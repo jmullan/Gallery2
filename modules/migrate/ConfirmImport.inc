@@ -800,6 +800,8 @@ class ConfirmImportView extends GalleryView {
 	$existingAlbums = array();
 	$albumValidOwner = array();
 	$urlDecoded = array();
+	$albumOwnerUserName = array();
+	$albumOwnerUid = array();
 	$titles = array();
 	if (!isset($form['sourceAlbums'])) {
 	    $form['sourceAlbums']=array();
@@ -860,18 +862,26 @@ class ConfirmImportView extends GalleryView {
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-
+		$albumOwnerUserName[$encodedName] = $testUser['username'];
+		$albumOwnerUid[$encodedName] = $album['owner'];
 		list($ret, $owner) = GalleryCoreApi::fetchUserByUsername($testUser['username']);
 		if ($ret->isError() && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-		if ($owner) {
+		if (isset($form['migrateUser'][$album['owner']])) {
+		    $importingOwner = TRUE;
+		} else {
+		    $importingOwner = FALSE;
+		}
+		if ($owner || $importingOwner) {
 		    $albumValidOwner[$encodedName] = TRUE;
 		} else {
 		    $albumValidOwner[$encodedName] = FALSE;
 		}
 	    } else {
 		$albumValidOwner[$encodedName] = FALSE;
+		$albumOwnerUserName[$encodedName] = NULL;
+		$albumOwnerUid[$encodedName] = NULL;
 	    }
 	    $i++;
 	}
@@ -884,6 +894,8 @@ class ConfirmImportView extends GalleryView {
 	$ConfirmImport['illegalAlbumNames'] = $illegalAlbumNames;
         $ConfirmImport['destinationAlbumID'] = $destinationAlbumID;
 	$ConfirmImport['albumValidOwner'] = $albumValidOwner;
+	$ConfirmImport['albumOwnerUserName'] = $albumOwnerUserName;
+	$ConfirmImport['albumOwnerUid'] = $albumOwnerUid;
         $ConfirmImport['targetAlbum'] = $targetAlbum->getMemberData();
 	$ConfirmImport['urlDecoded'] = $urlDecoded;
 	$ConfirmImport['titles'] = $titles;

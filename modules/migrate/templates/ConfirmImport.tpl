@@ -73,7 +73,9 @@
 	  {/if}
 
 	  {if (!$ConfirmImport.albumValidOwner.$albumName)}
-	  {g->text text="This album's owner hasn't been imported"}
+	  {g->text text="This album's owner (%s) hasn't been imported." arg1=$ConfirmImport.albumOwnerUserName.$albumName}
+	  <input type="checkbox" name="{g->formVar var="form[migrateUser][`$ConfirmImport.albumOwnerUid.$albumName`]}" />
+	  {g->text text="Import %s now." arg1=$ConfirmImport.albumOwnerUserName.$albumName }
 	  {/if}
 	</td>
       </tr>
