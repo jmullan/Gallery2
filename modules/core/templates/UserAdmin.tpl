@@ -4,7 +4,7 @@
  * Gallery will look for that file first and use it if it exists
  * and when you upgrade, your changes will not get overwritten.
  *}
-<form action="{g->url}" method="post">
+<form action="{g->url}" enctype="{$UserAdmin.enctype|default:"application/x-www-form-urlencoded"}" method="post">
   <div>      
     {g->hiddenFormVars}
     <input type="hidden" name="{g->formVar var="controller"}" value="{$controller}"/>
@@ -58,6 +58,14 @@
               {g->text text="Browse Gallery"}
             </a>
           </li>
+
+          {if ($UserAdmin.isSiteAdmin)}
+          <li>
+            <a href="{g->url arg1="view=core:SiteAdmin"}">
+              {g->text text="Site Admin"}
+            </a>
+          </li>
+          {/if}
         </ul>
       </div>
     </div>
