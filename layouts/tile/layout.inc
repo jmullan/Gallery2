@@ -161,6 +161,12 @@ class TileLayout extends GalleryLayout {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+
+	/* Get system content */
+	list ($ret, $moduleSystemContentFiles) = $this->_loadModuleSystemContent($template);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
  
 	/* Get item links and flatten out the modules */
 	$moduleItemLinks = array();
@@ -175,11 +181,22 @@ class TileLayout extends GalleryLayout {
 	}
 	usort($moduleItemLinks, array($this, '_sortItemLinks'));
 
+	/* Load the parents */
+	list ($ret, $parents) = GalleryCoreApi::fetchParents($item);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	for ($i = 0; $i < sizeof($parents); $i++) {
+	    $parents[$i] = $parents[$i]->getMemberData();
+	}
+
 	/* Get the active user */
 	$user = $gallery->getActiveUser();
 
 	$layout['moduleSystemLinks'] = $moduleSystemLinks;
+	$layout['moduleSystemContentFiles'] = $moduleSystemContentFiles;
 	$layout['moduleItemLinks'] = $moduleItemLinks;
+	$layout['parents'] = $parents;
 	$layout['user'] = $user->getMemberData();
 
 	$template->setVariable('layout', $layout);

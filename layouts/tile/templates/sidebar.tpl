@@ -21,6 +21,30 @@
     </ul>
   </div>
 
+  {* Extra modules system content *}
+  {foreach from=$layout.moduleSystemContentFiles key=moduleId item=moduleFile}
+  {if ($moduleId != 'core')}
+    {include file="gallery:$moduleFile" l10Domain="modules_$moduleId"}
+  {/if}
+  {/foreach}
+
+  {* Breadcrumb *}
+  {if (count($layout.parents)>0)}
+    <div class="gbMenu">
+      <div class="giTitle"> {g->text text="Navigation"} </div>
+      <ul>
+        {foreach from=$layout.parents item=parent}
+          <li>
+            &raquo;
+            <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$parent.id`"}">
+              {$parent.title|default:$parent.pathComponent|markup}
+            </a>
+          </li>
+        {/foreach}
+      </ul>
+    </div>
+  {/if}
+
   {* Album actions, if there are any *}
   {if !empty($layout.moduleItemLinks)}
   <div class="gbMenu">
