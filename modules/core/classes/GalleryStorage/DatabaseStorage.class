@@ -278,6 +278,7 @@ class DatabaseStorage extends GalleryStorage {
 	 * Get our persistent and meta info for this class
 	 */
 	$metaInfo = $this->_metaInfo->describeClass($targetType);
+	$idCol = $this->prefixColumnName('id');
 
 	$tables = array();
 	$data = array();
@@ -298,10 +299,12 @@ class DatabaseStorage extends GalleryStorage {
 	    /* Keep track of the entire set of tables we're selecting from */
 	    if (empty($tables[$tableName])) {
 		$tables[$tableName] = 1;
-		$where[] = "$tableName.id=?";
+		$where[] = "$tableName.$idCol=?";
 		$data[] = $id;
 	    }
-	    $columns[$tableName . '.' . $this->prefixColumnName($columnName)] = 1;
+	    $prefixedColumnName = $this->prefixColumnName($columnName);
+	    $columns[$tableName . '.' . $prefixedColumnName] = 1;
+	    $prefixTable[$prefixedColumnName] = $columnName;
 	}
 
 	$query = 'SELECT ';
@@ -314,9 +317,9 @@ class DatabaseStorage extends GalleryStorage {
 	$recordSet = $this->_db->Execute($query, $data);
 	if ($recordSet) {
 	    $prototype = new $targetType;
-	    foreach ($recordSet->fields as $memberName => $value) {
+	    foreach ($recordSet->fields as $prefixedColumnName => $value) {
 		if (isset($value)) {
-		    $func = 'set' . ucfirst($memberName);
+		    $func = 'set' . ucfirst($prefixTable[$prefixedColumnName]);
 		    $prototype->$func($value);
 		}
 	    }
@@ -338,14 +341,64 @@ class DatabaseStorage extends GalleryStorage {
      *
      * @param object GalleryNucleus the containing GalleryNucleus
      * @param string the name of the member
+     * @param object a reference to the object to be loaded
      * @return int a status code
      */
     function loadMember(&$nucleus, $memberName, &$object) {
 
 	$metaInfo = $this->_metaInfo->describeClass($nucleus->getObjectType());
 	$type = $metaInfo['members'][$memberName]['type'];
+
+	/* Figure out which table we're reading from */
+	$tableName = DATABASE_TABLE_PREFIX .
+		strtolower($metaInfo['members'][$memberName]['class']) . '_' .
+		strtolower($memberName);
+	
 	if ($type & STORAGE_TYPE_MAP) {
-	    return $this->_loadMap($nucleus, $memberName, $object);
+	    return $this->_loadMap($nucleus, $tableName, $memberName, $object);
+	} else if ($type & STORAGE_TYPE_LIST) {
+	    return $this->_loadList($nucleus, $tableName, $memberName, $object);
+	} else {
+	    return ERROR;
+	}
+    }
+
+    /**
+     * Save a class member from the database
+     *
+     * This is used for class members that are objects, like GalleryMap and
+     * GalleryList instances.
+     *
+     * @param object GalleryNucleus the containing GalleryNucleus
+     * @param string the name of the member
+     * @return int a status code
+     */
+    function saveMember(&$nucleus, $memberName) {
+
+	if (!$nucleus->getLoadedFlag($memberName)) {
+	    return SUCCESS;
+	}
+	
+	if (!($nucleus->getModifiedFlag($memberName) & MEMBER_MODIFIED)) {
+	    return SUCCESS;
+	}
+
+	$metaInfo = $this->_metaInfo->describeClass($nucleus->getObjectType());
+	$type = $metaInfo['members'][$memberName]['type'];
+	
+	/* Figure out which table we're writing to */
+	$tableName = DATABASE_TABLE_PREFIX .
+		strtolower($metaInfo['members'][$memberName]['class']) . '_' .
+		strtolower($memberName);
+
+	/* Get the actual object */
+	$func = 'get' . ucfirst($memberName);
+	$object =& $nucleus->$func();
+
+	if ($type & STORAGE_TYPE_MAP) {
+	    return $this->_saveMap($nucleus, $tableName, $memberName, $object);
+	} else if ($type & STORAGE_TYPE_LIST) {
+	    return $this->_saveList($nucleus, $tableName, $memberName, $object);
 	} else {
 	    return ERROR;
 	}
@@ -355,19 +408,15 @@ class DatabaseStorage extends GalleryStorage {
      * Load a GalleryMap from the database
      *
      * @param object GalleryNucleus the containing GalleryNucleus
+     * @param string the name of the table
      * @param string the name of the member
      * @access private
      * @return int a status code
      */
-    function _loadMap(&$nucleus, $memberName, &$map) {
+    function _loadMap(&$nucleus, $tableName, $memberName, &$map) {
 
 	$this->_traceStart();
 	
-	/* Figure out which table we're reading from */
-	$tableName = DATABASE_TABLE_PREFIX .
-		$nucleus->getObjectType() . '_' .
-		$memberName;
-
 	/* Clear out the map */
 	$map->reset();
 
@@ -387,12 +436,63 @@ class DatabaseStorage extends GalleryStorage {
 
 	/* Push all our data into the map */
 	while (!$recordSet->EOF) {
-	    $map->setValue($recordSet->fields[$keyCol],
-			   $recordSet->fields[$valueCol]);
+	    $map->set($recordSet->fields[$keyCol],
+		      $recordSet->fields[$valueCol]);
 	    $recordSet->MoveNext();
 	}
 
 	$map->clearModifiedFlags();
+	$nucleus->setLoadedFlag($memberName, true);
+
+	$this->_traceStop();
+	return SUCCESS;
+    }
+
+    /**
+     * Load a GalleryList from the database
+     *
+     * @param object GalleryNucleus the containing GalleryNucleus
+     * @param string the name of the table
+     * @param string the name of the member
+     * @access private
+     * @return int a status code
+     */
+    function _loadList(&$nucleus, $tableName, $memberName, &$list) {
+
+	$this->_traceStart();
+	
+	/* Clear out the list */
+	$list->reset();
+
+	/* Set up and execute our query */
+	$arrayCol = $this->prefixColumnName('array');
+	$idCol = $this->prefixColumnName('id');
+
+	$query = "SELECT $arrayCol FROM $tableName" .
+		' WHERE ' . $idCol . '=?';
+	$data = array($nucleus->getId());
+	$recordSet = $this->_db->Execute($query, $data);
+	if (!$recordSet) {
+	    $this->_traceStop();
+	    return ERROR | ERROR_DATABASE_FAILURE;
+	}
+
+	if (!$recordSet) {
+	    return ERROR | ERROR_DATABASE_FAILURE;
+	} else {
+	    if ($recordSet->RecordCount() == 0) {
+		/* No data!  Mark this member as newly created */
+		$nucleus->setModifiedFlag($memberName, MEMBER_CREATED);
+	    } else {
+		/* Push all our data into the map */
+		while (!$recordSet->EOF) {
+		    $list->unserialize($recordSet->fields[$arrayCol]);
+		    $recordSet->MoveNext();
+		}
+	    }
+	    $list->clearModifiedFlags();
+	}
+
 	$nucleus->setLoadedFlag($memberName, true);
 
 	$this->_traceStop();
@@ -520,7 +620,7 @@ class DatabaseStorage extends GalleryStorage {
 		    $query = 'UPDATE ' . $tableName  .  ' SET';
 		    $query .= ' ' . join(',', $changeList);
 		    $query .= ' WHERE ' .
-			     $this->prefixColumnName($idColumn[name]) .
+			     $this->prefixColumnName($idColumn['name']) .
 			     '=?';
 		    $data[] = $idColumn['value'];
 
@@ -567,15 +667,9 @@ class DatabaseStorage extends GalleryStorage {
 	 * Save sub-objects as necessary
 	 */
 	foreach ($metaInfo['members'] as $name => $info) {
-	    if ($metaInfo['members'][$name]['type'] & STORAGE_TYPE_MAP) {
-		$func = 'get' . ucfirst($name);
-		if ($nucleus->getLoadedFlag($name)) {
-		    $map =& $nucleus->$func();
-		    $ret = $this->_saveMap($nucleus, $name, $map);
-		    if ($ret & ERROR) {
-			return $ret;
-		    }
-		}
+	    $type = $metaInfo['members'][$name]['type'];
+	    if ($type & (STORAGE_TYPE_MAP | STORAGE_TYPE_LIST)) {
+		$this->saveMember($nucleus, $name);
 	    }
 	}
 
@@ -592,20 +686,16 @@ class DatabaseStorage extends GalleryStorage {
      *
      * @access public
      * @param object GalleryNucleus the containing GalleryNucleus
+     * @param string the name of the table
      * @param string the member name of the map
      * @param object GalleryMap the map object
      * @return int a status code
      */
-    function _saveMap($nucleus, $memberName, &$map) {
+    function _saveMap($nucleus, $tableName, $memberName, &$map) {
 	if ($this->_connectionStatus != DATABASE_STATUS_FULLY_CONNECTED) {
 	    return ERROR | ERROR_DATABASE_NOT_CONNECTED;
 	}
 
-	/* Figure out which table we're reading from */
-	$tableName = DATABASE_TABLE_PREFIX .
-		$nucleus->getObjectType() . '_' .
-		$memberName;
-	
 	$deleteKeys = array();
 	$modifyKeys = array();
 	$createKeys = array();
@@ -624,18 +714,15 @@ class DatabaseStorage extends GalleryStorage {
 	    }
 	}
 
+	$id = $nucleus->getId();
+	$idCol = $this->prefixColumnName('id');
 	$keyCol = $this->prefixColumnName('key');
 	$valueCol = $this->prefixColumnName('value');
-	$idCol = $this->prefixColumnName('id');
-	
-	$id = $nucleus->getId();
-
 	if ($deleteKeys) {
 	    $query = 'DELETE FROM ' . $tableName .
 		    ' WHERE ' . $idCol . ' = ? ' .
-		    ' AND ' . $keyCol . ' in (' .
-		     join(', ', $deleteMarkers) .
-		     ')';
+		    ' AND ' . $keyCol . ' IN (' .
+		    join(', ', $deleteMarkers) . ')';
 
 	    $data = $deleteKeys;
 	    array_unshift($data, $id);
@@ -653,7 +740,7 @@ class DatabaseStorage extends GalleryStorage {
 			' VALUES (?, ?, ?) ';
 		$data = array($id,
 			      $key,
-			      $map->getValue($key));
+			      $map->get($key));
 
 		$recordSet = $this->_db->Execute($query, $data);
 		if (!$recordSet) {
@@ -667,7 +754,7 @@ class DatabaseStorage extends GalleryStorage {
 		$query = 'UPDATE ' . $tableName .
 			' SET ' . $valueCol . '=? ' .
 			' WHERE ' . $idCol . '=? AND ' . $keyCol . '=?';
-		$data = array($map->getValue($key), $id, $key);
+		$data = array($map->get($key), $id, $key);
 		$recordSet = $this->_db->Execute($query, $data);
 		if (!$recordSet) {
 		    return ERROR | ERROR_DATABASE_FAILURE;
@@ -679,6 +766,47 @@ class DatabaseStorage extends GalleryStorage {
 	 * Clear out our modification flags.
 	 */
 	$map->clearModifiedFlags();
+    }
+
+    /**
+     * Save a GalleryList
+     *
+     * @access public
+     * @param object GalleryNucleus the containing GalleryNucleus
+     * @param string the name of the table
+     * @param string the member name of the map
+     * @param object GalleryList the list object
+     * @return int a status code
+     */
+    function _saveList($nucleus, $tableName, $memberName, &$list) {
+	if ($this->_connectionStatus != DATABASE_STATUS_FULLY_CONNECTED) {
+	    return ERROR | ERROR_DATABASE_NOT_CONNECTED;
+	}
+
+	/* Set up and execute our query */
+	$arrayCol = $this->prefixColumnName('array');
+	$idCol =  $this->prefixColumnName('id');
+
+	$serializedForm = $list->serialize();
+	if ($nucleus->getModifiedFlag($memberName) & MEMBER_CREATED) {
+	    $query = 'INSERT INTO ' . $tableName .
+		    ' (' . $idCol . ', ' . $arrayCol . ')' .
+		    ' VALUES (?, ?)';
+	    $data = array($nucleus->getId(), $serializedForm);
+	} else {
+	    $query = 'UPDATE ' . $tableName .
+		    ' SET ' . $arrayCol . '=? ' .
+		    ' WHERE ' . $idCol . '=?';
+	    $data = array($serializedForm, $nucleus->getId());
+	}
+
+	$recordSet = $this->_db->Execute($query, $data);
+	if (!$recordSet) {
+	    return ERROR | ERROR_DATABASE_FAILURE;
+	}
+
+	$list->clearModifiedFlags();
+	return SUCCESS;
     }
 
     /**
@@ -1048,14 +1176,16 @@ class DatabaseStorage extends GalleryStorage {
 	assert('!empty($id)');
 
 	$idCol = $this->prefixColumnName('id');
+	$objectTypeCol = $this->prefixColumnName('objectType');
 	$table = DATABASE_TABLE_PREFIX  . 'gallerynucleus';
-	$query = "SELECT $table.objectType FROM $table " .
-		 ' WHERE ' . $idCol . '=?';
+	$query = 'SELECT ' . $objectTypeCol .
+		' FROM ' . $table .
+		' WHERE ' . $idCol . '=?';
 	$data = array($id);
 	$recordSet = $this->_db->Execute($query, $data);
 
 	if ($recordSet) {
-	    $type = $recordSet->fields['objectType'];
+	    $type = $recordSet->fields[$objectTypeCol];
 	    $recordSet->Close();
 	    return array(SUCCESS, $type);
 	} else {

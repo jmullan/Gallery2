@@ -28,8 +28,14 @@ class CreateAlbumItemTestCase extends TestCase {
 	    $this->error($ret);
 	    return $ret;
 	}
+
+	global $gallery;
+	$gallery->lockLocal(array($this->_item->getId()));
 	
 	$this->_item->setRows(3);
+	$childIds =& $this->_item->getChildIds();
+	$childIds->push(3);
+	$childIds->unshift(5);
 	print("SECOND SAVE\n");
 	$ret = $this->_item->save();
 	$this->dump($ret, $this->_item);

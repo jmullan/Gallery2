@@ -321,13 +321,13 @@ class GalleryItem extends GalleryNucleus {
     function hasPermission($id, $perm) {
 
 	/* Check for an explicit deny.  Deny supercedes allow. */
-	$denied = $this->_deniedPermissions->getValue($id);
+	$denied = $this->_deniedPermissions->get($id);
 	if ($denied && ($denied & $perm)) {
 	    return false;
 	}
 
 	/* Check for an explicit allow */
-	$allowed = $this->_allowedPermissions->getValue($id);
+	$allowed = $this->_allowedPermissions->get($id);
 	if ($allowed && ($allowed & $perm)) {
 	    return true;
 	}
@@ -360,10 +360,10 @@ class GalleryItem extends GalleryNucleus {
 	$this->removePermission($id, $perm);
 
 	/* Grant the permission */
-	$allowed = $this->_allowedPermissions->getValue($id);
+	$allowed = $this->_allowedPermissions->get($id);
 	if (!($allowed && ($allowed & $perm))) {
 	    $allowed = ($allowed | $perm);
-	    $this->_allowedPermissions->setValue($id, $allowed);
+	    $this->_allowedPermissions->set($id, $allowed);
 	}
     }
 
@@ -385,10 +385,10 @@ class GalleryItem extends GalleryNucleus {
 	$this->removePermission($id, $perm);
 
 	/* Grant the permission */
-	$denied = $this->_deniedPermissions->getValue($id);
+	$denied = $this->_deniedPermissions->get($id);
 	if (!($denied && ($denied & $perm))) {
 	    $denied = ($denied | $perm);
-	    $this->_deniedPermissions->setValue($id, $denied);
+	    $this->_deniedPermissions->set($id, $denied);
 	}
 
     }
@@ -407,17 +407,17 @@ class GalleryItem extends GalleryNucleus {
     function removePermission($id, $perm) {
 
 	/* If the user was allowed this permission, un-allow them */
-	$allowed = $this->_allowedPermissions->getValue($id);
+	$allowed = $this->_allowedPermissions->get($id);
 	if ($allowed && ($allowed & $perm)) {
 	    $allowed = ($allowed ^ $perm);
-	    $this->_allowedPermissions->setValue($id, $allowed);
+	    $this->_allowedPermissions->set($id, $allowed);
 	}
 
 	/* If the user was denied this permission, un-deny them */
-	$denied = $this->_deniedPermissions->getValue($id);
+	$denied = $this->_deniedPermissions->get($id);
 	if ($denied && ($denied & $perm)) {
 	    $denied = ($denied ^ $perm);
-	    $this->_deniedPermissions->setValue($id, $denied);
+	    $this->_deniedPermissions->set($id, $denied);
 	}
     }
 

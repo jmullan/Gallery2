@@ -4,7 +4,6 @@
  * Derived from adodb-errorhandler.inc.php which is 
  * (c) 2000, 2001 John Lim (jlim@natsoft.com.my).  All rights reserved.
  * 
- *
  */
 
 define('ADODB_ERROR_HANDLER','ErrorHandler');

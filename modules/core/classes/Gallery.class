@@ -169,9 +169,12 @@ class Gallery {
      */
     function getCachedNucleus($id) {
 	assert('!empty($id)');
-	assert('!empty($this->_nucleusCache[$id])');
-	
-	return $this->_nucleusCache[$id];
+
+	if (empty($this->_nucleusCache[$id])) {
+	    return null;
+	} else {
+	    return $this->_nucleusCache[$id];
+	}
     }
     
     /**
@@ -348,14 +351,14 @@ class Gallery {
      * Get a value from the Gallery configuration settings
      *
      * This is a convenience method to get a Gallery configuration value.
-     * It's equivalent to $gallery->getConfig()->getValue($key)
+     * It's equivalent to $gallery->getConfig()->get($key)
      * 
      * @access public
      * @return object GalleryMap the Gallery config map
      */
     function getConfigValue($key) {
 	assert('!empty($key)');
-	return $this->_config->getValue($key);
+	return $this->_config->get($key);
     }
 
     /**
