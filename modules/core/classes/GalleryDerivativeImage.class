@@ -165,9 +165,27 @@ class GalleryDerivativeImage_core extends GalleryDerivative {
     function rebuildCache() {
 	global $gallery;
 
-	$ret = parent::rebuildCache();
+	/* Figure out our target path */
+	list($ret, $destPath) = $this->fetchPath();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$ret = parent::rebuildCache();
+	if ($ret->isError()) {
+	    if ($ret->getErrorCode() & ERROR_TOOLKIT_FAILURE) {
+		/*
+		 * Something went wrong with the toolkit -- use our "busted" image instead.
+		 */
+		$platform = $gallery->getPlatform();
+		if (!$platform->copy(dirname(__FILE__) . '/../data/broken-image.gif', $destPath)) {
+		    return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__);
+		}
+		$this->setDerivativeMimeType('image/gif');
+		$this->setDerivativeSize($platform->filesize($destPath));
+	    } else {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
 	}
 
 	/* Update our dimensions */
@@ -178,12 +196,6 @@ class GalleryDerivativeImage_core extends GalleryDerivative {
 	}
 
 	if (isset($toolkit)) {
-	    /* Figure out our target path */
-	    list($ret, $destPath) = $this->fetchPath();
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-
 	    list ($ret, $dimensions) = $toolkit->getProperty($mimeType, 'dimensions', $destPath);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
