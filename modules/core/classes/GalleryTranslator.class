@@ -196,12 +196,18 @@ class GalleryTranslator {
 	/* If we're using gettext, try to bind to a language */
 	if (function_exists('dgettext')) {
 	    
-	    /* Set the appropriate charset in our HTTP header */
-	    $this->_activeCharset = $supportedLanguages[$language][$country]['charset'];
+	    /* Set the appropriate charset in our HTTP header
+	     * Provide a sane default if the requested language is not
+	     * supported
+	     */
+	    if (isset($supportedLanguages[$language][$country])) {
+		$this->_activeCharset = $supportedLanguages[$language][$country]['charset'];
+	    } else {
+		$this->_activeCharset = 'UTF-8';
+	    }
 	    if (!headers_sent()) {
 		header('Content-Type: text/html; charset=' . $this->_activeCharset);
 	    }
-
 	    /*
 	     * Some systems only require LANG, others (like Mandrake) seem to require
 	     * LANGUAGE also.
