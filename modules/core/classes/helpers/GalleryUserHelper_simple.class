@@ -91,8 +91,14 @@ class GalleryUserHelper_simple {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	$storage =& $gallery->getStorage();
 	$groupIds = array_keys($groupIds);
 	$groupIdMarkers = GalleryUtilities::makeMarkers($groupIds);
+	list ($ret, $andPermission) = $storage->getFunctionSql('BITAND',
+						array('[GalleryPermissionMap::permission]', '?'));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 
 	$query = '
         SELECT
@@ -106,7 +112,7 @@ class GalleryUserHelper_simple {
            OR
            [GalleryPermissionMap::groupId] IN (' . $groupIdMarkers . '))
           AND
-          [GalleryPermissionMap::permission] & ? = ?
+        ' . $andPermission . ' = ?
         GROUP BY
           [GalleryPermissionMap::itemId]
         ';
@@ -116,8 +122,6 @@ class GalleryUserHelper_simple {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$storage =& $gallery->getStorage();
-	    
 	$data = array();
 	$data[] = $itemId;
 	$data[] = $gallery->getActiveUserId();

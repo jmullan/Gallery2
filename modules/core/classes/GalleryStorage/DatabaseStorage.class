@@ -750,7 +750,11 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	    if ($alias == null) {
 		$statement = str_replace("[${class}]", "$table", $statement);
 	    } else {
-		$statement = str_replace("[${class}]", "$table as $alias", $statement);
+		list ($ret, $as) = $this->getFunctionSql('AS', array());
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		$statement = str_replace("[${class}]", "$table $as $alias", $statement);
 	    }
 	}
 
@@ -1427,7 +1431,11 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	    if ($alias == null) {
 		$query = str_replace("[${class}]", "$table", $query);
 	    } else {
-		$query = str_replace("[${class}]", "$table as $alias", $query);
+		list ($ret, $as) = $this->getFunctionSql('AS', array());
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		$query = str_replace("[${class}]", "$table $as $alias", $query);
 	    }
 	}
 

@@ -95,6 +95,11 @@ class GalleryChildEntityHelper_simple {
 
 	$groupIds = array_keys($groupIds);
 	$groupIdMarkers = GalleryUtilities::makeMarkers($groupIds);
+	list ($ret, $andPermission) = $storage->getFunctionSql('BITAND',
+						array('[GalleryPermissionMap::permission]', '?'));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 
 	/* Prepare the query */
 	$query = '
@@ -111,7 +116,7 @@ class GalleryChildEntityHelper_simple {
            OR
           [GalleryPermissionMap::groupId] IN (' . $groupIdMarkers . '))
           AND
-          [GalleryPermissionMap::permission] & ? > ?
+        ' . $andPermission . ' > ?
           AND
           [GalleryPermissionMap::itemId] = [GalleryChildEntity::id]
 	  ' . $extraWhere . '
@@ -204,6 +209,11 @@ class GalleryChildEntityHelper_simple {
 
 	$groupIds = array_keys($groupIds);
 	$groupIdMarkers = GalleryUtilities::makeMarkers($groupIds);
+	list ($ret, $andPermission) = $storage->getFunctionSql('BITAND',
+						array('[GalleryPermissionMap::permission]', '?'));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 
 	/* Prepare the query */
 	$query = '
@@ -220,7 +230,7 @@ class GalleryChildEntityHelper_simple {
            OR
            [GalleryPermissionMap::groupId] IN (' . $groupIdMarkers . '))
           AND
-          [GalleryPermissionMap::permission] & ? > ?
+        ' . $andPermission . ' > ?
           AND
           [GalleryPermissionMap::itemId] = [GalleryChildEntity::id]
 	  ' . $extraWhere . '

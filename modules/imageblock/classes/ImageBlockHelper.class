@@ -166,7 +166,12 @@ class ImageBlockHelper {
 	}
 	$groupIds = array_keys($groupIds);
 	$groupIdMarkers = GalleryUtilities::makeMarkers($groupIds);
-	
+	list ($ret, $andPermission) = $storage->getFunctionSql('BITAND',
+						array('[GalleryPermissionMap::permission]', '?'));
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
 	$query = '
 	INSERT INTO
 	  [ImageBlockCacheMap]
@@ -181,7 +186,7 @@ class ImageBlockHelper {
 	   OR
 	   [GalleryPermissionMap::groupId] IN (' . $groupIdMarkers . '))
 	  AND
-	  [GalleryPermissionMap::permission] & ? > ?
+	' . $andPermission . ' > ?
 	  AND
 	  [GalleryPermissionMap::itemId] = [GalleryEntity::id]
 	  AND

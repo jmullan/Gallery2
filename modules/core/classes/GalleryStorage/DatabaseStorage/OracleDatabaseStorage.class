@@ -92,7 +92,19 @@ class OracleDatabaseStorage extends DatabaseStorage {
     function getFunctionSql($functionName, $args) {
 	switch($functionName) {
 	case 'CONCAT':
-	    $sql = join(' || ', $args);
+	    $sql = implode(' || ', $args);
+	    break;
+
+	case 'BITAND':
+	    $sql = 'BITAND(' . $args[0] . ',' . $args[1] . ')';
+	    break;
+
+	case 'AS':
+	    $sql = '';
+	    break;
+
+	case 'SUBSTRING':
+	    $sql = sprintf('SUBSTR(%s)', implode(', ', $args));
 	    break;
 
 	case 'RAND':
@@ -111,6 +123,112 @@ class OracleDatabaseStorage extends DatabaseStorage {
 	}
 
 	return array(GalleryStatus::success(), $sql);
+    }
+
+    /**
+     * @see DatabaseStorage::cleanStore
+     */
+    function cleanStore() {
+	$ret = parent::cleanStore();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/*
+	 * Create a temporary database connection and remove our custom
+	 * aggregate function.
+	 */
+	list ($ret, $tmpDb) = $this->_getConnection(true);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$this->_traceStart();
+	$recordSet1 = $tmpDb->Execute('DROP FUNCTION BIT_OR');
+	$recordSet2 = $tmpDb->Execute('DROP TYPE BIT_OR_IMPL');
+	$tmpDb->Close();
+	$this->_traceStop();
+
+	if (empty($recordSet1) || empty($recordSet2)) {
+	    return GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * @see DatabaseStorage::configureStore
+     */
+    function configureStore($moduleId) {
+
+	$queries = array(
+	'create or replace type BIT_OR_IMPL as object (
+	  val NUMBER,
+	  static function ODCIAggregateInitialize(sctx IN OUT BIT_OR_IMPL)
+	    return number,
+	  member function ODCIAggregateIterate(self IN OUT BIT_OR_IMPL,
+	    value IN number) return number,
+	  member function ODCIAggregateTerminate(self IN OUT BIT_OR_IMPL,
+	    returnValue OUT number, flags IN number) return number,
+	  member function ODCIAggregateMerge(self IN OUT BIT_OR_IMPL,
+	    ctx2 IN BIT_OR_IMPL) return number
+	 )',
+	'create or replace type body BIT_OR_IMPL is
+	  static function ODCIAggregateInitialize(sctx IN OUT BIT_OR_IMPL)
+	    return number is
+	  begin
+	    sctx := BIT_OR_IMPL(0);
+	    return ODCIConst.Success;
+	  end;
+	  member function ODCIAggregateIterate(self IN OUT BIT_OR_IMPL,
+	    value IN number) return number is
+	  begin
+	    self.val := (self.val + value) - BitAND(self.val, value);
+	    return ODCIConst.Success;
+	  end;
+	  member function ODCIAggregateTerminate(self IN OUT BIT_OR_IMPL,
+	    returnValue OUT number, flags IN number) return number is
+	  begin
+	    returnValue := self.val;
+	    return ODCIConst.Success;
+	  end;
+	  member function ODCIAggregateMerge(self IN OUT BIT_OR_IMPL,
+	    ctx2 IN BIT_OR_IMPL) return number is
+	  begin
+	    self.val := (self.val + ctx2.val) - BitAND(self.val, ctx2.val);
+	    return ODCIConst.Success;
+	  end;
+	 end;',
+	'create or replace function BIT_OR(input number) return number
+	 parallel_enable aggregate using BIT_OR_IMPL;');
+
+	/*
+	 * Create a temporary database connection and install our custom
+	 * aggregate function.
+	 */
+	list ($ret, $tmpDb) = $this->_getConnection(true);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$this->_traceStart();
+	foreach ($queries as $query) {
+	    $recordSet = $tmpDb->Execute($query);
+	    if (empty($recordSet)) {
+		$tmpDb->Close();
+		$this->_traceStop();
+		return GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__, $query);
+	    }
+	}
+	$tmpDb->Close();
+	$this->_traceStop();
+
+	$ret = parent::configureStore($moduleId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
     }
 }
 ?>

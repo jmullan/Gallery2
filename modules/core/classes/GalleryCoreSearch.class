@@ -93,12 +93,18 @@ class GalleryCoreSearch extends GallerySearchInterface_1_0 {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	$storage =& $gallery->getStorage();
 	$groupIds = array_keys($groupIds);
 	$groupIdMarkers = GalleryUtilities::makeMarkers($groupIds);
-	
+	list ($ret, $andPermission) = $storage->getFunctionSql('BITAND',
+						array('[GalleryPermissionMap::permission]', '?'));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	$countQuery = '
         SELECT
-          COUNT(DISTINCT([GalleryItem::id]))
+          COUNT(DISTINCT [GalleryItem::id])
         FROM
           [GalleryItem], [GalleryPermissionMap]
         WHERE
@@ -110,12 +116,11 @@ class GalleryCoreSearch extends GallerySearchInterface_1_0 {
            OR
            [GalleryPermissionMap::groupId] IN (' . $groupIdMarkers . '))
           AND
-          [GalleryPermissionMap::permission] & ? = ?
-        ';
+        ' . $andPermission . ' = ?';
 
 	$query = '
-        SELECT
-          DISTINCT([GalleryItem::id]),
+        SELECT DISTINCT
+          [GalleryItem::id],
           [GalleryUser::fullName],
           [GalleryUser::userName],
           [GalleryEntity::modificationTimestamp], ' .
@@ -135,7 +140,7 @@ class GalleryCoreSearch extends GallerySearchInterface_1_0 {
            OR
            [GalleryPermissionMap::groupId] IN (' . $groupIdMarkers . '))
           AND
-          [GalleryPermissionMap::permission] & ? = ?
+        ' . $andPermission . ' = ?
         ORDER BY
           [GalleryEntity::modificationTimestamp] DESC, [GalleryItem::id] DESC
         ';
@@ -145,8 +150,6 @@ class GalleryCoreSearch extends GallerySearchInterface_1_0 {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-
-	$storage =& $gallery->getStorage();
 
 	$data = $whereData;
 	$data[] = $gallery->getActiveUserId();

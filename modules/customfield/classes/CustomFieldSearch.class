@@ -75,12 +75,18 @@ class CustomFieldSearch extends GallerySearchInterface_1_0 {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	$storage =& $gallery->getStorage();
 	$groupIds = array_keys($groupIds);
 	$groupIdMarkers = GalleryUtilities::makeMarkers($groupIds);
+	list ($ret, $andPermission) = $storage->getFunctionSql('BITAND',
+						array('[GalleryPermissionMap::permission]', '?'));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 
 	$countQuery = '
 	SELECT
-	  COUNT(DISTINCT([CustomFieldMap::itemId]))
+	  COUNT(DISTINCT [CustomFieldMap::itemId])
 	FROM
 	  [CustomFieldMap], [GalleryPermissionMap]
 	WHERE
@@ -92,12 +98,11 @@ class CustomFieldSearch extends GallerySearchInterface_1_0 {
 	  AND
 	  [CustomFieldMap::value] LIKE ?
 	  AND
-	  [GalleryPermissionMap::permission] & ? = ?
-	';
+	' . $andPermission . ' = ?';
 
 	$query = '
-	SELECT
-	  DISTINCT([CustomFieldMap::itemId]),
+	SELECT DISTINCT
+	  [CustomFieldMap::itemId],
 	  [CustomFieldMap::field],
 	  [CustomFieldMap::value]
 	FROM
@@ -111,12 +116,11 @@ class CustomFieldSearch extends GallerySearchInterface_1_0 {
 	  AND
 	  [CustomFieldMap::value] LIKE ?
 	  AND
-	  [GalleryPermissionMap::permission] & ? = ?
+	' . $andPermission . ' = ?
 	ORDER BY
 	  [CustomFieldMap::itemId] DESC
 	';
 
-	$storage =& $gallery->getStorage();
 	$data = array();
 	$data[] = $gallery->getActiveUserId();
 	array_splice($data, sizeof($data), 0, $groupIds);

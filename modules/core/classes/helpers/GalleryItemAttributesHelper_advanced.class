@@ -289,10 +289,15 @@ class GalleryItemAttributesHelper_advanced {
 	$newParentSequence = join('/', $newParentSequence) . '/';
 	
 	$storage =& $gallery->getStorage();
-	list ($ret, $newSequenceSql) = $storage->getFunctionSql('CONCAT',
-            array('?',
-		  sprintf('SUBSTRING([GalleryItemAttributesMap::parentSequence], %d)',
-			  strlen($oldParentSequence) + 1)));
+	list ($ret, $substring) = $storage->getFunctionSql('SUBSTRING', array(
+		  '[GalleryItemAttributesMap::parentSequence]', strlen($oldParentSequence) + 1));
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	list ($ret, $newSequenceSql) = $storage->getFunctionSql('CONCAT', array('?', $substring));
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 
 	require_once(dirname(__FILE__) . '/../GalleryItemAttributesMap.class');
 	$ret = GalleryItemAttributesMap::updateMapEntry(

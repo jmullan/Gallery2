@@ -68,10 +68,15 @@ class GalleryItemHelper_medium {
 
 	$groupIds = array_keys($groupIds);
 	$groupIdMarkers = GalleryUtilities::makeMarkers($groupIds);
-	
+	list ($ret, $andPermission) = $storage->getFunctionSql('BITAND',
+						array('[GalleryPermissionMap::permission]', '?'));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	$query = '
-        SELECT
-          DISTINCT([GalleryChildEntity::id])
+        SELECT DISTINCT
+          [GalleryChildEntity::id]
         FROM
           [GalleryChildEntity], [GalleryPermissionMap]
         WHERE
@@ -83,7 +88,7 @@ class GalleryItemHelper_medium {
            OR
            [GalleryPermissionMap::groupId] IN (' . $groupIdMarkers . '))
           AND
-          [GalleryPermissionMap::permission] & ? = ?
+        ' . $andPermission . ' = ?
         GROUP BY
           [GalleryChildEntity::id]
         ';
@@ -143,10 +148,15 @@ class GalleryItemHelper_medium {
 
 	$groupIds = array_keys($groupIds);
 	$groupIdMarkers = GalleryUtilities::makeMarkers($groupIds);
-	
+	list ($ret, $andPermission) = $storage->getFunctionSql('BITAND',
+						array('[GalleryPermissionMap::permission]', '?'));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	$query = '
-        SELECT
-          DISTINCT([GalleryChildEntity::id])
+        SELECT DISTINCT
+          [GalleryChildEntity::id]
         FROM
           [GalleryEntity], [GalleryChildEntity], [GalleryPermissionMap]
         WHERE
@@ -162,7 +172,7 @@ class GalleryItemHelper_medium {
            OR
            [GalleryPermissionMap::groupId] IN (' . $groupIdMarkers . '))
           AND
-          [GalleryPermissionMap::permission] & ? > ?
+        ' . $andPermission . ' > ?
         GROUP BY
           [GalleryChildEntity::id]
         ';
@@ -219,10 +229,15 @@ class GalleryItemHelper_medium {
 
 	$groupIds = array_keys($groupIds);
 	$groupIdMarkers = GalleryUtilities::makeMarkers($groupIds);
-	
+	list ($ret, $andPermission) = $storage->getFunctionSql('BITAND',
+						array('[GalleryPermissionMap::permission]', '?'));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	$query = '
-        SELECT
-          DISTINCT([GalleryItem::id])
+        SELECT DISTINCT
+          [GalleryItem::id]
         FROM
           [GalleryEntity], [GalleryItem], [GalleryPermissionMap]
         WHERE
@@ -236,8 +251,7 @@ class GalleryItemHelper_medium {
            OR
            [GalleryPermissionMap::groupId] IN (' . $groupIdMarkers . '))
           AND
-          [GalleryPermissionMap::permission] & ? = ?
-        ';
+        ' . $andPermission . ' = ?';
 	$data = array();
 	$data[] = $itemType;
 	$data[] = $gallery->getActiveUserId();

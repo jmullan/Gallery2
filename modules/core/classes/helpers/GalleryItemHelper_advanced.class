@@ -279,12 +279,17 @@ class GalleryItemHelper_advanced {
 
 	$groupIds = array_keys($groupIds);
 	$groupIdMarkers = GalleryUtilities::makeMarkers($groupIds);
-	
+	list ($ret, $andPermission) = $storage->getFunctionSql('BITAND',
+						array('[GalleryPermissionMap::permission]', '?'));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	$query = sprintf('
         SELECT
           [GalleryItemAttributesMap=1::itemId],
-          COUNT(DISTINCT([GalleryAlbumItem::id])),
-          COUNT(DISTINCT([GalleryDataItem::id]))
+          COUNT(DISTINCT [GalleryAlbumItem::id]),
+          COUNT(DISTINCT [GalleryDataItem::id])
         FROM
           [GalleryItemAttributesMap=1],
           [GalleryItemAttributesMap=2]
@@ -302,7 +307,7 @@ class GalleryItemHelper_advanced {
            OR
            [GalleryPermissionMap::groupId] IN (' . $groupIdMarkers . '))
           AND
-          [GalleryPermissionMap::permission] & ? > ?
+        ' . $andPermission . ' > ?
           GROUP BY
           [GalleryItemAttributesMap=1::itemId]
         ', $markers, $concat);

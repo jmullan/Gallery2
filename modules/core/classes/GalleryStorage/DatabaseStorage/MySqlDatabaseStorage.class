@@ -94,11 +94,23 @@ class MySqlDatabaseStorage extends DatabaseStorage {
     function getFunctionSql($functionName, $args) {
 	switch($functionName) {
 	case 'CONCAT':
-	    $sql = sprintf('CONCAT(%s)', join(', ', $args));
+	    $sql = sprintf('CONCAT(%s)', implode(', ', $args));
+	    break;
+
+	case 'BITAND':
+	    $sql = $args[0] . ' & ' . $args[1];
 	    break;
 
 	case 'UNIX_TIMESTAMP':
 	    $sql = sprintf('UNIX_TIMESTAMP(%s)', $args[0]);
+	    break;
+
+	case 'AS':
+	    $sql = 'AS';
+	    break;
+
+	case 'SUBSTRING':
+	    $sql = sprintf('SUBSTRING(%s)', implode(', ', $args));
 	    break;
 
 	case 'RAND':

@@ -166,13 +166,25 @@ class PostgreSqlDatabaseStorage extends DatabaseStorage {
     function getFunctionSql($functionName, $args) {
 	switch($functionName) {
 	case 'CONCAT':
-	    $sql = join(' || ', $args);
+	    $sql = implode(' || ', $args);
+	    break;
+
+	case 'BITAND':
+	    $sql = $args[0] . ' & ' . $args[1];
 	    break;
 
 	case 'UNIX_TIMESTAMP':
 	    $sql = 'date_part(\'epoch\', ' . $args[0] . ')';
 	    break;
 	    
+	case 'AS':
+	    $sql = 'AS';
+	    break;
+
+	case 'SUBSTRING':
+	    $sql = sprintf('SUBSTRING(%s)', implode(', ', $args));
+	    break;
+
 	case 'RAND':
 	    $sql = sprintf('RANDOM(%s)', empty($args) ? '' : $args[0]);
 	    break;

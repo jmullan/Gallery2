@@ -534,7 +534,12 @@ class GalleryPermissionHelper_advanced {
 	}
 
 	$storage =& $gallery->getStorage();
-	
+	list ($ret, $andPermission) = $storage->getFunctionSql('BITAND',
+						array('[GalleryPermissionMap::permission]', '?'));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	$query = '
 	SELECT
           [GalleryPermissionMap::itemId]
@@ -543,7 +548,7 @@ class GalleryPermissionHelper_advanced {
         WHERE
           [GalleryPermissionMap::itemId] = ?
           AND (' . join(' OR ', $ands) . ')
-          AND ([GalleryPermissionMap::permission] & ? = ?)
+          AND (' . $andPermission . ' = ?)
         ';
 	$data = array($itemId);
 	$data = array_merge($data, $userIds, $groupIds);
