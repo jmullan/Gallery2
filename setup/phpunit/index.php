@@ -51,51 +51,60 @@ function GalleryMain(&$testSuite, $filter) {
 	return $ret->wrap(__FILE__, __LINE__);
     }
 
-    /*
-     * Load the test cases for every active module.
-     */
-    list ($ret, $moduleStatusList) = $gallery->getModuleStatus();
+    list ($ret, $isSiteAdmin) = GalleryUserGroupMap::isUserInSiteAdminGroup();
     if ($ret->isError()) {
-	return $ret->wrap(__FILE__, __LINE__);
+	print $ret->getAsHtml();
+	return;
     }
 
-    $platform = $gallery->getPlatform();
-    $modulesDir = $gallery->getConfig('code.gallery.modules');
-    $suiteArray = array();
-    foreach ($moduleStatusList as $moduleName => $moduleStatus) {
-	if (empty($moduleStatus['active'])) {
-	    continue;
+    if ($isSiteAdmin) {
+    
+	/*
+	 * Load the test cases for every active module.
+	 */
+	list ($ret, $moduleStatusList) = $gallery->getModuleStatus();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
+
+	$platform = $gallery->getPlatform();
+	$modulesDir = $gallery->getConfig('code.gallery.modules');
+	$suiteArray = array();
+	foreach ($moduleStatusList as $moduleName => $moduleStatus) {
+	    if (empty($moduleStatus['active'])) {
+		continue;
+	    }
 	
-	$testDir = $modulesDir . $moduleName . '/test/phpunit';
+	    $testDir = $modulesDir . $moduleName . '/test/phpunit';
 
-	if ($platform->file_exists($testDir) &&
-	    $platform->is_dir($testDir) &&
-	    $dir = $platform->opendir($testDir)) {
+	    if ($platform->file_exists($testDir) &&
+		$platform->is_dir($testDir) &&
+		$dir = $platform->opendir($testDir)) {
 
-	    while (($file = readdir($dir)) != false) {
-		if (preg_match('/(.*).class$/', $file, $matches)) {
-		    require_once($testDir . '/' . $file);
+		while (($file = readdir($dir)) != false) {
+		    if (preg_match('/(.*).class$/', $file, $matches)) {
+			require_once($testDir . '/' . $file);
 
-		    $className = $matches[1];
-		    if (!$filter || stristr($className, $filter) || !strcasecmp($className, $filter)) {
-			if (class_exists($className) &&
-			    GalleryUtilities::isA(new $className(null), 'GalleryTestCase')) {
+			$className = $matches[1];
+			if (!$filter || stristr($className, $filter) || !strcasecmp($className, $filter)) {
+			    if (class_exists($className) &&
+				GalleryUtilities::isA(new $className(null), 'GalleryTestCase')) {
 
-			    $suiteArray[$className] = new TestSuite($className, $moduleName);
+				$suiteArray[$className] = new TestSuite($className, $moduleName);
+			    }
 			}
 		    }
 		}
+		closedir($dir);
 	    }
-	    closedir($dir);
 	}
-    }
 
-    $keys = array_keys($suiteArray);
-    natcasesort($keys);
+	$keys = array_keys($suiteArray);
+	natcasesort($keys);
     
-    foreach ($keys as $className) {
-	$testSuite->addTest($suiteArray[$className]);
+	foreach ($keys as $className) {
+	    $testSuite->addTest($suiteArray[$className]);
+	}
     }
 
     return GalleryStatus::success();
@@ -164,13 +173,11 @@ print "</pre>";
     <font color="red">
     <b>
     <h2>ERROR!</h2>
-    You are not logged in as a Gallery site administrator so some
-    some of the tests <i>will</i> fail.  In order to properly use
-    these tests, you should log in as a site administrator.  If you
-    have cookies disabled, then you must go back to the page where you
-    logged in and copy the part of your URL that looks like this:
-    <i>g2_GALLERYSID=51c0ca5a9ce1296ccfd5307fa77fd998</i>, get rid of
-    the <i>g2_GALLERYSID</i> part and paste it into this text box then
+    You are not logged in as a Gallery site administrator so you are
+    not allowed to run the unit tests.  If you have cookies disabled, then you
+    must go back to the page where you logged in and copy the part of your URL
+    that looks like this: <i>g2_GALLERYSID=51c0ca5a9ce1296ccfd5307fa77fd998</i>,
+    get rid of the <i>g2_GALLERYSID</i> part and paste it into this text box then
     click the Reload Page button.  That will transfer your session from
     the page where you logged in over to this page.
     <br>
