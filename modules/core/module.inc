@@ -358,13 +358,12 @@ class CoreModule extends GalleryModule {
 					    'return' => 1));
 	    }
 
-	    if (!$isRoot && isset($permissions['core.edit'])) {
+	    if ($isAlbum && isset($permissions['core.edit'])) {
 		$links[$item->getId()][] =
-		    array('text' => $this->translate('edit caption'),
+		    array('text' => $this->translate('edit captions'),
 			  'params' => array('view' => 'core:ItemAdmin',
 					    'subView' => 'core:ItemEditCaptions',
-					    'itemId' => $item->getParentId(),
-					    'selectedId' => $item->getId(),
+					    'itemId' => $item->getId(),
 					    'return' => 1));
 	    }
 
