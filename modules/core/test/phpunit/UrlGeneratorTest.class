@@ -320,7 +320,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 	foreach ($params as $key => $value) {
 	    $values[] = GalleryUtilities::prefixFormVariable($key) . '=' . htmlentities($value);
 	}
-	$short = 'http://example.com/gallery2/phpunit_test.php/test/' . $testAlbum->getPathComponent() . '/';
+	$short = 'http://example.com/gallery2/phpunit_test.php/test/' . $testAlbum->getPathComponent() . '.html';
 	if (!$session->isUsingCookies()) {
 	    $sid = GalleryUtilities::prefixFormVariable($session->getKey()) .  '=' . $session->getId();
 	    $values[] = $sid;
