@@ -44,6 +44,12 @@ class GalleryTestCase extends TestCase {
     function setUp() {
 	global $gallery;
 
+	/*
+	 * Try to ensure enough time for this test to complete.  If a test
+	 * needs more time, then it should extend the limit itself.
+	 */
+	$gallery->guaranteeTimeLimit(30);
+
 	parent::setUp();
 
 	/* Start with a clean slate*/
