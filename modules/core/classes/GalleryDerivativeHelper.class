@@ -81,6 +81,30 @@ class GalleryDerivativeHelper {
     }
 
     /**
+     * Convenience function to fetch the preferred for an item id
+     *
+     * @param array GalleryItem ids
+     * @return array object GalleryStatus a status code 
+     *               array(GalleryItem id => GalleryDerivativeImage, ...)
+     */
+    function fetchPreferredsByItemIds($ids) {
+	list ($ret, $results) = GalleryDerivativeHelper::_loadDerivatives(
+	    $ids, null, DERIVATIVE_TYPE_IMAGE_PREFERRED);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/*
+	 * Only one thumb per item, so simplify the reuslts
+	 */
+	foreach ($results as $id => $value) {
+	    $results[$id] = $value[0];
+	}
+	
+	return array(GalleryStatus::success(), $results);
+    }
+
+    /**
      * Convenience function to fetch the resizes for an item id
      *
      * @param array GalleryItem ids
@@ -109,7 +133,7 @@ class GalleryDerivativeHelper {
      */
     function fetchDerivativesByItemIds($ids, $types=null) {
 	list ($ret, $results) =
-		GalleryDerivativeHelper::_loadDerivatives($ids, null, $type);
+		GalleryDerivativeHelper::_loadDerivatives($ids, null, $types);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -128,7 +152,7 @@ class GalleryDerivativeHelper {
      */
     function fetchDerivativesBySourceIds($ids, $types=null) {
 	list ($ret, $results) =
-		GalleryDerivativeHelper::_loadDerivatives(null, $ids, $type);
+		GalleryDerivativeHelper::_loadDerivatives(null, $ids, $types);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -158,7 +182,7 @@ class GalleryDerivativeHelper {
 
 	if (!empty($itemIds)) {
 	    $ids = $itemIds;
-	    $selectId = '[GalleryDerivative::id]';
+	    $selectId = '[GalleryChildEntity::parentId]';
 	} else {
 	    $ids = $sourceIds;
 	    $selectId = '[GalleryDerivative::derivativeSourceId]';
@@ -170,12 +194,10 @@ class GalleryDerivativeHelper {
 	    
 	/* Look up the ids of all their thumbnail images */
 	$data = array();
-	$searchParams['select'] = ($selectId . ', ' .
-				   '[GalleryChildEntity::parentId]');
+	$searchParams['select'] = '[GalleryDerivative::id], ' . $selectId;
 
 	$idMarkers = GalleryUtilities::makeMarkers(sizeof($ids));
-	$searchParams['where'] = ('[GalleryChildEntity::parentId] IN (' .
-				  $idMarkers . ')');
+	$searchParams['where'] = $selectId . ' IN (' . $idMarkers . ')';
 	$data = array_merge($data, $ids);
 	
 	if (!empty($types)) {

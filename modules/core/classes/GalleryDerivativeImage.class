@@ -127,6 +127,66 @@ class GalleryDerivativeImage_core extends GalleryDerivative {
     }
 
     /**
+     * @see GalleryDerivative::mergeCommand()
+     */
+    function mergeCommand($mergeCommand) {
+
+	$mergePieces = split(' ', $mergeCommand);
+	$commands = split(';', $this->getDerivativeCommands());
+	$newCommands = array();
+	foreach ($commands as $command) {
+	    $pieces = split(' ', $command);
+	    if ($pieces[0] == $mergePieces[0]) {
+		switch ($pieces[0]) {
+		case 'rotate':
+		    /* Add the rotations together */
+		    $newRotation = ($pieces[1] + $mergePieces[1]) % 360;
+		    if ($newRotation != 0) {
+			switch ($newRotation) {
+			case 270:
+			case -90:
+			    $newCommands[] = "rotate 90";
+			    break;
+
+			case 180:
+			case -180:
+			    $newCommands[] = "rotate 180";
+			    break;
+
+			case 90:
+			case -270:
+			    $newCommands[] = "rotate -90";
+			    break;
+
+			default:
+			    return GalleryStatus::error(ERROR_BAD_PARAMETER,
+							__FILE__, __LINE__);
+			}
+		    }
+		    break;
+		    
+		case 'scale':
+		case 'resize':
+		case 'crop':
+		    /* Replace the old command with the new one */
+		    $newCommands[] = $mergeCommand;
+		    break;
+		}
+	    } else {
+		$newCommands[] = $command;
+	    }
+	}
+
+	if (empty($newCommands)) {
+	    $this->setDerivativeCommands(null);
+	} else {
+	    $this->setDerivativeCommands(join('; ', $newCommands));
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
      * Rebuild the cache.
      *
      * Only applicable if isDerative() returns true.  The commands

@@ -42,53 +42,85 @@ class ItemEditImageController extends GalleryController {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	if (isset($form['action']['save'])) {
-	    /* Validate the input data. */
-	    $error = false;
-	    if (!is_numeric($form['thumbnail']['size'])) {
-		$error = true;
+	$command = null;
+	/* Figure out which command we're taking */
+	if (isset($form['action']['scale']) &&
+	        is_numeric($form['scale']['size']) &&
+	        $form['scale']['size'] > 0) {
+	    $command = "scale $form[scale][size]";
+	} else if (isset($form['action']['rotate']['clockwise'])) {
+	    $command = "rotate -90";
+	} else if (isset($form['action']['rotate']['counterClockwise'])) {
+	    $command = "rotate 90";
+	} else if (isset($form['action']['rotate']['flip'])) {
+	    $command = "rotate 180";
+	}
+
+	/*
+	 * If we have a command, then apply it to the correct object.
+	 */
+	if (!empty($command)) {
+	    /* Check to see if we have a preferred source */
+	    list ($ret, $results) = GalleryDerivativeHelper::fetchPreferredsByItemIds(
+                array($item->getId()));
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    
-	    foreach ($form['resizes'] as $resize) {
-		if (!empty($resize['active']) && !is_numeric($resize['size'])) {
-		    $error = true;
-		    break;
-		}
+	    $preferred = null;
+	    if (!empty($results[$item->getId()])) {
+		$preferred = $results[$item->getId()];
 	    }
 
-	    if (!$error) {
-		/* Delete existing derivative preferences */
-		$ret = GalleryDerivativePreferencesMap::removeMapEntry(
-		    array('itemId' => $item->getId()));
-		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
-
-		/* Add the thumbnail size back in */
-		$ret = GalleryDerivativePreferencesMap::addMapEntry(
-	            array('order' => 0,
-			  'itemId' => $item->getId(),
-			  'derivativeType' => DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
-			  'derivativeCommands' => 'scale ' . $form['thumbnail']['size']));
-		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
-
-		for ($i = 0; $i < sizeof($form['resizes']); $i++) {
-		    if (empty($form['resizes'][$i]['active'])) {
-			continue;
+	    /*
+	     * If we don't have a preferred and we're preserving, then create
+	     * one
+	     */
+	    $lockIds = array();
+	    if (empty($preferred) && empty($form['preserveOriginal'])) {
+		/* Apply change directly to the raw image */
+	    } else {
+		/* If we have no preferred, then create one */
+		if (empty($preferred)) {
+		    list ($ret, $preferred) = $gallery->newEntity('GalleryDerivativeImage');
+		    if ($ret->isError()) {
+			return $ret->wrap(__FILE__, __LINE__);
 		    }
 		    
-		    $ret = GalleryDerivativePreferencesMap::addMapEntry(
-	                array('order' => $i,
-			      'itemId' => $item->getId(),
-			      'derivativeType' => DERIVATIVE_TYPE_IMAGE_RESIZE,
-			      'derivativeCommands' => 'scale ' . $form['resizes'][$i]['size']));
+		    $ret = $preferred->create($item->getId(), DERIVATIVE_TYPE_IMAGE_PREFERRED);
+		    if ($ret->isError()) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
+		    
+		    $preferred->setDerivativeSourceId($item->getId());
+		    $preferred->setDerivativeMimeType($item->getMimeType());
+		} else {
+		    /*
+		     * Otherwise, lock the preferred so that we can modify it
+		     */
+		    list ($ret, $lockIds[]) = $gallery->acquireWriteLock($preferred->getId());
 		    if ($ret->isError()) {
 			return $ret->wrap(__FILE__, __LINE__);
 		    }
 		}
-	    
+
+		$ret = $preferred->mergeCommand($command);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+		
+		$ret = $preferred->save();
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+
+		if (!empty($lockIds)) {
+		    $ret = $gallery->releaseLocks($lockIds);
+		    if ($ret->isError()) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
+		}
+		
 		/* Figure out where to redirect upon success */
 		$redirectParams['view'] = 'core:ItemAdmin';
 		$redirectParams['subView'] = 'core:ItemEditImage';
@@ -135,80 +167,42 @@ class ItemEditImageView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	if ($formName == 'ItemEditImage' && empty($form['action']['undo'])) {
+	if ($formName == 'ItemEditImage') {
 
 	    /* Complain if we have any invalid data */
-	    if (empty($form['thumbnail']['size'])) {
-		$form['error']['thumbnail']['size']['missing'] = 1;
-	    } else if (!is_numeric($form['thumbnail']['size']) ||
-		       $form['thumbnail']['size'] <= 0) {
-		$form['error']['thumbnail']['size']['invalid'] = 1;
-	    }
-
-	    for ($i = 0; $i < sizeof($form['resizes']); $i++) {
-		if (empty($form['resizes'][$i]['active'])) {
-		    /* Force it to a value, but don't check the data */
-		    $form['resizes'][$i]['active'] = 0;
-		    continue;
-		}
-
-		if (empty($form['resizes'][$i]['size'])) {
-		    $form['error']['resizes'][$i]['size']['missing'] = 1;
-		} else if (!is_numeric($form['resizes'][$i]['size']) ||
-			   $form['resizes'][$i]['size'] <= 0) {
-		    $form['error']['resizes'][$i]['size']['invalid'] = 1;
+	    if (!empty($form['action']['scale'])) {
+		if (empty($form['scale']['size'])) {
+		    $form['error']['scale']['size']['missing'] = 1;
+		} else if (!is_numeric($form['scale']['size']) ||
+			   $form['scale']['size'] <= 0) {
+		    $form['error']['scale']['size']['invalid'] = 1;
 		}
 	    }
-
 	    
 	} else {
 	    /* First time around, load the form with item data */
 	    $form = array();
-	    
-	    list ($ret, $preferences) =
-		GalleryDerivativePreferencesMap::fetchPreferencesForItem($item->getId());
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-	    foreach ($preferences as $preference) {
-		if (preg_match('/scale (\d+)/',
-			       $preference['derivativeCommands'],
-			       $matches)) {
-		    $size = $matches[1];
-		}
-
-		switch($preference['derivativeType']) {
-		case DERIVATIVE_TYPE_IMAGE_THUMBNAIL:
-		    $form['thumbnail']['size'] = $size;
-		    break;
-		    
-		case DERIVATIVE_TYPE_IMAGE_RESIZE:
-		    if (empty($size)) {
-			$form['resizes'][] = array('active' => 0, 'size' => '');
-		    } else {
-			$form['resizes'][] = array('active' => 1, 'size' => $size);
-		    }
-		    break;
-		}
-	    }
-
-	    /* Tag on a few form blanks */
-	    if (empty($form['resizes'])) {
-		$extraBlanks = 3;
-	    } else {
-		$extraBlanks = max(2 - sizeof($form['resizes']), 0) + 1;
-	    }
-
-	    while ($extraBlanks-- > 0) {
-		$form['resizes'][] = array('active' => 0, 'size' => '');
-	    }
+	    $form['scale']['size'] = '';
 	}
 
+	/* Check to see if we have a preferred source */
+	list ($ret, $results) = GalleryDerivativeHelper::fetchPreferredsByItemIds(
+            array($item->getId()));
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	if (empty($results)) {
+	    $hasPreferredSource = false;
+	} else {
+	    $hasPreferredSource = true;
+	}
+							     
 	/* Render the HTML body */
 	$this->_initTemplate(dirname(__FILE__) . '/templates');
+	$this->_setTemplateVariable('hasPreferredSource', $hasPreferredSource);
 	$this->_setTemplateVariable('form', $form);
-	$this->_setTemplateVariable('itemId', $itemId);
+	$this->_setTemplateVariable('item', $item->getMemberData());
 	$this->_setTemplateVariable('controller', 'core:ItemEditImage');
 	$html = $this->_renderTemplate('core', 'ItemEditImage.tpl');
 

@@ -175,6 +175,20 @@ class GalleryDerivative_core extends GalleryChildEntity {
     }
 
     /**
+     * Merge a new command into this derivative's command list
+     *
+     * Try to do the "right thing".  For example, if the incoming command is a
+     * "rotate 90" and the last command on the list is already a "rotate 90"
+     * then replace the last command with a "rotate 180"
+     *
+     * @param string the command
+     * @return object GalleryStatus a status code
+     */
+    function mergeCommand($command) {
+	return GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
+    }
+
+    /**
      * Break this derivative's dependencies
      *
      * This is used when the object's derivativeSource gets deleted
