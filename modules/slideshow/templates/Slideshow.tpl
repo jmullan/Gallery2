@@ -19,16 +19,15 @@
 </div>
 {/foreach}
 <script language="JavaScript" type="text/JavaScript">
-var image = new Image(), timer, iDir = 1, iSize = 0, bPause = 0, bShowText = 0;
-var linkStop, spanPause, spanText;
+var image = new Image(), timer, iDelay = 15000, iDir = 1, iSize = 0;
+var bPause = 0, bShowText = 0, linkStop, spanPause, spanText;
 var textBanner, spanTitle, spanSummary, spanDate, spanDescription;
 var index = {$SlideShow.start}, count = {$SlideShow.count};
 var is_cached = new Array(count), item_map = new Array(count);
+for (i=0; i < count; i++) is_cached[i] = new Array(0,0,0,0,0,0);
 {foreach from=$SlideShow.itemList key=i item=it}
-item_map[{$i}] = new Array(6);
-{foreach from=$it.sizeClassMap key=j item=idx}
-item_map[{$i}][{$j}] = {$idx};
-{/foreach}
+item_map[{$i}] = new Array({foreach
+  from=$it.sizeClassMap key=j item=idx}{if $j>0},{/if}{$idx}{/foreach});
 {/foreach}
 {literal}
 function random_int(i) {
@@ -55,14 +54,14 @@ function move_index(by) {
   else return (index+(by*iDir)+count)%count;
 }
 function preload(i) {
-  if (!is_cached[i]) {
-    is_cached[i] = 1;
+  if (!is_cached[i][iSize]) {
+    is_cached[i][iSize] = 1;
     image.src = document.getElementById('item_'+i+'_'+item_map[i][iSize]).href;
   }
 }
 function slide_view_start() {
   preload(move_index(1));
-  timer = setTimeout('goto_next_photo()', 15000);
+  timer = setTimeout('goto_next_photo()', iDelay);
 }
 function goto_next_photo() {
   index = move_index(1);
@@ -110,13 +109,20 @@ function apply_filter() {
   document.images.slide.filters[0].Apply();
 }
 function new_size(size) {
-  clearTimeout(timer);
   iSize = size;
   index = move_index(-1);
-  goto_next_photo();
+  if (bPause) start_stop(); else {
+    clearTimeout(timer);
+    goto_next_photo();
+  }
 }
 function new_order(direct) {
   iDir = direct;
+}
+function new_delay(delay) {
+  clearTimeout(timer);
+  iDelay = delay*1000;
+  if (!bPause) slide_view_start();
 }
 {/literal}
 </script>
@@ -137,6 +143,13 @@ function new_order(direct) {
         {g->link onClick="text_onoff();return false"}
           <span id="moreInfo">{g->text text="Show More Info"}</span>
         {/g->link} &nbsp;
+        {g->text text="delay: "}<select onchange="new_delay(this.value)">
+          <option value=3>{g->text text="3 seconds"}
+          <option value=5>{g->text text="5 seconds"}
+          <option value=10>{g->text text="10 seconds"}
+          <option selected value=15>{g->text text="15 seconds"}
+          <option value=20>{g->text text="20 seconds"}
+        </select> &nbsp;
         {g->text text="direction: "}<select onchange="new_order(this.value)">
           <option value=1>{g->text text="forward"}
           <option value=-1>{g->text text="reverse"}
