@@ -17,9 +17,13 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #
+# msgid[0] : No apples
+# msgid[1] : One apple
+# msgid[2] : 2,3,4,... apples
+#
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Classic Layout 1.0\n"
+"Project-Id-Version: Gallery: Matrix Layout 1.0\n"
 "POT-Creation-Date: 2003-05-16 09:41+0300\n"
 "PO-Revision-Date: 2003-05-22 12:49+0300\n"
 "Last-Translator: Jussi Karppanen <bitti@bitti.eu.org>\n"
@@ -27,21 +31,27 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n < 2 ? n : 2;\n"
 
 #, c-format
 msgid "%d. %s"
-msgstr ""
+msgstr "%d. %s"
 
 #, c-format
 msgid "%dx%d"
-msgstr ""
+msgstr "%dx%d"
 
-msgid "&laquo; edit item &raquo;"
+#, fuzzy
+msgid "&laquo; actions &raquo;"
 msgstr "&laquo; muokkaa kohdetta &raquo;"
 
-msgid "&laquo; manage album &raquo;"
+#, fuzzy
+msgid "&laquo; album actions &raquo;"
 msgstr "&laquo; muokkaa albumia &raquo;"
+
+#, fuzzy
+msgid "&laquo; item actions &raquo;"
+msgstr "&laquo; muokkaa kohdetta &raquo;"
 
 #, c-format
 msgid "Album: %s"
@@ -72,6 +82,9 @@ msgid "Size: "
 msgstr "Koko: "
 
 msgid "This album is empty"
+msgstr "Tämä albumi on tyhjä"
+
+msgid "Unknown"
 msgstr ""
 
 msgid "back"
@@ -87,18 +100,18 @@ msgid "next"
 msgstr "seuraava"
 
 msgid "no thumbnail"
-msgstr ""
+msgstr "ei esikatselukuvaa"
 
 #, c-format
 msgid "(%d item)"
 msgid_plural "(%d items)"
-msgstr[0] "(yksi kohde)"
-msgstr[1] "(%d kohdetta)"
-msgstr[2] "(tyhjä)"
+msgstr[0] "(tyhjä)"
+msgstr[1] "(yksi kohde)"
+msgstr[2] "(%d kohdetta)"
 
 #, c-format
 msgid "Size: %d item"
 msgid_plural "Size: %d items"
-msgstr[0] "Sisältää yhden kohteen"
-msgstr[1] "Sisältää %d kohdetta"
-msgstr[2] "Tyhjä albumi"
+msgstr[0] "Tyhjä albumi"
+msgstr[1] "Sisältää yhden kohteen"
+msgstr[2] "Sisältää %d kohdetta"

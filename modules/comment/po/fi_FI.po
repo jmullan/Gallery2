@@ -17,17 +17,24 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #
+# UNFINISHED: Still needs checking how this translation fits in.
+#  -- Jussi Karppanen
+#
+# msgid[0]�= "No apples"
+# msgid[1] = "One apple"
+# msgid[2] = "2,3,4,.. apples"
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: Gallery: Comment 1.0\n"
 "POT-Creation-Date: 2003-05-16 09:40+0300\n"
-"PO-Revision-Date: 2003-07-27 00:04-0700\n"
+"PO-Revision-Date: 2003-09-22 09:10+0300\n"
 "Last-Translator: Jussi Karppanen <bitti@bitti.eu.org>\n"
 "Language-Team: Finnish <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=3; plural=n < 2 ? n : 2;\n"
 
 #, c-format
 msgid "%s (%s)"
@@ -46,9 +53,8 @@ msgstr "Oletko varma?"
 msgid "Cancel"
 msgstr "Peruuta"
 
-#, fuzzy
 msgid "Comment Module"
-msgstr "Kommentti: "
+msgstr "Kommenttimoduuli "
 
 msgid "Comment Preview"
 msgstr "Kommentin esikatselu "
@@ -110,7 +116,7 @@ msgstr "Lähettettäjä %s (%s) (%s)"
 
 #, c-format
 msgid "Posted by %s on %s"
-msgstr ""
+msgstr "Lähettänyt %s (%s)"
 
 msgid "Posted by"
 msgstr "Lähettänyt"
@@ -121,9 +127,8 @@ msgstr "Uusimmat kommentit"
 msgid "Save"
 msgstr "Tallenna"
 
-#, fuzzy
 msgid "Search comments"
-msgstr "[kommentti] Etsi kommentteja"
+msgstr "Etsi kommentteja"
 
 msgid "Subject"
 msgstr "Aihe"
@@ -203,8 +208,9 @@ msgstr "tallenna"
 #, c-format
 msgid "%d comment"
 msgid_plural "%d comments"
-msgstr[0] "yksi kommentti"
-msgstr[1] "%d kommenttia"
+msgstr[0] "Ei kommentteja"
+msgstr[1] "yksi kommentti"
+msgstr[2] "%d kommenttia"
 
 #~ msgid "Comments for %s"
 #~ msgstr "%s kommentit"
