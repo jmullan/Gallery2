@@ -997,7 +997,7 @@ class GalleryUtilities {
 			  '0' => 'Sun');
 	$dow = $weekdays[gmstrftime('%w', $time)];
 	$month = $months[gmstrftime('%m', $time)];
-	$out = gmstrftime('%%s, %d %%s %G %T %Z', $time);
+	$out = gmstrftime('%%s, %d %%s %Y %H:%M:%S GMT', $time);
 	return sprintf($out, $dow, $month);
     }
 }
