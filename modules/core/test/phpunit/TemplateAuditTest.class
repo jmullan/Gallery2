@@ -43,8 +43,10 @@ class TemplateAuditTest extends CodeAuditTestCase {
 	$this->_revisionPattern = ' \* \$Revision(:.+)?\$';
 	$lines[] = '\{\*';
 	$lines[] = $this->_revisionPattern;
-	$lines[] = ' \* If you want to customize this file, do not edit it directly since future upgrades';
-	$lines[] = ' \* may overwrite it.  Instead, copy it into a new directory called "local" and edit that';
+	$lines[] = ' \* If you want to customize this file, do not edit it directly since ' .
+	    'future upgrades';
+	$lines[] = ' \* may overwrite it.  Instead, copy it into a new directory called ' .
+	    '"local" and edit that';
 	$lines[] = ' \* version.  Gallery will look for that file first and use it if it exists.';
 	$lines[] = ' \*}';
 
@@ -53,6 +55,9 @@ class TemplateAuditTest extends CodeAuditTestCase {
 	$this->_headerLines = $lines;
 	$this->_expectedHeaderLines = $lines;
 	array_splice($this->_expectedHeaderLines, 1, 1, $this->_revisionPlaceHolder);
+
+	$this->_exceptions = array();
+	$this->_exceptions['header']['modules/core/templates/SplitMarker.tpl'] = 1;
 
 	/* Get rid of backslashes so that we can perform string compares later */
 	for ($i = 0; $i < sizeof($this->_expectedHeaderLines); $i++) {
@@ -93,7 +98,7 @@ class TemplateAuditTest extends CodeAuditTestCase {
 	    }
 
 	    $truncatedFileName =
-		substr($fileName, strlen(dirname(dirname(dirname(dirname($fileName))))));
+		substr($fileName, strlen(dirname(dirname(dirname(dirname($fileName)))))+1);
 
 	    if (empty($revision)) {
 		$this->assert(false, sprintf('[%s] Missing revision line', $truncatedFileName));
@@ -103,9 +108,11 @@ class TemplateAuditTest extends CodeAuditTestCase {
 					     $revision, $this->_revisionPattern));
 	    }
 
-	    $this->assertEquals($this->_expectedHeaderLines, $actual,
-				sprintf('[%s] Malformed template header', $truncatedFileName));
-	    $this->_errorCount++;
+	    if (!isset($this->_exceptions['header'][$truncatedFileName])) {
+		$this->assertEquals($this->_expectedHeaderLines, $actual,
+				    sprintf('[%s] Malformed template header', $truncatedFileName));
+		$this->_errorCount++;
+	    }
 
 	    if ($this->_errorCount > 3) {
 		$this->halt();
