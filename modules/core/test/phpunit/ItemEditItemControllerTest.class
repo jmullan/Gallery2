@@ -27,12 +27,12 @@
  */
 
 /**
- * ItemEditDataItem controller tests
+ * ItemEditItem controller tests
  */
-class ItemEditDataItemControllerTest extends GalleryControllerTestCase {
+class ItemEditItemControllerTest extends GalleryControllerTestCase {
 
-    function ItemEditDataItemControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'core:ItemEditDataItem');
+    function ItemEditItemControllerTest($methodName) {
+	$this->GalleryControllerTestCase($methodName, 'core:ItemEditItem');
     }
 
     function setUp() {
@@ -58,21 +58,23 @@ class ItemEditDataItemControllerTest extends GalleryControllerTestCase {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
-
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
     }
 
     function tearDown() {
 	global $gallery;
 
 	foreach ($this->_item as $item) {
-	    $gallery->deleteEntityById($item->getId());
+	    $ret = $gallery->deleteEntityById($item->getId());
+	    if ($ret->isError()) {
+		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
 	}
 
 	foreach ($this->_album as $album) {
-	    $gallery->deleteEntityById($album->getId());
+	    $ret = $gallery->deleteEntityById($album->getId());
+	    if ($ret->isError()) {
+		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
 	}
 	
 	parent::tearDown();
@@ -88,12 +90,12 @@ class ItemEditDataItemControllerTest extends GalleryControllerTestCase {
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
 	$this->assertRedirect(array('view' => 'core:ItemAdmin',
-				    'subView' => 'core:ItemEditDataItem',
+				    'subView' => 'core:ItemEditItem',
 				    'itemId' => $this->_item[0]->getId()),
 			      $results);
     }
 
-    function testEditDataItem() {
+    function testEditItem() {
 	global $gallery;
 
 	/* Use valid inputs */
@@ -109,7 +111,7 @@ class ItemEditDataItemControllerTest extends GalleryControllerTestCase {
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
 	$this->assertRedirect(array('view' => 'core:ItemAdmin',
-				    'subView' => 'core:ItemEditDataItem',
+				    'subView' => 'core:ItemEditItem',
 				    'itemId' => $this->_item[0]->getId()),
 			      $results);
     }
@@ -126,7 +128,7 @@ class ItemEditDataItemControllerTest extends GalleryControllerTestCase {
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
 	$this->assertEquals(array('view' => 'core:ItemAdmin'), $results);
-	$this->assertEquals('core:ItemEditDataItem', GalleryUtilities::getRequestVariables('subView'));
+	$this->assertEquals('core:ItemEditItem', GalleryUtilities::getRequestVariables('subView'));
 	$this->assert(GalleryUtilities::hasRequestVariable('form.error.pathComponent.invalid'));
     }
 
@@ -142,7 +144,7 @@ class ItemEditDataItemControllerTest extends GalleryControllerTestCase {
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
 	$this->assertEquals(array('view' => 'core:ItemAdmin'), $results);
-	$this->assertEquals('core:ItemEditDataItem', GalleryUtilities::getRequestVariables('subView'));
+	$this->assertEquals('core:ItemEditItem', GalleryUtilities::getRequestVariables('subView'));
 	$this->assert(GalleryUtilities::hasRequestVariable('form.error.pathComponent.missing'));
     }
 
@@ -159,7 +161,7 @@ class ItemEditDataItemControllerTest extends GalleryControllerTestCase {
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
 	$this->assertEquals(array('view' => 'core:ItemAdmin'), $results);
-	$this->assertEquals('core:ItemEditDataItem', GalleryUtilities::getRequestVariables('subView'));
+	$this->assertEquals('core:ItemEditItem', GalleryUtilities::getRequestVariables('subView'));
 	$this->assert(GalleryUtilities::hasRequestVariable('form.error.pathComponent.collision'));
     }
 
@@ -176,7 +178,7 @@ class ItemEditDataItemControllerTest extends GalleryControllerTestCase {
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
 	$this->assertEquals(array('view' => 'core:ItemAdmin'), $results);
-	$this->assertEquals('core:ItemEditDataItem', GalleryUtilities::getRequestVariables('subView'));
+	$this->assertEquals('core:ItemEditItem', GalleryUtilities::getRequestVariables('subView'));
 	$this->assert(GalleryUtilities::hasRequestVariable('form.error.pathComponent.collision'));
     }
 
