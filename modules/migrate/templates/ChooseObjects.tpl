@@ -71,7 +71,7 @@
     {/g->description}
 
     {g->element style="emphasized"}
-      Note: album migration is not yet implemented!
+      Note: album migration is not completely implemented.  Please use at your own risk.
     {/g->element}
 
     {g->element style="emphasized"}

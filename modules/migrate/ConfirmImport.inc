@@ -226,9 +226,7 @@ class ConfirmImportController extends GalleryController {
 		}
 		
 		if ($targetAlbumID) {
-		    // list ($ret, $importedAlbumID)=ConfirmImportController::importAlbum($targetAlbumID,$album);
-		    /* crappy procedural code ;) */
-		    /* Make sure we have permission do edit the target item */
+		    /* Make sure we have permission to edit the target item */
 		    $ret = GalleryUserHelper::assertHasItemPermission($targetAlbumID, 'core.addAlbumItem');
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
@@ -242,6 +240,7 @@ class ConfirmImportController extends GalleryController {
 		    
 		    /* Get a lock on said parent */
 		    list ($ret, $importLockIds[]) = $gallery->acquireReadLock($targetAlbumObject->getId());
+		    # list ($ret, $importLockIds[$targetAlbumObject->getId()]) = $gallery->acquireReadLock($targetAlbumObject->getId());
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
@@ -284,7 +283,6 @@ class ConfirmImportController extends GalleryController {
 			     *   +[title] => Test Album One
 			     *   +[description] => No description
 			     *   +[summary] =>
-			     *   -[nextname] => aaa
 			     *    [bgcolor] =>
 			     *    [textcolor] =>
 			     *    [linkcolor] =>
@@ -311,15 +309,12 @@ class ConfirmImportController extends GalleryController {
 			     *   +[clicks_date] => 1056014708
 			     *    [display_clicks] => yes
 			     *    [public_comments] => yes
-			     *   -[serial_number] => 8
 			     *    [extra_fields] => Array
 			     *        ( [0] => Description
 			     *        )
-			     *   -[cached_photo_count] => 2
-			     *   -[photos_separate] => 1
 			     *   +[name] => album01
 			     *   +[owner] => 1054014347u1233740678
-			     *   -[last_mod_time] => 1056015246
+			     *    [last_mod_time] => 1056015246
 			     */
 			    
 			    /* load up the album with metadata from the old album */ 
@@ -435,31 +430,30 @@ class ConfirmImportController extends GalleryController {
 		    }
 
 		    $albumHighlight[$newAlbumInstanceId]=FALSE;
+		    list ($ret, $item) = $gallery->loadEntitiesById($newAlbumInstanceId);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		    
+		    list ($ret, $lockIds[]) = $gallery->acquireReadLock($item->getId());
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		    list ($ret, $thumbnailTable) = GalleryDerivativeHelper::fetchThumbnailsByItemIds($item->getId());
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		    $albumNeedsThumbnail = empty($thumbnailTable) ? true : false;
+
 		    foreach($photos as $j => $importAlbumItem) {
 			if (isset($importAlbumItem->isAlbumName) && $importAlbumItem->isAlbumName) {
-			    if ($importAlbumItem->highlight) {
+			    if ($importAlbumItem->highlight == 1) {
 				$albumHighlight[$newAlbumInstanceId]=$importAlbumItem->isAlbumName;
 			    }
 			} else {
-			    list ($ret, $item) = $gallery->loadEntitiesById($newAlbumInstanceId);
-			    if ($ret->isError()) {
-				return array($ret->wrap(__FILE__, __LINE__), null);
-			    }
-			    
-			    list ($ret, $lockIds[]) = $gallery->acquireReadLock($item->getId());
-			    if ($ret->isError()) {
-				return array($ret->wrap(__FILE__, __LINE__), null);
-			    }
-			    list ($ret, $thumbnailTable) = GalleryDerivativeHelper::fetchThumbnailsByItemIds($item->getId());
-			    if ($ret->isError()) {
-				return array($ret->wrap(__FILE__, __LINE__), null);
-			    }
-			    $albumNeedsThumbnail = empty($thumbnailTable) ? true : false;
-			    
 			    $dir = $albumsPath . $album['name'] . $slash;
 			    $filename = $importAlbumItem->image->name . '.' . $importAlbumItem->image->type;
 			    $filepath = $dir . $filename;
-			    //echo "<p>$filepath</p>";
 			    list ($base, $extension) = GalleryUtilities::getFileNameComponents($filename);
 			    $mimeType = GalleryUtilities::convertExtensionToMime($extension);
 			    
@@ -478,10 +472,23 @@ class ConfirmImportController extends GalleryController {
 			    if ($ret->isError()) {
 				return array($ret->wrap(__FILE__, __LINE__), null);
 			    }
-			    $newItem->setTitle($importAlbumItem->caption);
+			    $caption = $importAlbumItem->caption;
+			    if (strlen($caption) > 128) {
+				$newItem->setTitle(substr($caption,0,125) . '...');
+				if (isset($importAlbumItem->extraFields['description']) && $importAlbumItem->extraFields['description'] != '') {
+				    $newItem->setDescription($caption . "\n" . $importAlbumItem->extraFields['description']);
+				} else {
+				    $newItem->setDescription($caption);
+				}
+			    } else {
+				$newItem->setTitle($caption);
+				if (isset($importAlbumItem->extraFields['description']) && $importAlbumItem->extraFields['description'] != '') {
+				    $newItem->setDescription($importAlbumItem->extraFields['description']);
+				}
+			    }
+			    
 			    $newItem->setSummary('');
 			    $newItem->setKeywords($importAlbumItem->keywords);
-			    //$newItem->setDescription($importAlbumItem->extraFields['description']);
 
 			    // $instance->setownerId
 			    if (isset($importAlbumItem->itemCaptureDate[0])){
@@ -489,13 +496,13 @@ class ConfirmImportController extends GalleryController {
 			    }
 			    $newItem->setviewedSinceTimestamp($album['clicks_date']);
 			    
-			    if ($albumNeedsThumbnail || $importAlbumItem->highlight) {
+			    if ($albumNeedsThumbnail || $importAlbumItem->highlight == 1) {
 				list ($ret, $success) =
 					GalleryItemHelper::setThumbnailFromItem($item->getId(), $newItem->getId());
 				if ($ret->isError()) {
 				    return array($ret->wrap(__FILE__, __LINE__), null);
 				}
-				$albumNeedsThumbnail = !$success;
+				$albumNeedsThumbnail = FALSE;
 			    }
 			    $ret = $newItem->save();
 			    if ($ret->isError()) {
@@ -526,41 +533,9 @@ class ConfirmImportController extends GalleryController {
 			     *           -[version] => 10
 			     *        )
 			     *
-			     *   -[thumbnail] => image Object
-			     *        (
-			     *           -[name] => canon_ae_1.thumb
-			     *           -[type] => jpg
-			     *           -[width] => 150
-			     *           -[height] => 110
-			     *           -[resizedName] =>
-			     *           -[thumb_x] =>
-			     *           -[thumb_y] =>
-			     *           -[thumb_width] =>
-			     *           -[thumb_height] =>
-			     *           -[raw_width] => 150
-			     *           -[raw_height] => 110
-			     *           -[version] => 10
-			     *        )
-			     *
-			     *   -[caption] => canon_ae_1
+			     *   +[caption] => canon_ae_1
 			     *    [hidden] =>
 			     *   +[highlight] => 1
-			     *   -[highlightImage] => image Object
-			     *        (
-			     *           -[name] => canon_ae_1.highlight
-			     *           -[type] => jpg
-			     *           -[width] => 200
-			     *           -[height] => 147
-			     *           -[resizedName] =>
-			     *           -[thumb_x] =>
-			     *           -[thumb_y] =>
-			     *           -[thumb_width] =>
-			     *           -[thumb_height] =>
-			     *           -[raw_width] => 200
-			     *           -[raw_height] => 147
-			     *           -[version] => 10
-			     *        )
-			     *
 			     *   +[isAlbumName] =>
 			     *   +[clicks] =>
 			     *   +[keywords] =>
@@ -568,33 +543,12 @@ class ConfirmImportController extends GalleryController {
 			     *    [uploadDate] => 1056014783
 			     *   +[itemCaptureDate] => Array
 			     *        (
-			     *           -[seconds] => 23
-			     *           -[minutes] => 26
-			     *           -[hours] => 04
-			     *           -[mday] => 19
-			     *           -[wday] => 4
-			     *           -[mon] => 06
-			     *           -[year] => 2003
-			     *           -[yday] => 169
-			     *           -[weekday] => Thursday
-			     *           -[month] => June
 			     *           +[0] => 1056014783
-			     *        )
-			     *
-			     *   -[exifData] => Array
-			     *        (
-			     *           -[File name] => /www/dev.jpmullan.com/albums/album01/canon_ae_1.jpg
-			     *           -[File size] => 8070 bytes
-			     *           -[File date] => 2003:06:19 04:26:23
-			     *           -[Resolution] => 225 x 165
-			     *           -[Jpeg process] => Baseline
 			     *        )
 			     *
 			     *    [extraFields] => Array
 			     *        (
 			     *        )
-			     *
-			     *   -[version] => 10
 			     *)
 			     */
 			}
