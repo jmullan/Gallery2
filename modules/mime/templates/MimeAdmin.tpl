@@ -5,7 +5,7 @@
  * version.  Gallery will look for that file first and use it if it exists.
  *}
 <div class="gbBlock gcBackground1">
-  <h2> {g->text text="MIME maintenance"} </h2>
+  <h2> {g->text text="MIME Maintenance"} </h2>
 </div>
 
 {if !empty($status)}
