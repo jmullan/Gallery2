@@ -207,6 +207,12 @@ class CoreModule extends GalleryModule {
 						      'ItemAddFromWeb',
 						      'ItemAddFromWeb',
 						      dirname(__FILE__) . '/ItemAddFromWeb.inc');
+
+	/* Register our item add plugins */
+	GalleryCoreApi::registerFactoryImplementation('ItemAddOption',
+						      'CreateThumbnailOption',
+						      'CreateThumbnailOption',
+						      dirname(__FILE__) . '/CreateThumbnailOption.inc');
     }
 
     /**

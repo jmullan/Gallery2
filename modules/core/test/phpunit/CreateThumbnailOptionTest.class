@@ -1,0 +1,129 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+GalleryCoreApi::relativeRequireOnce('lib/tools/phpunit/ItemAddOptionTestCase.class');
+
+/**
+ * CreateThumbnailOption tests
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class CreateThumbnailOptionTest extends ItemAddOptionTestCase {
+
+    function CreateThumbnailOptionTest($methodName) {
+	$this->ItemAddOptionTestCase($methodName, 'core', 'CreateThumbnailOption');
+    }
+
+    function setUp() {
+	global $gallery;
+	parent::setUp();
+
+	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markForCleanup($this->_album);
+
+	/* Register a dummy toolkit */
+	GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
+						      'CreateThumbnailOptionToolkit',
+						      'CreateThumbnailOptionToolkit',
+						      __FILE__);
+
+	/* Register operations that we can perform on our mock data items */
+	$ret = GalleryCoreApi::registerToolkitOperation('CreateThumbnailOptionToolkit',
+							array('test/file'),
+							'thumbnail',
+							array(array('type' => 'int', 'description' => 'test')),
+							'test-description',
+							'');
+
+	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_album->getId(), 'test/file');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    function testCreateThumbnail() {
+	list ($ret, $thumbnail) =
+	    $this->_createDerivative($this->_item, $this->_item->getId(),
+				     DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
+				     'thumbnail|200');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	$form['CreateThumbnailOption']['createThumbnail'] = 1;
+	$error = $this->handleRequestAfterAdd($form, $this->_item);
+	$this->assertEquals(array(), $error);
+
+	list ($ret, $isCurrent) = $thumbnail->isCacheCurrent();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	    
+	$this->assert($isCurrent, 'Thumbnail was not created!');
+    }
+
+    // This won't do anything, but shouldn't have any errors either.
+    function testCreateWithNoThumbnail() {
+	$form['CreateThumbnailOption']['createThumbnail'] = 1;
+	$error = $this->handleRequestAfterAdd($form, $this->_item);
+	$this->assertEquals(array(), $error);
+    }
+}
+
+/**
+ * Required by our test toolkit
+ */
+require_once(dirname(__FILE__) . '/../../classes/GalleryToolkit.class');
+
+/**
+ * Dummy test toolkit
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class CreateThumbnailOptionToolkit extends GalleryToolkit {
+    /**
+     * @see GalleryToolkit::performOperation()
+     * Dummy operation
+     */
+    function performOperation($mimeType, $operationName, $sourceFilename,
+			      $destFilename, $parameters, $context=array()) {
+	global $gallery;
+	if ($sourceFilename != $destFilename) {
+	    $platform = $gallery->getPlatform();
+	    $platform->copy($sourceFilename, $destFilename);
+	}
+	return array(GalleryStatus::success(), $mimeType, $context);
+    }
+}
+?>
