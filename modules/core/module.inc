@@ -157,7 +157,8 @@ class CoreModule extends GalleryModule {
 					       'GalleryPhotoItem',
 					       'GalleryPhotoItem',
 					       $classDir . 'GalleryPhotoItem.class',
-					       array('image/jpeg',
+					       array('image/pjpeg',
+						     'image/jpeg',
 						     'image/gif',
 						     'image/png'));
 
@@ -181,7 +182,7 @@ class CoreModule extends GalleryModule {
 	
 	/* Register all core permissions */
 	GalleryPermissionMap::registerPermission('core.all',
-						 $this->translate('[core] Full access'),
+						 $this->translate('[core] All access'),
 						 true);
 	
 	GalleryPermissionMap::registerPermission('core.view',
@@ -189,7 +190,7 @@ class CoreModule extends GalleryModule {
 						 false);
 	
 	GalleryPermissionMap::registerPermission('core.viewResizes',
-						 $this->translate('[core] View resized versions'),
+						 $this->translate('[core] View resized version(s)'),
 						 false);
 	
 	GalleryPermissionMap::registerPermission('core.viewSource',
