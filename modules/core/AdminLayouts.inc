@@ -155,7 +155,7 @@ class AdminLayoutsView extends GalleryView {
 
 	list ($mode, $activeLayoutName) =
 	    GalleryUtilities::getRequestVariables('mode', 'activeLayoutName');
-	if (!isset($mode)) {
+	if (empty($mode)) {
 	    $mode = 'config';
 	}
 	
@@ -207,6 +207,16 @@ class AdminLayoutsView extends GalleryView {
 	    break;
 
 	default:
+	    /* Load the config settings from the active layout */
+	    list ($ret, $layout) = GalleryPluginMap::loadPlugin('layout', $layoutName);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+
+	    list ($ret, $AdminLayouts['settings']) = $layout->getSettings();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
 	    break;
 	}
 

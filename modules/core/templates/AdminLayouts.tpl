@@ -48,6 +48,10 @@
     {g->element}
       {if ($AdminLayouts.mode == 'config')}
 	{g->box style="admin"}
+	  {g->title}
+	    {g->text text="Layout Configuration"}
+	  {/g->title}
+	    
 	  {g->description}
 	    {g->text text="Gallery has layouts that can change the way that you navigate around your albums.  You can download and install new layouts, or you can disable layouts if you don't want to use them.  By default, new layouts are disabled.  They must be enabled before you can use them."}
 	  {/g->description}
@@ -91,8 +95,43 @@
 	  {/g->table}
 	{/g->box}
       {else}
+	{g->box style="admin"}
+	  {g->title}
+	    {g->text text="%s Layout Settings" arg1=$layout.name}
+	  {/g->title}
 
+	  {g->description}
+	    {g->text text="These are the global settings for the layout.  They can be overridden at the album level."}
+	  {/g->description}
+
+	  {if !empty($AdminLayouts.settings)}
+	    {g->table style="admin_widgets" evenodd="true"}
+	      {foreach from=$AdminLayouts.settings item=setting}
+		{g->row}
+		  {g->column}
+		    {g->text text=$setting.name l10Domain=$layout.l10Domain}
+		  {/g->column}
+		  {g->column}
+		    {if ($setting.type == 'text-field')}
+		      {g->input type="text" size="6" name="key_$setting.key"}{$setting.values.0}{/g->input}
+		    {/if}
+		  {/g->column}
+		{/g->row}
+	      {/foreach}
+	    {/g->table}
+	  {else}
+	    {g->element style="emphasized"}
+	      {g->text text="There are no settings for this layout"}
+	    {/g->element}
+	  {/if}
+	{/g->box}
       {/if}
     {/g->element}
+    {g->box}
+      {g->element}
+	{g->input type="submit" name="form.action.save"}{g->text text="Save"}{/g->input}
+	{g->input type="submit" name="form.action.undo"}{g->text text="Undo"}{/g->input}
+      {/g->element}
+    {/g->box}
   {/g->tabbedbox}
 {/g->pagebox}

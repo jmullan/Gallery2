@@ -87,41 +87,13 @@ class GalleryLayout {
     }
 
     /**
-     * Localize the given content
-     *
-     * @see Gallery::translate()
-     *
-     * @param mixed a single string, or an array of parameters
-     * @return array object GalleryStatus a status code
-     *               string the localized value
-     */
-    function translate($params) {
-	global $gallery;
-	
-	if (!is_array($params)) {
-	    $params = array('text' => $params);
-	}
-
-	$translator =& $gallery->getTranslator();
-	list ($ret, $content) = $translator->translateDomain($this->getL10Domain(), $params);
-	if ($ret->isError()) {
-	    if ($gallery->getDebug()) {
-		$gallery->debug($ret->getAsHtml());
-	    }
-	    return 'Translation error';
-	} else {
-	    return $content;
-	}
-    }
-    
-    /**
      * Return the possible settings that a layout can specify on a global or per
      * item basis.
      *
      * Each setting contains:
      *   key:         a unique identifier
      *   name:        a localized, displayable text string
-     *   type:        single-select, multiple-select, input
+     *   type:        single-select, multiple-select, text-field
      *   choices:     [only valid for single-select, multiple-select type]
      *                array of:
      *                   key:     a unique identifier within this set of choices

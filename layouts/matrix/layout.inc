@@ -55,11 +55,13 @@ class MatrixLayout extends GalleryLayout {
      * @see GalleryLayout::getSettings()
      */
     function getSettings() {
+	global $gallery;
+	
 	$settings = array();
 	$settings[] = array('key' => 'perPage',
-			    'name' => $this->translate('Visible items per album page'),
-			    'description' => $this->translate('The number of visible items on one page'),
-			    'type' => 'input',
+			    'name' => $gallery->i18n('Visible items per album page'),
+			    'type' => 'text-field',
+			    'type-params' => array('size' => 4),
 			    'values' => array(9));
 	return array(GalleryStatus::success(), $settings);
     }
