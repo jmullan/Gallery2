@@ -72,11 +72,11 @@ class MatrixLayout extends GalleryLayout {
 	}
 
 	if (!isset($params['showImageOwner'])) {
-	    $params['showImageOwner'] = false;
+	    $params['showImageOwner'] = 0;
 	}
 	
 	if (!isset($params['showAlbumOwner'])) {
-	    $params['showAlbumOwner'] = true;
+	    $params['showAlbumOwner'] = 1;
 	}
 	
 	$settings = array();
