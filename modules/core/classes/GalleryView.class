@@ -79,9 +79,11 @@ class GalleryView {
      * global templating.  This style of view should be reserved for binary
      * data.
      *
+     * @param array any status information from a delegating controller
+     * @param array any error information from a delegating controller
      * @return object GalleryStatus a status code
      */
-    function renderImmediate() {
+    function renderImmediate($status, $error) {
 	return GalleryStatus::success();
     }
     

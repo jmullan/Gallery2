@@ -46,7 +46,7 @@ class DownloadItemView extends GalleryView {
     /**
      * @see GalleryView::renderImmediate
      */
-    function renderImmediate() {
+    function renderImmediate($status, $error) {
 	global $gallery;
 
 	/*

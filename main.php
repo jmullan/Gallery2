@@ -130,6 +130,7 @@ function GalleryMain() {
     list($viewName, $controllerName) = GalleryUtilities::getRequestVariables('view', 'controller');
 
     /* Load and run the appropriate controller */
+    $results = array();
     if (empty($redirectUrl) && !empty($controllerName)) {
 	require_once(dirname(__FILE__) . '/modules/core/classes/GalleryController.class');
 	list ($ret, $controller) = GalleryController::loadController($controllerName);
@@ -245,7 +246,9 @@ function GalleryMain() {
 	 * used in the situation where we want to send a binary file to the browser.
 	 */
 	if ($view->isImmediate()) {
-	    $ret = $view->renderImmediate();
+	    $status = isset($results['status']) ? $results['status'] : array();
+	    $error = isset($results['error']) ? $results['error'] : array();
+	    $ret = $view->renderImmediate($status, $error);
 	    if ($ret->isError()) {
 		$main['error'] = $ret->getAsHtml();
 	    } else {
