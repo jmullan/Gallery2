@@ -1410,6 +1410,8 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	/* URL HTML with edge cases */
 	$this->assertEquals('[url=http://google.com]Google[/url]',
 			    ConfirmImportController::convertHtmlToBbcode('<a href="http://google.com">Google</a>'));
+	$this->assertEquals('[url=http://google.com]Google[/url][url=http://poogle.com]Poogle[/url]',
+			    ConfirmImportController::convertHtmlToBbcode('<a href="http://google.com">Google</a><a href="http://poogle.com">Poogle</a>'));
 	$this->assertEquals('[url=http://google.com]Google[/url]',
 			    ConfirmImportController::convertHtmlToBbcode('<a href=\'http://google.com\'>Google</a>'));
 	$this->assertEquals('[url=http://google.com]Google[/url]',
