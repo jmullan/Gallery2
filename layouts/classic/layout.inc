@@ -208,5 +208,18 @@ class ClassicLayout extends MatrixLayout {
 	    }
 	}
     }
+
+    /**
+     * @see MatrixLayout::_loadSingleTemplate
+     */
+    function _loadSingleTemplate(&$template, $item, $params) {
+	list ($ret, $matrixResult) = parent::_loadSingleTemplate($template, $item, $params);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	/* Including matrix template directly.. switch to matrix domain for localization */
+	$this->setL10Domain('layouts_matrix');
+	return array(GalleryStatus::success(), $matrixResult);
+    }
 }
 ?>
