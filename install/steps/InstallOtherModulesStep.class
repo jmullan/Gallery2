@@ -58,7 +58,8 @@ class InstallOtherModulesStep extends InstallStep {
 	    foreach (array_keys($moduleList) as $moduleId) {
 		list ($ret, $modulePlugin) = GalleryCoreApi::loadPlugin('module', $moduleId);
 		if ($ret->isError()) {
-		    $templateData['errors'][] = _(sprintf('Unable to load the %s module', $moduleId));
+		    $templateData['errors'][] =
+			sprintf(_('Unable to load the %s module'), $moduleId);
 		    $templateData['stackTrace'] = $ret->getAsHtml();
 		} else {
 		    $modules[$moduleId] = $modulePlugin;
@@ -75,7 +76,7 @@ class InstallOtherModulesStep extends InstallStep {
 		    $ret = $module->installOrUpgrade();
 		    if ($ret->isError()) {
 			$templateData['errors'][] =
-				_(sprintf('Unable to install the %s module', $module->getName()));
+				sprintf(_('Unable to install the %s module'), $module->getName());
 			continue;
 		    }
 		    $moduleInstalled[$moduleId] = true;
@@ -83,7 +84,7 @@ class InstallOtherModulesStep extends InstallStep {
 		    list ($ret, $success) = $module->autoConfigure();
 		    if ($ret->isError()) {
 			$templateData['errors'][] =
-				_(sprintf('Unable to activate the %s module', $module->getName()));
+				sprintf(_('Unable to activate the %s module'), $module->getName());
 			continue;
 		    }
 
@@ -100,7 +101,7 @@ class InstallOtherModulesStep extends InstallStep {
 			continue;
 		    } else {
 			$templateData['errors'][] =
-				_(sprintf('Unable to activate the %s module', $module->getName()));
+				sprintf(_('Unable to activate the %s module'), $module->getName());
 			continue;
 		    }
 		}
