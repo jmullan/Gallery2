@@ -428,6 +428,7 @@ function _GalleryMain($returnHtml=false) {
 
 	    if ($template->hasVariable('layout')) {
 		$layout =& $template->getVariableByReference('layout');
+		$data['layout'] = $layout;
 		if (isset($layout['show']['sidebar']) && $layout['show']['sidebar'] === false) {
 		    // Render sidebar and return as separate block of content if
 		    // embedding app requested no sidebar in G2 content..
