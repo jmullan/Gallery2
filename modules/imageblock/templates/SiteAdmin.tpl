@@ -29,6 +29,22 @@
     {/g->element}
   {/g->box}
   {g->box style="admin"}
+    {g->title} {g->text text="Show"} {/g->title}
+    {g->description} {/g->description}
+    {g->element}
+      {g->input type="checkbox" name="form[title]"}{$form.title}{/g->input}
+      {g->text text="Title"}
+    {/g->element}
+    {g->element}
+      {g->input type="checkbox" name="form[date]"}{$form.date}{/g->input}
+      {g->text text="Date"}
+    {/g->element}
+    {g->element}
+      {g->input type="checkbox" name="form[views]"}{$form.views}{/g->input}
+      {g->text text="View Count"}
+    {/g->element}
+  {/g->box}
+  {g->box style="admin"}
     {g->element}
       {g->input type="submit" name="form[action][save]"}
         {g->text text="save"}

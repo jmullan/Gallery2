@@ -55,6 +55,16 @@ class ImageBlockSiteAdminController extends GalleryController {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
+	    $param = array();
+	    foreach (array('title', 'date', 'views') as $key) {
+		if (isset($form[$key]) && $form[$key]) {
+		    $param[] = $key;
+		}
+	    }
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'imageblock', 'show', implode('|', $param));
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
 	    $status['saved'] = 1;
 	} /* else $form['action']['reset'] */
 
@@ -81,14 +91,23 @@ class ImageBlockSiteAdminView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	if ($form['formName'] != 'ImageBlockSiteAdmin') {
 	    $form['formName'] = 'ImageBlockSiteAdmin';
+	    foreach (array('randomImage', 'recentImage', 'viewedImage',
+			   'randomAlbum', 'recentAlbum', 'viewedAlbum',
+			   'title', 'date', 'views') as $tmp) {
+		$form[$tmp] = 0;
+	    }
 	    list ($ret, $param) =
 		GalleryCoreApi::getPluginParameter('module', 'imageblock', 'blocks');
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    foreach (array('randomImage', 'recentImage', 'viewedImage',
-			   'randomAlbum', 'recentAlbum', 'viewedAlbum') as $tmp) {
-		$form[$tmp] = 0;
+	    foreach (explode('|', $param) as $tmp) {
+		$form[$tmp] = 1;
+	    }
+	    list ($ret, $param) =
+		GalleryCoreApi::getPluginParameter('module', 'imageblock', 'show');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    foreach (explode('|', $param) as $tmp) {
 		$form[$tmp] = 1;

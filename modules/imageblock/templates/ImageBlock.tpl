@@ -8,10 +8,16 @@
     {g->image item=$block.item image=$block.thumb}
   {/g->link}
   {g->listing}{g->item}{g->title}
-    {if isset($block.item.title)}{$block.item.title}<br>{/if}
-    {g->text text="Date: "}{g->date timestamp=$block.item.creationTimestamp format="%D"}<br>
-    {g->text one="Viewed: %d time" many="Viewed: %d times"
-     count=$block.viewCount arg1=$block.viewCount}
+    {if isset($ImageBlockSystemContent.show.title)}
+      {if isset($block.item.title)}{$block.item.title}<br>{/if}
+    {/if}
+    {if isset($ImageBlockSystemContent.show.date)}
+      {g->text text="Date: "}{g->date timestamp=$block.item.creationTimestamp format="%D"}<br>
+    {/if}
+    {if isset($ImageBlockSystemContent.show.views)}
+      {g->text one="Viewed: %d time" many="Viewed: %d times"
+       count=$block.viewCount arg1=$block.viewCount}
+    {/if}
   {/g->title}{/g->item}{/g->listing}
 {/g->element}
 {/g->box}

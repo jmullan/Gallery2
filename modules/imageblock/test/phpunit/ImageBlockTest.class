@@ -45,6 +45,17 @@ class ImageBlockTest extends GalleryTestCase {
 	parent::setUp();
 	global $gallery;
 
+	/* Register a dummy toolkit and operation */
+	GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
+	    'ImageBlockToolkit', 'ImageBlockToolkit', __FILE__);
+	$ret = GalleryCoreApi::registerToolkitOperation('ImageBlockToolkit',
+	    array('image/gif'), 'testoperation',
+	    array(array('type' => 'int', 'description' => 'size')), 'desc');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
 	// Create a new album and image, set thumbnail and highlight
 	list ($ret, $album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret->isError()) {
@@ -68,7 +79,7 @@ class ImageBlockTest extends GalleryTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	list ($ret, $success) = GalleryCoreApi::setThumbnailFromItem($album->getId(), $photo->getId());
+	list ($ret, $tmpId) = $this->_addDerivative($album, $photo, DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 150);
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -86,7 +97,7 @@ class ImageBlockTest extends GalleryTestCase {
 	}
 
 	list ($ret, $blocks) = $module->getModuleParameter('blocks');
-	if ($ret->isError() || !isset($view)) {
+	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -116,34 +127,47 @@ class ImageBlockTest extends GalleryTestCase {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	// add thumbnail
-	list ($ret, $thumbId) = $this->_addDerivative($photo,
-	    'thumbnail', DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 'thumbnail|150');
+	list ($ret, $thumbId) = $this->_addDerivative($photo, $photo,
+	    DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 150);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	return array(GalleryStatus::success(), $photo, $thumbId);
     }
 
-    function _addDerivative($photo, $toolkitType,
-			    $derivativeType, $derivativeOperation) {
-	list ($ret, $toolkit, $outputMimeType) =
-	    GalleryCoreApi::getToolkitByOperation(
-				  $photo->getMimeType(), $toolkitType);
-	if ($ret->isError() || !isset($toolkit)) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
+    function _addDerivative(&$item, &$src, $derivativeType, $size) {
 	list ($ret, $derivative) = GalleryCoreApi::newFactoryInstance(
 				   'GalleryEntity', 'GalleryDerivativeImage');
 	if ($ret->isError() || !isset($derivative)) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$ret = $derivative->create($photo->getId(), $derivativeType);
+	$ret = $derivative->create($item->getId(), $derivativeType);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$derivative->setDerivativeSourceId($photo->getId());
-	$derivative->setDerivativeOperations($derivativeOperation);
-	$derivative->setDerivativeMimeType($outputMimeType);
+	$derivative->setDerivativeSourceId($src->getId());
+	$derivative->setDerivativeMimeType($src->getMimeType());
+	$derivative->setDerivativeOperations('testoperation|0');
+	if ($size) {
+	    // Set scaled size:
+	    $w = $src->getWidth();
+	    $h = $src->getHeight();
+	    if ($w <= $size && $h <= $size &&
+		    $derivativeType==DERIVATIVE_TYPE_IMAGE_THUMBNAIL) {
+		$derivative->setWidth($w);
+		$derivative->setHeight($h);
+	    } else if ($w >= $h) {
+		$derivative->setWidth($size);
+		$derivative->setHeight((int)($size*$h/$w));
+	    } else {
+		$derivative->setHeight($size);
+		$derivative->setWidth((int)($size*$w/$h));
+	    }
+	} else {
+	    // Set rotated size (swap wd/ht):
+	    $derivative->setWidth($src->getHeight());
+	    $derivative->setHeight($src->getWidth());
+	}
 	$ret = $derivative->save();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -164,6 +188,11 @@ class ImageBlockTest extends GalleryTestCase {
 	$ret = $this->_module->setModuleParameter('blocks', $this->_blocks);
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	/* Unregister dummy toolkit */
+	$ret = GalleryCoreApi::unregisterToolkit('ImageBlockToolkit');
+	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	parent::tearDown();
@@ -231,6 +260,29 @@ class ImageBlockTest extends GalleryTestCase {
 
     }
 
+}
+
+/**
+ * Required classes
+ */
+require_once(dirname(__FILE__) . '/../../../core/classes/GalleryToolkit.class');
+
+/**
+ * Test toolkit
+ * @package ImageBlock
+ * @subpackage PHPUnit
+ */
+class ImageBlockToolkit extends GalleryToolkit {
+    function performOperation($mimeType, $operationName, $sourceFilename,
+			      $destFilename, $parameters) {
+	/* Just copy file and return dummy mime type */
+	global $gallery;
+	$platform = $gallery->getPlatform();
+	if (!$platform->copy($sourceFilename, $destFilename)) {
+	    return array(GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__), null);
+	}
+	return array(GalleryStatus::success(), 'test/image');
+    }
 }
 
 /**
