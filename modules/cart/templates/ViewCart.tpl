@@ -22,9 +22,11 @@
 
 <div class="gsContents">
   {include file="gallery:`$Navigation.sidebar`" l10Domain=$Navigation.l10Domain}	    
-
+  
   <div class="gsOtherContents">
 
+    <form action="{g->url}" method="post">
+      
     <div class="gbTopFlag">
       <div class="gbTitleBanner">
         <h1 class="gbTitle">
@@ -32,6 +34,21 @@
         </h1>
       </div>
     </div>
+    
+    <div class="gbNavBar">
+      <div class="gbAdmin">
+    	<select name="{g->formVar var="form[pluginId]"}" class="giActionSelect">
+    	  <option label="{g->text text="&laquo; cart actions &raquo;"}" value="" selected>{g->text text="&laquo; cart actions &raquo;"}</option>
+    	  <option label="{g->text text="Update Quantities"}" value="updateCart"> {g->text text="Update Quantities"} </option>
+    	  <option label="{g->text text="Empty Cart"}" value="emptyCart"> {g->text text="Empty Cart"} </option>
+    	  {foreach from=$ViewCart.plugins key=pluginId item=pluginData}
+    	  <option label="{$pluginData.actionDisplayName}" value="{$pluginId}"> {$pluginData.actionDisplayName} </option>
+    	  {/foreach}
+    	</select>
+    	<input type="submit" name="{g->formVar var="form[action][modify]"}" value="{g->text text="Go"}" class="button"/>
+      </div>
+    </div>
+
   
     {if isset($status)}
     <div id="gsStatus">
@@ -56,11 +73,9 @@
     </div>
     {else}
     <form action="{g->url}" method="post">
-      <div>
-        {g->hiddenFormVars}
-        <input type="hidden" name="{g->formVar var="controller"}" value="{$ViewCart.controller}"/>
-        <input type="hidden" name="{g->formVar var="form[formName]"}" value="{$form.formName}"/>
-      </div>
+      {g->hiddenFormVars}
+      <input type="hidden" name="{g->formVar var="controller"}" value="{$ViewCart.controller}"/>
+      <input type="hidden" name="{g->formVar var="form[formName]"}" value="{$form.formName}"/>
 
       <div class="gbAdmin">
     	<table class="gbDataTable">
@@ -123,17 +138,16 @@
     	</table>
       </div>
 
-      <div class="gbAdmin">
-	<select name="{g->formVar var="form[pluginId]"}" class="giActionSelect">
-	  <option label="{g->text text="Update Quantities"}" value="updateCart"> {g->text text="Update Quantities"} </option>
-	  <option label="{g->text text="Empty Cart"}" value="emptyCart"> {g->text text="Empty Cart"} </option>
-	  {foreach from=$ViewCart.plugins key=pluginId item=pluginData}
-	  <option label="{$pluginData.actionDisplayName}" value="{$pluginId}"> {$pluginData.actionDisplayName} </option>
-	  {/foreach}
-	</select>
-	<input type="submit" name="{g->formVar var="form[action][modify]"}" value="{g->text text="Go"}" class="button"/>
+    <div class="gbBottomFlag">
+      <div class="gbNavBar">
+        <div class="gbAdmin">
+        &nbsp;
+        </div>
       </div>
+    </div>
+    
     </form>
+    
     {/if}
   </div>
 </div>
