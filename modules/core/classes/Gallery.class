@@ -127,7 +127,23 @@ class Gallery {
      * @access private
      */
     var $_locks;
+
+    /**
+     * A pointer to the Smarty template engine
+     *
+     * @var object Smarty $_smarty
+     * @access private
+     */
+    var $_smarty;
     
+    /**
+     * Storage for arbitrary data used by the layout engine
+     *
+     * @var array $_config
+     * @access private
+     */
+    var $_layoutData;
+
     /*
      * ****************************************
      *                 Methods
@@ -159,7 +175,9 @@ class Gallery {
      *               int the id of the GalleryItem (or null)
      */
     function getIdByPath($path) {
-	list($ret, $storage) = $this->getStorage();
+	$reply =& $this->getStorage();
+	$ret = $reply[0];
+	$storage =& $reply[1];
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -170,25 +188,34 @@ class Gallery {
     }
 
     /**
-     * Load the GalleryEntity with the id specified
+     * Load the GalleryEntities with the ids specified
      *
-     * @param int the id of the GalleryEntity to load
-     * @return array object GalleryStatus a status code, object GalleryEntity
+     * @param mixed the ids (or id) of the GalleryEntities to load
+     * @return array object GalleryStatus a status code,
+     *               mixed one GalleryEntity or an array of GalleryEntities
      */
-    function loadEntityById($id) {
+    function loadEntitiesById($id) {
 	if (empty($id)) {
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER,
 					      __FILE__, __LINE__),
 			 null);
 	}
 
-	/* Load the entity from our persistent store */
-	list($ret, $storage) = $this->getStorage();
+	/* Get a reference to our storage object */
+	$reply =& $this->getStorage();
+	$ret = $reply[0];
+	$storage =& $reply[1];
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	return $storage->loadEntity($id);
+	/* Load the entities from our persistent store */
+	list ($ret, $entities) = $storage->loadEntities($id);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	return array(GalleryStatus::success(), $entities);
     }
 
     /**
@@ -226,7 +253,7 @@ class Gallery {
 	    }
 	}
 	
-	list ($ret, $entity) = $this->loadEntityById($id);
+	list ($ret, $entity) = $this->loadEntitiesById($id);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -248,7 +275,9 @@ class Gallery {
      * @see GalleryStorage::search()
      */
     function search($query, $data=array()) {
-	list($ret, $storage) = $this->getStorage();
+	$reply =& $this->getStorage();
+	$ret = $reply[0];
+	$storage =& $reply[1];
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -298,8 +327,8 @@ class Gallery {
 	 * Create the graphics object on demand.
 	 */
 	if (empty($this->_graphics)) {
-	    $type = $this->getConfig('graphics.type');
-	    $config = $this->getConfig('graphics.config');
+	    $type = $this->getConfig('core.graphics.type');
+	    $config = $this->getConfig('core.graphics.config');
 	    list($ret, $this->_graphics) =
 		    GalleryGraphicsFactory::newInstance($type, $config);
 	    if ($ret->isError()) {
@@ -331,6 +360,29 @@ class Gallery {
     function getConfig($key) {
 	assert('!empty($key)');
 	return $this->_config[$key];
+    }
+
+    /**
+     * Store a value in the Gallery layout data map
+     *
+     * @param string the key name
+     * @param mixed the value
+     * @access public
+     */
+    function setLayoutData($key, $value) {
+	assert('!empty($key)');
+	$this->_layoutData[$key] = $value;
+    }
+
+    /**
+     * Get a value from the Gallery layout data map
+     *
+     * @access public
+     * @return mixed an arbitrary value
+     */
+    function getLayoutData($key) {
+	assert('!empty($key)');
+	return $this->_layoutData[$key];
     }
 
     /**
@@ -378,7 +430,9 @@ class Gallery {
      */
     function acquireReadLock($ids, $timeout=10) {
 
-	list ($ret, $storage) = $this->getStorage();
+	$reply =& $this->getStorage();
+	$ret = $reply[0];
+	$storage =& $reply[1];
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -408,7 +462,9 @@ class Gallery {
     function acquireReadLockParents($id, $timeout=10) {
 	global $gallery;
 
-	list ($ret, $storage) = $gallery->getStorage();
+	$reply =& $this->getStorage();
+	$ret = $reply[0];
+	$storage =& $reply[1];
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -507,7 +563,9 @@ class Gallery {
      */
     function acquireWriteLock($ids, $timeout=10) {
 
-	list ($ret, $storage) = $this->getStorage();
+	$reply =& $this->getStorage();
+	$ret = $reply[0];
+	$storage =& $reply[1];
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -610,8 +668,8 @@ class Gallery {
      *               object GalleryStorage a storage instance
      */
     function getUninitializedStorage() {
-	$type = $this->getConfig('storage.type');
-	$config = $this->getConfig('storage.config');
+	$type = $this->getConfig('core.storage.type');
+	$config = $this->getConfig('core.storage.config');
 	
 	return GalleryStorageFactory::newInstance($type, $config);
     }
@@ -623,7 +681,7 @@ class Gallery {
      * @return array object GalleryStatus a status code
      *               object GalleryStorage a storage instance
      */
-    function getStorage() {
+    function &getStorage() {
 	if (empty($this->_storage)) {
 	    list($ret, $storage) = $this->getUninitializedStorage();
 	    if ($ret->isError()) {
@@ -637,7 +695,33 @@ class Gallery {
 
 	    $this->_storage = $storage;
 	}
-	return array(GalleryStatus::success(), $this->_storage);
+	return array(GalleryStatus::success(), &$this->_storage);
+    }
+
+    /**
+     * Return a properly configured instance of Smarty
+     *
+     * Create and configure one, if it does not exist.
+     *
+     * @return object Smarty
+     */
+    function getSmarty() {
+	if (empty($this->_smarty)) {
+	    /*
+	     * Load and configure Smarty.
+	     */
+	    require_once($this->_config['smarty.directory.base'] . 'Smarty.class.php');
+	    $this->_smarty = new Smarty;
+	    $this->_smarty->template_dir = $this->_config['smarty.directory.templates'];
+	    $this->_smarty->compile_dir = $this->_config['smarty.directory.templates_c'];
+	    $this->_smarty->cache_dir = $this->_config['smarty.directory.cache'];
+	    $this->_smarty->config_dir = $this->_config['smarty.directory.config'];
+	    if ($this->getDebug()) {
+		$this->_smarty->debugging = true;
+	    }
+	}
+
+	return $this->_smarty;
     }
 
     /**
@@ -703,6 +787,15 @@ class Gallery {
     }
 
     /**
+     * Get any buffered debug output
+     *
+     * @return string the debug state
+     */
+    function getDebugBuffer() {
+	return $this->_debugBuffer;
+    }
+
+    /**
      * Output a debug message
      *
      * @param string a message
@@ -711,7 +804,7 @@ class Gallery {
 	if (empty($msg)) {
 	    return;
 	}
-	
+
 	if (!empty($this->_debug)) {
 	    if (!strcmp($this->_debug, 'buffered')) {
 		$this->_debugBuffer .= "$msg\n";
