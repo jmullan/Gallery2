@@ -47,6 +47,15 @@ class CommentSearchTest extends GalleryTestCase {
 	
 	parent::setUp();
 
+	list ($ret, $moduleStatusList) = $gallery->getModuleStatus();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	if (empty($moduleStatusList['search']['active'])) {
+	    return $this->assert(false, 'Search module not installed');
+	}
+
 	list ($ret, $rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -59,6 +68,7 @@ class CommentSearchTest extends GalleryTestCase {
 
 	$this->_randomKey = "a" . rand(1,100000) . "z";
 
+	$this->_item = array();
 	for ($j = 0; $j < 4; $j++) {
 	    list ($ret, $this->_item[$j]) = $this->_createRandomDataItem($rootId);
 	    if ($ret->isError()) {
@@ -161,10 +171,12 @@ class CommentSearchTest extends GalleryTestCase {
 	
 	parent::tearDown();
 
-	for ($j = 0; $j < sizeof($this->_item); $j++) {
-	    $ret = $gallery->deleteEntityById($this->_item[$j]->getId());
-	    if ($ret->isError()) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	if (!empty($this->_item)) {
+	    foreach ($this->_item as $item) {
+		$ret = $gallery->deleteEntityById($item->getId());
+		if ($ret->isError()) {
+		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		}
 	    }
 	}
     }
