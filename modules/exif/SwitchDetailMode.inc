@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2003 Bharat Mediratta
+ * Copyright (C) 2000-2004 Bharat Mediratta
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,8 @@
  */
 
 /**
- * This controller will handle an user logging out of Gallery
+ * This controller will switch the ItemDetails mode in the session
+ * and return to the previous page
  *
  * @package Exif
  * @subpackage UserInterface
