@@ -98,7 +98,7 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 
 	/* Create a least one preferred */
 	list ($ret, $derivative) =
-	    GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative', $this->_items[$i]->getEntityType());
+	    GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative', $this->_items[2]->getEntityType());
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
