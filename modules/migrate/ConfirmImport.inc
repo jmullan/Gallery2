@@ -64,7 +64,7 @@ class ConfirmImportController extends GalleryController {
 				       'canAddTo' => array('core.addDataItem'),
 				       'canWrite' => array('core.edit'),
 				       'canDeleteFrom' => array('core.delete'),
-							       'canCreateSubAlbum' => array('core.addAlbumItem')
+				       'canCreateSubAlbum' => array('core.addAlbumItem')
 				       );
 	/* Get GroupIds for "everybody" and "all users" */
 	list ($ret, $everybodyGroupId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.everybodyGroup');
@@ -357,6 +357,7 @@ class ConfirmImportController extends GalleryController {
 				    foreach($album['perms'] as $tmpperm => $tmpusers) {
 					foreach($permissionTranslation[$tmpperm] as $tmpTranslatedPerm) {
 					    foreach(array_keys($tmpusers) as $tmpuser) {
+						//						print "<p>$desiredname : $tmpuser : $tmpperm  : $tmpTranslatedPerm</p>";
 						switch ($tmpuser) {
 						case 'everybody':
 						    if ($allUsersGroupId) {
@@ -381,6 +382,8 @@ class ConfirmImportController extends GalleryController {
 							    return array($ret->wrap(__FILE__, __LINE__), null);
 							}
 						    }
+						    break;
+						case 'Nobody':
 						    break;
 						default:		    
 						    $validPermUID = Gallery1DataParser::isValidUid($albumsPath,$tmpuser);
@@ -706,6 +709,8 @@ class ConfirmImportController extends GalleryController {
 							    return array($ret->wrap(__FILE__, __LINE__), null);
 							}
 						    }
+						    break;
+						case 'Nobody':
 						    break;
 						default:		    
 						    $validPermUID = Gallery1DataParser::isValidUid($albumsPath,$tmpuser);
