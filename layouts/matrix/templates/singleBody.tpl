@@ -1,3 +1,9 @@
+{*
+ * If you want to customize this file, do not edit it directly.
+ * Instead, copy it to singleBody.tpl.local and edit that version instead.
+ * Gallery will look for that file first and use it if it exists
+ * and when you upgrade, your changes will not get overwritten.
+ *}
     {* Jump through hoops because "$layout.imageViews.`$layout.imageViewsIndex`" doesn't work *}
       {assign var="currentIndex" value=$layout.imageViewsIndex}
       {assign var="image" value=$layout.imageViews.$currentIndex}
@@ -7,7 +13,7 @@
 	  <!-- img banner -->
 	</div>
 	
-	{include file="layouts/matrix/templates/pathbar.tpl"}
+	{include file="gallery:layouts/matrix/templates/pathbar.tpl"}
       </div>
       
       <div id="gsAlbumContents">
@@ -102,7 +108,7 @@
 
 	{if !empty($layout.moduleItemDetailFiles)}
 	{foreach from=$layout.moduleItemDetailFiles key=moduleId item=detailFile}
-	{include file=$detailFile l10Domain="modules_$moduleId"}
+	{include file="gallery:$detailFile" l10Domain="modules_$moduleId"}
 	{/foreach}
 	{/if}
 
@@ -119,6 +125,6 @@
 	</div>
 	{/if}
 
-	{include file="layouts/matrix/templates/itemNavigator.tpl"}
+	{include file="gallery:layouts/matrix/templates/itemNavigator.tpl"}
       </div>
-      {include file="layouts/matrix/templates/sidebar.tpl"}
+      {include file="gallery:layouts/matrix/templates/sidebar.tpl"}

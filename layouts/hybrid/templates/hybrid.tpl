@@ -1,3 +1,9 @@
+{*
+ * If you want to customize this file, do not edit it directly.
+ * Instead, copy it to hybrid.tpl.local and edit that version instead.
+ * Gallery will look for that file first and use it if it exists
+ * and when you upgrade, your changes will not get overwritten.
+ *}
 <div id="album"
 ><div id="album_titlebar"
 ><div id="album_tools"><img name="sidebar_min" src="{$layout.layoutUrl}/images/left.png" width="18" height="18" class="on" onclick="sidebar_onoff()" alt="Hide sidebar" title="Hide sidebar"
@@ -105,7 +111,7 @@
   {* Modules system content *}
   {foreach from=$layout.moduleSystemContentFiles key=moduleId item=moduleFile}
     {if ($moduleId != 'core')}
-      {include file=$moduleFile l10Domain="modules_$moduleId"}
+      {include file="gallery:$moduleFile" l10Domain="modules_$moduleId"}
     {/if}
   {/foreach}
   {* Breadcrumb *}

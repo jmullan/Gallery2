@@ -1,3 +1,9 @@
+{*
+ * If you want to customize this file, do not edit it directly.
+ * Instead, copy it to ImageBlock.tpl.local and edit that version instead.
+ * Gallery will look for that file first and use it if it exists
+ * and when you upgrade, your changes will not get overwritten.
+ *}
     {foreach from=$ImageBlockSystemContent.blocks item=block}
       <div class="gbMenu" style="width:144px">
 	{if !empty($block.title)}

@@ -1,3 +1,9 @@
+{*
+ * If you want to customize this file, do not edit it directly.
+ * Instead, copy it to ItemAdmin.tpl.local and edit that version instead.
+ * Gallery will look for that file first and use it if it exists
+ * and when you upgrade, your changes will not get overwritten.
+ *}
 <form action="{g->url}" enctype="{$ItemAdmin.enctype}" method="post">
   <p>
     {g->hiddenFormVars}
@@ -34,7 +40,7 @@
         {g->text text="No Thumbnail"}
       </span>
       {else}
-      {g->image item=$ItemAdmin.item image=$ItemAdmin.thumbnail}
+      {g->image item=$ItemAdmin.item image=$ItemAdmin.thumbnail maxSize=130}
       {/if}
 
       <div class="giTitle">
@@ -96,5 +102,5 @@
     </div>
   </div>
 
-  {include file=$ItemAdmin.viewBodyFile l10Domain=$ItemAdmin.viewL10Domain}
+  {include file="gallery:`$ItemAdmin.viewBodyFile`" l10Domain=$ItemAdmin.viewL10Domain}
 </form>

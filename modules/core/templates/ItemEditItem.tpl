@@ -1,3 +1,9 @@
+{*
+ * If you want to customize this file, do not edit it directly.
+ * Instead, copy it to ItemEditItem.tpl.local and edit that version instead.
+ * Gallery will look for that file first and use it if it exists
+ * and when you upgrade, your changes will not get overwritten.
+ *}
 <div class="gbAdmin">
   {if isset($ItemEditItem.can.changePathComponent)}
   <div class="gbDataEntry">
@@ -50,7 +56,11 @@
       {g->text text="The title of this item."}
     </div>
 
-    <input type="text" size="40" name="{g->formVar var="form[title]"}" value="{$form.title}"/>
+    {include file="gallery:modules/core/templates/MarkupBar.tpl" 
+             viewL10domain="modules_core" 
+	     element="title"
+	     firstMarkupBar="true"}
+    <input id="title" type="text" size="40" name="{g->formVar var="form[title]"}" value="{$form.title}"/>
   </div>
 
   <div class="gbDataEntry">
@@ -60,7 +70,11 @@
     <div class="giDescription">
       {g->text text="The summary of this item."}
     </div>
-    <input type="text" size="40" name="{g->formVar var="form[summary]"}" value="{$form.summary}"/>
+
+    {include file="gallery:modules/core/templates/MarkupBar.tpl" 
+             viewL10domain="modules_core" 
+	     element="summary"}
+    <input id="summary" type="text" size="40" name="{g->formVar var="form[summary]"}" value="{$form.summary}"/>
   </div>
 
   <div class="gbDataEntry">
@@ -80,7 +94,10 @@
     <div class="giDescription">
       {g->text text="This is the long description of the item."}
     </div>
-    <textarea rows="4" cols="60" name="{g->formVar var="form[description]"}">{$form.description}</textarea>
+    {include file="gallery:modules/core/templates/MarkupBar.tpl" 
+             viewL10domain="modules_core" 
+	     element="description"}
+    <textarea id="description" rows="4" cols="60" name="{g->formVar var="form[description]"}">{$form.description}</textarea>
   </div>
 </div>
 

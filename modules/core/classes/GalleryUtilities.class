@@ -852,7 +852,7 @@ class GalleryUtilities {
 		$value = addslashes($value);
 	    }
 	    
-	    /* Sanitize dangerous html entities */
+	    /* Unsanitize dangerous html entities */
 	    $value = GalleryUtilities::htmlEntityDecode($value);
 	}
     }
@@ -934,10 +934,7 @@ class GalleryUtilities {
     function isPathInList($path, $list) {
 	global $gallery;
 
-	$pos = strpos($path, '..');
-	if (!($pos === false)) {
-	    return false;
-	}
+	$path = realpath($path);
 
 	$platform = $gallery->getPlatform();
 	$slash = $platform->getDirectorySeparator();

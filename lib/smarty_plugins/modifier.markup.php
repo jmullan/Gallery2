@@ -30,18 +30,26 @@
  *           raw html)
  * -------------------------------------------------------------
  */
-function smarty_modifier_markup($text) {
+function smarty_modifier_markup($text, $overrideMarkupType=null) {
     global $gallery;
     static $parser;
     
     if (!isset($parser)) {
-	list ($ret, $markup) = GalleryCoreApi::getPluginParameter('module', 'core', 'misc.markup');
+	list ($ret, $markupType) = GalleryCoreApi::getPluginParameter('module', 'core', 'misc.markup');
 	if ($ret->isError()) {
 	    /* This code is used by the UI -- we can't return an error.  Choose something safe */
 	    $markup = 'none';
 	}
 
-	switch($markup) {
+	if (isset($overrideMarkupType)) {
+	    $markupType = $overrideMarkupType;
+	}
+
+	switch($markupType) {
+	case 'stripBbcodeAndHtml':
+	    $parser = new GalleryStripBbcodeAndHtmlParser();
+	    break;
+	    
 	case 'bbcode':
 	    $parser = new GalleryBbcodeMarkupParser();
 	    break;
@@ -173,4 +181,12 @@ class GalleryHtmlMarkupParser {
     }
 }
 
+class GalleryStripBbcodeAndHtmlParser {
+    function parse($text) {
+	$bbcodeParser = new GalleryBbcodeMarkupParser();
+	$text = $bbcodeParser->parse($text);
+	$text = GalleryUtilities::htmlEntityDecode($text);
+	return strip_tags($text);
+    }
+}
 ?>

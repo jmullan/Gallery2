@@ -256,7 +256,7 @@ function GalleryMain() {
 	    }
 	} else {
 	    require_once(dirname(__FILE__) . '/modules/core/classes/GalleryTemplate.class');
-	    $template = new GalleryTemplate(dirname(__FILE__) . '/templates/');
+	    $template = new GalleryTemplate(dirname(__FILE__));
 	    list ($ret, $results) = $view->doLoadTemplate($template);
 	    if ($ret->isError()) {
 		$main['error'] = $ret->getAsHtml();
@@ -310,7 +310,7 @@ function GalleryMain() {
 	}
 
 	require_once(dirname(__FILE__) . '/modules/core/classes/GalleryTemplate.class');
-	$template = new GalleryTemplate(dirname(__FILE__) . '/templates/');
+	$template = new GalleryTemplate(dirname(__FILE__));
 
 	/* Pass the theme to the template adapter */
 	$templateAdapter =& $gallery->getTemplateAdapter();
@@ -325,29 +325,31 @@ function GalleryMain() {
 	    }
 	} 
 
+	list ($ret, $markup) = GalleryCoreApi::getPluginParameter('module', 'core', 'misc.markup');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$main['markupType'] = $markup;
+
 	$main['gallery']['version'] = '2';
 	$template->setVariable('main', $main);
 	$template->setVariable('l10Domain', 'modules_core');
 
+	/* TODO: consider switching to using $template->display() for speed */
 	if (isset($main['redirectUrl'])) {
-	    list ($ret, $html) = $template->fetch('redirect.tpl');
+	    list ($ret, $html) = $template->fetch('gallery:templates/redirect.tpl');
 	} else if (isset($main['error'])) {
-	    list ($ret, $html) = $template->fetch('error.tpl');
+	    list ($ret, $html) = $template->fetch('gallery:templates/error.tpl');
 	} else {
-	    list ($ret, $html) = $template->fetch('global.tpl');
+	    list ($ret, $html) = $template->fetch('gallery:templates/global.tpl');
 	}
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	/*
-	require_once('XML/Beautifier.php');
-	$fmt = new XML_Beautifier();
-	$html = $result = $fmt->formatString($html);
-	*/
-	
 	print $html;
-	
+
+	/* Debug/Optimization code -- remove me eventually */
 	if (false) {
 	    printf("<pre>%s</pre>", print_r($GLOBALS['GalleryCoreApi'], 1));
 	    printf("<pre>\b(%s)\b\n\n&nbsp;</pre>", join("|", get_declared_classes()));

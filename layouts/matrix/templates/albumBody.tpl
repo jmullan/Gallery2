@@ -1,9 +1,15 @@
+{*
+ * If you want to customize this file, do not edit it directly.
+ * Instead, copy it to albumBody.tpl.local and edit that version instead.
+ * Gallery will look for that file first and use it if it exists
+ * and when you upgrade, your changes will not get overwritten.
+ *}
 <div id="gsHeader">
   <div class="gbTitleBanner">
     <!-- img banner -->
   </div>
 
-  {include file="layouts/matrix/templates/pathbar.tpl"}
+  {include file="gallery:layouts/matrix/templates/pathbar.tpl"}
 </div>
 
 <div id="gsAlbumContents">
@@ -41,7 +47,7 @@
       </span>
     </div>
 
-    {include file="layouts/matrix/templates/itemNavigator.tpl"}
+    {include file="gallery:layouts/matrix/templates/itemNavigator.tpl"}
 
     <div class="gsSpacer">
       &nbsp;
@@ -146,22 +152,11 @@
 
   {if !empty($layout.moduleItemDetailFiles)}
   {foreach from=$layout.moduleItemDetailFiles key=moduleId item=detailFile}
-  {include file=$detailFile l10Domain="modules_$moduleId"}
+  {include file="gallery:$detailFile" l10Domain="modules_$moduleId"}
   {/foreach}
   {/if}
 
   <div class="gbBottomFlag">
-    <div class="giActionSelect">
-      {if isset($layout.moduleItemLinks[$layout.item.id])}
-      <select onchange="javascript:if (this.value) location.href=this.value">
-	<option label="{g->text text="&laquo; album actions &raquo;"}" value="">{g->text text="&laquo; album actions &raquo;"}</option>
-        {foreach from=$layout.moduleItemLinks[$layout.item.id] item=link}
-        <option label="{$link.text}" value="{$link.url}">{$link.text}</option>
-        {/foreach}
-      </select>
-      {/if}
-    </div>
-
     <div class="giHorizontalLinks">
       <div class="giTitle">
 	{g->text text="Page"}
@@ -198,4 +193,4 @@
   </div>
 </div>
 
-{include file="layouts/matrix/templates/sidebar.tpl"}
+{include file="gallery:layouts/matrix/templates/sidebar.tpl"}

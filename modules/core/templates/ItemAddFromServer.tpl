@@ -1,3 +1,9 @@
+{*
+ * If you want to customize this file, do not edit it directly.
+ * Instead, copy it to ItemAddFromServer.tpl.local and edit that version instead.
+ * Gallery will look for that file first and use it if it exists
+ * and when you upgrade, your changes will not get overwritten.
+ *}
 <div class="gbAdmin">
   {if !empty($form.localServerFiles)}
   <script type="text/javascript">
@@ -5,7 +11,9 @@
     form = document.forms[0];
     state = form.elements['selectionToggle'].checked;
     {foreach from=$form.localServerFiles item=file}
+    {if ($file.type == 'file' && !$file.unknown)}
     form.elements['{g->formVar var="form[localServerFiles][`$file.fileKey`]"}'].checked = state;
+    {/if}
     {/foreach}
     {rdelim}
   </script>
@@ -96,17 +104,27 @@
 
   {else} {* {if empty($form.localServerFiles)} *}
   <b>
-    {g->text text="Directory: %s" arg1=$form.localServerPath}
+    {capture name="path"}
+    {strip}
+    {foreach name="pathElements" from=$ItemAddFromServer.pathElements item=element}
+    {$ItemAddFromServer.pathSeparator}
+    {if ($element.legal && !$smarty.foreach.pathElements.last)}
+    <a href="{g->url arg1="controller=core:ItemAdd" arg2="addPlugin=ItemAddFromServer" arg3="form[localServerPath]=`$element.path`" arg4="itemId=`$ItemAdmin.item.id`" arg5="form[action][findFilesFromLocalServer]=1" arg6="form[formName]=ItemAddFromServer"}">{$element.name}</a>
+    {else}
+    {$element.name}
+    {/if}
+    {/foreach}
+    {/strip}
+    {/capture}
+    {g->text text="Directory: %s" arg1=$smarty.capture.path}
   </b>
   <a href="{g->url arg1="view=core:ItemAdmin" arg2="subView=core:ItemAdd" arg3="itemId=`$ItemAdmin.item.id`" arg4="form[localServerPath]=`$form.localServerPath`" arg5="form[formName]=ItemAddFromServer" arg6="addPlugin=ItemAddFromServer"}">
-    {g->text text="change"}
+    {g->text text="[start over]"}
   </a>
 
   <input type="hidden" name="{g->formVar var="form[localServerPath]"}" value="{$form.localServerPath}"/>
 
   <br />
-
-  {g->text one="%d file found" many="%d files found" count=$ItemAddFromServer.localServerFileCount arg1=$ItemAddFromServer.localServerFileCount}
 
   <table class="gbDataTable" width="100%">
     <tr>
@@ -129,14 +147,15 @@
 
     {foreach from=$form.localServerFiles item=file}
     <tr class="{cycle values="gbEven,gbOdd"}">
-      <td>
+      {if ($file.type == 'file')}
+      <td style="text-align: center">
 	<input type="checkbox" name="{g->formVar var="form[localServerFiles][`$file.fileKey`]"}"/>
       </td>
 
       <td>
-	{$file.fileName}
+        {$file.fileName}
       </td>
-	
+
       <td>
 	{$file.itemType}
       </td>
@@ -144,6 +163,27 @@
       <td>
 	{g->text one="%d byte" many="%d bytes" count=$file.stat.size arg1=$file.stat.size}
       </td>
+      {else}
+      <td>
+        &nbsp;
+      </td>
+
+      <td>
+	{if $file.legal}
+	<a href="{g->url arg1="controller=core:ItemAdd" arg2="addPlugin=ItemAddFromServer" arg3="form[localServerPath]=`$file.fileKey`" arg4="itemId=`$ItemAdmin.item.id`" arg5="form[action][findFilesFromLocalServer]=1" arg6="form[formName]=ItemAddFromServer"}">{$file.fileName}</a>
+	{else}
+	<i>{$file.fileName}</i>
+	{/if}
+      </td>
+
+      <td>
+	{g->text text="Directory"}
+      </td>
+
+      <td>
+	&nbsp;
+      </td>
+      {/if}
     </tr>
     {/foreach}
   </table>

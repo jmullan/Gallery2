@@ -1,3 +1,9 @@
+{*
+ * If you want to customize this file, do not edit it directly.
+ * Instead, copy it to AddComment.tpl.local and edit that version instead.
+ * Gallery will look for that file first and use it if it exists
+ * and when you upgrade, your changes will not get overwritten.
+ *}
 <div id="gsAdminContents">
   <div class="gbTopFlag">
     <div class="gbTitle">
@@ -44,7 +50,11 @@
 	{g->text text="required"}
       </div>
 
-      <input type="text" size="60" name="{g->formVar var="form[subject]"}" value="{$form.subject}"/>
+      {include file="gallery:modules/core/templates/MarkupBar.tpl" 
+	       viewL10domain="modules_core" 
+	       element="subject"
+	       firstMarkupBar="true"}
+      <input type="text" size="60" id="subject" name="{g->formVar var="form[subject]"}" value="{$form.subject}"/>
 
       {if isset($form.error.subject.missing)}
       <div class="giError">
@@ -61,7 +71,10 @@
 	{g->text text="required"}
       </div>
 
-      <textarea rows="15" cols="60" name="{g->formVar var="form[comment]"}">{$form.comment}</textarea>
+      {include file="gallery:modules/core/templates/MarkupBar.tpl" 
+	       viewL10domain="modules_core" 
+	       element="comment"}
+      <textarea rows="15" cols="60" id="comment" name="{g->formVar var="form[comment]"}">{$form.comment}</textarea>
     </div>
 
     {if isset($form.error.comment.missing)}

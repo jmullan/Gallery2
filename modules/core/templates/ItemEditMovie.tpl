@@ -1,3 +1,9 @@
+{*
+ * If you want to customize this file, do not edit it directly.
+ * Instead, copy it to ItemEditMovie.tpl.local and edit that version instead.
+ * Gallery will look for that file first and use it if it exists
+ * and when you upgrade, your changes will not get overwritten.
+ *}
 <div class="gbAdmin">
   <div class="giDescription">
     {g->text text="In order for Gallery to properly display this movie, it has to know the movie's width and height.  If you have installed a graphics toolkit that can handle movie types, then these values may already be set.  If not, they may be set to 0.  If you do not enter the correct values here, the movie may appear distorted when viewed in your web browser.  Note that changing these values do <b>not</b> change the movie itself so experimentation won't cause harm."}

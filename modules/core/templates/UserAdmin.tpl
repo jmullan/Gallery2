@@ -1,3 +1,9 @@
+{*
+ * If you want to customize this file, do not edit it directly.
+ * Instead, copy it to UserAdmin.tpl.local and edit that version instead.
+ * Gallery will look for that file first and use it if it exists
+ * and when you upgrade, your changes will not get overwritten.
+ *}
 <form action="{g->url}" method="post">
   <p>
     {g->hiddenFormVars}
@@ -61,5 +67,5 @@
     </div>
   </div>
 
-  {include file=$UserAdmin.viewBodyFile l10Domain=$UserAdmin.viewL10Domain}
+  {include file="gallery:`$UserAdmin.viewBodyFile`" l10Domain=$UserAdmin.viewL10Domain}
 </form>

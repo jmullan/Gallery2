@@ -1,3 +1,9 @@
+{*
+ * If you want to customize this file, do not edit it directly.
+ * Instead, copy it to ViewCart.tpl.local and edit that version instead.
+ * Gallery will look for that file first and use it if it exists
+ * and when you upgrade, your changes will not get overwritten.
+ *}
 <form action="{g->url}" method="post">
   <p>
     {g->hiddenFormVars}
@@ -60,7 +66,7 @@
         <td>
           <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$item.id`"}">
             {if isset($ViewCart.thumbnails[$item.id])}
-            {g->image item=$ViewCart.items[$item.id] image=$ViewCart.thumbnails[$item.id]}
+            {g->image item=$ViewCart.items[$item.id] image=$ViewCart.thumbnails[$item.id] maxSize=90}
             {else}
             {g->text text="No thumbnail"}
             {/if}
@@ -77,11 +83,11 @@
       	</td>
 
       	<td>
-      	  {$item.title}
+      	  {$item.title|markup}
       	</td>
-            </tr>
+      </tr>
 
-            <tr>
+      <tr>
       	<td valign="top">
       	  <b>
       	    {g->text text="Summary"}
@@ -89,7 +95,7 @@
       	</td>
 
       	<td>
-      	  {$item.summary}
+      	  {$item.summary|markup}
       	</td>
             </tr>
           </table>

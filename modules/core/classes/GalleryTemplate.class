@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
@@ -92,6 +92,7 @@ class GalleryTemplate {
     function GalleryTemplate($templateDir) {
 	global $gallery;
 	$this->_templateDir = $templateDir;
+	
         /* This will be the place to put the compiled templates */
 	$this->_compiledTemplateDir = $gallery->getConfig('data.smarty.templates_c') .
             '%%' . sprintf("%u", crc32($templateDir));
@@ -294,9 +295,77 @@ class GalleryTemplate {
 
 	    $templateAdapter =& $gallery->getTemplateAdapter();
 	    $smarty->register_object('g', $templateAdapter);
+
+	    $smarty->register_resource('gallery',
+				       array('GalleryTemplate',
+					     'resourceGetTemplate',
+					     'resourceGetTimestamp',
+					     'resourceGetSecure',
+					     'resourceGetTrusted'));
 	}
 
 	return $smarty;
+    }
+
+   /**
+    * @see http://smarty.php.net/manual/en/template.resources.php
+    *
+    * This is basically the same as the file: resource except that we look for a template
+    * called "xxx.local" first and use that instead, if it exists.  This allows users to override
+    * templates with our own copies without modifying the original.
+    */
+   function resourceGetTemplate($templateName, &$templateSource, &$smarty) {
+        global $gallery;
+
+        $platform = $gallery->getPlatform();
+        
+        $templateName = $smarty->template_dir . '/' . $templateName;
+        $localTemplateName = $templateName . '.local';
+        if ($platform->file_exists($localTemplateName) && $platform->is_readable($localTemplateName)) {
+            $templateName = $localTemplateName;
+        }
+        
+        $templateSource = $smarty->_read_file($templateName);
+
+        return true;
+    }
+
+   /**
+    * @see http://smarty.php.net/manual/en/template.resources.php
+    *
+    * This is basically the same as the file: resource except that we look for a template
+    * called "xxx.local" first and use that instead, if it exists.  This allows users to override
+    * templates with our own copies without modifying the original.
+    */
+    function resourceGetTimestamp($templateName, &$templateTimestamp, &$smarty) {
+        global $gallery;
+
+        $platform = $gallery->getPlatform();
+        $templateName = $smarty->template_dir . '/' . $templateName;
+        $localTemplateName = $templateName . '.local';
+        if ($platform->file_exists($localTemplateName) && $platform->is_readable($localTemplateName)) {
+            $templateName = $localTemplateName;
+        }
+
+	$stat = $platform->stat($templateName);
+        $templateTimestamp = $stat[9];
+
+        return true;
+    }
+
+   /**
+    * @see http://smarty.php.net/manual/en/template.resources.php
+    */
+    function resourceGetSecure($templateName, &$smarty) {
+	// Assume all templates are secure
+        return true;
+    }
+
+   /**
+    * @see http://smarty.php.net/manual/en/template.resources.php
+    */
+    function resourceGetTrusted($templateName, &$smarty) {
+	// Not used for templates
     }
 }
 

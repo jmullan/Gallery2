@@ -1,3 +1,9 @@
+{*
+ * If you want to customize this file, do not edit it directly.
+ * Instead, copy it to SiteAdmin.tpl.local and edit that version instead.
+ * Gallery will look for that file first and use it if it exists
+ * and when you upgrade, your changes will not get overwritten.
+ *}
 <form action="{g->url}" enctype="{$SiteAdmin.enctype|default:"application/x-www-form-urlencoded"}" method="post">
   <p>
     {g->hiddenFormVars}
@@ -46,5 +52,5 @@
     </div>
   </div>
 
-  {include file=$SiteAdmin.viewBodyFile l10Domain=$SiteAdmin.viewL10Domain}
+  {include file="gallery:`$SiteAdmin.viewBodyFile`" l10Domain=$SiteAdmin.viewL10Domain}
 </form>

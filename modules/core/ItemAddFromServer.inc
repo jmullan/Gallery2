@@ -97,7 +97,8 @@ class ItemAddFromServer extends ItemAddPlugin {
 	    $form['formName'] = 'ItemAddFromServer';
 	}
 
-	list ($ret, $localServerDirs) = GalleryCoreApi::getPluginParameter('module', 'core', 'uploadLocalServer.dirs');
+	list ($ret, $localServerDirs) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'uploadLocalServer.dirs');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -107,12 +108,20 @@ class ItemAddFromServer extends ItemAddPlugin {
 	    $localServerDirList = split(',', $localServerDirs);
 	}
 
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	/* Look up the platform type */
 	$platform = $gallery->getPlatform();
+	$slash = $platform->getDirectorySeparator();
 
 	/* If we're uploading from the local server, get a file list now */
 	if (isset($form['action']['findFilesFromLocalServer'])) {
 	    $form['localServerPath'] = trim($form['localServerPath']);
+	    $form['localServerPath'] = realpath($form['localServerPath']);
+	    
 	    /* Validate the path */
 	    $form['localServerFiles'] = array();
 	    if (empty($form['localServerPath'])) {
@@ -136,30 +145,53 @@ class ItemAddFromServer extends ItemAddPlugin {
 
 		    while (false !== ($fileName = $platform->readdir($handle))) {
 			$gallery->guaranteeTimeLimit(5);
-			if ($fileName == '.' || $fileName == '..') {
+
+			if ($fileName == '.') {
 			    continue;
 			}
 
-			$filePath = $path . '/' . $fileName;
-			if (!$platform->is_dir($filePath) && $platform->is_readable($filePath)) {
-			    $mimeType = GalleryUtilities::getMimeType($fileName);
-			    if (!isset($mimeTypeItemMap[$mimeType])) {
-				list ($ret, $mimeTypeItemMap[$mimeType]['instance']) =
-				    GalleryCoreApi::newItemByMimeType($mimeType);
-				if ($ret->isError()) {
-				    return array($ret->wrap(__FILE__, __LINE__), null);
-				}
-
-				$mimeTypeItemMap[$mimeType]['names'] =
-				    $mimeTypeItemMap[$mimeType]['instance']->itemTypeName();
+			if ($fileName == '..') {
+			    $filePath = realpath($path . $slash . '..');
+			    if (!GalleryUtilities::isPathInList($filePath, $localServerDirList)) {
+				continue;
 			    }
-			    
-			    $form['localServerFiles'][] =
-				array('dirName' => $path,
-				      'fileName' => $fileName,
-				      'stat' => $platform->stat($filePath),
-				      'itemType' => $mimeTypeItemMap[$mimeType]['names'][0],
-				      'fileKey' => $fileName);
+			    $fileName = $module->translate('&laquo; Parent Directory &raquo;');
+			} else {
+			    $filePath = $path . '/' . $fileName;
+			}
+			
+			if ($platform->is_readable($filePath)) {
+			    if ($platform->is_dir($filePath)) {
+
+				$filePath = realpath($filePath);
+				$legal = GalleryUtilities::isPathInList($filePath, $localServerDirList);
+				
+				$form['localServerFiles'][] =
+				    array('type' => 'directory',
+					  'fileName' => $fileName,
+					  'fileKey' => $filePath,
+					  'legal' => $legal);
+			    } else {
+				$mimeType = GalleryUtilities::getMimeType($fileName);
+				if (!isset($mimeTypeItemMap[$mimeType])) {
+				    list ($ret, $mimeTypeItemMap[$mimeType]['instance']) =
+					GalleryCoreApi::newItemByMimeType($mimeType);
+				    if ($ret->isError()) {
+					return array($ret->wrap(__FILE__, __LINE__), null);
+				    }
+				    
+				    $mimeTypeItemMap[$mimeType]['names'] =
+					$mimeTypeItemMap[$mimeType]['instance']->itemTypeName();
+				}
+				
+				$form['localServerFiles'][] =
+				    array('type' => 'file',
+					  'fileName' => $fileName,
+					  'stat' => $platform->stat($filePath),
+					  'itemType' => $mimeTypeItemMap[$mimeType]['names'][0],
+					  'unknown' => GalleryUtilities::isA($mimeTypeItemMap[$mimeType]['instance'], 'GalleryUnknownItem'),
+					  'fileKey' => $fileName);
+			    }
 			}
 		    }
 		    $platform->closedir($handle);
@@ -176,22 +208,37 @@ class ItemAddFromServer extends ItemAddPlugin {
 			    $mimeTypeItemMap[$mimeType]['instance']->itemTypeName();
 		    }
 
-		    $dirName = dirname($path);
 		    $fileName = basename($path);
 		    $form['localServerFiles'][] =
-			array('dirName' => $dirName,
-			      'fileName' => $fileName,
+			array('fileName' => $fileName,
 			      'stat' => $platform->stat($path),
 			      'itemType' => $mimeTypeItemMap[$mimeType]['names'][0],
+			      'unknown' => GalleryUtilities::isA($mimeTypeItemMap[$mimeType]['instance'], 'GalleryUnknownItem'),
 			      'fileKey' => htmlentities($fileName));
 		}
-		$localServerFileCount = sizeof($form['localServerFiles']);
 	    }
 	}
-	
+
 	$ItemAddFromServer = array();
+	
+	$accumulator = '';
+	foreach (preg_split('|[\\\/]|', $form['localServerPath']) as $element) {
+	    if (empty($element)) {
+		continue;
+	    }
+	    
+	    $accumulator .= $slash . $element;
+	    $data = array();
+	    $data['name'] = $element;
+	    $data['path'] = $accumulator;
+	    $data['legal'] = GalleryUtilities::isPathInList($accumulator, $localServerDirList);
+	    $ItemAddFromServer['pathElements'][] = $data;
+	}
+	
+	$ItemAddFromServer['pathSeparator'] = $slash;
 	$ItemAddFromServer['localServerDirList'] = $localServerDirList;
-	$ItemAddFromServer['localServerFileCount'] = isset($localServerFileCount) ? $localServerFileCount : null;
+	$ItemAddFromServer['localServerFileCount'] =
+	    isset($localServerFileCount) ? $localServerFileCount : null;
 
 	$session =& $gallery->getSession();
 	$recentPaths = $session->get('core.view.ItemAdd.ItemAddFromServer.recentPaths');

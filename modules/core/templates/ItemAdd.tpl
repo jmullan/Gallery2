@@ -1,3 +1,9 @@
+{*
+ * If you want to customize this file, do not edit it directly.
+ * Instead, copy it to ItemAdd.tpl.local and edit that version instead.
+ * Gallery will look for that file first and use it if it exists
+ * and when you upgrade, your changes will not get overwritten.
+ *}
 <div id="gsAdminContents">
   <div class="gbTopFlag">
     <div class="gbTitle">
@@ -31,6 +37,6 @@
     </div>
 
     <input type="hidden" name="{g->formVar var="addPlugin"}" value="{$ItemAdd.addPlugin}"/>
-    {include file=$ItemAdd.pluginFile l10Domain=$ItemAdmin.viewL10Domain}
+    {include file="gallery:`$ItemAdd.pluginFile`" l10Domain=$ItemAdmin.viewL10Domain}
   </div>
 </div>
