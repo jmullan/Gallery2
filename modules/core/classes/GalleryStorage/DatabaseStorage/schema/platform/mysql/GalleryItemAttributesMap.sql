@@ -15,6 +15,14 @@
     DB_COLUMN_PREFIXorderWeight
       int(11)
     
+      ,
+    DB_COLUMN_PREFIXparentSequence
+      varchar(
+      
+          255
+        
+      )
+    
     , 
   
     UNIQUE KEY (DB_COLUMN_PREFIXitemId)

@@ -1043,30 +1043,7 @@ class DatabaseStorage extends GalleryStorage {
 	    return array(GalleryStatus::error(ERROR_STORAGE_CONNECTION, __FILE__, __LINE__), null);
 	}
 
-	/* Change '[Class::member]' to 'table.column' or 'alias.column' */
-	while (ereg('\[([[:alnum:]=]*)::([[:alnum:]]*)\]', $query, $regs)) {
-	    $class = $regs[1];
-	    $member = $regs[2];
-	    list ($table, $alias) = $this->_translateTableName($class);
-
-	    $column = $this->_translateColumnName($member);
-	    if ($alias == null) {
-		$query = str_replace("[${class}::${member}]", "$table.$column", $query);
-	    } else {
-		$query = str_replace("[${class}::${member}]", "$alias.$column", $query);
-	    }
-	}
-
-	/* Change '[Class]' to 'table' */
-	while (ereg('\[([[:alnum:]=]*)\]', $query, $regs)) {
-	    $class = $regs[1];
-	    list ($table, $alias) = $this->_translateTableName($class);
-	    if ($alias == null) {
-		$query = str_replace("[${class}]", "$table", $query);
-	    } else {
-		$query = str_replace("[${class}]", "$table as $alias", $query);
-	    }
-	}
+	$query = $this->_translateQuery($query);
 
 	/* Run it with the right limits and return the results */
 	$GLOBALS['ADODB_FETCH_MODE'] = ADODB_FETCH_BOTH;
@@ -1245,9 +1222,16 @@ class DatabaseStorage extends GalleryStorage {
 
 	foreach ($mapInfo['members'] as $memberName => $memberType) {
 	    if (isset($match[$memberName])) {
-		$where[] = $this->_translateColumnName($memberName) . '=?';
+		if (is_array($match[$memberName])) {
+		    $queryFragment = ' ' . $this->_translateQuery($match[$memberName][0]);
+		    $value = $match[$memberName][1];
+		} else {
+		    $queryFragment = '=?';
+		    $value = $match[$memberName];
+		}
 
-		$value = $match[$memberName];
+		$where[] = $this->_translateColumnName($memberName) . $queryFragment;
+
 		if ($memberType & STORAGE_TYPE_BIT) {
 		    $value = $this->convertIntToBits($value);
 		}
@@ -1256,9 +1240,16 @@ class DatabaseStorage extends GalleryStorage {
 	    }
 
 	    if (isset($change[$memberName])) {
-		$set[] = $this->_translateColumnName($memberName) . '=?';
+		if (is_array($change[$memberName])) {
+		    $queryFragment = ' ' . $this->_translateQuery($change[$memberName][0]);
+		    $value = $change[$memberName][1];
+		} else {
+		    $queryFragment = '=?';
+		    $value = $change[$memberName];
+		}
+		
+		$set[] = $this->_translateColumnName($memberName) . $queryFragment;
 
-		$value = $change[$memberName];
 		if ($memberType & STORAGE_TYPE_BIT) {
 		    $value = $this->convertIntToBits($value);
 		}
@@ -1710,6 +1701,42 @@ class DatabaseStorage extends GalleryStorage {
 	}
 
 	return array(GalleryStatus::success(), $results);
+    }
+
+    /**
+     * Translate all table and column names from the [Entity::member] notation to
+     * table.column notation.
+     *
+     * @param string the raw query
+     * @param string the translated query
+     */
+    function _translateQuery($query) {
+	/* Change '[Class::member]' to 'table.column' or 'alias.column' */
+	while (ereg('\[([[:alnum:]=]*)::([[:alnum:]]*)\]', $query, $regs)) {
+	    $class = $regs[1];
+	    $member = $regs[2];
+	    list ($table, $alias) = $this->_translateTableName($class);
+
+	    $column = $this->_translateColumnName($member);
+	    if ($alias == null) {
+		$query = str_replace("[${class}::${member}]", "$table.$column", $query);
+	    } else {
+		$query = str_replace("[${class}::${member}]", "$alias.$column", $query);
+	    }
+	}
+
+	/* Change '[Class]' to 'table' */
+	while (ereg('\[([[:alnum:]=]*)\]', $query, $regs)) {
+	    $class = $regs[1];
+	    list ($table, $alias) = $this->_translateTableName($class);
+	    if ($alias == null) {
+		$query = str_replace("[${class}]", "$table", $query);
+	    } else {
+		$query = str_replace("[${class}]", "$table as $alias", $query);
+	    }
+	}
+
+	return $query;
     }
 
     /**

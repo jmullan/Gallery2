@@ -228,6 +228,11 @@ class SessionTest extends GalleryTestCase {
 	    $session->getStatus($statusId[$i]);
 	}
     }
+
+    function testExpireSessions() {
+	/* Make sure the SQL runs */ 
+	GallerySession::_expireSessions();
+    }
 }
 
 ?>

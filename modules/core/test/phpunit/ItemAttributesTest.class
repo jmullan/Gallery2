@@ -55,7 +55,7 @@ class ItemAttributesTest extends GalleryTestCase {
 
     function tearDown() {
 	global $gallery;
-	
+
 	$ret = $gallery->deleteEntityById($this->_parentItem->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -198,6 +198,71 @@ class ItemAttributesTest extends GalleryTestCase {
 	    }
 	    $this->assertEquals(($i+1)*100, $weight, "item $i of $count is not balanced correctly");
 	}
+    }
+
+    function testFetchParentSequence() {
+	list($ret, $album) = $this->_createRandomAlbum($this->_childItems[1]->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $parentSequence) = GalleryItemAttributesMap::fetchParentSequence($album->getId());
+	$this->assertEquals(array($this->_getRootId(),
+				  $this->_parentItem->getId(),
+				  $this->_childItems[1]->getId()),
+			    $parentSequence,
+			    'album parent sequence');
+
+	list ($ret, $item) = $this->_createRandomDataItem($album->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	list ($ret, $parentSequence) = GalleryItemAttributesMap::fetchParentSequence($item->getId());
+	$this->assertEquals(array($this->_getRootId(),
+				  $this->_parentItem->getId(),
+				  $this->_childItems[1]->getId(),
+				  $album->getId()),
+			    $parentSequence,
+			    'item parent sequence');
+    }
+
+    function testFetchDescendentCounts() {
+	list($ret, $album) = $this->_createRandomAlbum($this->_childItems[1]->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	for ($i = 0; $i < 3; $i++) {
+	    list($ret, $item[$i]) = $this->_createRandomDataItem($album->getId());
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+
+	/* Drop perms for one item and one album */
+	$ret = GalleryPermissionMap::removeItemPermissions($item[0]->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryPermissionMap::removeItemPermissions($this->_childItems[0]->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Verify our counts */
+	list ($ret, $counts) =
+	    GalleryItemAttributesMap::fetchDescendentCounts(array($this->_parentItem->getId(),
+								  $album->getId()));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(array($this->_parentItem->getId() => array('GalleryAlbumItem' => 3,
+								       'GalleryDataItem' => 2),
+				  $album->getId() => array('GalleryAlbumItem' => 0,
+							   'GalleryDataItem' => 2)),
+			    $counts);
     }
 }
 

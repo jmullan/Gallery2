@@ -76,19 +76,6 @@ class ChildTest extends GalleryTestCase {
 	parent::tearDown();
     }
 
-    function testFetchParentIds() {
-	list ($ret, $parentIds) =
-	    GalleryChildEntityHelper::fetchParentIds($this->_derivative[0][0]->getId());
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	$this->assertEquals(array($this->_getRootId(),
-				  $this->_root->getId(),
-				  $this->_child[0]->getId()),
-			    $parentIds);
-    }
-
     function testFetchChildIds() {
 	list ($ret, $childIds) = GalleryChildEntityHelper::fetchChildIds($this->_root->getId());
 	if ($ret->isError()) {

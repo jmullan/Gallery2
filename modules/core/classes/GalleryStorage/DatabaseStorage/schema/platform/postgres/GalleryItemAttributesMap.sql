@@ -15,6 +15,14 @@
     DB_COLUMN_PREFIXorderWeight
       INTEGER
     
+      ,
+    DB_COLUMN_PREFIXparentSequence
+      VARCHAR(
+      
+          255
+        
+      )
+    
     );
 
   

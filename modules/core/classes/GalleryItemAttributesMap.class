@@ -72,17 +72,31 @@ class GalleryItemAttributesMap_core {
      * @g2     <member-type>INTEGER</member-type>
      * @g2     <member-size>LARGE</member-size>
      * @g2   </member>
+     * @g2   <member>
+     * @g2     <member-name>parentSequence</member-name>
+     * @g2     <member-type>STRING</member-type>
+     * @g2     <member-size>LARGE</member-size>
+     * @f2     <indexed/>
+     * @f2     <required/>
+     * @g2   </member>
      * @g2 </map>
      */
 
     /**
      * Create a new set of attributes for an item
      * @param int the item id
+     * @param array the sequence of parent ids
      */
-    function createItemAttributes($itemId) {
+    function createItemAttributes($itemId, $parentSequence) {
+	if (empty($parentSequence)) {
+	    $parentSequence = '';
+	} else {
+	    $parentSequence = join('/', $parentSequence) . '/';
+	}
 	$ret = GalleryItemAttributesMap::addMapEntry(array('itemId' => $itemId,
 							   'viewCount' => 0,
-							   'orderWeight' => 0));
+							   'orderWeight' => 0,
+							   'parentSequence' => $parentSequence));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -365,6 +379,168 @@ class GalleryItemAttributesMap_core {
 	}
 			 
 	return array(GalleryStatus::success(), $weight);
+    }
+
+    /**
+     * Set the parent id sequence for an item id
+     *
+     * @param int id the item id
+     * @param array the parent sequence (ids)
+     * @return object GalleryStatus a status code
+     */
+    function setParentSequence($itemId, $parentSequence) {
+	if (empty($parentSequence)) {
+	    $parentSequence = '';
+	} else {
+	    $parentSequence = join('/', $parentSequence) . '/';
+	}
+	
+	$ret = GalleryItemAttributesMap::updateMapEntry(array('itemId' => $itemId),
+							array('parentSequence' => $parentSequence));
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Update all items containing the source parent sequence to the new parent sequence
+     *
+     * @param int id the item id
+     * @param array the parent sequence (ids)
+     * @return object GalleryStatus a status code
+     */
+    function updateParentSequence($oldParentSequence, $newParentSequence) {
+	global $gallery;
+
+	$oldParentSequence = join('/', $oldParentSequence) . '/';
+	$newParentSequence = join('/', $newParentSequence) . '/';
+	
+	$storage = $gallery->getStorage();
+	list ($ret, $newSequenceSql) = $storage->getFunctionSql('CONCAT',
+            array('?',
+		  sprintf('SUBSTRING([GalleryItemAttributesMap::parentSequence], %d)',
+			  strlen($oldParentSequence) + 1)));
+
+	$ret = GalleryItemAttributesMap::updateMapEntry(
+	     array('parentSequence' => array('LIKE ?', $oldParentSequence . '%')),
+             array('parentSequence' => array('=' . $newSequenceSql, $newParentSequence)));
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Get the parent sequence for this item id
+     * @param int the item id
+     * @return array object GalleryStatus a status code
+     *               array the parent id sequence
+     */
+    function fetchParentSequence($itemId) {
+	global $gallery;
+
+	$query = '
+        SELECT
+          [GalleryItemAttributesMap::parentSequence]
+        FROM
+          [GalleryItemAttributesMap]
+        WHERE
+          [GalleryItemAttributesMap::itemId] = ?
+        ';
+	list ($ret, $searchResults) = $gallery->search($query, array($itemId));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if ($searchResults->resultCount() != 1) {
+	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
+	}
+
+	$result = $searchResults->nextResult();
+	$parentSequence = preg_split('/\//', $result[0], -1, PREG_SPLIT_NO_EMPTY);
+
+	return array(GalleryStatus::success(), $parentSequence);
+    }
+
+    /**
+     * Fetch the breakdown of descendents for a given item
+     *
+     * @param int the item id
+     * @return array object GalleryStatus a status code
+     *               array('GalleryAlbumItem' => ##,
+     *                     'GalleryDataItem' => ##)
+     */
+    function fetchDescendentCounts($itemIds) {
+	global $gallery;
+
+	list ($ret, $permissionBits) = GalleryPermissionSetMap::convertIdsToBits(array('core.view'));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$storage = $gallery->getStorage();
+	$markers = GalleryUtilities::makeMarkers($itemIds);
+
+	list ($ret, $concat) =
+	    $storage->getFunctionSql('CONCAT',
+				     array('[GalleryItemAttributesMap=1::parentSequence]', 
+					   '[GalleryItemAttributesMap=1::itemId]',
+					   '\'%\''));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
+	$query = sprintf('
+        SELECT
+          [GalleryItemAttributesMap=1::itemId],
+          COUNT(DISTINCT([GalleryAlbumItem::id])),
+          COUNT(DISTINCT([GalleryDataItem::id]))
+        FROM
+          [GalleryItemAttributesMap=1],
+          [GalleryItemAttributesMap=2]
+            LEFT JOIN [GalleryAlbumItem] ON [GalleryItemAttributesMap=2::itemId] = [GalleryAlbumItem::id]
+            LEFT JOIN [GalleryDataItem] ON [GalleryItemAttributesMap=2::itemId] = [GalleryDataItem::id],
+          [GalleryUserGroupMap],
+          [GalleryPermissionMap]
+        WHERE
+          [GalleryItemAttributesMap=1::itemId] IN (%s)
+          AND
+          [GalleryItemAttributesMap=2::parentSequence] LIKE %s
+          AND
+          [GalleryItemAttributesMap=2::itemId] = [GalleryPermissionMap::itemId]
+          AND
+          ([GalleryPermissionMap::userId] = ?
+           OR
+           ([GalleryUserGroupMap::userId] = ?
+            AND
+            [GalleryPermissionMap::groupId] = [GalleryUserGroupMap::groupId]))
+          AND
+          [GalleryPermissionMap::permission] & ? > ?
+          GROUP BY
+          [GalleryItemAttributesMap=1::itemId]
+        ', $markers, $concat);
+
+	$data = $itemIds;
+	$data[] = $gallery->getActiveUserId();
+	$data[] = $gallery->getActiveUserId();
+	$data[] = $storage->convertIntToBits($permissionBits);
+	$data[] = $storage->convertIntToBits(0);
+
+	list ($ret, $searchResults) = $gallery->search($query, $data);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$counts = array();
+	while ($result = $searchResults->nextResult()) {
+	    $counts[$result[0]] = array('GalleryAlbumItem' => $result[1],
+					'GalleryDataItem' => $result[2]);
+	}
+	
+	return array(GalleryStatus::success(), $counts);
     }
 }
 

@@ -343,18 +343,24 @@ class GallerySession_core {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
+	$storage =& $gallery->getStorage();
+	list ($ret, $timestamp) = $storage->getFunctionSql('UNIX_TIMESTAMP', array('NOW()'));
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
 	if ($sessionInactivityTimeout > 0) {
-	    $statement = '
+	    $statement = sprintf('
                 DELETE FROM
                   [GallerySession]
                 WHERE
-                  (UNIX_TIMESTAMP(NOW()) - [GallerySession::creationTime]) > ?
+                  (%s - [GallerySession::creationTime]) > ?
                   OR
-                  (UNIX_TIMESTAMP(NOW()) - [GallerySession::lastModificationTime]) > ?
-                ';
+                  (%s - [GallerySession::lastModificationTime]) > ?
+                ', $timestamp, $timestamp);
 		
 	    /* Delete any sessions that are expired */
-	    $storage =& $gallery->getStorage();
+	    /* TODO: get away from using execute() here */
 	    $ret = $storage->execute($statement, array($lifetime, $sessionInactivityTimeout));
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);

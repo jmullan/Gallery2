@@ -62,7 +62,7 @@ class ShowTreeView extends GalleryView {
 	}
 
 	/* Get the parent ids leading up to this entity */
-	list ($ret, $parentIds) = GalleryChildEntityHelper::fetchParentIds($entityId);
+	list ($ret, $parentIds) = GalleryItemAttributesMap::fetchParentSequence($entityId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

@@ -23,7 +23,14 @@
 
 	{g->item}
 	  {g->title}
-	    {g->text one="Size: %d item" many="Size: %d items" count=$layout.totalChildCount arg1=$layout.totalChildCount}
+	    {g->text one="Size: %d item" 
+	    many="Size: %d items" 
+	    count=$layout.totalChildCount 
+	    arg1=$layout.totalChildCount}
+	    {g->text one="(%d item total)"
+	    many="(%d items total)"
+	    count=$layout.totalDescendentCount.GalleryDataItem
+	    arg1=$layout.totalDescendentCount.GalleryDataItem}
 	  {/g->title}
 	{/g->item}
 	
@@ -97,6 +104,10 @@
 			  many="Size: %d items"
 			  count=$child.childCount
 			  arg1=$child.childCount}
+			  {g->text one="(%d item total)"
+			  many="(%d items total)"
+			  count=$child.descendentCount.GalleryDataItem
+			  arg1=$child.descendentCount.GalleryDataItem}
 			{/g->title}
 		      {/g->item}
 

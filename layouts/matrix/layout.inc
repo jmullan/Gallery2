@@ -199,6 +199,20 @@ class MatrixLayout extends GalleryLayout {
 	    $totalChildCount = $totalChildCount[$item->getId()];
 	}
 
+	/* Count the total number of descendents */
+	/* XXX: we could combine this with the other fetchDescendentCounts() call below */
+	list ($ret, $totalDescendentCount) =
+	    GalleryItemAttributesMap::fetchDescendentCounts(array($item->getId()));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	if (!isset($totalDescendentCount[$item->getId()])) {
+	    $totalDescendentCount = array('GalleryAlbumItem' => 0,
+					  'GalleryDataItem' => 0);
+	} else {
+	    $totalDescendentCount = $totalDescendentCount[$item->getId()];
+	}
+
 	/* Get the child id => child types */
 	list ($ret, $childIds) = $item->fetchChildIds($start, $perPage);
 	if ($ret->isError()) {
@@ -233,6 +247,11 @@ class MatrixLayout extends GalleryLayout {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
+	    list ($ret, $descendentCounts) = GalleryItemAttributesMap::fetchDescendentCounts($childIds);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
             /* Create a table of child id -> child data */
 	    $childTable = array();
 	    foreach ($childItems as $child) {
@@ -253,6 +272,15 @@ class MatrixLayout extends GalleryLayout {
 		    $childTable[$childId]['childCount'] = $childCounts[$childId];
 		} else {
 		    $childTable[$childId]['childCount'] = 0;
+		}
+
+		if (!empty($descendentCounts[$childId])) {
+		    $childTable[$childId]['descendentCount'] = $descendentCounts[$childId];
+		} else {
+		    $childTable[$childId]['descendentCount'] =
+			array('GalleryAlbumItem' => 0,
+			      'GalleryDataItem' => 0);
+		    
 		}
 	    }
 
@@ -444,6 +472,7 @@ class MatrixLayout extends GalleryLayout {
 	$layout['currentPage'] = $page;
 	$layout['totalPageCount'] = $totalPages;
 	$layout['totalChildCount'] = $totalChildCount;
+	$layout['totalDescendentCount'] = $totalDescendentCount;
 	$layout['totalPeerCount'] = $totalPeerCount;
 	$layout['peers'] = $peers;
 	$layout['navigator'] = $navigator;

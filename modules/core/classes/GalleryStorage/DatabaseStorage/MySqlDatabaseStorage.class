@@ -92,6 +92,26 @@ class MySqlDatabaseStorage extends DatabaseStorage {
 	
 	return array('DB_TABLE_TYPE' => $tableType);
     }
+
+    /**
+     * @see GalleryStorage::getFunctionsSql
+     */
+    function getFunctionSql($functionName, $args) {
+	switch($functionName) {
+	case 'CONCAT':
+	    $sql = sprintf('CONCAT(%s)', join(', ', $args));
+	    break;
+
+	case 'UNIX_TIMESTAMP':
+	    $sql = sprintf('UNIX_TIMESTAMP(%s)', $args[0]);
+	    break;
+
+	default:
+	    return array(GalleryStatus::ERROR_UNIMPLEMENTED(__FILE__, __LINE__), null);
+	}
+
+	return array(GalleryStatus::success(), $sql);
+    }
     
     /**
      * @see DatabaseStorage::_getLockClearance()

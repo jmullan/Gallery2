@@ -636,6 +636,68 @@ class ItemTest extends GalleryTestCase {
 	    
 	$this->assertEquals($truePath, $linkPath, "Link doesn't point to the original (link)");
     }
+
+    function testMove() {
+	global $gallery;
+	
+	/* Create a target item */
+	list ($ret, $item) = $this->_createRandomDataItem($this->_childItems[0]->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $parentSequence) =
+	    GalleryItemAttributesMap::fetchParentSequence($item->getId());
+
+	$this->assertEquals($this->_childItems[0]->getId(), $item->getParentId());
+	$this->assertEquals(array($this->_getRootId(),
+				  $this->_parentItem->getId(),
+				  $this->_childItems[0]->getId()),
+			    $parentSequence);
+
+	list ($ret, $locks[]) =
+	    $gallery->acquireReadLock(array($this->_childItems[0]->getId(),
+					    $this->_childItems[1]->getId()));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $locks[]) = $gallery->acquireWriteLock($item->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $item) = $item->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = $item->move($this->_childItems[1]->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = $item->save();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	GalleryDataCache::reset();
+
+	list ($ret, $parentSequence) =
+	    GalleryItemAttributesMap::fetchParentSequence($item->getId());
+
+	$this->assertEquals($this->_childItems[1]->getId(), $item->getParentId());
+	$this->assertEquals(array($this->_getRootId(),
+				  $this->_parentItem->getId(),
+				  $this->_childItems[1]->getId()),
+			    $parentSequence);
+
+	$ret = $gallery->releaseLocks($locks);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
 }
 
 // Dummy test toolkit

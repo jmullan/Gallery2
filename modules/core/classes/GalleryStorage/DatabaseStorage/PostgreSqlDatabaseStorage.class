@@ -159,5 +159,26 @@ class PostgreSqlDatabaseStorage extends DatabaseStorage {
     function convertBitsToInt($bitsVal) {
 	return bindec($bitsVal);
     }
+
+    /**
+     * @see GalleryStorage::getFunctionsSql
+     */
+    function getFunctionSql($functionName, $args) {
+	switch($functionName) {
+	case 'CONCAT':
+	    $sql = join(' || ', $args);
+	    break;
+
+	case 'UNIX_TIMESTAMP':
+	    $sql = 'date_part(\'epoch\', ' . $args[0] . ')';
+	    break;
+	    
+	default:
+	    return array(GalleryStatus::ERROR_UNIMPLEMENTED(__FILE__, __LINE__), null);
+	}
+
+	return array(GalleryStatus::success(), $sql);
+    }
+    
 }
 ?>

@@ -129,56 +129,5 @@ class GalleryChildEntityHelper {
 
 	return array(GalleryStatus::success(), $data);
     }
-    
-    /**
-     * Return the ids of all the parent entities of the given entity.
-     *
-     * Note: this call ignores permissions so it must be used very carefully!
-     *
-     * @access public
-     * @param array item ids
-     * @return array object GalleryStatus a status code
-     *               array (root id, id, id, id)
-     * @static
-     */
-    function fetchParentIds($entityId) {
-	global $gallery;
-
-	if (!isset($entityId)) {
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
-			 null);
-	}
-	
-	$storage = $gallery->getStorage();
-	$query = '
-        SELECT
-          [GalleryChildEntity::parentId]
-        FROM
-          [GalleryChildEntity]
-        WHERE
-          [GalleryChildEntity::id] = ?
-        ';
-
-	list ($ret, $searchResults) = $gallery->search($query, array($entityId));
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	$result = $searchResults->nextResult();
-	$parentId = (int)$result[0];
-
-	if (empty($parentId)) {
-	    $data = array();
-	} else {
-	    list ($ret, $data) = GalleryChildEntityHelper::fetchParentIds($parentId);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-	    $data[] = $parentId;
-	}
-
-	return array(GalleryStatus::success(), $data);
-    }
 }
 ?>

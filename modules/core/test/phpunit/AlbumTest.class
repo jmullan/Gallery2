@@ -190,15 +190,43 @@ class AlbumTest extends GalleryTestCase {
 
 	$lockIds = array();
 
-	list ($ret, $album0) = $this->_createRandomAlbum($this->_parentAlbum->getId());
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	$parentId = $this->_parentAlbum->getId();
+	for ($i = 0; $i < 3; $i++) {
+	    list ($ret, $album[$i]) = $this->_createRandomAlbum($parentId);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $parentId = $album[$i]->getId();
 	}
 
-	list ($ret, $album1) = $this->_createRandomAlbum($album0->getId());
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	/* Verify parents before moving */
+	$this->assertEquals($this->_parentAlbum->getId(), $album[0]->getParentId(), '(before) album 0');
+	$this->assertEquals($album[0]->getId(), $album[1]->getParentId(), '(before) album 1');
+	$this->assertEquals($album[1]->getId(), $album[2]->getParentId(), '(before) album 2');
+
+	for ($i = 0; $i < 3; $i++) {
+	    list ($ret, $parentSequence[$i]) =
+		GalleryItemAttributesMap::fetchParentSequence($album[$i]->getId());
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
 	}
+
+	$this->assertEquals(array($this->_getRootId(),
+				  $this->_parentAlbum->getId()),
+			    $parentSequence[0],
+			    '(before) sequence 0');
+	$this->assertEquals(array($this->_getRootId(),
+				  $this->_parentAlbum->getId(),
+				  $album[0]->getId()),
+			    $parentSequence[1],
+			    '(before) sequence 1');
+	$this->assertEquals(array($this->_getRootId(),
+				  $this->_parentAlbum->getId(),
+				  $album[0]->getId(),
+				  $album[1]->getId()),
+			    $parentSequence[2],
+			    '(before) sequence 2');
 
 	/* Read lock the root, write lock the two new albums */
 	list ($ret, $lockIds[]) = $gallery->acquireReadLock(array($this->_parentAlbum->getId()));
@@ -206,40 +234,28 @@ class AlbumTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $lockIds[]) = $gallery->acquireWriteLock(array($album0->getId(), $album1->getId()));
+	list ($ret, $lockIds[]) = $gallery->acquireWriteLock(array($album[0]->getId(),
+								   $album[1]->getId(),
+								   ));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $album0) = $album0->refresh();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	for ($i = 0; $i < 2; $i++) {
+	    list ($ret, $album[$i]) = $album[$i]->refresh();
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
 	}
 
-	list ($ret, $album1) = $album1->refresh();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	/* Move the album */
-	$ret = $album1->move($this->_parentAlbum->getId());
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	/* Save it */
-	$ret = $album1->save();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	/* Delete the albums */
-	$ret = $album0->delete();
+	/* Move one of the target albums */
+	$ret = $album[1]->move($this->_parentAlbum->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	
-	$ret = $album1->delete();
+	/* Save it */
+	$ret = $album[1]->save();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -248,6 +264,38 @@ class AlbumTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+
+	/* Verify parents */
+	for ($i = 0; $i < 2; $i++) {
+	    list ($ret, $album[$i]) = $album[$i]->refresh();
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+
+	$this->assertEquals($this->_parentAlbum->getId(), $album[0]->getParentId(), '(after) album 0');
+	$this->assertEquals($this->_parentAlbum->getId(), $album[1]->getParentId(), '(after) album 1');
+	$this->assertEquals($album[1]->getId(), $album[2]->getParentId(), '(after) album 2');
+
+	for ($i = 0; $i < 3; $i++) {
+	    list ($ret, $parentSequence[$i]) =
+		GalleryItemAttributesMap::fetchParentSequence($album[$i]->getId());
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+
+	$this->assertEquals(array($this->_getRootId(),
+				  $this->_parentAlbum->getId()), $parentSequence[0],
+			    '(after) sequence 0');
+	$this->assertEquals(array($this->_getRootId(),
+				  $this->_parentAlbum->getId()), $parentSequence[1],
+			    '(after) sequence 1');
+	$this->assertEquals(array($this->_getRootId(),
+				  $this->_parentAlbum->getId(),
+				  $album[1]->getId()),
+			    $parentSequence[2],
+			    '(after) sequence 2');
     }
 
     /**

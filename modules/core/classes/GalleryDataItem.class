@@ -358,6 +358,35 @@ class GalleryDataItem_core extends GalleryItem {
     }
     
     /**
+     * Move this item to a new parent
+     *
+     * @param int the id of the GalleryItem parent
+     * @return object GalleryStatus a status code
+     */
+    function move($newParentId) {
+	/* Get the current parent sequence */
+	list ($ret, $parentSequence) = GalleryItemAttributesMap::fetchParentSequence($this->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$ret = parent::move($newParentId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Set the new parent sequence */
+	array_pop($parentSequence);
+	array_push($parentSequence, $newParentId);
+	$ret = GalleryItemAttributesMap::setParentSequence($this->getId(), $parentSequence);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
      * Get the full path to the data file.
      *
      * @access public

@@ -555,9 +555,19 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 
 	GalleryProfiler::start('modules.core.classes.GalleryItem::fetchParents');
 
-	list ($ret, $parentIds) = GalleryChildEntityHelper::fetchParentIds($this->getId());
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	if (GalleryUtilities::isA($this, 'GalleryAlbumItem')) {
+	    list ($ret, $parentIds) =
+		GalleryItemAttributesMap::fetchParentSequence($this->getId());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	} else {
+	    list ($ret, $parentIds) =
+		GalleryItemAttributesMap::fetchParentSequence($this->getParentId());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    array_push($parentIds, $this->getParentId());
 	}
 
 	if (!empty($parentIds)) {
@@ -662,10 +672,19 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
+
+		list ($ret, $parentSequence) =
+		    GalleryItemAttributesMap::fetchParentSequence($this->getParentId());
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+		$parentSequence[] = $this->getParentId();
+	    } else {
+		$parentSequence = array();
 	    }
 
 	    /* Create an empty attribute entry */
-	    $ret = GalleryItemAttributesMap::createItemAttributes($this->getId());
+	    $ret = GalleryItemAttributesMap::createItemAttributes($this->getId(), $parentSequence);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }

@@ -70,6 +70,8 @@ class GalleryItemAttributesMap extends GalleryItemAttributesMap_core {
   
         $info['members']['orderWeight'] = STORAGE_TYPE_INTEGER;
   
+        $info['members']['parentSequence'] = STORAGE_TYPE_STRING;
+  
         return $info; 
     }
 
@@ -92,6 +94,10 @@ class GalleryItemAttributesMap extends GalleryItemAttributesMap_core {
         }
     
         if (!isset($data['orderWeight'])) {
+            return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+        }
+    
+        if (!isset($data['parentSequence'])) {
             return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
         }
     

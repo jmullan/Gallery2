@@ -333,6 +333,40 @@ class GalleryAlbumItem_core extends GalleryItem {
     }
 
     /**
+     * Move this item to a new parent
+     *
+     * @param int the id of the GalleryItem parent
+     * @return object GalleryStatus a status code
+     */
+    function move($newParentId) {
+	/* Get the current parent sequence */
+	list ($ret, $oldParentSequence) = GalleryItemAttributesMap::fetchParentSequence($this->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$ret = parent::move($newParentId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Figure out the new one */
+	list ($ret, $newParentSequence) = GalleryItemAttributesMap::fetchParentSequence($this->getParentId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$newParentSequence[] = $this->getParentId();
+
+	/* Convert this item and all of its children to the new sequence */
+	$ret = GalleryItemAttributesMap::updateParentSequence($oldParentSequence, $newParentSequence);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
      * @see GalleryItem::itemTypeName
      */
     function itemTypeName() {
