@@ -37,12 +37,11 @@ class UserAlbumModule extends GalleryModule {
 	$this->setId('useralbum');
 	$this->setName('User Albums');
 	$this->setDescription($gallery->i18n('Create an album for each new user'));
-	$this->setVersion('0.8.2');
+	$this->setVersion('0.8.3');
 	$this->setGroup('gallery', $gallery->i18n('Gallery'));
-	$this->setCallbacks('getSiteAdminViews');
+	$this->setCallbacks('registerEventListeners|getSiteAdminViews');
 	$this->setRequiredCoreApi(array(0, 8));
 	$this->setRequiredModuleApi(array(0, 8));
-	
     }
 
     /**
@@ -61,13 +60,13 @@ class UserAlbumModule extends GalleryModule {
 	if (!isset($currentVersion)) {
 	    list($ret, $rootId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);   
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    foreach (array('view' => 'everybody', 'fullSize' => '1', 'targetLocation' => $rootId)
 		     as $key => $value) {
 		$ret = $this->setParameter($key, $value);
 		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);   
+		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
 	}
