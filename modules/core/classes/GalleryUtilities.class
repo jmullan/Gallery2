@@ -343,7 +343,18 @@ class GalleryUtilities {
 	 * that we get consistent behaviour across all versions.
 	 */
 	$key = strtr(GALLERY_FORM_VARIABLE_PREFIX . $key, '.', '_');
-	
+
+	/* Simulate the damage caused by magic_quotes */
+	if (get_magic_quotes_gpc()) {
+	    if (is_array($value)) {
+		/* XXX: this only handles arrays 1 level deep */
+		foreach ($value as $subKey => $subValue) {
+		    $value[$subKey] = addslashes($subValue);
+		}
+	    } else {
+		$value = addslashes($value);
+	    }
+	}
 	$HTTP_GET_VARS[$key] = $value;
     }
 
@@ -405,7 +416,7 @@ class GalleryUtilities {
 	if (!isset($extensionMap)) {
 	    /* This data was lifted from Apache's mime.types listing. */
 	    $extensionMap = array(
-				  'Z'	    => 'application/x-compress',
+				  'z'	    => 'application/x-compress',
 				  'ai'	    => 'application/postscript',
 				  'aif'	    => 'audio/x-aiff',
 				  'aifc'    => 'audio/x-aiff',
@@ -548,7 +559,8 @@ class GalleryUtilities {
 				  'zip'	    => 'application/zip'
 				  );
 	}
-	
+
+	$extension = strtolower($extension);
 	if (empty($extensionMap[$extension])) {
 	    return 'application/unknown';
 	} else {
