@@ -10,8 +10,9 @@
   </h2>
 
   <div class="gbDataEntry">
-    <input id="isRandomHighlight" type="checkbox" name="{g->formVar var="form[RandomHighlightOption][isRandomHighlight]"}"
-           {if $form.RandomHighlightOption.isRandomHighlight}checked="checked"{/if}/>
+    <input id="isRandomHighlight" type="checkbox"
+     name="{g->formVar var="form[RandomHighlightOption][isRandomHighlight]"}"
+     {if $form.RandomHighlightOption.isRandomHighlight}checked="checked"{/if}/>
     <label for="isRandomHighlight">
       {g->text text="Activate random highlight for this album"}
     </label>

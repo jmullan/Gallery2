@@ -20,18 +20,6 @@
       {g->text text="Settings saved successfully"}
     </div>
     {/if}
-
-    {if isset($status.reset)}
-    <div class="giStatus">
-      {g->text text="Albums reset successfully"}
-    </div>
-    {/if}
-
-    {if isset($status.deactivated)}
-    <div class="giError">
-      {g->text text="Reset random highlight albums to enable deactivation (see below)"}
-    </div>
-    {/if}
   </div>
   {/if}
 
@@ -56,20 +44,9 @@
   </div>
 
   <div class="gbButtons">
-    <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}"/>
-    <input type="submit" name="{g->formVar var="form[action][undo]"}" value="{g->text text="Undo"}"/>
+    <input type="submit" name="{g->formVar var="form[action][save]"}"
+     value="{g->text text="Save"}"/>
+    <input type="submit" name="{g->formVar var="form[action][reset]"}"
+     value="{g->text text="Reset"}"/>
   </div>
-
-  {if ($form.count > 0)}
-  <div class="gbAdmin">
-    <div class="giDescription">
-      {g->text one="This gallery contains %d album using random highlight.  It must be reset to a standard album before this module can be deactivated.  You can reset the album here."
-	       many="This gallery contains %d albums using random highlight.  These must be reset to standard albums before this module can be deactivated.  You can reset all albums here."
-	       count=$form.count arg1=$form.count}
-      {g->text text="Warning: there is no undo."}
-    </div>
-
-    <input type="submit" name="{g->formVar var="form[action][reset]"}" value="{g->text text="Reset all albums"}"/>
-  </div>
-  {/if}
 </div>

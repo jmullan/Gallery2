@@ -56,17 +56,68 @@ class RandomHighlightOptionTest extends ItemEditOptionTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	list ($ret, $thumb) = $this->_createDerivative(
-	    $item, $item->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
+	    $item, $item->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
+	    'thumbnail|100', 'image/test');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	list ($ret, $this->_highlight) = $this->_createDerivative(
-	    $this->_album, $thumb->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
+	    $this->_album, $thumb->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
+	    'thumbnail|100', 'image/test');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+
+	foreach (array('duration') as $key) {
+	    list ($ret, $this->_params[$key]) =
+		GalleryCoreApi::getPluginParameter('module', 'randomhighlight', $key);
+	    if ($ret->isError()) {
+		print $ret->getAsHtml();
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+	$ret = GalleryCoreApi::setPluginParameter('module', 'randomhighlight', 'duration', '-100');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'GalleryToolkit', 'RandomHighlightTestToolkit', 'RandomHighlightTestToolkit',
+	    'modules/randomhighlight/test/phpunit/RandomHighlightOptionTest.class',
+	    'randomhighlightTest', null);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markFactoryModuleForCleanup('randomhighlightTest');
+
+	$ret = GalleryCoreApi::registerToolkitOperation(
+	    'RandomHighlightTestToolkit', array('image/test'), 'thumbnail',
+	    array(array('type' => 'int', 'description' => 'test'),
+		  array('type' => 'int', 'description' => 'test')), 'test');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    function tearDown() {
+	foreach ($this->_params as $key => $value) {
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'randomhighlight', $key, $value);
+	    if ($ret->isError()) {
+		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+
+	$ret = GalleryCoreApi::unregisterToolkit('RandomHighlightTestToolkit');
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	parent::tearDown();
     }
 
     function testRandomHighlight() {
@@ -75,9 +126,9 @@ class RandomHighlightOptionTest extends ItemEditOptionTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert($appropriate, 'appropriate');
+	$this->assertEquals(null, $this->_highlight->getWidth(), 'no width yet');
 
 	$form['RandomHighlightOption']['isRandomHighlight'] = 1;
-
 	$result = $this->_handleRequestAfterEdit($form, $this->_album);
 	$this->assertEquals(array(array(), array()), $result, 'turn on');
 
@@ -85,13 +136,10 @@ class RandomHighlightOptionTest extends ItemEditOptionTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals('RandomHighlightDerivativeImage', $highlight->getEntityType(), 'on');
+	$this->assertEquals('|RandomHighlight|', $highlight->getOnLoadHandlers(), 'on');
 
-	list ($ret, $count) = RandomHighlightHelper::fetchItemCount();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	$this->assert($count > 0, 'item count');
+	/* Negative duration forces re-highlight; dummy toolkit sets width value */
+	$this->assertEquals(123, $highlight->getWidth(), 'highlight was repicked');
 
 	$result = $this->_handleRequestAfterEdit(array(), $this->_album);
 	$this->assertEquals(array(array(), array()), $result, 'turn off');
@@ -100,7 +148,19 @@ class RandomHighlightOptionTest extends ItemEditOptionTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals('GalleryDerivativeImage', $highlight->getEntityType(), 'off');
+	$this->assertEquals(null, $highlight->getOnLoadHandlers(), 'off');
+    }
+}
+
+/**
+ * Test toolkit
+ *
+ * @package RandomHighlight
+ * @subpackage PHPUnit
+ */
+class RandomHighlightTestToolkit extends GalleryToolkit {
+    function estimateDimensions(&$derivative, $source) {
+	$derivative->setWidth(123);
     }
 }
 ?>

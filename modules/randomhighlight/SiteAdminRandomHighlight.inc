@@ -54,13 +54,6 @@ class SiteAdminRandomHighlightController extends GalleryController {
 		}
 		$status['saved'] = 1;
 	    }
-	} else if(isset($form['action']['reset'])) {
-	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/RandomHighlightHelper.class');
-	    $ret = RandomHighlightHelper::resetRandomHighlightItems();
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    $status['reset'] = 1;
 	}
 
 	/* Figure out where to redirect upon success */
@@ -84,7 +77,6 @@ class SiteAdminRandomHighlightView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/RandomHighlightHelper.class');
 	if ($form['formName'] != 'SiteAdminRandomHighlight') {
 	    $form['formName'] = 'SiteAdminRandomHighlight';
 	    list ($ret, $duration) =
@@ -93,10 +85,6 @@ class SiteAdminRandomHighlightView extends GalleryView {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    $form['duration'] = round($duration / 60, 2);
-	}
-	list ($ret, $form['count']) = RandomHighlightHelper::fetchItemCount();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$template->setVariable('controller', 'randomhighlight:SiteAdminRandomHighlight');
