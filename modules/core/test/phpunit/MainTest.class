@@ -1,0 +1,115 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Alan Harder <alan.harder@sun.com>
+ */
+
+/**
+ * Test main.php
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ *
+ */
+class MainTest extends GalleryTestCase {
+
+    function MainTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    function setUp() {
+	global $gallery;
+	parent::setUp();
+
+	GalleryUtilities::putRequestVariable('view', 'maintest:FooView');
+	$_SERVER['REQUEST_URI'] = '/gallery2/phpunit_test.php?g2_view=maintest:FooView';
+	$_SERVER['HTTP_HOST'] = 'example.com';
+	$_SERVER['SERVER_PORT'] = 80;
+	$this->_urlGenerator = new GalleryUrlGenerator('phpunit_test.php');
+	$gallery->setUrlGenerator($this->_urlGenerator);
+
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryPluginHelper_medium.class');
+	GalleryPluginHelper_medium::setPluginInstance('module', 'maintest', new MainTestModule());
+
+	if (!defined('G2_EMBED')) {
+	    define('G2_EMBED', 1);
+	}
+	GalleryCoreApi::relativeRequireOnce('main.php');
+    }
+
+    function testUrlGeneratorRedirect() {
+	global $gallery;
+	$save = $gallery->getDebug();
+	$gallery->setDebug('buffered');
+	$_SERVER['REQUEST_URI'] = '/gallery2/phpunit_test.php/foo/bar';
+	$this->_urlGenerator->registerViewPrefix('foo', 'maintest:FooView');
+
+	list($ret, $g2Data) = _GalleryMain(false);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('http://example.com/gallery2/phpunit_test.php/foo/newbar',
+ 			    $g2Data['redirectUrl']);
+
+	$gallery->setDebug($save);
+    }
+
+    function testEmbedOnly() {
+	global $gallery;
+	$gallery->setConfig('mode.embed.only', true);
+
+	list($ret, $g2Data) = _GalleryMain(false);
+	$this->assertEquals(GALLERY_ERROR | ERROR_PERMISSION_DENIED, $ret->getErrorCode());
+    }
+
+    function testRenderShortcut() {
+	ob_start();
+	list($ret, $g2Data) = _GalleryMain(false);
+	$output = ob_get_contents();
+	ob_end_clean();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('foo!', $output);
+    }
+}
+
+class MainTestModule {
+    function isActive() {
+	return array(GalleryStatus::success(), true);
+    }
+}
+
+class FooViewView extends GalleryView {
+    function parseQueryString($queryString) {
+	return array(GalleryStatus::success(), '/newbar');
+    }
+
+    function renderShortcut() {
+	print "foo!";
+	return array(GalleryStatus::success(), true);
+    }
+}
+?>

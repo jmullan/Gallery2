@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -147,7 +147,7 @@ define('ERROR_LOCK_TIMEOUT', 0x00100000);
 define('ERROR_BAD_PLUGIN', 0x00200000);
 
 /**
- * The module you tried to use requires configuration 
+ * The module you tried to use requires configuration
  */
 define('ERROR_CONFIGURATION_REQUIRED', 0x00400000);
 
@@ -181,7 +181,7 @@ define('ERROR_UNKNOWN', 0x80000000);
  * Global storage container and utility class for Gallery
  *
  * This is a container for global information required for gallery
- * operation, such as configuration, session, user, etc.  
+ * operation, such as configuration, session, user, etc.
  *
  * @package GalleryCore
  * @subpackage Classes
@@ -230,7 +230,7 @@ class GalleryStatus {
      * @access private
      */
     var $_errorMessage;
-    
+
     /*
      * ****************************************
      *                 Methods
@@ -297,7 +297,7 @@ class GalleryStatus {
     /**
      * Return the filename the error was found in.
      *
-     * @return string 
+     * @return string
      */
     function getFileName() {
 	return $this->_fileName[0];
@@ -306,7 +306,7 @@ class GalleryStatus {
     /**
      * Return the line number the error was found at.
      *
-     * @return int 
+     * @return int
      */
     function getLineNumber() {
 	return $this->_lineNumber[0];
@@ -315,7 +315,7 @@ class GalleryStatus {
     /**
      * Return the actual error code
      *
-     * @return int 
+     * @return int
      */
     function getErrorCode() {
 	return $this->_errorCode;
@@ -329,7 +329,7 @@ class GalleryStatus {
     function getErrorMessage() {
 	return $this->_errorMessage;
     }
-    
+
     /**
      * Add a new code to our set of codes
      *
@@ -362,7 +362,7 @@ class GalleryStatus {
     /**
      * Is this an error?
      *
-     * @return boolean  
+     * @return boolean
      */
     function isError() {
 	return $this->_errorCode & GALLERY_ERROR;
@@ -371,18 +371,19 @@ class GalleryStatus {
     /**
      * Is this a success?
      *
-     * @return boolean  
+     * @return boolean
      */
     function isSuccess() {
 	return $this->_errorCode == GALLERY_SUCCESS;
     }
 
     /**
-     * Return the error as an HTML string 
+     * Return the error as an HTML string
      *
-     * @return string 
+     * @param boolean (optional) false to omit errorMessage
+     * @return string
      */
-    function getAsHtml() {
+    function getAsHtml($showMessage=true) {
 	list ($codes, $trace) = $this->_getAsArray();
 
 	/*
@@ -391,7 +392,7 @@ class GalleryStatus {
 	 * catastrophically wrong.  Use the $storage and $translator objects as
 	 * our acid test.  If we have one them we're ok to continue
 	 */
-	global $gallery;	
+	global $gallery;
 	$storage =& $gallery->getStorage();
 	$translator = $gallery->getTranslator();
 	if (isset($storage) && isset($translator)) {
@@ -403,16 +404,17 @@ class GalleryStatus {
 	} else {
 	    $formatter = new GalleryStatusFormatterHtml();
 	}
-	
-	return $formatter->format($codes, $trace, $this->_errorMessage);
+
+	return $formatter->format($codes, $trace, $showMessage ? $this->_errorMessage : '');
     }
 
     /**
      * Return the error as a plain text string delimited by newlines
      *
-     * @return string 
+     * @param boolean (optional) false to omit errorMessage
+     * @return string
      */
-    function getAsText() {
+    function getAsText($showMessage=true) {
 	list ($codes, $trace) = $this->_getAsArray();
 
 	list ($ret, $formatter) =
@@ -420,7 +422,7 @@ class GalleryStatus {
 	if ($ret->isError() || !isset($formatter)) {
 	    $formatter = new GalleryStatusFormatterText();
 	}
-	return $formatter->format($codes, $trace, $this->_errorMessage);
+	return $formatter->format($codes, $trace, $showMessage ? $this->_errorMessage : '');
     }
 
     /**
@@ -432,7 +434,7 @@ class GalleryStatus {
 	if ($errorCode == 0) {
 	    return array('GALLERY_SUCCESS');
 	}
-	
+
 	/* get_defined_constants() arrived in 4.1? */
 	if (function_exists('get_defined_constants')) {
 	    foreach (get_defined_constants() as $constantName => $constantValue) {
@@ -483,7 +485,7 @@ class GalleryStatus {
 				 'function' => empty($traceEntry['function']) ?
 				                     null : $traceEntry['function']);
 	    }
-	}  
+	}
 
 	return array($codes, $trace);
     }
