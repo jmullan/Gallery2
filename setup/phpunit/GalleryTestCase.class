@@ -65,20 +65,20 @@ class GalleryTestCase extends TestCase {
 
     function assert($boolean, $message=null) {
 	global $gallery;
-	$message .= $gallery->getDebugBuffer();
+	$message = $gallery->getDebugBuffer() . $message;
 	parent::assert($boolean, $message);
     }
 
     function assertEquals($expected, $actual, $message=null) {
 	global $gallery;
-	$message .= $gallery->getDebugBuffer();
+	$message = $gallery->getDebugBuffer() . $message;
 	parent::assertEquals($expected, $actual, $message);
     }
 
-    function assertRedirect($params, $redirectUrl) {
+    function assertRedirect($params, $redirectUrl, $message=null) {
 	global $gallery;
 	$urlGenerator = $gallery->getUrlGenerator();
-	$this->assertEquals(array('redirect' => $urlGenerator->generateUrl($params)), $redirectUrl);
+	$this->assertEquals(array('redirect' => $urlGenerator->generateUrl($params)), $redirectUrl, $message);
     }
     
     function tearDown() {
