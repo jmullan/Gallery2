@@ -285,30 +285,20 @@ class GallerySession_core {
 	    }
 
 	    if ($sessionInactivityTimeout > 0) {
-		$query = '
-                SELECT
-                  [GallerySession::sessionId]
-                FROM
+		$statement = '
+                DELETE FROM
                   [GallerySession]
                 WHERE
-                  NOW() - [GallerySession::creationTime] > ?
+                  (UNIX_TIMESTAMP(NOW()) - [GallerySession::creationTime]) > ?
                   OR
-                  NOW() - [GallerySession::lastModificationTime] > ?
+                  (UNIX_TIMESTAMP(NOW()) - [GallerySession::lastModificationTime]) > ?
                 ';
 		
-		/* Find any sessions that are expired */
-		list ($ret, $searchResults) =
-		    $gallery->search($query, array($lifetime, $sessionInactivityTimeout));
+		/* Delete any sessions that are expired */
+		$storage =& $gallery->getStorage();
+		$ret = $storage->execute($statement, array($lifetime, $sessionInactivityTimeout));
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
-		}
-
-		/* And remove them */
-		while ($result = $searchResults->nextResult()) {
-		    $ret = $this->removeMapEntry(array('sessionId' => $result[0]));
-		    if ($ret->isError()) {
-			return $ret->wrap(__FILE__, __LINE__);
-		    }
 		}
 	    }
 	}

@@ -16,20 +16,16 @@
     {/if}
 
 
-    <a href="http://validator.w3.org/check/referer">
-      <img border="0" 
+    <a href="http://validator.w3.org/check/referer"><img border="0" 
 	   src="{gallery->url href="images/html401.gif"}"
            alt="{gallery->text text="This page is valid HTML 4.01"}" 
-           height="15" width="80">
-    </a>
+           height="15" width="80"></a>
 
-    <a href="http://gallery.sourceforge.net">
-      <img border="0" 
+    <a href="http://gallery.sourceforge.net"><img border="0" 
 	   src="{gallery->url href="images/gallery.gif"}"
            alt="{gallery->text text="Powered by Gallery %s" arg1=$gallery.version}"
            height="15"  
-           width="80">
-    </a>
+           width="80"></a>
 
     {if !empty($master.debug)}
     <!-- Debug output -->
