@@ -112,7 +112,7 @@ class ItemAdminView extends GalleryView {
 	/* If we have a specific sub view, render it now */
 	$subViewName = GalleryUtilities::getRequestVariables('subView');
 	if (empty($subViewName) && !empty($subViewChoices)) {
-	    $subViewName = 'core:ItemEditItem';
+	    $subViewName = 'core:ItemEdit';
 	}
 
 	list ($ret, $subView) = GalleryView::loadView($subViewName);
