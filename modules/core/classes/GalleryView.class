@@ -57,7 +57,7 @@ class GalleryView {
      */
 
     /**
-     * Initialize the veiw
+     * Initialize the view
      *
      * @param string the name of the module
      * @param string the path to the template directory
@@ -163,6 +163,11 @@ class GalleryView {
 
 	$moduleDir = $gallery->getConfig('code.gallery.modules') . $module . '/';
 	$fileName = $moduleDir . $class . '.inc';
+
+	$platform = $gallery->getPlatform();
+	if (!$platform->file_exists($fileName)) {
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	}
 
 	$ret = GalleryUtilities::requireOnce($fileName);
 	if ($ret->isError()) {
