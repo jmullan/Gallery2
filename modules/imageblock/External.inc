@@ -39,6 +39,10 @@ class ExternalView extends GalleryView {
 	$SlideShow = array();
 	$startId = null;
 
+	// Force UrlGenerator to not add session id into urls..
+	$session =& $gallery->getSession();
+	$session->_isUsingCookies = true;
+
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'imageblock');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
