@@ -236,7 +236,7 @@ class GalleryItemHelper_medium {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$ret = $newItem->create($albumId, $fileName, $mimeType, substr($itemName, 0, 64));
+	$ret = $newItem->create($albumId, $fileName, $mimeType, substr($itemName, 0, 128));
 	if ($ret->isError()) {
 	    if ($ret->getErrorCode() & ERROR_BAD_DATA_TYPE) {
 		/* Well, it wasn't what we thought it was.  Make it an unknown */
