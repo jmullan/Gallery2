@@ -299,20 +299,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	 */
 	
 	
-	$this->assertEquals(array($testAlbum->getTitle(),                // title
-				  $testAlbum->getSummary(),              // summary
-				  $testAlbum->getKeywords(),             // keywords
-				  $testAlbum->getDescription(),          // description
-				  $testAlbum->getownerId(),              // owner
-				  $testAlbum->getcreationTimestamp(),    // album creation
-				  $testAlbum->getviewedSinceTimestamp(), // clicks counted since
-				  $viewCount,                            // count of clicks
-				  $derivativePreferences,                // thumb and resized sizing preferences
-				  $rows,                                 // rows
-				  $cols                                  // cols
-				  
-				  ),
-			    array('Test Album Three',                    // title
+	$this->assertEquals(array('Test Album Three',                    // title
 				  NULL,                                  // summary
 				  NULL,                                  // keywords
 				  '[b]No description[/b]',               // description
@@ -333,6 +320,19 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 					),
 				  3,                                     // rows
 				  NULL                                   // cols
+				  ),
+			    array($testAlbum->getTitle(),                // title
+				  $testAlbum->getSummary(),              // summary
+				  $testAlbum->getKeywords(),             // keywords
+				  $testAlbum->getDescription(),          // description
+				  $testAlbum->getownerId(),              // owner
+				  $testAlbum->getcreationTimestamp(),    // album creation
+				  $testAlbum->getviewedSinceTimestamp(), // clicks counted since
+				  $viewCount,                            // count of clicks
+				  $derivativePreferences,                // thumb and resized sizing preferences
+				  $rows,                                 // rows
+				  $cols                                  // cols
+				  
 				  )
 			    );
 	/* albumitem Object
@@ -400,16 +400,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals(array($testItem->getTitle(),                 // title
-				  $testItem->getSummary(),               // summary
-				  $testItem->getKeywords(),              // keywords
-				  $testItem->getDescription(),           // description
-				  $testItem->getownerId(),               // owner
-				  $testItem->getcreationTimestamp(),     // album creation
-				  $testItem->getviewedSinceTimestamp(),  // clicks counted since
-				  $itemViewCount[$testItem->getId()]         // count of clicks
-				  ),
-			    array('&iexcl;Time to migrate!',             // title
+	$this->assertEquals(array('&#161;Time to migrate!',              // title
 				  NULL,                                  // summary
 				  'stump grinder chipper shredder',      // keywords
 				  'chipper',                             // description
@@ -417,6 +408,15 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 				  1056015116,                            // album creation
 				  1056015077,                            // clicks counted since
 				  2                                      // count of clicks
+				  ),
+			    array($testItem->getTitle(),                 // title
+				  $testItem->getSummary(),               // summary
+				  $testItem->getKeywords(),              // keywords
+				  $testItem->getDescription(),           // description
+				  $testItem->getownerId(),               // owner
+				  $testItem->getcreationTimestamp(),     // album creation
+				  $testItem->getviewedSinceTimestamp(),  // clicks counted since
+				  $itemViewCount[$testItem->getId()]         // count of clicks
 				  )
 			    );
 	
