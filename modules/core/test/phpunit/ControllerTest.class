@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album controllerer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -50,6 +50,7 @@ class ControllerTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	$this->assert(isset($controller));
     }
 
     function testLoadControllerFail() {
@@ -60,6 +61,18 @@ class ControllerTest extends GalleryTestCase {
 	} else {
 	    $this->assert(false, 'The controller of a deactivated module should not load.');
 	}
+    }
+
+    function testLoadConfigurationController() {
+	/*
+	 * We can load the config controller even though the module is deactivated
+	 * because we're an admin.
+	 */
+	list ($ret, $controller) = GalleryController::loadController('controllertest:ConfigView');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(isset($controller));
     }
 }
 
@@ -79,5 +92,7 @@ class ControllerTestModule {
 	return 'controllertest:ConfigView';
     }
 }
+
+class ConfigViewController extends GalleryController { }
 
 ?>

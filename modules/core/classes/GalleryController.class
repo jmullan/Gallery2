@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album controllerer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -114,7 +114,6 @@ class GalleryController {
      *
      * Be very security conscious about checking the inputs for possible misuse
      *
-     *
      * @param string a controller name (eg 'core:Logout')
      * @return array object GalleryStatus a status code
      *               object GalleryController a controller
@@ -153,26 +152,28 @@ class GalleryController {
 	    }
 	}
 
-	$fileName = dirname(__FILE__) . '/../../../modules/' . $module . '/' . $class . '.inc';
-
-	$platform = $gallery->getPlatform();
-	if (!$platform->file_exists($fileName)) {
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
-	}
-
-	$ret = GalleryUtilities::requireOnce($fileName);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
 	$controllerClassName = $class . 'Controller';
 	if (!class_exists($controllerClassName)) {
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
-					      "Class $controllerClassName not defined in " .
-					      "$controllerName"),
-			 null);
+	    $fileName = dirname(__FILE__) . '/../../../modules/' . $module . '/' . $class . '.inc';
+
+	    $platform = $gallery->getPlatform();
+	    if (!$platform->file_exists($fileName)) {
+		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	    }
+
+	    $ret = GalleryUtilities::requireOnce($fileName);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    if (!class_exists($controllerClassName)) {
+		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+						  "Class $controllerClassName not defined in " .
+						  "$controllerName"),
+			     null);
+	    }
 	}
-	
+
 	return array(GalleryStatus::success(), new $controllerClassName);
     }
 }
