@@ -71,7 +71,7 @@ class ImageFrameImpl extends ImageFrameInterface_1_1 {
     function init(&$template, $frameIds) {
 	static $simpleFrames;
 	if (!isset($simpleFrames)) {
-	    $simpleFrames = array('none' => array('type' => 'none'),
+	    $simpleFrames = array('none' => array('type' => 'style', 'style' => 'border:0px'),
 				  'solid' => array('type' => 'style',
 						   'style' => 'border:1px solid black'));
 	    $smarty =& $template->_getSmarty();

@@ -9,7 +9,7 @@
 {/if}
 {counter name="ImageFrame_counter" assign="IF_count"}
 {assign var="objectId" value="IFid`$IF_count`"}
-{if !isset($data) || $data.type=='none' || $data.type=='style'}
+{if !isset($data) || $data.type=='style'}
   {$content|replace:"%ID%":$objectId|replace:"%CLASS%":"ImageFrame_`$frame`"}
 {elseif $data.type=='image'}
   <table class="ImageFrame_{$frame}" border="0" cellspacing="0" cellpadding="0">
