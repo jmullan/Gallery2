@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -34,7 +34,7 @@
  * @subpackage UserInterface
  */
 class AdminCoreController extends GalleryController {
-    
+
     /**
      * @see GalleryController::handleRequest
      */
@@ -70,7 +70,7 @@ class AdminCoreController extends GalleryController {
 		$error[] = 'form[error][uploadLocalServer][newDir][notReadable]';
 	    } else if (!$platform->is_dir($path)) {
 		$error[] = 'form[error][uploadLocalServer][newDir][notADirectory]';
-	    } 
+	    }
 
 	    if (empty($error)) {
 		if (!in_array($path, $localServerDirList)) {
@@ -82,7 +82,7 @@ class AdminCoreController extends GalleryController {
 			unset($localServerDirList[$i]);
 		    }
 		}
-		
+
 		$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'uploadLocalServer.dirs', join(',', $localServerDirList));
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -132,13 +132,21 @@ class AdminCoreController extends GalleryController {
 			   'session.lifetime',
 			   'session.inactivityTimeout',
 			   'misc.useShortUrls',
-			   'misc.markup') as $key) {
+			   'misc.markup',
+			   'smtp.host', 'smtp.from', 'smtp.username') as $key) {
 		list ($outer, $inner) = explode('.', $key);
 		if (isset($form[$outer][$inner])) {
 		    $ret = GalleryCoreApi::setPluginParameter('module', 'core', $key, $form[$outer][$inner]);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
+		}
+	    }
+	    if (isset($form['smtp']['password'])) {
+		$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'smtp.password',
+							  base64_encode($form['smtp']['password']));
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 	    }
 	    $status['saved'] = 1;
@@ -172,12 +180,12 @@ class AdminCoreView extends GalleryView {
      */
     function loadTemplate(&$template, &$form) {
 	global $gallery;
-	
+
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	    
+
 	if ($form['formName'] != 'AdminCore') {
 	    /* Load up our form data */
 	    foreach (array('permissions.directory',
@@ -188,7 +196,9 @@ class AdminCoreView extends GalleryView {
 			   'session.lifetime',
 			   'session.inactivityTimeout',
 			   'misc.useShortUrls',
-			   'misc.markup') as $key) {
+			   'misc.markup',
+			   'smtp.host', 'smtp.from',
+			   'smtp.username', 'smtp.password') as $key) {
 
 		list ($ret, $value) =
 		    GalleryCoreApi::getPluginParameter('module', 'core', $key);
@@ -229,7 +239,7 @@ class AdminCoreView extends GalleryView {
 	}
 	$languageList = array();
 	$languageList[''] = $module->translate('&laquo; None &raquo;');
-	
+
 	$translator =& $gallery->getTranslator();
 	$supportedLanguages = $translator->getSupportedLanguages();
 	foreach ($supportedLanguages as $language => $countryList) {
@@ -276,7 +286,7 @@ class AdminCoreView extends GalleryView {
 					 'arg1' => $weeks));
 	}
 	$sessionTimeList[25 * 365 * 86400] = $module->translate('forever');
-	
+
 	/* Set up our permission selection lists */
 	$permissionsDirectoryList = array('700', '750', '755', '770', '775', '777');
 	$permissionsFileList = array('600', '640', '644', '660', '664', '666');
@@ -305,7 +315,7 @@ class AdminCoreView extends GalleryView {
 	$AdminCore['useShortUrlsList'] = $useShortUrlsList;
 	$AdminCore['embeddedMarkupList'] = $embeddedMarkupList;
 	$AdminCore['shortUrlTestItemId'] = $rootId;
-	
+
 	$template->setVariable('controller', 'core:AdminCore');
 	$template->setVariable('AdminCore', $AdminCore);
 

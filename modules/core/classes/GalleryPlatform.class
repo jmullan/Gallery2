@@ -1021,7 +1021,24 @@ class GalleryPlatform {
 	    $gallery->debug("mail($to, $subject, $body, $headers)");
 	}
 
-	if (isset($headers)) {
+	$config = array();
+	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
+	if ($ret->isSuccess()) {
+	    foreach ($params as $key => $value) {
+		if (strncmp($key, 'smtp.', 5) == 0) {
+		    $config[$key] = $value;
+		}
+	    }
+	}
+
+	if (!empty($config['smtp.host'])) {
+	    GalleryCoreApi::relativeRequireOnce('lib/smtp/smtp.php');
+	    $ret = smtpmail($config, $to, $subject, $body, $headers);
+	    if ($ret->isError() && $gallery->getDebug()) {
+		$gallery->debug("smtpmail error: " . $ret->getAsText());
+	    }
+	    return $ret->isSuccess();
+	} else if (isset($headers)) {
 	    return mail($to, $subject, $body, $headers);
 	} else {
 	    return mail($to, $subject, $body);

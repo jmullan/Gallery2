@@ -270,13 +270,62 @@
     <table class="gbDataTable">
       <tr>
 	<td>
-	  {g->text text="Markup: "}
+	  {g->text text="Markup"}
 	</td>
 	
 	<td>
 	  <select name="{g->formVar var="form[misc][markup]"}">
 	      {html_options options=$AdminCore.embeddedMarkupList selected=$form.misc.markup}
 	  </select>
+	</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="gbAdmin">
+    <h3 class="giTitle">
+      {g->text text="Email"}
+    </h3>
+    
+    <p class="giDescription">
+      {g->text text="By default Gallery uses PHP's built in mail function to send email which requires no configuration.  To use a smtp/mail server that requires authentication fill in the values below."}
+    </p>
+
+    <table class="gbDataTable">
+      <tr>
+	<td>
+	  {g->text text="Server"}
+	</td>
+	<td>
+	  <input type="text" size="20"
+	   name="{g->formVar var="form[smtp][host]"}" value="{$form.smtp.host}"/>
+	</td>
+      </tr>
+      <tr>
+	<td>
+	  {g->text text="Username"}
+	</td>
+	<td>
+	  <input type="text" size="20"
+	   name="{g->formVar var="form[smtp][username]"}" value="{$form.smtp.username}"/>
+	</td>
+      </tr>
+      <tr>
+	<td>
+	  {g->text text="Password"}
+	</td>
+	<td>
+	  <input type="password" size="20"
+	   name="{g->formVar var="form[smtp][password]"}" value="{$form.smtp.password}"/>
+	</td>
+      </tr>
+      <tr>
+	<td>
+	  {g->text text="SMTP From Address"}
+	</td>
+	<td>
+	  <input type="text" size="20"
+	   name="{g->formVar var="form[smtp][from]"}" value="{$form.smtp.from}"/>
 	</td>
       </tr>
     </table>
