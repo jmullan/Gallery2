@@ -61,7 +61,13 @@
 
     {assign var="childrenInColumnCount" value=0}
     <div class="gbBlock">
-    <table id="gsThumbMatrix" width="100%"><tr valign="top">
+    <table id="gsThumbMatrix" width="100%">
+      <colgroup>
+	{section name="colgroup" loop=$layout.children max=$layout.columnSize}
+	  <col width="1*"/>
+	{/section}
+      </colgroup>
+      <tr valign="top">
       {foreach from=$layout.children item=child}
 
       {* Move to a new row *}
@@ -71,8 +77,7 @@
       {/if}
 
       {assign var=childrenInColumnCount value="`$childrenInColumnCount+1`"}
-      <td class="{if $child.canContainChildren}giAlbumCell gcBackground1{else}giItemCell{/if}"
-	  width="1*">
+      <td class="{if $child.canContainChildren}giAlbumCell gcBackground1{else}giItemCell{/if}">
 	{if $child.canContainChildren}
 	  {assign var=frameType value="albumFrame"}
 	{else}
