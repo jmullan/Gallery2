@@ -26,7 +26,7 @@ if (!file_exists(dirname(__FILE__) . '/config.php') ||
 }
 
 /* Go! */
-list($ret, $ignore) = GalleryMain(false);
+list($ret, $isDone, $headHtml, $bodyHtml) = GalleryMain( defined('G2_MODE_EMBEDDED') );
 
 /* Save our session */
 if ($ret->isSuccess()) {
@@ -39,9 +39,7 @@ if ($ret->isSuccess()) {
 if ($ret->isSuccess()) {
     $storage =& $gallery->getStorage();
     $ret = $storage->commitTransaction();
-    if ($ret->isError()) {
-	return $ret->wrap(__FILE__, __LINE__);
-    }
+    // Fall through to error handling below..
 }
 
 /*
@@ -57,6 +55,7 @@ if ($ret->isError()) {
 	print $gallery->getDebugBuffer();
 	print '</pre>';
     }
+    $isDone = true;
 
     /* Nuke our transaction, too */
     $storage =& $gallery->getStorage();
@@ -71,7 +70,7 @@ function GalleryMain($returnHtml=false) {
     require_once(dirname(__FILE__) . '/init.php');
     $ret = GalleryInitFirstPass();
     if ($ret->isError()) {
-	return array($ret->wrap(__FILE__, __LINE__), null);
+	return array($ret->wrap(__FILE__, __LINE__), null, null, null);
     }
 
     /*
@@ -87,7 +86,7 @@ function GalleryMain($returnHtml=false) {
     $urlGenerator = $gallery->getUrlGenerator();
     list ($ret, $redirectUrl) = $urlGenerator->parseCurrentUrl();
     if ($ret->isError()) {
-	return array($ret->wrap(__FILE__, __LINE__), null);
+	return array($ret->wrap(__FILE__, __LINE__), null, null, null);
     }
 
     /* Figure out the target module/controller */
@@ -96,23 +95,23 @@ function GalleryMain($returnHtml=false) {
     if (!empty($viewName)) {
 	list ($ret, $view) = GalleryView::loadView($viewName);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null, null);
 	}
 
 	list ($ret, $responseComplete) = $view->renderShortcut();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null, null);
 	}
 	
 	if ($responseComplete) {
 	    // We're done
-	    return array(GalleryStatus::success(), null);
+	    return array(GalleryStatus::success(), true, null, null);
 	}
     }
 
     $ret = GalleryInitSecondPass();
     if ($ret->isError()) {
-	return array($ret->wrap(__FILE__, __LINE__), null);
+	return array($ret->wrap(__FILE__, __LINE__), null, null, null);
     }
     
     /* Initialize our container for template data */
@@ -128,7 +127,7 @@ function GalleryMain($returnHtml=false) {
 	    $redirectUrl = str_replace('&amp;', '&', $redirectUrl);
 	    
 	    header("Location: $redirectUrl");
-	    return array(GalleryStatus::success(), null);
+	    return array(GalleryStatus::success(), true, null, null);
 	} else {
 	    $main['redirectUrl'] = $redirectUrl;
 	}
@@ -140,7 +139,7 @@ function GalleryMain($returnHtml=false) {
 	require_once(dirname(__FILE__) . '/modules/core/classes/GalleryController.class');
 	list ($ret, $controller) = GalleryController::loadController($controllerName);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null, null);
 	}
 
 	/* Get our form and return variables */
@@ -149,7 +148,7 @@ function GalleryMain($returnHtml=false) {
 	/* Let the controller handle the input */
 	list ($ret, $results) = $controller->handleRequest($form);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null, null);
 	}
 
 	/* Check to make sure we got back everything we want */
@@ -157,8 +156,9 @@ function GalleryMain($returnHtml=false) {
 	    !isset($results['error']) ||
 	    (!isset($results['redirect']) && !isset($results['delegate']))) {
 	    $gallery->debug_r($results);
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
-					"Controller results are missing status, error or (redirect,delegate)");
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+					"Controller results are missing status, error or (redirect,delegate)"),
+			 null, null, null);
 	}
 
 	/* Try to return if the controller instructs it */
@@ -179,7 +179,7 @@ function GalleryMain($returnHtml=false) {
 		$session =& $gallery->getSession();
 		$results['redirect']['statusId'] = $session->putStatus($results['status']);
 		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret->wrap(__FILE__, __LINE__), null, null, null);
 		}
 	    }
 	    
@@ -196,7 +196,7 @@ function GalleryMain($returnHtml=false) {
 		$redirectUrl = str_replace('&amp;', '&', $redirectUrl);
 		
 		header("Location: $redirectUrl");
-		return array(GalleryStatus::success(), null);
+		return array(GalleryStatus::success(), true, null, null);
 	    } else {
 		$main['redirectUrl'] = $redirectUrl;
 	    }
@@ -239,10 +239,10 @@ function GalleryMain($returnHtml=false) {
 	    if ($ret->getErrorCode() & ERROR_BAD_PARAMETER) {
 		list ($ret, $view) = GalleryView::loadView('core:SecurityViolation');
 		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret->wrap(__FILE__, __LINE__), null, null, null);
 		}
 	    } else {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null, null);
 	    }
 	}
 
@@ -280,7 +280,7 @@ function GalleryMain($returnHtml=false) {
 			$redirectUrl = str_replace('&amp;', '&', $redirectUrl);
 			
 			header("Location: $redirectUrl");
-			return array(GalleryStatus::success(), null);
+			return array(GalleryStatus::success(), true, null, null);
 		    } else {
 			$main['redirectUrl'] = $redirectUrl;
 		    }
@@ -310,7 +310,7 @@ function GalleryMain($returnHtml=false) {
 	require_once(dirname(__FILE__) . '/modules/core/classes/GalleryTheme.class');
 	list ($ret, $theme) = GalleryTheme::loadTheme();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null, null);
 	}
 
 	require_once(dirname(__FILE__) . '/modules/core/classes/GalleryTemplate.class');
@@ -336,7 +336,7 @@ function GalleryMain($returnHtml=false) {
 
 	list ($ret, $markup) = GalleryCoreApi::getPluginParameter('module', 'core', 'misc.markup');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null, null);
 	}
 	$main['markupType'] = $markup;
 
@@ -360,25 +360,31 @@ function GalleryMain($returnHtml=false) {
 	    $templatePath = 'gallery:templates/error.tpl';
 	} else if (isset($main['html'])) {
 	    $templatePath = 'gallery:templates/standalone.tpl';
-	} else {
-	    $templatePath = 'gallery:templates/global.tpl';
 	}
 
-	/* Write directly for speed */
-	if ($returnHtml) {
-	    list ($ret, $html) = $template->fetch($templatePath);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+	if (isset($templatePath) || !$returnHtml) {
+	    if (!isset($templatePath)) {
+		$templatePath = 'gallery:templates/global.tpl';
 	    }
-	    return array(GalleryStatus::success(), $html);
-	} else {
+	    /* Write directly for speed */
 	    $ret = $template->display($templatePath);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null, null);
 	    }
+	    return array(GalleryStatus::success(), true, null, null);
+	} else {
+	    list ($ret, $headHtml) = $template->fetch('gallery:templates/embedHead.tpl');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null, null);
+	    }
+	    list ($ret, $bodyHtml) = $template->fetch('gallery:templates/embedBody.tpl');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null, null);
+	    }
+	    return array(GalleryStatus::success(), false, $headHtml, $bodyHtml);
 	}
     }
 
-    return array(GalleryStatus::success(), null);
+    return array(GalleryStatus::success(), true, null, null);
 }
 ?>
