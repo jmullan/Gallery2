@@ -75,6 +75,7 @@ $imEnvironment[] = array(
 		'image/tiff',
 		'image/bmp',
 		'application/pdf',
+		'application/postscript',
 	),
 	'binaries' => array(
 		'animate',
@@ -130,6 +131,8 @@ test.pdf=>/tmp/magicFnmgfF[1] 526x706 PseudoClass 256c 29kb PDF 1s',
 		'test.svg' => 'identify: no delegate for this image format (SVG).
 identify: Missing an image file name [No such file or directory].',
 		'test.tif' => 'test.tif 50x50 PseudoClass 256c 2729b TIFF 1s',
+		'test.eps' => 'test.eps[0] 43x18 PseudoClass 2c 3141b PS 1s
+test.eps[1] 43x18 PseudoClass 2c 3141b PS 1s',
 		'testProfile.jpg' => 'testProfile.jpg 40x30 DirectClass 29kb JPEG 1s',
 	),
 );
@@ -151,6 +154,7 @@ $imEnvironment[] = array(
 		'image/svg+xml',
 		'image/bmp',
 		'application/pdf',
+		'application/postscript',
 	),
 	'binaries' => array(
 		'animate',
@@ -200,6 +204,7 @@ test.pdf[1] PDF 612x792 DirectClass 8-bit 2840kb 0.0u 0:01',
 		'test.png' => 'test.png PNG 50x50 DirectClass 8-bit 730b 0.0u 0:01',
 		'test.svg' => 'test.svg SVG 595x841+0+0 DirectClass 16-bit 7.8kb 0.08u 0:01',
 		'test.tif' => 'test.tif TIFF 50x50 PseudoClass 256c 8-bit 2729b 0.0u 0:01',
+		'test.eps' => 'test.eps PS 43x18 DirectClass 8-bit 2388b 0.0u 0:01',
 		'testProfile.jpg' => 'testProfile.jpg JPEG 40x30 DirectClass 8-bit 30585b 0.0u 0:01',
 	),
 );
@@ -225,6 +230,7 @@ $imEnvironment[] = array(
 		'image/svg+xml',
 		'image/bmp',
 		'application/pdf',
+		'application/postscript',
 	),
 	'binaries' => array(
 		'animate',
@@ -289,6 +295,7 @@ test.pdf[1] PDF 612x792 612x792+0+0 PseudoClass 256c 947kb 0.030u 0:01',
 		'test.png' => 'test.png PNG 50x50 DirectClass 730 0.000u 0:01',
 		'test.svg' => 'test.svg SVG 595x842 DirectClass 8kb 0.020u 0:01',
 		'test.tif' => 'test.tif TIFF 50x50 PseudoClass 256c 3kb 0.000u 0:01',
+		'test.eps' => 'test.eps PS 43x18 43x18+0+0 PseudoClass 2c 170 0.000u 0:01',
 		'testProfile.jpg' => 'testProfile.jpg JPEG 40x30 DirectClass 30kb 0.010u 0:01',
 	),
 );
@@ -310,6 +317,7 @@ $imEnvironment[] = array(
 		'image/svg+xml',
 		'image/bmp',
 		'application/pdf',
+		'application/postscript',
 	),
 	'binaries' => array(
 		'animate',
@@ -365,6 +373,7 @@ test.pdf[1] PDF 612x792+0+0 PseudoClass 256c 8-bit 946.8k 0.030u 0:01',
 		'test.png' => 'test.png PNG 50x50+0+0 DirectClass 8-bit 730.0 0.010u 0:01',
 		'test.svg' => 'test.svg SVG 595x841+0+0 DirectClass 16-bit 7.8kb 0.008u 0:01',
 		'test.tif' => 'test.tif TIFF 50x50+0+0 PseudoClass 256c 8-bit 2.7k 0.000u 0:01',
+		'test.eps' => 'test.eps PS 43x18+0+0 PseudoClass 2c 8-bit 170.0 0.000u 0:01',
 		'testProfile.jpg' => 'testProfile.jpg JPEG 40x30+0+0 DirectClass 8-bit 29.9k 0.000u 0:01',
 	),
 );

@@ -164,7 +164,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	
-	if ($mimeType == 'image/tiff' || $mimeType == 'application/pdf') {
+	if ($mimeType == 'image/tiff' || $mimeType == 'application/pdf' || $mimeType == 'application/postscript') {
 	    $src = $src . '[0]';
 	}
 	
@@ -391,7 +391,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
-	    $wantToConvert = array('image/tiff', 'image/svg+xml', 'application/pdf', 'image/jp2', 'image/jpx');
+	    $wantToConvert = array('image/tiff', 'image/svg+xml', 'application/pdf', 'image/jp2', 'image/jpx', 'application/postscript');
 	    $canConvert = array_intersect($wantToConvert, $environment['mimeTypes']);
 
 	    $this->assertEquals(array(
@@ -738,6 +738,14 @@ class ImageMagickToolkitTestPlatform {
 
     function realpath($path) {
 	return $this->_platform->realpath($path);
+    }
+
+    function chdir($path) {
+	return true;
+    }
+
+    function getcwd() {
+	return '/tmp';
     }
 }
 

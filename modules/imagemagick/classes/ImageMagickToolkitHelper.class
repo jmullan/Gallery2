@@ -60,7 +60,8 @@ class ImageMagickToolkitHelper {
 	 * Same for PDF.
 	 */
 	$convertToJpegMimeTypes = array_intersect(
-		array('image/tiff', 'image/svg+xml', 'application/pdf', 'image/jp2', 'image/jpx'),
+		array('image/tiff', 'image/svg+xml', 'application/pdf',
+		      'image/jp2', 'image/jpx', 'application/postscript'),
 		$mimeTypes
 	);
 	if (!empty($convertToJpegMimeTypes)) {
@@ -205,10 +206,13 @@ class ImageMagickToolkitHelper {
 	$tests[] = array('mime' => array('image/svg+xml'), 'file' => 'test.svg', 'expected' => '(SVG.*DirectClass|DirectClass.*SVG)');
 	$tests[] = array('mime' => array('image/bmp'), 'file' => 'test.bmp', 'expected' => '(BMP.*PseudoClass|PseudoClass.*BMP)');
 	$tests[] = array('mime' => array('application/pdf'), 'file' => 'test.pdf', 'expected' => '(PDF.*(Pseudo|Direct)Class|PseudoClass.*PDF)');
+	$tests[] = array('mime' => array('application/postscript'), 'file' => 'test.eps', 'expected' => '(PS.*(Pseudo|Direct)Class|PseudoClass.*PS)');
 
 	$platform = $gallery->getPlatform();
 	$slash = $platform->getDirectorySeparator();
 	$dataPath = dirname(__FILE__) . "${slash}..${slash}test${slash}data${slash}";
+	$oldPwd = $platform->getcwd();
+	$platform->chdir($gallery->getConfig('data.gallery.tmp'));
 
 	$successCount = 0;
 	$mimeTypes = array();
@@ -232,6 +236,7 @@ class ImageMagickToolkitHelper {
 	    }
 	}
 
+	$platform->chdir($oldPwd);
 	if ($successCount == 0) {
 	    return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__), null);
 	}
@@ -281,6 +286,12 @@ class ImageMagickToolkitHelper {
 
 	$slash = $platform->getDirectorySeparator();
 	$dataPath = dirname(__FILE__) . "${slash}..${slash}test${slash}data${slash}";
+
+	/* Change to tmp, because IM5 sometimes wants to write stuff
+	 * to current working directory (e.g. on pdf/eps)
+	 */
+	$oldCwd = $platform->getcwd();
+	$platform->chdir($gallery->getConfig('data.gallery.tmp'));
 
 	/* Test each binary */
 	$testArray = array();
@@ -433,7 +444,7 @@ class ImageMagickToolkitHelper {
 		break;
 	    }
 	}
-
+	$platform->chdir($oldCwd);
 
 	return array(GalleryStatus::success(), $testArray);
     }
