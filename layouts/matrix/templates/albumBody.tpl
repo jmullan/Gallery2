@@ -194,10 +194,9 @@
       <div class="gbNavBar">
         {include file="gallery:layouts/matrix/templates/itemNavigator.tpl"}
       </div>
+      {if !empty($layout.jumprange)}
       <ul class="giHorizontalLinks">
-        {if !empty($layout.jumprange)}
 	<li>{g->text text="Page:"}</li>
-	{/if}
         {assign var="lastPage" value=0}
         {foreach name=jumprange from=$layout.jumprange item=page}
         {if ($page - $lastPage >= 2)}
@@ -222,6 +221,7 @@
         {assign var="lastPage" value=$page}
         {/foreach}
       </ul>
+      {/if}
     </div>
   </div>
 </div>
