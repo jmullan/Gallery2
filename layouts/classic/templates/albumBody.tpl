@@ -79,7 +79,7 @@
 	      {imageframe frame=$layout.$frameType}
 		<a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$child.id`"}">
 		{g->image item=$child image=$child.thumbnail id="%ID%" class="%CLASS%"}
-		</a}
+		</a>
 	      {/imageframe}
 	    {else}
 	      <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$child.id`"}">
