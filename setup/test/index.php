@@ -105,13 +105,12 @@ function runTest($testName) {
     if ($class->requireDatabaseConnection()) {
 	/* Set up our storage */
 	$storage = new DatabaseStorage();
-	$config = $gallery->getConfig();
-	$storage->setType($config->get('storage.database.type'));
-	$storage->setHostname($config->get('storage.database.hostname'));
-	$storage->setUsername($config->get('storage.database.username'));
-	$storage->setPassword($config->get('storage.database.password'));
+	$storage->setType($gallery->getConfig('storage.database.type'));
+	$storage->setHostname($gallery->getConfig('storage.database.hostname'));
+	$storage->setUsername($gallery->getConfig('storage.database.username'));
+	$storage->setPassword($gallery->getConfig('storage.database.password'));
 	if ($class->useDefaultDatabase()) {
-	    $storage->setDatabase($config->get('storage.database.database'));
+	    $storage->setDatabase($gallery->getConfig('storage.database.database'));
 	}
 	$ret = $storage->connect();
 	if ($ret->isError()) {
