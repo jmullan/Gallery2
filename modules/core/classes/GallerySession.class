@@ -166,6 +166,8 @@ class GallerySession {
 	$currentRemoteIdentifier = $this->_getRemoteIdentifier();
 
 	if (!isset($this->_remoteIdentifier) || $this->_remoteIdentifier != $currentRemoteIdentifier) {
+	    $gallery->debug(sprintf('Session hijack detected: saved: %s vs. current: %s',
+				    $this->_remoteIdentifier, $currentRemoteIdentifier));
 	    /*
 	     * The session was not created from this browser address, so reset
 	     * our data to prevent hijacking.
