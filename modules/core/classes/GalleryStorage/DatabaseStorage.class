@@ -895,7 +895,7 @@ class DatabaseStorage extends GalleryStorage {
      * @return object GalleryStatus a status code
      */
     function releaseLock($lock) {
-	return $this->_releaseLockById($lock->getId());
+	return $this->_releaseLockById($lock->getAllIds());
     }
 
     /**
@@ -903,17 +903,22 @@ class DatabaseStorage extends GalleryStorage {
      * releaseLock()
      *
      * @access private
-     * @param int the lock id
+     * @param mixed the lock id, or an array of lock ids
      * @return object GalleryStatus a status code
      */
-    function _releaseLockById($lockId) {
+    function _releaseLockById($lockIds) {
+	if (!is_array($lockIds)) {
+	    $lockIds = array($lockIds);
+	}
+	
 	/* Get the true name of the lock table */
 	$lockTable = $this->_prefixTableName("Lock");
 
 	$lockIdCol = $this->_prefixColumnName('lockId');
+	$markers = $this->_makeMarkers(sizeof($lockIds));
 	$query = 'DELETE FROM ' . $lockTable . ' ' .
-		'WHERE ' . $lockIdCol . ' = ?';
-	$data = array($lockId);
+		'WHERE ' . $lockIdCol . ' IN (' . $markers . ')';
+	$data = $lockIds;
 	$this->_traceStart();
 	$recordSet = $this->_db->execute($query, $data);
 	$this->_traceStop();
