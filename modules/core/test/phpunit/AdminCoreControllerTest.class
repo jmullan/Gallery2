@@ -37,6 +37,8 @@ class AdminCoreControllerTest extends GalleryTestCase {
 
     function setUp() {
 	global $gallery;
+
+	parent::setUp();
 	
 	$this->_keys = array('permissions.directory',
 			     'permissions.file',
@@ -73,6 +75,8 @@ class AdminCoreControllerTest extends GalleryTestCase {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
+
+	parent::tearDown();
     }
 
     function testChangeDefaults() {
