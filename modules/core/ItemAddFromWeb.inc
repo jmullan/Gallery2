@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -92,7 +92,7 @@ class ItemAddFromWeb extends ItemAddPlugin {
 			}
 			$error = array_merge($error, $optionErrors);
 		    }
-		    
+
 		    $status['addedFiles'][] = array('fileName' => $url, 'id' => $newItem->getId());
 		}
 		@$platform->unlink($tmpFile);
@@ -178,7 +178,6 @@ class ItemAddFromWeb extends ItemAddPlugin {
 			    if (!strncmp($url, '//', 2)) {
 				$url = $baseUrlComponents['scheme'] . ':' . $url;
 			    }
-
 			    /*
 			     * parse_url() isn't guaranteed to be reliable on relative urls, so try to make them
 			     * absolute if possible.
@@ -210,12 +209,15 @@ class ItemAddFromWeb extends ItemAddPlugin {
 				    $basePath = '/';
 				}
 				if (!preg_match('/\/$/', $basePath)) {
-				    $basePath = dirname($basePath) . '/';
+				    $basePath = dirname($basePath);
+				    if ($basePath != '/') {
+					$basePath .= '/';
+				    }
 				}
 				$tmp .= $basePath;
 				$url = $tmp . $url;
 			    }
-			    
+
 			    $urlComponents = parse_url($url);
 			    if (empty($urlComponents['scheme'])) {
 				$urlComponents['scheme'] = $baseUrlComponents['scheme'];
@@ -235,7 +237,7 @@ class ItemAddFromWeb extends ItemAddPlugin {
 				if (empty($urlComponents['query'])) {
 				    continue;
 				}
-				
+
 				$mimeType = GalleryCoreApi::getMimeType($urlComponents['query']);
 				if ($mimeType == 'application/unknown') {
 				    continue;
