@@ -122,7 +122,7 @@ class CoreModuleExtras {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
-	    list ($ret, $ignored) = $layout->installOrUpgrade();
+	    $ret = $layout->installOrUpgrade();
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
