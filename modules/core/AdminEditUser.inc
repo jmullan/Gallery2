@@ -86,6 +86,22 @@ class AdminEditUserController extends GalleryController {
 	    /*
 	     * Validate our data before we continue.
 	     */
+
+	    /* username is required and might conflict */
+	    if (empty($form['userName'])) {
+		$error[] = 'form.error.userName.missing';
+	    }
+
+	    if (!empty($form['userName'])) {
+		list ($ret, $tmpUser) = GalleryUserHelper::fetchUserByUsername($form['userName']);
+		if ($ret->isError() && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		if (!empty($tmpUser) && $tmpUser->getId() != $userId) {
+		    $error[] = 'form.error.userName.duplicate';
+		}
+	    }
 	    
 	    /* full name is optional for everybody */
 
@@ -117,6 +133,7 @@ class AdminEditUserController extends GalleryController {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
+		$user->setUserName($form['userName']);
 		$user->setFullname($form['fullName']);
 		if (!$isAnonymous) {
 		    $user->setEmail($form['email']);
@@ -139,7 +156,7 @@ class AdminEditUserController extends GalleryController {
 		/* Request a redirect to the confirmation screen */
 		$redirect['view'] = 'core:SiteAdmin';
 		$redirect['subView'] = 'core:AdminUsers';
-		$status['modifiedUser'] = $form['userName'];
+		$status['modifiedUser'] = $user->getUserName();
 	    }
 	}
 

@@ -10,12 +10,26 @@
       {g->title}
 	{g->text text="Username"}
       {/g->title}
+      {g->subtitle}
+	{g->text text="required"}
+      {/g->subtitle}
       {g->element}
-	{g->input type="hidden" name="form.userName"}{$form.userName}{/g->input}
 	{g->input type="hidden" name="userId"}{$AdminEditUser.user.id}{/g->input}
-	{$form.userName}
+	{g->input type="text" name="form.userName"}{$form.userName}{/g->input}
       {/g->element}
     {/g->box}
+
+    {if isset($form.error.userName.duplicate)}
+      {g->error}
+	{g->text text="That username is already in use"}
+      {/g->error}
+    {/if}
+
+    {if isset($form.error.userName.missing)}
+      {g->error}
+	{g->text text="You must enter a new username"}
+      {/g->error}
+    {/if}
 
     {g->box}
       {g->title}
