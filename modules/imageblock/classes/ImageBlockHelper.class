@@ -361,56 +361,40 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
      * @static
      */
     function setDisabledFlag($parentAlbum, $recursive, $disabled) {
+	global $gallery;
 	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/ImageBlockDisabledMap.class');
 
-	if ($recursive) {
-	    list($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($parentAlbum);
-	    if ($ret->isError()) {
+	$select[] = '[GalleryItemAttributesMap::itemId]';
+	$from[] = '[GalleryItemAttributesMap]';
+	$where[] = '[GalleryItemAttributesMap::parentSequence] LIKE ? OR [GalleryItemAttributesMap::itemId] = ?';
+	list ($ret, $sequence) = GalleryCoreApi::fetchParentSequence($parentAlbum->getId());
+
+	/* We don't care about ERROR_MISSING_OBJECT if it's a top-level album */
+	if ($ret->isError() & ERROR_MISSING_OBJECT) {
 		return $ret->wrap(__FILE__, __LINE__);
-	    }
+	}
+	$data[] = (empty($sequence) ? '/' : implode('/', $sequence)) . (empty($sequence) ? '' : '/') . 
+		$parentAlbum->getId() . '/%';
+	$data[] = $parentAlbum->getId();
 
-	    if (!empty($childIds)) {
-		list($ret, $childEntities) = GalleryCoreApi::loadEntitiesById($childIds);
-		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
+	/* Build the query */
+	$query = 'SELECT ' . implode(', ', $select) .
+		 ' FROM ' . implode(', ', $from) .
+		 ' WHERE ' . implode(' AND ', $where);
 
-		/*
-		 * TODO: use [GalleryItemAttributeMap::parentSequence] to get a list of *all* the
-		 * descendents of any given item.  As long as you're doing that, you can probably
-		 * craft a single SQL statement to mark all the descendents in a single query.
-		 */
-		foreach ($childEntities as $childEntity) {
-		    if (GalleryUtilities::isA($childEntity, 'GalleryAlbumItem')) {
-			$ret = ImageBlockHelper::setDisabledFlag($childEntity, $recursive, $disabled);
-			if ($ret->isError()) {
-			    return $ret->wrap(__FILE__, __LINE__);
-			}
-
-			/* Remove the item from the children array because it's handled by setDisabledFlag */
-			unset($childIds[array_search($childEntity->getId(), $childIds)]);
-		    }
-		}
-	    }
-	} else {
-	    /* Use fetchChildDataItems so that we don't have to worry about albums */
-	    list($ret, $childIds) = GalleryCoreApi::fetchChildDataItemIds($parentAlbum);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
+	list ($ret, $searchResult) = $gallery->search($query, $data);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	/* Append the parent to the list, so it gets set as well. */
-	$childIds[] = $parentAlbum->getId();
-
-	foreach ($childIds as $itemId) {
+	while ($result = $searchResult->nextResult()) {
 	    if ($disabled) {
-		$ret = ImageBlockDisabledMap::addMapEntry(array('itemId' => $itemId));
+		$ret = ImageBlockDisabledMap::addMapEntry(array('itemId' => $result[0]));
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    } else {
-		$ret = ImageBlockDisabledMap::removeMapEntry(array('itemId' => $itemId));
+		$ret = ImageBlockDisabledMap::removeMapEntry(array('itemId' => $result[0]));
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
