@@ -20,7 +20,7 @@ these instructions:
 
    MySQL:
    mysqladmin -uroot create gallery2
-   mysql gallery2 -uroot -e"GRANT ALL ON gallery2 TO \
+   mysql gallery2 -uroot -e"GRANT ALL ON gallery2.* TO \
         username@localhost IDENTIFIED BY 'password'"
 
    (Note:  if mysql denies you access, try adding "-p"
