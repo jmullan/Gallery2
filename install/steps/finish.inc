@@ -23,6 +23,7 @@
 
 <h1>Finish</h1>
 
+<?php if (array_sum($status) >= count($status)) { ?>
 <p>
 <?php print _("Congratulations! Your Gallery 2 <span style=\"color:ae0000; font-style: italic;\">Alpha</span> has successfully installed! See... that wasn't so hard, was it? Now it's time to upload some photos!") ?>
 </p>
@@ -34,3 +35,8 @@
 <div class="go">
 <span class="goToNext"><a href="../main.php"><?php print _('Go to my Gallery!') ?></a></span>
 </div>
+<?php } else { ?>
+<p>
+<?php print _("You still have installation steps remaining. Please go back and complete them.") ?>
+</p>
+<?php } ?>

@@ -288,7 +288,7 @@ if ($step == 1) {
     $status[$step] = count($errorMsg) == 0 ? true : false;
 }
 
-if ($step == 7 || ($status[7] && count($errorMsg) == 0 && isset($_GET['action']) && $_GET['action'] === 'create')) {
+if ($step == 7 || ($visited[7] && count($errorMsg) == 0 && isset($_GET['action']) && $_GET['action'] === 'create')) {
     writeConfigFile();
 }
 
