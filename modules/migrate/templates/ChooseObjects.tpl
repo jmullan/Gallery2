@@ -162,7 +162,7 @@
 
       <select name="{g->formVar var="form[sourceEncoding]"}">
         {foreach from=$ChooseObjects.availableEncodings key=encodingName item=encoding}
-	  {if strcmp($ChooseObjects.possibleEncodingMatch,$encodingName)}
+	  {if strcmp($ChooseObjects.possibleEncodingMatch, $encodingName)}
 	    <option value="{$encoding}">{$encodingName}</option>
 	  {else}
 	    <option value="{$encoding}" selected="selected">{$encodingName}</option>

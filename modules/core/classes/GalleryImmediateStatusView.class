@@ -1,0 +1,186 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @author Jesse Mullan <jmullan@visi.com>
+ */
+
+/**
+ * @package GalleryCore
+ * @subpackage GalleryImmediateStatusView
+ */
+class GalleryImmediateStatusView extends GalleryView {
+
+
+    /*
+     * ****************************************
+     *                 Members
+     * ****************************************
+     */
+
+    /**
+     * The template that this view will be using
+     *
+     * @access private
+     */
+    var $_template;
+
+    /**
+     * General data needed by the template to render the page
+     *
+     * @access private
+     */
+    var $_main;
+
+    /*
+     * ****************************************
+     *                 Methods
+     * ****************************************
+     */
+
+    /**
+     * This is the class that prepares the global template for display
+     * and loads all non-action-specific data into it.  It is basically
+     * a copy of the code from main.php
+     * 
+     * @return object GalleryStatus a status code
+     */
+    function doLoadImmediateTemplate() {
+        global $gallery;
+
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryTemplate.class');
+
+	/*
+	 * This normally expects to be called in the gallery root so that it
+	 * can create paths relative to that directory
+	 */
+	$this->_template = new GalleryTemplate(dirname(__FILE__) . '/../../..');
+
+	/*
+	 * Check for errors when loading the template, but otherwise throw away
+	 * the $results because we don't need them
+	 */
+	list ($ret, $results) = $this->doLoadTemplate($this->_template);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	$this->_main['viewBodyFile'] = 'modules/core/templates/SplitMarker.tpl';
+	
+	/* This is basically a copy of the code in main.php */
+	$this->_template->setVariable('l10Domain', 'modules_core');
+	$this->_template->setVariable('main', $this->_main);
+	return GalleryStatus::success();
+    }    
+
+    /**
+     * This renders the global template and splits the output into a header
+     * and footer.  We simply discard the footer since the header and footer
+     * are re-rendered explicitly for the footer later
+     * 
+     * @return object GalleryStatus a status code
+     */
+    function renderHeader() {
+	list ($ret, $html) = $this->_template->fetch('templates/global.tpl');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$pieces = split('SPLIT ON THIS LINE', $html);
+	print $pieces[0];
+	flush();
+	return GalleryStatus::success();
+    }
+
+    /**
+     * This is a one-shot, and might be able to reuse the class's template,
+     * but for safety and simplicity, it gets its own barebones template for
+     * no-frills rendering.
+     * 
+     * @param string a string to print
+     * @return object GalleryStatus a status code
+     */
+    function renderStatusMessage($statusMessage) {
+	$statusTemplate = new GalleryTemplate(dirname(__FILE__) . '/../../..');
+	$statusTemplate->setVariable('l10Domain', 'modules_core');
+	$statusTemplate->setVariable('statusMessage', $statusMessage);
+	$ret = $statusTemplate->display('modules/core/templates/StatusMessage.tpl');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	flush();
+	return GalleryStatus::success();
+    }
+
+    /**
+     * This prints a link to $redirectUrl, similar to the debug link.
+     * 
+     * @param string a url to send the user to when they click the link
+     * @return object GalleryStatus a status code
+     */
+    function renderRedirect($redirectUrl) {
+	$statusTemplate = new GalleryTemplate(dirname(__FILE__) . '/../../..');
+	$statusTemplate->setVariable('l10Domain', 'modules_core');
+	$statusTemplate->setVariable('redirectUrl', $redirectUrl);
+	$ret = $statusTemplate->display('modules/core/templates/LateRedirect.tpl');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	flush();
+	return GalleryStatus::success();
+    }
+    
+    /**
+     * This renders the global template and splits the output into a header
+     * and footer.  We simply discard the header since the header was
+     * previously printed
+     *
+     * @return object GalleryStatus a status code
+     */
+    function renderFooter() {
+	list ($ret, $html) = $this->_template->fetch('gallery:templates/global.tpl');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$pieces = split('SPLIT ON THIS LINE', $html);
+	print $pieces[1];
+	flush();
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Set the base data that will eventually be passed into the template
+     * 
+     * @param array base data to pass into the template
+     * @return object GalleryStatus a status code
+     */
+    function setMain($main) {
+	if (is_array($main)) {
+	    $this->_main = $main;
+	    return GalleryStatus::success();
+	} else {
+	    return (GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__));	    
+	}
+    }
+}
+
+?>

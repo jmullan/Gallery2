@@ -105,7 +105,9 @@ class Gallery1DataParser {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+	/*
+	 * TODO: check that there is an $albumOrder
+	 */
 	foreach ($albumOrder as $albumName){
 	    list ($ret, $albumFields) = Gallery1DataParser::loadAlbumFields($path . $albumName . $slash);
 	    if ($ret->isError()) {
@@ -220,7 +222,7 @@ class Gallery1DataParser {
 	    $tmp .= $slash;
 	}
 	$path = trim($tmp);
-	$albumPath = explode($slash,$path);
+	$albumPath = explode($slash, $path);
 	$albumName = $albumPath[count($albumPath)-2];
         list ($ret, $album) = Gallery1DataParser::loadFile($path . 'album.dat');
 	if ($ret->isError()) {
@@ -291,8 +293,8 @@ class Gallery1DataParser {
 	    }	    
 	    $uids[$path] = array();
 	    foreach ($userDB->userMap as $username => $uid) {
-		if (Gallery1DataParser::isValidUid($path,$uid)
-		    && !Gallery1DataParser::isValidUid($path,$username)
+		if (Gallery1DataParser::isValidUid($path, $uid)
+		    && !Gallery1DataParser::isValidUid($path, $username)
 		    && !eregi('nobody|everybody|loggedin', $username)) {
 		    $uids[$path][$uid] = $username;
 		}
@@ -412,7 +414,7 @@ class Gallery1DataParser {
      *
      */
     
-    function convertString($string,$sourceEncoding) {
+    function convertString($string, $sourceEncoding) {
 	global $gallery;	
 
 	$platform = $gallery->getPlatform();

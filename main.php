@@ -78,6 +78,8 @@ function GalleryMain($returnHtml=false) {
  */
 function _GalleryMain($returnHtml=false) {
     global $gallery;
+    
+    $main = array();
 
     /* Let our url generator process the query string and redirect if suggested */
     $urlGenerator =& $gallery->getUrlGenerator();
@@ -144,12 +146,25 @@ function _GalleryMain($returnHtml=false) {
 	/* Get our form and return variables */
 	$form = GalleryUtilities::getFormVariables('form');
 
+	if ($controller->canUseImmediateView()) {
+	    /* make a copy of $main for the immediate status view */
+	    $mainForImmediate = $main;
+	    $ret = _GalleryMain_setupMain($mainForImmediate, $urlGenerator, $installedVersions['gallery']);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    
+	    GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryImmediateStatusView.class');
+	    $galleryImmediateStatusView = new GalleryImmediateStatusView();
+	    $galleryImmediateStatusView->setMain($main);
+	    $controller->setImmediateStatusView($galleryImmediateStatusView);
+	}
+	
 	/* Let the controller handle the input */
 	list ($ret, $results) = $controller->handleRequest($form);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-
 	/* Check to make sure we got back everything we want */
 	if (!isset($results['status']) ||
 	    !isset($results['error']) ||
@@ -197,12 +212,22 @@ function _GalleryMain($returnHtml=false) {
 
 	/* If we have a redirect url.. use it */
 	if (!empty($redirectUrl)) {
-	    return array(GalleryStatus::success(), _GalleryMain_doRedirect($redirectUrl));
+	    if (isset($results['sendLateRedirect'])) {
+		$ret = _GalleryMain_setupMain($main, $urlGenerator, $installedVersions['gallery']);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		$results['sendLateRedirect']->setMain($main);
+		return array(GalleryStatus::success(),
+			     _GalleryMain_doLateRedirect($redirectUrl, $results['sendLateRedirect']));
+	    } else {
+		return array(GalleryStatus::success(), _GalleryMain_doRedirect($redirectUrl));
+	    }
 	}
 
 	/* Let the controller specify the next view */
 	if (!empty($results['delegate'])) {
-
 	    /* Load any errors into the request */
 	    if (!empty($results['error'])) {
 		foreach ($results['error'] as $error) {
@@ -224,12 +249,12 @@ function _GalleryMain($returnHtml=false) {
 	    }
 	}
     }
-
+    
     /* Load and run the appropriate view */
     if (empty($viewName)) {
 	$viewName = 'core:ShowItem';
     }
-
+    
     if (!isset($view)) {
 	list ($ret, $view) = GalleryView::loadView($viewName);
 	if ($ret->isError()) {
@@ -238,7 +263,6 @@ function _GalleryMain($returnHtml=false) {
     }
 
     /* Initialize our container for template data */
-    $main = array();
     $gallery->setCurrentView($viewName);
 
     /*
@@ -384,6 +408,13 @@ function _GalleryMain_doRedirect($redirectUrl, $template=null) {
     } else {
 	return array('isDone' => true, 'redirectUrl' => $redirectUrl, 'template' => $template);
     }
+}
+
+function _GalleryMain_doLateRedirect($redirectUrl, $immediateStatusView) {
+    global $gallery;
+    $immediateStatusView->renderRedirect($redirectUrl);
+    $immediateStatusView->renderFooter();
+    return array('isDone' => true);
 }
 
 function _GalleryMain_errorHandler($error, $g2Data=null, $initOk=true) {
