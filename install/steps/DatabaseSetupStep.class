@@ -52,12 +52,12 @@ class DatabaseSetupStep extends InstallStep {
 		$this->setComplete(true);
 		foreach (array('type', 'hostname', 'username',
 			       'password', 'database', 'tablePrefix', 'columnPrefix') as $key) {
-		    $this->_config[$key] = $_POST[$key];
+		    $this->_config[$key] = $this->sanitize($_POST[$key]);
 		}
 	    } else {
 		foreach (array('type', 'hostname', 'username',
 			       'password', 'database', 'tablePrefix', 'columnPrefix') as $key) {
-		    $templateData['config'][$key] = $_POST[$key];
+		    $templateData['config'][$key] = $this->sanitize($_POST[$key]);
 		}
 	    }
 	} else {

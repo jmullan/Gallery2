@@ -51,7 +51,7 @@ class AdminUserSetupStep extends InstallStep {
 		$templateData['passwordA'] = $_POST['passwordA'];
 		$templateData['passwordB'] = '';
 	    } else {
-		$this->_password = $_POST['passwordA'];
+		$this->_password = $this->sanitize($_POST['passwordA']);
 		$this->setComplete(true);
 	    }
 	}

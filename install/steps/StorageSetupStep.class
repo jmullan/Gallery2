@@ -41,22 +41,25 @@ class StorageSetupStep extends InstallStep {
 	if (!empty($_POST['action']) && $_POST['action'] == 'save') {
 	    if (empty($_POST['dir'])) {
 		$templateData['error']['missing_value'] = 1;
-	    } else if (!is_dir($_POST['dir'])) {
-		$templateData['error']['missing_dir'] = 1;
-	    } else if (!is_readable($_POST['dir'])) {
-		$templateData['error']['inaccessible_dir'] = 1;
-	    } else if (!is_writable($_POST['dir'])) {
-		$templateData['error']['readonly_dir'] = 1;
 	    } else {
-		// populate the dir
-		if (!StorageSetupStep::populateDataDirectory($_POST['dir'])) {
-		    $templateData['error']['creation_error'] = 1;
+		$dir = $this->sanitize($_POST['dir']);
+		if (!is_dir($dir)) {
+		    $templateData['error']['missing_dir'] = 1;
+		} else if (!is_readable($dir)) {
+		    $templateData['error']['inaccessible_dir'] = 1;
+		} else if (!is_writable($dir)) {
+		    $templateData['error']['readonly_dir'] = 1;
 		} else {
-		    $this->_dir = $_POST['dir'];
-		    $this->setComplete(true);
+		    // populate the dir
+		    if (!StorageSetupStep::populateDataDirectory($dir)) {
+			$templateData['error']['creation_error'] = 1;
+		    } else {
+			$this->_dir = $dir;
+			$this->setComplete(true);
+		    }
 		}
 	    }
-	    $templateData['dir'] = $_POST['dir'];
+	    $templateData['dir'] = $dir;
 	} else {
 	    $templateData['dir'] = $this->_dir;
 	}

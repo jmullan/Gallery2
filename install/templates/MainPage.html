@@ -22,11 +22,11 @@
 	    </span>
 
 	    <span class="nav_text">
-	      <?php if ($i > 0 && $steps[$i-1]->isComplete()): ?>
+	      <?php if ($i == 0 || $steps[$i-1]->isComplete()): ?>
 	      <a href="?step=<?php echo $i?>">
 		<?php endif; ?>
 		<?php print $steps[$i]->stepName(); ?>
-		<?php if ($i > 0 && $steps[$i-1]->isComplete()): ?>
+		<?php if ($i == 0 || $steps[$i-1]->isComplete()): ?>
 	      </a>
 	      <?php endif; ?>
 	    </span>

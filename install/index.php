@@ -121,6 +121,13 @@ class InstallStep {
 
     function loadGalleryObject(&$gallery) {
     }
+
+    function sanitize($string) {
+	if (get_magic_quotes_gpc()) {
+	    $string = stripslashes($string);
+	}
+	return $string;
+    }
 }
 
 // if gettext isn't enabled, subvert the _() text translation function

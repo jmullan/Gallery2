@@ -41,18 +41,19 @@ class CreateConfigFileStep extends InstallStep {
 		$in = @fopen(dirname(__FILE__) . '/../config.php-sample', 'r');
 		while ($line = fgets($in)) {
 		    if (trim($line) == '$gallery->setConfig(\'setup.password\', \'\');') {
-			$line = sprintf("\$gallery->setConfig('setup.password', '%s');\n",
-					$gallery->getConfig('setup.password'));
+			$tmp = addslashes($gallery->getConfig('setup.password'));
+			$line = sprintf("\$gallery->setConfig('setup.password', '%s');\n", $tmp);
 		    }
 
 		    if (trim($line) == '$gallery->setConfig(\'data.gallery.base\', \'\');') {
-			$line = sprintf("\$gallery->setConfig('data.gallery.base', '%s');\n",
-					$gallery->getConfig('data.gallery.base'));
+			$tmp = addslashes($gallery->getConfig('data.gallery.base'));
+			$line = sprintf("\$gallery->setConfig('data.gallery.base', '%s');\n", $tmp);
 		    }
 
 		    foreach (array('type', 'hostname', 'database', 'username',
 				   'password', 'tablePrefix', 'columnPrefix') as $key) {
 			if (preg_match("/^.storeConfig\['$key'\] = '.*';/", $line)) {
+			    $newStoreConfig[$key] = addslashes($newStoreConfig[$key]);
 			    $line = "\$storeConfig['$key'] = '$newStoreConfig[$key]';\n";
 			}
 		    }
