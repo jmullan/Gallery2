@@ -125,9 +125,16 @@ class SlideshowTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$photo->setTitle("Item #$index");
-	$photo->setSummary("Summary $index");
-	$photo->setDescription("Description $index");
+	// omit data once in a while
+	if ($index % 6) {
+	    $photo->setTitle("Item #$index");
+	}
+	if ($index % 3) {
+	    $photo->setSummary("Summary $index");
+	}
+	if ($index % 2) {
+	    $photo->setDescription("Description $index");
+	}
 	$ret = $photo->save();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -233,8 +240,12 @@ class SlideshowTest extends GalleryTestCase {
 	    'Slideshow data size');
 	$slideIds = array();
 	foreach ($slideData as $slide) {
-	    foreach (array('id','sourceId','sourceSerial') as $attribute) {
-		$this->assert(isset($slide[$attribute]),
+	    foreach (array('id','source.id','source.serialNumber','data')
+		as $attribute) {
+		$keys = explode('.', $attribute);
+		$this->assert(
+		    (count($keys)==1 && isset($slide[$attribute])) ||
+		    (count($keys)==2 && isset($slide[$keys[0]][$keys[1]])),
 		    "Slideshow item missing $attribute attribute");
 	    }
 	    $this->assert(isset($expectedResults[$slide['id']]),

@@ -142,8 +142,8 @@ class SlideshowView extends GalleryView {
 		if (isset($image)) {
 		    $itemList[] = array(
 			'id' => $childId,
-			'sourceId' => $image->getId(),
-			'sourceSerial' => $image->getSerialNumber());
+			'data' => $child->getMemberData(),
+			'source' => $image->getMemberData());
 		}
 	    }
 	}
