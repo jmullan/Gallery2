@@ -1,7 +1,7 @@
 <?php
 /*
 
-  version V3.40 7 April 2003 (c) 2000-2003 John Lim. All rights reserved.
+  version V3.60 16 June 2003 (c) 2000-2003 John Lim. All rights reserved.
 
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
@@ -41,12 +41,12 @@ class ADODB_oci8 extends ADOConnection {
 	var $concat_operator='||';
 	var $sysDate = "TRUNC(SYSDATE)";
 	var $sysTimeStamp = 'SYSDATE';
-	
+	var $metaDatabasesSQL = "SELECT USERNAME FROM ALL_USERS WHERE USERNAME NOT IN ('SYS','SYSTEM','DBSNMP','OUTLN') ORDER BY 1";
 	var $_stmt;
 	var $_commit = OCI_COMMIT_ON_SUCCESS;
 	var $_initdate = true; // init date to YYYY-MM-DD
 	var $metaTablesSQL = "select table_name from cat where table_type in ('TABLE','VIEW')";
-	var $metaColumnsSQL = "select cname,coltype,width from col where tname='%s' order by colno";
+	var $metaColumnsSQL = "select cname,coltype,width, SCALE, PRECISION, NULLS, DEFAULTVAL from col where tname='%s' order by colno"; //changed by smondino@users.sourceforge. net
 	var $_bindInputArray = true;
 	var $hasGenID = true;
 	var $_genIDSQL = "SELECT (%s.nextval) FROM DUAL";
@@ -74,7 +74,41 @@ class ADODB_oci8 extends ADOConnection {
 		$this->_hasOCIFetchStatement = ADODB_PHPVER >= 0x4200;
 	}
 	
+	/*  Function &MetaColumns($table) added by smondino@users.sourceforge.net*/
+	function &MetaColumns($table) 
+	{
+	global $ADODB_FETCH_MODE;
 	
+		$save = $ADODB_FETCH_MODE;
+		$ADODB_FETCH_MODE = ADODB_FETCH_NUM;
+		if ($this->fetchMode !== false) $savem = $this->SetFetchMode(false);
+		
+		$rs = $this->Execute(sprintf($this->metaColumnsSQL,strtoupper($table)));
+		
+		if (isset($savem)) $this->SetFetchMode($savem);
+		$ADODB_FETCH_MODE = $save;
+		if (!$rs) return false;
+		$retarr = array();
+		while (!$rs->EOF) { //print_r($rs->fields);
+			$fld = new ADOFieldObject();
+	   		$fld->name = $rs->fields[0];
+	   		$fld->type = $rs->fields[1];
+	   		$fld->max_length = $rs->fields[2];
+			$fld->scale = $rs->fields[3];
+			if ($rs->fields[1] == 'NUMBER' && $rs->fields[3] == 0) {
+				$fld->type ='INT';
+	     		$fld->max_length = $rs->fields[4];
+	    	}
+	   	
+			$fld->not_null = $rs->fields[5];
+			$fld->default_value = $rs->fields[6];
+			$retarr[strtoupper($fld->name)] = $fld; 
+			$rs->MoveNext();
+		}
+		$rs->Close();
+		return $retarr;
+	}
+ 
 /*
 
   Multiple modes of connection are supported:
@@ -266,7 +300,7 @@ NATSOFT.DOMAIN =
 	// Format date column in sql string given an input format that understands Y M D
 	function SQLDate($fmt, $col=false)
 	{	
-		if (!$col) $col = $this->sysDate;
+		if (!$col) $col = $this->sysTimeStamp;
 		$s = 'TO_CHAR('.$col.",'";
 		
 		$len = strlen($fmt);
@@ -283,6 +317,9 @@ NATSOFT.DOMAIN =
 				break;
 				
 			case 'M':
+				$s .= 'Mon';
+				break;
+				
 			case 'm':
 				$s .= 'MM';
 				break;
@@ -290,6 +327,28 @@ NATSOFT.DOMAIN =
 			case 'd':
 				$s .= 'DD';
 				break;
+			
+			case 'H':
+				$s.= 'HH24';
+				break;
+				
+			case 'h':
+				$s .= 'HH';
+				break;
+				
+			case 'i':
+				$s .= 'MI';
+				break;
+			
+			case 's':
+				$s .= 'SS';
+				break;
+			
+			case 'a':
+			case 'A':
+				$s .= 'AM';
+				break;
+				
 			default:
 			// handle escape characters...
 				if ($ch == '\\') {
@@ -372,7 +431,7 @@ NATSOFT.DOMAIN =
 				}
 			}
 			
-			 if (!$success = OCIExecute($stmt, OCI_DEFAULT)) {
+			 if (!OCIExecute($stmt, OCI_DEFAULT)) {
 				 OCIFreeStatement($stmt); 
 				 return false;
 			 }
@@ -688,20 +747,23 @@ NATSOFT.DOMAIN =
 					// jlim
 						$cursor = $sql[4];
 					// jlim
-                        OCIExecute($cursor);
-                        return $cursor;
+						if (is_resource($cursor)) {
+							OCIExecute($cursor);						
+	                        return $cursor;
+						}
+						return $stmt;
                     } else {
+						if (!is_array($sql) && is_resource($stmt)) {
+								OCIFreeStatement($stmt);
+								return true;
+						}
                         return $stmt;
                     }
                     break;
                 default :
+					// ociclose?
                     return true;
             }
-        
-		   /* Now this could be an Update/Insert or Delete */
-			//if (@OCIStatementType($stmt) != 'SELECT') return true;
-			//return $stmt;
-            
 		}
 		return false;
 	}
@@ -736,7 +798,7 @@ SELECT /*+ RULE */ distinct b.column_name
 
  		$rs = $this->Execute($sql);
 		if ($rs && !$rs->EOF) {
-			$arr = $rs->GetArray();
+			$arr =& $rs->GetArray();
 			$a = array();
 			foreach($arr as $v) {
 				$a[] = $v[0];
@@ -900,7 +962,7 @@ class ADORecordset_oci8 extends ADORecordSet {
 	}	
 	
 	/* Optimize SelectLimit() by using OCIFetch() instead of OCIFetchInto() */
-	function GetArrayLimit($nrows,$offset=-1) 
+	function &GetArrayLimit($nrows,$offset=-1) 
 	{
 		if ($offset <= 0) return $this->GetArray($nrows);
 		for ($i=1; $i < $offset; $i++) 
@@ -968,6 +1030,7 @@ class ADORecordset_oci8 extends ADORecordSet {
 		case 'BINARY':
 		case 'NCHAR':
 		case 'NVARCHAR':
+		case 'NVARCHAR2':
 				 if (isset($this) && $len <= $this->blobSize) return 'C';
 		
 		case 'NCLOB':

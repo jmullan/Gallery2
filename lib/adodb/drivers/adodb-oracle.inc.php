@@ -1,6 +1,6 @@
 <?php
 /*
-V3.40 7 April 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+V3.60 16 June 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -17,7 +17,7 @@ V3.40 7 April 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights res
 // 
 class ADODB_oracle extends ADOConnection {
 	var $databaseType = "oracle";
-	var $replaceQuote = "\'"; // string to use to replace quotes
+	var $replaceQuote = "''"; // string to use to replace quotes
 	var $concat_operator='||';
 	var $_curs;
 	var $_initdate = true; // init date to YYYY-MM-DD
@@ -130,7 +130,7 @@ class ADODB_oracle extends ADOConnection {
 		// returns true or false
 		function _close()
 		{
-			return @ora_close($this->_connectionID);
+			return @ora_logoff($this->_connectionID);
 		}
 
 

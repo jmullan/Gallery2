@@ -1,6 +1,6 @@
 <?php
 /*
-V3.40 7 April 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+V3.60 16 June 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -55,8 +55,6 @@ class ADODB_mysql extends ADOConnection {
 			if (ADODB_PHPVER >= 0x4300) {
 				if (is_resource($this->_connectionID))
 					return "'".mysql_real_escape_string($s,$this->_connectionID)."'";
-				else
-					return "'".mysql_real_escape_string($s)."'";
 			}
 			if ($this->replaceQuote[0] == '\\'){
 				$s = adodb_str_replace(array('\\',"\0"),array('\\\\',"\\\0"),$s);
@@ -123,7 +121,8 @@ class ADODB_mysql extends ADOConnection {
 		$i = 0;
 		$max = mysql_num_rows($qid);
 		while ($i < $max) {
-			$arr[] = mysql_tablename($qid,$i);
+			$db = mysql_tablename($qid,$i);
+			if ($db != 'mysql') $arr[] = $db;
 			$i += 1;
 		}
 		return $arr;
@@ -133,7 +132,7 @@ class ADODB_mysql extends ADOConnection {
 	// Format date column in sql string given an input format that understands Y M D
 	function SQLDate($fmt, $col=false)
 	{	
-		if (!$col) $col = $this->sysDate;
+		if (!$col) $col = $this->sysTimeStamp;
 		$s = 'DATE_FORMAT('.$col.",'";
 		$concat = false;
 		$len = strlen($fmt);
@@ -153,6 +152,9 @@ class ADODB_mysql extends ADOConnection {
 				$concat = true;
 				break;
 			case 'M':
+				$s .= '%b';
+				break;
+				
 			case 'm':
 				$s .= '%m';
 				break;
@@ -160,6 +162,28 @@ class ADODB_mysql extends ADOConnection {
 			case 'd':
 				$s .= '%d';
 				break;
+			
+			case 'H': 
+				$s .= '%H';
+				break;
+				
+			case 'h':
+				$s .= '%I';
+				break;
+				
+			case 'i':
+				$s .= '%i';
+				break;
+				
+			case 's':
+				$s .= '%s';
+				break;
+				
+			case 'a':
+			case 'A':
+				$s .= '%p';
+				break;
+				
 			default:
 				
 				if ($ch == '\\') {
@@ -247,9 +271,11 @@ class ADODB_mysql extends ADOConnection {
 		
 			$save = $ADODB_FETCH_MODE;
 			$ADODB_FETCH_MODE = ADODB_FETCH_NUM;
+			if ($this->fetchMode !== false) $savem = $this->SetFetchMode(false);
 			
 			$rs = $this->Execute(sprintf($this->metaColumnsSQL,$table));
 			
+			if (isset($savem)) $this->SetFetchMode($savem);
 			$ADODB_FETCH_MODE = $save;
 			
 			if ($rs === false) return false;
@@ -258,14 +284,15 @@ class ADODB_mysql extends ADOConnection {
 			while (!$rs->EOF){
 				$fld = new ADOFieldObject();
 				$fld->name = $rs->fields[0];
-				$fld->type = $rs->fields[1];
+				$type = $rs->fields[1];
 				
 				// split type into type(length):
-				if (preg_match("/^(.+)\((\d+)\)$/", $fld->type, $query_array)) {
+				if (preg_match("/^(.+)\((\d+)/", $type, $query_array)) {
 					$fld->type = $query_array[1];
 					$fld->max_length = $query_array[2];
 				} else {
 					$fld->max_length = -1;
+					$fld->type = $type;
 				}
 				$fld->not_null = ($rs->fields[2] != 'YES');
 				$fld->primary_key = ($rs->fields[3] == 'PRI');

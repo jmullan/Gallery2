@@ -665,7 +665,7 @@ function adodb_date($fmt,$d=false,$is_gmt=false)
 	*/
 	for ($i=0; $i < $max; $i++) {
 		switch($fmt[$i]) {
-		case 'T': $dates .= date('T',100000);break;
+		case 'T': $dates .= date('T');break;
 		// YEAR
 		case 'L': $dates .= $arr['leap'] ? '1' : '0'; break;
 		case 'r': // Thu, 21 Dec 2000 16:01:07 +0200

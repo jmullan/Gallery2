@@ -1,6 +1,6 @@
 <?php
 /* 
-V3.40 7 April 2003  (c) 2000-2003 John Lim. All rights reserved.
+V3.60 16 June 2003  (c) 2000-2003 John Lim. All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -17,7 +17,7 @@ V3.40 7 April 2003  (c) 2000-2003 John Lim. All rights reserved.
  
 class ADODB_sybase extends ADOConnection {
 	var $databaseType = "sybase";	
-	var $dataProvider = 'sybase';
+	//var $dataProvider = 'sybase';
 	var $replaceQuote = "''"; // string to use to replace quotes
 	var $fmtDate = "'Y-m-d'";
 	var $fmtTimeStamp = "'Y-m-d H:i:s'";

@@ -1,6 +1,6 @@
 <?php
 /*
- V3.40 7 April 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+ V3.60 16 June 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -33,6 +33,7 @@ class ADODB_postgres64 extends ADOConnection{
 	var $hasInsertID = true;
 	var $_resultid = false;
   	var $concat_operator='||';
+	var $metaDatabasesSQL = "select datname from pg_database where datname not in ('template0','template1') order by 1";
 	var $metaTablesSQL = "select tablename from pg_tables where tablename not like 'pg\_%' order by 1";
 	//"select tablename from pg_tables where tablename not like 'pg_%' order by 1";
 	var $isoDates = true; // accepts dates in ISO format
@@ -48,7 +49,9 @@ class ADODB_postgres64 extends ADOConnection{
 UNION 
 SELECT tablename FROM pg_tables WHERE tablename NOT LIKE 'pg_%' ORDER BY 1"
 */
-	var $metaColumnsSQL = "SELECT a.attname,t.typname,a.attlen,a.atttypmod,a.attnotnull,a.atthasdef,a.attnum  FROM pg_class c, pg_attribute a,pg_type t WHERE relkind = 'r' AND c.relname='%s' AND a.attnum > 0 AND a.atttypid = t.oid AND a.attrelid = c.oid ORDER BY a.attnum";
+	var $metaColumnsSQL = "SELECT a.attname,t.typname,a.attlen,a.atttypmod,a.attnotnull,a.atthasdef,a.attnum 
+		FROM pg_class c, pg_attribute a,pg_type t 
+		WHERE relkind = 'r' AND c.relname='%s' AND a.attnum > 0 AND a.atttypid = t.oid AND a.attrelid = c.oid ORDER BY a.attnum";
 	// get primary key etc -- from Freek Dijkstra
 	var $metaKeySQL = "SELECT ic.relname AS index_name, a.attname AS column_name,i.indisunique AS unique_key, i.indisprimary AS primary_key FROM pg_class bc, pg_class ic, pg_index i, pg_attribute a WHERE bc.oid = i.indrelid AND ic.oid = i.indexrelid AND (i.indkey[0] = a.attnum OR i.indkey[1] = a.attnum OR i.indkey[2] = a.attnum OR i.indkey[3] = a.attnum OR i.indkey[4] = a.attnum OR i.indkey[5] = a.attnum OR i.indkey[6] = a.attnum OR i.indkey[7] = a.attnum) AND a.attrelid = bc.oid AND bc.relname = '%s'";
 	
@@ -169,45 +172,74 @@ a different OID if a database must be reloaded. */
 	}
 	*/
 	
+	
 	// Format date column in sql string given an input format that understands Y M D
 	function SQLDate($fmt, $col=false)
 	{	
-		if (!$col) $col = $this->sysDate;
-		$s = '';
+		if (!$col) $col = $this->sysTimeStamp;
+		$s = 'TO_CHAR('.$col.",'";
 		
 		$len = strlen($fmt);
 		for ($i=0; $i < $len; $i++) {
-			if ($s) $s .= '||';
 			$ch = $fmt[$i];
 			switch($ch) {
 			case 'Y':
 			case 'y':
-				$s .= "date_part('year',$col)";
+				$s .= 'YYYY';
 				break;
 			case 'Q':
 			case 'q':
-				$s .= "date_part('quarter',$col)";
+				$s .= 'Q';
 				break;
 				
 			case 'M':
+				$s .= 'Mon';
+				break;
+				
 			case 'm':
-				$s .= "lpad(date_part('month',$col),2,'0')";
+				$s .= 'MM';
 				break;
 			case 'D':
 			case 'd':
-				$s .= "lpad(date_part('day',$col),2,'0')";
+				$s .= 'DD';
 				break;
+			
+			case 'H':
+				$s.= 'HH24';
+				break;
+				
+			case 'h':
+				$s .= 'HH';
+				break;
+				
+			case 'i':
+				$s .= 'MI';
+				break;
+			
+			case 's':
+				$s .= 'SS';
+				break;
+			
+			case 'a':
+			case 'A':
+				$s .= 'AM';
+				break;
+				
 			default:
+			// handle escape characters...
 				if ($ch == '\\') {
 					$i++;
 					$ch = substr($fmt,$i,1);
 				}
-				$s .= $this->qstr($ch);
-				break;
+				if (strpos('-/.:;, ',$ch) !== false) $s .= $ch;
+				else $s .= '"'.$ch.'"';
+				
 			}
 		}
-		return $s;
+		return $s. "')";
 	}
+	
+	
 	
 	/* 
 	* Load a Large Object from a file 
@@ -231,7 +263,7 @@ a different OID if a database must be reloaded. */
 		pg_lo_close($handle);
 		
 		// $oid = pg_lo_import ($path); 
-		pg_exec ($this->_connectionID, "commit"); 
+		pg_exec($this->_connectionID, "commit"); 
 		$rs = ADOConnection::UpdateBlob($table,$column,$oid,$where,$blobtype); 
 		$rez = !empty($rs); 
 		return $rez; 
@@ -248,6 +280,8 @@ a different OID if a database must be reloaded. */
 	*/ 
 	function BlobDecode( $blob) 
 	{ 
+		if (strlen($blob) > 24) return $blob;
+		
 		@pg_exec("begin"); 
 		$fd = @pg_lo_open($blob,"r");
 		if ($fd === false) {
@@ -268,7 +302,8 @@ a different OID if a database must be reloaded. */
 		backend.
 	*/
 	function BlobEncode($blob)
-	{ // requires php 4.0.5
+	{
+		if (ADODB_PHPVER >= 0x4200) return pg_escape_bytea($blob);
 		$badch = array(chr(92),chr(0),chr(39)); # \  null  '
 		$fixch = array('\\\\134','\\\\000','\\\\047');
 		return adodb_str_replace($badch,$fixch,$blob);
@@ -316,7 +351,7 @@ a different OID if a database must be reloaded. */
 				
 				$rskey = $this->Execute(sprintf($this->metaKeySQL,($table)));
 				// fetch all result in once for performance.
-				$keys = $rskey->GetArray();
+				$keys =& $rskey->GetArray();
 				if (isset($savem)) $this->SetFetchMode($savem);
 				$ADODB_FETCH_MODE = $save;
 				
@@ -392,47 +427,35 @@ a different OID if a database must be reloaded. */
 		return false;
 	}
 
-	 function &MetaDatabases()
-	 {
-	 	$arr = array();
-	  	$sql="select datname from pg_database";
-		$rs = $this->Execute($sql);
-		if (!$rs) return false;
-		while (!$rs->EOF) {
-			$arr[] = reset($rs->fields);
-			$rs->MoveNext();
-		}
-		
-		return $arr;
-	 }
-
-
 	// returns true or false
 	//
 	// examples:
 	// 	$db->Connect("host=host1 user=user1 password=secret port=4341");
 	// 	$db->Connect('host1','user1','secret');
 	function _connect($str,$user='',$pwd='',$db='',$persist=false)
-	{		   
+	{
 		if ($user || $pwd || $db) {
-			$str = adodb_addslashes($str);
 			$user = adodb_addslashes($user);
 			$pwd = adodb_addslashes($pwd);
+			if (strlen($db) == 0) $db = 'template1';
 			$db = adodb_addslashes($db);
 		   	if ($str)  {
 			 	$host = split(":", $str);
-				if ($host[0]) $str = "host=$host[0]";
-				else $str = 'localhost';
+				if ($host[0]) $str = "host=".adodb_addslashes($host[0]);
+				else $str = 'host=localhost';
 				if (isset($host[1])) $str .= " port=$host[1]";
+			} else {
+				$str = 'host=localhost';
 			}
 		   		if ($user) $str .= " user=".$user;
 		   		if ($pwd)  $str .= " password=".$pwd;
-			if ($db)   $str .= " dbname=".$db;
+				if ($db)   $str .= " dbname=".$db;
 		}
-		
+
 		//if ($user) $linea = "user=$user host=$linea password=$pwd dbname=$db port=5432";
 		if ($persist) $this->_connectionID = pg_pconnect($str);
 		else $this->_connectionID = pg_connect($str);
+		
 		if ($this->_connectionID === false) return false;
 		$this->Execute("set datestyle='ISO'");
 		return true;
@@ -452,11 +475,14 @@ a different OID if a database must be reloaded. */
 	function _query($sql,$inputarr)
 	{
 		$rez = pg_Exec($this->_connectionID,$sql);
+		//print_r($rez);
 		// check if no data returned, then no need to create real recordset
 		if ($rez && pg_numfields($rez) <= 0) {
+			if ($this->_resultid) pg_freeresult($this->_resultid);
 			$this->_resultid = $rez;
 			return true;
 		}
+		
 		return $rez;
 	}
 	
@@ -490,7 +516,10 @@ a different OID if a database must be reloaded. */
 	function _close()
 	{
 		if ($this->transCnt) $this->RollbackTrans();
-		$this->_resultid = false;
+		if ($this->_resultid) {
+			@pg_freeresult($this->_resultid);
+			$this->_resultid = false;
+		}
 		@pg_close($this->_connectionID);
 		$this->_connectionID = false;
 		return true;
@@ -595,11 +624,10 @@ class ADORecordSet_postgres64 extends ADORecordSet{
 	
 	function _decode($blob)
 	{
-		
 		eval('$realblob="'.adodb_str_replace(array('"','$'),array('\"','\$'),$blob).'";');
-		return $realblob;
-		
+		return $realblob;	
 	}
+	
 	function _fixblobs()
 	{
 		if ($this->fetchMode == PGSQL_NUM || $this->fetchMode == PGSQL_BOTH) {
@@ -645,7 +673,7 @@ class ADORecordSet_postgres64 extends ADORecordSet{
 	}
 
 	function _close() 
-	{
+	{ 
 		return @pg_freeresult($this->_queryID);
 	}
 
