@@ -199,6 +199,11 @@ if ($step == 1) {
 		    array_push($errorMsg, _("Error: Gallery cannot access the directory you specified. Please change its permissions."));
 		} elseif (!is_writable($dir)) {
 		    array_push($errorMsg, _("Error: Gallery cannot write to the directory you specified. Please change its permissions."));
+		} else {
+		    // populate the dir
+		    if (!checkDirectories($dir)) {
+			array_push($errorMsg, _("Error creating directories in storage directory."));
+		    }
 		}
 	    }
 	}
@@ -460,4 +465,44 @@ function CheckFileDirective() {
     }
 }
 
+function checkDirectories($dataBase) {
+    global $gallery, $platform;
+
+    /* Make sure that our base path exists, is a directory and is writeable */
+    //    $dataBase = $gallery->getConfig('data.gallery.base');
+
+    $testfile = $dataBase . '/setup' . rand(1, 10000);
+    if ($fd = fopen($testfile, 'w')) {
+	fclose($fd);
+	unlink($testfile);
+    } else {
+	return false;
+    }
+
+    /* Create the sub directories, if necessary */
+    foreach (array('albums',
+		   'cache',
+		   'tmp',
+		   'smarty',
+		   'smarty/templates_c') as $key) {
+	$dir = "$dataBase/$key";
+	//	$dir = $gallery->getConfig($key);
+
+	if (file_exists($dir) && !is_dir($dir)) {
+   	    return false;
+	}
+
+	if (!file_exists($dir)) {
+	    if (!mkdir($dir)) {
+		return false;
+	    }
+	}
+
+	if (!is_writeable($dir)) {
+	    return false;
+	}
+    }
+    return true;
+}
 ?>
+
