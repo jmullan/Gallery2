@@ -1,0 +1,219 @@
+<?php
+/*
+ * $RCSfile
+ *
+ * Gallery - a web based photo toolkit viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * Test Toolkit functionality
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ *
+ */
+class ToolkitTest extends GalleryTestCase {
+
+    function ToolkitTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    function setUp() {
+	parent::setUp();
+	
+	/* Register a dummy toolkit */
+	GalleryFactory::registerImplementation('GalleryToolkit',
+					       'TestToolkit',
+					       'TestToolkit',
+					       __FILE__);
+    }
+
+    function testOperation() {
+
+	$params = array(array('type' => 'test-type1',
+			      'description' => 'test-description1',
+			      'default' => 'test-default1'),
+			array('type' => 'test-type2',
+			      'description' => 'test-description2',
+			      'default' => 'test-default2')
+			);
+	$ret = GalleryToolkitHelper::registerOperation('TestToolkit',
+						       array('test/type'),
+						       'test-operation',
+						       $params,
+						       'test-description',
+						       'test/outputType');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Get the operation */
+	list ($ret, $operations) = GalleryToolkitHelper::getOperations('test/type');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(1, sizeof($operations));
+	$this->assertEquals('test-operation', $operations[0]['name']);
+	$this->assertEquals('test/outputType', $operations[0]['outputMimeType']);
+	$this->assertEquals('test-description', $operations[0]['description']);
+	$this->assertEquals($params, $operations[0]['parameters']);
+
+	/* Get the toolkit */
+	list ($ret, $toolkit, $outputMimeType) =
+	    GalleryToolkitHelper::getToolkitByOperation('test/type', 'test-operation');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(new TestToolkit(), $toolkit);
+	$this->assertEquals('test/outputType', $outputMimeType);
+
+	/* Unregister */
+	$ret = GalleryToolkitHelper::unregisterToolkit('TestToolkit');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	GalleryDataCache::reset();
+	
+	/* Get the toolkit */
+	list ($ret, $toolkit, $outputMimeType) =
+	    GalleryToolkitHelper::getToolkitByOperation('test/type', 'test-operation');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	$this->assertEquals(null, $toolkit);
+    }
+
+    function testProperty() {
+	$ret = GalleryToolkitHelper::registerProperty('TestToolkit',
+						      array('test/type'),
+						      'test-property',
+						      'int',
+						      'test-description');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Get the operation */
+	list ($ret, $properties) = GalleryToolkitHelper::getProperties('test/type');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(1, sizeof($properties));
+	$this->assertEquals('test-property', $properties[0]['name']);
+	$this->assertEquals('int', $properties[0]['type']);
+	$this->assertEquals('test-description', $properties[0]['description']);
+
+	/* Get the toolkit */
+	list ($ret, $toolkit) =
+	    GalleryToolkitHelper::getToolkitByProperty('test/type', 'test-property');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(new TestToolkit(), $toolkit);
+
+	/* Unregister */
+	$ret = GalleryToolkitHelper::unregisterToolkit('TestToolkit');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	GalleryDataCache::reset();
+	
+	/* Get the toolkit */
+	list ($ret, $toolkit) =
+	    GalleryToolkitHelper::getToolkitByProperty('test/type', 'test-property');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(null, $toolkit);
+    }
+
+    function testOperationSequence() {
+	$params = array(array('type' => 'test-type1',
+			      'description' => 'test-description1',
+			      'default' => 'test-default1'),
+			array('type' => 'test-type2',
+			      'description' => 'test-description2',
+			      'default' => 'test-default2')
+			);
+	$ret = GalleryToolkitHelper::registerOperation('TestToolkit',
+						       array('test/type1'),
+						       'test-operation1',
+						       $params,
+						       'test-description',
+						       'test/type2');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryToolkitHelper::registerOperation('TestToolkit',
+						       array('test/type2'),
+						       'test-operation2',
+						       $params,
+						       'test-description',
+						       'test/type3');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $isSupported, $outputMimeType) =
+	    GalleryToolkitHelper::isSupportedOperationSequence('test/type1',
+							       'test-operation1|1,2;test-operation2|1,2');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assert($isSupported);
+	$this->assert('test/type3', $outputMimeType);
+
+	/* Unregister */
+	$ret = GalleryToolkitHelper::unregisterToolkit('TestToolkit');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	GalleryDataCache::reset();
+	
+	list ($ret, $isSupported, $outputMimeType) =
+	    GalleryToolkitHelper::isSupportedOperationSequence('test/type1',
+							       'test-operation1|1,2;test-operation2|1,2');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assert(!$isSupported);
+    }
+}
+
+// Dummy test toolkit 
+class TestToolkit { }
+
+?>
