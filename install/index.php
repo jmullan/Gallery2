@@ -168,7 +168,7 @@ session_start();
 
 // If we don't have our steps in our session, initialize them now.
 if (!isset($_GET['startOver']) && isset($_SESSION['steps'])) {
-    $steps =& $_SESSION['steps'];
+    $steps = unserialize($_SESSION['steps']);
 } else {
     for ($i = 0; $i < sizeof($stepOrder); $i++) {
 	$className = $stepOrder[$i] . 'Step';
@@ -179,7 +179,6 @@ if (!isset($_GET['startOver']) && isset($_SESSION['steps'])) {
 	$step->setIsLastStep($i == sizeof($stepOrder) - 1);
 	$steps[] = $step;
     }
-    $_SESSION['steps'] =& $steps;
 }
 
 if (isset($_GET['step'])) {
@@ -216,5 +215,12 @@ $currentStep->loadTemplateData($templateData);
 
 // Render our page
 include('templates/MainPage.html');
+
+/*
+ * We don't store the steps in the session in raw form because that
+ * will break in environments where session.auto_start is on since
+ * it will try to instantiate the classes before they've been defined
+ */
+$_SESSION['steps'] = serialize($steps);
 ?>
 
