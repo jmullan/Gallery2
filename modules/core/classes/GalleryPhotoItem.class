@@ -130,6 +130,7 @@ class GalleryPhotoItem_core extends GalleryDataItem {
 	$this->setHeight(0);
 
 	/* Detect our dimensions, if possible */
+	$ret = $this->rescan();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -160,8 +161,7 @@ class GalleryPhotoItem_core extends GalleryDataItem {
 	}
 
 	if (isset($toolkit)) {
-	    list ($ret, $dimensions) =
-		$toolkit->getProperty($mimeType, 'dimensions', $path);
+	    list ($ret, $dimensions) = $toolkit->getProperty($mimeType, 'dimensions', $path);
 	    if ($ret->isError()) {
 
 		/*
