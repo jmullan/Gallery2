@@ -180,24 +180,28 @@ class GallerySession {
 	$currentRemoteIdentifier = $this->_getRemoteIdentifier();
 
 	if (!isset($this->_remoteIdentifier) ||
-		$this->_compareIdentifiers($this->_remoteIdentifier, $currentRemoteIdentifier) == 0) {
-	    if ($gallery->getDebug()) {
-		$gallery->debug('Session hijack detected: saved vs. current below');
-		$gallery->debug_r($this->_remoteIdentifier);
-		$gallery->debug_r($currentRemoteIdentifier);
-	    }
+		$this->_compareIdentifiers($this->_remoteIdentifier,
+					   $currentRemoteIdentifier) == 0) {
+	    $allowFrom = $gallery->getConfig('allowSessionAccess');
+	    if (!$allowFrom || $currentRemoteIdentifier[0] != $allowFrom) {
+		if ($gallery->getDebug()) {
+		    $gallery->debug('Session hijack detected: saved vs. current below');
+		    $gallery->debug_r($this->_remoteIdentifier);
+		    $gallery->debug_r($currentRemoteIdentifier);
+		}
 
-	    /*
-	     * The session was not created from this browser address, so reset
-	     * our data to prevent hijacking.
-	     */
-	    $this->_remoteIdentifier = $currentRemoteIdentifier;
-	    $this->_emptySessionData();
-	    $this->_sessionId = md5(microtime() . rand(1, 32767));
-	    $forceResendCookie = true;
-	    $ret = $this->save(true);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+		/*
+		 * The session was not created from this browser address, so reset
+		 * our data to prevent hijacking.
+		 */
+		$this->_remoteIdentifier = $currentRemoteIdentifier;
+		$this->_emptySessionData();
+		$this->_sessionId = md5(microtime() . rand(1, 32767));
+		$forceResendCookie = true;
+		$ret = $this->save(true);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
 	    }
 	}
 

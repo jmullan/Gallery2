@@ -134,6 +134,14 @@ $gallery->setProfile(false);
 $gallery->setConfig('mode.embed.only', false);
 
 /*
+ * Allow a particular IP address to access the session (it still must know the
+ * session id) even though it doesn't match the address/user agent that created
+ * the session.  Put the address of validator.w3.org ('128.30.52.13') here to allow
+ * validation of non-public Gallery pages from the links at the bottom of the page.
+ */
+$gallery->setConfig('allowSessionAccess', false);
+
+/*
  * Used by the installer to distinguish multiple sites supported by one codebase.
  */
 $gallery->setConfig('galleryId', '');
