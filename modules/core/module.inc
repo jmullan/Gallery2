@@ -454,6 +454,15 @@ class CoreModule extends GalleryModule {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	$itemIds = array();
+	foreach ($items as $item) {
+	    $itemIds[] = $item->getId();
+	}
+	list ($ret, $childCounts) = GalleryItemHelper::fetchChildCounts($itemIds);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	$links = array();
 	foreach ($items as $item) {
 	    /* Permissions for this item */
@@ -575,7 +584,9 @@ class CoreModule extends GalleryModule {
 					    'itemId' => $item->getId()));
 	    }
 
-	    if ($isAlbum && isset($permissions['core.edit'])) {
+	    if ($isAlbum && isset($permissions['core.edit']) &&
+		!empty($childCounts[$item->getId()]) &&
+		$childCounts[$item->getId()] > 1) {
 		$links[$item->getId()][] =
 		    array('text' => $this->translate('reorder items'),
 			  'params' => array('view' => 'core:ItemAdmin',
@@ -681,6 +692,15 @@ class CoreModule extends GalleryModule {
 	}
 
 	$isAlbum = $item->getCanContainChildren();
+	if ($isAlbum) {
+	    list ($ret, $childCounts) = GalleryItemHelper::fetchChildCounts(array($item->getId()));
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $childCount = empty($childCounts[$item->getId()]) ? 0 : $childCounts[$item->getId()];
+	} else {
+	    $childCount = 0;
+	}
 
 	$parentId = $item->getParentId();
 	list ($ret, $parentPermissions) = GalleryItemHelper::getPermissions($parentId);
@@ -703,8 +723,10 @@ class CoreModule extends GalleryModule {
 	        $views[] = array('name' => $this->translate('Album Settings'),
 				 'view' => 'core:ItemEditAlbum');
 
-	        $views[] = array('name' => $this->translate('Reorder Items'),
-				 'view' => 'core:ItemReorder');
+		if ($childCount > 1) {
+		    $views[] = array('name' => $this->translate('Reorder Items'),
+				     'view' => 'core:ItemReorder');
+		}
 		
 	    } else {
 		/* Management views for core item types */
