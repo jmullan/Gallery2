@@ -30,7 +30,7 @@ map(s{$basedir/}{}, @entries);
 print STDERR "\n";
 
 # Get list of .class, .inc, .php files in basedir/modules/layouts/themes..
-my @viewable = grep(m{^(install/.*|modules/.*|layouts/.*|themes/.*|[^/]*)\.(class|inc|php)$}, @entries);
+my @viewable = grep(m{^(install/.*|modules/.*|layouts/.*|themes/.*|[^/]*)\.(class|inc|php) \d$}, @entries);
 
 # Split into sections
 #
@@ -49,8 +49,7 @@ print STDERR "\n";
 #
 print STDERR "Generating checksums...";
 foreach my $manifest (keys %sections) {
-  my $out;
-  open($out, ">$manifest") or die;
+  open(my $out, ">$manifest") or die;
   print $out "# File crc32 crc32(crlf) size size(crlf) viewable\n";
   my @entries = @{$sections{$manifest}};
   foreach my $entry (@entries) {
@@ -60,19 +59,15 @@ foreach my $manifest (keys %sections) {
     open(my $fd, "<$file");
     binmode($fd);
     my $data = join('', <$fd>);
-    my $data_crlf;
     close($fd);
 
-    my $size;
-    my $size_crlf;
+    my ($data_crlf, $size, $size_crlf);
     if ($isBinary) {
       $data_crlf = $data;
-      $size = (stat($file))[7];
-      $size_crlf = (stat($file))[7];
+      $size = $size_crlf = (stat($file))[7];
     } else {
       if ($data =~ /\r/) {
-	$data_crlf = $data;
-	$data =~ s/\r//g;
+	($data_crlf = $data) =~ s/\r//g;
       } else {
 	($data_crlf = $data) =~ s/\n/\r\n/g;
       }
@@ -82,7 +77,7 @@ foreach my $manifest (keys %sections) {
 
     my $cksum = crc32($data);
     my $cksum_crlf = crc32($data_crlf);
-    my $view = grep(m{^\Q$file\E$}, @viewable) ? 1 : 0;
+    my $view = grep(m{^\Q$file\E \d$}, @viewable) ? 1 : 0;
     print $out "$file $cksum $cksum_crlf $size $size_crlf $view\n";
   }
   close $out;
