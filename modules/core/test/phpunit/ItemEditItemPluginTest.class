@@ -431,12 +431,12 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 	    GalleryUtilities::putRequestVariable('form[resizes][' . $i . '][active]', 1);
 	    GalleryUtilities::putRequestVariable('form[resizes][' . $i . '][size]', 100 * ($i+1));
 	}
-	GalleryUtilities::putRequestVariable('form[originationTimestamp][Date_Month]', '08');
-	GalleryUtilities::putRequestVariable('form[originationTimestamp][Date_Day]', '09');
-	GalleryUtilities::putRequestVariable('form[originationTimestamp][Date_Year]', '2003');
-	GalleryUtilities::putRequestVariable('form[originationTimestamp][Time_Hour]', '22');
-	GalleryUtilities::putRequestVariable('form[originationTimestamp][Time_Minute]', '50');
-	GalleryUtilities::putRequestVariable('form[originationTimestamp][Time_Second]', '59');
+	GalleryUtilities::putRequestVariable('form[originationTimestampSplit][Date_Month]', '08');
+	GalleryUtilities::putRequestVariable('form[originationTimestampSplit][Date_Day]', '09');
+	GalleryUtilities::putRequestVariable('form[originationTimestampSplit][Date_Year]', '2003');
+	GalleryUtilities::putRequestVariable('form[originationTimestampSplit][Time_Hour]', '22');
+	GalleryUtilities::putRequestVariable('form[originationTimestampSplit][Time_Minute]', '50');
+	GalleryUtilities::putRequestVariable('form[originationTimestampSplit][Time_Second]', '59');
 
 	/* Perform the request and verify that we are ok */
 	$results = $this->handleRequest($this->_item[0], $this->_preferred);

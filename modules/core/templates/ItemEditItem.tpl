@@ -123,7 +123,7 @@
   </p>
 
   <p>
-    {capture name=originationTimestampField}{g->formVar var="form[originationTimestamp]"}{/capture}
+    {capture name=originationTimestampField}{g->formVar var="form[originationTimestampSplit]"}{/capture}
     {g->text text="Date:"}
     {html_select_date time=$form.originationTimestamp field_array=$smarty.capture.originationTimestampField start_year="1970" end_year="+0"}
     {g->text text="Time:"}

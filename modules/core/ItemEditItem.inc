@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU DataItem Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * DataItem Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU DataItem Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -47,7 +47,7 @@ class ItemEditItem extends ItemEditPlugin {
 	if (isset($form['action']['undo'])) {
 
 	    /* Take no action and we'll be redirected back to the same page which will reset the form */
-	    
+
 	} else if (isset($form['action']['save'])) {
 	    list ($ret, $rootAlbumId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 	    if ($ret->isError()) {
@@ -60,7 +60,7 @@ class ItemEditItem extends ItemEditPlugin {
 	     * Validate the input data.
 	     */
 	    $platform = $gallery->getPlatform();
-	    
+
 	    foreach(array('title','summary','keywords','description') as $key) {
 		if (!empty($form[$key])) {
 		    $form[$key] = trim($form[$key]);
@@ -80,19 +80,29 @@ class ItemEditItem extends ItemEditPlugin {
 		    $error[] = 'form[error][title][missingRootTitle]';
 		}
 	    }
-	    
+
+	    if (!empty($form['originationTimestampSplit'])) {
+		$newOriginationTimestamp = mktime($form['originationTimestampSplit']['Time_Hour'],
+						  $form['originationTimestampSplit']['Time_Minute'],
+						  $form['originationTimestampSplit']['Time_Second'],
+						  $form['originationTimestampSplit']['Date_Month'],
+						  $form['originationTimestampSplit']['Date_Day'],
+						  $form['originationTimestampSplit']['Date_Year']);
+		GalleryUtilities::putRequestVariable('form[originationTimestamp]', $newOriginationTimestamp);
+	    }
+
 	    if (empty($error)) {
 		list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($item->getId());
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
-		
+
 		/*
 		 * It's possible to get a collision when we rename, so try that
 		 * first.  If there's no collision then make the rest of the changes.
 		 */
 		$originalPathComponent = $item->getPathComponent();
-		if (isset($form['pathComponent']) && $item->getPathComponent() != $form['pathComponent']) {	
+		if (isset($form['pathComponent']) && $item->getPathComponent() != $form['pathComponent']) {
 		    if ($isRootAlbum) {
 			GalleryCoreApi::releaseLocks($lockId);
 			return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null, null);
@@ -107,22 +117,17 @@ class ItemEditItem extends ItemEditPlugin {
 		if ($ret->isError() && $ret->getErrorCode() & ERROR_COLLISION) {
 		    $error[] = 'form[error][pathComponent][collision]';
 		} else {
-		    /* Change the originationTimestamp */
-		    if (!empty($form['originationTimestamp'])) {
-			$newOriginationTimestamp = mktime($form['originationTimestamp']['Time_Hour'],
-							  $form['originationTimestamp']['Time_Minute'],
-							  $form['originationTimestamp']['Time_Second'],
-							  $form['originationTimestamp']['Date_Month'],
-							  $form['originationTimestamp']['Date_Day'],
-							  $form['originationTimestamp']['Date_Year']);
-			$item->setOriginationTimestamp($newOriginationTimestamp);
-		    }
 		    $item->setTitle($form['title']);
 		    $item->setSummary($form['summary']);
 		    $item->setKeywords($form['keywords']);
 		    $item->setDescription($form['description']);
 		    $item->setSerialNumber($form['serialNumber']);
-	    
+
+		    /* Change the originationTimestamp */
+		    if (!empty($newOriginationTimestamp)) {
+			$item->setOriginationTimestamp($newOriginationTimestamp);
+		    }
+
 		    $ret = $item->save();
 		    if ($ret->isError()) {
 			if (isset($form['pathComponent']) && $originalPathComponent != $form['pathComponent']) {
@@ -132,7 +137,7 @@ class ItemEditItem extends ItemEditPlugin {
 			     */
 			    $item->rename($originalPathComponent);
 			}
-			    
+
 			GalleryCoreApi::releaseLocks($lockId);
 			return array($ret->wrap(__FILE__, __LINE__), null, null);
 		    }
@@ -142,7 +147,7 @@ class ItemEditItem extends ItemEditPlugin {
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null, null);
 		    }
-		
+
 		    $status = $module->translate('Changes saved successfully');
 		}
 
@@ -182,7 +187,7 @@ class ItemEditItem extends ItemEditPlugin {
 	if ($rootAlbumId != $item->getId()) {
 	    $can['changePathComponent'] = 1;
 	}
-	
+
 	$ItemEditItem = array();
 	$ItemEditItem['can'] = $can;
 	$ItemEditItem['typeName'] = $item->itemTypeName();
