@@ -688,8 +688,8 @@ class ConfirmImportController extends GalleryController {
 					return array($ret->wrap(__FILE__, __LINE__), null);
 				    }
 				}
-
-				list ($ret, $importLockIds[]) = GalleryCoreApi::acquireWriteLock($newItem->getId());
+				$itemLockIds = array();
+				list ($ret, $itemLockIds[]) = GalleryCoreApi::acquireWriteLock($newItem->getId());
 				if ($ret->isError()) {
 				    return array($ret->wrap(__FILE__, __LINE__), null);
 				}
@@ -890,6 +890,12 @@ class ConfirmImportController extends GalleryController {
 					    return array($ret->wrap(__FILE__, __LINE__), null);
 					}
 				    }
+				}
+				$ret = GalleryCoreApi::releaseLocks($itemLockIds);
+				if ($ret->isError()) {
+				    return array($ret->wrap(__FILE__, __LINE__), null);
+				} else {
+				    $itemLockIds = array();
 				}
 				/* Click counts must be set after the item is firstsaved */
 				//$ret = GalleryCoreApi::setItemViewCount($newItem->getId(), $importAlbumItem->clicks);
