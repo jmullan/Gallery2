@@ -60,7 +60,7 @@ class MatrixLayout extends GalleryLayout {
 	}
 	$params = array_merge(
 	    array('rows' => 3, 'columns' => 3, 'showImageOwner' => 0, 'showAlbumOwner' => 1,
-		  'albumFrame' => '', 'itemFrame' => '', 'photoFrame' => '', 'useCaptureDate' => 1),
+		  'albumFrame' => '', 'itemFrame' => '', 'photoFrame' => '', 'useCaptureDate' => 0),
 	    $params);
 
 	$settings = array();
