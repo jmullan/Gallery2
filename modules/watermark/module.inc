@@ -40,35 +40,42 @@ class WatermarkModule extends GalleryModule /* and GalleryEventListener */ {
 	$this->setId('watermark');
 	$this->setName('Watermark');
 	$this->setDescription($gallery->i18n('Watermark your images'));
-	$this->setVersion('0.8.4');
+	$this->setVersion('0.8.5');
 	$this->setGroup('display', $this->translate('Display'));
-	$this->setCallbacks('performFactoryRegistrations|registerEventListeners|' .
-			    'getSiteAdminViews|getUserAdminViews');
-	$this->setRequiredCoreApi(array(1, 0));
+	$this->setCallbacks('registerEventListeners|getSiteAdminViews|getUserAdminViews');
+	$this->setRequiredCoreApi(array(2, 0));
 	$this->setRequiredModuleApi(array(0, 8));
     }
 
     /**
-     * @see GalleryModule::performFactoryRegistrations
+     * @see GalleryModule::upgrade()
      */
-    function performFactoryRegistrations() {
-	$classDir = dirname(__FILE__) . '/classes/';
+    function upgrade($currentVersion) {
+	$ret = GalleryCoreApi::unregisterFactoryImplementationsByModuleId($this->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 
-	GalleryCoreApi::registerFactoryImplementation('GalleryEntity',
-						      'WatermarkImage',
-						      'WatermarkImage',
-						      $classDir . 'WatermarkImage.class');
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+            'GalleryEntity', 'WatermarkImage', 'WatermarkImage',
+            'modules/watermark/classes/WatermarkImage.class', 'watermark', null);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 
-	GalleryCoreApi::registerFactoryImplementation('ItemEditPlugin',
-						      'ItemEditWatermark',
-						      'ItemEditWatermark',
-						      dirname(__FILE__) . '/ItemEditWatermark.inc');
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+            'ItemEditPlugin', 'ItemEditWatermark', 'ItemEditWatermark',
+            'modules/watermark/ItemEditWatermark.inc', 'watermark', null);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 
-	/* Register our item add plugins */
-	GalleryCoreApi::registerFactoryImplementation('ItemAddOption',
-						      'WatermarkOption',
-						      'WatermarkOption',
-						      dirname(__FILE__) . '/WatermarkOption.inc');
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+            'ItemAddOption', 'WatermarkOption', 'WatermarkOption',
+            'modules/watermark/WatermarkOption.inc', 'watermark', null);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 
 	return GalleryStatus::success();
     }

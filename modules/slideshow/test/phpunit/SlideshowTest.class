@@ -46,8 +46,14 @@ class SlideshowTest extends GalleryTestCase {
 	global $gallery;
 
 	/* Register a dummy toolkit and operation */
-	GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
-	    'SlideshowToolkit', 'SlideshowToolkit', __FILE__);
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+            'GalleryToolkit', 'SlideshowToolkit', 'SlideshowToolkit',
+            'modules/slideshow/test/phpunit/SlideshowTest.class', 'slideshow_test', null);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
 	$ret = GalleryCoreApi::registerToolkitOperation('SlideshowToolkit',
 	    array('image/gif', 'image/jpeg'), 'testoperation',
 	    array(array('type' => 'int', 'description' => 'size')), 'desc');
@@ -55,10 +61,17 @@ class SlideshowTest extends GalleryTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	GalleryCoreApi::registerFactoryImplementation('ExifInterface_1_0',
-	    'SlideshowExif', 'SlideshowExif', __FILE__);
 
-	// Create a new subalbum and give AllUser group only core.view
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+            'ExifInterface_1_0', 'SlideshowExif', 'SlideshowExif',
+            'modules/slideshow/test/phpunit/SlideshowTest.class', 'slideshowTest', null);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markFactoryModuleForCleanup('slideshowTest');
+
+	/* Create a new subalbum and give AllUser group only core.view */
 	list ($ret, $album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();

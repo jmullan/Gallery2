@@ -51,17 +51,29 @@ class DerivativeTest extends GalleryTestCase {
 	}
 
 	/* Register a mock data item type */
-	GalleryCoreApi::registerFactoryImplementation('GalleryItem',
-						      'DerivativeTestItem',
-						      'DerivativeTestItem',
-						      __FILE__,
-						      array('test/*'));
+	$path = 'modules/core/test/phpunit/DerivativeTest.class';
+	$ret = GalleryCoreApi::registerFactoryImplementation('GalleryItem',
+							     'DerivativeTestItem',
+							     'DerivativeTestItem',
+							     $path,
+							     'coreTest',
+							     array('test/*'));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 
 	/* Register a dummy toolkit */
-	GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
-						      'DerivativeTestToolkit',
-						      'DerivativeTestToolkit',
-						      __FILE__);
+	$ret = GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
+							     'DerivativeTestToolkit',
+							     'DerivativeTestToolkit',
+							     $path,
+							     'coreTest',
+							     null);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	$this->_markFactoryModuleForCleanup('coreTest');
 
 	/* Register an operation that we can perform on our mock data items */
 	$ret = GalleryCoreApi::registerToolkitOperation('DerivativeTestToolkit',

@@ -47,8 +47,14 @@ class CustomThumbnailOptionTest extends ItemEditOptionTestCase {
     function setUp() {
 	parent::setUp();
 
-	GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
-	    'CustomThumbnailOptionTestToolkit', 'CustomThumbnailOptionTestToolkit', __FILE__);
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+            'GalleryToolkit', 'CustomThumbnailOptionTestToolkit', 'CustomThumbnailOptionTestToolkit',
+            'modules/thumbnail/test/phpunit/CustomThumbnailOptionTest.class', 'thumbnailTest', null);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markFactoryModuleForCleanup('thumbnailTest');
 
 	$ret = GalleryCoreApi::registerToolkitOperation('CustomThumbnailOptionTestToolkit',
 		array('image/test'), 'thumbnail',

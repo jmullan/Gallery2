@@ -129,7 +129,7 @@ class GalleryTestCase extends TestCase {
 
     function GalleryTestCase($methodName) {
 	$this->TestCase($methodName);
-	$this->_cleanup = array();
+	$this->_cleanup = array('entity' => array(), 'factoryModuleId' => array());
     }
 
     function &getEntityCounter() {
@@ -234,7 +234,7 @@ class GalleryTestCase extends TestCase {
 	global $gallery;
 
 	/* Do our cleanup */
-	foreach ($this->_cleanup as $entity) {
+	foreach ($this->_cleanup['entity'] as $entity) {
 	    $ret = GalleryCoreApi::deleteEntityById($entity->getId());
 	    if ($ret->isError()) {
 		print $ret->getAsHtml();
@@ -242,6 +242,14 @@ class GalleryTestCase extends TestCase {
 	    }
 	}
 	    
+	foreach ($this->_cleanup['factoryModuleId'] as $moduleId) {
+	    $ret = GalleryCoreApi::unregisterFactoryImplementationsByModuleId($moduleId);
+	    if ($ret->isError()) {
+		print $ret->getAsHtml();
+		return $this->failWithStatus(__FILE__, __LINE__);
+	    }
+	}
+
 	/* Make sure we're not hanging onto any locks */
 	$lockIds = GalleryCoreApi::getLockIds();
 	if (!empty($lockIds)) {
@@ -290,7 +298,11 @@ class GalleryTestCase extends TestCase {
     }
 
     function _markForCleanup($entity) {
-	$this->_cleanup[] = $entity;
+	$this->_cleanup['entity'][] = $entity;
+    }
+
+    function _markFactoryModuleForCleanup($moduleId) {
+	$this->_cleanup['factoryModuleId'][] = $moduleId;
     }
 
     function assert($boolean, $message=null) {

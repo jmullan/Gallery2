@@ -40,24 +40,11 @@ class FfmpegModule extends GalleryModule {
 	$this->setId('ffmpeg');
 	$this->setName($gallery->i18n('Ffmpeg'));
 	$this->setDescription($gallery->i18n('A toolkit for processing movies'));
-	$this->setVersion('0.8.2');
+	$this->setVersion('0.8.3');
 	$this->setGroup('toolkits', $this->translate('Graphics Toolkits'));
-	$this->setCallbacks('performFactoryRegistrations|getSiteAdminViews');
-	$this->setRequiredCoreApi(array(1, 0));
+	$this->setCallbacks('getSiteAdminViews');
+	$this->setRequiredCoreApi(array(2, 0));
 	$this->setRequiredModuleApi(array(0, 8));
-    }
-
-    /**
-     * @see GalleryModule::performFactoryRegistrations
-     */
-    function performFactoryRegistrations() {
-	$classDir = dirname(__FILE__) . '/classes/';
-
-	/* Register our graphics class with the factory */
-	GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
-						      'FfmpegToolkit',
-						      'Ffmpeg',
-						      $classDir . 'FfmpegToolkit.class');
     }
 
     /**
@@ -70,6 +57,19 @@ class FfmpegModule extends GalleryModule {
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
+	}
+
+	$ret = GalleryCoreApi::unregisterFactoryImplementationsByModuleId($this->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Register our graphics class with the factory */
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+            'GalleryToolkit', 'FfmpegToolkit', 'Ffmpeg',
+            'modules/ffmpeg/classes/FfmpegToolkit.class', 'ffmpeg', null);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	return GalleryStatus::success();

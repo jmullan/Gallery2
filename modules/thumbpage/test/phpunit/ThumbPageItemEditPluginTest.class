@@ -41,8 +41,15 @@ class ThumbPageItemEditPluginTest extends ItemEditPluginTestCase {
 	parent::setUp();
 
 	/* Register a dummy toolkit and property */
-	GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
-	    'ThumbPageTestToolkit', 'ThumbPageTestToolkit', __FILE__);
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+            'GalleryToolkit', 'ThumbPageTestToolkit', 'ThumbPageTestToolkit',
+            'modules/thumbpage/test/phpunit/ThumbPageItemEditPluginTest.class', 'thumbpageTest', null);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markFactoryModuleForCleanup('thumbpageTest');
+
 	$ret = GalleryCoreApi::registerToolkitProperty('ThumbPageTestToolkit',
 	    array('test/document'), 'page-count', 'int', 'desc');
 	if ($ret->isError()) {

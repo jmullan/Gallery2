@@ -39,16 +39,10 @@ class SizeLimitModule extends GalleryModule {
         $this->setId('sizelimit');      /* this must match the directory name */
         $this->setName('Size Limit');   /* this is the module name            */
         $this->setDescription($gallery->i18n('Define picture size limit'));
-        $this->setVersion('0.8.4');
-        
-        /*
-         * Multiple modules can be grouped together - this is the group name
-         * Examples of other groups are 'Graphics toolkits' or 'Display'
-         */
+        $this->setVersion('0.8.5');
         $this->setGroup('display', $gallery->i18n('Display'));
-        
-        $this->setCallbacks('registerEventListeners|performFactoryRegistrations');
-        $this->setRequiredCoreApi(array(1, 0));
+        $this->setCallbacks('registerEventListeners');
+        $this->setRequiredCoreApi(array(2, 0));
         $this->setRequiredModuleApi(array(0, 8));
     }
 
@@ -76,16 +70,29 @@ class SizeLimitModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::performFactoryRegistrations
+     * @see GalleryModule::upgrade()
      */
-    function performFactoryRegistrations() {
-        GalleryCoreApi::registerFactoryImplementation('ItemEditOption',
-            'SizeLimitOption', 'SizeLimitOption',
-            dirname(__FILE__) . '/SizeLimitOption.inc', array('ItemEditAlbum'));
+    function upgrade($currentVersion) {
+	$ret = GalleryCoreApi::unregisterFactoryImplementationsByModuleId($this->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+        $ret = GalleryCoreApi::registerFactoryImplementation(
+            'ItemEditOption', 'SizeLimitOption', 'SizeLimitOption',
+            'modules/sizelimit/SizeLimitOption.inc', 'sizelimit', array('ItemEditAlbum'));
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
             
-        GalleryCoreApi::registerFactoryImplementation('ItemAddOption',
-            'SetSizeOption', 'SetSizeOption',
-            dirname(__FILE__) . '/SetSizeOption.inc');
+        $ret = GalleryCoreApi::registerFactoryImplementation(
+            'ItemAddOption', 'SetSizeOption', 'SetSizeOption',
+            'modules/sizelimit/SetSizeOption.inc', 'sizelimit', null);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
     }
     
     /**

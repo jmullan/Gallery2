@@ -38,21 +38,37 @@ class ThumbPageModule extends GalleryModule /* and GalleryEventListener */ {
 	$this->setId('thumbpage');
 	$this->setName($gallery->i18n('Thumbnail Page'));
 	$this->setDescription($gallery->i18n('Select page/frame from a multipage file or movie for the thumbnail'));
-	$this->setVersion('0.8.3');
+	$this->setVersion('0.8.4');
 	$this->setGroup('display', $this->translate('Display'));
-	$this->setCallbacks('performFactoryRegistrations|registerEventListeners');
-	$this->setRequiredCoreApi(array(1, 0));
+	$this->setCallbacks('registerEventListeners');
+	$this->setRequiredCoreApi(array(2, 0));
 	$this->setRequiredModuleApi(array(0, 8));
     }
 
     /**
-     * @see GalleryModule::performFactoryRegistrations
+     * @see GalleryModule::upgrade()
      */
-    function performFactoryRegistrations() {
-	GalleryCoreApi::registerFactoryImplementation('ItemEditPlugin',
-	    'ItemEditThumbPage', 'ItemEditThumbPage', dirname(__FILE__) . '/ItemEditThumbPage.inc');
-	GalleryCoreApi::registerFactoryImplementation('ItemEditPlugin',
-	    'ItemEditThumbOffset', 'ItemEditThumbOffset', dirname(__FILE__) . '/ItemEditThumbOffset.inc');
+    function upgrade($currentVersion) {
+	$ret = GalleryCoreApi::unregisterFactoryImplementationsByModuleId($this->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+            'ItemEditPlugin', 'ItemEditThumbPage', 'ItemEditThumbPage',
+            'modules/thumbpage/ItemEditThumbPage.inc', 'thumbpage', null);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+            'ItemEditPlugin', 'ItemEditThumbOffset', 'ItemEditThumbOffset',
+            'modules/thumbpage/ItemEditThumbOffset.inc', 'thumbpage', null);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
     }
 
     /**

@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -47,20 +47,40 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	GalleryCoreApi::registerFactoryImplementation('ItemAddPlugin',
-						      'ItemAddControllerTestPluginSuccess',
-						      'ItemAddControllerTestPluginSuccess',
-						      __FILE__);
+	$path = 'modules/core/test/phpunit/ItemAddControllerTest.class';
+	$ret = GalleryCoreApi::registerFactoryImplementation('ItemAddPlugin',
+							     'ItemAddControllerTestPluginSuccess',
+							     'ItemAddControllerTestPluginSuccess',
+							     $path,
+							     'coreTest',
+							     null);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 
-	GalleryCoreApi::registerFactoryImplementation('ItemAddPlugin',
-						      'ItemAddControllerTestPluginContinue',
-						      'ItemAddControllerTestPluginContinue',
-						      __FILE__);
+	$ret = GalleryCoreApi::registerFactoryImplementation('ItemAddPlugin',
+							     'ItemAddControllerTestPluginContinue',
+							     'ItemAddControllerTestPluginContinue',
+							     $path,
+							     'coreTest',
+							     null);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 
-	GalleryCoreApi::registerFactoryImplementation('ItemAddPlugin',
-						      'ItemAddControllerTestPluginFail',
-						      'ItemAddControllerTestPluginFail',
-						      __FILE__);
+	$ret = GalleryCoreApi::registerFactoryImplementation('ItemAddPlugin',
+							     'ItemAddControllerTestPluginFail',
+							     'ItemAddControllerTestPluginFail',
+							     $path,
+							     'coreTest',
+							     null);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markFactoryModuleForCleanup('coreTest');
     }
 
     function tearDown() {
@@ -71,9 +91,6 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	GalleryCoreApi::unregisterFactoryImplementation('ItemAddPlugin', 'ItemAddControllerTestPluginSuccess');
-	GalleryCoreApi::unregisterFactoryImplementation('ItemAddPlugin', 'ItemAddControllerTestPluginFail');
-	
 	parent::tearDown();
     }
 
@@ -127,13 +144,13 @@ class ItemAddControllerTestPluginContinue {
 	if (!GalleryUtilities::isExactlyA($item, 'GalleryAlbumItem')) {
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null, null);
 	}
-	
+
 	return array(GalleryStatus::success(), array(), array());
     }
 }
 
 /**
- * ItemAddPlugin that always completes 
+ * ItemAddPlugin that always completes
  * @package GalleryCore
  * @subpackage PHPUnit
  */
@@ -142,7 +159,7 @@ class ItemAddControllerTestPluginSuccess {
 	if (!GalleryUtilities::isExactlyA($item, 'GalleryAlbumItem')) {
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null, null);
 	}
-	
+
 	return array(GalleryStatus::success(),
 		     array(),
 		     array('addedFiles' => array(array('fileName' => 'foo', 'id' => 1))));

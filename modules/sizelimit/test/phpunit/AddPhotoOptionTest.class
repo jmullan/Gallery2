@@ -36,7 +36,7 @@ GalleryCoreApi::relativeRequireOnce('lib/tools/phpunit/ItemAddOptionTestCase.cla
 class AddPhotoOptionTest extends ItemAddOptionTestCase {
 
     function AddPhotoOptionTest($methodName) {
-        $this->ItemAddOptionTestCase($methodName, 'SizeLimit', 'SetSizeOption');
+        $this->ItemAddOptionTestCase($methodName, 'sizelimit', 'SetSizeOption');
     }
 
     function setUp() {
@@ -48,8 +48,14 @@ class AddPhotoOptionTest extends ItemAddOptionTestCase {
         $gallery->setPlatform(new AddPhotoToolkitTestPlatform($gallery->getPlatform()));
         
         /* Register dummy toolkit and operations */
-        GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
-            'SizeLimitToolkit', 'SizeLimitToolkit', __FILE__);
+        $ret = GalleryCoreApi::registerFactoryImplementation(
+            'GalleryToolkit', 'SizeLimitToolkit', 'SizeLimitToolkit',
+            'modules/sizelimit/test/phpunit/AddPhotoOptionTest.class', 'sizelimitTest', null);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markFactoryModuleForCleanup('sizelimitTest');
             
         /* applying size limits uses 'compress' */
         $ret = GalleryCoreApi::registerToolkitOperation('SizeLimitToolkit',

@@ -32,24 +32,30 @@ class UploadAppletModule extends GalleryModule {
 	$this->setId('uploadapplet');
 	$this->setName('Upload Applet');
 	$this->setDescription($gallery->i18n('Easy to use upload applet for media'));
-	$this->setVersion('0.8.2');
+	$this->setVersion('0.8.3');
 	$this->setGroup('import', $this->translate('Import'));
-	$this->setCallbacks('performFactoryRegistrations');
-	$this->setRequiredCoreApi(array(1, 0));
+	$this->setCallbacks('');
+	$this->setRequiredCoreApi(array(2, 0));
 	$this->setRequiredModuleApi(array(0, 8));
     }
 
     /**
-     * @see GalleryModule::performFactoryRegistrations
+     * @see GalleryModule::upgrade()
      */
-    function performFactoryRegistrations() {
-	$classDir = dirname(__FILE__) . '/classes/';
+    function upgrade($currentVersion) {
+	$ret = GalleryCoreApi::unregisterFactoryImplementationsByModuleId($this->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+            'ItemAddPlugin', 'ItemAddUploadApplet', 'ItemAddUploadApplet',
+            'modules/uploadapplet/ItemAddUploadApplet.inc', 'uploadapplet', null);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 
-	/* Register our item add plugins */
-	GalleryCoreApi::registerFactoryImplementation('ItemAddPlugin',
-						      'ItemAddUploadApplet',
-						      'ItemAddUploadApplet',
-						      dirname(__FILE__) . '/ItemAddUploadApplet.inc');
+	return GalleryStatus::success();
     }
 
     /**

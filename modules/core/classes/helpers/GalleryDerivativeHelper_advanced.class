@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -41,7 +41,7 @@ class GalleryDerivativeHelper_advanced {
      *
      * @param array GalleryItem ids
      * @param array derivative types (eg, 'DERIVATIVE_TYPE_IMAGE_THUMBNAIL')
-     * @return array object GalleryStatus a status code 
+     * @return array object GalleryStatus a status code
      *               array(GalleryItem id => GalleryDerivativeImage, ...)
      * @static
      */
@@ -60,7 +60,7 @@ class GalleryDerivativeHelper_advanced {
      * Convenience function to fetch all derivatives for a given item id
      *
      * @param array GalleryItem ids
-     * @return array object GalleryStatus a status code 
+     * @return array object GalleryStatus a status code
      *               array(GalleryItem id => GalleryDerivativeImage, ...)
      * @static
      */
@@ -69,7 +69,7 @@ class GalleryDerivativeHelper_advanced {
 	if (empty($ids)) {
 	    return array(GalleryStatus::success(), array());
 	}
-	
+
 	list ($ret, $results) = GalleryDerivativeHelper_medium::_loadDerivatives($ids, null);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -129,7 +129,7 @@ class GalleryDerivativeHelper_advanced {
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-	    
+
 	    /* Turn ids into objects */
 	    list ($ret, $derivatives) = GalleryCoreApi::loadEntitiesById($ids);
 	    if ($ret->isError()) {
@@ -137,7 +137,11 @@ class GalleryDerivativeHelper_advanced {
 	    }
 
 	    /* Get all toolkits */
-	    $toolkitIds = GalleryCoreApi::getAllFactoryImplementationIds('GalleryToolkit');
+	    list ($ret, $toolkitIds) = GalleryCoreApi::getAllFactoryImplementationIds('GalleryToolkit');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
 	    $toolkits = array();
 	    foreach (array_keys($toolkitIds) as $toolkitId) {
 		list ($ret, $toolkits[$toolkitId]) =
@@ -166,7 +170,7 @@ class GalleryDerivativeHelper_advanced {
 		    }
 		}
 	    }
-	    
+
 	    $ret = GalleryCoreApi::releaseLocks($lockIds);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
@@ -221,7 +225,7 @@ class GalleryDerivativeHelper_advanced {
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-	    
+
 	    /* Turn ids into objects */
 	    list ($ret, $derivatives) = GalleryCoreApi::loadEntitiesById($derivativeIds);
 	    if ($ret->isError()) {
@@ -371,7 +375,7 @@ class GalleryDerivativeHelper_advanced {
      * scale|250;rotate|90          rotate|-90             scale|250
      * scale|250;rotate|90          rotate|90              scale|250;rotate|180
      * scale|250;rotate|90          thumbnail|125          thumbnail|125;rotate|180
-     *   
+     *
      * @param string the first set of operations
      * @param string the second set of operations
      * @param boolean true if the second set should be added at the beginning of the first set, if it
@@ -384,7 +388,11 @@ class GalleryDerivativeHelper_advanced {
 	global $gallery;
 
 	/* Get all toolkits */
-	$toolkitIds = GalleryCoreApi::getAllFactoryImplementationIds('GalleryToolkit');
+	list ($ret, $toolkitIds) = GalleryCoreApi::getAllFactoryImplementationIds('GalleryToolkit');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	$toolkits = array();
 	foreach (array_keys($toolkitIds) as $toolkitId) {
 	    list ($ret, $toolkits[$toolkitId]) = GalleryCoreApi::newFactoryInstanceById('GalleryToolkit', $toolkitId);
@@ -484,7 +492,7 @@ class GalleryDerivativeHelper_advanced {
 
 	return $operationSet;
     }
-    
+
 
     /**
      * Expire all derivatives that depend on the source ids specified
@@ -506,7 +514,7 @@ class GalleryDerivativeHelper_advanced {
         WHERE
           [GalleryDerivative::derivativeSourceId] IN (' . $idMarkers . ')
         ';
-	
+
 	list ($ret, $searchResults) = $gallery->search($query, $ids);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -570,7 +578,7 @@ class GalleryDerivativeHelper_advanced {
           AND
           [GalleryDerivative::derivativeSourceId] IN (' . $idMarkers . ')
         ';
-	
+
 	list ($ret, $searchResults) = $gallery->search($query, $ids);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -588,7 +596,7 @@ class GalleryDerivativeHelper_advanced {
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-	    
+
 	    /* Turn ids into objects */
 	    list ($ret, $derivatives) = GalleryCoreApi::loadEntitiesById($derivativeIds);
 	    if ($ret->isError()) {
@@ -674,7 +682,7 @@ class GalleryDerivativeHelper_advanced {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	list ($ret, $derivative) = $derivative->refresh();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);

@@ -26,6 +26,8 @@
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryDataCache.class');
+
 /**
  * AdminDeleteUser controller tests
  * @package GalleryCore
@@ -48,30 +50,28 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	$this->_markForCleanup($this->_album);
 	
 	$this->_userIds = array();
 	
 	/* Save activeUser, we're gonna change it during the tests */
 	$this->_activeUserBackup = $gallery->getActiveUser();
 	
-	GalleryCoreApi::requireOnce(realpath(dirname(__FILE__) . '/../../classes/GalleryDataCache.class'));
     }
 	
     function tearDown() {
 	global $gallery;
 	
-	/* Restore the activeUser */
-	$gallery->setActiveUser($this->_activeUserBackup);
-	
 	/* Remove all user mappings in case of error */
+	$ret = array();
 	foreach ($this->_userIds as $userId) {
-	    GalleryUserGroupMap::removeMapEntry(array('userId' => $userId));
-	    GalleryPermissionMap::removeMapEntry(array('userId' => $userId)); 
+	    $ret[] = GalleryUserGroupMap::removeMapEntry(array('userId' => $userId));
+	    $ret[] = GalleryPermissionMap::removeMapEntry(array('userId' => $userId));
 	}
-
-	$ret = GalleryCoreApi::deleteEntityById($this->_album->getId());
-	if ($ret->isError()) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	for ($i = 0; $i < sizeof($ret); $i++) {
+	    if ($ret[$i]->isError()) {
+		$this->failWithStatus($ret[$i]->wrap(__FILE__, __LINE__));
+	    }
 	}
 	
 	parent::tearDown();

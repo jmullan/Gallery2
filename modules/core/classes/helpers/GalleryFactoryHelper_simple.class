@@ -35,6 +35,22 @@
 class GalleryFactoryHelper_simple {
 
     /**
+     * Reset the static factory registry
+     *
+     * @access private
+     * @static
+     */
+    function &_resetData() {
+	$cacheParams = array('type' => 'module',
+			     'itemId' => 'GalleryFactoryHelper_loadRegistry',
+			     'id' => '_all');
+	GalleryDataCache::removeFromDisk($cacheParams);
+
+	$registry =& GalleryFactoryHelper_simple::_getFactoryData();
+	$registry = array();
+    }
+
+    /**
      * Get the static factory registry
      *
      * @return array factory data
@@ -43,75 +59,48 @@ class GalleryFactoryHelper_simple {
      * @static
      */
     function &_getFactoryData() {
+	global $gallery;
 	static $registry;
 	if (!isset($registry)) {
-	    $registry = array();
-	}
-	return $registry;
-    }
-
-    /**
-     * Tell all modules to register their factory implementations, because we're about to
-     * use one of them.
-     *
-     * @access private
-     * @return object GalleryStatus a status code
-     */
-    function _loadRegistry() {
-	list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module');
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	/* Load core first */
-	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-	$module->performFactoryRegistrations();
-
-	foreach ($moduleStatus as $moduleId => $status) {
-	    if ($moduleId == 'core') {
-		continue;
-	    }
-
-	    if (!empty($status['active'])) {
-		if (in_array('performFactoryRegistrations', explode('|', $status['callbacks']))) {
-		    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
-		    if ($ret->isError()) {
-			if ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH) {
-			    continue;
-			}
-			return $ret->wrap(__FILE__, __LINE__);
-		    }
-
-		    $module->performFactoryRegistrations();
+	    $storage =& $gallery->getStorage();
+	    $cacheParams = array('type' => 'module',
+				 'itemId' => 'GalleryFactoryHelper_loadRegistry',
+				 'id' => '_all');
+	    $registry =& GalleryDataCache::getFromDisk($cacheParams);
+	    if (!isset($registry)) {
+		$query = '
+                SELECT
+                  [GalleryFactoryMap::classType],
+                  [GalleryFactoryMap::className],
+                  [GalleryFactoryMap::implId],
+                  [GalleryFactoryMap::implPath],
+                  [GalleryFactoryMap::hints]
+                FROM
+                  [GalleryFactoryMap]
+                ORDER BY
+                  [GalleryFactoryMap::orderWeight] ASC
+                ';
+		list ($ret, $searchResults) = $gallery->search($query);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
+
+		while ($result = $searchResults->nextResult()) {
+		    $registry['implementations'][$result[0]][$result[1]] = $result[3];
+		    $registry['ids'][$result[0]][$result[2]] = $result[1];
+
+		    $hints = unserialize($result[4]);
+		    if (isset($hints)) {
+			foreach ($hints as $hint) {
+			    $registry['hints'][$result[0]][$hint][$result[2]] = $result[1];
+			}
+		    }
+		}
+		GalleryDataCache::putToDisk($cacheParams, $registry);
 	    }
 	}
 
-	return GalleryStatus::success();
-    }
-
-    /**
-     * Register a new implementation with the factory
-     *
-     * @param string the class type (eg. 'GalleryGraphics')
-     * @param string the class name (eg. 'NetPbmGraphics')
-     * @param string an id (eg. 'NetPBM')
-     * @param string the file name (eg. '.../classes/NetPbmGraphics.class')
-     * @param array optional hints that can be used to locate this
-     *              implementation (eg. array('image/jpeg', 'image/gif'))
-     * @static
-     */
-    function registerImplementation($classType, $className, $id, $fileName, $hints=array()) {
-	$registry =& GalleryFactoryHelper_simple::_getFactoryData();
-	$className = strtolower($className);
-	$registry['implementations'][$classType][$className] = $fileName;
-	$registry['ids'][$classType][$id] = $className;
-	foreach ($hints as $hint) {
-	    $registry['hints'][$classType][strtolower($hint)][$id] = $className;
-	}
+	return array(GalleryStatus::success(), $registry);
     }
 
     /**
@@ -124,18 +113,14 @@ class GalleryFactoryHelper_simple {
      * @static
      */
     function newInstanceByHint($classType, $hints) {
-	$registry =& GalleryFactoryHelper_simple::_getFactoryData();
+	list ($ret, $registry) = GalleryFactoryHelper_simple::_getFactoryData();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 	if (!is_array($hints)) {
 	    $hints = array($hints);
 	}
 	$hints[] = '*';
-
-	if (empty($registry)) {
-	    $ret = GalleryFactoryHelper_simple::_loadRegistry();
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	}
 
 	foreach ($hints as $hint) {
 	    $hint = strtolower($hint);
@@ -163,20 +148,18 @@ class GalleryFactoryHelper_simple {
      *
      * @param string the class type (eg. 'GalleryGraphics')
      * @param string the class name (eg. 'NetPbmGraphics')
+     * @return object GalleryStatus a status code
+     *         object the instance
      * @static
      */
     function newInstance($classType, $className=null) {
 	global $gallery;
 
-	$registry =& GalleryFactoryHelper_simple::_getFactoryData();
-
-	if (empty($registry)) {
-	    $ret = GalleryFactoryHelper_simple::_loadRegistry();
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
+	list ($ret, $registry) = GalleryFactoryHelper_simple::_getFactoryData();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	if (!isset($className)) {
 	    if (empty($registry['implementations'][$classType])) {
 		if ($gallery->getDebug()) {
@@ -187,7 +170,7 @@ class GalleryFactoryHelper_simple {
 	    $classNames = array_keys($registry['implementations'][$classType]);
 	    $className = $classNames[0];
 	}
-	$className = strtolower($className);
+
 	if (!class_exists($className)) {
 	    if (empty($registry['implementations'][$classType][$className])) {
 		if ($gallery->getDebug()) {
@@ -196,22 +179,16 @@ class GalleryFactoryHelper_simple {
 		return array(GalleryStatus::success(), null);
 	    }
 	    
-	    $fileName = $registry['implementations'][$classType][$className];
+	    $relativePath = $registry['implementations'][$classType][$className];
 
-	    /*
-	     * Make sure the file exists, unless of course we're actually
-	     * loading the platform class.
-	     */
-	    if ($classType != 'GalleryPlatform') {
-		$platform = $gallery->getPlatform();
-		if (!$platform->file_exists($fileName)) {
-		    return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__),
-				 null);
-		    
-		}
+	    $platform = $gallery->getPlatform();
+	    if (!$platform->file_exists(dirname(__FILE__) . '/../../../../' . $relativePath)) {
+		return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__,
+						  "Invalid path: $relativePath"),
+			     null);
 	    }
-	    
-	    require_once($fileName);
+
+	    GalleryCoreApi::relativeRequireOnce($relativePath);
 
 	    if (!class_exists($className)) {
 		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,

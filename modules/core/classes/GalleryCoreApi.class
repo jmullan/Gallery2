@@ -54,7 +54,7 @@ class GalleryCoreApi {
      * @return array major number, minor number
      */
     function getApiVersion() {
-	return array(1, 1);
+	return array(2, 0);
     }
 
     /**
@@ -62,15 +62,19 @@ class GalleryCoreApi {
      *
      * @param string the class type (eg. 'GalleryGraphics')
      * @param string the class name (eg. 'NetPbmGraphics')
-     * @param string an id (eg. 'NetPBM')
-     * @param string the file name (eg. '.../classes/NetPbmGraphics.class')
+     * @param string an implementatin id (eg. 'NetPBM')
+     * @param string the relative path to the implementation file
+     *               (eg. 'modules/netpbm/classes/NetPbmGraphics.class')
+     * @param string the id of the module containing the implementation (eg. 'netpbm')
      * @param array optional hints that can be used to locate this
      *              implementation (eg. array('image/jpeg', 'image/gif'))
      * @static
      */
-    function registerFactoryImplementation($classType, $className, $id, $fileName, $hints=array()) {
-	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryFactoryHelper_simple.class');
-	GalleryFactoryHelper_simple::registerImplementation($classType, $className, $id, $fileName, $hints);
+    function registerFactoryImplementation($classType, $className, $implId, $implPath,
+					   $implModuleId, $hints) {
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryFactoryHelper_medium.class');
+	return GalleryFactoryHelper_medium::registerImplementation($classType, $className, $implId,
+								   $implPath, $implModuleId, $hints);
     }
 
     /**
@@ -92,6 +96,8 @@ class GalleryCoreApi {
      *
      * @param string the class type (eg. 'GalleryGraphics')
      * @param string the class name (eg. 'NetPbmGraphics')
+     * @return object GalleryStatus a status code
+     *         object the instance
      * @static
      */
     function newFactoryInstance($classType, $className=null) {
@@ -116,7 +122,8 @@ class GalleryCoreApi {
     /**
      * Return the ids of all the available implementations for a class
      *
-     * @return array (id => className)
+     * @return array object GalleryStatus a status code
+     *               array (id => className, ...)
      * @static
      */
     function getAllFactoryImplementationIds($classType) {
@@ -128,7 +135,8 @@ class GalleryCoreApi {
      * Return the ids of all the available implementations for a class for a
      * given hint.
      *
-     * @return array (id => className)
+     * @return array object GalleryStatus a status code
+     *               array (id => className, ...)
      * @static
      */
     function getAllFactoryImplementationIdsWithHint($classType, $hint) {
@@ -137,15 +145,28 @@ class GalleryCoreApi {
     }
 
     /**
-     * Unregister an implementation from the factory by id
+     * Unregister all factory implementations for a module
      *
-     * @param string the class type (eg. 'GalleryGraphics')
-     * @param string an id (eg. 'NetPBM')
+     * @param string an id (eg. 'netpbm')
+     * @return object GalleryStatus a status code
      * @static
      */
-    function unregisterFactoryImplementation($classType, $className) {
+    function unregisterFactoryImplementationsByModuleId($moduleId) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryFactoryHelper_medium.class');
-	return GalleryFactoryHelper_medium::unregisterImplementation($classType, $className);
+	return GalleryFactoryHelper_medium::unregisterImplementationsByModuleId($moduleId);
+    }
+
+    /**
+     * Unregister a factory implementation by id
+     *
+     * @param string a class type (eg. 'GalleryToolkit')
+     * @param string an implementation id (eg. 'NetPBM')
+     * @return object GalleryStatus a status code
+     * @static
+     */
+    function unregisterFactoryImplementation($classType, $implId) {
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryFactoryHelper_medium.class');
+	return GalleryFactoryHelper_medium::unregisterImplementation($classType, $implId);
     }
 
     /**

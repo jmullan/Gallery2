@@ -133,7 +133,11 @@ class ItemAddView extends GalleryView {
 	}
 
 	/* Get all the add plugins */
-	$allPluginIds = GalleryCoreApi::getAllFactoryImplementationIds('ItemAddPlugin');
+	list ($ret, $allPluginIds) = GalleryCoreApi::getAllFactoryImplementationIds('ItemAddPlugin');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	$pluginInstances = array();
 	foreach (array_keys($allPluginIds) as $pluginId) {
 	    list ($ret, $plugin) = GalleryCoreApi::newFactoryInstanceById('ItemAddPlugin', $pluginId);
@@ -141,7 +145,14 @@ class ItemAddView extends GalleryView {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    $pluginInstances[$pluginId] = $plugin;
+	    list ($ret, $isAppropriate) = $plugin->isAppropriate();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    if ($isAppropriate) {
+		$pluginInstances[$pluginId] = $plugin;
+	    }
 	}
 
 	/* Get all the add options */
@@ -271,6 +282,16 @@ class ItemAddPlugin {
     function getTitle() {
 	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
     }
+
+    /**
+     * Is this plugin appropriate at this time?  Default is true.
+     *
+     * @return array object GalleryStatus a status code
+     *               boolean true or false
+     */
+    function isAppropriate() {
+	return array(GalleryStatus::success(), true);
+    }
 }
 
 /**
@@ -293,7 +314,11 @@ class ItemAddOption {
      */
     function getAllAddOptions() {
 	/* Get all the option plugins */
-	$allOptionIds = GalleryCoreApi::getAllFactoryImplementationIds('ItemAddOption');
+	list ($ret, $allOptionIds) = GalleryCoreApi::getAllFactoryImplementationIds('ItemAddOption');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	$optionInstances = array();
 	foreach (array_keys($allOptionIds) as $optionId) {
 	    list ($ret, $option) = GalleryCoreApi::newFactoryInstanceById('ItemAddOption', $optionId);
@@ -347,7 +372,7 @@ class ItemAddOption {
      * Is this option appropriate at this time?
      *
      * @return array object GalleryStatus a status code
-     *               boolean true or false
+     *               boolean true or false 
      */
     function isAppropriate() {
 	return array(GalleryStatus::success(), false);

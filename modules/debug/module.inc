@@ -40,10 +40,10 @@ class DebugModule extends GalleryModule {
 	$this->setId('debug');
 	$this->setName('Debugging');
 	$this->setDescription($gallery->i18n('Debugging and Developer Tools'));
-	$this->setVersion('0.8.3');
+	$this->setVersion('0.8.4');
 	$this->setGroup('gallery', $this->translate('Gallery'));
-	$this->setCallbacks('performFactoryRegistrations|getItemLinks');
-	$this->setRequiredCoreApi(array(1, 0));
+	$this->setCallbacks('getItemLinks');
+	$this->setRequiredCoreApi(array(2, 0));
 	$this->setRequiredModuleApi(array(0, 8));
     }
 
@@ -56,16 +56,28 @@ class DebugModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::performFactoryRegistrations
+     * @see GalleryModule::upgrade()
      */
-    function performFactoryRegistrations() {
-	$classDir = dirname(__FILE__) . '/classes/';
-	GalleryCoreApi::registerFactoryImplementation('GalleryStatusFormatter',
-						      'DebugStatusFormatter',
-						      'DebugStatusFormatter',
-						      $classDir . 'DebugStatusFormatter.class',
-						      array('text/html'));
-    }
+    function upgrade($currentVersion) {
+	global $gallery;
+
+	$ret = GalleryCoreApi::unregisterFactoryImplementationsByModuleId($this->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$ret = GalleryCoreApi::registerFactoryImplementation('GalleryStatusFormatter',
+            'DebugStatusFormatter',
+            'DebugStatusFormatter',
+            'modules/debug/classes/DebugStatusFormatter.class',
+            'debug',
+            array('text/html'));
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    } 
 
     /**
      * @see GalleryModule::getItemLinks

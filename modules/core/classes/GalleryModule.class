@@ -55,7 +55,6 @@ class GalleryModule extends GalleryPlugin {
     /**
      * This module's callbacks.  This is a pipe (|) delimited string containing
      * one or more of the following values:
-     *   performFactoryRegistrations
      *   registerEventListeners
      *   getSiteAdminViews
      *   getItemAdminViews
@@ -95,14 +94,6 @@ class GalleryModule extends GalleryPlugin {
      * register its event listeners before any events are posted.
      */
     function registerEventListeners() {
-    }
-
-    /**
-     * The factory will call this method the first time its used to load up all
-     * factory data that it requires.  Register all factory implementations for the
-     * module here.
-     */
-    function performFactoryRegistrations() {
     }
 
     /**
@@ -205,6 +196,11 @@ class GalleryModule extends GalleryPlugin {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
+	/* Remove factory implementations */
+	$ret = GalleryCoreApi::unregisterFactoryImplementationsByModuleId($this->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 
 	/* Remove all tables */
 	$storage =& $gallery->getStorage();

@@ -43,8 +43,18 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 	parent::setUp();
 
 	/* Register a dummy toolkit */
-	GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
-		'ItemMoveTestToolkit', 'ItemMoveTestToolkit', __FILE__);
+	$path = 'modules/core/test/phpunit/ItemMoveControllerTest.class';
+	$ret = GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
+							     'ItemMoveTestToolkit',
+							     'ItemMoveTestToolkit',
+							     $path,
+							     'coreTest',
+							     null);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markFactoryModuleForCleanup('coreTest');
 
 	/* Register operations that we can perform on our mock data items */
 	$ret = GalleryCoreApi::registerToolkitOperation('ItemMoveTestToolkit',

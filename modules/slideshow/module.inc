@@ -37,22 +37,30 @@ class SlideshowModule extends GalleryModule {
 	$this->setId('slideshow');
 	$this->setName('Slideshow');
 	$this->setDescription($gallery->i18n('Slideshow'));
-	$this->setVersion('0.8.2');
+	$this->setVersion('0.8.3');
 	$this->setGroup('display', $this->translate('Display'));
-	$this->setCallbacks('performFactoryRegistrations|getItemLinks');
-	$this->setRequiredCoreApi(array(1, 0));
+	$this->setCallbacks('getItemLinks');
+	$this->setRequiredCoreApi(array(2, 0));
 	$this->setRequiredModuleApi(array(0, 8));
     }
 
     /**
-     * @see GalleryModule::performFactoryRegistrations
+     * @see GalleryModule::upgrade()
      */
-    function performFactoryRegistrations() {
-	$classDir = dirname(__FILE__) . '/classes/';
+    function upgrade($currentVersion) {
+	$ret = GalleryCoreApi::unregisterFactoryImplementationsByModuleId($this->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 
-	GalleryCoreApi::registerFactoryImplementation(
+	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'SlideshowInterface_1_0', 'SlideshowImpl', 'Slideshow',
-	    dirname(__FILE__) . '/classes/SlideshowImpl.class');
+            'modules/slideshow/classes/SlideshowImpl.class', 'slideshow', null);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
     }
 
     /**

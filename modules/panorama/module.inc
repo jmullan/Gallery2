@@ -40,36 +40,11 @@ class PanoramaModule extends GalleryModule {
 	$this->setId('panorama');
 	$this->setName('Panorama');
 	$this->setDescription($gallery->i18n('View wide jpeg/gif images in a java applet viewer'));
-	$this->setVersion('0.8.3');
+	$this->setVersion('0.8.4');
 	$this->setGroup('display', $this->translate('Display'));
-	$this->setCallbacks('performFactoryRegistrations|getSiteAdminViews|' .
-			    'getItemLinks');
-	$this->setRequiredCoreApi(array(1, 0));
+	$this->setCallbacks('getSiteAdminViews|getItemLinks');
+	$this->setRequiredCoreApi(array(2, 0));
 	$this->setRequiredModuleApi(array(0, 8));
-    }
-
-    /**
-     * @see GalleryModule::performFactoryRegistrations
-     */
-    function performFactoryRegistrations() {
-	GalleryCoreApi::registerFactoryImplementation('GalleryEntity',
-						      'PanoramaDerivativeImage',
-						      'PanoramaDerivativeImage',
-						      dirname(__FILE__) . '/classes/PanoramaDerivativeImage.class');
-	GalleryCoreApi::registerFactoryImplementation('GalleryEntity',
-						      'PanoramaPhotoItem',
-						      'PanoramaPhotoItem',
-						      dirname(__FILE__) . '/classes/PanoramaPhotoItem.class');
-	GalleryCoreApi::registerFactoryImplementation('GalleryDerivative',
-						      'PanoramaDerivativeImage',
-						      'PanoramaDerivativeImage',
-						      dirname(__FILE__) . '/classes/PanoramaDerivativeImage.class',
-						      array('PanoramaPhotoItem'));
-	GalleryCoreApi::registerFactoryImplementation('ItemEditOption',
-						      'PanoramaOption',
-						      'PanoramaOption',
-						      dirname(__FILE__) . '/PanoramaOption.inc',
-						      array('ItemEditPhoto'));
     }
 
     /**
@@ -86,6 +61,39 @@ class PanoramaModule extends GalleryModule {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
+	}
+
+	$ret = GalleryCoreApi::unregisterFactoryImplementationsByModuleId($this->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+            'GalleryEntity', 'PanoramaDerivativeImage', 'PanoramaDerivativeImage',
+            'modules/panorama/classes/PanoramaDerivativeImage.class', 'panorama', null);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+            'GalleryEntity', 'PanoramaPhotoItem', 'PanoramaPhotoItem',
+            'modules/panorama/classes/PanoramaPhotoItem.class', 'panorama', null);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+            'GalleryDerivative', 'PanoramaDerivativeImage', 'PanoramaDerivativeImage',
+            'modules/panorama/classes/PanoramaDerivativeImage.class', 'panorama', array('PanoramaPhotoItem'));
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+            'ItemEditOption', 'PanoramaOption', 'PanoramaOption',
+            'modules/panorama/PanoramaOption.inc', 'panorama', array('ItemEditPhoto'));
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	return GalleryStatus::success();

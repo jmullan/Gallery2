@@ -40,32 +40,11 @@ class ExifModule extends GalleryModule {
 	$this->setId('exif');
 	$this->setName('Exif Parser');
 	$this->setDescription($gallery->i18n('Extract EXIF data from JPEG photos'));
-	$this->setVersion('0.8.4');
+	$this->setVersion('0.8.5');
 	$this->setGroup('data', $this->translate('Extra Data'));
-	$this->setCallbacks('performFactoryRegistrations|loadItemDetails|getSiteAdminViews');
-	$this->setRequiredCoreApi(array(1, 0));
+	$this->setCallbacks('loadItemDetails|getSiteAdminViews');
+	$this->setRequiredCoreApi(array(2, 0));
 	$this->setRequiredModuleApi(array(0, 8));
-    }
-
-    /**
-     * @see GalleryModule::performFactoryRegistrations
-     */
-    function performFactoryRegistrations() {
-	$classDir = dirname(__FILE__) . '/classes/';
-
-	GalleryCoreApi::registerFactoryImplementation(
-	    'ExifInterface_1_0', 'ExifExtractor', 'Exif',
-	    dirname(__FILE__) . '/classes/ExifExtractor.class');
-
-	/* Register our graphics class with the factory */
-	GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
-						      'ExifToolkit',
-						      'Exif',
-						      $classDir . 'ExifToolkit.class');
-
-	GalleryCoreApi::registerFactoryImplementation('ItemAddOption',
-	    'ExifDescriptionOption', 'ExifDescriptionOption',
-	    dirname(__FILE__) . '/ExifDescriptionOption.inc');
     }
 
     /**
@@ -99,9 +78,37 @@ class ExifModule extends GalleryModule {
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
+		
+	    case '0.8.4':
 	    }
 	}
 
+	$ret = GalleryCoreApi::unregisterFactoryImplementationsByModuleId($this->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'ExifInterface_1_0', 'ExifExtractor', 'Exif',
+            'modules/exif/classes/ExifExtractor.class', 'exif', null);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+            'GalleryToolkit', 'ExifToolkit', 'Exif',
+            'modules/exif/classes/ExifToolkit.class', 'exif', null);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$ret = GalleryCoreApi::registerFactoryImplementation('ItemAddOption',
+	    'ExifDescriptionOption', 'ExifDescriptionOption',
+            'modules/exif/ExifDescriptionOption.inc', 'exif', null);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
 	return GalleryStatus::success();
     }
 

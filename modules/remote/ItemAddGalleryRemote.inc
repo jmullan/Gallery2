@@ -63,5 +63,17 @@ class ItemAddGalleryRemote extends ItemAddPlugin {
 
 	return array(GalleryStatus::success(), $module->translate('Gallery Remote'));
     }
+
+    /**
+     * @see ItemAddPlugin::isAppropriate
+     */
+    function isAppropriate() {
+	list ($ret, $showItemAdd) = GalleryCoreApi::getPluginParameter('module', 'remote', 'showItemAdd');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	return array(GalleryStatus::success(), $showItemAdd);
+    }
 }
 ?>

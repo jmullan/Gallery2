@@ -37,22 +37,11 @@ class ImageBlockModule extends GalleryModule {
 	$this->setId('imageblock');
 	$this->setName('ImageBlock');
 	$this->setDescription($gallery->i18n('Random, Most Recent or Most Viewed Photo or Album'));
-	$this->setVersion('0.8.4');
+	$this->setVersion('0.8.5');
 	$this->setGroup('blocks', $this->translate('Blocks'));
-	$this->setCallbacks('registerEventListeners|getSiteAdminViews|loadSystemContent|performFactoryRegistrations');
-	$this->setRequiredCoreApi(array(1, 0));
+	$this->setCallbacks('registerEventListeners|getSiteAdminViews|loadSystemContent');
+	$this->setRequiredCoreApi(array(2, 0));
 	$this->setRequiredModuleApi(array(0, 8));
-    }
-
-    /**
-     * @see GalleryModule::performFactoryRegistrations()
-     */
-    function performFactoryRegistrations() {
-        GalleryCoreApi::registerFactoryImplementation('ItemEditOption',
-                                                      'ImageBlockOption',
-                                                      'ImageBlockOption',
-                                                      dirname(__FILE__) . '/ImageBlockOption.inc',
-						      array('ItemEditAlbum'));
     }
 
     /**
@@ -78,6 +67,18 @@ class ImageBlockModule extends GalleryModule {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
+	}
+
+	$ret = GalleryCoreApi::unregisterFactoryImplementationsByModuleId($this->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+        $ret = GalleryCoreApi::registerFactoryImplementation(
+           'ItemEditOption', 'ImageBlockOption', 'ImageBlockOption',
+           'modules/imageblock/ImageBlockOption.inc', 'imageblock', array('ItemEditAlbum'));
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	return GalleryStatus::success();

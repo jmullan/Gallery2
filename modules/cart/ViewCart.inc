@@ -78,8 +78,12 @@ class ViewCartView extends GalleryView {
 	}
 
 	/* Find all our cart plugins */
-	require_once(dirname(__FILE__) . '/classes/CartPluginInterface_1_0.class');
-	$ids = GalleryCoreApi::getAllFactoryImplementationIds('CartPluginInterface_1_0');
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/CartPluginInterface_1_0.class');
+	list ($ret, $ids) =
+	    GalleryCoreApi::getAllFactoryImplementationIds('CartPluginInterface_1_0');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 	$plugins = array();
 	foreach ($ids as $id => $className) {
 	    list ($ret, $instances[$id]) =

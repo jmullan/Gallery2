@@ -51,10 +51,17 @@ class CreateThumbnailOptionTest extends ItemAddOptionTestCase {
 	$this->_markForCleanup($this->_album);
 
 	/* Register a dummy toolkit */
-	GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
-						      'CreateThumbnailOptionTestToolkit',
-						      'CreateThumbnailOptionTestToolkit',
-						      __FILE__);
+	$path = 'modules/core/test/phpunit/CreateThumbnailOptionTest.class';
+	$ret = GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
+							     'CreateThumbnailOptionTestToolkit',
+							     'CreateThumbnailOptionTestToolkit',
+							     $path,
+							     'coreTest',
+							     null);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markFactoryModuleForCleanup('coreTest');
 
 	/* Register operations that we can perform on our mock data items */
 	$ret = GalleryCoreApi::registerToolkitOperation('CreateThumbnailOptionTestToolkit',
@@ -75,7 +82,7 @@ class CreateThumbnailOptionTest extends ItemAddOptionTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-
+	
 	parent::tearDown();
     }
 

@@ -30,6 +30,7 @@
  * class, but the core module has a lot of install code that is very rarely used so we tuck it out of the way.
  *
  * @package GalleryCore
+ * @static
  */
 class CoreModuleExtras {
 
@@ -37,6 +38,7 @@ class CoreModuleExtras {
      * @see GalleryModule::upgrade()
      * @param object GalleryModule the core module
      * @param string the current installed version
+     * @static
      */
     function upgrade($module, $currentVersion) {
 	global $gallery;
@@ -167,7 +169,8 @@ class CoreModuleExtras {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
-	    $currentVersion = '0.8.7';
+
+	    $currentVersion = '0.8.9';
 	    break;
 
 	case '0.8':
@@ -253,6 +256,10 @@ class CoreModuleExtras {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    $currentVersion = '0.8.8';
+	    /* fall through */
+
+	case '0.8.8':
+	    $currentVersion = '0.8.9';
 	    break;
 	    
 	default:
@@ -260,6 +267,56 @@ class CoreModuleExtras {
 					sprintf('Unknown module version %s', $currentVersion));
 	}
 
+	/* Register all of our factory implementations. */
+	$regs[] = array('GalleryEntity', 'GalleryEntity', 'class', null);
+	$regs[] = array('GalleryEntity', 'GalleryChildEntity', 'class', null);
+	$regs[] = array('GalleryEntity', 'GalleryAlbumItem', 'class', null);
+	$regs[] = array('GalleryEntity', 'GalleryUser', 'class', null);
+	$regs[] = array('GalleryEntity', 'GalleryGroup', 'class', null);
+	$regs[] = array('GalleryEntity', 'GalleryDerivative', 'class', null);
+	$regs[] = array('GalleryEntity', 'GalleryDerivativeImage', 'class', null);
+	$regs[] = array('GalleryDerivative', 'GalleryDerivativeImage', 'class', array('*'));
+	$regs[] = array('GalleryEntity', 'GalleryMovieItem', 'class', null);
+	$regs[] = array('GalleryEntity', 'GalleryAnimationItem', 'class', null);
+	$regs[] = array('GalleryEntity', 'GalleryPhotoItem', 'class', null);
+	$regs[] = array('GalleryEntity', 'GalleryUnknownItem', 'class', null);
+	$regs[] = array('GalleryItem', 'GalleryPhotoItem', 'class', array('image/*'));
+	$regs[] = array('GalleryItem', 'GalleryMovieItem', 'class',
+			array('video/x-msvideo', 'video/quicktime', 'video/mpeg',
+			      'video/x-ms-asf', 'video/x-ms-wmv'));
+	$regs[] = array('GalleryItem', 'GalleryAnimationItem', 'class',
+			array('application/x-director', 'application/x-shockwave-flash'));
+	$regs[] = array('GalleryItem', 'GalleryUnknownItem', 'class', array('*'));
+	$regs[] = array('GallerySearchInterface_1_0', 'GalleryCoreSearch', 'class', null);
+	$regs[] = array('ItemEditPlugin', 'ItemEditItem', 'inc', null);
+	$regs[] = array('ItemEditPlugin', 'ItemEditAnimation', 'inc', null);
+	$regs[] = array('ItemEditPlugin', 'ItemEditMovie', 'inc', null);
+	$regs[] = array('ItemEditPlugin', 'ItemEditAlbum', 'inc', null);
+	$regs[] = array('ItemEditPlugin', 'ItemEditLayout', 'inc', null);
+	$regs[] = array('ItemEditPlugin', 'ItemEditPhoto', 'inc', null);
+	$regs[] = array('ItemEditPlugin', 'ItemEditRotateAndScalePhoto', 'inc', null);
+	$regs[] = array('ItemEditPlugin', 'ItemEditPhotoThumbnail', 'inc', null);
+	$regs[] = array('ItemAddPlugin', 'ItemAddFromBrowser', 'inc', null);
+	$regs[] = array('ItemAddPlugin', 'ItemAddFromServer', 'inc', null);
+	$regs[] = array('ItemAddPlugin', 'ItemAddFromWeb', 'inc', null);
+	$regs[] = array('ItemAddOption', 'CreateThumbnailOption', 'inc', null);
+
+	$ret = GalleryCoreApi::unregisterFactoryImplementationsByModuleId($module->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	foreach ($regs as $entry) {
+	    $ret = GalleryCoreApi::registerFactoryImplementation(
+		$entry[0], $entry[1], $entry[1],
+                $entry[2] == 'class' ?
+		  sprintf('modules/core/classes/%s.class', $entry[1]) :
+		  sprintf('modules/core/%s.inc', $entry[1]),
+		'core', $entry[3]);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+	
 	$platform = $gallery->getPlatform();
 	$baseDir = $gallery->getConfig('data.gallery.base');
 	$versionFile = sprintf('%s%s%s',
@@ -293,6 +350,7 @@ class CoreModuleExtras {
      *
      * @param object GalleryModule the core module
      * @return object GalleryStatus a status code
+     * @static
      */
     function _createAllUsersGroup($module) {
 	global $gallery;
@@ -306,15 +364,9 @@ class CoreModuleExtras {
 	    return GalleryStatus::success();
 	}
 
-	list ($ret, $group) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryGroup');
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	if (!isset($group)) {
-	    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
-	}
-
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryGroup.class');
+	$group = new GalleryGroup();
+	
 	$groupName = GalleryUtilities::utf8ToUnicodeEntities($module->translate('All Users'));
 	$ret = $group->create($groupName, GROUP_ALL_USERS);
 	if ($ret->isError()) {
@@ -339,6 +391,7 @@ class CoreModuleExtras {
      *
      * @param object GalleryModule the core module
      * @return object GalleryStatus a status code
+     * @static
      */
     function _createSiteAdminsGroup($module) {
 	global $gallery;
@@ -352,14 +405,8 @@ class CoreModuleExtras {
 	    return GalleryStatus::success();
 	}
 
-	list ($ret, $group) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryGroup');
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	if (!isset($group)) {
-	    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
-	}
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryGroup.class');
+	$group = new GalleryGroup();
 
 	$groupName = GalleryUtilities::utf8ToUnicodeEntities($module->translate('Site Admins'));
 	$ret = $group->create($groupName, GROUP_SITE_ADMINS);
@@ -385,6 +432,7 @@ class CoreModuleExtras {
      *
      * @param object GalleryModule the core module
      * @return object GalleryStatus a status code
+     * @static
      */
     function _createEverybodyGroup($module) {
 	global $gallery;
@@ -398,14 +446,8 @@ class CoreModuleExtras {
 	    return GalleryStatus::success();
 	}
 
-	list ($ret, $group) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryGroup');
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	if (!isset($group)) {
-	    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
-	}
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryGroup.class');
+	$group = new GalleryGroup();
 
 	$groupName = GalleryUtilities::utf8ToUnicodeEntities($module->translate('Everybody'));
 	$ret = $group->create($groupName, GROUP_EVERYBODY);
@@ -431,6 +473,7 @@ class CoreModuleExtras {
      *
      * @param object GalleryModule the core module
      * @return object GalleryStatus a status code
+     * @static
      */
     function _createAnonymousUser($module) {
 	global $gallery;
@@ -444,14 +487,8 @@ class CoreModuleExtras {
 	    return GalleryStatus::success();
 	}
 
-	list ($ret, $user) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryUser');
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	if (!isset($user)) {
-	    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
-	}
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/GalleryUser.class');
+	$user = new GalleryUser();
 
 	$userName = GalleryUtilities::utf8ToUnicodeEntities('guest');
 	$fullName = GalleryUtilities::utf8ToUnicodeEntities($module->translate('Guest'));
@@ -488,6 +525,7 @@ class CoreModuleExtras {
      *
      * @param object GalleryModule the core module
      * @return object GalleryStatus a status code
+     * @static
      */
     function _createAdminUser($module) {
 	global $gallery;
@@ -507,15 +545,8 @@ class CoreModuleExtras {
 	    return GalleryStatus::success();
 	}
 
-	/* Create the user */
-	list ($ret, $user) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryUser');
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	if (!isset($user)) {
-	    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
-	}
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/GalleryUser.class');
+	$user = new GalleryUser();
 
 	$userName = GalleryUtilities::utf8ToUnicodeEntities('admin');
 	$fullName = GalleryUtilities::utf8ToUnicodeEntities($module->translate('Gallery Administrator'));
@@ -551,6 +582,7 @@ class CoreModuleExtras {
      *
      * @param object GalleryModule the core module
      * @return object GalleryStatus a status code
+     * @static
      */
     function _createRootAlbumItem($module) {
 	global $gallery;
@@ -561,14 +593,8 @@ class CoreModuleExtras {
 	    return GalleryStatus::success();
 	}
 
-	list ($ret, $album) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryAlbumItem');
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	if (!isset($album)) {
-	    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
-	}
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/GalleryAlbumItem.class');
+	$album = new GalleryAlbumItem();
 
 	$ret = $album->createRoot();
 	if ($ret->isError()) {
@@ -612,6 +638,21 @@ class CoreModuleExtras {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * In version 0.8.9 we moved all factory registrations into the database.
+     * Normally this means that we'd have to put all of this into the main
+     * update loop in two places (in the install section and in the 0.8.8 ->
+     * 0.8.9 section).  That was redundant, so we've refactored it out here.
+     *
+     * @access private
+     * @return object GalleryStatatus a status code
+     * @static
+     */
+    function _registerAllFactoryImplementations_0_8_9() {
 
 	return GalleryStatus::success();
     }

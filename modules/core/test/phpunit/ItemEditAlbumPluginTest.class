@@ -43,16 +43,30 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	parent::setUp();
 
 	/* Register a dummy entity */
-	GalleryCoreApi::registerFactoryImplementation('GalleryEntity',
-						      'ItemEditAlbumPluginTestDataItem',
-						      'ItemEditAlbumPluginTestDataItem',
-						      __FILE__);
+	$path = 'modules/core/test/phpunit/ItemEditAlbumPluginTest.class';
+	$ret = GalleryCoreApi::registerFactoryImplementation('GalleryEntity',
+							     'ItemEditAlbumPluginTestDataItem',
+							     'ItemEditAlbumPluginTestDataItem',
+							     $path,
+							     'coreTest',
+							     null);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 
 	/* Register a dummy toolkit */
-	GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
-						      'ItemEditAlbumPluginTestToolkit',
-						      'ItemEditAlbumPluginTestToolkit',
-						      __FILE__);
+	$ret = GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
+							     'ItemEditAlbumPluginTestToolkit',
+							     'ItemEditAlbumPluginTestToolkit',
+							     $path,
+							     'coreTest',
+							     null);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markFactoryModuleForCleanup('coreTest');
 
 	/* Register operations that we can perform on our mock data items */
 	$ret = GalleryCoreApi::registerToolkitOperation('ItemEditAlbumPluginTestToolkit',
@@ -415,7 +429,7 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 				  $this->_translate('Settings saved successfully.')),
 			    $results);
 
-	// Now verify that we didn't upsample our resizes
+	/* Now verify that we didn't upsample our resizes */
 	list ($ret, $resizes) = GalleryCoreApi::fetchResizesByItemIds(array($photo->getId()));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));

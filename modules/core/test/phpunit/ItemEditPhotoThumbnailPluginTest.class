@@ -48,10 +48,18 @@ class ItemEditPhotoThumbnailPluginTest extends ItemEditPluginTestCase {
 	}
 
 	/* Register a dummy toolkit */
-	GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
-						      'ItemEditPhotoThumbnailPluginTestToolkit',
-						      'ItemEditPhotoThumbnailPluginTestToolkit',
-						      __FILE__);
+	$path = 'modules/core/test/phpunit/ItemEditPhotoThumbnailPluginTest.class';
+	$ret = GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
+							     'ItemEditPhotoThumbnailPluginTestToolkit',
+							     'ItemEditPhotoThumbnailPluginTestToolkit',
+							     $path,
+							     'coreTest',
+							     null);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markFactoryModuleForCleanup('coreTest');
 
 	/* Register operations that we can perform on our mock data items */
 	$ret = GalleryCoreApi::registerToolkitOperation('ItemEditPhotoThumbnailPluginTestToolkit',
@@ -80,11 +88,16 @@ class ItemEditPhotoThumbnailPluginTest extends ItemEditPluginTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	GalleryCoreApi::registerFactoryImplementation('GalleryEntity',
-						      'ItemEditPhotoThumbnailTestItem',
-						      'ItemEditPhotoThumbnailTestItem',
-						      __FILE__,
-						      array());
+	$ret = GalleryCoreApi::registerFactoryImplementation('GalleryEntity',
+							     'ItemEditPhotoThumbnailTestItem',
+							     'ItemEditPhotoThumbnailTestItem',
+							     $path,
+							     'coreTest',
+							     array());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
 	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_album->getId(),
 								 'test/file',
 								 array('width' => 640, 'height' => 480),
@@ -127,8 +140,6 @@ class ItemEditPhotoThumbnailPluginTest extends ItemEditPluginTestCase {
 
     function tearDown() {
 	global $gallery;
-
-	GalleryCoreApi::unregisterFactoryImplementation('GalleryEntity', 'ItemEditPhotoThumbnailTestItem');
 
 	$ret = GalleryCoreApi::deleteEntityById($this->_album->getId());
 	if ($ret->isError()) {

@@ -531,7 +531,12 @@ class GalleryEmbed {
     function searchScan($searchString, $resultsPerModule=3) {
 	GalleryCoreApi::relativeRequireOnce('modules/search/classes/SearchUtilities.class');
 	$searchInstances = $searchResults = array();
-	$ids = GalleryCoreApi::getAllFactoryImplementationIds('GallerySearchInterface_1_0');
+	list ($ret, $ids) =
+	    GalleryCoreApi::getAllFactoryImplementationIds('GallerySearchInterface_1_0');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
 	foreach ($ids as $id => $className) {
 	    list ($ret, $searchInstances[$id]) =
 		GalleryCoreApi::newFactoryInstance('GallerySearchInterface_1_0', $className);

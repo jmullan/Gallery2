@@ -49,8 +49,15 @@ class SquareThumbToolkitTest extends GalleryTestCase {
 	parent::setUp();
 	
 	/* Register a dummy toolkit, property and operations */
-	GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
-	    'SquareThumbTestToolkit', 'SquareThumbTestToolkit', __FILE__);
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+            'GalleryToolkit', 'SquareThumbTestToolkit', 'SquareThumbTestToolkit',
+            'modules/squarethumb/test/phpunit/SquareThumbToolkitTest.class', 'squarethumbTest', null);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markFactoryModuleForCleanup('squarethumbTest');
+	
 	$ret = GalleryCoreApi::registerToolkitProperty('SquareThumbTestToolkit',
 	    array('test/dim', 'test/crop', 'test/scale', 'test/image'),
 	    'dimensions', 'int,int', 'desc');

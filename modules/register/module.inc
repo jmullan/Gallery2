@@ -38,26 +38,11 @@ class RegisterModule extends GalleryModule {
 	$this->setId('register');
 	$this->setName('Registration');
 	$this->setDescription($gallery->i18n('New User Registration'));
-	$this->setVersion('0.8.3');
+	$this->setVersion('0.8.4');
 	$this->setGroup('gallery', $this->translate('Gallery'));
-	$this->setCallbacks('performFactoryRegistrations|getSystemLinks|' .
-			    'getUserAdminViews|getSiteAdminViews');
-	$this->setRequiredCoreApi(array(1, 0));
+	$this->setCallbacks('getSystemLinks|getUserAdminViews|getSiteAdminViews');
+	$this->setRequiredCoreApi(array(2, 0));
 	$this->setRequiredModuleApi(array(0, 8));
-    }
-
-    /**
-     * @see GalleryModule::performFactoryRegistrations();
-     */
-    function performFactoryRegistrations() {
-	$classDir = dirname(__FILE__) . '/classes/';
-
-	GalleryCoreApi::registerFactoryImplementation('GalleryEntity',
-						      'GalleryPendingUser',
-						      'GalleryPendingUser',
-						      $classDir . 'GalleryPendingUser.class');
-
-	return GalleryStatus::success();
     }
 
     /**
@@ -78,6 +63,18 @@ class RegisterModule extends GalleryModule {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
+	}
+
+	$ret = GalleryCoreApi::unregisterFactoryImplementationsByModuleId($this->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+            'GalleryEntity', 'GalleryPendingUser', 'GalleryPendingUser',
+            'modules/register/classes/GalleryPendingUser.class', 'register', null);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	return GalleryStatus::success();

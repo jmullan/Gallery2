@@ -38,24 +38,31 @@ class PhotoAccessModule extends GalleryModule {
 	$this->setId('photoaccess');
 	$this->setName('PhotoAccess');
 	$this->setDescription($gallery->i18n('PhotoAccess Photo Printing Module'));
-	$this->setVersion('0.8.2');
+	$this->setVersion('0.8.3');
 	$this->setGroup('commerce', $this->translate('Commerce'));
-	$this->setCallbacks('performFactoryRegistrations|getItemLinks');
-	$this->setRequiredCoreApi(array(1, 0));
+	$this->setCallbacks('getItemLinks');
+	$this->setRequiredCoreApi(array(2, 0));
 	$this->setRequiredModuleApi(array(0, 8));
     }
 
     /**
-     * @see GalleryModule::performFactoryRegistrations
+     * @see GalleryModule::upgrade()
      */
-    function performFactoryRegistrations() {
-	$classDir = dirname(__FILE__) . '/classes/';
+    function upgrade($currentVersion) {
+	$ret = GalleryCoreApi::unregisterFactoryImplementationsByModuleId($this->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 
-	/* Register our cart plugin */
-	GalleryCoreApi::registerFactoryImplementation('CartPluginInterface_1_0',
-						      'PhotoAccessCartPlugin',
-						      'photoaccess',
-						      dirname(__FILE__) . '/classes/PhotoAccessCartPlugin.class');
+	/* Register our graphics class with the factory */
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+            'CartPluginInterface_1_0', 'PhotoAccessCartPlugin', 'photoaccess',
+            'modules/photoaccess/classes/PhotoAccessCartPlugin.class', 'netpbm', null);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
     }
 
     /**

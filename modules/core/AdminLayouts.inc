@@ -309,8 +309,13 @@ class AdminLayoutsView extends GalleryView {
 		'pathComponent' => $module->translate('Name'),
 		'viewCount' => $module->translate('View Count'),
 	    );
-	    foreach (GalleryCoreApi::getAllFactoryImplementationIds('GallerySortInterface_1_0')
-		    as $sortId => $className) {
+	    list ($ret, $implIds) =
+		GalleryCoreApi::getAllFactoryImplementationIds('GallerySortInterface_1_0');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    
+	    foreach ($implIds as $sortId => $className) {
 		list ($ret, $sort) =
 		    GalleryCoreApi::newFactoryInstance('GallerySortInterface_1_0', $className);
 		if ($ret->isError()) {

@@ -52,21 +52,40 @@ class ItemEditControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	GalleryCoreApi::registerFactoryImplementation('ItemEditPlugin',
-						      'ItemEditControllerTestPluginSuccess',
-						      'ItemEditControllerTestPluginSuccess',
-						      __FILE__);
+	$path = 'modules/core/test/phpunit/ItemEditControllerTest.class';
+	$ret = GalleryCoreApi::registerFactoryImplementation('ItemEditPlugin',
+							     'ItemEditControllerTestPluginSuccess',
+							     'ItemEditControllerTestPluginSuccess',
+							     $path,
+							     'coreTest',
+							     null);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 
-	GalleryCoreApi::registerFactoryImplementation('ItemEditPlugin',
-						      'ItemEditControllerTestPluginFailAndWarn',
-						      'ItemEditControllerTestPluginFailAndWarn',
-						      __FILE__);
+	$ret = GalleryCoreApi::registerFactoryImplementation('ItemEditPlugin',
+							     'ItemEditControllerTestPluginFailAndWarn',
+							     'ItemEditControllerTestPluginFailAndWarn',
+							     $path,
+							     'coreTest',
+							     null);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 
-	GalleryCoreApi::registerFactoryImplementation('ItemEditOption',
-						      'ItemEditControllerTestOption',
-						      'ItemEditControllerTestOption',
-						      __FILE__,
-						      array('ItemEditControllerTestPluginFailAndWarn'));
+	$ret = GalleryCoreApi::registerFactoryImplementation('ItemEditOption',
+							     'ItemEditControllerTestOption',
+							     'ItemEditControllerTestOption',
+							     $path,
+							     'coreTest',
+							     array('ItemEditControllerTestPluginFailAndWarn'));
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markFactoryModuleForCleanup('coreTest');
     }
 
     function tearDown() {
@@ -76,13 +95,6 @@ class ItemEditControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-
-	GalleryCoreApi::unregisterFactoryImplementation('ItemEditPlugin',
-							'ItemEditControllerTestPluginSuccess');
-	GalleryCoreApi::unregisterFactoryImplementation('ItemEditPlugin',
-							'ItemEditControllerTestPluginFailAndWarn');
-	GalleryCoreApi::unregisterFactoryImplementation('ItemEditOption',
-							'ItemEditControllerTestOption');
 	
 	parent::tearDown();
     }

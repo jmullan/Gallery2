@@ -49,10 +49,18 @@ class AlbumTest extends GalleryTestCase {
 	}
 
 	/* Register a dummy toolkit */
-	GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
-						      'AlbumTestToolkit',
-						      'AlbumTestToolkit',
-						      __FILE__);
+	$path = 'modules/core/test/phpunit/AlbumTest.class';
+	$ret = GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
+							     'AlbumTestToolkit',
+							     'AlbumTestToolkit',
+							     $path,
+							     'coreTest',
+							     null);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->_markFactoryModuleForCleanup('coreTest');
 
 	/* Register operations that we can perform on our mock data items */
 	$ret = GalleryCoreApi::registerToolkitOperation('AlbumTestToolkit',
@@ -92,11 +100,13 @@ class AlbumTest extends GalleryTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+
 	/* Unregister toolkit */
 	$ret = GalleryCoreApi::unregisterToolkit('AlbumTestToolkit');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+
 	parent::tearDown();
     }
 

@@ -32,26 +32,11 @@ class WebCamModule extends GalleryModule {
 	$this->setId('webcam');
 	$this->setName('WebCam');
 	$this->setDescription($gallery->i18n('Support periodically updated images like a webcam'));
-	$this->setVersion('0.8.2');
+	$this->setVersion('0.8.3');
 	$this->setGroup('import', $this->translate('Import'));
-	$this->setCallbacks('performFactoryRegistrations|getSiteAdminViews');
-	$this->setRequiredCoreApi(array(1, 0));
+	$this->setCallbacks('getSiteAdminViews');
+	$this->setRequiredCoreApi(array(2, 0));
 	$this->setRequiredModuleApi(array(0, 8));
-    }
-
-    /**
-     * @see GalleryModule::performFactoryRegistrations
-     */
-    function performFactoryRegistrations() {
-	$classDir = dirname(__FILE__) . '/classes/';
-
-	GalleryCoreApi::registerFactoryImplementation('GalleryEntity',
-						      'GalleryLiveImage', 'GalleryLiveImage',
-						      $classDir . 'GalleryLiveImage.class');
-
-	GalleryCoreApi::registerFactoryImplementation('ItemAddPlugin',
-						      'ItemAddLiveImage', 'ItemAddLiveImage',
-						      dirname(__FILE__) . '/ItemAddLiveImage.inc');
     }
 
     /**
@@ -64,6 +49,26 @@ class WebCamModule extends GalleryModule {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
+
+	$ret = GalleryCoreApi::unregisterFactoryImplementationsByModuleId($this->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+            'GalleryEntity', 'GalleryLiveImage', 'GalleryLiveImage',
+            'modules/webcam/classes/GalleryLiveImage.class', 'webcam', null);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+            'ItemAddPlugin', 'ItemAddLiveImage', 'ItemAddLiveImage',
+            'modules/webcam/ItemAddLiveImage.inc', 'webcam', null);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
 	return GalleryStatus::success();
     }
 

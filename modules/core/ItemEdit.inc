@@ -170,7 +170,12 @@ class ItemEditView extends GalleryView {
 	}
 
 	/* Get the edit plugins that support this item type */
-	$allPluginIds = GalleryCoreApi::getAllFactoryImplementationIds('ItemEditPlugin');
+	list ($ret, $allPluginIds) =
+	    GalleryCoreApi::getAllFactoryImplementationIds('ItemEditPlugin');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
 	$pluginInstances = array();
 	foreach (array_keys($allPluginIds) as $pluginId) {
 	    list ($ret, $plugin) = GalleryCoreApi::newFactoryInstanceById('ItemEditPlugin', $pluginId);
@@ -358,7 +363,12 @@ class ItemEditOption {
      * @static
      */
     function getAllOptions($editPlugin, $item, $thumbnail) {
-	$allOptionIds = GalleryCoreApi::getAllFactoryImplementationIdsWithHint('ItemEditOption', $editPlugin);
+	list ($ret, $allOptionIds) =
+	    GalleryCoreApi::getAllFactoryImplementationIdsWithHint('ItemEditOption', $editPlugin);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
 	$optionInstances = array();
 	foreach (array_keys($allOptionIds) as $optionId) {
 	    list ($ret, $option) = GalleryCoreApi::newFactoryInstanceById('ItemEditOption', $optionId);

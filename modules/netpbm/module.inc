@@ -40,24 +40,11 @@ class NetPbmModule extends GalleryModule {
 	$this->setId('netpbm');
 	$this->setName('NetPBM');
 	$this->setDescription($gallery->i18n('NetPBM Graphics Toolkit'));
-	$this->setVersion('0.8.4');
+	$this->setVersion('0.8.5');
 	$this->setGroup('toolkits', $this->translate('Graphics Toolkits'));
-	$this->setCallbacks('performFactoryRegistrations|getSiteAdminViews');
-	$this->setRequiredCoreApi(array(1, 0));
+	$this->setCallbacks('getSiteAdminViews');
+	$this->setRequiredCoreApi(array(2, 0));
 	$this->setRequiredModuleApi(array(0, 8));
-    }
-
-    /**
-     * @see GalleryModule::performFactoryRegistrations
-     */
-    function performFactoryRegistrations() {
-	$classDir = dirname(__FILE__) . '/classes/';
-
-	/* Register our graphics class with the factory */
-	GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
-						      'NetPbmToolkit',
-						      'NetPBM',
-						      $classDir . 'NetPbmToolkit.class');
     }
 
     /**
@@ -75,6 +62,19 @@ class NetPbmModule extends GalleryModule {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
+	}
+
+	$ret = GalleryCoreApi::unregisterFactoryImplementationsByModuleId($this->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Register our graphics class with the factory */
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+            'GalleryToolkit', 'NetPbmToolkit', 'NetPBM',
+            'modules/netpbm/classes/NetPbmToolkit.class', 'netpbm', null);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	return GalleryStatus::success();

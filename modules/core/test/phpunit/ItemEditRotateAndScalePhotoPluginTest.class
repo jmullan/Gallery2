@@ -47,10 +47,18 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 	}
 
 	/* Register a dummy toolkit */
-	GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
-						      'ItemEditRotateAndScalePhotoPluginTestToolkit',
-						      'ItemEditRotateAndScalePhotoPluginTestToolkit',
-						      __FILE__);
+	$path = 'modules/core/test/phpunit/ItemEditRotateAndScalePhotoPluginTest.class';
+	$ret = GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
+            'ItemEditRotateAndScalePhotoPluginTestToolkit',
+            'ItemEditRotateAndScalePhotoPluginTestToolkit',
+            $path,
+            'coreTest',
+            null);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markFactoryModuleForCleanup('coreTest');
 
 	/* Register operations that we can perform on our mock data items */
 	$ret = GalleryCoreApi::registerToolkitOperation('ItemEditRotateAndScalePhotoPluginTestToolkit',

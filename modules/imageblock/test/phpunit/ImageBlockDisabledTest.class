@@ -45,8 +45,15 @@ class ImageBlockDisabledTest extends GalleryTestCase {
 	GalleryCoreApi::relativeRequireOnce('modules/imageblock/classes/ImageBlockDisabledMap.class');
 
 	/* Register a dummy toolkit and operation */
-	GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
-	    'ImageBlockToolkit', 'ImageBlockToolkit', __FILE__);
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+            'GalleryToolkit', 'ImageBlockToolkit', 'ImageBlockToolkit',
+            'modules/imageblock/test/phpunit/ImageBlockDisabledTest.class', 'imageblockTest', null);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markFactoryModuleForCleanup('imageblockTest');
+	
 	$ret = GalleryCoreApi::registerToolkitOperation('ImageBlockToolkit',
 	    array('image/gif'), 'testoperation',
 	    array(array('type' => 'int', 'description' => 'size')), 'desc');

@@ -56,8 +56,13 @@ class SearchScanController extends GalleryController {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    require_once(dirname(__FILE__) . '/classes/GallerySearchInterface_1_0.class');
-	    $ids = GalleryCoreApi::getAllFactoryImplementationIds('GallerySearchInterface_1_0');
+	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/GallerySearchInterface_1_0.class');
+	    list ($ret, $ids) =
+		GalleryCoreApi::getAllFactoryImplementationIds('GallerySearchInterface_1_0');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    
 	    foreach ($ids as $id => $className) {
 		list ($ret, $searchInstances[$id]) =
 		    GalleryCoreApi::newFactoryInstance('GallerySearchInterface_1_0', $className);
@@ -111,12 +116,17 @@ class SearchScanView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	global $gallery;
 
-	// XXX: Parameterize this
+	/* TODO: Parameterize this */
 	$scanSize = 3;
 
 	/* Find all the modules that support the Search interface */
-	require_once(dirname(__FILE__) . '/classes/GallerySearchInterface_1_0.class');
-	$ids = GalleryCoreApi::getAllFactoryImplementationIds('GallerySearchInterface_1_0');
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/GallerySearchInterface_1_0.class');
+	list ($ret, $ids) =
+	    GalleryCoreApi::getAllFactoryImplementationIds('GallerySearchInterface_1_0');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
 	foreach ($ids as $id => $className) {
 	    list ($ret, $searchInstances[$id]) =
 		GalleryCoreApi::newFactoryInstance('GallerySearchInterface_1_0', $className);
@@ -210,7 +220,12 @@ class SearchScanView extends GalleryView {
 	    }
 	}
 
-	$ids = GalleryCoreApi::getAllFactoryImplementationIds('SlideshowInterface_1_0');
+	list ($ret, $ids) =
+	    GalleryCoreApi::getAllFactoryImplementationIds('SlideshowInterface_1_0');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
 	$slideshowAvailable = !empty($ids);
 
 	/* Render the HTML body */

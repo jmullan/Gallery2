@@ -40,32 +40,11 @@ class ThumbnailModule extends GalleryModule {
 	$this->setId('thumbnail');
 	$this->setName($gallery->i18n('Thumbnail Manager'));
 	$this->setDescription($gallery->i18n('Set default thumbnails for non-image items'));
-	$this->setVersion('0.8.3');
+	$this->setVersion('0.8.4');
 	$this->setGroup('display', $this->translate('Display'));
-	$this->setCallbacks('performFactoryRegistrations|getSiteAdminViews');
-	$this->setRequiredCoreApi(array(1, 0));
+	$this->setCallbacks('getSiteAdminViews');
+	$this->setRequiredCoreApi(array(2, 0));
 	$this->setRequiredModuleApi(array(0, 8));
-    }
-
-    /**
-     * @see GalleryModule::performFactoryRegistrations
-     */
-    function performFactoryRegistrations() {
-	$classDir = dirname(__FILE__) . '/classes/';
-
-	GalleryCoreApi::registerFactoryImplementation('GalleryEntity',
-						      'ThumbnailImage', 'ThumbnailImage',
-						      $classDir . 'ThumbnailImage.class');
-
-	GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
-						      'ThumbnailToolkit', 'Thumbnail',
-						      $classDir . 'ThumbnailToolkit.class');
-
-	GalleryCoreApi::registerFactoryImplementation('ItemEditOption',
-						      'CustomThumbnailOption',
-						      'CustomThumbnailOption',
-						      dirname(__FILE__) . '/CustomThumbnailOption.inc',
-						      array('ItemEditItem'));
     }
 
     /**
@@ -91,6 +70,34 @@ class ThumbnailModule extends GalleryModule {
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
+
+	case '0.8.3':
+	}
+
+	$ret = GalleryCoreApi::unregisterFactoryImplementationsByModuleId($this->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+            'GalleryEntity', 'ThumbnailImage', 'ThumbnailImage',
+            'modules/thumbnail/classes/ThumbnailImage.class', 'thumbnail', null);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+            'GalleryToolkit', 'ThumbnailToolkit', 'Thumbnail',
+            'modules/thumbnail/classes/ThumbnailToolkit.class', 'thumbnail', null);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+            'ItemEditOption', 'CustomThumbnailOption', 'CustomThumbnailOption',
+            'modules/thumbnail/CustomThumbnailOption.inc', 'thumbnail', array('ItemEditItem'));
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	return GalleryStatus::success();

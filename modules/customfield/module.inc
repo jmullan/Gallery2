@@ -40,11 +40,11 @@ class CustomFieldModule extends GalleryModule {
 	$this->setId('customfield');
 	$this->setName($gallery->i18n('Custom Fields'));
 	$this->setDescription($gallery->i18n('Create custom data fields for Gallery items'));
-	$this->setVersion('0.8.3');
+	$this->setVersion('0.8.4');
 	$this->setGroup('data', $this->translate('Extra Data'));
-	$this->setCallbacks('registerEventListeners|performFactoryRegistrations|' .
+	$this->setCallbacks('registerEventListeners|' .
 			    'getSiteAdminViews|getItemSummaries|loadItemDetails');
-	$this->setRequiredCoreApi(array(1, 0));
+	$this->setRequiredCoreApi(array(2, 0));
 	$this->setRequiredModuleApi(array(0, 8));
     }
 
@@ -54,29 +54,6 @@ class CustomFieldModule extends GalleryModule {
     function registerEventListeners() {
 	require_once(dirname(__FILE__) . '/classes/CustomFieldHelper.class');
 	GalleryCoreApi::registerEventListener('GalleryEntity::delete', new CustomFieldHelper());
-    }
-
-    /**
-     * @see GalleryModule::performFactoryRegistrations
-     */
-    function performFactoryRegistrations() {
-
-	/* Register our item edit plugin */
-	GalleryCoreApi::registerFactoryImplementation(
-	    'ItemEditPlugin', 'CustomFieldItemEdit', 'CustomFieldItemEdit',
-	    dirname(__FILE__) . '/CustomFieldItemEdit.inc');
-
-	/* Register interface implemenation */
-	GalleryCoreApi::registerFactoryImplementation(
-	    'CustomFieldInterface_1_0', 'CustomFieldHelper', 'CustomField',
-	    dirname(__FILE__) . '/classes/CustomFieldHelper.class');
-
-	/* Register search implementation */
-	GalleryCoreApi::registerFactoryImplementation(
-	    'GallerySearchInterface_1_0', 'CustomFieldSearch', 'CustomField',
-	    dirname(__FILE__) . '/classes/CustomFieldSearch.class');
-
-	return GalleryStatus::success();
     }
 
     /**
@@ -137,5 +114,44 @@ class CustomFieldModule extends GalleryModule {
 	return array(GalleryStatus::success(),
 		     'modules/customfield/templates/ItemDetails.tpl');
     }
+
+    /**
+     * @see GalleryModule::upgrade()
+     */
+    function upgrade($currentVersion) {
+	global $gallery;
+
+	$ret = GalleryCoreApi::unregisterFactoryImplementationsByModuleId($this->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Register our item edit plugin */
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'ItemEditPlugin', 'CustomFieldItemEdit', 'CustomFieldItemEdit',
+            'modules/customfield/CustomFieldItemEdit.inc', 'customfield', null);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Register interface implementation */
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'CustomFieldInterface_1_0', 'CustomFieldHelper', 'CustomField',
+            'modules/customfield/classes/CustomFieldHelper.class', 'customfield', null);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Register search implementation */
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'GallerySearchInterface_1_0', 'CustomFieldSearch', 'CustomField',
+            'modules/customfield/classes/CustomFieldSearch.class', 'customfield', null);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+    
 }
 ?>

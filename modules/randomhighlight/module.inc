@@ -38,25 +38,11 @@ class RandomHighlightModule extends GalleryModule {
 	$this->setId('randomhighlight');
 	$this->setName('Random Highlight');
 	$this->setDescription($gallery->i18n('Periodically change the album highlight'));
-	$this->setVersion('0.8.3');
+	$this->setVersion('0.8.4');
 	$this->setGroup('display', $this->translate('Display'));
-	$this->setCallbacks('performFactoryRegistrations|getSiteAdminViews');
-	$this->setRequiredCoreApi(array(1, 0));
+	$this->setCallbacks('getSiteAdminViews');
+	$this->setRequiredCoreApi(array(2, 0));
 	$this->setRequiredModuleApi(array(0, 8));
-    }
-
-    /**
-     * @see GalleryModule::performFactoryRegistrations
-     */
-    function performFactoryRegistrations() {
-	GalleryCoreApi::registerFactoryImplementation('GalleryEntity',
-	    'RandomHighlightDerivativeImage', 'RandomHighlightDerivativeImage',
-	    dirname(__FILE__) . '/classes/RandomHighlightDerivativeImage.class');
-
-	GalleryCoreApi::registerFactoryImplementation('ItemEditOption',
-	    'RandomHighlightOption', 'RandomHighlightOption',
-            dirname(__FILE__) . '/RandomHighlightOption.inc',
-            array('ItemEditAlbum'));
     }
 
     /**
@@ -69,6 +55,26 @@ class RandomHighlightModule extends GalleryModule {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
+
+	$ret = GalleryCoreApi::unregisterFactoryImplementationsByModuleId($this->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+            'GalleryEntity', 'RandomHighlightDerivativeImage', 'RandomHighlightDerivativeImage',
+            'modules/randomhighlight/classes/RandomHighlightDerivativeImage.class', 'randomhighlight', null);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+            'ItemEditOption', 'RandomHighlightOption', 'RandomHighlightOption',
+            'modules/randomhighlight/RandomHighlightOption.inc', 'randomhighlight', array('ItemEditAlbum'));
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
 	return GalleryStatus::success();
     }
 

@@ -42,10 +42,10 @@ class NokiaUploadModule extends GalleryModule {
 	$this->setId('nokiaupload');
 	$this->setName('Nokia Image Upload');
 	$this->setDescription($gallery->i18n('Implementation of Nokia Image Upload Server API v1.1'));
-	$this->setVersion('0.8.2');
+	$this->setVersion('0.8.3');
 	$this->setGroup('import', $this->translate('Import'));
 	$this->setCallbacks('');
-	$this->setRequiredCoreApi(array(1, 0));
+	$this->setRequiredCoreApi(array(2, 0));
 	$this->setRequiredModuleApi(array(0, 8));
     }
 

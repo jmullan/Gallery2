@@ -50,8 +50,15 @@ class ZipCartPluginTest extends GalleryTestCase {
 	}
 
 	// Register dummy toolkit and operation
-	GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
-	    'ZipCartToolkit', 'ZipCartToolkit', __FILE__);
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+            'GalleryToolkit', 'ZipCartToolkit', 'ZipCartToolkit',
+            'modules/zipcart/test/phpunit/ZipCartPluginTest.class', 'zipcartTest', null);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markFactoryModuleForCleanup('zipcartTest');
+
 	$ret = GalleryCoreApi::registerToolkitOperation('ZipCartToolkit',
 	    array('test/jpeg'), 'testoperation',
 	    array(array('type' => 'int', 'description' => 'size')), 'desc');

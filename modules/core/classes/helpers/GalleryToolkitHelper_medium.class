@@ -281,12 +281,12 @@ class GalleryToolkitHelper_medium {
 	global $gallery;
 
 	/* Require any classes that we're going to need */
-	require_once(dirname(__FILE__) . '/../GalleryToolkitOperationMap.class');
-	require_once(dirname(__FILE__) . '/../GalleryToolkitOperationParameterMap.class');
-	require_once(dirname(__FILE__) . '/../GalleryToolkitOperationMimeTypeMap.class');
-	require_once(dirname(__FILE__) . '/../GalleryToolkitPropertyMap.class');
-	require_once(dirname(__FILE__) . '/../GalleryToolkitPropertyMimeTypeMap.class');
-
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryToolkitOperationMap.class');
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryToolkitOperationParameterMap.class');
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryToolkitOperationMimeTypeMap.class');
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryToolkitPropertyMap.class');
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryToolkitPropertyMimeTypeMap.class');
+	
 	/* Remove our toolkit/operation mappings */
 	$ret = GalleryToolkitOperationMimeTypeMap::removeMapEntry(array('toolkitId' => $toolkitId));
 	if ($ret->isError()) {
@@ -354,7 +354,10 @@ class GalleryToolkitHelper_medium {
 	    }
 	}
 
-	GalleryCoreApi::unregisterFactoryImplementation('GalleryToolkit', $toolkitId);
+	$ret = GalleryCoreApi::unregisterFactoryImplementation('GalleryToolkit', $toolkitId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 
 	/* Invalidate our cache */
 	GalleryDataCache::removeByPattern('GalleryToolkitHelper::');

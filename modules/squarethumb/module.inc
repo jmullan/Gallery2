@@ -41,23 +41,30 @@ class SquareThumbModule extends GalleryModule /* and GalleryEventListener */ {
 	$this->setId('squarethumb');
 	$this->setName($gallery->i18n('Square Thumbnails'));
 	$this->setDescription($gallery->i18n('Crop all thumbnails so they are square'));
-	$this->setVersion('0.8.4');
+	$this->setVersion('0.8.5');
 	$this->setGroup('display', $this->translate('Display'));
-	$this->setCallbacks('performFactoryRegistrations|registerEventListeners');
-	$this->setRequiredCoreApi(array(1, 0));
+	$this->setCallbacks('registerEventListeners');
+	$this->setRequiredCoreApi(array(2, 0));
 	$this->setRequiredModuleApi(array(0, 8));
     }
 
     /**
-     * @see GalleryModule::performFactoryRegistrations
+     * @see GalleryModule::upgrade()
      */
-    function performFactoryRegistrations() {
-	$classDir = dirname(__FILE__) . '/classes/';
+    function upgrade($currentVersion) {
+	$ret = GalleryCoreApi::unregisterFactoryImplementationsByModuleId($this->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 
-	/* Register our toolkit */
-	GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
-						      'SquareThumbToolkit', 'SquareThumb',
-						      $classDir . 'SquareThumbToolkit.class');
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+            'GalleryToolkit', 'SquareThumbToolkit', 'SquareThumb',
+            'modules/squarethumb/classes/SquareThumbToolkit.class', 'squarethumb', null);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
     }
 
     /**

@@ -58,10 +58,18 @@ class ItemTest extends GalleryTestCase {
 	}
 
 	/* Register a dummy toolkit */
-	GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
-						      'ItemTestToolkit',
-						      'ItemTestToolkit',
-						      __FILE__);
+	$path = 'modules/core/test/phpunit/ItemTest.class';
+	$ret = GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
+							     'ItemTestToolkit',
+							     'ItemTestToolkit',
+							     $path,
+							     'coreTest',
+							     null);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markFactoryModuleForCleanup('coreTest');
 
 	/* Register an operation that we can perform on our mock data items */
 	/* Register a jpeg thumbnail in case there are no other toolkits active */
@@ -82,11 +90,12 @@ class ItemTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	GalleryCoreApi::registerFactoryImplementation('GalleryItem',
-						      'ItemTestMovieItem',
-						      'ItemTestMovieItem',
-						      dirname(__FILE__),
-						      array('test/movie'));
+	$ret = GalleryCoreApi::registerFactoryImplementation('GalleryItem',
+							     'ItemTestMovieItem',
+							     'ItemTestMovieItem',
+							     $path,
+							     'coreTest',
+							     array('test/movie'));
     }
 
     function tearDown() {
@@ -102,8 +111,6 @@ class ItemTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-
-	GalleryCoreApi::unregisterFactoryImplementation('GalleryItem', 'ItemTestMovieItem');
 
 	parent::tearDown();
     }

@@ -40,30 +40,12 @@ class CommentModule extends GalleryModule {
 	$this->setId('comment');
 	$this->setName('Comments');
 	$this->setDescription($gallery->i18n('User commenting system'));
-	$this->setVersion('0.81.2');
+	$this->setVersion('0.81.3');
 	$this->setGroup('data', $this->translate('Extra Data'));
-	$this->setCallbacks('performFactoryRegistrations|getItemLinks|getItemSummaries|' .
+	$this->setCallbacks('getItemLinks|getItemSummaries|' .
 			    'loadItemDetails|getItemAdminViews');
-	$this->setRequiredCoreApi(array(1, 0));
+	$this->setRequiredCoreApi(array(2, 0));
 	$this->setRequiredModuleApi(array(0, 8));
-    }
-
-    /**
-     * @see GalleryModule::performFactoryRegistrations
-     */
-    function performFactoryRegistrations() {
-	$classDir = dirname(__FILE__) . '/classes/';
-
-	GalleryCoreApi::registerFactoryImplementation('GalleryEntity',
-						      'GalleryComment',
-						      'GalleryComment',
-						      $classDir . 'GalleryComment.class');
-
-	/* Register our search implementation */
-	GalleryCoreApi::registerFactoryImplementation('GallerySearchInterface_1_0',
-						      'GalleryCommentSearch',
-						      'comment',
-						      $classDir . 'GalleryCommentSearch.class');
     }
 
     /**
@@ -90,6 +72,25 @@ class CommentModule extends GalleryModule {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
+	}
+
+	$ret = GalleryCoreApi::unregisterFactoryImplementationsByModuleId($this->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+            'GalleryEntity', 'GalleryComment', 'GalleryComment',
+            'modules/comment/classes/GalleryComment.class', 'comment', null);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+            'GallerySearchInterface_1_0', 'GalleryCommentSearch', 'comment',
+            'modules/comment/classes/GalleryCommentSearch.class', 'comment', null);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	return GalleryStatus::success();
