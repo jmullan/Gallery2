@@ -66,6 +66,17 @@ foreach ($stepOrder as $stepName) {
 
 session_start();
 
+if (isset($_SESSION['path'])) {
+    if ($_SESSION['path'] != __FILE__) {
+	/*
+	 * Security error!  This session is not valid for this copy of the
+	 * installer. Start over.
+	 */
+	session_unset();
+    }
+}
+$_SESSION['path'] = __FILE__;
+
 require_once(dirname(__FILE__) . '/../init.php');
 $ret = GalleryInitFirstPass(array('debug' => 'buffered',
 				  'noDatabase' => 1));

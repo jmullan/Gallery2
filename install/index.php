@@ -72,6 +72,17 @@ foreach ($stepOrder as $stepName) {
 
 session_start();
 
+if (isset($_SESSION['path'])) {
+    if ($_SESSION['path'] != __FILE__) {
+	/*
+	 * Security error!  This session is not valid for this copy of the
+	 * installer. Start over.
+	 */
+	session_unset();
+    }
+}
+$_SESSION['path'] = __FILE__;
+
 // If we don't have our steps in our session, initialize them now.
 if (!isset($_GET['startOver']) && !empty($_SESSION['install_steps'])) {
     $steps = unserialize($_SESSION['install_steps']);
