@@ -117,9 +117,82 @@ class GalleryUtilities {
     }
 
     /**
+     * Return all request variables that match the prefix
+     *
+     * Accept any number of keys and return that number of values, in order.
+     *
+     * @param string a prefix
+     * @return array key value pairs
+     */
+    function getFormVariables($prefix) {
+	global $gallery;
+	global $HTTP_POST_VARS;
+	global $HTTP_GET_VARS;
+	
+	/*
+	 * Convert dots to underscores.  Some versions of PHP seem to do
+	 * this when processing POST data, so we force the issue here so
+	 * that we get consistent behaviour across all versions.
+	 */
+	$prefix = strtr(GALLERY_FORM_VARIABLE_PREFIX . $prefix, '.', '_');
+	$values = array();
+	
+	/*
+	 * Find all matching GET and POST variables
+	 */
+	foreach (array_keys($HTTP_POST_VARS) as $key) {
+	    if (preg_match("/^${prefix}_?(.*)/", $key, $matches)) {
+		$formKey = $matches[1];
+		$values[$formKey] = $HTTP_POST_VARS[$key];
+	    }
+	}
+
+	foreach (array_keys($HTTP_GET_VARS) as $key) {
+	    if (preg_match("/^${prefix}_?(.*)/", $key, $matches)) {
+		$formKey = $matches[1];
+		$values[$formKey] = $HTTP_GET_VARS[$key];
+	    }
+	}
+
+	/* Undo the damage caused by magic_quotes */
+	if (get_magic_quotes_gpc()) {
+	    foreach (array_keys($values) as $key) {
+		$values[$key] = stripslashes($values[$key]);
+	    }
+	}
+
+	/*
+	 * Now split out any keys that contain a field separator (_) into
+	 * subarrays.  Eg, convert:
+	 *  array('name_first' => 'john'
+	 *        'name_last' => 'doe'
+	 *        'action_create' => 1)
+	 *
+	 * to:
+	 *  array('name' => array('first' => 'john'
+	 *                        'last'  => 'doe'),
+	 *        'action' => array('create' => 1))
+	 */
+	$form = array();
+	foreach ($values as $key => $value) {
+	    $base =& $form;
+	    $components = split('_', $key);
+	    for ($i = 0; $i < sizeof($components) - 1; $i++) {
+		$base =& $base[$components[$i]];
+	    }
+	    $base[$components[sizeof($components)-1]] = $value;
+	}
+
+	return $form;
+    }
+
+    /**
      * Return the specified request variables
      *
-     * Sanitize the input data
+     * Accept any number of keys and return that number of values, in order.
+     *
+     * @param mixed a single key or many keys
+     * @return mixed a single value or many values
      */
     function getRequestVariables() {
 	global $gallery;
@@ -159,6 +232,17 @@ class GalleryUtilities {
 	} else {
 	    return $values;
 	}
+    }
+
+    /**
+     * Push the given key => value pair back into the request
+     * 
+     * @param string the key
+     * @param string the value
+     */
+    function putRequestVariable($key, $value) {
+	global $HTTP_GET_VARS;
+	$HTTP_GET_VARS[GALLERY_FORM_VARIABLE_PREFIX . $key] = $value;
     }
 
     function convertTagToMime($tag) {
