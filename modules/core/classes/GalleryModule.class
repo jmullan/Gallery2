@@ -182,7 +182,7 @@ class GalleryModule {
     }
     
     /**
-     * Get the name of the GalleryView containing the various administration
+     * Get the name of the GalleryView containing the various site administration
      * views for this module
      *
      * @param the type of view requested
@@ -190,7 +190,19 @@ class GalleryModule {
      *               array( array('name' => name, 'view' => view), ...)
      */
     function getSiteAdminViews() {
-	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
+	return array(GalleryStatus::success(), null);
+    }
+
+    /**
+     * Get the name of the GalleryView containing the various item administration
+     * views for this module
+     *
+     * @param the type of view requested
+     * @return array object GalleryStatus a status code
+     *               array( array('name' => name, 'view' => view), ...)
+     */
+    function getItemAdminViews() {
+	return array(GalleryStatus::success(), null);
     }
 
     /**

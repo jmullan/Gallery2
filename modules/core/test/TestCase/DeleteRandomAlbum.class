@@ -13,7 +13,7 @@ class DeleteRandomAlbumTestCase extends TestCase {
     function testStart($iterations) {
 	global $gallery;
 
-	print("Choose an album\n");
+	$gallery->debug("Choosing an album");
 	$lockIds = array();
 
 	list ($ret, $rootId) =

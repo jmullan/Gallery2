@@ -3,15 +3,16 @@
     <tr>
       <td>
 	<table border="0" width="100%" cellspacing="0%" cellpadding="0%">
-	  <tr>
-	    <td align="right">
-	      {foreach from=$moduleSystemLinks item=module}
+	  <tr>	
+	    <td>
+	      {foreach from=$moduleItemLinks item=module}
 	      {foreach from=$module item=link}
 	      <a href="{$link.url}">[{$link.text}]</a>
 	      {/foreach}
 	      {/foreach}
-
-	      {foreach from=$moduleItemLinks item=module}
+	    </td>
+	    <td align="right">
+	      {foreach from=$moduleSystemLinks item=module}
 	      {foreach from=$module item=link}
 	      <a href="{$link.url}">[{$link.text}]</a>
 	      {/foreach}
@@ -54,12 +55,18 @@
     </tr>
 
     <tr>
-      <td>
+      <td align="center">
+	{if !empty($item.title)}
+	<b>{$item.title}</b>
+	<p>
+	{/if}
+
 	{if empty($item.description)}
 	{galleryText text="This item has no description"}
 	{else}
 	{$item.description}
 	{/if}
+	<p>
       </td>
     </tr>
 

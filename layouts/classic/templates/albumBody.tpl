@@ -13,14 +13,17 @@
 	      {galleryText text="on %d pages" arg1=$totalPageCount}
 	      {/if}
 	    </td>
-	    <td align="right">
-	      {foreach from=$moduleSystemLinks item=module}
+	  </tr>
+	  <tr>	
+	    <td>
+	      {foreach from=$moduleItemLinks item=module}
 	      {foreach from=$module item=link}
 	      <a href="{$link.url}">[{$link.text}]</a>
 	      {/foreach}
 	      {/foreach}
-
-	      {foreach from=$moduleItemLinks item=module}
+	    </td>
+	    <td align="right">
+	      {foreach from=$moduleSystemLinks item=module}
 	      {foreach from=$module item=link}
 	      <a href="{$link.url}">[{$link.text}]</a>
 	      {/foreach}
@@ -30,6 +33,14 @@
 	</table>
       </td>
     </tr>
+
+    {if !empty($item.description)}
+    <tr>
+      <td>
+	{$item.description}
+      </td>
+    </tr>
+    {/if}
 
     <tr>
       <td>
@@ -45,29 +56,37 @@
     </tr>
     {/if}
 
-    {if !empty($item.description)}
-    <tr>
-      <td>
-	{$item.description}
-      </td>
-    </tr>
-    {/if}
-
     <tr>
       <td>
 	<table border="0" width="100%">
-	  {counter assign=child start=0 print=false}
+	  {counter assign=childIndex start=0 print=false}
 	  {section name=outer loop=$children step=$properties.columns}
 	  <tr>
-	    {section name=inner loop=$children start=$child max=$properties.columns}
+	    {section name=inner loop=$children start=$childIndex max=$properties.columns}
+	    {assign var=child value=$children[$childIndex]}
 	    <td valign="top" align="center">
-	      {if $children[$child].entityType == 'galleryalbumitem'}
+	      {if $child.entityType == 'galleryalbumitem'}
 	      {include file="albumThumbnail.tpl"}
 	      {else}
 	      {include file="singleThumbnail.tpl"}
 	      {/if}
-	      {counter}
+
+	      <br>
+	      {if !empty($child.title)}
+	      <b>{$child.title}</b>
+	      {else}
+	      &nbsp;
+	      {/if}
+	      
+	      {if (!empty($child.moduleSummaries)) }
+	      {foreach from=$child.moduleSummaries item=summary}
+	      <br>
+	      {$summary}
+	      {/foreach}
+	      {/if}
 	    </td>
+
+	    {counter}
 	    {/section}
 	  </tr>
 	  {/section}

@@ -64,56 +64,6 @@ class Gallery {
     var $_config;
 
     /**
-     * A transitory registry used to share data between modules (eg, you can
-     * register an implementation in the registry so that a factory can find
-     * it).  You can only add to the registry, you can't delete.
-     *
-     * @var arrayobject GalleryRegistry $_registry
-     * @access private
-     */
-    var $_registry;
-
-    /**
-     * The current GalleryGraphics
-     *
-     * @var object GalleryGraphics $_graphics
-     * @access private
-     */
-    var $_graphics;
-
-    /**
-     * Information about Gallery modules
-     *
-     * @var array
-     * @access private
-     */
-    var $_modules;
-
-    /**
-     * Storage for all session variables.  
-     *
-     * @var object GallerySession $_session
-     * @access private
-     */
-    var $_session;
-
-    /**
-     * The backend persistent store for the Gallery class
-     *
-     * @var object GalleryStorage $_storage
-     * @access private
-     */
-    var $_storage;
-
-    /**
-     * Instance of the GalleryTranslator class
-     *
-     * @var array $_translator
-     * @access private
-     */
-    var $_translator;
-
-    /**
      * An instance of the GalleryPlatform class
      *
      * @var object GalleryPlatform $_platform
@@ -128,14 +78,6 @@ class Gallery {
      * @access private
      */
     var $_debug;
-    
-    /**
-     * The current profiling mode.
-     * 
-     * @var bool $_profile
-     * @access private
-     */
-    var $_profile;
     
     /**
      * Where to send debug output (when the debugging mode is set to 'logged')
@@ -155,12 +97,20 @@ class Gallery {
     var $_debugBuffer;
 
     /**
-     * The time at which we should cease whatever operation we're doing
+     * A registry of event listeners
      *
-     * @var int $_timeLimit
+     * @var array $_eventListeners;
+     * @access private;
+     */
+    var $_eventListeners;
+
+    /**
+     * The current GalleryGraphics
+     *
+     * @var object GalleryGraphics $_graphics
      * @access private
      */
-    var $_timeLimit;
+    var $_graphics;
 
     /**
      * A list of all the locks that have been acquired during this request
@@ -171,6 +121,40 @@ class Gallery {
     var $_locks;
 
     /**
+     * Information about Gallery modules
+     *
+     * @var array
+     * @access private
+     */
+    var $_modules;
+
+    /**
+     * The current profiling mode.
+     * 
+     * @var bool $_profile
+     * @access private
+     */
+    var $_profile;
+    
+    /**
+     * A transitory registry used to share data between modules (eg, you can
+     * register an implementation in the registry so that a factory can find
+     * it).  You can only add to the registry, you can't delete.
+     *
+     * @var arrayobject GalleryRegistry $_registry
+     * @access private
+     */
+    var $_registry;
+
+    /**
+     * Storage for all session variables.  
+     *
+     * @var object GallerySession $_session
+     * @access private
+     */
+    var $_session;
+
+    /**
      * A pointer to the Smarty template engine
      *
      * @var object Smarty $_smarty
@@ -178,6 +162,30 @@ class Gallery {
      */
     var $_smarty;
     
+    /**
+     * The backend persistent store for the Gallery class
+     *
+     * @var object GalleryStorage $_storage
+     * @access private
+     */
+    var $_storage;
+
+    /**
+     * Instance of the GalleryTranslator class
+     *
+     * @var array $_translator
+     * @access private
+     */
+    var $_translator;
+
+    /**
+     * The time at which we should cease whatever operation we're doing
+     *
+     * @var int $_timeLimit
+     * @access private
+     */
+    var $_timeLimit;
+
     /*
      * ****************************************
      *                 Methods
@@ -192,6 +200,7 @@ class Gallery {
 	$this->reset();
 	$this->_registry = array();
 	$this->_boundDomains = array();
+	$this->_eventListeners = array();
 	    
 	/* Set up a shutdown function to release any hanging locks. */
 	register_shutdown_function(array(&$this, '_releaseHangingLocks'));
@@ -1439,6 +1448,40 @@ class Gallery {
 	}
 
 	return $codes;
+    }
+
+    /**
+     * Register an event listener
+     *
+     * @param string the name of the event (eg "GalleryEntity::save")
+     * @param object a GalleryEventListener instance
+     */
+    function registerEventListener($eventName, $listener) {
+	if (empty($this->_eventListeners[$eventName])) {
+	    $this->_eventListeners[$eventName] = array();
+	}
+
+	$this->_eventListeners[$eventName][] = $listener;
+    }
+
+    /**
+     * Deliver an event to anybody listening
+     *
+     * @param string the name of the event (eg "GalleryEntity::save")
+     * @param object a GalleryEvent
+     * @return object GalleryStatus a status code
+     */
+    function postEvent($event) {
+	if (!empty($this->_eventListeners[$event->getEventName()])) {
+	    foreach ($this->_eventListeners[$event->getEventName()] as $listener) {
+		$ret = $listener->handleEvent( $event);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+	}
+
+	return GalleryStatus::success();
     }
 
 }

@@ -59,6 +59,25 @@ class TestCase {
 	print_r($item);
     }
 
+    function _randomWords($howMany) {
+	static $syllables;
+	if (empty($syllables)) {
+	    $syllables = array("ha", "lo", "ma", "fu", "re",
+			       "fr", "am", "ew", "ev", "ro",
+			       "lu", "itt", "ni", "op", "br",
+			       "et", "ing", "al", "ae", "ea");
+	}
+	
+	for ($i = 0; $i < $howMany; $i++) {
+	    $buf = '';
+	    for ($j = 0; $j < rand(2, 6); $j++) {
+		$buf .= $syllables[rand(0, sizeof($syllables)-1)];
+	    }
+	    $words[] = $buf;
+	}
+	return join(' ', $words);
+    }
+
     function startTiming($iterations) {
 	list ($usec, $sec) = explode(" ", microtime());
 	$this->_startTime = ((float)$usec + (float)$sec);

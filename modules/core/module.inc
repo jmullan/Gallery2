@@ -46,6 +46,8 @@ class CoreModule extends GalleryModule {
 	require_once($classDir . 'Gallery.class');
 	require_once($classDir . 'GalleryController.class');
 	require_once($classDir . 'GalleryDerivativeHelper.class');
+	require_once($classDir . 'GalleryEvent.class');
+	require_once($classDir . 'GalleryEventListener.class');
 	require_once($classDir . 'GalleryItemPropertiesMap.class');
 	require_once($classDir . 'GalleryLayout.class');
 	require_once($classDir . 'GalleryLock.class');
@@ -308,16 +310,6 @@ class CoreModule extends GalleryModule {
 	}
 
 	$links = array();
-	if ($gallery->getActiveUserId() == $anonymousUserId) {
-	    $links[] = array('text' => $this->translate('login'),
-			     'params' => array_merge(array('view' => 'core:Login'),
-						     $params));
-	} else {
-	    $links[] = array('text' => $this->translate('logout'),
-			     'params' => array_merge(array('controller' => 'core:Logout'),
-						     $params));
-	}
-
 	list ($ret, $isAdmin) =
 	    GalleryUserGroupMap::isUserInSiteAdminGroup($gallery->getActiveUserId());
 	if ($ret->isError()) {
@@ -327,6 +319,16 @@ class CoreModule extends GalleryModule {
 	if ($isAdmin) {
 	    $links[] = array('text' => $this->translate('site admin'),
 			     'params' => array_merge(array('view' => 'core:SiteAdmin'),
+						     $params));
+	}
+
+	if ($gallery->getActiveUserId() == $anonymousUserId) {
+	    $links[] = array('text' => $this->translate('login'),
+			     'params' => array_merge(array('view' => 'core:Login'),
+						     $params));
+	} else {
+	    $links[] = array('text' => $this->translate('logout'),
+			     'params' => array_merge(array('controller' => 'core:Logout'),
 						     $params));
 	}
 
@@ -575,9 +577,7 @@ class CoreModule extends GalleryModule {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	foreach (array('core.view',
-		       'core.viewResizes',
-		       'core.viewSource') as $permission) {
+	foreach (array('core.viewAll') as $permission) {
 	    $ret = GalleryPermissionMap::addGroupPermission($album->getId(),
 							    $groupId,
 							    $permission);

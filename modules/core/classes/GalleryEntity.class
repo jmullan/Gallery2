@@ -171,10 +171,17 @@ class GalleryEntity_core extends GalleryPersistent {
 					    __FILE__, __LINE__);
 	    }
 	}
-	
+
 	if ($this->isModified()) {
 	    /* Change the modification date */
 	    $this->setModificationTimestamp(time());
+
+	    $event = new GalleryEvent("GalleryEntity::save");
+	    $event->setEntity($this);
+	    $ret = $gallery->postEvent($event);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
 
 	    $reply =& $gallery->getStorage();
 	    $ret = $reply[0];
@@ -236,6 +243,13 @@ class GalleryEntity_core extends GalleryPersistent {
 	if (!$gallery->isWriteLocked($this->getId())) {
 	    return GalleryStatus::error(ERROR_LOCK_REQUIRED,
 					__FILE__, __LINE__);
+	}
+
+	$event = new GalleryEvent("GalleryEntity::delete");
+	$event->setEntity($this);
+	$ret = $gallery->postEvent($event);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$reply =& $gallery->getStorage();

@@ -64,7 +64,7 @@ class CommentModule extends GalleryModule {
 			      array('id' => 'comment.viewIp',
 				    'description' => 'View IP',
 				    'itemAdmin' => false));
-			      
+
 	return parent::init();
     }
 

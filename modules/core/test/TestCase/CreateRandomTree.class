@@ -6,6 +6,7 @@ class CreateRandomTreeTestCase extends TestCase {
     var $_photoCount = 0;
     var $_imagePath;
 
+
     function getIterations() {
 	return array(1, 50, 500, 1000, 10000);
     }
@@ -25,7 +26,13 @@ class CreateRandomTreeTestCase extends TestCase {
 	
 	$lockIds = array();
 
-	$this->_imagePath = dirname(dirname(__FILE__)) . '/data/test1.jpg';
+	foreach (array('test1.jpg',
+		       'test1.gif',
+		       'test2.gif',
+		       'test3.gif',
+		       'test4.gif') as $imageName) {
+	    $this->_imagePath[] = dirname(dirname(__FILE__)) . '/data/' . $imageName;
+	}
 	$this->_maxItems = $iterations;
 
 	list($ret, $lockIds[]) = $gallery->acquireReadLock($rootId);
@@ -74,7 +81,12 @@ class CreateRandomTreeTestCase extends TestCase {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	$album->setTitle("Random album, child of $parentId");
+	if (rand(1, 10) > 1) {
+	    $album->setTitle($this->_randomWords(rand(2, 4)));
+	}
+	if (rand(1, 5) > 1) {
+	    $album->setDescription($this->_randomWords(rand(20, 50)));
+	}
 
 	/* Save the album */
 	$ret = $album->save();
@@ -104,11 +116,18 @@ class CreateRandomTreeTestCase extends TestCase {
 	    }
 	    
 	    $ret = $photo->create($album->getId(),
-				  $this->_imagePath,
+				  $this->_imagePath[rand(0, sizeof($this->_imagePath)-1)],
 				  $gallery->getActiveUserId(),
 				  $this->_randomName());
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    if (rand(1, 10) > 1) {
+		$photo->setTitle($this->_randomWords(rand(2, 4)));
+	    }
+	    if (rand(1, 5) > 1) {
+		$photo->setDescription($this->_randomWords(rand(50, 100)));
 	    }
 
 	    /* Save the photo */
@@ -128,7 +147,7 @@ class CreateRandomTreeTestCase extends TestCase {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    $thumbnail->setDerivativeSourceId($photo->getId());
-	    $thumbnail->setDerivativeCommands("scale 200");
+	    $thumbnail->setDerivativeCommands("scale 100");
 	    $thumbnail->setDerivativeMimeType($photo->getMimeType());
 
 	    $thumbnail->save();
@@ -150,7 +169,7 @@ class CreateRandomTreeTestCase extends TestCase {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 
-		$scale = rand(300, 600);
+		$scale = 300 * ($j+1);
 		$resize->setDerivativeSourceId($photo->getId());
 		$resize->setDerivativeCommands("scale $scale");
 		$resize->setDerivativeMimeType($photo->getMimeType());
@@ -216,6 +235,7 @@ class CreateRandomTreeTestCase extends TestCase {
 
 	return GalleryStatus::success();
     }
+
 }
 
 ?>

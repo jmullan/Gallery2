@@ -198,10 +198,9 @@ class GalleryDataItem_core extends GalleryItem {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
-	$ret = $platform->unlink($path);
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+
+	if (!$platform->unlink($path)) {
+	    return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);
 	}
 
 	return GalleryStatus::success();
