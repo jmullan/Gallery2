@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -246,15 +246,16 @@ class ImageBlockHelper {
     /**
      * Event handler for Gallery::ViewableTreeChange event
      * Invalidate image block cache for specified user, or entire cache if no user
+     * Event sends array('userId'=>id or array of ids or null, 'itemId'=>id or array of ids or null)
      *
      * @param object GalleryEvent the event
      * @return object GalleryStatus a status code
      */
     function handleEvent($event) {
-	require_once(dirname(__FILE__) . '/ImageBlockCacheMap.class');
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/ImageBlockCacheMap.class');
 	if ($event->getEventName() == 'Gallery::ViewableTreeChange') {
 	    $param = $event->getEntity();
-	    if (isset($param['userId'])) {
+	    if (!empty($param['userId'])) {
 		$ret = ImageBlockCacheMap::removeMapEntry(array('userId' => $param['userId']));
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);

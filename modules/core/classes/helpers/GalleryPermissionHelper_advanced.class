@@ -71,18 +71,42 @@ class GalleryPermissionHelper_advanced {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	list ($ret, $userIds) = GalleryCoreApi::fetchUsersForGroup($groupId);
+	$ret = GalleryPermissionHelper_advanced::_postGroupEvent($groupId, $itemId);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	$event = GalleryCoreApi::newEvent('Gallery::ViewableTreeChange');
-	foreach (array_keys($userIds) as $userId) {
-	    $event->setEntity(array('userId' => $userId, 'itemId' => $itemId));
-	    $ret = GalleryCoreApi::postEvent($event);
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Post Gallery::ViewableTreeChange event for change of group permissions.
+     *
+     * @param int group id
+     * @param mixed item id or array of ids
+     * @return object GalleryStatus a status code
+     * @access private
+     * @static
+     */
+    function _postGroupEvent($groupId, $itemId) {
+	$userId = null;
+	list ($ret, $group) = GalleryCoreApi::loadEntitiesById($groupId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	if ($group->getGroupType() != GROUP_ALL_USERS && $group->getGroupType() != GROUP_EVERYBODY) {
+	    list ($ret, $userData) = GalleryCoreApi::fetchUsersForGroup($groupId);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
+	    $userId = array_keys($userData);
+	}
+
+	$event = GalleryCoreApi::newEvent('Gallery::ViewableTreeChange');
+	$event->setEntity(array('userId' => $userId, 'itemId' => $itemId));
+	$ret = GalleryCoreApi::postEvent($event);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	return GalleryStatus::success();
@@ -210,18 +234,9 @@ class GalleryPermissionHelper_advanced {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	list ($ret, $userIds) = GalleryCoreApi::fetchUsersForGroup($groupId);
+	$ret = GalleryPermissionHelper_advanced::_postGroupEvent($groupId, $itemId);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	$event = GalleryCoreApi::newEvent('Gallery::ViewableTreeChange');
-	foreach (array_keys($userIds) as $userId) {
-	    $event->setEntity(array('userId' => $userId, 'itemId' => $itemId));
-	    $ret = GalleryCoreApi::postEvent($event);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	return GalleryStatus::success();
@@ -322,7 +337,7 @@ class GalleryPermissionHelper_advanced {
     /**
      * Remove all permissions for the given itemid
      *
-     * @param int the id of the GalleryGroup
+     * @param mixed item id or array of ids
      * @return object GalleryStatus a status code
      * @static
      */
@@ -335,7 +350,7 @@ class GalleryPermissionHelper_advanced {
 	/*
 	 * Remove all relationships for this item from our map.
 	 */
-	require_once(dirname(__FILE__) . '/../GalleryPermissionMap.class');
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/../GalleryPermissionMap.class');
 	$ret = GalleryPermissionMap::removeMapEntry(array('itemId' => $itemId));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -474,7 +489,7 @@ class GalleryPermissionHelper_advanced {
 
 	list($ret, $searchResults) = $gallery->search($query, array($fromId));
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$storage =& $gallery->getStorage();
@@ -555,7 +570,7 @@ class GalleryPermissionHelper_advanced {
 	list($ret, $searchResults) =
 	    $gallery->search($query, $data, array('limit' => array('count' => 1)));
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), false);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	return array(GalleryStatus::success(),
@@ -672,13 +687,13 @@ class GalleryPermissionHelper_advanced {
 	list ($ret, $bits) =
 	    GalleryCoreApi::convertPermissionIdsToBits(array($permissionId));
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryPermissionHelper_medium.class');
 	list ($ret, $ids) = GalleryPermissionHelper_medium::convertBitsToIds($bits);
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	return array(GalleryStatus::success(), $ids);

@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -35,7 +35,7 @@ GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryFileSystemEntity.class'
  * Abstract base class for all objects in the Gallery
  * composite tree
  *
- * Container for all functionality and data common objects that 
+ * Container for all functionality and data common objects that
  * Gallery can deal with.  Each GalleryItem has the capacity
  * to own other GalleryItems in a parent-child relationship.
  * That capacity can be enabled or disabled by subclasses of
@@ -327,11 +327,11 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	$ret1 = GalleryCoreApi::removeItemProperties($this->getId());
 	$ret2 = GalleryCoreApi::removeItemPermissions($this->getId());
 	$ret3 = GalleryCoreApi::removeItemAttributes($this->getId());
-	
+
 	if ($ret1->isError()) {
 	    return $ret1->wrap(__FILE__, __LINE__);
 	}
-	
+
 	if ($ret2->isError()) {
 	    return $ret2->wrap(__FILE__, __LINE__);
 	}
@@ -340,13 +340,15 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	    return $ret3->wrap(__FILE__, __LINE__);
 	}
 
-	$event = GalleryCoreApi::newEvent('Gallery::ViewableTreeChange');
-	$event->setEntity(array('userId' => null, 'itemId' => $this->getParentId()));
-	$ret = GalleryCoreApi::postEvent($event);
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	if ($this->getParentId()) {
+	    $event = GalleryCoreApi::newEvent('Gallery::ViewableTreeChange');
+	    $event->setEntity(array('userId' => null, 'itemId' => $this->getParentId()));
+	    $ret = GalleryCoreApi::postEvent($event);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
 	}
-	
+
 	return GalleryStatus::success();
     }
 
@@ -358,26 +360,22 @@ class GalleryItem_core extends GalleryFileSystemEntity {
      * @return object GalleryStatus a status code
      */
     function move($newParentId) {
-	$event = GalleryCoreApi::newEvent('Gallery::ViewableTreeChange');
-	$event->setEntity(array('userId' => null, 'itemId' => $this->getParentId()));
-	$ret = GalleryCoreApi::postEvent($event);
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-	
+	$parentId = $this->getParentId();
 	$ret = parent::move($newParentId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	$event->setEntity(array('userId' => null, 'itemId' => $this->getParentId()));
+	$event = GalleryCoreApi::newEvent('Gallery::ViewableTreeChange');
+	$event->setEntity(array('userId' => null, 'itemId' => empty($parentId) ? $this->getParentId()
+							   : array($parentId, $this->getParentId())));
 	$ret = GalleryCoreApi::postEvent($event);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	return GalleryStatus::success();
-    }    
+    }
 
     /**
      * Save the changes to this GalleryItem
@@ -432,7 +430,7 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 		}
 	    }
 	}
-	
+
 	return GalleryStatus::success();
     }
 }

@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -113,7 +113,7 @@ class GalleryItemHelper_medium {
 
 	return array(GalleryStatus::success(), $data);
     }
-    
+
     /**
      * Return the ids of all the child items of the given item that have the
      * matching permission and are linkable entities.  Useful for, example, for
@@ -194,10 +194,10 @@ class GalleryItemHelper_medium {
 	}
 
 	GalleryDataCache::cachePermissions($data, $permissionId);
-	
+
 	return array(GalleryStatus::success(), $data);
     }
-    
+
     /**
      * Return the ids of all items that match the given type and have the
      * given permission (defaults to 'core.view')
@@ -289,9 +289,9 @@ class GalleryItemHelper_medium {
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
 			 null);
 	}
-	
+
 	$storage =& $gallery->getStorage();
-	
+
 	/* Search the item table for all items with owner = $ownerId */
 	$query = '
     SELECT DISTINCT
@@ -346,7 +346,7 @@ class GalleryItemHelper_medium {
      * @param string the description of the new item
      * @param string the mime type of the new item
      * @param int the id of the target album
-     * @param boolean (optional) a boolean true if we should symlink instead 
+     * @param boolean (optional) a boolean true if we should symlink instead
      *        of copy (default is false).
      * @return array object GalleryStatus a status code
      *               object GalleryDataItem a new item
@@ -408,7 +408,7 @@ class GalleryItemHelper_medium {
     }
 
     /**
-     * Add an existing data item to an album 
+     * Add an existing data item to an album
      *
      * @param object GalleryItem the source item
      * @param int the id of the target album
@@ -417,7 +417,7 @@ class GalleryItemHelper_medium {
      * @static
      */
     function addExistingItemToAlbum($item, $albumId, $isNew=false) {
-	
+
 	/* Set the order weight */
 	list ($ret, $maxWeight) = GalleryCoreApi::fetchExtremeChildWeight($albumId, HIGHER_WEIGHT);
 	if ($ret->isError()) {
@@ -600,7 +600,7 @@ class GalleryItemHelper_medium {
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-		
+
 	    if (empty($thumbnailTable)) {
 		list ($ret, $success) = GalleryCoreApi::setThumbnailFromItem($albumId, $item->getId());
 		if ($ret->isError()) {
@@ -626,7 +626,7 @@ class GalleryItemHelper_medium {
     function setThumbnailFromItem($itemId, $fromItemId) {
 	global $gallery;
 
-	/* Load the current album thumbnail. */ 
+	/* Load the current album thumbnail. */
 	list ($ret, $thumbnailTable) =
 	    GalleryCoreApi::fetchThumbnailsByItemIds(array($itemId, $fromItemId));
 	if ($ret->isError()) {
@@ -646,7 +646,7 @@ class GalleryItemHelper_medium {
 	$parentId = null;
 	$createdNewParentThumbnail = false;
 	$success = false;
-	
+
 	/* 1. The fromItem's preferred derivative's source id */
 	list ($ret, $derivatives) = GalleryCoreApi::fetchPreferredsByItemIds(array($fromItemId));
 	if ($ret->isError()) {
@@ -671,7 +671,7 @@ class GalleryItemHelper_medium {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    
+
 	    if (GalleryUtilities::isA($fromItem, 'GalleryDataItem')) {
 		$source = $fromItem;
 		$sourceMimeType = $fromItem->getMimeType();
@@ -696,7 +696,7 @@ class GalleryItemHelper_medium {
 	    /* Reuse the existing derivative, if one exists */
 	    if (isset($thumbnailTable[$itemId])) {
 		$derivative = $thumbnailTable[$itemId];
-	    
+
 		/* Modify existing thumbnail */
 		list ($ret, $lockIds[]) = GalleryCoreApi::acquireWriteLock($derivative->getId());
 		if ($ret->isError()) {
@@ -735,7 +735,7 @@ class GalleryItemHelper_medium {
 			GalleryCoreApi::releaseLocks($lockIds);
 		    }
 		    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
-		}  
+		}
 
 		$ret = $derivative->create($itemId, DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
 		if ($ret->isError()) {
@@ -747,7 +747,7 @@ class GalleryItemHelper_medium {
 		}
 
 		$createdNewParentThumbnail = true;
-	    
+
 		/*
 		 * The dimensions of the album's thumbnail are governed by the album's parent, so load the
 		 * album, get its parent's id, get that album's preferences and use those for the thumbnail.
@@ -887,39 +887,47 @@ class GalleryItemHelper_medium {
      * an item id, it'll invalidate that id and all of its parents for all users.  If you provide both, it
      * will only invalidate for the intersection of the user and the item ids.
      *
-     * @param int a user id
-     * @param int an item id
+     * @param mixed user id or array of ids or null
+     * @param mixed item id or array of ids or null
      * @return object GalleryStatus a status code
      */
     function invalidateDescendentCountCaches($userId, $itemId) {
-	require_once(dirname(__FILE__) . '/../GalleryDescendentCountsMap.class');
-	
-	if (isset($userId) && !isset($itemId)) {
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/../GalleryDescendentCountsMap.class');
+
+	if (!empty($userId) && empty($itemId)) {
 	    $ret = GalleryDescendentCountsMap::removeMapEntry(array('userId' => $userId));
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 
-	if (isset($itemId)) {
-	    list ($ret, $parentSequence) = GalleryCoreApi::fetchParentSequence($itemId);
-	    if ($ret->isError()) {
-		if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
-		    // It's legal to invalidate for objects that are in the process of being created
-		    return GalleryStatus::success();
-		}
-		
-		return $ret->wrap(__FILE__, __LINE__);
+	if (!empty($itemId)) {
+	    if (!is_array($itemId)) {
+		$itemId = array($itemId);
 	    }
-	    $parentSequence[] = $itemId;
-	    
-	    foreach ($parentSequence as $parentId) {
-		if (isset($userId)) {
-		    $ret = GalleryDescendentCountsMap::removeMapEntry(array('userId' => $userId,
-									    'itemId' => $parentId));
-		} else {
-		    $ret = GalleryDescendentCountsMap::removeMapEntry(array('itemId' => $parentId));
+	    // Gather up all ancestors of all specified ids
+	    $ids = array();
+	    foreach ($itemId as $id) {
+		list ($ret, $parentSequence) = GalleryCoreApi::fetchParentSequence($id);
+		if ($ret->isError()) {
+		    if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
+			// It's legal to invalidate for objects that are in the process of being created
+			continue;
+		    }
+		    return $ret->wrap(__FILE__, __LINE__);
 		}
+		foreach ($parentSequence as $parentId) {
+		    $ids[$parentId] = true;
+		}
+		$ids[$id] = true;
+	    }
+
+	    if (!empty($ids)) {
+		$data = array('itemId' => array_keys($ids));
+		if (!empty($userId)) {
+		    $data['userId'] = $userId;
+		}
+		$ret = GalleryDescendentCountsMap::removeMapEntry($data);
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
@@ -931,6 +939,7 @@ class GalleryItemHelper_medium {
 
     /**
      * Handler for Gallery::ViewableTreeChange event.
+     * Event sends array('userId'=>id or array of ids or null, 'itemId'=>id or array of ids or null)
      *
      * @param object GalleryEvent the event
      * @return object GalleryStatus a status code
