@@ -1,0 +1,174 @@
+ _                    _ _          _   _             
+| |    ___   ___ __ _| (_)______ _| |_(_) ___  _ __  
+| |   / _ \ / __/ _` | | |_  / _` | __| |/ _ \| '_ \ 
+| |__| (_) | (_| (_| | | |/ / (_| | |_| | (_) | | | |
+|_____\___/ \___\__,_|_|_/___\__,_|\__|_|\___/|_| |_|
+
+CONTENTS
+--------
+1. OVERVIEW
+2. REQUIREMENTS
+3. CREATING A NEW LOCALIZATION
+4. MAINTAINING A LOCALIZATION
+
+
+1. OVERVIEW
+-----------
+
+Gallery is internationalized.  This means that instead of containing
+language specific text messages, it tracks text in a special way such
+that this text can be translated into other languages and a version of
+the text can be displayed as appropriate for the viewer.
+
+In order for the viewer to see Gallery's text in their own language,
+somebody must first create a version of all the text messages that
+Gallery is going to display in that specific language.  This process
+is called "localization".
+
+This document is a little sketchy at the moment, but I'll try to
+outline in broad strokes how you can create and maintain localization
+files for the content in G2.  It's not a particularly difficult thing
+to do but it requires us to keep the various files up to date whenever
+the underlying content changes.  Luckily we have tools that will aid
+in this process.
+
+
+2. REQUIREMENTS
+---------------
+
+In order to really do this effectively, you need to have a few tools
+installed on your machine.  I've only tested this process on a FreeBSD
+box, but my guess is that you won't have too much difficulty on Linux
+or Solaris.  You may have difficulties following along on Windows, but
+it should be possible.
+
+  - gettext
+    http://www.gnu.org/software/gettext/
+
+  - gmake
+    http://www.gnu.org/software/make/make.html
+
+I don't *think* that you need anything else.  But it's possible (let me
+know).
+
+3. CREATING A NEW LOCALIZATION
+------------------------------
+
+This is pretty straightforward.  Look around the Gallery distribution and
+you'll find a bunch of directories called "po".  ("po" is a gettext term that
+stands for "portable object").  Here's one way to find them:
+
+	find . -type d -name po			<-- you type this
+
+	./layouts/classic/po	          	<-- you see this
+	./lib/tools/po
+	./modules/core/po
+	./modules/comment/po
+	./modules/netpbm/po
+
+** Ignore the "lib/tools/po" directory.
+
+These directories contain translation source files.  You're going to
+create a new file in this directory with an appropriate language code,
+and then fill that file with translated text.  The first thing to do
+is to identify the correct language code.  If the one that you want to
+work on already exists, then skip to the next section ("Maintaining a
+Localization").  Otherwise, you need to assemble a code from the
+following two tables:
+
+Language codes:
+	http://ftp.ics.uci.edu/pub/ietf/http/related/iso639.txt
+
+Country codes:
+	http://www.iso.ch/iso/en/prods-services/iso3166ma/02iso-3166-code-lists/list-en1.html
+
+Your code should be of the format xx_XX (eg, "en_US" for English/United States,
+or "el_GR" for Greek/Greece).  
+
+Once you've chosen the code, you need to create a new .po file for
+your code.  Let's assume that you chose "el_GR".  For each po directory,
+you need to do this:
+
+	gmake messages.po
+	mv messages.po el_GR.po
+
+Now edit el_GR.po.  It should have the Gallery license at the top of
+the file, but you'll need to customize these values:
+
+	"Project-Id-Version: xxx \n"
+		-> Copy the project id from another .po file in the same directory
+	
+	"Last-Translator: \n"
+		-> Put your name and email here in the format:
+			"FirstName LastName <email@address>"
+
+	"Language-Team: \n"
+		-> Put in the language and the -devel mailing list, eg:
+			"Greek <gallery-devel@lists.sourceforge.net>"
+
+	"Content-Type: text/plain; charset=iso-8859-1\n"
+		-> Replace the charset with as appropriate 
+		
+	"Content-Transfer-Encoding: 8bit\n"
+		-> Replace the encoding as appropriate
+
+Next, you'll see a series of blocks like this:
+
+	#, c-format		(this is optional)
+	msgid "a message in english, with %d or %s tags in it"
+	msgstr ""
+
+You need to put the translation for the English message into the 
+msgstr block, between the quotes, for example:
+
+	#, c-format		(this is optional)
+	msgid "a message in english, with %d or %s tags in it"
+	msgstr "eine Anzeige auf englisch, mit %d oder %s etikettiert in ihr"
+
+		(ok, that's German not Greek, but you get the idea)
+
+Do that for every message.  When you're done, run:
+
+	gmake install
+
+And it will compile your .po file into a .mo file and install it in the 
+appropriate place for the module.  Repeat this for every .po directory.
+Finally, you need to edit modules/core/classes/GalleryTranslator.class
+and in the constructor, add lines like this:
+
+	$this->_supportedLanguages['el']['GR']['description'] = 'Greek';
+	$this->_supportedLanguages['el']['GR']['charset'] = 'ISO-8859-1';
+
+		(but put in the appropriate charset)
+
+Now, log onto G2 and in the User preferences (you may need to edit the
+user via the Site Administrator) you should see Greek appear in the
+dropdown, and if you select it and log on as that user you'll see your
+translated messages.
+
+Check in your translation and you're done!  If you don't have permissions
+to commit your change, email it to the mailing list (or to the appropriate
+contact).
+
+4. MAINTAINING A LOCALIZATION
+-----------------------------
+
+This is pretty straightforward.  We'll work out some kind of
+notification system, but at any time you should be able to do this:
+
+	cd po
+	gmake el_GR.po  	(using Greek as an example)
+
+This will extract all messages from the module that you're in, and update
+the .po file.  Look through the .po file for any blocks that have an
+empty msgstr, or are marked "fuzzy" and update them.
+
+When you've got everything right, run:
+
+	gmake install
+
+Test your changes (see the "Creating a New Localization") section for 
+testing info, and submit the new files to us.
+
+
+

@@ -27,6 +27,9 @@ all: install
 messages.po:
 	perl $(TOOLDIR)/po/extract.pl $(MODULE_DIR) $(EXTRA_DIR) > strings.raw
 	xgettext --keyword=_ -C --no-location strings.raw
+	perl -ne 'print if $$. > 4' < messages.po > messages.tmp
+	cat $(TOOLDIR)/po/header.txt messages.tmp > messages.po
+	$(RM) messages.tmp
 
 %.po: messages.po
 	msgmerge $@ messages.po > $@.new
