@@ -4,7 +4,9 @@
       function checkAll(newValue) {
          for (var i = 0; i < document.forms[0].length; i++) {
              var element = document.forms[0].elements[i];
-             if (element.type == 'checkbox' && element.name.substr(0,6) == 'module') {
+             if (element.type == 'checkbox' && 
+                   element.name.substr(0,6) == 'module' &&
+                   ! element.disabled) {
                  element.checked = newValue;
              }
          }
