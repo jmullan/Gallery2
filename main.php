@@ -42,10 +42,8 @@ if (!defined('G2_EMBED')) {
 function GalleryMain($returnHtml=false) {
     global $gallery;
 
-    /* Go! */
+    /* Process the request */
     list($ret, $g2Data) = _GalleryMain($returnHtml);
-
-    /* Save our session */
     if ($ret->isSuccess()) {
 	/* Write out our session data */
 	$session =& $gallery->getSession();
@@ -73,6 +71,11 @@ function GalleryMain($returnHtml=false) {
     return $g2Data;
 }
 
+/**
+ * Process our request
+ * @return array object GalleryStatus a status code
+ *               array[]
+ */
 function _GalleryMain($returnHtml=false) {
     global $gallery;
 
@@ -107,7 +110,7 @@ function _GalleryMain($returnHtml=false) {
 	}
 
 	if ($responseComplete) {
-	    // We're done
+	    /* We're done */
 	    return array(GalleryStatus::success(), array('isDone' => true));
 	}
     }
@@ -119,8 +122,8 @@ function _GalleryMain($returnHtml=false) {
     }
     $installedVersions = $core->getInstalledVersions();
     if ($installedVersions['core'] != $core->getVersion()) {
-	header('Location: ' . $urlGenerator->generateUrl(array('href' => 'upgrade/')));
-	return array(GalleryStatus::success(), array('isDone' => true));
+	$redirectUrl = $urlGenerator->generateUrl(array('href' => 'upgrade/'));
+	return array(GalleryStatus::success(), _GalleryMain_doRedirect($redirectUrl));
     }
 
     $ret = GalleryInitSecondPass();
@@ -300,8 +303,10 @@ function _GalleryMain($returnHtml=false) {
 	    $layout =& $template->getVariableByReference('layout');
 	    $data['layoutData'] = $layout;
 	    if (isset($layout['show']['sidebar']) && $layout['show']['sidebar'] === false) {
-		// Render sidebar and return as separate block of content if
-		// embedding app requested no sidebar in G2 content..
+		/*
+		 * Render sidebar and return as separate block of content if
+		 * embedding app requested no sidebar in G2 content..
+		 */
 		$layout['show']['sidebar'] = true;
 		list ($ret, $data['sidebarHtml']) = $template->fetch('gallery:templates/sidebar.tpl');
 		if ($ret->isError()) {
@@ -377,7 +382,7 @@ function _GalleryMain_doRedirect($redirectUrl, $template=null) {
 function _GalleryMain_errorHandler($error, $g2Data=null, $initOk=true) {
     global $gallery;
     if (!$initOk) {
-	// May not have session or translator.. just dump error to browser.
+	/* May not have session or translator.. just dump error to browser. */
 	print '<h2>Error</h2>' . $error->getAsHtml(false);
 	if ($gallery->getDebug() == 'buffered') {
 	    print '<h3>Debug Output</h3><pre>' . $gallery->getDebugBuffer() . '</pre>';
@@ -386,10 +391,10 @@ function _GalleryMain_errorHandler($error, $g2Data=null, $initOk=true) {
     }
 
     if (isset($g2Data['template'])) {
-	// Main processing created a template before error occurred..
+	/* Main processing created a template before error occurred.. */
 	$template = $g2Data['template'];
     } else {
-	// Create a template with default theme..
+	/* Create a template with default theme.. */
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryTemplate.class');
 	$template = new GalleryTemplate(dirname(__FILE__));
 
@@ -404,41 +409,41 @@ function _GalleryMain_errorHandler($error, $g2Data=null, $initOk=true) {
     list ($ret, $isAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
     $isAdmin = $ret->isSuccess() && $isAdmin;
     $main = array('isAdmin' => $isAdmin,
-		  'error' => $error->getAsHtml($isAdmin),
+		  'error' => array('stackTrace' => $error->getAsHtml($isAdmin)),
 		  'viewHeadFile' => 'templates/errorHead.tpl',
 		  'viewBodyFile' => 'templates/errorBody.tpl',
 		  'viewL10Domain' => 'modules_core');
     _GalleryMain_setupMain($main);
 
     if (isset($g2Data['redirectUrl'])) {
-	// Redirect in debug mode..
+	/* Redirect in debug mode.. */
 	$templatePath = 'gallery:templates/redirect.tpl';
 	$main['redirectUrl'] = $g2Data['redirectUrl'];
     } else {
-	// Landing page for errors..
+	/* Landing page for errors.. */
 	$templatePath = 'gallery:templates/global.tpl';
 	$errorCode = $error->getErrorCode();
 
 	if ($errorCode & ERROR_OBSOLETE_DATA) {
-	    $main['obsoleteData'] = true;
+	    $main['error']['obsoleteData'] = true;
 	}
 	if ($errorCode & (ERROR_PERMISSION_DENIED | ERROR_BAD_PARAMETER)) {
-	    $main['securityViolation'] = true;
+	    $main['error']['securityViolation'] = true;
 	}
 	if ($errorCode & ERROR_STORAGE_FAILURE) {
-	    $main['storageFailure'] = true;
+	    $main['error']['storageFailure'] = true;
 	}
 
 	if ($isAdmin) {
-	    $main['phpversion'] = phpversion();
-	    $main['php_uname'] = php_uname();
-	    $main['php_sapi_name'] = php_sapi_name();
-	    $main['webserver'] = isset($_SERVER['SERVER_SOFTWARE']) ? $_SERVER['SERVER_SOFTWARE'] : '';
-	    $main['browser'] = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
+	    $main['error']['phpversion'] = phpversion();
+	    $main['error']['php_uname'] = php_uname();
+	    $main['error']['php_sapi_name'] = php_sapi_name();
+	    $main['error']['webserver'] = isset($_SERVER['SERVER_SOFTWARE']) ? $_SERVER['SERVER_SOFTWARE'] : '';
+	    $main['error']['browser'] = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
 	    if ($gallery->isStorageInitialized()) {
 		$storage =& $gallery->getStorage();
-		$main['db_type'] = $storage->_impl->getAdoDbType();
-		$main['db_version'] = @$storage->_impl->getVersion();
+		$main['error']['dbType'] = $storage->_impl->getAdoDbType();
+		$main['error']['dbVersion'] = @$storage->_impl->getVersion();
 
 		list ($ret, $list) = GalleryCoreApi::getToolkitOperationMimeTypes('thumbnail');
 		if ($ret->isSuccess()) {
@@ -446,7 +451,7 @@ function _GalleryMain_errorHandler($error, $g2Data=null, $initOk=true) {
 		    foreach ($list as $tmp) {
 			$toolkitList = array_merge($toolkitList, $tmp);
 		    }
-		    $main['toolkits'] = implode(' ', array_unique($toolkitList));
+		    $main['error']['toolkits'] = implode(', ', array_unique($toolkitList));
 		}
 	    }
 	}
@@ -458,7 +463,7 @@ function _GalleryMain_errorHandler($error, $g2Data=null, $initOk=true) {
 
     $ret = $template->display($templatePath);
     if ($ret->isError()) {
-	// Smarty failure.. all we can do now is dump the error out to the browser.
+	/* Smarty failure.. all we can do now is dump the error out to the browser. */
 	print '<h2>Error</h2>' . $error->getAsHtml($isAdmin)
 	    . '<h3>Smarty Error</h3>' . $ret->getAsHtml($isAdmin);
 	if (isset($main['debug'])) {
