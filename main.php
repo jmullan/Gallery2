@@ -323,13 +323,22 @@ function GalleryMain() {
 	    if ($gallery->getDebug() == 'buffered') {
 		$main['debug'] = $gallery->getDebugBuffer();
 	    }
-	} 
+	}
+
 
 	list ($ret, $markup) = GalleryCoreApi::getPluginParameter('module', 'core', 'misc.markup');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	$main['markupType'] = $markup;
+
+	/* Calculate a URI that we can use for the validation link */
+	$main['validationUri'] = $urlGenerator->getCurrentUrl();
+	$session =& $gallery->getSession();
+	$sessionDescriptor = $session->getSessionDescriptor();
+	$main['validationUri'] =
+	    urlencode($urlGenerator->appendParamsToUrl($urlGenerator->getCurrentUrl(),
+						       array($sessionDescriptor[0] => $sessionDescriptor[1])));
 
 	$main['gallery']['version'] = '2';
 	$template->setVariable('main', $main);

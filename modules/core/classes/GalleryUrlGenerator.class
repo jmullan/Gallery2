@@ -317,6 +317,34 @@ class GalleryUrlGenerator {
 
 	return '?' . join('&amp;', $args);
     }
+
+    /**
+     * Append parameters to a url using the G2 prefix and urlencoding the keys and values.
+     *
+     * @param string the original url
+     * @param array key/value pairs to be appended
+     * @return string the new url
+     */
+    function appendParamsToUrl($url, $params) {
+	if (strstr($url, '?') === false) {
+	    $url .= '?';
+	} else {
+	    $url .= '&';
+	}
+
+	$first = true;
+	foreach ($params as $key => $value) {
+	    if ($first) {
+		$first = false;
+	    } else {
+		$url .= '&';
+	    }
+	    
+	    $url .= sprintf('%s=%s', urlencode(GALLERY_FORM_VARIABLE_PREFIX . $key), urlencode($value));
+	}
+
+	return $url;
+    }
 }
 
 ?>

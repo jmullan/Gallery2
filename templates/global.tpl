@@ -29,7 +29,7 @@
       {include file="gallery:`$main.viewBodyFile`" l10Domain=$main.viewL10Domain}
 
       <div id="gsFooter">
-	<a href="http://validator.w3.org/check/referer"><img style="border: 0px"
+	<a href="http://validator.w3.org/check?uri={$main.validationUri}"><img style="border: 0px"
 	    src="{g->url href="images/xhtml10.png"}"
 	    alt="{g->text text="This page is valid XHTML 1.0"}" 
 	    height="15" width="80"/></a>
