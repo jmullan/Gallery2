@@ -384,20 +384,31 @@ class Gallery1DataParser {
      */
     
     function convertString($string,$sourceEncoding) {
+	global $gallery;
+	$platform = $gallery->getPlatform();
+	$slash = $platform->getDirectorySeparator();
+	include( dirname(__FILE__) . $slash . 'charsets.php');
 	if (!strcmp($sourceEncoding,'UTF-8')) {
 	    return $string;
 	}
 	if (function_exists('iconv')) {
-	    $string = iconv($sourceEncoding, 'UTF-8', $string);
+	    return iconv($sourceEncoding, 'UTF-8', $string);
 	} else if (function_exists('mb_convert_encoding')) {
-	    $string = mb_convert_encoding($string, $sourceEncoding, 'UTF-8');
+	    return mb_convert_encoding($string, $sourceEncoding, 'UTF-8');
 	} else if (function_exists('recode_string')) {
-	    $string = recode_string($sourceEncoding . '..UTF-8', $string);
+	    return recode_string($sourceEncoding . '..UTF-8', $string);
+	} else if ((phpversion() >= '3.0.0') && isset($charset[$sourceEncoding])) {
+	    return preg_replace('/([\x80-\xFF])/se',
+				'$charset[$sourceEncoding][ord(\'$1\')]',
+				$string);
+	} else if (!strcmp($sourceEncoding,'ISO-8859-1') && (phpversion() >= '3.0.0')) {
+	    return preg_replace('/([\x80-\xFF])/e',
+				'chr(192 | ord(\'$1\') >> 6) . chr(128 | ord(\'$1\') & 63)',
+				$string);
 	}
 	return $string;
-    }    
+    }
 }
-
 
     
 /* Define these classes so that unserialize can use them */
@@ -453,3 +464,4 @@ class Image { }
 class Comment { }
     
 ?>
+

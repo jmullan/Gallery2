@@ -332,11 +332,19 @@ class Gallery1DataParserTest extends GalleryControllerTestCase {
 	$this->assertEquals($valid,FALSE);
     }
     function testConvertiso8859_1ToUTF8() {
-	$inputString = chr(128);
-	$targetString = chr(194). chr(128);
+	$inputString = chr(245);
 	$sourceEncoding = 'ISO-8859-1';
 	$outputString = Gallery1DataParser::convertString($inputString,$sourceEncoding);
-	$this->assertEquals($targetString,$outputString);
+	if (function_exists('iconv')
+	    || function_exists('mb_convert_encoding')
+	    || function_exists('recode_string')
+	    ) {
+	    $targetString = chr(195). chr(181);
+	    $this->assertEquals($targetString,$outputString);
+	} else if (phpversion() >= '3.0.0') {
+	    $targetString = '&#245;';	   
+	    $this->assertEquals($targetString,$outputString);
+	}
     }
 }
 ?>

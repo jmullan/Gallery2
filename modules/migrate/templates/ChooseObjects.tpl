@@ -161,8 +161,8 @@
       </div>
 
       <select name="{g->formVar var="form[sourceEncoding]"}">
-        {foreach from=$ChooseObjects.availableEncodings item=encoding}
-	  <option value="{$encoding}">{$encoding}</option>
+        {foreach from=$ChooseObjects.availableEncodings key=encodingName item=encoding}
+	  <option value="{$encoding}">{$encodingName}</option>
         {/foreach}
       </select>
     </div>

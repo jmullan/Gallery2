@@ -102,7 +102,7 @@
       {g->text text="Encoding: %s" arg1=$form.sourceEncoding}
     </span>
   </div>
-  <input type="hidden" name="{g->formVar var="form[form.sourceEncoding]"}" value="{$form.sourceEncoding}"/>
+  <input type="hidden" name="{g->formVar var="form[sourceEncoding]"}" value="{$form.sourceEncoding}"/>
 
   <div class="gbButtons">
     <input type="hidden" name="{g->formVar var="albumsPath"}" value="{$ConfirmImport.albumsPath}"/>
