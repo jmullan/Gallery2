@@ -95,8 +95,8 @@ class PlatformTest extends GalleryTestCase {
     }
     
     function testFilesize() {
-	$this->assertEquals($this->_platform->filesize($this->_sourceFile),
-			    1083);
+	$this->assertEquals(1083,
+			    $this->_platform->filesize($this->_sourceFile));
     }
     
     function testFopen() {
@@ -157,27 +157,27 @@ class PlatformTest extends GalleryTestCase {
     }
     
     function testgetLegalPathCharacters() {
-	$this->assertEquals($this->_platform->getLegalPathCharacters(),
-			    "ABCDEFGHIJKLMNOPQRSTUVWXYZ" .
+	$this->assertEquals("ABCDEFGHIJKLMNOPQRSTUVWXYZ" .
 			    "abcdefghijklmnopqrstuvwxyz" .
 			    "0123456789" .
-			    " _.-");
+			    " _.-",
+			    $this->_platform->getLegalPathCharacters());
     }
     
     function testLegalizePathComponent() {
-	$this->assertEquals($this->_platform->legalizePathComponent("The!Quick$"),
-			    "The_Quick_");
+	$this->assertEquals("The_Quick_",
+			    $this->_platform->legalizePathComponent("The!Quick$"));
     }
     
     function testExec() {
-	$this->assertEquals($this->_platform->exec(array(array('/bogus/path'))),
-			    array(false, array('/bogus/path: not found', '')));
+	$this->assertEquals(array(false, array('/bogus/path: not found', '')),
+			    $this->_platform->exec(array(array('/bogus/path'))));
     }
     
     function testGetDirectorySeparator() {
 	$file = __FILE__;
 	$realSeparator = $file[strlen(dirname(__FILE__))];
-	$this->assertEquals($this->_platform->getDirectorySeparator(), $realSeparator);
+	$this->assertEquals($realSeparator, $this->_platform->getDirectorySeparator());
     }
     
     function testIsRestrictedByOpenBaseDir() {

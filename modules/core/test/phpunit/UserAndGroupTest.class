@@ -354,7 +354,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->assertEquals($countBefore, $countAfter - 1);
+	$this->assertEquals($countBefore+1, $countAfter);
 
 	/* Delete it */
 	$ret = $this->_deleteAndVerifyEntity($group->getId());

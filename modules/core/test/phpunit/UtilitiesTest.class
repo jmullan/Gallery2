@@ -41,57 +41,53 @@ class UtilitiesTest extends GalleryTestCase {
 
     function testGetFileNameComponents() {
 	list ($base, $extension) = GalleryUtilities::getFileNameComponents('base.extension');
-	$this->assertEquals($base, 'base');
-	$this->assertEquals($extension, 'extension');
+	$this->assertEquals('base', $base);
+	$this->assertEquals('extension', $extension);
     }
 
     function testGetFileExtension() {
-	$this->assertEquals(GalleryUtilities::getFileExtension('base.extension'),
-			    'extension');
+	$this->assertEquals('extension', GalleryUtilities::getFileExtension('base.extension'));
     }
     
     function testGetFileBase() {
-	$this->assertEquals(GalleryUtilities::getFileBase('base.extension'),
-			    'base');
+	$this->assertEquals('base', GalleryUtilities::getFileBase('base.extension'));
     }
     
     function testGetMimeType() {
-	$this->assertEquals(GalleryUtilities::getMimeType('file.jpg'),
-			    'image/jpeg');
+	$this->assertEquals('image/jpeg', GalleryUtilities::getMimeType('file.jpg'));
     }
     
     function testGetFormVariables() {
 	GalleryUtilities::putRequestVariable('test_a', 'b');
 	GalleryUtilities::putRequestVariable('test_c', 'd');
 	
-	$this->assertEquals(GalleryUtilities::getFormVariables('test'),
-			    array('a' => 'b',
-				  'c' => 'd'));
+	$this->assertEquals(array('a' => 'b',
+				  'c' => 'd'),
+			    GalleryUtilities::getFormVariables('test'));
     }
     
     function testGetRequestVariables() {
 	GalleryUtilities::putRequestVariable('test_x', 'blah');
-	$this->assertEquals(GalleryUtilities::getRequestVariables('test.x'),
-			    'blah');
+	$this->assertEquals('blah', GalleryUtilities::getRequestVariables('test.x'));
     }
 
     function testSanitizeInputValue() {
 	$rawInput = '<ScRiPt foo=bar>blah</SCRIPT> test test <IFRAME> <b> foo </b> </IFRAME>';
-	$this->assertEquals(GalleryUtilities::sanitizeInputValue($rawInput),
-			    'blah test test  <b> foo </b> ');
+	$this->assertEquals('blah test test  <b> foo </b> ',
+			    GalleryUtilities::sanitizeInputValue($rawInput));
 	
     }
     
     function testConvertExtensionToMime() {
-	$this->assertEquals(GalleryUtilities::convertExtensionToMime('jpg'),
-			    'image/jpeg');
+	$this->assertEquals('image/jpeg',
+			    GalleryUtilities::convertExtensionToMime('jpg'));
     }
     
     function testMakeMarkers() {
-	$this->assertEquals(GalleryUtilities::makeMarkers(5),
-			    '?, ?, ?, ?, ?');
-	$this->assertEquals(GalleryUtilities::makeMarkers(array(1, 2, 'foo', 4, 'baz')),
-			    '?, ?, ?, ?, ?');
+	$this->assertEquals('?, ?, ?, ?, ?',
+			    GalleryUtilities::makeMarkers(5));
+	$this->assertEquals('?, ?, ?, ?, ?',
+			    GalleryUtilities::makeMarkers(array(1, 2, 'foo', 4, 'baz')));
     }
     
     function testConvertPathToRelativeUrl() {
@@ -100,8 +96,8 @@ class UtilitiesTest extends GalleryTestCase {
 	$gallery->setConfig('url.gallery.base', '');
 	$gallery->setUrlGenerator(new GalleryUrlGenerator($gallery->getConfig('url.gallery.base')));
 	
-	$this->assertEquals(GalleryUtilities::convertPathToRelativeUrl(__FILE__),
-			    'modules/core/test/phpunit/UtilitiesTest.class');
+	$this->assertEquals('modules/core/test/phpunit/UtilitiesTest.class',
+			    GalleryUtilities::convertPathToRelativeUrl(__FILE__));
     }
     
     function testRequireOnce() {
@@ -114,15 +110,15 @@ class UtilitiesTest extends GalleryTestCase {
     
     function testShrinkDimensionsToFit() {
 	$results = GalleryUtilities::shrinkDimensionsToFit(341, 1024, 768);
-	$this->assertEquals($results, array(341, 255));
+	$this->assertEquals(array(341, 255), $results);
 	
 	$results = GalleryUtilities::shrinkDimensionsToFit(5000, 1024, 768);
-	$this->assertEquals($results, array(1024, 768));
+	$this->assertEquals(array(1024, 768), $results);
     }
     
     function testScaleDimensionsToFit() {
 	$results = GalleryUtilities::scaleDimensionsToFit(921, 1024, 768);
-	$this->assertEquals($results, array(921, 690));
+	$this->assertEquals(array(921, 690), $results);
     }
     
     function testIsA() {

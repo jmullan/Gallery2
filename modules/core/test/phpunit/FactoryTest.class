@@ -124,8 +124,9 @@ class FactoryTest extends GalleryTestCase {
      */
     function testGetAllImplementationIds() {
 	$ids = GalleryFactory::getAllImplementationIds('FactoryTest');
-	$this->assertEquals($ids, array('FactoryTestDummyId' => 'factorytestdummy',
-					'FactoryTestDummyIllegalPathId' => 'factorytestdummyillegalpath'));
+	$this->assertEquals(array('FactoryTestDummyId' => 'factorytestdummy',
+				  'FactoryTestDummyIllegalPathId' => 'factorytestdummyillegalpath'),
+			    $ids);
     }
 }
 

@@ -50,7 +50,7 @@ class EventTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->assertEquals($listener->getEvent(), $event);
+	$this->assertEquals($event, $listener->getEvent());
     }
 }
 

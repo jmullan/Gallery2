@@ -68,8 +68,7 @@ class CoreModuleTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals($content,
-			    array(
+	$this->assertEquals(array(
 				  array('name' => $t ? 'Allgemein' : 'General',
 					'view' => 'core:AdminCore'),
 				  array('name' => $t ? 'Benutzer' : 'Users',
@@ -78,8 +77,8 @@ class CoreModuleTest extends GalleryTestCase {
 					'view' => 'core:AdminGroups'),
 				  array('name' => $t ? 'Module' : 'Modules',
 					'view' => 'core:AdminModules')
-				  )
-			    );
+				  ),
+			    $content);
     }
 
     function testGetItemAdminViews() {
@@ -101,8 +100,7 @@ class CoreModuleTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	
-	$this->assertEquals($content,
-			    array(
+	$this->assertEquals(array(
 				  array('name' => $t ? 'Allgemeine Einstellungen' : 'General Settings',
 					'view' => 'core:ItemEditGeneral'),
 				  array('name' => $t ? 'Albumeinstellungen' : 'Album Settings',
@@ -113,8 +111,8 @@ class CoreModuleTest extends GalleryTestCase {
 					'view' => 'core:ItemEditPermissions'),
 				  array('name' => $t ? 'Elemente hinzuf&uuml;gen' : 'Add Items',
 					'view' => 'core:ItemAddChildren')
-				  )
-			    );
+				  ),
+			    $content);
     }
 
     function testGetConfigurationView() {
@@ -123,7 +121,7 @@ class CoreModuleTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->assertEquals($content, null);
+	$this->assertEquals(null, $content);
     }
 
     function testGetSystemLinks() {
@@ -135,14 +133,15 @@ class CoreModuleTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	
-	$this->assertEquals($content, array(
-					    array('text' => $t ? 'site admin' : 'site admin',
-						  'params' => array('view' => 'core:SiteAdmin',
-								    'return.x' => 'y')),
-					    array('text' => $t ? 'abmelden' : 'logout',
-						  'params' => array('controller' => 'core:Logout',
-								    'return.x' => 'y'))
-					    ));
+	$this->assertEquals(array(
+				  array('text' => $t ? 'site admin' : 'site admin',
+					'params' => array('view' => 'core:SiteAdmin',
+							  'return.x' => 'y')),
+				  array('text' => $t ? 'abmelden' : 'logout',
+					'params' => array('controller' => 'core:Logout',
+							  'return.x' => 'y'))
+				  ),
+			    $content);
     }
 
     function testGetSystemContent() {
@@ -151,7 +150,7 @@ class CoreModuleTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->assertEquals($content, array());
+	$this->assertEquals(array(), $content);
     }
 
     function testGetItemLinks() {
@@ -173,8 +172,7 @@ class CoreModuleTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->assertEquals($content,
-			    array(
+	$this->assertEquals(array(
 				  $rootId => array(
 						   array('text' => $t ? 'Album anpassen' : 'edit album',
 							 'params' => array(
@@ -217,8 +215,8 @@ class CoreModuleTest extends GalleryTestCase {
 									   )
 							 )
 						   )
-				  )
-			    );
+				  ),
+			    $content);
     }
     
     function testGetItemSummaries() {
@@ -239,7 +237,7 @@ class CoreModuleTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->assertEquals($content, array());
+	$this->assertEquals(array(), $content);
     }
 
     function testGetItemDetails() {
@@ -260,7 +258,7 @@ class CoreModuleTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->assertEquals($content, array());
+	$this->assertEquals(array(), $content);
     }
 
     function testSetModuleParameter() {
