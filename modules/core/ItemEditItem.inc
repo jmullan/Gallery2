@@ -60,11 +60,31 @@ class ItemEditItem extends ItemEditPlugin {
 	     * Validate the input data.
 	     */
 	    $platform = $gallery->getPlatform();
+	    
+	    if (!empty($form['title'])) {
+		$form['title'] = trim($form['title']);
+	    }
+	    if (!empty($form['summary'])) {
+		$form['summary'] = trim($form['summary']);
+	    }
+	    if (!empty($form['keywords'])) {
+		$form['keywords'] = trim($form['keywords']);
+	    }
+	    if (!empty($form['description'])) {
+		$form['description'] = trim($form['description']);
+	    }
+
 	    if (!$isRootAlbum) {
 		if (empty($form['pathComponent'])) {
 		    $error[] = 'form[error][pathComponent][missing]';
 		} else if (!$platform->isLegalPathComponent($form['pathComponent'])) {
 		    $error[] = 'form[error][pathComponent][invalid]';
+		}
+	    }
+
+	    if ($isRootAlbum) {
+		if (empty($form['title'])) {
+		    $error[] = 'form[error][title][missingRootTitle]';
 		}
 	    }
 	    

@@ -99,16 +99,26 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
   	$newPathComponent = $this->_item[0]->getPathComponent() . rand();
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[pathComponent]', $newPathComponent);
-	GalleryUtilities::putRequestVariable('form[title]', 'new title');
-	GalleryUtilities::putRequestVariable('form[summary]', 'new summary');
-	GalleryUtilities::putRequestVariable('form[keywords]', 'new keywords');
-	GalleryUtilities::putRequestVariable('form[description]', 'new description');
+	GalleryUtilities::putRequestVariable('form[title]', ' new title ');
+	GalleryUtilities::putRequestVariable('form[summary]', ' new summary ');
+	GalleryUtilities::putRequestVariable('form[keywords]', ' new keywords ');
+	GalleryUtilities::putRequestVariable('form[description]', ' new description ');
 	GalleryUtilities::putRequestVariable('form[serialNumber]', $this->_item[0]->getSerialNumber());
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest($this->_item[0], $this->_preferred);
 	$this->assertEquals(array(array(), $this->_translate('Changes saved successfully')),
 				  $results);
+
+	list ($ret, $this->_item[0]) = $this->_item[0]->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals('new title', $this->_item[0]->getTitle());
+	$this->assertEquals('new summary', $this->_item[0]->getSummary());
+	$this->assertEquals('new keywords', $this->_item[0]->getKeywords());
+	$this->assertEquals('new description', $this->_item[0]->getDescription());
     }
 
     function testInvalidPathComponent() {
@@ -179,13 +189,47 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 	$this->assert($platform->file_exists($newPath));
     }
 
-    function testRenameRoot() {
-	global $gallery;
-	
-	list ($ret, $rootAlbum) = GalleryCoreApi::loadEntitiesById($this->_getRootId());
+    function testMissingRootTitle() {
+        global $gallery;
+
+        list ($ret, $rootAlbum) = GalleryCoreApi::loadEntitiesById($this->_getRootId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+
+	$originalTitle = $rootAlbum->getTitle();
+	
+	/* Use invalid title (missing) */
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[pathComponent]', $rootAlbum->getPathComponent());
+	GalleryUtilities::putRequestVariable('form[title]', '');
+	GalleryUtilities::putRequestVariable('form[summary]', $rootAlbum->getSummary());
+	GalleryUtilities::putRequestVariable('form[keywords]', $rootAlbum->getKeywords());
+	GalleryUtilities::putRequestVariable('form[description]', $rootAlbum->getDescription());
+	GalleryUtilities::putRequestVariable('form[serialNumber]', $rootAlbum->getSerialNumber());
+	
+	/* Perform the request and verify that we failed */
+	$results = $this->handleRequest($rootAlbum, $this->_preferred);
+	$this->assertEquals(array(array('form[error][title][missingRootTitle]'), null),
+                            $results);
+			    
+        /* Make sure the title was not changed */
+	list ($ret, $rootAlbum) = $rootAlbum->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	$this->assertEquals($originalTitle, $rootAlbum->getTitle());
+    }
+
+    function testRenameRoot() {
+        global $gallery;
+
+        list ($ret, $rootAlbum) = GalleryCoreApi::loadEntitiesById($this->_getRootId());
+        if ($ret->isError()) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+
 	
 	/* Use invalid inputs */
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
@@ -206,6 +250,41 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 	}
 
 	$this->assertEquals(null, $rootAlbum->getPathComponent());
+    }
+
+    function testMissingRootTitle2() {
+        global $gallery;
+        
+        list ($ret, $rootAlbum) = GalleryCoreApi::loadEntitiesById($this->_getRootId());
+        if ($ret->isError()) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+	
+	$originalTitle = $rootAlbum->getTitle();
+
+        /* Use invalid title */
+        GalleryUtilities::putRequestVariable('form[action][save]', 1);
+        GalleryUtilities::putRequestVariable('form[pathComponent]', $rootAlbum->getPathComponent());
+        GalleryUtilities::putRequestVariable('form[title]', ' ');
+        GalleryUtilities::putRequestVariable('form[summary]', $rootAlbum->getSummary());
+        GalleryUtilities::putRequestVariable('form[keywords]', $rootAlbum->getKeywords());
+        GalleryUtilities::putRequestVariable('form[description]', $rootAlbum->getDescription());
+        GalleryUtilities::putRequestVariable('form[serialNumber]', $rootAlbum->getSerialNumber());
+
+	list ($ret, $rootAlbum) = $rootAlbum->refresh();
+	
+        /* Perform the request and verify that we failed */
+        $results = $this->handleRequest($rootAlbum, $this->_preferred);
+        $this->assertEquals(array(array('form[error][title][missingRootTitle]'), null),
+                            $results);
+
+        /* Make sure the title was not changed */
+        list ($ret, $rootAlbum) = $rootAlbum->refresh();
+        if ($ret->isError()) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+
+        $this->assertEquals($originalTitle, $rootAlbum->getTitle());
     }
 
     function testPathCollisionAlbum() {

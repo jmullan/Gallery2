@@ -62,6 +62,11 @@
 	     firstMarkupBar="true"}
     <input id="title" type="text" size="40" name="{g->formVar var="form[title]"}" value="{$form.title}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
   </div>
+  {if !empty($form.error.title.missingRootTitle)}
+    <div class="giError">
+      {g->text text="The root album must have a title."}
+    </div>
+  {/if}
 
   <div class="gbDataEntry">
     <div class="giTitle">
