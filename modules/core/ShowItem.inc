@@ -174,12 +174,14 @@ class ShowItemView extends GalleryView {
 
 	/* Transform the id into a path */
 	$buf = '';
-	list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($params['itemId']);
-	if ($ret->isSuccess()) {
-	    list ($ret, $path) = $entity->fetchLogicalPath();
+	if (isset($params['itemId'])) {
+	    list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($params['itemId']);
 	    if ($ret->isSuccess()) {
-		$buf .= $path;
-		unset($params['itemId']);
+		list ($ret, $path) = $entity->fetchLogicalPath();
+		if ($ret->isSuccess()) {
+		    $buf .= $path;
+		    unset($params['itemId']);
+		}
 	    }
 	}
 
