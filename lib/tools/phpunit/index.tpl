@@ -130,7 +130,7 @@
       <?php
       $activeCount = 0;
       foreach ($moduleStatusList as $moduleId => $moduleStatus) { 
-        if (isset($moduleStatus['active'])) {
+        if (!empty($moduleStatus['active'])) {
           $activeCount++;
         }
       }
