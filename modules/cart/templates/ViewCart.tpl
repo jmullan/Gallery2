@@ -47,9 +47,11 @@
       {g->text text="Your cart is empty"}
     {else}
     <form action="{g->url}" method="post">
-      {g->hiddenFormVars}
-      <input type="hidden" name="{g->formVar var="controller"}" value="{$ViewCart.controller}"/>
-      <input type="hidden" name="{g->formVar var="form[formName]"}" value="{$form.formName}"/>
+      <div>
+        {g->hiddenFormVars}
+        <input type="hidden" name="{g->formVar var="controller"}" value="{$ViewCart.controller}"/>
+        <input type="hidden" name="{g->formVar var="form[formName]"}" value="{$form.formName}"/>
+      </div>
 
       <div class="gbAdmin">
     	<table class="gbDataTable">
