@@ -54,7 +54,7 @@
 	      &nbsp;
 	    {/g->column}
 	    {g->column}
-	      {g->input type="checkbox" name="form[useGlobal][$settingKey]" onChange="javascript:toggleGlobal('$settingKey')"}{$form.useGlobal.$settingKey}{/g->input}
+	      {g->input type="checkbox" name="form[useGlobal][$settingKey]" onClick="javascript:toggleGlobal('$settingKey')"}{$form.useGlobal.$settingKey}{/g->input}
 	    {/g->column}
 	  {/g->row}
 	  {if isset($form.error.key.$settingKey.invalid)}

@@ -235,7 +235,7 @@
 	      {g->table style="admin_listing" evenodd="true"}
 		{g->row}
 		  {g->column header="true"}
-		    {g->input name="selectionToggle" type="checkbox" onChange="javascript:toggleSelections()"}{/g->input}
+		    {g->input name="selectionToggle" type="checkbox" onClick="javascript:toggleSelections()"}{/g->input}
 		  {/g->column}
 		  {g->column header="true"}
 		    {g->text text="File name"}
@@ -339,7 +339,7 @@
 	    {g->table style="admin_listing" evenodd="true"}
 	      {g->row}
 		{g->column header="true"}
-		  {g->input name="selectionToggle" type="checkbox" onChange="javascript:toggleSelections()"}{/g->input}
+		  {g->input name="selectionToggle" type="checkbox" onClick="javascript:toggleSelections()"}{/g->input}
 		{/g->column}
 		{g->column header="true"}
 		  {g->text text="URL"}
