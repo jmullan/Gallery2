@@ -1,0 +1,161 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+/**
+ * @package PhotoAcess
+ * @version $Revision$ $Date$
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * This is an implementation of the search module's SearchInterface_1_0
+ *
+ * @package PhotoAccess
+ * @subpackage Classes
+ *
+ */
+class PhotoAccessCartPlugin extends CartPluginInterface_1_0 {
+    /**
+     * @see CartPluginInterface_1_0::getSupportedItemTypes()
+     */
+    function getSupportedItemTypes() {
+	return array('GalleryPhotoItem');
+    }
+
+    /**
+     * @see CartPluginInterface_1_0::getActionDisplayName()
+     */
+    function getActionDisplayName() {
+	global $gallery;
+	
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'photoaccess');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$action = $module->translate('Print with PhotoAccess');
+
+	return array(GalleryStatus::success(), $action);
+    }
+
+    /**
+     * @see CartPluginInterface_1_0::fulfillCart()
+     */
+    function fulfillCart($cartItemIds) {
+	global $gallery;
+	
+	/* Load the necessary item data */
+	list ($ret, $items) = GalleryCoreApi::loadEntitiesById(array_keys($cartItemIds));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	list ($ret, $thumbnails) = GalleryCoreApi::fetchThumbnailsByItemIds(array_keys($cartItemIds));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	list ($ret, $preferreds) = GalleryCoreApi::fetchPreferredsByItemIds(array_keys($cartItemIds));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$urlGenerator = $gallery->getUrlGenerator();
+	$returnUrl = $urlGenerator->generateUrl(array('view' => 'cart:ViewCart'));
+
+	$session =& $gallery->getSession();
+	$photoAccessSessionId = $session->get('photoaccess.sessionId');
+
+	/*
+	 * Request the cart with our current session id.  If it's invalid for any reason, they'll give us
+	 * a new one. 
+	 */
+	if (isset($photoAccessSessionId)) {
+	    $idComponents = explode('-', $photoAccessSessionId);
+	    $cartUrl = sprintf('http://www.photoaccess.com/buy/anonCart.jsp;jsessionid=%s?cb=CB_GP&svr=%s',
+			       $idComponents[1], $idComponents[0]);
+	} else {
+	    $cartUrl = 'http://www.photoaccess.com/buy/anonCart.jsp?cb=CB_GP';
+	}
+	
+	list ($body, $headers) =
+	    GalleryUtilities::fetchWebPage($cartUrl, array('User-Agent' => $_SERVER['HTTP_USER_AGENT']));
+	foreach (explode("\n", $headers) as $header) {
+	    if (preg_match("/Set-Cookie: sessionid=(\S+);/", $header, $matches)) {
+		$photoAccessSessionId = $matches[1];
+		$session->put('photoaccess.sessionId', $photoAccessSessionId);
+		break;
+	    }
+	}
+
+	/* What do we do if we don't have a session id now? */
+	if (!isset($photoAccessSessionId)) {
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	}
+
+	/* Now make our canonical cart url */
+	$idComponents = explode('-', $photoAccessSessionId);
+	$cartUrl = sprintf('http://www.photoaccess.com/buy/anonCart.jsp;jsessionid=%s?cb=CB_GP&svr=%s',
+			   $idComponents[1], $idComponents[0]);
+
+	/* post photos to PhotoAccess */
+	$redirectUrl = null;
+	foreach ($items as $item) {
+	    $gallery->guaranteeTimeLimit(30);
+	    
+	    $itemId = $item->getId();
+	    $postData = array();
+	    $postData['cb'] = 'CB_GP';
+	    $postData['redir'] = 'true';
+	    $postData['returnUrl'] = $returnUrl;
+	    $postData['imageId'] = $item->getTitle();
+
+	    if (isset($preferreds[$itemId])) {
+		$sourceId = $preferreds[$itemId]->getId();
+		$imageWidth = $preferreds[$itemId]->getWidth();
+		$imageHeight = $preferreds[$itemId]->getHeight();
+	    } else {
+		$sourceId = $item->getId();
+		$imageWidth = $item->getWidth();
+		$imageHeight = $item->getHeight();
+	    }
+
+	    $postData['imageUrl'] = $urlGenerator->generateUrl(array('view' => 'core:DownloadItem',
+								     'itemId' => $sourceId));
+
+	    if (isset($thumbnails[$itemId])) {
+		$postData['thumbUrl'] = $urlGenerator->generateUrl(array('view' => 'core:DownloadItem',
+									 'itemId' => $thumbnails[$itemId]->getId()));
+	    } else {
+		$postData['thumbUrl'] = '';
+	    }
+	    $postData['imgWidth'] = $imageWidth;
+	    $postData['imgHeight'] = $imageHeight;
+
+	    list ($body, $headers) = GalleryUtilities::postToWebPage($cartUrl, $postData,
+								     array('User-Agent' => $_SERVER['HTTP_USER_AGENT']));
+	    /* We should scan the results for a "200 OK" result */
+	}
+
+	return array(GalleryStatus::success(), array('href' => $cartUrl));
+    }
+}
