@@ -594,13 +594,13 @@ class GalleryUtilities {
     function convertPathToUrl($path) {
 	global $gallery;
 
-	$dirbase = realpath(dirname(__FILE__) . '/../../..') . '/';
+	$platform = $gallery->getPlatform();
+	$dirbase = $platform->realpath(dirname(__FILE__) . '/../../..') . '/';
 
 	/*
 	 * Factor the gallery code base out of the path, accounting for
 	 * differences in directory separators between platforms.
 	 */
-	$platform = $gallery->getPlatform();
 	$slash = $platform->getDirectorySeparator();
 	if ($slash != '/') {
 	    $dirbase = str_replace($slash, '/', $dirbase);
@@ -934,9 +934,9 @@ class GalleryUtilities {
     function isPathInList($path, $list) {
 	global $gallery;
 
-	$path = realpath($path);
-
 	$platform = $gallery->getPlatform();
+	$path = $platform->realpath($path);
+
 	$slash = $platform->getDirectorySeparator();
 
 	foreach ($list as $element) {

@@ -741,5 +741,21 @@ class GalleryPlatform {
 
 	return fgets($handle, $length);
     }
+
+    /**
+     * Expand all symbolic links and resolve references to '/./', '/../' and extra '/' characters in the input
+     * path and return the canonicalized absolute pathname.   The resulting path will have no symbolic
+     * link, '/./' or '/../' components. [cribbed from http://php.net/realpath]
+     *
+     * @return FALSE on failure, e.g. if the file does not exists. 
+     */
+    function realpath($file) {
+	global $gallery;
+	if ($gallery->getDebug()) {
+	    $gallery->debug("realpath($file)");
+	}
+
+	return realpath($file);
+    }
 }
 ?>

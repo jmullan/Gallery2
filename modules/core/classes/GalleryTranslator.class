@@ -303,11 +303,12 @@ class GalleryTranslator {
 			 null);
 	}
 
+	$platform = $gallery->getPlatform();
 	if (function_exists('dgettext')) {
 	    if (isset($domain) && !isset($this->_boundDomains[$domain])) {
 		list ($componentType, $componentName) = split('_', $domain);
 		$basePath = sprintf('%s/%s/%s/locale',
-				    realpath(dirname(__FILE__) . '/../../..'),
+				    $platform->realpath(dirname(__FILE__) . '/../../..'),
 				    $componentType,
 				    $componentName);
 		if ($gallery->getDebug()) {

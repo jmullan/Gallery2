@@ -120,7 +120,7 @@ class ItemAddFromServer extends ItemAddPlugin {
 	/* If we're uploading from the local server, get a file list now */
 	if (isset($form['action']['findFilesFromLocalServer'])) {
 	    $form['localServerPath'] = trim($form['localServerPath']);
-	    $form['localServerPath'] = realpath($form['localServerPath']);
+	    $form['localServerPath'] = $platform->realpath($form['localServerPath']);
 	    
 	    /* Validate the path */
 	    $form['localServerFiles'] = array();
@@ -151,7 +151,7 @@ class ItemAddFromServer extends ItemAddPlugin {
 			}
 
 			if ($fileName == '..') {
-			    $filePath = realpath($path . $slash . '..');
+			    $filePath = $platform->realpath($path . $slash . '..');
 			    if (!GalleryUtilities::isPathInList($filePath, $localServerDirList)) {
 				continue;
 			    }
@@ -163,7 +163,7 @@ class ItemAddFromServer extends ItemAddPlugin {
 			if ($platform->is_readable($filePath)) {
 			    if ($platform->is_dir($filePath)) {
 
-				$filePath = realpath($filePath);
+				$filePath = $platform->realpath($filePath);
 				$legal = GalleryUtilities::isPathInList($filePath, $localServerDirList);
 				
 				$form['localServerFiles'][] =

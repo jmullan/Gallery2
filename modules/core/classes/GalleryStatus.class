@@ -464,10 +464,11 @@ class GalleryStatus {
      */
     function _getAsArray() {
 	global $gallery;
-	
+
+	$platform = $gallery->getPlatform();
 	$codes = $this->getErrorCodeConstants($this->_errorCode);
 	$trace = array();
-	$base = realpath(dirname(__FILE__) . '/../../../') . '/';
+	$base = $platform->realpath(dirname(__FILE__) . '/../../../') . '/';
 	if (empty($this->_stackTrace)) {
 	    for ($i = 0; $i < count($this->_fileName); $i++) {
 		$trace[] = array('file' => str_replace($base, '', $this->_fileName[$i]),
