@@ -146,7 +146,7 @@ class CreateRandomTreeTestCase extends TestCase {
 	    $ret = $item->create($album->getId(),
 				 $imageFile,
 				 $mimeType,
-				 $this->_randomName() . '.' . $extension);
+				 $this->_randomName());
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
