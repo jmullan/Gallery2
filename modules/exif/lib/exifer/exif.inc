@@ -344,7 +344,7 @@ function formatData($type,$tag,$intel,$data) {
 			//The formula is : Aperture = 2*log2(FNumber) <=> FNumber = e((Aperture.ln(2))/2)
 			$data = exp(($data*log(2))/2);
 			$data = round($data, 1);//Focal is given with a precision of 1 digit.
-			$data="f ".$data; 
+			$data="f/".$data;
 		} else if($tag=="920a") { //FocalLength
 			$data = sprintf("%.2f", $data) . " mm";
 		} else if($tag=="9201") { //ShutterSpeedValue
