@@ -86,7 +86,7 @@ class SelectGalleryView extends GalleryView {
 
 	if ($form['formName'] != 'SelectGallery') {
 	    $form['formName'] = 'SelectGallery';
-	    $form['albumsPath'] = '/usr/www/website/menalto.com/dev/gallery/gallery/modules/migrate/test/data/albums';
+	    $form['albumsPath'] = '';
 	}
 
         $template->setVariable('controller', 'migrate:SelectGallery');
