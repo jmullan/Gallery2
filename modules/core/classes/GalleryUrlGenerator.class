@@ -149,7 +149,9 @@ class GalleryUrlGenerator {
 	 *
 	 *    http://example.com/gallery2/
 	 */
-	$url = preg_replace('|' . $this->_baseFile . '.*|', '', $url);
+	if (($i = strpos($url, $this->_baseFile)) !== false) {
+	    $url = substr($url, 0, $i);
+	}
 	return $url;
     }
 
@@ -308,7 +310,7 @@ class GalleryUrlGenerator {
 	if (isset($queryString)) {
 	    $url .= $queryString;
 	} else if (!empty($params)) {
-	    $url .= $this->buildQueryString($params);
+	    $url .= $this->buildQueryString($params, strpos($url, '?') !== false);
 	}
 	    
 	return $url;
@@ -318,9 +320,10 @@ class GalleryUrlGenerator {
      * Build a query string out of the given params
      *
      * @param array key value pairs (where keys are not prefixed by our form variable prefix)
+     * @param boolean (optional) if true return value starts with & instead of ?
      * @return string the query string, prefixed with a '?' and using & as a separator
      */
-    function buildQueryString($params) {
+    function buildQueryString($params, $append=false) {
 	if (empty($params)) {
 	    return '';
 	}
@@ -330,7 +333,7 @@ class GalleryUrlGenerator {
 	    $args[] = GalleryUtilities::prefixFormVariable($key) . '=' . $value;
 	}
 
-	return '?' . join('&amp;', $args);
+	return ($append ? '&amp;' : '?') . join('&amp;', $args);
     }
 
     /**
@@ -341,7 +344,7 @@ class GalleryUrlGenerator {
      * @return string the new url
      */
     function appendParamsToUrl($url, $params) {
-	if (strstr($url, '?') === false) {
+	if (strpos($url, '?') === false) {
 	    $url .= '?';
 	} else {
 	    $url .= '&';
@@ -362,5 +365,4 @@ class GalleryUrlGenerator {
 	return $url;
     }
 }
-
 ?>
