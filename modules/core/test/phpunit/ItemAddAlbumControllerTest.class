@@ -72,13 +72,18 @@ class ItemAddAlbumControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[keywords]', 'keywords');
 	GalleryUtilities::putRequestVariable('form[description]', 'description');
 
+	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
 						      'subView' => 'core:ItemEdit',
 						      'editPlugin' => 'ItemEditAlbum',
 						      'itemId' => $this->_getChildId()),
-				  'status' => array('createdAlbum' => 1),
+				  'status' => array('editMessage' => $core->translate('Album created successfully.')),
 				  'error' => array()),
 			    $results);
     }
@@ -104,13 +109,18 @@ class ItemAddAlbumControllerTest extends GalleryControllerTestCase {
 	/* Then re-use the path component that we know will conflict */
 	GalleryUtilities::putRequestVariable('form[pathComponent]', $subAlbum->getPathComponent());
 
+	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
 						      'subView' => 'core:ItemEdit',
 						      'editPlugin' => 'ItemEditAlbum',
 						      'itemId' => $this->_getSecondChildId()),
-				  'status' => array('createdAlbum' => 1),
+				  'status' => array('editMessage' => $core->translate('Album created successfully.')),
 				  'error' => array()),
 			    $results);
 
