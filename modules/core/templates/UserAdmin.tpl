@@ -27,9 +27,9 @@
 
   <div id="gsAdminSidebar">
     <div class="gbMenu">
-      <div class="giTitle">
+      <h2 class="giTitle">
         {g->text text="User Options"}
-      </div>
+      </h2>
 
       <ul>
         {foreach from=$UserAdmin.subViewChoices item=choice}
@@ -49,9 +49,9 @@
     </div>
     
     <div class="gbMenu">
-      <div class="giTitle">
+      <h2 class="giTitle">
         {g->text text="Navigation"}
-      </div>
+      </h2>
 
       <ul>
         <li>
