@@ -142,7 +142,7 @@ class GalleryToolkitHelper_medium {
 	/* Associate all the mime types */
 	foreach ($mimeTypes as $mimeType) {
 	    $ret = GalleryToolkitOperationMimeTypeMap::addMapEntry(
-	        array('operationName' => $operationName,
+		array('operationName' => $operationName,
 		      'toolkitId' => $toolkitId,
 		      'mimeType' => $mimeType));
 	    if ($ret->isError()) {
@@ -222,11 +222,46 @@ class GalleryToolkitHelper_medium {
 	/* Associate our mime types */
 	foreach ($mimeTypes as $mimeType) {
 	    $ret = GalleryToolkitPropertyMimeTypeMap::addMapEntry(
-	        array('propertyName' => $propertyName,
+		array('propertyName' => $propertyName,
 		      'toolkitId' => $toolkitId,
 		      'mimeType' => $mimeType));
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Unregister a toolkit's operation, for all or selected mime types.
+     *
+     * @param string a toolkit id
+     * @param string an operation id
+     * @param array the applicable mime types to remove; empty for all mime types
+     * @return object GalleryStatus a status code
+     * @static
+     */
+    function unregisterOperation($toolkitId, $operationName, $mimeTypes=array()) {
+	/* Require any classes that we're going to need */
+	require_once(dirname(__FILE__) . '/../GalleryToolkitOperationMap.class');
+	require_once(dirname(__FILE__) . '/../GalleryToolkitOperationParameterMap.class');
+	require_once(dirname(__FILE__) . '/../GalleryToolkitOperationMimeTypeMap.class');
+
+	$entry = array('toolkitId' => $toolkitId, 'operationName' => $operationName);
+	if (!empty($mimeTypes)) {
+	    $entry['mimeType'] = $mimeTypes;
+	}
+	$ret = GalleryToolkitOperationMimeTypeMap::removeMapEntry($entry);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Invalidate our cache */
+	$cacheKeyPattern = "GalleryToolkitHelper::";
+	foreach (GalleryDataCache::getAllKeys() as $key) {
+	    if (!strncmp($key, $cacheKeyPattern, strlen($cacheKeyPattern))) {
+		GalleryDataCache::remove($key);
 	    }
 	}
 
@@ -320,6 +355,14 @@ class GalleryToolkitHelper_medium {
 	}
 
 	GalleryCoreApi::unregisterFactoryImplementation('GalleryToolkit', $toolkitId);
+
+	/* Invalidate our cache */
+	$cacheKeyPattern = "GalleryToolkitHelper::";
+	foreach (GalleryDataCache::getAllKeys() as $key) {
+	    if (!strncmp($key, $cacheKeyPattern, strlen($cacheKeyPattern))) {
+		GalleryDataCache::remove($key);
+	    }
+	}
 
 	return GalleryStatus::success();
     }

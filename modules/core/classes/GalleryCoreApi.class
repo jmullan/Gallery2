@@ -1621,8 +1621,8 @@ class GalleryCoreApi {
      * @param array the applicable mime types for this operation
      * @param string the id of the operation
      * @param array a list of parameters that this operation requires
-     * @param string the output mime type after performing this operation
      * @param string a translatable description of this operation
+     * @param string the output mime type after performing this operation
      * @return object GalleryStatus a status code
      * @static
      */
@@ -1635,7 +1635,22 @@ class GalleryCoreApi {
 							      $parameterTypesArray, $description,
 							      $outputMimeType);
     }
-    
+
+    /**
+     * Unregister an operation that a toolkit is able to perform on certain mime types
+     *
+     * @param string the id of the toolkit
+     * @param string the id of the operation
+     * @param array the applicable mime types to remove; empty for all mime types
+     * @return object GalleryStatus a status code
+     * @static
+     */
+    function unregisterToolkitOperation($toolkitId, $operationName, $mimeTypes=array()) {
+	GalleryCoreApi::apiMethodUsed('unregisterToolkitOperation', 'GalleryToolkitHelper_medium');
+	require_once(dirname(__FILE__) . '/helpers/GalleryToolkitHelper_medium.class');
+	return GalleryToolkitHelper_medium::unregisterOperation($toolkitId, $operationName, $mimeTypes);
+    }
+
     /**
      * Register a parameter that a toolkit can extract from a certain
      * mime type
