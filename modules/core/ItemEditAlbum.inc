@@ -116,8 +116,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 		/* Recreate the thumbnails, if requested to do so */
 		if (isset($form['recreateThumbnails'])) {
 		    /* Load the thumbnail of the children */
-		    list ($ret, $thumbTable) =
-			    GalleryCoreApi::fetchThumbnailsByItemIds($childIds);
+		    list ($ret, $thumbTable) = GalleryCoreApi::fetchThumbnailsByItemIds($childIds);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null, null);
 		    }
@@ -147,6 +146,10 @@ class ItemEditAlbum extends ItemEditPlugin {
 			    } elseif ($ret->isError()) {
 				return array($ret->wrap(__FILE__, __LINE__), null, null);
 			    }
+
+			    $operation = preg_replace('/((^|;)thumbnail\|)\d+/',
+						      '${1}' . $form['thumbnail']['size'],
+						      $thumbnail->getDerivativeOperations());
 			} else {
 			    /*
 			     * There is no thumbnail yet (maybe the file was uploaded
@@ -173,6 +176,8 @@ class ItemEditAlbum extends ItemEditPlugin {
 			    if ($ret->isError()) {
 				return array($ret->wrap(__FILE__, __LINE__), null, null);
 			    }
+
+			    $operation = 'thumbnail|' . $form['thumbnail']['size'];
 			}
 
 			if ($thumbnail == null) {
@@ -180,7 +185,6 @@ class ItemEditAlbum extends ItemEditPlugin {
 			}
 
 			/* Change the thumbnail */
-			$operation = 'thumbnail|' . $form['thumbnail']['size'];
 			list ($ret, $operation, $outputMimeType) =
 			    GalleryCoreApi::makeSupportedViewableOperationSequence(
 				$source->getMimeType(), $operation);

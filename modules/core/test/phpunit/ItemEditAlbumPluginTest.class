@@ -62,6 +62,7 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 								    'description' => 'test')),
 							'test-description');
 	if ($ret->isError()) {
+	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -72,11 +73,24 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 								    'description' => 'test')),
 							'test-description');
 	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::registerToolkitOperation('ItemEditAlbumPluginTestToolkit',
+		array('test/file'), 'crop',
+		array(array('type' => 'float', 'description' => 'test'),
+		      array('type' => 'float', 'description' => 'test'),
+		      array('type' => 'float', 'description' => 'test'),
+		      array('type' => 'float', 'description' => 'test')), 'test-description');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret->isError()) {
+	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }
@@ -86,12 +100,14 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 
 	$ret = GalleryCoreApi::deleteEntityById($this->_album->getId());
 	if ($ret->isError()) {
+	    print $ret->getAsHtml();
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* Unregister */
 	$ret = GalleryCoreApi::unregisterToolkit('ItemEditAlbumPluginTestToolkit');
 	if ($ret->isError()) {
+	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	

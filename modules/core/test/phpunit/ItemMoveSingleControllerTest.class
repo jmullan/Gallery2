@@ -61,6 +61,16 @@ class ItemMoveSingleControllerTest extends GalleryControllerTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	$ret = GalleryCoreApi::registerToolkitOperation('ItemMoveSingleTestToolkit',
+		array('image/test'), 'crop',
+		array(array('type' => 'float', 'description' => 'foo'),
+		      array('type' => 'float', 'description' => 'foo'),
+		      array('type' => 'float', 'description' => 'foo'),
+		      array('type' => 'float', 'description' => 'foo')), 'test-description');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 
 	list ($ret, $this->_rootAlbum) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret->isError()) {
