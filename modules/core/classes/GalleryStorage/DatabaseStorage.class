@@ -1077,7 +1077,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 		    }
 
 		    /* If we locate an appropriate upgrade, apply it. */
-		    list ($major,  $minor) = $tableVersions[$rawTableName];
+		    list ($major,  $minor) = $tableVersions[$tableNameInSchema];
 		    if (!empty($tableAlter[$rawTableName][$major][$minor])) {
 			$sqlFile = $tableAlter[$rawTableName][$major][$minor];
 			$ret = $this->_executeSqlFile($sqlFile);
