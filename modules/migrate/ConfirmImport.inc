@@ -177,6 +177,7 @@ class ConfirmImportController extends GalleryController {
 	    if(!isset($albumfields)){
 		$albumfields = array();
 	    }
+	    $albumHighlight = array();
 	    /* Go through the array of albums' metadata one album at a time.
 	     * We limit the number of passes through this list to n^2 times to
 	     * avoid an infinite loop.  This allows us to make sure that we add
@@ -319,8 +320,8 @@ class ConfirmImportController extends GalleryController {
 			     *   -[cached_photo_count] => 2
 			     *   -[photos_separate] => 1
 			     *   +[name] => album01
-			     *    [owner] => 1054014347u1233740678
-			     *    [last_mod_time] => 1056015246
+			     *   +[owner] => 1054014347u1233740678
+			     *   -[last_mod_time] => 1056015246
 			     */
 			    
 			    /* load up the album with metadata from the old album */ 
@@ -434,9 +435,14 @@ class ConfirmImportController extends GalleryController {
 		    if (!isset($photos)) {
 			$photos = array();
 		    }
-		    
+
+		    $albumHighlight[$newAlbumInstanceId]=FALSE;
 		    foreach($photos as $j => $importAlbumItem) {
-			if (!isset($importAlbumItem->isAlbumName) || !$importAlbumItem->isAlbumName) {
+			if (isset($importAlbumItem->isAlbumName) && $importAlbumItem->isAlbumName) {
+			    if ($importAlbumItem->highlight) {
+				$albumHighlight[$newAlbumInstanceId]=$importAlbumItem->isAlbumName;
+			    }
+			} else {
 			    list ($ret, $item) = $gallery->loadEntitiesById($newAlbumInstanceId);
 			    if ($ret->isError()) {
 				return array($ret->wrap(__FILE__, __LINE__), null);
@@ -600,6 +606,25 @@ class ConfirmImportController extends GalleryController {
 		/* $i keeps track of how many passes we make over the data */
 		$i++;
 	    }
+	    //$albumHighlight[$newAlbumInstanceId]=$importAlbumItem->isAlbumName;
+	    //$finishedAlbums[$album['name']] = $newAlbumInstanceId;
+	    foreach ($albumHighlight as $highlightRecipientId => $nameOfAlbumToHighlight) {
+		if (isset ($finishedAlbums[$nameOfAlbumToHighlight]) && $finishedAlbums[$nameOfAlbumToHighlight]) {
+		    list ($ret, $item) = $gallery->loadEntitiesById($highlightRecipientId);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		    list ($ret, $lockIds[]) = $gallery->acquireReadLock($item->getId());
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		    list ($ret, $success) = GalleryItemHelper::setThumbnailFromItem($item->getId(), $finishedAlbums[$nameOfAlbumToHighlight]);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		}
+	    }
+	    
 	    $redirect['view'] = 'core:SiteAdmin';
 	    $redirect['subView'] = 'migrate:ImportResults';
 	}
@@ -614,7 +639,8 @@ class ConfirmImportController extends GalleryController {
 	
 	return array(GalleryStatus::success(), $results);
     }
-}	    
+    
+}
 
 class ConfirmImportView extends GalleryView {
 
