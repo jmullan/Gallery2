@@ -118,7 +118,7 @@ function pickfield(s) {
 	<tr class="{cycle name=$set.key values=$rowclass}">
 	  <td style="white-space:nowrap">
 	    <span id="{$set.key}{$idx}">{$item.field}</span>
-	    <input id="i.{$set.key}{$idx}" type="hidden" name="{g->formVar var="form[`$set.key`][index][$idx]"}" value="{$idx}">
+	    <input id="i.{$set.key}{$idx}" type="hidden" name="{g->formVar var="form[`$set.key`][index][$idx]"}" value="{$idx}"/>
 	  </td><td style="text-align:center">
 	     <input id="s.{$set.key}{$idx}" type="checkbox" name="{g->formVar var="form[`$set.key`][summary][$idx]"}"
 		    {if $item.summary}checked="checked"{/if}/>
@@ -177,9 +177,11 @@ function pickfield(s) {
 	<table style="border-spacing:1px; border-top:1px dashed #ddd"><tr>
 	  <th> {g->text text="Field:"} </th>
 	  <th>
+	    {if !empty($form.fields[$set.key])}
 	    <select name="{g->formVar var="form[`$set.key`][goField]"}">
 	    {foreach from=$form.fields[$set.key] item=item}<option>{$item.field}</option>{/foreach}
 	    </select>
+            {/if}
 	  </th>
 	</tr><tr>
 	  <th> {g->text text="Action:"} </th>
@@ -222,7 +224,9 @@ function pickfield(s) {
       </td>
     </tr><tr>
       <td> {g->text text="Choices:"} </td>
-      <td> <textarea id="pick" name="{g->formVar var="form[picklist]"}" rows="4"></textarea> </td>
+      <td>
+        <textarea id="pick" name="{g->formVar var="form[picklist]"}" cols="40" rows="4"></textarea>
+      </td>
     </tr></table>
     <script type="text/javascript">pickfield(document.getElementById('picksel'));</script>
   </div>
