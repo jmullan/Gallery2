@@ -159,8 +159,8 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	/* We don't know the ids, but we can verify everything else */
 	$i = 0;
 	foreach ($files as $file) {
-	    GalleryUtilities::sanitizeInputValues($file);
-	    $this->assertEquals($file, $results[1]['addedFiles'][$i]['fileName']);
+	    GalleryUtilities::sanitizeInputValues(urlencode($file));
+	    $this->assertEquals($file, $results[1]['addedFiles'][$i]['fileName'], 'added #' . $i);
 	    $this->assert(isset($results[1]['addedFiles'][$i]['id']));
 	    $i++;
 	}
@@ -186,6 +186,31 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	    $this->assert(!isset($seenWeights[$orderWeight]), 'Seen this weight before');
 	    $seenWeights[$orderWeight] = 1;
 	}
+    }
+
+    /* 
+     * Checks if the urlencoded filename gets correctly converted to a nice filename
+     * in pathComponent, title and summary
+     */
+    function testAddFromServerFilenameToFields() {
+	global $gallery;
+
+	$baseDir = dirname(__FILE__) . '/../data/';
+	GalleryUtilities::putRequestVariable('form[action][addFromLocalServer]', 1);
+	GalleryUtilities::putRequestVariable('form[localServerPath]', $baseDir);
+	// This is what the browser will send us (urlencoded):
+	GalleryUtilities::putRequestVariable('form[localServerFiles][December+-+%23952.jpg][selected]', 1);
+
+	$results = $this->handleRequest($this->_rootAlbum);
+	$this->assertEquals(array(), $results[0]);
+
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($results[1]['addedFiles'][0]['id']);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('December - #952.jpg', $item->getPathComponent(), 'pathComponent');
+	$this->assertEquals('December - #952', $item->getTitle(), 'title');
+	$this->assertEquals('December - #952', $item->getSummary(), 'summary');
     }
 
     function testAddWithOption() {
@@ -223,6 +248,7 @@ class ItemAddFromServerTestPlatform extends GalleryPlatform {
 
     function file_exists($path) {
 	switch ($path) {
+	case dirname(__FILE__) . '/../data/December - #952.jpg':
 	case dirname(__FILE__) . '/../data/apo\'strophe.jpg':
 	    /* The windows path is a little weird -- but we can live with it */ 
 	case dirname(__FILE__) . '/../data/\\apo\'strophe.jpg':
@@ -235,6 +261,7 @@ class ItemAddFromServerTestPlatform extends GalleryPlatform {
 
     function copy($source, $dest) {
 	switch ($source) {
+	case dirname(__FILE__) . '/../data/December - #952.jpg':
 	case dirname(__FILE__) . '/../data/\\apo\'strophe.jpg':
 	    /* The windows path is a little weird -- but we can live with it */ 
 	case dirname(__FILE__) . '/../data/apo\'strophe.jpg':
@@ -246,6 +273,7 @@ class ItemAddFromServerTestPlatform extends GalleryPlatform {
 
     function symlink($source, $dest) {
 	switch ($source) {
+	case dirname(__FILE__) . '/../data/December - #952.jpg':
 	case dirname(__FILE__) . '/../data/\\apo\'strophe.jpg':
 	    /* The windows path is a little weird -- but we can live with it */ 
 	case dirname(__FILE__) . '/../data/apo\'strophe.jpg':

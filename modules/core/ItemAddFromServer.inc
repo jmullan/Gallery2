@@ -64,10 +64,11 @@ class ItemAddFromServer extends ItemAddPlugin {
 		    if ($filepath[strlen($filepath)-1] != $slash) {
 			$filepath .= $slash;
 		    }
-		    $filepath .= $filename;
 
-		    // Unescape any special chars in the file path
+		    // Unescape any special chars in the file name and path
+		    $filename = urldecode(GalleryUtilities::htmlEntityDecode($filename));
 		    $filepath = urldecode(GalleryUtilities::htmlEntityDecode($filepath));
+		    $filepath .= $filename;
 
 		    list ($base, $extension) = GalleryUtilities::getFileNameComponents($filename);
 		    $mimeType = GalleryCoreApi::convertExtensionToMime($extension);
