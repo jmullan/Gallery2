@@ -48,45 +48,33 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 	$this->_markForCleanup($this->_album);
 
 	$path = 'modules/core/test/phpunit/ItemAddControllerTest.class';
-	$ret = GalleryCoreApi::registerFactoryImplementation('ItemAddPlugin',
-							     'ItemAddControllerTestPluginSuccess',
-							     'ItemAddControllerTestPluginSuccess',
-							     $path,
-							     'coreTest',
-							     null);
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'ItemAddPlugin', 'ItemAddControllerTestPluginSuccess', 'ItemAddControllerTestPluginSuccess',
+	    $path, 'coreTest', null);
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$ret = GalleryCoreApi::registerFactoryImplementation('ItemAddPlugin',
-							     'ItemAddControllerTestPluginContinue',
-							     'ItemAddControllerTestPluginContinue',
-							     $path,
-							     'coreTest',
-							     null);
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'ItemAddPlugin', 'ItemAddControllerTestPluginContinue', 'ItemAddControllerTestPluginContinue',
+	    $path, 'coreTest', null);
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$ret = GalleryCoreApi::registerFactoryImplementation('ItemAddPlugin',
-							     'ItemAddControllerTestPluginFail',
-							     'ItemAddControllerTestPluginFail',
-							     $path,
-							     'coreTest',
-							     null);
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'ItemAddPlugin', 'ItemAddControllerTestPluginFail', 'ItemAddControllerTestPluginFail',
+	    $path, 'coreTest', null);
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$ret = GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
-							     'ItemAddControllerTestToolkit',
-							     'ItemAddControllerTestToolkit',
-							     $path,
-							     'coreTest',
-							     null);
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'GalleryToolkit', 'ItemAddControllerTestToolkit', 'ItemAddControllerTestToolkit',
+	    $path, 'coreTest', null);
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -94,11 +82,9 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 
 	$this->_markFactoryModuleForCleanup('coreTest');
 
-	$ret = GalleryCoreApi::registerToolkitOperation('ItemAddControllerTestToolkit',
-							array('test/archive'),
-							'extract',
-							array(),
-							'test-description');
+	$ret = GalleryCoreApi::registerToolkitOperation(
+	    'ItemAddControllerTestToolkit', array('test/archive'), 'extract',
+	    array(), 'test-description');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -121,9 +107,9 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' =>
-				      array('view' => 'core:ItemAdmin',
-					    'subView' => 'core:ItemAdd',
-					    'addPlugin' => 'ItemAddControllerTestPluginContinue'),
+				  array('view' => 'core:ItemAdmin',
+					'subView' => 'core:ItemAdd',
+					'addPlugin' => 'ItemAddControllerTestPluginContinue'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
@@ -156,12 +142,8 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$ret = GalleryCoreApi::registerFactoryImplementation(
-	    'ItemAddOption', 'ItemAddTestOption', 'ItemAddTestOption',
-	    'modules/core/test/phpunit/ItemAddControllerTest.class', 'coreTest', null);
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$this->_controller->setOptionInstances(
+	    array('ItemAddTestOption' => new ItemAddTestOption()));
 
 	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
 	GalleryUtilities::putRequestVariable('addPlugin', 'ItemAddControllerTestPluginSuccess');
@@ -189,12 +171,8 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$ret = GalleryCoreApi::registerFactoryImplementation(
-	    'ItemAddOption', 'ItemAddTestOption', 'ItemAddTestOption',
-	    'modules/core/test/phpunit/ItemAddControllerTest.class', 'coreTest', null);
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$this->_controller->setOptionInstances(
+	    array('ItemAddTestOption' => new ItemAddTestOption()));
 
 	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
 	GalleryUtilities::putRequestVariable('addPlugin', 'ItemAddControllerTestPluginSuccess');
@@ -239,9 +217,9 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' =>
-				      array('view' => 'core:ItemAdmin',
-					    'subView' => 'core:ItemAdd',
-					    'addPlugin' => 'ItemAddControllerTestPluginFail'),
+				  array('view' => 'core:ItemAdmin',
+					'subView' => 'core:ItemAdd',
+					'addPlugin' => 'ItemAddControllerTestPluginFail'),
 				  'status' => array(),
 				  'error' => array('failed')),
 			    $results);

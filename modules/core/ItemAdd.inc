@@ -34,6 +34,25 @@
  * @subpackage UserInterface
  */
 class ItemAddController extends GalleryController {
+    /**
+     * ItemAddOption instances to use when handling this request.  Only used by
+     * test code.
+     *
+     * @var array (optionId => object ItemAddOption) $_optionInstances
+     * @private
+     */
+    var $_optionInstances;
+
+    /**
+     * Tests can use this method to hardwire a specific set of option instances to use.
+     * This avoids situations where some of the option instances will do unpredictable
+     * things and derail the tests.
+     *
+     * @param array (optionId => ItemAddOption, ...)
+     */
+    function setOptionInstances($optionInstances) {
+	$this->_optionInstances = $optionInstances;
+    }
 
     /**
      * @see GalleryController::handleRequest
@@ -75,10 +94,15 @@ class ItemAddController extends GalleryController {
 	}
 
 	if (empty($error) && isset($status['addedFiles'])) {
-	    list ($ret, $optionInstances) = ItemAddOption::getAllAddOptions();
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+	    if (isset($this->_optionInstances)) {
+		$optionInstances = $this->_optionInstances;
+	    } else {
+		list ($ret, $optionInstances) = ItemAddOption::getAllAddOptions();
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
 	    }
+
 	    $addedItems = array();
 	    for ($i = 0; $i < count($status['addedFiles']); $i++) {
 		$file =& $status['addedFiles'][$i];
@@ -120,11 +144,11 @@ class ItemAddController extends GalleryController {
 		$error = array_merge($error, $optionErrors);
 		/* for each item, put the items warnings into our status array */
 		for ($j = 0; $j < count($optionWarnings); $j++) {
-		    $status['addedFiles'][$j]['warnings'] = 
+		    $status['addedFiles'][$j]['warnings'] =
 		        array_merge($status['addedFiles'][$j]['warnings'], $optionWarnings[$j]);
 		}
 	    }
-	    
+
 	    $results['redirect'] = array('view' => 'core:ItemAdmin',
 					 'subView' => 'core:ItemAddConfirmation',
 					 'itemId' => $item->getId());
