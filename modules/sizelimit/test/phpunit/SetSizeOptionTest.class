@@ -144,7 +144,7 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
         $this->assertEquals(array(), $error);
         $this->assertEquals(array(), $warning);
 
-	list ($ret, $this->_item) = $this->_item->refresh();
+        list ($ret, $this->_item) = $this->_item->refresh();
         if ($ret->isError()) {
             return array($ret->wrap(__FILE__, __LINE__), null, null);
         }
@@ -212,7 +212,7 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
         $this->assertEquals(array(), $warning);
         $platform->clearstatcache();
 
-	list ($ret, $this->_item) = $this->_item->refresh();
+        list ($ret, $this->_item) = $this->_item->refresh();
         if ($ret->isError()) {
             return array($ret->wrap(__FILE__, __LINE__), null, null);
         }
@@ -298,6 +298,40 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
         $operation = GalleryUtilities::getRequestVariables('operation');
         $this->assertEquals('compress', $operation, 'operation');
     }    
+    
+    /* change dimensions, don't keep original */
+    function testChangeBothNoOriginal() {
+        global $gallery;
+        $platform = $gallery->getPlatform();
+        
+        foreach (array('width' => 768, 'height' => 1024, 'size' => 1000, 'keepOriginal' => 0) 
+                as $key => $value) {
+            $ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit', 
+                $key, $value, $this->_album->getId());
+            if ($ret->isError()) {
+                return array($ret->wrap(__FILE__, __LINE__), null);
+            }
+        }
+        list ($error, $warning) = $this->_handleRequestAfterAdd(array(), $this->_item);
+        $this->assertEquals(array(), $error);
+        $this->assertEquals(array(), $warning);
+
+        list ($ret, $this->_item) = $this->_item->refresh();
+        if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), null, null);
+        }
+	
+        $this->assertEquals(768, $this->_item->getWidth(), 'Width');
+        $this->assertEquals(1024, $this->_item->getHeight(), 'Height');
+        $operation = GalleryUtilities::getRequestVariables('operation');
+        $this->assertEquals('compress', $operation, 'operation');
+        $platform->clearstatcache();
+        $ret = $this->_item->rescan();
+        if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), null, null);
+        }
+        $this->assertEquals(1000, $this->_item->getSize(), 'Size');
+    }
     
     /* try to change size and dimensions for unsupported file format */
     function testUnknownFormat() {
