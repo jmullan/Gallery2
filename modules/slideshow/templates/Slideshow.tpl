@@ -2,11 +2,10 @@
 <a id="item_{$i}" href="{$it.src}"></a>
 <a id="href_{$i}" href="{$it.href}"></a>
 {/foreach}
-<script language="JavaScript">
-var index;
-var next = {$SlideShow.start};
+<script language="JavaScript" type="text/JavaScript">
+var index = {$SlideShow.start};
 var count = {$SlideShow.count};
-var images = new Array;
+var is_cached = new Array;
 var item_ids = new Array;
 {foreach from=$SlideShow.itemList key=i item=it}
 item_ids[{$i}] = '{$it.id}';
@@ -14,39 +13,21 @@ item_ids[{$i}] = '{$it.id}';
 var timer;
 
 {literal}
-function preload_photo(i) {
-  if (!images[i]) {
-    images[i] = new Image;
-    images[i].src = document.getElementById("item_"+i).href;
+function preload(i) {
+  if (!is_cached[i]) {
+    is_cached[i] = 1;
+    var img = new Image();
+    img.src = document.getElementById("item_"+i).href;
   }
 }
 function slide_view_start() {
-  /* Start preloading next photo to be viewed,
-   * then start timer for viewing the current one */
-  next++;
-  if (next >= count) next = 0;
-  preload_photo(next);
-  clearTimeout(timer);
+  preload((index+1)%count);
   timer = setTimeout('goto_next_photo()', 15000);
 }
 function goto_next_photo() {
-  index = next;
-  wait_for_current_photo();
-}
-function show_current_photo() {
-  if (!images[index] || !images[index].complete) {
-    preload_photo(index);
-    return 0;
-  }
-  document.slide.src = images[index].src;
+  index = (index+1)%count;
+  document.images.slide.src = document.getElementById('item_'+index).href;
   document.getElementById("stop").href = document.getElementById("href_"+index).href;
-  return 1;
-}
-function wait_for_current_photo() {
-  if (!show_current_photo()) {
-    clearTimeout(timer);
-    timer = setTimeout('wait_for_current_photo()', 500);
-  }
 }
 {/literal}
 </script>
@@ -55,7 +36,7 @@ function wait_for_current_photo() {
     {g->item}
       {g->title}
         {g->link id="stop" arg1="view=core:ShowItem"
-                 arg2="itemId=$SlideShow.itemList[$SlideShow.start].id"}
+                 arg2="itemId=`$SlideShow.itemList[$SlideShow.start].id`"}
           {g->text text="Stop"}
         {/g->link}
       {/g->title}
@@ -65,8 +46,13 @@ function wait_for_current_photo() {
     {g->box style="canvas"}
       {g->itemview}
         {g->media}
-          <img name="slide" onLoad="slide_view_start()"
-               src="{$SlideShow.itemList[$SlideShow.start].src}">
+          <img name="slide" alt="" src="">
+          <script language="JavaScript" type="text/JavaScript">
+            document.images.slide.onload = slide_view_start;
+            document.images.slide.onerror = goto_next_photo;
+            document.images.slide.src =
+              '{$SlideShow.itemList[$SlideShow.start].src}';
+          </script>
         {/g->media}
       {/g->itemview}
     {/g->box}
