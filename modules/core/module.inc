@@ -366,8 +366,8 @@ class CoreModule extends GalleryModule {
 
 	if (array_intersect(array('core.all', 'core.change'), $permissions)) {
 	    if ($item->isContainer()) {
-	        $views[] = array('name' => $this->translate('Sub-item Preferences'),
-				 'view' => 'core:ItemEditChildPreferences');
+	        $views[] = array('name' => $this->translate('Album Settings'),
+				 'view' => 'core:ItemEditAlbum');
 	    }
 
 	    if (is_subclass_of($item, 'GalleryDataItem')) {

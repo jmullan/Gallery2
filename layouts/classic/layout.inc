@@ -155,12 +155,15 @@ class ClassicLayout extends GalleryLayout {
 	    $navigator['nextPage'] = $pageNumber+1;
 	}
 
-	/*
-	 * XXX: make the page navigator use a very small range for now as a
-	 * test, since we have very small albums.
-	 */
-	$lowerPage = max($pageNumber - 2, 1);
-	$upperPage = min($lowerPage + 4, $totalPages);
+	/* Show a window of 11 pages in the page navigator */
+	$windowSize = 11;
+	$lowerPage = max($pageNumber - (int)($windowSize / 2), 1);
+	$upperPage = min($pageNumber + (int)($windowSize / 2), $totalPages);
+	if ($upperPage == $totalPages) {
+	    $lowerPage = max($upperPage - $windowSize, 1);
+	} else if ($lowerPage == 1) {
+	    $upperPage = min($lowerPage + ($windowSize-1), $totalPages);
+	}
 	for ($i = $lowerPage; $i <= $upperPage; $i++) {
 	    $navigator['jumprange'][] = $i;
 	}

@@ -1119,15 +1119,15 @@ class DatabaseStorage extends GalleryStorage {
 	/* Assemble the query */
 	$finalQuery = 'SELECT ' . $query['select'];
 	$finalQuery .= ' FROM ' . $query['from'];
-	if (isset($query['where'])) {
+	if (!empty($query['where'])) {
 	    $finalQuery .= ' WHERE ' . $query['where'];
 	}
 
-	if (isset($query['order-by'])) {
+	if (!empty($query['order-by'])) {
 	    $finalQuery .= ' ORDER BY ' . $query['order-by'];
 	}
 
-	if (isset($query['group-by'])) {
+	if (!empty($query['group-by'])) {
 	    $finalQuery .= ' GROUP BY ' . $query['group-by'];
 	}
 

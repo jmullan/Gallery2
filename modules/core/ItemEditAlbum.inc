@@ -18,7 +18,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-class ItemEditChildPreferencesController extends GalleryController {
+class ItemEditAlbumController extends GalleryController {
 
     /**
      * @see GalleryController::handleRequest
@@ -61,7 +61,7 @@ class ItemEditChildPreferencesController extends GalleryController {
 		$ret = GalleryDerivativePreferencesMap::removeMapEntry(
 		    array('itemId' => $item->getId()));
 		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
 		/* Add the thumbnail size back in */
@@ -71,7 +71,7 @@ class ItemEditChildPreferencesController extends GalleryController {
 			  'derivativeType' => DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
 			  'derivativeCommands' => 'scale ' . $form['thumbnail']['size']));
 		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
 		for ($i = 0; $i < sizeof($form['resizes']); $i++) {
@@ -85,13 +85,34 @@ class ItemEditChildPreferencesController extends GalleryController {
 			      'derivativeType' => DERIVATIVE_TYPE_IMAGE_RESIZE,
 			      'derivativeCommands' => 'scale ' . $form['resizes'][$i]['size']));
 		    if ($ret->isError()) {
-			return $ret->wrap(__FILE__, __LINE__);
+			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 		}
 	    
+		/* Save basic settings */
+		$item->setLayout($form['layout']);
+		$item->setTheme($form['theme']);
+		$item->setOrderBy($form['orderBy']);
+		$item->setOrderDirection($form['orderDirection']);
+
+		list ($ret, $lockId) = $gallery->acquireWriteLock($item->getId());
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		$ret = $item->save();
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		$ret = $gallery->releaseLocks($lockId);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		
 		/* Figure out where to redirect upon success */
 		$redirectParams['view'] = 'core:ItemAdmin';
-		$redirectParams['subView'] = 'core:ItemEditChildPreferences';
+		$redirectParams['subView'] = 'core:ItemEditAlbum';
 		$redirectParams['itemId'] = $itemId;
 	    }
 	}
@@ -102,7 +123,7 @@ class ItemEditChildPreferencesController extends GalleryController {
 	} else {
 	    if (empty($results['view'])) {
 		$results['view'] = 'core:ItemAdmin';
-		GalleryUtilities::putRequestVariable('subView', 'core:ItemEditChildPreferences');
+		GalleryUtilities::putRequestVariable('subView', 'core:ItemEditAlbum');
 	    }
 	}
 
@@ -110,7 +131,7 @@ class ItemEditChildPreferencesController extends GalleryController {
     }
 }
 
-class ItemEditChildPreferencesView extends GalleryView {
+class ItemEditAlbumView extends GalleryView {
 
     /**
      * @see GalleryView::renderBody
@@ -135,7 +156,7 @@ class ItemEditChildPreferencesView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	if ($formName == 'ItemEditChildPreferences' && empty($form['action']['undo'])) {
+	if ($formName == 'ItemEditAlbum' && empty($form['action']['undo'])) {
 
 	    /* Complain if we have any invalid data */
 	    if (empty($form['thumbnail']['size'])) {
@@ -160,10 +181,14 @@ class ItemEditChildPreferencesView extends GalleryView {
 		}
 	    }
 
-	    
 	} else {
 	    /* First time around, load the form with item data */
 	    $form = array();
+
+	    $form['orderBy'] = $item->getOrderBy();
+	    $form['orderDirection'] = $item->getOrderDirection();
+	    $form['layout'] = $item->getLayout();
+	    $form['theme'] = $item->getTheme();
 	    
 	    list ($ret, $preferences) =
 		GalleryDerivativePreferencesMap::fetchPreferencesForItem($item->getId());
@@ -205,12 +230,73 @@ class ItemEditChildPreferencesView extends GalleryView {
 	    }
 	}
 
+	list ($ret, $module) = $gallery->loadModule('core');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$platform = $gallery->getPlatform();
+
+	/* Set up our sort order selection list */
+	$orderByList = array();
+	$orderByList[''] = $module->translate('* No Sort Order *');
+	$orderByList['title'] = $module->translate('Title');
+	$orderByList['summary'] = $module->translate('Summary');
+	$orderByList['creationTimestamp'] = $module->translate('Creation Date');
+	$orderByList['modificationTimestamp'] = $module->translate('Last Changed Date');
+	$orderByList['description'] = $module->translate('Description');
+	$orderByList['keywords'] = $module->translate('Keywords');
+
+	/* Set up our sort direction selection list */
+	$orderDirectionList = array();
+	$orderDirectionList['asc'] = $module->translate("Ascending");
+	$orderDirectionList['desc'] = $module->translate("Descending");
+
+	/* Set up our layout selection list */
+	$layoutList = array();
+	$layoutDir = $gallery->getConfig('code.gallery.layouts');
+	if ($dir = $platform->opendir($layoutDir)) {
+	    while (($file = readdir($dir)) !== false) {
+		if ($file{0} == '.' || $file == 'CVS') {
+		    continue;
+		}
+		$layoutInc = "$layoutDir$file/layout.inc";
+		if ($platform->file_exists($layoutInc)) {
+		    $layoutList[] = $file;
+		}
+	    }
+	    closedir($dir);
+	}
+	
+	/* Set up our theme selection list */
+	$themeList = array();
+	$themeDir = $gallery->getConfig('code.gallery.themes');
+	if ($dir = $platform->opendir($themeDir)) {
+	    while (($subdir = readdir($dir)) !== false) {
+		if ($subdir{0} == '.' || $subdir == 'CVS') {
+		    continue;
+		}
+
+		if ($platform->is_dir("$themeDir$subdir")) {
+		    $file = "$themeDir$subdir/theme.inc";
+		    if ($platform->file_exists($file)) {
+			$themeList[] = $subdir;
+		    }
+		}
+	    }
+	    closedir($dir);
+	}
+
 	/* Render the HTML body */
 	$this->_initTemplate(dirname(__FILE__) . '/templates');
 	$this->_setTemplateVariable('form', $form);
-	$this->_setTemplateVariable('itemId', $itemId);
-	$this->_setTemplateVariable('controller', 'core:ItemEditChildPreferences');
-	$html = $this->_renderTemplate('core', 'ItemEditChildPreferences.tpl');
+	$this->_setTemplateVariable('item', $item->getMemberData());
+	$this->_setTemplateVariable('layoutList', $layoutList);
+	$this->_setTemplateVariable('themeList', $themeList);
+	$this->_setTemplateVariable('orderByList', $orderByList);
+	$this->_setTemplateVariable('orderDirectionList', $orderDirectionList);
+	$this->_setTemplateVariable('controller', 'core:ItemEditAlbum');
+	$html = $this->_renderTemplate('core', 'ItemEditAlbum.tpl');
 
 	return array(GalleryStatus::success(), $html);
     }

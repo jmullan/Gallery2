@@ -21,9 +21,6 @@
 	{/if}
       </td>
       <td align="center">
-	{if $navigator.jumprange[0] != $pageNumber}
-	<img src="{$layoutUrl}/images/nav_dot.gif" alt="o" border="0" width="8" height="11">
-	{/if}
 	
 	{section name=jumprange loop=$navigator.jumprange}
 	{if $navigator.jumprange[jumprange] == $pageNumber}
@@ -31,17 +28,19 @@
 	<b>{$navigator.jumprange[jumprange]}</b>
 	<img src="{$layoutUrl}/images/nav_dot_right.gif" alt="&lt;" border="0" width="8" height="11">
 	{else}
+
+	{if $navigator.jumprange[jumprange] != $pageNumber + 1 && ! $smarty.section.jumprange.first}
+	<img src="{$layoutUrl}/images/nav_dot.gif" alt="o" border="0"
+	     width="8" height="11">
+	{/if}
+
 	{strip}
 	<a href="{galleryUrl view=core:ShowItem itemId=$item.id layoutPage=$navigator.jumprange[jumprange]}">
 	  {$navigator.jumprange[jumprange]}
 	</a>
 	{/strip}
-        {/if}
 
-	{if $navigator.jumprange[jumprange] != $pageNumber}
-	<img src="{$layoutUrl}/images/nav_dot.gif" alt="o" border="0"
-	     width="8" height="11">
-	{/if}
+        {/if}
 
 	{/section}
       </td>

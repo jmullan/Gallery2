@@ -479,13 +479,7 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	$where .= ' [GalleryPermissionMap::permission] IN (?, ?, ?)))';
 	$data = array_merge($data, array('core.view', 'core.viewAll', 'core.all'));
 
-	$orderBy = ' [GalleryItem::' . $this->getOrderBy() . ']';
-	if ($this->getOrderDirection() == ORDER_ASCENDING) {
-	    $orderBy .= ' ASC';
-	} else {
-	    $orderBy .= ' DESC';
-	}
-
+	$orderBy = $this->_fetchOrderClause();
 	list ($ret, $searchResults) = 
 	    $gallery->search(array('select' => ('DISTINCT([GalleryChildEntity::id]), ' .
 						'[GalleryEntity::entityType]'),
@@ -504,6 +498,64 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	}
 	
 	return array(GalleryStatus::success(), $ids);
+    }
+
+    /**
+     * Determine the sort order clause from this items settings
+     *
+     * @return string an order clause
+     */
+    function _fetchOrderClause() {
+	/*
+	 * Don't simply plug getOrderBy into the SQL clause, or we could open
+	 * the door for SQL injection.
+	 *
+	 * XXX: Eventually this should be something that a module can register
+	 * so that we can allow modules to introduce their own custom sort
+	 * orders.
+	 */
+	switch ($this->getOrderBy()) {
+	case 'title':
+	    $order = '[GalleryItem::title]';
+	    break;
+	    
+	case 'summary':
+	    $order = '[GalleryItem::summary]';
+	    break;
+	    
+	case 'creationTimestamp':
+	    $order = '[GalleryEntity::creationTimestamp]';
+	    break;
+	    
+	case 'modificationTimestamp':
+	    $order = '[GalleryEntity::modificationTimestamp]';
+	    break;
+	    
+	case 'description':
+	    $order = '[GalleryItem::description]';
+	    break;
+	    
+	case 'keywords':
+	    $order = '[GalleryItem::keywords]';
+	    break;
+
+	default:
+	    return null;
+	}
+
+	switch ($this->getOrderDirection()) {
+	case ORDER_ASCENDING:
+	    $direction = 'ASC';
+	    break;
+	    
+	case ORDER_ASCENDING:
+	    $direction = 'DESC';
+
+	default:
+	    $direction = '';
+	}
+
+	return $order . ' ' . $direction;
     }
     
     /**
@@ -546,13 +598,7 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	$where .= ' [GalleryPermissionMap::permission] IN (?, ?, ?)))';
 	$data = array_merge($data, array('core.view', 'core.viewAll', 'core.all'));
 
-	$orderBy = ' [GalleryItem::' . $this->getOrderBy() . ']';
-	if ($this->getOrderDirection() == ORDER_ASCENDING) {
-	    $orderBy .= ' ASC';
-	} else {
-	    $orderBy .= ' DESC';
-	}
-
+	$orderBy = $this->_fetchOrderClause();
 	list ($ret, $searchResults) = 
 	    $gallery->search(array('select' => 'DISTINCT([GalleryChildEntity::id])',
 				   'where' => $where,

@@ -1,20 +1,77 @@
     {galleryForm controller="$controller"}
-    {galleryInput type="hidden" name="formName"}ItemEditChildPreferences{/galleryInput}
-    {galleryInput type="hidden" name="itemId"}{$itemId}{/galleryInput}
+    {galleryInput type="hidden" name="formName"}ItemEditAlbum{/galleryInput}
+    {galleryInput type="hidden" name="itemId"}{$item.id}{/galleryInput}
     <table border="0" cellspacing="0" cellpadding="0">
 	<tr>
 	  <td>
 	    <center>
 	      {galleryBiggerFont}
-	      {galleryText text="Sub-Item Preferences"}
+	      {galleryText text="Album Settings"}
 	      {/galleryBiggerFont}
 	    </center>
+	  </td>
+	</tr>
+
+	<tr>
+	  <td>
+	    &nbsp;
+	  </td>
+	</tr>
+
+	<tr>
+	  <td>
+	  {galleryBigFont}
+	  {galleryText text="Sort order"}
+	  {/galleryBigFont}
+	  <br>
+	  {galleryText text="How the items in this album are sorted.  New items that are added will be placed in the album according to the order you specify here."}
+	  <br>
+	  {gallerySelect name="form.orderBy"}
+	  {html_options options=$orderByList selected=$form.orderBy}
+	  {/gallerySelect}
+	  {gallerySelect name="form.orderDirection"}
+	  {html_options options=$orderDirectionList selected=$form.orderDirection}
+	  {/gallerySelect}
+	  </td>
+	</tr>
+
+	<tr>
+	  <td>
+	    &nbsp;
+	  </td>
+	</tr>
+
+	<tr>	
+	  <td>
+	    {galleryBigFont}
+	    {galleryText text="Layout"}
+	    {/galleryBigFont}
 	    <br>
+	    {galleryText text="The way that items will be arranged on the page when viewing this album."}
 	    <br>
-	    {galleryText text="Here you can choose default values for items in this album.  These values will only apply to new items that are added to the album, not ones that are already in it."}
+	    {gallerySelect name="form.layout"}
+	    {html_options values=$layoutList selected=$form.layout output=$layoutList}
+	    {/gallerySelect}
+	  </td>
+	</tr>
+
+	<tr>
+	  <td>
+	    &nbsp;
+	  </td>
+	</tr>
+
+	<tr>	
+	  <td>
+	    {galleryBigFont}
+	    {galleryText text="Theme"}
+	    {/galleryBigFont}
 	    <br>
+	    {galleryText text="The colors and images that will be used when viewing this album."}
 	    <br>
-	    {galleryText text="When Gallery resizes images, it will maintain the same aspect ratio (height to width) of the original image to avoid distortion.  For resizes, you only enter one value and that forms a bounding box (in pixels).  Gallery will resize the image until it is as large as possible while still fitting inside the box."} 
+	    {gallerySelect name="form.theme"}
+	    {html_options values=$themeList selected=$form.theme output=$themeList}
+	    {/gallerySelect}
 	  </td>
 	</tr>
 
@@ -34,7 +91,7 @@
 
 	<tr>
 	  <td>
-	    {galleryText text="Every item will have a thumbnail.  The default thumbnail size you specify here will create a uniform look for your album.  You must enter a number greater than 0."}
+	    {galleryText text="Every item will have a thumbnail.  The default thumbnail size you specify here will create a uniform look for your album.  Gallery will create a thumbnail that is no larger than the size you specify."}
 	  </td>
 	</tr>
 

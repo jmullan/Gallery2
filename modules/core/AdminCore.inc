@@ -106,7 +106,9 @@ class AdminCoreView extends GalleryView {
 
 	/* Set up our sort order selection list */
 	$orderByList = array();
+	$orderByList[''] = $module->translate('* No Sort Order *');
 	$orderByList['title'] = $module->translate('Title');
+	$orderByList['summary'] = $module->translate('Summary');
 	$orderByList['creationTimestamp'] = $module->translate('Creation Date');
 	$orderByList['modificationTimestamp'] = $module->translate('Last Changed Date');
 	$orderByList['description'] = $module->translate('Description');
