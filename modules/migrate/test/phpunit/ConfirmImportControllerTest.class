@@ -358,7 +358,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	    $seenWeights[$orderWeight] = 1;
 	}
 	
-	/* Get the allegedly successfully imported album */
+	/* Get the allegedly successfully imported albumItem */
 	list($ret, $testItem) = GalleryCoreApi::loadEntitiesById($ids[0]);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
