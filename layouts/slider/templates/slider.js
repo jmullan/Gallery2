@@ -46,6 +46,7 @@ function app_init() {
  if (app_is_safari) { //For Safari:
   document.onresize = app_onresize;
  }
+ window.image_loaded = image_loaded;
  var i = app_getcookie();
  if (i < -1) image_show(data_view >= 0 ? data_view : 0);
 }
@@ -143,7 +144,7 @@ function image_show(i) {
  slide_reset();
  image_index = i;
  if (data_iw[i] < 0) {
-  ui_sethtml('image_view', '<iframe name="view" style="width:100%;height:100%" frameborder="0" src="'+document.getElementById('img_'+i).href+'"></iframe>');
+  ui_sethtml('image_view', '<iframe style="width:100%;height:'+(image_div.offsetHeight-4)+'px" frameborder="0" src="'+document.getElementById('img_'+i).href+'"></iframe>');
   document.fit_size.className = document.full_size.className = 'off';
  } else {
   var s = image_fit(1);

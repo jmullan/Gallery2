@@ -60,7 +60,6 @@ function app_init() {
   document.getElementById('tools_right').style.paddingRight = '8px';
  }
  window.image_loaded = image_loaded;
- window.image_vis = image_vis;
  var i = app_getcookie();
  if (i < -1 && data_view >= 0) image_show(data_view);
 }
@@ -225,7 +224,7 @@ function image_show(i) {
  slide_reset();
  image_index = i;
  if (data_iw[i] < 0) {
-  ui_sethtml('image_view', '<iframe name="view" style="width:100%;height:100%" frameborder="0" src="'+document.getElementById('img_'+i).href+'"></iframe>');
+  ui_sethtml('image_view', '<iframe style="width:100%;height:'+(app_wh-toolbar_getheight()-4)+'px" frameborder="0" src="'+document.getElementById('img_'+i).href+'"></iframe>');
   document.getElementById('fit_size').className = document.getElementById('full_size').className = 'off';
  } else {
   var s = image_fit(1);
