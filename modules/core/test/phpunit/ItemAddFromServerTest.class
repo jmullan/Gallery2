@@ -148,8 +148,14 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 					     $setDescription=false) {
 	global $gallery;
 
-	$sortAddedFilesFunc = create_function('$a, $b', 
-		'return strcmp($a[\'fileName\'], $b[\'fileName\']);');
+	/*
+	 * Use b<->a comparison here and rsort below because sanitizeInputValues on
+	 * form input will sanitize apo\'strophe.jpg and move it to the "end" of the
+	 * array, no matter what order we use to construct form[localServerFiles].
+	 * rsort keeps this item at the end anyway, so we get the expected results.
+	 */
+	$sortAddedFilesFunc = create_function('$a, $b',
+		'return strcmp($b[\'fileName\'], $a[\'fileName\']);');
 
 	if ($symlinkSupported) {
 	    $gallery->_platform = $this->_symlinkAllowedPlatform;
@@ -178,10 +184,10 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 
 	if ($addFiles) {
 	    $files = array('test1.gif', 'test1.jpg', 'test2.gif', 'test3.gif', 'apo\'strophe.jpg');
-	    sort($files);
+	    rsort($files);
 
 	    $escapedBasenames = array('test1', 'test1', 'test2', 'test3', 'apo\'strophe');
-	    sort($escapedBasenames);
+	    rsort($escapedBasenames);
 
 	    foreach ($files as $fileName) {
 		GalleryUtilities::putRequestVariable(
@@ -195,13 +201,13 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 
 	if ($addDirectories) {
 	    $files = array('test1.gif', 'test1.jpg', 'test2.gif', 'test3.gif', 'test4.gif');
-	    asort($files);
+	    rsort($files);
 
 	    $escapedBasenames = array('localUploadDir');
-	    asort($escapedBasenames);
+	    rsort($escapedBasenames);
 
 	    $escapedRecursiveBasenames = array('test1', 'test1', 'test2', 'test3', 'test4');
-	    asort($escapedRecursiveBasenames);
+	    rsort($escapedRecursiveBasenames);
 
 	    $dirName = urlencode($baseDir . 'localUploadDir');
 	    GalleryUtilities::putRequestVariable(
@@ -279,7 +285,7 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	$platform = $gallery->getPlatform();
 	$dirSep = $platform->getDirectorySeparator();
 	$baseDir = dirname(__FILE__) . "{$dirSep}..{$dirSep}data{$dirSep}";
-	
+
 	GalleryUtilities::putRequestVariable('form[action][addFromLocalServer]', 1);
 	GalleryUtilities::putRequestVariable('form[localServerPath]', $baseDir);
 	GalleryUtilities::putRequestVariable('form[set][title]', 1);
@@ -313,11 +319,11 @@ class ItemAddFromServerTestPlatform extends GalleryPlatform {
     	global $gallery;
     	$platform = $gallery->getPlatform();
     	$dirSep = $platform->getDirectorySeparator();
-    	
+
 	$this->_delegate = $delegate;
 	$this->_symlinkSupported = $symlinkSupported;
 	$this->_baseDir = dirname(__FILE__) . "{$dirSep}..{$dirSep}data{$dirSep}";
-	$this->_baseDirRecursive = dirname(__FILE__) . 
+	$this->_baseDirRecursive = dirname(__FILE__) .
 		"{$dirSep}..{$dirSep}data{$dirSep}localUploadDir{$dirSep}";
     }
 
