@@ -52,6 +52,12 @@ class AlbumSelectSiteAdminController extends GalleryController {
 		}
 	    }
 	    $status['saved'] = 1;
+
+	    /* Flush our cache */
+	    $cachePathInfo = array('type' => 'module-data',
+		                   'module' => 'albumselect',
+		                   'key' => 'loadSystemContent_guest');
+	    GalleryDataCache::removeFromDisk($cachePathInfo);
 	}
 
 	$results = array('redirect' => array('view' => 'core:SiteAdmin',

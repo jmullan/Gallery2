@@ -37,9 +37,9 @@ class AlbumSelectModule extends GalleryModule {
 	$this->setId('albumselect');
 	$this->setName('Album Select');
 	$this->setDescription($gallery->i18n('Jump directly to any album using a select box'));
-	$this->setVersion('0.8.4');
+	$this->setVersion('0.9.0');
 	$this->setGroup('display', $this->translate('Display'));
-	$this->setCallbacks('getSiteAdminViews|loadSystemContent');
+	$this->setCallbacks('getSiteAdminViews|loadSystemContent|registerEventListeners');
 	$this->setRequiredCoreApi(array(4, 0));
 	$this->setRequiredModuleApi(array(0, 9));
     }
@@ -59,6 +59,14 @@ class AlbumSelectModule extends GalleryModule {
 	return array(GalleryStatus::success(), true);
     }
 
+    /**
+     * @see GalleryModule::registerEventListeners()
+     */
+    function registerEventListeners() {
+	GalleryCoreApi::registerEventListener(
+	    'Gallery::ViewableTreeChange', new AlbumSelectModule());
+    }
+    
     /**
      * @see GalleryModule::upgrade()
      */
@@ -90,9 +98,35 @@ class AlbumSelectModule extends GalleryModule {
 
     /**
      * @see GalleryModule::loadSystemContent
+     *
+     * We always load the template data, but only show in systemContent if
+     * the 'show' module param is set.  Otherwise, we assume that the user still
+     * wants the tree, but has chosen to manually put it somewhere else on the
+     * page (by hand editing the templates).
      */
     function loadSystemContent(&$template) {
-	/* Load template data, but only show in systemContent if module param is set */
+	global $gallery;
+
+	list ($ret, $anonymousUserId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'albumselect');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
+	/* If it's the anonymous user, try to load it from the cache */
+	if ($gallery->getActiveUserId() == $anonymousUserId) {
+	    $cachePathInfo = array('type' => 'module-data',
+		                   'module' => 'albumselect',
+		                   'key' => 'loadSystemContent_guest');
+	    list ($treeList, $titles) = GalleryDataCache::getFromDisk($cachePathInfo);
+	}
+
+	if (!isset($titles) || !isset($treeList)) {
 	list ($ret, $tree) = GalleryCoreApi::fetchAlbumTree();
 	if ($ret->isError()) {
 	    if ($ret->getErrorCode() & ERROR_PERMISSION_DENIED) {
@@ -104,26 +138,51 @@ class AlbumSelectModule extends GalleryModule {
 	if (empty($tree)) {
 	    return array(GalleryStatus::success(), null);
 	}
+
 	list ($ret, $items) =
 	    GalleryCoreApi::loadEntitiesById(GalleryUtilities::arrayKeysRecursive($tree));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	foreach ($items as $treeItem) {
-	    $treeItems[$treeItem->getId()] = $treeItem->getMemberData();
+	    foreach ($items as $item) {
+		$titles[$item->getId()] =
+		    $item->getTitle() ? $item->getTitle() : $item->getPathComponent();
 	}
-	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'albumselect');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
+
 	$treeList = array();
-	$sorter = $params['sort'] ? new AlbumSelectTreeSorter('title', $treeItems) : null;
+	    $sorter = $params['sort'] ? new AlbumSelectTreeSorter($titles) : null;
 	$this->_parseTree($tree, $treeList, $sorter);
+
+	    /* If it's the anonymous user, try to save it to the */
+	    $dataToCache = array($treeList, $titles);
+	    if ($gallery->getActiveUserId() == $anonymousUserId) {
+		GalleryDataCache::putToDisk($cachePathInfo, $dataToCache);
+	    }
+	}
+	
 	$template->setVariable('AlbumSelectSystemContent',
-	    array('tree' => $treeList, 'treeItems' => $treeItems,
+	    array('tree' => $treeList,
+		  'titles' => $titles,
 		  'template' => 'modules/albumselect/templates/AlbumSelect.tpl'));
+	
 	return array(GalleryStatus::success(),
 		     $params['show'] ? 'modules/albumselect/templates/AlbumSelect.tpl' : null);
+    }
+
+    /**
+     * Event handler for Gallery::ViewableTreeChange
+     *
+     * @see GalleryEventListener::handleEvent
+     */
+    function handleEvent($event) {
+	if ($event->getEventName() == 'Gallery::ViewableTreeChange') {
+	    $cachePathInfo = array('type' => 'module-data',
+		                   'module' => 'albumselect',
+		                   'key' => 'loadSystemContent_guest');
+	    GalleryDataCache::removeFromDisk($cachePathInfo);
+	}
+	
+	return array(GalleryStatus::success(), null);
     }
 
     /**
@@ -147,12 +206,12 @@ class AlbumSelectModule extends GalleryModule {
  * Sort albums on a specific field
  */
 class AlbumSelectTreeSorter {
-    function AlbumSelectTreeSorter($field, &$treeItems) {
-	$this->_field = $field;
-	$this->_treeItems =& $treeItems;
+    var $_titles;
+    function AlbumSelectTreeSorter(&$titles) {
+	$this->_titles =& $titles;
     }
     function sort($a, $b) {
-	return strcmp($this->_treeItems[$a][$this->_field], $this->_treeItems[$b][$this->_field]);
+	return strcmp($this->_titles[$a], $this->_titles[$b]);
     }
 }
 ?>
