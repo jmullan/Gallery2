@@ -11,7 +11,7 @@
   </h2>
   
   <p class="giDescription">
-    {g->text text="You can select which part of the photo will be used for the thumbnail.  This will have no effect on the resized or original versions of the image."}
+    {g->text text="You can select which part of the photo will be used for the thumbnail.  This will have no effect on the resized or original versions of the image.  To reset the image to its default size, double-click on the blue box so that it encloses the entire image, and then submit."}
   </p>
 
   {if $ItemEditPhotoThumbnail.editThumbnail.can.crop}
