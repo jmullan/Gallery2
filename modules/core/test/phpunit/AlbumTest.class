@@ -130,8 +130,6 @@ class AlbumTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-
-	return GalleryStatus::success();
     }
 
     function testCreateRenameAndDeleteAlbum() {
@@ -188,15 +186,12 @@ class AlbumTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-
-	return GalleryStatus::success();
     }
-    
+
     function testCreateAndDeleteNestedAlbums() {
 	global $gallery;
 
 	$lockIds = array();
-	$time = time();
 	$iterations = 5;
 	$parentId = null;
 	for ($i = 0; $i < $iterations; $i++) {
@@ -221,8 +216,175 @@ class AlbumTest extends GalleryTestCase {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
+    }
+    
+    /**
+     * Create an album under the root, then create a nested album under that
+     * one, then move the nested album to the root, then delete both.
+     *
+     */
+    function testMoveAlbum() {
+	global $gallery;
 
-	return GalleryStatus::success();
+	$lockIds = array();
+
+	list ($ret, $rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $album0) = $this->_createRandomAlbum($rootId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $album1) = $this->_createRandomAlbum($album0->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Read lock the root, write lock the two new albums */
+	list ($ret, $lockIds[]) = $gallery->acquireReadLock(array($rootId));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $lockIds[]) = $gallery->acquireWriteLock(array($album0->getId(), $album1->getId()));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $album0) = $album0->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $album1) = $album1->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Move the album */
+	$ret = $album1->move($rootId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Save it */
+	$ret = $album1->save($rootId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Delete the albums */
+	$ret = $album0->delete();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	$ret = $album1->delete();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = $gallery->releaseLocks($lockIds);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    /**
+     * Create several levels of nested albums, then fetch the parents from the
+     * bottom most one and compare it against the parents we know.
+     */
+    function testFetchParents() {
+	global $gallery;
+
+	list ($ret, $rootId) =
+	    $gallery->getModuleParameter('core', 'id.rootAlbum');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $nested[0]) = $gallery->loadEntitiesById($rootId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$iterations = 5;
+	$parentId = $nested[0]->getId();
+	for ($i = 1; $i <= $iterations; $i++) {
+	    $gallery->guaranteeTimeLimit(5);
+
+	    list ($ret, $nested[$i]) = $this->_createRandomAlbum($parentId);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+
+	    $parentId = $nested[$i]->getId();
+	}
+
+	/* Now we've created our nested tree.  Fetch it all back again */
+	list ($ret, $actual) = $nested[$iterations]->fetchParents();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/*
+	 * fetchParents returns member data, so convert our expected values to
+	 * memberdata also.  Leave off the last element, since fetchParents()
+	 * is expected to return the parents but not the item itself.
+	 */
+	for ($i = 0; $i < $iterations; $i++) {
+	    $expected[] = $nested[$i]->getMemberData();
+	}
+	
+	$this->assertEquals($expected, $actual);
+
+	/* Then clean it all up */
+	$ret = $this->_deleteAndVerifyEntity($nested[1]->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    /**
+     * Create a parent, a child, verify that fetchChildren on the parent
+     * returns the child, delete both.
+     */
+    function testFetchChildren() {
+	global $gallery;
+
+	list ($ret, $rootId) =
+	    $gallery->getModuleParameter('core', 'id.rootAlbum');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $parent) = $this->_createRandomAlbum($rootId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $child) = $this->_createRandomAlbum($parent->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	GalleryDataCache::reset();
+
+	list ($ret, $actual) = $parent->fetchChildren($gallery->getActiveUserId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(array($child), $actual);
+
+	/* Then clean it all up */
+	$ret = $this->_deleteAndVerifyEntity($parent->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
     }
 }
 

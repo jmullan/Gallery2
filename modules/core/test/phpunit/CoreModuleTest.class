@@ -45,11 +45,6 @@ class CoreModuleTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$ret = $this->_becomeAdminUser();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
 	/* Set our language to German */
 	$translator =& $gallery->getTranslator();
 	$translator->init('de_DE');

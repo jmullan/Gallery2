@@ -170,6 +170,92 @@ class UserAndGroupTest extends GalleryTestCase {
     }
 
     /**
+     * Create user, fetch user names, make sure it's in there, delete user
+     */
+    function testFetchUserNames() {
+	global $gallery;
+
+	list ($ret, $user) = $this->_createRandomUser();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	GalleryDataCache::reset();
+
+	list ($ret, $names) = GalleryUserHelper::fetchUserNames();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assert(in_array($user->getUserName(), $names));
+
+	/* Delete it */
+	$ret = $this->_deleteAndVerifyEntity($user->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    /**
+     * Count users, Create user, count users again, delete user
+     */
+    function testFetchUserCount() {
+	global $gallery;
+
+	list ($ret, $countBefore) = GalleryUserHelper::fetchUserCount();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $user) = $this->_createRandomUser();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	GalleryDataCache::reset();
+
+	list ($ret, $countAfter) = GalleryUserHelper::fetchUserCount();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals($countBefore+1, $countAfter);
+
+	/* Delete it */
+	$ret = $this->_deleteAndVerifyEntity($user->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    /**
+     * Create user, fetch it by name, delete user
+     */
+    function testFetchUserByName() {
+	global $gallery;
+
+	list ($ret, $user) = $this->_createRandomUser();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	GalleryDataCache::reset();
+
+	list ($ret, $newUser) = GalleryUserHelper::fetchUserByUserName($user->getUserName());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals($user, $newUser);
+
+	/* Delete it */
+	$ret = $this->_deleteAndVerifyEntity($user->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+    
+    /**
      * Create group, delete group
      */
     function testCreateGroup() {
@@ -389,6 +475,43 @@ class UserAndGroupTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }
+
+    function testAssertSiteAdministrator() {
+	$ret = GalleryUserHelper::assertSiteAdministrator();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    function testAssertHasItemPermission() {
+	global $gallery;
+	
+	list ($ret, $rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryUserHelper::assertHasItemPermission($rootId, 'core.view');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    function testHasItemPermission() {
+	global $gallery;
+	
+	list ($ret, $rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $hasPermission) =
+	    GalleryUserHelper::hasItemPermission($rootId, $gallery->getActiveUserId(), 'core.view');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+    
 }
 
 ?>
