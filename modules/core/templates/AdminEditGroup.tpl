@@ -24,7 +24,7 @@
 	{g->text text="required"}
       </div>
 
-      <input type="text" name="{g->formVar var="form[groupName]"}" value="{$form.groupName}"/>
+      <input type="text" name="{g->formVar var="form[groupName]"}" value="{$form.groupName}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
       <input type="hidden" name="{g->formVar var="groupId"}" value="{$AdminEditGroup.group.id}"/>
 
       {if isset($form.error.groupName.missing)}
@@ -37,9 +37,9 @@
 
   <div class="gbBottomFlag">
     <div class="giActionSelect">
-      <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}"/>
-      <input type="submit" name="{g->formVar var="form[action][undo]"}" value="{g->text text="Undo"}"/>
-      <input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
+      <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}" class="button"/>
+      <input type="submit" name="{g->formVar var="form[action][undo]"}" value="{g->text text="Undo"}" class="button"/>
+      <input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}" class="button"/>
     </div>
   </div>
 </div>

@@ -34,7 +34,7 @@
 	{g->text text="ImageMagick Path"}
       </div>
 
-      <input type="text" name="{g->formVar var="form[path]"}" value="{$form.path}"/>
+      <input type="text" name="{g->formVar var="form[path]"}" value="{$form.path}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
 	
       {if isset($form.error.path.missing)}
       <div class="giError">
@@ -67,9 +67,9 @@
   </div>
 
   <div class="gbButtons">
-    <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="Save Settings"}"/>
-    <input type="submit" name="{g->formVar var="form[action][test]"}" value="{g->text text="Test Settings"}"/>
-    <input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
+    <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="Save Settings"}" class="button"/>
+    <input type="submit" name="{g->formVar var="form[action][test]"}" value="{g->text text="Test Settings"}" class="button"/>
+    <input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}" class="button"/>
   </div>
 
   {if !empty($AdminImageMagick.tests)}

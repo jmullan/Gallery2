@@ -44,9 +44,10 @@
       {g->text text="Edit Group"}
     </div>
 
-    <input type="text" name="{g->formVar var="form[text][groupName]"}" size="20" value="{$form.text.groupName}"/>
-
-    <br />
+    <input type="text" name="{g->formVar var="form[text][groupName]"}" size="20" value="{$form.text.groupName}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
+    <input type="submit" name="{g->formVar var="form[action][editFromText]"}" value="{g->text text="Edit"}" class="button"/>
+    <input type="submit" name="{g->formVar var="form[action][deleteFromText]"}" value="{g->text text="Delete"}" class="button"/>
+    <input type="submit" name="{g->formVar var="form[action][addRemoveUsersFromText]"}" value="{g->text text="Add/Remove Users"}" class="button"/>
 
     {if isset($form.error.text.noSuchGroup)}
     <div class="giError">
@@ -72,9 +73,6 @@
     </div>
     {/if}
 
-    <input type="submit" name="{g->formVar var="form[action][editFromText]"}" value="{g->text text="Edit"}"/>
-    <input type="submit" name="{g->formVar var="form[action][deleteFromText]"}" value="{g->text text="Delete"}"/>
-    <input type="submit" name="{g->formVar var="form[action][addRemoveUsersFromText]"}" value="{g->text text="Add/Remove Users"}"/>
   </div>
 
   <div class="gbAdmin">
@@ -157,9 +155,9 @@
     </table>
 
     {if !empty($form.list.filter) || ($form.list.maxPages > 1)}
-    <input type="text" name="{g->formVar var="form[list][filter]"}" value="{$form.list.filter}"/>
-    <input type="submit" name="{g->formVar var="form[action][filterBySubstring]"}" value="{g->text text="Filter:"}"/>
-    <input type="submit" name="{g->formVar var="form[action][filterClear]"}" value="{g->text text="Clear"}"/>
+    <input type="text" name="{g->formVar var="form[list][filter]"}" value="{$form.list.filter}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
+    <input type="submit" name="{g->formVar var="form[action][filterBySubstring]"}" value="{g->text text="Filter:"}" class="button"/>
+    <input type="submit" name="{g->formVar var="form[action][filterClear]"}" value="{g->text text="Clear"}" class="button"/>
     {/if}
       
     {if (!empty($form.list.filter))}
@@ -174,11 +172,7 @@
 
   <div class="gbAdmin">
     <div class="gbDataEntry">
-      <div class="giTitle">
-	{g->text text="Create Group"}
-      </div>
-
-      <input type="submit" name="{g->formVar var="form[action][create]"}" value="{g->text text="Create"}"/>
+      <input type="submit" name="{g->formVar var="form[action][create]"}" value="{g->text text="Create Group"}" class="button"/>
     </div>
   </div>
 </div>

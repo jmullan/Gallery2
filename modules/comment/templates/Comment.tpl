@@ -38,7 +38,7 @@
   {/if}
   </p>
 
-  <span>
+  <p class="giInfo">
     {capture name="date"}{g->date timestamp=$comment.date format="%e-%b-%Y %H:%M"}{/capture}
     {if isset($can.edit)}
 
@@ -52,6 +52,6 @@
              arg1=$user.fullName|default:$user.userName
              arg2=$smarty.capture.date}
     {/if}
-  </span>
+  </p>
 
 </div>

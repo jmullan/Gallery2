@@ -24,7 +24,7 @@
 	{g->text text="required"}
       </div>
 
-      <input type="text" name="{g->formVar var="form[groupName]"}" value="{$form.groupName}"/>
+      <input type="text" name="{g->formVar var="form[groupName]"}" value="{$form.groupName}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
       <script type="text/javascript">document.forms[0]['{g->formVar var="form[groupName]"}'].focus();</script>
 
       {if isset($form.error.groupName.missing)}
@@ -42,9 +42,9 @@
   </div>
 
   <div class="gbBottomFlag">
-    <div class="giActionSelect">
-      <input type="submit" name="{g->formVar var="form[action][create]"}" value="{g->text text="Create Group"}"/>
-      <input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
+    <div class="gbButtons">
+      <input type="submit" name="{g->formVar var="form[action][create]"}" value="{g->text text="Create Group"}" class="button"/>
+      <input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}" class="button"/>
     </div>
   </div>
 </div>

@@ -27,8 +27,8 @@
     <div class="gbBottomFlag">
       <div class="giActionSelect">
 	<input type="hidden" name="{g->formVar var="userId"}" value="{$AdminDeleteUser.user.id}"/>
-	<input type="submit" name="{g->formVar var="form[action][delete]"}" value="{g->text text="Delete"}"/>
-	<input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
+	<input type="submit" name="{g->formVar var="form[action][delete]"}" value="{g->text text="Delete"}" class="button"/>
+	<input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}" class="button"/>
       </div>
     </div>
   </div>

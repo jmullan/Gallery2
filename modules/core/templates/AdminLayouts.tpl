@@ -144,7 +144,7 @@
 
 	  <td>
 	    {if ($setting.type == 'text-field')}
-	    <input type="text" size="6" name="{g->formVar var="form[key][$settingKey]"}" value="{$form.key.$settingKey}"/>
+	    <input type="text" size="6" name="{g->formVar var="form[key][$settingKey]"}" value="{$form.key.$settingKey}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
 	    {elseif ($setting.type == 'single-select')}
 	    <select name="{g->formVar var="form[key][$settingKey]"}">
 		{html_options options=$setting.choices selected=$setting.value}
@@ -178,11 +178,11 @@
 
     {if isset($AdminLayouts.customTemplate) || !empty($AdminLayouts.settings)}
     <div class="gbBottomFlag">
-      <div class="giActionSelect">
+      <div class="gbButtons">
 	<input type="hidden" name="{g->formVar var="layoutId"}" value="{$AdminLayouts.layoutId}"/>
 	<input type="hidden" name="{g->formVar var="mode"}" value="editLayout"/>
-	<input type="submit" name="{g->formVar var="form[action][saveLayout]"}" value="{g->text text="Save"}"/>
-	<input type="submit" name="{g->formVar var="form[action][undoLayout]"}" value="{g->text text="Undo"}"/>
+	<input type="submit" name="{g->formVar var="form[action][saveLayout]"}" value="{g->text text="Save"}" class="button"/>
+	<input type="submit" name="{g->formVar var="form[action][undoLayout]"}" value="{g->text text="Undo"}" class="button"/>
       </div>
     </div>
     {/if}

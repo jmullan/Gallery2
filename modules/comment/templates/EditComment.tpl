@@ -7,9 +7,9 @@
 <div id="gsAdminContents">
   <div class="gbTopFlag">
     <div class="gbTitle">
-      <div class="giTitle">
+      <h1 class="giTitle">
 	{g->text text="Edit comment"}
-      </div>
+      </h1>
     </div>
 
   </div>

@@ -37,7 +37,7 @@
     
     <div class="gbNavBar">
       <div class="gbAdmin">
-    	<select name="{g->formVar var="form[pluginId]"}" class="giActionSelect">
+    	<select name="{g->formVar var="form[pluginId]"}" class="giActionSelect" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';">
     	  <option label="{g->text text="&laquo; cart actions &raquo;"}" value="" selected>{g->text text="&laquo; cart actions &raquo;"}</option>
     	  <option label="{g->text text="Update Quantities"}" value="updateCart"> {g->text text="Update Quantities"} </option>
     	  <option label="{g->text text="Empty Cart"}" value="emptyCart"> {g->text text="Empty Cart"} </option>
@@ -100,7 +100,7 @@
     	  {foreach from=$ViewCart.items item=item}
     	  <tr class="{cycle values="gbEven,gbOdd"}">
     	    <td>
-    	      <input type="text" size="3" name="{g->formVar var="form[counts][`$item.id`]"}" value="{$form.counts[$item.id]}"/>
+    	      <input type="text" size="3" name="{g->formVar var="form[counts][`$item.id`]"}" value="{$form.counts[$item.id]}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
     	    </td>
     
     	    <td>

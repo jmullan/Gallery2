@@ -25,7 +25,7 @@
       </div>
 
       <input type="hidden" name="{g->formVar var="userId"}" value="{$AdminEditUser.user.id}"/>
-      <input size="32" type="text" name="{g->formVar var="form[userName]"}" value="{$form.userName}"/>
+      <input size="32" type="text" name="{g->formVar var="form[userName]"}" value="{$form.userName}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
 
       {if isset($form.error.userName.duplicate)}
       <div class="giError">
@@ -45,7 +45,7 @@
 	{g->text text="Full Name"}
       </div>
       
-      <input size="32" type="text" name="{g->formVar var="form[fullName]"}" value="{$form.fullName}"/>
+      <input size="32" type="text" name="{g->formVar var="form[fullName]"}" value="{$form.fullName}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
     </div>
 
     {if $AdminEditUser.show.email}
@@ -58,7 +58,7 @@
 	{g->text text="required"}
       </div>
 
-      <input size="32" type="text" name="{g->formVar var="form[email]"}" value="{$form.email}"/>
+      <input size="32" type="text" name="{g->formVar var="form[email]"}" value="{$form.email}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
 	  
       {if isset($form.error.email.missing)}
       <div class="giError">
@@ -89,7 +89,7 @@
 	{g->text text="required"}
       </div>
 
-      <input size="32" type="password" name="{g->formVar var="form[password1]"}"/>
+      <input size="32" type="password" name="{g->formVar var="form[password1]"}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
 
       {if isset($form.error.password1.missing)}
       <div class="giError">
@@ -124,9 +124,9 @@
 	      
     <div class="gbBottomFlag">
       <div class="giActionSelect">
-	<input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="edit user"}"/>
-	<input type="submit" name="{g->formVar var="form[action][undo]"}" value="{g->text text="undo"}"/>
-	<input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="cancel"}"/>
+	<input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="edit user"}" class="button"/>
+	<input type="submit" name="{g->formVar var="form[action][undo]"}" value="{g->text text="undo"}" class="button"/>
+	<input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="cancel"}" class="button"/>
       </div>
     </div>
   </div>

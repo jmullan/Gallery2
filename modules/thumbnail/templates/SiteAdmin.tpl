@@ -107,9 +107,9 @@
     <div class="giDescription" style="margin-bottom:10px">{g->text text="Images do not need to be thumbnail size; they will be resized as needed."}</div>
 
     {g->text text="Default thumbnail for mime type:"}
-    <input type="text" name="{g->formVar var="form[mimeType]"}" size="30"><br/>
+    <input type="text" name="{g->formVar var="form[mimeType]"}" size="30" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/><br/>
     <select name="{g->formVar var="form[blah]"}"
-     onchange="this.form['{g->formVar var="form[mimeType]"}'].value=this.value;this.selectedIndex=0;this.blur()">
+     onchange="this.form['{g->formVar var="form[mimeType]"}'].value=this.value;this.selectedIndex=0;this.blur()"/>
     <option value="">{g->text text="&laquo; Choose type or enter above &raquo;"}</option>
     {foreach from=$form.mimeMap key=mime item=extlist}
       <option value="{$mime}">{$mime} ({$extlist})</option>
@@ -118,14 +118,14 @@
 
     <table><tr><td style="padding-left:10px">
       <input type="{if !empty($form.list)}radio{else}hidden{/if}"
-             name="{g->formVar var="form[image]"}" value="new">
+             name="{g->formVar var="form[image]"}" value="new"/>
       {g->text text="New jpeg file:"}
     </td><td>
-      <input type="file" name="{g->formVar var="form[1]"}" size="45">
+      <input type="file" name="{g->formVar var="form[1]"}" size="45"/>
     </td></tr>
     {if !empty($form.list)}
     <tr><td style="padding-left:10px">
-      <input type="radio" name="{g->formVar var="form[image]"}" value="old" checked="checked">
+      <input type="radio" name="{g->formVar var="form[image]"}" value="old" checked="checked"/>
       {g->text text="Existing image:"}
     </td><td>
       <select name="{g->formVar var="form[oldimage]"}">
@@ -140,7 +140,7 @@
 
   <div class="gbBottomFlag">
     <div class="gbButtons">
-      <input type="submit" name="{g->formVar var="form[action][add]"}" value="{g->text text="save"}">
+      <input type="submit" name="{g->formVar var="form[action][add]"}" value="{g->text text="save"}" class="button"/>
     </div>
   </div>
 </div>

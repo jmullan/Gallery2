@@ -30,7 +30,7 @@
 	{g->text text="Path:"}
       </div>
 
-      <input type="text" size="60" name="{g->formVar var="form[albumsPath]"}" value="{$form.albumsPath}"/>
+      <input type="text" size="60" name="{g->formVar var="form[albumsPath]"}" value="{$form.albumsPath}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
 
       {if isset($form.error.albumsPath.missing)}
       <div class="giError">
@@ -67,6 +67,6 @@
     </ul>
     {/if}
 
-    <input type="submit" name="{g->formVar var="form[action][select]"}" value="{g->text text="Select"}"/>
+    <input type="submit" name="{g->formVar var="form[action][select]"}" value="{g->text text="Select"}" class="button"/>
   </div>
 </div>

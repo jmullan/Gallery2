@@ -158,20 +158,20 @@
 
       <tr>
 	<td>
-	  <input type="submit" name="{g->formVar var="form[action][availableToSummary]"}" value="{g->text text="Add to Summary"}"/>
-	  <input type="submit" name="{g->formVar var="form[action][availableToDetailed]"}" value="{g->text text="Add to Detailed"}"/>
+	  <input type="submit" name="{g->formVar var="form[action][availableToSummary]"}" value="{g->text text="Add to Summary"}" class="button"/>
+	  <input type="submit" name="{g->formVar var="form[action][availableToDetailed]"}" value="{g->text text="Add to Detailed"}" class="button"/>
 	</td>
 
 	<td>
-	  <input type="submit" name="{g->formVar var="form[action][removeFromSummary]"}" value="{g->text text="Remove"}"/>
-	  <input type="submit" name="{g->formVar var="form[action][moveUpSummary]"}" value="{g->text text="Up"}"/>
-	  <input type="submit" name="{g->formVar var="form[action][moveDownSummary]"}" value="{g->text text="Down"}"/>
+	  <input type="submit" name="{g->formVar var="form[action][removeFromSummary]"}" value="{g->text text="Remove"}" class="button"/>
+	  <input type="submit" name="{g->formVar var="form[action][moveUpSummary]"}" value="{g->text text="Up"}" class="button"/>
+	  <input type="submit" name="{g->formVar var="form[action][moveDownSummary]"}" value="{g->text text="Down"}" class="button"/>
 	</td>
 
 	<td>
-	  <input type="submit" name="{g->formVar var="form[action][removeFromDetailed]"}" value="{g->text text="Remove"}"/>
-	  <input type="submit" name="{g->formVar var="form[action][moveUpDetailed]"}" value="{g->text text="Up"}"/>
-	  <input type="submit" name="{g->formVar var="form[action][moveDownDetailed]"}" value="{g->text text="Down"}"/>
+	  <input type="submit" name="{g->formVar var="form[action][removeFromDetailed]"}" value="{g->text text="Remove"}" class="button"/>
+	  <input type="submit" name="{g->formVar var="form[action][moveUpDetailed]"}" value="{g->text text="Up"}" class="button"/>
+	  <input type="submit" name="{g->formVar var="form[action][moveDownDetailed]"}" value="{g->text text="Down"}" class="button"/>
 	</td>
       </tr>
     </table>
@@ -185,7 +185,7 @@
       {g->text text="Restore the original values for the Summary and Detailed views.  Use with caution, there is no undo!"}
     </div>
 
-    <input type="submit" name="{g->formVar var="form[action][resetSummary]"}" value="{g->text text="Restore Summary Defaults"}"/>
-    <input type="submit" name="{g->formVar var="form[action][resetDetailed]"}" value="{g->text text="Restore Detailed Defaults"}"/>
+    <input type="submit" name="{g->formVar var="form[action][resetSummary]"}" value="{g->text text="Restore Summary Defaults"}" class="button"/>
+    <input type="submit" name="{g->formVar var="form[action][resetDetailed]"}" value="{g->text text="Restore Detailed Defaults"}" class="button"/>
   </div>
-</div>
+</div> class="button"

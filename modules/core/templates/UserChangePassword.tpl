@@ -36,7 +36,7 @@
 	{g->text text="required"}
       </div>
 
-      <input type="password" name="{g->formVar var="form[password1]"}"/>
+      <input type="password" name="{g->formVar var="form[password1]"}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
 
       {if isset($form.error.password1.missing)}
       <div class="giError">
@@ -53,7 +53,7 @@
 	{g->text text="required"}
       </div>
 
-      <input type="password" name="{g->formVar var="form[password2]"}"/>
+      <input type="password" name="{g->formVar var="form[password2]"}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
 
       {if isset($form.error.password2.missing)}
       <div class="giError">
@@ -70,7 +70,7 @@
   </div>
 
   <div class="gbButtons">
-    <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="Change"}"/>
-    <input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
+    <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="Change"}" class="button"/>
+    <input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}" class="button"/>
   </div>
 </div>

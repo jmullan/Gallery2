@@ -19,7 +19,7 @@
 	{g->text text="User name"}
       </div>
 
-      <input type="text" name="{g->formVar var="form[username]"}" value="{$form.username}"/>
+      <input type="text" name="{g->formVar var="form[username]"}" value="{$form.username}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
       <script type="text/javascript">document.forms[0]['{g->formVar var="form[username]"}'].focus();</script>
 
       {if isset($form.error.username.missing)}
@@ -34,7 +34,7 @@
 	{g->text text="Password"}
       </div>
 
-      <input type="password" name="{g->formVar var="form[password]"}"/>
+      <input type="password" name="{g->formVar var="form[password]"}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
 
       {if isset($form.error.password.missing)}
       <div class="giError">
@@ -51,7 +51,7 @@
   </div>
 
   <div class="gbButtons">
-    <input type="submit" name="{g->formVar var="form[action][login]"}" value="{g->text text="Login"}"/>
-    <input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
+    <input type="submit" name="{g->formVar var="form[action][login]"}" value="{g->text text="Login"}" class="button"/>
+    <input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}" class="button"/>
   </div>
 </div>

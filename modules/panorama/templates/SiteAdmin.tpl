@@ -41,20 +41,20 @@
       {g->text text="The panorama viewer can be activated in two ways: the first allows album administrators to select individual images for panorama display (Panorama section in \"edit photo\"), overriding the normal display of the entire image.  The second method retains the normal image display but gives users an option in the \"item actions\" to view the image in the panorama viewer."}
     </div>
 
-    <input id="itemType" type="checkbox" name="{g->formVar var="form[itemType]"}" {if $form.itemType}checked="checked"{/if}/>
+    <input id="itemType" type="checkbox" name="{g->formVar var="form[itemType]"}" {if $form.itemType}checked="checked"{/if} class="button"/>
     <label for="itemType">
       {g->text text="Use applet to display wide images"}
     </label>
     <br/>
 
-    <input id="itemLink" type="checkbox" name="{g->formVar var="form[itemLink]"}" {if $form.itemLink}checked="checked"{/if}/>
+    <input id="itemLink" type="checkbox" name="{g->formVar var="form[itemLink]"}" {if $form.itemLink}checked="checked"{/if} class="button"/>
     <label for="itemLink">
       {g->text text="Add \"view panorama\" option in item actions for wide images"}
     </label>
     <br/>
 
     {g->text text="Width of panorama viewer: "}
-    <input type="text" size="6" name="{g->formVar var="form[width]"}" value="{$form.width}"/>
+    <input type="text" size="6" name="{g->formVar var="form[width]"}" value="{$form.width}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
     <br/>
 
     {if isset($form.error.width)}
@@ -65,8 +65,8 @@
   </div>
 
   <div class="gbButtons">
-    <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}"/>
-    <input type="submit" name="{g->formVar var="form[action][undo]"}" value="{g->text text="Undo"}"/>
+    <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}" class="button"/>
+    <input type="submit" name="{g->formVar var="form[action][undo]"}" value="{g->text text="Undo"}" class="button"/>
   </div>
 
   {if ($form.count > 0)}
@@ -75,7 +75,7 @@
       {g->text text="This gallery contains items activated for panorama view.  These must be reset to standard items before this module can be deactivated.  You can reset all items here.  Warning: there is no undo."}
     </div>
 
-    <input type="submit" name="{g->formVar var="form[action][reset]"}" value="{g->text text="Reset all items"}"/>
+    <input type="submit" name="{g->formVar var="form[action][reset]"}" value="{g->text text="Reset all items"}" class="button"/>
   </div>
   {/if}
 </div>

@@ -186,11 +186,11 @@
 
       <tr>
 	<td>
-	  <input type="text" size="40" name="{g->formVar var="form[uploadLocalServer][newDir]"}" value="{$form.uploadLocalServer.newDir}"/>
+	  <input type="text" size="40" name="{g->formVar var="form[uploadLocalServer][newDir]"}" value="{$form.uploadLocalServer.newDir}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
 	</td>
 
 	<td>
-	  <input type="submit" name="{g->formVar var="form[action][addUploadLocalServerDir]"}" value="{g->text text="add"}"/>
+	  <input type="submit" name="{g->formVar var="form[action][addUploadLocalServerDir]"}" value="{g->text text="add"}" class="button"/>
 	</td>
       </tr>
     </table>
@@ -321,8 +321,8 @@
 
   <div class="gbBottomFlag">
     <div class="gbButtons">
-      <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="save"}"/>
-      <input type="submit" name="{g->formVar var="form[action][reset]"}" value="{g->text text="reset"}"/>
+      <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="save"}" class="button"/>
+      <input type="submit" name="{g->formVar var="form[action][reset]"}" value="{g->text text="reset"}" class="button"/>
     </div>
   </div>
 </div>
