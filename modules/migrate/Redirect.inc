@@ -112,8 +112,8 @@ class RedirectController extends GalleryController {
 	    $scriptName = GalleryUtilities::getServerVar('SCRIPT_NAME');
 	}
 	$results = array('redirect' => array('href' => GalleryUrlGenerator::makeUrl($scriptName),
-				'view' => $view),
-	    'status' => array(), 'error' => array());
+					     'view' => $view),
+			 'status' => array(), 'error' => array());
 	if (isset($id)) {
 	    $results['redirect']['itemId'] = $id;
 	    if (!empty($full)) {
