@@ -81,7 +81,7 @@ class MaintenanceHelperTest extends GalleryTestCase {
 	/* Add a task entry */
 	$time = time() - 5;  /* Choose an arbitrary time */
 	$ret = MaintenanceHelper_simple::addRun(
-	    'MaintenanceHelperTestTask', $time, true, 'some details');
+	    'MaintenanceHelperTestTask', $time, true, array('some details'));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -90,13 +90,13 @@ class MaintenanceHelperTest extends GalleryTestCase {
 	$this->assert($info['runId'] > 0, 'run id 1');
 	$this->assertEquals($time, $info['timestamp'], 'timestamp 1');
 	$this->assertEquals(true, $info['success'], 'success 1');
-	$this->assertEquals('some details', $info['details'], 'details 1');
+	$this->assertEquals(array('some details'), $info['details'], 'details 1');
 	$lastRunId = $info['runId'];
 
 	/* Add a second task entry */
 	$time = time() + 15;  /* Choose an arbitrary time */
 	$ret = MaintenanceHelper_simple::addRun(
-	    'MaintenanceHelperTestTask', $time, false, 'different details');
+	    'MaintenanceHelperTestTask', $time, false, array('different details'));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -105,7 +105,7 @@ class MaintenanceHelperTest extends GalleryTestCase {
 	$this->assert($info['runId'] > $lastRunId, 'run id 2');
 	$this->assertEquals($time, $info['timestamp'], 'timestamp 2');
 	$this->assertEquals(false, $info['success'], 'success 2');
-	$this->assertEquals('different details', $info['details'], 'details 2');
+	$this->assertEquals(array('different details'), $info['details'], 'details 2');
     }
 }
 
@@ -117,7 +117,7 @@ class MaintenanceHelperTestTask extends MaintenanceTask {
     }
     
     function run() {
-	return array(GalleryStatus::success(), false, 'fail details');
+	return array(GalleryStatus::success(), false, array('fail details'));
     }
 }
 ?>

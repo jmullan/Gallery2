@@ -102,7 +102,7 @@ class AdminMaintenanceControllerTest extends GalleryControllerTestCase {
 	$this->assert($info['runId'] > 0);
 	$this->assert($info['timestamp'] > time() - 2);  /* assert that it's recent */
 	$this->assert($info['success']);
-	$this->assertEquals('success details', $info['details']);
+	$this->assertEquals(array('success details'), $info['details']);
     }
 
     function testRunTaskFail() {
@@ -128,7 +128,7 @@ class AdminMaintenanceControllerTest extends GalleryControllerTestCase {
 	$this->assert($info['runId'] > 0);
 	$this->assert($info['timestamp'] > time() - 2);  /* assert that it's recent */
 	$this->assert(!$info['success']);
-	$this->assertEquals('fail details', $info['details']);
+	$this->assertEquals(array('fail details'), $info['details']);
     }
 }
 
@@ -140,7 +140,7 @@ class AdminMaintenanceControllerTestTaskSuccess extends MaintenanceTask {
     }
     
     function run() {
-	return array(GalleryStatus::success(), true, 'success details');
+	return array(GalleryStatus::success(), true, array('success details'));
     }
 }
 
@@ -152,7 +152,7 @@ class AdminMaintenanceControllerTestTaskFail extends MaintenanceTask {
     }
     
     function run() {
-	return array(GalleryStatus::success(), false, 'fail details');
+	return array(GalleryStatus::success(), false, array('fail details'));
     }
 }
 ?>

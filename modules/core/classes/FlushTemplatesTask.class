@@ -30,14 +30,13 @@
 GalleryCoreApi::relativeRequireOnce('modules/core/AdminMaintenance.inc');
 
 /**
- * This is a MaintenanceTask that will optimize all the Gallery tables in the
- * database to make Gallery run smoothly. 
+ * This is a MaintenanceTask that will delete all the cached Smarty templates.
  *
  * @package GalleryCore
  * @subpackage UserInterface
  *
  */
-class OptimizeDatabaseTask extends MaintenanceTask {
+class FlushTemplatesTask extends MaintenanceTask {
 
     /**
      * @see MaintenanceTask::getInfo()
@@ -46,8 +45,8 @@ class OptimizeDatabaseTask extends MaintenanceTask {
 	global $gallery;
 
 	$info['l10Domain'] = 'modules_core';
-	$info['title'] = $gallery->i18n('Optimize database');
-	$info['description'] = $gallery->i18n('Improve the performance of your database.  Results will vary depending on which database you\'re using, but this routine maintenance will make your Gallery run faster.  Especially useful after adding or deleting many items.');
+	$info['title'] = $gallery->i18n('Delete template cache');
+	$info['description'] = $gallery->i18n('Gallery compiles template files and saves them for increased performance.  If you\'re experiencing problems that say <i>Smarty error</i> then you might try running this task.');
 	return $info;
     }
 
@@ -57,13 +56,39 @@ class OptimizeDatabaseTask extends MaintenanceTask {
     function run() {
 	global $gallery;
 
-	$storage =& $gallery->getStorage();
-	$ret = $storage->optimize();
+	$platform = $gallery->getPlatform();
+	$dir = $gallery->getConfig('data.smarty.templates_c');
+	$success = true;
+
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
+	
+	$details = array();
+	if ($platform->file_exists($dir)) {
+	    $success = $platform->recursiveRmdir($dir);
+	    if (!$success) {
+		$details[] = $module->translate(
+		    array('text' => 'Unable to delete directory: %s',
+			  'arg1' => $dir));
+	    }
+	}
 
-	return array(GalleryStatus::success(), true, '');
+	if ($success) {
+	    $success = $platform->mkdir($dir);
+	    if (!$success) {
+		$details[] = $module->translate(
+		    array('text' => 'Unable to create directory: %s',
+			  'arg1' => $dir));
+	    }
+	}
+
+	if ($success) {
+	    $details[] = $module->translate('Template cache deleted successfully');
+	}
+
+	return array(GalleryStatus::success(), $success, $details);
     }
 }
 

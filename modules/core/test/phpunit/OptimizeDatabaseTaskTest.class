@@ -26,7 +26,7 @@
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
-GalleryCoreApi::relativeRequireOnce('modules/core/OptimizeDatabaseTask.inc');
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/OptimizeDatabaseTask.class');
 
 /**
  * Test the OptimizeDatabase maintenance task functionality
@@ -60,13 +60,18 @@ class OptimizeDatabaseTaskTest extends GalleryTestCase {
 	$mockStorage = new OptimizeDatabaseTaskTestStorage();
 	$gallery->_storage =& $mockStorage;
 
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
 	list ($ret, $success, $details) = $this->_task->run();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$this->assert($success);
-	$this->assertEquals('', $details);
+	$this->assertEquals(array($module->translate('Database optimized successfully')), $details);
 	$this->assert($mockStorage->optimizeWasCalled());
     }
 }

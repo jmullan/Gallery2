@@ -606,6 +606,18 @@ class CoreModuleExtras {
 	    /* Added GalleryMaintenance table */
 	    break;
 	     
+	case '0.9.7':
+	    /*
+	     * Change GalleryMaintenance::details column to be a serialized array.  The old data
+	     * is transient so just delete it. Added FlushTemplatesTask, FlushDatabaseCacheTask
+	     */
+	    GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryMaintenanceMap.class');
+	    $ret = GalleryMaintenanceMap::removeAllMapEntries();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    break;
+	     
 	default:
 	    return GalleryStatus::error(ERROR_BAD_PLUGIN, __FILE__, __LINE__,
 					sprintf('Unknown module version %s', $currentVersion));
@@ -1005,7 +1017,9 @@ class CoreModuleExtras {
 	$regs[] = array('ItemAddPlugin', 'ItemAddFromServer', 'inc', null);
 	$regs[] = array('ItemAddPlugin', 'ItemAddFromWeb', 'inc', null);
 	$regs[] = array('ItemAddOption', 'CreateThumbnailOption', 'inc', null);
-	$regs[] = array('MaintenanceTask', 'OptimizeDatabaseTask', 'inc', null);
+	$regs[] = array('MaintenanceTask', 'OptimizeDatabaseTask', 'class', null);
+	$regs[] = array('MaintenanceTask', 'FlushTemplatesTask', 'class', null);
+	$regs[] = array('MaintenanceTask', 'FlushDatabaseCacheTask', 'class', null);
 
 	/*
 	 * Unlike other modules, the core module doesn't get deactivated so its

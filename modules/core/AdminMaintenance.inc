@@ -168,7 +168,7 @@ class MaintenanceTask {
      * Execute the task
      * @return array object GalleryStatus a status code
      *               boolean success or failure
-     *               string output text
+     *               array string output text
      */
     function run() {
 	return GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);

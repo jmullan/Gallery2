@@ -99,7 +99,7 @@ class MaintenanceHelper_simple {
 	    $info = array('runId' => $result[0],
 			  'timestamp' => (int)$result[1],
 			  'success' => (bool)$result[2],
-			  'details' => $result[3]);
+			  'details' => unserialize($result[3]));
 	}
 
 	return array(GalleryStatus::success(), $info);
@@ -111,7 +111,7 @@ class MaintenanceHelper_simple {
      * @param int the task id
      * @param int when the run happened
      * @param bool task success/failure
-     * @param string task details
+     * @param array string task details
      * @return object GalleryStatus a status code
      */
     function addRun($taskId, $timestamp, $success, $details) {
@@ -129,7 +129,7 @@ class MaintenanceHelper_simple {
 		  'taskId' => $taskId,
 		  'timestamp' => $timestamp,
 		  'success' => (int)$success,
-		  'details' => $details));
+		  'details' => serialize($details)));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
