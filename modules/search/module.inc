@@ -107,8 +107,8 @@ class SearchModule extends GalleryModule {
     function loadSystemContent(&$template) {
 	global $gallery;
 
-	$subView = GalleryUtilities::getRequestVariables('subView');
-	if ($subView == 'search:SearchScan' || $subView == 'search:SearchShowAll') {
+	$view = GalleryUtilities::getRequestVariables('view');
+	if ($view == 'search:SearchScan' || $view == 'search:SearchShowAll') {
 	    $content = null;
 	} else {
 	    $SearchSystemContent['subView'] = 'search:SearchScan';
