@@ -111,9 +111,18 @@ class MembersTest extends GalleryTestCase {
     }
 
     function testFetchUserItemCount() {
+	/* Initial check, should be zero */
+        list ($ret, $itemCount) =
+            GalleryMembersHelper::fetchUserItemCount($this->_user->getId());
+        if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
+        }
+	
+        $this->assertEquals(0, $itemCount);
+
         /*
-         * Create some random items so that there's something for the API method to work with.  Set the
-         * timestamp to bogus (but well known) values and set the owner to our test user.
+         * Create some random items so that there's something for the API method to work with.
+         * Set the timestamp to bogus (but well known) values and set the owner to our test user.
          */
 	$numItems = 4; 
         for ($i = 0; $i < $numItems; $i++) {
@@ -127,6 +136,9 @@ class MembersTest extends GalleryTestCase {
         /* Ask for the item count */
         list ($ret, $itemCount) =
             GalleryMembersHelper::fetchUserItemCount($this->_user->getId());
+        if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
+        }
 
 	/* assert it equals our original number of items we created*/
         $this->assertEquals($numItems, $itemCount);
@@ -135,8 +147,8 @@ class MembersTest extends GalleryTestCase {
 
     function testFetchLastUserItems() {
 	/*
-	 * Create some random items so that there's something for the API method to work with.  Set the
-	 * timestamp to bogus (but well known) values and set the owner to our test user.
+	 * Create some random items so that there's something for the API method to work with.
+	 * Set the timestamp to bogus (but well known) values and set the owner to our test user.
 	 */
 	for ($i = 0; $i < 4; $i++) {
 	    list ($ret, $originalItems[$i]) =
@@ -149,6 +161,9 @@ class MembersTest extends GalleryTestCase {
 	/* Ask for the middle two items in ascending order */
 	list ($ret, $items) =
 	    GalleryMembersHelper::fetchLastUserItems($this->_user->getId(), 1, 2, ORDER_ASCENDING);
+        if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
+        }
 
 	$this->assertEquals(array($originalItems[1], $originalItems[2]), $items);
     }
@@ -283,7 +298,7 @@ class MembersTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$sevenDays = date("U", mktime(0, 0, date("s")+30, date("m"), date("d")-7, date("Y")));
+	$sevenDays = date("U", mktime(0, 0, 0, date("m"), date("d")-7, date("Y")));
 	$this->_user->setCreationTimestamp($sevenDays);
 	$ret = $this->_user->save();
 	if ($ret->isError()) {
@@ -298,15 +313,15 @@ class MembersTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$this->assertEquals(7, $result, 'a little more than 168 hours (7 days)');
+	$this->assertEquals(7, $result, '7 days ago');
 
 	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($this->_user->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$stillSevenDays = date("U", mktime(0, 0, date("s")-30, date("m"), date("d")-6, date("Y")));
-	$this->_user->setCreationTimestamp($stillSevenDays);
+	$sixDays = date("U", mktime(0, 0, 0, date("m"), date("d")-6, date("Y")));
+	$this->_user->setCreationTimestamp($sixDays);
 	$ret = $this->_user->save();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -320,7 +335,7 @@ class MembersTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$this->assertEquals(7, $result, 'a little less than 144 hours (6 days)');
+	$this->assertEquals(6, $result, '6 days ago');
     }
 }
 ?>
