@@ -63,7 +63,7 @@ if (phpversion() >= '4') {
 		$buf .= " <B>at line</B> $traceEntry[line]";
 		$trace[] = $buf;
 	    }
-	    $message .= '<BR>' . join('<BR>', $trace);
+	    $message .= join('<BR>', $trace);
 	} else {
 	    $message .=" <B>in</B> ".$errfile." <B>at line</B> ".$errline;
 	}
@@ -184,9 +184,8 @@ class Assert {
 
   function failNotEquals($expected, $actual, $expected_label, $message=0) {
     // Private function for reporting failure to match.
-    $str = $message ? ($message . ' ') : '';
+    $str = $message ? ($message . ' <br>') : '';
     //$str .= "($expected_label/actual)<br>";
-    $str .= "<br>";
     $str .= sprintf("%s<br>%s",
 		    $this->_formatValue($expected, "expected"),
 		    $this->_formatValue($actual, "actual"));
@@ -545,7 +544,6 @@ class TestResult {
   }
 }
 
-
 class TextTestResult extends TestResult {
   /* Specialize TestResult to produce text/html report */
   function TextTestResult() {
@@ -563,16 +561,17 @@ class TextTestResult extends TestResult {
 
     if ($nFailures > 0) {
 	print("<h2>Failures</h2>");
-	print("<ol>\n");
+	print("\n<ol>\n");
 	$failures = $this->getFailures();
 	while (list($i, $failure) = each($failures)) {
 	    $failedTestName = $failure->getTestName();
-	    printf("<li>%s\n", $failedTestName);
+	    printf("<li>%s</li>\n", $failedTestName);
 
 	    $exceptions = $failure->getExceptions();
-	    print("<ul>");
-	    while (list($na, $exception) = each($exceptions))
-		printf("<li>%s\n", $exception->getMessage());
+	    print("\n<ul>");
+	    while (list($na, $exception) = each($exceptions)) {
+                printf("<li>%s</li>\n", $exception->getMessage());
+            }
 	    print("</ul>");
 	}
 	print("</ol>\n");
@@ -580,15 +579,15 @@ class TextTestResult extends TestResult {
 
     if ($nErrors > 0) {
 	print("<h2>Errors</h2>");
-	print("<ol>\n");
+	print("\n<ol>\n");
 	reset($this->fErrors);
 	while (list($i, $error) = each($this->fErrors)) {
 	    $erroredTestName = $error->getTestName();
-	    printf("<li>%s\n", $failedTestName);
+	    printf("<li>%s</li>\n", $failedTestName);
 
 	    $exception = $error->getException();
-	    print("<ul>");
-	    printf("<li>%s\n", $exception->getMessage());
+	    print("\n<ul>");
+	    printf("<li>%s</li>\n", $exception->getMessage());
 	    print("</ul>");
 	}
 	print("</ol>\n");
@@ -637,23 +636,24 @@ class PrettyTestResult extends TestResult {
     $nFailures = $this->countFailures();
 	echo "<h2>Summary</h2>";
 
-    printf("<p>%2.4f seconds elapsed<br>", $this->_totalElapsed);
-    printf("<p>%s test%s run<br>", $nRun, ($nRun == 1) ? '' : 's');
-    printf("%s failure%s.<br>\n", $nFailures, ($nFailures == 1) ? '' : 's');
+    printf("<p>%2.4f seconds elapsed</p>", $this->_totalElapsed);
+    printf("<p>%s test%s run</p>", $nRun, ($nRun == 1) ? '' : 's');
+    printf("<p>%s failure%s.</p>\n", $nFailures, ($nFailures == 1) ? '' : 's');
     if ($nFailures == 0)
       return;
 
 	echo "<h2>Failure Details</h2>";
-    print("<ol>\n");
+    print("\n<ol>\n");
     $failures = $this->getFailures();
     while (list($i, $failure) = each($failures)) {
       $failedTestName = $failure->getTestName();
-      printf("<li>%s\n", $failedTestName);
+      printf("\n<li>%s</li>\n", $failedTestName);
 
       $exceptions = $failure->getExceptions();
       print("<ul>");
-      while (list($na, $exception) = each($exceptions))
-	printf("<li>%s\n", $exception->getMessage());
+      while (list($na, $exception) = each($exceptions)) {
+	printf("\n<li>%s</li>\n", $exception->getMessage());
+      }
       print("</ul>");
     }
     print("</ol>\n");
