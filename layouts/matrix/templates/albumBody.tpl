@@ -9,9 +9,6 @@
  * 2. Reconsider albums in a single td... 
  *
  *}
-<div id="gsHeader">
-  {include file="gallery:layouts/matrix/templates/banner.tpl"}      
-</div>
 
 {include file="gallery:layouts/matrix/templates/pathbar.tpl"}
 

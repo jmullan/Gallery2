@@ -9,10 +9,6 @@
     <input type="hidden" name="{g->formVar var="controller"}" value="{$controller}"/>
     <input type="hidden" name="{g->formVar var="form[formName]"}" value="{$form.formName}"/>
 
-  <div id="gsHeader">
-    <!-- header -->
-  </div>
-
   <ul class="gbBreadCrumb">
     <li class="giBreadCrumbFirst">
       {g->text text="Your Account"}

@@ -10,10 +10,6 @@
 {assign var="image" value=$layout.imageViews.$currentIndex}
 {/if}
       
-<div id="gsHeader">
-  {include file="gallery:layouts/matrix/templates/banner.tpl"}      
-</div>
-
 {include file="gallery:layouts/matrix/templates/pathbar.tpl"}  
 
 <div id="gsContents">

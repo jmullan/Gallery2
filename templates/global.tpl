@@ -31,6 +31,10 @@
     {/if}>
 
     <div id="gallery">
+      <div id="gsHeader">
+        <img src="images/galleryLogo_sm.png" alt="" />
+      </div>
+
       {include file="gallery:`$main.viewBodyFile`" l10Domain=$main.viewL10Domain}
 
       <div id="gsFooter">

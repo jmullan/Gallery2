@@ -1,6 +1,3 @@
-<div id="gsHeader">
-  <!-- header -->
-</div>
 
 <ul class="gbBreadCrumb">
   <li class="giBreadCrumbFirst">

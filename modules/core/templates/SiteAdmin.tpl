@@ -10,10 +10,7 @@
     <input type="hidden" name="{g->formVar var="controller"}" value="{$controller}"/>
     <input type="hidden" name="{g->formVar var="form[formName]"}" value="{$form.formName}" />
   </p>
-    
-  <div id="gsHeader">
-    {include file="gallery:layouts/matrix/templates/banner.tpl"}    
-  </div>
+
   <ul class="gbBreadCrumb">
     <li class="giBreadCrumbFirst">
       {g->text text="Site Administration"}

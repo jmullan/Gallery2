@@ -11,10 +11,6 @@
     <input type="hidden" name="{g->formVar var="form[formName]"}" value="{$form.formName}"/>
     <input type="hidden" name="{g->formVar var="itemId"}" value="{$ItemAdmin.item.id}"/>
   </p>
-  
-  <div id="gsHeader">
-    {include file="gallery:layouts/matrix/templates/banner.tpl"}    
-  </div>
 
   <ul class="gbBreadCrumb">
     {foreach name="parent" from=$ItemAdmin.parents item=parent}

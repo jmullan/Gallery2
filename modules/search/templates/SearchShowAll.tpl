@@ -4,9 +4,6 @@
  * Gallery will look for that file first and use it if it exists
  * and when you upgrade, your changes will not get overwritten.
  *}
-<div id="gsHeader">
-  {include file="gallery:layouts/matrix/templates/banner.tpl"}
-</div>
 
 <ul class="gbBreadCrumb">
   <li class="giBreadCrumbFirst">
