@@ -113,13 +113,13 @@ class GalleryGroupHelper {
      * @return array object GalleryStatus a status code
      *               object GalleryGroup a group
      */
-    function fetchGroupByGroupname($groupname=null) {
+    function fetchGroupByGroupName($groupName=null) {
 	global $gallery;
 
 	list ($ret, $searchResults) =
 	    $gallery->search(array('select' => '[GalleryGroup::id]',
-				   'where' => '[GalleryGroup::groupname] = ?'),
-			     array($groupname));
+				   'where' => '[GalleryGroup::groupName] = ?'),
+			     array($groupName));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

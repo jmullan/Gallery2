@@ -29,11 +29,19 @@ class AddCommentController extends GalleryController {
 	global $gallery;
 	global $HTTP_SERVER_VARS;
 
-	$gallery->debug('XXX: check to make sure that the user can add this comment');
-
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
 	$form = GalleryUtilities::getFormVariables('form.');
 	$return = GalleryUtilities::getFormVariables('return.');
+
+	/* Make sure we have permission to add a comment */
+	$ret = GalleryUserHelper::assertHasItemPermission($itemId,
+							  $gallery->getActiveUserId(),
+							  array('core.all',
+								'comment.all',
+								'comment.add'));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 
 	if (isset($form['action']['add']) && !empty($form['comment'])) {
 	    /* Add the comment */
@@ -101,6 +109,16 @@ class AddCommentView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	/* Make sure we have permission to add a comment */
+	$ret = GalleryUserHelper::assertHasItemPermission($item->getId(),
+							  $gallery->getActiveUserId(),
+							  array('core.all',
+								'comment.all',
+								'comment.add'));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
 	/* Get its thumbnail */
 	list ($ret, $thumbnailTable) = 
 		GalleryDerivativeHelper::fetchThumbnailsByItemIds(array($item->getId()));

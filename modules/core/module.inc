@@ -181,47 +181,51 @@ class CoreModule extends GalleryModule {
 	
 	/* Register all core permissions */
 	GalleryPermissionMap::registerPermission('core.all',
-						 $this->translate('All permissions'),
+						 $this->translate('[core] Full access'),
 						 true);
 	
 	GalleryPermissionMap::registerPermission('core.view',
-						 $this->translate('View this item'),
+						 $this->translate('[core] View item'),
 						 false);
 	
 	GalleryPermissionMap::registerPermission('core.viewResizes',
-						 $this->translate('View resized versions of this item'),
+						 $this->translate('[core] View resized versions'),
 						 false);
 	
 	GalleryPermissionMap::registerPermission('core.viewSource',
-						 $this->translate('View the original version of this item'),
+						 $this->translate('[core] View original version'),
 						 false);
 	
 	GalleryPermissionMap::registerPermission('core.viewAll',
-						 $this->translate('View all versions of this item'),
+						 $this->translate('[core] View all versions'),
 						 false);
 	
 	GalleryPermissionMap::registerPermission('core.addAlbum',
-						 $this->translate('Add an album to this item'),
+						 $this->translate('[core] Add sub-album'),
 						 true);
 	
 	GalleryPermissionMap::registerPermission('core.addItem',
-						 $this->translate('Add an item to this item'),
+						 $this->translate('[core] Add sub-item'),
 						 true);
 	
-	GalleryPermissionMap::registerPermission('core.change',
-						 $this->translate('Change the properties of this item'),
+	GalleryPermissionMap::registerPermission('core.changeProperties',
+						 $this->translate('[core] Change item properties'),
+						 true);
+	
+	GalleryPermissionMap::registerPermission('core.changePermissions',
+						 $this->translate('[core] Change item permissions'),
 						 true);
 	
 	GalleryPermissionMap::registerPermission('core.move',
-						 $this->translate('Move this item'),
+						 $this->translate('[core] Move item'),
 						 true);
 	
 	GalleryPermissionMap::registerPermission('core.changeText',
-						 $this->translate('Change this item\'s text'),
+						 $this->translate('[core] Change item text'),
 						 true);
 	
 	GalleryPermissionMap::registerPermission('core.delete',
-						 $this->translate('Delete this item'),
+						 $this->translate('[core] Delete item'),
 						 true);
 	
 	return parent::init();
@@ -388,7 +392,7 @@ class CoreModule extends GalleryModule {
 		    $showDeleteLink = $item->getId() != $rootId;
 		}
 
-		if (array_intersect(array('core.change'), $itemPermissions)) {
+		if (array_intersect(array('core.changePermissions'), $itemPermissions)) {
 		    $showPermissionsLink = true;
 		}
 	    }
@@ -516,7 +520,7 @@ class CoreModule extends GalleryModule {
 				 'view' => 'core:ItemEditGeneral');
 	}
 
-	if (array_intersect(array('core.all', 'core.change'), $permissions)) {
+	if (array_intersect(array('core.all', 'core.changeProperties'), $permissions)) {
 	    if (is_subclass_of($item, 'GalleryAlbumItem') ||
 		    get_class($item) == strtolower('GalleryAlbumItem')) {
 	        $views[] = array('name' => $this->translate('Album Settings'),
@@ -548,7 +552,7 @@ class CoreModule extends GalleryModule {
 	    }
 	}
 	
-	if (array_intersect(array('core.all', 'core.change'), $permissions)) {
+	if (array_intersect(array('core.all', 'core.changePermissions'), $permissions)) {
 	    $views[] = array('name' => $this->translate('Permissions'),
 			     'view' => 'core:ItemEditPermissions');
 	}

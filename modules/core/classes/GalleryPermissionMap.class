@@ -93,6 +93,16 @@ class GalleryPermissionMap_core {
     }
 
     /**
+     * Return the ids of all registered permissions
+     *
+     * @return array (permission, permission, permission)
+     */
+    function getAllRegisteredPermissions() {
+	$registry =& GalleryPermissionMap::_getPermissionRegistry();
+	return $registry['id'];
+    }
+
+    /**
      * Return the ids of all permissions relating to item administration
      *
      * @return array permission ids
@@ -119,6 +129,7 @@ class GalleryPermissionMap_core {
 	/* Add a new entry in our map to represent this relationship. */
 	$ret = GalleryPermissionMap::addMapEntry(array('itemId' => $itemId,
 						       'userId' => $userId,
+						       'groupId' => 0,
 						       'permission' => $permission));
 						     
 	if ($ret->isError()) {
@@ -350,18 +361,51 @@ class GalleryPermissionMap_core {
     function hasPermission($itemId, $userIds, $groupIds, $permissions) {
 	global $gallery;
 
-	$userIdMarkers = GalleryUtilities::makeMarkers($userIds);
-	$groupIdMarkers = GalleryUtilities::makeMarkers($groupIds);
-	$permissionMarkers = GalleryUtilities::makeMarkers($permissions);
+	if (empty($permissions)) {
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER,
+					      __FILE__, __LINE__),
+			 null);
+	}
+
+	$where = '[GalleryPermissionMap::itemId] = ? ';
+	$data = array($itemId);
 	
+	if (!empty($userIds)) {
+	    $userClause = '[GalleryPermissionMap::userId] IN (' .
+		GalleryUtilities::makeMarkers($userIds) .
+		') ';
+	}
+
+	if (!empty($groupIds)) {
+	    $groupClause = '[GalleryPermissionMap::groupId] IN (' .
+		GalleryUtilities::makeMarkers($groupIds) .
+		') ';
+	}
+
+	$where .= 'AND (';
+	if (!empty($userClause) && !empty($groupClause)) {
+	    $where .= '(' . $userClause . ' OR ' . $groupClause . ')';
+	    $data = array_merge($data, $userIds, $groupIds);
+	} else if (!empty($userClause)) {
+	    $where .= $userClause;
+	    $data = array_merge($data, $userIds);
+	} else {
+	    $where .= $groupClause;
+	    $data = array_merge($data, $groupIds);
+	}
+
+	$where .= 'AND [GalleryPermissionMap::permission] IN (' .
+	    GalleryUtilities::makeMarkers($permissions) .
+	    ')';
+	$data = array_merge($data, $permissions);
+	$where .= ')';
+
 	list($ret, $searchResults) =
 	    $gallery->search(array('select' => '[GalleryPermissionMap::permission]',
-				   'where' => ('[GalleryPermissionMap::itemId] = ? ' .
-					       'AND (([GalleryPermissionMap::userId] IN (' . $userIdMarkers . ') ' .
-					       '      OR [GalleryPermissionMap::groupId] IN (' . $groupIdMarkers . ')) ' .
-					       '     AND [GalleryPermissionMap::permission] IN (' . $permissionMarkers . '))'),
+				   'where' => $where,
 				   'limit' => array('count' => 1)),
-			     array_merge($itemId, $userIds, $groupIds, $permissions));
+			     $data);
+
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), false);
 	}

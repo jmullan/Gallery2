@@ -34,7 +34,7 @@ class ItemEditImageController extends GalleryController {
 	/* Make sure we have permission do edit this item */
 	$ret = GalleryUserHelper::assertHasItemPermission($itemId,
 							  $gallery->getActiveUserId(),
-							  array('core.all', 'core.change'));
+							  array('core.all', 'core.changeProperties'));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -279,7 +279,7 @@ class ItemEditImageView extends GalleryView {
 	/* Make sure we have permission do edit this item */
 	$ret = GalleryUserHelper::assertHasItemPermission($itemId,
 							  $gallery->getActiveUserId(),
-							  array('core.all', 'core.change'));
+							  array('core.all', 'core.changeProperties'));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

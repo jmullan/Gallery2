@@ -51,28 +51,28 @@ class CommentModule extends GalleryModule {
 					       'GalleryComment',
 					       $classDir . 'GalleryComment.class');
 
-	GalleryPermissionMap::registerPermission('comment.full',
-						 $this->translate('Full control over this item\'s comments'),
+	GalleryPermissionMap::registerPermission('comment.all',
+						 $this->translate('[comment] Full access'),
 						 false);
 
 	GalleryPermissionMap::registerPermission('comment.add',
-						 $this->translate('Add a comment to this item'),
+						 $this->translate('[comment] Add comments'),
 						 false);
 
 	GalleryPermissionMap::registerPermission('comment.edit',
-						 $this->translate('Edit this item\'s comments'),
+						 $this->translate('[comment] Edit comments'),
 						 false);
 
 	GalleryPermissionMap::registerPermission('comment.delete',
-						 $this->translate('Delete this item\'s comments'),
+						 $this->translate('[comment] Delete comments'),
 						 false);
 
 	GalleryPermissionMap::registerPermission('comment.view',
-						 $this->translate('View comments for this item'),
+						 $this->translate('[comment] View comments'),
 						 false);
 
 	GalleryPermissionMap::registerPermission('comment.viewIp',
-						 $this->translate('View the commenter\'s internet address'),
+						 $this->translate('[comment] View commenter\'s IP address'),
 						 false);
 
 	
@@ -137,20 +137,25 @@ class CommentModule extends GalleryModule {
 	    $items = array($items);
 	}
 
-	/* XXX: Permission check "can the user add a comment to this item?" */
-	$gallery->debug("XXX: Comment.getItemLinks should be checking perms");
-
 	foreach ($returnUrlParams as $param => $value) {
 	    $params['return.' . $param] = $value;
 	}
 
 	$links = array();
 	foreach ($items as $item) {
-	    $params['view'] = 'comment:AddComment';
-	    $params['itemId'] = $item->getId();
-	    $links[$item->getId()][] =
-		array('text' => $this->translate('add comment'),
-		      'params' => $params);
+
+	    list ($ret, $itemPermissions) =
+		GalleryItemHelper::getPermissions($item->getId(),
+						  $gallery->getActiveUserId());
+
+	    if (array_intersect(array('core.all', 'comment.all', 'comment.add'),
+				$itemPermissions)) {
+		$params['view'] = 'comment:AddComment';
+		$params['itemId'] = $item->getId();
+		$links[$item->getId()][] =
+		    array('text' => $this->translate('add comment'),
+			  'params' => $params);
+	    }
 	}
 
 	return array(GalleryStatus::success(), $links);

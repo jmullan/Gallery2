@@ -34,7 +34,7 @@ class ItemEditPermissionsController extends GalleryController {
 	/* Make sure we have permission do edit this item */
 	$ret = GalleryUserHelper::assertHasItemPermission($itemId,
 							  $gallery->getActiveUserId(),
-							  array('core.all', 'core.change'));
+							  array('core.all', 'core.changePermissions'));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -43,15 +43,129 @@ class ItemEditPermissionsController extends GalleryController {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
-	if (isset($form['action']['...xxx...'])) {
 
-	    /* ... take some action here ... */
+	if (isset($form['action']['delete'])) {
+	    /* Handle delete actions */ 
+	    if (isset($form['permission']['id']) &&
+		(isset($form['group']['id']) || isset($form['user']['id']))) {
+
+		$permission = $form['permission']['id'];
+		if (isset($form['group']['id'])) {
+		    $ret = GalleryPermissionMap::removeGroupPermission($itemId,
+								       $form['group']['id'],
+								       $permission);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		}
+		
+		if (isset($form['user']['id'])) {
+		    $ret = GalleryPermissionMap::removeUserPermission($itemId,
+								      $form['user']['id'],
+								      $permission);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		}
+	    }
 
 	    /* Figure out where to redirect upon success */
 	    $redirectParams['view'] = 'core:ItemAdmin';
 	    $redirectParams['subView'] = 'core:ItemEditPermissions';
 	    $redirectParams['itemId'] = $itemId;
+	} else if (isset($form['action']['addUserPermission'])) {
+
+	    /* Handle create user permission actions */
+	    if (empty($form['user']['userName'])) {
+		GalleryUtilities::putRequestVariable('form.error.user.missingUser', 1);
+	    } else {
+		/* Validate the user */
+		list ($ret, $user) =
+		    GalleryUserHelper::fetchUserByUserName($form['user']['userName']);
+		if ($ret->isError()) {
+		    if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
+			GalleryUtilities::putRequestVariable('form.error.user.invalidUser', 1);
+		    } else {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		}
+
+		/* Validate the permission */
+		$permission = $form['user']['permission'];
+		$allPermissions = GalleryPermissionMap::getAllRegisteredPermissions();
+		if (empty($allPermissions[$permission])) {
+		    GalleryUtilities::putRequestVariable('form.error.user.invalidPermission', 1);
+		    $permission = null;
+		}
+
+		if (!empty($permission) && !empty($user)) {
+		    /* Don't add the permission if it already exists */
+		    list ($ret, $hasIt) =
+			GalleryPermissionMap::hasPermission($itemId,
+							    array($user->getId()),
+							    null,
+							    array($permission));
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+
+		    if (!$hasIt) {
+			$ret = GalleryPermissionMap::addUserPermission($itemId,
+								       $user->getId(),
+								       $permission);
+			if ($ret->isError()) {
+			    return array($ret->wrap(__FILE__, __LINE__), null);
+			}
+		    }
+		}
+	    }
+	    
+	} else if (isset($form['action']['addGroupPermission'])) {
+
+	    /* Handle create group permission actions */
+	    if (empty($form['group']['groupName'])) {
+		GalleryUtilities::putRequestVariable('form.error.group.missingGroup', 1);
+	    } else {
+		/* Validate the group */
+		list ($ret, $group) =
+		    GalleryGroupHelper::fetchGroupByGroupName($form['group']['groupName']);
+		if ($ret->isError()) {
+		    if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
+			GalleryUtilities::putRequestVariable('form.error.group.invalidGroup', 1);
+		    } else {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		}
+
+		/* Validate the permission */
+		$permission = $form['group']['permission'];
+		$allPermissions = GalleryPermissionMap::getAllRegisteredPermissions();
+		if (empty($allPermissions[$permission])) {
+		    GalleryUtilities::putRequestVariable('form.error.group.invalidPermission', 1);
+		    $permission = null;
+		}
+
+		if (!empty($permission) && !empty($group)) {
+		    /* Don't add the permission if it already exists */
+		    list ($ret, $hasIt) =
+			GalleryPermissionMap::hasPermission($itemId,
+							    null,
+							    array($group->getId()),
+							    array($permission));
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+
+		    if (!$hasIt) {
+			$ret = GalleryPermissionMap::addGroupPermission($itemId,
+									$group->getId(),
+									$permission);
+			if ($ret->isError()) {
+			    return array($ret->wrap(__FILE__, __LINE__), null);
+			}
+		    }
+		}
+	    }
 	}
 
 	if (!empty($redirectParams)) {
@@ -83,7 +197,7 @@ class ItemEditPermissionsView extends GalleryView {
 	/* Make sure we have permission do edit this item */
 	$ret = GalleryUserHelper::assertHasItemPermission($itemId,
 							  $gallery->getActiveUserId(),
-							  array('core.all', 'core.change'));
+							  array('core.all', 'core.changePermissions'));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -93,10 +207,93 @@ class ItemEditPermissionsView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	if ($formName == 'ItemEditPermissions') {
+	    /* Complain if we have any invalid data */
+	} else {
+	    /* First time around, load the form with item data */
+	    $form['user']['userName'] = '';
+	    $form['group']['groupName'] = '';
+	}
+
+	/* Get all available permissions */
+	$allPermissions =
+	    GalleryPermissionMap::getAllRegisteredPermissions();
+	ksort($allPermissions);
+
+	/* Get all permissions for the item. */
+	list ($ret, $permissions) = 
+	    GalleryPermissionMap::fetchAllPermissionsForItem($itemId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Figure out all the unique user/group ids and load those */
+	$userAndGroupEntityIds = array();
+	foreach ($permissions as $permission) {
+	    if (!empty($permission['userId'])) {
+		$userAndGroupEntityIds[$permission['userId']] = 1;
+	    }
+	    if (!empty($permission['groupId'])) {
+		$userAndGroupEntityIds[$permission['groupId']] = 1;
+	    }
+	}
+
+	list ($ret, $userAndGroupEntities) =
+	    $gallery->loadEntitiesById(array_keys($userAndGroupEntityIds));
+
+	/* Convert them into a hash map by entity id */
+	foreach ($userAndGroupEntities as $entity) {
+	    $userAndGroupEntityMap[$entity->getId()] = $entity->getMemberData();
+	}
+
+	/* Figure out the admin group id */
+	list ($ret, $adminGroupId) =
+	    $gallery->getModuleParameter('core', 'id.adminGroup');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/*
+	 * Now create the separate user and group permission maps.
+	 *
+	 * Silently ignore any permissions that we come across that aren't part
+	 * of the permission registry.  They may be permission associated with 
+	 * modules that are not currently active.
+	 */
+	$userPermissions = array();
+	$groupPermissions = array();
+	foreach ($permissions as $permission) {
+	    if (!empty($permission['userId']) && isset($allPermissions[$permission['permission']])) {
+		$userPermissions[] =
+		    array('permission' =>
+			  array('id' => $permission['permission'],
+				'description' => $allPermissions[$permission['permission']]),
+			  'user' => $userAndGroupEntityMap[$permission['userId']],
+			  'deleteable' => 1);
+	    }
+	    
+	    if (!empty($permission['groupId']) && isset($allPermissions[$permission['permission']])) {
+		$deleteable = 1;
+		if ($permission['groupId'] == $adminGroupId &&
+		        $permission['permission'] == 'core.all') {
+		    $deleteable = 0;
+		}
+		$groupPermissions[] =
+		    array('permission' =>
+			  array('id' => $permission['permission'],
+				'description' => $allPermissions[$permission['permission']]),
+			  'group' => $userAndGroupEntityMap[$permission['groupId']],
+			  'deleteable' => $deleteable);
+	    }
+	}
+	
 	/* Render the HTML body */
 	$this->_initTemplate(dirname(__FILE__) . '/templates');
 	$this->_setTemplateVariable('form', $form);
 	$this->_setTemplateVariable('item', $item->getMemberData());
+	$this->_setTemplateVariable('userPermissions', $userPermissions);
+	$this->_setTemplateVariable('groupPermissions', $groupPermissions);
+	$this->_setTemplateVariable('allPermissions', $allPermissions);
 	$this->_setTemplateVariable('controller', 'core:ItemEditPermissions');
 	$html = $this->_renderTemplate('core', 'ItemEditPermissions.tpl');
 
