@@ -1,0 +1,131 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * ItemDelete controller tests
+ */
+class ItemMakeHighlightControllerTest extends GalleryControllerTestCase {
+
+    function ItemMakeHighlightControllerTest($methodName) {
+	$this->GalleryControllerTestCase($methodName, 'core:ItemMakeHighlight');
+    }
+
+    function setUp() {
+	global $gallery;
+	
+	parent::setUp();
+
+	list ($ret, $rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	/* Register a dummy toolkit */
+	GalleryFactory::registerImplementation('GalleryToolkit',
+					       'ItemMakeHighlightTestToolkit',
+					       'ItemMakeHighlightTestToolkit',
+					       __FILE__);
+	
+	/* Register operations that we can perform on our mock data items */
+	$ret = GalleryToolkitHelper::registerOperation('ItemMakeHighlightTestToolkit',
+						array('test/file-0'),
+						'thumbnail',
+						array(array('type' => 'int')),
+						'test-description');
+	if ($ret->isError()) {
+	    print $gallery->getDebugBuffer();
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $this->_album) = $this->_createRandomAlbum($rootId);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	for ($i = 0; $i < 2; $i++) {
+	    list ($ret, $this->_item[$i]) = $this->_createRandomDataItem($this->_album->getId(), 'test/file-' . $i);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+
+	    list ($ret, $this->_derivative[$i]) =
+		$this->_createDerivative($this->_item[$i]->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
+					 'thumbnail|200');
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+    }
+
+    function tearDown() {
+	global $gallery;
+	
+	$ret = $gallery->deleteEntityById($this->_album->getId());
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	/* Unregister */
+	$ret = GalleryToolkitHelper::unregisterToolkit('ItemMakeHighlightTestToolkit');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	parent::tearDown();
+    }
+
+    /**
+     * Test making a highlight item
+     */
+    function testMakeHighlightItem() {
+	global $gallery;
+	GalleryUtilities::putRequestVariable('itemId', $this->_item[0]->getId());
+	GalleryUtilities::putRequestVariable('form.action.makeHighlight', 1);
+
+	$results = $this->handleRequest();
+	$this->assertRedirect(array('view' => 'core:ItemAdmin',
+				    'itemId' => $this->_item[0]->getId()),
+			      $results);
+    }
+    
+    /**
+     * Test making a highlight item
+     */
+    function testMakeHighlightItemUnsupportedType() {
+	global $gallery;
+	GalleryUtilities::putRequestVariable('itemId', $this->_item[1]->getId());
+	GalleryUtilities::putRequestVariable('form.action.makeHighlight', 1);
+
+	$results = $this->handleRequest(ERROR_UNSUPPORTED_OPERATION);
+    }
+}
+
+// Dummy test toolkit
+class ItemMakeHighlightTestToolkit extends GalleryToolkit { }
+?>
