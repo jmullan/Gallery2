@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -52,6 +52,7 @@ class GalleryEmbed {
      *   'activeUserId' => (optional) external user id of active user
      *                                (empty string for anonymous/guest user)
      *   'activeLanguage' => (optional) language code in use for this session
+     *   'fullInit' => (optional) call GalleryInitSecondPass (only use when not calling handleRequest)
      * )
      * @return object GalleryStatus a status object
      * @static
@@ -61,12 +62,6 @@ class GalleryEmbed {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	if (empty($initParams)) {
-	    $ret = GalleryInitSecondPass();
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-	}
 
 	GalleryCapabilities::set('login', false);
 	if (isset($initParams['loginRedirect'])) {
@@ -75,6 +70,13 @@ class GalleryEmbed {
 
 	if (isset($initParams['activeUserId'])) {
 	    $ret = GalleryEmbed::checkActiveUser($initParams['activeUserId']);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	if (empty($initParams) || isset($initParams['fullInit'])) {
+	    $ret = GalleryInitSecondPass();
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -255,7 +257,7 @@ class GalleryEmbed {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	GalleryEmbed::_setUserData($user, $args, true);
-	$ret = $user->save(); 
+	$ret = $user->save();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -291,7 +293,7 @@ class GalleryEmbed {
 	}
 
 	GalleryEmbed::_setUserData($user, $args);
-	$ret = $user->save(); 
+	$ret = $user->save();
 	if ($ret->isError()) {
 	    GalleryCoreApi::releaseLocks($lockId);
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -388,7 +390,7 @@ class GalleryEmbed {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	$ret = $group->save(); 
+	$ret = $group->save();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -425,7 +427,7 @@ class GalleryEmbed {
 	}
 	return GalleryStatus::success();
     }
-	
+
     /**
      * Update a G2 Group.
      *
@@ -448,7 +450,7 @@ class GalleryEmbed {
 	if (isset($args['groupname'])) {
 	    $group->setGroupName($args['groupname']);
 	}
-	$ret = $group->save(); 
+	$ret = $group->save();
 	if ($ret->isError()) {
 	    GalleryCoreApi::releaseLocks($lockId);
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -518,7 +520,7 @@ class GalleryEmbed {
 
     /**
      * Return the SystemContent block for a specific module
-     * 
+     *
      * @param string module id
      * @param string the name of the content (see the module for a description of available systemContents)
      * @return array object GalleryStatus
@@ -566,33 +568,33 @@ class GalleryEmbed {
      * @return array(title, css, javascript)
      * @static
      */
-    function parseHead($headhtml) {	
+    function parseHead($headhtml) {
  	$title = '';
   	$css = array();
   	$javascript = array();
-  
+
 	/* only 1 title allowed */
         if (preg_match("|<title(?:\s[^>]*)?>(.*)</title>|Usi", $headhtml, $regs)) {
 	    $title = $regs[1];
 	}
-  	
-	/* more than one script section allowed?, dunno */ 
+
+	/* more than one script section allowed?, dunno */
 	if(preg_match_all("|<script(?:\s[^>]*)?>(.*)</script>|Usi", $headhtml, $regs, PREG_PATTERN_ORDER)) {
 	    foreach ($regs[1] as $script) {
       		$javascript[] = $script;
             }
         }
-  
-	/* more than one style allowed */ 
+
+	/* more than one style allowed */
 	if(preg_match_all("/<(style|link)(?:\s[^>]*)?>.*<\/\\1>/Usi", $headhtml, $regs, PREG_PATTERN_ORDER)) {
 	    foreach ($regs[0] as $style) {
         	$css[] = $style;
     	    }
   	}
-  
+
 	return array($title, $css, $javascript);
     }
-    
+
     /**
      * Get HTML for an image block
      *
@@ -603,15 +605,15 @@ class GalleryEmbed {
      * 'show' is a pipe (|) separated list of one or more possible choices which are:
      * title|date|views|owner or just 'none'
      * If you choose 'blocks' = 'specificItem', you got the specify 'itemId' too.
-     * example: GalleryEmbed::getImageBlock(array('blocks' => 'randomImage', 
+     * example: GalleryEmbed::getImageBlock(array('blocks' => 'randomImage',
      		'show' => 'title|date'));
      * @return array object GalleryStatus
      *               string html content
      * @static
      */
-    function getImageBlock($params) { 
+    function getImageBlock($params) {
 	global $gallery;
-  
+
 	$moduleId = 'imageblock';
 
 	/* Load the module list */
@@ -646,7 +648,6 @@ class GalleryEmbed {
       	    return array($ret->wrap(__FILE__, __LINE__), $blockHtml);
 	}
 	return array(GalleryStatus::success(), null);
-    } 
-
+    }
 }
 ?>
