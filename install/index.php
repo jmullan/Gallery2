@@ -103,6 +103,10 @@ class InstallStep {
 	return $this->_stepNumber;
     }
 
+    function processRequest() {
+	return true; // true means continue rendering the page
+    }
+
     function loadTemplateData(&$templateData) {
 	return null;
     }
@@ -186,6 +190,10 @@ for ($i = 0; $i < $stepNumber; $i++) {
     }
 }
 $currentStep =& $steps[$stepNumber];
+
+if (!$currentStep->processRequest()) {
+    return;
+}
 
 // Load up template data from the current step
 $templateData = array();

@@ -36,6 +36,19 @@ class AuthenticateStep extends InstallStep {
 	return _('Authenticate');
     }
 
+    function processRequest() {
+	if (!empty($_GET['downloadLogin'])) {
+	    header("Content-Type: text/plain");
+	    header("Content-Length: " . strlen($this->_uniqueKey));
+	    header("Content-Description: Download login.txt to your computer.");
+	    header("Content-Disposition: attachment; filename=login.txt");
+	    print $this->_uniqueKey;
+	    return false;
+	}
+	
+	return true;
+    }
+
     function loadTemplateData(&$templateData) {
 	if (!$this->isComplete()) {
 	    // authenticate
