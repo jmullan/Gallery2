@@ -167,9 +167,12 @@ foreach ($stepOrder as $stepName) {
 session_start();
 
 // If we don't have our steps in our session, initialize them now.
-if (!isset($_GET['startOver']) && isset($_SESSION['steps'])) {
+if (!isset($_GET['startOver']) && !empty($_SESSION['steps'])) {
     $steps = unserialize($_SESSION['steps']);
-} else {
+}
+
+if (empty($steps) || !is_array($steps)) {
+    $steps = array();
     for ($i = 0; $i < sizeof($stepOrder); $i++) {
 	$className = $stepOrder[$i] . 'Step';
 	$step = new $className();
@@ -198,23 +201,21 @@ for ($i = 0; $i < $stepNumber; $i++) {
 }
 $currentStep =& $steps[$stepNumber];
 
-if (!$currentStep->processRequest()) {
-    return;
+if ($currentStep->processRequest()) {
+    // Load up template data from the current step
+    $templateData = array();
+
+    // Round percentage to the nearest 5
+    $templateData['percentComplete'] =		  
+	(int)((100 * ($stepNumber / (sizeof($steps)-1))) / 5) * 5;
+    $templateData['errors'] = array();
+    $templateData['installerDir'] =
+	str_replace($_SERVER['DOCUMENT_ROOT'], '', dirname(__FILE__));
+    $currentStep->loadTemplateData($templateData);
+
+    // Render our page
+    include('templates/MainPage.html');
 }
-
-// Load up template data from the current step
-$templateData = array();
-
-// Round percentage to the nearest 5
-$templateData['percentComplete'] =		  
-    (int)((100 * ($stepNumber / (sizeof($steps)-1))) / 5) * 5;
-$templateData['errors'] = array();
-$templateData['installerDir'] =
-    str_replace($_SERVER['DOCUMENT_ROOT'], '', dirname(__FILE__));
-$currentStep->loadTemplateData($templateData);
-
-// Render our page
-include('templates/MainPage.html');
 
 /*
  * We don't store the steps in the session in raw form because that
@@ -223,4 +224,3 @@ include('templates/MainPage.html');
  */
 $_SESSION['steps'] = serialize($steps);
 ?>
-
