@@ -136,8 +136,17 @@ function GalleryMain($startTime) {
 	
 	/* Redirect, if so instructed */
 	if (!empty($results['redirect'])) {
+	    $urlGenerator = $gallery->getUrlGenerator();
+	    $redirectUrl = $urlGenerator->generateUrl($results['redirect']);
 	    if ($gallery->getDebug() == false) {
-		header("Location: $results[redirect]");
+
+		/*
+		 * The URL generator makes HTML 4.01 compliant URLs using
+		 * &amp; but we don't want those in our Location: header.
+		 */
+		$redirectUrl = str_replace('&amp;', '&', $url);
+		
+		header("Location: $redirectUrl");
 		return GalleryStatus::success();
 	    } else {
 		/*
@@ -149,7 +158,7 @@ function GalleryMain($startTime) {
 		$master['view']['head'] = '';
 		$master['view']['body'] =
 		    "You are in debug mode so we are not automatically redirecting. " .
-		    "Click <a href=\"$results[redirect]\">here</a> to continue.";
+		    "Click <a href=\"$redirectUrl\">here</a> to continue.";
 		$master['view']['alreadyRendered'] = true;
 		$showGlobal = true;
 

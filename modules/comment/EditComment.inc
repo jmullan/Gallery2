@@ -115,16 +115,14 @@ class EditCommentController extends GalleryController {
 		}
 	    
 		/* Redirect back to the return path */
-		$urlGenerator = $gallery->getUrlGenerator();
-		$results['redirect'] = $urlGenerator->generateUrl($return);
+		$results['redirect'] = $return;
 	    } else {
 		/* Stay on the same page */
 		$results['view'] = 'comment:EditComment';
 	    }
 	} else {
 	    /* Redirect back to the return path */
-	    $urlGenerator = $gallery->getUrlGenerator();
-	    $results['redirect'] = $urlGenerator->generateUrl($return);
+	    $results['redirect'] = $return;
 	}
 
 	return array(GalleryStatus::success(), $results);

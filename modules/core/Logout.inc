@@ -42,17 +42,13 @@ class LogoutController extends GalleryController {
     function handleRequest() {
 	global $gallery;
 
-	$results = array();
-	$return = GalleryUtilities::getFormVariables('return.');
-
 	$session =& $gallery->getSession();
 	$ret = $session->reset();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	
-	$urlGenerator = $gallery->getUrlGenerator();
-	$results['redirect'] = $urlGenerator->generateUrl($return);
+	$results['redirect'] = GalleryUtilities::getFormVariables('return.');
 
 	return array(GalleryStatus::success(), $results);
     }

@@ -105,8 +105,7 @@ class AdminImageMagickController extends GalleryController {
 	}
 
 	if (!empty($redirectParams)) {
-	    $urlGenerator = $gallery->getUrlGenerator();
-	    $results['redirect'] = $urlGenerator->generateUrl($redirectParams);
+	    $results['redirect'] = $redirectParams;
 	} else {
 	    if (empty($results['view'])) {
 		$results['view'] = 'core:SiteAdmin';

@@ -146,7 +146,8 @@ class UtilitiesTest extends GalleryTestCase {
 	global $gallery;
 	
 	$gallery->setConfig('url.gallery.base', '');
-	$gallery->setUrlGenerator(new GalleryUrlGenerator($gallery->getConfig('url.gallery.base')));
+	$gallery->setUrlGenerator(new GalleryUrlGenerator($gallery->getConfig('url.gallery.base'),
+							  'main.php'));
 	
 	$this->assertEquals('modules/core/test/phpunit/UtilitiesTest.class',
 			    GalleryUtilities::convertPathToRelativeUrl(__FILE__));

@@ -41,7 +41,7 @@ class UrlGeneratorTest extends GalleryTestCase {
     }
 
     function setUp() {
-	$this->_urlGenerator = new GalleryUrlGenerator('test.php');
+	$this->_urlGenerator = new GalleryUrlGenerator('dir/', 'test.php');
 	parent::setUp();
     }
 
@@ -62,7 +62,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 	    list ($sessionKey, $sessionId) = $session->getSessionDescriptor();
 	    $values[] = GALLERY_FORM_VARIABLE_PREFIX . $sessionKey . '=' . $sessionId;
 	}
-	$expected = 'test.php?' . join('&', $values);
+	$expected = 'dir/test.php?' . join('&amp;', $values);
 
 	$this->assertEquals($expected, $actual);
     }

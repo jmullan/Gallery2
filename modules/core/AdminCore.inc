@@ -112,11 +112,8 @@ class AdminCoreController extends GalleryController {
 	}
 
 	/* Figure out where to redirect upon success */
-	$urlParams['view'] = 'core:SiteAdmin';
-	$urlParams['subView'] = 'core:AdminCore';
-
-	$urlGenerator = $gallery->getUrlGenerator();
-	$results['redirect'] = $urlGenerator->generateUrl($urlParams);
+	$results['redirect']['view'] = 'core:SiteAdmin';
+	$results['redirect']['subView'] = 'core:AdminCore';
 
 	return array(GalleryStatus::success(), $results);
     }
@@ -187,8 +184,8 @@ class AdminCoreView extends GalleryView {
 
 	/* Set up our sort direction selection list */
 	$orderDirectionList = array();
-	$orderDirectionList['asc'] = $module->translate("Ascending");
-	$orderDirectionList['desc'] = $module->translate("Descending");
+	$orderDirectionList[ORDER_ASCENDING] = $module->translate("Ascending");
+	$orderDirectionList[ORDER_DESCENDING] = $module->translate("Descending");
 
 	$platform = $gallery->getPlatform();
 

@@ -115,11 +115,8 @@ class AdminModulesController extends GalleryController {
 	}
 
 	/* Figure out where to redirect upon success */
-	$urlParams['view'] = 'core:SiteAdmin';
-	$urlParams['subView'] = 'core:AdminModules';
-
-	$urlGenerator = $gallery->getUrlGenerator();
-	$results['redirect'] = $urlGenerator->generateUrl($urlParams);
+	$results['redirect']['view'] = 'core:SiteAdmin';
+	$results['redirect']['subView'] = 'core:AdminModules';
 
 	return array(GalleryStatus::success(), $results);
     }

@@ -84,8 +84,7 @@ class AddCommentController extends GalleryController {
 	} 
 
 	/* Redirect back to the item */
-	$urlGenerator = $gallery->getUrlGenerator();
-	$results['redirect'] = $urlGenerator->generateUrl($return);
+	$results['redirect'] = $return;
 
 	return array(GalleryStatus::success(), $results);
     }

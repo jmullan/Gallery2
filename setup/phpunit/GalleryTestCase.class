@@ -84,12 +84,6 @@ class GalleryTestCase extends TestCase {
 	parent::assertEquals($expected, $actual, $message);
     }
 
-    function assertRedirect($params, $redirectUrl, $message=null) {
-	global $gallery;
-	$urlGenerator = $gallery->getUrlGenerator();
-	$this->assertEquals(array('redirect' => $urlGenerator->generateUrl($params)), $redirectUrl, $message);
-    }
-    
     function tearDown() {
 	global $gallery;
 	global $HTTP_GET_VARS;

@@ -53,10 +53,27 @@ class GalleryControllerTestCase extends GalleryTestCase {
 	parent::tearDown();
     }
 
-    function assertRedirect($params, $redirectUrl, $message=null) {
+    function assertRedirect($params, $controllerResults, $message=null) {
 	global $gallery;
 	$urlGenerator = $gallery->getUrlGenerator();
-	$this->assertEquals(array('redirect' => $urlGenerator->generateUrl($params)), $redirectUrl, $message);
+
+	/*
+	 * We may have a status id in the redirect, and that's a wildcard that
+	 * we can't predict, so leave it out of our comparison.
+	 */
+	$status = null;
+	if (isset($controllerResults['redirect']['statusId'])) {
+	    $session =& $gallery->getSession();
+	    list ($ret, $status) = $session->getStatus($controllerResults['redirect']['statusId']);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    unset($controllerResults['redirect']['statusId']);
+	}
+	    
+	$this->assertEquals($params, $controllerResults['redirect'], $message);
+
+	return $status;
     }
 
     function handleRequest($errorCode=null) {

@@ -284,8 +284,7 @@ class ItemEditAlbumController extends GalleryController {
 	}
 
 	if (!empty($redirectParams)) {
-	    $urlGenerator = $gallery->getUrlGenerator();
-	    $results['redirect'] = $urlGenerator->generateUrl($redirectParams);
+	    $results['redirect'] = $redirectParams;
 	} else {
 	    if (empty($results['view'])) {
 		$results['view'] = 'core:ItemAdmin';
@@ -394,8 +393,8 @@ class ItemEditAlbumView extends GalleryView {
 
 	/* Set up our sort direction selection list */
 	$orderDirectionList = array();
-	$orderDirectionList['asc'] = $module->translate("Ascending");
-	$orderDirectionList['desc'] = $module->translate("Descending");
+	$orderDirectionList[ORDER_ASCENDING] = $module->translate("Ascending");
+	$orderDirectionList[ORDER_DESCENDING] = $module->translate("Descending");
 
 	/* Set up our layout selection list */
 	$layoutList = array();

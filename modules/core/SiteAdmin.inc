@@ -56,7 +56,7 @@ class SiteAdminView extends GalleryView {
     /**
      * @see GalleryView::renderBody
      */
-    function renderBody($form) {
+    function renderBody($form, $status) {
 	global $gallery;
 
 	/* Make sure we have adequate permissions */
@@ -101,7 +101,7 @@ class SiteAdminView extends GalleryView {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    list ($ret, $subViewHtml) = $subView->renderBody($form);
+	    list ($ret, $subViewHtml) = $subView->renderBody($form, $status);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }

@@ -52,7 +52,7 @@ class ItemAdminView extends GalleryView {
     /**
      * @see GalleryView::renderBody
      */
-    function renderBody($form) {
+    function renderBody($form, $status) {
 	global $gallery;
 
 	/* Figure out the item we're referring to */
@@ -101,8 +101,8 @@ class ItemAdminView extends GalleryView {
 
 	/* Get a list of all the admin views for each module */
 	$subViewChoices = array();
-	foreach ($moduleStatus as $moduleName => $status) {
-	    if (empty($status['active'])) {
+	foreach ($moduleStatus as $moduleName => $moduleStatus) {
+	    if (empty($moduleStatus['active'])) {
 		continue;
 	    }
 
@@ -132,7 +132,7 @@ class ItemAdminView extends GalleryView {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    list ($ret, $subViewHtml) = $subView->renderBody($form);
+	    list ($ret, $subViewHtml) = $subView->renderBody($form, $status);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }

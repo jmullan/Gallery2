@@ -233,16 +233,28 @@ class GalleryView {
 	if (!isset($form['formName'])) {
 	    $form['formName'] = '';
 	}
-	
+
+	/* Get our status */
+	$statusId = GalleryUtilities::getRequestVariables('statusId');
+	if (isset($statusId)) {
+	    $session =& $gallery->getSession();
+	    list ($ret, $status) = $session->getStatus($statusId);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	} else {
+	    $status = array();
+	}
+
 	GalleryProfiler::start('modules.core.classes.GalleryView::renderHead');
-	list ($ret, $head) = $this->renderHead($form);
+	list ($ret, $head) = $this->renderHead($form, $status);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	GalleryProfiler::stop('modules.core.classes.GalleryView::renderHead');
 
 	GalleryProfiler::start('modules.core.classes.GalleryView::renderBody');
-	list ($ret, $body) = $this->renderBody($form);
+	list ($ret, $body) = $this->renderBody($form, $status);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
