@@ -33,7 +33,6 @@ class InstallOtherModulesStep extends InstallStep {
 	 */
 	require(dirname(__FILE__) . '/../../modules/core/classes/GalleryDataCache.class');
 	GalleryDataCache::setFileCachingEnabled(false);
-	GalleryDataCache::setMemoryCachingEnabled(false);
 
 	require(dirname(__FILE__) . '/../../init.php');
 	$ret = GalleryInitFirstPass(array('debug' => 'buffered'));
