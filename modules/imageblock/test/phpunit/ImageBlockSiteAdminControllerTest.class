@@ -73,8 +73,7 @@ class ImageBlockSiteAdminControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('return' => 1,
-				  'redirect' => array('view' => 'core:SiteAdmin',
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'imageblock:ImageBlockSiteAdmin'),
 				  'status' => array(),
 				  'error' => array()),
@@ -87,8 +86,7 @@ class ImageBlockSiteAdminControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('return' => 1,
-				  'redirect' => array('view' => 'core:SiteAdmin',
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'imageblock:ImageBlockSiteAdmin'),
 				  'status' => array('saved' => 1),
 				  'error' => array()),
@@ -103,8 +101,7 @@ class ImageBlockSiteAdminControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('return' => 1,
-				  'redirect' => array('view' => 'core:SiteAdmin',
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'imageblock:ImageBlockSiteAdmin'),
 				  'status' => array('saved' => 1),
 				  'error' => array()),
@@ -122,8 +119,7 @@ class ImageBlockSiteAdminControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('return' => 1,
-				  'redirect' => array('view' => 'core:SiteAdmin',
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'imageblock:ImageBlockSiteAdmin'),
 				  'status' => array('saved' => 1),
 				  'error' => array()),

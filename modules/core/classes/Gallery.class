@@ -144,6 +144,14 @@ class Gallery {
     var $_urlGenerator;
 
     /**
+     * The name of the current view
+     *
+     * @var string $_currentView
+     * @access private
+     */
+    var $_currentView = '';
+
+    /**
      * The time at which we should cease whatever operation we're doing
      *
      * @var int $_timeLimit
@@ -386,6 +394,24 @@ class Gallery {
      */
     function &getUrlGenerator() {
 	return $this->_urlGenerator;
+    }
+
+    /**
+     * Set the current View
+     *
+     * @param string the view name
+     */
+    function setCurrentView($view) {
+	$this->_currentView = $view;
+    }
+
+    /**
+     * Get the current View
+     *
+     * @return string the current view name
+     */
+    function getCurrentView() {
+	return $this->_currentView;
     }
 
     /**

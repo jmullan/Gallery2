@@ -149,6 +149,21 @@ class ShowItemView extends GalleryView {
     }
 
     /**
+     * @see GalleryView::getViewDescription()
+     */
+    function getViewDescription() {
+	global $gallery;
+
+	list ($ret, $item) = $this->_getItem();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$typeName = $item->itemTypeName(true);
+	return array(GalleryStatus::success(), $typeName[1]);
+    }
+
+    /**
      * @see GalleryView::rewriteQueryString
      */
     function rewriteQueryString($params) {

@@ -80,8 +80,7 @@ class NokiaUploadConfigureControllerTest extends GalleryControllerTestCase {
     function testCancel() {
 	GalleryUtilities::putRequestVariable('form[action][cancel]', '1');
 	$results = $this->handleRequest();
-	$this->assertEquals(array('return' => 1,
-				  'redirect' => array('view' => 'core:SiteAdmin',
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
 						   'subView' => 'nokiaupload:Configure'),
 				  'status' => array(), 'error' => array()),
 			    $results);
@@ -117,7 +116,7 @@ class NokiaUploadConfigureControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[parent]', (string)$this->_album->getId());
 	GalleryUtilities::putRequestVariable('form[action][save]', '1');
 	$results = $this->handleRequest();
-	$this->assertEquals(array('return' => 1,
+	$this->assertEquals(array(
 	    'redirect' => array('view' => 'core:SiteAdmin', 'subView' => 'nokiaupload:Configure'),
 	    'status' => array('configured' => 'nokiaupload'), 'error' => array()),
 		$results);

@@ -81,7 +81,7 @@ class TileLayout extends GalleryLayout {
 	}
 
 	$ret = $this->loadLayoutTemplate($template, $item,
-	    array('parents', 'systemLinks', 'systemContentFiles', 'itemLinks'),
+	    array('parents', 'systemLinks', 'systemContent', 'itemLinks'),
 	    $childIds);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -128,6 +128,7 @@ class TileLayout extends GalleryLayout {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+	$itemMap = array();
 	foreach ($layout['children'] as $child) {
 	    $itemMap[$child['id']] = $child;
 	}

@@ -22,16 +22,22 @@ function checkForm() {ldelim}
 
 <div class="gbMenu">
   <form id="SearchSystemContent" action="{g->url}" method="post" onsubmit="return checkForm()">
+    <div>
+      {g->hiddenFormVars}
+      <input type="hidden" name="{g->formVar var="view"}" value="{$SearchSystemContent.subView}" />
+      <input type="hidden" name="{g->formVar var="form[formName]"}" value="SearchSystemContent" />
+    </div>
     <ul>
       <li>
-        <input type="hidden" name="{g->formVar var="view"}" value="{$SearchSystemContent.subView}" />
-        <input type="hidden" name="{g->formVar var="form[formName]"}" value="SearchSystemContent" />
-        <input type="text" value="{g->text text="Search the Gallery"}" name="{g->formVar var="form[searchCriteria]"}" id="searchCriteria" size="15" onfocus="document.getElementById('SearchSystemContent').searchCriteria.value = ''"/>
+        <input type="text" value="{g->text text="Search the Gallery"}" name="{g->formVar var="form[searchCriteria]"}" id="searchCriteria" size="18"
+		onfocus="var field = document.getElementById('SearchSystemContent').searchCriteria; if (field.value == '{g->text text="Search the Gallery"}') {ldelim} field.value = '' {rdelim}"
+		onblur="var field = document.getElementById('SearchSystemContent').searchCriteria; if (field.value == '') {ldelim} field.value = '{g->text text="Search the Gallery"}' {rdelim}"
+	/>
         <input type="hidden" name="{g->formVar var="form[useDefaultSettings]"}" value="1" />
         <input type="submit" value="{g->text text="Go"}"/>
       </li>
       <li>
-      <a href="{g->url arg1="view=search:SearchScan" arg2="form[useDefaultSettings]=1"}">{g->text text="advanced search"}</a>
+      <a href="{g->url arg1="view=search:SearchScan" arg2="form[useDefaultSettings]=1" arg3="return=1"}">{g->text text="advanced search"}</a>
       </li>
     </ul>
   </form>

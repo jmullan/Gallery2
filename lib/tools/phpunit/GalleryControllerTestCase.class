@@ -75,7 +75,7 @@ class GalleryControllerTestCase extends GalleryTestCase {
 	    /* Check to make sure we got back everything we want */
 	    $this->assert(isset($results['status']), 'controller results missing status');
 	    $this->assert(isset($results['error']), 'controller results missing error');
-	    $this->assert(isset($results['redirect']) || isset($results['delegate']),
+	    $this->assert(isset($results['redirect']) || isset($results['delegate']) || isset($results['return']),
 			  'controller results needs one of (redirect, delegate)');
 	}
 

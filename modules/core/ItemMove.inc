@@ -190,6 +190,8 @@ class ItemMoveController extends GalleryController {
 	    $page = GalleryUtilities::getRequestVariables('page');
 	    $results['delegate']['itemId'] = $itemId;
 	    $results['delegate']['page'] = max($page - 1, 1);
+	} else if (isset($form['action']['cancel'])) {
+	    $results['return'] = true;
 	}
 
 	if (!empty($redirect)) {
@@ -350,8 +352,10 @@ class ItemMoveView extends GalleryView {
 	    $albumTree = GalleryUtilities::createAlbumTree($albums);
 	}
 
-	$ItemMove = array();
+	$urlGenerator = $gallery->getUrlGenerator();
 
+	$ItemMove = array();
+	$ItemMove['canCancel'] = $urlGenerator->isNavigationBackPossible();
 	$ItemMove['albumIds'] = $albumIds;
         $ItemMove['peers'] = $peers;
         $ItemMove['peerTypes'] = $peerTypes;
@@ -367,6 +371,18 @@ class ItemMoveView extends GalleryView {
 
         return array(GalleryStatus::success(),
 		     array('body' => 'modules/core/templates/ItemMove.tpl'));
+    }
+
+    /**
+     * @see GalleryView::getViewDescription()
+     */
+    function getViewDescription() {
+	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+
+	return array(GalleryStatus::success(), $core->translate('move item'));
     }
 }
 ?>

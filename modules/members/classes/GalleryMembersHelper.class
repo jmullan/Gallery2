@@ -291,5 +291,25 @@ class GalleryMembersHelper {
 
 	return array(GalleryStatus::success(), $age);
     }
+
+    /**
+     * Get the current member count
+     *
+     * @return array object GalleryStatus
+     *               int how many members are registered
+     */
+    function getMembersCount() {
+        global $gallery;
+	list ($ret, $groupId) =
+            GalleryCoreApi::getPluginParameter('module', 'core', 'id.allUserGroup');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	list ($ret, $totalUserCount) = GalleryCoreApi::fetchUserCount(null, $groupId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+        return array(GalleryStatus::success(), (int)$totalUserCount);
+    }
 }
 ?>

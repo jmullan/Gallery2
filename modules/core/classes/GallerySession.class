@@ -502,6 +502,105 @@ class GallerySession {
     function getSessionId() {
 	return $this->_sessionId;
     }
+
+    /**
+     * Start new navigation
+     *
+     * @param array data for this new navigation:
+     *              array(  'returnName' => ...
+     *                      'returnUrl' => ...
+     *                    [ 'returnNavId' => ... ]
+     *                   )
+     * @return string the navigation id
+     */
+    function addToNavigation($navigationData) {
+	$tod = gettimeofday();
+	$navId = 'x' . substr(md5($tod['usec'] + rand(1, 1000)), 0, 8);
+
+	$navigation =& $this->get('core.navigation');
+	if (!isset($navigation)) {
+	    $navigation = array();
+	}
+	$navigation[$navId] = array();
+	$navigation[$navId]['data'] = $navigationData;
+	$navigation[$navId]['nextIds'] = array();
+
+	/* Tell our predecessor that he's got a new successor */
+	if (isset($navigationData['returnNavId'])) {
+	    $returnNavId = $navigationData['returnNavId'];
+	    $navigation[$returnNavId]['nextIds'][$navId] = true;
+	}
+
+	/* Prune oldest navigation branches */
+	$maxNavBranches = 10;
+	if (sizeof($navigation) > $maxNavBranches) {
+	    $navigation = array_splice($navigation, -$maxNavBranches);
+	}
+
+	$this->put('core.navigation', $navigation);
+
+	return $navId;
+    }
+
+    /**
+     * Get data for a specific navigation id
+     *
+     * @param string the navigation id
+     * @return array the navigation data
+     */
+    function getNavigation($navId) {
+	$navigation = $this->get('core.navigation');
+	$navigationData = array();
+	if ($navigation != null && isset($navigation[$navId])) {
+	    $navigationData[] = $navigation[$navId]['data'];
+	    /* Add data from our predecessors, if available */
+	    while (isset($navigation[$navId]['data']['returnNavId'])
+			&& isset($navigation[$navigation[$navId]['data']['returnNavId']]['data'])) {
+		$navId = $navigation[$navId]['data']['returnNavId'];
+	        $navigationData[] = $navigation[$navId]['data'];
+	    }
+	}
+
+	return $navigationData;
+    }
+
+    /**
+     * Jump back from one navigation point to one of its predecessors
+     *
+     * @param string the source navigation id
+     * @param string the destination navigation id. If empty, go back to root.
+     * @return
+     */
+    function jumpNavigation($fromNavId, $destNavId = '') {
+	global $gallery;
+	$gallery->debug("navigation: Jumping back from $fromNavId to $destNavId");
+
+	$navigation = $this->get('core.navigation');
+	$currentId = $fromNavId;
+	/* Iterate back to root, deleting everything, until we reach
+	 * destNavId or an navId that has other successors
+	 */
+	while (true) {
+	    $gallery->debug("navigation: deleting $currentId");
+	    $returnNavId = null;
+	    if (isset($navigation[$currentId]['data']['returnNavId'])) {
+		$returnNavId = $navigation[$currentId]['data']['returnNavId'];
+	    }
+	    unset($navigation[$currentId]);
+	    if ($returnNavId == null) {
+		break;
+	    }
+	    unset($navigation[$returnNavId]['nextIds'][$currentId]);
+	    if (count($navigation[$returnNavId]['nextIds']) > 0) {
+		break;
+	    }
+	    if ($returnNavId == $destNavId) {
+		break;
+	    }
+	    $currentId = $returnNavId;
+	}
+	$this->put('core.navigation', $navigation);
+    }
 }
 
 ?>

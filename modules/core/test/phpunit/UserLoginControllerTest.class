@@ -71,9 +71,7 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 	
 	$results = $this->handleRequest();
 	$this->assertEquals(array('return' => 1,
-				  'redirect' => array('view' => 'core:UserAdmin',
-						      'subView' => 'core:UserPreferences'),
-				  'status' => array('loggedin' => 1),
+				  'status' => array(),
 				  'error' => array()),
 			    $results);
     }
@@ -109,8 +107,6 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 	
 	$results = $this->handleRequest();
 	$this->assertEquals(array('return' => 1,
-				  'redirect' => array('view' => 'core:UserAdmin',
-						      'subView' => 'core:UserLogin'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);

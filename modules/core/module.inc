@@ -280,7 +280,8 @@ class CoreModule extends GalleryModule {
 		    array('text' => $this->translate('add items'),
 			  'params' => array('view' => 'core:ItemAdmin',
 					    'subView' => 'core:ItemAdd',
-					    'itemId' => $item->getId()));
+					    'itemId' => $item->getId(),
+					    'return' => 1));
 	    }
 
 	    $itemTypeNames = $item->itemTypeName();
@@ -289,9 +290,9 @@ class CoreModule extends GalleryModule {
 		    array('text' => $this->translate(array('text' => 'edit %s',
 							   'arg1' => $itemTypeNames[1])),
 			  'params' => array('view' => 'core:ItemAdmin',
-					    'return' => true,
 					    'subView' => 'core:ItemEdit',
-					    'itemId' => $item->getId()));
+					    'itemId' => $item->getId(),
+					    'return' => 1));
 	    }
 
 	    if (isset($permissions['core.viewSource']) && GalleryCapabilities::can('link')) {
@@ -311,11 +312,11 @@ class CoreModule extends GalleryModule {
 		    if ($count > 0) {
 			$links[$item->getId()][] =
 			    array('text' => $this->translate('create link'),
-				  'params' => array('return' => 'true',
-						    'view' => 'core:ItemAdmin',
+				  'params' => array('view' => 'core:ItemAdmin',
 						    'subView' => 'core:ItemCreateLink',
 						    'itemId' => $item->getParentId(),
-						    'selectedId' => $item->getId()));
+						    'selectedId' => $item->getId(),
+						    'return' => 1));
 		    }
 		}
 	    }
@@ -325,7 +326,8 @@ class CoreModule extends GalleryModule {
 		    array('text' => $this->translate('add sub-album'),
 			  'params' => array('view' => 'core:ItemAdmin',
 					    'subView' => 'core:ItemAddAlbum',
-					    'itemId' => $item->getId()));
+					    'itemId' => $item->getId(),
+					    'return' => 1));
 	    }
 
 	    if (isset($permissions['core.changePermissions'])) {
@@ -333,7 +335,8 @@ class CoreModule extends GalleryModule {
 		    array('text' => $this->translate('edit permissions'),
 			  'params' => array('view' => 'core:ItemAdmin',
 					    'subView' => 'core:ItemPermissions',
-					    'itemId' => $item->getId()));
+					    'itemId' => $item->getId(),
+					    'return' => 1));
 	    }
 
 	    if (!$isRoot && isset($permissions['core.delete'])) {
@@ -341,10 +344,10 @@ class CoreModule extends GalleryModule {
 		    array('text' => $this->translate(array('text' => 'delete %s',
 							   'arg1' => $itemTypeNames[1])),
 			  'params' => array('view' => 'core:ItemAdmin',
-					    'return' => true,
 					    'subView' => 'core:ItemDelete',
 					    'itemId' => $item->getParentId(),
-					    'selectedId' => $item->getId()));
+					    'selectedId' => $item->getId(),
+					    'return' => 1));
 	    }
 
 	    if (!$isRoot && isset($permissions['core.delete'])) {
@@ -354,16 +357,17 @@ class CoreModule extends GalleryModule {
 			  'params' => array('view' => 'core:ItemAdmin',
 					    'subView' => 'core:ItemMove',
 					    'itemId' => $item->getParentId(),
-					    'selectedId' => $item->getId()));
+					    'selectedId' => $item->getId(),
+					    'return' => 1));
 	    }
 
 	    if (!$isRoot && !$isParentRoot && isset($thumbTable[$item->getId()]) && isset($permissions['core.edit'])) {
 		$links[$item->getId()][] =
 		    array('text' => $this->translate('make highlight'),
 			  'params' => array('view' => 'core:ItemAdmin',
-					    'return' => true,
 					    'subView' => 'core:ItemMakeHighlight',
-					    'itemId' => $item->getId()));
+					    'itemId' => $item->getId(),
+					    'return' => 1));
 	    }
 
 	    if ($isAlbum && isset($permissions['core.edit']) &&
@@ -373,7 +377,8 @@ class CoreModule extends GalleryModule {
 		    array('text' => $this->translate('reorder items'),
 			  'params' => array('view' => 'core:ItemAdmin',
 					    'subView' => 'core:ItemReorder',
-					    'itemId' => $item->getId()));
+					    'itemId' => $item->getId(),
+					    'return' => 1));
 	    }
 	}
 
@@ -399,23 +404,24 @@ class CoreModule extends GalleryModule {
 
 	if ($isAdmin) {
 	    $links[] = array('text' => $this->translate('Site Admin'),
-			     'params' => array('view' => 'core:SiteAdmin'));
+			     'params' => array('view' => 'core:SiteAdmin',
+					       'return' => 1));
 	}
 
 	if (GalleryCapabilities::can('login')) {
 	    if ($gallery->getActiveUserId() == $anonymousUserId) {
 		$links[] = array('text' => $this->translate('Login'),
-				 'params' => array('return' => 'true',
-						   'view' => 'core:UserAdmin',
-						   'subView' => 'core:UserLogin'));
+				 'params' => array('view' => 'core:UserAdmin',
+						   'subView' => 'core:UserLogin',
+						   'return' => 1));
 	    } else {
 		$links[] = array('text' => $this->translate('Your Account'),
-				 'params' => array('return' => 'true',
-						   'view' => 'core:UserAdmin',
-						   'subView' => 'core:UserPreferences'));
+				 'params' => array('view' => 'core:UserAdmin',
+						   'subView' => 'core:UserPreferences',
+						   'return' => 1));
 		$links[] = array('text' => $this->translate('Logout'),
-				 'params' => array('return' => 'true',
-						   'controller' => 'core:Logout'));
+				 'params' => array('controller' => 'core:Logout',
+						   'return' => 1));
 	    }
 	}
 
@@ -427,19 +433,25 @@ class CoreModule extends GalleryModule {
      */
     function loadSystemContent(&$template) {
 	global $gallery;
-	$content = null;
+	$content = array();
 
-	list ($ret, $languageSelector) =
-	    $this->getModuleParameter('language.selector');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
 	list ($ret, $anonymousUserId) =
 	    $this->getModuleParameter('id.anonymousUser');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	/* Need a login form? */
+	if (GalleryCapabilities::can('login') && $gallery->getActiveUserId() == $anonymousUserId) {
+	    $content['core'] = 'modules/core/templates/LoginSystemContent.tpl';
+	}
+
+	/* Get the language selector */
+	list ($ret, $languageSelector) =
+	    $this->getModuleParameter('language.selector');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 	if ($languageSelector == 'all' || ($languageSelector == 'guest'
 			&& $gallery->getActiveUserId() == $anonymousUserId)) {
 	    /* Set up our language selection list */
@@ -457,9 +469,10 @@ class CoreModule extends GalleryModule {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    $template->setVariable('LanguageSystemContent',
-		array('list' => $languageList, 'language' => $language));
-	    $content = 'modules/core/templates/LanguageSelector.tpl';
+	    $LanguageSelector = array('list' => $languageList, 'language' => $language);
+
+	    $template->setVariable('LanguageSelector', $LanguageSelector);
+	    $content['languageSelector'] = 'modules/core/templates/LanguageSelector.tpl';
 	}
 
 	return array(GalleryStatus::success(), $content);

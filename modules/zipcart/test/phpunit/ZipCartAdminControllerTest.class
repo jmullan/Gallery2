@@ -67,8 +67,7 @@ class ZipCartAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][cancel]', 1);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('return' => 1,
-				  'redirect' => array('view' => 'core:SiteAdmin',
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'zipcart:Admin'),
 				  'status' => array(),
 				  'error' => array()),
@@ -128,8 +127,7 @@ class ZipCartAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[path]', '/validPath/zip');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('return' => 1,
-				  'redirect' => array('view' => 'core:SiteAdmin',
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'zipcart:Admin'),
 				  'status' => array('saved' => 1),
 				  'error' => array()),

@@ -61,6 +61,12 @@ class ItemAdminView extends GalleryView {
 	    $thumbnailData = $thumbnail->getMemberData();
 	}
 
+	/* Get system links */
+	list ($ret, $moduleSystemLinks) = $this->_getModuleSystemLinks();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	/* Load the module list */
 	list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module');
 	if ($ret->isError()) {
@@ -95,6 +101,8 @@ class ItemAdminView extends GalleryView {
 
 	usort($subViewChoiceData, array($this, 'sortByName'));
 
+	$subViewName = GalleryUtilities::getRequestVariables('subView');
+
 	/* Turn sub view choices into url params */
 	$subViewChoices = array();
 	foreach ($subViewChoiceData as $params) {
@@ -105,6 +113,9 @@ class ItemAdminView extends GalleryView {
 	    /* Move the view -> subView and set ItemAdmin as the view */
 	    $params['subView'] = $params['view'];
 	    $params['view'] = 'core:ItemAdmin';
+	    if ($subViewName == $params['subView']) {
+		$params['active'] = true;
+	    }
 
 	    /* Set the item id if necessary */
 	    if (!isset($params['itemId'])) {
@@ -115,7 +126,6 @@ class ItemAdminView extends GalleryView {
 	}
 
 	/* If we have a specific sub view, render it now */
-	$subViewName = GalleryUtilities::getRequestVariables('subView');
 	if (empty($subViewName) && !empty($subViewChoices)) {
 	    $subViewName = 'core:ItemEdit';
 	}
@@ -126,11 +136,7 @@ class ItemAdminView extends GalleryView {
 	}
 
 	/* Get the type of the item */
-	if (GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
-	    $itemType = 'album';
-	} else {
-	    $itemType = 'item';
-	}
+	$itemType = $item->itemTypeName(true);
 
 	/* Load the item's parents */
 	list ($ret, $parents) = GalleryCoreApi::fetchParents($item);
@@ -163,6 +169,15 @@ class ItemAdminView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
+	/* Get the links for navigating back to where we came from */
+	$urlGenerator =& $gallery->getUrlGenerator();
+	list ($ret, $navigationLinks) = $urlGenerator->getNavigationLinks();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+
+	$ItemAdmin['moduleSystemLinks'] = $moduleSystemLinks;
+	$ItemAdmin['navigationLinks'] = $navigationLinks;
 	$ItemAdmin['viewBodyFile'] = $results['body'];
 	$ItemAdmin['item'] = $item->getMemberData();
 	$ItemAdmin['parents'] = $parents;
@@ -187,6 +202,25 @@ class ItemAdminView extends GalleryView {
 
     function sortByName($a, $b) {
 	return strcmp($a['name'], $b['name']);
+    }
+
+    /**
+     * @see GalleryView::getViewDescription()
+     */
+    function getViewDescription() {
+	global $gallery;
+	
+	/* Get the description from the current subView */
+	$subViewName = GalleryUtilities::getRequestVariables('subView');
+	if (empty($subViewName)) {
+	    $subViewName = 'core:ItemEdit';
+	}
+	list ($ret, $subView) = GalleryView::loadView($subViewName);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
+	return $subView->getViewDescription();
     }
 }
 ?>

@@ -117,6 +117,8 @@ class ItemDeleteController extends GalleryController {
 	    $page = GalleryUtilities::getRequestVariables('page');
 	    $results['delegate']['itemId'] = $itemId;
 	    $results['delegate']['page'] = max($page - 1, 1);
+	} else if (isset($form['action']['cancel'])) {
+	    $results['return'] = 1;
 	}
 		
 	if (!empty($redirect)) {
@@ -146,7 +148,9 @@ class ItemDeleteView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	global $gallery;
 
-	list ($itemId, $selectedId, $page) = GalleryUtilities::getRequestVariables('itemId', 'selectedId', 'page');
+	list ($itemId, $selectedId, $page, $return) =
+		GalleryUtilities::getRequestVariables('itemId', 'selectedId',
+						      'page', 'return');
 	
 	if ($form['formName'] != 'ItemDelete') {
 	    if ($selectedId) {
@@ -240,7 +244,11 @@ class ItemDeleteView extends GalleryView {
 	    }
 	}
 
+
+	$urlGenerator = $gallery->getUrlGenerator();
+
 	$ItemDelete = array();
+	$ItemDelete['canCancel'] = $urlGenerator->isNavigationBackPossible();
 	$ItemDelete['peers'] = $peers;
 	$ItemDelete['peerTypes'] = $peerTypes;
 	$ItemDelete['peerDescendentCounts'] = $peerDescendentCounts;
@@ -255,6 +263,18 @@ class ItemDeleteView extends GalleryView {
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/core/templates/ItemDelete.tpl'));
 	
+    }
+
+    /**
+     * @see GalleryView::getViewDescription()
+     */
+    function getViewDescription() {
+	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+
+	return array(GalleryStatus::success(), $core->translate('delete an item'));
     }
 }
 ?>

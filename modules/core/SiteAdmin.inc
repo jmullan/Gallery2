@@ -48,6 +48,24 @@ class SiteAdminView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+        /* Bring in the root album information for the breadcrumb */
+        list ($ret, $rootAlbumId) =
+            GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
+        if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
+        }
+        list ($ret, $rootAlbum) = GalleryCoreApi::loadEntitiesById($rootAlbumId);
+        if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
+        }
+        $rootAlbumData = $rootAlbum->getMemberData();
+
+	/* Get system links */
+	list ($ret, $moduleSystemLinks) = $this->_getModuleSystemLinks();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	/* Load the module list */
 	list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module');
 	if ($ret->isError()) {
@@ -147,7 +165,17 @@ class SiteAdminView extends GalleryView {
 	    $SiteAdmin = array();
 	}
 
+	/* Get the links for navigating back to where we came from */
+	$urlGenerator =& $gallery->getUrlGenerator();
+	list ($ret, $navigationLinks) = $urlGenerator->getNavigationLinks();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+
 	/* Set up my view parameters */
+	$SiteAdmin['rootAlbum'] = $rootAlbumData;
+	$SiteAdmin['moduleSystemLinks'] = $moduleSystemLinks;
+	$SiteAdmin['navigationLinks'] = $navigationLinks;
 	$SiteAdmin['subViewGroups'] = $subViewGroups;
 	$SiteAdmin['subViewName'] = $subViewName;
 	$SiteAdmin['viewBodyFile'] = $results['body'];
@@ -157,6 +185,35 @@ class SiteAdminView extends GalleryView {
 	return array(GalleryStatus::success(),
 		     array('head' => 'modules/core/templates/SiteAdminHead.tpl',
 			   'body' => 'modules/core/templates/SiteAdmin.tpl'));
+    }
+
+    /**
+     * @see GalleryView::getViewDescription()
+     */
+    function getViewDescription() {
+	global $gallery;
+	
+	/* Get the description from the current subView */
+	$subViewName = GalleryUtilities::getRequestVariables('subView');
+	if (empty($subViewName)) {
+	    $subViewName = 'core:AdminCore';
+	}
+	list ($ret, $subView) = GalleryView::loadView($subViewName);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
+	list ($ret, $description) = $subView->getViewDescription();
+	if (!empty($description)) {
+	    return array(GalleryStatus::success(), $description);
+	}
+	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+
+	/* Fallback if subView doesn't have a name */
+	return array(GalleryStatus::success(), $core->translate('site admin'));
     }
 }
 

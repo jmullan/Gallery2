@@ -145,5 +145,25 @@ class ItemDeleteSingleView extends GalleryView {
 		     array('body' => 'modules/core/templates/ItemDeleteSingle.tpl'));
 	
     }
+
+    /**
+     * @see GalleryView::getViewDescription()
+     */
+    function getViewDescription() {
+	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+
+	list ($ret, $item) = $this->_getItem();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$itemTypeNames = $item->itemTypeName(true);
+
+	return array(GalleryStatus::success(), $core->translate(array('text' => 'delete %s',
+								      'arg1' => $itemTypeNames[1])));
+    }
 }
 ?>

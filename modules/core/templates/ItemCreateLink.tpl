@@ -106,7 +106,9 @@
     <input type="hidden" name="{g->formVar var="form[selectedIds][$selectedId]"}" value="on"/>
     {/foreach}
     <input type="submit" name="{g->formVar var="form[action][link]"}" value="{g->text text="Link"}"/>
-    <input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
+    {if $ItemCreateLink.canCancel}
+      <input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
+    {/if}
   </div>
   {else}
   <div class="gbAdmin">

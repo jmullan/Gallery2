@@ -154,14 +154,15 @@ class CoreModuleTest extends GalleryTestCase {
 	
         $this->assertEquals(array(
                                   array('text' => $this->_module->translate('Site Admin'),
-                                        'params' => array('view' => 'core:SiteAdmin')),
+                                        'params' => array('view' => 'core:SiteAdmin',
+							  'return' => 1)),
                                   array('text' => $this->_module->translate('Your Account'),
-                                        'params' => array('return' => 'true',
-							  'view' => 'core:UserAdmin',
-                                                          'subView' => 'core:UserPreferences')),
+                                        'params' => array('view' => 'core:UserAdmin',
+							  'subView' => 'core:UserPreferences',
+							  'return' => 1)),
                                   array('text' => $this->_module->translate('Logout'),
-                                        'params' => array('return' => 'true',
-							  'controller' => 'core:Logout'))
+                                        'params' => array('controller' => 'core:Logout',
+							  'return' => 1))
                                   ),
                             $content);
     }
@@ -171,18 +172,30 @@ class CoreModuleTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+
+	/* Without a language selector */
+	$template = new CoreModuleMockTemplate();
 	$ret = $this->_module->setModuleParameter('language.selector', 'none');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-
-	$template = new CoreModuleMockTemplate();
-	list ($ret, $file) = $this->_module->loadSystemContent($template);
+	list ($ret, $content) = $this->_module->loadSystemContent($template);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	$this->assert(empty($content['languageSelector']));
 
-	$this->assertEquals(null, $file);
+	/* With a language selector */
+	$template = new CoreModuleMockTemplate();
+	$ret = $this->_module->setModuleParameter('language.selector', 'all');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $content) = $this->_module->loadSystemContent($template);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(!empty($content['languageSelector']));
 
 	$ret = $this->_module->setModuleParameter('language.selector', $save);
 	if ($ret->isError()) {
@@ -203,35 +216,38 @@ class CoreModuleTest extends GalleryTestCase {
 					   'view' => 'core:ItemAdmin',
 					   'subView' => 'core:ItemAdd',
 					   'itemId' => $this->_parentAlbum->getId(),
+					   'return' => 1,
 					   ));
 	$links[] = array('text' => $this->_module->translate(array('text' => 'edit %s',
 								   'arg1' => $this->_module->translate('album'))),
 			 'params' => array(
 					   'view' => 'core:ItemAdmin',
-					   'return' => 1,
 					   'subView' => 'core:ItemEdit',
 					   'itemId' => $this->_parentAlbum->getId(),
+					   'return' => 1,
 					   ));
 	$links[] = array('text' => $this->_module->translate('add sub-album'),
 			 'params' => array(
 					   'view' => 'core:ItemAdmin',
 					   'subView' => 'core:ItemAddAlbum',
 					   'itemId' => $this->_parentAlbum->getId(),
+					   'return' => 1,
 					   ));
 	$links[] = array('text' => $this->_module->translate('edit permissions'),
 			 'params' => array(
 					   'view' => 'core:ItemAdmin',
 					   'subView' => 'core:ItemPermissions',
 					   'itemId' => $this->_parentAlbum->getId(),
+					   'return' => 1,
 					   ));
 	$links[] = array('text' => $this->_module->translate(array('text' => 'delete %s',
 								   'arg1' => $this->_module->translate('album'))),
 			 'params' => array(
 					   'view' => 'core:ItemAdmin',
-					   'return' => 1,
 					   'subView' => 'core:ItemDelete',
 					   'itemId' => $this->_parentAlbum->getParentId(),
 					   'selectedId' => $this->_parentAlbum->getId(),
+					   'return' => 1,
 					   ));
 	$links[] = array('text' => $this->_module->translate(array('text' => 'move %s',
 								   'arg1' => $this->_module->translate('album'))),
@@ -240,6 +256,7 @@ class CoreModuleTest extends GalleryTestCase {
 					   'subView' => 'core:ItemMove',
 					   'itemId' => $this->_parentAlbum->getParentId(),
 					   'selectedId' => $this->_parentAlbum->getId(),
+					   'return' => 1,
 					   ));
 	$this->assertEquals(array($this->_parentAlbum->getId() => $links), $content);
     }

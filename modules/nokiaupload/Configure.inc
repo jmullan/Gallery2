@@ -83,7 +83,6 @@ class ConfigureController extends GalleryController {
 	} /* else $form['action']['cancel'] */
 
 	if (empty($error)) {
-	    $results['return'] = 1;
 	    $results['redirect'] = array('view' => 'core:SiteAdmin',
 					 'subView' => 'nokiaupload:Configure');
 	} else {

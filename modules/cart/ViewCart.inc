@@ -71,6 +71,11 @@ class ViewCartView extends GalleryView {
         }
         $ViewCart['rootAlbum'] = $rootAlbum->getMemberData();
 	
+	/* Get system links */
+	list ($ret, $moduleSystemLinks) = $this->_getModuleSystemLinks();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 
 	/* Find all our cart plugins */
 	require_once(dirname(__FILE__) . '/classes/CartPluginInterface_1_0.class');
@@ -135,6 +140,7 @@ class ViewCartView extends GalleryView {
 	    }
 	}
 	
+	$ViewCart['moduleSystemLinks'] = $moduleSystemLinks;
 	$ViewCart['items'] = $items;
 	$ViewCart['itemTypeNames'] = $itemTypeNames;
 	$ViewCart['thumbnails'] = $thumbnails;
@@ -155,6 +161,18 @@ class ViewCartView extends GalleryView {
 	return array(GalleryStatus::success(),
 		     array('head' => 'modules/cart/templates/ViewCartHead.tpl',
 			   'body' => 'modules/cart/templates/ViewCart.tpl'));
+    }
+
+    /**
+     * @see GalleryView::getViewDescription()
+     */
+    function getViewDescription() {
+	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+
+	return array(GalleryStatus::success(), $core->translate('view cart'));
     }
 }
 ?>

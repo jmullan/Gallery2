@@ -123,7 +123,9 @@
 
   <div class="gbButtons">
     <input type="submit" name="{g->formVar var="form[action][delete]"}" value="{g->text text="Delete"}"/>
-    <input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
+    {if $ItemDelete.canCancel}
+      <input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
+    {/if}
   </div>
   {else}
   <div class="gbAdmin">

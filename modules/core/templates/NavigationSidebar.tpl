@@ -6,31 +6,41 @@
  *}
 <div id="gsSidebar">
   {* Module links *}
-  <div class="gbMenu">
-    <h3 class="giTitle">
-      {g->text text="Greetings, %s!" arg1=$Navigation.user.fullName|default:$Navigation.user.userName}
-    </h3>
 
-    <ul>
-      {foreach from=$Navigation.moduleSystemLinks item=module}
-      {foreach from=$module item=link}
-      <li>
-	<a href="{g->url params=$link.params}">{$link.text}</a>
-      </li>
-      {/foreach}
-      {/foreach}
-    </ul>
-  </div>
+  {* Core System content *}
+  {if isset($Navigation.systemContent.core.core)}
+    {assign var=moduleFile value=$Navigation.systemContent.core.core}
+    {include file="gallery:$moduleFile" l10Domain="modules_core"} 
+  {/if}
 
   {* Search form, if module's activated *}
-  {if isset($Navigation.moduleSystemContentFiles.search)}
-	{include file="gallery:modules/search/templates/SearchSystemContent.tpl"} 
+  {if isset($Navigation.systemContent.search.searchBox)}
+    {assign var=moduleFile value=$Navigation.systemContent.search.searchBox}
+    {include file="gallery:$moduleFile" l10Domain="modules_search"}
+  {/if}
+
+  {if $Navigation.navigationLinks}
+    <div class="gbMenu">
+      <h2 class="giTitle"> {g->text text="Navigation"} </h2>
+          
+      <ul>
+      {foreach from=$Navigation.navigationLinks item=link}
+        <li> 
+          <a href="{$link.url}">
+            {$link.name}
+          </a>
+        </li>
+      {/foreach}
+      </ul>
+    </div>
   {/if}
 
   {* Extra modules system content *}
-  {foreach from=$Navigation.moduleSystemContentFiles key=moduleId item=moduleFile}
-  {if ($moduleId != 'search')}
-  {include file="gallery:$moduleFile" l10Domain="modules_$moduleId"}
-  {/if}
+  {foreach from=$Navigation.systemContent key=moduleId item=moduleContent}
+    {foreach from=$moduleContent key=moduleContentKey item=moduleFile}
+      {if ($moduleId != 'search' || $moduleContentKey != 'searchBox') && ($moduleId != 'core' || $moduleContentKey != 'core')}
+        {include file="gallery:$moduleFile" l10Domain="modules_$moduleId"}
+      {/if}
+    {/foreach}
   {/foreach}
 </div>

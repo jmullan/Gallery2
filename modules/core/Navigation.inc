@@ -48,9 +48,16 @@ class NavigationView extends GalleryView {
 	}
 
 	/* Get system content */
-	list ($ret, $moduleSystemContentFiles) = $this->_loadModuleSystemContent($template);
+	list ($ret, $systemContent) = $this->_loadSystemContent($template);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Get the links for navigating back to where we came from */
+	$urlGenerator =& $gallery->getUrlGenerator();
+	list ($ret, $navigationLinks) = $urlGenerator->getNavigationLinks();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	$user = $gallery->getActiveUser();
@@ -59,8 +66,9 @@ class NavigationView extends GalleryView {
 	$Navigation['user'] = $user->getMemberData();
 	$Navigation['l10Domain'] = 'modules_core';
 	$Navigation['sidebar'] = 'modules/core/templates/NavigationSidebar.tpl';
-	$Navigation['moduleSystemContentFiles'] = $moduleSystemContentFiles;
+	$Navigation['systemContent'] = $systemContent;
 	$Navigation['moduleSystemLinks'] = $moduleSystemLinks;
+	$Navigation['navigationLinks'] = $navigationLinks;
 	$template->setVariable('Navigation', $Navigation);
 
 	return array(GalleryStatus::success(), null);
@@ -75,7 +83,7 @@ class NavigationView extends GalleryView {
      *                     ...)
      * @access private
      */
-    function _loadModuleSystemContent(&$template) {
+    function _loadSystemContent(&$template) {
 	global $gallery;
 
 	/* Load the module list */
@@ -113,7 +121,7 @@ class NavigationView extends GalleryView {
     }
 
     /**
-     * Call getSystemLinks on every active module
+     * Call getModuleSystemLinks on every active module
      *
      * @param object GalleryTemplate a template instance
      * @return array object GalleryStatus a status code
@@ -125,40 +133,40 @@ class NavigationView extends GalleryView {
     function _getModuleSystemLinks() {
 	global $gallery;
 
-        /* Load the module list */
-        list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module');
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
+	/* Load the module list */
+	list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	
-        $urlGenerator = $gallery->getUrlGenerator();
+	$urlGenerator = $gallery->getUrlGenerator();
 	
-        $links = array();
-        foreach ($moduleStatus as $moduleId => $status) {
-            if (empty($status['active'])) {
-                continue;
+	$links = array();
+	foreach ($moduleStatus as $moduleId => $status) {
+	    if (empty($status['active'])) {
+		continue;
 	    }
 	    
-            list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
-            if ($ret->isError()) {
+	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
+	    if ($ret->isError()) {
 		if ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH) {
 		    continue;
 		}
-                return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    
-            /* Get all module-related links for these items */
-            list ($ret, $links[$moduleId]) = $module->getSystemLinks();
-            if ($ret->isError()) {
-                return array($ret->wrap(__FILE__, __LINE__), null);
+	    /* Get all module-related links for these items */
+	    list ($ret, $links[$moduleId]) = $module->getSystemLinks();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    
-            if (empty($links[$moduleId])) {
-                unset($links[$moduleId]);
+
+	    if (empty($links[$moduleId])) {
+		unset($links[$moduleId]);
 	    }
 	}
 	
-        return array(GalleryStatus::success(), $links);
+	return array(GalleryStatus::success(), $links);
     }
 }
 ?>

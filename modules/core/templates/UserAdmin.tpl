@@ -11,6 +11,24 @@
     <input type="hidden" name="{g->formVar var="form[formName]"}" value="{$form.formName}"/>
   </div>
 
+  <div id="gsSystemLinks">
+    <ul>
+    {foreach from=$UserAdmin.moduleSystemLinks item=module}
+    {foreach from=$module item=link}
+    {if isset($link.params.view) && $link.params.view == "core:UserAdmin"}
+      <li class="giSelected">
+        {$link.text}
+      </li>
+    {else}
+      <li>
+        <a href="{g->url params=$link.params}">{$link.text}</a>
+      </li>
+    {/if}
+    {/foreach}
+    {/foreach}
+    </ul>
+  </div>
+
   <ul class="gbBreadCrumb">
     <li class="giBreadCrumbFirst">
       {g->text text="Your Account"}
@@ -53,19 +71,13 @@
         </h2>
   
         <ul>
-          <li>
-            <a href="{g->url}">
-              {g->text text="Browse Gallery"}
-            </a>
-          </li>
-
-          {if ($UserAdmin.isSiteAdmin)}
-          <li>
-            <a href="{g->url arg1="view=core:SiteAdmin"}">
-              {g->text text="Site Admin"}
-            </a>
-          </li>
-          {/if}
+          {foreach from=$UserAdmin.navigationLinks item=link}
+            <li> 
+              <a href="{$link.url}">
+                {$link.name}
+              </a>
+            </li>
+          {/foreach}
         </ul>
       </div>
     </div>

@@ -448,9 +448,11 @@ class GalleryModule {
      * things like the search module that want to embed a search box on every
      * page.
      *
+     * Each module can provide one or more System Content blocks.
+     *
      * @param object GalleryTemplate a template
      * @return array object GalleryStatus a status code
-     *               string template file path
+     *               array ('name' => the template file path, ...)
      */
 
     function loadSystemContent(&$template) {

@@ -250,6 +250,19 @@ class GalleryView {
     }
 
     /**
+     * This should return a description of the current view.
+     * 
+     * It might return a static description or generate a dynamic description
+     * using the current request status.
+     * 
+     * @return array object GalleryStatus
+     *               string localized description
+     */
+    function getViewDescription() {
+	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
+    }
+
+    /**
      * Views should override this to return the theme that they wish to use.
      *
      * @param string a theme name.
@@ -315,6 +328,52 @@ class GalleryView {
 	}
 
 	return array(GalleryStatus::success(), $item);
+    }
+
+    /**
+     * Call getSystemLinks on every active module
+     *
+     * @param object GalleryTemplate a template instance
+     * @return array object GalleryStatus a status code
+     *               array(array('moduleId' => array('text' => ...,
+     *                                               'params' => ...,
+     *                                               'url' => ...)),
+     * @access private
+     */
+    function _getModuleSystemLinks() {
+	global $gallery;
+
+	/* Load the module list */
+	list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
+	$urlGenerator = $gallery->getUrlGenerator();
+	
+	$links = array();
+	foreach ($moduleStatus as $moduleId => $status) {
+	    if (empty($status['active'])) {
+		continue;
+	    }
+	    
+	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    
+	    /* Get all module-related links for these items */
+	    list ($ret, $links[$moduleId]) = $module->getSystemLinks();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    
+	    if (empty($links[$moduleId])) {
+		unset($links[$moduleId]);
+	    }
+	}
+	
+	return array(GalleryStatus::success(), $links);
     }
 }
 ?>

@@ -98,7 +98,15 @@ class ImageBlockModule extends GalleryModule {
      * @see GalleryModule::loadSystemContent
      */
     function loadSystemContent(&$template) {
-	return $this->_loadImageBlocks($template);
+	list ($ret, $block) = $this->_loadImageBlocks($template);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$tpl = array();
+	if (strlen($block) > 0) {
+	    $tpl = array('imageblock' => $block);
+	}
+	return array(GalleryStatus::success(), $tpl);
     }
 	
     function _loadImageBlocks(&$template, $params = array('heading' => 1)) {

@@ -34,7 +34,7 @@
 	{g->text text="Password"}
       </h2>
 
-      <input type="password" size="18" name="{g->formVar var="form[password]"}"/>
+      <input class="giFormPassword" type="password" size="16" name="{g->formVar var="form[password]"}"/>
 
       {if isset($form.error.password.missing)}
       <div class="giError">

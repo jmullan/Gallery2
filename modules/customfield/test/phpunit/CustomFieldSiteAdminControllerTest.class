@@ -71,8 +71,7 @@ class CustomFieldSiteAdminControllerTest extends GalleryControllerTestCase {
 	// Reset..
 	GalleryUtilities::putRequestVariable('form[action][reset]', '1');
 	$results = $this->handleRequest();
-	$this->assertEquals(array('return' => 1,
-				  'redirect' => array('view' => 'core:SiteAdmin',
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
 						   'subView' => 'customfield:CustomFieldSiteAdmin'),
 				  'status' => array(), 'error' => array()),
 			    $results);
@@ -82,8 +81,7 @@ class CustomFieldSiteAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[common][newField]', 'Common Field');
 	GalleryUtilities::putRequestVariable('form[action][add][common]', '1');
 	$results = $this->handleRequest();
-	$this->assertEquals(array('return' => 1,
-				  'redirect' => array('view' => 'core:SiteAdmin',
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
 						   'subView' => 'customfield:CustomFieldSiteAdmin'),
 				  'status' => array('added' => 1), 'error' => array()),
 			    $results, 'Add Common Field');
@@ -92,8 +90,7 @@ class CustomFieldSiteAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[common][newField]', 'Another|Common');
 	GalleryUtilities::putRequestVariable('form[action][add][common]', '1');
 	$results = $this->handleRequest();
-	$this->assertEquals(array('return' => 1,
-				  'redirect' => array('view' => 'core:SiteAdmin',
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
 						   'subView' => 'customfield:CustomFieldSiteAdmin'),
 				  'status' => array('added' => 1), 'error' => array()),
 			    $results, 'Add Another Common');
@@ -102,8 +99,7 @@ class CustomFieldSiteAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[album][newField]', 'Album Field');
 	GalleryUtilities::putRequestVariable('form[action][add][album]', '1');
 	$results = $this->handleRequest();
-	$this->assertEquals(array('return' => 1,
-				  'redirect' => array('view' => 'core:SiteAdmin',
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
 						   'subView' => 'customfield:CustomFieldSiteAdmin'),
 				  'status' => array('added' => 1), 'error' => array()),
 			    $results, 'Add Album Field');
@@ -112,8 +108,7 @@ class CustomFieldSiteAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[photo][newField]', 'Photo Field');
 	GalleryUtilities::putRequestVariable('form[action][add][photo]', '1');
 	$results = $this->handleRequest();
-	$this->assertEquals(array('return' => 1,
-				  'redirect' => array('view' => 'core:SiteAdmin',
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
 						   'subView' => 'customfield:CustomFieldSiteAdmin'),
 				  'status' => array('added' => 1), 'error' => array()),
 			    $results, 'Add Photo Field');
@@ -123,8 +118,7 @@ class CustomFieldSiteAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[common][newField]', 'Photo Field');
 	GalleryUtilities::putRequestVariable('form[action][add][common]', '1');
 	$results = $this->handleRequest();
-	$this->assertEquals(array('return' => 1,
-				  'redirect' => array('view' => 'core:SiteAdmin',
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
 						   'subView' => 'customfield:CustomFieldSiteAdmin'),
 				  'status' => array('error' => array('duplicate' => 1)),
 				  'error' => array()),
@@ -136,8 +130,7 @@ class CustomFieldSiteAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[picklist]', "One\nTwo\nThree  \n  ");
 	GalleryUtilities::putRequestVariable('form[action][picklist]', '1');
 	$results = $this->handleRequest();
-	$this->assertEquals(array('return' => 1,
-				  'redirect' => array('view' => 'core:SiteAdmin',
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
 						   'subView' => 'customfield:CustomFieldSiteAdmin'),
 				  'status' => array('picklist' => 1), 'error' => array()),
 			    $results, 'Set Picklist');
@@ -148,8 +141,7 @@ class CustomFieldSiteAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[picklist]', "\n Three\nTwo\nOne  \n  ");
 	GalleryUtilities::putRequestVariable('form[action][picklist]', '1');
 	$results = $this->handleRequest();
-	$this->assertEquals(array('return' => 1,
-				  'redirect' => array('view' => 'core:SiteAdmin',
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
 						   'subView' => 'customfield:CustomFieldSiteAdmin'),
 				  'status' => array('picklist' => 1), 'error' => array()),
 			    $results, 'Update Picklist');
@@ -179,8 +171,7 @@ class CustomFieldSiteAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[photo][detail][0]', 'on');
 	GalleryUtilities::putRequestVariable('form[action][save]', '1');
 	$results = $this->handleRequest();
-	$this->assertEquals(array('return' => 1,
-				  'redirect' => array('view' => 'core:SiteAdmin',
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
 						   'subView' => 'customfield:CustomFieldSiteAdmin'),
 				  'status' => array('saved' => 1), 'error' => array()),
 			    $results, 'Update Display');
@@ -204,8 +195,7 @@ class CustomFieldSiteAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[common][goAction]', 'photo');
 	GalleryUtilities::putRequestVariable('form[action][go][common]', '1');
 	$results = $this->handleRequest();
-	$this->assertEquals(array('return' => 1,
-				  'redirect' => array('view' => 'core:SiteAdmin',
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
 						   'subView' => 'customfield:CustomFieldSiteAdmin'),
 				  'status' => array('moved' => 1), 'error' => array()),
 			    $results, 'Move Field');
@@ -215,8 +205,7 @@ class CustomFieldSiteAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[album][goAction]', 'common');
 	GalleryUtilities::putRequestVariable('form[action][go][album]', '1');
 	$results = $this->handleRequest();
-	$this->assertEquals(array('return' => 1,
-				  'redirect' => array('view' => 'core:SiteAdmin',
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
 						   'subView' => 'customfield:CustomFieldSiteAdmin'),
 				  'status' => array('moved' => 1), 'error' => array()),
 			    $results, 'Move Field');
@@ -227,8 +216,7 @@ class CustomFieldSiteAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[common][goAction]', 'remove');
 	GalleryUtilities::putRequestVariable('form[action][go][common]', '1');
 	$results = $this->handleRequest();
-	$this->assertEquals(array('return' => 1,
-				  'redirect' => array('view' => 'core:SiteAdmin',
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
 						   'subView' => 'customfield:CustomFieldSiteAdmin'),
 				  'status' => array('removed' => 1), 'error' => array()),
 			    $results, 'Remove Field');
@@ -252,8 +240,7 @@ class CustomFieldSiteAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[picklist]', '');
 	GalleryUtilities::putRequestVariable('form[action][picklist]', '1');
 	$results = $this->handleRequest();
-	$this->assertEquals(array('return' => 1,
-				  'redirect' => array('view' => 'core:SiteAdmin',
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
 						   'subView' => 'customfield:CustomFieldSiteAdmin'),
 				  'status' => array('picklist' => 1), 'error' => array()),
 			    $results, 'Remove Picklist');

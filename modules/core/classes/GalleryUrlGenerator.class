@@ -72,6 +72,11 @@ class GalleryUrlGenerator {
      */
     var $_embedSessionString;
 
+    /**
+     * The navigation id of the current URL
+     */
+    var $_navId = '';
+
     /*
      * ****************************************
      *                 Methods
@@ -239,6 +244,126 @@ class GalleryUrlGenerator {
     }
 
     /**
+     * Initializes the navigation branch
+     *
+     * If we came here with a 'return' set, we need to branch a new
+     * navigation.
+     * If we are just navigating through options in the same navigation
+     * level, simply pass the navId along.
+     * If we are coming back from a navigation, clean up our mess.
+     * In other cases we simply have no navigation support.
+     *
+     * Note: This should be called as soon as we have access to our session
+     * and the requestVariables, but before we start generating URLs with
+     * generateUrl(). Currently it's called from parseCurrentUrl().
+     * 
+     * @access private
+     */
+    function initNavigation() {
+	global $gallery;
+	$gallery->debug("Initializing navigation");
+	list ($returnUrl, $returnName, $navId, $fromNavId) =
+		GalleryUtilities::getRequestVariables('return', 'returnName', 'navId',
+						      'fromNavId');
+	if (!empty($returnUrl)) {
+	    /* Branch a new navigation */
+	    $navData = array('returnUrl' => $returnUrl,
+			     'returnName' => $returnName);
+	    if (!empty($navId)) {
+		$navData['returnNavId'] = $navId;
+	    }
+	    $session =& $gallery->getSession();
+	    $this->_navId = $session->addToNavigation($navData);
+	    $gallery->debug("Branched navigation: " . $this->_navId);
+	} else {
+	    if (!empty($fromNavId)) {
+		/* We came back from a navigational branch. Delete it */
+		$gallery->debug("Back from $fromNavId to $navId");
+		$session =& $gallery->getSession();
+		$session->jumpNavigation($fromNavId, $navId);
+	    }
+	    if (!empty($navId)) {
+		/* Just continue in our current navigation level */
+		$gallery->debug("Continuing navigation $navId");
+		$this->_navId = $navId;
+	    }
+	}
+    }
+
+    /**
+     * Check if we currently have a "back" link to where we came from
+     *
+     * @return boolean true if we can go "back"
+     */
+    function isNavigationBackPossible() {
+	global $gallery;
+	$session =& $gallery->getSession();
+	if (empty($this->_navId)) {
+	    return false;
+	}
+	$navData = $session->getNavigation($this->_navId);
+	if (count($navData) > 0) {
+	    return true;
+	}
+	return false;
+    }
+
+    /**
+     * Get a list of navigation links to go back to where we came 
+     * from.
+     *
+     * @param integer set this to get links back to a certain depth
+     * @return array of navigational links: array('url' => ...,
+     *                                            'name' => 'Back to ...')
+     */
+    function getNavigationLinks($depth = null) {
+	global $gallery;
+
+	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
+	$session =& $gallery->getSession();
+	if (empty($this->_navId)) {
+	    return array(GalleryStatus::success(), array());
+	}
+	$navData = $session->getNavigation($this->_navId);
+	$links = array();
+	$i = 0;
+	foreach ($navData as $navItem) {
+	    $i++;
+	    if ($depth != null && $i > $depth) {
+		break;
+	    }
+	    $url = $navItem['returnUrl'];
+	    $params = array('fromNavId' => $this->_navId);
+	    if (isset($navItem['returnNavId'])) {
+		$params['navId'] = $navItem['returnNavId'];
+	    }
+	    if (isset($navItem['returnName']) && !empty($navItem['returnName'])) {
+		$name = $core->translate(array('text' => 'Back to %s',
+					       'arg1' => $navItem['returnName']));
+	    } else {
+		$name = $core->translate('Back');
+	    }
+	    $url .= $this->buildQueryString($params, strpos($url, '?') !== false);
+	    $links[] = array('url' => $url,
+			     'name' => $name);
+	}
+	return array(GalleryStatus::success(), $links);
+    }
+
+    /**
+     * Get the current navigation id
+     * 
+     * @return string the navigation id
+     */
+    function getNavigationId() {
+	return $this->_navId;
+    }
+
+    /**
      * Parse our current url since it may be in our compressed format
      *
      * @return array object GalleryStatus a status code
@@ -246,6 +371,9 @@ class GalleryUrlGenerator {
      */
     function parseCurrentUrl() {
 	$url = $this->getCurrentUrl();
+
+	/* Start our navigation */
+	$this->initNavigation();
 
 	/* Ignore anything after the '?', as PHP will handle that */
 	preg_match('/\?(.*)/', $url, $standardQueryString);
@@ -303,6 +431,57 @@ class GalleryUrlGenerator {
 
 	return array(GalleryStatus::success(), $redirectUrl);
     }
+
+    /**
+     * Get an URL to return to the currently loaded view, stripping all 
+     * parameters that are of navigational nature
+     *
+     * @return string the URL
+     */
+    function getNavigationReturnUrl() {
+	global $gallery;
+
+	$formUrl = GalleryUtilities::getRequestVariables('formUrl');
+	if (!empty($formUrl)) {
+	    /* We don't really have an URL, because we are in a POST request.
+	     * This is the last known URL when the form was originally rendered:
+	     */
+	    return $formUrl;
+	}
+
+	$session =& $gallery->getSession();
+	$path = '';
+	if (!empty($_SERVER['SCRIPT_NAME'])) {
+	    $path = $_SERVER['SCRIPT_NAME'];
+	    if (!empty($_SERVER['PATH_INFO'])) {
+		$path .= $_SERVER['PATH_INFO'];
+	    }
+	    $urlVariables = GalleryUtilities::getUrlVariablesFiltered(array('return', 'returnName', 'navId', 'fromNavId'));
+	    $path .= '?';
+	    $args = array();
+	    foreach ($urlVariables as $key => $value) {
+		$args[] = $key . '=' . $value;
+	    }
+	    $path .= join('&amp;', $args);
+	}
+	$return = $this->makeUrl($path);
+
+	/*
+	 * In very rare cases (like when you first access the app) it's possible to not be using cookies,
+	 * but not have the session id in the url yet.  Detect that case and add the url here.
+	 */
+	if (!($session->isUsingCookies())) {
+	    $sessionCheck = !empty($this->_embedSessionString) ? $this->_embedSessionString
+				: (GalleryUtilities::prefixFormVariable($session->getKey()) .
+				  '=' . $session->getId());
+	    if (empty($_SERVER['QUERY_STRING'])
+	    	|| strpos($_SERVER['QUERY_STRING'], $sessionCheck) === false) {
+		$return .= (empty($_SERVER['QUERY_STRING']) ? '?' : '&') . $sessionCheck;
+	    }
+	}
+
+	return $return;
+    }
     
     /**
      * Return a valid Gallery URL.
@@ -323,7 +502,7 @@ class GalleryUrlGenerator {
 		$params[$session->getKey()] = $session->getId();
 	    }
 	}
-	// Force direct-g2 url for core:DownloadItem view, even if embedded:
+	/* Force direct-g2 url for core:DownloadItem view, even if embedded: */
 	if (isset($params['view']) && $params['view'] == 'core:DownloadItem'
 		&& !isset($params['href'])) {
 	    $params['href'] = 'main.php';
@@ -350,25 +529,37 @@ class GalleryUrlGenerator {
 	}
 
 	/* Swap in the actual url for the 'return' placeholder, if necessary */
-	if (isset($params['return'])) {
-	    $params['return'] = $this->getCurrentUrl();
-
-	    /*
-	     * In very rare cases (like when you first access the app) it's possible to not be using cookies,
-	     * but not have the session id in the url yet.  Detect that case and add the url here.
+	if (isset($params['view'])) {
+	    $targetView = $params['view'];
+	} else {
+	    /* Possibly a controller, but we don't know where it will redirect to */
+	    $targetView = '';
+	}
+	$currentView = $gallery->getCurrentView();
+	if ($currentView != $targetView && isset($params['return'])) {
+	    /* This link changes the view and the source want us to remember
+	     * it for back navigation
 	     */
-	    if (!($session->isUsingCookies())) {
-		$sessionCheck = !empty($this->_embedSessionString) ? $this->_embedSessionString
-		    : (GalleryUtilities::prefixFormVariable($session->getKey()) .
-					'=' . $session->getId());
-		if (empty($_SERVER['QUERY_STRING']) ||
-			strpos($_SERVER['QUERY_STRING'], $sessionCheck) === false) {
-		    $params['return'] .=
-			(empty($_SERVER['QUERY_STRING']) ? '?' : '&') . $sessionCheck;
+	    list ($ret, $view) = GalleryView::loadView($currentView);
+	    if ($ret->isError()) {
+		$viewDescription = '';
+	    } else {
+		list ($ret, $viewDescription) = $view->getViewDescription();
+		if ($ret->isError()) {
+		    $viewDescription = '';
 		}
 	    }
-
-	    $params['return'] = urlencode($params['return']);
+	    $params['returnName'] = $viewDescription;
+	    $params['return'] = urlencode($this->getNavigationReturnUrl());
+	    $params['navId'] = $this->_navId;
+	}
+	if ((empty($currentView) || $currentView == $targetView || ! empty($params['controller']))
+		&& !empty($this->_navId)) {
+	    /* We are moving around in the same view, or we are redirecting to
+	     * a controller, who knows where it will redirect to.
+	     * Let's keep the navigation.
+	     */
+	    $params['navId'] = $this->_navId;
 	}
 
 	/* Escape all values */

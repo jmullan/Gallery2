@@ -69,7 +69,6 @@ class ImageBlockSiteAdminController extends GalleryController {
 	} /* else $form['action']['reset'] */
 
 	/* Figure out where to redirect upon success */
-	$results['return'] = 1;
 	$results['redirect']['view'] = 'core:SiteAdmin';
 	$results['redirect']['subView'] = 'imageblock:ImageBlockSiteAdmin';
 	$results['status'] = $status;

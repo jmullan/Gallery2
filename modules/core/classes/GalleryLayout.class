@@ -379,7 +379,7 @@ class GalleryLayout {
      *   peers = array of peer data (first, last and a window of peers around this item),
      *      also set peerIds(of all peers), peerCount(total count), peerItemIndex(index of this item)
      *   systemLinks = array of array('text'=>.., 'params'=>.., 'url'=>.., 'moduleId'=>..)
-     *   systemContentFiles = array of moduleId => template file path
+     *   systemContent = array of moduleId => array(contentId => template file path, ...)
      *   itemLinks = array of array('text'=>.., 'params'=>.., 'url'=>.., 'moduleId'=>..)
      *      ^if childIds non-empty also set itemLinks on each child item
      *   itemSummaries = set itemSummaries (array of moduleId => html) on each child item
@@ -509,7 +509,6 @@ class GalleryLayout {
 	    $layout['children'][] = $child->getMemberData();
 	}
 	$layout['show'] = array('sidebar' => GalleryCapabilities::can('showSidebar'),
-				'sidebarGreeting' => GalleryCapabilities::can('showSidebarGreeting'),
 				'sidebarActions' => true,
 				'sidebarPeers' => isset($load['peers']));
 
@@ -596,16 +595,16 @@ class GalleryLayout {
 	}
 
 	// -------------------------------------------------------------------------------------
-	// 'systemLinks', 'systemContentFiles', 'itemLinks', 'itemSummaries', 'itemDetailFiles'
+	// 'systemLinks', 'systemContent', 'itemLinks', 'itemSummaries', 'itemDetailFiles'
 	// Load links and content from all active modules
-	if (isset($load['systemLinks']) || isset($load['systemContentFiles'])
+	if (isset($load['systemLinks']) || isset($load['systemContent'])
 		|| isset($load['itemLinks']) || isset($load['itemSummaries'])
 		|| isset($load['itemDetailFiles'])) {
 	    if (isset($load['systemLinks'])) {
 		$layout['systemLinks'] = array();
 	    }
-	    if (isset($load['systemContentFiles'])) {
-		$layout['systemContentFiles'] = array();
+	    if (isset($load['systemContent'])) {
+		$layout['systemContent'] = array();
 	    }
 	    if (isset($load['itemLinks'])) {
 		$itemLinks = array($itemId => array());
@@ -635,7 +634,7 @@ class GalleryLayout {
 
 		$required = false;
 		foreach (array('systemLinks' => 'getSystemLinks',
-			       'systemContentFiles' => 'loadSystemContent',
+			       'systemContent' => 'loadSystemContent',
 			       'itemLinks' => 'getItemLinks',
 			       'itemSummaries' => 'getItemSummaries',
 			       'itemDetailFiles' => 'loadItemDetails') as $key => $callbackKey) {
@@ -671,13 +670,13 @@ class GalleryLayout {
 		    }
 		}
 
-		if (isset($load['systemContentFiles']) && isset($callbacks['loadSystemContent'])) {
+		if (isset($load['systemContent']) && isset($callbacks['loadSystemContent'])) {
 		    list ($ret, $content) = $module->loadSystemContent($template);
 		    if ($ret->isError()) {
 			return $ret->wrap(__FILE__, __LINE__);
 		    }
 		    if (!empty($content)) {
-			$layout['systemContentFiles'][$moduleId] = $content;
+			$layout['systemContent'][$moduleId] = $content;
 		    }
 		}
 

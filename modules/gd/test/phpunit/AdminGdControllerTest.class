@@ -74,8 +74,7 @@ class AdminGdControllerTest extends GalleryControllerTestCase {
 	
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('return' => 1,
-				  'redirect' => array('view' => 'core:SiteAdmin',
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'gd:AdminGd'),
 				  'status' => array('saved' => 1),
 				  'error' => array()),
@@ -94,8 +93,7 @@ class AdminGdControllerTest extends GalleryControllerTestCase {
 	
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('return' => 1,
-				  'redirect' => array('view' => 'core:SiteAdmin',
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'gd:AdminGd'),
 				  'status' => array(),
 				  'error' => array()),

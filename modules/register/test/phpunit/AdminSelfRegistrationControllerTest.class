@@ -105,8 +105,7 @@ class AdminSelfRegistrationControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(
-		array(	'return' => 1,
-			'redirect' => array('view' => 'core:SiteAdmin',
+		array(	'redirect' => array('view' => 'core:SiteAdmin',
 					    'subView' => 'register:AdminSelfRegistration'),
 			'status' => array('saved' => 1),
 			'error' => array()),
@@ -136,8 +135,7 @@ class AdminSelfRegistrationControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(
-		array(	'return' => 1,
-			'redirect' => array('view' => 'core:SiteAdmin',
+		array(	'redirect' => array('view' => 'core:SiteAdmin',
 					    'subView' => 'register:AdminSelfRegistration'),
 			'status' => array('activated' => $this->_pendingUser->getUserName()),
 			'error' => array()),
@@ -164,8 +162,7 @@ class AdminSelfRegistrationControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(
-		array(	'return' => 1,
-			'redirect' => array('view' => 'core:SiteAdmin',
+		array(	'redirect' => array('view' => 'core:SiteAdmin',
 					    'subView' => 'register:AdminSelfRegistration'),
 			'status' => array('deleted' => $this->_pendingUser->getUserName()),
 			'error' => array()),

@@ -4,6 +4,19 @@
  * Gallery will look for that file first and use it if it exists
  * and when you upgrade, your changes will not get overwritten.
  *}
+<div id="gsSystemLinks">
+  <ul>
+  <li>
+    {g->text text="Welcome, %s" arg1=$layout.user.fullName|default:$layout.user.userName}
+  </li>
+  {foreach from=$layout.systemLinks item=item}
+  <li>
+    <a href="{g->url params=$item.params}">{$item.text}</a>
+  </li>
+  {/foreach}
+  </ul>
+</div>
+
 <ul class="gbBreadCrumb">
   {section name=parent loop=$layout.parents}
   <li {if $smarty.section.parent.first}class="giBreadCrumbFirst"{/if}>

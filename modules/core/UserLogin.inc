@@ -43,7 +43,6 @@ class UserLoginController extends GalleryController {
 	global $gallery;
 
 	$results = array();
-	$status = array();
 	$error = array();
 	if (isset($form['action']['login'])) {
 
@@ -56,34 +55,28 @@ class UserLoginController extends GalleryController {
 		if ($user != null && $user->isCorrectPassword($form['password'])) {
 		    $gallery->setActiveUser($user);
 
-		    $redirect['view'] = 'core:UserAdmin';
-		    $redirect['subView'] = 'core:UserPreferences';
-		    $status['loggedin'] = 1;
-
 		    $event = GalleryCoreApi::newEvent('Gallery::Login');
 		    $event->setEntity($user);
 		    $ret = GalleryCoreApi::postEvent($event);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
+
+		    $results['return'] = 1;
 		} else {
 		    $error[] = 'form[error][invalidPassword]';
 		}
 	    }
 
 	} else if (isset($form['action']['cancel'])) {
-	    $redirect['view'] = 'core:UserAdmin';
-	    $redirect['subView'] = 'core:UserLogin';
+	    $results['return'] = 1;
 	}
 	
-	if (!empty($redirect)) {
-	    $results['return'] = 1;
-	    $results['redirect'] = $redirect;
-	} else {
+	if (empty($results['return'])) {
 	    $results['delegate']['view'] = 'core:UserAdmin';
 	    $results['delegate']['subView'] = 'core:UserLogin';
 	}
-	$results['status'] = $status;
+	$results['status'] = array();
 	$results['error'] = $error;
 
 	return array(GalleryStatus::success(), $results);

@@ -190,6 +190,30 @@ class GalleryUtilities {
     }
 
     /**
+     * Return all request variables from the URL except the listed keys
+     *
+     * @param array keys to skip
+     * @return array key value pairs
+     * @static
+     */
+    function getUrlVariablesFiltered($skip = null) {
+	$filter = array();
+	foreach ($skip as $key) {
+	    $filter[] = GALLERY_FORM_VARIABLE_PREFIX . $key;
+	}
+
+	$vars = array();
+	foreach ($_GET as $key => $value) {
+	    if (in_array($key, $filter)) {
+		continue;
+	    }
+	    $vars[$key] = $value;
+	}
+
+	return $vars;
+    }
+
+    /**
      * Merges two arrays and replace existing Entrys
      *
      * Merges two array like the PHP function array_merge_recursive.

@@ -107,7 +107,7 @@
 	  <br/>
           {/if}
 	  {if (empty($action.controller)) }
-	  <a href="{g->url arg1="return=true" arg2="view=core:SiteAdmin" arg3="subView=`$action.view`"}">
+	  <a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=`$action.view`"}">
 	    {$action.text}
 	  </a>
 	  {else}

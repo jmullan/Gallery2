@@ -15,7 +15,7 @@
 </ul>
 
 <div id="gsContents">
-  {include file="gallery:`$Navigation.sidebar`" l10Domain=$Navigation.l10Domain}	    
+  {include file="gallery:`$Navigation.sidebar`" l10Domain=$Navigation.l10Domain}
 
   <div id="gsAlbumContents">
     <form action="{g->url}" method="post">
@@ -33,7 +33,7 @@
     	    {/foreach}
     	  {/foreach}
         {rdelim}
-        
+
         function invertCheck() {ldelim}
     	  var frm = document.forms[0];
     	{foreach from=$SearchScan.modules key=moduleId item=moduleInfo}
@@ -44,9 +44,9 @@
           {rdelim}
           // ]]>
       </script>
-    
+
       <div id="gsSearchContents">
-      
+
 	    <div class="gbTopFlag">
 		   <div class="gbTitleBanner">
 	          <h1 class="gbTitle">
@@ -56,18 +56,18 @@
 	    </div>
 
     	<div class="gbAdmin">
-    	
+
     	  <div class="gbDataEntry">
     	    <input type="text" size="50" name="{g->formVar var="form[searchCriteria]"}" value="{$form.searchCriteria}" onfocus="this.style.background='#fff';" onblur="this.style.background='#eee';"/>
     	    <input type="submit" name="{g->formVar var="form[action][search]"}" value="{g->text text="Search"}"/>
-    
+
     	    {if isset($form.error.searchCriteria.missing)}
     	    <p class="giError">
     	      {g->text text="You must enter some text to search for!"}
     	    </p>
     	    {/if}
     	  </div>
-    	  
+
           {foreach from=$SearchScan.modules key=moduleId item=moduleInfo}
         	{foreach from=$moduleInfo.options key=optionId item=optionInfo}
         	{capture name=checkboxName}{g->formVar var="form[options][$moduleId][$optionId]"}{/capture}
@@ -77,21 +77,21 @@
         	</label>
         	{/foreach}
           {/foreach}
-          
+
           <ul class="giSearchCheck">
-            <li><a href="javascript:setCheck(1)">{g->text text="Check All"}</a> </li> 
-            <li><a href="javascript:setCheck(0)">{g->text text="Uncheck All"}</a> </li> 
+            <li><a href="javascript:setCheck(1)">{g->text text="Check All"}</a> </li>
+            <li><a href="javascript:setCheck(0)">{g->text text="Uncheck All"}</a> </li>
             <li><a href="javascript:invertCheck(0)">{g->text text="Invert"}</a></li>
           </ul>
-          
-        </div>  
-          
+
+        </div>
+
           {assign var="resultCount" value="0"}
           {if !empty($SearchScan.searchResults)}
-    
+
     	  {foreach from=$SearchScan.searchResults key=moduleId item=results}
     	  {assign var="resultCount" value=$resultCount+$results.count}
-    
+
     	  <div class="giTitle">
     	    <p>
     	    {$SearchScan.modules.$moduleId.name}
@@ -102,7 +102,7 @@
     	    {/if}
 
     	    {if ($results.count > $results.end)}
-    	    {assign var="moduleId" value=$moduleId} &nbsp; 
+    	    {assign var="moduleId" value=$moduleId} &nbsp;
     	    <input type="submit" name="{g->formVar var="form[action][showAll][$moduleId]"}" value="{g->text text="Show all %d" arg1=$results.count}"/>
     	    {/if}
     	    </p>
@@ -149,7 +149,7 @@
 	    {/if}
 	  {/foreach}
 	{/if}
-	
+
         <div class="gbBottomFlag">
           <div class="gbButtons">
             {if $resultCount>0 && $SearchScan.slideshowAvailable}
@@ -157,7 +157,7 @@
             {/if}
           </div>
         </div>
-      </div>  
+      </div>
     </form>
   </div>
 </div>

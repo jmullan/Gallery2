@@ -183,15 +183,16 @@ class ItemCreateLinkController extends GalleryController {
 	    $results['delegate']['itemId'] = $itemId;
 	    $results['delegate']['page'] = max($page - 1, 1);
 	} else if (isset($form['action']['cancel'])) {
-	    $redirect['view'] = 'core:ShowItem';
-	    $redirect['itemId'] = $itemId;
+	    $results['return'] = 1;
 	}
 
 	if (!empty($redirect)) {
 	    $results['redirect'] = $redirect;
 	} else {
-	    $results['delegate']['view'] = 'core:ItemAdmin';
-	    $results['delegate']['subView'] = 'core:ItemCreateLink';
+	    if (empty($results['return'])) {
+		$results['delegate']['view'] = 'core:ItemAdmin';
+		$results['delegate']['subView'] = 'core:ItemCreateLink';
+	    }
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;
@@ -308,7 +309,10 @@ class ItemCreateLinkView extends GalleryView {
 	    }
 	}
 
+	$urlGenerator = $gallery->getUrlGenerator();
+
 	$ItemCreateLink = array();
+	$ItemCreateLink['canCancel'] = $urlGenerator->isNavigationBackPossible();
 	$ItemCreateLink['peers'] = $peers;
 	$ItemCreateLink['albumTree'] = GalleryUtilities::createAlbumTree($albums);
 	$ItemCreateLink['page'] = $page;
@@ -320,6 +324,18 @@ class ItemCreateLinkView extends GalleryView {
         $template->setVariable('controller', 'core:ItemCreateLink');
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/core/templates/ItemCreateLink.tpl'));
+    }
+
+    /**
+     * @see GalleryView::getViewDescription()
+     */
+    function getViewDescription() {
+	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+
+	return array(GalleryStatus::success(), $core->translate('create link'));
     }
 }
 ?>

@@ -222,7 +222,7 @@ class ImageBlockTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assert(!$tpl, 'Template should be empty');
+	$this->assert(count($tpl) == 0, 'No template should have been returned');
 	$this->assert(!isset($template->data['ImageBlockSystemContent']), 'No blocks');
 
 	$ret = $this->_module->setModuleParameter('blocks', 'randomImage');
@@ -236,7 +236,7 @@ class ImageBlockTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assert(strlen($tpl) > 0, 'Template should not be empty');
+	$this->assert(count($tpl) > 0, 'A template should have been returned');
 	$this->assertEquals(1, count($template->data['ImageBlockSystemContent']['blocks']), 'One block');
 	$this->assertBlock($template->data['ImageBlockSystemContent']['blocks'][0]);
 
@@ -251,7 +251,7 @@ class ImageBlockTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assert(strlen($tpl) > 0, 'Template should not be empty');
+	$this->assert(count($tpl) > 0, 'A template should have been returned');
 	$this->assertEquals(6, count($template->data['ImageBlockSystemContent']['blocks']), 'All blocks');
 	$gotAlbum = $gotPhoto = 0;
 	foreach ($template->data['ImageBlockSystemContent']['blocks'] as $block) {

@@ -82,7 +82,7 @@ class SliderLayout extends GalleryLayout {
 	}
 
 	$ret = $this->loadLayoutTemplate($template, $item,
-	    array('parents', 'systemLinks', 'systemContentFiles', 'itemLinks'),
+	    array('parents', 'systemLinks', 'systemContent', 'itemLinks'),
 	    $childIds);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -95,6 +95,7 @@ class SliderLayout extends GalleryLayout {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	$layout['show']['parents'] = true;
 	$layout['imageWidths'] = implode(',',$imageWidths);
 	$layout['imageHeights'] = implode(',',$imageHeights);
 	$layout['maxThumbWidth'] = $maxTW;

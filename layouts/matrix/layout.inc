@@ -249,7 +249,7 @@ class MatrixLayout extends GalleryLayout {
 
 	$ret = $this->loadLayoutTemplate($template, $item,
 	    array('owner', 'viewCount', 'childCount', 'descendentCount', 'parents', 'peers',
-		  'systemLinks', 'systemContentFiles', 'itemLinks', 'itemSummaries',
+		  'systemLinks', 'systemContent', 'itemLinks', 'itemSummaries',
 		  'itemDetailFiles', 'thumbnails'),
 	    $childIds);
 	if ($ret->isError()) {
@@ -464,7 +464,7 @@ class MatrixLayout extends GalleryLayout {
 
 	$ret = $this->loadLayoutTemplate($template, $item,
 	    array('owner', 'parents', 'peers',
-		  'systemLinks', 'systemContentFiles', 'itemLinks', 'itemDetailFiles'));
+		  'systemLinks', 'systemContent', 'itemLinks', 'itemDetailFiles'));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

@@ -5,6 +5,18 @@
  * and when you upgrade, your changes will not get overwritten.
  *}
 
+<div id="gsSystemLinks">
+  <ul>
+  {foreach from=$ViewCart.moduleSystemLinks item=module}
+  {foreach from=$module item=link}
+  <li>
+    <a href="{g->url params=$link.params}">{$link.text}</a>
+  </li>
+  {/foreach}
+  {/foreach}
+  </ul>
+</div>
+
 <ul class="gbBreadCrumb">
   <li class="giBreadCrumbFirst">
     <a href="{g->url}">{$ViewCart.rootAlbum.title}</a>

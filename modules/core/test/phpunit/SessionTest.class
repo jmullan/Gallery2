@@ -257,5 +257,97 @@ class SessionTest extends GalleryTestCase {
 	// Restore original session
 	$gallery->_session =& $saveSession;
     }
+
+    function testBasicNavigation() {
+	global $gallery;
+	$session =& $gallery->getSession();
+
+	/* Non-existant navigation */
+	$this->assertEquals(array(), $session->getNavigation('bogus'));
+
+	/* Create one level navigation, make sure the data can be retrieved */
+	$navData1 = array('returnUrl' => 'url1', 'returnName' => 'name1');
+	$navId1 = $session->addToNavigation($navData1);
+	$this->assertEquals(array($navData1), $session->getNavigation($navId1));
+
+	/* Add another navigation item, using navId1 as a predecessor */
+	$navData2 = array('returnUrl' => 'url2', 'returnName' => 'name2', 'returnNavId' => $navId1);
+	$navId2 = $session->addToNavigation($navData2);
+	/* We should have all predecessors in our list */
+	$this->assertEquals(array($navData2, $navData1), $session->getNavigation($navId2));
+
+	/* Add yet another navigation item, using a bogus navId as predecessor */
+	$navData3 = array('returnUrl' => 'url3', 'returnName' => 'name3', 'returnNavId' => 'bogus');
+	$navId3 = $session->addToNavigation($navData3);
+	$this->assertEquals(array($navData3), $session->getNavigation($navId3));
+    }
+
+    function _createNavigationBranch() {
+	global $gallery;
+	$session =& $gallery->getSession();
+	$session->put('core.navigation', array());
+
+	for ($i = 1; $i < 10; $i++) {
+	    $navData[$i] = array('returnUrl' => 'url' . $i, 'returnName' => 'name' . $i);
+	}
+
+	/* Create a "complex" branched navigation:
+	 *  1 --> 2 --> 3 --> 5 --> 6 --> 7
+	 *        |           |
+	 *        4           8
+	 */
+	$navId[1] = $session->addToNavigation($navData[1]);
+	$navData[2] = array_merge($navData[2], array('returnNavId' => $navId[1]));
+	$navId[2] = $session->addToNavigation($navData[2]);
+	$navData[3] = array_merge($navData[2], array('returnNavId' => $navId[2]));
+	$navId[3] = $session->addToNavigation($navData[3]);
+	$navData[4] = array_merge($navData[2], array('returnNavId' => $navId[2]));
+	$navId[4] = $session->addToNavigation($navData[4]);
+	$navData[5] = array_merge($navData[2], array('returnNavId' => $navId[3]));
+	$navId[5] = $session->addToNavigation($navData[5]);
+	$navData[6] = array_merge($navData[2], array('returnNavId' => $navId[5]));
+	$navId[6] = $session->addToNavigation($navData[6]);
+	$navData[7] = array_merge($navData[2], array('returnNavId' => $navId[6]));
+	$navId[7] = $session->addToNavigation($navData[7]);
+	$navData[8] = array_merge($navData[2], array('returnNavId' => $navId[5]));
+	$navId[8] = $session->addToNavigation($navData[8]);
+	return array($navId, $navData);
+    }
+
+    function testBranchedNavigation() {
+	global $gallery;
+	$session =& $gallery->getSession();
+
+	list ($navId, $navData) = $this->_createNavigationBranch();
+
+	/* Check the branch 1, 2, 3, 4, 7 */
+	$this->assertEquals(array(
+				$navData[7],
+				$navData[6],
+				$navData[5],
+				$navData[3],
+				$navData[2],
+				$navData[1]
+			    ), $session->getNavigation($navId[7])
+	);
+
+	/* Now return from 7 to 2. Should delete 6, 7 only */
+	$session->jumpNavigation($navId[7], $navId[2]);
+	$this->assert(count($session->getNavigation($navId[3])) > 0, '#1 navId[3] deleted');
+	$this->assert(count($session->getNavigation($navId[4])) > 0, '#1 navId[4] deleted');
+	$this->assert(count($session->getNavigation($navId[5])) > 0, '#1 navId[5] deleted');
+	$this->assert(count($session->getNavigation($navId[6])) == 0, '#1 navId[6] not deleted');
+	$this->assert(count($session->getNavigation($navId[7])) == 0, '#1 navId[7] not deleted');
+	$this->assert(count($session->getNavigation($navId[8])) > 0, '#1 navId[8] deleted');
+
+	/* Now return from 8 to 3. Should delete 3, 5, 8 */
+	$session->jumpNavigation($navId[8], $navId[3]);
+	$this->assert(count($session->getNavigation($navId[3])) > 0, '#2 navId[2] deleted');
+	$this->assert(count($session->getNavigation($navId[3])) > 0, '#2 navId[3] deleted');
+	$this->assert(count($session->getNavigation($navId[4])) > 0, '#2 navId[4] deleted');
+	$this->assert(count($session->getNavigation($navId[5])) == 0, '#2 navId[5] not deleted');
+	$this->assert(count($session->getNavigation($navId[8])) == 0, '#2 navId[8] not deleted');
+    }
+
 }
 ?>

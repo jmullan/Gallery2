@@ -69,5 +69,17 @@ class ItemAddConfirmationView extends GalleryView {
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/core/templates/ItemAddConfirmation.tpl'));
     }
+
+    /**
+     * @see GalleryView::getViewDescription()
+     */
+    function getViewDescription() {
+	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+
+	return array(GalleryStatus::success(), $core->translate('add items confirmation'));
+    }
 }
 ?>

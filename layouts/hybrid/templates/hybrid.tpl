@@ -101,45 +101,10 @@
 {if count($layout.children) is odd}<td></td><td></td></tr>{/if}
 </table></div></div
 
-><div id="sidebar">
-<div id="gsSidebar">
-  {* Module links *}
+>
+{capture name="sidebarInsert_2"}
   <div class="gbMenu">
-    <div class="giTitle" style="width:144px">
-      <noscript><p class="giError">
-	{g->text text="Warning: This site requires javascript."}
-      </p></noscript>
-      {g->text text="Greetings, %s!" arg1=$layout.user.fullName|default:$layout.user.userName}
-    </div>
-    <ul>
-      {foreach from=$layout.systemLinks item=link}
-	<li> <a href="{$link.url}">{$link.text}</a> </li>
-      {/foreach}
-    </ul>
-  </div>
-  {* Breadcrumb *}
-  {if (count($layout.parents)>0)}
-    <div class="gbMenu">
-      <div class="giTitle"> {g->text text="Navigation"} </div>
-      <ul>
-	{foreach from=$layout.parents item=parent}
-	  <li>
-	    &raquo;
-	    <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$parent.id`"}">
-	      {$parent.title|default:$parent.pathComponent|markup}
-	    </a>
-	  </li>
-	{/foreach}
-      </ul>
-    </div>
-  {/if}
-  {* Modules system content *}
-  {foreach from=$layout.systemContentFiles key=moduleId item=moduleFile}
-    {include file="gallery:$moduleFile" l10Domain="modules_$moduleId"}
-  {/foreach}
-  {* Album links *}
-  <div class="gbMenu">
-    <div class="giTitle"> {g->text text="Album"} </div>
+    <h3 class="giTitle"> {g->text text="Display Options"} </h3>
     <ul>
       <li>
 	<a id="dtl_link" href="" onclick="album_detailsonoff();this.blur();return false">{g->text text="hide details"}</a>
@@ -147,15 +112,12 @@
       <li>
 	<a id="lnk_link" href="" onclick="album_itemlinksonoff();this.blur();return false">{g->text text="hide item links"}</a>
       </li>
-      {foreach from=$layout.itemLinks item=link}
-	<li> <a href="{$link.url}">{$link.text}</a> </li>
-      {/foreach}
     </ul>
-  </div>
-  {* Slideshow options *}
-  <div class="gbMenu">
-    <div class="giTitle"> {g->text text="Slideshow&nbsp;Options"} </div>
-    <ul><li>
+    <ul>
+      <li>
+        <strong>{g->text text="Slideshow Options"}:</strong>
+      </li>
+      <li>
 	{g->text text="delay"}:
 	<select id="slide_delay" onchange="slide_setdelay(this.value)">
 	 <option value="3">{g->text text="3 seconds"}</option>
@@ -171,8 +133,11 @@
 	 <option value="-1">{g->text text="reverse"}</option>
 	 <option value="0">{g->text text="random"}</option>
 	</select> <br />
-    </li></ul>
+      </li>
+    </ul>
   </div>
+{/capture}
+{capture name="sidebarInsert_3"}
   <div class="gbMenu">
     <ul><li>
       <a href="http://validator.w3.org/check?uri={$main.validationUri}&amp;ss=1"><img style="border: 0px"
@@ -186,10 +151,9 @@
          height="15" width="80" /></a>
     </li></ul>
   </div>
-</div>
-</div
-
-><div id="image" style="visibility:hidden" onclick="image_vis(0)"
+{/capture}
+<div id="sidebar">{include file="gallery:templates/sidebar.tpl"}</div>
+<div id="image" style="visibility:hidden" onclick="image_vis(0)"
 ><div id="image_view"></div></div
 
 ><div id="toolbar" style="visibility:hidden"><div id="tools_left"

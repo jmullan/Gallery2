@@ -38,9 +38,9 @@ class CartModule extends GalleryModule {
 	$this->setId('cart');
 	$this->setName('Cart');
 	$this->setDescription($gallery->i18n('Shopping Cart Module'));
-	$this->setVersion('0.8.1');
+	$this->setVersion('0.8.2');
 	$this->setGroup('commerce', $gallery->i18n('Commerce'));
-	$this->setCallbacks('getItemLinks|getSystemLinks');
+	$this->setCallbacks('getItemLinks|loadSystemContent');
     }
 
     /**
@@ -71,19 +71,49 @@ class CartModule extends GalleryModule {
 		array('text' => $this->translate(array('text' => 'add %s to cart',
 						       'arg1' => $itemTypeNames[1])),
 		      'params' => array('controller' => 'cart:AddToCart',
-					'itemId' => $item->getId()));
+					'itemId' => $item->getId(),
+					'return' => true));
 	}
 
 	return array(GalleryStatus::success(), $links);
     }
 
     /**
-     * @see GalleryModule::getSystemLinks
+     * @see GalleryModule::loadSystemContent
      */
-    function getSystemLinks() {
+    function loadSystemContent(&$template) {
+	global $gallery;
+	$content = array();
+
+	$view = GalleryUtilities::getRequestVariables('view');
+	if ($view == 'cart:ViewCart') {
+	    return array(GalleryStatus::success(), array());
+	}
+
+	/* The "View Cart" link */
+	$links = array();
 	$links[] = array('text' => $this->translate('View Cart'),
-			 'params' => array('view' => 'cart:ViewCart'));
-	return array(GalleryStatus::success(), $links);
+			 'params' => array('view' => 'cart:ViewCart',
+					   'return' => true));
+	$CartSystemContent['links'] = $links;
+
+	/* The cart content's count */
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/CartHelper.class');
+	list ($ret, $cartItemIds) = CartHelper::fetchCartItemCounts();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$CartSystemContent['count'] = 0;
+	foreach ($cartItemIds as $itemId => $count) {
+	    $CartSystemContent['count'] += $count;
+	}
+
+	$template->setVariable('CartSystemContent', $CartSystemContent);
+
+	$content = array();
+	$content['cart'] = 'modules/cart/templates/CartSystemContent.tpl';
+
+	return array(GalleryStatus::success(), $content);
     }
 }
 ?>

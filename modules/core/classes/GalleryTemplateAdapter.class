@@ -124,11 +124,52 @@ class GalleryTemplateAdapter {
      * @return a series of XHTML 1.0 compliant <input> elements
      */
     function hiddenFormVars($params, &$smarty) {
+	global $gallery;
+	$urlGenerator =& $gallery->getUrlGenerator();
+	$vars = array();
+
+	/* The 'return' url */
 	if (GalleryUtilities::hasRequestVariable('return')) {
-	    return sprintf('<input type="hidden" name="%s" value="%s"/>',
-			   GalleryUtilities::prefixFormVariable('return'),
-			   GalleryUtilities::getRequestVariables('return'));
+	    $vars['return'] = GalleryUtilities::getRequestVariables('return');
 	}
+
+	/* Remember the current url for getting back to where we came from */
+	if (empty($vars['return'])) {
+	    $currentView = $gallery->getCurrentView();
+	    list ($ret, $view) = GalleryView::loadView($currentView);
+	    if ($ret->isError()) {
+		$viewDescription = '';
+	    } else {
+		list ($ret, $viewDescription) = $view->getViewDescription();
+		if ($ret->isError()) {
+		    $viewDescription = '';
+		}
+	    }
+	    $vars['returnName'] = $viewDescription;
+	    $vars['return'] = $urlGenerator->getNavigationReturnUrl();
+	}
+
+	/* Our navigation id */
+	$navigationId = $urlGenerator->getNavigationId();
+	if (!empty($navigationId)) {
+	    $vars['navId'] = $navigationId;
+	    unset($vars['return']);
+	}
+
+	/* Remember the original URL where this form was first shown */
+	$vars['formUrl'] = GalleryUtilities::getRequestVariables('formUrl');
+	if (empty($vars['formUrl'])) {
+	    /* First time we load this form */
+	    $vars['formUrl'] = $urlGenerator->getNavigationReturnUrl();
+	}
+
+	$out = '';
+	foreach ($vars as $key => $value) {
+	    $out .= sprintf('<input type="hidden" name="%s" value="%s"/>' . "\n",
+			   GalleryUtilities::prefixFormVariable($key),
+			   $value);
+	}
+	return $out;
     }
 
     /**

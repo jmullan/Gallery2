@@ -214,6 +214,28 @@ class ItemEditView extends GalleryView {
 	$template->setVariable('controller', 'core:ItemEdit');
 	return array(GalleryStatus::success(), array('body' => 'modules/core/templates/ItemEdit.tpl'));
     }
+
+    /**
+     * @see GalleryView::getViewDescription()
+     */
+    function getViewDescription() {
+	global $gallery;
+
+	list ($ret, $item) = $this->_getItem();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+
+	$itemTypeNames = $item->itemTypeName(true);
+
+	return array(GalleryStatus::success(), $core->translate(array('text' => 'edit %s',
+								      'arg1' => $itemTypeNames[1])));
+    }
 }
 
 /**

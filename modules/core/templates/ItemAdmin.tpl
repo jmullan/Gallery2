@@ -12,6 +12,18 @@
     <input type="hidden" name="{g->formVar var="itemId"}" value="{$ItemAdmin.item.id}"/>
   </div>
 
+  <div id="gsSystemLinks">
+    <ul>
+    {foreach from=$ItemAdmin.moduleSystemLinks item=module}
+    {foreach from=$module item=link}
+    <li>
+      <a href="{g->url params=$link.params}">{$link.text}</a>
+    </li>
+    {/foreach}
+    {/foreach}
+    </ul>
+  </div>
+
   <ul class="gbBreadCrumb">
     {foreach name="parent" from=$ItemAdmin.parents item=parent}
     <li {if $smarty.foreach.parent.first}class="giBreadCrumbFirst"{/if}>
@@ -51,10 +63,17 @@
         
         <ul>
           {foreach from=$ItemAdmin.subViewChoices key=choiceName item=choiceParams}
-          <li>
-            <a href="{g->url params=$choiceParams}">
+          {if isset($choiceParams.active)}
+            <li class="giSelected">
               {$choiceName}
-            </a>
+            </li>
+          {else}
+            <li>
+              <a href="{g->url params=$choiceParams}">
+                {$choiceName}
+              </a>
+            </li>
+          {/if}
           </li>
           {/foreach}
         </ul>
@@ -66,34 +85,13 @@
         </h3>
         
         <ul>
-          {if ($ItemAdmin.isSiteAdmin)}
-          <li>
-            <a href="{g->url arg1="view=core:SiteAdmin"}">
-              {g->text text="Site Admin"}
-            </a>
-          </li>
-          {/if}
-  
-          {if ($ItemAdmin.itemType == 'item')}
-          <li>
-            <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$ItemAdmin.item.id`"}">
-              {g->text text="Back to Item View"}
-            </a>
-          </li>
-          <li>
-            <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$ItemAdmin.parent.id`"}">
-              {g->text text="Back to Album View"}
-            </a>
-          </li>
-  
-          {else}
-          <li>
-            <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$ItemAdmin.item.id`"}">
-              {g->text text="Back to Album View"}
-            </a>
-          </li>
-          {/if}
-  
+          {foreach from=$ItemAdmin.navigationLinks item=link}
+            <li> 
+              <a href="{$link.url}">
+                {$link.name}
+              </a>
+            </li>
+          {/foreach}
         </ul>
       </div>
     </div>

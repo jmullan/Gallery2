@@ -72,8 +72,27 @@ form, div, h1, h2, h3, h4, h5, h6  {
 }
 
 #gsSidebar, #gsAdminSidebar {
-    float: left;
+	float: left;
 	width: 20%;
+}
+
+#gsSystemLinks {
+	float: right;
+	margin: 0;
+	padding: 6px 8px;
+}
+
+#gsSystemLinks ul {
+	list-style-type: none;
+	position: relative;
+	display: inline;
+	margin: 0 15px 0 0;
+	padding: 0;
+}
+
+#gsSystemLinks ul li {
+	display: inline;
+	margin: 0 0 0 10px;
 }
 
 #gsContents {
@@ -248,12 +267,12 @@ ul.gbAdminList li label { }
 
 /*      horizontal history links - 'trail of breadcrumbs' */
 .gbBreadCrumb {
- 	margin: 0;
+	margin: 0;
 	padding: 6px 8px;
 }
 
 .gbBreadCrumb li {
-    display: inline;
+	display: inline;
 	padding: 0 0 0 14px;
 }
 

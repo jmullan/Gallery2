@@ -106,7 +106,7 @@ class HybridLayout extends GalleryLayout {
 	}
 
 	$ret = $this->loadLayoutTemplate($template, $item,
-	    array('owner', 'viewCount', 'parents', 'systemLinks', 'systemContentFiles', 'itemLinks'),
+	    array('owner', 'viewCount', 'parents', 'systemLinks', 'systemContent', 'itemLinks'),
 	    $childIds);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -118,6 +118,9 @@ class HybridLayout extends GalleryLayout {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+
+	$layout['show']['parents'] = true;
+	$layout['show']['systemLinks'] = true;
 	$layout['imageWidths'] = implode(',',$imageWidths);
 	$layout['imageHeights'] = implode(',',$imageHeights);
 	$layout['imageCount'] = count($imageWidths);

@@ -43,6 +43,12 @@ class UserAdminView extends GalleryView {
 	global $gallery;
 
 	$user = $gallery->getActiveUser();
+
+	/* Get system links */
+	list ($ret, $moduleSystemLinks) = $this->_getModuleSystemLinks();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 	    
 	/* Load the module list */
 	list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module');
@@ -101,7 +107,17 @@ class UserAdminView extends GalleryView {
 	    $template->setVariableByReference('UserAdmin', $UserAdmin);
 	}
 
+	/* Get the links for navigating back to where we came from */
+	$urlGenerator =& $gallery->getUrlGenerator();
+	list ($ret, $navigationLinks) = $urlGenerator->getNavigationLinks();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+
+
 	/* Set up my view parameters */
+	$UserAdmin['moduleSystemLinks'] = $moduleSystemLinks;
+	$UserAdmin['navigationLinks'] = $navigationLinks;
 	$UserAdmin['user'] = $user->getMemberData();
 	$UserAdmin['show'] = $show;
 	$UserAdmin['subViewChoices'] = $subViewChoices;
@@ -127,6 +143,25 @@ class UserAdminView extends GalleryView {
 	return array(GalleryStatus::success(),
 		     array('head' => 'modules/core/templates/UserAdminHead.tpl',
 			   'body' => 'modules/core/templates/UserAdmin.tpl'));
+    }
+
+    /**
+     * @see GalleryView::getViewDescription()
+     */
+    function getViewDescription() {
+	global $gallery;
+	
+	/* Get the description from the current subView */
+	$subViewName = GalleryUtilities::getRequestVariables('subView');
+	if (empty($subViewName)) {
+	    $subViewName = 'core:ItemEdit';
+	}
+	list ($ret, $subView) = GalleryView::loadView($subViewName);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
+	return $subView->getViewDescription();
     }
 }
 ?>

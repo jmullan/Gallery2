@@ -59,21 +59,6 @@
 <div id="image"><div id="image_view"></div></div>
 
 {* Slideshow options *}
-{if !empty($layout.parents)}{capture name="sidebarInsert_1"}
-<div class="gbMenu">
-  <h3 class="giTitle"> {g->text text="Navigation"} </h3>
-  <ul>
-    {foreach from=$layout.parents item=parent}
-    <li>
-      &raquo;
-      <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$parent.id`"}">
-        {$parent.title|default:$parent.pathComponent|markup}
-      </a>
-    </li>
-    {/foreach}
-  </ul>
-</div>
-{/capture}{/if}
 {capture name="sidebarInsert_2"}
 {if !empty($layout.itemLinks)}
 <div class="gbMenu">

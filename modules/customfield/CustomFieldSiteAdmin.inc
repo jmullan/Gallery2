@@ -49,7 +49,6 @@ class CustomFieldSiteAdminController extends GalleryController {
 	}
 
 	/* Figure out where to redirect upon success */
-	$results['return'] = 1;
 	$results['redirect']['view'] = 'core:SiteAdmin';
 	$results['redirect']['subView'] = 'customfield:CustomFieldSiteAdmin';
 	$results['status'] = $status;

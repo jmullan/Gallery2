@@ -122,20 +122,20 @@ class CommentModule extends GalleryModule {
 	    }
 
 	    if (isset($permissions['comment.add'])) {
-		$params['return'] = 'true';
 		$params['view'] = 'core:ItemAdmin';
 		$params['subView'] = 'comment:AddComment';
 		$params['itemId'] = $item->getId();
+		$params['return'] = 1;
 		$links[$item->getId()][] =
 		    array('text' => $this->translate('add comment'),
 			  'params' => $params);
 	    }
 	    
 	    if (isset($permissions['comment.view'])) {
-		$params['return'] = 'true';
 		$params['view'] = 'core:ItemAdmin';
 		$params['subView'] = 'comment:ShowComments';
 		$params['itemId'] = $item->getId();
+		$params['return'] = 1;
 		$links[$item->getId()][] =
 		    array('text' => $this->translate('view comment'),
 			  'params' => $params);

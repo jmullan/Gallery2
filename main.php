@@ -88,7 +88,7 @@ function _GalleryMain($returnHtml=false) {
     global $gallery;
     
     /* Let our url generator process the query string */
-    $urlGenerator = $gallery->getUrlGenerator();
+    $urlGenerator =& $gallery->getUrlGenerator();
     list ($ret, $redirectUrl) = $urlGenerator->parseCurrentUrl();
     if ($ret->isError()) {
 	return array($ret->wrap(__FILE__, __LINE__), null);
@@ -185,7 +185,7 @@ function _GalleryMain($returnHtml=false) {
 	/* Check to make sure we got back everything we want */
 	if (!isset($results['status']) ||
 	    !isset($results['error']) ||
-	    (!isset($results['redirect']) && !isset($results['delegate']))) {
+	    (!isset($results['redirect']) && !isset($results['delegate']) && !isset($results['return']))) {
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
 					      'Controller results are missing status, ' .
 					      'error or (redirect,delegate)'),
@@ -195,12 +195,18 @@ function _GalleryMain($returnHtml=false) {
 	/* Try to return if the controller instructs it */
 	$redirectUrl = null;
 	if (!empty($results['return'])) {
-	    $redirectUrl = GalleryUtilities::getRequestVariables('return');
+	    list ($ret, $navigationLinks) = $urlGenerator->getNavigationLinks(1);
+	    if (count($navigationLinks) > 0) {
+		/* Go back to the previous navigation point in our history */
+		$redirectUrl = $navigationLinks[0]['url'];
+	    } else {
+		$redirectUrl = GalleryUtilities::getRequestVariables('return');
+	    }
 	}
 
 	/* Failing that, redirect if so instructed */
 	if (empty($redirectUrl) && !empty($results['redirect'])) {
-	    $urlGenerator = $gallery->getUrlGenerator();
+	    $urlGenerator =& $gallery->getUrlGenerator();
 
 	    /*
 	     * If we have a status, store its data in the session and attach it
@@ -210,8 +216,14 @@ function _GalleryMain($returnHtml=false) {
 		$session =& $gallery->getSession();
 		$results['redirect']['statusId'] = $session->putStatus($results['status']);
 	    }
-	    
-	    $redirectUrl = $urlGenerator->generateUrl($results['redirect']);
+
+	    $urlToGenerate = $results['redirect'];
+	    /* Keep our navId in the URL */
+	    $navId = $urlGenerator->getNavigationId();
+	    if (!empty($navId)) {
+		$urlToGenerate['navId'] = $navId;
+	    }
+	    $redirectUrl = $urlGenerator->generateUrl($urlToGenerate);
 	}
 	
 	/* If we have a redirect url .. use it */ 
@@ -257,6 +269,7 @@ function _GalleryMain($returnHtml=false) {
 
     $showGlobal = true;
     if (empty($redirectUrl)) {
+
 	/* Load and run the appropriate view */
 	if (empty($viewName)) {
 	    $viewName = 'core:ShowItem';
@@ -273,6 +286,8 @@ function _GalleryMain($returnHtml=false) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
+
+	$gallery->setCurrentView($viewName);
 
 	/*
 	 * If this is an immediate view, it will send its own output directly.  This is
