@@ -284,18 +284,13 @@
 	{g->text text="AcceptPathInfo directive"}
       </a>
       {/capture}
-      {capture name="iis6link"}
-      <a href="http://www.microsoft.com/resources/documentation/iis/6/all/proddocs/en-us/ref_mb_allowpathinfoforscriptmappings.mspx" onclick="window.open(this.href); return false;" onkeypress="window.open(this.href); return false;">
-	{g->text text="AllowPathInfoForScriptMappings directive"}
-      </a>
-      {/capture}
       {capture name="shortUrlTestLink"}
       <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$AdminCore.shortUrlTestItemId`" arg3="forceShortUrls=true"}" onclick="window.open(this.href); return false;" onkeypress="window.open(this.href); return false;">
 	{g->text text="test url"}
       </a>
       {/capture}
       {/strip}
-      {g->text text="Gallery has the option to use a compact URL format, however this format is not supported by default on all web servers.  It is enabled by default on Apache 1, but not on Apache 2 or IIS.  If you're using Apache 2 you must use the %s.  On IIS6 you must use the %s.  Use this %s to find out if short URLs work for you.  If the link returns a webserver error then they don't work for you." arg1=$smarty.capture.apache2link arg2=$smarty.capture.iis6link arg3=$smarty.capture.shortUrlTestLink}
+      {g->text text="Gallery has the option to use a compact URL format, however this format is not supported by default on all web servers.  It is enabled by default on Apache 1, but not on Apache 2.  If you're using Apache 2 you must use the %s.  Use this %s to find out if short URLs work for you.  If the link returns a webserver error then they don't work for you." arg1=$smarty.capture.apache2link arg2=$smarty.capture.shortUrlTestLink}
     </p>
 
     <table class="gbDataTable">
