@@ -20,6 +20,14 @@
       int(1)
     
     ,
+  COLUMN_PREFIXlayout
+      varchar(
+      
+          32
+        
+      )
+    
+    ,
   COLUMN_PREFIXkeywords
       varchar(
       
@@ -57,16 +65,12 @@
   COLUMN_PREFIXtitle
       varchar(
       
-          128
+          255
         
       )
     
     NOT NULL
   
-    ,
-  COLUMN_PREFIXviewCount
-      int(11)
-    
     ,
   COLUMN_PREFIXviewedSinceTimestamp
       int(11)
