@@ -500,6 +500,8 @@ class GalleryDerivativeHelper_advanced {
     function rebuildCache($derivativeId) {
 	global $gallery;
 
+	$gallery->guaranteeTimeLimit(10);
+
 	list ($ret, $derivative) = GalleryCoreApi::loadEntitiesById($derivativeId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
