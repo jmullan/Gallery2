@@ -53,12 +53,22 @@
       </div>
 
       <div id="main">
+	<?php if (!empty($templateData['errors'])): ?>
 	<h2 class="error">
 	  <?php foreach ($templateData['errors'] as $error): ?>
 	  <?php print $error ?> <br />
 	  <?php endforeach; ?>
 	</h2>
+	<?php endif; ?>
 	
+	<?php if (!empty($templateData['warnings'])): ?>
+	<h2 class="warning">
+	  <?php foreach ($templateData['warnings'] as $warning): ?>
+	  <?php print $warning ?> <br />
+	  <?php endforeach; ?>
+	</h2>
+	<?php endif; ?>
+
 	<?php include($templateData['bodyFile']); ?>
 
 	<?php if ($currentStep->isComplete() && !$currentStep->isLastStep()): ?>

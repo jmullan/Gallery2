@@ -28,6 +28,7 @@
 	    <input name="hostname" type="text" 
 	      value="<?php print $templateData['config']['hostname'] ?>" />
 	    <input type="hidden" name="action" value="save"/>
+	    <input type="hidden" name="confirmReuseTables" value=""/>
 	  </td>
 	</tr>
 	<tr>
@@ -68,7 +69,25 @@
       </table>
     </form>
 
-    <div class="go">
-      <span class="goToNext"><a href="javascript:document.database_form.submit()"><?php print _('Save') ?></a></span>
+    <?php if (!empty($templateData['errors'])): ?>
+    <h2 class="error">
+      <?php print _('We received the following database related errors:'); ?>
+    </h2>
+    <div>
+      <?php print $templateData['databaseErrors']; ?>
     </div>
+    <?php endif; ?>
+
+    <div class="go">
+      <span class="goToNext">
+	<a href="javascript:document.database_form.submit()"><?php print _('Save') ?></a>
+      </span>
+      <?php if (isset($templateData['showConfirm'])): ?>
+      &nbsp; 
+      <span class="goToNext">
+	<a href="javascript:document.database_form.confirmReuseTables.value='true'; document.database_form.submit()"><?php print _('Reuse Existing Tables') ?></a>
+      </span>
+      <?php endif; ?>
+    </div>
+
 

@@ -47,26 +47,70 @@ class DatabaseSetupStep extends InstallStep {
 	}
 
 	if (!empty($_POST['action']) && $_POST['action'] == 'save') {
-	    // TODO: change this to actually verify before marking complete
-	    if (true) {
-		$this->setComplete(true);
-		foreach (array('type', 'hostname', 'username',
-			       'password', 'database', 'tablePrefix', 'columnPrefix') as $key) {
-		    $this->_config[$key] = $this->sanitize($_POST[$key]);
-		}
-	    } else {
-		foreach (array('type', 'hostname', 'username',
-			       'password', 'database', 'tablePrefix', 'columnPrefix') as $key) {
-		    $templateData['config'][$key] = $this->sanitize($_POST[$key]);
+	    foreach (array('type', 'hostname', 'username',
+			   'password', 'database', 'tablePrefix', 'columnPrefix') as $key) {
+		$this->_config[$key] = $this->sanitize($_POST[$key]);
+	    }
+
+	    // Load up ADOdb
+	    require_once(dirname(__FILE__) . '/../../lib/adodb/adodb.inc.php');
+
+	    $this->_captureStart();
+	    $db =& ADONewConnection($this->_config['type']);
+	    $db->debug = true;
+	    $this->_captureEnd();
+	    
+	    if (empty($db)) {
+		$templateData['errors'][] = _('Unable to create a database connection of type %s',
+					      $this->_config['type']);
+	    }
+
+	    if (empty($templateData['errors'])) {
+		$this->_captureStart();
+		$result = $db->NConnect($this->_config['hostname'],
+					$this->_config['username'],
+					$this->_config['password'],
+					$this->_config['database']);
+		$this->_captureEnd();
+		if (empty($result)) {
+		    $templateData['errors'][] = _('Unable to connect to database with the information provided.');
 		}
 	    }
-	} else {
-	    $templateData['config'] = $this->_config;
+
+	    if (empty($templateData['errors'])) {
+		$this->_captureStart();
+		$result = $db->MetaTables();
+		$this->_captureEnd();
+		if (empty($result)) {
+		    $templateData['errors'][] = _('The database you specified does not exist.  Please create it.');
+		}
+
+		if (empty($_POST['confirmReuseTables'])) {
+		    if (in_array($this->_config['tablePrefix'] . 'Schema', $result) ||
+			in_array($this->_config['tablePrefix'] . 'schema', $result)) {
+			$templateData['warnings'][] = _('Gallery tables already exist in this database!  If you want to use the existing tables, you must confirm that below.  Otherwise, you must specify a new database, or a different table prefix in order to continue.');
+			$templateData['showConfirm'] = 1;
+			$confirmRequired = 1;
+		    }
+		}
+	    }
+
+	    $templateData['databaseErrors'] = $this->_getCaptured();
+
+	    if (empty($templateData['errors']) &&
+		(empty($confirmRequired) || !empty($_POST['confirmReuseTables']))) {
+		$this->setComplete(true);
+	    }
 	}
 
 	if ($this->isComplete()) {
 	    $templateData['bodyFile'] = 'templates/DatabaseSetupSuccess.html';
 	} else {
+	    foreach (array('type', 'hostname', 'username',
+			   'password', 'database', 'tablePrefix', 'columnPrefix') as $key) {
+		$templateData['config'] = $this->_config;
+	    }
+	    
 	    foreach (array('mysql'  => _('MySQL (all versions)'),
 			   'mysqlt' => _('MySQL with Transactions (v3.23.34a and newer)'),
 			   'postgres7' => _('PostgreSQL v7.x'),
@@ -78,6 +122,21 @@ class DatabaseSetupStep extends InstallStep {
 
 	    $templateData['bodyFile'] = 'templates/DatabaseSetupRequest.html';
 	}
+    }
+
+    function _captureStart() {
+	ob_start();
+    }
+
+    function _captureEnd() {
+	$this->_debugContents .= ob_get_contents();
+	ob_end_clean();
+    }
+
+    function _getCaptured() {
+	$contents = $this->_debugContents;
+	unset($this->_debugContents);
+	return $contents;
     }
 }
 ?>
