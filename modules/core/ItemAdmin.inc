@@ -146,6 +146,9 @@ class ItemAdminView extends GalleryView {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+	for ($i = 0; $i < sizeof($parents); $i++) {
+	    $parents[$i] = $parents[$i]->getMemberData();
+	}
 
 	list ($ret, $results) = $subView->loadTemplate($template, $form);
 	if ($ret->isError()) {
