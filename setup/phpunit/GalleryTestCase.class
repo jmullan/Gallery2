@@ -43,9 +43,18 @@ class GalleryTestCase extends TestCase {
 
     function setUp() {
 	global $gallery;
+	global $HTTP_GET_VARS;
+	global $HTTP_POST_VARS;
+	global $HTTP_POST_FILES;
 
 	parent::setUp();
 
+	/* Clear out any request vars */
+	$this->_saveRequestVars = array($HTTP_GET_VARS, $HTTP_POST_VARS, $HTTP_POST_FILES);
+	$HTTP_GET_VARS = array();
+	$HTTP_POST_VARS = array();
+	$HTTP_POST_FILES = array();
+	
 	/*
 	 * Try to ensure enough time for this test to complete.  If a test
 	 * needs more time, then it should extend the limit itself.
@@ -83,6 +92,9 @@ class GalleryTestCase extends TestCase {
     
     function tearDown() {
 	global $gallery;
+	global $HTTP_GET_VARS;
+	global $HTTP_POST_VARS;
+	global $HTTP_POST_FILES;
 
 	/* Make sure we're not hanging onto any locks */
 	if (!empty($gallery->_locks)) {
@@ -97,6 +109,9 @@ class GalleryTestCase extends TestCase {
 	    $this->fail($ret->getAsText());
 	}
 
+	/* Restore form vars */
+	list ($HTTP_GET_VARS, $HTTP_POST_VARS, $HTTP_POST_FILES) = $this->_saveRequestVars;
+	
 	parent::tearDown();
     }
 
