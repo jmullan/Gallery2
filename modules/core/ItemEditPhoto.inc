@@ -170,6 +170,7 @@ class ItemEditPhoto extends ItemEditPlugin {
 		}
 		foreach ($resizesTable as $resizes) {
 		    foreach ($resizes as $resize) {
+			$postFilter = $resize->getPostFilterOperations();
 			$ret = GalleryCoreApi::deleteEntityById($resize->getId());
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null, null);
@@ -218,6 +219,9 @@ class ItemEditPhoto extends ItemEditPlugin {
 			$derivative->setMimeType($outputMimeType);
 			$derivative->setDerivativeSourceId($source->getId());
 			$derivative->setDerivativeOperations('scale|' . $form['resizes'][$i]['size']);
+			if (isset($postFilter)) {
+			    $derivative->setPostFilterOperations($postFilter);
+			}
 
 			$ret = $derivative->save();
 			if ($ret->isError()) {

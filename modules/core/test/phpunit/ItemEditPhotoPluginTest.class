@@ -108,7 +108,8 @@ class ItemEditPhotoPluginTest extends ItemEditPluginTestCase {
 
 	list ($ret, $this->_derivative[2]) =
 	    $this->_createDerivative($this->_item, $this->_derivative[0]->getId(),
-				     DERIVATIVE_TYPE_IMAGE_RESIZE, 'scale|500');
+				     DERIVATIVE_TYPE_IMAGE_RESIZE, 'scale|500', 'test/file',
+				     array('postFilterOperations' => 'test-operation|0'));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -171,6 +172,9 @@ class ItemEditPhotoPluginTest extends ItemEditPluginTestCase {
 	    for ($i = 0; $i < 3; $i++) {
 		$this->assertEquals('scale|' . 100 * ($i+1),
 				    $resizeTable[$this->_item->getId()][$i]->getDerivativeOperations());
+		// check that postfilteroperations are maintained and added to new resizes..
+		$this->assertEquals('test-operation|0',
+		    $resizeTable[$this->_item->getId()][$i]->getPostFilterOperations(), "postfilter $i");
 	    }
 	}
     }
