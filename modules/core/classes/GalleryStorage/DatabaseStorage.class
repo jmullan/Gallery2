@@ -313,10 +313,8 @@ class DatabaseStorage extends GalleryStorage {
 	$classNames = array();
 	for ($i = 0; $i < sizeof($ids); $i++) {
 	    if (empty($types[$i])) {
-		if ($gallery->getDebug()) {
-		    $gallery->debug("Missing object for id $ids[$i]");
-		}
-		return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
+		return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__,
+						  "Missing object for id $ids[$i]"), null);
 	    }
 	    $classNames[$types[$i]][$ids[$i]] = 1;
 	}
@@ -1196,10 +1194,8 @@ class DatabaseStorage extends GalleryStorage {
 	}
 
 	if (empty($where)) {
-	    if ($gallery->getDebug()) {
-		$gallery->debug('Missing where clause');
-	    }
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+					'Missing where clause');
 	}
 
 	$query = 'DELETE FROM ' . $tableName . ' ';
@@ -1441,10 +1437,8 @@ class DatabaseStorage extends GalleryStorage {
 	$this->_traceStop();
 	
 	if (empty($recordSet)) {
-	    if ($gallery->getDebug()) {
-		$gallery->debug('Error reading schema table');
-	    }
-	    return array(GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__), null);
+	    return array(GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__,
+					      'Error reading schema table'), null);
 	}
 
 	while ($row = $recordSet->FetchRow()) {
@@ -1487,18 +1481,14 @@ class DatabaseStorage extends GalleryStorage {
 		    $recordSet = $this->_db->Execute($query);
 		    $this->_traceStop();
 		    if (empty($recordSet)) {
-			if ($gallery->getDebug()) {
-			    $gallery->debug("Error trying to load $fileName");
-			}
-			return GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
+			return GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__,
+						    "Error trying to load $fileName");
 		    }
 		}
 	    }
 	} else {
-	    if ($gallery->getDebug()) {
-		$gallery->debug("Unable to read file $fileName");
-	    }
-	    return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);
+	    return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__,
+					"Unable to read file $fileName");
 	}
 
 	return GalleryStatus::success();

@@ -965,9 +965,9 @@ class Gallery {
 	    $platform = $this->getPlatform();
 
 	    if (!$platform->file_exists($moduleFile)) {
-		$this->debug('Missing file: ' . $moduleFile);
 		return array(GalleryStatus::error(ERROR_BAD_MODULE,
-						  __FILE__, __LINE__),
+						  __FILE__, __LINE__,
+						  'Missing file: ' . $moduleFile),
 			     null);
 	    }
 

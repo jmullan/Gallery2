@@ -218,10 +218,7 @@ class GalleryDataItem_core extends GalleryItem {
 	$platform = $gallery->getPlatform();
 
 	if (!$platform->unlink($path)) {
-	    if ($gallery->getDebug()) {
-		$gallery->debug("Could not delete $path");
-	    }
-	    return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);
+	    return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__, "Could not delete $path");
 	}
 
 	return GalleryStatus::success();

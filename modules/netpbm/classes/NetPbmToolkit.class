@@ -260,11 +260,9 @@ class NetPbmToolkit extends GalleryToolkit {
 	$success = $platform->rename($tmpFilename, $destFilename);
 	@$platform->unlink($tmpFilename);
 	if (!$success) {
-	    if ($gallery->getDebug()) {
-		$gallery->debug("Failed renaming $tmpFilename -> $destFilename");
-	    }
 	    return GalleryStatus::error(ERROR_PLATFORM_FAILURE,
-					__FILE__, __LINE__);
+					__FILE__, __LINE__,
+					"Failed renaming $tmpFilename -> $destFilename");
 	} else {
 	    return GalleryStatus::success();
 	}
@@ -299,11 +297,9 @@ class NetPbmToolkit extends GalleryToolkit {
 	    break;
 
 	default:
-	    if ($gallery->getDebug()) {
-		$gallery->debug('Unsupported file type: ' . $mimeType);
-	    }
 	    return array(GalleryStatus::error(ERROR_UNSUPPORTED_FILE_TYPE,
-					      __FILE__, __LINE__),
+					      __FILE__, __LINE__,
+					      'Unsupported file type: ' . $mimeType),
 			 null);
 	}
 

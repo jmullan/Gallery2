@@ -152,24 +152,18 @@ class GalleryTheme {
 	     */
 	    $themeClassName = $themeName . "Theme";
 	    if (!class_exists($themeClassName)) {
-		if ($gallery->getDebug()) {
-		    $gallery->debug("Theme $themeName must have a class named '$themeClassName'");
-		}
-		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+						  "Theme $themeName must have a class named '$themeClassName'"), null);
 	    }
 
 	    $theme = new $themeClassName($themeDir);
 	    if (!GalleryUtilities::isA($theme, 'GalleryTheme')) {
-		if ($gallery->getDebug()) {
-		    $gallery->debug("Theme $themeName is not an instance of GalleryTheme");
-		}
-		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+						  "Theme $themeName is not an instance of GalleryTheme"), null);
 	    }
 	} else {
-	    if ($gallery->getDebug()) {
-		$gallery->debug("Theme $themeName is missing theme.inc");
-	    }
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+					      "Theme $themeName is missing theme.inc"), null);
 	}
 	GalleryProfiler::stop('modules.core.classes.GalleryTheme::loadTheme');
 

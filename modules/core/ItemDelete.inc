@@ -65,10 +65,8 @@ class ItemDeleteController extends GalleryController {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	if ($item->getId() == $rootId) {
-	    if ($gallery->getDebug()) {
-		$gallery->debug("Can't delete the root album");
-	    }
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+					      "Can't delete the root album"), null);
 	}
 
 	$status = array();
@@ -131,10 +129,8 @@ class ItemDeleteView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 	if ($item->getId() == $rootId) {
-	    if ($gallery->getDebug()) {
-		$gallery->debug("Can't delete the root album");
-	    }
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null, null);
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+					      "Can't delete the root album"), null, null);
 	}
 	
 	/* Count its children */

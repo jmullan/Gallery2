@@ -152,9 +152,9 @@ function GalleryMain($startTime) {
 	if (!isset($results['status']) ||
 	    !isset($results['error']) ||
 	    (!isset($results['redirect']) && !isset($results['delegate']))) {
-	    $gallery->debug("Controller results are missing status, error or (redirect,delegate)");
 	    $gallery->debug_r($results);
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+					"Controller results are missing status, error or (redirect,delegate)");
 	}
 
 	/* Try to return if the controller instructs it */

@@ -119,10 +119,8 @@ class GalleryView {
 	    $module = $regs[1];
 	    $class = $regs[2];
 	} else {
-	    if ($gallery->getDebug()) {
-		$gallery->debug("$viewName can't be parsed");
-	    }
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+					      "$viewName can't be parsed"), null);
 	}
 
 	$moduleDir = $gallery->getConfig('code.gallery.modules') . $module . '/';
@@ -140,18 +138,14 @@ class GalleryView {
 
 	$viewClassName = $class . 'View';
 	if (!class_exists($viewClassName)) {
-	    if ($gallery->getDebug()) {
-		$gallery->debug("Class $viewClassName not defined in $viewName");
-	    }
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+					      "Class $viewClassName not defined in $viewName"), null);
 	}
 
 	$view = new $viewClassName();
 	if (!GalleryUtilities::isA($view, 'GalleryView')) {
-	    if ($gallery->getDebug()) {
-		$gallery->debug("Class $viewClassName is not a subclass of GalleryView");
-	    }
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+					      "Class $viewClassName is not a subclass of GalleryView"), null);
 	}
 
 	/* Tell the view what module its in */

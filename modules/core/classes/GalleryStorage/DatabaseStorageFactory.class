@@ -60,11 +60,9 @@ class DatabaseStorageFactory {
 			 new PostgreSqlDatabaseStorage($config));
 	    
 	default:
-	    if ($gallery->getDebug()) {
-		$gallery->debug("Unknown storage type '$type'");
-	    }
 	    return array(GalleryStatus::error(ERROR_UNIMPLEMENTED,
-					      __FILE__, __LINE__),
+					      __FILE__, __LINE__,
+					      "Unknown storage type '$type'"),
 			 null);
 	}
     }

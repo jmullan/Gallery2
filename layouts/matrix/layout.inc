@@ -377,7 +377,7 @@ class MatrixLayout extends GalleryLayout {
 
 	/* Can we see this item at all? */
 	if (!isset($permissions['core.view'])) {
-	    return array(GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__), null);
+	    return array(GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__, "Permission denied"), null);
 	}
 
 	/* If the user can see resized versions, add those to the list */
