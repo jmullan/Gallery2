@@ -372,8 +372,8 @@ class ConfirmImportController extends GalleryController {
 			    if ($ret->isError()) {
 				if ($ret->getErrorCode() & ERROR_COLLISION) {
 				    $error[] = 'form[error][pathComponent][collision]';
-				    return array($ret->wrap(__FILE__, __LINE__), null);
 				}
+				return array($ret->wrap(__FILE__, __LINE__), null);
 			    }
 
 			    if (isset($form['urlRedirect'])) {
