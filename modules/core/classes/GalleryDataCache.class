@@ -251,7 +251,8 @@ class GalleryDataCache {
      */
     function &getFromDisk($pathInfo) {
 	if (!GalleryDataCache::isFileCachingEnabled()) {
-	    return;
+	    $null = null;
+	    return $null;
 	}
 	
 	global $gallery;
