@@ -95,6 +95,14 @@ class InitializeGalleryTestCase extends TestCase {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
+	/* For testing purposes, add a couple of local upload dirs */
+	$ret = $gallery->setModuleParameter('core', 'uploadLocalServer.dirs',
+					    join(',',
+						 array('/usr/www/website/menalto.com/albums',
+						       '/tmp')));
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 	return GalleryStatus::success();
     }
 }
