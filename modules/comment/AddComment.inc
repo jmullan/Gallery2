@@ -106,18 +106,19 @@ class AddCommentView extends GalleryView {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+	$thumbnail = $thumbnailTable[$item->getId()][0];
 
 	/* Render the HTML body */
 	$this->_initTemplate(dirname(__FILE__) . '/templates');
 	
 	if (!empty($thumbnailTable)) {
-	    $this->_setTemplateVariable('thumbnail', $thumbnailTable[$item->getId()][0]);
+	    $this->_setTemplateVariable('thumbnail', $thumbnail->getMemberData());
 	}
 	
 	$return = GalleryUtilities::getFormVariables('return.');
 
 	$this->_setTemplateVariable('return', $return);
-	$this->_setTemplateVariable('itemId', $item->getId());
+	$this->_setTemplateVariable('item', $item->getMemberData());
 	$this->_setTemplateVariable('controller', 'comment:AddComment');
 	$html = $this->_renderTemplate('comment', 'AddComment.tpl');
 	

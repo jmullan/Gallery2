@@ -64,7 +64,7 @@
 	  <tr>
 	    {section name=inner loop=$children start=$childIndex max=$properties.columns}
 	    {assign var=child value=$children[$childIndex]}
-	    <td valign="top" align="center">
+	    <td valign="center" align="center">
 	      {if $child.entityType == 'galleryalbumitem'}
 	      {include file="albumThumbnail.tpl"}
 	      {else}

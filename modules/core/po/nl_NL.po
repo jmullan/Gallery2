@@ -18,7 +18,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Core 1.0\n"
-"POT-Creation-Date: 2002-11-03 17:29-0800\n"
+"POT-Creation-Date: 2002-11-13 15:41-0800\n"
 "PO-Revision-Date: 2002-11-3 20:50+0100\n"
 "Last-Translator: Marcel van Groenigen <marcel@emenems.net>\n"
 "Language-Team: Dutch <gallery-devel@lists.sourceforge.net>\n"
@@ -51,11 +51,15 @@ msgstr ""
 msgid "Actions"
 msgstr "Akties"
 
+#, fuzzy
+msgid "Active"
+msgstr "Akties"
+
 msgid "Add"
 msgstr "Toevoegen"
 
 #, fuzzy
-msgid "Add/Remove Group"
+msgid "Add/Remove Group's Users"
 msgstr "Gebruikers verwijderen/toevoegen"
 
 msgid "Add/Remove Users"
@@ -136,12 +140,12 @@ msgstr "Aflopend"
 msgid "Description"
 msgstr "Omschrijving"
 
-#, fuzzy
-msgid "Do you really want to delete group "
+#, fuzzy, c-format
+msgid "Do you really want to delete group '%s'?"
 msgstr "Wil je de groep '%s' echt verwijderen?"
 
-#, fuzzy
-msgid "Do you really want to delete user "
+#, fuzzy, c-format
+msgid "Do you really want to delete user '%s'?"
 msgstr "Wil je de gebruiker '%s' echt verwijderen?"
 
 msgid "Done"
@@ -156,12 +160,13 @@ msgstr "Bewerk een gebruiker"
 msgid "Edit"
 msgstr "Bewerk"
 
-#, fuzzy
-msgid "Editting Group "
+#, fuzzy, c-format
+msgid "Editting Group '%s'"
 msgstr "Bewerken Groep '%s'"
 
+#, fuzzy
 msgid "Editting this item"
-msgstr ""
+msgstr "Bewerken Groep '%s'"
 
 msgid "Email address"
 msgstr "Email adres"
@@ -175,6 +180,12 @@ msgstr ""
 
 msgid "Error"
 msgstr "Fout"
+
+msgid ""
+"Every item will have a thumbnail.  The default thumbnail size you specify "
+"here will create a uniform look for your album.  You must enter a number "
+"greater than 0."
+msgstr ""
 
 msgid "Filesystem Permissions"
 msgstr "Filesystem rechten"
@@ -204,15 +215,40 @@ msgstr "Gallery Instellingen"
 msgid "Gallery Site Administration"
 msgstr "Gallery Site Administratie"
 
+msgid ""
+"Gallery can automatically create intermediate resized versions of images "
+"added to this album.  This is useful when you want to present larger "
+"versions of an image without showing the full size image."
+msgstr ""
+
+msgid "General Item Properties"
+msgstr ""
+
 msgid "General"
 msgstr ""
 
 msgid "Graphics Toolkit"
 msgstr "Grafische Toolkit"
 
-#, fuzzy
-msgid "Group "
-msgstr "Groep Naam"
+#, c-format
+msgid "Group '%s' already exists"
+msgstr "Groep '%s' bestaat al"
+
+#, c-format
+msgid "Group '%s' does not exist."
+msgstr "Groep '%s' bestaat niet"
+
+#, c-format
+msgid "Group '%s' has been created successfully."
+msgstr "Groep '%s' is aangemaakt"
+
+#, c-format
+msgid "Group '%s' has been modified successfully."
+msgstr "Groep '%s' is gewijzigt"
+
+#, c-format
+msgid "Group '%s' has been successfully deleted."
+msgstr "Groep '%s' is verwijdert"
 
 msgid "Group Management"
 msgstr "Groep Management"
@@ -224,23 +260,45 @@ msgstr "Groep Naam"
 msgid "Groups"
 msgstr "Groep Naam"
 
+msgid ""
+"Here you can choose default values for items in this album.  These values "
+"will only apply to new items that are added to the album, not ones that are "
+"already in it."
+msgstr ""
+
 #, fuzzy
 msgid ""
 "Here you can specify the default permissions for files and directories that "
-"Gallery creates. This doesn"
+"Gallery creates. This doesn't apply to files/directories that Gallery has "
+"already created."
 msgstr ""
 "Hier kun je de standaard rechten opgeven voor bestanden en mappen die "
 "Gallery Aanmaakt. Dit wordt niet gewijzigt in mappen/bestanden die nu al "
 "bestaan."
 
-msgid "If you don"
+msgid ""
+"If you don't know the group name you'd like to work with, you can browse or "
+"search for it here."
 msgstr ""
+"Als je de groepsnaam niet weet waar je mee wil werken, kun je er hier naar "
+"zoeken."
 
-msgid "If you know the group name you"
+msgid ""
+"If you don't know the username you'd like to work with, you can browse or "
+"search for it here."
 msgstr ""
+"Als je de gebruikersnaam niet weet waar je mee wil werken, kun je er hier "
+"naar zoeken."
 
-msgid "If you know the username you"
+msgid ""
+"If you know the group name you'd like to work with, you can enter it here."
 msgstr ""
+"Als je de groepsnaam weet waar je mee wil werken, voer hem dan hier in."
+
+msgid ""
+"If you know the username you'd like to work with, you can enter it here."
+msgstr ""
+"Als je de gebruikersnaam weet waar je mee wil werken, voer hem dan hier in."
 
 msgid "Inactivity Timeout"
 msgstr "Inactivity Timeout"
@@ -296,6 +354,9 @@ msgstr "Nieuwe bestanden"
 msgid "Next >>"
 msgstr "Volgende >>"
 
+msgid "No Thumbnail"
+msgstr ""
+
 msgid ""
 "Note: This is the site administrator group.  Any users you add to this group "
 "will have site-wide administrative privileges"
@@ -322,6 +383,9 @@ msgstr "Verwijderen"
 msgid "Reset"
 msgstr "Reset"
 
+msgid "Resized Images"
+msgstr ""
+
 msgid "Return to Group Administration"
 msgstr "Terug naar Groep Administratie"
 
@@ -347,21 +411,37 @@ msgstr ""
 msgid "Session Settings"
 msgstr "Sessie instellingen"
 
+msgid "Size (in pixels): "
+msgstr ""
+
 msgid "Specify the lifetime of the session here."
 msgstr "Geef de levensduur van een sessie hier op"
 
-#, fuzzy
-msgid "Successfully added user "
+msgid "Sub-Item Preferences"
+msgstr ""
+
+msgid "Sub-item Preferences"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Successfully added user '%s' to group."
 msgstr "Gebruiker '%s' is toegevoegd aan de groep"
 
-#, fuzzy
-msgid "Successfully removed user "
+#, fuzzy, c-format
+msgid "Successfully removed user '%s' from group."
 msgstr "Gebruiker '%s' is verwijderd van de groep"
 
-msgid ""
-"The name must be unique in this album.  NOTE: The name cannot contain any of "
-"the following characters: \\ / * ? &quot; "
+msgid "Target Size (in pixels)"
 msgstr ""
+
+msgid ""
+"The name must be unique in this album.  <b>Note:</b> You can only use "
+"alphanumeric characters, underscore (_) and hyphen (-) in your names."
+msgstr ""
+
+#, fuzzy
+msgid "The name you entered is already in use.  Please enter another."
+msgstr "Je login is fout. Probeer het nog een keer AUB."
 
 msgid "The passwords you entered did not match"
 msgstr "De wachtwoorden die je hebt ingegeven komen niet overeen"
@@ -413,6 +493,9 @@ msgstr ""
 msgid "This is the anonymous user."
 msgstr "Dit is de annonieme gebruiker"
 
+msgid "Thumbnails"
+msgstr ""
+
 msgid "Title"
 msgstr ""
 
@@ -425,16 +508,28 @@ msgstr "Totaal"
 msgid "Undo"
 msgstr "Ongedaan maken"
 
-#, fuzzy
-msgid "User "
-msgstr "Gebruikersnaam"
+#, c-format
+msgid "User '%s' does not exist."
+msgstr "Gebruiker '%s' bestaat niet"
+
+#, c-format
+msgid "User '%s' has been created successfully."
+msgstr "Gebruiker '%s' is aangemaakt"
+
+#, c-format
+msgid "User '%s' has been modified successfully."
+msgstr "Gebruiker '%s' is gewijzigt"
+
+#, c-format
+msgid "User '%s' has been successfully deleted."
+msgstr "Gebruiker '%s' is verwijdert"
 
 msgid "User Management"
 msgstr "Gebruikers Onderhoud"
 
-#, fuzzy
-msgid "Username "
-msgstr "Gebruikersnaam"
+#, c-format
+msgid "Username '%s' already exists"
+msgstr "Gebruikersnaam '%s' bestaat al"
 
 msgid "Username"
 msgstr "Gebruikersnaam"
@@ -453,9 +548,19 @@ msgstr "Versie"
 msgid "Viewing page %d of %d"
 msgstr "Pagina %d van %d"
 
-#, fuzzy
-msgid "You cannot delete the "
-msgstr "Je kan jezelf niet verwijderen"
+msgid ""
+"When Gallery resizes images, it will maintain the same aspect ratio (height "
+"to width) of the original image to avoid distortion.  For resizes, you only "
+"enter one value and that forms a bounding box (in pixels).  Gallery will "
+"resize the image until it is as large as possible while still fitting inside "
+"the box."
+msgstr ""
+
+msgid "You cannot delete the 'all admins' group!"
+msgstr "Je kan de 'all admins' groep niet verwijderen"
+
+msgid "You cannot delete the 'all users' group!"
+msgstr "Je kan de 'all users' groep niet verwijderen"
 
 msgid "You cannot delete the anonymous user!"
 msgstr "Je kan de annonieme gebruiker niet verwijderen!"
@@ -469,14 +574,26 @@ msgstr "Je moet een groepnaam opgeven"
 msgid "You must enter a name"
 msgstr "Je moet een naam opgeven"
 
+#, fuzzy
+msgid "You must enter a number (greater than zero)"
+msgstr "Je moet een gebruikersnaam opgeven"
+
 msgid "You must enter a password"
 msgstr "Je moet een wachtwoord opgeven"
+
+#, fuzzy
+msgid "You must enter a thumbnail size"
+msgstr "Je moet een naam opgeven"
 
 msgid "You must enter a username"
 msgstr "Je moet een gebruikersnaam opgeven"
 
 msgid "You must enter a username."
 msgstr "Je moet een gebruikersnaam opgeven."
+
+#, fuzzy
+msgid "You must enter a valid size"
+msgstr "Je moet een naam opgeven"
 
 msgid "You must enter an email address"
 msgstr "Je moet een email adres opgeven"
@@ -491,6 +608,10 @@ msgid "You must select a user to remove."
 msgstr "Je moet een gebruiker selecteren om te verwijderen"
 
 msgid "Your login information is incorrect.  Please try again."
+msgstr "Je login is fout. Probeer het nog een keer AUB."
+
+#, fuzzy
+msgid "Your name contains invalid characters.  Please enter another."
 msgstr "Je login is fout. Probeer het nog een keer AUB."
 
 msgid "[required]"
@@ -527,63 +648,18 @@ msgstr ""
 msgid "|< First"
 msgstr "|< Eerste"
 
-#~ msgid "Group '%s' already exists"
-#~ msgstr "Groep '%s' bestaat al"
+#, fuzzy
+#~ msgid "Group "
+#~ msgstr "Groep Naam"
 
-#~ msgid "Group '%s' does not exist."
-#~ msgstr "Groep '%s' bestaat niet"
+#, fuzzy
+#~ msgid "User "
+#~ msgstr "Gebruikersnaam"
 
-#~ msgid "Group '%s' has been created successfully."
-#~ msgstr "Groep '%s' is aangemaakt"
+#, fuzzy
+#~ msgid "Username "
+#~ msgstr "Gebruikersnaam"
 
-#~ msgid "Group '%s' has been modified successfully."
-#~ msgstr "Groep '%s' is gewijzigt"
-
-#~ msgid "Group '%s' has been successfully deleted."
-#~ msgstr "Groep '%s' is verwijdert"
-
-#~ msgid ""
-#~ "If you don't know the group name you'd like to work with, you can browse "
-#~ "or search for it here."
-#~ msgstr ""
-#~ "Als je de groepsnaam niet weet waar je mee wil werken, kun je er hier "
-#~ "naar zoeken."
-
-#~ msgid ""
-#~ "If you don't know the username you'd like to work with, you can browse or "
-#~ "search for it here."
-#~ msgstr ""
-#~ "Als je de gebruikersnaam niet weet waar je mee wil werken, kun je er hier "
-#~ "naar zoeken."
-
-#~ msgid ""
-#~ "If you know the group name you'd like to work with, you can enter it here."
-#~ msgstr ""
-#~ "Als je de groepsnaam weet waar je mee wil werken, voer hem dan hier in."
-
-#~ msgid ""
-#~ "If you know the username you'd like to work with, you can enter it here."
-#~ msgstr ""
-#~ "Als je de gebruikersnaam weet waar je mee wil werken, voer hem dan hier "
-#~ "in."
-
-#~ msgid "User '%s' does not exist."
-#~ msgstr "Gebruiker '%s' bestaat niet"
-
-#~ msgid "User '%s' has been created successfully."
-#~ msgstr "Gebruiker '%s' is aangemaakt"
-
-#~ msgid "User '%s' has been modified successfully."
-#~ msgstr "Gebruiker '%s' is gewijzigt"
-
-#~ msgid "User '%s' has been successfully deleted."
-#~ msgstr "Gebruiker '%s' is verwijdert"
-
-#~ msgid "Username '%s' already exists"
-#~ msgstr "Gebruikersnaam '%s' bestaat al"
-
-#~ msgid "You cannot delete the 'all admins' group!"
-#~ msgstr "Je kan de 'all admins' groep niet verwijderen"
-
-#~ msgid "You cannot delete the 'all users' group!"
-#~ msgstr "Je kan de 'all users' groep niet verwijderen"
+#, fuzzy
+#~ msgid "You cannot delete the "
+#~ msgstr "Je kan jezelf niet verwijderen"

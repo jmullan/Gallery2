@@ -1,21 +1,29 @@
   {galleryForm controller=$controller}
-  {galleryInput type="hidden" name="itemId"}{$itemId}{/galleryInput}
+  {galleryInput type="hidden" name="itemId"}{$item.id}{/galleryInput}
 	
   <!-- Embed the hidden return fields -->
   {foreach from=$return key=key item=value}
   {galleryInput type="hidden" name=$key|string_format:"return.%s"}{$value}{/galleryInput}
   {/foreach}
 
-  {if !empty($thumbnail)}
-  <center>
-    <img src="{galleryUrl view='core:DownloadItem' itemId=$thumbnail.id}"
+    <center>
+      {if !empty($thumbnail)}
+      <img src="{galleryUrl view='core:DownloadItem' itemId=$thumbnail.id}"
       {if $thumbnail.width} width="{$thumbnail.width}" {/if}
       {if $thumbnail.height} height="{$thumbnail.height}" {/if}
       >
-  </center>
-  <br>
-  {/if}
-  <center>
+      {else}
+      <i>{galleryText text="No thumbnail"}</i>
+      {/if}
+    <br>
+    <b>
+      {if empty($item.title)}
+      {$item.pathComponent}
+      {else}
+      {$item.title}
+      {/if}
+    </b>
+    <br>
     <table border="0" cellspacing="0" cellpadding="5">
       <tr>
 	<td align="center">

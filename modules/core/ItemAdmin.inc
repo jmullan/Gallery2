@@ -45,7 +45,28 @@ class ItemAdminView extends GalleryView {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
+	/* Find its thumbnail */
+	list ($ret, $thumbnailTable) =
+	    GalleryDerivativeHelper::loadDerivatives($itemId,
+						     DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	if (empty($thumbnailTable)) {
+	    $thumbnailData = null;
+	} else {
+	    $thumbnail = $thumbnailTable[$itemId][0];
+	    $thumbnailData = $thumbnail->getMemberData();
+	    
+	    /* Generate scaled dimensions for our thumbnail to fit our page */
+	    list ($thumbnailData['width'],
+		  $thumbnailData['height']) =
+		GalleryUtilities::shrinkDimensionsToFit(200,	
+							$thumbnailData['width'],
+							$thumbnailData['height']);
+	}
+
 	/* Load the module list */
 	list ($ret, $moduleStatus) = $gallery->getModuleStatus();
 	if ($ret->isError()) {
@@ -95,7 +116,8 @@ class ItemAdminView extends GalleryView {
 
 	/* Render our HTML body */
 	$this->_initTemplate(dirname(__FILE__) . '/templates');
-	$this->_setTemplateVariable('itemId', $itemId);
+	$this->_setTemplateVariable('item', $item->getMemberData());
+	$this->_setTemplateVariable('thumbnail', $thumbnailData);
 	$this->_setTemplateVariable('subViewChoices', $subViewChoices);
 	$this->_setTemplateVariable('subViewHtml', $subViewHtml);
 	$html = $this->_renderTemplate('core', 'ItemAdmin.tpl');

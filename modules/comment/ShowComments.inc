@@ -65,6 +65,7 @@ class ShowCommentsView extends GalleryView {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+	$thumbnail = $thumbnailTable[$itemId][0];
 
 	list ($ret, $comments) =
 	    GalleryCommentHelper::fetchComments($item->getId(), null, ORDER_ASCENDING);
@@ -95,8 +96,8 @@ class ShowCommentsView extends GalleryView {
 	/* Render the HTML body */
 	$this->_initTemplate(dirname(__FILE__) . '/templates');
 
-	if (!empty($thumbnailTable)) {
-	    $this->_setTemplateVariable('thumbnail', $thumbnailTable[$item->getId()][0]);
+	if (!empty($thumbnail)) {
+	    $this->_setTemplateVariable('thumbnail', $thumbnail->getMemberData());
 	}
 	
 	$return = GalleryUtilities::getFormVariables('return.');

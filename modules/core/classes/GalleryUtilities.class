@@ -561,5 +561,46 @@ class GalleryUtilities {
 
 	return GalleryStatus::success();
     }
+
+    /**
+     * Scale the given width/height to a new target size, maintaining
+     * aspect ratio, but only if the dimensions are already larger than the
+     * target (in other words, don't increase the dimensions)
+     *
+     * @param int target size
+     * @param int width
+     * @param int height
+     * @return array(width, height)
+     */
+    function shrinkDimensionsToFit($target, $width, $height) {
+	if ($width > $target || $height > $target) {
+	    list ($width, $height) =
+		GalleryUtilities::scaleDimensionsToFit($target, $width, $height);
+	}
+
+	return array($width, $height);
+    }
+
+    /**
+     * Scale the given width/height to a new target size, maintaining
+     * aspect ratio
+     *
+     * @param int target size
+     * @param int width
+     * @param int height
+     * @return array(width, height)
+     */
+    function scaleDimensionsToFit($target, $width, $height) {
+
+	if ($width > $height) {
+	    $height = (int)($target * ($height / $width));
+	    $width = $target;
+	} else {
+	    $width = (int)($target * ($width / $height));
+	    $height = $target;
+	}
+	
+	return array($width, $height);
+    }
 }
 ?>

@@ -138,7 +138,7 @@ class ClassicLayout extends GalleryLayout {
 	    foreach ($childIds as $id) {
 		$children[$i] = $childTable[$id];
 		if (isset($imageTable[$id])) {
-		    $children[$i]['thumbnail'] = $imageTable[$id][0];
+		    $children[$i]['thumbnail'] = $imageTable[$id][0]->getMemberData();
 		}
 		$i++;
 	    }
@@ -259,7 +259,7 @@ class ClassicLayout extends GalleryLayout {
 
 	    /* XXX: perform permission check here ("can user see resizes ")*/
 	    $gallery->debug('XXX: missing view-resize permission check');
-	    $this->_setTemplateVariable('image', $resizes[$resizeIndex]);
+	    $this->_setTemplateVariable('image', $resizes[$resizeIndex]->getMemberData());
 	}
 
 	/*

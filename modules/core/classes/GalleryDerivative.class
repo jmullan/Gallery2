@@ -314,67 +314,6 @@ class GalleryDerivative_core extends GalleryChildEntity {
 	
 	return array(GalleryStatus::success(), $cacheFile);
     }
-
-    /**
-     * Load the derivative images for the ids/types specified
-     *
-     * Meant to be called statically
-     *
-     * @param array GalleryItem ids
-     * @param string entity type (eg, 'GalleryDerivativeImage')
-     * @return array object GalleryStatus a status code 
-     *               array(GalleryItem id => GalleryDerivativeImage, ...)
-     */
-    function loadDerivatives($ids, $types) {
-	global $gallery;
-	
-	if (!is_array($ids)) {
-	    $ids = array($ids);
-	}
-
-	if (!is_array($types)) {
-	    $types = array($types);
-	}
-	    
-	/* Look up the ids of all their thumbnail images */
-	$idMarkers = GalleryUtilities::makeMarkers(sizeof($ids));
-	$typeMarkers = GalleryUtilities::makeMarkers(sizeof($types));
-	$data = array_merge($types,
-			    $ids);
-	list ($ret, $searchResults) = $gallery->search(
-            array('select' => ('[GalleryDerivative::id], ' .
-			       '[GalleryChildEntity::parentId]'),
-		  'where' => ('[GalleryDerivative::derivativeType] IN (' .
-			      $typeMarkers . ') AND ' .
-			      '[GalleryChildEntity::parentId] IN (' .
-			      $idMarkers . ')')),
-            $data);
-	    
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	$derivativeTable = array();
-	if ($searchResults->resultCount() > 0) {
-	    $derivativeIds = array();
-	    while ($result = $searchResults->nextResult()) {
-		$derivativeIds[] = $result[0];
-	    }
-		
-	    /* Load all the derivative images */
-	    list ($ret, $derivativeEntities) = $gallery->loadEntitiesById($derivativeIds);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-		
-	    /* Create a table of child id -> image data */
-	    foreach ($derivativeEntities as $derivative) {
-		$derivativeTable[$derivative->getParentId()][] = $derivative->getMemberData();
-	    }
-	}
-
-	return array(GalleryStatus::success(), $derivativeTable);
-    }
 }
 
 include(dirname(__FILE__) . '/interfaces/GalleryDerivative.inc');
