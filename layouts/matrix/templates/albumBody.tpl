@@ -86,7 +86,7 @@
 	{else}
 	  <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$child.id`"}">
 	    {if isset($child.thumbnail)}
-	      {g->image item=$child image=$child.thumbnail class="giThumbnail"}
+	      {g->image item=$child image=$child.thumbnail class="giThumbnail"}<br/>
 	    {else}
 	      {g->text text="no thumbnail"}<br/>
 	    {/if}
