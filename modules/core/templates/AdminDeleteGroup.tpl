@@ -20,8 +20,9 @@
     </h2>
 
     <p class="giDescription">
-      {g->text text="This will completely remove <strong>%s</strong> from Gallery.  There is no undo!"
-      arg1=$AdminDeleteGroup.group.groupName}
+      {capture name="group"}<strong>{$AdminDeleteGroup.group.groupName}</strong>{/capture}
+      {g->text text="This will completely remove %s from Gallery.  There is no undo!"
+      arg1=$smarty.capture.group}
     </p>
 
     <div class="gbBottomFlag">
