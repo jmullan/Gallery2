@@ -70,13 +70,13 @@ class ItemEditOptionTestCase extends GalleryTestCase {
     }
 
     function handleRequestAfterEdit($form, &$item, $errorCode=null) {
-	list ($ret, $thumbnails) = GalleryCoreApi::fetchThumbnailsByItemIds(array($item->getId()));
+	list ($ret, $preferred) = GalleryCoreApi::fetchPreferredsByItemIds(array($item->getId()));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$thumbnail = empty($thumbnails) ? null : array_shift($thumbnails);
+	$preferred = empty($preferred) ? null : array_shift($preferred);
 
-	list ($ret, $error) = $this->_option->handleRequestAfterEdit($form, $item, $thumbnail);
+	list ($ret, $error) = $this->_option->handleRequestAfterEdit($form, $item, $preferred);
 	if (isset($errorCode)) {
 	    if (($ret->getErrorCode() & $errorCode) != $errorCode) {
 		$this->assert(false,
