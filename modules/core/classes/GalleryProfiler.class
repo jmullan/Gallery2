@@ -1,0 +1,217 @@
+<?php
+/*
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2002 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+/**
+ * Utility class for gathering run-time profile data
+ *
+ * @version $Id$
+ * @package GalleryCore
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+class GalleryProfiler {
+
+    /*
+     * ****************************************
+     *                 Members
+     * ****************************************
+     */
+
+    /**
+     * The raw profiling data we've gathered
+     *
+     * @var array
+     * @access private
+     */
+    var $_profile = array();
+    
+    /*
+     * ****************************************
+     *                 Methods
+     * ****************************************
+     */
+
+    /**
+     * Constructor
+     */
+    function GalleryProfiler() {
+	$this->_profile = array();
+    }
+
+    /**
+     * Get the singleton of this class
+     *
+     * @return object GalleryProfiler
+     */
+    function &singleton() {
+	static $galleryProfiler;
+	if (empty($galleryProfiler)) {
+	    $galleryProfiler = new GalleryProfiler();
+	}
+
+	return $galleryProfiler;
+    }
+
+    /**
+     * Start profiling a function/method
+     *
+     * You can optionally specify the real start of this method (only useful at
+     * bootstrap time, when we want to retroactively start the overall
+     * profiling at the time the script started, as opposed to after this class
+     * is loaded).
+     *
+     * @param string the function/method name
+     * @param array the optional microtime() to use as the start of this function/method
+     */
+    function start($key, $start=null) {
+	global $gallery;
+
+	if (!$gallery->isProfiling()) {
+	    return;
+	}
+	    
+	/* Delegate to the singleton */
+	if (empty($this) || get_class($this) != 'galleryprofiler') {
+	    $galleryProfiler =& GalleryProfiler::singleton();
+	    return $galleryProfiler->start($key, $start);
+	}
+
+	if (empty($start)) {
+	    $start = microtime();
+	}
+
+	if (!is_array($this->_profile)) {
+	    $this->_profile = array();
+	}
+	
+	$this->_profile[$key][] = array('start', $start);
+    }
+
+    /**
+     * Stop profiling a function/method
+     *
+     * @param string the function/method name
+     */
+    function stop($key) {
+	global $gallery;
+
+	if (!$gallery->isProfiling()) {
+	    return;
+	}
+	    
+	/* Delegate to the singleton */
+	if (empty($this) || get_class($this) != 'galleryprofiler') {
+	    $galleryProfiler =& GalleryProfiler::singleton();
+	    return $galleryProfiler->stop($key);
+	}
+
+	$this->_profile[$key][] = array('stop', microtime());
+    }
+
+    /**
+     * Get the profiling data
+     *
+     * For each function/method, either return an error or the total time,
+     * average time and number of calls to the function/method.
+     *
+     * @return array('name' => ...,
+     *               'error' => ...,
+     *               'total' => ...,
+     *               'average' => ...,
+     *               'count' => ...)
+     */
+    function getProfile() {
+	/* Delegate to the singleton */
+	if (empty($this) || get_class($this) != 'galleryprofiler') {
+	    $galleryProfiler =& GalleryProfiler::singleton();
+	    return $galleryProfiler->getProfile();
+	}
+
+	$results = array();
+	foreach ($this->_profile as $key => $dataSet) {
+	    $error = null;
+	    $count = sizeof($dataSet);
+	    if ($count % 2 != 0) {
+		$error = 'Unmatched start/stop ($count)';
+	    } else {
+		$count /= 2;
+		$total = 0;
+		$max = null;
+		$min = null;
+		for ($i = 0; $i < $count; $i += 2) {
+		    if ($dataSet[$i][0] == 'start' && $dataSet[$i+1][0] == 'stop') {
+			list ($startMicro, $startSecs) = explode(' ', $dataSet[$i][1]);
+			list ($stopMicro, $stopSecs) = explode(' ', $dataSet[$i+1][1]);
+			$elapsed = ($stopSecs - $startSecs) + ($stopMicro - $startMicro);
+			$total += $elapsed;
+			if ($max === null || $elapsed > $max) {
+			    $max = $elapsed;
+			}
+			if ($min === null || $elapsed < $min) {
+			    $min = $elapsed;
+			}
+		    } else {
+			$error = 'Unmatched start/stop';
+			break;
+		    }
+		}
+
+		if (!empty($error)) {
+		    $results[] = array('name' => $key,
+				       'error' => $error);
+		} else {
+		    $precision = 5;
+		    $results[] = array('name' => $key,
+				       'count' => $count,
+				       'total' => round($total, $precision),
+				       'max' => round($max, $precision),
+				       'min' => round($min, $precision),
+				       'average' => round($total / $count, $precision));
+		}
+	    }
+	}
+
+	usort($results, array('GalleryProfiler', 'sortByTotal'));
+
+	return $results;
+    }
+
+    /**
+     * Sort profile entries by their averages
+     *
+     * @param array('average' => ###)
+     * @param array('average' => ###)
+     * @return bool
+     */
+    function sortByAverage($cmpA, $cmpB) {
+	return ($cmpA['average'] <= $cmpB['average']);
+    }
+
+    /**
+     * Sort profile entries by their totals
+     *
+     * @param array('total' => ###)
+     * @param array('total' => ###)
+     * @return bool
+     */
+    function sortByTotal($cmpA, $cmpB) {
+	return ($cmpA['total'] <= $cmpB['total']);
+    }
+}
+?>
