@@ -119,7 +119,7 @@
 
 	      {foreach from=$results.results item=result} 
 	      {assign var=itemId value=$result.itemId} 
-	      <td class="gbItemImage" style="width: 10%">
+	      <td class="{if $SearchScan.items.$itemId.canContainChildren}gbItemAlbum{else}gbItemImage{/if}" style="width: 10%">
 		<a href="{g->url arg1="view=core:ShowItem" arg2="itemId=$itemId"}">
 		{if isset($SearchScan.thumbnails.$itemId)}
 		<div class="gbItemImage">
