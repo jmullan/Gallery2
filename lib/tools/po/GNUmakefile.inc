@@ -32,8 +32,9 @@ messages.po:
 	$(RM) messages.tmp
 
 %.po: messages.po
-	msgmerge $@ messages.po > $@.new
-	mv $@.new $@
+	perl $(TOOLDIR)/po/premerge-messages.pl $@ messages.po > messages.tmp
+	msgmerge --update $@ messages.tmp
+	$(RM) messages.tmp
 
 clean:
 	$(RM) messages.po
