@@ -105,15 +105,15 @@
 	    spanDate.innerHTML = spanDescription.innerHTML = '';
 	  }
 	  textBanner.style.visibility = bShowText ? 'visible' : 'hidden';
-	  spanText.innerHTML = bShowText ? {/literal}'{g->text text="Hide More Info"}'
-	       			  : '{g->text text="Show More Info"}'; {literal}
+	  spanText.innerHTML = bShowText ? {/literal}'{g->text text="Hide More Info" forJavascript="1"}'
+	       			  : '{g->text text="Show More Info" forJavascript="1"}'; {literal}
 	}
 	function start_stop() {
 	  bPause = bPause ? 0 : 1;
 	  if (bPause) clearTimeout(timer);
 	  else goto_next_photo();
-	  spanPause.innerHTML = bPause ? {/literal}'{g->text text="Resume"}'
-	       			: '{g->text text="Pause"}'; {literal}
+	  spanPause.innerHTML = bPause ? {/literal}'{g->text text="Resume" forJavascript="1"}'
+	       			: '{g->text text="Pause" forJavascript="1"}'; {literal}
 	}
 	function jump(by) {
 	  index = move_index(by);
@@ -141,8 +141,8 @@
 	  bShowTools = bShowTools ? 0 : 1;
 	  toolBar.style.visibility = bShowTools ? 'visible' : 'hidden';
 	  toolBar.style.position = bShowTools ? 'static' : 'absolute';
-	  toolText.innerHTML = bShowTools ? {/literal}'{g->text text="[-]"}'
-	       			  : '{g->text text="[+]"}'; {literal}
+	  toolText.innerHTML = bShowTools ? {/literal}'{g->text text="[-]" forJavascript="1"}'
+	       			  : '{g->text text="[+]" forJavascript="1"}'; {literal}
 	}
 	{/literal}
         // ]]>
@@ -208,7 +208,7 @@
 	  // <![CDATA[
 	  if (bCanBlend) {
 	    document.write('&nbsp; {/literal}{g->text
-		     text="fade: "}{literal}<select id="filter">');
+		     text="fade: " forJavascript="1"}{literal}<select id="filter">');
 	    for (i = 0; i < filterNames.length; i++) {
 	      document.write('<option>'+filterNames[i]);
 	    }

@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -43,23 +43,23 @@ class GalleryTemplateAdapter {
     var $_theme;
 
     /**
-     * The number of times our block callbacks have been executed 
+     * The number of times our block callbacks have been executed
      * @var array _callCount
      */
     var $_callCount;
-    
+
     /**
      * Constructor
      */
     function GalleryTemplateAdapter() {
 	$this->_callCount = array();
     }
-    
+
     /**
      * Set the active theme
      *
      * @param object GalleryTheme
-     */ 
+     */
     function setTheme($theme) {
 	$this->_theme = $theme;
     }
@@ -68,7 +68,7 @@ class GalleryTemplateAdapter {
      * Get the active theme
      *
      * @return object GalleryTheme
-     */ 
+     */
     function getTheme() {
 	return $this->_theme;
     }
@@ -104,14 +104,14 @@ class GalleryTemplateAdapter {
 		$i++;
 	    }
 	}
-	    
+
 	$urlGenerator = $gallery->getUrlGenerator();
 	$url = $urlGenerator->generateUrl($hrefParams);
 
 	if (!empty($params['forJavascript'])) {
 	    $url = str_replace('&amp;', '&', $url);
 	}
-	
+
 	return $url;
     }
 
@@ -186,7 +186,7 @@ class GalleryTemplateAdapter {
 	if (empty($params['format'])) {
 	    $params['format'] = '%x';
 	}
-	
+
 	return strftime($params['format'], $params['timestamp']);
     }
 
@@ -206,9 +206,13 @@ class GalleryTemplateAdapter {
 	if ($ret->isError()) {
 	    return $ret->getAsHtml();
 	    return "[Translation error]";
-	} else {
-	    return $text;
 	}
+
+	if (!empty($params['forJavascript'])) {
+	    $text = str_replace("'", "\\'", $text);
+	}
+
+	return $text;
     }
 
     /**
@@ -224,7 +228,7 @@ class GalleryTemplateAdapter {
 
     /**
      * Delegate to the appropriate item class to render an image.
-     * 
+     *
      * @param array containing item, image, id, name, fallback
      * @param object Smarty the smarty instance
      * @return string HTML content
@@ -238,7 +242,7 @@ class GalleryTemplateAdapter {
 	    // XXX: is there a more graceful way to handle this?
 	    return '[Render error: missing item]';
 	}
-	
+
 	list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($params['image']['id']);
 	if ($ret->isError()) {
 	    // XXX: is there a more graceful way to handle this?
@@ -272,7 +276,7 @@ class GalleryTemplateAdapter {
 						'maxSize' => $params['maxSize'],
 						'fallback' => $params['fallback']));
 	} else {
-	    $html = $entity->render('HTML', $item, 
+	    $html = $entity->render('HTML', $item,
 				    array('class' => $params['class'],
 					  'id' => $params['id'],
 					  'name' => $params['name'],
@@ -282,8 +286,8 @@ class GalleryTemplateAdapter {
 
 	if (empty($html)) {
 	    /*
-	     * TODO: We should let the {g->image} tag provide some kind of fallback in case the image can't
-	     * be rendered.
+	     * TODO: We should let the {g->image} tag provide some kind of fallback in case
+	     * the image can't be rendered.
 	     */
 	    return $params['fallback'];
 	}
@@ -293,7 +297,7 @@ class GalleryTemplateAdapter {
 
     /**
      * Allow the current theme to return any style tags
-     * 
+     *
      * @param array
      * @param object Smarty the smarty instance
      * @return string HTML content
