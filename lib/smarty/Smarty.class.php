@@ -40,7 +40,7 @@
  * @author Monte Ohrt <monte@ispi.net>
  * @author Andrei Zmievski <andrei@php.net>
  * @package Smarty
- * @version 2.6.1-dev
+ * @version 2.6.2-dev
  */
 
 /* $Id$ */
@@ -118,7 +118,7 @@ class Smarty
      *
      * @var boolean
      */
-    var $tpl_error_reporting  =  null;
+    var $error_reporting  =  null;
 
     /**
      * This is the path to the debug console template. If not set,
@@ -287,7 +287,7 @@ class Smarty
      *
      * @var boolean
      */
-    var $request_use_auto_globals      = false;
+    var $request_use_auto_globals      = true;
 
     /**
      * Set this if you want different sets of compiled files for the same
@@ -338,16 +338,6 @@ class Smarty
      * @var null|string function name
      */
     var $cache_handler_func   = null;
-
-    /**
-     * These are the variables from the globals array that are
-     * assigned to all templates automatically. This isn't really
-     * necessary any more, you can use the $smarty var to access them
-     * directly.
-     *
-     * @var array
-     */
-    var $global_assign   =  array('HTTP_SERVER_VARS' => array('SCRIPT_NAME'));
 
     /**
      * This indicates which filters are automatically loaded into Smarty.
@@ -490,7 +480,7 @@ class Smarty
      *
      * @var string
      */
-    var $_version              = '2.6.1-dev';
+    var $_version              = '2.6.2-dev';
 
     /**
      * current template inclusion depth
@@ -590,31 +580,12 @@ class Smarty
     /**#@-*/
     /**
      * The class constructor.
-     *
-     * @uses $global_assign uses {@link assign()} to assign each corresponding
-     *                      value from $GLOBALS to the template vars
      */
     function Smarty()
     {
-        foreach ($this->global_assign as $key => $var_name) {
-            if (is_array($var_name)) {
-                foreach ($var_name as $var) {
-                    if (isset($GLOBALS[$key][$var])) {
-                        $this->assign($var, $GLOBALS[$key][$var]);
-                    } else {
-                        $this->assign($var, null);
-                    }
-                }
-            } else {
-                if (isset($GLOBALS[$var_name])) {
-                    $this->assign($var_name, $GLOBALS[$var_name]);
-                } else {
-                    $this->assign($var_name, null);
-                }
-            }
-        }
+      $this->assign('SCRIPT_NAME', isset($_SERVER['SCRIPT_NAME']) ? $_SERVER['SCRIPT_NAME']
+                    : @$GLOBALS['HTTP_SERVER_VARS']['SCRIPT_NAME']);
     }
-
 
     /**
      * assigns values to template variables
@@ -1168,14 +1139,29 @@ class Smarty
     function fetch($resource_name, $cache_id = null, $compile_id = null, $display = false)
     {
         static $_cache_info = array();
+        
+        $_smarty_old_error_level = $this->debugging ? error_reporting() : error_reporting(isset($this->error_reporting)
+               ? $this->error_reporting : error_reporting() & ~E_NOTICE);
 
-        $_smarty_old_error_level = $this->debugging ? error_reporting() : error_reporting(isset($this->tpl_error_reporting) 
-               ? $this->tpl_error_reporting : error_reporting() & ~E_NOTICE);
-
-        if (!$this->debugging && $this->debugging_ctrl == 'URL'
-               && @strstr($GLOBALS['HTTP_SERVER_VARS']['QUERY_STRING'], $this->_smarty_debug_id)) {
-            // enable debugging from URL
-            $this->debugging = true;
+        if (!$this->debugging && $this->debugging_ctrl == 'URL') {
+            $_query_string = $this->request_use_auto_globals ? $_SERVER['QUERY_STRING'] : $GLOBALS['HTTP_SERVER_VARS']['QUERY_STRING'];
+            if (@strstr($_query_string, $this->_smarty_debug_id)) {
+                if (@strstr($_query_string, $this->_smarty_debug_id . '=on')) {
+                    // enable debugging for this browser session
+                    @setcookie('SMARTY_DEBUG', true);
+                    $this->debugging = true;
+                } elseif (@strstr($_query_string, $this->_smarty_debug_id . '=off')) {
+                    // disable debugging for this browser session
+                    @setcookie('SMARTY_DEBUG', false);
+                    $this->debugging = false;
+                } else {
+                    // enable debugging for this page
+                    $this->debugging = true;
+                }
+            } else {
+                $_cookie_var = $this->request_use_auto_globals ? $_COOKIE['SMARTY_DEBUG'] : $GLOBALS['HTTP_COOKIE_VARS']['SMARTY_DEBUG'];
+                $this->debugging = $_cookie_var ? true : false;
+            }
         }
 
         if ($this->debugging) {
@@ -1235,7 +1221,8 @@ class Smarty
                         $_smarty_results .= smarty_core_display_debug_console($_params, $this);
                     }
                     if ($this->cache_modified_check) {
-                        $_last_modified_date = @substr($GLOBALS['HTTP_SERVER_VARS']['HTTP_IF_MODIFIED_SINCE'], 0, strpos($GLOBALS['HTTP_SERVER_VARS']['HTTP_IF_MODIFIED_SINCE'], 'GMT') + 3);
+                        $_server_vars = ($this->request_use_auto_globals) ? $_SERVER : $GLOBALS['HTTP_SERVER_VARS'];
+                        $_last_modified_date = @substr($_server_vars['HTTP_IF_MODIFIED_SINCE'], 0, strpos($_server_vars['HTTP_IF_MODIFIED_SINCE'], 'GMT') + 3);
                         $_gmt_mtime = gmdate('D, d M Y H:i:s', $this->_cache_info['timestamp']).' GMT';
                         if (@count($this->_cache_info['insert_tags']) == 0
                             && !$this->_cache_serials
@@ -1264,7 +1251,7 @@ class Smarty
                 }
             } else {
                 $this->_cache_info['template'][$resource_name] = true;
-                if ($this->cache_modified_check) {
+                if ($this->cache_modified_check && $display) {
                     header("Last-Modified: ".gmdate('D, d M Y H:i:s', time()).' GMT');
                 }
             }
@@ -1420,7 +1407,7 @@ class Smarty
             } else {
                 // get file source and timestamp
                 $_params = array('resource_name' => $resource_name, 'get_source'=>false);
-                if (!$this->_fetch_resource_info($_params, $this)) {
+                if (!$this->_fetch_resource_info($_params)) {
                     return false;
                 }
                 if ($_params['resource_timestamp'] <= filemtime($compile_path)) {

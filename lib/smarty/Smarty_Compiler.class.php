@@ -34,7 +34,7 @@
  * @link http://smarty.php.net/
  * @author Monte Ohrt <monte@ispi.net>
  * @author Andrei Zmievski <andrei@php.net>
- * @version 2.6.1-dev
+ * @version 2.6.2-dev
  * @copyright 2001-2003 ispi of Lincoln, Inc.
  * @package Smarty
  */
@@ -51,10 +51,7 @@ class Smarty_Compiler extends Smarty {
     /**#@+
      * @access private
      */
-    var $_sectionelse_stack     =   array();    // keeps track of whether section had 'else' part
-    var $_foreachelse_stack     =   array();    // keeps track of whether foreach had 'else' part
-    var $_literal_blocks        =   array();    // keeps literal template blocks
-    var $_php_blocks            =   array();    // keeps php code blocks
+    var $_folded_blocks         =   array();    // keeps folded template blocks
     var $_current_file          =   null;       // the current template being compiled
     var $_current_line_no       =   1;          // line number for error messages
     var $_capture_stack         =   array();    // keeps track of nested capture buffers
@@ -256,22 +253,20 @@ class Smarty_Compiler extends Smarty {
             }
         }
 
-        /* Annihilate the comments. */
-        $source_content = preg_replace("!({$ldq})\*(.*?)\*({$rdq})!se",
-                                        "'\\1*'.str_repeat(\"\n\", substr_count('\\2', \"\n\")) .'*\\3'",
-                                        $source_content);
+        /* fetch all special blocks */
+        $search = "!{$ldq}\*(.*?)\*{$rdq}|{$ldq}\s*literal\s*{$rdq}(.*?){$ldq}\s*/literal\s*{$rdq}|{$ldq}\s*php\s*{$rdq}(.*?){$ldq}\s*/php\s*{$rdq}!s";
 
-        /* Pull out the literal blocks. */
-        preg_match_all("!{$ldq}\s*literal\s*{$rdq}(.*?){$ldq}\s*/literal\s*{$rdq}!s", $source_content, $_match);
-        $this->_literal_blocks = $_match[1];
-        $source_content = preg_replace("!{$ldq}\s*literal\s*{$rdq}(.*?){$ldq}\s*/literal\s*{$rdq}!s",
-                                        $this->_quote_replace($this->left_delimiter.'literal'.$this->right_delimiter), $source_content);
+        preg_match_all($search, $source_content, $match,  PREG_SET_ORDER);
+        $this->_folded_blocks = $match;
+        reset($this->_folded_blocks);
 
-        /* Pull out the php code blocks. */
-        preg_match_all("!{$ldq}php{$rdq}(.*?){$ldq}/php{$rdq}!s", $source_content, $_match);
-        $this->_php_blocks = $_match[1];
-        $source_content = preg_replace("!{$ldq}php{$rdq}(.*?){$ldq}/php{$rdq}!s",
-                                        $this->_quote_replace($this->left_delimiter.'php'.$this->right_delimiter), $source_content);
+        /* replace special blocks by "{php}" */
+        $source_content = preg_replace($search.'e', "'"
+                                       . $this->_quote_replace($this->left_delimiter) . 'php'
+                                       . "' . str_repeat(\"\n\", substr_count('\\0', \"\n\")) .'"
+                                       . $this->_quote_replace($this->right_delimiter)
+                                       . "'"
+                                       , $source_content);
 
         /* Gather all template tags. */
         preg_match_all("!{$ldq}\s*(.*?)\s*{$rdq}!s", $source_content, $_match);
@@ -315,6 +310,11 @@ class Smarty_Compiler extends Smarty {
             $this->_current_line_no += substr_count($text_blocks[$i], "\n");
             $compiled_tags[] = $this->_compile_tag($template_tags[$i]);
             $this->_current_line_no += substr_count($template_tags[$i], "\n");
+        }
+        if (count($this->_tag_stack)>0) {
+            list($_open_tag, $_line_no) = end($this->_tag_stack);
+            $this->_syntax_error("unclosed tag \{$_open_tag} (opened line $_line_no).", E_USER_ERROR, __FILE__, __LINE__);
+            return;
         }
 
         $compiled_content = '';
@@ -393,7 +393,6 @@ class Smarty_Compiler extends Smarty {
         }
 
         $compiled_content = $template_header . $compiled_content;
-
         return true;
     }
 
@@ -444,15 +443,27 @@ class Smarty_Compiler extends Smarty {
                 return $this->_compile_include_php_tag($tag_args);
 
             case 'if':
+                $this->_push_tag('if');
                 return $this->_compile_if_tag($tag_args);
 
             case 'else':
+                list($_open_tag) = end($this->_tag_stack);
+                if ($_open_tag != 'if' && $_open_tag != 'elseif')
+                    $this->_syntax_error('unxepected {else}', E_USER_ERROR, __FILE__, __LINE__);
+                else
+                    $this->_push_tag('else');
                 return '<?php else: ?>';
 
             case 'elseif':
+                list($_open_tag) = end($this->_tag_stack);
+                if ($_open_tag != 'if' && $_open_tag != 'elseif')
+                    $this->_syntax_error('unxepected {elseif}', E_USER_ERROR, __FILE__, __LINE__);
+                if ($_open_tag == 'if')
+                    $this->_push_tag('elseif');
                 return $this->_compile_if_tag($tag_args, true);
 
             case '/if':
+                $this->_pop_tag('if');
                 return '<?php endif; ?>';
 
             case 'capture':
@@ -468,42 +479,48 @@ class Smarty_Compiler extends Smarty {
                 return $this->right_delimiter;
 
             case 'section':
-                array_push($this->_sectionelse_stack, false);
+                $this->_push_tag('section');
                 return $this->_compile_section_start($tag_args);
 
             case 'sectionelse':
-                $this->_sectionelse_stack[count($this->_sectionelse_stack)-1] = true;
+                $this->_push_tag('sectionelse');
                 return "<?php endfor; else: ?>";
+                break;
 
             case '/section':
-                if (array_pop($this->_sectionelse_stack))
+                $_open_tag = $this->_pop_tag('section');
+                if ($_open_tag == 'sectionelse')
                     return "<?php endif; ?>";
                 else
                     return "<?php endfor; endif; ?>";
 
             case 'foreach':
-                array_push($this->_foreachelse_stack, false);
+                $this->_push_tag('foreach');
                 return $this->_compile_foreach_start($tag_args);
                 break;
 
             case 'foreachelse':
-                $this->_foreachelse_stack[count($this->_foreachelse_stack)-1] = true;
+                $this->_push_tag('foreachelse');
                 return "<?php endforeach; unset(\$_from); else: ?>";
 
             case '/foreach':
-                if (array_pop($this->_foreachelse_stack))
+                $_open_tag = $this->_pop_tag('foreach');
+                if ($_open_tag == 'foreachelse')
                     return "<?php endif; ?>";
                 else
                     return "<?php endforeach; unset(\$_from); endif; ?>";
+                break;
 
             case 'strip':
             case '/strip':
                 if ($tag_command{0}=='/') {
+                    $this->_pop_tag('strip');
                     if (--$this->_strip_depth==0) { /* outermost closing {/strip} */
                         $this->_additional_newline = "\n";
                         return $this->left_delimiter.$tag_command.$this->right_delimiter;
                     }
                 } else {
+                    $this->_push_tag('strip');
                     if ($this->_strip_depth++==0) { /* outermost opening {strip} */
                         $this->_additional_newline = "";
                         return $this->left_delimiter.$tag_command.$this->right_delimiter;
@@ -511,19 +528,27 @@ class Smarty_Compiler extends Smarty {
                 }
                 return '';
 
-            case 'literal':
-                list (,$literal_block) = each($this->_literal_blocks);
-                $this->_current_line_no += substr_count($literal_block, "\n");
-                return "<?php echo '".str_replace("'", "\'", str_replace("\\", "\\\\", $literal_block))."'; ?>" . $this->_additional_newline;
-
             case 'php':
-                if ($this->security && !$this->security_settings['PHP_TAGS']) {
-                    $this->_syntax_error("(secure mode) php tags not permitted", E_USER_WARNING, __FILE__, __LINE__);
-                    return;
+                /* handle folded tags replaced by {php} */
+                list(, $block) = each($this->_folded_blocks);
+                $this->_current_line_no += substr_count($block[0], "\n");
+                /* the number of matched elements in the regexp in _compile_file()
+                   determins the type of folded tag that was found */
+                switch (count($block)) {
+                    case 2: /* comment */
+                        return '';
+
+                    case 3: /* literal */
+                        return "<?php echo '" . strtr($block[2], array("'"=>"\'", "\\"=>"\\\\")) . "'; ?>" . $this->_additional_newline;
+
+                    case 4: /* php */
+                        if ($this->security && !$this->security_settings['PHP_TAGS']) {
+                            $this->_syntax_error("(secure mode) php tags not permitted", E_USER_WARNING, __FILE__, __LINE__);
+                            return;
+                        }
+                        return '<?php ' . $block[3] .' ?>';
                 }
-                list (,$php_block) = each($this->_php_blocks);
-                $this->_current_line_no += substr_count($php_block, "\n");
-                return '<?php '.$php_block.' ?>';
+                break;
 
             case 'insert':
                 return $this->_compile_insert_tag($tag_args);
@@ -673,6 +698,11 @@ class Smarty_Compiler extends Smarty {
          * at runtime for future requests.
          */
         $this->_add_plugin('block', $tag_command);
+
+        if ($start_tag)
+            $this->_push_tag($tag_command);
+        else
+            $this->_pop_tag($tag_command);
 
         if ($start_tag) {
             $output = '<?php ' . $this->_push_cacheable_state('block', $tag_command);
@@ -1360,18 +1390,18 @@ class Smarty_Compiler extends Smarty {
                 if (@$tokens[$expr_end] == 'by') {
                     $expr_end++;
                     $expr_arg = $tokens[$expr_end++];
-                    $expr = "!(($is_arg / $expr_arg) % " . $this->_parse_var_props($expr_arg) . ")";
+                    $expr = "!(1 & ($is_arg / " . $this->_parse_var_props($expr_arg) . "))";
                 } else
-                    $expr = "!($is_arg % 2)";
+                    $expr = "!(1 & $is_arg)";
                 break;
 
             case 'odd':
                 if (@$tokens[$expr_end] == 'by') {
                     $expr_end++;
                     $expr_arg = $tokens[$expr_end++];
-                    $expr = "(($is_arg / $expr_arg) % ". $this->_parse_var_props($expr_arg) . ")";
+                    $expr = "(1 & ($is_arg / " . $this->_parse_var_props($expr_arg) . "))";
                 } else
-                    $expr = "($is_arg % 2)";
+                    $expr = "(1 & $is_arg)";
                 break;
 
             case 'div':
@@ -1509,14 +1539,16 @@ class Smarty_Compiler extends Smarty {
         $val = trim($val);
 
         if(preg_match('!^(' . $this->_obj_call_regexp . '|' . $this->_dvar_regexp . ')(' . $this->_mod_regexp . '*)$!', $val, $match)) {
-                // $ variable or object
-                $return = $this->_parse_var($match[1]);
-                if($match[2] != '') {
-                    $this->_parse_modifiers($return, $match[2]);
-                }
-                return $return;
+            // $ variable or object
+            $return = $this->_parse_var($match[1]);
+            $modifiers = $match[2];
+            if (!empty($this->default_modifiers) && !preg_match('!(^|\|)smarty:nodefaults($|\|)!',$modifiers)) {
+                $_default_mod_string = implode('|',(array)$this->default_modifiers);
+                $modifiers = empty($modifiers) ? $_default_mod_string : $_default_mod_string . '|' . $modifiers;
             }
-        elseif(preg_match('!^' . $this->_db_qstr_regexp . '(?:' . $this->_mod_regexp . '*)$!', $val)) {
+            $this->_parse_modifiers($return, $modifiers);
+            return $return;
+        } elseif (preg_match('!^' . $this->_db_qstr_regexp . '(?:' . $this->_mod_regexp . '*)$!', $val)) {
                 // double quoted text
                 preg_match('!^(' . $this->_db_qstr_regexp . ')('. $this->_mod_regexp . '*)$!', $val, $match);
                 $return = $this->_expand_quoted_text($match[1]);
@@ -1959,7 +1991,7 @@ class Smarty_Compiler extends Smarty {
 
             case 'config':
                 $compiled_ref = "\$this->_config[0]['vars']";
-                $_max_index = 2;
+                $_max_index = 3;
                 break;
 
             default:
@@ -2096,6 +2128,47 @@ class Smarty_Compiler extends Smarty {
         return 'if ($this->caching) { echo \'{/nocache:'
             . $this->_cache_serial . '#' . ($this->_nocache_count++)
             . '}\';}';
+    }
+
+
+    /**
+     * push opening tag-name, file-name and line-number on the tag-stack
+     * @param: string the opening tag's name
+     */
+    function _push_tag($open_tag)
+    {
+        array_push($this->_tag_stack, array($open_tag, $this->_current_line_no));
+    }
+
+    /**
+     * pop closing tag-name
+     * raise an error if this stack-top doesn't match with the closing tag
+     * @param: string the closing tag's name
+     * @return: string the opening tag's name
+     */
+    function _pop_tag($close_tag)
+    {
+        $message = '';
+        if (count($this->_tag_stack)>0) {
+            list($_open_tag, $_line_no) = array_pop($this->_tag_stack);
+            if ($close_tag == $_open_tag) {
+                return $_open_tag;
+            }
+            if ($close_tag == 'if' && ($_open_tag == 'else' || $_open_tag == 'elseif' )) {
+                return $this->_pop_tag($close_tag);
+            }
+            if ($close_tag == 'section' && $_open_tag == 'sectionelse') {
+                $this->_pop_tag($close_tag);
+                return $_open_tag;
+            }
+            if ($close_tag == 'foreach' && $_open_tag == 'foreachelse') {
+                $this->_pop_tag($close_tag);
+                return $_open_tag;
+            }
+            $message = " expected {/$_open_tag} (opened line $_line_no).";
+        }
+        $this->_syntax_error("mismatched tag {/$close_tag}.$message",
+                             E_USER_ERROR, __FILE__, __LINE__);
     }
 
 }
