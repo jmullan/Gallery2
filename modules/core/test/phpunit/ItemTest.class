@@ -640,7 +640,7 @@ class ItemTest extends GalleryTestCase {
 	global $gallery;
 	
 	/* Create a target item */
-	list ($ret, $item) = $this->_createRandomDataItem($this->_childItems[0]->getId());
+	list ($ret, $item) = $this->_createRandomDataItem($this->_parentItem->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -648,14 +648,14 @@ class ItemTest extends GalleryTestCase {
 	list ($ret, $parentSequence) =
 	    GalleryCoreApi::fetchParentSequence($item->getId());
 
-	$this->assertEquals($this->_childItems[0]->getId(), $item->getParentId());
+	$this->assertEquals($this->_parentItem->getId(), $item->getParentId(), 'Wrong original parent');
 	$this->assertEquals(array($this->_getRootId(),
-				  $this->_parentItem->getId(),
-				  $this->_childItems[0]->getId()),
-			    $parentSequence);
+				  $this->_parentItem->getId()),
+			    $parentSequence,
+			    'Wrong original parent sequence');
 
 	list ($ret, $locks[]) =
-	    GalleryCoreApi::acquireReadLock(array($this->_childItems[0]->getId(),
+	    GalleryCoreApi::acquireReadLock(array($this->_parentItem->getId(),
 					    $this->_childItems[1]->getId()));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -683,14 +683,17 @@ class ItemTest extends GalleryTestCase {
 
 	GalleryDataCache::reset();
 
-	list ($ret, $parentSequence) =
-	    GalleryCoreApi::fetchParentSequence($item->getId());
+	list ($ret, $parentSequence) = GalleryCoreApi::fetchParentSequence($item->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 
-	$this->assertEquals($this->_childItems[1]->getId(), $item->getParentId());
+	$this->assertEquals($this->_childItems[1]->getId(), $item->getParentId(), 'Wrong parent');
 	$this->assertEquals(array($this->_getRootId(),
 				  $this->_parentItem->getId(),
 				  $this->_childItems[1]->getId()),
-			    $parentSequence);
+			    $parentSequence,
+			    'Wrong parent sequence');
 
 	$ret = GalleryCoreApi::releaseLocks($locks);
 	if ($ret->isError()) {

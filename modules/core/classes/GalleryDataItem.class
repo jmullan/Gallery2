@@ -377,9 +377,14 @@ class GalleryDataItem_core extends GalleryItem {
 	}
 
 	/* Set the new parent sequence */
-	array_pop($parentSequence);
-	array_push($parentSequence, $newParentId);
-	$ret = GalleryCoreApi::setParentSequence($this->getId(), $parentSequence);
+	list ($ret, $newParentSequence) = GalleryCoreApi::fetchParentSequence($this->getParentId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$newParentSequence[] = $this->getParentId();
+
+	/* Set my parent sequence accordingly */
+	$ret = GalleryCoreApi::setParentSequence($this->getId(), $newParentSequence);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
