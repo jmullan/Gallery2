@@ -8,7 +8,7 @@
 	{g->item}
 	  {g->title}
 	    {g->link arg1="view=core:ShowItem" arg2="itemId=`$parent.id`"}
-	      {$parent.title|default:$parent.pathComponent|bbcode}
+	      {$parent.title|default:$parent.pathComponent|markup}
 	    {/g->link}
 	  {/g->title}
 	{/g->item}
@@ -16,7 +16,7 @@
       {g->item}
 	{g->title}
 	  {g->link arg1="view=core:ShowItem" arg2="itemId=`$ItemAdmin.item.id`"}
-	    {$ItemAdmin.item.title|default:$ItemAdmin.item.pathComponent|bbcode}
+	    {$ItemAdmin.item.title|default:$ItemAdmin.item.pathComponent|markup}
 	  {/g->link}
 	{/g->title}
       {/g->item}
@@ -32,7 +32,7 @@
 	  {/if}
 	{/g->element}
 	{g->footer}
-	  {$ItemAdmin.item.title|bbcode}
+	  {$ItemAdmin.item.title|markup}
 	{/g->footer}
       {/g->box}
 

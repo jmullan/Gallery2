@@ -1,4 +1,4 @@
 <title>
-  {$ShowItem.item.title|default:$ShowItem.item.pathComponent|bbcode}
+  {$ShowItem.item.title|default:$ShowItem.item.pathComponent|markup}
 </title>
 {g->style}

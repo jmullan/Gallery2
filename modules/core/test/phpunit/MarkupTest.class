@@ -1,0 +1,150 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+require_once(dirname(__FILE__) . '/../../../../lib/smarty_plugins/modifier.markup.php');
+
+/**
+ * Test Markup functionality
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ *
+ */
+class MarkupTest extends GalleryTestCase {
+
+    function MarkupTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    /**
+     * @see GalleryTestCase::setUp
+     */
+    function setUp() {
+	global $gallery;
+	$this->_bbcode = new GalleryBbcodeMarkupParser();
+	$this->_html = new GalleryHtmlMarkupParser();
+	$this->_none = new GalleryNoMarkupParser();
+	parent::setUp();
+    }
+
+    /**
+     * @see GalleryTestCase::tearDown
+     */
+    function tearDown() {
+	parent::tearDown();
+    }
+
+    function testBold() {
+	$results = $this->_bbcode->parse('[b]one[/b]&lt;b&gt;two&lt;/b&gt;');
+	$this->assertEquals('<b>one</b>&lt;b&gt;two&lt;/b&gt;', $results);
+    }
+
+    function testBold2() {
+	$results = $this->_none->parse('[b]one[/b]&lt;b&gt;two&lt;/b&gt;');
+	$this->assertEquals('[b]one[/b]&lt;b&gt;two&lt;/b&gt;', $results);
+    }
+
+    function testBold3() {
+	$results = $this->_html->parse('[b]one[/b]&lt;b&gt;two&lt;/b&gt;');
+	$this->assertEquals('[b]one[/b]<b>two</b>', $results);
+    }
+
+    function testItalic() {
+	$results = $this->_bbcode->parse('[i]italic[/i]');
+	$this->assertEquals('<i>italic</i>', $results);
+    }
+
+    function testList() {
+	$results = $this->_bbcode->parse('[list][*]one[*]two[*]three[/list]');
+	$this->assertEquals("<ul><li>one</li>\n<li>two</li>\n<li>three</li>\n</ul>", $results);
+    }
+
+    function testLineBreaks() {
+	$results = $this->_bbcode->parse("foo\r\nbar\rbaz\n");
+	$this->assertEquals("foo<br />\nbar<br />\nbaz<br />\n", $results);
+    }
+
+    function testHtmlSpecialChars() {
+	$results = $this->_bbcode->parse('&lt;script language=&quot;javascript&quot;' .
+					 '&gt;evil!&lt;/script&gt;');
+	$this->assertEquals('&lt;script language=&quot;javascript&quot;&gt;evil!&lt;/script&gt;', $results);
+    }
+
+    function testLineEndings() {
+	$results = $this->_bbcode->parse("foo\nbar\nbaz\n");
+	$this->assertEquals("foo<br />\nbar<br />\nbaz<br />\n", $results);
+    }
+
+    function testStripLastLineBreak() {
+	$results = $this->_bbcode->parse("[list][*]one\ntwo\n[*]three[*]four\n[/list]");
+	$this->assertEquals("<ul><li>one<br />\ntwo<br /></li>\n<li>three</li>" .
+			    "\n<li>four<br /></li>\n</ul>", $results);
+    }
+
+    function testImage() {
+	$results = $this->_bbcode->parse('[img]http://example.com/foo.gif[/img]');
+	$this->assertEquals('<img src="http://example.com/foo.gif" alt="">', $results);
+    }
+
+    function testUrl1() {
+	$results = $this->_bbcode->parse('[url]http://example.com/a.html[/url]');
+	$this->assertEquals('<a href="http://example.com/a.html">http://example.com/a.html</a>', $results);
+    }
+
+    function testUrl2() {
+	$results = $this->_bbcode->parse('[url=http://example.com/a.html]content[/url]');
+	$this->assertEquals('<a href="http://example.com/a.html">content</a>', $results);
+    }
+
+    function testUrl3() {
+	$results = $this->_bbcode->parse('[url=mailto:monkey@fruit.com]content[/url]');
+	$this->assertEquals('<a href="mailto:monkey@fruit.com">content</a>', $results);
+    }
+
+    function testUrl4() {
+	$results = $this->_bbcode->parse('[url=https://example.com/secure.html]content[/url]');
+	$this->assertEquals('<a href="https://example.com/secure.html">content</a>', $results);
+    }
+
+    function testUrl5() {
+	$results = $this->_bbcode->parse('[url=ftp://example.com/]content[/url]');
+	$this->assertEquals('<a href="ftp://example.com/">content</a>', $results);
+    }
+
+    function testUrl6() {
+	$results = $this->_bbcode->parse('[url=bogus://example.com]content[/url]');
+	$this->assertEquals('[url=bogus://example.com]content[/url]', $results);
+    }
+
+    function testJavascript() {
+	$results = $this->_bbcode->parse('[url=javascript:alert(&#039;hi&#039;)]content[/url]');
+	$this->assertEquals('[url=javascript:alert(&#039;hi&#039;)]content[/url]', $results);
+    }
+}
+
+?>

@@ -5,10 +5,10 @@
   {g->pagebox}
     {g->banner}
       {g->title}
-	{$layout.item.title|bbcode}
+	{$layout.item.title|markup}
       {/g->title}
       {g->description}
-	{$layout.item.summary|bbcode}
+	{$layout.item.summary|markup}
       {/g->description}
 
       {g->infoset}
@@ -58,11 +58,11 @@
 		      {if $child.canContainChildren}
 			{g->text text="Album: %s" arg1=$child.title|default:$child.pathComponent}
 		      {else}
-			{$child.title|default:$child.pathComponent|bbcode}
+			{$child.title|default:$child.pathComponent|markup}
 		      {/if}
 		    {/g->title}
 		    {g->description}
-		      {$child.description|truncate:512|bbcode}
+		      {$child.description|truncate:512|markup}
 		    {/g->description}
 		    {g->media}
 		      {g->link arg1="view=core:ShowItem" arg2="itemId=`$child.id`"}

@@ -273,7 +273,30 @@
 	  {/g->select}
 	{/g->column}
       {/g->row}
+    {/g->table}
+  {/g->box}
 
+  {g->box style="admin"}
+    {g->title}
+      {g->text text="Embedded Markup"}
+    {/g->title}
+    
+    {g->description}
+      {g->text text="What kind of markup should we allow in user-entered fields?  For security reasons we do not recommend that you allow raw HTML.  BBCode is a special kind of markup that is secure and allows for simple text formatting like bold, italics, lists, images and urls."}
+    {/g->description}
+
+    {g->table style="admin_widgets"}
+      {g->row}
+	{g->column}
+	  {g->text text="Markup: "}
+	{/g->column}
+	
+	{g->column}
+	  {g->select name="form[misc][markup]"}
+	    {html_options options=$AdminCore.embeddedMarkupList selected=$form.misc.markup}
+	  {/g->select}
+	{/g->column}
+      {/g->row}
     {/g->table}
   {/g->box}
 

@@ -315,6 +315,8 @@ class CoreModule extends GalleryModule {
 			       'session.idParameter' => 'GALLERYSID',
 			       'session.lifetime' => 25 * 365 * 86400, /* 25 years */
 			       'session.inactivityTimeout' => 14 * 86400, /* two weeks */
+			       'misc.markup' => 'bbcode',
+			       'misc.useShortUrls' => 'true',
 			       )
 			 as $key => $value) {
 

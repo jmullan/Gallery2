@@ -66,7 +66,8 @@ class AdminCoreController extends GalleryController {
 			   'default.language',
 			   'session.lifetime',
 			   'session.inactivityTimeout',
-			   'misc.useShortUrls') as $key) {
+			   'misc.useShortUrls',
+			   'misc.markup') as $key) {
 		list ($outer, $inner) = split('\.', $key);
 		if (isset($form[$outer][$inner])) {
 		    $ret = $gallery->setModuleParameter('core', $key, $form[$outer][$inner]);
@@ -182,7 +183,8 @@ class AdminCoreView extends GalleryView {
 			   'default.language',
 			   'session.lifetime',
 			   'session.inactivityTimeout',
-			   'misc.useShortUrls') as $key) {
+			   'misc.useShortUrls',
+			   'misc.markup') as $key) {
 
 		list ($ret, $value) =
 		    $gallery->getModuleParameter('core', $key);
@@ -289,6 +291,10 @@ class AdminCoreView extends GalleryView {
 	$useShortUrlsList = array('true' => $module->translate('yes'),
 				  'false' => $module->translate('no'));
 
+	$embeddedMarkupList = array('none' => $module->translate('No Markup'),
+				    'bbcode' => $module->translate('BBCode'),
+				    'html' => $module->translate('Raw HTML'));
+
 	list ($ret, $rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -320,6 +326,7 @@ class AdminCoreView extends GalleryView {
 	$AdminCore['permissionsFileList'] = $permissionsFileList;
 	$AdminCore['sessionTimeList'] = $sessionTimeList;
 	$AdminCore['useShortUrlsList'] = $useShortUrlsList;
+	$AdminCore['embeddedMarkupList'] = $embeddedMarkupList;
 	$AdminCore['shortUrlTestItemId'] = $rootId;
 	
 	$template->setVariable('controller', 'core:AdminCore');
