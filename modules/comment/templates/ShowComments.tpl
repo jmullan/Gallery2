@@ -7,9 +7,9 @@
 <div id="gsAdminContents">
   <div class="gbTopFlag">
     <div class="gbTitle">
-      <div class="giTitle">
+      <h2 class="giTitle">
 	{g->text text="View Comments"}
-      </div>
+      </h2>
     </div>
 
   </div>
@@ -26,9 +26,9 @@
 
   <div class="gbAdmin">
     {if empty($ShowComments.comments)}
-      <div class="giTitle">
+      <h2 class="giTitle">
 	{g->text text="There are no comments for this item"}
-      </div>
+      </h2>
     {else}
       {foreach from=$ShowComments.comments item=comment}
 	{assign var="userId" value=$comment.commenterId}
