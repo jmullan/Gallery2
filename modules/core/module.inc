@@ -259,24 +259,15 @@ class CoreModule extends GalleryModule {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	if (!$isSiteAdmin) {
-	    list ($ret, $groupIds) = 
-		GalleryUserGroupMap::fetchGroupsForUser($gallery->getActiveUserId());
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	}
-
 	$links = array();
 	foreach ($items as $item) {
 	    if ($isSiteAdmin) {
 		$hasPermission = true; 
 	    } else {
 		list ($ret, $hasPermission) =
-		    GalleryPermissionMap::hasPermission($item->getId(),
-							array($gallery->getActiveUserId()),
-							$groupIds,
-							$adminPermissions);
+		    GalleryPermissionMap::hasItemPermission($item->getId(),
+							    $gallery->getActiveUserId(),
+							    $adminPermissions);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -350,6 +341,29 @@ class CoreModule extends GalleryModule {
 				 'view' => 'core:AdminModules')));
     }
 
+    /**
+     * @see GalleryModule::getItemAdminViews();
+     */
+    function getItemAdminViews($item) {
+	global $gallery;
+
+	$views = array();
+	list ($ret, $hasPermission) =
+	    GalleryUserHelper::hasItemPermission($item->getId(),
+						 $gallery->getActiveUserId(),
+						 array('core.all', 'core.changeText'));
+	if ($ret->isError()) {
+	    return array(GalleryStatus::success(), null);
+	}
+
+	if ($hasPermission) {
+	    $views[] = array('name' => $this->translate('General'),
+			     'view' => 'core:ItemEditGeneral');
+	}
+	
+	return array(GalleryStatus::success(), $views);
+    }
+    
     /**
      * Create the initial All Users group
      *

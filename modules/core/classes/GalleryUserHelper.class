@@ -159,5 +159,52 @@ class GalleryUserHelper {
 
 	return GalleryStatus::success();
     }
+
+    /**
+     * Assert that the given user has one of the specific permissions for the
+     * target item
+     *
+     * @return object GalleryStatus success if the user is an administrator
+     *                              ERROR_PERMISSION_DENIED if not.
+     */
+    function assertHasItemPermission($itemId, $userId, $permissions) {
+
+	list ($ret, $hasPermission) =
+	    GalleryUserHelper::hasItemPermission($itemId, $userId, $permissions);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	if (!$hasPermission) {
+	    return GalleryStatus::error(ERROR_PERMISSION_DENIED,
+					__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Assert that the given user has one of the specific permissions for the
+     * target item
+     *
+     * @return array object GalleryStatus a status code
+     *               boolean true if yes
+     */
+    function hasItemPermission($itemId, $userId, $permissions) {
+
+	list ($ret, $groupIds) = GalleryUserGroupMap::fetchGroupsForUser($userId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	list ($ret, $hasPermission) =
+	    GalleryPermissionMap::hasPermission($itemId, array($userId),
+						$groupIds, $permissions);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return array(GalleryStatus::success(), $hasPermission);
+    }
 }
 ?>

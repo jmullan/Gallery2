@@ -158,6 +158,7 @@ function GalleryMain($startTime) {
 	}
     } else {
 	GalleryProfiler::start('GalleryView::renderHeadAndBody');
+
 	list ($ret, $master['view']) = $view->renderHeadAndBody();
 	if ($ret->isError()) {
 	    $master['error'] = $ret->getAsHtml();

@@ -18,7 +18,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-class SiteAdminView extends GalleryView {
+class ItemAdminView extends GalleryView {
 
     /**
      * @see GalleryView::renderHead
@@ -26,12 +26,6 @@ class SiteAdminView extends GalleryView {
     function renderHead() {
 	global $gallery;
 	
-	/* Make sure we have adequate permissions */
-	$ret = GalleryUserHelper::assertSiteAdministrator();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
 	/* Get our theme in place */
 	$ret = $this->_activateTheme();
 	if ($ret->isError()) {
@@ -50,7 +44,7 @@ class SiteAdminView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$smarty->template_dir = dirname(__FILE__) . '/templates';
-	$html = $smarty->fetch('SiteAdminHead.tpl');
+	$html = $smarty->fetch('ItemAdminHead.tpl');
 
 	return array(GalleryStatus::success(), $html);
     }
@@ -61,16 +55,17 @@ class SiteAdminView extends GalleryView {
     function renderBody() {
 	global $gallery;
 
-	/* Make sure we have adequate permissions */
-	$ret = GalleryUserHelper::assertSiteAdministrator();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
 	/* Get our theme in place */
 	$ret = $this->_activateTheme();
 	if ($ret->isError()) {
 	    return $ret;
+	}
+
+	/* Figure out the item we're referring to */
+	$itemId = GalleryUtilities::getRequestVariables('itemId');
+	list ($ret, $item) = $gallery->loadEntitiesById($itemId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	
 	/* Load the module list */
@@ -92,7 +87,7 @@ class SiteAdminView extends GalleryView {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    list ($ret, $moduleViews) = $module->getSiteAdminViews();
+	    list ($ret, $moduleViews) = $module->getItemAdminViews($item);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -102,6 +97,10 @@ class SiteAdminView extends GalleryView {
 
 	/* If we have a specific sub view, render it now */
 	$subViewName = GalleryUtilities::getRequestVariables('subView');
+	if (empty($subViewName) && !empty($subViewChoices)) {
+	    $subViewName = $subViewChoices[0]['view'];
+	}
+	
 	if (!empty($subViewName)) {
 	    list ($ret, $subView) = GalleryView::loadView($subViewName);
 
@@ -118,17 +117,18 @@ class SiteAdminView extends GalleryView {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	/* Render our HTML body */
 	list ($ret, $smarty) = $gallery->getSmarty();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	$smarty->assign('itemId', $itemId);
 	$smarty->assign('subViewChoices', $subViewChoices);
 	$smarty->assign('subViewHtml', $subViewHtml);
 	$smarty->template_dir = dirname(__FILE__) . '/templates';
-	$html = $smarty->fetch('SiteAdmin.tpl');
+	$html = $smarty->fetch('ItemAdmin.tpl');
 
 	return array(GalleryStatus::success(), $html);
     }

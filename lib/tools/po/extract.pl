@@ -47,13 +47,13 @@ sub extract
     open($fd, basename($file));
     my $data = join('', <$fd>);
     my $text;
-    while ($data =~ s/translate\("(.*?)"\)//s) {
+    while ($data =~ s/translate\([\"\'](.*?)[\"\']\)//s) {
       $text = $1;
       #$text =~ s/\s+/ /g;
       $strings{"_(\"$text\")"}++;
     }
 
-    while ($data =~ s/({galleryText.*?)(one|many|text)="(.*?)"/$1/s) {
+    while ($data =~ s/({galleryText.*?)(one|many|text)=[\"\'](.*?)[\"\']/$1/s) {
       $text = $3;
       #$text =~ s/\s+/ /g;
       $strings{"_(\"$text\")"}++;

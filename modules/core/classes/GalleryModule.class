@@ -185,7 +185,6 @@ class GalleryModule {
      * Get the name of the GalleryView containing the various site administration
      * views for this module
      *
-     * @param the type of view requested
      * @return array object GalleryStatus a status code
      *               array( array('name' => name, 'view' => view), ...)
      */
@@ -197,11 +196,11 @@ class GalleryModule {
      * Get the name of the GalleryView containing the various item administration
      * views for this module
      *
-     * @param the type of view requested
+     * @param object GalleryItem an item
      * @return array object GalleryStatus a status code
      *               array( array('name' => name, 'view' => view), ...)
      */
-    function getItemAdminViews() {
+    function getItemAdminViews($item) {
 	return array(GalleryStatus::success(), null);
     }
 

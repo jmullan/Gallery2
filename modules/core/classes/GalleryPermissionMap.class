@@ -195,7 +195,7 @@ class GalleryPermissionMap_core {
      *
      * @param int the id of the item
      * @return array object GalleryStatus a status code
-     *               array group ids
+     *               array array(
      */
     function fetchPermissionsForItem($itemId) {
 	global $gallery;
@@ -262,6 +262,16 @@ class GalleryPermissionMap_core {
 	return GalleryStatus::success();
     }
 
+    /**
+     * Does the user/group combo have the specific permission for the target item?
+     *
+     * @param int the id of the target item
+     * @param array int user ids
+     * @param array int group ids
+     * @param array string target permissions
+     * @return array object GalleryStatus a status code
+     *               boolean true if yes
+     */
     function hasPermission($itemId, $userIds, $groupIds, $permissions) {
 	global $gallery;
 
