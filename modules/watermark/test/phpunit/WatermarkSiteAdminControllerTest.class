@@ -48,7 +48,7 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 	parent::setUp();
 	$rand = rand();
 	$this->_randomName = 'phpunit_' . $rand . '.jpg';
-	$this->_expectedName = 'phpunit_' . $rand . '.dat';
+	$this->_expectedName = 'phpunit_' . $rand . '_jpg';
 
 	// Get the list of watermarks before, then after delete any that we created
 	list ($ret, $this->_beforeWatermarks) = WatermarkHelper::fetchWatermarks();
@@ -209,7 +209,7 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
     function testAddMaliciousFile() {
 	$rand = rand();
 	$randomName = 'phpunit_' . $rand . '.php';
-	$expectedName = 'phpunit_' . $rand . '.dat';
+	$expectedName = 'phpunit_' . $rand . '_php';
 	
 	GalleryUtilities::putRequestVariable('form[action][add]', '1');
 	GalleryUtilities::putRequestVariable('form[name][1]', $randomName);

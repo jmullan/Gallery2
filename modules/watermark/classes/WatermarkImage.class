@@ -157,7 +157,7 @@ class WatermarkImage_core extends GalleryEntity {
 	 * Neutralize the file extension to avoid receiving an executable file
 	 * (like a .php or .pl cgi script)
 	 */
-	$targetName = GalleryUtilities::getFileBase($targetName) . '.dat';
+	$targetName = str_replace('.', '_', $targetName);
 	
 	list ($ret, $list) = WatermarkHelper::fetchWatermarks();
 	if ($ret->isError()) {
