@@ -1,7 +1,9 @@
 function app_init() {
- // check for cookie; if found display image and remove cookie
- // precache..
  window.image_loaded = image_loaded;
+ var c = getcookie('G2_tile_'+name);
+ if (c) document.cookie = 'G2_tile_'+name+'=';
+ if (c && view >= 0) image_show(view);
+ else if (image_width.length > 0) image_precache(0);
 }
 var image_cache = new Image; // For precaching an image
 var image_iscached = new Array(image_width.length); // Track precached images
@@ -15,7 +17,8 @@ function image_show(i) {
  ui_vis('image',1,1);
 }
 function image_loaded() {
- // precache..
+ for (var i = 0; i < image_iscached.length; i++)
+  if (!image_iscached[i]) { image_precache(i); break; }
 }
 function image_precache(i) {
  if (!image_iscached[i]) {

@@ -5,6 +5,9 @@
  * and when you upgrade, your changes will not get overwritten.
  *}
 <br />
+<div class="giDescription">
+  {g->text text="A tile layout consists of a background image shown as a grid of tiles with thumbnails for other images placed in any tile position over the background.  Set the size and number of tiles, select the background image and assign thumbnail positions below.  Row 1, Column 1 is the upper left corner."}
+</div>
 <table><tr>
 <td>{g->text text="Rows"}</td>
 <td><input type="text" name="{g->formVar var="form[rows]"}" value="{$layout.params.rows}" size="4"></td>
