@@ -1023,7 +1023,7 @@ class GalleryUtilities {
 		    list ($file,
 			  $cksum, $cksum_crlf,
 			  $size, $size_crlf,
-			  $viewable) = split(' ', $line);
+			  $viewable) = preg_split('/\t/', $line);
 		    $manifest[trim($file)] =
 			array('checksum' => $cksum,
 			      'checksum_crlf' => $cksum_crlf,
