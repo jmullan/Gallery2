@@ -42,11 +42,32 @@ class DownloadItemView extends GalleryView {
 					__FILE__, __LINE__);
 	}
 
-	$gallery->debug("XXX Missing security checks to see if we can " .
-			"view this item or resize");
-
 	/* Load the item */
 	list ($ret, $item) = $gallery->loadEntitiesById($itemId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Figure out what permission we need to view this item */
+	if (is_subclass_of($item, 'GalleryDerivative')) {
+	    switch($item->getDerivativeType()) {
+	    case DERIVATIVE_TYPE_IMAGE_THUMBNAIL:
+		$requiredPermission = 'core.view';
+		break;
+		
+	    case DERIVATIVE_TYPE_IMAGE_RESIZE:
+		$requiredPermission = 'core.viewResizes';
+		break;
+	    }
+	    $itemForPermission = $item->getParentId();
+	} else {
+	    $requiredPermission = 'core.viewSource';
+	    $itemForPermission = $item->getId();
+	}
+
+	/* Make sure we have it */
+	$ret = GalleryUserHelper::assertHasItemPermission($itemForPermission,
+							  $requiredPermission);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
