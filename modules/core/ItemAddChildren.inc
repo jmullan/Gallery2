@@ -151,6 +151,7 @@ class ItemAddChildrenView extends GalleryView {
 	global $gallery;
 
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
+	$mode = GalleryUtilities::getRequestVariables('mode');
 
 	/* Make sure we have permission do edit this item */
 	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'core.addDataItem');
@@ -174,9 +175,25 @@ class ItemAddChildrenView extends GalleryView {
 	    $form['uploadBoxCount'] = 4;
 	}
 
+	$session =& $gallery->getSession();
+	
+	if (empty($mode)) {
+	    list ($ret, $mode) = $session->get('core.view.ItemAddChildren.mode');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    
+	    if (empty($mode)) {
+		$mode = 'fromBrowser';
+	    }
+	}
+
+	$session->put('core.view.ItemAddChildren.mode', $mode);
+
 	/* Render the HTML body */
 	$template = $this->_getTemplate();
 	$template->setVariable('form', $form);
+	$template->setVariable('mode', $mode);
 	$template->setVariable('item', $item->getMemberData());
 	$template->setVariable('controller', 'core:ItemAddChildren');
 	$html = $template->render('ItemAddChildren.tpl');

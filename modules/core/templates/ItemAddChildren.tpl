@@ -22,16 +22,42 @@
 
 	<tr>
 	  <td>
-	  {gallery->bigFontSize}
-	  {gallery->text text="Add Files From Your Computer"}
-	  {/gallery->bigFontSize}
-	  <br>
-	  {gallery->text one="Upload a file directly from your computer."
-	               many="Upload up to %d files directly from your computer."
-	               count=$form.uploadBoxCount
-	               arg1=$form.uploadBoxCount}
-	  {gallery->text text="Enter the full path to the file and an optional caption in the boxes below."}
-	  {gallery->input type="hidden" name="form.uploadBoxCount"}{$form.uploadBoxCount}{/gallery->input}
+	    <a href="{gallery->url view="core:ItemAdmin" 
+	                           subView="core:ItemAddChildren" 
+	                           itemId=$item.id
+	                           mode="fromBrowser"}">
+	      {gallery->text text="From Web Browser"}
+	    </a>
+	    &nbsp;
+	    /
+	    &nbsp;
+	    <a href="{gallery->url view="core:ItemAdmin" 
+                                   subView="core:ItemAddChildren" 
+	                           itemId=$item.id
+                                   mode="fromLocalServer"}">
+	      {gallery->text text="From Local Server"}
+	    </a>
+	    &nbsp;
+	    /
+	    &nbsp;
+	    <a href="{gallery->url view="core:ItemAdmin" 
+                                   subView="core:ItemAddChildren" 
+	                           itemId=$item.id
+	                           mode="fromWebPage"}">
+	      {gallery->text text="From Web Page"}
+	    </a>
+	  </td>
+	</tr>
+
+	<!-- {if $mode == 'fromBrowser'} -->
+	<tr>
+	  <td>
+	    {gallery->text one="Upload a file directly from your computer."
+	                   many="Upload up to %d files directly from your computer."
+	                   count=$form.uploadBoxCount
+	                   arg1=$form.uploadBoxCount}
+	    {gallery->text text="Enter the full path to the file and an optional caption in the boxes below."}
+	    {gallery->input type="hidden" name="form.uploadBoxCount"}{$form.uploadBoxCount}{/gallery->input}
 	  </td>
 	</tr>
 
@@ -81,38 +107,23 @@
 	    </table>
 	  </td>
 	</tr>
-	  
-	<tr>
-	  <td>
-	    &nbsp;
-	  </td>
-	</tr>
+	<!-- {/if} -->
 
+	<!-- {if $mode == 'fromLocalServer'} -->
 	<tr>
 	  <td>
-	  {gallery->bigFontSize}
-	  {gallery->text text="Add From Your Server"}
-	  {/gallery->bigFontSize}
-	  <br>
 	  {gallery->text text="Not implemented yet"}
 	  </td>
 	</tr>
+	<!-- {/if} -->
 
+	<!-- {if $mode == 'fromWebPage'} -->
 	<tr>
 	  <td>
-	    &nbsp;
-	  </td>
-	</tr>
-
-	<tr>
-	  <td>
-	  {gallery->bigFontSize}
-	  {gallery->text text="Add From a Website"}
-	  {/gallery->bigFontSize}
-	  <br>
 	  {gallery->text text="Not implemented yet"}
 	  </td>
 	</tr>
+	<!-- {/if} -->
 
     </table>
     {/gallery->form}
