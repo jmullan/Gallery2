@@ -40,6 +40,39 @@
  * @return string 
  */
 function smarty_modifier_entitytruncate($string, $length, $etc='...', $breakWords=false) {
-    return GalleryUtilities::entityTruncate($string, $length, true, $etc, $breakWords);
+    if (empty($string)) {
+	return '';
+    }
+    
+    /* Decode entities so that they're treated properly by GalleryUtilities::utf8Substring() */
+    GalleryUtilities::unsanitizeInputValues($string, false);
+
+    /* Split the string exactly on the boundary.   If there's no change, then we're done */
+    $piece = GalleryUtilities::utf8Substring($string, 0, $length);
+    if ($piece == $string) {
+	return $piece;
+    }
+
+    $etcLength = strlen($etc);
+
+    if ($etcLength < $length) {
+	/* Make room for the $etc string */
+	$piece = GalleryUtilities::utf8Substring($piece, 0, $length - $etcLength);
+	
+	$pieceLength = strlen($piece);
+	if (!$breakWords && $string{$pieceLength-1} != ' ' && $string{$pieceLength} != ' ') {
+	    /* We split a word, and we're not allowed to.  Try to back up to the last space */
+	    $splitIndex = strrpos($piece, ' ');
+	    if ($splitIndex > 0) {
+		/* Found a space, truncate there. */
+		$piece = substr($piece, 0, $splitIndex);
+	    }
+	}
+	$piece .= $etc;
+    }
+    
+    /* Reencode any dangerous entities for display */
+    GalleryUtilities::sanitizeInputValues($piece, false);
+    return $piece;
 }
 ?>

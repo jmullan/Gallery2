@@ -43,6 +43,11 @@ class TruncateTest extends GalleryTestCase {
 	$this->GalleryTestCase($methodName);
     }
 
+    function testTruncate1() {
+	/* Edge case -- no value */
+	$this->assertEquals('', smarty_modifier_entitytruncate('', 5));
+    }
+
     function testTruncate2() {
 	$string = 'truncate at 30 characters with no word break and ellipses';
 	$result = smarty_modifier_entitytruncate($string, 30);
@@ -89,27 +94,83 @@ class TruncateTest extends GalleryTestCase {
     }
     
     function testTruncate9() {
-	$string = 'monkey&amp;foo&#1234;bar';
+	/* Demonstrate that both &amp; and \xd0\xba are counted as single characters */
+	$string = "monkey&amp;foo\xd0\xbabar";
 	$result = smarty_modifier_entitytruncate($string, 11, '', true);
-	$this->assertEquals('monkey&amp;foo&#1234;', $result);
+	$this->assertEquals("monkey&amp;foo\xd0\xba", $result);
     }
     
     function testTruncate10() {
-	$string = '&#1040;&#1088;&#1093;&#1072;&#1085;&#1075;&#1077;&#1083;&#1100;&#1089;&#1082;&#1086;&#1077; 09.03.2004';
+	$string = "\xd0\xa6\xd0\xb2\xd0\xb5\xd1\x82\xd0\xbe\xd1\x87\xd0\xba\xd0\xb8\xd0\xa6\xd0" .
+	    "\xa6\xd0\xa6\xd0\xa6\xd0\xa6 09.03.2004";
 	$result = smarty_modifier_entitytruncate($string, 11, '', true);
-	$this->assertEquals('&#1040;&#1088;&#1093;&#1072;&#1085;&#1075;&#1077;&#1083;&#1100;&#1089;&#1082;', $result);
+	$this->assertEquals(
+	    "\xd0\xa6\xd0\xb2\xd0\xb5\xd1\x82\xd0\xbe\xd1\x87\xd0\xba\xd0\xb8\xd0\xa6\xd0\xa6\xd0\xa6",
+	    $result);
     }
     
     function testTruncate11() {
-	$string = '&#1040;&#1088;&#1093;&#1072;&#1085;&#1075;&#1077;&#1083;&#1100;&#1089;&#1082;&#1086;&#1077; 09.03.2004';
-	$result = smarty_modifier_entitytruncate($string, 6, '...', false);
-	$this->assertEquals('&#1040;&#1088;&#1093;...', $result);
+	$string = "\xd0\xa6\xd0\xb2\xd0\xb5\xd1\x82\xd0\xbe\xd1\x87\xd0\xba\xd0\xb8\xd0\xa6\xd0" .
+	    "\xa6\xd0\xa6\xd0\xa6\xd0\xa6 09.03.2004";
+	$result = smarty_modifier_entitytruncate($string, 11, '...', false);
+	$this->assertEquals(
+	    "\xd0\xa6\xd0\xb2\xd0\xb5\xd1\x82\xd0\xbe\xd1\x87\xd0\xba\xd0\xb8...",
+	    $result);
     }
     
     function testTruncate12() {
-	$string = '&#1040;&#1088;&#1093;&#1072;&#1085;&#1075;&#1077;&#1083;&#1100;&#1089;&#1082;&#1086;&#1077; 09.03.2004';
-	$result = smarty_modifier_entitytruncate($string, 14);
-	$this->assertEquals('&#1040;&#1088;&#1093;&#1072;&#1085;&#1075;&#1077;&#1083;&#1100;&#1089;&#1082;...', $result);
+	$string = "\xd0\xa6\xd0\xb2\xd0\xb5\xd1\x82\xd0\xbe\xd1\x87\xd0\xba\xd0\xb8\xd0\xa6\xd0" .
+	    "\xa6\xd0\xa6\xd0\xa6\xd0\xa6 09.03.2004";
+	$result = smarty_modifier_entitytruncate($string, 6, '...', false);
+	$this->assertEquals("\xd0\xa6\xd0\xb2\xd0\xb5...", $result);
+    }
+    
+    function testTruncate13() {
+	/*
+	 * Same as #12, but we don't pass values for etc and breakWords (so it uses the defaults
+	 * which are the same as we used in #12
+	 */
+	$string = "\xd0\xa6\xd0\xb2\xd0\xb5\xd1\x82\xd0\xbe\xd1\x87\xd0\xba\xd0\xb8\xd0\xa6\xd0" .
+	    "\xa6\xd0\xa6\xd0\xa6\xd0\xa6 09.03.2004";
+	$result = smarty_modifier_entitytruncate($string, 6);
+	$this->assertEquals("\xd0\xa6\xd0\xb2\xd0\xb5...", $result);
+    }
+    
+    function testTruncate14() {
+	$string = "\xd0\xa6\xd0\xb2\xd0\xb5\xd1\x82\xd0\xbe\xd1\x87\xd0\xba\xd0\xb8\x20\xd0" .
+	    "\xb8\x20\xd0\xbb\xd0\xb5\xd0\xbf\xd0\xb5\xd1\x81\xd1\x82\xd0\xbe\xd1\x87\xd0\xba\xd0" .
+	    "\xb8\xd0\xa6\xd0\xb2\xd0\xb5\xd1\x82\xd0\xbe\xd1\x87\xd0\xba\xd0\xb8\x20\xd0\xb8\x20" .
+	    "\xd0\xbb\xd0\xb5\xd0\xbf\xd0\xb5\xd1\x81\xd1\x82\xd0\xbe\xd1\x87\xd0\xba\xd0\xb8";
+	$expectedResult = "\xd0\xa6\xd0\xb2\xd0\xb5\xd1\x82\xd0\xbe\xd1\x87\xd0\xba\xd0\xb8\x20" .
+	    "\xd0\xb8\x20\xd0\xbb\xd0\xb5\xd0\xbf\xd0\xb5\xd1\x81\xd1\x82...";
+	$result = smarty_modifier_entitytruncate($string, 20, '...', true);
+	$this->assertEquals($expectedResult, $result);
+    }
+
+    function testTruncate16() {
+	/* Edge case -- etc is larger than the target size */
+	$this->assertEquals('foo b', smarty_modifier_entitytruncate('foo bar', 5, '......'));
+    }
+
+    function testTruncate17() {
+	/* Edge case -- etc is same as the target size */
+	$this->assertEquals('foo b', smarty_modifier_entitytruncate('foo bar', 5, '.....'));
+    }
+
+    function testTruncate18() {
+	$this->assertEquals(
+	    'foo bar...',
+	    smarty_modifier_entitytruncate('foo bar baz bletch', 13));
+    }
+
+    function testTruncate19() {
+	/*
+	 * Truncate splits a word, and when we back up to put in the ... we land exactly
+	 * on a word boundary.
+	 */
+	$this->assertEquals(
+	    'foo bar baz...',
+	    smarty_modifier_entitytruncate('foo bar baz bletch', 14));
     }
 }
 ?>

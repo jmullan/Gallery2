@@ -283,7 +283,8 @@ class GalleryUtilities {
     function getRequestVariables() {
 	$values = array();
 	foreach (func_get_args() as $argName) {
-	    $values[] = GalleryUtilities::_getRequestVariable(GALLERY_FORM_VARIABLE_PREFIX . $argName);
+	    $values[] = GalleryUtilities::_getRequestVariable(
+		GALLERY_FORM_VARIABLE_PREFIX . $argName);
 	}
 
 	/* Sanitize the input */
@@ -584,92 +585,6 @@ class GalleryUtilities {
     }
 
     /**
-     * An entity-safe truncate for smarty
-     *
-     * @param string the original input string
-     * @param integer the desired length.  If negative negative then that many characters will
-     *                be omitted from the end of string (after the start position has been
-     *                calculated when a start is negative)
-     * @param boolean true if the final length be a count of entities, instead
-     *                of characters. (default: true)
-     * @param string  the value to append if we truncate the string (default: "...")
-     * @param boolean true if it is ok to break words apart. (default: false)
-     * @return string
-     */
-    function entityTruncate($string, $length, $countEntitiesAsOne=true, $etc='...', $breakWords=false) {
-	if ($length == 0) {
-	    return '';
-	}
-	$originalLength = strlen($string);
-	if ($originalLength > $length) {
-	    /*
-	     * This is tricky.  We want to only show the truncation marker (...)
-	     * if we actually truncate.  However, it's possible that the string
-	     * will fit exactly and not require truncation.  If we take into
-	     * account the size of the truncation marker when we call
-	     * entitySubstr() then we may wind up truncating a string that
-	     * didn't otherwise require truncation, solely so that we can
-	     * squeeze in the marker (that wouldn't have been necessary had we
-	     * not done truncation in the first place!)
-	     *
-	     * Solution: Optimistically try the truncation hoping that the
-	     * string will fit.  If it turns out that we had to truncate *and*
-	     * we don't have enough space to fit the truncation marker, then try
-	     * the truncation a second time leaving room for the marker.
-	     */
-	    list ($substringCount, $newString) =
-		GalleryUtilities::entitySubstr($string, 0, $length, $countEntitiesAsOne);
-	    if ($string != $newString) {
-		/* We did some truncation */
-		$lengthMinusMarker = $length - strlen($etc);
-		if ($lengthMinusMarker < 0) {
-		    /* No room to show anything! */
-		    return '';
-		}
-
-		if ($substringCount > $lengthMinusMarker) {
-		    /* We don't have room for the marker */
-		    list ($substringCount, $newString) =
-			GalleryUtilities::entitySubstr(
-			    $string, 0, $lengthMinusMarker, $countEntitiesAsOne);
-		}
-	    }
-
-	    if (!$breakWords) {
-		$newStringLen = strlen($newString);
-		$testString = substr($string, 0, $newStringLen + 1);
-		if (strlen($testString) > $newStringLen) {
-		    if (preg_match('|\s+\S+$|', $testString)) {
-			/* The string has more than one word, so delete the last word */
-			$newString = preg_replace('/\s+\S+$/', '', $newString);
-		    } else {
-			/*
-			 * The string has only one word, that word is too long,
-			 * and we are not allowed to break words.  Try again
-			 * with word break allowed.
-			 */
-			return GalleryUtilities::entityTruncate(
-			    $string, $length, $countEntitiesAsOne, $etc, true);
-		    }
-		}
-
-		if ($substringCount > $length) {
-		    /* Still too long.  Retry with word break allowed */
-		    return GalleryUtilities::entityTruncate(
-			$string, $length, $countEntitiesAsOne, $etc, true);
-		}
-	    }
-	    if (strlen($newString) == $originalLength) {
-		return $newString;
-	    } else {
-		return $newString . $etc;
-	    }
-	} else {
-	    return $string;
-	}
-    }
-
-    /**
      * An entity-safe equivalent to substr (http://php.net/substr)
      *
      * @param string the input string
@@ -832,8 +747,7 @@ class GalleryUtilities {
      * 1.  Convert UTF-8 values to Unicode entities
      * 2.  Sanitize any input values to remove dangerous values
      */
-    function sanitizeInputValues(&$value) {
-
+    function sanitizeInputValues(&$value, $adaptForMagicQuotes=true) {
 	if (is_array($value)) {
 	    foreach (array_keys($value) as $key) {
 		$newKey = $key;
@@ -849,8 +763,10 @@ class GalleryUtilities {
 	    $value = htmlspecialchars($value, ENT_COMPAT, 'UTF-8');
 
 	    /* Undo the damage caused by magic_quotes */
-	    if (get_magic_quotes_gpc()) {
-		$value = stripslashes($value);
+	    if ($adaptForMagicQuotes) {
+		if (get_magic_quotes_gpc()) {
+		    $value = stripslashes($value);
+		}
 	    }
 	}
     }
@@ -859,7 +775,7 @@ class GalleryUtilities {
      * Undo the preprocessing done in sanitizeInputValues (useful when we
      * put values back into the request)
      */
-    function unsanitizeInputValues(&$value) {
+    function unsanitizeInputValues(&$value, $adaptForMagicQuotes=true) {
 	if (is_array($value)) {
 	    foreach (array_keys($value) as $key) {
 		GalleryUtilities::unsanitizeInputValues($value[$key]);
@@ -869,8 +785,10 @@ class GalleryUtilities {
 	    $value = GalleryUtilities::htmlEntityDecode($value);
 	    
 	    /* Redo the damage caused by magic_quotes */
-	    if (get_magic_quotes_gpc()) {
-		$value = addslashes($value);
+	    if ($adaptForMagicQuotes) {
+		if (get_magic_quotes_gpc()) {
+		    $value = addslashes($value);
+		}
 	    }
 	}
     }
