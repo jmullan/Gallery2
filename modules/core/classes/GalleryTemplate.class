@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -41,7 +41,7 @@ define('TEMPLATE_DATA_VERSION', 3);
  * @subpackage Classes
  */
 class GalleryTemplate {
-    
+
     /*
      * ****************************************
      *                 Members
@@ -71,7 +71,7 @@ class GalleryTemplate {
      * @access private
      */
     var $_templateDir;
-    
+
     /**
      * A directory where the templates will be written into.
      *
@@ -92,10 +92,10 @@ class GalleryTemplate {
     function GalleryTemplate($templateDir) {
 	global $gallery;
 	$this->_templateDir = $templateDir;
-	
-        /* This will be the place to put the compiled templates */
+
+	/* This will be the place to put the compiled templates */
 	$this->_compiledTemplateDir = $gallery->getConfig('data.smarty.templates_c') .
-            '%%' . sprintf("%u", crc32($templateDir));
+	    '%%' . sprintf("%u", crc32($templateDir));
 	$this->_smarty =& GalleryTemplate::_getSmarty();
     }
 
@@ -135,7 +135,7 @@ class GalleryTemplate {
      * Return true if the given variable is set
      *
      * @param string the key
-     * @return boolean true or false 
+     * @return boolean true or false
      */
     function hasVariable($key) {
 	$templateVars = $this->_smarty->get_template_vars();
@@ -160,20 +160,18 @@ class GalleryTemplate {
      *               string the HTML content
      */
     function fetch($templateName) {
-	global $gallery;
-
 	$this->_smarty->template_dir = $this->_templateDir;
 
-        $ret = $this->_initCompiledTemplateDir();
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
-        }
+	$ret = $this->_initCompiledTemplateDir();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 	$this->_smarty->compile_dir = $this->_compiledTemplateDir;
 
-        list($ret, $html) = $this->_smarty->fetch($templateName);
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
-        }
+	list($ret, $html) = $this->_smarty->fetch($templateName);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 	return array(GalleryStatus::success(), $html);
     }
 
@@ -184,20 +182,18 @@ class GalleryTemplate {
      * @return object GalleryStatus the status of the call
      */
     function display($templateName) {
-	global $gallery;
-
 	$this->_smarty->template_dir = $this->_templateDir;
 
-        $ret = $this->_initCompiledTemplateDir();
-        if ($ret->isError()) {
-            return $ret->wrap(__FILE__, __LINE__);
-        }
+	$ret = $this->_initCompiledTemplateDir();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 	$this->_smarty->compile_dir = $this->_compiledTemplateDir;
 
-        list ($ret, $junk) = $this->_smarty->fetch($templateName, null, null, true);
-        if ($ret->isError()) {
-            return $ret->wrap(__FILE__, __LINE__);
-        }
+	list ($ret, $junk) = $this->_smarty->fetch($templateName, null, null, true);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 	return GalleryStatus::success();
     }
 
@@ -213,10 +209,10 @@ class GalleryTemplate {
      */
     function _initCompiledTemplateDir() {
 	global $gallery;
+	$platform = $gallery->getPlatform();
 
 	/* Make a unique subdirectory for compiled templates for this templates dir */
-        $dir = $this->_compiledTemplateDir;
-	$platform = $gallery->getPlatform();
+	$dir = $this->_compiledTemplateDir;
 	if ($platform->file_exists($dir) && !$platform->is_dir($dir)) {
 	    return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__);
 	}
@@ -252,7 +248,7 @@ class GalleryTemplate {
 		$this->_initCompiledTemplateDir();
 	    }
 	}
-	
+
 	return GalleryStatus::success();
     }
 
@@ -285,7 +281,7 @@ class GalleryTemplate {
 	    $platform = $gallery->getPlatform();
 	    $slash = $platform->getDirectorySeparator();
 	    $smarty->plugins_dir[] = dirname(__FILE__) . '/../../../lib/smarty_plugins';
-	    
+
 	    if ($gallery->getDebug()) {
 		$smarty->debugging = true;
 	    }
@@ -313,10 +309,10 @@ class GalleryTemplate {
     * templates with our own copies without modifying the original.
     */
    function resourceGetTemplate($templateName, &$templateSource, &$smarty) {
-        $templateName = $this->_getActualTemplateName($smarty->template_dir . '/' . $templateName);
-        $templateSource = $smarty->_read_file($templateName);
+	$templateName = $this->_getActualTemplateName($smarty->template_dir . '/' . $templateName);
+	$templateSource = $smarty->_read_file($templateName);
 
-        return true;
+	return true;
     }
 
    /**
@@ -327,20 +323,21 @@ class GalleryTemplate {
     * templates with our own copies without modifying the original.
     */
     function resourceGetTimestamp($templateName, &$templateTimestamp, &$smarty) {
-        global $gallery;
-        $platform = $gallery->getPlatform();
-        $templateName = $this->_getActualTemplateName($smarty->template_dir . '/' . $templateName);
+	global $gallery;
+	$platform = $gallery->getPlatform();
+
+	$templateName = $this->_getActualTemplateName($smarty->template_dir . '/' . $templateName);
 
 	$stat = $platform->stat($templateName);
-        $templateTimestamp = $stat[9];
+	$templateTimestamp = $stat[9];
 
-        return true;
+	return true;
     }
 
     /**
      * Given a template name (/foo/bar.tpl), return one of the following
      * strings (in order of precedence).
-     *   1.  /foo/bar.local.tpl  (if it exists)
+     *   1.  /foo/local/bar.tpl  (if it exists)
      *   2.  /foo/bar.tpl.local  (if it exists -- deprecated old style)
      *   3.  /foo/bar.tpl        (whether or not it exists)
      *
@@ -348,17 +345,16 @@ class GalleryTemplate {
      */
     function _getActualTemplateName($templateName) {
 	global $gallery;
-	
-        $platform = $gallery->getPlatform();
-	
+	$platform = $gallery->getPlatform();
+
 	/* New style overrides:  local/file.ext */
-        $localTemplateName = dirname($templateName) . '/local/' . basename($templateName);
-        if ($platform->file_exists($localTemplateName) && $platform->is_readable($localTemplateName)) {
+	$localTemplateName = dirname($templateName) . '/local/' . basename($templateName);
+	if ($platform->file_exists($localTemplateName) && $platform->is_readable($localTemplateName)) {
 	    return $localTemplateName;
 	}
 
 	/*
-	 * Fall back to old style overrides:  file.local.ext
+	 * Fall back to old style overrides:  file.ext.local
 	 * TODO: Get rid of this format
 	 */
 	$localTemplateName = $templateName . '.local';
@@ -375,7 +371,7 @@ class GalleryTemplate {
      */
     function resourceGetSecure($templateName, &$smarty) {
 	// Assume all templates are secure
-        return true;
+	return true;
     }
 
     /**
