@@ -218,36 +218,81 @@
       in modules that can be enabled separately for maximum control.
     </p>
     <p>
-      New in Gallery 2 Alpha 2 (Grand Theft Photo) 
+      Highlights of what's changed in Gallery 2 Alpha 2 (Grand Theft Photo) 
     </p>
     <ol>
-      <li> <b> Migration Module </b> Basic release of migration module.</li>
-      
-  <li> <b> GD2 toolkit </b> - Implemented GD2 based graphics toolkit. Should work 
-    on any GD2.0 installation. 1.8 support dropped, since it isn't able to generate 
-    trueColor resizes.</li>
-      <li> <b> Migration Module </b> Basic release of migration module with lots of 
-	functionality.</li>
-      <li> <b> Migration</b> Import per-user and per-metauser permissions.</li>
-      <li> <b> Checks for image toolkit before migrating.</b></li>
-      <li> <b> Nokia Mobile Phone Uploader Module </b>Nokia image uploader module 
-	for G2.</li>
-      <li> <b> EXIF Data Stripping </b>EXIF data stripped from thumbnails.</li>
-      <li> <b> Language Preference </b>Now it is configurable to be visible for everybody, 
-	just guest user, or nobody.</li>
-      <li> <b> Gallery Remote </b> Now supports creating new albums. GR is going under 
-	a major revision to support future G2 releases / features.</li>
-      <li> <b> User Registration </b> Some minor security fixes.</li>
-      <li> <b> Self Registration Module </b> added.</li>
-      <li> <b> Module Performance </b>Changes to improve performance.</li>
-      
-  <li> <b>User Login </b>You can now set permissions so guests don't see the top 
-    level of Gallery. </li>
-      <li> <b> BBCode Fixes </b></li>
-      <li> <b> Fixed thumbnails when photo is deleted. </b></li>
-      <li> <b> PHP5 </b> Some changes to work better with PHP5.</li>
-      <li> <b> Print Support </b> Added PhotoAccess vendor to print photos and albums.</li>
-      <li> <b> Alpha Codename </b> Updated doc for most recent codename.</li>
+      <li>
+	<b> User Interface </b> - Many small and large user interface
+	improvements.  Made the XHTML more standards compliant and
+	used less divs in favor of more sensible tags (like h1, h2,
+	etc).
+      </li>
+      <li>
+	<b> Performance </b> - Significant performance increases in
+	general, and especially for image views.  This also reduces
+	the overall load on your system when (for example)
+	viewing a page with 9 thumbnails on it.
+      </li>
+      <li>
+	<b> Installer </b> - The installer now installs the core
+	module for you, as well as allows you to optionally install
+	other modules right away instead of having to do it later via
+	the Site Admin.
+      </li>
+      <li>
+	<b> Custom Fields </b> - New custom field module allows you to
+	define global and per-album custom fields for your item meta
+	data.
+      </li>
+      <li>
+	<b> Java Upload Applet </b> - New upload option where you can
+	drag and drop files onto an applet and G2 will upload them for you.
+      </li>
+      <li>
+	<b> GD2 Graphics toolkit </b> - Implemented GD2 based graphics toolkit.
+	This enables use of PHP's built-uin imaging functions for
+	thumbnails, resizes, cropping and rotating.  Should work on
+	any GD2.0 installation. Any PHP with GD version 2 compiled in
+	should work, no external binaries needed.
+      </li>
+      <li>
+	<b> Square Thumbnails </b> - New module that allows you to
+	specify that all gallery thumbnails have a 1:1 aspect ratio
+      </li>
+      <li>
+	<b> Imageframe module </b> - This module allows you to apply
+	frames to your photos and albums in the Matrix and Hybrid layouts.
+      </li>
+      <li>
+	<b> Self Registration module </b> - Allows guests to register
+	for their own account in your G2.
+      </li>
+      <li>
+	<b> Language selection </b> - There's a new box in the sidebar
+	where guests can choose their preferred language
+      </li>
+      <li>
+	<b> Nokia Mobile Phone Uploader Module </b> - Upload images to
+	your G2 from your mobile phone!
+      </li>
+      <li>
+	<b> Migration module </b> - We now import G1 permissions, and
+	allow you to choose the source encoding (character set) of
+	your Gallery 1 so that we can convert it to UTF-8 as part of
+	the migration.  We now also track where your G1 albums wound
+	up in G2 so that you can create an .htaccess file in your G1
+	to redirect G1 urls to G2, for ease of migration.  
+      </li>
+      <li>
+	<b> Gallery Remote </b> - GR now supports creating new G2 albums.
+      </li>
+      <li>
+	<b> PHP5 Support </b> G2 has been tested on PHP 5.0.1 on
+	FreeBSD and Linux.
+      </li>
+      <li> 
+	<b> Bugs </b> - More than 31 bugs closed since alpha 1.
+      </li> 
     </ol>
 
     <h2><a name="prerequisites">G2 Alpha Installation Prerequisites</a></h2>
@@ -341,12 +386,20 @@
 
       <li>
 	<b>Graphics Toolkits</b> - G2 works with <a
-	  href="http://netpbm.sourceforge.net" target="_blank">NetPBM</a> or <a
-	  href="http://imagemagick.org" target="_blank">ImageMagick</a>.  They&rsquo;re both
-	equally good, though some say that NetPBM has slightly better
-	quality and ImageMagick is slightly faster.
-	If you install these in default, or standard, locations then G2
-	will auto-detect them during G2 installation.
+	href="http://netpbm.sourceforge.net"
+	target="_blank">NetPBM</a>, <a href="http://imagemagick.org"
+	target="_blank">ImageMagick</a> or <a
+	href="http://www.boutell.com/gd/" target="_blank">GD</a>.
+	They&rsquo;re all equally good, though some say that NetPBM
+	has slightly better quality and that ImageMagick is slightly
+	faster than NetPBM.  GD is the fastest and is compiled into
+	PHP by default if your PHP is 4.3.0 or more recent, however it
+	may not have support for all image types (eg, it might not
+	have JPEG support).  If the binaries for NetPBM and
+	ImageMagick are installed in default, or standard, locations
+	then G2 will auto-detect them during G2 installation.  It
+	won't cause any harm to enable all of these toolkits -- in
+	fact you'll get the widest file type support if you do so.
       </li>
     </ol>
 
@@ -362,17 +415,13 @@
     <ol>
       <li>
 	<b> Authenticate </b> - You will be asked to create and save a
-	small text file in order to authenticate, If this step is
-	successful you can proceed to Step 2.
+	small text file in order to authenticate.  You may not proceed
+	until you do this.  That's how G2 knows that you're authorized
+	to use the installer.
       </li>
       <li>
-	<b> Install Checks </b> - This is where we would check to make
-	sure that all your files have been uploaded properly. This is
-	not implemented in this alpha release. Go onto Step 3.
-      </li>
-      <li>
-	<b> System Checks </b> - The installer looks for valid
-	versions of PHP and other items. Proceed to Step 4.
+	<b> System Checks </b> - The installer checks your system to
+	make sure that it will support G2.
       </li>
       <li>
 	<b> Admin User Setup </b> - You are prompted for an
@@ -381,25 +430,45 @@
 	cannot be changed during the install process(though you can
 	change it to something else later on). Type in a password and
 	type it again to validate it. Then click 'Create' to create
-	the admin user for this installation of Gallery 2. You are
-	them prompted to go to Step 5.
+	the admin user for this installation of Gallery 2. 
       </li>
       <li>
-	<b> Storage Setup </b> - Read the instructions on the installer
-	to set up a storage location for Gallery 2. Save this path,
-	then proceed to Step 6.
+	<b> Storage Setup </b> - Read the instructions on the
+	installer to set up a storage location for Gallery 2.  This is
+	where G2 will store all of your images, as well as other cache
+	information.
       </li>
       <li>
-	<b> Database Setup </b> - This is where you select your
-	database type and enter your database authentication
-	information. Select and enter the correct information and save
-	it. Proceed to Step 7.
+	<b> Database Setup </b> - Select your database type and enter
+	your database authentication information. 
+      </li>
+      <li>
+	<b> Create Config File </b> - G2 will create the
+	<b>config.php</b> file in your G2 directory.  This contains
+	all the answers you've provided in the installer and is
+	necessary for G2 to function properly.
+      </li>
+      <li>
+	<b> Install the Core module </b> - Here's where we create all
+	the database tables and initial users and albums to get you
+	started.  Unless something goes wrong, there's nothing for you
+	to do here.
+      </li>
+      <li>
+	<b> Install other modules </b> - G2 has lots of different
+	modules that provide useful functionality.  Choose which ones
+	you want to use.  You can always go to the <a
+	href="main.php?g2_view=core:SiteAdmin" target="_guided">Site
+	Admin</a> page later to install, activate or deactivate other
+	modules later on so it's ok to experiment here.
+      </li>
+      <li>
+	<b> Check Security </b> - G2 walks you through the process of
+	locking down your new <b>config.php</b>.
       </li>
       <li>
 	<b> Finished! </b> - Congratulations! Your Gallery 2 Alpha has
-	successfully installed! See... that wasn't so hard, was it? 
-	Now it's time to upload some photos! Click on 'Go to my
-	Gallery!'
+	successfully installed!
       </li>
     </ol>
 
@@ -415,13 +484,13 @@
       </li>
       <li>
 	<b> Activate Graphics Toolkits </b> - Click on the <a
-	href="main.php?g2_view=core:SiteAdmin" target="_guided">Site Admin</a> link
-	then the <a
-	href="main.php?g2_view=core:SiteAdmin&amp;g2_subView=core:AdminModules" target="_guided">Modules</a>
-	link to see the module list.  Install, configure and activate
-	either the NetPBM or ImageMagick modules.  You can activate
-	both if you want.  If your graphics toolkits are in well known
-	places, then they may already be activated.
+	href="main.php?g2_view=core:SiteAdmin" target="_guided">Site
+	Admin</a> link then the <a
+	href="main.php?g2_view=core:SiteAdmin&amp;g2_subView=core:AdminModules"
+	target="_guided">Modules</a> link to see the module list.
+	Install, configure and activate one of the NetPBM,
+	ImageMagick, or GD modules.  You can activate as many of them
+	as you want (more is better, here).  
       </li>
       <li>
 	<b> Add an album </b> - Browse back to <a href="main.php"
@@ -509,6 +578,11 @@
 	    different file types.  G2 lets you upload files of any type!
 	  </li>
 
+	  <li>
+	    Play around with the <a
+	    href="main.php?g2_view=core:SiteAdmin&amp;g2_subView=core:AdminModules"
+	    target="_guided">other modules</a> and see what they do!
+	  </li>
 	</ul>
       </li>
     </ol>
@@ -563,24 +637,19 @@
 	    feedback, you might want to import in small chunks of
 	    albums for now.
 	  </li>
-	  <li>
-	    If your G1 uses a character set besides UTF-8, any
-	    non-ASCII characters in your captions, description, and
-	    comments will probably be displayed incorrectly.
-	    Converting them to UTF-8 (and then HTML entities) is one
-	    of the high-priority post-alpha tasks.
-	  </li>
 	</ul>
       </li>
       <li>
-	<b>Performance</b> - G2 is not as fast as we want it to be.
-	We know about this and know how to greatly improve it.  We&rsquo;ve
-	been focused on features and reliability before performance,
-	and will optimize during the Alpha cycle.
+	<b>Performance</b> - This alpha release is much faster than
+	the last one.  There are still some tweaks that we have
+	planned that will make it even faster.  We&rsquo;ve still
+	focused on features and reliability before performance, and
+	will be continually optimizing during the Alpha and Beta
+	cycles.
       </li>
       <li>
-	<b> MembersList shows email addresses to everybody </b> - this is a known
-        issue that we will fix in an upcoming release.
+	<b> MembersList shows email addresses to everybody </b> - this
+	is a known issue that we will fix in an upcoming release.
       </li>
     </ol>
 
@@ -691,12 +760,16 @@
       no need to wait until you&rsquo;re entirely done.
     </p>
 
-    <a href="http://validator.w3.org/check?uri=referer">
-      <img style="border: 0px"
+    <a href="http://validator.w3.org/check?uri=referer"><img style="border: 0px"
 	src="images/xhtml10.png"
 	alt="This page is valid XHTML 1.0" 
-	height="15" width="80"/>
-    </a>
+	height="15" width="80"/></a>
+
+    <a href="http://gallery.sourceforge.net"><img style="border: 0px"
+	src="images/gallery.gif"
+	alt="Gallery 2.0 alpha-2 (Grand Theft Photo)"
+	height="15"  
+	width="80"/></a>
 
     <hr />
 
