@@ -30,7 +30,7 @@
  * library changes, bump this number to trigger a complete rebuild of all
  * compiled templates.
  */
-define("TEMPLATE_DATA_VERSION", 1);
+define('TEMPLATE_DATA_VERSION', 1);
 
 /**
  * This is Gallery's templating class.  It hides the details of the
@@ -185,17 +185,17 @@ class GalleryTemplate {
 	    return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__);
 	}
 
+	$templateVersionFile = $dir . '/v_' . TEMPLATE_DATA_VERSION;
 	if (!$platform->file_exists($dir)) {
 	    if (!$platform->mkdir($dir)) {
 	        return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
 					    "Unable to mkdir($dir)");
 	    }
-	    if ($fd = $platform->fopen("$dir/_tpl_version", "w")) {
-		fwrite($fd, TEMPLATE_DATA_VERSION . '\n');
+	    if ($fd = $platform->fopen($templateVersionFile, 'w')) {
 		fclose($fd);
 	    } else {
 	        return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
-					    "Unable to write to $dir/_tpl_version");
+					    sprintf('Unable to write to %s', $templateVersionFile));
 	    }
 	} else {
 	    if (!$platform->is_writeable($dir)) {
@@ -203,15 +203,8 @@ class GalleryTemplate {
 	    }
 
 	    $rebuild = false;
-	    if (!$platform->file_exists("$dir/_tpl_version")) {
+	    if (!$platform->file_exists($templateVersionFile)) {
 		$rebuild = true;
-	    } else if ($fd = $platform->fopen("$dir/_tpl_version", "r")) {
-		$currentVersion = rtrim(fgets($fd));
-		if ($currentVersion != TEMPLATE_DATA_VERSION) {
-		    $gallery->debug(sprintf("Template version mismatch (old: %d, new: %d)",
-					    $currentVersion, TEMPLATE_DATA_VERSION));
-		    $rebuild = true;
-		}
 	    }
 
 	    if ($rebuild) {
