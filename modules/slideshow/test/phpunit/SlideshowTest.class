@@ -294,13 +294,12 @@ class SlideshowTest extends GalleryTestCase {
 	parent::tearDown();
     }
 
-    function _runTest($test, $expectedResults, $startId=null) {
+    function _runTest($test, $expectedResults, $startId=null, $itemList=null) {
 	global $gallery;
 	$gallery->setActiveUserId($this->_guestId);
 	$recursive = ($test == 'recursive');
-	list ($ret, $slideData, $start) = isset($startId)
-	    ? $this->_view->buildSlideshow($this->_album, $startId, $recursive)
-	    : $this->_view->buildSlideshow($this->_album, null, $recursive);
+	list ($ret, $slideData, $start) = $this->_view->buildSlideshow(
+	    isset($itemList) ? $itemList : $this->_album, $startId, $recursive);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -502,8 +501,8 @@ class SlideshowTest extends GalleryTestCase {
 				  array(0,0,0,0,0,0)),
 	    $pd[7]['id'] => array(array($pd[7]['id'], $pd[7]['R']),
 				  array(1,1,1,1,1,1)),
-	    $pd[10]['id'] => array(array($pd[10]['id'], $pd[10]['R'], $pd[10]['T']),
-				   array(1,1,1,1,1,1)),
+	    $pd[10]['id'] => array(array($pd[10]['id'], $pd[10]['R'],
+				   $pd[10]['T']), array(1,1,1,1,1,1)),
 	    $pd[11]['id'] => array(array($pd[11]['P'], $pd[11]['T']),
 				   array(1,0,0,0,0,0)),
 	    $pd[8]['id'] => array(array($pd[8]['P']),
@@ -511,6 +510,25 @@ class SlideshowTest extends GalleryTestCase {
 	    $pd[9]['id'] => array(array($pd[9]['P'], $pd[9]['R']),
 				  array(0,1,1,1,1,1)),
 	    'idsWithExif' => array($pd[4]['id'], $pd[9]['id'])));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	// itemList test
+	$ret = $this->_runTest('itemList', array(
+	    $pd[2]['id'] => array(array($pd[2]['id'], $pd[2]['R'], $pd[2]['R2'],
+				  $pd[2]['T']), array(1,2,2,2,2,2)),
+	    $pd[11]['id'] => array(array($pd[11]['P'], $pd[11]['T']),
+				   array(1,0,0,0,0,0)),
+	    $pd[4]['id'] => array(array($pd[4]['P'], $pd[4]['R'], $pd[4]['T']),
+				  array(0,1,1,1,1,1)),
+	    $pd[10]['id'] => array(array($pd[10]['id'], $pd[10]['R'],
+				   $pd[10]['T']), array(1,1,1,1,1,1)),
+	    $pd[0]['id'] => array(array($pd[0]['id'], $pd[0]['T']),
+				  array(0,0,0,0,0,0)),
+	    'idsWithExif' => array($pd[4]['id'])), null,
+		array($pd[2]['id'], $pd[11]['id'], $pd[4]['id'],
+		      $pd[10]['id'], $pd[0]['id']));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

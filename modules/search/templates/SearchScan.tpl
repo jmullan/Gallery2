@@ -90,6 +90,7 @@
         {/g->row}
       {/g->box}
 
+      {assign var="resultCount" value="0"}
       {if !empty($SearchScan.searchResults)}
 	{g->box}
 	  {g->title}
@@ -97,6 +98,7 @@
 	  {/g->title}
 
 	  {foreach from=$SearchScan.searchResults key=moduleId item=results}
+	    {assign var="resultCount" value=$resultCount+$results.count}
 	    {g->box}
 	      {g->title}
 		{$SearchScan.modules.$moduleId.name}
@@ -154,6 +156,13 @@
 	    {/g->box}
 	  {/foreach}
 	{/g->box}
+      {/if}
+      {if $resultCount>0 && $SearchScan.slideshowAvailable}
+	{g->element}
+	  {g->input type="submit" name="form[action][slideshow]"}
+	    {g->text text="View these results in a slideshow"}
+	  {/g->input}
+	{/g->element}
       {/if}
     {/g->pagebox}
   {/g->main}

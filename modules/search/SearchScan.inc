@@ -44,7 +44,47 @@ class SearchScanController extends GalleryController {
 	global $gallery;
 
 	$results = array();
-	if (isset($form['action']['showAll'])) {
+	if (isset($form['action']['slideshow'])) {
+	    list ($ret, $slideshow) =
+		GalleryCoreApi::newFactoryInstance('SlideshowInterface_1_0');
+	    if ($ret->isError() || !isset($slideshow)) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    require_once(dirname(__FILE__) . '/classes/GallerySearchInterface_1_0.class');
+	    $ids = GalleryCoreApi::getAllFactoryImplementationIds('GallerySearchInterface_1_0');
+	    foreach ($ids as $id => $className) {
+		list ($ret, $searchInstances[$id]) =
+		    GalleryCoreApi::newFactoryInstance('GallerySearchInterface_1_0', $className);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	    }
+	    $form['searchCriteria'] =
+		SearchUtilities::sanitizeSearchCriteria($form['searchCriteria']);
+	    $itemIds = array();
+	    foreach ($searchInstances as $id => $instance) {
+		if (isset($form['options'][$id])) {
+		    list ($ret, $resultSet) =
+			$instance->search($form['options'][$id],
+					  $form['searchCriteria']);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		    foreach ($resultSet['results'] as $result) {
+			if (isset($result['itemId'])) {
+			    $itemIds[$result['itemId']] = 1;
+			}
+		    }
+		}
+	    }
+	    $itemIds = array_keys($itemIds);
+
+	    list ($ret, $results['delegate']) = $slideshow->getLinkData($itemIds);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	} else if (isset($form['action']['showAll'])) {
 	    $results['delegate']['view'] = 'search:SearchShowAll';
 	} else {
 	    $results['delegate']['view'] = 'search:SearchScan';
@@ -163,6 +203,9 @@ class SearchScanView extends GalleryView {
 	    $form['searchCriteria'] = '';
 	}
 
+	$ids = GalleryCoreApi::getAllFactoryImplementationIds('SlideshowInterface_1_0');
+	$slideshowAvailable = !empty($ids);
+
 	/* Render the HTML body */
 	$SearchScan = array();
 	$SearchScan['modules'] = $modules;
@@ -170,6 +213,7 @@ class SearchScanView extends GalleryView {
 	$SearchScan['thumbnails'] = $thumbnails;
 	$SearchScan['items'] = $items;
 	$SearchScan['controller'] = 'search:SearchScan';
+	$SearchScan['slideshowAvailable'] = $slideshowAvailable;
 
 	$template->setVariable('SearchScan', $SearchScan);
 	return array(GalleryStatus::success(),

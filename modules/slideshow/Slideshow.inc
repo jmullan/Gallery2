@@ -36,18 +36,28 @@ class SlideshowView extends GalleryView {
      */
     function loadTemplate(&$template, &$form) {
 	global $gallery;
-	list ($ret, $item) = $this->_getItem();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
+	$SlideShow = array();
 	$startId = null;
-	if (!$item->getCanContainChildren()) {
-	    // Photo: do slideshow of parent album, start at this photo
-	    $startId = $item->getId();
-	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($item->getParentId());
+
+	$itemListString = GalleryUtilities::getRequestVariables('itemList');
+	if (!empty($itemListString)) {
+	    // Build slideshow using specified items..
+	    $item = explode('|', $itemListString);
+	} else {
+	    // Build slideshow for an album..
+	    list ($ret, $item) = $this->_getItem();
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
+	    if (!$item->getCanContainChildren()) {
+		// Photo: do slideshow of parent album, start at this photo
+		$startId = $item->getId();
+		list ($ret, $item) = GalleryCoreApi::loadEntitiesById($item->getParentId());
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	    }
+	    $SlideShow['item'] = $item->getMemberData();
 	}
 
 	list ($ret, $itemList, $start) =
@@ -56,8 +66,6 @@ class SlideshowView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$SlideShow = array();
-	$SlideShow['item'] = $item->getMemberData();
 	$SlideShow['itemList'] = $itemList;
 	$SlideShow['count'] = count($itemList);
 	$SlideShow['start'] = $start;
@@ -68,7 +76,9 @@ class SlideshowView extends GalleryView {
     }
 
     /**
-     * Build data set to be used by template to render slideshow
+     * Build data set to be used by template to render slideshow.
+     * If $item parameter is a single object then build using all children
+     * of that item; if an array then build using the ids in the array.
      */
     function buildSlideshow($item, $startId = null, $recursive = false) {
 	global $gallery;
@@ -84,9 +94,13 @@ class SlideshowView extends GalleryView {
 	    }
 	    $this->init = 1;
 	}
-	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($item);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	if (is_array($item)) {
+	    $childIds = $item;
+	} else {
+	    list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($item);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
 	}
 	$itemList = array();
 	$childItems = array();

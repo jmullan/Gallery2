@@ -48,6 +48,11 @@ class SlideshowModule extends GalleryModule {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
+
+	GalleryCoreApi::registerFactoryImplementation(
+	    'SlideshowInterface_1_0', 'SlideshowImpl', 'Slideshow',
+	    dirname(__FILE__) . '/classes/SlideshowImpl.class');
+
 	return GalleryStatus::success();
     }
 
