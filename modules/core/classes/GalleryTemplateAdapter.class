@@ -123,8 +123,8 @@ class GalleryTemplateAdapter {
 
     /**
      * Return any hidden form variables that we want to embed in this form based on the
-     * current session and request context.  We use this to pass the special "return" variable forward, for
-     * example.
+     * current session and request context.  We use this to pass the special "return" variable
+     * forward, for example.
      *
      * @param array data in key/value pairs
      * @return a series of XHTML 1.0 compliant <input> elements
@@ -299,7 +299,7 @@ class GalleryTemplateAdapter {
 	}
 
 	return $html;
-     }
+    }
 
     /**
      * Allow the current theme to return any style tags
@@ -308,31 +308,49 @@ class GalleryTemplateAdapter {
      * @param object Smarty the smarty instance
      * @return string HTML content
      */
-     function style($params, &$smarty) {
-	 return $this->_theme->style($params, $smarty);
-     }
+    function style($params, &$smarty) {
+	return $this->_theme->style($params, $smarty);
+    }
 
-     /**
-      * Include our AutoCompletion template.
-      *
-      * @param array
-      * @param object Smarty the smarty instance
-      * @return string HTML content
-      */
-     function autoComplete($params, $content, &$smarty) {
-	 if (!isset($content)) {
-	     if (!isset($this->_callCount['autoComplete'])) {
-		 $this->_callCount['autoComplete'] = 0;
-	     }
-	     return;
-	 }
-	 $this->_callCount['autoComplete']++;
-	 $url = trim($content);
-	 return $smarty->_smarty_include(
-             array('smarty_include_tpl_file' => 'gallery:modules/core/templates/AutoComplete.tpl',
-		   'smarty_include_vars' => array('element' => $params['element'],
-						  'url' => $url,
-						  'callCount' => $this->_callCount['autoComplete'])));
-     }
+    /**
+     * Include our AutoCompletion template.
+     *
+     * @param array
+     * @param string content
+     * @param object Smarty the smarty instance
+     * @return string HTML content
+     */
+    function autoComplete($params, $content, &$smarty) {
+	if (!isset($content)) {
+	    if (!isset($this->_callCount['autoComplete'])) {
+		$this->_callCount['autoComplete'] = 0;
+	    }
+	    return;
+	}
+	$this->_callCount['autoComplete']++;
+	$url = trim($content);
+	return $smarty->_smarty_include(
+	    array('smarty_include_tpl_file' => 'gallery:modules/core/templates/AutoComplete.tpl',
+		  'smarty_include_vars' => array('element' => $params['element'],
+						 'url' => $url,
+						 'callCount' => $this->_callCount['autoComplete'])));
+    }
+
+    /**
+     * Include form inputs for dimensions.
+     *
+     * @param array params
+     * @param object Smarty the smarty instance
+     * @return string HTML content
+     */
+    function dimensions($params, &$smarty) {
+	if (!isset($this->_callCount['dimensions'])) {
+	    $this->_callCount['dimensions'] = 0;
+	}
+	return $smarty->_smarty_include(
+	    array('smarty_include_tpl_file' => 'gallery:modules/core/templates/Dimensions.tpl',
+		  'smarty_include_vars' => array('formVar' => $params['formVar'],
+						 'callCount' => ++$this->_callCount['dimensions'])));
+    }
 }
 ?>
