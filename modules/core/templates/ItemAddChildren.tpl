@@ -81,7 +81,7 @@
             form = document.forms[0];
             state = form.elements['{g->elementName name="selectionToggle"}'].checked;
             {foreach from=$form.webPageUrls item=url}
-  	    form.elements['{g->elementName name="form[webPageUrl][`$url.url`]"}'].checked = state;
+  	    form.elements['{g->elementName name="form[webPageUrls][`$url.url`]"}'].checked = state;
   	    {/foreach}
   	  {rdelim}
         </script>
