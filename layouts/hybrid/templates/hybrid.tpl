@@ -9,10 +9,10 @@
 <table cellspacing="0"><tr><td>
 <span id="album_title">{$layout.title|markup}</span>
 <span id="album_summary" class="text">{if isset($layout.item.summary)}
-<br>{$layout.item.summary|markup}{/if}</span>
+<br />{$layout.item.summary|markup}{/if}</span>
 </td><td>
 <span id="album_info" class="info">{g->text text="Owner: %s"
- arg1=$layout.owner.fullName|default:$layout.owner.userName}<br>
+ arg1=$layout.owner.fullName|default:$layout.owner.userName}<br />
 {g->text one="Viewed: %d time" many="Viewed: %d times"
     count=$layout.viewCounts[$layout.item.id]
     arg1=$layout.viewCounts[$layout.item.id]}</span>
@@ -29,32 +29,32 @@
  <td class="i">
   {if isset($it.image)}
     {if isset($it.renderItem)}
-      {g->link id="img_`$it.imageIndex`" arg1="view=core:ShowItem"
-          arg2="itemId=`$it.id`" arg3="renderId=`$it.image.id`"}{/g->link}
+      <a id="img_`$it.imageIndex`" href="{g->url arg1="view=core:ShowItem"
+          arg2="itemId=`$it.id`" arg3="renderId=`$it.image.id`"}"></a>
     {else}
-      {g->link id="img_`$it.imageIndex`" arg1="view=core:DownloadItem"
+      <a id="img_`$it.imageIndex`" href="{g->url arg1="view=core:DownloadItem"
           arg2="itemId=`$it.image.id`"
-          arg3="serialNumber=`$it.image.serialNumber`"}{/g->link}
+          arg3="serialNumber=`$it.image.serialNumber`"}"></a>
     {/if}
-    {g->link id="info_`$it.imageIndex`" arg1="view=core:ShowItem"
-        arg2="itemId=`$it.id`" arg3="detail=1"}{/g->link}
+    <a id="info_`$it.imageIndex`" href="{g->url arg1="view=core:ShowItem"
+        arg2="itemId=`$it.id`" arg3="detail=1"}"></a>
     <a href="" onclick="image_show({$it.imageIndex});return false">
     {if isset($it.thumb)}
       {g->image item=$it.data image=$it.thumb class=thumb}
     {else} {g->text text="no thumbnail"} {/if}
     </a>
   {elseif ($it.isContainer)}
-    {g->link arg1="view=core:ShowItem" arg2="itemId=`$it.id`"}
+    <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$it.id`"}">
     {if isset($it.thumb)}
       {g->image item=$it.data image=$it.thumb class=thumb}
     {else} {g->text text="no thumbnail"} {/if}
-    {/g->link}
+    </a>
   {else}
-    {g->link arg1="view=core:DownloadItem" arg2="itemId=`$it.id`"}
+    <a href="{g->url arg1="view=core:DownloadItem" arg2="itemId=`$it.id`"}">
     {if isset($it.thumb)}
       {g->image item=$it.data image=$it.thumb class=thumb}
     {else} {g->text text="no thumbnail"} {/if}
-    {/g->link}
+    </a>
   {/if}
  </td>
  <td class="t"><table class="text"><tr><td><span class="title">
@@ -67,12 +67,12 @@
   {$it.data.title|markup}</span></span></td>
   </tr><tr>
   <td><span class="text" {if isset($it.image)}id="text_{$it.imageIndex}"{/if}>
-  {if isset($it.data.summary)}{$it.data.summary|markup}<br>{/if}
+  {if isset($it.data.summary)}{$it.data.summary|markup}<br />{/if}
   {$it.data.description|markup}</span></td></tr></table>
   {if isset($it.moduleItemLinks)}
    <span id="links_{$i}" style="position:absolute;visibility:hidden;top:0px">
    {foreach from=$it.moduleItemLinks item=link}
-    {g->link params=$link.params}{$link.text}{/g->link}<br>
+    <a href="{g->url params=$link.params}">{$link.text}</a><br />
    {/foreach}
    </span>
   {/if}
@@ -83,74 +83,68 @@
 </table></div></div
 
 ><div id="sidebar">
-{g->sidebar side="right"}
+<div id="gsSidebar">
   {* Module links *}
-  {g->box style="sidebar"}
-    {g->title}
-      <noscript><br>{g->error}
+  <div class="gbMenu">
+    <div class="giTitle">
+      <noscript><br />{g->error}
 	{g->text text="Warning: This site requires javascript."}
-      {/g->error}<br></noscript>
+      {/g->error}<br /></noscript>
       {g->text text="Greetings, %s!" arg1=$layout.user.fullName|default:$layout.user.userName}
-    {/g->title}
-    {g->listing}
+    </div>
+    <ul>
       {foreach from=$layout.moduleSystemLinks item=module}
 	{foreach from=$module item=link}
-	  {g->item}
-	    {g->title}
-	      {g->link params=$link.params}{$link.text}{/g->link}
-	    {/g->title}
-	  {/g->item}
+	  <li>
+	    <a href="{g->url params=$link.params}">{$link.text}</a>
+	  </li>
 	{/foreach}
       {/foreach}
-    {/g->listing}
-  {/g->box}
+    </ul>
+  </div>
   {* Modules system content *}
   {foreach from=$layout.moduleSystemContentFiles key=moduleId item=moduleFile}
     {if ($moduleId != 'core')}
-      {g->box style="sidebar"}
-	{include file=$moduleFile l10Domain="modules_$moduleId"}
-      {/g->box}
+      {include file=$moduleFile l10Domain="modules_$moduleId"}
     {/if}
   {/foreach}
   {* Breadcrumb *}
   {if (count($layout.parents)>0)}
-    {g->box style="sidebar"}
-      {g->title} {g->text text="Navigation"} {/g->title}
-      {g->listing}
+    <div class="gbMenu">
+      <div class="giTitle"> {g->text text="Navigation"} </div>
+      <ul>
 	{foreach from=$layout.parents item=parent}
-	  {g->item}{g->title}
+	  <li>
 	    &raquo;
-	    {g->link arg1="view=core:ShowItem" arg2="itemId=`$parent.id`"}
+	    <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$parent.id`"}">
 	      {$parent.title|default:$parent.pathComponent|markup}
-	    {/g->link}
-	  {/g->title}{/g->item}
+	    </a>
+	  </li>
 	{/foreach}
-      {/g->listing}
-    {/g->box}
+      </ul>
+    </div>
   {/if}
   {* Album links *}
-  {g->box style="sidebar"}
-    {g->title} {g->text text="Album"} {/g->title}
-    {g->listing}
-      {g->item}{g->title}
-	{g->link id="dtl_link" href="" onclick="album_detailsonoff();this.blur();return false"}{g->text text="hide details"}{/g->link}
-      {/g->title}{/g->item}
-      {g->item}{g->title}
-	{g->link id="lnk_link" href="" onclick="album_itemlinksonoff();this.blur();return false"}{g->text text="hide item links"}{/g->link}
-      {/g->title}{/g->item}
+  <div class="gbMenu">
+    <div class="giTitle"> {g->text text="Album"} </div>
+    <ul>
+      <li>
+	<a id="dtl_link" href="" onclick="album_detailsonoff();this.blur();return false"}{g->text text="hide details"}</a>
+      </li>
+      <li>
+	<a id="lnk_link" href="" onclick="album_itemlinksonoff();this.blur();return false"}{g->text text="hide item links"}</a>
+      </li>
       {foreach from=$layout.moduleItemLinks item=link}
-	{g->item}{g->title}
-	  {g->link params=$link.params}{$link.text}{/g->link}
-	{/g->title}{/g->item}
+	<li>
+	  <a href="{g->url params=$link.params}">{$link.text}</a>
+	</li>
       {/foreach}
-    {/g->listing}
-  {/g->box}
+    </ul>
+  </div>
   {* Slideshow options *}
-  {g->box style="sidebar"}
-    {g->title}
-      {g->text text="Slideshow&nbsp;Options"}
-    {/g->title}
-    {g->listing}{g->item}{g->title}
+  <div class="gbMenu">
+    <div class="giTitle"> {g->text text="Slideshow&nbsp;Options"} </div>
+    <ul><li>
 	{g->text text="delay"}:
 	<select id="slide_delay" onchange="slide_setdelay(this.value)">
 	 <option value="3">{g->text text="3 seconds"}
@@ -159,33 +153,29 @@
 	 <option value="10">{g->text text="10 seconds"}
 	 <option value="15">{g->text text="15 seconds"}
 	 <option value="20">{g->text text="20 seconds"}
-	</select> <br>
+	</select> <br />
 	{g->text text="direction"}:
 	<select id="slide_order" onchange="slide_setorder(this.value)">
 	 <option selected value="1">{g->text text="forward"}
 	 <option value="-1">{g->text text="reverse"}
 	 <option value="0">{g->text text="random"}
-	</select> <br>
-    {/g->title}{/g->item}{/g->listing}
-  {/g->box}
-  {g->box style="sidebar"}
-    {g->title}&nbsp;{/g->title}
-    {g->listing}{g->item}{g->title}
-      <a href="http://validator.w3.org/check/referer"><img border="0"
-         src="{g->url href="images/html401.gif"}"
-         alt="{g->text text="This page is valid HTML 4.01"}"
-         title="{g->text text="This page is valid HTML 4.01"}"
+	</select> <br />
+    </li></ul>
+  </div>
+  <div class="gbMenu">
+    <ul><li>
+      <a href="http://validator.w3.org/check/referer"><img style="border: 0px"
+         src="{g->url href="images/xhtml10.png"}"
+         alt="{g->text text="This page is valid XHTML 1.0"}"
          height="15" width="80"></a>
-    {/g->title}{/g->item}{g->item}{g->title}
-      <a href="http://gallery.sourceforge.net"><img border="0"
+    </li><li>
+      <a href="http://gallery.sourceforge.net"><img style="border: 0px"
          src="{g->url href="images/gallery.gif"}"
          alt="{g->text text="Gallery %s" arg1=$main.gallery.version}"
-         title="{g->text text="Gallery %s" arg1=$main.gallery.version}"
-         height="15"
-         width="80"></a>
-    {/g->title}{/g->item}{/g->listing}
-  {/g->box}
-{/g->sidebar}
+         height="15" width="80"></a>
+    </li></ul>
+  </div>
+</div>
 </div
 
 ><div id="image" style="visibility:hidden" onclick="image_vis(0)"
