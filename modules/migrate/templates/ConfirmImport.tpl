@@ -9,13 +9,14 @@
     {g->title}
       {g->text text="Users to import"}
     {/g->title}
-
-    {g->element}
-      {foreach from=$form.migrateUser key=uid item=junk}
-	{$ConfirmImport.uids.$uid} &nbsp;
-	{g->input type="hidden" name="form.migrateUser.$uid"}1{/g->input}
-      {/foreach}
-    {/g->element}
+    {if isset($form.migrateUser)}
+     {g->element}
+       {foreach from=$form.migrateUser key=uid item=junk}
+	 {$ConfirmImport.uids.$uid} &nbsp;
+	 {g->input type="hidden" name="form.migrateUser.$uid"}1{/g->input}
+       {/foreach}
+     {/g->element}
+    {/if}
   {/g->box}
 
   {g->box style="admin"}
