@@ -24,12 +24,11 @@
 		<?php print $locale ?>
 	      </td>
 	      <td bgcolor="<?php print percentColor($localeData['percentDone']) ?>" rowspan="<?php print sizeof($localeData['plugins'])?>" class="locale_percent">
-		<?php print $localeData['percentDone'] ?>%
+		<?php print round($localeData['percentDone']) ?>%
 	      </td>
 	      <?php $keys = array_keys($localeData['plugins']); ?>
 	      <?php $plugin = $keys[0]; ?>
 	      <?php $pluginData = $localeData['plugins'][$plugin]; ?>
-	      <?php $modifier = 'light'; ?>
 	      <?php include(dirname(__FILE__) . '/plugin_rowdata.inc'); ?>
 	    </tr>
 
@@ -38,7 +37,6 @@
 	      <?php $keys = array_keys($localeData['plugins']); ?>
 	      <?php $plugin = $keys[$i]; ?>
 	      <?php $pluginData = $localeData['plugins'][$plugin]; ?>
-	      <?php $modifier = $i % 2 ? 'dark' : 'light'; ?>
 	      <?php include(dirname(__FILE__) . '/plugin_rowdata.inc'); ?>
 	    </tr>
 	    <?php } ?>

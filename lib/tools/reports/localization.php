@@ -200,7 +200,7 @@ function parsePoFiles($poFiles) {
 	}
 
 	$total = $translated + $untranslated;
-	$percentDone = round(($translated - $fuzzy) / $total * 100);
+	$percentDone = ($translated - $fuzzy) / $total * 100;
 	$poData[$locale]['plugins'][$plugin] = array('translated' => $translated,
 						     'untranslated' => $untranslated,
 						     'total' => $total,
@@ -226,13 +226,6 @@ function parsePoFiles($poFiles) {
 		$poData[$locale]['plugins'][$plugin]['missing'] = 1;
 		$poData[$locale]['plugins'][$plugin]['percentDone'] = 0;
 	    } else {
-		/*
-		 * debug
-		printf("[$locale, $plugin] [%d, %d]<br>",
-		       $poData[$locale]['plugins'][$plugin]['translated'],
-		       $poData[$locale]['plugins'][$plugin]['fuzzy']);
-		*/
-
 		$pluginTotal +=
 		    $poData[$locale]['plugins'][$plugin]['translated'] -
 		    $poData[$locale]['plugins'][$plugin]['fuzzy'];
@@ -241,7 +234,7 @@ function parsePoFiles($poFiles) {
 	uasort($poData[$locale]['plugins'], 'sortByPercentDone');
 
 	/* Figure out total percentage */
-	$poData[$locale]['percentDone'] = round($pluginTotal / $overallTotal * 100);
+	$poData[$locale]['percentDone'] = $pluginTotal / $overallTotal * 100;
     }
 
     /* Sort locales by overall total */
@@ -251,6 +244,12 @@ function parsePoFiles($poFiles) {
 }
 
 function sortByPercentDone($a, $b) {
+    if (isset($a['missing']) && !isset($b['missing'])) {
+	return 1;
+    } else if (isset($b['missing']) && !isset($a['missing'])) {
+	return -1;
+    }
+    
     if ($a['percentDone'] == $b['percentDone']) {
 	return 0;
     }
@@ -271,145 +270,27 @@ function percentColor($percent) {
     return $color;
 }
 
-?>
-<hr>
-
-$total=array();
-$languages=array();
-
-foreach ($podirs as $podir) {
-    $handle=opendir($podir);
-    $component=substr($podir,3,-3);
-    $components[]=$component;
-
-    while ($filename = readdir($handle)) {
-	if (ereg("^([a-z]{2}_[A-Z]{2})(\.[a-zA-Z0-9]+)?(\.po)$", $filename, $matches)) {
-	    $locale=substr($filename,0,-3);
-	    if (! in_array($locale, $languages)) $languages[]=$locale;
-			
-	    $lines=file("$podir/$filename");
-	    $fuzzy=0;
-	    $translated=0;
-	    $untranslated=-1;
-	    $obsolete=0;
-	    foreach ($lines as $line) {	
-		if(strpos($line,'msgstr') === 0) {
-		    if(stristr($line,'msgstr ""')) {
-			$untranslated++;
-		    } else {
-			$translated++;
-		    }
-		} elseif (strpos($line,'#, fuzzy') === 0) {
-		    $fuzzy++;
-		} elseif (strpos($line,'#~ ') === 0) {
-		    $obsolete++;
-		}
-	    }
-			
-	    $all=$translated+$untranslated;
-	    $percent_done=round(($translated-$fuzzy)/$all*100,2);
-	    $rpd=round($percent_done,0);
-				
-	    $report[$locale][$component]=array ($color,$percent_done,$all,$translated,$fuzzy,$untranslated,$obsolete/2);
-	    $total['percent_done'] = $total['percent_done'] + $percent_done;
-	    $report[$locale]['tpd']+=$percent_done;;
-	}
-    }
-    closedir($handle);
-}
-$total['percent_done'] = round($total['percent_done'] / (sizeof($languages)*sizeof($components)),2);
-
-function my_usort_function ($a, $b) {
-    if ($a['tpd'] > $b['tpd']) { return -1; }
-    if ($a['tpd'] < $b['tpd']) { return 1; }
-    return 0;
+function newRow() {
+    $count =& getRowCount();
+    $count++;
 }
 
-foreach ($report as $key => $value) {
-    $keys=(array_keys($value));
-    foreach ($components as $compo) {
-	if ($compo == 'lib/tools') continue;
-	if (! in_array($compo, $keys)) {
-	    $report[$key][$compo]='missing';
-	}
+function &getRowCount() {
+    static $count;
+    if (!isset($count)) {
+	$count = 0;
     }
+    return $count;
+}
 
-    $rtpd=round($report[$key]['tpd']/(sizeof($components)),2);
-    $report[$key]['tpd']=$rtpd;
-    if($rtpd <50) {
-	$color=dechex(255-$rtpd*2). "0000";
+function modifier($string) {
+    $count =& getRowCount();
+
+    if ($count % 2) {
+	return $string . '_light';
     } else {
-	$color="00" . dechex(55+$rtpd*2). "00";
+	return $string . '_dark';
     }
-    if (strlen($color) <6) $color="0". $color;
-    $report[$key]['color']=$color;
 }
 
-uasort ($report, 'my_usort_function');
-
-
-$filename="./g2-report.xml";
-
-if (!$handle = fopen($filename, "w+")) {
-    echo _("Unable to open ") . $filename ;
-    exit;
-}
-
-setlocale(LC_ALL,"de_DE");
-fwrite($handle,"<report date=\"".strftime("%x",time()). "\" time=\"".strftime("%X",time()) ."\">");
-
-$i=0;
-$j=0;
-
-foreach ($report as $key => $value) {
-    krsort($value);
-
-    $i++;
-    if ($i%2==0) {
-	$scheme="light";
-    } else {
-	$scheme="dark";
-    }
-	
-    if ($value['tpd'] != $last_value['tpd']) { 
-	$lfd_nr++;
-	$line=$lfd_nr;	
-    } else {
-	$line="";
-    }
-
-    fwrite($handle,"\n\t<locale id=\"$key\" scheme=\"$scheme\">");
-    fwrite($handle,"\n\t\t<nr scheme=\"$scheme\">$line</nr>");
-    fwrite($handle,"\n\t\t<tpd style=\"background-color:#". $value['color'] ."\">". $value['tpd'] ."</tpd>");
-	
-    foreach ($value as $subkey => $subvalue) {
-	if ($subkey =="tpd" or $subkey=="cc" or $subkey=="color") continue;
-	fwrite($handle,"\n\t\t<component scheme=\"$scheme\">");
-	fwrite($handle,"\n\t\t\t<name scheme=\"$scheme\">". $subkey ."</name>");
-	if ($subvalue != 'missing') {
-	    fwrite($handle,"\n\t\t\t<percent_done style=\"background-color:#". $subvalue[0] ."\">$subvalue[1] %</percent_done>");
-	    fwrite($handle,"\n\t\t\t<lines scheme=\"$scheme\">". $subvalue[2] ."</lines>");
-	    fwrite($handle,"\n\t\t\t<translated scheme=\"translated_$scheme\">$subvalue[3]</translated>");
-	    fwrite($handle,"\n\t\t\t<fuzzy scheme=\"fuzzy_$scheme\">$subvalue[4]</fuzzy>");
-	    fwrite($handle,"\n\t\t\t<untranslated scheme=\"untranslated_$scheme\">$subvalue[5]</untranslated>");
-	    fwrite($handle,"\n\t\t\t<obsolete scheme=\"obsolete_$scheme\">$subvalue[6]</obsolete>");
-	} else {
-	    fwrite($handle,"\n\t\t\t<percent_done style=\"background-color:#FF0000\">0 %</percent_done>");
-	    fwrite($handle,"\n\t\t\t<missing style=\"background-color: pink;\" />");
-	}
-	fwrite($handle,"\n\t\t</component>");
-    }
-
-    fwrite($handle,"\n\t</locale>");
-
-    $last_value=$value;	
-}
-fwrite($handle,"\n\t<total>");
-fwrite($handle,"\n\t\t<languages>". sizeof($languages) ."</languages>");
-fwrite($handle,"\n\t\t<t_percent_done align=\"right\">". $total['percent_done'] ."</t_percent_done>");
-fwrite($handle,"\n\t</total>");
-fwrite($handle,"\n</report>");
-fclose($handle);
-
-exec("/usr/bin/xsltproc g2-report.xslt g2-report.xml > g2-report.html");
 ?>
