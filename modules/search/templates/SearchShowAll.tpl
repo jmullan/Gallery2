@@ -3,10 +3,6 @@
  * Instead, copy it to SearchShowAll.tpl.local and edit that version instead.
  * Gallery will look for that file first and use it if it exists
  * and when you upgrade, your changes will not get overwritten.
- *
- * To do:
- * 1. Add column counter, default should be 3 items in a row, 12 items per page max
- * 2. Put search form in separate include and call it here and SearchScan.tpl (SearchForm.tpl)
  *}
 <div id="gsHeader">
   {include file="gallery:layouts/matrix/templates/banner.tpl"}      
@@ -134,7 +130,7 @@
 
 	      {foreach from=$SearchShowAll.results.results item=result}
 	      {* Move to a new row *}
-	      {if ($childrenInColumnCount == 3)}
+	      {if ($childrenInColumnCount == 4)}
 	    </tr>
 	    <tr>
 	      {assign var="childrenInColumnCount" value=0}
@@ -162,7 +158,7 @@
 	      {/foreach}
 
 	      {* flush the rest of the row with empty cells *}
-	      {section name="flush" start=$childrenInColumnCount loop=3}
+	      {section name="flush" start=$childrenInColumnCount loop=4}
 	      <td>&nbsp;</td>
 	      {/section}
 	    </tr>
