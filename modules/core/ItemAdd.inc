@@ -334,7 +334,7 @@ class ItemAddOption {
      * @see GalleryController::handleRequest
      *
      * @param array the form values
-     * @param reference to the item
+     * @param reference to a GalleryDataItem
      * @return array object GalleryStatus a status code
      *               array localized error messages
      *               array localized warning messages
