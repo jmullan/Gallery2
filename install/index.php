@@ -209,8 +209,6 @@ if ($currentStep->processRequest()) {
     $templateData['percentComplete'] =		  
 	(int)((100 * ($stepNumber / (sizeof($steps)-1))) / 5) * 5;
     $templateData['errors'] = array();
-    $templateData['installerDir'] =
-	str_replace($_SERVER['DOCUMENT_ROOT'], '', dirname(__FILE__));
     $currentStep->loadTemplateData($templateData);
 
     // Render our page
