@@ -254,6 +254,20 @@ class GalleryPlatform {
     }
 
     /**
+     * Clear the stat cache
+     *
+     * @access public
+     */
+    function clearstatcache() {
+	global $gallery;
+	if ($gallery->getDebug()) {
+	    $gallery->debug('clearstatcache()');
+	}
+	
+	return clearstatcache();
+    }
+
+    /**
      * Return a file as an array
      *
      * @param string a file path or URL
@@ -418,7 +432,10 @@ class GalleryPlatform {
 					    sprintf('Could not truncate file (%s)', $filename));
 	    }
 	}
-	$this->closeAndUnlock($fd);
+	$ret = $this->closeAndUnlock($fd);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 	if ($bytesWritten != $size) {
 	    return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
 					sprintf('Failed to write complete file (%s)', $filename));
@@ -435,6 +452,7 @@ class GalleryPlatform {
      * @access public
      */
     function concurrentRead($filename) {
+	$this->clearstatcache();
 	$size = $this->filesize($filename);
 	list ($ret, $fd) = $this->openAndLock($filename, 'rb');
 	if ($ret->isError()) {
