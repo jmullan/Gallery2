@@ -311,15 +311,15 @@ class GalleryDerivative_core extends GalleryChildEntity {
 	/* Now apply our derivative commands to create the cache file */
 	$mimeType = $source->getMimeType();
 	$context = array();
-	foreach ($operations as $operation) {
-	    if (strpos($operation, '|') === false) {
-		list($operationName, $operationArgs) = array($operation, null);
+	for ($i = 0; $i < count($operations); $i++) {
+	    if (strpos($operations[$i], '|') === false) {
+		list($operationName, $operationArgs) = array($operations[$i], null);
 	    } else {
-		list($operationName, $operationArgs) = explode('|', $operation);
+		list($operationName, $operationArgs) = explode('|', $operations[$i]);
 	    }
 
 	    /* Get the appropriate toolkit */
-	    list ($ret, $toolkit) =
+	    list ($ret, $toolkit, $nextMimeType) =
 		GalleryCoreApi::getToolkitByOperation($mimeType, $operationName);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
@@ -329,6 +329,23 @@ class GalleryDerivative_core extends GalleryChildEntity {
 		/* XXX: What can we do now? */
 		return GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
 					    "$operationName $mimeType");
+	    }
+
+	    /* Put look-ahead info in context, so toolkit can decide if it can
+	     * queue up parameters in the context for later processing, or just do it.
+	     */
+	    if ($i + 1 == count($operations)) {
+		$context['next.toolkit'] = null;
+		$context['next.operation'] = null;
+	    } else {
+		list ($nextOperationName) = explode('|', $operations[$i+1]);
+		list ($ret, $nextToolkit) =
+		    GalleryCoreApi::getToolkitByOperation($nextMimeType, $nextOperationName);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+		$context['next.toolkit'] = isset($nextToolkit) ? $nextToolkit : null;
+		$context['next.operation'] = $nextOperationName;
 	    }
 
 	    /* Perform the operation */
