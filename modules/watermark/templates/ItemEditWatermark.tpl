@@ -40,10 +40,11 @@
 
   <script type="text/javascript">
     // <![CDATA[
-    watermarkUrlMap = new Array;
+    var watermarkUrlMap = new Array;
     {foreach from=$ItemEditWatermark.watermarks item=watermark}
     watermarkUrlMap[{$watermark.id}] = new Array;
-    watermarkUrlMap[{$watermark.id}]['url'] = '{g->url forJavascript="true" arg1="view=core:DownloadItem" arg2="itemId=`$watermark.id`"}';
+    watermarkUrlMap[{$watermark.id}]['url'] = '{g->url forJavascript="true"
+      arg1="view=core:DownloadItem" arg2="itemId=`$watermark.id`"}';
     watermarkUrlMap[{$watermark.id}]['width'] = {$watermark.width};
     watermarkUrlMap[{$watermark.id}]['height'] = {$watermark.height};
     watermarkUrlMap[{$watermark.id}]['xPercent'] = {if
@@ -58,25 +59,21 @@
 
     {literal}
     function moveToLocation(xPct, yPct) {
-      orig = dd.elements.watermark_original;
-      floater = dd.elements.watermark_floater;
-      
-      newX = orig.x + Math.round(xPct * orig.w / 100);
-      newY = orig.y + Math.round(yPct * orig.y / 100);
+      var orig = dd.elements.watermark_original, floater = dd.elements.watermark_floater,
+	  newX = orig.x + Math.round(xPct * orig.w / 100),
+	  newY = orig.y + Math.round(yPct * orig.h / 100);
       floater.moveTo(newX, newY);
     }
 
     function calculatePercentages() {
-      orig = dd.elements.watermark_original;
-      floater = dd.elements.watermark_floater;
+      var orig = dd.elements.watermark_original, floater = dd.elements.watermark_floater;
       document.getElementById("xPercent").value = 100.0 * (floater.x - orig.x) / orig.w;
       document.getElementById("yPercent").value = 100.0 * (floater.y - orig.y) / orig.h;
     }
 
     function chooseWatermark(id) {
-      orig = dd.elements.watermark_original;
-      floater = dd.elements.watermark_floater;
-      newImage = watermarkUrlMap[id];
+      var orig = dd.elements.watermark_original, floater = dd.elements.watermark_floater,
+	  newImage = watermarkUrlMap[id];
       floater.swapImage(newImage['url']);
       floater.resizeTo(Math.min(newImage['width'], (0.9 * orig.w)),
 	               Math.min(newImage['height'], (0.9 * orig.h)));
@@ -90,9 +87,8 @@
 
     // Keep from dragging the watermark off the image
     function verifyBounds() {
-      orig = dd.elements.watermark_original;
-      floater = dd.elements.watermark_floater;
-     
+      var orig = dd.elements.watermark_original, floater = dd.elements.watermark_floater,
+	  newX, newY;
       if (floater.x < orig.x) {
         newX = orig.x;
       } else if (floater.x + floater.w > orig.x + orig.w) {
