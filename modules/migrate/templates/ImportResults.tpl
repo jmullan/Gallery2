@@ -63,7 +63,7 @@
                    arg1=$ImportResults.counts.albumImportSuccess
 	  }
 	{else}
-	  {g->text text="No users imported."}
+	  {g->text text="No albums imported."}
 	{/if}
       {/g->success}
     {/g->title}
