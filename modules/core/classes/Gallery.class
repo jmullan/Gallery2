@@ -206,6 +206,7 @@ class Gallery {
 	$this->_modules = array();
 	$this->_locks = array();
 	$this->_boundDomains = array();
+	$this->_activeUserId = null;
 	    
 	/* Set up a shutdown function to release any hanging locks. */
 	register_shutdown_function(array(&$this, '_shutdown'));
@@ -219,7 +220,6 @@ class Gallery {
     function reset() {
 	$this->_templateAdapter = null;
 	$this->_eventListeners = array();
-	$this->_activeUserId = null;
 	GalleryDataCache::reset();
     }
 
