@@ -46,9 +46,7 @@ class ItemAddFromServer extends ItemAddPlugin {
 	$status = array();
 	$error = array();
 
-	if (isset($form['action']['findFilesFromLocalServer'])) {
-	    /* Delegate back to the same view */
-	} else if (isset($form['action']['addFromLocalServer'])
+	if (isset($form['action']['addFromLocalServer'])
 		&& (!empty($form['localServerFiles']) || !empty($form['localServerDirectories']))) {
 	    /* Add the selected items */
 	    $dir = trim($form['localServerPath']);
@@ -62,7 +60,6 @@ class ItemAddFromServer extends ItemAddPlugin {
 
 	    if (!empty($form['localServerFiles'])) {
 		foreach ($form['localServerFiles'] as $fileKey => $unused) {
-
 		    $useSymLink =
 			(isset($form['localServerFiles'][$fileKey]['useSymlink'])) ? 1 : 0;
 
@@ -112,13 +109,13 @@ class ItemAddFromServer extends ItemAddPlugin {
 
 	$useSymlink = $file['useSymLink'];
 
-	// Build up the file path with the right style of directory separator
+	/* Build up the file path with the right style of directory separator */
 	$filepath = $dir;
 	if ($filepath[strlen($filepath)-1] != $this->_dirSep) {
 	    $filepath .= $this->_dirSep;
 	}
 
-	// Unescape any special chars in the file name and path
+	/* Unescape any special chars in the file name and path */
 	$filename = urldecode(GalleryUtilities::htmlEntityDecode($filename));
 	$filepath = urldecode(GalleryUtilities::htmlEntityDecode($filepath));
 	$filepath .= $filename;
@@ -168,10 +165,10 @@ class ItemAddFromServer extends ItemAddPlugin {
     function addDirectory($parentId, $directory, $textFields, &$status, &$error) {
 	global $gallery;
 
-	// Unescape any special chars in the file path
+	/* Unescape any special chars in the file path */
 	$path = urldecode(GalleryUtilities::htmlEntityDecode($directory['dirName']));
 
-	// Get directory name
+	/* Get directory name */
 	$dirName = basename($path);
 
 	/* Make sure we have permission to edit this item */
@@ -180,23 +177,22 @@ class ItemAddFromServer extends ItemAddPlugin {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-       list ($ret, $lockIds[]) = GalleryCoreApi::acquireReadLock($parentId);
-        if ($ret->isError()) {
-           return $ret->wrap(__FILE__, __LINE__);
-        }
+	list ($ret, $lockIds[]) = GalleryCoreApi::acquireReadLock($parentId);
+	if ($ret->isError()) {
+	   return $ret->wrap(__FILE__, __LINE__);
+	}
 
-
-	// Create new Album
+	/* Create new Album */
 	$dirTitle = ($textFields['title']) ? $dirName : null;
 	$dirSummary = ($textFields['summary']) ? $dirName : null;
 	$dirDescription = ($textFields['description']) ? $dirName : null;
 	list ($ret, $instance) =
-               GalleryCoreApi::createAlbum($parentId, $dirName, $dirTitle,
+	       GalleryCoreApi::createAlbum($parentId, $dirName, $dirTitle,
 			$dirSummary, $dirDescription, "");
 	if ($ret->isError()) {
 	    if ($ret->getErrorCode() & ERROR_COLLISION) {
 		$error[] = 'form[error][pathComponent][collision]';
-		// HACKHACK - This should cause the upload to abort
+		/* HACKHACK - This should cause the upload to abort */
 		return GalleryStatus::success();
 	    } else {
 		return $ret->wrap(__FILE__, __LINE__);
@@ -207,7 +203,7 @@ class ItemAddFromServer extends ItemAddPlugin {
 	    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
 	}
 
-        if (empty($error)) {
+	if (empty($error)) {
 	    $ret = GalleryCoreApi::addUserPermission($instance->getId(), $instance->getOwnerId(),
 		    'core.all', false);
 	    if ($ret->isError()) {
@@ -237,8 +233,8 @@ class ItemAddFromServer extends ItemAddPlugin {
 	    $localServerDirList = split(',', $localServerDirs);
 	}
 
-        // Look into the directory, add anything we find
-        $handle = $this->_platform->opendir($path);
+	/* Look into the directory, add anything we find */
+	$handle = $this->_platform->opendir($path);
 
 	while (false !== ($fileName = $this->_platform->readdir($handle))) {
 	    $gallery->guaranteeTimeLimit(5);
@@ -309,8 +305,10 @@ class ItemAddFromServer extends ItemAddPlugin {
 	$platform = $gallery->getPlatform();
 	$slash = $platform->getDirectorySeparator();
 
-	/* If we're uploading from the local server, get a file list now */
-	if (isset($form['action']['findFilesFromLocalServer'])) {
+	if (isset($form['action']['startOver'])) {
+	    $form['localServerFiles'] = array();
+	} else if (isset($form['action']['findFilesFromLocalServer'])) {
+	    /* If we're uploading from the local server, get a file list now */
 	    $form['localServerPath'] = trim($form['localServerPath']);
 	    $form['localServerPath'] = GalleryUtilities::htmlEntityDecode($form['localServerPath']);
 	    $form['localServerPath'] = $platform->realpath($form['localServerPath']);
