@@ -175,6 +175,7 @@
 
 	{g->text text="delay: "}
 	<select onchange="new_delay(this.value)">
+	  <option value="1">{g->text text="1 seconds"}</option>
 	  <option value="3">{g->text text="3 seconds"}</option>
 	  <option value="5">{g->text text="5 seconds"}</option>
 	  <option value="10">{g->text text="10 seconds"}</option>
