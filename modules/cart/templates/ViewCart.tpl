@@ -81,9 +81,7 @@
 	      <table>
 		<tr>
 		  <td valign="top">
-		    <b>
-		      {g->text text="Title"}
-		    </b>
+		      <strong>{g->text text="Title"}</strong>
 		  </td>
 
 		  <td>
@@ -93,9 +91,7 @@
 
 		<tr>
 		  <td valign="top">
-		    <b>
-		      {g->text text="Summary"}
-		    </b>
+		      <strong>{g->text text="Summary"}</strong>
 		  </td>
 
 		  <td>
@@ -115,7 +111,6 @@
 	  </tr>
 	  {/foreach}
 	</table>
-      </div>
 
       <div class="gbAdmin">
 	<select name="{g->formVar var="form[pluginId]"}">
