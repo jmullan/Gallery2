@@ -97,6 +97,7 @@ class LoginControllerTest extends GalleryControllerTestCase {
 
     function testCancel() {
 	GalleryUtilities::putRequestVariable('form.action.cancel', 1);
+	GalleryUtilities::putRequestVariable('return.x', 'y');
 	
 	$results = $this->handleRequest();
 	$this->assertRedirect(array('x' => 'y'), $results);
