@@ -561,6 +561,8 @@ class GalleryTheme {
 
 	if ($javascript) {
 	    $href = "javascript:$javascript";
+	} else if (isset($params['href'])) {
+	    $href = $params['href'];
 	} else {
 	    $urlGenerator = $gallery->getUrlGenerator();
 	    $href = $urlGenerator->generateUrl($hrefParams);
