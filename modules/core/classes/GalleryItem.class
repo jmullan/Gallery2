@@ -127,6 +127,7 @@ class GalleryItem extends FileSystemNucleus {
      *
      * @gallery persistent
      * @gallery flag STORAGE_TYPE_TEXT
+     * @gallery flag STORAGE_MODIFIER_FULLTEXT_INDEXED
      *
      * @var int $_description
      * @access private
@@ -150,6 +151,8 @@ class GalleryItem extends FileSystemNucleus {
      * @gallery persistent
      * @gallery flag STORAGE_TYPE_STRING
      * @gallery flag STORAGE_MODIFIER_LARGE
+     * @gallery flag STORAGE_MODIFIER_INDEXED
+     * @gallery flag STORAGE_MODIFIER_FULLTEXT_INDEXED
      *
      * @var int $_keywords
      * @access private
@@ -177,6 +180,8 @@ class GalleryItem extends FileSystemNucleus {
      * @gallery persistent
      * @gallery flag STORAGE_TYPE_MAP
      * @gallery flag STORAGE_TYPE_TEXT
+     * @gallery flag STORAGE_MODIFIER_INDEXED
+     * @gallery flag STORAGE_MODIFIER_FULLTEXT_INDEXED
      *
      * @var object GalleryMap $_properties
      * @access private
@@ -200,6 +205,8 @@ class GalleryItem extends FileSystemNucleus {
      * @gallery persistent
      * @gallery flag STORAGE_TYPE_STRING
      * @gallery flag STORAGE_MODIFIER_REQUIRED
+     * @gallery flag STORAGE_MODIFIER_INDEXED
+     * @gallery flag STORAGE_MODIFIER_FULLTEXT_INDEXED
      *
      * @var int $_title
      * @access private
@@ -702,22 +709,12 @@ class GalleryItem extends FileSystemNucleus {
 		return $ret;
 	    }
 	}
-	    
+
 	if ($this->canContainChildren()) {
 	    $childIds =& $this->getChildIds();
-	    $size = $childIds->sizeof();
-	    for ($i = 0; $i < $size; $i++) {
-		list($ret, $child) = $gallery->loadNucleusById($childIds->get($i));
-		if ($ret->isError()) {
-		    return $ret;
-		}
-
-		/*
-		 * Unset the child's parent, so that it doesn't try to remove
-		 * itself from this GalleryNucleus as part of its delete().
-		 * Then delete the child.
-		 */
-		$ret = $child->delete();
+	    while ($childIds->count() > 0) {
+		$childId = $childIds->get(0);
+		$ret = $gallery->deleteNucleusById($childId);
 		if ($ret->isError()) {
 		    return $ret;
 		}
@@ -755,7 +752,8 @@ class GalleryItem extends FileSystemNucleus {
             'type' => STORAGE_TYPE_BOOLEAN);
         $meta['members']['description'] = array(
             'class' => 'GalleryItem',
-            'type' => STORAGE_TYPE_TEXT);
+            'type' => STORAGE_TYPE_TEXT |
+                      STORAGE_MODIFIER_FULLTEXT_INDEXED);
         $meta['members']['childIds'] = array(
             'class' => 'GalleryItem',
             'type' => STORAGE_TYPE_LIST |
@@ -763,7 +761,7 @@ class GalleryItem extends FileSystemNucleus {
         $meta['members']['title'] = array(
             'class' => 'GalleryItem',
             'type' => STORAGE_TYPE_STRING |
-                      STORAGE_MODIFIER_REQUIRED);
+                      STORAGE_MODIFIER_FULLTEXT_INDEXED | STORAGE_MODIFIER_INDEXED | STORAGE_MODIFIER_REQUIRED);
         $meta['members']['commentIds'] = array(
             'class' => 'GalleryItem',
             'type' => STORAGE_TYPE_LIST |
@@ -793,11 +791,11 @@ class GalleryItem extends FileSystemNucleus {
         $meta['members']['keywords'] = array(
             'class' => 'GalleryItem',
             'type' => STORAGE_TYPE_STRING |
-                      STORAGE_MODIFIER_LARGE);
+                      STORAGE_MODIFIER_FULLTEXT_INDEXED | STORAGE_MODIFIER_INDEXED | STORAGE_MODIFIER_LARGE);
         $meta['members']['properties'] = array(
             'class' => 'GalleryItem',
             'type' => STORAGE_TYPE_MAP |
-                      STORAGE_TYPE_TEXT);
+                      STORAGE_MODIFIER_FULLTEXT_INDEXED | STORAGE_MODIFIER_INDEXED | STORAGE_TYPE_TEXT);
         $meta['members']['ownerId'] = array(
             'class' => 'GalleryItem',
             'type' => STORAGE_TYPE_INTEGER |
