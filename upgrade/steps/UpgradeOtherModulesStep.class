@@ -55,6 +55,13 @@ class UpgradeOtherModulesStep extends UpgradeStep {
 		$templateData['stackTrace'] = $ret->getAsHtml();
 	    }
 	}
+	if (empty($templateData['errors'])) {
+	    list ($ret, $layoutList) = GalleryCoreApi::fetchPluginStatus('layout', true);
+	    if ($ret->isError()) {
+		$templateData['errors'][] = _('Unable to get the layout list');
+		$templateData['stackTrace'] = $ret->getAsHtml();
+	    }
+	}
 
 	if (empty($templateData['errors'])) {
 	    foreach (array_keys($moduleList) as $moduleId) {
@@ -86,7 +93,7 @@ class UpgradeOtherModulesStep extends UpgradeStep {
 			continue;
 		    }
 		    $moduleIsUpgradeable[$moduleId] = false;
-		    $templateData['upgraded'][$moduleId] = $module->getName();
+		    $templateData['upgradedModule'][$moduleId] = $module->getName();
 		}
 
 		$group = $module->getGroup();
@@ -95,6 +102,42 @@ class UpgradeOtherModulesStep extends UpgradeStep {
 		}
 		$groupedModules[$group['group']][$moduleId] =& $module;
 		$groupLabel[$group['group']] = $group['groupLabel'];
+	    }
+
+	    foreach (array_keys($layoutList) as $layoutId) {
+		list ($ret, $layoutPlugin) = GalleryCoreApi::loadPlugin('layout', $layoutId, true);
+		if ($ret->isError()) {
+		    $templateData['errors'][] =
+			sprintf(_('Unable to load the %s layout'), $layoutId);
+		    $templateData['stackTrace'] = $ret->getAsHtml();
+		} else {
+		    $layouts[$layoutId] = $layoutPlugin;
+		}
+	    }
+
+	    ksort($layouts);
+	    $groupLabel['layouts'] = _('Layouts');
+	    foreach (array_keys($layouts) as $layoutId) {
+		$layout =& $layouts[$layoutId];
+		$moduleIsUpgradeable[$layoutId] =
+		   !empty($layoutList[$layoutId]['version']) &&
+		    $layoutList[$layoutId]['version'] != $layout->getVersion();
+		$currentVersion[$layoutId] = $layoutList[$layoutId]['version'];
+
+		if (isset($_REQUEST['upgrade']) &&
+		      isset($_REQUEST['module'][$layoutId]) &&
+		      $moduleIsUpgradeable[$layoutId]) {
+		    $ret = $layout->installOrUpgrade();
+		    if ($ret->isError()) {
+			$templateData['errors'][] =
+			    sprintf(_('Unable to upgrade the %s layout'), $layout->getName());
+			continue;
+		    }
+		    $moduleIsUpgradeable[$layoutId] = false;
+		    $templateData['upgradedLayout'][$layoutId] = $layout->getName();
+		}
+
+		$groupedModules['layouts'][$layoutId] =& $layout;
 	    }
 	    ksort($groupedModules);
 	}

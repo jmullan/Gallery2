@@ -1,9 +1,17 @@
     <h1><?php print _("Upgrade Other Modules") ?></h1>
 
-    <?php if (isset($templateData['upgraded'])): ?>
-    <?php foreach ($templateData['upgraded'] as $moduleId => $moduleName): ?>
+    <?php if (isset($templateData['upgradedModule'])): ?>
+    <?php foreach ($templateData['upgradedModule'] as $moduleId => $moduleName): ?>
     <h2 class="success">
       <?php print _(sprintf("Upgraded the %s module successfully", "<i>$moduleName</i>")); ?>
+    </h2>
+    <?php endforeach; ?>
+    <?php endif; ?>
+
+    <?php if (isset($templateData['upgradedLayout'])): ?>
+    <?php foreach ($templateData['upgradedLayout'] as $layoutId => $layoutName): ?>
+    <h2 class="success">
+      <?php print _(sprintf("Upgraded the %s layout successfully", "<i>$layoutName</i>")); ?>
     </h2>
     <?php endforeach; ?>
     <?php endif; ?>
