@@ -326,7 +326,7 @@ class GalleryMovieItem_core extends GalleryDataItem {
 			       // Mozilla object
 			       $params['class'] ? 'class="' . $params['class'] . '"' : '',
 			       $src,
-			       'video/x-ms-wmv', // Mozilla seems to prefer this
+			       $this->getMimeType(),
 			       $width,
 			       $height+50,
 			       $fallback);
