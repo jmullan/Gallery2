@@ -50,7 +50,8 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 			     'default.language',
 			     'session.lifetime',
 			     'session.inactivityTimeout',
-			     'uploadLocalServer.dirs');
+			     'uploadLocalServer.dirs',
+			     'misc.useShortUrls');
 	
 	/* Save the original values */
 	foreach ($this->_keys as $key) {
@@ -87,7 +88,8 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 			  'default.theme' => 'x7',
 			  'default.language' => 'x8',
 			  'session.lifetime' => 'x9',
-			  'session.inactivityTimeout' => 'x10');
+			  'session.inactivityTimeout' => 'x10',
+			  'misc.useShortUrls' => 'x11');
 
 	/* Change the defaults to something meaningless */
 	foreach ($valueMap as $key => $value) {

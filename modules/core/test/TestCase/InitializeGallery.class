@@ -103,6 +103,13 @@ class InitializeGalleryTestCase extends TestCase {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
+
+	/* Enable short urls */
+	$ret = $gallery->setModuleParameter('core', 'misc.useShortUrls', 'true');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
 	return GalleryStatus::success();
     }
 }

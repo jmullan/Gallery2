@@ -65,7 +65,8 @@ class AdminCoreController extends GalleryController {
 			   'default.theme',
 			   'default.language',
 			   'session.lifetime',
-			   'session.inactivityTimeout') as $key) {
+			   'session.inactivityTimeout',
+			   'misc.useShortUrls') as $key) {
 		list ($a, $b) = split('\.', $key);
 		if (isset($form[$a][$b])) {
 		    $ret = $gallery->setModuleParameter('core', $key, $form[$a][$b]);
@@ -169,7 +170,8 @@ class AdminCoreView extends GalleryView {
 			   'default.theme',
 			   'default.language',
 			   'session.lifetime',
-			   'session.inactivityTimeout') as $key) {
+			   'session.inactivityTimeout',
+			   'misc.useShortUrls') as $key) {
 
 		list ($ret, $value) =
 		    $gallery->getModuleParameter('core', $key);
@@ -286,6 +288,10 @@ class AdminCoreView extends GalleryView {
 	$permissionsDirectoryList = array('700', '750', '755', '770', '775', '777');
 	$permissionsFileList = array('600', '640', '644', '660', '664', '666');
 
+	/* Miscellaneous lists */
+	$useShortUrlsList = array('true' => $module->translate('yes'),
+				  'false' => $module->translate('no'));
+
 	$AdminCore = array();
 	$AdminCore['layoutList'] = $layoutList;
 	$AdminCore['themeList'] = GalleryTheme::getThemeList();
@@ -296,6 +302,7 @@ class AdminCoreView extends GalleryView {
 	$AdminCore['permissionsDirectoryList'] = $permissionsDirectoryList;
 	$AdminCore['permissionsFileList'] = $permissionsFileList;
 	$AdminCore['sessionTimeList'] = $sessionTimeList;
+	$AdminCore['useShortUrlsList'] = $useShortUrlsList;
 	
 	$template->setVariable('controller', 'core:AdminCore');
 	$template->setVariable('AdminCore', $AdminCore);

@@ -196,7 +196,7 @@
 	{/g->column}
 	
 	{g->column}
-	  {g->select name="session.lifetime"}
+	  {g->select name="form.session.lifetime"}
 	    {html_options options=$AdminCore.sessionTimeList selected=$form.session.lifetime}
 	  {/g->select}
 	{/g->column}
@@ -208,11 +208,41 @@
 	{/g->column}
 	
 	{g->column}
-	  {g->select name="session.inactivityTimeout"}
+	  {g->select name="form.session.inactivityTimeout"}
 	    {html_options options=$AdminCore.sessionTimeList selected=$form.session.inactivityTimeout}
 	  {/g->select}
 	{/g->column}
       {/g->row}
+    {/g->table}
+  {/g->box}
+
+  {g->box style="admin"}
+    {g->title}
+      {g->text text="URL Style"}
+    {/g->title}
+    
+    {g->description}
+      {capture name="acceptPathInfoLink"}
+	{g->link href="http://httpd.apache.org/docs-2.0/mod/core.html#acceptpathinfo"}
+	  {g->text text="AcceptPathInfo Directive"}
+	{/g->link}
+      {/capture}
+      {g->text text="Gallery has the option to use a compact URL format, however this format is not supported by default on all web servers.  It is enabled by default on Apache 1, but not on Apache 2.  If you're using Apache 2 and you want to enable this feature, you must use the %s." arg1=$smarty.capture.acceptPathInfoLink}
+    {/g->description}
+    
+    {g->table style="admin_widgets"}
+      {g->row}
+	{g->column}
+	  {g->text text="Use short URLs?"}
+	{/g->column}
+	
+	{g->column}
+	  {g->select name="form.misc.useShortUrls"}
+	    {html_options options=$AdminCore.useShortUrlsList selected=$form.misc.useShortUrls}
+	  {/g->select}
+	{/g->column}
+      {/g->row}
+
     {/g->table}
   {/g->box}
 
