@@ -133,6 +133,12 @@ class ImageMagickModule extends GalleryModule {
 	    }
 	}
 	
+	/* Save some platform specific ImageMagick parameters */
+	$ret = ImageMagickToolkitHelper::savePlatformParameters();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
 	list ($ret, $redirect) = parent::activate();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);

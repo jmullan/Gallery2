@@ -189,8 +189,14 @@ class AdminImageMagickControllerTest extends GalleryControllerTestCase {
  */ 
 class AdminImageMagickControllerTestPlatform {
 
+    var $_emulation;
+
     function AdminImageMagickControllerTestPlatform($originalPlatform) {
 	$this->_platform = $originalPlatform;
+    }
+
+    function setEmulation($what) {
+	$this->_emulation = $what;
     }
     
     function file_exists($path) {
@@ -225,6 +231,10 @@ class AdminImageMagickControllerTestPlatform {
 
     function tempnam($dir, $prefix) {
 	return 'TEMPFILE';
+    }
+
+    function filesize($file) {
+	return 10;
     }
 
     function isRestrictedByOpenBaseDir($path) {

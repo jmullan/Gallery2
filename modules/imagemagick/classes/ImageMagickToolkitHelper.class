@@ -135,6 +135,41 @@ class ImageMagickToolkitHelper {
     }
 
     /**
+     * Return an array of cmds needed to execute ImageMagick/GraphicsMagick commands
+     * 
+     * @param string an ImageMagick command (eg. "convert")
+     * @param string an optional other ImageMagick path. Default comes from modules configuration
+     * @return array object GalleryStatus
+     *               array commands
+     */
+    function getCommand($cmd, $imageMagickPath=null) {
+	global $gallery;
+
+	$platform = $gallery->getPlatform();
+
+	if ($imageMagickPath == null) {
+	    list ($ret, $imageMagickPath) =
+		    GalleryCoreApi::getPluginParameter('module', 'imagemagick', 'path');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__));
+	    }
+	    list ($ret, $binary) =
+		    GalleryCoreApi::getPluginParameter('module', 'imagemagick', 'binary');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__));
+	    }
+	} else {
+	    list ($ret, $binary) = ImageMagickToolkitHelper::discoverBinary($imageMagickPath);
+	}
+
+	if (empty($binary)) {
+	    return array(GalleryStatus::success(), array($imageMagickPath . $cmd));
+	} else {
+	    return array(GalleryStatus::success(), array($imageMagickPath . $binary, $cmd));
+	}
+    }
+
+    /**
      * Find out which mime types our ImageMagick installation supports.
      *
      * This is done by trying to run 'identify' on a couple of sample images.
@@ -160,21 +195,26 @@ class ImageMagickToolkitHelper {
 	}
 
 	$tests = array();
-	$tests[] = array('mime' => array('image/gif'), 'file' => 'test.gif', 'expected' => '(GIF.*PseudoClass|PseudoClass.*GIF)');
-	$tests[] = array('mime' => array('image/jpeg', 'image/pjpeg'), 'file' => 'test.jpg', 'expected' => 'JPEG.*DirectClass');
-	$tests[] = array('mime' => array('image/png'), 'file' => 'test.png', 'expected' => 'PNG.*DirectClass');
-	$tests[] = array('mime' => array('image/tiff'), 'file' => 'test.tif', 'expected' => 'TIFF.*(Pseudo|Direct)Class');
-	$tests[] = array('mime' => array('image/svg+xml'), 'file' => 'test.svg', 'expected' => 'SVG.*DirectClass');
-	$tests[] = array('mime' => array('image/bmp'), 'file' => 'test.bmp', 'expected' => 'BMP.*PseudoClass');
-	$tests[] = array('mime' => array('application/pdf'), 'file' => 'test.pdf', 'expected' => 'PDF.*(Pseudo|Direct)Class');
+	$tests[] = array('mime' => array('image/gif'), 'file' => 'test.gif', 'expected' => '(GIF.*PseudoClass|PseudoClass.*GIF|DirectClass.*GIF)');
+	$tests[] = array('mime' => array('image/jpeg', 'image/pjpeg'), 'file' => 'test.jpg', 'expected' => '(JPEG.*DirectClass|DirectClass.*JPEG)');
+	$tests[] = array('mime' => array('image/png'), 'file' => 'test.png', 'expected' => '(PNG.*DirectClass|DirectClass.*PNG)');
+	$tests[] = array('mime' => array('image/tiff'), 'file' => 'test.tif', 'expected' => '(TIFF.*(Pseudo|Direct)Class|(Pseudo|Direct)Class.*TIFF)');
+	$tests[] = array('mime' => array('image/svg+xml'), 'file' => 'test.svg', 'expected' => '(SVG.*DirectClass|DirectClass.*SVG)');
+	$tests[] = array('mime' => array('image/bmp'), 'file' => 'test.bmp', 'expected' => '(BMP.*PseudoClass|PseudoClass.*BMP)');
+	$tests[] = array('mime' => array('application/pdf'), 'file' => 'test.pdf', 'expected' => '(PDF.*(Pseudo|Direct)Class|PseudoClass.*PDF)');
 
 	$platform = $gallery->getPlatform();
 	$slash = $platform->getDirectorySeparator();
 	$dataPath = dirname(__FILE__) . "${slash}..${slash}test${slash}data${slash}";
 
 	$successCount = 0;
+	$mimeTypes = array();
 	foreach ($tests as $test) {
-	    $command = array($imageMagickPath . 'identify', $dataPath . $test['file']);
+	    list ($ret, $command) = ImageMagickToolkitHelper::getCommand('identify', $imageMagickPath);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $command = array_merge($command, array($dataPath . $test['file']));
 	    list ($success, $results) = $platform->exec(array($command));
 	    
 	    $successCount += $success;
@@ -244,16 +284,20 @@ class ImageMagickToolkitHelper {
 	foreach ($binaries as $binary) {
 	    switch ($binary) {
 	    case 'identify':
-	        $fullPath = $imageMagickPath . 'identify';
+		list ($ret, $command) = ImageMagickToolkitHelper::getCommand('identify', $imageMagickPath);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		$fullPath = $command[0];
 	        if (GalleryUtilities::isA($platform, 'WinNtPlatform')) {
 		    $fullPath .= '.exe';
 		}
 
 		if (!$platform->isRestrictedByOpenBasedir($fullPath) && !$platform->file_exists($fullPath)) {
 		    $success = false;
-		    $results = array('File does not exist');
+		    $results = array($module->translate('File does not exist'));
 		} else {
-		    $command = array($fullPath, $dataPath . 'test.gif');
+		    $command = array_merge($command, array($dataPath . 'test.gif'));
 		    list ($success, $results) = $platform->exec(array($command));
 		}
 	    
@@ -263,7 +307,12 @@ class ImageMagickToolkitHelper {
 			      'success' => false,
 			      'message' => array_merge(array($module->translate('Problem executing binary:')),
 						       $results));
-		} elseif (!ereg('(GIF.*PseudoClass|PseudoClass.*GIF)', join(',', $results))) {
+		    $testArray[] = array('name' => 'identify',
+					 'success' => false,
+					 'message' => array_merge(array($module->translate('Problem executing binary:')),
+								  $results)
+					 );
+		} elseif (!ereg('(GIF.*PseudoClass|PseudoClass.*GIF|DirectClass.*GIF)', join(',', $results))) {
 		    $testArray[] = array('name' => 'identify',
 					 'success' => false,
 					 'message' => array_merge(array($module->translate('Binary output:')),
@@ -275,8 +324,11 @@ class ImageMagickToolkitHelper {
 		break;
 	    case 'convert':
 		/* We will try to scale a gif using the 'convert' binary */
-
-	        $fullPath = $imageMagickPath . 'convert';
+		list ($ret, $command) = ImageMagickToolkitHelper::getCommand('convert', $imageMagickPath);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		$fullPath = $command[0];
 	        if (GalleryUtilities::isA($platform, 'WinNtPlatform')) {
 		    $fullPath .= '.exe';
 		}
@@ -291,13 +343,15 @@ class ImageMagickToolkitHelper {
 
 		if (!$platform->isRestrictedByOpenBasedir($fullPath) && !$platform->file_exists($fullPath)) {
 		    $success = false;
-		    $results = array('File does not exist');
+		    $results = array($module->translate('File does not exist'));
 		} else {
-		    $command = array($fullPath,
-				     '-scale', '200x200',
-				     $dataPath . 'test.gif',
-				     $tmpFilename
-				     );
+		    $command = array_merge($command,
+					   array('-size', '200x200',
+						 '-geometry', '200x200',
+						 $dataPath . 'test.gif',
+						 $tmpFilename
+						)
+					  );
 		    list ($success, $results) = $platform->exec(array($command));
 		}
 
@@ -323,6 +377,14 @@ class ImageMagickToolkitHelper {
 		@$platform->unlink($tmpFilename);
 		break;
 	    case 'composite':
+		list ($ret, $compositeCmd) = ImageMagickToolkitHelper::discoverCompositeCmd($imageMagickPath);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		list ($ret, $command) = ImageMagickToolkitHelper::getCommand($compositeCmd, $imageMagickPath);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
 		$tmpDir = $gallery->getConfig('data.gallery.tmp');
 		$tmpFilename = $platform->tempnam($tmpDir, 'imgk_');
 		if (empty($tmpFilename)) {
@@ -331,15 +393,16 @@ class ImageMagickToolkitHelper {
 		                                      "Could not create tmp file in '$tmpDir'"),
 		                 null);
 		}
-                $command = array($imageMagickPath . 'composite',
-                                 '-geometry', '+0+0',
-                                 $dataPath . 'test.jpg',
-                                 $dataPath . 'test.gif',
-                                 $tmpFilename
-                                );
+                $command = array_merge($command,
+				       array('-geometry', '+0+0',
+					     $dataPath . 'test.jpg',
+					     $dataPath . 'test.gif',
+					     $tmpFilename
+					    )
+				      );
 		list ($success, $results) = $platform->exec(array($command));
                 if (!$success) {
-                    $testArray[] = array('name' => 'composite',
+                    $testArray[] = array('name' => $compositeCmd,
                                          'success' => false,
                                          'message' => array_merge(array($module->translate('Problem executing binary:')),
                                                                   $results));
@@ -348,12 +411,12 @@ class ImageMagickToolkitHelper {
                      * 'composite' normaly doesn't say anything: if it does,
                      * it was an error message
                      */
-                    $testArray[] = array('name' => 'composite',
+                    $testArray[] = array('name' => $compositeCmd,
                                          'success' => false,
                                          'message' => array_merge(array($module->translate('Binary output:')),
                                                                   $results));
                 } else {
-                    $testArray[] = array('name' => 'composite',
+                    $testArray[] = array('name' => $compositeCmd,
                                          'success' => true);
                 }
 		if ($platform->file_exists($tmpFilename)) {
@@ -370,6 +433,193 @@ class ImageMagickToolkitHelper {
 
 
 	return array(GalleryStatus::success(), $testArray);
+    }
+
+    /**
+     * Check if we need to prefix every command with another binary name
+     *
+     * ImageMagick 4.x: <none>
+     * ImageMagick 5.x, 6.x: <none>
+     * GraphicsMagick: "gm"
+     *
+     * @return array object GalleryStatus
+     *               string name of the binary
+     */
+    function discoverBinary($imageMagickPath=null) {
+	global $gallery;
+
+	if (empty($imageMagickPath)) {
+	    list ($ret, $imageMagickPath) = GalleryCoreApi::getPluginParameter('module', 'imagemagick', 'path');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    if (empty($imageMagickPath)) {
+		return array(GalleryStatus::error(ERROR_MISSING_VALUE, __FILE__, __LINE__), null);
+	    }
+	}
+
+	$platform = $gallery->getPlatform();
+	$slash = $platform->getDirectorySeparator();
+	$gmBinary = $imageMagickPath . 'gm';
+
+	if ($platform->file_exists($gmBinary) && $platform->is_executable($gmBinary)) {
+	    return array(GalleryStatus::success(), 'gm');
+	}
+	return array(GalleryStatus::success(), '');
+    }
+
+    /**
+     * Discovers the version of the installed ImageMagick/GraphicsMagick
+     *
+     * @return array object GalleryStatus
+     *               array string "ImageMagick" | "GraphicsMagick"
+     *                     string version
+     */
+    function discoverVersion($imageMagickPath=null) {
+	global $gallery;
+	list ($ret, $command) = ImageMagickToolkitHelper::getCommand('identify', $imageMagickPath);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$platform = $gallery->getPlatform();
+	list ($success, $results) = $platform->exec(array($command));
+	foreach ($results as $resultLine) {
+	    if (preg_match('/(ImageMagick|GraphicsMagick)\s+([\d\.]+)/', $resultLine, $matches)) {
+		return array(GalleryStatus::success(), array($matches[1], $matches[2]));
+	    }
+	}
+	return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__), array());
+    }
+
+    /**
+     * Checks which composite binary is available in this ImageMagick.
+     *
+     * ImageMagick 4.x: combine
+     * ImageMagick 5.x, 6.x: composite
+     * GraphicsMagick: composite
+     *
+     * @return array object GalleryStatus
+     *               string name of the binary (defaults to composite)
+     */
+    function discoverCompositeCmd($imageMagickPath=null) {
+	global $gallery;
+
+	list ($ret, $binary) = ImageMagickToolkitHelper::discoverBinary($imageMagickPath);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	if ($binary != '') {
+	    /* GraphicsMagick is always 'composite' */
+	    return array(GalleryStatus::success(), 'composite');
+	}
+
+	if (empty($imageMagickPath)) {
+	    list ($ret, $imageMagickPath) = GalleryCoreApi::getPluginParameter('module', 'imagemagick', 'path');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    if (empty($imageMagickPath)) {
+		return array(GalleryStatus::error(ERROR_MISSING_VALUE, __FILE__, __LINE__), null);
+	    }
+	}
+
+	$platform = $gallery->getPlatform();
+	$slash = $platform->getDirectorySeparator();
+
+	$binaries = array('combine', 'composite');
+	foreach ($binaries as $binary) {
+	    $binaryPath = $imageMagickPath . $binary;
+	    if ($platform->file_exists($binaryPath) && $platform->is_executable($binaryPath)) {
+		return array(GalleryStatus::success(), $binary);
+	    }
+	}
+	return array(GalleryStatus::success(), 'composite');
+    }
+
+    /**
+     * Checks which switch to use to remove meta-data from jpegs
+     *
+     * ImageMagick 4.x: <none>
+     * ImageMagick 5.x, 6.x, GraphicsMagick: +profile '*'
+     *
+     * @return array object GalleryStatus
+     *               array the needed parameters
+     */
+    function discoverRemoveMetaDataSwitch($imageMagickPath=null) {
+	global $gallery;
+
+	list ($ret, $convertCmd) = ImageMagickToolkitHelper::getCommand('convert', $imageMagickPath);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$platform = $gallery->getPlatform();
+	$slash = $platform->getDirectorySeparator();
+	$dataPath = dirname(__FILE__) . "${slash}..${slash}test${slash}data${slash}";
+
+	$tmpDir = $gallery->getConfig('data.gallery.tmp');
+	$tmpFilename = $platform->tempnam($tmpDir, 'imgk_');
+	if (empty($tmpFilename)) {
+	    /* This can happen if the $tmpDir path is bad */
+	    return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__,
+					      "Could not create tmp file in '$tmpDir'"),
+			 null);
+	}
+
+	$command = array_merge($convertCmd, array('+profile', '*', $dataPath . 'testProfile.jpg', $tmpFilename));
+	$originalSize = $platform->filesize($dataPath . 'testProfile.jpg');
+	list ($success, $results) = $platform->exec(array($command));
+	$size = $platform->filesize($tmpFilename);
+	@$platform->unlink($tmpFilename);
+	if ($success) {
+	    if ($size > 0 && $size < $originalSize) {
+		return array(GalleryStatus::success(), array('+profile', '*'));
+	    }
+	}
+	return array(GalleryStatus::success(), array());
+    }
+
+    /**
+     * Given a imageMagickPath, discover and store some platform-specific 
+     * settings in the plugins parameter map
+     *
+     * @return object GalleryStatus
+     */
+    function savePlatformParameters($imageMagickPath=null) {
+	global $gallery;
+
+	/* Find out if we are GraphicsMagick, using "gm" as a binary */
+	list ($ret, $binary) = ImageMagickToolkitHelper::discoverBinary($imageMagickPath);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$ret = GalleryCoreApi::setPluginParameter('module', 'imagemagick', 'binary', $binary);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	/* Find out what composite cmd to use */
+	list ($ret, $compositeCmd) = ImageMagickToolkitHelper::discoverCompositeCmd($imageMagickPath);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$ret = GalleryCoreApi::setPluginParameter('module', 'imagemagick', 'compositeCmd', $compositeCmd);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Find out how to remove meta data from jpegs */
+	list ($ret, $removeMetaDataSwitch) = ImageMagickToolkitHelper::discoverRemoveMetaDataSwitch($imageMagickPath);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$ret = GalleryCoreApi::setPluginParameter('module', 'imagemagick', 'removeMetaDataSwitch', join('|', $removeMetaDataSwitch));
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
     }
 }
 ?>

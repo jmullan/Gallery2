@@ -92,7 +92,12 @@ class AdminImageMagickController extends GalleryController {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-	    
+		/* Save some platform specific ImageMagick parameters */
+		$ret = ImageMagickToolkitHelper::savePlatformParameters();
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
 		$ret = GalleryCoreApi::setPluginParameter('module', 'imagemagick', 'jpegQuality', $form['jpegQuality']);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -163,23 +168,37 @@ class AdminImageMagickView extends GalleryView {
 	$platform = $gallery->getPlatform();
 	$tests = array();
 	$mimeTypes = array();
+	$version = array();
 	if (isset($form['action']['test'])) {
 	    if (!empty($form['path'])) {
 		list($ret, $testResults) = ImageMagickToolkitHelper::testBinaries($form['path']);
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
+
 		$success = true;
-		foreach ($testResults as $testResult) {
-		    if (! $testResult['success']) {
-			$success = false;
-		    }
-		    $tests[] = $testResult;
-		}
-		if ($success) {
-		    list($ret, $mimeTypes) = ImageMagickToolkitHelper::discoverMimeTypes($form['path']);
-		    if ($ret->isError()) {
+		if ($ret->isError()) {
+		    if ($ret->getErrorCode() & ERROR_BAD_PATH) {
+			$testResults = array();
+			$form['error']['path']['bad'] = 1;
+		    } else {
 			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		} else {
+		    $success = true;
+		    foreach ($testResults as $testResult) {
+			if (! $testResult['success']) {
+			    $success = false;
+			}
+		        $tests[] = $testResult;
+		    }
+		    if ($success) {
+			list($ret, $mimeTypes) = ImageMagickToolkitHelper::discoverMimeTypes($form['path']);
+			if ($ret->isError()) {
+			    return array($ret->wrap(__FILE__, __LINE__), null);
+			}
+
+			list($ret, $version) = ImageMagickToolkitHelper::discoverVersion($form['path']);
+			if ($ret->isError()) {
+			    return array($ret->wrap(__FILE__, __LINE__), null);
+			}
 		    }
 		}
 	    } else {
@@ -189,6 +208,7 @@ class AdminImageMagickView extends GalleryView {
 
 	$AdminImageMagick = array();
 	$AdminImageMagick['tests'] = $tests;
+	$AdminImageMagick['version'] = $version;
 	$AdminImageMagick['mimeTypes'] = $mimeTypes;
 	$AdminImageMagick['jpegQualityList'] = $jpegQualityList;
 

@@ -29,7 +29,8 @@
 /**
  * Load required classes
  */
-require_once(dirname(__FILE__) . '/../../core/classes/GalleryToolkit.class');
+GalleryCoreApi::relativeRequireOnce('/modules/core/classes/GalleryToolkit.class');
+GalleryCoreApi::requireOnce(dirname(__FILE__) . '/ImageMagickToolkitHelper.class');
 
 /**
  * A ImageMagick version of GalleryToolkit
@@ -90,23 +91,37 @@ class ImageMagickToolkit extends GalleryToolkit {
 		$outputMimeType = $mimeType;
 	    } else {
 		/* Strip metadata to make derivative files smaller.. */
-		$transform = array('-scale', $parameters[0] . 'x' . $parameters[0], '+profile', '*');
+		list ($ret, $removeMetaDataSwitch) =
+		    GalleryCoreApi::getPluginParameter('module', 'imagemagick', 'removeMetaDataSwitch');
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		if (empty($removeMetaDataSwitch)) {
+		    $removeMetaDataSwitch = array();
+		} else {
+		    $removeMetaDataSwitch = split('\|', $removeMetaDataSwitch);
+		}
+		$transform = array_merge($removeMetaDataSwitch, array(
+					'-size', $parameters[0] . 'x' . $parameters[0],
+					'-geometry', $parameters[0] . 'x' . $parameters[0]));
 	    }
 	    break;
 	    
 	case 'scale':
 	    $cmd = 'convert';
-	    $transform = array('-scale', $parameters[0] . 'x' . $parameters[0]);
+	    $transform = array('-size', $parameters[0] . 'x' . $parameters[0],
+	                       '-geometry', $parameters[0] . 'x' . $parameters[0]);
 	    break;
 	    
 	case 'resize':
 	    $cmd = 'convert';
-	    $transform = array('-geometry', $parameters[0] . 'x' . $parameters[1]);
+	    $transform = array('-size', $parameters[0] . 'x' . $parameters[1],
+	                       '-geometry', $parameters[0] . 'x' . $parameters[1]);
 	    break;
 
 	case 'rotate':
 	    $cmd = 'convert';
-	    $transform = array('-rotate', $parameters[0]);
+	    $transform = array('-rotate', (string)$parameters[0]);
 	    break;
 	    
 	case 'crop':
@@ -131,7 +146,14 @@ class ImageMagickToolkit extends GalleryToolkit {
 	    break;
 	    
 	case 'composite':
-	    $cmd = 'composite';
+	    list ($ret, $cmd) =
+		GalleryCoreApi::getPluginParameter('module', 'imagemagick', 'compositeCmd');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    if (empty($cmd)) {
+		$cmd = 'composite';
+	    }
 	    $compositeOverlayPath = $parameters[0];
 	    $compositeOverlayMimeType = $parameters[1];
 	    $compositeWidth = $parameters[2];
@@ -268,7 +290,12 @@ class ImageMagickToolkit extends GalleryToolkit {
 	    return array(GalleryStatus::success(), $results[0], $results[1]);
 	}
 
-	list($success, $output) = $platform->exec(array(array($this->_imageMagickCmd('identify'), $filename)));
+	list ($ret, $cmd) = ImageMagickToolkitHelper::getCommand('identify');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), 0, 0);
+	}
+
+	list ($success, $output) = $platform->exec(array(array_merge($cmd, array($filename))));
 	if (!$success) {
 	    return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__), 0, 0);
 	}
@@ -302,8 +329,10 @@ class ImageMagickToolkit extends GalleryToolkit {
 	    return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);
 	}
 
-	$command = array($this->_imageMagickCmd($cmd));
-
+	list ($ret, $command) = ImageMagickToolkitHelper::getCommand($cmd);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 	list ($ret, $jpegQuality) =
 		GalleryCoreApi::getPluginParameter('module', 'imagemagick', 'jpegQuality');
 	if ($ret->isError()) {
@@ -311,13 +340,15 @@ class ImageMagickToolkit extends GalleryToolkit {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	    
-	switch($mimeType) {
+	switch ($outputMimeType) {
 	case 'image/png'  :
 	case 'image/jpeg' :
 	    $command[] = '-quality';
 	    $command[] = $jpegQuality;
 	    break;
+	}
 
+	switch ($mimeType) {
 	case 'image/tiff':
 	case 'application/pdf':
 	    /* TIFF can be multi-scened, PDF can be multi-paged;
@@ -359,7 +390,7 @@ class ImageMagickToolkit extends GalleryToolkit {
 	    }
 	}
 
-	list($success, $output) = $platform->exec(array($command));
+	list ($success, $output) = $platform->exec(array($command));
 
 	if (!$success) {
 	    @$platform->unlink($tmpFilename);

@@ -31,7 +31,7 @@
 
     <div class="gbDataEntry">
       <h3 class="giTitle">
-	{g->text text="ImageMagick Path"}
+	{g->text text="Directory to ImageMagick/GraphicsMagick binaries"}
       </h3>
 
       <input type="text" name="{g->formVar var="form[path]"}" value="{$form.path}"/>
@@ -39,6 +39,12 @@
       {if isset($form.error.path.missing)}
       <div class="giError">
 	{g->text text="You must enter a path to your ImageMagick binaries"}
+      </div>
+      {/if}
+
+      {if isset($form.error.path.bad)}
+      <div class="giError">
+	{g->text text="The path you entered is not a valid directory or is not accessible."}
       </div>
       {/if}
 
@@ -122,6 +128,14 @@
   {if $AdminImageMagick.mimeTypes}
   <div class="gbAdmin">
     <div class="giTitle">
+      {g->text text="Version"}
+    </div>
+
+    <div class="giDescription">
+      {$AdminImageMagick.version.0} {$AdminImageMagick.version.1}
+    </div>
+
+    <div class="giTitle">
       {g->text text="Supported MIME Types"}
     </div>
     
@@ -131,7 +145,7 @@
 	
     {foreach from=$AdminImageMagick.mimeTypes item=mimeType}
     <span>
-      {$mimeType} 
+      {$mimeType}<br />
     </span>
     {/foreach}
   </div>

@@ -40,8 +40,30 @@ require_once(dirname(__FILE__) . '/../../classes/ImageMagickToolkit.class');
  */
 class ImageMagickToolkitTest extends GalleryTestCase {
 
+    /*
+     * The array with environment information, from ImEnvironments.inc
+     */
+    var $_environments = array();
+
+    /*
+     * The current environment array item we are processing
+     */
+    var $_currentEnvironment = array();
+
+    /*
+     * Information about files in our pseudo-platform.
+     * Better would be to store the files information in the Platform, but
+     * since Gallery::getPlatform() will return a copy of the platform, we
+     * cannot keep them there.
+     */
+    var $_files = array();
+
     function ImageMagickToolkitTest($methodName) {
 	$this->GalleryTestCase($methodName);
+
+	/* Load our environments */
+	include(dirname(__FILE__) . '/ImEnvironments.inc');
+	$this->_environments = $imEnvironment;
     }
 
     /**
@@ -49,20 +71,20 @@ class ImageMagickToolkitTest extends GalleryTestCase {
      */
     function setUp() {
 	global $gallery;
-
+	
 	parent::setUp();
 	
-	$gallery->_platform = new ImageMagickToolkitTestPlatform($gallery->getPlatform());
-
+	$gallery->_platform =& new ImageMagickToolkitTestPlatform($gallery->getPlatform(), $this->_files);
+	
 	$this->_save = array();
-	foreach (array('path', 'jpegQuality') as $key) {
+	foreach (array('path', 'jpegQuality', 'compositeCmd', 'binary', 'removeMetaDataSwitch') as $key) {
 	    list ($ret, $this->_save[$key]) = GalleryCoreApi::getPluginParameter('module', 'imagemagick', $key);
 	    if ($ret->isError()) {
 		print $ret->getAsHtml();
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
-
+	
 	/* Reset to the defaults -- tearDown will undo this */
 	foreach (array('jpegQuality' => 75) as $key => $value) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'imagemagick', $key, $value);
@@ -71,9 +93,9 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
-
+	
 	/* Get a toolkit to work with */
-	$this->_toolkit = new ImageMagickToolkit();
+	$this->_toolkit =& new ImageMagickToolkit();
     }
 
     /**
@@ -88,120 +110,192 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
-
+	
 	parent::tearDown();
     }
 
+    /**
+     * Prepare to emulate a different version of IM/GM
+     *
+     * @param array the array item of the environment
+     * @access private
+     */
+    function _setEnvironment($environment) {
+	global $gallery;
+	
+	$environment['path'] = '/' . $environment['name'] . $environment['version'] . '/';
+	
+	$ret = GalleryCoreApi::setPluginParameter('module', 'imagemagick', 'path', $environment['path']);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	$this->_currentEnvironment = $environment;
+	$gallery->_platform->setEnvironment($environment);
+	
+	$ret = ImageMagickToolkitHelper::savePlatformParameters();
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	return true;
+    }
+
+    /**
+     * Helper to test a certain operation
+     * 
+     * @param string
+     * @param string
+     * @param string filename
+     * @param string filename
+     * @param array indexed array
+     * @param array assoc-array with paramName=>paramValue
+     * 
+     * @access private
+     * @return object GalleryStatus
+     */
+    function _testOperation($mimeType, $operation, $src, $dst, $params, $namedParams) {
+	list ($ret, $outputMimeType) =
+	    $this->_toolkit->performOperation($mimeType, $operation,
+					      $src, $dst, $params);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	if ($mimeType == 'image/tiff' || $mimeType == 'application/pdf') {
+	    $src = $src . '[0]';
+	}
+	
+	$search = array('|%src%|', '|%dst%|');
+	$replace = array($src, $dst);
+	foreach ($namedParams as $key => $value) {
+	    $search[] = sprintf('|%%%s%%|', $key);
+	    $replace[] = $value;
+	}
+	$expected = $this->_currentEnvironment['operations'][$operation];
+	foreach (array_keys($expected) as $key) {
+	    $expected[$key] = preg_replace($search, $replace, $expected[$key]);
+	}
+	
+	if ($outputMimeType == 'image/jpeg' || $outputMimeType == 'image/png') {
+	    foreach (array_keys($expected) as $key) {
+		$expected[$key] = array_merge(array('-quality', '75'), $expected[$key]);
+	    }
+	} 
+	
+	global $_ImPlatformFiles;
+	$this->assertEquals($expected, $this->_files[$dst]['operation'], $this->_currentEnvironment['path']);
+
+	return GalleryStatus::success();
+    }
+
     function testPerformOperations() {
-	list ($ret, $mimeType) =
-	    $this->_toolkit->performOperation('image/gif', 'thumbnail',
-					      'testPerformOperations1.gif',
-					      'testPerformOperations2.gif',
-					      array(100, 100));
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	global $gallery;
+	foreach ($this->_environments as $environment) {
+	    $this->_setEnvironment($environment);
+
+	    $ret = $this->_testOperation('image/gif', 'thumbnail',
+					 'test[1000x1000].gif', 'output.gif',
+					 array(100, 100),
+					 array('width' => 100, 'height' => 100));
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+
+	    $ret = $this->_testOperation('image/jpeg', 'thumbnail',
+					 'test[1000x1000].jpg', 'output.jpg',
+					 array(100, 100),
+					 array('width' => 100, 'height' => 100));
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+
+	    $ret = $this->_testOperation('image/tiff', 'rotate',
+					 'test.tiff', 'output.tiff',
+					 array(90), array('angle' => 90));
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+
+	    $ret = $this->_testOperation('image/bmp', 'rotate',
+					 'test.bmp', 'output.bmp',
+					 array(180), array('angle' => 180));
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+
+	    $ret = $this->_testOperation('image/png', 'crop',
+					 'test[640x480].png', 'output.png',
+					 array('24.667', '23.5', '51.375', '52'),
+					 array('width' => '329', 'height' => '250', 'x' => '158', 'y' => '113')
+				    );
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+
+	    // Test a basic composite operation (top right corner)
+	    $ret = $this->_testOperation('image/png', 'composite',
+					  'test.png',   // composite
+					  'output.png', // composited
+					  array('image.gif', // image
+						'image/gif', // mimeType
+						50, 50, // image width, height
+						0, 0,   // image alignment x, y
+						3),     // alignment type
+					  array('image' => 'image.gif',
+						'width' => '50',
+						'height' => '50',
+						'x' => '0',
+						'y' => '0'));
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+
+	    // Test another composite with out of range params that should get corrected
+	    $ret = $this->_testOperation('image/png', 'composite',
+					  'test.png',   // composite
+					  'output.png', // composited
+					  array('image.gif', // image
+						'image/gif', // mimeType
+						50, 50, // image width, height
+						151, 151,   // image alignment x, y
+						3),     // alignment type
+					  array('image' => 'image.gif',
+						'width' => '50',
+						'height' => '50',
+						'x' => '0',
+						'y' => '0'));
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+
+	    list ($ret, $mimeType) =
+		$this->_toolkit->performOperation('image/png', 'BOGUS',
+						  'BOGUS',
+						  'BOGUS',
+						  array('BOGUS'));
+
+	    $this->assert($ret->getErrorCode() & ERROR_UNIMPLEMENTED);
 	}
-
-	list ($ret, $mimeType) =
-	    $this->_toolkit->performOperation('image/jpeg', 'thumbnail',
-					      'testPerformOperations4.jpg',
-					      'testPerformOperations5.jpg',
-					      array(100, 100));
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	list ($ret, $mimeType) =
-	    $this->_toolkit->performOperation('image/jpeg', 'thumbnail',
-					      'testPerformOperations4.jpg',
-					      'testPerformOperations5.jpg',
-					      array(100, 100));
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	list ($ret, $mimeType) =
-	    $this->_toolkit->performOperation('image/tiff', 'rotate',
-					      'testPerformOperations6.tiff',
-					      'testPerformOperations7.tiff',
-					      array(90));
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	list ($ret, $mimeType) =
-	    $this->_toolkit->performOperation('image/png', 'crop',
-					      'testPerformOperations8.png',
-					      'testPerformOperations9.png',
-					      array('24.667', '23.5', '51.375', '52'));
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	list ($ret, $mimeType) =
-	    $this->_toolkit->performOperation('image/bmp', 'rotate',
-					      'testPerformOperationsA.bmp',
-					      'testPerformOperationsB.bmp',
-					      array(180));
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	// Test a basic composite operation (top right corner)
-        list ($ret, $mimeType) =
-            $this->_toolkit->performOperation('image/png', 'composite',
-                                              'testPerformOperations10.png', // composite
-                                              'testPerformOperations11.png', // composited
-                                              array('testPerformOperations12.gif', // image
-						    'testPerformOperations13.gif', // mask
-						    50, 50, // image width, height
-						    0, 0, // image alignment x, y
-						    3));    // alignment type
-        if ($ret->isError()) {
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-        }
-
-	// Test another composite with out of range params that should get corrected
-        list ($ret, $mimeType) =
-            $this->_toolkit->performOperation('image/png', 'composite',
-                                              'testPerformOperations10.png', // composite (200x200)
-                                              'testPerformOperations11.png', // composited
-                                              array('testPerformOperations12.gif', // image
-						    'testPerformOperations13.gif', // mask
-						    50, 50, // image width, height
-						    151, 151, // image alignment x, y
-						    0));    // alignment type
-        if ($ret->isError()) {
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-        }
-
-	list ($ret, $mimeType) =
-	    $this->_toolkit->performOperation('image/png', 'BOGUS',
-					      'BOGUS',
-					      'BOGUS',
-					      array('BOGUS'));
-
-	$this->assert($ret->getErrorCode() & ERROR_UNIMPLEMENTED);
     }
 
     function testGetProperties() {
-	list ($ret, $results) =
-	    $this->_toolkit->getProperty('image/gif', 'dimensions', 'testGetProperties1.gif');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	$this->assertEquals(array(10, 20), $results);
+	foreach ($this->_environments as $environment) {
+	    $this->_setEnvironment($environment);
 
-	list ($ret, $results) =
-	    $this->_toolkit->getProperty('image/gif', 'dimensions', 'testGetProperties2.gif');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	$this->assertEquals(array(30, 40), $results);
+	    list ($ret, $results) =
+		$this->_toolkit->getProperty('image/gif', 'dimensions', 'test[10x20].gif');
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $this->assertEquals(array(10, 20), $results);
 
-	list ($ret, $results) =
-	    $this->_toolkit->getProperty('image/gif', 'BOGUS', 'BOGUS');
-	$this->assert($ret->getErrorCode() & ERROR_UNIMPLEMENTED);
+	    list ($ret, $results) =
+		$this->_toolkit->getProperty('image/gif', 'BOGUS', 'BOGUS');
+	    $this->assert($ret->getErrorCode() & ERROR_UNIMPLEMENTED);
+	}
     }
 
     function testMergeOperations() {
@@ -277,168 +371,164 @@ class ImageMagickToolkitTest extends GalleryTestCase {
     }
 
     function testDiscoverMimeTypes() {
-	list ($ret, $results) = ImageMagickToolkitHelper::discoverMimeTypes('/validPath/');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	$this->assertEquals(array('image/gif',
-				  'image/jpeg',
-				  'image/pjpeg',
-				  'image/png',
-				  'image/tiff',
-				  'image/svg+xml',
-				  'image/bmp',
-				  'application/pdf'),
-			    $results);
-    }
+	foreach ($this->_environments as $environment) {
+	    $this->_setEnvironment($environment);
 
-    function testDiscoverMimeTypesWithBustedSvg() {
-	list ($ret, $results) = ImageMagickToolkitHelper::discoverMimeTypes('/crashSvgPath/');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    list ($ret, $results) = ImageMagickToolkitHelper::discoverMimeTypes($this->_currentEnvironment['path']);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $this->assertEquals($environment['mimeTypes'], $results);
 	}
-	$this->assertEquals(array('image/gif'),
-			    $results);
-    }
-
-    function testDiscoverMimeTypesWithAlternatePdf() {
-	list ($ret, $results) = ImageMagickToolkitHelper::discoverMimeTypes('/alternatePdf/');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	$this->assertEquals(array('image/gif',
-				  'application/pdf'),
-			    $results);
     }
 
     function testGetOperationsAndProperties() {
-	list ($ret, $results) = ImageMagickToolkitHelper::getOperationsAndProperties();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	foreach ($this->_environments as $environment) {
+	    $this->_setEnvironment($environment);
+
+	    list ($ret, $results) = ImageMagickToolkitHelper::getOperationsAndProperties();
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $wantToConvert = array('image/tiff', 'image/svg+xml', 'application/pdf');
+	    $canConvert = array_intersect($wantToConvert, $environment['mimeTypes']);
+
+	    $this->assertEquals(array(
+		'convert-to-image/jpeg' => array(
+			'params' => array(),
+			'description' => 'Convert to a JPEG',
+			'mimeTypes' => $canConvert,
+			'outputMimeType' => 'image/jpeg'
+		),
+		'scale' => array(
+			'params' => array(
+				array(
+					'type' => 'int',
+					'description' => 'target size'
+				)
+			),
+			'description' => 'Scale the image to the target size',
+			'mimeTypes' => $environment['mimeTypes'],
+		),
+		'thumbnail' => array(
+			'params' => array(
+				array(
+					'type' => 'int',
+					'description' => 'target size'
+				)
+			),
+			'description' => 'Scale the image to the target size',
+			'mimeTypes' => $environment['mimeTypes'],
+		),
+		'resize' => array(
+			'params' => array(
+				array(
+					'type' => 'int',
+					'description' => 'target width'
+				),
+				array(
+					'type' => 'int',
+					'description' => 'target height'
+				)
+			),
+			'description' => 'Resize the image to the target dimensions',
+			'mimeTypes' => $environment['mimeTypes'],
+		),
+		'rotate' => array(
+			'params' => array(
+				array(
+					'type' => 'int',
+					'description' => 'rotation degrees'
+				)
+			),
+			'description' => 'Rotate the image',
+			'mimeTypes' => $environment['mimeTypes'],
+		),
+		'crop' => array(
+			'params' => array(
+				array(
+					'type' => 'float',
+					'description' => 'left edge %'
+				),
+				array(
+					'type' => 'float',
+					'description' => 'top edge %'
+				),
+				array(
+					'type' => 'float',
+					'description' => 'width %'
+				),
+				array(
+					'type' => 'float',
+					'description' => 'height %'
+				)
+			),
+			'description' => 'Crop the image',
+			'mimeTypes' => $environment['mimeTypes'],
+		),
+		'composite' => array(
+			'params' => array(
+				array(
+					'type' => 'string',
+					'description' => 'overlay path'
+				),
+				array(
+					'type' => 'string',
+					'description' => 'overlay mime type'),
+				array(
+					'type' => 'int',
+					'description' => 'overlay width'),
+				array(
+					'type' => 'int',
+					'description' => 'overlay height'),
+				array(
+					'type' => 'int',
+					'description' => 'alignment location x'),
+				array(
+					'type' => 'int',
+					'description' => 'alignment location y'),
+				array(
+					'type' => 'int',
+					'description' => 'alignment type'
+				)
+			),
+			'description' => 'Composite the image',
+			'mimeTypes' => $environment['mimeTypes'],
+		),
+	    ), $results['operations']);
+
+	    $this->assertEquals(array(
+		'dimensions' => array(
+			'type' => 'int,int',
+			'description' => 'Get the width and height of the image',
+			'mimeTypes' => $environment['mimeTypes'],
+		)
+	    ), $results['properties']);
 	}
-	$this->assertEquals(array('convert-to-image/jpeg' => array('params' => array(),
-								   'description' => 'Convert to a JPEG',
-								   'mimeTypes' => array('image/tiff',
-											'image/svg+xml',
-											'application/pdf'),
-								   'outputMimeType' => 'image/jpeg'),
-				  'scale' => array('params' =>
-						   array(array('type' => 'int',
-							       'description' => 'target size')),
-						   'description' => 'Scale the image to the target size',
-						   'mimeTypes' => array('image/gif',
-									'image/jpeg',
-									'image/pjpeg',
-									'image/png',
-									'image/tiff',
-									'image/svg+xml',
-									'image/bmp',
-									'application/pdf')
-						   ),
-				  'thumbnail' => array('params' =>
-						       array(array('type' => 'int',
-								   'description' => 'target size')),
-						       'description' => 'Scale the image to the target size',
-						       'mimeTypes' => array('image/gif',
-									    'image/jpeg',
-									    'image/pjpeg',
-									    'image/png',
-									    'image/tiff',
-									    'image/svg+xml',
-									    'image/bmp',
-									    'application/pdf')),
-				  'resize' => array('params' =>
-						    array(array('type' => 'int',
-								'description' => 'target width'),
-							  array('type' => 'int',
-								'description' => 'target height')),
-						    'description' => 'Resize the image to the target dimensions',
-						    'mimeTypes' => array('image/gif',
-									 'image/jpeg',
-									 'image/pjpeg',
-									 'image/png',
-									 'image/tiff',
-									 'image/svg+xml',
-									 'image/bmp',
-									 'application/pdf')),
-				  'rotate' => array('params' =>
-						    array(array('type' => 'int',
-								'description' => 'rotation degrees')),
-						    'description' => 'Rotate the image',
-						    'mimeTypes' => array('image/gif',
-									 'image/jpeg',
-									 'image/pjpeg',
-									 'image/png',
-									 'image/tiff',
-									 'image/svg+xml',
-									 'image/bmp',
-									 'application/pdf')),
-				  'crop' => array('params' =>
-						  array(array('type' => 'float',
-							      'description' => 'left edge %'),
-							array('type' => 'float',
-							      'description' => 'top edge %'),
-							array('type' => 'float',
-							      'description' => 'width %'),
-							array('type' => 'float',
-							      'description' => 'height %')),
-						  'description' => 'Crop the image',
-						  'mimeTypes' => array('image/gif',
-								       'image/jpeg',
-								       'image/pjpeg',
-								       'image/png',
-								       'image/tiff',
-								       'image/svg+xml',
-								       'image/bmp',
-								       'application/pdf')),
-				  'composite' => array('params' =>
-						       array(array('type' => 'string',
-								   'description' => 'overlay path'),
-							     array('type' => 'string',
-								   'description' => 'overlay mime type'),
-							     array('type' => 'int',
-								   'description' => 'overlay width'),
-							     array('type' => 'int',
-								   'description' => 'overlay height'),
-							     array('type' => 'int',
-								   'description' => 'alignment location x'),
-							     array('type' => 'int',
-								   'description' => 'alignment location y'),
-							     array('type' => 'int',
-								   'description' => 'alignment type')),
-						       'description' => 'Composite the image',
-						       'mimeTypes' => array('image/gif',
-									     'image/jpeg',
-									     'image/pjpeg',
-									     'image/png',
-									     'image/tiff',
-									     'image/svg+xml',
-									    'image/bmp',
-									    'application/pdf'))),
-			    $results['operations']);
-	$this->assertEquals(array('dimensions' => array('type' => 'int,int',
-							'description' => 'Get the width and height of the image',
-							'mimeTypes' => array('image/gif',
-									     'image/jpeg',
-									     'image/pjpeg',
-									     'image/png',
-									     'image/tiff',
-									     'image/svg+xml',
-									     'image/bmp',
-									     'application/pdf'))),
-			    $results['properties']);
     }
 
     function testBinaries() {
-	list ($ret, $results) = ImageMagickToolkitHelper::testBinaries('/validPath/');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	foreach ($this->_environments as $environment) {
+	    $this->_setEnvironment($environment);
+
+	    list ($ret, $results) = ImageMagickToolkitHelper::testBinaries($this->_currentEnvironment['path']);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    
+	    $wanted = array('identify', 'convert', 'combine', 'composite');
+	    $expected = array();
+	    foreach ($wanted as $binary) {
+		if (in_array($binary, $this->_currentEnvironment['binaries'])) {
+		    $expected[] = array('name' => $binary, 'success' => true);
+		}
+	    }
+	    
+	    $this->assertEquals($expected, $results);
 	}
 
-	$this->assertEquals(array(array('name' => 'identify', 'success' => 1),
-				  array('name' => 'convert', 'success' => 1),
-				  array('name' => 'composite', 'success' => 1)),
-			    $results);
+	list ($ret, $results) = ImageMagickToolkitHelper::testBinaries('/bogusPath');
+	$this->assert($ret->getErrorCode() & ERROR_BAD_PATH);
     }
 }
 
@@ -450,243 +540,195 @@ class ImageMagickToolkitTest extends GalleryTestCase {
  */
 class ImageMagickToolkitTestPlatform {
 
-    function ImageMagickToolkitTestPlatform($originalPlatform) {
+    var $_environment = array();
+    var $_files;
+
+    function ImageMagickToolkitTestPlatform($originalPlatform, &$files) {
 	$this->_platform = $originalPlatform;
+	$this->_files =& $files;
+    }
+
+    function setEnvironment($environment) {
+	$this->_environment = $environment;
     }
 
     function exec($cmd) {
 	global $gallery;
+	global $_ImPlatformFiles;
 	list ($ret, $imageMagickPath) = GalleryCoreApi::getPluginParameter('module', 'imagemagick', 'path');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	switch($cmd[0][0]) {
-	case '/validPath/identify':
-	case $imageMagickPath . 'identify':
-	    $lines = array();
-	    for ($i = 0; $i < sizeof($cmd[0]); $i++) {
-		switch(basename($cmd[0][$i])) {
-		case 'testGetProperties2.gif':
-		    $lines[] = 'testGetProperties2.gif GIF 30x40+0+0 PseudoClass 8c 8-bit 232.0 0.000u 0:01';
-		    break;
-
-		case 'test.gif':
-		    $lines[] = 'test.gif GIF 50x50+0+0 PseudoClass 8c 8-bit 232.0 0.000u 0:01';
-		    break;
-		    
-		case 'test.jpg':
-		    $lines[] = 'test.jpg JPEG 50x50+0+0 DirectClass 8-bit 763.0 0.000u 0:01';
-		    break;
-		    
-		case 'test.png':
-		    $lines[] = 'test.png PNG 50x50+0+0 DirectClass 8-bit 730.0 0.000u 0:01';
-		    break;
-		    
-		case 'test.tif':
-		    $lines[] = 'test.tif TIFF 50x50+0+0 DirectClass 8-bit 7.8k 0.000u 0:01';
-		    break;
-		    
-		case 'test.svg':
-		    $lines[] = 'test.svg SVG 595x841+0+0 DirectClass 16-bit 7.8kb 0.008u 0:01';
-		    break;
-
-		case 'test.bmp':
-		    $lines[] = 'test.bmp BMP 50x50+0+0 PseudoClass 15c 8-bit 504.0 0.000u 0:01';
-		    break;
-
-		case 'test.pdf':
-		    $lines[] = 'test.pdf[0] PDF 612x792+0+0 DirectClass 3.7mb 0.080u 0:01';
-		    $lines[] = 'test.pdf[3] PDF 612x792+0+0 DirectClass 3.7mb 0.000u 0:01';
-		    break;
-
-		case 'testPerformOperations1.gif':
-		    $lines[] = 'testPerformOperations1.gif GIF 300x400+0+0 PseudoClass 8c 8-bit 232.0 0.000u 0:01';
-		    break;
-
-		case 'testPerformOperations4.jpg':
-		    $lines[] = 'testPerformOperations4.jpg GIF x100x200+0+0 PseudoClass 8c 8-bit 232.0 0.000u 0:01';
-		    break;
-
-		case 'testPerformOperations8.png':
-		    $lines[] = 'testPerformOperations8.png PNG 640x480+0+0 DirectClass 8-bit 730.0 0.000u 0:01';
-		    break;
-		    
-		case 'testPerformOperations10.png':
-		    $lines[] = 'testPerformOperations10.png PNG 200x200+0+0 DirectClass 8-bit 730.0 0.000u 0:01';
-		    break;
-		}
+	$firstCmd = $cmd[0];
+	if ($this->_environment['binary'] != '') {
+	    if (basename($firstCmd[0]) != $this->_environment['binary']) {
+		return array(0, array('unprepared for exec()'));
 	    }
-
-	    return array(1, $lines);
-	    break;
-
-	case '/alternatePdf/identify':
-	case $imageMagickPath . 'identify':
-	    $lines = array();
-	    $success = 1;
-	    for ($i = 0; $i < sizeof($cmd[0]); $i++) {
-		switch(basename($cmd[0][$i])) {
-		case 'test.gif':
-		    $lines[] = 'test.gif GIF 50x50+0+0 PseudoClass 8c 8-bit 232.0 0.000u 0:01';
-		    break;
-		    
-		case 'test.pdf':
-		    $lines[] = 'test.pdf[0] PDF 612x792+0+0 PseudoClass 256c 8-bit 947kb 0.016u 0:01';
-		    $lines[] = 'test.pdf[1] PDF 612x792+0+0 PseudoClass 256c 8-bit 947kb 0.008u 0:01';
-		    break;
-		}
-
-		if (!$success) {
-		    break;
-		}
-	    }
-	    return array($success, $lines);
-	    break;
-	    
-	case '/crashSvgPath/identify':
-	case $imageMagickPath . 'identify':
-	    $lines = array();
-	    $success = 1;
-	    for ($i = 0; $i < sizeof($cmd[0]); $i++) {
-		switch(basename($cmd[0][$i])) {
-		case 'test.gif':
-		    $lines[] = 'test.gif GIF 50x50+0+0 PseudoClass 8c 8-bit 232.0 0.000u 0:01';
-		    break;
-		    
-		case 'test.svg':
-		    $lines[] = 'Segmentation fault (core dumped)';
-		    $success = 0;
-		    break;
-		}
-
-		if (!$success) {
-		    break;
-		}
-	    }
-	    return array($success, $lines);
-	    break;
-	    
-	case $imageMagickPath . 'convert':
-	case '/validPath/convert':
-	    if ($cmd[0][1] == '-scale' && $cmd[0][2] == '200x200') {
-		return array(1, array());
-	    } else if ($cmd[0][1] == '-scale' &&
-		       $cmd[0][2] == '100x100' &&
-		       $cmd[0][3] == '+profile' &&
-		       $cmd[0][4] == '*' &&
-		       $cmd[0][5] == 'testPerformOperations1.gif') {
-		return array(1, array());
-	    } else if ($cmd[0][1] == '-quality' &&
-		       $cmd[0][2] == 75 &&
-		       $cmd[0][3] == '-scale' &&
-		       $cmd[0][4] == '100x100' &&
-		       $cmd[0][5] == '+profile' &&
-		       $cmd[0][6] == '*' &&
-		       $cmd[0][7] == 'testPerformOperations4.jpg') {
-		return array(1, array());
-	    } else if ($cmd[0][1] == '-rotate' &&
-		       $cmd[0][2] == '90' &&
-		       $cmd[0][3] == 'testPerformOperations6.tiff[0]') {
-		return array(1, array());
-	    } else if ($cmd[0][1] == '-quality' &&
-		       $cmd[0][2] == 75 &&
-		       $cmd[0][3] == '-crop' &&
-		       $cmd[0][4] == '329x250+158+113' &&
-		       $cmd[0][5] == 'testPerformOperations8.png') {
-		return array(1, array());
-	    } else if ($cmd[0][1] == '-rotate' &&
-		       $cmd[0][2] == '180' &&
-		       $cmd[0][3] == 'testPerformOperationsA.bmp') {
-		return array(1, array());
-	    }
-	    break;
-	    
-	case $imageMagickPath . 'composite':
-	case '/validPath/composite':
-	    if ($cmd[0][1] == '-geometry' &&
-		    $cmd[0][2] == '+0+0' &&
-		    realpath($cmd[0][3]) == realpath(dirname(__FILE__) . '/../data/test.jpg') &&
-		    realpath($cmd[0][4]) == realpath(dirname(__FILE__) . '/../data/test.gif') &&
-   		    $cmd[0][5] == 'TEMPFILE') {
-		return array(1, array());
-	    }  else if ($cmd[0][1] == '-quality' &&
-			$cmd[0][2] == 75 &&
-			$cmd[0][3] == '-geometry' &&
-			$cmd[0][4] == '+150+0' &&
-			$cmd[0][5] == 'testPerformOperations12.gif' && // image
-			$cmd[0][6] == 'testPerformOperations10.png' && // composite
-			$cmd[0][7] == 'TEMPFILE') { // composited
-		return array(1, array());
-	    } else if ($cmd[0][1] == '-quality' &&
-		       $cmd[0][2] == 75 &&
-		       $cmd[0][3] == '-geometry' &&
-		       $cmd[0][4] == '+150+150' &&
-		       $cmd[0][5] == 'testPerformOperations12.gif' && // image
-		       $cmd[0][6] == 'testPerformOperations10.png' && // composite
-		       $cmd[0][7] == 'TEMPFILE') { // composited
-		return array(1, array());
-	    } 
-	    break;
+	    array_shift($firstCmd);
 	}
 
+	$output = array();
+	$status = false;
+
+	$binary = array_shift($firstCmd);
+	$binary = basename($binary);
+	if ($binary == 'identify') {
+	    $file = array_shift($firstCmd);
+	    $file = basename($file);
+	    if (isset($this->_environment['identify'][$file])) {
+		$output = split("\n", $this->_environment['identify'][$file]);
+	    } else {
+		$output = split("\n", $this->_environment['identify']['UNKNOWN']);
+	    }
+	    $status = true;
+	} elseif (($binary == 'convert' && in_array('convert', $this->_environment['binaries']))
+			|| ($binary == 'composite' && in_array('composite', $this->_environment['binaries']))
+			|| ($binary == 'combine' && in_array('combine', $this->_environment['binaries'])) ) {
+	    $params = array_slice($firstCmd, 0);
+	    $src = basename($firstCmd[count($firstCmd) - 2]);
+	    $dst = basename($firstCmd[count($firstCmd) - 1]);
+	    if (preg_match('#(.*):(.*)$#', $dst, $matches)) {
+		// Format 'jpeg:filename.jpg'
+		$dst = $matches[2];
+	    }
+	    if ($src == 'testProfile.jpg') {
+		// ImageMagickToolkitHelper is testing our removeMetaDataSwitch
+		$params = array_slice($firstCmd, 0, count($firstCmd) - 2);
+		if ($this->_environment['removeMetaDataSwitch'] == $params) {
+		    $this->_files[$dst] = array('size' => 50000);
+		} else {
+		    $this->_files[$dst] = array('size' => 0);
+		}
+		$output = array();
+		$status = true;
+	    } else {
+		/* Remember how we converted from $src to $dst, so we can compare it later
+		 * with what we really wanted
+		 */
+		$this->_files[$dst] = array('operation' => array($binary => $params));
+		$output = array();
+		$status = true;
+	    }
+	}
+
+	if ($status) {
+	    return array(1, $output);
+	}
+	echo $this->_environment['path'] . ": ERROR exec()ing:<pre>";
 	print_r($cmd);
+	echo "</pre>\n";
 	return array(0, array('unprepared for exec()'));
     }
 
     function rename($oldName, $newName) {
-	switch ($newName) {
-	case 'testPerformOperations2.gif':
-	case 'testPerformOperations5.jpg':
-	case 'testPerformOperations7.tiff':
-	case 'testPerformOperations9.png':
-	case 'testPerformOperations11.png':
-	case 'testPerformOperationsB.bmp':
+	global $_ImPlatformFiles;
+	$oldBase = basename($oldName);
+	$newBase = basename($newName);
+	if (isset($this->_files[$oldBase])) {
+	    $this->_files[$newBase] = $this->_files[$oldBase];
+	    if (isset($this->_files[$newBase]['operation'])) {
+		foreach (array_keys($this->_files[$newBase]['operation']) as $operation) {
+		    $count = count($this->_files[$newBase]['operation'][$operation]);
+		    $this->_files[$newBase]['operation'][$operation][$count - 1] = $newName;
+		}
+	    }
+	    unset($this->_files[$oldBase]);
 	    return true;
-
-	default:
-	    print "rename($oldName, $newName) unexpected<br>";
-	    return false;
 	}
+	echo $this->_environment['path'] . ": rename($oldName, $newName)<br>\n";
+	return false;
     }
 
     function isRestrictedByOpenBasedir($path) {
-	switch($path) {
-	case '/validPath/':
-	    return false;
-	}
+	//echo $this->_environment['path'] . ": isRestrictedByOpenBasedir($path)<br>\n";
+	return false;
     }
 
     function file_exists($path) {
-	switch($path) {
-	case '/validPath/':
-	case '/validPath/convert':
-	case '/validPath/identify':
+	if ($path == $this->_environment['path']) {
 	    return true;
 	}
+	$dirName = dirname($path) . '/';
+	$baseName = basename($path);
+	if ($dirName == $this->_environment['path']) {
+	    if ($this->_environment['binary'] != '' && $baseName == $this->_environment['binary']) {
+		return true;
+	    }
+	    if ($this->_environment['binary'] == ''
+		    && in_array($baseName, $this->_environment['binaries']) ) {
+		return true;
+	    }
+	}
+	//echo $this->_environment['path'] . ": file_exists($path)<br>\n";
+	return false;
     }
     
     function is_dir($path) {
-	switch($path) {
-	case '/validPath/':
+	if ($path == $this->_environment['path']) {
 	    return true;
 	}
+	echo $this->_environment['path'] . ": is_dir($path)<br>\n";
+	return false;
+    }
+
+    function is_executable($file) {
+	$dirName = dirname($file) . '/';
+	$baseName = basename($file);
+	if ($dirName == $this->_environment['path']) {
+	    if ($this->_environment['binary'] != '' && $baseName == $this->_environment['binary']) {
+		return true;
+	    }
+	    if ($this->_environment['binary'] == ''
+		    && in_array($baseName, $this->_environment['binaries']) ) {
+		return true;
+	    }
+	}
+
+	echo $this->_environment['path'] . ": is_executable($file)<br>\n";
+	return false;	
+    }
+
+    function copy($file1, $file2) {
+	echo $this->_environment['path'] . ": copy($file1, $file2)<br>\n";
+    }
+
+    function filesize($file) {
+	global $_ImPlatformFiles;
+	$basename = basename($file);
+	if ($basename == 'testProfile.jpg') {
+	    return 100000;
+	}
+	if (isset($this->_files[$basename]['size'])) {
+	    return $this->_files[$basename]['size'];
+	}
+	echo $this->_environment['path'] . ": filesize($file)<br>\n";
+	return 0;
     }
 
     function tempnam($dir, $prefix) {
-	return 'TEMPFILE';
+	$fileName = $dir . $prefix . md5(rand());
+	//echo $this->_environment['path'] . ": tempnam($dir, $prefix) = $fileName<br>\n";
+	return $fileName;
     }
 
     function unlink($path) {
-	// we don't create any files, so no need to unlink any
+	global $_ImPlatformFiles;
+	$baseName = basename($path);
+	if (isset($this->_files[$baseName])) {
+	    unset($this->_files[$baseName]);
+	    return true;
+	}
+	echo $this->_environment['path'] . ": unlink($path)<br>\n";
+	return false;
     }
 
     function getimagesize($path) {
-	switch($path) {
-	case 'testGetProperties1.gif':
-	    return array(10, 20);
-	    break;
+	$basename = basename($path);
+	if (preg_match('#\[(\d+)x(\d+)\]#', $basename, $matches)) {
+	    return array($matches[1], $matches[2], 1, sprintf('height="%d" width="%d"', $matches[1], $matches[2]));
 	}
+	//echo $this->_environment['path'] . ": getimagesize($path)<br>\n";
 	return false;
     }
 
