@@ -147,15 +147,10 @@ class MatrixLayout extends GalleryLayout {
 	global $gallery;
 	$urlGenerator =& $gallery->getUrlGenerator();
 
-	list ($ret, $params) = $this->fetchParameters($item->getParentId());
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
 	if ($item->getCanContainChildren()) {
-	    list ($ret, $bodyFile) = $this->_loadAlbumTemplate($template, $item, $params);
+	    list ($ret, $bodyFile) = $this->_loadAlbumTemplate($template, $item);
 	} else {
-	    list ($ret, $bodyFile) = $this->_loadSingleTemplate($template, $item, $params);
+	    list ($ret, $bodyFile) = $this->_loadSingleTemplate($template, $item);
 	}
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -216,8 +211,13 @@ class MatrixLayout extends GalleryLayout {
      *         string the HTML body
      * @access private
      */
-    function _loadAlbumTemplate(&$template, $item, $properties) {
+    function _loadAlbumTemplate(&$template, $item) {
 	global $gallery;
+
+	list ($ret, $properties) = $this->fetchParameters($item->getId());
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 
 	$rows = $properties['rows'];
 	$columns = $properties['columns'];
@@ -357,6 +357,11 @@ class MatrixLayout extends GalleryLayout {
      */
     function _loadSingleTemplate(&$template, $item, $properties) {
 	global $gallery;
+
+	list ($ret, $properties) = $this->fetchParameters($item->getParentId());
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 
 	/*
 	 * Figure out all possible views of this item that the user can see and
