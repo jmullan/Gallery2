@@ -173,7 +173,7 @@
       install it on a development server.  We want you to try it, test it, break
       it, and tell us all about it.  Get your friends and colleagues to poke
       around.  However, please be prepared to delete your G2 Alpha installation
-      and all of the data at any time and start from scratch.
+      and all of the data at any time and start over from scratch.
     </p>
       
     <h2><a name="when_not_to_use">When not to use G2 Alpha</a></h2>
@@ -259,7 +259,7 @@
 	</div>
 
 	In the Unix example, you may note that modes of 777 on your
-	gallerydata directory are all that secure.  However, making it
+	gallerydata directory are not all that secure.  However, making it
 	more secure depends on how your system is configured.  Talk
 	with your system administrator about ways to change the
 	permissions on that directory to make it so that Gallery can
@@ -474,7 +474,11 @@
 	the order of photos, yet.  We also know that it seems to abort
 	after 5 minutes so if you do a large import and it suddenly
 	stops without giving you any feedback, you might want to
-	import in small chunks of albums for now.
+	import in small chunks of albums for now.  If your G1 uses a
+	character set besides UTF-8, any non-ASCII characters in your
+	captions, description, and comments will probably be displayed
+	incorrectly.  Converting them to UTF-8 (and then html entities)
+	is one of the high-priority post-alpha tasks.
       </li>
       <li>
 	<b>Performance</b> - G2 is not as fast as we want it to be.
