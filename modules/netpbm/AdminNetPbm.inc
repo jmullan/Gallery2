@@ -47,6 +47,7 @@ class AdminNetPbmController extends GalleryController {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	$debugSnippet = '';
 	$status = array();
 	$error = array();
 	if (isset($form['action']['save'])) {
@@ -65,8 +66,11 @@ class AdminNetPbmController extends GalleryController {
 		    }
 		}
 
+		$gallery->startRecordingDebugSnippet();
 		list ($ret, $testResults) = NetPbmToolkitHelper::testBinaries(
 		    $form['path'], array('pnmtojpeg' => $form['pnmtojpeg']));
+		$debugSnippet = $gallery->stopRecordingDebugSnippet();
+		
 		if ($ret->isError()) {
 		    if ($ret->getErrorCode() & ERROR_BAD_PATH) {
 			$error[] = 'form[error][path][badPath]';
@@ -75,6 +79,7 @@ class AdminNetPbmController extends GalleryController {
 		    }
 		} else {
 		    $failCount = 0;
+		    $debugSnippet = '';
 		    foreach ($testResults as $testResult) {
 			/* At least one test should work, else this path is not a valid one */
 			if (!$testResult['success']) {
@@ -84,6 +89,28 @@ class AdminNetPbmController extends GalleryController {
 
 		    if ($failCount == sizeof($testResults)) {
 			$error[] = 'form[error][path][testError]';
+		    }
+		}
+	    }
+
+	    if (!empty($form['jheadPath'])) {
+		$gallery->startRecordingDebugSnippet();
+		list ($ret, $jheadTests, $jheadMimeTypes) =
+		    NetPbmToolkitHelper::testJhead($form['jheadPath']);
+		$debugSnippet .= $gallery->stopRecordingDebugSnippet();
+		if ($ret->isError()) {
+		    if ($ret->getErrorCode() & ERROR_BAD_PATH) {
+			$error[] = 'form[error][jheadPath][badPath]';
+		    } else {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		} else {
+		    $successCount = 0;
+		    foreach ($jheadTests as $test) {
+			$successCount += $test['success'];
+		    }
+		    if ($successCount != count($jheadTests)) {
+			$error[] = 'form[error][jheadPath][badPath]';
 		    }
 		}
 	    }
@@ -111,6 +138,7 @@ class AdminNetPbmController extends GalleryController {
 
 		/* Set the jhead binary name */
 		$jheadPath = isset($form['jheadPath']) ? $form['jheadPath'] : '';
+
 		$ret = GalleryCoreApi::setPluginParameter(
 		    'module', 'netpbm', 'jheadPath', $jheadPath);
 		if ($ret->isError()) {
@@ -188,13 +216,15 @@ class AdminNetPbmView extends GalleryView {
 	$mimeTypes = array();
 
 	$failCount = 0;
+	$debugSnippet = '';
 	if (isset($form['action']['test'])) {
 	    if (empty($form['path'])) {
 		$form['error']['path']['missing'] = 1;
 	    } else {
-		list ($ret, $tests, $mimeTypes) =
-		    NetPbmToolkitHelper::testBinaries($form['path'],
-						      array('pnmtojpeg' => $form['pnmtojpeg']));
+		$gallery->startRecordingDebugSnippet();
+		list ($ret, $tests, $mimeTypes) = NetPbmToolkitHelper::testBinaries(
+		    $form['path'], array('pnmtojpeg' => $form['pnmtojpeg']));
+		$debugSnippet = $gallery->stopRecordingDebugSnippet();
 
 		if ($ret->isError()) {
 		    if ($ret->getErrorCode() & ERROR_BAD_PATH) {
@@ -208,11 +238,14 @@ class AdminNetPbmView extends GalleryView {
 		    }
 		}
 	    }
+
 	    if (empty($form['jheadPath'])) {
 		$form['error']['jheadPath']['missing'] = 1;
 	    } else {
+		$gallery->startRecordingDebugSnippet();
 		list ($ret, $jheadTests, $jheadMimeTypes) =
 		    NetPbmToolkitHelper::testJhead($form['jheadPath']);
+		$debugSnippet .= $gallery->stopRecordingDebugSnippet();
 		if ($ret->isError()) {
 		    if ($ret->getErrorCode() & ERROR_BAD_PATH) {
 			$form['error']['jheadPath']['badPath'] = 1;
@@ -222,6 +255,7 @@ class AdminNetPbmView extends GalleryView {
 		} else {
 		    foreach ($jheadTests as $test) {
 			$tests[] = $test;
+			$failCount += !$test['success'];
 		    }
 		}
 	    }
@@ -233,6 +267,13 @@ class AdminNetPbmView extends GalleryView {
 	$AdminNetPbm['pnmToJpegList'] = $pnmToJpegList;
 	$AdminNetPbm['jpegQualityList'] = $jpegQualityList;
 	$AdminNetPbm['failCount'] = $failCount;
+	$AdminNetPbm['debugSnippet'] = $debugSnippet;
+
+	if ($failCount > 0) {
+	    $urlGenerator =& $gallery->getUrlGenerator();
+	    $jsUrl = $urlGenerator->generateUrl(array('href' => 'lib/javascript/BlockToggle.js'));
+	    $template->javascript($jsUrl);
+	}
 
 	$template->setVariable('AdminNetPbm', $AdminNetPbm);
 	$template->setVariable('controller', 'netpbm:AdminNetPbm');

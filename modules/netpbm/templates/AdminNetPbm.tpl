@@ -175,5 +175,24 @@
     {/foreach}
   </div>
   {/if}
+
+  {if ($AdminNetPbm.failCount > 0)}
+  <div class="gbAdmin">
+    <h3 class="giTitle">
+      {g->text one="Debug output (%d failed test)"
+               many="Debug output (%d failed tests)"
+               count=$AdminNetPbm.failCount
+	       arg1=$AdminNetPbm.failCount}
+      <span id="AdminNetPbm_trace-toggle" class="giShowHideSwitch"
+        onclick="BlockToggle('AdminNetPbm_debugSnippet', 'AdminNetPbm_trace-toggle')"> + </span>
+    </h3>
+    <p class="giDescription">
+      {g->text text="We gathered this debug output while testing your NetPBM binaries.  If you read through this carefully you may discover the reason why your NetPBM binaries failed the tests."}
+    </p>
+    <pre id="AdminNetPbm_debugSnippet" class="giInlineDebug" style="display: none">
+      {$AdminNetPbm.debugSnippet}
+    </pre>
+  </div>
+  {/if}
   {/if}
 </div>

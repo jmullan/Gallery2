@@ -42,7 +42,8 @@ class AdminNetPbmControllerTest extends GalleryControllerTestCase {
 	parent::setUp();
 
 	foreach (array('path', 'jpegQuality', 'pnmtojpeg', 'jheadPath') as $param) {
-	    list ($ret, $this->_save[$param]) = GalleryCoreApi::getPluginParameter('module', 'netpbm', $param);
+	    list ($ret, $this->_save[$param]) = GalleryCoreApi::getPluginParameter(
+		'module', 'netpbm', $param);
 	    if ($ret->isError()) {
 		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -62,9 +63,6 @@ class AdminNetPbmControllerTest extends GalleryControllerTestCase {
     }
 
     function tearDown() {
-	global $gallery;
-	parent::tearDown();
-
 	foreach ($this->_save as $key => $value) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'netpbm', $key, $value);
 	    if ($ret->isError()) {
@@ -72,12 +70,10 @@ class AdminNetPbmControllerTest extends GalleryControllerTestCase {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
+	parent::tearDown();
     }
 
-    function testSaveGoodPath() {
-	global $gallery;
-
-	/* Use valid inputs */
+    function testSaveGoodNetPbmPathNoJheadPath() {
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[path]', '/validPath/');
 	GalleryUtilities::putRequestVariable('form[pnmtojpeg]', 'ppmtojpeg');
@@ -100,10 +96,33 @@ class AdminNetPbmControllerTest extends GalleryControllerTestCase {
 			    GalleryCoreApi::getPluginParameter('module', 'netpbm', 'pnmtojpeg'));
     }
 
-    function testCancel() {
-	global $gallery;
+    function testSaveGoodPaths() {
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[path]', '/validPath/');
+	GalleryUtilities::putRequestVariable('form[jheadPath]', '/validPath/');
+	GalleryUtilities::putRequestVariable('form[pnmtojpeg]', 'ppmtojpeg');
+	GalleryUtilities::putRequestVariable('form[jpegQuality]', '12');
 
-	/* Use valid inputs */
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'netpbm:AdminNetPbm'),
+				  'status' => array('saved' => 1),
+				  'error' => array()),
+			    $results);
+	
+	/* Verify the settings went in properly */
+	$this->assertEquals(array(GalleryStatus::success(), '/validPath/'),
+			    GalleryCoreApi::getPluginParameter('module', 'netpbm', 'path'));
+	$this->assertEquals(array(GalleryStatus::success(), '/validPath/'),
+			    GalleryCoreApi::getPluginParameter('module', 'netpbm', 'jheadPath'));
+	$this->assertEquals(array(GalleryStatus::success(), '12'),
+			    GalleryCoreApi::getPluginParameter('module', 'netpbm', 'jpegQuality'));
+	$this->assertEquals(array(GalleryStatus::success(), 'ppmtojpeg'),
+			    GalleryCoreApi::getPluginParameter('module', 'netpbm', 'pnmtojpeg'));
+    }
+
+    function testCancel() {
 	GalleryUtilities::putRequestVariable('form[action][cancel]', 1);
 
 	/* Perform the request and verify that we succeeded */
@@ -116,9 +135,6 @@ class AdminNetPbmControllerTest extends GalleryControllerTestCase {
     }
     
     function testSaveTestErrorPath() {
-	global $gallery;
-
-	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[path]', '/validPathBadBinaries/');
 	GalleryUtilities::putRequestVariable('form[pnmtojpeg]', 'ppmtojpeg');
@@ -134,9 +150,6 @@ class AdminNetPbmControllerTest extends GalleryControllerTestCase {
     }
 
     function testSaveBadPath() {
-	global $gallery;
-
-	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[path]', '/invalidPath/');
 	GalleryUtilities::putRequestVariable('form[pnmtojpeg]', 'ppmtojpeg');
@@ -152,9 +165,6 @@ class AdminNetPbmControllerTest extends GalleryControllerTestCase {
     }
     
     function testSaveMissingPath() {
-	global $gallery;
-
-	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[path]', '');
 	GalleryUtilities::putRequestVariable('form[pnmtojpeg]', 'ppmtojpeg');
@@ -166,6 +176,22 @@ class AdminNetPbmControllerTest extends GalleryControllerTestCase {
 						      'subView' => 'netpbm:AdminNetPbm'),
 				  'status' => array(),
 				  'error' => array('form[error][path][missing]')),
+			    $results);
+    }
+
+    function testSaveGoodNetPbmBadJheadPath() {
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[path]', '/validPath/');
+	GalleryUtilities::putRequestVariable('form[jheadPath]', '/invalid/');
+	GalleryUtilities::putRequestVariable('form[pnmtojpeg]', 'ppmtojpeg');
+	GalleryUtilities::putRequestVariable('form[jpegQuality]', '12');
+
+	/* Perform the request and verify that we failed */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'netpbm:AdminNetPbm'),
+				  'status' => array(),
+				  'error' => array('form[error][jheadPath][badPath]')),
 			    $results);
     }
 }
@@ -197,6 +223,7 @@ class AdminNetPbmControllerTestPlatform {
 	case '/validPath/pnmtopng':
 	case '/validPath/tifftopnm':
 	case '/validPath/pnmtotiff':
+	case '/validPath/jhead':
 	case '/validPathBadBinaries/':
 	    return true;
 	}
@@ -215,7 +242,7 @@ class AdminNetPbmControllerTestPlatform {
     }
 
     function unlink($args) {
-	// do nothing
+	/* do nothing */
     }
 
     function isRestrictedByOpenBaseDir($path) {
@@ -233,6 +260,7 @@ class AdminNetPbmControllerTestPlatform {
 	case '/validPath/tifftopnm':
 	case '/validPath/pnmtotiff':
 	case '/validPath/pnmcomp':
+	case '/validPath/jhead':
 	    return array(1, array());
 
 	default:
