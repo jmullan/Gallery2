@@ -35,9 +35,9 @@
       <ul>
 	{if ($AdminLayouts.mode == 'config')}
 	<li class="giSelectedTab"> 
-	<span>
+		<span>
 	  {g->text text="All Layouts"}
-	</span>
+		</span>
 	</li>
         {else}
         <li>
@@ -49,9 +49,9 @@
         {if $AdminLayouts.layouts.$layoutId.active}
         {if ($AdminLayouts.mode == 'editLayout') && ($AdminLayouts.layoutId == $layoutId)}
         <li class="giSelectedTab">
-        <span>
+            <span>
 	  {g->text text=$layout.name l10Domain=$layout.l10Domain}
-	  	</span>
+            </span>
 	</li>
 	{else}
         <li>
