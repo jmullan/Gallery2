@@ -126,6 +126,29 @@ class GalleryUtilities {
 	return GalleryUtilities::convertExtensionToMime($extension);
     }
 
+    function getFile($key) {
+	$file = array();
+	$key = GALLERY_FORM_VARIABLE_PREFIX . $key;
+	if (isset($_FILES[$key])) {
+	    /*
+	     * Later on during our sanitization process we're going to call
+	     * stripslashes on our file name.  But it may legitimately have
+	     * backslashes in it (eg c:\apache\tmp\php195.jpg), so make sure those
+	     * are escaped at this time.  There's gotta be a better way to
+	     * handle this.
+	     */
+	    $file = $_FILES[$key];
+	    if (get_magic_quotes_gpc()) {
+		$file['tmp_name'] = addslashes($file['tmp_name']);
+	    }
+
+	    /* Perform any necessary transformations on our values */
+	    GalleryUtilities::sanitizeInputValues($file);
+	}
+
+	return $file;
+    }
+
     /**
      * Return all request variables that match the prefix
      *

@@ -466,6 +466,26 @@ class UtilitiesTest extends GalleryTestCase {
 	$this->assert($tree[6]['depth'] == 0);
 	$this->assert($tree[6]['data']['id'] == 2);
     }
+
+    function testGetFile() {
+	global $gallery;
+	$platform = $gallery->getPlatform();
+
+        $_FILES[GALLERY_FORM_VARIABLE_PREFIX . 'userfile'] =
+	    array('name' => 'testfile.txt',
+		  'type' => 'text/plain',
+		  'tmp_name' => __FILE__,
+		  'error' => 0,
+		  'size' => $platform->filesize(__FILE__));
+
+	$file = GalleryUtilities::getFile('userfile');
+	$this->assertEquals(array('name' => 'testfile.txt',
+				  'type' => 'text/plain',
+				  'tmp_name' => __FILE__,
+				  'error' => 0,
+				  'size' => $platform->filesize(__FILE__)),
+			    $file);
+    }
 }
 
 /**
@@ -621,6 +641,10 @@ class UtilitiesTestPlatform {
 	default:
 	    return false;
 	}
+    }
+
+    function filesize($file) {
+	return filesize($file);
     }
 
     function getDirectorySeparator() {
