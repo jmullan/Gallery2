@@ -21,7 +21,7 @@ function checkForm() {ldelim}
 </script>
 
 <div class="gbMenu">
-  <form id="SearchSystemContent" action="{g->url}" method="post">
+  <form name="SearchSystemContent" id="SearchSystemContent" action="{g->url}" method="post">
     <p>
       <input type="hidden" name="{g->formVar var="view"}" value="core:Navigation"/>
       <input type="hidden" name="{g->formVar var="subView"}" value="{$SearchSystemContent.subView}"/>
