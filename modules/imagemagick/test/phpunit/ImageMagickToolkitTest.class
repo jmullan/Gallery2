@@ -292,7 +292,8 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 				  'image/png',
 				  'image/tiff',
 				  'image/svg+xml',
-				  'image/bmp'),
+				  'image/bmp',
+				  'application/pdf'),
 			    $results);
     }
 
@@ -301,11 +302,17 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	$this->assertEquals(array('image/gif'),
+			    $results);
+    }
+
+    function testDiscoverMimeTypesWithAlternatePdf() {
+	list ($ret, $results) = ImageMagickToolkitHelper::discoverMimeTypes('/alternatePdf/');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 	$this->assertEquals(array('image/gif',
-				  'image/jpeg',
-				  'image/pjpeg',
-				  'image/png',
-				  'image/tiff'),
+				  'application/pdf'),
 			    $results);
     }
 
@@ -317,7 +324,8 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 	$this->assertEquals(array('convert-to-image/jpeg' => array('params' => array(),
 								   'description' => 'Convert to a JPEG',
 								   'mimeTypes' => array('image/tiff',
-											'image/svg+xml'),
+											'image/svg+xml',
+											'application/pdf'),
 								   'outputMimeType' => 'image/jpeg'),
 				  'scale' => array('params' =>
 						   array(array('type' => 'int',
@@ -329,7 +337,8 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 									'image/png',
 									'image/tiff',
 									'image/svg+xml',
-									'image/bmp')
+									'image/bmp',
+									'application/pdf')
 						   ),
 				  'thumbnail' => array('params' =>
 						       array(array('type' => 'int',
@@ -341,7 +350,8 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 									    'image/png',
 									    'image/tiff',
 									    'image/svg+xml',
-									    'image/bmp')),
+									    'image/bmp',
+									    'application/pdf')),
 				  'resize' => array('params' =>
 						    array(array('type' => 'int',
 								'description' => 'target width'),
@@ -354,7 +364,8 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 									 'image/png',
 									 'image/tiff',
 									 'image/svg+xml',
-									 'image/bmp')),
+									 'image/bmp',
+									 'application/pdf')),
 				  'rotate' => array('params' =>
 						    array(array('type' => 'int',
 								'description' => 'rotation degrees')),
@@ -365,7 +376,8 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 									 'image/png',
 									 'image/tiff',
 									 'image/svg+xml',
-									 'image/bmp')),
+									 'image/bmp',
+									 'application/pdf')),
 				  'crop' => array('params' =>
 						  array(array('type' => 'int',
 							      'description' => 'left edge'),
@@ -382,7 +394,8 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 								       'image/png',
 								       'image/tiff',
 								       'image/svg+xml',
-								       'image/bmp')),
+								       'image/bmp',
+								       'application/pdf')),
 				  'composite' => array('params' =>
 						       array(array('type' => 'string',
 								   'description' => 'overlay path'),
@@ -405,7 +418,8 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 									     'image/png',
 									     'image/tiff',
 									     'image/svg+xml',
-									     'image/bmp'))),
+									    'image/bmp',
+									    'application/pdf'))),
 			    $results['operations']);
 	$this->assertEquals(array('dimensions' => array('type' => 'int,int',
 							'description' => 'Get the width and height of the image',
@@ -415,7 +429,8 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 									     'image/png',
 									     'image/tiff',
 									     'image/svg+xml',
-									     'image/bmp'))),
+									     'image/bmp',
+									     'application/pdf'))),
 			    $results['properties']);
     }
 
@@ -485,6 +500,11 @@ class ImageMagickToolkitTestPlatform {
 		    $lines[] = 'test.bmp BMP 50x50+0+0 PseudoClass 15c 8-bit 504.0 0.000u 0:01';
 		    break;
 
+		case 'test.pdf':
+		    $lines[] = 'test.pdf[0] PDF 612x792+0+0 DirectClass 3.7mb 0.080u 0:01';
+		    $lines[] = 'test.pdf[3] PDF 612x792+0+0 DirectClass 3.7mb 0.000u 0:01';
+		    break;
+
 		case 'testPerformOperations1.gif':
 		    $lines[] = 'testPerformOperations1.gif GIF 300x400+0+0 PseudoClass 8c 8-bit 232.0 0.000u 0:01';
 		    break;
@@ -502,43 +522,42 @@ class ImageMagickToolkitTestPlatform {
 	    return array(1, $lines);
 	    break;
 
+	case '/alternatePdf/identify':
+	case $imageMagickPath . 'identify':
+	    $lines = array();
+	    $success = 1;
+	    for ($i = 0; $i < sizeof($cmd[0]); $i++) {
+		switch(basename($cmd[0][$i])) {
+		case 'test.gif':
+		    $lines[] = 'test.gif GIF 50x50+0+0 PseudoClass 8c 8-bit 232.0 0.000u 0:01';
+		    break;
+		    
+		case 'test.pdf':
+		    $lines[] = 'test.pdf[0] PDF 612x792+0+0 PseudoClass 256c 8-bit 947kb 0.016u 0:01';
+		    $lines[] = 'test.pdf[1] PDF 612x792+0+0 PseudoClass 256c 8-bit 947kb 0.008u 0:01';
+		    break;
+		}
+
+		if (!$success) {
+		    break;
+		}
+	    }
+	    return array($success, $lines);
+	    break;
+	    
 	case '/crashSvgPath/identify':
 	case $imageMagickPath . 'identify':
 	    $lines = array();
 	    $success = 1;
 	    for ($i = 0; $i < sizeof($cmd[0]); $i++) {
 		switch(basename($cmd[0][$i])) {
-		case 'testGetProperties2.gif':
-		    $lines[] = 'testGetProperties2.gif GIF 30x40+0+0 PseudoClass 8c 8-bit 232.0 0.000u 0:01';
-		    break;
-
 		case 'test.gif':
 		    $lines[] = 'test.gif GIF 50x50+0+0 PseudoClass 8c 8-bit 232.0 0.000u 0:01';
-		    break;
-		    
-		case 'test.jpg':
-		    $lines[] = 'test.jpg JPEG 50x50+0+0 DirectClass 8-bit 763.0 0.000u 0:01';
-		    break;
-		    
-		case 'test.png':
-		    $lines[] = 'test.png PNG 50x50+0+0 DirectClass 8-bit 730.0 0.000u 0:01';
-		    break;
-		    
-		case 'test.tif':
-		    $lines[] = 'test.tif TIFF 50x50+0+0 DirectClass 8-bit 7.8k 0.000u 0:01';
 		    break;
 		    
 		case 'test.svg':
 		    $lines[] = 'Segmentation fault (core dumped)';
 		    $success = 0;
-		    break;
-
-		case 'testPerformOperations1.gif':
-		    $lines[] = 'testPerformOperations1.gif GIF 300x400+0+0 PseudoClass 8c 8-bit 232.0 0.000u 0:01';
-		    break;
-
-		case 'testPerformOperations4.jpg':
-		    $lines[] = 'testPerformOperations4.jpg GIF x100x200+0+0 PseudoClass 8c 8-bit 232.0 0.000u 0:01';
 		    break;
 		}
 
