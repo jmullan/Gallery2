@@ -254,6 +254,9 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	/* No parent for root */
 	$this->setParentId(0);
 
+	/* Origination timestamp defaults to now */
+	$this->setOriginationTimestamp(time());
+
 	return GalleryStatus::success();
     }
 
