@@ -182,6 +182,9 @@ class ItemCreateLinkController extends GalleryController {
 	    $page = GalleryUtilities::getRequestVariables('page');
 	    $results['delegate']['itemId'] = $itemId;
 	    $results['delegate']['page'] = max($page - 1, 1);
+	} else if (isset($form['action']['cancel'])) {
+	    $redirect['view'] = 'core:ShowItem';
+	    $redirect['itemId'] = $itemId;
 	}
 
 	if (!empty($redirect)) {

@@ -263,5 +263,34 @@ class ItemCreateLinkControllerTest extends GalleryControllerTestCase {
 				  'error' => array()),
 			    $results);
     }
+
+    /*
+     * Bug #995734
+     * Cancel button should return to the current album view
+     */
+    function testCreateLinkCancelButton() {
+	list ($ret, $childAlbum) = $this->_createRandomAlbum($this->_album->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $childItem) = $this->_createRandomDataItem($childAlbum->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	global $gallery;
+	GalleryUtilities::putRequestVariable('itemId', $childAlbum->getId());
+	GalleryUtilities::putRequestVariable('form[selectedIds]',
+					     array($childItem->getId() => 1));
+	GalleryUtilities::putRequestVariable('form[action][cancel]', 1);
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:ShowItem',
+						      'itemId' => $childAlbum->getId()),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
+    }
 }
 ?>
