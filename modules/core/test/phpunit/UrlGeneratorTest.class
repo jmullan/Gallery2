@@ -55,7 +55,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	$this->_urlGenerator = new GalleryUrlGenerator();
 	$this->_urlGenerator->init('phpunit_test.php');
     }
@@ -65,7 +65,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$gallery->_session = $this->_savedSession;
 
 	$ret = GalleryCoreApi::setPluginParameter(
-            'module', 'core', 'misc.useShortUrls', $this->_saveParam);
+	    'module', 'core', 'misc.useShortUrls', $this->_saveParam);
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -135,7 +135,7 @@ class UrlGeneratorTest extends GalleryTestCase {
     function testGenerateUrlWithNoSession() {
 	global $gallery;
 	$gallery->_session = null;
-	
+
 	$urlGenerator = new GalleryUrlGenerator();
 	$urlGenerator->init('phpunit_test.php');
 
@@ -602,6 +602,14 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$this->assertEquals($expected, $this->_urlGenerator->getNavigationReturnUrl());
 
 	$session->_isUsingCookies = $savedIsUsingCookies;
+    }
+
+    function testGetNavigationReturnUrlArrayParam() {
+	$_GET['g2_foo'] = array('test' => 'bar');
+	$_GET['g2_form'] = array('one' => array('two' => array('three' => 'four')));
+	$expected = 'http://example.com/gallery2/phpunit_test.php?g2_foo[test]=bar&amp;'
+		  . 'g2_form[one][two][three]=four';
+	$this->assertEquals($expected, $this->_urlGenerator->getNavigationReturnUrl());
     }
 
     function testRelativeUrlOverrides() {

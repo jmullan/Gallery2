@@ -542,9 +542,7 @@ class GalleryUrlGenerator {
 			array('return', 'returnName', 'navId', 'fromNavId'));
 	if (!empty($urlVariables)) {
 	    $args = array();
-	    foreach ($urlVariables as $key => $value) {
-		$args[] = $key . '=' . $value;
-	    }
+	    $this->_buildQueryParameters($args, $urlVariables);
 	    $url .= '?' . implode('&amp;', $args);
 	}
 
@@ -563,6 +561,21 @@ class GalleryUrlGenerator {
 	    }
 	}
 	return $url;
+    }
+
+    /**
+     * Build array of query parameters for array of keys/values (possibly nested)
+     * @private 
+     */
+    function _buildQueryParameters(&$args, $urlVariables, $prefix='') {
+	foreach ($urlVariables as $key => $value) {
+	    if (is_array($value)) {
+		$this->_buildQueryParameters($args, $value,
+					     $prefix . $key . (empty($prefix) ? '[' : ']['));
+	    } else {
+		$args[] = $prefix . $key . (empty($prefix) ? '=' : ']=') . $value;
+	    }
+	}
     }
 
     /**
