@@ -81,21 +81,31 @@ class CoreModuleTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals(array(
-				  array('name' => $this->_module->translate('General'),
-					'view' => 'core:AdminCore'),
-				  array('name' => $this->_module->translate('Modules'),
-					'view' => 'core:AdminModules'),
-				  array('name' => $this->_module->translate('Layouts and Themes'),
-					'view' => 'core:AdminLayouts',
-					'group' => 'display',
-					'groupLabel' => $this->_module->translate('Display')),
-				  array('name' => $this->_module->translate('Users'),
-					'view' => 'core:AdminUsers'),
-				  array('name' => $this->_module->translate('Groups'),
-					'view' => 'core:AdminGroups'),
-				  ),
-			    $content);
+	$expected = array(
+			  array('name' => $this->_module->translate('General'),
+				'view' => 'core:AdminCore'),
+			  array('name' => $this->_module->translate('Modules'),
+				'view' => 'core:AdminModules'),
+			  array('name' => $this->_module->translate('Layouts and Themes'),
+				'view' => 'core:AdminLayouts',
+				'group' => 'display',
+				'groupLabel' => $this->_module->translate('Display')),
+			  array('name' => $this->_module->translate('Users'),
+				'view' => 'core:AdminUsers'),
+			  array('name' => $this->_module->translate('Groups'),
+				'view' => 'core:AdminGroups'),
+			  );
+	list ($ret, $list) = GalleryCoreApi::getRedundantToolkitPriorities();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	if (!empty($list)) {
+	    $expected[] = array('name' => $this->_module->translate('Toolkit Priority'),
+				'view' => 'core:AdminToolkitPriority',
+				'group' => 'toolkits',
+				'groupLabel' => $this->_module->translate('Graphics Toolkits'));
+	}
+	$this->assertEquals($expected, $content);
     }
 
     function testGetItemAdminViews() {
