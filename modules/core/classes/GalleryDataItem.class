@@ -155,6 +155,32 @@ class GalleryDataItem_core extends GalleryItem {
 	$baseName = $platform->legalizePathComponent($baseName);
 	list ($fileBase, $extension) = GalleryUtilities::getFileNameComponents($baseName);
 
+	/*
+	 * Convert all dots to underscores in the fileBase.  This prevents
+	 * malicious users from uploading files like 'foo.php.jpg' which will
+	 * be treated like a JPEG by Gallery, but could be treated like a .php
+	 * file by Apache opening a security hole.
+	 */
+	$fileBase = str_replace('.', '_', $fileBase);
+
+	/*
+	 * If we don't know exactly what type this file is, we have to assume
+	 * that it's something malicious.  In that case, it might be a server
+	 * side script of some kind and we don't want that to wind up in the
+	 * albums directory in a pure state because it may open up a security
+	 * hole on systems that have placed the gallery data directory inside
+	 * the document root.  So mangle the extension to make sure that the
+	 * webserver doesn't execute it.
+	 */
+	$tmp = GalleryUtilities::convertExtensionToMime($extension);
+	if ($tmp == 'application/unknown') {
+	    $baseName = $fileBase . '_' . $extension;
+	    $extension = 'data';
+	}
+
+	/* Rebuild the baseName according to our transforms above */
+	$baseName = $fileBase . '.' . $extension;
+
 	/* Don't be intimidated by the first 10 collisions */
 	$retry = 0;
 	$newFileName = $parentPath . $baseName;
