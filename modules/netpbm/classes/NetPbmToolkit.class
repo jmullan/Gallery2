@@ -28,7 +28,7 @@
 /**
  * Load required classes
  */
-require_once(dirname(__FILE__) . '/../../core/classes/GalleryToolkit.class');
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryToolkit.class');
 
 /**
  * A NetPBM version of GalleryToolkit
@@ -134,9 +134,16 @@ class NetPbmToolkit extends GalleryToolkit {
 	    break;
 	    
 	case 'crop':
+	    /* Crop is expressed in percentages so we have to know the dimensions of the input file */
+	    list ($ret, $width, $height) = $this->_getImageDimensions($mimeType, $sourceFilename);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
 	    $transform = array($this->_pnmCmd('pnmcut'),
-			       $parameters[0], $parameters[1],
-			       $parameters[2], $parameters[3]);
+			       round(($parameters[0] / 100) * $width),
+			       round(($parameters[1] / 100) * $height),
+			       round(($parameters[2] / 100) * $width),
+			       round(($parameters[3] / 100) * $height));
 	    break;
 
 	case 'convert-to-image/jpeg':
