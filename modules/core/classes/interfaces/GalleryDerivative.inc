@@ -143,6 +143,17 @@ class GalleryDerivative extends GalleryDerivative_core {
         return 'GalleryDerivative';
     }
 
+    /** 
+     * Return the path to the PHP file for this class, relative to the gallery2 dir
+     * 
+     * @return string path
+     */ 
+    function getClassFile() { 
+        return 'modules/' .  
+            basename(dirname(dirname(dirname(__FILE__)))) .  
+            '/classes/GalleryDerivative.class'; 
+    }
+
     
     /**
      * Get the value of derivativeSourceId

@@ -26,43 +26,61 @@
  */
 
 /**
- * First pass of initialization.
- *
- * Do the following:
- * - Create and bootstrap the Core
- * - Set all of our paths correctly (modules, themes, layouts, etc)
- * - Check for the existence of key functions (eg, dgettext)
- *
- * Do not attempt anything database related!
+ * Perform all necessary initialization of the Gallery framework
  */
-function GalleryInitFirstPass() {
+function GalleryInitFirstPass($params=array()) {
     /* Specify that when an assertion fails, we terminate right away. */
     assert_options(ASSERT_BAIL, 1);
 
     /* Figure out the Gallery base directory here, from our filename. */
     $galleryBase = dirname(__FILE__) . '/';
 
-    /* Load and initialize the core module */
-    require_once($galleryBase . 'modules/core/module.inc');
-    $coreModule = new CoreModule();
-    $ret = $coreModule->bootstrap();
-    if ($ret->isError()) {
-	return $ret->wrap(__FILE__, __LINE__);
-    }
+    /* Load all the core Gallery classes */
+    $classDir = dirname(__FILE__) . '/modules/core/classes/';
+    require_once($classDir . 'GalleryCoreApi.class');
+    require_once($classDir . 'GalleryConstants.class');
+    require_once($classDir . 'Gallery.class');
+    require_once($classDir . 'GalleryStatus.class');
+    require_once($classDir . 'GalleryDataCache.class');
+    require_once($classDir . 'GalleryUrlGenerator.class');
+    require_once($classDir . 'GalleryUtilities.class');
+    require_once($classDir . 'GalleryView.class');
+    require_once($classDir . 'GalleryModule.class');
 
     /*
-     * Set our global configuration values.  These are mostly filesystem paths
-     * as everything else is configurable via the application itself.
+     * Set up our Gallery global.  It's important to use a reference here because
+     * the constructor registers a shutdown function and ties it to the instance in
+     * the constructor.  This global should be the only one that Gallery requires.
+     * Everything else should be inside it so that we do not pollute the namespace
+     * (especially important when we're embedded inside another application).
      */
-
-    /* Assign $gallery from global, for ease of use */
+    $GLOBALS['gallery'] =& new Gallery();
     $gallery =& $GLOBALS['gallery'];
+
+    if (strtolower(PHP_OS) == 'winnt') {
+	require_once($classDir . 'GalleryPlatform/WinNtPlatform.class');
+	$gallery->setPlatform(new WinNtPlatform());
+    } else {
+	require_once($classDir . 'GalleryPlatform/UnixPlatform.class');
+	$gallery->setPlatform(new UnixPlatform());
+    }
+
+    /* Configure our url Generator for standalone mode. */
+    $urlGenerator = new GalleryUrlGenerator('main.php');
+    $urlGenerator->registerViewPrefix('view', 'core:ShowItem');
+    $urlGenerator->registerViewPrefix('download', 'core:DownloadItem');
+    
+    $gallery->setUrlGenerator($urlGenerator);
 
     $platform = $gallery->getPlatform();
     $slash = $platform->getDirectorySeparator();
     
     /* Load our local configuration */
     include(dirname(__FILE__) . $slash . 'config.php');
+
+    if (isset($params['debug'])) {
+	$gallery->setDebug($params['debug']);
+    }
     
     /* Sanitize the data path */
     $dataBase = $gallery->getConfig('data.gallery.base');
@@ -80,17 +98,8 @@ function GalleryInitFirstPass() {
     $gallery->setConfig('data.smarty.base', $dataBase . 'smarty' . $slash);
     $gallery->setConfig('data.smarty.templates_c', $dataBase . 'smarty' . $slash . 'templates_c' . $slash);
 
-    return GalleryStatus::success();
-}
-
-/**
- * Initialize our storage subsystem.
- */
-function GalleryInitStorage() {
-    global $gallery;
-    
-    /* Init our storage */
-    $ret = $gallery->initStorage();
+    /* Initialize our translator */
+    $ret = $gallery->initTranslator();
     if ($ret->isError()) {
 	return $ret->wrap(__FILE__, __LINE__);
     }
@@ -98,36 +107,9 @@ function GalleryInitStorage() {
     return GalleryStatus::success();
 }
 
-/**
- * Second pass of initialization.
- *
- * Do the following:
- * - Install the core, if necessary
- * - Attach to our session
- * - Load all modules
- */
 function GalleryInitSecondPass() {
     global $gallery;
-
-    list ($ret, $coreModule) = GalleryCoreApi::loadPlugin('module', 'core');
-    if ($ret->isError()) {
-	return $ret->wrap(__FILE__, __LINE__);
-    }
     
-    /*
-     * During the setup process, we may have bogus database credentials.  So,
-     * anything that can be set without using the database should be defined
-     * *above* this point.  Once we start trying to load modules we'll expect
-     * to error out if our credentials are bad, and we still want all the core
-     * functionality (paths, settings, etc) to be set properly.
-     */
-
-    /* Let the core module install itself, if necessary */
-    list ($ret, $coreWasInstalled) = $coreModule->install();
-    if ($ret->isError()) {
-	return $ret->wrap(__FILE__, __LINE__);
-    }
-
     /* Initialize our session */
     $ret = $gallery->initSession();
     if ($ret->isError()) {
@@ -170,83 +152,7 @@ function GalleryInitSecondPass() {
     }
     
     $gallery->setActiveUser($activeUser);
-
-    /* Initialize our translator */
-    $ret = $gallery->initTranslator();
-    if ($ret->isError()) {
-	return $ret->wrap(__FILE__, __LINE__);
-    }
-
-    /* Now it's safe to init the core */
-    $ret = $coreModule->init();
-    if ($ret->isError()) {
-	return $ret->wrap(__FILE__, __LINE__);
-    }
     
-    /* Load the module list */
-    list ($ret, $moduleStatus) = GalleryCoreApi::getPluginStatus('module');
-    if ($ret->isError()) {
-	return $ret->wrap(__FILE__, __LINE__);
-    }
-
-    foreach ($moduleStatus as $moduleId => $status) {
-	if (empty($status['active'])) {
-	    /* If we just installed the core module then try auto configuring this module. */
-	    if ($coreWasInstalled) {
-		list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId, false);
-		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
-
-		if ($module->canBeAutoInstalled()) {
-		    list ($ret, $success) = $module->install();
-		    if ($ret->isError()) {
-			/*
-			 * Auto configuration is totally optional.  But even so, it shouldn't fail unless
-			 * something catastrophic went wrong.  And even if it does fail, the user can always
-			 * try again using the AdminModules view.  So let's just eat the error and not worry
-			 * about it.
-			 */
-			GalleryCoreApi::unloadPlugin('module', $moduleId);
-			continue;
-		    }
-		    
-			  
-		    list ($ret, $success) = $module->autoConfigure();
-		    if ($ret->isError()) {
-			/* As above, we don't want to fail even if there is an error */
-			GalleryCoreApi::unloadPlugin('module', $moduleId);
-			continue;
-		    }
-
-		    if ($success) {
-			/* Auto config was successful -- activate the module */
-			$ret = $module->activate();
-			if ($ret->isError()) {
-			    /* As above, we don't want to fail even if there is an error */
-			    GalleryCoreApi::unloadPlugin('module', $moduleId);
-			    continue;
-			}
-
-			/* Now initialize it */
-			$module->init();
-			if ($ret->isError()) {
-			    /* As above, we don't want to fail even if there is an error */
-			    GalleryCoreApi::unloadPlugin('module', $moduleId);
-			    continue;
-			}
-		    }
-		}
-	    }
-	} else {
-	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-	}
-
-    }
-
     return GalleryStatus::success();
 }
 ?>

@@ -269,14 +269,11 @@ class GalleryEntity_core extends GalleryPersistent {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
-	    /*
-	     * Update the Gallery cache.
-	     *
-	     * XXX: We should refactor this so that we're not accessing the
-	     * cache in two separate places.
-	     */
-	    $id = $this->getId();
-	    GalleryDataCache::put("GalleryEntityHelper::loadEntitiesById($id)", $this);
+	    /* Update our caches */
+	    GalleryDataCache::put(sprintf('GalleryEntityHelper::loadEntitiesById(%s)', $this->getId()),
+				  $this);
+	    GalleryDataCache::putToDisk(array('type' => 'entity', 'itemId' => $this->getId()),
+					$this, array($this->getClassFile()));
 	}
 	
 	return GalleryStatus::success();
@@ -320,8 +317,7 @@ class GalleryEntity_core extends GalleryPersistent {
 	global $gallery;
 
 	if (!GalleryCoreApi::isWriteLocked($this->getId())) {
-	    return GalleryStatus::error(ERROR_LOCK_REQUIRED,
-					__FILE__, __LINE__);
+	    return GalleryStatus::error(ERROR_LOCK_REQUIRED, __FILE__, __LINE__);
 	}
 
 	$event = GalleryCoreApi::newEvent('GalleryEntity::delete');
@@ -339,7 +335,15 @@ class GalleryEntity_core extends GalleryPersistent {
 	GalleryLockHelper_medium::deleteLockFile($this->getId());
 
 	$storage =& $gallery->getStorage();
-	return $storage->deleteEntity($this);
+	$ret = $storage->deleteEntity($this);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	GalleryDataCache::remove(sprintf('GalleryEntityHelper::loadEntitiesById(%s)', $this->getId()));
+	GalleryDataCache::removeFromDisk(array('type' => 'entity', 'itemId' => $this->getId()));
+	
+	return GalleryStatus::success();
     }
 
     /**

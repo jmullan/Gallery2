@@ -56,23 +56,17 @@ class UploadAppletModule extends GalleryModule {
 
 	list ($ret, $version) = $this->getModuleParameter('version');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__,__LINE__), false);
+	    return $ret->wrap(__FILE__,__LINE__);
 	}
 
-	$installed = false;
 	if ($version != $this->getVersion()) {
-	    if (empty($version)) {
-		/* Initial install */
-		$installed = true;
-	    }
-
 	    $ret = $this->setModuleParameter('version', $this->getVersion());
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), false);
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 
-	return array(GalleryStatus::success(), $installed);
+	return GalleryStatus::success();
     }
 
     /**

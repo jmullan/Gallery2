@@ -33,16 +33,10 @@ class InitializeGalleryTestCase extends TestCase {
 	GalleryDataCache::reset(true);
 
 	/* Get rid of event listeners, else they can screw up our reinstall process */
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryEventHelper_simple.class');
 	$listeners =& GalleryEventHelper_simple::_getEventListeners();
 	foreach (array_keys($listeners) as $eventName) {
 	    unset($listeners[$eventName]);
-	}
-
-	/* Commit any outstanding transactions */
-	$storage =& $gallery->getStorage();
-	$ret = $storage->commitTransaction();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$ret = GalleryInitFirstPass();
@@ -53,6 +47,48 @@ class InitializeGalleryTestCase extends TestCase {
 	/* We changed the global gallery -- update our pointer */
 	$gallery =& $GLOBALS['gallery'];
 
+	/* Reinstall the core */
+	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core', false);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	$ret = $core->install();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	list ($ret, $moduleList) = GalleryCoreApi::fetchPluginStatus('module');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	foreach (array_keys($moduleList) as $moduleId) {
+	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    
+	    if ($module->canBeAutoInstalled()) {
+		$ret = $module->install();
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+		
+		list ($ret, $success) = $module->autoConfigure();
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+		
+		if ($success) {
+		    $ret = $module->activate();
+		    if ($ret->isError()) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
+		}
+	    }
+	}
+
 	foreach (array('_config',
 		       '_session',
 		       '_profile',
@@ -60,18 +96,6 @@ class InitializeGalleryTestCase extends TestCase {
 		       '_debugBuffer',
 		       '_urlGenerator') as $member) {
 	    $gallery->$member = $oldGallery->$member;
-	}
-
-	$ret = GalleryInitStorage();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	/* Start a new transaction */
-	$storage =& $gallery->getStorage();
-	$ret = $storage->beginTransaction();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$ret = GalleryInitSecondPass();

@@ -210,9 +210,9 @@ class GalleryCoreApi {
      *                                               'installed' => true/false)
      * @static
      */
-    function getPluginStatus($pluginType) {
+    function fetchPluginStatus($pluginType) {
 	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/helpers/GalleryPluginHelper_simple.class');
-	return GalleryPluginHelper_simple::getPluginStatus($pluginType);
+	return GalleryPluginHelper_simple::fetchPluginStatus($pluginType);
     }
 
     /**
@@ -2098,7 +2098,6 @@ class GalleryCoreApi {
 	return WebHelper_simple::postToWebPage($url, $postDataArray, $extraHeaders);
     }
     
-
     /**
      * Require a file, but only once.  Surprisingly, tracking what's been
      * already loaded in a static variable is actually 10x+ faster than just
@@ -2116,6 +2115,15 @@ class GalleryCoreApi {
 	    require_once($file);
 	    $loaded[$file] = 1;
 	}
+    }
+
+    /**
+     * Like requireOnce, but use a path relative from the gallery2 directory
+     *
+     * @param the file name
+     */
+    function relativeRequireOnce($file) {
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/../../../' . $file);
     }
 }
 ?>

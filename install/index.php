@@ -30,7 +30,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-//XXX ENABLED FOR DEBUGGING
+/* Show all errors. */
 @ini_set('display_errors', 1);
 
 class GalleryStub {
@@ -64,7 +64,9 @@ $gallery = new GalleryStub();
 // load in config.php if there
 $configFile = dirname(__FILE__) . '/../config.php';
 if (is_file($configFile) && is_readable($configFile)) {
-    require_once($configFile);
+    ob_start();
+    @include($configFile);
+    ob_end_clean();
 }
 
 class InstallStep {
@@ -135,8 +137,10 @@ class InstallStep {
     }
 }
 
-// if gettext isn't enabled, subvert the _() text translation function
-// and just pass the string on through in English
+/*
+ * if gettext isn't enabled, subvert the _() text translation function
+ * and just pass the string on through in English
+ */
 if (!function_exists('_')) {
     function _($s) {
 	return $s;
@@ -151,6 +155,9 @@ $stepOrder[] = 'AdminUserSetup';
 $stepOrder[] = 'StorageSetup';
 $stepOrder[] = 'DatabaseSetup';
 $stepOrder[] = 'CreateConfigFile';
+$stepOrder[] = 'InstallCoreModule';
+$stepOrder[] = 'InstallOtherModules';
+$stepOrder[] = 'Finished';
 
 foreach ($stepOrder as $stepName) {
     $className = $stepName . 'Step';

@@ -11,46 +11,28 @@ require_once('GalleryControllerTestCase.class');
 require_once('ItemAddPluginTestCase.class');
 require_once('ItemEditPluginTestCase.class');
 
-function GalleryMain(&$testSuite, $filter) {
+function PhpUnitGalleryMain(&$testSuite, $filter) {
     $ret = GalleryInitFirstPass();
     if ($ret->isError()) {
 	return $ret->wrap(__FILE__, __LINE__);
     }
 
-    /* Init our storage */
-    $ret = GalleryInitStorage();
-    if ($ret->isError()) {
-	return $ret->wrap(__FILE__, __LINE__);
-    }
-
-    global $gallery;
-    $storage =& $gallery->getStorage();
-    $ret = $storage->beginTransaction();
-    if ($ret->isError()) {
-	return $ret->wrap(__FILE__, __LINE__);
-    }
-
-    /* Configure out url Generator for phpunit mode. */
-    $urlGenerator = new GalleryUrlGenerator('../../../main.php');
-    $gallery->setUrlGenerator($urlGenerator);
-    
     $ret = GalleryInitSecondPass();
     if ($ret->isError()) {
 	return $ret->wrap(__FILE__, __LINE__);
     }
 
-    /*
-     * Specify the base URL to the Gallery.  In standalone mode this will be the
-     * empty string (since everything is relative to main.php).  But when we're
-     * embedded, we need to put in the relative path from the outer app to the
-     * Gallery directory (eg for PostNuke it might be 'modules/gallery')
-     */
-    $gallery->setConfig('url.gallery.base', '');
+    global $gallery;
+
+    /* Configure out url Generator for phpunit mode. */
+    $urlGenerator = new GalleryUrlGenerator('lib/tools/phpunit/index.php');
+    $gallery->setUrlGenerator($urlGenerator);
 
     /*
      * Commit our transaction here because we're going to have a new
      * transaction for every test.
      */
+    $storage =& $gallery->getStorage();
     $ret = $storage->commitTransaction();
     if ($ret->isError()) {
 	return $ret->wrap(__FILE__, __LINE__);
@@ -67,7 +49,7 @@ function GalleryMain(&$testSuite, $filter) {
 	/*
 	 * Load the test cases for every active module.
 	 */
-	list ($ret, $moduleStatusList) = GalleryCoreApi::getPluginStatus('module');
+	list ($ret, $moduleStatusList) = GalleryCoreApi::fetchPluginStatus('module');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -129,7 +111,7 @@ if (isset($_GET['filter'])) {
 }
 
 $testSuite = new TestSuite();
-$ret = GalleryMain($testSuite, $filter);
+$ret = PhpUnitGalleryMain($testSuite, $filter);
 if ($ret->isError()) {
     $ret = $ret->wrap(__FILE__, __LINE__);
     print $ret->getAsHtml();
@@ -137,7 +119,7 @@ if ($ret->isError()) {
     return;
 }
 
-list ($ret, $moduleStatusList) = GalleryCoreApi::getPluginStatus('module');
+list ($ret, $moduleStatusList) = GalleryCoreApi::fetchPluginStatus('module');
 if ($ret->isError()) {
     $ret = $ret->wrap(__FILE__, __LINE__);
     print $ret->getAsHtml();

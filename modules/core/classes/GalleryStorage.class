@@ -37,77 +37,51 @@
 class GalleryStorage {
 
     /**
-     * A cache of member info that we've discovered about various classes
+     * Our encapsulated storage implementation 
      *
-     * @var array $_entityInfoCache
-     * @access private
+     * @var object GalleryStorage $_impl
+     * @acess private
      */
-    var $_entityInfoCache;
+    var $_impl;
 
     /**
-     * A cache of classes that we've created in order to figure out their type
+     * Have we initialized the connection yet?
      *
-     * @var array $_classTypeCache
+     * @var bool $_isInitialized
      * @access private
      */
-    var $_classTypeCache;
-
-    /**
-     * A cache of member info that we've discovered about various maps
-     *
-     * @var array $_mapInfoCache
-     * @access private
-     */
-    var $_mapInfoCache;
-
-    /**
-     * The debugging flag
-     *
-     * @var boolean $_debug
-     * @access private
-     */
-    var $_debug;
-
-    /**
-     * Trace timing information
-     *
-     * @var boolean $_traceTiming
-     * @access private
-     */
-    var $_traceTiming;
+    var $_isInitialized;
 
     /**
      * Constructor
-     *
      */
     function GalleryStorage() {
+	global $gallery;
+	
 	/* Initialize our Gallery map and class info caches */
 	$this->_entityInfoCache = array();
 	$this->_mapInfoCache = array();
-	$this->_traceTiming = array();
-    }
 
-    /**
-     * Do any initialization that is required by this storage type
-     *
-     * @return object GallerySatus a status code
-     */
-    function init() {
-	return GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
-    }
+	$base = dirname(__FILE__) . '/GalleryStorage/';
+	require_once($base . 'DatabaseStorage.class');
+	require_once($base . 'DatabaseSearchResults.class');
 
-    /**
-     * Turn debugging on or off.
-     */
-    function setDebug($bool) {
-	$this->_debug = (bool)$bool;
-    }
+	$config = $gallery->getConfig('storage.config');
+	switch ($config['type']) {
+	case 'postgres':
+	case 'postgres7':
+	    require_once($base . 'DatabaseStorage/PostgreSqlDatabaseStorage.class');
+	    $this->_impl = new PostgreSqlDatabaseStorage($config);
+	    break;
 
-    /**
-     * Get the debug state
-     */
-    function getDebug() {
-	return $this->_debug;
+	default:
+	case 'mysql':
+	case 'mysqlt':
+	    require_once($base . 'DatabaseStorage/MySqlDatabaseStorage.class');
+	    $this->_impl = new MySqlDatabaseStorage($config);
+	}
+
+	$this->_isInitialized = false;
     }
 
     /**
@@ -118,7 +92,16 @@ class GalleryStorage {
      *               mixed one GalleryEntity or an array of GalleryEntities
      */
     function loadEntities($ids) {
-	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
+	if (!$this->_isInitialized) {
+	    $ret = $this->_impl->init();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    } else {
+		$this->_isInitialized = true;
+	    }
+	}
+	
+	return $this->_impl->loadEntities($ids);
     }
 
     /**
@@ -128,8 +111,17 @@ class GalleryStorage {
      * @param object GalleryEntity the GalleryEntity to save
      * @return object GalleryStatus a status code
      */
-    function saveEntity($object) {
-	return GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
+    function saveEntity(&$object) {
+	if (!$this->_isInitialized) {
+	    $ret = $this->_impl->init();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    } else {
+		$this->_isInitialized = true;
+	    }
+	}
+	
+	return $this->_impl->saveEntity($object);
     }
 
     /**
@@ -140,7 +132,16 @@ class GalleryStorage {
      * @return object GalleryStatus a status code
      */
     function deleteEntity($object) {
-	return GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
+	if (!$this->_isInitialized) {
+	    $ret = $this->_impl->init();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    } else {
+		$this->_isInitialized = true;
+	    }
+	}
+	
+	return $this->_impl->deleteEntity($object);
     }
 
     /**
@@ -151,7 +152,16 @@ class GalleryStorage {
      * @return object GalleryStatus a status code
      */
     function newEntity(&$object) {
-	return GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
+	if (!$this->_isInitialized) {
+	    $ret = $this->_impl->init();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    } else {
+		$this->_isInitialized = true;
+	    }
+	}
+	
+	return $this->_impl->newEntity($object);
     }
 
     /**
@@ -165,43 +175,16 @@ class GalleryStorage {
      *               object GalleryEntity the fresh entity
      */
     function refreshEntity($object) {
-	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__),
-		     null);
-    }
-
-    /**
-     * Acquire read locks on the given items
-     *
-     * @access public
-     * @param int timeout before giving up on the lock
-     * @return array object GalleryStatus a status code
-     *               object a GalleryLock instance
-     */
-    function acquireReadLock($ids, $timeout) {
-	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__),
-		     null);
-    }
-
-    /**
-     * Acquire write locks on the given items
-     *
-     * @access public
-     * @param int timeout before giving up on the lock
-     * @return array object GalleryStatus a status code
-     *               object a GalleryLock instance
-     */
-    function acquireWriteLock($ids, $timeout) {
-	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__),
-		     null);
-    }
-
-    /**
-     * Release a lock
-     *
-     * @param object a GalleryLock instance
-     */
-    function releaseLock($lock) {
-	return GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
+	if (!$this->_isInitialized) {
+	    $ret = $this->_impl->init();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    } else {
+		$this->_isInitialized = true;
+	    }
+	}
+	
+	return $this->_impl->refreshEntity($object);
     }
 
     /**
@@ -216,8 +199,16 @@ class GalleryStorage {
      *               array the result values
      */
     function search($query, $data=array(), $optional=array()) {
-	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__),
-		     null);
+	if (!$this->_isInitialized) {
+	    $ret = $this->_impl->init();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    } else {
+		$this->_isInitialized = true;
+	    }
+	}
+	
+	return $this->_impl->search($query, $data, $optional);
     }
     
     /**
@@ -229,8 +220,16 @@ class GalleryStorage {
      * @return object GalleryStatus a status code,
      */
     function execute($statement, $data=array()) {
-	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__),
-		     null);
+	if (!$this->_isInitialized) {
+	    $ret = $this->_impl->init();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    } else {
+		$this->_isInitialized = true;
+	    }
+	}
+	
+	return $this->_impl->execute($statement, $data);
     }
     
     /**
@@ -241,7 +240,16 @@ class GalleryStorage {
      * @return object GalleryStatus a status code
      */
     function addMapEntry($map, $entry) {
-	return GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
+	if (!$this->_isInitialized) {
+	    $ret = $this->_impl->init();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    } else {
+		$this->_isInitialized = true;
+	    }
+	}
+	
+	return $this->_impl->addMapEntry($map, $entry);
     }
 
     /**
@@ -252,7 +260,16 @@ class GalleryStorage {
      * @return object GalleryStatus a status code
      */
     function removeMapEntry($map, $entry) {
-	return GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
+	if (!$this->_isInitialized) {
+	    $ret = $this->_impl->init();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    } else {
+		$this->_isInitialized = true;
+	    }
+	}
+	
+	return $this->_impl->removeMapEntry($map, $entry);
     }
 
     /**
@@ -262,7 +279,16 @@ class GalleryStorage {
      * @return object GalleryStatus a status code
      */
     function removeAllMapEntries($map) {
-	return GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
+	if (!$this->_isInitialized) {
+	    $ret = $this->_impl->init();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    } else {
+		$this->_isInitialized = true;
+	    }
+	}
+	
+	return $this->_impl->removeAllMapEntries($map);
     }
 
     /**
@@ -273,7 +299,16 @@ class GalleryStorage {
      * @return object GalleryStatus a status code
      */
     function updateMapEntry($map, $match, $change) {
-	return GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
+	if (!$this->_isInitialized) {
+	    $ret = $this->_impl->init();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    } else {
+		$this->_isInitialized = true;
+	    }
+	}
+	
+	return $this->_impl->updateMapEntry($map, $match, $change);
     }
 
     /**
@@ -282,7 +317,16 @@ class GalleryStorage {
      * @return object GalleryStatus a status code
      */
     function configureStore($moduleId) {
-	return GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
+	if (!$this->_isInitialized) {
+	    $ret = $this->_impl->init();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    } else {
+		$this->_isInitialized = true;
+	    }
+	}
+	
+	return $this->_impl->configureStore($moduleId);
     }
     
     /**
@@ -291,7 +335,16 @@ class GalleryStorage {
      * @return object GalleryStatus a status code
      */
     function cleanStore() {
-	return GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
+	if (!$this->_isInitialized) {
+	    $ret = $this->_impl->init();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    } else {
+		$this->_isInitialized = true;
+	    }
+	}
+	
+	return $this->_impl->cleanStore();
     }
 
     /**
@@ -300,7 +353,16 @@ class GalleryStorage {
      * @return object GalleryStatus a status code
      */
     function beginTransaction() {
-	return GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
+	if (!$this->_isInitialized) {
+	    $ret = $this->_impl->init();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    } else {
+		$this->_isInitialized = true;
+	    }
+	}
+	
+	return $this->_impl->beginTransaction();
     }
 
     /**
@@ -309,7 +371,16 @@ class GalleryStorage {
      * @return object GalleryStatus a status code
      */
     function commitTransaction() {
-	return GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
+	if (!$this->_isInitialized) {
+	    $ret = $this->_impl->init();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    } else {
+		$this->_isInitialized = true;
+	    }
+	}
+	
+	return $this->_impl->commitTransaction();
     }
     
     /**
@@ -318,7 +389,16 @@ class GalleryStorage {
      * @return object GalleryStatus a status code
      */
     function rollbackTransaction() {
-	return GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
+	if (!$this->_isInitialized) {
+	    $ret = $this->_impl->init();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    } else {
+		$this->_isInitialized = true;
+	    }
+	}
+	
+	return $this->_impl->rollbackTransaction();
     }
 
     /**
@@ -329,7 +409,7 @@ class GalleryStorage {
      * @param mixed bit value 
      */
     function convertIntToBits($intVal) {
-	return $intVal;
+	return $this->_impl->convertIntToBits($intVal);
     }
 
     /**
@@ -340,7 +420,7 @@ class GalleryStorage {
      * @param mixed bit value 
      */
     function convertBitsToInt($bitsVal) {
-	return $bitsVal;
+	return $this->_impl->convertBitsToInt($bitsVal);
     }
 
     /**
@@ -352,7 +432,16 @@ class GalleryStorage {
      *               string the function SQL
      */
     function getFunctionSql($functionName, $args) {
-	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
+	return $this->_impl->getFunctionSql($functionName, $args);
+    }
+
+    /**
+     * Return storage profiling information in HTML format
+     *
+     * @return string HTML
+     */
+    function getProfilingHtml() {
+	return $this->_impl->getProfilingHtml();
     }
 
     /**
@@ -378,124 +467,6 @@ class GalleryStorage {
 	}
 	return array(GalleryStatus::success(),
 		     array_keys($classes));
-    }
-
-    /**
-     * Return storage profiling information in HTML format
-     *
-     * @return string HTML
-     */
-    function getProfilingHtml() {
-	return '';
-    }
-
-    /**
-     * Describe all the members of a entity
-     *
-     * @param string a class name
-     * @access protected
-     * @return array object GalleryStatus a status code
-     *               member => info associative array
-     */
-    function _describeEntityMembers($entityName) {
-	global $gallery;
-
-	if (empty($this->_entityInfoCache[$entityName])) {
-	    list ($ret, $entity) = GalleryCoreApi::newFactoryInstance('GalleryEntity', $entityName);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    if (!isset($entity)) {
-		return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
-	    }
-	    $this->_entityInfoCache[$entityName] = $entity->getPersistentMemberInfo();
-	}
-
-	return array(GalleryStatus::success(),
-		     $this->_entityInfoCache[$entityName]);
-    }
-
-    /**
-     * Describe all the members of a map
-     *
-     * @param string a class name
-     * @return array member name => member type
-     * @access protected
-     */
-    function _describeMapMembers($mapName) {
-
-	if (empty($this->_mapInfoCache[$mapName])) {
-	    eval("\$info = $mapName::getMapInfo();");
-	    $this->_mapInfoCache[$mapName] = $info;
-	}
-
-	return $this->_mapInfoCache[$mapName];
-    }
-
-    /**
-     * Identify this class as an entity or a map
-     *
-     * @param string the name of a class
-     * @return array object GalleryStatus a status code
-     *               string 'entity' or 'map'
-     * @access protected
-     */
-    function _getClassType($className) {
-	global $gallery;
-
-	if (!isset($this->_classTypeCache[$className])) {
-	    list ($ret, $instance) =
-		GalleryCoreApi::newFactoryInstance('GalleryEntity', $className);
-	    
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-	    if (!isset($instance)) {
-		return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
-	    }
-	    
-	    $this->_classTypeCache[$className] = $instance ;
-	}
-
-	if (method_exists($this->_classTypeCache[$className], 'getPersistentMemberInfo')) {
-	    $type = 'entity';
-	} else {
-	    $type = 'map';
-	}
-	return array(GalleryStatus::success(), $type);
-    }
-    
-    /**
-     * Start tracing
-     *
-     * This method is for use by GalleryStorage subclasses only.  If Gallery is
-     * in debug, this method will begin storing all output and routing it into
-     * Gallery's debug system
-     *
-     * @access protected
-     */
-    function _traceStart() {
-	global $gallery;
-
-	if ($gallery->getDebug()) {
-	    ob_start();
-	}
-    }
-
-    /**
-     * Stop tracing
-     *
-     * This method is for use by GalleryStorage subclasses only.  If Gallery is
-     * in debug, this will method will stop tracing.
-     */
-    function _traceStop() {
-	global $gallery;
-	if ($gallery->getDebug()) {
-	    $buf = ob_get_contents();
-	    ob_end_clean();
-	    $gallery->debug($buf);
-	}
     }
 }
 ?>

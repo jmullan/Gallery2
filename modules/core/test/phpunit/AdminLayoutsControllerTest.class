@@ -83,7 +83,7 @@ class AdminLayoutsControllerTest extends GalleryControllerTestCase {
 				  'error' => array()),
 			    $results);
 
-	list ($ret, $pluginStatus) = GalleryCoreApi::getPluginStatus('layout');
+	list ($ret, $pluginStatus) = GalleryCoreApi::fetchPluginStatus('layout');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -110,7 +110,7 @@ class AdminLayoutsControllerTest extends GalleryControllerTestCase {
 				  'error' => array()),
 			    $results);
 
-	list ($ret, $pluginStatus) = GalleryCoreApi::getPluginStatus('layout');
+	list ($ret, $pluginStatus) = GalleryCoreApi::fetchPluginStatus('layout');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

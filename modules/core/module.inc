@@ -26,13 +26,6 @@
  */
 
 /**
- * Bootstrap code: We have to load a few classes just so that the GalleryModule
- * parent class exists. This is only because we are the core module; other
- * modules should not have to do stuff like this.
- */
-require_once(dirname(__FILE__) . '/classes/GalleryModule.class');
-
-/**
  * The implementation of the core-module
  *
  * @package GalleryCore
@@ -40,63 +33,17 @@ require_once(dirname(__FILE__) . '/classes/GalleryModule.class');
 class CoreModule extends GalleryModule {
 
     function CoreModule() {
+	global $gallery;
+	
 	$this->setId('core');
 	$this->setName('Core');
 	$this->setVersion('0.8');
+	$this->setDescription($gallery->i18n('Gallery 2 Core Module'));
 
 	/*
 	 * We can't set our description until we have a $gallery object so
 	 * that we can call $gallery->i18n().  Defer this to the bootstrap code.
 	 */
-    }
-
-    /**
-     * This method is not in GalleryModule.  It's a special method for the
-     * CoreModule that allows us to bootstrap G2 far enough up so that we can
-     * actually install and initialize the core.  It has no dependencies, so it
-     * can be safely called right at the very beginning of the G2 code.
-     *
-     * @return object GalleryStatus a status code
-     */
-    function bootstrap() {
-	$classDir = dirname(__FILE__) . '/classes/';
-
-	/* Load all the core Gallery classes */
- 	require_once($classDir . 'GalleryConstants.class');
-	require_once($classDir . 'Gallery.class');
-	require_once($classDir . 'GalleryStatus.class');
- 	require_once($classDir . 'GalleryDataCache.class');
-	require_once($classDir . 'GalleryCoreApi.class');
- 	require_once($classDir . 'GalleryUrlGenerator.class');
- 	require_once($classDir . 'GalleryUtilities.class');
- 	require_once($classDir . 'GalleryView.class');
-	
-	/*
-	 * Set up our Gallery global.  It's important to use a reference here because
-	 * the constructor registers a shutdown function and ties it to the instance in
-	 * the constructor.  This global should be the only one that Gallery requires.
-	 * Everything else should be inside it so that we do not pollute the namespace
-	 * (especially important when we're embedded inside another application).
-	 */
-	$gallery =& new Gallery();
-	$GLOBALS['gallery'] =& $gallery;
-	GalleryCoreApi::setPluginInstance('module', 'core', $this);
-
-	/* Configure the Platform */
-	$gallery->setConfig('platform.type', strtolower(PHP_OS));
-
-	if (strtolower(PHP_OS) == 'winnt') {
-	    require_once($classDir . 'GalleryPlatform/WinNtPlatform.class');
-	    $gallery->setPlatform(new WinNtPlatform());
-	} else {
-	    require_once($classDir . 'GalleryPlatform/UnixPlatform.class');
-	    $gallery->setPlatform(new UnixPlatform());
-	}
-	
-	/* Now we have a $gallery instance and can set our description */
-	$this->setDescription($gallery->i18n('Gallery 2 Core Module'));
-
-	return GalleryStatus::success();
     }
 
     /**
@@ -261,26 +208,13 @@ class CoreModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::init();
+     * @see GalleryModule::registerEventListeners();
      */
-    function init() {
-	global $gallery;
-
-	$ret = parent::init();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	/* Register our URL rewriting views */
-	$urlGenerator =& $gallery->getUrlGenerator();
-	$urlGenerator->registerViewPrefix('view', 'core:ShowItem');
-	$urlGenerator->registerViewPrefix('download', 'core:DownloadItem');
-
+    function registerEventListeners() {
 	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/helpers/GalleryItemHelper_medium.class');
 	GalleryCoreApi::registerEventListener('Gallery::ViewableTreeChange',
 					      new GalleryItemHelper_medium());
 
-	return GalleryStatus::success();
     }
 
     /**
@@ -641,19 +575,18 @@ class CoreModule extends GalleryModule {
 			    '<b>table Xxx doesn\'t exist</b> here, that\'s OK.');
 	}
 
-	$coreWasJustInstalled = false;
 	list ($ret, $version) = $this->getModuleParameter('version');
 	if ($ret->isError() & !($ret->getErrorCode() & ERROR_STORAGE_FAILURE)) {
-	    return array($ret->wrap(__FILE__, __LINE__), false);
+	    return $ret->wrap(__FILE__, __LINE__);
 	} else if ($ret->isError() || $version != $this->getVersion()) {
 	    require_once(dirname(__FILE__) . '/CoreModuleExtras.inc');
-	    list ($ret, $coreWasJustInstalled) = CoreModuleExtras::install($this);
+	    $ret = CoreModuleExtras::install($this);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), false);
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 
-	return array(GalleryStatus::success(), $coreWasJustInstalled);
+	return GalleryStatus::success();
     }
 }
 ?>

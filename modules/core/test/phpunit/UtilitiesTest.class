@@ -38,28 +38,18 @@ class UtilitiesTest extends GalleryTestCase {
 	$this->GalleryTestCase($methodName);
     }
 
-    /**
-     *
-     */
     function setUp() {
 	global $gallery;
 	parent::setUp();
 	$this->_savePlatform = $gallery->getPlatform();
 	$this->_saveConfig = $gallery->_config;
-	$this->_saveUrlGenerator = $gallery->_urlGenerator;
 
-	$gallery->setConfig('url.gallery.base', '');
-	$gallery->setUrlGenerator(new GalleryUrlGenerator($gallery->getConfig('url.gallery.base'), 'main.php'));
 	$gallery->_platform = new UtilitiesTestPlatform($this);
     }
 
-    /**
-     *
-     */
     function tearDown() {
 	parent::tearDown();
 	$gallery->_config = $this->_saveConfig;
-	$gallery->_urlGenerator = $this->_saveUrlGenerator;
     }
 
     function testGetFileNameComponents() {
@@ -187,11 +177,16 @@ class UtilitiesTest extends GalleryTestCase {
 
 	// Simulate unix to line up with our mock platform
 	$file = str_replace('\\', '/', __FILE__);
+
+	$_SERVER['REQUEST_URI'] = '/gallery2/phpunit_test.php?foo=bar';
+	$_SERVER['HTTP_HOST'] = 'example.com';
+	$_SERVER['SERVER_PORT'] = 80;
+	$gallery->setUrlGenerator(new GalleryUrlGenerator('phpunit_test.php'));
 	
-	$this->assertEquals('modules/core/test/phpunit/UtilitiesTest.class',
+	$this->assertEquals('http://example.com/gallery2/modules/core/test/phpunit/UtilitiesTest.class',
 			    GalleryUtilities::convertPathToUrl($file));
     }
-    
+
     function testRequireOnce() {
 	$ret = GalleryUtilities::requireOnce('bogus path');
 	$this->assert($ret->getErrorCode() & ERROR_BAD_PATH);

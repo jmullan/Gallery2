@@ -80,9 +80,7 @@ class ItemDeleteControllerTest extends GalleryControllerTestCase {
 	
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('return' => 1,
-				  'redirect' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemDelete',
+	$this->assertEquals(array('redirect' => array('view' => 'core:ShowItem',
 						      'itemId' => $album->getParentId()),
 				  'status' => array('deleted' => array('count' => 1)),
 				  'error' => array()),
@@ -200,9 +198,7 @@ class ItemDeleteControllerTest extends GalleryControllerTestCase {
 	
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('return' => 1,
-				  'redirect' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemDelete',
+	$this->assertEquals(array('redirect' => array('view' => 'core:ShowItem',
 						      'itemId' => $this->_album->getId()),
 				  'status' => array('deleted' => array('count' => 5)),
 				  'error' => array()),

@@ -45,7 +45,7 @@ class UserAdminView extends GalleryView {
 	$user = $gallery->getActiveUser();
 	    
 	/* Load the module list */
-	list ($ret, $moduleStatus) = GalleryCoreApi::getPluginStatus('module');
+	list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

@@ -143,6 +143,17 @@ class ThumbnailImage extends ThumbnailImage_core {
         return 'ThumbnailImage';
     }
 
+    /** 
+     * Return the path to the PHP file for this class, relative to the gallery2 dir
+     * 
+     * @return string path
+     */ 
+    function getClassFile() { 
+        return 'modules/' .  
+            basename(dirname(dirname(dirname(__FILE__)))) .  
+            '/classes/ThumbnailImage.class'; 
+    }
+
     
     /**
      * Get the value of fileName

@@ -62,10 +62,9 @@ class NetPbmModule extends GalleryModule {
     function install() {
 	list ($ret, $version) = $this->getModuleParameter('version');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), false);
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	$installed = false;
 	if ($version != $this->getVersion()) {
 	    if (empty($version)) {
 		/*
@@ -79,20 +78,18 @@ class NetPbmModule extends GalleryModule {
 
 		    $ret = $this->setModuleParameter($key, $value);
 		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), false);
+			return $ret->wrap(__FILE__, __LINE__);
 		    }
 		}
-
-		$installed = true;
 	    }
 		
 	    $ret = $this->setModuleParameter('version', $this->getVersion());
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), false);
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 	
-	return array(GalleryStatus::success(), $installed);
+	return GalleryStatus::success();
     }
 	
     /**
@@ -222,17 +219,21 @@ class NetPbmModule extends GalleryModule {
 	}
 	/* Now try each path in turn to see which ones work for jhead */
 	foreach ($paths as $path) {
-	    list ($ret, $testResults) = NetPbmToolkitHelper::testJhead($path);
-	    if ($ret->isError()) {
-	        return array($ret->wrap(__FILE__, __LINE__), false);
-	    }
-	    foreach ($testResults as $testResult) {
-	        if ($testResult['success'] && ($testResult['name'] == 'jhead')) {
-	            $ret = GalleryCoreApi::setPluginParameter('module', 'netpbm', 'jheadPath', $path);
-	            if ($ret->isError()) {
-	                return array($ret->wrap(__FILE__, __LINE__), false);
-	            }
-	        }
+	    if ($platform->file_exists($path)) {
+		list ($ret, $testResults) = NetPbmToolkitHelper::testJhead($path);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), false);
+		}
+		foreach ($testResults as $testResult) {
+		    if ($testResult['success'] && ($testResult['name'] == 'jhead')) {
+			$ret = GalleryCoreApi::setPluginParameter('module', 'netpbm', 'jheadPath', $path);
+			if ($ret->isError()) {
+			    return array($ret->wrap(__FILE__, __LINE__), false);
+			}
+
+			break 2;
+		    }
+		}
 	    }
 	}
 

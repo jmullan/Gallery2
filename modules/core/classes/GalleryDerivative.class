@@ -276,6 +276,9 @@ class GalleryDerivative_core extends GalleryChildEntity {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
+	/* Make sure our path is legit */ 
+	GalleryUtilities::guaranteeDirExists(dirname($destPath));
+
 	if (GalleryUtilities::isA($source, 'GalleryDerivative')) {
 	    /*
 	     * If my source is a thumbnail, then we've got to assume that we've already lost some valuable source
@@ -453,22 +456,8 @@ class GalleryDerivative_core extends GalleryChildEntity {
     function fetchPath() {
 	global $gallery;
 
-	/* Derivatives live in the cache directory */
-	$cacheDir = $gallery->getConfig('data.gallery.cache');
-
-	if ($this->getId() < 100) {
-	    $firstDigitOfId = '0';
-	    $secondDigitOfId = substr($this->getId(), 0, 1);
-	} else {
-	    $firstDigitOfId = substr($this->getId(), 0, 1);
-	    $secondDigitOfId = substr($this->getId(), 1, 1);
-	}
-	$cacheFile = sprintf("%s/%s/%s/%s",
-			     $gallery->getConfig('data.gallery.cache'),
-			     $firstDigitOfId,
-			     $secondDigitOfId,
-			     $this->getId());
-	
+	$cacheFile = GalleryDataCache::getCachePath(array('type' => 'derivative',
+							  'itemId' => $this->getId()));
 	return array(GalleryStatus::success(), $cacheFile);
     }
 

@@ -19,6 +19,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+require_once('save/elapsed.inc');
 
 if (!file_exists(dirname(__FILE__) . '/config.php') ||
         filesize(dirname(__FILE__) . '/config.php') < 10) {
@@ -27,7 +28,7 @@ if (!file_exists(dirname(__FILE__) . '/config.php') ||
 }
 
 /* Go! */
-$ret = GalleryMain();
+list($ret, $ignore) = GalleryMain(false);
 
 /* Save our session */
 if ($ret->isSuccess()) {
@@ -67,13 +68,17 @@ if ($ret->isError()) {
     return;
 }
 
-function GalleryMain() {
+function GalleryMain($returnHtml=false) {
 
     /* Initialize Gallery */
     require_once(dirname(__FILE__) . '/init.php');
     $ret = GalleryInitFirstPass();
     if ($ret->isError()) {
-	return $ret->wrap(__FILE__, __LINE__);
+	return array($ret->wrap(__FILE__, __LINE__), null);
+    }
+    $ret = GalleryInitSecondPass();
+    if ($ret->isError()) {
+	return array($ret->wrap(__FILE__, __LINE__), null);
     }
 
     /*
@@ -85,36 +90,14 @@ function GalleryMain() {
      */
     $gallery =& $GLOBALS['gallery'];
     
-    /* Init our storage */
-    $ret = GalleryInitStorage();
-    if ($ret->isError()) {
-	return $ret->wrap(__FILE__, __LINE__);
-    }
-
-    /* Start our transaction */
-    $storage =& $gallery->getStorage();
-    $ret = $storage->beginTransaction();
-    if ($ret->isError()) {
-	return $ret->wrap(__FILE__, __LINE__);
-    }
-
-    /* Configure our url Generator for standalone mode. */
-    $urlGenerator = new GalleryUrlGenerator('main.php');
-    $gallery->setUrlGenerator($urlGenerator);
-
-    /* Do the second pass of initialization */
-    $ret = GalleryInitSecondPass();
-    if ($ret->isError()) {
-	return $ret->wrap(__FILE__, __LINE__);
-    }
-
     /* Initialize our container for template data */
     $main = array();
     
     /* Let our url generator process the query string */
+    $urlGenerator = $gallery->getUrlGenerator();
     list ($ret, $redirectUrl) = $urlGenerator->parseCurrentUrl();
     if ($ret->isError()) {
-	return $ret->wrap(__FILE__, __LINE__);
+	return array($ret->wrap(__FILE__, __LINE__), null);
     }
 
     /* If the URL generator suggested that we redirect, then do so */
@@ -127,7 +110,7 @@ function GalleryMain() {
 	    $redirectUrl = str_replace('&amp;', '&', $redirectUrl);
 	    
 	    header("Location: $redirectUrl");
-	    return GalleryStatus::success();
+	    return array(GalleryStatus::success(), null);
 	} else {
 	    $main['redirectUrl'] = $redirectUrl;
 	}
@@ -142,7 +125,7 @@ function GalleryMain() {
 	require_once(dirname(__FILE__) . '/modules/core/classes/GalleryController.class');
 	list ($ret, $controller) = GalleryController::loadController($controllerName);
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* Get our form and return variables */
@@ -151,7 +134,7 @@ function GalleryMain() {
 	/* Let the controller handle the input */
 	list ($ret, $results) = $controller->handleRequest($form);
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* Check to make sure we got back everything we want */
@@ -181,7 +164,7 @@ function GalleryMain() {
 		$session =& $gallery->getSession();
 		$results['redirect']['statusId'] = $session->putStatus($results['status']);
 		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 	    }
 	    
@@ -198,7 +181,7 @@ function GalleryMain() {
 		$redirectUrl = str_replace('&amp;', '&', $redirectUrl);
 		
 		header("Location: $redirectUrl");
-		return GalleryStatus::success();
+		return array(GalleryStatus::success(), null);
 	    } else {
 		$main['redirectUrl'] = $redirectUrl;
 	    }
@@ -241,10 +224,10 @@ function GalleryMain() {
 	    if ($ret->getErrorCode() & ERROR_BAD_PARAMETER) {
 		list ($ret, $view) = GalleryView::loadView('core:SecurityViolation');
 		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 	    } else {
-		return $ret->wrap(__FILE__, __LINE__);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
 
@@ -265,7 +248,8 @@ function GalleryMain() {
 		$showGlobal = false;
 	    }
 	} else {
-	    require_once(dirname(__FILE__) . '/modules/core/classes/GalleryTemplate.class');
+            GalleryCoreApi::requireOnce(dirname(__FILE__) .
+					'/modules/core/classes/GalleryTemplate.class');
 	    $template = new GalleryTemplate(dirname(__FILE__));
 	    list ($ret, $results) = $view->doLoadTemplate($template);
 	    if ($ret->isError()) {
@@ -281,7 +265,7 @@ function GalleryMain() {
 			$redirectUrl = str_replace('&amp;', '&', $redirectUrl);
 			
 			header("Location: $redirectUrl");
-			return GalleryStatus::success();
+			return array(GalleryStatus::success(), null);
 		    } else {
 			$main['redirectUrl'] = $redirectUrl;
 		    }
@@ -311,12 +295,13 @@ function GalleryMain() {
 		}
 	    }
 	}
+	
     } else {
 	/* Set the default theme for the redirect page */
 	require_once(dirname(__FILE__) . '/modules/core/classes/GalleryTheme.class');
 	list ($ret, $theme) = GalleryTheme::loadTheme();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	require_once(dirname(__FILE__) . '/modules/core/classes/GalleryTemplate.class');
@@ -342,7 +327,7 @@ function GalleryMain() {
 
 	list ($ret, $markup) = GalleryCoreApi::getPluginParameter('module', 'core', 'misc.markup');
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$main['markupType'] = $markup;
 
@@ -358,23 +343,31 @@ function GalleryMain() {
 	$template->setVariable('main', $main);
 	$template->setVariable('l10Domain', 'modules_core');
 
-	/* TODO: consider switching to using $template->display() for speed */
 	if (isset($main['redirectUrl'])) {
-	    list ($ret, $html) = $template->fetch('gallery:templates/redirect.tpl');
+	    $templatePath = 'gallery:templates/redirect.tpl';
 	} else if (isset($main['error'])) {
-	    list ($ret, $html) = $template->fetch('gallery:templates/error.tpl');
+	    $templatePath = 'gallery:templates/error.tpl';
 	} else if (isset($main['html'])) {
-	    list ($ret, $html) = $template->fetch('gallery:templates/standalone.tpl');
+	    $templatePath = 'gallery:templates/standalone.tpl';
 	} else {
-	    list ($ret, $html) = $template->fetch('gallery:templates/global.tpl');
-	}
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    $templatePath = 'gallery:templates/global.tpl';
 	}
 
-	print $html;
+	/* Write directly for speed */
+	if ($returnHtml) {
+	    list ($ret, $html) = $template->fetch($templatePath);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    return array(GalleryStatus::success(), $html);
+	} else {
+	    $ret = $template->display($templatePath);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
     }
 
-    return GalleryStatus::success();
+    return array(GalleryStatus::success(), null);
 }
 ?>

@@ -62,7 +62,6 @@
 	<?php endif; ?>
 
 	<?php include(dirname(__FILE__) . '/' . $templateData['bodyFile']); ?>
-
 	<?php if ($currentStep->isComplete() && !$currentStep->isLastStep()): ?>
 	<div class="go">
 	  <?php $nextStep = $stepNumber + 1 ?>

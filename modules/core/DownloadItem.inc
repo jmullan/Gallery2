@@ -125,9 +125,9 @@ class DownloadItemView extends GalleryView {
 	} else {
 	    $size = $item->getSize();
 	}
+
 	$mimeType = $item->getMimeType();
 	header('Content-type: ' . $mimeType);
-	
 	header('Content-Disposition: inline; filename="' . $pseudoFileName . '"');
 	
 	if ($size > 0) {

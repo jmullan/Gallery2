@@ -36,20 +36,17 @@ class EntityCounterEventListener {
 	switch ($event->getEventName()) {
 	case 'GalleryEntity::delete':
 	    $entity = $event->getEntity();
-	    //printf("<pre>Delete: %s (%s)</pre>", $entity->getId(), get_class($entity));
 	    $this->_count--;
 	    break;
 	    
 	case 'GalleryEntity::save':
 	    $entity = $event->getEntity();
 	    if ($entity->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED)) {
-		//printf("<pre>Create: %s (%s)</pre>", $entity->getId(), get_class($entity));
 		$this->_count++;
 	    }
 	    break;
 	}
 
-	//printf("<pre>Count: %s</pre>", print_r($this->_count, 1));
 	return GalleryStatus::success();
     }
 
@@ -94,6 +91,8 @@ class GalleryTestCase extends TestCase {
 
 	$counter =& GalleryTestCase::getEntityCounter();
 	$counter->setCount(0);
+
+	GalleryDataCache::setFileCachingEnabled(false);
 	
 	parent::setUp();
 
@@ -131,6 +130,7 @@ class GalleryTestCase extends TestCase {
 
 	/* Save our user id */
 	$this->_saveUser = $gallery->getActiveUser();
+	$this->_saveConfig = $gallery->_config;
 
 	$gallery->clearDebugBuffer();
     }
@@ -157,8 +157,11 @@ class GalleryTestCase extends TestCase {
 
 	/* Restore user id */
 	$gallery->setActiveUser($this->_saveUser);
+	$gallery->_config = $this->_saveConfig;
 
 	parent::tearDown();
+
+	GalleryDataCache::setFileCachingEnabled(true);
 	
 	$counter =& GalleryTestCase::getEntityCounter();
 	$this->assert($counter->getCount() == 0,

@@ -88,6 +88,17 @@ class GalleryChildEntity extends GalleryChildEntity_core {
         return 'GalleryChildEntity';
     }
 
+    /** 
+     * Return the path to the PHP file for this class, relative to the gallery2 dir
+     * 
+     * @return string path
+     */ 
+    function getClassFile() { 
+        return 'modules/' .  
+            basename(dirname(dirname(dirname(__FILE__)))) .  
+            '/classes/GalleryChildEntity.class'; 
+    }
+
     
     /**
      * Get the value of parentId

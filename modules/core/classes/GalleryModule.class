@@ -108,15 +108,10 @@ class GalleryModule {
     }
 
     /**
-     * Do any initialization required for this module to run.  The init method
-     * is called on every active module on every request.  You should not do
-     * anything heavy in this method if you can avoid it.  Typically you would
-     * register any GalleryFactory implementations at this time.
-     *
-     * @return object GalleryStatus a status code
+     * Register any event listeners that this module requires.  Each module will get a chance to
+     * register its event listeners before any events are posted.
      */
-    function init() {
-	return GalleryStatus::success();
+    function registerEventListeners() {
     }
 
     /**
@@ -139,7 +134,7 @@ class GalleryModule {
      * @return object GalleryStatus a status code
      */
     function install() {
-	return array(GalleryStatus::success(), false);
+	return GalleryStatus::success();
     }
 
     /**
@@ -195,7 +190,7 @@ class GalleryModule {
     function isActive() {
 	global $gallery;
 
-	list($ret, $moduleStatus) = GalleryCoreApi::getPluginStatus('module');
+	list($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

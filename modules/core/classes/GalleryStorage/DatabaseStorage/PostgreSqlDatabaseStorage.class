@@ -147,14 +147,14 @@ class PostgreSqlDatabaseStorage extends DatabaseStorage {
     }
 
     /**
-     * @see GalleryStorage::_convertIntToBits
+     * @see GalleryStorage::convertIntToBits
      */
     function convertIntToBits($intVal) {
 	return sprintf("%032b", $intVal);
     }
 
     /**
-     * @see GalleryStorage::_convertIntToBits
+     * @see GalleryStorage::convertIntToBits
      */
     function convertBitsToInt($bitsVal) {
 	return bindec($bitsVal);

@@ -53,7 +53,7 @@ class AdminLayoutsController extends GalleryController {
 
 	$layoutId = GalleryUtilities::getRequestVariables('layoutId');
 	if (!empty($layoutId) && !empty($form['action'])) {
-	    list ($ret, $layoutStatusList) = GalleryCoreApi::getPluginStatus('layout');
+	    list ($ret, $layoutStatusList) = GalleryCoreApi::fetchPluginStatus('layout');
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -211,7 +211,7 @@ class AdminLayoutsView extends GalleryView {
 	}
 	
 	/* Load the module list */
-	list ($ret, $layouts) = GalleryCoreApi::getPluginStatus('layout');
+	list ($ret, $layouts) = GalleryCoreApi::fetchPluginStatus('layout');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

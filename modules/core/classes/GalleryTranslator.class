@@ -330,10 +330,6 @@ class GalleryTranslator {
 	     */
 	    if (isset($data['one'])) {
 		if (function_exists('dngettext')) {
-		    /*
-		     * XXX: sometimes this call takes forever.  I have no idea
-		     * why.  Do you?
-		     */
 		    $localized = dngettext($domain, $data['one'], $data['many'], $data['count']);
 		} else {
 		    /*

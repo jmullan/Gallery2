@@ -62,35 +62,17 @@ class PhotoAccessModule extends GalleryModule {
 	
 	list ($ret, $version) = $this->getModuleParameter('version');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), false);
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	$installed = false;
 	if ($version != $this->getVersion()) {
-
-	    if (empty($version)) {
-		/*
-		 * This is an initial install. Make sure that we have some
-		 * reasonable defaults.
-		 */
-		foreach (array( /* XXX: nothing to set for now */ )
-			 as $key => $value) {
-
-		    $ret = $this->setModuleParameter($key, $value);
-		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), false);
-		    }
-		}
-		$installed = true;
-	    }
-
 	    $ret = $this->setModuleParameter('version', $this->getVersion());
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), false);
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 	
-	return array(GalleryStatus::success(), $installed);
+	return GalleryStatus::success();
     }
 
     /**

@@ -41,16 +41,11 @@ class ImageBlockModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::init()
+     * @see GalleryModule::registerEventListeners()
      */
-    function init() {
-	$ret = parent::init();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
+    function registerEventListeners() {
 	require_once(dirname(__FILE__) . '/classes/ImageBlockHelper.class');
 	GalleryCoreApi::registerEventListener('Gallery::ViewableTreeChange', new ImageBlockHelper());
-	return GalleryStatus::success();
     }
 
     /**
@@ -61,21 +56,15 @@ class ImageBlockModule extends GalleryModule {
 
 	list ($ret, $version) = $this->getModuleParameter('version');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__,__LINE__), false);
+	    return $ret->wrap(__FILE__,__LINE__);
 	}
 
-	$installed = false;
 	if ($version != $this->getVersion()) {
-	    if (empty($version)) {
-		/* Initial install */
-		$installed = true;
-	    }
-
 	    /* The store requires configuration. */
 	    $storage =& $gallery->getStorage();
 	    $ret = $storage->configureStore('imageblock');
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), false);
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
 	    foreach (array( 'version' => $this->getVersion(),
@@ -84,12 +73,12 @@ class ImageBlockModule extends GalleryModule {
 		     as $key => $value) {
 		$ret = $this->setModuleParameter($key, $value);
 		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), false);
+		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
 	}
 
-	return array(GalleryStatus::success(), $installed);
+	return GalleryStatus::success();
     }
 
     /**

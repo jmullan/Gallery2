@@ -1,0 +1,14 @@
+    <h1 class="success"><?php print _("Installed Gallery Core successfully") ?></h1>
+
+    <?php if (empty($templateData['errors'])): ?>
+    <p>
+      <?php print _("We've successfully installed the core of Gallery.  You should now have a working Gallery and you can <a href=\"../main.php\">go directly to it</a>.  However, in order to really get full value out of Gallery you should keep going in the installer and install some of the additional modules."); ?>
+    </p>
+    <?php else: ?>
+    <h2 class="error">
+      <?php print _("There was an error installing the core module.  Here's the stack trace:"); ?>
+    </h2>
+    <div>
+      <?php print $templateData['stackTrace']; ?>
+    </div>
+    <?php endif; ?>

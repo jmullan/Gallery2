@@ -47,7 +47,7 @@ class CoreSearchTest extends GalleryTestCase {
 	
 	parent::setUp();
 
-	list ($ret, $moduleStatusList) = GalleryCoreApi::getPluginStatus('module');
+	list ($ret, $moduleStatusList) = GalleryCoreApi::fetchPluginStatus('module');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

@@ -26,27 +26,17 @@ function main() {
 	return $ret->wrap(__FILE__, __LINE__);
     }
 
-    /* Init our storage */
-    $ret = GalleryInitStorage();
-    if ($ret->isError()) {
-	return $ret->wrap(__FILE__, __LINE__);
-    }
-
-    global $gallery;
-    $storage =& $gallery->getStorage();
-    $ret = $storage->beginTransaction();
-    if ($ret->isError()) {
-	return $ret->wrap(__FILE__, __LINE__);
-    }
-
-    /* Configure our url Generator for the test harness */
-    $urlGenerator = new GalleryUrlGenerator('../../main.php');
-    $gallery->setUrlGenerator($urlGenerator);
-
     $ret = GalleryInitSecondPass();
     if ($ret->isError()) {
 	return $ret->wrap(__FILE__, __LINE__);
     }
+    global $gallery;
+    
+    /* Configure our url Generator for the test harness */
+    $urlGenerator = new GalleryUrlGenerator('../../main.php');
+    $gallery->setUrlGenerator($urlGenerator);
+
+    $storage =& $gallery->getStorage();
 
     $ret = GalleryTestHarness();
     if ($ret->isError()) {

@@ -199,9 +199,11 @@ class AdminImageMagickControllerTestPlatform {
     function file_exists($path) {
 	$slash = $this->getDirectorySeparator();
 	switch ($path) {
+	case "${slash}validPath":
 	case "${slash}validPath${slash}":
 	case "${slash}validPath${slash}identify":
 	case "${slash}validPath${slash}convert":
+	case "${slash}validPathBadBinaries":
 	case "${slash}validPathBadBinaries${slash}":
 	    return true;
 	}

@@ -425,7 +425,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 	$orderDirectionList[ORDER_DESCENDING] = $module->translate("Descending");
 
 	/* Set up our layout selection list */
-	list ($ret, $layoutStatusList) = GalleryCoreApi::getPluginStatus('layout');
+	list ($ret, $layoutStatusList) = GalleryCoreApi::fetchPluginStatus('layout');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

@@ -47,12 +47,6 @@ define('DATABASE_TABLE_PREFIX', 'g2_');
 define('DATABASE_COLUMN_PREFIX', 'g_');
 
 /**
- * Database connection states
- */
-define('DATABASE_STATUS_NOT_CONNECTED', 0);
-define('DATABASE_STATUS_CONNECTED', 1);
-
-/**
  * Database implementation of the GalleryStorage interface.
  *
  * This strategy implements the hooks for saving and restoring GalleryEntity
@@ -61,7 +55,7 @@ define('DATABASE_STATUS_CONNECTED', 1);
  * @package GalleryCore
  * @subpackage Storage
  */
-class DatabaseStorage extends GalleryStorage {
+class DatabaseStorage /* implements GalleryStorage */ {
 
     /**
      * Internal pointer to ADOdb database object
@@ -136,12 +130,27 @@ class DatabaseStorage extends GalleryStorage {
     var $_columnPrefix;
 
     /**
+     * A cache of member info that we've discovered about various classes
+     *
+     * @var array $_entityInfoCache
+     * @access private
+     */
+    var $_entityInfoCache;
+
+    /**
+     * A cache of member info that we've discovered about various maps
+     *
+     * @var array $_mapInfoCache
+     * @access private
+     */
+    var $_mapInfoCache;
+
+    /**
      * Constructor.
      *
      * @param array database configuration values
      */
     function DatabaseStorage($config) {
-	$this->GalleryStorage();
 	$this->_username = $config['username'];
 	$this->_password = $config['password'];
 	$this->_hostname = $config['hostname'];
@@ -167,16 +176,6 @@ class DatabaseStorage extends GalleryStorage {
      * @return object GallerySatus a status code
      */
     function init() {
-	return $this->_connect();
-    }
-    
-    /**
-     * Connect to the database
-     *
-     * @return object GalleryStatus a status code
-     * @access private
-     */
-    function _connect() {
 	global $gallery;
 
 	list ($ret, $this->_db) = $this->_getConnection();
@@ -184,6 +183,11 @@ class DatabaseStorage extends GalleryStorage {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
+	$ret = $this->beginTransaction();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
 	return GalleryStatus::success();
     }
 
@@ -193,7 +197,7 @@ class DatabaseStorage extends GalleryStorage {
      * @return array object GalleryStatus a status code
      *               object a database resource
      * @access private
-     */
+     */ 
     function _getConnection($forceNew=false) {
 	global $gallery;
 	
@@ -208,10 +212,7 @@ class DatabaseStorage extends GalleryStorage {
 	    return array(GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__), null);
 	}
 
-	/*
-	 * Turn on debugging in the database connection if Gallery is in debug
-	 * mode
-	 */
+	/* Turn on debugging in the database connection if Gallery is in debug mode */
 	if ($gallery->getDebug()) {
 	    $db->debug = true;
 	}
@@ -241,20 +242,6 @@ class DatabaseStorage extends GalleryStorage {
 	return array(GalleryStatus::success(), $db);
     }
     
-    /**
-     * Turn debugging on or off.
-     */
-    function setDebug($bool) {
-	parent::setDebug($bool);
-
-	/* Flip the switch in the ADOdb class, also */
-	if ($this->_debug) {
-	    $this->_db->debug = true;
-	} else {
-	    $this->_db->debug = false;
-	}
-    }
-
     /**
      * Load the GalleryEntities with the ids specified
      *
@@ -539,7 +526,6 @@ class DatabaseStorage extends GalleryStorage {
 	    /*
 	     * Now apply each UPDATE statement in turn.  Make sure that we're
 	     * only affecting one row each time.
-	     *
 	     */
 	    foreach ($queryList as $queryAndData) {
 		list($query, $data) = $queryAndData;
@@ -555,10 +541,7 @@ class DatabaseStorage extends GalleryStorage {
 		    if ($affectedRows == 0) {
 			return GalleryStatus::error(ERROR_OBSOLETE_DATA, __FILE__, __LINE__);
 		    } else if ($affectedRows > 1) {
-			/*
-			 * Holy shit, we just updated more than one row!  What do
-			 * we do now?
-			 */
+			/* Holy shit, we just updated more than one row!  What do we do now? */
 			return GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
 		    }
 		}
@@ -594,7 +577,7 @@ class DatabaseStorage extends GalleryStorage {
 	if ($entity->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED)) {
 	    $entity->clearPersistentFlag(STORAGE_FLAG_NEWLY_CREATED);
 	    $entity->setPersistentFlag(STORAGE_FLAG_DELETED);
-	    return;
+	    return GalleryStatus::success();
 	}
 
 	/*
@@ -1500,6 +1483,81 @@ class DatabaseStorage extends GalleryStorage {
 	}
 
 	return array($this->_tablePrefix . $tableName, $alias);
+    }
+
+    /**
+     * Describe all the members of a entity
+     *
+     * @param string a class name
+     * @access protected
+     * @return array object GalleryStatus a status code
+     *               member => info associative array
+     */
+    function _describeEntityMembers($entityName) {
+	global $gallery;
+
+	if (empty($this->_entityInfoCache[$entityName])) {
+	    list ($ret, $entity) = GalleryCoreApi::newFactoryInstance('GalleryEntity', $entityName);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    if (!isset($entity)) {
+		return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
+	    }
+	    $this->_entityInfoCache[$entityName] = $entity->getPersistentMemberInfo();
+	}
+
+	return array(GalleryStatus::success(),
+		     $this->_entityInfoCache[$entityName]);
+    }
+
+    /**
+     * Describe all the members of a map
+     *
+     * @param string a class name
+     * @return array member name => member type
+     * @access protected
+     */
+    function _describeMapMembers($mapName) {
+
+	if (empty($this->_mapInfoCache[$mapName])) {
+	    eval("\$info = $mapName::getMapInfo();");
+	    $this->_mapInfoCache[$mapName] = $info;
+	}
+
+	return $this->_mapInfoCache[$mapName];
+    }
+
+    /**
+     * Start tracing
+     *
+     * This method is for use by GalleryStorage subclasses only.  If Gallery is
+     * in debug, this method will begin storing all output and routing it into
+     * Gallery's debug system
+     *
+     * @access protected
+     */
+    function _traceStart() {
+	global $gallery;
+
+	if ($gallery->getDebug()) {
+	    ob_start();
+	}
+    }
+
+    /**
+     * Stop tracing
+     *
+     * This method is for use by GalleryStorage subclasses only.  If Gallery is
+     * in debug, this will method will stop tracing.
+     */
+    function _traceStop() {
+	global $gallery;
+	if ($gallery->getDebug()) {
+	    $buf = ob_get_contents();
+	    ob_end_clean();
+	    $gallery->debug($buf);
+	}
     }
 }
 ?>

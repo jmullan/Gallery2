@@ -26,6 +26,11 @@
  */
 
 /**
+ * Write lock type
+ */
+define('SESSION_ID_PARAMETER', 'GALLERYSID');
+
+/**
  * Container for session related data
  *
  * @package GalleryCore
@@ -54,14 +59,6 @@ class GallerySession {
      * @access private
      */
     var $_sessionId;
-
-    /**
-     * The COOKIE, GET or POST parameter containing the session id
-     *
-     * @var string $_sessionIdParameter
-     * @access private
-     */
-    var $_sessionIdParameter;
 
     /**
      * Is it ok to rely on cookies for this session?
@@ -109,33 +106,26 @@ class GallerySession {
     function init() {
 	global $gallery;
 
-	// Inactivity timeout for user sessions
-	list ($ret, $this->_sessionIdParameter) =
-	    GalleryCoreApi::getPluginParameter('module', 'core', 'session.idParameter');
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
 	/* Check to see if we have an existing session. */
 	$this->_sessionId = null;
-	if (!empty($_COOKIE[$this->_sessionIdParameter])) {
+	if (!empty($_COOKIE[SESSION_ID_PARAMETER])) {
 
 	    /*
 	     * If we get the id parameter as a cookie, then it also means that
 	     * cookies are functioning.
 	     */
-	    $this->_sessionId = $_COOKIE[$this->_sessionIdParameter];
+	    $this->_sessionId = $_COOKIE[SESSION_ID_PARAMETER];
 	    $this->_isUsingCookies = true;
 
 	    // Allow the URL to override the cookie, in rare occasions
-	    $sessionId = GalleryUtilities::getRequestVariables($this->_sessionIdParameter);
+	    $sessionId = GalleryUtilities::getRequestVariables(SESSION_ID_PARAMETER);
 	    if (!empty($sessionId)) {
 		$this->_sessionId = $sessionId;
 	    }
 	} else {
 	    $this->_isUsingCookies = false;
 	    $this->_sessionId =
-		GalleryUtilities::getRequestVariables($this->_sessionIdParameter);
+		GalleryUtilities::getRequestVariables(SESSION_ID_PARAMETER);
 	} 
 
 	/* If we don't have a session id at this point, create one. */
@@ -149,8 +139,8 @@ class GallerySession {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	if (!isset($_COOKIE[$this->_sessionIdParameter]) ||
-	        $_COOKIE[$this->_sessionIdParameter] != $this->_sessionIdParameter) {
+	if (!isset($_COOKIE[SESSION_ID_PARAMETER]) || 
+	        $_COOKIE[SESSION_ID_PARAMETER] != $this->_sessionId) {
 	    /*
 	     * Send back a cookie.
 	     *
@@ -159,7 +149,7 @@ class GallerySession {
 	     * by recording how many times we've sent a cookie, and how many times
 	     * that we've received one back in return.  Leave that for later.
 	     */
-	    $cookie = 'Set-Cookie: ' . $this->_sessionIdParameter . '=' . $this->_sessionId;
+	    $cookie = 'Set-Cookie: ' . SESSION_ID_PARAMETER . '=' . $this->_sessionId;
 
 	    list ($ret, $sessionLifetime) =
 		GalleryCoreApi::getPluginParameter('module', 'core', 'session.lifetime');
@@ -329,7 +319,7 @@ class GallerySession {
      * @return array string, string
      */
     function getSessionDescriptor() {
-	return array($this->_sessionIdParameter, $this->_sessionId);
+	return array(SESSION_ID_PARAMETER, $this->_sessionId);
     }
 
     /**

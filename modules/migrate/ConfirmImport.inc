@@ -84,7 +84,7 @@ class ConfirmImportController extends GalleryController {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	
-	list ($ret, $moduleStatusList) = GalleryCoreApi::getPluginStatus('module');
+	list ($ret, $moduleStatusList) = GalleryCoreApi::fetchPluginStatus('module');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -868,7 +868,7 @@ class ConfirmImportController extends GalleryController {
 				    
 				    if (isset($toolkit)) {
 					list ($ret, $success) =
-						GalleryCoreApi::setThumbnailFromItem($item->getId(), $newItem->getId());
+					    GalleryCoreApi::setThumbnailFromItem($item->getId(), $newItem->getId());
 					if ($ret->isError()) {
 					    return array($ret->wrap(__FILE__, __LINE__), null);
 					}

@@ -365,13 +365,13 @@ class GalleryUtilities {
     }
 
     /**
-     * Convert a filesystem path inside the gallery directory to a relative URL
+     * Convert a filesystem path inside the gallery directory to an absolute URL
      *
      *  ie /path/to/gallery/themes/classic/styles/style.css =>
-     *             themes/classic/styles/style.css
+     *     http://example.com/gallery/themes/classic/styles/style.css
      *
      * @param string path to a file in the gallery directory tree
-     * @return string a relative url
+     * @return string a url
      * @static
      */
     function convertPathToUrl($path) {
@@ -791,6 +791,24 @@ class GalleryUtilities {
 	return $_SERVER['REMOTE_ADDR'];
     }
 
+    /**
+     * Make sure that the given directory exists (creating it if necessary)
+     *
+     * @param string the dir
+     */
+    function guaranteeDirExists($dir) {
+	global $gallery;
+	$platform = $gallery->getPlatform();
+
+	if (!$platform->file_exists($dir)) {
+	    $base = dirname($dir);
+	    if ($base != $dir) {
+		GalleryUtilities::guaranteeDirExists($base);
+	    }
+	    $platform->mkdir($dir);
+	}
+    }
+    
     /**
      * Turn a set of albums into a depth tree suitable for display in a
      * hierarchical format.

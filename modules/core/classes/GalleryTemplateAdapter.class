@@ -199,6 +199,13 @@ class GalleryTemplateAdapter {
 	    return '[Render error: missing entity]';
 	}
 
+	// Provide a permissions shortcut for this item and this entity
+	$session =& $gallery->getSession();
+	$viewable = $session->get('viewableEntities');
+	$viewable[$params['item']['id']] = time();
+	$viewable[$params['image']['id']] = time();
+	$session->put('viewableEntities', $viewable);
+
 	if (!isset($params['maxSize'])) {
 	    $params['maxSize'] = null;
 	}

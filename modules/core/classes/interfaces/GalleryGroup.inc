@@ -99,6 +99,17 @@ class GalleryGroup extends GalleryGroup_core {
         return 'GalleryGroup';
     }
 
+    /** 
+     * Return the path to the PHP file for this class, relative to the gallery2 dir
+     * 
+     * @return string path
+     */ 
+    function getClassFile() { 
+        return 'modules/' .  
+            basename(dirname(dirname(dirname(__FILE__)))) .  
+            '/classes/GalleryGroup.class'; 
+    }
+
     
     /**
      * Get the value of groupType

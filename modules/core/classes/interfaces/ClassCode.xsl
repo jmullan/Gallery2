@@ -111,6 +111,17 @@ class <xsl:value-of select="class-name"/> extends <xsl:value-of select="class-na
 	return '<xsl:value-of select="class-name"/>';
     }
 
+    /** 
+     * Return the path to the PHP file for this class, relative to the gallery2 dir
+     * 
+     * @return string path
+     */ 
+    function getClassFile() { 
+        return 'modules/' .  
+            basename(dirname(dirname(dirname(__FILE__)))) .  
+            '/classes/<xsl:value-of select="class-name"/>.class'; 
+    }
+
     <xsl:apply-templates select="map" />
     <xsl:apply-templates select="member" />
 }

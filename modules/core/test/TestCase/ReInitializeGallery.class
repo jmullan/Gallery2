@@ -43,9 +43,11 @@ class ReInitializeGalleryTestCase extends TestCase {
 	$gallery->setActiveUser($adminUser);
 
 	$session =& $gallery->getSession();
-	$ret = $session->save();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	if (isset($session)) {
+	    $ret = $session->save();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
 	}
 	
 	return GalleryStatus::success();

@@ -49,24 +49,23 @@ class CoreModuleExtras {
 	$storage =& $gallery->getStorage();
 	$ret = $storage->rollbackTransaction();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), false);
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$ret = $storage->beginTransaction();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), false);
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	
 	/* The store requires configuration. */
 	$ret = $storage->configureStore('core');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), false);
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	$installed = false;
 	list ($ret, $version) = $module->getModuleParameter('version');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), false);
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	
 	if ($version != $module->getVersion()) {
@@ -89,7 +88,6 @@ class CoreModuleExtras {
 			       'default.layout' => 'matrix',
 			       'default.theme' => 'matrix',
 			       'default.language' => GalleryTranslator::getLanguageCodeFromRequest(),
-			       'session.idParameter' => 'GALLERYSID',
 			       'session.lifetime' => 25 * 365 * 86400, /* 25 years */
 			       'session.inactivityTimeout' => 14 * 86400, /* two weeks */
 			       'misc.markup' => 'bbcode',
@@ -99,19 +97,19 @@ class CoreModuleExtras {
 		    
 		    $ret = $module->setModuleParameter($key, $value);
 		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), false);
+			return $ret->wrap(__FILE__, __LINE__);
 		    }
 		}
 
 		/* Activate the Matrix layout */
 		list ($ret, $layout) = GalleryCoreApi::loadPlugin('layout', 'matrix');
 		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), false);
+		    return $ret->wrap(__FILE__, __LINE__);
 		}
 		
 		$ret = $layout->activate();
 		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), false);
+		    return $ret->wrap(__FILE__, __LINE__);
 		}
 
 		/*
@@ -124,7 +122,7 @@ class CoreModuleExtras {
 		if (empty($translator)) {
 		    $ret = $gallery->initTranslator();
 		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), false);
+			return $ret->wrap(__FILE__, __LINE__);
 		    }
 		}
 
@@ -142,28 +140,28 @@ class CoreModuleExtras {
 							  $gallery->i18n('All access'),
 							  GALLERY_PERMISSION_ALL_ACCESS);
 		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), false);
+		    return $ret->wrap(__FILE__, __LINE__);
 		}
 
 		$ret = GalleryCoreApi::registerPermission($module->getId(),
 							  'core.view',
 							  $gallery->i18n('[core] View item')); 
 		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), false);
+		    return $ret->wrap(__FILE__, __LINE__);
 		}
 
 		$ret = GalleryCoreApi::registerPermission($module->getId(),
 							  'core.viewResizes',
 							  $gallery->i18n('[core] View resized version(s)')); 
 		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), false);
+		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    
 		$ret = GalleryCoreApi::registerPermission($module->getId(),
 							  'core.viewSource',
 							  $gallery->i18n('[core] View original version')); 
 		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), false);
+		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    
 		$ret = GalleryCoreApi::registerPermission($module->getId(),
@@ -174,7 +172,7 @@ class CoreModuleExtras {
 								'core.viewResizes',
 								'core.viewSource'));
 		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), false);
+		    return $ret->wrap(__FILE__, __LINE__);
 		}
 
 		$ret = GalleryCoreApi::registerPermission($module->getId(),
@@ -182,7 +180,7 @@ class CoreModuleExtras {
 							  $gallery->i18n('[core] Add sub-album'), 
 							  GALLERY_PERMISSION_ITEM_ADMIN);
 		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), false);
+		    return $ret->wrap(__FILE__, __LINE__);
 		}
 
 		$ret = GalleryCoreApi::registerPermission($module->getId(),
@@ -190,7 +188,7 @@ class CoreModuleExtras {
 							  $gallery->i18n('[core] Add sub-item'), 
 							  GALLERY_PERMISSION_ITEM_ADMIN);
 		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), false);
+		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    
 		$ret = GalleryCoreApi::registerPermission($module->getId(),
@@ -198,7 +196,7 @@ class CoreModuleExtras {
 							  $gallery->i18n('[core] Edit item'), 
 							  GALLERY_PERMISSION_ITEM_ADMIN);
 		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), false);
+		    return $ret->wrap(__FILE__, __LINE__);
 		}
 
 		$ret = GalleryCoreApi::registerPermission($module->getId(),
@@ -206,7 +204,7 @@ class CoreModuleExtras {
 							  $gallery->i18n('[core] Change item permissions'), 
 							  GALLERY_PERMISSION_ITEM_ADMIN);
 		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), false);
+		    return $ret->wrap(__FILE__, __LINE__);
 		}
 
 		$ret = GalleryCoreApi::registerPermission($module->getId(),
@@ -214,12 +212,12 @@ class CoreModuleExtras {
 							  $gallery->i18n('[core] Delete item'), 
 							  GALLERY_PERMISSION_ITEM_ADMIN);
 		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), false);
+		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	
 		$ret = $module->setModuleParameter('version', $module->getVersion());
 		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), false);
+		    return $ret->wrap(__FILE__, __LINE__);
 		}
 
 		foreach (array('_createAllUsersGroup',
@@ -231,15 +229,14 @@ class CoreModuleExtras {
 
 		    $ret = CoreModuleExtras::$func($module);
 		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), false);
+			return $ret->wrap(__FILE__, __LINE__);
 		    }
 		}
-		$installed = true;
 	    }
 	}
 
 	/* The core is now guaranteed to be configured and initialized */
-	return array(GalleryStatus::success(), $installed);
+	return GalleryStatus::success();
     }
 
     /**

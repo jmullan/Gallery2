@@ -312,7 +312,7 @@ class Gallery {
      * @param object GalleryPlatform the Gallery platform object
      */
     function setPlatform(&$platform) {
-	$this->_platform = $platform;
+	$this->_platform =& $platform;
     }
 
     /**
@@ -357,37 +357,15 @@ class Gallery {
      * Return an instance of the GalleryStorage class
      *
      * @access public
-     * @return object GalleryStatus a status code
-     */
-    function initStorage() {
-	$type = $this->getConfig('storage.type');
-	$config = $this->getConfig('storage.config');
-	    
-	/* Load the factory class */
-	require_once(dirname(__FILE__) . '/GalleryStorageFactory.class');
-	    
-	list ($ret, $storage) =
-	    GalleryStorageFactory::newInstance($type, $config);
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-	    
-	$ret = $storage->init();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-	$this->_storage = $storage;
-
-	return GalleryStatus::success();
-    }
-
-    /**
-     * Return an instance of the GalleryStorage class
-     *
-     * @access public
      * @return object GalleryStorage a storage instance
      */
     function &getStorage() {
+	if (!isset($this->_storage)) {
+	    require_once(dirname(__FILE__) . '/GalleryStorage.class');
+	    require_once(dirname(__FILE__) . '/GallerySearchResults.class');
+	    $this->_storage = new GalleryStorage();
+	}
+	
 	return $this->_storage;
     }
     
@@ -441,7 +419,14 @@ class Gallery {
 		list ($ret, $language) =
 		    GalleryCoreApi::getPluginParameter('module', 'core', 'default.language');
 		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    if ($ret->getErrorCode() & ERROR_STORAGE_FAILURE) {
+			/*
+			 * During installation it's possible that the database isn't around yet when we
+			 * want a translator.  Just keep going.
+			 */
+		    } else {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
 		}
 	    }
 
@@ -524,13 +509,6 @@ class Gallery {
 	}
 
 	$this->_debug = $debug;
-	if (isset($this->_storage)) {
-	    if ($this->_debug) {
-		$this->_storage->setDebug(true);
-	    } else {
-		$this->_storage->setDebug(false);
-	    }
-	}
 	if (!isset($this->_debugBuffer)) {
 	    $this->clearDebugBuffer();
 	}

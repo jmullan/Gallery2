@@ -43,19 +43,6 @@ class MigrateModule extends GalleryModule {
     }
     
     /**
-     * @see GalleryModule::init
-     */
-    function init() {
-	global $gallery;
-	$ret = parent::init();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	return GalleryStatus::success();
-    }
-
-    /**
      * @see GalleryModule::install
      */
     function install() {
@@ -63,25 +50,16 @@ class MigrateModule extends GalleryModule {
 		
 	list ($ret, $version) = $this->getModuleParameter('version');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), false);
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	$installed = false;
 	if ($version != $this->getVersion()) {
-	    if (empty($version)) {
-		/* Initial install */
-		$installed = true;
-
-		/* Set any module defaults here */
-	    }
-	    
 	    $ret = $this->setModuleParameter('version', $this->getVersion());
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), false);
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
-	    /* XXX: Register permissions here */
 	}
-	return array(GalleryStatus::success(), $installed);
+	return GalleryStatus::success();
     }
 
     /**

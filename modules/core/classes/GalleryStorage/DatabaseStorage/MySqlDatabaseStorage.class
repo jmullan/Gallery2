@@ -111,5 +111,19 @@ class MySqlDatabaseStorage extends DatabaseStorage {
 
 	return array(GalleryStatus::success(), $sql);
     }
+
+    /**
+     * @see GalleryStorage::convertIntToBits
+     */
+    function convertIntToBits($intVal) {
+	return $intVal;
+    }
+
+    /**
+     * @see GalleryStorage::convertIntToBits
+     */
+    function convertBitsToInt($bitsVal) {
+	return $bitsVal;
+    }
 }
 ?>

@@ -111,6 +111,17 @@ class GalleryAnimationItem extends GalleryAnimationItem_core {
         return 'GalleryAnimationItem';
     }
 
+    /** 
+     * Return the path to the PHP file for this class, relative to the gallery2 dir
+     * 
+     * @return string path
+     */ 
+    function getClassFile() { 
+        return 'modules/' .  
+            basename(dirname(dirname(dirname(__FILE__)))) .  
+            '/classes/GalleryAnimationItem.class'; 
+    }
+
     
     /**
      * Get the value of width

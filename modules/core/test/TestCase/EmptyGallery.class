@@ -67,8 +67,7 @@ class EmptyGalleryTestCase extends TestCase {
 	    }
 	}
 
-	foreach (array('data.gallery.cache',
-		       'data.gallery.locks') as $key) {
+	foreach (array('data.gallery.locks') as $key) {
 	    $dir = $gallery->getConfig($key);
 
 	    if (empty($dir)) {

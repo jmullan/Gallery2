@@ -55,6 +55,17 @@ class GalleryToolkitOperationMap extends GalleryToolkitOperationMap_core {
 	return 'GalleryToolkitOperationMap';
     }
 
+    /** 
+     * Return the path to the PHP file for this class, relative to the gallery2 dir
+     * 
+     * @return string path
+     */ 
+    function getClassFile() { 
+        return 'modules/' .  
+            basename(dirname(dirname(dirname(__FILE__)))) .  
+            '/classes/GalleryToolkitOperationMap.class'; 
+    }
+
     
     /**
      * Get meta information about this class' map 

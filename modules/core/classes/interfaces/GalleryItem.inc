@@ -187,6 +187,17 @@ class GalleryItem extends GalleryItem_core {
         return 'GalleryItem';
     }
 
+    /** 
+     * Return the path to the PHP file for this class, relative to the gallery2 dir
+     * 
+     * @return string path
+     */ 
+    function getClassFile() { 
+        return 'modules/' .  
+            basename(dirname(dirname(dirname(__FILE__)))) .  
+            '/classes/GalleryItem.class'; 
+    }
+
     
     /**
      * Get the value of canContainChildren

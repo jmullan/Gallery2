@@ -46,19 +46,9 @@ class CustomFieldModule extends GalleryModule {
     /**
      * @see GalleryModule::init()
      */
-    function init() {
-	global $gallery;
-	
-	$ret = parent::init();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-	
-	/* Register event listener */
+    function registerEventListeners() {
 	require_once(dirname(__FILE__) . '/classes/CustomFieldHelper.class');
 	GalleryCoreApi::registerEventListener('GalleryEntity::delete', new CustomFieldHelper());
-
-	return GalleryStatus::success();
     }
 
     /**
@@ -87,29 +77,24 @@ class CustomFieldModule extends GalleryModule {
 
 	list ($ret, $version) = $this->getModuleParameter('version');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), false);
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	$installed = false;
 	if ($version != $this->getVersion()) {
-
 	    /* The store requires configuration. */
 	    $storage =& $gallery->getStorage();
 	    $ret = $storage->configureStore('customfield');
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), false);
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
-	    if (empty($version)) {
-		$installed = true;
-	    }
 	    $ret = $this->setModuleParameter('version', $this->getVersion());
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), false);
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 
-	return array(GalleryStatus::success(), $installed);
+	return GalleryStatus::success();
     }
 
     /**

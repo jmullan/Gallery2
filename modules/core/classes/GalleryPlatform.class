@@ -771,6 +771,19 @@ class GalleryPlatform {
 	return realpath($file);
     }
 
+    /**
+     * touch -- Sets access and modification time of file
+     *
+     * Attempts to set the access and modification time of the file named by filename to the value given by
+     * time. If the option time is not given, uses the present time. This is equivalent to what utime
+     * (sometimes referred to as utimes) does. If the third option atime is present, the access time of the
+     * given filename is set to the value of atime. Note that the access time is always modified, regardless
+     * of the number of parameters.
+     *
+     * @param string the file path
+     * @param int (optional) the modification time
+     * @param int (optional) the access time
+     */
     function touch($file, $time=null, $atime=null) {
 	global $gallery;
 	if ($gallery->getDebug()) {

@@ -39,6 +39,18 @@ class DataCacheTest extends GalleryTestCase {
 	$this->GalleryTestCase($methodName);
     }
 
+    function setUp() {
+	global $gallery;
+	parent::setUp();
+	$this->_savePlatform = $gallery->getPlatform();
+    }
+
+    function tearDown() {
+	global $gallery;
+	$gallery->setPlatform($this->_savePlatform);
+	parent::tearDown();
+    }
+
     function testPutAndGet() {
 	$key = 'test-key';
 	$value = 'test-value';
@@ -75,6 +87,218 @@ class DataCacheTest extends GalleryTestCase {
 	$this->assert(!GalleryDataCache::containsKey('foo(2, 3, 4)', 'baz'));
 	$this->assert(!GalleryDataCache::containsKey('bar(3, 4)', 'baz'));
 	$this->assert(!GalleryDataCache::containsKey('bar(4)', 'baz'));
+    }
+
+    function testGetCacheTuple() {
+	$this->assertEquals(array('0', '0'), GalleryDataCache::getCacheTuple(0));
+	$this->assertEquals(array('0', '0'), GalleryDataCache::getCacheTuple(1));
+	$this->assertEquals(array('0', '2'), GalleryDataCache::getCacheTuple(21));
+	$this->assertEquals(array('0', '9'), GalleryDataCache::getCacheTuple(99));
+	$this->assertEquals(array('7', '2'), GalleryDataCache::getCacheTuple(721));
+	$this->assertEquals(array('3', '4'), GalleryDataCache::getCacheTuple(3412312));
+    }
+
+    function testGetCachePath() {
+	global $gallery;
+	$gallery->setConfig('data.gallery.cache', '/');
+	
+	$this->assertEquals('/module/core/0/0/1.inc',
+			    GalleryDataCache::getCachePath(array('type' => 'module',
+								 'id' => 'core',
+								 'itemId' => 1)));
+	$this->assertEquals('/layout/matrix',
+			    GalleryDataCache::getCachePath(array('type' => 'layout', 'id' => 'matrix')));
+	
+	$this->assertEquals('/entity/7/2/725.inc',
+			    GalleryDataCache::getCachePath(array('type' => 'entity', 'itemId' => 725)));
+
+	$this->assertEquals('/derivative/1/2/123.inc',
+			    GalleryDataCache::getCachePath(array('type' => 'derivative', 'itemId' => 123)));
+    }
+
+    function testPutToDisk() {
+	global $gallery;
+
+	GalleryDataCache::setFileCachingEnabled(true);
+
+	$gallery->setConfig('data.gallery.cache', '/');
+	$gallery->setPlatform(new DataCacheTestPlatform());
+	
+	$testdata = "testdata";
+	GalleryDataCache::putToDisk(array('type' => 'entity', 'itemId' => 1), $testdata);
+	$this->assertEquals(htmlentities("<?php \$data = unserialize('s:8:\"testdata\";'); ?>"),
+			    htmlentities(DataCacheTestPlatform::getFileContents('/entity/0/0/1.inc')));
+	DataCacheTestPlatform::reset();
+
+	GalleryDataCache::putToDisk(array('type' => 'entity', 'itemId' => 1), $testdata, array('required-class'));
+	$this->assertEquals(htmlentities("<?php GalleryCoreApi::relativeRequireOnce(\"required-class\"); " .
+					 "\$data = unserialize('s:8:\"testdata\";'); ?>"),
+			    htmlentities(DataCacheTestPlatform::getFileContents('/entity/0/0/1.inc')));
+	DataCacheTestPlatform::reset();
+	
+	GalleryDataCache::putToDisk(array('type' => 'entity', 'itemId' => 21), $testdata);
+	$this->assertEquals(htmlentities("<?php \$data = unserialize('s:8:\"testdata\";'); ?>"),
+			    htmlentities(DataCacheTestPlatform::getFileContents('/entity/0/2/21.inc')));
+	DataCacheTestPlatform::reset();
+
+	GalleryDataCache::putToDisk(array('type' => 'entity', 'itemId' => 721), $testdata);
+	$this->assertEquals(htmlentities("<?php \$data = unserialize('s:8:\"testdata\";'); ?>"),
+			    htmlentities(DataCacheTestPlatform::getFileContents('/entity/7/2/721.inc')));
+	DataCacheTestPlatform::reset();
+    }
+    
+    function testRemoveFromDisk() {
+	global $gallery;
+
+	GalleryDataCache::setFileCachingEnabled(true);
+
+	list ($ret, $modulePluginStatus) = GalleryCoreApi::fetchPluginStatus('module');
+	if ($ret->isError()) {
+	    return $this->failWithStatus(__FILE__, __LINE__);
+	}
+
+	list ($ret, $layoutPluginStatus) = GalleryCoreApi::fetchPluginStatus('layout');
+	if ($ret->isError()) {
+	    return $this->failWithStatus(__FILE__, __LINE__);
+	}
+
+	$gallery->setConfig('data.gallery.cache', '/');
+	$gallery->setPlatform(new DataCacheTestPlatform());
+	
+	GalleryDataCache::removeFromDisk(array('type' => 'entity', 'itemId' => 1));
+	$this->assert(DataCacheTestPlatform::wasFileDeleted('/entity/0/0/1.inc'), 'file was not deleted');
+	DataCacheTestPlatform::reset();
+
+	GalleryDataCache::removeFromDisk(array('type' => 'module', 'id' => 'core', 'itemId' => 1));
+	$this->assert(DataCacheTestPlatform::wasFileDeleted('/module/core/0/0/1.inc'), 'file was not deleted');
+	DataCacheTestPlatform::reset();
+
+	GalleryDataCache::removeFromDisk(array('type' => 'module', 'id' => 'core'));
+	$this->assert(DataCacheTestPlatform::wasDirDeleted('/module/core'), 'dir was not deleted');
+	DataCacheTestPlatform::reset();
+
+	GalleryDataCache::removeFromDisk(array('type' => 'module', 'itemId' => 1));
+	foreach (array_keys($modulePluginStatus) as $moduleId) {
+	    $targetFile = '/module/' . $moduleId . '/0/0/1.inc';
+	    $this->assert(DataCacheTestPlatform::wasFileDeleted($targetFile), "$targetFile was not deleted");
+	}
+	DataCacheTestPlatform::reset();
+	
+	GalleryDataCache::removeFromDisk(array('type' => 'layout', 'itemId' => 1));
+	foreach (array_keys($layoutPluginStatus) as $layoutId) {
+	    $targetFile = '/layout/' . $layoutId . '/0/0/1.inc';
+	    $this->assert(DataCacheTestPlatform::wasFileDeleted($targetFile), "$targetFile was not deleted");
+	}
+	DataCacheTestPlatform::reset();
+    }
+    
+    function testGetFromDisk() {
+	global $gallery;
+	
+	GalleryDataCache::setFileCachingEnabled(true);
+
+	$gallery->setConfig('data.gallery.cache', '/');
+	$gallery->setPlatform(new DataCacheTestPlatform_testGetFromDisk());
+
+	/*
+	 * GalleryDataCache::getFromDisk uses include() and we don't have a platform wrapper for that.  We
+	 * can't easily wrap that function because we want to take advantage of the fact that include() shares
+	 * the lexical scope of the calling function, and wrapping it would change that scope.  But we can at
+	 * least partially exercise the function and make sure it doesn't throw any errors.
+	 */
+	GalleryDataCache::getFromDisk(array('type' => 'entity', 'itemId' => 1));
+	GalleryDataCache::getFromDisk(array('type' => 'module', 'id' => 'core', 'itemId' => 1));
+    }
+}
+
+class DataCacheTestPlatform_testGetFromDisk {
+    function file_exists($path) {
+	return false;
+    }
+}
+
+class DataCacheTestPlatform {
+
+    function DataCacheTestPlatform() {
+	$this->reset();
+    }
+
+    function reset() {
+	$record =& DataCacheTestPlatform::getRecord();
+	$record = array();
+    }
+
+    function &getRecord() {
+	static $record;
+	if (!isset($record)) {
+	    $record = array();
+	}
+
+	return $record;
+    }
+
+    function getFileContents($path) {
+	$record =& DataCacheTestPlatform::getRecord();
+	if (isset($record['contents'][$path])) {
+	    return $record['contents'][$path];
+	}
+	
+	return null;
+    }
+
+    function wasFileDeleted($path) {
+	$record =& DataCacheTestPlatform::getRecord();
+	return isset($record['deleted-file'][$path]);
+    }
+    
+    function wasDirDeleted($path) {
+	$record =& DataCacheTestPlatform::getRecord();
+	return isset($record['deleted-dir'][$path]);
+    }
+    
+    function fopen($path, $modes) {
+	$record =& DataCacheTestPlatform::getRecord();
+	if ($modes == 'wb') {
+	    $record['contents'][$path] = '';
+	} else if ($modes == 'rb') {
+	    $record['contents'][$path] = 'contents of ' . $path;
+	}
+	return $path;
+    }
+
+    function flock($handle, $type) {
+	// Ignore for now
+    }
+
+    function fwrite($handle, $data) {
+	$record =& DataCacheTestPlatform::getRecord();
+	if (!isset($record['contents'][$handle])) {
+	    $record['contents'][$handle] = '';
+	}
+	
+	$record['contents'][$handle] .= $data;
+    }
+
+    function unlink($filename) {
+	$record =& DataCacheTestPlatform::getRecord();
+	$record['deleted-file'][$filename] = 1;
+    }
+
+    function recursiveRmDir($dir) {
+	$record =& DataCacheTestPlatform::getRecord();
+	$record['deleted-dir'][$dir] = 1;
+    }
+
+    function fclose($handle) {
+	// Ignore for now
+    }
+
+    function file_exists($path) {
+	return true;
+    }
+
+    function is_dir($path) {
+	return preg_match('{/(module|layout)/\w+$}', $path);
     }
 }
 

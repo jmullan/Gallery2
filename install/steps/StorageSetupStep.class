@@ -96,7 +96,7 @@ class StorageSetupStep extends InstallStep {
 		return false;
 	    }
 
-	    if ($key == 'cache' || $key == 'locks') {
+	    if ($key == 'locks') {
 		for ($i = 0; $i <= 9; $i++) {
 		    if (!file_exists("$dir/$i")) {
 			if (!mkdir("$dir/$i", 0755)) {

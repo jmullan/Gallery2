@@ -128,6 +128,17 @@ class GalleryMovieItem extends GalleryMovieItem_core {
         return 'GalleryMovieItem';
     }
 
+    /** 
+     * Return the path to the PHP file for this class, relative to the gallery2 dir
+     * 
+     * @return string path
+     */ 
+    function getClassFile() { 
+        return 'modules/' .  
+            basename(dirname(dirname(dirname(__FILE__)))) .  
+            '/classes/GalleryMovieItem.class'; 
+    }
+
     
     /**
      * Get the value of width

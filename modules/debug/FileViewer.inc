@@ -41,7 +41,7 @@ class FileViewerView extends GalleryView {
 
 	list ($file, $line) = GalleryUtilities::getRequestVariables('file', 'line');
 
-	list ($ret, $modules) = GalleryCoreApi::getPluginStatus('module');
+	list ($ret, $modules) = GalleryCoreApi::fetchPluginStatus('module');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

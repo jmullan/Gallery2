@@ -8,7 +8,7 @@ class ActivateModuleTestCase extends TestCase {
 
     function getDescription() {
 	global $gallery;
-	list ($ret, $moduleStatus) = GalleryCoreApi::getPluginStatus('module');
+	list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module');
 	if ($ret->isError()) {
 	    $status = 'error';
 	} else {
@@ -24,7 +24,7 @@ class ActivateModuleTestCase extends TestCase {
     function testStart() {
 	global $gallery;
 
-	$moduleStatus = GalleryCoreApi::getPluginStatus('module');
+	$moduleStatus = GalleryCoreApi::fetchPluginStatus('module');
 	if (empty($moduleStatus[$this->_moduleId]['active'])) {
 	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $this->_moduleId);
 	    if ($ret->isError()) {

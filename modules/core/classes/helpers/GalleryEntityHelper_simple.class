@@ -46,7 +46,7 @@ class GalleryEntityHelper_simple {
 	global $gallery;
 	
 	$gallery->guaranteeTimeLimit(5);
-	    
+
 	if (empty($ids)) {
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
 	}
@@ -62,10 +62,17 @@ class GalleryEntityHelper_simple {
 	$cached = array();
 	$missing = array();
 	foreach ($ids as $id) {
-	    if (GalleryDataCache::containsKey("GalleryEntityHelper::loadEntitiesById($id)")) {
-		$cached[$id] = GalleryDataCache::get("GalleryEntityHelper::loadEntitiesById($id)");
+	    $cacheKey = "GalleryEntityHelper::loadEntitiesById($id)";
+	    if (GalleryDataCache::containsKey($cacheKey)) {
+		$cached[$id] = GalleryDataCache::get($cacheKey);
 	    } else {
-		$missing[] = $id;
+		$data =& GalleryDataCache::getFromDisk(array('type' => 'entity', 'itemId' => $id));
+		if (isset($data)) {
+		    $cached[$id] =& $data;
+		    GalleryDataCache::put($cacheKey, $data);
+		} else {
+		    $missing[] = $id;
+		}
 	    }
 	}
 
@@ -84,6 +91,8 @@ class GalleryEntityHelper_simple {
 	foreach ($missing as $entity) {
 	    $id = $entity->getId();
 	    GalleryDataCache::put("GalleryEntityHelper::loadEntitiesById($id)", $entity);
+	    GalleryDataCache::putToDisk(array('type' => 'entity', 'itemId' => $id),
+					$entity, array($entity->getClassFile()));
 	    $cached[$id] = $entity;
 	}
 
