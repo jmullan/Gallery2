@@ -306,6 +306,15 @@ class GalleryStatus {
     }
 
     /**
+     * Add a new code to our set of codes
+     *
+     * @param int an error code
+     */
+    function addErrorCode($code) {
+	$this->_errorCode |= $code;
+    }
+
+    /**
      * Is this an error?
      *
      * @return boolean  
