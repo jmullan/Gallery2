@@ -57,7 +57,7 @@ class GalleryStorage {
      */
     function GalleryStorage() {
 	global $gallery;
-	
+
 	/* Initialize our Gallery map and class info caches */
 	$this->_entityInfoCache = array();
 	$this->_mapInfoCache = array();
@@ -109,7 +109,7 @@ class GalleryStorage {
 		$this->_isInitialized = true;
 	    }
 	}
-	
+
 	return $this->_impl->loadEntities($ids);
     }
 
@@ -129,7 +129,7 @@ class GalleryStorage {
 		$this->_isInitialized = true;
 	    }
 	}
-	
+
 	return $this->_impl->saveEntity($object);
     }
 
@@ -149,7 +149,7 @@ class GalleryStorage {
 		$this->_isInitialized = true;
 	    }
 	}
-	
+
 	return $this->_impl->deleteEntity($object);
     }
 
@@ -169,7 +169,7 @@ class GalleryStorage {
 		$this->_isInitialized = true;
 	    }
 	}
-	
+
 	return $this->_impl->newEntity($object);
     }
 
@@ -192,7 +192,7 @@ class GalleryStorage {
 		$this->_isInitialized = true;
 	    }
 	}
-	
+
 	return $this->_impl->refreshEntity($object);
     }
 
@@ -216,10 +216,10 @@ class GalleryStorage {
 		$this->_isInitialized = true;
 	    }
 	}
-	
+
 	return $this->_impl->search($query, $data, $optional);
     }
-    
+
     /**
      * Execute a database statement
      *
@@ -237,10 +237,10 @@ class GalleryStorage {
 		$this->_isInitialized = true;
 	    }
 	}
-	
+
 	return $this->_impl->execute($statement, $data);
     }
-    
+
     /**
      * Add a new entry to a map
      *
@@ -257,7 +257,7 @@ class GalleryStorage {
 		$this->_isInitialized = true;
 	    }
 	}
-	
+
 	return $this->_impl->addMapEntry($map, $entry);
     }
 
@@ -277,7 +277,7 @@ class GalleryStorage {
 		$this->_isInitialized = true;
 	    }
 	}
-	
+
 	return $this->_impl->removeMapEntry($map, $entry);
     }
 
@@ -296,7 +296,7 @@ class GalleryStorage {
 		$this->_isInitialized = true;
 	    }
 	}
-	
+
 	return $this->_impl->removeAllMapEntries($map);
     }
 
@@ -316,7 +316,7 @@ class GalleryStorage {
 		$this->_isInitialized = true;
 	    }
 	}
-	
+
 	return $this->_impl->updateMapEntry($map, $match, $change);
     }
 
@@ -334,10 +334,10 @@ class GalleryStorage {
 		$this->_isInitialized = true;
 	    }
 	}
-	
+
 	return $this->_impl->configureStore($moduleId);
     }
-    
+
     /**
      * Uninstall the database schema for the given module
      *
@@ -352,10 +352,10 @@ class GalleryStorage {
 		$this->_isInitialized = true;
 	    }
 	}
-	
+
 	return $this->_impl->unconfigureStore($moduleId);
     }
-    
+
     /**
      * Clean out and reset the persistent store for this strategy.
      *
@@ -370,7 +370,7 @@ class GalleryStorage {
 		$this->_isInitialized = true;
 	    }
 	}
-	
+
 	return $this->_impl->cleanStore();
     }
 
@@ -388,7 +388,7 @@ class GalleryStorage {
 		$this->_isInitialized = true;
 	    }
 	}
-	
+
 	return $this->_impl->beginTransaction();
     }
 
@@ -406,10 +406,10 @@ class GalleryStorage {
 		$this->_isInitialized = true;
 	    }
 	}
-	
+
 	return $this->_impl->commitTransaction();
     }
-    
+
     /**
      * Roll back our transaction, if the storage layer supports them.
      *
@@ -424,14 +424,34 @@ class GalleryStorage {
 		$this->_isInitialized = true;
 	    }
 	}
-	
+
 	return $this->_impl->rollbackTransaction();
+    }
+
+    /**
+     * Mark a storage checkpoint, which will commit pending transactions
+     * and perform any future tied-tasks
+     *
+     * @return object GalleryStatus a status code
+     */
+    function checkPoint() {
+	if (!$this->_isInitialized) {
+	    return GalleryStatus::success();
+	}
+
+	$ret = $this->_impl->commitTransaction();
+	if ($ret->isError()) {
+	    return $ret;
+	} 
+
+	return GalleryStatus::success();
     }
 
     /**
      * Acquire read locks on the given items
      *
      * @access public
+     * @param array entityIds list of entityIds
      * @param int timeout before giving up on the lock
      * @return array object GalleryStatus a status code
      *               object a GalleryLock instance
@@ -445,7 +465,7 @@ class GalleryStorage {
 		$this->_isInitialized = true;
 	    }
 	}
-	
+
 	return $this->_impl->acquireReadLock($entityIds, $timeout);
     }
 
@@ -467,7 +487,7 @@ class GalleryStorage {
 		$this->_isInitialized = true;
 	    }
 	}
-	
+
 	return $this->_impl->acquireWriteLock($entityIds, $timeout);
     }
 
@@ -488,7 +508,7 @@ class GalleryStorage {
 		$this->_isInitialized = true;
 	    }
 	}
-	
+
 	return $this->_impl->refreshLocks($lockIds, $freshUntil);
     }
 
@@ -509,10 +529,10 @@ class GalleryStorage {
 		$this->_isInitialized = true;
 	    }
 	}
-	
+
 	return $this->_impl->releaseLocks($lockIds);
     }
-    
+
     /**
      * Convert an integer into something that the database will accept into a
      * bit column
@@ -572,7 +592,7 @@ class GalleryStorage {
 		$this->_isInitialized = true;
 	    }
 	}
-	
+
 	return $this->_impl->isInstalled();
     }
 

@@ -375,6 +375,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 
 	    /* Execute the query */
 	    $GLOBALS['ADODB_FETCH_MODE'] = ADODB_FETCH_NUM;
+
 	    $this->_traceStart();
 	    $recordSet = $this->_db->Execute($query, $targetIds);
 	    $this->_traceStop();
@@ -437,6 +438,11 @@ class DatabaseStorage /* implements GalleryStorage */ {
     function saveEntity(&$entity) {
 	if (empty($this->_db)) {
 	    return GalleryStatus::error(ERROR_STORAGE_CONNECTION, __FILE__, __LINE__);
+	}
+
+	$ret = $this->_guaranteeTransaction();
+	if ($ret->isError()) {
+	    return $ret;
 	}
 
 	/*
@@ -617,6 +623,11 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	    return GalleryStatus::error(ERROR_STORAGE_CONNECTION, __FILE__, __LINE__);
 	}
 
+	$ret = $this->_guaranteeTransaction();
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
 	/*
 	 * If this object has not yet been saved in the database, don't bother
 	 * saving it.
@@ -652,6 +663,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	    $query = 'DELETE FROM ' . $tableName .
 		    ' WHERE ' . $idCol . '=?';
 	    $data = array($entity->getId());
+
 	    $this->_traceStart();
 	    $recordSet = $this->_db->Execute($query, $data);
 	    $this->_traceStop();
@@ -775,6 +787,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	    $data = $entityIds;
 
 	    $GLOBALS['ADODB_FETCH_MODE'] = ADODB_FETCH_NUM;
+
 	    $this->_traceStart();
 	    $recordSet = $db->Execute($query, $data);
 	    $this->_traceStop();
@@ -816,6 +829,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	    $query = sprintf('INSERT INTO %s (%s, %s, %s) VALUES (?, ?, ?)',
 			     $lockTable, $lockIdCol, $readEntityIdCol, $freshUntilCol);
 	    $data = array($lockId, $entityId, $freshUntil);
+
 	    $this->_traceStart();
 	    $recordSet = $db->Execute($query, $data);
 	    $this->_traceStop();
@@ -830,6 +844,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	$query = 'DELETE FROM ' . $lockTable . ' ' .
 		'WHERE ' . $lockIdCol . '=? AND ' . $requestCol . '=1';
 	$data = array($lockId);
+
 	$this->_traceStart();
 	$recordSet = $db->Execute($query, $data);
 	$this->_traceStop();
@@ -895,6 +910,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	    $data = array_merge($data, $entityIds);
 
 	    $GLOBALS['ADODB_FETCH_MODE'] = ADODB_FETCH_NUM;
+
 	    $this->_traceStart();
 	    $recordSet = $db->Execute($query, $data);
 	    $this->_traceStop();
@@ -938,6 +954,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	    $query = sprintf('INSERT INTO %s (%s, %s, %s) VALUES (?, ?, ?)',
 			     $lockTable, $lockIdCol, $writeEntityIdCol, $freshUntilCol);
 	    $data = array($lockId, $entityId, $freshUntil);
+
 	    $this->_traceStart();
 	    $recordSet = $db->Execute($query, $data);
 	    $this->_traceStop();
@@ -952,6 +969,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	$query = 'DELETE FROM ' . $lockTable . ' ' .
 		'WHERE ' . $lockIdCol . '=? AND ' . $requestCol . '=1';
 	$data = array($lockId);
+
 	$this->_traceStart();
 	$recordSet = $db->Execute($query, $data);
 	$this->_traceStop();
@@ -1059,6 +1077,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	$query = 'DELETE FROM ' . $lockTable . ' ' .
 		'WHERE ' . $lockIdCol . ' IN (' . $markers . ')';
 	$data = $lockIds;
+
 	$this->_traceStart();
 	$recordSet = $db->Execute($query, $data);
 	$this->_traceStop();
@@ -1131,6 +1150,11 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	    return array(GalleryStatus::error(ERROR_STORAGE_CONNECTION, __FILE__, __LINE__), null);
 	}
 
+	$ret = $this->_guaranteeTransaction();
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
 	$statement = $this->_translateQuery($statement);
 
 	$this->_traceStart();
@@ -1152,6 +1176,11 @@ class DatabaseStorage /* implements GalleryStorage */ {
      * @return object GalleryStatus a status code
      */
     function addMapEntry($mapName, $entry) {
+
+	$ret = $this->_guaranteeTransaction();
+	if ($ret->isError()) {
+	    return $ret;
+	}
 
 	$mapInfo = $this->_describeMapMembers($mapName);
 	list ($tableName, $unused) = $this->_translateTableName($mapName);
@@ -1198,6 +1227,11 @@ class DatabaseStorage /* implements GalleryStorage */ {
      */
     function removeMapEntry($mapName, $entry) {
 	global $gallery;
+
+	$ret = $this->_guaranteeTransaction();
+	if ($ret->isError()) {
+	    return $ret;
+	}
 
 	$mapInfo = $this->_describeMapMembers($mapName);
 	list ($tableName, $unused) = $this->_translateTableName($mapName);
@@ -1250,6 +1284,11 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	list ($tableName, $unused) = $this->_translateTableName($mapName);
 	$query = 'DELETE FROM ' . $tableName;
 
+	$ret = $this->_guaranteeTransaction();
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
 	$this->_traceStart();
 	$recordSet = $this->_db->Execute($query);
 	$this->_traceStop();
@@ -1268,6 +1307,11 @@ class DatabaseStorage /* implements GalleryStorage */ {
      * @return object GalleryStatus a status code
      */
     function updateMapEntry($mapName, $match, $change) {
+
+	$ret = $this->_guaranteeTransaction();
+	if ($ret->isError()) {
+	    return $ret;
+	}
 
 	$mapInfo = $this->_describeMapMembers($mapName);
 	list ($tableName, $unused) = $this->_translateTableName($mapName);
@@ -1403,6 +1447,11 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	    return GalleryStatus::error(ERROR_STORAGE_CONNECTION, __FILE__, __LINE__);
 	}
 
+	$ret = $this->_guaranteeTransaction();
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
 	list ($ret, $tableDefinition, $tableAlter) = $this->_getModuleSql($moduleId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -1520,6 +1569,11 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	    return GalleryStatus::error(ERROR_STORAGE_CONNECTION, __FILE__, __LINE__);
 	}
 
+	$ret = $this->_guaranteeTransaction();
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
 	list ($ret, $tableDefinition, $tableAlter) = $this->_getModuleSql($moduleId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -1588,6 +1642,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	global $gallery;
 
 	$GLOBALS['ADODB_FETCH_MODE'] = ADODB_FETCH_NUM;
+
 	$this->_traceStart();
 	list ($schemaTableName, $unused) = $this->_translateTableName('Schema');
 	$recordSet = $this->_db->Execute('SELECT ' .
@@ -1620,6 +1675,11 @@ class DatabaseStorage /* implements GalleryStorage */ {
      */
     function _executeSqlFile($fileName) {
 	global $gallery;
+
+	$ret = $this->_guaranteeTransaction();
+	if ($ret->isError()) {
+	    return $ret;
+	}
 
 	$platform = $gallery->getPlatform();
 
@@ -1668,6 +1728,11 @@ class DatabaseStorage /* implements GalleryStorage */ {
     function cleanStore() {
 	global $gallery;
 
+	$ret = $this->_guaranteeTransaction();
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
 	/* Get the metabase info about this database */
 	$this->_traceStart();
 	$metatables = $this->_db->MetaTables();
@@ -1695,6 +1760,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	    foreach (array_keys($tableVersions) as $rawTableName) {
 		list ($tableName, $unused) = $this->_translateTableName($rawTableName);
 		$query = sprintf('DROP TABLE %s', $tableName);
+
 		$this->_traceStart();
 		$recordSet = $this->_db->Execute($query);
 		$this->_traceStop();
@@ -1757,6 +1823,23 @@ class DatabaseStorage /* implements GalleryStorage */ {
 
 	    if (!$ok) {
 		return GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
+	    }
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Guarantee that the connection has an existing transaction open,
+     * and if not, open a new one
+     *
+     * @return object GalleryStatus
+     */
+    function _guaranteeTransaction() {
+	if ($this->_isTransactional && !$this->_db->transCnt) {
+	    $ret = $this->beginTransaction();
+	    if ($ret->isError()) {
+		return $ret;
 	    }
 	}
 
@@ -1858,6 +1941,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 		    ' WHERE ' . $idCol . ' IN (' . $markers . ')';
 
 	    $GLOBALS['ADODB_FETCH_MODE'] = ADODB_FETCH_NUM;
+
 	    $this->_traceStart();
 	    $recordSet = $this->_db->Execute($query, $checkIds);
 	    $this->_traceStop();
@@ -2112,6 +2196,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 		'(' . $lockIdCol . ', ' . $requestCol .
 		') VALUES (?, 1)';
 	$data = array($lockId);
+
 	$this->_traceStart();
 	$recordSet = $db->Execute($query, $data);
 	$this->_traceStop();
