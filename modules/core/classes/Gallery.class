@@ -1123,6 +1123,7 @@ class Gallery {
 	    if (!strcmp($this->_debug, 'buffered')) {
 		$this->_debugBuffer .= wordwrap("$msg\n");
 	    } else if (!strcmp($this->_debug, 'logged')) {
+		/* Don't use platform calls for these as they call debug internally! */
 		if ($fd = fopen($this->_debugLogFile, 'a')) {
 		    $date = date('Y-m-d H:i:s');
 		    $session =& $this->getSession();
