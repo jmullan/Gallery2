@@ -102,14 +102,16 @@ class CoreSearchTest extends GalleryTestCase {
 	    }
 	}
 
-	list ($ret, $this->_coreSearch) =
-	    GalleryCoreApi::newFactoryInstance('GallerySearchInterface_1_0', 'GalleryCoreSearch');
-	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	if (class_exists('GallerySearchInterface_1_0')) {
+	    list ($ret, $this->_coreSearch) =
+		GalleryCoreApi::newFactoryInstance('GallerySearchInterface_1_0', 'GalleryCoreSearch');
+	    if ($ret->isError()) {
+		print $ret->getAsHtml();
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
 
-	$this->assert(isset($this->_coreSearch), 'Missing GalleryCoreSearch instance');
+	    $this->assert(isset($this->_coreSearch), 'Missing GalleryCoreSearch instance');
+	}
 
 	list ($ret, $this->_module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret->isError()) {
@@ -141,6 +143,10 @@ class CoreSearchTest extends GalleryTestCase {
     }
 
     function testFetchSearchModuleInfo() {
+	if (!isset($this->_coreSearch)) {
+	    return;
+	}
+	
 	list ($ret, $info) = $this->_coreSearch->getSearchModuleInfo();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -162,6 +168,10 @@ class CoreSearchTest extends GalleryTestCase {
      * Search for all available fields
      */
     function testSearchAll() {
+	if (!isset($this->_coreSearch)) {
+	    return;
+	}
+
 	list ($ret, $results) =
 	    $this->_coreSearch->search(array('titles' => 1,
 					     'summaries' => 1,
@@ -227,6 +237,10 @@ class CoreSearchTest extends GalleryTestCase {
      * Search only in the title and keywords
      */
     function testSearchAllSomeFields() {
+	if (!isset($this->_coreSearch)) {
+	    return;
+	}
+
 	list ($ret, $results) =
 	    $this->_coreSearch->search(array('titles' => 1,
 					     'keywords' => 1),
@@ -283,6 +297,10 @@ class CoreSearchTest extends GalleryTestCase {
      * Search for all available fields, but only request a subset of the total results
      */
     function testSearchLimited() {
+	if (!isset($this->_coreSearch)) {
+	    return;
+	}
+
 	list ($ret, $results) =
 	    $this->_coreSearch->search(array('titles' => 1,
 					     'summaries' => 1,
@@ -336,6 +354,10 @@ class CoreSearchTest extends GalleryTestCase {
     }
 
     function testEmptySearch() {
+	if (!isset($this->_coreSearch)) {
+	    return;
+	}
+
 	list ($ret, $results) =
 	    $this->_coreSearch->search(array('titles' => 1),
 				       'some string that will never show up');
@@ -351,6 +373,10 @@ class CoreSearchTest extends GalleryTestCase {
     }
 
     function testSearchLinks() {
+	if (!isset($this->_coreSearch)) {
+	    return;
+	}
+
 	/* Create a link and make sure it shows up in the search results */
 	list ($ret, $linkedItem) = $this->_createLinkedItem($this->_parentAlbum->getId(), $this->_item[1]);
 	if ($ret->isError()) {
