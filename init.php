@@ -74,8 +74,12 @@ function GalleryInitFirstPass($params=array()) {
 			isset($params['embedUri']) ? $params['embedUri'] : 'main.php',
 			isset($params['relativeG2Path']) ? $params['relativeG2Path'] : null,
 			isset($params['embedSessionString']) ? $params['embedSessionString'] : null );
-    $urlGenerator->registerViewPrefix('view', 'core:ShowItem');
-    $urlGenerator->registerViewPrefix('download', 'core:DownloadItem');
+    $urlGenerator->registerViewPrefix('v', 'core:ShowItem');
+    $urlGenerator->registerViewPrefix('d', 'core:DownloadItem');
+
+    /* Deprecated prefixes.  TODO: remove these before the final release */
+    $urlGenerator->registerViewPrefix('view', 'core:ShowItem', true);
+    $urlGenerator->registerViewPrefix('download', 'core:DownloadItem', true);
 
     $gallery->setUrlGenerator($urlGenerator);
 

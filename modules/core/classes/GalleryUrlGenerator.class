@@ -108,19 +108,24 @@ class GalleryUrlGenerator {
      *
      *   http://example.com/gallery2/main.php/view/blah/blah/blah
      *
-     * We know to pass it to the core:ShowItem view
+     * We know to pass it to the core:ShowItem view.  Deprecated prefixes will
+     * be stored only in the forward map; ie, we'll parse deprecated prefixes
+     * but won't generate urls using them.
      *
      * @param string the prefix
      * @param string the view name
+     * @param bool optional deprecated prefix.
      * @return object GalleryStatus a status code
      */
-    function registerViewPrefix($prefix, $viewName) {
+    function registerViewPrefix($prefix, $viewName, $deprecated=false) {
 	if (isset($this->_viewPrefixRegistry[$prefix])) {
 	    return GalleryStatus::error(ERROR_COLLISION, __FILE, __LINE__);
 	}
 
 	$this->_viewPrefixRegistry['forward'][$prefix] = $viewName;
-	$this->_viewPrefixRegistry['reverse'][$viewName] = $prefix;
+	if (!$deprecated) {
+	    $this->_viewPrefixRegistry['reverse'][$viewName] = $prefix;
+	}
     }
 
     /**
