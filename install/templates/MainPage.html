@@ -61,7 +61,7 @@
 	</h2>
 	<?php endif; ?>
 
-	<?php include($templateData['bodyFile']); ?>
+	<?php include(dirname(__FILE__) . '/' . $templateData['bodyFile']); ?>
 
 	<?php if ($currentStep->isComplete() && !$currentStep->isLastStep()): ?>
 	<div class="go">

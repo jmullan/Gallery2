@@ -116,7 +116,7 @@ class DatabaseSetupStep extends InstallStep {
 	}
 
 	if ($this->isComplete()) {
-	    $templateData['bodyFile'] = 'templates/DatabaseSetupSuccess.html';
+	    $templateData['bodyFile'] = 'DatabaseSetupSuccess.html';
 	} else {
 	    foreach (array('type', 'hostname', 'username',
 			   'password', 'database', 'tablePrefix', 'columnPrefix') as $key) {
@@ -132,7 +132,7 @@ class DatabaseSetupStep extends InstallStep {
 	    }
 	    $templatData['dbSelected'][$this->_config['type']] = 1;
 
-	    $templateData['bodyFile'] = 'templates/DatabaseSetupRequest.html';
+	    $templateData['bodyFile'] = 'DatabaseSetupRequest.html';
 	}
     }
 

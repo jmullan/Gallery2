@@ -52,7 +52,7 @@ class SystemChecksStep extends InstallStep {
 		array('title' => _('FILE Directive'), 'success' => true);
 	}
 	
-	$templateData['bodyFile'] = 'templates/SystemChecks.html';
+	$templateData['bodyFile'] = 'SystemChecks.html';
 	$this->setComplete($failCount == 0);
 	$this->setInError($failCount > 0);
     }
