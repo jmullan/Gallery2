@@ -66,7 +66,7 @@ class PanoramaModule extends GalleryModule {
 						      'PanoramaDerivativeImage',
 						      dirname(__FILE__) . '/classes/PanoramaDerivativeImage.class',
 						      array('PanoramaPhotoItem'));
-	GalleryCoreApi::registerFactoryImplementation('ItemEditPhotoSizesOption',
+	GalleryCoreApi::registerFactoryImplementation('ItemEditPhotoOption',
 						      'PanoramaOption',
 						      'PanoramaOption',
 						      dirname(__FILE__) . '/PanoramaOption.inc');
