@@ -56,7 +56,7 @@ class GalleryUtilities {
      *     "foo.bar.jpeg" yields 'foo.bar', 'jpeg'
      *
      * @param string the filename
-     * @return array the file base name, the file tag
+     * @return array the file base name, the file extension
      */
     function getFileNameComponents($filename) {
 
@@ -78,20 +78,20 @@ class GalleryUtilities {
     }
 
     /**
-     * Return the file's tag
+     * Return the file's extension
      *
      * Eg, "foo.jpg" yields "jpg"
      *
      * @param string the filename
-     * @return array the file tag
+     * @return array the file extension
      */
     function getFileExtension($filename) {
-	list ($base, $tag) = GalleryUtilities::getFileNameComponents($filename);
-	return $tag;
+	list ($base, $extension) = GalleryUtilities::getFileNameComponents($filename);
+	return $extension;
     }
 
     /**
-     * Return the file's tag
+     * Return the file's extension
      *
      * Eg, "foo.jpg" yields "foo"
      *
@@ -99,7 +99,7 @@ class GalleryUtilities {
      * @return array the file base
      */
     function getFileBase($filename) {
-	list ($base, $tag) = GalleryUtilities::getFileNameComponents($filename);
+	list ($base, $extension) = GalleryUtilities::getFileNameComponents($filename);
 	return $base;
     }
 
@@ -112,8 +112,8 @@ class GalleryUtilities {
      * @return string the mime type
      */
     function getMimeType($filename) {
-	list ($base, $tag) = GalleryUtilities::getFileNameComponents($filename);
-	return GalleryUtilities::convertTagToMime($tag);
+	list ($base, $extension) = GalleryUtilities::getFileNameComponents($filename);
+	return GalleryUtilities::convertExtensionToMime($extension);
     }
 
     /**
@@ -280,7 +280,13 @@ class GalleryUtilities {
 	$HTTP_GET_VARS[$key] = $value;
     }
 
-    function convertTagToMime($tag) {
+    /**
+     * Convert a file extension to a mime type
+     *
+     * @param string a file extension
+     * @return string a mime type 
+     */
+    function convertExtensionToMime($extension) {
 	static $extensionMap;
 
 	if (empty($extensionMap)) {
@@ -431,10 +437,10 @@ class GalleryUtilities {
 				  );
 	}
 
-	if (empty($extensionMap[$tag])) {
+	if (empty($extensionMap[$extension])) {
 	    return 'application/unknown';
 	} else {
-	    return $extensionMap[$tag];
+	    return $extensionMap[$extension];
 	}
     }
 
