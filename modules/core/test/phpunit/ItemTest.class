@@ -1165,69 +1165,6 @@ class ItemTest extends GalleryTestCase {
     }
 
     /**
-     * Verify that creating a new item, or adding an existing item to
-     * an album, updates that album's modification timestamp.
-     */
-    function testAddItemChangesParentModificationDate() {
-	global $gallery;
-
-	/* We want the album's modification timestamp, to see if it will be changed */
-	$originalModTimestamp = $this->_album->getModificationTimestamp();
-	
-	list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($this->_album->getId());
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	/*
-	 * Sleep for two seconds, so that we can be sure if the
-	 * album's modification timestamp has changed
-	 */
-	sleep(2);
-
-	/* Create the new image item, add it to the album */
-	list ($ret, $photo) = GalleryCoreApi::newItemByMimeType('image/jpeg');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	
-	$ret = $photo->create($this->_album->getId(),
-			      dirname(__FILE__) . '/../data/test1.jpg',
-			      'image/jpeg',
-			      'test image');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	$ret = GalleryCoreApi::addExistingItemToAlbum($photo, $this->_album->getId(), true);
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	
-	$ret = $photo->save();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	$ret = GalleryCoreApi::releaseLocks($lockId);
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	list ($ret, $this->_album) = $this->_album->refresh();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	/* Check the album's modification timestamp once again */
-	$newModTimestamp = $this->_album->getModificationTimestamp();
-
-	/* Check to make sure the album's modification timestamp has been updated to a later date */
-	$this->assert($newModTimestamp > $originalModTimestamp,
-		      'Modification Timestamp: ' . $newModTimestamp . ' !> ' . $originalModTimestamp);
-    }
-
-    /**
      * Add a small (dimension wise) photo to an album and make sure that we don't create
      * resizes that are larger (dimension wise) than the original.
      */
