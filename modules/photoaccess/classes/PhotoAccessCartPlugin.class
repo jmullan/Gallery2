@@ -44,15 +44,12 @@ class PhotoAccessCartPlugin extends CartPluginInterface_1_0 {
      * @see CartPluginInterface_1_0::getActionDisplayName()
      */
     function getActionDisplayName() {
-	global $gallery;
-
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'photoaccess');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$action = $module->translate('Print with PhotoAccess');
-
 	return array(GalleryStatus::success(), $action);
     }
 
@@ -61,11 +58,10 @@ class PhotoAccessCartPlugin extends CartPluginInterface_1_0 {
      */
     function fulfillCart($cartItemIds) {
 	global $gallery;
-
 	$urlGenerator =& $gallery->getUrlGenerator();
 	$returnUrl = $urlGenerator->generateUrl(array('view' => 'cart:ViewCart'));
 
-	require_once(dirname(__FILE__) . '/PhotoAccessHelper.class');
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/PhotoAccessHelper.class');
 	list ($ret, $cartUrl) = PhotoAccessHelper::printPhotos($cartItemIds, $returnUrl);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -74,3 +70,4 @@ class PhotoAccessCartPlugin extends CartPluginInterface_1_0 {
 	return array(GalleryStatus::success(), array('href' => $cartUrl));
     }
 }
+?>
