@@ -54,13 +54,6 @@ class WebCamSiteAdminController extends GalleryController {
 		}
 		$status['saved'] = 1;
 	    }
-	} else if (isset($form['action']['reset'])) {
-	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/GalleryLiveImageHelper.class');
-	    $ret = GalleryLiveImageHelper::resetLiveImageItems();
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    $status['reset'] = 1;
 	}
 
 	$method = empty($error) ? 'redirect' : 'delegate';
@@ -83,7 +76,6 @@ class WebCamSiteAdminView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/GalleryLiveImageHelper.class');
 	if ($form['formName'] != 'WebCamSiteAdmin') {
 	    $form['formName'] = 'WebCamSiteAdmin';
 	    list ($ret, $duration) =
@@ -92,10 +84,6 @@ class WebCamSiteAdminView extends GalleryView {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    $form['duration'] = round($duration / 60, 2);
-	}
-	list ($ret, $form['count']) = GalleryLiveImageHelper::fetchItemCount();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$template->setVariable('controller', 'webcam:WebCamSiteAdmin');

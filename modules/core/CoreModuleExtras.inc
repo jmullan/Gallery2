@@ -181,7 +181,7 @@ class CoreModuleExtras {
 		}
 	    }
 
-	    $currentVersion = '0.8.12';
+	    $currentVersion = '0.8.15';
 	    break;
 
 	case '0.8':
@@ -280,6 +280,7 @@ class CoreModuleExtras {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    $currentVersion = '0.8.13';
+	    /* fall through */
 
 	case '0.8.13':
 	    /*
@@ -299,22 +300,27 @@ class CoreModuleExtras {
 			!($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
-		    
+
 		    $ret = $layout->installOrUpgrade();
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
-		    
+
 		    list ($ret, $ignored) = $layout->activate();
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 		}
 	    }
-	    
+
 	    $currentVersion = '0.8.14';
+	    /* fall through */
+
+	case '0.8.14':
+	    /* Added Entity::onLoadHandlers; default all values to null, so nothing to do */
+	    $currentVersion = '0.8.15';
 	    break;
-	    
+
 	default:
 	    return GalleryStatus::error(ERROR_BAD_PLUGIN, __FILE__, __LINE__,
 					sprintf('Unknown module version %s', $currentVersion));
@@ -552,7 +558,8 @@ class CoreModuleExtras {
 	$user = new GalleryUser();
 
 	$userName = GalleryUtilities::utf8ToUnicodeEntities('admin');
-	$fullName = GalleryUtilities::utf8ToUnicodeEntities($module->translate('Gallery Administrator'));
+	$fullName = GalleryUtilities::utf8ToUnicodeEntities(
+		    $module->translate('Gallery Administrator'));
 	$ret = $user->create($userName);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -604,7 +611,8 @@ class CoreModuleExtras {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	$title = GalleryUtilities::utf8ToUnicodeEntities($module->translate('Gallery'));
-	$description = GalleryUtilities::utf8ToUnicodeEntities($module->translate('This is the top of your Gallery'));
+	$description = GalleryUtilities::utf8ToUnicodeEntities(
+		       $module->translate('This is the top of your Gallery'));
 	$album->setTitle($title);
 	$album->setDescription($description);
 

@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -82,9 +82,9 @@ class GalleryModule extends GalleryPlugin {
      * @return array major number, minor number
      */
     function getApiVersion() {
-	return array(0, 9);
+	return array(0, 10);
     }
-    
+
     /**
      * Register any event listeners that this module requires.  Each module will get a chance to
      * register its event listeners before any events are posted.
@@ -197,6 +197,12 @@ class GalleryModule extends GalleryPlugin {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
+	/* Remove onLoadHandlers */
+	$ret = GalleryCoreApi::removeOnLoadHandlers($this->getOnLoadHandlerIds());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
 	/* Remove factory implementations */
 	$ret = GalleryCoreApi::unregisterFactoryImplementationsByModuleId($this->getId());
 	if ($ret->isError()) {
@@ -209,7 +215,7 @@ class GalleryModule extends GalleryPlugin {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	    
+
 	/* Remove this plugin */
 	$ret = parent::uninstall();
 	if ($ret->isError()) {
@@ -240,10 +246,10 @@ class GalleryModule extends GalleryPlugin {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	return array(GalleryStatus::success(), array());
     }
-    
+
     /**
      * @see GalleryPlugin::activate()
      *
@@ -258,7 +264,7 @@ class GalleryModule extends GalleryPlugin {
 	 * activation.
 	 */
 	list ($ret, $needs) = $this->needsConfiguration();
-        if ($ret->isError()) {
+	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -274,7 +280,7 @@ class GalleryModule extends GalleryPlugin {
 	    if (!empty($redirect)) {
 		return array(GalleryStatus::success(), $redirect);
 	    }
-	    
+
 	    $ret = $this->performFactoryRegistrations();
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
@@ -297,9 +303,8 @@ class GalleryModule extends GalleryPlugin {
     }
 
     /**
-     * Is this module recommended to be installed/activated during the 
-     * installer?
-     * 
+     * Is this module recommended to be installed/activated during the installer?
+     *
      * Default is false which is a security measure. Only recommend modules
      * that by default do not expose any sensitive data. For example, the
      * debug module shouldn't be recommended because it can show filesystem
@@ -462,6 +467,16 @@ class GalleryModule extends GalleryPlugin {
      */
     function performFactoryRegistrations() {
 	return GalleryStatus::success();
+    }
+
+    /**
+     * Get ids of all onLoadHandlers this module may register.
+     * These will be removed from all entities upon module uninstall.
+     *
+     * @return array of factory impl ids
+     */
+    function getOnLoadHandlerIds() {
+	return array();
     }
 
     /* Getters and setters below */

@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -52,19 +52,19 @@ class EntityTest extends GalleryTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-    }
+	$this->_markForCleanup($this->_entity);
 
-    function tearDown() {
-	$ret = GalleryCoreApi::deleteEntityById($this->_entity->getId());
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'GalleryOnLoadHandler', 'EntityTestOnLoadHandler', 'EntityTestOnLoadHandler',
+	     'modules/core/test/phpunit/EntityTest.class', 'coreTest', null);
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-
-	parent::tearDown();
+	$this->_markFactoryModuleForCleanup('coreTest');
     }
 
-    function testDoLoad() {
+    function testOnLoad() {
 	/*
 	 * Ensure GalleryEntity::onLoad() is called whether entity is
 	 * loaded from database or disk cache..
@@ -73,7 +73,8 @@ class EntityTest extends GalleryTestCase {
 	/* Load the entity back and verify it */
 	GalleryDataCache::setFileCachingEnabled(true);
 	GalleryDataCache::reset();
-	GalleryDataCache::removeFromDisk(array('type' => 'entity', 'itemId' => $this->_entity->getId()));
+	GalleryDataCache::removeFromDisk(
+	    array('type' => 'entity', 'itemId' => $this->_entity->getId()));
 
 	list ($ret, $newEntity) = GalleryCoreApi::loadEntitiesById($this->_entity->getId());
 	if ($ret->isError()) {
@@ -88,7 +89,7 @@ class EntityTest extends GalleryTestCase {
 	    /* Load back from disk cache and verify it */
 	    GalleryDataCache::reset();
 	    $data = GalleryDataCache::getFromDisk(
-				      array('type' => 'entity', 'itemId' => $this->_entity->getId()));
+		array('type' => 'entity', 'itemId' => $this->_entity->getId()));
 	    $this->assert(!empty($data), 'Entity data should be in disk cache');
 
 	    list ($ret, $newEntity) = GalleryCoreApi::loadEntitiesById($this->_entity->getId());
@@ -96,10 +97,48 @@ class EntityTest extends GalleryTestCase {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 
-	    $this->assertEquals('entitytestentity', strtolower(get_class($newEntity)), 'Entity class 2');
+	    $this->assertEquals('entitytestentity', strtolower(get_class($newEntity)),
+				'Entity class 2');
 	    $this->assertEquals($this->_entity, $newEntity, 'Entity check 2');
 	    $this->assert($newEntity->_wasOnLoadCalled(), 'onLoad not called for disk cache load');
 	}
+    }
+
+    function testOnLoadHandler() {
+	$entity = new EntityTestEntity();
+	$ret = $entity->create();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$entity->removeOnLoadHandler('NotThere');
+	$this->assertEquals(null, $entity->getOnLoadHandlers(), 1);
+	$entity->addOnLoadHandler('EntityTestOnLoadHandler');
+	$this->assertEquals('|EntityTestOnLoadHandler|', $entity->getOnLoadHandlers(), 2);
+	$entity->removeOnLoadHandler('EntityTestOnLoadHandler');
+	$this->assertEquals(null, $entity->getOnLoadHandlers(), 3);
+	$entity->addOnLoadHandler('OneTest');
+	$entity->addOnLoadHandler('EntityTestOnLoadHandler');
+	$this->assertEquals('|OneTest|EntityTestOnLoadHandler|', $entity->getOnLoadHandlers(), 4);
+	$entity->removeOnLoadHandler('OneTest');
+	$this->assertEquals('|EntityTestOnLoadHandler|', $entity->getOnLoadHandlers(), 5);
+
+	$ret = $entity->save();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markForCleanup($entity);
+	$this->assert(!$entity->_wasOnLoadCalled(), 'onLoad for new entity');
+
+	list ($ret, $newEntity) = GalleryCoreApi::loadEntitiesById($entity->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals('entitytestentity', strtolower(get_class($newEntity)), 'Entity class');
+	$this->assert($newEntity->_wasOnLoadCalled(), 'onLoad not called for database load');
+	$this->assertEquals('onLoadHandler was called', $newEntity->getLinkedEntity(),
+			    'handler not called');
     }
 
     function testSetSameValueDifferentType() {
@@ -180,6 +219,17 @@ class EntityTestEntity extends GalleryEntity {
 	    $wasCalled = false;
 	}
 	return $value;
+    }
+}
+
+/**
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class EntityTestOnLoadHandler {
+    function onLoad(&$entity) {
+	$entity->setLinkedEntity('onLoadHandler was called');
+	return GalleryStatus::success();
     }
 }
 ?>

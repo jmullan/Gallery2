@@ -38,7 +38,7 @@ class CoreModule extends GalleryModule {
 	$this->setId('core');
 	$this->setName('Core');
 	$this->setGalleryVersion('2.0-alpha-4+');
-	$this->setVersion('0.8.14');
+	$this->setVersion('0.8.15');
 	$this->setDescription($gallery->i18n('Gallery 2 Core Module'));
 	$this->setGroup('gallery', $this->translate('Gallery'));
 	$this->setCallbacks('registerEventListeners|' .
@@ -53,7 +53,7 @@ class CoreModule extends GalleryModule {
      */
     function registerEventListeners() {
 	GalleryCoreApi::relativeRequireOnce(
-            'modules/core/classes/helpers/GalleryItemHelper_medium.class');
+	    'modules/core/classes/helpers/GalleryItemHelper_medium.class');
 	GalleryCoreApi::registerEventListener('Gallery::ViewableTreeChange',
 					      new GalleryItemHelper_medium());
 
@@ -432,10 +432,12 @@ class CoreModule extends GalleryModule {
 	    }
 
 	    /* Edit view for all item types */
-	    $views[] = array('name' => $this->translate(array('text' => 'Edit %s', 'arg1' => $itemTypeNames[0])),
+	    $views[] = array('name' => $this->translate(
+					array('text' => 'Edit %s', 'arg1' => $itemTypeNames[0])),
 			     'view' => 'core:ItemEdit');
 
-	    if (!empty($parentId) && $hasThumb && $parentId != $rootId && isset($parentPermissions['core.edit'])) {
+	    if (!empty($parentId) && $hasThumb && $parentId != $rootId
+		    && isset($parentPermissions['core.edit'])) {
 		$views[] = array('name' => $this->translate('Make Highlight'),
 				 'view' => 'core:ItemMakeHighlight');
 	    }
@@ -444,19 +446,22 @@ class CoreModule extends GalleryModule {
 	if (isset($permissions['core.viewSource']) && GalleryCapabilities::can('link')) {
 	    if ($item->getIsLinkable()) {
 		if ($isAlbum) {
-		    list ($ret, $count) = GalleryCoreApi::fetchItemIdCount('GalleryAlbumItem', 'core.addAlbumItem');
+		    list ($ret, $count) =
+			GalleryCoreApi::fetchItemIdCount('GalleryAlbumItem', 'core.addAlbumItem');
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 		} else {
-		    list ($ret, $count) = GalleryCoreApi::fetchItemIdCount('GalleryAlbumItem', 'core.addDataItem');
+		    list ($ret, $count) =
+			GalleryCoreApi::fetchItemIdCount('GalleryAlbumItem', 'core.addDataItem');
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 		}
 
 		if ($count > 0) {
-		    $views[] = array('name' => $this->translate(array('text' => 'Link %s', 'arg1' => $itemTypeNames[0])),
+		    $views[] = array('name' => $this->translate(
+					array('text' => 'Link %s', 'arg1' => $itemTypeNames[0])),
 				     'view' => 'core:ItemCreateLinkSingle');
 		}
 	    }
@@ -464,10 +469,12 @@ class CoreModule extends GalleryModule {
 
 	if (isset($permissions['core.delete'])) {
 	    if ($item->getId() != $rootId) {
-		$views[] = array('name' => $this->translate(array('text' => 'Delete %s', 'arg1' => $itemTypeNames[0])),
+		$views[] = array('name' => $this->translate(
+					array('text' => 'Delete %s', 'arg1' => $itemTypeNames[0])),
 				 'view' => 'core:ItemDeleteSingle');
 
-		$views[] = array('name' => $this->translate(array('text' => 'Move %s', 'arg1' => $itemTypeNames[0])),
+		$views[] = array('name' => $this->translate(
+					array('text' => 'Move %s', 'arg1' => $itemTypeNames[0])),
 				 'view' => 'core:ItemMoveSingle');
 	    }
 	}

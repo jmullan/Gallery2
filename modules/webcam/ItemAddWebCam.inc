@@ -29,7 +29,7 @@
  * @package WebCam
  * @subpackage UserInterface
  */
-class ItemAddLiveImage extends ItemAddPlugin {
+class ItemAddWebCam extends ItemAddPlugin {
 
     /**
      * @see ItemAddPlugin::handleRequest
@@ -41,10 +41,8 @@ class ItemAddLiveImage extends ItemAddPlugin {
 	$error = array();
 	if (isset($form['action']['checkUrl'])) {
 	    /* Delegate back to the same view */
-	} else if (isset($form['action']['addLiveImage'])) {
-	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/GalleryLiveImageHelper.class');
-
-	    // fetch url, create item, set type to GalleryLiveImage, save params
+	} else if (isset($form['action']['addWebCam'])) {
+	    /* fetch url, create item, set WebCam handler, save params */
 	    $platform = $gallery->getPlatform();
 	    $tmpDir = $gallery->getConfig('data.gallery.tmp');
 	    $tmpFile = $platform->tempnam($tmpDir, 'webcam');
@@ -71,9 +69,24 @@ class ItemAddLiveImage extends ItemAddPlugin {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
 
-		if (GalleryUtilities::isExactlyA($newItem, 'GalleryPhotoItem')) {
-
-		    $ret = GalleryLiveImageHelper::assignEntityType($newItem, $url);
+		if (GalleryUtilities::isA($newItem, 'GalleryPhotoItem')) {
+		    list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($newItem->getId());
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    }
+		    $newItem->addOnLoadHandler('WebCam');
+		    $ret = $newItem->save();
+		    if ($ret->isError()) {
+			GalleryCoreApi::releaseLocks($lockId);
+			return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    }
+		    $ret = GalleryCoreApi::setPluginParameter('module', 'webcam',
+							      'imageUrl', $url, $newItem->getId());
+		    if ($ret->isError()) {
+			GalleryCoreApi::releaseLocks($lockId);
+			return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    }
+		    $ret = GalleryCoreApi::releaseLocks($lockId);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null, null);
 		    }
@@ -108,8 +121,8 @@ class ItemAddLiveImage extends ItemAddPlugin {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
-	if ($form['formName'] != 'ItemAddLiveImage') {
-	    $form['formName'] = 'ItemAddLiveImage';
+	if ($form['formName'] != 'ItemAddWebCam') {
+	    $form['formName'] = 'ItemAddWebCam';
 	    $form['imageUrl'] = '';
 	}
 
@@ -125,7 +138,7 @@ class ItemAddLiveImage extends ItemAddPlugin {
 	}
 
 	return array(GalleryStatus::success(),
-		     'modules/webcam/templates/ItemAddLiveImage.tpl', 'modules_webcam');
+		     'modules/webcam/templates/ItemAddWebCam.tpl', 'modules_webcam');
     }
 
     /**

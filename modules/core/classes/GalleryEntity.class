@@ -40,7 +40,7 @@ GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryPersistent.class');
  * @g2 <parent-class-name>GalleryPersistent</parent-class-name>
  * @g2 <schema>
  * @g2   <schema-major>1</schema-major>
- * @g2   <schema-minor>0</schema-minor>
+ * @g2   <schema-minor>1</schema-minor>
  * @g2 </schema>
  *
  * @package GalleryCore
@@ -159,6 +159,20 @@ class GalleryEntity_core extends GalleryPersistent {
      */
     var $_entityType;
 
+    /**
+     * Handlers to run when this entity is loaded.
+     *
+     * @g2 <member>
+     * @g2   <member-name>onLoadHandlers</member-name>
+     * @g2   <member-type>STRING</member-type>
+     * @g2   <member-size>MEDIUM</member-size>
+     * @g2 </member>
+     *
+     * @var string $_onLoadHandlers
+     * @access private
+     */
+    var $_onLoadHandlers;
+
     /*
      * ****************************************
      *                 Methods
@@ -175,7 +189,6 @@ class GalleryEntity_core extends GalleryPersistent {
 
 	/* Create a new instance of this entity in the persistent store */
 	$storage =& $gallery->getStorage();
-
 	$ret = $storage->newEntity($this);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -277,11 +290,13 @@ class GalleryEntity_core extends GalleryPersistent {
 		 * line up with its embedded entityType.  Clear this from our cache so that the
 		 * next load actually gets the clean, correct version.
 		 */
-		GalleryDataCache::remove(sprintf('GalleryEntityHelper::loadEntitiesById(%s)', $this->getId()));
-		GalleryDataCache::removeFromDisk(array('type' => 'entity', 'itemId' => $this->getId()));
+		GalleryDataCache::remove(
+		    sprintf('GalleryEntityHelper::loadEntitiesById(%s)', $this->getId()));
+		GalleryDataCache::removeFromDisk(
+		    array('type' => 'entity', 'itemId' => $this->getId()));
 	    } else {
-		GalleryDataCache::put(sprintf('GalleryEntityHelper::loadEntitiesById(%s)', $this->getId()),
-				      $this);
+		GalleryDataCache::put(
+		    sprintf('GalleryEntityHelper::loadEntitiesById(%s)', $this->getId()), $this);
 		GalleryDataCache::putToDisk(array('type' => 'entity', 'itemId' => $this->getId()),
 					    $this, array($this->getClassFile()));
 	    }
@@ -303,8 +318,7 @@ class GalleryEntity_core extends GalleryPersistent {
 	/* Are we trying to refresh an object that isn't in the database? */
 	if ($this->testPersistentFlag(STORAGE_FLAG_DELETED) ||
 	    $this->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED)) {
-	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT,
-					      __FILE__, __LINE__),
+	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
 			 null);
 	}
 
@@ -361,7 +375,8 @@ class GalleryEntity_core extends GalleryPersistent {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	GalleryDataCache::remove(sprintf('GalleryEntityHelper::loadEntitiesById(%s)', $this->getId()));
+	GalleryDataCache::remove(
+	    sprintf('GalleryEntityHelper::loadEntitiesById(%s)', $this->getId()));
 	GalleryDataCache::removeFromDisk(array('type' => 'entity', 'itemId' => $this->getId()));
 
 	return GalleryStatus::success();
@@ -374,8 +389,6 @@ class GalleryEntity_core extends GalleryPersistent {
      * @return object GalleryStatus a status code
      */
     function onLoad() {
-	global $gallery;
-
 	$linkId = $this->getLinkId();
 	if (isset($linkId)) {
 	    list ($ret, $this->_linkedEntity) = GalleryCoreApi::loadEntitiesById($this->_linkId);
@@ -384,7 +397,65 @@ class GalleryEntity_core extends GalleryPersistent {
 	    }
 	}
 
+	/* Run any onLoad handlers for this entity */
+	$onLoadHandlers = $this->getOnLoadHandlers();
+	if (!empty($onLoadHandlers)) {
+	    foreach (explode('|', $onLoadHandlers) as $handlerId) {
+		if (empty($handlerId)) {
+		    continue;
+		}
+		list ($ret, $handler) =
+		    GalleryCoreApi::newFactoryInstanceById('GalleryOnLoadHandler', $handlerId);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+		if (isset($handler)) {
+		    $ret = $handler->onLoad($this);
+		    if ($ret->isError()) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
+		}
+	    }
+	}
+
 	return GalleryStatus::success();
+    }
+
+    /**
+     * Check for an onLoad handler.
+     *
+     * @param string handler id
+     * @return boolean
+     */
+    function hasOnLoadHandler($handlerId) {
+	return (strpos("|$handlerId|", $this->getOnLoadHandlers()) !== false);
+    }
+
+    /**
+     * Add onLoad handler.
+     *
+     * @param string handler id
+     */
+    function addOnLoadHandler($handlerId) {
+	$onLoadHandlers = $this->getOnLoadHandlers();
+	if (empty($onLoadHandlers)) {
+	    $onLoadHandlers = '|';
+	}
+	$this->setOnLoadHandlers($onLoadHandlers . $handlerId . '|');
+    }
+
+    /**
+     * Remove onLoad handler.
+     *
+     * @param string handler id
+     */
+    function removeOnLoadHandler($handlerId) {
+	$onLoadHandlers = preg_replace('{\|' . preg_quote($handlerId) . '\|}', '|',
+				       $this->getOnLoadHandlers());
+	if ($onLoadHandlers == '|') {
+	    $onLoadHandlers = null;
+	}
+	$this->setOnLoadHandlers($onLoadHandlers);
     }
 
     /**
@@ -472,7 +543,6 @@ class GalleryEntity_core extends GalleryPersistent {
 
 	return GalleryStatus::success();
     }
-
 }
 
 include(dirname(__FILE__) . '/interfaces/GalleryEntity.inc');

@@ -168,5 +168,53 @@ class GalleryEntityHelper_medium {
 
 	return array(GalleryStatus::success(), $linkedIds);
     }
+
+    /**
+     * Remove onLoadHandlers from all entities
+     *
+     * @param array of factory impl ids
+     * @return object GalleryStatus a status code
+     */
+    function removeOnLoadHandlers($handlerIds) {
+	global $gallery;
+
+	$query = 'SELECT [GalleryEntity::id] FROM [GalleryEntity]
+		  WHERE [GalleryEntity::onLoadHandlers] LIKE ?';
+	$i = 0;
+	foreach ($handlerIds as $handlerId) {
+	    list ($ret, $results) = $gallery->search($query, array("%|$handlerId|%"));
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    while ($result = $results->nextResult()) {
+		if ($i++ % 10 == 0) {
+		    $gallery->guaranteeTimeLimit(5);
+		}
+		$id = (int)$result[0];
+		list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($id);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+		list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($id);
+		if ($ret->isError()) {
+		    GalleryCoreApi::releaseLocks($lockId);
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+		$entity->removeOnLoadHandler($handlerId);
+		$ret = $entity->save();
+		if ($ret->isError()) {
+		    GalleryCoreApi::releaseLocks($lockId);
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+		$ret = GalleryCoreApi::releaseLocks($lockId);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+	}
+
+	return GalleryStatus::success();
+    }
 }
 ?>

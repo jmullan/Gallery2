@@ -27,14 +27,14 @@
  */
 
 /**
- * ItemAddLiveImage plugin test
+ * ItemAddWebCam plugin test
  * @package WebCam
  * @subpackage PHPUnit
  */
-class ItemAddLiveImageTest extends ItemAddPluginTestCase {
+class ItemAddWebCamTest extends ItemAddPluginTestCase {
 
-    function ItemAddLiveImageTest($methodName) {
-	$this->ItemAddPluginTestCase($methodName, 'webcam', 'ItemAddLiveImage');
+    function ItemAddWebCamTest($methodName) {
+	$this->ItemAddPluginTestCase($methodName, 'webcam', 'ItemAddWebCam');
     }
 
     function setUp() {
@@ -47,6 +47,7 @@ class ItemAddLiveImageTest extends ItemAddPluginTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	$this->_markForCleanup($this->_album);
 
 	list ($ret, $this->_lockId) = GalleryCoreApi::acquireReadLock($this->_album->getId());
 	if ($ret->isError()) {
@@ -54,8 +55,37 @@ class ItemAddLiveImageTest extends ItemAddPluginTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
+	list ($ret, $this->_item) = $this->_createRandomDataItem(
+	    $this->_album->getId(), 'image/test',
+	    array('onLoadHandlers' => '|WebCam|'),
+	    __FILE__, 'GalleryPhotoItem');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::setPluginParameter('module', 'webcam',
+	    'imageUrl', 'http://test.com/test.jpg', $this->_item->getId());
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	foreach (array('duration') as $key) {
+	    list ($ret, $this->_params[$key]) =
+		GalleryCoreApi::getPluginParameter('module', 'webcam', $key);
+	    if ($ret->isError()) {
+		print $ret->getAsHtml();
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+	$ret = GalleryCoreApi::setPluginParameter('module', 'webcam', 'duration', '-100');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
 	$this->_savePlatform = $gallery->getPlatform();
-	$gallery->setPlatform(new ItemAddLiveImageTestPlatform());
+	$gallery->setPlatform(new ItemAddWebCamTestPlatform());
     }
 
     function tearDown() {
@@ -64,14 +94,14 @@ class ItemAddLiveImageTest extends ItemAddPluginTestCase {
 
 	$ret = GalleryCoreApi::releaseLocks($this->_lockId);
 	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$ret = GalleryCoreApi::deleteEntityById($this->_album->getId());
-	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	foreach ($this->_params as $key => $value) {
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'webcam', $key, $value);
+	    if ($ret->isError()) {
+		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
 	}
 
 	parent::tearDown();
@@ -85,8 +115,8 @@ class ItemAddLiveImageTest extends ItemAddPluginTestCase {
 	$this->assertEquals(array(array(), array()), $results);
     }
 
-    function testAddLiveImage() {
-	GalleryUtilities::putRequestVariable('form[action][addLiveImage]', 1);
+    function testAddWebCam() {
+	GalleryUtilities::putRequestVariable('form[action][addWebCam]', 1);
 	GalleryUtilities::putRequestVariable('form[imageUrl]', 'http://test.com/test.jpg');
 
 	$results = $this->handleRequest($this->_album);
@@ -98,8 +128,8 @@ class ItemAddLiveImageTest extends ItemAddPluginTestCase {
 	$this->assertEquals('test.jpg', $results[1]['addedFiles'][0]['fileName'], 'fileName');
     }
 
-    function testAddLiveImageNotFound() {
-	GalleryUtilities::putRequestVariable('form[action][addLiveImage]', 1);
+    function testAddWebCamNotFound() {
+	GalleryUtilities::putRequestVariable('form[action][addWebCam]', 1);
 	GalleryUtilities::putRequestVariable('form[imageUrl]', 'http://test.com/404.jpg');
 
 	$results = $this->handleRequest($this->_album);
@@ -107,13 +137,22 @@ class ItemAddLiveImageTest extends ItemAddPluginTestCase {
 	$this->assertEquals(array(), $results[1], 'status');
     }
 
-    function testAddLiveImageBadType() {
-	GalleryUtilities::putRequestVariable('form[action][addLiveImage]', 1);
+    function testAddWebCamBadType() {
+	GalleryUtilities::putRequestVariable('form[action][addWebCam]', 1);
 	GalleryUtilities::putRequestVariable('form[imageUrl]', 'http://test.com/test.html');
 
 	$results = $this->handleRequest($this->_album);
 	$this->assertEquals(array('form[error][imageUrl][notImage]'), $results[0], 'error');
 	$this->assertEquals(array(), $results[1], 'status');
+    }
+
+    function testRefresh() {
+	list ($ret, $refresh) = GalleryCoreApi::loadEntitiesById($this->_item->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	/* If refreshed successfully then our fake filesize should be set */
+	$this->assertEquals(7, $refresh->getSize());
     }
 }
 
@@ -123,7 +162,7 @@ class ItemAddLiveImageTest extends ItemAddPluginTestCase {
  * @package GalleryCore
  * @subpackage PHPUnit
  */
-class ItemAddLiveImageTestPlatform {
+class ItemAddWebCamTestPlatform {
 
     function tempnam($tmpDir, $base) {
 	return "/test/$base";
@@ -206,6 +245,9 @@ class ItemAddLiveImageTestPlatform {
 	    case 'test.html':
 		return true;
 	    }
+	    if (preg_match('{^test.*dat$}', basename($toFile))) {
+		return true;
+	    }
 	}
 
 	print "unexpected copy($fromFile, $toFile)";
@@ -227,6 +269,9 @@ class ItemAddLiveImageTestPlatform {
 	case 'test.jpg':
 	case 'test.html':
 	    return 5;
+	}
+	if (preg_match('{^test.*dat$}', basename($filename))) {
+	    return 7;
 	}
 
 	print "unexpected filesize($filename)";

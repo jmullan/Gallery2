@@ -27,14 +27,7 @@
  */
 
 /**
- * Load required classes
- */
-require_once(dirname(__FILE__) . '/../../classes/GalleryLiveImage.class');
-require_once(dirname(__FILE__) . '/../../classes/GalleryLiveImageHelper.class');
-
-/**
  * WebCamSiteAdmin controller tests
- * Also tests GalleryLiveImageHelper::assignEntityType,resetLiveImageItems,fetchItemCount
  *
  * @package WebCam
  * @subpackage PHPUnit
@@ -56,35 +49,16 @@ class WebCamSiteAdminControllerTest extends GalleryControllerTestCase {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
-
-	list ($ret, $this->_item) = $this->_createRandomDataItem(
-	    $this->_getRootId(), 'image/test', array(), __FILE__, 'GalleryLiveImage');
-	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	$ret = GalleryCoreApi::setPluginParameter(
-	    'module', 'webcam', 'imageUrl', 'test', $this->_item->getId());
-	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
     }
 
     function tearDown() {
-	foreach (array('duration') as $key) {
-	    $ret = GalleryCoreApi::setPluginParameter('module', 'webcam', $key, $this->_params[$key]);
+	foreach ($this->_params as $key => $value) {
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'webcam', $key, $value);
 	    if ($ret->isError()) {
-		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
-	$ret = GalleryCoreApi::deleteEntityById($this->_item->getId());
-	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+
 	parent::tearDown();
     }
 
@@ -139,85 +113,6 @@ class WebCamSiteAdminControllerTest extends GalleryControllerTestCase {
 				  'status' => array(),
 				  'error' => array('form[error][duration]')),
 			    $results);
-    }
-
-    function testWebCamSiteAdminControllerReset() {
-	$ret = $this->_saveLiveImageItems();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	list ($ret, $preCount) = GalleryLiveImageHelper::fetchItemCount();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	$this->assert($preCount > 0, 'Should be at least one GalleryLiveImage entity in db');
-
-	GalleryUtilities::putRequestVariable('form[action][reset]', '1');
-
-	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'webcam:WebCamSiteAdmin'),
-				  'status' => array('reset' => 1),
-				  'error' => array()),
-			    $results);
-
-	list ($ret, $count) = GalleryLiveImageHelper::fetchItemCount();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	$this->assertEquals(0, $count, 'Should be no GalleryLiveImage entities in db after reset');
-
-	$ret = $this->_restoreLiveImageItems();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	list ($ret, $count) = GalleryLiveImageHelper::fetchItemCount();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	$this->assertEquals($preCount, $count, 'Restore correct number for GalleryLiveImages');
-    }
-
-    function _saveLiveImageItems() {
-	global $gallery;
-	$query = 'SELECT [GalleryEntity::id], [GalleryPluginParameterMap::parameterValue]
-		  FROM [GalleryEntity], [GalleryPluginParameterMap]
-		  WHERE [GalleryEntity::entityType] = \'GalleryLiveImage\'
-		  AND [GalleryEntity::id] = [GalleryPluginParameterMap::itemId]
-		  AND [GalleryPluginParameterMap::pluginType] = \'module\'
-		  AND [GalleryPluginParameterMap::pluginId] = \'webcam\'
-		  AND [GalleryPluginParameterMap::parameterName] = \'imageUrl\'';
-
-	list ($ret, $results) = $gallery->search($query);
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-	$data = array();
-	while ($result = $results->nextResult()) {
-	    $data[$result[0]] = $result[1];
-	}
-	$this->_liveImageData = $data;
-	return GalleryStatus::success();
-    }
-
-    function _restoreLiveImageItems() {
-	if (empty($this->_liveImageData)) {
-	    return GalleryStatus::success();
-	}
-	list ($ret, $items) = GalleryCoreApi::loadEntitiesById(array_keys($this->_liveImageData));
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-	foreach ($items as $item) {
-	    $ret = GalleryLiveImageHelper::assignEntityType(
-					   $item, $this->_liveImageData[$item->getId()]);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-	}
-	return GalleryStatus::success();
     }
 }
 ?>

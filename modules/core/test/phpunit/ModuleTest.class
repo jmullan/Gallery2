@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -38,7 +38,7 @@ class ModuleTest extends GalleryTestCase {
 
     function setUp() {
 	parent::setUp();
-	
+
 	/* Register a new module */
 	GalleryDataCache::reset();
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'ModuleTest');
@@ -50,14 +50,24 @@ class ModuleTest extends GalleryTestCase {
 	/* Install it */
 	$ret = $module->install();
 	if ($ret->isError()) {
+	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $this->_rootAlbum) = $this->_createRandomAlbum($this->_getRootId());
+	list ($ret, $this->_rootAlbum) = $this->_createRandomAlbum($this->_getRootId(),
+	    array('onLoadHandlers' => '|ModuleTestOnLoadHandler|'));
 	if ($ret->isError()) {
+	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markForCleanup($this->_rootAlbum);
+
+	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_rootAlbum->getId(),
+	    'test/file', array('onLoadHandlers' => '|ModuleTestOnLoadHandler|OtherHandler|'));
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
     }
 
     function tearDown() {
@@ -88,7 +98,7 @@ class ModuleTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	list ($ret, $originalBits) =
 	    $this->_fetchPermissionBitsForItem($this->_rootAlbum->getId(),
 					       $gallery->getActiveUserId(),
@@ -110,6 +120,20 @@ class ModuleTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
+	/* Activate the module */
+	list ($ret, $redirect) = $module->activate();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array(), $redirect, 'activate redirect');
+
+	/* Deactivate the module */
+	list ($ret, $redirect) = $module->deactivate();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array(), $redirect, 'deactivate redirect');
+
 	/* Uninstall the module */
 	$ret = $module->uninstall();
 	if ($ret->isError()) {
@@ -126,7 +150,7 @@ class ModuleTest extends GalleryTestCase {
 					       null);
 
 	$this->assertEquals($originalBits, $newBits, 'Permission bits not restored');
-	
+
 	/* Verify that the permission itself is gone */
 	list ($ret, $ids) = GalleryCoreApi::getPermissionIds();
 	if ($ret->isError()) {
@@ -136,7 +160,20 @@ class ModuleTest extends GalleryTestCase {
 	foreach ($ids as $id) {
 	    $this->assert($id != 'moduletest.one', 'Permission was not removed');
 	}
-	
+
+	/* Verify our OnLoadHandler was removed from all entities */
+	list ($ret, $album) = $this->_rootAlbum->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(null, $album->getOnLoadHandlers(), 'album onLoadHandlers');
+
+	list ($ret, $item) = $this->_item->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('|OtherHandler|', $item->getOnLoadHandlers(), 'item onLoadHandlers');
+
 	/* TODO: How do we verify that the tables are removed successfully? */
     }
 
@@ -148,22 +185,22 @@ class ModuleTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	$groupIds = array_keys($groupIds);
 	$groupIdMarkers = GalleryUtilities::makeMarkers($groupIds);
-	
+
 	$query = '
-        SELECT
-          BIT_OR([GalleryPermissionMap::permission])
-        FROM
-          [GalleryPermissionMap]
-        WHERE
-          [GalleryPermissionMap::itemId] = ?
-          AND
-          ([GalleryPermissionMap::userId] = ?
+	SELECT
+	  BIT_OR([GalleryPermissionMap::permission])
+	FROM
+	  [GalleryPermissionMap]
+	WHERE
+	  [GalleryPermissionMap::itemId] = ?
+	  AND
+	  ([GalleryPermissionMap::userId] = ?
 	    OR
-           [GalleryPermissionMap::groupId] IN (' . $groupIdMarkers . '))
-        ';
+	   [GalleryPermissionMap::groupId] IN (' . $groupIdMarkers . '))
+	';
 
 	$data = array($itemId, $userId);
 	array_splice($data, sizeof($data), 0, $groupIds);
@@ -182,10 +219,14 @@ class ModuleTest extends GalleryTestCase {
     }
 }
 
+/**
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
 class ModuleTestModule extends GalleryModule {
     function ModuleTestModule() {
 	global $gallery;
-	
+
 	$this->setId('moduletest');
 	$this->setName('ModuleTest Module');
 	$this->setDescription($gallery->i18n('Unit test module'));
@@ -195,15 +236,38 @@ class ModuleTestModule extends GalleryModule {
 
     function install() {
 	global $gallery;
-	
+
 	$ret = GalleryCoreApi::registerPermission($this->getId(),
-            'moduletest.one', $gallery->i18n('[test] A permission')); 
+	    'moduletest.one', $gallery->i18n('[test] A permission'));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	return GalleryStatus::success();
     }
+
+    function performFactoryRegistrations() {
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'GalleryOnLoadHandler', 'ModuleTestOnLoadHandler', 'ModuleTestOnLoadHandler',
+	     'modules/core/test/phpunit/ModuleTest.class', 'moduletest', null);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	return GalleryStatus::success();
+    }
+
+    function getOnLoadHandlerIds() {
+	return array('ModuleTestOnLoadHandler');
+    }
 }
 
+/**
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class ModuleTestOnLoadHandler {
+    function onLoad(&$entity) {
+	return GalleryStatus::success();
+    }
+}
 ?>

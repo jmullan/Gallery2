@@ -54,7 +54,7 @@ class GalleryCoreApi {
      * @return array major number, minor number
      */
     function getApiVersion() {
-	return array(3, 2);
+	return array(3, 3);
     }
 
     /**
@@ -2157,6 +2157,17 @@ class GalleryCoreApi {
     function loadEntityByExternalId($externalId, $entityType) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryEntityHelper_simple.class');
 	return GalleryEntityHelper_simple::loadEntityByExternalId($externalId, $entityType);
+    }
+
+    /**
+     * Remove onLoadHandlers from all entities
+     *
+     * @param array of factory impl ids
+     * @return object GalleryStatus a status code
+     */
+    function removeOnLoadHandlers($handlerIds) {
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryEntityHelper_medium.class');
+	return GalleryEntityHelper_medium::removeOnLoadHandlers($handlerIds);
     }
 
     /**
