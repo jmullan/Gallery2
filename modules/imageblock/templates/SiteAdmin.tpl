@@ -99,4 +99,24 @@
     <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="save"}"/>
     <input type="submit" name="{g->formVar var="form[action][reset]"}" value="{g->text text="reset"}"/>
   </div>
+
+  <div class="gbAdmin">
+    <div class="spacer">
+      &nbsp;
+    </div>
+
+    <div class="giTitle">
+      {g->text text="External Image Block"}
+    </div>
+
+    <div class="giDescription">
+      {g->text text="Use a PHP block like the one shown below to include an image block in a PHP page outside of Gallery."}
+    </div>
+    <div class="giInfo">
+      &lt;?php include('http://'.$_SERVER['HTTP_HOST'].'/gallery2/main.php?g2_view=imageblock:External&g2_blocks=randomImage&g2_show=title'); ?&gt;
+    </div>
+    <div class="giDescription">
+      {g->text text="g2_blocks is a pipe(|) separate list chosen from: randomImage, recentImage, viewedImage, randomAlbum, recentAlbum, viewedAlbum.  g2_show is a pipe(|) separated list chosen from: title, date, views, owner; the value can also be: none.  If either parameter is omitted the site default defined above is used."}
+    </div>
+  </div>
 </div>
