@@ -129,6 +129,15 @@ class GalleryPluginHelper_simple {
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
+		    if (!empty($redirectInfo)) {
+			/*
+			 * We were unable to automatically deactivate the module!
+			 * Forcibly abort this request and jump to the upgrader so this
+			 * module can be upgraded.
+			 */
+			header('Location: upgrade/');
+			exit;
+		    }
 
 		    /*  Return a handleable error */
 		    return array(GalleryStatus::error(ERROR_PLUGIN_VERSION_MISMATCH, __FILE__, __LINE__,
