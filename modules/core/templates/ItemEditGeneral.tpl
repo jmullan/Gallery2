@@ -1,6 +1,6 @@
     {galleryForm controller="$controller"}
-    {galleryInput name="formName" type="hidden"}ItemEditGeneral{/galleryInput}
-    {galleryInput name="itemId" type="hidden"}{$itemId}{/galleryInput}
+    {galleryInput type="hidden" name="formName"}ItemEditGeneral{/galleryInput}
+    {galleryInput type="hidden" name="itemId"}{$itemId}{/galleryInput}
     <table border="0" cellspacing="0" cellpadding="0">
 	<tr>
 	  <td align="center">
@@ -32,7 +32,7 @@
 
 	<tr>
 	  <td>
-	    {galleryInput size=40 name="form.title"}{$form.title}{/galleryInput}
+	    {galleryInput type=text size=40 name="form.title"}{$form.title}{/galleryInput}
 	  </td>
 	</tr>
 
@@ -58,7 +58,7 @@
 
 	<tr>
 	  <td>
-	    {galleryInput size=40 name="form.pathComponent"}{$form.pathComponent}{/galleryInput}
+	    {galleryInput type=text size=40 name="form.pathComponent"}{$form.pathComponent}{/galleryInput}
 	  </td>
 	</tr>
 

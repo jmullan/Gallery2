@@ -356,17 +356,23 @@ class CoreModule extends GalleryModule {
 	global $gallery;
 
 	$views = array();
-	list ($ret, $hasPermission) =
-	    GalleryUserHelper::hasItemPermission($item->getId(),
-						 $gallery->getActiveUserId(),
-						 array('core.all', 'core.changeText'));
+	list ($ret, $permissions) =
+	    GalleryUserHelper::getItemPermissions($item->getId(),
+						  $gallery->getActiveUserId());
 	if ($ret->isError()) {
-	    return array(GalleryStatus::success(), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	if ($hasPermission) {
-	    $views[] = array('name' => $this->translate('General'),
-			     'view' => 'core:ItemEditGeneral');
+	if (array_intersect(array('core.all', 'core.changeText'), $permissions)) {
+	        $views[] = array('name' => $this->translate('General'),
+				 'view' => 'core:ItemEditGeneral');
+	}
+
+	if ($item->isContainer() &&
+	    array_intersect(array('core.all', 'core.change'), $permissions)) {
+
+	        $views[] = array('name' => $this->translate('Sub-item Preferences'),
+				 'view' => 'core:ItemEditChildPreferences');
 	}
 	
 	return array(GalleryStatus::success(), $views);

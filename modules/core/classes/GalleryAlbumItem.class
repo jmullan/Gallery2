@@ -122,8 +122,8 @@ class GalleryAlbumItem_core extends GalleryItem {
 	/* Create default preferences */
 	/* XXX: parameterize this */
 	$ret = GalleryDerivativePreferencesMap::addMapEntry(
-	    array('order' => 1,
-		  'parentId' => $this->getId(),
+	    array('order' => 0,
+		  'itemId' => $this->getId(),
 		  'derivativeType' => DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
 		  'derivativeCommands' => 'scale 200'));
 	if ($ret->isError()) {
@@ -131,8 +131,8 @@ class GalleryAlbumItem_core extends GalleryItem {
 	}
 
 	$ret = GalleryDerivativePreferencesMap::addMapEntry(
-	    array('order' => 1,
-		  'parentId' => $this->getId(),
+	    array('order' => 0,
+		  'itemId' => $this->getId(),
 		  'derivativeType' => DERIVATIVE_TYPE_IMAGE_RESIZE,
 		  'derivativeCommands' => 'scale 640'));
 	if ($ret->isError()) {

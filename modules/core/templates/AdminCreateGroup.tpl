@@ -15,7 +15,7 @@
 	{galleryText text="Group Name"}
       </td>
       <td width="60%">
-	{galleryInput name="form.groupName"}{$form.groupName}{/galleryInput}
+	{galleryInput type="text" name="form.groupName"}{$form.groupName}{/galleryInput}
 	{galleryWarningFontColor}
 	{galleryText text="[required]"}
 	{/galleryWarningFontColor}

@@ -46,7 +46,7 @@ class GalleryDerivativePreferencesMap extends GalleryDerivativePreferencesMap_co
     function getMapInfo() {
         $info = array();
     
-        $info['members']['parentId'] = STORAGE_TYPE_INTEGER;
+        $info['members']['itemId'] = STORAGE_TYPE_INTEGER;
   
         $info['members']['order'] = STORAGE_TYPE_INTEGER;
   
@@ -66,7 +66,7 @@ class GalleryDerivativePreferencesMap extends GalleryDerivativePreferencesMap_co
     function addMapEntry($data) {
         global $gallery;
     
-        if (!isset($data['parentId'])) {
+        if (!isset($data['itemId'])) {
             return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
         }
     

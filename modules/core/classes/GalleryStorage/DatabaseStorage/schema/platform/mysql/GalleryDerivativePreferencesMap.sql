@@ -6,7 +6,7 @@
     --
 
     CREATE TABLE TABLE_PREFIXGalleryDerivativePreferencesMap (
-  COLUMN_PREFIXparentId
+  COLUMN_PREFIXitemId
       int(11)
     
       ,
@@ -27,7 +27,7 @@
     
     , 
   
-    INDEX (COLUMN_PREFIXparentId)
+    INDEX (COLUMN_PREFIXitemId)
     
       ,
     

@@ -28,7 +28,7 @@
 
 	  <tr>
 	    <td align="center">
-	      {galleryInput type="input" name="form.text.groupName" size="20"}{$form.text.groupName}{/galleryInput}
+	      {galleryInput type="text" name="form.text.groupName" size="20"}{$form.text.groupName}{/galleryInput}
 	      {galleryInput type="submit" name="form.action.editFromText"}{galleryText text="Edit"}{/galleryInput}
 	      {galleryInput type="submit" name="form.action.deleteFromText"}{galleryText text="Delete"}{/galleryInput}
 	    </td>

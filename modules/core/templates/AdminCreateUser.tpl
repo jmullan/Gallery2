@@ -15,7 +15,7 @@
 	{galleryText text="Username"}
       </td>
       <td width="60%">
-	{galleryInput name="form.username"}{$form.username}{/galleryInput}
+	{galleryInput type="text" name="form.username"}{$form.username}{/galleryInput}
 	{galleryWarningFontColor}
 	{galleryText text="[required]"}
 	{/galleryWarningFontColor}
@@ -54,7 +54,7 @@
 	{galleryText text="Full name"}
       </td>
       <td>
-	{galleryInput name="form.fullname"}{$form.fullname}{/galleryInput}
+	{galleryInput type="text" name="form.fullname"}{$form.fullname}{/galleryInput}
       </td>
     </tr>
       
@@ -63,7 +63,7 @@
 	{galleryText text="Email address"}
       </td>
       <td>
-	{galleryInput name="form.email"}{$form.email}{/galleryInput}
+	{galleryInput type="text" name="form.email"}{$form.email}{/galleryInput}
 	{galleryWarningFontColor}
 	{galleryText text="[required]"}
 	{/galleryWarningFontColor}

@@ -25,7 +25,7 @@
 	{galleryText text="Path to NetPBM:"}
       </td>
       <td>
-	{galleryInput name="form.path"}{$form.path}{/galleryInput}
+	{galleryInput type="text" name="form.path"}{$form.path}{/galleryInput}
       </td>
     </tr>
 

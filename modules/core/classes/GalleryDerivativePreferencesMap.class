@@ -36,7 +36,7 @@ class GalleryDerivativePreferencesMap_core {
     /**
      * @g2 <map>
      * @g2   <member>
-     * @g2     <member-name>parentId</member-name>
+     * @g2     <member-name>itemId</member-name>
      * @g2     <member-type>INTEGER</member-type>
      * @g2     <member-size>SMALL</member-size>
      * @g2     <indexed/>
@@ -81,7 +81,7 @@ class GalleryDerivativePreferencesMap_core {
 
 	foreach ($preferences as $preference) {
 	    $ret = GalleryDerivativePreferencesMap::addMapEntry(
-	        array_merge(array('parentId' => $targetId),
+	        array_merge(array('itemId' => $targetId),
 			    $preference));
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
@@ -105,7 +105,8 @@ class GalleryDerivativePreferencesMap_core {
 	    $gallery->search(array('select' => ('[GalleryDerivativePreferencesMap::order], ' .
 						'[GalleryDerivativePreferencesMap::derivativeType], ' .
 						'[GalleryDerivativePreferencesMap::derivativeCommands] '),
-				   'where' => '[GalleryDerivativePreferencesMap::parentId] = ?'),
+				   'where' => '[GalleryDerivativePreferencesMap::itemId] = ?',
+				   'order-by' => '[GalleryDerivativePreferencesMap::order] ASC'),
 			     array($targetId));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);

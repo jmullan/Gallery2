@@ -30,6 +30,7 @@ class GalleryTheme {
 	if ($content) {
 	    $params['value'] = $content;
 	}
+
 	return $this->_createFormTag('input', $params);
     }
 
@@ -264,6 +265,21 @@ class GalleryTheme {
 	/* Build our tag */
 	$result = "<$tag";
 	foreach ($params as $key => $value) {
+
+	    /*
+	     * For checkboxes and radio buttons, any non-empty value
+	     * means that it's selected.
+	     */
+	    if ($key == 'value' &&
+		    ($params['type'] == 'checkbox' ||
+		     $params['type'] == 'radio')) {
+
+		if (!empty($value)) {
+		    $result .= ' CHECKED';
+		}
+		continue;
+	    }
+	    
 	    $value = trim($value);
 	    $result .= " $key=\"$value\"";
 	}

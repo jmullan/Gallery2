@@ -78,7 +78,7 @@
 
 	  <tr>
 	    <td align="right">
-	      {galleryInput name="form.text.userName"}{$form.text.userName}{/galleryInput}
+	      {galleryInput type="text" name="form.text.userName"}{$form.text.userName}{/galleryInput}
 	    </td>
 	    <td align="left">
 	      {galleryInput type="submit" name="form.action.add"}

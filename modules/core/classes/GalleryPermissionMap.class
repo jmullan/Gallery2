@@ -195,9 +195,11 @@ class GalleryPermissionMap_core {
      *
      * @param int the id of the item
      * @return array object GalleryStatus a status code
-     *               array array(
+     *               array array('userId' => ...,
+     *                           'groupId' => ...,
+     *                           'permission' => ...)
      */
-    function fetchPermissionsForItem($itemId) {
+    function fetchAllPermissionsForItem($itemId) {
 	global $gallery;
 
 	if (empty($itemId)) {
@@ -216,15 +218,49 @@ class GalleryPermissionMap_core {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	if ($searchResults->resultCount() == 0) {
-	    return null;
-	}
-
 	$data = array();
 	while ($result = $searchResults->nextResult()) {
 	    $data[] = array('userId' => $result[0],
 			    'groupId' => $result[1],
 			    'permission' => $result[2]);
+	}
+	return array($ret, $data);
+    }
+
+    /**
+     * Return a list of permissions for the given item id
+     *
+     * @param int the id of the item
+     * @param array a set of user ids
+     * @param array a set of group ids
+     * @return array object GalleryStatus a status code
+     *               array permission strings
+     */
+    function fetchPermissionsForItem($itemId, $userIds, $groupIds) {
+	global $gallery;
+
+	if (empty($itemId)) {
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER,
+					      __FILE__, __LINE__), null);
+	}
+	
+	$userIdMarkers = GalleryUtilities::makeMarkers($userIds);
+	$groupIdMarkers = GalleryUtilities::makeMarkers($groupIds);
+
+	list($ret, $searchResults) =
+	    $gallery->search(array('select' => 'DISTINCT([GalleryPermissionMap::permission])',
+				   'where' => ('[GalleryPermissionMap::itemId] = ? ' .
+					       ' AND ([GalleryPermissionMap::userId] IN (' . $userIdMarkers . ') ' .
+					       ' OR [GalleryPermissionMap::groupId] IN (' . $groupIdMarkers . '))')),
+			     array_merge(array($itemId), $userIds, $groupIds));
+
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$data = array();
+	while ($result = $searchResults->nextResult()) {
+	    $data[] = $result[0];
 	}
 	return array($ret, $data);
     }
@@ -245,7 +281,7 @@ class GalleryPermissionMap_core {
 	}
 
 	list ($ret, $permissions) =
-	    GalleryPermissionMap::fetchPermissionsForItem($fromId);
+	    GalleryPermissionMap::fetchAllPermissionsForItem($fromId);
 
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);

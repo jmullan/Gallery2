@@ -28,7 +28,7 @@
 	  {galleryText text="Username"}
 	</td>
 	<td>
-	  {galleryInput name="form.username"}{$form.username}{/galleryInput}
+	  {galleryInput type="text" name="form.username"}{$form.username}{/galleryInput}
 	</td>
       </tr>
 
