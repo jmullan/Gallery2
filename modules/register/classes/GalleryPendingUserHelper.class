@@ -265,7 +265,8 @@ class GalleryPendingUserHelper {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	$success = mail($to, $subject, $sEmailText, "From: $from");
+	$platform = $gallery->getPlatform();
+	$success = $platform->mail($to, $subject, $sEmailText, "From: $from");
 	if (!$success) {
 	    return GalleryStatus::error(ERROR_UNKNOWN, __FILE__, __LINE__,
 		'Could not send mail to ' . $to);

@@ -798,5 +798,27 @@ class GalleryPlatform {
 	    touch($file);
 	}
     }
+
+    /**
+     * mail -- Send an email
+     *
+     * @param string to address(es) (comma separated)
+     * @param string subject
+     * @param string body
+     * @param string (optional) additional headers (\r\n separated)
+     * @return boolean true on success
+     */
+    function mail($to, $subject, $body, $headers=null) {
+	global $gallery;
+	if ($gallery->getDebug()) {
+	    $gallery->debug("mail($to, $subject, $body, $headers)");
+	}
+
+	if (isset($headers)) {
+	    return mail($to, $subject, $body, $headers);
+	} else {
+	    return mail($to, $subject, $body);
+	}
+    }
 }
 ?>

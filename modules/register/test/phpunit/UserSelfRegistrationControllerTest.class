@@ -137,6 +137,7 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
     }
     
     function testRegisterWithEMailActivation() {
+	global $gallery;
 	$ret = GalleryCoreApi::setPluginParameter('module', 'register', 'confirmation', 'email');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -151,14 +152,18 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[password1]', 'password');
 	GalleryUtilities::putRequestVariable('form[password2]', 'password');
 
-	// Expect error because 'email' is not a valid email address..
-	$results = $this->handleRequest((int)ERROR_UNKNOWN);
-//	$this->assertEquals(array('redirect' => array('view' => 'core:UserAdmin',
-//	      'subView' => 'register:SelfRegistrationSuccess'),
-//	  'status' => array('registeredUser' => $userName),
-//	  'error' => array()),
-//	    $results,
-//	    'Failed to register user with email activation');
+	$platform = $gallery->getPlatform();
+	$gallery->_platform = new RegisterDummyPlatform($platform);
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:UserAdmin',
+	      'subView' => 'register:SelfRegistrationSuccess'),
+	  'status' => array('registeredUser' => $userName),
+	  'error' => array()),
+	    $results,
+	    'Failed to register user with email activation');
+
+	$gallery->_platform = $platform;
 
 	/* make sure the pending user exists */
 	list($ret, $user) = GalleryPendingUserHelper::fetchPendingUserByUserName($userName);
@@ -307,6 +312,44 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+    }
+}
+
+/**
+ * @package SelfRegistration
+ * @subpackage PHPUnit
+ */
+class RegisterDummyPlatform {
+    function RegisterDummyPlatform($platform) {
+	$this->_platform = $platform;
+    }
+
+    function mail($to, $subject, $body, $headers=null) {
+	return true;
+    }
+
+    function realpath($file) {
+	return $this->_platform->realpath($file);
+    }
+
+    function getDirectorySeparator() {
+	return $this->_platform->getDirectorySeparator();
+    }
+
+    function file_exists($filename) {
+	return $this->_platform->file_exists($filename);
+    }
+
+    function is_dir($filename) {
+	return $this->_platform->is_dir($filename);
+    }
+
+    function is_writeable($filename) {
+	return $this->_platform->is_writeable($filename);
+    }
+
+    function stat($filename) {
+	return $this->_platform->stat($filename);
     }
 }
 ?>
