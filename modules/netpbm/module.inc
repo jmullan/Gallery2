@@ -71,9 +71,10 @@ class NetPbmModule extends GalleryModule {
     function install() {
 	list ($ret, $version) = $this->getModuleParameter('version');
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), false);
 	}
 
+	$installed = false;
 	if ($version != $this->getVersion()) {
 	    if (empty($version)) {
 		/*
@@ -87,18 +88,20 @@ class NetPbmModule extends GalleryModule {
 
 		    $ret = $this->setModuleParameter($key, $value);
 		    if ($ret->isError()) {
-			return $ret->wrap(__FILE__, __LINE__);
+			return array($ret->wrap(__FILE__, __LINE__), false);
 		    }
 		}
+
+		$installed = true;
 	    }
 		
 	    $ret = $this->setModuleParameter('version', $this->getVersion());
 	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return array($ret->wrap(__FILE__, __LINE__), false);
 	    }
 	}
 	
-	return GalleryStatus::success();
+	return array(GalleryStatus::success(), $installed);
     }
 	
     /**

@@ -68,36 +68,39 @@ class ExifModule extends GalleryModule {
 	
 	list ($ret, $version) = $this->getModuleParameter('version');
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), false);
 	}
 
+	$installed = false;
 	if ($version != $this->getVersion()) {
 	    /* The store requires configuration. */
 	    $storage = $gallery->getStorage();
 	    $ret = $storage->configureStore('exif');
 	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return array($ret->wrap(__FILE__, __LINE__), false);
 	    }
 	    
 	    if (empty($version)) {
 		$ret = ExifHelper::setDefaultProperties(EXIF_SUMMARY);
 		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return array($ret->wrap(__FILE__, __LINE__), false);
 		}
 		
 		$ret = ExifHelper::setDefaultProperties(EXIF_DETAILED);
 		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return array($ret->wrap(__FILE__, __LINE__), false);
 		}
+
+		$installed = true;
 	    }
 
 	    $ret = $this->setModuleParameter('version', $this->getVersion());
 	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return array($ret->wrap(__FILE__, __LINE__), false);
 	    }
 	}
 	
-	return GalleryStatus::success();
+	return array(GalleryStatus::success(), $installed);
     }
 	
     /**

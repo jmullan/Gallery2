@@ -79,16 +79,17 @@ class CommentModule extends GalleryModule {
 	
 	list ($ret, $version) = $this->getModuleParameter('version');
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), false);
 	}
 
+	$installed = false;
 	if ($version != $this->getVersion()) {
 
 	    /* The store requires configuration. */
 	    $storage = $gallery->getStorage();
 	    $ret = $storage->configureStore('comment');
 	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return array($ret->wrap(__FILE__, __LINE__), false);
 	    }
 	    
 	    if (empty($version)) {
@@ -101,9 +102,10 @@ class CommentModule extends GalleryModule {
 
 		    $ret = $this->setModuleParameter($key, $value);
 		    if ($ret->isError()) {
-			return $ret->wrap(__FILE__, __LINE__);
+			return array($ret->wrap(__FILE__, __LINE__), false);
 		    }
 		}
+		$installed = true;
 	    }
 
 	    /* Register our permissions */
@@ -111,28 +113,28 @@ class CommentModule extends GalleryModule {
 							       'comment.add',
 							       $gallery->i18n('[comment] Add comments')); 
 	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return array($ret->wrap(__FILE__, __LINE__), false);
 	    }
 	    
 	    $ret = GalleryPermissionSetMap::registerPermission($this->getId(),
 							       'comment.edit',
 							       $gallery->i18n('[comment] Edit comments')); 
 	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return array($ret->wrap(__FILE__, __LINE__), false);
 	    }
 	    
 	    $ret = GalleryPermissionSetMap::registerPermission($this->getId(),
 							       'comment.delete',
 							       $gallery->i18n('[comment] Delete comments')); 
 	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return array($ret->wrap(__FILE__, __LINE__), false);
 	    }
 	    
 	    $ret = GalleryPermissionSetMap::registerPermission($this->getId(),
 							       'comment.view',
 							       $gallery->i18n('[comment] View comments'));
 	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return array($ret->wrap(__FILE__, __LINE__), false);
 	    }
 	    
 	    $ret = GalleryPermissionSetMap::registerPermission($this->getId(),
@@ -144,7 +146,7 @@ class CommentModule extends GalleryModule {
 								     'comment.delete',
 								     'comment.view'));
 	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return array($ret->wrap(__FILE__, __LINE__), false);
 	    }
 		
 	    $ret = GalleryPermissionSetMap::registerPermission($this->getId(),
@@ -154,16 +156,16 @@ class CommentModule extends GalleryModule {
 							       array('core.view',
 								     'comment.view'));
 	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return array($ret->wrap(__FILE__, __LINE__), false);
 	    }
 	    
 	    $ret = $this->setModuleParameter('version', $this->getVersion());
 	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return array($ret->wrap(__FILE__, __LINE__), false);
 	    }
 	}
 	
-	return GalleryStatus::success();
+	return array(GalleryStatus::success(), $installed);
     }
 	
     /**

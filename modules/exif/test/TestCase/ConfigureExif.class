@@ -51,7 +51,7 @@ class ConfigureExifTestCase extends TestCase {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	
-	$ret = $module->install();
+	list ($ret, $success) = $module->install();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

@@ -131,7 +131,7 @@ class GalleryModule {
      * @return object GalleryStatus a status code
      */
     function install() {
-	return GalleryStatus::success();
+	return array(GalleryStatus::success(), false);
     }
 
     /**
@@ -210,6 +210,31 @@ class GalleryModule {
     function needsConfiguration() {
 	global $gallery;
 	
+	return array(GalleryStatus::success(), false);
+    }
+
+    /**
+     * Can this module be installed automatically if possible?  Default is false
+     * which is a security measure.  Only activate modules that by default do not
+     * expose any sensitive data.  For example, the debug module shouldn't be auto
+     * installed cause it can show filesystem paths.
+     *
+     */
+    function canBeAutoInstalled() {
+	return false;
+    }
+    
+    /**
+     * Allow this module to autoconfigure itself.  It should only autoconfigure if it is
+     * marked as needing configuration (see GalleryModule::needsConfiguration) and it should
+     * do its best to choose a reasonable configuration.  Return true upon success,
+     * even if nothing has to be done to get a successful configuration.
+     *
+     * @return array object GalleryStatus a status code
+     *               boolean
+     */
+    function autoConfigure() {
+	/* By default we can't auto configure */
 	return array(GalleryStatus::success(), false);
     }
     

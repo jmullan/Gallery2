@@ -271,11 +271,13 @@ class GalleryPluginMap_core {
     /**
      * Load and initialize the given plugin
      *
-     * @param string the module id
+     * @param string the plugin type (eg, module, layout, etc)
+     * @param string the plugin id
+     * @param string whether or not to initialize the plugin
      * @return array object GalleryStatus a status code
      *               object the plugin
      */
-    function loadPlugin($pluginType, $pluginId) {
+    function loadPlugin($pluginType, $pluginId, $initialize=true) {
 	global $gallery;
 	GalleryProfiler::start('modules.core.classes.GalleryPluginMap::loadPlugin');
 
@@ -308,9 +310,11 @@ class GalleryPluginMap_core {
 
 	    /* Instantiate and initialize it */
 	    $plugin = new $pluginClass();
-	    $ret = $plugin->init();
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+	    if ($initialize) {
+		$ret = $plugin->init();
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
 	    }
 
 	    /* Store it in our table */
@@ -321,6 +325,18 @@ class GalleryPluginMap_core {
 
 	GalleryProfiler::stop('modules.core.classes.GalleryPluginMap::loadPlugin');
 	return array(GalleryStatus::success(), $plugin);
+    }
+
+    /**
+     * Get rid of the specified plugin.
+     *
+     * TODO: This is incomplete, since if the plugin has already been initialized
+     *       then it may have registered implementations with the factory or otherwise
+     *       left tendrils of itself in memory.
+     */
+    function unloadPlugin($pluginType, $pluginId) {
+	$cacheKey = "GalleryPluginMap::loadPlugin($pluginType, $pluginId)";
+	GalleryDataCache::remove($cacheKey);
     }
 
     /**

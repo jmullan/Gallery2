@@ -262,7 +262,7 @@ class CoreModule extends GalleryModule {
 
 	list ($ret, $version) = $this->getModuleParameter('version');
 	if ($ret->isError() & !($ret->getErrorCode() & ERROR_STORAGE_FAILURE)) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), false);
 	} else if ($ret->isError() || $version != $this->getVersion()) {
 
 	    if ($gallery->getDebug()) {
@@ -276,22 +276,23 @@ class CoreModule extends GalleryModule {
 	     */
 	    $ret = $gallery->rollbackTransaction();
 	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return array($ret->wrap(__FILE__, __LINE__), false);
 	    }
 
 	    $ret = $gallery->beginTransaction();
 	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return array($ret->wrap(__FILE__, __LINE__), false);
 	    }
 
 	    /* The store requires configuration. */
 	    $storage = $gallery->getStorage();
 	    $ret = $storage->configureStore('core');
 	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return array($ret->wrap(__FILE__, __LINE__), false);
 	    }
 	}
 
+	$installed = false;
 	if ($version != $this->getVersion()) {
 	    if (empty($version)) {
 		/*
@@ -316,25 +317,25 @@ class CoreModule extends GalleryModule {
 			       'session.lifetime' => 25 * 365 * 86400, /* 25 years */
 			       'session.inactivityTimeout' => 14 * 86400, /* two weeks */
 			       'misc.markup' => 'bbcode',
-			       'misc.useShortUrls' => 'true',
+			       'misc.useShortUrls' => 'false',
 			       )
 			 as $key => $value) {
 
 		    $ret = $this->setModuleParameter($key, $value);
 		    if ($ret->isError()) {
-			return $ret->wrap(__FILE__, __LINE__);
+			return array($ret->wrap(__FILE__, __LINE__), false);
 		    }
 		}
 
 		/* Activate the Matrix layout */
 		list ($ret, $layout) = GalleryPluginMap::loadPlugin('layout', 'matrix');
 		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return array($ret->wrap(__FILE__, __LINE__), false);
 		}
 		
 		$ret = $layout->activate();
 		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return array($ret->wrap(__FILE__, __LINE__), false);
 		}
 
 		/*
@@ -351,28 +352,28 @@ class CoreModule extends GalleryModule {
 								   $gallery->i18n('All access'),
 								   GALLERY_PERMISSION_ALL_ACCESS);
 		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return array($ret->wrap(__FILE__, __LINE__), false);
 		}
 
 		$ret = GalleryPermissionSetMap::registerPermission($this->getId(),
 								   'core.view',
 								   $gallery->i18n('[core] View item')); 
 		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return array($ret->wrap(__FILE__, __LINE__), false);
 		}
 
 		$ret = GalleryPermissionSetMap::registerPermission($this->getId(),
 								   'core.viewResizes',
 								   $gallery->i18n('[core] View resized version(s)')); 
 		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return array($ret->wrap(__FILE__, __LINE__), false);
 		}
 	    
 		$ret = GalleryPermissionSetMap::registerPermission($this->getId(),
 								   'core.viewSource',
 								   $gallery->i18n('[core] View original version')); 
 		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return array($ret->wrap(__FILE__, __LINE__), false);
 		}
 	    
 		$ret = GalleryPermissionSetMap::registerPermission($this->getId(),
@@ -383,7 +384,7 @@ class CoreModule extends GalleryModule {
 									 'core.viewResizes',
 									 'core.viewSource'));
 		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return array($ret->wrap(__FILE__, __LINE__), false);
 		}
 
 		$ret = GalleryPermissionSetMap::registerPermission($this->getId(),
@@ -391,7 +392,7 @@ class CoreModule extends GalleryModule {
 								   $gallery->i18n('[core] Add sub-album'), 
 								   GALLERY_PERMISSION_ITEM_ADMIN);
 		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return array($ret->wrap(__FILE__, __LINE__), false);
 		}
 
 		$ret = GalleryPermissionSetMap::registerPermission($this->getId(),
@@ -399,7 +400,7 @@ class CoreModule extends GalleryModule {
 								   $gallery->i18n('[core] Add sub-item'), 
 								   GALLERY_PERMISSION_ITEM_ADMIN);
 		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return array($ret->wrap(__FILE__, __LINE__), false);
 		}
 	    
 		$ret = GalleryPermissionSetMap::registerPermission($this->getId(),
@@ -407,7 +408,7 @@ class CoreModule extends GalleryModule {
 								   $gallery->i18n('[core] Edit item'), 
 								   GALLERY_PERMISSION_ITEM_ADMIN);
 		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return array($ret->wrap(__FILE__, __LINE__), false);
 		}
 
 		$ret = GalleryPermissionSetMap::registerPermission($this->getId(),
@@ -415,7 +416,7 @@ class CoreModule extends GalleryModule {
 								   $gallery->i18n('[core] Change item permissions'), 
 								   GALLERY_PERMISSION_ITEM_ADMIN);
 		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return array($ret->wrap(__FILE__, __LINE__), false);
 		}
 
 		$ret = GalleryPermissionSetMap::registerPermission($this->getId(),
@@ -423,12 +424,12 @@ class CoreModule extends GalleryModule {
 								   $gallery->i18n('[core] Delete item'), 
 								   GALLERY_PERMISSION_ITEM_ADMIN);
 		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return array($ret->wrap(__FILE__, __LINE__), false);
 		}
 	
 		$ret = $this->setModuleParameter('version', $this->getVersion());
 		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return array($ret->wrap(__FILE__, __LINE__), false);
 		}
 
 		/*
@@ -441,7 +442,7 @@ class CoreModule extends GalleryModule {
 		if (empty($translator)) {
 		    $ret = $gallery->initTranslator();
 		    if ($ret->isError()) {
-			return $ret->wrap(__FILE__, __LINE__);
+			return array($ret->wrap(__FILE__, __LINE__), false);
 		    }
 		}
 
@@ -453,15 +454,15 @@ class CoreModule extends GalleryModule {
 
 		    $ret = $this->$func();
 		    if ($ret->isError()) {
-			return $ret->wrap(__FILE__, __LINE__);
+			return array($ret->wrap(__FILE__, __LINE__), false);
 		    }
 		}
+		$installed = true;
 	    }
-	} 
+	}
 
 	/* The core is now guaranteed to be configured and initialized */
-			      
-	return GalleryStatus::success();
+	return array(GalleryStatus::success(), $installed);
     }
 
     /**

@@ -908,8 +908,8 @@ class Gallery {
      * @return array object GalleryStatus a status code
      *               object GalleryModule the module
      */
-    function loadModule($moduleId) {
-	list ($ret, $module) = GalleryPluginMap::loadPlugin('module', $moduleId);
+    function loadModule($moduleId, $initialize=true) {
+	list ($ret, $module) = GalleryPluginMap::loadPlugin('module', $moduleId, $initialize);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

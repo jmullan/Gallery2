@@ -146,7 +146,7 @@ function GalleryInitSecondPass() {
      */
 
     /* Let the core module install itself, if necessary */
-    $ret = $coreModule->install();
+    list ($ret, $coreWasInstalled) = $coreModule->install();
     if ($ret->isError()) {
 	return $ret->wrap(__FILE__, __LINE__);
     }
@@ -196,13 +196,61 @@ function GalleryInitSecondPass() {
 
     foreach ($moduleStatus as $moduleId => $status) {
 	if (empty($status['active'])) {
-	    continue;
+	    /* If we just installed the core module then try auto configuring this module. */
+	    if ($coreWasInstalled) {
+		list ($ret, $module) = $gallery->loadModule($moduleId, false);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+
+		if ($module->canBeAutoInstalled()) {
+		    list ($ret, $success) = $module->install();
+		    if ($ret->isError()) {
+			/*
+			 * Auto configuration is totally optional.  But even so, it shouldn't fail unless
+			 * something catastrophic went wrong.  And even if it does fail, the user can always
+			 * try again using the AdminModules view.  So let's just eat the error and not worry
+			 * about it.
+			 */
+			GalleryPluginMap::unloadPlugin('module', $moduleId);
+			continue;
+		    }
+		    
+			  
+		    list ($ret, $success) = $module->autoConfigure();
+		    if ($ret->isError()) {
+			/* As above, we don't want to fail even if there is an error */
+			GalleryPluginMap::unloadPlugin('module', $moduleId);
+			continue;
+		    }
+
+		    if ($success) {
+			/* Auto config was successful -- activate the module */
+			$ret = $module->activate();
+			if ($ret->isError()) {
+			    /* As above, we don't want to fail even if there is an error */
+			    GalleryPluginMap::unloadPlugin('module', $moduleId);
+			    continue;
+			}
+
+			/* Now initialize it */
+			$module->init();
+			if ($ret->isError()) {
+			    /* As above, we don't want to fail even if there is an error */
+			    $gallery->unloadModule($moduleId);
+			    GalleryPluginMap::unloadPlugin('module', $moduleId);
+			    continue;
+			}
+		    }
+		}
+	    }
+	} else {
+	    list ($ret, $module) = $gallery->loadModule($moduleId);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
 	}
-    
-	list ($ret, $module) = $gallery->loadModule($moduleId);
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
+
     }
     GalleryProfiler::stop('init.GalleryInit#load-modules');
     GalleryProfiler::stop('init.GalleryInitSecondPass');
