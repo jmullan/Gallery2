@@ -85,9 +85,28 @@ class GalleryUnknownItem_core extends GalleryDataItem {
 
     /**
      * @see GalleryItem::itemTypeName
+     * @staticvar mimeMap array(mimeTypePattern=>array(CapName,name))
      */
     function itemTypeName() {
 	global $gallery;
+	static $mimeMap;
+
+	if (!isset($mimeMap)) {
+	    $mimeMap = array(
+		':^audio/:'
+		    => array($gallery->i18n('Audio'), $gallery->i18n('audio')),
+		':^application/(zip|mac-[cb].*|x-((us|g)?tar|gzip|compress|cpio|stuffit|shar))$:'
+		    => array($gallery->i18n('Archive'), $gallery->i18n('archive')),
+		':^(text/|application/(pdf|postscript|msword)$):'
+		    => array($gallery->i18n('Document'), $gallery->i18n('document')),
+	    );
+	}
+
+	foreach ($mimeMap as $pattern => $result) {
+	    if (preg_match($pattern, $this->_mimeType)) {
+		return $result;
+	    }
+	}
 	return array($gallery->i18n('Unknown'), $gallery->i18n('unknown'));
     }
 }
