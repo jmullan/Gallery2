@@ -12,7 +12,7 @@
       )
     
       ,
-    DB_COLUMN_PREFIXpluginName
+    DB_COLUMN_PREFIXpluginId
       VARCHAR(
       
           128
@@ -26,11 +26,11 @@
     );
 
   
-    CREATE UNIQUE INDEX PluginMap_pluginType_pluginName 
+    CREATE UNIQUE INDEX PluginMap_pluginType_pluginId 
     ON DB_TABLE_PREFIXPluginMap
     (DB_COLUMN_PREFIXpluginType
         ,
-      DB_COLUMN_PREFIXpluginName);
+      DB_COLUMN_PREFIXpluginId);
 
   
 

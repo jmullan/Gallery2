@@ -66,7 +66,7 @@ class GalleryPluginMap extends GalleryPluginMap_core {
     
         $info['members']['pluginType'] = STORAGE_TYPE_STRING;
   
-        $info['members']['pluginName'] = STORAGE_TYPE_STRING;
+        $info['members']['pluginId'] = STORAGE_TYPE_STRING;
   
         $info['members']['active'] = STORAGE_TYPE_BOOLEAN;
   
@@ -87,7 +87,7 @@ class GalleryPluginMap extends GalleryPluginMap_core {
             return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
         }
     
-        if (!isset($data['pluginName'])) {
+        if (!isset($data['pluginId'])) {
             return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
         }
     

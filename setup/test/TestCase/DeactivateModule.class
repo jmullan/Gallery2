@@ -2,8 +2,8 @@
 
 class DeactivateModuleTestCase extends TestCase {
 
-    function DeactivateModuleTestCase($moduleName) {
-	$this->_moduleName = $moduleName;
+    function DeactivateModuleTestCase($moduleId) {
+	$this->_moduleId = $moduleId;
     }
 
     function getDescription() {
@@ -12,19 +12,19 @@ class DeactivateModuleTestCase extends TestCase {
 	if ($ret->isError()) {
 	    $status = 'error';
 	} else {
-	    if (empty($moduleStatus[$this->_moduleName]['active'])) {
+	    if (empty($moduleStatus[$this->_moduleId]['active'])) {
 		$status = 'inactive';
 	    } else {
 		$status = 'active';
 	    }
 	}
-	return "Deactivate the $this->_moduleName module (currently $status)";
+	return "Deactivate the $this->_moduleId module (currently $status)";
     }
 
     function testStart() {
 	global $gallery;
 
-	list ($ret, $module) = $gallery->loadModule($this->_moduleName);
+	list ($ret, $module) = $gallery->loadModule($this->_moduleId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

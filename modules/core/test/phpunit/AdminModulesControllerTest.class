@@ -50,7 +50,7 @@ class AdminModulesControllerTest extends GalleryControllerTestCase {
     }
 
     function testInstall() {
-	GalleryUtilities::putRequestVariable('moduleName', 'AdminModulesControllerTest');
+	GalleryUtilities::putRequestVariable('moduleId', 'AdminModulesControllerTest');
 	GalleryUtilities::putRequestVariable('action', 'install');
 	$this->_testModule->_isActive = false;
 
@@ -69,7 +69,7 @@ class AdminModulesControllerTest extends GalleryControllerTestCase {
      * Activate a module that doesn't require configuration (this should succeed)
      */
     function testActivate() {
-	GalleryUtilities::putRequestVariable('moduleName', 'AdminModulesControllerTest');
+	GalleryUtilities::putRequestVariable('moduleId', 'AdminModulesControllerTest');
 	GalleryUtilities::putRequestVariable('action', 'activate');
 	$this->_testModule->_isActive = false;
 	$this->_testModule->_needsConfiguration = false;
@@ -88,7 +88,7 @@ class AdminModulesControllerTest extends GalleryControllerTestCase {
      * Activate a module that requires configuration (this should fail)
      */
     function testActivateNeedsConfiguration() {
-	GalleryUtilities::putRequestVariable('moduleName', 'AdminModulesControllerTest');
+	GalleryUtilities::putRequestVariable('moduleId', 'AdminModulesControllerTest');
 	GalleryUtilities::putRequestVariable('action', 'activate');
 	$this->_testModule->_isActive = false;
 	$this->_testModule->_needsConfiguration = true;
@@ -98,7 +98,7 @@ class AdminModulesControllerTest extends GalleryControllerTestCase {
 
     /* Dectivate a module that is active (should succeed) */
     function testDeactivate() {
-	GalleryUtilities::putRequestVariable('moduleName', 'AdminModulesControllerTest');
+	GalleryUtilities::putRequestVariable('moduleId', 'AdminModulesControllerTest');
 	GalleryUtilities::putRequestVariable('action', 'deactivate');
 	$this->_testModule->_isActive = true;
 	
@@ -113,7 +113,7 @@ class AdminModulesControllerTest extends GalleryControllerTestCase {
 
     /* Dectivate a module that is inactive (should succeed silently) */
     function testDeactivateAlreadyDeactivated() {
-	GalleryUtilities::putRequestVariable('moduleName', 'AdminModulesControllerTest');
+	GalleryUtilities::putRequestVariable('moduleId', 'AdminModulesControllerTest');
 	GalleryUtilities::putRequestVariable('action', 'deactivate');
 	$this->_testModule->_isActive = false;
 
@@ -137,6 +137,10 @@ class AdminModulesControllerTestModule {
 	}
 
 	return $singleton;
+    }
+
+    function getName() {
+	return 'AdminModulesControllerTest';
     }
 
     function init() {

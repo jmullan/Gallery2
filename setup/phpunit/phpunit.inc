@@ -206,7 +206,7 @@ class TestCase extends Assert /* implements Test */ {
      that specializes the runTest() method. */
   var $fName;
   var $fClassName;
-  var $fModuleName;
+  var $fModuleId;
   var $fResult;
   var $fExceptions = array();
   var $fTiming;
@@ -216,12 +216,12 @@ class TestCase extends Assert /* implements Test */ {
     $this->fName = $name;
   }
 
-  function setModuleName($moduleName) {
-      $this->fModuleName = $moduleName;
+  function setModuleId($moduleId) {
+      $this->fModuleId = $moduleId;
   }
 
-  function getModuleName() {
-      return $this->fModuleName;
+  function getModuleId() {
+      return $this->fModuleId;
   }
 
   function run(&$testResult) {
@@ -361,9 +361,9 @@ class TestSuite /* implements Test */ {
      run them all. */
   var $fTests = array();
   var $fClassname;
-  var $fModuleName;
+  var $fModuleId;
 
-  function TestSuite($classname=false,$modulename=false,$filter=null) {
+  function TestSuite($classname=false,$moduleid=false,$filter=null) {
     // Find all methods of the given class whose name starts with
     // "test" and add them to the test suite.
 
@@ -382,7 +382,7 @@ class TestSuite /* implements Test */ {
     if (empty($classname))
       return;
     $this->fClassname = $classname;
-    $this->fModuleName = $modulename;
+    $this->fModuleId = $moduleid;
     $this->fFilter = $filter;
 
     if (floor(phpversion()) >= 4) {
@@ -400,8 +400,8 @@ class TestSuite /* implements Test */ {
 
             //print "skipping $method<br>";
           } else {
-	    if (!isset($this->fFilter) || preg_match("/{$this->fFilter}/i", "$modulename.$classname.$method")) {
-	      $test->setModuleName($this->fModuleName);
+	    if (!isset($this->fFilter) || preg_match("/{$this->fFilter}/i", "$moduleid.$classname.$method")) {
+	      $test->setModuleId($this->fModuleId);
 	      $this->addTest($test);
 	    }
           }
@@ -680,7 +680,7 @@ class PrettyTestResult extends TestResult {
   }
 
   function _startTest($test) {
-    printf("<TR><TD>%s </TD><TD>%s </TD><TD>%s </TD>", $test->getModuleName(), $test->classname(),$test->name());
+    printf("<TR><TD>%s </TD><TD>%s </TD><TD>%s </TD>", $test->getModuleId(), $test->classname(),$test->name());
     flush();
   }
 

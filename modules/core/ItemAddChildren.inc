@@ -276,7 +276,7 @@ class ItemAddChildrenView extends GalleryView {
 		if ($platform->is_dir($path)) {
 		    $handle = $platform->opendir($path);
 
-		    while (false !== ($fileName = readdir($handle))) {
+		    while (false !== ($fileName = $platform->readdir($handle))) {
 			$gallery->guaranteeTimeLimit(5);
 			if ($fileName == '.' || $fileName == '..') {
 			    continue;
@@ -301,7 +301,7 @@ class ItemAddChildrenView extends GalleryView {
 				      'fileKey' => base64_encode($fileName));
 			}
 		    }
-		    closedir($handle);
+		    $platform->closedir($handle);
 			  
 		} else if ($platform->is_file($path) && !$platform->is_link($path)) {
 		    $mimeType = GalleryUtilities::getMimeType($path);

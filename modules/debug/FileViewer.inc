@@ -52,12 +52,12 @@ class FileViewerView extends GalleryView {
 	$approved = false;
 	$approvedChecksum = 0;
 	$legal = false;
-	foreach ($modules as $moduleName => $moduleStatus) {
+	foreach ($modules as $moduleId => $moduleStatus) {
 	    if (empty($moduleStatus['active'])) {
 		continue;
 	    }
 
-	    $approvedListFile = $moduleDir . $moduleName . '/debug/viewableFiles.txt';
+	    $approvedListFile = $moduleDir . $moduleId . '/debug/viewableFiles.txt';
 	    if ($platform->file_exists($approvedListFile)) { 
 		foreach ($platform->file($approvedListFile) as $approvedFile) {
 		    list ($approvedChecksum, $octets, $approvedFile) = split(' ', $approvedFile);

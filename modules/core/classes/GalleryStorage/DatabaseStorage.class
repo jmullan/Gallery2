@@ -1285,7 +1285,7 @@ class DatabaseStorage extends GalleryStorage {
      *
      * @return object GalleryStatus a status code
      */
-    function configureStore($moduleName) {
+    function configureStore($moduleId) {
 	global $gallery;
 	
 	if (empty($this->_db)) {
@@ -1295,14 +1295,14 @@ class DatabaseStorage extends GalleryStorage {
 	/*
 	 * Find the SQL files for this platform
 	 */
-	$sqlDir = dirname(__FILE__) . '/../../../../modules/' . $moduleName .
+	$sqlDir = dirname(__FILE__) . '/../../../../modules/' . $moduleId .
 	    '/classes/GalleryStorage/DatabaseStorage/schema/platform/' .
 	    $this->getType();
 	$platform = $gallery->getPlatform();
 
 	$sqlFiles = array();
 	if ($dir = $platform->opendir($sqlDir)) {
-	    while (($file = readdir($dir)) !== false) {
+	    while (($file = $platform->readdir($dir)) !== false) {
 		/*
 		 * There are two classes of files here, distinguished by name.
 		 *   "Foo.sql" -- the definition for table "Foo"
@@ -1319,7 +1319,7 @@ class DatabaseStorage extends GalleryStorage {
 		    $tableDefinition[$matches[1]] = $sqlDir . '/' . $file;
 		}
 	    }
-	    closedir($dir);
+	    $platform->closedir($dir);
 	} else {
 	    return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);
 	}

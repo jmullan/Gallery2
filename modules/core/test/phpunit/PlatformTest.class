@@ -123,7 +123,11 @@ class PlatformTest extends GalleryTestCase {
     function testOpendir() {
 	$dir = $this->_platform->opendir(dirname(__FILE__));
 	$this->assert($dir);
-	closedir($dir);
+	$platform->closedir($dir);
+    }
+
+    function testReaddir() {
+	$this->assert(false);
     }
     
     function testRename() {

@@ -45,7 +45,7 @@ class PluginParameterTest extends GalleryTestCase {
 
     function tearDown() {
 	$ret = GalleryPluginParameterMap::removeMapEntry(array('pluginType' => 'module',
-							       'pluginName' => 'unitTestModule'));
+							       'pluginId' => 'unitTestModule'));
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret);
 	}

@@ -56,13 +56,13 @@ class UserAdminView extends GalleryView {
 
 	/* Get a list of all the admin views for each module */
 	$subViewChoices = array();
-	foreach ($moduleStatus as $moduleName => $moduleStatus) {
+	foreach ($moduleStatus as $moduleId => $moduleStatus) {
 	    if (empty($moduleStatus['active'])) {
 		continue;
 	    }
 
 	    /* Get the selected module's admin view */
-	    list($ret, $module) = $gallery->loadModule($moduleName);
+	    list($ret, $module) = $gallery->loadModule($moduleId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }

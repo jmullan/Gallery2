@@ -194,12 +194,12 @@ function GalleryInitSecondPass() {
 	return $ret->wrap(__FILE__, __LINE__);
     }
 
-    foreach ($moduleStatus as $moduleName => $status) {
+    foreach ($moduleStatus as $moduleId => $status) {
 	if (empty($status['active'])) {
 	    continue;
 	}
     
-	list ($ret, $module) = $gallery->loadModule($moduleName);
+	list ($ret, $module) = $gallery->loadModule($moduleId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

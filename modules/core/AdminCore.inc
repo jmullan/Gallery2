@@ -298,8 +298,18 @@ class AdminCoreView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
+	$layoutList = array();
+	foreach (array_keys($layoutStatusList) as $layoutId) {
+	    list ($ret, $layout) = GalleryPluginMap::loadPlugin('layout', $layoutId);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+
+	    $layoutList[$layoutId] = $layout->getName();
+	}
+
 	$AdminCore = array();
-	$AdminCore['layoutList'] = array_keys($layoutStatusList);
+	$AdminCore['layoutList'] = $layoutList;
 	$AdminCore['themeList'] = GalleryTheme::getThemeList();
 	$AdminCore['localServerDirList'] = $localServerDirList;
 	$AdminCore['languageList'] = $languageList;

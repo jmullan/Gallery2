@@ -105,7 +105,7 @@ class PostgreSqlDatabaseStorage extends DatabaseStorage {
     /**
      * @see DatabaseStorage::configureStore
      */
-    function configureStore($moduleName) {
+    function configureStore($moduleId) {
 
 	$query = '
         CREATE AGGREGATE BIT_OR
@@ -138,7 +138,7 @@ class PostgreSqlDatabaseStorage extends DatabaseStorage {
 	 * already there before trying to install it again.
 	 */
 
-	$ret = parent::configureStore($moduleName);
+	$ret = parent::configureStore($moduleId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

@@ -50,9 +50,9 @@ class AdminModulesController extends GalleryController {
 	$status = array();
 	$error = array();
 	
-	list($moduleName, $action) = GalleryUtilities::getRequestVariables('moduleName', 'action');
-	if (!empty($moduleName) && !empty($action)) {
-	    list($ret, $module) = $gallery->loadModule($moduleName);
+	list($moduleId, $action) = GalleryUtilities::getRequestVariables('moduleId', 'action');
+	if (!empty($moduleId) && !empty($action)) {
+	    list($ret, $module) = $gallery->loadModule($moduleId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -72,7 +72,7 @@ class AdminModulesController extends GalleryController {
 
 		$redirect['view'] = 'core:SiteAdmin';
 		$redirect['subView'] = 'core:AdminModules';
-		$status['installed'] = $moduleName;
+		$status['installed'] = $moduleId;
 		break;
 		
 	    case 'activate':
@@ -96,7 +96,7 @@ class AdminModulesController extends GalleryController {
 
 		    $redirect['view'] = 'core:SiteAdmin';
 		    $redirect['subView'] = 'core:AdminModules';
-		    $status['activated'] = $moduleName;
+		    $status['activated'] = $module->getName();
 		}
 		break;
 		
@@ -110,7 +110,7 @@ class AdminModulesController extends GalleryController {
 		    }
 		    $redirect['view'] = 'core:SiteAdmin';
 		    $redirect['subView'] = 'core:AdminModules';
-		    $status['deactivated'] = $moduleName;
+		    $status['deactivated'] = $module->getName();
 		}
 		break;
 
@@ -170,17 +170,17 @@ class AdminModulesView extends GalleryView {
 
 	ksort($moduleStatus);
 
-	foreach ($moduleStatus as $moduleName => $status) {
+	foreach ($moduleStatus as $moduleId => $status) {
 	    /* Get the selected module's admin view */
-	    list($ret, $module) = $gallery->loadModule($moduleName);
+	    list($ret, $module) = $gallery->loadModule($moduleId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 
 	    $entry = array();
-	    $entry['name'] = $moduleName;
-	    $entry['l10Domain'] = 'modules_' . $moduleName;
-	    if ($moduleName != 'core') {
+	    $entry['name'] = $module->getName();
+	    $entry['l10Domain'] = 'modules_' . $moduleId;
+	    if ($moduleId != 'core') {
 		if (empty($status['active'])) {
 		    list ($ret, $version) = $module->getModuleParameter('version');
 		    if ($ret->isError()) {
@@ -194,7 +194,7 @@ class AdminModulesView extends GalleryView {
 		    if ($version != $module->getVersion()) {
 			$entry['action'] = array('text' => $coreModule->translate('install'),
 						 'controller' => 'core:AdminModules',
-						 'moduleName' => $module->getName(),
+						 'moduleId' => $module->getId(),
 						 'action' => 'install');
 		    } else {
 
@@ -217,14 +217,14 @@ class AdminModulesView extends GalleryView {
 			} else {
 			    $entry['action'] = array('text' => $coreModule->translate('activate'),
 						     'controller' => 'core:AdminModules',
-						     'moduleName' => $moduleName,
+						     'moduleId' => $moduleId,
 						     'action' => 'activate');
 			}
 		    }
 		} else {
 		    $entry['action'] = array('text' => $coreModule->translate('deactivate'),
 					     'controller' => 'core:AdminModules',
-					     'moduleName' => $moduleName,
+					     'moduleId' => $moduleId,
 					     'action' => 'deactivate');
 		}
 	    }

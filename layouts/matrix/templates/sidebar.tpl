@@ -63,10 +63,10 @@
   {/if}
 
   {* Extra modules system content *}
-  {foreach from=$layout.moduleSystemContentFiles key=moduleName item=moduleFile}
-    {if ($moduleName != 'core')}
+  {foreach from=$layout.moduleSystemContentFiles key=moduleId item=moduleFile}
+    {if ($moduleId != 'core')}
       {g->box style="sidebar"}
-	{include file=$moduleFile l10Domain="modules_$moduleName"}
+	{include file=$moduleFile l10Domain="modules_$moduleId"}
       {/g->box}
     {/if}
   {/foreach}

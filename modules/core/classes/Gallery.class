@@ -870,12 +870,12 @@ class Gallery {
     /**
      * Convenience method to load a specific module
      *
-     * @param string the module name
+     * @param string the module id
      * @return array object GalleryStatus a status code
      *               object GalleryModule the module
      */
-    function loadModule($moduleName) {
-	list ($ret, $module) = GalleryPluginMap::loadPlugin('module', $moduleName);
+    function loadModule($moduleId) {
+	list ($ret, $module) = GalleryPluginMap::loadPlugin('module', $moduleId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -884,31 +884,31 @@ class Gallery {
     }
 
     /**
-     * Convenience method to get all module names
+     * Convenience method to get all module ids
      *
      * @return array object GalleryStatus a status code
      *               string module names
      */
-    function getAllModuleNames() {
-	list ($ret, $moduleNames) = GalleryPluginMap::getAllPluginNames('module');
+    function getAllModuleIds() {
+	list ($ret, $moduleId) = GalleryPluginMap::getAllPluginIds('module');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	return array(GalleryStatus::success(), $moduleNames);
+	return array(GalleryStatus::success(), $moduleId);
     }
 
     /**
      * Convenience method to retrieve a module parameter
      *
-     * @param string the module name
+     * @param string the module id
      * @param string the parameter name
      * @return array object GalleryStatus a status code
      *               string a value
      */
-    function getModuleParameter($moduleName, $parameterName, $itemId=0) {
+    function getModuleParameter($moduleId, $parameterName, $itemId=0) {
 	list ($ret, $value) =
-	    GalleryPluginParameterMap::getParameter('module', $moduleName, $parameterName, $itemId);
+	    GalleryPluginParameterMap::getParameter('module', $moduleId, $parameterName, $itemId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -919,13 +919,15 @@ class Gallery {
     /**
      * Convenience method to set a module parameter
      *
-     * @param string the module name
+     * @param string the module id
      * @param string the parameter name
      * @param string the value
      * @return object GalleryStatus a status code
      */
-    function setModuleParameter($moduleName, $parameterName, $parameterValue) {
-	$ret = GalleryPluginParameterMap::setParameter('module', $moduleName, $parameterName, $parameterValue);
+    function setModuleParameter($moduleId, $parameterName, $parameterValue, $itemId=0) {
+	$ret = GalleryPluginParameterMap::setParameter('module', $moduleId,
+						       $parameterName, $parameterValue,
+						       $itemId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

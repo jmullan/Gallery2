@@ -69,12 +69,12 @@ function GalleryMain(&$testSuite, $filter) {
 	$platform = $gallery->getPlatform();
 	$modulesDir = $gallery->getConfig('code.gallery.modules');
 	$suiteArray = array();
-	foreach ($moduleStatusList as $moduleName => $moduleStatus) {
+	foreach ($moduleStatusList as $moduleId => $moduleStatus) {
 	    if (empty($moduleStatus['active'])) {
 		continue;
 	    }
 	
-	    $testDir = $modulesDir . $moduleName . '/test/phpunit';
+	    $testDir = $modulesDir . $moduleId . '/test/phpunit';
 
 	    if ($platform->file_exists($testDir) &&
 		$platform->is_dir($testDir) &&
@@ -86,18 +86,18 @@ function GalleryMain(&$testSuite, $filter) {
 		    $filterRegexp = $filter;
 		}
 
-		while (($file = readdir($dir)) != false) {
+		while (($file = $platform->readdir($dir)) != false) {
 		    if (preg_match('/(.*).class$/', $file, $matches)) {
 			require_once($testDir . '/' . $file);
 
 			$className = $matches[1];
 			if (class_exists($className) &&
 			        GalleryUtilities::isA(new $className(null), 'GalleryTestCase')) {
-			    $suiteArray[$className] = new TestSuite($className, $moduleName, $filterRegexp);
+			    $suiteArray[$className] = new TestSuite($className, $moduleId, $filterRegexp);
 			}
 		    }
 		}
-		closedir($dir);
+		$platform->closedir($dir);
 	    }
 	}
 
@@ -226,14 +226,14 @@ print "</pre>";
     <h2>Modules</h2>
     <table cellspacing="1" cellpadding="1" border="0" width="90%" align="center" class="details">
     <tr>
-    <th> Module Name </th>
+    <th> Module Id </th>
     <th> Active </th>
     <th> Installed </th>
     </tr>
-    <?php foreach ($moduleStatusList as $moduleName => $moduleStatus) { ?>
+    <?php foreach ($moduleStatusList as $moduleId => $moduleStatus) { ?>
     <tr>
     <td>
-    <?php print $moduleName ?>
+    <?php print $moduleId ?>
     </td>
     <td>
     <?php print !empty($moduleStatus['active']) ? "active" : "not active" ?>

@@ -32,16 +32,16 @@
  * @subpackage TestCase
  */
 class ConfigureNetPbmTestCase extends TestCase {
-    var $_moduleName = 'netpbm';
+    var $_moduleId = 'netpbm';
 
     function getDescription() {
-	return "Configure the $this->_moduleName module";
+	return "Configure the $this->_moduleId module";
     }
 
     function testStart() {
 	global $gallery;
 
-	list ($ret, $module) = $gallery->loadModule($this->_moduleName);
+	list ($ret, $module) = $gallery->loadModule($this->_moduleId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

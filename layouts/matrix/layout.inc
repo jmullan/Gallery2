@@ -39,6 +39,7 @@ class MatrixLayout extends GalleryLayout {
     function init() {
 	global $gallery;
 	
+	$this->setId('matrix');
 	$this->setName('Matrix');
 	$this->setDescription($gallery->i18n('Classic Gallery2 look and feel'));
 	$this->setVersion('1.0');
@@ -54,32 +55,75 @@ class MatrixLayout extends GalleryLayout {
     /**
      * @see GalleryLayout::getSettings()
      */
-    function getSettings() {
+    function getSettings($itemId=0) {
 	global $gallery;
+
+	list ($ret, $params) = $this->fetchParameters($itemId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if (!isset($params['rows'])) {
+	    $params['rows'] = 3;
+	}
 	
+	if (!isset($params['columns'])) {
+	    $params['columns'] = 3;
+	}
+
 	$settings = array();
-	$settings[] = array('key' => 'perPage',
-			    'name' => $gallery->i18n('Visible items per album page'),
+	$settings[] = array('key' => 'rows',
+			    'name' => $gallery->i18n('Rows per album page'),
 			    'type' => 'text-field',
-			    'type-params' => array('size' => 4),
-			    'values' => array(9));
+			    'type-params' => array('size' => 2),
+			    'values' => array($params['rows']));
+	$settings[] = array('key' => 'columns',
+			    'name' => $gallery->i18n('Columns per album page'),
+			    'type' => 'text-field',
+			    'type-params' => array('size' => 2),
+			    'values' => array($params['columns']));
 	return array(GalleryStatus::success(), $settings);
     }
 
+    /**
+     * @see GalleryLayout::validateSettings
+     */
+    function validateSettings($settings) {
+	$error = array();
+	if (empty($settings['rows']) || !is_numeric($settings['rows'])) {
+	    $error['rows'] = $this->translate('You must enter a number greater than 0');
+	}
+	
+	if (empty($settings['columns']) || !is_numeric($settings['columns'])) {
+	    $error['columns'] = $this->translate('You must enter a number greater than 0');
+	}
+
+	return $error;
+    }
+    
     /**
      * @see GalleryLayout::render
      */
     function loadTemplate(&$template, $item) {
 	GalleryProfiler::start('layouts.matrix.layout::loadTemplate');
 
-	/* Look up my properties */
-	//list ($ret, $properties) = GalleryItemPropertiesMap::getProperties('layout');
-	$properties = array('rows' => 3, 'columns' => 3);
+	list ($ret, $params) = $this->fetchParameters($item->getId());
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if (!isset($params['rows'])) {
+	    $params['rows'] = 3;
+	}
+	
+	if (!isset($params['columns'])) {
+	    $params['columns'] = 3;
+	}
 
 	if ($item->getCanContainChildren()) {
-	    list ($ret, $file) = $this->_loadAlbumTemplate($template, $item, $properties);
+	    list ($ret, $file) = $this->_loadAlbumTemplate($template, $item, $params);
 	} else {
-	    list ($ret, $file) = $this->_loadSingleTemplate($template, $item, $properties);
+	    list ($ret, $file) = $this->_loadSingleTemplate($template, $item, $params);
 	}
 
 	if ($ret->isError()) {
@@ -170,7 +214,7 @@ class MatrixLayout extends GalleryLayout {
 		if (!empty($moduleChildSummaries[$childId])) {
 		    /*
 		     * $moduleChildSummaries[$childId] is:
-		     *   $array[<modulename>] = <html>
+		     *   $array[<moduleId>] = <html>
 		     */
 		    $childTable[$childId]['moduleSummaries'] = $moduleChildSummaries[$childId];
 		} else {

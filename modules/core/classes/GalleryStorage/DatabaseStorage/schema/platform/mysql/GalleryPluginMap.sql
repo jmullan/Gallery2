@@ -12,7 +12,7 @@
       )
     
       ,
-    DB_COLUMN_PREFIXpluginName
+    DB_COLUMN_PREFIXpluginId
       varchar(
       
           128
@@ -27,7 +27,7 @@
   
     UNIQUE KEY (DB_COLUMN_PREFIXpluginType
         ,
-      DB_COLUMN_PREFIXpluginName)
+      DB_COLUMN_PREFIXpluginId)
     
 
     ) TYPE=DB_TABLE_TYPE;

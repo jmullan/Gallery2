@@ -48,7 +48,7 @@ class GalleryPluginParameterMap_core {
      * @g2     <member-size>MEDIUM</member-size>
      * @g2   </member>
      * @g2   <member>
-     * @g2     <member-name>pluginName</member-name>
+     * @g2     <member-name>pluginId</member-name>
      * @g2     <member-type>STRING</member-type>
      * @g2     <member-size>MEDIUM</member-size>
      * @g2   </member>
@@ -68,7 +68,7 @@ class GalleryPluginParameterMap_core {
      * @g2   </member>
      * @g2   <key>
      * @g2     <member-name>pluginType</member-name>
-     * @g2     <member-name>pluginName</member-name>
+     * @g2     <member-name>pluginId</member-name>
      * @g2     <member-name>itemId</member-name>
      * @g2     <member-name>parameterName</member-name>
      * @g2   </key>
@@ -79,21 +79,26 @@ class GalleryPluginParameterMap_core {
      * Add a new parameter for this plugin
      *
      * @param string the type of the plugin
-     * @param string the name of the plugin
+     * @param string the id of the plugin
      * @param string the name of the parameter
      * @param string the value of the parameter
      * @param integer the id of item (or null for a global setting)
      * @return object GalleryStatus a status code
      * @static
      */
-    function addParameter($pluginType, $pluginName, $parameterName, $parameterValue, $itemId=0) {
-	if (empty($pluginType) || empty($pluginName) || empty($parameterName)) {
+    function addParameter($pluginType, $pluginId, $parameterName, $parameterValue, $itemId=0) {
+	if (empty($pluginType) || empty($pluginId) || empty($parameterName)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
 
+	/* Convert null to 0, just in case */
+	if ($itemId == null) {
+	    $itemId = 0;
+	}
+	
 	$ret = GalleryPluginParameterMap::addMapEntry(
 	    array('pluginType' => $pluginType,
-		  'pluginName' => $pluginName,
+		  'pluginId' => $pluginId,
 		  'itemId' => $itemId,
 		  'parameterName' => $parameterName,
 		  'parameterValue' => $parameterValue));
@@ -102,7 +107,7 @@ class GalleryPluginParameterMap_core {
 	}
 
 	/* Invalidate our cache */
-	$cacheKey = "GalleryPluginParameterMap::fetchAllParameters($pluginType, $pluginName, $itemId)";
+	$cacheKey = "GalleryPluginParameterMap::fetchAllParameters($pluginType, $pluginId, $itemId)";
 	GalleryDataCache::remove($cacheKey);
 	
 	return GalleryStatus::success();
@@ -112,21 +117,26 @@ class GalleryPluginParameterMap_core {
      * Update an existing parameter for this plugin
      *
      * @param string the type of the plugin
-     * @param string the name of the plugin
+     * @param string the id of the plugin
      * @param string the name of the parameter
      * @param string the value of the parameter
      * @param integer the id of item (or null for a global setting)
      * @return object GalleryStatus a status code
      * @static
      */
-    function updateParameter($pluginType, $pluginName, $parameterName, $parameterValue, $itemId=0) {
-	if (empty($pluginType) || empty($pluginName) || empty($parameterName)) {
+    function updateParameter($pluginType, $pluginId, $parameterName, $parameterValue, $itemId=0) {
+	if (empty($pluginType) || empty($pluginId) || empty($parameterName)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
 
+	/* Convert null to 0, just in case */
+	if ($itemId == null) {
+	    $itemId = 0;
+	}
+	
 	$ret = GalleryPluginParameterMap::updateMapEntry(
 	    array('pluginType' => $pluginType,
-		  'pluginName' => $pluginName,
+		  'pluginId' => $pluginId,
 		  'itemId' => $itemId,
 		  'parameterName' => $parameterName),
 	    array('parameterValue' => $parameterValue));
@@ -135,7 +145,7 @@ class GalleryPluginParameterMap_core {
 	}
 
 	/* Invalidate our cache */
-	$cacheKey = "GalleryPluginParameterMap::fetchAllParameters($pluginType, $pluginName, $itemId)";
+	$cacheKey = "GalleryPluginParameterMap::fetchAllParameters($pluginType, $pluginId, $itemId)";
 	GalleryDataCache::remove($cacheKey);
 	
 	return GalleryStatus::success();
@@ -145,19 +155,28 @@ class GalleryPluginParameterMap_core {
      * Get all the parameters for this plugin
      *
      * @param string the type of the plugin
-     * @param string the name of the plugin
+     * @param string the id of the plugin
      * @param integer the id of item (or null for a global setting)
      * @return array object GalleryStatus a status code
      *               array (parameterName => parameterValue)
      * @static
      */
-    function fetchAllParameters($pluginType, $pluginName, $itemId=0) {
+    function fetchAllParameters($pluginType, $pluginId, $itemId=0) {
 	global $gallery;
-	if (empty($pluginType) || empty($pluginName)) {
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	if (empty($pluginType) || empty($pluginId)) {
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+					      sprintf("Missing pluginType [%s] or pluginId [%s]",
+						      $pluginType,
+						      $pluginId)),
+			 null);
 	}
 
-	$cacheKey = "GalleryPluginParameterMap::fetchAllParameters($pluginType, $pluginName, $itemId)";
+	/* Convert null to 0, just in case */
+	if ($itemId == null) {
+	    $itemId = 0;
+	}
+	
+	$cacheKey = "GalleryPluginParameterMap::fetchAllParameters($pluginType, $pluginId, $itemId)";
 	if (!GalleryDataCache::containsKey($cacheKey)) {
 	    $query = '
               SELECT
@@ -168,12 +187,12 @@ class GalleryPluginParameterMap_core {
               WHERE
                 [GalleryPluginParameterMap::pluginType] = ?
                 AND
-                [GalleryPluginParameterMap::pluginName] = ?
+                [GalleryPluginParameterMap::pluginId] = ?
                 AND
                 [GalleryPluginParameterMap::itemId] = ?
               ';
 
-	    list ($ret, $searchResults) = $gallery->search($query, array($pluginType, $pluginName, $itemId));
+	    list ($ret, $searchResults) = $gallery->search($query, array($pluginType, $pluginId, $itemId));
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -196,19 +215,24 @@ class GalleryPluginParameterMap_core {
      * Remove a parameter for this plugin
      *
      * @param string the type of the plugin
-     * @param string the name of the plugin
+     * @param string the id of the plugin
      * @param string the name of the parameter
      * @param integer the id of item (or null for a global setting)
      * @return object GalleryStatus a status code
      * @static
      */
-    function removeParameter($pluginType, $pluginName, $parameterName, $itemId=0) {
-	if (empty($pluginType) || empty($pluginName) || empty($parameterName)) {
+    function removeParameter($pluginType, $pluginId, $parameterName, $itemId=0) {
+	if (empty($pluginType) || empty($pluginId) || empty($parameterName)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
 
+	/* Convert null to 0, just in case */
+	if ($itemId == null) {
+	    $itemId = 0;
+	}
+	
 	$ret = GalleryPluginParameterMap::removeMapEntry(array('pluginType' => $pluginType,
-							       'pluginName' => $pluginName,
+							       'pluginId' => $pluginId,
 							       'itemId' => $itemId,
 							       'parameterName' => $parameterName));
 	if ($ret->isError()) {
@@ -216,7 +240,7 @@ class GalleryPluginParameterMap_core {
 	}
 
 	/* Invalidate our cache */
-	$cacheKey = "GalleryPluginParameterMap::fetchAllParameters($pluginType, $pluginName, $itemId)";
+	$cacheKey = "GalleryPluginParameterMap::fetchAllParameters($pluginType, $pluginId, $itemId)";
 	GalleryDataCache::remove($cacheKey);
 	
 	return GalleryStatus::success();
@@ -226,14 +250,21 @@ class GalleryPluginParameterMap_core {
      * Convenience method to retrieve a plugin parameter
      *
      * @param string the plugin type
-     * @param string the plugin name
+     * @param string the plugin id
      * @param string the parameter name
      * @param string optional item id
      * @return array object GalleryStatus a status code
      *               string a value
      */
-    function getParameter($pluginType, $pluginName, $parameterName, $itemId=0) {
-	list ($ret, $params) = GalleryPluginParameterMap::fetchAllParameters($pluginType, $pluginName, $itemId);
+    function getParameter($pluginType, $pluginId, $parameterName, $itemId=0) {
+
+	/* Convert null to 0, just in case */
+	if ($itemId == null) {
+	    $itemId = 0;
+	}
+	
+	list ($ret, $params) =
+	    GalleryPluginParameterMap::fetchAllParameters($pluginType, $pluginId, $itemId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -249,36 +280,42 @@ class GalleryPluginParameterMap_core {
     /**
      * Set a module parameter
      *
-     * @param string the module name
+     * @param string the plugin type
+     * @param string the plugin id
      * @param string the parameter name
      * @param string the value
      * @return object GalleryStatus a status code
      */
-    function setParameter($pluginType, $pluginName, $parameterName, $parameterValue, $itemId=0) {
-	if (empty($pluginType) || empty($pluginName) || empty($parameterName)) {
+    function setParameter($pluginType, $pluginId, $parameterName, $parameterValue, $itemId=0) {
+	if (empty($pluginType) || empty($pluginId) || empty($parameterName)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
 
+	/* Convert null to 0, just in case */
+	if ($itemId == null) {
+	    $itemId = 0;
+	}
+	
 	/*
 	 * Figure out if this is an insert or an update.  It's an insert if
 	 * we don't have an existing parameter by that name.  Otherwise, it's
 	 * an update.
 	 */
 	list ($ret, $params) =
-	    GalleryPluginParameterMap::fetchAllParameters($pluginType, $pluginName, $itemId);
+	    GalleryPluginParameterMap::fetchAllParameters($pluginType, $pluginId, $itemId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	if (!array_key_exists($parameterName, $params)) {
 	    $ret = GalleryPluginParameterMap::addParameter($pluginType,
-							   $pluginName,
+							   $pluginId,
 							   $parameterName,
 							   $parameterValue,
 							   $itemId);
 	} else {
 	    $ret = GalleryPluginParameterMap::updateParameter($pluginType,
-							      $pluginName,
+							      $pluginId,
 							      $parameterName,
 							      $parameterValue,
 							      $itemId);
@@ -288,7 +325,7 @@ class GalleryPluginParameterMap_core {
 	}
 
 	/* Invalidate our cache */
-	$cacheKey = "GalleryPluginParameterMap::fetchAllParameters($pluginType, $pluginName, $itemId)";
+	$cacheKey = "GalleryPluginParameterMap::fetchAllParameters($pluginType, $pluginId, $itemId)";
 	GalleryDataCache::remove($cacheKey);
 
 	return GalleryStatus::success();

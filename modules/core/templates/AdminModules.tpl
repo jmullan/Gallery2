@@ -47,7 +47,7 @@
 		  {$module.action.text}
 		{/g->link}
 	      {else}
-		{g->link url_controller=$module.action.controller url_moduleName=$module.action.moduleName url_action=$module.action.action}
+		{g->link url_controller=$module.action.controller url_moduleId=$module.action.moduleId url_action=$module.action.action}
 		  {$module.action.text}
 		{/g->link}
 	      {/if}

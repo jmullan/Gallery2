@@ -403,7 +403,7 @@ class ItemEditAlbumView extends GalleryView {
 
 	/* Set up our sort order selection list */
 	$orderByList = array();
-	$orderByList[''] = $module->translate('* No Sort Order *');
+	$orderByList[''] = $module->translate('&laquo; no sort order &raquo;');
 	$orderByList['title'] = $module->translate('Title');
 	$orderByList['summary'] = $module->translate('Summary');
 	$orderByList['creationTimestamp'] = $module->translate('Creation Date');
@@ -421,7 +421,14 @@ class ItemEditAlbumView extends GalleryView {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
-	$layoutList = array_keys($layoutStatusList);
+	$layoutList = array();
+	foreach ($layoutStatusList as $layoutId => $layoutStatus) {
+	    list ($ret, $layout) = GalleryPluginMap::loadPlugin('layout', $layoutId);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+	    $layoutList[$layoutId] = $layout->getName();
+	}
 	$layoutList = array_merge(array('' => $module->translate('&laquo; default layout &raquo;')),
 				  $layoutList);
 

@@ -37,8 +37,9 @@ class CommentModule extends GalleryModule {
     function CommentModule() {
 	global $gallery;
 	
-	$this->setName('comment');
-	$this->setDescription($gallery->i18n('User Comments'));
+	$this->setId('comment');
+	$this->setName('Comments');
+	$this->setDescription($gallery->i18n('User commenting system'));
 	$this->setVersion('1.0');
     }
 
@@ -106,35 +107,35 @@ class CommentModule extends GalleryModule {
 	    }
 
 	    /* Register our permissions */
-	    $ret = GalleryPermissionSetMap::registerPermission($this->getName(),
+	    $ret = GalleryPermissionSetMap::registerPermission($this->getId(),
 							       'comment.add',
 							       $gallery->i18n('[comment] Add comments')); 
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    
-	    $ret = GalleryPermissionSetMap::registerPermission($this->getName(),
+	    $ret = GalleryPermissionSetMap::registerPermission($this->getId(),
 							       'comment.edit',
 							       $gallery->i18n('[comment] Edit comments')); 
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    
-	    $ret = GalleryPermissionSetMap::registerPermission($this->getName(),
+	    $ret = GalleryPermissionSetMap::registerPermission($this->getId(),
 							       'comment.delete',
 							       $gallery->i18n('[comment] Delete comments')); 
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    
-	    $ret = GalleryPermissionSetMap::registerPermission($this->getName(),
+	    $ret = GalleryPermissionSetMap::registerPermission($this->getId(),
 							       'comment.view',
 							       $gallery->i18n('[comment] View comments'));
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    
-	    $ret = GalleryPermissionSetMap::registerPermission($this->getName(),
+	    $ret = GalleryPermissionSetMap::registerPermission($this->getId(),
 							       'comment.all',
 							       $gallery->i18n('[comment] All access'), 
 							       GALLERY_PERMISSION_COMPOSITE,
@@ -146,7 +147,7 @@ class CommentModule extends GalleryModule {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 		
-	    $ret = GalleryPermissionSetMap::registerPermission($this->getName(),
+	    $ret = GalleryPermissionSetMap::registerPermission($this->getId(),
 							       'comment.search',
 							       $gallery->i18n('[comment] Search comments'),
 							       GALLERY_PERMISSION_COMPOSITE,

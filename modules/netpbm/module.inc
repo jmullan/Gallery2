@@ -37,7 +37,8 @@ class NetPbmModule extends GalleryModule {
     function NetPbmModule() {
 	global $gallery;
 	
-	$this->setName('netpbm');
+	$this->setId('netpbm');
+	$this->setName('NetPBM');
 	$this->setDescription($gallery->i18n('NetPBM Graphics Toolkit'));
 	$this->setVersion('1.0');
     }

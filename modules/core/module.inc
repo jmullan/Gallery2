@@ -41,7 +41,8 @@ require_once($classDir . 'GalleryModule.class');
 class CoreModule extends GalleryModule {
 
     function CoreModule() {
-	$this->setName('core');
+	$this->setId('core');
+	$this->setName('Core');
 	$this->setVersion('1.0');
 
 	/*
@@ -332,7 +333,7 @@ class CoreModule extends GalleryModule {
 		 * extractor can find it.
 		 */
 		/* Register all core permissions */
-		$ret = GalleryPermissionSetMap::registerPermission($this->getName(),
+		$ret = GalleryPermissionSetMap::registerPermission($this->getId(),
 								   'core.all',
 								   $gallery->i18n('All access'),
 								   GALLERY_PERMISSION_ALL_ACCESS);
@@ -340,28 +341,28 @@ class CoreModule extends GalleryModule {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 
-		$ret = GalleryPermissionSetMap::registerPermission($this->getName(),
+		$ret = GalleryPermissionSetMap::registerPermission($this->getId(),
 								   'core.view',
 								   $gallery->i18n('[core] View item')); 
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 
-		$ret = GalleryPermissionSetMap::registerPermission($this->getName(),
+		$ret = GalleryPermissionSetMap::registerPermission($this->getId(),
 								   'core.viewResizes',
 								   $gallery->i18n('[core] View resized version(s)')); 
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    
-		$ret = GalleryPermissionSetMap::registerPermission($this->getName(),
+		$ret = GalleryPermissionSetMap::registerPermission($this->getId(),
 								   'core.viewSource',
 								   $gallery->i18n('[core] View original version')); 
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    
-		$ret = GalleryPermissionSetMap::registerPermission($this->getName(),
+		$ret = GalleryPermissionSetMap::registerPermission($this->getId(),
 								   'core.viewAll',
 								   $gallery->i18n('[core] View all versions'), 
 								   GALLERY_PERMISSION_COMPOSITE,
@@ -372,7 +373,7 @@ class CoreModule extends GalleryModule {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 
-		$ret = GalleryPermissionSetMap::registerPermission($this->getName(),
+		$ret = GalleryPermissionSetMap::registerPermission($this->getId(),
 								   'core.addAlbumItem',
 								   $gallery->i18n('[core] Add sub-album'), 
 								   GALLERY_PERMISSION_ITEM_ADMIN);
@@ -380,7 +381,7 @@ class CoreModule extends GalleryModule {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 
-		$ret = GalleryPermissionSetMap::registerPermission($this->getName(),
+		$ret = GalleryPermissionSetMap::registerPermission($this->getId(),
 								   'core.addDataItem',
 								   $gallery->i18n('[core] Add sub-item'), 
 								   GALLERY_PERMISSION_ITEM_ADMIN);
@@ -388,7 +389,7 @@ class CoreModule extends GalleryModule {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    
-		$ret = GalleryPermissionSetMap::registerPermission($this->getName(),
+		$ret = GalleryPermissionSetMap::registerPermission($this->getId(),
 								   'core.edit',
 								   $gallery->i18n('[core] Edit item'), 
 								   GALLERY_PERMISSION_ITEM_ADMIN);
@@ -396,7 +397,7 @@ class CoreModule extends GalleryModule {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 
-		$ret = GalleryPermissionSetMap::registerPermission($this->getName(),
+		$ret = GalleryPermissionSetMap::registerPermission($this->getId(),
 								   'core.changePermissions',
 								   $gallery->i18n('[core] Change item permissions'), 
 								   GALLERY_PERMISSION_ITEM_ADMIN);
@@ -404,7 +405,7 @@ class CoreModule extends GalleryModule {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 
-		$ret = GalleryPermissionSetMap::registerPermission($this->getName(),
+		$ret = GalleryPermissionSetMap::registerPermission($this->getId(),
 								   'core.delete',
 								   $gallery->i18n('[core] Delete item'), 
 								   GALLERY_PERMISSION_ITEM_ADMIN);

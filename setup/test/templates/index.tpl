@@ -26,8 +26,8 @@
   <body>
     <center>
       <h1> <a href=index.php>Gallery Test Harness</a> </h1>
-      {foreach from=$tests key=moduleName item=moduleTests}
-      <h2>{$moduleName}</h2>
+      {foreach from=$tests key=moduleId item=moduleTests}
+      <h2>{$moduleId}</h2>
       <table border="1" cellspacing="0" cellpadding="5" width="100%">
 	  <tr>
 	    <th bgcolor="#9999CC"> Name
@@ -36,18 +36,18 @@
 	  </tr>
 	  
 	  {cycle assign=rowClass values="oddRow,evenRow"}
-          {foreach from=$tests[$moduleName] item=test}
+          {foreach from=$tests[$moduleId] item=test}
           {cycle assign=rowClass}
 	  <tr>
 	    <td class="{$rowClass}">
-	      <a href="index.php?moduleName={$test.moduleName}&testName={$test.testName}">{$test.testName}</a>
+	      <a href="index.php?moduleId={$test.moduleId}&testName={$test.testName}">{$test.testName}</a>
 	    </td>
 	    <td class="{$rowClass}">
 	      {if (empty($test.iterations))}
 	      &nbsp;
 	      {else}
 	      {foreach from=$test.iterations item=iter}
-	      <a href=index.php?moduleName={$test.moduleName}&testName={$test.testName}&iterations={$iter.count}>
+	      <a href=index.php?moduleId={$test.moduleId}&testName={$test.testName}&iterations={$iter.count}>
 		{$iter.title}
 	      </a>
 	      {/foreach}
@@ -77,7 +77,7 @@
 
     {foreach from=$results item=result}
     <hr>
-    <b>Test</b>: {$result.moduleName} :: {$result.testName} [{$result.iterations} iteration(s)]
+    <b>Test</b>: {$result.moduleId} :: {$result.testName} [{$result.iterations} iteration(s)]
     <br>
     <b>Timing</b>: {$result.timing.elapsed} elapsed, {$result.timing.persec} per second
     <br>

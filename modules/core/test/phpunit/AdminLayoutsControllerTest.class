@@ -1,0 +1,314 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * AdminLayouts controller tests
+ */
+class AdminLayoutsControllerTest extends GalleryControllerTestCase {
+
+    function AdminLayoutsControllerTest($methodName) {
+	$this->GalleryControllerTestCase($methodName, 'core:AdminLayouts');
+    }
+
+    function setUp() {
+	global $gallery;
+
+        $this->_savePlatform = $gallery->getPlatform();
+	$gallery->_platform = new AdminLayoutsTestPlatform();
+
+	parent::setUp();
+    }
+
+    /**
+     *
+     */
+    function tearDown() {
+	global $gallery;
+
+	/* Delete our layouts */
+	foreach (array('testLayoutId1', 'testLayoutId2') as $layoutId) {
+	    $ret = GalleryPluginMap::removeMapEntry(array('pluginType' => 'layout',
+							  'pluginId' => $layoutId));
+	    if ($ret->isError()) {
+		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    
+	    $ret = GalleryPluginParameterMap::removeMapEntry(array('pluginType' => 'layout',
+								   'pluginId' => $layoutId));
+	    if ($ret->isError()) {
+		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+
+	/* Restore the platform */
+	$gallery->_platform = $this->_savePlatform;
+	parent::tearDown();
+    }
+
+    function testActivate() {
+	GalleryUtilities::putRequestVariable('layoutId', 'testLayoutId1');
+	GalleryUtilities::putRequestVariable('form.action.activate', 1);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminLayouts'),
+				  'status' => array('activated' => 'Test Layout 1'),
+				  'error' => array()),
+			    $results);
+
+	list ($ret, $pluginStatus) = GalleryPluginMap::getPluginStatus('layout');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(1, (int)$pluginStatus['testLayoutId1']['active']);
+    }
+
+    function testDeactivate() {
+	foreach (array('testLayoutId1', 'testLayoutId2') as $layoutId) {
+	    $ret = GalleryPluginMap::activate('layout', $layoutId);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+
+	GalleryUtilities::putRequestVariable('layoutId', 'testLayoutId1');
+	GalleryUtilities::putRequestVariable('form.action.deactivate', 1);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminLayouts'),
+				  'status' => array('deactivated' => 'Test Layout 1'),
+				  'error' => array()),
+			    $results);
+
+	list ($ret, $pluginStatus) = GalleryPluginMap::getPluginStatus('layout');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(0, (int)$pluginStatus['testLayoutId1']['active']);
+	$this->assertEquals(1, (int)$pluginStatus['testLayoutId2']['active']);
+    }
+
+    function testSaveLayout() {
+	GalleryUtilities::putRequestVariable('layoutId', 'testLayoutId2');
+	GalleryUtilities::putRequestVariable('form.key.rows', '2');
+	GalleryUtilities::putRequestVariable('form.key.columns', '4');
+	GalleryUtilities::putRequestVariable('form.action.saveLayout', 1);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminLayouts',
+						      'mode' => 'editLayout',
+						      'layoutId' => 'testLayoutId2'),
+				  'status' => array('savedLayout' => 'Test Layout 2'),
+				  'error' => array()),
+			    $results);
+    }
+
+    function testSaveLayoutWithValidationErrors() {
+	GalleryUtilities::putRequestVariable('layoutId', 'testLayoutId1');
+	GalleryUtilities::putRequestVariable('form.key.rows', '2');
+	GalleryUtilities::putRequestVariable('form.key.columns', '4');
+	GalleryUtilities::putRequestVariable('form.action.saveLayout', 1);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminLayouts'),
+				  'status' => array(),
+				  'error' => array('form.error.key.rows.invalid',
+						   'form.error.key.columns.invalid')),
+			    $results);
+
+	$map =& TestLayoutId2Layout::getMap();
+	$this->assertEquals(2, (int)$map['rows']);
+	$this->assertEquals(4, (int)$map['columns']);
+    }
+}
+
+class TestLayoutId1Layout {
+
+    /**
+     * @see GalleryLayout::getSettings()
+     */
+    function getSettings($itemId=0) {
+	global $gallery;
+
+	$settings = array();
+	$settings[] = array('key' => 'rows',
+			    'name' => 'Rows per album page',
+			    'type' => 'text-field',
+			    'type-params' => array('size' => 2),
+			    'values' => array(4));
+	$settings[] = array('key' => 'columns',
+			    'name' => 'Columns per album page',
+			    'type' => 'text-field',
+			    'type-params' => array('size' => 2),
+			    'values' => array(3));
+	return array(GalleryStatus::success(), $settings);
+    }
+
+    /**
+     * @see GalleryLayout::validateSettings
+     */
+    function validateSettings($settings) {
+	$error = array();
+	$error['rows'] = 'rows error';
+	$error['columns'] = 'columns error';
+	return $error;
+    }
+
+    function init() {
+	return GalleryStatus::success();
+    }
+
+    function getName() {
+	return 'Test Layout 1';
+    }
+}
+
+class TestLayoutId2Layout {
+
+    function init() {
+	return GalleryStatus::success();
+    }
+
+    function &getMap() {
+	static $map;
+	if (!isset($map)) {
+	    $map = array();
+	}
+	return $map;
+    }
+
+    function setParameter($key, $value) {
+	$map =& $this->getMap();
+	$map[$key] = $value;
+	return GalleryStatus::success();
+    }
+
+    /**
+     * @see GalleryLayout::getSettings()
+     */
+    function getSettings($itemId=0) {
+	global $gallery;
+
+	$settings = array();
+	$settings[] = array('key' => 'rows',
+			    'name' => 'Rows per album page',
+			    'type' => 'text-field',
+			    'type-params' => array('size' => 2),
+			    'values' => array(4));
+	$settings[] = array('key' => 'columns',
+			    'name' => 'Columns per album page',
+			    'type' => 'text-field',
+			    'type-params' => array('size' => 2),
+			    'values' => array(3));
+	return array(GalleryStatus::success(), $settings);
+    }
+
+    /**
+     * @see GalleryLayout::validateSettings
+     */
+    function validateSettings($settings) {
+	return array();
+    }
+
+    function getName() {
+	return 'Test Layout 2';
+    }
+}
+
+class AdminLayoutsTestPlatform {
+
+    function opendir($path) {
+	global $gallery;
+	if ($path == $gallery->getConfig('code.gallery.layouts')) {
+	    return 'TEST_VALID_RESOURCE';
+	} else {
+	    return null;
+	}
+    }
+
+    function readdir($path) {
+	static $paths;
+	if (!isset($paths)) {
+	    $paths = array('.',
+			   '..',
+			   'testLayoutId1',
+			   'testLayoutId2');
+	}
+
+	if ($path == 'TEST_VALID_RESOURCE') {
+	    if (empty($paths)) {
+		$paths = null;
+		return null;
+	    } else {
+		return array_shift($paths);
+	    }
+	}
+    }
+
+    function closedir($path) {
+    }
+
+    function file_exists($path) {
+	global $gallery;
+	
+	$base = $gallery->getConfig('code.gallery.layouts');
+	switch($path) {
+	case $base . 'testLayoutId1/layout.inc':
+	case $base . 'testLayoutId2/layout.inc':
+	case $base . 'anotherTestLayoutId/layout.inc':
+	    return 1;
+
+	default:
+	    return 0;
+	}
+    }
+
+    function is_dir($path) {
+	global $gallery;
+	
+	$base = $gallery->getConfig('code.gallery.layouts');
+	switch($path) {
+	case $base . 'testLayoutId1':
+	case $base . 'testLayoutId2':
+	case $base . 'anotherTestLayoutId':
+	    return 1;
+
+	default:
+	    return 0;
+	}
+    }
+}

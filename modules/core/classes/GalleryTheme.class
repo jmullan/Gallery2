@@ -102,7 +102,7 @@ class GalleryTheme {
 	$themeList = array();
 	$themeDir = $gallery->getConfig('code.gallery.themes');
 	if ($dir = $platform->opendir($themeDir)) {
-	    while (($subdir = readdir($dir)) !== false) {
+	    while (($subdir = $platform->readdir($dir)) !== false) {
 		if ($subdir{0} == '.' || $subdir == 'CVS') {
 		    continue;
 		}
@@ -114,7 +114,7 @@ class GalleryTheme {
 		    }
 		}
 	    }
-	    closedir($dir);
+	    $platform->closedir($dir);
 	}
 	return $themeList;
     }

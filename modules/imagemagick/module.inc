@@ -38,7 +38,8 @@ class ImageMagickModule extends GalleryModule {
     function ImageMagickModule() {
 	global $gallery;
 	
-	$this->setName('imagemagick');
+	$this->setId('imagemagick');
+	$this->setName('ImageMagick');
 	$this->setDescription($gallery->i18n('ImageMagick Graphics Toolkit'));
 	$this->setVersion('1.0');
     }

@@ -76,41 +76,43 @@ function GalleryTestHarness() {
     /*
      * Load the test cases for every module (active or not).
      */
-    list ($ret, $moduleNames) = $gallery->getAllModuleNames();
+    list ($ret, $moduleIds) = $gallery->getAllModuleIds();
     if ($ret->isError()) {
 	return $ret->wrap(__FILE__, __LINE__);
     }
 
-    foreach ($moduleNames as $moduleName) {
-	$testDir = $modulesDir . $moduleName . '/test/TestCase';
+    foreach ($moduleIds as $moduleId) {
+	$testDir = $modulesDir . $moduleId . '/test/TestCase';
 
 	/* Add our implicit tests */
 	foreach (array('ActivateModule', 'DeactivateModule') as $implicitTestName) {
 	    $className = $implicitTestName . 'TestCase';
-	    $testCase = new $className($moduleName);
-	    $test = array('moduleName' => $moduleName,
+	    $testCase = new $className($moduleId);
+	    $test = array('moduleId' => $moduleId,
 			  'testName' => $implicitTestName,
 			  'class' => $testCase,
 			  'description' => $testCase->getDescription());
-	    $tests[$moduleName][$implicitTestName] = $test;
+	    $tests[$moduleId][$implicitTestName] = $test;
 	}
 
 	$files = array();
-	if ($platform->file_exists($testDir) && $platform->is_dir($testDir) && $dir = $platform->opendir($testDir)) {
-	    while (($file = readdir($dir)) != false) {
+	if ($platform->file_exists($testDir) &&
+	        $platform->is_dir($testDir) &&
+	        $dir = $platform->opendir($testDir)) {
+	    while (($file = $platform->readdir($dir)) != false) {
 		if (preg_match('/.class$/', $file)) {
 		    $files[] = $file;
 		    require_once($testDir . '/' . $file);
 		}
 	    }
-	    closedir($dir);
+	    $platform->closedir($dir);
 
 	    /* Add our explicit tests */
 	    foreach ($files as $file) {
 		$testName = str_replace('.class', '', $file);
 		$className = $testName . 'TestCase';
 		$testCase = new $className();
-		$test = array('moduleName' => $moduleName,
+		$test = array('moduleId' => $moduleId,
 			      'testName' => $testName,
 			      'class' => $testCase,
 			      'description' => $testCase->getDescription());
@@ -118,7 +120,7 @@ function GalleryTestHarness() {
 		    $test['iterations'][$iter] = array('count' => $iter,
 						       'title' => shorten($iter));
 		}
-		$tests[$moduleName][$testName] = $test;
+		$tests[$moduleId][$testName] = $test;
 	    }
 	}
     }
@@ -127,8 +129,8 @@ function GalleryTestHarness() {
      * Alphabetize the module names and test names
      */
     ksort($tests);
-    foreach ($tests as $moduleName => $testArray) {
-	ksort($tests[$moduleName]);
+    foreach ($tests as $moduleId => $testArray) {
+	ksort($tests[$moduleId]);
     }
 
     /* Suppress preliminary debug output */
@@ -141,10 +143,10 @@ function GalleryTestHarness() {
 
     $results = array();
     if (!empty($HTTP_GET_VARS['testName']) &&
-	!empty($HTTP_GET_VARS['moduleName'])) {
+	!empty($HTTP_GET_VARS['moduleId'])) {
     
 	$testName = $HTTP_GET_VARS['testName'];
-	$moduleName = $HTTP_GET_VARS['moduleName'];
+	$moduleId = $HTTP_GET_VARS['moduleId'];
     
 	$iterations = 1;
 	$disableDebug = false;
@@ -160,7 +162,7 @@ function GalleryTestHarness() {
 	    $gallery->setDebug(false);
 	}
 	
-	$results = $results + runTest($moduleName, $testName, $iterations);
+	$results = $results + runTest($moduleId, $testName, $iterations);
 	if ($disableDebug) {
 	    $gallery->setDebug($debug);
 	}
@@ -202,18 +204,18 @@ function shorten($number) {
     return $number;
 }
 
-function runTest($moduleName, $testName, $iterations) {
+function runTest($moduleId, $testName, $iterations) {
     global $gallery;
     global $tests;
 
     $results = array();
-    $class = $tests[$moduleName][$testName]['class'];
+    $class = $tests[$moduleId][$testName]['class'];
 
     /* Satisfy all dependencies first */
     $dependencies = $class->getDependencies();
     foreach ($dependencies as $dependency) {
 	$results = array_merge($results,
-			       runTest($dependency['moduleName'],
+			       runTest($dependency['moduleId'],
 				       $dependency['testName'],
 				       $iterations));
     }
@@ -226,7 +228,7 @@ function runTest($moduleName, $testName, $iterations) {
     $ret2 = $class->cleanup();
 
     $result = array();
-    $result['moduleName'] = $moduleName;
+    $result['moduleId'] = $moduleId;
     $result['testName'] = $testName;
     $result['iterations'] = $iterations;
     $result['timing'] = $timing;

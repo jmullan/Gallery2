@@ -39,7 +39,7 @@ class AdminLayoutsController extends GalleryController {
     /**
      * @see GalleryController::handleRequest
      */
-    function handleRequest() {
+    function handleRequest($form) {
 	global $gallery;
 
 	$ret = GalleryUserHelper::assertSiteAdministrator();
@@ -49,65 +49,97 @@ class AdminLayoutsController extends GalleryController {
 
 	$status = array();
 	$error = array();
-	
-	list($layoutName, $action) = GalleryUtilities::getRequestVariables('layoutName', 'action');
-	if (!empty($layoutName) && !empty($action)) {
+	$errorMessage = array();
+
+	$layoutId = GalleryUtilities::getRequestVariables('layoutId');
+	if (!empty($layoutId) && !empty($form['action'])) {
 	    list ($ret, $layoutStatusList) = GalleryPluginMap::getPluginStatus('layout');
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    if (!isset($layoutStatusList[$layoutName])) {
+	    if (!isset($layoutStatusList[$layoutId])) {
 		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
-						  "Invalid layout: $layoutName"),
+						  "Invalid layout: $layoutId"),
 			     null);
 	    }
 	    
-	    $layoutStatus = $layoutStatusList[$layoutName];
+	    $layoutStatus = $layoutStatusList[$layoutId];
 
-	    switch($action) {
-	    case 'activate':
-		/* Only activate if we're not already active! */
-		if (empty($layoutStatus['active'])) {
-		    $ret = GalleryPluginMap::activate('layout', $layoutName);
-		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-		    }
+	    list ($ret, $layout) = GalleryPluginMap::loadPlugin('layout', $layoutId);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+	}
 
-		    $redirect['view'] = 'core:SiteAdmin';
-		    $redirect['subView'] = 'core:AdminLayouts';
-		    $status['activated'] = $layoutName;
-		}
-		break;
-		
-	    case 'deactivate':
-		/* Can't deactivate the last layout */
-		$count = 0;
-		foreach ($layoutStatusList as $tmp) {
-		    $count += !empty($tmp['active']);
-		}
-		if ($count == 1) {
-		    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
-						      "Can't deactivate the last layout"),
-				 null);
+	if (isset($form['action']['activate'])) {
+	    /* Only activate if we're not already active! */
+	    if (empty($layoutStatus['active'])) {
+		$ret = GalleryPluginMap::activate('layout', $layoutId);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-		/* Only deactivate if we're not already deactive! */
-		if (!empty($layoutStatus['active'])) {
-		    $ret = GalleryPluginMap::deactivate('layout', $layoutName);
-		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-		    }
-
-		    $redirect['view'] = 'core:SiteAdmin';
-		    $redirect['subView'] = 'core:AdminLayouts';
-		    $status['deactivated'] = $layoutName;
-		}
-		break;
-
-	    default:
-		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
+		$redirect['view'] = 'core:SiteAdmin';
+		$redirect['subView'] = 'core:AdminLayouts';
+		$status['activated'] = $layout->getName();
+	    }
+	} else if (isset($form['action']['deactivate'])) {
+	    /* Can't deactivate the last layout */
+	    $count = 0;
+	    foreach ($layoutStatusList as $tmp) {
+		$count += !empty($tmp['active']);
+	    }
+	    if ($count == 1) {
+		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+						  "Can't deactivate the last layout"),
 			     null);
+	    }
+
+	    /* Only deactivate if we're not already deactive! */
+	    if (!empty($layoutStatus['active'])) {
+		$ret = GalleryPluginMap::deactivate('layout', $layoutId);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		$redirect['view'] = 'core:SiteAdmin';
+		$redirect['subView'] = 'core:AdminLayouts';
+		$status['deactivated'] = $layout->getName();
+	    }
+	} else if (isset($form['action']['saveLayout'])) {
+
+	    /* Get all the possible settings */
+	    list ($ret, $settings) = $layout->getSettings(null);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+
+	    /* Validate the settings */
+	    $validationErrors = $layout->validateSettings($form['key']);
+	    if (empty($validationErrors)) {
+		/* Save any settings that have changed */
+		foreach ($settings as $setting) {
+		    if ($setting['key'] != $form['key'][$setting['key']]) {
+			$ret = $layout->setParameter($setting['key'], $form['key'][$setting['key']]);
+			if ($ret->isError()) {
+			    return array($ret->wrap(__FILE__, __LINE__), null);
+			}
+		    }
+		}
+
+		/* Redirect upon success */
+		$redirect['view'] = 'core:SiteAdmin';
+		$redirect['subView'] = 'core:AdminLayouts';
+		$redirect['mode'] = 'editLayout';
+		$redirect['layoutId'] = $layoutId;
+		$status['savedLayout'] = $layout->getName();
+	    } else {
+		foreach ($validationErrors as $validationKey => $validationMessage) {
+		    $error[] = sprintf('form.error.key.%s.invalid', $validationKey);
+		    $errorMessage[$validationKey] = $validationMessage;
+		}
+		GalleryUtilities::putRequestVariable('form.errorMessage', $errorMessage);
 	    }
 	}
 
@@ -148,13 +180,7 @@ class AdminLayoutsView extends GalleryView {
             return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
-	if ($form['formName'] != 'AdminLayouts') {
-	    /* We have no form variables */
-	    $form['formName'] = 'AdminLayouts';
-	}
-
-	list ($mode, $activeLayoutName) =
-	    GalleryUtilities::getRequestVariables('mode', 'activeLayoutName');
+	list ($layoutId, $mode) = GalleryUtilities::getRequestVariables('layoutId', 'mode');
 	if (empty($mode)) {
 	    $mode = 'config';
 	}
@@ -166,63 +192,66 @@ class AdminLayoutsView extends GalleryView {
 	}
 
 	/* Transform it to include all the layout data that we want to display */
-	foreach ($layouts as $layoutName => $layoutStatus) {
-	    list ($ret, $layout) = GalleryPluginMap::loadPlugin('layout', $layoutName);
+	$activeCount = 0;
+	foreach ($layouts as $id => $layoutStatus) {
+	    list ($ret, $layout) = GalleryPluginMap::loadPlugin('layout', $id);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 
-	    $layouts[$layoutName]['name'] = $layout->getName();
-	    $layouts[$layoutName]['description'] = $layout->getDescription();
-	    $layouts[$layoutName]['version'] = $layout->getVersion();
-	    $layouts[$layoutName]['l10Domain'] = $layout->getL10Domain();
+	    $layouts[$id]['active'] = empty($layoutStatus['active']) ? 0 : 1;
+	    $layouts[$id]['name'] = $layout->getName();
+	    $layouts[$id]['description'] = $layout->getDescription();
+	    $layouts[$id]['version'] = $layout->getVersion();
+	    $layouts[$id]['l10Domain'] = $layout->getL10Domain();
+
+	    $activeCount += $layouts[$id]['active'];
 	}
 
 	switch($mode) {
 	case 'config':
-	    /* Can't deactivate the last layout */
-	    $activeCount = 0;
-	    foreach ($layouts as $tmp) {
-		$activeCount += !empty($tmp['active']);
-	    }
-
-	    foreach (array_keys($layouts) as $layoutName) {
-		if (empty($layouts[$layoutName]['active'])) {
-		    $action = array('text' => $coreModule->translate('activate'),
-				    'Controller' => 'core:AdminLayouts',
-				    'layoutName' => $layoutName,
-				    'action' => 'activate');
+	    foreach (array_keys($layouts) as $id) {
+		$actions = array();
+		if (empty($layouts[$id]['active'])) {
+		    $actions['activate'] = 1;
 		} else {
+		    /* Can't deactivate the last layout */
 		    if ($activeCount > 1) {
-			$action = array('text' => $coreModule->translate('deactivate'),
-					'controller' => 'core:AdminLayouts',
-					'layoutName' => $layoutName,
-					'action' => 'deactivate');
-		    } else {
-			$action = array();
+			$actions['deactivate'] = 1;
 		    }
 		}
-		$layouts[$layoutName]['action'] = $action;
+		$layouts[$id]['actions'] = $actions;
 	    }
 	    break;
 
-	default:
+	case 'editLayout':
 	    /* Load the config settings from the active layout */
-	    list ($ret, $layout) = GalleryPluginMap::loadPlugin('layout', $layoutName);
+	    list ($ret, $layout) = GalleryPluginMap::loadPlugin('layout', $layoutId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 
-	    list ($ret, $AdminLayouts['settings']) = $layout->getSettings();
+	    list ($ret, $AdminLayouts['settings']) = $layout->getSettings(null);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    break;
 	}
 
-	$AdminLayouts['layouts'] = $layouts;
+	if ($form['formName'] != 'AdminLayouts') {
+	    $form['formName'] = 'AdminLayouts';
+
+	    switch ($mode) {
+	    case 'editLayout':
+		foreach ($AdminLayouts['settings'] as $setting) {
+		    $form['key'][$setting['key']] = $setting['values'][0];
+		}
+	    }
+	}
+
 	$AdminLayouts['mode'] = $mode;
-	$AdminLayouts['activeLayoutName'] = $activeLayoutName;
+	$AdminLayouts['layouts'] = $layouts;
+	$AdminLayouts['layoutId'] = $layoutId;
 
 	/* Render the HTML body */
 	$template->setVariable('AdminLayouts', $AdminLayouts);

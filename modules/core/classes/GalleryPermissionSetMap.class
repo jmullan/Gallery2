@@ -331,13 +331,13 @@ class GalleryPermissionSetMap_core {
      *
      * @return object GalleryStatus a status code
      */
-    function unregisterModulePermissions($moduleName) {
+    function unregisterModulePermissions($moduleId) {
 
-	if (empty($moduleName)) {
+	if (empty($moduleId)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
 	
-	$ret = GalleryPermissionSetMap::removeMapEntry(array('module' => $moduleName));
+	$ret = GalleryPermissionSetMap::removeMapEntry(array('module' => $moduleId));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

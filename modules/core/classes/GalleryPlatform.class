@@ -307,6 +307,36 @@ class GalleryPlatform {
     }
 
     /**
+     * Return the next file resource from a directory
+     *
+     * @param string a directory resource
+     * @access public
+     */
+    function readdir($resource) {
+	global $gallery;
+	if ($gallery->getDebug()) {
+	    $gallery->debug("readdir($resource)");
+	}
+	
+	return readdir($resource);
+    }
+
+    /**
+     * Close a directory resource
+     *
+     * @param string a directory resource
+     * @access public
+     */
+    function closedir($resource) {
+	global $gallery;
+	if ($gallery->getDebug()) {
+	    $gallery->debug("closedir($resource)");
+	}
+	
+	return closedir($resource);
+    }
+
+    /**
      * Rename a file/dir
      *
      * As a side bonus, create a backup of the original file.
@@ -432,7 +462,7 @@ class GalleryPlatform {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
-	closedir($fd);
+	$platform->closedir($fd);
 
 	return $this->rmdir($dirname);
     }

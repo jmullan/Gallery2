@@ -13,6 +13,9 @@
       {if isset($status.deactivated)}
 	{g->text text="Successfully deactivated layout %s" arg1=$status.deactivated}
       {/if}
+      {if isset($status.savedLayout)}
+	{g->text text="Successfully saved layout settings"}
+      {/if}
     {/g->success}
   {/if}
 
@@ -30,18 +33,20 @@
 	{/g->title}
       {/g->item}
 
-      {foreach from=$AdminLayouts.layouts key=layoutName item=layout}
-	{g->item}
-	  {g->title}
-	    {if ($AdminLayouts.mode == 'editLayout') && ($AdminLayouts.activeLayoutName == $layoutName)}
-	      {g->text text=$layout.name l10Domain=$layout.l10Domain}
-	    {else}
-	      {g->link url_view="core:SiteAdmin" url_subView="core:AdminLayouts" url_mode="editLayout" url_activeLayoutName=$layoutName}
+      {foreach from=$AdminLayouts.layouts key=layoutId item=layout}
+	{if $AdminLayouts.layouts.$layoutId.active}
+	  {g->item}
+	    {g->title}
+	      {if ($AdminLayouts.mode == 'editLayout') && ($AdminLayouts.layoutId == $layoutId)}
 		{g->text text=$layout.name l10Domain=$layout.l10Domain}
-	      {/g->link}
-	    {/if}
-	  {/g->title}
-	{/g->item}
+	      {else}
+		{g->link url_view="core:SiteAdmin" url_subView="core:AdminLayouts" url_mode="editLayout" url_layoutId=$layoutId}
+		  {g->text text=$layout.name l10Domain=$layout.l10Domain}
+		{/g->link}
+	      {/if}
+	    {/g->title}
+	  {/g->item}
+	{/if}
       {/foreach}
     {/g->tabset}
 
@@ -64,7 +69,7 @@
 	      {g->column header="true"} {g->text text="Actions"} {/g->column}
 	    {/g->row}
 
-	    {foreach from=$AdminLayouts.layouts item=layout}
+	    {foreach from=$AdminLayouts.layouts key=layoutId item=layout}
 	      {g->row}
 		{g->column}
 		  {$layout.name}
@@ -76,25 +81,34 @@
 		  {g->text text=$layout.description l10Domain=$layout.l10Domain}
 		{/g->column}	
 		{g->column}
-		  {if (!empty($layout.action))}
-		    {if (empty($layout.action.controller)) }
-		      {g->link url_return="true" url_view='core:SiteAdmin' url_subView=$layout.action.view}
-			{$layout.action.text}
-		      {/g->link}
-		    {else}
-		      {g->link url_controller=$layout.action.controller url_layoutName=$layout.action.layoutName url_action=$layout.action.action}
-			{$layout.action.text}
-		      {/g->link}
+		  {g->linkset}
+		    {if (isset($layout.actions.activate))}
+		      {g->item}
+			{g->title}
+			  {g->link url_controller='core:AdminLayouts' url_form_action_activate=1 url_layoutId=$layoutId}
+			    {g->text text="activate"}
+			  {/g->link}
+			{/g->title}
+		      {/g->item}
 		    {/if}
-		  {else}
-		    &nbsp;
-		  {/if}
+		    {if (isset($layout.actions.deactivate))}
+		      {g->item}
+			{g->title}
+			  {g->link url_controller='core:AdminLayouts' url_form_action_deactivate=1 url_layoutId=$layoutId}
+			    {g->text text="deactivate"}
+			  {/g->link}
+			{/g->title}
+		      {/g->item}
+		    {/if}
+		  {/g->linkset}
 		{/g->column}	
 	      {/g->row}
 	    {/foreach}
 	  {/g->table}
 	{/g->box}
-      {else}
+      {/if}
+
+      {if ($AdminLayouts.mode == "editLayout")}
 	{g->box style="admin"}
 	  {g->title}
 	    {g->text text="%s Layout Settings" arg1=$layout.name}
@@ -105,18 +119,28 @@
 	  {/g->description}
 
 	  {if !empty($AdminLayouts.settings)}
-	    {g->table style="admin_widgets" evenodd="true"}
+	    {g->table style="admin_widgets"}
 	      {foreach from=$AdminLayouts.settings item=setting}
+		{assign var="settingKey" value=$setting.key}
 		{g->row}
 		  {g->column}
 		    {g->text text=$setting.name l10Domain=$layout.l10Domain}
 		  {/g->column}
 		  {g->column}
 		    {if ($setting.type == 'text-field')}
-		      {g->input type="text" size="6" name="key_$setting.key"}{$setting.values.0}{/g->input}
+		      {g->input type="text" size="6" name="form_key_$settingKey"}{$form.key.$settingKey}{/g->input}
 		    {/if}
 		  {/g->column}
 		{/g->row}
+		{if isset($form.error.key.$settingKey.invalid)}
+		  {g->row}
+		    {g->column colspan="2"}
+		      {g->error}
+			{$form.errorMessage.$settingKey}
+		      {/g->error}
+		    {/g->column}
+		  {/g->row}
+		{/if}
 	      {/foreach}
 	    {/g->table}
 	  {else}
@@ -129,8 +153,10 @@
     {/g->element}
     {g->box}
       {g->element}
-	{g->input type="submit" name="form.action.save"}{g->text text="Save"}{/g->input}
-	{g->input type="submit" name="form.action.undo"}{g->text text="Undo"}{/g->input}
+	{g->input type="hidden" name="layoutId"}{$AdminLayouts.layoutId}{/g->input}
+	{g->input type="hidden" name="mode"}editLayout{/g->input}
+	{g->input type="submit" name="form.action.saveLayout"}{g->text text="Save"}{/g->input}
+	{g->input type="submit" name="form.action.undoLayout"}{g->text text="Undo"}{/g->input}
       {/g->element}
     {/g->box}
   {/g->tabbedbox}

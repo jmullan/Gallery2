@@ -41,6 +41,14 @@ class GalleryLayout {
      */
 
     /**
+     * The id of this layout
+     * 
+     * @var string _id
+     * @access private
+     */
+    var $_id;
+
+    /**
      * The name of this layout
      * 
      * @var string _name
@@ -100,10 +108,11 @@ class GalleryLayout {
      *                   display: a localized displayable text string
      *   values:      the current value(s) for this choice
      *
+     * @param int optional itemId 
      * @return array object GalleryStatus a status code
      *               settings array
      */
-    function getSettings() {
+    function getSettings($itemId=null) {
 	return array(GalleryStatus::success(), array());
     }
 
@@ -112,12 +121,10 @@ class GalleryLayout {
      * return an array of localized error messages to display for each invalid setting.
      *
      * @param settings array('key' => array(value, ...), ...)
-     * @return array object GalleryStatus a status code
-     *               boolean
-     *               errors
+     * @return array errors in the form of array('key' => 'translated text', ...)
      */
     function validateSettings($settings) {
-	return array(GalleryStatus::success(), true, array());
+	return array(GalleryStatus::success(), array());
     }
 
     /**
@@ -138,7 +145,7 @@ class GalleryLayout {
      *
      * @param object GalleryTemplate a template instance
      * @return array object GalleryStatus a status code
-     *               array('moduleName' => 'template file path',
+     *               array('moduleId' => 'template file path',
      *                     ...)
      * @access private
      */
@@ -154,24 +161,24 @@ class GalleryLayout {
 	}
 
 	$systemContent = array();
-	foreach ($moduleStatus as $moduleName => $status) {
+	foreach ($moduleStatus as $moduleId => $status) {
 	    if (empty($status['active'])) {
 		continue;
 	    }
 	    
-	    list ($ret, $module) = $gallery->loadModule($moduleName);
+	    list ($ret, $module) = $gallery->loadModule($moduleId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    /* Load all module-related content for these items */
-	    list ($ret, $systemContent[$moduleName]) = $module->loadSystemContent($template);
+	    list ($ret, $systemContent[$moduleId]) = $module->loadSystemContent($template);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    if (empty($systemContent[$moduleName])) {
-		unset($systemContent[$moduleName]);
+	    if (empty($systemContent[$moduleId])) {
+		unset($systemContent[$moduleId]);
 	    }
 	}
 
@@ -185,9 +192,9 @@ class GalleryLayout {
      *
      * @param object GalleryTemplate a template instance
      * @return array object GalleryStatus a status code
-     *               array(array('moduleName' => array('text' => ...,
-     *                                                 'params' => ...,
-     *                                                 'url' => ...)),
+     *               array(array('moduleId' => array('text' => ...,
+     *                                               'params' => ...,
+     *                                               'url' => ...)),
      * @access private
      */
     function _getModuleSystemLinks() {
@@ -204,24 +211,24 @@ class GalleryLayout {
         $urlGenerator = $gallery->getUrlGenerator();
 	
         $links = array();
-        foreach ($moduleStatus as $moduleName => $status) {
+        foreach ($moduleStatus as $moduleId => $status) {
             if (empty($status['active'])) {
                 continue;
 	    }
 	    
-            list ($ret, $module) = $gallery->loadModule($moduleName);
+            list ($ret, $module) = $gallery->loadModule($moduleId);
             if ($ret->isError()) {
                 return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    
             /* Get all module-related links for these items */
-            list ($ret, $links[$moduleName]) = $module->getSystemLinks();
+            list ($ret, $links[$moduleId]) = $module->getSystemLinks();
             if ($ret->isError()) {
                 return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    
-            if (empty($links[$moduleName])) {
-                unset($links[$moduleName]);
+            if (empty($links[$moduleId])) {
+                unset($links[$moduleId]);
 	    }
 	}
 	
@@ -235,7 +242,7 @@ class GalleryLayout {
      *
      * @param mixed object GalleryItem a target item, or array of object GalleryItem
      * @return array object GalleryStatus a status code
-     *               array('itemId' => array('moduleName' =>
+     *               array('itemId' => array('moduleId' =>
      *                                            array('text' => ...,
      *                                                  'params' => ...,
      *                                                  'url' => ...))),
@@ -259,12 +266,12 @@ class GalleryLayout {
 	$urlGenerator = $gallery->getUrlGenerator();
 
 	$itemLinks = array();
-	foreach ($moduleStatus as $moduleName => $status) {
+	foreach ($moduleStatus as $moduleId => $status) {
 	    if (empty($status['active'])) {
 		continue;
 	    }
 	    
-	    list ($ret, $module) = $gallery->loadModule($moduleName);
+	    list ($ret, $module) = $gallery->loadModule($moduleId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -275,11 +282,11 @@ class GalleryLayout {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    /* Refactor into: array[itemId][moduleName][links] */
+	    /* Refactor into: array[itemId][moduleId][links] */
 	    foreach ($moduleLinks as $itemId => $links) {
 		foreach ($links as $link) {
 		    $link['url'] = $urlGenerator->generateUrl($link['params']);
-		    $itemLinks[$itemId][$moduleName][] = $link;
+		    $itemLinks[$itemId][$moduleId][] = $link;
 		}
 	    }
 	}
@@ -294,7 +301,7 @@ class GalleryLayout {
      *
      * @param mixed object GalleryItem a target item, or array of object GalleryItem
      * @return array object GalleryStatus a status code
-     *               array ('itemId' => array('moduleName' => html, ...))
+     *               array ('itemId' => array('moduleId' => html, ...))
      * @access private
      */
     function _getModuleItemSummaries($items) {
@@ -313,12 +320,12 @@ class GalleryLayout {
 	}
 
 	$itemSummaries = array();
-	foreach ($moduleStatus as $moduleName => $status) {
+	foreach ($moduleStatus as $moduleId => $status) {
 	    if (empty($status['active'])) {
 		continue;
 	    }
 
-	    list ($ret, $module) = $gallery->loadModule($moduleName);
+	    list ($ret, $module) = $gallery->loadModule($moduleId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -328,9 +335,9 @@ class GalleryLayout {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    /* Refactor into: array[itemId][moduleName][links] */
+	    /* Refactor into: array[itemId][moduleId][links] */
 	    foreach ($moduleSummaries as $itemId => $html) {
-		$itemSummaries[$itemId][$moduleName] = $html;
+		$itemSummaries[$itemId][$moduleId] = $html;
 	    }
 	}
 
@@ -345,7 +352,7 @@ class GalleryLayout {
      * @param object GalleryTemplate a template
      * @param object GalleryItem a target item
      * @return array object GalleryStatus a status code
-     *               array ('itemId' => array('moduleName' => 'foo.tpl', ...))
+     *               array ('itemId' => array('moduleId' => 'foo.tpl', ...))
      * @access private
      */
     function _loadModuleItemDetails(&$template, $item) {
@@ -360,23 +367,23 @@ class GalleryLayout {
 	}
 
 	$itemDetails = array();
-	foreach ($moduleStatus as $moduleName => $status) {
+	foreach ($moduleStatus as $moduleId => $status) {
 	    if (empty($status['active'])) {
 		continue;
 	    }
 
-	    list ($ret, $module) = $gallery->loadModule($moduleName);
+	    list ($ret, $module) = $gallery->loadModule($moduleId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    list ($ret, $itemDetails[$moduleName]) = $module->loadItemDetails($template, $item);
+	    list ($ret, $itemDetails[$moduleId]) = $module->loadItemDetails($template, $item);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    if (empty($itemDetails[$moduleName])) {
-		unset($itemDetails[$moduleName]);
+	    if (empty($itemDetails[$moduleId])) {
+		unset($itemDetails[$moduleId]);
 	    }
 	}
 
@@ -406,6 +413,85 @@ class GalleryLayout {
 	}
     }
 
+    /**
+     * Fetch all layout specific parameters for the given item.  The results will contain
+     * a mixture of global parameters and item specific parameters, where the item specific
+     * ones override the global ones.
+     *
+     * @param int optional itemId
+     * @return array object GalleryStatus a status code
+     *               array parameters in key => value form
+     */
+    function fetchParameters($itemId=null) {
+	/* Fetch global params */
+	list ($ret, $params) =
+	    GalleryPluginParameterMap::fetchAllParameters('layout', $this->getId(), null);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Then fetch item params (if applicable) */
+	if (isset($itemId)) {
+	    list ($ret, $local) =
+		GalleryPluginParameterMap::fetchAllParameters('layout', $this->getId(), $itemId);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    
+	    $params = array_merge($params, $local);
+	}
+
+	return array(GalleryStatus::success(), $params);
+    }
+
+    /**
+     * Convenience method to set a layout parameter
+     *
+     * @param string the parameter name
+     * @param string the value
+     * @param int the (optional) item id
+     * @return object GalleryStatus a status code
+     */
+    function setParameter($parameterName, $parameterValue, $itemId=0) {
+	$ret = GalleryPluginParameterMap::setParameter('layout',
+						       $this->getId(),
+						       $parameterName, $parameterValue,
+						       $itemId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Localize the given content
+     *
+     * @see Gallery::translate()
+     *
+     * @param mixed a single string, or an array of parameters
+     * @return string the localized value
+     */
+    function translate($params) {
+	global $gallery;
+	
+	if (!is_array($params)) {
+	    $params = array('text' => $params);
+	}
+
+	$translator =& $gallery->getTranslator();
+	list ($ret, $content) =
+	    $translator->translateDomain('layouts_' . $this->getId(), $params);
+	if ($ret->isError()) {
+	    if ($gallery->getDebug()) {
+		$gallery->debug($ret->getAsHtml());
+	    }
+	    return 'Translation error';
+	} else {
+	    return $content;
+	}
+    }
+
     /* Getters and setters below */
 
     function setName($name) {
@@ -414,6 +500,14 @@ class GalleryLayout {
 
     function getName() {
 	return $this->_name;
+    }
+    
+    function setId($id) {
+	$this->_id = $id;
+    }
+
+    function getId() {
+	return $this->_id;
     }
     
     function setDescription($description) {
