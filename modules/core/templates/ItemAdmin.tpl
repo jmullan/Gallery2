@@ -13,24 +13,25 @@
   </p>
   
   <div id="gsHeader">
-    <div class="gbTitleBanner">
-      <div class="gbBreadCrumb">
-        {foreach name="parent" from=$ItemAdmin.parents item=parent}
-        <span {if $smarty.foreach.parent.first}class="giBreadCrumbFirst"{/if}>
-          <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$parent.id`"}">
-            {$parent.title|default:$parent.pathComponent|markup}
-          </a>
-        </span>
-        {/foreach}
-        
-        <span>
-          <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$ItemAdmin.item.id`"}">
-            {$ItemAdmin.item.title|default:$ItemAdmin.item.pathComponent|markup}
-          </a>
-        </span>
-      </div>
-    </div>
+    <!-- header -->
   </div>
+
+  <ul class="gbBreadCrumb">
+    {foreach name="parent" from=$ItemAdmin.parents item=parent}
+    <li {if $smarty.foreach.parent.first}class="giBreadCrumbFirst"{/if}>
+      <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$parent.id`"}">
+        {$parent.title|default:$parent.pathComponent|markup}
+      </a>
+    </li>
+    {/foreach}
+    
+    <li>
+      <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$ItemAdmin.item.id`"}">
+        {$ItemAdmin.item.title|default:$ItemAdmin.item.pathComponent|markup}
+      </a>
+    </li>
+  </ul>
+
   
   <div id="gsContents">
     <div id="gsAdminSidebar">

@@ -12,20 +12,20 @@
   </p>
 
   <div id="gsHeader">
-    <div class="gbTitleBanner">
-      <div class="gbBreadCrumb">
-        <span class="giBreadCrumbFirst">
-          {g->text text="Your Account"}
-        </span>
-
-        {if ($UserAdmin.show.userInPathbar)}
-        <span>
-          {$UserAdmin.user.fullName|default:$UserAdmin.user.userName}
-        </span>
-        {/if}
-      </div>
-    </div>
+    <!-- header -->
   </div>
+
+  <ul class="gbBreadCrumb">
+    <li class="giBreadCrumbFirst">
+      {g->text text="Your Account"}
+    </li>
+
+    {if ($UserAdmin.show.userInPathbar)}
+    <li>
+      {$UserAdmin.user.fullName|default:$UserAdmin.user.userName}
+    </li>
+    {/if}
+  </ul>
 
   <div id="gsAdminSidebar">
     <div class="gbMenu">

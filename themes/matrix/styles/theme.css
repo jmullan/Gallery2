@@ -283,18 +283,29 @@ table.gbDataTable img { border: none; }
 
 /*      horizontal history links - 'trail of breadcrumbs' */
 .gbBreadCrumb { 
+        font-size: 1.2em;
+        font-weight: bold;
 	margin: 0;
 	padding: 16px 8px; 
 }
+
 .gbBreadCrumb li { 
-	display: inline;
-	list-style-type: decimal;
-	padding: 0 0;
+        display: inline;
+	background-image: url('../images/icon_path_separator.gif');
+	background-repeat: no-repeat;
+	background-position: left;
+	padding: 0 0 0 14px;
 }
+
+.gbBreadCrumb li.giBreadCrumbFirst {
+	padding: 0 0 0 0;
+	background-image: none;
+}
+
 
 /*      horizontal link divider */
 #gsHeader .gbBreadCrumb span + span:before { content: '\00BB \ '; }
-.gbBreadCrumb li + li:before { content: '\00BB \ '; }
+/*.gbBreadCrumb li + li:before { content: '\00BB \ '; }*/
 
 /* inside gsAlbumContents or gsAdmiinContents */
 

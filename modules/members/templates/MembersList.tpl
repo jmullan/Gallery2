@@ -1,17 +1,17 @@
 <div id="gsHeader">
-  <div class="gbTitleBanner">
-    <div class="gbBreadCrumb">
-      <span class="giBreadCrumbFirst">
-        <a href="{g->url}">
-          {g->text text="Gallery"}
-        </a>
-      </span>
-      <span>
-        {g->text text="Members List"}
-      </span>
-    </div>
-  </div>
+  <!-- header -->
 </div>
+
+<ul class="gbBreadCrumb">
+  <li class="giBreadCrumbFirst">
+    <a href="{g->url}">
+      {g->text text="Gallery"}
+    </a>
+  </li>
+  <li>
+    {g->text text="Members List"}
+  </li>
+</ul>
 
 <div id="gsOtherContents">
   <div class="gbTopFlag">

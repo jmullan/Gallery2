@@ -1,22 +1,22 @@
 <div id="gsHeader">
-  <div class="gbTitleBanner">
-    <div class="gbBreadCrumb">
-      <span class="giBreadCrumbFirst">
-        <a href="{g->url}">
-          {g->text text="Gallery"}
-        </a>
-      </span>
-      <span>
-        <a href="{g->url arg1="view=members:MembersList"}">
-          {g->text text="Members List"}
-        </a>
-      </span>
-      <span>
-        {g->text text="Member Profile"}
-      </span>
-    </div>
-  </div>
+  <!-- header -->
 </div>
+
+<ul class="gbBreadCrumb">
+  <li class="giBreadCrumbFirst">
+    <a href="{g->url}">
+      {g->text text="Gallery"}
+    </a>
+  </li>
+  <li>
+    <a href="{g->url arg1="view=members:MembersList"}">
+      {g->text text="Members List"}
+    </a>
+  </li>
+  <li>
+    {g->text text="Member Profile"}
+  </li>
+</ul>
 
 <div id="gsOtherContents">
   <div class="gbTopFlag">
@@ -64,24 +64,20 @@
 
       <td>
 	{if sizeof($MembersProfile.lastItems)}
-	<table>
+	<ul>
 	  {foreach from=$MembersProfile.lastItems item=item}
-	  <tr>
-	    <td>
+	  <li>
 	      {if $item.canContainChildren}
 	      {g->text text="Album:"}
 	      {/if}
 	      {g->text text="&nbsp;"}
-	    </td>
-
-	    <td>
 	      <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$item.id`"}">
 		{$item.title|default:$item.pathComponent}
 	      </a>
-	    </td>
-	  </tr>
+	    <br />
+	  </li>
 	  {/foreach}
-	</table>
+	</ul>
 	{else}
 	{g->text text="None"}
 	{/if}
