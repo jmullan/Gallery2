@@ -71,7 +71,6 @@ function GalleryInitFirstPass() {
     $gallery->setConfig('code.gallery.layouts', $galleryBase . 'layouts' . $slash);
     $gallery->setConfig('code.gallery.themes', $galleryBase . 'themes' . $slash);
     $gallery->setConfig('code.gallery.modules', $galleryBase . 'modules' . $slash);
-    $gallery->setConfig('code.gallery.lib', $galleryBase . 'lib' . $slash);
     $gallery->setConfig('code.gallery.setup', $galleryBase . 'setup' . $slash);
 
     /* Smarty paths */

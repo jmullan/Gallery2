@@ -256,7 +256,7 @@ class GalleryTemplate {
 	    /* We have our own plugins */
 	    $platform = $gallery->getPlatform();
 	    $slash = $platform->getDirectorySeparator();
-	    $smarty->plugins_dir[] = $gallery->getConfig('code.gallery.lib') . 'smarty_plugins';
+	    $smarty->plugins_dir[] = dirname(__FILE__) . '/../../../lib/smarty_plugins';
 	    
 	    if ($gallery->getDebug()) {
 		$smarty->debugging = true;
