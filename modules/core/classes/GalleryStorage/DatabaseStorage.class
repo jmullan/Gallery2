@@ -130,11 +130,20 @@ class DatabaseStorage extends GalleryStorage {
     var $_connectionStatus;
 
     /**
+     * A cache of various queries and their associated data
+     * 
+     * @var array an associative array of cached queries
+     * @access private
+     */
+    var $_queryCache;
+
+    /**
      * Constructor.
      */
     function DatabaseStorage() {
 	$this->GalleryStorage();
 	$this->_connectionStatus = DATABASE_STATUS_NOT_CONNECTED;
+	$this->_queryCache = array();
     }
 
     /**
@@ -292,44 +301,70 @@ class DatabaseStorage extends GalleryStorage {
 	}
 
 	/*
-	 * Get our persistent and meta info for this class
+	 * If we already have a cached query, use it
 	 */
-	$metaInfo = $this->_metaInfo->describeClass($targetType);
-	$idCol = $this->prefixColumnName('id');
+	if (!empty($this->_queryCache['load'][$targetType])) {
+	    $prefixTable =
+		     $this->_queryCache['load'][$targetType]['prefixTable'];
+	    $query = $this->_queryCache['load'][$targetType]['query'];
+	    $idCount = $this->_queryCache['load'][$targetType]['idCount'];
 
-	$tables = array();
-	$data = array();
-	foreach ($metaInfo['members'] as $columnName => $columnInfo) {
-
-	    $type = $columnInfo['type'];
-	    if ($type & STORAGE_TYPE_LIST || $type & STORAGE_TYPE_MAP) {
-		/*
-		 * Don't load subtypes.  They are their own objects and are
-		 * loaded separately.
-		 */
-		continue;
+	    /*
+	     * Prepare our array of input values.  They are all the id of
+	     * the nucleus.
+	     */
+	    $data = array();
+	    for ($i = 0; $i < $idCount; $i++) {
+		$data[$i] = $id;
 	    }
+	} else {
+	    /*
+	     * Get our persistent and meta info for this class
+	     */
+	    $metaInfo = $this->_metaInfo->describeClass($targetType);
+	    $idCol = $this->prefixColumnName('id');
+
+	    $tables = array();
+	    $data = array();
+	    foreach ($metaInfo['members'] as $columnName => $columnInfo) {
+
+		$type = $columnInfo['type'];
+		if ($type & STORAGE_TYPE_LIST || $type & STORAGE_TYPE_MAP) {
+		    /*
+		     * Don't load subtypes.  They are their own objects and are
+		     * loaded separately.
+		     */
+		    continue;
+		}
 	    
-	    $class = strtolower($columnInfo['class']);
-	    $tableName = DATABASE_TABLE_PREFIX . $class;
+		$class = strtolower($columnInfo['class']);
+		$tableName = DATABASE_TABLE_PREFIX . $class;
 
-	    /* Keep track of the entire set of tables we're selecting from */
-	    if (empty($tables[$tableName])) {
-		$tables[$tableName] = 1;
-		$where[] = "$tableName.$idCol=?";
-		$data[] = $id;
+		/* Keep track of the entire set of tables we're selecting from */
+		if (empty($tables[$tableName])) {
+		    $tables[$tableName] = 1;
+		    $where[] = "$tableName.$idCol=?";
+		    $data[] = $id;
+		}
+		$prefixedColumnName = $this->prefixColumnName($columnName);
+		$columns[$tableName . '.' . $prefixedColumnName] = 1;
+		$prefixTable[$prefixedColumnName] = $columnName;
 	    }
-	    $prefixedColumnName = $this->prefixColumnName($columnName);
-	    $columns[$tableName . '.' . $prefixedColumnName] = 1;
-	    $prefixTable[$prefixedColumnName] = $columnName;
-	}
 
-	$query = 'SELECT ';
-	$query .= join(', ', array_keys($columns));
-	$query .= ' FROM ';
-	$query .= join(', ', array_keys($tables));
-	$query .= ' WHERE ';
-	$query .= join(' AND ', $where);
+	    $query = 'SELECT ';
+	    $query .= join(', ', array_keys($columns));
+	    $query .= ' FROM ';
+	    $query .= join(', ', array_keys($tables));
+	    $query .= ' WHERE ';
+	    $query .= join(' AND ', $where);
+
+	    /*
+	     * Cache this query
+	     */
+	    $this->_queryCache['load'][$targetType]['prefixTable'] = $prefixTable;
+	    $this->_queryCache['load'][$targetType]['query'] = $query;
+	    $this->_queryCache['load'][$targetType]['idCount'] = sizeof($data);
+	}
 
 	$recordSet = $this->_db->Execute($query, $data);
 	if ($recordSet) {
