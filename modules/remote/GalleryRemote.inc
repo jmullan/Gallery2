@@ -76,7 +76,7 @@ class GalleryRemoteController extends GalleryController {
                     
 	    default:
 		$response->setProperty('status', $grStatusCodes['UNKNOWN_COMMAND']);
-		$response->setProperty('status_text', "Command '$cmd' unknown.");
+		$response->setProperty('status_text', "Command '${form['cmd']}' unknown.");
 		break;
 	    }
 	} else {
