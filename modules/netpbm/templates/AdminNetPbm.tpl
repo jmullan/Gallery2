@@ -11,7 +11,6 @@
 	{g->text text="NetPBM Settings"}
       </h2>
     </div>
-    
   </div>
 
   {if !empty($status)}
@@ -31,23 +30,23 @@
 
     <div class="gbDataEntry">
       <h3 class="giTitle">
-	{g->text text="NetPBM Path"}
+	{g->text text="NetPBM Directory"}
       </h3>
-	
+
       <input type="text" size="40" name="{g->formVar var="form[path]"}" value="{$form.path}"/>
-      
+
       {if isset($form.error.path.missing)}
       <div class="giError">
 	{g->text text="You must enter a path to your NetPBM binaries"}
       </div>
       {/if}
-      
+
       {if isset($form.error.path.testError)}
       <div class="giError">
 	{g->text text="The path you entered doesn't contain valid NetPBM binaries. Use the 'test' button to check where the error is."}
       </div>
       {/if}
-      
+
       {if isset($form.error.path.badPath)}
       <div class="giError">
 	{g->text text="The path you entered isn't a valid path."}
@@ -83,7 +82,7 @@
 
     <div class="gbDataEntry">
       <h3 class="giTitle">
-	{g->text text="Path to jhead"}
+	{g->text text="jhead Directory"}
       </h3>
 
       <input type="text" size="40" name="{g->formVar var="form[jheadPath]"}" value="{$form.jheadPath}"/>
@@ -152,7 +151,7 @@
       {/foreach}
     </table>
 
-    {if ($AdminNetPbm.failCount > 0) && !empty($AdminNetPbm.mimeTypes)} 
+    {if ($AdminNetPbm.failCount > 0) && !empty($AdminNetPbm.mimeTypes)}
     <div class="giWarning">
       {g->text text="Although your NetPBM installation is not completely functional, you can still use it for the mime types listed below."}
     </div>
@@ -168,9 +167,9 @@
     <p class="giDescription">
       {g->text text="The NetPBM module can support files with the following MIME types"}
     </p>
-    
+
     {foreach from=$AdminNetPbm.mimeTypes item=mimeType}
-    {$mimeType} 
+    {$mimeType}
     {/foreach}
   </div>
   {/if}
