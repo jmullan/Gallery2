@@ -30,7 +30,7 @@ if (!$gallery->getConfig('setup.password')) {
     return;
 }
 
-if (!defined('G2_EMBED')) {
+if (!GalleryUtilities::isEmbedded()) {
     /* If this is a request for a public data file, give it to the user immediately */
     list ($view, $itemId) = GalleryUtilities::getRequestVariables('view', 'itemId');
     if ($view == 'core:DownloadItem' && !empty($itemId)) {

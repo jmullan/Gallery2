@@ -1404,5 +1404,14 @@ class GalleryUtilities {
 	GalleryUtilities::sanitizeInputValues($value);
 	return $value;
     }
+
+    /**
+     * Check if G2 is in embedded mode.
+     * 
+     * @return boolean true if G2 is in embedded mode, else false
+     */
+    function isEmbedded() {
+	return defined('G2_EMBED');
+    }
 }
 ?>

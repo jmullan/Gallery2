@@ -44,7 +44,7 @@ class MainTest extends GalleryTestCase {
 
 	$this->_saveGallery = $GLOBALS['gallery'];
 
-	if (!defined('G2_EMBED')) {
+	if (!GalleryUtilities::isEmbedded()) {
 	    define('G2_EMBED', 1);
 	}
 	GalleryCoreApi::relativeRequireOnce('main.php');
