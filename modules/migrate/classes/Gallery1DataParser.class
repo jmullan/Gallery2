@@ -273,6 +273,22 @@ class Gallery1DataParser {
     }
 
     /**
+     * Load user uids from path
+     *
+     * @param string Uid to be tested
+     * @return boolean True or False
+     */
+    function isValidUid($uid) {
+	if (ereg('^[0-9]{9,}[^0-9][0-9]+$', $uid)) {
+	    return array(GalleryStatus::success(), TRUE);
+	} else {
+	    return array(GalleryStatus::success(), FALSE);
+	}
+    }
+
+    
+    
+    /**
      * Load user metadata given a path and username
      *
      * @param string Path to album directory
