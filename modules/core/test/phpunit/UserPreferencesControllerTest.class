@@ -91,8 +91,7 @@ class UserPreferencesControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[language]', 'language');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('return' => 1,
-				  'redirect' => array('view' => 'core:UserAdmin',
+	$this->assertEquals(array('redirect' => array('view' => 'core:UserAdmin',
 						      'subView' => 'core:UserPreferences'),
 				  'status' => array('saved' => 1),
 				  'error' => array()),
@@ -116,8 +115,7 @@ class UserPreferencesControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[email]', '  email_with-leading@space.test-o.com');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('return' => 1,
-				  'redirect' => array('view' => 'core:UserAdmin',
+	$this->assertEquals(array('redirect' => array('view' => 'core:UserAdmin',
 						      'subView' => 'core:UserPreferences'),
 				  'status' => array('saved' => 1),
 				  'error' => array()),
@@ -149,8 +147,7 @@ class UserPreferencesControllerTest extends GalleryControllerTestCase {
 
 	/* Now it lets us submit with a missing email */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('return' => 1,
-				  'redirect' => array('view' => 'core:UserAdmin',
+	$this->assertEquals(array('redirect' => array('view' => 'core:UserAdmin',
 						      'subView' => 'core:UserPreferences'),
 				  'status' => array('saved' => 1),
 				  'error' => array()),
