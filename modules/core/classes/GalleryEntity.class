@@ -213,12 +213,12 @@ class GalleryEntity_core extends GalleryPersistent {
      * @return array object GalleryStatus a status code,
      *               object the refreshed GalleryEntity
      */
-    function refresh($entity) {
+    function refresh() {
 	global $gallery;
 
 	/* Are we trying to refresh an object that isn't in the database? */
-	if ($entity->testPersistentFlag(STORAGE_FLAG_DELETED) ||
-	    $entity->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED)) {
+	if ($this->testPersistentFlag(STORAGE_FLAG_DELETED) ||
+	    $this->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED)) {
 	    return GalleryStatus::error(ERROR_MISSING_OBJECT,
 					__FILE__, __LINE__);
 	}
@@ -229,7 +229,7 @@ class GalleryEntity_core extends GalleryPersistent {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	return $storage->refresh($this);
+	return $storage->refreshEntity($this);
     }
 
     /**
