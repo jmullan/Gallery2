@@ -297,8 +297,6 @@ class ConfirmImportController extends GalleryController {
 		    $album = NULL;
 		}
 		if ($targetAlbumID && $album) {
-		    if (isset($albumPosition[$album['name']])) {
-		    }
 		    list($ret, $parent) = GalleryCoreApi::loadEntitiesById($targetAlbumID);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
@@ -438,6 +436,20 @@ class ConfirmImportController extends GalleryController {
 				    return array($ret->wrap(__FILE__, __LINE__), null);
 				}
 				
+				// Set order weight
+				if (isset($albumPosition[$album['name']])) {
+				    $weight = $albumPosition[$album['name']];
+				} else {
+				    list ($ret, $weight) = GalleryCoreApi::fetchExtremeChildWeight($targetAlbumID, HIGHER_WEIGHT);
+				    if ($ret->isError()) {
+					return array($ret->wrap(__FILE__, __LINE__), null);
+				    }
+				    $weight += 1000;
+				}
+				$ret = GalleryCoreApi::setItemOrderWeight($newAlbumInstance->getId(), $weight);
+				if ($ret->isError()) {
+				    return array($ret->wrap(__FILE__, __LINE__), null);
+				}
 				
 				$ret = GalleryCoreApi::removeItemPermissions($newAlbumInstance->getId());
 				if ($ret->isError()) {
@@ -664,7 +676,12 @@ class ConfirmImportController extends GalleryController {
 				if ($importAlbumItem->highlight == 1) {
 				    $albumHighlight[$newAlbumInstanceId]=$importAlbumItem->isAlbumName;
 				}
-				$albumPosition[$importAlbumItem->isAlbumName] = $j;
+				list ($ret, $weight) = GalleryCoreApi::fetchExtremeChildWeight(
+							$newAlbumInstanceId, HIGHER_WEIGHT);
+				if ($ret->isError()) {
+				    return array($ret->wrap(__FILE__, __LINE__), null);
+				}
+				$albumPosition[$importAlbumItem->isAlbumName] = $weight + 100 + $j;
 				$importAlbumItem = NULL;
 			    } else {
 				$dir = $albumsPath . $album['name'] . $slash;
