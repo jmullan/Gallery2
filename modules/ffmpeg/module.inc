@@ -137,6 +137,7 @@ class FfmpegModule extends GalleryModule {
 	    $paths[] = '/usr/bin/ffmpeg';
 	    $paths[] = '/usr/local/bin/ffmpeg';
 	    $paths[] = '/bin/ffmpeg';
+	    $paths[] = '/sw/bin/ffmpeg';
 	} else {
 	    return array(GalleryStatus::success(), false);
 	}
