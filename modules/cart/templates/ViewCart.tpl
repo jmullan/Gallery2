@@ -18,10 +18,10 @@
   </li>
 </ul>
 
-<div class="gsContents">
+<div id="gsContents">
   {include file="gallery:`$Navigation.sidebar`" l10Domain=$Navigation.l10Domain}	    
   
-  <div class="gsOtherContents">
+  <div id="gsOtherContents">
 
     <form action="{g->url}" method="post">
       
