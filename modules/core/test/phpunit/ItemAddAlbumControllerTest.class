@@ -38,12 +38,12 @@ class ItemAddAlbumControllerTest extends GalleryControllerTestCase {
     function setUp() {
 	global $gallery;
 
+	parent::setUp();
+	
 	list ($ret, $this->_rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-
-	parent::setUp();
     }
 
     function tearDown() {
