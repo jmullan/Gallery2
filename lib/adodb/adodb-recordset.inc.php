@@ -1,6 +1,6 @@
 <?php
 /** 
- * @version V2.90 11 Dec 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
+ * @version V3.20 17 Feb 2003 (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
  * Released under both BSD license and Lesser GPL library license. 
  * Whenever there is any discrepancy between the two licenses, 
  * the BSD license will take precedence. 
@@ -72,7 +72,6 @@
 	{
 		if ($this->_inited) return;
 		$this->_inited = true;
-		
 		if ($this->_queryID) @$this->_initrs();
 		else {
 			$this->_numOfRows = 0;
@@ -80,9 +79,12 @@
 		}
 		if ($this->_numOfRows != 0 && $this->_numOfFields && $this->_currentRow == -1) {
 			$this->_currentRow = 0;
-			$this->EOF = ($this->_fetch() === false);
-		} else  
+			if ($this->EOF = ($this->_fetch() === false)) {
+				$this->_numOfRows = 0; // _numOfRows could be -1
+			}
+		} else {
 			$this->EOF = true;
+		}
 	}
 	
 	
@@ -265,8 +267,7 @@
 		// $tt == -1 if pre TIMESTAMP_FIRST_YEAR
 		if (($tt === false || $tt == -1) && $v != false) return $v;
 		if ($tt == 0) return $this->emptyTimeStamp;
-		
-		return date($fmt,$tt);
+		return adodb_date($fmt,$tt);
 	}
 	
 	
@@ -284,7 +285,7 @@
 		else if ($tt == 0) return $this->emptyDate;
 		else if ($tt == -1) { // pre-TIMESTAMP_FIRST_YEAR
 		}
-		return date($fmt,$tt);
+		return adodb_date($fmt,$tt);
 	
 	}
 	
@@ -296,12 +297,13 @@
 	 */
 	function UnixDate($v)
 	{
+		
 		if (!preg_match( "|^([0-9]{4})[-/\.]?([0-9]{1,2})[-/\.]?([0-9]{1,2})|", 
 			($v), $rr)) return false;
 			
 		if ($rr[1] <= 1903) return 0;
 		// h-m-s-MM-DD-YY
-		return mktime(0,0,0,$rr[2],$rr[3],$rr[1]);
+		return @adodb_mktime(0,0,0,$rr[2],$rr[3],$rr[1]);
 	}
 	
 
@@ -312,13 +314,15 @@
 	 */
 	function UnixTimeStamp($v)
 	{
+		
 		if (!preg_match( 
 			"|^([0-9]{4})[-/\.]?([0-9]{1,2})[-/\.]?([0-9]{1,2})[ -]?(([0-9]{1,2}):?([0-9]{1,2}):?([0-9\.]{1,4}))?|", 
 			($v), $rr)) return false;
 		if ($rr[1] <= 1903 && $rr[2]<= 1) return 0;
 	
 		// h-m-s-MM-DD-YY
-		return  @mktime($rr[5],$rr[6],$rr[7],$rr[2],$rr[3],$rr[1]);
+		if (!isset($rr[5])) return  adodb_mktime(0,0,0,$rr[2],$rr[3],$rr[1]);
+		return  @adodb_mktime($rr[5],$rr[6],$rr[7],$rr[2],$rr[3],$rr[1]);
 	}
 	
 	
@@ -399,7 +403,7 @@
 	function MoveLast() 
 	{
 		if ($this->_numOfRows >= 0) return $this->Move($this->_numOfRows-1);
-				while (!$this->EOF) $this->MoveNext();
+		while (!$this->EOF) $this->MoveNext();
 		return true;
 	}
 	
@@ -618,6 +622,18 @@
 	
 	/**
 	* Return the fields array of the current row as an object for convenience.
+	* The default case is lowercase field names.
+	*
+	* @return the object with the properties set to the fields of the current row
+	*/
+	function &FetchObj()
+	{
+		return FetchObject(false);
+	}
+	
+	/**
+	* Return the fields array of the current row as an object for convenience.
+	* The default case is uppercase.
 	* 
 	* @param $isupper to set the object property names to uppercase
 	*
@@ -644,8 +660,25 @@
 		}
 		return $o;
 	}
+	
 	/**
 	* Return the fields array of the current row as an object for convenience.
+	* The default is lower-case field names.
+	* 
+	* @return the object with the properties set to the fields of the current row,
+	* 	or false if EOF
+	*
+	* Fixed bug reported by tim@orotech.net
+	*/
+	function &FetchNextObj()
+	{
+		return $this->FetchNextObject(false);
+	}
+	
+	
+	/**
+	* Return the fields array of the current row as an object for convenience. 
+	* The default is upper case field names.
 	* 
 	* @param $isupper to set the object property names to uppercase
 	*
@@ -761,7 +794,23 @@
 		'NUMBER' => 'N',
 		'NUM' => 'N',
 		'NUMERIC' => 'N',
-		'MONEY' => 'N'
+		'MONEY' => 'N',
+		
+		## informix 9.2
+		'SQLINT' => 'I', 
+		'SQLSERIAL' => 'I', 
+		'SQLSMINT' => 'I', 
+		'SQLSMFLOAT' => 'N', 
+		'SQLFLOAT' => 'N', 
+		'SQLMONEY' => 'N', 
+		'SQLDECIMAL' => 'N', 
+		'SQLDATE' => 'D', 
+		'SQLVCHAR' => 'C', 
+		'SQLCHAR' => 'C', 
+		'SQLDTIME' => 'T', 
+		'SQLINTERVAL' => 'N', 
+		'SQLBYTES' => 'B', 
+		'SQLTEXT' => 'X' 
 		);
 		
 		
@@ -770,13 +819,14 @@
 		$tmap = @$typeMap[$t];
 		switch ($tmap) {
 		case 'C':
+		
+			// is the char field is too long, return as text field... 
 			if (!empty($this)) {
-				if ($len <= $this->blobSize) return 'C';
-			} else if ($len <= 250) {
-				return 'C';
+				if ($len > $this->blobSize) return 'X';
+			} else if ($len > 250) {
+				return 'X';
 			}
-			// ok, the char field is too long, return as text field... 
-			return 'X';
+			return 'C';
 			
 		case 'I':
 			if (!empty($fieldobj->primary_key)) return 'R';

@@ -1,6 +1,6 @@
 <?php
 /*
- V2.90 11 Dec 2002  (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
+ V3.20 17 Feb 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -56,15 +56,17 @@ class ADORecordSet_postgres extends ADORecordSet_postgres64{
 	{
 		if (!$this->EOF) {		
 			$this->_currentRow++;
+			if ($this->_numOfRows > 0 && $this->_numOfRows > $this->_currentRow) {
+				$f = @pg_fetch_array($this->_queryID,$this->_currentRow,$this->fetchMode);
 			
-			$f = @pg_fetch_array($this->_queryID,$this->_currentRow,$this->fetchMode);
-			
-			if (is_array($f)) {
-				$this->fields = $f;
-				return true;
+				if (is_array($f)) {
+					$this->fields = $f;
+					if (isset($this->_blobArr)) $this->_fixblobs();
+					return true;
+				}
 			}
+			$this->EOF = true;
 		}
-		$this->EOF = true;
 		return false;
 	}		
 }

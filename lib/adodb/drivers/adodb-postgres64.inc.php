@@ -1,6 +1,6 @@
 <?php
 /*
- V2.90 11 Dec 2002  (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
+ V3.20 17 Feb 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -29,7 +29,7 @@ class ADODB_postgres64 extends ADOConnection{
 	var $isoDates = true; // accepts dates in ISO format
 	var $sysDate = "CURRENT_DATE";
 	var $sysTimeStamp = "CURRENT_TIMESTAMP";
-	
+	var $blobEncodeType = 'C';
 /*
 # show tables and views suggestion
 "SELECT c.relname AS tablename FROM pg_class c 
@@ -57,7 +57,6 @@ SELECT tablename FROM pg_tables WHERE tablename NOT LIKE 'pg_%' ORDER BY 1"
 	var $_dropSeqSQL = "DROP SEQUENCE %s";
 	var $metaDefaultsSQL = "SELECT d.adnum as num, d.adsrc as def from pg_attrdef d, pg_class c where d.adrelid=c.oid and c.relname='%s' order by d.adnum";
 	
-	var $_is420 = false;
 	
 	// The last (fmtTimeStamp is not entirely correct: 
 	// PostgreSQL also has support for time zones, 
@@ -70,7 +69,6 @@ SELECT tablename FROM pg_tables WHERE tablename NOT LIKE 'pg_%' ORDER BY 1"
 	function ADODB_postgres64() 
 	{
 	// changes the metaColumnsSQL, adds columns: attnum[6]
-		$this->_is420 = strnatcmp(PHP_VERSION,'4.2.0')>=0;
 	}
 	
 	function ServerInfo()
@@ -98,14 +96,16 @@ Unless you are very careful, you might end up with a tuple having
 a different OID if a database must be reloaded. */
 	function _insertid()
 	{
-		return pg_getlastoid($this->_resultid);
+		if (!is_resource($this->_resultid)) return false;
+	   return pg_getlastoid($this->_resultid);
 	}
 
 // I get this error with PHP before 4.0.6 - jlim
 // Warning: This compilation does not support pg_cmdtuples() in d:/inetpub/wwwroot/php/adodb/adodb-postgres.inc.php on line 44
    function _affectedrows()
    {
-	   return pg_cmdtuples($this->_resultid);	  
+   		if (!is_resource($this->_resultid)) return false;
+	   	return pg_cmdtuples($this->_resultid);
    }
 
 	
@@ -141,7 +141,24 @@ a different OID if a database must be reloaded. */
 		return @pg_Exec($this->_connectionID, "rollback");
 	}
 	
-			// Format date column in sql string given an input format that understands Y M D
+	// if magic quotes disabled, use pg_escape_string()
+	function qstr($s,$magic_quotes=false)
+	{
+		if (!$magic_quotes) {
+			if (ADODB_PHPVER >= 0x4200) return "'".pg_escape_string($s)."'";
+			
+			if ($this->replaceQuote[0] == '\\'){
+				$s = adodb_str_replace(array('\\',"\0"),array('\\\\',"\\\0"),$s);
+			}
+			return  "'".str_replace("'",$this->replaceQuote,$s)."'"; 
+		}
+		
+		// undo magic quotes for "
+		$s = str_replace('\\"','"',$s);
+		return "'$s'";
+	}
+	
+	// Format date column in sql string given an input format that understands Y M D
 	function SQLDate($fmt, $col=false)
 	{	
 		if (!$col) $col = $this->sysDate;
@@ -188,10 +205,10 @@ a different OID if a database must be reloaded. */
 	*
 	* contributed by Mattia Rossi mattia@technologist.com
 	*/ 
-	function UpdateBlobFile($table,$column,$val,$where,$blobtype='BLOB') 
+	function UpdateBlobFile($table,$column,$path,$where,$blobtype='BLOB') 
 	{ 
 		pg_exec ($this->_connectionID, "begin"); 
-		$oid = pg_lo_import ($val); 
+		$oid = pg_lo_import ($path); 
 		pg_exec ($this->_connectionID, "commit"); 
 		$rs = ADOConnection::UpdateBlob($table,$column,$oid,$where,$blobtype); 
 		$rez = !empty($rs); 
@@ -199,19 +216,49 @@ a different OID if a database must be reloaded. */
 	} 
 	
 	/* 
-	* Reads the real blob from the db using the oid supplied as a parameter
+	* If an OID is detected, then we use pg_lo_* to open the oid file and read the
+	* real blob from the db using the oid supplied as a parameter. If you are storing
+	* blobs using bytea, we autodetect and process it so this function is not needed.
 	*
 	* contributed by Mattia Rossi mattia@technologist.com
+	*
+	* see http://www.postgresql.org/idocs/index.php?largeobjects.html
 	*/ 
-	function BlobDecode( $blob ) 
+	function BlobDecode( $blob) 
 	{ 
 		@pg_exec("begin"); 
-		$fd = @pg_lo_open($blob,"r"); 
+		$fd = @pg_lo_open($blob,"r");
+		if ($fd === false) {
+			@pg_exec("commit");
+			return $blob;
+		}
 		$realblob = @pg_loreadall($fd); 
 		@pg_loclose($fd); 
 		@pg_exec("commit"); 
-		return( $realblob ); 
+		return $realblob;
 	} 
+	
+	/* 
+		See http://www.postgresql.org/idocs/index.php?datatype-binary.html
+	 	
+		NOTE: SQL string literals (input strings) must be preceded with two backslashes 
+		due to the fact that they must pass through two parsers in the PostgreSQL 
+		backend.
+	*/
+	function BlobEncode($blob)
+	{ // requires php 4.0.5
+		$badch = array(chr(92),chr(0),chr(39)); # \  null  '
+		$fixch = array('\\\\134','\\\\000','\\\\047');
+		return adodb_str_replace($badch,$fixch,$blob);
+		
+		// note that there is a pg_escape_bytea function only for php 4.2.0 or later
+	}
+	
+	function UpdateBlob($table,$column,$val,$where,$blobtype='BLOB')
+	{
+		return $this->Execute("UPDATE $table SET $column=? WHERE $where",
+			array($this->BlobEncode($val))) != false;
+	}
 	
 	function OffsetDate($dayFraction,$date=false)
 	{		
@@ -356,7 +403,7 @@ a different OID if a database must be reloaded. */
 		$this->_connectionID = pg_connect($str);
 		if ($this->_connectionID === false) return false;
 		$this->Execute("set datestyle='ISO'");
-				return true;
+		return true;
 	}
 	
 	// returns true or false
@@ -386,20 +433,20 @@ a different OID if a database must be reloaded. */
 	// returns queryID or false
 	function _query($sql,$inputarr)
 	{
-		$this->_resultid= pg_Exec($this->_connectionID,$sql);
+		$rez = pg_Exec($this->_connectionID,$sql);
 		// check if no data returned, then no need to create real recordset
-		if ($this->_resultid && pg_numfields($this->_resultid) <= 0) {
-			pg_freeresult($this->_resultid);
+		if ($rez && pg_numfields($rez) <= 0) {
+			$this->_resultid = $rez;
 			return true;
 		}
-		return $this->_resultid;
+		return $rez;
 	}
 	
 
 	/*	Returns: the last error message from previous database operation	*/	
 	function ErrorMsg() 
 	{
-		if ($this->_is420) {
+		if (ADODB_PHPVER >= 0x4300) {
 			if (!empty($this->_resultid)) $this->_errorMsg = @pg_result_error($this->_resultid);
 			else if (!empty($this->_connectionID)) $this->_errorMsg = @pg_last_error($this->_connectionID);
 			else $this->_errorMsg = @pg_last_error();
@@ -419,35 +466,13 @@ a different OID if a database must be reloaded. */
 	function _close()
 	{
 		if ($this->transCnt) $this->RollbackTrans();
-		@pg_close($this->_connectionID);
 		$this->_resultid = false;
+		@pg_close($this->_connectionID);
 		$this->_connectionID = false;
 		return true;
 	}
 	
- 	function ActualType($meta)
-	{
-		switch($meta) {
-		case 'C': return 'VARCHAR';
-		case 'X': return 'TEXT';
-		
-		case 'C2': return 'VARCHAR';
-		case 'X2': return 'TEXT';
-		
-		case 'B': return 'BYTEA';
-			
-		case 'D': return 'DATE';
-		case 'T': return 'DATETIME';
-		case 'L': return 'SMALLINT';
-		case 'R': return 'SERIAL';
-		case 'I': return 'INTEGER'; 
-		
-		case 'F': return 'FLOAT8';
-		case 'N': return 'NUMERIC';
-		default:
-			return false;
-		}
-	}
+	
 	/*
 	* Maximum size of C field
 	*/
@@ -472,7 +497,7 @@ a different OID if a database must be reloaded. */
 --------------------------------------------------------------------------------------*/
 
 class ADORecordSet_postgres64 extends ADORecordSet{
-
+	var $_blobArr;
 	var $databaseType = "postgres64";
 	var $canSeek = true;
 	function ADORecordSet_postgres64($queryID,$mode=false) 
@@ -503,6 +528,12 @@ class ADORecordSet_postgres64 extends ADORecordSet{
 	global $ADODB_COUNTRECS;
 		$this->_numOfRows = ($ADODB_COUNTRECS)? @pg_numrows($this->_queryID):-1;
 		$this->_numOfFields = @pg_numfields($this->_queryID);
+		
+		// cache types for blob decode check
+		for ($i=0, $max = $this->_numOfFields; $i < $max; $i++) { 
+			$f1 = $this->FetchField($i);
+			if ($f1->type == 'bytea') $this->_blobArr[$i] = $f1->name;
+		}		
 	}
 
 		/* Use associative array to get fields array */
@@ -538,30 +569,56 @@ class ADORecordSet_postgres64 extends ADORecordSet{
 		return @pg_fetch_row($this->_queryID,$row);
 	}
 	
+	function _decode($blob)
+	{
+		
+		eval('$realblob="'.adodb_str_replace(array('"','$'),array('\"','\$'),$blob).'";');
+		return $realblob;
+		
+	}
+	function _fixblobs()
+	{
+		if ($this->fetchMode == PGSQL_NUM || $this->fetchMode == PGSQL_BOTH) {
+			foreach($this->_blobArr as $k => $v) {
+				$this->fields[$k] = ADORecordSet_postgres64::_decode($this->fields[$k]);
+			}
+		}
+		if ($this->fetchMode == PGSQL_ASSOC || $this->fetchMode == PGSQL_BOTH) {
+			foreach($this->_blobArr as $k => $v) {
+				$this->fields[$v] = ADORecordSet_postgres64::_decode($this->fields[$v]);
+			}
+		}
+	}
+	
 	// 10% speedup to move MoveNext to child class
 	function MoveNext() 
 	{
 		if (!$this->EOF) {		
 			$this->_currentRow++;
+			if ($this->_numOfRows < 0 || $this->_numOfRows > $this->_currentRow) {
+				$f = @pg_fetch_array($this->_queryID,$this->_currentRow,$this->fetchMode);
 			
-			$f = @pg_fetch_array($this->_queryID,$this->_currentRow,$this->fetchMode);
-			
-			if (is_array($f)) {
-				$this->fields = $f;
-				return true;
+				if (is_array($f)) {
+					$this->fields = $f;
+					if (isset($this->_blobArr)) $this->_fixblobs();
+					return true;
+				}
 			}
+			$this->EOF = true;
 		}
-		$this->EOF = true;
 		return false;
 	}		
 	
 	function _fetch()
 	{
 		$this->fields = @pg_fetch_array($this->_queryID,$this->_currentRow,$this->fetchMode);
+		if (isset($this->_blobArr)) $this->_fixblobs();
+			
 		return (is_array($this->fields));
 	}
 
-	function _close() {
+	function _close() 
+	{
 		return @pg_freeresult($this->_queryID);
 	}
 

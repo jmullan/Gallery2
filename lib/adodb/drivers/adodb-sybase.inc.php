@@ -1,6 +1,6 @@
 <?php
 /* 
-V2.90 11 Dec 2002  (c) 2000-2002 John Lim. All rights reserved.
+V3.20 17 Feb 2003  (c) 2000-2003 John Lim. All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -127,8 +127,12 @@ class ADODB_sybase extends ADOConnection {
 	// returns query ID if successful, otherwise false
 	function _query($sql,$inputarr)
 	{
-		//@sybase_free_result($this->_queryID);
-		return sybase_query($sql,$this->_connectionID);
+	global $ADODB_COUNTRECS;
+	
+		if ($ADODB_COUNTRECS == false && ADODB_PHPVER >= 0x4300)
+			return sybase_unbuffered_query($sql,$this->_connectionID);
+		else
+			return sybase_query($sql,$this->_connectionID);
 	}
 	
 	// See http://www.isug.com/Sybase_FAQ/ASE/section6.2.html#6.2.12
@@ -222,14 +226,23 @@ class ADORecordset_sybase extends ADORecordSet {
 	function _fetch($ignore_fields=false) 
 	{
 		if ($this->fetchMode == ADODB_FETCH_NUM) {
-			$this->fields = @sybase_fetch_row($this->_queryID);
+			$f = @sybase_fetch_row($this->_queryID);
 		} else if ($this->fetchMode == ADODB_FETCH_ASSOC) {
-			$this->fields = @sybase_fetch_row($this->_queryID);
-			$this->fields = $this->GetRowAssoc(ADODB_CASE_ASSOC);
+			$f = @sybase_fetch_row($this->_queryID);
+			if (is_array($f)) {
+				$this->fields = $f;
+				$this->fields = $this->GetRowAssoc(ADODB_CASE_ASSOC);
+				return true;
+			}
+			return false;
 		}  else {
-			$this->fields = @sybase_fetch_array($this->_queryID);
+			$f = @sybase_fetch_array($this->_queryID);
 		}
-		return is_array($this->fields);
+		if ( is_array($f)) {
+			$this->fields = $f;
+			return true;
+		}
+		return false;
 	}
 	
 	/*	close() only needs to be called if you are worried about using too much memory while your script

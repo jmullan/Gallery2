@@ -1,6 +1,6 @@
 <?php
 /*
-V2.90 11 Dec 2002  (c) 2000-2002 John Lim. All rights reserved.
+V3.20 17 Feb 2003  (c) 2000-2003 John Lim. All rights reserved.
   Released under both BSD license and Lesser GPL library license.
   Whenever there is any discrepancy between the two licenses,
   the BSD license will take precedence.
@@ -100,7 +100,8 @@ class ADODB_informix72 extends ADOConnection {
 		return $this->_errorMsg;
 	}
 
-   function ErrorNo() {
+   function ErrorNo() 
+   {
 	  return ifx_error();
    }
 
@@ -109,7 +110,17 @@ class ADODB_informix72 extends ADOConnection {
 		return ADOConnection::MetaColumns($table,false);
    }
 
+   function UpdateBlob($table, $column, $val, $where, $blobtype = 'BLOB')
+   {
+   		$type = ($blobtype == 'TEXT') ? 1 : 0;
+		$blobid = ifx_create_blob($type,0,$val);
+		return $this->Execute("UPDATE $table SET $column=(?) WHERE $where",array($blobid));
+   }
 
+   function BlobDecode($blobid)
+   {
+   		return @ifx_get_blob($blobid);
+   }
 	// returns true or false
    function _connect($argHostname, $argUsername, $argPassword, $argDatabasename)
 	{

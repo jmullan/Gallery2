@@ -1,6 +1,6 @@
 <?php
 /* 
-V2.90 11 Dec 2002  (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
+V3.20 17 Feb 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -32,16 +32,14 @@ Set tabs to 4 for best viewing.
 // 	   CONVERT(char(12),datecol,120)
 //----------------------------------------------------------------
 
-global $ADODB_mssql_date_order; // 'dmy' and 'mdy' supported
 
 // has datetime converstion to YYYY-MM-DD format, and also mssql_fetch_assoc
-$ADODB_mssql_dtconvert_assoc = (strnatcmp(PHP_VERSION,'4.2.0')>=0);
-
-if ($ADODB_mssql_dtconvert_assoc) {
+if (ADODB_PHPVER >= 0x4300) {
+// docs say 4.2.0, but testing shows only since 4.3.0 does it work!
 	ini_set('mssql.datetimeconvert',0); 
 } else {
 global $ADODB_mssql_mths;		// array, months must be upper-case
-global $ADODB_mssql_dtconvert_assoc;
+
 
 	$ADODB_mssql_date_order = 'mdy'; 
 	$ADODB_mssql_mths = array(
@@ -52,7 +50,7 @@ global $ADODB_mssql_dtconvert_assoc;
 //---------------------------------------------------------------------------
 // Call this to autoset $ADODB_mssql_date_order at the beginning of your code,
 // just after you connect to the database. Supports mdy and dmy only.
-// Not required for PHP 4.2.0 and above because of $ADODB_mssql_dtconvert_assoc.
+// Not required for PHP 4.2.0 and above.
 function AutoDetect_MSSQL_Date_Order($conn)
 {
 global $ADODB_mssql_date_order;
@@ -90,11 +88,11 @@ class ADODB_mssql extends ADOConnection {
 	var $leftOuter = '*=';
 	var $rightOuter = '=*';
 	var $ansiOuter = true; // for mssql7 or later
+	var $poorAffectedRows = true;
+	var $identitySQL = 'select @@IDENTITY'; // 'select SCOPE_IDENTITY'; # for mssql 2000
 	
 	function ADODB_mssql() 
-	{			
-	global $ADODB_mssql_dtconvert_assoc;
-	
+	{		
 		$this->_has_mssql_init = (strnatcmp(PHP_VERSION,'4.1.0')>=0);	
 	}
 
@@ -128,7 +126,12 @@ class ADODB_mssql extends ADOConnection {
 	
 	function _insertid()
 	{
-			return $this->GetOne('select @@identity');
+	// SCOPE_IDENTITY()
+	// Returns the last IDENTITY value inserted into an IDENTITY column in 
+	// the same scope. A scope is a module -- a stored procedure, trigger, 
+	// function, or batch. Thus, two statements are in the same scope if 
+	// they are in the same stored procedure, function, or batch.
+			return $this->GetOne($this->identitySQL);
 	}
 	
 	function _affectedrows()
@@ -278,6 +281,22 @@ class ADODB_mssql extends ADOConnection {
 		 return(false); 
 	} 
 
+	// "Stein-Aksel Basma" <basma@accelero.no>
+	// tested with MSSQL 2000
+	function MetaPrimaryKeys($table)
+	{
+		$sql = "select k.column_name from information_schema.key_column_usage k,
+		information_schema.table_constraints tc 
+		where tc.constraint_name = k.constraint_name and tc.constraint_type =
+		'PRIMARY KEY' and k.table_name = '$table'";
+		
+		$a = $this->GetCol($sql);
+		if ($a && sizeof($a)>0) return $a;
+		return false;	  
+	}
+
+
+ 
 	function SelectDB($dbName) 
 	{
 		$this->databaseName = $dbName;
@@ -522,10 +541,10 @@ class ADORecordset_mssql extends ADORecordSet {
 		if (!$this->EOF) {		
 			$this->_currentRow++;
 			if ($this->fetchMode & ADODB_FETCH_ASSOC) {
-			global $ADODB_mssql_dtconvert_assoc;
-				if ($ADODB_mssql_dtconvert_assoc) // only for PHP 4.2.0 or later
-					$this->fields = @mssql_fetch_assoc($this->_queryID);
-				else {
+				if (ADODB_PHPVER >= 0x4200) {// only for PHP 4.2.0 or later
+					$flds = @mssql_fetch_assoc($this->_queryID);
+					if (is_array($flds)) $this->fields = $flds;
+				} else {
 					$flds = @mssql_fetch_array($this->_queryID);
 					if (is_array($flds)) {
 						$fassoc = array();
@@ -534,8 +553,7 @@ class ADORecordset_mssql extends ADORecordSet {
 							$fassoc[$k] = $v;
 						}
 						$this->fields = $fassoc;
-					} else 
-						$this->fields = $flds;
+					}
 				}
 				
 				if (is_array($this->fields)) {
@@ -550,9 +568,10 @@ class ADORecordset_mssql extends ADORecordSet {
 					}
 				}
 			} else {
-				$this->fields = @mssql_fetch_row($this->_queryID);
+				$flds = @mssql_fetch_row($this->_queryID);
+				if (is_array($flds)) $this->fields = $flds;
 			}
-			if (is_array($this->fields)) return true;
+			if (is_array($flds)) return true;
 			$this->EOF = true;
 		}
 		return false;
@@ -564,9 +583,9 @@ class ADORecordset_mssql extends ADORecordSet {
 	function _fetch($ignore_fields=false) 
 	{
 		if ($this->fetchMode & ADODB_FETCH_ASSOC) {
-		global $ADODB_mssql_dtconvert_assoc;
-			if ($ADODB_mssql_dtconvert_assoc) // only for PHP 4.2.0 or later
-				$this->fields = @mssql_fetch_assoc($this->_queryID);
+			if (ADODB_PHPVER >= 0x4200) // only for PHP 4.2.0 or later
+				$flds = @mssql_fetch_assoc($this->_queryID);
+				if (is_array($flds)) $this->fields = $flds;
 			else {
 				$flds = @mssql_fetch_array($this->_queryID);
 				if (is_array($flds)) {
@@ -576,11 +595,11 @@ class ADORecordset_mssql extends ADORecordSet {
 						$fassoc[$k] = $v;
 					}
 					$this->fields = $fassoc;
-				} else
-					$this->fields = $flds;
+				}
 			}
 			
-			if (ADODB_ASSOC_CASE == 0) {
+			if (!$flds) {
+			} else if (ADODB_ASSOC_CASE == 0) {
 				foreach($this->fields as $k=>$v) {
 					$this->fields[strtolower($k)] = $v;
 				}
@@ -590,9 +609,10 @@ class ADORecordset_mssql extends ADORecordSet {
 				}
 			}
 		} else {
-			$this->fields = @mssql_fetch_row($this->_queryID);
+			$flds = @mssql_fetch_row($this->_queryID);
+			if (is_array($flds)) $this->fields = $flds;
 		}
-		return (!empty($this->fields));
+		return (is_array($flds));
 	}
 	
 	/*	close() only needs to be called if you are worried about using too much memory while your script
@@ -627,9 +647,8 @@ class ADORecordSet_array_mssql extends ADORecordSet_array {
 		// mssql uses a default date like Dec 30 2000 12:00AM
 	function UnixDate($v)
 	{
-	global $ADODB_mssql_dtconvert_assoc;
 	
-		if (is_numeric(substr($v,0,1)) && $ADODB_mssql_dtconvert_assoc) return parent::UnixDate($v);
+		if (is_numeric(substr($v,0,1)) && ADODB_PHPVER >= 0x4200) return parent::UnixDate($v);
 		
 	global $ADODB_mssql_mths,$ADODB_mssql_date_order;
 	
@@ -659,9 +678,8 @@ class ADORecordSet_array_mssql extends ADORecordSet_array {
 	
 	function UnixTimeStamp($v)
 	{
-	global $ADODB_mssql_dtconvert_assoc;
 	
-		if (is_numeric(substr($v,0,1)) && $ADODB_mssql_dtconvert_assoc) return parent::UnixTimeStamp($v);
+		if (is_numeric(substr($v,0,1)) && ADODB_PHPVER >= 0x4200) return parent::UnixTimeStamp($v);
 		
 	global $ADODB_mssql_mths,$ADODB_mssql_date_order;
 	

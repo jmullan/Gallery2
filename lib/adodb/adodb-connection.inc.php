@@ -1,6 +1,6 @@
 <?php
 /** 
- * @version V2.90 11 Dec 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
+ * @version V3.20 17 Feb 2003 (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
  * Released under both BSD license and Lesser GPL library license. 
  * Whenever there is any discrepancy between the two licenses, 
  * the BSD license will take precedence. 
@@ -10,6 +10,12 @@
  * Latest version is available at http://php.weblogs.com
  *
  */
+ 
+ 	class ADO_DBX {
+		var $handle;
+		var $database;
+		var $module;
+	};
 
     /**
 	 * Connection object. For connecting to databases, and executing queries.
@@ -63,6 +69,12 @@
 	var $ansiOuter = false; /// whether ansi outer join syntax supported
 	var $autoRollback = false; // autoRollback on PConnect().
 	var $poorAffectedRows = false; // affectedRows not working or unreliable
+	
+	var $fnExecute = false;
+	var $fnCacheExecute = false;
+	var $blobEncodeType = false; // false=not required, 'I'=encode to integer, 'C'=encode to char
+	var $dbxDriver = false;
+	
 	 //
 	 // PRIVATE VARS
 	 //
@@ -96,7 +108,7 @@
 	*/
 	function ServerInfo()
 	{
-		return array('string' => '', 'version' => '');
+		return array('description' => '', 'version' => '');
 	}
 	
 	function _findvers($str)
@@ -199,6 +211,9 @@
 	 */	
 	function PConnect($argHostname = "", $argUsername = "", $argPassword = "", $argDatabaseName = "")
 	{
+		if (defined('ADODB_NEVER_PERSIST')) 
+			return $this->Connect($argHostname,$argUsername,$argPassword,$argDatabaseName);
+		
 		if ($argHostname != "") $this->host = $argHostname;
 		if ($argUsername != "") $this->user = $argUsername;
 		if ($argPassword != "") $this->password = $argPassword;
@@ -395,7 +410,10 @@
 	 */
 	function &Execute($sql,$inputarr=false,$arg3=false) 
 	{
-
+		if ($this->fnExecute) {
+			$fn = $this->fnExecute;
+			$fn($this,$sql,$inputarr);
+		}
 		if (!$this->_bindInputArray && $inputarr) {
 			$sqlarr = explode('?',$sql);
 			$sql = '';
@@ -466,7 +484,50 @@
 				}
 		} else {
 			// non-debug version of query
-			$this->_queryID =@$this->_query($sql,$inputarr,$arg3);
+			if (defined('ADODB_DBX') && !$inputarr && is_string($sql) && strncasecmp('SELECT',$sql,6)==0) {
+				//$dbxlink = dbx_connect(DBX_MYSQL,'localhost','test','root','');
+				//print_r($dbxlink);
+				//print "<pre>dbx $sql <br>";
+				$dbxlink = new ADO_DBX;
+				$dbxlink->database = $this->database;
+				$dbxlink->handle = $this->_connectionID;
+				$dbxlink->module = $this->dbxDriver;
+				$flags = DBX_RESULT_INFO;
+				if ($this->fetchMode === false) {
+				global $ADODB_FETCH_MODE;
+					if ($ADODB_FETCH_MODE & ADODB_FETCH_ASSOC) $flags |= DBX_RESULT_ASSOC;
+					if ($ADODB_FETCH_MODE & ADODB_FETCH_NUM) $flags |= DBX_RESULT_INDEX;
+				} else {
+					if ($this->fetchMode & ADODB_FETCH_ASSOC) $flags |= DBX_RESULT_ASSOC;
+					if ($this->fetchMode & ADODB_FETCH_NUM) $flags |= DBX_RESULT_INDEX;
+				}
+				$dbxrs = dbx_query($dbxlink,$sql,$flags);
+				if (!$dbxrs) {
+					$this->_queryID = false;
+				} else {
+				//print_r($dbxrs);
+					$arrayClass = $this->arrayClass;
+			
+					$rs2 = new $arrayClass();
+					$rs2->connection = &$this;
+					$rs2->sql = $sql;
+					$rs2->dataProvider = $this->dataProvider;
+					$flds = array();
+					$name = $dbxrs->info['name'];
+					$type = $dbxrs->info['type'];
+					for ($i=0, $max = sizeof($name); $i < $max; $i++) {
+						$f = new ADOFieldObject;
+						$f->name = $name[$i];
+						$f->type = $type[$i];
+						$f->max_length = -1;
+						$flds[] = $f;
+					}
+					$rs2->InitArrayFields($dbxrs->data,$flds);
+					return $rs2;
+				}
+			} else {
+				$this->_queryID =@$this->_query($sql,$inputarr,$arg3);
+			}
 		}
 		// error handling if query fails
 		if ($this->_queryID === false) {
@@ -488,14 +549,17 @@
 		$rs->Init();
 		if (is_array($sql)) $rs->sql = $sql[0];
 		else $rs->sql = $sql;
-			
+		
+		if ($rs->_numOfRows <= 0) {
 		global $ADODB_COUNTRECS;
-		if ($rs->_numOfRows <= 0 && $ADODB_COUNTRECS) {
-			if (!$rs->EOF){ 
-				$rs = &$this->_rs2rs($rs);
-				$rs->_queryID = $this->_queryID;
-			} else
-				$rs->_numOfRows = 0;
+		
+			if ($ADODB_COUNTRECS) {
+				if (!$rs->EOF){ 
+					$rs = &$this->_rs2rs($rs,-1,-1,!is_array($sql));
+					$rs->_queryID = $this->_queryID;
+				} else
+					$rs->_numOfRows = 0;
+			}
 		}
 		return $rs;
 	}
@@ -721,7 +785,7 @@
 	* @param [offset] 	offset by number of rows (optional)
 	* @return 			the new recordset
 	*/
-	function &_rs2rs(&$rs,$nrows=-1,$offset=-1)
+	function &_rs2rs(&$rs,$nrows=-1,$offset=-1,$close=true)
 	{
 		if (! $rs) return false;
 		if (($rs->databaseType == 'array' || $rs->databaseType == 'csv') && $nrows == -1 && $offset == -1) {
@@ -729,11 +793,13 @@
 			$rs = &$rs; // required to prevent crashing in 4.2.1-- why ?
 			return $rs;
 		}
-		$arr = &$rs->GetArrayLimit($nrows,$offset);
-		$flds = array();
-		for ($i=0, $max=$rs->FieldCount(); $i < $max; $i++)
-			$flds[] = &$rs->FetchField($i);
-		$rs->Close();
+	
+		for ($i=0, $max=$rs->FieldCount(); $i < $max; $i++) {
+			$flds[] = $rs->FetchField($i);
+		}
+		$arr = $rs->GetArrayLimit($nrows,$offset);
+		//print_r($arr);
+		if ($close) $rs->Close();
 		
 		$arrayClass = $this->arrayClass;
 		
@@ -755,13 +821,17 @@
 	*/
 	function GetOne($sql,$inputarr=false)
 	{
+	global $ADODB_COUNTRECS;
+		$crecs = $ADODB_COUNTRECS;
+		$ADODB_COUNTRECS = false;
+		
 		$ret = false;
 		$rs = &$this->Execute($sql,$inputarr);
 		if ($rs) {		
 			if (!$rs->EOF) $ret = reset($rs->fields);
 			$rs->Close();
 		} 
-		
+		$ADODB_COUNTRECS = $crecs;
 		return $ret;
 	}
 	
@@ -777,29 +847,43 @@
 		return $ret;
 	}
 	
-	function GetCol($sql, $inputarr = false)
+	function GetCol($sql, $inputarr = false, $trim = false)
 	{
 	  	$rv = false;
 	  	$rs = &$this->Execute($sql, $inputarr);
 	  	if ($rs) {
-	   		while (!$rs->EOF) {
-				$rv[] = reset($rs->fields);
-				$rs->MoveNext();
-	   		}
+	   		if ($trim) {
+				while (!$rs->EOF) {
+					$rv[] = trim(reset($rs->fields));
+					$rs->MoveNext();
+		   		}
+			} else {
+				while (!$rs->EOF) {
+					$rv[] = reset($rs->fields);
+					$rs->MoveNext();
+		   		}
+			}
 	   		$rs->Close();
 	  	}
 	  	return $rv;
 	}
 	
-	function CacheGetCol($secs, $sql, $inputarr = false)
+	function CacheGetCol($secs, $sql, $inputarr = false,$trim=false)
 	{
 	  	$rv = false;
 	  	$rs = &$this->CacheExecute($secs, $sql, $inputarr);
 	  	if ($rs) {
-	   		while (!$rs->EOF) {
-				$rv[] = reset($rs->fields);
-				$rs->MoveNext();
-	   		}
+			if ($trim) {
+				while (!$rs->EOF) {
+					$rv[] = trim(reset($rs->fields));
+					$rs->MoveNext();
+		   		}
+			} else {
+				while (!$rs->EOF) {
+					$rv[] = reset($rs->fields);
+					$rs->MoveNext();
+		   		}
+			}
 	   		$rs->Close();
 	  	}
 	  	return $rv;
@@ -857,6 +941,10 @@
 	*/
 	function GetRow($sql,$inputarr=false)
 	{
+	global $ADODB_COUNTRECS;
+		$crecs = $ADODB_COUNTRECS;
+		$ADODB_COUNTRECS = false;
+		
 		$rs = $this->Execute($sql,$inputarr);
 		if ($rs) {
 			$arr = false;
@@ -864,6 +952,8 @@
 			$rs->Close();
 			return $arr;
 		}
+		
+		$crecs = $ADODB_COUNTRECS;
 		return false;
 	}
 	
@@ -934,14 +1024,18 @@
 			$update = "UPDATE $table SET $uSet WHERE $where";
 		
 			$rs = $this->Execute($update);
-			if ($rs && ($this->Affected_Rows()>0)) return 1;
 			
-			if ($this->poorAffectedRows) {
-			# affected_rows == 0 if update field values identical to old values
-			# for mysql - which is silly.
-				$cnt = $this->GetOne("select count(*) from $table where $where");
-				if ($cnt > 0) return 1; // record already exists
+			if ($rs) {
+				if ($this->poorAffectedRows) {
+				# affected_rows == 0 if update field values identical to old values
+				# for mysql - which is silly.
+					$cnt = $this->GetOne("select count(*) from $table where $where");
+					if ($cnt > 0) return 1; // record already exists
+				} else
+					 if (($this->Affected_Rows()>0)) return 1;
 			}
+			
+				
 		}
 	//	print "<p>Error=".$this->ErrorNo().'<p>';
 		$first = true;
@@ -999,7 +1093,7 @@
 	* Flush cached recordsets that match a particular $sql statement. 
 	* If $sql == false, then we purge all files in the cache.
  	*/
-	function CacheFlush($sql=false)
+	function CacheFlush($sql=false,$inputarr=false)
 	{
 	global $ADODB_CACHE_DIR;
 	
@@ -1017,7 +1111,7 @@
 			}
 			return;
 		} 
-		$f = $this->_gencachename($sql,false);
+		$f = $this->_gencachename($sql.serialize($inputarr),false);
 		adodb_write_file($f,''); // is adodb_write_file needed?
 		@unlink($f);
 	}
@@ -1041,9 +1135,12 @@
 		
 		$m = md5($sql.$this->databaseType.$this->database.$this->user);
 		$dir = $ADODB_CACHE_DIR.'/'.substr($m,0,2);
-		if ($createdir)
-			if(!file_exists($dir) && !mkdir($dir,0771)) 
+		if ($createdir && !file_exists($dir)) {
+			$oldu = umask(0);
+			if (!mkdir($dir,0771)) 
 				if ($this->debug) ADOConnection::outp( "Unable to mkdir $dir for $sql");
+			umask($oldu);
+		}
 		return $dir.'/adodb_'.$m.'.cache';
 	}
 	
@@ -1107,7 +1204,11 @@
 				
 			} else
 				@unlink($md5file);
-		} else { 
+		} else {
+			if ($this->fnCacheExecute) {
+				$fn = $this->fnCacheExecute;
+				$fn($this, $secs2cache, $sql, $inputarr);
+			}
 		// ok, set cached object found
 			$rs->connection = &$this; // Pablo suggestion
 			if ($this->debug){ 
@@ -1198,6 +1299,16 @@
 		$val = fread($fd,filesize($path));
 		fclose($fd);
 		return $this->UpdateBlob($table,$column,$val,$where,$blobtype);
+	}
+	
+	function BlobDecode($blob)
+	{
+		return $blob;
+	}
+	
+	function BlobEncode($blob)
+	{
+		return $blob;
 	}
 	
 	/**
@@ -1436,7 +1547,8 @@
 		if (is_string($d) && !is_numeric($d)) 
 			if ($this->isoDates) return "'$d'";
 			else $d = ADOConnection::UnixDate($d);
-		return date($this->fmtDate,$d);
+			
+		return adodb_date($this->fmtDate,$d);
 	}
 	
 	
@@ -1454,7 +1566,8 @@
 		if (is_string($ts) && !is_numeric($ts)) 
 			if ($this->isoDates) return "'$ts'";
 			else $ts = ADOConnection::UnixTimeStamp($ts);
-		return date($this->fmtTimeStamp,$ts);
+			
+		return adodb_date($this->fmtTimeStamp,$ts);
 	}
 	
 	/**
@@ -1470,7 +1583,7 @@
 
 		if ($rr[1] <= TIMESTAMP_FIRST_YEAR) return 0;
 		// h-m-s-MM-DD-YY
-		return mktime(0,0,0,$rr[2],$rr[3],$rr[1]);
+		return @adodb_mktime(0,0,0,$rr[2],$rr[3],$rr[1]);
 	}
 	
 
@@ -1488,7 +1601,8 @@
 		if ($rr[1] <= TIMESTAMP_FIRST_YEAR && $rr[2]<= 1) return 0;
 	
 		// h-m-s-MM-DD-YY
-		return  @mktime($rr[5],$rr[6],$rr[7],$rr[2],$rr[3],$rr[1]);
+		if (!isset($rr[5])) return  adodb_mktime(0,0,0,$rr[2],$rr[3],$rr[1]);
+		return  @adodb_mktime($rr[5],$rr[6],$rr[7],$rr[2],$rr[3],$rr[1]);
 	}
 	
 	/**
@@ -1510,7 +1624,8 @@
 		else if ($tt == 0) return $this->emptyDate;
 		else if ($tt == -1) { // pre-TIMESTAMP_FIRST_YEAR
 		}
-		return date($fmt,$tt);
+		
+		return adodb_date($fmt,$tt);
 	
 	}
 	
@@ -1532,8 +1647,8 @@
 		
 			if ($this->replaceQuote[0] == '\\'){
 				// only since php 4.0.5
-				//$s = str_replace(array('\\',"\0"),array('\\\\',"\\\0"),$s);
-				$s = str_replace("\0","\\\0", str_replace('\\','\\\\',$s));
+				$s = adodb_str_replace(array('\\',"\0"),array('\\\\',"\\\0"),$s);
+				//$s = str_replace("\0","\\\0", str_replace('\\','\\\\',$s));
 			}
 			return  "'".str_replace("'",$this->replaceQuote,$s)."'";
 		}

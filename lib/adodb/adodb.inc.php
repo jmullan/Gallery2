@@ -15,12 +15,11 @@
 /**
 	\mainpage 	
 	
-	 @version V2.90 11 Dec 2002 (c) 2000-2002 John Lim (jlim\@natsoft.com.my). All rights reserved.
+	 @version V3.20 17 Feb 2003 (c) 2000-2003 John Lim (jlim\@natsoft.com.my). All rights reserved.
 
 	Released under both BSD license and Lesser GPL library license. 
  	Whenever there is any discrepancy between the two licenses, 
  	the BSD license will take precedence. 
-
 	
 	PHP's database access functions are not standardised. This creates a need for a database 
 	class library to hide the differences between the different database API's (encapsulate 
@@ -73,11 +72,7 @@
 	 */
 	if (!defined('ADODB_DIR')) define('ADODB_DIR',dirname(__FILE__));
 	
-	if (strpos(strtoupper(PHP_OS),'WIN') !== false) {
-	// on windows, negative timestamps are illegal as of php 4.2.0
-		define('TIMESTAMP_FIRST_YEAR',1970);
-	} else
-		define('TIMESTAMP_FIRST_YEAR',1904);
+	define('TIMESTAMP_FIRST_YEAR',100);
 	
 	//==============================================================================================	
 	// GLOBAL VARIABLES
@@ -94,6 +89,34 @@
 	// GLOBAL SETUP
 	//==============================================================================================	
 	
+	if (strnatcmp(PHP_VERSION,'4.3.0')>=0) {
+		define('ADODB_PHPVER',0x4300);
+	} else if (strnatcmp(PHP_VERSION,'4.2.0')>=0) {
+		define('ADODB_PHPVER',0x4200);
+	} else if (strnatcmp(PHP_VERSION,'4.0.5')>=0) {
+		define('ADODB_PHPVER',0x4050);
+	} else {
+		define('ADODB_PHPVER',0x4000);
+	}
+	
+	//if (extension_loaded('dbx')) define('ADODB_DBX',1);
+	
+	/**
+	 	Accepts $src and $dest arrays, replacing string $data
+	*/
+	function ADODB_str_replace($src, $dest, $data)
+	{
+		if (ADODB_PHPVER >= 0x4050) return str_replace($src,$dest,$data);
+		
+		$s = reset($src);
+		$d = reset($dest);
+		while ($s !== false) {
+			$data = str_replace($s,$d,$data);
+			$s = next($src);
+			$d = next($dest);
+		}
+		return $data;
+	}
 	
 	function ADODB_Setup()
 	{
@@ -126,7 +149,7 @@
 		/**
 		 * ADODB version as a string.
 		 */
-		$ADODB_vers = 'V2.90 11 Dec 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved. Released BSD & LGPL.';
+		$ADODB_vers = 'V3.20 17 Feb 2003 (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved. Released BSD & LGPL.';
 	
 		/**
 		 * Determines whether recordset->RecordCount() is used. 
@@ -206,9 +229,13 @@
 	}
 	
 	//==============================================================================================	
+	// DATE AND TIME FUNCTIONS
+	//==============================================================================================	
+	include_once(ADODB_DIR.'/adodb-time.inc.php');
+	
+	//==============================================================================================	
 	// CLASS ADORecordSet
 	//==============================================================================================	
-	
 	include_once(ADODB_DIR.'/adodb-recordset.inc.php');
 	
 	//==============================================================================================	
@@ -278,12 +305,12 @@
 		 *			unless paramter $colnames is used.
 		 * @param fieldarr	holds an array of ADOFieldObject's.
 		 */
-		function InitArrayFields(&$array,&$fieldarr)
+		function InitArrayFields($array,$fieldarr)
 		{
-			$this->_array = &$array;
+			$this->_array = $array;
 			$this->_skiprow1= false;
 			if ($fieldarr) {
-				$this->_fieldobjects = &$fieldarr;
+				$this->_fieldobjects = $fieldarr;
 			} 
 			
 			$this->Init();
@@ -440,6 +467,35 @@
 		return $obj;
 	}
 	
+	function &NewDataDictionary($conn)
+	{
+		$provider = $conn->dataProvider;
+		if ($provider !== 'native' && $provider != 'odbc' && $provider != 'ado') 
+			$drivername = $conn->dataProvider;
+		else {
+			$drivername = $conn->databaseType;
+			if (substr($drivername,0,5) == 'odbc_') $drivername = substr($drivername,5);
+			else if (substr($drivername,0,4) == 'ado_') $drivername = substr($drivername,4);
+			else if ($drivername == 'oracle') $drivername = 'oci8';
+		}
+		include_once(ADODB_DIR.'/adodb-lib.inc.php');
+		include_once(ADODB_DIR.'/adodb-datadict.inc.php');
+		$path = ADODB_DIR."/datadict/datadict-$drivername.inc.php";
+
+		if (!file_exists($path)) {
+			ADOConnection::outp("Database driver '$path' not available");
+			return false;
+		}
+		include_once($path);
+		$class = "ADODB2_$drivername";
+		$dict = new $class();
+		$dict->connection = &$conn;
+		$dict->upperName = strtoupper($drivername);
+		
+		return $dict;
+	}
+
+
 	/**
 	* Save a file $filename and its $contents (normally for caching) with file locking
 	*/
@@ -491,5 +547,6 @@
 		return $ok;
 	}
 
+	
 } // defined
 ?>

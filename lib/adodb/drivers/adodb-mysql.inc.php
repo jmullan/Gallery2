@@ -1,6 +1,6 @@
 <?php
 /*
-V2.90 11 Dec 2002  (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
+V3.20 17 Feb 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -34,6 +34,7 @@ class ADODB_mysql extends ADOConnection {
 	var $forceNewConnect = false;
 	var $poorAffectedRows = true;
 	var $clientFlags = 0;
+	var $dbxDriver = 1;
 	
 	function ADODB_mysql() 
 	{			
@@ -46,6 +47,23 @@ class ADODB_mysql extends ADOConnection {
 		return $arr;
 	}
 	
+	// if magic quotes disabled, use mysql_real_escape_string()
+	function qstr($s,$magic_quotes=false)
+	{
+		if (!$magic_quotes) {
+		
+			if (ADODB_PHPVER >= 0x4300) return "'".mysql_real_escape_string($s)."'";
+			
+			if ($this->replaceQuote[0] == '\\'){
+				$s = adodb_str_replace(array('\\',"\0"),array('\\\\',"\\\0"),$s);
+			}
+			return  "'".str_replace("'",$this->replaceQuote,$s)."'"; 
+		}
+		
+		// undo magic quotes for "
+		$s = str_replace('\\"','"',$s);
+		return "'$s'";
+	}
 	
 	function _insertid()
 	{
@@ -184,10 +202,10 @@ class ADODB_mysql extends ADOConnection {
 	// returns true or false
 	function _connect($argHostname, $argUsername, $argPassword, $argDatabasename)
 	{
-		if (strnatcmp(PHP_VERSION,'4.3.0')>=0)
+		if (ADODB_PHPVER >= 0x4300)
 			$this->_connectionID = mysql_connect($argHostname,$argUsername,$argPassword,
 												$this->forceNewConnect,$this->clientFlags);
-		else if (strnatcmp(PHP_VERSION,'4.2.0')>=0)
+		else if (ADODB_PHPVER >= 0x4200)
 			$this->_connectionID = mysql_connect($argHostname,$argUsername,$argPassword,
 												$this->forceNewConnect);
 		else
@@ -201,7 +219,7 @@ class ADODB_mysql extends ADOConnection {
 	// returns true or false
 	function _pconnect($argHostname, $argUsername, $argPassword, $argDatabasename)
 	{
-		if (strnatcmp(PHP_VERSION,'4.3.0')>=0)
+		if (ADODB_PHPVER >= 0x4300)
 			$this->_connectionID = mysql_pconnect($argHostname,$argUsername,$argPassword,$this->clientFlags);
 		else
 			$this->_connectionID = mysql_pconnect($argHostname,$argUsername,$argPassword);
@@ -292,9 +310,10 @@ class ADODB_mysql extends ADOConnection {
 	// returns queryID or false
 	function _query($sql,$inputarr)
 	{
-	global $ADODB_COUNTRECS;
-		if($ADODB_COUNTRECS) return mysql_query($sql,$this->_connectionID);
-		else return mysql_unbuffered_query($sql,$this->_connectionID); // requires PHP >= 4.0.6
+	//global $ADODB_COUNTRECS;
+		//if($ADODB_COUNTRECS) 
+		return mysql_query($sql,$this->_connectionID);
+		//else return @mysql_unbuffered_query($sql,$this->_connectionID); // requires PHP >= 4.0.6
 	}
 
 	/*	Returns: the last error message from previous database operation	*/	
@@ -321,29 +340,6 @@ class ADODB_mysql extends ADOConnection {
 		$this->_connectionID = false;
 	}
 
-	 function ActualType($meta)
-	{
-		switch($meta) {
-		case 'C': return 'VARCHAR';
-		case 'X': return 'LONGTEXT';
-		
-		case 'C2': return 'VARCHAR';
-		case 'X2': return 'LONGTEXT';
-		
-		case 'B': return 'LONGBLOB';
-			
-		case 'D': return 'DATE';
-		case 'T': return 'DATETIME';
-		case 'L': return 'TINYINT';
-		case 'R': return 'INTEGER NOT NULL AUTO_INCREMENT';
-		case 'I': return 'INTEGER';  // enough for 9 petabytes!
-		
-		case 'F': return 'DOUBLE';
-		case 'N': return 'NUMERIC';
-		default:
-			return false;
-		}
-	}
 	
 	/*
 	* Maximum size of C field
@@ -392,8 +388,9 @@ class ADORecordSet_mysql extends ADORecordSet{
 	
 	function _initrs()
 	{
-	GLOBAL $ADODB_COUNTRECS;
-		$this->_numOfRows = ($ADODB_COUNTRECS) ? @mysql_num_rows($this->_queryID):-1;
+	//GLOBAL $ADODB_COUNTRECS;
+	//	$this->_numOfRows = ($ADODB_COUNTRECS) ? @mysql_num_rows($this->_queryID):-1;
+		$this->_numOfRows = @mysql_num_rows($this->_queryID);
 		$this->_numOfFields = @mysql_num_fields($this->_queryID);
 	}
 	
@@ -440,6 +437,7 @@ class ADORecordSet_mysql extends ADORecordSet{
 	
 	function _seek($row)
 	{
+		if ($this->_numOfRows == 0) return false;
 		return @mysql_data_seek($this->_queryID,$row);
 	}
 	
@@ -450,9 +448,12 @@ class ADORecordSet_mysql extends ADORecordSet{
 		if (!$this->EOF) {		
 			$this->_currentRow++;
 			// using & below slows things down by 20%!
-			$this->fields = @mysql_fetch_array($this->_queryID,$this->fetchMode);
+			$f = @mysql_fetch_array($this->_queryID,$this->fetchMode);
 			
-			if (is_array($this->fields)) return true;
+			if (is_array($f)) {
+				$this->fields = $f;
+				return true;
+			}
 			$this->EOF = true;
 		}
 		/* -- tested raising an error -- appears pointless
@@ -467,8 +468,12 @@ class ADORecordSet_mysql extends ADORecordSet{
 	
 	function _fetch()
 	{
-		$this->fields = @mysql_fetch_array($this->_queryID,$this->fetchMode);
-		return (is_array($this->fields));
+		$f = @mysql_fetch_array($this->_queryID,$this->fetchMode);
+		if (is_array($f)) {
+			$this->fields = $f;
+			return true;
+		}
+		return false;
 	}
 	
 	function _close() {
