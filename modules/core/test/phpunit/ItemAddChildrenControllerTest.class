@@ -48,12 +48,16 @@ class ItemAddChildrenControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+
+	$this->_savePlatform = $gallery->getPlatform();
+	$gallery->_platform = new ItemAddChildrenControllerTestPlatform($this->_savePlatform);
     }
 
     function tearDown() {
 	global $gallery;
 
 	$gallery->deleteEntityById($this->_rootAlbum->getId());
+	$gallery->_platform = $this->_savePlatform;
 	
 	parent::tearDown();
     }
@@ -177,6 +181,55 @@ class ItemAddChildrenControllerTest extends GalleryControllerTestCase {
 	    $this->assert(!isset($seenWeights[$orderWeight]), 'Seen this weight before');
 	    $seenWeights[$orderWeight] = 1;
 	}
+    }
+
+    function testAddChildrenFromWebPage() {
+	global $gallery;
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('itemId', $this->_rootAlbum->getId());
+	GalleryUtilities::putRequestVariable('form[action][addFromWebPage]', 1);
+	GalleryUtilities::putRequestVariable('form[webPageUrls][http://test/test1.gif]', 1);
+	GalleryUtilities::putRequestVariable('form[webPageUrls][http://test/test1.jpg]', 1);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('view' => 'core:ItemAdmin',
+				  'subView' => 'core:ItemAddChildrenConfirmation',
+				  'itemId' => $this->_rootAlbum->getId()),
+			    $results['redirect']);
+	$this->assertEquals(2, sizeof($results['status']['addFromWebPage']));
+	$this->assertEquals('http://test/test1.gif', $results['status']['addFromWebPage'][0]['fileName']);
+	$this->assertEquals('http://test/test1.jpg', $results['status']['addFromWebPage'][1]['fileName']);
+	$this->assertEquals(array(), $results['error']);
+    }
+}
+
+class ItemAddChildrenControllerTestPlatform extends GalleryPlatform {
+    function ItemAddChildrenControllerTestPlatform($delegate) {
+	$this->_delegate = $delegate;
+    }
+
+    function exec($cmdArray, $returnErrorOutput=false) {
+	return $this->_delegate->exec($cmdArray, $returnErrorOutput);
+    }
+
+    function getDirectorySeparator() {
+	return $this->_delegate->getDirectorySeparator();
+    }
+
+    function fopen($filename, $mode, $use_include_path=0) {
+	switch($filename) {
+	case 'http://test/test1.gif':
+	    return $this->_delegate->fopen(dirname(__FILE__) . '/../data/test1.gif', $mode, $use_include_path);
+	    break;
+
+	case 'http://test/test1.jpg':
+	    return $this->_delegate->fopen(dirname(__FILE__) . '/../data/test1.jpg', $mode, $use_include_path);
+	    break;
+	}
+
+	return $this->_delegate->fopen($filename, $mode, $use_include_path);
     }
 }
 ?>

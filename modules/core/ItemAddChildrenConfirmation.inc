@@ -58,6 +58,8 @@ class ItemAddChildrenConfirmationView extends GalleryView {
 		$status = $status['addFromLocalServer'];
 	    } else if (isset($status['addFromBrowser'])) {
 		$status = $status['addFromBrowser'];
+	    } else if (isset($status['addFromWebPage'])) {
+		$status = $status['addFromWebPage'];
 	    }
 	    $count = sizeof($status);
 	} else {

@@ -95,6 +95,14 @@
 	</script>
       {/if}
 
+      {if ($ItemAddChildren.mode == 'fromWebPage')}
+	<script type="text/javascript" language="javascript">
+          function selectPath(path) {ldelim}
+            document.forms[0].elements['{g->elementName name="form[webPage]"}'].value = path;
+          {rdelim}
+	</script>
+      {/if}
+
       {if $ItemAddChildren.mode == 'fromBrowser'}
 	{g->box style="admin"}
 	  {g->description}
@@ -193,6 +201,20 @@
 		    {/g->item}
 		  {/foreach}
 		{/g->listing}
+		{if !empty($ItemAddChildren.recentPaths)}
+		  {g->text text="Recent Directories"}
+		  {g->listing}
+		    {foreach from=$ItemAddChildren.recentPaths item=dir}
+		      {g->item}
+			{g->title}
+			  {g->link javascript="selectPath('$dir')"}
+			    {$dir}
+			  {/g->link}
+			{/g->title}
+		      {/g->item}
+		    {/foreach}
+		  {/g->listing}
+		{/if}
 		{g->input type="submit" name="form[action][findFilesFromLocalServer]"}{g->text text="Find Files"}{/g->input}
 	      {/g->element}
 	    {else} {* {if empty($form.localServerFiles)} *}
@@ -271,7 +293,28 @@
 	      {/g->error}
 	    {/if}
 	    
+	    {if isset($form.error.webPage.unavailable)}
+	      {g->error}
+		{g->text text="The web page you specified is unavailable"}
+	      {/g->error}
+	    {/if}
+	    
 	    {g->element}
+	      {if !empty($ItemAddChildren.recentPaths)}
+		{g->text text="Recent URLs"}
+		{g->listing}
+		  {foreach from=$ItemAddChildren.recentPaths item=dir}
+		    {g->item}
+		      {g->title}
+			{g->link javascript="selectPath('$dir')"}
+			  {$dir}
+			{/g->link}
+		      {/g->title}
+		    {/g->item}
+		  {/foreach}
+		{/g->listing}
+	      {/if}
+
 	      {g->input type="submit" name="form[action][findFilesFromWebPage]"}
 		{g->text text="Find Files"}
 	      {/g->input}
@@ -307,7 +350,7 @@
 	      {foreach from=$form.webPageUrls item=url}
 		{g->row}
 		  {g->column}
-		    {g->input type="checkbox" name="form[webPageUrl][`$url.url`]"}{/g->input}
+		    {g->input type="checkbox" name="form[webPageUrls][`$url.url`]"}{/g->input}
 		  {/g->column}
 		  {g->column}
 		    {$url.url}
@@ -318,9 +361,6 @@
 		{/g->row}
 	      {/foreach}
 	    {/g->table}
-	    {g->element style="emphasized"}
-	      NOTE: ADDING URLS DOES NOT WORK YET
-	    {/g->element}
 	    {g->input type="submit" name="form[action][addFromWebPage]"}{g->text text="Add URLs"}{/g->input}
 	  {/if} {* {if !empty($form.webPageUrls)} *}
 	{/g->box}

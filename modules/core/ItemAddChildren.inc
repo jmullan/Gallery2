@@ -174,6 +174,54 @@ class ItemAddChildrenController extends GalleryController {
 	    $redirect['itemId'] = $itemId;
 	} else if (isset($form['action']['findFilesFromWebPage'])) {
 	    /* Delegate back to the same view */
+	} else if (isset($form['action']['addFromWebPage'])) {
+	    foreach (array_keys($form['webPageUrls']) as $url) {
+		/* Copy the file locally */
+		$tmpDir = $gallery->getConfig('data.gallery.tmp');
+		$tmpFile = tempnam($tmpDir, 'add');
+
+		$fin = $platform->fopen($url, 'rb');
+		$fout = $platform->fopen($tmpFile, 'wb');
+		while (!$platform->feof($fin)) {
+		    $buf = $platform->fread($fin, 4096);
+		    $platform->fwrite($fout, $buf);
+		}
+		$platform->fclose($fin);
+		$platform->fclose($fout);
+
+		/* Add it */
+		list ($base, $extension) = GalleryUtilities::getFileNameComponents(basename($url));
+		$mimeType = GalleryUtilities::convertExtensionToMime($extension);
+
+		list ($ret, $newItem) = GalleryItemHelper::addItemToAlbum($tmpFile,
+									  $base,
+									  $base,
+									  $base,
+									  $base,
+									  $mimeType,
+									  $item->getId());
+		$platform->unlink($tmpFile);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		if ($albumNeedsThumbnail) {
+		    list ($ret, $success) =
+			GalleryItemHelper::setThumbnailFromItem($item->getId(), $newItem->getId());
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		    $albumNeedsThumbnail = !$success;
+		}
+
+		$status['addFromWebPage'][] = array('fileName' => $url,
+						    'id' => $newItem->getId());
+	    }
+
+	    /* Figure out where to redirect upon success */
+	    $redirect['view'] = 'core:ItemAdmin';
+	    $redirect['subView'] = 'core:ItemAddChildrenConfirmation';
+	    $redirect['itemId'] = $itemId;
 	}
 
 	$ret = $gallery->releaseLocks($lockIds);
@@ -284,6 +332,12 @@ class ItemAddChildrenView extends GalleryView {
 		if ($platform->is_dir($path)) {
 		    $handle = $platform->opendir($path);
 
+		    /* Add path to the recent path list */
+		    $session =& $gallery->getSession();
+		    $recentPaths = $session->get('core.view.ItemAddChildren.recentPaths');
+		    $recentPaths[$mode][$form['localServerPath']] = 1;
+		    $session->put('core.view.ItemAddChildren.recentPaths', $recentPaths);
+
 		    while (false !== ($fileName = $platform->readdir($handle))) {
 			$gallery->guaranteeTimeLimit(5);
 			if ($fileName == '.' || $fileName == '..') {
@@ -343,88 +397,93 @@ class ItemAddChildrenView extends GalleryView {
 		if ($baseUrlComponents['scheme'] != 'http') {
 		    $form['error']['webPage']['invalid'] = 1;
 		} else {
-		    $fd = $platform->fopen($form['webPage'], 'r');
-
-		    /* Read the web page into a buffer */
-		    $buffer = '';
-		    do {
-			$chunk = fread($fd, 4096);
-			if (strlen($chunk) == 0) {
-			    break;
+		    list ($buffer, $headers, $actualUrl) =
+			GalleryUtilities::fetchWebPage($form['webPage']);
+		    if (!isset($buffer)) {
+			$form['error']['webPage']['unavailable'] = 1;
+		    } else {
+			if (isset($actualUrl) && $actualUrl != $form['webPage']) {
+			    $form['webPage'] = $actualUrl;
+			    $baseUrlComponents = parse_url($form['webPage']);
 			}
 
-			$buffer .= $chunk;
-		    } while (true);
-		    fclose($fd);
-
-		    /*
-		     * Parse the buffer.  We match:
-		     *  href="foo bar"    href='foo bar'   href=foo
-		     *  src="foo bar"     src='foo bar'    src=foo
-		     */
-		    /* Parse the buffer */
-		    preg_match_all('/(?:src|href)=(?:\'(.*?)\'|\"(.*?)\"|([^\'\"]*))/i', $buffer, $matches);
-
-		    /* Validate the URLs as best we can */
-		    $webPageUrlList = array();
-		    $isSupported = array();
-		    $seenBefore = array();
-		    foreach (array_merge($matches[1], $matches[2], $matches[3]) as $url) {
-			if (isset($seenBefore[$url])) {
-			    continue;
-			} else {
-			    $seenBefore[$url] = 1;
-			}
+			/* Add path to the recent path list */
+			$session =& $gallery->getSession();
+			$recentPaths = $session->get('core.view.ItemAddChildren.recentPaths');
+			$recentPaths[$mode][$form['webPage']] = 1;
+			$session->put('core.view.ItemAddChildren.recentPaths', $recentPaths);
 
 			/*
-			 * Some sites (slashdot) have images that start with //
-			 * and this confuses Gallery.  Prepend the base scheme.
+			 * Parse the buffer.  We match:
+			 *  href="foo bar"    href='foo bar'   href=foo
+			 *  src="foo bar"     src='foo bar'    src=foo
 			 */
-			if (!strncmp($url, '//', 2)) {
-			    $url = $baseUrlComponents['scheme'] . ':' . $url;
-			}
+			/* Parse the buffer */
+			preg_match_all('/(?:src|href)=(?:\'(.*?)\'|\"(.*?)\"|([^\'\"]*))/i',
+				       $buffer, $matches);
+
+			/* Validate the URLs as best we can */
+			$webPageUrlList = array();
+			$isSupported = array();
+			$seenBefore = array();
+			foreach (array_merge($matches[1], $matches[2], $matches[3]) as $url) {
+			    if (isset($seenBefore[$url])) {
+				continue;
+			    } else {
+				$seenBefore[$url] = 1;
+			    }
+
+			    /*
+			     * Some sites (slashdot) have images that start with //
+			     * and this confuses Gallery.  Prepend the base scheme.
+			     */
+			    if (!strncmp($url, '//', 2)) {
+				$url = $baseUrlComponents['scheme'] . ':' . $url;
+			    }
 			
-			$urlComponents = parse_url($url);
-			if (empty($urlComponents['scheme'])) {
-			    $urlComponents['scheme'] = $baseUrlComponents['scheme'];
-			}
-
-			if (empty($urlComponents['path'])) {
-			    continue;
-			}
-
-			$mimeType = GalleryUtilities::getMimeType($urlComponents['path']);
-			if ($mimeType == 'application/unknown') {
-			    continue;
-			}
-			if (!isset($mimeTypeItemMap[$mimeType])) {
-			    list ($ret, $mimeTypeItemMap[$mimeType]) = GalleryItemHelper::newItemByMimeType($mimeType);
-			    if ($ret->isError()) {
-				return array($ret->wrap(__FILE__, __LINE__), null);
+			    $urlComponents = parse_url($url);
+			    if (empty($urlComponents['scheme'])) {
+				$urlComponents['scheme'] = $baseUrlComponents['scheme'];
 			    }
-			}
 
-			if (empty($urlComponents['host'])) {
-			    $urlComponents['host'] = $baseUrlComponents['host'];
-			}
-
-			$tmp = $urlComponents['scheme'] . '://' . $urlComponents['host'];
-			if (!empty($urlComponents['path'])) {
-			    if ($urlComponents['path'][0] != '/' && $tmp[strlen($tmp)-1] != '/') {
-				$tmp .= '/';
+			    if (empty($urlComponents['path'])) {
+				continue;
 			    }
-			    $tmp .= $urlComponents['path'];
-			}
 
-			if (!empty($urlComponents['query'])) {
-			    $tmp .= '?' . $urlComponents['query'];
-			}
+			    $mimeType = GalleryUtilities::getMimeType($urlComponents['path']);
+			    if ($mimeType == 'application/unknown') {
+				continue;
+			    }
+			    if (!isset($mimeTypeItemMap[$mimeType])) {
+				list ($ret, $mimeTypeItemMap[$mimeType]) =
+				    GalleryItemHelper::newItemByMimeType($mimeType);
+				if ($ret->isError()) {
+				    return array($ret->wrap(__FILE__, __LINE__), null);
+				}
+			    }
 
-			$form['webPageUrls'][] =
-			    array('url' => $tmp,
-				  'itemType' => $mimeTypeItemMap[$mimeType]->itemTypeName());
+			    if (empty($urlComponents['host'])) {
+				$urlComponents['host'] = $baseUrlComponents['host'];
+			    }
+
+			    $tmp = $urlComponents['scheme'] . '://' . $urlComponents['host'];
+			    if (!empty($urlComponents['path'])) {
+				if ($urlComponents['path'][0] != '/' && $tmp[strlen($tmp)-1] != '/') {
+				    $tmp .= '/';
+				}
+				$tmp .= $urlComponents['path'];
+			    }
+
+			    if (!empty($urlComponents['query'])) {
+				$tmp .= '?' . $urlComponents['query'];
+			    }
+
+			    $form['webPageUrls'][] =
+				array('url' => $tmp,
+				      'itemType' => $mimeTypeItemMap[$mimeType]->itemTypeName());
+			}
+			$webPageUrlCount = sizeof($form['webPageUrls']);
 		    }
-		    $webPageUrlCount = sizeof($form['webPageUrls']);
 		}
 	    }
 	}
@@ -439,7 +498,14 @@ class ItemAddChildrenView extends GalleryView {
 	if (isset($webPageUrlCount)) {
 	    $ItemAddChildren['webPageUrlCount'] = $webPageUrlCount;
 	}
-	
+
+	$session =& $gallery->getSession();
+	$recentPaths = $session->get('core.view.ItemAddChildren.recentPaths');
+	if (!isset($recentPaths[$mode])) {
+	    $recentPaths[$mode] = array();
+	}
+	$ItemAddChildren['recentPaths'] = array_keys($recentPaths[$mode]);
+
 	$template->setVariable('ItemAddChildren', $ItemAddChildren);
 
 	if ($mode == 'fromBrowser') {
