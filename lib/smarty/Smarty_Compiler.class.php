@@ -386,6 +386,7 @@ class Smarty_Compiler extends Smarty {
         $tag_modifier = isset($match[2]) ? $match[2] : null;
         $tag_args = isset($match[3]) ? $match[3] : null;
 		
+
         /* If the tag name is a variable or object, we process it. */
         if (preg_match('!^' . $this->_obj_call_regexp . '|' . $this->_var_regexp . '$!', $tag_command)) {
             $_return = $this->_parse_var_props($tag_command . $tag_modifier, $this->_parse_attrs($tag_args));
@@ -692,79 +693,81 @@ class Smarty_Compiler extends Smarty {
             $tag_command = substr($tag_command, 1);
         } else {
             $start_tag = true;
-		}
+        }
 
-		list($object, $obj_comp) = explode('->', $tag_command);
+        list($object, $obj_comp) = explode('->', $tag_command);
 
         $arg_list = array();
-		if(count($attrs)) {
-			$_assign_var = false;
-        	foreach ($attrs as $arg_name => $arg_value) {
-				if($arg_name == 'assign') {
-					$_assign_var = $arg_value;
-					unset($attrs['assign']);
-					continue;
-				}
-            	if (is_bool($arg_value))
-                	$arg_value = $arg_value ? 'true' : 'false';
-            	$arg_list[] = "'$arg_name' => $arg_value";
-        	}
-		}
-				
-		if($this->_reg_objects[$object][2]) {
-			// smarty object argument format
-			$args = "array(".implode(',', (array)$arg_list)."), \$this";
-		} else {
-			// traditional argument format
-			$args = implode(',', array_values($attrs));
-			if (empty($args)) {
-				$args = 'null';
-			}
-		}
+        if(count($attrs)) {
+            $_assign_var = false;
+            foreach ($attrs as $arg_name => $arg_value) {
+                if($arg_name == 'assign') {
+                    $_assign_var = $arg_value;
+                    unset($attrs['assign']);
+                    continue;
+                }
+                if (is_bool($arg_value))
+                    $arg_value = $arg_value ? 'true' : 'false';
+                $arg_list[] = "'$arg_name' => $arg_value";
+            }
+        }
+                
+        if($this->_reg_objects[$object][2]) {
+            // smarty object argument format
+            $args = "array(".implode(',', (array)$arg_list)."), \$this";
+        } else {
+            // traditional argument format
+            $args = implode(',', array_values($attrs));
+            if (empty($args)) {
+                $args = 'null';
+            }
+        }
 
-		$prefix = '';
-		$postfix = '';
-		if(!is_object($this->_reg_objects[$object][0])) {
-			$this->_trigger_fatal_error("registered '$object' is not an object");
-		} elseif(!empty($this->_reg_objects[$object][1]) && !in_array($obj_comp, $this->_reg_objects[$object][1])) {
-			$this->_trigger_fatal_error("'$obj_comp' is not a registered component of object '$object'");
-		} elseif(method_exists($this->_reg_objects[$object][0], $obj_comp)) {
-			// method
-			if(in_array($obj_comp, $this->_reg_objects[$object][3])) {
-				// block method 
-				if ($start_tag) {
-					$prefix = "\$this->_tag_stack[] = array('$obj_comp', $args); ob_start();";
-					$return = null;
-					$postfix = '';
-			} else {
-					$prefix = "\$this->_obj_block_content = ob_get_contents(); ob_end_clean(); ";
-					$return = "\$this->_reg_objects['$object'][0]->$obj_comp(\$this->_tag_stack[count(\$this->_tag_stack)-1][1], \$this->_obj_block_content, \$this)";
-					$postfix = "array_pop(\$this->_tag_stack);";
-				}
-			} else {
-				// non-block method
-				$return = "\$this->_reg_objects['$object'][0]->$obj_comp($args)";
-			}
-		} else {
-			// property
-			$return = "\$this->_reg_objects['$object'][0]->$obj_comp";
-		}
-		
-		if($return != null) {
-		if($tag_modifier != '') {
-			$this->_parse_modifiers($return, $tag_modifier);
-		}
-		
-			if(!empty($_assign_var)) {
-				$output = "\$this->assign('" . $this->_dequote($_assign_var) ."',  $return);";
-		} else {
-				$output = 'echo ' . $return . ';';
-		}
-		} else {
-			$output = '';
-    }
-	
-		return '<?php ' . $prefix . $output . $postfix . "?>\n";
+        $prefix = '';
+        $postfix = '';
+        if(!is_object($this->_reg_objects[$object][0])) {
+            $this->_trigger_fatal_error("registered '$object' is not an object");
+        } elseif(!empty($this->_reg_objects[$object][1]) && !in_array($obj_comp, $this->_reg_objects[$object][1])) {
+            $this->_trigger_fatal_error("'$obj_comp' is not a registered component of object '$object'");
+        } elseif(method_exists($this->_reg_objects[$object][0], $obj_comp)) {
+            // method
+            if(in_array($obj_comp, $this->_reg_objects[$object][3])) {
+                // block method 
+                if ($start_tag) {
+                    $prefix = "\$this->_tag_stack[] = array('$obj_comp', $args); ";
+                    $prefix .= "\$this->_reg_objects['$object'][0]->$obj_comp(\$this->_tag_stack[count(\$this->_tag_stack)-1][1], null, \$this); ";
+                    $prefix .= "ob_start();";
+                    $return = null;
+                    $postfix = '';
+                } else {
+                    $prefix = "\$this->_obj_block_content = ob_get_contents(); ob_end_clean(); ";
+                    $return = "\$this->_reg_objects['$object'][0]->$obj_comp(\$this->_tag_stack[count(\$this->_tag_stack)-1][1], \$this->_obj_block_content, \$this)";
+                    $postfix = "array_pop(\$this->_tag_stack);";
+                }
+            } else {
+                // non-block method
+                $return = "\$this->_reg_objects['$object'][0]->$obj_comp($args)";
+            }
+        } else {
+            // property
+            $return = "\$this->_reg_objects['$object'][0]->$obj_comp";
+        }
+        
+        if($return != null) {
+            if($tag_modifier != '') {
+                $this->_parse_modifiers($return, $tag_modifier);
+            }
+            
+            if(!empty($_assign_var)) {
+                $output = "\$this->assign('" . $this->_dequote($_assign_var) ."',  $return);";
+            } else {
+                $output = 'echo ' . $return . ';';
+            }
+        } else {
+            $output = '';
+        }
+        
+        return '<?php ' . $prefix . $output . $postfix . "?>\n";
     }
 	
 
