@@ -1,7 +1,7 @@
 {capture name="date"}{g->date timestamp=$comment.date format="%e-%b-%Y %H:%M"}{/capture}
 {g->box style="comment"}
   {g->title}
-    {$comment.subject}
+    {$comment.subject|markup}
   {/g->title}
   {if isset($can.edit) || isset($can.delete)}
     {g->subtitle}
@@ -45,9 +45,9 @@
 
   {g->element}
     {if isset($truncate)}
-      {$comment.comment|truncate:$truncate}
+      {$comment.comment|truncate:$truncate|markup}
     {else}
-      {$comment.comment}
+      {$comment.comment|markup}
     {/if}
   {/g->element}
 {/g->box}

@@ -13,10 +13,10 @@
       
       {g->box style="comment"}
 	{g->title}
-	  {$form.subject}
+	  {$form.subject|markup}
 	{/g->title}
 	{g->element}
-	  {$form.comment}
+	  {$form.comment|markup}
 	{/g->element}
       {/g->box}
     {/g->box}
