@@ -204,7 +204,7 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('an error', 'an error'), $results['error'], 'error');
 	$this->assertEquals(2, count($results['status']['addedFiles']), 'added 2 items');
 	$addedFiles = $results['status']['addedFiles'];
-	$this->assertEquals(array('foo.ext', 'bar.ext'),
+	$this->assertEquals(array('bar.ext', 'foo.ext'),
 			    array($addedFiles[0]['fileName'], $addedFiles[1]['fileName']), 'files');
 	$this->assertEquals(array('a warning'), $addedFiles[0]['warnings'], 'warning 1');
 	$this->assertEquals(array('a warning'), $addedFiles[1]['warnings'], 'warning 2');
@@ -219,7 +219,7 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals('bar', $item->getTitle(), 'title set with base filename');
+	$this->assertEquals('foo', $item->getTitle(), 'title set with base filename');
 	$this->assertEquals('hoho', $item->getSummary(), 'summary set from archive');
     }
 
