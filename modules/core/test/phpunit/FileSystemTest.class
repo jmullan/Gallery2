@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -41,9 +41,9 @@ class FileSystemTest extends GalleryTestCase {
 
     function setUp() {
 	global $gallery;
-	
+
 	parent::setUp();
-	
+
 	$iterations = 3;
 	$parentId = $this->_getRootId();
 	for ($i = 0; $i < $iterations; $i++) {
@@ -89,14 +89,14 @@ class FileSystemTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	list ($ret, $logicalPath) = $root->fetchLogicalPath();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$this->assertEquals('/', $logicalPath);
-	
+
 	list ($ret, $logicalPath) = $this->_albums[1]->fetchLogicalPath();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -111,7 +111,7 @@ class FileSystemTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	list ($ret, $logicalPath) = $item->fetchLogicalPath();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -128,8 +128,9 @@ class FileSystemTest extends GalleryTestCase {
 	global $gallery;
 	$originalPlatform = $gallery->getPlatform();
 	$gallery->_platform = new FileSystemTestPlatform('/');
+	$originalAlbumsDir = $gallery->getConfig('data.gallery.albums');
 	$gallery->setConfig('data.gallery.albums', '');
-	
+
 	list ($ret, $path) = $this->_albums[1]->fetchPath();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -141,7 +142,7 @@ class FileSystemTest extends GalleryTestCase {
 			    $path);
 
 	$gallery->_platform = new FileSystemTestPlatform('\\');
-	
+
 	list ($ret, $path) = $this->_albums[1]->fetchPath();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -153,6 +154,7 @@ class FileSystemTest extends GalleryTestCase {
 			    $path);
 
 	$gallery->_platform = $originalPlatform;
+	$gallery->setConfig('data.gallery.albums', $originalAlbumsDir);
     }
 
     function testFetchChildIdByPathComponent() {
@@ -163,7 +165,7 @@ class FileSystemTest extends GalleryTestCase {
     }
 
     /**
-     * Verify that creating a second filesystem entity with the same path as 
+     * Verify that creating a second filesystem entity with the same path as
      * an existing one throws a collision error.
      */
     function testCreateCollision() {
@@ -211,7 +213,7 @@ class FileSystemTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = $this->_albums[1]->save();
-	
+
 	$ret = $this->_albums[1]->move($this->_albums[0]->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
