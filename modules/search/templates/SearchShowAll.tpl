@@ -9,13 +9,13 @@
 </div>
 
 <ul class="gbBreadCrumb">
-  <li>
-  <a href="{g->url}">
-    {g->text text="Gallery"}
-  </a>
+  <li class="giBreadCrumbFirst">
+    <a href="{g->url}">
+      {g->text text="Gallery"}
+    </a>
   </li>
   <li>
-  {g->text text="Search"}
+    {g->text text="Search"}
   </li>
 </ul>
 

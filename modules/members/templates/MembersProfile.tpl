@@ -1,7 +1,7 @@
 <div id="gsHeader">
   <div class="gbTitleBanner">
     <div class="gbBreadCrumb">
-      <span>
+      <span class="giBreadCrumbFirst">
         <a href="{g->url}">
           {g->text text="Gallery"}
         </a>

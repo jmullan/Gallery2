@@ -15,8 +15,8 @@
   <div id="gsHeader">
     <div class="gbTitleBanner">
       <div class="gbBreadCrumb">
-        {foreach from=$ItemAdmin.parents item=parent}
-        <span>
+        {foreach name="parent" from=$ItemAdmin.parents item=parent}
+        <span {if $smarty.foreach.parent.first}class="giBreadCrumbFirst"{/if}>
           <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$parent.id`"}">
             {$parent.title|default:$parent.pathComponent|markup}
           </a>

@@ -14,7 +14,7 @@
   <div id="gsHeader">
     <div class="gbTitleBanner">
       <div class="gbBreadCrumb">
-        <span>
+        <span class="giBreadCrumbFirst">
           {g->text text="Your Account"}
         </span>
 

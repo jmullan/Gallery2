@@ -9,7 +9,7 @@
 </div>
 
 <ul class="gbBreadCrumb">
-  <li>
+  <li class="giBreadCrumbFirst">
     <a href="{g->url}">
       {g->text text="Gallery"}
     </a>
