@@ -238,6 +238,9 @@ class GalleryUser extends GalleryNucleus {
      * @return string the current value of email
      */
     function getEmail() {
+        if (!isset($this->_email)) {
+            return null;
+        }
         return $this->_email;
     }
     
@@ -260,6 +263,9 @@ class GalleryUser extends GalleryNucleus {
      * @return string the current value of fullname
      */
     function getFullname() {
+        if (!isset($this->_fullname)) {
+            return null;
+        }
         return $this->_fullname;
     }
     
@@ -304,6 +310,9 @@ class GalleryUser extends GalleryNucleus {
      * @return bool the current value of isAdmin
      */
     function getIsAdmin() {
+        if (!isset($this->_isAdmin)) {
+            return null;
+        }
         return $this->_isAdmin;
     }
     
@@ -326,6 +335,9 @@ class GalleryUser extends GalleryNucleus {
      * @return string the current value of password
      */
     function getPassword() {
+        if (!isset($this->_password)) {
+            return null;
+        }
         return $this->_password;
     }
     
@@ -348,6 +360,9 @@ class GalleryUser extends GalleryNucleus {
      * @return string the current value of username
      */
     function getUsername() {
+        if (!isset($this->_username)) {
+            return null;
+        }
         return $this->_username;
     }
     

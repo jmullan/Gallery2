@@ -136,7 +136,7 @@ class GalleryItem extends FileSystemNucleus {
      * The (short) title of this item
      *
      * @gallery persistent
-     * @gallery flag STORAGE_TYPE_TIMESTAMP
+     * @gallery flag STORAGE_TYPE_STRING
      * @gallery flag STORAGE_MODIFIER_REQUIRED
      *
      * @var int $_title;
@@ -532,6 +532,8 @@ class GalleryItem extends FileSystemNucleus {
      * @return object GalleryStatus a status code
      */
     function delete() {
+	global $gallery;
+	
 	$ret = parent::delete();
 	if ($ret->isError()) {
 	    return $ret;
@@ -541,7 +543,7 @@ class GalleryItem extends FileSystemNucleus {
 	    $childIds =& $this->getChildIds();
 	    $size = $childIds->sizeof();
 	    for ($i = 0; $i < $size; $i++) {
-		list($ret, $child) = GalleryNucleus::load($childIds->get($i));
+		list($ret, $child) = $gallery->loadNucleusById($childIds->get($i));
 		if ($ret->isError()) {
 		    return $ret;
 		}
@@ -588,7 +590,7 @@ class GalleryItem extends FileSystemNucleus {
                       STORAGE_TYPE_INTEGER);
         $meta['members']['title'] = array(
             'class' => 'GalleryItem',
-            'type' => STORAGE_TYPE_TIMESTAMP |
+            'type' => STORAGE_TYPE_STRING |
                       STORAGE_MODIFIER_REQUIRED);
         $meta['members']['commentIds'] = array(
             'class' => 'GalleryItem',
@@ -716,6 +718,9 @@ class GalleryItem extends FileSystemNucleus {
      * @return string the current value of description
      */
     function getDescription() {
+        if (!isset($this->_description)) {
+            return null;
+        }
         return $this->_description;
     }
     
@@ -743,6 +748,9 @@ class GalleryItem extends FileSystemNucleus {
      * @return bool the current value of isHtmlAllowed
      */
     function getIsHtmlAllowed() {
+        if (!isset($this->_isHtmlAllowed)) {
+            return null;
+        }
         return $this->_isHtmlAllowed;
     }
     
@@ -765,6 +773,9 @@ class GalleryItem extends FileSystemNucleus {
      * @return string the current value of keywords
      */
     function getKeywords() {
+        if (!isset($this->_keywords)) {
+            return null;
+        }
         return $this->_keywords;
     }
     
@@ -788,6 +799,9 @@ class GalleryItem extends FileSystemNucleus {
      * @return int the current value of ownerId
      */
     function getOwnerId() {
+        if (!isset($this->_ownerId)) {
+            return null;
+        }
         return $this->_ownerId;
     }
     
@@ -828,18 +842,20 @@ class GalleryItem extends FileSystemNucleus {
      * @return int the current value of thumbnailId
      */
     function getThumbnailId() {
+        if (!isset($this->_thumbnailId)) {
+            return null;
+        }
         return $this->_thumbnailId;
     }
     
     /**
      * Set the value of title
      * 
-     * @param int the new value for title
+     * @param string the new value for title
      * @access public
      */
     function setTitle($value) {
         assert('isset($value)');
-        $value = (int)$value;
         $this->_title = $value;
         $this->setModifiedFlag('title', MEMBER_MODIFIED);
     }
@@ -848,9 +864,12 @@ class GalleryItem extends FileSystemNucleus {
      * Get the value of title
      * 
      * @access public
-     * @return int the current value of title
+     * @return string the current value of title
      */
     function getTitle() {
+        if (!isset($this->_title)) {
+            return null;
+        }
         return $this->_title;
     }
     
@@ -874,6 +893,9 @@ class GalleryItem extends FileSystemNucleus {
      * @return int the current value of viewCount
      */
     function getViewCount() {
+        if (!isset($this->_viewCount)) {
+            return null;
+        }
         return $this->_viewCount;
     }
     
@@ -897,6 +919,9 @@ class GalleryItem extends FileSystemNucleus {
      * @return int the current value of viewedSinceTimestamp
      */
     function getViewedSinceTimestamp() {
+        if (!isset($this->_viewedSinceTimestamp)) {
+            return null;
+        }
         return $this->_viewedSinceTimestamp;
     }
     

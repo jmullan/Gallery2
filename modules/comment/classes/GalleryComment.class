@@ -180,6 +180,9 @@ class GalleryComment extends GalleryNucleus {
      * @return string the current value of comment
      */
     function getComment() {
+        if (!isset($this->_comment)) {
+            return null;
+        }
         return $this->_comment;
     }
     
@@ -203,6 +206,9 @@ class GalleryComment extends GalleryNucleus {
      * @return int the current value of date
      */
     function getDate() {
+        if (!isset($this->_date)) {
+            return null;
+        }
         return $this->_date;
     }
     
@@ -225,6 +231,9 @@ class GalleryComment extends GalleryNucleus {
      * @return string the current value of emailAddress
      */
     function getEmailAddress() {
+        if (!isset($this->_emailAddress)) {
+            return null;
+        }
         return $this->_emailAddress;
     }
     
@@ -247,6 +256,9 @@ class GalleryComment extends GalleryNucleus {
      * @return string the current value of hostname
      */
     function getHostname() {
+        if (!isset($this->_hostname)) {
+            return null;
+        }
         return $this->_hostname;
     }
     
@@ -269,6 +281,9 @@ class GalleryComment extends GalleryNucleus {
      * @return string the current value of name
      */
     function getName() {
+        if (!isset($this->_name)) {
+            return null;
+        }
         return $this->_name;
     }
     
