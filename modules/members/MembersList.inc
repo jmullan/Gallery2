@@ -60,7 +60,7 @@ class MembersListView extends GalleryView {
 	}
 	
 	$form['list']['count'] = $totalUserCount;
-	$form['list']['pageSize'] = $totalUserCount > 10 ? 10 : $totalUserCount + 2;
+	$form['list']['pageSize'] = $totalUserCount > 30 ? 30 : $totalUserCount + 2;
 	
 	/* Figure out our max pages, make sure our current page fits in it */
 	$form['list']['maxPages'] = ceil($form['list']['count'] / $form['list']['pageSize']);
