@@ -24,6 +24,7 @@
 require_once(dirname(__FILE__) . '/modules/core/classes/Gallery.class');
 require_once(dirname(__FILE__) . '/modules/core/classes/GalleryDataCache.class');
 require_once(dirname(__FILE__) . '/modules/core/classes/GalleryUtilities.class');
-$gallery = new Gallery();
+$GLOBALS['gallery'] = new Gallery();
+$gallery =& $GLOBALS['gallery'];
 include_once(dirname(__FILE__) . '/config.php');
 ?>
