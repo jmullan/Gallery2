@@ -4,10 +4,7 @@
  * Gallery will look for that file first and use it if it exists
  * and when you upgrade, your changes will not get overwritten.
  *}
-{if isset($layout.navigator.first) ||
-    isset($layout.navigator.back) ||
-    isset($layout.navigator.next) ||
-    isset($layout.navigator.last)}
+{if isset($layout.navigator.first) || isset($layout.navigator.back)}
 <ul class="giHorizontalLinksLeft">
   {if isset($layout.navigator.first)}
   <li><a href="{g->url params=$layout.navigator.first}">{g->text text="&lt;&lt; first"}</a></li>
@@ -18,7 +15,9 @@
     <a href="{g->url params=$layout.navigator.back}">{g->text text="&lt; previous"}</a></li>
   {/if}
 </ul>
+{/if}
 
+{if isset($layout.navigator.next) || isset($layout.navigator.last)}
 <ul class="giHorizontalLinks">
   {if isset($layout.navigator.next)}
   <li><a href="{g->url params=$layout.navigator.next}">{g->text text="next &gt;"}</a></li>
@@ -29,3 +28,4 @@
   {/if}
 </ul>
 {/if}
+
