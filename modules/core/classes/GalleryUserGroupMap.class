@@ -102,7 +102,7 @@ class GalleryUserGroupMap_core {
     /**
      * Remove the user from all groups
      *
-     * @param int the id of the GalleryGroup
+     * @param int the id of the GalleryUser
      * @return object GalleryStatus a status code
      */
     function removeUser($userId) {
@@ -116,6 +116,29 @@ class GalleryUserGroupMap_core {
 	 * Remove this relationship from our groups table.
 	 */
 	$ret = GalleryUserGroupMap::removeMapEntry(array("userId" => $userId));
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Remove any users in the group
+     *
+     * @param int the id of the GalleryGroup
+     * @return object GalleryStatus a status code
+     */
+    function removeGroup($groupId) {
+	global $gallery;
+	if (empty($groupId)) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
+					__FILE__, __LINE__);
+	}
+
+	/*
+	 * Remove this relationship from our groups table.
+	 */
+	$ret = GalleryUserGroupMap::removeMapEntry(array("groupId" => $groupId));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
