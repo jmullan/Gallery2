@@ -91,7 +91,10 @@ a:active {}
 
 #gsHeader { 
 	display: block; 
-	width: auto;
+	width: 100%;
+	border-bottom: 1px solid #ddd;
+	margin: 0;
+	padding: 0 0 0 8px;
 }
 
 
@@ -273,7 +276,7 @@ table.gbDataTable img { border: none; }
 
 .gbMenu { 
 	border-bottom: 1px solid #ddd;
-    margin: 16px 0 0 8px;
+        margin: 16px 0 0 8px;
 	padding: 0 0 16px 0;
 }
 
@@ -282,6 +285,10 @@ table.gbDataTable img { border: none; }
 	margin-top: 0;
 	padding-top: 12px;
 }
+/*      last gbMenu item has no bottom border   */
+.gbMenu:last-child { 
+	border-bottom: 1px none #ddd;}
+
 
 /*	icons for admin menu	*/
 .gbMenu li {
@@ -327,14 +334,14 @@ table.gbDataTable img { border: none; }
 
 /*      horizontal history links - 'trail of breadcrumbs' */
 .gbBreadCrumb { 
-    font-size: 1.2em;
-    font-weight: bold;
+        font-size: 1.2em;
+        font-weight: bold;
 	margin: 0;
-	padding: 16px 8px; 
+	padding: 8px 8px; 
 }
 
 .gbBreadCrumb li { 
-    display: inline;
+        display: inline;
 	background-image: url('../images/icon_path_separator.gif');
 	background-repeat: no-repeat;
 	background-position: left;
@@ -342,10 +349,9 @@ table.gbDataTable img { border: none; }
 }
 
 .gbBreadCrumb li.giBreadCrumbFirst {
-	padding: 0 0 0 0;
+	padding: 0;
 	background-image: none;
 }
-
 
 /*      horizontal link divider */
 #gsHeader .gbBreadCrumb span + span:before { content: '\00BB \ '; }

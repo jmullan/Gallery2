@@ -6,4 +6,4 @@
  * 
  * Add a sitewide banner to personalize your gallery.
  *}
- 
+  <img src="themes/matrix/images/gallery_logo.png" alt="gallery 2 header image" />
