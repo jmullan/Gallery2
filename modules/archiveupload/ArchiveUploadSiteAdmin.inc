@@ -1,0 +1,141 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2005 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package ArchiveUpload
+ * @author Alan Harder <alan.harder@sun.com>
+ */
+
+/**
+ * @package ArchiveUpload
+ * @subpackage UserInterface
+ */
+class ArchiveUploadSiteAdminController extends GalleryController {
+
+    /**
+     * @see GalleryController::handleRequest()
+     */
+    function handleRequest(&$form) {
+	global $gallery;
+
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$view = array('view' => 'core:SiteAdmin',
+		      'subView' => 'archiveupload:ArchiveUploadSiteAdmin');
+	$status = $error = array();
+	if (isset($form['action']['save']) || isset($form['action']['test'])) {
+	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/ArchiveUploadHelper.class');
+
+	    if (empty($form['unzipPath'])) {
+		$error[] = 'form[error][unzipPath][missing]';
+	    }
+	    if (empty($error)) {
+		list ($valid, $errorType, $output) =
+		    ArchiveUploadHelper::testBinary($form['unzipPath']);
+		if (!$valid && $errorType == 'badPath') {
+		    /* Maybe a directory was entered.. try adding /unzip */
+		    $platform = $gallery->getPlatform();
+		    $slash = $platform->getDirectorySeparator();
+		    $retryPath = $form['unzipPath'];
+		    if ($retryPath{strlen($retryPath)-1} != $slash) {
+			$retryPath .= $slash;
+		    }
+		    $retryPath .= 'unzip';
+		    list ($valid) = ArchiveUploadHelper::testBinary($retryPath);
+		    if ($valid) {
+			$form['unzipPath'] = $retryPath;
+		    }
+		}
+		if (!$valid) {
+		    $error[] = 'form[error][unzipPath][' . $errorType . ']';
+		}
+	    }
+	    if (empty($error) && isset($form['action']['save'])) {
+		$ret = GalleryCoreApi::setPluginParameter(
+				       'module', 'archiveupload', 'unzipPath', $form['unzipPath']);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		$results['redirect'] = $view;
+		$status['saved'] = 1;
+	    }
+	} else if (isset($form['action']['cancel'])) {
+	    $results['redirect'] = $view;
+	}
+
+	if (empty($results)) {
+	    $results['delegate'] = $view;
+	}
+	$results['status'] = $status;
+	$results['error'] = $error;
+
+	return array(GalleryStatus::success(), $results);
+    }
+}
+
+/**
+ * @package ArchiveUpload
+ * @subpackage UserInterface
+ */
+class ArchiveUploadSiteAdminView extends GalleryView {
+
+    /**
+     * @see GalleryView::loadTemplate
+     */
+    function loadTemplate(&$template, &$form) {
+	if ($form['formName'] != 'ArchiveUploadSiteAdmin') {
+	    $form['formName'] = 'ArchiveUploadSiteAdmin';
+	    foreach (array('unzipPath') as $key) {
+		list ($ret, $form[$key]) =
+		    GalleryCoreApi::getPluginParameter('module', 'archiveupload', $key);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	    }
+	}
+
+	if (isset($form['action']['test'])) {
+	    if (empty($form['error']['unzipPath'])) {
+		$test = array('name' => 'unzip', 'success' => true);
+	    } else if (isset($form['error']['unzipPath']['exec'])) {
+		$test = array('name' => 'unzip', 'success' => false);
+		list ($valid, $errorType, $output) =
+		    ArchiveUploadHelper::testBinary($form['unzipPath']);
+		if (!empty($output)) {
+		    $test['message'] = $output;
+		}
+	    }
+	    if (isset($test)) {
+		$template->setVariable('ArchiveUploadSiteAdmin', array('tests' => array($test)));
+	    }
+	}
+
+	$template->setVariable('controller', 'archiveupload:ArchiveUploadSiteAdmin');
+	return array(GalleryStatus::success(),
+		     array('body' => 'modules/archiveupload/templates/SiteAdmin.tpl'));
+    }
+}
+?>
