@@ -231,7 +231,7 @@ class Gallery {
      *               mixed one GalleryEntity or an array of GalleryEntities
      */
     function loadEntitiesById($ids) {
-	GalleryProfiler::start('Gallery::loadEntitiesById');
+	GalleryProfiler::start('modules.core.classes.Gallery::loadEntitiesById');
 	
 	$this->guaranteeTimeLimit(5);
 	    
@@ -283,7 +283,7 @@ class Gallery {
 	    $results[] =& $cached[$id];
 	}
 	
-	GalleryProfiler::stop('Gallery::loadEntitiesById');
+	GalleryProfiler::stop('modules.core.classes.Gallery::loadEntitiesById');
 
 	if (!$returnArray) {
 	    $results = $results[0];
@@ -299,7 +299,7 @@ class Gallery {
      * @return object GalleryStatus a status code 
      */
     function deleteEntityById($id) {
-	GalleryProfiler::start('Gallery::deleteEntityById');
+	GalleryProfiler::start('modules.core.classes.Gallery::deleteEntityById');
 	
 	if (empty($id)) {
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER,
@@ -344,7 +344,7 @@ class Gallery {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	GalleryProfiler::stop('Gallery::deleteEntityById');
+	GalleryProfiler::stop('modules.core.classes.Gallery::deleteEntityById');
 	return GalleryStatus::success();
     }
 
@@ -352,7 +352,7 @@ class Gallery {
      * @see GalleryStorage::search()
      */
     function search($query, $data=array(), $options=array()) {
-	GalleryProfiler::start('Gallery::search');
+	GalleryProfiler::start('modules.core.classes.Gallery::search');
 
 	$storage = $this->getStorage();
 	list ($ret, $results) = $storage->search($query, $data, $options);
@@ -360,7 +360,7 @@ class Gallery {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	GalleryProfiler::stop('Gallery::search');
+	GalleryProfiler::stop('modules.core.classes.Gallery::search');
 	return array(GalleryStatus::success(), $results);
     }
 
@@ -447,7 +447,7 @@ class Gallery {
      * @return object GalleryStatus a status code
      */
     function initSession() {
-	GalleryProfiler::start('Gallery::initSession');
+	GalleryProfiler::start('modules.core.classes.Gallery::initSession');
 
 	if (empty($this->_session)) {
 	    $this->_session = new GallerySession();
@@ -457,7 +457,7 @@ class Gallery {
 	    }
 	}
 
-	GalleryProfiler::stop('Gallery::initSession');
+	GalleryProfiler::stop('modules.core.classes.Gallery::initSession');
 	return GalleryStatus::success();
     }
 
@@ -527,7 +527,7 @@ class Gallery {
      */
     function acquireReadLock($ids, $timeout=10) {
 
-	GalleryProfiler::start('Gallery::acquireReadLock');
+	GalleryProfiler::start('modules.core.classes.Gallery::acquireReadLock');
 
 	$storage = $this->getStorage();
 	
@@ -540,7 +540,7 @@ class Gallery {
 	$lockId = $lock->getId();
 	$this->_locks[$lockId] = $lock;
 
-	GalleryProfiler::stop('Gallery::acquireReadLock');
+	GalleryProfiler::stop('modules.core.classes.Gallery::acquireReadLock');
 
 	return array($ret->wrap(__FILE__, __LINE__), $lockId);
     }
@@ -789,7 +789,7 @@ class Gallery {
      * @return object GalleryStatus a status code
      */
     function initStorage() {
-	GalleryProfiler::start('Gallery::initStorage');
+	GalleryProfiler::start('modules.core.classes.Gallery::initStorage');
 
 	$type = $this->getConfig('storage.type');
 	$config = $this->getConfig('storage.config');
@@ -809,7 +809,7 @@ class Gallery {
 	}
 	$this->_storage = $storage;
 
-	GalleryProfiler::stop('Gallery::initStorage');
+	GalleryProfiler::stop('modules.core.classes.Gallery::initStorage');
 	return GalleryStatus::success();
     }
 
@@ -885,7 +885,7 @@ class Gallery {
      *                                                 'installed' => true/false)
      */
     function getModuleStatus() {
-	GalleryProfiler::start('Gallery::getModuleStatus');
+	GalleryProfiler::start('modules.core.classes.Gallery::getModuleStatus');
 
 	if (!isset($this->_modules['_status'])) {
 	    list ($ret, $modules) = GalleryModuleMap::fetchModuleList();
@@ -928,7 +928,7 @@ class Gallery {
 	    $this->_modules['_status'] = $modules;
 	}
 
-	GalleryProfiler::stop('Gallery::getModuleStatus');
+	GalleryProfiler::stop('modules.core.classes.Gallery::getModuleStatus');
 	
 	return array(GalleryStatus::success(),
 		     $this->_modules['_status']);
@@ -955,7 +955,7 @@ class Gallery {
      *               object GalleryModule the module
      */
     function loadModule($moduleName) {
-	GalleryProfiler::start('Gallery::loadModule');
+	GalleryProfiler::start('modules.core.classes.Gallery::loadModule');
 
 	if (!isset($this->_modules[$moduleName]['instance'])) {
 
@@ -994,7 +994,7 @@ class Gallery {
 	    $this->_modules[$moduleName]['instance'] = $module;
 	}
 
-	GalleryProfiler::stop('Gallery::loadModule');
+	GalleryProfiler::stop('modules.core.classes.Gallery::loadModule');
 	return array(GalleryStatus::success(),
 		     $this->_modules[$moduleName]['instance']);
     }

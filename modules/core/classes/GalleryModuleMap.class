@@ -143,7 +143,7 @@ class GalleryModuleMap_core {
      */
     function fetchModuleList() {
 	global $gallery;
-	GalleryProfiler::start('GalleryModuleMap::fetchModuleList');
+	GalleryProfiler::start('modules.core.classes.GalleryModuleMap::fetchModuleList');
 
 	$query = '
         SELECT
@@ -163,7 +163,7 @@ class GalleryModuleMap_core {
 	    $data[$result[0]] = array('active' => $result[1]);
 	}
 	
-	GalleryProfiler::stop('GalleryModuleMap::fetchModuleList');
+	GalleryProfiler::stop('modules.core.classes.GalleryModuleMap::fetchModuleList');
 	return array(GalleryStatus::success(), $data);
     }
 }

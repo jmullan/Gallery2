@@ -67,7 +67,7 @@ class GalleryFileSystemEntity extends GalleryFileSystemEntity_core {
      */
     function getMemberData() {
         $data = parent::getMemberData();
-        GalleryProfiler::start('GalleryPersistent::getMemberData');
+        GalleryProfiler::start('modules.core.classes.GalleryPersistent::getMemberData');
     
         if (!isset($this->_pathComponent)) {
             $data['pathComponent'] = null;
@@ -75,7 +75,7 @@ class GalleryFileSystemEntity extends GalleryFileSystemEntity_core {
             $data['pathComponent'] = $this->_pathComponent;
         }
     
-        GalleryProfiler::stop('GalleryPersistent::getMemberData');
+        GalleryProfiler::stop('modules.core.classes.GalleryPersistent::getMemberData');
         return $data;
     }
   

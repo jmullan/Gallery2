@@ -71,15 +71,16 @@ function GalleryMain($startTime) {
      * at the top of this function because the variable isn't defined until we
      * call GalleryInitFirstPass()
      */
+
     /**
-     * The all mighty global Gallery object
+     * The al mighty global Gallery object
      *
      * @global Gallery $gallery
      */
     $gallery =& $GLOBALS['gallery'];
-    GalleryProfiler::start('GalleryMain', $startTime);
-    GalleryProfiler::start('GalleryInitFirstPass', $startTime);
-    GalleryProfiler::stop('GalleryInitFirstPass');
+    GalleryProfiler::start('main.GalleryMain', $startTime);
+    GalleryProfiler::start('init.GalleryInitFirstPass', $startTime);
+    GalleryProfiler::stop('init.GalleryInitFirstPass');
 
     /* Init our storage */
     $ret = GalleryInitStorage();
@@ -228,7 +229,7 @@ function GalleryMain($startTime) {
 	$template->setTranslationBase('modules', 'core');
 
 	if ($gallery->isProfiling()) {
-	    GalleryProfiler::stop('GalleryMain');
+	    GalleryProfiler::stop('main.GalleryMain');
 	    $master['profile'] = GalleryProfiler::getProfile();
 	}
 

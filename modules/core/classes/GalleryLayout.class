@@ -114,7 +114,7 @@ class GalleryLayout {
     function _getModuleSystemLinks($urlParams) {
 	global $gallery;
 
-	GalleryProfiler::start('GalleryLayout::_getModuleSystemLinks');
+	GalleryProfiler::start('modules.core.classes.GalleryLayout::_getModuleSystemLinks');
 
 	/* Load the module list */
 	list ($ret, $moduleStatus) = $gallery->getModuleStatus();
@@ -152,7 +152,7 @@ class GalleryLayout {
 	    }
 	}
 
-	GalleryProfiler::stop('GalleryLayout::_getModuleSystemLinks');
+	GalleryProfiler::stop('modules.core.classes.GalleryLayout::_getModuleSystemLinks');
 
 	return array(GalleryStatus::success(), $links);
     }
@@ -170,7 +170,7 @@ class GalleryLayout {
     function _getModuleSystemContent($urlParams) {
 	global $gallery;
 
-	GalleryProfiler::start('GalleryLayout::_getModuleSystemLinks');
+	GalleryProfiler::start('modules.core.classes.GalleryLayout::_getModuleSystemLinks');
 
 	/* Load the module list */
 	list ($ret, $moduleStatus) = $gallery->getModuleStatus();
@@ -200,7 +200,7 @@ class GalleryLayout {
 	    }
 	}
 
-	GalleryProfiler::stop('GalleryLayout::_getModuleSystemLinks');
+	GalleryProfiler::stop('modules.core.classes.GalleryLayout::_getModuleSystemLinks');
 
 	return array(GalleryStatus::success(), $systemContent);
     }
@@ -221,7 +221,7 @@ class GalleryLayout {
     function _getModuleItemLinks($items, $urlParams) {
 	global $gallery;
 
-	GalleryProfiler::start('GalleryLayout::_getModuleItemLinks');
+	GalleryProfiler::start('modules.core.classes.GalleryLayout::_getModuleItemLinks');
 
 	if (!is_array($items)) {
 	    $items = array($items);
@@ -262,7 +262,7 @@ class GalleryLayout {
 	    }
 	}
 
-	GalleryProfiler::stop('GalleryLayout::_getModuleItemLinks');
+	GalleryProfiler::stop('modules.core.classes.GalleryLayout::_getModuleItemLinks');
 
 	return array(GalleryStatus::success(), $itemLinks);
     }
@@ -280,7 +280,7 @@ class GalleryLayout {
     function _getModuleItemSummaries($items, $urlParams) {
 	global $gallery;
 
-	GalleryProfiler::start('GalleryLayout::_getModuleItemSummaries');
+	GalleryProfiler::start('modules.core.classes.GalleryLayout::_getModuleItemSummaries');
 
 	if (!is_array($items)) {
 	    $items = array($items);
@@ -315,7 +315,7 @@ class GalleryLayout {
 	    }
 	}
 
-	GalleryProfiler::stop('GalleryLayout::_getModuleItemSummaries');
+	GalleryProfiler::stop('modules.core.classes.GalleryLayout::_getModuleItemSummaries');
 
 	return array(GalleryStatus::success(), $itemSummaries);
     }
@@ -333,7 +333,7 @@ class GalleryLayout {
     function _getModuleItemDetails($item, $urlParams) {
 	global $gallery;
 
-	GalleryProfiler::start('GalleryLayout::_getModuleItemDetails');
+	GalleryProfiler::start('modules.core.classes.GalleryLayout::_getModuleItemDetails');
 
 	/* Load the module list */
 	list ($ret, $moduleStatus) = $gallery->getModuleStatus();
@@ -363,7 +363,7 @@ class GalleryLayout {
 	    }
 	}
 
-	GalleryProfiler::stop('GalleryLayout::_getModuleItemDetails');
+	GalleryProfiler::stop('modules.core.classes.GalleryLayout::_getModuleItemDetails');
 
 	return array(GalleryStatus::success(), $itemDetails);
     }

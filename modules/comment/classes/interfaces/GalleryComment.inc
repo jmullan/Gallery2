@@ -82,7 +82,7 @@ class GalleryComment extends GalleryComment_core {
      */
     function getMemberData() {
         $data = parent::getMemberData();
-        GalleryProfiler::start('GalleryPersistent::getMemberData');
+        GalleryProfiler::start('modules.core.classes.GalleryPersistent::getMemberData');
     
         if (!isset($this->_commenterId)) {
             $data['commenterId'] = null;
@@ -108,7 +108,7 @@ class GalleryComment extends GalleryComment_core {
             $data['date'] = $this->_date;
         }
     
-        GalleryProfiler::stop('GalleryPersistent::getMemberData');
+        GalleryProfiler::stop('modules.core.classes.GalleryPersistent::getMemberData');
         return $data;
     }
   

@@ -252,7 +252,7 @@ class GalleryTranslator {
     function translate($domain, $basePath, $data) {
 	global $gallery;
 
-	GalleryProfiler::start('GalleryTranslator::translate');
+	GalleryProfiler::start('modules.core.classes.GalleryTranslator::translate');
 	
 	/* Validate our parameters */
 	if (!(isset($data['text']) ||
@@ -342,7 +342,7 @@ class GalleryTranslator {
 	 */
 	// $localized = "[$domain: $localized]";
 
-	GalleryProfiler::stop('GalleryTranslator::translate');
+	GalleryProfiler::stop('modules.core.classes.GalleryTranslator::translate');
 	
 	return array(GalleryStatus::success(), $localized);
     }

@@ -92,7 +92,7 @@ class GalleryDerivative extends GalleryDerivative_core {
      */
     function getMemberData() {
         $data = parent::getMemberData();
-        GalleryProfiler::start('GalleryPersistent::getMemberData');
+        GalleryProfiler::start('modules.core.classes.GalleryPersistent::getMemberData');
     
         if (!isset($this->_derivativeSourceId)) {
             $data['derivativeSourceId'] = null;
@@ -130,7 +130,7 @@ class GalleryDerivative extends GalleryDerivative_core {
             $data['derivativeMimeType'] = $this->_derivativeMimeType;
         }
     
-        GalleryProfiler::stop('GalleryPersistent::getMemberData');
+        GalleryProfiler::stop('modules.core.classes.GalleryPersistent::getMemberData');
         return $data;
     }
   

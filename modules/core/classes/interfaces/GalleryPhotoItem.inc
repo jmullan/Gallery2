@@ -72,7 +72,7 @@ class GalleryPhotoItem extends GalleryPhotoItem_core {
      */
     function getMemberData() {
         $data = parent::getMemberData();
-        GalleryProfiler::start('GalleryPersistent::getMemberData');
+        GalleryProfiler::start('modules.core.classes.GalleryPersistent::getMemberData');
     
         if (!isset($this->_width)) {
             $data['width'] = null;
@@ -86,7 +86,7 @@ class GalleryPhotoItem extends GalleryPhotoItem_core {
             $data['height'] = $this->_height;
         }
     
-        GalleryProfiler::stop('GalleryPersistent::getMemberData');
+        GalleryProfiler::stop('modules.core.classes.GalleryPersistent::getMemberData');
         return $data;
     }
   

@@ -53,12 +53,12 @@ class GalleryProfilingSmarty extends Smarty {
     function fetch($_smarty_tpl_file, $_smarty_cache_id = null,
 		   $_smarty_compile_id = null, $_smarty_display = false) {
 
-	GalleryProfiler::start('Smarty::fetch');
+	GalleryProfiler::start('modules.core.classes.Smarty::fetch');
 	$result = parent::fetch($_smarty_tpl_file,
 				$_smarty_cache_id,
 				$_smarty_compile_id,
 				$_smarty_display);
-	GalleryProfiler::stop('Smarty::fetch');
+	GalleryProfiler::stop('modules.core.classes.Smarty::fetch');
 	return $result;
     }
 }

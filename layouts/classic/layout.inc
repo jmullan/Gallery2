@@ -37,7 +37,7 @@ class ClassicLayout extends GalleryLayout {
      * @see GalleryLayout::render
      */
     function render($item, $urlParams) {
-	GalleryProfiler::start('GalleryLayout::render');
+	GalleryProfiler::start('layouts.classic.layout::render');
 
 	/* Look up my properties */
 	//list ($ret, $properties) = GalleryItemPropertiesMap::getProperties('layout');
@@ -58,7 +58,7 @@ class ClassicLayout extends GalleryLayout {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	
-	GalleryProfiler::stop('GalleryLayout::render');
+	GalleryProfiler::stop('layouts.classic.layout::render');
 	return array(GalleryStatus::success(), $html);
     }
 

@@ -72,7 +72,7 @@ class GalleryGroup extends GalleryGroup_core {
      */
     function getMemberData() {
         $data = parent::getMemberData();
-        GalleryProfiler::start('GalleryPersistent::getMemberData');
+        GalleryProfiler::start('modules.core.classes.GalleryPersistent::getMemberData');
     
         if (!isset($this->_groupType)) {
             $data['groupType'] = null;
@@ -86,7 +86,7 @@ class GalleryGroup extends GalleryGroup_core {
             $data['groupName'] = $this->_groupName;
         }
     
-        GalleryProfiler::stop('GalleryPersistent::getMemberData');
+        GalleryProfiler::stop('modules.core.classes.GalleryPersistent::getMemberData');
         return $data;
     }
   

@@ -141,7 +141,7 @@ function GalleryInitStorage() {
 function GalleryInitSecondPass() {
     global $gallery;
 
-    GalleryProfiler::start('GalleryInitSecondPass');
+    GalleryProfiler::start('init.GalleryInitSecondPass');
 
     list ($ret, $coreModule) = $gallery->loadModule('core');
     if ($ret->isError()) {
@@ -206,7 +206,7 @@ function GalleryInitSecondPass() {
     }
     
     /* Load the module list */
-    GalleryProfiler::start('GalleryInit.load-modules');
+    GalleryProfiler::start('init.GalleryInit#load-modules');
     list ($ret, $moduleStatus) = $gallery->getModuleStatus();
     if ($ret->isError()) {
 	return $ret->wrap(__FILE__, __LINE__);
@@ -222,8 +222,8 @@ function GalleryInitSecondPass() {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
     }
-    GalleryProfiler::stop('GalleryInit.load-modules');
-    GalleryProfiler::stop('GalleryInitSecondPass');
+    GalleryProfiler::stop('init.GalleryInit#load-modules');
+    GalleryProfiler::stop('init.GalleryInitSecondPass');
 
     return GalleryStatus::success();
 }

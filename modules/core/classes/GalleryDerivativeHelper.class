@@ -162,7 +162,7 @@ class GalleryDerivativeHelper {
     function _loadDerivatives($itemIds, $sourceIds, $types=null) {
 	global $gallery;
 	
-	GalleryProfiler::start('GalleryDerivativeHelper::loadDerivatives');
+	GalleryProfiler::start('modules.core.classes.GalleryDerivativeHelper::loadDerivatives');
 
 	if (empty($itemIds) && empty($sourceIds)) {
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
@@ -234,7 +234,7 @@ class GalleryDerivativeHelper {
 	    }
 	}
 
-	GalleryProfiler::stop('GalleryDerivativeHelper::loadDerivatives');
+	GalleryProfiler::stop('modules.core.classes.GalleryDerivativeHelper::loadDerivatives');
 	
 	return array(GalleryStatus::success(), $derivativeTable);
     }

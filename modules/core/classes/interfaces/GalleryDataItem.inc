@@ -72,7 +72,7 @@ class GalleryDataItem extends GalleryDataItem_core {
      */
     function getMemberData() {
         $data = parent::getMemberData();
-        GalleryProfiler::start('GalleryPersistent::getMemberData');
+        GalleryProfiler::start('modules.core.classes.GalleryPersistent::getMemberData');
     
         if (!isset($this->_mimeType)) {
             $data['mimeType'] = null;
@@ -86,7 +86,7 @@ class GalleryDataItem extends GalleryDataItem_core {
             $data['size'] = $this->_size;
         }
     
-        GalleryProfiler::stop('GalleryPersistent::getMemberData');
+        GalleryProfiler::stop('modules.core.classes.GalleryPersistent::getMemberData');
         return $data;
     }
   

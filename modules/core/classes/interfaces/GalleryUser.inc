@@ -87,7 +87,7 @@ class GalleryUser extends GalleryUser_core {
      */
     function getMemberData() {
         $data = parent::getMemberData();
-        GalleryProfiler::start('GalleryPersistent::getMemberData');
+        GalleryProfiler::start('modules.core.classes.GalleryPersistent::getMemberData');
     
         if (!isset($this->_userName)) {
             $data['userName'] = null;
@@ -119,7 +119,7 @@ class GalleryUser extends GalleryUser_core {
             $data['language'] = $this->_language;
         }
     
-        GalleryProfiler::stop('GalleryPersistent::getMemberData');
+        GalleryProfiler::stop('modules.core.classes.GalleryPersistent::getMemberData');
         return $data;
     }
   
