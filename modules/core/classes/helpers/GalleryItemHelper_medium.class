@@ -493,10 +493,13 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 	    }
 	}
 
-        list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($albumId);
-        if ($ret->isError()) {
-            return $ret->wrap(__FILE__, __LINE__);
-        }
+	$alreadyLocked = GalleryCoreApi::isWriteLocked($albumId);
+	if(!$alreadyLocked) {
+            list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($albumId);
+            if ($ret->isError()) {
+                return $ret->wrap(__FILE__, __LINE__);
+            }
+	}
 
         list ($ret, $parentAlbum) = GalleryCoreApi::loadEntitiesById($albumId);
         if ($ret->isError()) {
@@ -508,11 +511,13 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
         if ($ret->isError()) {
             return $ret->wrap(__FILE__, __LINE__);
         }
-
-        $ret = GalleryCoreApi::releaseLocks($lockId);
-        if ($ret->isError()) {
-            return $ret->wrap(__FILE__, __LINE__);
-        }
+	
+	if (!$alreadyLocked) {
+            $ret = GalleryCoreApi::releaseLocks($lockId);
+            if ($ret->isError()) {
+                return $ret->wrap(__FILE__, __LINE__);
+            }
+	}
 
 	return GalleryStatus::success();
     }
