@@ -86,10 +86,9 @@
            count=$ItemAddFromWeb.webPageUrlCount 
            arg1=$ItemAddFromWeb.webPageUrlCount}
 
-  <table width="100%">
+  <table class="gbDataTable">
     <tr>
       <th>
-        <input name="selectionToggle" type="checkbox" onClick="javascript:toggleSelections()"/>
       </th>
       <th>
         {g->text text="URL"}
@@ -112,6 +111,14 @@
       </td>
     </tr>
     {/foreach}
+    <tr>
+      <th>
+        <input name="selectionToggle" type="checkbox" onClick="javascript:toggleSelections()"/>
+      </th>
+      <th colspan="2">
+        {g->text text="(Un)check all"}
+      </th>     
+    </tr>
   </table>
   {capture name="bottomFlagHtml"}
     <input type="submit" name="{g->formVar var="form[action][addFromWebPage]"}" value="{g->text text="Add URLs"}"/>
@@ -132,5 +139,3 @@
     {$smarty.capture.bottomFlagHtml}
   </div>
 </div>
-
-
