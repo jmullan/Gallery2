@@ -76,12 +76,12 @@ class ItemEditLayoutPluginTest extends ItemEditPluginTestCase {
     function tearDown() {
 	global $gallery;
 
-	parent::tearDown();
-	
 	$ret = GalleryCoreApi::deleteEntityById($this->_album->getId());
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+
+	parent::tearDown();
     }
 
     function testUndo() {
@@ -279,6 +279,18 @@ class ItemEditLayoutTestPlatform {
 	
 	print "Unexpected fopen($filename, $modes)";
 	return null;
+    }
+
+    function fclose($handle) {
+	return fclose($handle); // needed to release locks
+    }
+
+    function getDirectorySeparator() {
+	return DIRECTORY_SEPARATOR;
+    }
+
+    function unlink($path) {
+	return unlink($path); // needed to release locks
     }
 
     function closedir($path) {

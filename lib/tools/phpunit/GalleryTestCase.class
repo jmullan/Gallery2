@@ -133,8 +133,6 @@ class GalleryTestCase extends TestCase {
 
 	/* Start with a clean slate*/
 	GalleryDataCache::reset();
-	$eventListeners =& GalleryEventHelper_simple::_getEventListeners();
-	$eventListeners = array();
 
 	/* Preload a few things to lighten the load on our dummy platforms */
 	GalleryCoreApi::fetchPluginStatus('module');

@@ -63,12 +63,12 @@ class ItemEditMoviePluginTest extends ItemEditPluginTestCase {
     function tearDown() {
 	global $gallery;
 
-	parent::tearDown();
-	
 	$ret = GalleryCoreApi::deleteEntityById($this->_album->getId());
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	
+	parent::tearDown();
     }
 
     function testChangeSize() {
@@ -231,6 +231,57 @@ class ItemEditMoviePluginTestPlatform {
 	
 	print "Unexpected fopen($filename, $modes)";
 	return null;
+    }
+
+    function opendir($path) {
+	return opendir($path);
+    }
+
+    function readdir($handle) {
+	return readdir($handle);
+    }
+
+    function closedir($handle) {
+	return closedir($handle);
+    }
+
+    function rmdir($path) {
+	return rmdir($path);
+    }
+
+    function recursiveRmdir($dirname) {
+	global $gallery;
+	if ($gallery->getDebug()) {
+	    $gallery->debug("recursiveRmdir($dirname)");
+	}
+
+	if (!($fd = $this->opendir($dirname))) {
+	    return false;
+	}
+
+	while (($filename = $this->readdir($fd)) !== false) {
+	    if (!strcmp($filename, '.') || !strcmp($filename, '..')) {
+		continue;
+	    }
+	    $path = "$dirname/$filename";
+	    
+	    if ($this->is_dir($path)) {
+		$ret = $this->recursiveRmdir($path);
+	    } else {
+		$ret = $this->unlink($path);
+	    }
+	    
+	    if ($ret == false) {
+		return false;
+	    }
+	}
+	closedir($fd);
+
+	return $this->rmdir($dirname);
+    }
+    
+    function unlink($path) {
+	return unlink($path); // needed to release locks
     }
 
     function realpath($file) {
