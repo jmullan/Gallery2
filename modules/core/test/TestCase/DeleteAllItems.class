@@ -21,13 +21,26 @@ class DeleteAllItemsTestCase extends TestCase {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    
+	    $query = '
+            SELECT
+              [GalleryEntity::id]
+            FROM
+              [GalleryEntity]
+            WHERE
+              [GalleryEntity::entityType] = ?
+              AND
+              [GalleryEntity::id] <> ?
+            ORDER BY
+              [GalleryEntity::id] DESC
+                ';
+	    /*
+	     * XXX: we shouldn't be making direct search calls from our
+	     * test cases.
+	     */
 	    list ($ret, $results) =
-		$gallery->search(array('select' => '[GalleryEntity::id]',
-				       'where' => ('[GalleryEntity::entityType] = ? ' .
-						   'AND [GalleryEntity::id] <> ?'),
-				       'order-by' => '[GalleryEntity::id] DESC',
-				       'limit' => array('offset' => 0, 'count' => 5)),
-				 array('GalleryAlbumItem', $rootAlbumId));
+		$gallery->search($query,
+				 array('GalleryAlbumItem', $rootAlbumId),
+				 array('limit' => array('offset' => 0, 'count' => 5)));
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }

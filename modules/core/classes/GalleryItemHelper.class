@@ -63,24 +63,49 @@ class GalleryItemHelper {
     function getChildCounts($itemIds, $userId) {
 	global $gallery;
 
-	/* Filter by parent id */
-	$idMarkers = GalleryUtilities::makeMarkers($itemIds);
-	$where = '[GalleryChildEntity::parentId] IN (' . $idMarkers . ')';
+	if (empty($itemIds)) {
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
+			 null);
+	}
+
+	$storage = $gallery->getStorage();
+
+	list ($ret, $permissionBits) = GalleryPermissionSetMap::convertIdsToBits('core.view');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	foreach ($itemIds as $itemId) {
+	    $parentIdClause[] = '[GalleryChildEntity::parentId] = ?';
+	}
+
+	$query = '
+        SELECT
+          [GalleryChildEntity::parentId], COUNT(DISTINCT([GalleryChildEntity::id]))
+        FROM
+          [GalleryChildEntity], [GalleryUserGroupMap], [GalleryPermissionMap]
+        WHERE
+          ( ' . join(' OR ', $parentIdClause) . ' )
+          AND
+          [GalleryPermissionMap::itemId] = [GalleryChildEntity::id]
+          AND
+          ([GalleryPermissionMap::userId] = ?
+           OR
+           ([GalleryUserGroupMap::userId] = ?
+            AND
+            [GalleryPermissionMap::groupId] = [GalleryUserGroupMap::groupId]))
+          AND
+          [GalleryPermissionMap::permission] & ? > ?
+        GROUP BY
+          [GalleryChildEntity::parentId]
+        ';
 	$data = $itemIds;
+	$data[] = $userId;
+	$data[] = $userId;
+	$data[] = $storage->convertIntToBits($permissionBits);
+	$data[] = $storage->convertIntToBits(0);
 
-	/* Associate permissions */
-	$where .= ' AND [GalleryPermissionMap::itemId] = [GalleryChildEntity::id]';
-	list ($clause, $clauseData) =
-	    GalleryItemHelper::getViewPermissionClause($userId);
-	$where .= ' AND ' . $clause;
-	$data = array_merge($data, $clauseData);
-
-	list ($ret, $searchResults) =
-	    $gallery->search(array('select' => ('[GalleryChildEntity::parentId], ' .
-						'COUNT(DISTINCT([GalleryChildEntity::id]))'),
-				   'where' => $where,
-				   'group-by' => '[GalleryChildEntity::parentId]'),
-			     $data);
+	list ($ret, $searchResults) = $gallery->search($query, $data);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -93,67 +118,6 @@ class GalleryItemHelper {
 	return array(GalleryStatus::success(), $counts);
     }
 
-
-    /**
-     * Return a search clause that only displays the items that the specified
-     * user id is allowed to see.
-     *
-     * @param string a user id
-     * @return string a where clause
-     */
-    function getViewPermissionClause($userId) {
-	/* Figure out what groups the active user is in. */
-	list ($ret, $groupIds) =
-	    GalleryUserGroupMap::fetchGroupsForUser($userId);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	$groupIdString = join(', ', array_values($groupIds));
-
-	list ($ret, $permissionBits) =
-	    GalleryPermissionSetMap::convertIdsToBits('core.view');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	/*
-	 * We've still got a problem here.  There's no way to check to see if
-	 * the user has two different permissions, cause one permission might
-	 * be associated with one group (row) and the other might be associated
-	 * with a different group (row) or user (another row).
-	 *
-	 * Solutions:
-	 *
-	 * 1. We could separate the group and user tables so that we
-	 * could perform a join between them, but that doesn't take care of the
-	 * problem of the permission being in multiple rows.
-	 * 2. Reflexively cross-join all groups vs. each other and vs. each
-	 * user.  Is that possible?
-	 * 3. Do some craziness with bit_or() aggregator into a temporary
-	 * table?
-	 * 4. Do some craziness with bit_or() and return invalid values?
-	 * 5. Don't allow multiple permission checks?
-	 */
-
-	$where = ' ([GalleryItem::ownerId] = ?';
-	$data[] = $userId;
-	$where .= ' OR (';
-	$where .=     ' (';
-	$where .=      ' [GalleryPermissionMap::itemId] = [GalleryItem::id]';
-	$where .=      ' AND (';
-	$where .=           ' [GalleryPermissionMap::groupId] IN (' . $groupIdString . ')';
-	$where .=           ' OR [GalleryPermissionMap::userId] = ?';
-	$where .=           ')';
-	$where .=      ')';
-	$data[] = $userId;
-	$where .= '      AND ([GalleryPermissionMap::permission] & ? > 0)';
-	$data[] = $permissionBits;
-	$where .= '    )';
-	$where .= ')';
-
-	return array($where, $data);
-    }
-
     /**
      * Study the permissions for all items (for the given user)
      *
@@ -162,15 +126,9 @@ class GalleryItemHelper {
      * @return object GalleryStatus a status code
      */
     function studyPermissions($itemIds, $userId) {
-	list ($ret, $groupIds) = GalleryUserGroupMap::fetchGroupsForUser($userId);
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
 
 	list ($ret, $permissionsTable) =
-	    GalleryPermissionMap::fetchPermissionsForItems($itemIds,
-							   array($userId),
-							   $groupIds);
+	    GalleryPermissionMap::fetchPermissionsForItems($itemIds, $userId);
 
 	/* Cache the permissions */
 	foreach ($permissionsTable as $itemId => $permissions) {
@@ -189,19 +147,12 @@ class GalleryItemHelper {
      */
     function getPermissions($itemId, $userId) {
 
-	list ($ret, $groupIds) = GalleryUserGroupMap::fetchGroupsForUser($userId);
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
 	$cacheKey = "GalleryItemHelper::getPermissions($itemId,$userId)";
 	if (GalleryDataCache::containsKey($cacheKey)) {
 	    $permissions = GalleryDataCache::get($cacheKey);
 	} else {
 	    list ($ret, $permissionsTable) =
-		GalleryPermissionMap::fetchPermissionsForItems(array($itemId),
-							       array($userId),
-							       $groupIds);
+		GalleryPermissionMap::fetchPermissionsForItems(array($itemId), $userId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }

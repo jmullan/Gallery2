@@ -78,7 +78,7 @@ class GalleryPermissionSetMap_core {
      * @g2   </member>
      * @g2   <member>
      * @g2     <member-name>bits</member-name>
-     * @g2     <member-type>INTEGER</member-type>
+     * @g2     <member-type>BIT</member-type>
      * @g2     <member-size>LARGE</member-size>
      * @g2   </member>
      * @g2   <member>
@@ -229,10 +229,12 @@ class GalleryPermissionSetMap_core {
     /**
      * Return all the permission ids for a permission bit set
      *
+     * @param int the bit mask
+     * @param boolean should we compress the permission list?
      * @return array object GalleryStatus a status code
      *               array (bits, bits, bits)
      */
-    function convertBitsToIds($permissionBits) {
+    function convertBitsToIds($permissionBits, $compress=false) {
 	global $gallery;
 
 	if (empty($permissionBits)) {
@@ -249,37 +251,47 @@ class GalleryPermissionSetMap_core {
 	/* Make sure we've got an integer */
 	$permissionBits = (int)$permissionBits;
 
-	/*
-	 * We want to return the least number of permissions, so first process
-	 * all composites, then process all individual permissions.  Remove the
-	 * bits we've processed as we go.
-	 */
-	foreach ($allPermissions as $id => $permission) {
-	    if (($permission['flags'] & GALLERY_PERMISSION_COMPOSITE) > 0) {
-		if (($permission['bits'] & $permissionBits) == $permission['bits']) {
-		    $results[] = array('id' => $id,
-				       'module' => $permission['module'],
-				       'description' => $permission['description']);
-		    $permissionBits &= ~$permission['bits']; 
-		    if ($permissionBits == 0) {
-			break;
-		    }
-		}
-	    }
-	}
-
-	if ($permissionBits > 0) {
+	if ($compress) {
+	    /*
+	     * We want to return the least number of permissions, so first process
+	     * all composites, then process all individual permissions.  Remove the
+	     * bits we've processed as we go.
+	     */
 	    foreach ($allPermissions as $id => $permission) {
-		if (($permission['flags'] & GALLERY_PERMISSION_COMPOSITE) == 0) {
+		if (($permission['flags'] & GALLERY_PERMISSION_COMPOSITE) > 0) {
 		    if (($permission['bits'] & $permissionBits) == $permission['bits']) {
 			$results[] = array('id' => $id,
 					   'module' => $permission['module'],
 					   'description' => $permission['description']);
-			$permissionBits &= ~$permission['bits'];
+			$permissionBits &= ~$permission['bits']; 
 			if ($permissionBits == 0) {
 			    break;
 			}
 		    }
+		}
+	    }
+
+	    if ($permissionBits > 0) {
+		foreach ($allPermissions as $id => $permission) {
+		    if (($permission['flags'] & GALLERY_PERMISSION_COMPOSITE) == 0) {
+			if (($permission['bits'] & $permissionBits) == $permission['bits']) {
+			    $results[] = array('id' => $id,
+					       'module' => $permission['module'],
+					       'description' => $permission['description']);
+			    $permissionBits &= ~$permission['bits'];
+			    if ($permissionBits == 0) {
+				break;
+			    }
+			}
+		    }
+		}
+	    }
+	} else {
+	    foreach ($allPermissions as $id => $permission) {
+		if (($permission['bits'] & $permissionBits) == $permission['bits']) {
+		    $results[] = array('id' => $id,
+				       'module' => $permission['module'],
+				       'description' => $permission['description']);
 		}
 	    }
 	}
@@ -359,21 +371,30 @@ class GalleryPermissionSetMap_core {
 	$cacheKey = 'GalleryPermissionSetMap::_allPermissions';
 	if (!GalleryDataCache::containsKey($cacheKey)) {
 	    $permissions = array();
-	    list($ret, $searchResults) =
-		$gallery->search(array('select' => ('[GalleryPermissionSetMap::module], ' .
-						    '[GalleryPermissionSetMap::permission], ' .
-						    '[GalleryPermissionSetMap::description], ' .
-						    '[GalleryPermissionSetMap::bits], ' .
-						    '[GalleryPermissionSetMap::flags]')));
+
+	    $query = '
+            SELECT
+              [GalleryPermissionSetMap::module],
+              [GalleryPermissionSetMap::permission],
+              [GalleryPermissionSetMap::description],
+              [GalleryPermissionSetMap::bits],
+              [GalleryPermissionSetMap::flags]
+            FROM
+              [GalleryPermissionSetMap]
+            ';
+              
+	    list($ret, $searchResults) = $gallery->search($query);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
+	    $storage = $gallery->getStorage();
 	    while ($result = $searchResults->nextResult()) {
+		$bits = $storage->convertBitsToInt($result[3]);
 		$permissions[$result[1]] = array('module' => $result[0],
 						 'permission' => $result[1],
 						 'description' => $result[2],
-						 'bits' => (int)$result[3],
+						 'bits' => (int)$bits,
 						 'flags' => (int)$result[4]);
 	    }
 	    GalleryDataCache::put($cacheKey, $permissions);

@@ -320,24 +320,33 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
 	global $gallery;
 
 	$parentId = $this->getParentId();
-	    
-	$searchParams = array();
-	$searchParams['select'] = 'COUNT([GalleryChildEntity::id])';
 
+	$data = array();
+	$query = '
+        SELECT
+          COUNT([GalleryChildEntity::id])
+        FROM
+          [GalleryChildEntity], [GalleryFileSystemEntity]
+        WHERE
+        ';
 	if (empty($parentId)) {
-	    $searchParams['where'] = '[GalleryChildEntity::parentId] is NULL';
+	    $query .= '[GalleryChildEntity::parentId] IS NULL';
 	} else {
-	    $searchParams['where'] = '[GalleryChildEntity::parentId] = ?';
+	    $query .= '[GalleryChildEntity::parentId] = ?';
 	    $data[] = $parentId;
 	}
-
-	$searchParams['where'] .= ' AND [GalleryFileSystemEntity::pathComponent] = ?';
+	$query .= '
+          AND
+          [GalleryFileSystemEntity::pathComponent] = ?
+          AND
+          [GalleryChildEntity::id] <> ?
+          AND
+          [GalleryChildEntity::id] = [GalleryFileSystemEntity::id]
+        ';
 	$data[] = $pathComponent;
-	
-	$searchParams['where'] .= ' AND [GalleryChildEntity::id] <> ?';
 	$data[] = $this->getId();
 	    
-	list($ret, $searchResults) = $gallery->search($searchParams, $data);
+	list($ret, $searchResults) = $gallery->search($query, $data);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

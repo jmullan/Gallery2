@@ -20,13 +20,29 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+/* Go! */
 $ret = GalleryMain(microtime());
-if ($ret->isError()) {
 
-    /*
-     * If we get an error back up at this level, we can't rely on smarty so all
-     * we can do is dump the error out to the browser.
-     */
+/* Save our session */
+if ($ret->isSuccess()) {
+    /* Write out our session data */
+    $session =& $gallery->getSession();
+    $ret = $session->save();
+}
+
+/* Complete our transaction */
+if ($ret->isSuccess()) {
+    $ret = $gallery->commitTransaction();
+    if ($ret->isError()) {
+	return $ret->wrap(__FILE__, __LINE__);
+    }
+}
+
+/*
+ * If we get an at this level, we can't rely on smarty so all we can do is dump
+ * the error out to the browser.
+ */
+if ($ret->isError()) {
     $ret = $ret->wrap(__FILE__, __LINE__);
     print $ret->getAsHtml();
 
@@ -35,6 +51,9 @@ if ($ret->isError()) {
 	print $gallery->getDebugBuffer();
 	print "</pre>";
     }
+
+    /* Nuke our transaction, too */
+    $gallery->rollbackTransaction();
     return;
 }
 
@@ -56,6 +75,12 @@ function GalleryMain($startTime) {
     GalleryProfiler::start('GalleryMain', $startTime);
     GalleryProfiler::start('GalleryInitFirstPass', $startTime);
     GalleryProfiler::stop('GalleryInitFirstPass');
+
+    /* Init our storage */
+    $ret = GalleryInitStorage();
+    if ($ret->isError()) {
+	return $ret->wrap(__FILE__, __LINE__);
+    }
 
     /* Start our transaction */
     $ret = $gallery->beginTransaction();
@@ -90,6 +115,7 @@ function GalleryMain($startTime) {
 	GalleryUtilities::getRequestVariables('view', 'controller');
 
     /* Load and run the appropriate controller */
+    $master = array();
     if (!empty($controllerName)) {
 	list ($ret, $controller) = GalleryController::loadController($controllerName);
 	if ($ret->isError()) {
@@ -104,9 +130,23 @@ function GalleryMain($startTime) {
 	
 	/* Redirect, if so instructed */
 	if (!empty($results['redirect'])) {
-	    header("Location: $results[redirect]");
-	    print "DEBUG! Redirect to: <a href=\"$results[redirect]\">$results[redirect]</a>";
-	    return GalleryStatus::success();
+	    if ($gallery->getDebug() == false) {
+		header("Location: $results[redirect]");
+		return GalleryStatus::success();
+	    } else {
+		/*
+		 * If we're in debug mode, we'd rather not redirect because
+		 * then we can't see all the nice debug output.  Instead, put
+		 * up a link to the new URL and continue on to show our global
+		 * output.  But don't try to display a view!
+		 */
+		$master['view']['head'] = '';
+		$master['view']['body'] =
+		    "You are in debug mode so we are not automatically redirecting. " .
+		    "Click <a href=\"$results[redirect]\">here</a> to continue.";
+		$master['view']['alreadyRendered'] = true;
+		$showGlobal = true;
+	    }
 	}
 	
 	/* Let the controller specify the next view */
@@ -115,56 +155,52 @@ function GalleryMain($startTime) {
 	}
     }
 
-    /* Load and run the appropriate view */
-    if (empty($viewName)) {
-	$viewName = 'core:ShowItem';
-    }
+    if (empty($master['view']['alreadyRendered'])) {
+	/* Load and run the appropriate view */
+	if (empty($viewName)) {
+	    $viewName = 'core:ShowItem';
+	}
     
-    list ($ret, $view) = GalleryView::loadView($viewName);
-    if ($ret->isError()) {
-	if ($ret->getErrorCode() & ERROR_BAD_PARAMETER) {
-	    list ($ret, $view) = GalleryView::loadView('core:SecurityViolation');
-	    if ($ret->isError()) {
+	list ($ret, $view) = GalleryView::loadView($viewName);
+	if ($ret->isError()) {
+	    if ($ret->getErrorCode() & ERROR_BAD_PARAMETER) {
+		list ($ret, $view) = GalleryView::loadView('core:SecurityViolation');
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    } else {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-	} else {
-	    return $ret->wrap(__FILE__, __LINE__);
 	}
-    }
 
-    /*
-     * If this is an immediate view, it will send its own output directly.  This is
-     * used in the situation where we want to send a binary file to the browser.
-     * Otherwise, we're rendering in buffered mode and are expecting to receive 
-     * HTML head and HTML body content.
-     */
-    $showGlobal = true;
-    if ($view->isImmediate()) {
-	$ret = $view->renderImmediate();
-	if ($ret->isError()) {
-	    $master['view']['head'] = '';
-	    $master['view']['body'] = $ret->getAsHtml();
+	/*
+	 * If this is an immediate view, it will send its own output directly.  This is
+	 * used in the situation where we want to send a binary file to the browser.
+	 * Otherwise, we're rendering in buffered mode and are expecting to receive 
+	 * HTML head and HTML body content.
+	 */
+	$showGlobal = true;
+	if ($view->isImmediate()) {
+	    $ret = $view->renderImmediate();
+	    if ($ret->isError()) {
+		$master['view']['head'] = '';
+		$master['view']['body'] = $ret->getAsHtml();
+	    } else {
+		$showGlobal = false;
+	    }
 	} else {
-	    $showGlobal = false;
-	}
-    } else {
-	GalleryProfiler::start('GalleryView::renderHeadAndBody');
+	    GalleryProfiler::start('GalleryView::renderHeadAndBody');
 
-	list ($ret, $master['view']) = $view->renderHeadAndBody();
-	if ($ret->isError()) {
-	    $master['error'] = $ret->getAsHtml();
+	    list ($ret, $master['view']) = $view->renderHeadAndBody();
+	    if ($ret->isError()) {
+		$master['error'] = $ret->getAsHtml();
+	    }
+	    GalleryProfiler::stop('GalleryView::renderHeadAndBody');
 	}
-	GalleryProfiler::stop('GalleryView::renderHeadAndBody');
     }
 
     if ($showGlobal) {
 
-	/* Complete our transaction */
-	$ret = $gallery->commitTransaction();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-	
 	/* If we're debugging, gather up our debug info also */
 	if ($gallery->getDebug()) {
 	    if ($gallery->getDebug() == 'buffered') {

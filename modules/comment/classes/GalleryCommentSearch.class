@@ -49,64 +49,60 @@ class GalleryCommentSearch extends GallerySearchInterface_1_0 {
     function search($options, $criteria, $limit=null) {
 	global $gallery;
 
-	$data = array();
-	foreach (array('comments' => '[GalleryComment::comment]')
-		 as $key => $column) {
-
-	    if (isset($options[$key])) {
-		$whereList[] = "$column LIKE ?";
-		$data[] = '%' . $criteria . '%';
-	    }
+	/* Get our separate permission bit settings */
+	list ($ret, $coreBits) =
+	    GalleryPermissionSetMap::convertIdsToBits('core.view');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$where = join(' OR ', $whereList);
 
-	/*
-	('SELECT   [GalleryChildEntity::parentId] ' .
-	 'FROM     [GalleryChildEntity], [GalleryComment], [GalleryItem], [GalleryEntity] '.
-	 'WHERE    (([GalleryChildEntity::id] = [GalleryComment::id]) '.
-	 '          AND ([GalleryChildEntity::parentId] = [GalleryItem::id]) '.
-	 '          AND ([GalleryChildEntity::parentId] = [GalleryEntity::id])) ' .
-	 'ORDER BY [GalleryEntity::modificationTimestamp] DESC',
-	 'HAVING
-	*/
-	 
-	/* Factor in item permissions */
-	list ($permissionWhere, $permissionData) =
-	    GalleryItemHelper::getViewPermissionClause($gallery->getActiveUserId());
-	$where = $where . ' AND ' . $permissionWhere;
-	$data = array_merge($data, $permissionData);
-
-	/* Make sure we have permission to view the item's comment, also */
-	list ($ret, $permissionBits) =
+	list ($ret, $commentBits) =
 	    GalleryPermissionSetMap::convertIdsToBits('comment.view');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$where .= ' AND [GalleryPermissionMap::permission] & ? ';
-	$data[] = $permissionBits;
+	$query = '
+	SELECT
+	  DISTINCT([GalleryChildEntity::parentId]),
+	  BIT_OR([GalleryPermissionMap::permission]),
+          [GalleryComment::date]
+	FROM
+	  [GalleryChildEntity], [GalleryComment], [GalleryPermissionMap], [GalleryUserGroupMap]
+	WHERE
+	  [GalleryChildEntity::id] = [GalleryComment::id]
+	  AND
+          [GalleryChildEntity::parentId] = [GalleryPermissionMap::itemId]
+          AND
+          ([GalleryPermissionMap::userId] = ?
+           OR
+           ([GalleryUserGroupMap::userId] = ?
+            AND
+            [GalleryPermissionMap::groupId] = [GalleryUserGroupMap::groupId]))
+          AND
+          [GalleryComment::comment] LIKE ?
+	GROUP BY
+	  [GalleryChildEntity::parentId],
+          [GalleryComment::date]
+	HAVING
+	  (BIT_OR([GalleryPermissionMap::permission]) & ? > ?)
+          AND
+	  (BIT_OR([GalleryPermissionMap::permission]) & ? > ?)
+	ORDER BY
+	  [GalleryComment::date] DESC
+        ';
 
-	/*
-	 * We're going to be selecting all the child entities but we care about
-	 * the permissions of the parent item, so we need to join
-	 * GalleryChildEntity::parentId against GalleryItem::id.  Since this is
-	 * a non-standard entity join, we have to override the entity joins
-	 * that the DatabaseStorage layer gives us for free and do all the
-	 * joins ourself (ugh).
-	 */
-	$joins = ('((g2_GalleryChildEntity.g_id = g2_GalleryComment.g_id) ' .
-		  'AND (g2_GalleryChildEntity.g_parentId = g2_GalleryItem.g_id) ' .
-                  'AND (g2_GalleryChildEntity.g_parentId = g2_GalleryEntity.g_id))');
-	$where = $where . ' AND ' . $joins;
-
-	list ($ret, $results) = 
-	    $gallery->search(array('select' => '[GalleryChildEntity::parentId]',
-				   'where' => $where,
-				   'order-by' => '[GalleryEntity::modificationTimestamp] DESC',
-				   'limit' => array('offset' => 0, 'count' => $limit),
-				   'no-implicit-joins' => 1,
-				   'boolean-operator' => 'OR'),
-			     $data);
+	$storage = $gallery->getStorage();
+	$data = array();
+	$data[] = $gallery->getActiveUserId();
+	$data[] = $gallery->getActiveUserId();
+	$data[] = $criteria;
+	$data[] = $storage->convertIntToBits($coreBits);
+	$data[] = $storage->convertIntToBits(0);
+	$data[] = $storage->convertIntToBits($commentBits);
+	$data[] = $storage->convertIntToBits(0);
+	
+	list ($ret, $results) = $gallery->search($query, $data);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

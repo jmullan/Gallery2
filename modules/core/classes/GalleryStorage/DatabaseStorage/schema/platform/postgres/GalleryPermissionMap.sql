@@ -17,7 +17,7 @@
     
       ,
     DB_COLUMN_PREFIXpermission
-      INTEGER
+      BIT(32)
     
     );
 

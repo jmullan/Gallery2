@@ -63,13 +63,21 @@ class GalleryCommentHelper {
 			 null);
 	}
 
-	$params['select'] ='[GalleryComment::id]';
-	$params['where'] = '[GalleryChildEntity::parentId] = ?';
-	if (!empty($count)) {
-	    $params['limit'] = array('count' => $count);
-	}
-	$params['order-by'] = '[GalleryComment::date] ' . $direction;
-	list($ret, $searchResults) = $gallery->search($params, array($itemId));
+	$query = '
+        SELECT
+          [GalleryComment::id]
+        FROM
+          [GalleryComment], [GalleryChildEntity]
+        WHERE
+          [GalleryChildEntity::parentId] = ?
+          AND
+          [GalleryChildEntity::id] = [GalleryComment::id]
+        ORDER BY
+          [GalleryComment::date] ' . $direction . '
+        ';
+	list($ret, $searchResults) = $gallery->search($query,
+						       array($itemId),
+						       array('limit' => array('count' => $count)));
 
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -105,14 +113,21 @@ class GalleryCommentHelper {
 	global $gallery;
 
 	$markers = GalleryUtilities::makeMarkers(sizeof($itemIds));
-	list($ret, $searchResults) =
-	    $gallery->search(array('select' => ('[GalleryChildEntity::parentId], ' .
-						'COUNT([GalleryComment::id])'),
-				   'where' => ('[GalleryChildEntity::parentId] IN (' .
-					       $markers . ')'),
-				   'group-by' => '[GalleryChildEntity::parentId]'),
-			     $itemIds);
+	$query = '
+        SELECT
+          [GalleryChildEntity::parentId],
+          COUNT([GalleryComment::id])
+        FROM
+          [GalleryComment], [GalleryChildEntity]
+        WHERE
+          [GalleryChildEntity::parentId] IN (' . $markers . ')
+          AND
+          [GalleryChildEntity::id] = [GalleryComment::id]
+        GROUP BY
+          [GalleryChildEntity::parentId]
+        ';
 
+	list($ret, $searchResults) = $gallery->search($query, $itemIds);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

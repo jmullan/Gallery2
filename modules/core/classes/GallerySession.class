@@ -255,46 +255,12 @@ class GallerySession_core {
 	    $this->_keyStatus[$key] = SESSION_KEY_EXISTS;
 	}
 
-	return GalleryStatus::success();
-    }
-
-    /**
-     * Shut down the session.
-     *
-     * This method is intended to be called as a PHP shutdown handler, so it
-     * takes no arguments and returns no value.
-     */
-    function _shutdown() {
-	global $gallery;
-
-	$ret = $this->save();
-	if ($ret->isError()) {
-	    /*
-	     * We're getting called inside a shutdown handler -- can't
-	     * do much with errors here.  Complain loudly!
-	     */
-	    $ret = $ret->wrap(__FILE__, __LINE__);
-	    print $ret->getAsHtml();
-	}
-
 	$ret = $this->_expireSessions();
 	if ($ret->isError()) {
-	    /*
-	     * We're getting called inside a shutdown handler -- can't
-	     * do much with errors here.  Complain loudly!
-	     */
-	    $ret = $ret->wrap(__FILE__, __LINE__);
-	    print $ret->getAsHtml();
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	/*
-	 * If you want to see what's happening during this shutdown handler,
-	 * activate this block below:
-	 */
-	if (false) {
-	    print "<pre>";
-	    print $gallery->getDebugBuffer();
-	}
+	return GalleryStatus::success();
     }
 
     /**
@@ -343,21 +309,31 @@ class GallerySession_core {
 	    }
 
 	    if ($sessionInactivityTimeout > 0) {
-
+		$query = '
+                SELECT
+                  [GallerySession::sessionId]
+                FROM
+                  [GallerySession]
+                WHERE
+                  ([GallerySession::key] = ?
+                   AND
+                   (? - [GallerySession::value] > ?))
+                  OR
+                  ([GallerySession::key] = ?
+                   AND
+                   (? - [GallerySession::value] > ?))
+                ';
+		
 		/* Find any sessions that are expired */
 		list ($ret, $searchResults) =
-		    $gallery->search(array('select' => '[GallerySession::sessionId]',
-					   'where' => ('([GallerySession::key] = ? ' .
-						       ' AND (? - [GallerySession::value] > ?))' .
-						       ' OR ' .
-						       '([GallerySession::key] = ? ' .
-						       ' AND (? - [GallerySession::value] > ?))')),
-				     array('core.session.lastModified',
-					   time(),
-					   $sessionInactivityTimeout,
-					   'core.session.creationTime',
-					   time(),
-					   $lifetime));
+		    $now = time();
+		    $gallery->search($query, 
+				      array('core.session.lastModified',
+					    $now,
+					    $sessionInactivityTimeout,
+					    'core.session.creationTime',
+					    $now,
+					    $lifetime));
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
@@ -466,11 +442,18 @@ class GallerySession_core {
 	if (!empty($keys)) {
 	    $markers = GalleryUtilities::makeMarkers(array_keys($keys));
 	    $data = array_merge(array($this->_sessionId), array_keys($keys));
-	    list ($ret, $searchResults) =
-		$gallery->search(array('select' => '[GallerySession::key], [GallerySession::value]',
-				       'where' => ('[GallerySession::sessionId] = ?' .
-						   ' AND [GallerySession::key] IN (' . $markers . ')')),
-				 $data);
+	    $query = '
+            SELECT
+              [GallerySession::key], 
+              [GallerySession::value]
+            FROM
+              [GallerySession]
+            WHERE
+              [GallerySession::sessionId] = ?
+              AND
+              [GallerySession::key] IN (' . $markers . ')
+            ';
+	    list ($ret, $searchResults) = $gallery->search($query, $data);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }

@@ -166,6 +166,9 @@
     <xsl:when test="column-type='INTEGER'">
       INTEGER
     </xsl:when>
+    <xsl:when test="column-type='BIT'">
+      BIT(32)
+    </xsl:when>
     <xsl:when test="column-type='STRING'">
       VARCHAR(
       <xsl:choose>

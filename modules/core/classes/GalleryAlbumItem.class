@@ -92,7 +92,12 @@ class GalleryAlbumItem_core extends GalleryItem {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	return $this->_createDir($parentPath . $albumName);
+	$ret = $this->_createDir($parentPath . $albumName);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
     }
 
     /**
@@ -141,7 +146,12 @@ class GalleryAlbumItem_core extends GalleryItem {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	return $this->_createDir($parentPath . $albumName);
+	$ret = $this->_createDir($parentPath . $albumName);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
     }
 
     /**

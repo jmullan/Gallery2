@@ -114,29 +114,12 @@ class DatabaseStorage extends GalleryStorage {
     var $_databaseSchema;
 
     /**
-     * Status of the database connection
-     * 
-     * @var int status
-     * @access private
-     */
-    var $_connectionStatus;
-
-    /**
      * Are we attempting to be transactional?
      *
      * @var string $_transactional
      * @access private
      */
     var $_isTransactional;
-
-    /**
-     * A mapping of id to object type, useful when we are going to do multiple
-     * lookups on the same object.
-     *
-     * @var array $_entityTypeCache
-     * @access private
-     */
-    var $_entityTypeCache;
 
     /**
      * A string to prepend to table names
@@ -161,8 +144,6 @@ class DatabaseStorage extends GalleryStorage {
      */
     function DatabaseStorage($config) {
 	$this->GalleryStorage();
-	$this->_connectionStatus = DATABASE_STATUS_NOT_CONNECTED;
-
 	$this->_username = $config['username'];
 	$this->_password = $config['password'];
 	$this->_hostname = $config['hostname'];
@@ -199,18 +180,38 @@ class DatabaseStorage extends GalleryStorage {
      */
     function _connect() {
 	global $gallery;
+
+	list ($ret, $this->_db) = $this->_getConnection();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Connect to the database
+     *
+     * @return array object GalleryStatus a status code
+     *               object a database resource
+     * @access private
+     */
+    function _getConnection($forceNew=false) {
+	global $gallery;
 	
 	if (empty($this->_username) || empty($this->_hostname)) {
-	    return GalleryStatus::error(ERROR_MISSING_VALUE,
-					__FILE__, __LINE__);
+	    return array(GalleryStatus::error(ERROR_MISSING_VALUE,
+					      __FILE__, __LINE__),
+			 null);
 	}
 
 	$this->_traceStart();
-	$this->_db = ADONewConnection($this->getAdoDbType());
+	$db = ADONewConnection($this->getAdoDbType());
 	$this->_traceStop();
-	if (empty($this->_db)) {
-	    return GalleryStatus::error(ERROR_STORAGE_FAILURE,
-					__FILE__, __LINE__);
+	if (empty($db)) {
+	    return array(GalleryStatus::error(ERROR_STORAGE_FAILURE,
+					      __FILE__, __LINE__),
+			 null);
 	}
 
 	/*
@@ -218,29 +219,31 @@ class DatabaseStorage extends GalleryStorage {
 	 * mode
 	 */
 	if ($gallery->getDebug()) {
-	    $this->_db->debug = true;
+	    $db->debug = true;
 	}
 
 	$this->_traceStart();
-	$ret = $this->_db->PConnect($this->_hostname,
-				    $this->_username,
-				    $this->_password,
-				    $this->_database);
+	if ($forceNew) {
+	    $connectMethod = "NConnect";
+	} else {
+	    $connectMethod = "PConnect";
+	}
+	$ret = $db->$connectMethod($this->_hostname,
+				   $this->_username,
+				   $this->_password,
+				   $this->_database);
 	$this->_traceStop();
 
 	if (!$ret) {
-	    $this->_connectionStatus = DATABASE_STATUS_NOT_CONNECTED;
-	    $this->_db = null;
-	    return GalleryStatus::error(ERROR_STORAGE_FAILURE,
-					__FILE__, __LINE__);
-	} else {
-	    $this->_connectionStatus = DATABASE_STATUS_CONNECTED;
+	    return array(GalleryStatus::error(ERROR_STORAGE_FAILURE,
+					      __FILE__, __LINE__),
+			 null);
 	}
 
 
-	return GalleryStatus::success();
+	return array(GalleryStatus::success(), $db);
     }
-
+    
     /**
      * Turn debugging on or off.
      */
@@ -265,7 +268,7 @@ class DatabaseStorage extends GalleryStorage {
     function loadEntities($ids) {
 	global $gallery;
 	
-	if ($this->_connectionStatus != DATABASE_STATUS_CONNECTED) {
+	if (empty($this->_db)) {
 	    return array(GalleryStatus::error(ERROR_STORAGE_CONNECTION,
 					      __FILE__, __LINE__),
 			 null);
@@ -409,7 +412,7 @@ class DatabaseStorage extends GalleryStorage {
      * @return object GalleryStatus a status code
      */
     function saveEntity(&$entity) {
-	if ($this->_connectionStatus != DATABASE_STATUS_CONNECTED) {
+	if (empty($this->_db)) {
 	    return GalleryStatus::error(ERROR_STORAGE_CONNECTION,
 					__FILE__, __LINE__);
 	}
@@ -553,6 +556,7 @@ class DatabaseStorage extends GalleryStorage {
 	     */
 	    foreach ($queryList as $queryAndData) {
 		list($query, $data) = $queryAndData;
+
 		$this->_traceStart();
 		$recordSet = $this->_db->Execute($query, $data);
 		$this->_traceStop();
@@ -591,7 +595,7 @@ class DatabaseStorage extends GalleryStorage {
      * @return object GalleryStatus a status code
      */
     function deleteEntity(&$entity) {
-	if ($this->_connectionStatus != DATABASE_STATUS_CONNECTED) {
+	if (empty($this->_db)) {
 	    return GalleryStatus::error(ERROR_STORAGE_CONNECTION,
 					__FILE__, __LINE__);
 	}
@@ -652,7 +656,7 @@ class DatabaseStorage extends GalleryStorage {
      * @return object GalleryStatus a status code
      */
     function newEntity(&$entity) {
-	if ($this->_connectionStatus != DATABASE_STATUS_CONNECTED) {
+	if (empty($this->_db)) {
 	    return GalleryStatus::error(ERROR_STORAGE_CONNECTION,
 					__FILE__, __LINE__);
 	}
@@ -683,7 +687,7 @@ class DatabaseStorage extends GalleryStorage {
      *               GalleryEntity the refreshed entity
      */
     function refreshEntity($entity) {
-	if ($this->_connectionStatus != DATABASE_STATUS_CONNECTED) {
+	if (empty($this->_db)) {
 	    return GalleryStatus::error(ERROR_STORAGE_CONNECTION,
 					__FILE__, __LINE__);
 	}
@@ -1026,145 +1030,54 @@ class DatabaseStorage extends GalleryStorage {
      * @return array object GalleryStatus a status code,
      *               array the result values
      */
-    function search($query, $data=array()) {
-	if ($this->_connectionStatus != DATABASE_STATUS_CONNECTED) {
+    function search($query, $data=array(), $optional=array()) {
+	if (empty($this->_db)) {
 	    return array(GalleryStatus::error(ERROR_STORAGE_CONNECTION,
 					      __FILE__, __LINE__),
 			 null);
 	}
 
-	/*
-	 * Convert the generic query to a specific one.  Luckily, the
-	 * generic query language is very close to standard SQL.  Isn't
-	 * that convenient!
-	 *
-	 * Convert:
-	 * array(
-	 *   'select'   => '[Class1::member1] [Class2.member2]',
-	 *   'where'    => '[Class3::member3] is NULL',
-	 *   'order-by' => '[Class1::member1] ASC',
-	 *   'limit'    => array('offset' => 0, 'count' => 10),
-	 *   'group-by' => '[Class1::member1]'
-	 *   'having'   => '[Class1::member1] ... '
-	 *   'no-implicit-joins' => true (or false, which is the default)
-	 *
-	 * Into:
-	 *
-	 * SELECT   table1.column1, table2.column2, table3.column3
-	 * FROM     table1, table2, table3
-	 * WHERE    table3.member3 IS NULL
-	 *          AND ((table1.id = table2.id) AND (table1.id = table3.id))
-	 * ORDER BY table1.member1 ASC
-	 * GROUP BY table1.member1
-	 *
-	 * Which would then be called like this:
-	 *
-	 * $db->SelectLimit($query, limit['count'], limit['offset']);
-	 *
-	 */
-	$allTables = array();
-	$entityTables = array();
-	foreach (array('select', 'where', 'order-by', 'group-by', 'having') as $elementName) {
-	    if (empty($query[$elementName])) {
-		/* XXX: We should verify that 'select' exists here */
-		continue;
-	    }
-
-	    $elementValue = $query[$elementName];
-	    while (ereg("(\[[[:alnum:]]*::[[:alnum:]]*\])", $elementValue, $regs)) {
-		$outer = $regs[1];
-		ereg("([[:alnum:]]*)::([[:alnum:]]*)", $outer, $regs);
-		list($class, $member) = array($regs[1], $regs[2]);
-		
-		$table = $this->_prefixTableName($class);
-		$column = $this->_prefixColumnName($member);
-
-		$allTables[$table] = 1;
-		list ($ret, $classType) = $this->_getClassType($class);
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__),
-				 null);
-		}
-		
-		if (!strcmp($classType, 'entity')) {
-		    $entityTables[$table] = 1;
-		}
-
-		$elementValue = str_replace($outer, "$table.$column", $elementValue);
-	    }
-
-	    /* Replace the element in the query */
-	    $query[$elementName] = $elementValue;
+	/* Change '[Class::member]' to 'table.column' */
+	while (ereg("\[([[:alnum:]]*)::([[:alnum:]]*)\]", $query, $regs)) {
+	    $class = $regs[1];
+	    $member = $regs[2];
+	    $table = $this->_prefixTableName($class);
+	    $column = $this->_prefixColumnName($member);
+	    $query = str_replace("[${class}::${member}]", "$table.$column", $query);
 	}
 
-	/*
-	 * Now that we know 'tables' is unique, convert it to a list for easier
-	 * processing.
-	 */
-	$entityTables = array_keys($entityTables);
-	$allTables = array_keys($allTables);
-
-	if (sizeof($allTables)) {
-	    $query['from'] = join(", ", $allTables);
-
-	    if (empty($query['no-implicit-joins'])) {
-		if (sizeof($entityTables) > 1) {
-		    $query['where'] .= ' AND (';
-		    $idCol = $this->_prefixColumnName('id');
-		    for ($i = 1; $i < sizeof($entityTables); $i++) {
-			$query['where'] .= "($entityTables[0].$idCol = $entityTables[$i].$idCol)";
-			if ($i < (sizeof($entityTables)-1)) {
-			    $query['where'] .= ' AND ';
-			}
-		    }
-		    $query['where'] .= ')';
-		}
-	    }
-	}
-
-	/* Assemble the query */
-	$finalQuery = 'SELECT ' . $query['select'];
-	$finalQuery .= ' FROM ' . $query['from'];
-	if (!empty($query['where'])) {
-	    $finalQuery .= ' WHERE ' . $query['where'];
-	}
-
-	if (!empty($query['group-by'])) {
-	    $finalQuery .= ' GROUP BY ' . $query['group-by'];
-	}
-
-	if (!empty($query['order-by'])) {
-	    $finalQuery .= ' ORDER BY ' . $query['order-by'];
-	}
-
-	if (!empty($query['having'])) {
-	    $finalQuery .= ' HAVING ' . $query['having'];
+	/* Change '[Class]' to 'table' */
+	while (ereg("\[([[:alnum:]]*)\]", $query, $regs)) {
+	    $class = $regs[1];
+	    $table = $this->_prefixTableName($class);
+	    $query = str_replace("[${class}]", "$table", $query);
 	}
 
 	/* Run it with the right limits and return the results */
 	$GLOBALS['ADODB_FETCH_MODE'] = ADODB_FETCH_BOTH;
 
-	if (isset($query['limit']) && sizeof($query['limit'])) {
-	    if (empty($query['limit']['count'])) {
+	if (isset($optional['limit']) && sizeof($optional['limit'])) {
+	    if (empty($optional['limit']['count'])) {
 		$count = -1;
 	    } else {
-		$count = $query['limit']['count'];
+		$count = $optional['limit']['count'];
 	    }
 	    
-	    if (empty($query['limit']['offset'])) {
+	    if (empty($optional['limit']['offset'])) {
 		$offset = -1;
 	    } else {
-		$offset = $query['limit']['offset'];
+		$offset = $optional['limit']['offset'];
 	    }
 	    
 	    $this->_traceStart();
-	    $recordSet = $this->_db->SelectLimit($finalQuery, $count, $offset, $data);
+	    $recordSet = $this->_db->SelectLimit($query, $count, $offset, $data);
 	    $this->_traceStop();
 	} else {
 	    $this->_traceStart();
-	    $recordSet = $this->_db->Execute($finalQuery, $data);
+	    $recordSet = $this->_db->Execute($query, $data);
 	    $this->_traceStop();
 	}
+	
 	if ($recordSet) {
 	    return array(GalleryStatus::success(),
 			 new DatabaseSearchResults($recordSet));
@@ -1187,16 +1100,19 @@ class DatabaseStorage extends GalleryStorage {
 	$mapInfo = $this->_describeMapMembers($mapName);
 	$tableName = $this->_prefixTableName($mapName);
 	$data = array();
-	$markers = array();
 	$columns = array();
 	foreach ($mapInfo['members'] as $memberName => $memberType) {
-	    $markers[] = '?';
 	    $columns[] = $this->_prefixColumnName($memberName);
-
 	    $value = $entry[$memberName];
-	    if ($memberType & STORAGE_TYPE_TIMESTAMP) {
-		$value = $this->_db->DBTimeStamp($value);
+
+	    if ($memberType & STORAGE_TYPE_BIT) {
+		$value = $this->convertIntToBits($value);
+	    } else {
+		if ($memberType & STORAGE_TYPE_TIMESTAMP) {
+		    $value = $this->_db->DBTimeStamp($value);
+		}
 	    }
+	    
 	    $data[] = $value;
 	}
 
@@ -1273,12 +1189,24 @@ class DatabaseStorage extends GalleryStorage {
 	foreach ($mapInfo['members'] as $memberName => $memberType) {
 	    if (isset($match[$memberName])) {
 		$where[] = $this->_prefixColumnName($memberName) . '=?';
-		$wheredata[] = $match[$memberName];
+
+		$value = $match[$memberName];
+		if ($memberType & STORAGE_TYPE_BIT) {
+		    $value = $this->convertIntToBits($value);
+		}
+
+		$wheredata[] = $value;
 	    }
 
 	    if (isset($change[$memberName])) {
 		$set[] = $this->_prefixColumnName($memberName) . '=?';
-		$setdata[] = $change[$memberName];
+
+		$value = $change[$memberName];
+		if ($memberType & STORAGE_TYPE_BIT) {
+		    $value = $this->convertIntToBits($value);
+		}
+		
+		$setdata[] = $value;
 	    }
 	}
 
@@ -1316,7 +1244,7 @@ class DatabaseStorage extends GalleryStorage {
     function configureStore($moduleName) {
 	global $gallery;
 	
-	if ($this->_connectionStatus != DATABASE_STATUS_CONNECTED) {
+	if (empty($this->_db)) {
 	    return GalleryStatus::error(ERROR_STORAGE_CONNECTION,
 					__FILE__, __LINE__);
 	}
@@ -1374,6 +1302,19 @@ class DatabaseStorage extends GalleryStorage {
 	    $ret = $this->_executeSqlFile($tableDefinition['Schema']);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    /* Create our sequences now */
+	    foreach (array(DATABASE_SEQUENCE_LOCK, DATABASE_SEQUENCE_ID)
+		     as $sequenceId) {
+
+		$this->_traceStart();
+		$recordSet = $this->_db->CreateSequence($sequenceId);
+		$this->_traceStop();
+		if (empty($recordSet)) {
+		    return GalleryStatus::error(ERROR_STORAGE_FAILURE,
+						__FILE__, __LINE__);
+		}
 	    }
 	}
 
@@ -1564,7 +1505,6 @@ class DatabaseStorage extends GalleryStorage {
 		     as $sequenceId) {
 
 		$this->_traceStart();
-		$id = $this->_db->GenId($sequenceId);
 		$recordSet = $this->_db->DropSequence($sequenceId);
 		$this->_traceStop();
 		if (empty($recordSet)) {
@@ -1573,7 +1513,6 @@ class DatabaseStorage extends GalleryStorage {
 		}
 	    }
 	}
-
 
 	return GalleryStatus::success();
     }
@@ -1585,7 +1524,7 @@ class DatabaseStorage extends GalleryStorage {
      * @return object GalleryStatus a status code
      */
     function beginTransaction() {
-	if ($this->_connectionStatus != DATABASE_STATUS_CONNECTED) {
+	if (empty($this->_db)) {
 	    return GalleryStatus::error(ERROR_STORAGE_CONNECTION,
 					__FILE__, __LINE__);
 	}
@@ -1605,12 +1544,10 @@ class DatabaseStorage extends GalleryStorage {
     }
 
     /**
-     * Commit our transaction, if the storage layer supports them.
-     *
-     * @return object GalleryStatus a status code
+     * @see GalleryStorage::commitTransaction
      */
     function commitTransaction() {
-	if ($this->_connectionStatus != DATABASE_STATUS_CONNECTED) {
+	if (empty($this->_db)) {
 	    return GalleryStatus::error(ERROR_STORAGE_CONNECTION,
 					__FILE__, __LINE__);
 	}
@@ -1629,6 +1566,28 @@ class DatabaseStorage extends GalleryStorage {
 	return GalleryStatus::success();
     }
 
+    /**
+     * @see GalleryStorage::rollbackTransaction
+     */
+    function rollbackTransaction() {
+	if (empty($this->_db)) {
+	    return GalleryStatus::error(ERROR_STORAGE_CONNECTION,
+					__FILE__, __LINE__);
+	}
+
+	if ($this->_isTransactional) {
+	    $this->_traceStart();
+	    $ok = $this->_db->RollbackTrans();
+	    $this->_traceStop();
+	    
+	    if (!$ok) {
+		return GalleryStatus::error(ERROR_STORAGE_FAILURE,
+					    __FILE__, __LINE__);
+	    }
+	}
+	
+	return GalleryStatus::success();
+    }
     /**
      * Database specific string replacements in our SQL files.
      *
@@ -1657,7 +1616,7 @@ class DatabaseStorage extends GalleryStorage {
 
 	$checkIds = array();
 	foreach ($ids as $id) {
-	    if (empty($this->_entityTypeCache[$id])) {
+	    if (!GalleryDataCache::containsKey("DatabaseStorage::_identifyEntities($id)")) {
 		$checkIds[] = $id;
 	    }
 	}
@@ -1682,7 +1641,7 @@ class DatabaseStorage extends GalleryStorage {
 			return array(GalleryStatus::error(ERROR_MISSING_OBJECT,
 							  __FILE__, __LINE__), null);
 		    } else {
-			$this->_entityTypeCache[$row[0]] = $row[1];
+			GalleryDataCache::put("DatabaseStorage::_identifyEntities($row[0])", $row[1]);
 		    }
 		}
 	    } else {
@@ -1695,14 +1654,14 @@ class DatabaseStorage extends GalleryStorage {
 	if ($returnArray) {
 	    $results = array();
 	    foreach ($ids as $id) {
-		if (empty($this->_entityTypeCache[$id])) {
+		if (!GalleryDataCache::containsKey("DatabaseStorage::_identifyEntities($id)")) {
 		    return array(GalleryStatus::error(ERROR_MISSING_OBJECT,
 						      __FILE__, __LINE__), null);
 		}
-		$results[] = $this->_entityTypeCache[$id];
+		$results[] = GalleryDataCache::get("DatabaseStorage::_identifyEntities($id)");
 	    }
 	} else {
-	    $results = $this->_entityTypeCache[$ids[0]];
+	    $results = GalleryDataCache::get("DatabaseStorage::_identifyEntities($ids[0])");
 	}
 
 	return array(GalleryStatus::success(), $results);

@@ -54,7 +54,7 @@ class GalleryPermissionSetMap extends GalleryPermissionSetMap_core {
   
         $info['members']['description'] = STORAGE_TYPE_STRING;
   
-        $info['members']['bits'] = STORAGE_TYPE_INTEGER;
+        $info['members']['bits'] = STORAGE_TYPE_BIT;
   
         $info['members']['flags'] = STORAGE_TYPE_INTEGER;
   
@@ -91,12 +91,7 @@ class GalleryPermissionSetMap extends GalleryPermissionSetMap_core {
         }
     
 
-	$reply =& $gallery->getStorage();
-	$ret = $reply[0];
-	$storage =& $reply[1];
-        if ($ret->isError()) {
-            return $ret->wrap(__FILE__, __LINE__);
-        }
+	$storage = $gallery->getStorage();
 
         $ret = $storage->addMapEntry('GalleryPermissionSetMap', $data);
         if ($ret->isError()) {
@@ -118,13 +113,8 @@ class GalleryPermissionSetMap extends GalleryPermissionSetMap_core {
         if (sizeof($data) == 0) {
             return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
         }
-	$reply =& $gallery->getStorage();
-	$ret = $reply[0];
-	$storage =& $reply[1];
 
-        if ($ret->isError()) {
-            return $ret->wrap(__FILE__, __LINE__);
-        }
+	$storage = $gallery->getStorage();
 
         $ret = $storage->removeMapEntry('GalleryPermissionSetMap', $data);
         if ($ret->isError()) {
@@ -147,13 +137,8 @@ class GalleryPermissionSetMap extends GalleryPermissionSetMap_core {
 	if (sizeof($match) == 0 || sizeof($change) == 0) {
             return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
         }
-	$reply =& $gallery->getStorage();
-	$ret = $reply[0];
-	$storage =& $reply[1];
 
-        if ($ret->isError()) {
-            return $ret->wrap(__FILE__, __LINE__);
-        }
+	$storage = $gallery->getStorage();
 
         $ret = $storage->updateMapEntry('GalleryPermissionSetMap', $match, $change);
         if ($ret->isError()) {

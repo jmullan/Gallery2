@@ -162,17 +162,25 @@ class GalleryUserGroupMap_core {
     function fetchUsersForGroup($groupId, $count=null, $offset=null) {
 	global $gallery;
 
-	list ($ret, $searchResults) = 
-	    $gallery->search(array('select' => '[GalleryUserGroupMap::userId], ' .
-				               '[GalleryUser::userName] ',
-				   'where' => ('[GalleryUserGroupMap::groupId] = ? ' .
-					       'AND [GalleryUserGroupMap::userId] = ' .
-					       '    [GalleryUser::id]'),
-				   'order-by' => '[GalleryUser::userName]',
-				   'limit' => array('count' => $count,
-						    'offset' => $offset)),
-			     array($groupId));
+	$query = '
+        SELECT
+          [GalleryUserGroupMap::userId],
+          [GalleryUser::userName]
+        FROM
+          [GalleryUserGroupMap], [GalleryUser]
+        WHERE
+          [GalleryUserGroupMap::groupId] = ?
+          AND
+          [GalleryUserGroupMap::userId] = [GalleryUser::id]
+        ORDER BY
+          [GalleryUser::userName]
+        ';
 
+	list ($ret, $searchResults) =
+	    $gallery->search($query,
+			      array($groupId),
+			      array('limit' => array('count' => $count,
+						     'offset' => $offset)));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -203,24 +211,31 @@ class GalleryUserGroupMap_core {
 	if (GalleryDataCache::containsKey($cacheKey)) {
 	    $data = GalleryDataCache::get($cacheKey);
 	} else {
-	    list ($ret, $searchResults) = 
-		$gallery->search(array('select' => '[GalleryUserGroupMap::groupId], ' .
-				       '[GalleryGroup::groupName]',
-				       'where' => ('[GalleryUserGroupMap::userId] = ? ' .
-						   'AND [GalleryUserGroupMap::groupId] = ' .
-						   '    [GalleryGroup::id]'),
-				       'order-by' => '[GalleryGroup::groupName]',
-				       'limit' => array('count' => $count,
-							'offset' => $offset)),
-				 array($userId));
-	
+	    $query = '
+            SELECT
+              [GalleryGroup::id],
+              [GalleryGroup::groupName]
+            FROM
+              [GalleryUserGroupMap], [GalleryGroup]
+            WHERE
+              [GalleryGroup::id] = [GalleryUserGroupMap::groupId]
+              AND
+              [GalleryUserGroupMap::userId] = ?
+            ORDER BY
+              [GalleryGroup::groupName]
+            ';
+	    list ($ret, $searchResults) =
+		$gallery->search($query,
+				  array($userId),
+				  array('limit' => array('count' => $count,
+							 'offset' => $offset)));
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    
 	    $data = array();
 	    while ($result = $searchResults->nextResult()) {
-		$data[] = $result[0];
+		$data[$result[0]] = $result[1];
 	    }
 	    
 	    GalleryDataCache::put($cacheKey, $data);
@@ -263,13 +278,21 @@ class GalleryUserGroupMap_core {
     function isUserInGroup($userId, $groupId) {
 	global $gallery;
 
-	list ($ret, $searchResults) = 
-	    $gallery->search(array('select' => '[GalleryUserGroupMap::userId]',
-				   'where' => ('[GalleryUserGroupMap::userId] = ? ' .
-					       'AND [GalleryUserGroupMap::groupId] = ?'),
-				   'limit' => array('count' => 1)),
-			     array($userId, $groupId));
+	$query = '
+        SELECT
+          [GalleryUserGroupMap::userId]
+        FROM
+          [GalleryUserGroupMap]
+        WHERE
+          [GalleryUserGroupMap::userId] = ?
+          AND
+          [GalleryUserGroupMap::groupId] = ?
+        ';
 
+	list ($ret, $searchResults) = 
+	    $gallery->search($query,
+			     array($userId, $groupId),
+			     array('limit' => array('count' => 1)));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

@@ -101,11 +101,21 @@ class GalleryDerivativeImage_core extends GalleryDerivative {
 	/* We can't have more than one THUMBNAIL or PREFERRED */
 	if ($derivativeType == DERIVATIVE_TYPE_IMAGE_THUMBNAIL ||
 	    $derivativeType == DERIVATIVE_TYPE_IMAGE_PREFERRED) {
+
+	    $query = '
+            SELECT
+              COUNT([GalleryChildEntity::id])
+            FROM
+              [GalleryChildEntity], [GalleryDerivative]
+            WHERE
+              ([GalleryChildEntity::parentId] = ?
+               AND [GalleryDerivative::derivativeType] = ?)
+              AND ([GalleryChildEntity::id] = [GalleryDerivative::id])
+            ';
+              
+
 	    list($ret, $searchResults) =
-		$gallery->search(array('select' => 'COUNT([GalleryChildEntity::id])',
-				       'where' => ('[GalleryChildEntity::parentId]=? AND ' .
-						   '[GalleryDerivative::derivativeType]=?')),
-			     array($parentId, $derivativeType));
+		$gallery->search($query, array($parentId, $derivativeType));
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }

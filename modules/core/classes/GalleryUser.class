@@ -137,11 +137,19 @@ class GalleryUser_core extends GalleryEntity {
     function create($userName) {
 	global $gallery;
 
+	$query = '
+        SELECT
+          [GalleryUser::id]
+        FROM
+          [GalleryUser]
+        WHERE
+          [GalleryUser::userName] = ?
+        ';
+
 	/* Check to see if we have a collision */
 	list($ret, $results) =
-	    $gallery->search(array('select' => 'COUNT([GalleryUser::id])',
-				   'where' => ('[GalleryUser::userName]=?')),
-			     array($userName));
+	    $gallery->search($query, array($userName),
+			      array('limit' => array('count' => 1)));
 
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);

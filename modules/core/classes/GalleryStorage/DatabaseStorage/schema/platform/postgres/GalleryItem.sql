@@ -59,7 +59,7 @@
     DB_COLUMN_PREFIXsummary
       VARCHAR(
       
-          128
+          255
         
       )
     
@@ -79,8 +79,6 @@
         
       )
     
-    NOT NULL
-  
       ,
     DB_COLUMN_PREFIXviewedSinceTimestamp
       INTEGER

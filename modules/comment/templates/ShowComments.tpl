@@ -13,7 +13,7 @@
       <a href="{galleryUrl view="core:ShowItem" itemId=$item.id}">
 	[{galleryText text="Return to item view"}]
       </a>
-      {if $can.all || $can.add}
+      {if $can.add}
       <br>
       <a href="{galleryUrl view="comment:AddComment"
 	                   itemId=$item.id
@@ -39,11 +39,11 @@
 	    {$comment.commenter.userName}
 	    {/galleryBigFontSize}
 	    {if !empty($comment.host)}
-	    {if $can.all || $can.viewIps}
+	    {if $can.viewIps}
 	    ({$comment.host})
 	    {/if}
 	    {/if}
-	    {if $can.all || $can.edit}
+	    {if $can.edit}
 	    <a href="{galleryUrl view="comment:EditComment"
 	                   itemId=$item.id
 	                   commentId=$comment.id
@@ -52,7 +52,7 @@
 	      [{galleryText text="edit"}]
 	    </a>
 	    {/if}
-	    {if $can.all || $can.delete}
+	    {if $can.delete}
 	    <a href="{galleryUrl view="comment:DeleteComment"
 	                   itemId=$item.id
 	                   commentId=$comment.id

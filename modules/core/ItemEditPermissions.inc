@@ -296,7 +296,7 @@ class ItemEditPermissionsView extends GalleryView {
 
 	/* Get all permissions for the item. */
 	list ($ret, $permissions) = 
-	    GalleryPermissionMap::fetchAllPermissionsForItem($itemId);
+	    GalleryPermissionMap::fetchAllPermissionsForItem($itemId, true);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -348,8 +348,7 @@ class ItemEditPermissionsView extends GalleryView {
 	    
 	    if (!empty($permission['groupId']) && isset($allPermissions[$permission['permission']])) {
 		$deleteable = 1;
-		if ($permission['groupId'] == $adminGroupId &&
-		        $permission['permission'] == 'core.all') {
+		if ($permission['groupId'] == $adminGroupId) {
 		    $deleteable = 0;
 		}
 		$groupPermissions[] =

@@ -44,7 +44,8 @@ class LoginController extends GalleryController {
 		}
 
 		if ($user != null && $user->isCorrectPassword($form['password'])) {
-		    $gallery->putSessionValue('core.id.activeUser', $user->getId());
+		    $session =& $gallery->getSession();
+		    $session->put('core.id.activeUser', $user->getId());
 		    $redirectParams = $return;
 		} else {
 		    GalleryUtilities::putRequestVariable('form.error.invalidPassword', 1);

@@ -53,17 +53,33 @@ class GalleryGroupHelper {
     function fetchGroupnames($count=null, $offset=null, $substring=null) {
 	global $gallery;
 
-	$params['select'] = '[GalleryGroup::id], [GalleryGroup::groupName]';
-	$params['limit'] = array('count' => $count, 'offset' => $offset);
-	$params['order-by'] = '[GalleryGroup::groupName] ASC';
-
 	$data = array();
+	$query = '
+        SELECT
+          [GalleryGroup::id],
+          [GalleryGroup::groupName]
+        FROM
+          [GalleryGroup]
+        ';
+
 	if (!empty($substring)) {
-	    $params['where'] = '[GalleryGroup::groupName] LIKE ?';
+	    $query .= '
+        WHERE
+	  [GalleryGroup::groupName] LIKE ?
+            ';
 	    $data[] = "%$substring%";
 	}
+
+	$query .= '
+        ORDER BY
+          [GalleryGroup::groupName] ASC
+        ';
 	
-	list ($ret, $searchResults) = $gallery->search($params, $data);
+	list ($ret, $searchResults) =
+	    $gallery->search($query,
+			     $data,
+			     array('limit' => array('count' => $count,
+						    'offset' => $offset)));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -88,12 +104,22 @@ class GalleryGroupHelper {
 	global $gallery;
 
 	$data = array();
-	$params['select'] = 'COUNT([GalleryGroup::groupname])';
+	$query = '
+        SELECT
+          COUNT([GalleryGroup::id])
+        FROM
+          [GalleryGroup]
+        ';
+
 	if (!empty($substring)) {
-	    $params['where'] = '[GalleryGroup::groupname] LIKE ?';
+	    $query .= '
+        WHERE
+	  [GalleryGroup::groupName] LIKE ?
+            ';
 	    $data[] = "%$substring%";
 	}
-	list ($ret, $searchResults) = $gallery->search($params, $data);
+
+	list ($ret, $searchResults) = $gallery->search($query, $data);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -116,10 +142,15 @@ class GalleryGroupHelper {
     function fetchGroupByGroupName($groupName=null) {
 	global $gallery;
 
-	list ($ret, $searchResults) =
-	    $gallery->search(array('select' => '[GalleryGroup::id]',
-				   'where' => '[GalleryGroup::groupName] = ?'),
-			     array($groupName));
+        $query = '
+        SELECT
+          [GalleryGroup::id]
+        FROM
+          [GalleryGroup]
+        WHERE
+          [GalleryGroup::groupName] = ?
+        ';
+	list ($ret, $searchResults) = $gallery->search($query, array($groupName));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

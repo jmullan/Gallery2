@@ -67,6 +67,13 @@ define('STORAGE_TYPE_TIMESTAMP', 0x00000010);
 define('STORAGE_TYPE_ID', 0x00000020);
 
 /**
+ * Bits type
+ *
+ * @constant STORAGE_TYPE_BITS
+ */
+define('STORAGE_TYPE_BIT', 0x00000040);
+
+/**
  * Newly created flag
  *
  * @constant STORAGE_FLAG_NEWLY_CREATED
@@ -266,17 +273,14 @@ class GalleryStorage {
      * Search the persistent store for the target values matching the given
      * criteria
      *
-     * This is a flexible and powerful search mechanism.  You specify which
-     * class members you wish to search for, how you want to search them, and
-     * which class members you want returned in a very SQL like syntax
-     *
      * @access public
      * @param array the search query
      * @param array any explicit data values required by the query
+     * @param array optional arguments (eg, limits)
      * @return array object GalleryStatus a status code,
      *               array the result values
      */
-    function search($query, $data=array()) {
+    function search($query, $data=array(), $optional=array()) {
 	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED,
 					  __FILE__, __LINE__),
 		     null);
@@ -358,6 +362,38 @@ class GalleryStorage {
 				    __FILE__, __LINE__);
     }
     
+    /**
+     * Roll back our transaction, if the storage layer supports them.
+     *
+     * @return object GalleryStatus a status code
+     */
+    function rollbackTransaction() {
+	return GalleryStatus::error(ERROR_UNIMPLEMENTED,
+				    __FILE__, __LINE__);
+    }
+
+    /**
+     * Convert an integer into something that the database will accept into a
+     * bit column
+     *
+     * @param integer integer value
+     * @param mixed bit value 
+     */
+    function convertIntToBits($intVal) {
+	return $intVal;
+    }
+
+    /**
+     * Convert an integer into something that the database will accept into a
+     * bit column
+     *
+     * @param integer integer value
+     * @param mixed bit value 
+     */
+    function convertBitsToInt($bitsVal) {
+	return $bitsVal;
+    }
+
     /**
      * Describe all the members of a entity
      *

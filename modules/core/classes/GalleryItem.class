@@ -162,7 +162,7 @@ class GalleryItem_core extends GalleryFileSystemEntity {
      * @g2 <member>
      * @g2  <member-name>summary</member-name>
      * @g2  <member-type>STRING</member-type>
-     * @g2  <member-size>MEDIUM</member-size>
+     * @g2  <member-size>LARGE</member-size>
      * @g2  <indexed/>
      * @g2 </member>
      *
@@ -193,7 +193,6 @@ class GalleryItem_core extends GalleryFileSystemEntity {
      * @g2  <member-type>STRING</member-type>
      * @g2  <member-size>MEDIUM</member-size>
      * @g2  <indexed/>
-     * @g2  <required/>
      * @g2 </member>
      *
      * @var int $_title
@@ -424,21 +423,44 @@ class GalleryItem_core extends GalleryFileSystemEntity {
     function fetchChildIds($userId, $offset=null, $count=null) {
 	global $gallery;
 
-	$where = '[GalleryChildEntity::parentId] = ?';
+	list ($ret, $permissionBits) = GalleryPermissionSetMap::convertIdsToBits('core.view');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$storage = $gallery->getStorage();
+
+	$query = '
+        SELECT
+          DISTINCT([GalleryChildEntity::id])
+        FROM
+          [GalleryChildEntity], [GalleryUserGroupMap], [GalleryPermissionMap]
+        WHERE
+          [GalleryChildEntity::parentId] = ?
+          AND
+          ([GalleryPermissionMap::userId] = ?
+           OR
+           ([GalleryUserGroupMap::userId] = ?
+            AND
+            [GalleryPermissionMap::groupId] = [GalleryUserGroupMap::groupId]))
+          AND
+          [GalleryPermissionMap::permission] & ? > ?
+          AND
+          [GalleryPermissionMap::itemId] = [GalleryChildEntity::id]
+        GROUP BY
+          [GalleryChildEntity::id]
+        ';
 	$data[] = $this->getId();
+	$data[] = $userId;
+	$data[] = $userId;
+	$data[] = $storage->convertIntToBits($permissionBits);
+	$data[] = $storage->convertIntToBits(0);
 
-	list ($clause, $clauseData) =
-	    GalleryItemHelper::getViewPermissionClause($userId);
-	$where .= ' AND ' . $clause;
-	$data = array_merge($data, $clauseData);
-
-	list ($ret, $searchResults) = 
-	    $gallery->search(array('select' => 'DISTINCT([GalleryChildEntity::id])',
-				   'where' => $where,
-				   'order-by' => $this->_fetchOrderClause(),
-				   'limit' => array('count' => $count,
-						    'offset' => $offset)),
-			     $data);
+	$options = array();
+	$options['limit'] = array('count' => $count, 'offset' => $offset);
+	$gallery->debug_r($options);
+	list ($ret, $searchResults) = $gallery->search($query, $data, $options);
+	
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -521,10 +543,16 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	global $gallery;
 
 	/* Delete any children */
+	$query = '
+        SELECT
+          [GalleryChildEntity::id]
+        FROM
+          [GalleryChildEntity]
+        WHERE
+          [GalleryChildEntity::parentId] = ?
+        ';
 	list ($ret, $searchResults) =
-	    $gallery->search(array('select' => '[GalleryChildEntity::id]',
-				   'where' => '[GalleryChildEntity::parentId]=?'),
-			     array($this->getId()));
+	    $gallery->search($query, array($this->getId()));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

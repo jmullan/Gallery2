@@ -48,6 +48,7 @@ class DatabaseStorageFactory {
 			 new MySqlDatabaseStorage($config));
 	    
 	case 'postgres':
+	case 'postgres7':
 	    $base = dirname(__FILE__);
 	    require_once($base . '/DatabaseStorage/PostgreSqlDatabaseStorage.class');
 	    return array(GalleryStatus::success(),

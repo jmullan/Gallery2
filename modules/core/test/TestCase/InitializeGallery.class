@@ -41,10 +41,17 @@ class InitializeGalleryTestCase extends TestCase {
 	 * relevant data (like config values) survive this transition.
 	 */
 	$oldGallery = $gallery;
-	
-	require_once(dirname(__FILE__) . '/../../module.inc');
-	$coreModule = new CoreModule();
-	$ret = $coreModule->bootstrap();
+
+	/* Get rid of the data cache */
+	GalleryDataCache::reset();
+
+	/* Commit any outstanding transactions */
+	$ret = $gallery->commitTransaction();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$ret = GalleryInitFirstPass();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -53,24 +60,29 @@ class InitializeGalleryTestCase extends TestCase {
 	$gallery =& $GLOBALS['gallery'];
 
 	foreach (array('_config',
-		       '_debug',
+		       '_session',
 		       '_profile',
 		       '_debugLogFile',
 		       '_debugBuffer') as $member) {
 	    $gallery->$member = $oldGallery->$member;
 	}
 
-	/* Get rid of the data cache */
-	GalleryDataCache::reset();
-
-	/*
-	 * Install and initialize the core module
-	 */
-	$ret = $coreModule->install();
+	$ret = GalleryInitStorage();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
+	/* Start a new transaction */
+	$ret = $gallery->beginTransaction();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$ret = GalleryInitSecondPass();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
 	return GalleryStatus::success();
     }
 }

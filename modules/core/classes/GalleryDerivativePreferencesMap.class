@@ -103,13 +103,20 @@ class GalleryDerivativePreferencesMap_core {
     function fetchPreferencesForItem($targetId) {
 	global $gallery;
 
-	list ($ret, $searchResults) =
-	    $gallery->search(array('select' => ('[GalleryDerivativePreferencesMap::order], ' .
-						'[GalleryDerivativePreferencesMap::derivativeType], ' .
-						'[GalleryDerivativePreferencesMap::derivativeCommands] '),
-				   'where' => '[GalleryDerivativePreferencesMap::itemId] = ?',
-				   'order-by' => '[GalleryDerivativePreferencesMap::order] ASC'),
-			     array($targetId));
+	$query = '
+        SELECT
+          [GalleryDerivativePreferencesMap::order],
+          [GalleryDerivativePreferencesMap::derivativeType],
+          [GalleryDerivativePreferencesMap::derivativeCommands]
+        FROM
+          [GalleryDerivativePreferencesMap]
+        WHERE
+          [GalleryDerivativePreferencesMap::itemId] = ?
+        ORDER BY
+          [GalleryDerivativePreferencesMap::order] ASC
+        ';
+
+	list ($ret, $searchResults) = $gallery->search($query, array($targetId));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

@@ -33,11 +33,20 @@
 class PostgreSqlDatabaseStorage extends DatabaseStorage {
 
     /**
+     * The type of postgres database (postgres or postgrest)
+     *
+     * @var string $_postgresType
+     * @access private
+     */
+    var $_postgresType;
+
+    /**
      * Constructor
      *
      */
     function PostgreSqlDatabaseStorage($config) {
 	$this->DatabaseStorage($config);
+	$this->_postgresType = $config['type'];
 	$this->_isTransactional = true;
     }
 
@@ -47,7 +56,7 @@ class PostgreSqlDatabaseStorage extends DatabaseStorage {
      * @return string
      */
     function getAdoDbType() {
-	return 'postgres';
+	return $this->_postgresType;
     }
 
     /**
@@ -57,6 +66,94 @@ class PostgreSqlDatabaseStorage extends DatabaseStorage {
      */
     function getType() {
 	return 'postgres';
+    }
+
+    /**
+     * @see DatabaseStorage::cleanStore
+     */
+    function cleanStore() {
+	$ret = parent::cleanStore();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/*
+	 * Create a temporary database connection and install our custom
+	 * aggregate function.
+	 */
+	list ($ret, $tmpDb) = $this->_getConnection(true);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$this->_traceStart();
+	$recordSet = $tmpDb->Execute('DROP AGGREGATE BIT_OR(bit)');
+	$tmpDb->Close();
+	$this->_traceStop();
+
+	if (empty($recordSet)) {
+	    return GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
+	}
+	
+	return GalleryStatus::success();
+    }
+
+    /**
+     * @see DatabaseStorage::configureStore
+     */
+    function configureStore($moduleName) {
+
+	$query = '
+        CREATE AGGREGATE BIT_OR
+        (
+          basetype = bit,
+          sfunc = bitor,
+          stype = bit
+        )';
+
+	/*
+	 * Create a temporary database connection and install our custom
+	 * aggregate function.
+	 */
+	list ($ret, $tmpDb) = $this->_getConnection(true);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$this->_traceStart();
+	$recordSet = $tmpDb->Execute($query);
+	$tmpDb->Close();
+	$this->_traceStop();
+
+	/*
+	 * Ignore errors here, since we'll get them every time we try to
+	 * install the aggregate, which will happen every time we install a new
+	 * module.
+	 *
+	 * XXX: At some point figure out a way to detect if the aggregate is
+	 * already there before trying to install it again.
+	 */
+
+	$ret = parent::configureStore($moduleName);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * @see GalleryStorage::_convertIntToBits
+     */
+    function convertIntToBits($intVal) {
+	return sprintf("%032b", $intVal);
+    }
+
+    /**
+     * @see GalleryStorage::_convertIntToBits
+     */
+    function convertBitsToInt($bitsVal) {
+	return bindec($bitsVal);
     }
 }
 ?>

@@ -188,6 +188,9 @@ class AdminEditUserView extends GalleryView {
 	$supportedLanguages = $translator->getSupportedLanguages();
 	foreach ($supportedLanguages as $language => $countryList) {
 	    foreach ($countryList as $country => $languageData) {
+		if ($country == '_defaultCountry') {
+		    continue;
+		}
 		$languageList[$language . '_' . $country] =
 		    $languageData['description'];
 	    }

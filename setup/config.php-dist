@@ -47,7 +47,7 @@ $gallery->setConfig('setup.password', '');
  *
  * You have to create this directory
  */
-$gallery->setConfig('data.gallery.base', '/path/to/gallerydata');
+$gallery->setConfig('data.gallery.base', '');
 
 /*
  * Gallery can store its data in multiple different back ends.  Currently we
@@ -66,20 +66,19 @@ $gallery->setConfig('data.gallery.base', '/path/to/gallerydata');
  * names.  By default these prefixes are as shown below.  If you modify these
  * after Gallery has created its various tables, it will stop working.
  *
- * The possible database types are: mysql, postgres
- *
- * If your database supports transactions (Postgres or MySQL 3.23.34a+)
- * You should set 'transactional' to true.  This will provide you with
- * a greater degree of data integrity at a small performance cost.
+ * The possible database types are:
+ *  mysql        Standard MySQL
+ *  mysqlt       MySQL with transactions (3.23.34a and newer)
+ *  postgres     PostgreSQL 6.x
+ *  postgres7    PostgreSQL 7.x
  */
 $storeConfig['type'] = 'mysql';
 $storeConfig['hostname'] = 'localhost';
 $storeConfig['database'] = 'gallery2';
-$storeConfig['username'] = 'root';
+$storeConfig['username'] = '';
 $storeConfig['password'] = '';
 $storeConfig['tablePrefix'] = 'g2_';
 $storeConfig['columnPrefix'] = 'g_';
-$storeConfig['transactional'] = false;
 $gallery->setConfig('storage.config', $storeConfig);
 $gallery->setConfig('storage.type', 'database');
 
@@ -104,7 +103,7 @@ $gallery->setConfig('storage.type', 'database');
 $gallery->setDebug(false);
 
 /*
- * Enable or disable profiling
+ * Enable or disable profiling.
  */
-$gallery->setProfile(false);
+$gallery->setProfile(true);
 ?>

@@ -125,12 +125,17 @@ class GalleryModuleParameterMap_core {
 					      __FILE__, __LINE__), null);
 	}
 
-	list ($ret, $searchResults) = 
-	    $gallery->search(array('select' => ('[GalleryModuleParameterMap::parameterName],'.
-						'[GalleryModuleParameterMap::parameterValue]'),
-				   'where' => '[GalleryModuleParameterMap::moduleName]=?'),
-			     array($moduleName));
+	$query = '
+        SELECT
+          [GalleryModuleParameterMap::parameterName],
+          [GalleryModuleParameterMap::parameterValue]
+        FROM
+          [GalleryModuleParameterMap]
+        WHERE
+          [GalleryModuleParameterMap::moduleName] = ?
+        ';
 
+	list ($ret, $searchResults) = $gallery->search($query, array($moduleName));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

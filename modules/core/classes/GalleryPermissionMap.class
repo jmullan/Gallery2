@@ -58,7 +58,7 @@ class GalleryPermissionMap_core {
      * @g2   </member>
      * @g2   <member>
      * @g2     <member-name>permission</member-name>
-     * @g2     <member-type>INTEGER</member-type>
+     * @g2     <member-type>BIT</member-type>
      * @g2     <member-size>LARGE</member-size>
      * @g2   </member>
      * @g2 </map>
@@ -273,33 +273,43 @@ class GalleryPermissionMap_core {
      * Return a list of permissions for the given item id
      *
      * @param int the id of the item
+     * @param boolean should we compress the permission list?
      * @return array object GalleryStatus a status code
      *               array array('userId' => ...,
      *                           'groupId' => ...,
      *                           'permission' => ...)
      */
-    function fetchAllPermissionsForItem($itemId) {
+    function fetchAllPermissionsForItem($itemId, $compress=false) {
 	global $gallery;
 
 	if (empty($itemId)) {
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER,
 					      __FILE__, __LINE__), null);
 	}
-	
-	list($ret, $searchResults) =
-	    $gallery->search(array('select' => ('[GalleryPermissionMap::userId], ' .
-						'[GalleryPermissionMap::groupId], ' .
-						'[GalleryPermissionMap::permission] '),
-				   'where' => '[GalleryPermissionMap::itemId] = ?'),
-			     array($itemId));
 
+	$query = '
+        SELECT
+          [GalleryPermissionMap::userId],
+          [GalleryPermissionMap::groupId],
+          [GalleryPermissionMap::permission]
+        FROM
+          [GalleryPermissionMap]
+        WHERE
+          [GalleryPermissionMap::itemId] = ?
+        ';
+	
+	list($ret, $searchResults) = $gallery->search($query, array($itemId));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	$storage = $gallery->getStorage();
+
 	$data = array();
 	while ($result = $searchResults->nextResult()) {
-	    list ($ret, $permissions) = GalleryPermissionSetMap::convertBitsToIds($result[2]);
+	    $permissions = $storage->convertBitsToInt($result[2]);
+	    list ($ret, $permissions) =
+		GalleryPermissionSetMap::convertBitsToIds($permissions, $compress);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -317,12 +327,11 @@ class GalleryPermissionMap_core {
      * Return a list of permissions for the given items
      *
      * @param array int GalleryItem ids
-     * @param array a set of user ids
-     * @param array a set of group ids
+     * @param int a user id
      * @return array object GalleryStatus a status code
      *               array (id => array(array(permission.id => 1, ...), ...)
      */
-    function fetchPermissionsForItems($itemIds, $userIds, $groupIds) {
+    function fetchPermissionsForItems($itemIds, $userId) {
 	global $gallery;
 
 	if (!is_array($itemIds) || empty($itemIds)) {
@@ -331,43 +340,49 @@ class GalleryPermissionMap_core {
 	}
 
 	$itemIdMarkers = GalleryUtilities::makeMarkers(sizeof($itemIds));
-	$userIdMarkers = GalleryUtilities::makeMarkers(sizeof($userIds));
-	$groupIdMarkers = GalleryUtilities::makeMarkers(sizeof($groupIds));
 
-	list($ret, $searchResults) =
-	    $gallery->search(array('select' => ('[GalleryPermissionMap::permission], ' .
-						'[GalleryPermissionMap::itemId]'),
-				   'where' => ('[GalleryPermissionMap::itemId] IN (' . $itemIdMarkers . ') ' .
-					       ' AND ([GalleryPermissionMap::userId] IN (' . $userIdMarkers . ') ' .
-					       ' OR [GalleryPermissionMap::groupId] IN (' . $groupIdMarkers . '))')),
-			     array_merge($itemIds, $userIds, $groupIds));
+	$query = '
+        SELECT
+          [GalleryPermissionMap::itemId],
+          BIT_OR([GalleryPermissionMap::permission])
+        FROM
+          [GalleryPermissionMap], [GalleryUserGroupMap]
+        WHERE
+          [GalleryPermissionMap::itemId] IN (' . $itemIdMarkers . ')
+          AND
+          ([GalleryPermissionMap::userId] = ?
+           OR
+           ([GalleryUserGroupMap::userId] = ?
+            AND
+            [GalleryPermissionMap::groupId] = [GalleryUserGroupMap::groupId]))
+        GROUP BY
+          [GalleryPermissionMap::itemId]
+        ';
+	$data = $itemIds;
+	$data[] = $userId;
+	$data[] = $userId;
 
+	list($ret, $searchResults) = $gallery->search($query, $data);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$bitsTable = array();
-	while ($result = $searchResults->nextResult()) {
-	    if (!isset($data[$result[1]])) {
-		$bitsTable[$result[1]] = $result[0];
-	    } else {
-		$bitsTAble[$result[1]] |= $result[0];
-	    }
-	}
+	$storage = $gallery->getStorage();
 
-	$data = array();
-	foreach ($bitsTable as $itemId => $itemBits) {
-	    list ($ret, $permissionTable) = GalleryPermissionSetMap::convertBitsToIds($itemBits);
+	$permTable = array();
+	while ($result = $searchResults->nextResult()) {
+	    $bits = $storage->convertBitsToInt($result[1]);
+	    list ($ret, $permissions) = GalleryPermissionSetMap::convertBitsToIds($bits);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    foreach ($permissionTable as $entry) {
-		$data[$itemId][$entry['id']] = 1;
+	    foreach ($permissions as $permission) {
+		$permTable[$result[0]][$permission['id']] = 1;
 	    }
 	}
 
-	return array($ret, $data);
+	return array(GalleryStatus::success(), $permTable);
     }
 
     /**
@@ -388,20 +403,31 @@ class GalleryPermissionMap_core {
 					      __FILE__, __LINE__), null);
 	}
 
+	$query = '
+        SELECT
+          [GalleryPermissionMap::itemId],
+          [GalleryPermissionMap::permission]
+        FROM
+          [GalleryPermissionMap]
+        WHERE
+          [GalleryPermissionMap::itemId] = ?
+          AND
+          [GalleryPermissionMap::userId] = ?
+          AND
+          [GalleryPermissionMap::groupId] = ?
+        ';
+
 	list($ret, $searchResults) =
-	    $gallery->search(array('select' => ('[GalleryPermissionMap::itemId], ' .
-						'[GalleryPermissionMap::permission]'),
-				   'where' => ('[GalleryPermissionMap::itemId] = ? ' .
-					       ' AND [GalleryPermissionMap::userId] = ? ' .
-					       ' AND [GalleryPermissionMap::groupId] = ?')),
-			     array_merge($itemId, $userId, $groupId));
+	    $gallery->search($query, array($itemId, $userId, $groupId));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	$storage = $gallery->getStorage();
+
 	$data = array();
 	while ($result = $searchResults->nextResult()) {
-	    $data[$result[0]] = (int)$result[1];
+	    $data[$result[0]] = $storage->convertBitsToInt($result[1]);
 	}
 	return array($ret, $data);
     }
@@ -421,22 +447,30 @@ class GalleryPermissionMap_core {
 					__FILE__, __LINE__);
 	}
 
-	list($ret, $searchResults) =
-	    $gallery->search(array('select' => ('[GalleryPermissionMap::userId], ' .
-						'[GalleryPermissionMap::groupId], ' .
-						'[GalleryPermissionMap::permission] '),
-				   'where' => '[GalleryPermissionMap::itemId] = ?'),
-			     array($fromId));
+	$query = '
+        SELECT
+          [GalleryPermissionMap::userId],
+          [GalleryPermissionMap::groupId],
+          [GalleryPermissionMap::permission]
+        FROM
+          [GalleryPermissionMap]
+        WHERE
+          [GalleryPermissionMap::itemId] = ?
+        ';
 
+	list($ret, $searchResults) = $gallery->search($query, array($fromId));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	$storage = $gallery->getStorage();
+
 	$data = array();
 	while ($result = $searchResults->nextResult()) {
+	    $permission = $storage->convertBitsToInt($result[2]);
 	    $ret = GalleryPermissionMap::addMapEntry(array('userId' => $result[0],
 							   'groupId' => $result[1],
-							   'permission' => $result[2],
+							   'permission' => $permission,
 							   'itemId' => $itemId));
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
@@ -465,47 +499,42 @@ class GalleryPermissionMap_core {
 			 null);
 	}
 
-	$where = '[GalleryPermissionMap::itemId] = ? ';
-	$data = array($itemId);
-	
-	if (!empty($userIds)) {
-	    $userClause = '[GalleryPermissionMap::userId] IN (' .
-		GalleryUtilities::makeMarkers($userIds) .
-		') ';
-	}
-
-	if (!empty($groupIds)) {
-	    $groupClause = '[GalleryPermissionMap::groupId] IN (' .
-		GalleryUtilities::makeMarkers($groupIds) .
-		') ';
-	}
-
-	$where .= 'AND (';
-	if (!empty($userClause) && !empty($groupClause)) {
-	    $where .= '(' . $userClause . ' OR ' . $groupClause . ')';
-	    $data = array_merge($data, $userIds, $groupIds);
-	} else if (!empty($userClause)) {
-	    $where .= $userClause;
-	    $data = array_merge($data, $userIds);
-	} else {
-	    $where .= $groupClause;
-	    $data = array_merge($data, $groupIds);
-	}
-
 	list ($ret, $bits) = GalleryPermissionSetMap::convertIdsToBits($permission);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$where .= 'AND ([GalleryPermissionMap::permission] & ? > 0)';
-	$data[] = $bits;
-	$where .= ')';
+	if (!empty($userIds)) {
+	    foreach ($userIds as $userId) {
+		$ands[] = '[GalleryPermissionMap::userId] = ?';
+	    }
+	}
 
+	if (!empty($groupIds)) {
+	    foreach ($groupIds as $groupId) {
+		$ands[] = '[GalleryPermissionMap::groupId] = ?';
+	    }
+	}
+
+	$storage = $gallery->getStorage();
+	
+	$query = '
+	SELECT
+          [GalleryPermissionMap::itemId]
+        FROM
+          [GalleryPermissionMap]
+        WHERE
+          [GalleryPermissionMap::itemId] = ?
+          AND (' . join(' OR ', $ands) . ')
+          AND ([GalleryPermissionMap::permission] & ? > ?)
+        ';
+	$data = array($itemId);
+	$data = array_merge($data, $userIds, $groupIds);
+	$data[] = $storage->convertIntToBits($bits);
+	$data[] = $storage->convertIntToBits(0);
+	
 	list($ret, $searchResults) =
-	    $gallery->search(array('select' => '[GalleryPermissionMap::itemId]',
-				   'where' => $where,
-				   'limit' => array('count' => 1)),
-			     $data);
+	    $gallery->search($query, $data, array('limit' => array('count' => 1)));
 
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), false);

@@ -224,12 +224,22 @@ class CoreModule extends GalleryModule {
 	    $gallery->debug("Can't load core version -- " .
 			    "<b>assuming that the core needs installation</b>");
 
-	    /* The store requires configuration. */
-	    list ($ret, $storage) = $gallery->getStorage();
+	    /*
+	     * On some databases, our transaction is hosed at this point.  So
+	     * roll back and start again.
+	     */
+	    $ret = $gallery->rollbackTransaction();
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
+	    $ret = $gallery->beginTransaction();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    /* The store requires configuration. */
+	    $storage = $gallery->getStorage();
 	    $ret = $storage->configureStore('core');
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
@@ -590,14 +600,12 @@ class CoreModule extends GalleryModule {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	if (isset($permissions['core.all']) ||
-	    isset($permissions['core.changeText'])) {
+	if (isset($permissions['core.changeText'])) {
 	        $views[] = array('name' => $this->translate('General Settings'),
 				 'view' => 'core:ItemEditGeneral');
 	}
 
-	if (isset($permissions['core.all']) ||
-	    isset($permissions['core.changeProperties'])) {
+	if (isset($permissions['core.changeProperties'])) {
 	    if (is_subclass_of($item, 'GalleryAlbumItem') ||
 		    get_class($item) == strtolower('GalleryAlbumItem')) {
 	        $views[] = array('name' => $this->translate('Album Settings'),
@@ -623,29 +631,25 @@ class CoreModule extends GalleryModule {
 	}
 
 	if ($item->getId() != $rootId) {
-	    if (isset($permissions['core.all']) ||
-		isset($permissions['core.delete'])) {
+	    if (isset($permissions['core.delete'])) {
 		$views[] = array('name' => $this->translate('Delete Item'),
 				 'view' => 'core:ItemDelete');
 	    }
 	}
 	
-	if (isset($permissions['core.all']) ||
-	    isset($permissions['core.changePermissions'])) {
+	if (isset($permissions['core.changePermissions'])) {
 	    $views[] = array('name' => $this->translate('Permissions'),
 			     'view' => 'core:ItemEditPermissions');
 	}
 	
-	if (isset($permissions['core.all']) ||
-	    isset($permissions['core.addItem'])) {
+	if (isset($permissions['core.addItem'])) {
 	    if ($item->canContainChildren()) {
 	        $views[] = array('name' => $this->translate('Add Items'),
 				 'view' => 'core:ItemAddChildren');
 	    }
 	}
 	
-	if (isset($permissions['core.all']) ||
-	    isset($permissions['core.addAlbumItem'])) {
+	if (isset($permissions['core.addAlbumItem'])) {
 	    if ($item->canContainChildren()) {
 	        $views[] = array('name' => $this->translate('Add Album'),
 				 'view' => 'core:ItemAddAlbum');
@@ -883,13 +887,11 @@ class CoreModule extends GalleryModule {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	foreach (array('core.viewAll') as $permission) {
-	    $ret = GalleryPermissionMap::addGroupPermission($album->getId(),
-							    $groupId,
-							    $permission);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
+	$ret = GalleryPermissionMap::addGroupPermission($album->getId(),
+							$groupId,
+							'core.viewAll');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* Grant admin users everything */

@@ -185,10 +185,16 @@ class GalleryItemPropertiesMap_core {
 					__FILE__, __LINE__);
 	}
 
-	list ($ret, $searchResults) =
-	    $gallery->search(array('select' => '[GalleryItemPropertyMap::key]',
-				   'where' => '[GalleryItemPropertyMap::itemId] = ?'),
-			     array($itemId));
+	$query = '
+        SELECT
+          [GalleryItemPropertyMap::key]
+        FROM
+          [GalleryItemPropertyMap]
+        WHERE
+          [GalleryItemPropertyMap::itemId] = ?
+        ';
+
+	list ($ret, $searchResults) = $gallery->search($query, array($itemId));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -216,11 +222,19 @@ class GalleryItemPropertiesMap_core {
 					__FILE__, __LINE__);
 	}
 
+	$query = '
+        SELECT
+          [GalleryItemPropertyMap::value]
+        FROM
+          [GalleryItemPropertyMap]
+        WHERE
+          [GalleryItemPropertyMap::itemId] = ?
+          AND
+          [GalleryItemPropertyMap::key] = ?
+        ';
+
 	list ($ret, $searchResults) =
-	    $gallery->search(array('select' => '[GalleryItemPropertyMap::value]',
-				   'where' => ('[GalleryItemPropertyMap::itemId] = ? ' .
-					       'AND [GalleryItemPropertyMap::key] = ?')),
-			     array($itemId, $key));
+	    $gallery->search($query, array($itemId, $key));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -248,11 +262,17 @@ class GalleryItemPropertiesMap_core {
 					__FILE__, __LINE__);
 	}
 
-	list ($ret, $searchResults) =
-	    $gallery->search(array('select' => ('[GalleryItemPropertyMap.key], ' .
-						'[GalleryItemPropertyMap.value] '),
-				   'where' => '[GalleryItemPropertyMap.properties.itemId] = ?'),
-			     array($itemId));
+	$query = '
+        SELECT
+          [GalleryItemPropertyMap::key],
+          [GalleryItemPropertyMap::value]
+        FROM
+          [GalleryItemPropertyMap]
+        WHERE
+          [GalleryItemPropertyMap::itemId] = ?
+        ';
+
+	list ($ret, $searchResults) = $gallery->search($query, array($itemId));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

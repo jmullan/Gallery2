@@ -53,17 +53,33 @@ class GalleryUserHelper {
     function fetchUsernames($count=null, $offset=null, $substring=null) {
 	global $gallery;
 
-	$params['select'] = '[GalleryUser::id], [GalleryUser::userName]';
-	$params['limit'] = array('count' => $count, 'offset' => $offset);
-	$params['order-by'] = '[GalleryUser::userName] ASC';
-
 	$data = array();
+	$query = '
+        SELECT
+          [GalleryUser::id],
+          [GalleryUser::userName]
+        FROM
+          [GalleryUser]
+        ';
+
 	if (!empty($substring)) {
-	    $params['where'] = '[GalleryUser::userName] LIKE ?';
+	    $query .= '
+        WHERE
+	  [GalleryUser::userName] LIKE ?
+            ';
 	    $data[] = "%$substring%";
 	}
+
+	$query .= '
+        ORDER BY
+          [GalleryUser::userName] ASC
+        ';
 	
-	list ($ret, $searchResults) = $gallery->search($params, $data);
+	list ($ret, $searchResults) =
+	    $gallery->search($query,
+			     $data,
+			     array('limit' => array('count' => $count,
+						    'offset' => $offset)));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -77,23 +93,30 @@ class GalleryUserHelper {
     }
 
     /**
-     * Return a map of userNames => userids
+     * Return the total umber of users
      *
-     * You can specify how many usernames to list, and where the windows is in
-     * the list of all users.
-     *
-     * @param string the substring to match
+     * @param string an optional substring to match against the username
      */
     function fetchUserCount($substring=null) {
 	global $gallery;
 
 	$data = array();
-	$params['select'] = 'COUNT([GalleryUser::username])';
+	$query = '
+        SELECT
+          COUNT([GalleryUser::id])
+        FROM
+          [GalleryUser]
+        ';
+
 	if (!empty($substring)) {
-	    $params['where'] = '[GalleryUser::username] LIKE ?';
+	    $query .= '
+        WHERE
+	  [GalleryUser::userName] LIKE ?
+            ';
 	    $data[] = "%$substring%";
 	}
-	list ($ret, $searchResults) = $gallery->search($params, $data);
+
+	list ($ret, $searchResults) = $gallery->search($query, $data);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -116,10 +139,15 @@ class GalleryUserHelper {
     function fetchUserByUsername($username=null) {
 	global $gallery;
 
-	list ($ret, $searchResults) =
-	    $gallery->search(array('select' => '[GalleryUser::id]',
-				   'where' => '[GalleryUser::username] = ?'),
-			     array($username));
+        $query = '
+        SELECT
+          [GalleryUser::id]
+        FROM
+          [GalleryUser]
+        WHERE
+          [GalleryUser::userName] = ?
+        ';
+	list ($ret, $searchResults) = $gallery->search($query, array($username));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -199,19 +227,48 @@ class GalleryUserHelper {
      *               boolean true if yes
      */
     function hasItemPermission($itemId, $userId, $permission) {
+	global $gallery;
 
-	list ($ret, $groupIds) = GalleryUserGroupMap::fetchGroupsForUser($userId);
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
+	$query = '
+        SELECT
+          COUNT([GalleryPermissionMap::itemId])
+        FROM
+          [GalleryPermissionMap], [GalleryUserGroupMap]
+        WHERE
+          [GalleryPermissionMap::itemId] = ?
+          AND
+          ([GalleryPermissionMap::userId] = ?
+           OR
+           ([GalleryUserGroupMap::userId] = ?
+            AND
+            [GalleryPermissionMap::groupId] = [GalleryUserGroupMap::groupId]))
+          AND
+          [GalleryPermissionMap::permission] & ? > ?
+        GROUP BY
+          [GalleryPermissionMap::itemId]
+        ';
 
-	list ($ret, $hasPermission) =
-	    GalleryPermissionMap::hasPermission($itemId, array($userId),
-						$groupIds, $permission);
+	list ($ret, $bits) = GalleryPermissionSetMap::convertIdsToBits($permission);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	$storage = $gallery->getStorage();
+	    
+	$data = array();
+	$data[] = $itemId;
+	$data[] = $userId;
+	$data[] = $userId;
+	$data[] = $storage->convertIntToBits($bits);
+	$data[] = $storage->convertIntToBits(0);
+
+	list($ret, $searchResults) = $gallery->search($query, $data);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$hasPermission = ($searchResults->resultCount() > 0);
+	
 	return array(GalleryStatus::success(), $hasPermission);
     }
 

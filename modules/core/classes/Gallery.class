@@ -186,7 +186,7 @@ class Gallery {
 	$this->_eventListeners = array();
 	    
 	/* Set up a shutdown function to release any hanging locks. */
-	register_shutdown_function(array(&$this, '_releaseHangingLocks'));
+	register_shutdown_function(array(&$this, '_shutdown'));
     }
 
     /**
@@ -198,7 +198,6 @@ class Gallery {
     function reset() {
 	$this->_modules = array();
 	$this->_locks = array();
-	$this->_storage = null;
     }
 
     /**
@@ -215,12 +214,7 @@ class Gallery {
      *               int the id of the GalleryItem (or null)
      */
     function getIdByPath($path) {
-	$reply =& $this->getStorage();
-	$ret = $reply[0];
-	$storage =& $reply[1];
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
+	$storage = $this->getStorage();
 
 	/*
 	 * XXX: do this in applogic, not in the storage class.
@@ -253,14 +247,9 @@ class Gallery {
 
 	if (!isset($entities)) {
 
-	    /* Get a reference to our storage object */
-	    $reply =& $this->getStorage();
-	    $ret = $reply[0];
-	    $storage =& $reply[1];
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
+	    /* Get a our storage object */
+	    $storage = $this->getStorage();
+	    
 	    /* Load the entities from our persistent store */
 	    list ($ret, $entities) = $storage->loadEntities($id);
 	    if ($ret->isError()) {
@@ -330,26 +319,16 @@ class Gallery {
     }
 
     /**
+     * XXX: this is just around for transition purposes.  Eventually replace
+     * Gallery::search with this one.
+     *
      * @see GalleryStorage::search()
      */
-    function search($query, $data=array()) {
-
+    function search($query, $data=array(), $options=array()) {
 	GalleryProfiler::start('Gallery::search');
 
-	/*
-	 * XXX: can't cache the results of the $storage->search() call,
-	 * since the results are actually a GallerySearchResultSet which is an
-	 * active pointer back into the database.
-	 */
-
-	$reply =& $this->getStorage();
-	$ret = $reply[0];
-	$storage =& $reply[1];
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	    
-	list ($ret, $results) = $storage->search($query, $data);
+	$storage = $this->getStorage();
+	list ($ret, $results) = $storage->search($query, $data, $options);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -466,94 +445,34 @@ class Gallery {
      * made to this object will be saved in the session.
      * 
      * @access public
-     * @return array object GalleryStatus a status code
-     *               object GallerySession a session instance
+     * @return object GalleryStatus a status code
+     */
+    function initSession() {
+	GalleryProfiler::start('Gallery::initSession');
+
+	if (empty($this->_session)) {
+	    $this->_session = new GallerySession();
+	    $ret = $this->_session->init();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	GalleryProfiler::stop('Gallery::initSession');
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Get the Gallery session object.
+     *
+     * Return a reference to the unique Gallery session object.  Any changes
+     * made to this object will be saved in the session.
+     * 
+     * @access public
+     * @return object GallerySession a session instance
      */
     function &getSession() {
-	GalleryProfiler::start('Gallery::getSession');
-	
-	if (empty($this->_session)) {
-	    /* XXX: make this data driven from $gallery->_config */
-	    $session = new GallerySession();
-	    $ret = $session->init();
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-	    /*
-	     * Write out our session when we're done.  By doing this as a shutdown
-	     * function, it will fire after the results have been sent to the
-	     * browser.  This gives a slight performance increase on systems that
-	     * have idle cycles, but denies us effective debugging and error
-	     * handling.
-	     */
-	    $this->_session =& $session;
-	    register_shutdown_function(array(&$this->_session, '_shutdown'));
-	}
-
-	GalleryProfiler::stop('Gallery::getSession');
-	return array(GalleryStatus::success(), &$this->_session);
-    }
-
-    /**
-     * Get a value from the session data
-     *
-     * @param string the key
-     * @return array object GalleryStatus a status code
-     *               string the value
-     */
-    function getSessionValue($key) {
-	$reply =& $this->getSession();
-	if ($reply[0]->isError()) {
-	    return array($reply[0]->wrap(__FILE__, __LINE__), null);
-	}
-
-	list ($ret, $value) = $reply[1]->get($key);
-	if ($ret->isError()) {
-	    return array($reply[0]->wrap(__FILE__, __LINE__), null);
-	}
-
-	return array(GalleryStatus::success(), $value);
-    }
-
-    /**
-     * Store a value in the session
-     *
-     * @param string the key
-     * @param string the value
-     * @return object GalleryStatus a status code
-     */
-    function putSessionValue($key, $value) {
-	$reply =& $this->getSession();
-	if ($reply[0]->isError()) {
-	    return $reply[0]->wrap(__FILE__, __LINE__);
-	}
-
-	$ret = $reply[1]->put($key, $value);
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	return GalleryStatus::success();
-    }
-
-    /**
-     * Clean and reinitialize a session
-     *
-     * @return object GalleryStatus a status code
-     */
-    function resetSession() {
-	$reply =& $this->getSession();
-	if ($reply[0]->isError()) {
-	    return $reply[0]->wrap(__FILE__, __LINE__);
-	}
-
-	$ret = $reply[1]->reset();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	return GalleryStatus::success();
+	return $this->_session;
     }
 
     /**
@@ -600,12 +519,7 @@ class Gallery {
 
 	GalleryProfiler::start('Gallery::acquireReadLock');
 
-	$reply =& $this->getStorage();
-	$ret = $reply[0];
-	$storage =& $reply[1];
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
+	$storage = $this->getStorage();
 	
 	list ($ret, $lock) =
 	    $storage->acquireReadLock($ids, $timeout);
@@ -635,18 +549,19 @@ class Gallery {
     function acquireReadLockParents($id, $timeout=10) {
 	global $gallery;
 
-	$reply =& $this->getStorage();
-	$ret = $reply[0];
-	$storage =& $reply[1];
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
+	$storage = $this->getStorage();
 
 	/* Get the parent entity id */
-	list ($ret, $searchResults) = 
-	    $gallery->search(array('select' => '[GalleryChildEntity::parentId]',
-				   'where' => ('[GalleryChildEntity::id] = ? ')),
-			     array($id));
+	$query = '
+        SELECT
+          [GalleryChildEntity::parentId]
+        FROM
+          [GalleryChildEntity]
+        WHERE
+          [GalleryChildEntity::id] = ?
+        ';
+
+	list ($ret, $searchResults) = $gallery->search($query, array($id));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -736,12 +651,7 @@ class Gallery {
      */
     function acquireWriteLock($ids, $timeout=10) {
 
-	$reply =& $this->getStorage();
-	$ret = $reply[0];
-	$storage =& $reply[1];
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
+	$storage = $this->getStorage();
 
 	list ($ret, $lock) =
 	    $storage->acquireWriteLock($ids, $timeout);
@@ -813,13 +723,15 @@ class Gallery {
     }
 
     /**
-     * Release any hanging locks.
+     * Perform any necessary shutdown tasks.
      *
      * This should only be invoked as a register_shutdown callback.
      *
      * @access private
      */
-    function _releaseHangingLocks() {
+    function _shutdown() {
+
+	/* Release any hanging locks */
 	foreach ($this->_locks as $lock) {
 	    if ($lock->isLocked()) {
 		/* Bitch at the developer! */
@@ -827,58 +739,63 @@ class Gallery {
 		$lock->release();
 	    }
 	}
+
+	/* Roll back any transactions */
+	$this->rollbackTransaction();
     }
 
     /**
      * Return an instance of the GalleryStorage class
      *
      * @access public
-     * @return array object GalleryStatus a status code
-     *               object GalleryStorage a storage instance
+     * @return object GalleryStatus a status code
      */
-    function &getStorage() {
-	GalleryProfiler::start('Gallery::getStorage');
-	
-	if (empty($this->_storage)) {
-	    $type = $this->getConfig('storage.type');
-	    $config = $this->getConfig('storage.config');
-	    
-	    /* Load the factory class */
-	    require_once(dirname(__FILE__) . '/GalleryStorageFactory.class');
-	    
-	    list ($ret, $storage) =
-		GalleryStorageFactory::newInstance($type, $config);
-	    
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    
-	    $ret = $storage->init();
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
+    function initStorage() {
+	GalleryProfiler::start('Gallery::initStorage');
 
-	    $this->_storage = $storage;
+	$type = $this->getConfig('storage.type');
+	$config = $this->getConfig('storage.config');
+	    
+	/* Load the factory class */
+	require_once(dirname(__FILE__) . '/GalleryStorageFactory.class');
+	    
+	list ($ret, $storage) =
+	    GalleryStorageFactory::newInstance($type, $config);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
+	    
+	$ret = $storage->init();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$this->_storage = $storage;
 
-	GalleryProfiler::stop('Gallery::getStorage');
-	return array(GalleryStatus::success(), &$this->_storage);
+	GalleryProfiler::stop('Gallery::initStorage');
+	return GalleryStatus::success();
     }
 
+    /**
+     * Return an instance of the GalleryStorage class
+     *
+     * @access public
+     * @return object GalleryStorage a storage instance
+     */
+    function getStorage() {
+	return $this->_storage;
+    }
+    
     /**
      * Begin a new transaction, if the storage layer supports them.
      *
      * @return object GalleryStatus a status code
      */
     function beginTransaction() {
-	$reply =& $this->getStorage();
-	$ret = $reply[0];
-	$storage =& $reply[1];
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	if ($this->_storage == null) {
+	    return GalleryStatus::error(ERROR_STORAGE_CONNECTION, __FILE__, __LINE__);
 	}
-
-	$ret = $storage->beginTransaction();
+	
+	$ret = $this->_storage->beginTransaction();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -892,14 +809,29 @@ class Gallery {
      * @return object GalleryStatus a status code
      */
     function commitTransaction() {
-	$reply =& $this->getStorage();
-	$ret = $reply[0];
-	$storage =& $reply[1];
+	if ($this->_storage == null) {
+	    return GalleryStatus::error(ERROR_STORAGE_CONNECTION, __FILE__, __LINE__);
+	}
+
+	$ret = $this->_storage->commitTransaction();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	$ret = $storage->commitTransaction();
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Roll back our transaction, if the storage layer supports transactions.
+     *
+     * @return object GalleryStatus a status code
+     */
+    function rollbackTransaction() {
+	if ($this->_storage == null) {
+	    return GalleryStatus::error(ERROR_STORAGE_CONNECTION, __FILE__, __LINE__);
+	}
+
+	$ret = $this->_storage->rollbackTransaction();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

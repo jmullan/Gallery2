@@ -140,20 +140,28 @@ class GalleryViewCountMap_core {
 					__FILE__, __LINE__);
 	}
 
-	list ($ret, $searchResults) =
-	    $gallery->search(array('select' => '[GalleryViewCountMap::viewCount]',
-				   'where' => ('[GalleryViewCountMap::itemId] = ?')),
-			     array($itemId));
+	$query = '
+        SELECT
+          [GalleryViewCountMap::viewCount]
+        FROM
+          [GalleryViewCountMap]
+        WHERE
+          [GalleryViewCountMap::itemId] = ?
+        ';
+
+	list ($ret, $searchResults) = $gallery->search($query, array($itemId));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	if ($searchResults->resultCount() == 0) {
-	    return null;
+	    $count = 0;
+	} else {
+	    $result = $searchResults->nextResult();
+	    $count = $result[0];
 	}
-
-	$result = $searchResults->nextResult();
-	return array($ret, $result[0]);
+	
+	return array(GalleryStatus::success(), $result[0]);
     }
 }
 

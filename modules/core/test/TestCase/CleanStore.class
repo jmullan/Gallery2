@@ -11,11 +11,7 @@ class CleanStoreTestCase extends TestCase {
     function testStart() {
 	global $gallery;
 
-	list($ret, $storage) = $gallery->getStorage();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-	
+	$storage = $gallery->getStorage();
 	$ret = $storage->cleanStore();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);

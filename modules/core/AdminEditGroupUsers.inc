@@ -143,12 +143,6 @@ class AdminEditGroupUsersView extends GalleryView {
 	    $form['groupId'] = $groupId;
 	}
 
-	list ($ret, $userIds) =
-	    GalleryUserGroupMap::fetchUsersForGroup($form['groupId']);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
 	/* Load the group */
 	list ($ret, $group) = $gallery->loadEntitiesById($form['groupId']);
 	if ($ret->isError()) {

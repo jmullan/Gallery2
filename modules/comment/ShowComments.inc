@@ -114,18 +114,12 @@ class ShowCommentsView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	if (isset($permissions['core.all']) ||
-	        isset($permissions['comment.all'])) {
-	    $can['all'] = true;
-	} else {
-	    $can['all'] = false;
-	    foreach (array('add' => 'comment.add',
-			   'delete' => 'comment.delete',
-			   'edit' => 'comment.edit',
-			   'viewIps' => 'comment.viewIps')
-		     as $canFlag => $permission) {
-		$can[$canFlag] = isset($permissions[$permission]);
-	    }
+	foreach (array('add' => 'comment.add',
+		       'delete' => 'comment.delete',
+		       'edit' => 'comment.edit',
+		       'viewIps' => 'comment.viewIps')
+		 as $canFlag => $permission) {
+	    $can[$canFlag] = isset($permissions[$permission]);
 	}
 
 	$template->setVariable('comments', $commentData);

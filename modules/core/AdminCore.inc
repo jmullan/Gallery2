@@ -146,8 +146,12 @@ class AdminCoreView extends GalleryView {
 	}
 	$languageList = array();
 	$supportedLanguages = $translator->getSupportedLanguages();
+
 	foreach ($supportedLanguages as $language => $countryList) {
 	    foreach ($countryList as $country => $languageData) {
+		if ($country == "_defaultCountry") {
+		    continue;
+		}
 		$languageList[$language . '_' . $country] =
 		    $languageData['description'];
 	    }
@@ -195,7 +199,7 @@ class AdminCoreView extends GalleryView {
 		}
 
 		if ($platform->is_dir("$themeDir$subdir")) {
-		    $file = "$themeDir$subdir/theme.inc";
+		    $file = "$themeDir$subdir/templates";
 		    if ($platform->file_exists($file)) {
 			$themeList[] = $subdir;
 		    }

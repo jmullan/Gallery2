@@ -136,11 +136,16 @@ class GalleryModuleMap_core {
     function fetchModuleList() {
 	global $gallery;
 	GalleryProfiler::start('GalleryModuleMap::fetchModuleList');
-	
-	list ($ret, $searchResults) = 
-	    $gallery->search(array('select' => ('[GalleryModuleMap::moduleName],'.
-						'[GalleryModuleMap::active]')));
 
+	$query = '
+        SELECT
+          [GalleryModuleMap::moduleName],
+          [GalleryModuleMap::active]
+        FROM
+          [GalleryModuleMap]
+        ';
+	
+	list ($ret, $searchResults) = $gallery->search($query);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

@@ -182,34 +182,48 @@ class GalleryDerivativeHelper {
 			 null);
 	}
 
-	if (!empty($itemIds)) {
-	    $ids = $itemIds;
-	    $selectId = '[GalleryChildEntity::parentId]';
-	} else {
-	    $ids = $sourceIds;
-	    $selectId = '[GalleryDerivative::derivativeSourceId]';
-	}
-
 	if (!is_array($types)) {
 	    $types = array($types);
 	}
-	    
-	/* Look up the ids of all their thumbnail images */
-	$data = array();
-	$searchParams['select'] = '[GalleryDerivative::id], ' . $selectId;
-
-	$idMarkers = GalleryUtilities::makeMarkers(sizeof($ids));
-	$searchParams['where'] = $selectId . ' IN (' . $idMarkers . ')';
-	$data = array_merge($data, $ids);
 	
+	if (!empty($itemIds)) {
+	    $idMarkers = GalleryUtilities::makeMarkers(sizeof($itemIds));
+	    $data = $itemIds;
+	    $query = '
+            SELECT
+              [GalleryDerivative::id], [GalleryChildEntity::parentId]
+            FROM
+              [GalleryDerivative], [GalleryChildEntity]
+            WHERE
+              [GalleryDerivative::id] = [GalleryChildEntity::id]
+              AND
+              [GalleryChildEntity::parentId] IN (' . $idMarkers . ')
+            ';
+	} else {
+	    $idMarkers = GalleryUtilities::makeMarkers(sizeof($sourceIds));
+	    $data = $sourceIds;
+	    $query = '
+            SELECT
+              [GalleryDerivative::id], [GalleryDerivative::derivativeSourceId]
+            FROM
+              [GalleryDerivative]
+            WHERE
+              [GalleryDerivative::id] = [GalleryChildEntity::id]
+              AND
+              [GalleryDerivative::derivativeSourceId] IN (' . $idMarkers . ')
+            ';
+	}
+
 	if (!empty($types)) {
 	    $typeMarkers = GalleryUtilities::makeMarkers(sizeof($types));
-	    $searchParams['where'] .= (' AND [GalleryDerivative::derivativeType] IN (' .
-				       $typeMarkers . ')');
+	    $query .= '
+              AND
+              [GalleryDerivative::derivativeType] IN (' . $typeMarkers . ')
+            ';
 	    $data = array_merge($data, $types);
 	}
-		     
-	list ($ret, $searchResults) = $gallery->search($searchParams, $data);
+
+	list ($ret, $searchResults) = $gallery->search($query, $data);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -248,11 +262,17 @@ class GalleryDerivativeHelper {
 	global $gallery;
 
 	$idMarkers = GalleryUtilities::makeMarkers($ids);
-	list ($ret, $searchResults) =
-	    $gallery->search(array('select' => '[GalleryDerivative::id]',
-				   'where' => ('[GalleryDerivative::derivativeSourceId] IN (' .
-					       $idMarkers . ')')),
-			     $ids);
+
+	$query = '
+        SELECT
+          [GalleryDerivative::id]
+        FROM
+          [GalleryDerivative]
+        WHERE
+          [GalleryDerivative::derivativeSourceId] IN (' . $idMarkers . ')
+        ';
+	
+	list ($ret, $searchResults) = $gallery->search($query, $ids);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -302,11 +322,20 @@ class GalleryDerivativeHelper {
 	    return GalleryStatus::success();
 	}
 
-	list ($ret, $searchResults) =
-	    $gallery->search(array('select' => '[GalleryDerivative::id]',
-				   'where' => ('[GalleryDerivative::derivativeSourceId] = ? ' .
-					       ' AND [GalleryDerivative::id] NOT IN (?, ?)')),
-			     array($originalSourceId, $originalSourceId, $newSourceId));
+	$query = '
+        SELECT
+          [GalleryDerivative::id]
+        FROM
+          [GalleryDerivative]
+        WHERE
+          [GalleryDerivative::derivativeSourceId] = ?
+          AND
+          [GalleryDerivative::id] NOT IN (?, ?)
+        ';
+
+	list ($ret, $searchResults) = $gallery->search($query, array($originalSourceId,
+								      $originalSourceId,
+								      $newSourceId));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

@@ -54,7 +54,9 @@ class GalleryCoreSearch extends GallerySearchInterface_1_0 {
      */
     function search($options, $criteria, $limit=null) {
 	global $gallery;
-	
+
+	$whereList = array();
+	$whereData = array();
 	foreach (array('descriptions' => '[GalleryItem::description]',
 		       'keywords' => '[GalleryItem::keywords]',
 		       'summaries' => '[GalleryItem::summary]',
@@ -63,26 +65,53 @@ class GalleryCoreSearch extends GallerySearchInterface_1_0 {
 
 	    if (isset($options[$key])) {
 		$whereList[] = "$column LIKE ?";
-		$data[] = '%' . $criteria . '%';
+		$whereData[] = '%' . $criteria . '%';
 	    }
 	}
 
-	$where = '(' . join(' OR ', $whereList) . ')';
+	$query = '
+        SELECT
+          DISTINCT([GalleryItem::id]), [GalleryEntity::modificationTimestamp]
+        FROM
+          [GalleryItem], [GalleryPermissionMap], [GalleryUserGroupMap], [GalleryEntity]
+        WHERE
+          (' . join(' OR ', $whereList) . ')
+          AND
+          [GalleryItem::id] = [GalleryPermissionMap::itemId]
+          AND
+          [GalleryItem::id] = [GalleryEntity::id]
+          AND
+          ([GalleryPermissionMap::userId] = ?
+           OR
+           ([GalleryUserGroupMap::userId] = ?
+            AND
+            [GalleryPermissionMap::groupId] = [GalleryUserGroupMap::groupId]))
+          AND
+          [GalleryPermissionMap::permission] & ? > ?
+        GROUP BY
+          [GalleryItem::id], [GalleryEntity::modificationTimestamp]
+        ORDER BY
+          [GalleryEntity::modificationTimestamp] DESC
+        ';
 
-	/* Factor in item permissions */
-	list ($permissionWhere, $permissionData) =
-	    GalleryItemHelper::getViewPermissionClause($gallery->getActiveUserId());
-	$where = $where . ' AND ' . $permissionWhere;
-	$data = array_merge($data, $permissionData);
+	list ($ret, $viewPermission) =
+	    GalleryPermissionSetMap::convertIdsToBits('core.view');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$storage = $gallery->getStorage();
+
+	$data = $whereData;
+	$data[] = $gallery->getActiveUserId();
+	$data[] = $gallery->getActiveUserId();
+	$data[] = $storage->convertIntToBits($viewPermission);
+	$data[] = $storage->convertIntToBits(0);
 
 	list ($ret, $results) = 
-	    $gallery->search(array('select' => 'DISTINCT([GalleryItem::id])',
-				   'where' => $where,
-				   'order-by' => '[GalleryEntity::modificationTimestamp] DESC',
-				   'group-by' => '[GalleryItem::id]',
-				   'limit' => array('offset' => 0, 'count' => $limit),
-				   'boolean-operator' => 'OR'),
-			     $data);
+	    $gallery->search($query, $data,
+			      array('limit' => array('offset' => 0, 'count' => $limit)),
+			      $data);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

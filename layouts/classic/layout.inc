@@ -276,20 +276,18 @@ class ClassicLayout extends GalleryLayout {
 	list ($ret, $permissions) =
 	    GalleryItemHelper::getPermissions($item->getId(),
 					      $gallery->getActiveUserId());
-	   
+
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* Can we see this item at all? */
-	if (!isset($permissions['core.all']) &&
-	        !isset($permissions['core.view']) &&
-	        !isset($permissions['core.viewAll'])) {
+	if (!isset($permissions['core.view'])) {
 	    return array(GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__), null);
 	}
 
 	/* If the user can see resized versions, add those to the list */
-	if (isset($permissions['core.viewAll']) || isset($permissions['core.viewResizes'])) {
+	if (isset($permissions['core.viewResizes'])) {
 	    /* Load the resizes */
 	    list ($ret, $resizes) =
 		GalleryDerivativeHelper::fetchResizesByItemIds(array($item->getId()));
@@ -309,7 +307,7 @@ class ClassicLayout extends GalleryLayout {
 	}
 
 	/* If the user can see the full version, add it to the list */
-	if (isset($permissions['core.viewAll']) || isset($permissions['core.viewSource'])) {
+	if (isset($permissions['core.viewSource'])) {
 	    /* Add the full version */
 	    list ($ret, $preferred) =
 		GalleryDerivativeHelper::fetchPreferredsByItemIds(array($item->getId()));

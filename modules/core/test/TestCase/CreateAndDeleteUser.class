@@ -29,7 +29,10 @@ class CreateAndDeleteUserTestCase extends TestCase {
 
 	/* Check what groups the user is in */
 	$gallery->debug('See what groups the user is in');
-	$this->_dumpGroups($user->getId());
+	$ret = $this->_dumpGroups($user->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 
 	list ($ret, $groupId) =
 	    $gallery->getModuleParameter('core', 'id.adminGroup');
@@ -40,10 +43,13 @@ class CreateAndDeleteUserTestCase extends TestCase {
 	/* Make the user an admin */
 	$gallery->debug('Add the user to the admin group');
 	$ret = GalleryUserGroupMap::addUserToGroup($user->getId(), $groupId);
-	
+
 	/* Check groups again */
 	$gallery->debug('Check groups again');
-	$this->_dumpGroups($user->getId());
+	$ret = $this->_dumpGroups($user->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 
 	/* Delete the user -- the lazy way. */
 	$gallery->debug('Delete the user');
@@ -54,15 +60,25 @@ class CreateAndDeleteUserTestCase extends TestCase {
 
 	/* Make sure that the user is not in the map anymore */
 	$gallery->debug('Make sure the user is not in any groups');
-	$this->_dumpGroups($user->getId());
+	$ret = $this->_dumpGroups($user->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 
 	return GalleryStatus::success();
     }
 
     function _dumpGroups($userId) {
-	list ($ret, $groupIds) = 
-	    GalleryUserGroupMap::fetchGroupsForUser($userId);
-	print_r($groupIds);
+	global $gallery;
+
+	/* XXX: this doesn't work properly, since fetchGroupsForUser caches data */
+	list ($ret, $groups) = GalleryUserGroupMap::fetchGroupsForUser($userId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$gallery->debug_r($groups);
+	return GalleryStatus::success();
     }
 }
 

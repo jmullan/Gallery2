@@ -173,6 +173,9 @@
     <xsl:when test="column-type='INTEGER'">
       int(11)
     </xsl:when>
+    <xsl:when test="column-type='BIT'">
+      int(11)
+    </xsl:when>
     <xsl:when test="column-type='STRING'">
       varchar(
       <xsl:choose>

@@ -276,7 +276,7 @@ class ItemEditAlbumView extends GalleryView {
 		}
 
 		if ($platform->is_dir("$themeDir$subdir")) {
-		    $file = "$themeDir$subdir/theme.inc";
+		    $file = "$themeDir$subdir/templates";
 		    if ($platform->file_exists($file)) {
 			$themeList[] = $subdir;
 		    }

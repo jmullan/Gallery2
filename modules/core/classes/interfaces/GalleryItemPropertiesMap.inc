@@ -79,12 +79,7 @@ class GalleryItemPropertiesMap extends GalleryItemPropertiesMap_core {
         }
     
 
-	$reply =& $gallery->getStorage();
-	$ret = $reply[0];
-	$storage =& $reply[1];
-        if ($ret->isError()) {
-            return $ret->wrap(__FILE__, __LINE__);
-        }
+	$storage = $gallery->getStorage();
 
         $ret = $storage->addMapEntry('GalleryItemPropertiesMap', $data);
         if ($ret->isError()) {
@@ -106,13 +101,8 @@ class GalleryItemPropertiesMap extends GalleryItemPropertiesMap_core {
         if (sizeof($data) == 0) {
             return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
         }
-	$reply =& $gallery->getStorage();
-	$ret = $reply[0];
-	$storage =& $reply[1];
 
-        if ($ret->isError()) {
-            return $ret->wrap(__FILE__, __LINE__);
-        }
+	$storage = $gallery->getStorage();
 
         $ret = $storage->removeMapEntry('GalleryItemPropertiesMap', $data);
         if ($ret->isError()) {
@@ -135,13 +125,8 @@ class GalleryItemPropertiesMap extends GalleryItemPropertiesMap_core {
 	if (sizeof($match) == 0 || sizeof($change) == 0) {
             return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
         }
-	$reply =& $gallery->getStorage();
-	$ret = $reply[0];
-	$storage =& $reply[1];
 
-        if ($ret->isError()) {
-            return $ret->wrap(__FILE__, __LINE__);
-        }
+	$storage = $gallery->getStorage();
 
         $ret = $storage->updateMapEntry('GalleryItemPropertiesMap', $match, $change);
         if ($ret->isError()) {

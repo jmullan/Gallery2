@@ -77,7 +77,7 @@ function GalleryInitFirstPass() {
 			$galleryBase . 'lib' . $slash . 'smarty' . $slash);
 
     /* Load our local configuration */
-    require_once(dirname(__FILE__) . $slash . 'config.php');
+    include(dirname(__FILE__) . $slash . 'config.php');
 
     /* Sanitize the data path */
     $dataBase = $gallery->getConfig('data.gallery.base');
@@ -103,6 +103,21 @@ function GalleryInitFirstPass() {
 	     as $functionName) {
 	$key = 'function.exists.' . $functionName;
 	$gallery->setConfig($key, function_exists($functionName) ? 1 : 0);
+    }
+
+    return GalleryStatus::success();
+}
+
+/**
+ * Initialize our storage subsystem.
+ */
+function GalleryInitStorage() {
+    global $gallery;
+    
+    /* Init our storage */
+    $ret = $gallery->initStorage();
+    if ($ret->isError()) {
+	return $ret->wrap(__FILE__, __LINE__);
     }
 
     return GalleryStatus::success();
@@ -138,15 +153,23 @@ function GalleryInitSecondPass() {
 	return $ret->wrap(__FILE__, __LINE__);
     }
 
+    /* Initialize our session */
+    $ret = $gallery->initSession();
+    if ($ret->isError()) {
+	return $ret->wrap(__FILE__, __LINE__);
+    }
+    $session =& $gallery->getSession();
+
     /*
      * Set our active user id.  Check to see if we have one in our session.  If
      * not, make us the anonymous user.  If we don't have a session, this will
      * initiate one for us.
      */
-    list ($ret, $activeUserId) = $gallery->getSessionValue('core.id.activeUser');
+    list ($ret, $activeUserId) = $session->get('core.id.activeUser');
     if ($ret->isError()) {
 	return $ret->wrap(__FILE__, __LINE__);
     }
+    
     if (empty($activeUserId)) {
 	/* No active user -- be anonymous */
 	list ($ret, $activeUserId) = $gallery->getModuleParameter('core', 'id.anonymousUser');
@@ -154,7 +177,7 @@ function GalleryInitSecondPass() {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	$ret = $gallery->putSessionValue('core.id.activeUser', $activeUserId);
+	$ret = $session->put('core.id.activeUser', $activeUserId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

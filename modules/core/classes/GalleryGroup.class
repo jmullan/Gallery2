@@ -116,11 +116,16 @@ class GalleryGroup_core extends GalleryEntity {
 	global $gallery;
 
 	/* Check to see if we have a collision */
+	$query = '
+        SELECT
+          [GalleryGroup::id]
+        FROM
+          [GalleryGroup]
+        WHERE
+          [GalleryGroup::groupName] = ?
+        ';
 	list($ret, $results) =
-	    $gallery->search(array('select' => 'COUNT([GalleryGroup::id])',
-				   'where' => ('[GalleryGroup::groupName]=?')),
-			     array($groupName));
-
+	    $gallery->search($query, array($groupName), array('count' => 1));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

@@ -76,14 +76,17 @@ class SearchView extends GalleryView {
 			$form['options'][$id] = $modules[$id]['options'];
 		    }
 		}
-		
+
 		/* Execute a limited search */
 		foreach ($searchInstances as $id => $instance) {
-		    list ($ret, $searchResults[$id]) = $instance->search($form['options'][$id],
-									 $form['searchCriteria'],
-									 $searchLimit);
-		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+		    if (isset($form['options'][$id])) {
+			list ($ret, $searchResults[$id]) =
+			    $instance->search($form['options'][$id],
+					      $form['searchCriteria'],
+					      $searchLimit);
+			if ($ret->isError()) {
+			    return array($ret->wrap(__FILE__, __LINE__), null);
+			}
 		    }
 		}
 	    }

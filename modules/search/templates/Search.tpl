@@ -125,7 +125,7 @@
 	    &nbsp;
 	  </td>
 	  <td valign="top" width="100%">
-	    {$searchResultItems.$resultId.title|default:"&nbsp;"}
+	    {$searchResultItems.$resultId.title|default:"&nbsp;"|replace:$form.searchCriteria:"<b>$form[searchCriteria]</b>"}
 	  </td>
 	</tr>
 	
@@ -134,7 +134,7 @@
 	    <b>{galleryText text="Description: "}</b>
 	  </td>
 	  <td valign="top">
-	    {$searchResultItems.$resultId.description|default:"&nbsp;"}
+	    {$searchResultItems.$resultId.description|default:"&nbsp;"|replace:$form.searchCriteria:"<b>$form[searchCriteria]</b>"}
 	  </td>
 	</tr>
 

@@ -84,9 +84,11 @@ class CreateRandomTreeTestCase extends TestCase {
 	if (rand(1, 10) > 1) {
 	    $album->setTitle($this->_randomWords(rand(2, 4)));
 	}
+	
 	if (rand(1, 8) > 1) {
 	    $album->setSummary($this->_randomWords(rand(4, 20)));
 	}
+	
 	if (rand(1, 5) > 1) {
 	    $album->setDescription($this->_randomWords(rand(20, 50)));
 	}

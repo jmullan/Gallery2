@@ -99,7 +99,7 @@ if (!empty($dirStatus)) {
 /*
  * Make sure we can connect to the storage subsystem.
  */
-list ($ret, $storage) = $gallery->getStorage();
+$ret = $gallery->initStorage();
 if ($ret->isError()) {
     $ret = $ret->wrap(__FILE__, __LINE__);
     error('storageError', array('error' => $ret));

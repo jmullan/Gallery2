@@ -29,7 +29,7 @@
     
       ,
     DB_COLUMN_PREFIXbits
-      INTEGER
+      BIT(32)
     
       ,
     DB_COLUMN_PREFIXflags

@@ -79,18 +79,10 @@ class GalleryTemplateAdapter {
 
 	$baseUrl = $this->getBaseUrl();
 
-	/*
-	 * We can't do much about errors at this level, so ignore them
-	 * and hope for the best.
-	 */
-	list ($ret, $session) = $gallery->getSession();
-	if ($ret->isError()) {
-	    $gallery->debug($ret->errorAsHtml());
-	} else {
-	    if (!($session->isUsingCookies())) {
-		list ($sessionKey, $sessionId) = $session->getSessionDescriptor();
-		$params[$sessionKey] = $sessionId;
-	    }
+	$session =& $gallery->getSession();
+	if (!($session->isUsingCookies())) {
+	    list ($sessionKey, $sessionId) = $session->getSessionDescriptor();
+	    $params[$sessionKey] = $sessionId;
 	}
 	
 	foreach ($params as $key => $value) {
@@ -133,18 +125,10 @@ class GalleryTemplateAdapter {
 	
 	$baseUrl = $this->getBaseUrl();
 
-	/*
-	 * We can't do much about errors at this level, so ignore them
-	 * and hope for the best.
-	 */
-	list ($ret, $session) = $gallery->getSession();
-	if ($ret->isError()) {
-	    $gallery->debug($ret->errorAsHtml());
-	} else {
-	    if (!($session->isUsingCookies())) {
-		list ($sessionKey, $sessionId) = $session->getSessionDescriptor();
-		$params[$sessionKey] = $sessionId;
-	    }
+	$session =& $gallery->getSession();
+	if (!($session->isUsingCookies())) {
+	    list ($sessionKey, $sessionId) = $session->getSessionDescriptor();
+	    $params[$sessionKey] = $sessionId;
 	}
 
 	$enctype = null;

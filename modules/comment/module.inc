@@ -79,11 +79,7 @@ class CommentModule extends GalleryTemplateModule {
 	if ($version != $this->getVersion()) {
 
 	    /* The store requires configuration. */
-	    list ($ret, $storage) = $gallery->getStorage();
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-
+	    $storage = $gallery->getStorage();
 	    $ret = $storage->configureStore('comment');
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
@@ -186,9 +182,7 @@ class CommentModule extends GalleryTemplateModule {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    if (isset($permissions['core.all']) ||
-		isset($permissions['comment.all']) ||
-		isset($permissions['comment.add'])) {
+	    if (isset($permissions['comment.add'])) {
 		$params['view'] = 'comment:AddComment';
 		$params['itemId'] = $item->getId();
 		$links[$item->getId()][] =
@@ -237,9 +231,7 @@ class CommentModule extends GalleryTemplateModule {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    if (isset($permissions['core.all']) ||
-		isset($permissions['comment.all']) ||
-		isset($permissions['comment.view'])) {
+	    if (isset($permissions['comment.view'])) {
 		if (!empty($commentCounts[$item->getId()])) {
 		    $message['one'] = '%d comment';
 		    $message['many'] = '%d comments';
@@ -272,9 +264,7 @@ class CommentModule extends GalleryTemplateModule {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	
-	if (!isset($permissions['core.all']) &&
-	        !isset($permissions['comment.all']) &&
-	        !isset($permissions['comment.view'])) {
+	if (!isset($permissions['comment.view'])) {
 	    return array(GalleryStatus::success(), null);
 	}
 	

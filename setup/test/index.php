@@ -24,12 +24,30 @@ function main() {
 	return $ret->wrap(__FILE__, __LINE__);
     }
 
+    /* Init our storage */
+    $ret = GalleryInitStorage();
+    if ($ret->isError()) {
+	return $ret->wrap(__FILE__, __LINE__);
+    }
+
+    global $gallery;
+    $ret = $gallery->beginTransaction();
+    if ($ret->isError()) {
+	return $ret->wrap(__FILE__, __LINE__);
+    }
+
     $ret = GalleryInitSecondPass();
     if ($ret->isError()) {
 	return $ret->wrap(__FILE__, __LINE__);
     }
 
     $ret = GalleryTestHarness();
+    if ($ret->isError()) {
+	$gallery->rollbackTransaction();
+	return $ret->wrap(__FILE__, __LINE__);
+    }
+
+    $ret = $gallery->commitTransaction();
     if ($ret->isError()) {
 	return $ret->wrap(__FILE__, __LINE__);
     }
