@@ -283,9 +283,7 @@ class GalleryEmbed {
 	    $user->setFullName($args['fullname']);
 	}
 	if (isset($args['language'])) {
-	    global $gallery;
-	    $translator = $gallery->getTranslator();
-	    list ($languageCode) = $translator->getSupportedLanguageCode($args['language']);
+	    list ($languageCode) = GalleryTranslator::getSupportedLanguageCode($args['language']);
 	    $user->setLanguage($languageCode);
 	}
     }

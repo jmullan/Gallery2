@@ -209,10 +209,10 @@ class GalleryTranslator {
      */
     function init($languageCode=null) {
 	if (empty($languageCode)) {
-	    $languageCode = $this->getLanguageCodeFromRequest();
+	    $languageCode = GalleryTranslator::getLanguageCodeFromRequest();
 	}
 
-	list ($languageCode, $data) = $this->getSupportedLanguageCode($languageCode);
+	list ($languageCode, $data) = GalleryTranslator::getSupportedLanguageCode($languageCode);
 
 	/* If we're using gettext, try to bind to a language */
 	if (function_exists('dgettext')) {
@@ -247,6 +247,7 @@ class GalleryTranslator {
      * @param boolean (optional) if false, return array(null,null) for no match instead of en_US
      * @return array (string a language code in <language>_<COUNTRY> format,
      *                array data about this language code (description,charset))
+     * @static
      */
     function getSupportedLanguageCode($languageCode, $fallback=true) {
 	static $supportedLanguages;
@@ -273,6 +274,7 @@ class GalleryTranslator {
      * browser will accept.  Take the first one that we can support.
      *
      * @return a language code in the <language>_<COUNTRY> format, eg: en_US
+     * @static
      */
     function getLanguageCodeFromRequest() {
 	/* Take the first thing the browser accepts that we can use */
@@ -280,7 +282,7 @@ class GalleryTranslator {
 	    foreach (explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE'])
 		     as $code) {
 
-		list ($languageCode) = $this->getSupportedLanguageCode($code, false);
+		list ($languageCode) = GalleryTranslator::getSupportedLanguageCode($code, false);
 		if (isset($languageCode)) {
 		    return $languageCode;
 		}
