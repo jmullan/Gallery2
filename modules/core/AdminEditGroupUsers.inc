@@ -47,7 +47,7 @@ class AdminEditGroupUsersController extends GalleryController {
 	    $results['view'] = 'core:SiteAdmin';
 	    GalleryUtilities::putRequestVariable('subView', 'core:AdminGroups');
 	    
-	} else if ($group->getType() != GROUP_ALL_USERS) {
+	} else if ($group->getGroupType() != GROUP_ALL_USERS) {
 	    if (isset($form['action']['remove'])) {
 
 		/* Remove the user from the group */
