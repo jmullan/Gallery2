@@ -1016,5 +1016,32 @@ class GalleryPlatform {
 	/* This must be implemented in a platform specific way */
 	assert(false);
     }
+
+    /**
+     * chdir -- change working directory
+     *
+     * @param string directory
+     * @return boolean true on success
+     */
+    function chdir($path) {
+	global $gallery;
+	if ($gallery->getDebug()) {
+	    $gallery->debug("chdir($path)");
+	}
+	return chdir($path);
+    }
+
+    /**
+     * getcwd -- gets the current working directory
+     *
+     * @return the current working directory, or FALSE on failure.
+     */
+    function getcwd() {
+	global $gallery;
+	if ($gallery->getDebug()) {
+	    $gallery->debug("getcwd()");
+	}
+	return getcwd();
+    }
 }
 ?>

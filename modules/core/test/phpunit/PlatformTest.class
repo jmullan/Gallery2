@@ -349,5 +349,20 @@ class PlatformTest extends GalleryTestCase {
 				$this->_platform->splitPath('/dir/path/file.txt'), 'absolute');
 	}
     }
+
+    function testChdir() {
+	global $gallery;
+	$tmpdir = $gallery->getConfig('data.gallery.tmp');
+	$oldCwd = $this->_platform->getcwd();
+	$this->assert($oldCwd);
+
+	/* Change working directory to g2data/tmp */
+	$this->assert($this->_platform->chdir($tmpdir));
+	$newCwd = $this->_platform->getcwd();
+	$this->assertEquals(realpath($tmpdir), $newCwd);
+
+	/* Go back to original directory */
+	$this->_platform->chdir($oldCwd);
+    }
 }
 ?>
