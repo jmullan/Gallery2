@@ -148,49 +148,64 @@ class GalleryTheme {
 	    $params[$sessionKey] = $sessionId;
 	}
 
-	/* Pass through the encoding type, if required */
-	$enctype = null;
-	if (!empty($params['enctype'])) {
-	    $enctype = $params['enctype'];
-	    unset($params['enctype']);
-	}
-	
+	/* Preprocessing */
 	if (empty($params['method'])) {
-	    $method = 'POST';
-	} else {
-	    $method = $params['method'];
-	    unset($params['method']);
+	    $params['method'] = 'post';
 	}
-	
-	$name = null;
-	if (isset($params['name'])) {
-	    $name = $params['name'];
-	    unset($params['name']);
-	}
-
 	$urlGenerator = $gallery->getUrlGenerator();
-	$baseUrl = $urlGenerator->generateUrl();
-	$result = '<form method="' . $method . '" action="' . $baseUrl . '"';
-	$result .= ' accept-charset="UTF-8"';
-	if (!empty($enctype)) {
-	    $result .= ' enctype="' . $enctype . '"';
-	}
-	if (isset($name)) {
-	    $result .= ' name="' . $name . '"';
-	}
-	$result .= ">\n";
-	foreach ($params as $key => $value) {
-	    $result .= '<input type="hidden" ' .
-		'name="' . GALLERY_FORM_VARIABLE_PREFIX . $key . '" ' .
-		'value="' . $value . '">';
-	    $result .= "\n";
-	}
-	
-	$result .= $content;
-	$result .= "\n";
-	$result .= '</form>';
+	$params['action'] = $urlGenerator->generateUrl();
+	$params['accept-charset'] = 'UTF-8';
 
-	return $result;
+	/* Prepare the tag */
+	$results = '<form';
+	$hiddenFields = '';
+	foreach ($params as $caseSensitiveKey => $value) {
+	    /* Force the key to lower case */
+	    $key = strtolower($caseSensitiveKey);
+	    switch($key) {
+	    case 'action':
+	    case 'method':
+	    case 'enctype':
+	    case 'accept':
+	    case 'name':
+	    case 'onsubmit':
+	    case 'onreset':
+	    case 'accept-charset':
+		$results .= " $key=\"$value\"";
+		break;
+
+		
+	    /* Generic attributes */
+	    case 'id':
+	    case 'class':
+	    case 'style':
+	    case 'title':
+	    case 'lang':
+	    case 'dir':
+	    case 'onclick':
+	    case 'ondblclick':
+	    case 'onmousedown':
+	    case 'onmouseup':
+	    case 'onmouseover':
+	    case 'onmouseout':
+	    case 'onkeypress':
+	    case 'onkeydown':
+	    case 'onkeyup':
+		$results .= " $key=\"$value\"";
+		break;
+
+	    default:
+		$hiddenFields .= '<input type="hidden" name="' .
+		    GALLERY_FORM_VARIABLE_PREFIX . $caseSensitiveKey .
+		    '" value="' . $value . "\">\n";
+	    }
+	}
+	$results .= ">\n";
+	$results .= $hiddenFields;
+	$results .= $content;
+	$results .= "\n</form>\n";
+
+	return $results;
     }
 
     /**
@@ -200,16 +215,75 @@ class GalleryTheme {
      * @return HTML content
      */
     function input($params, $content=null) {
+	/* Do some preprocessing */
 	$params['value'] = trim($content);
-
-	/* Translate the form variable name */
 	$params['name'] = GALLERY_FORM_VARIABLE_PREFIX . $params['name'];
-
 	if (empty($params['type'])) {
 	    $params['type'] = 'text';
 	}
 
-	return $this->_renderTemplate('input', $params);
+	/* Prepare the tag */
+	$results = '<input';
+	foreach ($params as $key => $value) {
+	    /* Force the key to lower case */
+	    $key = strtolower($key);
+	    switch($key) {
+	    case 'type':
+	    case 'name':
+	    case 'size':
+	    case 'maxlength':
+	    case 'src':
+	    case 'alt':
+	    case 'usemap':
+	    case 'tabindex':
+	    case 'accesskey':
+	    case 'onfocus':
+	    case 'onblur':
+	    case 'onchange':
+	    case 'onselect':
+	    case 'accept':
+		$results .= " $key=\"$value\"";
+		break;
+
+	    case 'disabled':
+	    case 'readonly':
+	    case 'ismap':
+		$results .= " $key";
+		break;
+
+	    case 'value':
+		if ($params['type'] == 'checkbox' || $params['type'] == 'radio') {
+		    if (!empty($value)) {
+			$results .= ' checked';
+		    }
+		} else {
+		    $results .= " value=\"$value\"";
+		}
+		break;
+
+	    /* Generic attributes */
+	    case 'id':
+	    case 'class':
+	    case 'style':
+	    case 'title':
+	    case 'lang':
+	    case 'dir':
+	    case 'onclick':
+	    case 'ondblclick':
+	    case 'onmousedown':
+	    case 'onmouseup':
+	    case 'onmouseover':
+	    case 'onmouseout':
+	    case 'onkeypress':
+	    case 'onkeydown':
+	    case 'onkeyup':
+		$results .= " $key=\"$value\"";
+		break;
+	    }
+	}
+	$results .= '>';
+
+	return $results;
     }
 
     /**
@@ -225,7 +299,51 @@ class GalleryTheme {
 	    $params['name'] = GALLERY_FORM_VARIABLE_PREFIX . $params['name'];
 	}
 
-	return $this->_renderTemplate('select', $params, $content);
+	/* Prepare the tag */
+	$results = '<select';
+	foreach ($params as $key => $value) {
+	    /* Force the key to lower case */
+	    $key = strtolower($key);
+	    switch($key) {
+	    case 'name':
+	    case 'size':
+	    case 'tabindex':
+	    case 'onfocus':
+	    case 'onblur':
+	    case 'onchange':
+		$results .= " $key=\"$value\"";
+		break;
+
+	    case 'multiple':
+	    case 'disabled':
+		$results .= " $key";
+		break;
+
+	    /* Generic attributes */
+	    case 'id':
+	    case 'class':
+	    case 'style':
+	    case 'title':
+	    case 'lang':
+	    case 'dir':
+	    case 'onclick':
+	    case 'ondblclick':
+	    case 'onmousedown':
+	    case 'onmouseup':
+	    case 'onmouseover':
+	    case 'onmouseout':
+	    case 'onkeypress':
+	    case 'onkeydown':
+	    case 'onkeyup':
+		$results .= " $key=\"$value\"";
+		break;
+	    }
+	}
+	$results .= '>';
+	$results .= $content;
+	$results .= '</select>';
+
+	return $results;
     }
     
     /**
@@ -241,7 +359,54 @@ class GalleryTheme {
 	    $params['name'] = GALLERY_FORM_VARIABLE_PREFIX . $params['name'];
 	}
 
-	return $this->_renderTemplate('textarea', $params, $content);
+	/* Prepare the tag */
+	$results = '<textarea';
+	foreach ($params as $key => $value) {
+	    /* Force the key to lower case */
+	    $key = strtolower($key);
+	    switch($key) {
+	    case 'name':
+	    case 'rows':
+	    case 'cols':
+	    case 'tabindex':
+	    case 'accesskey':
+	    case 'onfocus':
+	    case 'onblur':
+	    case 'onselect':
+	    case 'onchange':
+		$results .= " $key=\"$value\"";
+		break;
+
+	    case 'disabled':
+	    case 'readonly':
+		$results .= " $key";
+		break;
+
+	    /* Generic attributes */
+	    case 'id':
+	    case 'class':
+	    case 'style':
+	    case 'title':
+	    case 'lang':
+	    case 'dir':
+	    case 'onclick':
+	    case 'ondblclick':
+	    case 'onmousedown':
+	    case 'onmouseup':
+	    case 'onmouseover':
+	    case 'onmouseout':
+	    case 'onkeypress':
+	    case 'onkeydown':
+	    case 'onkeyup':
+		$results .= " $key=\"$value\"";
+		break;
+	    }
+	}
+	$results .= '>';
+	$results .= $content;
+	$results .= '</textarea>';
+
+	return $results;
     }
 
     /**
