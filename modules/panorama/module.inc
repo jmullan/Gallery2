@@ -167,11 +167,11 @@ class PanoramaModule extends GalleryModule {
 		}
 		$image = $images[$item->getId()];
 		$mimeType = $item->getMimeType();
-		$width = $item->getWidth();
+		$width = $image->getWidth();
 		// Applet supports jpeg and gif images
 		if (GalleryUtilities::isA($item, 'GalleryPhotoItem') &&
-		    !GalleryUtilities::isA($item, 'PanoramaPhotoItem') &&
-		    preg_match(':^image/(gif|p?jpeg)$:', $mimeType) &&
+		        !GalleryUtilities::isA($item, 'PanoramaPhotoItem') &&
+		        preg_match(':^image/(gif|p?jpeg)$:', $mimeType) &&
 			$width > $param['width'] &&
 			($image->getHeight() / $width < 0.6)) {
 		    $links[$item->getId()][] =
