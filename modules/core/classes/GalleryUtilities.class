@@ -139,16 +139,19 @@ class GalleryUtilities {
      * Return all request variables that match the prefix
      *
      * @param string a key
+     * @param boolean (optional) false to omit gallery variable prefix (not recommended)
      * @return array key value pairs
      * @static
      */
-    function getFormVariables($key) {
-	$key = GALLERY_FORM_VARIABLE_PREFIX . $key;
+    function getFormVariables($key, $prefix=true) {
+	if ($prefix) {
+	    $key = GALLERY_FORM_VARIABLE_PREFIX . $key;
+	}
 	$form = array();
 	if (isset($_POST[$key])) {
 	    $form = $_POST[$key];
 	}
-	
+
 	if (isset($_FILES[$key])) {
 	    /*
 	     * Later on during our sanitization process we're going to call
@@ -219,11 +222,14 @@ class GalleryUtilities {
      * Remove all request variables that match the prefix
      *
      * @param string a prefix
+     * @param boolean (optional) false to omit gallery variable prefix (not recommended)
      * @static
      */
-    function removeFormVariables($key) {
+    function removeFormVariables($key, $prefix=true) {
 	/* Remove all matching GET and POST variables */
-	$key = GALLERY_FORM_VARIABLE_PREFIX . $key;
+	if ($prefix) {
+	    $key = GALLERY_FORM_VARIABLE_PREFIX . $key;
+	}
 	unset($_POST[$key]);
 	unset($_FILES[$key]);
 	unset($_GET[$key]);
@@ -258,14 +264,45 @@ class GalleryUtilities {
     }
 
     /**
+     * Return the specified request variables (omit gallery variable prefix).
+     * Should be used only when interacting with an external api where prefix can't be used.
+     *
+     * Accept any number of keys and return that number of values, in order.
+     *
+     * @param mixed a single key or many keys
+     * @return mixed a single value or many values
+     * @static
+     */
+    function getRequestVariablesNoPrefix() {
+	global $gallery;
+
+	$values = array();
+	foreach (func_get_args() as $argName) {
+	    $values[] = GalleryUtilities::_getRequestVariable($argName);
+	}
+
+	/* Sanitize the input */
+	GalleryUtilities::sanitizeInputValues($values);
+
+	if (sizeof($values) == 1) {
+	    return $values[0];
+	} else {
+	    return $values;
+	}
+    }
+
+    /**
      * Push the given key => value pair back into the request
      * 
      * @param string the key
      * @param string the value
+     * @param boolean (optional) false to omit gallery variable prefix (not recommended)
      * @static
      */
-    function putRequestVariable($key, $value) {
-	$key = GALLERY_FORM_VARIABLE_PREFIX . $key;
+    function putRequestVariable($key, $value, $prefix=true) {
+	if ($prefix) {
+	    $key = GALLERY_FORM_VARIABLE_PREFIX . $key;
+	}
 
 	/* Simulate the damage caused by magic_quotes */
 	GalleryUtilities::unsanitizeInputValues($key);
@@ -301,10 +338,14 @@ class GalleryUtilities {
      * 
      * @param string the key
      * @param string the value
+     * @param boolean (optional) false to omit gallery variable prefix (not recommended)
      * @static
      */
-    function hasRequestVariable($key) {
-	$value = GalleryUtilities::_getRequestVariable(GALLERY_FORM_VARIABLE_PREFIX . $key);
+    function hasRequestVariable($key, $prefix=true) {
+	if ($prefix) {
+	    $key = GALLERY_FORM_VARIABLE_PREFIX . $key;
+	}
+	$value = GalleryUtilities::_getRequestVariable($key);
 	return !empty($value);
     }
 
@@ -312,11 +353,13 @@ class GalleryUtilities {
      * Remove a request variable
      * 
      * @param string the key
-     * @param string the value
+     * @param boolean (optional) false to omit gallery variable prefix (not recommended)
      * @static
      */
-    function removeRequestVariable($key) {
-	$key = GALLERY_FORM_VARIABLE_PREFIX . $key;
+    function removeRequestVariable($key, $prefix=true) {
+	if ($prefix) {
+	    $key = GALLERY_FORM_VARIABLE_PREFIX . $key;
+	}
 	$keyPath = preg_split('/[\[\]]/', $key, -1, PREG_SPLIT_NO_EMPTY);
 	GalleryUtilities::_internalRemoveRequestVariable($keyPath, $_GET);
 	GalleryUtilities::_internalRemoveRequestVariable($keyPath, $_POST);
@@ -936,6 +979,5 @@ class GalleryUtilities {
 	$out = gmstrftime('%%s, %d %%s %G %T %Z', $time);
 	return sprintf($out, $dow, $month);
     }
-
 }
 ?>

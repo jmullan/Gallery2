@@ -143,9 +143,35 @@ class UtilitiesTest extends GalleryTestCase {
 			    GalleryUtilities::getFormVariables('utilitiestest'));
     }
 
+    function testGetFormVariablesNoPrefix() {
+	GalleryUtilities::putRequestVariable('utilitiestest[outer1][inner1]', '1', false);
+	GalleryUtilities::putRequestVariable('utilitiestest[outer1][inner\'2][a]', '2', false);
+	GalleryUtilities::putRequestVariable('utilitiestest[outer1][inner\'2][b]', '3\'3', false);
+	GalleryUtilities::putRequestVariable('utilitiestest[outer1][inner3][a]', '4', false);
+	GalleryUtilities::putRequestVariable('utilitiestest[outer1][inner3][b]', '5\'5', false);
+	GalleryUtilities::putRequestVariable('utilitiestest[outer2]', '6', false);
+
+	$this->assertEquals(array('outer1' => array('inner1' => '1',
+						    'inner&#039;2' => array('a' => '2',
+									'b' => '3&#039;3'),
+						    'inner3' => array('a' => '4',
+								      'b' => '5&#039;5')),
+				  'outer2' => '6'),
+			    GalleryUtilities::getFormVariables('utilitiestest', false));
+    }
+
+    function testGetFormVariablesNoPrefix2() {
+	$_POST['utilitiestest']['entities'] = '<b> bold </b> <script> foo </script>';
+
+	$this->assertEquals(array('entities' => '&lt;b&gt; bold &lt;/b&gt; &lt;script&gt; foo &lt;/script&gt;'),
+			    GalleryUtilities::getFormVariables('utilitiestest', false));
+    }
+
     function testGetRequestVariables() {
 	GalleryUtilities::putRequestVariable('utilitiestest[x]', 'blah');
 	$this->assertEquals('blah', GalleryUtilities::getRequestVariables('utilitiestest[x]'));
+	GalleryUtilities::putRequestVariable('testutilities', 'blah', false);
+	$this->assertEquals('blah', GalleryUtilities::getRequestVariablesNoPrefix('testutilities'));
     }
 
     function testSanitizeInputValue1() {
@@ -219,6 +245,9 @@ class UtilitiesTest extends GalleryTestCase {
 	$this->assert(!GalleryUtilities::hasRequestVariable($key));
 	GalleryUtilities::putRequestVariable($key, 'TESTVALUE');
 	$this->assert(GalleryUtilities::hasRequestVariable($key));
+	$this->assert(!GalleryUtilities::hasRequestVariable($key, false));
+	GalleryUtilities::putRequestVariable($key, 'TESTVALUE', false);
+	$this->assert(GalleryUtilities::hasRequestVariable($key, false));
     }
 
     function testHasRequestVariable2() {
@@ -226,6 +255,9 @@ class UtilitiesTest extends GalleryTestCase {
 	$this->assert(!GalleryUtilities::hasRequestVariable($key));
 	GalleryUtilities::putRequestVariable($key, 'TESTVALUE');
 	$this->assert(GalleryUtilities::hasRequestVariable($key));
+	$this->assert(!GalleryUtilities::hasRequestVariable($key, false));
+	GalleryUtilities::putRequestVariable($key, 'TESTVALUE', false);
+	$this->assert(GalleryUtilities::hasRequestVariable($key, false));
     }
 
     function testRemoveRequestVariable() {
@@ -234,6 +266,10 @@ class UtilitiesTest extends GalleryTestCase {
 	$this->assert(GalleryUtilities::hasRequestVariable($key));
 	GalleryUtilities::removeRequestVariable($key);
 	$this->assert(!GalleryUtilities::hasRequestVariable($key));
+	GalleryUtilities::putRequestVariable($key, 'TESTVALUE', false);
+	$this->assert(GalleryUtilities::hasRequestVariable($key, false));
+	GalleryUtilities::removeRequestVariable($key, false);
+	$this->assert(!GalleryUtilities::hasRequestVariable($key, false));
     }
 
     function testRemoveRequestVariable2() {
@@ -254,6 +290,16 @@ class UtilitiesTest extends GalleryTestCase {
 
 	GalleryUtilities::removeFormVariables('utilitiestest');
 	$this->assertEquals(array(), GalleryUtilities::getFormVariables('utilitiestest'));
+
+	GalleryUtilities::putRequestVariable('utilitiestest[a]', 'b', false);
+	GalleryUtilities::putRequestVariable('utilitiestest[c]', 'd', false);
+	
+	$this->assertEquals(array('a' => 'b',
+				  'c' => 'd'),
+			    GalleryUtilities::getFormVariables('utilitiestest', false));
+
+	GalleryUtilities::removeFormVariables('utilitiestest', false);
+	$this->assertEquals(array(), GalleryUtilities::getFormVariables('utilitiestest', false));
     }
 
     function testIsPathInList() {
