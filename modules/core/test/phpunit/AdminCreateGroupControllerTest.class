@@ -38,10 +38,10 @@ class AdminCreateGroupControllerTest extends GalleryTestCase {
     function setUp() {
 	global $gallery;
 
-	/* Clear out any form vars that we're planning on using */
-	GalleryUtilities::removeRequestVariable('form.action.create');
-	GalleryUtilities::removeRequestVariable('form.action.cancel');
-	GalleryUtilities::removeRequestVariable('form.groupName');
+	parent::setUp();
+
+	/* Clear out any form vars */
+	GalleryUtilities::removeFormVariables('form.');
 	
 	list ($ret, $this->_controller) = GalleryController::loadController("core:AdminCreateGroup");
 	if ($ret->isError()) {
@@ -50,7 +50,10 @@ class AdminCreateGroupControllerTest extends GalleryTestCase {
     }
 
     function tearDown() {
-	global $gallery;
+	/* Clear out any form vars */
+	GalleryUtilities::removeFormVariables('form.');
+	
+	parent::tearDown();
     }
 
     function testCancel() {
@@ -82,7 +85,6 @@ class AdminCreateGroupControllerTest extends GalleryTestCase {
     function testMissingGroupName() {
 	/* Create one group */
 	GalleryUtilities::putRequestVariable('form.action.create', 1);
-	GalleryUtilities::removeRequestVariable('form.groupName');
 	
 	list ($ret, $results) = $this->_controller->handleRequest();
 	if ($ret->isError()) {
