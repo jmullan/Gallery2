@@ -16,18 +16,22 @@ class DeleteAllItemsTestCase extends TestCase {
 	    return $ret;
 	}
 	    
-	list ($ret, $results) =
-		$gallery->search(array(), array('GalleryNucleus::id'));
-	if ($ret->isError()) {
-	    return $ret;
-	}
-	
-	if (sizeof($results) == 0) {
-	    break;
-	}
+	while (true) {
+	    set_time_limit(60);
+	    
+	    list ($ret, $results) =
+		    $gallery->search(array(),
+				     array('GalleryNucleus::id'),
+				     array(array(SEARCH_LIMIT, 1)));
+	    if ($ret->isError()) {
+		return $ret;
+	    }
 
-	foreach ($results as $row) {
-	    $id = $row['GalleryNucleus::id'];
+	    if (empty($results)) {
+		break;
+	    }
+	    
+	    $id = $results[0]['GalleryNucleus::id'];
 	    print "<H2> Delete Item $id </H2>\n";
 	    $ret = $gallery->deleteNucleusById($id);
 	    if ($ret->isError()) {
@@ -35,12 +39,12 @@ class DeleteAllItemsTestCase extends TestCase {
 		    return $ret;
 		}
 	    }
-	}
 
-	/* Commit the cache */
-	$ret = $gallery->commitCache();
-	if ($ret->isError()) {
-	    return $ret;
+	    /* Commit the cache */
+	    $ret = $gallery->commitCache();
+	    if ($ret->isError()) {
+		return $ret;
+	    }
 	}
 
 	$ret = $gallery->unlock();
