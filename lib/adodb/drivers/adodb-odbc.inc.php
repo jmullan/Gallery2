@@ -1,6 +1,6 @@
 <?php
 /* 
-V4.03 6 Nov 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.05 13 Dec 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -156,6 +156,9 @@ class ADODB_odbc extends ADOConnection {
 	function _connect($argDSN, $argUsername, $argPassword, $argDatabasename)
 	{
 	global $php_errormsg;
+		
+		if (!function_exists('odbc_connect')) return false;
+		
 		if ($this->debug && $argDatabasename) {
 			ADOConnection::outp("For odbc Connect(), $argDatabasename is not used. Place dsn in 1st parameter.");
 		}
@@ -173,6 +176,9 @@ class ADODB_odbc extends ADOConnection {
 	function _pconnect($argDSN, $argUsername, $argPassword, $argDatabasename)
 	{
 	global $php_errormsg;
+	
+		if (!function_exists('odbc_connect')) return false;
+		
 		$php_errormsg = '';
 		if ($this->debug && $argDatabasename) {
 			ADOConnection::outp("For odbc PConnect(), $argDatabasename is not used. Place dsn in 1st parameter.");

@@ -1,6 +1,6 @@
 <?php
 /*
-V4.03 6 Nov 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.  
+V4.05 13 Dec 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.  
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -185,6 +185,7 @@ class ADODB_ibase extends ADOConnection {
 	   // returns true or false
 	function _connect($argHostname, $argUsername, $argPassword, $argDatabasename)
 	{  
+		if (!function_exists('ibase_pconnect')) return false;
 		if ($argDatabasename) $argHostname .= ':'.$argDatabasename;
 		$this->_connectionID = ibase_connect($argHostname,$argUsername,$argPassword,$this->charSet,$this->buffers,$this->dialect);
 	 	if ($this->dialect != 1) { // http://www.ibphoenix.com/ibp_60_del_id_ds.html
@@ -201,6 +202,7 @@ class ADODB_ibase extends ADOConnection {
 	   // returns true or false
 	function _pconnect($argHostname, $argUsername, $argPassword, $argDatabasename)
 	{
+		if (!function_exists('ibase_pconnect')) return false;
 		if ($argDatabasename) $argHostname .= ':'.$argDatabasename;
 		$this->_connectionID = ibase_pconnect($argHostname,$argUsername,$argPassword,$this->charSet,$this->buffers,$this->dialect);
 		if ($this->dialect != 1) { // http://www.ibphoenix.com/ibp_60_del_id_ds.html
@@ -670,7 +672,7 @@ class ADORecordset_ibase extends ADORecordSet
 		// fix missing nulls and decode blobs automatically
 	
 		global $ADODB_ANSI_PADDING_OFF;
-		$ADODB_ANSI_PADDING_OFF=1;
+		//$ADODB_ANSI_PADDING_OFF=1;
 		$rtrim = !empty($ADODB_ANSI_PADDING_OFF);
 		
 		for ($i=0, $max = $this->_numOfFields; $i < $max; $i++) { 

@@ -1,6 +1,6 @@
 <?php
 /*
- V4.03 6 Nov 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+ V4.05 13 Dec 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -85,8 +85,7 @@ AND a.attnum > 0 AND a.atttypid = t.oid AND a.attrelid = c.oid ORDER BY a.attnum
 	var $_genSeqSQL = "CREATE SEQUENCE %s START %s";
 	var $_dropSeqSQL = "DROP SEQUENCE %s";
 	var $metaDefaultsSQL = "SELECT d.adnum as num, d.adsrc as def from pg_attrdef d, pg_class c where d.adrelid=c.oid and c.relname='%s' order by d.adnum";
-	var $upperCase = 'upper';
-	var $substr = "substr";
+	var $random = 'random()';		/// random function
 	var $autoRollback = true; // apparently pgsql does not autorollback properly before 4.3.4
 							// http://bugs.php.net/bug.php?id=25404
 	
@@ -147,7 +146,7 @@ a different OID if a database must be reloaded. */
    		if (!is_resource($this->_resultid) || get_resource_type($this->_resultid) !== 'pgsql result') return false;
 	   	return pg_cmdtuples($this->_resultid);
    }
-
+   
 	
 		// returns true/false
 	function BeginTrans()
@@ -455,8 +454,7 @@ select viewname,'V' from pg_views where viewname like $mask";
 				
 				// Freek
 				if (is_array($keys)) {
-					reset ($keys);
-					while (list($x,$key) = each($keys)) {
+					foreach($keys as $key) {
 						if ($fld->name == $key['column_name'] AND $key['primary_key'] == $this->true) 
 							$fld->primary_key = true;
 						if ($fld->name == $key['column_name'] AND $key['unique_key'] == $this->true) 
@@ -475,6 +473,57 @@ select viewname,'V' from pg_views where viewname like $mask";
 		return false;
 	}
 
+	  function &MetaIndexes ($table, $primary = FALSE)
+        {
+                global $ADODB_FETCH_MODE;
+                
+                $sql = '
+SELECT c.relname as "Name", i.indisunique as "Unique", i.indkey as "Columns"
+FROM pg_catalog.pg_class c
+JOIN pg_catalog.pg_index i ON i.indexrelid=c.oid
+JOIN pg_catalog.pg_class c2 ON c2.oid=i.indrelid
+WHERE c2.relname=\'%s\'';
+                
+                if ($primary == FALSE) {
+                        $sql .= ' AND i.indisprimary=false;';
+                }
+                
+                $save = $ADODB_FETCH_MODE;
+                $ADODB_FETCH_MODE = ADODB_FETCH_NUM;
+                if ($this->fetchMode !== FALSE) {
+                        $savem = $this->SetFetchMode(FALSE);
+                }
+                
+                $rs = $this->Execute(sprintf($sql,$table));
+                
+                if (isset($savem)) {
+                        $this->SetFetchMode($savem);
+                }
+                $ADODB_FETCH_MODE = $save;
+                
+                if (!is_object($rs)) {
+                        return FALSE;
+                }
+                
+                $col_names = $this->MetaColumnNames($table);
+                $indexes = array();
+                
+                while ($row = $rs->FetchRow()) {
+                        $columns = array();
+                        
+                        foreach (explode(' ', $row[2]) as $col) {
+                                $columns[] = $col_names[$col - 1];
+                        }
+                        
+                        $indexes[$row[0]] = array(
+                                'unique' => ($row[1] == 't'),
+                                'columns' => $columns
+                        );
+                }
+                
+                return $indexes;
+        }
+
 	// returns true or false
 	//
 	// examples:
@@ -482,6 +531,9 @@ select viewname,'V' from pg_views where viewname like $mask";
 	// 	$db->Connect('host1','user1','secret');
 	function _connect($str,$user='',$pwd='',$db='',$ctype=0)
 	{
+		
+		if (!function_exists('pg_pconnect')) return false;
+		
 		$this->_errorMsg = false;
 		
 		if ($user || $pwd || $db) {
@@ -749,14 +801,12 @@ class ADORecordSet_postgres64 extends ADORecordSet{
 	function _fixblobs()
 	{
 		if ($this->fetchMode == PGSQL_NUM || $this->fetchMode == PGSQL_BOTH) {
-			reset($this->_blobArr);
-			while(list($k,$v) = each($this->_blobArr)) {
+			foreach($this->_blobArr as $k => $v) {
 				$this->fields[$k] = ADORecordSet_postgres64::_decode($this->fields[$k]);
 			}
 		}
 		if ($this->fetchMode == PGSQL_ASSOC || $this->fetchMode == PGSQL_BOTH) {
-			reset($this->_blobArr);
-			while(list($k,$v) = each($this->_blobArr)) {
+			foreach($this->_blobArr as $k => $v) {
 				$this->fields[$v] = ADORecordSet_postgres64::_decode($this->fields[$v]);
 			}
 		}

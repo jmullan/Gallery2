@@ -23,7 +23,7 @@ This library replaces native functions as follows:
 	date()     with  adodb_date() 
 	gmdate()   with  adodb_gmdate()
 	mktime()   with  adodb_mktime()
-	gmmktime() with  adodb_gmmktime()45
+	gmmktime() with  adodb_gmmktime()
 </pre>
 	
 The parameters are identical, except that adodb_date() accepts a subset

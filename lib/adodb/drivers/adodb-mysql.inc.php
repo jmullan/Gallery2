@@ -1,6 +1,6 @@
 <?php
 /*
-V4.03 6 Nov 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.05 13 Dec 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -36,7 +36,6 @@ class ADODB_mysql extends ADOConnection {
 	var $clientFlags = 0;
 	var $dbxDriver = 1;
 	var $substr = "substring";
-	var $lastInsID = false;
 	
 	function ADODB_mysql() 
 	{			
@@ -68,6 +67,58 @@ class ADODB_mysql extends ADOConnection {
 		}
 		return $ret;
 	}
+	
+	function &MetaIndexes ($table, $primary = FALSE, $owner=false)
+	{
+	        // save old fetch mode
+	        global $ADODB_FETCH_MODE;
+	        
+	        $save = $ADODB_FETCH_MODE;
+	        $ADODB_FETCH_MODE = ADODB_FETCH_NUM;
+	        if ($this->fetchMode !== FALSE) {
+	               $savem = $this->SetFetchMode(FALSE);
+	        }
+	        
+	        // get index details
+	        $rs = $this->Execute(sprintf('SHOW INDEXES FROM %s',$table));
+	        
+	        // restore fetchmode
+	        if (isset($savem)) {
+	                $this->SetFetchMode($savem);
+	        }
+	        $ADODB_FETCH_MODE = $save;
+	        
+	        if (!is_object($rs)) {
+	                return FALSE;
+	        }
+	        
+	        $indexes = array ();
+	        
+	        // parse index data into array
+	        while ($row = $rs->FetchRow()) {
+	                if ($primary == FALSE AND $row[2] == 'PRIMARY') {
+	                        continue;
+	                }
+	                
+	                if (!isset($indexes[$row[2]])) {
+	                        $indexes[$row[2]] = array(
+	                                'unique' => ($row[1] == 0),
+	                                'columns' => array()
+	                        );
+	                }
+	                
+	                $indexes[$row[2]]['columns'][$row[3] - 1] = $row[4];
+	        }
+	        
+	        // sort columns by order in the index
+	        foreach ( array_keys ($indexes) as $index )
+	        {
+	                ksort ($indexes[$index]['columns']);
+	        }
+	        
+	        return $indexes;
+	}
+
 	
 	// if magic quotes disabled, use mysql_real_escape_string()
 	function qstr($s,$magic_quotes=false)
@@ -128,14 +179,19 @@ class ADODB_mysql extends ADOConnection {
 		return $this->Execute(sprintf($this->_genSeq2SQL,$seqname,$startID-1));
 	}
 	
+
 	function GenID($seqname='adodbseq',$startID=1)
 	{
 		// post-nuke sets hasGenID to false
 		if (!$this->hasGenID) return false;
 		
+		$savelog = $this->_logsql;
+		$this->_logsql = false;
 		$getnext = sprintf($this->_genIDSQL,$seqname);
+		$holdtransOK = $this->_transOK; // save the current status
 		$rs = @$this->Execute($getnext);
 		if (!$rs) {
+			if ($holdtransOK) $this->_transOK = true; //if the status was ok before reset
 			$u = strtoupper($seqname);
 			$this->Execute(sprintf($this->_genSeqSQL,$seqname));
 			$this->Execute(sprintf($this->_genSeq2SQL,$seqname,$startID-1));
@@ -145,6 +201,7 @@ class ADODB_mysql extends ADOConnection {
 		
 		if ($rs) $rs->Close();
 		
+		$this->_logsql = $savelog;
 		return $this->genID;
 	}
 	
@@ -240,7 +297,6 @@ class ADODB_mysql extends ADOConnection {
 	{
 		$s = "";
 		$arr = func_get_args();
-		$first = true;
 		
 		// suggestion by andrew005@mnogo.ru
 		$s = implode(',',$arr); 
@@ -587,6 +643,7 @@ class ADORecordSet_mysql extends ADORecordSet{
 		case 'BLOB':
 		case 'MEDIUMBLOB':
 			return !empty($fieldobj->binary) ? 'B' : 'X';
+			
 		case 'YEAR':
 		case 'DATE': return 'D';
 		

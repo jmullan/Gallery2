@@ -1,6 +1,6 @@
 <?php
 /*
-V4.03 6 Nov 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.05 13 Dec 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -126,6 +126,8 @@ class ADODB_sqlite extends ADOConnection {
 	// returns true or false
 	function _connect($argHostname, $argUsername, $argPassword, $argDatabasename)
 	{
+		if (!function_exists('sqlite_open')) return false;
+		
 		$this->_connectionID = sqlite_open($argHostname);
 		if ($this->_connectionID === false) return false;
 		$this->_createFunctions();
@@ -135,6 +137,8 @@ class ADODB_sqlite extends ADOConnection {
 	// returns true or false
 	function _pconnect($argHostname, $argUsername, $argPassword, $argDatabasename)
 	{
+		if (!function_exists('sqlite_open')) return false;
+		
 		$this->_connectionID = sqlite_popen($argHostname);
 		if ($this->_connectionID === false) return false;
 		$this->_createFunctions();

@@ -1,6 +1,6 @@
 <?php
 /* 
-V4.03 6 Nov 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.05 13 Dec 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -193,6 +193,9 @@ class ADODB_ado extends ADOConnection {
 		return $arr;
 	}
 	
+
+
+	
 	/* returns queryID or false */
 	function &_query($sql,$inputarr=false) 
 	{
@@ -210,8 +213,7 @@ class ADODB_ado extends ADOConnection {
 			$oCmd->CommandText = $sql;
 			$oCmd->CommandType = 1;
 
-			reset($inputarr);
-			while(list(,$val) = each($inputarr)) {
+			foreach($inputarr as $val) {
 				// name, type, direction 1 = input, len,
 				$this->adoParameterType = 130;
 				$p = $oCmd->CreateParameter('name',$this->adoParameterType,1,strlen($val),$val);
@@ -544,19 +546,18 @@ class ADORecordSet_ado extends ADORecordSet {
 
 			switch($t) {
 			case 135: // timestamp
-				if (!strlen($f->value)) $this->fields = false;
-				else $this->fields[] = date('Y-m-d H:i:s',(integer)$f->value);
+				if (!strlen((string)$f->value)) $this->fields[] = false;
+				else $this->fields[] = adodb_date('Y-m-d H:i:s',(integer)$f->value);
 				break;			
 			case 133:// A date value (yyyymmdd) 
-				if ($val) {
-					$val = $f->value;
+				if ($val = $f->value) {
 					$this->fields[] = substr($val,0,4).'-'.substr($val,4,2).'-'.substr($val,6,2);
 				} else
 					$this->fields[] = false;
 				break;
 			case 7: // adDate
-				if (!strlen($f->value)) $this->fields = false;
-				else $this->fields[] = date('Y-m-d',(integer)$f->value);
+				if (!strlen((string)$f->value)) $this->fields[] = false;
+				else $this->fields[] = adodb_date('Y-m-d',(integer)$f->value);
 				break;
 			case 1: // null
 				$this->fields[] = false;
@@ -582,7 +583,25 @@ class ADORecordSet_ado extends ADORecordSet {
 		return true;
 	}
 	
-	
+		function NextRecordSet()
+		{
+			$rs = $this->_queryID;
+			$this->_queryID = $rs->NextRecordSet();
+			//$this->_queryID = $this->_QueryId->NextRecordSet();
+			if ($this->_queryID == null) return false;
+			
+			$this->_currentRow = -1;
+			$this->_currentPage = -1;
+			$this->bind = false;
+			$this->fields = false;
+			$this->_flds = false;
+			$this->_tarr = false;
+			
+			$this->_inited = false;
+			$this->Init();
+			return true;
+		}
+
 	function _close() {
 		$this->_flds = false;
 		@$this->_queryID->Close();// by Pete Dishman (peterd@telephonetics.co.uk)

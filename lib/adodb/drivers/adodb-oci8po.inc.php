@@ -1,6 +1,6 @@
 <?php
 /*
-V4.03 6 Nov 2003  (c) 2000-2003 John Lim. All rights reserved.
+V4.05 13 Dec 2003  (c) 2000-2003 John Lim. All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -51,15 +51,13 @@ class ADODB_oci8po extends ADODB_oci8 {
 		if (is_array($inputarr)) {
 			$i = 0;
 			if (is_array($sql)) {
-				reset($inputarr);
-				while(list(,$v) = each($inputarr)) {
+				foreach($inputarr as $v) {
 					$arr['bind'.$i++] = $v;
 				} 
 			} else {
 				$sqlarr = explode('?',$sql);
 				$sql = $sqlarr[0];
-				reset($inputarr);
-				while(list($k,$v) = each($inputarr)) {
+				foreach($inputarr as $k => $v) {
 					$sql .=  ":$k" . $sqlarr[++$i];
 				}
 			}
@@ -122,8 +120,7 @@ class ADORecordset_oci8po extends ADORecordset_oci8 {
 	
 				if ($this->fetchMode & OCI_ASSOC) $this->_updatefields();
 				if (!empty($ADODB_ANSI_PADDING_OFF)) {
-					reset($this->fields);
-					while (list($k,$v) = each($this->fields)) {
+					foreach($this->fields as $k => $v) {
 						if (is_string($v)) $this->fields[$k] = rtrim($v);
 					}
 				}
@@ -161,8 +158,7 @@ class ADORecordset_oci8po extends ADORecordset_oci8 {
 		$arr = array();
 		$lowercase = (ADODB_ASSOC_CASE == 0);
 		
-		reset($this->fields);
-				while(list($k,$v) = each($this->fields)) {
+		foreach($this->fields as $k => $v) {
 			if (is_integer($k)) $arr[$k] = $v;
 			else {
 				if ($lowercase)
@@ -182,8 +178,7 @@ class ADORecordset_oci8po extends ADORecordset_oci8 {
 	
 				if ($this->fetchMode & OCI_ASSOC) $this->_updatefields();
 				if (!empty($ADODB_ANSI_PADDING_OFF)) {
-					reset($this->fields);
-					while (list($k,$v) = each($this->fields)) {
+					foreach($this->fields as $k => $v) {
 						if (is_string($v)) $this->fields[$k] = rtrim($v);
 					}
 				}

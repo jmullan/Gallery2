@@ -1,7 +1,7 @@
 <?php
 /*
 
-  version V4.03 6 Nov 2003 (c) 2000-2003 John Lim. All rights reserved.
+  version V4.05 13 Dec 2003 (c) 2000-2003 John Lim. All rights reserved.
 
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
@@ -55,8 +55,7 @@ class ADODB_oci8 extends ADOConnection {
 	var $_genSeqSQL = "CREATE SEQUENCE %s START WITH %s";
 	var $_dropSeqSQL = "DROP SEQUENCE %s";
 	var $hasAffectedRows = true;
-	var $upperCase = 'upper';
-	var $substr = 'substr';
+	var $random = "abs(mod(DBMS_RANDOM.RANDOM,10000001)/10000000)";
 	var $noNullStrings = false;
 	var $connectSID = false;
 	var $_bind = false;
@@ -150,6 +149,9 @@ NATSOFT.DOMAIN =
 */
 	function _connect($argHostname, $argUsername, $argPassword, $argDatabasename,$mode=0)
 	{
+		if (!function_exists('OCIPLogon')) return false;
+		
+		
         $this->_errorMsg = false;
 		$this->_errorCode = false;
 		
@@ -206,6 +208,8 @@ NATSOFT.DOMAIN =
 	{
 		return $this->_connect($argHostname, $argUsername, $argPassword, $argDatabasename,1);
 	}
+	
+	
 	
 	// returns true or false
 	function _nconnect($argHostname, $argUsername, $argPassword, $argDatabasename)
@@ -451,8 +455,7 @@ NATSOFT.DOMAIN =
 			 }
 			 
 			 if (is_array($inputarr)) {
-				 reset($inputarr);
-				 while (list($k,$v) = each($inputarr)) {
+			 	foreach($inputarr as $k => $v) {
 					if (is_array($v)) {
 						if (sizeof($v) == 2) // suggested by g.giunta@libero.
 							OCIBindByName($stmt,":$k",$inputarr[$k][0],$v[1]);
@@ -501,7 +504,7 @@ NATSOFT.DOMAIN =
 				$inputarr['adodb_offset'] = $offset;
 				
 			if ($secs2cache>0) $rs =& $this->CacheExecute($secs2cache, $sql,$inputarr);
-			else $rs &= $this->Execute($sql,$inputarr);
+			else $rs =& $this->Execute($sql,$inputarr);
 			return $rs;
 		}
 	
@@ -631,8 +634,7 @@ NATSOFT.DOMAIN =
 		if (is_array($stmt) && sizeof($stmt) >= 5) {
 			$this->Parameter($stmt, $ignoreCur, $cursorName, false, -1, OCI_B_CURSOR);
 			if ($params) {
-				reset($params);
-				while (list($k,$v) = each($params)) {
+				foreach($params as $k => $v) {
 					$this->Parameter($stmt,$params[$k], $k);
 				}
 			}
@@ -750,8 +752,7 @@ NATSOFT.DOMAIN =
 				} else {
 				// one statement to bind them all
 					$bindarr = array();
-					reset($inputarr);
-					while(list($k,$v) = each($inputarr)) {
+					foreach($inputarr as $k => $v) {
 						$bindarr[$k] = $v;
 						OCIBindByName($stmt,":$k",$bindarr[$k],4000);
 					}
@@ -768,8 +769,7 @@ NATSOFT.DOMAIN =
 		if (defined('ADODB_PREFETCH_ROWS')) @OCISetPrefetch($stmt,ADODB_PREFETCH_ROWS);
 			
 		if (is_array($inputarr)) {
-			reset($inputarr);
-			while(list($k,$v) = each($inputarr)) {
+			foreach($inputarr as $k => $v) {
 				if (is_array($v)) {
 					if (sizeof($v) == 2) // suggested by g.giunta@libero.
 						OCIBindByName($stmt,":$k",$inputarr[$k][0],$v[1]);
