@@ -49,6 +49,7 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 	}
 
 	$this->_saveUser = $gallery->getActiveUser();
+	$this->_saveSession = $gallery->getSession();
     }
 
     function tearDown() {
@@ -60,20 +61,29 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 	}
 
 	$gallery->setActiveUser($this->_saveUser);
+	$gallery->_session = $this->_saveSession;
 	
 	parent::tearDown();
     }
 
     function testLogin() {
+	global $gallery;
+	
 	GalleryUtilities::putRequestVariable('form[action][login]', 1);
 	GalleryUtilities::putRequestVariable('form[username]', $this->_user->getUserName());
 	GalleryUtilities::putRequestVariable('form[password]', 'password'); // from _createRandomUser
-	
+
+	$mockSession = new UserLoginControllerTestSession();
+	$gallery->_session =& $mockSession;
+	    
 	$results = $this->handleRequest();
 	$this->assertEquals(array('return' => 1,
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
+
+	$this->assertEquals($this->_user->getId(), $gallery->getActiveUserId());
+	$this->assert($mockSession->regenerateWasCalled(), '$session->regenerate() was not called');
     }
 
     function testLoginInvalidUser() {
@@ -110,6 +120,33 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
+    }
+}
+
+/**
+ * Mock session.
+ */
+class UserLoginControllerTestSession {
+
+    function UserLoginControllerTestSession() {
+	$this->_regenerateWasCalled = false;
+	$this->_hash = array();
+    }
+
+    function get($key) {
+	return isset($this->_hash[$key]) ? $this->_hash[$key] : null;
+    }
+    
+    function put($key, $value) {
+	$this->_hash[$key] = $value;
+    }
+    
+    function regenerate() {
+	$this->_regenerateWasCalled = true;
+    }
+
+    function regenerateWasCalled() {
+	return $this->_regenerateWasCalled;
     }
 }
 ?>
