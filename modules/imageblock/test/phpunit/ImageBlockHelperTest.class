@@ -135,6 +135,8 @@ class ImageBlockHelperTest extends GalleryTestCase {
         while ($rec = $searchResults->nextResult()) {
             $dbItemIds[] = (int)$rec[0];
 	}
+	sort($itemIds);
+	sort($dbItemIds);
 	$this->assertEquals($itemIds, $dbItemIds, 'Items not added to the DisableMap');
 
 	$ret = ImageBlockHelper::setDisabledFlag($this->_topAlbum, false, false);
