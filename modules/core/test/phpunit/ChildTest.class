@@ -113,6 +113,31 @@ class ChildTest extends GalleryTestCase {
 	}
     }
 
+    function testFetchOrderedChildIds() {
+
+	/* Order them in reverse */
+	$count = sizeof($this->_child);
+	for ($i = 0; $i < $count; $i++) {
+	    $ret = GalleryItemAttributesMap::setOrderWeight($this->_child[$i]->getId(), $count-$i);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+
+	list ($ret, $childIds) = GalleryChildEntityHelper::fetchOrderedChildIds($this->_root->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$expectedIds = array();
+	for ($i = $count-1; $i >= 0; $i--) {
+	    $expectedIds[] = $this->_child[$i]->getId();
+	}
+
+
+	$this->assertEquals($expectedIds, $childIds);
+    }
+    
 }
 
 ?>

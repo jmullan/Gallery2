@@ -81,6 +81,56 @@ class GalleryChildEntityHelper {
     }
 
     /**
+     * Return the ids in weighted order of all the immediate child entities of
+     * the given entity.
+     *
+     * Note: this call ignores permissions so it must be used very carefully!
+     *
+     * @access public
+     * @param array item ids
+     * @return array object GalleryStatus a status code
+     *               int a count
+     * @static
+     */
+    function fetchOrderedChildIds($id) {
+	global $gallery;
+
+	if (empty($id)) {
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
+			 null);
+	}
+
+	$storage = $gallery->getStorage();
+
+	$query = '
+        SELECT
+          [GalleryChildEntity::id]
+        FROM
+          [GalleryChildEntity], [GalleryItemAttributesMap]
+        WHERE
+          [GalleryChildEntity::parentId] = ?
+          AND
+          [GalleryChildEntity::id] = [GalleryItemAttributesMap::itemId]
+        ORDER BY
+          [GalleryItemAttributesMap::orderWeight] ASC
+        ';
+	$data = array();
+	$data[] = $id;
+
+	list ($ret, $searchResults) = $gallery->search($query, $data);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$data = array();
+	while ($result = $searchResults->nextResult()) {
+	    $data[] = (int)$result[0];
+	}
+
+	return array(GalleryStatus::success(), $data);
+    }
+    
+    /**
      * Return the ids of all the parent entities of the given entity.
      *
      * Note: this call ignores permissions so it must be used very carefully!
