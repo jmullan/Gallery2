@@ -72,7 +72,7 @@ function GalleryInitFirstPass($params=array()) {
     $urlGenerator = new GalleryUrlGenerator(
 			isset($params['embedUri']) ? $params['embedUri'] : 'main.php',
 			isset($params['relativeG2Path']) ? $params['relativeG2Path'] : null,
-			isset($params['embedSessionString'] ? $params['embedSessionString'] : null );
+			isset($params['embedSessionString']) ? $params['embedSessionString'] : null );
     $urlGenerator->registerViewPrefix('view', 'core:ShowItem');
     $urlGenerator->registerViewPrefix('download', 'core:DownloadItem');
 
