@@ -61,7 +61,7 @@ class InstallCoreModuleStep extends InstallStep {
 	 */
 	$translator =& $gallery->getTranslator();
 	if (empty($translator)) {
-	    $ret = $gallery->initTranslator();
+	    $ret = $gallery->initTranslator(true /* dontUseDatabase */ );
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }

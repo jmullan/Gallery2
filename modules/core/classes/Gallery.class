@@ -426,14 +426,15 @@ class Gallery {
     /**
      * Initialize our GalleryTranslator
      *
+     * @param boolean true if we should not use the database
      * @return object GalleryStatus a status code
      */
-    function initTranslator() {
+    function initTranslator($dontUseDatabase=false) {
 	if (empty($this->_translator)) {
 	    /* Load the translator class */
 	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryTranslator.class');
 
-	    list ($ret, $language) = $this->getActiveLanguageCode();
+	    list ($ret, $language) = $this->getActiveLanguageCode($dontUseDatabase);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -451,25 +452,19 @@ class Gallery {
     /**
      * Get the active language code.
      *
+     * @param boolean true if we should not use the database
      * @return array object GalleryStatus a status code
      *               string language code
      */
-    function getActiveLanguageCode() {
+    function getActiveLanguageCode($dontUseDatabase=false) {
 	$session =& $this->getSession();
 	$language = $session->get('core.language');
 
-	if (empty($language)) {
+	if (empty($language) && !$dontUseDatabase) {
 	    list ($ret, $language) =
 		GalleryCoreApi::getPluginParameter('module', 'core', 'default.language');
 	    if ($ret->isError()) {
-		if ($ret->getErrorCode() & ERROR_STORAGE_FAILURE) {
-		    /*
-		     * During installation it's possible that the database isn't around yet.
-		     * Just keep going.
-		     */
-		} else {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
 
