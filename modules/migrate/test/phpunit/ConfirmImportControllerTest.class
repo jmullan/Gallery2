@@ -384,5 +384,43 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 			    );
 	
     }
+    function testConvertHtmlToBbcode() {
+	$this->assertEquals('[b]bold[/b]',
+			    ConfirmImportController::convertHtmlToBbcode('<b>bold</b>'));
+	$this->assertEquals('[img]foo.jpg[/img]',
+			    ConfirmImportController::convertHtmlToBbcode('<img src=\'foo.jpg\'>'));
+	$this->assertEquals('[i]italic[/i]',
+			    ConfirmImportController::convertHtmlToBbcode('<i>italic</i>'));
+	$this->assertEquals('[list][/list]',
+			    ConfirmImportController::convertHtmlToBbcode('<ul></ul>'));
+	$this->assertEquals('[list][*]foo[/list]',
+			    ConfirmImportController::convertHtmlToBbcode('<ul><li>foo</li></ul>'));
+	$this->assertEquals('[list][*]foo[/list]',
+			    ConfirmImportController::convertHtmlToBbcode('<ul><li>foo</ul>'));
+	$this->assertEquals('[url=http://google.com]Google[/url]',
+			    ConfirmImportController::convertHtmlToBbcode('<a href="http://google.com">Google</a>'));
+	$this->assertEquals('[url=http://google.com]Google[/url]',
+			    ConfirmImportController::convertHtmlToBbcode('<a href=\'http://google.com\'>Google</a>'));
+	$this->assertEquals('[url=http://google.com]Google[/url]',
+			    ConfirmImportController::convertHtmlToBbcode('<a title="foo" href="http://google.com" class="bar">Google</a>'));
+	$this->assertEquals('[url=http://google.com]Google[/url]',
+			    ConfirmImportController::convertHtmlToBbcode('<a title=foo href=http://google.com class=bar>Google</a>'));
+	$this->assertEquals('[url=http://google.com]Google[/url]',
+			    ConfirmImportController::convertHtmlToBbcode('<a href=http://google.com class=bar>Google</a>'));
+	$this->assertEquals('[url=http://google.com]Google[/url]',
+			    ConfirmImportController::convertHtmlToBbcode('<a title=foo href=http://google.com>Google</a>'));
+	
+	/*
+	 * $this->assertEquals('[img]foo.jpg[/img]',
+	 *     ConfirmImportController::convertHtmlToBbcode('<img src=foo.jpg>'));
+	 */
+
+	/* Malformed HTML tags should not be turned into BBCode
+	 * $this->assertEquals('&lt;i&gt;&lt;b&gt;foo.jpg&lt;i&gt;&lt;b&gt;',
+	 *     ConfirmImportController::convertHtmlToBbcode('<i><b>interleaved</i></b>'));
+	 */
+    }
+    
+
 }
 ?>
