@@ -44,7 +44,7 @@ class ItemEditPhotoThumbnailPluginTest extends ItemEditPluginTestCase {
 
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* Register a dummy toolkit */
@@ -130,20 +130,10 @@ class ItemEditPhotoThumbnailPluginTest extends ItemEditPluginTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-
-	list ($ret, $this->_lock) = GalleryCoreApi::acquireWriteLock($this->_derivative[2]->getId());
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
-	}
     }
 
     function tearDown() {
 	global $gallery;
-
-	$ret = GalleryCoreApi::releaseLocks($this->_lock);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
-	}
 
 	GalleryCoreApi::unregisterFactoryImplementation('GalleryEntity', 'ItemEditPhotoThumbnailTestItem');
 
@@ -217,11 +207,21 @@ class ItemEditPhotoThumbnailPluginTest extends ItemEditPluginTestCase {
 	list ($ret, $operations) = 
 	    GalleryCoreApi::mergeDerivativeOperations('crop|0,0,100,100', $this->_derivative[2]->getDerivativeOperations());
 
+	list ($ret, $this->_lock) = GalleryCoreApi::acquireWriteLock($this->_derivative[2]->getId());
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+
 	$this->_derivative[2]->setDerivativeOperations($operations);
 
 	$ret = $this->_derivative[2]->save();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::releaseLocks($this->_lock);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	/* Get the thumbnail and verify its operations */
