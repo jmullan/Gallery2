@@ -8,13 +8,13 @@
   {if isset($status)}
     {g->success}
       {if isset($status.added)}
-	{g->text text="Commented added successfully"}
+	{g->text text="Comment added successfully"}
       {/if}
       {if isset($status.deleted)}
-	{g->text text="Commented deleted successfully"}
+	{g->text text="Comment deleted successfully"}
       {/if}
       {if isset($status.saved)}
-	{g->text text="Commented modified successfully"}
+	{g->text text="Comment modified successfully"}
       {/if}
     {/g->success}
   {/if}
