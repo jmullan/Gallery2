@@ -138,8 +138,11 @@ class ImageBlockTest extends GalleryTestCase {
     function _addDerivative(&$item, &$src, $derivativeType, $size) {
 	list ($ret, $derivative) =
 	    GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative', $item->getEntityType());
-	if ($ret->isError() || !isset($derivative)) {
+	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	if (!isset($derivative)) {
+	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
 	}
 	$ret = $derivative->create($item->getId(), $derivativeType);
 	if ($ret->isError()) {

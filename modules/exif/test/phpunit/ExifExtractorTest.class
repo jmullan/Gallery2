@@ -125,9 +125,13 @@ class ExifExtractorTest extends GalleryTestCase {
 	}
 	list ($ret, $derivative) =
 	    GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative', $photo->getEntityType());
-	if ($ret->isError() || !isset($derivative)) {
+	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+	if (!isset($derivative)) {
+	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
+	}
+	
 	$ret = $derivative->create($photo->getId(), $derivativeType);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
