@@ -233,6 +233,12 @@ class UtilitiesTest extends GalleryTestCase {
 	GalleryUtilities::putRequestVariable('test', __FILE__);
 	$this->assertEquals(__FILE__, GalleryUtilities::getRequestVariables('test'));
     }
+
+    function testHtmlEntityDecode() {
+	$result = GalleryUtilities::htmlEntityDecode('&lt;a href=&quot;javascript:alert(&#039;hi&#039;)' .
+						     '&quot;&gt;yo&lt;/a&gt;');
+	$this->assertEquals('<a href="javascript:alert(\'hi\')">yo</a>', $result);
+    }
 }
 
 ?>
