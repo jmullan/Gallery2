@@ -51,10 +51,18 @@ class UserAlbumHelper {
 	}
 
 	// Create album..
-	list ($ret, $album) = GalleryCoreApi::createAlbum(
-	    $module['targetLocation'], $user->getUserName(), $user->getFullName(), '', '', '');
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	$albumName = $user->getUserName();
+	while (true) {
+	    list ($ret, $album) = GalleryCoreApi::createAlbum(
+		$module['targetLocation'], $albumName, $user->getFullName(), '', '', '');
+	    if ($ret->isSuccess()) {
+		break;
+	    }
+	    if ($ret->getErrorCode() & ERROR_COLLISION) {
+		$albumName .= '_';
+	    } else {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
 	}
 
 	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($album->getId());
