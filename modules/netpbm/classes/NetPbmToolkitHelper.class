@@ -75,6 +75,14 @@ class NetPbmToolkitHelper {
 	 * -------------------- Operations --------------------
 	 */
 
+	/* Convert TIFF to JPEG */
+	if (in_array('image/tiff', $mimeTypes)) {
+	    $operations['convert-to-image/jpeg']['params'] = array();
+	    $operations['convert-to-image/jpeg']['description'] = $gallery->i18n('Convert to a JPEG'); 
+	    $operations['convert-to-image/jpeg']['mimeTypes'] = array('image/tiff');
+	    $operations['convert-to-image/jpeg']['outputMimeType'] = 'image/jpeg';
+	}
+
 	/* Scale */
 	$operations['scale']['params'][] = array('type' => 'int',
 						 'description' => $gallery->i18n('target size'));

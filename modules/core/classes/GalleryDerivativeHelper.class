@@ -283,7 +283,7 @@ class GalleryDerivativeHelper {
 	    foreach ($derivatives as $derivative) {
 		$newOperations = array();
 		foreach (explode(';', $derivative->getDerivativeOperations()) as $derivativeOperation) {
-		    list ($op, $args) = explode('|', $derivativeOperation);
+		    list ($op) = explode('|', $derivativeOperation);
 		    if (!in_array($op, $operations)) {
 			$newOperations[] = $derivativeOperation;
 		    }

@@ -165,8 +165,7 @@ class AdminImageMagickView extends GalleryView {
 	$mimeTypes = array();
 	if (isset($form['action']['test'])) {
 	    if (!empty($form['path'])) {
-		list($ret, $testResults) =
-		    ImageMagickToolkitHelper::testBinaries($form['path']);
+		list($ret, $testResults) = ImageMagickToolkitHelper::testBinaries($form['path']);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -178,8 +177,7 @@ class AdminImageMagickView extends GalleryView {
 		    $tests[] = $testResult;
 		}
 		if ($success) {
-		    list($ret, $mimeTypes) =
-			ImageMagickToolkitHelper::discoverMimeTypes($form['path']);
+		    list($ret, $mimeTypes) = ImageMagickToolkitHelper::discoverMimeTypes($form['path']);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }

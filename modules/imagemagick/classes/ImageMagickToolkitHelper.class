@@ -54,6 +54,16 @@ class ImageMagickToolkitHelper {
 	 * -------------------- Operations --------------------
 	 */
 
+	/*
+	 * TIFF isn't viewable inline, so provide a means to convert it to a JPEG
+	 */
+	if (in_array('image/tiff', $mimeTypes)) {
+	    $operations['convert-to-image/jpeg']['params'] = array();
+	    $operations['convert-to-image/jpeg']['description'] = $gallery->i18n('Convert to a JPEG'); 
+	    $operations['convert-to-image/jpeg']['mimeTypes'] = array('image/tiff');
+	    $operations['convert-to-image/jpeg']['outputMimeType'] = 'image/jpeg';
+	}
+
 	/* Scale */
 	$operations['scale']['params'][] = array('type' => 'int',
 						 'description' => $gallery->i18n('target size'));
@@ -137,27 +147,24 @@ class ImageMagickToolkitHelper {
 
 	list ($success, $results) = $platform->exec(array($command));
 	if (!$success) {
-	    return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE,
-					      __FILE__, __LINE__),
-			 null);
+	    return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__), null);
 	}
 
 	$mimeTypes = array();
 	foreach ($results as $resultLine) {
 	    if (ereg('(GIF.*PseudoClass|PseudoClass.*GIF)', $resultLine)) {
-		$mimeTypes[] = 'image/gif';
+		$mimeTypes['image/gif'] = 1;
 	    } elseif (ereg('JPEG.*DirectClass', $resultLine)) {
-		$mimeTypes[] = 'image/jpeg';
-		$mimeTypes[] = 'image/pjpeg';
+		$mimeTypes['image/jpeg'] = 1;
+		$mimeTypes['image/pjpeg'] = 1;
 	    } elseif (ereg('PNG.*DirectClass', $resultLine)) {
-		$mimeTypes[] = 'image/png';
-	    } elseif (ereg('TIFF.*DirectClass', $resultLine)) {
-		$mimeTypes[] = 'image/tiff';
+		$mimeTypes['image/png'] = 1;
+	    } elseif (ereg('TIFF.*(Pseudo|Direct)Class', $resultLine)) {
+		$mimeTypes['image/tiff'] = 1;
 	    }
 	}
-	$mimeTypes = array_values(array_unique($mimeTypes));
 
-	return array(GalleryStatus::success(), $mimeTypes);
+	return array(GalleryStatus::success(), array_keys($mimeTypes));
     }
 
     /**
@@ -234,8 +241,7 @@ class ImageMagickToolkitHelper {
 		$tmpFilename = tempnam($tmpDir, 'imgk_');
 		if (empty($tmpFilename)) {
 		    /* This can happen if the $tmpDir path is bad */
-		    return array(GalleryStatus::error(ERROR_BAD_PATH,
-						      __FILE__, __LINE__,
+		    return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__,
 						      "Could not create tmp file in '$tmpDir'"),
 				 null);
 		}
@@ -274,6 +280,7 @@ class ImageMagickToolkitHelper {
 		break;
 	    }
 	}
+
 
 	return array(GalleryStatus::success(), $testArray);
     }

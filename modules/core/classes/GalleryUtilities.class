@@ -920,5 +920,18 @@ class GalleryUtilities {
 	global $HTTP_SERVER_VARS;
 	return $HTTP_SERVER_VARS['REMOTE_ADDR'];
     }
+
+    function isViewableMimeType($mimeType) {
+	static $viewableMimeTypes;
+
+	if (!isset($viewableMimeTypes)) {
+	    $viewableMimeTypes = array('image/jpeg' => 1,
+				       'image/pjpeg' => 1,
+				       'image/gif' => 1,
+				       'image/png' => 1);
+	}
+
+	return isset($viewableMimeTypes[$mimeType]);
+    }
 }
 ?>

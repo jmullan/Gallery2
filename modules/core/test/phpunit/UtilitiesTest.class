@@ -244,6 +244,11 @@ class UtilitiesTest extends GalleryTestCase {
 						     '&quot;&gt;yo&lt;/a&gt;');
 	$this->assertEquals('<a href="javascript:alert(\'hi\')">yo</a>', $result);
     }
+
+    function testIsViewableMimeType() {
+	$this->assertEquals(true, GalleryUtilities::isViewableMimeType('image/jpeg'));
+	$this->assertEquals(false, GalleryUtilities::isViewableMimeType('image/tiff'));
+    }
 }
 
 ?>

@@ -73,8 +73,9 @@ class ImageMagickToolkit extends GalleryToolkit {
     /**
      * @see GalleryToolkit::performOperation()
      */
-    function performOperation($mimeType, $operationName, $sourceFilename,
-			      $destFilename, $parameters) {
+    function performOperation($mimeType, $operationName, $sourceFilename, $destFilename, $parameters) {
+
+	$outputMimeType = $mimeType;
 	switch($operationName) {
 	case 'thumbnail':
 	case 'scale':
@@ -93,19 +94,22 @@ class ImageMagickToolkit extends GalleryToolkit {
 	    $transform = array('-crop', $parameters[2] . 'x' . $parameters[3] .
 			       '+' . $parameters[0] . '+' . $parameters[1]);
 	    break;
+
+	case 'convert-to-image/jpeg':
+	    $transform = null;
+	    $outputMimeType = 'image/jpeg';
+	    break;
 	    
 	default:
-	    return array(GalleryStatus::error(ERROR_UNIMPLEMENTED,
-					      __FILE__, __LINE__),
-			 null);
+	    return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
 	}
 
-	$ret = $this->_transformImage($mimeType, $transform, $sourceFilename, $destFilename);
+	$ret = $this->_transformImage($mimeType, $transform, $sourceFilename, $destFilename, $outputMimeType);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	return array(GalleryStatus::success(), $mimeType);
+	return array(GalleryStatus::success(), $outputMimeType);
     }
 
     /**
@@ -186,7 +190,7 @@ class ImageMagickToolkit extends GalleryToolkit {
      * @param string the path to a destination file
      * @return object GalleryStatus a status code
      */
-    function _transformImage($mimeType, $args, $sourceFilename, $destFilename) {
+    function _transformImage($mimeType, $args, $sourceFilename, $destFilename, $outputMimeType) {
 	global $gallery;
 
 	/* Get a temp file name and figure out our convert-from-pnm command */
@@ -194,14 +198,12 @@ class ImageMagickToolkit extends GalleryToolkit {
 	$tmpFilename = tempnam($tmpDir, 'imgk_');
 	if (empty($tmpFilename)) {
 	    /* This can happen if the $tmpDir path is bad */
-	    return GalleryStatus::error(ERROR_BAD_PATH,
-					__FILE__, __LINE__);
+	    return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);
 	}
 
 	$command = array($this->_imageMagickCmd('convert'));
 
-	list ($ret, $jpegQuality) =
-	    $gallery->getModuleParameter('imagemagick', 'jpegQuality');
+	list ($ret, $jpegQuality) = $gallery->getModuleParameter('imagemagick', 'jpegQuality');
 	if ($ret->isError()) {
 	    @$platform->unlink($tmpFilename);
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -218,9 +220,26 @@ class ImageMagickToolkit extends GalleryToolkit {
 	$platform = $gallery->getPlatform();
 	
 	/* Do the conversion */
-	$command = array_merge($command, $args);
+	if (isset($args)) {
+	    $command = array_merge($command, $args);
+	}
 	$command[] = $sourceFilename;
-	$command[] = $tmpFilename;
+
+	if ($mimeType == $outputMimeType) {
+	    $command[] = $tmpFilename;
+	} else {
+	    switch($outputMimeType) {
+	    case 'image/jpeg':
+		$command[] = sprintf("jpeg:%s", $tmpFilename);
+		break;
+
+	    default:
+		/* Don't know this type! */
+		return GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__,
+					    "Can't convert to unknown mime type: $outputMimeType");
+	    }
+	}
+	
 	list($success, $output) = $platform->exec(array($command));
 
 	if (!$success) {

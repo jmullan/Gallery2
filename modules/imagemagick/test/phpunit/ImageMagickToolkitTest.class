@@ -209,7 +209,11 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals(array('scale' => array('params' =>
+	$this->assertEquals(array('convert-to-image/jpeg' => array('params' => array(),
+								   'description' => 'Convert to a JPEG',
+								   'mimeTypes' => array('image/tiff'),
+								   'outputMimeType' => 'image/jpeg'),
+				  'scale' => array('params' =>
 						   array(array('type' => 'int',
 							       'description' => 'target size')),
 						   'description' => 'Scale the image to the target size',

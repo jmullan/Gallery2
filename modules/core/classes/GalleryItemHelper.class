@@ -459,6 +459,25 @@ class GalleryItemHelper {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
+	    /*
+	     * If the output type isn't viewable, then try to turn it into a form that *is*
+	     * viewable.
+	     */
+	    if (!GalleryUtilities::isViewableMimeType($outputMimeType)) {
+		$tmpOperations = $preference['derivativeOperations'] . ';convert-to-image/jpeg';
+		list ($ret, $isSupported, $outputMimeType) =
+		    GalleryToolkitHelper::isSupportedOperationSequence($mimeType, $tmpOperations);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		
+		if ($isSupported) {
+		    $operations = $tmpOperations;
+		} else {
+		    /* Oh well */
+		}
+	    }
+
 	    $derivative->setDerivativeMimeType($outputMimeType);
 	    $derivative->setDerivativeSourceId($newItem->getId());
 	    $derivative->setDerivativeOperations($operations);

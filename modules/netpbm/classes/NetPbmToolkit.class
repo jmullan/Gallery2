@@ -72,8 +72,11 @@ class NetPbmToolkit extends GalleryToolkit {
     /**
      * @see GalleryToolkit::performOperation()
      */
-    function performOperation($mimeType, $operationName, $sourceFilename,
-			      $destFilename, $parameters) {
+    function performOperation($mimeType, $operationName, $sourceFilename, $destFilename, $parameters) {
+
+	/* By default we keep the same output type */
+	$outputMimeType = $mimeType;
+	
 	switch($operationName) {
 	case 'thumbnail':
 	case 'scale':
@@ -101,6 +104,7 @@ class NetPbmToolkit extends GalleryToolkit {
 		$flipArgument = "-cw";
 		break;
 		
+	    case -180:
 	    case 180:
 		$flipArgument = "-r180";
 		break;
@@ -115,9 +119,14 @@ class NetPbmToolkit extends GalleryToolkit {
 	    break;
 	    
 	case 'crop':
-	    $transform = array($this->_pnmCmd('pnmcut'),
+	    $transform = array($this->_pnmCmd('pnmtojpeg'),
 			       $parameters[0], $parameters[1],
 			       $parameters[2], $parameters[3]);
+	    break;
+
+	case 'convert-to-image/jpeg':
+	    $transform = null;
+	    $outputMimeType = 'image/jpeg';
 	    break;
 	    
 	default:
@@ -126,12 +135,12 @@ class NetPbmToolkit extends GalleryToolkit {
 			 null);
 	}
 
-	$ret = $this->_transformImage($mimeType, $transform, $sourceFilename, $destFilename);
+	$ret = $this->_transformImage($mimeType, $transform, $sourceFilename, $destFilename, $outputMimeType);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	return array(GalleryStatus::success(), $mimeType);
+	return array(GalleryStatus::success(), $outputMimeType);
     }
 
     /**
@@ -220,9 +229,10 @@ class NetPbmToolkit extends GalleryToolkit {
      * @param string the command to execute
      * @param string the path to a source file
      * @param string the path to a destination file
+     * @param string the output mime type
      * @return object GalleryStatus a status code
      */
-    function _transformImage($mimeType, $command, $sourceFilename, $destFilename) {
+    function _transformImage($mimeType, $command, $sourceFilename, $destFilename, $outputMimeType) {
 	global $gallery;
 
 	/* Figure out our convert-to-pnm command */
@@ -240,18 +250,22 @@ class NetPbmToolkit extends GalleryToolkit {
 					__FILE__, __LINE__);
 	}
 
-	list($ret, $convertFromPnmCmd) =
-		$this->_convertFromPnmCmd($mimeType, $tmpFilename);
+	list($ret, $convertFromPnmCmd) = $this->_convertFromPnmCmd($outputMimeType, $tmpFilename);
 	if ($ret->isError()) {
 	    @$platform->unlink($tmpFilename);
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* Do the conversion */
-	list($ret, $output) = 
-		$this->_exec(array($convertToPnmCmd,
-				   $command,
-				   $convertFromPnmCmd));
+	if (isset($command)) {
+	    list($ret, $output) = $this->_exec(array($convertToPnmCmd,
+						     $command,
+						     $convertFromPnmCmd));
+	} else {
+	    list($ret, $output) = $this->_exec(array($convertToPnmCmd,
+						     $convertFromPnmCmd));
+	}
+	
 	if ($ret->isError()) {
 	    @$platform->unlink($tmpFilename);
 	    return $ret->wrap(__FILE__, __LINE__);

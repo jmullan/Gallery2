@@ -123,11 +123,13 @@ class ImageMagickModule extends GalleryModule {
 	}
 
 	foreach ($results['operations'] as $operation => $info) {
+	    $outputMimeType = isset($info['outputMimeType']) ? $info['outputMimeType'] : '';
 	    $ret = GalleryToolkitHelper::registerOperation('ImageMagick',
 							   $info['mimeTypes'],
 							   $operation,
 							   $info['params'],
-							   $info['description']);
+							   $info['description'],
+							   $outputMimeType);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }

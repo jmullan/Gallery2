@@ -1687,7 +1687,8 @@ class DatabaseStorage extends GalleryStorage {
 	    $results = array();
 	    foreach ($ids as $id) {
 		if (!GalleryDataCache::containsKey("DatabaseStorage::_identifyEntities($id)")) {
-		    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
+		    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__,
+						      "Missing object for $id"), null);
 		}
 		$results[] = GalleryDataCache::get("DatabaseStorage::_identifyEntities($id)");
 	    }
