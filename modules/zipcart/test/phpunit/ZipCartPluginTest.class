@@ -49,7 +49,7 @@ class ZipCartPluginTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	// Register dummy toolkit and operation
+	/* Register dummy toolkit and operation */
 	$ret = GalleryCoreApi::registerFactoryImplementation(
             'GalleryToolkit', 'ZipCartToolkit', 'ZipCartToolkit',
             'modules/zipcart/test/phpunit/ZipCartPluginTest.class', 'zipcartTest', null);
@@ -67,14 +67,14 @@ class ZipCartPluginTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	// Test album
+	/* Test album */
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	// Photo with core.viewSource
+	/* Photo with core.viewSource */
 	list ($ret, $this->_items[0]) = $this->_addItem($this->_album->getId(), 'GalleryPhotoItem',
 							'test/jpeg', 'core.viewSource');
 	if ($ret->isError()) {
@@ -82,7 +82,7 @@ class ZipCartPluginTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	// Photo with core.viewSource and preferred derivative
+	/* Photo with core.viewSource and preferred derivative */
 	list ($ret, $this->_items[1]) = $this->_addItem($this->_album->getId(), 'GalleryPhotoItem',
 							'test/jpeg', 'core.viewSource');
 	if ($ret->isError()) {
@@ -96,7 +96,7 @@ class ZipCartPluginTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	// Photo with core.viewResizes and resized derivative
+	/* Photo with core.viewResizes and resized derivative */
 	list ($ret, $this->_items[2]) = $this->_addItem($this->_album->getId(), 'GalleryPhotoItem',
 							'test/jpeg', 'core.viewResizes');
 	if ($ret->isError()) {
@@ -110,7 +110,7 @@ class ZipCartPluginTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	// Data item with core.viewSource
+	/* Data item with core.viewSource */
 	list ($ret, $this->_items[3]) = $this->_addItem($this->_album->getId(), 'GalleryUnknownItem',
 					'test/data', 'core.viewSource');
 	if ($ret->isError()) {
@@ -210,14 +210,14 @@ class ZipCartPluginTest extends GalleryTestCase {
 	@$platform->unlink($gallery->_zipCartTempnam);
 	$slash = $platform->getDirectorySeparator();
 	$path = $this->_album->getPathComponent();
-	// Check that the right files were selected..
+	/* Check that the right files were selected.. */
 	$this->assertEquals(
 	    array($path . $slash . $this->_items[0]->getPathComponent(),
 		  $path . $slash . $this->_items[1]->getPathComponent(),
 		  $path . $slash . $this->_items[2]->getPathComponent(),
 		  $path . $slash . $this->_items[3]->getPathComponent()),
 	    $gallery->_zipCartFiles, 'zip files');
-	// Check that derivatives were used appropriately..
+	/* Check that derivatives were used appropriately.. */
 	$this->assertEquals(4, count($gallery->_zipCartSources), '4 sources');
 	$this->assert(strpos($gallery->_zipCartSources[0], "${slash}albums${slash}") !== false,
 		      'first item from original (' . $gallery->_zipCartSources[0] . ')');
@@ -261,6 +261,18 @@ class ZipCartPluginTestPlatform {
 	return $this->_platform->getDirectorySeparator();
     }
 
+    function flock($handle, $operation, &$wouldblock) {
+	return $this->_platform->flock($handle, $operation, $wouldblock);
+    }
+
+    function stat($filename) {
+	return $this->_platform->stat($filename);
+    }
+
+    function is_writeable($filename) {
+	return $this->_platform->is_writeable($filename);
+    }
+    
     function file_exists($path) {
 	return $this->_platform->file_exists($path);
     }
