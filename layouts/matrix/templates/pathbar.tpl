@@ -14,7 +14,7 @@
     {/if}
   </li>
   {/section}
-  <li>
+  <li {if empty($layout.parents)}class="giBreadCrumbFirst"{/if}>
     {$layout.item.title|default:$layout.item.pathComponent|markup}
   </li>
 </ul>
