@@ -124,11 +124,11 @@ class GalleryModule {
     }
     
     /**
-     * Get the name of the Administration view for this module
+     * Get the GalleryView containing the administration view for this module
      *
      * @param the type of view requested
      * @return array object GalleryStatus a status code
-     *               string a module::view pair
+     *               object GalleryView a view
      */
     function getAdminView() {
 	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);

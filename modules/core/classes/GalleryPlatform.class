@@ -131,6 +131,54 @@ class GalleryPlatform {
     }
 
     /**
+     * Is the given path a writeable file
+     *
+     * @param string a filesystem path 
+     * @return bool TRUE if the path is writeable, FALSE otherwise
+     * @access public
+     */
+    function is_writeable($filename) {
+	global $gallery;
+	
+	$filename = $this->importPath($filename);
+	$gallery->debug("is_writeable($filename)");
+	
+	return is_writeable($filename);
+    }
+
+    /**
+     * Is the given path a readable file
+     *
+     * @param string a filesystem path 
+     * @return bool TRUE if the path is readable, FALSE otherwise
+     * @access public
+     */
+    function is_readable($filename) {
+	global $gallery;
+	
+	$filename = $this->importPath($filename);
+	$gallery->debug("is_readable($filename)");
+	
+	return is_readable($filename);
+    }
+
+    /**
+     * Is the given path an uploaded file
+     *
+     * @param string a filesystem path 
+     * @return bool TRUE if the path is an uploaded file, FALSE otherwise
+     * @access public
+     */
+    function is_uploaded_file($filename) {
+	global $gallery;
+	
+	$filename = $this->importPath($filename);
+	$gallery->debug("is_uploaded_file($filename)");
+	
+	return is_uploaded_file($filename);
+    }
+
+    /**
      * Is the given path an executable file?
      *
      * @param string a filesystem path 

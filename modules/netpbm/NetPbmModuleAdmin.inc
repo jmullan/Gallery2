@@ -18,18 +18,15 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-/* Turn on debug mode */
-$gallery->setDebug('buffered');
+class NetPbmModuleAdminView extends GalleryView {
 
-/* Connection information for the GalleryStorage sub-system */
-$dbConfig['type'] = 'mysql';
-$dbConfig['hostname'] = 'localhost';
-$dbConfig['database'] = 'g2dev';
-$dbConfig['username'] = 'g2dev';
-$dbConfig['password'] = 'g2dev';
-$dbConfig['tablePrefix'] = 'g2_';
-$dbConfig['columnPrefix'] = 'g_';
-$gallery->setConfig('storage.config', $dbConfig);
-$gallery->setConfig('storage.type', 'database');
+    /**
+     * @see GalleryView::fetchBody
+     */
+    function fetchBody() {
+	global $gallery;
 
+	return array(GalleryStatus::success(), "test!");
+    }
+}
 ?>

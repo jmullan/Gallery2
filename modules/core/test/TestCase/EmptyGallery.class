@@ -20,14 +20,9 @@ class EmptyGalleryTestCase extends TestCase {
 		       'data.gallery.tmp',
 		       'data.smarty.base')
 		 as $param) {
-	    list ($ret, $dir) =
-		$gallery->getModuleParameter('core', $param);
-	    if ($ret->isError()) {
-		// Ignore
-	    } else {
-		if (!empty($dir)) {
-		    $dirs[] = $dir;
-		}
+	    $dir = $gallery->getConfig($param);
+	    if (!empty($dir)) {
+		$dirs[] = $dir;
 	    }
 	}
 

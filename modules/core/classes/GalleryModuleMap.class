@@ -144,8 +144,7 @@ class GalleryModuleMap_core {
 
 	$data = array();
 	while ($result = $searchResults->nextResult()) {
-	    $data[$result[0]] = array('active' => $result[1],
-				      'version' => $result[2]);
+	    $data[$result[0]] = array('active' => $result[1]);
 	}
 	return array($ret, $data);
     }

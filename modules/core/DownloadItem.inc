@@ -18,12 +18,18 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-class DownloadItemView /* extends GalleryView */ {
+class DownloadItemView extends GalleryView {
 
+    /**
+     * @see GalleryView::isImmediate
+     */
     function isImmediate() {
 	return true;
     }
 
+    /**
+     * @see GalleryView::renderImmediate
+     */
     function renderImmediate() {
 	global $gallery;
 
@@ -61,9 +67,7 @@ class DownloadItemView /* extends GalleryView */ {
 	    }
 
 	    $size = $item->getDerivativeSize();
-	    $fileExtension = $item->getDerivativeFileExtension();
 	} else {
-	    $fileExtension = $item->getFileExtension();
 	    list ($ret, $size) = $item->getSize();
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
@@ -73,7 +77,7 @@ class DownloadItemView /* extends GalleryView */ {
 	if ($size > 0) {
 	    header('Content-length: ' . $size);
 	}
-	$mimeType = GalleryUtilities::convertTagToMime($fileExtension);
+	$mimeType = $item->getDerivativeMimeType();
 	header('Content-type: ' . $mimeType);
 	readfile($path);
 

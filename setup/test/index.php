@@ -3,149 +3,140 @@ require_once('../../init.php');
 require_once('TestCase.class');
 require_once('TestCase/ActivateModule.class');
 require_once('TestCase/DeactivateModule.class');
-
-$modulesDir = $gallery->getConfig('code.gallery.modules');
 $tests = array();
 
-list ($ret, $platform) = $gallery->getPlatform();
+$ret = GalleryInit();
 if ($ret->isError()) {
     $ret = $ret->wrap(__FILE__, __LINE__);
     print $ret->getAsHtml();
     return;
 }
 
-/*
- * Load the test cases for every module (active or not).
- */
-list ($ret, $moduleNames) = $gallery->getAllModuleNames();
+$ret = GalleryTestHarness();
 if ($ret->isError()) {
     $ret = $ret->wrap(__FILE__, __LINE__);
     print $ret->getAsHtml();
     return;
 }
 
-foreach ($moduleNames as $moduleName) {
-    $testDir = $modulesDir . $moduleName . '/test/TestCase';
+function GalleryTestHarness() {
+    global $gallery;
+    global $tests;
+    global $HTTP_GET_VARS;
 
-    /* Add our implicit tests */
-    foreach (array('ActivateModule', 'DeactivateModule') as $implicitTestName) {
-	$className = $implicitTestName . 'TestCase';
-	$testCase = new $className($moduleName);
-	$test = array('moduleName' => $moduleName,
-		      'testName' => $implicitTestName,
-		      'class' => $testCase,
-		      'description' => $testCase->getDescription());
-	$tests[$moduleName][$implicitTestName] = $test;
+    $modulesDir = $gallery->getConfig('code.gallery.modules');
+
+    list ($ret, $platform) = $gallery->getPlatform();
+    if ($ret->isError()) {
+	return $ret->wrap(__FILE__, __LINE__);
     }
 
-    $files = array();
-    if ($platform->is_dir($testDir) && $dir = $platform->opendir($testDir)) {
-	while (($file = readdir($dir)) != false) {
-	    if (preg_match('/.class$/', $file)) {
-		$files[] = $file;
-		require_once($testDir . '/' . $file);
-	    }
-	}
-	closedir($dir);
+    /*
+     * Load the test cases for every module (active or not).
+     */
+    list ($ret, $moduleNames) = $gallery->getAllModuleNames();
+    if ($ret->isError()) {
+	return $ret->wrap(__FILE__, __LINE__);
+    }
 
-	/* Add our explicit tests */
-	foreach ($files as $file) {
-	    $testName = str_replace('.class', '', $file);
-	    $className = $testName . 'TestCase';
-	    $testCase = new $className();
+    foreach ($moduleNames as $moduleName) {
+	$testDir = $modulesDir . $moduleName . '/test/TestCase';
+
+	/* Add our implicit tests */
+	foreach (array('ActivateModule', 'DeactivateModule') as $implicitTestName) {
+	    $className = $implicitTestName . 'TestCase';
+	    $testCase = new $className($moduleName);
 	    $test = array('moduleName' => $moduleName,
-			  'testName' => $testName,
+			  'testName' => $implicitTestName,
 			  'class' => $testCase,
 			  'description' => $testCase->getDescription());
-	    foreach ($testCase->getIterations() as $iter) {
-		$test['iterations'][$iter] = array('count' => $iter,
-						   'title' => shorten($iter));
+	    $tests[$moduleName][$implicitTestName] = $test;
+	}
+
+	$files = array();
+	if ($platform->is_dir($testDir) && $dir = $platform->opendir($testDir)) {
+	    while (($file = readdir($dir)) != false) {
+		if (preg_match('/.class$/', $file)) {
+		    $files[] = $file;
+		    require_once($testDir . '/' . $file);
+		}
 	    }
-	    $tests[$moduleName][$testName] = $test;
+	    closedir($dir);
+
+	    /* Add our explicit tests */
+	    foreach ($files as $file) {
+		$testName = str_replace('.class', '', $file);
+		$className = $testName . 'TestCase';
+		$testCase = new $className();
+		$test = array('moduleName' => $moduleName,
+			      'testName' => $testName,
+			      'class' => $testCase,
+			      'description' => $testCase->getDescription());
+		foreach ($testCase->getIterations() as $iter) {
+		    $test['iterations'][$iter] = array('count' => $iter,
+						       'title' => shorten($iter));
+		}
+		$tests[$moduleName][$testName] = $test;
+	    }
 	}
     }
-}
 
-/*
- * Alphabetize the module names and test names
- */
-ksort($tests);
-foreach ($tests as $moduleName => $testArray) {
-    ksort($tests[$moduleName]);
-}
-
-/* Suppress preliminary debug output */
-if (0) {
-    print "<pre>";
-    print_r($gallery->getDebugBuffer());
-    print "</pre>";
-}
-$gallery->clearDebugBuffer();
-
-$results = array();
-if (!empty($HTTP_GET_VARS['testName']) &&
-    !empty($HTTP_GET_VARS['moduleName'])) {
-    
-    $testName = $HTTP_GET_VARS['testName'];
-    $moduleName = $HTTP_GET_VARS['moduleName'];
-    
-    $iterations = 1;
-    if (!empty($HTTP_GET_VARS['iterations'])) {
-	$iterations = $HTTP_GET_VARS['iterations'];
+    /*
+     * Alphabetize the module names and test names
+     */
+    ksort($tests);
+    foreach ($tests as $moduleName => $testArray) {
+	ksort($tests[$moduleName]);
     }
 
-    $results = $results + runTest($moduleName, $testName, $iterations);
-}
+    /* Suppress preliminary debug output */
+    if (0) {
+	print "<pre>";
+	print_r($gallery->getDebugBuffer());
+	print "</pre>";
+    }
+    $gallery->clearDebugBuffer();
 
-$rollup = array();
-if (sizeof($results) > 1) {
-    $rollup['elapsed'] = 0.0;
-    foreach ($results as $result) {
-	if (!empty($result['error']) && empty($rollup['error'])) {
-	    $rollup['error'] = $result['error'];
+    $results = array();
+    if (!empty($HTTP_GET_VARS['testName']) &&
+	!empty($HTTP_GET_VARS['moduleName'])) {
+    
+	$testName = $HTTP_GET_VARS['testName'];
+	$moduleName = $HTTP_GET_VARS['moduleName'];
+    
+	$iterations = 1;
+	if (!empty($HTTP_GET_VARS['iterations'])) {
+	    $iterations = $HTTP_GET_VARS['iterations'];
 	}
-	$rollup['elapsed'] += $result['timing']['elapsed'];
+
+	$results = $results + runTest($moduleName, $testName, $iterations);
     }
+
+    $rollup = array();
+    if (sizeof($results) > 1) {
+	$rollup['elapsed'] = 0.0;
+	foreach ($results as $result) {
+	    if (!empty($result['error']) && empty($rollup['error'])) {
+		$rollup['error'] = $result['error'];
+	    }
+	    $rollup['elapsed'] += $result['timing']['elapsed'];
+	}
+    }
+
+    /* Get the Smarty instance. */
+    list ($ret, $smarty) = $gallery->getSmarty();
+    if ($ret->isError()) {
+	return $ret->wrap(__FILE__, __LINE__);
+    }
+
+    $smarty->template_dir = dirname(__FILE__) . '/templates';
+    $smarty->assign('tests', $tests);
+    $smarty->assign('results', $results);
+    $smarty->assign('rollup', $rollup);
+    $smarty->display('index.tpl');
+
+    return GalleryStatus::success();
 }
-
-/*
- * Get a Smarty instance and specify a local directory in the setup directory as the
- * compile target.  This allows us to use Smarty before the core module has
- * been configured.
- */
-$setup = $gallery->getConfig('code.gallery.setup');
-$smartyDir = $setup . 'smarty';
-
-/*
- * Make sure the compile dir exists
- */
-if (!($platform->file_exists($smartyDir) &&
-      $platform->is_dir($smartyDir) &&
-      $platform->is_writeable($smartyDir))) {
-
-    print "You must create a temporary directory writeable by the web server<br>";
-    print "in order to use the test harness.  Here's one way to do it:<br>";
-    print "<pre>";
-    print "    cd $setup\n";
-    print "    mkdir smarty\n";
-    print "    chmod 777 smarty\n";
-    print "</pre>";
-    return;
-}
-
-list ($ret, $smarty) = $gallery->getSmarty($smartyDir);
-$smarty->compile_dir = $smartyDir;
-if ($ret->isError()) {
-    $ret = $ret->wrap(__FILE__, __LINE__);
-    print $ret->getAsHtml();
-    return;
-}
-
-$smarty->template_dir = dirname(__FILE__) . '/templates';
-$smarty->assign('tests', $tests);
-$smarty->assign('results', $results);
-$smarty->assign('rollup', $rollup);
-$smarty->display('index.tpl');
 
 function shorten($number) {
     $number = str_replace("000000", "M", $number);

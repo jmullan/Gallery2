@@ -18,80 +18,93 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-/*
- * Specify that when an assertion fails, we terminate right away.
- */
-assert_options(ASSERT_BAIL, 1);
+function GalleryInit() {
+    /*
+     * Specify that when an assertion fails, we terminate right away.
+     */
+    assert_options(ASSERT_BAIL, 1);
 
-/*
- * Figure out the Gallery base directory here, from our filename.
- */
-$galleryBase = dirname(__FILE__) . '/';
+    /*
+     * Figure out the Gallery base directory here, from our filename.
+     */
+    $galleryBase = dirname(__FILE__) . '/';
 
-/*
- * Load and initialize the core module
- */
-require_once($galleryBase . 'modules/core/module.inc');
-$coreModule = new CoreModule();
-$ret = $coreModule->init();
-/* XXX: this is unclean; we should handle this better. */
-if ($ret->isError()) {
-    $ret = $ret->wrap(__FILE__, __LINE__);
-    print $ret->getAsHtml();
-    return;
-}
-
-/*
- * Extract the global gallery instance from the core module.  This bends the OO
- * model slightly, but it's a necessity to bootstrap ourselves up.
- */
-$gallery =& $coreModule->getGallery();
-
-/*
- * Set our global configuration values.  These are mostly (entirely?) code path
- * locations as everything else is configurable via the application itself.
- */
-
-/* Gallery paths */
-$gallery->setConfig('code.gallery.base', $galleryBase);
-$gallery->setConfig('code.gallery.layouts', $galleryBase . 'layouts/');
-$gallery->setConfig('code.gallery.styles', $galleryBase . 'styles/');
-$gallery->setConfig('code.gallery.modules', $galleryBase . 'modules/');
-$gallery->setConfig('code.gallery.lib', $galleryBase . 'lib/');
-$gallery->setConfig('code.gallery.setup', $galleryBase . 'setup/');
-
-/* Smarty paths */
-$gallery->setConfig('code.smarty.base', $galleryBase . 'lib/smarty/');
-$gallery->setConfig('config.smarty.templates', $galleryBase . 'templates');
-
-/* Load our local configuration */
-require_once(dirname(__FILE__) . '/config.php');
-
-/* Load all active modules */
-list ($ret, $moduleStatus) = $gallery->getModuleStatus();
-if ($ret->isError()) {
-    $ret = $ret->wrap(__FILE__, __LINE__);
-    print $ret->getAsHtml();
-    return;
-}
-
-foreach ($moduleStatus as $moduleName => $status) {
-    if (empty($status['active'])) {
-	continue;
-    }
-    
-    list ($ret, $module) = $gallery->loadModule($moduleName);
-    /* XXX: this is unclean; we should handle this better. */
+    /*
+     * Load and initialize the core module
+     */
+    require_once($galleryBase . 'modules/core/module.inc');
+    $coreModule = new CoreModule();
+    $ret = $coreModule->init();
     if ($ret->isError()) {
-	$ret = $ret->wrap(__FILE__, __LINE__);
-	print $ret->getAsHtml();
-	return;
+	return $ret->wrap(__FILE__, __LINE__);
     }
-}
 
-/*
- * Fake being the admin user for now.  When we get in gear, we'll pull
- * this information from the session.
- */
-$gallery->setActiveUserId(4);
+    /*
+     * Set our global configuration values.  These are mostly filesystem paths
+     * as everything else is configurable via the application itself.
+     */
+
+    /* Gallery paths */
+    $gallery =& $GLOBALS['gallery'];
+    $gallery->setConfig('code.gallery.base', $galleryBase);
+    $gallery->setConfig('code.gallery.layouts', $galleryBase . 'layouts/');
+    $gallery->setConfig('code.gallery.styles', $galleryBase . 'styles/');
+    $gallery->setConfig('code.gallery.modules', $galleryBase . 'modules/');
+    $gallery->setConfig('code.gallery.lib', $galleryBase . 'lib/');
+    $gallery->setConfig('code.gallery.setup', $galleryBase . 'setup/');
+
+    /* Smarty paths */
+    $gallery->setConfig('code.smarty.base', $galleryBase . 'lib/smarty/');
+    $gallery->setConfig('config.smarty.templates', $galleryBase . 'templates');
+
+    /* Load our local configuration */
+    require_once(dirname(__FILE__) . '/config.php');
+
+    /* Sanitize the data path */
+    $dataBase = $gallery->getConfig('data.gallery.base');
+    if ($dataBase{strlen($dataBase)-1} != '/') {
+	$dataBase .= '/';
+	$gallery->setConfig('data.gallery.base', $dataBase);
+    }
+
+    /* Set our various data paths */
+    $gallery->setConfig('data.gallery.albums', $dataBase . 'albums/');
+    $gallery->setConfig('data.gallery.cache', $dataBase . 'cache/');
+    $gallery->setConfig('data.gallery.tmp', $dataBase . 'tmp/');
+    $gallery->setConfig('data.smarty.base', $dataBase . 'smarty/');
+    $gallery->setConfig('data.smarty.templates_c', $dataBase . 'smarty/templates_c/');
+
+    /*
+     * During the setup process, we may have bogus database credentials.  So,
+     * anything that can be set without using the database should be defined
+     * *above* this point.  Once we start trying to load modules we'll expect
+     * to error out if our credentials are bad, and we still want all the core
+     * functionality (paths, settings, etc) to be set properly.
+     */
+
+    /* Load the module list */
+    list ($ret, $moduleStatus) = $gallery->getModuleStatus();
+    if ($ret->isError()) {
+	return $ret->wrap(__FILE__, __LINE__);
+    }
+
+    foreach ($moduleStatus as $moduleName => $status) {
+	if (empty($status['active'])) {
+	    continue;
+	}
+    
+	list ($ret, $module) = $gallery->loadModule($moduleName);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+    }
+
+    /*
+     * Fake being the admin user for now.  When we get in gear, we'll pull
+     * this information from the session.
+     */
+    $gallery->setActiveUserId(4);
+
+    return GalleryStatus::success();
+}
 ?>

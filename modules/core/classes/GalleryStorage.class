@@ -309,6 +309,17 @@ class GalleryStorage {
     }
 
     /**
+     * Test to see if our authentication information for this GalleryStorage is
+     * valid.
+     *
+     * @return object GalleryStatus a status code
+     */
+    function testAuthentication() {
+	return GalleryStatus::error(ERROR_UNIMPLEMENTED,
+				    __FILE__, __LINE__);
+    }
+
+    /**
      * Create the persistent store for this strategy.
      *
      * @return object GalleryStatus a status code

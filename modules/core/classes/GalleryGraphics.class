@@ -81,12 +81,12 @@ class GalleryGraphics {
     var $_supportedFunctions = 0;
 
     /**
-     * The file extensions supported by this toolkit
+     * The mime types supported by this toolkit
      *
-     * @var array $_supportedFileExtensions
+     * @var array $_supportedMimeTypes
      * @access private
      */
-    var $_supportedFileExtensions = array();
+    var $_supportedMimeTypes = array();
 
     /*
      * ****************************************
@@ -95,27 +95,27 @@ class GalleryGraphics {
      */
 
     /**
-     * Get the list of supported file extensions
+     * Get the list of supported mime types
      *
      * Get the list of supported file types that this toolkit can
      * support.
      *
      * @access public
-     * @return array lowercase file tags tags (eg "jpg", "gif")
+     * @return array mime types (eg "image/jpeg", "image/png")
      */
-    function getSupportedFileExtensions() {
-	return array_keys($this->_supportedFileExtensions);
+    function getSupportedMimeTypes() {
+	return array_keys($this->_supportedMimeTypes);
     }
 
     /**
-     * Is this file extension supported?
+     * Is this mime type supported?
      *
      * @access public
-     * @param string a file tag (eg "jpg", "Jpg", "JPG", "JPEG")
-     * @return bool true if the tag given is supported 
+     * @param string a mime type (eg "image/jpeg", "image/png")
+     * @return bool true if the type given is supported 
      */
-    function isSupportedFileExtension($extension) {
-	return isset($this->_supportedFileExtensions[strtolower($extension)]);
+    function isSupportedMimeType($mimeType) {
+	return isset($this->_supportedMimeType[strtolower($mimeType)]);
     }
 
     /**
@@ -148,11 +148,11 @@ class GalleryGraphics {
      * 
      * @access public
      * @param string a file name
-     * @param string an optional file extension hint
+     * @param string an optional mime type hint
      * @return array object GalleryStatus a status code,
      *               int the image width, int the image height
      */
-    function getImageDimensions($filename, $fileExtension=false) {
+    function getImageDimensions($filename, $mimeType=false) {
 	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED,
 					  __FILE__, __LINE__),
 		     null, null);

@@ -1,0 +1,96 @@
+<?php
+/*
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2002 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+/*
+ * As a security precaution, we limit access to Gallery's install and setup
+ * functionality to thosse people who know the password, below.  The first time
+ * around, you must pick a password and enter it here in clear text.  Example:
+ *
+ *  $gallery->setConfig('setup.password', 'A PASSWORD');
+ *
+ * Choose something random and enter it in plain text.  You don't have to
+ * remember it because you can always refer to this file.  You'll only be asked
+ * for this password when you run Gallery's setup code.  We don't provide a
+ * default password because we want you to choose one of your own (which
+ * lessens the chance that you'll get hacked).
+ */
+$gallery->setConfig('setup.password', '');
+
+/*
+ * In order for Gallery to manage your data, you must provide it with
+ * a directory that it can write to.  Gallery is a webserver application,
+ * so the directory that you create must be writeable by the
+ * webserver, not just by you.  
+ *
+ * This directory can be anywhere on your filesystem.  For security purposes,
+ * it's better if the directory is not accessible via your webserver (ie, it
+ * should not be in your DocumentRoot).
+ *
+ * You have to create this directory
+ */
+$gallery->setConfig('data.gallery.base', '/path/to/gallerydata');
+
+/*
+ * Gallery can store its data in multiple different back ends.  Currently we
+ * support only MySQL.  Enter the hostname where your database lives, and the
+ * username and password you use to connect to it.
+ *
+ * You must specify a database name, but you do not need to create the database
+ * yourself.  Gallery will do it for you.  However, Gallery requires that the
+ * user account you provide has the following permissions on the database you
+ * specified:
+ *
+ *    CREATE, INSERT, UPDATE, DELETE, ALTER
+ *
+ * If you want Gallery to coexist in a database with tables from other
+ * applications, you can specify a prefix to prepend to all table and column
+ * names.  By default these prefixes are as shown below.  If you modify these
+ * after Gallery has created its various tables, it will stop working.
+ */
+$storeConfig['type'] = 'mysql';          
+$storeConfig['hostname'] = 'localhost';  
+$storeConfig['database'] = 'gallery2';      
+$storeConfig['username'] = 'root';      
+$storeConfig['password'] = '';
+$storeConfig['tablePrefix'] = 'g2_';     
+$storeConfig['columnPrefix'] = 'g_';
+$gallery->setConfig('storage.config', $storeConfig);
+$gallery->setConfig('storage.type', 'database');
+
+/*
+ * Put Gallery into debug mode.  Useful for tracking down problems with the
+ * application.  Not a good idea to leave it this way, though.  Possible debug
+ * choices are: 'buffered', 'logged', 'immediate' or false.
+ *
+ * If you choose 'immediate', you'll see debugging information as soon as
+ * Gallery generates it.  This can be useful at times, but it'll screw up some
+ * parts of the application flow.
+ *
+ * If you choose 'buffered', Gallery will display debug information in a table
+ * as part of the application.  You won't necessarily get *all* the debug
+ * information but the application should work normally.
+ *
+ * If you choose 'logged', you must also specify:
+ *    $gallery->setDebugLogFile('/path/to/writeable/file');
+ * and all debug output will get printed into that file.  You'll get all the
+ * debug output and the application will work normally.
+ */
+$gallery->setDebug(false);
+?>

@@ -41,19 +41,23 @@ class NetPbmGraphics extends GalleryGraphics {
 				      IMAGE_FUNCTION_ROTATE |
 				      IMAGE_FUNCTION_CROP |
 				      IMAGE_FUNCTION_PROPERTIES);
-	$this->_supportedFileExtensions = array('jpg',
-						'gif',
-						'png');
+	$this->_supportedMimeTypes = array('image/jpeg',
+					   'image/gif',
+					   'image/png');
     }
 
     /**
      * @see GalleryGraphics::getImageDimensions()
      */
-    function getImageDimensions($filename, $fileExtension=false) {
+    function getImageDimensions($filename, $mimeType=false) {
 
-	list($ret, $convertToPnmCmd) = $this->_convertToPnmCmd($filename, $fileExtension);
+	if (empty($mimeType)) {
+	    $mimeType = GalleryUtilities::getMimeType($filename);
+	}
+
+	list($ret, $convertToPnmCmd) = $this->_convertToPnmCmd($filename, $mimeType);
 	if ($ret->isError()) {
-	    return array($ret, null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 	
 	list($ret, $output) =
@@ -62,7 +66,7 @@ class NetPbmGraphics extends GalleryGraphics {
 					 '--allimages')));
 
 	if ($ret->isError()) {
-	    return array($ret, null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	foreach ($output as $line) {
@@ -144,12 +148,12 @@ class NetPbmGraphics extends GalleryGraphics {
 	/* Test validity by getting image dimensions */
 	list($ret, $width, $height) = $this->getImageDimensions($filename);
 	if ($ret->isError()) {
-	    return array($ret, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* 0x0 image is also invalid */
 	if ($width == 0 && $height == 0) {
-	    return array($ret, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	return array(GalleryStatus::success(), true);
@@ -173,7 +177,7 @@ class NetPbmGraphics extends GalleryGraphics {
 	}
 
 	/* Get a temp file name and figure out our convert-from-pnm command */
-	$tmpDir = $gallery->getConfig('core.directory.temp');
+	$tmpDir = $gallery->getConfig('data.gallery.tmp');
 	$tmpFilename = tempnam($tmpDir, 'g2');
 	if (empty($tmpFilename)) {
 	    /* This can happen if the $tmpDir path is bad */
@@ -181,9 +185,9 @@ class NetPbmGraphics extends GalleryGraphics {
 					__FILE__, __LINE__);
 	}
 
-	$fileExtension = GalleryUtilities::getFileExtension($sourceFilename);
+	$mimeType = GalleryUtilities::getMimeType($sourceFilename);
 	list($ret, $convertFromPnmCmd) =
-		$this->_convertFromPnmCmd($tmpFilename, $fileExtension);
+		$this->_convertFromPnmCmd($tmpFilename, $mimeType);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -219,27 +223,28 @@ class NetPbmGraphics extends GalleryGraphics {
      * @return array object GalleryStatus a status code,
      *               array 1 or more string commands
      */
-    function _convertToPnmCmd($filename, $fileExtension=false) {
+    function _convertToPnmCmd($filename, $mimeType=false) {
+	global $gallery;
 
-	if (empty($fileExtension)) {
-	    $fileExtension = GalleryUtilities::getFileExtension($filename);
+	if (empty($mimeType)) {
+	    $mimeType = GalleryUtilities::getMimeType($filename);
 	}
 	
-	switch($fileExtension) {
-	case 'png':
+	switch($mimeType) {
+	case 'image/png':
 	    $cmd = $this->_pnmCmd('pngtopnm');
 	    break;
 
-	case 'jpg':
-	case 'jpeg':
+	case 'image/jpeg':
 	    $cmd = $this->_pnmCmd('jpegtopnm');
 	    break;
 
-	case 'gif':
+	case 'image/gif':
 	    $cmd = $this->_pnmCmd('giftopnm');
 	    break;
 
 	default:
+	    $gallery->debug('Unsupported file type: ' . $mimeType);
 	    return array(GalleryStatus::error(ERROR_UNSUPPORTED_FILE_TYPE,
 					      __FILE__, __LINE__),
 			 null);
@@ -257,7 +262,7 @@ class NetPbmGraphics extends GalleryGraphics {
      * @return array object GalleryStatus a status code,
      *               array 1 or more string commands
      */
-    function _convertFromPnmCmd($filename, $fileExtension) {
+    function _convertFromPnmCmd($filename, $mimeType) {
 	global $gallery;
 
 	list ($ret, $pnmtojpeg) =
@@ -272,22 +277,21 @@ class NetPbmGraphics extends GalleryGraphics {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	switch($fileExtension) {
-	case 'png':
+	switch($mimeType) {
+	case 'image/png':
 	    $cmd = array($this->_pnmCmd('pnmtopng'),
 			 '>',
 			 $filename);
 	    break;
 
-	case 'jpg':
-	case 'jpeg':
+	case 'image/jpeg':
 	    $cmd = array($this->_pnmCmd($pnmtojpeg),
 			 '--quality=' . $jpegQuality,
 			 '>',
 			 $filename);
 	    break;
 
-	case 'gif':
+	case 'image/gif':
 	    $cmd = array(array($this->_pnmCmd('ppmquant'),
 			       '256'),
 			 array($this->_pnmCmd('ppmtogif'),

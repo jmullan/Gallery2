@@ -15,25 +15,6 @@ class InitializeGalleryTestCase extends TestCase {
 	}
 
 	$retArray = array();
-	$dataBase = $gallery->getConfig('code.gallery.base') . '../gallerydata/';
-	$retArray[] = $gallery->setModuleParameter('core', 'data.gallery.base', $dataBase);
-	$retArray[] = $gallery->setModuleParameter('core', 'data.gallery.albums', $dataBase . 'albums/');
-	$retArray[] = $gallery->setModuleParameter('core', 'data.gallery.cache', $dataBase . 'cache/');
-	$retArray[] = $gallery->setModuleParameter('core', 'data.gallery.tmp', $dataBase . 'tmp/');
-
-	$dirs[] = $dataBase . 'albums/';
-	$dirs[] = $dataBase . 'cache/';
-	$dirs[] = $dataBase . 'tmp/';
-	
-	
-	$smartyBase = $dataBase . 'smarty/';
-	$retArray[] = $gallery->setModuleParameter('core', 'data.smarty.base', $smartyBase);
-	$retArray[] = $gallery->setModuleParameter('core', 'data.smarty.templates_c',
-						   $smartyBase . 'templates_c/');
-
-	$dirs[] = $smartyBase;
-	$dirs[] = $smartyBase . 'templates_c';
-
 	$retArray[] = $gallery->setModuleParameter('core', 'permissions.directory', 0755);
 	$retArray[] = $gallery->setModuleParameter('core', 'permissions.file', 0755);
 	$retArray[] = $gallery->setModuleParameter('core', 'exec.expectedStatus', 0);

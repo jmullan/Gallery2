@@ -181,6 +181,7 @@ class Gallery {
     function reset() {
 	$this->_locks = array();
 	$this->_modules = array();
+	$this->_storage = null;
     }
 
     /**
@@ -709,7 +710,7 @@ class Gallery {
      * @return array object GalleryStatus a status code
      *               object Smarty
      */
-    function getSmarty($compileDir=false) {
+    function getSmarty() {
 	if (empty($this->_smarty)) {
 	    /*
 	     * Load and configure Smarty.
@@ -719,16 +720,8 @@ class Gallery {
 	    $this->_smarty->template_dir = $this->_config['config.smarty.templates'];
 
 	    /* These are module params */
-	    if (empty($compileDir)) {
-		list ($ret, $smartyTmp) =
-		    $this->getModuleParameter('core', 'data.smarty.base');
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-		$this->_smarty->compile_dir = $smartyTmp . '/templates_c';
-	    } else {
-		$this->_smarty->compile_dir = $compileDir;
-	    }
+	    $this->_smarty->compile_dir =
+		$this->getConfig('data.smarty.templates_c');
 
 	    if ($this->getDebug()) {
 		$this->_smarty->debugging = true;
@@ -737,6 +730,8 @@ class Gallery {
 	    /* Set up some hooks */
 	    $this->_smarty->register_function('galleryUrl', 'galleryUrlGenerator');
 	    $this->_smarty->register_function('galleryText', 'galleryTranslator');
+	    $this->_smarty->register_function('galleryFormOpen', 'galleryFormOpenGenerator');
+	    $this->_smarty->register_function('galleryFormClose', 'galleryFormCloseGenerator');
 	}
 
 	return array(GalleryStatus::success(), $this->_smarty);
@@ -785,6 +780,9 @@ class Gallery {
 		}
 	    }
 
+	    /* Force the core module's status */
+	    $modules['core'] = array('active' => 1, 'installed' => 1);
+
 	    $this->_modules['_status'] = $modules;
 	}
 
@@ -793,15 +791,16 @@ class Gallery {
     }
 
     /**
-     * Set a module instance in the modules table.
+     * Set the core module instance in the modules table.
      *
-     * This should only be used to set the CoreModule, since it can't be loaded
-     * with the loadModule() call for chicken-and-egg reasons.
+     * The core module can't be loaded from inside Gallery with the
+     * loadModule() call for chicken-and-egg reasons, so we have to be able to
+     * set it here.
      *
      * @param object GalleryModule a module
      */
-    function setModule($moduleName, $instance) {
-	$this->_modules[$moduleName]['instance'] = $instance;
+    function setCoreModule($instance) {
+	$this->_modules['core']['instance'] = $instance;
     }
 
     /**

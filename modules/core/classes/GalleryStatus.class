@@ -78,40 +78,40 @@ define('ERROR_BAD_PARAMETER', 0x00000010);
 define('ERROR_MISSING_VALUE', 0x00000020);
 
 /**
- * An unspecified database error occurred
+ * An unspecified storage error occurred
  *
- * @constant ERROR_DATABASE_FAILURE
+ * @constant ERROR_STORAGE_FAILURE
  */
-define('ERROR_DATABASE_FAILURE', 0x00000040);
+define('ERROR_STORAGE_FAILURE', 0x00000040);
 
 /**
- * A database operation was attempted with an invalid database connection
+ * A storage operation was attempted with an invalid storage connection
  *
- * @constant ERROR_DATABASE_CONNECTION
+ * @constant ERROR_STORAGE_CONNECTION
  */
-define('ERROR_DATABASE_CONNECTION', 0x00000080);
+define('ERROR_STORAGE_CONNECTION', 0x00000080);
+
+/**
+ * A storage operation was attempted with invalid credentials
+ *
+ * @constant ERROR_STORAGE_BAD_AUTHENTICAITON
+ */
+define('ERROR_STORAGE_BAD_AUTHENTICATON', 0x00000100);
 
 /**
  * You attempted to modify an object using an in-memory version that
- * is out of date with the version that's in the database
+ * is out of date with the version that's in the storage
  *
  * @constant ERROR_OBSOLETE_DATA
  */
-define('ERROR_OBSOLETE_DATA', 0x00000100);
+define('ERROR_OBSOLETE_DATA', 0x00000200);
 
 /**
  * You attempted an operation which requires a lock.
  *
  * @constant ERROR_LOCK_REQUIRED
  */
-define('ERROR_LOCK_REQUIRED', 0x00000200);
-
-/**
- * You attempted to acquire a lock illegally
- *
- * @constant ERROR_ILLEGAL_LOCK
- */
-define('ERROR_ILLEGAL_LOCK', 0x00000400);
+define('ERROR_LOCK_REQUIRED', 0x00000400);
 
 /**
  * We tried a file operation on an unsupported file type

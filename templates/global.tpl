@@ -8,6 +8,7 @@
     {/if}
   </head>
   <body>
+	
     {if !empty($master.error)}
     {$master.error}
     {else}

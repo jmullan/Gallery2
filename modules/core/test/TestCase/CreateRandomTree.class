@@ -115,7 +115,7 @@ class CreateRandomTreeTestCase extends TestCase {
 	    }
 	    $thumbnail->setDerivativeSourceId($photo->getId());
 	    $thumbnail->setDerivativeCommands("scale 200");
-	    $thumbnail->setDerivativeFileExtension($photo->getFileExtension());
+	    $thumbnail->setDerivativeMimeType($photo->getMimeType());
 
 	    $thumbnail->save();
 	    if ($ret->isError()) {
@@ -135,7 +135,7 @@ class CreateRandomTreeTestCase extends TestCase {
 		$scale = rand(300, 600);
 		$resize->setDerivativeSourceId($photo->getId());
 		$resize->setDerivativeCommands("scale $scale");
-		$resize->setDerivativeFileExtension($photo->getFileExtension());
+		$resize->setDerivativeMimeType($photo->getMimeType());
 
 		$ret = $resize->save();
 		if ($ret->isError()) {

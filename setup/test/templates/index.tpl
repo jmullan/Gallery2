@@ -40,13 +40,14 @@
 	      <a href="index.php?moduleName={$test.moduleName}&testName={$test.testName}">{$test.testName}</a>
 	    </td>
 	    <td class="{$rowClass}">
+	      {if (empty($test.iterations))}
+	      &nbsp;
+	      {else}
 	      {foreach from=$test.iterations item=iter}
 	      <a href=index.php?moduleName={$test.moduleName}&testName={$test.testName}&iterations={$iter.count}>
 		{$iter.title}
 	      </a>
 	      {/foreach}
-	      {if (empty($test.iterations))}
-	      &nbsp;
 	      {/if}
 	    </td>
 	    <td class="{$rowClass}">

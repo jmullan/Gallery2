@@ -23,11 +23,13 @@
       </td>
     </tr>
 
+    {if !empty($navigator.jumprange)}
     <tr>
       <td width="100%">
 	{include file="pageNavigator.tpl"}
       </td>
     </tr>
+    {/if}
 
     {if !empty($item.description)}
     <tr>
@@ -59,11 +61,13 @@
       </td>
     </tr>
 
+    {if !empty($navigator.jumprange)}
     <tr>
       <td width="100%">
 	{include file="pageNavigator.tpl"}
       </td>
     </tr>
+    {/if}
 
     <tr>
       <td>

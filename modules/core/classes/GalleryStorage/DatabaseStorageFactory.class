@@ -35,6 +35,8 @@ class DatabaseStorageFactory {
      * @return a DatabaseStorage instance
      */
     function newInstance($type, $config) {
+	global $gallery;
+	
 	switch ($type) {
 	case 'mysql':
 	    $base = dirname(__FILE__);
@@ -43,8 +45,10 @@ class DatabaseStorageFactory {
 			 new MySqlDatabaseStorage($config));
 	    
 	default:
+	    $gallery->debug("Unknown storage type '$type'");
 	    return array(GalleryStatus::error(ERROR_UNIMPLEMENTED,
-					      __FILE__, __LINE__));
+					      __FILE__, __LINE__),
+			 null);
 	}
     }
 }

@@ -28,7 +28,7 @@
       int(11)
     
       ,
-    COLUMN_PREFIXderivativeFileExtension
+    COLUMN_PREFIXderivativeMimeType
       varchar(
       
           128

@@ -44,7 +44,7 @@ class GalleryDataItem_core extends GalleryItem {
      */
 
     /**
-     * The type of data file
+     * The file extension of the data file
      *
      * @g2 <member>
      * @g2   <member-name>fileExtension</member-name>
@@ -55,6 +55,19 @@ class GalleryDataItem_core extends GalleryItem {
      * @access private
      */
     var $_fileExtension;
+
+    /**
+     * The mime type of the data file
+     *
+     * @g2 <member>
+     * @g2   <member-name>mimeType</member-name>
+     * @g2   <member-type>STRING</member-type>
+     * @g2 </member>
+     *
+     * @var string $_mimeType
+     * @access private
+     */
+    var $_mimeType;
 
     /*
      * ****************************************
@@ -146,7 +159,8 @@ class GalleryDataItem_core extends GalleryItem {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	/* Set my file extension */
+	/* Set my mime type and file extension */
+	$this->setMimeType(GalleryUtilities::getMimeType($inputFileName));
 	$this->setFileExtension(GalleryUtilities::getFileExtension($inputFileName));
 
 	return GalleryStatus::success();

@@ -25,9 +25,7 @@ class ActivateModuleTestCase extends TestCase {
 	global $gallery;
 
 	$moduleStatus = $gallery->getModuleStatus();
-	if ($moduleStatus[$this->_moduleName]) {
-	    $gallery->debug($this->_moduleName . ' is already activated.');
-	} else {
+	if (empty($moduleStatus[$this->_moduleName]['active'])) {
 	    list ($ret, $module) = $gallery->loadModule($this->_moduleName);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
@@ -37,6 +35,8 @@ class ActivateModuleTestCase extends TestCase {
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
+	} else {
+	    $gallery->debug($this->_moduleName . ' is already activated.');
 	}
 
 	return GalleryStatus::success();

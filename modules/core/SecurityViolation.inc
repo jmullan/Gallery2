@@ -18,21 +18,27 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-class SecurityViolationView /* extends GalleryView */ {
+class SecurityViolationView extends GalleryView {
 
-    function isImmediate() {
-	return false;
-    }
-
-    function renderBuffered() {
+    /**
+     * @see GalleryView::fetchHead
+     */
+    function fetchHead() {
 	global $gallery;
 
 	$text = galleryTranslator("Security Violation!");
-	$head = "<head>$text</head>";
-	$body = "$text";
+	$html = "<title>$text</title>";
+	return array(GalleryStatus::success(), $html);
+    }
 
-	return array(GalleryStatus::success(),
-		     array('head' => $head,
-			   'body' => $body));
+
+    /**
+     * @see GalleryView::fetchBody
+     */
+    function fetchBody() {
+	global $gallery;
+
+	$text = galleryTranslator("Security Violation!");
+	return array(GalleryStatus::success(), $text);
     }
 }

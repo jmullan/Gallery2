@@ -131,8 +131,7 @@ class GalleryAlbumItem_core extends GalleryItem {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	list ($ret, $parentPath) =
-	    $gallery->getModuleParameter('core', 'data.gallery.albums');
+	$parentPath = $gallery->getConfig('data.gallery.albums');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

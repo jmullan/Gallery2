@@ -18,27 +18,56 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-class ShowItemView /* extends GalleryView */ {
+class ShowItemView extends GalleryView {
 
-    function isImmediate() {
-	return false;
-    }
-
-    function renderBuffered() {
+    /**
+     * @see GalleryView::fetchHead
+     */
+    function fetchHead() {
 	global $gallery;
 
-	/* If we don't have an item id, default to the root */
-	$itemId = GalleryUtilities::getRequestVariables('itemId');
-	if (empty($itemId)) {
-	    list ($ret, $itemId) =
-		$gallery->getModuleParameter('core', 'id.rootAlbum');
+	list ($ret, $item) = $this->_getItem();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Figure out what style sheet to use and calculate its relative URL */
+	$style = $item->getStyle();
+	if (empty($style)) {
+	    list ($ret, $style) =
+		$gallery->getModuleParameter('core', 'default.style');
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
+	$style = $gallery->getConfig('code.gallery.styles') . $style . '.css';
+	$dirbase = $gallery->getConfig('code.gallery.base');
+	$style = str_replace($dirbase, '', $style);
+	$urlbase = $gallery->getConfig('url.gallery.base');
+	if (!empty($urlbase)) {
+	    $style = $urlbase . '/' . $style;
+	}
 
-	/* Load the item */
-	list ($ret, $item) = $gallery->loadEntitiesById($itemId);
+	/* Render the HTML head */
+	list ($ret, $smarty) = $gallery->getSmarty();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$smarty->assign('item', $item->getMemberData());
+	$smarty->assign('style', $style);
+	$smarty->template_dir = dirname(__FILE__) . '/templates';
+	$html = $smarty->fetch('head.tpl');
+
+	return array(GalleryStatus::success(), $html);
+    }
+
+    /**
+     * @see GalleryView::fetchBody
+     */
+    function fetchBody() {
+	global $gallery;
+
+	list ($ret, $item) = $this->_getItem();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -70,41 +99,34 @@ class ShowItemView /* extends GalleryView */ {
 	$layout = new $layoutClassName();
 
 	/* Render and retrieve the body */
-	list ($ret, $body) = $layout->render($item);
+	list ($ret, $html) = $layout->render($item);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+	
+	return array(GalleryStatus::success(), $html);
+    }
 
-	/* Figure out what style sheet to use and calculate its relative URL */
-	$style = $item->getStyle();
-	if (empty($style)) {
-	    list ($ret, $style) =
-		$gallery->getModuleParameter('core', 'default.style');
+    function _getItem() {
+	global $gallery;
+	
+	/* If we don't have an item id, default to the root */
+	$itemId = GalleryUtilities::getRequestVariables('itemId');
+	if (empty($itemId)) {
+	    list ($ret, $itemId) =
+		$gallery->getModuleParameter('core', 'id.rootAlbum');
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
-	$style = $gallery->getConfig('code.gallery.styles') . $style . '.css';
-	$dirbase = $gallery->getConfig('code.gallery.base');
-	$style = str_replace($dirbase, '', $style);
-	$urlbase = $gallery->getConfig('url.gallery.base');
-	if (!empty($urlbase)) {
-	    $style = $urlbase . '/' . $style;
-	}
 
-	/* Render the HTML head */
-	list ($ret, $smarty) = $gallery->getSmarty();
+	/* Load the item */
+	list ($ret, $item) = $gallery->loadEntitiesById($itemId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$smarty->assign('item', $item->getMemberData());
-	$smarty->assign('style', $style);
-	$smarty->template_dir = dirname(__FILE__) . '/templates';
-	$head = $smarty->fetch('head.tpl');
 
-	return array(GalleryStatus::success(),
-		     array('head' => $head,
-			   'body' => $body));
+	return array(GalleryStatus::success(), $item);
     }
 }
 ?>

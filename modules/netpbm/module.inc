@@ -52,5 +52,9 @@ class NetPbmModule extends GalleryModule {
 	return parent::init();
     }
 
+    function getAdminView() {
+	require_once(dirname(__FILE__) . '/NetPbmModuleAdmin.inc');
+	return array(GalleryStatus::success(), new NetPbmModuleAdminView());
+    }
 }
 ?>

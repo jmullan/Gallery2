@@ -75,6 +75,7 @@ class CoreModule extends GalleryModule {
 	require_once($classDir . 'GalleryViewCountMap.class');
 	require_once($classDir . 'GalleryModuleMap.class');
 	require_once($classDir . 'GalleryModuleParameterMap.class');
+	require_once($classDir . 'GalleryView.class');
 
 	/*
 	 * Set up our Gallery global.  It's important to use a reference here because
@@ -84,7 +85,8 @@ class CoreModule extends GalleryModule {
 	 * (especially important when we're embedded inside another application).
 	 */
 	$gallery =& new Gallery();
-	$gallery->setModule('core', $this);
+	$GLOBALS['gallery'] =& $gallery;
+	$gallery->setCoreModule($this);
 
 	/* Configure the Platform */
 	if (substr(PHP_OS, 0, 3) == 'WIN') {
@@ -111,19 +113,11 @@ class CoreModule extends GalleryModule {
     }
 
     /**
-     * Return the core Gallery instance that we initialized in the init() method
-     *
-     * @return object Gallery the core Gallery instance
-     */
-    function &getGallery() {
-	return $this->_gallery;
-    }
-
-    /**
-     * @see GalleryModule::getAdminView();
+     * @see GalleryModule::getAdminContent();
      */
     function getAdminView() {
-	return array(GalleryStatus::success(), 'core::Admin.inc');
+	require_once(dirname(__FILE__) . '/CoreModuleAdmin.inc');
+	return array(GalleryStatus::success(), new CoreModuleAdminView());
     }
 }
 ?>

@@ -212,7 +212,7 @@ class DatabaseStorage extends GalleryStorage {
 	$this->_db = ADONewConnection($this->getType());
 	$this->_traceStop();
 	if (empty($this->_db)) {
-	    return GalleryStatus::error(ERROR_DATABASE_FAILURE,
+	    return GalleryStatus::error(ERROR_STORAGE_FAILURE,
 					__FILE__, __LINE__);
 	}
 
@@ -234,7 +234,7 @@ class DatabaseStorage extends GalleryStorage {
 	if (!$ret) {
 	    $this->_connectionStatus = DATABASE_STATUS_NOT_CONNECTED;
 	    $this->_db = null;
-	    return GalleryStatus::error(ERROR_DATABASE_FAILURE,
+	    return GalleryStatus::error(ERROR_STORAGE_FAILURE,
 					__FILE__, __LINE__);
 	} else {
 	    $this->_connectionStatus = DATABASE_STATUS_CONNECTED;
@@ -269,7 +269,7 @@ class DatabaseStorage extends GalleryStorage {
 	global $gallery;
 	
 	if ($this->_connectionStatus != DATABASE_STATUS_CONNECTED) {
-	    return array(GalleryStatus::error(ERROR_DATABASE_CONNECTION,
+	    return array(GalleryStatus::error(ERROR_STORAGE_CONNECTION,
 					      __FILE__, __LINE__),
 			 null);
 	}
@@ -378,7 +378,7 @@ class DatabaseStorage extends GalleryStorage {
 		}
 		$recordSet->Close();
 	    } else {
-		return array(GalleryStatus::error(ERROR_DATABASE_FAILURE,
+		return array(GalleryStatus::error(ERROR_STORAGE_FAILURE,
 						  __FILE__, __LINE__),
 			     null);
 	    }
@@ -405,7 +405,7 @@ class DatabaseStorage extends GalleryStorage {
      */
     function saveEntity(&$entity) {
 	if ($this->_connectionStatus != DATABASE_STATUS_CONNECTED) {
-	    return GalleryStatus::error(ERROR_DATABASE_CONNECTION,
+	    return GalleryStatus::error(ERROR_STORAGE_CONNECTION,
 					__FILE__, __LINE__);
 	}
 
@@ -494,7 +494,7 @@ class DatabaseStorage extends GalleryStorage {
 		$recordSet = $this->_db->Execute($query, $data);
 		$this->_traceStop();
 		if (!$recordSet) {
-		    return GalleryStatus::error(ERROR_DATABASE_FAILURE,
+		    return GalleryStatus::error(ERROR_STORAGE_FAILURE,
 						__FILE__, __LINE__);
 		}
 	    }
@@ -549,7 +549,7 @@ class DatabaseStorage extends GalleryStorage {
 		$this->_traceStop();
 
 		if (!$recordSet) {
-		    return GalleryStatus::error(ERROR_DATABASE_FAILURE,
+		    return GalleryStatus::error(ERROR_STORAGE_FAILURE,
 						__FILE__, __LINE__);
 		} else {
 		    $affectedRows = $this->_db->Affected_Rows();
@@ -561,7 +561,7 @@ class DatabaseStorage extends GalleryStorage {
 			 * Holy shit, we just updated more than one row!  What do
 			 * we do now?
 			 */
-			return GalleryStatus::error(ERROR_DATABASE_FAILURE,
+			return GalleryStatus::error(ERROR_STORAGE_FAILURE,
 						    __FILE__, __LINE__);
 		    }
 		}
@@ -583,7 +583,7 @@ class DatabaseStorage extends GalleryStorage {
      */
     function deleteEntity(&$entity) {
 	if ($this->_connectionStatus != DATABASE_STATUS_CONNECTED) {
-	    return GalleryStatus::error(ERROR_DATABASE_CONNECTION,
+	    return GalleryStatus::error(ERROR_STORAGE_CONNECTION,
 					__FILE__, __LINE__);
 	}
 
@@ -620,7 +620,7 @@ class DatabaseStorage extends GalleryStorage {
 	    $recordSet = $this->_db->Execute($query, $data);
 	    $this->_traceStop();
 	    if (!$recordSet) {
-		return GalleryStatus::error(ERROR_DATABASE_FAILURE,
+		return GalleryStatus::error(ERROR_STORAGE_FAILURE,
 					    __FILE__, __LINE__);
 	    }
 	}
@@ -639,7 +639,7 @@ class DatabaseStorage extends GalleryStorage {
      */
     function newEntity(&$entity) {
 	if ($this->_connectionStatus != DATABASE_STATUS_CONNECTED) {
-	    return GalleryStatus::error(ERROR_DATABASE_CONNECTION,
+	    return GalleryStatus::error(ERROR_STORAGE_CONNECTION,
 					__FILE__, __LINE__);
 	}
 
@@ -670,7 +670,7 @@ class DatabaseStorage extends GalleryStorage {
      */
     function refreshEntity($entity) {
 	if ($this->_connectionStatus != DATABASE_STATUS_CONNECTED) {
-	    return GalleryStatus::error(ERROR_DATABASE_CONNECTION,
+	    return GalleryStatus::error(ERROR_STORAGE_CONNECTION,
 					__FILE__, __LINE__);
 	}
 
@@ -754,7 +754,7 @@ class DatabaseStorage extends GalleryStorage {
 	    $this->_traceStop();
 	    if (!$recordSet) {
 		$this->_releaseLockById($lockId);
-		return array(GalleryStatus::error(ERROR_DATABASE_FAILURE,
+		return array(GalleryStatus::error(ERROR_STORAGE_FAILURE,
 						  __FILE__, __LINE__),
 			     null);
 	    }
@@ -790,7 +790,7 @@ class DatabaseStorage extends GalleryStorage {
 	    $this->_traceStop();
 	    if (!$recordSet) {
 		$this->_releaseLockById($lockId);
-		return array(GalleryStatus::error(ERROR_DATABASE_FAILURE,
+		return array(GalleryStatus::error(ERROR_STORAGE_FAILURE,
 						  __FILE__, __LINE__),
 			     null);
 	    }
@@ -806,7 +806,7 @@ class DatabaseStorage extends GalleryStorage {
 	$this->_traceStop();
 	if (!$recordSet) {
 	    $this->_releaseLockById($lockId);
-	    return array(GalleryStatus::error(ERROR_DATABASE_FAILURE,
+	    return array(GalleryStatus::error(ERROR_STORAGE_FAILURE,
 					      __FILE__, __LINE__),
 			 null);
 	}
@@ -875,7 +875,7 @@ class DatabaseStorage extends GalleryStorage {
 	    $this->_traceStop();
 	    if (!$recordSet) {
 		$this->_releaseLockById($lockId);
-		return array(GalleryStatus::error(ERROR_DATABASE_FAILURE,
+		return array(GalleryStatus::error(ERROR_STORAGE_FAILURE,
 						  __FILE__, __LINE__),
 			     null);
 	    }
@@ -914,7 +914,7 @@ class DatabaseStorage extends GalleryStorage {
 	    $this->_traceStop();
 	    if (!$recordSet) {
 		$this->_releaseLockById($lockId);
-		return array(GalleryStatus::error(ERROR_DATABASE_FAILURE,
+		return array(GalleryStatus::error(ERROR_STORAGE_FAILURE,
 						  __FILE__, __LINE__),
 			     null);
 	    }
@@ -930,7 +930,7 @@ class DatabaseStorage extends GalleryStorage {
 	$this->_traceStop();
 	if (!$recordSet) {
 	    $this->_releaseLockById($lockId);
-	    return array(GalleryStatus::error(ERROR_DATABASE_FAILURE,
+	    return array(GalleryStatus::error(ERROR_STORAGE_FAILURE,
 					      __FILE__, __LINE__),
 			 null);
 	}
@@ -985,7 +985,7 @@ class DatabaseStorage extends GalleryStorage {
 	if ($recordSet) {
 	    return GalleryStatus::success();
 	} else {
-	    return array(GalleryStatus::error(ERROR_DATABASE_FAILURE,
+	    return array(GalleryStatus::error(ERROR_STORAGE_FAILURE,
 					      __FILE__, __LINE__),
 			 null);
 	}
@@ -1007,7 +1007,7 @@ class DatabaseStorage extends GalleryStorage {
      */
     function search($query, $data=array()) {
 	if ($this->_connectionStatus != DATABASE_STATUS_CONNECTED) {
-	    return array(GalleryStatus::error(ERROR_DATABASE_CONNECTION,
+	    return array(GalleryStatus::error(ERROR_STORAGE_CONNECTION,
 					      __FILE__, __LINE__),
 			 null);
 	}
@@ -1127,7 +1127,7 @@ class DatabaseStorage extends GalleryStorage {
 	    return array(GalleryStatus::success(),
 			 new DatabaseSearchResults($recordSet));
 	} else {
-	    return array(GalleryStatus::error(ERROR_DATABASE_FAILURE,
+	    return array(GalleryStatus::error(ERROR_STORAGE_FAILURE,
 					      __FILE__, __LINE__),
 			 null);
 	}
@@ -1167,7 +1167,7 @@ class DatabaseStorage extends GalleryStorage {
 	$recordSet = $this->_db->Execute($query, $data);
 	$this->_traceStop();
 	if (!$recordSet) {
-	    return GalleryStatus::error(ERROR_DATABASE_FAILURE,
+	    return GalleryStatus::error(ERROR_STORAGE_FAILURE,
 					__FILE__, __LINE__);
 	}
 
@@ -1207,7 +1207,7 @@ class DatabaseStorage extends GalleryStorage {
 	$recordSet = $this->_db->Execute($query, $data);
 	$this->_traceStop();
 	if (!$recordSet) {
-	    return GalleryStatus::error(ERROR_DATABASE_FAILURE,
+	    return GalleryStatus::error(ERROR_STORAGE_FAILURE,
 					__FILE__, __LINE__);
 	}
 
@@ -1254,10 +1254,50 @@ class DatabaseStorage extends GalleryStorage {
 	$recordSet = $this->_db->Execute($query, $data);
 	$this->_traceStop();
 	if (!$recordSet) {
-	    return GalleryStatus::error(ERROR_DATABASE_FAILURE,
+	    return GalleryStatus::error(ERROR_STORAGE_FAILURE,
 					__FILE__, __LINE__);
 	}
 
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Test to see if our authentication information for this GalleryStorage is
+     * valid.
+     *
+     * @return object GalleryStatus a status code
+     */
+    function testAuthentication() {
+	global $gallery;
+
+	/*
+	 * Create a temporary connection that doesn't attach to the default
+	 * database for this operation.
+	 */
+	$this->_traceStart();
+	$db = ADONewConnection($this->getType());
+	if (empty($db)) {
+	    return GalleryStatus::error(ERROR_STORAGE_FAILURE,
+					__FILE__, __LINE__);
+	}
+
+	/*
+	 * Turn on debugging in the database connection if Gallery is in debug
+	 * mode
+	 */
+	if ($gallery->getDebug()) {
+	    $db->debug = true;
+	}
+
+	$ret = $db->Connect($this->_hostname,
+			    $this->_username,
+			    $this->_password);
+	if (!$ret) {
+	    return GalleryStatus::error(ERROR_STORAGE_BAD_AUTHENTICATON,
+					__FILE__, __LINE__);
+	}
+
+	$db->Close();
 	return GalleryStatus::success();
     }
 
@@ -1276,7 +1316,7 @@ class DatabaseStorage extends GalleryStorage {
 	$this->_traceStart();
 	$db = ADONewConnection($this->getType());
 	if (empty($db)) {
-	    return GalleryStatus::error(ERROR_DATABASE_FAILURE,
+	    return GalleryStatus::error(ERROR_STORAGE_FAILURE,
 					__FILE__, __LINE__);
 	}
 
@@ -1292,7 +1332,7 @@ class DatabaseStorage extends GalleryStorage {
 			    $this->_username,
 			    $this->_password);
 	if (!$ret) {
-	    return GalleryStatus::error(ERROR_DATABASE_FAILURE,
+	    return GalleryStatus::error(ERROR_STORAGE_FAILURE,
 					__FILE__, __LINE__);
 	}
 	
@@ -1301,7 +1341,7 @@ class DatabaseStorage extends GalleryStorage {
 	$db->Close();
 	
 	if (empty($recordSet)) {
-	    return GalleryStatus::error(ERROR_DATABASE_FAILURE,
+	    return GalleryStatus::error(ERROR_STORAGE_FAILURE,
 					__FILE__, __LINE__);
 	}
 
@@ -1320,7 +1360,7 @@ class DatabaseStorage extends GalleryStorage {
 	global $gallery;
 	
 	if ($this->_connectionStatus != DATABASE_STATUS_CONNECTED) {
-	    return GalleryStatus::error(ERROR_DATABASE_CONNECTION,
+	    return GalleryStatus::error(ERROR_STORAGE_CONNECTION,
 					__FILE__, __LINE__);
 	}
 	
@@ -1454,7 +1494,7 @@ class DatabaseStorage extends GalleryStorage {
 	
 	if (empty($recordSet)) {
 	    $gallery->debug("Error reading schema table");
-	    return array(GalleryStatus::error(ERROR_DATABASE_FAILURE,
+	    return array(GalleryStatus::error(ERROR_STORAGE_FAILURE,
 					      __FILE__, __LINE__), null);
 	}
 
@@ -1496,7 +1536,7 @@ class DatabaseStorage extends GalleryStorage {
 		    $this->_traceStop();
 		    if (empty($recordSet)) {
 			$gallery->debug("Error trying to load $fileName");
-			return GalleryStatus::error(ERROR_DATABASE_FAILURE,
+			return GalleryStatus::error(ERROR_STORAGE_FAILURE,
 						    __FILE__, __LINE__);
 		    }
 		}
@@ -1530,7 +1570,7 @@ class DatabaseStorage extends GalleryStorage {
 	$this->_traceStart();
 	$db = ADONewConnection($this->getType());
 	if (empty($db)) {
-	    return GalleryStatus::error(ERROR_DATABASE_FAILURE,
+	    return GalleryStatus::error(ERROR_STORAGE_FAILURE,
 					__FILE__, __LINE__);
 	}
 
@@ -1546,7 +1586,7 @@ class DatabaseStorage extends GalleryStorage {
 			    $this->_username,
 			    $this->_password);
 	if (!$ret) {
-	    return GalleryStatus::error(ERROR_DATABASE_FAILURE,
+	    return GalleryStatus::error(ERROR_STORAGE_FAILURE,
 					__FILE__, __LINE__);
 	}
 	
@@ -1555,7 +1595,7 @@ class DatabaseStorage extends GalleryStorage {
 	$db->Close();
 	
 	if (empty($recordSet)) {
-	    return GalleryStatus::error(ERROR_DATABASE_FAILURE,
+	    return GalleryStatus::error(ERROR_STORAGE_FAILURE,
 					__FILE__, __LINE__);
 	}
 
@@ -1609,7 +1649,7 @@ class DatabaseStorage extends GalleryStorage {
 		    }
 		}
 	    } else {
-		return array(GalleryStatus::error(ERROR_DATABASE_FAILURE,
+		return array(GalleryStatus::error(ERROR_STORAGE_FAILURE,
 						  __FILE__, __LINE__),
 			     null);
 	    }
@@ -1689,7 +1729,7 @@ class DatabaseStorage extends GalleryStorage {
 	$this->_traceStop();
 	if (!$recordSet) {
 	    $this->_releaseLockById($lockId);
-	    return array(GalleryStatus::error(ERROR_DATABASE_FAILURE,
+	    return array(GalleryStatus::error(ERROR_STORAGE_FAILURE,
 					      __FILE__, __LINE__),
 			 null);
 	}
@@ -1706,7 +1746,7 @@ class DatabaseStorage extends GalleryStorage {
 	    $this->_traceStop();
 	    if (!$recordSet) {
 		$this->_releaseLockById($lockId);
-		return array(GalleryStatus::error(ERROR_DATABASE_FAILURE,
+		return array(GalleryStatus::error(ERROR_STORAGE_FAILURE,
 						  __FILE__, __LINE__),
 			     null);
 	    }

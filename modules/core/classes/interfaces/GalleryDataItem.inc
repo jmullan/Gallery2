@@ -51,6 +51,11 @@ class GalleryDataItem extends GalleryDataItem_core {
             'type' => STORAGE_TYPE_STRING
         );
     
+        $meta['members']['mimeType'] = array(
+            'class' => 'GalleryDataItem',
+            'type' => STORAGE_TYPE_STRING
+        );
+    
         return $meta;
     }
 
@@ -63,6 +68,8 @@ class GalleryDataItem extends GalleryDataItem_core {
         $data = parent::getMemberData();
     
         $data['fileExtension'] = $this->_fileExtension;
+    
+        $data['mimeType'] = $this->_mimeType;
     
         return $data;
     }
@@ -88,6 +95,29 @@ class GalleryDataItem extends GalleryDataItem_core {
     
         $this->_fileExtension = $value;
         $this->setModifiedFlag('fileExtension', MEMBER_MODIFIED);
+    }
+  
+    /**
+     * Get the value of mimeType
+     *
+     * @return STRING the value
+     */
+    function getmimeType() {
+        if (!isset($this->_mimeType)) {
+            return null;
+        }
+        return $this->_mimeType;
+    }
+
+    /**
+     * Set the value of mimeType
+     *
+     * @param STRING the value
+     */
+    function setmimeType($value) {
+    
+        $this->_mimeType = $value;
+        $this->setModifiedFlag('mimeType', MEMBER_MODIFIED);
     }
   
 }

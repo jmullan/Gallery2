@@ -267,12 +267,7 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
 	    }
 	} else {
 	    global $gallery;
-
-	    list ($ret, $path) =
-		$gallery->getModuleParameter('core', 'data.gallery.albums');
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
+	    $path = $gallery->getConfig('data.gallery.albums');
 	}
 
 	return array(GalleryStatus::success(),

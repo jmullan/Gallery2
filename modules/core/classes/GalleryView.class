@@ -1,0 +1,104 @@
+<?php
+/*
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2002 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+/**
+ * The API for module views
+ *
+ * This class defines the API for view classes used by the various modules to
+ * render HTML and binary data to the browser.
+ *
+ * @version $Id$
+ * @package GalleryCore
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+class GalleryView {
+
+    /**
+     * Is this an immediate or a buffered view?
+     *
+     * @return boolean true if it's an immediate view.
+     */
+    function isImmediate() {
+	return false;
+    }
+
+    /**
+     * Print out the immediate output for this view.  This will bypass any
+     * global templating.  This style of view should be reserved for binary
+     * data.
+     *
+     * @return array object GalleryStatus a status code
+     *               array ('head' => header html,
+     *                      'body' => body html)
+     */
+    function renderImmediate() {
+    }
+    
+    /**
+     * Return the HTML head content for this view.
+     *
+     * The content should not include the <head> tags, but it should include
+     * any content that should be contained within those tags in the resulting
+     * HTML.
+     *
+     * @return array object GalleryStatus a status code
+     *               string html content
+     */
+    function fetchHead() {
+	return false;
+    }
+
+    /**
+     * Return the HTML body content for this view.
+     *
+     * The content should not include the <body> tag, but it should include any
+     * content that should be contained within those tags in the resulting
+     * HTML.
+     *
+     * @return array object GalleryStatus a status code
+     *               string html content
+     */
+    function fetchBody() {
+	return false;
+    }
+
+    /**
+     * Return the head and body content with a single call
+     *
+     * @return array object GalleryStatus a status code
+     *               array ('head' => head HTML, 'body' => body html)
+     */
+    function fetchHeadAndBody() {
+	list ($ret, $head) = $this->fetchHead();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
+	list ($ret, $body) = $this->fetchBody();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	return array(GalleryStatus::success(),
+		     array('head' => $head,
+			   'body' => $body));
+    }
+}
+?>

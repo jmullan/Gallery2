@@ -26,8 +26,7 @@
 	
 	{section name=jumprange loop=$navigator.jumprange}
 	{if $navigator.jumprange[jumprange] == $pageNumber}
-	<img src="{$layoutUrl}/images/nav_dot_left.gif" alt="&gt;" border="0"
-	     width="8" height="11">
+	<img src="{$layoutUrl}/images/nav_dot_left.gif" alt="&gt;" border="0" width="8" height="11">
 	<b>{$navigator.jumprange[jumprange]}</b>
 	<img src="{$layoutUrl}/images/nav_dot_right.gif" alt="&lt;" border="0" width="8" height="11">
 	{else}
@@ -36,10 +35,11 @@
 	  {$navigator.jumprange[jumprange]}
 	</a>
 	{/strip}
+        {/if}
+
 	{if $navigator.jumprange[jumprange] != $pageNumber-1}
 	<img src="{$layoutUrl}/images/nav_dot.gif" alt="o" border="0"
 	     width="8" height="11">
-	{/if}
 	{/if}
 	{/section}
       </td>

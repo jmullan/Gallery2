@@ -19,6 +19,14 @@
         
       )
     
+      ,
+    COLUMN_PREFIXmimeType
+      varchar(
+      
+          128
+        
+      )
+    
     , 
   
     INDEX (COLUMN_PREFIXid)

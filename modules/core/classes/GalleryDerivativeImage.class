@@ -279,7 +279,7 @@ class GalleryDerivativeImage_core extends GalleryDerivative {
 	 */
 	if ($this->getWidth() == 0 || $this->getHeight() == 0) {
 	    list ($ret, $width, $height) =
-		$graphics->getImageDimensions($destPath, $this->getDerivativeFileExtension());
+		$graphics->getImageDimensions($destPath, $this->getDerivativeMimeType());
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
