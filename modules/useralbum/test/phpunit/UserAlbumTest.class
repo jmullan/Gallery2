@@ -237,6 +237,35 @@ class UserAlbumTest extends GalleryTestCase {
 		      'useralbum.targetLocation should equal core.id.rootAlbum');
     }
 
+    function testUserAlbumDeleteUserAlbum() {
+	/*
+	 *  Verify that when an album is deleted, references to that album are
+	 *  removed from the PluginParameterMap
+	 */
+	list ($ret, $user) = $this->_createRandomUser();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markForCleanup($user);
+
+	list ($ret, $userAlbum) = GalleryCoreApi::getPluginParameter('module', 'useralbum', 'albumId', $user->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(!empty($userAlbum), 'User should have valid album');
+
+	$ret = GalleryCoreApi::deleteEntityById($userAlbum);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $userAlbum) = GalleryCoreApi::getPluginParameter('module', 'useralbum', 'albumId', $user->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(!isset($userAlbum), 'User album should be empty');
+    }
+
     function testUserAlbumCollision() {
 	$userString = 'useralbum-' . rand();
 	$userName = 'testuser-' . $userString;

@@ -40,7 +40,7 @@ class UserAlbumModule extends GalleryModule /* and GalleryEventListener */ {
 	$this->setVersion('0.8.8');
 	$this->setGroup('gallery', $this->translate('Gallery'));
 	$this->setCallbacks('registerEventListeners|getSiteAdminViews|getSystemLinks');
-	$this->setRequiredCoreApi(array(3, 0));
+	$this->setRequiredCoreApi(array(3, 2));
 	$this->setRequiredModuleApi(array(0, 9));
     }
 
@@ -128,6 +128,7 @@ class UserAlbumModule extends GalleryModule /* and GalleryEventListener */ {
      * Event handler for GalleryEntity::save, ::delete and Gallery::Login events
      * Create new top level album with appropriate permissions when a GalleryUser is created
      * Reset the targetAlbum to root if the target is ever deleted
+     * Remove albumId param if the user's album is deleted
      * Redirect to user album after login, if enabled in site admin
      *
      * @see GalleryEventListener::handleEvent
@@ -144,7 +145,8 @@ class UserAlbumModule extends GalleryModule /* and GalleryEventListener */ {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		if ($createMode == 'immediate') {
-		    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/UserAlbumHelper.class');
+		    GalleryCoreApi::requireOnce(dirname(__FILE__) . 
+						'/classes/UserAlbumHelper.class');
 
 		    $ret = UserAlbumHelper::createUserAlbum($user);
 		    if ($ret->isError()) {
@@ -175,6 +177,16 @@ class UserAlbumModule extends GalleryModule /* and GalleryEventListener */ {
 		}
 
 		$ret = $this->setParameter('targetLocation', $rootId);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	    } else {
+		/*
+		 * Delete the albumid value from the ParameterMap so we don't get
+		 * MISSING_OBJECT errors when the user clicks their 'Your Album' link
+		 */
+		$ret = GalleryCoreApi::removePluginParameterByValue('module', 'useralbum', 
+								    'albumId', $entity->getId());
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
