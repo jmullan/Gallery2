@@ -342,7 +342,9 @@ class TestCase extends Assert /* implements Test */ {
     $this->fTiming['start'] = microtime();
     $this->setUp();
     $this->assert(!empty($this->fLifeCycle['setUp']), 'TestSuite setUp() method did not call parent::setUp()');
-    $this->runTest();
+    if (!($this->errored() || $this->failed())) {
+	$this->runTest();
+    }
     $this->tearDown();
     $this->assert(!empty($this->fLifeCycle['tearDown']), 'TestSuite tearDown() method did not call parent::tearDown()');
     $this->fTiming['stop'] = microtime();
