@@ -134,6 +134,20 @@
 	  </td>
 	</tr>
 
+	<!-- {if empty($localServerDirList)} -->
+	<tr>
+	  <td>
+	    <i>
+	      {gallery->text text="For security purposes, you can't use this feature until the Gallery Site Administrator configures a set of legal upload directories."}
+	      {if $isAdmin} 
+	      <a href="{gallery->url view="core:SiteAdmin" subView="core:AdminCore"}">
+		[{gallery->text text="site admin"}]
+	      </a>
+	      {/if}
+	    </i>
+	  </td>
+	</tr>
+	<!-- {else} -->
 	<tr>
 	  <td>
 	    {gallery->bigFontSize}
@@ -144,19 +158,40 @@
 
 	<tr>
 	  <td>
-	    {gallery->input type=text size=80 name="form.path"}{$form.path}{/gallery->input}
-	    {if $platform == 'unixplatform'}
+	    {gallery->input type=text size=80 name="form.localServerPath"}{$form.localServerPath}{/gallery->input}
+
+	    {if isset($form.error.localServerPath.missing)}
 	    <br>
-	    {gallery->text text="Example: /var/www/htdocs/upload"}
-	    <br>
-	    {gallery->text text="Example: /tmp/images"}
+	    {gallery->errorFontColor}
+	    {gallery->text text="You must enter a directory."}
+	    {/gallery->errorFontColor}
 	    {/if}
-	    {if $platform == 'winntplatform'}
+
+	    {if isset($form.error.localServerPath.invalid)}
 	    <br>
-	    {gallery->text text="Example: c:\\windows\\temp\\images"}
-	    <br>
-	    {gallery->text text="Example: c:\\ftp"}
+	    {gallery->errorFontColor}
+	    {gallery->text text="The directory you entered is invalid.  Make sure that the directory is readable by all users."}
+	    {/gallery->errorFontColor}
 	    {/if}
+
+	    {if isset($form.error.localServerPath.illegal)}
+	    <br>
+	    {gallery->errorFontColor}
+	    {gallery->text text="The directory you entered is illegal.  It must be a sub directory of one of the directories listed below."}
+	    {/gallery->errorFontColor}
+	    {/if}
+
+	    <br>
+	    <b> {gallery->text text="Legal Directories"} </b>
+	    {if $isAdmin}
+	    <a href="{gallery->url view="core:SiteAdmin" subView="core:AdminCore"}">
+	      [{gallery->text text="modify"}]
+	    </a>
+	    {/if}
+	    {foreach from=$localServerDirList item=dir}
+	    <br>
+	    {$dir}
+	    {/foreach}
 	  </td>
 	</tr>
 
@@ -165,10 +200,32 @@
 	    &nbsp;
 	  </td>
 	</tr>
+	<!-- {/if} -->
+
+	<!-- {if !empty($form.localServerFiles)} -->
+	<tr>
+	  <td>
+	    <table>
+	      {foreach from=$form.localServerFiles item=file}
+		<tr>
+		  <td>
+		    {$file.fileName}
+		    {gallery->text one="(type: %s, size: %d byte)"
+		                   many="(type: %s, size: %d bytes)"
+		                   count=$file.stat.size
+		                   arg1=$file.itemType
+		                   arg2=$file.stat.size}
+		  </td>
+		</tr>
+	      {/foreach}
+	    </table>
+	  </td>
+	</tr>
+	<!-- {/if} -->
 
 	<tr>
 	  <td>
-	    {gallery->input type="submit" name="form.action.addFromLocalServer"}{gallery->text text="Find Files"}{/gallery->input}
+	    {gallery->input type="submit" name="form.action.findFilesFromLocalServer"}{gallery->text text="Find Files"}{/gallery->input}
 	  </td>
 	</tr>
 

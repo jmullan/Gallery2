@@ -60,19 +60,20 @@ class ItemAddChildrenController extends GalleryController {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	$platform = $gallery->getPlatform();
+
 	/*
 	 * See if the album has a thumbnail.  If not, we'll create one during
 	 * this upload.
 	 */
-	list ($ret, $thumbnailTable) =
-	    GalleryDerivativeHelper::fetchThumbnailsByItemIds($item->getId());
+	list ($ret, $thumbnailTable) = GalleryDerivativeHelper::fetchThumbnailsByItemIds($item->getId());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$albumNeedsThumbnail = empty($thumbnailTable) ? true : false;
 	
 	if (isset($form['action']['addFromBrowser'])) {
-
+	    
 	    /* Upload any new files */
 	    for ($i = 1; $i <= $form['uploadBoxCount']; $i++) {
 		$file = $form['fileUpload'][$i];
@@ -115,6 +116,9 @@ class ItemAddChildrenController extends GalleryController {
 	    $redirectParams['view'] = 'core:ItemAdmin';
 	    $redirectParams['subView'] = 'core:ItemAddChildren';
 	    $redirectParams['itemId'] = $itemId;
+
+	} else if (isset($form['action']['findFilesFromLocalServer'])) {
+	    /* Delegate back to the same view */
 	}
 
 	$ret = $gallery->releaseLocks($lockIds);
@@ -159,6 +163,11 @@ class ItemAddChildrenView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	list ($ret, $isAdmin) = GalleryUserGroupMap::isUserInSiteAdminGroup();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	list ($ret, $item) = $gallery->loadEntitiesById($itemId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -173,11 +182,25 @@ class ItemAddChildrenView extends GalleryView {
 	    $form = array();
 
 	    $form['uploadBoxCount'] = 4;
-	    $form['path'] = '';
+	    $form['localServerPath'] = '';
 	}
 
-	$session =& $gallery->getSession();
+	list ($ret, $localServerDirs) = $gallery->getModuleParameter('core', 'uploadLocalServer.dirs');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	if (empty($localServerDirs)) {
+	    $localServerDirList = array();
+	} else {
+	    $localServerDirList = split(',', $localServerDirs);
+	}
 	
+	/*
+	 * If the mode is empty get it from the session.  If it's empty there,
+	 * default to uploading from the browser.  Either way, save the user's
+	 * preference in the session.
+	 */
+	$session =& $gallery->getSession();
 	if (empty($mode)) {
 	    list ($ret, $mode) = $session->get('core.view.ItemAddChildren.mode');
 	    if ($ret->isError()) {
@@ -191,13 +214,73 @@ class ItemAddChildrenView extends GalleryView {
 	$session->put('core.view.ItemAddChildren.mode', $mode);
 
 	/* Look up the platform type */
-	$platform = get_class($gallery->getPlatform());
+	$platform = $gallery->getPlatform();
+
+	/* If we're uploading from the local server, get a file list now */
+	if (isset($form['action']['findFilesFromLocalServer'])) {
+
+	    /* Validate the path */
+	    $form['localServerFiles'] = array();
+	    if (empty($form['localServerPath'])) {
+		$form['error']['localServerPath']['missing'] = 1;
+	    } else if (!$platform->file_exists($form['localServerPath']) ||
+		       !$platform->is_readable($form['localServerPath'])) {
+		$form['error']['localServerPath']['invalid'] = 1;
+	    } else if (!GalleryUtilities::isPathInList($form['localServerPath'], $localServerDirList)) {
+		$form['error']['localServerPath']['illegal'] = 1;
+	    } else {
+		$mimeTypeItemMap = array();
+		$path = $form['localServerPath'];
+		if ($platform->is_dir($path)) {
+		    $handle = $platform->opendir($path);
+
+		    while (false !== ($fileName = readdir($handle))) {
+			$gallery->guaranteeTimeLimit(5);
+			if ($fileName == '.' || $fileName == '..') {
+			    continue;
+			}
+
+			$filePath = $path . '/' . $fileName;
+			if (!$platform->is_dir($filePath) && $platform->is_readable($filePath)){
+			    $mimeType = GalleryUtilities::getMimeType($fileName);
+			    if (!isset($mimeTypeItemMap[$mimeType])) {
+				list ($ret, $mimeTypeItemMap[$mimeType]) = GalleryItemHelper::newItemByMimeType($mimeType);
+				if ($ret->isError()) {
+				    return array($ret->wrap(__FILE__, __LINE__), null);
+				}
+			    }
+			    
+			    $form['localServerFiles'][] = array('dirName' => $path,
+								'fileName' => $fileName,
+								'stat' => $platform->stat($filePath),
+								'itemType' => $mimeTypeItemMap[$mimeType]->itemTypeName());
+			}
+		    }
+		    closedir($handle);
+			  
+		} else if ($platform->is_file($path) && !$platform->is_link($path)) {
+		    $mimeType = GalleryUtilities::getMimeType($path);
+		    if (!isset($mimeTypeItemMap[$mimeType])) {
+			list ($ret, $mimeTypeItemMap[$mimeType]) = GalleryItemHelper::newItemByMimeType($mimeType);
+			if ($ret->isError()) {
+			    return array($ret->wrap(__FILE__, __LINE__), null);
+			}
+		    }
+
+		    $form['localServerFiles'][] = array('dirName' => dirname($path),
+							'fileName' => basename($path),
+							'stat' => $platform->stat($path),
+							'itemType' => $mimeTypeItemMap[$mimeType]->itemTypeName());
+		}
+	    }
+	}
 
 	/* Render the HTML body */
 	$template = $this->_getTemplate();
 	$template->setVariable('form', $form);
 	$template->setVariable('mode', $mode);
-	$template->setVariable('platform', $platform);
+	$template->setVariable('isAdmin', $isAdmin);
+	$template->setVariable('localServerDirList', $localServerDirList);
 	$template->setVariable('item', $item->getMemberData());
 	$template->setVariable('controller', 'core:ItemAddChildren');
 	$html = $template->render('ItemAddChildren.tpl');
