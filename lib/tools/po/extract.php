@@ -23,7 +23,7 @@
  * way that Gallery embeds internationalized text, so let's tack on our
  * own copyrights.
  *
- * Copyright 2002-2004 Bharat Mediratta <bharat@menalto.com>
+ * Copyright 2002-2005 Bharat Mediratta <bharat@menalto.com>
  *
  * $Id$
  */
