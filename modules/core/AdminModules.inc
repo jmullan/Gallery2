@@ -117,24 +117,12 @@ class AdminModulesController extends GalleryController {
 		break;
 
 	    case 'uninstall':
-		if ($isActive) {
-		    list ($ret, $redirect) = $module->deactivate();
-		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-		    }
-		}
-		    
-		$ret = $module->uninstall();
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-		if (empty($redirect)) {
-		    $redirect['view'] = 'core:SiteAdmin';
-		    $redirect['subView'] = 'core:AdminModules';
-		}
-		$status['uninstalled'] = $module->getName();
+		/* Show the confirmation view */
+		$redirect['view'] = 'core:SiteAdmin';
+		$redirect['subView'] = 'core:AdminModulesVerifyUninstall';
+		$redirect['moduleId'] = $module->getId();
 		break;
-
+		
 	    default:
 		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
 			     null);
@@ -144,8 +132,12 @@ class AdminModulesController extends GalleryController {
 	if (!empty($redirect)) {
 	    $results['redirect'] = $redirect;
 	} else {
-	    $results['delegate']['view'] = 'core:SiteAdmin';
-	    $results['delegate']['subView'] = 'core:AdminModules';
+	    if (empty($delegate)) {
+		$results['delegate']['view'] = 'core:SiteAdmin';
+		$results['delegate']['subView'] = 'core:AdminModules';
+	    } else {
+		$results['delegate'] = $delegate;
+	    }
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;

@@ -60,7 +60,7 @@ class AdminModulesControllerTest extends GalleryControllerTestCase {
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'core:AdminModules'),
-				  'status' => array('available' => 'AdminModulesControllerTest'),
+				  'status' => array('available' => 'AdminModules Controller Test'),
 				  'error' => array()),
 			    $results);
 
@@ -79,7 +79,7 @@ class AdminModulesControllerTest extends GalleryControllerTestCase {
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'core:AdminModules'),
-				  'status' => array('activated' => 'AdminModulesControllerTest'),
+				  'status' => array('activated' => 'AdminModules Controller Test'),
 				  'error' => array()),
 			    $results);
 
@@ -98,7 +98,7 @@ class AdminModulesControllerTest extends GalleryControllerTestCase {
 	$results = $this->handleRequest(ERROR_BAD_PARAMETER);
     }
 
-    /* Dectivate a module that is active (should succeed) */
+    /* Deactivate a module that is active (should succeed) */
     function testDeactivate() {
 	GalleryUtilities::putRequestVariable('moduleId', 'AdminModulesControllerTest');
 	GalleryUtilities::putRequestVariable('action', 'deactivate');
@@ -107,13 +107,13 @@ class AdminModulesControllerTest extends GalleryControllerTestCase {
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'core:AdminModules'),
-				  'status' => array('deactivated' => 'AdminModulesControllerTest'),
+				  'status' => array('deactivated' => 'AdminModules Controller Test'),
 				  'error' => array()),
 			    $results);
 	$this->assert($this->_testModule->wasCalled('deactivate'), 'deactivate not called');
     }
 
-    /* Dectivate a module that is inactive (should succeed silently) */
+    /* Deactivate a module that is inactive (should succeed silently) */
     function testDeactivateAlreadyDeactivated() {
 	GalleryUtilities::putRequestVariable('moduleId', 'AdminModulesControllerTest');
 	GalleryUtilities::putRequestVariable('action', 'deactivate');
@@ -126,6 +126,21 @@ class AdminModulesControllerTest extends GalleryControllerTestCase {
 				  'error' => array()),
 			    $results);
 	$this->assert(!$this->_testModule->wasCalled('deactivate'), 'deactivate called');
+    }
+
+    /* Uninstall a module that is deactive (should send us to the confirm page) */
+    function testUninstall() {
+	GalleryUtilities::putRequestVariable('moduleId', 'AdminModulesControllerTest');
+	GalleryUtilities::putRequestVariable('action', 'uninstall');
+	$this->_testModule->_isActive = true;
+	
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminModulesVerifyUninstall',
+						      'moduleId' => 'AdminModulesControllerTest'),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
     }
 }
 
@@ -146,8 +161,12 @@ class AdminModulesControllerTestModule {
 	return $singleton;
     }
 
-    function getName() {
+    function getId() {
 	return 'AdminModulesControllerTest';
+    }
+
+    function getName() {
+	return 'AdminModules Controller Test';
     }
 
     function init() {

@@ -1,0 +1,146 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * AdminModulesVerifyUninstall controller tests
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class AdminModulesVerifyUninstallControllerTest extends GalleryControllerTestCase {
+
+    function AdminModulesVerifyUninstallControllerTest($methodName) {
+	$this->GalleryControllerTestCase($methodName, 'core:AdminModulesVerifyUninstall');
+    }
+
+    function setUp() {
+	parent::setUp();
+	
+	$this->_testModule =& AdminModulesVerifyUninstallControllerTestModule::getSingleton();
+    }
+
+    function tearDown() {
+	global $gallery;
+
+	$this->_testModule->resetCalls();
+
+	parent::tearDown();
+    }
+
+    /* Uninstall a module that is inactive (should succeed) */
+    function testUninstall() {
+	GalleryUtilities::putRequestVariable('moduleId', 'AdminModulesVerifyUninstallControllerTest');
+	GalleryUtilities::putRequestVariable('form[action]', 'deactivate');
+	$this->_testModule->_isActive = false;
+	
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminModules'),
+				  'status' => array('uninstalled' => 'AdminModulesVerifyUninstall Controller Test'),
+				  'error' => array()),
+			    $results);
+	$this->assert($this->_testModule->wasCalled('uninstall'), 'uninstall not called');
+    }
+
+    /* Uninstall a module that is active (should fail silently) */
+    function testUninstallActiveModule() {
+	GalleryUtilities::putRequestVariable('moduleId', 'AdminModulesVerifyUninstallControllerTest');
+	GalleryUtilities::putRequestVariable('form[action]', 'deactivate');
+	$this->_testModule->_isActive = true;
+	
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminModules'),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
+	$this->assert(!$this->_testModule->wasCalled('uninstall'), 'uninstall called');
+    }
+}
+
+/**
+ * Test module
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class AdminModulesVerifyUninstallControllerTestModule {
+
+    function &getSingleton() {
+	static $singleton;
+	if (!isset($singleton)) {
+	    $singleton = new AdminModulesVerifyUninstallControllerTestModule();
+	}
+
+	return $singleton;
+    }
+
+    function getId() {
+	return 'AdminModulesVerifyUninstallControllerTest';
+    }
+
+    function getName() {
+	return 'AdminModulesVerifyUninstall Controller Test';
+    }
+
+    function init() {
+	$this->_setCalled('init');
+	return GalleryStatus::success();
+    }
+    
+    function uninstall() {
+	$this->_setCalled('uninstall');
+	return GalleryStatus::success();
+    }
+
+    function _setCalled($function) {
+	$singleton = &$this->getSingleton();
+	$singleton->_callMap[$function] = 1;
+    }
+
+    function wasCalled($function) {
+	$singleton = &$this->getSingleton();
+	return isset($singleton->_callMap[$function]);
+    }
+
+    function resetCalls() {
+	$singleton = &$this->getSingleton();
+	$singleton->_callMap = array();
+    }
+
+    function isActive() {
+	$singleton = &$this->getSingleton();
+	return array(GalleryStatus::success(), $singleton->_isActive);
+    }
+
+    function needsConfiguration() {
+	$singleton = &$this->getSingleton();
+	return array(GalleryStatus::success(), $singleton->_needsConfiguration);
+    }
+}
+
+?>
