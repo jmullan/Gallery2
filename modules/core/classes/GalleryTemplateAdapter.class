@@ -640,6 +640,11 @@ class GalleryTemplateAdapter {
             return;
         }
 
+      	$content = trim($content);
+	if (!empty($content)) {
+	    $smarty->trigger_error(sprintf('Unexpected content detected in \'listing\' tag: <pre>%s</pre>', $content));
+	}
+
         $context = $this->_getContext($params, $smarty);
 	$self = $this->stackPop();
 
@@ -684,6 +689,11 @@ class GalleryTemplateAdapter {
             $this->stackPush($self);
             return;
         }
+
+      	$content = trim($content);
+	if (!empty($content)) {
+	    $smarty->trigger_error(sprintf('Unexpected content detected in \'breadcrumb\' tag: <pre>%s</pre>', $content));
+	}
 
         $context = $this->_getContext($params, $smarty);
 	$self = $this->stackPop();
@@ -730,6 +740,11 @@ class GalleryTemplateAdapter {
             $this->stackPush($self);
             return;
         }
+
+      	$content = trim($content);
+	if (!empty($content)) {
+	    $smarty->trigger_error(sprintf('Unexpected content detected in \'linkset\' tag: <pre>%s</pre>', $content));
+	}
 
         /* Verify all attributes */
         if (!isset($params['style'])) {
@@ -792,6 +807,11 @@ class GalleryTemplateAdapter {
             return;
         }
 
+      	$content = trim($content);
+	if (!empty($content)) {
+	    $smarty->trigger_error(sprintf('Unexpected content detected in \'actionset\' tag: <pre>%s</pre>', $content));
+	}
+
         /* Verify all attributes */
         if (!isset($params['style'])) {
             $params['style'] = null;
@@ -852,6 +872,11 @@ class GalleryTemplateAdapter {
             return;
         }
 
+      	$content = trim($content);
+	if (!empty($content)) {
+	    $smarty->trigger_error(sprintf('Unexpected content detected in \'infoset\' tag: <pre>%s</pre>', $content));
+	}
+
         $context = $this->_getContext($params, $smarty);
 	$self = $this->stackPop();
 
@@ -897,6 +922,11 @@ class GalleryTemplateAdapter {
             return;
         }
 
+      	$content = trim($content);
+	if (!empty($content)) {
+	    $smarty->trigger_error(sprintf('Unexpected content detected in \'tabset\' tag: <pre>%s</pre>', $content));
+	}
+
         $context = $this->_getContext($params, $smarty);
 	$self = $this->stackPop();
 
@@ -941,6 +971,11 @@ class GalleryTemplateAdapter {
             $this->stackPush($self);
             return;
         }
+
+      	$content = trim($content);
+	if (!empty($content)) {
+	    $smarty->trigger_error(sprintf('Unexpected content detected in \'table\' tag: <pre>%s</pre>', $content));
+	}
 
         /* Verify all attributes */
         if (!isset($params['style'])) {
@@ -994,6 +1029,11 @@ class GalleryTemplateAdapter {
             $this->stackPush($self);
             return;
         }
+
+      	$content = trim($content);
+	if (!empty($content)) {
+	    $smarty->trigger_error(sprintf('Unexpected content detected in \'row\' tag: <pre>%s</pre>', $content));
+	}
 
         /* Verify all attributes */
         if (!isset($params['rowspan'])) {
@@ -1356,6 +1396,11 @@ class GalleryTemplateAdapter {
             return;
         }
 
+      	$content = trim($content);
+	if (!empty($content)) {
+	    $smarty->trigger_error(sprintf('Unexpected content detected in \'main\' tag: <pre>%s</pre>', $content));
+	}
+
         $context = $this->_getContext($params, $smarty);
 	$self = $this->stackPop();
         /* Collapse breadcrumb to a single value */
@@ -1421,6 +1466,11 @@ class GalleryTemplateAdapter {
             return;
         }
 
+      	$content = trim($content);
+	if (!empty($content)) {
+	    $smarty->trigger_error(sprintf('Unexpected content detected in \'sidebar\' tag: <pre>%s</pre>', $content));
+	}
+
         /* Verify all attributes */
         if (!isset($params['style'])) {
             $params['style'] = null;
@@ -1476,6 +1526,11 @@ class GalleryTemplateAdapter {
             $this->stackPush($self);
             return;
         }
+
+      	$content = trim($content);
+	if (!empty($content)) {
+	    $smarty->trigger_error(sprintf('Unexpected content detected in \'itemthumbnail\' tag: <pre>%s</pre>', $content));
+	}
 
         /* Verify all attributes */
         if (!isset($params['style'])) {
@@ -1578,6 +1633,11 @@ class GalleryTemplateAdapter {
             return;
         }
 
+      	$content = trim($content);
+	if (!empty($content)) {
+	    $smarty->trigger_error(sprintf('Unexpected content detected in \'itemview\' tag: <pre>%s</pre>', $content));
+	}
+
         /* Verify all attributes */
         if (!isset($params['style'])) {
             $params['style'] = null;
@@ -1669,6 +1729,11 @@ class GalleryTemplateAdapter {
             return;
         }
 
+      	$content = trim($content);
+	if (!empty($content)) {
+	    $smarty->trigger_error(sprintf('Unexpected content detected in \'tabbedbox\' tag: <pre>%s</pre>', $content));
+	}
+
         $context = $this->_getContext($params, $smarty);
 	$self = $this->stackPop();
         /* Collapse tabset to a single value */
@@ -1737,6 +1802,11 @@ class GalleryTemplateAdapter {
             $this->stackPush($self);
             return;
         }
+
+      	$content = trim($content);
+	if (!empty($content)) {
+	    $smarty->trigger_error(sprintf('Unexpected content detected in \'box\' tag: <pre>%s</pre>', $content));
+	}
 
         /* Verify all attributes */
         if (!isset($params['style'])) {
@@ -1828,6 +1898,11 @@ class GalleryTemplateAdapter {
             return;
         }
 
+      	$content = trim($content);
+	if (!empty($content)) {
+	    $smarty->trigger_error(sprintf('Unexpected content detected in \'pagebox\' tag: <pre>%s</pre>', $content));
+	}
+
         /* Verify all attributes */
         if (!isset($params['style'])) {
             $params['style'] = null;
@@ -1879,6 +1954,11 @@ class GalleryTemplateAdapter {
             $this->stackPush($self);
             return;
         }
+
+      	$content = trim($content);
+	if (!empty($content)) {
+	    $smarty->trigger_error(sprintf('Unexpected content detected in \'banner\' tag: <pre>%s</pre>', $content));
+	}
 
         $context = $this->_getContext($params, $smarty);
 	$self = $this->stackPop();
@@ -1944,6 +2024,11 @@ class GalleryTemplateAdapter {
             $this->stackPush($self);
             return;
         }
+
+      	$content = trim($content);
+	if (!empty($content)) {
+	    $smarty->trigger_error(sprintf('Unexpected content detected in \'item\' tag: <pre>%s</pre>', $content));
+	}
 
         /* Verify all attributes */
         if (!isset($params['selected'])) {
@@ -2012,6 +2097,16 @@ class GalleryTemplateAdapter {
             $self['value'] = array();
             $this->stackPush($self);
             return;
+        }
+
+      	$content = trim($content);
+	if (!empty($content)) {
+	    $smarty->trigger_error(sprintf('Unexpected content detected in \'actionitem\' tag: <pre>%s</pre>', $content));
+	}
+
+        /* Verify all attributes */
+        if (!isset($params['selected'])) {
+            $params['selected'] = false;
         }
 
         $context = $this->_getContext($params, $smarty);

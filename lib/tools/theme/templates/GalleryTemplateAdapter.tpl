@@ -43,6 +43,13 @@
 {/if}
             return;
         {rdelim}
+{if (empty($tagInfo.children.content))}
+
+      	$content = trim($content);
+	if (!empty($content)) {ldelim}
+	    $smarty->trigger_error(sprintf('Unexpected content detected in \'{$tagName}\' tag: <pre>%s</pre>', $content));
+	{rdelim}
+{/if}
 {if !empty($tagInfo.attributes)}
 
         /* Verify all attributes */
