@@ -15,10 +15,9 @@
 
   <div class="gbAdmin">
     <div class="gbDataEntry">
-      <h3> {g->text text="Username"} </h3>
-      <div class="giSubtitle">
-	{g->text text="required"}
-      </div>
+      <h2 class="giTitle">
+	{g->text text="Username (required)"}
+      </h2>
       <input size="32" type="text" name="{g->formVar var="form[userName]"}" value="{$form.userName}"/>
     </div>
 
@@ -34,10 +33,9 @@
     {/if}
 
     <div class="gbDataEntry">
-      <h3> {g->text text="Full Name"} </h3>
-      <div class="giSubtitle">
-	{g->text text="required"}
-      </div>
+      <h2 class="giTitle">
+	{g->text text="Full Name (required)"} 
+      </h2>
       <input size="32" type="text" name="{g->formVar var="form[fullName]"}" value="{$form.fullName}"/>
     </div>
     
@@ -48,10 +46,9 @@
     {/if}
 
     <div class="gbDataEntry">
-      <h3> {g->text text="Email Address"} </h3>
-      <div class="giSubtitle">
-	{g->text text="required"}
-      </div>
+      <h2 class="giTitle">
+	{g->text text="Email Address (required)"} 
+      </h2>
       <input size="32" type="text" name="{g->formVar var="form[email]"}" value="{$form.email}"/>
     </div>
 
@@ -63,7 +60,9 @@
 
     {if false} {* added by S.E., 17.06.04 *}
     <div class="gbDataEntry">
-      <h3> {g->text text="Language"} </h3>
+      <h2 class="giTitle">
+	{g->text text="Language"} 
+      </h2>
       <select name="g->formVar var="form[language]"}">
 	{html_options options=$AdminCreateUser.languageList selected=$form.language}
       </select>	
@@ -71,10 +70,9 @@
     {/if}
 
     <div class="gbDataEntry">
-      <h3> {g->text text="Password"} </h3>
-      <div class="giSubtitle">
-	{g->text text="required"}
-      </div>
+      <h2 class="giTitle">
+	{g->text text="Password (required)"} 
+      </h2>
       <input size="32" type="password" name="{g->formVar var="form[password1]"}"/>
     </div>
 
@@ -85,10 +83,9 @@
     {/if}
 
     <div class="gbDataEntry">
-      <h3> {g->text text="Verify Password"} </h3>
-      <div class="giSubtitle">
-	{g->text text="required"}
-      </div>
+      <h2 class="giTitle">
+	{g->text text="Verify Password (required)"} 
+      </h2>
       <input size="32" type="password" name="{g->formVar var="form[password2]"}"/>
     </div>
 
