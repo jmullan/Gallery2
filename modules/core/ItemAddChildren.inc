@@ -120,8 +120,18 @@ class ItemAddChildrenController extends GalleryController {
 
 	    foreach ($form['localServerFiles'] as $fileKey => $unused) {
 		$filename = $fileKey;
-		$filepath = $dir . '/' . $filename;
 
+		// Build up the file path with the right style of directory separator
+		$slash = $platform->getDirectorySeparator();
+		$filepath = $dir;
+		if ($filepath[strlen($filepath)-1] != $slash) {
+		    $filepath .= $slash;
+		}
+		$filepath .= $filename;
+
+		// Unescape any special chars in the file path
+		$filepath = GalleryUtilities::htmlEntityDecode($filepath);
+		
 		list ($base, $extension) = GalleryUtilities::getFileNameComponents($filename);
 		$mimeType = GalleryUtilities::convertExtensionToMime($extension);
 
@@ -152,6 +162,7 @@ class ItemAddChildrenController extends GalleryController {
 		$tmpFile = $platform->tempnam($tmpDir, 'add');
 
 		$successfullyCopied = false;
+		$url = GalleryUtilities::htmlEntityDecode($url);
 		$fin = $platform->fopen($url, 'rb');
 		if ($fin) {
 		    $fout = $platform->fopen($tmpFile, 'wb');

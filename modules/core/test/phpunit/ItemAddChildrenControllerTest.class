@@ -140,7 +140,7 @@ class ItemAddChildrenControllerTest extends GalleryControllerTestCase {
 	$baseDir = dirname(__FILE__) . '/../data/';
 	$fileKeys = array();
 	GalleryUtilities::putRequestVariable('form[localServerPath]', $baseDir);
-	$files = array('test1.gif', 'test1.jpg', 'test2.gif', 'test3.gif');
+	$files = array('test1.gif', 'test1.jpg', 'test2.gif', 'test3.gif', 'apo\'strophe.jpg');
 	foreach ($files as $fileName) {
 	    GalleryUtilities::putRequestVariable('form[localServerFiles][' . $fileName . ']', 1);
 	}
@@ -156,7 +156,8 @@ class ItemAddChildrenControllerTest extends GalleryControllerTestCase {
 	/* We don't know the ids, but we can verify everything else */
 	$i = 0;
 	foreach ($files as $file) {
-	    $this->assertEquals($results['status']['addFromLocalServer'][$i]['fileName'], $file);
+	    GalleryUtilities::sanitizeInputValues($file);
+	    $this->assertEquals($file, $results['status']['addFromLocalServer'][$i]['fileName']);
 	    $i++;
 	}
 
@@ -191,6 +192,7 @@ class ItemAddChildrenControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][addFromWebPage]', 1);
 	GalleryUtilities::putRequestVariable('form[webPageUrls][http://test/test1.gif]', 1);
 	GalleryUtilities::putRequestVariable('form[webPageUrls][http://test/test1.jpg]', 1);
+	GalleryUtilities::putRequestVariable('form[webPageUrls][http://test/apo\'strophe.jpg]', 1);
 	GalleryUtilities::putRequestVariable('form[webPageUrls][http://test/404.jpg]', 1);
 
 	/* Perform the request and verify that we succeeded */
@@ -199,9 +201,10 @@ class ItemAddChildrenControllerTest extends GalleryControllerTestCase {
 				  'subView' => 'core:ItemAddChildrenConfirmation',
 				  'itemId' => $this->_rootAlbum->getId()),
 			    $results['redirect']);
-	$this->assertEquals(2, sizeof($results['status']['addFromWebPage']));
+	$this->assertEquals(3, sizeof($results['status']['addFromWebPage']));
 	$this->assertEquals('http://test/test1.gif', $results['status']['addFromWebPage'][0]['fileName']);
 	$this->assertEquals('http://test/test1.jpg', $results['status']['addFromWebPage'][1]['fileName']);
+	$this->assertEquals('http://test/apo\'strophe.jpg', $results['status']['addFromWebPage'][2]['fileName']);
 	$this->assertEquals(array(), $results['error']);
     }
 }
@@ -209,6 +212,25 @@ class ItemAddChildrenControllerTest extends GalleryControllerTestCase {
 class ItemAddChildrenControllerTestPlatform extends GalleryPlatform {
     function ItemAddChildrenControllerTestPlatform($delegate) {
 	$this->_delegate = $delegate;
+    }
+
+    function file_exists($path) {
+	switch ($path) {
+	case dirname(__FILE__) . '/../data/apo\'strophe.jpg':
+	    return true;
+
+	default:
+	    return $this->_delegate->file_exists($path);
+	}
+    }
+
+    function copy($source, $dest) {
+	switch ($source) {
+	case dirname(__FILE__) . '/../data/apo\'strophe.jpg':
+	    $source = dirname(__FILE__) . '/../data/test1.jpg';
+	    break;
+	}
+	return $this->_delegate->copy($source, $dest);
     }
 
     function exec($cmdArray) {
@@ -223,18 +245,20 @@ class ItemAddChildrenControllerTestPlatform extends GalleryPlatform {
 	switch($filename) {
 	case 'http://test/test1.gif':
 	    return $this->_delegate->fopen(dirname(__FILE__) . '/../data/test1.gif', $mode, $use_include_path);
-	    break;
 
 	case 'http://test/test1.jpg':
 	    return $this->_delegate->fopen(dirname(__FILE__) . '/../data/test1.jpg', $mode, $use_include_path);
-	    break;
+
+	case 'http://test/apo\'strophe.jpg':
+	    return $this->_delegate->fopen(dirname(__FILE__) . '/../data/test1.jpg', $mode, $use_include_path);
 
 	case 'http://test/404.jpg':
 	    return null;
-	    break;
+
+	default:
+	    return $this->_delegate->fopen($filename, $mode, $use_include_path);
 	}
 
-	return $this->_delegate->fopen($filename, $mode, $use_include_path);
     }
 }
 ?>
