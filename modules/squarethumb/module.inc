@@ -179,8 +179,9 @@ class SquareThumbModule extends GalleryModule /* and GalleryEventListener */ {
      */
     function handleEvent($event) {
 	/*
-	 * We're going to deactivate this plugin which will generate another Gallery::DeactivatePlugin event,
-	 * so make sure that we don't handle *that* event and get into an infinite loop!
+	 * We're going to deactivate this plugin which will generate another
+	 * Gallery::DeactivatePlugin event, so make sure that we don't handle
+	 * *that* event and get into an infinite loop! 
 	 */
 	$data = $event->getData();
 	if ($event->getEventName() == 'Gallery::DeactivatePlugin' &&
