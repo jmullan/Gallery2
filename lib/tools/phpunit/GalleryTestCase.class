@@ -203,6 +203,10 @@ class GalleryTestCase extends TestCase {
     function assertEquals($expected, $actual, $message=null) {
 	global $gallery;
 	$message = $gallery->getDebugBuffer() . $message;
+	$err = $this->DeepCompare($expected, $actual);
+	if ($err) {
+	    $message .= sprintf('&nbsp;<br/><b>Mismatch At</b>: %s', $err);
+	}
 	parent::assertEquals($expected, $actual, $message);
     }
 
@@ -546,6 +550,45 @@ class GalleryTestCase extends TestCase {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
+    }
+
+    function DeepCompare($obj1, $obj2, $context=null) {
+	if (gettype($obj1) !== gettype($obj2)) {
+	    return sprintf("[$context] $obj1 type (%s) !== $obj2 type (%s)", gettype($obj1), gettype($obj2));
+	}
+
+	if (is_array($obj1)) {
+	    $keys1 = array_keys($obj1);
+	    $keys2 = array_keys($obj2);
+
+	    while (true) {
+		if (empty($keys1) && empty($keys2)) {
+		    break;
+		} else if (empty($keys1) && !empty($keys2)) {
+		    return sprintf("[$context] extra keys in array 2: %s", join(',', $keys2));
+		} else if (empty($keys2) && !empty($keys1)) {
+		    return sprintf("[$context] extra keys in array 1: %s", join(',', $keys1));
+		}
+		
+		$key1 = array_shift($keys1);
+		$key2 = array_shift($keys2);
+
+		if ($key1 !== $key2) {
+		    return "[$context] $key1 !== $key2";
+		}
+		
+		$err = $this->DeepCompare($obj1[$key1], $obj2[$key2], "$context $key1");
+		if (isset($err)) {
+		    return $err;
+		}
+	    }
+	} else {
+	    if ($obj1 !== $obj2) {
+		return "[$context] $obj1 !== $obj2";
+	    }
+	}
+
+	return null;
     }
 }
 ?>
