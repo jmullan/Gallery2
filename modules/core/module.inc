@@ -179,14 +179,14 @@ class CoreModule extends GalleryModule {
 						      dirname(__FILE__) . '/ItemEditLayout.inc');
 
 	GalleryCoreApi::registerFactoryImplementation('ItemEditPlugin',
-						      'ItemEditRotateAndScalePhoto',
-						      'ItemEditRotateAndScalePhoto',
-						      dirname(__FILE__) . '/ItemEditRotateAndScalePhoto.inc');
-
-	GalleryCoreApi::registerFactoryImplementation('ItemEditPlugin',
 						      'ItemEditPhotoSizes',
 						      'ItemEditPhotoSizes',
 						      dirname(__FILE__) . '/ItemEditPhotoSizes.inc');
+
+	GalleryCoreApi::registerFactoryImplementation('ItemEditPlugin',
+						      'ItemEditRotateAndScalePhoto',
+						      'ItemEditRotateAndScalePhoto',
+						      dirname(__FILE__) . '/ItemEditRotateAndScalePhoto.inc');
 
 	GalleryCoreApi::registerFactoryImplementation('ItemEditPlugin',
 						      'ItemEditPhotoThumbnail',

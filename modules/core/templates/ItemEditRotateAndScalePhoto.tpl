@@ -69,6 +69,11 @@
   {/if}
 </div>
 
+{* Include our extra ItemEditOptions *}
+{foreach from=$ItemEdit.options item=option}
+  {include file="gallery:`$option.file`" l10Domain=$option.l10Domain}
+{/foreach}
+
 {if $ItemEditRotateAndScalePhoto.editPhoto.can.rotate || $ItemEditRotateAndScalePhoto.editPhoto.can.scale}
 <div class="gbAdmin">
   {if empty($ItemEditRotateAndScalePhoto.editPhoto.hasPreferredSource)}
@@ -84,14 +89,12 @@
   <b>
     {g->text text="This is a link to another photo, so you cannot change the original"}
   </b>
-  {else}
-  {if $ItemEditRotateAndScalePhoto.editPhoto.isLinkedTo}
+  {elseif $ItemEditRotateAndScalePhoto.editPhoto.isLinkedTo}
   <b>
     {g->text text="There are links to this photo, so you cannot change the original"}
   </b>
   {else}
   <input type="checkbox" name="{g->formVar var="form[preserveOriginal]"}" {if $form.preserveOriginal}checked="checked"{/if}/> {g->text text="Preserve Original Photo"}
-  {/if}
   {/if}
   {else}
   <h2 class="giTitle">

@@ -492,7 +492,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	return array(GalleryStatus::success(), $module->translate('Album Basics'));
+	return array(GalleryStatus::success(), $module->translate('Album'));
     }
 }
 ?>

@@ -198,7 +198,7 @@ class ItemEditItem extends ItemEditPlugin {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	return array(GalleryStatus::success(), $module->translate('General Settings'));
+	return array(GalleryStatus::success(), $module->translate('General'));
     }
 }
 ?>

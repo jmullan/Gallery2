@@ -424,7 +424,7 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	return array(GalleryStatus::success(), $module->translate('Rotate/Scale'));
+	return array(GalleryStatus::success(), $module->translate('Modify Photo'));
     }
 }
 ?>
