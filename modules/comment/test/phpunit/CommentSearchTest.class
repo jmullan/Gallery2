@@ -83,6 +83,7 @@ class CommentSearchTest extends GalleryTestCase {
 		$this->_comment[$j][$i]->create($this->_item[$j]->getId());
 		$this->_comment[$j][$i]->setCommenterId($gallery->getActiveUserId());
 		$this->_comment[$j][$i]->setHost('127.0.0.1');
+		$this->_comment[$j][$i]->setSubject($this->_randomKey . ": test subject($j,$i)");
 		$this->_comment[$j][$i]->setComment($this->_randomKey . ": test comment($j,$i)");
 		$this->_comment[$j][$i]->setDate(time());
 		$ret = $this->_comment[$j][$i]->save();
@@ -197,6 +198,7 @@ class CommentSearchTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
+	$subject = $this->_module->translate('Subject');
 	$comment = $this->_module->translate('Comment');
 	$commenter = $this->_module->translate('Commenter');
 
@@ -210,22 +212,30 @@ class CommentSearchTest extends GalleryTestCase {
 				  'count' => 4,
 				  'results' =>
 				  array(array('itemId' => $this->_item[3]->getId(),
-					      'fields' => array(array('key' => $comment,
+					      'fields' => array(array('key' => $subject,
+								      'value' => $this->_comment[3][1]->getSubject()),
+								array('key' => $comment,
 								      'value' => $this->_comment[3][1]->getComment()),
 								array('key' => $commenter,
 								      'value' => $userName))),
 					array('itemId' => $this->_item[3]->getId(),
-					      'fields' => array(array('key' => $comment,
+					      'fields' => array(array('key' => $subject,
+								      'value' => $this->_comment[3][0]->getSubject()),
+								array('key' => $comment,
 								      'value' => $this->_comment[3][0]->getComment()),
 								array('key' => $commenter,
 								      'value' => $userName))),
 					array('itemId' => $this->_item[2]->getId(),
-					      'fields' => array(array('key' => $comment,
+					      'fields' => array(array('key' => $subject,
+								      'value' => $this->_comment[2][1]->getSubject()),
+								array('key' => $comment,
 								      'value' => $this->_comment[2][1]->getComment()),
 								array('key' => $commenter,
 								      'value' => $userName))),
 					array('itemId' => $this->_item[2]->getId(),
-					      'fields' => array(array('key' => $comment,
+					      'fields' => array(array('key' => $subject,
+								      'value' => $this->_comment[2][0]->getSubject()),
+								array('key' => $comment,
 								      'value' => $this->_comment[2][0]->getComment()),
 								array('key' => $commenter,
 								      'value' => $userName))))),
@@ -242,6 +252,7 @@ class CommentSearchTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
+	$subject = $this->_module->translate('Subject');
 	$comment = $this->_module->translate('Comment');
 	$commenter = $this->_module->translate('Commenter');
 
@@ -255,12 +266,16 @@ class CommentSearchTest extends GalleryTestCase {
 				  'count' => 4,
 				  'results' =>
 				  array(array('itemId' => $this->_item[3]->getId(),
-					      'fields' => array(array('key' => $comment,
+					      'fields' => array(array('key' => $subject,
+								      'value' => $this->_comment[3][0]->getSubject()),
+								array('key' => $comment,
 								      'value' => $this->_comment[3][0]->getComment()),
 								array('key' => $commenter,
 								      'value' => $userName))),
 					array('itemId' => $this->_item[2]->getId(),
-					      'fields' => array(array('key' => $comment,
+					      'fields' => array(array('key' => $subject,
+								      'value' => $this->_comment[2][1]->getSubject()),
+								array('key' => $comment,
 								      'value' => $this->_comment[2][1]->getComment()),
 								array('key' => $commenter,
 								      'value' => $userName))))),
