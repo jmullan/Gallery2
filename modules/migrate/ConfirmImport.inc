@@ -157,7 +157,7 @@ class ConfirmImportController extends GalleryController {
 	    foreach (array_keys ($form['migrateUser']) as $uid) {
 		/* convert from uid to username */
 		list ($ret, $fields) =
-			Gallery1DataParser::getUserFieldsByUid($albumsPath, $uid);
+		    Gallery1DataParser::getUserFieldsByUid($albumsPath, $uid);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -702,7 +702,7 @@ class ConfirmImportController extends GalleryController {
 
 				$convertedCaption = $this->convertHtmlToBbcode($caption,$sourceEncoding);
 				if (strlen($convertedCaption) > 128) {
-				    $newItem->setTitle(GalleryUtilities::entityTruncate($convertedCaption,128));
+				    $newItem->setTitle(GalleryUtilities::entityTruncate($convertedCaption, 128));
 				    if (isset($importAlbumItem->extraFields['description']) && $importAlbumItem->extraFields['description'] != '') {
 					$newItem->setDescription($convertedCaption
 								 . "\n"

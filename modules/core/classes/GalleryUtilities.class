@@ -586,25 +586,75 @@ class GalleryUtilities {
     /**
      * An entity-safe truncate for smarty
      *
-     * @param string
-     * @param integer
-     * @param string
-     * @param boolean
+     * @param string the original input string
+     * @param integer the 0 based start index (negative values mean subtract
+     *                from the end)
+     * @param integer the desired length.  If negative negative then that many characters will
+     *                be omitted from the end of string (after the start position has been
+     *                calculated when a start is negative)
+     * @param boolean true if the final length be a count of entities, instead
+     *                of characters. (default: true)
+     * @param string  the value to append if we truncate the string (default: "...")
+     * @param boolean true if it is ok to break words apart. (default: false)
      * @return string
-     *
      */
-    function entityTruncate($string, $length = 80, $etc = '...', $breakWords = false, $countRawLength=FALSE) {
+    function entityTruncate($string, $length, $countEntitiesAsOne=false, $etc='...', $breakWords=false) {
 	if ($length == 0) {
 	    return '';
 	}
 	$originalLength = strlen($string);
 	if ($originalLength > $length) {
-	    $length = max(0,$length - strlen($etc));
-	    $newString = GalleryUtilities::entitySubstr($string, 0, $length, $countRawLength=FALSE);
+	    /*
+	     * This is tricky.  We want to only show the truncation marker (...)
+	     * if we actually truncate.  However, it's possible that the string
+	     * will fit exactly and not require truncation.  If we take into
+	     * account the size of the truncation marker when we call
+	     * entitySubstr() then we may wind up truncating a string that
+	     * didn't otherwise require truncation, solely so that we can
+	     * squeeze in the marker (that wouldn't have been necessary had we
+	     * not done truncation in the first place!)
+	     *
+	     * Solution: Optimistically try the truncation hoping that the
+	     * string will fit.  If it turns out that we had to truncate *and*
+	     * we don't have enough space to fit the truncation marker, then try
+	     * the truncation a second time leaving room for the marker.
+	     */
+	    list ($substringCount, $newString) = GalleryUtilities::entitySubstr($string, 0, $length, $countEntitiesAsOne);
+	    if ($string != $newString) {
+		/* We did some truncation */
+		$lengthMinusMarker = $length - strlen($etc);
+		if ($lengthMinusMarker < 0) {
+		    /* No room to show anything! */
+		    return '';
+		}
+		
+		if ($substringCount > $lengthMinusMarker) {
+		    /* We don't have room for the marker */
+		    list ($substringCount, $newString) =
+			GalleryUtilities::entitySubstr($string, 0, $lengthMinusMarker, $countEntitiesAsOne);
+		}
+	    }
+	    
 	    if (!$breakWords) {
-	        $testString = substr($string, 0, strlen($newString)+1);
-		if (preg_match('|\s+\S+$|',$testString)) {
-		    $newString = preg_replace('/\s+\S+$/', '', $newString);
+		$newStringLen = strlen($newString);
+	        $testString = substr($string, 0, $newStringLen + 1);
+		if (strlen($testString) > $newStringLen) {
+		    if (preg_match('|\s+\S+$|', $testString)) {
+			/* The string has more than one word, so delete the last word */
+			$newString = preg_replace('/\s+\S+$/', '', $newString);
+		    } else {
+			/*
+			 * The string has only one word, that word is too long,
+			 * and we are not allowed to break words.  Try again
+			 * with word break allowed.
+			 */
+			return GalleryUtilities::entityTruncate($string, $length, $countEntitiesAsOne, $etc, true);
+		    }
+		}
+
+		if ($substringCount > $length) {
+		    /* Still too long.  Retry with word break allowed */
+		    return GalleryUtilities::entityTruncate($string, $length, $countEntitiesAsOne, $etc, true);
 		}
 	    }
 	    if (strlen($newString) == $originalLength) {
@@ -618,46 +668,67 @@ class GalleryUtilities {
     }
 
     /**
-     * An entity-safe substr
+     * An entity-safe equivalent to substr (http://php.net/substr)
      *
-     * @param string
-     * @param integer
-     * @param integer
-     * @return string
+     * @param string the input string
+     * @param integer the 0 based start index (negative values mean subtract
+     *                from the end)
+     * @param integer the desired length.  If negative negative then that many characters will
+     *                be omitted from the end of string (after the start position has been
+     *                calculated when a start is negative)
+     * @param boolean true if the final length be a count of entities, instead
+     *                of characters. (default: true)
+     * @return string the output string
      */
-
-    function entitySubstr($string, $start, $length="", $countRawLength=TRUE) {
+    function entitySubstr($string, $start, $length=null, $countEntitiesAsOne=true) {
 	$stringLength = strlen($string);
 	if ($stringLength < $start) {
-	    return FALSE;
+	    return array(0, false);
 	}
-	if (''===$length) {
+
+	if (!isset($length)) {
 	    $length = $stringLength;
 	}
-	if (0 == $length) {
-	    return '';
+
+	if (!$countEntitiesAsOne && $start == 0 && $length >= $stringLength) {
+	    return array(strlen($string), $string);
 	}
-	if ((0 == $start) && ($length >= $stringLength)) {
-	    return $string;
-	}
+	
 	if (preg_match_all('(&#x[A-Fa-f0-9]+;|&#[0-9]+;|&[A-Za-z0-9]+;|.|\n)', $string, $reg)) {
-	    $cookedText = '';
 	    $charArray = $reg[0];
 	    $charArrayLength = count($charArray);
 
+	    /* if $length < 0, then it's really the end index */
 	    $cookedStart = ($start < 0) ? $charArrayLength + $start : $start;
 	    $cookedLength = ($length < 0) ? $charArrayLength - $cookedStart + $length : $length;
-	    $cookedEnd = min($cookedStart + $cookedLength,$charArrayLength);
-	    for ($i=$cookedStart; $i<$cookedEnd; $i++) {
-		if (0 > $length || !$countRawLength || strlen($cookedText . $charArray[$i]) <= $length) {
+
+	    /* We now have the proper begin/end indices, so grab that slice */
+	    if ($countEntitiesAsOne) {
+		$slice = array_slice($charArray, $cookedStart, $cookedLength);
+		return array(count($slice), join('', $slice));
+	    } else {
+		$cookedText = '';
+		$actualLength = 0;
+		for ($i = $cookedStart; $i < $cookedLength; $i++) {
+		    if ($charArray[$i][0] == '&') {
+			$size = strlen($charArray[$i]);
+		    } else {
+			$size = 1;
+		    }
+
+		    if ($actualLength + $size > $cookedLength) {
+			/* We're done */
+			break;
+		    }
 		    $cookedText .= $charArray[$i];
-		} else {
-		    $i = $cookedEnd;
+		    $actualLength += $size;
 		}
+		return array($actualLength, $cookedText);
 	    }
-	    return $cookedText;
 	} else {
-	    return $string;
+	    /* How could we get here?  Our regex should match everything */
+	    $newString = substr($string, $start, $length);
+	    return array(strlen($newString), $newString);
 	}
     }
 

@@ -23,7 +23,7 @@
  * file and are bound by their license, found in lib/smarty/COPYING.lib
  */
 
-  /**
+/**
  * Smarty truncate modifier plugin.  This differs from the standard Smarty plugin
  * in that it respects HTML entities and doesn't split them.
  *
@@ -31,17 +31,15 @@
  * Name:     entitytruncate<br>
  * Purpose:  Truncate a string to a certain length if necessary,
  *           optionally splitting in the middle of a word, and
- *           appending the $etc string.
- * @link http://smarty.php.net/manual/en/language.modifier.truncate.php
- *          truncate (Smarty online manual)
- * @param string
- * @param integer
- * @param string
- * @param boolean
- * @return string
+ *           appending the $etc string.  Won't split an HTML entity.
+ *
+ * @param string the input string
+ * @param integer what to truncate it to (max length upon return)
+ * @param string what to use to indicate that there was more (default: "...")
+ * @param boolean break words or not?
+ * @return string 
  */
-function smarty_modifier_entitytruncate($string, $length = 80, $etc = '...', $breakWords = false, $countRawLength = FALSE) {
-    $countRawLength = TRUE;
-    return GalleryUtilities::entityTruncate($string, $length, $etc, $breakWords, $countRawLength);
+function smarty_modifier_entitytruncate($string, $length, $etc='...', $breakWords=false) {
+    return GalleryUtilities::entityTruncate($string, $length, true, $etc, $breakWords);
 }
 ?>

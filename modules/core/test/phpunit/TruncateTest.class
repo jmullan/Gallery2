@@ -43,13 +43,6 @@ class TruncateTest extends GalleryTestCase {
 	$this->GalleryTestCase($methodName);
     }
 
-    function testTruncate1() {
-	$string = 'truncate will default to truncating at 80 characters with no word break and append an ellipse';
-	$result = smarty_modifier_entitytruncate($string);
-	$this->assertEquals('truncate will default to truncating at 80 characters with no word break and...',
-			    $result);
-    }
-
     function testTruncate2() {
 	$string = 'truncate at 30 characters with no word break and ellipses';
 	$result = smarty_modifier_entitytruncate($string, 30);
