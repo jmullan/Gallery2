@@ -362,7 +362,7 @@ class DatabaseStorage extends GalleryStorage {
 		while ($row = $recordSet->FetchRow()) {
 		    $entity = new $className;
 		    if (empty($entity)) {
-			return array(GalleryStatus::error(ERROR_BAD_DATA,
+			return array(GalleryStatus::error(ERROR_BAD_DATA_TYPE,
 							  __FILE__, __LINE__),
 				     null);
 		    }
@@ -1275,7 +1275,7 @@ class DatabaseStorage extends GalleryStorage {
 	}
 
 	if (sizeof($set) == 0 || sizeof($where) == 0) {
-	    return GalleryStatus::error(ERROR_BAD_DATA,
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
 					__FILE__, __LINE__);
 	}
 
