@@ -1,6 +1,6 @@
 <?php
 /* 
-V3.20 17 Feb 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+V3.30 3 March 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -541,18 +541,23 @@ class ADORecordset_mssql extends ADORecordSet {
 		if (!$this->EOF) {		
 			$this->_currentRow++;
 			if ($this->fetchMode & ADODB_FETCH_ASSOC) {
-				if (ADODB_PHPVER >= 0x4200) {// only for PHP 4.2.0 or later
-					$flds = @mssql_fetch_assoc($this->_queryID);
-					if (is_array($flds)) $this->fields = $flds;
-				} else {
-					$flds = @mssql_fetch_array($this->_queryID);
-					if (is_array($flds)) {
-						$fassoc = array();
-						foreach($flds as $k => $v) {
-							if (is_numeric($k)) continue;
-							$fassoc[$k] = $v;
+				if ($this->fetchMode & ADODB_FETCH_NUM) {
+					//ADODB_FETCH_BOTH mode
+					$this->fields = @mssql_fetch_array($this->_queryID);
+				}
+				else {
+					if (ADODB_PHPVER >= 0x4200) {// only for PHP 4.2.0 or later
+						 $this->fields = @mssql_fetch_assoc($this->_queryID);
+					} else {
+						$flds = @mssql_fetch_array($this->_queryID);
+						if (is_array($flds)) {
+							$fassoc = array();
+							foreach($flds as $k => $v) {
+								if (is_numeric($k)) continue;
+								$fassoc[$k] = $v;
+							}
+							$this->fields = $fassoc;
 						}
-						$this->fields = $fassoc;
 					}
 				}
 				
@@ -568,10 +573,9 @@ class ADORecordset_mssql extends ADORecordSet {
 					}
 				}
 			} else {
-				$flds = @mssql_fetch_row($this->_queryID);
-				if (is_array($flds)) $this->fields = $flds;
+				$this->fields = @mssql_fetch_row($this->_queryID);
 			}
-			if (is_array($flds)) return true;
+			if ($this->fields) return true;
 			$this->EOF = true;
 		}
 		return false;
@@ -583,22 +587,26 @@ class ADORecordset_mssql extends ADORecordSet {
 	function _fetch($ignore_fields=false) 
 	{
 		if ($this->fetchMode & ADODB_FETCH_ASSOC) {
-			if (ADODB_PHPVER >= 0x4200) // only for PHP 4.2.0 or later
-				$flds = @mssql_fetch_assoc($this->_queryID);
-				if (is_array($flds)) $this->fields = $flds;
-			else {
-				$flds = @mssql_fetch_array($this->_queryID);
-				if (is_array($flds)) {
-					$fassoc = array();
-					foreach($flds as $k => $v) {
-						if (is_integer($k)) continue;
-						$fassoc[$k] = $v;
+			if ($this->fetchMode & ADODB_FETCH_NUM) {
+				//ADODB_FETCH_BOTH mode
+				$this->fields = @mssql_fetch_array($this->_queryID);
+			} else {
+				if (ADODB_PHPVER >= 0x4200) // only for PHP 4.2.0 or later
+					$this->fields = @mssql_fetch_assoc($this->_queryID);
+				else {
+					$this->fields = @mssql_fetch_array($this->_queryID);
+					if (is_array($$this->fields)) {
+						$fassoc = array();
+						foreach($$this->fields as $k => $v) {
+							if (is_integer($k)) continue;
+							$fassoc[$k] = $v;
+						}
+						$this->fields = $fassoc;
 					}
-					$this->fields = $fassoc;
 				}
 			}
 			
-			if (!$flds) {
+			if (!$this->fields) {
 			} else if (ADODB_ASSOC_CASE == 0) {
 				foreach($this->fields as $k=>$v) {
 					$this->fields[strtolower($k)] = $v;
@@ -609,10 +617,9 @@ class ADORecordset_mssql extends ADORecordSet {
 				}
 			}
 		} else {
-			$flds = @mssql_fetch_row($this->_queryID);
-			if (is_array($flds)) $this->fields = $flds;
+			$this->fields = @mssql_fetch_row($this->_queryID);
 		}
-		return (is_array($flds));
+		return $this->fields;
 	}
 	
 	/*	close() only needs to be called if you are worried about using too much memory while your script

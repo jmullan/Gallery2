@@ -1,6 +1,6 @@
 <?php
 /** 
- * @version V3.20 17 Feb 2003 (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+ * @version V3.30 3 March 2003 (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
  * Released under both BSD license and Lesser GPL library license. 
  * Whenever there is any discrepancy between the two licenses, 
  * the BSD license will take precedence. 
@@ -55,6 +55,8 @@
 	var $_atLastPage = false;	/** Added by Iván Oliva to implement recordset pagination */
 	var $_lastPageNo = -1; 
 	var $_maxRecordCount = 0;
+	var $dateHasTime = false;
+	
 	/**
 	 * Constructor
 	 *
@@ -140,11 +142,14 @@
 	 */
 	function GetArray($nRows = -1) 
 	{
+	global $ADODB_EXTENSION; if ($ADODB_EXTENSION) return adodb_getall($this,$nRows);
+		
 		$results = array();
 		$cnt = 0;
 		while (!$this->EOF && $nRows != $cnt) {
-			$results[$cnt++] = $this->fields;
+			$results[] = $this->fields;
 			$this->MoveNext();
+			$cnt++;
 		}
 		
 		return $results;
@@ -169,7 +174,7 @@
 	 * @return an array indexed by the rows (0-based) from the recordset
 	 */
 	function GetArrayLimit($nrows,$offset=-1) 
-	{
+	{	
 		if ($offset <= 0) return $this->GetArray($nrows);
 		$this->Move($offset);
 		
@@ -403,7 +408,13 @@
 	function MoveLast() 
 	{
 		if ($this->_numOfRows >= 0) return $this->Move($this->_numOfRows-1);
-		while (!$this->EOF) $this->MoveNext();
+		if ($this->EOF) return false;
+		while (!$this->EOF) {
+			$f = $this->fields;
+			$this->MoveNext();
+		}
+		$this->fields = $f;
+		$this->EOF = false;
 		return true;
 	}
 	
@@ -441,29 +452,31 @@
 	function Move($rowNumber = 0) 
 	{
 		if ($rowNumber == $this->_currentRow) return true;
-		if ($rowNumber > $this->_numOfRows)
-	   		if ($this->_numOfRows != -1) $rowNumber = $this->_numOfRows-1;
+		if ($rowNumber >= $this->_numOfRows)
+	   		if ($this->_numOfRows != -1) $rowNumber = $this->_numOfRows-2;
    
 		if ($this->canSeek) {
 			if ($this->_seek($rowNumber)) {
 				$this->_currentRow = $rowNumber;
 				if ($this->_fetch()) {
-					$this->EOF = false;	
-								   //  $this->_currentRow += 1;			
 					return true;
 				}
-			} else 
+			} else {
+				$this->EOF = true;
 				return false;
+			}
 		} else {
+		
 			if ($rowNumber < $this->_currentRow) return false;
 			while (! $this->EOF && $this->_currentRow < $rowNumber) {
 				$this->_currentRow++;
+				
 				if (!$this->_fetch()) $this->EOF = true;
 			}
 			return !($this->EOF);
 		}
 		
-		$this->fields = null;	
+		$this->fields = false;	
 		$this->EOF = true;
 		return false;
 	}
@@ -758,6 +771,7 @@
 		'LONGBINARY' => 'B',
 		'B' => 'B',
 		##
+		'YEAR' => 'D', // mysql
 		'DATE' => 'D',
 		'D' => 'D',
 		##
@@ -839,6 +853,10 @@
 			 if (isset($fieldobj->binary)) 
 				 return ($fieldobj->binary) ? 'B' : 'X';
 			return 'B';
+		
+		case 'D':
+			if ($this->dateHasTime) return 'T';
+			return 'D';
 			
 		default: 
 			if ($t == 'LONG' && $this->dataProvider == 'oci8') return 'B';

@@ -1,6 +1,6 @@
 <?php
 /*
-V3.20 17 Feb 2003  (c) 2000-2003 John Lim. All rights reserved.
+V3.30 3 March 2003  (c) 2000-2003 John Lim. All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -22,6 +22,7 @@ include_once(ADODB_DIR.'/drivers/adodb-oci8.inc.php');
 class ADODB_oci8po extends ADODB_oci8 {
 	var $databaseType = 'oci8po';
 	var $dataProvider = 'oci8';
+	var $metaColumnsSQL = "select lower(cname),coltype,width from col where tname='%s' order by colno";
 	
 	function Prepare($sql)
 	{
@@ -52,6 +53,7 @@ class ADODB_oci8po extends ADODB_oci8 {
 		}
 		return ADODB_oci8::_query($sql,$inputarr);
 	}
+	
 
 }
 
@@ -107,7 +109,6 @@ class ADORecordset_oci8po extends ADORecordset_oci8 {
 				if ($this->fetchMode & OCI_ASSOC) $this->_updatefields();
 				return true;
 			}
-			
 			$this->EOF = true;
 		}
 		return false;
@@ -132,7 +133,7 @@ class ADORecordset_oci8po extends ADORecordset_oci8 {
 		return $results;
 	}
 
-	// Uggh - a useless slowdown
+	// Create associative array
 	function _updatefields()
 	{
 		//if (ADODB_ASSOC_CASE == 2) return; // native
@@ -153,7 +154,9 @@ class ADORecordset_oci8po extends ADORecordset_oci8 {
 	function _fetch() 
 	{
 		$ret = @OCIfetchinto($this->_queryID,$this->fields,$this->fetchMode);
-		if ($ret && $this->fetchMode & OCI_ASSOC) $this->_updatefields();
+		if ($ret) {
+			if ($this->fetchMode & OCI_ASSOC) $this->_updatefields();
+		}
 		return $ret;
 	}
 	

@@ -1,6 +1,6 @@
 <?php
 /** 
- * @version V3.20 17 Feb 2003 (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+ * @version V3.30 3 March 2003 (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
  * Released under both BSD license and Lesser GPL library license. 
  * Whenever there is any discrepancy between the two licenses, 
  * the BSD license will take precedence. 
@@ -31,7 +31,7 @@
 	var $user = ''; 			/// The username which is used to connect to the database server. 
 	var $password = ''; 		/// Password for the username. For security, we no longer store it.
 	var $debug = false; 		/// if set to true will output sql statements
-	var $maxblobsize = 64000; 	/// maximum size of blobs or large text fields -- some databases die otherwise like foxpro
+	var $maxblobsize = 256000; 	/// maximum size of blobs or large text fields -- some databases die otherwise like foxpro
 	var $concat_operator = '+'; /// default concat operator -- change to || for Oracle/Interbase	
 	var $fmtDate = "'Y-m-d'";	/// used by DBDate() as the default date format used by the database
 	var $fmtTimeStamp = "'Y-m-d, h:i:s A'"; /// used by DBTimeStamp as the default timestamp fmt.
@@ -281,11 +281,11 @@
 	}
 	
 	/**
-	* PEAR DB Compat - Quote with auto-checking of magic-quotes-gpc.
+	* PEAR DB Compat
 	*/
 	function Quote($s)
 	{
-		return $this->qstr($s,get_magic_quotes_gpc());
+		return $this->qstr($s,false);
 	}
 
 	
@@ -484,50 +484,9 @@
 				}
 		} else {
 			// non-debug version of query
-			if (defined('ADODB_DBX') && !$inputarr && is_string($sql) && strncasecmp('SELECT',$sql,6)==0) {
-				//$dbxlink = dbx_connect(DBX_MYSQL,'localhost','test','root','');
-				//print_r($dbxlink);
-				//print "<pre>dbx $sql <br>";
-				$dbxlink = new ADO_DBX;
-				$dbxlink->database = $this->database;
-				$dbxlink->handle = $this->_connectionID;
-				$dbxlink->module = $this->dbxDriver;
-				$flags = DBX_RESULT_INFO;
-				if ($this->fetchMode === false) {
-				global $ADODB_FETCH_MODE;
-					if ($ADODB_FETCH_MODE & ADODB_FETCH_ASSOC) $flags |= DBX_RESULT_ASSOC;
-					if ($ADODB_FETCH_MODE & ADODB_FETCH_NUM) $flags |= DBX_RESULT_INDEX;
-				} else {
-					if ($this->fetchMode & ADODB_FETCH_ASSOC) $flags |= DBX_RESULT_ASSOC;
-					if ($this->fetchMode & ADODB_FETCH_NUM) $flags |= DBX_RESULT_INDEX;
-				}
-				$dbxrs = dbx_query($dbxlink,$sql,$flags);
-				if (!$dbxrs) {
-					$this->_queryID = false;
-				} else {
-				//print_r($dbxrs);
-					$arrayClass = $this->arrayClass;
 			
-					$rs2 = new $arrayClass();
-					$rs2->connection = &$this;
-					$rs2->sql = $sql;
-					$rs2->dataProvider = $this->dataProvider;
-					$flds = array();
-					$name = $dbxrs->info['name'];
-					$type = $dbxrs->info['type'];
-					for ($i=0, $max = sizeof($name); $i < $max; $i++) {
-						$f = new ADOFieldObject;
-						$f->name = $name[$i];
-						$f->type = $type[$i];
-						$f->max_length = -1;
-						$flds[] = $f;
-					}
-					$rs2->InitArrayFields($dbxrs->data,$flds);
-					return $rs2;
-				}
-			} else {
-				$this->_queryID =@$this->_query($sql,$inputarr,$arg3);
-			}
+			$this->_queryID =@$this->_query($sql,$inputarr,$arg3);
+			
 		}
 		// error handling if query fails
 		if ($this->_queryID === false) {
@@ -793,7 +752,6 @@
 			$rs = &$rs; // required to prevent crashing in 4.2.1-- why ?
 			return $rs;
 		}
-	
 		for ($i=0, $max=$rs->FieldCount(); $i < $max; $i++) {
 			$flds[] = $rs->FetchField($i);
 		}
@@ -926,6 +884,7 @@
 		if (!$rs) 
 			if (defined('ADODB_PEAR')) return ADODB_PEAR_Error();
 			else return false;
+		
 		$arr = $rs->GetArray();
 		$rs->Close();
 		return $arr;

@@ -1,7 +1,7 @@
 <?php
 /*
 
-  version V3.20 17 Feb 2003 (c) 2000-2003 John Lim. All rights reserved.
+  version V3.30 3 March 2003 (c) 2000-2003 John Lim. All rights reserved.
 
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
@@ -881,33 +881,16 @@ class ADORecordset_oci8 extends ADORecordSet {
 		return $this->_fieldobjs[$fieldOffset];
 	}
 	
-	/**
-	 * return recordset as a 2-dimensional array.
-	 *
-	 * @param [nRows]  is the number of rows to return. -1 means every row.
-	 *
-	 * @return an array indexed by the rows (0-based) from the recordset
-	 */
-	function GetArray($nRows = -1) 
-	{
-	//	if ($this->_arr) return $this->_arr;
-		$results = array();
-		$cnt = 0;
-		while (!$this->EOF && $nRows != $cnt) {
-			$results[$cnt++] = $this->fields;
-			$this->MoveNext();
-		}
-		return $results;
-	}
 	
 	// 10% speedup to move MoveNext to child class
 	function MoveNext() 
 	{
+	//global $ADODB_EXTENSION;if ($ADODB_EXTENSION) return @adodb_movenext($this);
+		
 		if (!$this->EOF) {		
 			$this->_currentRow++;
 			if(@OCIfetchinto($this->_queryID,$this->fields,$this->fetchMode))
 				return true;
-			
 			$this->EOF = true;
 		}
 		return false;

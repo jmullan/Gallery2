@@ -15,7 +15,7 @@
 /**
 	\mainpage 	
 	
-	 @version V3.20 17 Feb 2003 (c) 2000-2003 John Lim (jlim\@natsoft.com.my). All rights reserved.
+	 @version V3.30 3 March 2003 (c) 2000-2003 John Lim (jlim\@natsoft.com.my). All rights reserved.
 
 	Released under both BSD license and Lesser GPL library license. 
  	Whenever there is any discrepancy between the two licenses, 
@@ -62,7 +62,6 @@
 	// allow [ ] @ and . in table names
 	define('ADODB_TABLE_REGEX','([]0-9a-z_\.\@\[-]*)');
 	
-	if (!defined('MAX_BLOB_SIZE')) define('MAX_BLOB_SIZE',999999); // 900K
 	
 	if (!defined('ADODB_PREFETCH_ROWS')) define('ADODB_PREFETCH_ROWS',10);
 
@@ -83,6 +82,8 @@
 		$ADODB_Database, 	// last database driver used
 		$ADODB_COUNTRECS,	// count number of records returned - slows down query
 		$ADODB_CACHE_DIR,	// directory to cache recordsets
+		$ADODB_EXTENSION,   // ADODB extension installed
+		$ADODB_COMPAT_PATCH, // If $ADODB_COUNTRECS and this is true, $rs->fields is available on EOF
 	 	$ADODB_FETCH_MODE;	// DEFAULT, NUM, ASSOC or BOTH. Default follows native driver default...
 	
 	//==============================================================================================	
@@ -98,7 +99,7 @@
 	} else {
 		define('ADODB_PHPVER',0x4000);
 	}
-	
+	$ADODB_EXTENSION = (defined('ADODB_EXTENSION'));
 	//if (extension_loaded('dbx')) define('ADODB_DBX',1);
 	
 	/**
@@ -149,7 +150,7 @@
 		/**
 		 * ADODB version as a string.
 		 */
-		$ADODB_vers = 'V3.20 17 Feb 2003 (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved. Released BSD & LGPL.';
+		$ADODB_vers = 'V3.30 3 March 2003 (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved. Released BSD & LGPL.';
 	
 		/**
 		 * Determines whether recordset->RecordCount() is used. 
@@ -262,14 +263,17 @@
 		var $affectedrows = false;
 		var $insertid = false;
 		var $sql = '';
+		var $compat = false;
 		/**
 		 * Constructor
 		 *
 		 */
 		function ADORecordSet_array($fakeid=1)
 		{
-		global $ADODB_FETCH_MODE;
+		global $ADODB_FETCH_MODE,$ADODB_COMPAT_FETCH;
 		
+			// fetch() on EOF does not delete $this->fields
+			$this->compat = !empty($ADODB_COMPAT_FETCH);
 			$this->ADORecordSet($fakeid); // fake queryID		
 			$this->fetchMode = $ADODB_FETCH_MODE;
 		}
@@ -314,6 +318,14 @@
 			} 
 			
 			$this->Init();
+		}
+		
+		function GetArray($nRows=-1)
+		{
+			if ($nRows == -1 && $this->_currentRow == 0) return $this->_array;
+			else {
+				ADORecordSet::GetArray($nRows);
+			}
 		}
 		
 		function _initrs()
@@ -367,10 +379,16 @@
 			$pos = $this->_currentRow;
 			
 			if ($this->_skiprow1) {
-				if ($this->_numOfRows <= $pos-1) return false;
+				if ($this->_numOfRows <= $pos-1) {
+					if (!$this->compat) $this->fields = false;
+					return false;
+				}
 				$pos += 1;
 			} else {
-				if ($this->_numOfRows <= $pos) return false;
+				if ($this->_numOfRows <= $pos) {
+					if (!$this->compat) $this->fields = false;
+					return false;
+				}
 			}
 			
 			$this->fields = $this->_array[$pos];

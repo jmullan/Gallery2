@@ -1,6 +1,6 @@
 <?php
 /* 
-V3.20 17 Feb 2003  (c) 2000-2003 John Lim. All rights reserved.
+V3.30 3 March 2003  (c) 2000-2003 John Lim. All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -226,22 +226,21 @@ class ADORecordset_sybase extends ADORecordSet {
 	function _fetch($ignore_fields=false) 
 	{
 		if ($this->fetchMode == ADODB_FETCH_NUM) {
-			$f = @sybase_fetch_row($this->_queryID);
+			$this->fields = @sybase_fetch_row($this->_queryID);
 		} else if ($this->fetchMode == ADODB_FETCH_ASSOC) {
-			$f = @sybase_fetch_row($this->_queryID);
-			if (is_array($f)) {
-				$this->fields = $f;
+			$this->fields = @sybase_fetch_row($this->_queryID);
+			if (is_array($this->fields)) {
 				$this->fields = $this->GetRowAssoc(ADODB_CASE_ASSOC);
 				return true;
 			}
 			return false;
 		}  else {
-			$f = @sybase_fetch_array($this->_queryID);
+			$this->fields = @sybase_fetch_array($this->_queryID);
 		}
-		if ( is_array($f)) {
-			$this->fields = $f;
+		if ( is_array($this->fields)) {
 			return true;
 		}
+
 		return false;
 	}
 	

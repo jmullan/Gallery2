@@ -1,6 +1,6 @@
 <?php
 /*
-V3.20 17 Feb 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.  
+V3.30 3 March 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.  
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -403,7 +403,7 @@ class ADODB_ibase extends ADOConnection {
 	function _BlobDecode( $blob ) 
 	{
 		$blobid = ibase_blob_open( $blob );
-		$realblob = ibase_blob_get( $blobid,MAX_BLOB_SIZE); // 2nd param is max size of blob -- Kevin Boillet <kevinboillet@yahoo.fr>
+		$realblob = ibase_blob_get( $blobid,$this->maxblobsize); // 2nd param is max size of blob -- Kevin Boillet <kevinboillet@yahoo.fr>
 		while($string = ibase_blob_get($blobid, 8192)){ 
 			$realblob .= $string; 
 		}
@@ -545,7 +545,10 @@ class ADORecordset_ibase extends ADORecordSet
 	function _fetch() 
 	{
 		$f = @ibase_fetch_row($this->_queryID); 
-		if ($f === false) return false;
+		if ($f === false) {
+			$this->fields = false;
+			return false;
+		}
 		// OPN stuff start - optimized
 		// fix missing nulls and decode blobs automatically
 		for ($i=0, $max = $this->_numOfFields; $i < $max; $i++) { 
