@@ -368,32 +368,33 @@ class ConfirmImportController extends GalleryController {
 				
 				// $newAlbumInstance->setorderBy
 				// $newAlbumInstance->setorderDirection
-
+				
 				// Set album owner
-				$validUID = Gallery1DataParser::isValidUid($albumsPath,$album['owner']);
-				if ($validUID) {
-				    list($ret, $albumUserFields) = Gallery1DataParser::getUserFieldsByUid($albumsPath, $album['owner']);
-				    if ($ret->isError()) {
-					return array($ret->wrap(__FILE__, __LINE__), null);
-				    }
-				    list($ret, $owner) = GalleryCoreApi::fetchUserByUsername($albumUserFields['username']);
-				    if ($ret->isError()) {
-					if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
-					    $owner = $gallery->getActiveUser();
-					} else {
+				if (isset($album['owner'])) {
+				    $validUID = Gallery1DataParser::isValidUid($albumsPath,$album['owner']);
+				    if ($validUID) {
+					list($ret, $albumUserFields) = Gallery1DataParser::getUserFieldsByUid($albumsPath, $album['owner']);
+					if ($ret->isError()) {
 					    return array($ret->wrap(__FILE__, __LINE__), null);
 					}
+					list($ret, $owner) = GalleryCoreApi::fetchUserByUsername($albumUserFields['username']);
+					if ($ret->isError()) {
+					    if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
+						$owner = $gallery->getActiveUser();
+					    } else {
+						return array($ret->wrap(__FILE__, __LINE__), null);
+					    }
+					}
+					$newAlbumInstance->setOwnerId($owner->getId());
 				    }
-				    $newAlbumInstance->setOwnerId($owner->getId());
 				}
-
-				/* Save the new album */	    
+				    /* Save the new album */	    
 				$ret = $newAlbumInstance->save();
 				if ($ret->isError()) {
 				    return array($ret->wrap(__FILE__, __LINE__), null);
 				}
-
-
+				
+				
 				$ret = GalleryCoreApi::removeItemPermissions($newAlbumInstance->getId());
 				if ($ret->isError()) {
 				    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -416,7 +417,7 @@ class ConfirmImportController extends GalleryController {
 					return array($ret->wrap(__FILE__, __LINE__), null);
 				    }
 				}
-
+				
 				// Set album owner permissions
 				$validUID = Gallery1DataParser::isValidUid($albumsPath,$album['owner']);
 				if ($validUID) {
@@ -449,7 +450,7 @@ class ConfirmImportController extends GalleryController {
 					return array($ret->wrap(__FILE__, __LINE__), null);
 				    }				    
 				}
-
+				
 				if (isset($album['perms'])) {
 				    foreach($album['perms'] as $tmpperm => $tmpusers) {
 					foreach($permissionTranslation[$tmpperm] as $tmpTranslatedPerm) {
@@ -513,12 +514,14 @@ class ConfirmImportController extends GalleryController {
 				}				
 				
 
-				/* Click counts must be set after the item is first saved */
-				$ret = GalleryCoreApi::setItemViewCount($newAlbumInstanceId, $album['clicks']);
-				if ($ret->isError()) {
-				    return array($ret->wrap(__FILE__, __LINE__), null);
+				/* Click counts must be set after the item is
+				 * first saved */
+				if (isset($album['clicks'])) {
+				    $ret = GalleryCoreApi::setItemViewCount($newAlbumInstanceId, $album['clicks']);
+				    if ($ret->isError()) {
+					return array($ret->wrap(__FILE__, __LINE__), null);
+				    }
 				}
-				
 				
 				/* Delete existing derivative preferences */
 				$ret = GalleryCoreApi::removeDerivativePreferencesForItem($newAlbumInstanceId);
@@ -527,21 +530,23 @@ class ConfirmImportController extends GalleryController {
 				}
 				
 				/* Add the thumbnail size back in */
-				$ret = GalleryCoreApi::addDerivativePreference(0, $newAlbumInstanceId,
-									       DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
-									       'thumbnail|' . $album['thumb_size']);
+				if (isset($album['thumb_size'])) {
+				    $ret = GalleryCoreApi::addDerivativePreference(0, $newAlbumInstanceId,
+										   DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
+										   'thumbnail|' . $album['thumb_size']);
+				}
 				if ($ret->isError()) {
 				    return array($ret->wrap(__FILE__, __LINE__), null);
 				}
 				
-				
-				$ret = GalleryCoreApi::addDerivativePreference(1, $newAlbumInstanceId,
-									       DERIVATIVE_TYPE_IMAGE_RESIZE,
-									       'scale|' . $album['resize_size']);
-				if ($ret->isError()) {
-				    return array($ret->wrap(__FILE__, __LINE__), null);
+				if (isset($album['resize_size']) && strcmp($album['resize_size'],'off')) {
+				    $ret = GalleryCoreApi::addDerivativePreference(1, $newAlbumInstanceId,
+										   DERIVATIVE_TYPE_IMAGE_RESIZE,
+										   'scale|' . $album['resize_size']);
+				    if ($ret->isError()) {
+					return array($ret->wrap(__FILE__, __LINE__), null);
+				    }
 				}
-				
 				
 				list ($ret, $layout) = GalleryCoreApi::fetchLayout($newAlbumInstance);
 				if ($ret->isError()) {
@@ -605,7 +610,7 @@ class ConfirmImportController extends GalleryController {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
 			$albumNeedsThumbnail = empty($thumbnailTable) ? true : false;
-
+			
 			foreach($photos as $j => $importAlbumItem) {
 			    if (isset($importAlbumItem->isAlbumName) && $importAlbumItem->isAlbumName) {
 				if ($importAlbumItem->highlight == 1) {
@@ -661,7 +666,9 @@ class ConfirmImportController extends GalleryController {
 				if (isset($importAlbumItem->uploadDate)){
 				    $newItem->setcreationTimestamp($importAlbumItem->uploadDate);
 				}
-				$newItem->setviewedSinceTimestamp($album['clicks_date']);
+				if (isset($album['clicks_date']) && $album['clicks_date']>0) {
+				    $newItem->setviewedSinceTimestamp($album['clicks_date']);
+				}
 				if (isset($importAlbumItem->clicks) && $importAlbumItem->clicks > 0) {
 				    $ret = GalleryCoreApi::setItemViewCount($newItem->getId(), $importAlbumItem->clicks);
 				    if ($ret->isError()) {

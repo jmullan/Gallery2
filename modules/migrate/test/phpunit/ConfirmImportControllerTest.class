@@ -304,9 +304,9 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 				  NULL,                                  // keywords
 				  '[b]No description[/b]',               // description
 				  $testOwner->getId(),                   // owner
-				  1082614775,                            // album creation
+				  1056015077,                            // album creation
 				  1056015077,                            // clicks counted since
-				  13,                                    // count of clicks
+				  14,                                    // count of clicks
 				  array(array(                           // thumb and resized sizing preferences
 					      'order' => 0,
 					      'derivativeType' => 1,
@@ -582,6 +582,11 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
     
     function testConvertHtmlToBbcode() {
 	/* Basic HTML styling with edge cases */
+	$this->assertEquals('&ntilde;o' . "\n" . 'this',
+			    ConfirmImportController::convertHtmlToBbcode('&ntilde;o'. "\n" . 'this'));
+			    
+	$this->assertEquals('Se&ntilde;or Guapo&#039;s favorite!',
+			    ConfirmImportController::convertHtmlToBbcode('Se&ntilde;or Guapo\'s favorite!'));
 	$this->assertEquals('[b]bold[/b]',
 			    ConfirmImportController::convertHtmlToBbcode('<b>bold</b>'));
 	$this->assertEquals('[i]italic[/i]',
