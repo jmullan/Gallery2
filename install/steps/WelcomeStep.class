@@ -21,14 +21,64 @@
  */
 
 class WelcomeStep extends InstallStep {
+    var $_configType;
+
     function stepName() {
 	return _('Welcome');
     }
 
+    function processRequest() {
+	if (!empty($_GET['downloadHtaccess'])) {
+	    $htaccess = "RedirectMatch permanent ^/mygallery$ /mygallery/main.php\n"
+		      . "<IfModule mod_rewrite.c>\nRewriteEngine On\nRewriteBase /mygallery\n"
+		      . "RewriteRule ^(.*)$ /gallery2/$1\n</IfModule>\n";
+	    header("Content-Type: text/plain");
+	    header("Content-Length: " . strlen($htaccess));
+	    header("Content-Description: .htaccess file for multisite Gallery");
+	    header("Content-Disposition: attachment; filename=.htaccess");
+	    print $htaccess;
+	    return false;
+	}
+
+	return true;
+    }
+
     function loadTemplateData(&$templateData) {
-	$templateData['totalSteps'] = sizeof($GLOBALS['steps'])-1;
-	$templateData['bodyFile'] = 'Welcome.html';
-	$this->setComplete(true);
+	global $galleryStub;
+	if (!isset($this->_configType)) {
+	    $urlGalleryId = $_SESSION['galleryId'];
+	    $configGalleryId = $galleryStub->getConfig('galleryId');
+
+	    if (empty($configGalleryId)) {
+		$galleryStub->setConfig('galleryId', $urlGalleryId);
+		$this->_configType = 'newconfig';
+	    } else if ($configGalleryId != $urlGalleryId) {
+		/* Clear out any default config details */
+		$isMultisite = $galleryStub->getConfig('multisite');
+		$galleryStub = new GalleryStub();
+		$galleryStub->setConfig('galleryId', $urlGalleryId);
+		if ($isMultisite) {
+		    $galleryStub->setConfig('multisite', true);
+		}
+		$galleryStub->setConfig('newsite', true);
+		$this->_configType = 'newsite';
+	    } else {
+		$this->_configType = 'reconfig';
+	    }
+	}
+
+	$templateData['configType'] = $this->_configType;
+	if (isset($_GET['multisite'])) {
+	    $templateData['galleryId'] = $galleryStub->getConfig('galleryId');
+	    $templateData['bodyFile'] = 'WelcomeMultiSite.html';
+	} else {
+	    $templateData['totalSteps'] = sizeof($GLOBALS['steps'])-1;
+	    $templateData['bodyFile'] = 'Welcome.html';
+	}
+    }
+
+    function isOptional() {
+	return true;
     }
 }
 ?>

@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -47,7 +47,7 @@ $gallery->setConfig('setup.password', '');
  * not be in your DocumentRoot).  If you *do* make it available via your
  * web server then you probably won't have any security for your data files.
  *
- * Don't make this the same as your gallery directory!  
+ * Don't make this the same as your gallery directory!
  */
 $gallery->setConfig('data.gallery.base', '');
 
@@ -56,16 +56,16 @@ $gallery->setConfig('data.gallery.base', '');
  * support MySQL, PostgreSQL and Oracle.  Enter the hostname where your
  * database lives, and the username and password you use to connect to it.
  *
- * You must specify the name of a database that already exists.  Gallery will 
+ * You must specify the name of a database that already exists.  Gallery will
  * not create the database for you, because it's very difficult to do that in
- * a reliable, database-neutral fashion.  The user that you use should have 
+ * a reliable, database-neutral fashion.  The user that you use should have
  * the following permissions:
  *
  *    SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER
  *
  * You must specify a table and column prefix.  This is a few characters that
  * is prepended to any table or column name to avoid conflicting with reserved
- * words in the database or other tables you have in the same database.  In 
+ * words in the database or other tables you have in the same database.  In
  * fact, it's fine to let Gallery uses the same database as other applications
  * (including other instances of Gallery itself); the prefix is enough
  * to distinguish Gallery's tables from other applications.
@@ -118,12 +118,12 @@ $gallery->setConfig('storage.config', $storeConfig);
 $gallery->setDebug(false);
 
 /*
- * Profiling mode.  You can enable profiling for different parts of G2 to get an 
+ * Profiling mode.  You can enable profiling for different parts of G2 to get an
  * idea of what's fast and slow.  Right now the only options are to enable SQL
  * profiling:
  *
  * $gallery->setProfile(array('sql'));
- *	
+ *
  */
 $gallery->setProfile(false);
 
@@ -132,4 +132,9 @@ $gallery->setProfile(false);
  * by setting this this flag to true.
  */
 $gallery->setConfig('mode.embed.only', false);
+
+/*
+ * Used by the installer to distinguish multiple sites supported by one codebase.
+ */
+$gallery->setConfig('galleryId', '');
 ?>

@@ -73,16 +73,26 @@ foreach ($stepOrder as $stepName) {
 
 session_start();
 
-if (isset($_SESSION['path'])) {
-    if ($_SESSION['path'] != __FILE__) {
-	/*
-	 * Security error!  This session is not valid for this copy of the
-	 * installer. Start over.
-	 */
-	session_unset();
-    }
+if (!isset($_SESSION['path'])) {
+    $_SESSION['path'] = __FILE__;
+} else if ($_SESSION['path'] != __FILE__) {
+    /*
+     * Security error!  This session is not valid for this copy of the installer. Start over.
+     */
+    session_unset();
+    $_SESSION['path'] = __FILE__;
 }
-$_SESSION['path'] = __FILE__;
+require_once(dirname(__FILE__) . '/../modules/core/classes/GalleryUrlGenerator.class');
+if (!isset($_SESSION['galleryId'])) {
+    $_SESSION['galleryId'] = GalleryUrlGenerator::getGalleryId();
+} else if ($_SESSION['galleryId'] != GalleryUrlGenerator::getGalleryId()) {
+    /*
+     * Security error!  This session is not valid for this URL. Start over.
+     */
+    session_unset();
+    $_SESSION['path'] = __FILE__;
+    $_SESSION['galleryId'] = GalleryUrlGenerator::getGalleryId();
+}
 
 /* If we don't have our steps in our session, initialize them now. */
 if (!isset($_GET['startOver']) && !empty($_SESSION['install_steps'])) {
@@ -102,7 +112,7 @@ if (empty($steps) || !is_array($steps)) {
 
     /* Get rid of $gallery so that we can call init.php later on and get a real $gallery */
     $galleryStub = $gallery;
-    $_SESSION['galleryStub'] = $galleryStub;
+    $_SESSION['galleryStub'] =& $galleryStub;
     unset($gallery);
 
     $steps = array();
@@ -156,7 +166,7 @@ if ($currentStep->processRequest()) {
     /* Round percentage to the nearest 5 */
     $templateData['errors'] = array();
     $currentStep->loadTemplateData($templateData);
-    $stepsComplete = $stepNumber - ($currentStep->isComplete() ? 0 : 1);
+    $stepsComplete = max($stepNumber - ($currentStep->isComplete() ? 0 : 1), 0);
     $templateData['percentComplete'] = (int)((100 * ($stepsComplete / (sizeof($steps)-1))) / 5) * 5;
 
     /* Fetch our page into a variable */

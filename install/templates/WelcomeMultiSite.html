@@ -1,0 +1,30 @@
+    <h1>MultiSite Setup</h1>
+    <p>
+      <?php print _('Gallery can support multiple independent sites with a single installation of the code. This is done by configuring the webserver to point multiple URL domains, subdomains or paths at the Gallery code and then rerunning this installer to configure each site.') ?>
+    </p>
+    <p>
+      <?php print _('This installer session will')
+		. ($templateData['configType'] == 'newsite' ? _(' configure a new site at ')
+							    : _(' reconfigure '))
+		. $templateData['galleryId'] ?>
+    </p>
+    <p>
+      <?php printf(_('Below is a <a href="%s">sample</a> .htaccess for Apache to point <tt>/mygallery</tt> to a <tt>gallery2</tt> directory where the Gallery code resides.'), 'index.php?step=' . $stepNumber . '&downloadHtaccess=1') ?>
+      <div class="example"><pre>RedirectMatch permanent ^/mygallery$ /mygallery/main.php
+&lt;IfModule mod_rewrite.c&gt;
+RewriteEngine On
+RewriteBase /mygallery
+RewriteRule ^(.*)$ /gallery2/$1
+&lt;/IfModule&gt;</pre></div>
+    </p>
+    <p>
+      <?php print _('To configure a new Gallery site first put the .htaccess file in place and verify it works by browsing to main.php.  This will bring up the previously configured Gallery site.  Then rerun this installer <i>using the new URL</i>.  After configuration the original and new URLs will display separate Gallery sites.') ?>
+    </p>
+
+    <div class="go">
+      <span class="goToNext">
+	<a href="index.php?step=<?php print ($stepNumber + 1) ?>">
+	  <?php print _('Begin Installation&raquo;') ?>
+	</a>
+      </span>
+    </div>

@@ -43,6 +43,18 @@ class CreateConfigFileStep extends InstallStep {
 	    $templateData['bodyFile'] = 'CreateConfigFileInstructions.html';
 	    $templateData['galleryDir'] = basename($baseDir);
 	} else {
+	    $isNewSite = $galleryStub->getConfig('newsite');
+	    $isMultisite = $galleryStub->getConfig('multisite');
+	    $galleryId = $galleryStub->getConfig('galleryId');
+	    $currentConfig = array();
+
+	    if ($isNewSite || $isMultisite) {
+		$currentConfig = @file($configFilePath);
+		if (empty($currentConfig)) {
+		    $templateData['error'] = _('Unable to read config.php');
+		}
+	    }
+
 	    if (!$out = @fopen($configFilePath, 'w')) {
 		/* Give the user instructions */
 		$templateData['bodyFile'] = 'CreateConfigFileInstructions.html';
@@ -56,36 +68,103 @@ class CreateConfigFileStep extends InstallStep {
 		    }
 		}
 	    } else {
-		$newStoreConfig = $galleryStub->getConfig('storage.config');
-		$in = @fopen($baseDir . '/install/config.php-template', 'r');
-		while ($line = fgets($in, 2000)) {
-		    if (trim($line) == '$gallery->setConfig(\'setup.password\', \'\');') {
-			$tmp = addslashes($galleryStub->getConfig('setup.password'));
-			$line = sprintf("\$gallery->setConfig('setup.password', '%s');\n", $tmp);
-		    }
-
-		    if (trim($line) == '$gallery->setConfig(\'data.gallery.base\', \'\');') {
-			$tmp = addslashes($galleryStub->getConfig('data.gallery.base'));
-			$line = sprintf("\$gallery->setConfig('data.gallery.base', '%s');\n", $tmp);
-		    }
-
-		    foreach (array('type', 'hostname', 'database', 'username',
-				   'password', 'tablePrefix', 'columnPrefix') as $key) {
-			if (preg_match("/^.storeConfig\['$key'\] = '.*';/", $line)) {
-			    $newStoreConfig[$key] = addslashes($newStoreConfig[$key]);
-			    $line = "\$storeConfig['$key'] = '$newStoreConfig[$key]';\n";
-			}
-		    }
-
-		    fwrite($out, $line);
+		if ($isNewSite && !$isMultisite) {
+		    $this->_newMultiConfig($out, $baseDir, $currentConfig, $galleryId);
+		} else if ($isNewSite) {
+		    $this->_addMultiConfig($out, $baseDir, $currentConfig, $galleryId);
+		} else if ($isMultisite) {
+		    $this->_updateMultiConfig($out, $baseDir, $currentConfig, $galleryId);
+		} else {
+		    $this->_writeSingleConfig($out, $baseDir, $galleryId);
 		}
-		fclose($in);
 		fclose($out);
 		$this->setComplete(true);
 		$templateData['bodyFile'] = 'CreateConfigFileSuccess.html';
 	    }
 	}
 	$this->_firstTime = false;
+    }
+
+    function _writeSingleConfig(&$out, $baseDir) {
+	global $galleryStub;
+
+	$newStoreConfig = $galleryStub->getConfig('storage.config');
+	$in = @fopen($baseDir . '/install/config.php-template', 'r');
+	while ($line = fgets($in, 2000)) {
+	    if (trim($line) == '$gallery->setConfig(\'setup.password\', \'\');') {
+		$tmp = addslashes($galleryStub->getConfig('setup.password'));
+		$line = sprintf("\$gallery->setConfig('setup.password', '%s');\n", $tmp);
+	    }
+
+	    if (trim($line) == '$gallery->setConfig(\'data.gallery.base\', \'\');') {
+		$tmp = addslashes($galleryStub->getConfig('data.gallery.base'));
+		$line = sprintf("\$gallery->setConfig('data.gallery.base', '%s');\n", $tmp);
+	    }
+
+	    if (trim($line) == '$gallery->setConfig(\'galleryId\', \'\');') {
+		$tmp = addslashes($galleryStub->getConfig('galleryId'));
+		$line = sprintf("\$gallery->setConfig('galleryId', '%s');\n", $tmp);
+	    }
+
+	    foreach (array('type', 'hostname', 'database', 'username',
+			   'password', 'tablePrefix', 'columnPrefix') as $key) {
+		if (preg_match("/^.storeConfig\['$key'\] = '.*';/", $line)) {
+		    $newStoreConfig[$key] = addslashes($newStoreConfig[$key]);
+		    $line = "\$storeConfig['$key'] = '$newStoreConfig[$key]';\n";
+		}
+	    }
+
+	    fwrite($out, $line);
+	}
+	fclose($in);
+    }
+
+    function _newMultiConfig(&$out, $baseDir, $currentConfig, $galleryId) {
+	$in = @fopen($baseDir . '/install/multiconfig.php-template', 'r');
+	while ($line = fgets($in, 2000)) {
+	    fwrite($out, $line);
+	    if (preg_match('{^/\*>-*<\*/$}', $line)) {
+		fwrite($out, "case '" . $galleryId . "': ?>\n");
+		$this->_writeSingleConfig($out, $baseDir);
+		fwrite($out, "\n<?php\nbreak;\n${line}default: ?>\n");
+		foreach ($currentConfig as $tmp) {
+		    fwrite($out, $tmp);
+		}
+		fwrite($out, "<?php\n$line");
+	    }
+	}
+	fclose($in);
+    }
+
+    function _addMultiConfig(&$out, $baseDir, $currentConfig, $galleryId) {
+	$added = false;
+	foreach ($currentConfig as $line) {
+	    fwrite($out, $line);
+	    if (preg_match('{^/\*>-*<\*/$}', $line) && !$added) {
+		fwrite($out, "case '" . $galleryId . "': ?>\n");
+		$this->_writeSingleConfig($out, $baseDir);
+		fwrite($out, "<?php\nbreak;\n$line");
+		$added = true;
+	    }
+	}
+    }
+
+    function _updateMultiConfig(&$out, $baseDir, $currentConfig, $galleryId) {
+	$skip = $updated = false;
+	foreach ($currentConfig as $line) {
+	    if (preg_match('{^/\*>-*<\*/$}', $line)) {
+		$skip = false;
+	    }
+	    if (!$skip) {
+		fwrite($out, $line);
+	    }
+	    if (strpos($line, "case '$galleryId': ?>") === 0
+		    || (!$updated && strpos($line, 'default:') === 0)) {
+		$this->_writeSingleConfig($out, $baseDir);
+		fwrite($out, "<?php\nbreak;\n");
+		$skip = $updated = true;
+	    }
+	}
     }
 }
 ?>
