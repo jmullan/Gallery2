@@ -61,6 +61,7 @@ class ItemAddUploadApplet extends ItemAddPlugin {
 	    $ItemAddUploadApplet['album'] = $item->getId();
 	    $ItemAddUploadApplet['defaults'] = array();
 	    $ItemAddUploadApplet['overrides'] = array('toSysOut' => 'true');
+	    $ItemAddUploadApplet['userAgent'] = $_SERVER['HTTP_USER_AGENT'];
 
 	    $urlGenerator = $gallery->getUrlGenerator();
 	    $ItemAddUploadApplet['g2BaseUrl'] = $urlGenerator->getCurrentUrlDir();
