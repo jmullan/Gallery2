@@ -34,35 +34,80 @@
  * @subpackage UserInterface
  */
 class AdminCoreController extends GalleryController {
-
+    
     /**
      * @see GalleryController::handleRequest
      */
-    function handleRequest() {
+    function handleRequest($form) {
 	global $gallery;
 
 	$ret = GalleryUserHelper::assertSiteAdministrator();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	    
-	foreach (array('permissions.directory',
-		       'permissions.file',
-		       'exec.expectedStatus',
-		       'default.orderBy',
-		       'default.orderDirection',
-		       'default.layout',
-		       'default.theme',
-		       'default.language',
-		       'session.lifetime',
-		       'session.inactivityTimeout') as $key) {
-	    $value = GalleryUtilities::getRequestVariables($key);
 
-	    if (isset($value)) {
-		$ret = $gallery->setModuleParameter('core', $key, $value);
+	/* Get the list of legal local server dirs */
+	list ($ret, $localServerDirs) = $gallery->getModuleParameter('core', 'uploadLocalServer.dirs');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$localServerDirList = split(',', $localServerDirs);
+
+	if (isset($form['action']['save'])) {
+	    foreach (array('permissions.directory',
+			   'permissions.file',
+			   'exec.expectedStatus',
+			   'default.orderBy',
+			   'default.orderDirection',
+			   'default.layout',
+			   'default.theme',
+			   'default.language',
+			   'session.lifetime',
+			   'session.inactivityTimeout') as $key) {
+		list ($a, $b) = split('.', $key);
+		if (isset($form[$a][$b])) {
+		    $ret = $gallery->setModuleParameter('core', $key, $form[$a][$b]);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		}
+	    }
+	} else if (isset($form['action']['addUploadLocalServerDir'])) {
+	    $path = $form['uploadLocalServer']['newDir'];
+	    if (!empty($path)) {
+		if (!in_array($path, $localServerDirList)) {
+		    $localServerDirList[] = $path;
+		}
+
+		for ($i = 0; $i < sizeof($localServerDirList); $i++) {
+		    if (empty($localServerDirList[$i])) {
+			unset($localServerDirList[$i]);
+		    }
+		}
+		
+		$ret = $gallery->setModuleParameter('core', 'uploadLocalServer.dirs', join(',', $localServerDirList));
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
+	    }
+	} else if (isset($form['action']['removeUploadLocalServerDir'])) {
+	    $path = $form['uploadLocalServer']['selectedDir'];
+	    if (!empty($path)) {
+		$flip = array_flip($localServerDirList);
+		if (isset($flip[$path])) {
+		    unset($flip[$path]);
+		}
+		$localServerDirList = array_flip($flip);
+
+		for ($i = 0; $i < sizeof($localServerDirList); $i++) {
+		    if (empty($localServerDirList[$i])) {
+			unset($localServerDirList[$i]);
+		    }
+		}
+	    }
+	    $ret = $gallery->setModuleParameter('core', 'uploadLocalServer.dirs', join(',', $localServerDirList));
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
 
@@ -122,6 +167,13 @@ class AdminCoreView extends GalleryView {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+
+	/* Get the list of legal local server dirs */
+	list ($ret, $localServerDirs) = $gallery->getModuleParameter('core', 'uploadLocalServer.dirs');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$localServerDirList = split(',', $localServerDirs);
 
 	/* Set up our sort order selection list */
 	$orderByList = array();
@@ -214,6 +266,7 @@ class AdminCoreView extends GalleryView {
 	$template->setVariable('form', $form);
 	$template->setVariable('layoutList', $layoutList);
 	$template->setVariable('themeList', GalleryTheme::getThemes());
+	$template->setVariable('localServerDirList', $localServerDirList);
 	$template->setVariable('languageList', $languageList);
 	$template->setVariable('orderByList', $orderByList);
 	$template->setVariable('orderDirectionList', $orderDirectionList);

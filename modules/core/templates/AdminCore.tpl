@@ -24,10 +24,10 @@
 	    {gallery->text text="Album sort order:"}
 	  </td>
 	  <td>
-	    {gallery->select name="default.orderBy"}
+	    {gallery->select name="form.default.orderBy"}
 	    {html_options options=$orderByList selected=$form.default.orderBy}
 	    {/gallery->select}
-	    {gallery->select name="default.orderDirection"}
+	    {gallery->select name="form.default.orderDirection"}
 	    {html_options options=$orderDirectionList selected=$form.default.orderDirection}
 	    {/gallery->select}
 	  </td>
@@ -38,7 +38,7 @@
 	    {gallery->text text="Default layout"}
 	  </td>
 	  <td>
-	    {gallery->select name="default.layout"}
+	    {gallery->select name="form.default.layout"}
 	    {html_options values=$layoutList selected=$form.default.layout output=$layoutList}
 	    {/gallery->select}
 	  </td>
@@ -49,7 +49,7 @@
 	    {gallery->text text="Default theme"}
 	  </td>
 	  <td>
-	    {gallery->select name="default.theme"}
+	    {gallery->select name="form.default.theme"}
 	    {html_options values=$themeList selected=$form.default.theme output=$themeList}
 	    {/gallery->select}
 	  </td>
@@ -76,7 +76,7 @@
 	    {gallery->text text="Default language"}
 	  </td>
 	  <td>
-	    {gallery->select name="default.language"}
+	    {gallery->select name="form.default.language"}
 	    {html_options options=$languageList selected=$form.default.language}
 	    {/gallery->select}
 	  </td>
@@ -103,7 +103,7 @@
 	    {gallery->text text="New directories"}
 	  </td>
 	  <td>
-	    {gallery->select name="permissions.directory"}
+	    {gallery->select name="form.permissions.directory"}
 	    {html_options values=$permissionsDirectoryList selected=$form.permissions.directory output=$permissionsDirectoryList}
 	    {/gallery->select}
 	  </td>
@@ -114,9 +114,46 @@
 	    {gallery->text text="New files"}
 	  </td>
 	  <td>
-	    {gallery->select name="permissions.file"}
+	    {gallery->select name="form.permissions.file"}
 	    {html_options values=$permissionsFileList selected=$form.permissions.file output=$permissionsFileList}
 	    {/gallery->select}
+	  </td>
+	</tr>
+
+	<tr>
+	  <td>
+	    &nbsp;
+	  </td>
+	</tr>
+
+	<tr>
+	  <td colspan="2">
+	    {gallery->bigFontSize}
+	    {gallery->text text="Upload Options"}
+	    {/gallery->bigFontSize}
+	    <br>
+	    {gallery->text text="Specify the legal directories on the local server where a user can store files and then upload them into Gallery using the <i>Upload from Local Server</i> feature.  The paths you enter here and all the files and directories under those paths will be available to any Gallery user who has upload privileges, so you should limit this to directories that won't contain sensitive data (eg. /tmp or /usr/ftp/incoming)"}
+	  </td>
+	</tr>
+
+	<tr>	
+	  <td align="right" valign="top">
+	    {gallery->text text="Allowed Local Server Directories"}
+	    <br>
+	    {gallery->input type="submit" name="form.action.removeUploadLocalServerDir"}
+	    {gallery->text text="Remove Selected"}
+	    {/gallery->input}
+	  </td>
+	  <td>
+	    {gallery->select name="form.uploadLocalServer.selectedDir" size="5"}
+	    {html_options values=$localServerDirList selected=$form.uploadFromLocalServer.selectedDir 
+                          output=$localServerDirList}
+	    {/gallery->select}
+	    <br>
+	    {gallery->input type="text" name="form.uploadLocalServer.newDir"}{/gallery->input}
+	    {gallery->input type="submit" name="form.action.addUploadLocalServerDir"}
+	    {gallery->text text="Add New"}
+	    {/gallery->input}
 	  </td>
 	</tr>
 
@@ -166,8 +203,8 @@
 
 	<tr>
 	  <td colspan="2" align="center">
-	    {gallery->input type="submit" name="actionSave"}{gallery->text text="Save Changes"}{/gallery->input}
-	    {gallery->input type="submit" name="actionReset"}{gallery->text text="Reset"}{/gallery->input}
+	    {gallery->input type="submit" name="form.action.save"}{gallery->text text="Save Changes"}{/gallery->input}
+	    {gallery->input type="submit" name="form.action.reset"}{gallery->text text="Reset"}{/gallery->input}
 	  </td>
 	</tr>
 
