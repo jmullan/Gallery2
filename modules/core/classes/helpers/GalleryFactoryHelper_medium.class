@@ -100,6 +100,7 @@ class GalleryFactoryHelper_medium {
      * @static
      */
     function unregisterImplementation($classType, $className) {
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryFactoryHelper_simple.class');
 	$registry =& GalleryFactoryHelper_simple::_getFactoryData();
 
 	if (empty($registry)) {
