@@ -11,6 +11,14 @@
     
     NOT NULL
   
+    ,
+  COLUMN_PREFIXwidth
+      int(11)
+    
+    ,
+  COLUMN_PREFIXheight
+      int(11)
+    
     , 
   
     INDEX (

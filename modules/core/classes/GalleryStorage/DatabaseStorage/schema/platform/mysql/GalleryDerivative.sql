@@ -27,6 +27,14 @@
   COLUMN_PREFIXderivativeSize
       int(11)
     
+    ,
+  COLUMN_PREFIXderivativeFileExtension
+      varchar(
+      
+          128
+        
+      )
+    
     , 
   
     INDEX (

@@ -11,6 +11,14 @@
     
     NOT NULL
   
+    ,
+  COLUMN_PREFIXfileExtension
+      varchar(
+      
+          128
+        
+      )
+    
     , 
   
     INDEX (
