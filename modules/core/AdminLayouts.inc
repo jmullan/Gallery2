@@ -294,7 +294,6 @@ class AdminLayoutsView extends GalleryView {
 		'keywords' => $module->translate('Keywords'),
 		'pathComponent' => $module->translate('Name'),
 		'viewCount' => $module->translate('View Count'),
-		'pathName' => $module->translate('Filename'),
 	    );
 	    /* Set up our sort direction selection list */
 	    $orderDirectionList = array(
