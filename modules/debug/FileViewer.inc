@@ -38,31 +38,17 @@ class FileViewerView extends GalleryView {
      */
     function loadTemplate(&$template, &$form) {
 	global $gallery;
+	$platform = $gallery->getPlatform();
 
 	list ($file, $line) = GalleryUtilities::getRequestVariables('file', 'line');
 
 	/* Make sure the file is on the approved list */
-	$base = dirname(__FILE__) . '/../../';
-	$platform = $gallery->getPlatform();
-	$approved = $legal = false;
-	$approvedChecksum = 0;
-
-	$approvedListFile = $base . '/lib/MANIFEST.txt';
-	if ($platform->file_exists($approvedListFile)) { 
-	    foreach ($platform->file($approvedListFile) as $fileInfo) {
-		list ($approvedFile, $approvedChecksum, $octets, $viewable) = split(' ', $fileInfo);
-		$approvedFile = trim($approvedFile);
-		if ($approvedFile == $file) {
-		    $approved = ($viewable > 0);
-		    break;
-		}
-	    }
-	}
-
-	if ($approved) {
-	    $lines = $platform->file($base . '/' . $file);
+	$legal = false;
+	$manifest = GalleryUtilities::readManifest();
+	if (isset($manifest[$file]) && $manifest[$file]['viewable']) {
+	    $lines = $platform->file(dirname(__FILE__) . '/../../' . $file);
 	    $actualChecksum = sprintf("%u", crc32(join("", $lines)));
-	    if ($approvedChecksum == $actualChecksum) {
+	    if ($actualChecksum == $manifest[$file]['checksum']) {
 		$legal = true;
 	    }
 	}

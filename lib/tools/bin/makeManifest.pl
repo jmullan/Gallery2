@@ -25,22 +25,36 @@ map(s{$basedir/}{}, @files);
 # Get list of .class, .inc, .php files in basedir/modules/layouts..
 my @viewable = grep(m{^(install/.*|modules/.*|layouts/.*|[^/]*)\.(class|inc|php)$}, @files);
 
-# Now generate the checksum file
+# Split into sections
 #
-my $out;
-open($out, ">lib/MANIFEST.txt") or die;
-while (@files) {
-  my @set = splice(@files, 0, 10);
-  local *FD;
-  open(FD, "cksum -o3 @set |") or die;
-  while (<FD>) {
-    my ($sum, $size, $file) = /^(\d+)\s+(\d+)\s+(.*)$/;
-    my $view = grep(m{^\Q$file\E$}, @viewable) ? 1 : 0;
-    print $out "$file $sum $size $view\n";
+my %sections;
+foreach my $file (@files) {
+  if ($file =~ m{^((modules|layouts|themes)/.*?)/}) {
+    push(@{$sections{"$1/MANIFEST"}}, $file);
+  } else {
+    push(@{$sections{'MANIFEST'}}, $file);
   }
-  close FD;
 }
-close $out;
+
+# Now generate the checksum files
+#
+foreach my $manifest (keys %sections) {
+  my $out;
+  open($out, ">$manifest") or die;
+  my @files = @{$sections{$manifest}};
+  while (@files) {
+    my @set = splice(@files, 0, 10);
+    local *FD;
+    open(FD, "cksum -o3 @set |") or die;
+    while (<FD>) {
+      my ($sum, $size, $file) = /^(\d+)\s+(\d+)\s+(.*)$/;
+      my $view = grep(m{^\Q$file\E$}, @viewable) ? 1 : 0;
+      print $out "$file $sum $size $view\n";
+    }
+    close FD;
+  }
+  close $out;
+}
 
 sub parseCvs {
   my $activeDir = shift;
@@ -59,7 +73,7 @@ sub parseCvs {
       die "$target not a dir" if (! -d $target);
       &parseCvs($target, $files);
     } elsif (m|/([^/]*)/|) {
-      next if m{lib/MANIFEST.txt};
+      next if m{/MANIFEST$};
       my $target = "$activeDir/$1";
       die "$target not a file" if (! -f $target);
       push(@$files, $target);

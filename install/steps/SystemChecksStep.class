@@ -175,12 +175,19 @@ class SystemChecksStep extends InstallStep {
 
 	// Check all files against MANIFEST
 	$title = _('File Integrity');
-	$warnings = SystemChecksStep::CheckManifest();
+	if (SystemChecksStep::CheckFileDirective()) {
+	    $warnings = SystemChecksStep::CheckManifest();
+	} else {
+	    $warnings = array('skipped' => 1);
+	}
 	if (empty($warnings)) {
 	    $templateData['check'][] = array('title' => $title, 'success' => true);
 	} else {
 	    $notice = isset($warnings['manifest']) ?
-			    'lib/MANIFEST.txt ' . _('missing or inaccessible.') . '<br/>' : '';
+			    _('Manifest missing or inaccessible.') . '<br/>' : '';
+	    if (isset($warnings['skipped'])) {
+		$notice .= _('Test skipped due to other errors.') . '<br/>';
+	    }
 	    if (!empty($warnings['missing'])) {
 		$notice .= _('Missing files:') .
 			   '<ul>' . join('<br/>', $warnings['missing']) . '</ul>';
@@ -210,21 +217,20 @@ class SystemChecksStep extends InstallStep {
 
     function CheckManifest() {
 	$base = realpath(dirname(__FILE__) . '/../..') . '/';
-	$manifest = @file($base . 'lib/MANIFEST.txt');
+	require_once($base . 'modules/core/classes/GalleryUtilities.class');
+	$manifest = GalleryUtilities::readManifest();
 	if (empty($manifest)) {
 	    return array('manifest' => 1);
 	}
 	$warnings = array();
-	foreach ($manifest as $fileInfo) {
-	    list ($file, $cksum, $size, $viewable) = split(' ', $fileInfo);
-	    $path = $base . trim($file);
-
+	foreach ($manifest as $file => $info) {
+	    $path = $base . $file;
 	    if (!file_exists($path)) {
 		$warnings['missing'][] = SystemChecksStep::_abbreviateInSpan($file, 60);
 	    } else {
 		$lines = @file($path);
 		$actualChecksum = sprintf('%u', crc32(join('', $lines)));
-		if ($actualChecksum != $cksum) {
+		if ($actualChecksum != $info['checksum']) {
 		    $warnings['corrupt'][] = SystemChecksStep::_abbreviateInSpan($file, 60);
 		}
 	    }

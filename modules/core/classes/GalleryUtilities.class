@@ -256,8 +256,6 @@ class GalleryUtilities {
      * @static
      */
     function getRequestVariables() {
-	global $gallery;
-
 	$values = array();
 	foreach (func_get_args() as $argName) {
 	    $values[] = GalleryUtilities::_getRequestVariable(GALLERY_FORM_VARIABLE_PREFIX . $argName);
@@ -284,8 +282,6 @@ class GalleryUtilities {
      * @static
      */
     function getRequestVariablesNoPrefix() {
-	global $gallery;
-
 	$values = array();
 	foreach (func_get_args() as $argName) {
 	    $values[] = GalleryUtilities::_getRequestVariable($argName);
@@ -469,7 +465,6 @@ class GalleryUtilities {
      */
     function requireOnce($filename) {
 	global $gallery;
-
 	$platform = $gallery->getPlatform();
 
 	if (!$platform->file_exists($filename)) {
@@ -535,8 +530,6 @@ class GalleryUtilities {
      * @static
      */
     function isA($instance, $className) {
-	global $gallery;
-
 	if (function_exists('is_a')) {
 	    return is_a($instance, $className);
 	} else {
@@ -555,8 +548,6 @@ class GalleryUtilities {
      * @static
      */
     function isExactlyA($instance, $className) {
-	global $gallery;
-
 	if (function_exists('is_a')) {
 	    return is_a($instance, $className);
 	} else {
@@ -815,7 +806,6 @@ class GalleryUtilities {
      */
     function isPathInList($path, $list) {
 	global $gallery;
-
 	$platform = $gallery->getPlatform();
 	$path = $platform->realpath($path);
 
@@ -994,6 +984,43 @@ class GalleryUtilities {
 	$month = $months[gmstrftime('%m', $time)];
 	$out = gmstrftime('%%s, %d %%s %Y %H:%M:%S GMT', $time);
 	return sprintf($out, $dow, $month);
+    }
+
+    /**
+     * Get contents of MANIFEST files
+     *
+     * @return array (file => array('checksum'=>..,'size'=>..,'viewable'=>..), ..)
+     */
+    function readManifest() {
+	/*
+	 * Be careful not to reference $gallery here; this method is called from the installer
+	 */
+	// Look in (modules|layouts|themes)/*/MANIFEST and top level MANIFEST
+	$base = realpath(dirname(__FILE__) . '/../../..') . '/';
+	$list = array();
+	if (file_exists($base . 'MANIFEST')) {
+	    $list[] = 'MANIFEST';
+	}
+	foreach (array('modules', 'layouts', 'themes') as $dir) {
+	    $dh = opendir($base . $dir);
+	    while (($file = readdir($dh)) !== false) {
+		if (file_exists($base . $dir . '/' . $file . '/MANIFEST')) {
+		    $list[] = $dir . '/' . $file . '/MANIFEST';
+		}
+	    }
+	}
+	$manifest = array();
+	foreach ($list as $file) {
+	    $lines = file($base . $file);
+	    if (!empty($lines)) {
+		foreach ($lines as $line) {
+		    list ($file, $cksum, $size, $viewable) = split(' ', $line);
+		    $manifest[trim($file)] =
+			array('checksum' => $cksum, 'size' => $size, 'viewable' => ($viewable > 0));
+		}
+	    }
+	}
+	return $manifest;
     }
 }
 ?>
