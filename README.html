@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content= "text/html; charset=us-ascii" />
-      <title>README: Gallery 2 Alpha 3 (Farva)</title>
+      <title>README: Gallery 2 Alpha 4 (Nice Commits)</title>
       <style type="text/css">
 	<!--
 	html {
@@ -117,12 +117,12 @@
 	//-->
       </script>
   </head>
-  
+
   <body>
     <img src="images/g2Logo.png" alt="Gallery 2.0 Alpha" />
     <p>
-      Welcome to Gallery 2.0 (G2). This is the third
-      &ldquo;Alpha&rdquo; release of G2, code named <b>&ldquo;Farva&rdquo;</b>.
+      Welcome to Gallery 2.0 (G2). This is the fourth and final
+      &ldquo;Alpha&rdquo; release of G2, code named <b>&ldquo;Nice Commits&rdquo;</b>.
       Please read through this document carefully before installing G2
       and before asking for help.  We have taken care to try to answer
       as many of your questions here as possible.
@@ -146,7 +146,7 @@
       <li> <a href="#updating">Updating your Gallery 2 Installation</a> </li>
       <li> <a href="#advanced_topics">Advanced Topics</a> </li>
     </ul>
-    
+
     <h2><a name="quick_start">Quick Start</a></h2>
     <p>
       If you&rsquo;re impatient like us, you just want to get going.
@@ -178,9 +178,9 @@
       contain both known and unknown bugs, and will be missing some
       intended features.  We release it early so that you can see what
       is coming and give us feedback that will help us improve the
-      final release.  
+      final release.
     </p>
-    
+
     <h2><a name="Alpha_requirements">G2 Alpha requirements</a></h2>
     <ul>
       <li>
@@ -215,7 +215,7 @@
       test purposes (this shouldn&rsquo;t affect your G1 installation at
       all).
     </p>
-      
+
     <h2><a name="when_not_to_use">When not to use G2 Alpha</a></h2>
     <p>
       Do not use it as the main repository for your data.  Do not use
@@ -229,7 +229,7 @@
     </p>
 
     <div class="important">
-      <h3>Warning</h3> 
+      <h3>Warning</h3>
       <span>
 	G2 has not yet been subjected to a rigorous security audit!
 	While we have taken great pains to make sure that it is
@@ -242,7 +242,7 @@
     </div>
 
     <h2><a name="whats_new">What&rsquo;s new in G2 Alpha</a></h2>
-    
+
     <p>
       G2 has been redesigned from the ground up and is database driven! It is secure, 
       scalable, reliable, modular, customizable, portable and intuitive. In short, 
@@ -254,7 +254,7 @@
     </p>
 
     <h3>
-      Highlight of changes in Gallery 2 (upcoming release)
+      Highlight of changes in Gallery 2 Alpha 4 (Nice Commits)
       <span id="next-toggle" class="toggle"
        onclick="toggle('next-list', 'next-toggle')"> - </span>
     </h3>
@@ -303,7 +303,7 @@
 	TIFF) you can pick the page number for the thumbnail (Note:
 	PDF/Postscript require both ImageMagick and Ghostscript).
 	When used in conjunction with the Ffmpeg module you can
-	pick a time offset for generating thumbnails for movies.  
+	pick a time offset for generating thumbnails for movies.
       </li>
 
       <li>
@@ -346,7 +346,7 @@
     </ol>
 
     <h3>
-      Highlight of changes in Gallery 2 Alpha 3 (Farva) 
+      Highlight of changes in Gallery 2 Alpha 3 (Farva)
       <span id="alpha3-toggle" class="toggle"
        onclick="toggle('alpha3-list', 'alpha3-toggle')"> + </span>
     </h3>
@@ -366,7 +366,7 @@
       <li>
 	<b> Module Manifests </b> - All modules now come with a
 	manifest file, and the installer checks to make sure that
-	you&rsquo;ve got a complete set of files on the server.  
+	you&rsquo;ve got a complete set of files on the server.
       </li>
 
       <li>
@@ -404,7 +404,7 @@
 	  </li>
 	</ul>
       </li>
-      
+
       <li>
 	<b> CMS Integration </b> - Although this is not yet readily visible, a
 	great deal of work has been done on getting G2 ready to integrate into
@@ -514,7 +514,7 @@
 	your Gallery 1 so that we can convert it to UTF-8 as part of
 	the migration.  We now also track where your G1 albums wound
 	up in G2 so that you can create an .htaccess file in your G1
-	to redirect G1 URLs to G2, for ease of migration.  
+	to redirect G1 URLs to G2, for ease of migration.
       </li>
       <li>
 	<b> Gallery Remote </b> - GR now supports creating new G2 albums.
@@ -523,10 +523,21 @@
 	<b> PHP5 Support </b> G2 has been tested on PHP 5.0.1 on
 	FreeBSD and Linux.
       </li>
-      <li> 
+      <li>
 	<b> Bugs </b> - More than 31 bugs closed since Alpha 1.
-      </li> 
+      </li>
     </ol>
+
+    <h3>
+      Highlight of changes in Gallery 2 Alpha 1 (Cowbell)
+      <span id="alpha1-toggle" class="toggle"
+       onclick="toggle('alpha1-list', 'alpha1-toggle')"> + </span>
+    </h3>
+    <ul id="alpha1-list" style="display:none">
+      <li>
+	<b> First Release of G2! </b>
+      </li>
+    </ul>
 
     <h2><a name="prerequisites">G2 Alpha Installation Prerequisites</a></h2>
     <ol>
@@ -538,7 +549,7 @@
 	    <b>Tarball</b> - You can download a prepackaged file as a
 	    tarball or a zip file from <a href=
 	      "http://sourceforge.net/projects/gallery/"
-	      target="_blank">SourceForge</a>.  
+	      target="_blank">SourceForge</a>.
 	  </li>
 	  <li>
 	    <b>CVS</b> - This is a better way to get the latest code,
@@ -556,7 +567,7 @@
 	photos.  This must be writable by the web server, but for
 	security reasons we suggest that you do not put it in the web
 	root.  If you put it in the web root, then it circumvents G2&rsquo;s
-	security.  
+	security.
 	<div class="instructions">
 	  <h3>Unix Example</h3>
 	  <code>
@@ -565,7 +576,7 @@
 	    % chmod 777 g2data
 	  </code>
 	</div>
-	
+
 	<div class="instructions">
 	  <h3>Windows Example</h3>
 	  <code>
@@ -609,7 +620,7 @@
 	  <li>
 	    If MySQL denies you access, try adding "-p" right before the "-e "
 	  </li>
-	</ul>	
+	</ul>
 
 	<div class="instructions">
 	  <h3>PostgreSQL</h3>
@@ -674,7 +685,7 @@
 	cannot be changed during the install process(though you can
 	change it to something else later on). Type in a password and
 	type it again to validate it. Then click &rsquo;Create&rsquo; to create
-	the admin user for this installation of Gallery 2. 
+	the admin user for this installation of Gallery 2.
       </li>
       <li>
 	<b> Storage Setup </b> - Read the instructions on the
@@ -776,7 +787,7 @@
 	    Explore the different <a href="main.php?g2_view=core:SiteAdmin" target="_guided">Site Admin</a> options
 	    and tune your G2 the way that you want it.
 	  </li>
-	    
+
 	  <li>
 	    You can <a href="main.php?g2_view=core:SiteAdmin&amp;g2_subView=core:AdminLayouts" target="_guided">activate different layouts</a> and then experiment with layouts and themes when <a href="main.php?g2_view=core:ItemAdmin&amp;g2_subView=core:ItemEdit&amp;g2_itemId=8" target="_guided">editing your new album</a>.
 	  </li>
@@ -789,7 +800,7 @@
 	    If the ffmpeg module is activated, you can upload movies and it will automatically create thumbnails of them for you.
 	  </li>
 
-	  <li> 
+	  <li>
 	    Try uploading really wide images and then edit them to put them in Panorama mode to activate the panorama viewer.
 	  </li>
 
@@ -898,14 +909,14 @@
       your existing copy with it.  If you see weird errors, then
       it&rsquo;s time to delete your database.
     </p>
-    
+
     <div class="instructions">
       <h3>MySQL</h3>
       <code>
 	mysqladmin -uroot drop gallery2
       </code>
     </div>
-	
+
     <div class="instructions">
       <h3>PostgreSQL</h3>
       <code>
@@ -1003,13 +1014,13 @@
 
     <a href="http://validator.w3.org/check?uri=referer"><img style="border: 0px"
 	src="images/xhtml10.png"
-	alt="This page is valid XHTML 1.0" 
+	alt="This page is valid XHTML 1.0"
 	height="15" width="80"/></a>
 
     <a href="http://gallery.sourceforge.net"><img style="border: 0px"
 	src="images/gallery.gif"
 	alt="Gallery 2.0 alpha-3 (Farva)"
-	height="15"  
+	height="15"
 	width="80"/></a>
 
     <a href="modules/core/test/data/Farva2.mp3"
