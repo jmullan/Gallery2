@@ -5,7 +5,7 @@
     form = document.forms[0];
     state = form.elements['selectionToggle'].checked;
     {foreach from=$form.localServerFiles item=file}
-    form.elements['{g->elementName name="form[localServerFiles][`$file.fileKey`]"}'].checked = state;
+    form.elements['{g->formVar var="form[localServerFiles][`$file.fileKey`]"}'].checked = state;
     {/foreach}
     {rdelim}
   </script>
@@ -13,7 +13,7 @@
 
   <script type="text/javascript">
     function selectPath(path) {ldelim}
-    document.forms[0].elements['{g->elementName name="form[localServerPath]"}'].value = path;
+    document.forms[0].elements['{g->formVar var="form[localServerPath]"}'].value = path;
     {rdelim}
   </script>
 
