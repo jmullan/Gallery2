@@ -37,10 +37,11 @@
 	{/strip}
         {/if}
 
-	{if $navigator.jumprange[jumprange] != $pageNumber-1}
+	{if $navigator.jumprange[jumprange] != $pageNumber}
 	<img src="{$layoutUrl}/images/nav_dot.gif" alt="o" border="0"
 	     width="8" height="11">
 	{/if}
+
 	{/section}
       </td>
       <td width=72>
