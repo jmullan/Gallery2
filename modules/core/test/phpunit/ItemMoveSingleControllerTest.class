@@ -332,6 +332,68 @@ class ItemMoveSingleControllerTest extends GalleryControllerTestCase {
 	// The UI shouldn't allow us to try to move an item that we can't delete
 	$results = $this->handleRequest(ERROR_PERMISSION_DENIED);
     }
+
+    /**
+     * Test moving an item with a cropped thumbnail; ensure crop operation is maintained
+     */
+    function testMoveItemWithCroppedThumbnail() {
+	/* Create derivatives according to prefs of original album */
+	$ret = GalleryCoreApi::addExistingItemToAlbum(
+				$this->_item, $this->_rootAlbum->getId(), true);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Add crop operation */
+	list ($ret, $thumbnails) = GalleryCoreApi::fetchThumbnailsByItemIds(array($this->_item->getId()));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$thumb = $thumbnails[$this->_item->getId()];
+	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($thumb->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$thumb->setDerivativeOperations('crop|0,0,50,50;' . $thumb->getDerivativeOperations());
+	$ret = $thumb->save();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::releaseLocks($lockId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Verify derivatives were created ok */
+	$sizes = $this->_getDerivativeSizes($this->_item->getId());
+	$this->assertEquals(array(
+	    array('type' => DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 'op' => 'crop|0,0,50,50;thumbnail|150'),
+	    array('type' => DERIVATIVE_TYPE_IMAGE_RESIZE, 'op' => 'scale|300'),
+	    array('type' => DERIVATIVE_TYPE_IMAGE_RESIZE, 'op' => 'scale|400')),
+	    $sizes, 'Initial derivative sizes');
+
+	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
+	GalleryUtilities::putRequestVariable('form[action][move]', 1);
+	GalleryUtilities::putRequestVariable('form[destination]', $this->_destinationAlbum->getId());
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemMoveSingle',
+						      'itemId' => $this->_item->getId()),
+				  'status' => array('moved' => 1),
+				  'error' => array()),
+			    $results);
+
+	/* Verify derivatives were recreated with preferences of new parent album */
+	$sizes = $this->_getDerivativeSizes($this->_item->getId());
+	$this->assertEquals(array(
+	    array('type' => DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 'op' => 'crop|0,0,50,50;thumbnail|200'),
+	    /* Order differs because old 400 kept as-is, and old 300 is reused for 600. */
+	    array('type' => DERIVATIVE_TYPE_IMAGE_RESIZE, 'op' => 'scale|600'),
+	    array('type' => DERIVATIVE_TYPE_IMAGE_RESIZE, 'op' => 'scale|400'),
+	    array('type' => DERIVATIVE_TYPE_IMAGE_RESIZE, 'op' => 'scale|800')),
+	    $sizes, 'Derivative sizes after move');
+    }
 }
 
 /**

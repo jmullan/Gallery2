@@ -234,7 +234,8 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 
-	    /* The first item has a thumbnail and a resize, the second has a preferred */
+	    /* The first item has a thumbnail and a resize,
+	     * the second has a cropped thumbnail and a preferred */
 	    if ($i == 0) {
 		list ($ret, $ignore) = $this->_createDerivative($child[$i], $child[$i]->getId(), 
 								DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
@@ -252,6 +253,14 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 		}
 	    } else if ($i == 1) {
+		list ($ret, $ignore) = $this->_createDerivative($child[$i], $child[$i]->getId(), 
+								DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
+								'crop|0,0,50,50;thumbnail|100',
+								'test/file');
+		if ($ret->isError()) {
+		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		}
+
 		list ($ret, $ignore) = $this->_createDerivative($child[$i], $child[$i]->getId(),
 								DERIVATIVE_TYPE_IMAGE_PREFERRED,
 								'rotate|90',
@@ -297,7 +306,8 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	}
 
 	$this->assertEquals('thumbnail|123', $thumbnails[$child[0]->getId()]->getDerivativeOperations());
-	
+	$this->assertEquals('crop|0,0,50,50;thumbnail|123', $thumbnails[$child[1]->getId()]->getDerivativeOperations());
+
 	list ($ret, $resizes) = GalleryCoreApi::fetchResizesByItemIds(array($child[0]->getId(), $child[1]->getId()));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
