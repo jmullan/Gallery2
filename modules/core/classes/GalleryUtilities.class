@@ -932,5 +932,114 @@ class GalleryUtilities {
 
 	return isset($viewableMimeTypes[$mimeType]);
     }
+
+    /**
+     * Fetch the web page at the given url.  Follow redirects to get the data and
+     * upon completion return the body, headers and the actual URL that we used to
+     * get the data.
+     *
+     * @param string the url
+     * @param int the redirect depth (pass in 0 or leave this empty to start)
+     * @return array(body, headers, url)
+     */
+    function fetchWebPage($url, $depth=0) {
+	global $gallery;
+
+	$components = parse_url($url);
+	$port = empty($components['port']) ? 80 : empty($components['port']);
+	if (empty($components['path'])) {
+	    $components['path'] = '/';
+	}
+
+	/* Don't redirect too far */
+	if ($depth > 5) {
+	    $gallery->debug("Too many levels of HTTP redirection!");
+	    return array(null, null, null);
+	}
+
+	$platform = $gallery->getPlatform();
+	$fd = @$platform->fsockopen($components['host'], $port, $errno, $errstr, 1);
+	if (empty($fd)) {
+	    $gallery->debug("Error $errno: '$errstr' retrieving $url");
+	    return array(null, null, null);
+	}
+
+	/* Read the web page into a buffer */
+	$get = $components['path'];
+	if (!empty($components['query'])) {
+	    $get .= '?' . $components['query'];
+	}
+
+	/*
+	 * Unescape ampersands, since if the url comes from form input
+	 * it will be escaped
+	 */
+	$get = str_replace("&amp;", "&", $get);
+
+	$platform->fwrite($fd, sprintf("GET %s HTTP/1.0\nHost: %s\n\n",
+				       $get, $components['host']));
+	$body = '';
+	while (!$platform->feof($fd)) {
+	    $body .= $platform->fread($fd, 4096);
+	}
+	$platform->fclose($fd);
+
+	/* Normalize line endings */
+	$body = str_replace("\r", "", $body);
+
+	/* Parse out headers and body */
+	$lines = explode("\n", $body);
+	for ($headersEnd = 0; $headersEnd < sizeof($lines); $headersEnd++) {
+	    if ($lines[$headersEnd] == '') {
+		break;
+	    }
+	}
+
+	/* Scan for a redirect */
+	for ($i = 0; $i < $headersEnd; $i++) {
+	    if (!strncmp($lines[$i], 'Location: ', 10)) {
+		$redirectUrl = substr($lines[$i], 10);
+		break;
+	    }
+	}
+
+	if (isset($redirectUrl)) {
+	    /* The redirect url is supposed to be absolute, but not everybody plays by the rules */
+	    $redirectComponents = parse_url($redirectUrl);
+	    foreach (array('scheme', 'host') as $key) {
+		if (empty($redirectComponents[$key])) {
+		    $redirectComponents[$key] = $components[$key];
+		}
+	    }
+
+	    if (empty($redirectComponents['port'])) {
+		if (isset($components['port'])) {
+		    $redirectPort = ':' . $components['port'];
+		} else {
+		    $redirectPort = '';
+		}
+	    }
+
+	    if (empty($redirectComponents['query'])) {
+		$query = '';
+	    } else {
+		$query = '?' . $redirectComponents['query'];
+	    }
+
+	    $redirectUrl = sprintf('%s://%s%s%s%s',
+				   $redirectComponents['scheme'],
+				   $redirectComponents['host'],
+				   $redirectPort,
+				   $redirectComponents['path'],
+				   $query);
+
+	    return GalleryUtilities::fetchWebPage($redirectUrl, $depth+1);
+	}
+
+	$headers = join("\n", array_slice($lines, 0, $headersEnd)) . "\n";
+	$body = join("\n", array_slice($lines, $headersEnd + 1));
+
+	return array($body, $headers, $url);
+    }
 }
 ?>
