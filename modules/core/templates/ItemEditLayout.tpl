@@ -8,7 +8,12 @@
   <div class="giDescription">
     {g->text text="This album is configured to use the <b>%s</b> layout. These settings only apply to the layout for this album." arg1=$ItemEditLayout.layout.name}
   </div>
-  
+
+ {if isset($ItemEditLayout.customTemplate)}
+
+  {include file="gallery:`$ItemEditLayout.customTemplate`" l10Domain=$ItemEditLayout.layout.l10Domain}
+
+ {else}  
   {if !empty($ItemEditLayout.settings)}
   <table class="gbDataTable">
     <tr>
@@ -113,6 +118,7 @@
     {rdelim}
   </script>
 
-  <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}"/>
-  <input type="submit" name="{g->formVar var="form[action][undo]"}" value="{g->text text="Undo"}"/>
+ {/if}
+ <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}"/>
+ <input type="submit" name="{g->formVar var="form[action][undo]"}" value="{g->text text="Undo"}"/>
 </div>

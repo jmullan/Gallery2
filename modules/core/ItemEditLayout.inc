@@ -41,7 +41,19 @@ class ItemEditLayout extends ItemEditPlugin {
     function handleRequest($form, &$item, &$preferred) {
 	global $gallery;
 
-	
+	list ($ret, $layout) = GalleryCoreApi::fetchLayout($item);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+
+	if ($layout->isAdvancedSettings()) {
+	    list ($ret, $error, $status) = $layout->handleSettingsRequest($form, $item->getId());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+	    return array(GalleryStatus::success(), $error, $status);
+	}
+
 	$status = null;
 	$error = array();
 	$errorMessage = array();
@@ -52,11 +64,6 @@ class ItemEditLayout extends ItemEditPlugin {
 	}
 
 	if (isset($form['action']['save'])) {
-	    list ($ret, $layout) = GalleryCoreApi::fetchLayout($item);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
-	    }
-	    
 	    /* Validate the settings */
 	    $validationErrors = $layout->validateSettings($form['key']);
 	    if (empty($validationErrors)) {
@@ -115,57 +122,68 @@ class ItemEditLayout extends ItemEditPlugin {
      */
     function loadTemplate(&$template, &$form, $item, $thumbnail) {
 	global $gallery;
+	$ItemEditLayout = array();
 
 	list ($ret, $layout) = GalleryCoreApi::fetchLayout($item);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	/* Get the per-item settings (global + item) */
-	list ($ret, $settings) = $layout->getSettings($item->getId());
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	/* Fetch the global-only params */
-	list ($ret, $globalParams) =
-	    GalleryCoreApi::fetchAllPluginParameters('layout', $layout->getId());
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	/* Fetch the item-only params */
-	list ($ret, $itemParams) =
-	    GalleryCoreApi::fetchAllPluginParameters('layout', $layout->getId(), $item->getId());
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	if ($form['formName'] != 'ItemEditLayout') {
-	    $form['formName'] = 'ItemEditLayout';
-	    foreach ($settings as $setting) {
-		$key = $setting['key'];
-		$form['key'][$key] = $setting['value'];
-
-		/* If the key doesn't exist in the item params then it's a global setting */
-		$form['useGlobal'][$key] = isset($itemParams[$key]) ? 0 : 1;
+	if ($layout->isAdvancedSettings()) {
+	    list ($ret, $tpl) = $layout->loadSettingsTemplate($template, $form, $item->getId());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $ItemEditLayout['customTemplate'] = $tpl;
+	    if ($form['formName'] != 'ItemEditLayout') {
+		$form['formName'] = 'ItemEditLayout';
 	    }
 	} else {
-	    /* Make sure all checkbox values are defined */
-	    foreach ($settings as $setting) {
-		$key = $setting['key'];
-		if (!isset($form['useGlobal'][$key])) {
-		    $form['useGlobal'][$key] = 0;
+	    /* Get the per-item settings (global + item) */
+	    list ($ret, $settings) = $layout->getSettings($item->getId());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    /* Fetch the global-only params */
+	    list ($ret, $globalParams) =
+	    GalleryCoreApi::fetchAllPluginParameters('layout', $layout->getId());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    /* Fetch the item-only params */
+	    list ($ret, $itemParams) =
+	    GalleryCoreApi::fetchAllPluginParameters('layout', $layout->getId(), $item->getId());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    if ($form['formName'] != 'ItemEditLayout') {
+		$form['formName'] = 'ItemEditLayout';
+		foreach ($settings as $setting) {
+		    $key = $setting['key'];
+		    $form['key'][$key] = $setting['value'];
+
+		    /* If the key doesn't exist in the item params then it's a global setting */
+		    $form['useGlobal'][$key] = isset($itemParams[$key]) ? 0 : 1;
+		}
+	    } else {
+		/* Make sure all checkbox values are defined */
+		foreach ($settings as $setting) {
+		    $key = $setting['key'];
+		    if (!isset($form['useGlobal'][$key])) {
+			$form['useGlobal'][$key] = 0;
+		    }
 		}
 	    }
+	    $ItemEditLayout['settings'] = $settings;
+	    $ItemEditLayout['globalParams'] = $globalParams;
 	}
 
-	$ItemEditLayout = array();
-	$ItemEditLayout['settings'] = $settings;
-	$ItemEditLayout['globalParams'] = $globalParams;
 	$ItemEditLayout['layout']['name'] = $layout->getName();
 	$ItemEditLayout['layout']['l10Domain'] = $layout->getL10Domain();
-	
+
 	$template->setVariable('ItemEditLayout', $ItemEditLayout);
 	$template->setVariable('controller', 'core:ItemEditLayout');
 	return array(GalleryStatus::success(), 'modules/core/templates/ItemEditLayout.tpl');

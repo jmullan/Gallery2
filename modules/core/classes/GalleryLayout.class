@@ -95,8 +95,20 @@ class GalleryLayout {
     }
 
     /**
+     * Return whether the layout uses simple or advanced settings.
+     * To support simple settings the layout needs to implement getSettings and validateSettings.
+     * To support advanced settings the layout must implement loadSettingsTemplate and
+     * handleSettingsRequest.
+     *
+     * @return boolean true for advanced settings, false for simple
+     */
+    function isAdvancedSettings() {
+	return false;  // Default to simple
+    }
+
+    /**
      * Return the possible settings that a layout can specify on a global or per
-     * item basis.
+     * item basis.  Used for layout with simple settings ( @see isAdvancedSettings ).
      *
      * Each setting contains:
      *   key:         a unique identifier
@@ -119,12 +131,42 @@ class GalleryLayout {
     /**
      * Return true if all the values are legal, or false if not.  If there are errors,
      * return an array of localized error messages to display for each invalid setting.
+     * Used for layout with simple settings ( @see isAdvancedSettings ).
      *
      * @param settings array('key' => array(value, ...), ...)
      * @return array errors in the form of array('key' => 'translated text', ...)
      */
     function validateSettings($settings) {
 	return array();
+    }
+
+    /**
+     * Load the template with data to define the layout settings.
+     * Used for layout with advanced settings ( @see isAdvancedSettings ).
+     *
+     * @param array object GalleryTemplate the template instance
+     * @param array array the form values
+     * @param the item id or null for site wide settings
+     * @return array object GalleryStatus a status code
+     *               string path to the body template
+     */
+    function loadSettingsTemplate(&$template, &$form, $itemId=null) {
+	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
+    }
+
+    /**
+     * Let the layout handle the incoming request.
+     * Used for layout with advanced settings ( @see isAdvancedSettings ).
+     * @see GalleryController::handleRequest
+     * 
+     * @param array the form values
+     * @param the item id or null for site wide settings
+     * @return array object GalleryStatus a status code
+     *               array error messages
+     *               string status message (itemId!=null) or status key (itemId==null)
+     */
+    function handleSettingsRequest($form, $itemId=null) {
+	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null, null);
     }
 
     /**

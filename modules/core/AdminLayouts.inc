@@ -107,6 +107,19 @@ class AdminLayoutsController extends GalleryController {
 		$redirect['subView'] = 'core:AdminLayouts';
 		$status['deactivated'] = $layout->getName();
 	    }
+	} else if ($layout->isAdvancedSettings()) {
+	    list ($ret, $error, $statusKey) = $layout->handleSettingsRequest($form);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    if (empty($error)) {
+		/* Redirect upon success */
+		$redirect['view'] = 'core:SiteAdmin';
+		$redirect['subView'] = 'core:AdminLayouts';
+		$redirect['mode'] = 'editLayout';
+		$redirect['layoutId'] = $layoutId;
+		$status[$statusKey] = $layout->getName();
+	    }
 	} else if (isset($form['action']['saveLayout'])) {
 
 	    /* Get all the possible settings */
@@ -243,9 +256,17 @@ class AdminLayoutsView extends GalleryView {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    list ($ret, $AdminLayouts['settings']) = $layout->getSettings(null);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+	    if ($layout->isAdvancedSettings()) {
+		list ($ret, $tpl) = $layout->loadSettingsTemplate($template, $form);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		$AdminLayouts['customTemplate'] = $tpl;
+	    } else {
+		list ($ret, $AdminLayouts['settings']) = $layout->getSettings(null);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
 	    }
 	    break;
 	}
@@ -255,8 +276,10 @@ class AdminLayoutsView extends GalleryView {
 
 	    switch ($mode) {
 	    case 'editLayout':
-		foreach ($AdminLayouts['settings'] as $setting) {
-		    $form['key'][$setting['key']] = $setting['value'];
+		if (isset($AdminLayouts['settings'])) {
+		    foreach ($AdminLayouts['settings'] as $setting) {
+			$form['key'][$setting['key']] = $setting['value'];
+		    }
 		}
 	    }
 	}

@@ -11,7 +11,6 @@
 	{g->text text="Gallery Layouts"}
       </div>
     </div>
-
   </div>
 
   {if isset($status)}
@@ -133,6 +132,11 @@
 	{g->text text="These are the global settings for the layout.  They can be overridden at the album level."}
       </div>
 
+     {if isset($AdminLayouts.customTemplate)}
+
+	{include file="gallery:`$AdminLayouts.customTemplate`" l10Domain=$AdminLayouts.layouts[$AdminLayouts.layoutId].l10Domain}
+
+     {else}
       {if !empty($AdminLayouts.settings)}
       <table>
 	{foreach from=$AdminLayouts.settings item=setting}
@@ -173,8 +177,10 @@
 	{g->text text="There are no settings for this layout"}
       </span>
       {/if}
+     {/if}
     </div>
 
+    {if isset($AdminLayouts.customTemplate) || !empty($AdminLayouts.settings)}
     <div class="gbBottomFlag">
       <div class="giActionSelect">
 	<input type="hidden" name="{g->formVar var="layoutId"}" value="{$AdminLayouts.layoutId}"/>
@@ -183,6 +189,7 @@
 	<input type="submit" name="{g->formVar var="form[action][undoLayout]"}" value="{g->text text="Undo"}"/>
       </div>
     </div>
+    {/if}
     {/if}
   </div>
 </div>
