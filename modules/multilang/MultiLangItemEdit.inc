@@ -40,114 +40,141 @@ class MultiLangItemEdit extends ItemEditPlugin {
      * @see ItemEditPlugin::handleRequest
      */
     function handleRequest($form, &$item, &$preferred) {
-	global $gallery;
-	$status = null;
-	$error = array();
-
-	if (isset($form['action']['save'])) {
-	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/MultiLangHelper.class');
-
-	    $ret = MultiLangHelper::setItemData($item, $form['language'],
-		$form['title'], $form['summary'], $form['description']);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
-	    }
-
-	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'multilang');
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
-	    }
-	    $status = $module->translate('Changes saved successfully');
-
-	    $session =& $gallery->getSession();
-	    $session->put('multilang.language', $form['language']);
-	}
-
-	return array(GalleryStatus::success(), $error, $status);
+        global $gallery;
+        $status = null;
+        $error = array();
+    
+        if (isset($form['action']['save'])) {
+            GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/MultiLangHelper.class');
+    
+            list ($ret, $rootAlbumId) = GalleryCoreApi::getPluginParameter(
+                'module', 'core', 'id.rootAlbum');
+            if ($ret->isError()) {
+                return array($ret->wrap(__FILE__, __LINE__), null, null);
+            }
+    
+            if (($item->getId() == $rootAlbumId) && empty($form['title'])) {
+                $error[] = 'form[error][title][missingRootTitle]';
+            } else {
+                $ret = MultiLangHelper::setItemData($item, $form['language'],
+                $form['title'], $form['summary'], $form['description']);
+                if ($ret->isError()) {
+                return array($ret->wrap(__FILE__, __LINE__), null, null);
+                }
+        
+                list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'multilang');
+                if ($ret->isError()) {
+                return array($ret->wrap(__FILE__, __LINE__), null, null);
+                }
+                $status = $module->translate('Changes saved successfully');
+        
+                $session =& $gallery->getSession();
+                $session->put('multilang.language', $form['language']);
+            }
+        }
+    
+        return array(GalleryStatus::success(), $error, $status);
     }
 
     /**
      * @see ItemEditPlugin::loadTemplate
      */
     function loadTemplate(&$template, &$form, $item, $thumbnail) {
-	global $gallery;
-	$session =& $gallery->getSession();
-	$translator =& $gallery->getTranslator();
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/MultiLangHelper.class');
-
-	if ($form['formName'] != 'MultiLangItemEdit') {
-	    $form['formName'] = 'MultiLangItemEdit';
-	    list ($ret, $form['languageData']) = MultiLangHelper::getItemData($item->getId());
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    $form['title'] = $item->getTitle();
-	    $form['summary'] = $item->getSummary();
-	    $form['description'] = $item->getDescription();
-	}
-
-	$supportedLanguages = $translator->getSupportedLanguages();
-	$languageList = array();
-	foreach ($supportedLanguages as $language => $countryList) {
-	    foreach ($countryList as $country => $languageData) {
-		$languageList[$language . '_' . $country] = $languageData['description'];
-	    }
-	}
-	list ($ret, $languages) =
-	    GalleryCoreApi::getPluginParameter('module', 'multilang', 'languages');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	$languages = empty($languages) ? array() : explode('|', $languages);
-	sort($languages);
-	foreach (array_keys($form['languageData']) as $language) {
-	    /* Show all languages for item, even if no longer in languages list */
-	    if (!in_array($language, $languages)) {
-		$languages[] = $language;
-	    }
-	}
-
-	$selectedLanguage = $session->get('multilang.language');
-	if (empty($selectedLanguage)) {
-	    list ($ret, $selectedLanguage) = $gallery->getActiveLanguageCode();
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	} else {
-	    $session->remove('multilang.language');
-	}
-	$selectedLanguageIndex = $i = 0;
-	foreach ($languages as $language) {
-	    $form['languageList'][$language] = isset($languageList[$language])
-						? $languageList[$language] : $language;
-	    if ($language == $selectedLanguage) {
-		$selectedLanguageIndex = $i;
-	    }
-	    $i++;
-	}
-	$form['selectedLanguage'] = $selectedLanguage;
-	$form['selectedIndex'] = $selectedLanguageIndex;
-
-	$template->setVariable('controller', 'multilang:MultiLangItemEdit');
-	return array(GalleryStatus::success(), 'modules/multilang/templates/MultiLangItemEdit.tpl');
+        global $gallery;
+        $session =& $gallery->getSession();
+        $translator =& $gallery->getTranslator();
+        GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/MultiLangHelper.class');
+    
+        if ($form['formName'] != 'MultiLangItemEdit') {
+            $form['formName'] = 'MultiLangItemEdit';
+        }
+        $form['mainTitle'] = $item->getTitle();
+        $form['mainSummary'] = $item->getSummary();
+        $form['mainDescription'] = $item->getDescription();
+        list ($ret, $form['languageData']) = MultiLangHelper::getItemData($item->getId());
+        if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
+        }
+        /*
+         * if there was an error and the data wasn't saved
+         * then overwrite the values from the database with the ones from the form
+         */
+        if (!empty($form['error'])) {
+            $form['languageData'][$form['language']]['title'] = $form['title'];
+            $form['languageData'][$form['language']]['summary'] = $form['summary'];
+            $form['languageData'][$form['language']]['description'] = $form['description'];
+        }
+    
+        $supportedLanguages = $translator->getSupportedLanguages();
+        $languageList = array();
+        foreach ($supportedLanguages as $language => $countryList) {
+            foreach ($countryList as $country => $languageData) {
+            $languageList[$language . '_' . $country] = $languageData['description'];
+            }
+        }
+        list ($ret, $languages) =
+            GalleryCoreApi::getPluginParameter('module', 'multilang', 'languages');
+        if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
+        }
+        $languages = empty($languages) ? array() : explode('|', $languages);
+        sort($languages);
+        foreach (array_keys($form['languageData']) as $language) {
+            /* Show all languages for item, even if no longer in languages list */
+            if (!in_array($language, $languages)) {
+            $languages[] = $language;
+            }
+        }
+    
+        $selectedLanguage = $session->get('multilang.language');
+        if (empty($selectedLanguage)) {
+            list ($ret, $selectedLanguage) = $gallery->getActiveLanguageCode();
+            if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
+            }
+        } else {
+            $session->remove('multilang.language');
+        }
+        $selectedLanguageIndex = $i = 0;
+        foreach ($languages as $language) {
+            $form['languageList'][$language] = isset($languageList[$language])
+                            ? $languageList[$language] : $language;
+            if ($language == $selectedLanguage) {
+            $selectedLanguageIndex = $i;
+            }
+            $i++;
+        }
+        $form['selectedLanguage'] = $selectedLanguage;
+        $form['selectedIndex'] = $selectedLanguageIndex;
+    
+        $template->setVariable('controller', 'multilang:MultiLangItemEdit');
+        return array(GalleryStatus::success(), 'modules/multilang/templates/MultiLangItemEdit.tpl');
     }
 
     /**
      * @see ItemEditPlugin::isSupported
      */
     function isSupported($item, $thumbnail) {
-	return GalleryUtilities::isA($item, 'GalleryItem');
+        if (!GalleryUtilities::isA($item, 'GalleryItem')) {
+            return false;
+        }
+        list ($ret, $languages) =
+            GalleryCoreApi::getPluginParameter('module', 'multilang', 'languages');
+        if ($ret->isError() || empty($languages)) {
+            return false;
+        }
+        return true;
     }
 
     /**
      * @see ItemEditPlugin::getTitle
      */
     function getTitle() {
-	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'multilang');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	return array(GalleryStatus::success(), $module->translate('MultiLanguage'));
+    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'multilang');
+    if ($ret->isError()) {
+        return array($ret->wrap(__FILE__, __LINE__), null);
+    }
+    return array(GalleryStatus::success(), $module->translate('MultiLanguage'));
     }
 }
 ?>

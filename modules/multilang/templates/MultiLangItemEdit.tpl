@@ -47,13 +47,13 @@ function changed() { isChanged = 1; }
 
   <table class="gbDataTable"><tr>
     <td> {g->text text="Title"} </td>
-    <td> {$form.title|markup} </td>
+    <td> {$form.mainTitle|markup} </td>
   </tr><tr>
     <td> {g->text text="Summary"} </td>
-    <td> {$form.summary|markup} </td>
+    <td> {$form.mainSummary|markup} </td>
   </tr><tr>
     <td> {g->text text="Description"} </td>
-    <td> {$form.description|markup} </td>
+    <td> {$form.mainDescription|markup} </td>
   </tr></table>
 
   <h4> {g->text text="Language"} </h4>
