@@ -62,7 +62,11 @@
       {g->text text="Add Member"}
     </h2>
 
-    <input type="text" name="{g->formVar var="form[text][userName]"}" value="{$form.text.userName}"/>
+    <input id="username" class="giFormUsername" type="text" name="{g->formVar var="form[text][userName]"}" value="{$form.text.userName}"/>
+    {g->autoComplete element="username"}
+    {g->url forJavascript="true" arg1="view=core:SimpleCallback" arg2="command=lookupUsername" arg3="prefix=__VALUE__"}
+    {/g->autoComplete}
+
     <input type="submit" name="{g->formVar var="form[action][add]"}" value="{g->text text="Add"}"/>
 
     {if isset($form.error.text.userName.missing)}
