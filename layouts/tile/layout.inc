@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -25,7 +25,7 @@
  * @author Alan Harder <alan.harder@sun.com>
  */
 
-/** 
+/**
  * This implements a gallery layout with a tiled background image and image thumbnails
  * on top of it; Displays inline items ONLY; subalbums or other item types are NOT shown.
  *
@@ -145,7 +145,7 @@ class TileLayout extends GalleryLayout {
 
 	/* Init view with specific image */
 	if (isset($viewItemId)) {
-	    foreach ($itemList as $tmp) {
+	    foreach ($layout['children'] as $tmp) {
 		if ($tmp['id'] == $viewItemId) {
 		    if (isset($tmp['imageIndex'])) {
 			$layout['viewIndex'] = $tmp['imageIndex'];
