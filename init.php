@@ -30,6 +30,7 @@
  */
 function GalleryInitFirstPass($params=array()) {
     ini_set('magic_quotes_runtime', 0);
+    ini_set('magic_quotes_sybase', 0);
 
     /* Specify that when an assertion fails, we terminate right away. */
     assert_options(ASSERT_WARNING, 1);
