@@ -19,12 +19,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-if (!file_exists(dirname(__FILE__) . '/config.php')) {
+include(dirname(__FILE__) . '/bootstrap.inc');
+
+/*
+ * If they don't have a setup password, we assume that the config.php is
+ * empty and this is an initial install.
+ */
+if (!$gallery->getConfig('setup.password')) {
     header('Location: install/');
     return;
 }
 
-include(dirname(__FILE__) . '/bootstrap.inc');
 if (!defined('G2_EMBED')) {
     /* If this is a request for a public data file, give it to the user immediately */
     list ($view, $itemId) = GalleryUtilities::getRequestVariables('view', 'itemId');
