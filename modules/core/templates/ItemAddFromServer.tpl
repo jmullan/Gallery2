@@ -14,7 +14,7 @@
   {foreach name=fileIndex from=$form.localServerFiles item=file}
   {if ($file.type == 'file' && !$file.unknown)}
   {if !$first},{/if}
-  {$smarty.foreach.fileIndex.iteration}
+  "{$smarty.foreach.fileIndex.iteration}"
   {assign var="first" value="0"}
   {/if}
   {/foreach}
@@ -22,9 +22,9 @@
   {/strip}
 
   {literal}
-  function toggleSelections() {
+  function toggleSelections() {   
     for (i = 0; i < knownTypeCheckboxIds.length; i++) {
-      var cb = document.getElementById('cb_' + knownTypeCheckboxIds[i]);
+      var cb = document.getElementById('cb_' + knownTypeCheckboxIds[i]);	
       cb.checked = !cb.checked;
   {/literal}
       {if $ItemAddFromServer.showSymlink}toggleSymlinkEnabled(knownTypeCheckboxIds[i]);{/if}
@@ -35,7 +35,7 @@
   function toggleSymlinkEnabled(a) {
     var cbSymlink = document.getElementById('symlink_' + a );
     var cbSelected = document.getElementById('cb_' + a );
-    cbSymlink.disabled = ! cbSelected.checked;
+    cbSymlink.disabled = !cbSelected.checked;
   }
 
   function invertSymlinkSelection() {
