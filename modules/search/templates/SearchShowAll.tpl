@@ -131,7 +131,7 @@
 		<a href="{g->url arg1="view=core:ShowItem" arg2="itemId=$itemId"}">
 		{if isset($SearchShowAll.thumbnails.$itemId)}
 		  {g->image item=$SearchShowAll.items.$itemId
-			    image=$SearchShowAll.thumbnails.$itemId}
+			    image=$SearchShowAll.thumbnails.$itemId class="giThumbnail"}
 		{else}
 		  {g->text text="No thumbnail"}
 		{/if}

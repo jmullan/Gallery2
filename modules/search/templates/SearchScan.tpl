@@ -115,9 +115,8 @@
 		style="width: 10%">
 		<a href="{g->url arg1="view=core:ShowItem" arg2="itemId=$itemId"}">
 		{if isset($SearchScan.thumbnails.$itemId)}
-		<div class="gbItemImage">
-		    {g->image item=$SearchScan.items.$itemId image=$SearchScan.thumbnails.$itemId}
-		</div>
+		  {g->image item=$SearchScan.items.$itemId image=$SearchScan.thumbnails.$itemId
+			    class="giThumbnail"}
 		{else}
 		{g->text text="No thumbnail"}
 		{/if}
