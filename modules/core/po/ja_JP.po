@@ -33,6 +33,10 @@ msgstr ""
 "各アイテムはサムネイルが必要です。ピクセル指定でここにデフォルトの値を入力し"
 "てください。"
 
+#, fuzzy, c-format
+msgid "%s Layout Settings"
+msgstr "アカウント設定"
+
 msgid "&laquo; No Sort Order &raquo;"
 msgstr "&laquo; ソートなし &laquo;"
 
@@ -138,6 +142,10 @@ msgid "Album"
 msgstr "アルバム"
 
 #, fuzzy
+msgid "All Layouts"
+msgstr "レイアウト"
+
+#, fuzzy
 msgid "All Users"
 msgstr "ユーザー"
 
@@ -221,6 +229,10 @@ msgstr "それらに対する新しいアルバムを選んでください"
 
 msgid "Choose a theme for this album.  (The look and feel of this album)"
 msgstr "このアルバムのテーマを選んでください。(このアルバムのルック&フィール)"
+
+#, fuzzy
+msgid "Choose the items you want to delete"
+msgstr "移動したいアイテムを選択してください"
 
 msgid "Choose the items you want to move"
 msgstr "移動したいアイテムを選択してください"
@@ -448,6 +460,10 @@ msgstr "Gallery デバッグ出力"
 msgid "Gallery Item Administration"
 msgstr "Gallery アイテム管理"
 
+#, fuzzy
+msgid "Gallery Layouts"
+msgstr "Gallery モジュール"
+
 msgid "Gallery Modules"
 msgstr "Gallery モジュール"
 
@@ -489,6 +505,13 @@ msgstr ""
 "効にすることができます。ある機能を使用するには、インストールして、(必要があれ"
 "ば)設定をして、有効化してください。機能を使いたくなければ、それを無効化するこ"
 "とができます。"
+
+msgid ""
+"Gallery has layouts that can change the way that you navigate around your "
+"albums.  You can download and install new layouts, or you can disable "
+"layouts if you don't want to use them.  By default, new layouts are "
+"disabled.  They must be enabled before you can use them."
+msgstr ""
 
 #, c-format
 msgid ""
@@ -592,7 +615,18 @@ msgstr "言語"
 msgid "Last Changed Date"
 msgstr "最終変更日"
 
+msgid "Layout Configuration"
+msgstr ""
+
+#, fuzzy
+msgid "Layout Name"
+msgstr "レイアウト"
+
 msgid "Layout"
+msgstr "レイアウト"
+
+#, fuzzy
+msgid "Layouts"
 msgstr "レイアウト"
 
 msgid "Legal Directories"
@@ -695,6 +729,9 @@ msgstr "選択された宛先がありません"
 msgid "No files added."
 msgstr ""
 
+msgid "No items were selected for deletion"
+msgstr ""
+
 msgid "Not implemented yet"
 msgstr "まだ実装されていません"
 
@@ -795,11 +832,6 @@ msgstr "ユーザ '%s' をグループから削除しました。"
 #, c-format
 msgid "Removed user '%s'"
 msgstr "ユーザ '%s' を削除しました。"
-
-msgid ""
-"Removing this album will remove all of its children also.  There is no undo!"
-msgstr ""
-"このアルバムを削除すると子アイテムも全て削除されます。やり直しはできません。"
 
 msgid "Reorder Album"
 msgstr "アルバムの並べ替え"
@@ -963,6 +995,22 @@ msgstr "このアイテムのサムネイルのサイズをここで指定して
 msgid "Square 1x1"
 msgstr ""
 
+#, fuzzy, c-format
+msgid "Successfully activated layout %s"
+msgstr "%d個のファイルの追加に成功しました。"
+
+#, fuzzy, c-format
+msgid "Successfully activated module %s"
+msgstr "%d個のファイルの追加に成功しました。"
+
+#, c-format
+msgid "Successfully deactivated layout %s"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Successfully deactivated module %s"
+msgstr "%d個のファイルの追加に成功しました。"
+
 msgid "Summary"
 msgstr "概要"
 
@@ -1092,12 +1140,24 @@ msgid ""
 "we cannot scale it."
 msgstr ""
 
+msgid "There are no settings for this layout"
+msgstr ""
+
 msgid "These are default values.  They can be overridden in each album."
+msgstr "これはデフォルト値です。それぞれのアルバムで別の値に設定できます。"
+
+#, fuzzy
+msgid ""
+"These are the global settings for the layout.  They can be overridden at the "
+"album level."
 msgstr "これはデフォルト値です。それぞれのアルバムで別の値に設定できます。"
 
 msgid ""
 "These sizes are alternate resized versions of the original you would like to "
 "have available for viewing."
+msgstr ""
+
+msgid "This album contains no items to delete"
 msgstr ""
 
 msgid "This album contains no items to move."
@@ -1107,11 +1167,6 @@ msgid ""
 "This album has an automatic sort order specified, so you cannot change the "
 "order of items manually.  You must remove the automatic sort order to "
 "continue."
-msgstr ""
-
-msgid ""
-"This album is empty.  This will completely remove this album from Gallery.  "
-"There is no undo!"
 msgstr ""
 
 msgid "This is the album summary."
@@ -1164,9 +1219,6 @@ msgstr ""
 
 #, c-format
 msgid "This will completely remove <b>%s</b> from Gallery.  There is no undo!"
-msgstr ""
-
-msgid "This will completely remove this item from Gallery. There is no undo!"
 msgstr ""
 
 #, fuzzy
@@ -1656,6 +1708,12 @@ msgstr[0] "%d個のファイルの追加に成功しました。"
 msgstr[1] ""
 
 #, fuzzy, c-format
+msgid "Successfully deleted %d item"
+msgid_plural "Successfully deleted %d items"
+msgstr[0] "%d個のファイルの追加に成功しました。"
+msgstr[1] ""
+
+#, fuzzy, c-format
 msgid "Successfully moved %d item"
 msgid_plural "Successfully moved %d items"
 msgstr[0] "%d個のファイルの追加に成功しました。"
@@ -1674,12 +1732,6 @@ msgstr[0] "システムには全部で %dユーザー存在しています。"
 msgstr[1] ""
 
 #, c-format
-msgid "This album has %d child."
-msgid_plural "This album has %d children."
-msgstr[0] "このアルバムは %d個の子アイテムを持ちます。"
-msgstr[1] ""
-
-#, c-format
 msgid "This group contains %d user"
 msgid_plural "This group contains %d users"
 msgstr[0] "このグループは、%dユーザーを含みます。"
@@ -1690,6 +1742,18 @@ msgid "Upload a file directly from your computer."
 msgid_plural "Upload up to %d files directly from your computer."
 msgstr[0] "あなたのコンピュータから直接ファイルをアップロードしてください。"
 msgstr[1] ""
+
+#~ msgid ""
+#~ "Removing this album will remove all of its children also.  There is no "
+#~ "undo!"
+#~ msgstr ""
+#~ "このアルバムを削除すると子アイテムも全て削除されます。やり直しはできませ"
+#~ "ん。"
+
+#~ msgid "This album has %d child."
+#~ msgid_plural "This album has %d children."
+#~ msgstr[0] "このアルバムは %d個の子アイテムを持ちます。"
+#~ msgstr[1] ""
 
 #~ msgid "General Item Properties"
 #~ msgstr "アイテム全般のプロパティ"
