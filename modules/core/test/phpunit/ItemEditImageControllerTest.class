@@ -57,7 +57,7 @@ class ItemEditImageControllerTest extends GalleryControllerTestCase {
 					       __FILE__);
 
 	/* Register operations that we can perform on our mock data items */
-	GalleryToolkitHelper::registerOperation('ItemEditImageTestToolkit',
+	$ret = GalleryToolkitHelper::registerOperation('ItemEditImageTestToolkit',
 						       array('test/file'),
 						       'scale',
 						       array(array('type' => 'int')),
@@ -106,6 +106,12 @@ class ItemEditImageControllerTest extends GalleryControllerTestCase {
 	$ret = $gallery->deleteEntityById($this->_album->getId());
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	/* Unregister */
+	$ret = GalleryToolkitHelper::unregisterToolkit('ItemEditImageTestToolkit');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	
 	parent::tearDown();
