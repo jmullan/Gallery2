@@ -11,7 +11,7 @@ var app_ww, app_wh, // Window width/height
     app_is_ie = app_agent.indexOf('msie') >= 0 && app_agent.indexOf('opera') < 0,
     app_is_safari = app_agent.indexOf('safari') >= 0,
     app_body; // Scrollable document container (<body> element, or html for IE)
-if (window.attachEvent) { // IE
+if (window.attachEvent) {
   window.attachEvent("onload", app_onload);
   window.attachEvent("onunload", app_setcookie);
 } else if (window.addEventListener) {
@@ -28,19 +28,16 @@ function app_init() {
   imagediv = document.getElementById('imagediv');
   textdiv = document.getElementById('textdiv');
 
-  var attr = document.createAttribute('onresize');
-  attr.value = 'app_onresize()';
-  document.body.attributes.setNamedItem(attr);
   document.onkeypress = app_onkeypress;
+  if (window.attachEvent) window.attachEvent("onresize", app_onresize);
+  else if (window.addEventListener) window.addEventListener("resize", app_onresize, false);
 
   if (app_is_ie) {
-    document.body.onresize = app_onresize;
     document.onkeydown = app_onkeydown;
     document.getElementById('imageview').style.position = 'absolute';
     document.getElementById('popup_details').style.position = 'absolute';
     document.getElementById('popup_titlebar').style.position = 'absolute';
   } else if (app_is_safari) {
-    document.onresize = app_onresize;
     document.getElementById('tools_right').style.paddingRight = '8px';
   }
 
@@ -243,7 +240,7 @@ function image_show(i) {
   } else {
     var s = image_fit(1);
     imagediv.innerHTML = '<img name="view" src="' + document.getElementById('img_'+i).href
-      + '" ' + s + ' onload="image_loaded()">';
+      + '" ' + s + ' onload="image_loaded()" alt=""/>';
   }
   image_setbuttons();
   text_fill();
