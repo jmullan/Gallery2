@@ -138,6 +138,8 @@ class GalleryPhotoItem_core extends GalleryDataItem {
 		$ret->addErrorCode(ERROR_BAD_DATA_TYPE);
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
+	} else {
+	    $dimensions = array(0, 0);
 	}
 
 	/* Create our data item */
