@@ -41,8 +41,17 @@ class AdminNetPbmControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 	parent::setUp();
 
-	foreach (array('path', 'jpegQuality', 'pnmtojpeg') as $param) {
-	    list ($ret, $this->_saveParameters[$param]) = GalleryCoreApi::getPluginParameter('module', 'netpbm', $param);
+	foreach (array('path', 'jpegQuality', 'pnmtojpeg', 'jheadPath') as $param) {
+	    list ($ret, $this->_save[$param]) = GalleryCoreApi::getPluginParameter('module', 'netpbm', $param);
+	    if ($ret->isError()) {
+		print $ret->getAsHtml();
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+
+	/* Reset to the defaults -- tearDown will undo this */
+	foreach (array('jpegQuality' => 75, 'pnmtojpeg' => 'ppmtojpeg') as $key => $value) {
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'netpbm', $key, $value);
 	    if ($ret->isError()) {
 		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -58,9 +67,9 @@ class AdminNetPbmControllerTest extends GalleryControllerTestCase {
 	parent::tearDown();
 
 	$gallery->_platform = $this->_platform;
-	
-	foreach (array('path', 'jpegQuality', 'pnmtojpeg') as $param) {
-	    $ret = GalleryCoreApi::setPluginParameter('module', 'netpbm', $param, $this->_saveParameters[$param]);
+
+	foreach ($this->_save as $key => $value) {
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'netpbm', $key, $value);
 	    if ($ret->isError()) {
 		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
