@@ -411,11 +411,11 @@ function _GalleryMain_errorHandler($error, $g2Data=null, $initOk=true) {
 
     list ($ret, $isAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
     $isAdmin = $ret->isSuccess() && $isAdmin;
-    $template->head('templates/errorHead.tpl', 'modules_core');
     $main = array('isAdmin' => $isAdmin,
 		  'error' => array('stackTrace' => $error->getAsHtml($isAdmin)),
 		  'viewBodyFile' => 'templates/errorBody.tpl',
 		  'viewL10Domain' => 'modules_core');
+    $template->head('templates/errorHead.tpl', 'modules_core');
     _GalleryMain_setupMain($main);
 
     if (isset($g2Data['redirectUrl'])) {
