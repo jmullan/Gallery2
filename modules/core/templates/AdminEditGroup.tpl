@@ -1,4 +1,5 @@
   {gallery->form controller="$controller"}
+  {gallery->input type="hidden" name="formName"}AdminEditGroup{/gallery->input}
   {gallery->input type="hidden" name="form.groupId"}{$form.groupId}{/gallery->input}
   <table width="100%" border="0" cellspacing="3" cellpadding="3">
 
@@ -9,22 +10,6 @@
 	{/gallery->bigFontSize}
       </td>
     </tr>
-
-    {if $form.groupType == GROUP_ALL_USERS}
-    <tr>
-      <td colspan="2" align="center">
-	{gallery->text text="This group contains all Gallery users.  You cannot add or remove users from it."}
-      </td>
-    </tr>
-    {/if}
-
-    {if $form.groupType == GROUP_SITE_ADMINS}
-    <tr>
-      <td colspan="2" align="center">
-	{gallery->text text="This group contains all Gallery site administrators.  Any users you add to this group will have Gallery administrative privileges."}
-      </td>
-    </tr>
-    {/if}
 
     <tr>
       <td align="right" width="40%">

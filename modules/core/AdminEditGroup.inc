@@ -59,18 +59,18 @@ class AdminEditGroupController extends GalleryController {
 
 	if (isset($form['action']['cancel'])) {
 
-	    /* Go back to the AdminGroups view */
-	    $results['view'] = 'core:SiteAdmin';
-	    GalleryUtilities::putRequestVariable('subView', 'core:AdminGroups');
+	    /* Redirect back to the AdminGroups view */
+	    $redirectParams['view'] = 'core:SiteAdmin';
+	    $redirectParams['subView'] = 'core:AdminGroups';
 	    
 	} else if (isset($form['action']['undo'])) {
 
-	    /* Reset our form */
+	    /* Reset our form and stay on the same view */
 	    GalleryUtilities::putRequestVariable('form.groupName', $group->getGroupName());
 	    
 	} else if (isset($form['action']['save'])) {
 
-	    if (!empty($form['groupName'])) {
+	    if (!empty($form['groupId'])) {
 		/* Save our changes */
 		list ($ret, $lockId) = $gallery->acquireWriteLock($form['groupId']);
 		if ($ret->isError()) {
@@ -83,8 +83,8 @@ class AdminEditGroupController extends GalleryController {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
+		/* Enact the change */
 		$group->setGroupName($form['groupName']);
-
 		$ret = $group->save();
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -138,26 +138,18 @@ class AdminEditGroupView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	    
-	$groupid = GalleryUtilities::getRequestVariables('groupId');
+	$formName = GalleryUtilities::getRequestVariables('formName');
 	$form = GalleryUtilities::getFormVariables('form.');
 
-	if (!empty($groupid)) {
-	    $form['groupId'] = $groupid;
+	if ($formName != 'AdminEditGroup') {
+	    $form['groupId'] = GalleryUtilities::getRequestVariables('groupId');
 	}
 
 	list ($ret, $group) = $gallery->loadEntitiesById($form['groupId']);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-
-	/* Load the form with group data */
-	if (empty($form['groupName'])) {
-	    $form['groupName'] = $group->getGroupName();
-	}
-
-	if (empty($form['groupType'])) {
-	    $form['groupType'] = $group->getGroupType();
-	}
+	$form['groupName'] = $group->getGroupName();
 
 	/* Render the HTML body */
 	$template = $this->_getTemplate();
