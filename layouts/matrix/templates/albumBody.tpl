@@ -48,6 +48,10 @@
     </div>
   </div>
       
+  <div class="gsSpacer">
+    &nbsp;
+  </div>
+
   {counter start=0 print=no assign=childrenInColumnCount}
   {foreach from=$layout.children item=child}
   <div class="{if $child.canContainChildren}gbItemAlbum{else}gbItemImage{/if}">
@@ -82,7 +86,7 @@
     </div>
 
     <div class="giDescription">
-      {$child.description|truncate:512|markup}
+      {$child.summary|truncate:256|markup}
     </div>
 
     <div class="giInfo">
@@ -110,12 +114,14 @@
       </span>
       {/if}
 
+      {if ($layout.viewCounts[$child.id] > 0) }
       <span>
 	{g->text one="Viewed: %d time"
 	many="Viewed: %d times"
 	count=$layout.viewCounts[$child.id]
 	arg1=$layout.viewCounts[$child.id]}
       </span>
+      {/if}
     </div>
   </div>
 
