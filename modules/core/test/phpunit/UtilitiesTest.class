@@ -205,9 +205,15 @@ class UtilitiesTest extends GalleryTestCase {
 	$_SERVER['HTTP_HOST'] = 'example.com';
 	$_SERVER['SERVER_PORT'] = 80;
 	$gallery->setUrlGenerator(new GalleryUrlGenerator('phpunit_test.php'));
-	
+
 	$this->assertEquals('http://example.com/gallery2/modules/core/test/phpunit/UtilitiesTest.class',
-			    GalleryUtilities::convertPathToUrl($file));
+			    GalleryUtilities::convertPathToUrl($file), 'test one');
+
+	$gallery->setUrlGenerator(new GalleryUrlGenerator('phpunit_test.php?test=on'));
+	$_SERVER['REQUEST_URI'] = '/phpunit_test.php?test=on&foo=bar';
+
+	$this->assertEquals('http://example.com/gallery2/modules/core/test/phpunit/UtilitiesTest.class',
+			    GalleryUtilities::convertPathToUrl($file), 'test two');
     }
 
     function testRequireOnce() {

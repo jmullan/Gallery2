@@ -440,12 +440,11 @@ class GalleryUtilities {
      */
     function convertPathToUrl($path) {
 	global $gallery;
-
 	$platform = $gallery->getPlatform();
-	$dirbase = $platform->realpath(dirname(__FILE__) . '/../../..') . '/';
+	$dirbase = $_SERVER['DOCUMENT_ROOT'];
 
 	/*
-	 * Factor the gallery code base out of the path, accounting for
+	 * Factor the document root out of the path, accounting for
 	 * differences in directory separators between platforms.
 	 */
 	$slash = $platform->getDirectorySeparator();
@@ -453,16 +452,14 @@ class GalleryUtilities {
 	    $dirbase = str_replace($slash, '/', $dirbase);
 	    $path = str_replace($slash, '/', $path);
 	}
-	$relativePath = str_replace($dirbase, '', $path);
-	
-	/* Prepend the current base URL */
-	$urlGenerator = $gallery->getUrlGenerator();
-	$urlBase = $urlGenerator->getCurrentUrlDir();
-	if (!empty($urlBase)) {
-	    return $urlBase . $relativePath;
+	if ($dirbase{strlen($dirbase)-1} != '/') {
+	    $dirbase .= '/';
 	}
+	$relativePath = str_replace($dirbase, '', $path);
 
-	return $relativePath;
+	/* Prepend the protocol/server */
+	$urlGenerator = $gallery->getUrlGenerator();
+	return $urlGenerator->makeUrl($relativePath);
     }
 
     /**
