@@ -35,7 +35,7 @@ class WebCamModule extends GalleryModule {
 	$this->setVersion('0.9.0');
 	$this->setGroup('import', $this->translate('Import'));
 	$this->setCallbacks('getSiteAdminViews');
-	$this->setRequiredCoreApi(array(3, 0));
+	$this->setRequiredCoreApi(array(3, 3));
 	$this->setRequiredModuleApi(array(0, 10));
     }
 
