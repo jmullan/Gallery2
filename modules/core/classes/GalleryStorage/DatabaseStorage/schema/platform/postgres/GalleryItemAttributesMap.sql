@@ -30,7 +30,7 @@
     );
 
   
-    CREATE INDEX ItemAttributesMap_parentSequence 
+    CREATE INDEX DB_TABLE_PREFIXItemAttributesMap_2918195270 
     ON DB_TABLE_PREFIXItemAttributesMap
     (DB_COLUMN_PREFIXparentSequence);
 

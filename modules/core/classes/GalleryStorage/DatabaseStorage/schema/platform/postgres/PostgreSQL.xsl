@@ -4,12 +4,15 @@
 <xsl:stylesheet 
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:saxon="http://icl.com/saxon"
-  extension-element-prefixes="saxon"
+  xmlns:crc="http://icl.com/saxon"
+  extension-element-prefixes="saxon crc"
   version="1.0">
 
   <xsl:output method="text"/>
   <xsl:variable name="tablePrefix">DB_TABLE_PREFIX</xsl:variable>
   <xsl:variable name="columnPrefix">DB_COLUMN_PREFIX</xsl:variable>
+
+  <saxon:script implements-prefix="crc" language="java" src="java:gallery.CRC32"/>
 
   <!-- TABLE -->
   <xsl:template match="table">
@@ -77,10 +80,6 @@
       <xsl:if test="count(alter)">,</xsl:if>
     </xsl:if>
     
-    <xsl:if test="count(remove) and count(alter)">
-      , 
-    </xsl:if>
-    
     <xsl:if test="count(alter)">
       <xsl:apply-templates select="alter"/>
     </xsl:if>
@@ -128,7 +127,7 @@
   <!-- Change/remove -->
   <xsl:template match="remove">
     <xsl:for-each select="column">
-      DROP COLUMN COLUMN_PREFIX<xsl:value-of select="column-name"/>
+      DROP COLUMN <xsl:value-of select="$columnPrefix"/><xsl:value-of select="column-name"/>
     <xsl:if test="position()!=last()">
       ,
     </xsl:if>
@@ -137,7 +136,7 @@
     <xsl:if test="count(column) and (count(key) or count(index))">,</xsl:if>
 
     <xsl:for-each select="index">
-      DROP INDEX COLUMN_PREFIX<xsl:value-of select="column-name"/>
+      DROP INDEX <xsl:value-of select="$columnPrefix"/><xsl:value-of select="column-name"/>
     <xsl:if test="position()!=last()">
       ,
     </xsl:if>
@@ -148,7 +147,7 @@
     </xsl:if>
     
     <xsl:for-each select="key">
-      DROP KEY COLUMN_PREFIX<xsl:value-of select="column-name"/>
+      DROP KEY <xsl:value-of select="$columnPrefix"/><xsl:value-of select="column-name"/>
     <xsl:if test="position()!=last()">
       ,
     </xsl:if>
@@ -231,8 +230,11 @@
   
   <!-- General purpose index definition -->
   <xsl:template name="indexName">
-    <xsl:value-of select="/table/table-name"/>
-    <xsl:for-each select="column-name">_<xsl:value-of select="."/></xsl:for-each>
+    <xsl:value-of select="crc:reset()"/>
+    <xsl:for-each select="column-name">
+      <xsl:value-of select="crc:update(.)"/>
+    </xsl:for-each>
+    <xsl:value-of select="$tablePrefix"/><xsl:value-of select="/*/table-name"/>_<xsl:value-of select="crc:getValue()"/>
   </xsl:template>
 
   <xsl:template name="indexColumns">

@@ -36,12 +36,12 @@
     );
 
   
-    CREATE INDEX TkPropertyMimeTypeMap_propertyName 
+    CREATE INDEX DB_TABLE_PREFIXTkPropertyMimeTypeMap_1900452881 
     ON DB_TABLE_PREFIXTkPropertyMimeTypeMap
     (DB_COLUMN_PREFIXpropertyName);
 
   
-    CREATE INDEX TkPropertyMimeTypeMap_mimeType 
+    CREATE INDEX DB_TABLE_PREFIXTkPropertyMimeTypeMap_3639779463 
     ON DB_TABLE_PREFIXTkPropertyMimeTypeMap
     (DB_COLUMN_PREFIXmimeType);
 

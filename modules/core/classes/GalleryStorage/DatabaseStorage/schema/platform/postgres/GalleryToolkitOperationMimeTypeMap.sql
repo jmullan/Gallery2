@@ -42,12 +42,12 @@
     );
 
   
-    CREATE INDEX TkOperationMimeTypeMap_operationName 
+    CREATE INDEX DB_TABLE_PREFIXTkOperationMimeTypeMap_2891702014 
     ON DB_TABLE_PREFIXTkOperationMimeTypeMap
     (DB_COLUMN_PREFIXoperationName);
 
   
-    CREATE INDEX TkOperationMimeTypeMap_mimeType 
+    CREATE INDEX DB_TABLE_PREFIXTkOperationMimeTypeMap_3639779463 
     ON DB_TABLE_PREFIXTkOperationMimeTypeMap
     (DB_COLUMN_PREFIXmimeType);
 

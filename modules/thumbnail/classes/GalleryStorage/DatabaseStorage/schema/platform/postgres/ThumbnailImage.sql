@@ -53,7 +53,7 @@
     ALTER TABLE DB_TABLE_PREFIXThumbnailImage
     ADD PRIMARY KEY (DB_COLUMN_PREFIXid);
     
-    CREATE UNIQUE INDEX ThumbnailImage_fileName 
+    CREATE UNIQUE INDEX DB_TABLE_PREFIXThumbnailImage_2620999259 
     ON DB_TABLE_PREFIXThumbnailImage
     (DB_COLUMN_PREFIXfileName);
     

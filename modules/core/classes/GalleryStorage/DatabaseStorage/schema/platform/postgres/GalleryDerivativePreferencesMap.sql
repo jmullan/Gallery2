@@ -26,7 +26,7 @@
     );
 
   
-    CREATE INDEX DerivativePrefsMap_itemId 
+    CREATE INDEX DB_TABLE_PREFIXDerivativePrefsMap_3052975985 
     ON DB_TABLE_PREFIXDerivativePrefsMap
     (DB_COLUMN_PREFIXitemId);
 

@@ -52,7 +52,7 @@
     );
 
   
-    CREATE INDEX PluginParameterMap_pluginType_pluginId_itemId 
+    CREATE INDEX DB_TABLE_PREFIXPluginParameterMap_4202412808 
     ON DB_TABLE_PREFIXPluginParameterMap
     (DB_COLUMN_PREFIXpluginType
         ,
@@ -61,12 +61,12 @@
       DB_COLUMN_PREFIXitemId);
 
   
-    CREATE INDEX PluginParameterMap_pluginType 
+    CREATE INDEX DB_TABLE_PREFIXPluginParameterMap_23380596 
     ON DB_TABLE_PREFIXPluginParameterMap
     (DB_COLUMN_PREFIXpluginType);
 
   
-    CREATE UNIQUE INDEX PluginParameterMap_pluginType_pluginId_itemId_parameterName 
+    CREATE UNIQUE INDEX DB_TABLE_PREFIXPluginParameterMap_846226955 
     ON DB_TABLE_PREFIXPluginParameterMap
     (DB_COLUMN_PREFIXpluginType
         ,

@@ -40,7 +40,7 @@
     );
 
   
-    CREATE INDEX TkOperationParameterMap_operationName 
+    CREATE INDEX DB_TABLE_PREFIXTkOperationParameterMap_2891702014 
     ON DB_TABLE_PREFIXTkOperationParameterMap
     (DB_COLUMN_PREFIXoperationName);
 

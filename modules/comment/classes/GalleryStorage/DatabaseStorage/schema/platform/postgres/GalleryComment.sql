@@ -46,7 +46,7 @@
     );
 
   
-    CREATE INDEX Comment_date 
+    CREATE INDEX DB_TABLE_PREFIXComment_2862495610 
     ON DB_TABLE_PREFIXComment
     (DB_COLUMN_PREFIXdate);
 

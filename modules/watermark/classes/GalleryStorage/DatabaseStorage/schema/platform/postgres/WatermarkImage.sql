@@ -45,7 +45,7 @@
     ALTER TABLE DB_TABLE_PREFIXWatermarkImage
     ADD PRIMARY KEY (DB_COLUMN_PREFIXid);
     
-    CREATE UNIQUE INDEX WatermarkImage_fileName 
+    CREATE UNIQUE INDEX DB_TABLE_PREFIXWatermarkImage_2620999259 
     ON DB_TABLE_PREFIXWatermarkImage
     (DB_COLUMN_PREFIXfileName);
     
