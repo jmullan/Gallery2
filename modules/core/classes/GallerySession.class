@@ -361,10 +361,8 @@ class GallerySession {
      * @param string the value
      */
     function put($key, $value) {
-	if (!isset($this->_sessionData[$key]) || $this->_sessionData[$key] !== $value) {
-	    $this->_sessionData[$key] = $value;
-	    $this->_isSessionDataModified = true;
-	}
+	$this->_sessionData[$key] = $value;
+	$this->_isSessionDataModified = true;
     }
 
     /**
