@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -40,47 +40,47 @@ class ItemDeleteController extends GalleryController {
      */
     function handleRequest($form) {
 	global $gallery;
-	
+
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
-	
+
 	$status = array();
 	$error = array();
-	
+
 	if (isset($form['action']['delete'])) {
 	    $status['deleted']['count'] = 0;
 	    if (!empty($form['selectedIds'])) {
 		$selectedIds = array_keys($form['selectedIds']);
-		
+
 		/* get the rootId, so we don't try to delete it */
 		list ($ret, $rootId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-		
+
 		$ret = GalleryCoreApi::studyPermissions($selectedIds);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-		
+
 		foreach ($selectedIds as $selectedId) {
 		    /* Make sure we have permission to delete this item */
 		    list ($ret, $permissions) = GalleryCoreApi::getPermissions($selectedId);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
-		    
+
 		    if ( !isset($permissions['core.delete'])) {
 			return array(GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__,
 							  "Don't have permission to delete this item"), null);
 		    }
-		    
+
 		    /* Make sure we're not deleting the root album */
 		    if ($selectedId == $rootId) {
 			return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
 							  "Can't delete the root album"), null);
 		    }
 		}
-		
+
 		/* if we're still here then all are deletable */
 		foreach ($selectedIds as $selectedId) {
 		    $ret = GalleryCoreApi::deleteEntityById($selectedId);
@@ -110,7 +110,7 @@ class ItemDeleteController extends GalleryController {
 	    }
 
 	    $numPages = ceil(sizeof($peerIds) / $form['numPerPage']);
-	    
+
 	    $results['delegate']['itemId'] = $itemId;
 	    $results['delegate']['page'] = min($page + 1, $numPages);
 	} else if (isset($form['action']['previous'])) {
@@ -120,7 +120,7 @@ class ItemDeleteController extends GalleryController {
 	} else if (isset($form['action']['cancel'])) {
 	    $results['return'] = 1;
 	}
-		
+
 	if (!empty($redirect)) {
 	    $results['redirect'] = $redirect;
 	} else {
@@ -129,7 +129,7 @@ class ItemDeleteController extends GalleryController {
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;
-	
+
 	return array(GalleryStatus::success(), $results);
     }
 }
@@ -141,7 +141,7 @@ class ItemDeleteController extends GalleryController {
  * @subpackage UserInterface
  */
 class ItemDeleteView extends GalleryView {
-	
+
     /**
      * @see GalleryView::loadTemplate
      */
@@ -151,7 +151,7 @@ class ItemDeleteView extends GalleryView {
 	list ($itemId, $selectedId, $page, $return) =
 		GalleryUtilities::getRequestVariables('itemId', 'selectedId',
 						      'page', 'return');
-	
+
 	if ($form['formName'] != 'ItemDelete') {
 	    if ($selectedId) {
 		$form['selectedIds'][$selectedId] = true;
@@ -160,18 +160,18 @@ class ItemDeleteView extends GalleryView {
 	    $form['formName'] = 'ItemDelete';
 	    $form['numPerPage'] = 15;
 	}
-	
+
 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	list ($ret, $peerIds) =
 	    GalleryCoreApi::fetchChildItemIdsWithPermission($itemId, 'core.delete');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	$peers = array();
 	$peerTypes = array();
 	$peerDescendentCounts = array();
@@ -199,13 +199,13 @@ class ItemDeleteView extends GalleryView {
 		    }
 		}
 	    }
-	    
+
 	    /* load peers */
 	    list ($ret, $peerItems) = GalleryCoreApi::loadEntitiesById($peerIds);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    
+
 	    /* get peer thumbnails */
 	    list ($ret, $thumbnails) = GalleryCoreApi::fetchThumbnailsByItemIds($peerIds);
 	    if ($ret->isError()) {
@@ -228,9 +228,10 @@ class ItemDeleteView extends GalleryView {
 		    list ($ret, $thumbnail) =
 			GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($thumbnail->getId());
 		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			/* Ignore thumbnail errors so we can delete items with broken thumbnail */
+		    } else {
+			$peers[$peerItem->getId()]['thumbnail'] = $thumbnail->getMemberData();
 		    }
-		    $peers[$peerItem->getId()]['thumbnail'] = $thumbnail->getMemberData();
 		}
 	    }
 
@@ -259,10 +260,9 @@ class ItemDeleteView extends GalleryView {
 
 	$template->setVariable('controller', 'core:ItemDelete');
 	$template->setVariable('ItemDelete', $ItemDelete);
-	
+
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/core/templates/ItemDelete.tpl'));
-	
     }
 
     /**

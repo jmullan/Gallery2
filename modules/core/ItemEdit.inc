@@ -161,7 +161,7 @@ class ItemEditView extends GalleryView {
 	    list ($ret, $thumbnail) =
 		GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($thumbnails[$item->getId()]->getId());
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		/* Ignore thumbnail errors so we can edit items with broken thumbnail */
 	    }
 	} else {
 	    $thumbnail = null;
