@@ -38,91 +38,72 @@ function changed() { isChanged = 1; }
 {/foreach}
 </div>
 
-<div class="gbAdmin">
+<div class="gbBlock">
   <p class="giDescription">
     {g->text text="Enter text for additional languages.  If all fields are blank then the primary data shown below will be used.  If any fields are non-empty then the multilanguage data will be used, even if some fields are blank."}
   </p>
 
-  <div class="gbDataEntry">
-    <h3 class="giTitle">
-      {g->text text="Item Data"}
-    </h3>
+  <h4> {g->text text="Item Data"} </h4>
 
-    <table class="gbDataTable"><tr>
-      <td> {g->text text="Title"} </td>
-      <td> {$form.title|markup} </td>
-      </tr><tr>
-      <td> {g->text text="Summary"} </td>
-      <td> {$form.summary|markup} </td>
-      </tr><tr>
-      <td> {g->text text="Description"} </td>
-      <td> {$form.description|markup} </td>
-    </tr></table>
-  </div>
+  <table class="gbDataTable"><tr>
+    <td> {g->text text="Title"} </td>
+    <td> {$form.title|markup} </td>
+  </tr><tr>
+    <td> {g->text text="Summary"} </td>
+    <td> {$form.summary|markup} </td>
+  </tr><tr>
+    <td> {g->text text="Description"} </td>
+    <td> {$form.description|markup} </td>
+  </tr></table>
 
-  <div class="gbDataEntry">
-    <h3 class="giTitle">
-      {g->text text="Language"}
-    </h3>
+  <h4> {g->text text="Language"} </h4>
 
-    <select id="language" name="{g->formVar var="form[language]"}"
-     onchange="pick(this.selectedIndex)">
-      {html_options options=$form.languageList selected=$form.selectedLanguage}
-    </select>
-  </div>
+  <select id="language" onchange="pick(this.selectedIndex)"
+   name="{g->formVar var="form[language]"}">
+    {html_options options=$form.languageList selected=$form.selectedLanguage}
+  </select>
 
-  <div class="gbDataEntry">
-    <h3 class="giTitle">
-      {g->text text="Title"}
-    </h3>
-    <p class="giDescription">
-      {g->text text="The title of this item."}
-    </p>
+  <h4> {g->text text="Title"} </h4>
+  <p class="giDescription">
+    {g->text text="The title of this item."}
+  </p>
 
-    {include file="gallery:modules/core/templates/MarkupBar.tpl"
-	     viewL10domain="modules_core" element="title" firstMarkupBar="true"}
-    <input id="title" type="text" size="40" name="{g->formVar var="form[title]"}"
-	   value="" onchange="changed()"/>
-  </div>
+  {include file="gallery:modules/core/templates/MarkupBar.tpl"
+	   viewL10domain="modules_core" element="title" firstMarkupBar="true"}
+  <input type="text" id="title" size="40" onchange="changed()"
+   name="{g->formVar var="form[title]"}" value=""/>
+
   {if !empty($form.error.title.missingRootTitle)}
-    <div class="giError">
-      {g->text text="The root album must have a title."}
-    </div>
+  <div class="giError">
+    {g->text text="The root album must have a title."}
+  </div>
   {/if}
 
-  <div class="gbDataEntry">
-    <h3 class="giTitle">
-      {g->text text="Summary"}
-    </h3>
-    <p class="giDescription">
-      {g->text text="The summary of this item."}
-    </p>
+  <h4> {g->text text="Summary"} </h4>
+  <p class="giDescription">
+    {g->text text="The summary of this item."}
+  </p>
 
-    {include file="gallery:modules/core/templates/MarkupBar.tpl"
-	     viewL10domain="modules_core" element="summary"}
-    <input id="summary" type="text" size="40" name="{g->formVar var="form[summary]"}"
-	   value="" onchange="changed()"/>
-  </div>
+  {include file="gallery:modules/core/templates/MarkupBar.tpl"
+	   viewL10domain="modules_core" element="summary"}
+  <input type="text" id="summary" size="40" onchange="changed()"
+   name="{g->formVar var="form[summary]"}" value=""/>
 
-  <div class="gbDataEntry">
-    <h3 class="giTitle">
-      {g->text text="Description"}
-    </h3>
-    <p class="giDescription">
-      {g->text text="This is the long description of the item."}
-    </p>
-    {include file="gallery:modules/core/templates/MarkupBar.tpl"
-	     viewL10domain="modules_core" element="description"}
-    <textarea id="description" rows="4" cols="60" name="{g->formVar var="form[description]"}"
-	      onchange="changed()"></textarea>
-  </div>
+  <h4> {g->text text="Description"} </h4>
+  <p class="giDescription">
+    {g->text text="This is the long description of the item."}
+  </p>
+  {include file="gallery:modules/core/templates/MarkupBar.tpl"
+	   viewL10domain="modules_core" element="description"}
+  <textarea id="description" rows="4" cols="60" onchange="changed()"
+   name="{g->formVar var="form[description]"}"></textarea>
 </div>
 
-<div class="gbButtons">
-  <input type="submit" name="{g->formVar var="form[action][save]"}"
-   value="{g->text text="Save"}"/>
-  <input type="submit" name="{g->formVar var="form[action][reset]"}"
-   value="{g->text text="Reset"}"/>
+<div class="gbBlock gcBackground1">
+  <input type="submit" class="inputTypeSubmit"
+   name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}"/>
+  <input type="submit" class="inputTypeSubmit"
+   name="{g->formVar var="form[action][reset]"}" value="{g->text text="Reset"}"/>
 </div>
 
 <script type="text/javascript">

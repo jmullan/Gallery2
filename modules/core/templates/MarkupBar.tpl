@@ -6,26 +6,28 @@
  *}
 {if $main.markupType == 'bbcode'}
 {if !empty($firstMarkupBar)}
-<script type="text/javascript">
-  function openOrCloseTextElement(elementId, bbCodeElement, button, buttonLabel) {ldelim}
+<script type="text/javascript">{literal}
+  // <![CDATA[
+  function openOrCloseTextElement(elementId, bbCodeElement, button, buttonLabel) {
     element = document.getElementById(elementId);
-    if (!button.g2ToggleMode) {ldelim}
+    if (!button.g2ToggleMode) {
       element.value = element.value + '[' + bbCodeElement + ']';
       button.value = '*' + buttonLabel;
-    {rdelim} else {ldelim}
+    } else {
       element.value = element.value + '[/' + bbCodeElement + ']';
       button.value = buttonLabel;
-    {rdelim}
+    }
     element.focus();
     button.g2ToggleMode = !button.g2ToggleMode;
-  {rdelim}
+  }
 
-  function appendTextElement(elementId, bbCodeElement, button) {ldelim}
+  function appendTextElement(elementId, bbCodeElement, button) {
     element = document.getElementById(elementId);
     element.value = element.value + '[' + bbCodeElement + ']';
     element.focus();
-  {rdelim}
+  }
 
+  {/literal}
   function appendUrlElement(elementId, bbCodeElement) {ldelim}
     element = document.getElementById(elementId);
     url = prompt("{g->text text="Enter a URL"}");
@@ -40,23 +42,24 @@
     element.value = element.value + '[img]' + url + '[/img]';
     element.focus();
   {rdelim}
+  // ]]>
 </script>
 {/if}
 
-<div class="giMarkupBar">
-  <input type="button" value="{g->text text="B"}" 
-         onclick="javascript:openOrCloseTextElement('{$element}', 'b', this, '{g->text text="B"}')"
-         style="font-weight: bold;"/>
-  <input type="button" value="{g->text text="i"}" 
-         onclick="javascript:openOrCloseTextElement('{$element}', 'i', this, '{g->text text="i"}')"
-         style="font-style: italic; padding-left: 1px; padding-right: 4px"/>
-  <input type="button" value="{g->text text="list"}" 
+<div class="gbMarkupBar">
+  <input type="button" class="inputTypeButton" value="{g->text text="B"}" 
+	 onclick="javascript:openOrCloseTextElement('{$element}', 'b', this, '{g->text text="B"}')"
+	 style="font-weight: bold;"/>
+  <input type="button" class="inputTypeButton" value="{g->text text="i"}" 
+	 onclick="javascript:openOrCloseTextElement('{$element}', 'i', this, '{g->text text="i"}')"
+	 style="font-style: italic; padding-left: 1px; padding-right: 4px"/>
+  <input type="button" class="inputTypeButton" value="{g->text text="list"}" 
 	 onclick="javascript:openOrCloseTextElement('{$element}', 'list', this, '{g->text text="list"}')"/>
-  <input type="button" value="{g->text text="bullet"}" 
+  <input type="button" class="inputTypeButton" value="{g->text text="bullet"}" 
 	 onclick="javascript:appendTextElement('{$element}', '*', this)"/>
-  <input type="button" value="{g->text text="url"}" 
+  <input type="button" class="inputTypeButton" value="{g->text text="url"}" 
 	 onclick="javascript:appendUrlElement('{$element}', this)"/>
-  <input type="button" value="{g->text text="image"}"  
+  <input type="button" class="inputTypeButton" value="{g->text text="image"}"  
 	 onclick="javascript:appendImageElement('{$element}', this)"/>
 </div>
 {/if}

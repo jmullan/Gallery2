@@ -4,7 +4,6 @@
  * may overwrite it.  Instead, copy it into a new directory called "local" and edit that
  * version.  Gallery will look for that file first and use it if it exists.
  *}
-
 <!-- Load up the WZ_DragDrop library -->
 <script type="text/javascript" src="{g->url href="lib/wz_dragdrop/wz_dragdrop.js"}">
 </script>
@@ -80,10 +79,8 @@
   // ]]>
 </script>
 
-<div class="gbAdmin">
-  <h2 class="giTitle">
-    {g->text text="Watermark"}
-  </h2>
+<div class="gbBlock">
+  <h3> {g->text text="Watermark"} </h3>
 
   <p class="giDescription">
     {g->text text="You can choose a watermark to apply to this image.  Watermarks do not affect the original image, so they they can be applied to resizes and thumbnails without damaging the original."}
@@ -91,10 +88,8 @@
 </div>
 
 {if empty($ItemEditWatermark.watermarks)}
-<div class="gbAdmin">
-  <h2 class="giTitle">
-    {g->text text="You have no watermarks"}
-  </h2>
+<div class="gbBlock">
+  <h3> {g->text text="You have no watermarks"} </h3>
 
   <p class="giDescription">
     {g->text text="You must first upload some watermark images so that you can apply them to your image."}
@@ -104,10 +99,8 @@
   </p>
 </div>
 {else}
-<div class="gbAdmin">
-  <h2 class="giTitle">
-    {g->text text="Step 1.  Choose which watermark you want to use"}
-  </h2>
+<div class="gbBlock">
+  <h3> {g->text text="Step 1.  Choose which watermark you want to use"} </h3>
 
   <select name="{g->formVar var="form[watermarkId]"}" onchange="chooseWatermark(this.value)"
    id="watermarkList">
@@ -118,17 +111,15 @@
   </select>
 </div>
 
-<div class="gbAdmin">
-  <h2 class="giTitle">
-    {g->text text="Step 2.  Place the watermark on your image."}
-  </h2>
+<div class="gbBlock">
+  <h3> {g->text text="Step 2.  Place the watermark on your image."} </h3>
 
   {strip}
   <div>
     {g->image name="watermark_original"
-	  item=$ItemEditWatermark.item
-	  image=$ItemEditWatermark.derivative|default:$ItemEditWatermark.item
-	  maxSize=400}
+	      item=$ItemEditWatermark.item
+	      image=$ItemEditWatermark.derivative|default:$ItemEditWatermark.item
+	      maxSize=400}
     <img name="watermark_floater"
      src="{g->url arg1="view=core:DownloadItem" arg2="itemId=`$form.watermarkId`"}"
      width="{$ItemEditWatermark.watermarks[$form.watermarkId].width}"
@@ -138,10 +129,8 @@
   {/strip}
 </div>
 
-<div class="gbAdmin">
-  <h2 class="giTitle">
-    {g->text text="Step 3.  Choose which versions of the image you'd like to watermark"}
-  </h2>
+<div class="gbBlock">
+  <h3> {g->text text="Step 3.  Choose which versions of the image you'd like to watermark"} </h3>
 
   {if isset($form.error.versions.missing)}
   <div class="giError">
@@ -149,35 +138,33 @@
   </div>
   {/if}
 
-  <input type="checkbox" name="{g->formVar var="form[whichDerivative][preferred]"}"
-	{if isset($form.whichDerivative.preferred)}checked="checked"{/if}/>
+  <input type="checkbox"{if isset($form.whichDerivative.preferred)} checked="checked"{/if}
+   name="{g->formVar var="form[whichDerivative][preferred]"}"/>
   {g->text text="Full size (won't damage the original file)"}
   <br/>
 
-  <input type="checkbox" name="{g->formVar var="form[whichDerivative][resize]"}"
-	{if isset($form.whichDerivative.resize)}checked="checked"{/if}/>
+  <input type="checkbox"{if isset($form.whichDerivative.resize)} checked="checked"{/if}
+   name="{g->formVar var="form[whichDerivative][resize]"}"/>
   {g->text text="Resizes"}
   <br/>
 
-  <input type="checkbox" name="{g->formVar var="form[whichDerivative][thumbnail]"}"
-	{if isset($form.whichDerivative.thumbnail)}checked="checked"{/if}/>
+  <input type="checkbox"{if isset($form.whichDerivative.thumbnail)} checked="checked"{/if}
+   name="{g->formVar var="form[whichDerivative][thumbnail]"}"/>
   {g->text text="Thumbnail"}
   <br/>
 </div>
 
-<div class="gbBottomFlag">
-  <div class="gbButtons">
-    <input type="submit" name="{g->formVar var="form[action][save]"}"
-     value="{g->text text="Apply Watermark"}" onclick="calculatePercentages(); submit()"/>
-    <input type="submit" name="{g->formVar var="form[action][remove]"}"
-     value="{g->text text="Remove Watermark"}"/>
-  </div>
+<div class="gbBlock gcBackground1">
+  <input type="submit" class="inputTypeSubmit" onclick="calculatePercentages(); submit()"
+   name="{g->formVar var="form[action][save]"}" value="{g->text text="Apply Watermark"}"/>
+  <input type="submit" class="inputTypeSubmit"
+   name="{g->formVar var="form[action][remove]"}" value="{g->text text="Remove Watermark"}"/>
 </div>
 
-<input id="xPercent" type="hidden" name="{g->formVar var="form[xPercent]"}"
- value="{$form.xPercent}"/>
-<input id="yPercent" type="hidden" name="{g->formVar var="form[yPercent]"}"
- value="{$form.yPercent}"/>
+<input type="hidden" id="xPercent"
+ name="{g->formVar var="form[xPercent]"}" value="{$form.xPercent}"/>
+<input type="hidden" id="yPercent"
+ name="{g->formVar var="form[yPercent]"}" value="{$form.yPercent}"/>
 
 <script type="text/javascript">
 // <![CDATA[

@@ -4,7 +4,7 @@
  * may overwrite it.  Instead, copy it into a new directory called "local" and edit that
  * version.  Gallery will look for that file first and use it if it exists.
  *}
-<div class="gbAdmin">
+<div class="gbBlock">
   <p class="giDescription">
     {g->text text="These are album-specific custom field settings. Common fields are available on all items; Album and Photo fields can be assigned only to items of the appropriate type."}
   </p>
@@ -13,7 +13,7 @@
                      arg2="cfAdmin=-1" arg3="itemId=`$form.itemId`" arg4="return=true"}">
       {g->text text="Edit custom field values for this album"}
     </a>
-    <br />
+    <br/>
     <a href="{g->url arg1="controller=customfield:CustomFieldItemAdmin"
                      arg2="cfAdmin=-2" arg3="itemId=`$form.itemId`" arg4="return=true"}"
        onclick="return confirm('{g->text text="WARNING: Values for all fields that do not also exist in the global settings will be deleted for this album and its items!"}')">

@@ -4,68 +4,52 @@
  * may overwrite it.  Instead, copy it into a new directory called "local" and edit that
  * version.  Gallery will look for that file first and use it if it exists.
  *}
-<div id="gsAdminContents">
-  <div class="gbTopFlag">
-    <div class="gbTitle">
-      <h2 class="giTitle">
-	{g->text text="Edit %s" arg1=$ItemEdit.itemTypeNames.0}
-      </h2>
-    </div>
-    
-  </div>
-  <input type="hidden" name="{g->formVar var="editPlugin"}" value="{$ItemEdit.editPlugin}"/>
-  <input type="hidden" name="{g->formVar var="form[serialNumber]"}" value="{$form.serialNumber}"/>
+<div class="gbBlock gcBackground1">
+  <h2> {g->text text="Edit %s" arg1=$ItemEdit.itemTypeNames.0} </h2>
+</div>
 
-  {if !empty($status) || !empty($form.error)}
-  <div id="gsStatus">
-    {if !empty($status)}
+<input type="hidden" name="{g->formVar var="editPlugin"}" value="{$ItemEdit.editPlugin}"/>
+<input type="hidden" name="{g->formVar var="form[serialNumber]"}" value="{$form.serialNumber}"/>
+
+{if !empty($status) || !empty($form.error)}
+<div class="gbBlock">
+  {if !empty($status)}
+  <h2 class="giSuccess">
     {if !empty($status.editMessage)}
-    <div class="giStatus">
-      {if isset($status.editMessage)}
       {$status.editMessage}
-      {/if}
-    </div>
     {/if}
     {if !empty($status.warning)}
     <div class="giWarning">
       {foreach from=$status.warning item=warning}
-      {$warning}
+	{$warning}
       {/foreach}
     </div>
     {/if}
-    {/if}
-    {if !empty($form.error)}
-    <div class="giError">
-      {g->text text="There was a problem processing your request."}
-    </div>
-    {/if}
-  </div>
+  </h2>
   {/if}
-
-  <div class="gbAdmin">
-    <div class="gbTabBar">
-      <ul>
-	{foreach from=$ItemEdit.plugins item=plugin} 
-	{if $plugin.isSelected}
-	<li class="giSelectedTab">
-	  <span>
-	  {$plugin.title}
-	  </span>
-	</li>
-        {else}
-        <li>
-          <span>
-	  <a href="{g->url arg1="view=core:ItemAdmin" arg2="subView=core:ItemEdit" arg3="itemId=`$ItemAdmin.item.id`" arg4="editPlugin=`$plugin.id`"}">
-	    {$plugin.title}
-	  </a>
-          </span>
-        </li>
-        {/if}
-        {/foreach}
-      </ul>
-    </div>
-
-    {include file="gallery:`$ItemEdit.pluginFile`" l10Domain=$ItemAdmin.viewL10Domain}
-
-  </div>
+  {if !empty($form.error)}
+  <h2 class="giError">
+    {g->text text="There was a problem processing your request."}
+  </h2>
+  {/if}
 </div>
+{/if}
+
+<ul class="gbTabBar">
+  {foreach from=$ItemEdit.plugins item=plugin} 
+    {if $plugin.isSelected}
+      <li class="giSelected"><span>
+	{$plugin.title}
+      </span></li>
+    {else}
+      <li><span>
+	<a href="{g->url arg1="view=core:ItemAdmin" arg2="subView=core:ItemEdit"
+	 arg3="itemId=`$ItemAdmin.item.id`" arg4="editPlugin=`$plugin.id`"}">
+	  {$plugin.title}
+	</a>
+      </span></li>
+    {/if}
+  {/foreach}
+</ul>
+
+{include file="gallery:`$ItemEdit.pluginFile`" l10Domain=$ItemAdmin.viewL10Domain}

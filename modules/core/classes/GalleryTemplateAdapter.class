@@ -372,6 +372,7 @@ class GalleryTemplateAdapter {
 	    array('smarty_include_tpl_file' => 'gallery:modules/core/templates/Dimensions.tpl',
 		  'smarty_include_vars' => array(
 				 'formVar' => $params['formVar'],
+				 'formVarId' => strtr($params['formVar'], '[]', '__'),
 				 'width' => isset($params['width']) ? $params['width'] : null,
 				 'height' => isset($params['height']) ? $params['height'] : null,
 				 'callCount' => ++$this->_callCount['dimensions'])));

@@ -4,7 +4,7 @@
  * may overwrite it.  Instead, copy it into a new directory called "local" and edit that
  * version.  Gallery will look for that file first and use it if it exists.
  *}
-<div class="gbAdmin">
+<div class="gbBlock">
   {if isset($form.adminFlag)}
     <p class="giDescription">
       <a href="{g->url arg1="controller=customfield:CustomFieldItemAdmin"
@@ -30,7 +30,8 @@
 	    $choice==$value} selected="selected"{/if}>{$choice}</option>{/foreach}
       </select>
     {else}
-      <input type="text" name="{g->formVar var="form[fields][$field]"}" value="{$value}" size="40"/>
+      <input type="text" size="40"
+       name="{g->formVar var="form[fields][$field]"}" value="{$value}"/>
     {/if}
     </td></tr>
   {/foreach}
@@ -39,9 +40,10 @@
 </div>
 
 {if !empty($form.fields)}
-<div class="gbButtons">
-  <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}"/>
-  <input type="submit" name="{g->formVar var="form[action][reset]"}"
-   value="{g->text text="Reset"}"/>
+<div class="gbBlock gcBackground1">
+  <input type="submit" class="inputTypeSubmit"
+   name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}"/>
+  <input type="submit" class="inputTypeSubmit"
+   name="{g->formVar var="form[action][reset]"}" value="{g->text text="Reset"}"/>
 </div>
 {/if}

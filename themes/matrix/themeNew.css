@@ -47,6 +47,10 @@
     color: #f9c190;
 }
 
+#gallery img {
+    border-style: none;
+}
+
 #gallery h2, #gallery h3, #gallery h4 {
     font-family: "Trebuchet MS", Arial, Verdana, Helvetica, sans-serif;
 }
@@ -55,7 +59,7 @@
     background-color: #ffc;
 }
 
-#gallery input.inputTypeSubmit {  /* No input[type=submit] in IE */
+#gallery input.inputTypeSubmit, #gallery input.inputTypeButton {  /* No input[type=submit] in IE */
     color: #333;
     background-color: #eee;
     border-width: 2px;
@@ -189,6 +193,11 @@ ul.gbTabBar li.giSelected span {
 }
 
 
+#gallery .gbMarkupBar input {
+    font-size: 1.1em;
+}
+
+
 /* ********************************************************************************
  * Sections
  * #gallery         Page container
@@ -214,7 +223,7 @@ ul.gbTabBar li.giSelected span {
     color: #999;
 }
 
-#giFormUsername {
+#giFormUsername, .giFormUsername {
     background: url('../matrix/images/userinfo.png') no-repeat 0 1px;
     padding-left: 17px;
 }

@@ -209,10 +209,11 @@ class GalleryView {
 	}
 	/*
 	 * XXX TEMPORARY HACK XXX
-	 * Hardcode new layout/theme CSS for core:SiteAdmin and core:UserAdmin views.
+	 * Hardcode new layout/theme CSS for core:SiteAdmin, core:UserAdmin, core:ItemAdmin views.
 	 */
 	if (!strcasecmp(get_class($this), 'siteadminview')
-		|| !strcasecmp(get_class($this), 'useradminview')) {
+		|| !strcasecmp(get_class($this), 'useradminview')
+		|| !strcasecmp(get_class($this), 'itemadminview')) {
 	    $template->style('templates/layoutNew.css');
 	    $template->style("themes/$themeName/themeNew.css");
 	} else {
