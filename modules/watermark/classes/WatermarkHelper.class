@@ -49,18 +49,49 @@ class WatermarkHelper {
     function fetchWatermarks($count=null, $offset=null, $substring=null) {
 	global $gallery;
 
+	list ($ret, $permissionBits) =
+	    GalleryCoreApi::convertPermissionIdsToBits(array('core.viewSource'));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
+	list ($ret, $groupIds) = GalleryCoreApi::fetchGroupsForUser($gallery->getActiveUserId());
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$storage =& $gallery->getStorage();
+	$groupIds = array_keys($groupIds);
+	$groupIdMarkers = GalleryUtilities::makeMarkers($groupIds);
+	list ($ret, $andPermission) =
+	    $storage->getFunctionSql('BITAND', array('[GalleryPermissionMap::permission]', '?'));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
 	$data = array();
 	$query = '
 	SELECT
 	  [WatermarkImage::id],
+	  [WatermarkImage::ownerId],
 	  [WatermarkImage::fileName]
 	FROM
-	  [WatermarkImage]
-	';
+	  [WatermarkImage], [GalleryPermissionMap]
+	WHERE
+          [GalleryPermissionMap::itemId] = [WatermarkImage::id]
+          AND
+          ([GalleryPermissionMap::userId] = ?
+           OR
+           [GalleryPermissionMap::groupId] IN (' . $groupIdMarkers . '))
+          AND ' . $andPermission . ' = ?';
+	$data[] = $gallery->getActiveUserId();
+	array_splice($data, sizeof($data), 0, $groupIds);
+	$data[] = $storage->convertIntToBits($permissionBits);
+	$data[] = $storage->convertIntToBits($permissionBits);
 
 	if (!empty($substring)) {
 	    $query .= '
-	WHERE
+          AND
 	  [WatermarkImage::fileName] LIKE ?
 	    ';
 	    $data[] = "%$substring%";
@@ -81,10 +112,46 @@ class WatermarkHelper {
 
 	$items = array();
 	while ($result = $searchResults->nextResult()) {
-	    $items[$result[0]] = $result[1];
+	    list($items[$result[0]]['ownerId'],
+		 $items[$result[0]]['fileName']) = array($result[1], $result[2]);
 	}
 
 	return array(GalleryStatus::success(), $items);
     }
+
+    /**
+     * Return all watermark ids owned by a given user id
+     *
+     * @param int the owner id
+     * @return array object GalleryStatus a status code
+     *               array of itemIds
+     * @static
+     */
+    function fetchWatermarkIdsByOwnerId($ownerId) {
+	global $gallery;
+	
+	$query = '
+	SELECT
+	  [WatermarkImage::id]
+	FROM
+	  [WatermarkImage]
+	WHERE
+          [WatermarkImage::ownerId] = ?
+	';
+	$data = array($ownerId);
+
+	list ($ret, $searchResults) = $gallery->search($query, $data);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$ids = array();
+	while ($result = $searchResults->nextResult()) {
+	    $ids[] = $result[0];
+	}
+
+	return array(GalleryStatus::success(), $ids);
+    }
+    
 }
 ?>

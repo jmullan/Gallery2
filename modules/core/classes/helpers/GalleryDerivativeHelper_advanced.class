@@ -46,13 +46,34 @@ class GalleryDerivativeHelper_advanced {
      * @static
      */
     function fetchDerivativesBySourceIds($ids, $types=array()) {
-	require_once(dirname(__FILE__) . '/GalleryDerivativeHelper_medium.class');
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryDerivativeHelper_medium.class');
 	list ($ret, $results) =
 		GalleryDerivativeHelper_medium::_loadDerivatives(null, $ids, $types);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	return array(GalleryStatus::success(), $results);
+    }
+
+    /**
+     * Convenience function to fetch all derivatives for a given item id
+     *
+     * @param array GalleryItem ids
+     * @return array object GalleryStatus a status code 
+     *               array(GalleryItem id => GalleryDerivativeImage, ...)
+     * @static
+     */
+    function fetchDerivativesByItemIds($ids) {
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryDerivativeHelper_medium.class');
+	if (empty($ids)) {
+	    return array(GalleryStatus::success(), array());
+	}
+	
+	list ($ret, $results) = GalleryDerivativeHelper_medium::_loadDerivatives($ids, null);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 	return array(GalleryStatus::success(), $results);
     }
 
@@ -441,6 +462,29 @@ class GalleryDerivativeHelper_advanced {
 
 	return array(GalleryStatus::success(), $results);
     }
+
+    /**
+     * Remove the given operation from the operation set.
+     *
+     * @return string the new operation set
+     * @static
+     */
+    function removeOperation($operation, $operationSet) {
+	if (!empty($operationSet)) {
+	    $newOperations = array();
+	    $match = $operation . '|';
+	    $matchLength = strlen($match);
+	    foreach (split(';', $operationSet) as $opString) {
+		if (strncmp($opString, $match, $matchLength)) {
+		    $newOperations[] = $opString;
+		}
+	    }
+	    $operationSet = join(';', $newOperations);
+	}
+
+	return $operationSet;
+    }
+    
 
     /**
      * Expire all derivatives that depend on the source ids specified

@@ -104,7 +104,7 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 			    $results, 'Add');
 
 	// Verify 
-	list ($ret, $map) = $this->_fetchWatermarkMap();
+	list ($ret, $map) = $this->_fetchWatermarkMapByFilename();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -130,7 +130,7 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 	}
 
 	// Verify 
-	list ($ret, $map) = $this->_fetchWatermarkMap();
+	list ($ret, $map) = $this->_fetchWatermarkMapByFilename();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -155,12 +155,12 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 				  'error' => array()),
 			    $results, 'Add same name, bad mime');
 
-	list ($ret, $map) = $this->_fetchWatermarkMap();
+	list ($ret, $map) = $this->_fetchWatermarkMapByFilename();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($map[$this->_expectedName]);
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($map[$this->_expectedName]['id']);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -182,7 +182,7 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 				  'error' => array()),
 			    $results, 'Add');
 
-	list ($ret, $map) = $this->_fetchWatermarkMap();
+	list ($ret, $map) = $this->_fetchWatermarkMapByFilename();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -190,7 +190,7 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 	// Delete it
 	GalleryUtilities::removeFormVariables('form');
 	GalleryUtilities::putRequestVariable('form[action][delete]', '1');
-	GalleryUtilities::putRequestVariable('form[delete][itemId]', $map[$this->_expectedName]);
+	GalleryUtilities::putRequestVariable('form[delete][itemId]', $map[$this->_expectedName]['id']);
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
@@ -200,10 +200,22 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 			    $results, 'Delete');
 
 	// Verify that it's gone
-	$ret = $this->_verifyMissing($map[$this->_expectedName]);
+	$ret = $this->_verifyMissing($map[$this->_expectedName]['id']);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+    }
+
+    function testIllegalDelete() {
+	GalleryUtilities::putRequestVariable('form[action][delete]', 1);
+	GalleryUtilities::putRequestVariable('form[delete][itemId]', 1); // valid, but illegal
+
+	$results = $this->handleRequest(ERROR_PERMISSION_DENIED);
+
+	GalleryUtilities::putRequestVariable('form[action][delete]', 1);
+	GalleryUtilities::putRequestVariable('form[delete][itemId]', 123456789); // invvalid and illegal
+
+	$results = $this->handleRequest(ERROR_PERMISSION_DENIED);
     }
 
     function testAddMaliciousFile() {
@@ -223,13 +235,13 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 				  'error' => array()),
 			    $results, 'Add');
 
-	list ($ret, $map) = $this->_fetchWatermarkMap();
+	list ($ret, $map) = $this->_fetchWatermarkMapByFilename();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert(isset($map[$expectedName]), 'Watermark is missing');
 
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($map[$expectedName]);
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($map[$expectedName]['id']);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -244,12 +256,16 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals($expectedName, basename($path));
     }
 
-    function _fetchWatermarkMap() {
+    function _fetchWatermarkMapByFilename() {
 	list ($ret, $items) = WatermarkHelper::fetchWatermarks();
 	if ($ret->isError()) {
 	    return array($this->wrap(__FILE__, __LINE__), null);
 	}
-	return array(GalleryStatus::success(), array_flip($items));
+	$results = array();
+	foreach ($items as $id => $item) {
+	    $results[$item['fileName']] = array_merge(array('id' => $id), $item);
+	}
+	return array(GalleryStatus::success(), $results);
     }
 }
 ?>

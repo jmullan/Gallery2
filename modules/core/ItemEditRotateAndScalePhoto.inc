@@ -261,8 +261,7 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
 		 * Perform a final check -- if the new derivative is exactly
 		 * the same as the original then delete it.
 		 */
-		$derivativeOperations = $preferred->getDerivativeOperations();
-		if (empty($derivativeOperations)) {
+		if ($preferred->hasNoOperations()) {
 		    $ret = GalleryCoreApi::remapSourceIds($preferred->getId(), $preferred->getDerivativeSourceId());
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null, null);

@@ -77,6 +77,11 @@ class WatermarkImage extends WatermarkImage_core {
 	    'type' => STORAGE_TYPE_INTEGER
 	);
     
+	$meta['members']['ownerId'] = array(
+	    'class' => 'WatermarkImage',
+	    'type' => STORAGE_TYPE_INTEGER
+	);
+    
 	return $meta;
     }
 
@@ -116,6 +121,12 @@ class WatermarkImage extends WatermarkImage_core {
  	    $data['height'] = null;
  	} else {
 	    $data['height'] = $this->_height;
+	}
+	
+	if (!isset($this->_ownerId)) {
+ 	    $data['ownerId'] = null;
+ 	} else {
+	    $data['ownerId'] = $this->_ownerId;
 	}
 	
 	return $data;
@@ -356,6 +367,51 @@ class WatermarkImage extends WatermarkImage_core {
       
 	    $this->setModifiedFlag('height', $value);
 	    $this->_height = $value;
+	}
+    }
+  
+    /**
+     * Get the value of ownerId
+     *
+     * @return INTEGER the value
+     */
+    function getownerId() {
+ 	
+
+	if (!isset($this->_ownerId)) {
+	    return null;
+	}
+
+	return $this->_ownerId;
+    }
+
+    /**
+     * Set the value of ownerId
+     *
+     * @param INTEGER the value
+     */
+    function setownerId($value) {
+    
+	/* Type cast the incoming value to be an integer */
+	if ($value != null) {
+	    $value = (int)$value;
+	}
+      
+	/* 
+	 * Convert unset values to null, to avoid generating warnings.
+	 */
+	$a = isset($value) ? $value : null;
+	$b = isset($this->_ownerId) ? $this->_ownerId : null;
+
+	/* 
+	 * Only take action if the value actually changes, but take care not to 
+	 * generate warnings for unset values.
+	 */
+    
+	if ($a !== $b) {
+      
+	    $this->setModifiedFlag('ownerId', $value);
+	    $this->_ownerId = $value;
 	}
     }
   

@@ -55,9 +55,21 @@ class WatermarkModule extends GalleryModule {
 						      'WatermarkImage',
 						      $classDir . 'WatermarkImage.class');
 
+	GalleryCoreApi::registerFactoryImplementation('ItemEditPlugin',
+						      'ItemEditWatermark',
+						      'ItemEditWatermark',
+						      dirname(__FILE__) . '/ItemEditWatermark.inc');
+
 	return GalleryStatus::success();
     }
 
+    /**
+     * @see GalleryModule::registerEventListeners();
+     */
+    function registerEventListeners() {
+	GalleryCoreApi::registerEventListener('GalleryEntity::delete', new WatermarkModule());
+    }
+    
     /**
      * @see GalleryModule::install()
      */
@@ -108,6 +120,54 @@ class WatermarkModule extends GalleryModule {
 	return array(GalleryStatus::success(),
 		     array(array('name' => $this->translate('Watermarks'),
 				 'view' => 'watermark:WatermarkSiteAdmin')));
+    }
+
+    /**
+     * @see GalleryModule::getUserAdminViews();
+     */
+    function getUserAdminViews($user) {
+	global $gallery;
+	
+	list ($ret, $anonymousUserId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$views = array();
+	if ($user->getId() != $anonymousUserId) {
+	    $views[] = array('name' => $this->translate('Watermarks'),
+			     'view' => 'watermark:UserWatermarks');
+	}
+
+	return array(GalleryStatus::success(), $views);
+    }
+
+    /**
+     * Handler for GalleryEntity::delete event.  Get rid of any watermarks
+     * for users that are deleted.
+     *
+     * @param object GalleryEvent the event
+     * @return object GalleryStatus a status code
+     */
+    function handleEvent($event) {
+	if ($event->getEventName() == 'GalleryEntity::delete') {
+	    $entity = $event->getEntity();
+	    if (GalleryUtilities::isA($entity, 'GalleryUser')) {
+		list ($ret, $watermarkIds) =
+		    WatermarkHelper::fetchWatermarkIdsByOwnerId($entity->getId());
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+
+		foreach ($watermarkIds as $id) {
+		    $ret = GalleryCoreApi::deleteEntityById($id);
+		    if ($ret->isError()) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
+		}
+	    }
+	}
+	return GalleryStatus::success();
     }
 }
 ?>

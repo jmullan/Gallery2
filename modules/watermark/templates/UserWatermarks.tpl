@@ -8,21 +8,27 @@
   <div class="gbTopFlag">
     <div class="gbTitle">
       <div class="giTitle">
-        {g->text text="Watermark Images"}
+        {g->text text="My Watermarks"}
       </div>
     </div>
   </div>
 
-  {if !empty($status)}
+  {if !empty($status) || !empty($form.error)}
   <div id="gsStatus">
     {if isset($status.add)}
-      <div class="giStatus">{g->text text="New image added successfully"}</div>
+    <div class="giStatus">
+      {g->text text="New image added successfully"}
+    </div>
     {/if}
     {if isset($status.delete)}
-      <div class="giStatus">{g->text text="Image deleted successfully"}</div>
+    <div class="giStatus">
+      {g->text text="Image deleted successfully"}
+    </div>
     {/if}
-    {if isset($status.add_error)}
-      <div class="giError">{g->text text="Missing image file"}</div>
+    {if isset($form.error)}
+    <div class="giError">
+      {g->text text="There was a problem processing your request."}
+    </div>
     {/if}
   </div>
   {/if}
@@ -32,21 +38,14 @@
       <tr>
         <th> {g->text text="File"} </th>
         <th> {g->text text="Image"} </th>
-        <th> {g->text text="Owner"} </th>
         <th> {g->text text="Action"} </th>
       </tr>
       {foreach from=$form.list item=item}
       <tr class="{cycle values="gbEven,gbOdd"}">
         <td> {$item.name} </td>
         <td> {g->image item=$item image=$item maxSize=150} </td>
-	<td> 
-	  <a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=core:AdminEditUser" arg3="userId=`$item.ownerId`"}">
-	    {$WatermarkSiteAdmin.owners[$item.ownerId].fullName|default:$WatermarkSiteAdmin.owners[$item.ownerId].userName}
-	  </a>
-       </td>
-
         <td>
-          <a href="{g->url arg1="controller=watermark:WatermarkSiteAdmin"
+          <a href="{g->url arg1="controller=watermark:UserWatermarks"
                            arg2="form[action][delete]=1" arg3="form[delete][itemId]=`$item.id`"}">
             {g->text text="delete"}
           </a>
@@ -56,5 +55,10 @@
     </table>
     <input type="file" name="{g->formVar var="form[1]"}" size="60"/>
     <input type="submit" name="{g->formVar var="form[action][add]"}" value="{g->text text="add"}"/>
+    {if isset($form.error.missingFile)}
+    <div class="giError">
+      {g->text text="You must enter the path to a file to upload"}
+    </div>
+    {/if}
   </div>
 </div>

@@ -121,6 +121,19 @@ class WatermarkImage_core extends GalleryEntity {
      */
     var $_height;
 
+    /**
+     * The owner of the image
+     *
+     * @g2 <member>
+     * @g2   <member-name>ownerId</member-name>
+     * @g2   <member-type>INTEGER</member-type>
+     * @g2 </member>
+     *
+     * @var int $_ownerId
+     * @access private
+     */
+    var $_ownerId;
+
     /*
      * ****************************************
      *                 Methods
@@ -165,8 +178,14 @@ class WatermarkImage_core extends GalleryEntity {
 	}
 
 	/* Uniquify name */
-	while (in_array($targetName, $list)) {
-	    $targetName = "_$targetName";
+	while (true) {
+	    foreach ($list as $entry) {
+		if ($entry['fileName'] == $targetName) {
+		    $targetName = "_$targetName";
+		    continue 2; // repeat this foreach loop
+		}
+	    }
+	    break; // no conflicts -- we're done
 	}
 
 	$ret = parent::create();
@@ -178,6 +197,7 @@ class WatermarkImage_core extends GalleryEntity {
 	$this->setMimeType($mimeType);
 	$this->setWidth(0);
 	$this->setHeight(0);
+	$this->setOwnerId($gallery->getActiveUserId());
 
 	$platform = $gallery->getPlatform();
 	$dir = $this->getWatermarkDir();

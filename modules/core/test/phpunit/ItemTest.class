@@ -934,10 +934,12 @@ class ItemTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals(2, count($thumbTable), 'album has highlight, photo has thumbnail');
-	$this->assertEquals($thumbTable[$photo->getId()]->getId(),
-	    $thumbTable[$this->_album->getId()]->getDerivativeSourceId(), 'highlight id');
-
+	$this->assertEquals(2, count($thumbTable), 'album missing highlight or photo missing thumbnail');
+	if (count($thumbTable) == 2) {
+	    $this->assertEquals($thumbTable[$photo->getId()]->getId(),
+				$thumbTable[$this->_album->getId()]->getDerivativeSourceId(), 'highlight id');
+	}
+	    
 	// Make sure setting the same highlight doesn't throw an error..
 	list ($ret, $success) =
 	    GalleryCoreApi::setThumbnailFromItem($this->_album->getId(), $photo->getId());

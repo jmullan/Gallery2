@@ -51,6 +51,16 @@
     
     NOT NULL
   
+      ,
+    DB_COLUMN_PREFIXpostFilterOperations
+      varchar(
+      
+          255
+        
+      )
+    
+    NOT NULL
+  
     , 
   
       PRIMARY KEY (DB_COLUMN_PREFIXid)

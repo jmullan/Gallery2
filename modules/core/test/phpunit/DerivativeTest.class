@@ -44,31 +44,10 @@ class DerivativeTest extends GalleryTestCase {
 	
 	parent::setUp();
 
-	/* Create a little tree of mixed items/entities */
+	/* Create a root container to hold all our test items */
 	list ($ret, $this->_root) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	$types = array(DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
-		       DERIVATIVE_TYPE_IMAGE_RESIZE,
-		       DERIVATIVE_TYPE_IMAGE_PREFERRED,
-		       DERIVATIVE_TYPE_IMAGE_RESIZE);
-
-	for ($i = 0; $i < 2; $i++) {
-	    list ($ret, $this->_child[$i]) = $this->_createRandomAlbum($this->_root->getId());
-	    if ($ret->isError()) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-	    
-	    for ($j = 0; $j < 4; $j++) {
-		list ($ret, $this->_derivative[$i][$j]) =
-		    $this->_createDerivative($this->_child[$i], $this->_child[$i]->getId(),
-					     $types[$j]);
-		if ($ret->isError()) {
-		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-		}
-	    }
 	}
 
 	/* Register a mock data item type */
@@ -78,34 +57,6 @@ class DerivativeTest extends GalleryTestCase {
 						      __FILE__,
 						      array('test/*'));
 	
-	/* Create two mock data items */
-	list ($ret, $lockIds[]) = GalleryCoreApi::acquireReadLock($this->_root->getId());
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	
-	for ($i = 0; $i < 2; $i++) {
-	    list ($ret, $this->_mockItem[$i]) = GalleryCoreApi::newFactoryInstance('GalleryItem', 'DerivativeTestItem');
-	    if ($ret->isError()) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-	    
-	    $ret = $this->_mockItem[$i]->create($this->_root->getId(), __FILE__, 'test/file');
-	    if ($ret->isError()) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-
-	    $ret = $this->_mockItem[$i]->save();
-	    if ($ret->isError()) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-	}
-
-	$ret = GalleryCoreApi::releaseLocks($lockIds);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
 	/* Register a dummy toolkit */
 	GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
 						      'DerivativeTestToolkit',
@@ -119,22 +70,6 @@ class DerivativeTest extends GalleryTestCase {
 							array(),
 							'test-description',
 							'test/file');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	/* Create a derivative from our mock data item */
-	list ($ret, $this->_mockDerivative[0]) =
-	    $this->_createDerivative($this->_mockItem[0], $this->_mockItem[0]->getId(),
-				     DERIVATIVE_TYPE_IMAGE_RESIZE);
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	/* Create a sub-derivative */
-	list ($ret, $this->_mockDerivative[1]) =
-	    $this->_createDerivative($this->_mockItem[0], $this->_mockDerivative[0]->getId(),
-				     DERIVATIVE_TYPE_IMAGE_RESIZE);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -162,37 +97,23 @@ class DerivativeTest extends GalleryTestCase {
     
 
     function testRemapSourceIds() {
-	$ret = GalleryCoreApi::remapSourceIds(
-	    $this->_mockItem[0]->getId(), $this->_mockItem[1]->getId());
+	list ($ret, $item1) = $this->_createRandomAlbum($this->_root->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	for ($i = 0; $i < 2; $i++) {
-	    list ($ret, $this->_mockDerivative[$i]) = $this->_mockDerivative[$i]->refresh();
-	    if ($ret->isError()) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-
-	    $this->assert($this->_mockItem[1]->getId(), $this->_mockDerivative[$i]->getDerivativeSourceId());
+	list ($ret, $item2) = $this->_createRandomAlbum($this->_root->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-    }
 
-    function testInvalidateDerivativeDimensionsBySourceIds() {
-
-	/* Create a sub-derivative and give it some dimensions*/
 	list ($ret, $derivative) =
-	    $this->_createDerivative($this->_mockItem[0], $this->_mockDerivative[0]->getId(),
-				     DERIVATIVE_TYPE_IMAGE_RESIZE,
-				     'bogus-operation|123', 'image/jpeg', array('width' => 100, 'height' => 200));
+	    $this->_createDerivative($item1, $item1->getId(), DERIVATIVE_TYPE_IMAGE_RESIZE);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->assertEquals(100, $derivative->getWidth());
-	$this->assertEquals(200, $derivative->getHeight());
-
-	$ret = GalleryCoreApi::invalidateDerivativeDimensionsBySourceIds(array($this->_mockDerivative[0]->getId()));
+	$ret = GalleryCoreApi::remapSourceIds($item1->getId(), $item2->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -201,33 +122,83 @@ class DerivativeTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+
+	$this->assertEquals($item2->getId(), $derivative->getDerivativeSourceId());
+    }
+
+    function testInvalidateDerivativeDimensionsBySourceIds() {
+	list ($ret, $item1) = $this->_createRandomAlbum($this->_root->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $parentDerivative) = 
+	    $this->_createDerivative($item1, $item1->getId(),
+				     DERIVATIVE_TYPE_IMAGE_RESIZE,
+				     'bogus-operation|123', 'image/jpeg', array('width' => 100, 'height' => 200));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Create a sub-derivative and give it some dimensions*/
+	list ($ret, $subDerivative) =
+	    $this->_createDerivative($item1, $parentDerivative->getId(),
+				     DERIVATIVE_TYPE_IMAGE_RESIZE,
+				     'bogus-operation|123', 'image/jpeg', array('width' => 100, 'height' => 200));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* sanity check */
+	$this->assertEquals(100, $subDerivative->getWidth());
+	$this->assertEquals(200, $subDerivative->getHeight());
+
+	$ret = GalleryCoreApi::invalidateDerivativeDimensionsBySourceIds(array($parentDerivative->getId()));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $subDerivative) = $subDerivative->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 	
-	$this->assertEquals(0, $derivative->getWidth());
-	$this->assertEquals(0, $derivative->getHeight());
+	$this->assertEquals(0, $subDerivative->getWidth());
+	$this->assertEquals(0, $subDerivative->getHeight());
     }
 
     function testExpireDerivatives() {
+	list ($ret, $item) =
+	    $this->_createRandomDataItem($this->_root->getId(), 'test/file');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 
-	list ($ret, $this->_mockDerivative[0], $rebuilt) =
-	    GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($this->_mockDerivative[0]->getId());
+	/* Create a derivative from our data item */
+	list ($ret, $derivative) = $this->_createDerivative($item, $item->getId(), DERIVATIVE_TYPE_IMAGE_RESIZE);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $derivative, $rebuilt) =
+	    GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($derivative->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert($rebuilt, "cache was rebuilt");
 
-	list ($ret, $current) = $this->_mockDerivative[0]->isCacheCurrent();
+	list ($ret, $current) = $derivative->isCacheCurrent();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert($current, "cache is current");
 
-	$ret = GalleryCoreApi::expireDerivativeTreeBySourceIds(
-	    array($this->_mockDerivative[0]->getDerivativeSourceId()));
+	$ret = GalleryCoreApi::expireDerivativeTreeBySourceIds(array($derivative->getDerivativeSourceId()));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	
-	list ($ret, $current) = $this->_mockDerivative[0]->isCacheCurrent();
+	list ($ret, $current) = $derivative->isCacheCurrent();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -236,19 +207,24 @@ class DerivativeTest extends GalleryTestCase {
 
     function testRebuildThumbnailOfSmallerThumbnail() {
 	/*
-	 * Test the case where we have a thumbnail whose source is another thumbnail with smaller dimensions.
-	 * What should happen is that we should wind up with a derivative that is based off of the
-	 * larger item.
+	 * Make sure that derivatives derived from other derivatives are still based off of the
+	 * original data item.
 	 */
+	list ($ret, $item) =
+	    $this->_createRandomDataItem($this->_root->getId(), 'test/file');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
 	list ($ret, $firstThumb) =
-	    $this->_createDerivative($this->_mockItem[0], $this->_mockItem[0]->getId(),
+	    $this->_createDerivative($item, $item->getId(),
 				     DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
 				     'test-operation|testRebuildThumbnailOfSmallerThumbnail-1');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	list ($ret, $secondThumb) =
-	    $this->_createDerivative($this->_mockItem[1], $firstThumb->getId(),
+	    $this->_createDerivative($this->_root, $firstThumb->getId(),
 				     DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
 				     'test-operation|testRebuildThumbnailOfSmallerThumbnail-2');
 	if ($ret->isError()) {
@@ -267,7 +243,7 @@ class DerivativeTest extends GalleryTestCase {
 	 * (from the source) and testRebuildThumbnailOfSmallerThumbnail-2 on the second thumbnail (equally
 	 * from the source -- NOT from the first thumbnail).
 	 */
-	list ($ret, $sourcePath) = $this->_mockItem[0]->fetchPath();
+	list ($ret, $sourcePath) = $item->fetchPath();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -294,105 +270,71 @@ class DerivativeTest extends GalleryTestCase {
 			    $ops);
     }
 
-    function testRebuild() {
-
-	list ($ret, $this->_mockDerivative[1], $rebuilt) =
-	    GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($this->_mockDerivative[1]->getId());
+    function testFetchDerivativesByItemIds() {
+	list ($ret, $derivative1) = $this->_createDerivative($this->_root, $this->_root->getId(),
+							     DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->assert($rebuilt, 'cache was rebuilt');
-
-	for ($i = 0; $i < 2; $i++) {
-	    list ($ret, $current) = $this->_mockDerivative[$i]->isCacheCurrent();
-	    if ($ret->isError()) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-	    
-	    $this->assert($current, "cache $i is current");
+	list ($ret, $item) =
+	    $this->_createRandomDataItem($this->_root->getId(), 'test/file');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-    }
 
-    function testFetchDerivativesByItemIds() {
+	list ($ret, $derivative2) = $this->_createDerivative($item, $item->getId(),
+							     DERIVATIVE_TYPE_IMAGE_RESIZE);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 
 	/* Get the thumbnails */
 	list ($ret, $ids) =
-	    GalleryCoreApi::fetchThumbnailsByItemIds(array($this->_child[0]->getId(),
-								    $this->_child[1]->getId()));
+	    GalleryCoreApi::fetchThumbnailsByItemIds(array($this->_root->getId(), $item->getId()));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	asort($ids);
-	$this->assertEquals(array($this->_child[0]->getId() => $this->_derivative[0][0],
-				  $this->_child[1]->getId() => $this->_derivative[1][0]),
-			    $ids,
-			    "thumbnails");
-							  
-
-	/* Get the preferreds */
-	list ($ret, $ids) =
-	    GalleryCoreApi::fetchPreferredsByItemIds(array($this->_child[0]->getId(),
-								    $this->_child[1]->getId()));
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	asort($ids);
-	$this->assertEquals(array($this->_child[0]->getId() => $this->_derivative[0][2],
-				  $this->_child[1]->getId() => $this->_derivative[1][2]),
-			    $ids,
-			    "preferreds");
-	
-	/* Get the resizes */
-	list ($ret, $ids) =
-	    GalleryCoreApi::fetchResizesByItemIds(array($this->_child[0]->getId(),
-								 $this->_child[1]->getId()));
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	asort($ids);
-	sort($ids[$this->_child[0]->getId()]);
-	sort($ids[$this->_child[1]->getId()]);
-	$this->assertEquals(array($this->_child[0]->getId() => array($this->_derivative[0][1], $this->_derivative[0][3]),
-				  $this->_child[1]->getId() => array($this->_derivative[1][1], $this->_derivative[1][3])),
-			    $ids,
-			    "resizes");
+	$this->assertEquals(array($this->_root->getId() => $derivative1), $ids, "thumbnails");
     }
 
     function testFetchDerivativesBySourceIds() {
+	list ($ret, $derivative1) = $this->_createDerivative($this->_root, $this->_root->getId(),
+							     DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $item) =
+	    $this->_createRandomDataItem($this->_root->getId(), 'test/file');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $derivative2) = $this->_createDerivative($item, $item->getId(),
+							     DERIVATIVE_TYPE_IMAGE_RESIZE);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 
 	// Fetch thumbnails
 	list ($ret, $ids) =
-	    GalleryCoreApi::fetchDerivativesBySourceIds(array($this->_child[0]->getId()),
-								 DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
+	    GalleryCoreApi::fetchDerivativesBySourceIds(array($this->_root->getId(), $item->getId()),
+							DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals(array($this->_child[0]->getId() => array($this->_derivative[0][0])),
-			    $ids);
-
-	// Fetch preferreds
-	list ($ret, $ids) =
-	    GalleryCoreApi::fetchDerivativesBySourceIds(array($this->_child[0]->getId()),
-								 DERIVATIVE_TYPE_IMAGE_PREFERRED);
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	$this->assertEquals(array($this->_child[0]->getId() => array($this->_derivative[0][2])),
-			    $ids);
+	$this->assertEquals(array($this->_root->getId() => array($derivative1)), $ids, 'thumbnails');
 
 	// Fetch resizes
 	list ($ret, $ids) =
-	    GalleryCoreApi::fetchDerivativesBySourceIds(array($this->_child[0]->getId()),
-								 DERIVATIVE_TYPE_IMAGE_RESIZE);
+	    GalleryCoreApi::fetchDerivativesBySourceIds(array($this->_root->getId(), $item->getId()),
+							DERIVATIVE_TYPE_IMAGE_RESIZE);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	sort($ids[$this->_child[0]->getId()]);
-	$this->assertEquals(array($this->_child[0]->getId() =>
-				  array($this->_derivative[0][1], $this->_derivative[0][3])),
-			    $ids);
-	
+	$this->assertEquals(array($item->getId() => array($derivative2)), $ids, 'resizes');
     }
 
     function testAdjustDependentDerivatives() {
@@ -402,39 +344,29 @@ class DerivativeTest extends GalleryTestCase {
 	 * Create a derivative with a operation that we want to adjust.  Parent it to an item that will get
 	 * deleted so that tearDown will get rid of it for us.
 	 */
-	list ($ret, $derivative) =
-	    $this->_createDerivative($this->_child[0], $this->_child[0]->getId(),
+	list ($ret, $derivative1) =
+	    $this->_createDerivative($this->_root, $this->_root->getId(),
+				     DERIVATIVE_TYPE_IMAGE_RESIZE, 'filler|1');
+
+	list ($ret, $derivative2) =
+	    $this->_createDerivative($this->_root, $derivative1->getId(),
 				     DERIVATIVE_TYPE_IMAGE_RESIZE,
-				     'filler|1,2,3;crop|20,30,41,16;filler|1');
+				     'filler|1,2,3;crop|20,30,41,16;filler|1',
+				     'test/file',
+				     array('derivativeSourceId' => $derivative1->getId()));
 
-	list($ret, $lockId) = GalleryCoreApi::acquireWriteLock($derivative->getId());
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	
-	$derivative->setDerivativeSourceId($this->_derivative[0][0]->getId());
-	$ret = $derivative->save();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	
-	$ret = GalleryCoreApi::releaseLocks($lockId);
+	$ret = GalleryCoreApi::adjustDependentDerivatives($derivative1->getId(), 'rotate|90');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$ret = GalleryCoreApi::adjustDependentDerivatives($this->_derivative[0][0]->getId(), 'rotate|90');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	list ($ret, $derivative) = $derivative->refresh();
+	list ($ret, $derivative2) = $derivative2->refresh();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$this->assertEquals('filler|1,2,3;crop|54,20,16,41;filler|1',
-			    $derivative->getDerivativeOperations());
+			    $derivative2->getDerivativeOperations());
     }
 
     function testMergeDerivativeOperations() {
@@ -525,13 +457,168 @@ class DerivativeTest extends GalleryTestCase {
 
 	$this->assertEquals($linkPreferred, $source);
     }
+
+    /**
+     * This test makes sure that we're generating the right set of operations for our derivatives for a given
+     * derivative tree, including derivative operations and postfilters.
+     */
+    function testFetchFinalOperations() {
+	/*
+	 * If we've got the following scenario where derivative commands are marked with <> and postfilter
+	 * operations are marked with []:
+	 *
+	 * Source Image A.jpg (640x480):
+	 * --> Preferred A1: <rotate|90> [watermark|...]
+	 *     --> Derivative A2: <crop|25,49,33,25;thumbnail|150> []
+	 *         --> Derivative A3: <thumbnail|75> [test|...;watermark|...]
+	 *             --> Derivative A4: <thumbnail|300> []
+	 *     --> Derivative A5: <thumbnail|100>
+	 *
+	 * Source Image B.jpg (640x480):
+	 * --> Preferred B1: <> [watermark|...]
+	 *
+	 * Then when we really do our calculations, the real operations we perform should be:
+	 *
+	 * TARGET         SOURCE  OPERATONS                                  POSTFILTER
+	 * -----------------------------------------------------------------------------------------------
+	 * Preferred  A1: A.jpg   rotate|90                                  watermark|A1
+	 * Derivative A2: A.jpg   rotate|90;crop|25,49,33,25;thumbnail|150    
+	 * Derivative A3: A.jpg   rotate|90;crop|25,49,33,25;thumbnail|75    test|A3;watermark|A3
+	 * Derivative A4: A.jpg   rotate|90;crop|25,49,33,25;thumbnail|300
+	 * Derivative A5: A.jpg   rotate|90;thumbnail|100
+	 *
+	 * Preferred  B1: B.jpg                                              watermark|B1
+	 *
+	 * Note how A3's thumbnail|75 overrides A2's thumbnail|150.
+	 * Note how A2 is not watermarked, though it's source (A1) is.
+	 */
+
+	/* No link or preferred --> return the item itself */
+	list ($ret, $itemA) = $this->_createRandomDataItem($this->_root->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $A1) = $this->_createDerivative($itemA, $itemA->getId(),
+						    DERIVATIVE_TYPE_IMAGE_PREFERRED,
+						    'rotate|90',
+						    'test/file',
+						    array('postFilterOperations' => 'watermark|A1'));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $A2) = $this->_createDerivative($itemA, $A1->getId(),
+						    DERIVATIVE_TYPE_IMAGE_RESIZE,
+						    'crop|25,49,33,25;thumbnail|150');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $A3) = $this->_createDerivative($itemA, $A2->getId(),
+						    DERIVATIVE_TYPE_IMAGE_RESIZE,
+						    'thumbnail|75',
+						    'test/file',
+						    array('postFilterOperations' => 'test|A3;watermark|A3'));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $A4) = $this->_createDerivative($itemA, $A3->getId(),
+						    DERIVATIVE_TYPE_IMAGE_RESIZE,
+						    'thumbnail|300');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $A5) = $this->_createDerivative($itemA, $A1->getId(),
+						    DERIVATIVE_TYPE_IMAGE_RESIZE,
+						    'thumbnail|100');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $itemB) = $this->_createRandomDataItem($this->_root->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	list ($ret, $B1) = $this->_createDerivative($itemB, $itemB->getId(),
+						    DERIVATIVE_TYPE_IMAGE_RESIZE,
+						    '',
+						    'test/file',
+						    array('postFilterOperations' => 'watermark|B1'));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $source, $operations) = $A1->fetchFinalOperations();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals($source, $itemA);
+	$this->assertEquals(array('rotate|90', 'watermark|A1'), $operations);
+
+	list ($ret, $source, $operations) = $A2->fetchFinalOperations();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals($source, $itemA);
+	$this->assertEquals(array('rotate|90', 'crop|25,49,33,25', 'thumbnail|150'), $operations);
+
+	list ($ret, $source, $operations) = $A3->fetchFinalOperations();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals($source, $itemA);
+	$this->assertEquals(array('rotate|90', 'crop|25,49,33,25', 'thumbnail|75',
+				  'test|A3', 'watermark|A3'), $operations);
+
+	list ($ret, $source, $operations) = $A4->fetchFinalOperations();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals($source, $itemA);
+	$this->assertEquals(array('rotate|90', 'crop|25,49,33,25', 'thumbnail|300'), $operations);
+	
+	list ($ret, $source, $operations) = $A5->fetchFinalOperations();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals($source, $itemA);
+	$this->assertEquals(array('rotate|90', 'thumbnail|100'), $operations);
+
+	list ($ret, $source, $operations) = $B1->fetchFinalOperations();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals($source, $itemB);
+	$this->assertEquals(array('watermark|B1'), $operations);
+    }
+
+    function testHasNoOperations() {
+	list ($ret, $derivative) = $this->_createDerivative($this->_root, $this->_root->getId(),
+							    DERIVATIVE_TYPE_IMAGE_PREFERRED,
+							    '');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	$this->assert($derivative->hasNoOperations());
+    }
+
+    function testRemoveDerivativeOperation() {
+	$this->assertEquals('test|1,2,3,4;test|4,5,6',
+            GalleryCoreApi::removeDerivativeOperation('composite',
+						      'test|1,2,3,4;composite|a,b;test|4,5,6'));
+    }
 }
 
 /**
  * Load required classes
  */
-require_once(dirname(__FILE__) . '/../../classes/GalleryToolkit.class');
-require_once(dirname(__FILE__) . '/../../classes/GalleryDataItem.class');
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryToolkit.class');
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryDataItem.class');
 
 /**
  * Test toolkit

@@ -51,6 +51,16 @@
     
     NOT NULL
   
+      ,
+    DB_COLUMN_PREFIXpostFilterOperations
+      VARCHAR(
+      
+          255
+        
+      )
+    
+    NOT NULL
+  
     );
 
   

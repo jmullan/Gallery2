@@ -82,6 +82,11 @@ class GalleryDerivative extends GalleryDerivative_core {
 	    'type' => STORAGE_TYPE_STRING
 	);
     
+	$meta['members']['postFilterOperations'] = array(
+	    'class' => 'GalleryDerivative',
+	    'type' => STORAGE_TYPE_STRING
+	);
+    
 	return $meta;
     }
 
@@ -127,6 +132,12 @@ class GalleryDerivative extends GalleryDerivative_core {
  	    $data['mimeType'] = null;
  	} else {
 	    $data['mimeType'] = $this->_mimeType;
+	}
+	
+	if (!isset($this->_postFilterOperations)) {
+ 	    $data['postFilterOperations'] = null;
+ 	} else {
+	    $data['postFilterOperations'] = $this->_postFilterOperations;
 	}
 	
 	return $data;
@@ -412,6 +423,46 @@ class GalleryDerivative extends GalleryDerivative_core {
       
 	    $this->setModifiedFlag('mimeType', $value);
 	    $this->_mimeType = $value;
+	}
+    }
+  
+    /**
+     * Get the value of postFilterOperations
+     *
+     * @return STRING the value
+     */
+    function getpostFilterOperations() {
+ 	
+
+	if (!isset($this->_postFilterOperations)) {
+	    return null;
+	}
+
+	return $this->_postFilterOperations;
+    }
+
+    /**
+     * Set the value of postFilterOperations
+     *
+     * @param STRING the value
+     */
+    function setpostFilterOperations($value) {
+    
+	/* 
+	 * Convert unset values to null, to avoid generating warnings.
+	 */
+	$a = isset($value) ? $value : null;
+	$b = isset($this->_postFilterOperations) ? $this->_postFilterOperations : null;
+
+	/* 
+	 * Only take action if the value actually changes, but take care not to 
+	 * generate warnings for unset values.
+	 */
+    
+	if ($a != $b) {
+      
+	    $this->setModifiedFlag('postFilterOperations', $value);
+	    $this->_postFilterOperations = $value;
 	}
     }
   

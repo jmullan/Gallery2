@@ -801,6 +801,17 @@ class GalleryCoreApi {
 	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/helpers/GalleryDerivativeHelper_advanced.class');
 	return GalleryDerivativeHelper_advanced::mergeOperations($operationSet1, $operationSet2, $highPriority);
     }
+
+    /**
+     * Remove the given operation from the operation set.
+     *
+     * @return string the new operation set
+     * @static
+     */
+    function removeDerivativeOperation($operation, $operationSet) {
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/helpers/GalleryDerivativeHelper_advanced.class');
+	return GalleryDerivativeHelper_advanced::removeOperation($operation, $operationSet);
+    }
     
     /**
      * Load the derivative images that have the specified source id(s) with
@@ -815,6 +826,19 @@ class GalleryCoreApi {
     function fetchDerivativesBySourceIds($ids, $types=array()) {
 	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/helpers/GalleryDerivativeHelper_advanced.class');
 	return GalleryDerivativeHelper_advanced::fetchDerivativesBySourceIds($ids, $types);
+    }
+
+    /**
+     * Convenience function to fetch all derivatives for a given item id
+     *
+     * @param array GalleryItem ids
+     * @return array object GalleryStatus a status code 
+     *               array(GalleryItem id => GalleryDerivativeImage, ...)
+     * @static
+     */
+    function fetchDerivativesByItemIds($ids) {
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/helpers/GalleryDerivativeHelper_advanced.class');
+	return GalleryDerivativeHelper_advanced::fetchDerivativesByItemIds($ids);
     }
 
     /**

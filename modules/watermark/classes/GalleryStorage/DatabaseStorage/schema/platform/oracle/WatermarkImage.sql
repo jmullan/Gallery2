@@ -35,6 +35,10 @@
     DB_COLUMN_PREFIXheight
       INTEGER
     
+      ,
+    DB_COLUMN_PREFIXownerId
+      INTEGER
+    
     );
 
   

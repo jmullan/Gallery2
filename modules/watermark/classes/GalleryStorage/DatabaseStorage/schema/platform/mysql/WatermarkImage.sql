@@ -39,6 +39,10 @@
     DB_COLUMN_PREFIXheight
       int(11)
     
+      ,
+    DB_COLUMN_PREFIXownerId
+      int(11)
+    
     , 
   
       PRIMARY KEY (DB_COLUMN_PREFIXid)

@@ -191,7 +191,6 @@ class UserPreferencesView extends GalleryView {
 	    }
 	}
 
-	$UserPreferences = array();
 	$UserPreferences['translationsSupported'] = $translator->canTranslate();
 	$UserPreferences['languageList'] = $languageList;
 

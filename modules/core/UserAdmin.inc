@@ -83,18 +83,32 @@ class UserAdminView extends GalleryView {
 	    $subViewName = $subViewChoices[0]['view'];
 	}
 
+	list ($ret, $isSiteAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Our sub view may have set some hints, like the encoding type */
+	if ($template->hasVariable('UserAdmin')) {
+	    $UserAdmin =& $template->getVariableByReference('UserAdmin');
+	} else {
+	    $UserAdmin = array();
+	    $template->setVariableByReference('UserAdmin', $UserAdmin);
+	}
+
 	/* Set up my view parameters */
-	$UserAdmin = array('user' => $user->getMemberData(),
-			   'show' => $show,
-			   'subViewChoices' => $subViewChoices,
-			   'subViewName' => $subViewName);
+	$UserAdmin['user'] = $user->getMemberData();
+	$UserAdmin['show'] = $show;
+	$UserAdmin['subViewChoices'] = $subViewChoices;
+	$UserAdmin['subViewName'] = $subViewName;
+	$UserAdmin['isSiteAdmin'] = $isSiteAdmin;
 
 	if (!empty($subViewName)) {
 	    list ($ret, $subView) = GalleryView::loadView($subViewName);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    
+
 	    list ($ret, $results) = $subView->loadTemplate($template, $form);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
