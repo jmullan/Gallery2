@@ -124,7 +124,7 @@ class SliderLayout extends GalleryLayout {
 
 	$template->head('layouts/slider/templates/header.tpl');
 	$template->style('templates/layout.css');
-	$template->style('layouts/slider/templates/slider.css');
+	$template->style('layouts/slider/layout.css');
 	return array(GalleryStatus::success(),
 		     array('body' => 'layouts/slider/templates/slider.tpl'));
     }

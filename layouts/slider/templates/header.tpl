@@ -18,4 +18,4 @@ var data_iw = new Array({$layout.imageWidths}),
 var data_count = data_iw.length, data_name = '{$layout.item.id}',
     data_view = {$layout.viewIndex|default:0}, app_path = '{$layout.cookiePath}';
 </script>
-<script type="text/javascript" src="{$layout.layoutUrl}/templates/slider.js"></script>
+<script type="text/javascript" src="{$layout.layoutUrl}/slider.js"></script>
