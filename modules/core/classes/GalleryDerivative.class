@@ -416,8 +416,12 @@ class GalleryDerivative_core extends GalleryChildEntity {
 	$data = array('permissionItemId' => $this->getParentId(),
 		      'permission' => $requiredPermission,
 		      'derivativePath' => $destPath,
-		      'mimeType' => $this->getMimeType(),
-		      'pseudoFileName' => 'BROKEN');
+		      'mimeType' => $this->getMimeType());
+	list ($ret, $data['pseudoFileName']) = GalleryUtilities::getPseudoFileName($this);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
 	GalleryDataCache::putToDisk(array('type' => 'derivative-meta',
 					  'itemId' => $this->getId()),
 				    $data);

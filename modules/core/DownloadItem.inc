@@ -138,7 +138,7 @@ class DownloadItemView extends GalleryView {
 	}
 
         /* Figure out the filename */
-        list ($ret, $pseudoFileName) = $this->getPseudoFileName($item);
+        list ($ret, $pseudoFileName) = GalleryUtilities::getPseudoFileName($item);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -244,7 +244,7 @@ class DownloadItemView extends GalleryView {
 	$buf .= '-' . $entity->getSerialNumber();
 	unset($params['serialNumber']);
 
-	list ($ret, $pseudoFileName) = $this->getPseudoFileName($entity);
+	list ($ret, $pseudoFileName) = GalleryUtilities::getPseudoFileName($entity);
 	if ($ret->isError()) {
 	    return null;
 	}
@@ -278,42 +278,6 @@ class DownloadItemView extends GalleryView {
 	$queryString = preg_match('|/(\d+)-|', $queryString, $regs);
 	GalleryUtilities::putRequestVariable('itemId', $regs[1]);
 	return array(GalleryStatus::success(), null);
-    }
-    
-    /**
-     * Return an approximate filename of the given GalleryEntity, or "unknown" if we can't figure it out
-     *
-     * @param object entity a GalleryEntity
-     * @return string pseudoFileName a filename
-     */
-    function getPseudoFileName($entity) {
-    
-        /*
-	 * If our GalleryEntity is a GalleryFileSystemEntity, then we've got a path component so we're cool.
-	 * If it's a derivative, then get the pseudo filename of its derivative source and use that instead.
-	 * If it's neither, then return 'unknown' for now.
-         */
-       	if (GalleryUtilities::isA($entity, 'GalleryFileSystemEntity')) {
-	    $pseudoFileName = $entity->getPathComponent();
-        } else if (GalleryUtilities::isA($entity, 'GalleryDerivative')) {
-	    list ($ret, $sourceEntity) = GalleryCoreApi::loadEntitiesById($entity->getParentId());
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-	    if (GalleryUtilities::isA($sourceEntity, 'GalleryFileSystemEntity')) {
-		$pseudoFileName = $sourceEntity->getPathComponent();
-	    } else {
-		list ($ret, $pseudoFileName) = $this->getPseudoFileName($sourceEntity);
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-	    }
-        } else {
-	    return array(GalleryStatus::success(), 'unknown');
-	}
-	
-	return array(GalleryStatus::success(), $pseudoFileName);
     }
 }
 ?>
