@@ -44,7 +44,7 @@ class WebCamModule extends GalleryModule {
      */
     function upgrade($currentVersion) {
 	if (!isset($currentVersion)) {
-	    $ret = $this->setParameter('duration', 10 * 60 * 60); /* 10 minutes */
+	    $ret = $this->setParameter('duration', 600); /* 10 minutes */
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -68,7 +68,7 @@ class WebCamModule extends GalleryModule {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	return GalleryStatus::success();
     }
 
