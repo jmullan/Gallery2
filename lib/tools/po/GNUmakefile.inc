@@ -25,7 +25,7 @@ MSGFMTSOL = msgfmt -v -o
 all: install
 
 messages.po:
-	@perl $(TOOLDIR)/po/extract.pl $(MODULE_DIR) $(EXTRA_DIR) > strings.raw
+	@php -f $(TOOLDIR)/po/extract.php $(MODULE_DIR) $(EXTRA_DIR) > strings.raw
 	@xgettext --keyword=_ -C --no-location strings.raw
 	@perl -ne 'print if $$. > 4' < messages.po > messages.tmp
 	@cat $(TOOLDIR)/po/header.txt messages.tmp > messages.po
