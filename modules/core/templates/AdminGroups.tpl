@@ -172,6 +172,16 @@
 	  </tr>
 	  {/if}
 
+	  {if isset($form.error.list.cantEditUsers)}
+	  <tr>
+	    <td align="center">
+	      {gallery->errorFontColor}
+	      {gallery->text text="You cannot add or delete users from this group"}
+	      {/gallery->errorFontColor}
+	    </td>
+	  </tr>
+	  {/if}
+
 	  <tr>
 	    <td align="center">
 	      {gallery->input type="submit" name="form.action.editFromList"}{gallery->text text="Edit"}{/gallery->input}

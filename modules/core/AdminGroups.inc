@@ -109,10 +109,20 @@ class AdminGroupsController extends GalleryController {
 	    if (empty($form['list']['groupId'])) {
 		GalleryUtilities::putRequestVariable('form.error.list.noGroupSelected', 1);
 	    } else {
-		/* Show the "edit group" view */
-		$results['view'] = 'core:SiteAdmin';
-		GalleryUtilities::putRequestVariable('subView', 'core:AdminEditGroupUsers');
-		GalleryUtilities::putRequestVariable('groupId', $form['list']['groupId']);
+		/* Make sure we're not trying to add users to the All Users group */
+		list ($ret, $group) = $gallery->loadEntitiesById($form['list']['groupId']);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		if ($group->getGroupType() == GROUP_ALL_USERS) {
+		    GalleryUtilities::putRequestVariable('form.error.list.cantEditUsers', 1);
+		} else {
+		    /* Show the "edit group" view */
+		    $results['view'] = 'core:SiteAdmin';
+		    GalleryUtilities::putRequestVariable('subView', 'core:AdminEditGroupUsers');
+		    GalleryUtilities::putRequestVariable('groupId', $form['list']['groupId']);
+		}
 	    }
 	    
 	} else if (isset($form['action']['deleteFromList'])) {
