@@ -46,7 +46,7 @@
 	{/if}
       </td><td>
 	<input type="checkbox" id="cb_{$peer.id}"{if $peer.selected} checked="checked"{/if}
-	 name="{g->formVar var="form[selectedIds][$peer.id]"}"/>
+	 name="{g->formVar var="form[selectedIds][`$peer.id`]"}"/>
       </td><td>
 	<label for="cb_{$peer.id}">
 	  {$peer.title|default:$peer.pathComponent}
