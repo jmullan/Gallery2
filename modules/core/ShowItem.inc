@@ -155,13 +155,28 @@ class ShowItemView extends GalleryView {
     function parseQueryString($queryString) {
 
 	/* Treat the input as a path and get the right item id out */
-	list ($ret, $itemId) = GalleryFileSystemEntityHelper::fetchItemIdByPath($queryString);
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	$itemId = null;
+	$origQueryString = $queryString;
+	while ($itemId == null && !empty($queryString)) {
+	    list ($ret, $itemId) = GalleryFileSystemEntityHelper::fetchItemIdByPath($queryString);
+	    if ($ret->isError() && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    if ($ret->isSuccess()) {
+		break;
+	    } else {
+		/* Object is missing -- try trimming the query string */
+		$queryString = preg_replace('|/[^/]*$|', '', $queryString);
+	    }
 	}
-	
+
 	GalleryUtilities::putRequestVariable('itemId', $itemId);
-	return GalleryStatus::success();
+	if ($origQueryString == $queryString) {
+	    return array(GalleryStatus::success(), null);
+	} else {
+	    return array(GalleryStatus::success(), $queryString);
+	}
     }
     
 }

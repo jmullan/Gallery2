@@ -181,7 +181,7 @@ class DownloadItemView extends GalleryView {
 	 */
 	$queryString = preg_match('|/(\d+)-|', $queryString, $regs);
 	GalleryUtilities::putRequestVariable('itemId', $regs[1]);
-	return GalleryStatus::success();
+	return array(GalleryStatus::success(), null);
     }
 }
 ?>

@@ -134,37 +134,53 @@ class GalleryUrlGenerator {
 	$url = $this->getCurrentUrl();
 
 	/* Ignore anything after the '?', as PHP will handle that */
+	preg_match('/\?(.*)/', $url, $standardQueryString);
 	$url = preg_replace('/\?.*/', '', $url);
-	
+
 	/* Search for data after our base file */
+	$redirectUrl = null;
 	if (preg_match('|' . $this->_baseFile . '(/.*)|', $url, $regs)) {
 	    preg_match('|/(.*?)(/.*)|', $regs[1], $regs);
-	    list ($prefix, $queryString) = array($regs[1], $regs[2]);
+	    if (sizeof($regs) >= 3) {
+		list ($prefix, $queryString) = array($regs[1], $regs[2]);
 
-	    if (empty($prefix)) {
-		return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+		if (empty($prefix)) {
+		    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+		}
+
+		if (empty($this->_viewPrefixRegistry['forward'][$prefix])) {
+		    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+		}
+
+		$viewName = $this->_viewPrefixRegistry['forward'][$prefix];
+		list ($ret, $view) = GalleryView::loadView($viewName);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		list ($ret, $newQueryString) = $view->parseQueryString($queryString);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		/*
+		 * If the query string was modified, calculate a new URL with the new query string.  We'll
+		 * pass that back up the chain and the caller can decide to redirect if it chooses.
+		 */
+		if ($newQueryString != null) {
+		    $redirectUrl = $this->getCurrentUrlDir() . $this->_baseFile .
+			'/' . $prefix . $newQueryString;
+		    if (!empty($standardQueryString)) {
+			$redirectUrl .= $standardQueryString[0];
+		    }
+		}
+
+		/* Wire in the view */
+		GalleryUtilities::putRequestVariable('view', $viewName);
 	    }
-
-	    if (empty($this->_viewPrefixRegistry['forward'][$prefix])) {
-		return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	    }
-
-	    $viewName = $this->_viewPrefixRegistry['forward'][$prefix];
-	    list ($ret, $view) = GalleryView::loadView($viewName);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-
-	    $ret = $view->parseQueryString($queryString);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-
-	    /* Wire in the view */
-	    GalleryUtilities::putRequestVariable('view', $viewName);
 	}
 
-	return GalleryStatus::success();
+	return array(GalleryStatus::success(), $redirectUrl);
     }
     
     /**

@@ -103,19 +103,37 @@ function GalleryMain($startTime) {
     if ($ret->isError()) {
 	return $ret->wrap(__FILE__, __LINE__);
     }
+
+    /* Initialize our container for template data */
+    $main = array();
     
     /* Let our url generator process the query string */
-    $ret = $urlGenerator->parseCurrentUrl();
+    list ($ret, $redirectUrl) = $urlGenerator->parseCurrentUrl();
     if ($ret->isError()) {
 	return $ret->wrap(__FILE__, __LINE__);
+    }
+
+    /* If the URL generator suggested that we redirect, then do so */
+    if (!empty($redirectUrl)) {
+	if ($gallery->getDebug() == false) {
+	    /*
+	     * The URL generator makes HTML 4.01 compliant URLs using
+	     * &amp; but we don't want those in our Location: header.
+	     */
+	    $redirectUrl = str_replace('&amp;', '&', $redirectUrl);
+	    
+	    header("Location: $redirectUrl");
+	    return GalleryStatus::success();
+	} else {
+	    $main['redirectUrl'] = $redirectUrl;
+	}
     }
 
     /* Figure out the target module/controller */
     list($viewName, $controllerName) = GalleryUtilities::getRequestVariables('view', 'controller');
 
     /* Load and run the appropriate controller */
-    $main = array();
-    if (!empty($controllerName)) {
+    if (empty($redirectUrl) && !empty($controllerName)) {
 	list ($ret, $controller) = GalleryController::loadController($controllerName);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
