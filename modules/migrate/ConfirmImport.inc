@@ -472,8 +472,7 @@ class ConfirmImportController extends GalleryController {
 										   $item->getId());
 			    if ($ret->isError()) {
 				return array($ret->wrap(__FILE__, __LINE__), null);
-			    }
-			    
+			    }	    
 			    list ($ret, $importLockIds[]) = GalleryCoreApi::acquireWriteLock($newItem->getId());
 			    if ($ret->isError()) {
 				return array($ret->wrap(__FILE__, __LINE__), null);
@@ -495,6 +494,7 @@ class ConfirmImportController extends GalleryController {
 			    
 			    $newItem->setSummary('');
 			    $newItem->setKeywords($importAlbumItem->keywords);
+			    
 
 			    /* $instance->setownerId */
 			    /*
@@ -506,7 +506,11 @@ class ConfirmImportController extends GalleryController {
 				$newItem->setcreationTimestamp($importAlbumItem->uploadDate);
 			    }
 			    $newItem->setviewedSinceTimestamp($album['clicks_date']);
-			    
+			    $ret = GalleryCoreApi::setItemViewCount($newItem->getId(), $importAlbumItem->clicks);
+			    if ($ret->isError()) {
+				return array($ret->wrap(__FILE__, __LINE__), null);
+			    }
+
 			    if ($albumNeedsThumbnail || $importAlbumItem->highlight == 1) {
 				list ($ret, $success) =
 					GalleryCoreApi::setThumbnailFromItem($item->getId(), $newItem->getId());

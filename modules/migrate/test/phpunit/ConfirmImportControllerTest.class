@@ -294,6 +294,51 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 				  NULL                                   // cols
 				  )
 			    );
+	/* Verify item attributes (like order weight) */
+	list ($ret, $ids) = GalleryCoreApi::fetchChildItemIds($testAlbum);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$seenWeights = array();
+	foreach ($ids as $id) {
+	    list ($ret, $itemViewCount[$id]) = GalleryCoreApi::fetchItemViewCount($id);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+
+	    list ($ret, $orderWeight) = GalleryCoreApi::fetchItemOrderWeight($id);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $this->assert(!isset($seenWeights[$orderWeight]), 'Seen this weight before');
+	    $seenWeights[$orderWeight] = 1;
+	}
+	
+	/* Get the allegedly successfully imported album */
+	list($ret, $testItem) = GalleryCoreApi::loadEntitiesById($ids[0]);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$this->assertEquals(array($testItem->getTitle(),                 // title
+				  $testItem->getSummary(),               // summary
+				  $testItem->getKeywords(),              // keywords
+				  $testItem->getDescription(),           // description
+				  $testItem->getownerId(),               // owner
+				  $testItem->getcreationTimestamp(),     // album creation
+				  $testItem->getviewedSinceTimestamp(),  // clicks counted since
+				  $itemViewCount[$testItem->getId()]         // count of clicks
+				  ),
+			    array('&iexcl;Time to migrate!',             // title
+				  NULL,                                  // summary
+				  'stump grinder chipper shredder',      // keywords
+				  'chipper',                             // description
+				  $testOwner->getId(),                   // owner
+				  1056015116,                            // album creation
+				  1056015077,                            // clicks counted since
+				  1                                      // count of clicks
+				  )
+			    );
 	
     }
 }

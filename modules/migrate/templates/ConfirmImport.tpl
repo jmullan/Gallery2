@@ -48,12 +48,17 @@
 	      {$ConfirmImport.albums.$albumName.title}
 	    {/g->column}
 	    {g->column}
+	      <p>
               {if ($ConfirmImport.existingAlbums.$albumName)> 0}
-		<p>Album will be renamed</p>
+		{g->text text="An album already exists with this name.  This album will be renamed."}<br />
+	      {/if}
+	      {if ($ConfirmImport.illegalAlbumNames.$albumName) != ''}
+		{g->text text="This album has an illegal name and will be renamed: "}{$ConfirmImport.illegalAlbumNames.$albumName}<br />
 	      {/if}
 	      {if (!$ConfirmImport.albumValidOwner.$albumName)}
-                <p>Album's owner hasn't been imported</p>
+                {g->text text="This album's owner hasn't been imported"}
               {/if}
+	      </p>
             {/g->column}
 	  {/g->row}
 	{/foreach}
