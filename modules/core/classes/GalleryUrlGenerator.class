@@ -228,7 +228,10 @@ class GalleryUrlGenerator {
 	}
 
 	list ($ret, $useShortUrls) = $gallery->getModuleParameter('core', 'misc.useShortUrls');
-	if ($ret->isSuccess() && $useShortUrls == 'true') {
+	if (isset($params['forceShortUrls']) ||
+	        ($ret->isSuccess() && $useShortUrls == 'true')) {
+	    unset($params['forceShortUrls']);
+	    
 	    /* Give our view a chance to rewrite the query string */
 	    $queryString = null;
 	    if (isset($params['view'])) {

@@ -292,6 +292,11 @@ class AdminCoreView extends GalleryView {
 	$useShortUrlsList = array('true' => $module->translate('yes'),
 				  'false' => $module->translate('no'));
 
+	list ($ret, $rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+
 	$AdminCore = array();
 	$AdminCore['layoutList'] = $layoutList;
 	$AdminCore['themeList'] = GalleryTheme::getThemeList();
@@ -303,6 +308,7 @@ class AdminCoreView extends GalleryView {
 	$AdminCore['permissionsFileList'] = $permissionsFileList;
 	$AdminCore['sessionTimeList'] = $sessionTimeList;
 	$AdminCore['useShortUrlsList'] = $useShortUrlsList;
+	$AdminCore['shortUrlTestItemId'] = $rootId;
 	
 	$template->setVariable('controller', 'core:AdminCore');
 	$template->setVariable('AdminCore', $AdminCore);

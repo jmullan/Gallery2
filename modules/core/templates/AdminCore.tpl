@@ -224,10 +224,15 @@
     {g->description}
       {capture name="acceptPathInfoLink"}
 	{g->link href="http://httpd.apache.org/docs-2.0/mod/core.html#acceptpathinfo"}
-	  {g->text text="AcceptPathInfo Directive"}
+	  {g->text text="AcceptPathInfo Directive."}
 	{/g->link}
       {/capture}
-      {g->text text="Gallery has the option to use a compact URL format, however this format is not supported by default on all web servers.  It is enabled by default on Apache 1, but not on Apache 2.  If you're using Apache 2 and you want to enable this feature, you must use the %s." arg1=$smarty.capture.acceptPathInfoLink}
+      {capture name="shortUrlTestLink"}
+	{g->link url_view="core:ShowItem" url_itemId=$AdminCore.shortUrlTestItemId url_forceShortUrls=true}
+	  {g->text text="test url"}
+	{/g->link}
+      {/capture}
+      {g->text text="Gallery has the option to use a compact URL format, however this format is not supported by default on all web servers.  It is enabled by default on Apache 1, but not on Apache 2.  If you're using Apache 2 and you want this feature, you must use the %s  Use this %s to find out if short URLs work for you.  If the link returns a webserver error then they don't work for you." arg1=$smarty.capture.acceptPathInfoLink arg2=$smarty.capture.shortUrlTestLink}
     {/g->description}
     
     {g->table style="admin_widgets"}
