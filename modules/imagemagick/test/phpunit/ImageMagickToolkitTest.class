@@ -102,8 +102,6 @@ class ImageMagickToolkitTest extends GalleryTestCase {
      *
      */
     function tearDown() {
-	global $gallery;
-
 	foreach ($this->_save as $key => $value) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'imagemagick', $key, $value);
 	    if ($ret->isError()) {
@@ -160,7 +158,8 @@ class ImageMagickToolkitTest extends GalleryTestCase {
      * @access private
      * @return object GalleryStatus
      */
-    function _testOperation($mimeType, $operation, $src, $dst, $params, $namedParams) {
+    function _testOperation($mimeType, $operation, $src, $dst, $params, $namedParams,
+			    $quality=null) {
 	list ($ret, $outputMimeType) =
 	    $this->_toolkit->performOperation($mimeType, $operation,
 					      $src, $dst, $params);
@@ -195,12 +194,14 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 	}
 
 	if ($outputMimeType == 'image/jpeg' || $outputMimeType == 'image/png') {
+	    if (!isset($quality)) {
+		$quality = '75';
+	    }
 	    foreach (array_keys($expected) as $key) {
-		$expected[$key] = array_merge(array('-quality', '75'), $expected[$key]);
+		$expected[$key] = array_merge(array('-quality', $quality), $expected[$key]);
 	    }
 	}
 
-	global $_ImPlatformFiles;
 	$this->assertEquals($expected, $this->_files[$dst]['operation'],
 	    $this->_currentEnvironment['path'] . " $operation " . implode(' ', $params));
 
@@ -298,6 +299,17 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 					       'height' => '50',
 					       'x' => '0',
 					       'y' => '0'));
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+
+	    // Test compress
+	    $this->_files['compressMe.jpg']['size'] = 250 << 10;
+	    $gallery->_platform->_counter = 2;
+	    $ret = $this->_testOperation('image/jpeg', 'compress',
+					 'compressMe.jpg', 'compressed.jpg',
+					 array(150),
+					 array(), 58);
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
@@ -796,8 +808,6 @@ class ImageMagickToolkitTestPlatform {
     }
 
     function exec($cmd) {
-	global $gallery;
-	global $_ImPlatformFiles;
 	list ($ret, $imageMagickPath) = GalleryCoreApi::getPluginParameter('module', 'imagemagick', 'path');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -865,7 +875,6 @@ class ImageMagickToolkitTestPlatform {
     }
 
     function rename($oldName, $newName) {
-	global $_ImPlatformFiles;
 	$oldBase = basename($oldName);
 	$newBase = basename($newName);
 	if (isset($this->_files[$oldBase])) {
@@ -946,10 +955,19 @@ class ImageMagickToolkitTestPlatform {
     }
 
     function filesize($file) {
-	global $_ImPlatformFiles;
 	$basename = basename($file);
 	if ($basename == 'testProfile.jpg') {
 	    return 100000;
+	}
+	if ($basename == 'compressed.jpg') {
+	    switch ($this->_counter--) {
+	    case 2:
+		return 200 << 10;
+	    case 1:
+		return 100 << 10;
+	    case 0:
+		return 150 << 10;
+	    }
 	}
 	if (isset($this->_files[$basename]['size'])) {
 	    return $this->_files[$basename]['size'];
@@ -965,7 +983,6 @@ class ImageMagickToolkitTestPlatform {
     }
 
     function unlink($path) {
-	global $_ImPlatformFiles;
 	$baseName = basename($path);
 	if (isset($this->_files[$baseName])) {
 	    unset($this->_files[$baseName]);

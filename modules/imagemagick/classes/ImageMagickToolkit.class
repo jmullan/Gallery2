@@ -278,6 +278,40 @@ class ImageMagickToolkit extends GalleryToolkit {
 			       $dataDir . $compositeOverlayPath);
 	    break;
 
+	case 'compress':
+	    $targetSize = $parameters[0];
+	    $platform = $gallery->getPlatform();
+	    $fileSize = $platform->filesize($sourceFilename) >> 10; //Size in KB
+	    if ($fileSize <= $targetSize) {
+		break;
+	    }
+	    /* Use module quality parameter as initial guess */
+	    list ($ret, $quality) =
+		GalleryCoreApi::getPluginParameter('module', 'imagemagick', 'jpegQuality');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+	    $maxQuality = 100;
+	    $minQuality = 5;
+	    do {
+		$ret = $this->_transformImage($mimeType, 'convert', array(), $sourceFilename,
+					      $destFilename, $outputMimeType, $quality);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		}
+		clearstatcache();
+		$fileSize = $platform->filesize($destFilename) >> 10;
+		if ($fileSize >= $targetSize) {
+		    $maxQuality = $quality;
+		}
+		if ($fileSize <= $targetSize) {
+		    $minQuality = $quality;
+		}
+		$quality = round(($minQuality + $maxQuality) / 2);
+	    } while ($maxQuality - $minQuality > 2
+		   && abs(($fileSize - $targetSize) / $targetSize) > 0.02);
+	    return array(GalleryStatus::success(), $outputMimeType, $context);
+
 	default:
 	    return array(GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
 					      "$operationName $outputMimeType"), null, null);
@@ -401,7 +435,8 @@ class ImageMagickToolkit extends GalleryToolkit {
      * @param string the path to a destination file
      * @return object GalleryStatus a status code
      */
-    function _transformImage($mimeType, $cmd, $args, $sourceFilename, $destFilename, $outputMimeType) {
+    function _transformImage($mimeType, $cmd, $args, $sourceFilename, $destFilename, $outputMimeType,
+			     $jpegQuality=null) {
 	global $gallery;
 
 	/* Get a temp file name and figure out our convert-from-pnm command */
@@ -418,11 +453,13 @@ class ImageMagickToolkit extends GalleryToolkit {
 	    @$platform->unlink($tmpFilename);
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	list ($ret, $jpegQuality) =
+	if (!isset($jpegQuality)) {
+	    list ($ret, $jpegQuality) =
 		GalleryCoreApi::getPluginParameter('module', 'imagemagick', 'jpegQuality');
-	if ($ret->isError()) {
-	    @$platform->unlink($tmpFilename);
-	    return $ret->wrap(__FILE__, __LINE__);
+	    if ($ret->isError()) {
+		@$platform->unlink($tmpFilename);
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
 	}
 
 	switch ($outputMimeType) {
