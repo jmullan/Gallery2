@@ -31,7 +31,8 @@ class LogoutController extends GalleryController {
 	$results = array();
 	$return = GalleryUtilities::getFormVariables('return.');
 
-	$ret = $gallery->resetSession();
+	$session =& $gallery->getSession();
+	$ret = $session->reset();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
