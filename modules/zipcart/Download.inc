@@ -53,18 +53,25 @@ class DownloadView extends GalleryView {
 	}
 
 	if ($platform->is_readable($file)) {
-	    // Send multipart reply: zip + html-to-reload
-	    header('Content-Type: multipart/mixed; boundary=G2ZipCart');
-	    // Poor IE6 doesn't know multipart.. add filename in main headers so IE will see it
-	    header('Content-Disposition: inline; filename="G2cart.zip"');
-	    print "--G2ZipCart\nContent-Type: application/zip\n";
-	    print "Content-Disposition: inline; filename=\"G2cart.zip\"\n";
-
 	    $size = $platform->filesize($file);
-	    if ($size > 0) {
-		print "Content-Length: " . $size . "\n";
+	    $sendMultipart = (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE ') === false);
+	    if ($sendMultipart) {
+		// Send multipart reply: zip + html-to-reload
+		header('Content-Type: multipart/mixed; boundary=G2ZipCart');
+		print "--G2ZipCart\nContent-Type: application/zip\n";
+		print "Content-Disposition: inline; filename=\"G2cart.zip\"\n";
+
+		if ($size > 0) {
+		    print "Content-Length: " . $size . "\n";
+		}
+		print "\n";
+	    } else {
+		// Poor IE6 doesn't know multipart.. just send zip
+		header('Content-Disposition: inline; filename="G2cart.zip"');
+		if ($size > 0) {
+		    header("Content-Length", $size);
+		}
 	    }
-	    print "\n";
 
 	    if ($fd = $platform->fopen($file, 'rb')) {
 		while (true) {
@@ -81,9 +88,11 @@ class DownloadView extends GalleryView {
 	    @$platform->unlink($file);
 	    @$platform->unlink(substr($file, 0, -4));   // Remove file created by tempnam() too
 
-	    print "\n--G2ZipCart\nContent-type: text/html\nPragma: No-cache\n\n";
-	    print "<html><body onload=\"location.reload()\"></body></html>\n\n";
-	    print "--G2ZipCart--\n";
+	    if ($sendMultipart) {
+		print "\n--G2ZipCart\nContent-type: text/html\nPragma: No-cache\n\n";
+		print "<html><body onload=\"location.reload()\"></body></html>\n\n";
+		print "--G2ZipCart--\n";
+	    }
 	} else {
 	    // On reload return to View Cart
 	    $urlGenerator = $gallery->getUrlGenerator();
