@@ -278,7 +278,7 @@ class GalleryItemHelper_simple {
 	    $storage->getFunctionSql('CONCAT',
 				     array('[GalleryItemAttributesMap=1::parentSequence]',
 					   '[GalleryItemAttributesMap=1::itemId]',
-					   '\'%\''));
+					   '\'/%\''));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
