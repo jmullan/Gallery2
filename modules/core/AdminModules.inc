@@ -126,6 +126,8 @@ class AdminModulesView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	ksort($moduleStatus);
+
 	foreach ($moduleStatus as $moduleName => $status) {
 	    /* Get the selected module's admin view */
 	    list($ret, $module) = $gallery->loadModule($moduleName);
