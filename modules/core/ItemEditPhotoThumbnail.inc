@@ -232,8 +232,14 @@ class ItemEditPhotoThumbnail extends ItemEditPlugin {
 		$crop['height'] = $source->getHeight();
 	    }
 
+	    /*
+	     * When we make the url for the image, force the session id into it.  Otherwise, the IE JVM will
+	     * send a request without the session cookie, then the server will make a new session and send
+	     * that cookie back to the JVM, which will overwrite the browser's session with it, effectively
+	     * logging out the user.
+	     */
 	    $urlGenerator = $gallery->getUrlGenerator();
-	    $url = $urlGenerator->generateUrl(array('view' => 'core:DownloadItem', 'itemId' => $selected));
+	    $url = $urlGenerator->generateUrl(array('view' => 'core:DownloadItem', 'itemId' => $selected), true);
 	    
 	    $ItemEditPhotoThumbnail['editThumbnail']['appletCodeBase'] =
 		GalleryUtilities::convertPathToUrl(dirname(__FILE__)) . '/plugins';

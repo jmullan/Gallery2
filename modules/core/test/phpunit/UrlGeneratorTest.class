@@ -76,6 +76,26 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$this->assertEquals($expected, $actual);
     }
 
+    function testGenerateUrlWithEmbeddedSessionId() {
+	global $gallery;
+
+	$params['a'] = 123;
+	$params['b'] = 'bBbB';
+	$params['c'] = serialize(array(1, 2, 3));
+	$actual = $this->_urlGenerator->generateUrl($params, true);
+	
+	$values = array('g2_a=' . htmlentities($params['a']),
+			'g2_b=' . htmlentities($params['b']),
+			'g2_c=' . htmlentities($params['c']));
+
+	// No matter what, expect the session id
+	$session = $gallery->getSession();
+	list ($sessionKey, $sessionId) = $session->getSessionDescriptor();
+	$values[] = GALLERY_FORM_VARIABLE_PREFIX . $sessionKey . '=' . $sessionId;
+	$expected = 'http://example.com/gallery2/phpunit_test.php?' . join('&amp;', $values);
+	$this->assertEquals($expected, $actual);
+    }
+
     function testGetCurrentUrl() {
 	$this->assertEquals('http://example.com/gallery2/phpunit_test.php?foo=bar', $this->_urlGenerator->getCurrentUrl());
     }
