@@ -29,7 +29,7 @@
 	  {if isset($ImageBlockSystemContent.show.date)}
 	  <span>
 	    {g->text text="Date:"} {g->date timestamp=$block.item.creationTimestamp format="%D"}
-	  </span>
+	  </span><br/>
 	  {/if}
 
 	  {if isset($ImageBlockSystemContent.show.views)}
@@ -37,13 +37,13 @@
 	    {g->text one="Viewed: %d time" 
 	             many="Viewed: %d times"
 	             count=$block.viewCount arg1=$block.viewCount}
-	  </span>
+	  </span><br/>
 	  {/if}
 
 	  {if isset($ImageBlockSystemContent.show.owner)}
 	  <span>
 	    {g->text text="Owner: %s" arg1=$block.owner.fullName|default:$block.owner.userName}
-	  </span>
+	  </span><br/>
 	  {/if}
 	</div>
 	{/if}
