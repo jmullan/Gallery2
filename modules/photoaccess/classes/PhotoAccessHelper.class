@@ -138,7 +138,7 @@ class PhotoAccessHelper {
 	$gallery->guaranteeTimeLimit(30);
 	$cartUrl = 'http://' . $photoAccessServer . $cartUrlFragment;
 	list ($body, $headers) =
-	    GalleryUtilities::postToWebPage($cartUrl, $postData, array('User-Agent' => $_SERVER['HTTP_USER_AGENT']));
+	    GalleryCoreApi::postToWebPage($cartUrl, $postData, array('User-Agent' => $_SERVER['HTTP_USER_AGENT']));
 
 	/* Expect a response of the form:
 	 *

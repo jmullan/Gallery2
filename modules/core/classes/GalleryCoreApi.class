@@ -2629,5 +2629,58 @@ class GalleryCoreApi {
 	}
 	return MimeHelper_simple::isViewableMimeType($mimeType);
     }
+
+    /**
+     * Fetch the web page at the given url.  Follow redirects to get the data and
+     * upon completion return the body, headers and the actual URL that we used to
+     * get the data.
+     *
+     * @param string the url
+     * @param string the output file
+     * @return array(body, headers, url)
+     */
+    function fetchWebFile($url, $outputFile) {
+	static $loaded;
+	if (!isset($loaded)) {
+	    $loaded = true;
+	    require_once(dirname(__FILE__) . '/helpers/WebHelper_simple.class');
+	}
+	return WebHelper_simple::fetchWebFile($url, $outputFile);
+    }
+
+    /**
+     * Fetch the web page at the given url.  Follow redirects to get the data and
+     * upon completion return the body, headers and the actual URL that we used to
+     * get the data.
+     *
+     * @param string the url
+     * @param array extra headers to pass to the server
+     * @return array(body, headers, url)
+     */
+    function fetchWebPage($url, $extraHeaders=array()) {
+	static $loaded;
+	if (!isset($loaded)) {
+	    $loaded = true;
+	    require_once(dirname(__FILE__) . '/helpers/WebHelper_simple.class');
+	}
+	return WebHelper_simple::fetchWebPage($url, $extraHeaders);
+    }
+
+    /**
+     * Post form data to a remote url and return the headers and body of the reply
+     *
+     * @param string the url
+     * @param array the key/value post data
+     * @return array(body, headers)
+     */
+    function postToWebPage($url, $postDataArray, $extraHeaders=array()) {
+	static $loaded;
+	if (!isset($loaded)) {
+	    $loaded = true;
+	    require_once(dirname(__FILE__) . '/helpers/WebHelper_simple.class');
+	}
+	return WebHelper_simple::postToWebPage($url, $postDataArray, $extraHeaders);
+    }
+    
 }
 ?>
