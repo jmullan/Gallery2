@@ -41,11 +41,9 @@ class MatrixLayout extends GalleryLayout {
 
 	$this->setId('matrix');
 	$this->setName('Matrix');
-	$this->setDescription($gallery->i18n('Classic Gallery2 look and feel'));
+	$this->setDescription($gallery->i18n('Standard Gallery2 look and feel'));
 	$this->setVersion('0.8');
 	$this->setL10Domain('layouts_matrix');
-
-	return GalleryStatus::success();
     }
 
     /**
@@ -159,7 +157,7 @@ class MatrixLayout extends GalleryLayout {
 	}
 
 	$layout =& $template->getVariableByReference('layout');
-	$layout['layoutUrl'] = GalleryUtilities::convertPathToUrl(dirname(__FILE__));
+	$layout['layoutUrl'] = 'layouts/' . $this->getId();
 
 	/* Prepare image frames, if available */
 	list ($ret, $imageframe) = GalleryCoreApi::newFactoryInstance('ImageFrameInterface_1_0');
