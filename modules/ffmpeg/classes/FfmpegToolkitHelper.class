@@ -137,18 +137,19 @@ class FfmpegToolkitHelper {
 	$i = 0;
 	while ($i < sizeof($results)) {
 	    $resultLine = $results[$i++];
-            # ffmpeg 0.4.6 says:
-	    # 
-	    #   Decoding: mpeg mpegts pgm pgmyuv ppm .Y.U.V pgmpipe pgmyuvpipe
-	    # ppmpipe mp3 ac3 m4v mpegvideo mjpeg s16le s16be u16le u16be s8 u8 mulaw alaw
-	    # rawvideo rm asf avi wav swf au mov jpeg dv ffm video_grab_device
-	    # audio_device rtsp redir sdp rtp
-	    # [multiple lines]
-	    #
-	    # ffmpeg 0.4.7 says:
-	    # Input audio/video file formats: mpeg mpegts image ...
-	    # [all on one line]
-	    # 
+            /* ffmpeg 0.4.6 says:
+	     * 
+	     *   Decoding: mpeg mpegts pgm pgmyuv ppm .Y.U.V pgmpipe pgmyuvpipe
+	     * ppmpipe mp3 ac3 m4v mpegvideo mjpeg s16le s16be u16le u16be s8 u8 mulaw alaw
+	     * rawvideo rm asf avi wav swf au mov jpeg dv ffm video_grab_device
+	     * audio_device rtsp redir sdp rtp
+	     * [multiple lines]
+	     *
+	     * ffmpeg 0.4.7 says:
+	     * Input audio/video file formats: mpeg mpegts image ...
+	     * [all on one line]
+	     *
+	     */
 	    if (preg_match('|Input audio/video file formats: (.*)$|', $resultLine, $regs)) {
 		foreach (explode(' ', $regs[1]) as $type) {
 		    if (isset($relevantTypes[$type])) {
