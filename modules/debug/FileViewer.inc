@@ -93,7 +93,7 @@ class FileViewerView extends GalleryView {
 
 	return array(GalleryStatus::success(),
 		     array('head' => 'modules/debug/templates/FileViewerHead.tpl',
-			   'body' => 'modules/debug/templates/' . $bodyFile);
+			   'body' => 'modules/debug/templates/' . $bodyFile));
     }
 }
 ?>
