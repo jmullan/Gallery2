@@ -38,7 +38,7 @@ function GalleryMain(&$testSuite, $filter) {
     $gallery->setConfig('url.gallery.base', '');
 
     /* Configure out url Generator for standalone mode. */
-    $urlGenerator = new GalleryUrlGenerator($gallery->getConfig('url.gallery.base') .
+    $urlGenerator = new GalleryUrlGenerator($gallery->getConfig('url.gallery.base'),
 					    'main.php');
     $gallery->setUrlGenerator($urlGenerator);
     
@@ -81,12 +81,18 @@ function GalleryMain(&$testSuite, $filter) {
 		$platform->is_dir($testDir) &&
 		$dir = $platform->opendir($testDir)) {
 
+		if (empty($filter)) {
+		    $filterRegexp = "/.*/i";
+		} else {
+		    $filterRegexp = "/$filter/i";
+		}
+
 		while (($file = readdir($dir)) != false) {
 		    if (preg_match('/(.*).class$/', $file, $matches)) {
 			require_once($testDir . '/' . $file);
 
 			$className = $matches[1];
-			if (!$filter || stristr($className, $filter) || !strcasecmp($className, $filter)) {
+			if (preg_match($filterRegexp, $className)) {
 			    if (class_exists($className) &&
 				GalleryUtilities::isA(new $className(null), 'GalleryTestCase')) {
 
@@ -101,7 +107,7 @@ function GalleryMain(&$testSuite, $filter) {
 
 	$keys = array_keys($suiteArray);
 	natcasesort($keys);
-    
+
 	foreach ($keys as $className) {
 	    $testSuite->addTest($suiteArray[$className]);
 	}
@@ -205,7 +211,7 @@ print "</pre>";
     Enter a filter string in the box below to restrict testing to classes containing 
     that text in their name.
     <br>
-    Filter: <input type="text" name="filter" value="<?php echo $filter ?>">
+    Class Filter: <input type="text" name="filter" value="<?php echo $filter ?>"> <i>(regular expressions are ok)</i>
     </form>
 
     <h2>Modules</h2>
