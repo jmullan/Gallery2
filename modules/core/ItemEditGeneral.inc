@@ -148,7 +148,7 @@ class ItemEditGeneralView extends GalleryView {
 	/* Render the HTML body */
 	$this->_initTemplate(dirname(__FILE__) . '/templates');
 	$this->_setTemplateVariable('form', $form);
-	$this->_setTemplateVariable('itemId', $itemId);
+	$this->_setTemplateVariable('item', $item);
 	$this->_setTemplateVariable('controller', 'core:ItemEditGeneral');
 	$html = $this->_renderTemplate('core', 'ItemEditGeneral.tpl');
 

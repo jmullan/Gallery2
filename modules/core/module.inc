@@ -364,11 +364,23 @@ class CoreModule extends GalleryModule {
 				 'view' => 'core:ItemEditGeneral');
 	}
 
-	if ($item->isContainer() &&
-	    array_intersect(array('core.all', 'core.change'), $permissions)) {
-
+	if (array_intersect(array('core.all', 'core.change'), $permissions)) {
+	    if ($item->isContainer()) {
 	        $views[] = array('name' => $this->translate('Sub-item Preferences'),
 				 'view' => 'core:ItemEditChildPreferences');
+	    }
+
+	    if (is_subclass_of($item, 'GalleryDataItem')) {
+		list ($ret, $graphics) = $gallery->getGraphics();
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		
+		if ($graphics->isSupportedMimeType($item->getMimeType())) {
+		    $views[] = array('name' => $this->translate('Edit Image'),
+				     'view' => 'core:ItemEditImage');
+		}
+	    }
 	}
 	
 	return array(GalleryStatus::success(), $views);
@@ -529,7 +541,7 @@ class CoreModule extends GalleryModule {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	$user->changePassword($gallery->getConfig('setup.password'));
-	$user->setFullName('Gallery Administrator');
+	$user->setFullName($this->translate('Gallery Administrator'));
 	
 	$ret = $user->save();
 	if ($ret->isError()) {
@@ -588,8 +600,8 @@ class CoreModule extends GalleryModule {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	$album->setTitle("Gallery");
-	$album->setDescription("This is the top of your Gallery");
+	$album->setTitle($this->translate("Gallery"));
+	$album->setDescription($this->translate("This is the top of your Gallery"));
 
 	$ret = $album->save();
 	if ($ret->isError()) {

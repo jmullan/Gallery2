@@ -78,7 +78,7 @@ class GalleryGraphics {
      * @var int $_supportedFunctions
      * @access private
      */
-    var $_supportedFunctions = 0;
+    var $_supportedFunctions = array();
 
     /**
      * The mime types supported by this toolkit
@@ -115,7 +115,7 @@ class GalleryGraphics {
      * @return bool true if the type given is supported 
      */
     function isSupportedMimeType($mimeType) {
-	return isset($this->_supportedMimeType[strtolower($mimeType)]);
+	return isset($this->_supportedMimeTypes[strtolower($mimeType)]);
     }
 
     /**

@@ -35,15 +35,17 @@ class NetPbmGraphics extends GalleryGraphics {
      */
 
     function NetPbmGraphics() {
-	/* Configure our support */
+	/* Supported functions */
 	$this->_supportedFunctions = (IMAGE_FUNCTION_RESIZE |
 				      IMAGE_FUNCTION_SCALE |
 				      IMAGE_FUNCTION_ROTATE |
 				      IMAGE_FUNCTION_CROP |
 				      IMAGE_FUNCTION_PROPERTIES);
-	$this->_supportedMimeTypes = array('image/jpeg',
-					   'image/gif',
-					   'image/png');
+
+	/* Supported mime types */
+	$this->_supportedMimeTypes['image/jpeg'] = 1;
+	$this->_supportedMimeTypes['image/gif'] = 1;
+	$this->_supportedMimeTypes['image/png'] = 1;
     }
 
     /**
