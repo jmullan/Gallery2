@@ -352,7 +352,9 @@ class ImageMagickToolkit extends GalleryToolkit {
 	    break;
 
 	case 'image/tiff':
-	    /* TIFF can be multi-scened; make sure ImageMagick grabs the first scene */
+	case 'application/pdf':
+	    /* TIFF can be multi-scened, PDF can be multi-paged;
+	     * make sure ImageMagick grabs the first scene/page */
 	    $sourceFilename = $sourceFilename . '[0]';
 	    break;
 	}
