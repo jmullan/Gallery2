@@ -47,6 +47,15 @@ class GalleryUserGroupHelper_medium {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
 
+	/* Is the user already in the group? */
+	list ($ret, $inGroup) = GalleryCoreApi::isUserInGroup($userId, $groupId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	if ($inGroup) {
+	    return GalleryStatus::success();
+	}
+
 	/* Add a new entry in our groups table to represent this relationship. */
 	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/../GalleryUserGroupMap.class');
 	$ret = GalleryUserGroupMap::addMapEntry(array('userId' => $userId, 'groupId' => $groupId));
@@ -65,7 +74,7 @@ class GalleryUserGroupHelper_medium {
     }
 
     /**
-     * Remove the specified user to the specified group.
+     * Remove the specified user from the specified group.
      *
      * @param int the id of the GalleryUser
      * @return object GalleryStatus a status code

@@ -1150,6 +1150,53 @@ class UserAndGroupTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }
+
+    function testAddDuplicateUserToGroup() {
+	global $gallery;
+
+	/* Create a new group */
+	list ($ret, $group) = $this->_createRandomGroup();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markForCleanup($group);
+	$groupId = $group->getId();
+
+	/* Create a new user */
+	/* If the unit test aborts to some reason, this user will still be in the db */
+	list ($ret, $user) = $this->_createRandomUser();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markForCleanup($user);
+	$userId = $user->getId();
+
+	/* Put the user into the group */
+	$ret = GalleryCoreApi::addUserToGroup($userId, $groupId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	/* Verify */
+	list ($ret, $count) = GalleryCoreApi::fetchUserCount(null, $groupId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(1, $count, 'first');
+
+	GalleryDataCache::reset();
+
+	/* Put the same user into the group again */
+	$ret = GalleryCoreApi::addUserToGroup($userId, $groupId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	/* Verify */
+	list ($ret, $count) = GalleryCoreApi::fetchUserCount(null, $groupId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(1, $count, 'second');
+    }
 }
 
 ?>
