@@ -52,4 +52,4 @@ class ADODB_BASE_RS implements IteratorAggregate {
     }
 } 
 
-?
+?>
