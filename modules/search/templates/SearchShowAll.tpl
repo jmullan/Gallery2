@@ -132,7 +132,7 @@
       	{foreach from=$result.fields item=field} 
       	<span>
       	  <b>{$field.key}</b>
-      	  {$field.value|default:"&nbsp;"|replace:$searchCriteria:"<b>$searchCriteria</b>"}
+      	  {$field.value|default:"&nbsp;"|replace:$searchCriteria:"<b>$searchCriteria</b>"|markup}
       	</span>
       	{/foreach}
             </div>
