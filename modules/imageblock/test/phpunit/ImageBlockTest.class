@@ -265,9 +265,43 @@ class ImageBlockTest extends GalleryTestCase {
 	}
 	$this->assertEquals(1, $gotAlbum, "Test album not in 'newest album' block");
 	$this->assertEquals(1, $gotPhoto, "Test photo not in 'newest photo' block");
-
     }
 
+    function testExternalImageBlock() {
+	$form = array();
+	list ($ret, $external) = GalleryView::loadView('imageblock:External');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	GalleryUtilities::putRequestVariable('blocks', 'randomImage');
+	GalleryUtilities::putRequestVariable('show', 'none');
+
+	$template = new DummyGalleryTemplate();
+	list ($ret, $tpl) = $external->loadTemplate($template, $form);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array('html' => 'modules/imageblock/templates/ImageBlock.tpl'), $tpl);
+	$this->assertEquals(1, count($template->data['ImageBlockSystemContent']['blocks']), 'One block');
+	$this->assertBlock($template->data['ImageBlockSystemContent']['blocks'][0]);
+
+	// Select only from subtree..
+	GalleryUtilities::putRequestVariable('blocks', 'recentImage|viewedAlbum');
+	GalleryUtilities::putRequestVariable('show', 'title');
+	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
+
+	$template = new DummyGalleryTemplate();
+	list ($ret, $tpl) = $external->loadTemplate($template, $form);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array('html' => 'modules/imageblock/templates/ImageBlock.tpl'), $tpl);
+	$this->assertEquals(1, count($template->data['ImageBlockSystemContent']['blocks']), 'One block');
+	$this->assertBlock($template->data['ImageBlockSystemContent']['blocks'][0]);
+	$this->assertEquals($this->_photo->getId(),
+	    $template->data['ImageBlockSystemContent']['blocks'][0]['id'], 'Photo id');
+    }
 }
 
 /**

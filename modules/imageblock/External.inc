@@ -39,13 +39,13 @@ class ExternalView extends GalleryView {
 	$SlideShow = array();
 	$startId = null;
 
-	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'ImageBlock');
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'imageblock');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$params = array();
-	foreach (array('blocks', 'show', 'heading') as $key) {
+	foreach (array('blocks', 'show', 'heading', 'itemId') as $key) {
 	    $tmp = GalleryUtilities::getRequestVariables($key);
 	    if (!empty($tmp)) {
 		$params[$key] = $tmp;
@@ -57,7 +57,7 @@ class ExternalView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	return array(GalleryStatus::success(), array('main' => $tpl));
+	return array(GalleryStatus::success(), array('html' => $tpl));
     }
 }
 ?>
