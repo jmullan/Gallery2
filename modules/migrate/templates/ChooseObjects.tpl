@@ -20,6 +20,39 @@
       {g->text text="Select the users to migrate"}
     {/g->description}
 
+
+    {g->element}
+      <script language="javascript">
+      // <!-- 
+
+      function setCheck(val) {ldelim}
+      ufne=document.forms[0];
+      len = ufne.elements.length;
+      for(i = 0 ; i < len ; i++) {ldelim}
+      if (ufne.elements[i].name.substring(0,20)=='g2_form[migrateUser]') {ldelim}
+      ufne.elements[i].checked=val;
+      {rdelim}
+      {rdelim}
+      {rdelim}
+      function invertCheck() {ldelim}
+      ufne=document.forms[0];
+      len = ufne.elements.length;
+      for(i = 0 ; i < len ; i++) {ldelim}
+      if (ufne.elements[i].name.substring(0,20)=='g2_form[migrateUser]') {ldelim}
+      ufne.elements[i].checked = !(ufne.elements[i].checked);
+      {rdelim}
+      {rdelim}
+      {rdelim}
+      // -->
+     </script>
+      <p><span class="popup">
+      <a href="javascript:setCheck(1)">Check All</a> -
+      <a href="javascript:setCheck(0)">Clear All</a> -
+      <a href="javascript:invertCheck()">Invert Selection</a>
+      </span></p>
+
+{/g->element}
+
     {if (sizeof($ChooseObjects.newUsers) > 0)} 
       {g->table style="admin_listing" evenodd="true"}
 	{g->row}
