@@ -250,6 +250,9 @@ function GalleryMain() {
 	    $error = isset($results['error']) ? $results['error'] : array();
 	    $ret = $view->renderImmediate($status, $error);
 	    if ($ret->isError()) {
+		require_once(dirname(__FILE__) . '/modules/core/classes/GalleryTemplate.class');
+		$template = new GalleryTemplate(dirname(__FILE__));
+		
 		$main['error'] = $ret->getAsHtml();
 	    } else {
 		$showGlobal = false;
