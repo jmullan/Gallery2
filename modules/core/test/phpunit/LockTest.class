@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -42,25 +42,24 @@ class LockTest extends GalleryTestCase {
     }
 
     function setUp() {
+	global $gallery;
+	$this->_saveLockSystem = $gallery->_lockSystem;
+
 	parent::setUp();
 
 	list ($ret, $this->_parentAlbum) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-
-	$this->_saveLockSystem =& $gallery->_lockSystem;
     }
 
     function tearDown() {
 	global $gallery;
-
 	$gallery->_lockSystem = $this->_saveLockSystem;
-	
+
 	$ret = GalleryCoreApi::deleteEntityById($this->_parentAlbum->getId());
 	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	parent::tearDown();
@@ -69,7 +68,7 @@ class LockTest extends GalleryTestCase {
     function _tryAllLockSystems($testFunction) {
 	global $gallery;
 	$testFunction = "_" . $testFunction;
-	
+
 	$gallery->_lockSystem = new DatabaseLockSystem();
 	$this->$testFunction();
 	$gallery->_lockSystem->releaseAllLocks();
@@ -87,7 +86,7 @@ class LockTest extends GalleryTestCase {
 	global $gallery;
 
 	$targetId = $gallery->getActiveUserId();
-	
+
 	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($targetId);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -133,7 +132,7 @@ class LockTest extends GalleryTestCase {
 	global $gallery;
 
 	$targetId = $gallery->getActiveUserId();
-	
+
 	list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($targetId);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -177,7 +176,7 @@ class LockTest extends GalleryTestCase {
 
     function _testAcquireReadLockParents() {
 	global $gallery;
-	
+
 	/* Create a hierarchy */
 	$parentId = $this->_parentAlbum->getId();
 	for ($i = 0; $i < 3; $i++) {
@@ -228,6 +227,6 @@ class LockTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-    }    
+    }
 }
 ?>
