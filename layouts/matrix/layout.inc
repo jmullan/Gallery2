@@ -373,22 +373,18 @@ class MatrixLayout extends GalleryLayout {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    if ($gallery->getDebug()) {
-		$gallery->debug("Begin: Rebuilding cache");
-	    }
 	    if (!empty($resizes)) {
 		foreach ($resizes[$item->getId()] as $resize) {
-		    /* Rebuild cache, to be prepared to the getMemberData() call */
-		    list ($ret, $resize) = GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($resize->getId());
-		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+		    /* Rebuild the derivative if we don't have its dimensions */
+		    if ($resize->getWidth() == 0 || $resize->getHeight() == 0) {
+			list ($ret, $resize) = GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($resize->getId());
+			if ($ret->isError()) {
+			    return array($ret->wrap(__FILE__, __LINE__), null);
+			}
 		    }
 		    $imageViews[] = $resize->getMemberData();
 		    $can['viewInline'][] = 1;
 		}
-	    }
-	    if ($gallery->getDebug()) {
-		$gallery->debug("End: Rebuilding cache");
 	    }
 	}
 
