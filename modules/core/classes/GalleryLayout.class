@@ -391,7 +391,8 @@ class GalleryLayout {
      * @param array (string data key, ..) data to load into template
      * @param array (optional) ids of child items to display
      * @return object GalleryStatus a status code
-     * @access private
+     * @access public
+     * @static
      */
     function loadLayoutTemplate(&$template, $item, $dataToLoad, $childIds=array()) {
 	global $gallery;
@@ -689,7 +690,7 @@ class GalleryLayout {
 
 	    if (isset($itemLinks)) {
 		foreach (array_keys($itemLinks) as $id) {
-		    usort($itemLinks[$id], array($this, '_sortItemLinks'));
+		    usort($itemLinks[$id], 'GalleryLayout::_sortItemLinks');
 		}
 		$layout['itemLinks'] = $itemLinks[$itemId];
 		$childData[] = 'itemLinks';
