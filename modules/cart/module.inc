@@ -111,21 +111,5 @@ class CartModule extends GalleryModule {
 			 'params' => array('view' => 'cart:ViewCart'));
 	return array(GalleryStatus::success(), $links);
     }
-
-    /**
-     * @see GalleryModule::getSiteAdminViews()
-     */
-    function getSiteAdminViews() {
-	return array(GalleryStatus::success(),
-		     array(array('name' => $this->translate('Cart Settings'),
-				 'view' => 'cart:AdminCart')));
-    }
-
-    /**
-     * @see GalleryModule::getConfigurationView()
-     */
-    function getConfigurationView() {
-	return array(GalleryStatus::success(), 'cart:AdminCart');
-    }
 }
 ?>

@@ -312,17 +312,6 @@ class CommentModule extends GalleryModule {
     }
     
     /**
-     * @see GalleryModule::getSiteAdminViews()
-     */
-    function getSiteAdminViews() {
-	global $gallery;
-
-	return array(GalleryStatus::success(),
-		     array(array('name' => $this->translate('Comments Settings'),
-				 'view' => 'comment:AdminComments')));
-    }
-
-    /**
      * @see GalleryModule::getItemAdminViews();
      */
     function getItemAdminViews($item) {
@@ -345,15 +334,6 @@ class CommentModule extends GalleryModule {
 	}
 	
 	return array(GalleryStatus::success(), $views);
-    }
-
-    /**
-     * @see GalleryModule::getConfigurationView()
-     */
-    function getConfigurationView() {
-	global $gallery;
-
-	return array(GalleryStatus::success(), 'comment:AdminComments');
     }
 }
 ?>

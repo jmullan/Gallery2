@@ -85,21 +85,5 @@ class MembersModule extends GalleryModule {
                          'params' => array('view' => 'members:MembersList'));
 	return array(GalleryStatus::success(), $links);
     }
-
-    /**
-     * @see GalleryModule::getSiteAdminViews()
-     */
-    function getSiteAdminViews() {
-	return array(GalleryStatus::success(),
-		     array(array('name' => $this->translate('Members Settings'),
-				 'view' => 'members:AdminMembers')));
-    }
-
-    /**
-     * @see GalleryModule::getConfigurationView()
-     */
-    function getConfigurationView() {
-	return array(GalleryStatus::success(), 'members:AdminMembers');
-    }
 }
 ?>

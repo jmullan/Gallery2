@@ -96,25 +96,5 @@ class SearchModule extends GalleryModule {
 	    
 	return array(GalleryStatus::success(), $content);
     }
-
-    /**
-     * @see GalleryModule::getSiteAdminViews
-     */
-    function getSiteAdminViews() {
-	global $gallery;
-
-	return array(GalleryStatus::success(),
-		     array(array('name' => $this->translate('Search Settings'),
-				 'view' => 'search:AdminSearch')));
-    }
-
-    /**
-     * @see GalleryModule::getConfigurationView
-     */
-    function getConfigurationView() {
-	global $gallery;
-
-	return array(GalleryStatus::success(), 'search:AdminSearch');
-    }
 }
 ?>
