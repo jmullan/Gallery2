@@ -234,7 +234,6 @@ class SystemChecksStep extends InstallStep {
     function CheckManifest() {
 	$base = realpath(dirname(__FILE__) . '/../..') . '/';
 
-	require_once($base . 'modules/core/classes/GalleryUtilities.class');
 	$manifest = GalleryUtilities::readManifest();
 	if (empty($manifest)) {
 	    return null;
