@@ -1,0 +1,142 @@
+<?php
+/*
+ * $RCSfile
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * Test Translator functionality
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ *
+ */
+class TranslatorTest extends GalleryTestCase {
+
+    function TranslatorTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    function setUp() {
+	global $HTTP_SERVER_VARS;
+	
+	parent::setUp();
+	$this->_acceptLanguageSave = $HTTP_SERVER_VARS['HTTP_ACCEPT_LANGUAGE'];
+    }
+
+    function tearDown() {
+	global $HTTP_SERVER_VARS;
+
+	$HTTP_SERVER_VARS['HTTP_ACCEPT_LANGUAGE'] = $this->_acceptLanguageSave;
+	parent::tearDown();
+    }
+
+    function testGetLanguageCodeFromRequest() {
+	global $gallery;
+	global $HTTP_SERVER_VARS;
+
+	/* Init with a null language code and a valid accept language */
+	$HTTP_SERVER_VARS['HTTP_ACCEPT_LANGUAGE'] = 'de';
+	$translator = new GalleryTranslator();
+	$translator->init();
+	if ($gallery->getConfig('function.exists.dgettext')) {
+	    $this->assertEquals('de_DE', getenv('LANG'), 'null init, valid language');
+	} else {
+	    $this->assertEquals(false, getenv('LANG'));
+	}
+
+	/* Init with a null language code and a valid accept language/country */
+	$HTTP_SERVER_VARS['HTTP_ACCEPT_LANGUAGE'] = 'pt_BR';
+	$translator = new GalleryTranslator();
+	$translator->init();
+	if ($gallery->getConfig('function.exists.dgettext')) {
+	    $this->assertEquals('pt_BR', getenv('LANG'), 'null init, valid language/country');
+	} else {
+	    $this->assertEquals(false, getenv('LANG'));
+	}
+	
+	/* Init with a real language code */
+	$translator = new GalleryTranslator();
+	$translator->init('no_NO');
+	if ($gallery->getConfig('function.exists.dgettext')) {
+	    $this->assertEquals('no_NO', getenv('LANG'), 'valid init');
+	} else {
+	    $this->assertEquals(false, getenv('LANG'));
+	}
+    }
+
+    function testTranslate() {
+	global $gallery;
+
+	$domain = 'modules_core';
+	$path = $gallery->getConfig('code.gallery.modules') . 'core';
+
+	$translator = new GalleryTranslator();
+	$translator->init('de_DE');
+
+	/* Singular text data */
+	list ($ret, $results) = $translator->translate($domain, $path, array('text' => 'Description'));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	if ($gallery->getConfig('function.exists.dgettext')) {
+	    $this->assertEquals('Beschreibung', $results);
+	} else {
+	    $this->assertEquals('Description', $results);
+	}
+
+	/* Plural text data */
+	list ($ret, $results) = $translator->translate($domain, $path,
+						       array('one' => 'There is %d user in the system.',
+							     'many' => 'There are %d total users in the system.',
+							     'count' => 1,
+							     'arg1' => 1));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	if ($gallery->getConfig('function.exists.dngettext')) {
+	    $this->assertEquals('Es existiert 1 Benutzer im System.', $results);
+	} else {
+	    $this->assertEquals('There is 1 user in the system.', $results);
+	}
+	
+	/* Plural text data */
+	list ($ret, $results) = $translator->translate($domain, $path,
+						       array('one' => 'There is %d user in the system.',
+							     'many' => 'There are %d total users in the system.',
+							     'count' => 2,
+							     'arg1' => 2));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	if ($gallery->getConfig('function.exists.dngettext')) {
+	    $this->assertEquals('Es existieren 2 Benutzer im System.', $results);
+	} else {
+	    $this->assertEquals('There are 2 total users in the system.', $results);
+	}
+    }
+}
+
+?>
