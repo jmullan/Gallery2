@@ -129,6 +129,7 @@ if ($ret->isError()) {
 $session = $gallery->getSession();
 if (!$session->isUsingCookies()) {
     $sessionKey = GALLERY_FORM_VARIABLE_PREFIX . $session->getKey();
+    $sessionId = $session->getId();
 }
 
 list ($ret, $isSiteAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
@@ -145,6 +146,7 @@ print "</pre>";
 */
 
 ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
   <head>
     <title>Gallery Unit Tests</title>
