@@ -37,7 +37,12 @@ class DebugStatusFormatter {
 	$template->setTranslationBase('modules', 'debug');
 	$template->setVariable('codes', join(" ", $codes));
 	$template->setVariable('trace', $trace);
-	return $template->render('DebugStatusFormatter.tpl');
+	list ($ret, $html) = $template->render('DebugStatusFormatter.tpl');
+	if ($ret->isError()) {
+	    return $ret->getAsHtml();
+	} else {
+	    return $html;
+	}
     }
     
 }
