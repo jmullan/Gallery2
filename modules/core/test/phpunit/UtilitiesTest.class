@@ -322,16 +322,24 @@ class UtilitiesTest extends GalleryTestCase {
     function testIsPathInList() {
 	global $gallery;
 	$platform = $gallery->getPlatform();
-	$this->assert(GalleryUtilities::isPathInList('/foo/bar',
-						     array('/foo', '/bar')),
-		      'test 1');
-	$this->assert(!GalleryUtilities::isPathInList('/foobar',
-						      array('/foo', '/bar')),
-		      'test 2');
-	
-	$this->assert(GalleryUtilities::isPathInList('/foo',
-						     array('/foo', '/bar')),
-		      'test 3');
+	$dir = dirname(__FILE__);
+
+	$this->assert(GalleryUtilities::isPathInList($dir,
+						     array($dir, '/foo')), 'test 1');
+	$this->assert(GalleryUtilities::isPathInList($dir . '/',
+						     array('/foo', $dir)), 'test 2');
+	$this->assert(GalleryUtilities::isPathInList($dir,
+						     array($dir . '/', '/foo/')), 'test 3');
+	$this->assert(GalleryUtilities::isPathInList(__FILE__,
+						     array($dir, '/bar')), 'test 4');
+	$this->assert(!GalleryUtilities::isPathInList($dir . 'foo',
+						      array($dir, '/bar')), 'test 5');
+	$this->assert(!GalleryUtilities::isPathInList(substr($dir, 0, -2),
+						      array('/foo', $dir)), 'test 6');
+	if (GalleryUtilities::isA($platform, 'WinNtPlatform')) {
+	    $this->assert(GalleryUtilities::isPathInList(strtolower(__FILE__),
+							 array('d:\\', strtoupper($dir))), 'test 7');
+	}
     }
 
     function testProcessingPaths() {
@@ -476,4 +484,4 @@ class UtilitiesTestPlatform {
 	return filesize($file);
     }
 }
-
+?>

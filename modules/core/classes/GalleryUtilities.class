@@ -807,15 +807,11 @@ class GalleryUtilities {
     function isPathInList($path, $list) {
 	global $gallery;
 	$platform = $gallery->getPlatform();
-	$path = $platform->realpath($path);
-
 	$slash = $platform->getDirectorySeparator();
+	$path = $platform->realpath($path) . $slash;
+	$compare = GalleryUtilities::isA($platform, 'WinNtPlatform') ? 'strncasecmp' : 'strncmp';
 
 	foreach ($list as $element) {
-	    if ($path == $element) {
-		return true;
-	    }
-
 	    /*
 	     * Make sure the compare directory has a trailing slash so that
 	     * /tmp doesn't accidentally match /tmpfoo
@@ -824,7 +820,7 @@ class GalleryUtilities {
 		$element .= $slash;
 	    }
 
-	    if (!strncmp($element, $path, strlen($element))) {
+	    if (!$compare($element, $path, strlen($element))) {
 		return true;
 	    }
 	}
