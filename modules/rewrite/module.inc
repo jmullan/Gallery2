@@ -35,9 +35,10 @@
 class RewriteModule extends GalleryModule {
 
     function RewriteModule() {
+	global $gallery;
 	$this->setId('rewrite');
 	$this->setName('URL Rewrite');
-	$this->setDescription($this->i18n('Enables short URLs using mod_rewrite.'));
+	$this->setDescription($gallery->i18n('Enables short URLs using mod_rewrite.'));
 	$this->setVersion('0.9.0');
 	$this->setGroup('gallery', $this->translate('Gallery'));
 	$this->setCallbacks('getSiteAdminViews');
