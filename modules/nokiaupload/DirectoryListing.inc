@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2003 Bharat Mediratta
+ * Copyright (C) 2000-2004 Bharat Mediratta
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,9 +26,7 @@
  * @author Jerome Rannikko <jeromer@hotpop.com>
  */
 
-require_once('constants.inc'); // Error codes
-require_once(dirname(__FILE__) . '/classes/LogFile.class');
-require_once(dirname(__FILE__) . '/classes/ImageUploadApi.class');
+GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/ImageUploadHelper.class');
 
 /**
  * This controller implements the Nokia Image Uploader API's 'Retrieve Directory Listing' command.
@@ -41,17 +39,11 @@ class DirectoryListingController extends GalleryController {
      * @see GalleryController::handleRequest()
      */
     function handleRequest($form) {
-	/* 
-	 * We set the Content-length header in the view and that is not possible if
-	 * anything gets sent before that so we need to buffer all (possible) output.
-	 */
-	ob_start();
-
 	LogFile::mark('DirectoryListingController');
 	LogFile::writeRequest();
 
-	$results['status'] = ImageUploadApi::getDirectoryListing();
 	$results['delegate'] = array('view' => 'nokiaupload:DirectoryListing');
+	$results['status'] = ImageUploadHelper::getDirectoryListing();
 	$results['error'] = array();
 
 	return array(GalleryStatus::success(), $results);
@@ -70,9 +62,8 @@ class DirectoryListingView extends GalleryView {
      * @see GalleryView::renderImmediate()
      */
     function isImmediate() {
-        return true;
+	return true;
     }
-
 
     /**
      * API defines the output very specifically so we can't allow any global 
@@ -88,33 +79,33 @@ class DirectoryListingView extends GalleryView {
 		$status['success'] = NOKIAUPLOAD_ERR_UNKNOWN;
 	}
 
-	$reply = $status['success'] . "\r\n";
+	$reply = array($status['success'] . "\r\n");
 
 	if ($status['success'] == NOKIAUPLOAD_ERR_NOERR) {
 	    $dirNum = count($status['albums']);
-	    $reply .= $dirNum . "\r\n";
-	    $reply .= "3\r\n"; // Lines per directory (id, parent id and name).
+	    $reply[] = $dirNum . "\r\n";
+	    $reply[] = "3\r\n"; // Lines per directory (id, parent id and name).
 	    foreach ($status['albums'] as $album) {
-		$reply .= 'DId=' . $album['id'] . "\r\n";
-		$reply .= 'PId=' . $album['parentid'] . "\r\n";
-		$reply .= 'DirName='. $album['name'] . "\r\n";
+		$reply[] = 'DId=' . $album['id'] . "\r\n";
+		$reply[] = 'PId=' . $album['parentid'] . "\r\n";
+		$reply[] = 'DirName='. $album['name'] . "\r\n";
 	    }
 	} else {
-	    $reply .= "Couldn't fetch directory list.\r\n";
+	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'nokiaupload');
+	    if ($ret->isError()) {
+		$reply[] = "Couldn't fetch directory list.\r\n";
+	    } else {
+		$reply[] = $module->translate("Couldn't fetch directory list.") . "\r\n";
+	    }
 	}
 
+	$reply = implode('', $reply);
 	LogFile::write("Sending:\n$reply");
 
-	/* Stop output buffering. */
-	ob_end_clean();
-
-	header('Content-Length: '.strlen($reply));
-	echo $reply;
+	header('Content-Length: ' . strlen($reply));
+	print $reply;
 
 	return GalleryStatus::success();
     }
-
-
 }
-
 ?>

@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2003 Bharat Mediratta
+ * Copyright (C) 2000-2004 Bharat Mediratta
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,9 +26,7 @@
  * @author Jerome Rannikko <jeromer@hotpop.com>
  */
 
-require_once('constants.inc'); // Error codes
-require_once(dirname(__FILE__) . '/classes/LogFile.class');
-require_once(dirname(__FILE__) . '/classes/ImageUploadApi.class');
+GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/ImageUploadHelper.class');
 
 /**
  * This controller implements the Nokia Image Uploader API's 'Login' command.
@@ -41,18 +39,12 @@ class LoginController extends GalleryController {
      * @see GalleryController::handleRequest()
      */
     function handleRequest($form) {
-	/* 
-	 * We set the Content-length header in the view and that is not possible if
-	 * anything gets sent before that so we need to buffer all (possible) output.
-	 */
-	ob_start();
-
 	LogFile::mark('LoginController');
 	LogFile::writeRequest();
 
 	$results['delegate'] = array('view' => 'nokiaupload:Login');
+	$results['status'] = ImageUploadHelper::doLogin();
 	$results['error'] = array();
-	$results['status'] = ImageUploadApi::doLogin();
 
 	return array(GalleryStatus::success(), $results);
     }
@@ -70,9 +62,8 @@ class LoginView extends GalleryView {
      * @see GalleryView::renderImmediate()
      */
     function isImmediate() {
-        return true;
+	return true;
     }
-
 
     /**
      * API defines the output very specifically so we can't allow any global 
@@ -84,35 +75,35 @@ class LoginView extends GalleryView {
 	LogFile::mark('LoginView');
 	LogFile::write('$status = ' . print_r($status, true));
 
-	$reply = $status['success'] . "\r\n";
-	$reply .= 'Version=' . NOKIAUPLOAD_PROTOCOLVERSION . "\r\n";
+	$reply = array($status['success'] . "\r\n");
+	$reply[] = 'Version=' . NOKIAUPLOAD_PROTOCOLVERSION . "\r\n";
 
 	if ($status['success'] == NOKIAUPLOAD_ERR_NOERR) {
-	    $reply .= 'SId=' . $status['sessionidparam'] . '=' . $status['sessionid'] . "\r\n";
-	    $reply.= 'RSURL=' . $status['rsurl'] . "\r\n";
+	    $reply[] = 'SId=' . $status['sessionidparam'] . '=' . $status['sessionid'] . "\r\n";
+	    $reply[] = 'RSURL=' . $status['rsurl'] . "\r\n";
 
 	    /* Send RS Capabilities as well if we have them. */
 	    if (isset($status['capabilities'])) {
 		foreach ($status['capabilities'] as $capability) {
-		    $reply .= $capability;
+		    $reply[] = $capability;
 		}
 	    }
 	} else {
-	    $reply .= "Login failed.\r\n";
+	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'nokiaupload');
+	    if ($ret->isError()) {
+		$reply[] = "Login failed.\r\n";
+	    } else {
+		$reply[] = $module->translate('Login failed.') . "\r\n";
+	    }
 	}
 
+	$reply = implode('', $reply);
 	LogFile::write("Sending:\n$reply");
 
-	/* Stop output buffering. */
-	ob_end_clean();
-
-	header('Content-Length: '.strlen($reply));
-	echo $reply;
+	header('Content-Length: ' . strlen($reply));
+	print $reply;
 
 	return GalleryStatus::success();
     }
-
-
 }
-
 ?>

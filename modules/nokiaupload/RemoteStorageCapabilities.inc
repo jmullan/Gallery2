@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2003 Bharat Mediratta
+ * Copyright (C) 2000-2004 Bharat Mediratta
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,9 +26,7 @@
  * @author Jerome Rannikko <jeromer@hotpop.com>
  */
 
-require_once('constants.inc'); // Error codes
-require_once(dirname(__FILE__) . '/classes/LogFile.class');  
-require_once(dirname(__FILE__) . '/classes/ImageUploadApi.class');
+GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/ImageUploadHelper.class');
 
 /**
  * This view implements the Nokia Image Uploader API's 'Remote Storage Capabilities' query.
@@ -40,11 +38,9 @@ class RemoteStorageCapabilitiesView extends GalleryView {
     /**
      * @see GalleryView::renderImmediate()
      */
-
     function isImmediate() {
-        return true;
+	return true;
     }
-
 
     /**
      * API defines the output very specifically so we can't allow any global 
@@ -53,12 +49,6 @@ class RemoteStorageCapabilitiesView extends GalleryView {
      * @see GalleryView::renderImmediate()
      */
     function renderImmediate($status, $error) {
-	/* 
-	 * We set the Content-length header and that is not possible if
-	 * anything gets sent before that so we need to buffer all (possible) output.
-	 */
-	ob_start();
-
 	LogFile::mark('RemoteStorageCapabilitiesView');
 	LogFile::writeRequest();
 
@@ -66,25 +56,22 @@ class RemoteStorageCapabilitiesView extends GalleryView {
 
 	if (empty($capabilities)) {
 	    $reply = NOKIAUPLOAD_ERR_UNKNOWN . "\r\n";
-	    $reply .= "Couldn\'t retrieve settings.\r\n";
-	} else {
-	    $reply = NOKIAUPLOAD_ERR_NOERR . "\r\n";
-	    foreach ($capabilities as $capability) {
-		$reply .= $capability;
+	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'nokiaupload');
+	    if ($ret->isError()) {
+		$reply .= "Couldn't retrieve settings.\r\n";
+	    } else {
+		$reply .= $module->translate("Couldn't retrieve settings.") . "\r\n";
 	    }
+	} else {
+	    $reply = NOKIAUPLOAD_ERR_NOERR . "\r\n" . implode('', $capabilities);
 	}
 
 	LogFile::write("sending:\n$reply");
 
-	/* Stop output buffering. */
-	ob_end_clean();
-
-	header('Content-Length: '.strlen($reply));
-	echo $reply;
+	header('Content-Length: ' . strlen($reply));
+	print $reply;
 
 	return GalleryStatus::success();
     }
-
 }
-
 ?>

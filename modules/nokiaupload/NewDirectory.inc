@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2003 Bharat Mediratta
+ * Copyright (C) 2000-2004 Bharat Mediratta
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,12 +26,10 @@
  * @author Jerome Rannikko <jeromer@hotpop.com>
  */
 
-require_once('constants.inc'); // Error codes
-require_once(dirname(__FILE__) . '/classes/LogFile.class');
-require_once(dirname(__FILE__) . '/classes/ImageUploadApi.class');
+GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/ImageUploadHelper.class');
 
 /**
- * This controller implements the Nokia Image Uploader API's 'Retrieve Directory Listing' command.
+ * This controller implements the Nokia Image Uploader API's 'New Directory' command.
  *
  * @package NokiaUpload
  */
@@ -41,17 +39,11 @@ class NewDirectoryController extends GalleryController {
      * @see GalleryController::handleRequest()
      */
     function handleRequest($form) {
-	/* 
-	 * We set the Content-length header in the view and that is not possible if
-	 * anything gets sent before that so we need to buffer all (possible) output.
-	 */
-	ob_start();
-
 	LogFile::mark('CreateAlbumController');
 	LogFile::writeRequest();
 
-	$results['status'] = ImageUploadApi::createNewDirectory();
 	$results['delegate'] = array('view' => 'nokiaupload:NewDirectory');
+	$results['status'] = ImageUploadHelper::createNewDirectory();
 	$results['error'] = array();
 
 	return array(GalleryStatus::success(), $results);
@@ -60,7 +52,7 @@ class NewDirectoryController extends GalleryController {
 
 
 /**
- * This view implements the Nokia Image Uploader API's 'Retrieve Directory Listing' command.
+ * This view implements the Nokia Image Uploader API's 'New Directory' command.
  *
  * @package NokiaUpload
  */
@@ -70,9 +62,8 @@ class NewDirectoryView extends GalleryView {
      * @see GalleryView::renderImmediate()
      */
     function isImmediate() {
-        return true;
+	return true;
     }
-
 
     /**
      * API defines the output very specifically so we can't allow any global 
@@ -85,7 +76,7 @@ class NewDirectoryView extends GalleryView {
 	LogFile::write('$status = ' . print_r($status, true));
 
 	if ($status['success'] == NOKIAUPLOAD_ERR_NOERR && !isset($status['id'])) {
-		$status['success'] = NOKIAUPLOAD_ERR_UNKNOWN;
+	    $status['success'] = NOKIAUPLOAD_ERR_UNKNOWN;
 	}
 
 	$reply = $status['success'] . "\r\n";
@@ -93,21 +84,20 @@ class NewDirectoryView extends GalleryView {
 	if ($status['success'] == NOKIAUPLOAD_ERR_NOERR) {
 	    $reply .= 'Did=' . $status['id'] . "\r\n";
 	} else {
-	    $reply .= "Album creation failed.\r\n";
+	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'nokiaupload');
+	    if ($ret->isError()) {
+		$reply .= "Album creation failed.\r\n";
+	    } else {
+		$reply .= $module->translate('Album creation failed.') . "\r\n";
+	    }
 	}
 
 	LogFile::write("sending:\n$reply");
-
-	/* stop output buffering. */
-	ob_end_clean();
 
 	header('Content-Length: '.strlen($reply));
 	echo $reply;
 
 	return GalleryStatus::success();
     }
-
-
 }
-
 ?>

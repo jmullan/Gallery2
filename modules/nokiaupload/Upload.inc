@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2003 Bharat Mediratta
+ * Copyright (C) 2000-2004 Bharat Mediratta
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,9 +26,7 @@
  * @author Jerome Rannikko <jeromer@hotpop.com>
  */
 
-require_once('constants.inc'); // Error codes
-require_once(dirname(__FILE__) . '/classes/LogFile.class');
-require_once(dirname(__FILE__) . '/classes/ImageUploadApi.class');
+GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/ImageUploadHelper.class');
 
 /**
  * This controller implements the Nokia Image Uploader API's 'Upload' command.
@@ -41,17 +39,11 @@ class UploadController extends GalleryController {
      * @see GalleryController::handleRequest()
      */
     function handleRequest($form) {
-	/* 
-	 * We set the Content-length header in the view and that is not possible if
-	 * anything gets sent before that so we need to buffer all (possible) output.
-	 */
-	ob_start();
-
 	LogFile::mark('UploadController');
 	LogFile::writeRequest();
 
-	$results['status'] = ImageUploadApi::doUpload();
 	$results['delegate'] = array('view' => 'nokiaupload:Upload');
+	$results['status'] = ImageUploadHelper::doUpload();
 	$results['error'] = array();
 
 	return array(GalleryStatus::success(), $results);
@@ -69,11 +61,9 @@ class UploadView extends GalleryView {
     /**
      * @see GalleryView::renderImmediate()
      */
-
     function isImmediate() {
-        return true;
+	return true;
     }
-
 
     /**
      * API defines the output very specifically so we can't allow any global 
@@ -90,21 +80,20 @@ class UploadView extends GalleryView {
 	if ($status['success'] == NOKIAUPLOAD_ERR_NOERR) {
 	    $reply .= 'Free=' . $status['spaceleft'] . "\r\n";
 	} else {
-	    $reply .= "Upload failed.\r\n";
+	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'nokiaupload');
+	    if ($ret->isError()) {
+		$reply .= "Upload failed.\r\n";
+	    } else {
+		$reply .= $module->translate('Upload failed.') . "\r\n";
+	    }
 	}
 
 	LogFile::write("sending:\n$reply");
 
-	/* Stop output buffering. */
-	ob_end_clean();
-
-	header('Content-Length: '.strlen($reply));
-	echo $reply;
+	header('Content-Length: ' . strlen($reply));
+	print $reply;
 
 	return GalleryStatus::success();
     }
-
-
 }
-
 ?>
