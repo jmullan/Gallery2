@@ -290,4 +290,8 @@ class SliderLayout extends GalleryLayout {
 	return array(GalleryStatus::success(), $itemList,
 	             $imageWidths, $imageHeights, $maxTW, $maxTH);
     }
+
+    function _sortItemLinks($a, $b) {
+	return strcmp($a['text'], $b['text']);
+    }
 }
