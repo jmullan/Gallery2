@@ -520,7 +520,7 @@ class CoreModule extends GalleryModule {
 		    $links[$item->getId()][] =
 			array('text' => $this->translate('edit image'),
 			      'params' => array('view' => 'core:ItemAdmin',
-						'subView' => 'core:ItemEditMovie',
+						'subView' => 'core:ItemEditImage',
 						'itemId' => $item->getId()));
 		} else if ($isAlbum) {
 		    $links[$item->getId()][] =
