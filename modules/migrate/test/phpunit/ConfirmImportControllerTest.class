@@ -275,6 +275,48 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+
+	/*
+	 * Array of example data
+	 * (
+	 *   +[title] => Test Album One
+	 *   +[description] => No description
+	 *   +[summary] =>
+	 *   -[bgcolor] =>
+	 *   -[textcolor] =>
+	 *   -[linkcolor] =>
+	 *   -[font] => verdana
+	 *   -[border] => 1
+	 *   -[bordercolor] => black
+	 *   -[returnto] => yes
+	 *   +[thumb_size] => 150
+	 *   +[resize_size] => 400
+	 *   +[rows] => 5
+	 *   +[cols] => 5
+	 *   -[fit_to_window] => no
+	 *   -[use_fullOnly] => no
+	 *   -[print_photos] => none
+	 *   -[use_exif] => yes
+	 *    [perms] => Array
+	 *        ( [canRead] => Array
+	 *            ( [everybody] => 1 )
+	 *            [canViewFullImages] => Array
+	 *            ( [everybody] => 1 )
+	 *        )
+	 *   +[parentAlbumName] => .root
+	 *   +[clicks] => 0
+	 *   +[clicks_date] => 1056014708
+	 *   -[display_clicks] => yes
+	 *   -[public_comments] => yes
+	 *    [extra_fields] => Array
+	 *        ( [0] => Description
+	 *        )
+	 *   +[name] => album01
+	 *   +[owner] => 1054014347u1233740678
+	 *   -[last_mod_time] => 1056015246
+	 */
+	
+	
 	$this->assertEquals(array($testAlbum->getTitle(),                // title
 				  $testAlbum->getSummary(),              // summary
 				  $testAlbum->getKeywords(),             // keywords
@@ -286,22 +328,22 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 				  $derivativePreferences,                // thumb and resized sizing preferences
 				  $rows,                                 // rows
 				  $cols                                  // cols
-
+				  
 				  ),
 			    array('Test Album Three',                    // title
 				  NULL,                                  // summary
 				  NULL,                                  // keywords
 				  '[b]No description[/b]',               // description
 				  $testOwner->getId(),                   // owner
-				  1056016982,                            // album creation
+				  1080629328,                            // album creation
 				  1056015077,                            // clicks counted since
-				  2,                                     // count of clicks
+				  4,                                     // count of clicks
 				  array(array(                           // thumb and resized sizing preferences
 					      'order' => 0,
 					      'derivativeType' => 1,
 					      'derivativeOperations' => 'thumbnail|150'
 					      ),
-
+					
 					array('order' => 1,
 					      'derivativeType' => 2,
 					      'derivativeOperations' => 'scale|400'
@@ -311,12 +353,51 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 				  NULL                                   // cols
 				  )
 			    );
+	/* albumitem Object
+	 * (
+	 *   +[image] => image Object
+	 *        (
+	 *           +[name] => canon_ae_1
+	 *           +[type] => jpg
+	 *           -[width] => 225
+	 *           -[height] => 165
+	 *           -[resizedName] =>
+	 *           +[thumb_x] =>
+	 *           +[thumb_y] =>
+	 *           +[thumb_width] =>
+	 *           +[thumb_height] =>
+	 *           -[raw_width] => 225
+	 *           -[raw_height] => 165
+	 *           -[version] => 10
+	 *        )
+	 *
+	 *   +[caption] => canon_ae_1
+	 *    [hidden] =>
+	 *   +[highlight] => 1
+	 *   +[isAlbumName] =>
+	 *    [clicks] =>
+	 *   +[keywords] =>
+	 *    [comments] =>
+	 *   +[uploadDate] => 1056014783
+	 *   +[itemCaptureDate] => Array
+	 *        (
+	 *           +[0] => 1056014783
+	 *        )
+	 *
+	 *    [extraFields] => Array
+	 *        (
+	 *        )
+	 *)
+	 */
+	
+	
+	
 	/* Verify item attributes (like order weight) */
 	list ($ret, $ids) = GalleryCoreApi::fetchChildItemIds($testAlbum);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-
+	
 	$seenWeights = array();
 	foreach ($ids as $id) {
 	    list ($ret, $itemViewCount[$id]) = GalleryCoreApi::fetchItemViewCount($id);
