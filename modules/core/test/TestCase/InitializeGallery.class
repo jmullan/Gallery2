@@ -52,7 +52,7 @@ class InitializeGalleryTestCase extends TestCase {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	$ret = $core->install();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -62,7 +62,7 @@ class InitializeGalleryTestCase extends TestCase {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	foreach (array_keys($moduleList) as $moduleId) {
 	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
 	    if ($ret->isError()) {

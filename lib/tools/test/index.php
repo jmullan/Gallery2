@@ -36,15 +36,14 @@ function main() {
     $urlGenerator = new GalleryUrlGenerator('../../main.php');
     $gallery->setUrlGenerator($urlGenerator);
 
+    /* Roll back our transaction since we're going to wrap each test in its own */
     $storage =& $gallery->getStorage();
-
-    $ret = GalleryTestHarness();
+    $ret = $storage->rollbackTransaction();
     if ($ret->isError()) {
-	$storage->rollbackTransaction();
 	return $ret->wrap(__FILE__, __LINE__);
     }
 
-    $ret = $storage->commitTransaction();
+    $ret = GalleryTestHarness();
     if ($ret->isError()) {
 	return $ret->wrap(__FILE__, __LINE__);
     }
@@ -210,6 +209,15 @@ function runTest($moduleId, $testName, $iterations) {
     /* Run the test */
     ob_start();
 
+    $storage =& $gallery->getStorage();
+    $ret = $storage->beginTransaction();
+    if ($ret->isError()) {
+	$ret = $ret->wrap(__FILE__, __LINE__);
+	$result['error']['html'] = $ret->getAsHtml();
+	$result['error']['object'] = $ret;
+	$results[] = $result;
+    }
+
     $gallery->guaranteeTimeLimit(30);
     list ($timing, $ret1) = $class->start($iterations);
     $ret2 = $class->cleanup();
@@ -237,6 +245,14 @@ function runTest($moduleId, $testName, $iterations) {
 	}
     } else {
 	$result['error'] = null;
+
+	$ret = $storage->commitTransaction();
+	if ($ret->isError()) {
+	    $ret = $ret->wrap(__FILE__, __LINE__);
+	    $result['error']['html'] = $ret->getAsHtml();
+	    $result['error']['object'] = $ret;
+	    $results[] = $result;
+	}
     }
     $results[] = $result;
 
