@@ -89,7 +89,6 @@ class ImageBlockSiteAdminView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-	global $gallery;
 	if ($form['formName'] != 'ImageBlockSiteAdmin') {
 	    $form['formName'] = 'ImageBlockSiteAdmin';
 	    foreach (array('randomImage', 'recentImage', 'viewedImage',
@@ -108,8 +107,6 @@ class ImageBlockSiteAdminView extends GalleryView {
 	    foreach (explode('|', $param['show']) as $tmp) {
 		$form[$tmp] = 1;
 	    }
-	    $urlGenerator = $gallery->getUrlGenerator();
-	    $form['baseUrl'] = $urlGenerator->generateUrl();
 	}
 	$template->setVariable('controller', 'imageblock:ImageBlockSiteAdmin');
 	return array(GalleryStatus::success(),

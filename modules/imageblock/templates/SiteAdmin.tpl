@@ -120,7 +120,7 @@
       {g->text text="Use a PHP block like the one shown below to include an image block in a PHP page outside of Gallery."}
     </p>
     <p class="giInfo">
-      &lt;?php @readfile('{$form.baseUrl}?g2_view=imageblock:External&amp;g2_blocks=randomImage&amp;g2_show=title'); ?&gt;
+      &lt;?php @readfile('{g->url arg1="view=imageblock:External" arg2="blocks=randomImage" arg3="show=title"}'); ?&gt;
     </p>
     <p class="giDescription">
       {g->text text="g2_blocks is a pipe(|) separate list chosen from: randomImage, recentImage, viewedImage, randomAlbum, recentAlbum, viewedAlbum.  g2_show is a pipe(|) separated list chosen from: title, date, views, owner; the value can also be: none.  If either parameter is omitted the site default defined above is used.  Add the parameter g2_heading=on to show the image block heading.  Add the parameter g2_itemId=[id] to limit the item selection to the subtree of the gallery under the album with the given [id].  To create an image block for a particular item pass g2_blocks=specificItem and g2_itemId=[id] of the item to display."}
