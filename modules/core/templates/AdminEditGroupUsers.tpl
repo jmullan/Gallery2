@@ -8,7 +8,7 @@
   <div class="gbTopFlag">
     <div class="gbTitle">
       <h2 class="giTitle">
-	{g->text text="Edit Group Members"}
+	{g->text text="Edit Members of Group '%s'" arg1=$AdminEditGroupUsers.group.groupName}
       </h2>
     </div>
     
@@ -18,11 +18,11 @@
   <div id="gsStatus">
     <div class="giStatus">
       {if isset($status.addedUser)}
-	{g->text text="Added user '%s' to group" arg1=$status.addedUser}
+	{g->text text="Added user '%s' to group '%s'" arg1=$status.addedUser arg2=$AdminEditGroupUsers.group.groupName}
       {/if}
       
       {if isset($status.removedUser)}
-	{g->text text="Removed user '%s' from group" arg1=$status.removedUser}
+	{g->text text="Removed user '%s' from group '%s'" arg1=$status.removedUser arg2=$AdminEditGroupUsers.group.groupName}
       {/if}
     </div>
   </div>
