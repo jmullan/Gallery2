@@ -51,11 +51,6 @@ class GalleryItem extends GalleryItem_core {
             'type' => STORAGE_TYPE_TEXT
         );
     
-        $meta['members']['isHtmlAllowed'] = array(
-            'class' => 'GalleryItem',
-            'type' => STORAGE_TYPE_BOOLEAN
-        );
-    
         $meta['members']['layout'] = array(
             'class' => 'GalleryItem',
             'type' => STORAGE_TYPE_STRING
@@ -113,27 +108,65 @@ class GalleryItem extends GalleryItem_core {
         $data = parent::getMemberData();
         GalleryProfiler::start('GalleryPersistent::getMemberData');
     
-        $data['description'] = $this->_description;
+        if (!isset($this->_description)) {
+            $data['description'] = null;
+        } else {
+            $data['description'] = $this->_description;
+        }
     
-        $data['isHtmlAllowed'] = $this->_isHtmlAllowed;
+        if (!isset($this->_layout)) {
+            $data['layout'] = null;
+        } else {
+            $data['layout'] = $this->_layout;
+        }
     
-        $data['layout'] = $this->_layout;
+        if (!isset($this->_keywords)) {
+            $data['keywords'] = null;
+        } else {
+            $data['keywords'] = $this->_keywords;
+        }
     
-        $data['keywords'] = $this->_keywords;
+        if (!isset($this->_orderBy)) {
+            $data['orderBy'] = null;
+        } else {
+            $data['orderBy'] = $this->_orderBy;
+        }
     
-        $data['orderBy'] = $this->_orderBy;
+        if (!isset($this->_orderDirection)) {
+            $data['orderDirection'] = null;
+        } else {
+            $data['orderDirection'] = $this->_orderDirection;
+        }
     
-        $data['orderDirection'] = $this->_orderDirection;
+        if (!isset($this->_orderWeight)) {
+            $data['orderWeight'] = null;
+        } else {
+            $data['orderWeight'] = $this->_orderWeight;
+        }
     
-        $data['orderWeight'] = $this->_orderWeight;
+        if (!isset($this->_ownerId)) {
+            $data['ownerId'] = null;
+        } else {
+            $data['ownerId'] = $this->_ownerId;
+        }
     
-        $data['ownerId'] = $this->_ownerId;
+        if (!isset($this->_theme)) {
+            $data['theme'] = null;
+        } else {
+            $data['theme'] = $this->_theme;
+        }
     
-        $data['theme'] = $this->_theme;
+        if (!isset($this->_title)) {
+            $data['title'] = null;
+        } else {
+            $data['title'] = $this->_title;
+        }
     
-        $data['title'] = $this->_title;
-    
-        $data['viewedSinceTimestamp'] = $this->_viewedSinceTimestamp;
+        if (!isset($this->_viewedSinceTimestamp)) {
+            $data['viewedSinceTimestamp'] = null;
+        } else {
+            $data['viewedSinceTimestamp'] = $this->_viewedSinceTimestamp;
+        }
     
         GalleryProfiler::stop('GalleryPersistent::getMemberData');
         return $data;
@@ -172,47 +205,6 @@ class GalleryItem extends GalleryItem_core {
         if ($a != $b) {
             $this->_description = $value;
             $this->setModifiedFlag('description', MEMBER_MODIFIED);
-        }
-    }
-  
-    /**
-     * Get the value of isHtmlAllowed
-     *
-     * @return BOOLEAN the value
-     */
-    function getisHtmlAllowed() {
-        if (!isset($this->_isHtmlAllowed)) {
-            return null;
-        }
-        return $this->_isHtmlAllowed;
-    }
-
-    /**
-     * Set the value of isHtmlAllowed
-     *
-     * @param BOOLEAN the value
-     */
-    function setisHtmlAllowed($value) {
-
-        /* 
-         * Convert unset values to null, to avoid generating warnings.
-         */
-	$a = isset($value) ? $value : null;
-	$b = isset($this->_isHtmlAllowed) ? $this->_isHtmlAllowed : null;
-
-    
-        /* Type case the incoming value to be a boolean */
-        if ($value != null) {
-            $value = (bool)$value;
-        }
-      
-        /* 
-         * Only take action if the value actually changes, but take care not to 
-         * generate warnings for unset values.
-         */
-        if ($a != $b) {
-            $this->_isHtmlAllowed = $value;
-            $this->setModifiedFlag('isHtmlAllowed', MEMBER_MODIFIED);
         }
     }
   

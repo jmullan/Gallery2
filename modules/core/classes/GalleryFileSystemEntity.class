@@ -104,7 +104,7 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
 	}
 
 	/* Make sure that we don't have a collision in the db. */
-	list ($ret, $isCollision) = $this->_checkCollision($path);
+	list ($ret, $isCollision) = $this->_checkPathCollision($path);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -201,7 +201,7 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
 	}
 
 	/* Make sure that we don't have a collision in the db. */
-	list ($ret, $isCollision) = $this->_checkCollision($newname);
+	list ($ret, $isCollision) = $this->_checkPathCollision($newname);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -322,7 +322,7 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
      *               boolean true if there's a collision
      * @access private
      */
-    function _checkCollision($pathComponent) {
+    function _checkPathCollision($pathComponent) {
 	global $gallery;
 
 	$parentId = $this->getParentId();

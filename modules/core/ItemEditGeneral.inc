@@ -82,11 +82,9 @@ class ItemEditGeneralController extends GalleryController {
 		    }
 
 		    /* Figure out where to redirect upon success */
-		    /*
 		    $redirectParams['view'] = 'core:ItemAdmin';
 		    $redirectParams['subView'] = 'core:ItemEditGeneral';
 		    $redirectParams['itemId'] = $itemId;
-		    */
 		}
 
 		$ret = $gallery->releaseLocks($lockId);

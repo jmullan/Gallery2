@@ -261,27 +261,7 @@ class GalleryPlatform {
 	$newname = $this->importPath($newname);
 	$gallery->debug("rename($oldname, $newname)");
 
-	/*
-	 * We can use raw functions from this point on because the paths have
-	 * already been imported.
-	 */
-	if (is_dir($oldname)) {
-	    return rename($oldname, $newname);
-	} else {
-	    if (file_exists("$newname.bak")) {
-		unlink("$newname.bak");
-	    }
-	    if (file_exists("$newname")) {
-		return
-		    rename($newname, "$newname.bak") &&
-		    copy($oldname, $newname) &&
-		    unlink($oldname);
-	    } else {
-		return
-		    copy($oldname, $newname) &&
-		    unlink($oldname);
-	    }
-	}
+	return rename($oldname, $newname);
     }
 
     /**

@@ -16,10 +16,6 @@
       text
     
       ,
-    COLUMN_PREFIXisHtmlAllowed
-      int(1)
-    
-      ,
     COLUMN_PREFIXlayout
       varchar(
       

@@ -161,6 +161,9 @@ class CoreModule extends GalleryModule {
 	    return $ret->wrap(__FILE__, __LINE__);
 	} else if ($ret->isError() || $version != $this->getVersion()) {
 
+	    $gallery->debug("Can't load core version -- " .
+			    "assuming that the core needs installation");
+
 	    /* The store requires configuration. */
 	    list ($ret, $storage) = $gallery->getStorage();
 	    if ($ret->isError()) {
