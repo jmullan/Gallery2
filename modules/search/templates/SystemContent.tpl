@@ -1,14 +1,14 @@
-{galleryForm view="$view" method="GET"}
-{galleryInput type="hidden" name="formName"}SearchSystemContent{/galleryInput}
-<a href="{galleryUrl view="search:SearchScan" return_view=$return.view return_itemId=$return.itemId}">
-{galleryText text="Search: "}
+{gallery->form view="$view" method="GET"}
+{gallery->input type="hidden" name="formName"}SearchSystemContent{/gallery->input}
+<a href="{gallery->url view="search:SearchScan" return_view=$return.view return_itemId=$return.itemId}">
+{gallery->text text="Search: "}
 </a>
-{galleryInput type="text" name="form.searchCriteria" size="15"}{/galleryInput}
-{galleryInput type="hidden" name="form.useDefaultSettings"}1{/galleryInput}
+{gallery->input type="text" name="form.searchCriteria" size="15"}{/gallery->input}
+{gallery->input type="hidden" name="form.useDefaultSettings"}1{/gallery->input}
 
 <!-- Embed the hidden return fields -->
 {foreach from=$return key=key item=value}
-{galleryInput type="hidden" name=$key|string_format:"return.%s"}{$value}{/galleryInput}
+{gallery->input type="hidden" name=$key|string_format:"return.%s"}{$value}{/gallery->input}
 {/foreach}
 
-{/galleryForm}
+{/gallery->form}

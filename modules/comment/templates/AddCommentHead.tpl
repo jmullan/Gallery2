@@ -1,3 +1,3 @@
-<title>{galleryText text='Add a comment'}</title>
-{galleryStyle}
+<title>{gallery->text text='Add a comment'}</title>
+{gallery->style}
 

@@ -1,10 +1,10 @@
-  {galleryThinFrame width="100%"}
+  {gallery->thinFrame width="100%"}
   <table border="0" width="100%" cellspacing="0%" cellpadding="0%">
     <tr>
       <td width="27">
 	{if isset($navigator.firstPage)}
-	<a href="{galleryUrl view=core:ShowItem itemId=$item.id layoutPage=$navigator.firstPage}">
-	  <img src="{$layoutUrl}/images/nav_first.gif" alt="{galleryText text="First"}" border="0"
+	<a href="{gallery->url view=core:ShowItem itemId=$item.id layoutPage=$navigator.firstPage}">
+	  <img src="{$layoutUrl}/images/nav_first.gif" alt="{gallery->text text="First"}" border="0"
 	    width="27" height="11">
 	</a>
 	{else}
@@ -13,8 +13,8 @@
       </td>
       <td width="72">
 	{if isset($navigator.previousPage)}
-	<a href="{galleryUrl view=core:ShowItem itemId=$item.id layoutPage=$navigator.previousPage}">
-	  <img src="{$layoutUrl}/images/nav_prev.gif" alt="{galleryText text="Previous"}" border="0" width="72" height="11">
+	<a href="{gallery->url view=core:ShowItem itemId=$item.id layoutPage=$navigator.previousPage}">
+	  <img src="{$layoutUrl}/images/nav_prev.gif" alt="{gallery->text text="Previous"}" border="0" width="72" height="11">
 	</a>
 	{else}
 	&nbsp;
@@ -35,7 +35,7 @@
 	{/if}
 
 	{strip}
-	<a href="{galleryUrl view=core:ShowItem itemId=$item.id layoutPage=$navigator.jumprange[jumprange]}">
+	<a href="{gallery->url view=core:ShowItem itemId=$item.id layoutPage=$navigator.jumprange[jumprange]}">
 	  {$navigator.jumprange[jumprange]}
 	</a>
 	{/strip}
@@ -46,8 +46,8 @@
       </td>
       <td width=72>
 	{if isset($navigator.nextPage)}
-	<a href="{galleryUrl view=core:ShowItem itemId=$item.id layoutPage=$navigator.nextPage}">
-	  <img src="{$layoutUrl}/images/nav_next.gif" alt="{galleryText text="Next"}" border="0"
+	<a href="{gallery->url view=core:ShowItem itemId=$item.id layoutPage=$navigator.nextPage}">
+	  <img src="{$layoutUrl}/images/nav_next.gif" alt="{gallery->text text="Next"}" border="0"
 	    width="72" height="11">
 	</a>
 	{else}
@@ -56,8 +56,8 @@
       </td>
       <td width=27>
 	{if isset($navigator.lastPage)}
-	<a href="{galleryUrl view=core:ShowItem itemId=$item.id layoutPage=$navigator.lastPage}">
-	  <img src="{$layoutUrl}/images/nav_last.gif" alt="{galleryText text="Last"}" border="0"
+	<a href="{gallery->url view=core:ShowItem itemId=$item.id layoutPage=$navigator.lastPage}">
+	  <img src="{$layoutUrl}/images/nav_last.gif" alt="{gallery->text text="Last"}" border="0"
 	    width="27" height="11">
 	</a>
 	{else}
@@ -66,4 +66,4 @@
       </td>
     </tr>
   </table>
-  {/galleryThinFrame}
+  {/gallery->thinFrame}

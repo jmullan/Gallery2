@@ -1,16 +1,16 @@
-      {galleryLightFrame width="100%"}
+      {gallery->lightFrame width="100%"}
     <table border="0" width="100%" cellspacing="0%" cellpadding="0%">
 	<tr>
 	  <td>
 	    <table border="0" width="100%" cellspacing="0%" cellpadding="0%">
 		<tr>
 		  <td>
-		    {galleryText one="%d item in this album" 
+		    {gallery->text one="%d item in this album" 
 	                         many="%d items in this album"
 	                         count=$totalChildCount
 	                         arg1=$totalChildCount}
 		    {if $totalPageCount > 1}
-		    {galleryText text="on %d pages" arg1=$totalPageCount}
+		    {gallery->text text="on %d pages" arg1=$totalPageCount}
 		    {/if}
 		  </td>
 		  <td align="right">
@@ -98,12 +98,12 @@
 
 		{if !empty($child.childCount)}
 		<br>
-		{gallerySmallerFontSize}
-		{galleryText one="This album contains %d item"
+		{gallery->smallerFontSize}
+		{gallery->text one="This album contains %d item"
                              many="This album contains %d items"
                              count=$child.childCount
                              arg1=$child.childCount}
-		{/gallerySmallerFontSize}
+		{/gallery->smallerFontSize}
 		{else}
 		&nbsp
 		{/if}
@@ -149,4 +149,4 @@
     {/if}
 
   </table>
-    {/galleryLightFrame}
+    {/gallery->lightFrame}

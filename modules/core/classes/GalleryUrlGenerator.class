@@ -26,26 +26,26 @@
  */
 
 /**
- * This is a GalleryModule that has template support.
+ * Url Generator
  *
  * @package GalleryCore
  * @subpackage Classes
  */
-class GalleryTemplateModule extends GalleryModule {
-
+class GalleryUrlGenerator {
     /*
      * ****************************************
      *                 Members
      * ****************************************
      */
 
-    /**
-     * The template instance
+    /**  
+     * The base Gallery URL.  Everything else is an argument to this.
+     * 
      *
-     * @var object GalleryTemplate $_template
+     * @var array $_baseUrl
      * @access private
      */
-    var $_template;
+    var $_baseUrl;
 
     /*
      * ****************************************
@@ -54,39 +54,37 @@ class GalleryTemplateModule extends GalleryModule {
      */
 
     /**
-     * Initialize our GalleryTemplate instance
+     * Constructor
      *
-     * @return object GalleryStatus a status code
+     * @param string the base URL
      */
-    function init() {
-	global $gallery;
-
-	$ret = parent::init();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-	
-	$templateDir = $gallery->getConfig('code.gallery.modules') . $this->getName() . '/templates/';
-	$platform = $gallery->getPlatform();
-	if (!$platform->file_exists($templateDir)) {
-	    $gallery->debug("Missing theme template dir: $templateDir");
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-	
-	$this->_template = new GalleryTemplate($templateDir);
-	$this->_template->setTranslationBase('modules', $this->getName());
-
-	return GalleryStatus::success();
+    function GalleryUrlGenerator($baseUrl) {
+	$this->_baseUrl = $baseUrl;
     }
 
     /**
-     * Get the configured GalleryTemplate instance
-     *
-     * @return object GalleryTemplate a template instance
+     * Return a valid Gallery URL.
      */
-    function &_getTemplate() {
-	return $this->_template;
+    function generateUrl($params=array()) {
+	global $gallery;
+	    
+	$session =& $gallery->getSession();
+	if (!($session->isUsingCookies())) {
+	    list ($sessionKey, $sessionId) = $session->getSessionDescriptor();
+	    $params[$sessionKey] = $sessionId;
+	}
+	    
+	foreach ($params as $key => $value) {
+	    $args[] = GALLERY_FORM_VARIABLE_PREFIX . "$key=$value";
+	}
+	    
+	$url = $this->_baseUrl;
+	if (isset($args)) {
+	    $url .= '?' . join('&', $args);
+	}
+	    
+	return $url;
     }
-    
 }
+
 ?>

@@ -37,13 +37,6 @@
 class SiteAdminView extends GalleryView {
 
     /**
-     * @see GalleryView::useDefaultTheme
-     */
-    function useDefaultTheme() {
-	return true;
-    }
-
-    /**
      * @see GalleryView::renderHead
      */
     function renderHead() {
@@ -55,7 +48,7 @@ class SiteAdminView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$template = $this->getTemplate();
+	$template = $this->_getTemplate();
 	$html = $template->render('SiteAdminHead.tpl');
 	return array(GalleryStatus::success(), $html);
     }
@@ -116,7 +109,7 @@ class SiteAdminView extends GalleryView {
 	    $subViewHtml = '';
 	}
 
-	$template = $this->getTemplate();
+	$template = $this->_getTemplate();
 	$template->setVariable('subViewChoices', $subViewChoices);
 	$template->setVariable('subViewHtml', $subViewHtml);
 	$html = $template->render('SiteAdmin.tpl');

@@ -68,8 +68,11 @@ class ItemAddAlbumController extends GalleryController {
 	     * Validate the input data.
 	     */
 	    $platform = $gallery->getPlatform();
-	    
-	    if (!$platform->isLegalPathComponent($form['pathComponent'])) {
+
+	    if (empty($form['pathComponent'])) {
+		GalleryUtilities::putRequestVariable('form.error.pathComponent.missing', 1);
+		$error = true;
+	    } else if (!$platform->isLegalPathComponent($form['pathComponent'])) {
 		GalleryUtilities::putRequestVariable('form.error.pathComponent.invalid', 1);
 		$error = true;
 	    }
@@ -117,8 +120,8 @@ class ItemAddAlbumController extends GalleryController {
 	}
 
 	if (!empty($redirectParams)) {
-	    $templateAdapter = $gallery->getTemplateAdapter();
-	    $results['redirect'] = $templateAdapter->url($redirectParams);
+	    $urlGenerator = $gallery->getUrlGenerator();
+	    $results['redirect'] = $urlGenerator->generateUrl($redirectParams);
 	} else {
 	    if (empty($results['view'])) {
 		$results['view'] = 'core:ItemAdmin';
@@ -182,7 +185,7 @@ class ItemAddAlbumView extends GalleryView {
 	$parents[] = $item->getMemberData();
 	
 	/* Render the HTML body */
-	$template = $this->getTemplate();
+	$template = $this->_getTemplate();
 	$template->setVariable('form', $form);
 	$template->setVariable('item', $item->getMemberData());
 	$template->setVariable('parents', $parents);

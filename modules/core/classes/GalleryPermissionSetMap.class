@@ -409,11 +409,7 @@ class GalleryPermissionSetMap_core {
 	     * can be returned.
 	     */
 
-	    list ($ret, $translator) = $gallery->getTranslator();
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    
+	    $translator =& $gallery->getTranslator();
 	    $storage = $gallery->getStorage();
 	    while ($result = $searchResults->nextResult()) {
 		$bits = $storage->convertBitsToInt($result[3]);

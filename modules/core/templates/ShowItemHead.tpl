@@ -5,4 +5,4 @@
     {$item.title}
     {/if}
   </title>
-  {galleryStyle}
+  {gallery->style}

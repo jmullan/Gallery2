@@ -70,7 +70,8 @@ class GalleryLayout {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
 	
-	$this->_template = new GalleryTemplate('layouts', $layoutName, $templateDir);
+	$this->_template = new GalleryTemplate($templateDir);
+	$this->_template->setTranslationBase('layouts', $layoutName);
 	return GalleryStatus::success();
     }
 
@@ -79,7 +80,7 @@ class GalleryLayout {
      *
      * @return object GalleryTemplate a template instance
      */
-    function &getTemplate() {
+    function &_getTemplate() {
 	return $this->_template;
     }
 
@@ -121,7 +122,7 @@ class GalleryLayout {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$templateAdapter = $gallery->getTemplateAdapter();
+	$urlGenerator = $gallery->getUrlGenerator();
 
 	$links = array();
 	foreach ($moduleStatus as $moduleName => $status) {
@@ -143,7 +144,7 @@ class GalleryLayout {
 	    /* Turn the URL params into an actual URL */
 	    for ($i = 0; $i < sizeof($links[$moduleName]); $i++) {
 		$links[$moduleName][$i]['url'] =
-		    $templateAdapter->url($links[$moduleName][$i]['params']);
+		    $urlGenerator->generateUrl($links[$moduleName][$i]['params']);
 	    }
 
 	    if (empty($links[$moduleName])) {
@@ -232,7 +233,7 @@ class GalleryLayout {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$templateAdapter = $gallery->getTemplateAdapter();
+	$urlGenerator = $gallery->getUrlGenerator();
 
 	$itemLinks = array();
 	foreach ($moduleStatus as $moduleName => $status) {
@@ -255,7 +256,7 @@ class GalleryLayout {
 	    /* Refactor into: array[itemId][moduleName][links] */
 	    foreach ($moduleLinks as $itemId => $links) {
 		foreach ($links as $link) {
-		    $link['url'] = $templateAdapter->url($link['params']);
+		    $link['url'] = $urlGenerator->generateUrl($link['params']);
 		    $itemLinks[$itemId][$moduleName][] = $link;
 		}
 	    }

@@ -3,7 +3,7 @@
       <td align="right">
 	{section name=parent loop=$parents}
 	{strip}
-	<a href="{galleryUrl view=core:ShowItem itemId=$parents[parent].id}">
+	<a href="{gallery->url view=core:ShowItem itemId=$parents[parent].id}">
 	  {if $parents[parent].title}
 	  {$parents[parent].title}
 	  {else}
@@ -11,8 +11,8 @@
 	  {/if}
 	</a>
 	&nbsp;
-	<a href="{galleryUrl view=core:ShowItem itemId=$parents[parent].id}">
-	  <img src="{$layoutUrl}/images/nav_home.gif" alt="{galleryText text="up"}"
+	<a href="{gallery->url view=core:ShowItem itemId=$parents[parent].id}">
+	  <img src="{$layoutUrl}/images/nav_home.gif" alt="{gallery->text text="up"}"
 	    width="13" height="11" border="0">
 	</a>
 	{/strip}

@@ -71,8 +71,8 @@ class DeleteCommentController extends GalleryController {
 	} 
 
 	/* Redirect back to the item */
-	$templateAdapter = $gallery->getTemplateAdapter();
-	$results['redirect'] = $templateAdapter->url($return);
+	$urlGenerator = $gallery->getUrlGenerator();
+	$results['redirect'] = $urlGenerator->generateUrl($return);
 
 	return array(GalleryStatus::success(), $results);
     }
@@ -100,7 +100,7 @@ class DeleteCommentView extends GalleryView {
 	}
 
 	/* Render the HTML head */
-	$template = $this->getTemplate();
+	$template = $this->_getTemplate();
 	$template->setVariable('item', $item->getMemberData());
 	$html = $template->render('DeleteCommentHead.tpl');
 	return array(GalleryStatus::success(), $html);
@@ -146,7 +146,7 @@ class DeleteCommentView extends GalleryView {
 	}
 
 	/* Render the HTML body */
-	$template = $this->getTemplate();
+	$template = $this->_getTemplate();
 	
 	if (!empty($thumbnailTable)) {
 	    $thumbnail = $thumbnailTable[$item->getId()];

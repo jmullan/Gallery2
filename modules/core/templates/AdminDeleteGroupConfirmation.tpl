@@ -1,17 +1,17 @@
 
 <center>
-{gallerySuccessFontColor}
-{galleryBiggerFontSize}
-{galleryText text="Group '%s' has been successfully deleted."
+{gallery->successFontColor}
+{gallery->biggerFontSize}
+{gallery->text text="Group '%s' has been successfully deleted."
              arg1=$groupName}
-{/galleryBiggerFontSize}
-{/gallerySuccessFontColor}
+{/gallery->biggerFontSize}
+{/gallery->successFontColor}
 
 <br>
 <br>
 
-<a href="{galleryUrl view='core:SiteAdmin' subView='core:AdminGroups'}">
-{galleryText text="Return to Group Administration"}
+<a href="{gallery->url view='core:SiteAdmin' subView='core:AdminGroups'}">
+{gallery->text text="Return to Group Administration"}
 </a>
 
 </center>

@@ -1,62 +1,62 @@
-      {galleryForm controller="$controller"}
-      {galleryInput type="hidden" name="formName"}AdminImageMagick{/galleryInput}
+      {gallery->form controller="$controller"}
+      {gallery->input type="hidden" name="formName"}AdminImageMagick{/gallery->input}
 
       <!-- Embed the hidden return fields -->
       {foreach from=$return key=key item=value}
-      {galleryInput type="hidden" name=$key|string_format:"return.%s"}{$value}{/galleryInput}
+      {gallery->input type="hidden" name=$key|string_format:"return.%s"}{$value}{/gallery->input}
       {/foreach}
 
     <table>
 
 	<tr>
 	  <td colspan="2" align="center">
-	    {galleryBiggerFontSize}
-	    {galleryText text="ImageMagick Settings"}
-	    {/galleryBiggerFontSize}
+	    {gallery->biggerFontSize}
+	    {gallery->text text="ImageMagick Settings"}
+	    {/gallery->biggerFontSize}
 	  </td>
 	</tr>
 
 	<tr>
 	  <td colspan="2">
-	    {galleryText text="ImageMagick is a graphics toolkit that can be used to process images that you upload to Gallery.  You must install the ImageMagick binaries on your machine, then enter the path to them in the text box below.  If you're on a Unix machine, don't forget to make the binaries executable (<i>chmod 755 *</i> in the ImageMagick directory should do it)"}
+	    {gallery->text text="ImageMagick is a graphics toolkit that can be used to process images that you upload to Gallery.  You must install the ImageMagick binaries on your machine, then enter the path to them in the text box below.  If you're on a Unix machine, don't forget to make the binaries executable (<i>chmod 755 *</i> in the ImageMagick directory should do it)"}
 	  </td>
 	</tr>
 
 	<tr>
 	  <td colspan="2">
-	    {galleryBigFontSize}
-	    {galleryText text="Defaults"}
-	    {/galleryBigFontSize}
+	    {gallery->bigFontSize}
+	    {gallery->text text="Defaults"}
+	    {/gallery->bigFontSize}
 	  </td>
 	</tr>
 
 	<tr>
 	  <td align="right">
-	    {galleryText text="Path to ImageMagick:"}
+	    {gallery->text text="Path to ImageMagick:"}
 	  </td>
 	  <td>
-	    {galleryInput type="text" name="form.path"}{$form.path}{/galleryInput}
+	    {gallery->input type="text" name="form.path"}{$form.path}{/gallery->input}
 	  </td>
 	</tr>
 
 	<!-- {if isset($form.error.path.missing)} -->
 	<tr>
 	  <td colspan="2" align="center">
-	    {galleryErrorFontColor}
-	    {galleryText text="You must enter a path to your ImageMagick binaries"}
-	    {/galleryErrorFontColor}
+	    {gallery->errorFontColor}
+	    {gallery->text text="You must enter a path to your ImageMagick binaries"}
+	    {/gallery->errorFontColor}
 	  </td>
 	</tr>
 	<!-- {/if} -->
 
 	<tr>	
 	  <td align="right">
-	    {galleryText text="JPEG Quality"}
+	    {gallery->text text="JPEG Quality"}
 	  </td>
 	  <td>
-	    {gallerySelect name="form.jpegQuality"}
+	    {gallery->select name="form.jpegQuality"}
 	    {html_options values=$jpegQualityList selected=$form.jpegQuality output=$jpegQualityList}
-	    {/gallerySelect}
+	    {/gallery->select}
 	  </td>
 	</tr>
 
@@ -68,9 +68,9 @@
 
 	<tr>
 	  <td colspan="2" align="center">
-	    {galleryInput type="submit" name="form.action.save"}{galleryText text="Save Settings"}{/galleryInput}
-	    {galleryInput type="submit" name="form.action.test"}{galleryText text="Test Settings"}{/galleryInput}
-	    {galleryInput type="submit" name="form.action.cancel"}{galleryText text="Cancel"}{/galleryInput}
+	    {gallery->input type="submit" name="form.action.save"}{gallery->text text="Save Settings"}{/gallery->input}
+	    {gallery->input type="submit" name="form.action.test"}{gallery->text text="Test Settings"}{/gallery->input}
+	    {gallery->input type="submit" name="form.action.cancel"}{gallery->text text="Cancel"}{/gallery->input}
 	  </td>
 	</tr>
 
@@ -86,14 +86,14 @@
 	<table width="50%" cellpadding="0" cellspacing="0" border="1">
 	    <tr>
 	      <td colspan="2" align="center">
-		{galleryBigFontSize}
-		{galleryText text="ImageMagick binary test results"}
-		{/galleryBigFontSize}
+		{gallery->bigFontSize}
+		{gallery->text text="ImageMagick binary test results"}
+		{/gallery->bigFontSize}
 	      </td>
 	    </tr>
 	    <tr>
-	      <th> {galleryText text="Binary Name"} </th>
-	      <th> {galleryText text="Pass/Fail"} </th>
+	      <th> {gallery->text text="Binary Name"} </th>
+	      <th> {gallery->text text="Pass/Fail"} </th>
 	    </tr>
 	{foreach from=$tests item=test}
 	<tr>
@@ -102,9 +102,9 @@
 	  </td>
 	  <td align="center">
 	    {if ($test.success)}
-	    {gallerySuccessFontColor}{galleryText text="Passed"}{/gallerySuccessFontColor}
+	    {gallery->successFontColor}{gallery->text text="Passed"}{/gallery->successFontColor}
 	    {else}
-	    {galleryErrorFontColor}{galleryText text="Failed"}{/galleryErrorFontColor}
+	    {gallery->errorFontColor}{gallery->text text="Failed"}{/gallery->errorFontColor}
 	    {/if}
 	  </td>
 	</tr>
@@ -112,7 +112,7 @@
 	{if empty($test.success) && !empty($test.results)}
 	<tr>
 	  <td colspan="2">
-	    {galleryText text="Error messages:"}
+	    {gallery->text text="Error messages:"}
 	    <br>
 	    {foreach from=$test.results item=line}
 	    <pre>{$line}</pre>
@@ -128,5 +128,5 @@
     {/if}
 
   </table>
-    {/galleryForm}
+    {/gallery->form}
     

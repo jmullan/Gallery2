@@ -5,7 +5,7 @@
 {/if}
 
 <title>
-{galleryText text="Delete a comments for %s" arg1=$title}
+{gallery->text text="Delete a comments for %s" arg1=$title}
 </title>
-{galleryStyle}
+{gallery->style}
 

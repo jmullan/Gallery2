@@ -159,12 +159,29 @@ class Gallery {
     var $_storage;
 
     /**
+     * The adapter between the template system and any Gallery callbacks that
+     * we want to use during the template process.
+     *
+     * @var object GalleryTemplateAdapter $_templateAdapter
+     * @access private
+     */
+    var $_templateAdapter;
+
+    /**
      * Instance of the GalleryTranslator class
      *
-     * @var array $_translator
+     * @var object $_translator
      * @access private
      */
     var $_translator;
+
+    /**
+     * Instance of the GalleryUrlGenerator class
+     *
+     * @var object $_urlGenerator
+     * @access private
+     */
+    var $_urlGenerator;
 
     /**
      * The time at which we should cease whatever operation we're doing
@@ -202,27 +219,7 @@ class Gallery {
     function reset() {
 	$this->_modules = array();
 	$this->_locks = array();
-    }
-
-    /**
-     * Return the id of the GalleryItem associated with the path provided
-     *
-     * Return the id associated with the given path. Example path:
-     * "/birthdays/fred" .. this is the "fred" item in the "birthdays"
-     * item.  It doesn't really matter what types of items these are, as
-     * long as the path is legitimate.
-     *
-     * @access public
-     * @param string the path to a GalleryItem
-     * @return array object GalleryStatus a status code
-     *               int the id of the GalleryItem (or null)
-     */
-    function getIdByPath($path) {
-	$storage = $this->getStorage();
-
-	/*
-	 * XXX: do this in applogic, not in the storage class.
-	 */
+	$this->_templateAdapter = null;
     }
 
     /**
@@ -326,9 +323,6 @@ class Gallery {
     }
 
     /**
-     * XXX: this is just around for transition purposes.  Eventually replace
-     * Gallery::search with this one.
-     *
      * @see GalleryStorage::search()
      */
     function search($query, $data=array(), $options=array()) {
@@ -847,24 +841,6 @@ class Gallery {
     }
 
     /**
-     * Register a template adapter.
-     *
-     * @param object GalleryTemplateAdapter 
-     */
-    function setTemplateAdapter($templateAdapter) {
-	$this->_templateAdapter = $templateAdapter;
-    }
-
-    /**
-     * Return the registered template adapter.
-     *
-     * @return object GalleryTemplateAdapter 
-     */
-    function &getTemplateAdapter() {
-	return $this->_templateAdapter;
-    }
-
-    /**
      * Get the status of all modules
      *
      * @return array object GalleryStatus as status code
@@ -1112,15 +1088,39 @@ class Gallery {
     }
 
     /**
-     * Return a reference to the GalleryTranslator instance
+     * Set the URL generator
      *
-     * Create and initialize new instance if necessary.
+     * @param object GalleryUrlGenerator
+     */
+    function setUrlGenerator($urlGenerator) {
+	$this->_urlGenerator = $urlGenerator;
+    }
+
+    /**
+     * Get the URL generator
      *
-     * @return object GalleryTranslator
+     * @return object GalleryUrlGenerator
+     */
+    function getUrlGenerator() {
+	return $this->_urlGenerator;
+    }
+
+    /**
+     * Return a reference to our GalleryTranslator instance
+     *
+     * @return array object GalleryTranslator
      */
     function &getTranslator() {
-	if (empty($this->_translator)) {
+	return $this->_translator;
+    }
 
+    /**
+     * Initialize our GalleryTranslator
+     *
+     * @return object GalleryStatus a status code
+     */
+    function initTranslator() {
+	if (empty($this->_translator)) {
 	    /* Load the translator class */
 	    require_once(dirname(__FILE__) . '/GalleryTranslator.class');
 	    
@@ -1131,18 +1131,18 @@ class Gallery {
 	    if (!empty($activeUserId)) {
 		list ($ret, $activeUser) = $this->getActiveUser();
 		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return $ret->wrap(__FILE__, __LINE__);
 		}
 		$activeUserLanguage = $activeUser->getLanguage();
 	    }
 
 	    $ret = $this->_translator->init($activeUserLanguage);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 
-	return array(GalleryStatus::success(), &$this->_translator);
+	return GalleryStatus::success();
     }
 
     /**
@@ -1356,5 +1356,17 @@ class Gallery {
 	return GalleryStatus::success();
     }
 
+    /**
+     * Return the template adapter.  There is only ever one in the system.
+     *
+     * @return object GalleryTemplateAdapter
+     */
+    function &getTemplateAdapter() {
+	if (!isset($this->_templateAdapter)) {
+	    $this->_templateAdapter = new GalleryTemplateAdapter();
+	}
+
+	return $this->_templateAdapter;
+    }
 }
 ?>

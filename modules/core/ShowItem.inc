@@ -36,6 +36,18 @@
 class ShowItemView extends GalleryView {
 
     /**
+     * @see GalleryView::getThemeName
+     */
+    function getThemeName() {
+	list ($ret, $item) = $this->_getItem();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	return array(GalleryStatus::success(), $item->getTheme());
+    }
+
+    /**
      * @see GalleryView::renderHead
      */
     function renderHead() {
@@ -46,7 +58,7 @@ class ShowItemView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$template = $this->getTemplate();
+	$template = $this->_getTemplate();
 	$template->setVariable('item', $item->getMemberData());
 	$html = $template->render('ShowItemHead.tpl');
 	return array(GalleryStatus::success(), $html);

@@ -1,16 +1,16 @@
-    {galleryForm controller="$controller" enctype="multipart/form-data"}
-    {galleryInput type="hidden" name="formName"}ItemAddChildren{/galleryInput}
-    {galleryInput type="hidden" name="itemId"}{$item.id}{/galleryInput}
+    {gallery->form controller="$controller" enctype="multipart/form-data"}
+    {gallery->input type="hidden" name="formName"}ItemAddChildren{/gallery->input}
+    {gallery->input type="hidden" name="itemId"}{$item.id}{/gallery->input}
     <table border="0" cellspacing="0" cellpadding="0">
 	<tr>
 	  <td>
 	    <center>
-	      {galleryBiggerFontSize}
-	      {galleryText text="Add Items to this Album"}
-	      {/galleryBiggerFontSize}
+	      {gallery->biggerFontSize}
+	      {gallery->text text="Add Items to this Album"}
+	      {/gallery->biggerFontSize}
 	    </center>
 	    <br>
-	    {galleryText text="Gallery can handle files of any format.  However, it can only create automatic resizes and thumbnails for certain types of files."}
+	    {gallery->text text="Gallery can handle files of any format.  However, it can only create automatic resizes and thumbnails for certain types of files."}
 	  </td>
 	</tr>
 
@@ -22,16 +22,16 @@
 
 	<tr>
 	  <td>
-	  {galleryBigFontSize}
-	  {galleryText text="Add Files From Your Computer"}
-	  {/galleryBigFontSize}
+	  {gallery->bigFontSize}
+	  {gallery->text text="Add Files From Your Computer"}
+	  {/gallery->bigFontSize}
 	  <br>
-	  {galleryText one="Upload a file directly from your computer."
+	  {gallery->text one="Upload a file directly from your computer."
 	               many="Upload up to %d files directly from your computer."
 	               count=$form.uploadBoxCount
 	               arg1=$form.uploadBoxCount}
-	  {galleryText text="Enter the full path to the file and an optional caption in the boxes below."}
-	  {galleryInput type="hidden" name="form.uploadBoxCount"}{$form.uploadBoxCount}{/galleryInput}
+	  {gallery->text text="Enter the full path to the file and an optional caption in the boxes below."}
+	  {gallery->input type="hidden" name="form.uploadBoxCount"}{$form.uploadBoxCount}{/gallery->input}
 	  </td>
 	</tr>
 
@@ -43,21 +43,21 @@
 		<tr>
 		  <td align="right">
 		    <b>
-		      {galleryText text="File: "}
+		      {gallery->text text="File: "}
 		    </b>
 		  </td>
 		  <td>
-		    {galleryInput name=form.fileUpload.$iteration type="file" size="60"}{/galleryInput}
+		    {gallery->input name=form.fileUpload.$iteration type="file" size="60"}{/gallery->input}
 		  </td>
 		</tr>
 		<tr>
 		  <td align="right" valign="top">
 		    <b>
-		      {galleryText text="Caption: "}
+		      {gallery->text text="Caption: "}
 		    </b>
 		  </td>
 		  <td>
-		    {galleryTextArea rows="2" cols="60" name=form.fileUpload.$iteration.caption}{/galleryTextArea}
+		    {gallery->textArea rows="2" cols="60" name=form.fileUpload.$iteration.caption}{/gallery->textArea}
 		  </td>
 		</tr>
 
@@ -75,7 +75,7 @@
 		    &nbsp;
 		  </td>
 		  <td>
-		    {galleryInput type="submit" name="form.action.addFromComputer"}{galleryText text="Add Items"}{/galleryInput}
+		    {gallery->input type="submit" name="form.action.addFromComputer"}{gallery->text text="Add Items"}{/gallery->input}
 		  </td>
 		</tr>
 	    </table>
@@ -90,11 +90,11 @@
 
 	<tr>
 	  <td>
-	  {galleryBigFontSize}
-	  {galleryText text="Add From Your Server"}
-	  {/galleryBigFontSize}
+	  {gallery->bigFontSize}
+	  {gallery->text text="Add From Your Server"}
+	  {/gallery->bigFontSize}
 	  <br>
-	  {galleryText text="Not implemented yet"}
+	  {gallery->text text="Not implemented yet"}
 	  </td>
 	</tr>
 
@@ -106,13 +106,13 @@
 
 	<tr>
 	  <td>
-	  {galleryBigFontSize}
-	  {galleryText text="Add From a Website"}
-	  {/galleryBigFontSize}
+	  {gallery->bigFontSize}
+	  {gallery->text text="Add From a Website"}
+	  {/gallery->bigFontSize}
 	  <br>
-	  {galleryText text="Not implemented yet"}
+	  {gallery->text text="Not implemented yet"}
 	  </td>
 	</tr>
 
     </table>
-    {/galleryForm}
+    {/gallery->form}

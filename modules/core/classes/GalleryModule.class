@@ -87,15 +87,7 @@ class GalleryModule {
 	    $params = array('text' => $params);
 	}
 
-	/* Get the translator.  Jump through hoops to get it as a reference */
-	$reply = $gallery->getTranslator();
-	if ($reply[0]->isError()) {
-	    $gallery->debug($reply[0]->getAsHtml());
-	    return 'Translation error';
-	} else {
-	    $translator =& $reply[1];
-	}
-
+	$translator =& $gallery->getTranslator();
 	list ($ret, $content) = $translator->translate(
 	    'modules_' . $this->getName(),
 	    $gallery->getConfig('code.gallery.modules') . $this->getName(), $params);

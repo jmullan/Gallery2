@@ -95,8 +95,8 @@ class AdminDeleteGroupController extends GalleryController {
 	}
 
 	if (!empty($redirectParams)) {
-	    $templateAdapter = $gallery->getTemplateAdapter();
-	    $results['redirect'] = $templateAdapter->url($redirectParams);
+	    $urlGenerator = $gallery->getUrlGenerator();
+	    $results['redirect'] = $urlGenerator->generateUrl($redirectParams);
 	} else {
 	    if (empty($results['view'])) {
 		$results['view'] = 'core:SiteAdmin';
@@ -142,7 +142,7 @@ class AdminDeleteGroupView extends GalleryView {
 	$isAllAdmins = ($group->getGroupType() == GROUP_SITE_ADMINS);
 	
 	/* Render the HTML body */
-	$template = $this->getTemplate();
+	$template = $this->_getTemplate();
 	$template->setVariable('groupId', $groupId);
 	$template->setVariable('groupName', $group->getGroupName());
 	$template->setVariable('isAllUsers', $isAllUsers);

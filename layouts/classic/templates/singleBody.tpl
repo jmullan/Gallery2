@@ -1,4 +1,4 @@
-      {galleryLightFrame width="100%"}
+      {gallery->lightFrame width="100%"}
     <table border="0" width="100%" cellspacing="0%" cellpadding="0%">
 	<tr>
 	  <td>
@@ -61,18 +61,18 @@
 		    {assign var="image" value=$imageViews.$imageViewsIndex}
 
 		    {if ($image.inline)}
-		    {galleryThinFrame}
-		    <img src="{galleryUrl view=core:DownloadItem itemId=$image.id}"
+		    {gallery->thinFrame}
+		    <img src="{gallery->url view=core:DownloadItem itemId=$image.id}"
 		    {if ($image.width && $image.height)}
 		         width="{$image.width}"
 		         height="{$image.height}"
 		    {/if}
 		         border="0"
 		    >
-		    {/galleryThinFrame}
+		    {/gallery->thinFrame}
 		    {else}
-		    <a href="{galleryUrl view=core:DownloadItem itemId=$image.id}">
-		    {galleryText text="Download this item"} 
+		    <a href="{gallery->url view=core:DownloadItem itemId=$image.id}">
+		    {gallery->text text="Download this item"} 
 		    </a>
 		    {/if}
 		    {/strip}
@@ -88,7 +88,7 @@
 		    {strip}
 		    {section name=imageView loop=$imageViews}
 		    {if $smarty.section.imageView.index != $imageViewsIndex}
-		    <a href="{galleryUrl view=core:ShowItem itemId=$item.id imageViewsIndex=$smarty.section.imageView.index}">
+		    <a href="{gallery->url view=core:ShowItem itemId=$item.id imageViewsIndex=$smarty.section.imageView.index}">
 		      {else}
 		      <b>
 			{/if}
@@ -96,9 +96,9 @@
 			{if $imageViews[imageView].inline}
 			[
 			{if empty($imageViews[imageView].width)}
-			{galleryText text="??? x ???"}
+			{gallery->text text="??? x ???"}
 			{else}
-			{galleryText text="%d x %d" arg1=$imageViews[imageView].width arg2=$imageViews[imageView].height}
+			{gallery->text text="%d x %d" arg1=$imageViews[imageView].width arg2=$imageViews[imageView].height}
 			{/if}
 			]
 			{/if}
@@ -165,4 +165,4 @@
     {/if}
 
   </table>
-    {/galleryLightFrame}
+    {/gallery->lightFrame}

@@ -80,8 +80,8 @@ class AddCommentController extends GalleryController {
 	} 
 
 	/* Redirect back to the item */
-	$templateAdapter = $gallery->getTemplateAdapter();
-	$results['redirect'] = $templateAdapter->url($return);
+	$urlGenerator = $gallery->getUrlGenerator();
+	$results['redirect'] = $urlGenerator->generateUrl($return);
 
 	return array(GalleryStatus::success(), $results);
     }
@@ -109,7 +109,7 @@ class AddCommentView extends GalleryView {
 	}
 
 	/* Render the HTML head */
-	$template = $this->getTemplate();
+	$template = $this->_getTemplate();
 	$html = $template->render('AddCommentHead.tpl');
 	return array(GalleryStatus::success(), $html);
     }
@@ -140,7 +140,7 @@ class AddCommentView extends GalleryView {
 	}
 
 	/* Render the HTML body */
-	$template = $this->getTemplate();
+	$template = $this->_getTemplate();
 	
 	if (!empty($thumbnailTable)) {
 	    $thumbnail = $thumbnailTable[$item->getId()];

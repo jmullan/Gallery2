@@ -35,14 +35,6 @@
 class GalleryTemplateAdapter {
 
     /**
-     * The base URL to be used in all template methods
-     *
-     * @var $_baseUrl
-     * @access private
-     */
-    var $_baseUrl;
-
-    /**
      * The active theme
      *
      * @var object GalleryTheme a theme instance
@@ -51,62 +43,37 @@ class GalleryTemplateAdapter {
     var $_theme;
 
     /**
-     * The location of the translation base
+     * The base path of our localized data required for translation
      *
      * @var string a directory
-     * @access private
      */
-    var $_translationBase;
+    var $_translationBasePath;
 
     /**
-     * Set the base URL to be used in all template methods
+     * The translation domain (eg modules_core)
      *
-     * @param string the base URL
+     * @var string a gettext domain
      */
-    function setBaseUrl($baseUrl) {
-	$this->_baseUrl = $baseUrl;
-    }
+    var $_translationDomain;
 
     /**
-     * Get the base URL
+     * @see GalleryUrlGenerator::generateUrl()
      *
-     * @return string the base URL
-     */
-    function getBaseUrl() {
-	return $this->_baseUrl;
-    }
-
-    /**
-     * Return a valid URL for a standalone Gallery.
+     * Return a valid Gallery URL, standalone or embedded.
      *
      * @param array data in key/value pairs
      * @return string a URL
      */
     function url($params) {
 	global $gallery;
-
-	$baseUrl = $this->getBaseUrl();
-
-	$session =& $gallery->getSession();
-	if (!($session->isUsingCookies())) {
-	    list ($sessionKey, $sessionId) = $session->getSessionDescriptor();
-	    $params[$sessionKey] = $sessionId;
-	}
-	
-	foreach ($params as $key => $value) {
-	    $args[] = GALLERY_FORM_VARIABLE_PREFIX . "$key=$value";
-	}
-
-	$url = $baseUrl;
-	if (isset($args)) {
-	    $url .= '?' . join('&', $args);
-	}
-
-	return $url;
+	$urlGenerator = $gallery->getUrlGenerator();
+	return $urlGenerator->generateUrl($params);
     }
 
     /**
-     * Return a valid URL for a standalone Gallery.
+     * Return a valid Gallery date.
+     *
+     * @todo This needs to be refactored.
      *
      * @param array data in key/value pairs
      * @return string a URL
@@ -120,119 +87,197 @@ class GalleryTemplateAdapter {
 	
 	return strftime($params['format'], $params['timestamp']);
     }
-    
-    /**
-     * Return an HTML form 
-     *
-     * @param array data in key/value pairs
-     * @param string HTML content to go inside the form
-     * @return string a complete HTML form
-     */
-    function form($params, $content) {
-	global $gallery;
-	
-	$baseUrl = $this->getBaseUrl();
-
-	$session =& $gallery->getSession();
-	if (!($session->isUsingCookies())) {
-	    list ($sessionKey, $sessionId) = $session->getSessionDescriptor();
-	    $params[$sessionKey] = $sessionId;
-	}
-
-	$enctype = null;
-	if (!empty($params['enctype'])) {
-	    $enctype = $params['enctype'];
-	    unset($params['enctype']);
-	}
-	
-	if (empty($params['method'])) {
-	    $method = 'POST';
-	} else {
-	    $method = $params['method'];
-	    unset($params['method']);
-	}
-
-	$result = '<form method="' . $method . '" action="' . $baseUrl . '"';
-	if (!empty($enctype)) {
-	    $result .= ' enctype="' . $enctype . '"';
-	}
-	$result .= '">';
-	$result .= "\n";
-	foreach ($params as $key => $value) {
-	    $result .= '<input type="hidden" ' .
-		'name="' . GALLERY_FORM_VARIABLE_PREFIX . $key . '" ' .
-		'value="' . $value . '">';
-	    $result .= "\n";
-	}
-	$result .= $content;
-	$result .= "\n";
-	$result .= '</form>';
-
-	return $result;
-    }
 
     /**
-     * Translate a string into a localized version
-     *
-     * @see Gallery::translate()
-     * @param array data in key/value pairs
-     * @return string a translated string
+     * @see GalleryTranslator::translate()
      */
     function text($params) {
 	global $gallery;
 
-	/* Get the translator.  Jump through hoops to get it as a reference */
-	$reply = $gallery->getTranslator();
-	if ($reply[0]->isError()) {
-	    $gallery->debug($reply[0]->getAsHtml());
-	    return 'Translation error';
-	} else {
-	    $translator =& $reply[1];
-	}
-
-	/* Translate using the active module */
-	list ($ret, $content) =
-	    $translator->translate($this->_translationBase[0],
-				   $this->_translationBase[1],
-				   $params);
-
+	$translator =& $gallery->getTranslator();
+	list ($ret, $text) = $translator->translate($this->_translationDomain,
+						    $this->_translationBasePath,
+						    $params);
 	if ($ret->isError()) {
-	    $gallery->debug($ret->getAsHtml());
-	    return 'Translation error';
+	    return "[Translation error]";
 	} else {
-	    return $content;
+	    return $text;
 	}
     }
 
+    /* ================================================== */
+    /* BEGIN DELEGATION METHODS */
+
     /**
-     * Call a specific template method.
-     *
-     * @param string the method name (like 'galleryStyle')
-     * @param array key => value attributes
-     * @param string content
+     * @see GalleryTheme::form()
      */
-    function callMethod($method, $params, $content) {
-	global $gallery;
+    function form($params, $content) {
+	return $this->_theme->form($params, $content);
+    }
 
-	if (!strncmp($method, 'gallery', 7)) {
-	    $method = substr($method, 7); // get rid of the 'gallery' part
+    /**
+     * @see GalleryTheme::input()
+     */
+    function input($params, $content) {
+	return $this->_theme->input($params, $content);
+    }
 
-	    /* Check first to see if this class can handle the method */
-	    if (method_exists($this, $method)) {
-		return $this->$method($params, $content);
-	    } else if (isset($this->_theme)) {
-		/* See if the theme can handle it */
-		if (method_exists($this->_theme, $method)) {
-		    return $this->_theme->$method($params, $content);
-		}
-	    }
-	}
+    /**
+     * @see GalleryTheme::select()
+     */
+    function select($params, $content) {
+	return $this->_theme->select($params, $content);
+    }
+    
+    /**
+     * @see GalleryTheme::textarea()
+     */
+    function textarea($params, $content) {
+	return $this->_theme->textarea($params, $content);
+    }
 
-	$result = "Unknown template method: $method";
-	if (!isset($this->_theme)) {
-	    $result .= " [no theme specified]";
-	}
-	return $result;
+    /**
+     * @see GalleryTheme::style()
+     */
+    function style($params) {
+	return $this->_theme->style($params);
+    }
+
+    /**
+     * @see GalleryTheme::smallestFontSize()
+     */
+    function smallestFontSize($params, $content) {
+	return $this->_theme->smallestFontSize($params, $content);
+    }
+
+    /**
+     * @see GalleryTheme::smallerFontSize()
+     */
+    function smallerFontSize($params, $content) {
+	return $this->_theme->smallerFontSize($params, $content);
+    }
+
+    /**
+     * @see GalleryTheme::smallFontSize()
+     */
+    function smallFontSize($params, $content) {
+	return $this->_theme->smallFontSize($params, $content);
+    }
+
+    /**
+     * @see GalleryTheme::bigFontSize()
+     */
+    function bigFontSize($params, $content) {
+	return $this->_theme->bigFontSize($params, $content);
+    }
+
+    /**
+     * @see GalleryTheme::biggerFontSize()
+     */
+    function biggerFontSize($params, $content) {
+	return $this->_theme->biggerFontSize($params, $content);
+    }
+
+    /**
+     * @see GalleryTheme::biggestFontSize()
+     */
+    function biggestFontSize($params, $content) {
+	return $this->_theme->biggestFontSize($params, $content);
+    }
+
+    /**
+     * @see GalleryTheme::successFontColor()
+     */
+    function successFontColor($params, $content) {
+	return $this->_theme->successFontColor($params, $content);
+    }
+
+    /**
+     * @see GalleryTheme::warningFontColor()
+     */
+    function warningFontColor($params, $content) {
+	return $this->_theme->warningFontColor($params, $content);
+    }
+
+    /**
+     * @see GalleryTheme::errorFontColor()
+     */
+    function errorFontColor($params, $content) {
+	return $this->_theme->errorFontColor($params, $content);
+    }
+
+    /**
+     * @see GalleryTheme::highlight1()
+     */
+    function highlight1($params, $content) {
+	return $this->_theme->highlight1($params, $content);
+    }
+    
+    /**
+     * @see GalleryTheme::highlight2()
+     */
+    function highlight2($params, $content) {
+	return $this->_theme->highlight2($params, $content);
+    }
+    
+    /**
+     * @see GalleryTheme::thinFrame()
+     */
+    function thinFrame($params, $content) {
+	return $this->_theme->thinFrame($params, $content);
+    }
+
+    /**
+     * @see GalleryTheme::lightFrame()
+     */
+    function lightFrame($params, $content) {
+	return $this->_theme->lightFrame($params, $content);
+    }
+
+    /**
+     * @see GalleryTheme::heavyFrame()
+     */
+    function heavyFrame($params, $content) {
+	return $this->_theme->heavyFrame($params, $content);
+    }
+
+    /**
+     * @see GalleryTheme::threeDFrame()
+     */
+    function threeDFrame($params, $content) {
+	return $this->_theme->threeDFrame($params, $content);
+    }
+
+    /* END DELEGATION METHODS */
+    /* ================================================== */
+    
+    /**
+     * Return an array of the theme methods that operate on a block of text.
+     *
+     * @static
+     * @staticvar array $_blockMethods a list of methods
+     */
+    function getBlockMethods() {
+	static $_blockMethods = array('bigFontSize',
+				      'biggerFontSize',
+				      'biggestFontSize',
+				      'errorFontColor',
+				      'form',
+				      'heavyFrame',
+				      'highlight1',
+				      'highlight2',
+				      'input',
+				      'lightFrame',
+				      'select',
+				      'smallFontSize',
+				      'smallerFontSize',
+				      'smallestFontSize',
+				      'successFontColor',
+				      'textArea',
+				      'thinFrame',
+				      'threeDFrame',
+				      'warningFontColor');
+	return $_blockMethods;
     }
 
     /**
@@ -254,23 +299,18 @@ class GalleryTemplateAdapter {
     }
 
     /**
-     * Set the active translation base
+     * Specify the translation base for this template
      *
-     * @param string a translation base
-     */ 
-    function setTranslationBase($module, $path) {
-	$this->_translationBase = array($module, $path);
+     * @param componentType the type of component we're using (module, layout, theme, etc)
+     * @param componentName the name of the component (core, comment, classic, etc)
+     */
+    function setTranslationBase($componentType, $componentName) {
+	global $gallery;
+	$this->_translationDomain = $componentType . '_' . $componentName;
+	$this->_translationBasePath =
+	    $gallery->getConfig('code.gallery.' . $componentType) .
+	    $componentName;
     }
-
-    /**
-     * Get the active translation base
-     *
-     * @return string a translation base
-     */ 
-    function getTranslationBase() {
-	return $this->_translationBase;
-    }
-    
 }
 
 ?>

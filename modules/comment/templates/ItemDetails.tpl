@@ -3,55 +3,55 @@
     {if sizeof($comments) < $totalComments }
     <tr>
       <td align="center">
-	{galleryBigFontSize}
-	{galleryText text="Recent comments"}
-	{/galleryBigFontSize}
-	{gallerySmallFontSize}
-	<a href="{galleryUrl view="comment:ShowComments" itemId=$item.id}">
-	  {galleryText text="(view all %d comments)" arg1=$totalComments}
+	{gallery->bigFontSize}
+	{gallery->text text="Recent comments"}
+	{/gallery->bigFontSize}
+	{gallery->smallFontSize}
+	<a href="{gallery->url view="comment:ShowComments" itemId=$item.id}">
+	  {gallery->text text="(view all %d comments)" arg1=$totalComments}
 	</a>
-	{/gallerySmallFontSize}
+	{/gallery->smallFontSize}
       </td>
     </tr>
     {/if}
     {foreach from=$comments item=comment}
     <tr>
       <td width="100%">
-	{galleryLightFrame width="100%"}
-	{galleryHighlight1}
-	{galleryBigFontSize}
+	{gallery->lightFrame width="100%"}
+	{gallery->highlight1}
+	{gallery->bigFontSize}
 	{$comment.commenter.userName}
-	{/galleryBigFontSize}
+	{/gallery->bigFontSize}
 	{if !empty($comment.host)}
 	{if $can.viewIp}
 	({$comment.host})
 	{/if}
 	{/if}
 	{if $can.edit}
-	<a href="{galleryUrl view="comment:EditComment"
+	<a href="{gallery->url view="comment:EditComment"
 	               itemId=$item.id
 	               commentId=$comment.id
 	               return_view="core:ShowItem"
 	               return_itemId=$item.id}">
-	  [{galleryText text="edit"}]
+	  [{gallery->text text="edit"}]
 	</a>
 	{/if}
 	{if $can.delete}
-	<a href="{galleryUrl view="comment:DeleteComment"
+	<a href="{gallery->url view="comment:DeleteComment"
 	               itemId=$item.id
 	               commentId=$comment.id
 	               return_view="core:ShowItem"
 	               return_itemId=$item.id}">
-	  [{galleryText text="delete"}]
+	  [{gallery->text text="delete"}]
 	</a>
 	{/if}
 	<br>
-	{galleryDate timestamp=$comment.date format="%e-%b-%Y %H:%M"}
-	{/galleryHighlight1}
-	{galleryHighlight2}
+	{gallery->date timestamp=$comment.date format="%e-%b-%Y %H:%M"}
+	{/gallery->highlight1}
+	{gallery->highlight2}
 	{$comment.comment}
-	{/galleryHighlight2}
-	{/galleryLightFrame}
+	{/gallery->highlight2}
+	{/gallery->lightFrame}
       </td>
     </tr>
     {/foreach}

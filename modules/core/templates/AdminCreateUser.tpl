@@ -1,24 +1,24 @@
-  {galleryForm controller="$controller"}
-  {galleryInput type="hidden" name="formName"}AdminCreateUser{/galleryInput}
+  {gallery->form controller="$controller"}
+  {gallery->input type="hidden" name="formName"}AdminCreateUser{/gallery->input}
   <table width="100%" border="0" cellspacing="3" cellpadding="3">
 
     <tr>
       <td align="center" colspan="2"}
-	{galleryBigFontSize}
-	{galleryText text="Create a new user"}
-	{/galleryBigFontSize}
+	{gallery->bigFontSize}
+	{gallery->text text="Create a new user"}
+	{/gallery->bigFontSize}
       </td>
     </tr>
 
     <tr>
       <td align="right" width="40%">
-	{galleryText text="Username"}
+	{gallery->text text="Username"}
       </td>
       <td width="60%">
-	{galleryInput type="text" name="form.username"}{$form.username}{/galleryInput}
-	{galleryWarningFontColor}
-	{galleryText text="[required]"}
-	{/galleryWarningFontColor}
+	{gallery->input type="text" name="form.username"}{$form.username}{/gallery->input}
+	{gallery->warningFontColor}
+	{gallery->text text="[required]"}
+	{/gallery->warningFontColor}
       </td>
     </tr>
 
@@ -28,9 +28,9 @@
 	&nbsp;
       </td>
       <td>
-	{galleryErrorFontColor}
-	{galleryText text="You must enter a username"}
-	{/galleryErrorFontColor}
+	{gallery->errorFontColor}
+	{gallery->text text="You must enter a username"}
+	{/gallery->errorFontColor}
       </td>
     </tr>
     {/if}
@@ -41,32 +41,32 @@
 	&nbsp;
       </td>
       <td>
-	{galleryErrorFontColor}
-	{galleryText text="Username '%s' already exists"
+	{gallery->errorFontColor}
+	{gallery->text text="Username '%s' already exists"
 	             arg1=$form.username}
-	{/galleryErrorFontColor}
+	{/gallery->errorFontColor}
       </td>
     </tr>
     {/if}
       
     <tr>
       <td align="right">
-	{galleryText text="Full name"}
+	{gallery->text text="Full name"}
       </td>
       <td>
-	{galleryInput type="text" name="form.fullname"}{$form.fullname}{/galleryInput}
+	{gallery->input type="text" name="form.fullname"}{$form.fullname}{/gallery->input}
       </td>
     </tr>
       
     <tr>
       <td align="right">
-	{galleryText text="Email address"}
+	{gallery->text text="Email address"}
       </td>
       <td>
-	{galleryInput type="text" name="form.email"}{$form.email}{/galleryInput}
-	{galleryWarningFontColor}
-	{galleryText text="[required]"}
-	{/galleryWarningFontColor}
+	{gallery->input type="text" name="form.email"}{$form.email}{/gallery->input}
+	{gallery->warningFontColor}
+	{gallery->text text="[required]"}
+	{/gallery->warningFontColor}
       </td>
     </tr>
       
@@ -76,33 +76,33 @@
 	&nbsp;
       </td>
       <td>
-	{galleryErrorFontColor}
-	{galleryText text="You must enter an email address"}
-	{/galleryErrorFontColor}
+	{gallery->errorFontColor}
+	{gallery->text text="You must enter an email address"}
+	{/gallery->errorFontColor}
       </td>
     </tr>
     {/if}
       
     <tr>
       <td align="right">
-	{galleryText text="Language"}
+	{gallery->text text="Language"}
       </td>
       <td>
-	{gallerySelect name="form.language"}
+	{gallery->select name="form.language"}
 	  {html_options options=$languageList selected=$form.language}
-	{/gallerySelect}
+	{/gallery->select}
       </td>
     </tr>
       
     <tr>
       <td align="right">
-	{galleryText text="Password"}
+	{gallery->text text="Password"}
       </td>
       <td>
-	{galleryInput type="password" name="form.password1"}{/galleryInput}
-	{galleryWarningFontColor}
-	{galleryText text="[required]"}
-	{/galleryWarningFontColor}
+	{gallery->input type="password" name="form.password1"}{/gallery->input}
+	{gallery->warningFontColor}
+	{gallery->text text="[required]"}
+	{/gallery->warningFontColor}
       </td>
     </tr>
       
@@ -112,22 +112,22 @@
 	&nbsp;
       </td>
       <td>
-	{galleryErrorFontColor}
-	{galleryText text="You must enter a password"}
-	{/galleryErrorFontColor}
+	{gallery->errorFontColor}
+	{gallery->text text="You must enter a password"}
+	{/gallery->errorFontColor}
       </td>
     </tr>
     {/if}
       
     <tr>
       <td align="right">
-	{galleryText text="Verify password"}
+	{gallery->text text="Verify password"}
       </td>
       <td>
-	{galleryInput type="password" name="form.password2"}{/galleryInput}
-	{galleryWarningFontColor}
-	{galleryText text="[required]"}
-	{/galleryWarningFontColor}
+	{gallery->input type="password" name="form.password2"}{/gallery->input}
+	{gallery->warningFontColor}
+	{gallery->text text="[required]"}
+	{/gallery->warningFontColor}
       </td>
     </tr>
 
@@ -137,9 +137,9 @@
 	&nbsp;
       </td>
       <td>
-	{galleryErrorFontColor}
-	{galleryText text="You must enter the password a second time"}
-	{/galleryErrorFontColor}
+	{gallery->errorFontColor}
+	{gallery->text text="You must enter the password a second time"}
+	{/gallery->errorFontColor}
       </td>
     </tr>
     {/if}
@@ -150,21 +150,21 @@
 	&nbsp;
       </td>
       <td>
-	{galleryErrorFontColor}
-	{galleryText text="The passwords you entered did not match"}
-	{/galleryErrorFontColor}
+	{gallery->errorFontColor}
+	{gallery->text text="The passwords you entered did not match"}
+	{/gallery->errorFontColor}
       </td>
     </tr>
     {/if}
       
     <tr>
       <td align="center" colspan="2">
-	{galleryInput type="submit" name="form.action.create"}{galleryText text="Create User"}{/galleryInput}
-	{galleryInput type="submit" name="form.action.cancel"}{galleryText text="Cancel"}{/galleryInput}
+	{gallery->input type="submit" name="form.action.create"}{gallery->text text="Create User"}{/gallery->input}
+	{gallery->input type="submit" name="form.action.cancel"}{gallery->text text="Cancel"}{/gallery->input}
       </td>
     </tr>
       
   </table>
-  {/galleryForm}
+  {/gallery->form}
 
   

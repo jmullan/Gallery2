@@ -124,8 +124,8 @@ class AdminEditUserController extends GalleryController {
 	}
 
 	if (!empty($redirectParams)) {
-	    $templateAdapter = $gallery->getTemplateAdapter();
-	    $results['redirect'] = $templateAdapter->url($redirectParams);
+	    $urlGenerator = $gallery->getUrlGenerator();
+	    $results['redirect'] = $urlGenerator->generateUrl($redirectParams);
 	} else {
 	    if (empty($results['view'])) {
 		$results['view'] = 'core:SiteAdmin';
@@ -200,10 +200,7 @@ class AdminEditUserView extends GalleryView {
 	}
 
 	/* Set up our language selection list */
-	list ($ret, $translator) = $gallery->getTranslator();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
+	$translator =& $gallery->getTranslator();
 	$languageList = array();
 	$languageList[''] = '<none>';
 	$supportedLanguages = $translator->getSupportedLanguages();
@@ -215,7 +212,7 @@ class AdminEditUserView extends GalleryView {
 	}
 
 	/* Render the HTML body */
-	$template = $this->getTemplate();
+	$template = $this->_getTemplate();
 	$template->setVariable('form', $form);
 	$template->setVariable('isAnonymous', $isAnonymous);
 	$template->setVariable('languageList', $languageList);

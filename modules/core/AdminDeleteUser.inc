@@ -102,8 +102,8 @@ class AdminDeleteUserController extends GalleryController {
 	}
 
 	if (!empty($redirectParams)) {
-	    $templateAdapter = $gallery->getTemplateAdapter();
-	    $results['redirect'] = $templateAdapter->url($redirectParams);
+	    $urlGenerator = $gallery->getUrlGenerator();
+	    $results['redirect'] = $urlGenerator->generateUrl($redirectParams);
 	} else {
 	    if (empty($results['view'])) {
 		$results['view'] = 'core:SiteAdmin';
@@ -155,7 +155,7 @@ class AdminDeleteUserView extends GalleryView {
 	$isSelf = ($userid == $gallery->getActiveUserId());
 
 	/* Render the HTML body */
-	$template = $this->getTemplate();
+	$template = $this->_getTemplate();
 	$template->setVariable('userid', $userid);
 	$template->setVariable('username', $user->getUserName());
 	$template->setVariable('isSelf', $isSelf);

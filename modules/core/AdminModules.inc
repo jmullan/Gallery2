@@ -118,8 +118,8 @@ class AdminModulesController extends GalleryController {
 	$urlParams['view'] = 'core:SiteAdmin';
 	$urlParams['subView'] = 'core:AdminModules';
 
-	$templateAdapter = $gallery->getTemplateAdapter();
-	$results['redirect'] = $templateAdapter->url($urlParams);
+	$urlGenerator = $gallery->getUrlGenerator();
+	$results['redirect'] = $urlGenerator->generateUrl($urlParams);
 
 	return array(GalleryStatus::success(), $results);
     }
@@ -221,7 +221,7 @@ class AdminModulesView extends GalleryView {
 	}
 
 	/* Render the HTML body */
-	$template = $this->getTemplate();
+	$template = $this->_getTemplate();
 	$template->setVariable('modules', $modules);
 	$template->setVariable('controller', 'core:AdminModules');
 	$html = $template->render('AdminModules.tpl');

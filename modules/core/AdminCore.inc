@@ -71,8 +71,8 @@ class AdminCoreController extends GalleryController {
 	$urlParams['view'] = 'core:SiteAdmin';
 	$urlParams['subView'] = 'core:AdminCore';
 
-	$templateAdapter = $gallery->getTemplateAdapter();
-	$results['redirect'] = $templateAdapter->url($urlParams);
+	$urlGenerator = $gallery->getUrlGenerator();
+	$results['redirect'] = $urlGenerator->generateUrl($urlParams);
 
 	return array(GalleryStatus::success(), $results);
     }
@@ -159,10 +159,7 @@ class AdminCoreView extends GalleryView {
 	}
 
 	/* Set up our language selection list */
-	list ($ret, $translator) = $gallery->getTranslator();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
+	$translator =& $gallery->getTranslator();
 	$languageList = array();
 	$supportedLanguages = $translator->getSupportedLanguages();
 
@@ -218,7 +215,7 @@ class AdminCoreView extends GalleryView {
 	}
 
 	/* Render the HTML body */
-	$template = $this->getTemplate();
+	$template = $this->_getTemplate();
 	$template->setVariable('form', $form);
 	$template->setVariable('layoutList', $layoutList);
 	$template->setVariable('themeList', GalleryTheme::getThemes());

@@ -107,13 +107,10 @@ function GalleryMain($startTime) {
      */
     $gallery->setConfig('url.gallery.base', '');
 
-    /*
-     * Create, configure and register our template adapter.
-     */
-    $templateAdapter = new GalleryTemplateAdapter();
-    $templateAdapter->setBaseUrl($gallery->getConfig('url.gallery.base') .
-				 'main.php');
-    $gallery->setTemplateAdapter($templateAdapter);
+    /* Configure out url Generator for standalone mode. */
+    $urlGenerator = new GalleryUrlGenerator($gallery->getConfig('url.gallery.base') .
+					    'main.php');
+    $gallery->setUrlGenerator($urlGenerator);
 
     /* Figure out the target module/controller */
     list($viewName, $controllerName) =
@@ -151,6 +148,20 @@ function GalleryMain($startTime) {
 		    "Click <a href=\"$results[redirect]\">here</a> to continue.";
 		$master['view']['alreadyRendered'] = true;
 		$showGlobal = true;
+
+		/*
+		 * We need to set a theme here, since we're not expressly
+		 * displaying a view so nobody else will.
+		 */
+		$theme = new GalleryTheme();
+		$ret = $theme->init();
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+
+		/* Pass the theme to the template adapter */
+		$templateAdapter =& $gallery->getTemplateAdapter();
+		$templateAdapter->setTheme($theme);
 	    }
 	}
 	
@@ -213,8 +224,8 @@ function GalleryMain($startTime) {
 	    }
 	} 
 
-	$template = new GalleryTemplate('modules', 'core',
-            $gallery->getConfig('code.gallery.base') . 'templates/');
+	$template = new GalleryTemplate($gallery->getConfig('code.gallery.base') . 'templates/');
+	$template->setTranslationBase('modules', 'core');
 
 	if ($gallery->isProfiling()) {
 	    GalleryProfiler::stop('GalleryMain');
@@ -222,7 +233,6 @@ function GalleryMain($startTime) {
 	}
 
 	$galleryData['version'] = '2';
-
 	$template->setVariable('master', $master);
 	$template->setVariable('gallery', $galleryData);
 	print $template->render('global.tpl');

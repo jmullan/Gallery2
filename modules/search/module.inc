@@ -90,7 +90,7 @@ class SearchModule extends GalleryTemplateModule {
 	    $return[$param] = $value;
 	}
 	
-	$template = $this->getTemplate();
+	$template = $this->_getTemplate();
 	$template->setVariable('view', 'search:SearchScan');
 	$template->setVariable('return', $return);
 	$html = $template->render('SystemContent.tpl');

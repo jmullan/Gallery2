@@ -1,52 +1,18 @@
-    {galleryForm controller="$controller"}
-    {galleryInput type="hidden" name="formName"}ItemEditImage{/galleryInput}
-    {galleryInput type="hidden" name="itemId"}{$item.id}{/galleryInput}
+    {gallery->form controller="$controller"}
+    {gallery->input type="hidden" name="formName"}ItemEditImage{/gallery->input}
+    {gallery->input type="hidden" name="itemId"}{$item.id}{/gallery->input}
     <table border="0" cellspacing="0" cellpadding="0">
 	<tr>
 	  <td align="center">
-	    {galleryBiggerFontSize}
-	    {galleryText text="Edit Image"}
-	    {/galleryBiggerFontSize}
+	    {gallery->biggerFontSize}
+	    {gallery->text text="Edit Image"}
+	    {/gallery->biggerFontSize}
 	  </td>
 	</tr>
 
 	<tr>
 	  <td>
-	   {galleryText text="Certain image manipulation operations (such as rotating and scaling) can cause a permanent change to the original image.  In these cases, Gallery avoids modifying the original image by creating a duplicate that is rotated or scaled to the dimensions that you prefer.  Future operations (viewing, modifying) apply to the duplicate leaving your original image intact.  This preserves your original image, but will consume more disk space."}
-	  </td>
-	</tr>
-
-	<tr>
-	  <td>
-	    &nbsp;
-	  </td>
-	</tr>
-
-	<tr>
-	  <td>
-	    {galleryBigFontSize}
-	    {galleryText text="Rotate"}
-	    {/galleryBigFontSize}
-	  </td>
-	</tr>
-
-	<tr>
-	  <td>
-	    {galleryText text="You can only rotate the image in 90 degree increments."}
-	  </td>
-	</tr>
-
-	<tr>
-	  <td>
-	    {galleryInput type="submit" name="form.action.rotate.counterClockwise"}
-	    {galleryText text="Counter-Clockwise 90&deg;"}
-	    {/galleryInput}
-	    {galleryInput type="submit" name="form.action.rotate.flip"}
-	    {galleryText text="Flip 180&deg;"}
-	    {/galleryInput}
-	    {galleryInput type="submit" name="form.action.rotate.clockwise"}
-	    {galleryText text="Clockwise 90&deg;"}
-	    {/galleryInput}
+	   {gallery->text text="Certain image manipulation operations (such as rotating and scaling) can cause a permanent change to the original image.  In these cases, Gallery avoids modifying the original image by creating a duplicate that is rotated or scaled to the dimensions that you prefer.  Future operations (viewing, modifying) apply to the duplicate leaving your original image intact.  This preserves your original image, but will consume more disk space."}
 	  </td>
 	</tr>
 
@@ -58,34 +24,68 @@
 
 	<tr>
 	  <td>
-	    {galleryBigFontSize}
-	    {galleryText text="Scale"}
-	    {/galleryBigFontSize}
+	    {gallery->bigFontSize}
+	    {gallery->text text="Rotate"}
+	    {/gallery->bigFontSize}
 	  </td>
 	</tr>
 
 	<tr>
 	  <td>
-	    {galleryText text="Shrink or enlarge the original image.  When Gallery scales an image, it maintains the same aspect ratio (height to width) of the original image to avoid distortion.  The value you enter below forms a bounding box in pixels.  Gallery will scale the image until it is as large as possible while still fitting inside the box."}
+	    {gallery->text text="You can only rotate the image in 90 degree increments."}
+	  </td>
+	</tr>
+
+	<tr>
+	  <td>
+	    {gallery->input type="submit" name="form.action.rotate.counterClockwise"}
+	    {gallery->text text="Counter-Clockwise 90&deg;"}
+	    {/gallery->input}
+	    {gallery->input type="submit" name="form.action.rotate.flip"}
+	    {gallery->text text="Flip 180&deg;"}
+	    {/gallery->input}
+	    {gallery->input type="submit" name="form.action.rotate.clockwise"}
+	    {gallery->text text="Clockwise 90&deg;"}
+	    {/gallery->input}
+	  </td>
+	</tr>
+
+	<tr>
+	  <td>
+	    &nbsp;
+	  </td>
+	</tr>
+
+	<tr>
+	  <td>
+	    {gallery->bigFontSize}
+	    {gallery->text text="Scale"}
+	    {/gallery->bigFontSize}
+	  </td>
+	</tr>
+
+	<tr>
+	  <td>
+	    {gallery->text text="Shrink or enlarge the original image.  When Gallery scales an image, it maintains the same aspect ratio (height to width) of the original image to avoid distortion.  The value you enter below forms a bounding box in pixels.  Gallery will scale the image until it is as large as possible while still fitting inside the box."}
 	  </td> 
 	</tr>
 
 	<tr>
 	  <td>
-	    {galleryText text="Target size (in pixels):"}
-	    {galleryInput type="text" size="6" name="form.scale.size"}{$form.scale.size}{/galleryInput}
-	    {galleryInput type="submit" name="form.action.scale"}
-	    {galleryText text="Scale"}
-	    {/galleryInput}
+	    {gallery->text text="Target size (in pixels):"}
+	    {gallery->input type="text" size="6" name="form.scale.size"}{$form.scale.size}{/gallery->input}
+	    {gallery->input type="submit" name="form.action.scale"}
+	    {gallery->text text="Scale"}
+	    {/gallery->input}
 	  </td>
 	</tr>
 
 	{if !empty($form.error.scale.size.missing)}
         <tr>
           <td>
-	    {galleryErrorFontColor}
-	    {galleryText text="You must enter a size"}
-	    {/galleryErrorFontColor}
+	    {gallery->errorFontColor}
+	    {gallery->text text="You must enter a size"}
+	    {/gallery->errorFontColor}
           </td>
         </tr>
         {/if}
@@ -93,9 +93,9 @@
 	{if !empty($form.error.scale.size.invalid)}
         <tr>
           <td>
-	    {galleryErrorFontColor}
-	    {galleryText text="You must enter a number (greater than zero)"}
-	    {/galleryErrorFontColor}
+	    {gallery->errorFontColor}
+	    {gallery->text text="You must enter a number (greater than zero)"}
+	    {/gallery->errorFontColor}
           </td>
         </tr>
         {/if}
@@ -109,38 +109,38 @@
 	{if empty($hasPreferredSource)}
 	<tr>
 	  <td>
-	    {galleryBigFontSize}
-	    {galleryText text="Preserve Original"}
-	    {/galleryBigFontSize}
+	    {gallery->bigFontSize}
+	    {gallery->text text="Preserve Original"}
+	    {/gallery->bigFontSize}
 	  </td>
 	</tr>
 
 	<tr>
 	  <td>
-	   {galleryText text="Disabling this option will cause any actions to happen to the original image.  This will permanently change your original image!"}
+	   {gallery->text text="Disabling this option will cause any actions to happen to the original image.  This will permanently change your original image!"}
 	   <br>
-	   {galleryInput type="checkbox" name="form.preserveOriginal"}{$form.preserveOriginal}{/galleryInput} {galleryText text="Preserve Original Image"}
+	   {gallery->input type="checkbox" name="form.preserveOriginal"}{$form.preserveOriginal}{/gallery->input} {gallery->text text="Preserve Original Image"}
 	  </td>
 	</tr>
         {else}
 	<tr>
 	  <td>
-	    {galleryBigFontSize}
-	    {galleryText text="Modified Image"}
-	    {/galleryBigFontSize}
+	    {gallery->bigFontSize}
+	    {gallery->text text="Modified Image"}
+	    {/gallery->bigFontSize}
 	  </td>
 	</tr>
 
 	<tr>
 	  <td>
-	   {galleryText text="You are using a copy of the original image that has been scaled or rotated.  The original image is still available, but is no longer being used.  Any changes you make will be applied to the copy instead."}
+	   {gallery->text text="You are using a copy of the original image that has been scaled or rotated.  The original image is still available, but is no longer being used.  Any changes you make will be applied to the copy instead."}
 	   <br>
-	   {galleryInput type="submit" name="form.action.revertToOriginal"}
-	   {galleryText text="Revert to original"}
-	   {/galleryInput}
+	   {gallery->input type="submit" name="form.action.revertToOriginal"}
+	   {gallery->text text="Revert to original"}
+	   {/gallery->input}
 	  </td>
 	</tr>
         {/if}
 
     </table>
-    {/galleryForm}
+    {/gallery->form}

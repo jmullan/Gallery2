@@ -1,36 +1,36 @@
     <table border="0" cellspacing="0" cellpadding="4" width="100%" height="100%">
 	<tr>
 	  <td colspan="2" align="center">
-	    {galleryBiggestFontSize}
-	    {galleryText text="Gallery Item Administration"}
-	    {/galleryBiggestFontSize}
+	    {gallery->biggestFontSize}
+	    {gallery->text text="Gallery Item Administration"}
+	    {/gallery->biggestFontSize}
 	  </td>
 	</tr>
 	
 	<tr>
 	  <td valign="top" width="200" height="100%">
-	    {galleryLightFrame}
+	    {gallery->lightFrame}
 	    <center>
-	      {galleryBigFontSize}
+	      {gallery->bigFontSize}
 	      <nobr>
 	      {if $itemType == "album"}
-		{galleryText text="Editing this album"}
+		{gallery->text text="Editing this album"}
 	      {else} 
-		{galleryText text="Editing this item"}
+		{gallery->text text="Editing this item"}
 	      {/if} 
 	      </nobr>
-	      {/galleryBigFontSize}
+	      {/gallery->bigFontSize}
 	      <br>
-	      <a href="{galleryUrl view="core:ShowItem" itemId=$item.id}">
+	      <a href="{gallery->url view="core:ShowItem" itemId=$item.id}">
 		{if !empty($thumbnail)} 
-		<img src="{galleryUrl view='core:DownloadItem' itemId=$thumbnail.id}" 
+		<img src="{gallery->url view='core:DownloadItem' itemId=$thumbnail.id}" 
 		     width="{$thumbnail.width}" 
 		     height="{$thumbnail.height}" 
 		     alt="{$item.title}"
 		     border="0">
 		{else}
 		<br>
-		<i>{galleryText text="No Thumbnail"}</i>
+		<i>{gallery->text text="No Thumbnail"}</i>
 		<br>
 		{/if}
 	      </a>
@@ -39,26 +39,26 @@
 	    <br>
 	    
 	    <nobr>
-	      {galleryBigFontSize}
-	      {galleryText text="Available Settings"}
-	      {/galleryBigFontSize}
+	      {gallery->bigFontSize}
+	      {gallery->text text="Available Settings"}
+	      {/gallery->bigFontSize}
 	    </nobr>
 	    
 	    <table border="0" cellspacing="0" cellpadding="0">
 	      {foreach from=$subViewChoices item=choice}
 		<tr>
 		  <td>
-		    <a href="{galleryUrl view='core:ItemAdmin' subView=$choice.view itemId=$item.id}">{$choice.name}</a>
+		    <a href="{gallery->url view='core:ItemAdmin' subView=$choice.view itemId=$item.id}">{$choice.name}</a>
                   </td>
 		</tr>
 	        {/foreach}
             </table>
-            {/galleryLightFrame}
+            {/gallery->lightFrame}
           </td>
 	  <td valign="top" width="100%" height="100%">
-	    {galleryLightFrame}
+	    {gallery->lightFrame}
 	    {$subViewHtml}
-	    {/galleryLightFrame}
+	    {/gallery->lightFrame}
 	  </td>
 	</tr>
     </table>

@@ -1,17 +1,17 @@
 
 <center>
-{gallerySuccessFontColor}
-{galleryBiggerFontSize}
-{galleryText text="User '%s' has been modified successfully."
+{gallery->successFontColor}
+{gallery->biggerFontSize}
+{gallery->text text="User '%s' has been modified successfully."
              arg1=$username}
-{/galleryBiggerFontSize}
-{/gallerySuccessFontColor}
+{/gallery->biggerFontSize}
+{/gallery->successFontColor}
 
 <br>
 <br>
 
-<a href="{galleryUrl view='core:SiteAdmin' subView='core:AdminUsers'}">
-{galleryText text="Return to User Administration"}
+<a href="{gallery->url view='core:SiteAdmin' subView='core:AdminUsers'}">
+{gallery->text text="Return to User Administration"}
 </a>
 
 </center>

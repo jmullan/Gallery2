@@ -1,14 +1,14 @@
-      {galleryForm view="$view" method="GET"}
-      {galleryInput type="hidden" name="formName"}FilterMembers{/galleryInput}
-      {galleryInput type="hidden" name="itemId"}{$itemId}{/galleryInput}
+      {gallery->form view="$view" method="GET"}
+      {gallery->input type="hidden" name="formName"}FilterMembers{/gallery->input}
+      {gallery->input type="hidden" name="itemId"}{$itemId}{/gallery->input}
   
     <table border="0" cellspacing="0" cellpadding="0">
 	<tr>
 	  <td>
 	    <center>
-	      {galleryBiggerFontSize}
-	      {galleryText text="Debug Tree"}
-	      {/galleryBiggerFontSize}
+	      {gallery->biggerFontSize}
+	      {gallery->text text="Debug Tree"}
+	      {/gallery->biggerFontSize}
 	    </center>
 	  </td>
 	</tr>
@@ -21,11 +21,11 @@
 
 	<tr>
 	  <td colspan="2">
-	    {galleryText text="Filter members-names with regexp:"}
-	    {galleryInput type="text" size="20" name="form.filterMembers"}{$form.filterMembers}{/galleryInput}
-	    {galleryInput type="submit" name="form.action.filter"}
-	    {galleryText text="Filter"}
-	    {/galleryInput}
+	    {gallery->text text="Filter members-names with regexp:"}
+	    {gallery->input type="text" size="20" name="form.filterMembers"}{$form.filterMembers}{/gallery->input}
+	    {gallery->input type="submit" name="form.action.filter"}
+	    {gallery->text text="Filter"}
+	    {/gallery->input}
 	  </td>
 	</tr>
 
@@ -41,7 +41,7 @@
 	   {foreach from=$entityTree item=entity}
 	    <tr valign="top">
 	     <td>
-	      <a href="{galleryUrl view="core:ShowItem" itemId=$entity.itemId}">
+	      <a href="{gallery->url view="core:ShowItem" itemId=$entity.itemId}">
 	      <strong>{$entity.completePath}</strong>
 	      </a>
 	     </td>
@@ -71,5 +71,5 @@
 	</tr>
 
     </table>
-    {/galleryForm}
+    {/gallery->form}
 

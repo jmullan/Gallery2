@@ -43,7 +43,7 @@ class ItemAdminView extends GalleryView {
 	global $gallery;
 	
 	/* Render the HTML head */
-	$template = $this->getTemplate();
+	$template = $this->_getTemplate();
 	$html = $template->render('ItemAdminHead.tpl');
 
 	return array(GalleryStatus::success(), $html);
@@ -147,7 +147,7 @@ class ItemAdminView extends GalleryView {
 	}
 
 	/* Render our HTML body */
-	$template = $this->getTemplate();
+	$template = $this->_getTemplate($item);
 	$template->setVariable('item', $item->getMemberData());
 	$template->setVariable('itemType', $itemType);
 	$template->setVariable('thumbnail', $thumbnailData);

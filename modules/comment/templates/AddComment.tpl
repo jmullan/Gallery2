@@ -1,19 +1,19 @@
-      {galleryForm controller=$controller}
-      {galleryInput type="hidden" name="itemId"}{$item.id}{/galleryInput}
+      {gallery->form controller=$controller}
+      {gallery->input type="hidden" name="itemId"}{$item.id}{/gallery->input}
       
       <!-- Embed the hidden return fields -->
       {foreach from=$return key=key item=value}
-      {galleryInput type="hidden" name=$key|string_format:"return.%s"}{$value}{/galleryInput}
+      {gallery->input type="hidden" name=$key|string_format:"return.%s"}{$value}{/gallery->input}
       {/foreach}
 
     <center>
       {if !empty($thumbnail)}
-      <img src="{galleryUrl view='core:DownloadItem' itemId=$thumbnail.id}"
+      <img src="{gallery->url view='core:DownloadItem' itemId=$thumbnail.id}"
       {if $thumbnail.width} width="{$thumbnail.width}" {/if}
       {if $thumbnail.height} height="{$thumbnail.height}" {/if}
       >
       {else}
-      <i>{galleryText text="No thumbnail"}</i>
+      <i>{gallery->text text="No thumbnail"}</i>
       {/if}
       <br>
       <b>
@@ -27,23 +27,23 @@
       <table border="0" cellspacing="0" cellpadding="5">
 	  <tr>
 	    <td align="center">
-	      {galleryBigFontSize}
-	      {galleryText text="Add a comment for this item"}
-	      {/galleryBigFontSize}
+	      {gallery->bigFontSize}
+	      {gallery->text text="Add a comment for this item"}
+	      {/gallery->bigFontSize}
 	    </td>
 	  </tr>
 	  <tr>
 	    <td>
-	      {galleryTextArea rows="15" cols="60" name="form.comment"}{/galleryTextArea}
+	      {gallery->textArea rows="15" cols="60" name="form.comment"}{/gallery->textArea}
 	    </td>
 	  </tr>
 
 	  <tr>
 	    <td align="center">
-	      {galleryInput type="submit" name="form.action.add"}{galleryText text="Save"}{/galleryInput}
-	      {galleryInput type="submit" name="form.action.cancel"}{galleryText text="Cancel"}{/galleryInput}
+	      {gallery->input type="submit" name="form.action.add"}{gallery->text text="Save"}{/gallery->input}
+	      {gallery->input type="submit" name="form.action.cancel"}{gallery->text text="Cancel"}{/gallery->input}
 	    </td>
 	  </tr>
       </table>
     </center>
-    {/galleryForm}
+    {/gallery->form}

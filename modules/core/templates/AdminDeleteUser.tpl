@@ -1,19 +1,19 @@
-  {galleryForm controller="$controller"}
-  {galleryInput type="hidden" name="userid"}{$userid}{/galleryInput}
+  {gallery->form controller="$controller"}
+  {gallery->input type="hidden" name="userid"}{$userid}{/gallery->input}
   <table width="100%" border="0" cellspacing="3" cellpadding="3">
 
     <tr>
       <td align="center" colspan="2">
-	{galleryBigFontSize}
-	{galleryText text="Delete a user"}
-	{/galleryBigFontSize}
+	{gallery->bigFontSize}
+	{gallery->text text="Delete a user"}
+	{/gallery->bigFontSize}
       </td>
     </tr>
 
     {if !$isSelf && !$isAnonymous}
     <tr>
       <td align="center">
-	{galleryText text="Do you really want to delete user '%s'?"
+	{gallery->text text="Do you really want to delete user '%s'?"
 	             arg1=$username}
       </td>
     </tr>
@@ -22,9 +22,9 @@
     {if $isSelf}
     <tr>
       <td align="center">
-	{galleryErrorFontColor}
-	{galleryText text="You cannot delete yourself!"}
-	{/galleryErrorFontColor}
+	{gallery->errorFontColor}
+	{gallery->text text="You cannot delete yourself!"}
+	{/gallery->errorFontColor}
       </td>
     </tr>
     {/if}
@@ -32,9 +32,9 @@
     {if $isAnonymous}
     <tr>
       <td align="center">
-	{galleryErrorFontColor}
-	{galleryText text="You cannot delete the anonymous user!"}
-	{/galleryErrorFontColor}
+	{gallery->errorFontColor}
+	{gallery->text text="You cannot delete the anonymous user!"}
+	{/gallery->errorFontColor}
       </td>
     </tr>
     {/if}
@@ -42,13 +42,13 @@
     <tr>
       <td align="center" colspan="2">
 	{if !$isSelf && !$isAnonymous}
-	{galleryInput type="submit" name="form.action.delete"}{galleryText text="Delete"}{/galleryInput}
+	{gallery->input type="submit" name="form.action.delete"}{gallery->text text="Delete"}{/gallery->input}
 	{/if}
-	{galleryInput type="submit" name="form.action.cancel"}{galleryText text="Cancel"}{/galleryInput}
+	{gallery->input type="submit" name="form.action.cancel"}{gallery->text text="Cancel"}{/gallery->input}
       </td>
     </tr>
       
   </table>
-  {/galleryForm}
+  {/gallery->form}
 
   

@@ -328,7 +328,7 @@ class CommentModule extends GalleryTemplateModule {
 	    }
 
 	    /* Render the comments */
-	    $template = $this->getTemplate();
+	    $template = $this->_getTemplate();
 	    $template->setVariable('comments', $commentData);
 	    $template->setVariable('can', $can);
 	    $template->setVariable('item', $item->getMemberData());

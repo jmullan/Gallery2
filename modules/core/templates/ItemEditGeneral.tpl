@@ -1,12 +1,12 @@
-    {galleryForm controller="$controller"}
-    {galleryInput type="hidden" name="formName"}ItemEditGeneral{/galleryInput}
-    {galleryInput type="hidden" name="itemId"}{$item.id}{/galleryInput}
+    {gallery->form controller="$controller"}
+    {gallery->input type="hidden" name="formName"}ItemEditGeneral{/gallery->input}
+    {gallery->input type="hidden" name="itemId"}{$item.id}{/gallery->input}
     <table border="0" cellspacing="0" cellpadding="0">
 	<tr>
 	  <td align="center">
-	    {galleryBiggerFontSize}
-	    {galleryText text="General Item Properties"}
-	    {/galleryBiggerFontSize}
+	    {gallery->biggerFontSize}
+	    {gallery->text text="General Item Properties"}
+	    {/gallery->biggerFontSize}
 	  </td>
 	</tr>
 
@@ -18,15 +18,15 @@
 
 	<tr>
 	  <td>
-	    {galleryBigFontSize}
-	    {galleryText text="Name"}
-	    {/galleryBigFontSize}
+	    {gallery->bigFontSize}
+	    {gallery->text text="Name"}
+	    {/gallery->bigFontSize}
 	  </td>
 	</tr>
 
 	<tr>
 	  <td>
-	    {galleryText text="The name represents the location of this item on your hard drive.  It is not visible anywhere, except possibly in the URL.  It must be unique in this album.  <b>Note:</b> You can only use alphanumeric characters, underscore (_) and hyphen (-) in your names."}
+	    {gallery->text text="The name represents the location of this item on your hard drive.  It is not visible anywhere, except possibly in the URL.  It must be unique in this album.  <b>Note:</b> You can only use alphanumeric characters, underscore (_) and hyphen (-) in your names."}
 	  </td>
 	</tr>
 
@@ -41,16 +41,16 @@
 	    {/if}
 	    {/foreach}
 	    {/strip}
-	    {galleryInput type=text size=40 name="form.pathComponent"}{$form.pathComponent}{/galleryInput}
+	    {gallery->input type=text size=40 name="form.pathComponent"}{$form.pathComponent}{/gallery->input}
 	  </td>
 	</tr>
 
         {if !empty($form.error.pathComponent.invalid)}
 	<tr>
 	  <td>
-	    {galleryErrorFontColor}
-	    {galleryText text="Your name contains invalid characters.  Please enter another."}
-	    {/galleryErrorFontColor}
+	    {gallery->errorFontColor}
+	    {gallery->text text="Your name contains invalid characters.  Please enter another."}
+	    {/gallery->errorFontColor}
 	  </td>
 	</tr>
         {/if}
@@ -58,9 +58,9 @@
         {if !empty($form.error.pathComponent.collision)}
 	<tr>
 	  <td>
-	    {galleryErrorFontColor}
-	    {galleryText text="The name you entered is already in use.  Please enter another."}
-	    {/galleryErrorFontColor}
+	    {gallery->errorFontColor}
+	    {gallery->text text="The name you entered is already in use.  Please enter another."}
+	    {/gallery->errorFontColor}
 	  </td>
 	</tr>
         {/if}
@@ -73,47 +73,21 @@
 
 	<tr>
 	  <td>
-	    {galleryBigFontSize}
-	    {galleryText text="Title"}
-	    {/galleryBigFontSize}
+	    {gallery->bigFontSize}
+	    {gallery->text text="Title"}
+	    {/gallery->bigFontSize}
 	  </td>
 	</tr>
 
 	<tr>
 	  <td>
-	    {galleryText text="The title can be any character string, and should not contain any HTML"}
+	    {gallery->text text="The title can be any character string, and should not contain any HTML"}
 	  </td>
 	</tr>
 
 	<tr>
 	  <td>
-	    {galleryInput type=text size=40 name="form.title"}{$form.title}{/galleryInput}
-	  </td>
-	</tr>
-
-	<tr>
-	  <td>
-	    &nbsp;
-	  </td>
-	</tr>
-
-	<tr>
-	  <td>
-	    {galleryBigFontSize}
-	    {galleryText text="Summary"}
-	    {/galleryBigFontSize}
-	  </td>
-	</tr>
-
-	<tr>
-	  <td>
-	    {galleryText text="The summary can be any character string, and should not contain any HTML"}
-	  </td>
-	</tr>
-
-	<tr>
-	  <td>
-	    {galleryInput type=text size=40 name="form.summary"}{$form.summary}{/galleryInput}
+	    {gallery->input type=text size=40 name="form.title"}{$form.title}{/gallery->input}
 	  </td>
 	</tr>
 
@@ -125,47 +99,21 @@
 
 	<tr>
 	  <td>
-	    {galleryBigFontSize}
-	    {galleryText text="Keywords"}
-	    {/galleryBigFontSize}
+	    {gallery->bigFontSize}
+	    {gallery->text text="Summary"}
+	    {/gallery->bigFontSize}
 	  </td>
 	</tr>
 
 	<tr>
 	  <td>
-	    {galleryText text="Keywords will not be visible to the end user, but are searchable. This can be any character string.  It should not contain HTML."}
+	    {gallery->text text="The summary can be any character string, and should not contain any HTML"}
 	  </td>
 	</tr>
 
 	<tr>
 	  <td>
-	    {galleryTextArea rows=2 cols=60 name="form.keywords"}{$form.keywords}{/galleryTextArea}
-	  </td>
-	</tr>
-
-	<tr>
-	  <td>
-	    &nbsp;
-	  </td>
-	</tr>
-
-	<tr>
-	  <td>
-	    {galleryBigFontSize}
-	    {galleryText text="Description"}
-	    {/galleryBigFontSize}
-	  </td>
-	</tr>
-
-	<tr>
-	  <td>
-	    {galleryText text="A longer description of this item."}
-	  </td>
-	</tr>
-
-	<tr>
-	  <td>
-	    {galleryTextArea rows=8 cols=60 name="form.description"}{$form.description}{/galleryTextArea}
+	    {gallery->input type=text size=40 name="form.summary"}{$form.summary}{/gallery->input}
 	  </td>
 	</tr>
 
@@ -177,10 +125,62 @@
 
 	<tr>
 	  <td>
-	    {galleryInput type="submit" name="form.action.save"}{galleryText text="Save"}{/galleryInput}
-	    {galleryInput type="submit" name="form.action.undo"}{galleryText text="Undo"}{/galleryInput}
+	    {gallery->bigFontSize}
+	    {gallery->text text="Keywords"}
+	    {/gallery->bigFontSize}
+	  </td>
+	</tr>
+
+	<tr>
+	  <td>
+	    {gallery->text text="Keywords will not be visible to the end user, but are searchable. This can be any character string.  It should not contain HTML."}
+	  </td>
+	</tr>
+
+	<tr>
+	  <td>
+	    {gallery->textArea rows=2 cols=60 name="form.keywords"}{$form.keywords}{/gallery->textArea}
+	  </td>
+	</tr>
+
+	<tr>
+	  <td>
+	    &nbsp;
+	  </td>
+	</tr>
+
+	<tr>
+	  <td>
+	    {gallery->bigFontSize}
+	    {gallery->text text="Description"}
+	    {/gallery->bigFontSize}
+	  </td>
+	</tr>
+
+	<tr>
+	  <td>
+	    {gallery->text text="A longer description of this item."}
+	  </td>
+	</tr>
+
+	<tr>
+	  <td>
+	    {gallery->textArea rows=8 cols=60 name="form.description"}{$form.description}{/gallery->textArea}
+	  </td>
+	</tr>
+
+	<tr>
+	  <td>
+	    &nbsp;
+	  </td>
+	</tr>
+
+	<tr>
+	  <td>
+	    {gallery->input type="submit" name="form.action.save"}{gallery->text text="Save"}{/gallery->input}
+	    {gallery->input type="submit" name="form.action.undo"}{gallery->text text="Undo"}{/gallery->input}
 	  </td>
 	</tr>
 
     </table>
-    {/galleryForm}
+    {/gallery->form}

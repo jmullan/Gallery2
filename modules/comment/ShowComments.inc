@@ -55,7 +55,7 @@ class ShowCommentsView extends GalleryView {
 	}
 	
 	/* Render the HTML head */
-	$template = $this->getTemplate();
+	$template = $this->_getTemplate();
 	$template->setVariable('item', $item->getMemberData());
 	$html = $template->render('ShowCommentsHead.tpl');
 	
@@ -113,7 +113,7 @@ class ShowCommentsView extends GalleryView {
 	}
 
 	/* Render the HTML body */
-	$template = $this->getTemplate();
+	$template = $this->_getTemplate();
 
 	if (!empty($thumbnail)) {
 	    $template->setVariable('thumbnail', $thumbnail->getMemberData());

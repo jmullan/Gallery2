@@ -51,8 +51,8 @@ class LogoutController extends GalleryController {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	
-	$templateAdapter = $gallery->getTemplateAdapter();
-	$results['redirect'] = $templateAdapter->url($return);
+	$urlGenerator = $gallery->getUrlGenerator();
+	$results['redirect'] = $urlGenerator->generateUrl($return);
 
 	return array(GalleryStatus::success(), $results);
     }

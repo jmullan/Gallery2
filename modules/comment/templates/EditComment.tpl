@@ -1,22 +1,22 @@
-      {galleryForm controller=$controller}
+      {gallery->form controller=$controller}
 
-      {galleryInput type="hidden" name="itemId"}{$item.id}{/galleryInput}
-      {galleryInput type="hidden" name="commentId"}{$comment.id}{/galleryInput}
-      {galleryInput type="hidden" name="formName"}EditComment{/galleryInput}
+      {gallery->input type="hidden" name="itemId"}{$item.id}{/gallery->input}
+      {gallery->input type="hidden" name="commentId"}{$comment.id}{/gallery->input}
+      {gallery->input type="hidden" name="formName"}EditComment{/gallery->input}
       
       <!-- Embed the hidden return fields -->
       {foreach from=$return key=key item=value}
-      {galleryInput type="hidden" name=$key|string_format:"return.%s"}{$value}{/galleryInput}
+      {gallery->input type="hidden" name=$key|string_format:"return.%s"}{$value}{/gallery->input}
       {/foreach}
 
     <center>
       {if !empty($thumbnail)}
-      <img src="{galleryUrl view='core:DownloadItem' itemId=$thumbnail.id}"
+      <img src="{gallery->url view='core:DownloadItem' itemId=$thumbnail.id}"
       {if $thumbnail.width} width="{$thumbnail.width}" {/if}
       {if $thumbnail.height} height="{$thumbnail.height}" {/if}
       >
       {else}
-      <i>{galleryText text="No thumbnail"}</i>
+      <i>{gallery->text text="No thumbnail"}</i>
       {/if}
       <br>
       <b>
@@ -30,19 +30,19 @@
       <table border="0" cellspacing="0" cellpadding="5">
 	  <tr>
 	    <td align="center" colspan="2">
-	      {galleryBigFontSize}
-	      {galleryText text="Edit comment"}
-	      {/galleryBigFontSize}
+	      {gallery->bigFontSize}
+	      {gallery->text text="Edit comment"}
+	      {/gallery->bigFontSize}
 	    </td>
 	  </tr>
 	  <tr>
 	    <td>
-	      {galleryText text="Commenter: "}
+	      {gallery->text text="Commenter: "}
 	    </td>
 	    <td>
-	      {galleryInput type="text" name="form.commenterName"}
+	      {gallery->input type="text" name="form.commenterName"}
 	      {$form.commenterName}
-	      {/galleryInput}
+	      {/gallery->input}
 	    </td>
 	  </tr>
 
@@ -52,9 +52,9 @@
 	      &nbsp;
 	    </td>
 	    <td>
-	      {galleryErrorFontColor}
-	      {galleryText text="You must enter a username."}
-	      {/galleryErrorFontColor}
+	      {gallery->errorFontColor}
+	      {gallery->text text="You must enter a username."}
+	      {/gallery->errorFontColor}
 	    </td>
 	  </tr>
 	  <!-- {/if} -->
@@ -65,32 +65,32 @@
 	      &nbsp;
 	    </td>
 	    <td>
-	      {galleryErrorFontColor}
-	      {galleryText text="The username you entered is invalid."}
-	      {/galleryErrorFontColor}
+	      {gallery->errorFontColor}
+	      {gallery->text text="The username you entered is invalid."}
+	      {/gallery->errorFontColor}
 	    </td>
 	  </tr>
 	  <!-- {/if} -->
 
 	  <tr>
 	    <td>
-	      {galleryText text="Host: "}
+	      {gallery->text text="Host: "}
 	    </td>
 	    <td>
-	      {galleryInput type="text" name="form.host"}
+	      {gallery->input type="text" name="form.host"}
 	      {$form.host}
-	      {/galleryInput}
+	      {/gallery->input}
 	    </td>
 	  </tr>
 
 	  <tr>
 	    <td>
-	      {galleryText text="Date: "}
+	      {gallery->text text="Date: "}
 	    </td>
 	    <td>
-	      {galleryInput type="text" name="form.date"}
-	      {galleryDate timestamp=$form.date format="%e-%b-%Y %H:%M"}
-	      {/galleryInput}
+	      {gallery->input type="text" name="form.date"}
+	      {gallery->date timestamp=$form.date format="%e-%b-%Y %H:%M"}
+	      {/gallery->input}
 	    </td>
 	  </tr>
 	  
@@ -100,9 +100,9 @@
 	      &nbsp;
 	    </td>
 	    <td>
-	      {galleryErrorFontColor}
-	      {galleryText text="The date you entered is invalid."}
-	      {/galleryErrorFontColor}
+	      {gallery->errorFontColor}
+	      {gallery->text text="The date you entered is invalid."}
+	      {/gallery->errorFontColor}
 	    </td>
 	  </tr>
 	  <!-- {/if} -->
@@ -113,32 +113,32 @@
 	      &nbsp;
 	    </td>
 	    <td>
-	      {galleryErrorFontColor}
-	      {galleryText text="You must enter a date"}
-	      {/galleryErrorFontColor}
+	      {gallery->errorFontColor}
+	      {gallery->text text="You must enter a date"}
+	      {/gallery->errorFontColor}
 	    </td>
 	  </tr>
 	  <!-- {/if} -->
 
 	  <tr>
 	    <td>
-	      {galleryText text="Comment: "}
+	      {gallery->text text="Comment: "}
 	    </td>
 	    <td>
 	      {strip}
-	      {galleryTextArea rows="15" cols="60" name="form.comment"}
+	      {gallery->textArea rows="15" cols="60" name="form.comment"}
 	      {$form.comment}
-	      {/galleryTextArea}
+	      {/gallery->textArea}
 	      {/strip}
 	    </td>
 	  </tr>
 
 	  <tr>
 	    <td colspan="2" align="center">
-	      {galleryInput type="submit" name="form.action.save"}{galleryText text="Save"}{/galleryInput}
-	      {galleryInput type="submit" name="form.action.cancel"}{galleryText text="Cancel"}{/galleryInput}
+	      {gallery->input type="submit" name="form.action.save"}{gallery->text text="Save"}{/gallery->input}
+	      {gallery->input type="submit" name="form.action.cancel"}{gallery->text text="Cancel"}{/gallery->input}
 	    </td>
 	  </tr>
       </table>
     </center>
-    {/galleryForm}
+    {/gallery->form}

@@ -56,6 +56,12 @@ class GalleryView {
      * ****************************************
      */
 
+    /**
+     * Initialize the veiw
+     *
+     * @param string the name of the module
+     * @param string the path to the template directory
+     */
     function init($moduleName, $templateDir) {
 	global $gallery;
 	
@@ -65,7 +71,8 @@ class GalleryView {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
 	
-	$this->_template = new GalleryTemplate('modules', $moduleName, $templateDir);
+	$this->_template = new GalleryTemplate($templateDir);
+	$this->_template->setTranslationBase('modules', $moduleName);
 	return GalleryStatus::success();
     }
 
@@ -73,8 +80,9 @@ class GalleryView {
      * Get the configured GalleryTemplate instance
      *
      * @return object GalleryTemplate a template instance
+     * @access protected
      */
-    function &getTemplate() {
+    function &_getTemplate() {
 	return $this->_template;
     }
 
@@ -185,11 +193,25 @@ class GalleryView {
      *               array ('head' => head HTML, 'body' => body html)
      */
     function renderHeadAndBody() {
+	global $gallery;
 
-	$ret = $this->activateTheme();
+	GalleryProfiler::start('GalleryView::renderHeadAndBody');
+	/* Get the theme name from the view */
+	list ($ret, $themeName) = $this->getThemeName();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+	
+	/* Load and initialize the theme */
+	$theme = new GalleryTheme();
+	$ret = $theme->init($themeName);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Pass the theme to the template adapter */
+	$templateAdapter =& $gallery->getTemplateAdapter();
+	$templateAdapter->setTheme($theme);
 	
 	GalleryProfiler::start('GalleryView::renderHead');
 	list ($ret, $head) = $this->renderHead();
@@ -204,62 +226,22 @@ class GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	GalleryProfiler::stop('GalleryView::renderBody');
-
+	GalleryProfiler::stop('GalleryView::renderHeadAndBody');
+	
 	return array(GalleryStatus::success(),
 		     array('head' => $head,
 			   'body' => $body));
     }
 
     /**
-     * Should we force this view to use the default theme?
+     * Views should override this to return the theme that they wish to use.
      *
-     * Usually the answer is "no".  But specific subclasses (like admin
-     * classes) can override this if desired.
-     *
-     * @return bool true if the view should use the default theme
+     * @param string a theme name.
+     * @return array object GalleryStatus a status code
+     *               string a theme name
      */
-    function _useDefaultTheme() {
-	return false;
-    }
-
-    /**
-     * Activate the appropriate theme for this GalleryView
-     *
-     * @param object GalleryItem an item (or empty, for the default theme)
-     * @return object GalleryStatus a status code
-     */
-    function activateTheme() {
-        global $gallery;
-
-	/*
-	 * If this view is not supposed to use the default theme, then
-	 * try to divine the correct theme from the active item.  This requires
-	 * the "itemId" parameter to contain a valid item id.
-	 */
-	$themeName = false;
-	if (!$this->_useDefaultTheme()) {
-	    list ($ret, $item) = $this->_getItem();
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-	    
-	    if (!empty($item)) {
-		$themeName = $item->getTheme();
-	    }
-	}
-
-	/* Load and initialize the theme */
-	$theme = new GalleryTheme();
-	$ret = $theme->init($themeName);
-	if ($ret->isError()) {
-	    return $ret;
-	}
-
-	/* Set it */
-	$templateAdapter =& $gallery->getTemplateAdapter();
-	$templateAdapter->setTheme($theme);
-
-	return GalleryStatus::success();
+    function getThemeName() {
+	return array(GalleryStatus::success(), null);
     }
 
     /**

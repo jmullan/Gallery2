@@ -44,7 +44,7 @@ class ClassicLayout extends GalleryLayout {
 	$properties = array('rows' => 3,
 			    'columns' => 3);
 
-	$template =& $this->getTemplate();
+	$template =& $this->_getTemplate();
 	$template->setVariable('properties', $properties);
 	$template->setVariable('item', $item->getMemberData());
 	
@@ -252,7 +252,7 @@ class ClassicLayout extends GalleryLayout {
 	}
 
 	/* Tell Smarty about everything we've learned */
-	$template =& $this->getTemplate();
+	$template =& $this->_getTemplate();
 	$template->setVariable('moduleItemLinks', $moduleItemLinks);
 	$template->setVariable('moduleSystemLinks', $moduleSystemLinks);
 	$template->setVariable('moduleSystemContent', $moduleSystemContent);
@@ -465,7 +465,7 @@ class ClassicLayout extends GalleryLayout {
 	}
 	
 	/* Tell Smarty about everything we've learned */
-	$template =& $this->getTemplate();
+	$template =& $this->_getTemplate();
 	$template->setVariable('navigator', $navigator);
 	$template->setVariable('moduleItemLinks', $moduleItemLinks);
 	$template->setVariable('moduleSystemLinks', $moduleSystemLinks);

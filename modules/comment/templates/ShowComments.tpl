@@ -1,73 +1,73 @@
     <center>
       {if !empty($thumbnail)}
-      <img src="{galleryUrl view='core:DownloadItem' itemId=$thumbnail.id}"
+      <img src="{gallery->url view='core:DownloadItem' itemId=$thumbnail.id}"
       {if $thumbnail.width} width="{$thumbnail.width}" {/if}
       {if $thumbnail.height} height="{$thumbnail.height}" {/if}
       >
       {else}
-      {galleryBigFontSize}
-      {galleryText text="There is no thumbnail for this item"}
-      {/galleryBigFontSize}
+      {gallery->bigFontSize}
+      {gallery->text text="There is no thumbnail for this item"}
+      {/gallery->bigFontSize}
       {/if}
       <br>
-      <a href="{galleryUrl view="core:ShowItem" itemId=$item.id}">
-	[{galleryText text="Return to item view"}]
+      <a href="{gallery->url view="core:ShowItem" itemId=$item.id}">
+	[{gallery->text text="Return to item view"}]
       </a>
       {if $can.add}
       <br>
-      <a href="{galleryUrl view="comment:AddComment"
+      <a href="{gallery->url view="comment:AddComment"
 	                   itemId=$item.id
 	                   return_view="comment:ShowComments"
 	                   return_itemId=$item.id}">
-	{galleryBigFontSize}
-	[{galleryText text="Add a comment"}]
-	{/galleryBigFontSize}
+	{gallery->bigFontSize}
+	[{gallery->text text="Add a comment"}]
+	{/gallery->bigFontSize}
       </a>
       {/if}
     </center>
     
     {if empty($comments)}
-    {galleryText text="There are no comments for this item"}
+    {gallery->text text="There are no comments for this item"}
     {else}
     <table width="100%" border="0" cellspacing="4" cellpadding="0">
         <!-- {foreach from=$comments item=comment} -->
 	<tr>
 	  <td width="100%">
-	    {galleryLightFrame width="100%"}
-	    {galleryHighlight1}
-	    {galleryBigFontSize}
+	    {gallery->lightFrame width="100%"}
+	    {gallery->highlight1}
+	    {gallery->bigFontSize}
 	    {$comment.commenter.userName}
-	    {/galleryBigFontSize}
+	    {/gallery->bigFontSize}
 	    {if !empty($comment.host)}
 	    {if $can.viewIp}
 	    ({$comment.host})
 	    {/if}
 	    {/if}
 	    {if $can.edit}
-	    <a href="{galleryUrl view="comment:EditComment"
+	    <a href="{gallery->url view="comment:EditComment"
 	                   itemId=$item.id
 	                   commentId=$comment.id
 	                   return_view="comment:ShowComments"
 	                   return_itemId=$item.id}">
-	      [{galleryText text="edit"}]
+	      [{gallery->text text="edit"}]
 	    </a>
 	    {/if}
 	    {if $can.delete}
-	    <a href="{galleryUrl view="comment:DeleteComment"
+	    <a href="{gallery->url view="comment:DeleteComment"
 	                   itemId=$item.id
 	                   commentId=$comment.id
 	                   return_view="comment:ShowComments"
 	                   return_itemId=$item.id}">
-	      [{galleryText text="delete"}]
+	      [{gallery->text text="delete"}]
 	    </a>
 	    {/if}
 	    <br>
-	    {galleryDate timestamp=$comment.date format="%e-%b-%Y %H:%M"}
-	    {/galleryHighlight1}
-	    {galleryHighlight2}
+	    {gallery->date timestamp=$comment.date format="%e-%b-%Y %H:%M"}
+	    {/gallery->highlight1}
+	    {gallery->highlight2}
 	    {$comment.comment}
-	    {/galleryHighlight2}
-	    {/galleryLightFrame}
+	    {/gallery->highlight2}
+	    {/gallery->lightFrame}
 	  </td>
 	</tr>
 	<!-- {/foreach} -->

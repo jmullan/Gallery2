@@ -53,8 +53,8 @@ class AdminCommentsController extends GalleryController {
 	$redirectParams['view'] = 'core:SiteAdmin';
 	$redirectParams['subView'] = 'comment:AdminComments';
 
-	$templateAdapter = $gallery->getTemplateAdapter();
-	$results['redirect'] = $templateAdapter->url($redirectParams);
+	$urlGenerator = $gallery->getUrlGenerator();
+	$results['redirect'] = $urlGenerator->generateUrl($redirectParams);
 
 	return array(GalleryStatus::success(), $results);
     }
@@ -76,7 +76,7 @@ class AdminCommentsView extends GalleryView {
 	global $gallery;
 
 	/* Render the HTML body */
-	$template = $this->getTemplate();
+	$template = $this->_getTemplate();
 	$template->setVariable('controller', 'comment:AdminComments');
 	$html = $template->render('AdminComments.tpl');
 	

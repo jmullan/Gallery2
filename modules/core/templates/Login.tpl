@@ -1,18 +1,18 @@
-  {galleryForm controller="$controller"}
-  {galleryInput type="hidden" name="formName"}Login{/galleryInput}
+  {gallery->form controller="$controller"}
+  {gallery->input type="hidden" name="formName"}Login{/gallery->input}
 
   <!-- Embed the hidden return fields -->
   {foreach from=$return key=key item=value}
-  {galleryInput type="hidden" name=$key|string_format:"return.%s"}{$value}{/galleryInput}
+  {gallery->input type="hidden" name=$key|string_format:"return.%s"}{$value}{/gallery->input}
   {/foreach}
 
   <center>
     <table border="0" cellspacing="4" cellpadding="0">
       <tr>
 	<td colspan="2" align="center">
-	  {galleryBiggerFontSize}
-	  {galleryText text="Gallery Login"}
-	  {/galleryBiggerFontSize}
+	  {gallery->biggerFontSize}
+	  {gallery->text text="Gallery Login"}
+	  {/gallery->biggerFontSize}
 	</td>
       </tr>
 
@@ -24,38 +24,38 @@
 
       <tr>
 	<td align="right">
-	  {galleryText text="Username"}
+	  {gallery->text text="Username"}
 	</td>
 	<td>
-	  {galleryInput type="text" name="form.username"}{$form.username}{/galleryInput}
+	  {gallery->input type="text" name="form.username"}{$form.username}{/gallery->input}
 	</td>
       </tr>
 
       {if !empty($form.error.username.missing)}
       <tr>
 	<td colspan="2">
-	  {galleryErrorFontColor}
-	  {galleryText text="You must enter a username"}
-	  {/galleryErrorFontColor}
+	  {gallery->errorFontColor}
+	  {gallery->text text="You must enter a username"}
+	  {/gallery->errorFontColor}
 	</td>
       </tr>
       {/if}
 
       <tr>
 	<td align="right">
-	  {galleryText text="Password"}
+	  {gallery->text text="Password"}
 	</td>
 	<td>
-	  {galleryInput type="password" name="form.password"}{/galleryInput}
+	  {gallery->input type="password" name="form.password"}{/gallery->input}
 	</td>
       </tr>
 
       {if !empty($form.error.password.missing)}
       <tr>
 	<td colspan="2">
-	  {galleryErrorFontColor}
-	  {galleryText text="You must enter a password"}
-	  {/galleryErrorFontColor}
+	  {gallery->errorFontColor}
+	  {gallery->text text="You must enter a password"}
+	  {/gallery->errorFontColor}
 	</td>
       </tr>
       {/if}
@@ -63,9 +63,9 @@
       {if !empty($form.error.invalidPassword)}
       <tr>
 	<td colspan="2">
-	  {galleryErrorFontColor}
-	  {galleryText text="Your login information is incorrect.  Please try again."}
-	  {/galleryErrorFontColor}
+	  {gallery->errorFontColor}
+	  {gallery->text text="Your login information is incorrect.  Please try again."}
+	  {/gallery->errorFontColor}
 	</td>
       </tr>
       {/if}
@@ -78,11 +78,11 @@
 
       <tr>
 	<td colspan="2" align="center">
-	  {galleryInput type="submit" name="form.action.login"}{galleryText text="Login"}{/galleryInput}
-	  {galleryInput type="submit" name="form.action.cancel"}{galleryText text="Cancel"}{/galleryInput}
+	  {gallery->input type="submit" name="form.action.login"}{gallery->text text="Login"}{/gallery->input}
+	  {gallery->input type="submit" name="form.action.cancel"}{gallery->text text="Cancel"}{/gallery->input}
 	</td>
       </tr>
 
     </table>
   </center>
-  {/galleryForm}
+  {/gallery->form}

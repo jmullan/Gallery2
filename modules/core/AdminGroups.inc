@@ -251,7 +251,7 @@ class AdminGroupsView extends GalleryView {
 	}
 
 	/* Render the HTML body */
-	$template = $this->getTemplate();
+	$template = $this->_getTemplate();
 	$template->setVariable('form', $form);
 	$template->setVariable('totalGroupCount', $totalGroupCount);
 	$template->setVariable('controller', 'core:AdminGroups');

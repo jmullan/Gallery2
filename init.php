@@ -193,6 +193,12 @@ function GalleryInitSecondPass() {
     }
     $gallery->setActiveUserId($activeUserId);
 
+    /* Initialize our translator */
+    $ret = $gallery->initTranslator();
+    if ($ret->isError()) {
+	return $ret->wrap(__FILE__, __LINE__);
+    }
+
     /* Now it's safe to init the core */
     $ret = $coreModule->init();
     if ($ret->isError()) {
@@ -220,54 +226,5 @@ function GalleryInitSecondPass() {
     GalleryProfiler::stop('GalleryInitSecondPass');
 
     return GalleryStatus::success();
-}
-
-/**
- * Glue between Smarty and Gallery
- *
- * This function serves as a glue layer between Smarty and Gallery.  Smarty
- * expects callbacks to be functions, whereas Gallery really wants everything
- * to be OO with classes and methods.  Gallery routes all Smarty callbacks to
- * this function, which figures out which template adapter method to call.
- *
- * To add new Smarty callbacks to Gallery, you must do the following:
- * - add the function definition to the GalleryAdapterTemplate API
- * - register a new block or function callback in Gallery::getSmarty()
- * - add a new case to the switch statement here.
- */
-function galleryTemplateCallback($params, $content) {
-    global $gallery;
-
-    /*
-     * For function callbacks, the second parameter is a reference to Smarty.
-     * For blocks, the second parameter is the content that goes inside the
-     * block, and the third parameter is the Smarty reference.
-     *
-     * We don't use the Smarty reference, so we'll assume that the second
-     * parameter is the content, but only use it when we're dealing with a
-     * block tag (like galleryForm).
-     *
-     * One idiosyncracy: block functions are called twice, once at the start
-     * and once at the end.  The first time around, the $content parameter is
-     * null.  To simplify our system, we're going to ignore the first call.
-     * So, if $content is null, we'll just return.  Note that if this is a
-     * function call, $content actually contains a smarty instance so it won't
-     * be empty.
-     */
-    $content = func_get_arg(1);
-    if (is_object($content)) {
-	$content = false;
-    } else {
-	if ($content === null) {
-	    /* Ignore the first of a two part call */
-	    return;
-	}
-    }
-
-    $templateAdapter = $gallery->getTemplateAdapter();
-    $function = $params['__function'];
-    unset($params['__function']);
-
-    print $templateAdapter->callMethod($function, $params, $content);
 }
 ?>

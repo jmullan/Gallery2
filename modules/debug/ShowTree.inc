@@ -40,7 +40,7 @@ class ShowTreeView extends GalleryView {
      */
     function renderHead() {
 	/* Render the HTML head */
-	$template = $this->getTemplate();
+	$template = $this->_getTemplate();
 	$html = $template->render('DebugHead.tpl');
 
 	return array(GalleryStatus::success(), $html);
@@ -157,7 +157,7 @@ class ShowTreeView extends GalleryView {
 	}
 
 	/* Render the HTML body */
-	$template = $this->getTemplate();
+	$template = $this->_getTemplate();
 	$template->setVariable('view', 'debug:ShowTree');
 	$template->setVariable('itemId', $item->getId());
 	$template->setVariable('form', $form);

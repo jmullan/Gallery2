@@ -85,6 +85,7 @@ class CoreModule extends GalleryModule {
 	require_once($classDir . 'GalleryUserHelper.class');
 	require_once($classDir . 'GalleryGroupHelper.class');
 	require_once($classDir . 'GalleryUtilities.class');
+	require_once($classDir . 'GalleryUrlGenerator.class');
 	require_once($classDir . 'GalleryView.class');
 	require_once($classDir . 'GalleryViewCountMap.class');
 	require_once($classDir . 'GalleryFactory.class');
@@ -394,6 +395,20 @@ class CoreModule extends GalleryModule {
 		$ret = $this->setModuleParameter('version', $this->getVersion());
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
+		}
+
+		/*
+		 * We're going to need a translator in order to run the install
+		 * functions below.  At this point in the install process, we
+		 * probably don't have one!  Try to get one, and if that fails,
+		 * then create one.
+		 */
+		$translator =& $gallery->getTranslator();
+		if (empty($translator)) {
+		    $ret = $gallery->initTranslator();
+		    if ($ret->isError()) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
 		}
 		
 		foreach (array('_createAllUsersGroup',

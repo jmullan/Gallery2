@@ -94,8 +94,8 @@ class AdminCreateGroupController extends GalleryController {
 	}
 
 	if (!empty($redirectParams)) {
-	    $templateAdapter = $gallery->getTemplateAdapter();
-	    $results['redirect'] = $templateAdapter->url($redirectParams);
+	    $urlGenerator = $gallery->getUrlGenerator();
+	    $results['redirect'] = $urlGenerator->generateUrl($redirectParams);
 	} else {
 	    if (empty($results['view'])) {
 		$results['view'] = 'core:SiteAdmin';
@@ -156,7 +156,7 @@ class AdminCreateGroupView extends GalleryView {
 	}
 
 	/* Render the HTML body */
-	$template = $this->getTemplate();
+	$template = $this->_getTemplate();
 	$template->setVariable('form', $form);
 	$template->setVariable('controller', 'core:AdminCreateGroup');
 	$html = $template->render('AdminCreateGroup.tpl');

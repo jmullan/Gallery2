@@ -216,7 +216,7 @@ class AdminUsersView extends GalleryView {
 	}
 
 	/* Render the HTML body */
-	$template = $this->getTemplate();
+	$template = $this->_getTemplate();
 	$template->setVariable('form', $form);
 	$template->setVariable('totalUserCount', $totalUserCount);
 	$template->setVariable('controller', 'core:AdminUsers');

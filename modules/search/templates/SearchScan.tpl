@@ -1,49 +1,49 @@
-      {galleryForm controller=$controller method="GET"}
-      {galleryInput type="hidden" name="formName"}SearchScan{/galleryInput}
+      {gallery->form controller=$controller method="GET"}
+      {gallery->input type="hidden" name="formName"}SearchScan{/gallery->input}
 
       <!-- Embed the hidden return fields -->
       {foreach from=$return key=key item=value}
-      {galleryInput type="hidden" name=$key|string_format:"return.%s"}{$value}{/galleryInput}
+      {gallery->input type="hidden" name=$key|string_format:"return.%s"}{$value}{/gallery->input}
       {/foreach}
 
-      {galleryThinFrame width="100%"}
+      {gallery->thinFrame width="100%"}
     <table border="0" cellspacing="0" cellpadding="0" width="100%">
 	<tr>
 	  <td colspan="2" align="center">
-	    {galleryHighlight1}
-	    {galleryBiggerFontSize}
+	    {gallery->highlight1}
+	    {gallery->biggerFontSize}
 	    <center>
-	    {galleryText text="Search the Gallery"}
+	    {gallery->text text="Search the Gallery"}
 	    </center>
-	    {/galleryBiggerFontSize}
+	    {/gallery->biggerFontSize}
 
 	    {if !empty($return)}
 	    <center>
-	    <a href="{galleryUrl view=$return.view itemId=$return.itemId}">
-	      [{galleryText text="Back to Gallery"}]
+	    <a href="{gallery->url view=$return.view itemId=$return.itemId}">
+	      [{gallery->text text="Back to Gallery"}]
 	    </a>
 	    </center>
-	    {/galleryHighlight1}
+	    {/gallery->highlight1}
 	    {/if}
 	  </td>
 	</tr>
 
 	<tr>
 	  <td colspan="2">
-	    {galleryText text="Search for: "}
-	    {galleryInput type="text" size="50" name="form.searchCriteria"}{$form.searchCriteria}{/galleryInput}
-	    {galleryInput type="submit" name="form.action.search"}
-	    {galleryText text="Search"}
-	    {/galleryInput}
+	    {gallery->text text="Search for: "}
+	    {gallery->input type="text" size="50" name="form.searchCriteria"}{$form.searchCriteria}{/gallery->input}
+	    {gallery->input type="submit" name="form.action.search"}
+	    {gallery->text text="Search"}
+	    {/gallery->input}
 	  </td>
 	</tr>
 
 	<!-- {if isset($form.error.searchCriteria.missing)} -->
 	<tr>
 	  <td colspan="2">
-	    {galleryErrorFontColor}
-	    {galleryText text="You must enter some text to search for!"}
-	    {/galleryErrorFontColor}
+	    {gallery->errorFontColor}
+	    {gallery->text text="You must enter some text to search for!"}
+	    {/gallery->errorFontColor}
 	  </td>
 	</tr>
 	<!-- {/if} -->
@@ -51,11 +51,11 @@
 	<!-- {foreach from=$modules key=moduleId item=moduleInfo} -->
 	<tr>
 	  <td colspan="2">
-	    {galleryHighlight2}
-	    {galleryBigFontSize}
+	    {gallery->highlight2}
+	    {gallery->bigFontSize}
 	    {$moduleInfo.name}
-	    {/galleryBigFontSize}
-	    {/galleryHighlight2}
+	    {/gallery->bigFontSize}
+	    {/gallery->highlight2}
 	  </td>
 	</tr>
 	
@@ -66,56 +66,56 @@
 	  </td>
 	  <td>
 	    {capture name=checkboxName}form.options.{$moduleId}.{$optionId}{/capture}
-	    {galleryInput type="checkbox" name=$smarty.capture.checkboxName}
+	    {gallery->input type="checkbox" name=$smarty.capture.checkboxName}
 	    {if isset($form.options.$moduleId.$optionId)}1{/if}
-	    {/galleryInput}
+	    {/gallery->input}
 	    {$optionInfo.description}
 	  </td>
 	</tr>
 	<!-- {/foreach} -->
 	<!-- {/foreach} -->
     </table>
-    {/galleryThinFrame}
+    {/gallery->thinFrame}
 
     <br>
 
     <!-- {if !empty($searchResults)} -->
-    {galleryThinFrame}
+    {gallery->thinFrame}
     <table border="0" cellspacing="0" cellpadding="0" width="100%">
 	<tr>
 	  <td colspan="6">
-	    {galleryHighlight1}
-	    {galleryBiggerFontSize}
+	    {gallery->highlight1}
+	    {gallery->biggerFontSize}
 	    <center>
-	      {galleryText text="Search Results"}
+	      {gallery->text text="Search Results"}
 	    </center>
-	    {/galleryBiggerFontSize}
-	    {/galleryHighlight1}
+	    {/gallery->biggerFontSize}
+	    {/gallery->highlight1}
 	  </td>
 	</tr>
 
 	<!-- {foreach from=$searchResults key=moduleId item=results} -->
 	<tr>
 	  <td colspan="6">
-	    {galleryHighlight2}
-	    {galleryBigFontSize}
+	    {gallery->highlight2}
+	    {gallery->bigFontSize}
 	    {$modules.$moduleId.name}
-	    {/galleryBigFontSize}
+	    {/gallery->bigFontSize}
 	    &nbsp;
 	    &nbsp;
 	    &nbsp;
 	    {if ($results.count > 0)}
-	    {galleryText text="(Results %d - %d)"
+	    {gallery->text text="(Results %d - %d)"
 	                 arg1=$results.start
 	                 arg2=$results.end}
 	    {/if}
 	    {if ($results.count > $results.end)}
 	    {assign var="moduleId" value=$moduleId}
-	    {galleryInput type="submit" name="form.action.showAll.$moduleId"}
-	    {galleryText text="Show all %d" arg1=$results.count}
-	    {/galleryInput}
+	    {gallery->input type="submit" name="form.action.showAll.$moduleId"}
+	    {gallery->text text="Show all %d" arg1=$results.count}
+	    {/gallery->input}
 	    {/if}
-	    {/galleryHighlight2}
+	    {/gallery->highlight2}
 	  </td>
 	</tr>
 
@@ -131,9 +131,9 @@
 	    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	  </td>
 	  <td rowspan="2" valign="top">
-	    <a href="{galleryUrl view=core:ShowItem itemId=$resultId}">
+	    <a href="{gallery->url view=core:ShowItem itemId=$resultId}">
 	      {if isset($searchResultThumbnails.$resultId)}
-	      <img src="{galleryUrl view=core:DownloadItem itemId=$searchResultThumbnails.$resultId.id}"
+	      <img src="{gallery->url view=core:DownloadItem itemId=$searchResultThumbnails.$resultId.id}"
 	      {if ! empty($searchResultThumbnails.$resultId.width)}
 	      width="{$searchResultThumbnails.$resultId.width}"
 	      height="{$searchResultThumbnails.$resultId.height}"
@@ -141,7 +141,7 @@
 	      border="0"
 	      >
 	      {else}
-	      {galleryText text="No thumbnail"}
+	      {gallery->text text="No thumbnail"}
 	      {/if}
 	    </a>
 	  </td>
@@ -149,22 +149,22 @@
 	    &nbsp;
 	  </td>
 	  <td valign="top" align="right">
-	    <b>{galleryText text="Title: "}</b>
+	    <b>{gallery->text text="Title: "}</b>
 	  </td>
 	  <td width="10" rowspan="2">
 	    &nbsp;
 	  </td>
 	  <td valign="top" width="100%">
-	    {$searchResultItems.$resultId.title|default:"&nbsp;"|replace:$form.searchCriteria:"<b>$form[searchCriteria]</b>"}
+	    {$searchResultItems.$resultId.title|default:"&nbsp;"|replace:$form.searchCriteria:"<b>$form.searchCriteria</b>"}
 	  </td>
 	</tr>
 	
 	<tr>
 	  <td valign="top" align="right">
-	    <b>{galleryText text="Description: "}</b>
+	    <b>{gallery->text text="Description: "}</b>
 	  </td>
 	  <td valign="top">
-	    {$searchResultItems.$resultId.description|default:"&nbsp;"|replace:$form.searchCriteria:"<b>$form[searchCriteria]</b>"}
+	    {$searchResultItems.$resultId.description|default:"&nbsp;"|replace:$form.searchCriteria:"<b>$form.searchCriteria</b>"}
 	  </td>
 	</tr>
 
@@ -181,14 +181,14 @@
 	    &nbsp;
 	  </td>
 	  <td colspan="5">
-	    {galleryText text="No results"}
+	    {gallery->text text="No results"}
 	  </td>
 	</tr>
 	<!-- {/foreach} -->
 	<!-- {/foreach} -->
     </table>
-    {/galleryThinFrame}
+    {/gallery->thinFrame}
     <!-- {/if} -->
 
-    {/galleryForm}
+    {/gallery->form}
     

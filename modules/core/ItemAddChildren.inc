@@ -116,8 +116,10 @@ class ItemAddChildrenController extends GalleryController {
 		    }
 
 		    $newItem->setTitle(basename($file['name']));
-		    $newItem->setSummary(substr($file['caption'], 0, 64));
-		    $newItem->setDescription($file['caption']);
+		    if (isset($file['caption'])) {
+			$newItem->setSummary(substr($file['caption'], 0, 255));
+			$newItem->setDescription($file['caption']);
+		    }
 
 		    $ret = $newItem->save();
 		    if ($ret->isError()) {
@@ -208,8 +210,8 @@ class ItemAddChildrenController extends GalleryController {
 	}
 
 	if (!empty($redirectParams)) {
-	    $templateAdapter = $gallery->getTemplateAdapter();
-	    $results['redirect'] = $templateAdapter->url($redirectParams);
+	    $urlGenerator = $gallery->getUrlGenerator();
+	    $results['redirect'] = $urlGenerator->generateUrl($redirectParams);
 	} else {
 	    if (empty($results['view'])) {
 		$results['view'] = 'core:ItemAdmin';
@@ -262,7 +264,7 @@ class ItemAddChildrenView extends GalleryView {
 	}
 
 	/* Render the HTML body */
-	$template = $this->getTemplate();
+	$template = $this->_getTemplate();
 	$template->setVariable('form', $form);
 	$template->setVariable('item', $item->getMemberData());
 	$template->setVariable('controller', 'core:ItemAddChildren');

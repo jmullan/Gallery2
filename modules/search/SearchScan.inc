@@ -60,7 +60,7 @@ class SearchScanView extends GalleryView {
      */
     function renderHead() {
 	/* Render the HTML body */
-	$template = $this->getTemplate();
+	$template = $this->_getTemplate();
 	$html = $template->render('SearchHead.tpl');
 	
 	return array(GalleryStatus::success(), $html);
@@ -160,7 +160,7 @@ class SearchScanView extends GalleryView {
 	}
 
 	/* Render the HTML body */
-	$template = $this->getTemplate();
+	$template = $this->_getTemplate();
 	$template->setVariable('controller', 'search:SearchScan');
 	$template->setVariable('modules', $modules);
 	$template->setVariable('form', $form);

@@ -112,16 +112,16 @@ class EditCommentController extends GalleryController {
 		}
 	    
 		/* Redirect back to the return path */
-		$templateAdapter = $gallery->getTemplateAdapter();
-		$results['redirect'] = $templateAdapter->url($return);
+		$urlGenerator = $gallery->getUrlGenerator();
+		$results['redirect'] = $urlGenerator->generateUrl($return);
 	    } else {
 		/* Stay on the same page */
 		$results['view'] = 'comment:EditComment';
 	    }
 	} else {
 	    /* Redirect back to the return path */
-	    $templateAdapter = $gallery->getTemplateAdapter();
-	    $results['redirect'] = $templateAdapter->url($return);
+	    $urlGenerator = $gallery->getUrlGenerator();
+	    $results['redirect'] = $urlGenerator->generateUrl($return);
 	}
 
 	return array(GalleryStatus::success(), $results);
@@ -150,7 +150,7 @@ class EditCommentView extends GalleryView {
 	}
 
 	/* Render the HTML head */
-	$template = $this->getTemplate();
+	$template = $this->_getTemplate();
 	$template->setVariable('item', $item->getMemberData());
 	$html = $template->render('EditCommentHead.tpl');
 	return array(GalleryStatus::success(), $html);
@@ -205,7 +205,7 @@ class EditCommentView extends GalleryView {
 	}
 	
 	/* Render the HTML body */
-	$template = $this->getTemplate();
+	$template = $this->_getTemplate();
 	
 	if (!empty($thumbnailTable)) {
 	    $thumbnail = $thumbnailTable[$item->getId()];

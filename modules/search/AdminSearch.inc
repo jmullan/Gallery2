@@ -49,8 +49,8 @@ class AdminSearchController extends GalleryController {
 	$redirectParams['view'] = 'core:SiteAdmin';
 	$redirectParams['subView'] = 'search:AdminSearch';
 
-	$templateAdapter = $gallery->getTemplateAdapter();
-	$results['redirect'] = $templateAdapter->url($redirectParams);
+	$urlGenerator = $gallery->getUrlGenerator();
+	$results['redirect'] = $urlGenerator->generateUrl($redirectParams);
 
 	return array(GalleryStatus::success(), $results);
     }
@@ -69,7 +69,7 @@ class AdminSearchView extends GalleryView {
 	global $gallery;
 
 	/* Render the HTML body */
-	$template = $this->getTemplate();
+	$template = $this->_getTemplate();
 	$template->setVariable('controller', 'comment:AdminSearch');
 	$html = $template->render('AdminSearch.tpl');
 	

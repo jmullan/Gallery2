@@ -1,36 +1,36 @@
-      {galleryForm controller=$controller}
-      {galleryInput type="hidden" name="itemId"}{$item.id}{/galleryInput}
-      {galleryInput type="hidden" name="commentId"}{$comment.id}{/galleryInput}
+      {gallery->form controller=$controller}
+      {gallery->input type="hidden" name="itemId"}{$item.id}{/gallery->input}
+      {gallery->input type="hidden" name="commentId"}{$comment.id}{/gallery->input}
       
       <!-- Embed the hidden return fields -->
       {foreach from=$return key=key item=value}
-      {galleryInput type="hidden" name=$key|string_format:"return.%s"}{$value}{/galleryInput}
+      {gallery->input type="hidden" name=$key|string_format:"return.%s"}{$value}{/gallery->input}
       {/foreach}
       
     <center>
       {if !empty($thumbnail)}
-      <img src="{galleryUrl view='core:DownloadItem' itemId=$thumbnail.id}"
+      <img src="{gallery->url view='core:DownloadItem' itemId=$thumbnail.id}"
       {if $thumbnail.width} width="{$thumbnail.width}" {/if}
       {if $thumbnail.height} height="{$thumbnail.height}" {/if}
       >
       {else}
-      {galleryBigFontSize}
-      {galleryText text="There is no thumbnail for this item"}
-      {/galleryBigFontSize}
+      {gallery->bigFontSize}
+      {gallery->text text="There is no thumbnail for this item"}
+      {/gallery->bigFontSize}
       {/if}
 
       <br>
 
-      {galleryBiggerFontSize}
-      {galleryText text="Delete this comment?"}
-      {/galleryBiggerFontSize}
+      {gallery->biggerFontSize}
+      {gallery->text text="Delete this comment?"}
+      {/gallery->biggerFontSize}
 
       <br>
 
       <table>
 	  <tr>
 	    <td valign="top">
-	      <b>{galleryText text="Commenter:"}</b>
+	      <b>{gallery->text text="Commenter:"}</b>
 	    </td>
 	    <td>
 	      {$commenter.userName}
@@ -38,15 +38,15 @@
 	  </tr>
 	  <tr>
 	    <td valign="top">
-	      <b>{galleryText text="Date:"}</b>
+	      <b>{gallery->text text="Date:"}</b>
 	    </td>
 	    <td>
-	      {galleryDate timestamp=$comment.date format="%e-%b-%Y %H:%M"}
+	      {gallery->date timestamp=$comment.date format="%e-%b-%Y %H:%M"}
 	    </td>
 	  </tr>
 	  <tr>
 	    <td valign="top">
-	      <b>{galleryText text="Comment:"}</b>
+	      <b>{gallery->text text="Comment:"}</b>
 	    </td>
 	    <td>
 	      {$comment.comment}
@@ -54,14 +54,14 @@
 	  </tr>
 	  <tr>
 	    <td colspan="2" align="center">
-	      {galleryInput type="submit" name="form.action.delete"}
-	      {galleryText text="Delete"}
-	      {/galleryInput}
-	      {galleryInput type="submit" name="form.action.cancel"}
-	      {galleryText text="Cancel"}
-	      {/galleryInput}
+	      {gallery->input type="submit" name="form.action.delete"}
+	      {gallery->text text="Delete"}
+	      {/gallery->input}
+	      {gallery->input type="submit" name="form.action.cancel"}
+	      {gallery->text text="Cancel"}
+	      {/gallery->input}
 	    </td>
 	  </tr>
       </table>
     </center>
-    {/galleryForm}
+    {/gallery->form}

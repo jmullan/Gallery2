@@ -2,7 +2,7 @@
 <html>
   <head>
       {if !empty($master.error)}
-      <title>{galleryText text="Error"}</title>
+      <title>{gallery->text text="Error"}</title>
       {else}
       {$master.view.head}
       {/if}
@@ -20,7 +20,7 @@
     <table border="1" width="100%">
 	<tr>
 	  <td>
-	    <b>{galleryText text="Gallery Debug Output"}</b>
+	    <b>{gallery->text text="Gallery Debug Output"}</b>
 	  </td>
 	</tr>
 	<tr>
@@ -38,27 +38,27 @@
       <table border="1">
 	  <tr>
 	    <td colspan="8">
-	      {galleryBigFontSize}
-	      {galleryText text="Profiling"}
-	      {/galleryBigFontSize}
+	      {gallery->bigFontSize}
+	      {gallery->text text="Profiling"}
+	      {/gallery->bigFontSize}
 	    </td>
 	  </tr>
 
 	  <tr>
-	    <th rowspan=2> {galleryText text="Function"}
-	    <th colspan=2> {galleryText text="Combined"}
-	    <th colspan=3> {galleryText text="Internal"}
-	    <th colspan=3> {galleryText text="External"}
+	    <th rowspan=2> {gallery->text text="Function"}
+	    <th colspan=2> {gallery->text text="Combined"}
+	    <th colspan=3> {gallery->text text="Internal"}
+	    <th colspan=3> {gallery->text text="External"}
 	  </tr>
 	  <tr>
-	    <th> {galleryText text="Calls"}
-	    <th> {galleryText text="Total"}
-	    <th> &lt;{galleryText text="Total"}&gt;
-	    <th> {galleryText text="Max"}
-	    <th> {galleryText text="Average"}
-	    <th> {galleryText text="Total"}
-	    <th> {galleryText text="Max"}
-	    <th> {galleryText text="Average"}
+	    <th> {gallery->text text="Calls"}
+	    <th> {gallery->text text="Total"}
+	    <th> &lt;{gallery->text text="Total"}&gt;
+	    <th> {gallery->text text="Max"}
+	    <th> {gallery->text text="Average"}
+	    <th> {gallery->text text="Total"}
+	    <th> {gallery->text text="Max"}
+	    <th> {gallery->text text="Average"}
 	  </tr>
 
       {foreach from=$master.profile item=profileEntry}
@@ -68,7 +68,7 @@
 	</td>
       {if (isset($profileEntry.error))} 
       <td colspan="7">
-	{galleryText text="Error:"} {$profileEntry.error}
+	{gallery->text text="Error:"} {$profileEntry.error}
       </td>
       {else}
       <td>
@@ -107,11 +107,11 @@
     {/if}
 
     <a href="http://validator.w3.org/check/referer">
-      [{galleryText text="Validate this Page"}]
+      [{gallery->text text="Validate this Page"}]
     </a>
 
     <a href="http://gallery.sourceforge.net">
-      [{galleryText text="Powered by Gallery %s"
+      [{gallery->text text="Powered by Gallery %s"
       arg1=$gallery.version}]
     </a>
     

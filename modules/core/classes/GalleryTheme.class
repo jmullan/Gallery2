@@ -91,7 +91,7 @@ class GalleryTheme {
      * @param themeName the name of a theme in the themes directory.
      * @return object GalleryStatus a status code
      */
-    function init($themeName) {
+    function init($themeName=null) {
 	global $gallery;
 
 	/* If we don't have a theme name then use the default theme. */
@@ -113,7 +113,7 @@ class GalleryTheme {
 
 	$themeData['dir'] = $themeDir;
 	$themeData['url'] = GalleryUtilities::convertPathToRelativeUrl($themeDir);
-	$this->_template = new GalleryTemplate('themes', $themeName, $templateDir);
+	$this->_template = new GalleryTemplate($templateDir);
 	$this->_template->setVariable('theme', $themeData);
 
 	return GalleryStatus::success();
@@ -123,9 +123,62 @@ class GalleryTheme {
      * Get the configured GalleryTemplate instance
      *
      * @return object GalleryTemplate a template instance
+     * @access protected
      */
-    function &getTemplate() {
+    function &_getTemplate() {
 	return $this->_template;
+    }
+
+    /**
+     * Return an HTML form 
+     *
+     * @param array data in key/value pairs
+     * @param string HTML content to go inside the form
+     * @return string a complete HTML form
+     */
+    function form($params, $content) {
+	global $gallery;
+
+	/* Embed the session key, if we're not using cookies */
+	$session =& $gallery->getSession();
+	if (!($session->isUsingCookies())) {
+	    list ($sessionKey, $sessionId) = $session->getSessionDescriptor();
+	    $params[$sessionKey] = $sessionId;
+	}
+
+	/* Pass through the encoding type, if required */
+	$enctype = null;
+	if (!empty($params['enctype'])) {
+	    $enctype = $params['enctype'];
+	    unset($params['enctype']);
+	}
+	
+	if (empty($params['method'])) {
+	    $method = 'POST';
+	} else {
+	    $method = $params['method'];
+	    unset($params['method']);
+	}
+
+	$urlGenerator = $gallery->getUrlGenerator();
+	$baseUrl = $urlGenerator->generateUrl();
+	$result = '<form method="' . $method . '" action="' . $baseUrl . '"';
+	if (!empty($enctype)) {
+	    $result .= ' enctype="' . $enctype . '"';
+	}
+	$result .= '">';
+	$result .= "\n";
+	foreach ($params as $key => $value) {
+	    $result .= '<input type="hidden" ' .
+		'name="' . GALLERY_FORM_VARIABLE_PREFIX . $key . '" ' .
+		'value="' . $value . '">';
+	    $result .= "\n";
+	}
+	$result .= $content;
+	$result .= "\n";
+	$result .= '</form>';
+
+	return $result;
     }
 
     /**
@@ -360,9 +413,10 @@ class GalleryTheme {
      * @param templateName the template file name
      * @param params array template data
      * @param content string template data
+     * @access protected
      */
     function _renderTemplate($templateName, $params, $content=null) {
-	$template = $this->getTemplate();
+	$template = $this->_getTemplate();
 	$template->setVariable('params', $params);
 	$template->setVariable('content', $content);
 	return $template->render($templateName . '.tpl');

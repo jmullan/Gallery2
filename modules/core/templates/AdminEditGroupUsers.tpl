@@ -1,32 +1,32 @@
-  {galleryForm controller="$controller"}
-  {galleryInput type="hidden" name="formName"}AdminEditGroupUsers{/galleryInput}
-  {galleryInput type="hidden" name="form.groupId"}{$form.groupId}{/galleryInput}
+  {gallery->form controller="$controller"}
+  {gallery->input type="hidden" name="formName"}AdminEditGroupUsers{/gallery->input}
+  {gallery->input type="hidden" name="form.groupId"}{$form.groupId}{/gallery->input}
   <table width="100%" border="0" cellspacing="3" cellpadding="3">
 
     <tr>
       <td colspan="2" align="center">
-	{galleryBiggerFontSize}
-	{galleryText text="Add/Remove Group's Users"}
-	{/galleryBiggerFontSize}
+	{gallery->biggerFontSize}
+	{gallery->text text="Add/Remove Group's Users"}
+	{/gallery->biggerFontSize}
       </td>
     </tr>
 
     <tr>
       <td align="center">
-	{galleryLightFrame}
+	{gallery->lightFrame}
 	<table width="100%" border="0">
 	  <tr>
 	    <td colspan="2" align="center">
-	      {galleryBigFontSize}
-	      {galleryText text="Editing Group '%s'"
+	      {gallery->bigFontSize}
+	      {gallery->text text="Editing Group '%s'"
 	                   arg1=$form.groupName}
-	      {/galleryBigFontSize}
+	      {/gallery->bigFontSize}
 	    </td>
 	  </tr>
 	      
 	  <tr>
 	    <td colspan="2" align="center">
-	      {galleryText one="This group contains %d user"
+	      {gallery->text one="This group contains %d user"
 	                   many="This group contains %d users"
 	                   count=$userCount
 	                   arg1=$userCount}
@@ -36,9 +36,9 @@
 	  {if ($form.groupType == GROUP_SITE_ADMINS)}
 	  <tr>
 	    <td colspan="2" align="center">
-	      {galleryWarningFontColor}
-	      {galleryText text="Note: This is the site administrator group.  Any users you add to this group will have site-wide administrative privileges"}
-	      {/galleryWarningFontColor}
+	      {gallery->warningFontColor}
+	      {gallery->text text="Note: This is the site administrator group.  Any users you add to this group will have site-wide administrative privileges"}
+	      {/gallery->warningFontColor}
 	    </td>
 	  </tr>
 	  {/if}
@@ -46,7 +46,7 @@
 	  {if ($form.groupType == GROUP_ALL_USERS)}
 	  <tr>
 	    <td colspan="2" align="center">
-	      {galleryText text="This group contains all Gallery users.  You cannot add or remove users from it."}
+	      {gallery->text text="This group contains all Gallery users.  You cannot add or remove users from it."}
 	    </td>
 	  </tr>
 	  {else}
@@ -54,23 +54,23 @@
 	  {if !empty($form.list.users)}
 	  <tr>
 	    <td align="right">
-	      {gallerySelect name="form.list.userId" size=1}
-	      {html_options options=$form['list']['users']}
-	      {/gallerySelect}
+	      {gallery->select name="form.list.userId" size=1}
+	      {html_options options=$form.list.users}
+	      {/gallery->select}
 	    </td>
 	    <td align="left">
-	      {galleryInput type="submit" name="form.action.remove"}
-	      {galleryText text="Remove"}
-	      {/galleryInput}
+	      {gallery->input type="submit" name="form.action.remove"}
+	      {gallery->text text="Remove"}
+	      {/gallery->input}
 	    </td>
 	  </tr>
 
 	  {if isset($form.error.list.noUserSelected)}
 	  <tr>
 	    <td align="center">
-	      {galleryErrorFontColor}
-	      {galleryText text="You must select a user to remove."}
-	      {/galleryErrorFontColor}
+	      {gallery->errorFontColor}
+	      {gallery->text text="You must select a user to remove."}
+	      {/gallery->errorFontColor}
 	    </td>
 	  </tr>
 	  {/if}
@@ -78,21 +78,21 @@
 
 	  <tr>
 	    <td align="right">
-	      {galleryInput type="text" name="form.text.userName"}{$form.text.userName}{/galleryInput}
+	      {gallery->input type="text" name="form.text.userName"}{$form.text.userName}{/gallery->input}
 	    </td>
 	    <td align="left">
-	      {galleryInput type="submit" name="form.action.add"}
-	      {galleryText text="Add"}
-	      {/galleryInput}
+	      {gallery->input type="submit" name="form.action.add"}
+	      {gallery->text text="Add"}
+	      {/gallery->input}
 	    </td>
 	  </tr>
 
 	  {if isset($form.error.text.missingUserName)}
 	  <tr>
 	    <td colspan="2" align="center">
-	      {galleryErrorFontColor}
-	      {galleryText text="You must enter a username."}
-	      {/galleryErrorFontColor}
+	      {gallery->errorFontColor}
+	      {gallery->text text="You must enter a username."}
+	      {/gallery->errorFontColor}
 	    </td>
 	  </tr>
 	  {/if}
@@ -100,10 +100,10 @@
 	  {if isset($form.error.text.noSuchUser)}
 	  <tr>
 	    <td colspan="2" align="center">
-	      {galleryErrorFontColor}
-	      {galleryText text="User '%s' does not exist."
+	      {gallery->errorFontColor}
+	      {gallery->text text="User '%s' does not exist."
 	                   arg1=$form.text.userName}
-	      {/galleryErrorFontColor}
+	      {/gallery->errorFontColor}
 	    </td>
 	  </tr>
 	  {/if}
@@ -111,17 +111,17 @@
 
 	  <tr>
 	    <td colspan="2" align="center">
-	      {galleryInput type="submit" name="form.action.done"}{galleryText text="Done"}{/galleryInput}
+	      {gallery->input type="submit" name="form.action.done"}{gallery->text text="Done"}{/gallery->input}
 	    </td>
 	  </tr>
 
 	  {if !empty($userAdded)}
 	  <tr>
 	    <td colspan="2" align="center">
-	      {gallerySuccessFontColor}
-	      {galleryText text="Successfully added user '%s' to group."
+	      {gallery->successFontColor}
+	      {gallery->text text="Successfully added user '%s' to group."
 	                   arg1=$userAdded}
-	      {/gallerySuccessFontColor}
+	      {/gallery->successFontColor}
 	    </td>
 	  </tr>
 	  {/if}
@@ -129,19 +129,19 @@
 	  {if !empty($userRemoved)}
 	  <tr>
 	    <td colspan="2" align="center">
-	      {gallerySuccessFontColor}
-	      {galleryText text="Successfully removed user '%s' from group."
+	      {gallery->successFontColor}
+	      {gallery->text text="Successfully removed user '%s' from group."
 	                   arg1=$userRemoved}
-	      {/gallerySuccessFontColor}
+	      {/gallery->successFontColor}
 	    </td>
 	  </tr>
 	  {/if}
 
 	</table>
-	{/galleryLightFrame}
+	{/gallery->lightFrame}
       </td>
     </tr>
   </table>
-  {/galleryForm}
+  {/gallery->form}
 
   

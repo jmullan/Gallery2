@@ -1,57 +1,57 @@
-      {galleryForm controller="$controller"}
+      {gallery->form controller="$controller"}
     <table>
 
 	<tr>
 	  <td colspan="2" align="center">
-	    {galleryBiggerFontSize}
-	    {galleryText text="Gallery Settings"}
-	    {/galleryBiggerFontSize}
+	    {gallery->biggerFontSize}
+	    {gallery->text text="Gallery Settings"}
+	    {/gallery->biggerFontSize}
 	  </td>
 	</tr>
 
 	<tr>
 	  <td colspan="2">
-	    {galleryBigFontSize}
-	    {galleryText text="Defaults"}
-	    {/galleryBigFontSize}
+	    {gallery->bigFontSize}
+	    {gallery->text text="Defaults"}
+	    {/gallery->bigFontSize}
 	    <br>
-	    {galleryText text="These are default values.  They can be overridden in each album."}
+	    {gallery->text text="These are default values.  They can be overridden in each album."}
 	  </td>
 	</tr>
 
 	<tr>
 	  <td align="right">
-	    {galleryText text="Album sort order:"}
+	    {gallery->text text="Album sort order:"}
 	  </td>
 	  <td>
-	    {gallerySelect name="default.orderBy"}
+	    {gallery->select name="default.orderBy"}
 	    {html_options options=$orderByList selected=$form.default.orderBy}
-	    {/gallerySelect}
-	    {gallerySelect name="default.orderDirection"}
+	    {/gallery->select}
+	    {gallery->select name="default.orderDirection"}
 	    {html_options options=$orderDirectionList selected=$form.default.orderDirection}
-	    {/gallerySelect}
+	    {/gallery->select}
 	  </td>
 	</tr>
 
 	<tr>	
 	  <td align="right">
-	    {galleryText text="Default layout"}
+	    {gallery->text text="Default layout"}
 	  </td>
 	  <td>
-	    {gallerySelect name="default.layout"}
+	    {gallery->select name="default.layout"}
 	    {html_options values=$layoutList selected=$form.default.layout output=$layoutList}
-	    {/gallerySelect}
+	    {/gallery->select}
 	  </td>
 	</tr>
 
 	<tr>	
 	  <td align="right">
-	    {galleryText text="Default theme"}
+	    {gallery->text text="Default theme"}
 	  </td>
 	  <td>
-	    {gallerySelect name="default.theme"}
+	    {gallery->select name="default.theme"}
 	    {html_options values=$themeList selected=$form.default.theme output=$themeList}
-	    {/gallerySelect}
+	    {/gallery->select}
 	  </td>
 	</tr>
 
@@ -63,22 +63,22 @@
 
 	<tr>
 	  <td colspan="2">
-	    {galleryBigFontSize}
-	    {galleryText text="Language settings"}
-	    {/galleryBigFontSize}
+	    {gallery->bigFontSize}
+	    {gallery->text text="Language settings"}
+	    {/gallery->bigFontSize}
 	    <br>
-	    {galleryText text="Select language defaults for Gallery. Individual users can override this setting in their personal preferences."}
+	    {gallery->text text="Select language defaults for Gallery. Individual users can override this setting in their personal preferences."}
 	  </td>
 	</tr>
 
 	<tr>	
 	  <td align="right">
-	    {galleryText text="Default language"}
+	    {gallery->text text="Default language"}
 	  </td>
 	  <td>
-	    {gallerySelect name="default.language"}
+	    {gallery->select name="default.language"}
 	    {html_options options=$languageList selected=$form.default.language}
-	    {/gallerySelect}
+	    {/gallery->select}
 	  </td>
 	</tr>
 
@@ -90,33 +90,33 @@
 
 	<tr>
 	  <td colspan="2">
-	    {galleryBigFontSize}
-	    {galleryText text="Filesystem Permissions"}
-	    {/galleryBigFontSize}
+	    {gallery->bigFontSize}
+	    {gallery->text text="Filesystem Permissions"}
+	    {/gallery->bigFontSize}
 	    <br>
-	    {galleryText text="Here you can specify the default permissions for files and directories that Gallery creates. This doesn't apply to files/directories that Gallery has already created."}
+	    {gallery->text text="Here you can specify the default permissions for files and directories that Gallery creates. This doesn't apply to files/directories that Gallery has already created."}
 	  </td>
 	</tr>
 
 	<tr>	
 	  <td align="right">
-	    {galleryText text="New directories"}
+	    {gallery->text text="New directories"}
 	  </td>
 	  <td>
-	    {gallerySelect name="permissions.directory"}
+	    {gallery->select name="permissions.directory"}
 	    {html_options values=$permissionsDirectoryList selected=$form.permissions.directory output=$permissionsDirectoryList}
-	    {/gallerySelect}
+	    {/gallery->select}
 	  </td>
 	</tr>
 
 	<tr>
 	  <td align="right">
-	    {galleryText text="New files"}
+	    {gallery->text text="New files"}
 	  </td>
 	  <td>
-	    {gallerySelect name="permissions.file"}
+	    {gallery->select name="permissions.file"}
 	    {html_options values=$permissionsFileList selected=$form.permissions.file output=$permissionsFileList}
-	    {/gallerySelect}
+	    {/gallery->select}
 	  </td>
 	</tr>
 
@@ -128,34 +128,34 @@
 
 	<tr>
 	  <td colspan="2">
-	    {galleryBigFontSize}
-	    {galleryText text="Graphics Toolkit"}
-	    {/galleryBigFontSize}
+	    {gallery->bigFontSize}
+	    {gallery->text text="Graphics Toolkit"}
+	    {/gallery->bigFontSize}
 	    <br>
-	    {galleryText text="Choose a graphics toolkit to use.  You can only choose from the list of currently active toolkits."}
+	    {gallery->text text="Choose a graphics toolkit to use.  You can only choose from the list of currently active toolkits."}
 	  </td>
 	</tr>
 
 	<!-- {if !empty($graphicsTypeList)} -->
 	<tr>
 	  <td align="right">
-	    {galleryText text="Toolkit"}
+	    {gallery->text text="Toolkit"}
 	  </td>
 	  <td>
-	    {gallerySelect name="graphics.type"}
+	    {gallery->select name="graphics.type"}
 	    {html_options options=$graphicsTypeList selected=$form.graphics.type}
-	    {/gallerySelect}
+	    {/gallery->select}
 	  </td>
 	</tr>
 	<!-- {else} -->
 	<tr>
 	  <td colspan="2">
-	    {galleryErrorFontColor}
-	    {galleryText text="No Graphics toolkits detected!"}
-	    <a href="{galleryUrl view=core:SiteAdmin subView=core:AdminModules}">
-	      [{galleryText text="Activate a toolkit here"}]
+	    {gallery->errorFontColor}
+	    {gallery->text text="No Graphics toolkits detected!"}
+	    <a href="{gallery->url view=core:SiteAdmin subView=core:AdminModules}">
+	      [{gallery->text text="Activate a toolkit here"}]
 	    </a>
-	    {/galleryErrorFontColor}
+	    {/gallery->errorFontColor}
 	  </td>
 	</tr>
 	<!-- {/if} -->
@@ -168,33 +168,33 @@
 
 	<tr>
 	  <td colspan="2">
-	    {galleryBigFontSize}
-	    {galleryText text="Session Settings"}
-	    {/galleryBigFontSize}
+	    {gallery->bigFontSize}
+	    {gallery->text text="Session Settings"}
+	    {/gallery->bigFontSize}
 	    <br>
-	    {galleryText text="Specify the lifetime of the session here."}
+	    {gallery->text text="Specify the lifetime of the session here."}
 	  </td>
 	</tr>
 
 	<tr>
 	  <td align="right">
-	    {galleryText text="Lifetime"}
+	    {gallery->text text="Lifetime"}
 	  </td>
 	  <td>
-	    {gallerySelect name="session.lifetime"}
+	    {gallery->select name="session.lifetime"}
 	    {html_options options=$sessionTimeList selected=$form.session.lifetime}
-	    {/gallerySelect}
+	    {/gallery->select}
 	  </td>
 	</tr>
 
 	<tr>
 	  <td align="right">
-	    {galleryText text="Inactivity Timeout"}
+	    {gallery->text text="Inactivity Timeout"}
 	  </td>
 	  <td>
-	    {gallerySelect name="session.inactivityTimeout"}
+	    {gallery->select name="session.inactivityTimeout"}
 	    {html_options options=$sessionTimeList selected=$form.session.inactivityTimeout}
-	    {/gallerySelect}
+	    {/gallery->select}
 	  </td>
 	</tr>
 
@@ -206,11 +206,11 @@
 
 	<tr>
 	  <td colspan="2" align="center">
-	    {galleryInput type="submit" name="actionSave"}{galleryText text="Save Changes"}{/galleryInput}
-	    {galleryInput type="submit" name="actionReset"}{galleryText text="Reset"}{/galleryInput}
+	    {gallery->input type="submit" name="actionSave"}{gallery->text text="Save Changes"}{/gallery->input}
+	    {gallery->input type="submit" name="actionReset"}{gallery->text text="Reset"}{/gallery->input}
 	  </td>
 	</tr>
 
     </table>
-    {/galleryForm}
+    {/gallery->form}
     

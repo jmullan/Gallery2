@@ -1,46 +1,46 @@
-  {galleryForm controller="$controller"}
+  {gallery->form controller="$controller"}
   <table width="100%" border="0" cellspacing="3" cellpadding="3">
 
     <tr>
       <td colspan="2" align="center">
-	{galleryBiggerFontSize}
-	{galleryText text="User Management"}
-	{/galleryBiggerFontSize}
+	{gallery->biggerFontSize}
+	{gallery->text text="User Management"}
+	{/gallery->biggerFontSize}
 	<br>
-	{galleryBigFontSize}
-	{galleryText one="There is %d user in the system." 
+	{gallery->bigFontSize}
+	{gallery->text one="There is %d user in the system." 
 	             many="There are %d total users in the system." 
 	             count=$totalUserCount
 	             arg1=$totalUserCount}
-	{/galleryBigFontSize}
+	{/gallery->bigFontSize}
       </td>
     </tr>
 
     <tr>
       <td valign="top">
-	{galleryLightFrame}
+	{gallery->lightFrame}
 	<table width="100%" border="0">
 	  <tr>
 	    <td>
-	      {galleryText text="If you know the username you'd like to work with, you can enter it here."}
+	      {gallery->text text="If you know the username you'd like to work with, you can enter it here."}
 	    </td>
 	  </tr>
 
 	  <tr>
 	    <td align="center">
-	      {galleryInput type="text" name="form.text.username" size="20"}{$form.text.username}{/galleryInput}
-	      {galleryInput type="submit" name="form.action.editFromText"}{galleryText text="Edit"}{/galleryInput}
-	      {galleryInput type="submit" name="form.action.deleteFromText"}{galleryText text="Delete"}{/galleryInput}
+	      {gallery->input type="text" name="form.text.username" size="20"}{$form.text.username}{/gallery->input}
+	      {gallery->input type="submit" name="form.action.editFromText"}{gallery->text text="Edit"}{/gallery->input}
+	      {gallery->input type="submit" name="form.action.deleteFromText"}{gallery->text text="Delete"}{/gallery->input}
 	    </td>	
 	  </tr>
 
 	  {if isset($form.error.text.noSuchUser)}
 	  <tr>
 	    <td align="center">
-	      {galleryErrorFontColor}
-	      {galleryText text="User '%s' does not exist."
+	      {gallery->errorFontColor}
+	      {gallery->text text="User '%s' does not exist."
 	                   arg1=$form.text.username}
-	      {/galleryErrorFontColor}
+	      {/gallery->errorFontColor}
 	    </td>
 	  </tr>
 	  {/if}
@@ -48,80 +48,80 @@
 	  <tr>
 	    <td>
 	      <br><br>
-	      {galleryText text="Or you can create a new user here."}
+	      {gallery->text text="Or you can create a new user here."}
 	    </td>
 	  </tr>
 
 	  <tr>
 	    <td align="center">
-	      {galleryInput type="submit" name="form.action.create"}{galleryText text="Create"}{/galleryInput}
+	      {gallery->input type="submit" name="form.action.create"}{gallery->text text="Create"}{/gallery->input}
 	    </td>
 	  </tr>
 	</table>
-	{/galleryLightFrame}
+	{/gallery->lightFrame}
       </td>
       <td>
-	{galleryLightFrame}
+	{gallery->lightFrame}
 	<table width="100%" border="0">
 	  <tr>
 	    <td>
-	      {galleryText text="If you don't know the username you'd like to work with, you can browse or search for it here."}
+	      {gallery->text text="If you don't know the username you'd like to work with, you can browse or search for it here."}
 	    </td>
 	  </tr>
 
 	  <tr>
 	    <td align="center">
-	      {gallerySelect name="form.list.userid" size=$form['list']['pageSize']}
-	      {html_options options=$form['list']['usernames']}
-	      {/gallerySelect}
+	      {gallery->select name="form.list.userid" size=$form.list.pageSize}
+	      {html_options options=$form.list.usernames}
+	      {/gallery->select}
 	      {if (!empty($form.list.filter))}
 	      <br>
-	      {galleryText one="%d user matches your filter"
+	      {gallery->text one="%d user matches your filter"
 			   many="%d users match your filter"
 			   count=$form.list.count
 			   arg1=$form.list.count}
 	      {/if}
 	      {if ($form.list.maxPages > 1)}
 	      <br>
-	      {galleryText text="Viewing page %d of %d"
+	      {gallery->text text="Viewing page %d of %d"
 		arg1=$form.list.page
 		arg2=$form.list.maxPages}
 	      {/if}
-	      {galleryInput type="hidden" name="form.list.page"}{$form.list.page}{/galleryInput}
-	      {galleryInput type="hidden" name="form.list.maxPages"}{$form.list.maxPages}{/galleryInput}
+	      {gallery->input type="hidden" name="form.list.page"}{$form.list.page}{/gallery->input}
+	      {gallery->input type="hidden" name="form.list.maxPages"}{$form.list.maxPages}{/gallery->input}
 	    </td>
 	  </tr>
 
 	  <tr>
 	    <td align="center">
-	      {galleryInput type="submit" name="form.action.editFromList"}{galleryText text="Edit"}{/galleryInput}
-	      {galleryInput type="submit" name="form.action.deleteFromList"}{galleryText text="Delete"}{/galleryInput}
+	      {gallery->input type="submit" name="form.action.editFromList"}{gallery->text text="Edit"}{/gallery->input}
+	      {gallery->input type="submit" name="form.action.deleteFromList"}{gallery->text text="Delete"}{/gallery->input}
 	    </td>
 	  </tr>
 	  <tr>
 	    <td align="center">
 	      {if ($form.list.page > 1)}
-	      {galleryInput type="submit" name="form.action.firstPage"}{galleryText text="|< First"}{/galleryInput}
-	      {galleryInput type="submit" name="form.action.backPage"}{galleryText text="<< Back"}{/galleryInput}
+	      {gallery->input type="submit" name="form.action.firstPage"}{gallery->text text="|< First"}{/gallery->input}
+	      {gallery->input type="submit" name="form.action.backPage"}{gallery->text text="<< Back"}{/gallery->input}
 	      {/if}
 	      {if ($form.list.page < $form.list.maxPages)}
-	      {galleryInput type="submit" name="form.action.nextPage"}{galleryText text="Next >>"}{/galleryInput}
-	      {galleryInput type="submit" name="form.action.lastPage"}{galleryText text="Last >|"}{/galleryInput}
+	      {gallery->input type="submit" name="form.action.nextPage"}{gallery->text text="Next >>"}{/gallery->input}
+	      {gallery->input type="submit" name="form.action.lastPage"}{gallery->text text="Last >|"}{/gallery->input}
 	      {/if}
 	    </td>
 	  </tr>
 	  <tr>
 	    <td align="center">
-	      {galleryInput type="submit" name="form.action.filterClear"}{galleryText text="Clear"}{/galleryInput}
-	      {galleryInput type="submit" name="form.action.filterBySubstring"}{galleryText text="Filter:"}{/galleryInput}
-	      {galleryInput type="text" name="form.list.filter"}{$form.list.filter}{/galleryInput}
+	      {gallery->input type="submit" name="form.action.filterClear"}{gallery->text text="Clear"}{/gallery->input}
+	      {gallery->input type="submit" name="form.action.filterBySubstring"}{gallery->text text="Filter:"}{/gallery->input}
+	      {gallery->input type="text" name="form.list.filter"}{$form.list.filter}{/gallery->input}
 	    </td>
 	  </tr>
 	</table>
-	{/galleryLightFrame}
+	{/gallery->lightFrame}
       </td>
     </tr>
   </table>
-  {/galleryForm}
+  {/gallery->form}
 
   

@@ -174,8 +174,7 @@ function GalleryTestHarness() {
     }
 
     /* Get the Smarty instance. */
-    $template = new GalleryTemplate(null, null, 
-				    dirname(__FILE__) . '/templates');
+    $template = new GalleryTemplate(dirname(__FILE__) . '/templates');
     $template->setVariable('tests', $tests);
     $template->setVariable('results', $results);
     $template->setVariable('rollup', $rollup);

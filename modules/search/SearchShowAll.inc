@@ -60,7 +60,7 @@ class SearchShowAllView extends GalleryView {
      */
     function renderHead() {
 	/* Render the HTML body */
-	$template = $this->getTemplate();
+	$template = $this->_getTemplate();
 	$html = $template->render('SearchHead.tpl');
 	
 	return array(GalleryStatus::success(), $html);
@@ -162,7 +162,7 @@ class SearchShowAllView extends GalleryView {
 	}
 
 	/* Render the HTML body */
-	$template = $this->getTemplate();
+	$template = $this->_getTemplate();
 	$template->setVariable('controller', 'search:SearchShowAll');
 	$template->setVariable('form', $form);
 	$template->setVariable('maxPages', $maxPages);
