@@ -1,0 +1,131 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package AlbumSelect
+ * @subpackage PHPUnit
+ * @author Alan Harder <alan.harder@sun.com>
+ */
+
+/**
+ * Test AlbumSelect functionality
+ *
+ * @package AlbumSelect
+ * @subpackage PHPUnit
+ */
+class AlbumSelectTest extends GalleryTestCase {
+
+    function AlbumSelectTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    function setUp() {
+	parent::setUp();
+
+	list ($ret, $this->_param) =
+	    GalleryCoreApi::fetchAllPluginParameters('module', 'albumselect');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $this->_module) = GalleryCoreApi::loadPlugin('module', 'albumselect');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markForCleanup($this->_album);
+    }
+
+    function tearDown() {
+	foreach ($this->_param as $key => $value) {
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'albumselect', $key, $value);
+	    if ($ret->isError()) {
+		print $ret->getAsHtml();
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+	parent::tearDown();
+    }
+
+    function testAlbumSelect() {
+	$ret = $this->_module->setParameter('show', '0');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = $this->_module->setParameter('sort', '0');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$template = new AlbumSelectDummyGalleryTemplate();
+	list ($ret, $tpl) = $this->_module->loadSystemContent($template);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(null, $tpl, 'no system content');
+	$this->assert(!empty($template->data['AlbumSelectSystemContent']['tree']), 'tree');
+	$this->assert(in_array(array('id' => $this->_album->getId(), 'depth' => 0),
+			       $template->data['AlbumSelectSystemContent']['tree']), 'album in tree');
+    }
+
+    function testAlbumSelectShowSort() {
+	$ret = $this->_module->setParameter('show', '1');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = $this->_module->setParameter('sort', '1');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$template = new AlbumSelectDummyGalleryTemplate();
+	list ($ret, $tpl) = $this->_module->loadSystemContent($template);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals('modules/albumselect/templates/AlbumSelect.tpl', $tpl, 'system content');
+	$this->assert(!empty($template->data['AlbumSelectSystemContent']['tree']), 'tree');
+	$this->assert(in_array(array('id' => $this->_album->getId(), 'depth' => 0),
+			       $template->data['AlbumSelectSystemContent']['tree']), 'album in tree');
+    }
+}
+
+/**
+ * @package AlbumSelect
+ * @subpackage PHPUnit
+ */
+class AlbumSelectDummyGalleryTemplate {
+    var $data = array();
+    function setVariable($key, $value) {
+	$this->data[$key] = $value;
+    }
+}
+?>
