@@ -16,7 +16,10 @@
     {/if}
     {if isset($ImageBlockSystemContent.show.views)}
       {g->text one="Viewed: %d time" many="Viewed: %d times"
-       count=$block.viewCount arg1=$block.viewCount}
+       count=$block.viewCount arg1=$block.viewCount}<br>
+    {/if}
+    {if isset($ImageBlockSystemContent.show.owner)}
+      {g->text text="Owner: %s" arg1=$block.owner.fullName|default:$block.owner.userName}<br>
     {/if}
   {/g->title}{/g->item}{/g->listing}
 {/g->element}

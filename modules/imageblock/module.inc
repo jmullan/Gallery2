@@ -201,9 +201,14 @@ class ImageBlockModule extends GalleryModule {
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
+	    list ($ret, $owner) = GalleryCoreApi::loadEntitiesById($item->getOwnerId());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
 
 	    $data['title'] = $title;
 	    $data['item'] = $item->getMemberData();
+	    $data['owner'] = $owner->getMemberData();
 	    if (isset($thumbnail[$id])) {
 		$data['thumb'] = $thumbnail[$id]->getMemberData();
 		$blocks[] = $data;

@@ -43,6 +43,10 @@
       {g->input type="checkbox" name="form[views]"}{$form.views}{/g->input}
       {g->text text="View Count"}
     {/g->element}
+    {g->element}
+      {g->input type="checkbox" name="form[owner]"}{$form.owner}{/g->input}
+      {g->text text="Owner"}
+    {/g->element}
   {/g->box}
   {g->box style="admin"}
     {g->element}
