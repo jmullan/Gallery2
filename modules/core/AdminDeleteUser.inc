@@ -98,9 +98,9 @@ class AdminDeleteUserController extends GalleryController {
 		    } else { /* the user was spelled incorrectly, return an error page */
 			$error[] = 'form[error][text][noSuchUser]';
 		    }
-		} elseif ($newOwner->getId() == $userId) { /* new Owner = deleted user, doesn't make sense */
+		} else if ($newOwner->getId() == $userId) { /* new Owner = deleted user, doesn't make sense */
 		    $error[] = 'form[error][text][newOwnerIsDeletedUser]';
-		} elseif($newOwner->getId() == $anonymousUserId) {
+		} else if($newOwner->getId() == $anonymousUserId) {
 		    $error[] = 'form[error][text][newOwnerIsGuest]';
 		}
 	    } else { /* new owner field is empty, set the default new owner: 'admin' */

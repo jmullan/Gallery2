@@ -412,9 +412,9 @@ class GalleryTranslator {
 		/* Suppress warnings, which can happen in $codeSet is not supported */
 		if (function_exists('mb_convert_encoding')) {
 		    $localized = @mb_convert_encoding($localized, $this->_activeCharset, $codeSet);
-		} elseif (function_exists('iconv')) {
+		} else if (function_exists('iconv')) {
 		    $localized = @iconv($codeSet, $this->_activeCharset, $localized);
-		} elseif (function_exists('recode_string')) {
+		} else if (function_exists('recode_string')) {
 		    $localized = @recode_string($codeSet . '..' . $this->_activeCharset, $localized);
 		}
 	    }

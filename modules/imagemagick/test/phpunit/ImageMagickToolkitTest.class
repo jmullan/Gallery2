@@ -805,9 +805,9 @@ class ImageMagickToolkitTestPlatform {
 		$output = split("\n", $this->_environment['identify']['UNKNOWN']);
 	    }
 	    $status = true;
-	} elseif (($binary == 'convert' && in_array('convert', $this->_environment['binaries']))
-			|| ($binary == 'composite' && in_array('composite', $this->_environment['binaries']))
-			|| ($binary == 'combine' && in_array('combine', $this->_environment['binaries'])) ) {
+	} else if (($binary == 'convert' && in_array('convert', $this->_environment['binaries']))
+		   || ($binary == 'composite' && in_array('composite', $this->_environment['binaries']))
+		   || ($binary == 'combine' && in_array('combine', $this->_environment['binaries'])) ) {
 	    $params = array_slice($firstCmd, 0);
 	    $src = basename($firstCmd[count($firstCmd) - 2]);
 	    $dst = basename($firstCmd[count($firstCmd) - 1]);

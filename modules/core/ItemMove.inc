@@ -114,7 +114,7 @@ class ItemMoveController extends GalleryController {
 		    /* Check if the destination allows this source to be added */
 		    if ($selectedItem->getCanContainChildren() && ! $canAddAlbum) {
 			$error[] = 'form[error][source][' . $selectedId . '][permission][addAlbumItem]';
-		    } elseif (! $selectedItem->getCanContainChildren() && ! $canAddItem) {
+		    } else if (! $selectedItem->getCanContainChildren() && ! $canAddItem) {
 			$error[] = 'form[error][source][' . $selectedId . '][permission][addDataItem]';
 		    }
 		}

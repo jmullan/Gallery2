@@ -88,7 +88,7 @@ class UserPreferencesController extends GalleryController {
 	     */
 	    if (empty($form['email']) && !$isAdmin) {
 		$error[] = 'form[error][email][missing]';
-	    } elseif (!empty($form['email'])) {
+	    } else if (!empty($form['email'])) {
 		$form['email'] = trim($form['email']);
 		if (!GalleryUtilities::isValidEmailString($form['email'])) {
 		    $error[] = 'form[error][email][invalid]';

@@ -342,7 +342,7 @@ class ImageMagickToolkitHelper {
 					 'message' => array_merge(array($module->translate('Problem executing binary:')),
 								  $results)
 					 );
-		} elseif (!ereg('(GIF.*PseudoClass|PseudoClass.*GIF|DirectClass.*GIF)', join(',', $results))) {
+		} else if (!ereg('(GIF.*PseudoClass|PseudoClass.*GIF|DirectClass.*GIF)', join(',', $results))) {
 		    $testArray[] = array('name' => 'identify',
 					 'success' => false,
 					 'message' => array_merge(array($module->translate('Binary output:')),
@@ -391,7 +391,7 @@ class ImageMagickToolkitHelper {
 			      'success' => false,
 			      'message' => array_merge(array($module->translate('Problem executing binary:')),
 						       $results));
-		} elseif (join('', $results) != '') {
+		} else if (join('', $results) != '') {
 		    /*
 		     * 'convert' normaly doesn't say anything: if it does,
 		     * it was an error message

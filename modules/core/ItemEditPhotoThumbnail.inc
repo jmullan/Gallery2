@@ -117,7 +117,7 @@ class ItemEditPhotoThumbnail extends ItemEditPlugin {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    $status = $module->translate('Thumbnail cropped successfully');
-	} elseif (isset($form['action']['reset']) && isset($thumbnail)) {
+	} else if (isset($form['action']['reset']) && isset($thumbnail)) {
 	    list ($ret, $lock) = GalleryCoreApi::acquireWriteLock($thumbnail->getId());
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);

@@ -143,7 +143,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 				    return array($ret->wrap(__FILE__, __LINE__), null, null);
 				}
 				continue;
-			    } elseif ($ret->isError()) {
+			    } else if ($ret->isError()) {
 				return array($ret->wrap(__FILE__, __LINE__), null, null);
 			    }
 
