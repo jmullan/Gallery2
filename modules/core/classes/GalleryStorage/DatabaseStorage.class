@@ -37,9 +37,14 @@ define('DATABASE_ID_SEQUENCE', 'idSequence');
 define('DATABASE_LOCK_SEQUENCE', 'lockSequence');
 
 /**
- * Prefix to append to table names
+ * Prefix to prepend to table names
  */
 define('DATABASE_TABLE_PREFIX', 'gallery_');
+
+/**
+ * Prefix to prepend to column names
+ */
+define('DATABASE_COLUMN_PREFIX', 'g_');
 
 /**
  * Database connection states
@@ -185,7 +190,6 @@ class DatabaseStorage extends GalleryStorage {
     function connect() {
 	if (empty($this->_type) ||
 	        empty($this->_username) ||
-	        empty($this->_password) ||
 	        empty($this->_hostname)) {
 	    return ERROR | ERROR_MISSING_VALUE;
 	}
@@ -297,7 +301,7 @@ class DatabaseStorage extends GalleryStorage {
 		$where[] = "$tableName.id=?";
 		$data[] = $id;
 	    }
-	    $columns[$tableName . '.' . $columnName] = 1;
+	    $columns[$tableName . '.' . $this->prefixColumnName($columnName)] = 1;
 	}
 
 	$query = 'SELECT ';
@@ -368,8 +372,12 @@ class DatabaseStorage extends GalleryStorage {
 	$map->reset();
 
 	/* Set up and execute our query */
-	$query = 'SELECT `key`, `value` from ' . $tableName .
-		' WHERE id=?';
+	$keyCol = $this->prefixColumnName('key');
+	$valueCol = $this->prefixColumnName('value');
+	$idCol = $this->prefixColumnName('id');
+	$query = "SELECT $keyCol, $valueCol" . 
+		 ' FROM ' . $tableName .
+		 " WHERE $idCol=?";
 	$data = array($nucleus->getId());
 	$recordSet = $this->_db->Execute($query, $data);
 	if (!$recordSet) {
@@ -379,7 +387,8 @@ class DatabaseStorage extends GalleryStorage {
 
 	/* Push all our data into the map */
 	while (!$recordSet->EOF) {
-	    $map->setValue($recordSet->fields['key'], $recordSet->fields['value']);
+	    $map->setValue($recordSet->fields[$keyCol],
+			   $recordSet->fields[$valueCol]);
 	    $recordSet->MoveNext();
 	}
 
@@ -462,19 +471,22 @@ class DatabaseStorage extends GalleryStorage {
 
 		/* Make sure that the id column is set for each table */
 		if (empty($changes[$idColumn['name']])) {
-		    $changes[$idColumn['name']] = $idColumn['value'];
+		    $changes[$idColumn['name']] =
+			     $idColumn['value'];
 		}
 
 		$table = DATABASE_TABLE_PREFIX . strtolower($table);
-		$query = "INSERT INTO $table (";
-		$query .= join(',', array_keys($changes));
-		$query .= ') VALUES (';
-		for ($i = 0; $i < sizeof($changes); $i++) {
-		    if ($i > 0) {
-			$query .= ', ';
-		    }
-		    $query .= '?';
+
+		$columns = array();
+		$markers = array();
+		foreach ($changes as $name => $value) {
+		    $columns[] = $this->prefixColumnName($name);
+		    $markers[] = '?';
 		}
+		$query = "INSERT INTO $table (";
+		$query .= join(', ', $columns);
+		$query .= ') VALUES (';
+		$query .= join(', ', $markers);
 		$query .= ')';
 		$data = array_values($changes);
 
@@ -499,19 +511,23 @@ class DatabaseStorage extends GalleryStorage {
 		$data = array();
 		
 		foreach ($changes as $key => $value) {
-		    $changeList[] = " `$key` = ?";
+		    $changeList[] = $this->prefixColumnName($key) . '=?';
 		    $data[] = $value;
 		}
 
 		if (sizeof($changeList)) {
 		    $tableName = DATABASE_TABLE_PREFIX . strtolower($table);
-		    $query = "UPDATE $tableName SET";
-		    $query .= join(',', $changeList);
-		    $query .= " WHERE `$idColumn[name]`=?";
+		    $query = 'UPDATE ' . $tableName  .  ' SET';
+		    $query .= ' ' . join(',', $changeList);
+		    $query .= ' WHERE ' .
+			     $this->prefixColumnName($idColumn[name]) .
+			     '=?';
 		    $data[] = $idColumn['value'];
 
 		    if (!strcasecmp($table, "GalleryNucleus")) {
-			$query .= " AND `serialNumber`=?";
+			$query .= ' AND ' .
+				 $this->prefixColumnName('serialNumber') .
+				 '=?';
 			$data[] = $originalSerialNumber;
 		    }
 
@@ -608,12 +624,18 @@ class DatabaseStorage extends GalleryStorage {
 	    }
 	}
 
+	$keyCol = $this->prefixColumnName('key');
+	$valueCol = $this->prefixColumnName('value');
+	$idCol = $this->prefixColumnName('id');
+	
 	$id = $nucleus->getId();
 
 	if ($deleteKeys) {
 	    $query = 'DELETE FROM ' . $tableName .
-		    ' WHERE id = ? ' .
-		    ' AND `key` in (' . join(', ', $deleteMarkers) . ')';
+		    ' WHERE ' . $idCol . ' = ? ' .
+		    ' AND ' . $keyCol . ' in (' .
+		     join(', ', $deleteMarkers) .
+		     ')';
 
 	    $data = $deleteKeys;
 	    array_unshift($data, $id);
@@ -627,7 +649,7 @@ class DatabaseStorage extends GalleryStorage {
 	if ($createKeys) {
 	    foreach ($createKeys as $key) {
 		$query = 'INSERT INTO ' . $tableName .
-			' (`id`, `key`, `value`)' .
+			' (' . $idCol . ', ' . $keyCol . ', ' . $valueCol . ')' .
 			' VALUES (?, ?, ?) ';
 		$data = array($id,
 			      $key,
@@ -643,8 +665,8 @@ class DatabaseStorage extends GalleryStorage {
 	if ($modifyKeys) {
 	    foreach ($modifyKeys as $key) {
 		$query = 'UPDATE ' . $tableName .
-			' SET value=? ' .
-			' WHERE id=? AND `key`=?';
+			' SET ' . $valueCol . '=? ' .
+			' WHERE ' . $idCol . '=? AND ' . $keyCol . '=?';
 		$data = array($map->getValue($key), $id, $key);
 		$recordSet = $this->_db->Execute($query, $data);
 		if (!$recordSet) {
@@ -717,6 +739,10 @@ class DatabaseStorage extends GalleryStorage {
 	    return ERROR | ERROR_DATABASE_NOT_CONNECTED;
 	}
 
+	$semaphoreCol = $this->prefixColumnName('semaphore');
+	$lockIdCol = $this->prefixColumnName('lockId');
+	$idCol = $this->prefixColumnName('id');
+
 	/* Remember when we started trying to acquire this lock */
 	$startTime = time();
 
@@ -733,7 +759,7 @@ class DatabaseStorage extends GalleryStorage {
 	    
 	    /* See if there are any pending world locks */
 	    $query = 'SELECT * FROM ' . $lockSemaphoreTable .
-		    ' WHERE semaphore=?';
+		    ' WHERE ' . $semaphoreCol . '=?';
 	    $data = array(SEMAPHORE_WORLD_LOCK_REQUESTED);
 	    $recordSet = $this->_db->Execute($query, $data);
 	    if (!$recordSet) {
@@ -763,7 +789,8 @@ class DatabaseStorage extends GalleryStorage {
 	     * pretty much covers it.  But, it might be useful in the future
 	     */
 	    $query = 'INSERT INTO ' . $lockSemaphoreTable .
-		    '(semaphore, lockId) VALUES (?, ?)';
+		    '(' . $semaphoreCol . ', ' . $lockIdCol . ') ' .
+		     ' VALUES (?, ?)';
 
 	    /* Insert our semaphore */
 	    while (true) {
@@ -818,7 +845,8 @@ class DatabaseStorage extends GalleryStorage {
 
 	    /* Acquire our lock */
 	    $query = 'INSERT INTO ' . $lockSemaphoreTable .
-		    '(semaphore, lockId) VALUES (?, ?)';
+		    '(' . $semaphoreCol . ', ' . $lockIdCol . ') ' .
+		     'VALUES (?, ?)';
 	    while (true) {
 		/*
 		 * If we've exceeded our time limit, abort.
@@ -845,7 +873,9 @@ class DatabaseStorage extends GalleryStorage {
 	     * one, release all of them and let the user know.
 	     */
 	    $i = 0;
-	    $query = 'INSERT INTO ' . $lockTable . '(id, lockId) VALUES (?, ?)';
+	    $query = 'INSERT INTO ' . $lockTable . '(' .
+		     $idCol . ', ' . $lockIdCol . ') ' .
+		     'VALUES (?, ?)';
 	    while (true) {
 		$id = $ids[$i];
 
@@ -898,7 +928,9 @@ class DatabaseStorage extends GalleryStorage {
 	    $lockTable = DATABASE_TABLE_PREFIX . 'lock';
 	}
 
-	$query = 'DELETE FROM ' . $lockTable . ' WHERE lockId=?';
+	$lockIdCol = $this->prefixColumnName('lockId');
+	$query = 'DELETE FROM ' . $lockTable .
+		 ' WHERE ' . $lockIdCol . '=?';
 	$data = array($lockId);
 
 	$recordSet = $this->_db->Execute($query, $data);
@@ -1015,8 +1047,10 @@ class DatabaseStorage extends GalleryStorage {
     function _identifyNucleus($id) {
 	assert('!empty($id)');
 
+	$idCol = $this->prefixColumnName('id');
 	$table = DATABASE_TABLE_PREFIX  . 'gallerynucleus';
-	$query = "SELECT $table.objectType FROM $table where id=?";
+	$query = "SELECT $table.objectType FROM $table " .
+		 ' WHERE ' . $idCol . '=?';
 	$data = array($id);
 	$recordSet = $this->_db->Execute($query, $data);
 
@@ -1027,6 +1061,17 @@ class DatabaseStorage extends GalleryStorage {
 	} else {
 	    return array(ERROR | ERROR_DATABASE_FAILURE, null);
 	}
+    }
+
+    /**
+     * Translate a potentially unsafe column name into a safe one
+     *
+     * @param string the name of a column
+     * @return string a safe column name
+     */
+    function prefixColumnName($columnName) {
+	$this->_initDatabaseSchema();
+	return $this->_databaseSchema->prefixColumnName($columnName);
     }
 }
 ?>
