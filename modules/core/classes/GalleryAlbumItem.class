@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -127,7 +127,7 @@ class GalleryAlbumItem_core extends GalleryItem {
      */
     function create($parentId, $albumName) {
 	global $gallery;
-	
+
 	if (empty($albumName) || empty($parentId)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
@@ -147,7 +147,7 @@ class GalleryAlbumItem_core extends GalleryItem {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	list($ret, $parentPath) = $parent->fetchPath();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -174,7 +174,7 @@ class GalleryAlbumItem_core extends GalleryItem {
     }
 
     /**
-     * Create a new root level album 
+     * Create a new root level album
      *
      * @return object GalleryStatus a status code
      */
@@ -232,20 +232,22 @@ class GalleryAlbumItem_core extends GalleryItem {
      */
     function _createDir($albumDir) {
 	global $gallery;
-	
+
 	$platform = $gallery->getPlatform();
 
 	list($ret, $perm) = GalleryCoreApi::getPluginParameter('module', 'core', 'permissions.directory');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	if ($platform->file_exists($albumDir)) {
-	    return GalleryStatus::error(ERROR_COLLISION, __FILE__, __LINE__);
+	    return GalleryStatus::error(ERROR_COLLISION, __FILE__, __LINE__,
+					$albumDir . ' already exists');
 	}
-	
+
 	if (!$platform->mkdir($albumDir, $perm)) {
-	    return GalleryStatus::error(ERROR_COLLISION, __FILE__, __LINE__);
+	    return GalleryStatus::error(ERROR_COLLISION, __FILE__, __LINE__,
+					'mkdir failed for ' . $albumDir);
 	}
 
 	return GalleryStatus::success();
@@ -261,7 +263,7 @@ class GalleryAlbumItem_core extends GalleryItem {
     function isContainer() {
 	return true;
     }
-    
+
     /**
      * Delete this AlbumItem
      *
@@ -328,7 +330,7 @@ class GalleryAlbumItem_core extends GalleryItem {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
-	
+
 	$platform = $gallery->getPlatform();
 
 	/*
@@ -369,7 +371,7 @@ class GalleryAlbumItem_core extends GalleryItem {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-				   
+
 	if (isset($error)) {
 	    return $error;
 	}
