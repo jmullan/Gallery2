@@ -44,6 +44,11 @@
           alt="{g->text text="Gallery %s" arg1=$main.gallery.version}"
 	  height="15"  
 	  width="80"/></a>
+	<img style="border: 0px"
+	     src="{g->url href="modules/core/data/heybaby.png"}"
+	     alt="{g->text text="Gallery 2 - Alpha 4: Hey Baby, Nice Commits"}"
+	     height="15"
+	     width="115"/>
       </div>
     </div>
 
