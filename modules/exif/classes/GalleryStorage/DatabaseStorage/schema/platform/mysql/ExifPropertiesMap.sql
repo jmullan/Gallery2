@@ -21,7 +21,7 @@
     
     , 
   
-    UNIQUE KEY (DB_COLUMN_PREFIXproperty
+      UNIQUE KEY (DB_COLUMN_PREFIXproperty
         ,
       DB_COLUMN_PREFIXviewMode)
     

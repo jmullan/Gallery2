@@ -19,7 +19,7 @@
     
     , 
   
-    UNIQUE KEY (DB_COLUMN_PREFIXsessionId)
+      PRIMARY KEY (DB_COLUMN_PREFIXsessionId)
     
 
     ) TYPE=DB_TABLE_TYPE;

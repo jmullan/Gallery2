@@ -3,7 +3,7 @@ TOOLDIR ?= $(GALLERYDIR)/lib/tools
 CLASSDIR ?= ..
 XSLFILE ?= $(GALLERYDIR)/modules/core/classes/interfaces/ClassCode.xsl
 PACKAGE ?= GalleryCore
-TMPDIR ?= tmp
+G2_TMPDIR ?= tmp
 
 include $(TOOLDIR)/GNUmakefile.inc
 
@@ -11,17 +11,17 @@ CLASSFILES  = $(wildcard $(CLASSDIR)/*.class)
 XMLFILES    = $(patsubst $(CLASSDIR)/%.class,%.xml,$(CLASSFILES))
 INCFILES    = $(patsubst %.xml,%.inc,$(XMLFILES))
 
-inc: $(TMPDIR) $(INCFILES)
+inc: $(G2_TMPDIR) $(INCFILES)
 
-$(TMPDIR):
-	mkdir $(TMPDIR)
+$(G2_TMPDIR):
+	mkdir $(G2_TMPDIR)
 
-%.inc: $(TMPDIR)/%.xml $(XSLFILE)
+%.inc: $(G2_TMPDIR)/%.xml $(XSLFILE)
 	if [ -f $< ]; then $(SAXON) $< $(XSLFILE) \
 		| perl -pe 's/\@\@package\@\@/$(PACKAGE)/' \
 		> $@; fi
 
-$(TMPDIR)/%.xml: $(CLASSDIR)/%.class
+$(G2_TMPDIR)/%.xml: $(CLASSDIR)/%.class
 	perl $(TOOLDIR)/extractClassXml.pl \
 		--dtd=../$(TOOLDIR)/dtd/GalleryClass2.0.dtd \
 		--stub-ok \
@@ -30,13 +30,13 @@ $(TMPDIR)/%.xml: $(CLASSDIR)/%.class
 	if [ -f $@ ]; then $(VALIDATOR) $@; fi
 
 clean:
-	rm -rf $(TMPDIR)
+	rm -rf $(G2_TMPDIR)
 
 scrub: clean
 	rm -f *.inc
 
-# Gmake will automatically delete $(TMPDIR)/*.xml files after creating .inc files
+# Gmake will automatically delete $(G2_TMPDIR)/*.xml files after creating .inc files
 # because it thinks that they're intermediate files.  But, we want to save
 # them (for now), so mark them as PRECIOUS.
 #
-.PRECIOUS: $(TMPDIR)/%.xml
+.PRECIOUS: $(G2_TMPDIR)/%.xml

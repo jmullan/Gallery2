@@ -27,8 +27,7 @@
     (DB_COLUMN_PREFIXproperty
         ,
       DB_COLUMN_PREFIXviewMode);
-
-  
+    
 
     INSERT INTO DB_TABLE_PREFIXSchema (
       DB_COLUMN_PREFIXname,

@@ -3,7 +3,7 @@ TOOLDIR ?= $(GALLERYDIR)/lib/tools
 CLASSDIR ?= ..
 XSLFILE ?= $(GALLERYDIR)/modules/core/classes/uml/JavaClasses.xsl
 PACKAGE ?= GalleryCore
-TMPDIR ?= tmp
+G2_TMPDIR ?= tmp
 
 include $(TOOLDIR)/GNUmakefile.inc
 
@@ -11,17 +11,17 @@ CLASSFILES  = $(wildcard $(CLASSDIR)/*.class)
 XMLFILES    = $(patsubst $(CLASSDIR)/%.class,%.xml,$(CLASSFILES))
 JAVAFILES   = $(patsubst %.xml,%.java,$(XMLFILES))
 
-java: $(TMPDIR) $(JAVAFILES)
+java: $(G2_TMPDIR) $(JAVAFILES)
 
-$(TMPDIR):
-	mkdir $(TMPDIR)
+$(G2_TMPDIR):
+	mkdir $(G2_TMPDIR)
 
-%.java: $(TMPDIR)/%.xml $(XSLFILE)
+%.java: $(G2_TMPDIR)/%.xml $(XSLFILE)
 	if [ -f $< ]; then $(SAXON) $< $(XSLFILE) \
 		| perl -pe 's/\@\@package\@\@/$(PACKAGE)/' \
 		> $@; fi
 
-$(TMPDIR)/%.xml: $(CLASSDIR)/%.class
+$(G2_TMPDIR)/%.xml: $(CLASSDIR)/%.class
 	perl $(TOOLDIR)/extractClassXml.pl \
 		--dtd=../$(TOOLDIR)/dtd/GalleryClass2.0.dtd \
 		--stub-ok \
@@ -30,13 +30,13 @@ $(TMPDIR)/%.xml: $(CLASSDIR)/%.class
 	if [ -f $@ ]; then $(VALIDATOR) $@; fi
 
 clean:
-	rm -rf $(TMPDIR)
+	rm -rf $(G2_TMPDIR)
 
 scrub: clean
 	rm -f *.java
 
-# Gmake will automatically delete $(TMPDIR)/*.xml files after creating .java files
+# Gmake will automatically delete $(G2_TMPDIR)/*.xml files after creating .java files
 # because it thinks that they're intermediate files.  But, we want to save
 # them (for now), so mark them as PRECIOUS.
 #
-.PRECIOUS: $(TMPDIR)/%.xml
+.PRECIOUS: $(G2_TMPDIR)/%.xml

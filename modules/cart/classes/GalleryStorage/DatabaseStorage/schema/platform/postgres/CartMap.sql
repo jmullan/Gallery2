@@ -20,11 +20,9 @@
     );
 
   
-    CREATE UNIQUE INDEX CartMap_sessionId 
-    ON DB_TABLE_PREFIXCartMap
-    (DB_COLUMN_PREFIXsessionId);
-
-  
+    ALTER TABLE DB_TABLE_PREFIXCartMap
+    ADD PRIMARY KEY (DB_COLUMN_PREFIXsessionId);
+    
 
     INSERT INTO DB_TABLE_PREFIXSchema (
       DB_COLUMN_PREFIXname,

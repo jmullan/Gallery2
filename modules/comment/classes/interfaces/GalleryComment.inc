@@ -154,7 +154,6 @@ class GalleryComment extends GalleryComment_core {
      * @param INTEGER the value
      */
     function setcommenterId($value) {
-
         /* 
          * Convert unset values to null, to avoid generating warnings.
          */
@@ -200,7 +199,6 @@ class GalleryComment extends GalleryComment_core {
      * @param STRING the value
      */
     function sethost($value) {
-
         /* 
          * Convert unset values to null, to avoid generating warnings.
          */
@@ -241,7 +239,6 @@ class GalleryComment extends GalleryComment_core {
      * @param STRING the value
      */
     function setsubject($value) {
-
         /* 
          * Convert unset values to null, to avoid generating warnings.
          */
@@ -282,7 +279,6 @@ class GalleryComment extends GalleryComment_core {
      * @param TEXT the value
      */
     function setcomment($value) {
-
         /* 
          * Convert unset values to null, to avoid generating warnings.
          */
@@ -323,7 +319,6 @@ class GalleryComment extends GalleryComment_core {
      * @param INTEGER the value
      */
     function setdate($value) {
-
         /* 
          * Convert unset values to null, to avoid generating warnings.
          */

@@ -13,6 +13,8 @@
     DB_COLUMN_PREFIXcommenterId
       int(11)
     
+    NOT NULL
+  
       ,
     DB_COLUMN_PREFIXhost
       varchar(
@@ -21,6 +23,8 @@
         
       )
     
+    NOT NULL
+  
       ,
     DB_COLUMN_PREFIXsubject
       varchar(
@@ -37,9 +41,15 @@
     DB_COLUMN_PREFIXdate
       int(11)
     
+    NOT NULL
+  
     , 
   
-    INDEX (DB_COLUMN_PREFIXid)
+      PRIMARY KEY (DB_COLUMN_PREFIXid)
+    
+    , 
+  
+    INDEX (DB_COLUMN_PREFIXdate)
     
 
     ) TYPE=DB_TABLE_TYPE;
