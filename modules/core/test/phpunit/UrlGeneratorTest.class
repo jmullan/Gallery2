@@ -170,6 +170,10 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$_SERVER['SERVER_PORT'] = 8080;
 	$this->assertEquals('http://example.com:8080/test.php?fun=yes',
 			    $this->_urlGenerator->makeUrl('/test.php?fun=yes'), 'other port');
+	$_SERVER['HTTP_HOST'] = 'example.com:8080'; //sometimes browser includes port in http_host
+	$this->assertEquals('http://example.com:8080/test.php?fun=yes',
+			    $this->_urlGenerator->makeUrl('/test.php?fun=yes'), 'port in http_host');
+	$_SERVER['HTTP_HOST'] = 'example.com';
 	$_SERVER['SERVER_PORT'] = 443;
 	$_SERVER['HTTPS'] = 'on';
 	$this->assertEquals('https://example.com/test/go.php?a=one&amp;b=two',
