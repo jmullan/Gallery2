@@ -236,7 +236,7 @@ class SquareThumbTestToolkit extends GalleryToolkit {
 	    }
 	    break;
 	case 'scale':
-	    if (!strncmp('sqth_', basename($sourceFilename), 5) ||
+	    if (!strncmp('sqt', basename($sourceFilename), 3) ||
 		$sourceFilename == 'testPerformOperations11') {
 		return array(GalleryStatus::success(), $mimeType);
 	    }
