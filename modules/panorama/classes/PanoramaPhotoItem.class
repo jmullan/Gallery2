@@ -31,10 +31,20 @@
 require_once(dirname(__FILE__) . '/../../core/classes/GalleryPhotoItem.class');
 
 /**
+ * An extension of GalleryPhotoItem to render in panorama mode 
+ *
+ * @g2 <class-name>PanoramaPhotoItem</class-name>
+ * @g2 <parent-class-name>GalleryPhotoItem</parent-class-name>
+ * @g2 <schema>
+ * @g2   <schema-major>1</schema-major>
+ * @g2   <schema-minor>0</schema-minor>
+ * @g2 </schema>
+ * @g2 <requires-id/>
+ *
  * @package Panorama
  * @subpackage Classes
  */
-class PanoramaPhotoItem extends GalleryPhotoItem {
+class PanoramaPhotoItem_core extends GalleryPhotoItem {
 
     /**
      * @see GalleryDataItem::render
@@ -73,15 +83,7 @@ class PanoramaPhotoItem extends GalleryPhotoItem {
 	    return null;
 	}
     }
-
-    /**
-     * Return the name of this class with the proper mix of uppercase and
-     * lowercase (get_class() always returns lowercase)
-     *
-     * @return string class name
-     */
-    function getClassName() {
-	return 'PanoramaPhotoItem';
-    }
 }
+
+GalleryCoreApi::requireOnce(dirname(__FILE__) . '/interfaces/PanoramaPhotoItem.inc');
 ?>
