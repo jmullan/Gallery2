@@ -346,8 +346,12 @@ class SlideshowTest extends GalleryTestCase {
 			"$test: Slide id " . $slide['id'] . " size map $i"
 			. '<br>' . $this->_dump($this->_photoData));
 		    if ($index != $slide['sizeClassMap'][$i]) {
-			printf("<pre>%s</pre>", print_r($expectedResults, 1));
-			printf("<pre>%s</pre>", print_r($slide, 1));
+			ob_start();
+			print_r($expectedResults);
+			print_r($slide);
+			$obContent = ob_get_contents();
+			ob_clean();
+			printf("<pre>%s</pre>", $obContent);
 			return GalleryStatus::error(ERROR_UNKNOWN, __FILE__, __LINE__);
 		    }
 		}
@@ -379,7 +383,25 @@ class SlideshowTest extends GalleryTestCase {
 	return $buf;
     }
 
-
+    /*
+     * Derivatives:
+     * P = rotate|90
+     * T = 150
+     * R = 300
+     * R2 = 600
+     * 
+     * Our test photos and derivatives:
+     * 0 62x75                                   T=62x75
+     * 1 200x178            R=300x267            T=150x133
+     * 2 120x54             R=300x135 R2=600x270 T=120x54
+     * 3 366x292  P=292x366                      T=120x150
+     * 4 38x50    P=50x38   R=300x228            T=38x50
+     * 5 62x75    P=75x62   R=300x248 R2=600x496 T=75x62
+     * 6 200x178  
+     * 7 120x54             R=300x135
+     * 8 366x292  P=292x366
+     * 9 38x50    P=50x38   R=300x228
+     */
     function testSlideshow() {
 	$pd = $this->_photoData;
 
@@ -410,15 +432,15 @@ class SlideshowTest extends GalleryTestCase {
 	    $pd[0]['id'] => array(array($pd[0]['T']),
 				  array(0,0,0,0,0,0)),
 	    $pd[1]['id'] => array(array($pd[1]['R'], $pd[1]['T']),
-				  array(1,0,0,0,0,0)),
+				  array(0,0,0,0,0,0)),
 	    $pd[2]['id'] => array(array($pd[2]['R'], $pd[2]['R2'], $pd[2]['T']),
 				  array(0,1,1,1,1,1)),
 	    $pd[3]['id'] => array(array($pd[3]['T']),
 				  array(0,0,0,0,0,0)),
 	    $pd[4]['id'] => array(array($pd[4]['R'], $pd[4]['T']),
-				  array(1,0,0,0,0,0)),
+				  array(0,0,0,0,0,0)),
 	    $pd[5]['id'] => array(array($pd[5]['R'], $pd[5]['R2'], $pd[5]['T']),
-				  array(2,0,1,1,1,1)),
+				  array(0,1,1,1,1,1)),
 	    $pd[7]['id'] => array(array($pd[7]['R']),
 				  array(0,0,0,0,0,0)),
 	    $pd[9]['id'] => array(array($pd[9]['R']),
@@ -482,15 +504,15 @@ class SlideshowTest extends GalleryTestCase {
 	    $pd[0]['id'] => array(array($pd[0]['id'], $pd[0]['T']),
 				  array(0,0,0,0,0,0)),
 	    $pd[1]['id'] => array(array($pd[1]['id'], $pd[1]['R'], $pd[1]['T']),
-				  array(0,1,1,1,1,1)),
-	    $pd[2]['id'] => array(array($pd[2]['id'], $pd[2]['R'], $pd[2]['R2'],
-				  $pd[2]['T']), array(1,2,2,2,2,2)),
+				  array(1,1,1,1,1,1)),
+	    $pd[2]['id'] => array(array($pd[2]['id'], $pd[2]['R'], $pd[2]['R2'], $pd[2]['T']),
+				  array(1,2,2,2,2,2)),
 	    $pd[3]['id'] => array(array($pd[3]['P'], $pd[3]['T']),
 				  array(1,0,0,0,0,0)),
 	    $pd[4]['id'] => array(array($pd[4]['P'], $pd[4]['R'], $pd[4]['T']),
-				  array(0,1,1,1,1,1)),
-	    $pd[5]['id'] => array(array($pd[5]['P'], $pd[5]['R'], $pd[5]['R2'],
-				  $pd[5]['T']), array(0,1,2,2,2,2)),
+				  array(1,1,1,1,1,1)),
+	    $pd[5]['id'] => array(array($pd[5]['P'], $pd[5]['R'], $pd[5]['R2'], $pd[5]['T']),
+				  array(1,2,2,2,2,2)),
 	    $pd[6]['id'] => array(array($pd[6]['id']),
 				  array(0,0,0,0,0,0)),
 	    $pd[7]['id'] => array(array($pd[7]['id'], $pd[7]['R']),
@@ -498,7 +520,7 @@ class SlideshowTest extends GalleryTestCase {
 	    $pd[8]['id'] => array(array($pd[8]['P']),
 				  array(0,0,0,0,0,0)),
 	    $pd[9]['id'] => array(array($pd[9]['P'], $pd[9]['R']),
-				  array(0,1,1,1,1,1)),
+				  array(1,1,1,1,1,1)),
 	    'idsWithExif' => array($pd[4]['id'], $pd[9]['id'])),
 	  $pd[7]['id']);
 	if ($ret->isError()) {
@@ -510,27 +532,27 @@ class SlideshowTest extends GalleryTestCase {
 	    $pd[0]['id'] => array(array($pd[0]['id'], $pd[0]['T']),
 				  array(0,0,0,0,0,0)),
 	    $pd[1]['id'] => array(array($pd[1]['id'], $pd[1]['R'], $pd[1]['T']),
-				  array(0,1,1,1,1,1)),
-	    $pd[2]['id'] => array(array($pd[2]['id'], $pd[2]['R'], $pd[2]['R2'],
-				  $pd[2]['T']), array(1,2,2,2,2,2)),
+				  array(1,1,1,1,1,1)),
+	    $pd[2]['id'] => array(array($pd[2]['id'], $pd[2]['R'], $pd[2]['R2'], $pd[2]['T']),
+				  array(1,2,2,2,2,2)),
 	    $pd[3]['id'] => array(array($pd[3]['P'], $pd[3]['T']),
 				  array(1,0,0,0,0,0)),
 	    $pd[4]['id'] => array(array($pd[4]['P'], $pd[4]['R'], $pd[4]['T']),
-				  array(0,1,1,1,1,1)),
-	    $pd[5]['id'] => array(array($pd[5]['P'], $pd[5]['R'], $pd[5]['R2'],
-				  $pd[5]['T']), array(0,1,2,2,2,2)),
+				  array(1,1,1,1,1,1)),
+	    $pd[5]['id'] => array(array($pd[5]['P'], $pd[5]['R'], $pd[5]['R2'], $pd[5]['T']),
+				  array(1,2,2,2,2,2)),
 	    $pd[6]['id'] => array(array($pd[6]['id']),
 				  array(0,0,0,0,0,0)),
 	    $pd[7]['id'] => array(array($pd[7]['id'], $pd[7]['R']),
 				  array(1,1,1,1,1,1)),
-	    $pd[10]['id'] => array(array($pd[10]['id'], $pd[10]['R'],
-				   $pd[10]['T']), array(1,1,1,1,1,1)),
+	    $pd[10]['id'] => array(array($pd[10]['id'], $pd[10]['R'], $pd[10]['T']),
+				   array(1,1,1,1,1,1)),
 	    $pd[11]['id'] => array(array($pd[11]['P'], $pd[11]['T']),
 				   array(1,0,0,0,0,0)),
 	    $pd[8]['id'] => array(array($pd[8]['P']),
 				  array(0,0,0,0,0,0)),
 	    $pd[9]['id'] => array(array($pd[9]['P'], $pd[9]['R']),
-				  array(0,1,1,1,1,1)),
+				  array(1,1,1,1,1,1)),
 	    'idsWithExif' => array($pd[4]['id'], $pd[9]['id'])));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -538,14 +560,14 @@ class SlideshowTest extends GalleryTestCase {
 
 	// itemList test
 	$ret = $this->_runTest('itemList', array(
-	    $pd[2]['id'] => array(array($pd[2]['id'], $pd[2]['R'], $pd[2]['R2'],
-				  $pd[2]['T']), array(1,2,2,2,2,2)),
+	    $pd[2]['id'] => array(array($pd[2]['id'], $pd[2]['R'], $pd[2]['R2'], $pd[2]['T']),
+				  array(1,2,2,2,2,2)),
 	    $pd[11]['id'] => array(array($pd[11]['P'], $pd[11]['T']),
 				   array(1,0,0,0,0,0)),
 	    $pd[4]['id'] => array(array($pd[4]['P'], $pd[4]['R'], $pd[4]['T']),
-				  array(0,1,1,1,1,1)),
-	    $pd[10]['id'] => array(array($pd[10]['id'], $pd[10]['R'],
-				   $pd[10]['T']), array(1,1,1,1,1,1)),
+				  array(1,1,1,1,1,1)),
+	    $pd[10]['id'] => array(array($pd[10]['id'], $pd[10]['R'], $pd[10]['T']),
+				   array(1,1,1,1,1,1)),
 	    $pd[0]['id'] => array(array($pd[0]['id'], $pd[0]['T']),
 				  array(0,0,0,0,0,0)),
 	    'idsWithExif' => array($pd[4]['id'])), null,
