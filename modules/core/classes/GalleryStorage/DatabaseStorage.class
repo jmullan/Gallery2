@@ -965,7 +965,8 @@ class DatabaseStorage /* implements GalleryStorage */ {
 		/*
 		 * There are two classes of files here, distinguished by name.
 		 *   "Foo.sql" -- the definition for table "Foo"
-		 *   "A_Foo_1.0.sql" -- an alteration to the 1.0 version of table "Foo"
+		 *   "A_Foo_1.0.sql" -- an alteration to upgrade the 1.0 version of
+		 *                      table "Foo" to the current version
 		 *
 		 * We need to parse these file names and group them together
 		 * such that once we figure out what version of the Foo table
