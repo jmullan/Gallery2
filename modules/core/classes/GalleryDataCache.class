@@ -437,7 +437,7 @@ class GalleryDataCache {
     function getCachePath($pathInfo) {
 	global $gallery;
 
-	$base = $gallery->getConfig('data.gallery.base') . 'cache/';
+	$base = $gallery->getConfig('data.gallery.cache');
 	$cacheFile = null;
 	switch ($pathInfo['type']) {
 	case 'entity':

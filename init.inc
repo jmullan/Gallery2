@@ -77,6 +77,7 @@ function GalleryInitFirstPass($params=array()) {
     }
 
     /* Set our various data paths */
+    $gallery->setConfig('data.gallery.cache', $dataBase . 'cache' . $slash);
     $gallery->setConfig('data.gallery.albums', $dataBase . 'albums' . $slash);
     $gallery->setConfig('data.gallery.locks', $dataBase . 'locks'. $slash);
     $gallery->setConfig('data.gallery.sessions', $dataBase . 'sessions' . $slash);

@@ -738,7 +738,7 @@ class Gallery {
     function fastDownload($relativePath, $filename, $lastModified, $mimeType, $contentLength) {
 	/* Don't use GalleryPlatform here -- we're aiming for max speed */
 	/* TODO: benchmark what it would cost us to use GalleryPlatform */
-	$cacheBase = $this->getConfig('data.gallery.base') . '/cache/';
+	$cacheBase = $this->getConfig('data.gallery.cache');
 	if ($fd = fopen($cacheBase . $relativePath, 'rb')) {
 	    header('Content-Disposition: inline; filename="' . $filename . '"');
 	    header('Last-Modified: ' . $lastModified);

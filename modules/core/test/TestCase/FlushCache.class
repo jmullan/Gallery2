@@ -23,8 +23,8 @@ class FlushCacheTestCase extends TestCase {
 	$platform = $gallery->getPlatform();
 
 	$dirs = array();
-	foreach (array('cache') as $param) {
-	    $dir = $gallery->getConfig('data.gallery.base') . '/' . $param;
+	foreach (array('data.gallery.cache') as $param) {
+	    $dir = $gallery->getConfig($param);
 	    if (!empty($dir)) {
 		$dirs[] = $dir;
 	    }
