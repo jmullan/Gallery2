@@ -64,7 +64,9 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'migrate:ImportResults'),
 				  'status' => array('userImportSuccess' => array('phpunit_foobar' => 1),
-						    'userImportFailure' => array()),
+						    'userImportFailure' => array(),
+                                                    'albumImportFailure' => array(),
+                                                    'albumImportSuccess' => array()),
 				  'error' => array()),
 			    $results);
 
@@ -84,7 +86,9 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'migrate:ImportResults'),
 				  'status' => array('userImportFailure' => array('admin' => 1),
-						    'userImportSuccess' => array()),
+						    'userImportSuccess' => array(),
+						    'albumImportFailure' => array(),
+						    'albumImportSuccess' => array()),
 				  'error' => array()),
 			    $results);
     }
