@@ -21,6 +21,13 @@
 class SiteAdminView extends GalleryView {
 
     /**
+     * @see GalleryView::useDefaultTheme
+     */
+    function useDefaultTheme() {
+	return true;
+    }
+
+    /**
      * @see GalleryView::renderHead
      */
     function renderHead() {
@@ -32,26 +39,8 @@ class SiteAdminView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	/* Get our theme in place */
-	$ret = $this->_activateTheme();
-	if ($ret->isError()) {
-	    return $ret;
-	}
-	
-	/* Specify our translation module */
-	$ret = $this->_setTranslationModule('core');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	
-	/* Render the HTML head */
-	list ($ret, $smarty) = $gallery->getSmarty();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	$smarty->template_dir = dirname(__FILE__) . '/templates';
-	$html = $smarty->fetch('SiteAdminHead.tpl');
-
+	$this->_initTemplate(dirname(__FILE__) . '/templates');
+	$html = $this->_renderTemplate('core', 'SiteAdminHead.tpl');
 	return array(GalleryStatus::success(), $html);
     }
 
@@ -67,12 +56,6 @@ class SiteAdminView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	/* Get our theme in place */
-	$ret = $this->_activateTheme();
-	if ($ret->isError()) {
-	    return $ret;
-	}
-	
 	/* Load the module list */
 	list ($ret, $moduleStatus) = $gallery->getModuleStatus();
 	if ($ret->isError()) {
@@ -113,22 +96,10 @@ class SiteAdminView extends GalleryView {
 	    $subViewHtml = '';
 	}
 
-	/* Specify our translation module */
-	$ret = $this->_setTranslationModule('core');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	
-	/* Render our HTML body */
-	list ($ret, $smarty) = $gallery->getSmarty();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	$smarty->assign('subViewChoices', $subViewChoices);
-	$smarty->assign('subViewHtml', $subViewHtml);
-	$smarty->template_dir = dirname(__FILE__) . '/templates';
-	$html = $smarty->fetch('SiteAdmin.tpl');
+	$this->_initTemplate(dirname(__FILE__) . '/templates');
+	$this->_setTemplateVariable('subViewChoices', $subViewChoices);
+	$this->_setTemplateVariable('subViewHtml', $subViewHtml);
+	$html = $this->_renderTemplate('core', 'SiteAdmin.tpl');
 
 	return array(GalleryStatus::success(), $html);
     }

@@ -55,7 +55,6 @@ function GalleryInit() {
 
     /* Smarty paths */
     $gallery->setConfig('code.smarty.base', $galleryBase . 'lib/smarty/');
-    $gallery->setConfig('config.smarty.templates', $galleryBase . 'templates');
 
     /* Load our local configuration */
     require_once(dirname(__FILE__) . '/config.php');

@@ -105,12 +105,6 @@ class AdminDeleteGroupView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	    
-	/* Specify our translation module */
-	$ret = $this->_setTranslationModule('core');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
 	$groupId = GalleryUtilities::getRequestVariables('groupId');
 
 	/*
@@ -126,17 +120,13 @@ class AdminDeleteGroupView extends GalleryView {
 	$isAllAdmins = ($group->getGroupType() == GROUP_SITE_ADMINS);
 	
 	/* Render the HTML body */
-	list ($ret, $smarty) = $gallery->getSmarty();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	$smarty->assign('groupId', $groupId);
-	$smarty->assign('groupName', $group->getGroupName());
-	$smarty->assign('isAllUsers', $isAllUsers);
-	$smarty->assign('isAllAdmins', $isAllAdmins);
-	$smarty->assign('controller', 'core:AdminDeleteGroup');
-	$smarty->template_dir = dirname(__FILE__) . '/templates';
-	$html = $smarty->fetch('AdminDeleteGroup.tpl');
+	$this->_initTemplate(dirname(__FILE__) . '/templates');
+	$this->_setTemplateVariable('groupId', $groupId);
+	$this->_setTemplateVariable('groupName', $group->getGroupName());
+	$this->_setTemplateVariable('isAllUsers', $isAllUsers);
+	$this->_setTemplateVariable('isAllAdmins', $isAllAdmins);
+	$this->_setTemplateVariable('controller', 'core:AdminDeleteGroup');
+	$html = $this->_renderTemplate('core', 'AdminDeleteGroup.tpl');
 
 	return array(GalleryStatus::success(), $html);
     }

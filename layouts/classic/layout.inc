@@ -27,25 +27,26 @@ class ClassicLayout extends GalleryLayout {
 	GalleryProfiler::start('GalleryLayout::render');
 
 	/* Look up my properties */
-	//list ($ret, $properties) =
-	//GalleryLayoutPropertiesMap::getProperties('BasicLayout');
+	//list ($ret, $properties) = GalleryItemPropertiesMap::getProperties('layout');
 	$properties = array('rows' => 3,
 			    'columns' => 3);
 
-	/* Specify our translation */
-	$ret = $this->_setTranslationLayout('classic');
+	$this->_initTemplate(dirname(__FILE__) . '/templates');
+	$this->_setTemplateVariable('properties', $properties);
+	$this->_setTemplateVariable('item', $item->getMemberData());
+	
+	if ($item->canContainChildren()) {
+	    list ($ret, $html) = $this->_renderAlbum($item, $urlParams, $properties);
+	} else {
+	    list ($ret, $html) = $this->_renderSingle($item, $urlParams, $properties);
+	}
+
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	
-	if ($item->canContainChildren()) {
-	    $result = $this->_renderAlbum($item, $urlParams, $properties);
-	} else {
-	    $result = $this->_renderSingle($item, $urlParams, $properties);
-	}
-	
 	GalleryProfiler::stop('GalleryLayout::render');
-	return $result;
+	return array(GalleryStatus::success(), $html);
     }
 
     /**
@@ -190,29 +191,21 @@ class ClassicLayout extends GalleryLayout {
 	}
 
 	/* Tell Smarty about everything we've learned */
-	list ($ret, $smarty) = $gallery->getSmarty();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	$smarty->assign('item', $item->getMemberData());
-	$smarty->assign('moduleItemLinks', $moduleItemLinks);
-	$smarty->assign('moduleSystemLinks', $moduleSystemLinks);
-	$smarty->assign('moduleItemDetails', $moduleItemDetails);
-	$smarty->assign('navigator', $navigator);
-	$smarty->assign('children', $children);
-	$smarty->assign('properties', $properties);
-	$smarty->assign('pageNumber', $pageNumber);
-	$smarty->assign('totalPageCount', $totalPages);
-	$smarty->assign('totalChildCount', $totalChildCount);
-	$smarty->assign('layoutUrl',
-			GalleryUtilities::convertPathToRelativeUrl(dirname(__FILE__)));
-	$smarty->assign('parents', $parents);
-
-    
+	$this->_setTemplateVariable('moduleItemLinks', $moduleItemLinks);
+	$this->_setTemplateVariable('moduleSystemLinks', $moduleSystemLinks);
+	$this->_setTemplateVariable('moduleItemDetails', $moduleItemDetails);
+	$this->_setTemplateVariable('navigator', $navigator);
+	$this->_setTemplateVariable('children', $children);
+	$this->_setTemplateVariable('pageNumber', $pageNumber);
+	$this->_setTemplateVariable('totalPageCount', $totalPages);
+	$this->_setTemplateVariable('totalChildCount', $totalChildCount);
+	$this->_setTemplateVariable('layoutUrl',
+				    GalleryUtilities::convertPathToRelativeUrl(dirname(__FILE__)));
+	$this->_setTemplateVariable('parents', $parents);
+	
 	/* Parse the body template and send it back */
-	$smarty->template_dir = dirname(__FILE__) . '/templates';
-	return array(GalleryStatus::success(), $smarty->fetch('albumBody.tpl'));
+	$html = $this->_renderTemplate('classic', 'albumBody.tpl');
+	return array(GalleryStatus::success(), $html);
     }
 
 
@@ -230,20 +223,11 @@ class ClassicLayout extends GalleryLayout {
      */
     function _renderSingle($item, $urlParams, $properties) {
 	global $gallery;
-
-	list ($ret, $smarty) = $gallery->getSmarty();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	
-	$smarty->assign('layout', $properties);
-	$smarty->assign('item', $item->getMemberData());
-
 	$showMode = GalleryUtilities::getRequestVariables('showMode');
 	if ($showMode == 'full') {
 	    /* XXX: perform permission check here ("can user see full size")*/
 	    $gallery->debug('XXX: missing view-full permission check');
-	    $smarty->assign('image', $item->getMemberData());
+	    $this->_setTemplateVariable('image', $item->getMemberData());
 	    
 	} else {
 
@@ -275,7 +259,7 @@ class ClassicLayout extends GalleryLayout {
 
 	    /* XXX: perform permission check here ("can user see resizes ")*/
 	    $gallery->debug('XXX: missing view-resize permission check');
-	    $smarty->assign('image', $resizes[$resizeIndex]);
+	    $this->_setTemplateVariable('image', $resizes[$resizeIndex]);
 	}
 
 	/*
@@ -343,20 +327,20 @@ class ClassicLayout extends GalleryLayout {
 	}
 
 	/* Tell Smarty about everything we've learned */
-	$smarty->assign('navigator', $navigator);
-	$smarty->assign('moduleItemLinks', $moduleItemLinks);
-	$smarty->assign('moduleSystemLinks', $moduleSystemLinks);
-	$smarty->assign('moduleItemDetails', $moduleItemDetails);
-	$smarty->assign('layoutUrl',
-			GalleryUtilities::convertPathToRelativeUrl(dirname(__FILE__)));
-	$smarty->assign('parents', $parents);
-	$smarty->assign('itemIndex', $itemIndex+1);
-	$smarty->assign('nextResizeIndex', $resizeIndex+1);
-	$smarty->assign('totalPeerCount', $totalPeerCount);
+	$this->_setTemplateVariable('navigator', $navigator);
+	$this->_setTemplateVariable('moduleItemLinks', $moduleItemLinks);
+	$this->_setTemplateVariable('moduleSystemLinks', $moduleSystemLinks);
+	$this->_setTemplateVariable('moduleItemDetails', $moduleItemDetails);
+	$this->_setTemplateVariable('layoutUrl',
+				    GalleryUtilities::convertPathToRelativeUrl(dirname(__FILE__)));
+	$this->_setTemplateVariable('parents', $parents);
+	$this->_setTemplateVariable('itemIndex', $itemIndex+1);
+	$this->_setTemplateVariable('nextResizeIndex', $resizeIndex+1);
+	$this->_setTemplateVariable('totalPeerCount', $totalPeerCount);
 	
 	/* Parse the header and body and send them back */
-	$smarty->template_dir = dirname(__FILE__) . '/templates';
-	return array(GalleryStatus::success(), $smarty->fetch('singleBody.tpl'));
+	$html = $this->_renderTemplate('classic', 'singleBody.tpl');
+	return array(GalleryStatus::success(), $html);
     }
 
 }

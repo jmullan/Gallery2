@@ -112,12 +112,6 @@ class AdminCreateUserView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	    
-	/* Specify our translation module */
-	$ret = $this->_setTranslationModule('core');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
 	$formName = GalleryUtilities::getRequestVariables('formName');
 	$form = GalleryUtilities::getFormVariables('form.');
 
@@ -175,15 +169,11 @@ class AdminCreateUserView extends GalleryView {
 	}
 
 	/* Render the HTML body */
-	list ($ret, $smarty) = $gallery->getSmarty();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	$smarty->assign('form', $form);
-	$smarty->assign('languageList', $languageList);
-	$smarty->assign('controller', 'core:AdminCreateUser');
-	$smarty->template_dir = dirname(__FILE__) . '/templates';
-	$html = $smarty->fetch('AdminCreateUser.tpl');
+	$this->_initTemplate(dirname(__FILE__) . '/templates');
+	$this->_setTemplateVariable('form', $form);
+	$this->_setTemplateVariable('languageList', $languageList);
+	$this->_setTemplateVariable('controller', 'core:AdminCreateUser');
+	$html = $this->_renderTemplate('core', 'AdminCreateUser.tpl');
 
 	return array(GalleryStatus::success(), $html);
     }

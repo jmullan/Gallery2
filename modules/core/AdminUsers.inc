@@ -146,12 +146,6 @@ class AdminUsersView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	    
-	/* Specify our translation module */
-	$ret = $this->_setTranslationModule('core');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
 	/* Load some standard form parameters */
 	$form = GalleryUtilities::getFormVariables('form.');
 
@@ -199,15 +193,11 @@ class AdminUsersView extends GalleryView {
 	}
 
 	/* Render the HTML body */
-	list ($ret, $smarty) = $gallery->getSmarty();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	$smarty->assign('form', $form);
-	$smarty->assign('totalUserCount', $totalUserCount);
-	$smarty->assign('controller', 'core:AdminUsers');
-	$smarty->template_dir = dirname(__FILE__) . '/templates';
-	$html = $smarty->fetch('AdminUsers.tpl');
+	$this->_initTemplate(dirname(__FILE__) . '/templates');
+	$this->_setTemplateVariable('form', $form);
+	$this->_setTemplateVariable('totalUserCount', $totalUserCount);
+	$this->_setTemplateVariable('controller', 'core:AdminUsers');
+	$html = $this->_renderTemplate('core', 'AdminUsers.tpl');
 
 	return array(GalleryStatus::success(), $html);
     }

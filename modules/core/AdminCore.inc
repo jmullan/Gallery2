@@ -66,13 +66,6 @@ class AdminCoreController extends GalleryController {
 class AdminCoreView extends GalleryView {
 
     /**
-     * @see GalleryView::renderHead
-     */
-    function renderHead() {
-	return array(GalleryStatus::success(), false);
-    }
-    
-    /**
      * @see GalleryView::renderBody
      */
     function renderBody() {
@@ -218,30 +211,20 @@ class AdminCoreView extends GalleryView {
 	require_once(dirname(__FILE__) . '/classes/GalleryGraphicsFactory.class');
 	$graphicsTypeList = GalleryGraphicsFactory::getAllImplementationIds();
 
-	/* Specify our translation module */
-	$ret = $this->_setTranslationModule('core');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	
 	/* Render the HTML body */
-	list ($ret, $smarty) = $gallery->getSmarty();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	$smarty->assign('form', $form);
-	$smarty->assign('layoutList', $layoutList);
-	$smarty->assign('themeList', $themeList);
-	$smarty->assign('languageList', $languageList);
-	$smarty->assign('orderByList', $orderByList);
-	$smarty->assign('orderDirectionList', $orderDirectionList);
-	$smarty->assign('permissionsDirectoryList', $permissionsDirectoryList);
-	$smarty->assign('permissionsFileList', $permissionsFileList);
-	$smarty->assign('sessionTimeList', $sessionTimeList);
-	$smarty->assign('graphicsTypeList' , $graphicsTypeList);
-	$smarty->assign('controller', 'core:AdminCore');
-	$smarty->template_dir = dirname(__FILE__) . '/templates';
-	$html = $smarty->fetch('AdminCore.tpl');
+	$this->_initTemplate(dirname(__FILE__) . '/templates');
+	$this->_setTemplateVariable('form', $form);
+	$this->_setTemplateVariable('layoutList', $layoutList);
+	$this->_setTemplateVariable('themeList', $themeList);
+	$this->_setTemplateVariable('languageList', $languageList);
+	$this->_setTemplateVariable('orderByList', $orderByList);
+	$this->_setTemplateVariable('orderDirectionList', $orderDirectionList);
+	$this->_setTemplateVariable('permissionsDirectoryList', $permissionsDirectoryList);
+	$this->_setTemplateVariable('permissionsFileList', $permissionsFileList);
+	$this->_setTemplateVariable('sessionTimeList', $sessionTimeList);
+	$this->_setTemplateVariable('graphicsTypeList' , $graphicsTypeList);
+	$this->_setTemplateVariable('controller', 'core:AdminCore');
+	$html = $this->_renderTemplate('core', 'AdminCore.tpl');
 
 	return array(GalleryStatus::success(), $html);
     }

@@ -20,6 +20,26 @@
 
 class GalleryLayout {
     
+    /*
+     * ****************************************
+     *                 Members
+     * ****************************************
+     */
+
+    /**
+     * The Smarty instance
+     *
+     * @var int $_smarty
+     * @access private
+     */
+    var $_smarty;
+
+    /*
+     * ****************************************
+     *                 Methods
+     * ****************************************
+     */
+
     /**
      * Render the item
      *
@@ -36,22 +56,49 @@ class GalleryLayout {
     }
 
     /**
-     * Specify which layout's translation database to use for localized content
-     * in templates
+     * Initialize the template
      *
+     * @param string parent directory of the "templates" dir
      * @return object GalleryStatus a status code
      */
-    function _setTranslationLayout($layoutName) {
+    function _initTemplate($templateDir) {
 	global $gallery;
-	GalleryProfiler::start('GalleryLayout::_setTranslationLayout');
 	
+	list ($ret, $this->_smarty) = $gallery->getSmarty();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$this->_smarty->template_dir = $templateDir;
+    }
+
+    /**
+     * Assign a template key/value pair
+     *
+     * @param string the key
+     * @param mixed the value
+     */
+    function _setTemplateVariable($key, $value) {
+	$this->_smarty->assign($key, $value);
+    }
+
+    /**
+     * Render the properly localized template
+     *
+     * @param string the template name
+     * @return string the HTML content
+     */
+    function _renderTemplate($layoutName, $templateName) {
+	global $gallery;
+
+	/* Set the translation base in the template adapter */
 	$templateAdapter =& $gallery->getTemplateAdapter();
 	$templateAdapter->setTranslationBase(
 	    'layouts_' . $layoutName,
 	    $gallery->getConfig('code.gallery.layouts') . $layoutName);
 
-	GalleryProfiler::stop('GalleryLayout::_setTranslationLayout');
-	return GalleryStatus::success();
+	/* Render the template */
+	return $this->_smarty->fetch($templateName);
     }
 
     /**

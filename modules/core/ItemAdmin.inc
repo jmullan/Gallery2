@@ -26,25 +26,8 @@ class ItemAdminView extends GalleryView {
     function renderHead() {
 	global $gallery;
 	
-	/* Get our theme in place */
-	$ret = $this->_activateTheme();
-	if ($ret->isError()) {
-	    return $ret;
-	}
-	
-	/* Specify our translation module */
-	$ret = $this->_setTranslationModule('core');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	
 	/* Render the HTML head */
-	list ($ret, $smarty) = $gallery->getSmarty();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	$smarty->template_dir = dirname(__FILE__) . '/templates';
-	$html = $smarty->fetch('ItemAdminHead.tpl');
+	$html = $this->_renderTemplate('core', 'ItemAdminHead.tpl');
 
 	return array(GalleryStatus::success(), $html);
     }
@@ -54,12 +37,6 @@ class ItemAdminView extends GalleryView {
      */
     function renderBody() {
 	global $gallery;
-
-	/* Get our theme in place */
-	$ret = $this->_activateTheme();
-	if ($ret->isError()) {
-	    return $ret;
-	}
 
 	/* Figure out the item we're referring to */
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
@@ -112,23 +89,12 @@ class ItemAdminView extends GalleryView {
 	    $subViewHtml = '';
 	}
 
-	/* Specify our translation module */
-	$ret = $this->_setTranslationModule('core');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
 	/* Render our HTML body */
-	list ($ret, $smarty) = $gallery->getSmarty();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	$smarty->assign('itemId', $itemId);
-	$smarty->assign('subViewChoices', $subViewChoices);
-	$smarty->assign('subViewHtml', $subViewHtml);
-	$smarty->template_dir = dirname(__FILE__) . '/templates';
-	$html = $smarty->fetch('ItemAdmin.tpl');
+	$this->_initTemplate(dirname(__FILE__) . '/templates');
+	$this->_setTemplateVariable('itemId', $itemId);
+	$this->_setTemplateVariable('subViewChoices', $subViewChoices);
+	$this->_setTemplateVariable('subViewHtml', $subViewHtml);
+	$html = $this->_renderTemplate('core', 'ItemAdmin.tpl');
 
 	return array(GalleryStatus::success(), $html);
     }

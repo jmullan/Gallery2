@@ -69,12 +69,6 @@ class ItemEditGeneralView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	/* Specify our translation module */
-	$ret = $this->_setTranslationModule('core');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
 	list ($ret, $item) = $gallery->loadEntitiesById($itemId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -83,14 +77,10 @@ class ItemEditGeneralView extends GalleryView {
 	$form['item'] = $item->getMemberData();
 
 	/* Render the HTML body */
-	list ($ret, $smarty) = $gallery->getSmarty();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	$smarty->assign('form', $form);
-	$smarty->assign('controller', 'core:ItemEditGeneral');
-	$smarty->template_dir = dirname(__FILE__) . '/templates';
-	$html = $smarty->fetch('ItemEditGeneral.tpl');
+	$this->_initTemplate(dirname(__FILE__) . '/templates');
+	$this->_setTemplateVariable('form', $form);
+	$this->_setTemplateVariable('controller', 'core:ItemEditGeneral');
+	$html = $this->_renderTemplate('core', 'ItemEditGeneral.tpl');
 
 	return array(GalleryStatus::success(), $html);
     }

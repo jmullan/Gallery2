@@ -131,12 +131,6 @@ class AdminEditGroupUsersView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	    
-	/* Specify our translation module */
-	$ret = $this->_setTranslationModule('core');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
 	$userAdded = GalleryUtilities::getRequestVariables('userAdded');
 	$userRemoved = GalleryUtilities::getRequestVariables('userRemoved');
 	$groupId = GalleryUtilities::getRequestVariables('groupId');
@@ -201,17 +195,13 @@ class AdminEditGroupUsersView extends GalleryView {
 	$form['list']['users'] = $users;
 
 	/* Render the HTML body */
-	list ($ret, $smarty) = $gallery->getSmarty();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	$smarty->assign('form', $form);
-	$smarty->assign('userCount', $userCount);
-	$smarty->assign('userAdded', $userAdded);
-	$smarty->assign('userRemoved', $userRemoved);
-	$smarty->assign('controller', 'core:AdminEditGroupUsers');
-	$smarty->template_dir = dirname(__FILE__) . '/templates';
-	$html = $smarty->fetch('AdminEditGroupUsers.tpl');
+	$this->_initTemplate(dirname(__FILE__) . '/templates');
+	$this->_setTemplateVariable('form', $form);
+	$this->_setTemplateVariable('userCount', $userCount);
+	$this->_setTemplateVariable('userAdded', $userAdded);
+	$this->_setTemplateVariable('userRemoved', $userRemoved);
+	$this->_setTemplateVariable('controller', 'core:AdminEditGroupUsers');
+	$html = $this->_renderTemplate('core', 'AdminEditGroupUsers.tpl');
 
 	return array(GalleryStatus::success(), $html);
     }

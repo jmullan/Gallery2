@@ -181,12 +181,6 @@ class AdminGroupsView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	    
-	/* Specify our translation module */
-	$ret = $this->_setTranslationModule('core');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
 	/* Load some standard form parameters */
 	$form = GalleryUtilities::getFormVariables('form.');
 
@@ -235,15 +229,11 @@ class AdminGroupsView extends GalleryView {
 	}
 
 	/* Render the HTML body */
-	list ($ret, $smarty) = $gallery->getSmarty();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	$smarty->assign('form', $form);
-	$smarty->assign('totalGroupCount', $totalGroupCount);
-	$smarty->assign('controller', 'core:AdminGroups');
-	$smarty->template_dir = dirname(__FILE__) . '/templates';
-	$html = $smarty->fetch('AdminGroups.tpl');
+	$this->_initTemplate(dirname(__FILE__) . '/templates');
+	$this->_setTemplateVariable('form', $form);
+	$this->_setTemplateVariable('totalGroupCount', $totalGroupCount);
+	$this->_setTemplateVariable('controller', 'core:AdminGroups');
+	$html = $this->_renderTemplate('core', 'AdminGroups.tpl');
 
 	return array(GalleryStatus::success(), $html);
     }

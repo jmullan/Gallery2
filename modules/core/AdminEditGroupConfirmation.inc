@@ -31,22 +31,12 @@ class AdminEditGroupConfirmationView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	    
-	/* Specify our translation module */
-	$ret = $this->_setTranslationModule('core');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
 	$groupName = GalleryUtilities::getRequestVariables('groupName');
 
 	/* Render the HTML body */
-	list ($ret, $smarty) = $gallery->getSmarty();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	$smarty->assign('groupName', $groupName);
-	$smarty->template_dir = dirname(__FILE__) . '/templates';
-	$html = $smarty->fetch('AdminEditGroupConfirmation.tpl');
+	$this->_initTemplate(dirname(__FILE__) . '/templates');
+	$this->_setTemplateVariable('groupName', $groupName);
+	$html = $this->_renderTemplate('core', 'AdminEditGroupConfirmation.tpl');
 
 	return array(GalleryStatus::success(), $html);
     }

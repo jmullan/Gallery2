@@ -134,12 +134,6 @@ class AdminEditUserView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	    
-	/* Specify our translation module */
-	$ret = $this->_setTranslationModule('core');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
 	list ($userid, $formName) =
 	    GalleryUtilities::getRequestVariables('userid', 'formName');
 	$form = GalleryUtilities::getFormVariables('form.');
@@ -198,16 +192,12 @@ class AdminEditUserView extends GalleryView {
 	}
 
 	/* Render the HTML body */
-	list ($ret, $smarty) = $gallery->getSmarty();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	$smarty->assign('form', $form);
-	$smarty->assign('isAnonymous', $isAnonymous);
-	$smarty->assign('languageList', $languageList);
-	$smarty->assign('controller', 'core:AdminEditUser');
-	$smarty->template_dir = dirname(__FILE__) . '/templates';
-	$html = $smarty->fetch('AdminEditUser.tpl');
+	$this->_initTemplate(dirname(__FILE__) . '/templates');
+	$this->_setTemplateVariable('form', $form);
+	$this->_setTemplateVariable('isAnonymous', $isAnonymous);
+	$this->_setTemplateVariable('languageList', $languageList);
+	$this->_setTemplateVariable('controller', 'core:AdminEditUser');
+	$html = $this->_renderTemplate('core', 'AdminEditUser.tpl');
 
 	return array(GalleryStatus::success(), $html);
     }

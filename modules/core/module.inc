@@ -265,9 +265,9 @@ class CoreModule extends GalleryModule {
 		$hasPermission = true; 
 	    } else {
 		list ($ret, $hasPermission) =
-		    GalleryPermissionMap::hasItemPermission($item->getId(),
-							    $gallery->getActiveUserId(),
-							    $adminPermissions);
+		    GalleryUserHelper::hasItemPermission($item->getId(),
+							 $gallery->getActiveUserId(),
+							 $adminPermissions);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}

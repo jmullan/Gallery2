@@ -143,24 +143,14 @@ class AdminNetPbmView extends GalleryView {
 	}
 	GalleryProfiler::stop('AdminNetPbmView::renderBody().test-binaries');
 
-	/* Specify our translation module */
-	$ret = $this->_setTranslationModule('netpbm');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	
 	/* Render the HTML body */
-	list ($ret, $smarty) = $gallery->getSmarty();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	$smarty->assign('form', $form);
-	$smarty->assign('tests', $tests);
-	$smarty->assign('pnmToJpegList', $pnmToJpegList);
-	$smarty->assign('jpegQualityList', $jpegQualityList);
-	$smarty->assign('controller', 'netpbm:AdminNetPbm');
-	$smarty->template_dir = dirname(__FILE__) . '/templates';
-	$html = $smarty->fetch('AdminNetPbm.tpl');
+	$this->_initTemplate(dirname(__FILE__) . '/templates');
+	$this->_setTemplateVariable('form', $form);
+	$this->_setTemplateVariable('tests', $tests);
+	$this->_setTemplateVariable('pnmToJpegList', $pnmToJpegList);
+	$this->_setTemplateVariable('jpegQualityList', $jpegQualityList);
+	$this->_setTemplateVariable('controller', 'netpbm:AdminNetPbm');
+	$html = $this->_renderTemplate('netpbm', 'AdminNetPbm.tpl');
 
 	return array(GalleryStatus::success(), $html);
     }

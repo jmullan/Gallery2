@@ -74,27 +74,9 @@ class LoginView extends GalleryView {
      */
     function renderHead() {
 	global $gallery;
-	
-	/* Get our theme in place */
-	$ret = $this->_activateTheme();
-	if ($ret->isError()) {
-	    return $ret;
-	}
-	
-	/* Specify our translation module */
-	$ret = $this->_setTranslationModule('core');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	
-	/* Render the HTML head */
-	list ($ret, $smarty) = $gallery->getSmarty();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	$smarty->template_dir = dirname(__FILE__) . '/templates';
-	$html = $smarty->fetch('LoginHead.tpl');
 
+	$this->_initTemplate(dirname(__FILE__) . '/templates');
+	$html = $this->_renderTemplate('core', 'LoginHead.tpl');
 	return array(GalleryStatus::success(), $html);
     }
 
@@ -103,24 +85,6 @@ class LoginView extends GalleryView {
      */
     function renderBody() {
 	global $gallery;
-
-	/* Get our theme in place */
-	$ret = $this->_activateTheme();
-	if ($ret->isError()) {
-	    return $ret;
-	}
-	
-	/* Specify our translation module */
-	$ret = $this->_setTranslationModule('core');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	
-	/* Render our HTML body */
-	list ($ret, $smarty) = $gallery->getSmarty();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
 
 	$form = GalleryUtilities::getFormVariables('form.');
 	$return = GalleryUtilities::getFormVariables('return.');
@@ -139,11 +103,11 @@ class LoginView extends GalleryView {
 	    $form['return'] = $return;
 	}
 
-	$smarty->assign('form', $form);
-	$smarty->assign('return', $return);
-	$smarty->assign('controller', 'core:Login');
-	$smarty->template_dir = dirname(__FILE__) . '/templates';
-	$html = $smarty->fetch('Login.tpl');
+	$this->_initTemplate(dirname(__FILE__) . '/templates');
+	$this->_setTemplateVariable('form', $form);
+	$this->_setTemplateVariable('return', $return);
+	$this->_setTemplateVariable('controller', 'core:Login');
+	$html = $this->_renderTemplate('core', 'Login.tpl');
 
 	return array(GalleryStatus::success(), $html);
     }

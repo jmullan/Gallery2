@@ -112,12 +112,6 @@ class AdminDeleteUserView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	    
-	/* Specify our translation module */
-	$ret = $this->_setTranslationModule('core');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
 	$userid = GalleryUtilities::getRequestVariables('userid');
 
 	/*
@@ -139,17 +133,13 @@ class AdminDeleteUserView extends GalleryView {
 	$isSelf = ($userid == $gallery->getActiveUserId());
 
 	/* Render the HTML body */
-	list ($ret, $smarty) = $gallery->getSmarty();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	$smarty->assign('userid', $userid);
-	$smarty->assign('username', $user->getUserName());
-	$smarty->assign('isSelf', $isSelf);
-	$smarty->assign('isAnonymous', $isAnonymous);
-	$smarty->assign('controller', 'core:AdminDeleteUser');
-	$smarty->template_dir = dirname(__FILE__) . '/templates';
-	$html = $smarty->fetch('AdminDeleteUser.tpl');
+	$this->_initTemplate(dirname(__FILE__) . '/templates');
+	$this->_setTemplateVariable('userid', $userid);
+	$this->_setTemplateVariable('username', $user->getUserName());
+	$this->_setTemplateVariable('isSelf', $isSelf);
+	$this->_setTemplateVariable('isAnonymous', $isAnonymous);
+	$this->_setTemplateVariable('controller', 'core:AdminDeleteUser');
+	$html = $this->_renderTemplate('core', 'AdminDeleteUser.tpl');
 
 	return array(GalleryStatus::success(), $html);
     }

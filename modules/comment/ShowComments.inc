@@ -32,18 +32,6 @@ class ShowCommentsView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	/* Activate our theme */
-	$this->_activateTheme($item);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	
-	/* Specify our translation module */
-	$ret = $this->_setTranslationModule('comment');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
 	/* Load our item */
 	list ($ret, $item) = $this->_getItem();
 	if ($ret->isError()) {
@@ -51,13 +39,9 @@ class ShowCommentsView extends GalleryView {
 	}
 	
 	/* Render the HTML head */
-	list ($ret, $smarty) = $gallery->getSmarty();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	$smarty->template_dir = dirname(__FILE__) . '/templates';
-	$smarty->assign('item', $item->getMemberData());
-	$html = $smarty->fetch('ShowCommentsHead.tpl');
+	$this->_initTemplate(dirname(__FILE__) . '/templates');
+	$this->_setTemplateVariable('item', $item->getMemberData());
+	$html = $this->_renderTemplate('comment', 'ShowCommentsHead.tpl');
 	
 	return array(GalleryStatus::success(), $html);
     }
@@ -78,18 +62,6 @@ class ShowCommentsView extends GalleryView {
 	list ($ret, $thumbnailTable) = 
 	    GalleryDerivativeHelper::loadDerivatives($item->getId(),
 						     DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	/* Activate our theme */
-	$this->_activateTheme($item);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	/* Specify our translation module */
-	$ret = $this->_setTranslationModule('comment');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -121,22 +93,18 @@ class ShowCommentsView extends GalleryView {
 	}
 
 	/* Render the HTML body */
-	list ($ret, $smarty) = $gallery->getSmarty();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
+	$this->_initTemplate(dirname(__FILE__) . '/templates');
 
 	if (!empty($thumbnailTable)) {
-	    $smarty->assign('thumbnail', $thumbnailTable[$item->getId()][0]);
+	    $this->_setTemplateVariable('thumbnail', $thumbnailTable[$item->getId()][0]);
 	}
 	
 	$return = GalleryUtilities::getFormVariables('return.');
 
-	$smarty->assign('comments', $commentData);
-	$smarty->assign('return', $return);
-	$smarty->assign('itemId', $item->getId());
-	$smarty->template_dir = dirname(__FILE__) . '/templates';
-	$html = $smarty->fetch('ShowComments.tpl');
+	$this->_setTemplateVariable('comments', $commentData);
+	$this->_setTemplateVariable('return', $return);
+	$this->_setTemplateVariable('itemId', $item->getId());
+	$html = $this->_renderTemplate('comment', 'ShowComments.tpl');
 	
 	return array(GalleryStatus::success(), $html);
     }

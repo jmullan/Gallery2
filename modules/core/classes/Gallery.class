@@ -918,9 +918,6 @@ class Gallery {
 		$this->_smarty = new Smarty();
 	    }
 
-	    /* Our base Smarty templates live here */
-	    $this->_smarty->template_dir = $this->_config['config.smarty.templates'];
-
 	    /* Compiled templates go here */
 	    $this->_smarty->compile_dir = $this->getConfig('data.smarty.templates_c');
 	    

@@ -113,12 +113,6 @@ class AdminEditGroupView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	    
-	/* Specify our translation module */
-	$ret = $this->_setTranslationModule('core');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
 	$groupid = GalleryUtilities::getRequestVariables('groupId');
 	$form = GalleryUtilities::getFormVariables('form.');
 
@@ -141,14 +135,10 @@ class AdminEditGroupView extends GalleryView {
 	}
 
 	/* Render the HTML body */
-	list ($ret, $smarty) = $gallery->getSmarty();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	$smarty->assign('form', $form);
-	$smarty->assign('controller', 'core:AdminEditGroup');
-	$smarty->template_dir = dirname(__FILE__) . '/templates';
-	$html = $smarty->fetch('AdminEditGroup.tpl');
+	$this->_initTemplate(dirname(__FILE__) . '/templates');
+	$this->_setTemplateVariable('form', $form);
+	$this->_setTemplateVariable('controller', 'core:AdminEditGroup');
+	$html = $this->_renderTemplate('core', 'AdminEditGroup.tpl');
 
 	return array(GalleryStatus::success(), $html);
     }

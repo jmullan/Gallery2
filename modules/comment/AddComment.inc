@@ -81,26 +81,9 @@ class AddCommentView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	/* Activate our theme */
-	$this->_activateTheme($item);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	
-	/* Specify our translation module */
-	$ret = $this->_setTranslationModule('comment');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	
 	/* Render the HTML head */
-	list ($ret, $smarty) = $gallery->getSmarty();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	$smarty->template_dir = dirname(__FILE__) . '/templates';
-	$html = $smarty->fetch('AddCommentHead.tpl');
-	
+	$this->_initTemplate(dirname(__FILE__) . '/templates');
+	$html = $this->_renderTemplate('comment', 'AddCommentHead.tpl');
 	return array(GalleryStatus::success(), $html);
     }
     
@@ -124,35 +107,19 @@ class AddCommentView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	/* Activate our theme */
-	$this->_activateTheme($item);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	/* Specify our translation module */
-	$ret = $this->_setTranslationModule('comment');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	
 	/* Render the HTML body */
-	list ($ret, $smarty) = $gallery->getSmarty();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
+	$this->_initTemplate(dirname(__FILE__) . '/templates');
+	
 	if (!empty($thumbnailTable)) {
-	    $smarty->assign('thumbnail', $thumbnailTable[$item->getId()][0]);
+	    $this->_setTemplateVariable('thumbnail', $thumbnailTable[$item->getId()][0]);
 	}
 	
 	$return = GalleryUtilities::getFormVariables('return.');
 
-	$smarty->assign('return', $return);
-	$smarty->assign('itemId', $item->getId());
-	$smarty->assign('controller', 'comment:AddComment');
-	$smarty->template_dir = dirname(__FILE__) . '/templates';
-	$html = $smarty->fetch('AddComment.tpl');
+	$this->_setTemplateVariable('return', $return);
+	$this->_setTemplateVariable('itemId', $item->getId());
+	$this->_setTemplateVariable('controller', 'comment:AddComment');
+	$html = $this->_renderTemplate('comment', 'AddComment.tpl');
 	
 	return array(GalleryStatus::success(), $html);
     }

@@ -104,12 +104,6 @@ class AdminCreateGroupView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	    
-	/* Specify our translation module */
-	$ret = $this->_setTranslationModule('core');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
 	$formName = GalleryUtilities::getRequestVariables('formName');
 	$form = GalleryUtilities::getFormVariables('form.');
 
@@ -140,14 +134,10 @@ class AdminCreateGroupView extends GalleryView {
 	}
 
 	/* Render the HTML body */
-	list ($ret, $smarty) = $gallery->getSmarty();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	$smarty->assign('form', $form);
-	$smarty->assign('controller', 'core:AdminCreateGroup');
-	$smarty->template_dir = dirname(__FILE__) . '/templates';
-	$html = $smarty->fetch('AdminCreateGroup.tpl');
+	$this->_initTemplate(dirname(__FILE__) . '/templates');
+	$this->_setTemplateVariable('form', $form);
+	$this->_setTemplateVariable('controller', 'core:AdminCreateGroup');
+	$html = $this->_renderTemplate('core', 'AdminCreateGroup.tpl');
 
 	return array(GalleryStatus::success(), $html);
     }

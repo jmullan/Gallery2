@@ -31,27 +31,9 @@ class ShowItemView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	/* Activate the theme for this item */
-	$ret = $this->_activateTheme($item);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	
-	/* Specify our translation module */
-	$ret = $this->_setTranslationModule('core');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	
-	/* Render the HTML head */
-	list ($ret, $smarty) = $gallery->getSmarty();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	$smarty->assign('item', $item->getMemberData());
-	$smarty->template_dir = dirname(__FILE__) . '/templates';
-	$html = $smarty->fetch('ShowItemHead.tpl');
-
+	$this->_initTemplate(dirname(__FILE__) . '/templates');
+	$this->_setTemplateVariable('item', $item->getMemberData());
+	$html = $this->_renderTemplate('core', 'ShowItemHead.tpl');
 	return array(GalleryStatus::success(), $html);
     }
 
@@ -83,10 +65,24 @@ class ShowItemView extends GalleryView {
 	}
 
 	/* Load the correct layout */
-	list ($ret, $layout) = $this->_loadLayout($layoutName);
+	list ($ret, $platform) = $gallery->getPlatform();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+
+	if (empty($layoutName)) {
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER,
+					      __FILE__, __LINE__), null);
+	}
+
+	require_once($gallery->getConfig('code.gallery.layouts') .
+		     $layoutName . '/layout.inc');
+	$layoutClassName = $layoutName . 'Layout';
+	if (!class_exists($layoutClassName)) {
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER,
+					      __FILE__, __LINE__), null);
+	}
+	$layout = new $layoutClassName();
 
 	/* Render and retrieve the body */
 	$urlParams['view'] = 'core:ShowItem';
