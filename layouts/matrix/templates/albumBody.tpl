@@ -44,6 +44,7 @@
 	  {foreach from=$layout.childRows item=childRow}
 	    {g->row}
 	      {foreach from=$childRow item=child}
+		{assign var="childId" value=$child.id}
 		{if $child.canContainChildren} 
 		  {assign var="style" value="album"}
 		  {assign var="colspan" value=$layout.columnSize}
@@ -98,9 +99,17 @@
 			  arg1=$child.childCount}
 			{/g->title}
 		      {/g->item}
+
+		      {g->item}
+			{g->title}
+			  {g->text one="Viewed: %d time"
+			  many="Viewed: %d times"
+			  count=$layout.viewCounts.$childId
+			  arg1=$layout.viewCounts.$childId}
+			{/g->title}
+		      {/g->item}
 		    {/g->infoset}
 
-		    {assign var="childId" value=$child.id}
 		    {if !empty($layout.moduleItemLinks.$childId)}
 		      {g->actionset}
 			{g->actionitem}

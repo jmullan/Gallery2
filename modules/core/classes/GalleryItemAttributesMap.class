@@ -143,28 +143,44 @@ class GalleryItemAttributesMap_core {
      * @param int the item id
      */
     function fetchViewCount($itemId) {
-	global $gallery;
-	
-	$query = '
-        SELECT
-          [GalleryItemAttributesMap::viewCount]
-        FROM
-          [GalleryItemAttributesMap]
-        WHERE
-          [GalleryItemAttributesMap::itemId] = ?
-        ';
-	list ($ret, $searchResults) = $gallery->search($query, array($itemId));
+	list ($ret, $viewCounts) = GalleryItemAttributesMap::fetchViewCounts(array($itemId));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	if ($searchResults->resultCount() == 0) {
+	return array(GalleryStatus::success(), $viewCounts[$itemId]);
+    }
+
+    /**
+     * Get the view counts for many item ids
+     * @param int the item id
+     */
+    function fetchViewCounts($itemIds) {
+	global $gallery;
+
+	$query = sprintf('
+        SELECT
+          [GalleryItemAttributesMap::itemId], [GalleryItemAttributesMap::viewCount]
+        FROM
+          [GalleryItemAttributesMap]
+        WHERE
+          [GalleryItemAttributesMap::itemId] IN (%s)
+        ', GalleryUtilities::makeMarkers($itemIds));
+	list ($ret, $searchResults) = $gallery->search($query, $itemIds);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if ($searchResults->resultCount() != sizeof($itemIds)) {
 	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
 	}
-	$result = $searchResults->nextResult();
-	$count = (int)$result[0];
-			 
-	return array(GalleryStatus::success(), $count);
+
+	$data = array();
+	while ($result = $searchResults->nextResult()) {
+	    $data[$result[0]] = $result[1];
+	}
+
+	return array(GalleryStatus::success(), $data);
     }
 
     /**

@@ -286,6 +286,12 @@ class MatrixLayout extends GalleryLayout {
 	    }
 	}
 
+	/* Get the view counts */
+	list ($ret, $viewCounts) = GalleryItemAttributesMap::fetchViewCounts($childIds);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
 	/* Set up the navigator */
 	$totalPages = ceil($totalChildCount / $perPage);
 	$navigator = array();
@@ -420,6 +426,7 @@ class MatrixLayout extends GalleryLayout {
 	$layout['show'] = $show;
 	$layout['user'] = $user->getMemberData();
 	$layout['owners'] = $owners;
+	$layout['viewCounts'] = $viewCounts;
 	$layout['owner'] = $owners[$item->getOwnerId()];
 	$layout['moduleItemLinks'] = $moduleItemLinks;
 	$layout['moduleSystemContentFiles'] = $moduleSystemContentFiles;
