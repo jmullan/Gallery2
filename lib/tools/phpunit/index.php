@@ -151,6 +151,7 @@ if (isset($_GET['filter'])) {
 } else {
     $filter = null;
     $displayFilter = null;
+    $range = array(array(1, FILTER_MAX));
 }
 $testSuite = new TestSuite();
 $ret = PhpUnitGalleryMain($testSuite, $filter);
