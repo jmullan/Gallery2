@@ -168,6 +168,17 @@ class GalleryUtilities {
 	    if (preg_match("/^${prefix}_?(.*)/", $key, $matches)) {
 		$formKey = $matches[1];
 		$values[$formKey] = $HTTP_POST_FILES[$key];
+
+		/*
+		 * Later on during our sanitization process we're going to call
+		 * stripslashes on our file name.  But it may legitimately have
+		 * backslashes in it (eg c:\apache\foo.jpg), so make sure those
+		 * are escaped at this time.  There's gotta be a better way to
+		 * handle this.
+		 */
+		if (get_magic_quotes_gpc()) {
+		    $values[$formKey]['tmp_name'] = addslashes($values[$formKey]['tmp_name']);
+		}
 	    }
 	}
 
@@ -285,7 +296,6 @@ class GalleryUtilities {
      * @static
      */
     function sanitizeInputValue($value) {
-	
 	/* Undo the damage caused by magic_quotes */
 	if (get_magic_quotes_gpc()) {
 	    if (is_array($value)) {
