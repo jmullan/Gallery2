@@ -123,7 +123,8 @@ class AdminGroupsController extends GalleryController {
 		 * operating on a valid group, so don't bother sending errors back
 		 * in case we can't delete.
 		 */
-		if ($group->getGroupType() == GROUP_ALL_USERS) {
+		if ($group->getGroupType() == GROUP_ALL_USERS ||
+		    $group->getGroupType() == GROUP_EVERYBODY) {
 		    $error[] = 'form[error][text][cantEditGroupUsers]';
 		}
 	    }
