@@ -251,6 +251,7 @@ class ImageMagickModule extends GalleryModule {
 	    $paths[] = '/usr/bin/';
 	    $paths[] = '/usr/local/bin/';
 	    $paths[] = '/bin/';
+	    $paths[] = '/sw/bin/';
 	} else {
 	    return array(GalleryStatus::success(), false);
 	}

@@ -160,6 +160,7 @@ class NetPbmModule extends GalleryModule {
 	    $paths[] = '/usr/local/bin/';
 	    $paths[] = '/usr/local/netpbm/bin/';
 	    $paths[] = '/bin/';
+	    $paths[] = '/sw/bin/';
 	} else {
 	    return array(GalleryStatus::success(), false);
 	}
