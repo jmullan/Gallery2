@@ -107,6 +107,16 @@ class ItemEditItem extends ItemEditPlugin {
 		if ($ret->isError() && $ret->getErrorCode() & ERROR_COLLISION) {
 		    $error[] = 'form[error][pathComponent][collision]';
 		} else {
+		    /* Change the originationTimestamp */
+		    if (!empty($form['originationTimestamp'])) {
+			$newOriginationTimestamp = mktime($form['originationTimestamp']['Time_Hour'],
+							  $form['originationTimestamp']['Time_Minute'],
+							  $form['originationTimestamp']['Time_Second'],
+							  $form['originationTimestamp']['Date_Month'],
+							  $form['originationTimestamp']['Date_Day'],
+							  $form['originationTimestamp']['Date_Year']);
+			$item->setOriginationTimestamp($newOriginationTimestamp);
+		    }
 		    $item->setTitle($form['title']);
 		    $item->setSummary($form['summary']);
 		    $item->setKeywords($form['keywords']);
@@ -159,6 +169,7 @@ class ItemEditItem extends ItemEditPlugin {
 	    $form['keywords'] = $item->getKeywords();
 	    $form['description'] = $item->getDescription();
 	    $form['pathComponent'] = $item->getPathComponent();
+	    $form['originationTimestamp'] = $item->getOriginationTimestamp();
 	    $form['formName'] = 'ItemEditItem';
 	}
 
@@ -174,6 +185,32 @@ class ItemEditItem extends ItemEditPlugin {
 	
 	$ItemEditItem = array();
 	$ItemEditItem['can'] = $can;
+	$ItemEditItem['typeName'] = $item->itemTypeName();
+
+	/* The originateTimestamp that we can get from our toolkits */
+	list ($ret, $originationTimestamp) =
+		GalleryCoreApi::fetchOriginationTimestamp($item);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	if (!empty($originationTimestamp)) {
+	    $ItemEditItem['originationTimestamp'] = array(
+		'timestamp' => $originationTimestamp,
+		'Time_Hour' => strftime('%H', $originationTimestamp),
+		'Time_Minute' => strftime('%M', $originationTimestamp),
+		'Time_Second' => strftime('%S', $originationTimestamp),
+		'Date_Day' => ltrim(strftime('%d', $originationTimestamp), '0'),
+		'Date_Month' => strftime('%m', $originationTimestamp),
+		'Date_Year' => strftime('%Y', $originationTimestamp),
+	    );
+	}
+
+	/* The template needs to differentiate some important itemTypes */
+	if (GalleryUtilities::isA($item, 'GalleryPhotoItem')) {
+	    $ItemEditItem['isItemPhoto'] = true;
+	} else if (GalleryUtilities::isA($item, 'GalleryUnknownItem')) {
+	    $ItemEditItem['isItemUnknown'] = true;
+	}
 
 	/* Render the HTML body */
 	$template->setVariable('ItemEditItem', $ItemEditItem);

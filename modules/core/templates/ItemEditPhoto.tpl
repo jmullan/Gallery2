@@ -82,54 +82,6 @@
   {/if}
 </div>
 
-<div class="gbAdmin">
-  <h2 class="giTitle">
-    {g->text text="Capture Date and Time"}
-  </h2>
-  
-  <p class="giDescription">
-    {g->text text="Set the date and time when this image was captured."}
-  </p>
-
-  <p>
-    {capture name=originationTimestampField}{g->formVar var="form[originationTimestamp]"}{/capture}
-    {g->text text="Date:"}
-    {html_select_date time=$form.originationTimestamp field_array=$smarty.capture.originationTimestampField start_year="1970" end_year="+0"}
-    {g->text text="Time:"}
-    {html_select_time time=$form.originationTimestamp field_array=$smarty.capture.originationTimestampField"}
-    <br/>
-  </p>
-
-  {if $ItemEditPhoto.originationTimestamp.timestamp}
-  <script type="text/javascript" language="javascript">
-  // <![CDATA[
-  function setOriginationTimestamp(hour, min, sec, mon, day, year) {ldelim}
-    var frm = document.gItemAdmin;
-    frm.elements['{$smarty.capture.originationTimestampField}[Date_Month]'].value = '{$ItemEditPhoto.originationTimestamp.Date_Month}';
-    frm.elements['{$smarty.capture.originationTimestampField}[Date_Day]'].value = '{$ItemEditPhoto.originationTimestamp.Date_Day}';
-    frm.elements['{$smarty.capture.originationTimestampField}[Date_Year]'].value = '{$ItemEditPhoto.originationTimestamp.Date_Year}';
-    frm.elements['{$smarty.capture.originationTimestampField}[Time_Hour]'].value = '{$ItemEditPhoto.originationTimestamp.Time_Hour}';
-    frm.elements['{$smarty.capture.originationTimestampField}[Time_Minute]'].value = '{$ItemEditPhoto.originationTimestamp.Time_Minute}';
-    frm.elements['{$smarty.capture.originationTimestampField}[Time_Second]'].value = '{$ItemEditPhoto.originationTimestamp.Time_Second}';
-  {rdelim}
-  // ]]>
-  </script>
-  <p>
-    {g->text text="Use the original capture date and time from file information (e.g. Exif tag):"}
-    <br/>
-    <a href="#" onclick="javascript:setOriginationTimestamp();return false;">
-      {$ItemEditPhoto.originationTimestamp.timestamp|date_format:"%B %d %Y, %H:%M:%S"}
-    </a>
-  </p>
-  {/if}
-
-  {if !empty($form.error.originationTimestamp.invalid)}
-  <div class="giError">
-    {g->text text="You must enter a valid date and time"}
-  </div>
-  {/if}
-</div>
-
 {* Include our extra ItemEditOptions *}
 {foreach from=$ItemEdit.options item=option}
   {include file="gallery:`$option.file`" l10Domain=$option.l10Domain}

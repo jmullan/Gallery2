@@ -414,5 +414,34 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 	/* Make sure that the file wasn't moved */
 	$this->assert($platform->file_exists($originalPath), 'Album should not have been moved');
     }
+
+    function testEditOriginationTimestamp() {
+	global $gallery;
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[pathComponent]', $this->_item[0]->getPathComponent());
+	GalleryUtilities::putRequestVariable('form[title]', $this->_item[0]->getTitle());
+	GalleryUtilities::putRequestVariable('form[summary]', $this->_item[0]->getSummary());
+	GalleryUtilities::putRequestVariable('form[keywords]', $this->_item[0]->getKeywords());
+	GalleryUtilities::putRequestVariable('form[description]', $this->_item[0]->getDescription());
+	GalleryUtilities::putRequestVariable('form[serialNumber]', $this->_item[0]->getSerialNumber());
+
+	for ($i = 0; $i < 3; $i++) {
+	    GalleryUtilities::putRequestVariable('form[resizes][' . $i . '][active]', 1);
+	    GalleryUtilities::putRequestVariable('form[resizes][' . $i . '][size]', 100 * ($i+1));
+	}
+	GalleryUtilities::putRequestVariable('form[originationTimestamp][Date_Month]', '08');
+	GalleryUtilities::putRequestVariable('form[originationTimestamp][Date_Day]', '09');
+	GalleryUtilities::putRequestVariable('form[originationTimestamp][Date_Year]', '2003');
+	GalleryUtilities::putRequestVariable('form[originationTimestamp][Time_Hour]', '22');
+	GalleryUtilities::putRequestVariable('form[originationTimestamp][Time_Minute]', '50');
+	GalleryUtilities::putRequestVariable('form[originationTimestamp][Time_Second]', '59');
+
+	/* Perform the request and verify that we are ok */
+	$results = $this->handleRequest($this->_item[0], $this->_preferred);
+	$this->assertEquals(array(array(), $this->_translate('Changes saved successfully')), $results);
+	$this->assertEquals(mktime(22,50,59,8,9,2003), $this->_item[0]->getOriginationTimestamp());
+    }
 }
 ?>

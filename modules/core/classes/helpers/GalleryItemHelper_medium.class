@@ -261,6 +261,9 @@ class GalleryItemHelper_medium {
      * @static
      */
     function fetchOriginationTimestamp($item) {
+	if (! GalleryUtilities::isA($item, 'GalleryDataItem')) {
+	    return array(GalleryStatus::success(), null);
+	}
 	list ($ret, $toolkits) =
 	    GalleryCoreApi::getToolkitsByProperty($item->getMimeType(), 'originationTimestamp');
 	if ($ret->isError()) {

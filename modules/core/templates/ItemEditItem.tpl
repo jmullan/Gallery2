@@ -107,6 +107,60 @@
   </div>
 </div>
 
+<div class="gbAdmin">
+  <h2 class="giTitle">
+    {g->text text="%s Date and Time" arg1=$ItemEditItem.typeName.0}
+  </h2>
+
+  <p class="giDescription">
+    {if !empty($ItemEditItem.isItemPhoto)}
+    {g->text text="Set the date and time when this image was captured."}
+    {elseif !empty($ItemEditItem.isItemUnknown)}
+    {g->text text="Set the date and time to be displayed for this item."}
+    {else}
+    {g->text text="Set the date and time to be displayed for this %s." arg1=$ItemEditItem.typeName.1}
+    {/if}
+  </p>
+
+  <p>
+    {capture name=originationTimestampField}{g->formVar var="form[originationTimestamp]"}{/capture}
+    {g->text text="Date:"}
+    {html_select_date time=$form.originationTimestamp field_array=$smarty.capture.originationTimestampField start_year="1970" end_year="+0"}
+    {g->text text="Time:"}
+    {html_select_time time=$form.originationTimestamp field_array=$smarty.capture.originationTimestampField"}
+    <br/>
+  </p>
+
+  {if !empty($ItemEditItem.originationTimestamp)}
+  <script type="text/javascript" language="javascript">
+  // <![CDATA[
+  function setOriginationTimestamp() {ldelim}
+    var frm = document.gItemAdmin;
+    frm.elements['{$smarty.capture.originationTimestampField}[Date_Month]'].value = '{$ItemEditItem.originationTimestamp.Date_Month}';
+    frm.elements['{$smarty.capture.originationTimestampField}[Date_Day]'].value = '{$ItemEditItem.originationTimestamp.Date_Day}';
+    frm.elements['{$smarty.capture.originationTimestampField}[Date_Year]'].value = '{$ItemEditItem.originationTimestamp.Date_Year}';
+    frm.elements['{$smarty.capture.originationTimestampField}[Time_Hour]'].value = '{$ItemEditItem.originationTimestamp.Time_Hour}';
+    frm.elements['{$smarty.capture.originationTimestampField}[Time_Minute]'].value = '{$ItemEditItem.originationTimestamp.Time_Minute}';
+    frm.elements['{$smarty.capture.originationTimestampField}[Time_Second]'].value = '{$ItemEditItem.originationTimestamp.Time_Second}';
+  {rdelim}
+  // ]]>
+  </script>
+  <p>
+    {g->text text="Use the original capture date and time from file information (e.g. Exif tag):"}
+    <br/>
+    <a href="#" onclick="javascript:setOriginationTimestamp();return false;">
+      {$ItemEditItem.originationTimestamp.timestamp|date_format:"%B %d %Y, %H:%M:%S"}
+    </a>
+  </p>
+  {/if}
+
+  {if !empty($form.error.originationTimestamp.invalid)}
+  <div class="giError">
+    {g->text text="You must enter a valid date and time"}
+  </div>
+  {/if}
+</div>
+
 <div class="gbButtons">
   <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}"/>
   <input type="submit" name="{g->formVar var="form[action][undo]"}" value="{g->text text="Undo"}"/>

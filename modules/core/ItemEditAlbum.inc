@@ -312,16 +312,6 @@ class ItemEditAlbum extends ItemEditPlugin {
 		if (isset($form['orderDirection'])) {
 		    $item->setOrderDirection($form['orderDirection']);
 		}
-		/* Change the originationTimestamp */
-		if (!empty($form['originationTimestamp'])) {
-		    $newOriginationTimestamp = mktime($form['originationTimestamp']['Time_Hour'],
-						      $form['originationTimestamp']['Time_Minute'],
-						      $form['originationTimestamp']['Time_Second'],
-						      $form['originationTimestamp']['Date_Month'],
-						      $form['originationTimestamp']['Date_Day'],
-						      $form['originationTimestamp']['Date_Year']);
-		    $item->setOriginationTimestamp($newOriginationTimestamp);
-		}
 		$item->setSerialNumber($form['serialNumber']);
 
 		list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($item->getId());
@@ -364,7 +354,6 @@ class ItemEditAlbum extends ItemEditPlugin {
 	    $form['orderDirection'] = $item->getOrderDirection();
 	    $form['layout'] = $item->getLayout();
 	    $form['theme'] = $item->getTheme();
-	    $form['originationTimestamp'] = $item->getOriginationTimestamp();
 	    $form['formName'] = 'ItemEditAlbum';
 
 	    /* Load up the data for the resizes table */
