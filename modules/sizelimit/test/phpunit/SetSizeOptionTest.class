@@ -153,6 +153,7 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
         $this->assertEquals(1024, $this->_item->getHeight(), 'Height');
         $operation = GalleryUtilities::getRequestVariables('operation');
         $this->assertEquals('resize', $operation, 'operation');
+        $this->assertEquals(2, $this->_item->getSerialNumber(), 'Serial Number');
         $platform->clearstatcache();
         $ret = $this->_item->rescan();
         if ($ret->isError()) {
