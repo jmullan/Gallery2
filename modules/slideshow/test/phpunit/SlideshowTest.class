@@ -163,11 +163,11 @@ class SlideshowTest extends GalleryTestCase {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    $idData['preferred'] = $derivative->getId();
+	    $idData['P'] = $derivative->getId();
 	}
 	if (in_array('T', $sizes)) {
 	    // add thumbnail
-	    list ($ret, $idData['thumbnail']) = $this->_addDerivative($photo,
+	    list ($ret, $idData['T']) = $this->_addDerivative($photo,
 		'thumbnail', DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 'thumbnail|150');
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
@@ -175,7 +175,7 @@ class SlideshowTest extends GalleryTestCase {
 	}
 	if (in_array('R', $sizes)) {
 	    // add one resize
-	    list ($ret, $idData['resize']) = $this->_addDerivative($photo,
+	    list ($ret, $idData['R']) = $this->_addDerivative($photo,
 		'scale', DERIVATIVE_TYPE_IMAGE_RESIZE, 'scale|300');
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
@@ -183,7 +183,7 @@ class SlideshowTest extends GalleryTestCase {
 	}
 	if (in_array('R2', $sizes)) {
 	    // add another resize
-	    list ($ret, $idData['resizes']) = $this->_addDerivative($photo,
+	    list ($ret, $idData['R2']) = $this->_addDerivative($photo,
 		'scale', DERIVATIVE_TYPE_IMAGE_RESIZE, 'scale|600');
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
@@ -231,82 +231,100 @@ class SlideshowTest extends GalleryTestCase {
 	parent::tearDown();
     }
 
-    function _runTest($expectedResults) {
+    function _runTest($test, $expectedResults, $startId=null) {
 	global $gallery;
 	$gallery->setActiveUserId($this->_guestId);
-	list ($ret, $slideData) = $this->_view->buildSlideshow($this->_album);
-	$this->assert(!$ret->isError() && isset($slideData),
-	    'Generate slideshow data<br>' . $ret->getAsHtml());
+	list ($ret, $slideData, $start) = isset($startId)
+	    ? $this->_view->buildSlideshow($this->_album, $startId)
+	    : $this->_view->buildSlideshow($this->_album);
+	$this->assert(!$ret->isError() && isset($slideData) && isset($start),
+	    "$test: Generate slideshow data<br>" . $ret->getAsHtml());
 	$this->assertEquals(count($expectedResults) - 1, count($slideData),
-	    'Slideshow data size');
+	    "$test: Slideshow data size");
 	$slideIds = array();
 	foreach ($slideData as $slide) {
-	    foreach (array('id', 'source.id', 'source.serialNumber',
-			   'data', 'exif') as $attribute) {
-		$keys = explode('.', $attribute);
+	    foreach (array('id', 'sources.0.id', 'sources.0.serialNumber',
+			   'data', 'sizeClassMap', 'exif') as $attribute) {
+		$k = explode('.', $attribute);
 		$this->assert(
-		    (count($keys)==1 && isset($slide[$attribute])) ||
-		    (count($keys)==2 && isset($slide[$keys[0]][$keys[1]])),
-		    "Slideshow item missing $attribute attribute");
+		    (count($k)==1 && isset($slide[$attribute])) ||
+		    (count($k)==3 && isset($slide[$k[0]][$k[1]][$k[2]])),
+		    "$test: Slideshow item missing $attribute attribute");
 	    }
 	    $this->assert(isset($expectedResults[$slide['id']]),
-			  "Slide id " . $slide['id'] . " not expected");
-	    // Verify source for this slide comes from expected derivative..
+			  "$test: Slide id " . $slide['id'] . " not expected");
+	    // Verify sources and sizeClassMap..
 	    if (isset($expectedResults[$slide['id']]) &&
-		isset($slide['source']['id'])) {
+		isset($slide['sizeClassMap']) && isset($slide['exif'])) {
 		$this->assertEquals(
-		    $expectedResults[$slide['id']], $slide['source']['id'],
-		    'Slide ' . $slide['id'] .  ' sourced from wrong id<br>' .
-		    var_export($this->_photoData, TRUE));
+		    count($expectedResults[$slide['id']][0]),
+		    count($slide['sources']), "$test: Slide " .
+		    $slide['id'] . ' wrong number of sources');
+		foreach ($expectedResults[$slide['id']][0] as $i => $id) {
+		    $this->assertEquals($id, $slide['sources'][$i]['id'],
+			"$test: Slide id " . $slide['id'] . " source $i id"
+			. '<br>' . var_export($this->_photoData, TRUE));
+		}
+		foreach ($expectedResults[$slide['id']][1] as $i => $index) {
+		    $this->assertEquals($index, $slide['sizeClassMap'][$i],
+			"$test: Slide id " . $slide['id'] . " size map $i"
+			. '<br>' . var_export($this->_photoData, TRUE));
+		}
 		if (in_array($slide['id'], $expectedResults['idsWithExif'])) {
 		    $this->assert(isset($slide['exif']['DateTime']['value']),
-		      'Slide id ' . $slide['id'] . ' missing EXIF Date/Time');
+		      "$test: Slide id " . $slide['id'] .
+		      ' missing EXIF Date/Time');
 		}
 	    }
 	    $slideIds[] = $slide['id'];
 	}
 	$this->assertEquals(count($expectedResults) - 1,
 	    count(array_intersect(array_keys($expectedResults), $slideIds)),
-	    "Slideshow doesn't contain correct set of photo ids");
+	    "$test: Slideshow doesn't contain correct set of photo ids");
 	$gallery->setActiveUserId($this->_adminId);
     }
 
 
-    function testView() {
+    function testSlideshow() {
+	$pd = $this->_photoData;
+
 	// First test, only core.view permission:
 	// see thumbnails (4 of the 10 have none)
-	$this->_runTest(array(
-	    $this->_photoData[0]['id'] => $this->_photoData[0]['thumbnail'],
-	    $this->_photoData[1]['id'] => $this->_photoData[1]['thumbnail'],
-	    $this->_photoData[2]['id'] => $this->_photoData[2]['thumbnail'],
-	    $this->_photoData[3]['id'] => $this->_photoData[3]['thumbnail'],
-	    $this->_photoData[4]['id'] => $this->_photoData[4]['thumbnail'],
-	    $this->_photoData[5]['id'] => $this->_photoData[5]['thumbnail'],
-	    'idsWithExif' => array($this->_photoData[4]['id'])));
-    }
+	$this->_runTest('view', array(
+	    $pd[0]['id'] => array(array($pd[0]['T']), array(0,0,0,0,0,0)),
+	    $pd[1]['id'] => array(array($pd[1]['T']), array(0,0,0,0,0,0)),
+	    $pd[2]['id'] => array(array($pd[2]['T']), array(0,0,0,0,0,0)),
+	    $pd[3]['id'] => array(array($pd[3]['T']), array(0,0,0,0,0,0)),
+	    $pd[4]['id'] => array(array($pd[4]['T']), array(0,0,0,0,0,0)),
+	    $pd[5]['id'] => array(array($pd[5]['T']), array(0,0,0,0,0,0)),
+	    'idsWithExif' => array($pd[4]['id'])));
 
-    function testViewResizes() {
 	// core.viewResize permission:
-	// see resize if available, thumb otherwise (2 have neither)
+	// see resize and thumb (2 have neither)
 	$ret = GalleryPermissionMap::addGroupPermission(
 			$this->_album->getId(), $this->_allUsersGroupId,
 			'core.viewResizes', TRUE);
 	$this->assert(!$ret->isError(), "Set viewResizes permission");
-	$this->_runTest(array(
-	    $this->_photoData[0]['id'] => $this->_photoData[0]['thumbnail'],
-	    $this->_photoData[1]['id'] => $this->_photoData[1]['resize'],
-	    $this->_photoData[2]['id'] => $this->_photoData[2]['resize'],
-	    $this->_photoData[3]['id'] => $this->_photoData[3]['thumbnail'],
-	    $this->_photoData[4]['id'] => $this->_photoData[4]['resize'],
-	    $this->_photoData[5]['id'] => $this->_photoData[5]['resize'],
-	    $this->_photoData[7]['id'] => $this->_photoData[7]['resize'],
-	    $this->_photoData[9]['id'] => $this->_photoData[9]['resize'],
-	    'idsWithExif' => array($this->_photoData[4]['id'],
-				   $this->_photoData[9]['id'])));
-    }
+	$this->_runTest('viewResize', array(
+	    $pd[0]['id'] => array(array($pd[0]['T']),
+				  array(0,0,0,0,0,0)),
+	    $pd[1]['id'] => array(array($pd[1]['R'], $pd[1]['T']),
+				  array(1,0,0,0,0,0)),
+	    $pd[2]['id'] => array(array($pd[2]['R'], $pd[2]['R2'], $pd[2]['T']),
+				  array(0,1,1,1,1,1)),
+	    $pd[3]['id'] => array(array($pd[3]['T']),
+				  array(0,0,0,0,0,0)),
+	    $pd[4]['id'] => array(array($pd[4]['R'], $pd[4]['T']),
+				  array(1,0,0,0,0,0)),
+	    $pd[5]['id'] => array(array($pd[5]['R'], $pd[5]['R2'], $pd[5]['T']),
+				  array(2,0,1,1,1,1)),
+	    $pd[7]['id'] => array(array($pd[7]['R']),
+				  array(0,0,0,0,0,0)),
+	    $pd[9]['id'] => array(array($pd[9]['R']),
+				  array(0,0,0,0,0,0)),
+	    'idsWithExif' => array($pd[4]['id'], $pd[9]['id'])));
 
-    function testViewSource() {
-	// core.viewSource permission: see full/preferred
+	// core.viewSource permission: see full/preferred and thumb
 	$ret = GalleryPermissionMap::removeGroupPermission(
 			$this->_album->getId(), $this->_allUsersGroupId,
 			'core.viewResizes', TRUE);
@@ -315,41 +333,58 @@ class SlideshowTest extends GalleryTestCase {
 			$this->_album->getId(), $this->_allUsersGroupId,
 			'core.viewSource', TRUE);
 	$this->assert(!$ret->isError(), "Set viewSource permission");
-	$this->_runTest(array(
-	    $this->_photoData[0]['id'] => $this->_photoData[0]['id'],
-	    $this->_photoData[1]['id'] => $this->_photoData[1]['id'],
-	    $this->_photoData[2]['id'] => $this->_photoData[2]['id'],
-	    $this->_photoData[3]['id'] => $this->_photoData[3]['preferred'],
-	    $this->_photoData[4]['id'] => $this->_photoData[4]['preferred'],
-	    $this->_photoData[5]['id'] => $this->_photoData[5]['preferred'],
-	    $this->_photoData[6]['id'] => $this->_photoData[6]['id'],
-	    $this->_photoData[7]['id'] => $this->_photoData[7]['id'],
-	    $this->_photoData[8]['id'] => $this->_photoData[8]['preferred'],
-	    $this->_photoData[9]['id'] => $this->_photoData[9]['preferred'],
-	    'idsWithExif' => array($this->_photoData[4]['id'],
-				   $this->_photoData[9]['id'])));
-    }
+	$this->_runTest('viewSource', array(
+	    $pd[0]['id'] => array(array($pd[0]['id'], $pd[0]['T']),
+				  array(0,0,0,0,0,0)),
+	    $pd[1]['id'] => array(array($pd[1]['id'], $pd[1]['T']),
+				  array(0,0,0,0,0,0)),
+	    $pd[2]['id'] => array(array($pd[2]['id'], $pd[2]['T']),
+				  array(0,0,0,0,0,0)),
+	    $pd[3]['id'] => array(array($pd[3]['P'], $pd[3]['T']),
+				  array(1,0,0,0,0,0)),
+	    $pd[4]['id'] => array(array($pd[4]['P'], $pd[4]['T']),
+				  array(0,0,0,0,0,0)),
+	    $pd[5]['id'] => array(array($pd[5]['P'], $pd[5]['T']),
+				  array(0,0,0,0,0,0)),
+	    $pd[6]['id'] => array(array($pd[6]['id']),
+				  array(0,0,0,0,0,0)),
+	    $pd[7]['id'] => array(array($pd[7]['id']),
+				  array(0,0,0,0,0,0)),
+	    $pd[8]['id'] => array(array($pd[8]['P']),
+				  array(0,0,0,0,0,0)),
+	    $pd[9]['id'] => array(array($pd[9]['P']),
+				  array(0,0,0,0,0,0)),
+	    'idsWithExif' => array($pd[4]['id'], $pd[9]['id'])),
+	  $pd[4]['id']);
 
-    function testViewAll() {
-	// core.viewAll permission:
-	// see resize if available, full/preferred otherwise
+	// core.viewAll permission: see all
 	$ret = GalleryPermissionMap::addGroupPermission(
 			$this->_album->getId(), $this->_allUsersGroupId,
 			'core.viewAll', TRUE);
 	$this->assert(!$ret->isError(), "Set viewAll permission");
-	$this->_runTest(array(
-	    $this->_photoData[0]['id'] => $this->_photoData[0]['id'],
-	    $this->_photoData[1]['id'] => $this->_photoData[1]['resize'],
-	    $this->_photoData[2]['id'] => $this->_photoData[2]['resize'],
-	    $this->_photoData[3]['id'] => $this->_photoData[3]['preferred'],
-	    $this->_photoData[4]['id'] => $this->_photoData[4]['resize'],
-	    $this->_photoData[5]['id'] => $this->_photoData[5]['resize'],
-	    $this->_photoData[6]['id'] => $this->_photoData[6]['id'],
-	    $this->_photoData[7]['id'] => $this->_photoData[7]['resize'],
-	    $this->_photoData[8]['id'] => $this->_photoData[8]['preferred'],
-	    $this->_photoData[9]['id'] => $this->_photoData[9]['resize'],
-	    'idsWithExif' => array($this->_photoData[4]['id'],
-				   $this->_photoData[9]['id'])));
+	$this->_runTest('viewAll', array(
+	    $pd[0]['id'] => array(array($pd[0]['id'], $pd[0]['T']),
+				  array(0,0,0,0,0,0)),
+	    $pd[1]['id'] => array(array($pd[1]['id'], $pd[1]['R'], $pd[1]['T']),
+				  array(0,1,1,1,1,1)),
+	    $pd[2]['id'] => array(array($pd[2]['id'], $pd[2]['R'], $pd[2]['R2'],
+				  $pd[2]['T']), array(1,2,2,2,2,2)),
+	    $pd[3]['id'] => array(array($pd[3]['P'], $pd[3]['T']),
+				  array(1,0,0,0,0,0)),
+	    $pd[4]['id'] => array(array($pd[4]['P'], $pd[4]['R'], $pd[4]['T']),
+				  array(0,1,1,1,1,1)),
+	    $pd[5]['id'] => array(array($pd[5]['P'], $pd[5]['R'], $pd[5]['R2'],
+				  $pd[5]['T']), array(0,1,2,2,2,2)),
+	    $pd[6]['id'] => array(array($pd[6]['id']),
+				  array(0,0,0,0,0,0)),
+	    $pd[7]['id'] => array(array($pd[7]['id'], $pd[7]['R']),
+				  array(1,1,1,1,1,1)),
+	    $pd[8]['id'] => array(array($pd[8]['P']),
+				  array(0,0,0,0,0,0)),
+	    $pd[9]['id'] => array(array($pd[9]['P'], $pd[9]['R']),
+				  array(0,1,1,1,1,1)),
+	    'idsWithExif' => array($pd[4]['id'], $pd[9]['id'])),
+	  $pd[7]['id']);
     }
 
     // test with links?

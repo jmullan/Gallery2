@@ -94,6 +94,11 @@ class SlideshowView extends GalleryView {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
+	    list ($ret, $thumbnails) =
+		GalleryDerivativeHelper::fetchThumbnailsByItemIds($childIds);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
 	    // If an Exif extractor is available try to get capture dates..
 	    list ($ret, $exifExtractor) =
 		GalleryFactory::newInstance('ExifInterface_1_0');
@@ -108,6 +113,11 @@ class SlideshowView extends GalleryView {
 		}
 	    }
 	}
+	// Classify each derivative in a size class..
+	$sizeClasses = array(array(320,240),   // 0: < 320x240
+	    array(640,480),  array(800,600),   // 1: --640x480  2: --800x600
+	    array(1024,768), array(1280,1024)  // 3: --1024x768 4: --1280x1024
+	);                                     // 5: > 1280x1024
 	if (!isset($startId)) {
 	    $start = 0;
 	}
@@ -126,37 +136,69 @@ class SlideshowView extends GalleryView {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-		$image = null;
-		if (isset($permissions['core.viewResizes']) &&
-			isset($resizedImages[$childId])) {
-		    // Just get the first resized size
-		    $image = current($resizedImages[$childId]);
-		    //XXX cache refresh?
-		} else if (isset($permissions['core.viewSource'])) {
+		$images = array();
+		if (isset($permissions['core.viewSource'])) {
 		    // Full size; check for preferred copy
 		    if (isset($preferredFullImages[$childId])) {
-			$image = $preferredFullImages[$childId];
+			$images[] = $preferredFullImages[$childId];
 		    } else if ($child->canBeViewedInline()) {
-			$image = $child;
+			$images[] = $child;
 		    }
-		} else {
-		    // Thumbnail as fallback
-		    list ($ret, $thumb) =
-			GalleryDerivativeHelper::fetchThumbnailsByItemIds(
-						 array($childId));
-		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		if (isset($permissions['core.viewResizes']) &&
+			isset($resizedImages[$childId])) {
+		    foreach ($resizedImages[$childId] as $resize) {
+			$images[] = $resize;
 		    }
-		    if (!empty($thumb)) {
-			$image = $thumb[$childId];
+		}
+		if (isset($thumbnails[$childId])) {
+		    $images[] = $thumbnails[$childId];
+		}
+
+		// build table of {sizeClass}=>{sources_index}
+		$sizeClassMap = array_fill(0, count($sizeClasses) + 1, -1);
+		$sizeClassArea = array_fill(0, count($sizeClasses) + 1, -1);
+		foreach ($images as $i => $image) {
+		    // Rebuild derivatives if needed so width/height known..
+		    if (is_a($image, 'GalleryDerivativeImage')) {
+			list ($ret, $image) =
+			    GalleryDerivativeHelper::rebuildCacheIfNotCurrent(
+				    $image->getId());
+			if ($ret->isError()) {
+			    return array($ret->wrap(__FILE__, __LINE__), null);
+			}
+		    }
+		    $image = $images[$i] = $image->getMemberData();
+		    if (!isset($image['width']) || !isset($image['height'])) {
+			continue; // Should not happen
+		    }
+		    $area = $image['width'] * $image['height'];
+		    for ($j = count($sizeClasses); $j >= 0; $j--) {
+			if ($j < count($sizeClasses) &&
+				($image['width'] > $sizeClasses[$j][0] ||
+				 $image['height'] > $sizeClasses[$j][1])) {
+			    break;
+			}
+			if ($area > $sizeClassArea[$j]) {
+			    $sizeClassMap[$j] = $i;
+			    $sizeClassArea[$j] = $area;
+			}
+		    }
+		}
+		for ($j = 0, $i = count($sizeClasses); $i >= 0; $i--) {
+		    if ($sizeClassMap[$i] < 0) {
+			$sizeClassMap[$i] = $j;
+		    } else {
+			$j = $sizeClassMap[$i];
 		    }
 		}
 
-		if (isset($image)) {
+		if (!empty($images)) {
 		    $itemList[] = array(
 			'id' => $childId,
 			'data' => $child->getMemberData(),
-			'source' => $image->getMemberData(),
+			'sources' => $images,
+			'sizeClassMap' => $sizeClassMap,
 			'exif' => isset($exif[$childId])
 				  ? $exif[$childId] : array());
 		}
