@@ -45,20 +45,20 @@ class ItemEditItem extends ItemEditPlugin {
 	$status = null;
 	$error = array();
 	if (isset($form['action']['undo'])) {
-
-	    /* Take no action and we'll be redirected back to the same page which will reset the form */
-
+	    /*
+	     * Take no action and we'll be redirected back to the same page which will
+	     * reset the form.
+	     */
 	} else if (isset($form['action']['save'])) {
-	    list ($ret, $rootAlbumId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
+	    list ($ret, $rootAlbumId) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 
 	    $isRootAlbum = $item->getId() == $rootAlbumId;
 
-	    /*
-	     * Validate the input data.
-	     */
+	    /* Validate the input data. */
 	    $platform = $gallery->getPlatform();
 
 	    foreach(array('title','summary','keywords','description') as $key) {
@@ -88,7 +88,8 @@ class ItemEditItem extends ItemEditPlugin {
 						  $form['originationTimestampSplit']['Date_Month'],
 						  $form['originationTimestampSplit']['Date_Day'],
 						  $form['originationTimestampSplit']['Date_Year']);
-		GalleryUtilities::putRequestVariable('form[originationTimestamp]', $newOriginationTimestamp);
+		GalleryUtilities::putRequestVariable(
+		    'form[originationTimestamp]', $newOriginationTimestamp);
 	    }
 
 	    if (empty($error)) {
@@ -102,10 +103,12 @@ class ItemEditItem extends ItemEditPlugin {
 		 * first.  If there's no collision then make the rest of the changes.
 		 */
 		$originalPathComponent = $item->getPathComponent();
-		if (isset($form['pathComponent']) && $item->getPathComponent() != $form['pathComponent']) {
+		if (isset($form['pathComponent']) &&
+		        $item->getPathComponent() != $form['pathComponent']) {
 		    if ($isRootAlbum) {
 			GalleryCoreApi::releaseLocks($lockId);
-			return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null, null);
+			return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
+				     null, null);
 		    } else {
 			$ret = $item->rename($form['pathComponent']);
 			if ($ret->isError() && !($ret->getErrorCode() & ERROR_COLLISION)) {
@@ -130,7 +133,8 @@ class ItemEditItem extends ItemEditPlugin {
 
 		    $ret = $item->save();
 		    if ($ret->isError()) {
-			if (isset($form['pathComponent']) && $originalPathComponent != $form['pathComponent']) {
+			if (isset($form['pathComponent']) &&
+			        $originalPathComponent != $form['pathComponent']) {
 			    /*
 			     * Move the file back and hope that this succeeds
 			     * since we're already in an error state
@@ -178,7 +182,8 @@ class ItemEditItem extends ItemEditPlugin {
 	    $form['formName'] = 'ItemEditItem';
 	}
 
-	list ($ret, $rootAlbumId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
+	list ($ret, $rootAlbumId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
