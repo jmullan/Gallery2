@@ -53,11 +53,13 @@
       </script>
     
       <div id="gsSearchContents">
-	<div class="gbTopFlag">
-	  <h1 class="giTitle">
-	  {g->text text="Search the Gallery"}
-	  </h1>
-	</div>
+	    <div class="gbTopFlag">
+		   <div class="gbTitleBanner">
+	          <h1 class="gbTitle">
+	          {g->text text="Search the Gallery"}
+	          </h1>
+	       </div>
+	    </div>
 
 	<div class="gbAdmin">
 	  <div class="gbDataEntry">
@@ -116,7 +118,7 @@
 
 	      {foreach from=$results.results item=result} 
 	      {assign var=itemId value=$result.itemId} 
-	      <td class="{if $SearchScan.items.$itemId.canContainChildren}gbItemAlbum{else}gbItemImage{/if}" style="width: 10%">
+	      <td class="gbItemImage" style="width: 10%">
 		<a href="{g->url arg1="view=core:ShowItem" arg2="itemId=$itemId"}">
 		{if isset($SearchScan.thumbnails.$itemId)}
 		<div class="gbItemImage">

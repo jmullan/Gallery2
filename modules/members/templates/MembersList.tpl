@@ -19,12 +19,14 @@
     <div id="gsOtherContents">
     
       <div class="gbTopFlag">
-          <h1 class="giTitle">
+        <div class="gbTitleBanner">
+            <h1 class="gbTitle">
             {g->text one="%d user"
                      many="%d users"
                      count=$form.list.totalUserCount
                      arg1=$form.list.totalUserCount}
-          </h1>
+            </h1>
+          </div>
       </div>
     
       <table class="gbDataTable">

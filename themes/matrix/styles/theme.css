@@ -85,11 +85,12 @@ body {
 * html .#gsContents { height: 1%; }
 /* End hide from IE-mac */
 
-#gsAlbumContents, #gsAdminContents, .gsOtherContents {
+#gsAlbumContents, #gsAdminContents, .gsOtherContents, #gsOtherContents {
         float: left;
         border-top: 1px solid #ccc;
         border-left: 1px solid #ccc;
         width: 78%;
+        margin: 0;
         padding: 0;
 }
 
@@ -339,13 +340,16 @@ table.gbDataTable img { border: none; }
 	display: block;
 	height: 0; 
 	clear: both; 
-        visibility: hidden;
+    visibility: hidden;
 }
 
 /* Hides from IE-mac \*/
 * html .gbNavBar { height: 2em; }
 /* End hide from IE-mac */
 
+.gbTitleBanner { padding: 8px 14px; }
+
+.gbTitleBanner h1 { font-size: 1.2em; margin: 0; padding: 0; }
 
 table.gbTitleBanner {
 	margin: 0 0 0 14px;
@@ -353,15 +357,13 @@ table.gbTitleBanner {
 }
 
 table.gbTitleBanner tr td {
-        width: 33%;      
+    width: 33%;      
 	vertical-align: top;
 }
 
 .gbTitleBanner .giTitle, .gbTitleBanner .giDescription  { margin: 8px 0; }
 
-.gbTitle {
-        padding: 14px;
-}
+.gbTitle { padding: 14px; }
 
 #gbThumbMatrix {  }
 
@@ -663,8 +665,6 @@ discused the options of generating a table-based border (ie_test) and alistapart
 }
 
 #SearchSystemContent input { font-size: 1.0em; }
-
-#gsSearchContents .gbTopFlag { padding: 12px; }
 
 #gsSearchContents .gbAdmin {
         margin: 12px;

@@ -24,6 +24,16 @@
   {include file="gallery:`$Navigation.sidebar`" l10Domain=$Navigation.l10Domain}	    
 
   <div class="gsOtherContents">
+
+      <div class="gbTopFlag">
+        <div class="gbTitleBanner">
+          <h1 class="gbTitle">
+    	  {g->text text="Items Currently in Your Cart"}
+          </h1>
+        </div>
+      </div>
+  
+  
     {if isset($status)}
     <div id="gsStatus">
       {if isset($status.cartModified)}
