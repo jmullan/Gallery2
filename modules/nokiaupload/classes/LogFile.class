@@ -1,0 +1,103 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+/**
+ * @version $Revision$ $Date$
+ * @package NokiaUpload
+ * @author Jerome Rannikko <jeromer@hotpop.com>
+ */
+
+define('NOKIAUPLOAD_LOGFILE', '/tmp/nokia-upload-log');
+define('NOKIAUPLOAD_LOGGING', false);
+
+/**
+ * Logging class for Nokia Upload module to help debugging.
+ *
+ * For each logging request LogFile opens the file, writes the message and then closes the file.
+ * This isn't the fastest and most efficient way of doing it, but it serves our purposes.
+ * It's easy to use as the user doesn't have to explicitly open and close the log file.
+ *
+ * Calling any of the functions in this class will not have any effect unless you set 
+ * NOKIAUPLOAD_LOGGING to true. LogFile is not meant to be used all the time but only for 
+ * debugging purposes. Edit NOKIAUPLOAD_LOGFILE to change the log file.
+ *
+ * @package NokiaUpload
+ */
+class LogFile {
+
+    /**
+     * Make a mark to the log file.
+     * 
+     * Use this to clearly separate different parts of the log file e.g. at the beginning of
+     * every function and give the name of the function as the parameter.
+     * This function produces a mark like this: '##### 2004-07-06 16:09:42 # <your message here>'.
+     *
+     * @param string optional message to added after the mark
+     */
+    function mark($message = '') {
+	if (NOKIAUPLOAD_LOGGING === true) {
+	    $logfile = fopen(NOKIAUPLOAD_LOGFILE, 'a');
+	    fwrite($logfile, "\n##### " . strftime('%Y-%m-%d %T') . " #  $message\n\n");
+	    fflush($logfile);
+	    fclose($logfile);
+	}
+    }
+
+    /**
+     * Write a message to the log file.
+     *
+     * Calling this function without a parameter produces an empty line in the log file.
+     *
+     * @param string optional your message
+     */
+    function write($message = '') {
+	if (NOKIAUPLOAD_LOGGING === true) {
+	    $logfile = fopen(NOKIAUPLOAD_LOGFILE, 'a');
+	    fwrite($logfile, "$message\n\n");
+	    fflush($logfile);
+	    fclose($logfile);
+	}
+    }
+
+    /**
+     * Write the contents of $_GET and $_POST to log file.
+     */
+    function writeRequest() {
+	LogFile::write('POST is: ' . var_export($_POST, true)
+			. "\nGET is: " . var_export($_GET, true));
+    }
+
+    /**
+     * Write an error message to the log file.
+     *
+     * Produces the following kind of message:
+     * 'ERROR:
+     *  <your message here>'
+     * 
+     * @param string optional error message
+     */
+    function error($message = '') {
+	LogFile::write("ERROR:\n$message");
+    }
+
+}
+?>

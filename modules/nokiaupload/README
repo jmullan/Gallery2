@@ -1,0 +1,38 @@
+
+$Id$
+
+IMPLEMENTATION OF NOKIA IMAGE UPLOADER SERVER API V1.1
+
+Author: Jerome Rannikko <jeromer@hotpop.com>
+
+This module implements the Nokia Image Uploader Server API. 
+The API specification can be found from the following address: 
+http://forum.nokia.com/documents
+
+Currently (module version 0.5) only the minimum functinality of 
+the interface is implemented, namely sections 5.2, 5.2, 5.3, 5.4, 
+5.5 and 5.6 of the specification.
+
+The module doesn't need any configuration. All you need to do is to copy
+the files in your Gallery's modules directory and activate the module
+from the Site Admin view. In the future some configuration options might
+be added.
+
+When you install this module it will create an album on the top level of your Gallery. 
+Also a new user group will be created called 'Mobile Users'. Only users of this group 
+can add albums and other items to the mobile upload album. When user first logs in using
+her Image Uploader enabled mobile phone (e.g. Nokia 3650 and 6600) she will be added to 
+the Mobile users group. The login address is visible in the description of the album 
+(make sure your layout/theme shows album descriptions).
+
+If you don't have a mobile phone that supports the protocol you can still play with
+the module. Set NOKIAUPLOAD_DEBUG to true in constants.inc. Then the module will read 
+parameters from GET also. Normally only POST parameters are read as that is what the
+specification requires. For example to login using the Image uploader module type
+http://your.gallery/main.php?g2_controller=nokiaupload:Login&Username=<your username>
+	&Password=<your password> 
+in your browser's address field.
+
+If you have trouble using the module you can enable logging to see what's going on. 
+Set NOKIAUPLOAD_LOGGING to true in classes/LogFile.class. By default it's false. 
+In the same file you can also set the log file location.
