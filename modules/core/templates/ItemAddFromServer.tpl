@@ -12,7 +12,7 @@
   var knownTypeCheckboxIds = new Array(
   {assign var="first" value="1"}
   {foreach name=fileIndex from=$form.localServerFiles item=file}
-  {if (($file.type == 'file' || $file.type == 'directory') && !isset($file.unknown))}
+  {if (($file.type == 'file' || ($file.type == 'directory' && $file.fileName != '..' && $file.fileName != 'CVS')) && empty($file.unknown))}
   {if !$first},{/if}
   "{$smarty.foreach.fileIndex.iteration}"
   {assign var="first" value="0"}
