@@ -79,7 +79,7 @@ class GalleryComment extends GalleryNucleus {
      *
      * @gallery persistent
      * @gallery flag STORAGE_TYPE_TEXT
-     * @gallery flag STORAGE_MODIFIER_INDEX
+     * @gallery flag STORAGE_MODIFIER_INDEXED
      * @gallery flag STORAGE_MODIFIER_FULLTEXT_INDEXED
      *
      * @var $_comment
@@ -157,7 +157,7 @@ class GalleryComment extends GalleryNucleus {
         $meta['members']['comment'] = array(
             'class' => 'GalleryComment',
             'type' => STORAGE_TYPE_TEXT |
-                      STORAGE_MODIFIER_FULLTEXT_INDEXED | STORAGE_MODIFIER_INDEX);
+                      STORAGE_MODIFIER_FULLTEXT_INDEXED | STORAGE_MODIFIER_INDEXED);
         $meta['members']['hostname'] = array(
             'class' => 'GalleryComment',
             'type' => STORAGE_TYPE_STRING |
