@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -57,8 +57,10 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	/* Register operations that we can perform on our mock data items */
 	$ret = GalleryCoreApi::registerToolkitOperation('ItemEditAlbumPluginTestToolkit',
 							array('test/file'),
-							'scale',
+							'resize',
 							array(array('type' => 'int',
+								    'description' => 'test'),
+							      array('type' => 'int',
 								    'description' => 'test')),
 							'test-description');
 	if ($ret->isError()) {
@@ -110,7 +112,7 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	parent::tearDown();
     }
 
@@ -135,14 +137,16 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	GalleryUtilities::putRequestVariable('form[orderDirection]', 'bletch');
 	GalleryUtilities::putRequestVariable('form[thumbnail][size]', 123);
 	GalleryUtilities::putRequestVariable('form[resizes][0][active]', 1);
-	GalleryUtilities::putRequestVariable('form[resizes][0][size]', 234);
+	GalleryUtilities::putRequestVariable('form[resizes][0][width]', 234);
+	GalleryUtilities::putRequestVariable('form[resizes][0][height]', 234);
 	GalleryUtilities::putRequestVariable('form[resizes][1][active]', 1);
-	GalleryUtilities::putRequestVariable('form[resizes][1][size]', 345);
+	GalleryUtilities::putRequestVariable('form[resizes][1][width]', 345);
+	GalleryUtilities::putRequestVariable('form[resizes][1][height]', 543);
 	GalleryUtilities::putRequestVariable('form[resizes][2][active]', 1);
-	GalleryUtilities::putRequestVariable('form[resizes][2][size]', 456);
+	GalleryUtilities::putRequestVariable('form[resizes][2][width]', 456);
+	GalleryUtilities::putRequestVariable('form[resizes][2][height]', 456);
 	GalleryUtilities::putRequestVariable('form[serialNumber]', $this->_album->getSerialNumber());
-	
-	
+
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest($this->_album, $this->_preferred);
 	$this->assertEquals(array(array(),
@@ -167,13 +171,13 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	}
 	$this->assert(array(array('order' => 0,
 				  'derivativeType' => 2,
-				  'derivativeOperations' => 'scale|234'),
+				  'derivativeOperations' => 'resize|234,234'),
 			    array('order' => 0,
 				  'derivativeType' => 2,
-				  'derivativeOperations' => 'scale|345'),
+				  'derivativeOperations' => 'resize|345,543'),
 			    array('order' => 0,
 				  'derivativeType' => 2,
-				  'derivativeOperations' => 'scale|456')),
+				  'derivativeOperations' => 'resize|456,456')),
 		      $preferences);
     }
 
@@ -183,11 +187,14 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[thumbnail][size]', 'foo');
 	GalleryUtilities::putRequestVariable('form[resizes][0][active]', 1);
-	GalleryUtilities::putRequestVariable('form[resizes][0][size]', 'foo');
+	GalleryUtilities::putRequestVariable('form[resizes][0][width]', 'foo');
+	GalleryUtilities::putRequestVariable('form[resizes][0][height]', 100);
 	GalleryUtilities::putRequestVariable('form[resizes][1][active]', 1);
-	GalleryUtilities::putRequestVariable('form[resizes][1][size]', 'foo');
+	GalleryUtilities::putRequestVariable('form[resizes][1][width]', 100);
+	GalleryUtilities::putRequestVariable('form[resizes][1][height]', 'foo');
 	GalleryUtilities::putRequestVariable('form[resizes][2][active]', 1);
-	GalleryUtilities::putRequestVariable('form[resizes][2][size]', 'foo');
+	GalleryUtilities::putRequestVariable('form[resizes][2][width]', -10);
+	GalleryUtilities::putRequestVariable('form[resizes][2][height]', 100);
 
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest($this->_album, $this->_preferred);
@@ -216,7 +223,6 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 				  null),
 			    $results);
     }
-    
 
     function testInvalidSerialNumber() {
 	/* valid inputs */
@@ -227,11 +233,14 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	GalleryUtilities::putRequestVariable('form[orderDirection]', 'bletch');
 	GalleryUtilities::putRequestVariable('form[thumbnail][size]', 123);
 	GalleryUtilities::putRequestVariable('form[resizes][0][active]', 1);
-	GalleryUtilities::putRequestVariable('form[resizes][0][size]', 234);
+	GalleryUtilities::putRequestVariable('form[resizes][0][width]', 234);
+	GalleryUtilities::putRequestVariable('form[resizes][0][height]', 234);
 	GalleryUtilities::putRequestVariable('form[resizes][1][active]', 1);
-	GalleryUtilities::putRequestVariable('form[resizes][1][size]', 345);
+	GalleryUtilities::putRequestVariable('form[resizes][1][width]', 345);
+	GalleryUtilities::putRequestVariable('form[resizes][1][height]', 543);
 	GalleryUtilities::putRequestVariable('form[resizes][2][active]', 1);
-	GalleryUtilities::putRequestVariable('form[resizes][2][size]', 456);
+	GalleryUtilities::putRequestVariable('form[resizes][2][width]', 456);
+	GalleryUtilities::putRequestVariable('form[resizes][2][height]', 456);
 	/* invalid serial number */
 	GalleryUtilities::putRequestVariable('form[serialNumber]', -1);
 
@@ -253,7 +262,7 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	    /* The first item has a thumbnail and a resize,
 	     * the second has a cropped thumbnail and a preferred */
 	    if ($i == 0) {
-		list ($ret, $ignore) = $this->_createDerivative($child[$i], $child[$i]->getId(), 
+		list ($ret, $ignore) = $this->_createDerivative($child[$i], $child[$i]->getId(),
 								DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
 								'thumbnail|100',
 								'test/file');
@@ -263,13 +272,13 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 
 		list ($ret, $ignore) = $this->_createDerivative($child[$i], $child[$i]->getId(),
 								DERIVATIVE_TYPE_IMAGE_RESIZE,
-								'scale|100',
+								'resize|100,100',
 								'test/file');
 		if ($ret->isError()) {
 		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 		}
 	    } else if ($i == 1) {
-		list ($ret, $ignore) = $this->_createDerivative($child[$i], $child[$i]->getId(), 
+		list ($ret, $ignore) = $this->_createDerivative($child[$i], $child[$i]->getId(),
 								DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
 								'crop|0,0,50,50;thumbnail|100',
 								'test/file');
@@ -295,15 +304,18 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	// for empty orderBy, orderDirection can be omitted
 	GalleryUtilities::putRequestVariable('form[thumbnail][size]', 123);
 	GalleryUtilities::putRequestVariable('form[resizes][0][active]', 1);
-	GalleryUtilities::putRequestVariable('form[resizes][0][size]', 234);
+	GalleryUtilities::putRequestVariable('form[resizes][0][width]', 234);
+	GalleryUtilities::putRequestVariable('form[resizes][0][height]', 234);
 	GalleryUtilities::putRequestVariable('form[resizes][1][active]', 1);
-	GalleryUtilities::putRequestVariable('form[resizes][1][size]', 345);
+	GalleryUtilities::putRequestVariable('form[resizes][1][width]', 345);
+	GalleryUtilities::putRequestVariable('form[resizes][1][height]', 543);
 	GalleryUtilities::putRequestVariable('form[resizes][2][active]', 1);
-	GalleryUtilities::putRequestVariable('form[resizes][2][size]', 456);
+	GalleryUtilities::putRequestVariable('form[resizes][2][width]', 456);
+	GalleryUtilities::putRequestVariable('form[resizes][2][height]', 456);
 	GalleryUtilities::putRequestVariable('form[recreateThumbnails]', 1);
 	GalleryUtilities::putRequestVariable('form[recreateResizes]', 1);
 	GalleryUtilities::putRequestVariable('form[serialNumber]', $this->_album->getSerialNumber());
-	
+
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest($this->_album, $this->_preferred);
 	$this->assertEquals(array(array(),
@@ -330,14 +342,14 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	}
 
 	for ($i = 0; $i < 2; $i++) {
-	    $this->assertEquals('scale|234', $resizes[$child[$i]->getId()][0]->getDerivativeOperations());
-	    $this->assertEquals('scale|345', $resizes[$child[$i]->getId()][1]->getDerivativeOperations());
-	    $this->assertEquals('scale|456', $resizes[$child[$i]->getId()][2]->getDerivativeOperations());
+	    $this->assertEquals('resize|234,234', $resizes[$child[$i]->getId()][0]->getDerivativeOperations());
+	    $this->assertEquals('resize|345,543', $resizes[$child[$i]->getId()][1]->getDerivativeOperations());
+	    $this->assertEquals('resize|456,456', $resizes[$child[$i]->getId()][2]->getDerivativeOperations());
 	}
     }
 
     /**
-     * Add a small (dimension wise) photo to an album and make sure that we don't create resizes that are 
+     * Add a small (dimension wise) photo to an album and make sure that we don't create resizes that are
      * larger (dimension wise) than the original.
      */
     function testRecreateResizesForSmallPhoto() {
@@ -393,9 +405,11 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	GalleryUtilities::putRequestVariable('form[orderDirection]', 'bletch');
 	GalleryUtilities::putRequestVariable('form[thumbnail][size]', 123);
 	GalleryUtilities::putRequestVariable('form[resizes][0][active]', 1);
-	GalleryUtilities::putRequestVariable('form[resizes][0][size]', 50);
+	GalleryUtilities::putRequestVariable('form[resizes][0][width]', 50);
+	GalleryUtilities::putRequestVariable('form[resizes][0][height]', 50);
 	GalleryUtilities::putRequestVariable('form[resizes][1][active]', 1);
-	GalleryUtilities::putRequestVariable('form[resizes][1][size]', 100);
+	GalleryUtilities::putRequestVariable('form[resizes][1][width]', 100);
+	GalleryUtilities::putRequestVariable('form[resizes][1][height]', 100);
 	GalleryUtilities::putRequestVariable('form[recreateResizes]', 1);
 	GalleryUtilities::putRequestVariable('form[serialNumber]', $this->_album->getSerialNumber());
 
@@ -415,7 +429,7 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	if (isset($resizes[$photo->getId()])) {
 	    $resizes = $resizes[$photo->getId()];
 	    $this->assertEquals(1, sizeof($resizes), 'There should only be one resize');
-	    $this->assertEquals('scale|50', $resizes[0]->getDerivativeOperations(), 'The resize operation should be scale|50');
+	    $this->assertEquals('resize|50,50', $resizes[0]->getDerivativeOperations(), 'The resize operation should be resize|50,50');
 	}
     }
 }

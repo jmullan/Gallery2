@@ -245,7 +245,7 @@ class ItemEditPhoto extends ItemEditPlugin {
 
 	    if (!empty($resizes)) {
 		foreach ($resizes[$item->getId()] as $resize) {
-		    if (preg_match('/(?:scale|resize)\|(\d+)(?:,(\d+))/',
+		    if (preg_match('/(?:scale|resize)\|(\d+)(?:,(\d+))?/',
 				   $resize->getDerivativeOperations(),
 				   $matches)) {
 			$width = $matches[1];

@@ -56,9 +56,12 @@ class ItemEditAlbum extends ItemEditPlugin {
 
 	    for ($i = 0; $i < sizeof($form['resizes']); $i++) {
 		if (!empty($form['resizes'][$i]['active'])) {
-		    if (empty($form['resizes'][$i]['size'])) {
+		    if (empty($form['resizes'][$i]['width']) || empty($form['resizes'][$i]['height'])) {
 			$error[] = 'form[error][resizes][' . $i . '][size][missing]';
-		    } else if (!is_numeric($form['resizes'][$i]['size'])) {
+		    } else if (!is_numeric($form['resizes'][$i]['width'])
+			      || $form['resizes'][$i]['width'] < 1
+			      || !is_numeric($form['resizes'][$i]['height'])
+			      || $form['resizes'][$i]['height'] < 1) {
 			$error[] = 'form[error][resizes][' . $i . '][size][invalid]';
 		    }
 		}
@@ -73,8 +76,8 @@ class ItemEditAlbum extends ItemEditPlugin {
 
 		/* Add the thumbnail size back in */
 		$ret = GalleryCoreApi::addDerivativePreference(0, $item->getId(),
-							       DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
-							       'thumbnail|' . $form['thumbnail']['size']);
+		    DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
+		    'thumbnail|' . $form['thumbnail']['size']);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
@@ -86,8 +89,8 @@ class ItemEditAlbum extends ItemEditPlugin {
 		    }
 
 		    $ret = GalleryCoreApi::addDerivativePreference($i, $item->getId(),
-								   DERIVATIVE_TYPE_IMAGE_RESIZE,
-								   'scale|' . $form['resizes'][$i]['size']);
+			DERIVATIVE_TYPE_IMAGE_RESIZE, 'resize|' .
+			$form['resizes'][$i]['width'] . ',' . $form['resizes'][$i]['height']);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null, null);
 		    }
@@ -167,7 +170,8 @@ class ItemEditAlbum extends ItemEditPlugin {
 			    }
 
 			    list ($ret, $thumbnail) =
-				GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative', $source->getEntityType());
+				GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative',
+									 $source->getEntityType());
 			    if ($ret->isError()) {
 				return array($ret->wrap(__FILE__, __LINE__), null, null);
 			    }
@@ -246,7 +250,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 
 			/* Make sure that we have a toolkit before adding back the resizes */
 			list ($ret, $toolkit, $outputMimeType) =
-			    GalleryCoreApi::getToolkitByOperation($source->getMimeType(), 'scale');
+			    GalleryCoreApi::getToolkitByOperation($source->getMimeType(), 'resize');
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null, null);
 			}
@@ -259,8 +263,8 @@ class ItemEditAlbum extends ItemEditPlugin {
 
 				/* Special case to make sure that we don't upsample photos */
 				if (GalleryUtilities::isA($child, 'GalleryPhotoItem')) {
-				    $maxDimension = max($child->getWidth(), $child->getHeight());
-				    if ($form['resizes'][$i]['size'] >= $maxDimension) {
+				    if ($child->getWidth() <= $form['resizes'][$i]['width']
+					  && $child->getHeight() <= $form['resizes'][$i]['height']) {
 					continue;
 				    }
 				}
@@ -284,7 +288,8 @@ class ItemEditAlbum extends ItemEditPlugin {
 
 				$derivative->setMimeType($outputMimeType);
 				$derivative->setDerivativeSourceId($source->getId());
-				$derivative->setDerivativeOperations('scale|' . $form['resizes'][$i]['size']);
+				$derivative->setDerivativeOperations('resize|' .
+				    $form['resizes'][$i]['width'] . ',' . $form['resizes'][$i]['height']);
 
 				$ret = GalleryCoreApi::estimateDerivativeDimensions($derivative, $source);
 				if ($ret->isError()) {
@@ -363,22 +368,23 @@ class ItemEditAlbum extends ItemEditPlugin {
 	    }
 
 	    foreach ($preferences as $preference) {
-		if (preg_match('/(scale|thumbnail)\|(\d+)/',
+		if (preg_match('/(?:resize|scale|thumbnail)\|(\d+)(?:,(\d+))?/',
 			       $preference['derivativeOperations'],
 			       $matches)) {
-		    $size = $matches[2];
+		    $size = $matches[1];
+		    $height = empty($matches[2]) ? $size : $matches[2];
 		}
 
-		switch($preference['derivativeType']) {
+		switch ($preference['derivativeType']) {
 		case DERIVATIVE_TYPE_IMAGE_THUMBNAIL:
 		    $form['thumbnail']['size'] = $size;
 		    break;
 
 		case DERIVATIVE_TYPE_IMAGE_RESIZE:
 		    if (empty($size)) {
-			$form['resizes'][] = array('active' => 0, 'size' => '');
+			$form['resizes'][] = array('active' => 0, 'width' => '', 'height' => '');
 		    } else {
-			$form['resizes'][] = array('active' => 1, 'size' => $size);
+			$form['resizes'][] = array('active' => 1, 'width' => $size, 'height' => $height);
 		    }
 		    break;
 		}
@@ -392,7 +398,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 	    }
 
 	    while ($extraBlanks-- > 0) {
-		$form['resizes'][] = array('active' => 0, 'size' => '');
+		$form['resizes'][] = array('active' => 0, 'width' => '', 'height' => '');
 	    }
 
 	    /* Always force these to be false */
