@@ -403,7 +403,7 @@ class CoreModuleExtras {
 	    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
 	}  
     
-	$userName = GalleryUtilities::utf8ToUnicodeEntities($module->translate('guest'));
+	$userName = GalleryUtilities::utf8ToUnicodeEntities('guest');
 	$fullName = GalleryUtilities::utf8ToUnicodeEntities($module->translate('Guest'));
 	$ret = $user->create($userName);
 	if ($ret->isError()) {
