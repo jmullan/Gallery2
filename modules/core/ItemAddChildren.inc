@@ -419,7 +419,7 @@ class ItemAddChildrenView extends GalleryView {
 			 *  src="foo bar"     src='foo bar'    src=foo
 			 */
 			/* Parse the buffer */
-			preg_match_all('/(?:src|href)=(?:\'(.*?)\'|\"(.*?)\"|([^\'\"]*))/i',
+			preg_match_all('/(?:src|href)=(?:\'(.*?)\'|\"(.*?)\"|([^\'\"\> ]*))/i',
 				       $buffer, $matches);
 
 			/* Validate the URLs as best we can */
@@ -427,7 +427,9 @@ class ItemAddChildrenView extends GalleryView {
 			$isSupported = array();
 			$seenBefore = array();
 			foreach (array_merge($matches[1], $matches[2], $matches[3]) as $url) {
-			    if (isset($seenBefore[$url])) {
+			    if (empty($url)) {
+				continue;
+			    } else if (isset($seenBefore[$url])) {
 				continue;
 			    } else {
 				$seenBefore[$url] = 1;
@@ -440,7 +442,19 @@ class ItemAddChildrenView extends GalleryView {
 			    if (!strncmp($url, '//', 2)) {
 				$url = $baseUrlComponents['scheme'] . ':' . $url;
 			    }
-			
+
+			    /*
+			     * parse_url() isn't guaranteed to be reliable on relative urls, so try to make it
+			     * non relative if possible.
+			     */
+			    if ($url[0] == '/') {
+				$tmp = $baseUrlComponents['scheme'] . '://' . $baseUrlComponents['host'];
+				if (!empty($baseUrlComponents['port'])) {
+				    $tmp .= $baseUrlComponents['port'];
+				}
+				$url = $tmp . $url;
+			    }
+
 			    $urlComponents = parse_url($url);
 			    if (empty($urlComponents['scheme'])) {
 				$urlComponents['scheme'] = $baseUrlComponents['scheme'];
@@ -452,8 +466,21 @@ class ItemAddChildrenView extends GalleryView {
 
 			    $mimeType = GalleryUtilities::getMimeType($urlComponents['path']);
 			    if ($mimeType == 'application/unknown') {
-				continue;
+				/*
+				 * Try again with end of the query string -- just in case.  Some sites, like
+				 * Google's image search feature puts the file name at the end of the query
+				 * string.
+				 */
+				if (empty($urlComponents['query'])) {
+				    continue;
+				}
+				
+				$mimeType = GalleryUtilities::getMimeType($urlComponents['query']);
+				if ($mimeType == 'application/unknown') {
+				    continue;
+				}
 			    }
+
 			    if (!isset($mimeTypeItemMap[$mimeType])) {
 				list ($ret, $mimeTypeItemMap[$mimeType]) =
 				    GalleryItemHelper::newItemByMimeType($mimeType);
