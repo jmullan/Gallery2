@@ -175,14 +175,17 @@ class DownloadItemView extends GalleryView {
 
 	    if (GalleryUtilities::isA($entity, 'GalleryDataItem')) {
 		$pseudoFileName = $entity->getPathComponent();
-	    } else {
+	    } else if (GalleryUtilities::isA($entity, 'GalleryDerivative')) {
 		list ($ret, $sourceEntity) = GalleryCoreApi::loadEntitiesById($entity->getDerivativeSourceId());
 		if ($ret->isSuccess()) {
 		    if (GalleryUtilities::isA($sourceEntity, 'GalleryDataItem')) {
 			$pseudoFileName = $sourceEntity->getPathComponent();
 		    }
 		}
+	    } else {
+		return null;
 	    }
+	    
 	    $mimeType = $entity->getMimeType();
 
 	    if (isset($pseudoFileName)) {
