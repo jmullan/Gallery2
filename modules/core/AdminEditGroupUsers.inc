@@ -69,21 +69,28 @@ class AdminEditGroupUsersController extends GalleryController {
 
 		/* Remove the user from the group */
 		if (!empty($form['list']['userId'])) {
-		    list ($ret, $user) = GalleryCoreApi::loadEntitiesById($form['list']['userId']);
-		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-		    }
 
-		    $ret = GalleryCoreApi::removeUserFromGroup($user->getId(), $groupId);
-		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-		    }
+		    /* Can't remove yourself from the site admins list */
+		    if ($group->getGroupType() == GROUP_SITE_ADMINS &&
+			$form['list']['userId'] == $gallery->getActiveUserId()) {
+			$error[] = 'form[error][list][cantRemoveSelf]';
+		    } else {
+			list ($ret, $user) = GalleryCoreApi::loadEntitiesById($form['list']['userId']);
+			if ($ret->isError()) {
+			    return array($ret->wrap(__FILE__, __LINE__), null);
+			}
+
+			$ret = GalleryCoreApi::removeUserFromGroup($user->getId(), $groupId);
+			if ($ret->isError()) {
+			    return array($ret->wrap(__FILE__, __LINE__), null);
+			}
 		    
-		    /* Redirect back to the same view */
-		    $redirect['view'] = 'core:SiteAdmin';
-		    $redirect['subView'] = 'core:AdminEditGroupUsers';
-		    $redirect['groupId'] = $group->getId();
-		    $status['removedUser'] = $user->getUsername();
+			/* Redirect back to the same view */
+			$redirect['view'] = 'core:SiteAdmin';
+			$redirect['subView'] = 'core:AdminEditGroupUsers';
+			$redirect['groupId'] = $group->getId();
+			$status['removedUser'] = $user->getUsername();
+		    }
 		}
 	    
 	    } else if (isset($form['action']['add'])) {
@@ -166,6 +173,7 @@ class AdminEditGroupUsersView extends GalleryView {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+
 	$form['userCount'] = sizeof($users);
 	$form['list']['users'] = $users;
 

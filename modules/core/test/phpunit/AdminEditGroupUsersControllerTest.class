@@ -45,22 +45,16 @@ class AdminEditGroupUsersControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	$this->_markForCleanup($this->_group);
 
 	/* Create a test user */
 	list ($ret, $this->_user) = $this->_createUser();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	$this->_markForCleanup($this->_user);
     }
 
-    function tearDown() {
-	/* Delete our test group, user */
-	$this->_deleteGroup($this->_group);
-	$this->_deleteUser($this->_user);
-	
-	parent::tearDown();
-    }
-    
     function testDone() {
 	list ($ret, $group) = $this->_createGroup();
 	if ($ret->isError()) {
@@ -99,6 +93,43 @@ class AdminEditGroupUsersControllerTest extends GalleryControllerTestCase {
 				  'status' => array('removedUser' => $this->_user->getUserName()),
 				  'error' => array()),
 			    $results);
+    }
+
+    function testCantRemoveSelfFromSiteAdmins() {
+	global $gallery;
+	
+	list ($ret, $adminGroupId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), false);
+	}
+	
+	/* Add the user to the site admin group */
+	$ret = GalleryCoreApi::addUserToGroup($this->_user->getId(), $adminGroupId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Become that user */
+	$gallery->setActiveUser($this->_user);
+
+	GalleryUtilities::putRequestVariable('groupId', $adminGroupId);
+	GalleryUtilities::putRequestVariable('form[action][remove]', 1);
+	GalleryUtilities::putRequestVariable('form[list][userId]', $this->_user->getId());
+
+	$results = $this->handleRequest();
+
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminEditGroupUsers'),
+				  'status' => array(),
+				  'error' => array('form[error][list][cantRemoveSelf]')),
+			    $results);
+
+	list ($ret, $inGroup) = GalleryCoreApi::isUserInGroup($this->_user->getId(), $adminGroupId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assert($inGroup, 'User should still be in the group');
     }
 
     function testAddUser() {
@@ -144,7 +175,7 @@ class AdminEditGroupUsersControllerTest extends GalleryControllerTestCase {
 			    $results);
     }
     
-    function _createGroup() {
+    function _createGroup($groupType=GROUP_NORMAL) {
 	global $gallery;
 	
 	list ($ret, $group) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryGroup');
@@ -157,7 +188,7 @@ class AdminEditGroupUsersControllerTest extends GalleryControllerTestCase {
 			 null);
 	}
 	
-	$ret = $group->create('testgroup-'.rand());
+	$ret = $group->create('testgroup-'.rand(), $groupType);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

@@ -54,6 +54,12 @@
       {g->text text="You must select a user to remove."}
     </div>
     {/if}
+
+    {if isset($form.error.list.cantRemoveSelf)}
+    <div class="giError">
+      {g->text text="You can't remove yourself from this group."}
+    </div>
+    {/if}
   </div>
   {/if}
 
