@@ -77,10 +77,12 @@ Localization").  Otherwise, you need to assemble a code from the
 following two tables:
 
 Language codes:
-	http://ftp.ics.uci.edu/pub/ietf/http/related/iso639.txt
+	http://www.gnu.org/manual/gettext/html_mono/gettext.html#SEC221
+	(or http://ftp.ics.uci.edu/pub/ietf/http/related/iso639.txt)
 
 Country codes:
-	http://www.iso.ch/iso/en/prods-services/iso3166ma/02iso-3166-code-lists/list-en1.html
+	http://www.gnu.org/manual/gettext/html_mono/gettext.html#SEC222
+	(or http://www.iso.ch/iso/en/prods-services/iso3166ma/02iso-3166-code-lists/list-en1.html)
 
 Your code should be of the format xx_XX (eg, "en_US" for English/United States,
 or "el_GR" for Greek/Greece).  
@@ -140,7 +142,17 @@ msgstr block, between the quotes, for example:
 
 		(ok, that's German not Greek, but you get the idea)
 
-Do that for every message.  When you're done, run:
+Do that for every message.  Note that you must limit yourself to using
+characters from the character set that you specify!  So if you're using
+the standard ISO-8859-1 character set, you should use the HTML entities
+from this page:
+
+	http://www.w3.org/TR/REC-html40/sgml/entities.html#h-24.2
+
+Otherwise, any non-ASCII characters you enter may screw things up (I'm
+not 100% sure on this point so I'm playing it safe here).
+
+When you're done, run:
 
 	gmake install
 
@@ -189,6 +201,10 @@ need to translate it.  You can delete these entries.
 When you've got everything right, run:
 
 	gmake install
+
+The translation files get cached by PHP (which is why it's so fast)
+so you may not see change until you restart your web server.  That's
+annoying, but I haven't figured a good workaround for it yet.
 
 Test your changes (see the "Creating a New Localization") section for 
 testing info, and submit the new files to us.
