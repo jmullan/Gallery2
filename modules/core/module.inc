@@ -487,7 +487,7 @@ class CoreModule extends GalleryModule {
 	    $views[] = array('name' => $this->translate('Change Password'),
 			     'view' => 'core:UserChangePassword');
 	} else {
-	    $views[] = array('name' => $this->translate('Log in'),
+	    $views[] = array('name' => $this->translate('Login'),
 			     'view' => 'core:UserLogin');
 	}
 

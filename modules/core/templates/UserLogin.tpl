@@ -8,7 +8,7 @@
   <div class="gbTopFlag">
     <div class="gbTitle">
       <h2 class="giTitle">
-	{g->text text="Log in to your account"}
+	{g->text text="Login to your account"}
       </h2>
     </div>
   </div>
