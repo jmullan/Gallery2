@@ -264,8 +264,12 @@ function _GalleryMain($returnHtml=false) {
 	} else {
 	    if (isset($results['html'])) {
 		$main['html'] = $results['html'];
+	    } else if (empty($results['body'])) {
+		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+						  'View results are missing body file'), null);
+	    } else {
+		$main['viewBodyFile'] = $results['body'];
 	    }
-	    $main['viewBodyFile'] = isset($results['body']) ? $results['body'] : '';
 	    $main['viewL10Domain'] = $view->getL10Domain();
 	}
     }
