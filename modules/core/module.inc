@@ -256,14 +256,17 @@ class CoreModule extends GalleryModule {
 	 * configured and do that now.  All other modules can simply ask for
 	 * the version number and expect that to succeed.
 	 */
+	$gallery->debug("Trying to load core version.  If you see an error like " .
+			"<b>table Xxx doesn't exist</b> here, that's OK.");
+
 	list ($ret, $version) = $this->getModuleParameter('version');
 	if ($ret->isError() & !($ret->getErrorCode() & ERROR_STORAGE_FAILURE)) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	} else if ($ret->isError() || $version != $this->getVersion()) {
 
 	    $gallery->debug("Can't load core version -- " .
-			    "assuming that the core needs installation");
-
+			    "<b>assuming that the core needs installation</b>");
+	    
 	    /* The store requires configuration. */
 	    list ($ret, $storage) = $gallery->getStorage();
 	    if ($ret->isError()) {
@@ -284,7 +287,8 @@ class CoreModule extends GalleryModule {
 		 */
 
 		/* Load the translator class since we use it statically */
-		require_once(dirname(__FILE__) . '/GalleryTranslator.class');
+		$classDir = dirname(__FILE__) . '/classes/';
+		require_once($classDir . 'GalleryTranslator.class');
 		
 		foreach (array('permissions.directory' => '0755',
 			       'permissions.file' => '0644',
