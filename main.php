@@ -157,7 +157,7 @@ function GalleryMain($startTime) {
 		 * The URL generator makes HTML 4.01 compliant URLs using
 		 * &amp; but we don't want those in our Location: header.
 		 */
-		$redirectUrl = str_replace('&amp;', '&', $url);
+		$redirectUrl = str_replace('&amp;', '&', $redirectUrl);
 		
 		header("Location: $redirectUrl");
 		return GalleryStatus::success();
