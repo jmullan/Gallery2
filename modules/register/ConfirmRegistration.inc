@@ -48,7 +48,7 @@ class ConfirmRegistrationController extends GalleryController {
 	$results['error'] = array();
 
    	/* turn the pending user into a real user */		
-	$username = GalleryUtilities::getRequestVariables('username');
+	list ($username, $regKey) = GalleryUtilities::getRequestVariables('username', 'key');
 
 	list($ret, $user) = GalleryPendingUserHelper::fetchPendingUserByUsername($username);
 	if ($ret->isError()) {
@@ -58,10 +58,14 @@ class ConfirmRegistrationController extends GalleryController {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	} else {
-	    /* we have found the requested user */
-	    $ret = GalleryPendingUserHelper::createGalleryUser($user);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+	    // verify registration key:
+	    if ($regKey != $user->getRegistrationKey()) {
+	    	$results['error'][] = 'form[error][unknownUser]';
+	    } else {
+		$ret = GalleryPendingUserHelper::createGalleryUser($user);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
 	    }
 	}				
 

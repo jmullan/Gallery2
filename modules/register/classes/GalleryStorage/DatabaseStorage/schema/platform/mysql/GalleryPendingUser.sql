@@ -51,6 +51,14 @@
         
       )
     
+      ,
+    DB_COLUMN_PREFIXregistrationKey
+      varchar(
+      
+          32
+        
+      )
+    
     , 
   
       PRIMARY KEY (DB_COLUMN_PREFIXid)

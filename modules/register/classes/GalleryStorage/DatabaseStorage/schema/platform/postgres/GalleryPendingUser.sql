@@ -51,6 +51,14 @@
         
       )
     
+      ,
+    DB_COLUMN_PREFIXregistrationKey
+      VARCHAR(
+      
+          32
+        
+      )
+    
     );
 
   

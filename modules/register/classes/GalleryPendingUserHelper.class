@@ -103,6 +103,7 @@ class GalleryPendingUserHelper {
 			 array( 'view' => 'core:UserAdmin',
 				'subview' => 'register:ConfirmRegistration',
 				'username' => $pendingUser->getUserName(),
+				'key' => $pendingUser->getRegistrationKey(),
 				'controller' => 'register:ConfirmRegistration' ));
 	/* it seems that spaces in the username are not translated to %20, so do it here */
 	/* otherwise mail clients will certainly put a line break there */

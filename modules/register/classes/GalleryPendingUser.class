@@ -130,6 +130,20 @@ class GalleryPendingUser_core extends GalleryEntity {
      */
     var $_language;
 
+    /**
+     * The registration key (used in confirmation url)
+     *
+     * @g2 <member>
+     * @g2   <member-name>registrationKey</member-name>
+     * @g2   <member-type>STRING</member-type>
+     * @g2   <member-size>SMALL</member-size>
+     * @g2 </member>
+     *
+     * @var string $_registrationKey
+     * @access private
+     */
+    var $_registrationKey;
+
     /*
      * ****************************************
      *                 Methods
@@ -197,6 +211,7 @@ class GalleryPendingUser_core extends GalleryEntity {
 	}
 
 	$this->setUserName($userName);
+	$this->setRegistrationKey('G' . rand(100000,999999) . '2');
 	return GalleryStatus::success();
     }
 

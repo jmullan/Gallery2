@@ -77,6 +77,11 @@ class GalleryPendingUser extends GalleryPendingUser_core {
 	    'type' => STORAGE_TYPE_STRING
 	);
     
+	$meta['members']['registrationKey'] = array(
+	    'class' => 'GalleryPendingUser',
+	    'type' => STORAGE_TYPE_STRING
+	);
+    
 	return $meta;
     }
 
@@ -116,6 +121,12 @@ class GalleryPendingUser extends GalleryPendingUser_core {
  	    $data['language'] = null;
  	} else {
 	    $data['language'] = $this->_language;
+	}
+	
+	if (!isset($this->_registrationKey)) {
+ 	    $data['registrationKey'] = null;
+ 	} else {
+	    $data['registrationKey'] = $this->_registrationKey;
 	}
 	
 	return $data;
@@ -341,6 +352,46 @@ class GalleryPendingUser extends GalleryPendingUser_core {
       
 	    $this->_language = $value;
 	    $this->setModifiedFlag('language', MEMBER_MODIFIED);
+	}
+    }
+  
+    /**
+     * Get the value of registrationKey
+     *
+     * @return STRING the value
+     */
+    function getregistrationKey() {
+ 	
+
+	if (!isset($this->_registrationKey)) {
+	    return null;
+	}
+
+	return $this->_registrationKey;
+    }
+
+    /**
+     * Set the value of registrationKey
+     *
+     * @param STRING the value
+     */
+    function setregistrationKey($value) {
+	/* 
+	 * Convert unset values to null, to avoid generating warnings.
+	 */
+	$a = isset($value) ? $value : null;
+	$b = isset($this->_registrationKey) ? $this->_registrationKey : null;
+
+    
+	/* 
+	 * Only take action if the value actually changes, but take care not to 
+	 * generate warnings for unset values.
+	 */
+    
+	if ($a != $b) {
+      
+	    $this->_registrationKey = $value;
+	    $this->setModifiedFlag('registrationKey', MEMBER_MODIFIED);
 	}
     }
   
