@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -70,7 +70,7 @@ class GalleryCommentSearch extends GallerySearchInterface_1_0 {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	list ($ret, $groupIds) = GalleryCoreApi::fetchGroupsForUser($gallery->getActiveUserId());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -142,7 +142,7 @@ class GalleryCommentSearch extends GallerySearchInterface_1_0 {
 	$data[] = '%' . $criteria . '%';
 	$data[] = $storage->convertIntToBits($commentBits);
 	$data[] = $storage->convertIntToBits($commentBits);
-	
+
 	/* Find the total */
 	list ($ret, $results) = $gallery->search($countQuery, $data);
 	if ($ret->isError()) {
@@ -150,7 +150,7 @@ class GalleryCommentSearch extends GallerySearchInterface_1_0 {
 	}
 	$result = $results->nextResult();
 	$numRows = (int)$result[0];
-	
+
 	list ($ret, $results) = $gallery->search($query, $data,
 						 array('limit' => array('offset' => $offset,
 									'count' => $count)));
@@ -172,7 +172,7 @@ class GalleryCommentSearch extends GallerySearchInterface_1_0 {
 	    $fields = array();
 	    $fields[] = array('key' => $text['subject'], 'value' => $result[1]);
 	    $fields[] = array('key' => $text['comment'], 'value' => $result[2]);
-	    
+
 	    if (!empty($result[4])) {
 		$fields[] = array('key' => $text['commenter'], 'value' => $result[4]);
 	    } else {
@@ -189,3 +189,4 @@ class GalleryCommentSearch extends GallerySearchInterface_1_0 {
 	return array(GalleryStatus::success(), $data);
     }
 }
+?>

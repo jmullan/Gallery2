@@ -236,3 +236,4 @@ class SliderLayout extends GalleryLayout {
 	return array(GalleryStatus::success(), $imageWidths, $imageHeights, $maxTW, $maxTH);
     }
 }
+?>

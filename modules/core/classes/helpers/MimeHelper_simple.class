@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -43,7 +43,7 @@ class MimeHelper_simple {
      */
     function &_getExtensionMap() {
 	static $extensionMap;
-	
+
 	if (!isset($extensionMap)) {
 	    /* This data was lifted from Apache's mime.types listing. */
 	    $extensionMap['forward'] = array(
@@ -206,7 +206,7 @@ class MimeHelper_simple {
 	    $extensionMap['forward']['mjp2'] = 'video/mj2';
 	    $extensionMap['forward']['jpm'] = 'image/jpm';
 	    $extensionMap['forward']['jpgm'] = 'image/jpgm';
-	    
+
 	    $extensionMap['reverse'] = array_flip($extensionMap['forward']);
 
 	    $mimeMap = array();
@@ -218,7 +218,7 @@ class MimeHelper_simple {
 	    }
 	    $extensionMap['reverseToArray'] = $mimeMap;
 	}
-	
+
 	return $extensionMap;
     }
 
@@ -226,7 +226,7 @@ class MimeHelper_simple {
      * Convert a file extension to a mime type
      *
      * @param string a file extension
-     * @return string a mime type 
+     * @return string a mime type
      * @static
      */
     function convertExtensionToMime($extension) {
@@ -301,5 +301,5 @@ class MimeHelper_simple {
 
 	return isset($viewableMimeTypes[$mimeType]);
     }
-}    
-
+}
+?>

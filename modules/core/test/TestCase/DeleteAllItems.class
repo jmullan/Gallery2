@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @version $Revision$ $Date$
  * @package GalleryCore
@@ -31,7 +30,7 @@ class DeleteAllItemsTestCase extends TestCase {
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-	    
+
 	    $query = '
             SELECT
               [GalleryEntity::id]
@@ -72,6 +71,4 @@ class DeleteAllItemsTestCase extends TestCase {
 	return GalleryStatus::success();
     }
 }
-
 ?>
-

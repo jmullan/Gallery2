@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @version $Revision$ $Date$
  * @package GalleryCore
@@ -29,7 +28,7 @@ class CreateAlbumTestCase extends TestCase {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	list($ret, $lockIds[]) = GalleryCoreApi::acquireReadLock($rootId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -43,8 +42,8 @@ class CreateAlbumTestCase extends TestCase {
 	    }
 	    if (!isset($album)) {
 		return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
-	    }  
-	
+	    }
+
 	    $ret = $album->create($rootId, $this->_randomName());
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
@@ -73,6 +72,4 @@ class CreateAlbumTestCase extends TestCase {
 	return "foo_" . rand(1000,5000);
     }
 }
-
 ?>
-

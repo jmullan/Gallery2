@@ -339,3 +339,4 @@ class TileLayout extends GalleryLayout {
 	return array(GalleryStatus::success(), $error, $status);
     }
 }
+?>

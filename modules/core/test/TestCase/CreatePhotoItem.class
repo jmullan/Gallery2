@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @version $Revision$ $Date$
  * @package GalleryCore
@@ -31,7 +30,7 @@ class CreatePhotoItemTestCase extends TestCase {
 
 	return GalleryStatus::success();
     }
-    
+
     function _runTest() {
 	global $gallery;
 
@@ -40,7 +39,7 @@ class CreatePhotoItemTestCase extends TestCase {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	$lockIds = array();
 
 	/*
@@ -60,8 +59,8 @@ class CreatePhotoItemTestCase extends TestCase {
 
 	if (!isset($photo)) {
 	    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
-	}  
-	
+	}
+
 	$imagePath = dirname(dirname(__FILE__)) . '/data/test1.jpg';
 	$extension = GalleryUtilities::getFileExtension($imagePath);
 	$mimeType = GalleryCoreApi::getMimeType($imagePath);
@@ -103,7 +102,7 @@ class CreatePhotoItemTestCase extends TestCase {
 
             if (!isset($thumbnail)) {
 		return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
-	    }  
+	    }
 
 	    $ret = $thumbnail->create($photo->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
 	    if ($ret->isError()) {
@@ -136,7 +135,7 @@ class CreatePhotoItemTestCase extends TestCase {
 
             if (!isset($resize)) {
 		return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
-	    }  
+	    }
 
 	    $ret = $resize->create($photo->getId(), DERIVATIVE_TYPE_IMAGE_RESIZE);
 	    if ($ret->isError()) {
@@ -156,6 +155,4 @@ class CreatePhotoItemTestCase extends TestCase {
 	return GalleryStatus::success();
     }
 }
-
 ?>
-

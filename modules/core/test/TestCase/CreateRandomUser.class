@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @version $Revision$ $Date$
  * @package GalleryCore
@@ -35,7 +34,7 @@ class CreateRandomUserTestCase extends TestCase {
 
             if (!isset($user)) {
 		return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
-	    }  
+	    }
 
 	    $randSize = 1000000;
 	    $rand = rand(1, $randSize);
@@ -49,11 +48,11 @@ class CreateRandomUserTestCase extends TestCase {
 			continue;
 		    }
 		}
-		
+
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    $user->setFullName('Random ' . $rand);
-	
+
 	    $ret = $user->save();
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
@@ -64,6 +63,4 @@ class CreateRandomUserTestCase extends TestCase {
 	return GalleryStatus::success();
     }
 }
-
 ?>
-

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @version $Revision$ $Date$
  * @package GalleryCore
@@ -35,7 +34,7 @@ class CreateRandomGroupTestCase extends TestCase {
 
             if (!isset($group)) {
 		return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
-	    }  
+	    }
 
 	    $randSize = 1000000;
 	    $rand = rand(1, $randSize);
@@ -49,10 +48,10 @@ class CreateRandomGroupTestCase extends TestCase {
 			continue;
 		    }
 		}
-		
+
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-	
+
 	    $ret = $group->save();
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
@@ -63,6 +62,4 @@ class CreateRandomGroupTestCase extends TestCase {
 	return GalleryStatus::success();
     }
 }
-
 ?>
-

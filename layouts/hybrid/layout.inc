@@ -328,4 +328,4 @@ class HybridLayout extends GalleryLayout {
 	return array(GalleryStatus::success(), $settings);
     }
 }
-
+?>
