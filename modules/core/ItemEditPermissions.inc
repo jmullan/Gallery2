@@ -20,6 +20,20 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage UserInterface
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * This controller will handle the changes in the permission of an item
+ *
+ * @package GalleryCore
+ * @subpackage UserInterface
+ *
+ */
 class ItemEditPermissionsController extends GalleryController {
 
     /**
@@ -123,23 +137,34 @@ class ItemEditPermissionsController extends GalleryController {
 		}
 
 		if (!empty($permission) && !empty($user)) {
+		    /* Don't add the permission if it already exists */
+		    list ($ret, $hasIt) =
+			GalleryPermissionMap::hasPermission($itemId,
+							    array($user->getId()),
+							    null,
+							    array($permission));
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 
-		    $ret = GalleryPermissionMap::addUserPermission($itemId,
+		    if (!$hasIt) {
+			$ret = GalleryPermissionMap::addUserPermission($itemId,
 								   $user->getId(),
 								   $permission,
 								   $applyToChildren);
-		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			if ($ret->isError()) {
+			    return array($ret->wrap(__FILE__, __LINE__), null);
+			}
+
+			/* Figure out where to redirect upon success */
+			$redirectParams['view'] = 'core:ItemAdmin';
+			$redirectParams['subView'] = 'core:ItemEditPermissions';
+			$redirectParams['itemId'] = $itemId;
+			$redirectParams['form.user.userName'] = $user->getUserName();
+		    } else {
+			GalleryUtilities::putRequestVariable('form.error.user.alreadyHadPermission', 1);
 		    }
 
-		    /* Figure out where to redirect upon success */
-		    $redirectParams['view'] = 'core:ItemAdmin';
-		    $redirectParams['subView'] = 'core:ItemEditPermissions';
-		    $redirectParams['itemId'] = $itemId;
-		    $redirectParams['form.user.userName'] = $user->getUserName();
 		}
 	    }
 	} else if (isset($form['action']['addGroupPermission'])) {
@@ -172,19 +197,32 @@ class ItemEditPermissionsController extends GalleryController {
 		}
 
 		if (!empty($permission) && !empty($group)) {
-		    $ret = GalleryPermissionMap::addGroupPermission($itemId,
-								    $group->getId(),
-								    $permission,
-								    $applyToChildren);
+		    /* Don't add the permission if it already exists */
+		    list ($ret, $hasIt) =
+			GalleryPermissionMap::hasPermission($itemId,
+							    array($group->getId()),
+							    null,
+							    array($permission));
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 
-		    /* Figure out where to redirect upon success */
-		    $redirectParams['view'] = 'core:ItemAdmin';
-		    $redirectParams['subView'] = 'core:ItemEditPermissions';
-		    $redirectParams['itemId'] = $itemId;
-		    $redirectParams['form.group.groupName'] = $group->getGroupName();
+		    if (!$hasIt) {
+			$ret = GalleryPermissionMap::addGroupPermission($itemId,
+									$group->getId(),
+									$permission,
+									$applyToChildren);
+			if ($ret->isError()) {
+			    return array($ret->wrap(__FILE__, __LINE__), null);
+			}
+			/* Figure out where to redirect upon success */
+			$redirectParams['view'] = 'core:ItemAdmin';
+			$redirectParams['subView'] = 'core:ItemEditPermissions';
+			$redirectParams['itemId'] = $itemId;
+			$redirectParams['form.group.groupName'] = $group->getGroupName();
+		    } else {
+			GalleryUtilities::putRequestVariable('form.error.group.alreadyHadPermission', 1);
+		    }
 		}
 	    }
 	} else if (isset($form['action']['changeOwner'])) {
@@ -247,6 +285,12 @@ class ItemEditPermissionsController extends GalleryController {
     }
 }
 
+/**
+ * This view will prompt for permission settings of an item
+ *
+ * @package GalleryCore
+ * @subpackage UserInterface
+ */
 class ItemEditPermissionsView extends GalleryView {
 
     /**

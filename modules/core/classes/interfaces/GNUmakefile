@@ -2,7 +2,7 @@ GALLERYDIR ?= ../../../..
 TOOLDIR ?= $(GALLERYDIR)/lib/tools
 CLASSDIR ?= ..
 XSLFILE ?= $(GALLERYDIR)/modules/core/classes/interfaces/ClassCode.xsl
-PACKAGE ?= GalleryCoreInterfaces
+PACKAGE ?= GalleryCore
 TMPDIR ?= tmp
 
 include $(TOOLDIR)/GNUmakefile.inc

@@ -20,6 +20,20 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage UserInterface
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * This controller will handle an administration request for a module
+ *
+ * @package GalleryCore
+ * @subpackage UserInterface
+ *
+ */
 class AdminModulesController extends GalleryController {
 
     /**
@@ -111,6 +125,12 @@ class AdminModulesController extends GalleryController {
     }
 }
 
+/**
+ * This view will show administration possibilities for available modules
+ *
+ * @package GalleryCore
+ * @subpackage UserInterface
+ */
 class AdminModulesView extends GalleryView {
 
     /**

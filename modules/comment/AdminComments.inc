@@ -20,10 +20,23 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+/**
+ * @version $Revision$ $Date$
+ * @package Comment
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * This controller will handle the setting of options specific to the comment-module
+ *
+ * @package Comment
+ * @subpackage UserInterface
+ *
+ */
 class AdminCommentsController extends GalleryController {
 
     /**
-     * @see GalleryController::handleRequest
+     * @see GalleryController::handleRequest()
      */
     function handleRequest() {
 	global $gallery;
@@ -47,10 +60,17 @@ class AdminCommentsController extends GalleryController {
     }
 }
 
+/**
+ * This view will prompt for settings specific to the comment module
+ *
+ * @package Comment
+ * @subpackage UserInterface
+ *
+ */
 class AdminCommentsView extends GalleryView {
 
     /**
-     * @see GalleryView::renderBody
+     * @see GalleryView::renderBody()
      */
     function renderBody() {
 	global $gallery;

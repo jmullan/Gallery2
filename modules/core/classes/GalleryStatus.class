@@ -19,6 +19,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
 
 /*
  * ****************************************
@@ -29,14 +34,12 @@
 /**
  * The operation was a success
  *
- * @constant SUCCESS
  */
 define('SUCCESS', 0x00000000);
 
 /**
  * The operation had errors
  *
- * @constant ERROR
  */
 define('ERROR', 0x00000001);
 
@@ -45,7 +48,6 @@ define('ERROR', 0x00000001);
  * operation.  A common cause for this is attempting to use an existing filename
  * when moving an item from one location to another.
  *
- * @constant ERROR_COLLISION
  */
 define('ERROR_COLLISION', 0x00000002);
 
@@ -53,7 +55,6 @@ define('ERROR_COLLISION', 0x00000002);
  * The object you're trying to access is no longer available.  Perhaps it was
  * deleted.  You shouldn't get this when an object has simply moved.
  *
- * @constant ERROR_MISSING_OBJECT
  */
 define('ERROR_MISSING_OBJECT', 0x00000004);
 
@@ -61,35 +62,30 @@ define('ERROR_MISSING_OBJECT', 0x00000004);
  * The lock you're trying to acquire is currently in use and was not released
  * within the timeout period you specified.
  *
- * @constant ERROR_LOCK_IN_USE
  */
 define('ERROR_LOCK_IN_USE', 0x00000008);
 
 /**
  * One of the parameters passed to this function is bad.
  *
- * @constant ERROR_BAD_PARAMETER
  */
 define('ERROR_BAD_PARAMETER', 0x00000010);
 
 /**
  * Missing a value necessary to continue
  *
- * @constant ERROR_MISSING_VALUE
  */
 define('ERROR_MISSING_VALUE', 0x00000020);
 
 /**
  * An unspecified storage error occurred
  *
- * @constant ERROR_STORAGE_FAILURE
  */
 define('ERROR_STORAGE_FAILURE', 0x00000040);
 
 /**
  * A storage operation was attempted with an invalid storage connection
  *
- * @constant ERROR_STORAGE_CONNECTION
  */
 define('ERROR_STORAGE_CONNECTION', 0x00000080);
 
@@ -97,126 +93,108 @@ define('ERROR_STORAGE_CONNECTION', 0x00000080);
  * You attempted to modify an object using an in-memory version that
  * is out of date with the version that's in the storage
  *
- * @constant ERROR_OBSOLETE_DATA
  */
 define('ERROR_OBSOLETE_DATA', 0x00000200);
 
 /**
  * You attempted an operation which requires a lock.
  *
- * @constant ERROR_LOCK_REQUIRED
  */
 define('ERROR_LOCK_REQUIRED', 0x00000400);
 
 /**
  * We tried a file operation on an unsupported file type
  *
- * @constant ERROR_UNSUPPORTED_FILE_TYPE
  */
 define('ERROR_UNSUPPORTED_FILE_TYPE', 0x00000800);
 
 /**
  * You attempted an illegal operation on a deleted object
  *
- * @constant ERROR_DELETED_OBJECT
  */
 define('ERROR_DELETED_OBJECT', 0x00001000);
 
 /**
  * You attempted an operation which had a bad path component
  *
- * @constant ERROR_BAD_PATH
  */
 define('ERROR_BAD_PATH', 0x00002000);
 
 /**
  * You attempted an operation which had a bad data type
  *
- * @constant ERROR_BAD_DATA_TYPE
  */
 define('ERROR_BAD_DATA_TYPE', 0x00004000);
 
 /**
  * You attempted to add a child to a GalleryItem which can't have children
  *
- * @constant ERROR_ILLEGAL_CHILD
  */
 define('ERROR_ILLEGAL_CHILD', 0x00008000);
 
 /**
  * An unspecified error occured while completing a graphics command.
  *
- * @constant ERROR_GRAPHICS_FAILURE
  */
 define('ERROR_GRAPHICS_FAILURE', 0x00010000);
 
 /**
  * We experienced a platform specific error (perhaps filesystem related)
  *
- * @constant ERROR_PLATFORM_FAILURE
  */
 define('ERROR_PLATFORM_FAILURE', 0x00020000);
 
 /**
  * You did an operation on a derivative that is broken
  *
- * @constant ERROR_BROKEN_DERIVATIVE
  */
 define('ERROR_BROKEN_DERIVATIVE', 0x00040000);
 
 /**
  * We tried an unsupported operation
  *
- * @constant ERROR_UNSUPPORTED_OPERATION
  */
 define('ERROR_UNSUPPORTED_OPERATION', 0x00080000);
 
 /**
  * We were unable to get a lock in the time allotted
  *
- * @constant ERROR_LOCK_TIMEOUT
  */
 define('ERROR_LOCK_TIMEOUT', 0x00100000);
 
 /**
  * Something went wrong when loading or activating a module
  *
- * @constant ERROR_BAD_MODULE
  */
 define('ERROR_BAD_MODULE', 0x00200000);
 
 /**
  * The module you tried to use requires configuration 
  *
- * @constant ERROR_CONFIGURATION_REQUIRED
  */
 define('ERROR_CONFIGURATION_REQUIRED', 0x00400000);
 
 /**
  * You don't have permission to complete the given action
  *
- * @constant ERROR_PERMISSION_DENIED
  */
 define('ERROR_PERMISSION_DENIED', 0x00800000);
 
 /**
  * You don't have enough space for the operation required
  *
- * @constant ERROR_OUT_OF_SPACE
  */
 define('ERROR_OUT_OF_SPACE', 0x01000000);
 
 /**
  * The operation you attempted is unimplemented
  *
- * @constant ERROR_UNIMPLEMENTED
  */
 define('ERROR_UNIMPLEMENTED', 0x40000000);
 
 /**
  * An unknown error occurred
  *
- * @constant ERROR_UNKNOWN
  */
 define('ERROR_UNKNOWN', 0x80000000);
 
@@ -226,9 +204,8 @@ define('ERROR_UNKNOWN', 0x80000000);
  * This is a container for global information required for gallery
  * operation, such as configuration, session, user, etc.  
  *
- * @version $Revision$ $Date$
  * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
+ * @subpackage Classes
  */
 class GalleryStatus {
 
@@ -303,6 +280,7 @@ class GalleryStatus {
      * Return a success status
      *
      * @return object GalleryStatus a successful status
+     * @staticvar GalleryStatus $success An object stating that everything went well
      * @static
      */
     function success() {

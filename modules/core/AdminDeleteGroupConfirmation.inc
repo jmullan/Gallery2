@@ -20,6 +20,20 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage UserInterface
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * This view will show the confirmation that a group was successfully deleted
+ *
+ * @package GalleryCore
+ * @subpackage UserInterface
+ *
+ */
 class AdminDeleteGroupConfirmationView extends GalleryView {
 
     /**

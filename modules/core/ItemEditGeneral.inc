@@ -20,6 +20,20 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage UserInterface
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * This controller will handle general changes made to an item
+ *
+ * @package GalleryCore
+ * @subpackage UserInterface
+ *
+ */
 class ItemEditGeneralController extends GalleryController {
 
     /**
@@ -106,6 +120,12 @@ class ItemEditGeneralController extends GalleryController {
     }
 }
 
+/**
+ * This view will prompt for general settings of an item
+ *
+ * @package GalleryCore
+ * @subpackage UserInterface
+ */
 class ItemEditGeneralView extends GalleryView {
 
     /**

@@ -71,6 +71,11 @@ function GalleryMain($startTime) {
      * at the top of this function because the variable isn't defined until we
      * call GalleryInitFirstPass()
      */
+    /**
+     * The all mighty global Gallery object
+     *
+     * @global Gallery $gallery
+     */
     $gallery =& $GLOBALS['gallery'];
     GalleryProfiler::start('GalleryMain', $startTime);
     GalleryProfiler::start('GalleryInitFirstPass', $startTime);

@@ -20,10 +20,24 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+/**
+ * @version $Revision$ $Date$
+ * @package Comment
+ * @subpackage UserInterface
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * This controller will handle the adition of a comment to an item
+ *
+ * @package Comment
+ * @subpackage UserInterface
+ *
+ */
 class AddCommentController extends GalleryController {
 
     /**
-     * @see GalleryController::handleRequest
+     * @see GalleryController::handleRequest()
      */
     function handleRequest() {
 	global $gallery;
@@ -73,10 +87,17 @@ class AddCommentController extends GalleryController {
     }
 }
 
+/**
+ * This view will show a form to add a new comment to an item
+ *
+ * @package Comment
+ * @subpackage UserInterface
+ *
+ */
 class AddCommentView extends GalleryView {
 
     /**
-     * @see GalleryView::renderHead
+     * @see GalleryView::renderHead()
      */
     function renderHead() {
 	global $gallery;
@@ -94,7 +115,7 @@ class AddCommentView extends GalleryView {
     }
     
     /**
-     * @see GalleryView::renderBody
+     * @see GalleryView::renderBody()
      */
     function renderBody() {
 	global $gallery;

@@ -20,6 +20,20 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage UserInterface
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * This controller will handle the deletion of an item
+ *
+ * @package GalleryCore
+ * @subpackage UserInterface
+ *
+ */
 class ItemDeleteController extends GalleryController {
 
     /**
@@ -84,6 +98,12 @@ class ItemDeleteController extends GalleryController {
     }
 }
 
+/**
+ * This view will prompt for confirmation on the deletion of an item
+ *
+ * @package GalleryCore
+ * @subpackage UserInterface
+ */
 class ItemDeleteView extends GalleryView {
 
     /**

@@ -20,10 +20,23 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+/**
+ * @version $Revision$ $Date$
+ * @package Comment
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * This controller will handle the deletion of a comment
+ *
+ * @package Comment
+ * @subpackage UserInterface
+ *
+ */
 class DeleteCommentController extends GalleryController {
 
     /**
-     * @see GalleryController::handleRequest
+     * @see GalleryController::handleRequest()
      */
     function handleRequest() {
 	global $gallery;
@@ -65,10 +78,17 @@ class DeleteCommentController extends GalleryController {
     }
 }
 
+/**
+ * This view will ask for a confirmation to delete a comment
+ *
+ * @package Comment
+ * @subpackage UserInterface
+ *
+ */
 class DeleteCommentView extends GalleryView {
 
     /**
-     * @see GalleryView::renderHead
+     * @see GalleryView::renderHead()
      */
     function renderHead() {
 	global $gallery;
@@ -87,7 +107,7 @@ class DeleteCommentView extends GalleryView {
     }
     
     /**
-     * @see GalleryView::renderBody
+     * @see GalleryView::renderBody()
      */
     function renderBody() {
 	global $gallery;

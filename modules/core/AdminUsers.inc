@@ -20,6 +20,21 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage UserInterface
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * This controller will send the user to the chosen subView in the AdminUsers
+*  View
+ *
+ * @package GalleryCore
+ * @subpackage UserInterface
+ *
+ */
 class AdminUsersController extends GalleryController {
 
     /**
@@ -135,6 +150,12 @@ class AdminUsersController extends GalleryController {
     }
 }
 
+/**
+ * This view will show available options to administer the users of Gallery
+ *
+ * @package GalleryCore
+ * @subpackage UserInterface
+ */
 class AdminUsersView extends GalleryView {
 
     /**

@@ -19,7 +19,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+/**
+ * @version $Revision$ $Date$
+ * @package ImageMagick
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
 
+/**
+ * @package ImageMagick
+ * @subpackage UserInterface
+ */
 class AdminImageMagickController extends GalleryController {
 
     /**
@@ -79,6 +88,10 @@ class AdminImageMagickController extends GalleryController {
     }
 }
 
+/**
+ * @package ImageMagick
+ * @subpackage UserInterface
+ */
 class AdminImageMagickView extends GalleryView {
 
     /**

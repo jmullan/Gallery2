@@ -20,6 +20,19 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage UserInterface
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ *
+ * @package GalleryCore
+ * @subpackage UserInterface
+ * @todo Document this
+ */
 class SecurityViolationView extends GalleryView {
 
     /**

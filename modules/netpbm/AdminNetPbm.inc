@@ -19,11 +19,20 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+/**
+ * @version $Revision$ $Date$
+ * @package NetPBM
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
 
+/**
+ * @package NetPBM
+ * @subpackage UserInterface
+ */
 class AdminNetPbmController extends GalleryController {
 
     /**
-     * @see GalleryController::handleRequest
+     * @see GalleryController::handleRequest()
      */
     function handleRequest() {
 	global $gallery;
@@ -93,10 +102,14 @@ class AdminNetPbmController extends GalleryController {
     }
 }
 
+/**
+ * @package NetPBM
+ * @subpackage UserInterface
+ */
 class AdminNetPbmView extends GalleryView {
 
     /**
-     * @see GalleryView::renderBody
+     * @see GalleryView::renderBody()
      */
     function renderBody() {
 	global $gallery;

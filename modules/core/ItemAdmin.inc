@@ -20,6 +20,20 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage UserInterface
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * This view will present the available options to administrate an item/album
+ *
+ * @package GalleryCore
+ * @subpackage UserInterface
+ *
+ */
 class ItemAdminView extends GalleryView {
 
     /**
@@ -63,16 +77,9 @@ class ItemAdminView extends GalleryView {
 	     * Rebuild the cache if it's not current, so that we can make sure
 	     * that we've got the appropriate thumbnail dimensions
 	     */
-	    list ($ret, $isCurrent) = $thumbnail->isCacheCurrent();
+	    list ($ret, $rebuild) = $thumbnail->rebuildCacheIfNotCurrent();
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    
-	    if (!$isCurrent) {
-		$ret = $thumbnail->rebuildCache();
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
 	    }
 	    
 	    $thumbnailData = $thumbnail->getMemberData();
@@ -132,9 +139,18 @@ class ItemAdminView extends GalleryView {
 	    $subViewHtml = '';
 	}
 
+	/* Get the type of the item */
+	if (is_subclass_of($item, "GalleryAlbumItem")
+	    || get_class($item) == strtolower('GalleryAlbumItem')) {
+	    $itemType = "album";
+	} else {
+	    $itemType = "item";
+	}
+
 	/* Render our HTML body */
 	$template = $this->getTemplate();
 	$template->setVariable('item', $item->getMemberData());
+	$template->setVariable('itemType', $itemType);
 	$template->setVariable('thumbnail', $thumbnailData);
 	$template->setVariable('subViewChoices', $subViewChoices);
 	$template->setVariable('subViewHtml', $subViewHtml);

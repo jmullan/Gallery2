@@ -19,7 +19,18 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+/**
+ * @version $Revision$ $Date$
+ * @package Gallery
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
 
+/** 
+ * This implements the standard gallery layout 
+ *
+ * @package GalleryLayout
+ * @subpackage Layout
+ */
 class ClassicLayout extends GalleryLayout {
 
     /**
@@ -144,6 +155,10 @@ class ClassicLayout extends GalleryLayout {
 		$childTable[$childId] = $child->getMemberData();
 
 		if (!empty($moduleChildSummaries[$childId])) {
+		    /*
+		     * $moduleChildSummaries[$childId] is:
+		     *   $array[<modulename>] = <html>
+		     */
 		    $childTable[$childId]['moduleSummaries'] = $moduleChildSummaries[$childId];
 		} else {
 		    $childTable[$childId]['moduleSummaries'] = array();
@@ -166,6 +181,11 @@ class ClassicLayout extends GalleryLayout {
 	    foreach ($childIds as $id) {
 		$children[$i] = $childTable[$id];
 		if (isset($thumbTable[$id])) {
+		    /* Rebuild cache, to be prepared to the getMemberData() call */
+		    list ($ret, $rebuild) = $thumbTable[$id]->rebuildCacheIfNotCurrent();
+		    if ($ret->isError()) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
 		    $children[$i]['thumbnail'] = $thumbTable[$id]->getMemberData();
 		}
 		$i++;
@@ -263,6 +283,7 @@ class ClassicLayout extends GalleryLayout {
      * @return array object GalleryStatus a status code
      *         string the HTML body
      * @access private
+     * @todo Maybe display the sizes of an image in increasing order
      */
     function _renderSingle($item, $urlParams, $properties) {
 	global $gallery;
@@ -297,6 +318,10 @@ class ClassicLayout extends GalleryLayout {
 
 	    if (!empty($resizes)) {
 		foreach ($resizes[$item->getId()] as $resize) {
+		    list ($ret, $rebuild) = $resize->rebuildCacheIfNotCurrent();
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
 		    $imageViews[] = array('inline' => true,
 					  'height' => $resize->getHeight(),
 					  'width' => $resize->getWidth(),

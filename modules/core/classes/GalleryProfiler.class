@@ -19,13 +19,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
 
 /**
  * Utility class for gathering run-time profile data
  *
- * @version $Revision$ $Date$
  * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
+ * @subpackage Classes
  */
 class GalleryProfiler {
 
@@ -61,6 +65,7 @@ class GalleryProfiler {
      *
      * @return object GalleryProfiler
      * @access private
+     * @staticvar GalleryProfiler $galleryProfiler The only Profiler we will need
      * @static
      */
     function &_singleton() {

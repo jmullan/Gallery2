@@ -19,14 +19,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
-/*
- * ****************************************
- *             Ordering Tags
- * ****************************************
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @author Bharat Mediratta <bharat@menalto.com>
  */
 
-/* Load the parent class */
+/**
+ * Load the parent class
+ */
 require_once(dirname(__FILE__) . '/GalleryFileSystemEntity.class');
 
 /**
@@ -46,10 +47,9 @@ require_once(dirname(__FILE__) . '/GalleryFileSystemEntity.class');
  * @g2 </schema>
  * @g2 <requires-id/>
  *
- * @version $Revision$ $Date$
  * @package GalleryCore
+ * @subpackage Classes
  * @abstract
- * @author Bharat Mediratta <bharat@menalto.com>
  */
 class GalleryItem_core extends GalleryFileSystemEntity {
 
@@ -350,12 +350,19 @@ class GalleryItem_core extends GalleryFileSystemEntity {
     }
 
     /**
-     * Determine the sort order clause from this items settings
+     * If we want to sort, which storage info we need?
      *
-     * @return string an order clause
+     * This will return the ORDER BY clause to sort the items and a
+     * condition that we need to add to the fetching query. To join with
+     * a new table, the [GalleryChildEntity::id] will contain the current
+     * ID. Eventualy another table mentioned in the condition will have to
+     * be included too, the calling function has to decide that (using
+     * GalleryStorage::extractTables());
+     *
+     * @return array string an order clause, string a row matching condition
      * @access private
      */
-    function _fetchOrderClause() {
+    function _fetchOrderInfo() {
 	/*
 	 * Don't simply plug getOrderBy into the SQL clause, or we could open
 	 * the door for SQL injection.
@@ -367,45 +374,53 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	switch ($this->getOrderBy()) {
 	case 'title':
 	    $order = '[GalleryItem::title]';
+	    $condition = '[GalleryItem::id] = [GalleryChildEntity::id]';
 	    break;
 	    
 	case 'summary':
 	    $order = '[GalleryItem::summary]';
+	    $condition = '[GalleryItem::id] = [GalleryChildEntity::id]';
 	    break;
 	    
 	case 'creationTimestamp':
 	    $order = '[GalleryEntity::creationTimestamp]';
+	    $condition = '[GalleryEntity::id] = [GalleryChildEntity::id]';
 	    break;
 	    
 	case 'modificationTimestamp':
 	    $order = '[GalleryEntity::modificationTimestamp]';
+	    $condition = '[GalleryEntity::id] = [GalleryChildEntity::id]';
 	    break;
 	    
 	case 'description':
 	    $order = '[GalleryItem::description]';
+	    $condition = '[GalleryItem::id] = [GalleryChildEntity::id]';
 	    break;
 	    
 	case 'keywords':
 	    $order = '[GalleryItem::keywords]';
+	    $condition = '[GalleryItem::id] = [GalleryChildEntity::id]';
 	    break;
 
 	default:
-	    return null;
+	    $order = '';
+	    $condition = '';
 	}
 
 	switch ($this->getOrderDirection()) {
-	case ORDER_ASCENDING:
-	    $direction = 'ASC';
-	    break;
-	    
-	case ORDER_ASCENDING:
+	case ORDER_DESCENDING:
 	    $direction = 'DESC';
 
+	case ORDER_ASCENDING:
 	default:
 	    $direction = '';
 	}
 
-	return $order . ' ' . $direction;
+	$orderClause = '';
+	if (!empty($order)) {
+	    $orderClause = $order . ' ' . $direction;
+	}
+	return array($orderClause, $condition);
     }
     
     /**
@@ -431,11 +446,31 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 
 	$storage = $gallery->getStorage();
 
+	/* List of tables that we will need */
+	$tables = array('[GalleryChildEntity]', '[GalleryUserGroupMap]', '[GalleryPermissionMap]');
+
+	list($orderClause, $extraWhere) = $this->_fetchOrderInfo();
+	$extraIds = 0;
+	if (!empty($extraWhere)) {
+	    $extraIds = substr_count($extraWhere, '?');
+	    $extraWhere = 'AND ' . $extraWhere;
+
+	    list ($ret, $orderTables) = $storage->extractTables($extraWhere);
+	    if ($ret->isError()) {
+    		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $tables = array_unique(array_merge($tables, $orderTables));
+	}
+	if (!empty($orderClause)) {
+	    $orderClause = 'ORDER BY ' . $orderClause;
+	}
+
+	/* Prepare the query */
 	$query = '
         SELECT
           DISTINCT([GalleryChildEntity::id])
         FROM
-          [GalleryChildEntity], [GalleryUserGroupMap], [GalleryPermissionMap]
+          ' . join(', ', $tables) . '
         WHERE
           [GalleryChildEntity::parentId] = ?
           AND
@@ -448,15 +483,20 @@ class GalleryItem_core extends GalleryFileSystemEntity {
           [GalleryPermissionMap::permission] & ? > ?
           AND
           [GalleryPermissionMap::itemId] = [GalleryChildEntity::id]
+	  ' . $extraWhere . '
         GROUP BY
           [GalleryChildEntity::id]
-        ';
+	' . $orderClause . '
+	';
 	$data[] = $this->getId();
 	$data[] = $userId;
 	$data[] = $userId;
 	$data[] = $storage->convertIntToBits($permissionBits);
 	$data[] = $storage->convertIntToBits(0);
-
+	for ($i = 0; $i < $extraIds; $i++) {
+	    /* add the data for $orderWhere's extra ?'s */
+	    $data[] = $this->getId();
+	}
 	$options = array();
 	$options['limit'] = array('count' => $count, 'offset' => $offset);
 	$gallery->debug_r($options);

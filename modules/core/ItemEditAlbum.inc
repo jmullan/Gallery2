@@ -20,6 +20,20 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage UserInterface
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * This controller will handle the changes users make to an album.
+ *
+ * @package GalleryCore
+ * @subpackage UserInterface
+ *
+ */
 class ItemEditAlbumController extends GalleryController {
 
     /**
@@ -74,6 +88,7 @@ class ItemEditAlbumController extends GalleryController {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
+		/* Add the resize-sizes back in */
 		for ($i = 0; $i < sizeof($form['resizes']); $i++) {
 		    if (empty($form['resizes'][$i]['active'])) {
 			continue;
@@ -88,6 +103,110 @@ class ItemEditAlbumController extends GalleryController {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 		}
+
+		/* Load the children if we might need them */
+		if (   isset($form['recreateThumbnails'])
+		    || isset($form['recreateResizes']) ) {
+			/* Get the child id => child types */
+			list ($ret, $childIds) =
+				$item->fetchChildIds($gallery->getActiveUserId());
+			if ($ret->isError()) {
+			    return array($ret->wrap(__FILE__, __LINE__), null);
+			}
+
+			$childItems = array();
+			if (!empty($childIds)) {
+			    /* Load the children */
+			    list ($ret, $childItems) = $gallery->loadEntitiesById($childIds);
+			    if ($ret->isError()) {
+				return array($ret->wrap(__FILE__, __LINE__), null);
+			    }
+			}
+		}
+
+		$lockIds = array();
+
+		/* Recreate the thumbnails, if requested to do so */
+		if (isset($form['recreateThumbnails'])) {
+		    /* Load the thumbnail of the children */
+		    list ($ret, $thumbTable) =
+			    GalleryDerivativeHelper::fetchThumbnailsByItemIds($childIds);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		    foreach ($childItems as $child) {
+			$childId = $child->getId();
+			$thumbnail = $thumbTable[$childId];
+
+			/* Change the thumbnail */
+			$thumbnail->setDerivativeCommands('scale ' . $form['thumbnail']['size']);
+
+			if ($thumbnail->isModified()) {
+			    list ($ret, $lockIds[]) = $gallery->acquireWriteLock($thumbnail->getId());
+			    if ($ret->isError()) {
+				return array($ret->wrap(__FILE__, __LINE__), null);
+			    }
+			    $thumbnail->expireCache();
+			    $ret = $thumbnail->save();
+			    if ($ret->isError()) {
+				return array($ret->wrap(__FILE__, __LINE__), null);
+			    }
+			}
+		    }
+		}
+
+		/* Recreate the resizes, if requested to do so */
+		/* XXX: We should not delete resizes that we will be adding */
+		/*      again moments later again */
+		if (isset($form['recreateResizes'])) {
+		    /* Get and delete all current resizes */
+		    list ($ret, $resizesTable) =
+			GalleryDerivativeHelper::fetchResizesByItemIds($childIds);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		    while (list(, $resizes) = each($resizesTable)) {
+			foreach ($resizes as $resize) {
+			    $ret = $gallery->deleteEntityById($resize->getId());
+			}
+		    }
+
+		    /* Add the new resizes */
+		    foreach ($childItems as $child) {
+			$childId = $child->getId();
+			for ($i = 0; $i < sizeof($form['resizes']); $i++) {
+			    if (empty($form['resizes'][$i]['active'])) {
+				continue;
+			    }
+
+			    list ($ret, $derivative) = 
+				    GalleryFactory::newInstance('GalleryEntity', 'GalleryDerivativeImage');
+			    if ($ret->isError()) {
+				return array($ret->wrap(__FILE__, __LINE__), null);
+			    }
+
+			    $ret = $derivative->create($childId, DERIVATIVE_TYPE_IMAGE_RESIZE);
+			    if ($ret->isError()) {
+				return array($ret->wrap(__FILE__, __LINE__), null);
+			    }
+
+			    $derivative->setDerivativeMimeType($child->getMimeType());
+			    $derivative->setDerivativeSourceId($child->getId());
+			    $derivative->setDerivativeCommands('scale ' . $form['resizes'][$i]['size']);
+
+			    $ret = $derivative->save();
+			    if ($ret->isError()) {
+				return array($ret->wrap(__FILE__, __LINE__), null);
+			    }
+			}
+		    }
+		}
+
+		$ret = $gallery->releaseLocks($lockIds);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
 	    
 		/* Save basic settings */
 		$item->setLayout($form['layout']);
@@ -131,6 +250,12 @@ class ItemEditAlbumController extends GalleryController {
     }
 }
 
+/**
+ * This view will prompt for settings of an album
+ *
+ * @package GalleryCore
+ * @subpackage UserInterface
+ */
 class ItemEditAlbumView extends GalleryView {
 
     /**
@@ -226,6 +351,8 @@ class ItemEditAlbumView extends GalleryView {
 	    while ($extraBlanks-- > 0) {
 		$form['resizes'][] = array('active' => 0, 'size' => '');
 	    }
+	    $form['recreateThumbnails'] = false;
+	    $form['recreateResizes'] = false;
 	}
 
 	list ($ret, $module) = $gallery->loadModule('core');

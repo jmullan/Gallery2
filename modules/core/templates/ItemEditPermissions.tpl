@@ -215,6 +215,16 @@
 	</tr>
 	<!-- {/if} -->
 
+	<!-- {if !empty($form.error.group.alreadyHadPermission)} -->
+	<tr>
+	  <td>
+	    {galleryErrorFontColor}
+	    {galleryText text="Group already has this permission (maybe it's included in one of the permissions the group already has)"}
+	    {/galleryErrorFontColor}
+	  </td>
+	</tr>
+	<!-- {/if} -->
+
 	<tr>
 	  <td>
 	    &nbsp;
@@ -321,6 +331,16 @@
 	  <td>
 	    {galleryErrorFontColor}
 	    {galleryText text="The user name you entered is invalid"}
+	    {/galleryErrorFontColor}
+	  </td>
+	</tr>
+	<!-- {/if} -->
+
+	<!-- {if !empty($form.error.user.alreadyHadPermission)} -->
+	<tr>
+	  <td>
+	    {galleryErrorFontColor}
+	    {galleryText text="The user already has this permission (maybe it's included in one of the permissions the user already has)"}
 	    {/galleryErrorFontColor}
 	  </td>
 	</tr>

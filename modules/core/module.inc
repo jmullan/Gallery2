@@ -19,8 +19,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
 
-/*
+/**
  * Bootstrap code: We have to load a few classes just so that the GalleryModule
  * parent class exists. This is only because we are the core module; other
  * modules should not have to do stuff like this.
@@ -28,6 +33,11 @@
 $classDir = dirname(__FILE__) . '/classes/';
 require_once($classDir . 'GalleryModule.class');
 
+/**
+ * The implementation of the core-module
+ *
+ * @package GalleryCore
+ */
 class CoreModule extends GalleryModule {
 
     function CoreModule() {
@@ -49,6 +59,7 @@ class CoreModule extends GalleryModule {
 
 	/* Load all the core Gallery classes */
 	require_once($classDir . 'Gallery.class');
+	require_once($classDir . 'GalleryChildEntityHelper.class');
 	require_once($classDir . 'GalleryController.class');
 	require_once($classDir . 'GalleryDataCache.class');
 	require_once($classDir . 'GalleryDerivativeHelper.class');
@@ -441,7 +452,16 @@ class CoreModule extends GalleryModule {
 	    $showAddAlbumLink = false;
 	    $showDeleteLink = false;
 	    $showPermissionsLink = false;
+	    $showAddHighlightLink = false;
 	    
+	    if (is_subclass_of($item, 'GalleryAlbumItem')
+		    || get_class($item) == strtolower('GalleryAlbumItem')) {
+		$itemType = "album";
+	    } else {
+		$itemType = "item";
+	    }
+
+	    /* Permissions for this item */
 	    list ($ret, $permissions) =
 		GalleryItemHelper::getPermissions($item->getId(),
 						  $gallery->getActiveUserId());
@@ -482,9 +502,31 @@ class CoreModule extends GalleryModule {
 		}
 	    }
 
+	    /* Permissions for its parent */
+	    list ($ret, $parentPermissions) =
+		GalleryItemHelper::getPermissions($item->getParentId(),
+						  $gallery->getActiveUserId());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    if ($item->getParentId() != $rootId) {
+		if (isset($parentPermissions['core.all'])) {
+		    $showAddHighlightLink = true;
+		} else {
+		    if (isset($parentPermissions['core.changeProperties'])) {
+			$showAddHighlightLink = true;
+		    }
+		}
+	    }
+
 	    if ($showEditLink) {
+		if ($itemType == "album") {
+		    $text = $this->translate('edit album');
+		} else {
+		    $text = $this->translate('edit item');
+		}
 		$links[$item->getId()][] =
-		    array('text' => $this->translate('edit item'),
+		    array('text' => $text,
 			  'params' => array_merge(array('view' => 'core:ItemAdmin',
 							'itemId' => $item->getId()),
 						  $params));
@@ -525,6 +567,16 @@ class CoreModule extends GalleryModule {
 							'itemId' => $item->getId()),
 						  $params));
 	    }
+
+	    if ($showAddHighlightLink) {
+		$links[$item->getId()][] =
+		    array('text' => $this->translate('make highlight'),
+			  'params' => array_merge(array('view' => 'core:ItemAdmin',
+							'subView' => 'core:ItemMakeHighlight',
+							'itemId' => $item->getId()),
+						  $params));
+	    }
+
 	}
 
 	return array(GalleryStatus::success(), $links);
@@ -600,6 +652,11 @@ class CoreModule extends GalleryModule {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	list ($ret, $rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	if (isset($permissions['core.changeText'])) {
 	        $views[] = array('name' => $this->translate('General Settings'),
 				 'view' => 'core:ItemEditGeneral');
@@ -621,15 +678,16 @@ class CoreModule extends GalleryModule {
 		if ($graphics->isSupportedMimeType($item->getMimeType())) {
 		    $views[] = array('name' => $this->translate('Edit Image'),
 				     'view' => 'core:ItemEditImage');
+		    $views[] = array('name' => $this->translate('Edit Sizes'),
+				     'view' => 'core:ItemCreateResizes');
 		}
+	    }
+	    if ($item->getParentId() != $rootId) {
+		$views[] = array('name' => $this->translate('Make Highlight'),
+				 'view' => 'core:ItemMakeHighlight');
 	    }
 	}
 	
-	list ($ret, $rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
 	if ($item->getId() != $rootId) {
 	    if (isset($permissions['core.delete'])) {
 		$views[] = array('name' => $this->translate('Delete Item'),

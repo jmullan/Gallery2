@@ -19,8 +19,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
 
-/* Load the parent class */
+/**
+ * Load the parent class
+ */
 require_once(dirname(__FILE__) . '/GalleryChildEntity.class');
 
 /**
@@ -37,9 +44,8 @@ require_once(dirname(__FILE__) . '/GalleryChildEntity.class');
  * @g2 </schema>
  * @g2 <requires-id/>
  *
- * @version $Revision$ $Date$
  * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
+ * @subpackage Classes
  */
 class GalleryDerivative_core extends GalleryChildEntity {
 
@@ -219,6 +225,30 @@ class GalleryDerivative_core extends GalleryChildEntity {
 	$gallery->loadDerivatives($this->getId());
 
 	return GalleryStatus::success();
+    }
+
+    /**
+     * Rebuild the cache if its not current
+     *
+     * If the cache is expired, it will be automatically rebuilt
+     * 
+     * @access public
+     * @return array object GalleryStatus a status code,
+     *               boolean true if it had to be rebuild, false if not
+     */
+    function rebuildCacheIfNotCurrent() {
+	list ($ret, $current) = $this->isCacheCurrent();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
+	if (!$current) {
+	    $ret = $this->rebuildCache();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+	return array(GalleryStatus::success(), !$current);
     }
 
     /**

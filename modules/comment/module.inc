@@ -19,15 +19,18 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+/**
+ * @package Comment
+ * @version $Revision$ $Date$
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
 
 /**
  * Comment Module
  *
  * This module provides support for adding comments to items
  *
- * @version $Revision$ $Date$
  * @package Comment
- * @author Bharat Mediratta <bharat@menalto.com>
  */
 class CommentModule extends GalleryTemplateModule {
 
@@ -38,7 +41,7 @@ class CommentModule extends GalleryTemplateModule {
     }
 
     /**
-     * @see GalleryModule::init
+     * @see GalleryModule::init()
      */
     function init() {
 	global $gallery;
@@ -66,7 +69,7 @@ class CommentModule extends GalleryTemplateModule {
     }
 
     /**
-     * @see GalleryModule::install
+     * @see GalleryModule::install()
      */
     function install() {
 	global $gallery;
@@ -159,7 +162,7 @@ class CommentModule extends GalleryTemplateModule {
     }
 	
     /**
-     * @see GalleryModule::getItemLinks
+     * @see GalleryModule::getItemLinks()
      */
     function getItemLinks($items, $returnUrlParams) {
 	global $gallery;
@@ -253,6 +256,7 @@ class CommentModule extends GalleryTemplateModule {
      *              parent view -- the module can augment or override these.
      * @return array object GalleryStatus a status code
      *               array (itemId => string HTML content)
+     * @todo parameterize the $viewMax option
      */
     function getItemDetails($item, $returnUrlParams) {
 	global $gallery;
@@ -308,9 +312,25 @@ class CommentModule extends GalleryTemplateModule {
 		$commentData[] = $memberData;
 	    }
 
+	    list ($ret, $permissions) =
+		GalleryItemHelper::getPermissions($item->getId(),
+						  $gallery->getActiveUserId());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    foreach (array('add' => 'comment.add',
+			   'delete' => 'comment.delete',
+			   'edit' => 'comment.edit',
+			   'viewIp' => 'comment.viewIp')
+		 as $canFlag => $permission) {
+		$can[$canFlag] = isset($permissions[$permission]);
+	    }
+
 	    /* Render the comments */
 	    $template = $this->getTemplate();
 	    $template->setVariable('comments', $commentData);
+	    $template->setVariable('can', $can);
 	    $template->setVariable('item', $item->getMemberData());
 	    $template->setVariable('totalComments', $totalComments);
 	    $html = $template->render('ItemDetails.tpl');
@@ -320,7 +340,7 @@ class CommentModule extends GalleryTemplateModule {
     }
     
     /**
-     * @see GalleryModule::getSiteAdminViews
+     * @see GalleryModule::getSiteAdminViews()
      */
     function getSiteAdminViews() {
 	global $gallery;
@@ -331,7 +351,7 @@ class CommentModule extends GalleryTemplateModule {
     }
 
     /**
-     * @see GalleryModule::getConfigurationView
+     * @see GalleryModule::getConfigurationView()
      */
     function getConfigurationView() {
 	global $gallery;

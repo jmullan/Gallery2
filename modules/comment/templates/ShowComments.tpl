@@ -39,7 +39,7 @@
 	    {$comment.commenter.userName}
 	    {/galleryBigFontSize}
 	    {if !empty($comment.host)}
-	    {if $can.viewIps}
+	    {if $can.viewIp}
 	    ({$comment.host})
 	    {/if}
 	    {/if}

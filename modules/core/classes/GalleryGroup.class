@@ -19,30 +19,33 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
 
 /**
  * A normal group
  *
- * @constant GROUP_NORMAL
  */
 define('GROUP_NORMAL', 1);
 
 /**
  * The "all users" group 
  *
- * @constant GROUP_ALL_USERS
  */
 define('GROUP_ALL_USERS', 2);
 
 /**
  * The "site admins" group 
  *
- * @constant GROUP_SITE_ADMINS
  */
 define('GROUP_SITE_ADMINS', 3);
 
-/* Load the parent class */
+/**
+ * Load the parent class
+ */
 require_once(dirname(__FILE__) . '/GalleryEntity.class');
 
 /**
@@ -58,11 +61,9 @@ require_once(dirname(__FILE__) . '/GalleryEntity.class');
  * @g2 </schema>
  * @g2 <requires-id/>
  * 
- * @version $Revision$ $Date$
  * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
+ * @subpackage Classes
  */
-
 class GalleryGroup_core extends GalleryEntity {
 	
     /*
@@ -109,6 +110,7 @@ class GalleryGroup_core extends GalleryEntity {
     /**
      * Create a new instance of this GalleryGroup in the persistent store
      *
+     * @param string the name of the new group
      * @param int the type of group
      * @return object GalleryStatus a status code
      */

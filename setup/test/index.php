@@ -92,7 +92,7 @@ function GalleryTestHarness() {
 	}
 
 	$files = array();
-	if ($platform->is_dir($testDir) && $dir = $platform->opendir($testDir)) {
+	if ($platform->file_exists($testDir) && $platform->is_dir($testDir) && $dir = $platform->opendir($testDir)) {
 	    while (($file = readdir($dir)) != false) {
 		if (preg_match('/.class$/', $file)) {
 		    $files[] = $file;

@@ -19,9 +19,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+/**
+ * @version $Revision$ $Date$
+ * @package Gallery
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
 
 /**
- * First pass of initialization.  Do the following:
+ * First pass of initialization.
+ *
+ * Do the following:
  * - Create and bootstrap the Core
  * - Set all of our paths correctly (modules, themes, layouts, etc)
  * - Check for the existence of key functions (eg, dgettext)
@@ -124,7 +131,9 @@ function GalleryInitStorage() {
 }
 
 /**
- * Second pass of initialization.  Do the following:
+ * Second pass of initialization.
+ *
+ * Do the following:
  * - Install the core, if necessary
  * - Attach to our session
  * - Load all modules
@@ -213,7 +222,9 @@ function GalleryInitSecondPass() {
     return GalleryStatus::success();
 }
 
-/*
+/**
+ * Glue between Smarty and Gallery
+ *
  * This function serves as a glue layer between Smarty and Gallery.  Smarty
  * expects callbacks to be functions, whereas Gallery really wants everything
  * to be OO with classes and methods.  Gallery routes all Smarty callbacks to

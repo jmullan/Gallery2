@@ -20,6 +20,20 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage UserInterface
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * This controller will handle the addition of an album
+ *
+ * @package GalleryCore
+ * @subpackage UserInterface
+ *
+ */
 class ItemAddAlbumController extends GalleryController {
 
     /**
@@ -60,21 +74,23 @@ class ItemAddAlbumController extends GalleryController {
 		$error = true;
 	    }
 
-	    list ($ret, $instance) =
-		GalleryFactory::newInstance('GalleryEntity', 'GalleryAlbumItem');
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-	    $ret = $instance->create($itemId,
-				     $form['pathComponent'],
-				     $gallery->getActiveUserId());
-	    if ($ret->isError()) {
-		if ($ret->getErrorCode() & ERROR_COLLISION) {
-		    GalleryUtilities::putRequestVariable('form.error.pathComponent.collision', 1);
-		    $error = true;
-		} else {
+	    if (!$error) {
+		list ($ret, $instance) =
+		    GalleryFactory::newInstance('GalleryEntity', 'GalleryAlbumItem');
+		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		$ret = $instance->create($itemId,
+					 $form['pathComponent'],
+					 $gallery->getActiveUserId());
+		if ($ret->isError()) {
+		    if ($ret->getErrorCode() & ERROR_COLLISION) {
+			GalleryUtilities::putRequestVariable('form.error.pathComponent.collision', 1);
+			$error = true;
+		    } else {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
 		}
 	    }
 
@@ -114,6 +130,12 @@ class ItemAddAlbumController extends GalleryController {
     }
 }
 
+/**
+ * This view will prompt for the data for a new album to be created
+ *
+ * @package GalleryCore
+ * @subpackage UserInterface
+ */
 class ItemAddAlbumView extends GalleryView {
 
     /**

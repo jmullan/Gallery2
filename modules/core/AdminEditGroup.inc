@@ -20,6 +20,20 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage UserInterface
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * This controller will handle changes made to a group
+ *
+ * @package GalleryCore
+ * @subpackage UserInterface
+ *
+ */
 class AdminEditGroupController extends GalleryController {
 
     /**
@@ -102,6 +116,15 @@ class AdminEditGroupController extends GalleryController {
     }
 }
 
+/**
+ * This view will show options available to groups
+ *
+ * Only the 'groupname' is editable. Display a notice if editing special
+ * (non-GROUP_NORMAL) groups.
+ *
+ * @package GalleryCore
+ * @subpackage UserInterface
+ */
 class AdminEditGroupView extends GalleryView {
 
     /**

@@ -4,12 +4,18 @@
  * Derived from adodb-errorhandler.inc.php which is 
  * (c) 2000, 2001 John Lim (jlim@natsoft.com.my).  All rights reserved.
  * 
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage Storage
  */
 
+/**
+ * This will let ADODB know which error handler function we want to use
+ */
 define('ADODB_ERROR_HANDLER','ErrorHandler');
 
 /**
- * Default Error Handler. This will be called with the following params
+ * Default Error Handler for ADODB
  *
  * @param $dbms		the RDBMS you are connecting to
  * @param $fn		the name of the calling function (in uppercase)

@@ -20,6 +20,20 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage UserInterface
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * This controller will handle an user logging out of Gallery
+ *
+ * @package GalleryCore
+ * @subpackage UserInterface
+ *
+ */
 class LogoutController extends GalleryController {
     
     /**

@@ -13,7 +13,11 @@
 	    <center>
 	      {galleryBigFontSize}
 	      <nobr>
+	      {if $itemType == "album"}
+		{galleryText text="Editing this album"}
+	      {else} 
 		{galleryText text="Editing this item"}
+	      {/if} 
 	      </nobr>
 	      {/galleryBigFontSize}
 	      <br>

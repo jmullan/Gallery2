@@ -20,6 +20,20 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage UserInterface
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * This controller will handle the deletion of an user
+ *
+ * @package GalleryCore
+ * @subpackage UserInterface
+ *
+ */
 class AdminDeleteUserController extends GalleryController {
 
     /**
@@ -101,6 +115,12 @@ class AdminDeleteUserController extends GalleryController {
     }
 }
 
+/**
+ * This view will prompt for confirmation ot delete an user
+ *
+ * @package GalleryCore
+ * @subpackage UserInterface
+ */
 class AdminDeleteUserView extends GalleryView {
 
     /**

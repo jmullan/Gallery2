@@ -19,13 +19,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
 
 /**
  * Internationalization and Localization utilities
  *
- * @version $Revision$ $Date$
  * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
+ * @subpackage Classes
  */
 class GalleryTranslator {
     /*
@@ -119,6 +123,8 @@ class GalleryTranslator {
      *
      * @param string the language code hint (eg. 'en_US' or 'zh_CN')
      * @return object GalleryStatus a status code
+     * @todo Also respect the core.default.language setting, not only try
+     *       to get the language the browser supports.
      */
     function init($languageCode=null) {
 	global $gallery;
@@ -315,3 +321,5 @@ class GalleryTranslator {
 	return array(GalleryStatus::success(), $localized);
     }
 }
+
+?>

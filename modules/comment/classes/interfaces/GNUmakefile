@@ -1,5 +1,5 @@
 GALLERYDIR=../../../..
 XSLFILE=$(GALLERYDIR)/modules/core/classes/interfaces/ClassCode.xsl
-PACKAGE=CommentInterfaces
+PACKAGE=Comment
 
 include $(GALLERYDIR)/modules/core/classes/interfaces/GNUmakefile

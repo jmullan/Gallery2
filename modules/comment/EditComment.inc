@@ -20,10 +20,23 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+/**
+ * @version $Revision$ $Date$
+ * @package Comment
+ * @subpackage UserInterface
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * This controller will handle the changes made to a comment
+ *
+ * @package Comment
+ * @subpackage UserInterface
+ */
 class EditCommentController extends GalleryController {
 
     /**
-     * @see GalleryController::handleRequest
+     * @see GalleryController::handleRequest()
      */
     function handleRequest() {
 	global $gallery;
@@ -115,10 +128,17 @@ class EditCommentController extends GalleryController {
     }
 }
 
+/**
+ * This view shows a form to edit a comment
+ *
+ * @package Comment
+ * @subpackage UserInterface
+ *
+ */
 class EditCommentView extends GalleryView {
 
     /**
-     * @see GalleryView::renderHead
+     * @see GalleryView::renderHead()
      */
     function renderHead() {
 	global $gallery;
@@ -137,7 +157,7 @@ class EditCommentView extends GalleryView {
     }
     
     /**
-     * @see GalleryView::renderBody
+     * @see GalleryView::renderBody()
      */
     function renderBody() {
 	global $gallery;

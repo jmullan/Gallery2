@@ -19,71 +19,65 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 /**
- * Storage constants.
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @author Bharat Mediratta <bharat@menalto.com>
  */
+
+/* Storage constants */
 
 /**
  * Integer type
  *
- * @constant STORAGE_TYPE_INTEGER
  */
 define('STORAGE_TYPE_INTEGER', 0x00000001);
 
 /**
  * String type
  *
- * @constant STORAGE_TYPE_STRING
  */
 define('STORAGE_TYPE_STRING', 0x00000002);
 
 /**
  * Text type
  *
- * @constant STORAGE_TYPE_TEXT
  */
 define('STORAGE_TYPE_TEXT', 0x00000004);
 
 /**
  * Text type
  *
- * @constant STORAGE_TYPE_BOOLEAN
  */
 define('STORAGE_TYPE_BOOLEAN', 0x00000008);
 
 /**
  * Timestamp type
  *
- * @constant STORAGE_TYPE_TIMESTAMP
  */
 define('STORAGE_TYPE_TIMESTAMP', 0x00000010);
 
 /**
  * ID type
  *
- * @constant STORAGE_TYPE_ID
  */
 define('STORAGE_TYPE_ID', 0x00000020);
 
 /**
  * Bits type
  *
- * @constant STORAGE_TYPE_BITS
  */
 define('STORAGE_TYPE_BIT', 0x00000040);
 
 /**
  * Newly created flag
  *
- * @constant STORAGE_FLAG_NEWLY_CREATED
  */
 define('STORAGE_FLAG_NEWLY_CREATED', 0x00000001);
 
 /**
  * Deleted flag
  *
- * @constant STORAGE_FLAG_DELETED
  */
 define('STORAGE_FLAG_DELETED', 0x00000002);
 
@@ -92,9 +86,8 @@ define('STORAGE_FLAG_DELETED', 0x00000002);
  *
  * This object provides the hooks for saving and restoring objects in the persistent store.
  *
- * @version $Revision$ $Date$
  * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
+ * @subpackage Classes
  * @abstract
  */
 class GalleryStorage {
@@ -392,6 +385,28 @@ class GalleryStorage {
      */
     function convertBitsToInt($bitsVal) {
 	return $bitsVal;
+    }
+
+    /**
+     * Extracts the table names from a given query
+     *
+     * Query should be something like
+     * '[GalleryItem::id] = ? AND [GalleryPhotoItem::itemId] = ?'
+     *
+     * @param string query
+     * @return array GalleryStatus a return status,
+     *               array strings table names
+     */
+    function extractTables($query) {
+    	$regexp = '/\[([^:]*)::[^\]]*\]/';
+	$tables = array();
+	while (preg_match($regexp, $query, $matches)) {
+	    $tables[] = '[' . $matches[1] . ']';
+	    $query = preg_replace($regexp, "", $query);
+	}
+	return array(GalleryStatus::success(),
+		     array_unique($tables));
+
     }
 
     /**

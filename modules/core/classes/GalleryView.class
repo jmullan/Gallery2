@@ -19,6 +19,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
 
 /**
  * The API for module views
@@ -26,9 +31,8 @@
  * This class defines the API for view classes used by the various modules to
  * render HTML and binary data to the browser.
  *
- * @version $Revision$ $Date$
  * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
+ * @subpackage Classes
  */
 class GalleryView {
 
@@ -125,9 +129,13 @@ class GalleryView {
     /**
      * Load a view
      *
-     * Be very security conscious about checking the inputs for possible misuse
+     * Be very security conscious about checking the inputs for possible
+     * misuse. The view name is in the format <module>:<classname>, where
+     * - <module> is the module the view belongs to
+     * - <classname> is the name of the .inc-file to be loaded. The class
+     *   that is loaded is the <classname>View, that must extend GalleryView class
      *
-     * @param string a view name (eg 'core:ShowItem')
+     * @param string a view name in the format <module>:<classname> (eg 'core:ShowItem')
      * @return array object GalleryStatus a status code
      *               object GalleryView a view
      * @static
@@ -158,6 +166,10 @@ class GalleryView {
 	}
 
 	$view = new $viewClassName();
+	if (!is_subclass_of($view, "GalleryView")) {
+	    $gallery->debug("Class $viewClassName is not a subclass of GalleryView");
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	}
 	$ret = $view->init($module, $moduleDir . 'templates/');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);

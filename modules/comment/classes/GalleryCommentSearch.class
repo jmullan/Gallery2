@@ -21,12 +21,22 @@
  */
 
 /**
+ * @package Comment
+ * @version $Revision$ $Date$
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
  * This is an implementation of the search module's SearchInterface_1_0
+ *
+ * @package Comment
+ * @subpackage Classes
+ *
  */
 class GalleryCommentSearch extends GallerySearchInterface_1_0 {
 
     /**
-     * @see GallerySearchInterface_1_0.getSearchModuleInfo()
+     * @see GallerySearchInterface_1_0::getSearchModuleInfo()
      */
     function getSearchModuleInfo() {
 	global $gallery;
@@ -44,7 +54,7 @@ class GalleryCommentSearch extends GallerySearchInterface_1_0 {
     }
 
     /**
-     * @see GallerySearchInterface_1_0.search()
+     * @see GallerySearchInterface_1_0::search()
      */
     function search($options, $criteria, $offset=0, $count=-1) {
 	global $gallery;

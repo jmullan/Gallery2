@@ -25,6 +25,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+/**
+ * @package @@package@@
+ * @version $Revision$ $Date$
+ * @author Bharat Mediratta &lt;bharat@menalto.com&gt;
+ */
 
 /**
  * Interface class for the <xsl:value-of select="class-name"/> class.
@@ -37,11 +42,9 @@
  * them in the core class.  If you want to change the format of this
  * file, then you should edit the XSL template.
  *
- * @version $Revision$ $Date$
  * @package @@package@@
- * @author Bharat Mediratta &lt;bharat@menalto.com&gt;
+ * @subpackage Classes
  */
-
 class <xsl:value-of select="class-name"/> extends <xsl:value-of select="class-name"/>_core {
   <!-- If the class has members then we must create a 
        getPersistentMemberInfo() method 

@@ -20,10 +20,24 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+/**
+ * @version $Revision$ $Date$
+ * @package Comment
+ * @subpackage UserInterface
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * This view will show the comments stored for an item
+ *
+ * @package Comment
+ * @subpackage UserInterface
+ *
+ */
 class ShowCommentsView extends GalleryView {
 
     /**
-     * @see GalleryView::renderHead
+     * @see GalleryView::renderHead()
      */
     function renderHead() {
 	global $gallery;
@@ -117,7 +131,7 @@ class ShowCommentsView extends GalleryView {
 	foreach (array('add' => 'comment.add',
 		       'delete' => 'comment.delete',
 		       'edit' => 'comment.edit',
-		       'viewIps' => 'comment.viewIps')
+		       'viewIp' => 'comment.viewIp')
 		 as $canFlag => $permission) {
 	    $can[$canFlag] = isset($permissions[$permission]);
 	}

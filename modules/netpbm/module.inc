@@ -19,15 +19,18 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+/**
+ * @version $Revision$ $Date$
+ * @package NetPBM
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
 
 /**
  * NetPBM Graphics Module
  *
  * This module provides the NetPBM graphics toolkit for Gallery
  *
- * @version $Revision$ $Date$
  * @package NetPBM
- * @author Bharat Mediratta <bharat@menalto.com>
  */
 class NetPbmModule extends GalleryModule {
 
@@ -38,7 +41,7 @@ class NetPbmModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::init
+     * @see GalleryModule::init()
      */
     function init() {
 	global $gallery;
@@ -60,7 +63,7 @@ class NetPbmModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::install
+     * @see GalleryModule::install()
      */
     function install() {
 	list ($ret, $version) = $this->getModuleParameter('version');
@@ -96,7 +99,7 @@ class NetPbmModule extends GalleryModule {
     }
 	
     /**
-     * @see GalleryModule::activate
+     * @see GalleryModule::activate()
      */
     function activate() {
 	global $gallery;
@@ -125,7 +128,7 @@ class NetPbmModule extends GalleryModule {
     }
 	
     /**
-     * @see GalleryModule::deactivate
+     * @see GalleryModule::deactivate()
      */
     function deactivate() {
 	global $gallery;
@@ -164,7 +167,7 @@ class NetPbmModule extends GalleryModule {
     }
 	
     /**
-     * @see GalleryModule::needsConfiguration
+     * @see GalleryModule::needsConfiguration()
      */
     function needsConfiguration() {
 	global $gallery;
@@ -188,7 +191,7 @@ class NetPbmModule extends GalleryModule {
     }
     
     /**
-     * @see GalleryModule::getSiteAdminViews
+     * @see GalleryModule::getSiteAdminViews()
      */
     function getSiteAdminViews() {
 	return array(GalleryStatus::success(),
@@ -197,7 +200,7 @@ class NetPbmModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::getConfigurationView
+     * @see GalleryModule::getConfigurationView()
      */
     function getConfigurationView() {
 	return array(GalleryStatus::success(), 'netpbm:AdminNetPbm');

@@ -22,6 +22,29 @@
 	{galleryBigFontSize}
 	{$comment.commenter.userName}
 	{/galleryBigFontSize}
+	{if !empty($comment.host)}
+	{if $can.viewIp}
+	({$comment.host})
+	{/if}
+	{/if}
+	{if $can.edit}
+	<a href="{galleryUrl view="comment:EditComment"
+	               itemId=$item.id
+	               commentId=$comment.id
+	               return_view="core:ShowItem"
+	               return_itemId=$item.id}">
+	  [{galleryText text="edit"}]
+	</a>
+	{/if}
+	{if $can.delete}
+	<a href="{galleryUrl view="comment:DeleteComment"
+	               itemId=$item.id
+	               commentId=$comment.id
+	               return_view="core:ShowItem"
+	               return_itemId=$item.id}">
+	  [{galleryText text="delete"}]
+	</a>
+	{/if}
 	<br>
 	{galleryDate timestamp=$comment.date format="%e-%b-%Y %H:%M"}
 	{/galleryHighlight1}

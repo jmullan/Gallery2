@@ -20,6 +20,20 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage UserInterface
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * Provides downloading of binary items
+ *
+ * @package GalleryCore
+ * @subpackage UserInterface
+ *
+ */
 class DownloadItemView extends GalleryView {
 
     /**
@@ -58,6 +72,10 @@ class DownloadItemView extends GalleryView {
 	    case DERIVATIVE_TYPE_IMAGE_RESIZE:
 		$requiredPermission = 'core.viewResizes';
 		break;
+
+	    case DERIVATIVE_TYPE_IMAGE_PREFERRED:
+		$requiredPermission = 'core.viewSource';
+		break;
 	    }
 	    $itemForPermission = $item->getParentId();
 	} else {
@@ -80,16 +98,9 @@ class DownloadItemView extends GalleryView {
 
 	/* Rebuild derivative cache, if necessary */
 	if (is_subclass_of($item, 'GalleryDerivative')) {
-	    list ($ret, $current) = $item->isCacheCurrent();
+	    list ($ret, $rebuild) = $item->rebuildCacheIfNotCurrent();
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
-	    }
-	    
-	    if (!$current) {
-		$ret = $item->rebuildCache();
-		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
 	    }
 
 	    $mimeType = $item->getDerivativeMimeType();

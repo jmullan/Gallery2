@@ -19,6 +19,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
 
 /**
  * Global storage container and utility class for Gallery
@@ -26,9 +31,8 @@
  * This is a container for global information required for gallery
  * operation, such as configuration, session, user, etc.  
  *
- * @version $Revision$ $Date$
  * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
+ * @subpackage Classes
  */
 class Gallery {
 
@@ -94,7 +98,7 @@ class Gallery {
      * A registry of event listeners
      *
      * @var array $_eventListeners;
-     * @access private;
+     * @access private
      */
     var $_eventListeners;
 
@@ -1195,7 +1199,7 @@ class Gallery {
 	if ($debug === true) {
 	    $debug = 'buffered';
 	}
-	
+
 	$this->_debug = $debug;
 	if (isset($this->_storage)) {
 	    if ($this->_debug) {
@@ -1203,6 +1207,14 @@ class Gallery {
 	    } else {
 		$this->_storage->setDebug(false);
 	    }
+	}
+	if (!isset($this->_debugBuffer)) {
+	    $this->clearDebugBuffer();
+	}
+	if (!empty($this->_debug)) {
+	    error_reporting(E_ALL);
+	    ini_set("short_open_tag", false);
+	    ini_set("allow_call_time_pass_reference", false);
 	}
     }
 

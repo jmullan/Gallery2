@@ -19,11 +19,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
 
 /**
  * The prefix for all HTTP GET/POST arguments
  *
- * @constant GALLERY_FORM_VARIABLE_PREFIX
  */
 define('GALLERY_FORM_VARIABLE_PREFIX', 'g2_');
 
@@ -39,9 +43,9 @@ define('GALLERY_FORM_VARIABLE_PREFIX', 'g2_');
  * they are of obvious value to the class layer and there's no other home for
  * them.
  * 
- * @version $Revision$ $Date$
  * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
+ * @subpackage Classes
+ * @static
  */
 class GalleryUtilities {
 
@@ -329,6 +333,7 @@ class GalleryUtilities {
      *
      * @param string a file extension
      * @return string a mime type 
+     * @staticvar array extensionMap Maps file extentions to equivalent MIME-types
      * @static
      */
     function convertExtensionToMime($extension) {

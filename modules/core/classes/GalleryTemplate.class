@@ -19,11 +19,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
 
 /**
  * This is Gallery's templating class.  It hides the details of the
  * implementation (eg, Smarty) and provides a unified means of handling
  * internationalization.
+ *
+ * @package GalleryCore
+ * @subpackage Classes
  */
 class GalleryTemplate {
     
@@ -95,6 +103,7 @@ class GalleryTemplate {
      *
      * @return array object GalleryStatus a status code
      *               object Smarty
+     * @staticvar Smarty $_smarty The only Smarty-object that we will need
      */
     function _getSmarty() {
 	global $gallery;
@@ -105,6 +114,7 @@ class GalleryTemplate {
 	    /*
 	     * Load and configure Smarty.
 	     */
+	    define('SMARTY_DIR', $gallery->getConfig('code.smarty.base'));
 	    require_once($gallery->getConfig('code.smarty.base') . 'Smarty.class.php');
 
 	    if ($gallery->isProfiling()) {
@@ -149,3 +159,5 @@ class GalleryTemplate {
 	return $_smarty;
     }
 }
+
+?>

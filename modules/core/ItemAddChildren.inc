@@ -19,7 +19,21 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage UserInterface
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
 
+/**
+ * This controller will handle the addition of an item as a children to
+ * another item.
+ *
+ * @package GalleryCore
+ * @subpackage UserInterface
+ * @todo Add support for other ways of adding images (from server, from http...)
+ */
 class ItemAddChildrenController extends GalleryController {
 
     /**
@@ -154,7 +168,7 @@ class ItemAddChildrenController extends GalleryController {
 			     * Create a thumbnail for the album, if necessary.
 			     * XXX: this needs to be refactored 
 			     */
-			    if ($albumNeedsThumbnail) {
+			    if ($albumNeedsThumbnail && $preference['derivativeType'] == DERIVATIVE_TYPE_IMAGE_THUMBNAIL) {
 				list ($ret, $derivative) = 
 				    GalleryFactory::newInstance('GalleryEntity', 'GalleryDerivativeImage');
 				if ($ret->isError()) {
@@ -207,6 +221,12 @@ class ItemAddChildrenController extends GalleryController {
     }
 }
 
+/**
+ * This view will prompt for files to add as children to an album.
+ *
+ * @package GalleryCore
+ * @subpackage UserInterface
+ */
 class ItemAddChildrenView extends GalleryView {
 
     /**

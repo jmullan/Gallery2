@@ -1,0 +1,130 @@
+<?php
+/*
+ * $RCSfile
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @author Ernesto Baschny <ernst@baschny.de>
+ */
+
+/**
+ * Helper class for GalleryChildEntities
+ *
+ * @package GalleryCore
+ * @subpackage Classes
+ * @abstract
+ */
+class GalleryChildEntityHelper {
+
+    /**
+     * Return the number of children for the items specified
+     *
+     * @access public
+     * @param array item ids
+     * @return array object GalleryStatus a status code
+     *               int a count
+     * @static
+     */
+    function getChildCounts($ids) {
+	global $gallery;
+
+	if (empty($ids)) {
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
+			 null);
+	}
+
+	$storage = $gallery->getStorage();
+
+	foreach ($ids as $id) {
+	    $parentIdClause[] = '[GalleryChildEntity::parentId] = ?';
+	}
+
+	$query = '
+        SELECT
+          [GalleryChildEntity::parentId], COUNT(DISTINCT([GalleryChildEntity::id]))
+        FROM
+          [GalleryChildEntity]
+        WHERE
+          ( ' . join(' OR ', $parentIdClause) . ' )
+          AND
+        GROUP BY
+          [GalleryChildEntity::parentId]
+        ';
+	$data = $ids;
+
+	list ($ret, $searchResults) = $gallery->search($query, $data);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$counts = array();
+	while ($result = $searchResults->nextResult()) {
+	    $counts[$result[0]] = $result[1];
+	}
+
+	return array(GalleryStatus::success(), $counts);
+    }
+
+    /**
+     * Return the ids of all the child items of the given item.
+     *
+     * @access public
+     * @param array item ids
+     * @return array object GalleryStatus a status code
+     *               int a count
+     * @static
+     */
+    function fetchChildIds($id) {
+	global $gallery;
+
+	if (empty($id)) {
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
+			 null);
+	}
+
+	$storage = $gallery->getStorage();
+
+	$query = '
+        SELECT
+          DISTINCT([GalleryChildEntity::id])
+        FROM
+          [GalleryChildEntity]
+        WHERE
+          [GalleryChildEntity::parentId] = ?
+        ';
+	$data = array();
+	$data[] = $id;
+
+	list ($ret, $searchResults) = $gallery->search($query, $data);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$data = array();
+	while ($result = $searchResults->nextResult()) {
+	    $data[] = $result[0];
+	}
+
+	return array(GalleryStatus::success(), $data);
+    }
+    
+}
+?>

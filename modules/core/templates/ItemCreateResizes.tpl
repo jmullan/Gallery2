@@ -1,77 +1,14 @@
     {galleryForm controller="$controller"}
-    {galleryInput type="hidden" name="formName"}ItemEditAlbum{/galleryInput}
+    {galleryInput type="hidden" name="formName"}ItemCreateResizes{/galleryInput}
     {galleryInput type="hidden" name="itemId"}{$item.id}{/galleryInput}
     <table border="0" cellspacing="0" cellpadding="0">
 	<tr>
 	  <td>
 	    <center>
 	      {galleryBiggerFontSize}
-	      {galleryText text="Album Settings"}
+	      {galleryText text="Item Thumbnail Size and Resizes"}
 	      {/galleryBiggerFontSize}
 	    </center>
-	  </td>
-	</tr>
-
-	<tr>
-	  <td>
-	    &nbsp;
-	  </td>
-	</tr>
-
-	<tr>
-	  <td>
-	  {galleryBigFontSize}
-	  {galleryText text="Sort order"}
-	  {/galleryBigFontSize}
-	  <br>
-	  {galleryText text="How the items in this album are sorted.  New items that are added will be placed in the album according to the order you specify here."}
-	  <br>
-	  {gallerySelect name="form.orderBy"}
-	  {html_options options=$orderByList selected=$form.orderBy}
-	  {/gallerySelect}
-	  {gallerySelect name="form.orderDirection"}
-	  {html_options options=$orderDirectionList selected=$form.orderDirection}
-	  {/gallerySelect}
-	  </td>
-	</tr>
-
-	<tr>
-	  <td>
-	    &nbsp;
-	  </td>
-	</tr>
-
-	<tr>	
-	  <td>
-	    {galleryBigFontSize}
-	    {galleryText text="Layout"}
-	    {/galleryBigFontSize}
-	    <br>
-	    {galleryText text="The way that items will be arranged on the page when viewing this album."}
-	    <br>
-	    {gallerySelect name="form.layout"}
-	    {html_options values=$layoutList selected=$form.layout output=$layoutList}
-	    {/gallerySelect}
-	  </td>
-	</tr>
-
-	<tr>
-	  <td>
-	    &nbsp;
-	  </td>
-	</tr>
-
-	<tr>	
-	  <td>
-	    {galleryBigFontSize}
-	    {galleryText text="Theme"}
-	    {/galleryBigFontSize}
-	    <br>
-	    {galleryText text="The colors and images that will be used when viewing this album."}
-	    <br>
-	    {gallerySelect name="form.theme"}
-	    {html_options values=$themeList selected=$form.theme output=$themeList}
-	    {/gallerySelect}
 	  </td>
 	</tr>
 
@@ -91,7 +28,7 @@
 
 	<tr>
 	  <td>
-	    {galleryText text="Every item will have a thumbnail.  The default thumbnail size you specify here will create a uniform look for your album.  Gallery will create a thumbnail that is no larger than the size you specify."}
+	    {galleryText text="Gallery will create a thumbnail that is no larger than the size you specify here."}
 	  </td>
 	</tr>
 
@@ -138,7 +75,7 @@
 
 	<tr>
 	  <td>
-	    {galleryText text="Gallery can automatically create intermediate resized versions of images added to this album.  This is useful when you want to present larger versions of an image without showing the full size image."}
+	    {galleryText text="Other intermediate resized versions of this image."}
 	  </td>
 	</tr>
 	
@@ -194,32 +131,6 @@
                 {counter}
 	        {/foreach}
 	    </table>
-	  </td>
-	</tr>
-
-	<tr>
-	  <td>
-	    &nbsp;
-	  </td>
-	</tr>
-
-	<tr>
-	  <td>
-	    {galleryBigFontSize}
-	    {galleryText text="Recreate thumbnails and resizes"}
-	    {/galleryBigFontSize}
-	  </td>
-	</tr>
-
-	<tr>
-	  <td>
-	    {galleryText text="When you make changes to the values of the thumbnail size and/or the size of the resized images, this will only apply to newly uploaded images. Other images remain with their currently (possibly customized) thumbnails and resizes. Click here to recreate the thumbnails and/or resizes based on the new information."}
-	    <br>
-	    {galleryInput type="checkbox" name="form.recreateThumbnails"}{$form.recreateThumbnails}{/galleryInput}
-	    {galleryText text="Recreate thumbnails"}
-	    <br>
-	    {galleryInput type="checkbox" name="form.recreateResizes"}{$form.recreateResizes}{/galleryInput}
-	    {galleryText text="Recreate resized images"}
 	  </td>
 	</tr>
 

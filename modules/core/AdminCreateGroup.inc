@@ -20,6 +20,20 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage UserInterface
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * This controller will handle the creation of a group
+ *
+ * @package GalleryCore
+ * @subpackage UserInterface
+ *
+ */
 class AdminCreateGroupController extends GalleryController {
 
     /**
@@ -93,6 +107,12 @@ class AdminCreateGroupController extends GalleryController {
     }
 }
 
+/**
+ * This view will prompt for data to create a new group
+ *
+ * @package GalleryCore
+ * @subpackage UserInterface
+ */
 class AdminCreateGroupView extends GalleryView {
 
     /**

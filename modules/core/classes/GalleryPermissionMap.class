@@ -19,6 +19,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
 
 /**
  * Representation of the many-to-many relationship between users and groups
@@ -29,11 +34,9 @@
  * @g2   <schema-minor>0</schema-minor>
  * @g2 </schema>
  *
- * @version $Revision$ $Date$
  * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
+ * @subpackage Classes
  */
-
 class GalleryPermissionMap_core {
 
     /**
@@ -443,10 +446,11 @@ class GalleryPermissionMap_core {
 	    }
 
 	    foreach ($permissions as $permission) {
+		// $result[0] = itemId
+		// $permission['id'] = the permission name for that bit
 		$permTable[$result[0]][$permission['id']] = 1;
 	    }
 	}
-
 	return array(GalleryStatus::success(), $permTable);
     }
 
@@ -545,6 +549,71 @@ class GalleryPermissionMap_core {
 	}
 
 	return GalleryStatus::success();
+    }
+
+    /**
+     * Does the user/group combo have all needed permissions for the target item?
+     *
+     * @param int the id of the target item
+     * @param array int user ids
+     * @param array int group ids
+     * @param array string target permissions
+     * @return array object GalleryStatus a status code
+     *               boolean true if yes
+     * @static
+     */
+    function hasPermission($itemId, $userIds, $groupIds, $permission) {
+	global $gallery;
+
+	if (!isset($permission)) {
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER,
+					      __FILE__, __LINE__),
+			 null);
+	}
+
+	list ($ret, $bits) = GalleryPermissionSetMap::convertIdsToBits($permission);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if (!empty($userIds)) {
+	    foreach ($userIds as $userId) {
+		$ands[] = '[GalleryPermissionMap::userId] = ?';
+	    }
+	}
+
+	if (!empty($groupIds)) {
+	    foreach ($groupIds as $groupId) {
+		$ands[] = '[GalleryPermissionMap::groupId] = ?';
+	    }
+	}
+
+	$storage = $gallery->getStorage();
+	
+	$query = '
+	SELECT
+          [GalleryPermissionMap::itemId]
+        FROM
+          [GalleryPermissionMap]
+        WHERE
+          [GalleryPermissionMap::itemId] = ?
+          AND (' . join(' OR ', $ands) . ')
+          AND ([GalleryPermissionMap::permission] & ? = ?)
+        ';
+	$data = array($itemId);
+	$data = array_merge($data, $userIds, $groupIds);
+	$data[] = $storage->convertIntToBits($bits);
+	$data[] = $storage->convertIntToBits($bits);
+
+	list($ret, $searchResults) =
+	    $gallery->search($query, $data, array('limit' => array('count' => 1)));
+
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), false);
+	}
+
+	return array(GalleryStatus::success(),
+		     $searchResults->resultCount() ? true : false);
     }
 }
 

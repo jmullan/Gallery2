@@ -19,25 +19,27 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+/**
+ * @package GalleryCore
+ * @version $Revision$ $Date$
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
 
 /**
  * The key value is newly created 
  *
- * @constant SESSION_KEY_NEW
  */
 define('SESSION_KEY_NEW', 0x00000001);
 
 /**
  * The key value already exists in the store
  *
- * @constant SESSION_KEY_EXISTS
  */
 define('SESSION_KEY_EXISTS', 0x00000002);
 
 /**
  * The key value has been modified
  *
- * @constant SESSION_KEY_MODIFIED
  */
 define('SESSION_KEY_MODIFIED', 0x00000004);
 
@@ -50,9 +52,8 @@ define('SESSION_KEY_MODIFIED', 0x00000004);
  * @g2   <schema-minor>0</schema-minor>
  * @g2 </schema>
  *
- * @version $Revision$ $Date$
  * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
+ * @subpackage Classes
  */
 class GallerySession_core {
 
@@ -325,8 +326,8 @@ class GallerySession_core {
                 ';
 		
 		/* Find any sessions that are expired */
+		$now = time();
 		list ($ret, $searchResults) =
-		    $now = time();
 		    $gallery->search($query, 
 				      array('core.session.lastModified',
 					    $now,
