@@ -45,11 +45,11 @@ class AddPhotoOptionTest extends ItemAddOptionTestCase {
         parent::setUp();
 
         /* create custom platform to return dummy filesize, imagesize, etc. */
-        $gallery->setPlatform(new AddPhotoToolkitTestPlatform($gallery->getPlatform()));
+        $gallery->setPlatform(new AddPhotoOptionTestPlatform($gallery->getPlatform()));
         
         /* Register dummy toolkit and operations */
         $ret = GalleryCoreApi::registerFactoryImplementation(
-            'GalleryToolkit', 'SizeLimitToolkit', 'SizeLimitToolkit',
+            'GalleryToolkit', 'AddPhotoOptionTestToolkit', 'AddPhotoOptionTestToolkit',
             'modules/sizelimit/test/phpunit/AddPhotoOptionTest.class', 'sizelimitTest', null);
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
@@ -58,7 +58,7 @@ class AddPhotoOptionTest extends ItemAddOptionTestCase {
 	$this->_markFactoryModuleForCleanup('sizelimitTest');
             
         /* applying size limits uses 'compress' */
-        $ret = GalleryCoreApi::registerToolkitOperation('SizeLimitToolkit',
+        $ret = GalleryCoreApi::registerToolkitOperation('AddPhotoOptionTestToolkit',
             array('image/known'), 'compress',
             array(array('type' => 'int', 'description' => 'size')), 'desc');
         if ($ret->isError()) {
@@ -67,7 +67,7 @@ class AddPhotoOptionTest extends ItemAddOptionTestCase {
         }
 
         /* applying dimension limits uses 'resize' */
-        $ret = GalleryCoreApi::registerToolkitOperation('SizeLimitToolkit',
+        $ret = GalleryCoreApi::registerToolkitOperation('AddPhotoOptionTestToolkit',
             array('image/known'), 'resize',
             array(array('type' => 'int', 'description' => 'width'),
             array('type' => 'int', 'description' => 'height')), 'desc');
@@ -77,7 +77,7 @@ class AddPhotoOptionTest extends ItemAddOptionTestCase {
         }
 
         /* we will return dimensions to whoever asks */
-        $ret = GalleryCoreApi::registerToolkitProperty('SizeLimitToolkit',
+        $ret = GalleryCoreApi::registerToolkitProperty('AddPhotoOptionTestToolkit',
             array('image/known'), 'dimensions', 'int,int', 'desc');
         if ($ret->isError()) {
             print $ret->getAsHtml();
@@ -112,7 +112,7 @@ class AddPhotoOptionTest extends ItemAddOptionTestCase {
     function tearDown() {
         global $gallery;
         
-        $ret = GalleryCoreApi::unregisterToolkit('SizeLimitToolkit');
+        $ret = GalleryCoreApi::unregisterToolkit('AddPhotoOptionTestToolkit');
         if ($ret->isError()) {
             return array($ret->wrap(__FILE__, __LINE__), null);
         }
@@ -143,6 +143,12 @@ class AddPhotoOptionTest extends ItemAddOptionTestCase {
         list ($error, $warning) = $this->_handleRequestAfterAdd(array(), $this->_item);
         $this->assertEquals(array(), $error);
         $this->assertEquals(array(), $warning);
+
+	list ($ret, $this->_item) = $this->_item->refresh();
+        if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), null, null);
+        }
+	
         $this->assertEquals(768, $this->_item->getWidth(), 'Width');
         $this->assertEquals(1024, $this->_item->getHeight(), 'Height');
         $operation = GalleryUtilities::getRequestVariables('operation');
@@ -205,6 +211,12 @@ class AddPhotoOptionTest extends ItemAddOptionTestCase {
         $this->assertEquals(array(), $error);
         $this->assertEquals(array(), $warning);
         $platform->clearstatcache();
+
+	list ($ret, $this->_item) = $this->_item->refresh();
+        if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), null, null);
+        }
+	
         /* check item size (in KB) */
         $this->assertEquals(1000, $this->_item->getSize(), 'Size');
         $operation = GalleryUtilities::getRequestVariables('operation');
@@ -243,6 +255,7 @@ class AddPhotoOptionTest extends ItemAddOptionTestCase {
         if ($ret->isError()) {
             return array($ret->wrap(__FILE__, __LINE__), null);
         }
+
         /* check derivative size */
         $this->assertEquals(1000, $resized->getDerivativeSize(), 'Size');
         $operation = GalleryUtilities::getRequestVariables('operation');
@@ -309,25 +322,30 @@ class AddPhotoOptionTest extends ItemAddOptionTestCase {
  * @package ImageMagick
  * @subpackage PHPUnit
  */
-class AddPhotoToolkitTestPlatform extends GalleryPlatform {
+class AddPhotoOptionTestPlatform extends GalleryPlatform {
 
-    function AddPhotoToolkitTestPlatform($originalPlatform) {
+    function AddPhotoOptionTestPlatform($originalPlatform) {
         $this->_savedPlatform = $originalPlatform;
-        $this->_resizePerformed = false;
-        $this->_compressPerformed = false;
+	GalleryUtilities::putRequestVariable('resizePerformed', false);
+	GalleryUtilities::putRequestVariable('compressPerformed', false);
     }
 
     function filesize($file) {
-        return $this->_compressPerformed ? 1000 : 26031966;
+	$compressPerformed = GalleryUtilities::getRequestVariables('compressPerformed');
+        return $compressPerformed ? 1000 : 26031966;
     }
     
     function getimagesize($file) {
-        return $this->_resizePerformed ? array(768, 1024) : array(1728, 2304);
+	$resizePerformed = GalleryUtilities::getRequestVariables('resizePerformed');
+        return $resizePerformed ? array(768, 1024) : array(1728, 2304);
     }
     
     function file_exists($filename) {
+	$compressPerformed = GalleryUtilities::getRequestVariables('compressPerformed');
+	$resizePerformed = GalleryUtilities::getRequestVariables('resizePerformed');
+
         /* if we created a derivative make-believe that the file exists */
-        if ($this->_resizePerformed || $this->_compressPerformed) {
+        if ($resizePerformed || $compressPerformed) {
             return true;
         } else {
             return $this->_savedPlatform->file_exists($filename);
@@ -349,33 +367,30 @@ class AddPhotoToolkitTestPlatform extends GalleryPlatform {
  * @package SizeLimit
  * @subpackage PHPUnit
  */
- 
-class SizeLimitToolkit extends GalleryToolkit {    
+class AddPhotoOptionTestToolkit extends GalleryToolkit {    
     /**
      * @see GalleryToolkit::performOperation()
      */
     function performOperation($mimeType, $operationName, $sourceFilename,
                   $destFilename, $parameters, $context=array()) {
-        global $gallery;
-        $platform = $gallery->getPlatform();
         /* Here we are pretending that conversion happened by setting the flag */
         switch($operationName) {
         case 'compress':
-            $platform->_compressPerformed = true;
+	    GalleryUtilities::putRequestVariable('compressPerformed', true);
             break;
             
         case 'resize':
-            $platform->_resizePerformed = true;
+	    GalleryUtilities::putRequestVariable('resizePerformed', true);
             break;
-        
-        case 'test':
-            $platform->_compressPerformed = true;
-            $platform->_resizePerformed = true;
-            break;
+
+	default:
+	    return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
         }
         GalleryUtilities::putRequestVariable('operation', $operationName);
+
         return array(GalleryStatus::success(), $mimeType, $context);
     }
+
     /**
      * @see GalleryToolkit::getProperty()
      */

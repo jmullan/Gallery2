@@ -45,11 +45,11 @@ class SizeLimitHelperTest extends GalleryTestCase {
         parent::setUp();
 
         /* create custom platform to return dummy filesize, imagesize, etc. */
-        $gallery->setPlatform(new AddPhotoToolkitTestPlatform($gallery->getPlatform()));
+        $gallery->setPlatform(new SizeLimitHelperTestPlatform($gallery->getPlatform()));
         
         /* Register dummy toolkit and operations */
         $ret = GalleryCoreApi::registerFactoryImplementation(
-            'GalleryToolkit', 'SizeLimitToolkit', 'SizeLimitToolkit',
+            'GalleryToolkit', 'SizeLimitHelperTestToolkit', 'SizeLimitHelperTestToolkit',
             'modules/sizelimit/test/phpunit/SizeLimitHelperTest.class', 'sizelimitTest', null);
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
@@ -58,7 +58,7 @@ class SizeLimitHelperTest extends GalleryTestCase {
 	$this->_markFactoryModuleForCleanup('sizelimitTest');
             
         /* applying size limits uses 'compress' */
-        $ret = GalleryCoreApi::registerToolkitOperation('SizeLimitToolkit',
+        $ret = GalleryCoreApi::registerToolkitOperation('SizeLimitHelperTestToolkit',
             array('image/known'), 'test',
             array(array('type' => 'int', 'description' => 'size')), 'desc');
         if ($ret->isError()) {
@@ -67,7 +67,7 @@ class SizeLimitHelperTest extends GalleryTestCase {
         }
 
         /* we will return dimensions to whoever asks */
-        $ret = GalleryCoreApi::registerToolkitProperty('SizeLimitToolkit',
+        $ret = GalleryCoreApi::registerToolkitProperty('SizeLimitHelperTestToolkit',
             array('image/known'), 'dimensions', 'int,int', 'desc');
         if ($ret->isError()) {
             print $ret->getAsHtml();
@@ -102,7 +102,7 @@ class SizeLimitHelperTest extends GalleryTestCase {
     function tearDown() {
         global $gallery;
         
-        $ret = GalleryCoreApi::unregisterToolkit('SizeLimitToolkit');
+        $ret = GalleryCoreApi::unregisterToolkit('SizeLimitHelperTestToolkit');
         if ($ret->isError()) {
             return array($ret->wrap(__FILE__, __LINE__), null);
         }
@@ -155,6 +155,12 @@ class SizeLimitHelperTest extends GalleryTestCase {
         }
         $ret = SizeLimitHelper::applyLimits($this->_item, 'test', array(26));
         $this->assert($ret->isSuccess(), 'applyLimits');
+
+	list ($ret, $this->_item) = $this->_item->refresh();
+        if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), null, null);
+        }
+	
         $this->assertEquals(1000, $this->_item->getSize(), 'Size');
     }
     
@@ -176,6 +182,99 @@ class SizeLimitHelperTest extends GalleryTestCase {
             
         $ret = SizeLimitHelper::applyLimits($this->_itemUnknown, 'test', array(26));
         $this->assertEquals(GALLERY_ERROR | ERROR_UNSUPPORTED_FILE_TYPE, $ret->getErrorCode(), 'Unknown format');
+    }
+}
+
+/**
+ * Test platform
+ *
+ * @package ImageMagick
+ * @subpackage PHPUnit
+ */
+class SizeLimitHelperTestPlatform extends GalleryPlatform {
+
+    function SizeLimitHelperTestPlatform($originalPlatform) {
+        $this->_savedPlatform = $originalPlatform;
+	GalleryUtilities::putRequestVariable('resizePerformed', false);
+	GalleryUtilities::putRequestVariable('compressPerformed', false);
+    }
+
+    function filesize($file) {
+	$compressPerformed = GalleryUtilities::getRequestVariables('compressPerformed');
+        return $compressPerformed ? 1000 : 26031966;
+    }
+    
+    function getimagesize($file) {
+	$resizePerformed = GalleryUtilities::getRequestVariables('resizePerformed');
+        return $resizePerformed ? array(768, 1024) : array(1728, 2304);
+    }
+    
+    function file_exists($filename) {
+	$compressPerformed = GalleryUtilities::getRequestVariables('compressPerformed');
+	$resizePerformed = GalleryUtilities::getRequestVariables('resizePerformed');
+
+        /* if we created a derivative make-believe that the file exists */
+        if ($resizePerformed || $compressPerformed) {
+            return true;
+        } else {
+            return $this->_savedPlatform->file_exists($filename);
+        }
+    }
+
+    function unlink($filename) {
+        /* if it is a derivative - we didn't really create it */
+        if ($this->_savedPlatform->file_exists($filename)) {
+            return $this->_savedPlatform->unlink($filename);
+        } else {
+            return true;
+        }
+    }
+}
+
+/**
+ * Test toolkit
+ * @package SizeLimit
+ * @subpackage PHPUnit
+ */
+class SizeLimitHelperTestToolkit extends GalleryToolkit {    
+    /**
+     * @see GalleryToolkit::performOperation()
+     */
+    function performOperation($mimeType, $operationName, $sourceFilename,
+                  $destFilename, $parameters, $context=array()) {
+        /* Here we are pretending that conversion happened by setting the flag */
+        switch($operationName) {
+        case 'test':
+	    GalleryUtilities::putRequestVariable('compressPerformed', true);
+	    GalleryUtilities::putRequestVariable('resizePerformed', true);
+            break;
+
+	default:
+	    return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
+        }
+        GalleryUtilities::putRequestVariable('operation', $operationName);
+
+        return array(GalleryStatus::success(), $mimeType, $context);
+    }
+
+    /**
+     * @see GalleryToolkit::getProperty()
+     */
+    function getProperty($mimeType, $propertyName, $file) {
+        global $gallery;
+
+        /* Our 'mime type' has to support dimensions */
+        switch($propertyName) {
+        case 'dimensions':
+            $platform = $gallery->getPlatform();
+            $results = $platform->getimagesize($file);
+            break;
+        
+        default:
+            return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
+        }
+        
+        return array(GalleryStatus::success(), $results);
     }
 }
 ?>
