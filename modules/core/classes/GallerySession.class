@@ -324,10 +324,39 @@ class GallerySession {
 	if ($platform->file_exists($sessionFile)) {
 	    $platform->unlink($sessionFile);
 	}
+
+	/*
+	 * Unset the cookie and any request variables so that
+	 * we'll regenerate a new id in init()
+	 */
+	unset($_REQUEST[SESSION_ID_PARAMETER]);
+	unset($_COOKIE[SESSION_ID_PARAMETER]);
+
 	$ret = $this->init();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Regenerate the session ID to prevent a session fixation attack
+     * by a hostile website
+     *
+     * @return object GalleryStatus a status code
+     */
+    function regenerate() {
+	/* Store the current session data */
+        $localSessionData = $this->_sessionData;
+        $localLoadedSessionData = $this->_loadedSessionData;
+
+	/* Reset the session data to create a new session id */
+	$this->reset();
+
+	/* Restore the stored session data */
+	$this->_sessionData = $localSessionData;
+	$this->_loadedSessionData = $localLoadedSessionData;
 
 	return GalleryStatus::success();
     }

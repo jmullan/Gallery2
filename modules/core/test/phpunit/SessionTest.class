@@ -456,6 +456,44 @@ class SessionTest extends GalleryTestCase {
 	}
     }
 
+    function testRegenerateSessionId() {
+	    /* Verify that our original session has not been nuked */
+	    $_SERVER['HTTP_USER_AGENT'] = 'TEST_USER_AGENT';
+	    $_SERVER['REMOTE_ADDR'] = '1.1.1.1';
+	    $session = new GallerySession();
+	    $ret = $session->init();
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+
+	    /* Set a value we can test after regeneration */
+            $key = 'test-key';
+	    $value = md5(date('c') . $session->getSessionId());
+            $session->put($key, $value);
+	    $ret = $session->save();
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+            }
+
+	    /* Verify the value was set */
+	    $this->assertEquals($value, $session->get($key));
+
+	    /* Store the session id */
+	    $sessionIdPreRegen = $session->getSessionId();
+
+	    /* Regenerate the session */
+	    $ret = $session->regenerate();
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+            }
+
+	    /* Verify that the test value is still set, and that the session ID actually changed */
+	    $this->assertEquals($value, $session->get($key));
+	    $this->assert($sessionIdPreRegen != $session->getSessionId(), 
+			    'Session ID did not change on regenerate');
+    }
+
+
     function testSearchEngineCrawlerSessions() {
 	unset($_COOKIE[SESSION_ID_PARAMETER]);
 	$_SERVER['HTTP_USER_AGENT'] = 'Googlebot/2.1 (+http://www.google.com/bot.html)';

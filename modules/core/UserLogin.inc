@@ -62,6 +62,9 @@ class UserLoginController extends GalleryController {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 
+		    $session =& $gallery->getSession();
+		    $session->regenerate();
+
 		    // Redirect if requested by event listener, otherwise return
 		    if (!empty($redirect)) {
 			$results['redirect'] = array_shift($redirect);

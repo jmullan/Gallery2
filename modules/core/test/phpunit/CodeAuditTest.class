@@ -46,16 +46,22 @@ class CodeAuditTest extends CodeAuditTestCase {
 	$this->_exception['superglobals'] =
 	    array(
 		  'FILES' => array(
-				   'modules/core/classes/GalleryUtilities.class' => 1
+				   'modules/core/classes/GalleryUtilities.class' => 1,
 				   ),
 		  'POST' => array(
-				   'modules/core/classes/GalleryUtilities.class' => 1
+				   'modules/core/classes/GalleryUtilities.class' => 1,
 				  ),
 		  'GET' => array(
-				   'modules/core/classes/GalleryUtilities.class' => 1
+				   'modules/core/classes/GalleryUtilities.class' => 1,
+				 ),
+		  'REQUEST' => array(
+				   'modules/core/classes/GallerySession.class' => 1,
+				 ),
+		  'COOKIE' => array(
+				   'modules/core/classes/GallerySession.class' => 1,
 				 ),
 		  'SERVER' => array(
-				   'modules/core/classes/GalleryUtilities.class' => 1
+				   'modules/core/classes/GalleryUtilities.class' => 1,
 				 ),
 		  );
 	
@@ -98,7 +104,7 @@ class CodeAuditTest extends CodeAuditTestCase {
 	     * get remote exploits.
 	     */
 	    if ($checkSuperglobals && preg_match_all(
-		    '/\$_(REQUEST|POST|GET|SESSION|FILES|SERVER)/', $lines[$i], $matches)) {
+		    '/\$_(REQUEST|POST|GET|SESSION|FILES|SERVER|COOKIE)/', $lines[$i], $matches)) {
 		foreach (array_unique($matches[1]) as $item) {
 		    if (isset($this->_exception['superglobals'][$item][$fileName])) {
 			continue;
