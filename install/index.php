@@ -118,7 +118,7 @@ if (isset($_GET['step'])) {
 
 /* Make sure all steps up to the current one are ok */
 for ($i = 0; $i < $stepNumber; $i++) {
-    if (!$steps[$i]->isComplete()) {
+    if (!$steps[$i]->isComplete() && ! $steps[$i]->isOptional()) {
 	$stepNumber = $i;
 	break;
     }
