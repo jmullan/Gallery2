@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -27,7 +27,7 @@
 
 /**
  * All image functions from the GD library are implemented here.
- * 
+ *
  * Every call to these functions should go through this class. Errors are
  * handled the Gallery-way (GalleryStatus) and it provides an easy way to
  * test the Toolkit (by using an implementation with pseudo-functionality
@@ -44,7 +44,7 @@ class GdFunctionality {
      */
 
     /**
-     * 
+     *
      * @return array object GalleryStatus
      *	       string phpinfo output
      */
@@ -59,7 +59,7 @@ class GdFunctionality {
     /**
      * The tempnam method from the GalleryPlatform we will need to overwrite
      * in our testcases
-     * 
+     *
      * @return string
      */
     function tempnam($tmpDir, $prefix) {
@@ -69,9 +69,21 @@ class GdFunctionality {
     }
 
     /**
+     * The copy method from GalleryPlatform, which we also need to be able
+     * to overwrite in our testcases
+     *
+     * @return string
+     */
+    function copy($src, $dest) {
+	global $gallery;
+	$platform = $gallery->getPlatform();
+	return $platform->copy($src, $dest);
+    }
+
+    /**
      * The unlink method from GalleryPlatform, which we also need to be able
      * to overwrite in our testcases
-     * 
+     *
      * @return string
      */
     function unlink($file) {
@@ -82,19 +94,19 @@ class GdFunctionality {
 
     /**
      * Just check if a function exists or not.
-     * 
+     *
      * This is here so we can substitute the function-checker routine in our
      * phpunit testcases.
-     * 
+     *
      * @return boolean true if exists
      */
     function functionExists($fct) {
 	return function_exists($fct);
     }
-    
+
     /**
      * Return an integer representing the known imageTypes
-     * 
+     *
      * @return int
      */
     function imageTypes() {
@@ -103,10 +115,10 @@ class GdFunctionality {
 
     /**
      * Return an array of information about the currently installed GD version
-     * 
+     *
      * Requires:
      * - PHP 4 >= 4.3.0, PHP 5
-     * 
+     *
      * @return array object GalleryStatus
      *	       array the output of gd_info
      */
@@ -121,7 +133,7 @@ class GdFunctionality {
 
     /**
      * Return the size (width, height) of an image file.
-     * 
+     *
      * @return array (x, y)
      */
     function getImageSize($filename) {
@@ -132,10 +144,10 @@ class GdFunctionality {
 
     /**
      * Create a new palette based image with specified width and height
-     * 
+     *
      * Requires:
      * - any PHP
-     * 
+     *
      * @return array object GalleryStatus
      *	       res GD-resource
      */
@@ -150,18 +162,18 @@ class GdFunctionality {
 
     /**
      * Create a new true color image with specified width and height
-     * 
+     *
      * Requires:
      * - PHP 4 >= 4.0.6 or PHP 5
      * - GD >= 2.0.1
-     * 
+     *
      * Danger: The imageCreateTruecolor() function is defined even if the
      * GD library does not support it! If called in this situation, the call
      * will generate a "Fatal error", which cannot be catched. So we have to
      * make sure to call this method ONLY if we are sure to have GD >= 2.0.1
      * (which at the current stage of this module will always be the case,
      * since this is the minimal required version).
-     * 
+     *
      * @return array object GalleryStatus
      *	       res GD-resource
      */
@@ -176,17 +188,17 @@ class GdFunctionality {
 	}
 	return array(GalleryStatus::success(), $res);
     }
-    
+
     /**
      * Helper functionality to see if a filename is readable
-     * 
+     *
      * @return boolean
      */
     function isValidFile($filename) {
 	global $gallery;
 	$platform = $gallery->getPlatform();
 	if (! $platform->file_exists($filename)
-	      || ! $platform->is_file($filename) 
+	      || ! $platform->is_file($filename)
 	      || ! $platform->is_readable($filename)) {
 	    return false;
 	}
@@ -195,7 +207,7 @@ class GdFunctionality {
 
     /**
      * Check if a resource that is based on $filename is valid
-     * 
+     *
      * @return array object GalleryStatus
      *	       resource GD resource
      */
@@ -213,11 +225,11 @@ class GdFunctionality {
 
     /**
      * Create a new image from GIF file or URL.
-     * 
+     *
      * Requires
      * - any PHP version
      * - GD with GIF support
-     * 
+     *
      * @return array object GalleryStatus
      *	       res GD-resource
      */
@@ -307,11 +319,11 @@ class GdFunctionality {
 
     /**
      * Output GIF image to file.
-     * 
+     *
      * Requires:
      * - any PHP
      * - GD with GIF support
-     * 
+     *
      * @return object GalleryStatus
      */
     function imageGif($res, $filename) {
@@ -328,11 +340,11 @@ class GdFunctionality {
 
     /**
      * Output JPEG image to file.
-     * 
+     *
      * Requires:
      * - any PHP >= 3.0.16
      * - GD >= 1.8
-     * 
+     *
      * @return object GalleryStatus
      */
     function imageJpeg($res, $filename) {
@@ -349,11 +361,11 @@ class GdFunctionality {
 
     /**
      * Output PNG image to file.
-     * 
+     *
      * Requires:
      * - any PHP 3>= 3.0.13
      * - GD
-     * 
+     *
      * @return object GalleryStatus
      */
     function imagePng($res, $filename) {
@@ -370,11 +382,11 @@ class GdFunctionality {
 
     /**
      * Output WBMP image to file.
-     * 
+     *
      * Requires:
      * - PHP 3>= 3.0.15 or PHP 4 >= 4.0.1 or PHP 5
      * - GD >= 1.8 (for WBMP support)
-     * 
+     *
      * @return object GalleryStatus
      */
     function imageWbmp($res, $filename) {
@@ -391,10 +403,10 @@ class GdFunctionality {
 
     /**
      * Output XBM image to file.
-     * 
+     *
      * Requires:
      * - PHP 5
-     * 
+     *
      * @return object GalleryStatus
      */
     function imageXbm($res, $filename) {
@@ -411,11 +423,11 @@ class GdFunctionality {
 
     /**
      * Copy and resize part of an image with resampling
-     * 
+     *
      * Requires:
      * - PHP 4 >= 4.0.6 or PHP 5
      * - GD >= 2.0.1
-     * 
+     *
      * @return object GalleryStatus
      */
     function imageCopyResampled($dstRes, $srcRes, $dstX, $dstY, $srcX, $srcY, $dstW, $dstH, $srcW, $srcH) {
@@ -432,10 +444,10 @@ class GdFunctionality {
 
     /**
      * Copy and resize part of an image
-     * 
+     *
      * Requires:
      * - any PHP
-     * 
+     *
      * @return object GalleryStatus
      */
     function imageCopyResized($dstRes, $srcRes, $dstX, $dstY, $srcX, $srcY, $dstW, $dstH, $srcW, $srcH) {
@@ -449,10 +461,10 @@ class GdFunctionality {
 
     /**
      * Copy and merge part of an image
-     * 
+     *
      * Requires:
      * - PHP 4 >= 4.0.1 or PHP 5
-     * 
+     *
      * @return object GalleryStatus
      */
     function imageCopyMerge($dstRes, $srcRes, $dstX, $dstY, $srcX, $srcY, $srcW, $srcH, $pct) {
@@ -466,10 +478,10 @@ class GdFunctionality {
 
     /**
      * Copy part of an image
-     * 
+     *
      * Requires:
      * - any PHP >= 3.0.6
-     * 
+     *
      * @return object GalleryStatus
      */
     function imageCopy($dstRes, $srcRes, $dstX, $dstY, $srcX, $srcY, $srcW, $srcH) {
@@ -480,10 +492,10 @@ class GdFunctionality {
 	    return GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__);
 	}
     }
-    
+
     /**
      * Get image width
-     * 
+     *
      * @return int the width of the image
      */
     function imageSx($res) {
@@ -492,19 +504,19 @@ class GdFunctionality {
 
     /**
      * Get image height
-     * 
+     *
      * @return int the height of the image
      */
     function imageSy($res) {
 	return array(GalleryStatus::success(), @imageSy($res));
     }
-    
+
     /**
      * Copy and merge part of an image
-     * 
+     *
      * Requires:
      * - PHP 4 >= 4.3.0 or PHP 5
-     * 
+     *
      * @return array object GalleryStatus
      *	       resource new gd resource
      */

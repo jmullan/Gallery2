@@ -161,6 +161,10 @@ class TestGdFunctionality {
 	return rand();
     }
 
+    function copy($filename) {
+	return true;
+    }
+
     function unlink($filename) {
 	if (! isset($this->_outputFiles[$filename])) {
 	    return false;

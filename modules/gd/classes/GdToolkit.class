@@ -161,6 +161,13 @@ class GdToolkit extends GalleryToolkit {
 	    if ($operationName == 'thumbnail') {
 		/* Don't enlarge images for a thumbnail */
 		if ($width <= $parameters[0] && $height <= $targetHeight) {
+		    /* Just copy the source to the destination */
+		    if ($sourceFilename != $destFilename) {
+			if (!$gd->copy($sourceFilename, $destFilename)) {
+			    return array(GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__),
+					 null, null);
+			}
+		    }
 		    return array(GalleryStatus::success(), $mimeType, $context);
 		}
 	    }
