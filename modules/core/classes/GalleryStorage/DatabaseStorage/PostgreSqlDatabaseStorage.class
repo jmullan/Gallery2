@@ -173,6 +173,10 @@ class PostgreSqlDatabaseStorage extends DatabaseStorage {
 	    $sql = 'date_part(\'epoch\', ' . $args[0] . ')';
 	    break;
 	    
+	case 'RAND':
+	    $sql = sprintf('RANDOM(%s)', empty($args) ? '' : $args[0]);
+	    break;
+
 	default:
 	    return array(GalleryStatus::ERROR_UNIMPLEMENTED(__FILE__, __LINE__), null);
 	}

@@ -106,6 +106,10 @@ class MySqlDatabaseStorage extends DatabaseStorage {
 	    $sql = sprintf('UNIX_TIMESTAMP(%s)', $args[0]);
 	    break;
 
+	case 'RAND':
+	    $sql = sprintf('RAND(%s)', empty($args) ? '' : $args[0]);
+	    break;
+
 	default:
 	    return array(GalleryStatus::ERROR_UNIMPLEMENTED(__FILE__, __LINE__), null);
 	}
