@@ -45,8 +45,22 @@ class MatrixTheme extends GalleryTheme {
      * @return string HTML content
      */
     function style() {
-	return sprintf('<style type="text/css" media="all">@import url(%s);</style>',
-		       $this->getBaseUrl() . 'styles/theme.css');
+	global $gallery;
+
+	$style[] = sprintf('<style type="text/css" media="all">@import url(%s);</style>',
+			   $this->getBaseUrl() . 'styles/theme.css');
+
+	// TODO: remove the file_exists check once Chad creates positioning.css
+	$platform = $gallery->getPlatform();
+	if ($platform->file_exists(dirname(__FILE__) . '/styles/positioning.css')) {
+	    $view = GalleryUtilities::getRequestVariables('view');
+	    if (!empty($view) && $view != 'core:ShowItem') {
+		$style[] = sprintf('<style type="text/css" media="all">@import url(%s);</style>',
+				   $this->getBaseUrl() . 'styles/positioning.css');
+	    }
+	}
+
+	return join("\n", $style);
     }
 }
 ?>
