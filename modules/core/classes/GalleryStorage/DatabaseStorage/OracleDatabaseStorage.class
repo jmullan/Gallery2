@@ -119,6 +119,14 @@ class OracleDatabaseStorage extends DatabaseStorage {
 	    $sql = 'SELECT * FROM (' . $args[1] . ') WHERE ROWNUM <= ' . $args[0];
 	    break;
 
+	case 'CASE':
+	    $sql = array();
+	    while (count($args) > 1) {
+		$sql[] = 'WHEN ' . array_shift($args) . ' THEN ' . array_shift($args);
+	    }
+	    $sql = 'CASE ' . implode(' ', $args) . ' ELSE ' . $args[0];
+	    break;
+
 	default:
 	    return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__,
 					      $functionName . ' ' . implode(' ', $args)), null);

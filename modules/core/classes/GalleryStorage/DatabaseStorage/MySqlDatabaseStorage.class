@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -84,7 +84,7 @@ class MySqlDatabaseStorage extends DatabaseStorage {
 	} else {
 	    $tableType = 'MyISAM';
 	}
-	
+
 	return array('DB_TABLE_TYPE' => $tableType);
     }
 
@@ -119,6 +119,14 @@ class MySqlDatabaseStorage extends DatabaseStorage {
 
 	case 'LIMIT':
 	    $sql = $args[1] . ' LIMIT ' . $args[0];
+	    break;
+
+	case 'CASE': // condition value (condition value)* else-value
+	    $sql = array();
+	    for ($i = 0; count($args) > 1; $i++) {
+		$sql[] = 'IF(' . array_shift($args) . ', ' . array_shift($args) . ', ';
+	    }
+	    $sql = implode('', $sql) . $args[0] . str_repeat(')', $i);
 	    break;
 
 	default:
