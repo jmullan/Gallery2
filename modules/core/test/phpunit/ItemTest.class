@@ -248,7 +248,7 @@ class ItemTest extends GalleryTestCase {
     function testGetChildCounts() {
 	global $gallery;
 
-	list ($ret, $counts) = GalleryItemHelper::getChildCounts(array($this->_parentItem->getId()));
+	list ($ret, $counts) = GalleryItemHelper::fetchChildCounts(array($this->_parentItem->getId()));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

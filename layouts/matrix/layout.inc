@@ -91,8 +91,8 @@ class MatrixLayout extends GalleryLayout {
 	$children = array();
 
 	/* Count the total number of children */
-	/* XXX: we could combine this with the other getChildCounts() call below */
-	list ($ret, $totalChildCount) = GalleryItemHelper::getChildCounts(array($item->getId()));
+	/* XXX: we could combine this with the other fetchChildCounts() call below */
+	list ($ret, $totalChildCount) = GalleryItemHelper::fetchChildCounts(array($item->getId()));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -131,7 +131,7 @@ class MatrixLayout extends GalleryLayout {
 	    }
 
 	    /* Get the "grandchild" counts */
-	    list ($ret, $childCounts) = GalleryItemHelper::getChildCounts($childIds);
+	    list ($ret, $childCounts) = GalleryItemHelper::fetchChildCounts($childIds);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
