@@ -4,7 +4,9 @@
  * Gallery will look for that file first and use it if it exists
  * and when you upgrade, your changes will not get overwritten.
  *}
-<title>{$layout.title|markup}</title>
+<title>
+  {$layout.item.title|default:$layout.item.pathComponent|markup:stripBbcodeAndHtml}
+</title>
 <link rel="stylesheet" type="text/css" href="{$layout.layoutUrl}/templates/hybrid.css" />
 {g->style}
 {if isset($layout.frame)}

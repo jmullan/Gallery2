@@ -8,7 +8,7 @@ table, tr, td {
     border-spacing: 0px !important;
 }
 img {
-    border: 0px !important;
+    border-width: 0px !important;
 }
 img.off {
     position: absolute;
@@ -18,15 +18,14 @@ img.off {
 img.hid {
     visibility: hidden;
 }
-div#album {
+div#gsContents {
     position: absolute;
     top: 0px;
-    left: 180px;
+    left: 150px;
     right: 0px;
-    height: 101%;
-    margin: 0px;
-    padding: 0px;
-    clear: both;
+    height: 100%;
+    margin: 0px !important;
+    padding: 0px !important;
 }
 div#album_titlebar {
     overflow: hidden;
@@ -46,59 +45,54 @@ div#album_tools {
 div#album_tools img.on {
     margin-right: 1px;
 }
-div#album_content {
+div#gsAlbumContents {
     position: absolute;
     top: 40px;
     left: 0px;
     width: 100%;
-    height: 100%;
-    background-color: #ddd;
-    overflow: auto;
-    /*
     bottom: 0px;
-    */
+    background-color: #ddd !important;
+    overflow: auto;
 }
-div#album table.content {
-    margin: 10px 0px 1px 10px;
+div#gsContents table.content {
+    margin: 3px 0px 1px 3px;
 }
-div#album table.text {
+div#gsContents table.text {
     width: 100%;
 }
-div#album td.i {
-    vertical-align: top;
-    padding: 0px 5px 3px 0px;
+div#gsContents td.i {
+  vertical-align:top;
+  padding:0px 5px 3px 0px;
 }
-div#album td.t {
-    vertical-align: top;
-    width: 40%;
+div#gsContents td.t {
+  vertical-align:top;
+  width:40%;
 }
-div#album td.t img {
-    margin-left: 1px;
+div#gsContents td.t img {
+  margin-left:1px;
 }
-div#album td.t span.title {
-    display: block;
-    margin-right: 6px;
-    padding: 0px 1px 0px 2px;
+div#gsContents td.t span.title {
+    display:block;
+    margin-right:6px;
+    padding:0px 1px 0px 2px;
 }
-div#album td.t span.text {
-    margin-right: 6px;
-    padding: 0px 1px 0px 2px;
+div#gsContents td.t span.text {
+    margin-right:6px;
+    padding:0px 1px 0px 2px;
 }
 div#sidebar {
     position: absolute;
     top: 0px;
     left: 0px;
-    padding: 0;
-    overflow: auto;
-    /*
     height: 100%;
+    padding: 0px !important;
+    overflow: auto;
     border-right-width: 1px;
-    */
 }
 div#image {
     position: absolute;
-    /*bottom: 10px;*/
     top: 0px;
+    bottom: 10px;
     left: 0px;
     width: 100%;
     overflow: hidden;
@@ -161,24 +155,22 @@ div#popup_menu {
     padding: 1px 11px 3px 2px;
     border-width: 3px !important;
 }
+
 div#album_titlebar { 
     background-color: #bbb;
     border-bottom-style: solid !important;
     border-bottom-color: black !important;
 }
-
-div#album td.i {
+div#gsContents td.i {
     text-align: center;
 }
-div#album td.t span.title {
+div#gsContents td.t span.title {
     background-color: #bbb !important;
 }
 div#sidebar { 
     background-color: white;
-    /*
     border-right-style: solid;
     border-right-color: black;
-    */
 }
 div#image {
     background-color: #bbb !important;
@@ -213,6 +205,7 @@ div#popup_menu {
     border-color: #999 !important;
 }
 
+/*
 #gsSidebar {
     width: 180px;
     border-right: 0px !important;
@@ -234,6 +227,7 @@ div#popup_menu {
 .gbMenu ul ul {
 	margin: 0 0 0.5em 1.0em;
 }
+*/
 #gsFooter {
     /*bottom: 0px;*/
     margin: 0 15px 0 0;

@@ -22,7 +22,7 @@
         <tr>
           <td>
             <h1 class="giTitle">
-              {$layout.item.title|markup}
+              {$layout.item.title|default:$layout.item.pathComponent|markup}
             </h1>
             <p class="giDescription">
               {$layout.item.description|markup}
@@ -41,12 +41,12 @@
               <li>
                 {g->text one="Size: %d item"
                          many="Size: %d items"
-                                count=$layout.totalChildCount
-                                arg1=$layout.totalChildCount}
+                                count=$layout.childCount
+                                arg1=$layout.childCount}
                 {g->text one="(%d item total)"
                                 many="(%d items total)"
-                                count=$layout.totalDescendentCount
-                                arg1=$layout.totalDescendentCount}
+                                count=$layout.descendentCount
+                                arg1=$layout.descendentCount}
               </li>    
               {if $layout.showAlbumOwner}
               <li>
@@ -63,7 +63,7 @@
       {include file="gallery:layouts/matrix/templates/itemNavigator.tpl"}
     </div>
     
-    {if (sizeof($layout.children) > 0)}
+    {if count($layout.children) > 0}
     {assign var="childrenInColumnCount" value=0}
     <table id="gbThumbMatrix">
       <tr>
@@ -101,11 +101,11 @@
 	      </a>
 	    {/if}
 
-            {if !empty($layout.moduleItemLinks[$child.id])}
+            {if !empty($child.itemLinks)}
             <select onchange="{literal}javascript:if (this.value) { newLocation = this.value; this.options[0].selected = true; location.href= newLocation; }{/literal}" class="giActionSelect">
               <option label="{if $child.canContainChildren}{g->text text="&laquo; album actions &raquo;"}{else}{g->text text="&laquo; item actions &raquo;"}{/if}" value="">{if $child.canContainChildren}{g->text text="&laquo; album actions &raquo;"}{else}{g->text text="&laquo; item actions &raquo;"}{/if}</option>
 
-              {foreach from=$layout.moduleItemLinks[$child.id] item=link}
+              {foreach from=$child.itemLinks item=link}
               <option label="{$link.text}" value="{$link.url}">{$link.text}</option>
               {/foreach}
             </select>
@@ -127,44 +127,40 @@
           <ul class="giInfo">
             <li>
               {if !empty($layout.useCaptureDate) && isset($child.captureTimestamp)}
-              {capture name=captureTimestamp}{g->date timestamp=$child.captureTimestamp}{/capture}
-              {g->text text="Date: %s" arg1=$smarty.capture.captureTimestamp}
+              {capture name=childTimestamp}{g->date timestamp=$child.captureTimestamp}{/capture}
               {else}
-              {capture name=creationTimestamp}{g->date timestamp=$child.creationTimestamp}{/capture}
-              {g->text text="Date: %s" arg1=$smarty.capture.creationTimestamp}
+              {capture name=childTimestamp}{g->date timestamp=$child.creationTimestamp}{/capture}
               {/if}
+              {g->text text="Date: %s" arg1=$smarty.capture.childTimestamp}
             </li>
             
             {if ($child.canContainChildren && $layout.showAlbumOwner) || (!$child.canContainChildren && $layout.showImageOwner)}
             <li>
               {g->text text="Owner: %s"
-                       arg1=$layout.owners[$child.ownerId].fullName|default:$layout.owners[$child.ownerId].userName}
+                       arg1=$layout.ownerMap[$child.ownerId].fullName|default:$layout.ownerMap[$child.ownerId].userName}
             </li>
             {/if}
 
-            {if ($child.childCount > 0)}
+            {if ($child.canContainChildren && $child.childCount > 0)}
             <li>
-              {g->text one="Size: %d item"
-                       many="Size: %d items"
-                       count=$child.childCount
-                       arg1=$child.childCount}
-              {g->text one="(%d item total)"
-                       many="(%d items total)"
-                       count=$child.descendentCount
-                       arg1=$child.descendentCount}
+              {g->text one="Size: %d item" many="Size: %d items"
+                       count=$child.childCount arg1=$child.childCount}
+              {if $child.descendentCount > $child.childCount}
+                {g->text one="(%d item total)" many="(%d items total)"
+                         count=$child.descendentCount arg1=$child.descendentCount}
+              {/if}
             </li>
             {/if}
 
-            {if ($layout.viewCounts[$child.id] > 0)}
+            {if ($child.viewCount > 0)}
             <li>
-              {g->text text="Views: %d"
-                       arg1=$layout.viewCounts[$child.id]}
+              {g->text text="Views: %d" arg1=$child.viewCount}
             </li>
             {/if}
 
-            {foreach from=$child.moduleSummaries item=module}
+            {foreach from=$child.itemSummaries item=summary}
             <li>
-              {$module}
+              {$summary}
             </li>
             {/foreach}
 
@@ -186,8 +182,8 @@
     </div>
     {/if}
 
-    {if !empty($layout.moduleItemDetailFiles)}
-    {foreach from=$layout.moduleItemDetailFiles key=moduleId item=detailFile}
+    {if !empty($layout.itemDetailFiles)}
+    {foreach from=$layout.itemDetailFiles key=moduleId item=detailFile}
     {include file="gallery:$detailFile" l10Domain="modules_$moduleId"}
     {/foreach}
     {/if}

@@ -76,60 +76,48 @@ class HybridLayout extends GalleryLayout {
 	    }
 	}
 
-	list ($ret, $params) = $this->fetchParameters($item->getId());
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	$layout = array();
-	$layout['title'] = $item->getTitle();
-	if (empty($layout['title'])) {
-	    $layout['title'] = $item->getPathComponent();
-	}
-	$layout['item'] = $item->getMemberData();
-
 	if (!$item->getCanContainChildren() && $detail) {
-	    /* Get item details */
-	    list ($ret, $moduleItemDetailFiles) = $this->_loadModuleItemDetails($template, $item);
+	    $ret = $this->loadLayoutTemplate($template, $item,
+		array('owner', 'viewCount', 'itemDetailFiles'));
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    $layout['moduleItemDetailFiles'] = $moduleItemDetailFiles;
-	    /* Get thumbnail */
+	    $layout =& $template->getVariableByReference('layout');
 	    list ($ret, $thumbnail) =
 		GalleryCoreApi::fetchThumbnailsByItemIds(array($item->getId()));
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    if (!empty($thumbnail)) {
-		$layout['thumb'] = $thumbnail[$item->getId()]->getMemberData();
+		$layout['thumbnail'] = $thumbnail[$item->getId()]->getMemberData();
 	    }
-	    /* Get view count */
-	    list ($ret, $viewCount) = GalleryCoreApi::fetchItemViewCounts(array($item->getId()));
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    if (!empty($viewCount)) {
-		$layout['viewCount'] = $viewCount[$item->getId()];
-	    }
-	    /* Get owner */
-	    list ($ret, $tmp) = GalleryCoreApi::loadEntitiesById($item->getOwnerId());
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    $layout['owner'] = $tmp->getMemberData();
-	    $template->setVariable('layout', $layout);
 	    return array(GalleryStatus::success(),
 	                 array('html' => 'layouts/hybrid/templates/detail.tpl'));
 	}
 
-	list ($ret, $itemList, $imageWidths, $imageHeights) = $this->_buildItemList($item);
+	list ($ret, $params) = $this->fetchParameters($item->getId());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$layout['itemList'] = $itemList;
-	$layout['count'] = count($itemList);
+	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($item);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$ret = $this->loadLayoutTemplate($template, $item,
+	    array('owner', 'viewCount', 'systemLinks', 'systemContentFiles', 'itemLinks'),
+	    $childIds);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$layout =& $template->getVariableByReference('layout');
+
+	list ($ret, $imageWidths, $imageHeights) =
+	    $this->_buildItemList($childIds, $layout['children']);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 	$layout['imageWidths'] = implode(',',$imageWidths);
 	$layout['imageHeights'] = implode(',',$imageHeights);
 	$layout['imageCount'] = count($imageWidths);
@@ -140,10 +128,10 @@ class HybridLayout extends GalleryLayout {
 
 	/* Init view with specific image */
 	if (isset($viewItemId)) {
-	    foreach ($itemList as $tmp) {
-		if ($tmp['id'] == $viewItemId) {
-		    if (isset($tmp['imageIndex'])) {
-			$layout['viewIndex'] = $tmp['imageIndex'];
+	    foreach ($layout['children'] as $child) {
+		if ($child['id'] == $viewItemId) {
+		    if (isset($child['imageIndex'])) {
+			$layout['viewIndex'] = $child['imageIndex'];
 			/* Set cookie to popup image just once */
 			$cook = 'G2_hybrid_' . $item->getId();
 			setcookie($cook, '-2' .
@@ -155,31 +143,6 @@ class HybridLayout extends GalleryLayout {
 	    }
 	}
 
-	/* Get system links */
-	list ($ret, $moduleSystemLinks) = $this->_getModuleSystemLinks();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	/* Get system content */
-	list ($ret, $moduleSystemContentFiles) = $this->_loadModuleSystemContent($template);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	/* Get item links and flatten out the modules */
-	$moduleItemLinks = array();
-	list ($ret, $tmp) = $this->_getModuleItemLinks($item);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	foreach ($tmp as $tmpId => $moduleLinks) {
-	    foreach ($moduleLinks as $module => $links) {
-		$moduleItemLinks = array_merge($moduleItemLinks, $links);
-	    }
-	}
-	usort($moduleItemLinks, array($this, '_sortItemLinks'));
-
 	/* Load the parents */
 	list ($ret, $parents) = GalleryCoreApi::fetchParents($item);
 	if ($ret->isError()) {
@@ -187,33 +150,6 @@ class HybridLayout extends GalleryLayout {
 	}
 	for ($i = 0; $i < sizeof($parents); $i++) {
 	    $parents[$i] = $parents[$i]->getMemberData();
-	}
-
-	/* Get the active user */
-	$user = $gallery->getActiveUser();
-
-	/* Get all the owners */
-	$tmpId = array($item->getOwnerId());
-	foreach ($itemList as $tmp) {
-	    $tmpId[] = $tmp['data']['ownerId'];
-	}
-	list ($ret, $tmp) = GalleryCoreApi::loadEntitiesById($tmpId);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	$owners = array();
-	foreach ($tmp as $owner) {
-	    $owners[$owner->getId()] = $owner->getMemberData();
-	}
-
-	/* Get the view counts */
-	$tmpId = array($item->getId());
-	foreach ($itemList as $tmp) {
-	    $tmpId[] = $tmp['id'];
-	}
-	list ($ret, $viewCounts) = GalleryCoreApi::fetchItemViewCounts($tmpId);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* Prepare image frames, if available */
@@ -238,57 +174,40 @@ class HybridLayout extends GalleryLayout {
 	    $layout['frame'] = $frame;
 	}
 
-	$layout['user'] = $user->getMemberData();
-	$layout['moduleSystemLinks'] = $moduleSystemLinks;
-	$layout['moduleSystemContentFiles'] = $moduleSystemContentFiles;
-	$layout['moduleItemLinks'] = $moduleItemLinks;
-	$layout['owner'] = $owners[$item->getOwnerId()];
-	$layout['owners'] = $owners;
-	$layout['viewCounts'] = $viewCounts;
-//	$layout['totalChildCount'] = $totalChildCount;
-//	$layout['totalDescendentCount'] = $totalDescendentCount;
 	$layout['layoutUrl'] = GalleryUtilities::convertPathToUrl(dirname(__FILE__));
 	$layout['parents'] = $parents;
 	$layout['params'] = $params;
 
-	$template->setVariable('layout', $layout);
 	return array(GalleryStatus::success(),
 		array('body' => 'layouts/hybrid/templates/hybrid.tpl',
 		      'head' => 'layouts/hybrid/templates/header.tpl'));
     }
 
-    function _buildItemList(&$item) {
-	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($item);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	$itemList = array();
-	$imageWidths = array();
-	$imageHeights = array();
-	$childItems = array();
+    function _buildItemList($childIds, &$children) {
+	$imageWidths = $imageHeights = $childItems = array();
 	if (!empty($childIds)) {
 	    $ret = GalleryCoreApi::studyPermissions($childIds);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    list ($ret, $childItems) = GalleryCoreApi::loadEntitiesById($childIds);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    list ($ret, $preferredFullImages) =
 		GalleryCoreApi::fetchPreferredsByItemIds($childIds);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    list ($ret, $resizedImages) =
 		GalleryCoreApi::fetchResizesByItemIds($childIds);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    list ($ret, $thumbnails) =
 		GalleryCoreApi::fetchThumbnailsByItemIds($childIds);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    // If an Exif extractor is available try to get capture dates..
 //	    $exif = array();
@@ -296,102 +215,79 @@ class HybridLayout extends GalleryLayout {
 //		list ($ret, $exif) =
 //		    $this->exifExtractor->getMetaData($childIds);
 //		if ($ret->isError()) {
-//		    return array($ret->wrap(__FILE__, __LINE__), null);
+//		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 //		}
 //	    }
 	}
+	$i = 0;
 	foreach ($childItems as $child) {
 	    $childId = $child->getId();
-	    $newItem = array('id' => $childId,
-			     'data' => $child->getMemberData(),
-			     'isContainer' => $child->getCanContainChildren());
 	    if (isset($thumbnails[$childId])) {
-		list ($ret, $thumbnails[$childId]) =
-		    GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($thumbnails[$childId]->getId());
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		if (!($thumbnails[$childId]->getWidth() && $thumbnails[$childId]->getHeight())) {
+		    list ($ret, $thumbnails[$childId]) =
+			GalleryCoreApi::rebuildDerivativeCache($thumbnails[$childId]->getId());
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    }
 		}
-		$newItem['thumb'] = $thumbnails[$childId]->getMemberData();
+		$children[$i]['thumbnail'] = $thumbnails[$childId]->getMemberData();
 	    }
 
-	    /* Get item links and flatten out the modules */
-	    $moduleItemLinks = array();
-	    list ($ret, $tmp) = $this->_getModuleItemLinks($child);
+	    if (!(GalleryUtilities::isA($child, 'GalleryDataItem') && $child->canBeViewedInline())) {
+		continue;
+	    }
+
+	    list ($ret, $permissions) = GalleryCoreApi::getPermissions($childId);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    foreach ($tmp as $tmpId => $moduleLinks) {
-		foreach ($moduleLinks as $module => $links) {
-		    $moduleItemLinks = array_merge($moduleItemLinks, $links);
-		}
-	    }
-	    if (!empty($moduleItemLinks)) {
-		usort($moduleItemLinks, array($this, '_sortItemLinks'));
-		$newItem['moduleItemLinks'] = $moduleItemLinks;
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 
-	    if (GalleryUtilities::isA($child, 'GalleryDataItem') && $child->canBeViewedInline()) {
-		list ($ret, $permissions) =
-		    GalleryCoreApi::getPermissions($childId);
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-
-		$images = array();
-		if (isset($permissions['core.viewSource'])) {
-		    // Full size; check for preferred copy
-		    if (isset($preferredFullImages[$childId])) {
-			$images[] = $preferredFullImages[$childId];
-		    } else {
-			$images[] = $child;
-		    }
-		}
-		if (isset($permissions['core.viewResizes']) &&
-			isset($resizedImages[$childId])) {
-		    foreach ($resizedImages[$childId] as $resize) {
-			$images[] = $resize;
-		    }
-		}
-		if (isset($thumbnails[$childId])) {
-		    $images[] = $thumbnails[$childId];
-		}
-
-		if (!empty($images)) {
-		    $image = $images[0];
-
-		    // Rebuild derivative if needed so width/height known..
-		    if (GalleryUtilities::isA($image, 'GalleryDerivativeImage')) {
-			if (!($image->getWidth() && $image->getHeight())) {
-			    list ($ret, $image) = GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($image->getId());
-			    if ($ret->isError()) {
-				return array($ret->wrap(__FILE__, __LINE__), null);
-			    }
-			}
-		    }
-		    $image = $image->getMemberData();
-		    $newItem['image'] = $image;
-		    $newItem['imageIndex'] = count($imageWidths);
-		    if (GalleryUtilities::isExactlyA($child, 'GalleryPhotoItem') &&
-			    $image['width'] > 0 && $image['height'] > 0) {
-			// Display in <img>
-			$imageWidths[] = $image['width'];
-			$imageHeights[] = $image['height'];
-		    } else {
-			// Item must render itself
-			$newItem['renderItem'] = 1;
-			$imageWidths[] = $imageHeights[] = -1;
-		    }
+	    $images = array();
+	    if (isset($permissions['core.viewSource'])) {
+		// Full size; check for preferred copy
+		if (isset($preferredFullImages[$childId])) {
+		    $images[] = $preferredFullImages[$childId];
+		} else {
+		    $images[] = $child;
 		}
 	    }
+	    if (isset($permissions['core.viewResizes']) && isset($resizedImages[$childId])) {
+		foreach ($resizedImages[$childId] as $resize) {
+		    $images[] = $resize;
+		}
+	    }
+	    if (isset($thumbnails[$childId])) {
+		$images[] = $thumbnails[$childId];
+	    }
 
-	    $itemList[] = $newItem;
+	    if (!empty($images)) {
+		$image = $images[0];
+
+		// Rebuild derivative if needed so width/height known..
+		if (GalleryUtilities::isA($image, 'GalleryDerivativeImage')
+			&& !($image->getWidth() && $image->getHeight())) {
+		    list ($ret, $image) = GalleryCoreApi::rebuildDerivativeCache($image->getId());
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    }
+		}
+		$image = $image->getMemberData();
+		$children[$i]['image'] = $image;
+		$children[$i]['imageIndex'] = count($imageWidths);
+		if (GalleryUtilities::isExactlyA($child, 'GalleryPhotoItem') &&
+			$image['width'] > 0 && $image['height'] > 0) {
+		    // Display in <img>
+		    $imageWidths[] = $image['width'];
+		    $imageHeights[] = $image['height'];
+		} else {
+		    // Item must render itself
+		    $children[$i]['renderItem'] = 1;
+		    $imageWidths[] = $imageHeights[] = -1;
+		}
+	    }
+	    $i++;
 	}
-	return array(GalleryStatus::success(), $itemList,
-	             $imageWidths, $imageHeights);
-    }
-
-    function _sortItemLinks($a, $b) {
-	return strcmp($a['text'], $b['text']);
+	return array(GalleryStatus::success(), $imageWidths, $imageHeights);
     }
 
     /**

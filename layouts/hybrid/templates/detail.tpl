@@ -6,16 +6,18 @@
  *}
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html><head>
-<title>{$layout.title|markup}</title>
+<title>
+  {$layout.item.title|default:$layout.item.pathComponent|markup:stripBbcodeAndHtml}
+</title>
 {g->style}
 </head>
 <body>
   <table cellspacing="0"><tr>
-  {if isset($layout.thumb)}
-    <td>{g->image item=$layout.item image=$layout.thumb}</td>
+  {if isset($layout.thumbnail)}
+    <td>{g->image item=$layout.item image=$layout.thumbnail}</td>
   {/if}
   <td valign="top"><br>
-    {$layout.item.title|default:$layout.item.pathComponent}<br>
+    {$layout.item.title|default:$layout.item.pathComponent|markup}<br>
     {g->text text="Owner: %s" arg1=$layout.owner.fullName|default:$layout.owner.userName}<br>
     {g->text one="Viewed: %d time" many="Viewed: %d times"
              count=$layout.viewCount arg1=$layout.viewCount}<br>
@@ -24,8 +26,8 @@
       {g->text text="Keywords: "}{$layout.item.keywords|markup}<br>
     {/if}
   </td></tr></table>
-  {if !empty($layout.moduleItemDetailFiles)}
-    {foreach from=$layout.moduleItemDetailFiles key=moduleId item=detailFile}
+  {if !empty($layout.itemDetailFiles)}
+    {foreach from=$layout.itemDetailFiles key=moduleId item=detailFile}
       {include file="gallery:$detailFile" l10Domain="modules_$moduleId"}
     {/foreach}
   {/if}

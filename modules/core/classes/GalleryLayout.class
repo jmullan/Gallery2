@@ -229,253 +229,6 @@ class GalleryLayout {
     }
 
     /**
-     * Call loadSystemContent on every active module
-     *
-     * @param object GalleryTemplate a template instance
-     * @return array object GalleryStatus a status code
-     *               array('moduleId' => 'template file path',
-     *                     ...)
-     * @access private
-     */
-    function _loadModuleSystemContent(&$template) {
-	global $gallery;
-
-	/* Load the module list */
-	list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	$systemContent = array();
-	foreach ($moduleStatus as $moduleId => $status) {
-	    if (empty($status['active'])) {
-		continue;
-	    }
-
-	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
-	    if ($ret->isError()) {
-		if ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH) {
-		    continue;
-		}
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-	    /* Load all module-related content for these items */
-	    list ($ret, $systemContent[$moduleId]) = $module->loadSystemContent($template);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-	    if (empty($systemContent[$moduleId])) {
-		unset($systemContent[$moduleId]);
-	    }
-	}
-
-	return array(GalleryStatus::success(), $systemContent);
-    }
-
-    /**
-     * Call getSystemLinks on every active module
-     *
-     * @param object GalleryTemplate a template instance
-     * @return array object GalleryStatus a status code
-     *               array(array('moduleId' => array('text' => ...,
-     *                                               'params' => ...,
-     *                                               'url' => ...)),
-     * @access private
-     */
-    function _getModuleSystemLinks() {
-	global $gallery;
-
-        /* Load the module list */
-        list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module');
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-        $urlGenerator = $gallery->getUrlGenerator();
-
-        $links = array();
-        foreach ($moduleStatus as $moduleId => $status) {
-            if (empty($status['active'])) {
-                continue;
-	    }
-
-            list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
-            if ($ret->isError()) {
-		if ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH) {
-		    continue;
-		}
-                return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-            /* Get all module-related links for these items */
-            list ($ret, $links[$moduleId]) = $module->getSystemLinks();
-            if ($ret->isError()) {
-                return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-            if (empty($links[$moduleId])) {
-                unset($links[$moduleId]);
-	    }
-	}
-
-        return array(GalleryStatus::success(), $links);
-    }
-
-    /**
-     * Call getItemLinks on every active module
-     *
-     * @param mixed object GalleryItem a target item, or array of object GalleryItem
-     * @return array object GalleryStatus a status code
-     *               array('itemId' => array('moduleId' =>
-     *                                            array('text' => ...,
-     *                                                  'params' => ...,
-     *                                                  'url' => ...))),
-     * @access private
-     */
-    function _getModuleItemLinks($items) {
-	global $gallery;
-
-	if (!is_array($items)) {
-	    $items = array($items);
-	}
-
-	/* Load the module list */
-	list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	$urlGenerator = $gallery->getUrlGenerator();
-
-	$itemLinks = array();
-	foreach ($moduleStatus as $moduleId => $status) {
-	    if (empty($status['active'])) {
-		continue;
-	    }
-
-	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
-	    if ($ret->isError()) {
-		if ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH) {
-		    continue;
-		}
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-	    /* Get all module-related links for these items */
-	    list ($ret, $moduleLinks) = $module->getItemLinks($items);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-	    /* Refactor into: array[itemId][moduleId][links] */
-	    foreach ($moduleLinks as $itemId => $links) {
-		foreach ($links as $link) {
-		    $link['url'] = $urlGenerator->generateUrl($link['params']);
-		    $itemLinks[$itemId][$moduleId][] = $link;
-		}
-	    }
-	}
-
-	return array(GalleryStatus::success(), $itemLinks);
-    }
-
-    /**
-     * Call getItemSummaries on every active module
-     *
-     * @param mixed object GalleryItem a target item, or array of object GalleryItem
-     * @return array object GalleryStatus a status code
-     *               array ('itemId' => array('moduleId' => html, ...))
-     * @access private
-     */
-    function _getModuleItemSummaries($items) {
-	global $gallery;
-
-	if (!is_array($items)) {
-	    $items = array($items);
-	}
-
-	/* Load the module list */
-	list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	$itemSummaries = array();
-	foreach ($moduleStatus as $moduleId => $status) {
-	    if (empty($status['active'])) {
-		continue;
-	    }
-
-	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
-	    if ($ret->isError()) {
-		if ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH) {
-		    continue;
-		}
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-	    list ($ret, $moduleSummaries) = $module->getItemSummaries($items);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-	    /* Refactor into: array[itemId][moduleId][links] */
-	    foreach ($moduleSummaries as $itemId => $html) {
-		$itemSummaries[$itemId][$moduleId] = $html;
-	    }
-	}
-
-	return array(GalleryStatus::success(), $itemSummaries);
-    }
-
-    /**
-     * Call loadItemDetails on every active module
-     *
-     * @param object GalleryTemplate a template
-     * @param object GalleryItem a target item
-     * @return array object GalleryStatus a status code
-     *               array ('itemId' => array('moduleId' => 'foo.tpl', ...))
-     * @access private
-     */
-    function _loadModuleItemDetails(&$template, $item) {
-	global $gallery;
-
-	/* Load the module list */
-	list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	$itemDetails = array();
-	foreach ($moduleStatus as $moduleId => $status) {
-	    if (empty($status['active'])) {
-		continue;
-	    }
-
-	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
-	    if ($ret->isError()) {
-		if ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH) {
-		    continue;
-		}
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-	    list ($ret, $itemDetails[$moduleId]) = $module->loadItemDetails($template, $item);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-	    if (empty($itemDetails[$moduleId])) {
-		unset($itemDetails[$moduleId]);
-	    }
-	}
-
-	return array(GalleryStatus::success(), $itemDetails);
-    }
-
-    /**
      * Study items very closely
      *
      * Learn whatever we think we'll need.  By performing operations on the
@@ -604,6 +357,301 @@ class GalleryLayout {
 	} else {
 	    return $content;
 	}
+    }
+
+    /**
+     * Load commonly used data into layout template
+     * Always loaded:
+     *   item      item data
+     *   user      active user data
+     *   children  array of child item data
+     * Available keys to include in $dataToLoad parameter:
+     *   owner = item owner data
+     *      ^if childIds non-empty also fill ownerMap with array of ownerId => owner data
+     *   viewCount = number of views for item
+     *      ^if childIds non-empty also set viewCount on each child item
+     *   childCount = number of children for item
+     *      ^if childIds non-empty also set childCount on each child item that canContainChildren
+     *   descendentCount = number of descendents for item
+     *      ^if childIds non-empty also set descendentCount on each child that canContainChildren
+     *   systemLinks = array of array('text'=>.., 'params'=>.., 'url'=>.., 'moduleId'=>..)
+     *   systemContentFiles = array of moduleId => template file path
+     *   itemLinks = array of array('text'=>.., 'params'=>.., 'url'=>.., 'moduleId'=>..)
+     *      ^if childIds non-empty also set itemLinks on each child item
+     *   itemSummaries = set itemSummaries (array of moduleId => html) on each child item
+     *   itemDetailFiles = array of moduleId => template file path
+     *   thumbnails = if childIds non-empty then set thumbnail on each child item
+     *
+     * @param array object GalleryTemplate the template instance
+     * @param object GalleryItem the item to display
+     * @param array (string data key, ..) data to load into template
+     * @param array (optional) ids of child items to display
+     * @return object GalleryStatus a status code
+     * @access private
+     */
+    function loadLayoutTemplate(&$template, $item, $dataToLoad, $childIds=array()) {
+	global $gallery;
+	$urlGenerator = $gallery->getUrlGenerator();
+
+	// -------------------------------------------------------------------------------------
+	// Initialize..
+	$load = $layout = $childItems = $childData = array();
+	foreach ($dataToLoad as $key) {
+	    $load[$key] = true;
+	}
+	if (!empty($childIds)) {
+	    list ($ret, $childItems) = GalleryCoreApi::loadEntitiesById($childIds);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+	$itemId = $item->getId();
+	$allItems = array_merge(array($item), $childItems);
+	$allItemIds = array_merge(array($itemId), $childIds);
+	$allAlbumIds = array();
+	foreach ($allItems as $it) {
+	    if ($it->getCanContainChildren()) {
+		$allAlbumIds[] = $it->getId();
+	    }
+	}
+
+	// -------------------------------------------------------------------------------------
+	// Load additional required entities..
+	$ids = array();
+	if (isset($load['owner'])) {
+	    $ids[$item->getOwnerId()] = true;
+	    $childOwnerIds = array();
+	    foreach ($childItems as $child) {
+		$ids[$child->getOwnerId()] = true;
+		$childOwnerIds[$child->getOwnerId()] = true;
+	    }
+	    $childOwnerIds = array_keys($childOwnerIds);
+	}
+	if (!empty($ids)) {
+	    list ($ret, $list) = GalleryCoreApi::loadEntitiesById(array_keys($ids));
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    foreach ($list as $it) {
+		$entities[$it->getId()] = $it;
+	    }
+	}
+
+	// -------------------------------------------------------------------------------------
+	// Always load 'item', 'user' and 'children'
+	$layout['item'] = $item->getMemberData();
+	$user = $gallery->getActiveUser();
+	$layout['user'] = $user->getMemberData();
+	$layout['children'] = array();
+	foreach ($childItems as $child) {
+	    $layout['children'][] = $child->getMemberData();
+	}
+
+	// -------------------------------------------------------------------------------------
+	// 'owner'
+	if (isset($load['owner'])) {
+	    $layout['owner'] = $entities[$item->getOwnerId()]->getMemberData();
+	    foreach ($childOwnerIds as $id) {
+		if (!isset($layout['ownerMap'][$id])) {
+		    $layout['ownerMap'][$id] = $entities[$id]->getMemberData();
+		}
+	    }
+	}
+
+	// -------------------------------------------------------------------------------------
+	// 'viewCount'
+	if (isset($load['viewCount'])) {
+	    list ($ret, $viewCount) = GalleryCoreApi::fetchItemViewCounts($allItemIds);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    $layout['viewCount'] = $viewCount[$itemId];
+	    $childData[] = 'viewCount';
+	}
+
+	// -------------------------------------------------------------------------------------
+	// 'childCount'
+	if (isset($load['childCount'])) {
+	    list ($ret, $childCount) = GalleryCoreApi::fetchChildCounts($allAlbumIds);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    foreach ($allAlbumIds as $id) {
+		if (!isset($childCount[$id])) {
+		    $childCount[$id] = 0;
+		}
+	    }
+	    $layout['childCount'] = isset($childCount[$itemId]) ? $childCount[$itemId] : 0;
+	    $childData[] = 'childCount';
+	}
+
+	// -------------------------------------------------------------------------------------
+	// 'descendentCount'
+	if (isset($load['descendentCount'])) {
+	    list ($ret, $descendentCount) = GalleryCoreApi::fetchDescendentCounts($allAlbumIds);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    foreach ($allAlbumIds as $id) {
+		if (!isset($descendentCount[$id])) {
+		    $descendentCount[$id] = 0;
+		}
+	    }
+	    $layout['descendentCount'] =
+		isset($descendentCount[$itemId]) ? $descendentCount[$itemId] : 0;
+	    $childData[] = 'descendentCount';
+	}
+
+	// -------------------------------------------------------------------------------------
+	// 'systemLinks', 'systemContentFiles', 'itemLinks', 'itemSummaries', 'itemDetailFiles'
+	// Load links and content from all active modules
+	if (isset($load['systemLinks']) || isset($load['systemContentFiles'])) {
+	    if (isset($load['systemLinks'])) {
+		$layout['systemLinks'] = array();
+	    }
+	    if (isset($load['systemContentFiles'])) {
+		$layout['systemContentFiles'] = array();
+	    }
+	    if (isset($load['itemLinks'])) {
+		$itemLinks = array($itemId => array());
+		foreach ($childIds as $id) {
+		    $itemLinks[$id] = array();
+		}
+	    }
+	    if (isset($load['itemSummaries']) && !empty($childIds)) {
+		foreach ($childIds as $id) {
+		    $itemSummaries[$id] = array();
+		}
+		$childData[] = 'itemSummaries';
+	    }
+	    if (isset($load['itemDetailFiles'])) {
+		$layout['itemDetailFiles'] = array();
+	    }
+
+	    list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    foreach ($moduleStatus as $moduleId => $status) {
+		if (empty($status['active'])) {
+		    continue;
+		}
+		list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
+		if ($ret->isError()) {
+		    if ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH) {
+			continue;
+		    }
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+
+		if (isset($load['systemLinks'])) {
+		    list ($ret, $links) = $module->getSystemLinks();
+		    if ($ret->isError()) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
+		    // Add url/moduleId keys..
+		    foreach ($links as $link) {
+			$link['url'] = $urlGenerator->generateUrl($link['params']);
+			$link['moduleId'] = $moduleId;
+			$layout['systemLinks'][] = $link;
+		    }
+		}
+
+		if (isset($load['systemContentFiles'])) {
+		    list ($ret, $content) = $module->loadSystemContent($template);
+		    if ($ret->isError()) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
+		    if (!empty($content)) {
+			$layout['systemContentFiles'][$moduleId] = $content;
+		    }
+		}
+
+		if (isset($itemLinks)) {
+		    list ($ret, $links) = $module->getItemLinks($allItems);
+		    if ($ret->isError()) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
+		    // Add url/moduleId keys..
+		    foreach ($links as $itemId => $list) {
+			foreach ($list as $link) {
+			    $link['url'] = $urlGenerator->generateUrl($link['params']);
+			    $link['moduleId'] = $moduleId;
+			    $itemLinks[$itemId][] = $link;
+			}
+		    }
+		}
+
+		if (isset($itemSummaries)) {
+		    list ($ret, $content) = $module->getItemSummaries($childItems);
+		    if ($ret->isError()) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
+		    foreach ($content as $itemId => $html) {
+			$itemSummaries[$itemId][$moduleId] = $html;
+		    }
+		}
+
+		if (isset($load['itemDetailFiles'])) {
+		    list ($ret, $content) = $module->loadItemDetails($template, $item);
+		    if ($ret->isError()) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
+		    if (!empty($content)) {
+			$layout['itemDetailFiles'][$moduleId] = $content;
+		    }
+		}
+	    }
+
+	    if (isset($itemLinks)) {
+		foreach (array_keys($itemLinks) as $itemId) {
+		    usort($itemLinks[$itemId], array($this, '_sortItemLinks'));
+		}
+		$layout['itemLinks'] = $itemLinks[$itemId];
+		$childData[] = 'itemLinks';
+	    }
+	}
+
+	// -------------------------------------------------------------------------------------
+	// 'thumbnails'
+	if (isset($load['thumbnails']) && !empty($childIds)) {
+	    list ($ret, $thumbnail) = GalleryCoreApi::fetchThumbnailsByItemIds($childIds);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    foreach (array_keys($thumbnail) as $id) {
+		if (!($thumbnail[$id]->getWidth() && $thumbnail[$id]->getHeight())) {
+		    list ($ret, $thumbnail[$id]) =
+			GalleryCoreApi::rebuildDerivativeCache($thumbnail[$id]->getId());
+		    if ($ret->isError()) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
+		}
+		$thumbnail[$id] = $thumbnail[$id]->getMemberData();
+	    }
+	    $childData[] = 'thumbnail';
+	}
+
+	// -------------------------------------------------------------------------------------
+	// Populate data in children list..
+	if (!empty($childData)) {
+	    foreach (array_keys($layout['children']) as $i) {
+		$id = $layout['children'][$i]['id'];
+		foreach ($childData as $key) {
+		    if (isset(${$key}[$id])) {
+			$layout['children'][$i][$key] = ${$key}[$id];
+		    }
+		}
+	    }
+	}
+
+	// -------------------------------------------------------------------------------------
+	$template->setVariable('layout', $layout);
+	return GalleryStatus::success();
+    }
+
+    function _sortItemLinks($a, $b) {
+	return strcmp($a['text'], $b['text']);
     }
 
     /* Getters and setters below */

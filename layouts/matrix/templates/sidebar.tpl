@@ -12,28 +12,26 @@
     </h3>
 
     <ul>
-      {foreach from=$layout.moduleSystemLinks item=module}
-      {foreach from=$module item=link}
+      {foreach from=$layout.systemLinks item=link}
       <li>
-	<a href="{g->url params=$link.params}">{$link.text}</a>
+	<a href="{$link.url}">{$link.text}</a>
       </li>
-      {/foreach}
       {/foreach}
     </ul>
   </div>
 
   {* Search form, if module's activated *}
-  {if isset($layout.moduleSystemContentFiles.search)}
-	{assign var=moduleFile value=$layout.moduleSystemContentFiles.search}
+  {if isset($layout.systemContentFiles.search)}
+	{assign var=moduleFile value=$layout.systemContentFiles.search}
 	{include file="gallery:$moduleFile" l10Domain="modules_search"} 
   {/if}
 
   {* Album actions, if there are any *}
-  {if (isset($layout.moduleItemLinks[$layout.item.id]))}
+  {if !empty($layout.itemLinks)}
   <div class="gbMenu">
     <h3 class="giTitle">{g->text text="Actions"}</h3>
     <ul>
-      {foreach from=$layout.moduleItemLinks[$layout.item.id] item=link}
+      {foreach from=$layout.itemLinks item=link}
       <li><a href="{$link.url}">{$link.text}</a></li>
       {/foreach}
     </ul>
@@ -43,7 +41,7 @@
   {* List of peer items *}
   {if $layout.show.peerSidebarBox}
   <div class="gbMenu">
-    <h3 class="giTitle"> {$layout.parent.title|default:$layout.parent.pathComponent}</h3>
+    <h3 class="giTitle"> {$layout.parent.title|default:$layout.parent.pathComponent|markup}</h3>
     <p class="giDescription">{g->text one="(%d item)" many="(%d items)" count=$layout.totalPeerCount arg1=$layout.totalPeerCount}</p>
 
     <ul>
@@ -66,7 +64,7 @@
   {/if}
 
   {* Extra modules system content *}
-  {foreach from=$layout.moduleSystemContentFiles key=moduleId item=moduleFile}
+  {foreach from=$layout.systemContentFiles key=moduleId item=moduleFile}
   {if ($moduleId != 'search')}
   {include file="gallery:$moduleFile" l10Domain="modules_$moduleId"}
   {/if}

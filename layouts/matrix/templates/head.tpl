@@ -5,7 +5,7 @@
  * and when you upgrade, your changes will not get overwritten.
  *}
 <title>
-  {$layout.title|markup:stripBbcodeAndHtml}
+  {$layout.item.title|default:$layout.item.pathComponent|markup:stripBbcodeAndHtml}
 </title>
 <style type="text/css" media="all">@import url({$layout.layoutUrl}/layout.css.php);</style>
 {g->style}

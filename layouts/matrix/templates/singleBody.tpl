@@ -4,10 +4,8 @@
  * Gallery will look for that file first and use it if it exists
  * and when you upgrade, your changes will not get overwritten.
  *}
-{* Jump through hoops because "$layout.imageViews.`$layout.imageViewsIndex`" doesn't work *}
-{assign var="currentIndex" value=$layout.imageViewsIndex}
 {if !empty($layout.imageViews)}
-{assign var="image" value=$layout.imageViews.$currentIndex}
+{assign var="image" value=$layout.imageViews[$layout.imageViewsIndex]}
 {/if}
       
 {include file="gallery:layouts/matrix/templates/pathbar.tpl"}  
@@ -21,7 +19,7 @@
         <tr>
           <td>
             <h1 class="giTitle">
-              {$layout.item.title|markup}
+              {$layout.item.title|default:$layout.item.pathComponent|markup}
             </h1>
             <p class="giDescription">
               {$layout.item.description|markup}
@@ -31,15 +29,14 @@
             <ul class="giInfo">
               <li>
                 {if !empty($layout.useCaptureDate) && isset($layout.captureTimestamp)}
-                {capture name=captureTimestamp}{g->date timestamp=$layout.captureTimestamp}{/capture}
-                {g->text text="Date: %s" arg1=$smarty.capture.captureTimestamp}
+                {capture name=itemTimestamp}{g->date timestamp=$layout.captureTimestamp}{/capture}
                 {else}
-                {capture name=creationTimestamp}{g->date timestamp=$layout.item.creationTimestamp}{/capture}
-                {g->text text="Date: %s" arg1=$smarty.capture.creationTimestamp}
+                {capture name=itemTimestamp}{g->date timestamp=$layout.item.creationTimestamp}{/capture}
                 {/if}
+                {g->text text="Date: %s" arg1=$smarty.capture.itemTimestamp}
               </li>
         
-              {if sizeof($layout.imageViews) > 1}
+              {if count($layout.imageViews) > 1}
               <li>
                 {g->text text="Size: "}
                 <select onchange="{literal}javascript:if (this.value) { newLocation = this.value; this.options[0].selected = true; location.href= newLocation; }{/literal}">
@@ -76,7 +73,7 @@
                 {g->text text="%dx%d" arg1=$layout.sourceImage.width arg2=$layout.sourceImage.height}
                 {/if}
                 {/capture}
-                {if sizeof($layout.imageViews) > 1}
+                {if count($layout.imageViews) > 1}
                 <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$layout.item.id`" arg3="imageViewsIndex=`$layout.sourceImageViewIndex`"}">{$smarty.capture.fullSize}</a>
                 {else}
                 {$smarty.capture.fullSize}
@@ -107,7 +104,7 @@
       </a>
       {/capture}
 
-      {if ($layout.can.viewInline.$currentIndex)}
+      {if ($layout.can.viewInline[$layout.imageViewsIndex])}
 	{if isset($layout.frame)}
 	  {include file=$layout.frame.template ImageFrame_data=$layout.frame.data
 		   ImageFrame_frame=$layout.frame.photoFrame item=$layout.item image=$image}
@@ -122,8 +119,8 @@
       {/if}
     </div>
 
-    {if !empty($layout.moduleItemDetailFiles)}
-    {foreach from=$layout.moduleItemDetailFiles key=moduleId item=detailFile}
+    {if !empty($layout.itemDetailFiles)}
+    {foreach from=$layout.itemDetailFiles key=moduleId item=detailFile}
     {include file="gallery:$detailFile" l10Domain="modules_$moduleId"}
     {/foreach}
     {/if}

@@ -4,33 +4,32 @@
  * Gallery will look for that file first and use it if it exists
  * and when you upgrade, your changes will not get overwritten.
  *}
-<div id="album"
-><div id="album_titlebar"
+<div id="gsContents"
+><div id="album_titlebar" class="gbTopFlag"
 ><div id="album_tools"><img id="sidebar_min" src="{$layout.layoutUrl}/images/left.png" width="18" height="18" class="on" onclick="sidebar_onoff()" alt="Hide sidebar" title="Hide sidebar"
 /><img id="sidebar_max" src="{$layout.layoutUrl}/images/right.png" width="18" height="18" class="off" onclick="sidebar_onoff()" alt="Show sidebar" title="Show sidebar"
 /><img id="slide__fwd" src="{$layout.layoutUrl}/images/fwd.png" width="18" height="18" class="on" onclick="slide_onoff()" alt="Start Slideshow" title="Start Slideshow"
 /><img id="slide__rev" src="{$layout.layoutUrl}/images/rev.png" width="18" height="18" class="off" onclick="slide_onoff()" alt="Start Slideshow" title="Start Slideshow"
 /><img id="slide__rand" src="{$layout.layoutUrl}/images/rand.png" width="18" height="18" class="off" onclick="slide_onoff()" alt="Start Slideshow" title="Start Slideshow"
 /></div>
-<table cellspacing="0"><tr><td>
-<span id="album_title" class="giTitle">{$layout.title|markup}</span>
+<table class="gbTitleBanner" cellspacing="0"><tr><td>
+<span id="album_title" class="giTitle">{$layout.item.title|default:$layout.item.pathComponent|markup}</span>
 <span id="album_summary" class="giDescription">{if isset($layout.item.summary)}
 <br />{$layout.item.summary|markup}{/if}</span>
 </td><td>
 <span id="album_info" class="giInfo">{g->text text="Owner: %s"
  arg1=$layout.owner.fullName|default:$layout.owner.userName}<br />
 {g->text one="Viewed: %d time" many="Viewed: %d times"
-    count=$layout.viewCounts[$layout.item.id]
-    arg1=$layout.viewCounts[$layout.item.id]}</span>
+    count=$layout.viewCount arg1=$layout.viewCount}</span>
 </td></tr>
 {if isset($layout.item.description)}
 <tr><td colspan="2">
 <span class="giDescription">{$layout.item.description|markup}</span>
 </td></tr>{/if}
 </table></div
-><div id="album_content"
+><div id="gsAlbumContents"
 ><table class="content" cellspacing="0">
-{foreach from=$layout.itemList key=i item=it}
+{foreach from=$layout.children key=i item=it}
  {if ($i is even)}<tr>{/if}
  <td class="i">
   {if isset($it.image)}
@@ -45,61 +44,61 @@
     <a id="info_{$it.imageIndex}" href="{g->url arg1="view=core:ShowItem"
         arg2="itemId=`$it.id`" arg3="detail=1"}"></a>
     {capture name="link"}<a href="" onclick="image_show({$it.imageIndex});return false">{/capture}
-    {if isset($it.thumb) && isset($layout.frame) && isset($layout.params.imageFrame)}
+    {if isset($it.thumbnail) && isset($layout.frame) && isset($layout.params.imageFrame)}
       {include file=$layout.frame.template ImageFrame_data=$layout.frame.data
-       ImageFrame_frame=$layout.params.imageFrame item=$it.data image=$it.thumb
+       ImageFrame_frame=$layout.params.imageFrame item=$it image=$it.thumbnail
        ImageFrame_pre=$smarty.capture.link ImageFrame_post="</a>"}
     {else}
       {$smarty.capture.link}
-      {if isset($it.thumb)}
-        {g->image item=$it.data image=$it.thumb class=thumb}
+      {if isset($it.thumbnail)}
+        {g->image item=$it image=$it.thumbnail class=thumb}
       {else} {g->text text="no thumbnail"} {/if}
       </a>
     {/if}
-  {elseif ($it.isContainer)}
+  {elseif ($it.canContainChildren)}
     {capture name="link"}<a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$it.id`"}">{/capture}
-    {if isset($it.thumb) && isset($layout.frame) && isset($layout.params.albumFrame)}
+    {if isset($it.thumbnail) && isset($layout.frame) && isset($layout.params.albumFrame)}
       {include file=$layout.frame.template ImageFrame_data=$layout.frame.data
-       ImageFrame_frame=$layout.params.albumFrame item=$it.data image=$it.thumb
+       ImageFrame_frame=$layout.params.albumFrame item=$it image=$it.thumbnail
        ImageFrame_pre=$smarty.capture.link ImageFrame_post="</a>"}
     {else}
       {$smarty.capture.link}
-      {if isset($it.thumb)}
-        {g->image item=$it.data image=$it.thumb class=thumb}
+      {if isset($it.thumbnail)}
+        {g->image item=$it image=$it.thumbnail class=thumb}
       {else} {g->text text="no thumbnail"} {/if}
       </a>
     {/if}
   {else}
     <a href="{g->url arg1="view=core:DownloadItem" arg2="itemId=`$it.id`"}">
-    {if isset($it.thumb)}
-      {g->image item=$it.data image=$it.thumb class=thumb}
+    {if isset($it.thumbnail)}
+      {g->image item=$it image=$it.thumbnail class=thumb}
     {else} {g->text text="no thumbnail"} {/if}
     </a>
   {/if}
  </td>
  <td class="t"><table class="text"><tr><td><span class="title">
-  {if isset($it.image) || isset($it.moduleItemLinks)}
+  {if isset($it.image) || isset($it.itemLinks)}
    <span style="float:right;margin-left:2px"><img src="{$layout.layoutUrl}/images/menu.png" class="vis" width="18" height="18" alt="Item Actions" title="Item Actions" onclick="popup_menu(event,{$i}
     {if isset($it.image)},{$it.imageIndex})" /></span>
       <span id="title_{$it.imageIndex}" class="giTitle">
     {else},-1)" /></span><span class="giTitle">{/if}
   {else}<span class="giTitle">{/if}
-  {$it.data.title|markup}</span></span></td>
+  {$it.title|default:$it.pathComponent|markup}</span></span></td>
   </tr><tr>
   <td><span class="giDescription" {if isset($it.image)}id="text_{$it.imageIndex}"{/if}>
-  {if isset($it.data.summary)}{$it.data.summary|markup}<br />{/if}
-  {$it.data.description|markup}</span></td></tr></table>
-  {if isset($it.moduleItemLinks)}
+  {if isset($it.summary)}{$it.summary|markup}<br />{/if}
+  {$it.description|markup}</span></td></tr></table>
+  {if isset($it.itemLinks)}
    <span id="links_{$i}" style="position:absolute;visibility:hidden;top:0px">
-   {foreach from=$it.moduleItemLinks item=link}
-    <a href="{g->url params=$link.params}">{$link.text}</a><br />
+   {foreach from=$it.itemLinks item=link}
+    <a href="{$link.url}">{$link.text}</a><br />
    {/foreach}
    </span>
   {/if}
  </td>
  {if ($i is odd)}</tr>{/if}
 {/foreach}
-{if ($layout.count is odd)}<td></td><td></td></tr>{/if}
+{if count($layout.children) is odd}<td></td><td></td></tr>{/if}
 </table></div></div
 
 ><div id="sidebar">
@@ -113,12 +112,8 @@
       {g->text text="Greetings, %s!" arg1=$layout.user.fullName|default:$layout.user.userName}
     </div>
     <ul>
-      {foreach from=$layout.moduleSystemLinks item=module}
-	{foreach from=$module item=link}
-	  <li>
-	    <a href="{g->url params=$link.params}">{$link.text}</a>
-	  </li>
-	{/foreach}
+      {foreach from=$layout.systemLinks item=link}
+	<li> <a href="{$link.url}">{$link.text}</a> </li>
       {/foreach}
     </ul>
   </div>
@@ -139,7 +134,7 @@
     </div>
   {/if}
   {* Modules system content *}
-  {foreach from=$layout.moduleSystemContentFiles key=moduleId item=moduleFile}
+  {foreach from=$layout.systemContentFiles key=moduleId item=moduleFile}
     {include file="gallery:$moduleFile" l10Domain="modules_$moduleId"}
   {/foreach}
   {* Album links *}
@@ -152,10 +147,8 @@
       <li>
 	<a id="lnk_link" href="" onclick="album_itemlinksonoff();this.blur();return false">{g->text text="hide item links"}</a>
       </li>
-      {foreach from=$layout.moduleItemLinks item=link}
-	<li>
-	  <a href="{g->url params=$link.params}">{$link.text}</a>
-	</li>
+      {foreach from=$layout.itemLinks item=link}
+	<li> <a href="{$link.url}">{$link.text}</a> </li>
       {/foreach}
     </ul>
   </div>
