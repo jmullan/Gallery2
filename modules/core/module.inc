@@ -458,6 +458,7 @@ class CoreModule extends GalleryModule {
 	    $showPermissionsLink = false;
 	    $showAddHighlightLink = false;
 	    $showMoveItemLink = false;
+	    $showReorderItemLink = false;
 
 	    if (GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
 		$itemType = 'album';
@@ -478,7 +479,7 @@ class CoreModule extends GalleryModule {
 		$showAddAlbumLink = $item->getCanContainChildren();
 		$showPermissionsLink = true;
 		$showMoveItemLink = $item->getId() != $rootId;
-
+		$showReorderItemLink = $item->getCanContainChildren();
 	    } else {
 		if (!empty($permissions) &&
 		    array_intersect(array_keys($adminPermissions),
@@ -493,6 +494,10 @@ class CoreModule extends GalleryModule {
 		    
 		    if (isset($permissions['core.addAlbumItem'])) {
 			$showAddAlbumLink = true;
+		    }
+
+		    if (isset($permissions['core.edit'])) {
+			$showReorderItemLink = true;
 		    }
 		}
 
@@ -512,12 +517,8 @@ class CoreModule extends GalleryModule {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    if ($item->getParentId() != $rootId) {
-		if (isset($parentPermissions['core.all'])) {
+		if (isset($parentPermissions['core.edit'])) {
 		    $showAddHighlightLink = true;
-		} else {
-		    if (isset($parentPermissions['core.edit'])) {
-			$showAddHighlightLink = true;
-		    }
 		}
 	    }
 
@@ -589,6 +590,14 @@ class CoreModule extends GalleryModule {
 						  $params));
 	    }
 
+	    if ($showReorderItemLink) {
+		$links[$item->getId()][] =
+		    array('text' => $this->translate('reorder items'),
+			  'params' => array_merge(array('view' => 'core:ItemAdmin',
+							'subView' => 'core:ItemReorder',
+							'itemId' => $item->getId()),
+						  $params));
+	    }
 	}
 
 	return array(GalleryStatus::success(), $links);
