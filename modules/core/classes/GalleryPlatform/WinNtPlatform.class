@@ -133,5 +133,13 @@ class WinNtPlatform extends GalleryPlatform {
 	
 	return true;
     }
+
+    /**
+     * @see GalleryPlatform::is_executable
+     */
+    function is_executable($filename) {
+	/* Any existing file is considered executable on Windows */
+	return $this->file_exists($filename);
+    }
 }
 ?>
