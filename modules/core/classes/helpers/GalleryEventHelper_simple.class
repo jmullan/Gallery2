@@ -35,6 +35,19 @@
 class GalleryEventHelper_simple {
 
     /**
+     * Get the static event listeners registry
+     *
+     * @return array
+     * @access private
+     * @staticvar array $eventListeners The event listener table
+     * @static
+     */
+    function &_getEventListeners() {
+	static $eventListeners = array();
+	return $eventListeners;
+    }
+
+    /**
      * Create a new event with the given name
      * @static
      */
@@ -53,11 +66,12 @@ class GalleryEventHelper_simple {
      * @static
      */
     function registerEventListener($eventName, &$listener) {
-	if (empty($this->_eventListeners[$eventName])) {
-	    $this->_eventListeners[$eventName] = array();
+	$eventListeners =& GalleryEventHelper_simple::_getEventListeners();
+	if (empty($eventListeners[$eventName])) {
+	    $eventListeners[$eventName] = array();
 	}
 
-	$this->_eventListeners[$eventName][] =& $listener;
+	$eventListeners[$eventName][] =& $listener;
     }
 
     /**
@@ -68,8 +82,9 @@ class GalleryEventHelper_simple {
      * @static
      */
     function postEvent($event) {
-	if (!empty($this->_eventListeners[$event->getEventName()])) {
-	    $listeners = $this->_eventListeners[$event->getEventName()];
+	$eventListeners =& GalleryEventHelper_simple::_getEventListeners();
+	if (!empty($eventListeners[$event->getEventName()])) {
+	    $listeners = $eventListeners[$event->getEventName()];
 	    for ($i = 0; $i < sizeof($listeners); $i++) {
 		$ret = $listeners[$i]->handleEvent($event);
 		if ($ret->isError()) {
