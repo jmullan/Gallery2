@@ -31,10 +31,10 @@
  * @package GalleryCore
  * @subpackage PHPUnit
  */
-class ItemEditPhotoSizesPluginTest extends ItemEditPluginTestCase {
+class ItemEditPhotoPluginTest extends ItemEditPluginTestCase {
 
-    function ItemEditPhotoSizesPluginTest($methodName) {
-	$this->ItemEditPluginTestCase($methodName, 'core', 'ItemEditPhotoSizes');
+    function ItemEditPhotoPluginTest($methodName) {
+	$this->ItemEditPluginTestCase($methodName, 'core', 'ItemEditPhoto');
     }
 
     function setUp() {
@@ -49,12 +49,12 @@ class ItemEditPhotoSizesPluginTest extends ItemEditPluginTestCase {
 
 	/* Register a dummy toolkit */
 	GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
-						      'ItemEditPhotoSizesPluginTestToolkit',
-						      'ItemEditPhotoSizesPluginTestToolkit',
+						      'ItemEditPhotoPluginTestToolkit',
+						      'ItemEditPhotoPluginTestToolkit',
 						      __FILE__);
 
 	/* Register operations that we can perform on our mock data items */
-	$ret = GalleryCoreApi::registerToolkitOperation('ItemEditPhotoSizesPluginTestToolkit',
+	$ret = GalleryCoreApi::registerToolkitOperation('ItemEditPhotoPluginTestToolkit',
 							array('test/file'),
 							'scale',
 							array(array('type' => 'int',
@@ -64,7 +64,7 @@ class ItemEditPhotoSizesPluginTest extends ItemEditPluginTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$ret = GalleryCoreApi::registerToolkitOperation('ItemEditPhotoSizesPluginTestToolkit',
+	$ret = GalleryCoreApi::registerToolkitOperation('ItemEditPhotoPluginTestToolkit',
 							array('test/file'),
 							'rotate',
 							array(array('type' => 'int',
@@ -74,7 +74,7 @@ class ItemEditPhotoSizesPluginTest extends ItemEditPluginTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$ret = GalleryCoreApi::registerToolkitOperation('ItemEditPhotoSizesPluginTestToolkit',
+	$ret = GalleryCoreApi::registerToolkitOperation('ItemEditPhotoPluginTestToolkit',
 							array('test/file'),
 							'resize',
 							array(array('type' => 'int',
@@ -123,7 +123,7 @@ class ItemEditPhotoSizesPluginTest extends ItemEditPluginTestCase {
 	}
 
 	/* Unregister */
-	$ret = GalleryCoreApi::unregisterToolkit('ItemEditPhotoSizesPluginTestToolkit');
+	$ret = GalleryCoreApi::unregisterToolkit('ItemEditPhotoPluginTestToolkit');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -229,7 +229,7 @@ require_once(dirname(__FILE__) . '/../../classes/GalleryToolkit.class');
  * @package GalleryCore
  * @subpackage PHPUnit
  */
-class ItemEditPhotoSizesPluginTestToolkit extends GalleryToolkit {
+class ItemEditPhotoPluginTestToolkit extends GalleryToolkit {
     /**
      * @see GalleryToolkit::performOperation()
      * Dummy operation
@@ -255,7 +255,7 @@ class ItemEditPhotoSizesPluginTestToolkit extends GalleryToolkit {
      * Dummy operation
      */
     function mergeOperations($operation1, $args1, $operation2, $args2) {
-	print "ItemEditPhotoSizesPluginTestToolkit!";
+	print "ItemEditPhotoPluginTestToolkit!";
 	// Do something stupid, but predictable
 	return array(GalleryStatus::success(),
 		     $operation1 . '+' . $operation2,
