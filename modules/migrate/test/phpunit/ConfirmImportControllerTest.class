@@ -502,18 +502,6 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	/*
-	print "<pre>Album Perms\n";
-	print_r($album['perms']);	
-	
-	foreach($album['perms'] as $tmpperm => $tmpusers) {
-	    foreach (array_keys($tmpusers) as $tmpuser) {
-		$tmpuserperm[$tmpuser][]=$tmpperm;
-	    }
-	}
-	print_r($tmpuserperm);
-	print "</pre>";
-	*/
 	GalleryUtilities::putRequestVariable('albumsPath', dirname(__FILE__) . $slash . '..' . $slash . 'data' . $slash . 'albums' . $slash);
         GalleryUtilities::putRequestVariable('form[sourceAlbums][album05]', 1);
         GalleryUtilities::putRequestVariable('form[action][import]', 1);
@@ -573,17 +561,117 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
-	    foreach ($permsToTest as $permToTest => $expected) {
-		/* User has component of composite permission */
-		list ($ret, $testPermsResult[$testUserName][$permToTest]) =
-			GalleryCoreApi::hasPermission($testAlbum->getId(),
-						      array($testUserInstance->getId()),
-						      array(),
-						      $permToTest);
-		if ($ret->isError()) {
-		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    list ($ret, $permissions) =
+		    GalleryCoreApi::fetchAllPermissionsForItem($testAlbum->getId(), false);
+	    $userPerms = array();
+	    $groupPerms = array();
+	    foreach ($permissions as $permission) {
+		if ($permission['userId']>0) {
+		    $userPerms[$permission['userId']][$permission['permission']]=TRUE;
+		} else {
+		    $groupPerms[$permission['groupId']][$permission['permission']]=TRUE;
 		}
-		
+	    }
+	    foreach ($permsToTest as $permToTest => $expected) {
+		if (array_key_exists($testUserInstance->getId(),$userPerms)) {
+		    $testPermsResult[$testUserName][$permToTest] =
+			    array_key_exists($permToTest,$userPerms[$testUserInstance->getId()]);
+		} else {
+		    $testPermsResult[$testUserName][$permToTest] = FALSE;
+		}
+	    }
+	}
+	$this->assertEquals($testPerms,$testPermsResult);	
+    }
+
+    function testImportAlbumPermissions2() {
+	global $gallery;
+	$platform = $gallery->getPlatform();
+	$slash = $platform->getDirectorySeparator();
+
+
+	list ($ret, $album) = Gallery1DataParser::loadAlbumFields(dirname(__FILE__) . $slash . '..' . $slash . 'data' . $slash . 'albums' . $slash . 'album05' . $slash);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	GalleryUtilities::putRequestVariable('albumsPath', dirname(__FILE__) . $slash . '..' . $slash . 'data' . $slash . 'albums' . $slash);
+        GalleryUtilities::putRequestVariable('form[sourceAlbums][album01]', 1);
+        GalleryUtilities::putRequestVariable('form[action][import]', 1);
+	GalleryUtilities::putRequestVariable('form[destinationAlbumID]',$this->_temporaryAlbumId);
+
+        $results = $this->handleRequest();
+	$this->assertEquals(array('album01'),
+			    array_keys($results['status']['albumImportSuccess']));
+	$this->assertEquals(array('view' => 'core:SiteAdmin',
+				  'subView' => 'migrate:ImportResults'),
+			    $results['redirect']);
+	$this->assertEquals(array(), $results['error']);
+	$this->assertEquals(array(), $results['status']['userImportFailure']);
+	$this->assertEquals(array(), $results['status']['userImportSuccess']);
+	$this->assertEquals(array(), $results['status']['albumImportFailure']);
+	$testAlbumId = $results['status']['albumImportSuccess']['album01'];
+	/* Get the allegedly successfully imported album */
+	list($ret, $testAlbum) = GalleryCoreApi::loadEntitiesById($testAlbumId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	/*
+	 * This is the user that we expect to be associated with this album.
+	 * It really shouldn't be the admin, but the test data needs to be
+	 * changed to fix it, so we will change it later - probably to
+	 * phpunit_foobar, or whatever we are loading in the other unit test
+	 */
+
+	list($ret, $testOwner) = GalleryCoreApi::fetchUserByUsername('admin');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array($testAlbum->getownerId()              // owner
+				  ),
+			    array($testOwner->getId()                   // owner
+				  )
+			    );
+	$testPerms = array();
+	$testPermsResult = array();
+	$testPerms['admin'] = array('core.all' => true,
+				    'comment.all' => true
+				    );
+	$testPerms['phpunitfoo001'] = array('core.view' => true,
+					    'core.viewResizes' => true,
+					    'core.viewSource' => false,
+					    'comment.view' => false,
+					    'comment.search' => false,
+					    'comment.add' => false,
+					    'core.edit' => false,
+					    'core.addDataItem' => false,
+					    'core.edit' => false,
+					    'core.delete' => true,
+					    'core.addAlbumItem' => false
+					    );
+	foreach ($testPerms as $testUserName => $permsToTest){
+	    list($ret, $testUserInstance) = GalleryCoreApi::fetchUserByUsername($testUserName);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    list ($ret, $permissions) =
+		    GalleryCoreApi::fetchAllPermissionsForItem($testAlbum->getId(), false);
+	    $userPerms = array();
+	    $groupPerms = array();
+	    foreach ($permissions as $permission) {
+		if ($permission['userId']>0) {
+		    $userPerms[$permission['userId']][$permission['permission']]=TRUE;
+		} else {
+		    $groupPerms[$permission['groupId']][$permission['permission']]=TRUE;
+		}
+	    }
+	    foreach ($permsToTest as $permToTest => $expected) {
+		if (array_key_exists($testUserInstance->getId(),$userPerms)) {
+		    $testPermsResult[$testUserName][$permToTest] =
+			    array_key_exists($permToTest,$userPerms[$testUserInstance->getId()]);
+		} else {
+		    $testPermsResult[$testUserName][$permToTest] = FALSE;
+		}
 	    }
 	}
 	$this->assertEquals($testPerms,$testPermsResult);	
