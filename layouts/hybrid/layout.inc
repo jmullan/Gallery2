@@ -350,7 +350,7 @@ class HybridLayout extends GalleryLayout {
 		    $image = $image->getMemberData();
 		    $newItem['image'] = $image;
 		    $newItem['imageIndex'] = count($imageWidths);
-		    if (GalleryUtilities::isA($child, 'galleryphotoitem') &&
+		    if (get_class($child) == 'galleryphotoitem' &&
 			    $image['width'] > 0 && $image['height'] > 0) {
 			// Display in <img>
 			$imageWidths[] = $image['width'];
