@@ -4,22 +4,17 @@
  * Gallery will look for that file first and use it if it exists
  * and when you upgrade, your changes will not get overwritten.
  *}
-<div class="gbBreadCrumb">
+<ul class="gbBreadCrumb">
   {section name=parent loop=$layout.parents}
-  <span>
+  <li>
     {if ! $smarty.section.parent.last}
-    <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$layout.parents[parent].id`" arg3="highlightId=`$layout.parents[parent.index_next].id`"}">
-      {$layout.parents[parent].title|default:$layout.parents[parent].pathComponent|markup}
-    </a>
+    <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$layout.parents[parent].id`" arg3="highlightId=`$layout.parents[parent.index_next].id`"}">{$layout.parents[parent].title|default:$layout.parents[parent].pathComponent|markup}</a>
     {else}
-    <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$layout.parents[parent].id`" arg3="highlightId=`$layout.item.id`"}">
-      {$layout.parents[parent].title|default:$layout.parents[parent].pathComponent|markup}
-    </a>
+    <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$layout.parents[parent].id`" arg3="highlightId=`$layout.item.id`"}">{$layout.parents[parent].title|default:$layout.parents[parent].pathComponent|markup}</a>
     {/if}
-  </span>
+  </li>
   {/section}
-
-  <span>
+  <li>
     {$layout.item.title|default:$layout.item.pathComponent|markup}
-  </span>
-</div>
+  </li>
+</ul>

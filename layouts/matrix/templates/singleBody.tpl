@@ -8,14 +8,13 @@
       {assign var="currentIndex" value=$layout.imageViewsIndex}
       {assign var="image" value=$layout.imageViews.$currentIndex}
       
-      <div id="gsHeader">
+  <div id="gsHeader">
 	<div class="gbTitleBanner">
 	  <!-- img banner -->
 	</div>
-	
+  </div>
+    {include file="gallery:layouts/matrix/templates/sidebar.tpl"}      
 	{include file="gallery:layouts/matrix/templates/pathbar.tpl"}
-      </div>
-      
       <div id="gsAlbumContents">
 	<div class="gbTopFlag">
 	  <div class="gbTitleBanner">
@@ -103,5 +102,4 @@
 	{/if}
 
 	{include file="gallery:layouts/matrix/templates/itemNavigator.tpl"}
-      </div>
-      {include file="gallery:layouts/matrix/templates/sidebar.tpl"}
+</div>

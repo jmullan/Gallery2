@@ -8,11 +8,14 @@
   <div class="gbTitleBanner">
     <!-- img banner -->
   </div>
-
-  {include file="gallery:layouts/matrix/templates/pathbar.tpl"}
 </div>
 
+{include file="gallery:layouts/matrix/templates/sidebar.tpl"}
+
+{include file="gallery:layouts/matrix/templates/pathbar.tpl"}
+
 <div id="gsAlbumContents">
+  {include file="gallery:layouts/matrix/templates/itemNavigator.tpl"}
   <div class="gbTopFlag">
     <div class="gbTitleBanner">
       <h1 class="giTitle">
@@ -24,14 +27,15 @@
     </div>
 
     <div class="giInfo">
-      <span>
+      <ul>
+        <li>
 	{capture name=creationTimestamp}
 	{g->date timestamp=$layout.item.creationTimestamp}
 	{/capture}
 	{g->text text="Date: %s" arg1=$smarty.capture.creationTimestamp}
-      </span>
+        </li>
 
-      <span>
+        <li>
 	{g->text one="Size: %d item" 
 	         many="Size: %d items" 
 	         count=$layout.totalChildCount 
@@ -40,15 +44,13 @@
 	         many="(%d items total)"
 	         count=$layout.totalDescendentCount
 	         arg1=$layout.totalDescendentCount}
-      </span>
+        </li>
 	
-      <span>
+        <li>
 	{g->text text="Owner: %s" arg1=$layout.owner.fullName|default:$layout.owner.userName}
-      </span>
+        </li>
+      </ul>
     </div>
-
-    {include file="gallery:layouts/matrix/templates/itemNavigator.tpl"}
-
   </div>
 
   {counter start=0 print=no assign=childrenInColumnCount}
@@ -144,39 +146,32 @@
 
   <div class="gbBottomFlag">
     <div class="giHorizontalLinks">
-      <div class="giTitle">
-	{g->text text="Page"}
-      </div>
-      
+      <ul>
+	  <li>{g->text text="Page:"}</li>
       {assign var="lastPage" value=0}
       {foreach name=jumprange from=$layout.jumprange item=page}
       {if ($page - $lastPage >= 2)}
-      <span>
+      <li>
 	{if ($page - $lastPage == 2)}
-	<a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$layout.item.id`" arg3="page=`$page-1`"}">
-	  {$page-1}
-	</a>
+	<a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$layout.item.id`" arg3="page=`$page-1`"}">{$page-1}</a>
 	{else}
 	...
 	{/if}
-      </span>
+      </li>
       {/if}
 	  
       {if ($layout.currentPage == $page)}
-      <span>
+      <li>
 	{$page}
-      </span>
+      </li>
       {else}
-      <span> 
-	<a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$layout.item.id`" arg3="page=$page"}">
-	  {$page}
-	</a>
-      </span>
+      <li> 
+	<a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$layout.item.id`" arg3="page=$page"}">{$page}</a>
+      </li>
       {/if}
       {assign var="lastPage" value=$page}
       {/foreach}
+      </ul>
     </div>
   </div>
 </div>
-
-{include file="gallery:layouts/matrix/templates/sidebar.tpl"}

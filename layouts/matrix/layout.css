@@ -28,12 +28,13 @@
 /*   Category 2: section definitions                 */
 /* declare relative or absolute section positions    */
 
-#gsHeader {  }
+#gsHeader { margin: 0; padding: 0; }
 
 #gsSidebar {
-	float: left;
-	width: 148px;
-	padding: 0 12px;
+	position: absolute;
+	left:0;
+	width: 150px;
+	padding: 0 10px;
 }
 
 #gsComments { 
@@ -52,8 +53,8 @@
 /* gsXxxxContents	elements are the main 'holder' for the page. */
 
 #gsAlbumContents {
-	float: left;
-	width: 72%;
+	margin-left: 170px;
+	width: auto;
 	min-width: 596px;
 }
 
@@ -96,12 +97,21 @@
 
 /* ********** #gsHeader *************** */
 
-#gsHeader .gbTitleBanner { 
-	padding-top: 6px;
-	padding-bottom: 6px;
+#gsHeader .gbTitleBanner { padding: 6px 0; }
+
+.gbBreadCrumb { 
+	margin-left: 170px; 
+	padding: 5px 0; 
+}
+.gbBreadCrumb li { 
+	display: inline;
+	list-style-type: decimal;
+	padding: 0 5px;
 }
 
-#gsHeader .gbBreadCrumb { padding: 8px; }
+#gsFooter {
+	margin-left: 170px;
+}
 
 /* ********** #gsAlbumContents ******** */
 
@@ -115,8 +125,8 @@
 	clear: both;
 	float: left;
 	width: 97%;
-	margin: 5px 10px 5px 0;
-	padding: 10px;
+	margin: 5px 0;
+	padding: 8px;
 }
 
 .gbItemAlbum:after {
@@ -142,7 +152,7 @@
 	max-width: 172px;
 	width: expression(document.body.clientWidth > 172? '172px': 'auto' );
 	margin: 8px 8px 0 0;
-	padding: 8px;
+	padding: 8px 0;
 }
 
 #gsAlbumContents .gbExif { }
@@ -166,14 +176,22 @@
 * html .gbTopFlag, * html .gbBottomFlag { height: 1%; }
 /* End hide from IE-mac */
 
-#gsAlbumContents div.giHorizontalLinks {
+#gsAlbumContents .giHorizontalLinks { 
 	float: right;
+	margin: 0;
+	padding: 0;
 }
+#gsAlbumContents .giHorizontalLinks li { 
+	display: inline;
+	list-style-type: none;
+	padding: 0 5px;
+ }
+#gsAlbumContents .giHorizontalLinks a { text-decoration: none; }
 
 /* ************* #gsCommentBox ************ */
 
 #gsComments .gbComment { 
-			padding: 8px 0 16px 0;
+	padding: 8px 0 16px 0;
 }
 
 /* ************* gsSidebar **************** */

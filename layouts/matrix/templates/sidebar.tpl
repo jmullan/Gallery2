@@ -42,33 +42,21 @@
   {* List of peer items *}
   {if $layout.show.peerSidebarBox}
   <div class="gbMenu">
-    <div class="giTitle">
-	{$layout.parent.title|default:$layout.parent.pathComponent}
-    </div>
-    <span class="giDescription">
-	{g->text one="(%d item)" many="(%d items)" count=$layout.totalPeerCount arg1=$layout.totalPeerCount}
-    </span>
+    <p><span class="giTitle">{$layout.parent.title|default:$layout.parent.pathComponent}</span><br />
+    <span class="giDescription">{g->text one="(%d item)" many="(%d items)" count=$layout.totalPeerCount arg1=$layout.totalPeerCount}</span></p>
 
     <ul>
       {assign var="lastIndex" value=0}
       {foreach from=$layout.peers item=peer}
       {assign var="title" value=$peer.peer.title|default:$peer.peer.pathComponent}
       {if ($peer.index - $lastIndex > 1)}
-      <li>
-	...
-      </li>
+      <li>...</li>
       {/if}
 
       {if ($peer.peer.id == $layout.item.id)}
-      <li class="giSelected">
-        {g->text text="%d. %s" arg1=$peer.index arg2=$title|truncate:14}
-      </li>
+      <li class="giSelected">{g->text text="%d. %s" arg1=$peer.index arg2=$title|truncate:14}</li>
       {else}
-      <li>
-        <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$peer.peer.id`"}">
-	  {g->text text="%d. %s" arg1=$peer.index arg2=$title|truncate:14}
-	</a>
-      </li>
+      <li><a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$peer.peer.id`"}">{g->text text="%d. %s" arg1=$peer.index arg2=$title|truncate:14}</a></li>
       {/if}
       {assign var="lastIndex" value=$peer.index}
       {/foreach}
