@@ -45,12 +45,25 @@ class UrlGeneratorTest extends GalleryTestCase {
     }
 
     function testGenerateUrl() {
-	$url = $this->_urlGenerator->generateUrl(array('a' => 123,
-						       'b' => 'bBBB',
-						       'c' => serialize(array(1, 2, 3))));
+	global $gallery;
+	
+	$actual = $this->_urlGenerator->generateUrl(array('a' => 123,
+							  'b' => 'bBbB',
+							  'c' => serialize(array(1, 2, 3))));
+	
+	$values = array('g2_a=123',
+			'g2_b=bBbB',
+			'g2_c=a%3A3%3A%7Bi%3A0%3Bi%3A1%3Bi%3A1%3Bi%3A2%3Bi%3A2%3Bi%3A3%3B%7D');
 
-	$this->assertEquals('test.php?g2_a=123&g2_b=bBBB&g2_c=a%3A3%3A%7Bi%3A0%3Bi%3A1%3Bi%3A1%3Bi%3A2%3Bi%3A2%3Bi%3A3%3B%7D',
-			    $url);
+	// If we're not using cookies, expect there to be an additional value
+	$session = $gallery->getSession();
+	if (!$session->isUsingCookies()) {
+	    list ($sessionKey, $sessionId) = $session->getSessionDescriptor();
+	    $values[] = GALLERY_FORM_VARIABLE_PREFIX . $sessionKey . '=' . $sessionId;
+	}
+	$expected = 'test.php?' . join('&', $values);
+
+	$this->assertEquals($expected, $actual);
     }
 }
 
