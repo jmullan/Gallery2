@@ -31,12 +31,12 @@
   {/if}
 
   <div class="gbAdmin">
-    <div class="giDescription">
+    <p class="giDescription">
       {g->text one="There is %d user in the system." 
                many="There are %d total users in the system." 
                count=$AdminUsers.totalUserCount
                arg1=$AdminUsers.totalUserCount}
-    </div>
+    </p>
   </div>
 
   <div class="gbAdmin">

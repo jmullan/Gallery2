@@ -12,13 +12,15 @@
     {include file="gallery:layouts/matrix/templates/banner.tpl"}      
   </div>
 
-{include file="gallery:layouts/matrix/templates/pathbar.tpl"}  
-{include file="gallery:layouts/matrix/templates/sidebar.tpl"}      
-
+  {include file="gallery:layouts/matrix/templates/pathbar.tpl"}  
+  
   <div id="gsContents">
+    {include file="gallery:layouts/matrix/templates/sidebar.tpl"} 
+    
     <div id="gsAlbumContents">
+	{include file="layouts/matrix/templates/itemNavigator.tpl"}
+
 	<div class="gbTopFlag">
-        {include file="layouts/matrix/templates/itemNavigator.tpl"}
 	  <table class="gbTitleBanner">
 	    <tr>
               <td>
@@ -107,7 +109,8 @@
 	{include file="gallery:$detailFile" l10Domain="modules_$moduleId"}
 	{/foreach}
 	{/if}
-
-	{include file="gallery:layouts/matrix/templates/itemNavigator.tpl"}
+        <div class="gbBottomFlag">
+          {include file="gallery:layouts/matrix/templates/itemNavigator.tpl"}
+        </div>
   </div>
 </div>
