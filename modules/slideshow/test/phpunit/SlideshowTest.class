@@ -72,13 +72,16 @@ class SlideshowTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	$photoIds = array();
 	$prefix = dirname(__FILE__).'/../../../core/test/data/test';
 	for ($i = 1; $i <= 4; $i++) {
-	    $ret = $this->_addPhoto($album->getId(), "$prefix$i.gif", $i,
-				    $allUsersGroupId, 'core.viewAll');
+	    list ($ret, $photoId) =
+		$this->_addPhoto($album->getId(), "$prefix$i.gif", $i,
+				 $allUsersGroupId, 'core.viewAll');
 	    if ($ret->isError()) {
 		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
+	    $photoIds[] = $photoId;
 	}
 	$ret = $gallery->releaseLocks($lockId);
 
@@ -91,58 +94,59 @@ class SlideshowTest extends GalleryTestCase {
 	$gallery->setActiveUserId($guestId);
 
 	$this->_album = $album;
+	$this->_photoIds = $photoIds;
     }
 
     function _addPhoto($parentId, $imagePath, $index, $groupId, $permission) {
 	list ($ret, $photo) =
 	    GalleryFactory::newInstance('GalleryEntity', 'GalleryPhotoItem');
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$ret = $photo->create($parentId, $imagePath,
 			      GalleryUtilities::getMimeType($imagePath),
 			      'testitem_' . time() . '.gif');
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$photo->setTitle("Item #$index");
 	$photo->setSummary("Summary $index");
 	$photo->setDescription("Description $index");
 	$ret = $photo->save();
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	// set permission
 	$ret = GalleryPermissionMap::addGroupPermission(
 			  $photo->getId(), $groupId, $permission);
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	// add thumbnail
 	list ($ret, $toolkit, $thumbMimeType) =
 	    GalleryToolkitHelper::getToolkitByOperation(
 				  $photo->getMimeType(), 'thumbnail');
 	if ($ret->isError() || !isset($toolkit)) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	list ($ret, $thumb) = GalleryFactory::newInstance(
 				  'GalleryEntity', 'GalleryDerivativeImage');
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$ret = $thumb->create($photo->getId(),
 			      DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$thumb->setDerivativeSourceId($photo->getId());
 	$thumb->setDerivativeOperations('thumbnail|150');
 	$thumb->setDerivativeMimeType($thumbMimeType);
 	$ret = $thumb->save();
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	return GalleryStatus::success();
+	return array(GalleryStatus::success(), $photo->getId());
     }
 
     /**
@@ -169,6 +173,17 @@ class SlideshowTest extends GalleryTestCase {
 	$this->assert(
 	    !$ret->isError() && isset($slideData) && count($slideData) == 4,
 	    'Generate slideshow data');
+	$slideIds = array();
+	for ($i = 0; $i < 4; $i++) {
+	    $this->assert(isset($slideData[$i]), "Slideshow item $i missing");
+	    foreach (array('id','src','href') as $attribute) {
+		$this->assert(isset($slideData[$i][$attribute]),
+		    "Slideshow item $i - missing $attribute attribute");
+	    }
+	    $slideIds[] = $slideData[$i]['id'];
+	}
+	$this->assert(count(array_intersect($this->_photoIds, $slideIds)) == 4,
+	    "Slideshow doesn't contain correct set of photo ids");
 
 	// Want a test album with all combinations of these item sizes:
 	// full+thumb, full+resize+thumb, full+resizes+thumb, full+resize, full
