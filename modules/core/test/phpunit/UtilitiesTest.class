@@ -158,10 +158,17 @@ class UtilitiesTest extends GalleryTestCase {
 	$this->assertEquals('blah', GalleryUtilities::getRequestVariables('utilitiestest[x]'));
     }
 
-    function testSanitizeInputValue() {
+    function testSanitizeInputValue1() {
 	$rawInput = '<ScRiPt foo=bar>blah</SCRIPT> test test <IFRAME> <b> foo </b> </IFRAME>';
 	GalleryUtilities::sanitizeInputValues($rawInput);
 	$this->assertEquals('&lt;ScRiPt foo=bar&gt;blah&lt;/SCRIPT&gt; test test &lt;IFRAME&gt; &lt;b&gt; foo &lt;/b&gt; &lt;/IFRAME&gt;', $rawInput);
+	
+    }
+    
+    function testSanitizeInputValue2() {
+	$rawInput = 'Opções de Administração';
+	GalleryUtilities::sanitizeInputValues($rawInput);
+	$this->assertEquals('Op&#36133;s de Administra&#34991;', $rawInput);
 	
     }
     
