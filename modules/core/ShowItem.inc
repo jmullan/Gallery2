@@ -80,6 +80,21 @@ class ShowItemView extends GalleryView {
 	/* Make sure we have permission to view this item */
 	$ret = GalleryCoreApi::assertHasItemPermission($item->getId(), 'core.view');
 	if ($ret->isError()) {
+	    if ($ret->getErrorCode() & ERROR_PERMISSION_DENIED) {
+		/* Try to redirect to root */
+		list ($ret2, $rootId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
+		if ($ret2->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		}
+		if ($item->getId() == $rootId) {
+		    /* No permission on root album; redirect to login view */
+		    return array(GalleryStatus::success(), array('redirect' =>
+			array('view' => 'core:UserAdmin', 'subView' => 'core:UserLogin')));
+
+		}
+		return array(GalleryStatus::success(), array('redirect' =>
+		    array('view' => 'core:ShowItem', 'itemId' => $rootId)));
+	    }
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
