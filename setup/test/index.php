@@ -20,7 +20,7 @@ if ($dir = opendir($testDir)) {
 }
 
 print '<center>';
-print '<h1> Test Harness </h1>';
+print '<h1> <a href=index.php>Test Harness</a> </h1>';
 print '<table border=1 cellspacing=0 cellpadding=5>';
 print '<tr>';
 print '<th bgcolor=#9999CC> Name';

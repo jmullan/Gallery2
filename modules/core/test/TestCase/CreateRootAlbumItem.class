@@ -30,7 +30,11 @@ class CreateAlbumItemTestCase extends TestCase {
 	}
 
 	global $gallery;
-	$gallery->lockLocal(array($this->_item->getId()));
+	$ret = $gallery->lockLocal(array($this->_item->getId()));
+	if ($ret->isError()) {
+	    $this->error($ret);
+	    return $ret;
+	}
 
 	$this->_item->setRows(3);
 	$childIds =& $this->_item->getChildIds();

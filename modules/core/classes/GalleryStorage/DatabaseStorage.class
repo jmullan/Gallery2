@@ -206,7 +206,8 @@ class DatabaseStorage extends GalleryStorage {
 	$this->_traceStart();
 	$this->_db = ADONewConnection($this->_type);
 	if (empty($this->_db)) {
-	    return GalleryStatus::error(__FILE__, __LINE__);
+	    return GalleryStatus::error(ERROR_DATABASE_FAILURE,
+					__FILE__, __LINE__);
 	}
 
 	/*
@@ -417,7 +418,8 @@ class DatabaseStorage extends GalleryStorage {
 	} else if ($type & STORAGE_TYPE_LIST) {
 	    return $this->_loadList($nucleus, $tableName, $memberName, $object);
 	} else {
-	    return GalleryStatus::error(__FILE__, __LINE__);
+	    return GalleryStatus::error(ERROR_BAD_DATA_TYPE,
+					__FILE__, __LINE__);
 	}
     }
 
@@ -458,7 +460,8 @@ class DatabaseStorage extends GalleryStorage {
 	} else if ($type & STORAGE_TYPE_LIST) {
 	    return $this->_saveList($nucleus, $tableName, $memberName, $object);
 	} else {
-	    return GalleryStatus::error(__FILE__, __LINE__);
+	    return GalleryStatus::error(ERROR_BAD_DATA_TYPE,
+					__FILE__, __LINE__);
 	}
     }
 
@@ -895,7 +898,8 @@ class DatabaseStorage extends GalleryStorage {
 	}
 
 	// XXX: implement this
-	return GalleryStatus::error(__FILE__, __LINE__);
+	return GalleryStatus::error(ERROR_UNIMPLEMENTED,
+				    __FILE__, __LINE__);
     }
 
     /**
