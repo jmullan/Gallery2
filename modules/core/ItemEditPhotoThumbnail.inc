@@ -155,6 +155,12 @@ class ItemEditPhotoThumbnail extends ItemEditPlugin {
 	    $crop['topPercent'] = $matches[2];
 	    $crop['widthPercent'] = $matches[3];
 	    $crop['heightPercent'] = $matches[4];
+	} else {
+	    /* No cropping yet */
+	    $crop['leftPercent'] = 0;
+	    $crop['topPercent'] = 0;
+	    $crop['widthPercent'] = 100;
+	    $crop['heightPercent'] = 100;
 	}
 
 	/*
