@@ -67,31 +67,6 @@ class ItemEditPhoto extends ItemEditPlugin {
 	    }
 
 	    if (empty($error)) {
-		/* Change the originationTimestamp */
-		if (!empty($form['originationTimestamp'])) {
-		    $newOriginationTimestamp = mktime($form['originationTimestamp']['Time_Hour'],
-						      $form['originationTimestamp']['Time_Minute'],
-						      $form['originationTimestamp']['Time_Second'],
-						      $form['originationTimestamp']['Date_Month'],
-						      $form['originationTimestamp']['Date_Day'],
-						      $form['originationTimestamp']['Date_Year']);
-		    $item->setOriginationTimestamp($newOriginationTimestamp);
-
-		    list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($item->getId());
-		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null, null);
-		    }
-		    $ret = $item->save();
-		    if ($ret->isError()) {
-			GalleryCoreApi::releaseLocks($lockId);
-			return array($ret->wrap(__FILE__, __LINE__), null, null);
-		    }
-		    $ret = GalleryCoreApi::releaseLocks($lockId);
-		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null, null);
-		    }
-		}
-
 		/* Load the thumbnail */
 		list ($ret, $thumbTable) =
 		    GalleryCoreApi::fetchThumbnailsByItemIds(array($item->getId()));
@@ -289,9 +264,6 @@ class ItemEditPhoto extends ItemEditPlugin {
 		$form['thumbnail']['size'] = $size;
 	    }
 
-	    /* The originationTimestamp */
-	    $form['originationTimestamp'] = $item->getOriginationTimestamp();
-
 	    $form['formName'] = 'ItemEditPhoto';
 	}
 
@@ -331,22 +303,6 @@ class ItemEditPhoto extends ItemEditPlugin {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$ItemEditPhoto['editSizes']['can']['createResizes'] = isset($toolkit);
-
-	/* The originateTimestamp that we can get from our toolkits */
-	list ($ret, $originationTimestamp) =
-		GalleryCoreApi::fetchOriginationTimestamp($item);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	$ItemEditPhoto['originationTimestamp'] = array(
-		'timestamp' => $originationTimestamp,
-		'Time_Hour' => strftime('%H', $originationTimestamp),
-		'Time_Minute' => strftime('%M', $originationTimestamp),
-		'Time_Second' => strftime('%S', $originationTimestamp),
-		'Date_Day' => strftime('%d', $originationTimestamp),
-		'Date_Month' => strftime('%m', $originationTimestamp),
-		'Date_Year' => strftime('%Y', $originationTimestamp),
-	);
 
 	$template->setVariable('ItemEditPhoto', $ItemEditPhoto);
 	$template->setVariable('controller', 'core:ItemEditPhoto');
