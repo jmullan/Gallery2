@@ -143,7 +143,7 @@ function GalleryInitSecondPass() {
     if (empty($activeUserId)) {
 	/* No active user -- be anonymous */
 	list ($ret, $activeUserId) =
-		GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
