@@ -364,7 +364,7 @@ class GalleryItem_core extends GalleryFileSystemEntity {
      * @return array string an order clause, string a row matching condition
      * @access private
      */
-    function _fetchOrderInfo() {
+    function _getOrderInfo() {
 	/*
 	 * Don't simply plug getOrderBy into the SQL clause, or we could open
 	 * the door for SQL injection.
@@ -450,7 +450,7 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	/* List of classes that we will need */
 	$classes = array('[GalleryChildEntity]', '[GalleryUserGroupMap]', '[GalleryPermissionMap]');
 
-	list($orderClause, $extraWhere) = $this->_fetchOrderInfo();
+	list($orderColumn, $extraWhere) = $this->_getOrderInfo();
 	$extraIds = 0;
 	if (!empty($extraWhere)) {
 	    $extraIds = substr_count($extraWhere, '?');
@@ -462,14 +462,18 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	    }
 	    $classes = array_unique(array_merge($classes, $orderClasses));
 	}
-	if (!empty($orderClause)) {
-	    $orderClause = 'ORDER BY ' . $orderClause;
+	if (!empty($orderColumn)) {
+	    $orderClause = 'ORDER BY ' . $orderColumn;
+	    $selectClause = ', ' . $orderColumn;
+	} else {
+	    $orderClause = '';
+	    $selectClause = '';
 	}
 
 	/* Prepare the query */
 	$query = '
         SELECT
-          DISTINCT([GalleryChildEntity::id])
+          DISTINCT([GalleryChildEntity::id]) ' . $selectClause . '
         FROM
           ' . join(', ', $classes) . '
         WHERE
