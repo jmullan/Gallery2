@@ -49,6 +49,8 @@ class GalleryDataCache {
     function &_getCache() {
 	static $cache;
 	if (!isset($cache)) {
+	    $cache['maxKeys'] = 300;
+	    $cache['timestamps'] = array();
 	    $cache['keys'] = array();
 	    $cache['protected'] = array();
 	}
@@ -70,7 +72,11 @@ class GalleryDataCache {
 	$cache['keys'][$key] = $data;
 	if ($protected) {
 	    $cache['protected'][$key] = 1;
+	} else {
+	    $cache['timestamps'][$key] = time() + microtime();
 	}
+
+	GalleryDataCache::_performMaintenance();
     }
 
     /**
@@ -82,6 +88,7 @@ class GalleryDataCache {
      */
     function remove($key) {
 	$cache =& GalleryDataCache::_getCache();
+	unset($cache['timestamps'][$key]);
 	unset($cache['keys'][$key]);
 	unset($cache['protected'][$key]);
     }
@@ -101,6 +108,42 @@ class GalleryDataCache {
 	$cache['keys'][$key] =& $data;
 	if ($protected) {
 	    $cache['protected'][$key] = 1;
+	} else {
+	    print "Setting timestamp for $key<br>";
+	    $cache['timestamps'][$key] = time() + microtime();
+	}
+
+	GalleryDataCache::_performMaintenance();
+    }
+
+    /**
+     * Perform some pruning of our cache to prevent it from growing too large when we're doing
+     * exceptionally long operations like adding many items in one request.
+     *
+     * @access private
+     * @static
+     */
+    function _performMaintenance() {
+	static $count;
+
+	if (!isset($count)) {
+	    $count = 0;
+	}
+
+	if ($count++ % 150 == 0) {
+	    $cache =& GalleryDataCache::_getCache();
+	    if (sizeof($cache['timestamps']) > $cache['maxKeys']) {
+		$timestamps = $cache['timestamps'];
+		asort($timestamps);
+		$numToExpire = sizeof($timestamps) - $cache['maxKeys'];
+		foreach ($timestamps as $key => $timestamp) {
+		    unset($cache['keys'][$key]);
+		    unset($cache['timestamps'][$key]);
+		    if ($numToExpire-- == 0) {
+			break;
+		    }
+		}
+	    }
 	}
     }
 
@@ -115,6 +158,9 @@ class GalleryDataCache {
 	GalleryCoreApi::apiMethodUsed("GalleryDataCache::get");
 	
 	$cache =& GalleryDataCache::_getCache();
+	if (!isset($cache['protected'][$key])) {
+	    $cache['timestamps'][$key] = time() + microtime();
+	}
 	return $cache['keys'][$key];
     }
 
@@ -155,10 +201,12 @@ class GalleryDataCache {
 	$cache =& GalleryDataCache::_getCache();
 
 	if ($purgeProtected) {
+	    $cache['timestamps'] = array();
 	    $cache['keys'] = array();
 	} else {
 	    foreach (array_keys($cache['keys']) as $key) {
 		if (!isset($cache['protected'][$key])) {
+		    unset($cache['timestamps'][$key]);
 		    unset($cache['keys'][$key]);
 		}
 	    }
