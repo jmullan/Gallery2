@@ -107,9 +107,16 @@ class SearchModule extends GalleryModule {
     function loadSystemContent(&$template) {
 	global $gallery;
 
-	$SearchSystemContent['subView'] = 'search:SearchScan';
-	$template->setVariable('SearchSystemContent', $SearchSystemContent);
-	return array(GalleryStatus::success(), 'modules/search/templates/SearchSystemContent.tpl');
+	$subView = GalleryUtilities::getRequestVariables('subView');
+	if ($subView == 'search:SearchScan' || $subView == 'search:SearchShowAll') {
+	    $content = null;
+	} else {
+	    $SearchSystemContent['subView'] = 'search:SearchScan';
+	    $template->setVariable('SearchSystemContent', $SearchSystemContent);
+	    $content = 'modules/search/templates/SearchSystemContent.tpl';
+	}
+	    
+	return array(GalleryStatus::success(), $content);
     }
 
     /**
