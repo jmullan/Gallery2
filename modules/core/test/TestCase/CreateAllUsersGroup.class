@@ -10,11 +10,10 @@ class CreateAllUsersGroupTestCase extends TestCase {
 	global $gallery;
 
 	$group = new GalleryGroup();
-	$ret = $group->create(GROUP_ALL_USERS);
+	$ret = $group->create('All Users', GROUP_ALL_USERS);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	$group->setGroupName('All Users');
 	
 	$ret = $group->save();
 	if ($ret->isError()) {
