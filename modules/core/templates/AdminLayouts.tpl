@@ -50,7 +50,7 @@
         {if ($AdminLayouts.mode == 'editLayout') && ($AdminLayouts.layoutId == $layoutId)}
         <li class="giSelectedTab">
           <span>
-	  {g->text text=$layout.name l10Domain=$layout.l10Domain}
+			{g->text text=$layout.name l10Domain=$layout.l10Domain}
           </span>
 	</li>
 	{else}
