@@ -108,6 +108,7 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
 	GalleryUtilities::putRequestVariable('form.action.preview', 1);
 	GalleryUtilities::putRequestVariable('form.comment', 'this is a comment');
+	GalleryUtilities::putRequestVariable('form.subject', 'this is a subject');
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
@@ -119,6 +120,32 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
     }
 
     function testAddEmptyComment() {
+	global $gallery;
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
+	GalleryUtilities::putRequestVariable('form.action.add', 1);
+	GalleryUtilities::putRequestVariable('form.comment', '');
+	GalleryUtilities::putRequestVariable('form.subject', '');
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'comment:AddComment'),
+				  'status' => array(),
+				  'error' => array('form.error.subject.missing',
+						   'form.error.comment.missing')),
+			    $results);
+	
+	/* Verify that there are no comments */
+	list ($ret, $counts) = GalleryCommentHelper::fetchCommentCounts(array($this->_item->getId()));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(empty($counts[$this->_item->getId()]));
+    }
+
+    function testPreviewEmptyComment() {
 	global $gallery;
 
 	/* Use valid inputs */
