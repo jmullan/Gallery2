@@ -100,6 +100,15 @@ class GallerySession {
      */
     var $_cookiePath;
 
+    /**
+     * An identifying value that we can use to verify that the session is coming
+     * from the same browser as it used to (to prevent session hijacking).
+     *
+     * @var string $_remoteIdentifier
+     * @access private
+     */
+    var $_remoteIdentifier;
+
     /*
      * ****************************************
      *                 Methods
@@ -124,7 +133,7 @@ class GallerySession {
 	    $this->_sessionId = $_COOKIE[SESSION_ID_PARAMETER];
 	    $this->_isUsingCookies = true;
 
-	    // Allow the URL to override the cookie, in rare occasions
+	    /* Allow the URL to override the cookie, in rare occasions */
 	    $sessionId = GalleryUtilities::getRequestVariables(SESSION_ID_PARAMETER);
 	    if (!empty($sessionId)) {
 		$this->_sessionId = $sessionId;
@@ -137,11 +146,13 @@ class GallerySession {
 	/* If we don't have a session id at this point, create one. */
 	if (empty($this->_sessionId)) {
 	    $this->_sessionId = md5(microtime() . rand(1, 32767));
-	    $this->_remoteIp = $_SERVER['REMOTE_ADDR'];
-	} else {
-	    /* Sanitize user input to avoid writing outside the session's dir */
-	    $this->_sessionId = preg_replace('/[^a-zA-Z0-9]/', '', $this->_sessionId);
 	}
+
+	/*
+	 * Sanitize the session id (which may have come from user input) to
+	 * avoid possibly writing outside the session storage dir.
+	 */
+	$this->_sessionId = preg_replace('/[^a-zA-Z0-9]/', '', $this->_sessionId);
 
 	/* Load session state */
 	$ret = $this->_loadSessionData();
@@ -149,14 +160,20 @@ class GallerySession {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
+	$forceResendCookie = false;
+	
 	/* Verify the remote address to avoid casual session hijacking */
-	if (!isset($this->_remoteIp) || $this->_remoteIp != $_SERVER['REMOTE_ADDR']) {
+	$currentRemoteIdentifier = GalleryUtilities::getRemoteHostAddress();
+	if (!isset($this->_remoteIdentifier) || $this->_remoteIdentifier != $currentRemoteIdentifier) {
 	    /*
 	     * The session was not created from this browser address, so reset
 	     * our data to prevent hijacking.
 	     */
-	    $this->_remoteIp = $_SERVER['REMOTE_ADDR'];
+	    printf("<pre>hijack! %s</pre>", print_r(array($this->_remoteIdentifier, $currentRemoteIdentifier), 1));
+	    $this->_remoteIdentifier = $currentRemoteIdentifier;
 	    $this->_emptySessionData();
+	    $this->_sessionId = md5(microtime() . rand(1, 32767));
+	    $forceResendCookie = true;
 	    $ret = $this->save(true);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
@@ -164,7 +181,8 @@ class GallerySession {
 	}
 
 	if (!isset($_COOKIE[SESSION_ID_PARAMETER]) || 
-	        $_COOKIE[SESSION_ID_PARAMETER] != $this->_sessionId) {
+	        $_COOKIE[SESSION_ID_PARAMETER] != $this->_sessionId ||
+	        $forceResendCookie) {
 	    /*
 	     * Send back a cookie.
 	     *
@@ -242,7 +260,7 @@ class GallerySession {
 	
 	/* Only bother saving if we've been modified at all */
 	$serialized = serialize(array($this->_creationTime,
-				      $this->_remoteIp,
+				      $this->_remoteIdentifier,
 				      $this->_sessionData));
 	if ($serialized != $this->_loadedSessionData) {
 	    $sessionFile = $gallery->getConfig('data.gallery.sessions') . $this->_sessionId;
@@ -447,7 +465,7 @@ class GallerySession {
 	    $data = unserialize($serialized);
 	    if (sizeof($data) == 3) {
 		list ($this->_creationTime,
-		      $this->_remoteIp,
+		      $this->_remoteIdentifier,
 		      $this->_sessionData) = $data;
 		$this->_loadedSessionData = $serialized;
 	    }
@@ -471,6 +489,7 @@ class GallerySession {
 	$this->_sessionData = array();
 	$this->_loadedSessionData = array();
 	$this->_creationTime = time();
+	$this->_remoteIdentifier = GalleryUtilities::getRemoteHostAddress();
     }
 
     /**
