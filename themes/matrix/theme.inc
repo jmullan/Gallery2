@@ -52,10 +52,10 @@ class MatrixTheme extends GalleryTheme {
 	
 	$style[] = sprintf($format, $this->getBaseUrl() . 'styles/theme.css');
 	
-    $view = GalleryUtilities::getRequestVariables('view');
-    if (!empty($view) && $view != 'core:ShowItem') {
+	$view = GalleryUtilities::getRequestVariables('view');
+	if (!empty($view) && $view != 'core:ShowItem') {
 	    $style[] = sprintf($format, $this->getBaseUrl() . 'styles/layout.css');
-    }
+	}
 
 	return join("\n", $style);
     }
