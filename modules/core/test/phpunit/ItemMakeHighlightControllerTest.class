@@ -48,10 +48,10 @@ class ItemMakeHighlightControllerTest extends GalleryControllerTestCase {
 	
 	/* Register operations that we can perform on our mock data items */
 	$ret = GalleryToolkitHelper::registerOperation('ItemMakeHighlightTestToolkit',
-						array('test/file-0'),
-						'thumbnail',
-						array(array('type' => 'int')),
-						'test-description');
+						       array('test/file-0'),
+						       'thumbnail',
+						       array(array('type' => 'int', 'description' => 'foo')),
+						       'test-description');
 	if ($ret->isError()) {
 	    print $gallery->getDebugBuffer();
 	    print $ret->getAsHtml();
@@ -82,9 +82,11 @@ class ItemMakeHighlightControllerTest extends GalleryControllerTestCase {
     function tearDown() {
 	global $gallery;
 
-	$ret = $gallery->deleteEntityById($this->_album->getId());
-	if ($ret->isError()) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	if (isset($this->_album)) {
+	    $ret = $gallery->deleteEntityById($this->_album->getId());
+	    if ($ret->isError()) {
+		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
 	}
 	
 	/* Unregister */

@@ -154,7 +154,7 @@ class ItemTest extends GalleryTestCase {
 	$ret = GalleryToolkitHelper::registerOperation('ItemTestToolkit',
 						       array('test/image'),
 						       'thumbnail',
-						       array(array('type' => 'int')),
+						       array(array('type' => 'int', 'description' => 'foo')),
 						       'itemtest-description');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
