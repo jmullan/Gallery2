@@ -47,7 +47,7 @@ class CommentSearchTest extends GalleryTestCase {
 	
 	parent::setUp();
 
-	list ($ret, $moduleStatusList) = $gallery->getModuleStatus();
+	list ($ret, $moduleStatusList) = GalleryPluginMap::getPluginStatus('module');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

@@ -113,7 +113,7 @@ class ShowItemView extends GalleryView {
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null, null);
 	}
 
-	list ($ret, $layout) = GalleryLayout::loadLayout($layoutName);
+	list ($ret, $layout) = GalleryPluginMap::loadPlugin('layout', $layoutName);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}

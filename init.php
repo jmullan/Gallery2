@@ -189,7 +189,7 @@ function GalleryInitSecondPass() {
     
     /* Load the module list */
     GalleryProfiler::start('init.GalleryInit#load-modules');
-    list ($ret, $moduleStatus) = $gallery->getModuleStatus();
+    list ($ret, $moduleStatus) = GalleryPluginMap::getPluginStatus('module');
     if ($ret->isError()) {
 	return $ret->wrap(__FILE__, __LINE__);
     }

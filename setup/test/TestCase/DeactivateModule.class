@@ -8,7 +8,7 @@ class DeactivateModuleTestCase extends TestCase {
 
     function getDescription() {
 	global $gallery;
-	list ($ret, $moduleStatus) = $gallery->getModuleStatus();
+	list ($ret, $moduleStatus) = GalleryPluginMap::getPluginStatus('module');
 	if ($ret->isError()) {
 	    $status = 'error';
 	} else {

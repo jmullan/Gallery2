@@ -868,23 +868,6 @@ class Gallery {
     }
 
     /**
-     * Get the status of all modules
-     *
-     * @param string the plugin type (eg 'module', 'layout')
-     * @return array object GalleryStatus as status code
-     *                      array (moduleName => array('active' => true/false,
-     *                                                 'installed' => true/false)
-     */
-    function getModuleStatus() {
-	list ($ret, $status) = GalleryPluginMap::getPluginStatus('module');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	return array(GalleryStatus::success(), $status);
-    }
-    
-    /**
      * Convenience method to load a specific module
      *
      * @param string the module name

@@ -61,7 +61,7 @@ function GalleryMain(&$testSuite, $filter) {
 	/*
 	 * Load the test cases for every active module.
 	 */
-	list ($ret, $moduleStatusList) = $gallery->getModuleStatus();
+	list ($ret, $moduleStatusList) = GalleryPluginMap::getPluginStatus('module');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -127,7 +127,7 @@ if ($ret->isError()) {
     return;
 }
 
-list ($ret, $moduleStatusList) = $gallery->getModuleStatus();
+list ($ret, $moduleStatusList) = GalleryPluginMap::getPluginStatus('module');
 if ($ret->isError()) {
     $ret = $ret->wrap(__FILE__, __LINE__);
     print $ret->getAsHtml();

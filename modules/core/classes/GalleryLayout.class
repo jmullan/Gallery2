@@ -176,7 +176,7 @@ class GalleryLayout {
 	GalleryProfiler::start('modules.core.classes.GalleryLayout::_loadModuleSystemContent');
 
 	/* Load the module list */
-	list ($ret, $moduleStatus) = $gallery->getModuleStatus();
+	list ($ret, $moduleStatus) = GalleryPluginMap::getPluginStatus('module');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -224,7 +224,7 @@ class GalleryLayout {
         GalleryProfiler::start('modules.core.classes.GalleryLayout::_getModuleSystemLinks');
 	
         /* Load the module list */
-        list ($ret, $moduleStatus) = $gallery->getModuleStatus();
+        list ($ret, $moduleStatus) = GalleryPluginMap::getPluginStatus('module');
         if ($ret->isError()) {
             return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -279,7 +279,7 @@ class GalleryLayout {
 	}
 
 	/* Load the module list */
-	list ($ret, $moduleStatus) = $gallery->getModuleStatus();
+	list ($ret, $moduleStatus) = GalleryPluginMap::getPluginStatus('module');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -335,7 +335,7 @@ class GalleryLayout {
 	}
 	
 	/* Load the module list */
-	list ($ret, $moduleStatus) = $gallery->getModuleStatus();
+	list ($ret, $moduleStatus) = GalleryPluginMap::getPluginStatus('module');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -382,7 +382,7 @@ class GalleryLayout {
 	GalleryProfiler::start('modules.core.classes.GalleryLayout::_loadModuleItemDetails');
 
 	/* Load the module list */
-	list ($ret, $moduleStatus) = $gallery->getModuleStatus();
+	list ($ret, $moduleStatus) = GalleryPluginMap::getPluginStatus('module');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -432,52 +432,6 @@ class GalleryLayout {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-    }
-
-    /**
-     * Get an array of available layout-names
-     *
-     * @static
-     * @return array of layout names
-     */
-    function getLayoutList() {
-	global $gallery;
-	 
-	$platform = $gallery->getPlatform();
-	$layoutList = array();
-	$layoutDir = $gallery->getConfig('code.gallery.layouts');
-	if ($dir = $platform->opendir($layoutDir)) {
-	    while (($file = readdir($dir)) !== false) {
-		if ($file{0} == '.' || $file == 'CVS') {
-		    continue;
-		}
-		$layoutInc = "$layoutDir$file/layout.inc";
-		if ($platform->file_exists($layoutInc)) {
-		    $layoutList[$file] = $file;
-		}
-	    }
-	    closedir($dir);
-	}
-	return $layoutList;
-    }
-
-    /**
-     * Load given layout
-     *
-     * @static
-     * @return array object GalleryStatus a status code
-     *               object GalleryLayout instance
-     */
-    function loadLayout($layoutName) {
-	global $gallery;
-	require_once($gallery->getConfig('code.gallery.layouts') . $layoutName . '/layout.inc');
-	$layoutClassName = $layoutName . 'Layout';
-	if (!class_exists($layoutClassName)) {
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null, null);
-	}
-	$layout = new $layoutClassName();
-	$layout->init($layoutName);
-	return array (GalleryStatus::success(), $layout);
     }
 
     /* Getters and setters below */

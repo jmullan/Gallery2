@@ -5,6 +5,17 @@
     {/g->title}
   {/g->banner}
 
+  {if isset($status)}
+    {g->success}
+      {if isset($status.activated)}
+	{g->text text="Successfully activated layout %s" arg1=$status.activated}
+      {/if}
+      {if isset($status.deactivated)}
+	{g->text text="Successfully deactivated layout %s" arg1=$status.deactivated}
+      {/if}
+    {/g->success}
+  {/if}
+
   {g->box style="admin"}
     {g->description}
       {g->text text="Gallery has layouts that can change the way that you navigate around your albums.  You can download and install new layouts, or you can disable layouts if you don't want to use them.  By default, new layouts are disabled.  They must be enabled before you can use them."}

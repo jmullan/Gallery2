@@ -84,7 +84,7 @@ class GalleryPluginMap_core {
 
 	if (isset($pluginStatus[$pluginName]['active'])) {
 	    $ret = GalleryPluginMap::updateMapEntry(array('pluginType' => $pluginType,
-							  'pluginName' => $pluginType),
+							  'pluginName' => $pluginName),
 						    array('active' => 1));
 	} else {
 	    $ret = GalleryPluginMap::addMapEntry(array('pluginType' => $pluginType,
@@ -239,7 +239,7 @@ class GalleryPluginMap_core {
 	    /* Find and remove plugins that are active, but not installed */
 	    foreach ($plugins as $pluginName => $pluginStatus) {
 		if (!isset($pluginStatus['installed'])) {
-		    $this->debug("Plugin $pluginName no longer installed");
+		    $gallery->debug("Plugin $pluginName no longer installed");
 		    unset($plugins[$pluginName]);
 		}
 	    }
@@ -267,6 +267,7 @@ class GalleryPluginMap_core {
      *               object the plugin
      */
     function loadPlugin($pluginType, $pluginName) {
+	global $gallery;
 	GalleryProfiler::start('modules.core.classes.GalleryPluginMap::loadPlugin');
 
 	$cacheKey = "GalleryPluginMap::($pluginType, $pluginName)";
@@ -274,12 +275,12 @@ class GalleryPluginMap_core {
 
 	    switch($pluginType) {
 	    case 'module':
-		$pluginFile = $this->getConfig('code.gallery.modules') . $pluginName . '/module.inc';
+		$pluginFile = $gallery->getConfig('code.gallery.modules') . $pluginName . '/module.inc';
 		$pluginClass = $pluginName . 'Module';
 		break;
 		
 	    case 'layout':
-		$pluginFile = $this->getConfig('code.gallery.layouts') . $pluginName . '/layout.inc';
+		$pluginFile = $gallery->getConfig('code.gallery.layouts') . $pluginName . '/layout.inc';
 		$pluginClass = $pluginName . 'Layout';
 		break;
 	    }
@@ -320,20 +321,21 @@ class GalleryPluginMap_core {
      *               string module names
      */
     function getAllPluginNames($pluginType) {
+	global $gallery;
 
 	switch($pluginType) {
 	case 'module':
-	    $pluginsDir = $this->getConfig('code.gallery.modules');
+	    $pluginsDir = $gallery->getConfig('code.gallery.modules');
 	    $pluginFile = 'module.inc';
 	    break;
 	    
 	case 'layout':
-	    $pluginsDir = $this->getConfig('code.gallery.layouts');
+	    $pluginsDir = $gallery->getConfig('code.gallery.layouts');
 	    $pluginFile = 'layout.inc';
 	    break;
 	}
 	
-	$platform = $this->getPlatform();
+	$platform = $gallery->getPlatform();
 	if ($dir = $platform->opendir($pluginsDir)) {
 	    while (($file = readdir($dir)) != false) {
 		$path = $pluginsDir . $file;

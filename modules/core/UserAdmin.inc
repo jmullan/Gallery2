@@ -49,7 +49,7 @@ class UserAdminView extends GalleryView {
 	}
 	    
 	/* Load the module list */
-	list ($ret, $moduleStatus) = $gallery->getModuleStatus();
+	list ($ret, $moduleStatus) = GalleryPluginMap::getPluginStatus('module');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}

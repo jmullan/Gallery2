@@ -5,6 +5,17 @@
     {/g->title}
   {/g->banner}
 
+  {if isset($status)}
+    {g->success}
+      {if isset($status.activated)}
+	{g->text text="Successfully activated module %s" arg1=$status.activated}
+      {/if}
+      {if isset($status.deactivated)}
+	{g->text text="Successfully deactivated module %s" arg1=$status.deactivated}
+      {/if}
+    {/g->success}
+  {/if}
+
   {g->box style="admin"}
     {g->description}
       {g->text text="Gallery features come as separate modules.  You can download and install modules to add more features to your Gallery, or you can disable features if you don't want to use them.  In order to use a feature, you must install, configure (if necessary) and activate it.  If you don't wish to use a feature, you can deactivate it."}
