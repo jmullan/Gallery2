@@ -1,3 +1,4 @@
+
 <?php
 /*
  * ATTENTION:
@@ -197,7 +198,7 @@ if ($step == 1) {
 	    } else {
 		if (!is_readable($dir)) {
 		    array_push($errorMsg, _("Error: Gallery cannot access the directory you specified. Please change its permissions."));
-		} elseif (!is_writable($dir) || !is_executable($dir)) {
+		} elseif (!is_writable($dir)) {
 		    array_push($errorMsg, _("Error: Gallery cannot write to the directory you specified. Please change its permissions."));
 		}
 	    }
