@@ -11,14 +11,14 @@
 {include file="gallery:layouts/matrix/templates/pathbar.tpl"}
 
 <table width="100%" cellspacing="0" cellpadding="0">
-  <tr valign="top"><td width="170">
+  <tr valign="top"><td id="gsSidebarCol">
     {include file="gallery:templates/sidebar.tpl" l10Domain="modules_core"}
   </td><td>
 
   <div id="gsContent">
     <div class="gbBlock gcBackground1">
       <table width="100%">
-	<tr><td width="40%">
+	<tr><td style="width: 40%">
 	  {if !empty($layout.item.title)}
 	    <h2> {$layout.item.title|markup} </h2>
 	  {/if}

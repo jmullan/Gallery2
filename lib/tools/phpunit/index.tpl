@@ -175,13 +175,13 @@
         </tr>
         <?php foreach ($moduleStatusList as $moduleId => $moduleStatus): ?>
         <tr>
-          <td width="100">
+          <td style="width: 100px">
             <?php print $moduleId ?>
           </td>
-          <td width="100">
+          <td style="width: 100px">
             <?php print !empty($moduleStatus['active']) ? "active" : "not active" ?>
           </td>
-          <td width="100">
+          <td style="width: 100px">
             <?php print !empty($moduleStatus['available']) ? "installed" : "not available" ?>
           </td>
         </tr>

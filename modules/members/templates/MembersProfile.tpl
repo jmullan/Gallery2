@@ -19,7 +19,7 @@
 </div>
 
 <table width="100%" cellspacing="0" cellpadding="0">
-  <tr valign="top"><td width="170">
+  <tr valign="top"><td id="gsSidebarCol">
     {include file="gallery:`$Navigation.sidebar`" l10Domain=$Navigation.l10Domain}
   </td><td>
 

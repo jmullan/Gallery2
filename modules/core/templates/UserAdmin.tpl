@@ -42,7 +42,7 @@
 
   <table width="100%" cellspacing="0" cellpadding="0">
     <tr valign="top">
-    <td width="170"><div id="gsSidebar" class="gcBorder1">
+    <td id="gsSidebarCol"><div id="gsSidebar" class="gcBorder1">
       <div class="gbBlock">
 	<h2> {g->text text="User Options"} </h2>
 	<ul>
