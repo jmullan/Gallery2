@@ -311,7 +311,7 @@ class GalleryDerivative_core extends GalleryChildEntity {
 	}
 
 	$context = array();
-	if (GalleryUtilities::isA($source, 'GalleryPhotoItem')) {
+	if (method_exists($source, 'getWidth') && method_exists($source, 'getHeight')) {
 	    $context['width'] = $source->getWidth();
 	    $context['height'] = $source->getHeight();
 	}
