@@ -1170,9 +1170,7 @@ class Gallery {
      */
     function setTimeLimit($limit) {
 	set_time_limit($limit);
-	$now = time();
-	$this->_timeLimit = $now + $limit;
-	// $this->debug("[$now] Set time limit to " . $this->_timeLimit);
+	$this->_timeLimit = time() + $limit;
     }
 
     /**
@@ -1185,7 +1183,7 @@ class Gallery {
      */
     function guaranteeTimeLimit($limit) {
 	$now = time();
-	if (empty($this->_timeLimit) || ($this->_timeLimit - $now < 5)) {
+	if (empty($this->_timeLimit) || ($this->_timeLimit - $now < $limit)) {
 	    $this->debug("[$now] can't guarantee $limit -- extending!");
 	    $this->setTimeLimit($limit);
 	}
