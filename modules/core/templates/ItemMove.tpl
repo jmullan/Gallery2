@@ -161,6 +161,15 @@
     </div>
     {/if}
     {/foreach}
+
+    <br/>
+
+    {if ($ItemMove.page > 1)}
+    <input type="submit" name="{g->formVar var="form[action][previous]"}" value="{g->text text="Previous Page"}"/>
+    {/if}
+    {if ($ItemMove.page < $ItemMove.numPages)}
+    <input type="submit" name="{g->formVar var="form[action][next]"}" value="{g->text text="Next Page"}"/>
+    {/if}
   </div>
     
   <div class="gbAdmin">
@@ -194,7 +203,7 @@
     {/if}
   </div>
     
-  <div class="gbAdmin">
+  <div class="gbButtons">
     <input type="hidden" name="{g->formVar var="page"}" value="{$ItemMove.page}"/>
     <input type="hidden" name="{g->formVar var="form[numPerPage]"}" value="{$ItemMove.numPerPage}"/>
     {foreach from=$ItemMove.selectedIds item=selectedId}
@@ -202,12 +211,6 @@
     {/foreach}
     <input type="submit" name="{g->formVar var="form[action][move]"}" value="{g->text text="Move"}"/>
     <input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
-    {if ($ItemMove.page > 1)}
-    <input type="submit" name="{g->formVar var="form[action][previous]"}" value="{g->text text="Previous Page"}"/>
-    {/if}
-    {if ($ItemMove.page < $ItemMove.numPages)}
-    <input type="submit" name="{g->formVar var="form[action][next]"}" value="{g->text text="Next Page"}"/>
-    {/if}
   </div>
   {else}
   <div class="gbAdmin">

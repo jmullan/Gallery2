@@ -115,10 +115,8 @@
       <textarea id="description" rows="4" cols="60" name="{g->formVar var="form[description]"}">{$form.description}</textarea>
     </div>
 
-    <div class="gbBottomFlag">
-      <div class="giActionSelect">
-	<input type="submit" name="{g->formVar var="form[action][create]"}" value="{g->text text="Create"}"/>
-      </div>
+    <div class="gbButtons">
+      <input type="submit" name="{g->formVar var="form[action][create]"}" value="{g->text text="Create"}"/>
     </div>
   </div>
 </div>

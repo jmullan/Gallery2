@@ -803,12 +803,10 @@ class CoreModule extends GalleryModule {
 	if (isset($permissions['core.delete'])) {
 	    if ($item->getId() != $rootId) {
 		$views[] = array('name' => $this->translate(array('text' => 'Delete %s', 'arg1' => $itemTypeNames[0])),
-				 'view' => 'core:ItemDelete');
+				 'view' => 'core:ItemDeleteSingle');
 
 		$views[] = array('name' => $this->translate(array('text' => 'Move %s', 'arg1' => $itemTypeNames[0])),
-				 'view' => 'core:ItemMove',
-				 'itemId' => $parentId,
-				 'selectedId' => $item->getId());
+				 'view' => 'core:ItemMoveSingle');
 	    }
 	}
 	

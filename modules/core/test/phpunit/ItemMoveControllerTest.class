@@ -177,10 +177,6 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 
 	$this->assertEquals(array($this->_getRootId(), $this->_album[0]->getId()),
 			    $parentSequence);
-
-
-	/* Verify that the album now has a thumbnail */
-	$this->assert('implement me');
     }
 
     /**
@@ -230,10 +226,6 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(array($this->_getRootId()), $parentSequence, 'album 0 is under the root');
-
-
-	/* Verify that the album now has a thumbnail */
-	$this->assert('implement me');
     }
 
     /**

@@ -37,9 +37,8 @@
     {/section}
   </div>
 
-  <div class="gbBottomFlag">
-    <div class="giActionSelect">
-      <input type="submit" name="{g->formVar var="form[action][addFromBrowser]"}" value="{g->text text="Add Items"}"/>
-    </div>
+  <div class="gbButtons">
+    <input type="submit" name="{g->formVar var="form[action][addFromBrowser]"}" 
+           value="{g->text text="Add Items"}"/>
   </div>
 </div>
