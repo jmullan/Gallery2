@@ -74,19 +74,43 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	parent::tearDown();
     }
 
-    function testChangeDefaults() {
+    function testChangeValues() {
+	global $gallery;
+
+	$valueMap = array('permissions.directory' => 'x1',
+			  'permissions.file' => 'x2',
+			  'exec.expectedStatus' => 'x3',
+			  'default.orderBy' => 'x4',
+			  'default.orderDirection' => 'x5',
+			  'default.layout' => 'x6',
+			  'default.theme' => 'x7',
+			  'default.language' => 'x8',
+			  'session.lifetime' => 'x9',
+			  'session.inactivityTimeout' => 'x10');
 
 	/* Change the defaults to something meaningless */
-	GalleryUtilities::putRequestVariable('default.orderBy', 'x');
-	GalleryUtilities::putRequestVariable('default.orderDirection', 'x');
-	GalleryUtilities::putRequestVariable('default.layout', 'x');
-	GalleryUtilities::putRequestVariable('default.theme', 'x');
+	foreach ($valueMap as $key => $value) {
+	    GalleryUtilities::putRequestVariable('form.' . $key, $value);
+	    GalleryUtilities::putRequestVariable('form.action.save', 1);
+	}
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'core:AdminCore')),
 			    $results);
+
+	GalleryDataCache::reset();
+
+	foreach ($valueMap as $key => $expectedValue) {
+	    list ($ret, $realValue) = $gallery->getModuleParameter('core', $key);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+
+	    $this->assertEquals($expectedValue, $realValue, "value mismatch for $key");
+	}
+	
     }
 }
 ?>
