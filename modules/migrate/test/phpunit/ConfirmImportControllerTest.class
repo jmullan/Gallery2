@@ -209,10 +209,14 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 			    $results['status']['albumImportFailure']
 			    );
 	$testAlbumId = $results['status']['albumImportSuccess']['album03'];
+
+	/* Get the allegedly successfully imported album */
 	list($ret, $testAlbum) = GalleryCoreApi::loadEntitiesById($testAlbumId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
+
+	/* Get the layout associated with this album */
 	list ($ret, $layout) = GalleryCoreApi::fetchLayout($testAlbum);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -221,6 +225,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+	/* Get specific values from the layout */
 	list ($ret, $rows) = $layout->getParameter('rows',$testAlbumId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -229,41 +234,52 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+
+	/* Count the clicks for this item */
 	list ($ret, $viewCount) = GalleryCoreApi::fetchItemViewCount($testAlbumId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+
+	/*
+	 * This is the user that we expect to be associated with this album.
+	 * It really shouldn't be the admin, but the test data needs to be
+	 * changed to fix it, so we will change it later - probably to
+	 * phpunit_foobar, or whatever we are loading in the other unit test
+	 */
 	list($ret, $testOwner) = GalleryCoreApi::fetchUserByUsername('admin');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+
+	/* Load the thumb and resized image sizes for later comparison */
 	list ($ret, $derivativePreferences) = GalleryCoreApi::fetchDerivativePreferencesForItem($testAlbumId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$this->assertEquals(array($testAlbum->getTitle(),
-				  $testAlbum->getSummary(),
-				  $testAlbum->getKeywords(),
-				  $testAlbum->getDescription(),
-				  $testAlbum->getownerId(),
-				  $testAlbum->getcreationTimestamp(),
-				  $testAlbum->getviewedSinceTimestamp(),
-				  $viewCount,
-				  $derivativePreferences,
-				  $rows,
-				  $cols
+	$this->assertEquals(array($testAlbum->getTitle(),                // title
+				  $testAlbum->getSummary(),              // summary
+				  $testAlbum->getKeywords(),             // keywords
+				  $testAlbum->getDescription(),          // description
+				  $testAlbum->getownerId(),              // owner
+				  $testAlbum->getcreationTimestamp(),    // album creation
+				  $testAlbum->getviewedSinceTimestamp(), // clicks counted since
+				  $viewCount,                            // count of clicks
+				  $derivativePreferences,                // thumb and resized sizing preferences
+				  $rows,                                 // rows
+				  $cols                                  // cols
 
 				  ),
-			    array('Test Album Three',
-				  NULL,
-				  NULL,
-				  'No description',
-				  $testOwner->getId(),
-				  1056016982,
-				  1056015077,
-				  2,
-				  array(array(
+			    array('Test Album Three',                    // title
+				  NULL,                                  // summary
+				  NULL,                                  // keywords
+				  'No description',                      // description
+				  $testOwner->getId(),                   // owner
+				  1056016982,                            // album creation
+				  1056015077,                            // clicks counted since
+				  2,                                     // count of clicks
+				  array(array(                           // thumb and resized sizing preferences
 					      'order' => 0,
 					      'derivativeType' => 1,
 					      'derivativeOperations' => 'thumbnail|150'
@@ -274,8 +290,8 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 					      'derivativeOperations' => 'scale|400'
 					      )
 					),
-				  3,
-				  NULL
+				  3,                                     // rows
+				  NULL                                   // cols
 				  )
 			    );
 	
