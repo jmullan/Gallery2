@@ -86,10 +86,12 @@ class EditCommentControllerTest extends GalleryControllerTestCase {
 
     function tearDown() {
 	global $gallery;
-	
-	$ret = $gallery->deleteEntityById($this->_item[0]->getId());
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+
+	for ($i = 0; $i < sizeof($this->_item); $i++) {
+	    $ret = $gallery->deleteEntityById($this->_item[$i]->getId());
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
 	}
 	
 	parent::tearDown();
