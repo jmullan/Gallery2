@@ -39,7 +39,11 @@ class ConfigureImageMagickTestCase extends TestCase {
 	/* Hardcode a path we know will work (on Bharat's dev box) */
 	$platform = $gallery->getPlatform();
 	if (get_class($platform) == 'unixplatform') {
-	    $path = '/usr/local/bin/';
+	    foreach (array('/usr/local/bin/', '/usr/bin/') as $dir) {
+		if ($platform->file_exists($dir . 'convert')) {
+		    $path = $dir;
+		}
+	    }
 	} else {
 	    $path = 'c:\\apps\\imagemagick\\';
 	}
