@@ -1,0 +1,151 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * Test ItemOrder functionality
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ *
+ */
+class ItemOrderTest extends GalleryTestCase {
+
+    function ItemOrderTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    function setUp() {
+	global $gallery;
+	
+	parent::setUp();
+
+	list ($ret, $this->_parentItem) = $this->_createRandomAlbum(null);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Give us full perms */
+	$userId = $gallery->getActiveUserId();
+	$ret = GalleryPermissionMap::addUserPermission($this->_parentItem->getId(),
+						       $userId, 'core.all', false);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Lock and refresh it */
+	list ($ret, $lockId) = $gallery->acquireWriteLock($this->_parentItem->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	list ($ret, $this->_parentItem) = $this->_parentItem->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	$this->_parentItem->setOrderBy(null);
+	
+	/* Save it */
+	$ret = $this->_parentItem->save();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	/* Unlock it */
+	$ret = $gallery->releaseLocks($lockId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	for ($i = 0; $i < 3; $i++) {
+	    list ($ret, $this->_childItems[$i]) = $this->_createRandomAlbum($this->_parentItem->getId());
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+
+    }
+
+    function tearDown() {
+	global $gallery;
+
+	$ret = $gallery->deleteEntityById($this->_parentItem->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	parent::tearDown();
+    }
+
+    function testFetchByOrder() {
+	global $gallery;
+
+	/* Assign the item order in reverse */
+	for ($i = 0; $i < sizeof($this->_childItems); $i++) {
+
+	    /* Lock and refresh it */
+	    list ($ret, $lockId) = $gallery->acquireWriteLock($this->_childItems[$i]->getId());
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+
+	    list ($ret, $this->_childItems[$i]) = $this->_childItems[$i]->refresh();
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    
+	    $this->_childItems[$i]->setOrderWeight(100-$i);
+	    
+	    /* Save it */
+	    $ret = $this->_childItems[$i]->save();
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+
+	    /* Unlock it */
+	    $ret = $gallery->releaseLocks($lockId);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+
+	/* Fetch them out */
+	list ($ret, $results) = $this->_parentItem->fetchChildIds();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$correctResults = array();
+	for ($i = 0; $i < sizeof($this->_childItems); $i++) {
+	    array_unshift($correctResults, $this->_childItems[$i]->getId());
+	}
+		 
+	$this->assertEquals($correctResults, $results);
+    }
+}
+?>
