@@ -83,8 +83,8 @@ sub extract {
       $strings{qq{gettext("$text")}}++;
     }
 
-    # grab phrases of this format {gallery->text ..... }
-    while ($data =~ /(\{\s*gallery->text\s+.*?[^\\]\})/sg) {
+    # grab phrases of this format {g->text ..... }
+    while ($data =~ /(\{\s*g->text\s+.*?[^\\]\})/sg) {
       my $string = $1;
       my $text;
       my $one;
