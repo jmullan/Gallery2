@@ -60,20 +60,17 @@ body {
 }
 
 #gsSidebar, #gsAdminSidebar {
-	float: left;
-	width: 156px;
+        float: left;
+	/*width: 156px;*/
+	width: 20%;
 	border-top: 1px solid #ccc;
 	background-color: #fff;
 }
 
 #gsContents {
-        width: auto;
-	min-width: 962px;           
-        /* IE Dynamic Expression to set the width */
-        width:expression(document.body.clientWidth < 962 ? "962px" : "100%" );
+        width: 100%;
 	margin: 0;
 	padding: 0;
-	overflow: hidden;
 }
 
 #gsContents:after {
@@ -89,17 +86,43 @@ body {
 /* End hide from IE-mac */
 
 #gsAlbumContents, #gsAdminContents {
+        float: left;
         border-top: 1px solid #ccc;
         border-left: 1px solid #ccc;
-        /*margin: 0 0 0 157px;*/
-        float: left;
         width: 78%;
         padding: 0;
 }
 
-#gsAlbumContents .gbExif { }
+* html #gsAlbumContents { overflow: auto; } /* style for IE */
 
-#gsComments { border-top: 1px solid #ccc; }
+.gbExif {
+        padding: 8px 14px;
+}
+
+/*      .gbDataTable	*/
+/*      count from 0 Ñ first row is even...     */
+
+.gbEven { background-color: #fff; }
+.gbOdd { background-color: #eee; }
+
+.gbExif .gbEven { text-align: right; }
+.gbExif .gbOdd {
+        text-align: left;
+        font-weight: normal;
+}
+
+table.gbDataTable tr td {
+        border-bottom: 1px solid #eee;
+        font-weight: bold;
+        padding: 4px;
+}
+
+#gsComments {
+        clear: both;
+        border-top: 1px solid #ccc;
+        border-bottom: 1px solid #ccc;
+        padding: 8px 14px;
+}
 
 #gsSearchContents { }
 
@@ -119,11 +142,6 @@ body {
 #gsAlbumImages {
 	display: block;
 	clear: both;
-}
-
-#gsComments { 
-	clear: both;
-	padding: 8px;
 }
 
 
@@ -233,9 +251,9 @@ body {
 
 /*	text inside the title bar */
 .giTitle {
-	font-size: 1.1em;
+	font-size: 1.2em;
 	font-weight: bold;
-	margin: 0;
+	margin: 0 8px 0 0;
 	padding: 0;
 }
 
@@ -257,6 +275,7 @@ body {
 /* inside gsAlbumContents or gsAdmiinContents */
 
 .gbTopFlag, .gbBottomFlag {
+	width: 100%;
 	background-color: #eee;
 	margin: 0;
 	padding: 0;
@@ -278,7 +297,7 @@ body {
 .gbNavBar {
         background-color: #e7e7e7;
         margin: 0;
-        padding: 0 16px;
+        padding: 0 14px;
 }
 
 .gbNavBar:after {
@@ -295,8 +314,7 @@ body {
 
 
 table.gbTitleBanner {
-	width: 100%;
-	margin: 0;
+	margin: 0 0 0 14px;
 	padding: 0;
 }
 
@@ -305,7 +323,7 @@ table.gbTitleBanner tr td {
 	vertical-align: top;
 }
 
-.gbTitleBanner .giTitle, .gbTitleBanner .giDescription  { margin: 8px 14px; }
+.gbTitleBanner .giTitle, .gbTitleBanner .giDescription  { margin: 8px 0; }
 
 .gbTitle {
         padding: 14px;
@@ -317,6 +335,7 @@ td.gbItemAlbum,
 td.gbItemImage, 
 td.gbItemMovie, 
 td.gbItemOther {
+        width: 20%;
         vertical-align: top;
 	background-color: #fff;
         padding: 14px;
@@ -326,25 +345,26 @@ td.gbItemAlbum {
 	background-color: #eee;        
 }
 
-.gbExif {
-	margin: 8px;
-}
-
 .gsSingleImage {
 	margin: 16px;
 }
 
 /*	  #gsComments	 */
 
-#gsComments .gbComment {
-	border-bottom: 1px solid #ddd;
+.gbComment {
+	border-bottom: 1px dotted #ddd;
         margin: 0;	
-	padding: 8px 0 16px 0;
+	padding: 8px 0 8px 0;
 
 }
 
-#gsComments .gbComment .giHorizontalLinks {
-	float: none;
+.gbComment span {
+        font-size: 0.9em;
+        color: #bbb;
+}
+
+.gbComment p {
+        margin: 6px 0;
 }
 
 /*	  #gsFooter  */
@@ -391,7 +411,7 @@ td.gbItemAlbum {
 
 .gbButtons { background-color: #eee; }
 
-/* for tabular data */
+/*      for tabular data */
 #gsAdminContents .gbDataTable {
 	border-width: 0;
 	font-size: 1.0em;
@@ -399,9 +419,9 @@ td.gbItemAlbum {
 }
 
 
-/*	  Status section  */
+/*      Status section  */
 
-/*	  Error inside a gsStatus section */
+/*      Error inside a gsStatus section */
 
 #gsStatus {
 	padding: 4px;
@@ -417,26 +437,26 @@ td.gbItemAlbum {
 	color: #AA4444;
 }
 
-/*	  Warning inside a gsStatus section */
+/*      Warning inside a gsStatus section */
 
 #gsStatus .giWarning {
 	color: #DDDD77;
 }
 
-/*	  Status inside a gsStatus section */
+/*      Status inside a gsStatus section */
 
 #gsStatus .giStatus {
 	color: #44AA44;
 }
 
-/*	  ITEMS
+/*      ITEMS
 	Category 4: item and span definitions		 
 	declares styles for items that are defined globally or  
 	with respect to boxes. items defined uniquely per	   
 	section are in the BOXES part of this file.		 
 */
 
-/*	  Global / Defaults */
+/*      Global / Defaults */
 
 .giMarkupBar input {
 	font-size: 1.1em;
@@ -446,7 +466,7 @@ td.gbItemAlbum {
 
 .giDescription {
 	display: block;
-	font-size: 1em;
+	font-size: 1.1em;
 	margin: 2px 0;
 	padding: 0 8px 0 0;
 }
@@ -467,9 +487,12 @@ td.gbItemAlbum {
 
 /*      horizontal link styles page navigations */
 .giHorizontalLinks {
-        float: right;
 	font-size: 0.9em;
 	padding: 2px 8px;
+}
+
+.gbNavBar .giHorizontalLinks {
+        float: right;
 }
 
 .giHorizontalLinks li { 
@@ -479,6 +502,13 @@ td.gbItemAlbum {
  }
  
 .giHorizontalLinks a { text-decoration: none; }
+
+.gbExif .giHorizontalLinks, .gbExif li, .gbComment .giHorizontalLinks, .gbComment li {
+        color: #888;
+        margin: 4px 0;
+        padding: 0 2px 0 0;
+}
+
 
 /*  thumbnails */
 .giThumbImage, .giThumbMovie, .giThumbOther {
@@ -549,18 +579,8 @@ discused the options of generating a table-based border (ie_test) and alistapart
 .gbTopFlag .giTitle {
 	color: #000;
 	font-weight: bold;
-	font-size: 1.2em; 
+	font-size: 1.3em; 
 }
-
-/*	  .gbComment */
-
-.gbComment .giComment { padding-bottom: 8px; }
-
-#gsComments .gbComment .giHorizontalLinks { padding: 0; }
-
-.gbComment span.giDate { }
-.gbComment span.giOwner { }
-.gbComment span.giInternetAddress { }
 
 /*	  .gbBottomFlag   */
 
@@ -579,21 +599,3 @@ discused the options of generating a table-based border (ie_test) and alistapart
 	padding-bottom: 0;
 }
 
-/*	  .gbDataTable	*/
-
-/*	  even and odd rows have different backgrounds I count from 0,
-	so the first row is even!
-*/
-
-.gbDataTable { margin: 0; }
-.gbDataTable .gbEven {	background-color: #cdcdcd; }
-.gbDataTable .gbOdd { background-color: #dcdcdc; }
-
-/*	  cell padding	*/
-
-.gbDataTable td { padding: 4px; }
-
-.gbDataTable th { 
-	padding: 2px; 
-	background-color: #acacac;
-}
