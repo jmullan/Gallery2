@@ -1,0 +1,222 @@
+<?php
+/*
+ * $RCSfile
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * ItemEditDataItem controller tests
+ */
+class ItemEditDataItemControllerTest extends GalleryControllerTestCase {
+
+    function ItemEditDataItemControllerTest($methodName) {
+	$this->GalleryControllerTestCase($methodName, 'core:ItemEditDataItem');
+    }
+
+    function setUp() {
+	global $gallery;
+
+	parent::setUp();
+
+	list ($ret, $rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	for ($i = 0; $i < 2; $i++) {
+	    list ($ret, $this->_item[$i]) = $this->_createRandomDataItem($rootId);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    function tearDown() {
+	global $gallery;
+
+	foreach ($this->_item as $item) {
+	    $gallery->deleteEntityById($item->getId());
+	}
+	
+	parent::tearDown();
+    }
+
+    function testUndo() {
+	global $gallery;
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('itemId', $this->_item[0]->getId());
+	GalleryUtilities::putRequestVariable('form.action.undo', 1);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertRedirect(array('view' => 'core:ItemAdmin',
+				    'subView' => 'core:ItemEditDataItem',
+				    'itemId' => $this->_item[0]->getId()),
+			      $results);
+    }
+
+    function testEditDataItem() {
+	global $gallery;
+
+	/* Use valid inputs */
+	$newPathComponent = $this->_item[0]->getPathComponent() . rand();
+	GalleryUtilities::putRequestVariable('itemId', $this->_item[0]->getId());
+	GalleryUtilities::putRequestVariable('form.action.save', 1);
+	GalleryUtilities::putRequestVariable('form.pathComponent', $newPathComponent);
+	GalleryUtilities::putRequestVariable('form.title', 'new title');
+	GalleryUtilities::putRequestVariable('form.summary', 'new summary');
+	GalleryUtilities::putRequestVariable('form.keywords', 'new keywords');
+	GalleryUtilities::putRequestVariable('form.description', 'new description');
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertRedirect(array('view' => 'core:ItemAdmin',
+				    'subView' => 'core:ItemEditDataItem',
+				    'itemId' => $this->_item[0]->getId()),
+			      $results);
+    }
+
+    function testInvalidPathComponent() {
+	global $gallery;
+
+	/* Use valid inputs */
+	$newPathComponent = $this->_item[0]->getPathComponent() . rand();
+	GalleryUtilities::putRequestVariable('itemId', $this->_item[0]->getId());
+	GalleryUtilities::putRequestVariable('form.action.save', 1);
+	GalleryUtilities::putRequestVariable('form.pathComponent', '#$%W$%W?$%W%/');
+
+	/* Perform the request and verify that we failed */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('view' => 'core:ItemAdmin'), $results);
+	$this->assertEquals('core:ItemEditDataItem', GalleryUtilities::getRequestVariables('subView'));
+	$this->assert(GalleryUtilities::hasRequestVariable('form.error.pathComponent.invalid'));
+    }
+
+    function testMissingPathComponent() {
+	global $gallery;
+
+	/* Use valid inputs */
+	$newPathComponent = $this->_item[0]->getPathComponent() . rand();
+	GalleryUtilities::putRequestVariable('itemId', $this->_item[0]->getId());
+	GalleryUtilities::putRequestVariable('form.action.save', 1);
+	GalleryUtilities::removeRequestVariable('form.pathComponent');
+
+	/* Perform the request and verify that we failed */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('view' => 'core:ItemAdmin'), $results);
+	$this->assertEquals('core:ItemEditDataItem', GalleryUtilities::getRequestVariables('subView'));
+	$this->assert(GalleryUtilities::hasRequestVariable('form.error.pathComponent.missing'));
+    }
+
+    function testPathCollision() {
+	/* Use invalid inputs */
+	GalleryUtilities::putRequestVariable('itemId', $this->_item[0]->getId());
+	GalleryUtilities::putRequestVariable('form.action.save', 1);
+	GalleryUtilities::putRequestVariable('form.pathComponent', $this->_item[1]->getPathComponent());
+	GalleryUtilities::putRequestVariable('form.title', 'new title');
+	GalleryUtilities::putRequestVariable('form.summary', 'new summary');
+	GalleryUtilities::putRequestVariable('form.keywords', 'new keywords');
+	GalleryUtilities::putRequestVariable('form.description', 'new description');
+
+	/* Perform the request and verify that we failed */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('view' => 'core:ItemAdmin'), $results);
+	$this->assertEquals('core:ItemEditDataItem', GalleryUtilities::getRequestVariables('subView'));
+	$this->assert(GalleryUtilities::hasRequestVariable('form.error.pathComponent.collision'));
+    }
+
+    function testInvalidItem() {
+	/* Use invalid inputs */
+	GalleryUtilities::putRequestVariable('itemId', '123456789' . rand());
+	GalleryUtilities::putRequestVariable('form.action.save', 1);
+
+	/* Perform the request and verify that we failed */
+	$results = $this->handleRequest(ERROR_PERMISSION_DENIED);
+    }
+
+    /*
+     * Create a random data item
+     *
+     * @param int the id of the parent album
+     * @return array object GalleryStatus a status code
+     *               object GalleryDataItem
+     * @access private
+     */
+    function _createRandomDataItem($parentId) {
+	global $gallery;
+	
+	list ($ret, $item) = GalleryFactory::newInstance('GalleryEntity', 'GalleryUnknownItem');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if (!isset($item)) {
+	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
+	}
+
+	list ($ret, $lockIds[]) = $gallery->acquireReadLock($parentId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$inputFile = dirname(__FILE__) . '/../data/test1.gif';
+	if (get_magic_quotes_gpc()) {
+	    $inputFile = addslashes($inputFile);
+	}
+	
+	$ret = $item->create($parentId, $inputFile, 'application/unknown', 'unknown.dat');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Change some settings */
+	$item->setTitle('This is my title');
+	$item->setSummary('This is a summary');
+	$item->setKeywords('These are some keywords');
+	$item->setDescription('This is a description');
+
+	/* Save it */
+	$ret = $item->save();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Leggo of our locks */
+	if (isset($lockIds)) {
+	    $ret = $gallery->releaseLocks($lockIds);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+
+	return array(GalleryStatus::success(), $item);
+    }
+}
+?>
