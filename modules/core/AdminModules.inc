@@ -180,6 +180,7 @@ class AdminModulesView extends GalleryView {
 
 	    $entry = array();
 	    $entry['name'] = $moduleName;
+	    $entry['l10Domain'] = 'modules_' . $moduleName;
 	    if ($moduleName != 'core') {
 		if (empty($status['active'])) {
 		    list ($ret, $version) = $module->getModuleParameter('version');

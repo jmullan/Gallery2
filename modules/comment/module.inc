@@ -35,8 +35,10 @@
 class CommentModule extends GalleryModule {
 
     function CommentModule() {
+	global $gallery;
+	
 	$this->setName('comment');
-	$this->setDescription('User Comments');
+	$this->setDescription($gallery->i18n('User Comments'));
 	$this->setVersion('1.0');
     }
 

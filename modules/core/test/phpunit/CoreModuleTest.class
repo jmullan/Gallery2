@@ -105,8 +105,6 @@ class CoreModuleTest extends GalleryTestCase {
 					'view' => 'core:ItemEditItem'),
 				  array('name' => $this->_module->translate('Album Settings'),
 					'view' => 'core:ItemEditAlbum'),
-				  array('name' => $this->_module->translate('Reorder Items'),
-					'view' => 'core:ItemReorder'),
 				  array('name' => $this->_module->translate('Delete Album'),
 					'view' => 'core:ItemDelete'),
 				  array('name' => $this->_module->translate('Permissions'),
@@ -205,19 +203,6 @@ class CoreModuleTest extends GalleryTestCase {
 					   'subView' => 'core:ItemMove',
 					   'itemId' => $this->_parentAlbum->getParentId(),
 					   'selectedId' => $this->_parentAlbum->getId(),
-					   ));
-	$links[] = array('text' => $this->_module->translate('make highlight'),
-			 'params' => array(
-					   'view' => 'core:ItemAdmin',
-					   'return' => 1,
-					   'subView' => 'core:ItemMakeHighlight',
-					   'itemId' => $this->_parentAlbum->getId(),
-					   ));
-	$links[] = array('text' => $this->_module->translate('reorder items'),
-			 'params' => array(
-					   'view' => 'core:ItemAdmin',
-					   'subView' => 'core:ItemReorder',
-					   'itemId' => $this->_parentAlbum->getId(),
 					   ));
 	$this->assertEquals(array($this->_parentAlbum->getId() => $links), $content);
     }

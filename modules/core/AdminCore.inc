@@ -80,7 +80,19 @@ class AdminCoreController extends GalleryController {
 	    $redirect['subView'] = 'core:AdminCore';
 	} else if (isset($form['action']['addUploadLocalServerDir'])) {
 	    $path = $form['uploadLocalServer']['newDir'];
-	    if (!empty($path)) {
+
+	    $platform = $gallery->getPlatform();
+	    if (empty($path)) {
+		$error[] = 'form.error.uploadLocalServer.newDir.missing';
+	    } else if ($platform->isRestrictedByOpenBasedir($path)) {
+		$error[] = 'form.error.uploadLocalServer.newDir.restrictedByOpenBasedir';
+	    } else if (!$platform->is_readable($path)) {
+		$error[] = 'form.error.uploadLocalServer.newDir.notReadable';
+	    } else if (!$platform->is_dir($path)) {
+		$error[] = 'form.error.uploadLocalServer.newDir.notADirectory';
+	    } 
+
+	    if (empty($error)) {
 		if (!in_array($path, $localServerDirList)) {
 		    $localServerDirList[] = $path;
 		}
@@ -99,7 +111,6 @@ class AdminCoreController extends GalleryController {
 		$redirect['view'] = 'core:SiteAdmin';
 		$redirect['subView'] = 'core:AdminCore';
 	    } else {
-		$error[] = 'form.error.uploadLocalServer.newDir.missing';
 	    }
 	} else if (isset($form['action']['removeUploadLocalServerDir'])) {
 	    if (!empty($form['uploadLocalServer']['selectedDir'])) {

@@ -140,6 +140,76 @@ class AdminGroupsControllerTest extends GalleryControllerTestCase {
 			    $results);
     }
 
+    function testDeleteSiteAdminGroupFromText() {
+	global $gallery;
+	list ($ret, $id) = $gallery->getModuleParameter('core', 'id.adminGroup');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	list ($ret, $group) = $gallery->loadEntitiesById($id);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
+	GalleryUtilities::putRequestVariable('form.action.deleteFromText', 1);
+	GalleryUtilities::putRequestVariable('form.text.groupName', $group->getGroupName());
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminGroups'),
+				  'status' => array(),
+				  'error' => array('form.error.text.cantDeleteGroup')),
+			    $results);
+    }
+
+    function testDeleteAllUsersGroupFromText() {
+	global $gallery;
+	list ($ret, $id) = $gallery->getModuleParameter('core', 'id.allUserGroup');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	list ($ret, $group) = $gallery->loadEntitiesById($id);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
+	GalleryUtilities::putRequestVariable('form.action.deleteFromText', 1);
+	GalleryUtilities::putRequestVariable('form.text.groupName', $group->getGroupName());
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminGroups'),
+				  'status' => array(),
+				  'error' => array('form.error.text.cantDeleteGroup')),
+			    $results);
+    }
+
+    function testEditAllUsersGroupUsersFromText() {
+	global $gallery;
+	list ($ret, $id) = $gallery->getModuleParameter('core', 'id.allUserGroup');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	list ($ret, $group) = $gallery->loadEntitiesById($id);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
+	GalleryUtilities::putRequestVariable('form.action.addRemoveUsersFromText', 1);
+	GalleryUtilities::putRequestVariable('form.text.groupName', $group->getGroupName());
+	
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminGroups'),
+				  'status' => array(),
+				  'error' => array('form.error.text.cantEditGroupUsers')),
+			    $results);
+    }
+
+
     function testEditUsersFromText() {
 	/* Normal */
 	list ($ret, $group) = $this->_createGroup();

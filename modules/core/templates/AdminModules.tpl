@@ -27,7 +27,7 @@
 	    {$module.version}
 	  {/g->column}
 	  {g->column}
-	    {$module.description}
+	    {g->text text=$module.description l10Domain=$module.l10Domain}
 	  {/g->column}	
 	  {g->column}
 	    {if (!empty($module.action))}

@@ -60,10 +60,7 @@ class AdminDeleteGroupController extends GalleryController {
 	    
 	} else if (isset($form['action']['delete'])) {
 
-	    /*
-	     * Check to see if we're trying to delete the anonymous group, or
-	     * ourself (can't do either of those).
-	     */
+	    /* Only allow users to delete GROUP_NORMAL groups. */
 	    list ($ret, $group) = $gallery->loadEntitiesById($groupId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);

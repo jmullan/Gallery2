@@ -35,8 +35,10 @@
 class FfmpegModule extends GalleryModule {
 
     function FfmpegModule() {
+	global $gallery;
+	
 	$this->setName('ffmpeg');
-	$this->setDescription('Ffmpeg Graphics Toolkit');
+	$this->setDescription($gallery->i18n('Ffmpeg Graphics Toolkit'));
 	$this->setVersion('1.0');
     }
 

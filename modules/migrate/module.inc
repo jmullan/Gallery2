@@ -34,8 +34,10 @@
  */
 class MigrateModule extends GalleryModule {
     function MigrateModule() {
+	global $gallery;
+	
 	$this->setName('migrate');
-	$this->setDescription('migrate');
+	$this->setDescription($gallery->i18n('Migrate your Gallery 1 albums to Gallery 2'));
 	$this->setVersion('1.0');
     }
     

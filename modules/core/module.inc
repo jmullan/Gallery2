@@ -42,8 +42,12 @@ class CoreModule extends GalleryModule {
 
     function CoreModule() {
 	$this->setName('core');
-	$this->setDescription('Core Gallery functionality');
 	$this->setVersion('1.0');
+
+	/*
+	 * We can't set our description until we have a $gallery object so
+	 * that we can call $gallery->i18n().  Defer this to the bootstrap code.
+	 */
     }
 
     /**
@@ -208,6 +212,9 @@ class CoreModule extends GalleryModule {
 					       'GalleryCoreSearch',
 					       'core',
 					       $classDir . 'GalleryCoreSearch.class');
+
+	/* Now we have a $gallery instance and can set our description */
+	$this->setDescription($gallery->i18n('Gallery 2 Core Module'));
 
 	return GalleryStatus::success();
     }
@@ -454,11 +461,19 @@ class CoreModule extends GalleryModule {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	/* Fetch child counts */
 	$itemIds = array();
 	foreach ($items as $item) {
 	    $itemIds[] = $item->getId();
 	}
 	list ($ret, $childCounts) = GalleryItemHelper::fetchChildCounts($itemIds);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Fetch thumbnail ids */
+	list ($ret, $thumbTable) =
+	    GalleryDerivativeHelper::fetchDerivativesBySourceIds($itemIds, DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -575,7 +590,7 @@ class CoreModule extends GalleryModule {
 					    'selectedId' => $item->getId()));
 	    }
 
-	    if (!$isRoot) {
+	    if (!$isRoot && isset($thumbTable[$item->getId()])) {
 		$links[$item->getId()][] =
 		    array('text' => $this->translate('make highlight'),
 			  'params' => array('view' => 'core:ItemAdmin',
@@ -702,6 +717,15 @@ class CoreModule extends GalleryModule {
 	    $childCount = 0;
 	}
 
+	/* Fetch thumbnail ids */
+	list ($ret, $thumbTable) =
+	    GalleryDerivativeHelper::fetchDerivativesBySourceIds(array($item->getId()),
+								 DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$hasThumb = !empty($thumbTable[$item->getId()]);
+
 	$parentId = $item->getParentId();
 	list ($ret, $parentPermissions) = GalleryItemHelper::getPermissions($parentId);
 	if ($ret->isError()) {
@@ -755,7 +779,7 @@ class CoreModule extends GalleryModule {
 		}
 	    }
 	    
-	    if (!empty($parentId) && $parentId != $rootId && isset($parentPermissions['core.edit'])) {
+	    if (!empty($parentId) && $hasThumb && $parentId != $rootId && isset($parentPermissions['core.edit'])) {
 		$views[] = array('name' => $this->translate('Make Highlight'),
 				 'view' => 'core:ItemMakeHighlight');
 	    }

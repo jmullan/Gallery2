@@ -942,8 +942,8 @@ class Gallery {
      *
      * @param object GalleryModule a module
      */
-    function setCoreModule($instance) {
-	$this->_modules['core']['instance'] = $instance;
+    function setCoreModule(&$instance) {
+	$this->_modules['core']['instance'] =& $instance;
     }
 
     /**

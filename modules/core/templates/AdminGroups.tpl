@@ -49,6 +49,18 @@
       {/g->error}
     {/if}
 
+    {if isset($form.error.text.cantDeleteGroup)}
+      {g->error}
+	{g->text text="You cannot delete that group"}
+      {/g->error}
+    {/if}
+
+    {if isset($form.error.text.cantEditGroupUsers)}
+      {g->error}
+	{g->text text="You cannot edit that group's users"}
+      {/g->error}
+    {/if}
+
     {g->element}
       {g->input type="submit" name="form.action.editFromText"}{g->text text="Edit"}{/g->input}
       {g->input type="submit" name="form.action.deleteFromText"}{g->text text="Delete"}{/g->input}

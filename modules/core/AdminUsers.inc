@@ -93,6 +93,27 @@ class AdminUsersController extends GalleryController {
 	    } else if ($user == null) {
 		$error[] = 'form.error.text.noSuchUser';
 	    } else {
+
+		/*
+		 * Check to see if we're trying to delete the anonymous user, or
+		 * ourself (can't do either of those).
+		 */
+		list ($ret, $anonymousUserId) =
+		    $gallery->getModuleParameter('core', 'id.anonymousUser');
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		if ($user->getId() == $anonymousUserId) {
+		    $error[] = 'form.error.text.cantDeleteAnonymous';
+		}
+
+		if ($user->getId() == $gallery->getActiveUserId()) {
+		    $error[] = 'form.error.text.cantDeleteSelf';
+		}
+	    }
+
+	    if (empty($error)) {
 		/* Show the "delete user" view */
 		$redirect['view'] = 'core:SiteAdmin';
 		$redirect['subView'] = 'core:AdminDeleteUser';

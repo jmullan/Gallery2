@@ -5,6 +5,12 @@
     {/g->title}
   {/g->banner}
 
+  {if isset($status.changedOwner)}
+    {g->success}
+      {g->text text="Owner changed successfully"}
+    {/g->success}
+  {/if}
+
   {g->box style="admin"}
     {g->description}
       {g->text text="Each item has its own independent set of permissions.  Changing the parent's permissions has no effect on the permissions of the child.  This allows you to restrict access to the parent of this item, but still grant full access to this item, or vice versa.  The most efficient way to use this permission system is to create groups and assign permissions to them.  Then if you want to grant permissions to a specific user, you can add (or remove) the user from the appropriate group."}

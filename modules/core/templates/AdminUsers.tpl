@@ -53,6 +53,18 @@
 	{g->text text="You must enter a username"}
       {/g->error}
     {/if}
+
+    {if isset($form.error.text.cantDeleteSelf)}
+      {g->error}
+	{g->text text="You cannot delete yourself!"}
+      {/g->error}
+    {/if}
+
+    {if isset($form.error.text.cantDeleteAnonymous)}
+      {g->error}
+	{g->text text="You cannot delete the special guest user."}
+      {/g->error}
+    {/if}
   {/g->box}
 
   {g->box style="admin"}

@@ -94,7 +94,7 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
 						      'subView' => 'core:ItemEditPermissions',
 						      'itemId' => $this->_albumParent->getId()),
-				  'status' => array(),
+				  'status' => array('changedOwner' => 1),
 				  'error' => array()),
 			    $results);
 

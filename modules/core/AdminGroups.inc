@@ -93,6 +93,18 @@ class AdminGroupsController extends GalleryController {
 	    } else if ($group == null) {
 		$error[] = 'form.error.text.noSuchGroup';
 	    } else {
+
+		/*
+		 * In theory we should never get to this point unless we're
+		 * operating on a valid group, so don't bother sending errors back
+		 * in case we can't delete.
+		 */
+		if ($group->getGroupType() != GROUP_NORMAL) {
+		    $error[] = 'form.error.text.cantDeleteGroup';
+		}
+	    }
+
+	    if (empty($error)) {
 		/* Show the "delete group" view */
 		$redirect['view'] = 'core:SiteAdmin';
 		$redirect['subView'] = 'core:AdminDeleteGroup';
@@ -106,6 +118,17 @@ class AdminGroupsController extends GalleryController {
 	    } else if ($group == null) {
 		$error[] = 'form.error.text.noSuchGroup';
 	    } else {
+		/*
+		 * In theory we should never get to this point unless we're
+		 * operating on a valid group, so don't bother sending errors back
+		 * in case we can't delete.
+		 */
+		if ($group->getGroupType() == GROUP_ALL_USERS) {
+		    $error[] = 'form.error.text.cantEditGroupUsers';
+		}
+	    }
+
+	    if (empty($error)) {
 		/* Show the "edit group's users" view */
 		$redirect['view'] = 'core:SiteAdmin';
 		$redirect['subView'] = 'core:AdminEditGroupUsers';

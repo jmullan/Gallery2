@@ -153,11 +153,13 @@ class ItemMoveController extends GalleryController {
 		}
 		
 		/* If we have no problems, do the moves */
+		$status['moved']['count'] = 0;
 		foreach ($selectedItems as $selectedItem) {
 		    $ret = $selectedItem->move($newParentId);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
+		    $status['moved']['count']++;
 
 		    $ret = $selectedItem->save();
 		    if ($ret->isError()) {
@@ -171,6 +173,7 @@ class ItemMoveController extends GalleryController {
 
 		/* Figure out where to redirect upon success */
 		$redirect['view'] = 'core:ItemAdmin';
+		$redirect['subView'] = 'core:ItemMove';
 		$redirect['itemId'] = $itemId;
 	    }
 	}
@@ -227,55 +230,61 @@ class ItemMoveView extends GalleryView {
             return array($ret->wrap(__FILE__, __LINE__), null, null);
         }
 
-	/* Load all the peers */
-        list ($ret, $peerItems) = $gallery->loadEntitiesById($peerIds);
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null, null);
-        }
-
-	/* Build our peers table */
+	$albumIds = array();
 	$peers = array();
-	foreach ($peerItems as $peerItem) {
-            $peers[$peerItem->getId()] = $peerItem->getMemberData();
-	    if (GalleryUtilities::isA($peerItem, 'GalleryAlbumItem')) {
-		$peerTypes['album'][$peerItem->getId()] = 1;
-	    } else {
-		$peerTypes['data'][$peerItem->getId()] = 1;
+	$peerTypes = array();
+	$albumTree = array();
+	if (!empty($peerIds)) {
+	    /* Load all the peers */
+	    list ($ret, $peerItems) = $gallery->loadEntitiesById($peerIds);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
-            $peers[$peerItem->getId()]['selected'] = isset($form['selectedIds'][$peerItem->getId()]);
-        }
 
-        /* Get all possible destinations (where user has write permission) */
-        list ($ret, $rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null, null);
-        }
+	    /* Build our peers table */
+	    $peers = array();
+	    foreach ($peerItems as $peerItem) {
+		$peers[$peerItem->getId()] = $peerItem->getMemberData();
+		if (GalleryUtilities::isA($peerItem, 'GalleryAlbumItem')) {
+		    $peerTypes['album'][$peerItem->getId()] = 1;
+		} else {
+		    $peerTypes['data'][$peerItem->getId()] = 1;
+		}
+		$peers[$peerItem->getId()]['selected'] = isset($form['selectedIds'][$peerItem->getId()]);
+	    }
 
-	/* Get ids of all all albums where we can add new data items */
-        list ($ret, $albumIds['addDataItem']) =
-	    GalleryItemHelper::fetchAllItemIds('GalleryAlbumItem', 'core.addDataItem');
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null, null);
-        }
+	    /* Get all possible destinations (where user has write permission) */
+	    list ($ret, $rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
 
-	/* Get ids of all all albums where we can add new album items */
-        list ($ret, $albumIds['addAlbumItem']) =
-	    GalleryItemHelper::fetchAllItemIds('GalleryAlbumItem', 'core.addAlbumItem');
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null, null);
-        }
+	    /* Get ids of all all albums where we can add new data items */
+	    list ($ret, $albumIds['addDataItem']) =
+		GalleryItemHelper::fetchAllItemIds('GalleryAlbumItem', 'core.addDataItem');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
 
-	/* Merge them together to get the master list of ids */
-	$albumIds['allIds'] = array_unique(array_merge($albumIds['addDataItem'],
-						       $albumIds['addAlbumItem']));
+	    /* Get ids of all all albums where we can add new album items */
+	    list ($ret, $albumIds['addAlbumItem']) =
+		GalleryItemHelper::fetchAllItemIds('GalleryAlbumItem', 'core.addAlbumItem');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
 
-	/* Load all the album entities */
-        list ($ret, $albums) = $gallery->loadEntitiesById($albumIds['allIds']);
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null, null);
-        }
+	    /* Merge them together to get the master list of ids */
+	    $albumIds['allIds'] = array_unique(array_merge($albumIds['addDataItem'],
+							   $albumIds['addAlbumItem']));
 
-	$albumTree = $this->_createAlbumTree($albums);
+	    /* Load all the album entities */
+	    list ($ret, $albums) = $gallery->loadEntitiesById($albumIds['allIds']);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+
+	    $albumTree = $this->_createAlbumTree($albums);
+	}
 
 	$ItemMove = array();
 

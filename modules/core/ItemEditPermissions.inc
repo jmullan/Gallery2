@@ -277,6 +277,7 @@ class ItemEditPermissionsController extends GalleryController {
 		    $redirect['view'] = 'core:ItemAdmin';
 		    $redirect['subView'] = 'core:ItemEditPermissions';
 		    $redirect['itemId'] = $itemId;
+		    $status['changedOwner'] = 1;
 		}
 	    }
 	}

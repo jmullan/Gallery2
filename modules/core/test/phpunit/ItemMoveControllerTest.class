@@ -154,8 +154,9 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemMove',
 						      'itemId' => $this->_album[1]->getId()),
-				  'status' => array(),
+				  'status' => array('moved' => array('count' => 1)),
 				  'error' => array()),
 			    $results);
     }

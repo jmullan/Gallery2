@@ -225,7 +225,7 @@ class GalleryUrlGenerator {
 
 	/* Swap in the actual url for the 'return' placeholder, if necessary */
 	if (isset($params['return'])) {
-	    $params['return'] = $this->getCurrentUrl();
+	    $params['return'] = urlencode($this->getCurrentUrl());
 	}
 
 	/* Escape all values */

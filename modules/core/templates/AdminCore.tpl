@@ -162,7 +162,7 @@
 
       {g->row}
 	{g->column}
-	  {g->input type="text" size="40" name="form.uploadLocalServer.newDir"}{/g->input}
+	  {g->input type="text" size="40" name="form.uploadLocalServer.newDir"}{$form.uploadLocalServer.newDir}{/g->input}
 	{/g->column}
 
 	{g->column}
@@ -178,6 +178,30 @@
 	{g->text text="You must enter a directory to add."}
       {/g->error}
     {/if}
+
+    {if isset($form.error.uploadLocalServer.newDir.restrictedByOpenBasedir)}
+      {g->error}
+	{capture name="open_basedir"}
+	  {g->link href="http://php.net/ini_set"}
+	    {g->text text="open_basedir documentation"}
+	  {/g->link}
+	{/capture}
+	{g->text text="Your webserver is configured to prevent you from accessing that directory.  Please refer to the %s and consult your webserver administrator." arg1=$smarty.capture.open_basedir}
+      {/g->error}
+    {/if}
+
+    {if isset($form.error.uploadLocalServer.newDir.notReadable)}
+      {g->error}
+	{g->text text="The webserver does not have permissions to read that directory."}
+      {/g->error}
+    {/if}
+
+    {if isset($form.error.uploadLocalServer.newDir.notADirectory)}
+      {g->error}
+	{g->text text="The path you specified is not a valid directory."}
+      {/g->error}
+    {/if}
+
   {/g->box}
 
   {g->box style="admin"}

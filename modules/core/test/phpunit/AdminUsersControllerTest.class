@@ -141,6 +141,49 @@ class AdminUsersControllerTest extends GalleryControllerTestCase {
 			    $results);
     }
 
+    function testDeleteAnonymous() {
+	global $gallery;
+	
+	list ($ret, $anonymousUserId) = $gallery->getModuleParameter('core', 'id.anonymousUser');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $anonymousUser) = $gallery->loadEntitiesById($anonymousUserId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	GalleryUtilities::putRequestVariable('form.action.deleteFromText', 1);
+	GalleryUtilities::putRequestVariable('form.text.userName', $anonymousUser->getUserName());
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminUsers'),
+				  'status' => array(),
+				  'error' => array('form.error.text.cantDeleteAnonymous')),
+			    $results);
+    }
+    
+    function testDeleteSelf() {
+	global $gallery;
+	
+	list ($ret, $self) = $gallery->getActiveUser();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	GalleryUtilities::putRequestVariable('form.action.deleteFromText', 1);
+	GalleryUtilities::putRequestVariable('form.text.userName', $self->getUserName());
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminUsers'),
+				  'status' => array(),
+				  'error' => array('form.error.text.cantDeleteSelf')),
+			    $results);
+    }
+
     function _createUser() {
 	global $gallery;
 	

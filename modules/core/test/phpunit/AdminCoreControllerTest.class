@@ -120,7 +120,7 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 
     function testAddUploadLocalServerDir() {
 	global $gallery;
-	GalleryUtilities::putRequestVariable('form.uploadLocalServer.newDir', 'foo');
+	GalleryUtilities::putRequestVariable('form.uploadLocalServer.newDir', dirname(__FILE__));
 	GalleryUtilities::putRequestVariable('form.action.addUploadLocalServerDir', 1);
 
 	$ret = $gallery->setModuleParameter('core', 'uploadLocalServer.dirs', 'a,b,c');
@@ -139,7 +139,7 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	GalleryDataCache::reset();
 
 	list ($ret, $dirs) = $gallery->getModuleParameter('core', 'uploadLocalServer.dirs');
-	$this->assertEquals('a,b,c,foo', $dirs);
+	$this->assertEquals('a,b,c,' . dirname(__FILE__), $dirs);
     }
 
     function testAddUploadLocalServerDirMissing() {
@@ -152,6 +152,19 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 						      'subView' => 'core:AdminCore'),
 				  'status' => array(),
 				  'error' => array('form.error.uploadLocalServer.newDir.missing')),
+				  $results);
+    }
+    
+    function testAddUploadLocalServerDirBogus() {
+	GalleryUtilities::putRequestVariable('form.uploadLocalServer.newDir', __FILE__);
+	GalleryUtilities::putRequestVariable('form.action.addUploadLocalServerDir', 1);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminCore'),
+				  'status' => array(),
+				  'error' => array('form.error.uploadLocalServer.newDir.notADirectory')),
 				  $results);
     }
     
