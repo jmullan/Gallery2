@@ -378,6 +378,20 @@ class CoreModule extends GalleryModule {
 		}
 
 		/*
+		 * We're going to need a translator in order to run the install
+		 * functions below.  At this point in the install process, we
+		 * probably don't have one!  Try to get one, and if that fails,
+		 * then create one.
+		 */
+		$translator =& $gallery->getTranslator();
+		if (empty($translator)) {
+		    $ret = $gallery->initTranslator();
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), false);
+		    }
+		}
+
+		/*
 		 * Register our permissions.  Since we're storing
 		 * internationalized strings in the database, we have to give
 		 * our internationalized-string-extractor a clue that these
@@ -469,20 +483,6 @@ class CoreModule extends GalleryModule {
 		$ret = $this->setModuleParameter('version', $this->getVersion());
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), false);
-		}
-
-		/*
-		 * We're going to need a translator in order to run the install
-		 * functions below.  At this point in the install process, we
-		 * probably don't have one!  Try to get one, and if that fails,
-		 * then create one.
-		 */
-		$translator =& $gallery->getTranslator();
-		if (empty($translator)) {
-		    $ret = $gallery->initTranslator();
-		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), false);
-		    }
 		}
 
 		foreach (array('_createAllUsersGroup',
