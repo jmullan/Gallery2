@@ -48,7 +48,7 @@ class ItemAddFromServer extends ItemAddPlugin {
 	    /* Delegate back to the same view */
 	} else if (isset($form['action']['addFromLocalServer'])) {
 	    /* Add the selected items */
-	    $dir = $form['localServerPath'];
+	    $dir = trim($form['localServerPath']);
 
 	    $platform = $gallery->getPlatform();
 	    foreach ($form['localServerFiles'] as $fileKey => $unused) {
@@ -112,7 +112,7 @@ class ItemAddFromServer extends ItemAddPlugin {
 
 	/* If we're uploading from the local server, get a file list now */
 	if (isset($form['action']['findFilesFromLocalServer'])) {
-
+	    $form['localServerPath'] = trim($form['localServerPath']);
 	    /* Validate the path */
 	    $form['localServerFiles'] = array();
 	    if (empty($form['localServerPath'])) {
