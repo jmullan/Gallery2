@@ -165,13 +165,21 @@ class CoreModuleExtras {
 			       $platform->getDirectorySeparator(),
 			       'versions.dat');
 
+	$versionDatError =  0;
 	if ($fd = $platform->fopen($versionFile, 'wb')) {
 	    $data = sprintf("%s\n%s",
 			    $module->getVersion(),
 			    $module->getGalleryVersion());
-	    $platform->fwrite($fd, $data);
+	    $x = $platform->fwrite($fd, $data);
+	    if ($platform->fwrite($fd, $data) != strlen($data)) {
+		$versionDatError = 1;
+	    }
 	    $platform->fclose($fd);
 	} else {
+	    $versionDatError = 1;
+	}
+
+	if ($versionDatError) {
 	    return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
 					'Can\'t write to the versions file'); 
 	}
