@@ -278,35 +278,6 @@ class GalleryMimeTypeHelper_simple {
     }
 
     /**
-     * Return mime types and applicable file extensions
-     *
-     * @return array object GalleryStatus a status code
-     *               array (string mime type => array(string extension))
-     * @static
-     * @deprecated
-     */
-    function deprecated_getMimeTypeMap() {
-        global $gallery;
-        
-        $query = '
-            SELECT [GalleryMimeTypeMap::mimeType],
-                [GalleryMimeTypeMap::extension]
-            FROM [GalleryMimeTypeMap]
-            ORDER BY [GalleryMimeTypeMap::mimeType]
-        ';
-        list ($ret, $searchResults) = $gallery->search($query);
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
-        }
-
-        $mimeTypes = array();
-        while ($result = $searchResults->nextResult()) {
-            $mimeTypes[$result[0]][] = $result[1];
-        }
-        return array(GalleryStatus::success(), $mimeTypes);
-    }
-
-    /**
      * Figure out the file's mime type
      *
      * Eg, "foo.jpg" returns "image/jpeg"
