@@ -113,17 +113,16 @@ function GalleryInitFirstPass($params=array()) {
 	return $ret->wrap(__FILE__, __LINE__);
     }
 
-    return GalleryStatus::success();
-}
-
-function GalleryInitSecondPass() {
-    global $gallery;
-    
     /* Initialize our translator */
     $ret = $gallery->initTranslator();
     if ($ret->isError()) {
 	return $ret->wrap(__FILE__, __LINE__);
     }
+    return GalleryStatus::success();
+}
+
+function GalleryInitSecondPass() {
+    global $gallery;
 
     $session =& $gallery->getSession();
     /*
