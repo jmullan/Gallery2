@@ -38,12 +38,13 @@ class GalleryPluginHelper_simple {
      *
      * @param string the plugin type (eg, module, layout, etc)
      * @param string the plugin id
+     * @param bool should we ignore version mismatches (default: no)
      * @param int the depth of recursion (don't set this- it's used internally)
      * @return array object GalleryStatus a status code
      *               object the plugin
      * @static
      */
-    function loadPlugin($pluginType, $pluginId, $depth=0) {
+    function loadPlugin($pluginType, $pluginId, $ignoreVersionMismatch=false, $depth=0) {
 	global $gallery;
 
 	$cacheKey = "GalleryPluginHelper::loadPlugin($pluginType, $pluginId)";
@@ -75,7 +76,8 @@ class GalleryPluginHelper_simple {
 							       'itemId' => 'GalleryPluginHelper_fetchPluginStatus',
 							       'id' => '_all'));
 			list ($ret, $plugin) =
-			    GalleryPluginHelper_simple::loadPlugin($pluginType, $pluginId, $depth + 1);
+			    GalleryPluginHelper_simple::loadPlugin($pluginType, $pluginId,
+								   $ignoreVersionMismatch, $depth + 1);
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
@@ -97,7 +99,7 @@ class GalleryPluginHelper_simple {
 	    $plugin = GalleryDataCache::get($cacheKey);
 	}
 
-	if ($pluginType == 'module') {
+	if (!$ignoreVersionMismatch && $pluginType == 'module') {
 	    /* Verify that the versions match */
 	    list ($ret, $status) = GalleryPluginHelper_simple::fetchPluginStatus('module');
 	    if ($ret->isError()) {

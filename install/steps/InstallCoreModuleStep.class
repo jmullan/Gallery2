@@ -56,7 +56,7 @@ class InstallCoreModuleStep extends InstallStep {
 	}
 
 	if (empty($templateData['errors'])) {
-	    list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
+	    list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core', true);
 	    if ($ret->isError()) {
 		$templateData['errors'][] = _('Unable to load the core module');
 		$templateData['stackTrace'] = $ret->getAsHtml();

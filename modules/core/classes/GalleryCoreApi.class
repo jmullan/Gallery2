@@ -132,13 +132,14 @@ class GalleryCoreApi {
      *
      * @param string the plugin type (eg, module, layout, etc)
      * @param string the plugin id
+     * @param bool should we ignore version mismatches (default: no)
      * @return array object GalleryStatus a status code
      *               object the plugin
      * @static
      */
-    function loadPlugin($pluginType, $pluginId) {
+    function loadPlugin($pluginType, $pluginId, $ignoreVersionMismatch=false) {
 	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/helpers/GalleryPluginHelper_simple.class');
-	return GalleryPluginHelper_simple::loadPlugin($pluginType, $pluginId);
+	return GalleryPluginHelper_simple::loadPlugin($pluginType, $pluginId, $ignoreVersionMismatch);
     }
 
     /**

@@ -52,11 +52,9 @@ class AdminModulesController extends GalleryController {
 	
 	list($moduleId, $action) = GalleryUtilities::getRequestVariables('moduleId', 'action');
 	if (!empty($moduleId) && !empty($action)) {
-	    list($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
+	    list($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId, true);
 	    if ($ret->isError()) {
-		if (!($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    list ($ret, $isActive) = $module->isActive();
@@ -186,13 +184,10 @@ class AdminModulesView extends GalleryView {
 	}
 
 	foreach ($moduleStatus as $moduleId => $status) {
-	    /* Get the selected module's admin view */
-	    list($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
+	    /* Get the selected module's admin view (even if the module needs upgrading)  */
+	    list($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId, true);
 	    if ($ret->isError()) {
-		/* We show all plugins so that we can get the ones that need upgrading */
-		if ($ret->getErrorCode() != (GALLERY_ERROR | ERROR_PLUGIN_VERSION_MISMATCH)) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    $entry = array();
