@@ -92,7 +92,7 @@
 <div id="gsSidebar">
   {* Module links *}
   <div class="gbMenu">
-    <div class="giTitle">
+    <div class="giTitle" style="width:144px">
       <noscript><p class="giError">
 	{g->text text="Warning: This site requires javascript."}
       </p></noscript>
