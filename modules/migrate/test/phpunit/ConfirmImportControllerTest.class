@@ -306,7 +306,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 				  $testOwner->getId(),                   // owner
 				  1056015077,                            // album creation
 				  1056015077,                            // clicks counted since
-				  14,                                    // count of clicks
+				  16,                                    // count of clicks
 				  array(array(                           // thumb and resized sizing preferences
 					      'order' => 0,
 					      'derivativeType' => 1,
@@ -419,9 +419,19 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 				  $itemViewCount[$testItem->getId()]     // count of clicks
 				  )
 			    );
-	
+	/*
+	 * [comments] => Array (
+	 *     [0] => comment Object (
+	 *          [commentText] => "Hooray!  This is a @$@ comment!"
+	 *          [datePosted] => "1088663587"
+	 *          [IPNumber] => '209.98.212.219'
+	 *          [name] => 'Administrator (admin)'
+	 *          [UID] => '1054014347_1233740678'
+	 *     )
+	 * )
+	 */
     }
-
+    
     /* $album['perms']
      *
      * Album Perms

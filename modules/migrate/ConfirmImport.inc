@@ -79,6 +79,21 @@ class ConfirmImportController extends GalleryController {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+	list ($ret, $guestUserId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
+	list ($ret, $moduleStatusList) = GalleryCoreApi::getPluginStatus('module');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	if (!empty($moduleStatusList['comment']['active'])) {
+	    $importComments = TRUE;
+	} else {
+	    $importComments = FALSE;
+	}
+
 	
         /* Verify that active user is an admin */
         $ret = GalleryCoreApi::assertUserIsSiteAdministrator();
@@ -774,6 +789,58 @@ class ConfirmImportController extends GalleryController {
 				if ($ret->isError()) {
 				    return array($ret->wrap(__FILE__, __LINE__), null);
 				}
+				
+				if ($importComments && isset($importAlbumItem->comments) && count($importAlbumItem->comments)>0) {
+				    foreach ($importAlbumItem->comments AS $importCommentId => $importComment) {
+					if (strcmp($importComment->UID,'everybody')) {
+					    $validCommentUid = Gallery1DataParser::isValidUid($albumsPath,$album['owner']);
+					    if ($validCommentUid){
+						list($ret, $commentG1User) = Gallery1DataParser::getUserFieldsByUid($albumsPath, $album['owner']);
+						if ($ret->isError()) {
+						    return array($ret->wrap(__FILE__, __LINE__), null);
+						}
+						list($ret, $commentG2User) = GalleryCoreApi::fetchUserByUsername($commentG1User['username']);
+						if ($ret->isError() && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
+						    return array($ret->wrap(__FILE__, __LINE__), null);
+						}
+					    }
+					    $commenterId = $commentG2User->getId();
+					} else {
+					    $commenterId = $guestUserId;
+					}
+					
+					/* Add the comment */
+					list ($ret, $comment) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryComment');
+					if ($ret->isError()) {
+					    return array($ret->wrap(__FILE__, __LINE__), null);
+					}
+					
+					if (!isset($comment)) {
+					return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
+						     null);
+					}
+					
+					$ret = $comment->create($newItem->getId());
+					if ($ret->isError()) {
+					    return array($ret->wrap(__FILE__, __LINE__), null);
+					}
+					
+					$comment->setCommenterId($commenterId);
+					$comment->setHost($importComment->IPNumber);
+					if ($commenterId == $guestUserId) {
+					    $comment->setSubject($importComment->name);
+					} else {
+					    $comment->setSubject('');
+					}
+					$comment->setComment(ConfirmImportController::convertHtmlToBbcode($importComment->commentText));
+					$comment->setDate($importComment->datePosted);
+					
+					$ret = $comment->save();
+					if ($ret->isError()) {
+					    return array($ret->wrap(__FILE__, __LINE__), null);
+					}
+				    }
+				}
 				/* Click counts must be set after the item is firstsaved */
 				//$ret = GalleryCoreApi::setItemViewCount($newItem->getId(), $importAlbumItem->clicks);
 				//if ($ret->isError()) {
@@ -952,6 +1019,7 @@ class ConfirmImportView extends GalleryView {
 	    } else {
 		$illegalAlbumNames[$encodedName] = FALSE;
 	    }
+	    
 	    $validUid = Gallery1DataParser::isValidUid($albumsPath,$album['owner']);
 	    if ($validUid){
 		list($ret, $testUser) = Gallery1DataParser::getUserFieldsByUid($albumsPath, $album['owner']);
@@ -975,8 +1043,8 @@ class ConfirmImportView extends GalleryView {
 		    $albumValidOwner[$encodedName] = FALSE;
 		}
 	    } else {
-		$albumValidOwner[$encodedName] = FALSE;
-		$albumOwnerUserName[$encodedName] = NULL;
+		$albumValidOwner[$encodedName] = TRUE;
+		$albumOwnerUserName[$encodedName] = 'admin';
 		$albumOwnerUid[$encodedName] = NULL;
 	    }
 	    $i++;
