@@ -25,10 +25,10 @@ if (!file_exists(dirname(__FILE__) . '/config.php') ||
     return;
 }
 
+require_once(dirname(__FILE__) . '/init.php');
 if (!defined('G2_EMBED')) {
 
     /* Initialize Gallery */
-    require_once(dirname(__FILE__) . '/init.php');
     $ret = GalleryInitFirstPass();
     if ($ret->isError()) {
 	$ret = $ret->wrap(__FILE__, __LINE__);
