@@ -122,12 +122,6 @@
       {/foreach}
     </ul>
   </div>
-  {* Modules system content *}
-  {foreach from=$layout.moduleSystemContentFiles key=moduleId item=moduleFile}
-    {if ($moduleId != 'core')}
-      {include file="gallery:$moduleFile" l10Domain="modules_$moduleId"}
-    {/if}
-  {/foreach}
   {* Breadcrumb *}
   {if (count($layout.parents)>0)}
     <div class="gbMenu">
@@ -144,6 +138,12 @@
       </ul>
     </div>
   {/if}
+  {* Modules system content *}
+  {foreach from=$layout.moduleSystemContentFiles key=moduleId item=moduleFile}
+    {if ($moduleId != 'core')}
+      {include file="gallery:$moduleFile" l10Domain="modules_$moduleId"}
+    {/if}
+  {/foreach}
   {* Album links *}
   <div class="gbMenu">
     <div class="giTitle"> {g->text text="Album"} </div>
