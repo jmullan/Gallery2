@@ -34,6 +34,7 @@
     <?php endforeach; ?>
     <?php endif; ?>
 
+    <?php if (!empty($templateData['modules'])): ?>
     <form>
       <table class="modules">
 	<tr>
@@ -50,7 +51,7 @@
 	    <?php print _("Description") ?>
 	  </th>
 	</tr>
-	
+
 	<?php foreach ($templateData['modules'] as $id => $module): ?>
 	<?php if ($module->canBeAutoInstalled()): ?>
 	<tr>
@@ -77,4 +78,5 @@
       <input type="hidden" name="step" value="<?php print $currentStep->getStepNumber() ?>"/>
       <input type="submit" name="action[activate]" value="<?php print _("activate selected modules")?>"/>
     </form>
+    <?php endif; ?>
 
