@@ -61,9 +61,11 @@ class ThumbnailModule extends GalleryModule {
 						      'ThumbnailToolkit', 'Thumbnail',
 						      $classDir . 'ThumbnailToolkit.class');
 
-	GalleryCoreApi::registerFactoryImplementation('ItemEditItemOption',
-			'CustomThumbnailOption', 'CustomThumbnailOption',
-			dirname(__FILE__) . '/CustomThumbnailOption.inc');
+	GalleryCoreApi::registerFactoryImplementation('ItemEditOption',
+						      'CustomThumbnailOption',
+						      'CustomThumbnailOption',
+						      dirname(__FILE__) . '/CustomThumbnailOption.inc',
+						      array('ItemEditItem'));
     }
 
     /**

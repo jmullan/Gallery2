@@ -79,8 +79,8 @@ class RandomHighlightOptionTest extends ItemEditOptionTestCase {
 
 	$form['RandomHighlightOption']['isRandomHighlight'] = 1;
 
-	$error = $this->handleRequestAfterEdit($form, $this->_album);
-	$this->assertEquals(array(), $error, 'turn on');
+	$result = $this->_handleRequestAfterEdit($form, $this->_album);
+	$this->assertEquals(array(array(), array()), $result, 'turn on');
 
 	list ($ret, $highlight) = $this->_highlight->refresh();
 	if ($ret->isError()) {
@@ -94,8 +94,8 @@ class RandomHighlightOptionTest extends ItemEditOptionTestCase {
 	}
 	$this->assert($count > 0, 'item count');
 
-	$error = $this->handleRequestAfterEdit(array(), $this->_album);
-	$this->assertEquals(array(), $error, 'turn off');
+	$result = $this->_handleRequestAfterEdit(array(), $this->_album);
+	$this->assertEquals(array(array(), array()), $result, 'turn off');
 
 	list ($ret, $highlight) = $this->_highlight->refresh();
 	if ($ret->isError()) {

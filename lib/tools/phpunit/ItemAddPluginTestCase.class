@@ -115,6 +115,16 @@ class ItemAddPluginTestCase extends GalleryTestCase {
 class ItemAddPluginTestOption extends ItemAddOption {
     function ItemAddPluginTestOption() {
 	$this->_key = rand();
+	$this->_error = array();
+	$this->_warning = array();
+    }
+
+    function addError($error) {
+	$this->_error[] = $error;
+    }
+
+    function addWarning($warning) {
+	$this->_warning[] = $warning;
     }
 
     function &_getInstance($key) {
@@ -133,7 +143,7 @@ class ItemAddPluginTestOption extends ItemAddOption {
 	$instance =& $this->_getInstance($this->_key);
 	$instance->_form = $form;
 	$instance->_item = $item;
-	return array(GalleryStatus::success(), array());
+	return array(GalleryStatus::success(), $this->_error, $this->_warning);
     }
 
     function getData() {

@@ -73,7 +73,7 @@ class RandomHighlightOption extends ItemEditOption {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
-	return array(GalleryStatus::success(), array());
+	return array(GalleryStatus::success(), array(), array());
     }
 }
 ?>

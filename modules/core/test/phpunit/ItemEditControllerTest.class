@@ -58,9 +58,15 @@ class ItemEditControllerTest extends GalleryControllerTestCase {
 						      __FILE__);
 
 	GalleryCoreApi::registerFactoryImplementation('ItemEditPlugin',
-						      'ItemEditControllerTestPluginFail',
-						      'ItemEditControllerTestPluginFail',
+						      'ItemEditControllerTestPluginFailAndWarn',
+						      'ItemEditControllerTestPluginFailAndWarn',
 						      __FILE__);
+
+	GalleryCoreApi::registerFactoryImplementation('ItemEditOption',
+						      'ItemEditControllerTestOption',
+						      'ItemEditControllerTestOption',
+						      __FILE__,
+						      array('ItemEditControllerTestPluginFailAndWarn'));
     }
 
     function tearDown() {
@@ -71,8 +77,12 @@ class ItemEditControllerTest extends GalleryControllerTestCase {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	GalleryCoreApi::unregisterFactoryImplementation('ItemEditPlugin', 'ItemEditControllerTestPluginSuccess');
-	GalleryCoreApi::unregisterFactoryImplementation('ItemEditPlugin', 'ItemEditControllerTestPluginFail');
+	GalleryCoreApi::unregisterFactoryImplementation('ItemEditPlugin',
+							'ItemEditControllerTestPluginSuccess');
+	GalleryCoreApi::unregisterFactoryImplementation('ItemEditPlugin',
+							'ItemEditControllerTestPluginFailAndWarn');
+	GalleryCoreApi::unregisterFactoryImplementation('ItemEditOption',
+							'ItemEditControllerTestOption');
 	
 	parent::tearDown();
     }
@@ -94,7 +104,8 @@ class ItemEditControllerTest extends GalleryControllerTestCase {
 						      'subView' => 'core:ItemEdit',
 						      'editPlugin' => 'ItemEditControllerTestPluginSuccess',
 						      'itemId' => $this->_item->getId()),
-				  'status' => array('editMessage' => 'success'),
+				  'status' => array('editMessage' => 'success',
+						    'warning' => array()),
 				  'error' => array()),
 			    $results);
     }
@@ -109,7 +120,8 @@ class ItemEditControllerTest extends GalleryControllerTestCase {
 						      'subView' => 'core:ItemEdit',
 						      'editPlugin' => 'ItemEditControllerTestPluginSuccess',
 						      'itemId' => $this->_item->getId()),
-				  'status' => array('editMessage' => 'success'),
+				  'status' => array('editMessage' => 'success',
+						    'warning' => array()),
 				  'error' => array()),
 			    $results);
     }
@@ -117,14 +129,18 @@ class ItemEditControllerTest extends GalleryControllerTestCase {
     function testHandleRequestDelegate() {
 	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
 	GalleryUtilities::putRequestVariable('form[serialNumber]', $this->_item->getSerialNumber());
-	GalleryUtilities::putRequestVariable('editPlugin', 'ItemEditControllerTestPluginFail');
+	GalleryUtilities::putRequestVariable('editPlugin', 'ItemEditControllerTestPluginFailAndWarn');
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
 						      'subView' => 'core:ItemEdit',
-						      'editPlugin' => 'ItemEditControllerTestPluginFail'),
-				  'status' => null,
-				  'error' => array('failed')),
+						      'editPlugin' => 'ItemEditControllerTestPluginFailAndWarn'),
+				  'status' => array('editMessage' => null,
+						    'warning' => array('a warning')),   /* from its option */
+				  'error' => array('failed',   /* from the plugin */
+						   'an error') /* from its option */ 
+				  ),
 			    $results);
     }
 }
@@ -161,9 +177,27 @@ class ItemEditControllerTestPluginSuccess {
  * @package GalleryCore
  * @subpackage PHPUnit
  */
-class ItemEditControllerTestPluginFail {
+class ItemEditControllerTestPluginFailAndWarn extends ItemEditPlugin {
     function handleRequest($form, &$item, &$preferred) {
 	return array(GalleryStatus::success(), array('failed'), null);
+    }
+}
+
+/**
+ * Test ItemEditOption that returns warnings and errors
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class ItemEditControllerTestOption extends ItemEditOption {
+    function isAppropriate($item, $thumbnail) {
+	return array(GalleryStatus::success(), true);
+    }
+
+    function handleRequestAfterEdit($form, &$item, &$preferred) {
+	return array(GalleryStatus::success(),
+		     array('an error'),
+		     array('a warning'));
     }
 }
 

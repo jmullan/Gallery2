@@ -67,7 +67,6 @@ class GalleryFactoryHelper_medium {
 	return array(GalleryStatus::success(), $instance);
     }
 
-
     /**
      * Return the ids of all the available implementations for a class
      *
@@ -84,9 +83,34 @@ class GalleryFactoryHelper_medium {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
-	
+
 	if (isset($registry['ids'][$classType])) {
 	    return $registry['ids'][$classType];
+	} else {
+	    return array();
+	}
+    }
+
+    /**
+     * Return the ids of all the available implementations for a class
+     *
+     * @return array (id => className)
+     * @static
+     */
+    function getAllImplementationIdsWithHint($classType, $hint) {
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryFactoryHelper_simple.class');
+	$registry =& GalleryFactoryHelper_simple::_getFactoryData();
+
+	if (empty($registry)) {
+	    $ret = GalleryFactoryHelper_simple::_loadRegistry();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+
+	$hint = strtolower($hint);
+	if (isset($registry['hints'][$classType][$hint])) {
+	    return $registry['hints'][$classType][$hint];
 	} else {
 	    return array();
 	}
@@ -125,12 +149,15 @@ class GalleryFactoryHelper_medium {
 		}
 	    }
 	}
+
 	if (isset($registry['hints'][$classType])) {
-	    foreach ($registry['hints'][$classType] as $hint => $names) {
-		if (isset($names[$className])) {
-		    unset($registry['hints'][$classType][$hint][$className]);
-		    if (empty($registry['hints'][$classType][$hint])) {
-			unset($registry['hints'][$classType][$hint]);
+	    foreach ($registry['hints'][$classType] as $hint => $ids) {
+		foreach (array_keys($ids) as $id) {
+		    if ($ids[$id] == $className) {
+			unset($registry['hints'][$classType][$hint][$id]);
+			if (empty($registry['hints'][$classType][$hint])) {
+			    unset($registry['hints'][$classType][$hint]);
+			}
 		    }
 		}
 	    }

@@ -35,8 +35,8 @@ class ImageBlockOption extends ItemEditOption {
      * @see ItemEditOption::handleRequestAfterEdit
      */
     function handleRequestAfterEdit($form, &$item, &$preferred) {
-	$status = null;
 	$error = array();
+	$warning = array();
 
 	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/ImageBlockHelper.class');
 
@@ -59,13 +59,7 @@ class ImageBlockOption extends ItemEditOption {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
-	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'imageblock');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
-	}
-	$status = $module->translate('Changes saved successfully');
-
-	return array(GalleryStatus::success(), $error, $status);
+	return array(GalleryStatus::success(), $error, $warning);
     }
 
     /**

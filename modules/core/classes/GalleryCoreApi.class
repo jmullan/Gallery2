@@ -54,7 +54,7 @@ class GalleryCoreApi {
      * @return array major number, minor number
      */
     function getApiVersion() {
-	return array(1, 0);
+	return array(1, 1);
     }
 
     /**
@@ -122,6 +122,18 @@ class GalleryCoreApi {
     function getAllFactoryImplementationIds($classType) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryFactoryHelper_medium.class');
 	return GalleryFactoryHelper_medium::getAllImplementationIds($classType);
+    }
+
+    /**
+     * Return the ids of all the available implementations for a class for a
+     * given hint.
+     *
+     * @return array (id => className)
+     * @static
+     */
+    function getAllFactoryImplementationIdsWithHint($classType, $hint) {
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryFactoryHelper_medium.class');
+	return GalleryFactoryHelper_medium::getAllImplementationIdsWithHint($classType, $hint);
     }
 
     /**

@@ -100,7 +100,7 @@ class CreateThumbnailOptionTest extends ItemAddOptionTestCase {
 	$this->assert($isCurrent, 'Thumbnail was not created!');
     }
 
-    // This won't do anything, but shouldn't have any errors either.
+    /* This won't do anything, but shouldn't have any errors either. */
     function testCreateWithNoThumbnail() {
 	$form['CreateThumbnailOption']['createThumbnail'] = 1;
 	$result = $this->_handleRequestAfterAdd($form, $this->_item);

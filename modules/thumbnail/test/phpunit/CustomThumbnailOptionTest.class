@@ -100,19 +100,20 @@ class CustomThumbnailOptionTest extends ItemEditOptionTestCase {
 		      'tmp_name' => array(1 =>
 			    dirname(__FILE__) . '/../../../core/test/data/test1.gif'));
 
-	$error = $this->handleRequestAfterEdit($form, $this->_item);
+	list ($error, $warning) = $this->_handleRequestAfterEdit($form, $this->_item);
 	$this->assertEquals(array('form[CustomThumbnailOption][error][imageMime]'), $error);
+	$this->assertEquals(array(), $warning);
     }
 
     function testAddDeleteThumbnail() {
-	// Add custom thumbnail..
+	/* Add custom thumbnail.. */
 	$form = array('name' => array(1 => 'test.jpg'),
 		      'type' => array(1 => 'image/jpeg'),
 		      'tmp_name' => array(1 =>
 			    dirname(__FILE__) . '/../../../core/test/data/test1.jpg'));
 
-	$error = $this->handleRequestAfterEdit($form, $this->_item);
-	$this->assertEquals(array(), $error);
+	$result = $this->_handleRequestAfterEdit($form, $this->_item);
+	$this->assertEquals(array(array(), array()), $result);
 
 	list ($ret, $thumbnailImage) = ThumbnailHelper::fetchThumbnail($this->_item->getId());
 	if ($ret->isError()) {
@@ -129,10 +130,10 @@ class CustomThumbnailOptionTest extends ItemEditOptionTestCase {
 	$thumbnail = array_shift($thumbnails);
 	$this->assertEquals($thumbnailImage->getId(), $thumbnail->getDerivativeSourceId(), 'source');
 
-	// Remove custom thumbnail..
+	/* Remove custom thumbnail.. */
 	$form = array('CustomThumbnailOption' => array('delete' => '1'));
-	$error = $this->handleRequestAfterEdit($form, $this->_item);
-	$this->assertEquals(array(), $error);
+	$result = $this->_handleRequestAfterEdit($form, $this->_item);
+	$this->assertEquals(array(array(), array()), $result);
 
 	list ($ret, $thumbnailImage) = ThumbnailHelper::fetchThumbnail($this->_item->getId());
 	if ($ret->isError()) {
@@ -149,14 +150,14 @@ class CustomThumbnailOptionTest extends ItemEditOptionTestCase {
     }
 
     function testChangeRestoreThumbnail() {
-	// Add custom thumbnail..
+	/* Add custom thumbnail.. */
 	$form = array('name' => array(1 => 'test.jpg'),
 		      'type' => array(1 => 'image/jpeg'),
 		      'tmp_name' => array(1 =>
 			    dirname(__FILE__) . '/../../../core/test/data/test1.jpg'));
 
-	$error = $this->handleRequestAfterEdit($form, $this->_image);
-	$this->assertEquals(array(), $error);
+	$result = $this->_handleRequestAfterEdit($form, $this->_image);
+	$this->assertEquals(array(array(), array()), $result);
 
 	list ($ret, $thumbnailImage) = ThumbnailHelper::fetchThumbnail($this->_image->getId());
 	if ($ret->isError()) {
@@ -173,10 +174,10 @@ class CustomThumbnailOptionTest extends ItemEditOptionTestCase {
 	$thumbnail = array_shift($thumbnails);
 	$this->assertEquals($thumbnailImage->getId(), $thumbnail->getDerivativeSourceId(), 'source');
 
-	// Remove custom thumbnail..
+	/* Remove custom thumbnail.. */
 	$form = array('CustomThumbnailOption' => array('delete' => '1'));
-	$error = $this->handleRequestAfterEdit($form, $this->_image);
-	$this->assertEquals(array(), $error);
+	$result = $this->_handleRequestAfterEdit($form, $this->_image);
+	$this->assertEquals(array(array(), array()), $result);
 
 	list ($ret, $thumbnailImage) = ThumbnailHelper::fetchThumbnail($this->_image->getId());
 	if ($ret->isError()) {
@@ -190,8 +191,9 @@ class CustomThumbnailOptionTest extends ItemEditOptionTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(array($this->_image->getId()), array_keys($thumbnails), 'got derivative');
-//	$thumbnail = array_shift($thumbnails);
-//	$this->assertEquals($this->_image->getId(), $thumbnail->getDerivativeSourceId(), 'got source');
+
+	$thumbnail = array_shift($thumbnails);
+	$this->assertEquals($this->_image->getId(), $thumbnail->getDerivativeSourceId(), 'got source');
     }
 }
 

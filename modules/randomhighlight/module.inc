@@ -53,9 +53,10 @@ class RandomHighlightModule extends GalleryModule {
 	    'RandomHighlightDerivativeImage', 'RandomHighlightDerivativeImage',
 	    dirname(__FILE__) . '/classes/RandomHighlightDerivativeImage.class');
 
-	GalleryCoreApi::registerFactoryImplementation('ItemEditAlbumOption',
+	GalleryCoreApi::registerFactoryImplementation('ItemEditOption',
 	    'RandomHighlightOption', 'RandomHighlightOption',
-	    dirname(__FILE__) . '/RandomHighlightOption.inc');
+            dirname(__FILE__) . '/RandomHighlightOption.inc',
+            array('ItemEditAlbum'));
     }
 
     /**
@@ -96,7 +97,7 @@ class RandomHighlightModule extends GalleryModule {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	if ($count > 0) {
-	    // Can't deactivate if randomhighlight derivatives exist..
+	    /* Can't deactivate if randomhighlight derivatives exist.. */
 	    return array(GalleryStatus::success(),
 			 array('view' => 'core:SiteAdmin',
 			       'subView' => 'randomhighlight:SiteAdminRandomHighlight'));

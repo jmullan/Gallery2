@@ -88,19 +88,24 @@ class ItemEditController extends GalleryController {
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
 	}
 
-	list ($ret, $error, $statusMessage) = $plugin->handleRequest($form, $item, $preferred);
+	list ($ret, $error, $status['editMessage']) = $plugin->handleRequest($form, $item, $preferred);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* Now let each option process its data */
+	if (!isset($status['warning'])) {
+	    $status['warning'] = array();
+	}
 	if (isset($form['action']['save'])) {
 	    foreach ($optionInstances as $option) {
-		list ($ret, $optionErrors) = $option->handleRequestAfterEdit($form, $item, $preferred);
+		list ($ret, $optionErrors, $optionWarnings) = $option->handleRequestAfterEdit($form, $item, $preferred);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
+
 		$error = array_merge($error, $optionErrors);
+		$status['warning'] = array_merge($status['warning'], $optionWarnings);
 	    }
 	}
 
@@ -115,10 +120,7 @@ class ItemEditController extends GalleryController {
 	    $results['delegate']['editPlugin'] = $editPlugin;
 	}
 
-	$results['status'] = array();
-	if (isset($statusMessage)) {
-	    $results['status']['editMessage'] = $statusMessage;
-	}
+	$results['status'] = $status;
 	$results['error'] = $error;
 
 	return array(GalleryStatus::success(), $results);
@@ -317,7 +319,7 @@ class ItemEditPlugin {
      * @param the item's preferred derivative, if there is one
      * @return array object GalleryStatus a status code
      *               array error messages
-     *               string status message
+     *               array warning messages
      */
     function handleRequest($form, &$item, &$preferred) {
 	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null, null);
@@ -356,11 +358,10 @@ class ItemEditOption {
      * @static
      */
     function getAllOptions($editPlugin, $item, $thumbnail) {
-	$classType = $editPlugin . 'Option';
-	$allOptionIds = GalleryCoreApi::getAllFactoryImplementationIds($classType);
+	$allOptionIds = GalleryCoreApi::getAllFactoryImplementationIdsWithHint('ItemEditOption', $editPlugin);
 	$optionInstances = array();
 	foreach (array_keys($allOptionIds) as $optionId) {
-	    list ($ret, $option) = GalleryCoreApi::newFactoryInstanceById($classType, $optionId);
+	    list ($ret, $option) = GalleryCoreApi::newFactoryInstanceById('ItemEditOption', $optionId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -401,9 +402,10 @@ class ItemEditOption {
      * @param reference to the item
      * @return array object GalleryStatus a status code
      *               array error messages
+     *               array localized warning messages
      */
     function handleRequestAfterEdit($form, &$item, &$preferred) {
-	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
+	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null, null);
     }
 
     /**

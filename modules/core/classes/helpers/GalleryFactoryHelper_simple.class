@@ -110,7 +110,7 @@ class GalleryFactoryHelper_simple {
 	$registry['implementations'][$classType][$className] = $fileName;
 	$registry['ids'][$classType][$id] = $className;
 	foreach ($hints as $hint) {
-	    $registry['hints'][$classType][strtolower($hint)][$className] = 1;
+	    $registry['hints'][$classType][strtolower($hint)][$id] = $className;
 	}
     }
 
@@ -140,7 +140,7 @@ class GalleryFactoryHelper_simple {
 	foreach ($hints as $hint) {
 	    $hint = strtolower($hint);
 	    if (!empty($registry['hints'][$classType][$hint])) {
-		$classNames = array_keys($registry['hints'][$classType][$hint]);
+		$classNames = array_values($registry['hints'][$classType][$hint]);
 		break;
 	    }
 	}

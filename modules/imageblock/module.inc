@@ -48,10 +48,11 @@ class ImageBlockModule extends GalleryModule {
      * @see GalleryModule::performFactoryRegistrations()
      */
     function performFactoryRegistrations() {
-        GalleryCoreApi::registerFactoryImplementation('ItemEditAlbumOption',
+        GalleryCoreApi::registerFactoryImplementation('ItemEditOption',
                                                       'ImageBlockOption',
                                                       'ImageBlockOption',
-                                                      dirname(__FILE__) . '/ImageBlockOption.inc');
+                                                      dirname(__FILE__) . '/ImageBlockOption.inc',
+						      array('ItemEditAlbum'));
     }
 
     /**

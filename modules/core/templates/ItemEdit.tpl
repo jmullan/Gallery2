@@ -19,11 +19,20 @@
   {if !empty($status) || !empty($form.error)}
   <div id="gsStatus">
     {if !empty($status)}
+    {if !empty($status.editMessage)}
     <div class="giStatus">
       {if isset($status.editMessage)}
       {$status.editMessage}
       {/if}
     </div>
+    {/if}
+    {if !empty($status.warning)}
+    <div class="giWarning">
+      {foreach from=$status.warning item=warning}
+      {$warning}
+      {/foreach}
+    </div>
+    {/if}
     {/if}
     {if !empty($form.error)}
     <div class="giError">

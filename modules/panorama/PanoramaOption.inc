@@ -82,21 +82,21 @@ class PanoramaOption extends ItemEditOption {
     function handleRequestAfterEdit($form, &$item, &$preferred) {
 	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/PanoramaHelper.class');
 
-	$isPanorama = isset($form['PanoramaOption']['isPanorama'])
-			&& $form['PanoramaOption']['isPanorama'];
+	$isPanorama = isset($form['PanoramaOption']['isPanorama']) &&
+	    $form['PanoramaOption']['isPanorama'];
 	$ret = PanoramaHelper::assignEntityType($item, $isPanorama);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	if (isset($preferred) && GalleryUtilities::isA($preferred, 'GalleryDerivativeImage')) {
 	    $ret = PanoramaHelper::assignEntityType($preferred, $isPanorama);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	}
 
-	return array(GalleryStatus::success(), array());
+	return array(GalleryStatus::success(), array(), array());
     }
 }
 ?>

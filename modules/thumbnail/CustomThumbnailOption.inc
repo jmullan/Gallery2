@@ -81,10 +81,11 @@ class CustomThumbnailOption extends ItemEditOption {
 	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/ThumbnailHelper.class');
 
 	$error = array();
+	$warning = array('WARNING!  foobar!');
 	if (!empty($form['tmp_name'][1])) {
 	    list ($ret, $lockId) = GalleryCoreApi::acquireReadLock(array($item->getId()));
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 
 	    list ($ret, $thumbnailId) = ThumbnailHelper::addItem(
@@ -93,40 +94,40 @@ class CustomThumbnailOption extends ItemEditOption {
 		$error[] = 'form[CustomThumbnailOption][error][imageMime]';
 	    } else if ($ret->isError()) {
 		GalleryCoreApi::releaseLocks($lockId);
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 
 	    if (empty($error)) {
 		$ret = ThumbnailHelper::applyThumbnail($item, $thumbnailId);
 		if ($ret->isError()) {
 		    GalleryCoreApi::releaseLocks($lockId);
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
 	    }
 
 	    $ret = GalleryCoreApi::releaseLocks($lockId);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	} else if (isset($form['CustomThumbnailOption']['delete'])) {
 	    list ($ret, $thumbnailImage) = ThumbnailHelper::fetchThumbnail($item->getId());
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    if (!isset($thumbnailImage)) {
-		return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
+		return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null, null);
 	    }
 	    $ret = ThumbnailHelper::restoreThumbnail($item);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    $ret = GalleryCoreApi::deleteEntityById($thumbnailImage->getId());
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	}
 
-	return array(GalleryStatus::success(), $error);
+	return array(GalleryStatus::success(), $error, $warning);
     }
 }
 ?>

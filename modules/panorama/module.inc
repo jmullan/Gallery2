@@ -65,10 +65,11 @@ class PanoramaModule extends GalleryModule {
 						      'PanoramaDerivativeImage',
 						      dirname(__FILE__) . '/classes/PanoramaDerivativeImage.class',
 						      array('PanoramaPhotoItem'));
-	GalleryCoreApi::registerFactoryImplementation('ItemEditPhotoOption',
+	GalleryCoreApi::registerFactoryImplementation('ItemEditOption',
 						      'PanoramaOption',
 						      'PanoramaOption',
-						      dirname(__FILE__) . '/PanoramaOption.inc');
+						      dirname(__FILE__) . '/PanoramaOption.inc',
+						      array('ItemEditPhoto'));
     }
 
     /**
@@ -115,7 +116,7 @@ class PanoramaModule extends GalleryModule {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	if ($count > 0) {
-	    // Can't deactivate if panorama entities exist..
+	    /* Can't deactivate if panorama entities exist.. */
 	    return array(GalleryStatus::success(),
 			 array('view' => 'core:SiteAdmin',
 			       'subView' => 'panorama:PanoramaSiteAdmin'));
@@ -159,7 +160,7 @@ class PanoramaModule extends GalleryModule {
 		$image = $images[$item->getId()];
 		$mimeType = $item->getMimeType();
 		$width = $image->getWidth();
-		// Applet supports jpeg and gif images
+		/* Applet supports jpeg and gif images */
 		if (GalleryUtilities::isA($item, 'GalleryPhotoItem') &&
 		        !GalleryUtilities::isA($item, 'PanoramaPhotoItem') &&
 		        preg_match(':^image/(gif|p?jpeg)$:', $mimeType) &&

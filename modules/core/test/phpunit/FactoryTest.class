@@ -50,6 +50,12 @@ class FactoryTest extends GalleryTestCase {
 					       array('dummy', '*'));
 
 	GalleryCoreApi::registerFactoryImplementation('FactoryTest',
+					       'FactoryTestDummy',
+					       'FactoryTestDummyId2',
+					       $path,
+					       array('dummy'));
+
+	GalleryCoreApi::registerFactoryImplementation('FactoryTest',
 					       'FactoryTestDummyIllegalPath',
 					       'FactoryTestDummyIllegalPathId',
 					       'ILLEGAL_PATH!',
@@ -179,7 +185,15 @@ class FactoryTest extends GalleryTestCase {
     function testGetAllImplementationIds() {
 	$ids = GalleryCoreApi::getAllFactoryImplementationIds('FactoryTest');
 	$this->assertEquals(array('FactoryTestDummyId' => 'factorytestdummy',
+				  'FactoryTestDummyId2' => 'factorytestdummy',
 				  'FactoryTestDummyIllegalPathId' => 'factorytestdummyillegalpath'),
+			    $ids);
+    }
+
+    function testGetAllImplementationIdsWithHint() {
+	$ids = GalleryCoreApi::getAllFactoryImplementationIdsWithHint('FactoryTest', 'dummy');
+	$this->assertEquals(array('FactoryTestDummyId' => 'factorytestdummy',
+				  'FactoryTestDummyId2' => 'factorytestdummy'),
 			    $ids);
     }
 }
