@@ -74,6 +74,20 @@ class GalleryTheme {
     }
 
     /**
+     * Get the style tags for this theme. 
+     * 
+     * This should be overridden by the theme implementation. It should
+     * return a html-tag to include in the <head> part (e.g. to load one or
+     * more CSS-files).
+     *
+     * @param array parameters from the {g->style} tag
+     * @return string HTML content
+     */
+    function style($params, &$smarty) {
+	assert(false);
+    }
+
+    /**
      * Get the theme url.
      * @return string the theme url
      */

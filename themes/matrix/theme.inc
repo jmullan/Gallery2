@@ -38,13 +38,9 @@ class MatrixTheme extends GalleryTheme {
     }
 
     /**
-     * style theme method
-     * 
-     * @param array ("params" => ..., "stack" => ...)
-     * @param string HTML content 
-     * @return string HTML content
+     * @see GalleryTheme::style()
      */
-    function style() {
+    function style($params) {
 	global $gallery;
 
 	$platform = $gallery->getPlatform();

@@ -38,13 +38,9 @@ class VeloriaTheme extends GalleryTheme {
     }
 
     /**
-     * style theme method
-     * 
-     * @param array ("params" => ..., "stack" => ...)
-     * @param string HTML content 
-     * @return string HTML content
+     * @see GalleryTheme::style()
      */
-    function style() {
+    function style($params) {
 	return sprintf('<style type="text/css" media="all">@import url(%s);</style>',
 		       $this->getBaseUrl() . 'styles/theme.css');
     }
