@@ -33,7 +33,7 @@
   </p>
 
   <table>
-    <colgroup width="60,*"/>
+    <colgroup width="60"/>
     {foreach from=$ItemCreateLink.peers item=peer}
     <tr>
       <td align="center">

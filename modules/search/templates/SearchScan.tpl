@@ -16,8 +16,7 @@
 </div>
 
 <table width="100%" cellspacing="0" cellpadding="0">
-  <colgroup width="1*,*"/>
-  <tr valign="top"><td>
+  <tr valign="top"><td width="170">
     {include file="gallery:`$Navigation.sidebar`" l10Domain=$Navigation.l10Domain}
   </td><td>
 

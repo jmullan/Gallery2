@@ -117,7 +117,7 @@
   </script>
 
   <table>
-    <colgroup width="60,*"/>
+    <colgroup width="60"/>
     {foreach from=$ItemMove.peers item=peer}
     {assign var="peerItemId" value=$peer.id}
     <tr>

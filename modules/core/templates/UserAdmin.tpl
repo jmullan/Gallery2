@@ -41,9 +41,8 @@
   </div>
 
   <table width="100%" cellspacing="0" cellpadding="0">
-    <colgroup width="1*,*"/>
     <tr valign="top">
-    <td><div id="gsSidebar" class="gcBorder1">
+    <td width="170"><div id="gsSidebar" class="gcBorder1">
       <div class="gbBlock">
 	<h2> {g->text text="User Options"} </h2>
 	<ul>

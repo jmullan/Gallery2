@@ -37,9 +37,8 @@
   </div>
 
   <table width="100%" cellspacing="0" cellpadding="0">
-    <colgroup width="1*,*"/>
     <tr valign="top">
-    <td><div id="gsSidebar" class="gcBorder1">
+    <td width="170"><div id="gsSidebar" class="gcBorder1">
       {if !$ItemAdmin.isRootAlbum}
       <div class="gbBlock">
 	{if empty($ItemAdmin.thumbnail)}

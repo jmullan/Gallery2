@@ -325,6 +325,7 @@ class MatrixLayout extends GalleryLayout {
 	}
 
 	$layout['columnSize'] = $params['columns'];
+	$layout['columnWidthPct'] = floor(100 / $params['columns']);
 	$layout['currentPage'] = $page;
 	$layout['totalPageCount'] = $totalPages;
 	$layout['navigator'] = $navigator;

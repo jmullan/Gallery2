@@ -7,16 +7,14 @@
 {include file="gallery:layouts/matrix/templates/pathbar.tpl"}
 
 <table width="100%" cellspacing="0" cellpadding="0">
-  <colgroup width="1*,*"/>
-  <tr valign="top"><td>
+  <tr valign="top"><td width="170">
     {include file="gallery:templates/sidebar.tpl" l10Domain="modules_core"}
   </td><td>
 
   <div id="gsContent" class="gcBorder1">
     <div class="gbBlock gcBackground1">
       <table width="100%">
-	<colgroup width="40%,60%"/>
-	<tr><td>
+	<tr><td width="40%">
 	  {if !empty($layout.item.title)}
 	    <h2> {$layout.item.title|markup} </h2>
 	  {/if}
@@ -62,11 +60,6 @@
     {assign var="childrenInColumnCount" value=0}
     <div class="gbBlock">
     <table id="gsThumbMatrix" width="100%">
-      <colgroup>
-	{section name="colgroup" loop=$layout.children max=$layout.columnSize}
-	  <col width="1*"/>
-	{/section}
-      </colgroup>
       <tr valign="top">
       {foreach from=$layout.children item=child}
 
@@ -77,7 +70,8 @@
       {/if}
 
       {assign var=childrenInColumnCount value="`$childrenInColumnCount+1`"}
-      <td class="{if $child.canContainChildren}giAlbumCell gcBackground1{else}giItemCell{/if}">
+      <td class="{if $child.canContainChildren}giAlbumCell gcBackground1{else}giItemCell{/if}"
+	  width="{$layout.columnWidthPct}%">
 	{if $child.canContainChildren}
 	  {assign var=frameType value="albumFrame"}
 	{else}

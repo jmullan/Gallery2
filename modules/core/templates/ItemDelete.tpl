@@ -58,7 +58,7 @@
   </script>
 
   <table>
-    <colgroup width="60,*"/>
+    <colgroup width="60"/>
     {foreach from=$ItemDelete.peers item=peer}
     <tr>
       <td align="center">
