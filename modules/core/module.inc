@@ -566,7 +566,8 @@ class CoreModule extends GalleryModule {
 			  'params' => array('view' => 'core:ItemAdmin',
 					    'return' => true,
 					    'subView' => 'core:ItemDelete',
-					    'itemId' => $item->getId()));
+					    'itemId' => $item->getParentId(),
+					    'selectedId' => $item->getId()));
 	    }
 
 	    if (isset($permissions['core.edit'])) {

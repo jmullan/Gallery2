@@ -41,50 +41,64 @@ class ItemDeleteController extends GalleryController {
      */
     function handleRequest($form) {
 	global $gallery;
-
+	
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
-
-	/* Make sure we have permission do edit this item */
-	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'core.delete');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	/* 
-	 * Get the parent id -- it's the destination item after we delete this
-	 * one
-	 */
-	list ($ret, $item) = $gallery->loadEntitiesById($itemId);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	$parentId = $item->getParentId();
-
-	list ($ret, $rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	if ($item->getId() == $rootId) {
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
-					      "Can't delete the root album"), null);
-	}
-
+	
 	$status = array();
 	$error = array();
+	
 	if (isset($form['action']['delete'])) {
-
-	    $ret = $gallery->deleteEntityById($itemId);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+	    $status['deleted']['count'] = 0;
+	    if (!empty($form['selectedIds'])) {
+		$selectedIds = array_keys($form['selectedIds']);
+		
+		/* get the rootId, so we don't try to delete it */
+		list ($ret, $rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		
+		$ret = GalleryItemHelper::studyPermissions($selectedIds);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		
+		foreach ($selectedIds as $selectedId) {
+		    /* Make sure we have permission to delete this item */
+		    list ($ret, $permissions) = GalleryItemHelper::getPermissions($selectedId);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		    
+		    if ( !isset($permissions['core.delete'])) {
+			return array(GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__,
+							  "Don't have permission to delete this item"), null);
+		    }
+		    
+		    /* Make sure we're not deleting the root album */
+		    if ($selectedId == $rootId) {
+			return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+							  "Can't delete the root album"), null);
+		    }
+		}
+		
+		/* if we're still here than all are deletable */
+		foreach ($selectedIds as $selectedId) {
+		    $ret = $gallery->deleteEntityById($selectedId);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		    $status['deleted']['count']++;
+		    
+		}
 	    }
-
 	    /* Figure out where to redirect upon success */
 	    $redirect['view'] = 'core:ItemAdmin';
-	    $redirect['itemId'] = $parentId;
+	    $redirect['subView'] = 'core:ItemDelete';
+	    $redirect['itemId'] = $itemId;
 	}
-
+		
 	if (!empty($redirect)) {
-	    $results['return'] = true;
 	    $results['redirect'] = $redirect;
 	} else {
 	    $results['delegate']['view'] = 'core:ItemAdmin';
@@ -92,7 +106,7 @@ class ItemDeleteController extends GalleryController {
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;
-
+	
 	return array(GalleryStatus::success(), $results);
     }
 }
@@ -104,59 +118,64 @@ class ItemDeleteController extends GalleryController {
  * @subpackage UserInterface
  */
 class ItemDeleteView extends GalleryView {
-
+	
     /**
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
 	global $gallery;
-
-	$itemId = GalleryUtilities::getRequestVariables('itemId');
-
-	/* Make sure we have permission do edit this item */
-	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'core.delete');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
-	}
-
-	list ($ret, $item) = $gallery->loadEntitiesById($itemId);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
-	}
-
-	list ($ret, $rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
-	}
-	if ($item->getId() == $rootId) {
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
-					      "Can't delete the root album"), null, null);
+		
+	list($itemId, $selectedId) = GalleryUtilities::getRequestVariables('itemId', 'selectedId');
+	
+	if ($form['formName'] != 'ItemDelete') {
+	    if ($selectedId) {
+		$form['selectedIds'][$selectedId] = true;
+	    }
+	    $form['destination'] = '';
+	    $form['formName'] = 'ItemDelete';
 	}
 	
-	/* Count its children */
-	$childCount = 0;
-	if ($item->getCanContainChildren()) {
-	    list ($ret, $childCountTable) = GalleryItemHelper::fetchChildCounts(array($item->getId()));
-	    if (isset($childCountTable[$item->getId()])) {
-		$childCount = $childCountTable[$item->getId()];
+	list($ret, $item) = $gallery->loadEntitiesById($itemId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+	
+	list($ret, $peerIds) =
+		GalleryItemHelper::fetchChildItemIdsWithPermission($itemId, 'core.delete');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+	
+	$peers = array();
+	$peerTypes = array();
+	if (!empty($peerIds)) {
+	    /* load peers */
+	    list($ret, $peerItems) = $gallery->loadEntitiesById($peerIds);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+	    
+	    /* build peers table */
+	    foreach ($peerItems as $peerItem) {
+		$peers[$peerItem->getId()] = $peerItem->getMemberData();
+		if (GalleryUtilities::isA($peerItem, 'GalleryAlbumItem')) {
+		    $peerTypes['album'][$peerItem->getId()] = 1;
+		} else {
+		    $peerTypes['data'][$peerItem->getId()] = 1;
+		}
+		$peers[$peerItem->getId()]['selected'] = isset($form['selectedIds'][$peerItem->getId()]);
 	    }
 	}
 	
-	/* Get the type of the item */
-	if (GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
-	    $itemType = 'album';
-	} else {
-	    $itemType = 'item';
-	}
-
 	$ItemDelete = array();
-	$ItemDelete['itemType'] = $itemType;
-	$ItemDelete['childCount'] = $childCount;
-
+	$ItemDelete['peers'] = $peers;
+	$ItemDelete['peerTypes'] = $peerTypes;
+	
 	$template->setVariable('controller', 'core:ItemDelete');
 	$template->setVariable('ItemDelete', $ItemDelete);
-
+	
 	return array(GalleryStatus::success(), '', 'modules/core/templates/ItemDelete.tpl');
+	
     }
 }
 ?>
