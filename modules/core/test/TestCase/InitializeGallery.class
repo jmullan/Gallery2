@@ -24,6 +24,9 @@ class InitializeGalleryTestCase extends TestCase {
 	$retArray[] = $gallery->setModuleParameter('core', 'default.theme', 'classic');
 	$retArray[] = $gallery->setModuleParameter('core', 'default.language', 'en_US');
 	$retArray[] = $gallery->setModuleParameter('core', 'graphics.type', 'netpbm');
+	$retArray[] = $gallery->setModuleParameter('core', 'session.idParameter', 'GALLERYSID');
+	$retArray[] = $gallery->setModuleParameter('core', 'session.lifetime', 25 * 365 * 86400); /* 25 years */
+	$retArray[] = $gallery->setModuleParameter('core', 'session.inactivityTimeout', 7 * 365 * 86400); /* one week */
 
 	foreach ($retArray as $ret) {
 	    if ($ret->isError()) {

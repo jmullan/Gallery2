@@ -8,7 +8,7 @@
 	{/galleryBiggerFont}
 	<br>
 	{galleryBigFont}
-	{galleryText one="There %d user in the system." 
+	{galleryText one="There is %d user in the system." 
 	             many="There are %d total users in the system." 
 	             count=$totalUserCount
 	             arg1=$totalUserCount}

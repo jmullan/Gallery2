@@ -409,7 +409,7 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$groupIdString = join(', ', array_keys($groupIds));
+	$groupIdString = join(', ', array_values($groupIds));
 	    
 	$where .= ' AND';
 	$where .= ' ([GalleryItem::ownerId] = ? OR';
@@ -463,8 +463,8 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$groupIdString = join(', ', array_keys($groupIds));
-	    
+	$groupIdString = join(', ', array_values($groupIds));
+
 	$where .= ' AND';
 	$where .= ' ([GalleryItem::ownerId] = ? OR';
 	$data[] = $userId;
@@ -530,7 +530,7 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$groupIdString = join(', ', array_keys($groupIds));
+	$groupIdString = join(', ', array_values($groupIds));
 	    
 	$where .= ' AND';
 	$where .= ' ([GalleryItem::ownerId] = ? OR';

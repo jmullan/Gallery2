@@ -24,6 +24,11 @@ function GalleryTestHarness() {
     global $tests;
     global $HTTP_GET_VARS;
 
+    /*
+     * Pretend to be the admin
+     */
+    $gallery->setActiveUserId(4);
+
     $modulesDir = $gallery->getConfig('code.gallery.modules');
 
     list ($ret, $platform) = $gallery->getPlatform();

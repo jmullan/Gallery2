@@ -209,16 +209,31 @@ class GalleryModule {
     }
 
     /**
+     * Return 0 or more system-specific links to an arbitrary module view.
+     *
+     * @param array key => value parameters provided by the
+     *              parent view -- the module can augment or override these.
+     * @return array object GalleryStatus a status code
+     *               array(array('text' => 'localized text',
+     *                           'params' => array(key => value, key => value))
+     *                     ...)
+     */
+    function getSystemLinks($returnUrlParams) {
+	return array(GalleryStatus::success(), array());
+    }
+
+    /**
      * Return 0 or more item-specific links to an arbitrary module view.
      *
      * @param mixed object GalleryItem a target item, or array of object GalleryItem
      * @param array key => value parameters provided by the
      *              parent view -- the module can augment or override these.
      * @return array object GalleryStatus a status code
-     *               array 0 or more array('text' => 'localized text',
-     *                                     'params' => array(key => value, key => value))
+     *               array(itemId => array(array('text' => 'localized text',
+     *                                           'params' => array(key => value, key => value))
+     *                                     ...))
      */
-    function getItemLinks($item, $urlParams) {
+    function getItemLinks($item, $returnUrlParams) {
 	return array(GalleryStatus::success(), array());
     }
 
@@ -231,7 +246,7 @@ class GalleryModule {
      * @return array object GalleryStatus a status code
      *               string HTML content
      */
-    function getItemSummaries($item, $urlParams) {
+    function getItemSummaries($item, $returnUrlParams) {
 	return array(GalleryStatus::success(), array());
     }
 
@@ -244,7 +259,7 @@ class GalleryModule {
      * @return array object GalleryStatus a status code
      *               string HTML content
      */
-    function getItemDetails($item, $urlParams) {
+    function getItemDetails($item, $returnUrlParams) {
 	return array(GalleryStatus::success(), array());
     }
 

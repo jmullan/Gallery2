@@ -90,6 +90,7 @@ class ShowItemView extends GalleryView {
 
 	/* Render and retrieve the body */
 	$urlParams['view'] = 'core:ShowItem';
+	$urlParams['itemId'] = $item->getId();
 	list ($ret, $html) = $layout->render($item, $urlParams);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);

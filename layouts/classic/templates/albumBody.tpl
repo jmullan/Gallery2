@@ -13,9 +13,15 @@
 	      {/if}
 	    </td>
 	    <td align="right">
+	      {foreach from=$moduleSystemLinks item=module}
+	      {foreach from=$module item=link}
+	      <a href="{$link.url}">[{$link.text}]</a>
+	      {/foreach}
+	      {/foreach}
+
 	      {foreach from=$moduleItemLinks item=module}
 	      {foreach from=$module item=link}
-	      [<a href="{$link.url}">{$link.text}</a>]
+	      <a href="{$link.url}">[{$link.text}]</a>
 	      {/foreach}
 	      {/foreach}
 	    </td>

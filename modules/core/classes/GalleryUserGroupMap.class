@@ -253,7 +253,7 @@ class GalleryUserGroupMap_core {
 			     array($userId, $groupId));
 
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$result = $searchResults->nextResult();

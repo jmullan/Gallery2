@@ -55,6 +55,59 @@ class GalleryLayout {
     }
 
     /**
+     * Call getSystemLinks on every active module
+     *
+     * @param array key => value parameters provided by the
+     *              parent view -- the module can augment or override these.
+     * @return array object GalleryStatus a status code
+     *               array(array('moduleName' => array('text' => ...,
+     *                                                 'params' => ...,
+     *                                                 'url' => ...)),
+     *                     ...)
+     */
+    function _getModuleSystemLinks($urlParams) {
+	global $gallery;
+
+	GalleryProfiler::start('GalleryLayout::_getModuleSystemLinks');
+
+	/* Load the module list */
+	list ($ret, $moduleStatus) = $gallery->getModuleStatus();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$templateAdapter = $gallery->getTemplateAdapter();
+
+	$itemLinks = array();
+	foreach ($moduleStatus as $moduleName => $status) {
+	    if (empty($status['active'])) {
+		continue;
+	    }
+	    
+	    list ($ret, $module) = $gallery->loadModule($moduleName);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    /* Get all module-related links for these items */
+	    list ($ret, $links[$moduleName]) = $module->getSystemLinks($urlParams);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    /* Turn the URL params into an actual URL */
+	    for ($i = 0; $i < sizeof($links[$moduleName]); $i++) {
+		$links[$moduleName][$i]['url'] =
+		    $templateAdapter->url($links[$moduleName][$i]['params']);
+	    }
+	}
+
+	GalleryProfiler::stop('GalleryLayout::_getModuleSystemLinks');
+
+	return array(GalleryStatus::success(), $links);
+    }
+
+    /**
      * Call getItemLinks on every active module
      *
      * @param mixed object GalleryItem a target item, or array of object GalleryItem

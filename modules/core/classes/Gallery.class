@@ -92,7 +92,7 @@ class Gallery {
     /**
      * Storage for all session variables.  
      *
-     * @var array $_session
+     * @var object GallerySession $_session
      * @access private
      */
     var $_session;
@@ -453,10 +453,94 @@ class Gallery {
      * made to this object will be saved in the session.
      * 
      * @access public
-     * @return array session information
+     * @return array object GalleryStatus a status code
+     *               object GallerySession a session instance
      */
     function &getSession() {
-	return $this->_session;
+	GalleryProfiler::start('Gallery::getSession');
+	
+	if (empty($this->_session)) {
+	    /* XXX: make this data driven from $gallery->_config */
+	    $session = new GallerySession();
+	    $ret = $session->init();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    /*
+	     * Write out our session when we're done.  By doing this as a shutdown
+	     * function, it will fire after the results have been sent to the
+	     * browser.  This gives a slight performance increase on systems that
+	     * have idle cycles, but denies us effective debugging and error
+	     * handling.
+	     */
+	    $this->_session =& $session;
+	    register_shutdown_function(array(&$this->_session, '_shutdown'));
+	}
+
+	GalleryProfiler::stop('Gallery::getSession');
+	return array(GalleryStatus::success(), &$this->_session);
+    }
+
+    /**
+     * Get a value from the session data
+     *
+     * @param string the key
+     * @return array object GalleryStatus a status code
+     *               string the value
+     */
+    function getSessionValue($key) {
+	$reply =& $this->getSession();
+	if ($reply[0]->isError()) {
+	    return array($reply[0]->wrap(__FILE__, __LINE__), null);
+	}
+
+	list ($ret, $value) = $reply[1]->get($key);
+	if ($ret->isError()) {
+	    return array($reply[0]->wrap(__FILE__, __LINE__), null);
+	}
+
+	return array(GalleryStatus::success(), $value);
+    }
+
+    /**
+     * Store a value in the session
+     *
+     * @param string the key
+     * @param string the value
+     * @return object GalleryStatus a status code
+     */
+    function putSessionValue($key, $value) {
+	$reply =& $this->getSession();
+	if ($reply[0]->isError()) {
+	    return $reply[0]->wrap(__FILE__, __LINE__);
+	}
+
+	$ret = $reply[1]->put($key, $value);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Clean and reinitialize a session
+     *
+     * @return object GalleryStatus a status code
+     */
+    function resetSession() {
+	$reply =& $this->getSession();
+	if ($reply[0]->isError()) {
+	    return $reply[0]->wrap(__FILE__, __LINE__);
+	}
+
+	$ret = $reply[1]->reset();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
     }
 
     /**
@@ -744,7 +828,14 @@ class Gallery {
 	/* Load the factory class */
 	require_once(dirname(__FILE__) . '/GalleryStorageFactory.class');
 
-	return GalleryStorageFactory::newInstance($type, $config);
+	list ($ret, $storage) =
+	    GalleryStorageFactory::newInstance($type, $config);
+
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	return array(GalleryStatus::success(), $storage);
     }
     
     /**
@@ -760,7 +851,7 @@ class Gallery {
 	if (empty($this->_storage)) {
 	    list($ret, $storage) = $this->getUninitializedStorage();
 	    if ($ret->isError()) {
-		return array($ret, null);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    $ret = $storage->init();
@@ -1299,7 +1390,7 @@ class Gallery {
 
 	if (!empty($this->_debug)) {
 	    if (!strcmp($this->_debug, 'buffered')) {
-		$this->_debugBuffer .= "$msg\n";
+		$this->_debugBuffer .= wordwrap("$msg\n");
 	    } else if (!strcmp($this->_debug, 'logged')) {
 		if ($fd = fopen($this->_debugLogFile, 'a')) {
 		    $date = date('Y-m-d H:i:s');

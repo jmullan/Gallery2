@@ -58,7 +58,7 @@ class CommentModule extends GalleryModule {
     /**
      * @see GalleryModule::getItemLinks
      */
-    function getItemLinks($items, $urlParams) {
+    function getItemLinks($items, $returnUrlParams) {
 	global $gallery;
 
 	if (!is_array($items)) {
@@ -88,7 +88,7 @@ class CommentModule extends GalleryModule {
      * @return array object GalleryStatus a status code
      *               string HTML content
      */
-    function getItemSummaries($items, $urlParams) {
+    function getItemSummaries($items, $returnUrlParams) {
 	global $gallery;
 
 	if (!is_array($items)) {

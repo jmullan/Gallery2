@@ -72,6 +72,20 @@ class GalleryTemplateAdapter {
 	global $gallery;
 
 	$baseUrl = $this->getBaseUrl();
+
+	/*
+	 * We can't do much about errors at this level, so ignore them
+	 * and hope for the best.
+	 */
+	list ($ret, $session) = $gallery->getSession();
+	if ($ret->isError()) {
+	    $gallery->debug($ret->errorAsHtml());
+	} else {
+	    if (!($session->isUsingCookies())) {
+		list ($sessionKey, $sessionId) = $session->getSessionDescriptor();
+		$params[$sessionKey] = $sessionId;
+	    }
+	}
 	
 	foreach ($params as $key => $value) {
 	    $args[] = GALLERY_FORM_VARIABLE_PREFIX . "$key=$value";
@@ -87,7 +101,23 @@ class GalleryTemplateAdapter {
      * @return string a complete HTML form
      */
     function form($params, $content) {
+	global $gallery;
+	
+	$baseUrl = $this->getBaseUrl();
 
+	/*
+	 * We can't do much about errors at this level, so ignore them
+	 * and hope for the best.
+	 */
+	list ($ret, $session) = $gallery->getSession();
+	if ($ret->isError()) {
+	    $gallery->debug($ret->errorAsHtml());
+	} else {
+	    if (!($session->isUsingCookies())) {
+		list ($sessionKey, $sessionId) = $session->getSessionDescriptor();
+		$params[$sessionKey] = $sessionId;
+	    }
+	}
 	if (empty($params['method'])) {
 	    $method = 'POST';
 	} else {
@@ -95,7 +125,7 @@ class GalleryTemplateAdapter {
 	    unset($params['method']);
 	}
 
-	$result = '<form method="' . $method . '" action="main.php">';
+	$result = '<form method="' . $method . '" action="' . $baseUrl . '">';
 	$result .= "\n";
 	foreach ($params as $key => $value) {
 	    $result .= '<input type="hidden" ' .
@@ -123,7 +153,7 @@ class GalleryTemplateAdapter {
 	/* Get the translator.  Jump through hoops to get it as a reference */
 	$reply = $gallery->getTranslator();
 	if ($reply[0]->isError()) {
-	    $gallery->debug($ret->getAsHtml());
+	    $gallery->debug($reply[0]->getAsHtml());
 	    return 'Translation error';
 	} else {
 	    $translator =& $reply[1];

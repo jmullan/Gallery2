@@ -20,6 +20,11 @@
 
 $ret = GalleryMain(microtime());
 if ($ret->isError()) {
+
+    /*
+     * If we get an error back up at this level, we can't rely on smarty so all
+     * we can do is dump the error out to the browser.
+     */
     $ret = $ret->wrap(__FILE__, __LINE__);
     print $ret->getAsHtml();
 
@@ -50,7 +55,6 @@ function GalleryMain($startTime) {
     GalleryProfiler::start('GalleryInit', $startTime);
     GalleryProfiler::stop('GalleryInit');
     
-
     /*
      * Specify the base URL to the Gallery.  In standalone mode this will be the
      * empty string (since everything is relative to main.php).  But when we're
@@ -58,6 +62,29 @@ function GalleryMain($startTime) {
      * Gallery directory (eg for PostNuke it might be 'modules/gallery')
      */
     $gallery->setConfig('url.gallery.base', '');
+
+    /*
+     * Set our active user id.  Check to see if we have one in our session.  If
+     * not, make us the anonymous user.  If we don't have a session, this will
+     * initiate one for us.
+     */
+    list ($ret, $activeUserId) = $gallery->getSessionValue('core.id.activeUser');
+    if ($ret->isError()) {
+	return $ret->wrap(__FILE__, __LINE__);
+    }
+    if (empty($activeUserId)) {
+	/* No active user -- be anonymous */
+	list ($ret, $activeUserId) = $gallery->getModuleParameter('core', 'id.anonymousUser');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$ret = $gallery->putSessionValue('core.id.activeUser', $activeUserId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+    }
+    $gallery->setActiveUserId($activeUserId);
 
     /*
      * Create, configure and register our template adapter.

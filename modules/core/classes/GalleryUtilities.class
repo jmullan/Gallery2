@@ -445,6 +445,11 @@ class GalleryUtilities {
      * @access private
      */
     function makeMarkers($count) {
+
+	if (is_array($count)) {
+	    $count = sizeof($count);
+	}
+	
 	$markers = array();
 	for ($i = 0; $i < $count; $i++) {
 	    $markers[$i] = '?';

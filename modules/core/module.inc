@@ -53,6 +53,7 @@ class CoreModule extends GalleryModule {
 	require_once($classDir . 'GalleryModuleParameterMap.class');
 	require_once($classDir . 'GalleryPermissionMap.class');
 	require_once($classDir . 'GalleryProfiler.class');
+	require_once($classDir . 'GallerySession.class');
 	require_once($classDir . 'GalleryStatus.class');
 	require_once($classDir . 'GalleryTemplateAdapter.class');
 	require_once($classDir . 'GalleryTheme.class');
@@ -116,6 +117,36 @@ class CoreModule extends GalleryModule {
 	return parent::init();
     }
 
+    /**
+     * @see GalleryModule::getSystemLinks
+     */
+    function getSystemLinks($returnUrlParams) {
+	global $gallery;
+
+	list ($ret, $anonymousUserId) =
+	    $gallery->getModuleParameter('core', 'id.anonymousUser');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	foreach ($returnUrlParams as $param => $value) {
+	    $params['return.' . $param] = $value;
+	}
+
+	$links = array();
+	if ($gallery->getActiveUserId() == $anonymousUserId) {
+	    $params['view'] = 'core:Login';
+	    $links[] = array('text' => $this->translate('login'),
+			     'params' => $params);
+	} else {
+	    $params['controller'] = 'core:Logout';
+	    $links[] = array('text' => $this->translate('logout'),
+			     'params' => $params);
+	}
+
+	return array(GalleryStatus::success(), $links);
+    }
+    
     /**
      * @see GalleryModule::getSiteAdminViews();
      */

@@ -20,7 +20,7 @@
     </tr>
 
     <tr>
-      <td>
+      <td align="right">
 	{galleryText text="Album sort order:"}
       </td>
       <td>
@@ -34,7 +34,7 @@
     </tr>
 
     <tr>	
-      <td>
+      <td align="right">
 	{galleryText text="Default layout"}
       </td>
       <td>
@@ -45,7 +45,7 @@
     </tr>
 
     <tr>	
-      <td>
+      <td align="right">
 	{galleryText text="Default theme"}
       </td>
       <td>
@@ -72,7 +72,7 @@
     </tr>
 
     <tr>	
-      <td>
+      <td align="right">
 	{galleryText text="Default language"}
       </td>
       <td>
@@ -99,7 +99,7 @@
     </tr>
 
     <tr>	
-      <td>
+      <td align="right">
 	{galleryText text="New directories"}
       </td>
       <td>
@@ -110,7 +110,7 @@
     </tr>
 
     <tr>
-      <td>
+      <td align="right">
 	{galleryText text="New files"}
       </td>
       <td>
@@ -137,12 +137,50 @@
     </tr>
 
     <tr>
-      <td>
+      <td align="right">
 	{galleryText text="Toolkit"}
       </td>
       <td>
 	{gallerySelect name="graphics.type"}
 	  {html_options values=$graphicsTypeList selected=$form.graphics.type output=$graphicsTypeList}
+	{/gallerySelect}
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+	&nbsp;
+      </td>
+    </tr>
+
+    <tr>
+      <td colspan="2">
+	{galleryBigFont}
+	  {galleryText text="Session Settings"}
+	{/galleryBigFont}
+	<br>
+	{galleryText text="Specify the lifetime of the session here."}
+      </td>
+    </tr>
+
+    <tr>
+      <td align="right">
+	{galleryText text="Lifetime"}
+      </td>
+      <td>
+	{gallerySelect name="session.lifetime"}
+	  {html_options options=$sessionTimeList selected=$form.session.lifetime}
+	{/gallerySelect}
+      </td>
+    </tr>
+
+    <tr>
+      <td align="right">
+	{galleryText text="Inactivity Timeout"}
+      </td>
+      <td>
+	{gallerySelect name="session.inactivityTimeout"}
+	  {html_options options=$sessionTimeList selected=$form.session.inactivityTimeout}
 	{/gallerySelect}
       </td>
     </tr>

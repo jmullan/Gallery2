@@ -29,35 +29,41 @@ class AddCommentController extends GalleryController {
 
 	$gallery->debug('XXX: check to make sure that the user can add this comment');
 
-	list ($text, $itemId) = 
-	    GalleryUtilities::getRequestVariables('comment', 'itemId');
+	$itemId = GalleryUtilities::getRequestVariables('itemId');
+	$form = GalleryUtilities::getFormVariables('form.');
 
-	/* Add the comment */
-	list ($ret, $comment) = $gallery->newEntity('GalleryComment');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
+	if (isset($form['action']['add']) && !empty($form['comment'])) {
+	    /* Add the comment */
+	    list ($ret, $comment) = $gallery->newEntity('GalleryComment');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
 
-	$ret = $comment->create($itemId);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
+	    $ret = $comment->create($itemId);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
 
-	$comment->setCommenterId($gallery->getActiveUserId());
-	$comment->setHost($HTTP_SERVER_VARS['REMOTE_ADDR']);
-	$comment->setComment($text);
+	    /* Sanitize the comment */
+	    $form['comment'] = strip_tags($form['comment']);
 
-	$ret = $comment->save();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
+	    $comment->setCommenterId($gallery->getActiveUserId());
+	    $comment->setHost($HTTP_SERVER_VARS['REMOTE_ADDR']);
+	    $comment->setComment($form['comment']);
+	    $comment->setDate(time());
 
-	/* Figure out where to redirect upon success */
-	$urlParams['view'] = 'core:ShowItem';
-	$urlParams['itemId'] = $itemId;
+	    $ret = $comment->save();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	} 
 
+	/* Redirect back to the item */
+	$redirectParams = array();
+	$redirectParams['view'] = 'core:ShowItem';
+	$redirectParams['itemId'] = $itemId;
 	$templateAdapter = $gallery->getTemplateAdapter();
-	$results['redirect'] = $templateAdapter->url($urlParams);
+	$results['redirect'] = $templateAdapter->url($redirectParams);
 
 	return array(GalleryStatus::success(), $results);
     }

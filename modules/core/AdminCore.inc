@@ -39,7 +39,9 @@ class AdminCoreController extends GalleryController {
 		       'default.layout',
 		       'default.theme',
 		       'default.language',
-		       'graphics.type') as $key) {
+		       'graphics.type',
+		       'session.lifetime',
+		       'session.inactivityTimeout') as $key) {
 	    $value = GalleryUtilities::getRequestVariables($key);
 
 	    if (isset($value)) {
@@ -90,7 +92,9 @@ class AdminCoreView extends GalleryView {
 		       'default.layout',
 		       'default.theme',
 		       'default.language',
-		       'graphics.type') as $key) {
+		       'graphics.type',
+		       'session.lifetime',
+		       'session.inactivityTimeout') as $key) {
 
 	    list ($ret, $value) =
 		$gallery->getModuleParameter('core', $key);
@@ -154,6 +158,38 @@ class AdminCoreView extends GalleryView {
 		    $languageData['description'];
 	    }
 	}
+
+	/* Set up our session time lists */
+	$sessionTimeLists = array();
+	foreach (array(15, 30, 45) as $minutes) {
+	    $sessionTimeList[$minutes * 60] =
+		$module->translate(array('one' => '%d minute',
+					 'many' => '%d minutes',
+					 'count' => $minutes,
+					 'arg1' => $minutes));
+	}
+	foreach (array(1, 6, 12) as $hours) {
+	    $sessionTimeList[$hours * 3600] =
+		$module->translate(array('one' => '%d hour',
+					 'many' => '%d hours',
+					 'count' => $hours,
+					 'arg1' => $hours));
+	}
+	foreach (array(1, 2, 3, 4, 5, 6) as $days) {
+	    $sessionTimeList[$days * 86400] =
+		$module->translate(array('one' => '%d day',
+					 'many' => '%d days',
+					 'count' => $days,
+					 'arg1' => $days));
+	}
+	foreach (array(1, 2, 3) as $weeks) {
+	    $sessionTimeList[$days * 7 * 86400] =
+		$module->translate(array('one' => '%d week',
+					 'many' => '%d weeks',
+					 'count' => $weeks,
+					 'arg1' => $weeks));
+	}
+	$sessionTimeList[25 * 365 * 86400] = $module->translate('forever');
 	
 	/* Set up our theme selection list */
 	$themeList = array();
@@ -201,6 +237,7 @@ class AdminCoreView extends GalleryView {
 	$smarty->assign('orderDirectionList', $orderDirectionList);
 	$smarty->assign('permissionsDirectoryList', $permissionsDirectoryList);
 	$smarty->assign('permissionsFileList', $permissionsFileList);
+	$smarty->assign('sessionTimeList', $sessionTimeList);
 	$smarty->assign('graphicsTypeList' , $graphicsTypeList);
 	$smarty->assign('controller', 'core:AdminCore');
 	$smarty->template_dir = dirname(__FILE__) . '/templates';

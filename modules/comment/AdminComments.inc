@@ -77,11 +77,11 @@ class AdminCommentsController extends GalleryController {
 	}
 
 	/* Figure out where to redirect upon success */
-	$urlParams['view'] = 'core:SiteAdmin';
-	$urlParams['subView'] = 'comment:AdminComments';
+	$redirectParams['view'] = 'core:SiteAdmin';
+	$redirectParams['subView'] = 'comment:AdminComments';
 
 	$templateAdapter = $gallery->getTemplateAdapter();
-	$results['redirect'] = $templateAdapter->url($urlParams);
+	$results['redirect'] = $templateAdapter->url($redirectParams);
 
 	return array(GalleryStatus::success(), $results);
     }

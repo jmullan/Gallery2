@@ -180,7 +180,11 @@ foreach (array('permissions.directory' => '0755',
 	       'default.layout' => 'classic',
 	       'default.theme' => 'classic',
 	       'default.language' => 'en_US',
-	       'graphics.type' => 'netpbm')
+	       'graphics.type' => 'netpbm',
+	       'session.idParameter' => 'GALLERYSID',
+	       'session.lifetime' => 25 * 365 * 86400, /* 25 years */
+	       'session.inactivityTimeout' => 7 * 365 * 86400, /* one week */
+	       )
 	 as $key => $value) {
 
     list ($ret, $oldValue) = $gallery->getModuleParameter('core', $key);
@@ -453,7 +457,6 @@ function CreateAnonymousUser() {
 	return $ret->wrap(__FILE__, __LINE__);
     }
     $user->setFullName('Anonymous');
-    $user->setLanguage('en_US');
 	
     $ret = $user->save();
     if ($ret->isError()) {
@@ -497,7 +500,7 @@ function CreateAdminUser() {
     if ($ret->isError()) {
 	return $ret->wrap(__FILE__, __LINE__);
     }
-    $user->changePassword('admin');
+    $user->changePassword($gallery->getConfig('setup.password'));
     $user->setFullName('Gallery Administrator');
 	
     $ret = $user->save();

@@ -61,17 +61,12 @@ class AdminNetPbmController extends GalleryController {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	/* Scan for the appropriate version of p?mtojpeg */
-	foreach (array('pnmtojpeg', 'ppmtojpeg') as $name) {
-	    $executable = $platform->executablePath($name);
-	    if ($platform->file_exists($form['path'] . '/' . $name)) {
-		$ret = $gallery->setModuleParameter('netpbm', 'pnmtojpeg', $name);
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-
-		break;
-	    }
+	/*
+	 * Set the pnmtojpeg binary name
+	 */
+	$ret = $gallery->setModuleParameter('netpbm', 'pnmtojpeg', $form['pnmtojpeg']);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	list($ret, $module) = $gallery->loadModule('netpbm');
@@ -117,7 +112,7 @@ class AdminNetPbmView extends GalleryView {
     function renderBody() {
 	global $gallery;
 
-	foreach (array('path', 'jpegQuality') as $key) {
+	foreach (array('path', 'jpegQuality', 'pnmtojpeg') as $key) {
 	    list ($ret, $form[$key]) =
 		$gallery->getModuleParameter('netpbm', $key);
 	    if ($ret->isError()) {
@@ -130,17 +125,15 @@ class AdminNetPbmView extends GalleryView {
 	    $jpegQualityList[] = $i;
 	}
 
-	list ($ret, $pnmtojpeg) = $gallery->getModuleParameter('netpbm', 'pnmtojpeg');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
+	/* Set up our pnmtojpeg selection list */
+	$pnmToJpegList = array('pnmtojpeg', 'ppmtojpeg');
 
 	GalleryProfiler::start('AdminNetPbmView::renderBody().test-binaries');
 	$tests = array();
 	if (!empty($form['path'])) {
 	    foreach (array('jpegtopnm',
 			   'giftopnm',
-			   $pnmtojpeg,
+			   $form['pnmtojpeg'],
 			   'ppmtogif',
 			   'pnmtopng',
 			   'pnmscale',
@@ -172,6 +165,7 @@ class AdminNetPbmView extends GalleryView {
 	}
 	$smarty->assign('form', $form);
 	$smarty->assign('tests', $tests);
+	$smarty->assign('pnmToJpegList', $pnmToJpegList);
 	$smarty->assign('jpegQualityList', $jpegQualityList);
 	$smarty->assign('controller', 'netpbm:AdminNetPbm');
 	$smarty->template_dir = dirname(__FILE__) . '/templates';

@@ -29,6 +29,18 @@
       </td>
     </tr>
 
+
+    <tr>	
+      <td align="right">
+	{galleryText text="PNM to JPEG converter"}
+      </td>
+      <td>
+	{gallerySelect name="form.pnmtojpeg"}
+	  {html_options values=$pnmToJpegList selected=$form.pnmtojpeg output=$pnmToJpegList}
+	{/gallerySelect}
+      </td>
+    </tr>
+
     <tr>	
       <td align="right">
 	{galleryText text="JPEG Quality"}

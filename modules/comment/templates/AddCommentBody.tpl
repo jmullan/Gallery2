@@ -18,14 +18,14 @@
       </tr>
       <tr>
 	<td>
-	  {galleryTextArea rows="15" cols="60" name="comment"}{/galleryTextArea}
+	  {galleryTextArea rows="15" cols="60" name="form.comment"}{/galleryTextArea}
 	</td>
       </tr>
 
       <tr>
 	<td align="center">
-	  {galleryInput type="submit" name="add"}{galleryText text="Save"}{/galleryInput}
-	  {galleryInput type="submit" name="cancel"}{galleryText text="Cancel"}{/galleryInput}
+	  {galleryInput type="submit" name="form.action.add"}{galleryText text="Save"}{/galleryInput}
+	  {galleryInput type="submit" name="form.action.cancel"}{galleryText text="Cancel"}{/galleryInput}
 	</td>
       </tr>
     </table>

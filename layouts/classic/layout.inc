@@ -177,6 +177,12 @@ class ClassicLayout extends GalleryLayout {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	/* Get system links */
+	list ($ret, $moduleSystemLinks) = $this->_getModuleSystemLinks($urlParams);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	/* Tell Smarty about everything we've learned */
 	list ($ret, $smarty) = $gallery->getSmarty();
 	if ($ret->isError()) {
@@ -185,6 +191,7 @@ class ClassicLayout extends GalleryLayout {
 
 	$smarty->assign('item', $item->getMemberData());
 	$smarty->assign('moduleItemLinks', $moduleItemLinks);
+	$smarty->assign('moduleSystemLinks', $moduleSystemLinks);
 	$smarty->assign('navigator', $navigator);
 	$smarty->assign('children', $children);
 	$smarty->assign('properties', $properties);
@@ -316,9 +323,16 @@ class ClassicLayout extends GalleryLayout {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	/* Get system links */
+	list ($ret, $moduleSystemLinks) = $this->_getModuleSystemLinks($urlParams);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	/* Tell Smarty about everything we've learned */
 	$smarty->assign('navigator', $navigator);
 	$smarty->assign('moduleItemLinks', $moduleItemLinks);
+	$smarty->assign('moduleSystemLinks', $moduleSystemLinks);
 	$smarty->assign('layoutUrl',
 			GalleryUtilities::convertPathToRelativeUrl(dirname(__FILE__)));
 	$smarty->assign('parents', $parents);

@@ -108,12 +108,6 @@ function GalleryInit() {
     }
     GalleryProfiler::stop('GalleryInit.load-modules');
 
-    /*
-     * Fake being the admin user for now.  When we get in gear, we'll pull
-     * this information from the session.
-     */
-    $gallery->setActiveUserId(4);
-
     return GalleryStatus::success();
 }
 

@@ -4,9 +4,15 @@
 	<table border="1" width="100%" cellspacing="0%" cellpadding="0%">
 	  <tr>
 	    <td align="right">
+	      {foreach from=$moduleSystemLinks item=module}
+	      {foreach from=$module item=link}
+	      <a href="{$link.url}">[{$link.text}]</a>
+	      {/foreach}
+	      {/foreach}
+
 	      {foreach from=$moduleItemLinks item=module}
 	      {foreach from=$module item=link}
-	      [<a href="{$link.url}">{$link.text}</a>]
+	      <a href="{$link.url}">[{$link.text}]</a>
 	      {/foreach}
 	      {/foreach}
 	    </td>
