@@ -21,7 +21,7 @@
  */
 /**
  * @version $Revision$ $Date$
- * @package NetPBM
+ * @package NetPbm
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
@@ -31,7 +31,7 @@
 require_once(dirname(__FILE__) . '/classes/NetPbmToolkitHelper.class');
 
 /**
- * @package NetPBM
+ * @package NetPbm
  * @subpackage UserInterface
  */
 class AdminNetPbmController extends GalleryController {
@@ -134,7 +134,7 @@ class AdminNetPbmController extends GalleryController {
 }
 
 /**
- * @package NetPBM
+ * @package NetPbm
  * @subpackage UserInterface
  */
 class AdminNetPbmView extends GalleryView {

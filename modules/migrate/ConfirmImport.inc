@@ -409,12 +409,10 @@ class ConfirmImportView extends GalleryView {
 			GalleryFileSystemEntityHelper::fetchItemIdByPath($album['name']);
 	    }
 	    if ($ret->isError()) {
-		echo "<pre>err:\n";
-		print_r($ret);
-		echo "</pre>";
-		if (!$ret->getErrorCode() & MISSING_OBJECT) {
+		if (!$ret->getErrorCode() & ERROR_MISSING_OBJECT) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
+		$existingAlbums[$album['name']] = FALSE;
 	    } else {
 		$existingAlbums[$album['name']] = $existingAlbumId;
 	    }

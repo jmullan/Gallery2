@@ -21,7 +21,7 @@
  */
 /**
  * @version $Revision$ $Date$
- * @package NetPBM
+ * @package NetPbm
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
@@ -30,7 +30,7 @@
  *
  * This module provides the NetPBM graphics toolkit for Gallery
  *
- * @package NetPBM
+ * @package NetPbm
  */
 class NetPbmModule extends GalleryModule {
 

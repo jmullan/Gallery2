@@ -21,7 +21,7 @@
  */
 /**
  * @version $Revision$ $Date$
- * @package GalleryCore
+ * @package Migrate
  * @subpackage PHPUnit
  * @author Bharat Mediratta <bharat@menalto.com>
  */
@@ -92,5 +92,24 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 				  'error' => array()),
 			    $results);
     }
+    /**
+     * Example of testing for an error
+     *
+    function testReorderItemsWithoutPermissions() {
+	global $gallery;
+
+	$ret = GalleryPermissionMap::removeItemPermissions($this->_parentAlbum->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	GalleryUtilities::putRequestVariable('itemId', $this->_parentAlbum->getId());
+	GalleryUtilities::putRequestVariable('form.selectedId', $this->_child[3]->getId());
+	GalleryUtilities::putRequestVariable('form.afterId', $this->_child[0]->getId());
+	GalleryUtilities::putRequestVariable('form.action.reorder', 1);
+
+	$results = $this->handleRequest(ERROR_PERMISSION_DENIED);
+    }
+    */
 }
 ?>
