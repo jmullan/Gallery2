@@ -43,7 +43,7 @@ class TileLayout extends GalleryLayout {
 	$this->setId('tile');
 	$this->setName('Tile');
 	$this->setDescription($gallery->i18n('Tile view of background image and image thumbnails; subalbums/other items not shown'));
-	$this->setVersion('0.2');
+	$this->setVersion('0.3');
 	$this->setL10Domain('layouts_tile');
 	$ret = parent::init();
 	if ($ret->isError()) {
@@ -155,6 +155,35 @@ class TileLayout extends GalleryLayout {
 		}
 	    }
 	}
+
+	/* Get system links */
+	list ($ret, $moduleSystemLinks) = $this->_getModuleSystemLinks();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+ 
+	/* Get item links and flatten out the modules */
+	$moduleItemLinks = array();
+	list ($ret, $tmp) = $this->_getModuleItemLinks($item);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	foreach ($tmp as $tmpId => $moduleLinks) {
+	    foreach ($moduleLinks as $module => $links) {
+		$moduleItemLinks = array_merge($moduleItemLinks, $links);
+	    }
+	}
+	usort($moduleItemLinks, array($this, '_sortItemLinks'));
+
+	/* Get the active user */
+	list ($ret, $user) = $gallery->getActiveUser();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$layout['moduleSystemLinks'] = $moduleSystemLinks;
+	$layout['moduleItemLinks'] = $moduleItemLinks;
+	$layout['user'] = $user->getMemberData();
 
 	$template->setVariable('layout', $layout);
 	return array(GalleryStatus::success(),
@@ -338,5 +367,9 @@ class TileLayout extends GalleryLayout {
 	}
 
 	return array(GalleryStatus::success(), $error, $status);
+    }
+
+    function _sortItemLinks($a, $b) {
+	return strcmp($a['text'], $b['text']);
     }
 }

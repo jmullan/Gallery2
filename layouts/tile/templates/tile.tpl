@@ -4,6 +4,8 @@
  * Gallery will look for that file first and use it if it exists
  * and when you upgrade, your changes will not get overwritten.
  *}
+{include file="gallery:layouts/tile/templates/sidebar.tpl"}
+
 <noscript><p class="giError">
   {g->text text="Warning: This site requires javascript."}
 </p></noscript>
@@ -51,6 +53,8 @@
 </tr>
 {/section}
 </table>
+{else}
+  {g->text text="The layout has not been configured."}
 {/if}
 
 <script type="text/javascript">app_init();</script>
