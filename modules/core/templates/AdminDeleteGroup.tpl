@@ -1,6 +1,6 @@
   {gallery->form controller="$controller"}
   {gallery->input type="hidden" name="form.formName"}AdminDeleteGroup{/gallery->input}
-  {gallery->input type="hidden" name="form.groupId"}{$form.groupId}{/gallery->input}
+  {gallery->input type="hidden" name="groupId"}{$group.id}{/gallery->input}
   <table width="100%" border="0" cellspacing="3" cellpadding="3">
 
     <tr>
@@ -14,7 +14,7 @@
     <tr>
       <td align="center">
 	{gallery->text text="Do you really want to delete group '%s'?"
-	             arg1=$form.groupName}
+	             arg1=$group.groupName}
       </td>
     </tr>
 

@@ -53,8 +53,8 @@ class AdminDeleteGroupControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
+	GalleryUtilities::putRequestVariable('groupId', $group->getId());
 	GalleryUtilities::putRequestVariable('form.action.delete', 1);
-	GalleryUtilities::putRequestVariable('form.groupId', $group->getId());
 	
 	$results = $this->handleRequest();
 	$this->assertRedirect(array('view' => 'core:SiteAdmin',
@@ -78,8 +78,8 @@ class AdminDeleteGroupControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	
+	GalleryUtilities::putRequestVariable('groupId', $groupId);
 	GalleryUtilities::putRequestVariable('form.action.delete', 1);
-	GalleryUtilities::putRequestVariable('form.groupId', $groupId);
 	
 	$results = $this->handleRequest();
 	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
@@ -97,8 +97,8 @@ class AdminDeleteGroupControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	
+	GalleryUtilities::putRequestVariable('groupId', $groupId);
 	GalleryUtilities::putRequestVariable('form.action.delete', 1);
-	GalleryUtilities::putRequestVariable('form.groupId', $groupId);
 	
 	$results = $this->handleRequest();
 	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);

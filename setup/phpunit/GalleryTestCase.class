@@ -83,6 +83,13 @@ class GalleryTestCase extends TestCase {
     
     function tearDown() {
 	global $gallery;
+
+	/* Make sure we're not hanging onto any locks */
+	if (!empty($gallery->_locks)) {
+	    /* Bend the API slightly and release all locks */
+	    $gallery->_releaseAllLocks(false);
+	    $this->assert(0, 'There are unreleased locks!');
+	}
 	
 	$ret = $gallery->commitTransaction();
 	if ($ret->isError()) {

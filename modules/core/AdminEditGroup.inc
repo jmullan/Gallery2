@@ -50,7 +50,8 @@ class AdminEditGroupController extends GalleryController {
 	$results = array();
 	$redirectParams = array();
 
-	list ($ret, $group) = $gallery->loadEntitiesById($form['groupId']);
+	$groupId = GalleryUtilities::getRequestVariables('groupId');
+	list ($ret, $group) = $gallery->loadEntitiesById($groupId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -63,14 +64,16 @@ class AdminEditGroupController extends GalleryController {
 	    
 	} else if (isset($form['action']['undo'])) {
 
-	    /* Reset our form and stay on the same view */
-	    GalleryUtilities::putRequestVariable('form.groupName', $group->getGroupName());
+	    /* Redirect back to the same view to reset the form */
+	    $redirectParams['view'] = 'core:SiteAdmin';
+	    $redirectParams['subView'] = 'core:AdminEditGroup';
+	    $redirectParams['groupId'] = $groupId;
 	    
 	} else if (isset($form['action']['save'])) {
 
-	    if (!empty($form['groupId'])) {
+	    if (!empty($groupId)) {
 		/* Save our changes */
-		list ($ret, $lockId) = $gallery->acquireWriteLock($form['groupId']);
+		list ($ret, $lockId) = $gallery->acquireWriteLock($groupId);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -117,9 +120,6 @@ class AdminEditGroupController extends GalleryController {
 /**
  * This view will show options available to groups
  *
- * Only the 'groupname' is editable. Display a notice if editing special
- * (non-GROUP_NORMAL) groups.
- *
  * @package GalleryCore
  * @subpackage UserInterface
  */
@@ -136,20 +136,21 @@ class AdminEditGroupView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	    
-
-	if ($form['formName'] != 'AdminEditGroup') {
-	    $form['groupId'] = GalleryUtilities::getRequestVariables('groupId');
-	}
-
-	list ($ret, $group) = $gallery->loadEntitiesById($form['groupId']);
+	$groupId = GalleryUtilities::getRequestVariables('groupId');
+	list ($ret, $group) = $gallery->loadEntitiesById($groupId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$form['groupName'] = $group->getGroupName();
+
+	if ($form['formName'] != 'AdminEditGroup') {
+	    /* First time around initialize our form */
+	    $form['groupName'] = $group->getGroupName();
+	}
 
 	/* Render the HTML body */
 	$template = $this->_getTemplate();
 	$template->setVariable('form', $form);
+	$template->setVariable('group', $group);
 	$template->setVariable('controller', 'core:AdminEditGroup');
 	$html = $template->render('AdminEditGroup.tpl');
 

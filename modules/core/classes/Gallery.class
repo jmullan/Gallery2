@@ -671,7 +671,7 @@ class Gallery {
 
 	$lockId = $lock->getId();
 	$this->_locks[$lockId] = $lock;
-	return array($ret, $lockId);
+	return array(GalleryStatus::success(), $lockId);
     }
 
     /**
@@ -733,6 +733,40 @@ class Gallery {
     }
 
     /**
+     * Let go of all of our locks.  We expect to call this from within the
+     * shutdown routine so allow for the fact that we don't want to halt on the
+     * first failure.
+     *
+     * @param string halt after the first failure?  default: no
+     * @return object GalleryStatus a status code
+     * @access private
+     */
+    function _releaseAllLocks($haltOnFailure=false) {
+	/* Release any hanging locks */
+	$errorRet = null;
+	foreach ($this->_locks as $lock) {
+	    $this->guaranteeTimeLimit(5);
+	    if ($lock->isLocked()) {
+		/* Bitch at the developer! */
+		$this->debug('Lock id ' . $lock->getId() . ' was left hanging!');
+		$ret = $lock->release();
+		if ($ret->isError()) {
+		    $errorRet = $ret->wrap(__FILE__, __LINE__);
+		    if ($haltOnFailure) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
+		}
+	    }
+	}
+	$this->_locks = array();
+	if (!empty($errorRet)) {
+	    return $errorRet;
+	} else {
+	    return GalleryStatus::success();
+	}
+    }
+
+    /**
      * Perform any necessary shutdown tasks.
      *
      * This should only be invoked as a register_shutdown callback.
@@ -741,15 +775,8 @@ class Gallery {
      */
     function _shutdown() {
 
-	/* Release any hanging locks */
-	foreach ($this->_locks as $lock) {
-	    $this->guaranteeTimeLimit(5);
-	    if ($lock->isLocked()) {
-		/* Bitch at the developer! */
-		$this->debug('Lock id ' . $lock->getId() . ' was left hanging!');
-		$lock->release();
-	    }
-	}
+	/* Release all locks and ignore any errors */
+	$this->_releaseAllLocks(false);
 
 	/* Roll back any transactions */
 	$this->rollbackTransaction();

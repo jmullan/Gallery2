@@ -6,16 +6,16 @@
  * Copyright (C) 2000-2003 Bharat Mediratta
  * 
  * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * it under the terms of the GNU DataItem Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  * 
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
+ * DataItem Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License
+ * You should have received a copy of the GNU DataItem Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
@@ -34,7 +34,7 @@
  * @subpackage UserInterface
  *
  */
-class ItemEditGeneralController extends GalleryController {
+class ItemEditDataItemController extends GalleryController {
 
     /**
      * @see GalleryController::handleRequest
@@ -50,26 +50,33 @@ class ItemEditGeneralController extends GalleryController {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	if (isset($form['action']['save'])) {
+	if (isset($form['action']['undo'])) {
 
+	    /* Redirect back to the same view to reset the form */
+	    $redirectParams['view'] = 'core:ItemAdmin';
+	    $redirectParams['subView'] = 'core:ItemEditDataItem';
+	    $redirectParams['itemId'] = $itemId;
+	    
+	} else if (isset($form['action']['save'])) {
 	    /*
 	     * Validate the input data.
 	     */
 	    $platform = $gallery->getPlatform();
-	    
-	    if (!$platform->isLegalPathComponent($form['pathComponent'])) {
+	    if (empty($form['pathComponent'])) {
+		GalleryUtilities::putRequestVariable('form.error.pathComponent.missing', 1);
+	    } else if (!$platform->isLegalPathComponent($form['pathComponent'])) {
 		GalleryUtilities::putRequestVariable('form.error.pathComponent.invalid', 1);
 	    } else {
 		list ($ret, $lockId) = $gallery->acquireWriteLock($itemId);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-	    
+		
 		list ($ret, $item) = $gallery->loadEntitiesById($itemId);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-
+		    
 		/*
 		 * It's possible to get a collision when we rename, so try that
 		 * first.  If there's no collision then make the rest of the changes.
@@ -94,7 +101,7 @@ class ItemEditGeneralController extends GalleryController {
 
 		    /* Figure out where to redirect upon success */
 		    $redirectParams['view'] = 'core:ItemAdmin';
-		    $redirectParams['subView'] = 'core:ItemEditGeneral';
+		    $redirectParams['subView'] = 'core:ItemEditDataItem';
 		    $redirectParams['itemId'] = $itemId;
 		}
 
@@ -111,7 +118,7 @@ class ItemEditGeneralController extends GalleryController {
 	} else {
 	    if (empty($results['view'])) {
 		$results['view'] = 'core:ItemAdmin';
-		GalleryUtilities::putRequestVariable('subView', 'core:ItemEditGeneral');
+		GalleryUtilities::putRequestVariable('subView', 'core:ItemEditDataItem');
 	    }
 	}
 
@@ -125,7 +132,7 @@ class ItemEditGeneralController extends GalleryController {
  * @package GalleryCore
  * @subpackage UserInterface
  */
-class ItemEditGeneralView extends GalleryView {
+class ItemEditDataItemView extends GalleryView {
 
     /**
      * @see GalleryView::renderBody
@@ -146,14 +153,7 @@ class ItemEditGeneralView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	if ($form['formName'] == 'ItemEditGeneral' && empty($form['action']['undo'])) {
-	    /* Complain if we have any invalid data */
-	    $platform = $gallery->getPlatform();
-
-	    if (!$platform->isLegalPathComponent($form['pathComponent'])) {
-		$form['error']['pathComponent']['invalid'] = 1;
-	    }
-	} else {
+	if ($form['formName'] != 'ItemEditDataItem') {
 	    /* First time around, load the form with item data */
 	    $form['title'] = $item->getTitle();
 	    $form['summary'] = $item->getSummary();
@@ -171,10 +171,10 @@ class ItemEditGeneralView extends GalleryView {
 	/* Render the HTML body */
 	$template = $this->_getTemplate();
 	$template->setVariable('form', $form);
-	$template->setVariable('item', $item->getMemberData());
+	$template->setVariable('itemId', $itemId);
 	$template->setVariable('parents', $parents);
-	$template->setVariable('controller', 'core:ItemEditGeneral');
-	$html = $template->render('ItemEditGeneral.tpl');
+	$template->setVariable('controller', 'core:ItemEditDataItem');
+	$html = $template->render('ItemEditDataItem.tpl');
 
 	return array(GalleryStatus::success(), $html);
     }

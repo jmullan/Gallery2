@@ -265,7 +265,7 @@ class GalleryAlbumItem_core extends GalleryItem {
 	 */
 	list ($ret, $lockId) = $gallery->acquireReadLock($this->getParentId());
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$platform = $gallery->getPlatform();
@@ -284,25 +284,23 @@ class GalleryAlbumItem_core extends GalleryItem {
 	 */
 	$ret = parent::rename($newname);
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* Check to see if the desired path exists. */
 	$newPath = dirname($currentPath) . '/' . $newname;
 	if ($platform->file_exists($newPath)) {
-	    return GalleryStatus::error(ERROR_COLLISION,
-					__FILE__, __LINE__);
+	    return GalleryStatus::error(ERROR_COLLISION, __FILE__, __LINE__);
 	}
 
 	if (!$platform->rename($currentPath, $newPath)) {
-	    return GalleryStatus::error(ERROR_BAD_PATH,
-					__FILE__, __LINE__);
+	    return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);
 	}
 
 	/* Release locks */
 	$ret = $gallery->releaseLocks($lockId);
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 				   
 	return GalleryStatus::success();

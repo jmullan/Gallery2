@@ -153,42 +153,16 @@ class GalleryDataItem_core extends GalleryItem {
 
 	/* Make sure our base file name is legal */
 	$baseName = $platform->legalizePathComponent($baseName);
-	list ($fileBase, $extension) = GalleryUtilities::getFileNameComponents($baseName);
-
-	/*
-	 * Convert all dots to underscores in the fileBase.  This prevents
-	 * malicious users from uploading files like 'foo.php.jpg' which will
-	 * be treated like a JPEG by Gallery, but could be treated like a .php
-	 * file by Apache opening a security hole.
-	 */
-	$fileBase = str_replace('.', '_', $fileBase);
-
-	/*
-	 * If we don't know exactly what type this file is, we have to assume
-	 * that it's something malicious.  In that case, it might be a server
-	 * side script of some kind and we don't want that to wind up in the
-	 * albums directory in a pure state because it may open up a security
-	 * hole on systems that have placed the gallery data directory inside
-	 * the document root.  So mangle the extension to make sure that the
-	 * webserver doesn't execute it.
-	 */
-	$tmp = GalleryUtilities::convertExtensionToMime($extension);
-	if ($tmp == 'application/unknown') {
-	    $baseName = $fileBase . '_' . $extension;
-	    $extension = 'data';
-	}
-
-	/* Rebuild the baseName according to our transforms above */
-	$baseName = $fileBase . '.' . $extension;
 
 	/* Don't be intimidated by the first 10 collisions */
 	$retry = 0;
 	$newFileName = $parentPath . $baseName;
+	list ($fileBase, $extension) = GalleryUtilities::getFileNameComponents($baseName);
 	while ($platform->file_exists($newFileName)) {
 	    if (++$retry > 10) {
 		return GalleryStatus::error(ERROR_COLLISION, __FILE__, __LINE__);
 	    }
-	    $baseName = sprintf('%s_%03d.%s', $fileBase, $retry, $extension);
+	    $baseName = sprintf('%s_%03d%s', $fileBase, $retry, empty($extension) ? '' : '.' . $extension);
 	    $newFileName = sprintf('%s%s', $parentPath, $baseName);
 	} 
 	
@@ -268,10 +242,10 @@ class GalleryDataItem_core extends GalleryItem {
      * @param string the path component
      * @return object GalleryStatus a status code
      */
-    function rename($newname) {
+    function rename($newName) {
 	global $gallery;
 
-	if ($newname == $this->getPathComponent()) {
+	if ($newName == $this->getPathComponent()) {
 	    return GalleryStatus::success();
 	}
 
@@ -280,7 +254,7 @@ class GalleryDataItem_core extends GalleryItem {
 	 */
 	list ($ret, $lockId) = $gallery->acquireReadLock($this->getParentId());
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$platform = $gallery->getPlatform();
@@ -293,32 +267,43 @@ class GalleryDataItem_core extends GalleryItem {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
+	/* Make sure our base file name is legal */
+	$newName = $platform->legalizePathComponent($newName);
+
 	/*
 	 * Set the new path in the database.  If that succeeds then we should
-	 * be ok in general.
+	 * be ok in general.  Jump through hoops to make sure that we release
+	 * our locks at the end.
 	 */
-	$ret = parent::rename($newname);
+	$error = null;
+	$ret = parent::rename($newName);
 	if ($ret->isError()) {
-	    return $ret;
+	    $error = $ret->wrap(__FILE__, __LINE__);
 	}
 
-	$newPath = dirname($currentPath) . '/' . $newname;
-	
-	/* Check to see if the desired path exists. */
-	if ($platform->file_exists($newPath)) {
-	    return GalleryStatus::error(ERROR_COLLISION,
-					__FILE__, __LINE__);
+	if (!isset($error)) {
+	    $newPath = dirname($currentPath) . '/' . $newName;
+	    
+	    /* Check to see if the desired path exists. */
+	    if ($platform->file_exists($newPath)) {
+		$error = GalleryStatus::error(ERROR_COLLISION, __FILE__, __LINE__);
+	    }
 	}
 
-	if (!$platform->rename($currentPath, $newPath)) {
-	    return GalleryStatus::error(ERROR_BAD_PATH,
-					__FILE__, __LINE__);
+	if (!isset($error)) {
+	    if (!$platform->rename($currentPath, $newPath)) {
+		$error = GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);
+	    }
 	}
 
 	/* Release locks */
 	$ret = $gallery->releaseLocks($lockId);
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	if (isset($error)) {
+	    return $error;
 	}
 
 	return GalleryStatus::success();

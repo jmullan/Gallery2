@@ -156,21 +156,31 @@ class PlatformTest extends GalleryTestCase {
     }
     
     function testIsLegalPathComponent() {
-	$this->assert($this->_platform->isLegalPathComponent("TheQuickBrownFox"));
-	$this->assert(!$this->_platform->isLegalPathComponent("The!QuickBrownFox"));
+	$this->assert($this->_platform->isLegalPathComponent('TheQuickBrownFox'));
+	$this->assert(!$this->_platform->isLegalPathComponent('The!QuickBrownFox'));
     }
     
     function testgetLegalPathCharacters() {
-	$this->assertEquals("ABCDEFGHIJKLMNOPQRSTUVWXYZ" .
-			    "abcdefghijklmnopqrstuvwxyz" .
-			    "0123456789" .
-			    " _.-",
+	$this->assertEquals('ABCDEFGHIJKLMNOPQRSTUVWXYZ' .
+			    'abcdefghijklmnopqrstuvwxyz' .
+			    '0123456789' .
+			    ' _.-',
 			    $this->_platform->getLegalPathCharacters());
     }
     
     function testLegalizePathComponent() {
-	$this->assertEquals("The_Quick_",
-			    $this->_platform->legalizePathComponent("The!Quick$"));
+	$this->assertEquals('The_Quick_',
+			    $this->_platform->legalizePathComponent('The!Quick$'));
+    }
+
+    function testLegalizePathComponent2() {
+	$this->assertEquals('test_php',
+			    $this->_platform->legalizePathComponent('test.php'));
+    }
+    
+    function testLegalizePathComponent3() {
+	$this->assertEquals('test_php.jpg',
+			    $this->_platform->legalizePathComponent('test.php.jpg'));
     }
     
     function testExec() {

@@ -49,6 +49,7 @@ class AdminDeleteGroupController extends GalleryController {
 
 	$results = array();
 	$redirectParams = array();
+	$groupId = GalleryUtilities::getRequestVariables('groupId');
 	
 	if (isset($form['action']['cancel'])) {
 
@@ -62,7 +63,7 @@ class AdminDeleteGroupController extends GalleryController {
 	     * Check to see if we're trying to delete the anonymous group, or
 	     * ourself (can't do either of those).
 	     */
-	    list ($ret, $group) = $gallery->loadEntitiesById($form['groupId']);
+	    list ($ret, $group) = $gallery->loadEntitiesById($groupId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -118,15 +119,16 @@ class AdminDeleteGroupView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	if ($form['formName'] != 'AdminDeleteGroup') {
-	    $form['groupId'] = GalleryUtilities::getRequestVariables('groupId');
-	}
-
-	list ($ret, $group) = $gallery->loadEntitiesById($form['groupId']);
+	$groupId = GalleryUtilities::getRequestVariables('groupId');
+	list ($ret, $group) = $gallery->loadEntitiesById($groupId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$form['groupName'] = $group->getGroupName();
+
+        if ($form['formName'] != 'AdminDeleteGroup') {
+	    /* First time around initialize our form */
+	    $form['groupName'] = $group->getGroupName();
+	}
 
 	/* Render the HTML body */
 	$template = $this->_getTemplate();

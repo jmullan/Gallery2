@@ -49,6 +49,7 @@ class AdminDeleteUserController extends GalleryController {
 
 	$results = array();
 	$redirectParams = array();
+	$userId = GalleryUtilities::getRequestVariables('userId');
 	
 	if (isset($form['action']['cancel'])) {
 
@@ -73,8 +74,8 @@ class AdminDeleteUserController extends GalleryController {
 	     * operating on a valid user, so don't bother sending errors back
 	     * in case we can't delete.
 	     */
-	    if ($form['userId'] != $anonymousUserId && $form['userId'] != $gallery->getActiveUserId()) {
-		list ($ret, $user) = $gallery->loadEntitiesById($form['userId']);
+	    if ($userId != $anonymousUserId && $userId != $gallery->getActiveUserId()) {
+		list ($ret, $user) = $gallery->loadEntitiesById($userId);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -125,15 +126,16 @@ class AdminDeleteUserView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	    
-	if ($form['formName'] != 'AdminDeleteUser') {
-	    $form['userId'] = GalleryUtilities::getRequestVariables('userId');
-	}
-
-	list ($ret, $user) = $gallery->loadEntitiesById($form['userId']);
+	$userId = GalleryUtilities::getRequestVariables('userId');
+	list ($ret, $user) = $gallery->loadEntitiesById($userId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$form['userName'] = $user->getUserName();
+
+	if ($form['formName'] != 'AdminDeleteUser') {
+	    /* First time around initialize our form */
+	    $form['userName'] = $user->getUserName();
+	}
 
 
 	/* Render the HTML body */

@@ -50,7 +50,8 @@ class AdminEditUserController extends GalleryController {
 	$results = array();
 	$redirectParams = array();
 
-	list ($ret, $user) = $gallery->loadEntitiesById($form['userId']);
+	$userId = GalleryUtilities::getRequestVariables('userId');
+	list ($ret, $user) = $gallery->loadEntitiesById($userId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -64,7 +65,7 @@ class AdminEditUserController extends GalleryController {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$isAnonymous = ($form['userId'] == $anonymousUserId);
+	$isAnonymous = ($userId == $anonymousUserId);
 
 	if (isset($form['action']['cancel'])) {
 
@@ -75,13 +76,10 @@ class AdminEditUserController extends GalleryController {
 	    
 	} else if (isset($form['action']['undo'])) {
 
-	    /* Reset our form and stay on the same view */
-	    GalleryUtilities::putRequestVariable('form.userName', $user->getUserName());
-	    GalleryUtilities::putRequestVariable('form.fullName', $user->getFullName());
-	    GalleryUtilities::putRequestVariable('form.email', $user->getEmail());
-	    GalleryUtilities::putRequestVariable('form.language', $user->getLanguage());
-	    GalleryUtilities::putRequestVariable('form.password1', '');
-	    GalleryUtilities::putRequestVariable('form.password2', '');
+	    /* Redirect back to the same view to reset the form */
+	    $redirectParams['view'] = 'core:SiteAdmin';
+	    $redirectParams['subView'] = 'core:AdminEditUser';
+	    $redirectParams['userId'] = $userId;
 	    
 	} else if (isset($form['action']['save'])) {
 
@@ -185,12 +183,8 @@ class AdminEditUserView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	    
-
-	if ($form['formName'] != 'AdminEditUser') {
-	    $form['userId'] = GalleryUtilities::getRequestVariables('userId');
-	}
-	
-	list ($ret, $user) = $gallery->loadEntitiesById($form['userId']);
+	$userId = GalleryUtilities::getRequestVariables('userId');
+	list ($ret, $user) = $gallery->loadEntitiesById($userId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -209,9 +203,9 @@ class AdminEditUserView extends GalleryView {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$show['email'] = ($form['userId'] != $anonymousUserId);
-	$show['language'] = ($form['userId'] != $anonymousUserId);
-	$show['password'] = ($form['userId'] != $anonymousUserId);
+	$show['email'] = ($userId != $anonymousUserId);
+	$show['language'] = ($userId != $anonymousUserId);
+	$show['password'] = ($userId != $anonymousUserId);
 
 	if ($show['language']) {
 	    /* Set up our language selection list */
@@ -234,6 +228,7 @@ class AdminEditUserView extends GalleryView {
 	/* Render the HTML body */
 	$template = $this->_getTemplate();
 	$template->setVariable('form', $form);
+	$template->setVariable('user', $user);
 	$template->setVariable('show', $show);
 	if ($show['language']) {
 	    $template->setVariable('languageList', $languageList);

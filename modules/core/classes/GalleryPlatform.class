@@ -387,7 +387,7 @@ class GalleryPlatform {
     }
 
     /**
-     * Legal characters on all systems: A-Z a-z 0-9 _ -
+     * Legal characters on all systems: A-Z a-z 0-9 _ . -
      *
      * Specific platform implementations can override this.
      *
@@ -410,7 +410,43 @@ class GalleryPlatform {
      */
     function legalizePathComponent($component) {
 	$legal = $this->getLegalPathCharacters();
-	return ereg_replace("[^$legal]", "_", $component);
+
+	/* Scrub out all the illegal characters */
+	$component = ereg_replace("[^$legal]", "_", $component);
+
+	/* Break it into filebase and extension */
+	list ($fileBase, $extension) = GalleryUtilities::getFileNameComponents($component);
+	
+	/*
+	 * Convert all dots to underscores in the fileBase.  This prevents
+	 * malicious users from uploading files like 'foo.php.jpg' which will
+	 * be treated like a JPEG by Gallery, but could be treated like a .php
+	 * file by Apache opening a security hole.
+	 */
+	$fileBase = str_replace('.', '_', $fileBase);
+
+	/*
+	 * If we don't know exactly what type this file is, we have to assume
+	 * that it's something malicious.  In that case, it might be a server
+	 * side script of some kind and we don't want that to wind up in the
+	 * albums directory in a pure state because it may open up a security
+	 * hole on systems that have placed the gallery data directory inside
+	 * the document root.  So mangle the extension to make sure that the
+	 * webserver doesn't execute it.
+	 */
+	$tmp = GalleryUtilities::convertExtensionToMime($extension);
+	if ($tmp == 'application/unknown' && !empty($extension)) {
+	    $fileBase = $fileBase . '_' . $extension;
+	    $extension = null;
+	}
+
+	/* Rebuild the baseName according to our transforms above */
+	$baseName = $fileBase;
+	if (!empty($extension)) {
+	    $baseName .= '.' . $extension;
+	}
+
+	return $baseName;
     }
     
     /**

@@ -69,9 +69,9 @@ class GalleryUtilities {
 
 	$pos = strrpos($filename, '.');
 
-	/* No dot == bogus */
+	/* No dot == it's all base, no extension */
 	if ($pos === false) {
-	    return null;
+	    return array($filename, '');
 	}
 
 	$pos++;

@@ -67,6 +67,12 @@ class UtilitiesTest extends GalleryTestCase {
 	$this->assertEquals('extension', $extension);
     }
 
+    function testGetFileNameComponents2() {
+	list ($base, $extension) = GalleryUtilities::getFileNameComponents('base_without_extension');
+	$this->assertEquals('base_without_extension', $base);
+	$this->assertEquals('', $extension);
+    }
+    
     function testGetFileExtension() {
 	$this->assertEquals('extension', GalleryUtilities::getFileExtension('base.extension'));
     }

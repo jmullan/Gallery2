@@ -1,5 +1,5 @@
     {gallery->form controller="$controller"}
-    {gallery->input type="hidden" name="form.formName"}ItemEditGeneral{/gallery->input}
+    {gallery->input type="hidden" name="form.formName"}ItemEditDataItem{/gallery->input}
     {gallery->input type="hidden" name="itemId"}{$item.id}{/gallery->input}
     <table border="0" cellspacing="0" cellpadding="0">
 	<tr>
@@ -49,7 +49,17 @@
 	<tr>
 	  <td>
 	    {gallery->errorFontColor}
-	    {gallery->text text="Your name contains invalid characters.  Please enter another."}
+	    {gallery->text text="Your name contains invalid characters.  Please choose another."}
+	    {/gallery->errorFontColor}
+	  </td>
+	</tr>
+        {/if}
+
+        {if !empty($form.error.pathComponent.missing)}
+	<tr>
+	  <td>
+	    {gallery->errorFontColor}
+	    {gallery->text text="You must enter a name for this item."}
 	    {/gallery->errorFontColor}
 	  </td>
 	</tr>
@@ -59,7 +69,7 @@
 	<tr>
 	  <td>
 	    {gallery->errorFontColor}
-	    {gallery->text text="The name you entered is already in use.  Please enter another."}
+	    {gallery->text text="The name you entered is already in use.  Please choose another."}
 	    {/gallery->errorFontColor}
 	  </td>
 	</tr>

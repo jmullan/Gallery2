@@ -289,7 +289,7 @@ class ItemMoveView extends GalleryView {
         /* Render the HTML body */
         $template = $this->_getTemplate();
 	$template->setVariable('albumIds', $albumIds);
-        $template->setVariable('itemId', $itemId);
+        $template->setVariable('item', $item->getMemberData());
         $template->setVariable('form', $form);
         $template->setVariable('peers', $peers);
         $template->setVariable('peerTypes', $peerTypes);

@@ -1,6 +1,6 @@
   {gallery->form controller="$controller"}
   {gallery->input type="hidden" name="form.formName"}AdminEditGroupUsers{/gallery->input}
-  {gallery->input type="hidden" name="form.groupId"}{$form.groupId}{/gallery->input}
+  {gallery->input type="hidden" name="groupId"}{$group.id}{/gallery->input}
   <table width="100%" border="0" cellspacing="3" cellpadding="3">
 
     <tr>
@@ -45,7 +45,7 @@
 	    <td colspan="2" align="center">
 	      {gallery->bigFontSize}
 	      {gallery->text text="Editing Group '%s'"
-	                   arg1=$form.groupName}
+	                   arg1=$group.groupName}
 	      {/gallery->bigFontSize}
 	    </td>
 	  </tr>

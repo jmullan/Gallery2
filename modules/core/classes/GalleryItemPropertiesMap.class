@@ -182,7 +182,7 @@ class GalleryItemPropertiesMap_core {
 	while ($result = $searchResults->nextResult()) {
 	    $data[] = $result[0];
 	}
-	return array($ret, $data);
+	return array(GalleryStatus::success(), $data);
     }
 
     /**
@@ -269,7 +269,7 @@ class GalleryItemPropertiesMap_core {
 	while ($result = $searchResults->nextResult()) {
 	    $data[$result[0]] = $result[1];
 	}
-	return array($ret, $data);
+	return array(GalleryStatus::success(), $data);
     }
 
 }

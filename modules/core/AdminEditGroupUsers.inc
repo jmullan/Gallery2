@@ -51,7 +51,8 @@ class AdminEditGroupUsersController extends GalleryController {
 	$redirectParams = array();
 
 	/* Load the group */
-	list ($ret, $group) = $gallery->loadEntitiesById($form['groupId']);
+	$groupId = GalleryUtilities::getRequestVariables('groupId');
+	list ($ret, $group) = $gallery->loadEntitiesById($groupId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -72,7 +73,7 @@ class AdminEditGroupUsersController extends GalleryController {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 
-		    $ret = GalleryUserGroupMap::removeUserFromGroup($user->getId(), $form['groupId']);
+		    $ret = GalleryUserGroupMap::removeUserFromGroup($user->getId(), $groupId);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
@@ -80,7 +81,7 @@ class AdminEditGroupUsersController extends GalleryController {
 		    /* Redirect back to the same view */
 		    $redirectParams['view'] = 'core:SiteAdmin';
 		    $redirectParams['subView'] = 'core:AdminEditGroupUsers';
-		    $redirectParams['form.groupId'] = $group->getId();
+		    $redirectParams['groupId'] = $group->getId();
 		    $redirectParams['form.status.removedUser'] = $user->getUsername();
 		}
 	    
@@ -99,7 +100,7 @@ class AdminEditGroupUsersController extends GalleryController {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    } else {
 			$ret = GalleryUserGroupMap::addUserToGroup($user->getId(),
-								   $form['groupId']);
+								   $groupId);
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
@@ -107,7 +108,7 @@ class AdminEditGroupUsersController extends GalleryController {
 			/* Redirect back to the same view */
 			$redirectParams['view'] = 'core:SiteAdmin';
 			$redirectParams['subView'] = 'core:AdminEditGroupUsers';
-			$redirectParams['form.groupId'] = $group->getId();
+			$redirectParams['groupId'] = $group->getId();
 			$redirectParams['form.status.addedUser'] = $user->getUsername();
 		    }
 		}
@@ -148,19 +149,12 @@ class AdminEditGroupUsersView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	    
-
-	if ($form['formName'] != 'AdminEditGroupUsers' && !isset($form['groupId'])) {
-	    $form['groupId'] = GalleryUtilities::getRequestVariables('groupId');
-	}
-
 	/* Load the group */
-	list ($ret, $group) = $gallery->loadEntitiesById($form['groupId']);
+	$groupId = GalleryUtilities::getRequestVariables('groupId');
+	list ($ret, $group) = $gallery->loadEntitiesById($groupId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-
-	/* Load the form with group data */
-	$form['groupName'] = $group->getGroupName();
 
 	/* First time on this page, initialize form fields */
 	if ($form['formName'] != 'AdminEditGroupUsers') {
@@ -178,6 +172,7 @@ class AdminEditGroupUsersView extends GalleryView {
 	/* Render the HTML body */
 	$template = $this->_getTemplate();
 	$template->setVariable('form', $form);
+	$template->setVariable('group', $group);
 	$template->setVariable('controller', 'core:AdminEditGroupUsers');
 	$html = $template->render('AdminEditGroupUsers.tpl');
 

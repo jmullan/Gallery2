@@ -57,7 +57,7 @@ class ItemEditAlbumController extends GalleryController {
 
 	if (isset($form['action']['undo'])) {
 
-	    /* Redirect back to the current page to reset the form */
+	    /* Redirect back to the same view to reset the form */
 	    $redirectParams['view'] = 'core:ItemAdmin';
 	    $redirectParams['subView'] = 'core:ItemEditAlbum';
 	    $redirectParams['itemId'] = $itemId;
