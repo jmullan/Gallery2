@@ -121,7 +121,7 @@
 	}
 	function apply_filter() {
 	  f = filters[document.getElementById('filter').selectedIndex];
-	  if (f == 'RANDOM') f = filters[random_int(filters.length)];
+	  if (f == 'RANDOM') f = filters[random_int(filters.length-1)];
 	  document.images.slide.style.filter = f;
 	  document.images.slide.filters[0].Apply();
 	}
