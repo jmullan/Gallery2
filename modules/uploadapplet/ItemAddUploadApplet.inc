@@ -44,32 +44,26 @@ class ItemAddUploadApplet extends ItemAddPlugin {
 
 	$plugins = GalleryCoreApi::getAllFactoryImplementationIds('ItemAddPlugin');
 
-	if (!isset($plugins['ItemAddGalleryRemote'])) {
-	    $template->setVariable('NoProtocolError', 1);
-	} else {
-	    $cookieInfo = session_get_cookie_params();
-	    $urlGenerator = $gallery->getUrlGenerator();
-	    $dir = $urlGenerator->getCurrentUrlDir();
-	    $session = $gallery->getSession();
-	    list ($session_name, $session_id) = $session->getSessionDescriptor();
-	    
-	    $template->setVariable('width', 400);
-	    $template->setVariable('height', 300);
-	    $template->setVariable('code', 'com.gallery.GalleryRemote.GRAppletMini');
-	    $template->setVariable('archive', "${dir}modules/uploadapplet/applets/GalleryRemoteAppletMini.jar," . 
-		    "${dir}modules/uploadapplet/applets/GalleryRemoteHTTPClient.jar," . 
-		    "${dir}modules/uploadapplet/applets/applet_img.jar");
-	    $template->setVariable('url', $dir);
-	    $template->setVariable('cookie_name', $session_name);
-	    $template->setVariable('cookie_value', $session_id);
-	    $template->setVariable('cookie_domain', $cookieInfo['domain']);
-	    $template->setVariable('cookie_path', $cookieInfo['path']);
-	    $template->setVariable('album', $item->getId());
-	    $template->setVariable('defaults', array());
-	    $template->setVariable('overrides', array("toSysOut" => "true"));
-	}
+	$ItemAddUploadApplet = array();
 
-	return array(GalleryStatus::success(), 'modules/uploadapplet/templates/ItemAddUploadApplet.tpl');
+	if (!isset($plugins['ItemAddGalleryRemote'])) {
+	    $ItemAddUploadApplet['NoProtocolError'] = 1;
+	} else {
+	    $session =& $gallery->getSession();
+	    $urlGenerator = $gallery->getUrlGenerator();
+	    $ItemAddUploadApplet['NoProtocolError'] = 0;
+	    $ItemAddUploadApplet['cookieName'] = $session->getKey();
+	    $ItemAddUploadApplet['cookieValue'] = $session->getId();
+	    $ItemAddUploadApplet['cookieDomain'] = $session->getCookieDomain();
+	    $ItemAddUploadApplet['cookiePath'] = $session->getCookiePath();
+	    $ItemAddUploadApplet['album'] = $item->getId();
+	    $ItemAddUploadApplet['defaults'] = array();
+	    $ItemAddUploadApplet['overrides'] = array('toSysOut' => 'true');
+	}
+	
+	$template->setVariable('ItemAddUploadApplet', $ItemAddUploadApplet);
+	return array(GalleryStatus::success(),
+		     'modules/uploadapplet/templates/ItemAddUploadApplet.tpl');
     }
 
     /**
