@@ -26,6 +26,9 @@
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/DatabaseLockSystem.class');
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/FlockLockSystem.class');
+
 /**
  * Test Lock functionality
  *
@@ -45,11 +48,15 @@ class LockTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+
+	$this->_saveLockSystem =& $gallery->_lockSystem;
     }
 
     function tearDown() {
 	global $gallery;
 
+	$gallery->_lockSystem = $this->_saveLockSystem;
+	
 	$ret = GalleryCoreApi::deleteEntityById($this->_parentAlbum->getId());
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
@@ -59,7 +66,24 @@ class LockTest extends GalleryTestCase {
 	parent::tearDown();
     }
 
+    function _tryAllLockSystems($testFunction) {
+	global $gallery;
+	$testFunction = "_" . $testFunction;
+	
+	$gallery->_lockSystem = new DatabaseLockSystem();
+	$this->$testFunction();
+	$gallery->_lockSystem->releaseAllLocks();
+
+	$gallery->_lockSystem = new FlockLockSystem();
+	$this->$testFunction();
+	$gallery->_lockSystem->releaseAllLocks();
+    }
+
     function testOneWriteLock() {
+	return $this->_tryAllLockSystems('testOneWriteLock');
+    }
+
+    function _testOneWriteLock() {
 	global $gallery;
 
 	$targetId = $gallery->getActiveUserId();
@@ -78,6 +102,10 @@ class LockTest extends GalleryTestCase {
     }
 
     function testManyWriteLocks() {
+	return $this->_tryAllLockSystems('testManyWriteLocks');
+    }
+
+    function _testManyWriteLocks() {
 	global $gallery;
 
 	$ids = array($gallery->getActiveUserId(), $this->_getRootId());
@@ -98,6 +126,10 @@ class LockTest extends GalleryTestCase {
     }
 
     function testOneReadLock() {
+	return $this->_tryAllLockSystems('testOneReadLock');
+    }
+
+    function _testOneReadLock() {
 	global $gallery;
 
 	$targetId = $gallery->getActiveUserId();
@@ -116,6 +148,10 @@ class LockTest extends GalleryTestCase {
     }
 
     function testManyReadLocks() {
+	return $this->_tryAllLockSystems('testManyReadLocks');
+    }
+
+    function _testManyReadLocks() {
 	global $gallery;
 
 	$ids = array($gallery->getActiveUserId(), $this->_getRootId());
@@ -136,9 +172,13 @@ class LockTest extends GalleryTestCase {
     }
 
     function testAcquireReadLockParents() {
+	return $this->_tryAllLockSystems('testAcquireReadLockParents');
+    }
+
+    function _testAcquireReadLockParents() {
 	global $gallery;
 	
-	// Create a hierarchy
+	/* Create a hierarchy */
 	$parentId = $this->_parentAlbum->getId();
 	for ($i = 0; $i < 3; $i++) {
 	    list ($ret, $this->_album[$i]) = $this->_createRandomAlbum($parentId);
@@ -153,14 +193,14 @@ class LockTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	// Verify that they're all locked except the item itself
+	/* Verify that they're all locked except the item itself */
 	$this->assert(!GalleryCoreApi::isReadLocked($this->_album[2]->getId()));
 	$this->assert(GalleryCoreApi::isReadLocked($this->_album[1]->getId()));
 	$this->assert(GalleryCoreApi::isReadLocked($this->_album[0]->getId()));
 	$this->assert(GalleryCoreApi::isReadLocked($this->_parentAlbum->getId()));
 	$this->assert(GalleryCoreApi::isReadLocked($this->_getRootId()));
 
-	// Release locks
+	/* Release locks */
 	$ret = GalleryCoreApi::releaseLocks($lockId);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -168,6 +208,10 @@ class LockTest extends GalleryTestCase {
     }
 
     function testAcquireReadLockParentsOnRoot() {
+	return $this->_tryAllLockSystems('testAcquireReadLockParentsOnRoot');
+    }
+
+    function _testAcquireReadLockParentsOnRoot() {
 	global $gallery;
 
 	list ($ret, $lockId) = GalleryCoreApi::acquireReadLockParents($this->_getRootId());
@@ -175,10 +219,11 @@ class LockTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	// Verify that the root is not read locked
-	$this->assert(!GalleryCoreApi::isReadLocked($this->_getRootId()), 'Root should not be locked');
+	/* Verify that the root is not read locked */
+	$this->assert(!GalleryCoreApi::isReadLocked($this->_getRootId()),
+		      'Root should not be locked');
 
-	// Release locks
+	/* Release locks */
 	$ret = GalleryCoreApi::releaseLocks($lockId);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));

@@ -87,6 +87,11 @@ class Gallery {
     var $_debugBuffer;
 
     /**
+     * The active GalleryLockSystem implementation
+     */
+    var $_lockSystem;
+
+    /**
      * An instance of the GalleryPlatform class
      *
      * @var object GalleryPlatform $_platform
@@ -200,7 +205,7 @@ class Gallery {
     function setActiveUser($user) {
 	$this->_activeUser = $user;
 
-	// It's possible for the session not to exist during bootstrap time
+	/* It's possible for the session not to exist during bootstrap time */
 	$session =& $this->getSession();
 	if (isset($session)) {
 	    $activeUserId = $session->get('core.id.activeUser');
@@ -327,6 +332,39 @@ class Gallery {
     }
 
     /**
+     * Return the active lock system.
+     *
+     * @return array object GalleryStatus a status code
+     *               object GalleryLockSystem the lock implementation (reference)
+     */
+    function getLockSystem() {
+	if (!isset($this->_lockSystem)) {
+	    list ($ret, $which) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'lock.system');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    switch($which) {
+	    case 'flock':
+		GalleryCoreApi::relativeRequireOnce('modules/core/classes/FlockLockSystem.class');
+		$this->_lockSystem = new FlockLockSystem();
+		break;
+
+	    case 'database':
+		GalleryCoreApi::relativeRequireOnce('modules/core/classes/DatabaseLockSystem.class');
+		$this->_lockSystem = new DatabaseLockSystem();
+		break;
+
+	    default:
+		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	    }
+	}
+
+	return array(GalleryStatus::success(), &$this->_lockSystem);
+    }
+
+    /**
      * Perform any necessary shutdown tasks.
      *
      * This should only be invoked as a register_shutdown callback.
@@ -334,17 +372,18 @@ class Gallery {
      * @access private
      */
     function _shutdown() {
-
-	/* Bitch about open locks */
-	$lockIds = GalleryCoreApi::getLockIds();
-	foreach ($lockIds as $lockId) {
-	    if ($this->getDebug()) {
-		$this->debug(sprintf('Lock id %d was left hanging!', $lockId));
+	if (isset($this->_lockSystem)) {
+	    /* Bitch about open locks */
+	    $lockIds = $this->_lockSystem->getLockIds();
+	    foreach ($lockIds as $lockId) {
+		if ($this->getDebug()) {
+		    $this->debug(sprintf('Lock id %d was left hanging!', $lockId));
+		}
 	    }
-	}
 
-	/* Release all locks and ignore any errors */
-	GalleryCoreApi::releaseAllLocks(false);
+	    /* Release all locks and ignore any errors */
+	    $this->_lockSystem->releaseAllLocks();
+	}
 
 	/* Roll back any transactions */
 	if (isset($this->_storage)) {
@@ -503,16 +542,19 @@ class Gallery {
 	if (empty($this->_timeLimit) || ($this->_timeLimit - $now < $limit)) {
 	    $this->debug("[$now] can't guarantee $limit -- extending!");
 
-	    // Make sure that we extend at least a minimum of 30 seconds
+	    /* Make sure that we extend at least a minimum of 30 seconds */
 	    $this->_timeLimit = $now + max($limit, 30);
 	    set_time_limit($this->_timeLimit - $now);
 
 	    /*
-	     * Then make sure our locks stick around.  Even though this returns a status code, we really don't
-	     * want to make guaranteeTimeLimit() return a status code since we want to keep it lightweight.
-	     * So swallow the return code and don't sweat it for now.
+	     * Then make sure our locks stick around.  Even though this returns
+	     * a status code, we really don't want to make guaranteeTimeLimit()
+	     * return a status code since we want to keep it lightweight.  So
+	     * swallow the return code and don't sweat it for now.
 	     */
-	    $ret = GalleryCoreApi::refreshLocks($this->_timeLimit);
+	    if (isset($this->_lockSystem)) {
+		$this->_lockSystem->refreshLocks($this->_timeLimit);
+	    }
 	}
     }
 
@@ -550,7 +592,7 @@ class Gallery {
      */
     function setDebug($debug=false) {
 
-	// Try to do the right thing in the face of bogus input
+	/* Try to do the right thing in the face of bogus input */
 	if ($debug === true) {
 	    $debug = 'buffered';
 	}

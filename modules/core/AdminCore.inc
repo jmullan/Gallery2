@@ -47,7 +47,8 @@ class AdminCoreController extends GalleryController {
 	}
 
 	/* Get the list of legal local server dirs */
-	list ($ret, $localServerDirs) = GalleryCoreApi::getPluginParameter('module', 'core', 'uploadLocalServer.dirs');
+	list ($ret, $localServerDirs) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'uploadLocalServer.dirs');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -83,7 +84,8 @@ class AdminCoreController extends GalleryController {
 		    }
 		}
 
-		$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'uploadLocalServer.dirs', join(',', $localServerDirList));
+		$ret = GalleryCoreApi::setPluginParameter(
+		    'module', 'core', 'uploadLocalServer.dirs', join(',', $localServerDirList));
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -107,7 +109,8 @@ class AdminCoreController extends GalleryController {
 			unset($localServerDirList[$i]);
 		    }
 		}
-		$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'uploadLocalServer.dirs', join(',', $localServerDirList));
+		$ret = GalleryCoreApi::setPluginParameter(
+		    'module', 'core', 'uploadLocalServer.dirs', join(',', $localServerDirList));
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -132,11 +135,16 @@ class AdminCoreController extends GalleryController {
 			   'session.lifetime',
 			   'session.inactivityTimeout',
 			   'misc.useShortUrls',
-			   'misc.markup', 'misc.login',
-			   'smtp.host', 'smtp.from', 'smtp.username') as $key) {
+			   'misc.markup',
+			   'misc.login',
+			   'smtp.host',
+			   'smtp.from',
+			   'smtp.username',
+			   'lock.system') as $key) {
 		list ($outer, $inner) = explode('.', $key);
 		if (isset($form[$outer][$inner])) {
-		    $ret = GalleryCoreApi::setPluginParameter('module', 'core', $key, $form[$outer][$inner]);
+		    $ret = GalleryCoreApi::setPluginParameter(
+		        'module', 'core', $key, $form[$outer][$inner]);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
@@ -196,9 +204,13 @@ class AdminCoreView extends GalleryView {
 			   'session.lifetime',
 			   'session.inactivityTimeout',
 			   'misc.useShortUrls',
-			   'misc.markup', 'misc.login',
-			   'smtp.host', 'smtp.from',
-			   'smtp.username', 'smtp.password') as $key) {
+			   'misc.markup',
+			   'misc.login',
+			   'smtp.host',
+			   'smtp.from',
+			   'smtp.username',
+			   'smtp.password',
+			   'lock.system') as $key) {
 
 		list ($ret, $value) =
 		    GalleryCoreApi::getPluginParameter('module', 'core', $key);
@@ -219,7 +231,8 @@ class AdminCoreView extends GalleryView {
 	}
 
 	/* Get the list of legal local server dirs */
-	list ($ret, $localServerDirs) = GalleryCoreApi::getPluginParameter('module', 'core', 'uploadLocalServer.dirs');
+	list ($ret, $localServerDirs) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'uploadLocalServer.dirs');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -303,6 +316,9 @@ class AdminCoreView extends GalleryView {
 				    'bbcode' => $module->translate('BBCode'),
 				    'html' => $module->translate('Raw HTML'));
 
+	$lockSystemList = array('database' => $module->translate('Database'),
+				'flock' => $module->translate('File'));
+
 	list ($ret, $rootId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -320,6 +336,7 @@ class AdminCoreView extends GalleryView {
 	$AdminCore['useShortUrlsList'] = $useShortUrlsList;
 	$AdminCore['embeddedMarkupList'] = $embeddedMarkupList;
 	$AdminCore['shortUrlTestItemId'] = $rootId;
+	$AdminCore['lockSystemList'] = $lockSystemList;
 
 	$template->setVariable('controller', 'core:AdminCore');
 	$template->setVariable('AdminCore', $AdminCore);

@@ -1,0 +1,312 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2005 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryLockSystem.class');
+
+/**
+ * Flock() based locking.  This is fairly efficient, but it will not work on NFS
+ * and is known to be unreliable on some operating systems including some
+ * flavors of the 2.4 Linux kernel.
+ *
+ * @package GalleryCore
+ * @subpackage Classes
+ * @abstract
+ */
+class FlockLockSystem extends GalleryLockSystem {
+
+    /**
+     * Information about all the locks we currently hold
+     */
+    var $_locks;
+
+    /**
+     * Constructor
+     */
+    function FlockLockSystem() {
+	$this->_locks = array();
+    }
+
+    /**
+     * @see GalleryLockSystem::acquireReadLock()
+     */
+    function acquireReadLock($ids, $timeout=10) {
+	if (!is_array($ids)) {
+	    $ids = array($ids);
+	}
+	
+	list ($ret, $lockId) = $this->_acquireLock($ids, $timeout, LOCK_READ);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	return array(GalleryStatus::success(), $lockId);
+    }
+
+    /**
+     * @see GalleryLockSystem::isReadLocked()
+     */
+    function isReadLocked($id) {
+	foreach ($this->_locks as $lockId => $lock) {
+	    if (in_array($id, $lock['ids'])) {
+		return true;
+	    }
+	}
+
+	return false;
+    }
+
+    /**
+     * @see GalleryLockSystem::acquireWriteLock()
+     */
+    function acquireWriteLock($ids, $timeout=10) {
+	if (!is_array($ids)) {
+	    $ids = array($ids);
+	}
+
+	list ($ret, $lockId) = $this->_acquireLock($ids, $timeout, LOCK_WRITE);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	return array(GalleryStatus::success(), $lockId);
+    }
+
+    /**
+     * @see GalleryLockSystem::isWriteLocked()
+     */
+    function isWriteLocked($id) {
+	foreach ($this->_locks as $lockId => $lock) {
+	    if ($lock['type'] == LOCK_WRITE && in_array($id, $lock['ids'])) {
+		return true;
+	    }
+	}
+
+	return false;
+    }
+
+    /**
+     * @see GalleryLockSystem::releaseLocks()
+     */
+    function releaseLocks($lockIds) {
+	global $gallery;
+	
+	if (!is_array($lockIds)) {
+	    $lockIds = array($lockIds);
+	}
+
+	/* Release all locks by closing the files */
+	$platform = $gallery->getPlatform();
+	$gallery->guaranteeTimeLimit(count($lockIds));
+	foreach ($lockIds as $lockId) {
+	    if (empty($lockId)) {
+		continue;
+	    }
+	    
+	    foreach ($this->_locks[$lockId]['fds'] as $fd) {
+		$platform->fclose($fd);
+	    }
+	    unset($this->_locks[$lockId]);
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * @see GalleryLockSystem::refreshAllLocks()
+     */
+    function releaseAllLocks() {
+	global $gallery;
+
+	$platform = $gallery->getPlatform();
+	$gallery->guaranteeTimeLimit(count($this->_locks));
+	foreach ($this->_locks as $lockId => $lock) {
+	    foreach ($lock['fds'] as $fd) {
+		$platform->fclose($fd);
+	    }
+	    unset($this->_locks[$lockId]);
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * @see GalleryLockSystem::refreshLocks()
+     */
+    function refreshLocks($freshUntil) {
+	global $gallery;
+
+	/* Flush one byte to each lock file to update its timestamp */
+	$platform = $gallery->getPlatform();
+	foreach ($this->_locks as $lockId => $lock) {
+	    foreach ($lock['fds'] as $fd) {
+		$count = $platform->fwrite($fd, '.');
+		if ($count == 0) {
+		    return GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
+		}
+		$platform->fflush($fd);
+	    }
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * @see GalleryLockSystem::deleteLock()
+     */
+    function deleteLock($id) {
+	global $gallery;
+
+	/*
+	 * Release the lock before we delete the lock file.  This is tricky --
+	 * we may have locked this entity along with other ones.  Surgically
+	 * extract this entity id from the lock, but leave the lock around even
+	 * if its empty since it's going to get released later on by whoever
+	 * acquired it.  If we don't close the file before we try to delete it,
+	 * Windows will cry.
+	 */
+	$platform = $gallery->getPlatform();
+	foreach (array_keys($this->_locks) as $lockId) {
+	    for ($i = 0; $i < sizeof($this->_locks[$lockId]['ids']); $i++) {
+		if ($this->_locks[$lockId]['ids'][$i] == $id) {
+		    $platform->fclose($this->_locks[$lockId]['fds'][$i]);
+		    array_splice($this->_locks[$lockId]['ids'], $i, 1);
+		    array_splice($this->_locks[$lockId]['fds'], $i, 1);
+		    break;
+		}
+	    }
+	}
+
+	/* Now it's safe to delete the lock file */
+	$lockFile = $this->_getLockFile($id);
+	if (!@$platform->unlink($lockFile)) {
+	    return GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Return the lock file for a given entity id
+     *
+     * @param int the input id
+     * @return string the complete path to the lock file
+     */
+    function _getLockFile($id) {
+	global $gallery;
+	
+	$locksDir = $gallery->getConfig('data.gallery.locks');
+	$tmp = "$id";
+	if ($id < 100) {
+	    $first = '0';
+	    $second = $tmp[0];
+	} else {
+	    $first = $tmp[0];
+	    $second = $tmp[1];
+	}
+	
+	return "$locksDir$first/$second/$id";
+    }
+
+    /**
+     * Read Lock one or more objects
+     *
+     * @param array ids to lock
+     * @param integer how long to wait for the lock before giving up
+     * @param the type of lock (LOCK_READ, LOCK_WRITE)
+     * @return array object GalleryStatus a status code
+     *               int the lock id
+     * @access private
+     * @static
+     */
+    function _acquireLock($ids, $timeout, $lockType) {
+	global $gallery;
+
+	$cutoffTime = time() + $timeout;
+
+	$platform = $gallery->getPlatform();
+
+	/* Get a file handle for all the files first */
+	$notLocked = array();
+	foreach ($ids as $id) {
+	    $lockFile = $this->_getLockFile($id);
+	    $fd = $platform->fopen($lockFile, 'wb+');
+	    if ($fd) {
+		$notLocked[] =& $fd;
+	    } else {
+		foreach ($open as $fd) {
+		    $platform->fclose($fd);
+		}
+		return array(GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__), null);
+	    }
+	}
+
+	/* Move them from notLocked -> locked as we acquire the lock */
+	$locked = array();
+	$wouldBlock = null;
+	while (!empty($notLocked)) {
+	    $tmp = $notLocked;
+	    $notLocked = array();
+	    foreach ($tmp as $fd) {
+		$flockType = ($lockType == LOCK_READ) ? LOCK_SH : LOCK_EX;
+		if ($platform->flock($fd, $flockType | LOCK_NB, $wouldBlock)) {
+		    $locked[] = $fd;
+		} else {
+		    /* Remember that it's not locked and keep going */
+		    $notLocked[] = $fd;
+		}
+	    }
+
+	    if (!empty($notLocked)) {
+		if (time() > $cutoffTime) {
+		    foreach (array_merge($locked, $notLocked) as $fd) {
+			$platform->fclose($fd);
+		    }
+		    return array(GalleryStatus::error(ERROR_LOCK_TIMEOUT, __FILE__, __LINE__), null);
+		}
+
+		/* Wait a second and try any unacquired locks again */
+		sleep(1);
+	    }
+	}
+
+	$lockId = md5(microtime());
+	$this->_locks[$lockId] = array('type' => $lockType,
+				       'ids' => $ids,
+				       'fds' => $locked);
+	return array(GalleryStatus::success(), $lockId);
+    }
+
+
+    /**
+     * Return the ids of all the locks we hold
+     *
+     * @return array lock ids
+     */
+    function getLockIds() {
+	return array_keys($this->_locks);
+    }
+}

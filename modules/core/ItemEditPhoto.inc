@@ -314,7 +314,8 @@ class ItemEditPhoto extends ItemEditPlugin {
 	$ItemEditPhoto['editSizes']['can']['createThumbnail'] = isset($toolkit);
 
 	/* Figure out what options we can provide */
-	list ($ret, $toolkit) = GalleryCoreApi::getToolkitByOperation($item->getMimeType(), 'scale');
+	list ($ret, $toolkit) =
+	    GalleryCoreApi::getToolkitByOperation($item->getMimeType(), 'scale');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

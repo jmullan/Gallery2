@@ -44,12 +44,9 @@ class ItemMoveSingleControllerTest extends GalleryControllerTestCase {
 
 	/* Register a dummy toolkit */
 	$path = 'modules/core/test/phpunit/ItemMoveSingleControllerTest.class';
-	$ret = GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
-							     'ItemMoveSingleTestToolkit',
-							     'ItemMoveSingleTestToolkit',
-							     $path,
-							     'coreTest',
-							     null);
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+            'GalleryToolkit', 'ItemMoveSingleTestToolkit', 'ItemMoveSingleTestToolkit', $path,
+            'coreTest', null);
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -369,7 +366,8 @@ class ItemMoveSingleControllerTest extends GalleryControllerTestCase {
 	}
 
 	/* Add crop operation */
-	list ($ret, $thumbnails) = GalleryCoreApi::fetchThumbnailsByItemIds(array($this->_item->getId()));
+	list ($ret, $thumbnails) =
+	    GalleryCoreApi::fetchThumbnailsByItemIds(array($this->_item->getId()));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

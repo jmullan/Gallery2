@@ -429,6 +429,91 @@ class GalleryStorage {
     }
 
     /**
+     * Acquire read locks on the given items
+     *
+     * @access public
+     * @param int timeout before giving up on the lock
+     * @return array object GalleryStatus a status code
+     *               object a GalleryLock instance
+     */
+    function acquireReadLock($entityIds, $timeout) {
+	if (!$this->_isInitialized) {
+	    $ret = $this->_impl->init();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    } else {
+		$this->_isInitialized = true;
+	    }
+	}
+	
+	return $this->_impl->acquireReadLock($entityIds, $timeout);
+    }
+
+    /**
+     * Acquire write locks on the given items
+     *
+     * @access public
+     * @param array or integer a set of ids
+     * @param int timeout before giving up on the lock
+     * @return array object GalleryStatus a status code
+     *               object a GalleryLock instance
+     */
+    function acquireWriteLock($entityIds, $timeout) {
+	if (!$this->_isInitialized) {
+	    $ret = $this->_impl->init();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    } else {
+		$this->_isInitialized = true;
+	    }
+	}
+	
+	return $this->_impl->acquireWriteLock($entityIds, $timeout);
+    }
+
+    /**
+     * Refresh all the locks that we hold so that they aren't accidentally considered expired
+     *
+     * @param array the lock ids
+     * @param int the new "fresh until" timestamp
+     * @return object GalleryStatus a status code
+     * @static
+     */
+    function refreshLocks($lockIds, $freshUntil) {
+	if (!$this->_isInitialized) {
+	    $ret = $this->_impl->init();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    } else {
+		$this->_isInitialized = true;
+	    }
+	}
+	
+	return $this->_impl->refreshLocks($lockIds, $freshUntil);
+    }
+
+    /**
+     * Internal function to release a lock by id.  Outsiders should use
+     * releaseLock()
+     *
+     * @access private
+     * @param int the lock id
+     * @return object GalleryStatus a status code
+     */
+    function releaseLocks($lockIds) {
+	if (!$this->_isInitialized) {
+	    $ret = $this->_impl->init();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    } else {
+		$this->_isInitialized = true;
+	    }
+	}
+	
+	return $this->_impl->releaseLocks($lockIds);
+    }
+    
+    /**
      * Convert an integer into something that the database will accept into a
      * bit column
      *

@@ -339,6 +339,29 @@
     </table>
   </div>
 
+  <div class="gbAdmin">
+    <h3 class="giTitle">
+      {g->text text="Locking System"}
+    </h3>
+
+    <p class="giDescription">
+      {g->text text="Gallery uses a system of locks to prevent simultaneous changes from interfering with each other.  There are two types of locking, each with its advantages and disadvantages.  <b>File</b> based locking is fast and efficient, but won't work on NFS filesystems and will be unreliable on Windows.  <b>Database</b> locking is slower but is more reliable.  If you are unsure which to choose, we recommend using file locking.  If you're getting many lock timeouts, you can try switching to database locking instead.  It's ok to switch back and forth."}
+    </p>
+
+    <table>
+      <tr>
+        <td>
+          {g->text text="Lock system"}
+        </td>
+        <td>
+	  <select name="{g->formVar var="form[lock][system]"}">
+	      {html_options options=$AdminCore.lockSystemList selected=$form.lock.system}
+          </select>
+        </td>
+      </tr>
+     </table>
+  </div>
+
   <div class="gbBottomFlag">
     <div class="gbButtons">
       <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="save"}"/>

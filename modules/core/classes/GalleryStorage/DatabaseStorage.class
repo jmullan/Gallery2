@@ -28,13 +28,18 @@
 /**
  * Require the ADOdb libraries
  */
-require_once(dirname(__FILE__) . '/../../../../lib/adodb/adodb.inc.php');
-require_once(dirname(__FILE__) . '/DatabaseStorage/ErrorHandler.inc');
+GalleryCoreApi::relativeRequireOnce('lib/adodb/adodb.inc.php');
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryStorage/DatabaseStorage/ErrorHandler.inc');
 
 /**
  * Name of the sequence we'll use for GalleryEntity ids
  */
 define('DATABASE_SEQUENCE_ID', 'SequenceId');
+
+/**
+ * Name of the sequence we'll use for lock ids
+ */
+define('DATABASE_SEQUENCE_LOCK', 'SequenceLock');
 
 /**
  * Default prefix to prepend to table names
@@ -64,6 +69,14 @@ class DatabaseStorage /* implements GalleryStorage */ {
      * @access private
      */
     var $_db;
+
+    /**
+     * Internal pointer to a non-transactional ADOdb database object
+     *
+     * @var object ADOdb $_nonTransactionalDb
+     * @access private
+     */
+    var $_nonTransactionalDb;
 
     /**
      * Name of the database user
@@ -258,6 +271,31 @@ class DatabaseStorage /* implements GalleryStorage */ {
     }
 
     /**
+     * Return a non transactional database connection
+     *
+     * @return array object GalleryStatus a status code
+     *               object ADOdb a database connection
+     */
+    function _getNonTransactionalDatabaseConnection() {
+	/*
+	 * If we're transactional, then we need another connection to
+	 * manipulate our locks, since they have to operate outside of a
+	 * transaction.
+	 */
+	if ($this->_isTransactional) {
+	    if (empty($this->_nonTransactionalDb)) {
+		list ($ret, $this->_nonTransactionalDb) = $this->_getConnection();
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	    }
+	    return array(GalleryStatus::success(), $this->_nonTransactionalDb);
+	} else {
+	    return array(GalleryStatus::success(), $this->_db);
+	}
+    }
+	
+    /**
      * Load the GalleryEntities with the ids specified
      *
      * @param array the ids of the GalleryEntities to load
@@ -342,7 +380,8 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	    $this->_traceStop();
 	    if ($recordSet) {
 		if ($recordSet->RecordCount() != sizeof($targetIds)) {
-		    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
+		    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
+				 null);
 		}
 
 		/* Process all the results */
@@ -353,7 +392,8 @@ class DatabaseStorage /* implements GalleryStorage */ {
 		    }
 		    $entity = new $className;
 		    if (empty($entity)) {
-			return array(GalleryStatus::error(ERROR_BAD_DATA_TYPE, __FILE__, __LINE__), null);
+			return array(GalleryStatus::error(ERROR_BAD_DATA_TYPE, __FILE__, __LINE__),
+				     null);
 		    }
 
 		    for ($i = 0; $i < sizeof($callbacks); $i++) {
@@ -457,7 +497,6 @@ class DatabaseStorage /* implements GalleryStorage */ {
 		 * need to insert into in order for this class to be completely
 		 * serialized.
 		 */
-
 		if (!isset($dataTable[$tableName])) {
 		    $dataTable[$tableName] = array();
 		}
@@ -495,12 +534,11 @@ class DatabaseStorage /* implements GalleryStorage */ {
 		$recordSet = $this->_db->Execute($query, $data);
 		$this->_traceStop();
 
-		if ($recordSet === false) {
+		if (!$recordSet) {
 		    return GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
 		}
 	    }
 	} else {
-
 	    /*
 	     * Iterate through the data table and make an UPDATE statement for
 	     * each table that requires one.  Make sure that we do the table
@@ -549,7 +587,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 		$recordSet = $this->_db->Execute($query, $data);
 		$this->_traceStop();
 
-		if ($recordSet === false) {
+		if (!$recordSet) {
 		    return GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
 		} else {
 		    $affectedRows = $this->_db->Affected_Rows();
@@ -625,7 +663,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	    $this->_traceStart();
 	    $recordSet = $this->_db->Execute($query, $data);
 	    $this->_traceStop();
-	    if ($recordSet === false) {
+	    if (!$recordSet) {
 		return GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
 	    }
 	}
@@ -676,9 +714,10 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	}
 
 	/*
-	 * We could check the serial number against the database, or check to see if the entity is modified in
-	 * order to figure out whether or not we should refresh.  But either way that requires a database hit
-	 * so we might as well just retrieve the record every time
+	 * We could check the serial number against the database, or check to
+	 * see if the entity is modified in order to figure out whether or not
+	 * we should refresh.  But either way that requires a database hit so we
+	 * might as well just retrieve the record every time
 	 */
 	list ($ret, list($freshEntity)) = $this->loadEntities(array($entity->getId()));
 	if ($ret->isError()) {
@@ -686,6 +725,350 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	}
 
 	return array(GalleryStatus::success(), $freshEntity);
+    }
+
+    /**
+     * Acquire read locks on the given items
+     *
+     * @access public
+     * @param int timeout before giving up on the lock
+     * @return array object GalleryStatus a status code
+     *               object a GalleryLock instance
+     */
+    function acquireReadLock($entityIds, $timeout) {
+	/* It's ok to pass in a single id */
+	if (!is_array($entityIds)) {
+	    $entityIds = array($entityIds);
+	}
+
+	/* Acquire a non-transactional connection to use for this request */
+	list ($ret, $db) = $this->_getNonTransactionalDatabaseConnection();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Know when to call it quits */
+	$cutoffTime = time() + $timeout;
+
+	/* Get the true name of the lock table */
+	list ($lockTable, $unused) = $this->_translateTableName('Lock');
+
+	/*
+	 * Algorithm:
+	 * 1. Get clearance to acquire locks (and get the lock id)
+	 * 2. If any of the entities that we want to lock are currently write
+	 *    locked, then clear the request and go back to step 1.
+	 * 3. Acquire our read locks
+	 */
+	while (true) {
+	    list($ret, $lockId) = $this->_getLockClearance($cutoffTime);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    /*
+	     * Check to see if any of the ids that we care about are write
+	     * locked.
+	     */
+	    $writeEntityIdCol = $this->_translateColumnName('writeEntityId');
+	    $markers = GalleryUtilities::makeMarkers(sizeof($entityIds));
+	    $query = 'SELECT COUNT(*) FROM ' . $lockTable . ' ' .
+		    'WHERE ' . $writeEntityIdCol . ' IN (' . $markers . ') ';
+	    $data = $entityIds;
+
+	    $GLOBALS['ADODB_FETCH_MODE'] = ADODB_FETCH_NUM;
+	    $this->_traceStart();
+	    $recordSet = $db->Execute($query, $data);
+	    $this->_traceStop();
+	    if (!$recordSet) {
+		$this->_releaseLockById($lockId);
+		return array(GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__), null);
+	    }
+
+	    $row = $recordSet->FetchRow();
+	    if ($row[0] == 0 ) {
+		/* Success */
+		break;
+	    } else {
+		/* An entity that we want is write locked */
+		$this->_releaseLockById($lockId);
+
+		if (time() > $cutoffTime) {
+		    return array(GalleryStatus::error(ERROR_LOCK_TIMEOUT, __FILE__, __LINE__), null);
+		}
+
+		/* Wait a second and try again */
+		sleep(1);
+
+		/* Expire any bogus locks */
+		$ret = $this->_expireLocks();
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	    }
+	}
+	    
+	/* Put in a read lock for every entity id */
+	$lockIdCol = $this->_translateColumnName('lockId');
+	$readEntityIdCol = $this->_translateColumnName('readEntityId');
+	$freshUntilCol = $this->_translateColumnName('freshUntil');
+	$freshUntil = time() + 30;
+	foreach ($entityIds as $entityId) {
+	    $query = sprintf('INSERT INTO %s (%s, %s, %s) VALUES (?, ?, ?)',
+			     $lockTable, $lockIdCol, $readEntityIdCol, $freshUntilCol);
+	    $data = array($lockId, $entityId, $freshUntil);
+	    $this->_traceStart();
+	    $recordSet = $db->Execute($query, $data);
+	    $this->_traceStop();
+	    if (!$recordSet) {
+		$this->_releaseLockById($lockId);
+		return array(GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__), null);
+	    }
+	}
+
+	/* Drop the lock request, now that we've got the write locks */
+	$requestCol = $this->_translateColumnName('request');
+	$query = 'DELETE FROM ' . $lockTable . ' ' .
+		'WHERE ' . $lockIdCol . '=? AND ' . $requestCol . '=1';
+	$data = array($lockId);
+	$this->_traceStart();
+	$recordSet = $db->Execute($query, $data);
+	$this->_traceStop();
+	if (!$recordSet) {
+	    $this->_releaseLockById($lockId);
+	    return array(GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__), null);
+	}
+
+	return array(GalleryStatus::success(),
+		     array($lockId, array('type' => LOCK_READ, 'ids' => $entityIds)));
+    }
+
+    /**
+     * Acquire write locks on the given items
+     *
+     * @access public
+     * @param array or integer a set of ids
+     * @param int timeout before giving up on the lock
+     * @return array object GalleryStatus a status code
+     *               object a GalleryLock instance
+     */
+    function acquireWriteLock($entityIds, $timeout) {
+	/* It's ok to pass in a single id */
+	if (!is_array($entityIds)) {
+	    $entityIds = array($entityIds);
+	}
+
+	/* Acquire a non-transactional connection to use for this request */
+	list ($ret, $db) = $this->_getNonTransactionalDatabaseConnection();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
+	/* Know when to call it quits */
+	$cutoffTime = time() + $timeout;
+
+	/* Get the true name of the lock table */
+	list ($lockTable, $unused) = $this->_translateTableName('Lock');
+
+	/*
+	 * Algorithm:
+	 * 1. Get clearance to acquire locks (and get the lock id)
+	 * 2. If any of the entities that we want to lock are currently locked,
+	 *    then clear the request and go back to step 1.
+	 * 3. Acquire our write locks
+	 */
+	while (true) {
+	    list($ret, $lockId) = $this->_getLockClearance($cutoffTime);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	
+	    /*
+	     * Check to see if any of the ids that we care about are locked.
+	     */
+	    $readEntityIdCol = $this->_translateColumnName('readEntityId');
+	    $writeEntityIdCol = $this->_translateColumnName('writeEntityId');
+	    $markers = GalleryUtilities::makeMarkers(sizeof($entityIds));
+	    $query = 'SELECT COUNT(*) FROM ' . $lockTable . ' ' .
+		    'WHERE ' . $readEntityIdCol . ' IN (' . $markers . ') ' .
+		    'OR ' . $writeEntityIdCol . ' IN (' . $markers . ')';
+	    $data = $entityIds;
+	    $data = array_merge($data, $entityIds);
+
+	    $GLOBALS['ADODB_FETCH_MODE'] = ADODB_FETCH_NUM;
+	    $this->_traceStart();
+	    $recordSet = $db->Execute($query, $data);
+	    $this->_traceStop();
+	    if (!$recordSet) {
+		$this->_releaseLockById($lockId);
+		return array(GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__), null);
+	    }
+
+	    $row = $recordSet->FetchRow();
+	    if ($row[0] == 0 ) {
+		/* Success */
+		break;
+	    } else {
+		/* An entity that we want is still locked */
+		$this->_releaseLockById($lockId);
+
+		if (time() > $cutoffTime) {
+		    return array(GalleryStatus::error(ERROR_LOCK_TIMEOUT, __FILE__, __LINE__), null);
+		}
+
+		/* Wait a second and try again */
+		sleep(1);
+
+		/* Expire any bogus locks */
+		$ret = $this->_expireLocks();
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	    }
+	}
+
+	/*
+	 * We are approved to acquire our write locks.
+	 */
+	$lockIdCol = $this->_translateColumnName('lockId');
+	$writeEntityIdCol = $this->_translateColumnName('writeEntityId');
+	$freshUntilCol = $this->_translateColumnName('freshUntil');
+	$freshUntil = time() + 30;
+	foreach ($entityIds as $entityId) {
+	    $query = sprintf('INSERT INTO %s (%s, %s, %s) VALUES (?, ?, ?)',
+			     $lockTable, $lockIdCol, $writeEntityIdCol, $freshUntilCol);
+	    $data = array($lockId, $entityId, $freshUntil);
+	    $this->_traceStart();
+	    $recordSet = $db->Execute($query, $data);
+	    $this->_traceStop();
+	    if (!$recordSet) {
+		$this->_releaseLockById($lockId);
+		return array(GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__), null);
+	    }
+	}
+
+	/* Drop the lock request, now that we've got the write locks */
+	$requestCol = $this->_translateColumnName('request');
+	$query = 'DELETE FROM ' . $lockTable . ' ' .
+		'WHERE ' . $lockIdCol . '=? AND ' . $requestCol . '=1';
+	$data = array($lockId);
+	$this->_traceStart();
+	$recordSet = $db->Execute($query, $data);
+	$this->_traceStop();
+	if (!$recordSet) {
+	    $this->_releaseLockById($lockId);
+	    return array(GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__), null);
+	}
+
+	return array(GalleryStatus::success(),
+		     array($lockId, array('type' => LOCK_WRITE, 'ids' => $entityIds)));
+    }
+
+    /**
+     * Refresh all the locks that we hold so that they aren't accidentally considered expired
+     *
+     * @param array the lock ids
+     * @param int the new "fresh until" timestamp
+     * @return object GalleryStatus a status code
+     * @static
+     */
+    function refreshLocks($lockIds, $freshUntil) {
+	list ($lockTable, $unused) = $this->_translateTableName('Lock');
+	$lockIdCol = $this->_translateColumnName('lockId');
+	$freshUntilCol = $this->_translateColumnName('freshUntil');
+	$lockIdMarkers = GalleryUtilities::makeMarkers(sizeof($lockIds));
+	$query = sprintf('UPDATE %s SET %s = ? WHERE %s in (%s)',
+			 $lockTable, $freshUntilCol, $lockIdCol, $lockIdMarkers);
+
+	$this->_traceStart();
+	$data = array_merge(array($freshUntil), $lockIds);
+	$recordSet = $this->_db->Execute($query, $data);
+	$this->_traceStop();
+	
+	if (!$recordSet) {
+	    return GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
+	}
+	
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Refresh all the locks that we hold so that they aren't accidentally considered expired
+     *
+     * @param array the lock ids
+     * @param int the new "fresh until" timestamp
+     * @return object GalleryStatus a status code
+     * @static
+     */
+    function _expireLocks() {
+	list ($lockTable, $unused) = $this->_translateTableName('Lock');
+	$freshUntilCol = $this->_translateColumnName('freshUntil');
+	$query = sprintf('DELETE FROM %s WHERE %s < ?',
+			 $lockTable, $freshUntilCol);
+
+	$this->_traceStart();
+	$recordSet = $this->_db->Execute($query, array(time()));
+	$this->_traceStop();
+	
+	if (!$recordSet) {
+	    return GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
+	}
+	
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Internal function to release a lock by id.  Outsiders should use
+     * releaseLock()
+     *
+     * @access private
+     * @param int the lock id
+     * @return object GalleryStatus a status code
+     */
+    function releaseLocks($lockIds) {
+	$ret = $this->_releaseLockById($lockIds);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Internal function to release a lock by id.  Outsiders should use
+     * releaseLock()
+     *
+     * @access private
+     * @param mixed the lock id, or an array of lock ids
+     * @return object GalleryStatus a status code
+     */
+    function _releaseLockById($lockIds) {
+	if (!is_array($lockIds)) {
+	    $lockIds = array($lockIds);
+	}
+
+	/* Acquire a non-transactional connection to use for this request */
+	list ($ret, $db) = $this->_getNonTransactionalDatabaseConnection();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	/* Get the true name of the lock table */
+	list ($lockTable, $unused) = $this->_translateTableName('Lock');
+
+	$lockIdCol = $this->_translateColumnName('lockId');
+	$markers = GalleryUtilities::makeMarkers(sizeof($lockIds));
+	$query = 'DELETE FROM ' . $lockTable . ' ' .
+		'WHERE ' . $lockIdCol . ' IN (' . $markers . ')';
+	$data = $lockIds;
+	$this->_traceStart();
+	$recordSet = $db->Execute($query, $data);
+	$this->_traceStop();
+	if ($recordSet) {
+	    return GalleryStatus::success();
+	} else {
+	    return GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
+	}
     }
 
     /**
@@ -849,7 +1232,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	$this->_traceStart();
 	$recordSet = $this->_db->Execute($query, $data);
 	$this->_traceStop();
-	if ($recordSet === false) {
+	if (!$recordSet) {
 	    return GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
 	}
 
@@ -956,7 +1339,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	$this->_traceStart();
 	$recordSet = $this->_db->Execute($query, $data);
 	$this->_traceStop();
-	if ($recordSet === false) {
+	if (!$recordSet) {
 	    return GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
 	}
 
@@ -1049,7 +1432,9 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	    }
 
 	    /* Create our sequences now */
-	    foreach (array(DATABASE_SEQUENCE_ID) as $sequenceId) {
+	    foreach (array(DATABASE_SEQUENCE_LOCK, DATABASE_SEQUENCE_ID)
+		     as $sequenceId) {
+
 		$this->_traceStart();
 		$recordSet = $this->_db->CreateSequence($this->_tablePrefix . $sequenceId);
 		$this->_traceStop();
@@ -1265,7 +1650,6 @@ class DatabaseStorage /* implements GalleryStorage */ {
 		    }
 		}
 	    }
-	    $platform->fclose($fd);
 	} else {
 	    return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__,
 					"Unable to read file $fileName");
@@ -1318,7 +1702,8 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	    }
 
 	    /* Get rid of our sequences */
-	    foreach (array(DATABASE_SEQUENCE_ID) as $sequenceId) {
+	    foreach (array(DATABASE_SEQUENCE_LOCK, DATABASE_SEQUENCE_ID)
+		     as $sequenceId) {
 
 		$this->_traceStart();
 		$recordSet = $this->_db->DropSequence($this->_tablePrefix . $sequenceId);
@@ -1691,6 +2076,82 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	    ob_end_clean();
 	    $gallery->debug($buf);
 	}
+    }
+
+    /**
+     * Internal function to get clearance to acquire locks
+     *
+     * Request clearance to acquire locks and then wait until it's our turn.
+     *
+     * @param int the time to stop trying to get clearance
+     * @return object GalleryStatus a status code
+     */
+    function _getLockClearance($cutoffTime) {
+	/* Get the true name of the lock table */
+	list ($lockTable, $unused) = $this->_translateTableName('Lock');
+	
+	/* Acquire a non-transactional connection to use for this request */
+	list ($ret, $db) = $this->_getNonTransactionalDatabaseConnection();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Get a new lock id */
+	$this->_traceStart();
+	$lockId = $db->GenId($this->_tablePrefix . DATABASE_SEQUENCE_LOCK);
+	$this->_traceStop();
+
+	/* Put in a lock request */
+	$lockIdCol = $this->_translateColumnName('lockId');
+	$requestCol = $this->_translateColumnName('request');
+	$query = 'INSERT INTO ' . $lockTable .
+		'(' . $lockIdCol . ', ' . $requestCol .
+		') VALUES (?, 1)';
+	$data = array($lockId);
+	$this->_traceStart();
+	$recordSet = $db->Execute($query, $data);
+	$this->_traceStop();
+	if (!$recordSet) {
+	    $this->_releaseLockById($lockId);
+	    return array(GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__), null);
+	}
+    
+	/* Wait till it's our turn */
+	while (true) {
+	    $query = 'SELECT ' . $lockIdCol . ' FROM ' . $lockTable . ' ' .
+		    'WHERE ' . $requestCol . '=1 ORDER BY ' .
+		    $lockIdCol . ' ASC';
+
+	    $GLOBALS['ADODB_FETCH_MODE'] = ADODB_FETCH_NUM;
+	    $this->_traceStart();
+	    $recordSet = $db->SelectLimit($query, 1);
+	    $this->_traceStop();
+	    if (!$recordSet) {
+		$this->_releaseLockById($lockId);
+		return array(GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__), null);
+	    }
+
+	    $row = $recordSet->FetchRow();
+	    if ($row[0] == $lockId) {
+		break;
+	    }
+
+	    /* Wait a second and try again */
+	    sleep(1);
+
+	    /* Expire any bogus locks */
+	    $ret = $this->_expireLocks();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    
+	    if (time() > $cutoffTime) {
+		$this->_releaseLockById($lockId);
+		return array(GalleryStatus::error(ERROR_LOCK_TIMEOUT, __FILE__, __LINE__), null);
+	    }
+	}
+
+	return array(GalleryStatus::success(), $lockId);
     }
 }
 ?>

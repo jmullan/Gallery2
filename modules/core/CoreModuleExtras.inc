@@ -26,8 +26,9 @@
  */
 
 /**
- * Extra, rarely used core module code.  Most modules will not need to push their extra code into a separate
- * class, but the core module has a lot of install code that is very rarely used so we tuck it out of the way.
+ * Extra, rarely used core module code.  Most modules will not need to push
+ * their extra code into a separate class, but the core module has a lot of
+ * install code that is very rarely used so we tuck it out of the way.
  *
  * @package GalleryCore
  * @static
@@ -105,6 +106,7 @@ class CoreModuleExtras {
 			   'misc.markup' => 'bbcode',
 			   'misc.useShortUrls' => 'false',
 			   'misc.login' => 'both',
+			   'lock.system' => 'flock',
 			   ) as $key => $value) {
 		if (!isset($param[$key])) {
 		    $ret = $module->setParameter($key, $value);
@@ -135,8 +137,10 @@ class CoreModuleExtras {
 	    $permissions[] = array('all', $gallery->i18n('All access'),
 				   GALLERY_PERMISSION_ALL_ACCESS, array());
 	    $permissions[] = array('view', $gallery->i18n('[core] View item'), 0, array());
-	    $permissions[] = array('viewResizes', $gallery->i18n('[core] View resized version(s)'), 0, array());
-	    $permissions[] = array('viewSource', $gallery->i18n('[core] View original version'), 0, array());
+	    $permissions[] = array('viewResizes', $gallery->i18n('[core] View resized version(s)'),
+				   0, array());
+	    $permissions[] = array('viewSource', $gallery->i18n('[core] View original version'),
+				   0, array());
 	    $permissions[] = array('viewAll', $gallery->i18n('[core] View all versions'),
 				   GALLERY_PERMISSION_COMPOSITE,
 				   array('core.view', 'core.viewResizes', 'core.viewSource'));
@@ -146,12 +150,14 @@ class CoreModuleExtras {
 				   GALLERY_PERMISSION_ITEM_ADMIN, array());
 	    $permissions[] = array('edit', $gallery->i18n('[core] Edit item'),
 				   GALLERY_PERMISSION_ITEM_ADMIN, array());
-	    $permissions[] = array('changePermissions', $gallery->i18n('[core] Change item permissions'),
+	    $permissions[] = array('changePermissions',
+				   $gallery->i18n('[core] Change item permissions'),
 				   GALLERY_PERMISSION_ITEM_ADMIN, array());
 	    $permissions[] = array('delete', $gallery->i18n('[core] Delete item'),
 				   GALLERY_PERMISSION_ITEM_ADMIN, array());
 	    foreach ($permissions as $p) {
-		$ret = GalleryCoreApi::registerPermission($module->getId(), 'core.' . $p[0], $p[1], $p[2], $p[3]);
+		$ret = GalleryCoreApi::registerPermission(
+		    $module->getId(), 'core.' . $p[0], $p[1], $p[2], $p[3]);
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
@@ -263,7 +269,12 @@ class CoreModuleExtras {
 
 	case '0.8.10':
 	case '0.8.11':
-	    $currentVersion = '0.8.12';
+	case '0.8.12':
+	    $ret = $module->setParameter('lock.system', 'flock');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    $currentVersion = '0.8.13';
 	    break;
 	    
 	default:
