@@ -55,7 +55,7 @@ sub extract {
       /(translate|i18n)\(\s*(((\s*\.\s*)?('((\\')?[^']*)*[^\\]'|"((\\")?[^"]*)*[^\\]"))+)\s*\)/sg) {
 	# Call out to php to parse string..
 	my ($in, $out);
-	open2($in, $out, 'php');
+	open2($in, $out, 'php -q');
 	print $out '<?php print ';
 	print $out $2;
 	print $out ' ?>';
