@@ -84,7 +84,12 @@ class GalleryItemPropertiesMap extends GalleryItemPropertiesMap_core {
             return $ret->wrap(__FILE__, __LINE__);
         }
 
-        return $storage->addMapEntry('GalleryItemPropertiesMap', $data);
+        $ret = $storage->addMapEntry('GalleryItemPropertiesMap', $data);
+        if ($ret->isError()) {
+            return $ret->wrap(__FILE__, __LINE__);
+        }
+
+        return GalleryStatus::success();
     }
 
     /**
@@ -107,7 +112,12 @@ class GalleryItemPropertiesMap extends GalleryItemPropertiesMap_core {
             return $ret->wrap(__FILE__, __LINE__);
         }
 
-        return $storage->removeMapEntry('GalleryItemPropertiesMap', $data);
+        $ret = $storage->removeMapEntry('GalleryItemPropertiesMap', $data);
+        if ($ret->isError()) {
+            return $ret->wrap(__FILE__, __LINE__);
+        }
+
+        return GalleryStatus::success();
     }
 
     /**
@@ -131,7 +141,12 @@ class GalleryItemPropertiesMap extends GalleryItemPropertiesMap_core {
             return $ret->wrap(__FILE__, __LINE__);
         }
 
-        return $storage->updateMapEntry('GalleryItemPropertiesMap', $match, $change);
+        $ret = $storage->updateMapEntry('GalleryItemPropertiesMap', $match, $change);
+        if ($ret->isError()) {
+            return $ret->wrap(__FILE__, __LINE__);
+        }
+
+        return GalleryStatus::success();
     }
   
 }

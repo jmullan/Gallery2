@@ -122,7 +122,12 @@ class <xsl:value-of select="class-name"/> extends <xsl:value-of select="class-na
             return $ret->wrap(__FILE__, __LINE__);
         }
 
-        return $storage->addMapEntry('<xsl:value-of select="/class/class-name"/>', $data);
+        $ret = $storage->addMapEntry('<xsl:value-of select="/class/class-name"/>', $data);
+        if ($ret->isError()) {
+            return $ret->wrap(__FILE__, __LINE__);
+        }
+
+        return GalleryStatus::success();
     }
 
     /**
@@ -145,7 +150,12 @@ class <xsl:value-of select="class-name"/> extends <xsl:value-of select="class-na
             return $ret->wrap(__FILE__, __LINE__);
         }
 
-        return $storage->removeMapEntry('<xsl:value-of select="/class/class-name"/>', $data);
+        $ret = $storage->removeMapEntry('<xsl:value-of select="/class/class-name"/>', $data);
+        if ($ret->isError()) {
+            return $ret->wrap(__FILE__, __LINE__);
+        }
+
+        return GalleryStatus::success();
     }
 
     /**
@@ -169,7 +179,12 @@ class <xsl:value-of select="class-name"/> extends <xsl:value-of select="class-na
             return $ret->wrap(__FILE__, __LINE__);
         }
 
-        return $storage->updateMapEntry('<xsl:value-of select="/class/class-name"/>', $match, $change);
+        $ret = $storage->updateMapEntry('<xsl:value-of select="/class/class-name"/>', $match, $change);
+        if ($ret->isError()) {
+            return $ret->wrap(__FILE__, __LINE__);
+        }
+
+        return GalleryStatus::success();
     }
   </xsl:template>
 

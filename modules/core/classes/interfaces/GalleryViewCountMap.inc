@@ -78,7 +78,12 @@ class GalleryViewCountMap extends GalleryViewCountMap_core {
             return $ret->wrap(__FILE__, __LINE__);
         }
 
-        return $storage->addMapEntry('GalleryViewCountMap', $data);
+        $ret = $storage->addMapEntry('GalleryViewCountMap', $data);
+        if ($ret->isError()) {
+            return $ret->wrap(__FILE__, __LINE__);
+        }
+
+        return GalleryStatus::success();
     }
 
     /**
@@ -101,7 +106,12 @@ class GalleryViewCountMap extends GalleryViewCountMap_core {
             return $ret->wrap(__FILE__, __LINE__);
         }
 
-        return $storage->removeMapEntry('GalleryViewCountMap', $data);
+        $ret = $storage->removeMapEntry('GalleryViewCountMap', $data);
+        if ($ret->isError()) {
+            return $ret->wrap(__FILE__, __LINE__);
+        }
+
+        return GalleryStatus::success();
     }
 
     /**
@@ -125,7 +135,12 @@ class GalleryViewCountMap extends GalleryViewCountMap_core {
             return $ret->wrap(__FILE__, __LINE__);
         }
 
-        return $storage->updateMapEntry('GalleryViewCountMap', $match, $change);
+        $ret = $storage->updateMapEntry('GalleryViewCountMap', $match, $change);
+        if ($ret->isError()) {
+            return $ret->wrap(__FILE__, __LINE__);
+        }
+
+        return GalleryStatus::success();
     }
   
 }

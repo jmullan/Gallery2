@@ -84,7 +84,12 @@ class GalleryModuleParameterMap extends GalleryModuleParameterMap_core {
             return $ret->wrap(__FILE__, __LINE__);
         }
 
-        return $storage->addMapEntry('GalleryModuleParameterMap', $data);
+        $ret = $storage->addMapEntry('GalleryModuleParameterMap', $data);
+        if ($ret->isError()) {
+            return $ret->wrap(__FILE__, __LINE__);
+        }
+
+        return GalleryStatus::success();
     }
 
     /**
@@ -107,7 +112,12 @@ class GalleryModuleParameterMap extends GalleryModuleParameterMap_core {
             return $ret->wrap(__FILE__, __LINE__);
         }
 
-        return $storage->removeMapEntry('GalleryModuleParameterMap', $data);
+        $ret = $storage->removeMapEntry('GalleryModuleParameterMap', $data);
+        if ($ret->isError()) {
+            return $ret->wrap(__FILE__, __LINE__);
+        }
+
+        return GalleryStatus::success();
     }
 
     /**
@@ -131,7 +141,12 @@ class GalleryModuleParameterMap extends GalleryModuleParameterMap_core {
             return $ret->wrap(__FILE__, __LINE__);
         }
 
-        return $storage->updateMapEntry('GalleryModuleParameterMap', $match, $change);
+        $ret = $storage->updateMapEntry('GalleryModuleParameterMap', $match, $change);
+        if ($ret->isError()) {
+            return $ret->wrap(__FILE__, __LINE__);
+        }
+
+        return GalleryStatus::success();
     }
   
 }

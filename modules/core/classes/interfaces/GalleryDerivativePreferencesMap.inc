@@ -90,7 +90,12 @@ class GalleryDerivativePreferencesMap extends GalleryDerivativePreferencesMap_co
             return $ret->wrap(__FILE__, __LINE__);
         }
 
-        return $storage->addMapEntry('GalleryDerivativePreferencesMap', $data);
+        $ret = $storage->addMapEntry('GalleryDerivativePreferencesMap', $data);
+        if ($ret->isError()) {
+            return $ret->wrap(__FILE__, __LINE__);
+        }
+
+        return GalleryStatus::success();
     }
 
     /**
@@ -113,7 +118,12 @@ class GalleryDerivativePreferencesMap extends GalleryDerivativePreferencesMap_co
             return $ret->wrap(__FILE__, __LINE__);
         }
 
-        return $storage->removeMapEntry('GalleryDerivativePreferencesMap', $data);
+        $ret = $storage->removeMapEntry('GalleryDerivativePreferencesMap', $data);
+        if ($ret->isError()) {
+            return $ret->wrap(__FILE__, __LINE__);
+        }
+
+        return GalleryStatus::success();
     }
 
     /**
@@ -137,7 +147,12 @@ class GalleryDerivativePreferencesMap extends GalleryDerivativePreferencesMap_co
             return $ret->wrap(__FILE__, __LINE__);
         }
 
-        return $storage->updateMapEntry('GalleryDerivativePreferencesMap', $match, $change);
+        $ret = $storage->updateMapEntry('GalleryDerivativePreferencesMap', $match, $change);
+        if ($ret->isError()) {
+            return $ret->wrap(__FILE__, __LINE__);
+        }
+
+        return GalleryStatus::success();
     }
   
 }

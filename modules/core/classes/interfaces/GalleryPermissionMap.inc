@@ -90,7 +90,12 @@ class GalleryPermissionMap extends GalleryPermissionMap_core {
             return $ret->wrap(__FILE__, __LINE__);
         }
 
-        return $storage->addMapEntry('GalleryPermissionMap', $data);
+        $ret = $storage->addMapEntry('GalleryPermissionMap', $data);
+        if ($ret->isError()) {
+            return $ret->wrap(__FILE__, __LINE__);
+        }
+
+        return GalleryStatus::success();
     }
 
     /**
@@ -113,7 +118,12 @@ class GalleryPermissionMap extends GalleryPermissionMap_core {
             return $ret->wrap(__FILE__, __LINE__);
         }
 
-        return $storage->removeMapEntry('GalleryPermissionMap', $data);
+        $ret = $storage->removeMapEntry('GalleryPermissionMap', $data);
+        if ($ret->isError()) {
+            return $ret->wrap(__FILE__, __LINE__);
+        }
+
+        return GalleryStatus::success();
     }
 
     /**
@@ -137,7 +147,12 @@ class GalleryPermissionMap extends GalleryPermissionMap_core {
             return $ret->wrap(__FILE__, __LINE__);
         }
 
-        return $storage->updateMapEntry('GalleryPermissionMap', $match, $change);
+        $ret = $storage->updateMapEntry('GalleryPermissionMap', $match, $change);
+        if ($ret->isError()) {
+            return $ret->wrap(__FILE__, __LINE__);
+        }
+
+        return GalleryStatus::success();
     }
   
 }

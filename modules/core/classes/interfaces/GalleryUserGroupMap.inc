@@ -78,7 +78,12 @@ class GalleryUserGroupMap extends GalleryUserGroupMap_core {
             return $ret->wrap(__FILE__, __LINE__);
         }
 
-        return $storage->addMapEntry('GalleryUserGroupMap', $data);
+        $ret = $storage->addMapEntry('GalleryUserGroupMap', $data);
+        if ($ret->isError()) {
+            return $ret->wrap(__FILE__, __LINE__);
+        }
+
+        return GalleryStatus::success();
     }
 
     /**
@@ -101,7 +106,12 @@ class GalleryUserGroupMap extends GalleryUserGroupMap_core {
             return $ret->wrap(__FILE__, __LINE__);
         }
 
-        return $storage->removeMapEntry('GalleryUserGroupMap', $data);
+        $ret = $storage->removeMapEntry('GalleryUserGroupMap', $data);
+        if ($ret->isError()) {
+            return $ret->wrap(__FILE__, __LINE__);
+        }
+
+        return GalleryStatus::success();
     }
 
     /**
@@ -125,7 +135,12 @@ class GalleryUserGroupMap extends GalleryUserGroupMap_core {
             return $ret->wrap(__FILE__, __LINE__);
         }
 
-        return $storage->updateMapEntry('GalleryUserGroupMap', $match, $change);
+        $ret = $storage->updateMapEntry('GalleryUserGroupMap', $match, $change);
+        if ($ret->isError()) {
+            return $ret->wrap(__FILE__, __LINE__);
+        }
+
+        return GalleryStatus::success();
     }
   
 }

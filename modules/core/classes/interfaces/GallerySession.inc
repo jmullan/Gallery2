@@ -84,7 +84,12 @@ class GallerySession extends GallerySession_core {
             return $ret->wrap(__FILE__, __LINE__);
         }
 
-        return $storage->addMapEntry('GallerySession', $data);
+        $ret = $storage->addMapEntry('GallerySession', $data);
+        if ($ret->isError()) {
+            return $ret->wrap(__FILE__, __LINE__);
+        }
+
+        return GalleryStatus::success();
     }
 
     /**
@@ -107,7 +112,12 @@ class GallerySession extends GallerySession_core {
             return $ret->wrap(__FILE__, __LINE__);
         }
 
-        return $storage->removeMapEntry('GallerySession', $data);
+        $ret = $storage->removeMapEntry('GallerySession', $data);
+        if ($ret->isError()) {
+            return $ret->wrap(__FILE__, __LINE__);
+        }
+
+        return GalleryStatus::success();
     }
 
     /**
@@ -131,7 +141,12 @@ class GallerySession extends GallerySession_core {
             return $ret->wrap(__FILE__, __LINE__);
         }
 
-        return $storage->updateMapEntry('GallerySession', $match, $change);
+        $ret = $storage->updateMapEntry('GallerySession', $match, $change);
+        if ($ret->isError()) {
+            return $ret->wrap(__FILE__, __LINE__);
+        }
+
+        return GalleryStatus::success();
     }
   
 }
