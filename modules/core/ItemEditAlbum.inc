@@ -130,13 +130,6 @@ class ItemEditAlbumController extends GalleryController {
 		$lockIds = array();
 
 		/* Recreate the thumbnails, if requested to do so */
-
-		/*
-		 * TODO: it's possible for the data item not to have
-		 * resizes/thumbnails because it was created when there were no
-		 * graphics toolkits.  Improve this code to detect that
-		 * situation and build new thumbnails/resizes
-		 */
 		if (isset($form['recreateThumbnails'])) {
 		    /* Load the thumbnail of the children */
 		    list ($ret, $thumbTable) =
@@ -147,30 +140,74 @@ class ItemEditAlbumController extends GalleryController {
 
 		    foreach ($childItems as $child) {
 			$childId = $child->getId();
-			if (!isset($thumbTable[$childId])) {
-			    continue;
+			$thumbnail = null;
+			if (isset($thumbTable[$childId])) {
+			    /* We already have a thumbnail */
+			    $thumbnail = $thumbTable[$childId];
+			    $sourceId = $thumbnail->getDerivativeSourceId();
+
+			    /* Load the source of the thumbnail */
+			    list($ret, $source) = GalleryCoreApi::loadEntitiesById($sourceId);
+			    if ($ret->isError() && $ret->getErrorCode() & ERROR_MISSING_OBJECT) {
+				/* Someone deleted the source image, we can do
+				   nothing but delete the thumbnail */
+				list ($ret, $lockIds[]) = GalleryCoreApi::acquireWriteLock($thumbnail->getId());
+				if ($ret->isError()) {
+				    return array($ret->wrap(__FILE__, __LINE__), null);
+				}
+				$ret = $thumbnail->delete();
+				if ($ret->isError()) {
+				    return array($ret->wrap(__FILE__, __LINE__), null);
+				}
+				continue;
+			    } elseif ($ret->isError()) {
+				return array($ret->wrap(__FILE__, __LINE__), null);
+			    }
+			} else {
+			    /* There is no thumbnail yet (maybe the file was uploaded
+			       when there was no graphic toolkit). Build new thumbnail
+			       from source if its a GalleryDataItem (with mimeType) */
+			    $source = $child;
+			    $sourceId = $childId;
+			    if (!GalleryUtilities::isA($source, 'GalleryDataItem')) {
+				/* Its an album or something else, we can't make a thumbnail */
+				continue;
+			    }
+			    list ($ret, $thumbnail) =
+				GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryDerivativeImage');
+			    if ($ret->isError()) {
+				return array($ret->wrap(__FILE__, __LINE__), null);
+			    }
+			    $ret = $thumbnail->create($sourceId, DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
+			    if ($ret->isError()) {
+				return array($ret->wrap(__FILE__, __LINE__));
+			    }
 			}
-			
-			$thumbnail = $thumbTable[$childId];
+
+			if ($thumbnail == null) {
+			    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
+			}
 
 			/* Change the thumbnail */
 			$operation = 'thumbnail|' . $form['thumbnail']['size'];
-			list ($ret, $isSupported) =
-			    GalleryCoreApi::isSupportedOperationSequence($child->getMimeType(), $operation);
+			list ($ret, $isSupported, $outputMimeType) =
+			    GalleryCoreApi::isSupportedOperationSequence($source->getMimeType(), $operation);
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
 			
 			if (!$isSupported) {
 			    $operation = 'convert-to-image/jpeg;' . $operation;
-			    list ($ret, $isSupported) =
-				GalleryCoreApi::isSupportedOperationSequence($child->getMimeType(), $operation);
+			    list ($ret, $isSupported, $outputMimeType) =
+				GalleryCoreApi::isSupportedOperationSequence($source->getMimeType(), $operation);
 			    if ($ret->isError()) {
 				return array($ret->wrap(__FILE__, __LINE__), null);
 			    }
 			}
 
 			if ($isSupported) {
+			    $thumbnail->setDerivativeMimeType($outputMimeType);
+			    $thumbnail->setDerivativeSourceId($sourceId);
 			    $thumbnail->setDerivativeOperations($operation);
 			    if ($thumbnail->isModified()) {
 				list ($ret, $lockIds[]) = GalleryCoreApi::acquireWriteLock($thumbnail->getId());
