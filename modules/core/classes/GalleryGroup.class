@@ -1,0 +1,167 @@
+<?php
+/*
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2002 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+/**
+ * Representation of a group of users
+ *
+ * A group is a set of GalleryUsers that can be treated as if they were a
+ * single user.  This is very useful for managing permissions.
+ *
+ * @gallery metainfo 1.0
+ * 
+ * @version $Id$
+ * @package GalleryCore
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+class GalleryGroup extends GalleryNucleus {
+	
+    /*
+     * ****************************************
+     *                 Members
+     * ****************************************
+     */
+
+    /**
+     * The group name
+     *
+     * @gallery persistent
+     * @gallery flag STORAGE_TYPE_STRING
+     * @gallery flag STORAGE_MODIFIER_SMALL
+     *
+     * @var string $_name
+     */
+    var $_name;
+
+    /**
+     * The set of users in this group
+     *
+     * @gallery persistent
+     * @gallery flag STORAGE_TYPE_MAP
+     * @gallery flag STORAGE_TYPE_INTEGER
+     *
+     * @var object GalleryList $_users
+     */
+    var $_users;
+
+    /*
+     * ****************************************
+     *                 Methods
+     * ****************************************
+     */
+
+    /**
+     * Constructor
+     *
+     * Create a new blank instance, and register any members that need to
+     * persist in our storage.
+     *
+     * @access public
+     * @param string the id of an object to be loaded
+     */
+    function GalleryGroup() {
+	$this->GalleryNucleus();
+    }
+
+    /**
+     * Add the user to this group
+     *
+     * @param int a user id
+     */
+    function addUser($userId) {
+	$users =& $this->getUsers();
+	$users->set($userId, 1);
+    }
+
+    /**
+     * Remove the user from this group
+     *
+     * @param int a user id
+     */
+    function removeUser($userId) {
+	$users =& $this->getUsers();
+	$users->remove($userId);
+    }
+
+    /* BEGIN: Accessor Block.  DO NOT MODIFY! */
+    
+    /**
+     * Return the meta class information about this class
+     *
+     * @return array member => array(type, class)
+     */
+    function getMetaInfo() {
+        $meta = parent::getMetaInfo();
+        $meta['members']['users'] = array(
+            'class' => 'GalleryGroup',
+            'type' => STORAGE_TYPE_MAP |
+                      STORAGE_TYPE_INTEGER);
+        $meta['members']['name'] = array(
+            'class' => 'GalleryGroup',
+            'type' => STORAGE_TYPE_STRING |
+                      STORAGE_MODIFIER_SMALL);
+        $meta['version'] = array('major' => 1, 'minor' => 0);
+    
+        return $meta;
+    }
+    
+    /**
+     * Set the value of name
+     * 
+     * @param string the new value for name
+     * @access public
+     */
+    function setName($value) {
+        assert('isset($value)');
+        $this->_name = $value;
+        $this->setModifiedFlag('name', MEMBER_MODIFIED);
+    }
+    
+    /**
+     * Get the value of name
+     * 
+     * @access public
+     * @return string the current value of name
+     */
+    function getName() {
+        return $this->_name;
+    }
+    
+    /**
+     * Get a reference to the users object
+     * 
+     * @access public
+     * @return object GalleryMap the users instance
+     */
+    function &getUsers() {
+        if (!($this->getLoadedFlag('users'))) {
+            global $gallery;
+            $storage = $gallery->getStorage();
+            $this->_users = new GalleryMap();
+            $this->_users->setParentInfo($this, 'users');
+            $storage->loadMember($this, 'users', $this->_users);
+        }
+        return $this->_users;
+    }
+    
+    
+    /* END: Accessor Block.  DO NOT MODIFY! */
+}
+?>

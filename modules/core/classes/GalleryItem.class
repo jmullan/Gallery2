@@ -20,7 +20,8 @@
 
 
 /**
- * Base class for all objects in the Gallery composite tree
+ * Abstract base class for all objects in the Gallery
+ * composite tree
  *
  * Container for all functionality and data common objects that 
  * Gallery can deal with.  Each GalleryItem has the capacity
@@ -32,9 +33,10 @@
  *
  * @version $Id$
  * @package GalleryCore
+ * @abstract
  * @author Bharat Mediratta <bharat@menalto.com>
  */
-class GalleryItem extends GalleryNucleus {
+class GalleryItem extends FileSystemNucleus {
 
     /*
      * ****************************************
@@ -204,7 +206,7 @@ class GalleryItem extends GalleryNucleus {
      * @access public
      */
     function GalleryItem() {
-	$this->GalleryNucleus();
+	$this->FileSystemNucleus();
     }
 
     /**
@@ -318,16 +320,16 @@ class GalleryItem extends GalleryNucleus {
      * @param string permission name
      * @return boolean true if the given user id has the given permission for this item
      */
-    function hasPermission($id, $perm) {
+    function hasPermission($userId, $perm) {
 
 	/* Check for an explicit deny.  Deny supercedes allow. */
-	$denied = $this->_deniedPermissions->get($id);
+	$denied = $this->_deniedPermissions->get($userId);
 	if ($denied && ($denied & $perm)) {
 	    return false;
 	}
 
 	/* Check for an explicit allow */
-	$allowed = $this->_allowedPermissions->get($id);
+	$allowed = $this->_allowedPermissions->get($userId);
 	if ($allowed && ($allowed & $perm)) {
 	    return true;
 	}
@@ -335,7 +337,7 @@ class GalleryItem extends GalleryNucleus {
 	/* Defer to the parent */
 	$parent =& $this->getParent();
 	if ($parent) {
-	    return $parent->hasPermission($id, $perm);
+	    return $parent->hasPermission($userId, $perm);
 	}
 
 	/* No clear answer, so the default is deny */
@@ -352,18 +354,18 @@ class GalleryItem extends GalleryNucleus {
      * @param string the id of the user
      * @param int the specific permission
      */
-    function allowPermission($id, $perm) {
+    function allowPermission($userId, $perm) {
 
 	/*
 	 * Clear the permissions for this id.
 	 */
-	$this->removePermission($id, $perm);
+	$this->removePermission($userId, $perm);
 
 	/* Grant the permission */
-	$allowed = $this->_allowedPermissions->get($id);
+	$allowed = $this->_allowedPermissions->get($userId);
 	if (!($allowed && ($allowed & $perm))) {
 	    $allowed = ($allowed | $perm);
-	    $this->_allowedPermissions->set($id, $allowed);
+	    $this->_allowedPermissions->set($userId, $allowed);
 	}
     }
 
@@ -377,18 +379,18 @@ class GalleryItem extends GalleryNucleus {
      * @param string the id of the user
      * @param int the specific permission
      */
-    function denyPermission($id, $perm) {
+    function denyPermission($userId, $perm) {
 
 	/*
 	 * Clear the permission for this id.
 	 */
-	$this->removePermission($id, $perm);
+	$this->removePermission($userId, $perm);
 
 	/* Grant the permission */
-	$denied = $this->_deniedPermissions->get($id);
+	$denied = $this->_deniedPermissions->get($userId);
 	if (!($denied && ($denied & $perm))) {
 	    $denied = ($denied | $perm);
-	    $this->_deniedPermissions->set($id, $denied);
+	    $this->_deniedPermissions->set($userId, $denied);
 	}
 
     }
@@ -404,20 +406,20 @@ class GalleryItem extends GalleryNucleus {
      * @param string the id of the user
      * @param int the specific permission
      */
-    function removePermission($id, $perm) {
+    function removePermission($userId, $perm) {
 
 	/* If the user was allowed this permission, un-allow them */
-	$allowed = $this->_allowedPermissions->get($id);
+	$allowed = $this->_allowedPermissions->get($userId);
 	if ($allowed && ($allowed & $perm)) {
 	    $allowed = ($allowed ^ $perm);
-	    $this->_allowedPermissions->set($id, $allowed);
+	    $this->_allowedPermissions->set($userId, $allowed);
 	}
 
 	/* If the user was denied this permission, un-deny them */
-	$denied = $this->_deniedPermissions->get($id);
+	$denied = $this->_deniedPermissions->get($userId);
 	if ($denied && ($denied & $perm)) {
 	    $denied = ($denied ^ $perm);
-	    $this->_deniedPermissions->set($id, $denied);
+	    $this->_deniedPermissions->set($userId, $denied);
 	}
     }
 
@@ -441,17 +443,17 @@ class GalleryItem extends GalleryNucleus {
 	}
 
 	$tmp = $this->_deniedPermissions->toArray();
-	foreach ($tmp as $id => $perm) {
+	foreach ($tmp as $userId => $perm) {
 	    /* Remove allows from the denied list, add them to allowed list */
-	    $denied[$id] &= ~$perm;
-	    $allowed[$id] |= $perm; 
+	    $denied[$userId] &= ~$perm;
+	    $allowed[$userId] |= $perm; 
 	}
 
 	$tmp = $this->_allowedPermissions->toArray();
-	foreach ($tmp as $id => $perm) {
+	foreach ($tmp as $userId => $perm) {
 	    /* Remove denys from the allowed list, add them to deny list */
-	    $allowed[$id] &= ~$perm; 
-	    $denied[$id] |= $perm;
+	    $allowed[$userId] &= ~$perm; 
+	    $denied[$userId] |= $perm;
 	}
 
 	return array($allowed, $denied);
@@ -508,8 +510,7 @@ class GalleryItem extends GalleryNucleus {
 	    $childIds =& $this->getChildIds();
 	    $size = $childIds->sizeof();
 	    for ($i = 0; $i < $size; $i++) {
-		$child = new GalleryNucleus();
-		$ret = $child->load($childIds->get($i));
+		list($ret, $child) = GalleryNucleus::load($childIds->get($i));
 		if ($ret->isError()) {
 		    return $ret;
 		}
@@ -695,6 +696,11 @@ class GalleryItem extends GalleryNucleus {
      */
     function setIsHtmlAllowed($value) {
         assert('isset($value)');
+        if (empty($value)) {
+            $value = 0;
+        } else {
+            $value = 1;
+        }
         $this->_isHtmlAllowed = $value;
         $this->setModifiedFlag('isHtmlAllowed', MEMBER_MODIFIED);
     }

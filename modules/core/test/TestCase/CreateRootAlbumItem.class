@@ -2,58 +2,56 @@
 
 class CreateAlbumItemTestCase extends TestCase {
 
-    var $_item;
-
     function getDescription() {
 	return "Create a new AlbumItem, save it, modify it, save it again";
     }
 
     function testStart() {
-	$this->_item = new AlbumItem();
+	$album = new AlbumItem();
 
 	print("Creating new album item\n");
-	$ret = $this->_item->createRoot("test");
-	$this->dump($ret, $this->_item);
+	$ret = $album->createRoot("test");
+	$this->dump($ret, $album);
 
 	if ($ret->isError()) {
 	    $this->error($ret);
-	    $this->_item = null;
+	    $album = null;
 	    return $ret;
 	}
 	
 	print("SAVE\n");
-	$ret = $this->_item->save();
-	$this->dump($ret, $this->_item);
+	$ret = $album->save();
+	$this->dump($ret, $album);
 	if ($ret->isError()) {
 	    $this->error($ret);
 	    return $ret;
 	}
 
 	global $gallery;
-	$ret = $gallery->lockLocal(array($this->_item->getId()));
+	$ret = $gallery->lockLocal(array($album->getId()));
 	if ($ret->isError()) {
 	    $this->error($ret);
 	    return $ret;
 	}
 
-	$this->_item->setRows(3);
-	$childIds =& $this->_item->getChildIds();
+	$album->setRows(3);
+	$childIds =& $album->getChildIds();
 	$childIds->push(3);
 	$childIds->unshift(5);
 	print("SECOND SAVE\n");
-	$ret = $this->_item->save();
-	$this->dump($ret, $this->_item);
+	$ret = $album->save();
+	$this->dump($ret, $album);
 	if ($ret->isError()) {
 	    $this->error($ret);
 	    return $ret;
 	}
 	
-	$this->_item->setRows(0);
-	$this->_item->setDescription("This is a longish description with " .
+	$album->setRows(0);
+	$album->setDescription("This is a longish description with " .
 				     "+=!@#$%^&*()_-|\\\"'?/>.<,}]{[~` chars in it");
 	print("THIRD SAVE\n");
-	$ret = $this->_item->save();
-	$this->dump($ret, $this->_item);
+	$ret = $album->save();
+	$this->dump($ret, $album);
 	if ($ret->isError()) {
 	    $this->error($ret);
 	    return $ret;

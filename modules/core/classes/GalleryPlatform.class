@@ -44,6 +44,9 @@ class GalleryPlatform {
      * @access public
      */
     function copy($source, $dest) {
+	global $gallery;
+	$gallery->debug("copy($source, $dest)");
+	
 	$source = $this->importPath($source);
 	$dest = $this->importPath($dest);
 	
@@ -70,6 +73,9 @@ class GalleryPlatform {
      * @access public
      */
     function file_exists($filename) {
+	global $gallery;
+	$gallery->debug("file_exists($filename)");
+	
 	$filename = $this->importPath($filename);
 	return file_exists($filename);
     }
@@ -82,6 +88,9 @@ class GalleryPlatform {
      * @access public
      */
     function is_link($filename) {
+	global $gallery;
+	$gallery->debug("is_link($filename)");
+	
 	$filename = $this->importPath($filename);
 	return is_link($filename);
     }
@@ -94,6 +103,9 @@ class GalleryPlatform {
      * @access public
      */
     function is_dir($filename) {
+	global $gallery;
+	$gallery->debug("is_dir($filename)");
+	
 	$filename = $this->importPath($filename);
 	return is_dir($filename);
     }
@@ -106,6 +118,9 @@ class GalleryPlatform {
      * @access public
      */
     function is_file($filename) {
+	global $gallery;
+	$gallery->debug("is_file($filename)");
+	
 	$filename = $this->importPath($filename);
 	return is_file($filename);
     }
@@ -118,6 +133,9 @@ class GalleryPlatform {
      * @access public
      */
     function is_executable($filename) {
+	global $gallery;
+	$gallery->debug("is_executable($filename)");
+	
 	$filename = $this->importPath($filename);
 	return is_executable($filename);
     }
@@ -130,6 +148,9 @@ class GalleryPlatform {
      * @access public
      */
     function filesize($filename) {
+	global $gallery;
+	$gallery->debug("filesize($filename)");
+	
 	$filename = $this->importPath($filename);
 	return filesize($filename);
     }
@@ -144,6 +165,9 @@ class GalleryPlatform {
      * @access public
      */
     function fopen($filename, $mode, $use_include_path=0) {
+	global $gallery;
+	$gallery->debug("fopen($filename, $mode, $use_include_path)");
+	
 	$path = $this->importPath($filename);
 	return fopen($filename, $mode, $use_include_path);
     }
@@ -156,6 +180,9 @@ class GalleryPlatform {
      * @access public
      */
     function opendir($path) {
+	global $gallery;
+	$gallery->debug("opendir($path)");
+	
 	$path = $this->importPath($path);
 	return opendir($path);
     }
@@ -171,6 +198,9 @@ class GalleryPlatform {
      * @access public
      */
     function rename($oldname, $newname) {
+	global $gallery;
+	$gallery->debug("rename($oldname, $newname)");
+	
 	$oldname = $this->importPath($oldname);
 	$newname = $this->importPath($newname);
 
@@ -197,6 +227,9 @@ class GalleryPlatform {
      * @access public
      */
     function stat($filename) {
+	global $gallery;
+	$gallery->debug("stat($filename)");
+	
 	$filename = $this->importPath($filename);
 	return stat($filename);
     }
@@ -209,6 +242,9 @@ class GalleryPlatform {
      * @access public
      */
     function unlink($filename) {
+	global $gallery;
+	$gallery->debug("unlink($filename)");
+	
 	$filename = $this->importPath($filename);
 	return unlink($filename);
     }
@@ -221,8 +257,58 @@ class GalleryPlatform {
      * @access public
      */
     function rmdir($filename) {
+	global $gallery;
+	$gallery->debug("rmdir($filename)");
+	
 	$filename = $this->importPath($filename);
 	return rmdir($filename);
+    }
+
+    /**
+     * Delete a directory, and all its contents
+     *
+     * @param string directory name
+     * @return bool true on success, false on failure
+     * @access public
+     */
+    function recursiveRmdir($dirname) {
+	global $gallery;
+	$gallery->debug("recursiveRmdir($dirname)");
+	
+	$dirname = $this->importPath($dirname);
+
+	if (!($fd = $this->opendir($dirname))) {
+	    return false;
+	}
+
+	while (($filename = readdir($fd)) != false) {
+	    if (!strcmp($filename, ".")) {
+		continue;
+	    }
+
+	    if (!strcmp($filename, "..")) {
+		continue;
+	    }
+
+	    $path = "$dirname/$filename";
+	    
+	    if ($this->is_dir($path)) {
+		$ret = $this->recursiveRmdir($path);
+		if ($ret == false) {
+		    return $ret;
+		}
+	    }
+
+	    $ret = $this->unlink($path);
+	    if ($ret == false) {
+		return $ret;
+	    }
+	}
+	closedir($fd);
+
+	$this->rmdir($dirname);
+
+	return true;
     }
 
     /**
@@ -233,7 +319,17 @@ class GalleryPlatform {
      * @return bool true on success, false on failure
      * @access public
      */
-    function mkdir($path, $perms) {
+    function mkdir($path, $perms=false) {
+	global $gallery;
+
+	if (empty($perms)) {
+	    $perms = $gallery->getconfigValue('core.permissions.directory');
+	}
+	
+	$gallery->debug("mkdir($path, " .
+			sprintf("%o", $perms) .
+			")");
+	
 	$path = $this->importPath($path);
 	$umask = umask(0);
 	$results = mkdir($path, $perms);

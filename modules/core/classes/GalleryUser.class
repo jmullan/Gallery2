@@ -25,6 +25,8 @@
  * users.  Each instance of User contains a unique user id. It   
  * must be implemented by a class that has a persistent store for
  * the relevant user data.
+ *
+ * @gallery metainfo 1.0
  * 
  * @version $Id$
  * @package GalleryCore
@@ -42,37 +44,67 @@ class GalleryUser extends GalleryNucleus {
     /**
      * The User's username
      *
-     * @var	string
+     * @gallery persistent
+     * @gallery flag STORAGE_TYPE_STRING
+     * @gallery flag STORAGE_MODIFIER_SMALL
+     *
+     * @var string $_username
      */
     var $_username;
 
     /**
      * The User's full name
      *
-     * @var	string
+     * @gallery persistent
+     * @gallery flag STORAGE_TYPE_STRING
+     * @gallery flag STORAGE_MODIFIER_MEDIUM
+     *
+     * @var string $_fullname
      */
     var $_fullname;
 
     /**
      * The User's password in a hashed form.
      *
-     * @var	string
+     * @gallery persistent
+     * @gallery flag STORAGE_TYPE_STRING
+     * @gallery flag STORAGE_MODIFIER_SMALL
+     *
+     * @var string $_password
      */
     var $_password;
 
     /**
      * The User's email address.
      *
-     * @var	string
+     * @gallery persistent
+     * @gallery flag STORAGE_TYPE_STRING
+     * @gallery flag STORAGE_MODIFIER_MEDIUM
+     *
+     * @var string $_email
      */
     var $_email;
 
     /**
      * Is the user a Gallery admininstrator?
      *
-     * @var	boolean
+     * @gallery persistent
+     * @gallery flag STORAGE_TYPE_BOOLEAN
+     *
+     * @var boolean $_isAdmin
      */
     var $_isAdmin;
+
+    /**
+     * The set of groups this user belongs to
+     *
+     * @gallery persistent
+     * @gallery flag STORAGE_TYPE_MAP
+     * @gallery flag STORAGE_TYPE_INTEGER
+     *
+     * @var object GalleryList $_groups
+     */
+    var $_groups;
 
     /*
      * ****************************************
@@ -94,104 +126,214 @@ class GalleryUser extends GalleryNucleus {
     }
 
     /**
-     * Set the user's password
-     *
-     * Set the user's password
-     *
-     * @param string the new password (in plain text)
-     */
-    function setPassword($password) {
-    }
-
-    /**
      * Is the password provided correct?
      *
-     * @param string a password
+     * @param string a plaintext password
      * @return boolean true if the password is correct
      */
     function isCorrectPassword($password) {
+	return !strcmp(md5($password), $this->getPassword());
     }
 
     /**
-     * Get the User's id
+     * Change the user's password to the new value provided.
      *
-     * @return string the id
+     * @param string a plaintext password
      */
-    function getId() {
+    function changePassword($newPassword) {
+	$this->setPassword(md5($newPassword));
     }
 
     /**
-     * Set the User's username
+     * Add this user to the group id specified.
      *
-     * @param string the new username
+     * @param int a group id
      */
-    function setUsername($username) {
+    function addToGroup($groupId) {
+	$groups =& $this->getGroups();
+	$groups->set($groupId, 1);
     }
 
     /**
-     * Get the User's username
+     * Add this user to the group id specified.
      *
-     * @return string the username
+     * @param int a group id
+     */
+    function removeFromGroup($groupId) {
+	$groups =& $this->getGroups();
+	$groups->remove($groupId);
+    }
+
+    /* BEGIN: Accessor Block.  DO NOT MODIFY! */
+    
+    /**
+     * Return the meta class information about this class
+     *
+     * @return array member => array(type, class)
+     */
+    function getMetaInfo() {
+        $meta = parent::getMetaInfo();
+        $meta['members']['username'] = array(
+            'class' => 'GalleryUser',
+            'type' => STORAGE_TYPE_STRING |
+                      STORAGE_MODIFIER_SMALL);
+        $meta['members']['isAdmin'] = array(
+            'class' => 'GalleryUser',
+            'type' => STORAGE_TYPE_BOOLEAN);
+        $meta['members']['fullname'] = array(
+            'class' => 'GalleryUser',
+            'type' => STORAGE_TYPE_STRING |
+                      STORAGE_MODIFIER_MEDIUM);
+        $meta['members']['password'] = array(
+            'class' => 'GalleryUser',
+            'type' => STORAGE_TYPE_STRING |
+                      STORAGE_MODIFIER_SMALL);
+        $meta['members']['email'] = array(
+            'class' => 'GalleryUser',
+            'type' => STORAGE_TYPE_STRING |
+                      STORAGE_MODIFIER_MEDIUM);
+        $meta['members']['groups'] = array(
+            'class' => 'GalleryUser',
+            'type' => STORAGE_TYPE_MAP |
+                      STORAGE_TYPE_INTEGER);
+        $meta['version'] = array('major' => 1, 'minor' => 0);
+    
+        return $meta;
+    }
+    
+    /**
+     * Set the value of email
+     * 
+     * @param string the new value for email
+     * @access public
+     */
+    function setEmail($value) {
+        assert('isset($value)');
+        $this->_email = $value;
+        $this->setModifiedFlag('email', MEMBER_MODIFIED);
+    }
+    
+    /**
+     * Get the value of email
+     * 
+     * @access public
+     * @return string the current value of email
+     */
+    function getEmail() {
+        return $this->_email;
+    }
+    
+    /**
+     * Set the value of fullname
+     * 
+     * @param string the new value for fullname
+     * @access public
+     */
+    function setFullname($value) {
+        assert('isset($value)');
+        $this->_fullname = $value;
+        $this->setModifiedFlag('fullname', MEMBER_MODIFIED);
+    }
+    
+    /**
+     * Get the value of fullname
+     * 
+     * @access public
+     * @return string the current value of fullname
+     */
+    function getFullname() {
+        return $this->_fullname;
+    }
+    
+    /**
+     * Get a reference to the groups object
+     * 
+     * @access public
+     * @return object GalleryMap the groups instance
+     */
+    function &getGroups() {
+        if (!($this->getLoadedFlag('groups'))) {
+            global $gallery;
+            $storage = $gallery->getStorage();
+            $this->_groups = new GalleryMap();
+            $this->_groups->setParentInfo($this, 'groups');
+            $storage->loadMember($this, 'groups', $this->_groups);
+        }
+        return $this->_groups;
+    }
+    
+    /**
+     * Set the value of isAdmin
+     * 
+     * @param bool the new value for isAdmin
+     * @access public
+     */
+    function setIsAdmin($value) {
+        assert('isset($value)');
+        if (empty($value)) {
+            $value = 0;
+        } else {
+            $value = 1;
+        }
+        $this->_isAdmin = $value;
+        $this->setModifiedFlag('isAdmin', MEMBER_MODIFIED);
+    }
+    
+    /**
+     * Get the value of isAdmin
+     * 
+     * @access public
+     * @return bool the current value of isAdmin
+     */
+    function getIsAdmin() {
+        return $this->_isAdmin;
+    }
+    
+    /**
+     * Set the value of password
+     * 
+     * @param string the new value for password
+     * @access public
+     */
+    function setPassword($value) {
+        assert('isset($value)');
+        $this->_password = $value;
+        $this->setModifiedFlag('password', MEMBER_MODIFIED);
+    }
+    
+    /**
+     * Get the value of password
+     * 
+     * @access public
+     * @return string the current value of password
+     */
+    function getPassword() {
+        return $this->_password;
+    }
+    
+    /**
+     * Set the value of username
+     * 
+     * @param string the new value for username
+     * @access public
+     */
+    function setUsername($value) {
+        assert('isset($value)');
+        $this->_username = $value;
+        $this->setModifiedFlag('username', MEMBER_MODIFIED);
+    }
+    
+    /**
+     * Get the value of username
+     * 
+     * @access public
+     * @return string the current value of username
      */
     function getUsername() {
+        return $this->_username;
     }
-
-    /**
-     * Set the User's email address
-     *
-     * @param string the new email address
-     */
-    function setEmailAddress($email) {
-    }
-
-    /**
-     * Get the User's email address
-     *
-     * @return string the user's email address
-     */
-    function getEmailAddress() {
-    }
-
-    /**
-     * Set the User's full name
-     *
-     * @param string the new full name
-     */
-    function setFullName($fullname) {
-    }
-
-    /**
-     * Get the User's full name
-     *
-     * @return string the user's full name
-     */
-    function getFullName() {
-    }
-
-    /**
-     * Is this User a Gallery administrator?
-     *
-     * @return boolean true if the user is an administrator
-     */
-    function isAdmin() {
-    }
-
-    /**
-     * Specify that this user is (is not) a Gallery administrator
-     *
-     * @param bool true for adminstrator, false if not
-     */
-    function setIsAdmin($yesOrNo) {
-    }
-
-    /**
-     * Is this User a pseudo user?
-     *
-     * @return boolean true if the user is a pseudo user
-     */
-    function isPseudo() {
-    }
-
+    
+    
+    /* END: Accessor Block.  DO NOT MODIFY! */
 }
-
 ?>

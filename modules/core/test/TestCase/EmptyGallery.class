@@ -1,0 +1,48 @@
+<?php
+
+class EmptyGalleryTestCase extends TestCase {
+
+    function requireDatabaseConnection() {
+	return false;
+    }
+
+    function getDescription() {
+	return "Clean out all the Gallery filesystem data.";
+    }
+
+    function testStart() {
+	global $gallery;
+
+	$platform = $gallery->getPlatform();
+
+	$albumsDir = $gallery->getConfigValue('core.directory.albums');
+	$tempDir = $gallery->getConfigValue('core.directory.temp');
+
+	if ($platform->file_exists($albumsDir)) {
+	    $ret = $platform->recursiveRmdir($albumsDir);
+	    if (!$ret) {
+		return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);
+	    }
+	}
+
+	if ($platform->file_exists($tempDir)) {
+	    $ret = $platform->recursiveRmdir($tempDir);
+	    if (!$ret) {
+		return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);
+	    }
+	}
+	
+	$ret = $platform->mkdir($albumsDir);
+	if (!$ret) {
+	    return GalleryStatus::error(ERROR_UNKNOWN, __FILE__, __LINE__);
+	}
+	
+	$ret = $platform->mkdir($tempDir);
+	if (!$ret) {
+	    return GalleryStatus::error(ERROR_UNKNOWN, __FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+}
+?>

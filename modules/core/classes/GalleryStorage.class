@@ -114,6 +114,13 @@ define("STORAGE_MODIFIER_LARGE", 0x00100000);
 define("STORAGE_FLAG_NEWLY_CREATED", 0x00000001);
 
 /**
+ * Deleted flag
+ *
+ * @constant STORAGE_FLAG_DELETED
+ */
+define("STORAGE_FLAG_DELETED", 0x00000002);
+
+/**
  * Interface to the storage mechanism
  *
  * This object provides the hooks for saving and restoring objects in the persistent store.
@@ -178,10 +185,9 @@ class GalleryStorage {
      *
      * @access public
      * @param string the id of the stored GalleryNucleus
-     * @param object GalleryNucleus the object we're loading into
-     * @return object GalleryStatus a status code
+     * @return array object GalleryStatus a status code, object GalleryNucleus
      */
-    function loadNucleus($id, &$nucleus) {
+    function loadNucleus($id) {
     }
 
     /**

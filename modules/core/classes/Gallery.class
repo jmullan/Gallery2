@@ -188,8 +188,7 @@ class Gallery {
 	
 	$id = $nucleus->getId();
 	assert('!empty($id)');
-	
-	$this->_nucleusCache[$id] =& $nucleus;
+	$this->_nucleusCache[$id] = $nucleus;
 
     }
 
@@ -426,12 +425,15 @@ class Gallery {
      * locked.
      * 
      * @access public
-     * @param array the GalleryNucleus' to be locked 
+     * @param mixed an id or an array of ids of the GalleryNucleus' to be locked 
      * @param integer how long to wait for the lock before giving up
      * @return object GalleryStatus a status code
      */
     function lockLocal($ids, $timeout=10) {
-	assert('is_array($ids)');
+	assert('isset($ids)');
+	if (!is_array($ids)) {
+	    $ids = array($ids);
+	}
 
 	/*
 	 * If we already have a lock, fail.
@@ -481,17 +483,20 @@ class Gallery {
     /**
      * Is the GalleryNucleus locked?
      *
-     * @param int the id of a GalleryNucleus
+     * @param mixed an id or array of ids of GalleryNucleus'
      * @access public
      */
-    function isLocked($id) {
-	assert('!empty($id)');
-
+    function isLocked($ids) {
+	assert('!empty($ids)');
 	if (empty($this->_lock)) {
 	    return false;
 	}
 
-	return $this->_lock->isLocked($id);
+	if (!is_array($ids)) {
+	    $ids = array($ids);
+	}
+
+	return $this->_lock->isLocked($ids);
     }
 
     /**
@@ -582,7 +587,7 @@ class Gallery {
 		    fclose($fd);
 		}
 	    } else if (!strcmp($this->_debug, 'immediate')) {
-		print $msg;
+		print "$msg\n";
 	    }
 	}
     }

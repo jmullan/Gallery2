@@ -107,25 +107,53 @@ define("ERROR_OBSOLETE_DATA", 0x00000100);
 define("ERROR_LOCK_REQUIRED", 0x00000200);
 
 /**
+ * You attempted an operation which requires a world lock.
+ *
+ * @constant ERROR_WORLD_LOCK_REQUIRED
+ */
+define("ERROR_WORLD_LOCK_REQUIRED", 0x00000400);
+
+/**
+ * You attempted to acquire a lock illegally
+ *
+ * @constant ERROR_ILLEGAL_LOCK
+ */
+define("ERROR_ILLEGAL_LOCK", 0x00000800);
+
+/**
+ * You attempted an illegal operation on a deleted object
+ *
+ * @constant ERROR_DELETED_OBJECT
+ */
+define("ERROR_DELETED_OBJECT", 0x00001000);
+
+/**
  * You attempted an operation which had a bad path component
  *
  * @constant ERROR_BAD_PATH
  */
-define("ERROR_BAD_PATH", 0x00000400);
+define("ERROR_BAD_PATH", 0x00002000);
 
 /**
  * You attempted an operation which had a bad data type
  *
  * @constant ERROR_BAD_DATA_TYPE
  */
-define("ERROR_BAD_DATA_TYPE", 0x00000800);
+define("ERROR_BAD_DATA_TYPE", 0x00004000);
 
 /**
  * The operation you attempted is unimplemented
  *
  * @constant ERROR_UNIMPLEMENTED
  */
-define("ERROR_UNIMPLEMENTED", 0x80000000);
+define("ERROR_UNIMPLEMENTED", 0x40000000);
+
+/**
+ * An unknown error occurred
+ *
+ * @constant ERROR_UNKNOWN
+ */
+define("ERROR_UNKNOWN", 0x80000000);
 
 /**
  * Global storage container and utility class for Gallery

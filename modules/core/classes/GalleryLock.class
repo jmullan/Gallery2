@@ -100,11 +100,11 @@ class GalleryLock {
     /**
      * Is this GalleryNucleus locked?
      *
-     * @param int the id of a gallery nucleus
+     * @param array an array of GalleryNucleus ids
      * @return boolean true if locked
      */
-    function isLocked($id) {
-	assert('!empty($id)');
+    function isLocked($ids) {
+	assert('!empty($ids)');
 
 	if (!$this->_isLockAcquired) {
 	    return false;
@@ -114,7 +114,13 @@ class GalleryLock {
 	    return true;
 	}
 
-	return in_array($id, $this->_lockList);
+	foreach ($ids as $id) {
+	    if (!in_array($id, $this->_lockList)) {
+		return false;
+	    }
+	}
+
+	return true;
     }
 
     /**

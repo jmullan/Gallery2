@@ -1,0 +1,74 @@
+<?php
+
+class CreateGroupAndUsersTestCase extends TestCase {
+
+    function getDescription() {
+	return "Create new Group and Users, test adding and removing Users from Groups";
+    }
+
+    function testStart() {
+
+	$group = new GalleryGroup();
+	$ret = $group->create();
+	if ($ret->isError()) {
+	    return $ret;
+	}
+	$group->setName('Group 1');
+
+	$user1 = new GalleryUser();
+	$ret = $user1->create();
+	if ($ret->isError()) {
+	    return $ret;
+	}
+	$user1->setFullName('User 1');
+	$user1->changePassword('password');
+	$user1->setEmail('User1@gallery.com');
+	$user1->setIsAdmin(false);
+	
+	$user2 = new GalleryUser();
+	$ret = $user2->create();
+	if ($ret->isError()) {
+	    return $ret;
+	}
+	$user2->setFullName('User 2');
+	$user2->changePassword('password');
+	$user2->setEmail('User2@gallery.com');
+	$user2->setIsAdmin(false);
+
+	$ret = GalleryNucleus::saveMany(array(&$group, &$user1, &$user2));
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
+	global $gallery;
+	$ret = $gallery->lockLocal(array($group->getId(),
+					 $user1->getId(),
+					 $user2->getId()));
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
+	$group->addUser($user1->getId());
+	$group->addUser($user2->getId());
+	$user1->addToGroup($group->getId());
+	$user2->addToGroup($group->getId());
+
+	$ret = GalleryNucleus::saveMany(array(&$group, &$user1, &$user2));
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
+	$user1->removeFromGroup($group->getId());
+	$group->removeUser($user1->getId());
+
+	$ret = GalleryNucleus::saveMany(array(&$group, &$user1, &$user2));
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
+	return GalleryStatus::success();
+    }
+}
+
+?>
+</pre>

@@ -29,12 +29,12 @@ $ADODB_FETCH_MODE = ADODB_FETCH_ASSOC;
 /**
  * Name of the sequence we'll use for GalleryNucleus ids
  */
-define('DATABASE_ID_SEQUENCE', 'idSequence');
+define('DATABASE_ID_SEQUENCE', 'sequence_id');
 
 /**
  * Name of the sequence we'll use for lock ids
  */
-define('DATABASE_LOCK_SEQUENCE', 'lockSequence');
+define('DATABASE_LOCK_SEQUENCE', 'sequence_lock');
 
 /**
  * Prefix to prepend to table names
@@ -284,13 +284,13 @@ class DatabaseStorage extends GalleryStorage {
      *
      * @access public
      * @param string the id of the stored GalleryNucleus
-     * @param object GalleryNucleus the object we're loading into
-     * @return object GalleryStatus a status code
+     * @return array object GalleryStatus a status code, object GalleryNucleus
      */
-    function loadNucleus($id, &$nucleus) {
+    function loadNucleus($id) {
 	if ($this->_connectionStatus != DATABASE_STATUS_FULLY_CONNECTED) {
-	    return GalleryStatus::error(ERROR_DATABASE_NOT_CONNECTED,
-					__FILE__, __LINE__);
+	    return array(GalleryStatus::error(ERROR_DATABASE_NOT_CONNECTED,
+					      __FILE__, __LINE__),
+			 null);
 	}
 
 	$this->_traceStart();
@@ -301,7 +301,7 @@ class DatabaseStorage extends GalleryStorage {
 	list($ret, $targetType) = $this->_identifyNucleus($id);
 	if ($ret->isError()) {
 	    $this->_traceStop();
-	    return $ret;
+	    return array($ret, null);
 	}
 
 	/*
@@ -372,23 +372,23 @@ class DatabaseStorage extends GalleryStorage {
 
 	$recordSet = $this->_db->Execute($query, $data);
 	if ($recordSet) {
-	    $prototype = new $targetType;
+	    $nucleus = new $targetType;
 	    foreach ($recordSet->fields as $prefixedColumnName => $value) {
 		if (isset($value)) {
 		    $func = 'set' . ucfirst($prefixTable[$prefixedColumnName]);
-		    $prototype->$func($value);
+		    $nucleus->$func($value);
 		}
 	    }
 	    $recordSet->Close();
 
-	    $prototype->clearModifiedFlags();
-	    $nucleus = $prototype;
+	    $nucleus->clearModifiedFlags();
 	    $this->_traceStop();
-	    return GalleryStatus::success();
+	    return array(GalleryStatus::success(), $nucleus);
 	} else {
 	    $this->_traceStop();
-	    return GalleryStatus::error(ERROR_DATABASE_FAILURE,
-					__FILE__, __LINE__);
+	    return array(GalleryStatus::error(ERROR_DATABASE_FAILURE,
+					      __FILE__, __LINE__),
+			 null);
 	}
     }
 
@@ -417,48 +417,6 @@ class DatabaseStorage extends GalleryStorage {
 	    return $this->_loadMap($nucleus, $tableName, $memberName, $object);
 	} else if ($type & STORAGE_TYPE_LIST) {
 	    return $this->_loadList($nucleus, $tableName, $memberName, $object);
-	} else {
-	    return GalleryStatus::error(ERROR_BAD_DATA_TYPE,
-					__FILE__, __LINE__);
-	}
-    }
-
-    /**
-     * Save a class member from the database
-     *
-     * This is used for class members that are objects, like GalleryMap and
-     * GalleryList instances.
-     *
-     * @param object GalleryNucleus the containing GalleryNucleus
-     * @param string the name of the member
-     * @return object GalleryStatus a status code
-     */
-    function saveMember(&$nucleus, $memberName) {
-
-	if (!$nucleus->getLoadedFlag($memberName)) {
-	    return GalleryStatus::success();
-	}
-	
-	if (!($nucleus->getModifiedFlag($memberName) & MEMBER_MODIFIED)) {
-	    return GalleryStatus::success();
-	}
-
-	$metaInfo = $this->_metaInfo->describeClass($nucleus->getObjectType());
-	$type = $metaInfo['members'][$memberName]['type'];
-	
-	/* Figure out which table we're writing to */
-	$tableName = DATABASE_TABLE_PREFIX .
-		strtolower($metaInfo['members'][$memberName]['class']) . '_' .
-		strtolower($memberName);
-
-	/* Get the actual object */
-	$func = 'get' . ucfirst($memberName);
-	$object =& $nucleus->$func();
-
-	if ($type & STORAGE_TYPE_MAP) {
-	    return $this->_saveMap($nucleus, $tableName, $memberName, $object);
-	} else if ($type & STORAGE_TYPE_LIST) {
-	    return $this->_saveList($nucleus, $tableName, $memberName, $object);
 	} else {
 	    return GalleryStatus::error(ERROR_BAD_DATA_TYPE,
 					__FILE__, __LINE__);
@@ -751,6 +709,48 @@ class DatabaseStorage extends GalleryStorage {
     }
 
     /**
+     * Save a class member from the database
+     *
+     * This is used for class members that are objects, like GalleryMap and
+     * GalleryList instances.
+     *
+     * @param object GalleryNucleus the containing GalleryNucleus
+     * @param string the name of the member
+     * @return object GalleryStatus a status code
+     */
+    function saveMember(&$nucleus, $memberName) {
+
+	if (!$nucleus->getLoadedFlag($memberName)) {
+	    return GalleryStatus::success();
+	}
+	
+	if (!($nucleus->getModifiedFlag($memberName) & MEMBER_MODIFIED)) {
+	    return GalleryStatus::success();
+	}
+
+	$metaInfo = $this->_metaInfo->describeClass($nucleus->getObjectType());
+	$type = $metaInfo['members'][$memberName]['type'];
+	
+	/* Figure out which table we're writing to */
+	$tableName = DATABASE_TABLE_PREFIX .
+		strtolower($metaInfo['members'][$memberName]['class']) . '_' .
+		strtolower($memberName);
+
+	/* Get the actual object */
+	$func = 'get' . ucfirst($memberName);
+	$object =& $nucleus->$func();
+
+	if ($type & STORAGE_TYPE_MAP) {
+	    return $this->_saveMap($nucleus, $tableName, $memberName, $object);
+	} else if ($type & STORAGE_TYPE_LIST) {
+	    return $this->_saveList($nucleus, $tableName, $memberName, $object);
+	} else {
+	    return GalleryStatus::error(ERROR_BAD_DATA_TYPE,
+					__FILE__, __LINE__);
+	}
+    }
+
+    /**
      * Save a GalleryMap
      *
      * @access public
@@ -836,6 +836,13 @@ class DatabaseStorage extends GalleryStorage {
 	}
 
 	/*
+	 * Actually delete the removed keys
+	 */
+	foreach ($deleteKeys as $key) {
+	    $map->delete($key);
+	}
+
+	/*
 	 * Clear out our modification flags.
 	 */
 	$map->clearModifiedFlags();
@@ -897,6 +904,16 @@ class DatabaseStorage extends GalleryStorage {
 					__FILE__, __LINE__);
 	}
 
+	/*
+	 * If this object has not yet been saved in the database, don't bother
+	 * saving it.
+	 */
+	if ($nucleus->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED)) {
+	    $nucleus->clearPersistentFlag(STORAGE_FLAG_NEWLY_CREATED);
+	    $nucleus->setPersistentFlag(STORAGE_FLAG_DELETED);
+	    return;
+	}
+
 	$this->_traceStart();
 	
 	/*
@@ -922,8 +939,58 @@ class DatabaseStorage extends GalleryStorage {
 					    __FILE__, __LINE__);
 	    }
 	}
+
+	/*
+	 * Delete sub-objects as necessary
+	 */
+	foreach ($metaInfo['members'] as $name => $info) {
+	    $type = $metaInfo['members'][$name]['type'];
+	    if ($type & (STORAGE_TYPE_MAP | STORAGE_TYPE_LIST)) {
+		$this->deleteMember($nucleus, $name);
+	    }
+	}
+
+	$nucleus->setPersistentFlag(STORAGE_FLAG_DELETED);
 	    
 	$this->_traceStop();
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Delete a class member from the database
+     *
+     * This is used for class members that are objects, like GalleryMap and
+     * GalleryList instances.
+     *
+     * @param object GalleryNucleus the containing GalleryNucleus
+     * @param string the name of the member
+     * @return object GalleryStatus a status code
+     */
+    function deleteMember(&$nucleus, $memberName) {
+
+	$this->_traceStart();
+	
+	$metaInfo = $this->_metaInfo->describeClass($nucleus->getObjectType());
+	$type = $metaInfo['members'][$memberName]['type'];
+	$idCol = $this->prefixColumnName('id');
+	
+	/* Figure out which table we're writing to */
+	$tableName = DATABASE_TABLE_PREFIX .
+		strtolower($metaInfo['members'][$memberName]['class']) . '_' .
+		strtolower($memberName);
+
+	$query = 'DELETE FROM ' . $tableName .
+		' WHERE ' . $idCol . '=?';
+	$data = array($nucleus->getId());
+	$recordSet = $this->_db->Execute($query, $data);
+	$this->_traceStop();
+	
+	if (!$recordSet) {
+	    return array(GalleryStatus::error(ERROR_DATABASE_FAILURE,
+					      __FILE__, __LINE__),
+			 null);
+	}
+
 	return GalleryStatus::success();
     }
 

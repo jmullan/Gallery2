@@ -58,12 +58,13 @@ if (!empty($HTTP_GET_VARS['runTest'])) {
 
     $class = $testTable[$runTest];
 
-    if ($class->useDefaultDatabase()) {
-	include('connectToDbDefault.php');
-    } else {
-	include('connectToDbNoDefault.php');
+    if ($class->requireDatabaseConnection()) {
+	if ($class->useDefaultDatabase()) {
+	    include('connectToDbDefault.php');
+	} else {
+	    include('connectToDbNoDefault.php');
+	}
     }
-
 
     print '<b>Test: ' . $runTest . '</b>';
     print '<br>';
