@@ -67,7 +67,9 @@ class ImageBlockSiteAdminControllerTest extends GalleryControllerTestCase {
 	parent::tearDown();
     }
 
-    function testImageBlockSiteAdminController() {
+    function testImageBlockSiteAdminControllerReset() {
+
+	GalleryUtilities::putRequestVariable('form[action][reset]', '1');
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
@@ -77,6 +79,9 @@ class ImageBlockSiteAdminControllerTest extends GalleryControllerTestCase {
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
+    }
+
+    function testImageBlockSiteAdminControllerSaveNone() {
 
 	GalleryUtilities::putRequestVariable('form[action][save]', '1');
 
@@ -88,7 +93,11 @@ class ImageBlockSiteAdminControllerTest extends GalleryControllerTestCase {
 				  'status' => array('saved' => 1),
 				  'error' => array()),
 			    $results);
+    }
 
+    function testImageBlockSiteAdminControllerSaveOne() {
+
+	GalleryUtilities::putRequestVariable('form[action][save]', '1');
 	GalleryUtilities::putRequestVariable('form[randomAlbum]', '1');
 	GalleryUtilities::putRequestVariable('form[date]', '1');
 
@@ -100,9 +109,14 @@ class ImageBlockSiteAdminControllerTest extends GalleryControllerTestCase {
 				  'status' => array('saved' => 1),
 				  'error' => array()),
 			    $results);
+    }
 
+    function testImageBlockSiteAdminControllerSaveMultiple() {
+
+	GalleryUtilities::putRequestVariable('form[action][save]', '1');
 	GalleryUtilities::putRequestVariable('form[recentImage]', '1');
 	GalleryUtilities::putRequestVariable('form[viewedAlbum]', '1');
+	GalleryUtilities::putRequestVariable('form[randomImage]', '1');
 	GalleryUtilities::putRequestVariable('form[title]', '1');
 	GalleryUtilities::putRequestVariable('form[views]', '1');
 
