@@ -62,14 +62,21 @@ function GalleryMain(&$testSuite, $filter) {
 		    if (!$filter || stristr($className, $filter)) {
 			if (class_exists($className) &&
 			    GalleryUtilities::isA(new $className(null), 'GalleryTestCase')) {
-			
-			    $testSuite->addTest(new TestSuite($className));
+
+			    $suiteArray[$className] = new TestSuite($className);
 			}
 		    }
 		}
 	    }
 	    closedir($dir);
 	}
+    }
+
+    $keys = array_keys($suiteArray);
+    natcasesort($keys);
+    
+    foreach ($keys as $className) {
+	$testSuite->addTest($suiteArray[$className]);
     }
 
     return GalleryStatus::success();
