@@ -52,7 +52,7 @@ class GalleryDescendentCountsMap extends GalleryDescendentCountsMap_core {
      * @return string class name
      */
     function getClassName() {
-        return 'GalleryDescendentCountsMap';
+	return 'GalleryDescendentCountsMap';
     }
 
     
@@ -62,15 +62,15 @@ class GalleryDescendentCountsMap extends GalleryDescendentCountsMap_core {
      * @return array map member => type
      */
     function getMapInfo() {
-        $info = array();
+	$info = array();
     
-        $info['members']['userId'] = STORAGE_TYPE_INTEGER;
+	$info['members']['userId'] = STORAGE_TYPE_INTEGER;
   
-        $info['members']['itemId'] = STORAGE_TYPE_INTEGER;
+	$info['members']['itemId'] = STORAGE_TYPE_INTEGER;
   
-        $info['members']['descendentCount'] = STORAGE_TYPE_INTEGER;
+	$info['members']['descendentCount'] = STORAGE_TYPE_INTEGER;
   
-        return $info; 
+	return $info; 
     }
 
     /**
@@ -81,29 +81,29 @@ class GalleryDescendentCountsMap extends GalleryDescendentCountsMap_core {
      * @static
      */
     function addMapEntry($data) {
-        global $gallery;
+	global $gallery;
     
-        if (!isset($data['userId'])) {
-            return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-        }
+	if (!isset($data['userId'])) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	}
     
-        if (!isset($data['itemId'])) {
-            return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-        }
+	if (!isset($data['itemId'])) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	}
     
-        if (!isset($data['descendentCount'])) {
-            return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-        }
+	if (!isset($data['descendentCount'])) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	}
     
 
 	$storage =& $gallery->getStorage();
 
-        $ret = $storage->addMapEntry('GalleryDescendentCountsMap', $data);
-        if ($ret->isError()) {
-            return $ret->wrap(__FILE__, __LINE__);
-        }
+	$ret = $storage->addMapEntry('GalleryDescendentCountsMap', $data);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 
-        return GalleryStatus::success();
+	return GalleryStatus::success();
     }
 
     /**
@@ -114,20 +114,39 @@ class GalleryDescendentCountsMap extends GalleryDescendentCountsMap_core {
      * @static
      */
     function removeMapEntry($data) {
-        global $gallery;
+	global $gallery;
 
-        if (sizeof($data) == 0) {
-            return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-        }
+	if (sizeof($data) == 0) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	}
 
 	$storage =& $gallery->getStorage();
 
-        $ret = $storage->removeMapEntry('GalleryDescendentCountsMap', $data);
-        if ($ret->isError()) {
-            return $ret->wrap(__FILE__, __LINE__);
-        }
+	$ret = $storage->removeMapEntry('GalleryDescendentCountsMap', $data);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 
-        return GalleryStatus::success();
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Remove ALL entries from this map.. use with caution!
+     *
+     * @return object GalleryStatus a status code
+     * @static
+     */
+    function removeAllMapEntries() {
+	global $gallery;
+
+	$storage =& $gallery->getStorage();
+
+	$ret = $storage->removeAllMapEntries('GalleryDescendentCountsMap');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
     }
 
     /**
@@ -142,17 +161,17 @@ class GalleryDescendentCountsMap extends GalleryDescendentCountsMap_core {
 	global $gallery;
 
 	if (sizeof($match) == 0 || sizeof($change) == 0) {
-            return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-        }
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	}
 
 	$storage =& $gallery->getStorage();
 
-        $ret = $storage->updateMapEntry('GalleryDescendentCountsMap', $match, $change);
-        if ($ret->isError()) {
-            return $ret->wrap(__FILE__, __LINE__);
-        }
+	$ret = $storage->updateMapEntry('GalleryDescendentCountsMap', $match, $change);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 
-        return GalleryStatus::success();
+	return GalleryStatus::success();
     }
   
 }

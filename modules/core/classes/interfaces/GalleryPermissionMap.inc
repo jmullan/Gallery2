@@ -52,7 +52,7 @@ class GalleryPermissionMap extends GalleryPermissionMap_core {
      * @return string class name
      */
     function getClassName() {
-        return 'GalleryPermissionMap';
+	return 'GalleryPermissionMap';
     }
 
     
@@ -62,17 +62,17 @@ class GalleryPermissionMap extends GalleryPermissionMap_core {
      * @return array map member => type
      */
     function getMapInfo() {
-        $info = array();
+	$info = array();
     
-        $info['members']['itemId'] = STORAGE_TYPE_INTEGER;
+	$info['members']['itemId'] = STORAGE_TYPE_INTEGER;
   
-        $info['members']['userId'] = STORAGE_TYPE_INTEGER;
+	$info['members']['userId'] = STORAGE_TYPE_INTEGER;
   
-        $info['members']['groupId'] = STORAGE_TYPE_INTEGER;
+	$info['members']['groupId'] = STORAGE_TYPE_INTEGER;
   
-        $info['members']['permission'] = STORAGE_TYPE_BIT;
+	$info['members']['permission'] = STORAGE_TYPE_BIT;
   
-        return $info; 
+	return $info; 
     }
 
     /**
@@ -83,33 +83,33 @@ class GalleryPermissionMap extends GalleryPermissionMap_core {
      * @static
      */
     function addMapEntry($data) {
-        global $gallery;
+	global $gallery;
     
-        if (!isset($data['itemId'])) {
-            return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-        }
+	if (!isset($data['itemId'])) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	}
     
-        if (!isset($data['userId'])) {
-            return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-        }
+	if (!isset($data['userId'])) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	}
     
-        if (!isset($data['groupId'])) {
-            return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-        }
+	if (!isset($data['groupId'])) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	}
     
-        if (!isset($data['permission'])) {
-            return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-        }
+	if (!isset($data['permission'])) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	}
     
 
 	$storage =& $gallery->getStorage();
 
-        $ret = $storage->addMapEntry('GalleryPermissionMap', $data);
-        if ($ret->isError()) {
-            return $ret->wrap(__FILE__, __LINE__);
-        }
+	$ret = $storage->addMapEntry('GalleryPermissionMap', $data);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 
-        return GalleryStatus::success();
+	return GalleryStatus::success();
     }
 
     /**
@@ -120,20 +120,39 @@ class GalleryPermissionMap extends GalleryPermissionMap_core {
      * @static
      */
     function removeMapEntry($data) {
-        global $gallery;
+	global $gallery;
 
-        if (sizeof($data) == 0) {
-            return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-        }
+	if (sizeof($data) == 0) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	}
 
 	$storage =& $gallery->getStorage();
 
-        $ret = $storage->removeMapEntry('GalleryPermissionMap', $data);
-        if ($ret->isError()) {
-            return $ret->wrap(__FILE__, __LINE__);
-        }
+	$ret = $storage->removeMapEntry('GalleryPermissionMap', $data);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 
-        return GalleryStatus::success();
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Remove ALL entries from this map.. use with caution!
+     *
+     * @return object GalleryStatus a status code
+     * @static
+     */
+    function removeAllMapEntries() {
+	global $gallery;
+
+	$storage =& $gallery->getStorage();
+
+	$ret = $storage->removeAllMapEntries('GalleryPermissionMap');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
     }
 
     /**
@@ -148,17 +167,17 @@ class GalleryPermissionMap extends GalleryPermissionMap_core {
 	global $gallery;
 
 	if (sizeof($match) == 0 || sizeof($change) == 0) {
-            return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-        }
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	}
 
 	$storage =& $gallery->getStorage();
 
-        $ret = $storage->updateMapEntry('GalleryPermissionMap', $match, $change);
-        if ($ret->isError()) {
-            return $ret->wrap(__FILE__, __LINE__);
-        }
+	$ret = $storage->updateMapEntry('GalleryPermissionMap', $match, $change);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 
-        return GalleryStatus::success();
+	return GalleryStatus::success();
     }
   
 }

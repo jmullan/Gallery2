@@ -52,7 +52,7 @@ class CustomFieldMap extends CustomFieldMap_core {
      * @return string class name
      */
     function getClassName() {
-        return 'CustomFieldMap';
+	return 'CustomFieldMap';
     }
 
     
@@ -62,15 +62,15 @@ class CustomFieldMap extends CustomFieldMap_core {
      * @return array map member => type
      */
     function getMapInfo() {
-        $info = array();
+	$info = array();
     
-        $info['members']['itemId'] = STORAGE_TYPE_INTEGER;
+	$info['members']['itemId'] = STORAGE_TYPE_INTEGER;
   
-        $info['members']['field'] = STORAGE_TYPE_STRING;
+	$info['members']['field'] = STORAGE_TYPE_STRING;
   
-        $info['members']['value'] = STORAGE_TYPE_STRING;
+	$info['members']['value'] = STORAGE_TYPE_STRING;
   
-        return $info; 
+	return $info; 
     }
 
     /**
@@ -81,29 +81,29 @@ class CustomFieldMap extends CustomFieldMap_core {
      * @static
      */
     function addMapEntry($data) {
-        global $gallery;
+	global $gallery;
     
-        if (!isset($data['itemId'])) {
-            return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-        }
+	if (!isset($data['itemId'])) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	}
     
-        if (!isset($data['field'])) {
-            return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-        }
+	if (!isset($data['field'])) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	}
     
-        if (!isset($data['value'])) {
-            return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-        }
+	if (!isset($data['value'])) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	}
     
 
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 
-        $ret = $storage->addMapEntry('CustomFieldMap', $data);
-        if ($ret->isError()) {
-            return $ret->wrap(__FILE__, __LINE__);
-        }
+	$ret = $storage->addMapEntry('CustomFieldMap', $data);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 
-        return GalleryStatus::success();
+	return GalleryStatus::success();
     }
 
     /**
@@ -114,20 +114,39 @@ class CustomFieldMap extends CustomFieldMap_core {
      * @static
      */
     function removeMapEntry($data) {
-        global $gallery;
+	global $gallery;
 
-        if (sizeof($data) == 0) {
-            return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-        }
+	if (sizeof($data) == 0) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	}
 
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 
-        $ret = $storage->removeMapEntry('CustomFieldMap', $data);
-        if ($ret->isError()) {
-            return $ret->wrap(__FILE__, __LINE__);
-        }
+	$ret = $storage->removeMapEntry('CustomFieldMap', $data);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 
-        return GalleryStatus::success();
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Remove ALL entries from this map.. use with caution!
+     *
+     * @return object GalleryStatus a status code
+     * @static
+     */
+    function removeAllMapEntries() {
+	global $gallery;
+
+	$storage =& $gallery->getStorage();
+
+	$ret = $storage->removeAllMapEntries('CustomFieldMap');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
     }
 
     /**
@@ -142,17 +161,17 @@ class CustomFieldMap extends CustomFieldMap_core {
 	global $gallery;
 
 	if (sizeof($match) == 0 || sizeof($change) == 0) {
-            return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-        }
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	}
 
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 
-        $ret = $storage->updateMapEntry('CustomFieldMap', $match, $change);
-        if ($ret->isError()) {
-            return $ret->wrap(__FILE__, __LINE__);
-        }
+	$ret = $storage->updateMapEntry('CustomFieldMap', $match, $change);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 
-        return GalleryStatus::success();
+	return GalleryStatus::success();
     }
   
 }

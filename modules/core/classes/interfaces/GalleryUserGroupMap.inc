@@ -52,7 +52,7 @@ class GalleryUserGroupMap extends GalleryUserGroupMap_core {
      * @return string class name
      */
     function getClassName() {
-        return 'GalleryUserGroupMap';
+	return 'GalleryUserGroupMap';
     }
 
     
@@ -62,13 +62,13 @@ class GalleryUserGroupMap extends GalleryUserGroupMap_core {
      * @return array map member => type
      */
     function getMapInfo() {
-        $info = array();
+	$info = array();
     
-        $info['members']['userId'] = STORAGE_TYPE_INTEGER;
+	$info['members']['userId'] = STORAGE_TYPE_INTEGER;
   
-        $info['members']['groupId'] = STORAGE_TYPE_INTEGER;
+	$info['members']['groupId'] = STORAGE_TYPE_INTEGER;
   
-        return $info; 
+	return $info; 
     }
 
     /**
@@ -79,25 +79,25 @@ class GalleryUserGroupMap extends GalleryUserGroupMap_core {
      * @static
      */
     function addMapEntry($data) {
-        global $gallery;
+	global $gallery;
     
-        if (!isset($data['userId'])) {
-            return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-        }
+	if (!isset($data['userId'])) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	}
     
-        if (!isset($data['groupId'])) {
-            return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-        }
+	if (!isset($data['groupId'])) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	}
     
 
 	$storage =& $gallery->getStorage();
 
-        $ret = $storage->addMapEntry('GalleryUserGroupMap', $data);
-        if ($ret->isError()) {
-            return $ret->wrap(__FILE__, __LINE__);
-        }
+	$ret = $storage->addMapEntry('GalleryUserGroupMap', $data);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 
-        return GalleryStatus::success();
+	return GalleryStatus::success();
     }
 
     /**
@@ -108,20 +108,39 @@ class GalleryUserGroupMap extends GalleryUserGroupMap_core {
      * @static
      */
     function removeMapEntry($data) {
-        global $gallery;
+	global $gallery;
 
-        if (sizeof($data) == 0) {
-            return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-        }
+	if (sizeof($data) == 0) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	}
 
 	$storage =& $gallery->getStorage();
 
-        $ret = $storage->removeMapEntry('GalleryUserGroupMap', $data);
-        if ($ret->isError()) {
-            return $ret->wrap(__FILE__, __LINE__);
-        }
+	$ret = $storage->removeMapEntry('GalleryUserGroupMap', $data);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 
-        return GalleryStatus::success();
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Remove ALL entries from this map.. use with caution!
+     *
+     * @return object GalleryStatus a status code
+     * @static
+     */
+    function removeAllMapEntries() {
+	global $gallery;
+
+	$storage =& $gallery->getStorage();
+
+	$ret = $storage->removeAllMapEntries('GalleryUserGroupMap');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
     }
 
     /**
@@ -136,17 +155,17 @@ class GalleryUserGroupMap extends GalleryUserGroupMap_core {
 	global $gallery;
 
 	if (sizeof($match) == 0 || sizeof($change) == 0) {
-            return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-        }
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	}
 
 	$storage =& $gallery->getStorage();
 
-        $ret = $storage->updateMapEntry('GalleryUserGroupMap', $match, $change);
-        if ($ret->isError()) {
-            return $ret->wrap(__FILE__, __LINE__);
-        }
+	$ret = $storage->updateMapEntry('GalleryUserGroupMap', $match, $change);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 
-        return GalleryStatus::success();
+	return GalleryStatus::success();
     }
   
 }

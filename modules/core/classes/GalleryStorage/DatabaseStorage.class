@@ -830,6 +830,7 @@ class DatabaseStorage extends GalleryStorage {
      *
      * @param object the map we're working on
      * @param array an associative array of data about the entry
+     * @return object GalleryStatus a status code
      */
     function removeMapEntry($mapName, $entry) {
 	global $gallery;
@@ -864,6 +865,28 @@ class DatabaseStorage extends GalleryStorage {
 
 	$this->_traceStart();
 	$recordSet = $this->_db->Execute($query, $data);
+	$this->_traceStop();
+	if ($recordSet === false) {
+	    return GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Remove ALL entries from a map.
+     *
+     * This is dangerous, use very very carefully!
+     *
+     * @param object the map we're working on
+     * @return object GalleryStatus a status code
+     */
+    function removeAllMapEntries($mapName) {
+	list ($tableName, $unused) = $this->_translateTableName($mapName);
+	$query = 'DELETE FROM ' . $tableName;
+
+	$this->_traceStart();
+	$recordSet = $this->_db->Execute($query);
 	$this->_traceStop();
 	if ($recordSet === false) {
 	    return GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);

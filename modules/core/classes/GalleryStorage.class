@@ -256,6 +256,16 @@ class GalleryStorage {
     }
 
     /**
+     * Remove ALL entries from a map.. use with caution!
+     *
+     * @param object the map we're working on
+     * @return object GalleryStatus a status code
+     */
+    function removeAllMapEntries($map) {
+	return GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
+    }
+
+    /**
      * Update an entry in this map
      *
      * @param array the entry to match
