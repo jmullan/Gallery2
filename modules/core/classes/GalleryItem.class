@@ -241,6 +241,7 @@ class GalleryItem_core extends GalleryFileSystemEntity {
      * class.
      *
      * @param int the id of the GalleryEntity parent of this object
+     * @param string the path component of this new object
      * @param int the id of the parent object
      * @return object GalleryStatus a status code
      */
@@ -547,7 +548,7 @@ class GalleryItem_core extends GalleryFileSystemEntity {
      * Load all the ancestors of this item
      *
      * @return array object GalleryStatus a status code 
-     *               array(GalleryItem, ...)
+     *               array (array(memberName => memberValue))
      */
     function fetchParents() {
 	global $gallery;
