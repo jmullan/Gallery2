@@ -74,8 +74,8 @@ class ThumbnailToolkit extends GalleryToolkit {
 	$outputMimeType = 'image/jpeg';
 	$success = $platform->copy($thumbPath, $destFilename);
 	if (!$success) {
-	    return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
-					"Failed copying $thumbPath -> $destFilename");
+	    return array(GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
+					      "Failed copying $thumbPath -> $destFilename"), null);
 	}
 
 	return array(GalleryStatus::success(), $outputMimeType);
