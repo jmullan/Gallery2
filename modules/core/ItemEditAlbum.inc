@@ -455,7 +455,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 	    $layoutList[$layoutId] = $layout->getName();
 	}
 
-	$themeList = GalleryTheme::getThemeList();
+	$themeList = GalleryCoreApi::getThemeList();
 	$themeList = array_merge(array('' => $module->translate('&laquo; default theme &raquo;')),
 				 $themeList);
 

@@ -63,6 +63,7 @@ class HybridLayout extends GalleryLayout {
 	    $layout = array('item' => $item->getMemberData(),
 			    'image' => $image->getMemberData());
 	    $template->setVariable('layout', $layout);
+	    $template->title('');
 	    return array(GalleryStatus::success(),
 			 array('html' => 'layouts/hybrid/templates/render.tpl'));
 	}

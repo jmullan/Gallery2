@@ -191,6 +191,7 @@ class ClassicLayout extends MatrixLayout {
 	    }
 	}
 
+	$template->style('layouts/classic/layout.css');
 	return array(GalleryStatus::success(), 'layouts/classic/templates/albumBody.tpl');
     }
 

@@ -19,7 +19,7 @@
     <title>
       {g->text text="Redirect"}
     </title>
-    {g->style}
+    {g->head}
   </head>
   <body>
     {g->text text="You are in debug mode so we are not automatically redirecting."}

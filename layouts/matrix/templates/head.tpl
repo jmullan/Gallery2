@@ -7,4 +7,3 @@
 <title>
   {$layout.item.title|default:$layout.item.pathComponent|markup:stripBbcodeAndHtml}
 </title>
-<style type="text/css" media="all">@import url({$layout.layoutUrl}/layout.css.php);</style>

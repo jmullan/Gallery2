@@ -9,7 +9,7 @@
 <title>
   {$layout.item.title|default:$layout.item.pathComponent|markup:stripBbcodeAndHtml}
 </title>
-{g->style}
+{g->head}
 </head>
 <body>
   <table cellspacing="0"><tr>

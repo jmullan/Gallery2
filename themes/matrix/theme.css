@@ -1,4 +1,6 @@
 /*
+ * $RCSfile$
+ *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
  *
@@ -15,21 +17,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- *
- * $Id$
  */
 
 /*
  * Matrix Theme for Gallery 2
  * by Ross A. Reyman, Jon Huang, and Chad Kieffer
  *
- * /themes/styles/theme.css
- *
  * The CSS defintions in this file determine styles for font, color,
  * border, background, list, etc.
  *
  * !!!!!! DO NOT PLACE POSITIONING ELEMENTS IN THIS STYLE SHEET !!!!!!
- * Instead, edit themes/matrix/styles/layout.css (for admin pages) or
+ * Instead, edit templates/layout.css (for admin pages) or
  * the appropriate layout style sheet for album/images pages.
  */
 
@@ -64,47 +62,45 @@
 
 
 /* ******************************************************************************************
- * Standard CSS definitions, redefine HTML tags
+ * GALLERY
+ * Category 1: Gallery
+ * declare Gallery Module Borders, html tags, etc
  */
 
-body {
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-size: 62.5%;
-	color: #333;
+#gallery {
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    font-size: 62.5%;
+    color: #333;
+    background-color: #fff;
 }
 
-h1, h2, h3, h4, h5, h6 {
+body {
+    background-color: #fff;
+}
+
+#gallery h1, #gallery h2, #gallery h3, #gallery h4, #gallery h5, #gallery h6 {
     font-family: "Trebuchet MS", Arial, Verdana, Helvetica, sans-serif;
 }
 
-a {
+#gallery a {
     font-weight: bold;
     text-decoration: none;
     color: #6B8CB7;
 }
-a:link { }
-a:visited { }
-a:hover {
+#gallery a:link { }
+#gallery a:visited { }
+#gallery a:hover {
     color: #F4560F;
     text-decoration: underline;
 }
-a:active {
+#gallery a:active {
     color: #F9C190;
     text-decoration: none;
 }
 
-textarea:focus, input:focus {
+#gallery textarea:focus, #gallery input:focus {
     background-color: #ffc;
 }
-
-
-/* ******************************************************************************************
- * GALLERY
- * Category 1: Gallery
- * declare Gallery Module Borders, etc
- */
-
-#gallery { }
 
 
 /* ******************************************************************************************
@@ -114,20 +110,20 @@ textarea:focus, input:focus {
  */
 
 #gsHeader {
-	border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
 }
 
 #gsFooter {
-	border-top: 1px solid #ccc;
+    border-top: 1px solid #ccc;
 }
 
 #gsFooter img {
-	border: none;
+    border: none;
 }
 
 #gsSidebar, #gsAdminSidebar {
-	border-top: 1px solid #ccc;
-	background-color: #fff;
+    border-top: 1px solid #ccc;
+    background-color: #fff;
 }
 
 #gsAlbumContents, #gsAdminContents, #gsOtherContents {
@@ -139,14 +135,14 @@ textarea:focus, input:focus {
 
 .gbCustomFields { }
 
-/* .gbDataTable	*/
-/*      count from 0 Ñ first row is even...     */
+/* .gbDataTable */
+/*      count from 0 - first row is even...     */
 
 .gsOtherContents table.gbDataTable { }
 
 .gsOtherContents .giActionSelect, .gbDataEntry .giActionSelect {
-	font-size: 1.2em;
-	background: #eee;
+    font-size: 1.2em;
+    background: #eee;
 }
 
 table.gbDataTable th {
@@ -195,7 +191,7 @@ table.gbDataTable img {
 #gsSearchContents .gbItemImage { }
 
 #gsStatus {
-	text-align: left;
+    text-align: left;
 }
 
 #gsItemImages { }
@@ -221,31 +217,31 @@ ul.gbAdminList li label {
     vertical-align: super;
 }
 
-/*	tabs for admin pages	*/
+/* tabs for admin pages */
 .gbTabBar {
-	background: #eee url('../images/tab_bg.jpg') repeat-x bottom;
-	font-size: 0.9em;
-	line-height: normal;
+    background: #eee url('images/tab_bg.jpg') repeat-x bottom;
+    font-size: 0.9em;
+    line-height: normal;
 }
 
 .gbTabBar ul {
-	list-style: none;
+    list-style: none;
 }
 
 .gbTabBar li {
-	background: url('../images/tab_left.jpg') no-repeat left top;
-	list-style: none;
+    background: url('images/tab_left.jpg') no-repeat left top;
+    list-style: none;
 }
 
 .gbTabBar span {
-	background: url('../images/tab_right.jpg') no-repeat right top;
-	text-decoration: none;
-	font-weight: bold;
-	padding-bottom: 5px;
+    background: url('images/tab_right.jpg') no-repeat right top;
+    text-decoration: none;
+    font-weight: bold;
+    padding-bottom: 5px;
 }
 
 .gbTabBar a {
-	color: #777;
+    color: #777;
 }
 
 /* commented Backslash Hack hides rule from IE5-Mac \*/
@@ -253,37 +249,37 @@ ul.gbAdminList li label {
 /* End IE5-Mac hack */
 
 .gbTabBar a:hover {
-	color: #333;
+    color: #333;
 }
 
 .gbTabBar .giSelectedTab {
-	background-image: url('../images/tab_left_on.jpg');
+    background-image: url('images/tab_left_on.jpg');
 }
 
 .gbTabBar .giSelectedTab span {
-	background-image: url('../images/tab_right_on.jpg');
-	color: #333;
-	padding-bottom: 5px;
+    background-image: url('images/tab_right_on.jpg');
+    color: #333;
+    padding-bottom: 5px;
 }
 
-/*      first and default module settings */
+/*  first and default module settings */
 
 .gbMenu {
-	border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
 }
 
-/*      subsequent menu modules can have different settings */
+/*  subsequent menu modules can have different settings */
 .gbMenu + .gbMenu {}
 
-/*      last gbMenu item has no bottom border   */
+/*  last gbMenu item has no bottom border  */
 .gbMenu:last-child {
-	border-bottom: 1px none #ddd;
+    border-bottom: 1px none #ddd;
 }
 
 
-/*	icons for admin menu	*/
+/* icons for admin menu */
 .gbMenu li {
-	font-size: 1.0em;
+    font-size: 1.0em;
 }
 
 .gbMenu ul, .gbMenu ol {
@@ -296,32 +292,32 @@ ul.gbAdminList li label {
 * html .gbMenu {}
 /* End hide from IE-mac */
 
-/*	text inside the title bar */
+/* text inside the title bar */
 .giTitle {
-	font-size: 1.3em;
-	font-weight: bold;
+    font-size: 1.3em;
+    font-weight: bold;
 }
 
-/*      horizontal history links - 'trail of breadcrumbs' */
+/*  horizontal history links - 'trail of breadcrumbs' */
 .gbBreadCrumb {
     font-size: 1.1em;
     font-weight: bold;
 }
 
 .gbBreadCrumb li {
-	background-image: url('../images/icon_path_separator.gif');
-	background-repeat: no-repeat;
-	background-position: left;
+    background-image: url('images/icon_path_separator.gif');
+    background-repeat: no-repeat;
+    background-position: left;
 }
 
 .gbBreadCrumb li.giBreadCrumbFirst {
-	background-image: none;
+    background-image: none;
 }
 
-/*      inside gsAlbumContents or gsAdmiinContents */
+/*  inside gsAlbumContents or gsAdminContents */
 
 .gbTopFlag, .gbBottomFlag {
-	background-color: #eee;
+    background-color: #eee;
 }
 
 .gbTopFlag:after, .gbBottomFlag:after {}
@@ -360,7 +356,7 @@ ul.gbAdminList li label {
 table.gbTitleBanner { }
 
 table.gbTitleBanner tr td {
-	vertical-align: top;
+    vertical-align: top;
 }
 
 .gbTitleBanner .giTitle { }
@@ -380,7 +376,7 @@ td.gbItemAlbum {
 
 .gsSingleImage { }
 
-/*	  #gsComments	 */
+/* #gsComments */
 
 .gbComment {
     border-bottom: 1px dotted #ddd;
@@ -393,22 +389,22 @@ td.gbItemAlbum {
 
 .gbComment p { }
 
-/*      #gsSidebar  */
+/*  #gsSidebar  */
 #gsSidebar div { }
 
 #gsSidebar .giThumbImage { }
 
-/*      #gsSearchContents  */
+/*  #gsSearchContents  */
 
-/*      small grey border around all the thumbnails */
+/*  small grey border around all the thumbnails */
 #gsSearchContents .giThumbImage, #gsSearchContents .giThumbMovie, #gsSearchContents .giThumbOther {
     border: 0px solid #ccc;
 }
 
-/*      override the normal title clear so as to wrap information on the right of the thumbnail */
+/*  override the normal title clear so as to wrap information on the right of the thumbnail */
 
 #gsSearchContents .gbItemImage .giTitle {
-	border-width: 0;
+    border-width: 0;
 }
 
 #gsSearchContents .gbItemImage img, #gsSearchContents .gbItemAlbum img {
@@ -417,23 +413,23 @@ td.gbItemAlbum {
 
 #gsSearchContents .giTitle { }
 
-/*      #gsAdminContents	*/
+/*  #gsAdminContents */
 
 #gsAdminContents .gbAdmin {
-	background-color: #fff;
-	border-bottom: 1px solid #bbb;
+    background-color: #fff;
+    border-bottom: 1px solid #bbb;
 }
 
-/*      hides border on last occurence  */
+/*  hides border on last occurence  */
 .gbAdmin:last-child {
-	border-bottom: 1px none #bbb;
+    border-bottom-style: none;
 }
 
 .gbButtons {
     background-color: #eee;
 }
 
-input[type=submit], input[type=button] {
+#gallery input[type=submit], #gallery input[type=button] {
     color: #333;
     background:#eee;
     border: 2px solid #e7e7e7;
@@ -449,28 +445,28 @@ input[type=submit], input[type=button] {
 }
 
 
-/*      for tabular data */
+/*  for tabular data */
 #gsAdminContents .gbDataTable {
-	border-width: 0;
-	font-size: 1.0em;
+    border-width: 0;
+    font-size: 1.0em;
 }
 
-/*      Status section  */
+/*  Status section  */
 
-/*      error inside a gsStatus section */
+/*  error inside a gsStatus section */
 
 #gsStatus { }
 
 #gsStatus .giError, #gsStatus .giWarning, #gsStatus .giStatus  {
-	font-weight: bold;
-	font-size: 1.3em;
+    font-weight: bold;
+    font-size: 1.3em;
 }
 
 #gsStatus .giError {
     color: #a44;
 }
 
-/*      Warning inside a gsStatus section */
+/*  Warning inside a gsStatus section */
 
 #gsStatus .giWarning {
     color: #dd7;
@@ -480,7 +476,7 @@ input[type=submit], input[type=button] {
     font-weight: bold;
 }
 
-/*      Status inside a gsStatus section */
+/*  Status inside a gsStatus section */
 
 #gsStatus .giStatus {
     color: #4a4;
@@ -495,39 +491,35 @@ input[type=submit], input[type=button] {
  * section are in the BOXES part of this file.
  */
 
-/*      Global / Defaults */
+/*  Global / Defaults */
 
 .giMarkupBar input {
-	font-size: 1.1em;
+    font-size: 1.1em;
 }
 
 .giDescription {
-	font-size: 1.1em;
-	line-height: 1.4em;
+    font-size: 1.1em;
+    line-height: 1.4em;
 }
 
 .giInfo {
-	font-size: 0.9em;
-	color: #888;
-	list-style: none;
+    font-size: 0.9em;
+    color: #888;
+    list-style: none;
 }
 
 .giInfo li { }
 
-.giInfoToday {
-    color: #900;
-}
-
-/*      horizontal link styles page navigations */
+/*  horizontal link styles page navigations */
 .giHorizontalLinks, .giHorizontalLinksLeft {
-	font-size: 0.9em;
+    font-size: 0.9em;
 }
 
 .gbNavBar .giHorizontalLinks { }
 
 .giHorizontalLinks li, .giHorizontalLinksLeft li {
-	list-style-type: none;
- }
+    list-style-type: none;
+}
 
 .giHorizontalLinks a, .giHorizontalLinksLeft a {
     text-decoration: none;
@@ -542,7 +534,7 @@ input[type=submit], input[type=button] {
 
 /*  thumbnails */
 .giThumbImage, .giThumbMovie, .giThumbOther {
-	border: 0;
+    border: 0;
 }
 
 .giThumbImage img {
@@ -550,83 +542,84 @@ input[type=submit], input[type=button] {
 }
 
 select.giActionSelect {
-	font-size: 1.2em;
-	background: #eee;
+    font-size: 1.2em;
+    background: #eee;
 }
 
- #gsAlbumContents select.giActionSelect {
+#gsAlbumContents select.giActionSelect {
     font-size: 1.0em;
- }
+}
 
-/*      .giThumbBorder {}
+/*  .giThumbBorder {}
 ...giBorders...
-discused the options of generating a table-based border (ie_test) and alistapart.com http://www.alistapart.com/articles/customcorners/ method. Defer until completion of initial theme.
+discused the options of generating a table-based border (ie_test) and alistapart.com
+http://www.alistapart.com/articles/customcorners/ method. Defer until completion of initial theme.
 */
 
 .giPageNumber {
-	font-size: 0.9em;
+    font-size: 0.9em;
 }
 
 .giSelected {
     color: #111;
-	font-weight: bold;
-	list-style-type: none;
+    font-weight: bold;
+    list-style-type: none;
 }
 
-/*	  Form elements */
+/*  Form elements */
 
 .giFormButton, .giFormInput { }
 
 .giFormCheckbox {
-	vertical-align: middle;
+    vertical-align: middle;
 }
 
 .gbForm, .giFormTextarea, .giFormRadio, .giFormSelect, .giFormFile, .giFormText { }
 
 .giFormUsername {
-	background: url('../images/userinfo.png') no-repeat scroll 0 1px;
-	padding-left: 17px;
+    background: url('images/userinfo.png') no-repeat scroll 0 1px;
+    padding-left: 17px;
 }
 
 .giFormPassword {
-	background: url('../images/key7-16-bw.gif') no-repeat scroll 0 1px;
-	padding-left: 17px;
+    background: url('images/key7-16-bw.gif') no-repeat scroll 0 1px;
+    padding-left: 17px;
 }
 
 .giFormGroupname {
-	background: url('../images/groupinfo.png') no-repeat scroll 0 1px;
-	padding-left: 17px;
+    background: url('images/groupinfo.png') no-repeat scroll 0 1px;
+    padding-left: 17px;
 }
 
 /* Status class local error, warning and success */
 
 .giError {
-	color: #AA4444;
-	font-weight: bold;
+    color: #AA4444;
+    font-weight: bold;
 }
 
 .giWarning {
-	color: #CC5500;
-	font-weight: bold;
+    color: #CC5500;
+    font-weight: bold;
 }
 
 .giSuccess {
-	color: #55CC00;
-	font-weight: bold;
+    color: #55CC00;
+    font-weight: bold;
 }
 
-/*	  .gbTopFlag   */
+/*  .gbTopFlag   */
 
-/*	  .gbBottomFlag   */
+/*  .gbBottomFlag   */
 
 .gbBottomFlag .giHorizontalLinks {
-	font-size: 0.9em;
+    font-size: 0.9em;
 }
 
-/*	  .gbDataEntry */
+/*  .gbDataEntry */
 
 .gbDataEntry .giFormButton {
-	font-size: 1.0em;
+    font-size: 1.0em;
 }
 
 .gbAdmin p.giDescription { }
@@ -635,7 +628,7 @@ discused the options of generating a table-based border (ie_test) and alistapart
 
 .giMarkupBar { }
 
-input, textarea {
+#gallery input, #gallery textarea {
     border:1px solid #ccc;
     color: #333;
     background: #fff;
@@ -677,49 +670,49 @@ input, textarea {
 }
 
 #gpDebug span pre {
-	font-family: Courier New;
-	font-size: 12px;
+    font-family: Courier New;
+    font-size: 12px;
 }
 
 /* New definitions that need to be moved to the right place */
 .autoCompleteBackground {
-  border-left: solid #ccc 1px;
-  border-right: solid #ccc 1px;
-  border-bottom: solid #ccc 1px;
-  margin: 0;
-  font-size: 1.2em;
+    border-left: solid #ccc 1px;
+    border-right: solid #ccc 1px;
+    border-bottom: solid #ccc 1px;
+    margin: 0;
+    font-size: 1.2em;
 }
 
 .autoCompleteHighlight {
-  border: none;
-  text-decoration: underline;
+    border: none;
+    text-decoration: underline;
 }
 
 .autoCompleteNotSelected {
-  background-color: #eee;
-  padding: 4px 4px 4px 17px;
+    background-color: #eee;
+    padding: 4px 4px 4px 17px;
 }
 
 .autoCompleteSelected {
-  background-color: #ffc;
-  padding: 4px 4px 4px 17px;
+    background-color: #ffc;
+    padding: 4px 4px 4px 17px;
 }
 
 .gbStatusTable {
-  width: 100%;
-  margin: 0 0 0 -6px;
-  padding: 0;
+    width: 100%;
+    margin: 0 0 0 -6px;
+    padding: 0;
 }
 
 .gbStatusTable h4 {
-  font-size: 0.9em;
+    font-size: 0.9em;
 }
 .giStatusProgressMade {
-  background-color: #fd6704;
-  border: thin solid #ddd;
+    background-color: #fd6704;
+    border: thin solid #ddd;
 }
 
 .giStatusProgressToGo {
-  background-color: #eee;
-  border: thin solid #ddd;
+    background-color: #eee;
+    border: thin solid #ddd;
 }

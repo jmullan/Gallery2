@@ -438,12 +438,11 @@ function _GalleryMain_errorHandler($error, $g2Data=null, $initOk=true) {
 	/* Create a template with default theme.. */
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryTemplate.class');
 	$template = new GalleryTemplate(dirname(__FILE__));
+	$template->style("templates/layout.css");
 
-	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryTheme.class');
-	list ($ret, $theme) = GalleryTheme::loadTheme();
+	list ($ret, $theme) = GalleryCoreApi::getPluginParameter('module', 'core', 'default.theme');
 	if ($ret->isSuccess()) {
-	    $templateAdapter =& $gallery->getTemplateAdapter();
-	    $templateAdapter->setTheme($theme);
+	    $template->style("themes/$theme/theme.css");
 	}
     }
 

@@ -35,14 +35,6 @@
 class GalleryTemplateAdapter {
 
     /**
-     * The active theme
-     *
-     * @var object GalleryTheme a theme instance
-     * @access private
-     */
-    var $_theme;
-
-    /**
      * The number of times our block callbacks have been executed
      * @var array _callCount
      */
@@ -61,24 +53,6 @@ class GalleryTemplateAdapter {
      */
     function GalleryTemplateAdapter() {
 	$this->_callCount = $this->_blocks = array();
-    }
-
-    /**
-     * Set the active theme
-     *
-     * @param object GalleryTheme
-     */
-    function setTheme($theme) {
-	$this->_theme = $theme;
-    }
-
-    /**
-     * Get the active theme
-     *
-     * @return object GalleryTheme
-     */
-    function getTheme() {
-	return $this->_theme;
     }
 
     /*************************************************************
@@ -316,14 +290,38 @@ class GalleryTemplateAdapter {
     }
 
     /**
-     * Allow the current theme to return any style tags
+     * Render head content
      *
      * @param array
      * @param object Smarty the smarty instance
      * @return string HTML content
      */
-    function style($params, &$smarty) {
-	return $this->_theme->style($params, $smarty);
+    function head($params, &$smarty) {
+	global $gallery;
+	$urlGenerator =& $gallery->getUrlGenerator();
+	$templateVars =& $smarty->get_template_vars();
+	$head = $templateVars['head'];
+	$output = array();
+
+	/* Title */
+	if (isset($head['title'])) {
+	    $output[] = '<title>' . $head['title'] . "</title>\n";
+	}
+
+	/* Style */
+	foreach ($head['style'] as $path) {
+	    $output[] = sprintf('<link rel="stylesheet" type="text/css" href="%s"/>' . "\n",
+				$urlGenerator->generateUrl(array('href' => $path)));
+	}
+
+	/* Tpl to include */
+	foreach ($head['tpl'] as $path => $l10Domain) {
+	    $output[] = $smarty->_smarty_include(
+		array('smarty_include_tpl_file' => "gallery:$path",
+		      'smarty_include_vars' => array('l10Domain' => $l10Domain)));
+	}
+
+	return implode('', $output);
     }
 
     /**

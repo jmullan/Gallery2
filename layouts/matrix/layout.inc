@@ -163,10 +163,7 @@ class MatrixLayout extends GalleryLayout {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-
 	$layout =& $template->getVariableByReference('layout');
-	$layout['layoutUrl'] = $urlGenerator->generateUrl(
-				array('href' => 'layouts/' . $this->getId()), false);
 
 	/* Prepare image frames, if available */
 	list ($ret, $imageframe) = GalleryCoreApi::newFactoryInstance('ImageFrameInterface_1_1');
@@ -198,6 +195,7 @@ class MatrixLayout extends GalleryLayout {
 	    return array(GalleryStatus::success(), $bodyFile);
 	} else {
 	    $template->head('layouts/matrix/templates/head.tpl');
+	    $template->style('templates/layout.css');
 	    return array(GalleryStatus::success(), array('body' => $bodyFile));
 	}
     }

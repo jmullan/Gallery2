@@ -168,6 +168,15 @@ class GalleryTemplate {
     }
 
     /**
+     * Add a stylesheet to include in the <head> section
+     * @param string stylesheet path relative to gallery2 dir
+     */
+    function style($path) {
+	$head =& $this->getVariableByReference('head');
+	$head['style'][] = $path;
+    }
+
+    /**
      * Render the properly localized template
      *
      * @param string the template name
@@ -314,7 +323,7 @@ class GalleryTemplate {
 					     'resourceGetSecure',
 					     'resourceGetTrusted'));
 
-	    $smarty->assign('head', array('tpl' => array()));
+	    $smarty->assign('head', array('tpl' => array(), 'style' => array()));
 	}
 
 	return $smarty;

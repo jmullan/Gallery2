@@ -211,17 +211,21 @@ class GalleryView {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
-
-	/* Load and initialize the theme */
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryTheme.class');
-	list ($ret, $theme) = GalleryTheme::loadTheme($themeName);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	/* Fallback to default theme if none specified */
+	if (empty($themeName)) {
+	    list ($ret, $themeName) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'default.theme');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
 	}
+	/* Theme style */
+	$template->style("themes/$themeName/theme.css");
 
-	/* Pass the theme to the template adapter */
-	$templateAdapter =& $gallery->getTemplateAdapter();
-	$templateAdapter->setTheme($theme);
+	/* Use default layout style if applicable */
+	if ($this->useDefaultStyle()) {
+	    $template->style('templates/layout.css');
+	}
 
 	/* Get our form variables */
 	$form = GalleryUtilities::getFormVariables('form');
@@ -273,6 +277,14 @@ class GalleryView {
      */
     function getThemeName() {
 	return array(GalleryStatus::success(), null);
+    }
+
+    /**
+     * View may override this to omit default layout css and use its own.
+     * @return boolean
+     */
+    function useDefaultStyle() {
+	return true;
     }
 
     /**

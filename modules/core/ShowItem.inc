@@ -67,6 +67,13 @@ class ShowItemView extends GalleryView {
     }
 
     /**
+     * @see GalleryView::useDefaultStyle
+     */
+    function useDefaultStyle() {
+	return false;
+    }
+
+    /**
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {

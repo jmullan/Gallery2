@@ -54,7 +54,7 @@ class GalleryCoreApi {
      * @return array major number, minor number
      */
     function getApiVersion() {
-	return array(4, 0);
+	return array(4, 1);
     }
 
     /**
@@ -358,6 +358,17 @@ class GalleryCoreApi {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryPluginHelper_medium.class');
 	return GalleryPluginHelper_medium::setParameter($pluginType, $pluginId,
 							$parameterName, $parameterValue, $itemId);
+    }
+
+    /**
+     * Get list of available themes
+     *
+     * @return array of (string)themeName => (string)themeDir (currently name==dir)
+     * @static
+     */
+    function getThemeList() {
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryPluginHelper_medium.class');
+	return GalleryPluginHelper_medium::getThemeList();
     }
 
     /**

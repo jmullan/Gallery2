@@ -440,7 +440,7 @@ class AdminLayoutsView extends GalleryView {
 	    $AdminLayouts['presortList'] = $presortList;
 	    $AdminLayouts['orderDirectionList'] = $orderDirectionList;
 	    $AdminLayouts['layoutList'] = $layoutList;
-	    $AdminLayouts['themeList'] = GalleryTheme::getThemeList();
+	    $AdminLayouts['themeList'] = GalleryCoreApi::getThemeList();
 	    $AdminLayouts['newAlbumsUseDefaultsList'] = $newAlbumsUseDefaultsList;
 	    break;
 

@@ -457,5 +457,33 @@ class GalleryPluginHelper_medium {
 	GalleryDataCache::putByReference("GalleryPluginHelper::loadPlugin($pluginType, $pluginId)",
 					 $instance, true);
     }
+
+    /**
+     * Get list of available themes
+     *
+     * @return array of (string)themeName => (string)themeDir (currently name==dir)
+     * @static
+     */
+     function getThemeList() {
+	global $gallery;
+	$platform = $gallery->getPlatform();
+
+	$themeList = array();
+	$themeDir = dirname(__FILE__) . '/../../../../themes/';
+	if ($dir = $platform->opendir($themeDir)) {
+	    while (($subdir = $platform->readdir($dir)) !== false) {
+		if ($subdir{0} == '.' || $subdir == 'CVS'
+			|| !$platform->is_dir("$themeDir$subdir")) {
+		    continue;
+		}
+
+		if ($platform->file_exists("$themeDir$subdir/theme.css")) {
+		    $themeList[$subdir] = $subdir;
+		}
+	    }
+	    $platform->closedir($dir);
+	}
+	return $themeList;
+    }
 }
 ?>
