@@ -19,8 +19,7 @@ function smarty_core_get_php_resource(&$params, &$smarty)
 {
 	
 	$params['resource_base_path'] = $smarty->trusted_dir;	
-	require_once(SMARTY_DIR . 'core' . DIRECTORY_SEPARATOR . 'core.parse_resource_name.php');
-	smarty_core_parse_resource_name($params, $smarty);
+	$smarty->_parse_resource_name($params, $smarty);
 		
     /*
      * Find out if the resource exists.
@@ -41,7 +40,7 @@ function smarty_core_get_php_resource(&$params, &$smarty)
         }
     } else if ($params['resource_type'] != 'file') {
 		$_template_source = null;
-        $_readable = $smarty->_plugin_implementation_exists($smarty->_plugins['resource'][$params['resource_type']][0][0])
+        $_readable = is_callable($smarty->_plugins['resource'][$params['resource_type']][0][0])
             && call_user_func_array($smarty->_plugins['resource'][$params['resource_type']][0][0],
                                     array($params['resource_name'], &$_template_source, &$smarty));
     }
