@@ -298,7 +298,8 @@ class GalleryGraphics {
      * 
      * @access public
      * @param string the image file name
-     * @return array object GalleryStatus, boolean 
+     * @return array object a status code
+     *               boolean true if the filename represents an image file
      */
     function isValidImage($filename) {
 	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__),
@@ -337,6 +338,7 @@ class GalleryGraphics {
 
 	/* Build up a platform-correct version of the command and arguments */
 	$command = '';
+	$cmdArray = $this->_extractCommands($cmdArray);
 	foreach ($cmdArray as $cmdAndArgs) {
 	    if (strlen($command)) {
 		$command .= ' | ';
@@ -369,6 +371,54 @@ class GalleryGraphics {
 	}
 
 	return array($ret, $results);
+    }
+
+    /**
+     * Extract a single array of commands from a multilevel array of commands
+     *
+     * The command array may wind up being multilevel, eg:
+     *
+     * array(
+     *   array('cmd', 'args'),
+     *   array('cmd', 'args'),
+     *   array(
+     *     array('cmd', 'args'),
+     *     array('cmd', 'args')
+     *   ),
+     * )
+     *
+     * Extract the commands as a single level array:
+     *
+     * array(
+     *   array('cmd', 'args'),
+     *   array('cmd', 'args'),
+     *   array('cmd', 'args'),
+     *   array('cmd', 'args')
+     * )
+     *
+     * While maintaining the order.
+     *
+     * @param array a multilevel set of commands
+     * @param array a single level set of commands
+     */
+    function _extractCommands($cmdArray, $level=0) {
+
+	$results = array();
+	$arrayElements = 0;
+	foreach (array_values($cmdArray) as $cmd) {
+	    if (is_array($cmd)) {
+		$results = array_merge($results, $this->_extractCommands($cmd, $level+1));
+		$arrayElements++;
+	    } else {
+		array_push($results, $cmd);
+	    }
+	}
+
+	if ($arrayElements == count($cmdArray)) {
+	    return $results;
+	} else {
+	    return array($results);
+	}
     }
 }
 ?>
