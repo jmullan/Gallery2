@@ -762,7 +762,7 @@ class ConfirmImportController extends GalleryController {
 				    $validItemUID = Gallery1DataParser::isValidUid($albumsPath,$importAlbumItem->owner);
 				    if ($validItemUID) {
 					list($ret, $albumItemUserFields) =
-					    Gallery1DataParser::getUserFieldsByUid($albumsPath, $importAlbumItem['owner']);
+					    Gallery1DataParser::getUserFieldsByUid($albumsPath, $importAlbumItem->owner);
 					if ($ret->isError()) {
 					    return array($ret->wrap(__FILE__, __LINE__), null);
 					}
