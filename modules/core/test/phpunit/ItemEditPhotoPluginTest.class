@@ -55,7 +55,7 @@ class ItemEditPhotoPluginTest extends ItemEditPluginTestCase {
 
 	/* Register operations that we can perform on our mock data items */
 	$ret = GalleryCoreApi::registerToolkitOperation('ItemEditPhotoPluginTestToolkit',
-		array('test/file'), 'resize',
+		array('test/file'), 'scale',
 		array(array('type' => 'int', 'description' => 'test'),
 		      array('type' => 'int', 'description' => 'test')),
 		'test-description');
@@ -72,14 +72,10 @@ class ItemEditPhotoPluginTest extends ItemEditPluginTestCase {
 	}
 
 	$ret = GalleryCoreApi::registerToolkitOperation('ItemEditPhotoPluginTestToolkit',
-							array('test/file'),
-							'resize',
-							array(array('type' => 'int',
-								    'description' => 'test'),
-							      array('type' => 'int',
-								    'description' => 'test')),
-							'test-description',
-							'');
+		array('test/file'), 'resize',
+		array(array('type' => 'int', 'description' => 'test'),
+		      array('type' => 'int', 'description' => 'test')),
+		'test-description', '');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -105,7 +101,7 @@ class ItemEditPhotoPluginTest extends ItemEditPluginTestCase {
 
 	list ($ret, $this->_derivative[2]) =
 	    $this->_createDerivative($this->_item, $this->_derivative[0]->getId(),
-				     DERIVATIVE_TYPE_IMAGE_RESIZE, 'resize|500,500', 'test/file',
+				     DERIVATIVE_TYPE_IMAGE_RESIZE, 'scale|500,500', 'test/file',
 				     array('postFilterOperations' => 'test-operation|0'));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -170,7 +166,7 @@ class ItemEditPhotoPluginTest extends ItemEditPluginTestCase {
 	    $this->assertEquals(3, sizeof($resizeTable[$this->_item->getId()]));
 	    for ($i = 0; $i < 3; $i++) {
 		$this->assertEquals(
-		    ($i < 2) ? ('resize|' . 100 * ($i+1) . ',' . 100 * ($i+1)) : 'resize|300,600',
+		    ($i < 2) ? ('scale|' . 100 * ($i+1) . ',' . 100 * ($i+1)) : 'scale|300,600',
 		    $resizeTable[$this->_item->getId()][$i]->getDerivativeOperations());
 		// check that postfilteroperations are maintained and added to new resizes..
 		$this->assertEquals('test-operation|0',

@@ -89,7 +89,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 		    }
 
 		    $ret = GalleryCoreApi::addDerivativePreference($i, $item->getId(),
-			DERIVATIVE_TYPE_IMAGE_RESIZE, 'resize|' .
+			DERIVATIVE_TYPE_IMAGE_RESIZE, 'scale|' .
 			$form['resizes'][$i]['width'] . ',' . $form['resizes'][$i]['height']);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null, null);
@@ -250,7 +250,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 
 			/* Make sure that we have a toolkit before adding back the resizes */
 			list ($ret, $toolkit, $outputMimeType) =
-			    GalleryCoreApi::getToolkitByOperation($source->getMimeType(), 'resize');
+			    GalleryCoreApi::getToolkitByOperation($source->getMimeType(), 'scale');
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null, null);
 			}
@@ -288,7 +288,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 
 				$derivative->setMimeType($outputMimeType);
 				$derivative->setDerivativeSourceId($source->getId());
-				$derivative->setDerivativeOperations('resize|' .
+				$derivative->setDerivativeOperations('scale|' .
 				    $form['resizes'][$i]['width'] . ',' . $form['resizes'][$i]['height']);
 
 				$ret = GalleryCoreApi::estimateDerivativeDimensions($derivative, $source);

@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -58,7 +58,7 @@ class GdToolkitHelper {
 	    return array(GalleryStatus::success(), array('operations' => array(),
 							 'properties' => array()));
 	}
-	
+
 	list ($ret, $mimeTypes) = GdToolkitHelper::discoverMimeTypes($gd);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -83,8 +83,11 @@ class GdToolkitHelper {
 	if (GdToolkitHelper::isOperationSupported('scale', $gd)) {
 	    /* Scale */
 	    $operations['scale']['params'][] = array('type' => 'int',
-						     'description' => $gallery->i18n('target size'));
-	    $operations['scale']['description'] = $gallery->i18n('Scale the image to the target size'); 
+						     'description' => $gallery->i18n('target width'));
+	    $operations['scale']['params'][] = array('type' => 'int',
+	      'description' => $gallery->i18n('(optional) target height, defaults to same as width'));
+	    $operations['scale']['description'] = $gallery->i18n(
+		'Scale the image to the target size, maintain aspect ratio');
 	    $operations['scale']['mimeTypes'] = $mimeTypes;
 	}
 
@@ -99,18 +102,18 @@ class GdToolkitHelper {
 						      'description' => $gallery->i18n('target width'));
 	    $operations['resize']['params'][] = array('type' => 'int',
 						      'description' => $gallery->i18n('target height'));
-	    $operations['resize']['description'] = $gallery->i18n('Resize the image to the target dimensions'); 
+	    $operations['resize']['description'] = $gallery->i18n('Resize the image to the target dimensions');
 	    $operations['resize']['mimeTypes'] = $mimeTypes;
 	}
-	
+
 	if (GdToolkitHelper::isOperationSupported('rotate', $gd)) {
 	    /* Rotate */
 	    $operations['rotate']['params'][] = array('type' => 'int',
 						      'description' => $gallery->i18n('rotation degrees'));
-	    $operations['rotate']['description'] = $gallery->i18n('Rotate the image'); 
+	    $operations['rotate']['description'] = $gallery->i18n('Rotate the image');
 	    $operations['rotate']['mimeTypes'] = $mimeTypes;
 	}
-	
+
 	if (GdToolkitHelper::isOperationSupported('crop', $gd)) {
 	    /* Crop */
 	    $operations['crop']['params'][] = array('type' => 'float',
@@ -121,7 +124,7 @@ class GdToolkitHelper {
 						    'description' => $gallery->i18n('width %'));
 	    $operations['crop']['params'][] = array('type' => 'float',
 						    'description' => $gallery->i18n('height %'));
-	    $operations['crop']['description'] = $gallery->i18n('Crop the image'); 
+	    $operations['crop']['description'] = $gallery->i18n('Crop the image');
 	    $operations['crop']['mimeTypes'] = $mimeTypes;
 	}
 
@@ -141,7 +144,7 @@ class GdToolkitHelper {
 							 'description' => $gallery->i18n('alignment x %'));
 	    $operations['composite']['params'][] = array('type' => 'int',
 							 'description' => $gallery->i18n('alignment y %'));
-	    $operations['composite']['description'] = $gallery->i18n('Overlay source image with a second one'); 
+	    $operations['composite']['description'] = $gallery->i18n('Overlay source image with a second one');
 	    $operations['composite']['mimeTypes'] = $mimeTypes;
 	}
 
@@ -160,7 +163,7 @@ class GdToolkitHelper {
 
     /**
      * Checks if a certain operation is supported by this GD library
-     * 
+     *
      * @return true/false
      * @static
      */
@@ -174,7 +177,7 @@ class GdToolkitHelper {
 	case 'resize':
 	case 'crop':
 	case 'composite':
-	    /* We can always to these */
+	    /* We can always do these */
 	    return true;
 	    break;
 	case 'convert-to-image/jpeg':
@@ -191,7 +194,7 @@ class GdToolkitHelper {
 
     /**
      * The minimal version of GD that this module supports
-     * 
+     *
      * @return string A version string
      * @static
      */
@@ -201,11 +204,11 @@ class GdToolkitHelper {
 
     /**
      * Find out which version of GD is compiled in this PHP-environment
-     * 
+     *
      * This is ugly, but the only way that works on any PHP version. The
      * idea is from Justin Greer's manual comments for imageCreateTruecolor
-     * at php.net. This really doesn't get the correct GD version if it is 
-     * an external library, since they are defined in the PHP code and 
+     * at php.net. This really doesn't get the correct GD version if it is
+     * an external library, since they are defined in the PHP code and
      * just refer to the functionality that is supported. So if one sees
      * "1.6.2 or higher", it can be as high as 1.8.2, depending on the PHP
      * version and which functionality they test for.
@@ -223,7 +226,7 @@ class GdToolkitHelper {
 	if (!isset($gd)) {
 	    $gd =& GdToolkitHelper::getGdFunctionality();
 	}
-	
+
 	if ($gd->functionExists('gd_info')) {
 	    list ($ret, $gdInfo) = $gd->gd_info();
 	    if ($ret->isError()) {
@@ -252,9 +255,9 @@ class GdToolkitHelper {
 
     /**
      * See if this GD version is supported by this module
-     * 
+     *
      * Currently GD >= 2.0 is supported
-     * 
+     *
      * @param string A gd version string or empty to check the current version
      * @return array object GalleryStatus
      *	       boolean true if supported, false otherwise
@@ -277,14 +280,14 @@ class GdToolkitHelper {
 	/* 1.6, 1.8, ... is too old */
 	return array(GalleryStatus::success(), false);
     }
-    
+
     /**
      * Find out if this GD library is the one bundled with the PHP
      * source.
-     * 
+     *
      * The bundled library provides some functionality that is currently
      * not available on the standard GD library. Those are tested here.
-     * 
+     *
      * @return array object GalleryStatus
      *	       boolean true if it is the bundled library, false otherwise
      */
@@ -335,16 +338,16 @@ class GdToolkitHelper {
 	    && $gd->functionExists('imageCreateFromXbm')) {
 	    $mimeTypes[] = 'image/x-xbitmap';
 	}
-	
+
 	if (count($mimeTypes) == 0) {
 	    return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__), null);
 	}
 	return array(GalleryStatus::success(), $mimeTypes);
     }
-    
+
     /**
      * Tries to find out if we can imageCreateTrueColor()
-     * 
+     *
      * This function is always defined, but will fail with a Fatal PHP error
      * on GD < 2.0.1. There are a lot of PHP installations compiled with
      * external GD libraries where phpinfo informs "2.0 or higher", so we
@@ -368,12 +371,12 @@ class GdToolkitHelper {
 	}
 	return array(GalleryStatus::success(), false);
     }
-    
+
     /**
      * Factory to get a new GdFunctionality object.
-     * 
+     *
      * @param string the name of the GdFunctionality class we want to use
-     * 
+     *
      * @return object GdFunctionality
      * @static
      */

@@ -50,10 +50,10 @@ class ItemMakeHighlightControllerTest extends GalleryControllerTestCase {
 	
 	/* Register operations that we can perform on our mock data items */
 	$ret = GalleryCoreApi::registerToolkitOperation('ItemMakeHighlightTestToolkit',
-						       array('test/file-0'),
-						       'thumbnail',
-						       array(array('type' => 'int', 'description' => 'foo')),
-						       'test-description');
+		array('test/file-0'), 'thumbnail',
+		array(array('type' => 'int', 'description' => 'foo'),
+		      array('type' => 'int', 'description' => 'foo')),
+		'test-description');
 	if ($ret->isError()) {
 	    print $gallery->getDebugBuffer();
 	    print $ret->getAsHtml();

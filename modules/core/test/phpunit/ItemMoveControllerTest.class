@@ -49,14 +49,18 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 	/* Register operations that we can perform on our mock data items */
 	$ret = GalleryCoreApi::registerToolkitOperation('ItemMoveTestToolkit',
 		array('image/test'), 'thumbnail',
-		array(array('type' => 'int', 'description' => 'foo')), 'test-description');
+		array(array('type' => 'int', 'description' => 'foo'),
+		      array('type' => 'int', 'description' => 'foo')),
+		'test-description');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = GalleryCoreApi::registerToolkitOperation('ItemMoveTestToolkit',
 		array('image/test'), 'scale',
-		array(array('type' => 'int', 'description' => 'foo')), 'test-description');
+		array(array('type' => 'int', 'description' => 'foo'),
+		      array('type' => 'int', 'description' => 'foo')),
+		'test-description');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));

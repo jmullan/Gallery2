@@ -41,7 +41,7 @@ class SquareThumbModule extends GalleryModule /* and GalleryEventListener */ {
 	$this->setId('squarethumb');
 	$this->setName($gallery->i18n('Square Thumbnails'));
 	$this->setDescription($gallery->i18n('Crop all thumbnails so they are square'));
-	$this->setVersion('0.8.3');
+	$this->setVersion('0.8.4');
 	$this->setGroup('display', $this->translate('Display'));
 	$this->setCallbacks('performFactoryRegistrations|registerEventListeners');
 	$this->setRequiredCoreApi(array(1, 0));
@@ -89,7 +89,8 @@ class SquareThumbModule extends GalleryModule /* and GalleryEventListener */ {
 	/* Register toolkit operation using high priority */
 	if (!empty($mimeTypes)) {
 	    $ret = GalleryCoreApi::registerToolkitOperation('SquareThumb', $mimeTypes, 'thumbnail',
-			array(array('type' => 'int', 'description' => $gallery->i18n('target size'))),
+			array(array('type' => 'int', 'description' => $gallery->i18n('target size')),
+			      array('type' => 'int', 'description' => $gallery->i18n('(optional)'))),
 			$gallery->i18n('Create square thumbnail'), '', 10);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);

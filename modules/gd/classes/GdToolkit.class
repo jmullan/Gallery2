@@ -28,7 +28,7 @@
 /**
  * Load required classes
  */
-GalleryCoreApi::relativeRequireOnce('/modules/core/classes/GalleryToolkit.class');
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryToolkit.class');
 GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GdToolkitHelper.class');
 
 /**
@@ -152,28 +152,21 @@ class GdToolkit extends GalleryToolkit {
 	switch($operationName) {
 	case 'thumbnail':
 	case 'scale':
-	    /* $parameters[0]: target size */
+	    /* $parameters[0]: target width, [1]: optional target height */
+	    $targetHeight = empty($parameters[1]) ? $parameters[0] : $parameters[1];
 	    list ($ret, $width, $height) = $this->_getImageDimensionsForResource($sourceRes);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    if ($operationName == 'thumbnail') {
 		/* Don't enlarge images for a thumbnail */
-		if ($width <= $parameters[0] && $height <= $parameters[0]) {
+		if ($width <= $parameters[0] && $height <= $targetHeight) {
 		    return array(GalleryStatus::success(), $mimeType, $context);
 		}
 	    }
-	    /* Calculate the scaled width/height */
-	    $destWidth = min($parameters[0], $width);
-	    $destHeight = min($parameters[0], $height);
-	    $prop = $width / $height;
-	    if ($prop > 1) {
-		/* landscape */
-		$destHeight = round($height * $parameters[0] / $width);
-	    } else if ($prop < 1) {
-		/* portrait */
-		$destWidth = round($width * $parameters[0] / $height);
-	    }
+
+	    list ($destWidth, $destHeight) = GalleryUtilities::scaleDimensionsToFit(
+					     $width, $height, $parameters[0], $targetHeight);
 	    list ($ret, $destRes) = $this->_resizeImageResource($sourceRes,
 								$destWidth,
 								$destHeight);

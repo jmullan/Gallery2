@@ -55,11 +55,10 @@ class AlbumTest extends GalleryTestCase {
 
 	/* Register operations that we can perform on our mock data items */
 	$ret = GalleryCoreApi::registerToolkitOperation('AlbumTestToolkit',
-							array('test/file'),
-							'thumbnail',
-							array(array('type' => 'int', 'description' => 'test')),
-							'test-description',
-							'');
+		array('test/file'), 'thumbnail',
+		array(array('type' => 'int', 'description' => 'test'),
+		      array('type' => 'int', 'description' => 'test')),
+		'test-description', '');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

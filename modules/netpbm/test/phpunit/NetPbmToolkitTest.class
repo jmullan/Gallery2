@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -417,8 +417,11 @@ class NetPbmToolkitTest extends GalleryTestCase {
 								   'outputMimeType' => 'image/jpeg'),
 				  'scale' => array('params' =>
 						   array(array('type' => 'int',
-							       'description' => 'target size')),
-						   'description' => 'Scale the image to the target size',
+							       'description' => 'target width'),
+							     array('type' => 'int',
+								   'description' => '(optional) ' .
+							'target height, defaults to same as width')),
+						   'description' => 'Scale the image to the target size, maintain aspect ratio',
 						   'mimeTypes' => array('image/gif',
 									'image/jpeg',
 									'image/pjpeg',
@@ -428,8 +431,11 @@ class NetPbmToolkitTest extends GalleryTestCase {
 						   ),
 				  'thumbnail' => array('params' =>
 						       array(array('type' => 'int',
-								   'description' => 'target size')),
-						       'description' => 'Scale the image to the target size',
+								   'description' => 'target width'),
+							     array('type' => 'int',
+								   'description' => '(optional) ' .
+							'target height, defaults to same as width')),
+						       'description' => 'Scale the image to the target size, maintain aspect ratio',
 						       'mimeTypes' => array('image/gif',
 									    'image/jpeg',
 									    'image/pjpeg',

@@ -53,7 +53,8 @@ class CustomThumbnailOptionTest extends ItemEditOptionTestCase {
 
 	$ret = GalleryCoreApi::registerToolkitOperation('CustomThumbnailOptionTestToolkit',
 		array('image/test'), 'thumbnail',
-		array(array('type' => 'int', 'description' => 'foo')), 'test-description');
+		array(array('type' => 'int', 'description' => 'foo'),
+		      array('type' => 'int', 'description' => 'foo')), 'test-description');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));

@@ -29,7 +29,7 @@
 /**
  * Required classes
  */
-require_once(dirname(__FILE__) . '/../../classes/SquareThumbToolkit.class');
+GalleryCoreApi::relativeRequireOnce('modules/squarethumb/classes/SquareThumbToolkit.class');
 
 /**
  * Test SquareThumbToolkit functionality
@@ -70,7 +70,8 @@ class SquareThumbToolkitTest extends GalleryTestCase {
 	}
 	$ret = GalleryCoreApi::registerToolkitOperation('SquareThumbTestToolkit',
 	    array('test/scale', 'test/image'), 'scale',
-	    array(array('type' => 'int', 'description' => 'size')), 'desc');
+	    array(array('type' => 'int', 'description' => 'width'),
+		  array('type' => 'int', 'description' => 'height')), 'desc');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));

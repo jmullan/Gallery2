@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -48,7 +48,7 @@ class GdToolkitTest extends GalleryTestCase {
     var $_toolkit;
 
     var $_oldBase;
-    
+
     function GdToolkitTest($methodName) {
 	$this->GalleryTestCase($methodName);
 	include(dirname(__FILE__) . '/GdFunctionMatrix.inc');
@@ -56,13 +56,13 @@ class GdToolkitTest extends GalleryTestCase {
     }
 
     /**
-     * 
+     *
      */
     function setUp() {
 	global $gallery;
-	
+
 	parent::setUp();
-	
+
 	$this->_save = array();
 	foreach (array('jpegQuality') as $key) {
 	    list ($ret, $this->_save[$key]) = GalleryCoreApi::getPluginParameter('module', 'gd', $key);
@@ -84,7 +84,7 @@ class GdToolkitTest extends GalleryTestCase {
 	/* Watermarks are relative to data.gallery.base */
 	$this->_oldBase = $gallery->getConfig('data.gallery.base');
 	$gallery->setConfig('data.gallery.base', '/valid/');
-	
+
 	/* Get a toolkit to work with */
 	$this->_toolkit = new GdToolkit();
 	$this->_gdFunctionality =& new TestGdFunctionality();
@@ -95,7 +95,7 @@ class GdToolkitTest extends GalleryTestCase {
      */
     function tearDown() {
 	global $gallery;
-	
+
 	foreach ($this->_save as $key => $value) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'gd', $key, $value);
 	    if ($ret->isError()) {
@@ -124,14 +124,14 @@ class GdToolkitTest extends GalleryTestCase {
 	    if (! $isSupported) {
 		continue;
 	    }
-	    
+
 	    list ($ret, $mimeTypes) = GdToolkitHelper::discoverMimeTypes($gd);
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
-	    
+
 	    foreach ($mimeTypes as $mimeType) {
-		/* 
+		/*
 		 * Check operations on the mime types this PHP environment seems
 		 * to understand
 		 */
@@ -147,7 +147,7 @@ class GdToolkitTest extends GalleryTestCase {
 		    $this->assertEquals($this->_gdFunctionality->getOutputFileData('/valid/thumbnail.ext'),
 					array('x' => '100', 'y' => '100', 'mimeType' => $mimeType));
 		}
-		
+
 		if (GdToolkitHelper::isOperationSupported('crop', $gd)) {
 		    list ($ret, $mimeType) =
 			$this->_toolkit->performOperation($mimeType, 'crop',
@@ -163,7 +163,7 @@ class GdToolkitTest extends GalleryTestCase {
 					),
 					'crop dimensions mismatch');
 		}
-		
+
 		if (GdToolkitHelper::isOperationSupported('rotate', $gd)) {
 		    $context = array('width' => 300, 'height' => 200);
 		    list ($ret, $mimeType, $context) =
@@ -179,7 +179,7 @@ class GdToolkitTest extends GalleryTestCase {
 					'rotate');
 		    $this->assertEquals(array('width' => 200, 'height' => 300), $context, 'rotate-context');
 		}
-		
+
 		if (GdToolkitHelper::isOperationSupported('convert-to-image/jpeg', $gd)) {
 		    list ($ret, $mimeType) =
 			$this->_toolkit->performOperation($mimeType, 'convert-to-image/jpeg',
@@ -213,7 +213,7 @@ class GdToolkitTest extends GalleryTestCase {
 					      'copy' => array('/valid/50x50.ext', '250', '0', '0', '0', '50', '50')
 					),
 					'composite #1 ' . $mimeType);
-		
+
 		    /* Test another composite with out of range params that should
 		     * get corrected
 		     */
@@ -250,7 +250,7 @@ class GdToolkitTest extends GalleryTestCase {
 	     */
 	    $this->_gdFunctionality->setEnvironment($environment);
 	    $this->_toolkit->setGdFunctionality($this->_gdFunctionality);
-	    
+
 	    list ($ret, $isSupported) = GdToolkitHelper::isGdVersionSupported(null, $this->_gdFunctionality);
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -258,14 +258,14 @@ class GdToolkitTest extends GalleryTestCase {
 	    if (! $isSupported) {
 		continue;
 	    }
-	    
+
 	    list ($ret, $results) =
 		$this->_toolkit->getProperty('image/gif', 'dimensions', '300x300.gif');
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	    $this->assertEquals(array(300, 300), $results);
-    
+
 	    /* Test a property that doesn't exist */
 	    list ($ret, $results) =
 		$this->_toolkit->getProperty('image/gif', 'BOGUS', 'BOGUS');
@@ -351,7 +351,7 @@ class GdToolkitTest extends GalleryTestCase {
 	     * Test each PHP environment we know
 	     */
 	    $this->_gdFunctionality->setEnvironment($environment);
-	    
+
 	    list ($ret, $results) = GdToolkitHelper::discoverMimeTypes($this->_gdFunctionality);
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -368,12 +368,12 @@ class GdToolkitTest extends GalleryTestCase {
 	     * Test each PHP environment we know
 	     */
 	    $this->_gdFunctionality->setEnvironment($environment);
-	    
+
 	    list ($ret, $isSupported) = GdToolkitHelper::isGdVersionSupported(null, $this->_gdFunctionality);
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
-	    
+
 	    list ($ret, $results) = GdToolkitHelper::getOperationsAndProperties($this->_gdFunctionality);
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -384,7 +384,7 @@ class GdToolkitTest extends GalleryTestCase {
 		$this->assertEquals(array(), $results['properties'], 'Environment ' . $environment['name']);
 		continue;
 	    }
-	    
+
 	    $expectedOperations = array();
 	    if (GdToolkitHelper::isOperationSupported('convert-to-image/jpeg', $this->_gdFunctionality)) {
 		$expectedOperations['convert-to-image/jpeg'] = array(
@@ -399,10 +399,14 @@ class GdToolkitTest extends GalleryTestCase {
 		    'params' => array(
 			array(
 			    'type' => 'int',
-			    'description' => 'target size'
+			    'description' => 'target width'
+			    ),
+			array(
+			    'type' => 'int',
+			    'description' => '(optional) target height, defaults to same as width'
 			    )
 			),
-		    'description' => 'Scale the image to the target size',
+		    'description' => 'Scale the image to the target size, maintain aspect ratio',
 		    'mimeTypes' => $environment['mimeTypes'],
 		    );
 	    }
@@ -411,10 +415,14 @@ class GdToolkitTest extends GalleryTestCase {
 		    'params' => array(
 			array(
 			    'type' => 'int',
-			    'description' => 'target size'
+			    'description' => 'target width'
+			    ),
+			array(
+			    'type' => 'int',
+			    'description' => '(optional) target height, defaults to same as width'
 			    )
 			),
-		    'description' => 'Scale the image to the target size',
+		    'description' => 'Scale the image to the target size, maintain aspect ratio',
 		    'mimeTypes' => $environment['mimeTypes'],
 		    );
 	    }

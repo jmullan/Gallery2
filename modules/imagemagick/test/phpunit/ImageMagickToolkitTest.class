@@ -607,26 +607,36 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 	    }
 	    $wantToPage = array('image/tiff', 'application/pdf', 'application/postscript');
 	    $canPage = array_intersect($wantToPage, $environment['mimeTypes']);
+	    $qualityMimeTypes = array_intersect(array('image/jpeg', 'image/png'),
+						$environment['mimeTypes']);
 
 	    $this->assertEquals(array_merge($canConvert, array(
 		'scale' => array(
 			'params' => array(
 				array(
 					'type' => 'int',
-					'description' => 'target size'
+					'description' => 'target width'
+				),
+				array(
+					'type' => 'int',
+					'description' => '(optional) target height, defaults to same as width'
 				)
 			),
-			'description' => 'Scale the image to the target size',
+			'description' => 'Scale the image to the target size, maintain aspect ratio',
 			'mimeTypes' => $environment['mimeTypes'],
 		),
 		'thumbnail' => array(
 			'params' => array(
 				array(
 					'type' => 'int',
-					'description' => 'target size'
+					'description' => 'target width'
+				),
+				array(
+					'type' => 'int',
+					'description' => '(optional) target height, defaults to same as width'
 				)
 			),
-			'description' => 'Scale the image to the target size',
+			'description' => 'Scale the image to the target size, maintain aspect ratio',
 			'mimeTypes' => $environment['mimeTypes'],
 		),
 		'resize' => array(
@@ -712,6 +722,16 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 			),
 			'description' => 'Select a single page from a multi-page file',
 			'mimeTypes' => $canPage,
+		),
+		'compress' => array(
+			'params' => array(
+				array(
+					'type' => 'int',
+					'description' => 'target size in kb',
+				)
+			),
+			'description' => 'Reduce image quality to reach target file size',
+			'mimeTypes' => $qualityMimeTypes
 		),
 	    )), $results['operations']);
 

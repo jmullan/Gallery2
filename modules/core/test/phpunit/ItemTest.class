@@ -64,32 +64,20 @@ class ItemTest extends GalleryTestCase {
 						      __FILE__);
 
 	/* Register an operation that we can perform on our mock data items */
+	/* Register a jpeg thumbnail in case there are no other toolkits active */
 	$ret = GalleryCoreApi::registerToolkitOperation('ItemTestToolkit',
-						       array('test/image'),
-						       'thumbnail',
-						       array(array('type' => 'int', 'description' => 'foo')),
-						       'itemtest-description');
+		array('test/image', 'image/jpeg'), 'thumbnail',
+		array(array('type' => 'int', 'description' => 'foo'),
+		      array('type' => 'int', 'description' => 'foo')),
+		'itemtest-description');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* Register a conversion operation that we can perform on our mock data items */
 	$ret = GalleryCoreApi::registerToolkitOperation('ItemTestToolkit',
-						       array('test/movie'),
-						       'convert-to-image/jpeg',
-						       array(),
-						       'itemtest-description',
-						       'image/jpeg');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	/* Register a jpeg thumbnail in case there are no other toolkits active */
-	$ret = GalleryCoreApi::registerToolkitOperation('ItemTestToolkit',
-						       array('image/jpeg'),
-						       'thumbnail',
-						       array(array('type' => 'int', 'description' => 'foo')),
-						       'itemtest-description');
+		array('test/movie'), 'convert-to-image/jpeg',
+		array(), 'itemtest-description', 'image/jpeg');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

@@ -54,7 +54,7 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 
 	/* Register operations that we can perform on our mock data items */
 	$ret = GalleryCoreApi::registerToolkitOperation('ItemEditRotateAndScalePhotoPluginTestToolkit',
-		array('test/file'), 'resize',
+		array('test/file'), 'scale',
 		array(array('type' => 'int', 'description' => 'test'),
 		      array('type' => 'int', 'description' => 'test')),
 		'test-description');
@@ -73,14 +73,10 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 	}
 
 	$ret = GalleryCoreApi::registerToolkitOperation('ItemEditRotateAndScalePhotoPluginTestToolkit',
-							array('test/file'),
-							'resize',
-							array(array('type' => 'int',
-								    'description' => 'test'),
-							      array('type' => 'int',
-								    'description' => 'test')),
-							'test-description',
-							'');
+		array('test/file'), 'resize',
+		array(array('type' => 'int', 'description' => 'test'),
+		      array('type' => 'int', 'description' => 'test')),
+		'test-description', '');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -258,7 +254,7 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->assertEquals('rotate|90;resize|200,200', $this->_derivative[0]->getDerivativeOperations());
+	$this->assertEquals('rotate|90;scale|200,200', $this->_derivative[0]->getDerivativeOperations());
     }
 
     function testScaleMissing() {

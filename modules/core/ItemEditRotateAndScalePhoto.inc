@@ -59,7 +59,7 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
 		       || !is_numeric($form['resize']['height']) || $form['resize']['height'] < 1) {
 		$error[] = 'form[error][resize][size][invalid]';
 	    } else {
-		$operation = 'resize';
+		$operation = 'scale';
 		$args = array($form['resize']['width'], $form['resize']['height']);
 	    }
 	} else if (isset($form['action']['rotate']['clockwise'])) {
@@ -329,7 +329,7 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
 		$status = $module->translate('Rotated photo successfully');
 		break;
 
-	    case 'resize':
+	    case 'scale':
 		$status = $module->translate('Scaled photo successfully');
 		break;
 	    }
@@ -396,7 +396,7 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
 	$ItemEditRotateAndScalePhoto['editPhoto']['can']['rotate'] = isset($toolkit);
 		
 	/* Figure out what options we can provide */
-	list ($ret, $toolkit) = GalleryCoreApi::getToolkitByOperation($item->getMimeType(), 'resize');
+	list ($ret, $toolkit) = GalleryCoreApi::getToolkitByOperation($item->getMimeType(), 'scale');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

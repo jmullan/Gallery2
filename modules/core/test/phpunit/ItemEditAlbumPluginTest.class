@@ -56,24 +56,20 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 
 	/* Register operations that we can perform on our mock data items */
 	$ret = GalleryCoreApi::registerToolkitOperation('ItemEditAlbumPluginTestToolkit',
-							array('test/file'),
-							'resize',
-							array(array('type' => 'int',
-								    'description' => 'test'),
-							      array('type' => 'int',
-								    'description' => 'test')),
-							'test-description');
+		array('test/file'), 'scale',
+		array(array('type' => 'int', 'description' => 'test'),
+		      array('type' => 'int', 'description' => 'test')),
+		'test-description');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$ret = GalleryCoreApi::registerToolkitOperation('ItemEditAlbumPluginTestToolkit',
-							array('test/file'),
-							'thumbnail',
-							array(array('type' => 'int',
-								    'description' => 'test')),
-							'test-description');
+		array('test/file'), 'thumbnail',
+		array(array('type' => 'int', 'description' => 'test'),
+		      array('type' => 'int', 'description' => 'test')),
+		'test-description');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -171,13 +167,13 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	}
 	$this->assert(array(array('order' => 0,
 				  'derivativeType' => 2,
-				  'derivativeOperations' => 'resize|234,234'),
+				  'derivativeOperations' => 'scale|234,234'),
 			    array('order' => 0,
 				  'derivativeType' => 2,
-				  'derivativeOperations' => 'resize|345,543'),
+				  'derivativeOperations' => 'scale|345,543'),
 			    array('order' => 0,
 				  'derivativeType' => 2,
-				  'derivativeOperations' => 'resize|456,456')),
+				  'derivativeOperations' => 'scale|456,456')),
 		      $preferences);
     }
 
@@ -272,7 +268,7 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 
 		list ($ret, $ignore) = $this->_createDerivative($child[$i], $child[$i]->getId(),
 								DERIVATIVE_TYPE_IMAGE_RESIZE,
-								'resize|100,100',
+								'scale|100,100',
 								'test/file');
 		if ($ret->isError()) {
 		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -342,9 +338,9 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	}
 
 	for ($i = 0; $i < 2; $i++) {
-	    $this->assertEquals('resize|234,234', $resizes[$child[$i]->getId()][0]->getDerivativeOperations());
-	    $this->assertEquals('resize|345,543', $resizes[$child[$i]->getId()][1]->getDerivativeOperations());
-	    $this->assertEquals('resize|456,456', $resizes[$child[$i]->getId()][2]->getDerivativeOperations());
+	    $this->assertEquals('scale|234,234', $resizes[$child[$i]->getId()][0]->getDerivativeOperations());
+	    $this->assertEquals('scale|345,543', $resizes[$child[$i]->getId()][1]->getDerivativeOperations());
+	    $this->assertEquals('scale|456,456', $resizes[$child[$i]->getId()][2]->getDerivativeOperations());
 	}
     }
 
@@ -429,7 +425,7 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	if (isset($resizes[$photo->getId()])) {
 	    $resizes = $resizes[$photo->getId()];
 	    $this->assertEquals(1, sizeof($resizes), 'There should only be one resize');
-	    $this->assertEquals('resize|50,50', $resizes[0]->getDerivativeOperations(), 'The resize operation should be resize|50,50');
+	    $this->assertEquals('scale|50,50', $resizes[0]->getDerivativeOperations(), 'The resize operation should be resize|50,50');
 	}
     }
 }

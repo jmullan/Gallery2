@@ -165,7 +165,7 @@ class ItemEditPhoto extends ItemEditPlugin {
 		 * Make sure that we have a toolkit before adding back the resizes
 		 */
 		list ($ret, $toolkit, $outputMimeType) =
-		    GalleryCoreApi::getToolkitByOperation($source->getMimeType(), 'resize');
+		    GalleryCoreApi::getToolkitByOperation($source->getMimeType(), 'scale');
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
@@ -196,7 +196,7 @@ class ItemEditPhoto extends ItemEditPlugin {
 			$derivative->setMimeType($outputMimeType);
 			$derivative->setDerivativeSourceId($source->getId());
 			$derivative->setDerivativeOperations(
-			    'resize|' . $form['resizes'][$i]['width']
+			     'scale|' . $form['resizes'][$i]['width']
 				. ',' . $form['resizes'][$i]['height']);
 			if (isset($postFilter)) {
 			    $derivative->setPostFilterOperations($postFilter);
@@ -298,7 +298,7 @@ class ItemEditPhoto extends ItemEditPlugin {
 	$ItemEditPhoto['editSizes']['can']['createThumbnail'] = isset($toolkit);
 
 	/* Figure out what options we can provide */
-	list ($ret, $toolkit) = GalleryCoreApi::getToolkitByOperation($item->getMimeType(), 'resize');
+	list ($ret, $toolkit) = GalleryCoreApi::getToolkitByOperation($item->getMimeType(), 'scale');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

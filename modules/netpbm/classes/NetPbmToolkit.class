@@ -114,11 +114,12 @@ class NetPbmToolkit extends GalleryToolkit {
 	    }
 
 	case 'scale':
+	    $ysize = empty($parameters[1]) ? $parameters[0] : $parameters[1];
 	    $transform[] = array($this->_pnmCmd('pnmscale'),
-				 '--quiet', '-xysize', $parameters[0], $parameters[0]);
+				 '--quiet', '-xysize', $parameters[0], $ysize);
 	    if (isset($width)) {
 		list ($width, $height) =
-		    GalleryUtilities::scaleDimensionsToFit($width, $height, $parameters[0]);
+		    GalleryUtilities::scaleDimensionsToFit($width, $height, $parameters[0], $ysize);
 	    }
 	    break;
 
