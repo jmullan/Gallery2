@@ -45,20 +45,24 @@ function smarty_modifier_entitytruncate($string, $length = 80, $etc = '...', $br
         return '';
     }
 
-    $string = GalleryUtilities::htmlEntityDecode($string);
-	
-    if (strlen($string) > $length) {
-	$length -= strlen($etc);
-	if (!$breakWords) {
-	    $string = preg_replace('/\s+?(\S+)?$/', '', substr($string, 0, $length+1));
+    if (preg_match_all("(&[^&;]*;|[^&;])", $string, $regs)) {	
+	if (count($regs[0]) > $length) {
+	    $length -= strlen($etc);
+	    $substring = '';
+	    for ($i = 0; $i < $length; $i++) {
+		$substring .= $regs[0][$i];
+	    }
+	    if (!$breakWords) {
+		$substring = preg_replace('/\s+?(\S+)?$/', '' , $substring);
+	    }	    
+	    $string = $substring . $etc;
 	}
-
-	$string = substr($string, 0, $length) . $etc;
+	return $string;	
+    } else {
+	return '';
     }
+    
 
-    $string = htmlentities($string);
-
-    return $string;
 }
 
 ?>
