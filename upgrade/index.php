@@ -2,7 +2,7 @@
 /*
  * ATTENTION:
  *
- * If you're seeing this in your browser, and are trying to install Gallery,
+ * If you're seeing this in your browser, and are trying to upgrade Gallery,
  * you either do not have PHP installed, or if it is installed, it is not
  * properly enabled. Please visit the following page for assistance:
  *
@@ -77,6 +77,13 @@ if ($ret->isError()) {
 /* We want to avoid using the cache */
 GalleryDataCache::setFileCachingEnabled(false);
 
+/* Check to see if we have a database.  If we don't, then go to the installer */
+$storage =& $gallery->getStorage();
+list ($ret, $isInstalled) = $storage->isInstalled();
+if ($ret->isError() || !$isInstalled) {
+    header("Location: ../install/");
+}
+
 /* If we don't have our steps in our session, initialize them now. */
 if (!isset($_GET['startOver']) && !empty($_SESSION['upgrade_steps'])) {
     $steps = unserialize($_SESSION['upgrade_steps']);
@@ -137,8 +144,24 @@ if ($currentStep->processRequest()) {
     $templateData['errors'] = array();
     $currentStep->loadTemplateData($templateData);
 
-    // Render our page
+    // Fetch our page into a variable
+    ob_start();
     include('templates/MainPage.html');
+    $html = ob_get_contents();
+    ob_end_clean();
+
+    // Add session ids if we don't have cookies
+    $html = addSessionIdToUrls($html);
+    print $html;
+}
+
+/* Add the session id to our url, if necessary */
+function addSessionIdToUrls($html) {
+    $sid = SID;
+    if (!empty($sid)) {
+	$html = preg_replace('/href="(.*\?.*)"/', 'href="$1&' . $sid . '"', $html);
+    }
+    return $html;
 }
 
 /*

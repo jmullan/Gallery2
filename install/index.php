@@ -147,8 +147,24 @@ if ($currentStep->processRequest()) {
     $templateData['errors'] = array();
     $currentStep->loadTemplateData($templateData);
 
-    // Render our page
+    // Fetch our page into a variable
+    ob_start();
     include('templates/MainPage.html');
+    $html = ob_get_contents();
+    ob_end_clean();
+
+    // Add session ids if we don't have cookies
+    $html = addSessionIdToUrls($html);
+    print $html;
+}
+
+/* Add the session id to our url, if necessary */
+function addSessionIdToUrls($html) {
+    $sid = SID;
+    if (!empty($sid)) {
+	$html = preg_replace('/href="(.*\?.*)"/', 'href="$1&' . $sid . '"', $html);
+    }
+    return $html;
 }
 
 /*
