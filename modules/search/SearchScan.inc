@@ -25,6 +25,9 @@
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
+/* Pull in required classes */
+require(dirname(__FILE__) . '/classes/SearchUtilities.class');
+
 /**
  * @package Search
  * @subpackage UserInterface
@@ -107,6 +110,10 @@ class SearchScanView extends GalleryView {
 	    if (empty($form['searchCriteria'])) {
 		$form['error']['searchCriteria']['missing'] = 1;
 	    } else {
+
+		$form['searchCriteria'] =
+		    SearchUtilities::sanitizeSearchCriteria($form['searchCriteria']);
+		
 		if (isset($form['useDefaultSettings']) || $formName == 'SearchShowAll') {
 		    foreach ($searchInstances as $id => $instance) {
 			$form['options'][$id] = $modules[$id]['options'];
@@ -118,7 +125,7 @@ class SearchScanView extends GalleryView {
 		    if (isset($form['options'][$id])) {
 			list ($ret, $searchResults[$id]) =
 			    $instance->search($form['options'][$id],
-					      $form['searchCriteria'],
+					      '%' . $form['searchCriteria'] . '%',
 					      0,
 					      $scanSize);
 			if ($ret->isError()) {

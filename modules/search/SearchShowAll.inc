@@ -25,6 +25,9 @@
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
+/* Pull in required classes */
+require(dirname(__FILE__) . '/classes/SearchUtilities.class');
+
 /**
  * @package Search
  * @subpackage UserInterface
@@ -86,6 +89,10 @@ class SearchShowAllView extends GalleryView {
 	    if (empty($form['searchCriteria'])) {
 		$form['error']['searchCriteria']['missing'] = 1;
 	    } else {
+
+		$form['searchCriteria'] =
+		    SearchUtilities::sanitizeSearchCriteria($form['searchCriteria']);
+		    
 		if (isset($form['action']['showAll'])) {
 		    $form['moduleId'] = array_pop(array_keys($form['action']['showAll']));
 		    $form['page'] = 1;
@@ -126,7 +133,7 @@ class SearchShowAllView extends GalleryView {
 		if (isset($form['options'][$moduleId])) {
 		    list ($ret, $searchResults) =
 			$searchInstance->search($form['options'][$moduleId],
-						$form['searchCriteria'],
+						'%' . $form['searchCriteria'] . '%',
 						($form['page']-1) * $pageSize,
 						$pageSize);
 		    if ($ret->isError()) {
