@@ -569,13 +569,17 @@ class ImageMagickToolkitTestPlatform {
 		return array(1, array());
 	    } else if ($cmd[0][1] == '-scale' &&
 		       $cmd[0][2] == '100x100' &&
-		       $cmd[0][3] == 'testPerformOperations1.gif') {
+		       $cmd[0][3] == '+profile' &&
+		       $cmd[0][4] == '*' &&
+		       $cmd[0][5] == 'testPerformOperations1.gif') {
 		return array(1, array());
 	    } else if ($cmd[0][1] == '-quality' &&
 		       $cmd[0][2] == 75 &&
 		       $cmd[0][3] == '-scale' &&
 		       $cmd[0][4] == '100x100' &&
-		       $cmd[0][5] == 'testPerformOperations4.jpg') {
+		       $cmd[0][5] == '+profile' &&
+		       $cmd[0][6] == '*' &&
+		       $cmd[0][7] == 'testPerformOperations4.jpg') {
 		return array(1, array());
 	    } else if ($cmd[0][1] == '-rotate' &&
 		       $cmd[0][2] == '90' &&

@@ -88,10 +88,11 @@ class ImageMagickToolkit extends GalleryToolkit {
 	    if ($width <= $parameters[0] && $height <= $parameters[0]) {
 		$transform = null;
 		$outputMimeType = $mimeType;
-		break;
 	    } else {
-		/* fall through to scale */
+		/* Strip metadata to make derivative files smaller.. */
+		$transform = array('-scale', $parameters[0] . 'x' . $parameters[0], '+profile', '*');
 	    }
+	    break;
 	    
 	case 'scale':
 	    $cmd = 'convert';
