@@ -118,7 +118,8 @@ class PhotoAccessHelper {
 
 	    if (isset($thumbnails[$itemId])) {
 		$entry['thumbUrl'] = $urlGenerator->generateUrl(
-		    array('view' => 'core:DownloadItem', 'itemId' => $thumbnails[$itemId]->getId()),
+		    array('view' => 'core:DownloadItem',
+			  'itemId' => $thumbnails[$itemId]->getId()),
 		    true);
 	    } else {
 		$entry['thumbUrl'] = '';
@@ -129,7 +130,7 @@ class PhotoAccessHelper {
 	    $entries[] = $entry;
 	    /* We should scan the results for a "200 OK" result */
 	}
-
+	
 	/* Turn our data into an XML request like this:
 	 *
 	 * <add-cart-request cobrand="CB_GP"
@@ -151,8 +152,8 @@ class PhotoAccessHelper {
 			   'entry-page="/buy/anonCart.jsp" return-url="%s">', $returnUrl);
 	for ($i = 0; $i < sizeof($entries); $i++) {
 	    $lines[] = sprintf('<image id="%d" url="%s" thumb-url="%s" height="%d" width="%d"/>',
-			       $entries[$i]['id'], $entries[$i]['imageUrl'], $entries[$i]['thumbUrl'],
-			       $entries[$i]['imageWidth'], $entries[$i]['imageHeight']);
+                $entries[$i]['id'], $entries[$i]['imageUrl'], $entries[$i]['thumbUrl'],
+                $entries[$i]['imageWidth'], $entries[$i]['imageHeight']);
 	}
 	$lines[] = '</add-cart-request>';
 
@@ -162,8 +163,12 @@ class PhotoAccessHelper {
 
 	$gallery->guaranteeTimeLimit(30);
 	$cartUrl = 'http://' . $photoAccessServer . $cartUrlFragment;
+	if ($gallery->getDebug()) {
+	    $gallery->debug(sprintf("Post Data:\n%s", htmlentities(print_r($postData, 1))));
+	}
 	list ($body, $headers) =
-	    GalleryCoreApi::postToWebPage($cartUrl, $postData, array('User-Agent' => $_SERVER['HTTP_USER_AGENT']));
+	    GalleryCoreApi::postToWebPage($cartUrl, $postData,
+					  array('User-Agent' => $_SERVER['HTTP_USER_AGENT']));
 
 	/* Expect a response of the form:
 	 *
@@ -172,16 +177,20 @@ class PhotoAccessHelper {
 	 * or:
 	 *
 	 * <add-cart-response
-	 * request-url="/buy/anonCartXML.jsp;jsessionid=8BF478ADB099D255F66022164011C6A5?cb=CB_GP&#38;svr=clay"
-	 * redirect-url="/buy/anonCart.jsp;jsessionid=8BF478ADB099D255F66022164011C6A5?cb=CB_GP&#38;svr=clay"/>
+	 *   request-url="/buy/anonCartXML.jsp;jsessionid=XXXXXXXX?cb=CB_GP&#38;svr=clay"
+	 *   redirect-url="/buy/anonCart.jsp;jsessionid=XXXXXXXX?cb=CB_GP&#38;svr=clay"/>
 	 */
-
-	if (preg_match('{<add-cart-response\s*request-url="(\S+)"\s*redirect-url="(\S+)"/>}', $body, $matches)) {
+	if ($gallery->getDebug()) {
+	    $gallery->debug(sprintf("Response Data:\n%s", htmlentities(print_r($body, 1))));
+	}
+	if (preg_match('{<add-cart-response\s*request-url="(\S+)"\s*redirect-url="(\S+)"/>}',
+		       $body, $matches)) {
 	    $cartUrlFragment = str_replace('&#38;', '&', $matches[1]);
 	    $session->put('photoaccess.cartUrlFragment', $cartUrlFragment);
 	    $redirectUrl = 'http://' . $photoAccessServer . str_replace('&#38;', '&', $matches[2]);
 	} else {
-	    $redirectUrl = $urlGenerator->generateUrl(array('view' => 'photoaccess:FulfillmentError'));
+	    $redirectUrl =
+		$urlGenerator->generateUrl(array('view' => 'photoaccess:FulfillmentError'));
 	}
 
 	return array(GalleryStatus::success(), $redirectUrl);
