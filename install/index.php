@@ -201,7 +201,7 @@ $templateData = array();
 
 // Round percentage to the nearest 5
 $templateData['percentComplete'] =		  
-    (int)((100 * ($stepNumber / sizeof($steps))) / 5) * 5;
+    (int)((100 * ($stepNumber / (sizeof($steps)-1))) / 5) * 5;
 $templateData['errors'] = array();
 $templateData['installerDir'] =
     str_replace($_SERVER['DOCUMENT_ROOT'], '', dirname(__FILE__));
