@@ -95,6 +95,34 @@ class ItemAddFromBrowser extends ItemAddPlugin {
     function loadTemplate(&$template, &$form, $item) {
 	global $gallery;
 
+	$fileUploadsBool = (bool) ini_get('file_uploads');
+	$postMaxSize = ini_get('post_max_size');
+	if (preg_match("/(\d+)M/", $postMaxSize, $matches)) {
+	    $postMaxSize = $matches[1] * 1024 * 1024;
+	}
+	
+	$uploadMaxSize = ini_get('upload_max_filesize');
+	if (preg_match("/(\d+)M/", $uploadMaxSize, $matches)) {
+	    $uploadMaxSize = $matches[1] * 1024 * 1024;
+	}
+	$uploadMaxSize = min($postMaxSize, $uploadMaxSize);
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
+	if ($uploadMaxSize >= 1024 * 1024) {
+	    $uploadMaxSize = $module->translate(array('one' => '%d megabyte',
+						      'many' => '%d megabytes',
+						      'count' => (int)($uploadMaxSize / (1024 * 1024)),
+						      'arg1' => (int)($uploadMaxSize / (1024 * 1024))));
+	} else if ($uploadMaxSize >= 1024) {
+	    $uploadMaxSize = $module->translate(array('one' => '%d kilobytes',
+						      'many' => '%d kilobytes',
+						      'count' => (int)($uploadMaxSize / (1024)),
+						      'arg1' => (int)($uploadMaxSize / (1024))));
+	}
+
 	if ($form['formName'] != 'ItemAddFromBrowser') {
 	    /* First time around, load the form with item data */
 	    $form['uploadBoxCount'] = 4;
@@ -102,6 +130,8 @@ class ItemAddFromBrowser extends ItemAddPlugin {
 	}
 
 	$ItemAddFromBrowser = array();
+	$ItemAddFromBrowser['uploadMaxSize'] = $uploadMaxSize;
+	$ItemAddFromBrowser['uploadsPermitted'] = $fileUploadsBool;
 	$template->setVariable('ItemAddFromBrowser', $ItemAddFromBrowser);
 
 	/* Set the ItemAdmin form's encoding type specially since we're uploading binary files */

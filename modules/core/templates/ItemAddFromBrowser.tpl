@@ -4,6 +4,7 @@
  * Gallery will look for that file first and use it if it exists
  * and when you upgrade, your changes will not get overwritten.
  *}
+{if $ItemAddFromBrowser.uploadsPermitted}
 <div class="gbAdmin">
   <div class="giDescription">
     {g->text one="Upload a file directly from your computer."
@@ -15,6 +16,9 @@
   </div>
 
   <div class="gbAdmin">
+    <div class="giDescription">
+      {g->text text="<b>Note:</b> you can upload up to %s at one time.  If you want to upload more than that, you must upload the files separately, or use an upload format" arg1=$ItemAddFromBrowser.uploadMaxSize}
+    </div>
     {section name="uploadBoxes" loop=$form.uploadBoxCount}
     {assign var=iteration value=$smarty.section.uploadBoxes.iteration}
     <div class="gbDataEntry">
@@ -42,3 +46,10 @@
            value="{g->text text="Add Items"}"/>
   </div>
 </div>
+{else}
+<div class="gbAdmin">
+  <div class="giError">
+    {g->text text="Your webserver is configured to disallow file uploads from your web browser at this time.  Please contact your system administrator for assistance."}  
+  </div>
+</div>
+{/if}
