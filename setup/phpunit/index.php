@@ -201,7 +201,7 @@ print "</pre>";
     click the Reload Page button.  That will transfer your session from
     the page where you logged in over to this page.
     <br>
-    <a href="../../main.php?g2_view=core:UserAdmin&g2_subView=core:UserLogin">[ login ]</a>
+    <a href="../../main.php?g2_view=core:UserAdmin&g2_subView=core:UserLogin&g2_return=<?php echo $_SERVER['REQUEST_URI']?>">[ login ]</a>
     <form>
       <input type="text" size=33 name="<?php echo $sessionKey?>">
       <input type="submit" value="Reload page">
