@@ -20,9 +20,22 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 ?>
+<?php
+
+if ($status[$step]) { ?>
+<h2 class="success">
+System checks completed successfully!
+</h2>
+<?php } ?>
 <h1>System Checks</h1>
+<?php if ($status[$step]) { ?>
 <div class="go">
   <span class="goToNextL">
     <a href="index.php?step=4"><?php print _('Go to Step 4&raquo;') ?></a>
   </span>
 </div>
+<?php } else { ?>
+<div class="go">
+<span class="goToNextL"><a href="index.php?step=3"><?php echo _('Run checks again') ?></a></span>
+</div>
+<?php } ?>

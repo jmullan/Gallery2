@@ -33,6 +33,23 @@
 //XXX ENABLED FOR DEBUGGING
 @ini_set('display_errors', 1);
 
+class GalleryStub {
+    var $_hash;
+    function setConfig($key, $value) {
+	$this->_hash[$key] = $value;
+    }
+    
+    function getConfig($key) {
+	return $this->_hash[$key];
+    }
+    
+    function setDebug() { }
+    function setDebugLogFile() { }
+    function setProfile() { }
+}
+
+$gallery = new GalleryStub();
+
 session_start();
 
 // if gettext isn't enabled, subvert the _() text translation function
@@ -150,7 +167,18 @@ if ($step == 1) {
 } elseif ($step == 2) {
     $status[$step] = true;
 } elseif ($step == 3) {
-    $status[$step] = true;
+    $status[$step] = false;
+    // assert compatible version of PHP
+    if (phpversion() < '4.1.0') {
+	array_push($errorMsg, sprintf(_("Error: Gallery 2 requires PHP version 4.1.0 or newer. You have PHP version %s installed. Contact your webserver administrator to request an upgrade, available at the <a href=\"http://php.net/\">PHP website</a>."), phpversion()));
+    }
+    // assert that __FILE__ works correctly
+    if (!CheckFileDirective()) {
+	array_push($errorMsg, _("Error: your PHP __FILE__ directive is not functioning correctly. Please file a support request with your webserver administrator or in the Gallery forums."));
+    }
+    if (count($errorMsg) == 0) {
+	$status[$step] = true;
+    }
 } elseif ($step == 4) {
     if (isset($_GET['action']) && $_GET['action'] === 'create') {
 	$status[$step] = false;
@@ -243,7 +271,19 @@ if ($step == 1) {
 	array_push($errorMsg, "Error: you must specify a database name.");
     }
     
-    if (isset($_GET['action']) && $_GET['action'] === 'create') {
+    if (count($errorMsg == 0) && isset($_GET['action']) && $_GET['action'] === 'create') {
+	/*
+	 * Make sure we can connect to the storage subsystem.
+	 */
+	$ret = $gallery->initStorage();
+	if ($ret->isError()) {
+	    $ret = $ret->wrap(__FILE__, __LINE__);
+	    error('storageError', array('error' => $ret));
+	    return;
+	}
+
+message('success');
+
 	$status[$step] = count($errorMsg) == 0 ? true : false;
     }
 }
@@ -314,16 +354,7 @@ function InstallCheck() {
 
 function SystemCheck() {
     global $content, $navbar, $percentage, $step, $status, $errorMsg;
-	
-    $errors = array();
-	
-    if (phpversion() < '4.1.0') {
-	$error['oldPhp'] = true;
-    }
-    if (!CheckFileDirective()) {
-	$error['brokenFile'] = true;
-    }
-
+    
     $content = 'systemCheck.inc';
 
     include(dirname(__FILE__) . '/body.inc');
@@ -459,17 +490,15 @@ function printNavBar() {
 function CheckFileDirective() {
     if (strstr(__FILE__, 'install/index.php') ||
 	strstr(__FILE__, 'install\\install.php')) {
-	return 1;
+	return true;
     } else {
-	return 0;
+	return false;
     }
 }
 
 function checkDirectories($dataBase) {
-    global $gallery, $platform;
 
     /* Make sure that our base path exists, is a directory and is writeable */
-    //    $dataBase = $gallery->getConfig('data.gallery.base');
 
     $testfile = $dataBase . '/setup' . rand(1, 10000);
     if ($fd = fopen($testfile, 'w')) {
@@ -486,7 +515,6 @@ function checkDirectories($dataBase) {
 		   'smarty',
 		   'smarty/templates_c') as $key) {
 	$dir = "$dataBase/$key";
-	//	$dir = $gallery->getConfig($key);
 
 	if (file_exists($dir) && !is_dir($dir)) {
    	    return false;
