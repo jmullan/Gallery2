@@ -820,14 +820,14 @@ class ItemTest extends GalleryTestCase {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	list ($ret, $photo) = GalleryCoreApi::newItemByMimeType('image/gif');
+	list ($ret, $photo) = GalleryCoreApi::newItemByMimeType('image/jpeg');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$ret = $photo->create($this->_album->getId(),
-			      dirname(__FILE__) . '/../data/test1.gif',
-			      'image/gif',
+			      dirname(__FILE__) . '/../data/test1.jpg',
+			      'image/jpeg',
 			      'test image');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
