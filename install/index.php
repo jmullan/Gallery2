@@ -119,6 +119,18 @@ for ($i = 0; $i < $stepNumber; $i++) {
 }
 $currentStep =& $steps[$stepNumber];
 
+if (!empty($_GET['doOver'])) {
+    $currentStep->setComplete(false);
+}
+
+/* If the current step is incomplete, the rest of the steps can't be complete either */
+if (!$currentStep->isComplete()) {
+    for ($i = $stepNumber+1; $i < sizeof($steps); $i++) {
+	$steps[$i]->setComplete(false);
+	$steps[$i]->setInError(false);
+    }
+}
+
 if ($currentStep->processRequest()) {
     // Load up template data from the current step
     $templateData = array();
