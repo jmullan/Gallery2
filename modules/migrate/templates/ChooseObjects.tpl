@@ -166,6 +166,15 @@
         {/foreach}
       </select>
     </div>
+
+    <div class="gbDataEntry">
+      <div class="giTitle">
+        {g->text text="URL Redirection"}
+      </div>
+
+      <input type="checkbox" name="{g->formVar var="form[urlRedirect]"}"{if $form.urlRedirect} checked="checked"{/if}/>
+      {g->text text="Record G1->G2 mappings during import"}
+    </div>
   </div>
 
   <div class="gbButtons">

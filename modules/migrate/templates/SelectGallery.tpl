@@ -14,11 +14,9 @@
       <p class="giDescription">
       This operation takes data (images, albums, users, etc.) from <strong>Gallery 1</strong> and brings it into <strong>Gallery 2</strong>.
       </p>
-      <p class="giDescription">      
-	<em>
-	  {g->text text="This module is unfinished.  It should not harm your Gallery 1 data, but use it at your own risk."}
-	</em>
-      </p>
+      <em>
+	{g->text text="This module is unfinished.  It should not harm your Gallery 1 data, but use it at your own risk."}
+      </em>
     </div>
   </div>
 
@@ -82,4 +80,31 @@
 
     <input type="submit" name="{g->formVar var="form[action][select]"}" value="{g->text text="Select"}"/>
   </div>
+
+  {if $SelectGallery.mapCount>0 || isset($status.mapDeleted)}
+  <div class="gbAdmin">
+    <h3 class="giTitle"> {g->text text="URL Redirection"} </h3>
+    <p class="giDescription">
+      {g->text text="Gallery can redirect old Gallery1 URLs to the new Gallery2 pages."}
+    </p>
+    {if $SelectGallery.mapCount>0}
+      <span style="padding-right:12px">
+	{g->text one="There is %d G1->G2 map entry" many="There are %d G1->G2 map entries"
+		 count=$SelectGallery.mapCount arg1=$SelectGallery.mapCount}
+      </span>
+      <span>
+	<a href="{g->url arg1="controller=migrate:SelectGallery" arg2="form[action][deleteMap]=1"}"
+	   onclick="return confirm('{g->text text="Deleting map entries will cause old G1 URLs to produce HTTP Not Found errors instead of redirecting to G2 pages.  Delete all entries?"}')">
+	  {g->text text="Delete All"}
+	</a>
+      </span>
+    {/if}
+    {if isset($status.mapDeleted)}
+      <p class="giError">
+	{g->text text="Map entries deleted successfully"}
+      </p>
+    {/if}
+    {include file="gallery:modules/migrate/templates/Redirect.tpl" uriBase=$SelectGallery.uriBase}
+  </div>
+  {/if}
 </div>

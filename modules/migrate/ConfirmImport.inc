@@ -26,6 +26,8 @@
  * @author Jesse Mullan <jmullan@visi.com>
  */
 
+GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/G1MigrateMap.class');
+
 /**
  * @package Migrate
  * @subpackage UserInterface
@@ -108,7 +110,8 @@ class ConfirmImportController extends GalleryController {
 	$status = array('userImportFailure'=>array(),
 			'userImportSuccess'=>array(),
 			'albumImportFailure'=>array(),
-			'albumImportSuccess'=>array()
+			'albumImportSuccess'=>array(),
+			'urlRedirect' => isset($form['urlRedirect'])
 			);
 	$finishedAlbums = array();
 	$albumPosition = array();
@@ -362,6 +365,15 @@ class ConfirmImportController extends GalleryController {
 				    return array($ret->wrap(__FILE__, __LINE__), null);
 				}
 			    }
+
+			    if (isset($form['urlRedirect'])) {
+				$ret = $this->createG1ToG2Mapping(
+						$newAlbumInstance->getId(), $album['name']);
+				if ($ret->isError()) {
+				    return array($ret->wrap(__FILE__, __LINE__), null);
+				}
+			    }
+
 			    if (empty($error)) {
 				$newAlbumInstanceId = $newAlbumInstance->getId();				
 				/* load up the album with metadata from the old
@@ -657,7 +669,16 @@ class ConfirmImportController extends GalleryController {
 										       $item->getId());
 				if ($ret->isError()) {
 				    return array($ret->wrap(__FILE__, __LINE__), null);
-				}	    
+				}
+
+				if (isset($form['urlRedirect'])) {
+				    $ret = $this->createG1ToG2Mapping($newItem->getId(),
+						  $album['name'], $importAlbumItem->image->name);
+				    if ($ret->isError()) {
+					return array($ret->wrap(__FILE__, __LINE__), null);
+				    }
+				}
+
 				list ($ret, $importLockIds[]) = GalleryCoreApi::acquireWriteLock($newItem->getId());
 				if ($ret->isError()) {
 				    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -962,7 +983,25 @@ class ConfirmImportController extends GalleryController {
         $item = strip_tags($item);
         GalleryUtilities::sanitizeInputValues($item);
         return $item;
-    }    
+    }
+
+    /**
+     * Create the G1->G2 map entries so that Gallery1 links
+     * can be redirected to Gallery2 links.
+     * @param int item id
+     * @param string G1 album name
+     * @param string (optional) G1 item name
+     * @return object GalleryStatus a status code
+     * @author Joseph Elwell <jelwell@yahoo.com>
+     */
+    function createG1ToG2Mapping($itemId, $g1AlbumName, $g1ItemName=null) {
+	$ret = G1MigrateMap::addMapEntry(
+		array('itemId' => $itemId, 'g1album' => $g1AlbumName, 'g1item' => $g1ItemName) );
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	return GalleryStatus::success();
+    }
 }
 
 /**

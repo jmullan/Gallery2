@@ -94,15 +94,25 @@
     </div>
     <input type="hidden" name="{g->formVar var="form[destinationAlbumID]"}" value="{$ConfirmImport.destinationAlbumID}"/>
   </div>
-  <div class="giDescription">
+  <div class="gbAdmin">
+    <div class="giDescription">
       {g->text text="Your Gallery 1 will be converted from this character encoding into UTF-8:"}
-  </div>
-  <div class="giInfo">
-    <span>
-      {g->text text="Encoding: %s" arg1=$form.sourceEncoding}
-    </span>
+    </div>
+    <div class="giInfo">
+      <span>
+	{g->text text="Encoding: %s" arg1=$form.sourceEncoding}
+      </span>
+    </div>
   </div>
   <input type="hidden" name="{g->formVar var="form[sourceEncoding]"}" value="{$form.sourceEncoding}"/>
+  {if isset($form.urlRedirect)}
+    <div class="gbAdmin">
+      <p class="giDescription">
+	{g->text text="G1->G2 mappings will be recorded for use in URL Redirection"}
+      </p>
+      <input type="hidden" name="{g->formVar var="form[urlRedirect]"}" value="{$form.urlRedirect}"/>
+    </div>
+  {/if}
 
   <div class="gbButtons">
     <input type="hidden" name="{g->formVar var="albumsPath"}" value="{$ConfirmImport.albumsPath}"/>

@@ -57,6 +57,7 @@ class ImportResultsView extends GalleryView {
 	$ImportResults = array();
 	$ImportResults['counts'] = $counts;
 	$ImportResults['status'] = $status;
+	$ImportResults['uriBase'] = $_SERVER['SCRIPT_NAME'];
 	$template->setVariable('ImportResults', $ImportResults);
 	$template->setVariable('controller', 'migrate:ImportResults');
         return array(GalleryStatus::success(),

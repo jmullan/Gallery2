@@ -198,6 +198,7 @@ class ChooseObjectsView extends GalleryView {
 	    foreach ($newUsers as $uid => $username) {
 		$form['migrateUser'][$uid] = null;
 	    }
+	    $form['urlRedirect'] = 1;
 	}
 	list ($ret, $g1AlbumTree) = $this->_createG1AlbumTree($albumsPath);
 	if ($ret->isError()) {

@@ -110,6 +110,13 @@
   </div>
   {/if}
 
+  {if $ImportResults.status.urlRedirect}
+  <div class="gbAdmin">
+    <div class="giTitle"> {g->text text="URL Redirection"} </div>
+    {include file="gallery:modules/migrate/templates/Redirect.tpl" uriBase=$ImportResults.uriBase}
+  </div>
+  {/if}
+
   <div class="gbAdmin">
     <a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=migrate:SelectGallery"}">
       {g->text text="Import more data"}

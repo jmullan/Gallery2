@@ -30,6 +30,7 @@
  * Required classes
  */
 GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/Gallery1DataParser.class');
+GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/G1MigrateHelper.class');
 
 /**
  * @version $Revision$ $Date$
@@ -68,25 +69,35 @@ class SelectGalleryController extends GalleryController {
 		    $error[] = 'form[error][albumsPath][invalid]';
 		}
 	    }
-	}
 
-	if (empty($error)) {
-	    /* Save our albums path in the session */
-	    $session =& $gallery->getSession();
-	    $recentPaths = $session->get('migrate.view.SelectGallery.recentPaths');
-	    if (empty($recentPaths)) {
-		$recentPaths = array();
-	    }
-	    if (isset($recentPaths[$form['albumsPath']])) {
-		$recentPaths[$form['albumsPath']]++;
-	    } else {
-		$recentPaths[$form['albumsPath']] = 1;
-	    }
-	    $session->put('migrate.view.SelectGallery.recentPaths', $recentPaths);
+	    if (empty($error)) {
+		/* Save our albums path in the session */
+		$session =& $gallery->getSession();
+		$recentPaths = $session->get('migrate.view.SelectGallery.recentPaths');
+		if (empty($recentPaths)) {
+		    $recentPaths = array();
+		}
+		if (isset($recentPaths[$form['albumsPath']])) {
+		    $recentPaths[$form['albumsPath']]++;
+		} else {
+		    $recentPaths[$form['albumsPath']] = 1;
+		}
+		$session->put('migrate.view.SelectGallery.recentPaths', $recentPaths);
 	    
+		$redirect['view'] = 'core:SiteAdmin';
+		$redirect['subView'] = 'migrate:ChooseObjects';
+		$redirect['albumsPath'] = $form['albumsPath'];
+	    }
+	} else if (isset($form['action']['deleteMap'])) {
+	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/G1MigrateMap.class');
+	    $ret = G1MigrateMap::removeAllMapEntries();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
 	    $redirect['view'] = 'core:SiteAdmin';
-	    $redirect['subView'] = 'migrate:ChooseObjects';
-	    $redirect['albumsPath'] = $form['albumsPath'];
+	    $redirect['subView'] = 'migrate:SelectGallery';
+	    $status['mapDeleted'] = 1;
 	}
 
 	if (!empty($redirect)) {
@@ -139,9 +150,16 @@ class SelectGalleryView extends GalleryView {
 	    }
 	}
 
+	list ($ret, $mapCount) = G1MigrateHelper::fetchMapCount();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	$SelectGallery = array();
 	$SelectGallery['recentPaths'] = $recentPaths;
 	$SelectGallery['hasToolkit'] = $hasToolkit;
+	$SelectGallery['mapCount'] = $mapCount;
+	$SelectGallery['uriBase'] = $_SERVER['SCRIPT_NAME'];
 
         $template->setVariable('controller', 'migrate:SelectGallery');
 	$template->setVariable('SelectGallery', $SelectGallery);

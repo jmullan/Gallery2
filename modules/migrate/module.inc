@@ -55,6 +55,13 @@ class MigrateModule extends GalleryModule {
 	}
 
 	if ($version != $this->getVersion()) {
+	    /* The store requires configuration. */
+	    $storage =& $gallery->getStorage();
+	    $ret = $storage->configureStore('migrate');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
 	    $ret = $this->setModuleParameter('version', $this->getVersion());
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
