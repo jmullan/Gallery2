@@ -50,10 +50,6 @@
       )
     
       ,
-    DB_COLUMN_PREFIXorderWeight
-      int(11)
-    
-      ,
     DB_COLUMN_PREFIXownerId
       int(11)
     

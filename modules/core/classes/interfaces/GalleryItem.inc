@@ -82,11 +82,6 @@ class GalleryItem extends GalleryItem_core {
             'type' => STORAGE_TYPE_STRING
         );
     
-        $meta['members']['orderWeight'] = array(
-            'class' => 'GalleryItem',
-            'type' => STORAGE_TYPE_INTEGER
-        );
-    
         $meta['members']['ownerId'] = array(
             'class' => 'GalleryItem',
             'type' => STORAGE_TYPE_INTEGER
@@ -158,12 +153,6 @@ class GalleryItem extends GalleryItem_core {
             $data['orderDirection'] = null;
         } else {
             $data['orderDirection'] = $this->_orderDirection;
-        }
-    
-        if (!isset($this->_orderWeight)) {
-            $data['orderWeight'] = null;
-        } else {
-            $data['orderWeight'] = $this->_orderWeight;
         }
     
         if (!isset($this->_ownerId)) {
@@ -430,47 +419,6 @@ class GalleryItem extends GalleryItem_core {
         if ($a != $b) {
             $this->_orderDirection = $value;
             $this->setModifiedFlag('orderDirection', MEMBER_MODIFIED);
-        }
-    }
-  
-    /**
-     * Get the value of orderWeight
-     *
-     * @return INTEGER the value
-     */
-    function getorderWeight() {
-        if (!isset($this->_orderWeight)) {
-            return null;
-        }
-        return $this->_orderWeight;
-    }
-
-    /**
-     * Set the value of orderWeight
-     *
-     * @param INTEGER the value
-     */
-    function setorderWeight($value) {
-
-        /* 
-         * Convert unset values to null, to avoid generating warnings.
-         */
-	$a = isset($value) ? $value : null;
-	$b = isset($this->_orderWeight) ? $this->_orderWeight : null;
-
-    
-        /* Type case the incoming value to be an integer */
-        if ($value != null) {
-            $value = (int)$value;
-        }
-      
-        /* 
-         * Only take action if the value actually changes, but take care not to 
-         * generate warnings for unset values.
-         */
-        if ($a != $b) {
-            $this->_orderWeight = $value;
-            $this->setModifiedFlag('orderWeight', MEMBER_MODIFIED);
         }
     }
   

@@ -140,7 +140,7 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_albumParent->getId());
 	GalleryUtilities::putRequestVariable('form.action.addGroupPermission', 1);
-	GalleryUtilities::putRequestVariable('form.group.permission', 'core.changeText');
+	GalleryUtilities::putRequestVariable('form.group.permission', 'core.edit');
 	GalleryUtilities::putRequestVariable('form.group.groupName', $this->_group->getGroupName());
 
 	/* Perform the request and verify that we succeeded */
@@ -161,7 +161,7 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 	    if ($permission['groupId'] == $this->_group->getId()) {
 		$this->assertEquals(array('userId' => 0,
 					  'groupId' => $this->_group->getId(),
-					  'permission' => 'core.changeText'),
+					  'permission' => 'core.edit'),
 				    $permission);
 		$count++;
 	    }
@@ -173,7 +173,7 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_albumParent->getId());
 	GalleryUtilities::putRequestVariable('form.action.addGroupPermission', 1);
-	GalleryUtilities::putRequestVariable('form.group.permission', 'core.changeText');
+	GalleryUtilities::putRequestVariable('form.group.permission', 'core.edit');
 	GalleryUtilities::putRequestVariable('form.group.groupName', $this->_group->getGroupName());
 	GalleryUtilities::putRequestVariable('form.applyToSubItems', 1);
 
@@ -195,7 +195,7 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 		if ($permission['groupId'] == $this->_group->getId()) {
 		    $this->assertEquals(array('userId' => 0,
 					      'groupId' => $this->_group->getId(),
-					      'permission' => 'core.changeText'),
+					      'permission' => 'core.edit'),
 					$permission);
 		    $count++;
 		}
@@ -208,7 +208,7 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 	/* Use invalid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_albumParent->getId());
 	GalleryUtilities::putRequestVariable('form.action.addGroupPermission', 1);
-	GalleryUtilities::putRequestVariable('form.group.permission', 'core.changeText');
+	GalleryUtilities::putRequestVariable('form.group.permission', 'core.edit');
 
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
@@ -221,7 +221,7 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 	/* Use invalid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_albumParent->getId());
 	GalleryUtilities::putRequestVariable('form.action.addGroupPermission', 1);
-	GalleryUtilities::putRequestVariable('form.group.permission', 'core.changeText');
+	GalleryUtilities::putRequestVariable('form.group.permission', 'core.edit');
 	GalleryUtilities::putRequestVariable('form.group.groupName', 'bogus-name-' . rand(1,5000));
 
 	/* Perform the request and verify that we failed */
@@ -252,7 +252,7 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 	/* Add a group permission */
 	$ret = GalleryPermissionMap::addGroupPermission($this->_albumParent->getId(),
 							$this->_group->getId(),
-							'core.changeText',
+							'core.edit',
 							false);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -261,7 +261,7 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 	/* Use invalid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_albumParent->getId());
 	GalleryUtilities::putRequestVariable('form.action.addGroupPermission', 1);
-	GalleryUtilities::putRequestVariable('form.group.permission', 'core.changeText');
+	GalleryUtilities::putRequestVariable('form.group.permission', 'core.edit');
 	GalleryUtilities::putRequestVariable('form.group.groupName', $this->_group->getGroupName());
 
 	/* Perform the request and verify that we failed */
@@ -277,7 +277,7 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 	/* Add a group permission */
 	$ret = GalleryPermissionMap::addGroupPermission($this->_albumParent->getId(),
 							$this->_group->getId(),
-							'core.changeText',
+							'core.edit',
 							false);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -286,14 +286,14 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_albumParent->getId());
 	GalleryUtilities::putRequestVariable('form.action.deleteGroupPermission', array(0 => 1));
-	GalleryUtilities::putRequestVariable('form.group.delete.0', $this->_group->getId() . ',core.changeText');
+	GalleryUtilities::putRequestVariable('form.group.delete.0', $this->_group->getId() . ',core.edit');
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
 	$this->assertRedirect(array('view' => 'core:ItemAdmin',
 				    'subView' => 'core:ItemEditPermissions',
 				    'itemId' => $this->_albumParent->getId(),
-				    'form.group.permission' => 'core.changeText',
+				    'form.group.permission' => 'core.edit',
 				    'form.group.groupName' => $this->_group->getGroupName()),
 			      $results);
 
@@ -312,7 +312,7 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 	/* Add a group permission */
 	$ret = GalleryPermissionMap::addGroupPermission($this->_albumParent->getId(),
 							$this->_group->getId(),
-							'core.changeText',
+							'core.edit',
 							true);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -321,7 +321,7 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_albumParent->getId());
 	GalleryUtilities::putRequestVariable('form.action.deleteGroupPermission', array(0 => 1));
-	GalleryUtilities::putRequestVariable('form.group.delete.0', $this->_group->getId() . ',core.changeText');
+	GalleryUtilities::putRequestVariable('form.group.delete.0', $this->_group->getId() . ',core.edit');
 	GalleryUtilities::putRequestVariable('form.applyToSubItems', 1);
 
 	/* Perform the request and verify that we succeeded */
@@ -329,7 +329,7 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 	$this->assertRedirect(array('view' => 'core:ItemAdmin',
 				    'subView' => 'core:ItemEditPermissions',
 				    'itemId' => $this->_albumParent->getId(),
-				    'form.group.permission' => 'core.changeText',
+				    'form.group.permission' => 'core.edit',
 				    'form.group.groupName' => $this->_group->getGroupName()),
 			      $results);
 
@@ -351,7 +351,7 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_albumParent->getId());
 	GalleryUtilities::putRequestVariable('form.action.addUserPermission', 1);
-	GalleryUtilities::putRequestVariable('form.user.permission', 'core.changeText');
+	GalleryUtilities::putRequestVariable('form.user.permission', 'core.edit');
 	GalleryUtilities::putRequestVariable('form.user.userName', $this->_user->getUserName());
 
 	/* Perform the request and verify that we succeeded */
@@ -372,7 +372,7 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 	    if ($permission['userId'] == $this->_user->getId()) {
 		$this->assertEquals(array('userId' => $this->_user->getId(),
 					  'groupId' => 0, 
-					  'permission' => 'core.changeText'),
+					  'permission' => 'core.edit'),
 				    $permission);
 		$count++;
 	    }
@@ -384,7 +384,7 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_albumParent->getId());
 	GalleryUtilities::putRequestVariable('form.action.addUserPermission', 1);
-	GalleryUtilities::putRequestVariable('form.user.permission', 'core.changeText');
+	GalleryUtilities::putRequestVariable('form.user.permission', 'core.edit');
 	GalleryUtilities::putRequestVariable('form.user.userName', $this->_user->getUserName());
 	GalleryUtilities::putRequestVariable('form.applyToSubItems', 1);
 
@@ -406,7 +406,7 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 		if ($permission['userId'] == $this->_user->getId()) {
 		    $this->assertEquals(array('userId' => $this->_user->getId(),
 					      'groupId' => 0,
-					      'permission' => 'core.changeText'),
+					      'permission' => 'core.edit'),
 					$permission);
 		    $count++;
 		}
@@ -419,7 +419,7 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 	/* Use invalid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_albumParent->getId());
 	GalleryUtilities::putRequestVariable('form.action.addUserPermission', 1);
-	GalleryUtilities::putRequestVariable('form.user.permission', 'core.changeText');
+	GalleryUtilities::putRequestVariable('form.user.permission', 'core.edit');
 
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
@@ -432,7 +432,7 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 	/* Use invalid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_albumParent->getId());
 	GalleryUtilities::putRequestVariable('form.action.addUserPermission', 1);
-	GalleryUtilities::putRequestVariable('form.user.permission', 'core.changeText');
+	GalleryUtilities::putRequestVariable('form.user.permission', 'core.edit');
 	GalleryUtilities::putRequestVariable('form.user.userName', 'bogus-name-' . rand(1,5000));
 
 	/* Perform the request and verify that we failed */
@@ -463,7 +463,7 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 	/* Add a user permission */
 	$ret = GalleryPermissionMap::addUserPermission($this->_albumParent->getId(),
 							$this->_user->getId(),
-							'core.changeText',
+							'core.edit',
 							false);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -472,7 +472,7 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 	/* Use invalid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_albumParent->getId());
 	GalleryUtilities::putRequestVariable('form.action.addUserPermission', 1);
-	GalleryUtilities::putRequestVariable('form.user.permission', 'core.changeText');
+	GalleryUtilities::putRequestVariable('form.user.permission', 'core.edit');
 	GalleryUtilities::putRequestVariable('form.user.userName', $this->_user->getUserName());
 
 	/* Perform the request and verify that we failed */
@@ -488,7 +488,7 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 	/* Add a user permission */
 	$ret = GalleryPermissionMap::addUserPermission($this->_albumParent->getId(),
 							$this->_user->getId(),
-							'core.changeText',
+							'core.edit',
 							false);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -497,14 +497,14 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_albumParent->getId());
 	GalleryUtilities::putRequestVariable('form.action.deleteUserPermission', array(0 => 1));
-	GalleryUtilities::putRequestVariable('form.user.delete.0', $this->_user->getId() . ',core.changeText');
+	GalleryUtilities::putRequestVariable('form.user.delete.0', $this->_user->getId() . ',core.edit');
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
 	$this->assertRedirect(array('view' => 'core:ItemAdmin',
 				    'subView' => 'core:ItemEditPermissions',
 				    'itemId' => $this->_albumParent->getId(),
-				    'form.user.permission' => 'core.changeText',
+				    'form.user.permission' => 'core.edit',
 				    'form.user.userName' => $this->_user->getUserName()),
 			      $results);
 
@@ -523,7 +523,7 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 	/* Add a user permission */
 	$ret = GalleryPermissionMap::addUserPermission($this->_albumParent->getId(),
 							$this->_user->getId(),
-							'core.changeText',
+							'core.edit',
 							true);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -532,7 +532,7 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_albumParent->getId());
 	GalleryUtilities::putRequestVariable('form.action.deleteUserPermission', array(0 => 1));
-	GalleryUtilities::putRequestVariable('form.user.delete.0', $this->_user->getId() . ',core.changeText');
+	GalleryUtilities::putRequestVariable('form.user.delete.0', $this->_user->getId() . ',core.edit');
 	GalleryUtilities::putRequestVariable('form.applyToSubItems', 1);
 
 	/* Perform the request and verify that we succeeded */
@@ -540,7 +540,7 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 	$this->assertRedirect(array('view' => 'core:ItemAdmin',
 				    'subView' => 'core:ItemEditPermissions',
 				    'itemId' => $this->_albumParent->getId(),
-				    'form.user.permission' => 'core.changeText',
+				    'form.user.permission' => 'core.edit',
 				    'form.user.userName' => $this->_user->getUserName()),
 			      $results);
 

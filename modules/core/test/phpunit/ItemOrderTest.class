@@ -107,28 +107,7 @@ class ItemOrderTest extends GalleryTestCase {
 
 	/* Assign the item order in reverse */
 	for ($i = 0; $i < sizeof($this->_childItems); $i++) {
-
-	    /* Lock and refresh it */
-	    list ($ret, $lockId) = $gallery->acquireWriteLock($this->_childItems[$i]->getId());
-	    if ($ret->isError()) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-
-	    list ($ret, $this->_childItems[$i]) = $this->_childItems[$i]->refresh();
-	    if ($ret->isError()) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-	    
-	    $this->_childItems[$i]->setOrderWeight(100-$i);
-	    
-	    /* Save it */
-	    $ret = $this->_childItems[$i]->save();
-	    if ($ret->isError()) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-
-	    /* Unlock it */
-	    $ret = $gallery->releaseLocks($lockId);
+	    $ret = GalleryItemAttributesMap::setOrderWeight($this->_childItems[$i]->getId(), 100-$i);
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }

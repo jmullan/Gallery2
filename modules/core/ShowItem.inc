@@ -82,7 +82,7 @@ class ShowItemView extends GalleryView {
 	}
 
 	/* Update the view count */
-	$ret = $item->incrementViewCount();
+	$ret = GalleryItemAttributesMap::incrementViewCount($item->getId());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

@@ -1,0 +1,234 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * A mapping of items to specific named attributes (eg, view count and order
+ * weight).  We don't want to put these attributes inside the entity itself
+ * because we want to be able to modify many of them at once without worrying
+ * about versioning.  These values are also non-essential to the integrity of
+ * the entity itself.
+ *
+ * @g2 <class-name>GalleryItemAttributesMap</class-name>
+ * @g2 <schema>
+ * @g2   <schema-major>1</schema-major>
+ * @g2   <schema-minor>0</schema-minor>
+ * @g2 </schema>
+ *
+ * @package GalleryCore
+ * @subpackage Classes
+ */
+class GalleryItemAttributesMap_core {
+
+    /**
+     * @g2 <map>
+     * @g2   <member>
+     * @g2     <member-name>itemId</member-name>
+     * @g2     <member-type>INTEGER</member-type>
+     * @g2     <member-size>MEDIUM</member-size>
+     * @g2     <unique/>
+     * @g2   </member>
+     * @g2   <member>
+     * @g2     <member-name>viewCount</member-name>
+     * @g2     <member-type>INTEGER</member-type>
+     * @g2     <member-size>LARGE</member-size>
+     * @g2   </member>
+     * @g2   <member>
+     * @g2     <member-name>orderWeight</member-name>
+     * @g2     <member-type>INTEGER</member-type>
+     * @g2     <member-size>LARGE</member-size>
+     * @g2   </member>
+     * @g2 </map>
+     */
+
+    /**
+     * Create a new set of attributes for an item
+     * @param the item id
+     */
+    function createItemAttributes($itemId) {
+	$ret = GalleryItemAttributesMap::addMapEntry(array('itemId' => $itemId,
+							   'viewCount' => 0,
+							   'orderWeight' => 0));
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Remove the attributes for the given item
+     * @param the item id
+     */
+    function removeItemAttributes($itemId) {
+	$ret = GalleryItemAttributesMap::removeMapEntry(array('itemId' => $itemId));
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Update the view count for this item id
+     * @param the item id
+     * @param the new count
+     */
+    function setViewCount($itemId, $count) {
+	$ret = GalleryItemAttributesMap::updateMapEntry(array('itemId' => $itemId),
+							array('viewCount' => $count));
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Update the view count for this item id
+     * @param the item id
+     * @param the amount to increment
+     */
+    function incrementViewCount($itemId, $step=1) {
+	list ($ret, $count) = GalleryItemAttributesMap::fetchViewCount($itemId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	$ret = GalleryItemAttributesMap::updateMapEntry(array('itemId' => $itemId),
+							array('viewCount' => $count + $step));
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Get the view count for this item id
+     */
+    function fetchViewCount($itemId) {
+	global $gallery;
+	
+	$query = '
+        SELECT
+          [GalleryItemAttributesMap::viewCount]
+        FROM
+          [GalleryItemAttributesMap]
+        WHERE
+          [GalleryItemAttributesMap::itemId] = ?
+        ';
+	list ($ret, $searchResults) = $gallery->search($query, array($itemId));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if ($searchResults->resultCount() == 0) {
+	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
+	}
+	$result = $searchResults->nextResult();
+	$count = (int)$result[0];
+			 
+	return array(GalleryStatus::success(), $count);
+    }
+
+    /**
+     * Set the order weight for an item id
+     * @param the item id
+     * @param the new order weight
+     */
+    function setOrderWeight($itemId, $orderWeight) {
+	$ret = GalleryItemAttributesMap::updateMapEntry(array('itemId' => $itemId),
+							array('orderWeight' => $orderWeight));
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Get the order weight for a given item id
+     * @param the item id
+     * @param the order weight
+     */
+    function fetchOrderWeight($itemId) {
+	global $gallery;
+	
+	$query = '
+        SELECT
+          [GalleryItemAttributesMap::orderWeight]
+        FROM
+          [GalleryItemAttributesMap]
+        WHERE
+          [GalleryItemAttributesMap::itemId] = ?
+        ';
+	list ($ret, $searchResults) = $gallery->search($query, array($itemId));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if ($searchResults->resultCount() == 0) {
+	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
+	}
+	$result = $searchResults->nextResult();
+	$count = (int)$result[0];
+			 
+	return array(GalleryStatus::success(), $count);
+    }
+
+    /**
+     * Rebalance the order weights associated with this item's children.
+     * When this method is complete, the child item ids should still have the
+     * same order as they have now, but their order weights should be spaced
+     * out to exactly the spacing value specified in the arguments.
+     *
+     * @param the parent id
+     * @param the order spacing
+     */
+    function rebalanceChildOrderWeights($parentItemId, $spacing=1000) {
+	global $gallery;
+
+	list ($ret, $ids) = GalleryChildEntityHelper::fetchChildIds($parentItemId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$current = $spacing;
+	foreach ($ids as $id) {
+	    $ret = GalleryItemAttributesMap::setOrderWeight($id, $current);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    $current += $spacing;
+	}
+
+	return GalleryStatus::success();
+    }
+}
+
+include(dirname(__FILE__) . '/interfaces/GalleryItemAttributesMap.inc');
+?>

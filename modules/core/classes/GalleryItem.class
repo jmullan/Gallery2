@@ -142,20 +142,6 @@ class GalleryItem_core extends GalleryFileSystemEntity {
     var $_orderDirection;
 
     /**
-     * An arbitrary integer value that fixes this item in a position relative
-     * to its peers.
-     *
-     * @g2 <member>
-     * @g2  <member-name>orderWeight</member-name>
-     * @g2  <member-type>INTEGER</member-type>
-     * @g2 </member>
-     *
-     * @var int $_orderWeight
-     * @access private
-     */
-    var $_orderWeight;
-
-    /**
      * The id of the User who owns this item
      *
      * @g2 <member>
@@ -333,26 +319,6 @@ class GalleryItem_core extends GalleryFileSystemEntity {
     }
 
     /**
-     * Convenienve method to increment the view count for this item
-     *
-     * @param int how much to increment the count
-     * @return object GalleryStatus a status code
-     */
-    function incrementViewCount($increment=1) {
-	list ($ret, $count) = GalleryViewCountMap::fetchCount($this->getId());
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	$ret = GalleryViewCountMap::updateCount($this->getId(), $count+1);
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	return GalleryStatus::success();
-    }
-
-    /**
      * If we want to sort, which storage info we need?
      *
      * This will return the ORDER BY clause to sort the items and a
@@ -406,8 +372,8 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	    break;
 
 	default:
-	    $order = '[GalleryItem::orderWeight]';
-	    $condition = '[GalleryItem::id] = [GalleryChildEntity::id]';
+	    $order = '[GalleryItemAttributesMap::orderWeight]';
+	    $condition = '[GalleryItemAttributesMap::itemId] = [GalleryChildEntity::id]';
 	}
 
 	switch ($this->getOrderDirection()) {
@@ -623,7 +589,7 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	/* Remove all my properties, permissions, view counts */
 	$ret1 = GalleryItemPropertiesMap::removeProperties($this->getId());
 	$ret2 = GalleryPermissionMap::removeItemPermissions($this->getId());
-	$ret3 = GalleryViewCountMap::removeCount($this->getId());
+	$ret3 = GalleryItemAttributesMap::removeItemAttributes($this->getId());
 	
 	if ($ret1->isError()) {
 	    return $ret1->wrap(__FILE__, __LINE__);
@@ -671,8 +637,8 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 		}
 	    }
 
-	    /* Zero out the view count */
-	    $ret = GalleryViewCountMap::setCount($this->getId(), 0);
+	    /* Create an empty attribute entry */
+	    $ret = GalleryItemAttributesMap::createItemAttributes($this->getId());
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }

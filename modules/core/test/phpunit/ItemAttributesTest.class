@@ -1,0 +1,151 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * Test ItemAttribute functionality
+ */
+class ItemAttributesTest extends GalleryTestCase {
+
+    function ItemAttributesTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    function setUp() {
+	global $gallery;
+
+	parent::setUp();
+
+	list ($ret, $this->_rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $this->_parentItem) = $this->_createRandomAlbum($this->_rootId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	for ($i = 0; $i < 3; $i++) {
+	    list ($ret, $this->_childItems[$i]) = $this->_createRandomAlbum($this->_parentItem->getId());
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+    }
+
+    function tearDown() {
+	global $gallery;
+	
+	$ret = $gallery->deleteEntityById($this->_parentItem->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	parent::tearDown();
+    }	
+
+    /**
+     * Update the view count and verify it
+     */
+    function testSetViewCount() {
+	$ret = GalleryItemAttributesMap::setViewCount($this->_childItems[0]->getId(), 999);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $viewCount) = GalleryItemAttributesMap::fetchViewCount($this->_childItems[0]->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(999, $viewCount);
+    }
+
+    /**
+     * Update the view count and verify it
+     */
+    function testIncrementViewCount() {
+	$ret = GalleryItemAttributesMap::setViewCount($this->_childItems[0]->getId(), 999);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryItemAttributesMap::incrementViewCount($this->_childItems[0]->getId(), 3);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $viewCount) = GalleryItemAttributesMap::fetchViewCount($this->_childItems[0]->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(1002, $viewCount);
+    }
+
+    /**
+     * Update the view count and verify it
+     */
+    function testSetOrderWeight() {
+	$ret = GalleryItemAttributesMap::setOrderWeight($this->_childItems[0]->getId(), 123);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $orderWeight) = GalleryItemAttributesMap::fetchOrderWeight($this->_childItems[0]->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(123, $orderWeight);
+    }
+
+    /**
+     * Update the view count and verify it
+     */
+    function testRebalanceOrderWeights() {
+	for ($i = 0; $i < sizeof($this->_childItems); $i++) {
+	    $ret = GalleryItemAttributesMap::setOrderWeight($this->_childItems[$i]->getId(), $i);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+
+	$ret = GalleryItemAttributesMap::rebalanceChildOrderWeights($this->_parentItem->getId(), 100);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	for ($i = 0; $i < sizeof($this->_childItems); $i++) {
+	    $this->assertEquals(array(GalleryStatus::success(), ($i+1)*100),
+				GalleryItemAttributesMap::fetchOrderWeight($this->_childItems[$i]->getId()));
+	}
+    }
+}
+
+?>

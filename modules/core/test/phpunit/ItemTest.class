@@ -107,7 +107,7 @@ class ItemTest extends GalleryTestCase {
 		// Can add data item via group perm
 		$ret = GalleryPermissionMap::addGroupPermission($this->_childItems[$i]->getId(),
 								$groupId,
-								'core.changeText',
+								'core.edit',
 								false);
 		if ($ret->isError()) {
 		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -267,7 +267,7 @@ class ItemTest extends GalleryTestCase {
 	}
 	$this->assertEquals(array('core.view' => 1,
 				  'core.addDataItem' => 1,
-				  'core.changeText' => 1), $perms);
+				  'core.edit' => 1), $perms);
 
 	list ($ret, $perms) = GalleryItemHelper::getPermissions($this->_childItems[2]->getId());
 	if ($ret->isError()) {

@@ -50,10 +50,6 @@
       )
     
       ,
-    DB_COLUMN_PREFIXorderWeight
-      INTEGER
-    
-      ,
     DB_COLUMN_PREFIXownerId
       INTEGER
     

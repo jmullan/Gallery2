@@ -49,7 +49,7 @@ class ItemMakeHighlightController extends GalleryController {
 	$parentId = $item->getParentId();
 
 	/* Make sure we have permission to edit this item */
-	$ret = GalleryUserHelper::assertHasItemPermission($parentId, 'core.changeProperties');
+	$ret = GalleryUserHelper::assertHasItemPermission($parentId, 'core.edit');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -201,7 +201,7 @@ class ItemMakeHighlightView extends GalleryView {
 	$parentId = $item->getParentId();
 
 	/* Make sure we have permission do edit the parent of this item */
-	$ret = GalleryUserHelper::assertHasItemPermission($parentId, 'core.changeProperties');
+	$ret = GalleryUserHelper::assertHasItemPermission($parentId, 'core.edit');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

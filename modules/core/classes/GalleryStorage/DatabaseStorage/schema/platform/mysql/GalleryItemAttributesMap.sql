@@ -3,29 +3,31 @@
     -- why it looks so ugly.  Editing it by hand would be a bad idea.
     --
 
-    CREATE TABLE DB_TABLE_PREFIXViewCountMap (
+    CREATE TABLE DB_TABLE_PREFIXItemAttributesMap (
   DB_COLUMN_PREFIXitemId
-      INTEGER
+      int(11)
     
       ,
     DB_COLUMN_PREFIXviewCount
-      INTEGER
+      int(11)
     
-    );
-
+      ,
+    DB_COLUMN_PREFIXorderWeight
+      int(11)
+    
+    , 
   
-    CREATE UNIQUE INDEX ViewCountMap_itemId 
-    ON DB_TABLE_PREFIXViewCountMap
-    (DB_COLUMN_PREFIXitemId);
+    UNIQUE KEY (DB_COLUMN_PREFIXitemId)
+    
 
-  
+    ) TYPE=DB_TABLE_TYPE;
 
     INSERT INTO DB_TABLE_PREFIXSchema (
       DB_COLUMN_PREFIXname,
       DB_COLUMN_PREFIXmajor,
       DB_COLUMN_PREFIXminor
       ) VALUES (
-      'ViewCountMap',
+      'ItemAttributesMap',
       1,
       0
       );

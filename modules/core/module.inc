@@ -89,8 +89,8 @@ class CoreModule extends GalleryModule {
 	require_once($classDir . 'GalleryUtilities.class');
 	require_once($classDir . 'GalleryUrlGenerator.class');
 	require_once($classDir . 'GalleryView.class');
-	require_once($classDir . 'GalleryViewCountMap.class');
 	require_once($classDir . 'GalleryFactory.class');
+	require_once($classDir . 'GalleryItemAttributesMap.class');
 
 	/*
 	 * Set up our Gallery global.  It's important to use a reference here because
@@ -358,8 +358,8 @@ class CoreModule extends GalleryModule {
 		}
 	    
 		$ret = GalleryPermissionSetMap::registerPermission($this->getName(),
-								   'core.changeProperties',
-								   $gallery->i18n('[core] Change item properties'), 
+								   'core.edit',
+								   $gallery->i18n('[core] Edit item'), 
 								   GALLERY_PERMISSION_ITEM_ADMIN);
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
@@ -368,22 +368,6 @@ class CoreModule extends GalleryModule {
 		$ret = GalleryPermissionSetMap::registerPermission($this->getName(),
 								   'core.changePermissions',
 								   $gallery->i18n('[core] Change item permissions'), 
-								   GALLERY_PERMISSION_ITEM_ADMIN);
-		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
-
-		$ret = GalleryPermissionSetMap::registerPermission($this->getName(),
-								   'core.move',
-								   $gallery->i18n('[core] Move item'), 
-								   GALLERY_PERMISSION_ITEM_ADMIN);
-		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
-
-		$ret = GalleryPermissionSetMap::registerPermission($this->getName(),
-								   'core.changeText',
-								   $gallery->i18n('[core] Change item text'), 
 								   GALLERY_PERMISSION_ITEM_ADMIN);
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
@@ -493,7 +477,7 @@ class CoreModule extends GalleryModule {
 		$showAddItemLink = $item->getCanContainChildren();
 		$showAddAlbumLink = $item->getCanContainChildren();
 		$showPermissionsLink = true;
-		$showMoveItemLink = true;
+		$showMoveItemLink = $item->getId() != $rootId;
 
 	    } else {
 		if (!empty($permissions) &&
@@ -531,7 +515,7 @@ class CoreModule extends GalleryModule {
 		if (isset($parentPermissions['core.all'])) {
 		    $showAddHighlightLink = true;
 		} else {
-		    if (isset($parentPermissions['core.changeProperties'])) {
+		    if (isset($parentPermissions['core.edit'])) {
 			$showAddHighlightLink = true;
 		    }
 		}
@@ -682,12 +666,12 @@ class CoreModule extends GalleryModule {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	if (isset($permissions['core.changeText'])) {
+	if (isset($permissions['core.edit'])) {
 	        $views[] = array('name' => $this->translate('General Settings'),
 				 'view' => 'core:ItemEditItem');
 	}
 
-	if (isset($permissions['core.changeProperties'])) {
+	if (isset($permissions['core.edit'])) {
 	    if (GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
 	        $views[] = array('name' => $this->translate('Album Settings'),
 				 'view' => 'core:ItemEditAlbum');

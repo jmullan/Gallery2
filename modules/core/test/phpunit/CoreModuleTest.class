@@ -45,32 +45,48 @@ class CoreModuleTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	/* Set our language to German */
-	$translator =& $gallery->getTranslator();
-	$translator->init('de_DE');
+	list ($ret, $this->_parentAlbum) = $this->_createRandomAlbum(null);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryPermissionMap::addUserPermission($this->_parentAlbum->getId(),
+						       $gallery->getActiveUserId(),
+						       'core.all');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
     }
 
     function tearDown() {
-	unset($this->_module);
+	global $gallery;
+
+	$ret = $gallery->deleteEntityById($this->_parentAlbum->getId());
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
 	parent::tearDown();
     }
 
     function testGetSiteAdminViews() {
 	global $gallery;
-	$t = $gallery->getConfig('function.exists.dgettext');
 	
 	list ($ret, $content) = $this->_module->getSiteAdminViews();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(array(
-				  array('name' => $t ? 'Allgemein' : 'General',
+				  array('name' => $this->_module->translate('General'),
 					'view' => 'core:AdminCore'),
-				  array('name' => $t ? 'Benutzer' : 'Users',
+				  array('name' => $this->_module->translate('Users'),
 					'view' => 'core:AdminUsers'),
-				  array('name' => $t ? 'Gruppen' : 'Groups',
+				  array('name' => $this->_module->translate('Groups'),
 					'view' => 'core:AdminGroups'),
-				  array('name' => $t ? 'Module' : 'Modules',
+				  array('name' => $this->_module->translate('Modules'),
 					'view' => 'core:AdminModules')
 				  ),
 			    $content);
@@ -78,35 +94,26 @@ class CoreModuleTest extends GalleryTestCase {
 
     function testGetItemAdminViews() {
 	global $gallery;
-	$t = $gallery->getConfig('function.exists.dgettext');
 
-	list ($ret, $rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	list ($ret, $rootAlbum) = $gallery->loadEntitiesById($rootId);
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	
-	list ($ret, $content) = $this->_module->getItemAdminViews($rootAlbum);
+	list ($ret, $content) = $this->_module->getItemAdminViews($this->_parentAlbum);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	
 	$this->assertEquals(array(
-				  array('name' => $t ? 'Allgemeine Einstellungen' : 'General Settings',
+				  array('name' => $this->_module->translate('General Settings'),
 					'view' => 'core:ItemEditItem'),
-				  array('name' => $t ? 'Albumeinstellungen' : 'Album Settings',
+				  array('name' => $this->_module->translate('Album Settings'),
 					'view' => 'core:ItemEditAlbum'),
-				  array('name' => $t ? 'Make Highlight' : 'Make Highlight',
+				  array('name' => $this->_module->translate('Make Highlight'),
 					'view' => 'core:ItemMakeHighlight'),
-				  array('name' => $t ? 'Berechtigungen': 'Permissions',
+				  array('name' => $this->_module->translate('Delete Item'),
+					'view' => 'core:ItemDelete'),
+				  array('name' => $this->_module->translate('Permissions'),
 					'view' => 'core:ItemEditPermissions'),
-				  array('name' => $t ? 'Elemente hinzuf&uuml;gen' : 'Add Items',
+				  array('name' => $this->_module->translate('Add Items'),
 					'view' => 'core:ItemAddChildren'),
-				  array('name' => $t ? 'Album hinzuf&uuml;gen' : 'Add Album',
+				  array('name' => $this->_module->translate('Add Album'),
 					'view' => 'core:ItemAddAlbum')
 				  ),
 			    $content);
@@ -123,7 +130,6 @@ class CoreModuleTest extends GalleryTestCase {
 
     function testGetSystemLinks() {
 	global $gallery;
-	$t = $gallery->getConfig('function.exists.dgettext');
 	
 	list ($ret, $content) = $this->_module->getSystemLinks(array('x' => 'y'));
 	if ($ret->isError()) {
@@ -131,10 +137,10 @@ class CoreModuleTest extends GalleryTestCase {
 	}
 	
 	$this->assertEquals(array(
-				  array('text' => $t ? 'site admin' : 'site admin',
+				  array('text' => $this->_module->translate('site admin'),
 					'params' => array('view' => 'core:SiteAdmin',
 							  'return.x' => 'y')),
-				  array('text' => $t ? 'abmelden' : 'logout',
+				  array('text' => $this->_module->translate('logout'),
 					'params' => array('controller' => 'core:Logout',
 							  'return.x' => 'y'))
 				  ),
@@ -152,84 +158,61 @@ class CoreModuleTest extends GalleryTestCase {
 
     function testGetItemLinks() {
 	global $gallery;
-	$t = $gallery->getConfig('function.exists.dgettext');
 
-	list ($ret, $rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
+	list ($ret, $content) = $this->_module->getItemLinks($this->_parentAlbum, array('x' => 'y'));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $rootAlbum) = $gallery->loadEntitiesById($rootId);
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	
-	list ($ret, $content) = $this->_module->getItemLinks($rootAlbum, array('x' => 'y'));
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	$this->assertEquals(array(
-				  $rootId => array(
-						   array('text' => $t ? 'Album anpassen' : 'edit album',
-							 'params' => array(
-									   'view' => 'core:ItemAdmin',
-									   'itemId' => $rootId,
-									   'return.x' => 'y'
-									   )
-							 ),
-						   array('text' => $t ? 'Element hinzuf&uuml;gen' : 'add item',
-							 'params' => array(
-									   'view' => 'core:ItemAdmin',
-									   'subView' => 'core:ItemAddChildren',
-									   'itemId' => $rootId,
-									   'return.x' => 'y'
-									   )
-							 ),
-						   array('text' => $t ? 'Album hinzuf&uuml;gen' : 'add album',
-							 'params' => array(
-									   'view' => 'core:ItemAdmin',
-									   'subView' => 'core:ItemAddAlbum',
-									   'itemId' => $rootId,
-									   'return.x' => 'y'
-									   )
-							 ),
-						   array('text' => $t ? 'Berechtigungen' : 'permissions',
-							 'params' => array(
-									   'view' => 'core:ItemAdmin',
-									   'subView' => 'core:ItemEditPermissions',
-									   'itemId' => $rootId,
-									   'return.x' => 'y'
-									   )
-							 ),
-						   array('text' => $t ? 'move item' : 'move item',
-							 'params' => array(
-									   'view' => 'core:ItemAdmin',
-									   'subView' => 'core:ItemMove',
-									   'itemId' => null,
-									   'selectedId' => $rootId,
-									   'return.x' => 'y'
-									   )
-							 )
-						   )
-				  ),
-			    $content);
+	$links[] = array('text' => $this->_module->translate('edit album'),
+			 'params' => array(
+					   'view' => 'core:ItemAdmin',
+					   'itemId' => $this->_parentAlbum->getId(),
+					   'return.x' => 'y',
+					   ));
+	$links[] = array('text' => $this->_module->translate('add item'),
+			 'params' => array(
+					   'view' => 'core:ItemAdmin',
+					   'subView' => 'core:ItemAddChildren',
+					   'itemId' => $this->_parentAlbum->getId(),
+					   'return.x' => 'y'
+					   ));
+	$links[] = array('text' => $this->_module->translate('add album'),
+			 'params' => array(
+					   'view' => 'core:ItemAdmin',
+					   'subView' => 'core:ItemAddAlbum',
+					   'itemId' => $this->_parentAlbum->getId(),
+					   'return.x' => 'y'
+					   ));
+	$links[] = array('text' => $this->_module->translate('permissions'),
+			 'params' => array(
+					   'view' => 'core:ItemAdmin',
+					   'subView' => 'core:ItemEditPermissions',
+					   'itemId' => $this->_parentAlbum->getId(),
+					   'return.x' => 'y'
+					   ));
+	$links[] = array('text' => $this->_module->translate('delete item'),
+			 'params' => array(
+					   'view' => 'core:ItemAdmin',
+					   'subView' => 'core:ItemDelete',
+					   'itemId' => $this->_parentAlbum->getId(),
+					   'return.x' => 'y'
+					   ));
+	$links[] = array('text' => $this->_module->translate('move item'),
+			 'params' => array(
+					   'view' => 'core:ItemAdmin',
+					   'subView' => 'core:ItemMove',
+					   'itemId' => null,
+					   'selectedId' => $this->_parentAlbum->getId(),
+					   'return.x' => 'y'
+					   ));
+	$this->assertEquals(array($this->_parentAlbum->getId() => $links), $content);
     }
     
     function testGetItemSummaries() {
 	global $gallery;
 	
-	list ($ret, $rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	list ($ret, $rootAlbum) = $gallery->loadEntitiesById($rootId);
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	
-	list ($ret, $content) = $this->_module->getItemSummaries($rootAlbum, array('x' => 'y'));
+	list ($ret, $content) = $this->_module->getItemSummaries($this->_parentAlbum, array('x' => 'y'));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -240,17 +223,7 @@ class CoreModuleTest extends GalleryTestCase {
     function testGetItemDetails() {
 	global $gallery;
 	
-	list ($ret, $rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	list ($ret, $rootAlbum) = $gallery->loadEntitiesById($rootId);
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	
-	list ($ret, $content) = $this->_module->getItemSummaries($rootAlbum, array('x' => 'y'));
+	list ($ret, $content) = $this->_module->getItemSummaries($this->_parentAlbum, array('x' => 'y'));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

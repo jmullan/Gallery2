@@ -125,7 +125,7 @@ class PermissionTest extends GalleryTestCase {
 	/* Add user permission to just this item */
 	$ret = GalleryPermissionMap::addUserPermission($this->_albums[0]->getId(),
 						       $userId,
-						       'core.changeProperties',
+						       'core.edit',
 						       false);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -134,7 +134,7 @@ class PermissionTest extends GalleryTestCase {
 	/* Add group permission to just this item */
 	$ret = GalleryPermissionMap::addGroupPermission($this->_albums[0]->getId(),
 							$groupId,
-							'core.changeText',
+							'core.edit',
 							false);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -180,16 +180,16 @@ class PermissionTest extends GalleryTestCase {
 		$expectedUncompressed[] = array('userId' => $userId, 'groupId' => 0, 'permission' => 'core.viewResizes');
 		$expectedUncompressed[] = array('userId' => $userId, 'groupId' => 0, 'permission' => 'core.viewSource');
 		$expectedUncompressed[] = array('userId' => $userId, 'groupId' => 0, 'permission' => 'core.viewAll');
-		$expectedUncompressed[] = array('userId' => $userId, 'groupId' => 0, 'permission' => 'core.changeProperties');
+		$expectedUncompressed[] = array('userId' => $userId, 'groupId' => 0, 'permission' => 'core.edit');
 		$expectedUncompressed[] = array('userId' => $userId, 'groupId' => 0, 'permission' => 'core.changePermissions');
-		$expectedUncompressed[] = array('userId' => 0, 'groupId' => $groupId, 'permission' => 'core.changeText');
+		$expectedUncompressed[] = array('userId' => 0, 'groupId' => $groupId, 'permission' => 'core.edit');
 		$expectedUncompressed[] = array('userId' => 0, 'groupId' => $groupId, 'permission' => 'core.delete');
 		
 		$expectedCompressed = array();
 		$expectedCompressed[] = array('userId' => $userId, 'groupId' => 0, 'permission' => 'core.viewAll');
-		$expectedCompressed[] = array('userId' => $userId, 'groupId' => 0, 'permission' => 'core.changeProperties');
+		$expectedCompressed[] = array('userId' => $userId, 'groupId' => 0, 'permission' => 'core.edit');
 		$expectedCompressed[] = array('userId' => $userId, 'groupId' => 0, 'permission' => 'core.changePermissions');
-		$expectedCompressed[] = array('userId' => 0, 'groupId' => $groupId, 'permission' => 'core.changeText');
+		$expectedCompressed[] = array('userId' => 0, 'groupId' => $groupId, 'permission' => 'core.edit');
 		$expectedCompressed[] = array('userId' => 0, 'groupId' => $groupId, 'permission' => 'core.delete');
 	    } else {
 		/*
@@ -313,7 +313,7 @@ class PermissionTest extends GalleryTestCase {
 	    GalleryPermissionMap::hasPermission($this->_albums[0]->getId(),
 						array($userId),
 						array(),
-						'core.changeText');
+						'core.edit');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -335,7 +335,7 @@ class PermissionTest extends GalleryTestCase {
 	    GalleryPermissionMap::hasPermission($this->_albums[0]->getId(),
 						array(),
 						array($groupId),
-						'core.changeText');
+						'core.edit');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
