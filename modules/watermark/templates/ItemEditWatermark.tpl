@@ -180,6 +180,7 @@ dd.elements.watermark_floater.moveTo(dd.elements.watermark_original.x,
 	                             dd.elements.watermark_original.y);
 dd.elements.watermark_floater.setZ(dd.elements.watermark_original.z+1);
 moveToOriginalLocation()
+verifyBounds();
 -->
 </script>
 {/if}

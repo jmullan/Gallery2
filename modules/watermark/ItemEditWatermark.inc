@@ -211,7 +211,8 @@ class ItemEditWatermark extends ItemEditPlugin {
 		}
 
 		if (!isset($form['watermarkId'])) {
-		    $form['watermarkId'] = $watermarks[0]['id'];
+		    $watermarkIds = array_keys($watermarks);
+		    $form['watermarkId'] = $watermarkIds[0];
 		}
 	    }
 	}
