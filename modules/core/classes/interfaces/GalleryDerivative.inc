@@ -133,6 +133,18 @@ class GalleryDerivative extends GalleryDerivative_core {
         return $data;
     }
   
+
+    /**
+     * Return the name of this class with the proper mix of uppercase and
+     * lowercase (get_class() always returns lowercase)
+     *
+     * @return string class name
+     */
+    function getClassName() {
+        return 'GalleryDerivative';
+    }
+
+    
     /**
      * Get the value of derivativeSourceId
      *

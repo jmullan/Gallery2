@@ -43,6 +43,18 @@ class GalleryToolkitPropertyMap extends GalleryToolkitPropertyMap_core {
   
 
   
+
+    /**
+     * Return the name of this class with the proper mix of uppercase and
+     * lowercase (get_class() always returns lowercase)
+     *
+     * @return string class name
+     */
+    function getClassName() {
+        return 'GalleryToolkitPropertyMap';
+    }
+
+    
     /**
      * Get meta information about this class' map 
      *

@@ -87,6 +87,16 @@ class <xsl:value-of select="class-name"/> extends <xsl:value-of select="class-na
     }
   </xsl:if>
 
+    /**
+     * Return the name of this class with the proper mix of uppercase and
+     * lowercase (get_class() always returns lowercase)
+     *
+     * @return string class name
+     */
+    function getClassName() {
+        return '<xsl:value-of select="class-name"/>';
+    }
+
     <xsl:apply-templates select="map" />
     <xsl:apply-templates select="member" />
 }
