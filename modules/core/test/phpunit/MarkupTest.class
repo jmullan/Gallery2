@@ -51,6 +51,7 @@ class MarkupTest extends GalleryTestCase {
 	$this->_bbcode = new GalleryBbcodeMarkupParser();
 	$this->_html = new GalleryHtmlMarkupParser();
 	$this->_none = new GalleryNoMarkupParser();
+	$this->_strip = new GalleryStripBbcodeAndHtmlParser();
 	parent::setUp();
     }
 
@@ -147,6 +148,15 @@ class MarkupTest extends GalleryTestCase {
 	$results = $this->_bbcode->parse('[url=javascript:alert(&#039;hi&#039;)]content[/url]');
 	$this->assertEquals('[url=javascript:alert(&#039;hi&#039;)]content[/url]', $results);
     }
-}
 
+    function testStrip() {
+	$results = $this->_strip->parse('[url=http://no]yes[/url] yes [b]yes[/b] <b>yes</b> &lt;foo&gt; hinzufügen');
+	$this->assertEquals('yes yes yes yes &lt;foo&gt; hinzufügen', $results);
+    }
+
+    function testUnicodeCharacters() {
+	$results = $this->_bbcode->parse('[url=https://example.com/secure.html]Elemente hinzufügen[/url] Seitenverhältnis');
+	$this->assertEquals('<a href="https://example.com/secure.html">Elemente hinzufügen</a> Seitenverhältnis', $results);
+    }
+}
 ?>

@@ -38,7 +38,7 @@ function smarty_modifier_markup($text, $overrideMarkupType=null) {
 	list ($ret, $markupType) = GalleryCoreApi::getPluginParameter('module', 'core', 'misc.markup');
 	if ($ret->isError()) {
 	    /* This code is used by the UI -- we can't return an error.  Choose something safe */
-	    $markup = 'none';
+	    $markup = 'stripBbcodeAndHtml';
 	}
 
 	if (isset($overrideMarkupType)) {
@@ -183,10 +183,14 @@ class GalleryHtmlMarkupParser {
 
 class GalleryStripBbcodeAndHtmlParser {
     function parse($text) {
-	$bbcodeParser = new GalleryBbcodeMarkupParser();
-	$text = $bbcodeParser->parse($text);
-	$text = GalleryUtilities::htmlEntityDecode($text);
-	return strip_tags($text);
+	static $bbcode;
+	if (!isset($bbcode)) {
+	    $bbcode = new GalleryBbcodeMarkupParser();
+	}
+
+	$text = $bbcode->parse($text);
+	$text = strip_tags($text);
+	return $text;
     }
 }
 ?>
