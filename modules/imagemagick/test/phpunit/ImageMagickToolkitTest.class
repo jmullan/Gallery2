@@ -201,7 +201,8 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 	}
 
 	global $_ImPlatformFiles;
-	$this->assertEquals($expected, $this->_files[$dst]['operation'], $this->_currentEnvironment['path']);
+	$this->assertEquals($expected, $this->_files[$dst]['operation'],
+	    $this->_currentEnvironment['path'] . " $operation " . implode(' ', $params));
 
 	return GalleryStatus::success();
     }
@@ -213,7 +214,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 
 	    $ret = $this->_testOperation('image/gif', 'thumbnail',
 					 'test[1000x1000].gif', 'output.gif',
-					 array(100, 100),
+					 array(100),
 					 array('width' => 100, 'height' => 100));
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -221,7 +222,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 
 	    $ret = $this->_testOperation('image/jpeg', 'thumbnail',
 					 'test[1000x1000].jpg', 'output.jpg',
-					 array(100, 100),
+					 array(100),
 					 array('width' => 100, 'height' => 100));
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));

@@ -600,14 +600,17 @@ class ImageMagickToolkitHelper {
 			 null);
 	}
 
-	$command = array_merge($convertCmd, array('+profile', '*', $dataPath . 'testProfile.jpg', $tmpFilename));
-	$originalSize = $platform->filesize($dataPath . 'testProfile.jpg');
-	list ($success, $results) = $platform->exec(array($command));
-	$size = $platform->filesize($tmpFilename);
-	@$platform->unlink($tmpFilename);
-	if ($success) {
-	    if ($size > 0 && $size < $originalSize) {
-		return array(GalleryStatus::success(), array('+profile', '*'));
+	foreach (array(array('-strip'), array('+profile', '*')) as $param) {
+	    $command = array_merge($convertCmd, $param,
+				   array($dataPath . 'testProfile.jpg', $tmpFilename));
+	    $originalSize = $platform->filesize($dataPath . 'testProfile.jpg');
+	    list ($success, $results) = $platform->exec(array($command));
+	    $size = $platform->filesize($tmpFilename);
+	    @$platform->unlink($tmpFilename);
+	    if ($success) {
+		if ($size > 0 && $size < $originalSize) {
+		    return array(GalleryStatus::success(), $param);
+		}
 	    }
 	}
 	return array(GalleryStatus::success(), array());

@@ -307,6 +307,100 @@ test.pdf[1] PDF 612x792 612x792+0+0 PseudoClass 256c 947kb 0.030u 0:01',
 );
 
 /* --------------------------------------------------------------------------
+ * ImageMagick 6.1.3
+ * --------------------------------------------------------------------------
+ */
+
+$imEnvironment[] = array(
+	'name' => 'ImageMagick',
+	'version' => '6.1.3',
+	'binary' => '',
+	'mimeTypes' => array(
+		'image/gif',
+		'image/jpeg',
+		'image/pjpeg',
+		'image/jp2',
+		'image/jpg2',
+		'image/jpx',
+		'image/png',
+		'image/tiff',
+		'image/svg+xml',
+		'image/bmp',
+		'application/pdf',
+		'application/postscript',
+	),
+	'binaries' => array(
+		'animate',
+		'compare',
+		'composite',
+		'conjure',
+		'convert',
+		'display',
+		'identify',
+		'import',
+		'mogrify',
+		'montage',
+	),
+	'removeMetaDataSwitch' => array('-strip'),
+	'operations' => array_merge($_commonOperations,
+	    array('thumbnail' => array('convert' => array('-size', '%width%x%height%', '-geometry', '%width%x%height%', '-strip', '%src%', '%dst%')))),
+	'identify' => array(
+		'' => 'Version: ImageMagick 6.1.3 11/01/04 Q16 http://www.imagemagick.org
+Copyright: Copyright (C) 1999-2004 ImageMagick Studio LLC
+
+Usage: identify [options ...] file [ [options ...] file ... ]
+
+Where options include:
+  -authenticate value  decrypt image with this password
+  -channel type        Red, Green, Blue, Opacity, Index, Cyan, Yellow,
+                       Magenta, Black, or All
+  -debug events        display copious debugging information
+  -define format:option
+                       define one or more image format options
+  -density geometry    horizontal and vertical density of the image
+  -depth value         image depth
+  -extract geometry    extract area from image
+  -format "string"     output formatted image characteristics
+  -fuzz distance       colors within this distance are considered equal
+  -help                print program options
+  -interlace type      None, Line, Plane, or Partition
+  -limit type value    Area, Disk, Map, or Memory resource limit
+  -list type           Color, Configure, Delegate, Format, Magic, Module,
+                       Resource, or Type
+  -log format          format of debugging information
+  -sampling-factor geometry
+                       horizontal and vertical sampling factor
+  -size geometry       width and height of image
+  -strip               strip image of all profiles and comments
+  -units type          PixelsPerInch, PixelsPerCentimeter, or Undefined
+  -verbose             print detailed information about the image
+  -version             print version information
+  -virtual-pixel method
+                       Constant, Edge, Mirror, or Tile
+',
+		'UNKNOWN' => 'identify: unable to open image `UNKNOWN\': No such file or directory.
+identify: missing an image filename `UNKNOWN\'.',
+		'test-compressed.tif' => 'identify: unknown field with tag 34665 (0x8769) ignored..
+test-compressed.tif TIFF 50x50 DirectClass 8kb 0.110u 0:01',
+		'test-multiscene.tif' => 'test-multiscene.tif[0] TIFF 100x75 DirectClass 45kb 0.000u 0:01
+test-multiscene.tif[1] TIFF 100x75 DirectClass 45kb 0.000u 0:01',
+		'test.bmp' => 'test.bmp BMP 50x50 PseudoClass 15c 504 0.000u 0:01',
+		'SIZED.gif' => '%filename% GIF %width%x%height% %width%x%height%+0+0 PseudoClass 8c 232 0.000u 0:01',
+		'test.gif' => 'test.gif GIF 50x50 50x50+0+0 PseudoClass 8c 232 0.000u 0:01',
+		'test.jpg' => 'test.jpg JPEG 88x40 PseudoClass 256c 986 0.010u 0:01',
+		'test.jp2' => 'test.jp2 JP2 50x50 DirectClass 1kb 0.020u 0:01',
+		'test.pdf' => 'test.pdf[0] PDF 612x792 612x792+0+0 PseudoClass 256c 947kb 0.060u 0:01
+test.pdf[1] PDF 612x792 612x792+0+0 PseudoClass 256c 947kb 0.030u 0:01',
+		'test.pjpg' => 'test.pjpg JPEG 50x50 DirectClass 970 0.010u 0:01',
+		'test.png' => 'test.png PNG 50x50 DirectClass 730 0.000u 0:01',
+		'test.svg' => 'test.svg SVG 595x842 DirectClass 8kb 0.020u 0:01',
+		'test.tif' => 'test.tif TIFF 50x50 PseudoClass 256c 3kb 0.000u 0:01',
+		'test.eps' => 'test.eps PS 43x18 43x18+0+0 PseudoClass 2c 170 0.000u 0:01',
+		'testProfile.jpg' => 'testProfile.jpg JPEG 40x30 DirectClass 30kb 0.010u 0:01',
+	),
+);
+
+/* --------------------------------------------------------------------------
  * GraphicsMagick 1.0.5
  * --------------------------------------------------------------------------
  */
