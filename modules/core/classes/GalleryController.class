@@ -40,15 +40,21 @@ class GalleryController {
      * Take the appropriate action based on the user input provided
      *
      * When done, we return an array where we can indicate actions that we'd
-     * like to take at this point
+     * like to take at this point.  The return array contains:
      *
-     *  redirect => url to redirect the browser
-     *  view     => view to display next
+     * Either
+     *   redirect => url to redirect the browser
+     * Or:
+     *   delegate => array('view' => ... [, 'subView' => ...'])
      *
+     *  status   => array('key' => 'value')
+     *  view     => array('error code', 'error code', ...)
+     *
+     * @param array the form values
      * @return array object GalleryStatus a status code
-     *               array ('redirect' => ..., 'view' => ...)
+     *               return-array
      */
-    function handleRequest() {
+    function handleRequest($form) {
 	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__),
 		     null);
     }
