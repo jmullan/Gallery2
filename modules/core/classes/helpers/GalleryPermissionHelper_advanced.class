@@ -112,16 +112,15 @@ class GalleryPermissionHelper_advanced {
 	}
 
 	/* Figure out what the current bits are */
-	list ($ret, $currentBitsTable) =
+	list ($ret, $currentBits) =
 	    GalleryPermissionHelper_advanced::_fetchPermissionBitsForItem($itemId, $userId, $groupId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* Figure out if we had any bits to begin with */
-	if (isset($currentBitsTable[$itemId])) {
+	if (isset($currentBits)) {
 	    $needToAddEntry = 0;
-	    $currentBits = $currentBitsTable[$itemId];
 	} else {
 	    $needToAddEntry = 1;
 	    $currentBits = 0;
@@ -252,13 +251,13 @@ class GalleryPermissionHelper_advanced {
 	}
 
 	/* Figure out what the current bits are */
-	list ($ret, $currentBitsTable)  =
+	list ($ret, $currentBits)  =
 	    GalleryPermissionHelper_advanced::_fetchPermissionBitsForItem($itemId, $userId, $groupId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	if (!isset($currentBitsTable[$itemId])) {
+	if (!isset($currentBits)) {
 	    if ($gallery->getDebug()) {
 		$gallery->debug("Tried to remove a non-existant permission!");
 	    }
@@ -273,7 +272,6 @@ class GalleryPermissionHelper_advanced {
 	     */
 	}
 
-	$currentBits = $currentBitsTable[$itemId];
 	$newBits = $currentBits & ~$removeBits;
 
 	require_once(dirname(__FILE__) . '/../GalleryPermissionMap.class');
@@ -403,13 +401,13 @@ class GalleryPermissionHelper_advanced {
     }
 
     /**
-     * Return a list of permissions for the given items
+     * Return a permissions for the given item
      *
-     * @param array int GalleryItem ids
-     * @param array a set of user ids
-     * @param array a set of group ids
+     * @param int GalleryItem id
+     * @param int user id or null (user id and group id can't both be null)
+     * @param int group id or null (user id and group id can't both be null)
      * @return array object GalleryStatus a status code
-     *               array (id => array(array(permission.id => 1, ...), ...)
+     *               int permissions or null if not found
      * @access private
      * @static
      */
@@ -422,7 +420,6 @@ class GalleryPermissionHelper_advanced {
 
 	$query = '
         SELECT
-          [GalleryPermissionMap::itemId],
           [GalleryPermissionMap::permission]
         FROM
           [GalleryPermissionMap]
@@ -442,11 +439,11 @@ class GalleryPermissionHelper_advanced {
 
 	$storage =& $gallery->getStorage();
 
-	$data = array();
-	while ($result = $searchResults->nextResult()) {
-	    $data[$result[0]] = $storage->convertBitsToInt($result[1]);
+	$permission = null;
+	if ($result = $searchResults->nextResult()) {
+	    $permission = $storage->convertBitsToInt($result[0]);
 	}
-	return array(GalleryStatus::success(), $data);
+	return array(GalleryStatus::success(), $permission);
     }
     
     /**
