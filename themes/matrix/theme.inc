@@ -90,6 +90,9 @@ class MatrixTheme extends GalleryTheme {
      */
     function image($context) {
 	$class = "image";
+	if (isset($context['params']['class'])) {
+	    $class = $context['params']['class'];
+	}
 	
 	/* Shrink down images that we display in the sidebar */
 	if (in_array('sidebar', $context['stack'])) {
