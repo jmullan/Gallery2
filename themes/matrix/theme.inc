@@ -45,12 +45,13 @@ class MatrixTheme extends GalleryTheme {
 
 	$platform = $gallery->getPlatform();
 	$format = '<style type="text/css" media="all">@import url(%s);</style>';
-	
-	$style[] = sprintf($format, $this->getBaseUrl() . 'styles/theme.css');
+
+	$urlGenerator = $gallery->getUrlGenerator();
+	$style[] = sprintf($format, $urlGenerator->generateUrl(array('href' => 'themes/matrix/styles/theme.css')));
 	
 	list ($view, $controller) = GalleryUtilities::getRequestVariables('view', 'controller');
 	if (!empty($controller) || (!empty($view) && $view != 'core:ShowItem')) {
-	    $style[] = sprintf($format, $this->getBaseUrl() . 'styles/layout.css.php');
+	    $style[] = sprintf($format, $urlGenerator->generateUrl(array('href' => 'themes/matrix/styles/layout.css.php')));
 	}
 
 	return join("\n", $style);
