@@ -1,0 +1,371 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package SelfRegistration
+ * @subpackage PHPUnit
+ * @author Sebastian Eichner <mailsp@sebastian-eichner.de>
+ */
+
+/**
+ * require necessary classes
+ */
+ require_once( dirname(__FILE__). '/../../classes/GalleryPendingUserHelper.class');
+ 
+/**
+ * UserSelfRegistration controller tests
+ * @package SelfRegistration
+ * @subpackage PHPUnit
+ */
+class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
+
+    function UserSelfRegistrationControllerTest($methodName) {
+	$this->GalleryControllerTestCase($methodName, 'register:UserSelfRegistration');
+    }
+    
+    function setUp() {
+	global $gallery;
+	parent::setUp();
+
+	/* store settings */
+	$this->_params = array();
+	    foreach (array('confirmation', 'emailadmins') as $key) {
+	    list($ret, $value) = GalleryCoreApi::getPluginParameter('module', 'register', $key);
+	    if ($ret->isError()) {
+		print $ret->getAsHtml();
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $this->_params[$key] = $value;
+	}
+
+	$ret = GalleryCoreApi::setPluginParameter('module', 'register', 'emailadmins', '0');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+//    	/* store active user */
+//    	$this->_activeUserId = $gallery->getActiveUserId();
+//   	
+//    	list($ret, $guestId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+//    	if ($ret->isError())
+//    		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+//    	
+//    	/* become guest */
+//    	$gallery->setActiveUserId( $guestId );
+//    	
+    }
+
+    function tearDown() {
+	global $gallery;
+	/* restore parameters */
+	foreach (array('confirmation', 'emailadmins') as $key) {
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'register', $key, $this->_params[$key]);
+	    if ($ret->isError()) {
+		print $ret->getAsHtml();
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+//
+//    	$gallery->setActiveUserId($this->_activeUserId);
+//    	
+	parent::tearDown();
+    }
+    
+    function testCancel() {
+	GalleryUtilities::putRequestVariable('form[action][cancel]', 1);
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:UserAdmin'),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
+    }
+
+    function testRegisterWithAutomaticActivation() {
+	$ret = GalleryCoreApi::setPluginParameter('module', 'register', 'confirmation', 'auto');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$userName = 'user-selfreg' . rand();
+	GalleryUtilities::putRequestVariable('form[action][create]', 1);
+	GalleryUtilities::putRequestVariable('form[userName]', $userName);
+	GalleryUtilities::putRequestVariable('form[fullName]', 'full name');
+	GalleryUtilities::putRequestVariable('form[email]', 'email');
+	GalleryUtilities::putRequestVariable('form[language]', 'language');
+	GalleryUtilities::putRequestVariable('form[password1]', 'password');
+	GalleryUtilities::putRequestVariable('form[password2]', 'password');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:UserAdmin',
+				      'subView' => 'register:SelfRegistrationSuccess'),
+		'status' => array('activatedUser' => $userName),
+		'error' => array()),
+	    $results,
+	    'Failed to register user with automatic activation');
+
+	/* the newly registered user is a real user by now */
+	list ($ret, $user) = GalleryCoreApi::fetchUserByUserName($userName);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(GalleryUtilities::isA($user, 'GalleryUser'), true);
+
+	$ret = $this->_deleteUser($user);
+	if ($ret != null && $ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+    
+    function testRegisterWithEMailActivation() {
+	global $gallery;
+	$ret = GalleryCoreApi::setPluginParameter('module', 'register', 'confirmation', 'email');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$userName = 'user-' . rand();
+	GalleryUtilities::putRequestVariable('form[action][create]', 1);
+	GalleryUtilities::putRequestVariable('form[userName]', $userName);
+	GalleryUtilities::putRequestVariable('form[fullName]', 'full name');
+	GalleryUtilities::putRequestVariable('form[email]', 'email');
+	GalleryUtilities::putRequestVariable('form[language]', 'language');
+	GalleryUtilities::putRequestVariable('form[password1]', 'password');
+	GalleryUtilities::putRequestVariable('form[password2]', 'password');
+
+	$platform = $gallery->getPlatform();
+	$gallery->_platform = new RegisterDummyPlatform($platform);
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:UserAdmin',
+	      'subView' => 'register:SelfRegistrationSuccess'),
+	  'status' => array('registeredUser' => $userName),
+	  'error' => array()),
+	    $results,
+	    'Failed to register user with email activation');
+
+	$gallery->_platform = $platform;
+
+	/* make sure the pending user exists */
+	list($ret, $user) = GalleryPendingUserHelper::fetchPendingUserByUserName($userName);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->_deletePendingUser($userName);
+    }
+
+    function testMissingInputs() {
+	GalleryUtilities::putRequestVariable('form[action][create]', 1);
+
+	/* Create one user */
+	$results = $this->handleRequest();
+	$this->assertEquals(
+	    array('delegate' => array('view' => 'core:UserAdmin',
+				      'subView' => 'register:UserSelfRegistration'),
+		  'status' => array(),
+		  'error' => array('form[error][userName][missing]',
+				   'form[error][email][missing]',
+				   'form[error][password1][missing]',
+				   'form[error][password2][missing]',
+				   'form[error][fullName][missing]')),
+	    $results);
+    }
+
+    function testPasswordMismatch() {
+	$userName = 'user-selfreg' . rand();
+
+	/* Create one user */
+	GalleryUtilities::putRequestVariable('form[action][create]', 1);
+	GalleryUtilities::putRequestVariable('form[userName]', $userName);
+	GalleryUtilities::putRequestVariable('form[fullName]', 'full name');
+	GalleryUtilities::putRequestVariable('form[email]', 'email');
+	GalleryUtilities::putRequestVariable('form[language]', 'language');
+	GalleryUtilities::putRequestVariable('form[password1]', 'passwordRight');
+	GalleryUtilities::putRequestVariable('form[password2]', 'passwordWrong');
+
+	$results = $this->handleRequest();
+
+	$this->assertEquals(
+	    array('delegate' => array('view' => 'core:UserAdmin',
+				      'subView' => 'register:UserSelfRegistration'),
+		  'status' => array(),
+		  'error' => array('form[error][password2][mismatch]')),
+	    $results);
+    }
+
+    function testCreateDuplicatePendingUser() {
+	$userName = 'user-selfreg' . rand();
+
+	$ret = GalleryCoreApi::setPluginParameter('module', 'register', 'confirmation', 'admin');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Create one user */
+	GalleryUtilities::putRequestVariable('form[action][create]', 1);
+	GalleryUtilities::putRequestVariable('form[userName]', $userName);
+	GalleryUtilities::putRequestVariable('form[fullName]', 'full name');
+	GalleryUtilities::putRequestVariable('form[email]', 'email');
+	GalleryUtilities::putRequestVariable('form[language]', 'language');
+	GalleryUtilities::putRequestVariable('form[password1]', 'password');
+	GalleryUtilities::putRequestVariable('form[password2]', 'password');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(
+	    array('redirect' => array('view' => 'core:UserAdmin',
+				      'subView' => 'register:SelfRegistrationSuccess'),
+		  'status' => array('registeredUserNoEmail' => $userName),
+		  'error' => array()),
+	    $results,
+	    'Failed to create first pending user');
+
+	/* Create a second user with the same name */
+	/* fails because we have the existing pending user */
+	$results = $this->handleRequest();
+	$this->assertEquals(
+	    array('delegate' => array('view' => 'core:UserAdmin',
+				      'subView' => 'register:UserSelfRegistration'),
+		  'status' => array(),
+		  'error' => array('form[error][userName][exists]')),
+	    $results, 'Create duplicate');
+
+	$this->_deletePendingUser($userName);
+    }
+
+    function testCreateDuplicateUser() {
+	$userName = 'user-selfreg' . rand();
+
+	$ret = GalleryCoreApi::setPluginParameter('module', 'register', 'confirmation', 'auto');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Create one user */
+	GalleryUtilities::putRequestVariable('form[action][create]', 1);
+	GalleryUtilities::putRequestVariable('form[userName]', $userName);
+	GalleryUtilities::putRequestVariable('form[fullName]', 'full name');
+	GalleryUtilities::putRequestVariable('form[email]', 'email');
+	GalleryUtilities::putRequestVariable('form[language]', 'language');
+	GalleryUtilities::putRequestVariable('form[password1]', 'password');
+	GalleryUtilities::putRequestVariable('form[password2]', 'password');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(
+	    array('redirect' => array('view' => 'core:UserAdmin',
+				      'subView' => 'register:SelfRegistrationSuccess'),
+		  'status' => array('activatedUser' => $userName),
+		  'error' => array()),
+	    $results,
+	    'Failed to create first user');
+
+	/* Create a second user with the same name */
+	/* fails because we have the existing  user */
+	$results = $this->handleRequest();
+	$this->assertEquals(
+	    array('delegate' => array('view' => 'core:UserAdmin',
+				      'subView' => 'register:UserSelfRegistration'),
+		  'status' => array(),
+		  'error' => array('form[error][userName][exists]')),
+	    $results, 'Create duplicate');
+
+	/* find userid */
+	list($ret, $user) = GalleryCoreApi::fetchUserByUserName($userName);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$ret = $this->_deleteUser($user);
+	if ($ret!=null && $ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    function _deletePendingUser($userName) {
+	global $gallery;
+
+	list ($ret, $user) = GalleryPendingUserHelper::fetchPendingUserByUserName($userName);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::deleteEntityById($user->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+}
+
+/**
+ * @package SelfRegistration
+ * @subpackage PHPUnit
+ */
+class RegisterDummyPlatform {
+    function RegisterDummyPlatform($platform) {
+	$this->_platform = $platform;
+    }
+
+    function mail($to, $subject, $body, $headers=null) {
+	return true;
+    }
+
+    function realpath($file) {
+	return $this->_platform->realpath($file);
+    }
+
+    function getDirectorySeparator() {
+	return $this->_platform->getDirectorySeparator();
+    }
+
+    function file_exists($filename) {
+	return $this->_platform->file_exists($filename);
+    }
+
+    function is_dir($filename) {
+	return $this->_platform->is_dir($filename);
+    }
+
+    function is_writeable($filename) {
+	return $this->_platform->is_writeable($filename);
+    }
+
+    function stat($filename) {
+	return $this->_platform->stat($filename);
+    }
+
+    function mkdir($path) {
+	return $this->_platform->mkdir($path);
+    }
+
+    function fopen($filename, $mode, $use_include_path=0) {
+	return $this->_platform->fopen($filename, $mode, $use_include_path);
+    }
+
+    function recursiveRmdir($dirname) {
+	return $this->_platform->recursiveRmdir($dirname);
+    }
+
+    function fclose($handle) {
+	return $this->_platform->fclose($handle);
+    }    
+}
+?>

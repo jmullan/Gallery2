@@ -1,0 +1,246 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * This class is a glue layer between the templating system and our various
+ * callbacks that generate URLs, localized text, dates, themed widgets, etc.
+ *
+ * @package GalleryCore
+ * @subpackage Classes
+ */
+class GalleryTemplateAdapter {
+
+    /**
+     * The active theme
+     *
+     * @var object GalleryTheme a theme instance
+     * @access private
+     */
+    var $_theme;
+
+    /**
+     * Temporary storage for generated content.
+     *
+     * @var array content
+     */
+    var $_content_stack;
+
+    /**
+     * Constructor
+     */
+    function GalleryTemplateAdapter() {
+	$this->_content_stack = array();
+    }
+
+    /**
+     * Set the active theme
+     *
+     * @param object GalleryTheme
+     */ 
+    function setTheme($theme) {
+	$this->_theme = $theme;
+    }
+
+    /**
+     * Get the active theme
+     *
+     * @return object GalleryTheme
+     */ 
+    function getTheme() {
+	return $this->_theme;
+    }
+
+    /*************************************************************
+     * Special purpose template callback methods.
+     *************************************************************/
+
+    /**
+     * @see GalleryUrlGenerator::generateUrl()
+     *
+     * Return a valid Gallery URL, standalone or embedded.
+     *
+     * @param array data in key/value pairs
+     * @return string a URL
+     */
+    function url($params, &$smarty) {
+	global $gallery;
+
+	if (isset($params['href'])) {
+	    $hrefParams = array('href' => $params['href']);
+	} else if (isset($params['params'])) {
+	    /* All the user to pass in bulk params */
+	    $hrefParams = $params['params'];
+	} else {
+	    $hrefParams = array();
+
+	    /* Search for args and add them to the params */
+	    $i = 1;
+	    while (isset($params['arg' . $i])) {
+		list ($key, $value) = explode('=', $params['arg' . $i]);
+		$hrefParams[$key] = $value;
+		$i++;
+	    }
+	}
+	    
+	$urlGenerator = $gallery->getUrlGenerator();
+	return $urlGenerator->generateUrl($hrefParams);
+    }
+
+    /**
+     * Return any hidden form variables that we want to embed in this form based on the
+     * current session and request context.  We use this to pass the special "return" variable forward, for
+     * example.
+     *
+     * @param array data in key/value pairs
+     * @return a series of XHTML 1.0 compliant <input> elements
+     */
+    function hiddenFormVars($params, &$smarty) {
+	if (GalleryUtilities::hasRequestVariable('return')) {
+	    return sprintf('<input type="hidden" name="%s" value="%s"/>',
+			   GalleryUtilities::prefixFormVariable('return'),
+			   GalleryUtilities::getRequestVariables('return'));
+	}
+    }
+
+    /**
+     * Return a valid Gallery date.
+     *
+     * @todo This needs to be refactored.
+     *
+     * @param array data in key/value pairs
+     * @return string a URL
+     */
+    function date($params, &$smarty) {
+	global $gallery;
+
+	if (empty($params['format'])) {
+	    $params['format'] = '%x';
+	}
+	
+	return strftime($params['format'], $params['timestamp']);
+    }
+
+    /**
+     * @see GalleryTranslator::translate()
+     */
+    function text($params, &$smarty) {
+	global $gallery;
+
+	if (isset($params['l10Domain'])) {
+	    $domain = $params['l10Domain'];
+	} else {
+	    $domain = $smarty->_tpl_vars['l10Domain'];
+	}
+	$translator =& $gallery->getTranslator();
+	list ($ret, $text) = $translator->translateDomain($domain, $params);
+	if ($ret->isError()) {
+	    return $ret->getAsHtml();
+	    return "[Translation error]";
+	} else {
+	    return $text;
+	}
+    }
+
+    /**
+     * Return a transformed element name, useful when we're trying to use
+     * Javascript to access a form element.
+     *
+     * @param array key => value attributes
+     * @return HTML content
+     */
+    function formVar($params) {
+	return GalleryUtilities::prefixFormVariable($params['var']);
+    }
+
+    /**
+     * image theme method
+     * 
+     * @param array ("params" => ..., "stack" => ...)
+     * @param int maximum dimension on a side
+     * @return string HTML content
+     */
+    function image($params, &$smarty) {
+ 	global $gallery;
+
+	/* Ask the entity to render itself in HTML */
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($params['item']['id']);
+	if ($ret->isError()) {
+	    // XXX: is there a more graceful way to handle this?
+	    return '[Render error: missing item]';
+	}
+	
+	list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($params['image']['id']);
+	if ($ret->isError()) {
+	    // XXX: is there a more graceful way to handle this?
+	    return '[Render error: missing entity]';
+	}
+
+	if (!isset($params['maxSize'])) {
+	    $params['maxSize'] = null;
+	}
+
+	if (!isset($params['class'])) {
+	    $params['class'] = null;
+	}
+
+	if (!isset($params['id'])) {
+	    $params['id'] = null;
+	}
+
+	if (!isset($params['fallback'])) {
+	    $params['fallback'] = null;
+	}
+
+	if ($entity->getId() == $item->getId()) {
+	    $html = $item->render('HTML', array('class' => $params['class'],
+						'id' => $params['id'],
+						'maxSize' => $params['maxSize'],
+						'fallback' => $params['fallback']));
+	} else {
+	    $html = $entity->render('HTML', $item, 
+				    array('class' => $params['class'],
+					  'id' => $params['id'],
+					  'maxSize' => $params['maxSize'],
+					  'fallback' => $params['fallback']));
+	}
+
+	if (empty($html)) {
+	    /*
+	     * TODO: We should let the {g->image} tag provide some kind of fallback in case the image can't
+	     * be rendered.
+	     */
+	    return $params['fallback'];
+	}
+
+	return $html;
+     }
+
+     function style($params, &$smarty) {
+	 return $this->_theme->style($params, $smarty);
+     }
+}
+?>

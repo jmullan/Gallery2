@@ -1,0 +1,119 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+class InstallOtherModulesStep extends InstallStep {
+    function stepName() {
+	return _('Install More Modules');
+    }
+
+    function loadTemplateData(&$templateData) {
+	require(dirname(__FILE__) . '/../../init.php');
+	$ret = GalleryInitFirstPass(array('debug' => 'buffered'));
+	if ($ret->isError()) {
+	    $templateData['errors'][] = _('Unable to initialize our Gallery data');
+	    $templateData['stackTrace'] = $ret->getAsHtml();
+	}
+
+	// We want to avoid using the cache
+	GalleryDataCache::setFileCachingEnabled(false);
+	
+	if (empty($templateData['errors'])) {
+	    list ($ret, $moduleList) = GalleryCoreApi::fetchPluginStatus('module');
+	    if ($ret->isError()) {
+		$templateData['errors'][] = _('Unable to get the module list');
+		$templateData['stackTrace'] = $ret->getAsHtml();
+	    }
+	}
+
+	if (empty($templateData['errors'])) {
+	    foreach (array_keys($moduleList) as $moduleId) {
+		list ($ret, $modules[$moduleId]) = GalleryCoreApi::loadPlugin('module', $moduleId);
+		if ($ret->isError()) {
+		    $templateData['errors'][] = _(sprintf('Unable to load the %s module', $moduleId));
+		}
+	    }
+
+	    foreach (array_keys($modules) as $moduleId) {
+		$module =& $modules[$moduleId];
+		list ($ret, $isActive) = $module->isActive();
+		if ($ret->isSuccess()) {
+		    if ($isActive) {
+			unset($modules[$moduleId]);
+			continue;
+		    }
+		} else {
+		    continue;
+		}
+
+		if (!$module->canBeAutoInstalled()) {
+		    unset($modules[$moduleId]);
+		    continue;
+		}
+
+		if (isset($_REQUEST['action']['activate']) && isset($_REQUEST['module'][$moduleId])) {
+		    $ret = $module->install();
+		    if ($ret->isError()) {
+			$templateData['errors'][] =
+				_(sprintf('Unable to install the %s module', $module->getName()));
+			continue;
+		    }
+		
+		    list ($ret, $success) = $module->autoConfigure();
+		    if ($ret->isError()) {
+			$templateData['errors'][] =
+				_(sprintf('Unable to activate the %s module', $module->getName()));
+			continue;
+		    }
+
+		    if (!$success) {
+			$templateData['errors'][] =
+				_(sprintf('Unable to auto configure the %s module', $module->getName()));
+			continue;
+		    }
+		
+		    list ($ret, $redirect) = $module->activate();
+		    if ($ret->isSuccess()) {
+			unset($modules[$moduleId]);
+			$templateData['activated'][$moduleId] = $module->getName();
+		    } else {
+			$templateData['errors'][] =
+				_(sprintf('Unable to activate the %s module', $module->getName()));
+			continue;
+		    }
+		}
+
+		global $gallery;
+		$storage =& $gallery->getStorage();
+		$ret = $storage->commitTransaction();
+		if ($ret->isError()) {
+		    $templateData['errors'][] = _('Unable to commit database transaction');
+		    $templateData['stackTrace'] = $ret->getAsHtml();
+		}
+	    }
+	}
+
+	$this->setComplete(true);
+	$templateData['modules'] =& $modules;
+	$templateData['bodyFile'] = 'InstallOtherModules.html';
+    }
+}
+?>

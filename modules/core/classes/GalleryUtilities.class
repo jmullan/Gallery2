@@ -1,0 +1,1004 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * The prefix for all HTTP GET/POST arguments
+ *
+ */
+define('GALLERY_FORM_VARIABLE_PREFIX', 'g2_');
+
+/**
+ * A collection of useful utilities that have no obvious home
+ *
+ * All of these utilities should be accessed in a static sense,
+ * ie:
+ *
+ *   GalleryUtilities::getFileExtension($filename);
+ *
+ * Try not to jam too many methods into this class.  Only put methods here if
+ * they are of obvious value to the class layer and there's no other home for
+ * them.
+ * 
+ * @package GalleryCore
+ * @subpackage Classes
+ * @static
+ */
+class GalleryUtilities {
+
+    /*
+     * ****************************************
+     *                 Methods
+     * ****************************************
+     */
+
+    /**
+     * Get the type of the file from its filename
+     *
+     * Eg, "foo.jpg" yields 'foo', 'jpg'
+     *     "foo.bar.jpeg" yields 'foo.bar', 'jpeg'
+     *
+     * @param string the filename
+     * @return array the file base name, the file extension
+     * @static
+     */
+    function getFileNameComponents($filename) {
+
+	$pos = strrpos($filename, '.');
+
+	/* No dot == it's all base, no extension */
+	if ($pos === false) {
+	    return array($filename, '');
+	}
+
+	$pos++;
+	
+	/* If it's the last char in the name, just return the base */
+	if ($pos >= strlen($filename)) {
+	    return array(substr($filename, 0, $pos-1), '');
+	}
+
+	return array(substr($filename, 0, $pos-1), substr($filename, $pos));
+    }
+
+    /**
+     * Return the file's extension
+     *
+     * Eg, "foo.jpg" yields "jpg"
+     *
+     * @param string the filename
+     * @return array the file extension
+     * @static
+     */
+    function getFileExtension($filename) {
+	list ($base, $extension) = GalleryUtilities::getFileNameComponents($filename);
+	return $extension;
+    }
+
+    /**
+     * Return the file's extension
+     *
+     * Eg, "foo.jpg" yields "foo"
+     *
+     * @param string the filename
+     * @return array the file base
+     * @static
+     */
+    function getFileBase($filename) {
+	list ($base, $extension) = GalleryUtilities::getFileNameComponents($filename);
+	return $base;
+    }
+
+    /**
+     * Return data about file attached to request
+     *
+     * @param string a key
+     * @param boolean (optional) false to omit gallery variable prefix (not recommended)
+     * @return array file data
+     * @static
+     */
+    function getFile($key, $prefix=true) {
+	$file = array();
+	if ($prefix) {
+	    $key = GALLERY_FORM_VARIABLE_PREFIX . $key;
+	}
+	if (isset($_FILES[$key])) {
+	    /*
+	     * Later on during our sanitization process we're going to call
+	     * stripslashes on our file name.  But it may legitimately have
+	     * backslashes in it (eg c:\apache\tmp\php195.jpg), so make sure those
+	     * are escaped at this time.  There's gotta be a better way to
+	     * handle this.
+	     */
+	    $file = $_FILES[$key];
+	    if (get_magic_quotes_gpc()) {
+		$file['tmp_name'] = addslashes($file['tmp_name']);
+	    }
+
+	    /* Perform any necessary transformations on our values */
+	    GalleryUtilities::sanitizeInputValues($file);
+	}
+
+	return $file;
+    }
+
+    /**
+     * Return all request variables that match the prefix
+     *
+     * @param string a key
+     * @param boolean (optional) false to omit gallery variable prefix (not recommended)
+     * @return array key value pairs
+     * @static
+     */
+    function getFormVariables($key, $prefix=true) {
+	if ($prefix) {
+	    $key = GALLERY_FORM_VARIABLE_PREFIX . $key;
+	}
+	$form = array();
+	if (isset($_POST[$key])) {
+	    $form = $_POST[$key];
+	}
+
+	if (isset($_FILES[$key])) {
+	    /*
+	     * Later on during our sanitization process we're going to call
+	     * stripslashes on our file name.  But it may legitimately have
+	     * backslashes in it (eg c:\apache\tmp\php195.jpg), so make sure those
+	     * are escaped at this time.  There's gotta be a better way to
+	     * handle this.
+	     */
+	    $postForm = $_FILES[$key];
+	    if (get_magic_quotes_gpc()) {
+		for ($i = 1; $i <= sizeof($postForm['tmp_name']); $i++) {
+		    $postForm['tmp_name'][$i] = addslashes($postForm['tmp_name'][$i]);
+		}
+	    }
+	    $form = GalleryUtilities::array_merge_replace($form, $postForm);
+	}
+	
+	if (isset($_GET[$key])) {
+	    $form = GalleryUtilities::array_merge_replace($form, $_GET[$key]);
+	}
+
+	/* Perform any necessary transformations on our values */
+	GalleryUtilities::sanitizeInputValues($form);
+
+	return $form;
+    }
+
+    /**
+     * Merges two arrays and replace existing Entrys
+     *
+     * Merges two array like the PHP function array_merge_recursive.
+     * The main difference is that existing keys will be replaced with new values,
+     * not combined in a new sub array.
+     *
+     * Usage:
+     *        $newArray = array_merge_replace( $array, $newValues );
+     *
+     * @access public
+     * @author Tobias Tom <t.tom@succont.de>
+     * @param array $array first array with 'replaceable' values
+     * @param array $newValues array which will be merged into first one
+     * @return array resulting array 
+     */
+    function array_merge_replace($array, $newValues) {
+	foreach ($newValues as $key => $value) {
+	    if (is_array($value)) {
+		if (!isset($array[$key])) {
+		    $array[$key] = array();
+		}
+		$array[$key] = GalleryUtilities::array_merge_replace($array[$key], $value);
+	    } else {
+		if (isset($array[$key]) && is_array($array[$key])) {
+		    $array[$key][0] = $value;
+		} else {
+		    if (isset($array) && !is_array($array)) {
+			$temp = $array;
+			$array = array();
+			$array[0] = $temp;
+		    }
+		    $array[$key] = $value;
+		}
+	    }
+	}
+	return $array;
+    }
+
+    /**
+     * Remove all request variables that match the prefix
+     *
+     * @param string a prefix
+     * @param boolean (optional) false to omit gallery variable prefix (not recommended)
+     * @static
+     */
+    function removeFormVariables($key, $prefix=true) {
+	/* Remove all matching GET and POST variables */
+	if ($prefix) {
+	    $key = GALLERY_FORM_VARIABLE_PREFIX . $key;
+	}
+	unset($_POST[$key]);
+	unset($_FILES[$key]);
+	unset($_GET[$key]);
+    }
+    
+
+    /**
+     * Return the specified request variables
+     *
+     * Accept any number of keys and return that number of values, in order.
+     *
+     * @param mixed a single key or many keys
+     * @return mixed a single value or many values
+     * @static
+     */
+    function getRequestVariables() {
+	global $gallery;
+
+	$values = array();
+	foreach (func_get_args() as $argName) {
+	    $values[] = GalleryUtilities::_getRequestVariable(GALLERY_FORM_VARIABLE_PREFIX . $argName);
+	}
+
+	/* Sanitize the input */
+	GalleryUtilities::sanitizeInputValues($values);
+
+	if (sizeof($values) == 1) {
+	    return $values[0];
+	} else {
+	    return $values;
+	}
+    }
+
+    /**
+     * Return the specified request variables (omit gallery variable prefix).
+     * Should be used only when interacting with an external api where prefix can't be used.
+     *
+     * Accept any number of keys and return that number of values, in order.
+     *
+     * @param mixed a single key or many keys
+     * @return mixed a single value or many values
+     * @static
+     */
+    function getRequestVariablesNoPrefix() {
+	global $gallery;
+
+	$values = array();
+	foreach (func_get_args() as $argName) {
+	    $values[] = GalleryUtilities::_getRequestVariable($argName);
+	}
+
+	/* Sanitize the input */
+	GalleryUtilities::sanitizeInputValues($values);
+
+	if (sizeof($values) == 1) {
+	    return $values[0];
+	} else {
+	    return $values;
+	}
+    }
+
+    /**
+     * Push the given key => value pair back into the request
+     * 
+     * @param string the key
+     * @param string the value
+     * @param boolean (optional) false to omit gallery variable prefix (not recommended)
+     * @static
+     */
+    function putRequestVariable($key, $value, $prefix=true) {
+	if ($prefix) {
+	    $key = GALLERY_FORM_VARIABLE_PREFIX . $key;
+	}
+
+	/* Simulate the damage caused by magic_quotes */
+	GalleryUtilities::unsanitizeInputValues($key);
+	GalleryUtilities::unsanitizeInputValues($value);
+
+	$keyPath = preg_split('/[\[\]]/', $key, -1, PREG_SPLIT_NO_EMPTY);
+	GalleryUtilities::_internalPutRequestVariable($keyPath, $value, $_GET);
+    }
+
+    /**
+     * Take a path in the form of ('foo', 'bar', 'baz') and a destination array
+     * and put the value into it like this:
+     *
+     *   $destination['foo']['bar']['baz'] = $value;
+     *
+     * @param array the key path
+     * @param mixed the value
+     * @param array the destination
+     * @access private
+     * @static
+     */
+    function _internalPutRequestVariable($keyPath, $value, &$destination) {
+	$key = array_shift($keyPath);
+	if (empty($keyPath)) {
+	    $destination[$key] = $value;
+	} else {
+	    GalleryUtilities::_internalPutRequestVariable($keyPath, $value, $destination[$key]);
+	}
+    }
+
+    /**
+     * Check to see if the given key is in the request
+     * 
+     * @param string the key
+     * @param string the value
+     * @param boolean (optional) false to omit gallery variable prefix (not recommended)
+     * @static
+     */
+    function hasRequestVariable($key, $prefix=true) {
+	if ($prefix) {
+	    $key = GALLERY_FORM_VARIABLE_PREFIX . $key;
+	}
+	$value = GalleryUtilities::_getRequestVariable($key);
+	return !empty($value);
+    }
+
+    /**
+     * Remove a request variable
+     * 
+     * @param string the key
+     * @param boolean (optional) false to omit gallery variable prefix (not recommended)
+     * @static
+     */
+    function removeRequestVariable($key, $prefix=true) {
+	if ($prefix) {
+	    $key = GALLERY_FORM_VARIABLE_PREFIX . $key;
+	}
+	$keyPath = preg_split('/[\[\]]/', $key, -1, PREG_SPLIT_NO_EMPTY);
+	GalleryUtilities::_internalRemoveRequestVariable($keyPath, $_GET);
+	GalleryUtilities::_internalRemoveRequestVariable($keyPath, $_POST);
+    }
+
+    /**
+     * Take a path in the form of ('foo', 'bar', 'baz') and a source array
+     * and remove the value from it like this:
+     *
+     *   unset($source['foo']['bar']['baz']);
+     *
+     * @param array the key path
+     * @param array the source
+     * @access private
+     * @static
+     */
+    function _internalRemoveRequestVariable($keyPath, &$array) {
+	$key = array_shift($keyPath);
+	if (empty($keyPath)) {
+	    unset($array[$key]);
+	} else {
+	    if (isset($array[$key])) {
+		GalleryUtilities::_internalRemoveRequestVariable($keyPath, $array[$key]);
+	    }
+	}
+    }
+
+    /**
+     * Return variable name with prepended prefix
+     *
+     * @param string key
+     * @return string key with prefix
+     * @static
+     */
+    function prefixFormVariable($key) {
+	return GALLERY_FORM_VARIABLE_PREFIX . $key;
+    }
+
+    /**
+     * Return a string of ? markers
+     *
+     * @param int the number of markers to return
+     * @access private
+     * @static
+     */
+    function makeMarkers($count) {
+
+	if (is_array($count)) {
+	    $count = sizeof($count);
+	}
+	
+	$markers = array();
+	for ($i = 0; $i < $count; $i++) {
+	    $markers[$i] = '?';
+	}
+	return join(', ', $markers);
+    }
+
+    /**
+     * Convert a filesystem path inside the gallery directory to an absolute URL
+     *
+     *  ie /path/to/gallery/themes/classic/styles/style.css =>
+     *     http://example.com/gallery/themes/classic/styles/style.css
+     *
+     * @param string path to a file in the gallery directory tree
+     * @return string a url
+     * @static
+     */
+    function convertPathToUrl($path) {
+	global $gallery;
+
+	$platform = $gallery->getPlatform();
+	$dirbase = $platform->realpath(dirname(__FILE__) . '/../../..') . '/';
+
+	/*
+	 * Factor the gallery code base out of the path, accounting for
+	 * differences in directory separators between platforms.
+	 */
+	$slash = $platform->getDirectorySeparator();
+	if ($slash != '/') {
+	    $dirbase = str_replace($slash, '/', $dirbase);
+	    $path = str_replace($slash, '/', $path);
+	}
+	$relativePath = str_replace($dirbase, '', $path);
+	
+	/* Prepend the current base URL */
+	$urlGenerator = $gallery->getUrlGenerator();
+	$urlBase = $urlGenerator->getCurrentUrlDir();
+	if (!empty($urlBase)) {
+	    return $urlBase . $relativePath;
+	}
+
+	return $relativePath;
+    }
+
+    /**
+     * Load a file in a security conscious fashion
+     *
+     * @param string a local filename
+     * @return object GalleryStatus a status code
+     * @static
+     */
+    function requireOnce($filename) {
+	global $gallery;
+
+	$platform = $gallery->getPlatform();
+
+	if (!$platform->file_exists($filename)) {
+	    return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__,
+					sprintf("File %s does not exist", $filename));
+	}
+
+	require_once($filename);
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Scale the given width/height to a new target size, maintaining
+     * aspect ratio, but only if the dimensions are already larger than the
+     * target (in other words, don't increase the dimensions)
+     *
+     * @param int target size
+     * @param int width
+     * @param int height
+     * @return array(width, height)
+     * @static
+     */
+    function shrinkDimensionsToFit($target, $width, $height) {
+	if ($width > $target || $height > $target) {
+	    list ($width, $height) =
+		GalleryUtilities::scaleDimensionsToFit($target, $width, $height);
+	}
+
+	return array($width, $height);
+    }
+
+    /**
+     * Scale the given width/height to a new target size, maintaining
+     * aspect ratio
+     *
+     * @param int target size
+     * @param int width
+     * @param int height
+     * @return array(width, height)
+     * @static
+     */
+    function scaleDimensionsToFit($target, $width, $height) {
+
+	if ($width > $height) {
+	    $height = (int)($target * ($height / $width));
+	    $width = (int)$target;
+	} else {
+	    $width = (int)($target * ($width / $height));
+	    $height = (int)$target;
+	}
+	
+	return array($width, $height);
+    }
+
+    /**
+     * Figure out if the object specified is an instance of or an instance of a
+     * sub class of the class specified.
+     *
+     * @param object any kind of object
+     * @param string a class name
+     * @return boolean true or false
+     * @static
+     */
+    function isA($instance, $className) {
+	global $gallery;
+
+	if (function_exists('is_a')) {
+	    return is_a($instance, $className);
+	} else {
+	    return (is_subclass_of($instance, $className) ||
+		    !strcasecmp(get_class($instance), $className));
+	}
+    }
+
+    /**
+     * Figure out if the object specified is an instance of the class specified,
+     * excluding subclasses
+     *
+     * @param object any kind of object
+     * @param string a class name
+     * @return boolean true or false
+     * @static
+     */
+    function isExactlyA($instance, $className) {
+	global $gallery;
+
+	if (function_exists('is_a')) {
+	    return is_a($instance, $className);
+	} else {
+	    return (!strcasecmp(get_class($instance), $className));
+	}
+    }
+    
+    /**
+     * Takes a string of utf-8 encoded characters and converts it to a string
+     * of unicode entities.  Each unicode entity has the form &#nnnnn; n={0..9}
+     * and can be displayed by utf-8 supporting browsers.
+     *
+     * This function was posted in a comment here:
+     *   http://www.php.net/manual/en/function.utf8-decode.php
+     * by "ronen at greyzone dot com".
+     *
+     * @param $source string encoded using utf-8 [STRING]
+     * @return string of unicode entities [STRING]
+     * @access public
+     */
+    function utf8ToUnicodeEntities($source) {
+	// array used to figure what number to decrement from character order
+	// value
+	// according to number of characters used to map unicode to ascii by
+	// utf-8
+	$decrement[4] = 240;
+	$decrement[3] = 224;
+	$decrement[2] = 192;
+	$decrement[1] = 0;
+
+	// the number of bits to shift each charNum by
+	$shift[1][0] = 0;
+	$shift[2][0] = 6;
+	$shift[2][1] = 0;
+	$shift[3][0] = 12;
+	$shift[3][1] = 6;
+	$shift[3][2] = 0;
+	$shift[4][0] = 18;
+	$shift[4][1] = 12;
+	$shift[4][2] = 6;
+	$shift[4][3] = 0;
+
+	$pos = 0;
+	$len = strlen($source);
+	$encodedString = '';
+	while ($pos < $len) {
+	    $asciiPos = ord(substr($source, $pos, 1));
+	    if (($asciiPos >= 240) && ($asciiPos <= 255)) {
+		// 4 chars representing one unicode character
+		$thisLetter = substr($source, $pos, 4);
+		$pos += 4;
+	    }
+	    else if (($asciiPos >= 224) && ($asciiPos <= 239)) {
+		// 3 chars representing one unicode character
+		$thisLetter = substr($source, $pos, 3);
+		$pos += 3;
+	    }
+	    else if (($asciiPos >= 192) && ($asciiPos <= 223)) {
+		// 2 chars representing one unicode character
+		$thisLetter = substr($source, $pos, 2);
+		$pos += 2;
+	    }
+	    else {
+		// 1 char (lower ascii)
+		$thisLetter = substr($source, $pos, 1);
+		$pos += 1;
+	    }
+
+	    // process the string representing the letter to a unicode entity
+	    $thisLen = strlen ($thisLetter);
+	    $thisPos = 0;
+	    $decimalCode = 0;
+	    while ($thisPos < $thisLen) {
+		$thisCharOrd = ord(substr($thisLetter, $thisPos, 1));
+		if ($thisPos == 0) {
+		    $charNum = intval($thisCharOrd - $decrement[$thisLen]);
+		    $decimalCode += ($charNum << $shift[$thisLen][$thisPos]);
+		} else {
+		    $charNum = intval($thisCharOrd - 128);
+		    $decimalCode += ($charNum << $shift[$thisLen][$thisPos]);
+		}
+		$thisPos++;
+	    }
+	    if (($thisLen == 1) && ($decimalCode<=128)) {
+		$encodedLetter = $thisLetter;
+	    } else {
+		$encodedLetter = '&#' . $decimalCode . ';';
+	    }
+	    $encodedString .= $encodedLetter;
+	}
+	return $encodedString;
+    }
+
+    /**
+     * Perform necessary pre-processing on the "value" part of the incoming
+     * array (which may be an associative array or a simple list of values).
+     * We do the following:
+     * 1.  Convert UTF-8 values to Unicode entities
+     * 2.  Sanitize any input values to remove dangerous values
+     */
+    function sanitizeInputValues(&$value) {
+
+	if (is_array($value)) {
+	    foreach (array_keys($value) as $key) {
+		$newKey = $key;
+		GalleryUtilities::sanitizeInputValues($newKey);
+		if ($key != $newKey) {
+		    $value[$newKey] =& $value[$key];
+		    unset($value[$key]);
+		}
+
+		GalleryUtilities::sanitizeInputValues($value[$newKey]);
+	    } 
+	} else {
+	    /* First & into &amp; so it htmlentities can convert it into
+	     * &amp;amp;, which can then be converted back into &amp; when we
+	     * correct the unicode entities generated by
+	     * GalleryUtilities::utf8ToUnicodeEntities
+	     */
+
+	    /* Convert UTF-8 to Unicode entities */
+	    $value = GalleryUtilities::utf8ToUnicodeEntities($value);
+	    /* Sanitize the rest of the contents
+	     */
+	    if ($value) {
+		$value = GalleryUtilities::smartHtmlEntities($value);
+	    }
+
+
+	    /* Undo the damage caused by magic_quotes */
+	    if (get_magic_quotes_gpc()) {
+		$value = stripslashes($value);
+	    }
+	}
+    }
+
+    /**
+     *  Convert characters to entities as needed, but respect existing entities
+     */
+    function smartHtmlEntities($text="") {
+	if (strlen($text)==0) {
+	    return $text;
+	}
+	$rawText = '';
+	$cookedText = '';
+	if (preg_match_all('(&#x[A-Fa-f0-9]+;|&#[0-9]+;|&[A-Za-z0-9]+;|.|\n)', $text, $regs)) {
+	    foreach ($regs[0] as $chunk) {
+		if (strlen($chunk)==1) {
+		    $rawText .= $chunk;
+		} else {
+		    $cookedText .= htmlentities($rawText, ENT_QUOTES);
+		    $cookedText .= $chunk;
+		    $rawText = '';
+		}
+	    }
+	    $cookedText .= htmlentities($rawText, ENT_QUOTES);
+	} else {
+	    return $text;
+	}
+	return $cookedText;
+    }
+    
+    /**
+     * Undo the preprocessing done in sanitizeInputValues (useful when we
+     * put values back into the request)
+     */
+    function unsanitizeInputValues(&$value) {
+	if (is_array($value)) {
+	    foreach (array_keys($value) as $key) {
+		GalleryUtilities::unsanitizeInputValues($value[$key]);
+	    }
+	} else {
+	    /* Redo the damage caused by magic_quotes */
+	    if (get_magic_quotes_gpc()) {
+		$value = addslashes($value);
+	    }
+	    
+	    /* Unsanitize dangerous html entities */
+	    $value = GalleryUtilities::htmlEntityDecode($value);
+	}
+    }
+
+    /**
+     * Equivalent to html_entity_decode() for PHP <4.3.0 which doesn't have it.
+     *
+     * @param string with html entities
+     * @return same string without them
+     */
+    function htmlEntityDecode($string) {
+	if (function_exists("html_entity_decode")) {
+	    return html_entity_decode($string, ENT_QUOTES);
+	}
+	
+	static $translation_table = null;
+	if (!isset($translation_table)) {
+	    $translation_table = get_html_translation_table(HTML_ENTITIES, ENT_QUOTES);
+	    $translation_table = array_flip($translation_table);
+
+	    /*
+	     * htmlentities() translates single quotes into &#039; but the decode table only has &#39; so we
+	     * need to add a special case for that.
+	     */
+	    $translation_table['&#039;'] = "'";
+	}
+
+	return strtr($string, $translation_table);
+    }
+
+    /**
+     * Return a specified request variable from the GET or POST vars.
+     *
+     * @param string a single key
+     * @return string a single value
+     * @static
+     */
+    function _getRequestVariable($key) {
+	$keyPath = preg_split('/[\[\]]/', $key, -1, PREG_SPLIT_NO_EMPTY);
+	$result = GalleryUtilities::_internalGetRequestVariable($keyPath, $_GET);
+	if (isset($result)) {
+	    return $result;
+	}
+	return GalleryUtilities::_internalGetRequestVariable($keyPath, $_POST);
+    }
+
+    /**
+     * Take a path in the form of ('foo', 'bar', 'baz') and a source array
+     * and get the value from it like this:
+     *
+     *   return $source['foo']['bar']['baz'];
+     *
+     * @param array the key path
+     * @param array the source
+     * @return the value or null if it does not exist
+     * @access private
+     * @static
+     */
+    function _internalGetRequestVariable($keyPath, &$array) {
+	$key = array_shift($keyPath);
+	if (empty($keyPath)) {
+	    if (isset($array[$key])) {
+		return $array[$key];
+	    } else {
+		return null;
+	    }
+	} else {
+	    return GalleryUtilities::_internalGetRequestVariable($keyPath, $array[$key]);
+	}
+    }
+
+    /**
+     * Return true if the path exists and is in the given path list
+     *
+     * @param string the path
+     * @param string the list of legal paths
+     * @return true or false
+     */
+    function isPathInList($path, $list) {
+	global $gallery;
+
+	$platform = $gallery->getPlatform();
+	$path = $platform->realpath($path);
+
+	$slash = $platform->getDirectorySeparator();
+
+	foreach ($list as $element) {
+	    if ($path == $element) {
+		return true;
+	    }
+
+	    /*
+	     * Make sure the compare directory has a trailing slash so that
+	     * /tmp doesn't accidentally match /tmpfoo
+	     */
+	    if ($element{strlen($element)-1} != $slash) {
+		$element .= $slash;
+	    }
+
+	    if (!strncmp($element, $path, strlen($element))) {
+		return true;
+	    }
+	}
+	return false;
+    }
+
+    /**
+     * Return the address of the remote host.
+     *
+     * @return string the remote host address
+     */
+    function getRemoteHostAddress() {
+	return $_SERVER['REMOTE_ADDR'];
+    }
+
+    /**
+     * Make sure that the given directory exists (creating it if necessary)
+     *
+     * @param string the dir
+     */
+    function guaranteeDirExists($dir) {
+	global $gallery;
+	$platform = $gallery->getPlatform();
+
+	if (!$platform->file_exists($dir)) {
+	    $base = dirname($dir);
+	    if ($base != $dir) {
+		GalleryUtilities::guaranteeDirExists($base);
+	    }
+	    $platform->mkdir($dir);
+	}
+    }
+    
+    /**
+     * Turn a set of albums into a depth tree suitable for display in a
+     * hierarchical format.
+     *
+     * @access private
+     */
+    function createAlbumTree($albums) {
+	/* Index the albums by id */
+	$map = array();
+	foreach ($albums as $album) {
+	    $albumId = $album->getId();
+	    $parentId = $album->getParentId();
+	    $map[$albumId]['instance'] = $album;
+	    if (!empty($parentId)) {
+		$map[$albumId]['parent'] = $parentId;
+		$map[$parentId]['children'][] = $albumId;
+	    }
+	}
+
+	/*
+	 * Prune parents that don't exist.  This can occur if we have multiple
+	 * roots (unusual) or an album in the middle of the hierarchy that is
+	 * not viewable.
+	 */
+	foreach ($map as $id => $info) {
+	    if (isset($info['parent']) && !isset($map[$info['parent']]['instance'])) {
+		unset($map[$info['parent']]);
+	    }
+	}
+
+	/* Find root albums */
+	foreach ($map as $id => $info) {
+	    if (!isset($info['parent']) || !isset($map[$info['parent']])) {
+		$roots[] = $id;
+	    }
+	}
+
+	/* Walk the root albums */
+	$tree = array();
+	foreach ($roots as $id) {
+	    $tree = array_merge($tree, GalleryUtilities::_createDepthTree($map, $id));
+	}
+
+	return $tree;
+    }
+
+    /**
+     * Recursively walk a parent/child map and build the depth tree.
+     *
+     * @access private
+     */
+    function _createDepthTree(&$map, $id, $depth=0) {
+	$data = array();
+	$data[] = array('depth' => $depth, 'data' => $map[$id]['instance']->getMemberData());
+	if (isset($map[$id]['children'])) {
+	    foreach ($map[$id]['children'] as $childId) {
+		$data = array_merge($data, GalleryUtilities::_createDepthTree($map, $childId, $depth+1));
+	    }
+	}
+
+	return $data;
+    }
+
+    /**
+     * Return an approximate filename of the given GalleryEntity, or "unknown" if we can't figure it out
+     *
+     * @param object entity a GalleryEntity
+     * @return string pseudoFileName a filename
+     */
+    function getPseudoFileName($entity) {
+    
+        /*
+	 * If our GalleryEntity is a GalleryFileSystemEntity, then we've got a path component so we're cool.
+	 * If it's a derivative, then get the pseudo filename of its derivative source and use that instead.
+	 * If it's neither, then return 'unknown' for now.
+         */
+       	if (GalleryUtilities::isA($entity, 'GalleryFileSystemEntity')) {
+	    $pseudoFileName = $entity->getPathComponent();
+        } else if (GalleryUtilities::isA($entity, 'GalleryDerivative')) {
+	    list ($ret, $sourceEntity) = GalleryCoreApi::loadEntitiesById($entity->getParentId());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    if (GalleryUtilities::isA($sourceEntity, 'GalleryFileSystemEntity')) {
+		$pseudoFileName = $sourceEntity->getPathComponent();
+	    } else {
+		list ($ret, $pseudoFileName) = GalleryUtilities::getPseudoFileName($sourceEntity);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	    }
+        } else {
+	    return array(GalleryStatus::success(), 'unknown');
+	}
+	
+	return array(GalleryStatus::success(), $pseudoFileName);
+    }
+
+    /**
+     * Return a date and time string that is conformant to RFC 2616
+     *
+     * @param integer the unix timestamp of the date we want to return, 
+     *                empty if we want the current time
+     * @return string a date-string conformant to the RFC 2616
+     *
+     * @see http://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.3
+     */
+    function getHttpDate($time = '') {
+	if ($time == '') {
+	    $time = time();
+	}
+	/* Use fixed list of weekdays and months, so we don't have to 
+	 * fiddle with locale stuff
+	 */
+	$months = array('01' => 'Jan', '02' => 'Feb', '03' => 'Mar',
+			'04' => 'Apr', '05' => 'May', '06' => 'Jun',
+			'07' => 'Jul', '08' => 'Aug', '09' => 'Sep',
+			'10' => 'Oct', '11' => 'Nov', '12' => 'Dec');
+	$weekdays = array('1' => 'Mon', '2' => 'Tue', '3' => 'Wed',
+			  '4' => 'Thu', '5' => 'Fri', '6' => 'Sat',
+			  '0' => 'Sun');
+	$dow = $weekdays[gmstrftime('%w', $time)];
+	$month = $months[gmstrftime('%m', $time)];
+	$out = gmstrftime('%%s, %d %%s %Y %H:%M:%S GMT', $time);
+	return sprintf($out, $dow, $month);
+    }
+}
+?>

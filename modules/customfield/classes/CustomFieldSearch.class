@@ -1,0 +1,158 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+/**
+ * @package CustomField
+ * @version $Revision$ $Date$
+ * @author Alan Harder <alan.harder@sun.com>
+ */
+
+/**
+ * Required classes
+ */
+require_once(dirname(__FILE__) . '/../../search/classes/GallerySearchInterface_1_0.class');
+
+/**
+ * This is an implementation of the search module's SearchInterface_1_0
+ *
+ * @package CustomField
+ * @subpackage Classes
+ *
+ */
+class CustomFieldSearch extends GallerySearchInterface_1_0 {
+
+    /**
+     * @see GallerySearchInterface_1_0::getSearchModuleInfo()
+     */
+    function getSearchModuleInfo() {
+	global $gallery;
+
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'customfield');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$info = array('name' => $module->translate('Custom Fields'),
+		      'description' => $module->translate('Custom Fields Module'),
+		      'options' => array('customfield' =>
+				array('description' => $module->translate('Search custom fields'),
+				'enabled' => 1)));
+	return array(GalleryStatus::success(), $info);
+    }
+
+    /**
+     * @see GallerySearchInterface_1_0::search()
+     */
+    function search($options, $criteria, $offset=0, $count=-1) {
+	global $gallery;
+
+	list ($ret, $bits) = GalleryCoreApi::convertPermissionIdsToBits('core.view');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	list ($ret, $groupIds) = GalleryCoreApi::fetchGroupsForUser($gallery->getActiveUserId());
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$storage =& $gallery->getStorage();
+	$groupIds = array_keys($groupIds);
+	$groupIdMarkers = GalleryUtilities::makeMarkers($groupIds);
+	list ($ret, $andPermission) = $storage->getFunctionSql('BITAND',
+						array('[GalleryPermissionMap::permission]', '?'));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$countQuery = '
+	SELECT
+	  COUNT(DISTINCT [CustomFieldMap::itemId])
+	FROM
+	  [CustomFieldMap], [GalleryPermissionMap]
+	WHERE
+	  [CustomFieldMap::itemId] = [GalleryPermissionMap::itemId]
+	  AND
+	  ([GalleryPermissionMap::userId] = ?
+	   OR
+	   [GalleryPermissionMap::groupId] IN (' . $groupIdMarkers . '))
+	  AND
+	  [CustomFieldMap::value] LIKE ?
+	  AND
+	' . $andPermission . ' = ?';
+
+	$query = '
+	SELECT DISTINCT
+	  [CustomFieldMap::itemId],
+	  [CustomFieldMap::field],
+	  [CustomFieldMap::value]
+	FROM
+	  [CustomFieldMap], [GalleryPermissionMap]
+	WHERE
+	  [CustomFieldMap::itemId] = [GalleryPermissionMap::itemId]
+	  AND
+	  ([GalleryPermissionMap::userId] = ?
+	   OR
+	   [GalleryPermissionMap::groupId] IN (' . $groupIdMarkers . '))
+	  AND
+	  [CustomFieldMap::value] LIKE ?
+	  AND
+	' . $andPermission . ' = ?
+	ORDER BY
+	  [CustomFieldMap::itemId] DESC
+	';
+
+	$data = array();
+	$data[] = $gallery->getActiveUserId();
+	array_splice($data, sizeof($data), 0, $groupIds);
+	$data[] = '%' . $criteria . '%';
+	$data[] = $storage->convertIntToBits($bits);
+	$data[] = $storage->convertIntToBits($bits);
+
+	/* Find the total */
+	list ($ret, $results) = $gallery->search($countQuery, $data);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$result = $results->nextResult();
+	$numRows = (int)$result[0];
+
+	list ($ret, $results) = $gallery->search($query, $data,
+						 array('limit' => array('offset' => $offset,
+									'count' => $count)));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$searchResults = array();
+	while ($result = $results->nextResult()) {
+	    $searchResults[] = array('itemId' => (int)$result[0],
+		'fields' => array(array('key' => $result[1], 'value' => $result[2])));
+	}
+
+	$data = array('start' => $numRows == 0 ? 0 : $offset+1,
+		      'end' => $numRows == 0 ? 0 : $offset + sizeof($searchResults),
+		      'count' => $numRows,
+		      'results' => $searchResults);
+	return array(GalleryStatus::success(), $data);
+    }
+}

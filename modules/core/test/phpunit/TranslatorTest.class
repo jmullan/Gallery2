@@ -1,0 +1,146 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * Test Translator functionality
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ *
+ */
+class TranslatorTest extends GalleryTestCase {
+
+    function TranslatorTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    function setUp() {
+	parent::setUp();
+	if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
+	    $this->_acceptLanguageSave = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
+	}
+    }
+
+    function tearDown() {
+	if (isset($this->_acceptLanguageSave)) {
+	    $_SERVER['HTTP_ACCEPT_LANGUAGE'] = $this->_acceptLanguageSave;
+	}
+	parent::tearDown();
+    }
+
+    function testGetLanguageCodeFromRequest() {
+	global $gallery;
+
+	/* Init with a null language code and a valid accept language */
+	$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'de';
+	$translator = new GalleryTranslator();
+	$translator->init();
+	if (function_exists('dgettext')) {
+	    $this->assertEquals('de_DE', getenv('LANG'), 'null init, valid language');
+	} else {
+	    // If we don't have gettext, who knows what the LANG will be set to!
+	    // $this->assertEquals(false, getenv('LANG'));
+	}
+
+	/* Init with a null language code and a valid accept language/country */
+	$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'pt_BR';
+	$translator = new GalleryTranslator();
+	$translator->init();
+	if (function_exists('dgettext')) {
+	    $this->assertEquals('pt_BR', getenv('LANG'), 'null init, valid language/country');
+	} else {
+	    // If we don't have gettext, who knows what the LANG will be set to!
+	    // $this->assertEquals(false, getenv('LANG'));
+	}
+	
+	/* Init with a real language code */
+	$translator = new GalleryTranslator();
+	$translator->init('no_NO');
+	if (function_exists('dgettext')) {
+	    $this->assertEquals('no_NO', getenv('LANG'), 'valid init');
+	} else {
+	    // If we don't have gettext, who knows what the LANG will be set to!
+	    // $this->assertEquals(false, getenv('LANG'));
+	}
+    }
+
+    function testTranslate() {
+	global $gallery;
+
+	$domain = 'modules_core';
+
+	$translator = new GalleryTranslator();
+	$translator->init('es_AR');
+
+	/* Singular text data */
+	list ($ret, $results) =
+	    $translator->translateDomain($domain, array('text' => 'Description'));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	if (function_exists('dgettext')) {
+	    $this->assertEquals('Descripci&oacute;n', $results);
+	} else {
+	    $this->assertEquals('Description', $results);
+	}
+
+	/* Plural text data */
+	list ($ret, $results) =
+	    $translator->translateDomain($domain,
+					 array('one' => '%d user matches your filter',
+					       'many' => '%d users match your filter',
+					       'count' => 1,
+					       'arg1' => 1));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	if (function_exists('dngettext')) {
+	    $this->assertEquals('1 usuario coincide con su filtro', $results);
+	} else {
+	    $this->assertEquals('1 user matches your filter', $results);
+	}
+	
+	/* Plural text data */
+	list ($ret, $results) =
+	    $translator->translateDomain($domain,
+					 array('one' => '%d user matches your filter',
+					       'many' => '%d users match your filter',
+					       'count' => 2,
+					       'arg1' => 2));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	if (function_exists('dngettext')) {
+	    $this->assertEquals('2 usuarios coinciden con su filtro', $results);
+	} else {
+	    $this->assertEquals('2 users match your filter', $results);
+	}
+    }
+}
+
+?>

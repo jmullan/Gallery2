@@ -1,0 +1,464 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * Test Utilities functionality
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class UtilitiesTest extends GalleryTestCase {
+
+    function UtilitiesTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    function setUp() {
+	global $gallery;
+	parent::setUp();
+
+	$gallery->_platform = new UtilitiesTestPlatform($this);
+    }
+
+    function tearDown() {
+	parent::tearDown();
+    }
+
+    function testGetFileNameComponents() {
+	list ($base, $extension) = GalleryUtilities::getFileNameComponents('base.extension');
+	$this->assertEquals('base', $base);
+	$this->assertEquals('extension', $extension);
+    }
+
+    function testGetFileNameComponents2() {
+	list ($base, $extension) = GalleryUtilities::getFileNameComponents('base_without_extension');
+	$this->assertEquals('base_without_extension', $base);
+	$this->assertEquals('', $extension);
+    }
+    
+    function testGetFileNameComponents3() {
+	list ($base, $extension) = GalleryUtilities::getFileNameComponents('base_ending_in_.');
+	$this->assertEquals('base_ending_in_', $base);
+	$this->assertEquals('', $extension);
+    }
+    
+    function testGetFileExtension() {
+	$this->assertEquals('extension', GalleryUtilities::getFileExtension('base.extension'));
+    }
+    
+    function testGetFileBase() {
+	$this->assertEquals('base', GalleryUtilities::getFileBase('base.extension'));
+    }
+    
+
+    function testMaliciousBrowserInput1() {
+	GalleryUtilities::putRequestVariable('test[a]', '<a href="javascript:alert(\'hi\')">yo</a>');
+	$this->assertEquals('&lt;a href=&quot;javascript:alert(&#039;hi&#039;)&quot;&gt;yo&lt;/a&gt;',
+			    GalleryUtilities::getRequestVariables('test[a]'));
+    }
+
+    function testArrayInput() {
+	GalleryUtilities::putRequestVariable('test[a]', array('goodvalue' => 'foo bar',
+							     'badvalue' => '<a href="javascript:alert(\'hi\')">yo</a>'));
+	$this->assertEquals(array('goodvalue' => 'foo bar',
+				  'badvalue' => '&lt;a href=&quot;javascript:alert(&#039;hi&#039;)&quot;&gt;yo&lt;/a&gt;'),
+			    GalleryUtilities::getRequestVariables('test[a]'));
+    }
+    
+    function testGetFormVariables() {
+	GalleryUtilities::putRequestVariable('utilitiestest[outer1][inner1]', '1');
+	GalleryUtilities::putRequestVariable('utilitiestest[outer1][inner\'2][a]', '2');
+	GalleryUtilities::putRequestVariable('utilitiestest[outer1][inner\'2][b]', '3\'3');
+	GalleryUtilities::putRequestVariable('utilitiestest[outer1][inner3][a]', '4');
+	GalleryUtilities::putRequestVariable('utilitiestest[outer1][inner3][b]', '5\'5');
+	GalleryUtilities::putRequestVariable('utilitiestest[outer2]', '6');
+
+	$this->assertEquals(array('outer1' => array('inner1' => '1',
+						    'inner&#039;2' => array('a' => '2',
+									'b' => '3&#039;3'),
+						    'inner3' => array('a' => '4',
+								      'b' => '5&#039;5')),
+				  'outer2' => '6'),
+			    GalleryUtilities::getFormVariables('utilitiestest'));
+    }
+
+    function testGetFormVariables2() {
+	/* Test windows and unix style tmp names */
+	$_FILES[GalleryUtilities::prefixFormVariable('utilitiestest')] =
+		array('name' => array('1' => 'DSCF0001.JPG', 'DSCF0002.GIF', null, null),
+		      'type' => array('1' => 'image/pjpeg', 'image/gif', null, null),
+		      'tmp_name' => array('1' => 'c:\apache\tmp\php195.tmp', '/tmp/php195.tmp', null, null),
+		      'error' => array('1' => 0, 0, 4, 4),
+		      'size' => array('1' => 1779802, 102323, 0, 0));
+	    
+	$this->assertEquals(array('name' => array('1' => 'DSCF0001.JPG', 'DSCF0002.GIF', null, null),
+				  'type' => array('1' => 'image/pjpeg', 'image/gif', null, null),
+				  'tmp_name' => array('1' => 'c:\apache\tmp\php195.tmp', '/tmp/php195.tmp', null, null),
+				  'error' => array('1' => 0, 0, 4, 4),
+				  'size' => array('1' => 1779802, 102323, 0, 0)),
+			    GalleryUtilities::getFormVariables('utilitiestest'));
+    }
+
+    /**
+     * Test the error condition where we have a value in _POST and we put the same value back via
+     * putRequestVariable -- make sure that the new value overwrites the old.
+     */
+    function testGetFormVariables3() {
+	$_POST[GalleryUtilities::prefixFormVariable('utilitiestest')]['list']['filter'] = 'x';
+	GalleryUtilities::putRequestVariable('utilitiestest[list][filter]', 'y');
+
+	$this->assertEquals(array('list' => array('filter' => 'y')),
+			    GalleryUtilities::getFormVariables('utilitiestest'));
+    }
+
+    function testGetFormVariables4() {
+	$_POST[GalleryUtilities::prefixFormVariable('utilitiestest')]['entities'] = '<b> bold </b> <script> foo </script>';
+
+	$this->assertEquals(array('entities' => '&lt;b&gt; bold &lt;/b&gt; &lt;script&gt; foo &lt;/script&gt;'),
+			    GalleryUtilities::getFormVariables('utilitiestest'));
+    }
+
+    function testGetFormVariablesNoPrefix() {
+	GalleryUtilities::putRequestVariable('utilitiestest[outer1][inner1]', '1', false);
+	GalleryUtilities::putRequestVariable('utilitiestest[outer1][inner\'2][a]', '2', false);
+	GalleryUtilities::putRequestVariable('utilitiestest[outer1][inner\'2][b]', '3\'3', false);
+	GalleryUtilities::putRequestVariable('utilitiestest[outer1][inner3][a]', '4', false);
+	GalleryUtilities::putRequestVariable('utilitiestest[outer1][inner3][b]', '5\'5', false);
+	GalleryUtilities::putRequestVariable('utilitiestest[outer2]', '6', false);
+
+	$this->assertEquals(array('outer1' => array('inner1' => '1',
+						    'inner&#039;2' => array('a' => '2',
+									'b' => '3&#039;3'),
+						    'inner3' => array('a' => '4',
+								      'b' => '5&#039;5')),
+				  'outer2' => '6'),
+			    GalleryUtilities::getFormVariables('utilitiestest', false));
+    }
+
+    function testGetFormVariablesNoPrefix2() {
+	$_POST['utilitiestest']['entities'] = '<b> bold </b> <script> foo </script>';
+
+	$this->assertEquals(array('entities' => '&lt;b&gt; bold &lt;/b&gt; &lt;script&gt; foo &lt;/script&gt;'),
+			    GalleryUtilities::getFormVariables('utilitiestest', false));
+    }
+
+    function testGetRequestVariables() {
+	GalleryUtilities::putRequestVariable('utilitiestest[x]', 'blah');
+	$this->assertEquals('blah', GalleryUtilities::getRequestVariables('utilitiestest[x]'));
+	GalleryUtilities::putRequestVariable('testutilities', 'blah', false);
+	$this->assertEquals('blah', GalleryUtilities::getRequestVariablesNoPrefix('testutilities'));
+    }
+
+    function testSanitizeInputValue1() {
+	$rawInput = '<ScRiPt foo=bar>blah</SCRIPT> test test <IFRAME> <b> foo </b> </IFRAME>';
+	GalleryUtilities::sanitizeInputValues($rawInput);
+	$this->assertEquals('&lt;ScRiPt foo=bar&gt;blah&lt;/SCRIPT&gt; test test &lt;IFRAME&gt; &lt;b&gt; foo &lt;/b&gt; &lt;/IFRAME&gt;', $rawInput);
+	
+    }
+    
+    function testSanitizeInputValue2() {
+	$rawInput = 'Opções de Administração';
+	GalleryUtilities::sanitizeInputValues($rawInput);
+	$this->assertEquals('Op&#36133;s de Administra&#34991;', $rawInput);
+	
+    }
+    
+    function testMakeMarkers() {
+	$this->assertEquals('?, ?, ?, ?, ?',
+			    GalleryUtilities::makeMarkers(5));
+	$this->assertEquals('?, ?, ?, ?, ?',
+			    GalleryUtilities::makeMarkers(array(1, 2, 'foo', 4, 'baz')));
+    }
+    
+    function testConvertPathToUrl() {
+	global $gallery;
+
+	// Simulate unix to line up with our mock platform
+	$file = str_replace('\\', '/', __FILE__);
+
+	$_SERVER['REQUEST_URI'] = '/gallery2/phpunit_test.php?foo=bar';
+	$_SERVER['HTTP_HOST'] = 'example.com';
+	$_SERVER['SERVER_PORT'] = 80;
+	$gallery->setUrlGenerator(new GalleryUrlGenerator('phpunit_test.php'));
+	
+	$this->assertEquals('http://example.com/gallery2/modules/core/test/phpunit/UtilitiesTest.class',
+			    GalleryUtilities::convertPathToUrl($file));
+    }
+
+    function testRequireOnce() {
+	$ret = GalleryUtilities::requireOnce('bogus path');
+	$this->assert($ret->getErrorCode() & ERROR_BAD_PATH);
+			    
+	$ret = GalleryUtilities::requireOnce(__FILE__);
+	$this->assert($ret->isSuccess());
+    }
+    
+    function testShrinkDimensionsToFit() {
+	$results = GalleryUtilities::shrinkDimensionsToFit(341, 1024, 768);
+	$this->assertEquals(array(341, 255), $results);
+	
+	$results = GalleryUtilities::shrinkDimensionsToFit(5000, 1024, 768);
+	$this->assertEquals(array(1024, 768), $results);
+
+	// make sure ints are returned even if size param is a string
+	$results = GalleryUtilities::shrinkDimensionsToFit("150", 150, 200);
+	$this->assertEquals(array(112, 150), $results);
+	$this->assertEquals(150, $results[1]);
+    }
+    
+    function testScaleDimensionsToFit() {
+	$results = GalleryUtilities::scaleDimensionsToFit(921, 1024, 768);
+	$this->assertEquals(array(921, 690), $results);
+    }
+    
+    function testIsA() {
+	$this->assert(GalleryUtilities::isA(new UtilitiesTest("x"), 'GalleryTestCase'));
+	$this->assert(GalleryUtilities::isA(new UtilitiesTest("x"), 'UtilitiesTest'));
+	$this->assert(!GalleryUtilities::isA(new UtilitiesTest("x"), 'GalleryEntity'));
+    }
+
+    function testHasRequestVariable() {
+	$key = 'TESTKEY';
+	$this->assert(!GalleryUtilities::hasRequestVariable($key));
+	GalleryUtilities::putRequestVariable($key, 'TESTVALUE');
+	$this->assert(GalleryUtilities::hasRequestVariable($key));
+	$this->assert(!GalleryUtilities::hasRequestVariable($key, false));
+	GalleryUtilities::putRequestVariable($key, 'TESTVALUE', false);
+	$this->assert(GalleryUtilities::hasRequestVariable($key, false));
+    }
+
+    function testHasRequestVariable2() {
+	$key = 'foo[TEST][KEY]';
+	$this->assert(!GalleryUtilities::hasRequestVariable($key));
+	GalleryUtilities::putRequestVariable($key, 'TESTVALUE');
+	$this->assert(GalleryUtilities::hasRequestVariable($key));
+	$this->assert(!GalleryUtilities::hasRequestVariable($key, false));
+	GalleryUtilities::putRequestVariable($key, 'TESTVALUE', false);
+	$this->assert(GalleryUtilities::hasRequestVariable($key, false));
+    }
+
+    function testRemoveRequestVariable() {
+	$key = 'TESTKEY';
+	GalleryUtilities::putRequestVariable($key, 'TESTVALUE');
+	$this->assert(GalleryUtilities::hasRequestVariable($key));
+	GalleryUtilities::removeRequestVariable($key);
+	$this->assert(!GalleryUtilities::hasRequestVariable($key));
+	GalleryUtilities::putRequestVariable($key, 'TESTVALUE', false);
+	$this->assert(GalleryUtilities::hasRequestVariable($key, false));
+	GalleryUtilities::removeRequestVariable($key, false);
+	$this->assert(!GalleryUtilities::hasRequestVariable($key, false));
+    }
+
+    function testRemoveRequestVariable2() {
+	$key = 'foo[TEST][KEY]';
+	GalleryUtilities::putRequestVariable($key, 'TESTVALUE');
+	$this->assert(GalleryUtilities::hasRequestVariable($key));
+	GalleryUtilities::removeRequestVariable($key);
+	$this->assert(!GalleryUtilities::hasRequestVariable($key));
+    }
+
+    function testRemoveFormVariables() {
+	GalleryUtilities::putRequestVariable('utilitiestest[a]', 'b');
+	GalleryUtilities::putRequestVariable('utilitiestest[c]', 'd');
+	
+	$this->assertEquals(array('a' => 'b',
+				  'c' => 'd'),
+			    GalleryUtilities::getFormVariables('utilitiestest'));
+
+	GalleryUtilities::removeFormVariables('utilitiestest');
+	$this->assertEquals(array(), GalleryUtilities::getFormVariables('utilitiestest'));
+
+	GalleryUtilities::putRequestVariable('utilitiestest[a]', 'b', false);
+	GalleryUtilities::putRequestVariable('utilitiestest[c]', 'd', false);
+	
+	$this->assertEquals(array('a' => 'b',
+				  'c' => 'd'),
+			    GalleryUtilities::getFormVariables('utilitiestest', false));
+
+	GalleryUtilities::removeFormVariables('utilitiestest', false);
+	$this->assertEquals(array(), GalleryUtilities::getFormVariables('utilitiestest', false));
+    }
+
+    function testIsPathInList() {
+	global $gallery;
+	$platform = $gallery->getPlatform();
+	$this->assert(GalleryUtilities::isPathInList('/foo/bar',
+						     array('/foo', '/bar')),
+		      'test 1');
+	$this->assert(!GalleryUtilities::isPathInList('/foobar',
+						      array('/foo', '/bar')),
+		      'test 2');
+	
+	$this->assert(GalleryUtilities::isPathInList('/foo',
+						     array('/foo', '/bar')),
+		      'test 3');
+    }
+
+    function testProcessingPaths() {
+	GalleryUtilities::putRequestVariable('test', __FILE__);
+	$this->assertEquals(__FILE__, GalleryUtilities::getRequestVariables('test'));
+    }
+
+    function testHtmlEntityDecode() {
+	$result = GalleryUtilities::htmlEntityDecode('&lt;a href=&quot;javascript:alert(&#039;hi&#039;)' .
+						     '&quot;&gt;yo&lt;/a&gt;');
+	$this->assertEquals('<a href="javascript:alert(\'hi\')">yo</a>', $result);
+    }
+
+    function testCreateAlbumTree() {
+	/* Make up some bogus albums that we can use to simulate our tree. */
+	for ($i = 0; $i < 7; $i++) {
+	    list ($ret, $albums[$i]) =
+		GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryAlbumItem');
+	    $albums[$i]->setId($i);
+	}
+
+	$albums[0]->setParentId(null);
+	$albums[1]->setParentId(0);
+	$albums[2]->setParentId(0);
+	$albums[3]->setParentId(1);
+	$albums[4]->setParentId(1);
+	$albums[5]->setParentId(1);
+	$albums[6]->setParentId(4);
+	       
+	$tree = GalleryUtilities::createAlbumTree($albums);
+	$this->assert($tree[0]['depth'] == 0);
+	$this->assert($tree[0]['data']['id'] == 0);
+	$this->assert($tree[1]['depth'] == 0);
+	$this->assert($tree[1]['data']['id'] == 1);
+	$this->assert($tree[2]['depth'] == 1);
+	$this->assert($tree[2]['data']['id'] == 3);
+	$this->assert($tree[3]['depth'] == 1);
+	$this->assert($tree[3]['data']['id'] == 4);
+	$this->assert($tree[4]['depth'] == 2);
+	$this->assert($tree[4]['data']['id'] == 6);
+	$this->assert($tree[5]['depth'] == 1);
+	$this->assert($tree[5]['data']['id'] == 5);
+	$this->assert($tree[6]['depth'] == 0);
+	$this->assert($tree[6]['data']['id'] == 2);
+    }
+
+    function testGetFile() {
+	global $gallery;
+	$platform = $gallery->getPlatform();
+
+        $_FILES[GalleryUtilities::prefixFormVariable('userfile')] =
+	    array('name' => 'testfile.txt',
+		  'type' => 'text/plain',
+		  'tmp_name' => __FILE__,
+		  'error' => 0,
+		  'size' => $platform->filesize(__FILE__));
+
+	$file = GalleryUtilities::getFile('userfile');
+	$this->assertEquals(array('name' => 'testfile.txt',
+				  'type' => 'text/plain',
+				  'tmp_name' => __FILE__,
+				  'error' => 0,
+				  'size' => $platform->filesize(__FILE__)),
+			    $file);
+
+        $_FILES['testfile'] =
+	    array('name' => 'testfile.txt',
+		  'type' => 'text/plain',
+		  'tmp_name' => __FILE__,
+		  'error' => 0,
+		  'size' => $platform->filesize(__FILE__));
+
+	$file = GalleryUtilities::getFile('testfile', false);
+	$this->assertEquals(array('name' => 'testfile.txt',
+				  'type' => 'text/plain',
+				  'tmp_name' => __FILE__,
+				  'error' => 0,
+				  'size' => $platform->filesize(__FILE__)),
+			    $file);
+    }
+
+    function testGetHttpDate() {
+	$regexp = '/(Mon|Tue|Wed|Thu|Fri|Sat|Sun), ';
+	$regexp .= '\d\d (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d\d\d\d ';
+	$regexp .= '\d\d:\d\d:\d\d GMT/';
+
+	/* Test a known date */
+	$date = GalleryUtilities::getHttpDate(1092648357);
+	$this->assertEquals('Mon, 16 Aug 2004 09:25:57 GMT', $date);
+
+	/* Test the format of current datetime */
+	$date = GalleryUtilities::getHttpDate();
+	$isCorrect = preg_match($regexp, $date);
+	$this->assert($isCorrect, 'date-string ' . $date . ' is not RFC 2616 conformant');
+    }
+}
+
+/**
+ * Mock platform
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class UtilitiesTestPlatform {
+
+    function UtilitiesTestPlatform(&$testCase) {
+	$this->_testCase =& $testCase;
+    }
+    
+    function realpath($file) {
+	/* These are used in testIsPathInList */
+	switch ($file) {
+	case '/foo/bar':
+	case '/foobar':
+	case '/foo':
+	case '/bar':
+	    return $file;
+	}
+	
+	$path = realpath($file);
+
+	// Stick with Unix slashes for the purpose of our tests
+	return str_replace('\\', '/', $path); 
+    }
+
+    function getDirectorySeparator() {
+	return '/';
+    }
+
+    function file_exists($path) {
+	switch(realpath($path)) {
+	case __FILE__:
+	case realpath(dirname(__FILE__) . '/../../classes/GalleryAlbumItem.class'):
+	    return true;
+
+	default:
+	    return false;
+	}
+    }
+
+    function filesize($file) {
+	return filesize($file);
+    }
+}
+

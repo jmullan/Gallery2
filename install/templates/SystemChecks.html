@@ -1,0 +1,29 @@
+    <h1>System Checks</h1>
+    
+    <table style="width: 80%">
+    <?php foreach ($templateData['check'] as $check): ?>
+      <tr>
+	<td>
+	  <?php print $check['title'] ?>
+	</td>
+
+	<td style="float: right">
+	  <?php if ($check['success']): ?>
+	  <h2 class="success"> <?php print _('Success') ?> </h2>
+	  <?php else: ?>
+	  <h2 class="error"> <?php print _('Failed') ?> </h2>
+	  <?php endif; ?>
+	</td>
+      </tr>
+
+      <?php if (!$check['success']): ?>
+      <tr>
+	<td colspan="2">
+	  <?php print $check['error']; ?>
+	</td>
+      </tr>
+      <?php endif; ?>
+      <?php endforeach; ?>
+    </table>
+</h2>
+

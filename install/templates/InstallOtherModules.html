@@ -1,0 +1,83 @@
+    <h1><?php print _("Install Other Modules") ?></h1>
+
+    <script type="text/javascript">
+      function checkAll(newValue) {
+         for (var i = 0; i < document.forms[0].length; i++) {
+             var element = document.forms[0].elements[i];
+             if (element.type == 'checkbox') {
+                 element.checked = newValue;
+             }
+         }
+      }
+      function toggleAll() {
+         for (var i = 0; i < document.forms[0].length; i++) {
+             var element = document.forms[0].elements[i];
+             if (element.type == 'checkbox') {
+                 element.checked = !element.checked;
+             }
+         }
+      }
+    </script>
+
+    <p>
+      <?php print _("The following modules can be automatically installed and activated for you.  You should install at least one of the graphics toolkits otherwise Gallery can't make thumbnails out of your images.  On most systems, the automatic install will work properly for you.  However, in some cases it may fail.  You can always activate new modules or deactivate any of the ones you choose here on the Site Administration page, so any decision you make here is not permanent.") ?>
+    </p>
+    <p>
+      <?php print _("Some modules may fail to install automatically.  That's ok.  It typically means that they require some configuration, which you can do on the Site Adminstration page"); ?>
+    </p>
+
+    <?php if (isset($templateData['activated'])): ?>
+    <?php foreach ($templateData['activated'] as $moduleId => $moduleName): ?>
+    <h2 class="success">
+      <?php print _(sprintf("Activated the <i>%s</i> module successfully", $moduleName)) ?>
+    </h2>
+    <?php endforeach; ?>
+    <?php endif; ?>
+
+    <?php if (!empty($templateData['modules'])): ?>
+    <form>
+      <table class="modules">
+        <tr style="background: #ccc;">
+          <th>
+            &nbsp;
+          </th>
+          <th>
+            <?php print _("Name") ?>
+          </th>
+          <th>
+            <?php print _("Version") ?>
+          </th>
+          <th>
+            <?php print _("Description") ?>
+          </th>
+        </tr>
+        <?php $counter = 0; ?>
+        <?php foreach ($templateData['modules'] as $id => $module): ?>
+        <?php if ($module->canBeAutoInstalled()): ?>
+        <tr<?php if ($counter % 2 != 0) print ' style="background:#eee;"' ?>>
+          <td>
+            <input type=checkbox name="module[<?php print $id ?>]" selected="selected"/>
+          </td>
+          <td class="modules">
+            <?php print $module->getName() ?>
+          </td>
+          <td>
+            <?php print $module->getVersion() ?>
+          </td>
+          <td>
+            <?php print $module->getDescription() ?>
+          </td>
+        </tr>
+	<?php $counter++; ?>
+	<?php endif; ?>
+	<?php endforeach; ?>
+      </table>
+      <input type="button" onclick="checkAll(true)" value="<?php print _("check all") ?>"/>
+      <input type="button" onclick="toggleAll()" value="<?php print _("toggle") ?>"/>
+      <input type="button" onclick="checkAll(false)" value="<?php print _("uncheck all") ?>"/>
+      <br/>
+      <input type="hidden" name="step" value="<?php print $currentStep->getStepNumber() ?>"/>
+      <input type="submit" name="action[activate]" value="<?php print _("activate selected modules")?>"/>
+    </form>
+    <?php endif; ?>
+

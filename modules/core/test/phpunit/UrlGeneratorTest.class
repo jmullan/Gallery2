@@ -1,0 +1,133 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * Test UrlGenerator functionality
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ *
+ */
+class UrlGeneratorTest extends GalleryTestCase {
+    var $_urlGenerator;
+
+    function UrlGeneratorTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    function setUp() {
+	$_SERVER['REQUEST_URI'] = '/gallery2/phpunit_test.php?foo=bar';
+	$_SERVER['HTTP_HOST'] = 'example.com';
+	$_SERVER['SERVER_PORT'] = 80;
+
+	$this->_urlGenerator = new GalleryUrlGenerator('phpunit_test.php');
+	parent::setUp();
+    }
+
+    function tearDown() {
+	parent::tearDown();
+    }
+
+    function testGenerateUrl() {
+	global $gallery;
+
+	$params['a'] = 123;
+	$params['b'] = 'bBbB';
+	$params['c'] = serialize(array(1, 2, 3));
+	$actual = $this->_urlGenerator->generateUrl($params);
+	
+	$values = array('g2_a=' . htmlentities($params['a']),
+			'g2_b=' . htmlentities($params['b']),
+			'g2_c=' . htmlentities($params['c']));
+
+	// If we're not using cookies, expect there to be an additional value
+	$session = $gallery->getSession();
+	if (!$session->isUsingCookies()) {
+	    $values[] = GalleryUtilities::prefixFormVariable($session->getKey()) .
+		'=' . $session->getId();
+	}
+	$expected = 'http://example.com/gallery2/phpunit_test.php?' . join('&amp;', $values);
+
+	$this->assertEquals($expected, $actual);
+    }
+
+    function testGenerateUrlWithEmbeddedSessionId() {
+	global $gallery;
+
+	$params['a'] = 123;
+	$params['b'] = 'bBbB';
+	$params['c'] = serialize(array(1, 2, 3));
+	$actual = $this->_urlGenerator->generateUrl($params, true);
+	
+	$values = array('g2_a=' . htmlentities($params['a']),
+			'g2_b=' . htmlentities($params['b']),
+			'g2_c=' . htmlentities($params['c']));
+
+	// No matter what, expect the session id
+	$session = $gallery->getSession();
+	$values[] = GalleryUtilities::prefixFormVariable($session->getKey()) .
+	    '=' . $session->getId();
+	$expected = 'http://example.com/gallery2/phpunit_test.php?' . join('&amp;', $values);
+	$this->assertEquals($expected, $actual);
+    }
+
+    function testGenerateUrlWithoutEmbeddedSessionId() {
+	global $gallery;
+
+	$params['a'] = 123;
+	$params['b'] = 'bBbB';
+	$params['c'] = serialize(array(1, 2, 3));
+	$actual = $this->_urlGenerator->generateUrl($params, false);
+
+	$values = array('g2_a=' . htmlentities($params['a']),
+			'g2_b=' . htmlentities($params['b']),
+			'g2_c=' . htmlentities($params['c']));
+
+	// No matter what, expect no session id
+	$expected = 'http://example.com/gallery2/phpunit_test.php?' . join('&amp;', $values);
+	$this->assertEquals($expected, $actual);
+    }
+
+    function testGetCurrentUrl() {
+	$this->assertEquals('http://example.com/gallery2/phpunit_test.php?foo=bar', $this->_urlGenerator->getCurrentUrl());
+    }
+
+    function testGetCurrentUrlDir() {
+	$this->assertEquals('http://example.com/gallery2/', $this->_urlGenerator->getCurrentUrlDir());
+    }
+
+    function testGetCurrentDomain() {
+	$_SERVER['HTTP_HOST'] = 'http_host';
+	$this->assertEquals('http_host', $this->_urlGenerator->getCurrentDomain());
+	
+	$_SERVER['HTTP_X_FORWARDED_SERVER'] = 'http_x_forwarded_server';
+	$this->assertEquals('http_x_forwarded_server', $this->_urlGenerator->getCurrentDomain());
+    }
+}
+
+?>

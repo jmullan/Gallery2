@@ -1,0 +1,141 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package SquareThumb
+ * @author Alan Harder <alan.harder@sun.com>
+ */
+
+/**
+ * Load required classes
+ */
+require_once(dirname(__FILE__) . '/../../core/classes/GalleryToolkit.class');
+
+/**
+ * A version of GalleryToolkit to enforce creation of square thumbnails
+ *
+ * @package SquareThumb
+ * @subpackage Classes
+ */
+class SquareThumbToolkit extends GalleryToolkit {
+
+    /**
+     * @see GalleryToolkit::getProperty()
+     */
+    function getProperty($mimeType, $propertyName, $sourceFilename) {
+	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
+    }
+
+    /**
+     * @see GalleryToolkit::performOperation()
+     */
+    function performOperation($mimeType, $operationName, $sourceFilename,
+			      $destFilename, $parameters) {
+	global $gallery;
+	$platform = $gallery->getPlatform();
+	$tmpDir = $gallery->getConfig('data.gallery.tmp');
+
+	if ($operationName != 'thumbnail') {
+	    return array(GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__), null);
+	}
+
+	/*
+	 * Get dimensions
+	 */
+	list ($ret, $toolkit) = GalleryCoreApi::getToolkitByProperty($mimeType, 'dimensions');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	if (!isset($toolkit)) {
+	    return array(GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__), null);
+	}
+	list ($ret, $dimensions) = $toolkit->getProperty($mimeType, 'dimensions', $sourceFilename);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	list ($width, $height) = $dimensions;
+
+	if ($width != $height) {
+	    /*
+	     * Crop to square
+	     */
+	    list ($ret, $toolkit) = GalleryCoreApi::getToolkitByOperation($mimeType, 'crop');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    if (!isset($toolkit)) {
+		return array(GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__), null);
+	    }
+	    if ($width > $parameters[0] && $height > $parameters[0]) {
+		$cropFilename = $tmpFilename = $platform->tempnam($tmpDir, 'sqth_');
+		if (empty($tmpFilename)) {
+		    return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);
+		}
+	    } else {
+		$cropFilename = $destFilename;
+	    }
+	    $args = ($width > $height) ? array( floor(($width-$height)/2), 0, $height, $height )
+				       : array( 0, floor(($height-$width)/2), $width, $width );
+	    list ($ret, $mimeType) = $toolkit->performOperation(
+				     $mimeType, 'crop', $sourceFilename, $cropFilename, $args);
+	    if ($ret->isError()) {
+		if (isset($tmpFilename)) {
+		    @$platform->unlink($tmpFilename);
+		}
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $sourceFilename = $cropFilename;
+	}
+	if ($width > $parameters[0] && $height > $parameters[0]) {
+	    /*
+	     * Scale to thumb size
+	     */
+	    list ($ret, $toolkit) = GalleryCoreApi::getToolkitByOperation($mimeType, 'scale');
+	    if ($ret->isError()) {
+		if (isset($tmpFilename)) {
+		    @$platform->unlink($tmpFilename);
+		}
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    if (!isset($toolkit)) {
+		if (isset($tmpFilename)) {
+		    @$platform->unlink($tmpFilename);
+		}
+		return array(GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__), null);
+	    }
+	    list ($ret, $mimeType) = $toolkit->performOperation(
+				     $mimeType, 'scale', $sourceFilename, $destFilename, $parameters);
+	    if ($ret->isError()) {
+		if (isset($tmpFilename)) {
+		    @$platform->unlink($tmpFilename);
+		}
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+	if (isset($tmpFilename)) {
+	    @$platform->unlink($tmpFilename);
+	}
+
+	return array(GalleryStatus::success(), $mimeType);
+    }
+}
+?>

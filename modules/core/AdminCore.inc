@@ -1,0 +1,359 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage UserInterface
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * This controller will handle the setting of several general Gallery options
+ *
+ * @package GalleryCore
+ * @subpackage UserInterface
+ */
+class AdminCoreController extends GalleryController {
+    
+    /**
+     * @see GalleryController::handleRequest
+     */
+    function handleRequest($form) {
+	global $gallery;
+
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Get the list of legal local server dirs */
+	list ($ret, $localServerDirs) = GalleryCoreApi::getPluginParameter('module', 'core', 'uploadLocalServer.dirs');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$localServerDirList = split(',', $localServerDirs);
+
+	$error = array();
+	$status = array();
+	$canSave = false;
+	if (isset($form['action']['save'])) {
+	    $canSave = true;
+	} else if (isset($form['action']['addUploadLocalServerDir'])) {
+	    $path = $form['uploadLocalServer']['newDir'];
+
+	    $platform = $gallery->getPlatform();
+	    if (empty($path)) {
+		$error[] = 'form[error][uploadLocalServer][newDir][missing]';
+	    } else if ($platform->isRestrictedByOpenBasedir($path)) {
+		$error[] = 'form[error][uploadLocalServer][newDir][restrictedByOpenBasedir]';
+	    } else if (!$platform->is_readable($path)) {
+		$error[] = 'form[error][uploadLocalServer][newDir][notReadable]';
+	    } else if (!$platform->is_dir($path)) {
+		$error[] = 'form[error][uploadLocalServer][newDir][notADirectory]';
+	    } 
+
+	    if (empty($error)) {
+		if (!in_array($path, $localServerDirList)) {
+		    $localServerDirList[] = $path;
+		}
+
+		for ($i = 0; $i < sizeof($localServerDirList); $i++) {
+		    if (empty($localServerDirList[$i])) {
+			unset($localServerDirList[$i]);
+		    }
+		}
+		
+		$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'uploadLocalServer.dirs', join(',', $localServerDirList));
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		$canSave = true;
+		$status['addedDir'] = 1;
+		$redirect['view'] = 'core:SiteAdmin';
+		$redirect['subView'] = 'core:AdminCore';
+	    } else {
+	    }
+	} else if (isset($form['action']['removeUploadLocalServerDir'])) {
+	    if (!empty($form['uploadLocalServer']['selectedDir'])) {
+		$path = $form['uploadLocalServer']['selectedDir'];
+		$flip = array_flip($localServerDirList);
+		if (isset($flip[$path])) {
+		    unset($flip[$path]);
+		}
+		$localServerDirList = array_flip($flip);
+
+		for ($i = 0; $i < sizeof($localServerDirList); $i++) {
+		    if (empty($localServerDirList[$i])) {
+			unset($localServerDirList[$i]);
+		    }
+		}
+		$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'uploadLocalServer.dirs', join(',', $localServerDirList));
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		$status['removedDir'] = 1;
+		$redirect['view'] = 'core:SiteAdmin';
+		$redirect['subView'] = 'core:AdminCore';
+	    } else {
+		$error[] = 'form[error][uploadLocalServer][selectedDir][missing]';
+	    }
+	}
+
+	if ($canSave) {
+	    foreach (array('permissions.directory',
+			   'permissions.file',
+			   'exec.expectedStatus',
+			   'default.orderBy',
+			   'default.orderDirection',
+			   'default.layout',
+			   'default.theme',
+			   'default.language',
+			   'language.selector',
+			   'session.lifetime',
+			   'session.inactivityTimeout',
+			   'misc.useShortUrls',
+			   'misc.markup') as $key) {
+		list ($outer, $inner) = split('\.', $key);
+		if (isset($form[$outer][$inner])) {
+		    $ret = GalleryCoreApi::setPluginParameter('module', 'core', $key, $form[$outer][$inner]);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		}
+	    }
+	    $status['saved'] = 1;
+	    $redirect['view'] = 'core:SiteAdmin';
+	    $redirect['subView'] = 'core:AdminCore';
+	}
+
+	if (!empty($redirect)) {
+	    $results['redirect'] = $redirect;
+	} else {
+	    $results['delegate']['view'] = 'core:SiteAdmin';
+	    $results['delegate']['subView'] = 'core:AdminCore';
+	}
+	$results['status'] = $status;
+	$results['error'] = $error;
+
+	return array(GalleryStatus::success(), $results);
+    }
+}
+
+/**
+ * This view will prompt for general Gallery settings
+ *
+ * @package GalleryCore
+ * @subpackage UserInterface
+ */
+class AdminCoreView extends GalleryView {
+
+    /**
+     * @see GalleryView::loadTemplate
+     */
+    function loadTemplate(&$template, &$form) {
+	global $gallery;
+	
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	    
+	if ($form['formName'] != 'AdminCore') {
+	    /* Load up our form data */
+	    foreach (array('permissions.directory',
+			   'permissions.file',
+			   'exec.expectedStatus',
+			   'default.orderBy',
+			   'default.orderDirection',
+			   'default.layout',
+			   'default.theme',
+			   'default.language',
+			   'language.selector',
+			   'session.lifetime',
+			   'session.inactivityTimeout',
+			   'misc.useShortUrls',
+			   'misc.markup') as $key) {
+
+		list ($ret, $value) =
+		    GalleryCoreApi::getPluginParameter('module', 'core', $key);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		list ($outer, $inner) = split('\.', $key);
+		$form[$outer][$inner] = $value;
+	    }
+	    $form['formName'] = 'AdminCore';
+	    $form['uploadLocalServer']['newDir'] = '';
+	}
+
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Get the list of legal local server dirs */
+	list ($ret, $localServerDirs) = GalleryCoreApi::getPluginParameter('module', 'core', 'uploadLocalServer.dirs');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$localServerDirList = split(',', $localServerDirs);
+	for ($i = 0; $i < sizeof($localServerDirList); $i++) {
+	    if (empty($localServerDirList[$i])) {
+		unset($localServerDirList[$i]);
+	    }
+	}
+
+	/* Set up our sort order selection list */
+	$orderByList = array();
+	$orderByList[''] = $module->translate('&laquo; No Sort Order &raquo;');
+	$orderByList['title'] = $module->translate('Title');
+	$orderByList['summary'] = $module->translate('Summary');
+	$orderByList['creationTimestamp'] = $module->translate('Creation Date');
+	$orderByList['modificationTimestamp'] = $module->translate('Last Changed Date');
+	$orderByList['description'] = $module->translate('Description');
+	$orderByList['keywords'] = $module->translate('Keywords');
+	$orderByList['viewCount'] = $module->translate('View Count');
+	
+	/* Set up our sort direction selection list */
+	$orderDirectionList = array();
+	$orderDirectionList[ORDER_ASCENDING] = $module->translate('Ascending');
+	$orderDirectionList[ORDER_DESCENDING] = $module->translate('Descending');
+
+	$platform = $gallery->getPlatform();
+
+	/* Set up our language selection list */
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$languageList = array();
+	$languageList[''] = $module->translate('&laquo; None &raquo;');
+	
+	$translator =& $gallery->getTranslator();
+	$supportedLanguages = $translator->getSupportedLanguages();
+	foreach ($supportedLanguages as $language => $countryList) {
+	    foreach ($countryList as $country => $languageData) {
+		$languageList[$language . '_' . $country] =
+		    $languageData['description'];
+	    }
+	}
+
+	$languageSelectorList = array(
+	    'none' => $module->translate('None'),
+	    'guest' => $module->translate('Guest User Only'),
+	    'all' => $module->translate('Everybody')
+	);
+
+	/* Set up our session time lists */
+	$sessionTimeLists = array();
+	foreach (array(15, 30, 45) as $minutes) {
+	    $sessionTimeList[$minutes * 60] =
+		$module->translate(array('one' => '%d minute',
+					 'many' => '%d minutes',
+					 'count' => $minutes,
+					 'arg1' => $minutes));
+	}
+	foreach (array(1, 6, 12) as $hours) {
+	    $sessionTimeList[$hours * 3600] =
+		$module->translate(array('one' => '%d hour',
+					 'many' => '%d hours',
+					 'count' => $hours,
+					 'arg1' => $hours));
+	}
+	foreach (array(1, 2, 3, 4, 5, 6) as $days) {
+	    $sessionTimeList[$days * 86400] =
+		$module->translate(array('one' => '%d day',
+					 'many' => '%d days',
+					 'count' => $days,
+					 'arg1' => $days));
+	}
+	foreach (array(1, 2, 3) as $weeks) {
+	    $sessionTimeList[$weeks * 7 * 86400] =
+		$module->translate(array('one' => '%d week',
+					 'many' => '%d weeks',
+					 'count' => $weeks,
+					 'arg1' => $weeks));
+	}
+	$sessionTimeList[25 * 365 * 86400] = $module->translate('forever');
+	
+	/* Set up our permission selection lists */
+	$permissionsDirectoryList = array('700', '750', '755', '770', '775', '777');
+	$permissionsFileList = array('600', '640', '644', '660', '664', '666');
+
+	/* Miscellaneous lists */
+	$useShortUrlsList = array('true' => $module->translate('yes'),
+				  'false' => $module->translate('no'));
+
+	$embeddedMarkupList = array('none' => $module->translate('No Markup'),
+				    'bbcode' => $module->translate('BBCode'),
+				    'html' => $module->translate('Raw HTML'));
+
+	list ($ret, $rootId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	list ($ret, $layoutStatusList) = GalleryCoreApi::fetchPluginStatus('layout');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$layoutList = array();
+	foreach ($layoutStatusList as $layoutId => $layoutStatus) {
+	    if (empty($layoutStatus['active'])) {
+		continue;
+	    }
+	    
+	    list ($ret, $layout) = GalleryCoreApi::loadPlugin('layout', $layoutId);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    $layoutList[$layoutId] = $layout->getName();
+	}
+
+	$AdminCore = array();
+	$AdminCore['layoutList'] = $layoutList;
+	$AdminCore['themeList'] = GalleryTheme::getThemeList();
+	$AdminCore['localServerDirList'] = $localServerDirList;
+	$AdminCore['languageList'] = $languageList;
+	$AdminCore['languageSelectorList'] = $languageSelectorList;
+	$AdminCore['translationsSupported'] = function_exists('dngettext');
+	$AdminCore['orderByList'] = $orderByList;
+	$AdminCore['orderDirectionList'] = $orderDirectionList;
+	$AdminCore['permissionsDirectoryList'] = $permissionsDirectoryList;
+	$AdminCore['permissionsFileList'] = $permissionsFileList;
+	$AdminCore['sessionTimeList'] = $sessionTimeList;
+	$AdminCore['useShortUrlsList'] = $useShortUrlsList;
+	$AdminCore['embeddedMarkupList'] = $embeddedMarkupList;
+	$AdminCore['shortUrlTestItemId'] = $rootId;
+	
+	$template->setVariable('controller', 'core:AdminCore');
+	$template->setVariable('AdminCore', $AdminCore);
+
+	return array(GalleryStatus::success(),
+		     array('body' => 'modules/core/templates/AdminCore.tpl'));
+    }
+}
+?>

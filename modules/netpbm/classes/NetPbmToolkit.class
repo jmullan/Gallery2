@@ -1,0 +1,710 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package NetPbm
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * Load required classes
+ */
+require_once(dirname(__FILE__) . '/../../core/classes/GalleryToolkit.class');
+
+/**
+ * A NetPBM version of GalleryToolkit
+ *
+ * This class implements the GalleryToolkit API using NetPBM.
+ *
+ * @package NetPbm
+ * @subpackage Classes
+ */
+class NetPbmToolkit extends GalleryToolkit {
+    /*
+     * ****************************************
+     *                 Methods
+     * ****************************************
+     */
+
+    /**
+     * @see GalleryToolkit::getProperty()
+     */
+    function getProperty($mimeType, $propertyName, $sourceFilename) {
+
+	switch($propertyName) {
+	case 'dimensions':
+	    list ($ret, $width, $height) = $this->_getImageDimensions($mimeType, $sourceFilename);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__),
+			     null);
+	    }
+	    $results = array($width, $height);
+	    break;
+
+	default:
+	    return array(GalleryStatus::error(ERROR_UNIMPLEMENTED,
+					      __FILE__, __LINE__),
+			 null);
+	}
+
+	return array(GalleryStatus::success(), $results);
+    }
+
+    /**
+     * @see GalleryToolkit::performOperation()
+     */
+    function performOperation($mimeType, $operationName, $sourceFilename, $destFilename, $parameters) {
+	global $gallery;
+	/* By default we keep the same output type */
+	$outputMimeType = $mimeType;
+
+	$platform = $gallery->getPlatform();
+	
+	switch($operationName) {
+	case 'thumbnail':
+	    /* Don't enlarge images for a thumbnail */
+	    list ($ret, $width, $height) = $this->_getImageDimensions($mimeType, $sourceFilename);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    if ($width <= $parameters[0] && $height <= $parameters[0]) {
+		$transform = null;
+		$outputMimeType = $mimeType;
+		break;
+	    } else {
+		/* fall through to scale */
+	    }
+	    
+	case 'scale':
+	    $transform = array($this->_pnmCmd('pnmscale'),
+			       '--quiet',
+			       '-xysize',
+			       $parameters[0],
+			       $parameters[0]);
+	    break;
+	    
+	case 'resize':
+	    $transform = array($this->_pnmCmd('pnmscale'),
+			       '--quiet',
+			       '-xsize', $parameters[0],
+			       '-ysize', $parameters[1]);
+	    break;
+
+	case 'rotate':
+	    switch($parameters[0]) {
+	    case -90:
+		$flipArgument = "-ccw";
+		break;
+
+	    case 90:
+		$flipArgument = "-cw";
+		break;
+		
+	    case -180:
+	    case 180:
+		$flipArgument = "-r180";
+		break;
+
+	    default:
+		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+						  "Bad rotation argument: $parameters[0]"),
+			     null);
+	    }
+	    
+	    $transform = array($this->_pnmCmd('pnmflip'), $flipArgument);
+	    break;
+	    
+	case 'crop':
+	    $transform = array($this->_pnmCmd('pnmcut'),
+			       $parameters[0], $parameters[1],
+			       $parameters[2], $parameters[3]);
+	    break;
+
+	case 'convert-to-image/jpeg':
+	    $transform = null;
+	    $outputMimeType = 'image/jpeg';
+	    break;
+	    
+	case 'composite':
+	    $compositeOverlayPath = $parameters[0];
+	    $compositeOverlayMimeType = $parameters[1];
+	    $compositeWidth = $parameters[2];
+	    $compositeHeight = $parameters[3];
+	    $compositeAlignX = $parameters[4];
+	    $compositeAlignY = $parameters[5];
+	    $compositeAlignmentType = $parameters[6];
+	    
+	    // Create temporary files, composite may need to be decomposed into rgb & alpha images
+	    $tmpDir = $gallery->getConfig('data.gallery.tmp');
+	    $tmpOverlay = $platform->tempnam($tmpDir, 'npbm_');
+	    if (empty($tmpOverlay)) {
+	        /* This can happen if the $tmpDir path is bad */
+	        return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__,
+	                                          "Could not create tmp file in '$tmpDir'"),
+	                     null);
+	    }
+	    
+	    $tmpAlpha = $platform->tempnam($tmpDir, 'npbm_');
+	    if (empty($tmpAlpha)) {
+	        /* This can happen if the $tmpDir path is bad */
+	        return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__,
+	                                          "Could not create tmp file in '$tmpDir'"),
+	                     null);
+	    }
+
+	    switch ($compositeOverlayMimeType) {
+	    case 'image/png':
+	        $useAlpha = 1;
+	        $getOverlayCmd = array($this->_pnmCmd('pngtopnm'),
+	                               $compositeOverlayPath,
+	                               '>',
+	                               $tmpOverlay);
+	        $getAlphaCmd   = array($this->_pnmCmd('pngtopnm'),
+	                               '-alpha',
+	                               $compositeOverlayPath,
+	                               '>',
+	                               $tmpAlpha);
+	        break;
+
+	    case 'image/jpeg':
+	    case 'image/pjpeg':
+	        $useAlpha = 0;
+	        $getOverlayCmd = array($this->_pnmCmd('jpegtopnm'),
+	                               $compositeOverlayPath,
+	                               '>',
+	                               $tmpOverlay);
+	        break;
+
+	    case 'image/gif':
+	        $useAlpha = 1;
+	        $getOverlayCmd = array($this->_pnmCmd('giftopnm'),
+	                               '-alphaout=' . $tmpAlpha,
+	                               $compositeOverlayPath,
+	                               '>',
+	                               $tmpOverlay);
+	        break;
+
+	    case 'image/tiff':
+	        /*
+		 * This is only because my decomposed alpha was "all black", and made it seem like it
+		 * wasn't doing anything
+		 */
+	        $useAlpha = 0;
+	        $getOverlayCmd = array($this->_pnmCmd('tifftopnm'),
+	                               '-alphaout=' . $tmpAlpha,
+	                               $compositeOverlayPath,
+	                               '>',
+	                               $tmpOverlay);
+	        break;
+	    default:
+	        return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__,
+	                                          "mimeType not handled: $compositeOverlayMimeType"),
+	                     null);
+	    }
+
+	    // Execute commands
+	    list($ret, $output) = $platform->exec(array($getOverlayCmd));
+	    if (!$ret) {
+	        return array(GalleryStatus::error(ERROR_UNKNOWN, __FILE__, __LINE__,
+	                                          "Could not get/convert/extract overlay"),
+	                     null);
+	    }
+	    if (isset($getAlphaCmd)) {
+	        list($ret, $output) = $platform->exec(array($getAlphaCmd));
+	        if (!$ret) {
+	            return array($ret->wrap(__FILE__, __LINE__), null, null);
+	        }
+	    }
+	    $transform[] = $this->_pnmCmd('pnmcomp');
+
+	    switch ($compositeAlignmentType) { // Alignment is the third parameter
+	    case 1: // Top - Left
+	        $transform[] = '-align=left';
+	        $transform[] = '-valign=top';
+	        break;
+	    case 2: // Top
+	        $transform[] = '-align=center';
+	        $transform[] = '-valign=top';
+	        break;
+	    case 3: // Top - Right
+	        $transform[] = '-align=right';
+	        $transform[] = '-valign=top';
+	        break;
+	    case 4: // Left
+	        $transform[] = '-align=left';
+	        $transform[] = '-valign=middle';
+	        break;
+	    case 5: // Center
+	        $transform[] = '-align=center';
+	        $transform[] = '-valign=middle';
+	        break;
+	    case 6: // Right
+	        $transform[] = '-align=right';
+	        $transform[] = '-valign=middle';
+	        break;
+	    case 7: // Bottom - Left
+	        $transform[] = '-align=left';
+	        $transform[] = '-valign=bottom';
+	        break;
+	    case 8: // Bottom
+	        $transform[] = '-align=center';
+	        $transform[] = '-valign=bottom';
+	        break;
+	    case 9: // Bottom Right
+	        $transform[] = '-align=right';
+	        $transform[] = '-valign=bottom';
+	        break;
+	    default: // Other
+		list ($ret, $sourceWidth, $sourceHeight) = $this->_getImageDimensions($mimeType, $sourceFilename);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+	        // Check for percents
+	        if (ereg('([0-9]+)(\%?)', $compositeAlignX, $regs)) {
+	            if ($regs[2] == '%') {
+	                $compositeAlignX = round($regs[1] / 100 * ($sourceWidth - $compositeWidth));
+	            } else {
+	                $compositeAlignX = $regs[1];
+	            }
+	        } else {
+	            $compositeAlignX = 0;
+	        }
+	        if (ereg('([0-9]+)(\%?)', $compositeAlignY, $regs)) {
+	            if ($regs[2] == '%') {
+	                $compositeAlignY = round($regs[1] / 100 * ($sourceHeight - $compositeHeight));
+	            } else {
+	                $compositeAlignY = $regs[1];
+	            }
+	        } else {
+	            $compositeAlignY = 0;
+	        }
+
+	        if ($compositeAlignX < 1) { // clip left side
+	            $compositeAlignX = 0;
+	        } else if ($compositeAlignX > ($sourceWidth - $compositeWidth)) { // clip right side
+	            $compositeAlignX = ($sourceWidth - $compositeWidth);
+	        }
+	        if ($compositeAlignY < 1) { // clip top
+	            $compositeAlignY = 0;
+	        } else if ($compositeAlignY > ($sourceHeight - $compositeHeight)) { // clip bottom
+	            $compositeAlignY = ($sourceHeight - $compositeHeight);
+	        }
+
+	        $transform[] = '-xoff=' . $compositeAlignX;
+	        $transform[] = '-yoff=' . $compositeAlignY;
+	    } // end switch-alignment
+
+	    if ($useAlpha) {
+	        $transform[] = '-alpha=' . $tmpAlpha;
+	    }
+	    $transform[] = '>';
+	    $transform[] = $tmpOverlay;
+
+	    break; // case composite
+	    
+	default:
+	    return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__,
+					      "Unknown operation: $operationName"),
+			 null);
+	}
+
+	$ret = $this->_transformImage($mimeType, $transform, $sourceFilename,
+				      $destFilename, $outputMimeType);
+	/*
+	 * We still need to delete the temporary overlay/alphamask for compositing
+	 * before, possibly, returning an error
+	 */
+	if ($operationName == 'composite') {
+	    if (isset($tmpOverlay) && $platform->file_exists($tmpOverlay)) {
+	        @$platform->unlink($tmpOverlay);
+	    }
+	    if (isset($tmpAlpha) && $platform->file_exists($tmpAlpha)) {
+	        @$platform->unlink($tmpAlpha);
+	    }
+	}
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	return array(GalleryStatus::success(), $outputMimeType);
+    }
+
+    /**
+     * @see GalleryToolkit::mergeOperations()
+     */
+    function mergeOperations($operation1, $args1, $operation2, $args2) {
+
+	/* We can only merge like operations */
+	if ($operation1 != $operation2) {
+	    /* But not all like operations have the same name */
+	    $likeOperations = array('resize', 'scale', 'thumbnail');
+	    if (!(in_array($operation1, $likeOperations) && in_array($operation2, $likeOperations))) {
+		return array(false, null, null);
+	    }
+	}
+
+	switch ($operation1) {
+	case 'crop':
+	case 'resize':
+	case 'scale':
+	case 'thumbnail':
+	    /* For like operations, the second operation takes precedence */
+	    return array(true, $operation2, $args2);
+	    break;
+
+	case 'rotate':
+	    /* Rotation is additive */
+	    $rotation = ($args1[0] + $args2[0]) % 360;
+
+	    /* 0 rotation means the operation goes away */
+	    if ($rotation == 0) {
+		return array(true, null, null);
+	    }
+
+	    if (abs($rotation) > 180) {
+		$rotation = $rotation - 360;
+	    }
+	    return array(true, $operation2, array($rotation));
+
+	default:
+	    return array(false, null, null);
+	}
+    }
+
+    /**
+     * @see GalleryToolkit::getImageDimensions()
+     */
+    function _getImageDimensions($mimeType, $filename) {
+	global $gallery;
+
+	/*
+	 * Run it through PHP first, it's faster and more portable.  If it runs
+	 * afoul of open_basedir it'll return false and we can try NetPBM.
+	 */
+	$platform = $gallery->getPlatform();
+	$results = $platform->getimagesize($filename);
+	if (($results != false) &&
+	    (($results[0] > 1) && ($results[1] > 1))) {
+	    return array(GalleryStatus::success(), $results[0], $results[1]);
+	}
+	
+	list($ret, $convertToPnmCmd) = $this->_convertToPnmCmd($mimeType, $filename);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+	
+	list($ret, $output) =
+		$this->_exec(array($convertToPnmCmd,
+				   array($this->_pnmCmd('pnmfile'),
+					 '--allimages')));
+
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+
+	foreach ($output as $line) {
+	    if (ereg('([0-9]+) by ([0-9]+)', $line, $regs)) {
+		return array(GalleryStatus::success(), $regs[1], $regs[2]);
+	    }
+	}
+
+	return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE,
+					  __FILE__, __LINE__),
+		     null, null);
+    }
+
+    /**
+     * Do the given transform on the source image 
+     *
+     * @param string a mime type
+     * @param string the command to execute
+     * @param string the path to a source file
+     * @param string the path to a destination file
+     * @param string the output mime type
+     * @return object GalleryStatus a status code
+     */
+    function _transformImage($mimeType, $command, $sourceFilename, $destFilename, $outputMimeType) {
+	global $gallery;
+
+	/* Figure out our convert-to-pnm command */
+	list($ret, $convertToPnmCmd) = $this->_convertToPnmCmd($mimeType, $sourceFilename);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$platform = $gallery->getPlatform();
+
+	/* Get a temp file name and figure out our convert-from-pnm command */
+	$tmpDir = $gallery->getConfig('data.gallery.tmp');
+	$tmpFilename = $platform->tempnam($tmpDir, 'npbm_');
+	if (empty($tmpFilename)) {
+	    /* This can happen if the $tmpDir path is bad */
+	    return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);
+	}
+
+	list($ret, $convertFromPnmCmd) = $this->_convertFromPnmCmd($outputMimeType, $tmpFilename);
+	if ($ret->isError()) {
+	    @$platform->unlink($tmpFilename);
+
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Do the conversion */
+	if (isset($command)) {
+	    list($ret, $output) = $this->_exec(array($convertToPnmCmd,
+						     $command,
+						     $convertFromPnmCmd));
+	} else {
+	    list($ret, $output) = $this->_exec(array($convertToPnmCmd,
+						     $convertFromPnmCmd));
+	}
+	
+	if ($ret->isError()) {
+	    @$platform->unlink($tmpFilename);
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Use jhead to preserve EXIF metadata for some mime types */
+	if ($mimeType == 'image/jpeg' || $mimeType == 'image/pjpeg') {
+	    list ($ret, $jheadPath) = GalleryCoreApi::getPluginParameter('module', 'netpbm', 'jheadPath');
+	    if ($ret->isError()) {
+	        return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    
+	    if (!empty($jheadPath)) {
+	        $cmd = array($jheadPath . 'jhead', '-te', $sourceFilename, $tmpFilename);
+	        list ($success, $stdout, $stderr) = $this->_exec(array($cmd));
+	        if (!$success) {
+	            return GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE, __LINE);
+	        }
+	    }
+	}
+	
+	$success = $platform->rename($tmpFilename, $destFilename);
+	if (!$success) {
+	    @$platform->unlink($tmpFilename);
+	    return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
+					"Failed renaming $tmpFilename -> $destFilename");
+	}
+
+	return GalleryStatus::success();
+    }
+		
+    /**
+     * Generate the correct command to convert an image type to PNM.
+     *
+     * @param string the path to an image file
+     * @return array object GalleryStatus a status code,
+     *               array 1 or more string commands
+     */
+    function _convertToPnmCmd($mimeType, $filename) {
+	global $gallery;
+
+	switch($mimeType) {
+	case 'image/png':
+	    $cmd = $this->_pnmCmd('pngtopnm');
+	    break;
+
+	case 'image/jpeg':
+	case 'image/pjpeg':
+	    $cmd = $this->_pnmCmd('jpegtopnm');
+	    break;
+
+	case 'image/gif':
+	    $cmd = $this->_pnmCmd('giftopnm');
+	    break;
+
+	case 'image/tiff':
+	    $cmd = $this->_pnmCmd('tifftopnm');
+	    break;
+
+	case 'image/bmp':
+	    $cmd = $this->_pnmCmd('bmptopnm');
+	    break;
+
+	default:
+	    return array(GalleryStatus::error(ERROR_UNSUPPORTED_FILE_TYPE,
+					      __FILE__, __LINE__,
+					      'Unsupported file type: ' . $mimeType),
+			 null);
+	}
+
+	return array(GalleryStatus::success(),
+		     array($cmd, '--quiet', $filename));
+    }
+
+    /**
+     * Generate the correct command to convert an image type from PNM.
+     *
+     * @param string the path to an image file
+     * @param string the path to an image file
+     * @return array object GalleryStatus a status code,
+     *               array 1 or more string commands
+     */
+    function _convertFromPnmCmd($mimeType, $filename) {
+	global $gallery;
+
+	list ($ret, $pnmtojpeg) =
+	    GalleryCoreApi::getPluginParameter('module', 'netpbm', 'pnmtojpeg');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	list ($ret, $jpegQuality) =
+	    GalleryCoreApi::getPluginParameter('module', 'netpbm', 'jpegQuality');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	switch($mimeType) {
+	case 'image/png':
+	    $cmd = array($this->_pnmCmd('pnmtopng'),
+			 '>',
+			 $filename);
+	    break;
+
+	case 'image/pjpeg':
+	case 'image/jpeg':
+	    $cmd = array($this->_pnmCmd($pnmtojpeg),
+			 '--quality=' . $jpegQuality,
+			 '>',
+			 $filename);
+	    break;
+
+	case 'image/gif':
+	    $cmd = array(array($this->_pnmCmd('ppmquant'),
+			       256),
+			 array($this->_pnmCmd('ppmtogif'),
+			       '>',
+			       $filename));
+	    break;
+
+	case 'image/tiff':
+	    $cmd = array($this->_pnmCmd('pnmtotiff'),
+			 '>',
+			 $filename);
+	    break;
+
+	case 'image/bmp':
+	    $cmd = array(array($this->_pnmCmd('ppmquant'),
+			       256),
+			 array($this->_pnmCmd('ppmtobmp'),
+			       '>',
+			       $filename));
+	    break;
+
+	default:
+	    return array(GalleryStatus::error(ERROR_UNSUPPORTED_FILE_TYPE,
+					      __FILE__, __LINE__),
+			 null);
+	}
+
+	return array(GalleryStatus::success(), $cmd);
+    }
+
+    /**
+     * Execute the command.  Flatten the command array first.
+     *
+     */
+    function _exec($cmdArray) {
+	global $gallery;
+	
+	$cmdArray = $this->_extractCommands($cmdArray);
+	$platform = $gallery->getPlatform();
+
+	list ($success, $stdout, $stderr) = $platform->exec($cmdArray);
+	if (!$success) {
+	    return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__), null, null);
+	}
+
+	return array(GalleryStatus::success(), $stdout, $stderr);
+    }	
+
+    /**
+     * Return the full path to the NetPBM command
+     *
+     * @access private
+     * @param string a netpbm command (eg. "giftopnm")
+     */
+    function _pnmCmd($cmd) {
+	global $gallery;
+	$platform = $gallery->getPlatform();
+
+	list ($ret, $netPbmPath) =
+	    GalleryCoreApi::getPluginParameter('module', 'netpbm', 'path');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	   
+	return $netPbmPath . $cmd;
+    }
+
+    /**
+     * Extract a single array of commands from a multilevel array of commands
+     *
+     * The command array may wind up being multilevel, eg:
+     *
+     * array(
+     *   array('cmd', 'args'),
+     *   array('cmd', 'args'),
+     *   array(
+     *     array('cmd', 'args'),
+     *     array('cmd', 'args')
+     *   ),
+     * )
+     *
+     * Extract the commands as a single level array:
+     *
+     * array(
+     *   array('cmd', 'args'),
+     *   array('cmd', 'args'),
+     *   array('cmd', 'args'),
+     *   array('cmd', 'args')
+     * )
+     *
+     * While maintaining the order.
+     *
+     * @param array a multilevel set of commands
+     * @param array a single level set of commands
+     */
+    function _extractCommands($cmdArray, $level=0) {
+
+	$results = array();
+	$arrayElements = 0;
+	foreach (array_values($cmdArray) as $cmd) {
+	    if (is_array($cmd)) {
+		$results = array_merge($results, $this->_extractCommands($cmd, $level+1));
+		$arrayElements++;
+	    } else {
+		array_push($results, $cmd);
+	    }
+	}
+
+	if ($arrayElements == count($cmdArray)) {
+	    return $results;
+	} else {
+	    return array($results);
+	}
+    }
+}
+?>
