@@ -113,6 +113,19 @@ class SystemChecksStep extends InstallStep {
 		array('title' => _('exec() allowed'), 'success' => true);
 	}
 	
+	// Warning when set_time_limit() is disabled
+	if (in_array('set_time_limit', split(',\s*', ini_get('disable_functions')))) {
+	    $timeLimit = ini_get('max_execution_time');
+	    $templateData['check'][] =
+		array('title' => _('set_time_limit() allowed'),
+		      'warning' => true,
+		      'notice' => sprintf(_('Warning: The set_time_limit() function is disabled in your php by the <b>disabled_functions</b> parameter in php.ini.  Gallery can function with this setting, but it will not operate reliably.  Any operation that takes longer than %d seconds will fail (and in some cases just return a blank page) possibly leading to data corruption.'), $timeLimit),
+		);
+	} else {
+	    $templateData['check'][] =
+		array('title' => _('set_time_limit() allowed'), 'success' => true);
+	}
+	
 	// Warning if memory_limit is set and is too low
 	$memoryLimit = ini_get('memory_limit');
 	$title = sprintf('%s (%s)', _('Memory limit'), ($memoryLimit == '' ? 'no limit' : $memoryLimit . 'b'));
