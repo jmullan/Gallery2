@@ -114,7 +114,7 @@ function _GalleryMain($returnHtml=false) {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	if ($responseComplete) {
 	    // We're done
 	    return array(GalleryStatus::success(), array('isDone' => true));

@@ -190,14 +190,15 @@ class GalleryCoreApi {
      * Get the status of all plugins of a given type
      *
      * @param string the plugin type (eg 'module', 'layout')
+     * @param bool true if we want to ignore the cache?
      * @return array object GalleryStatus as status code
      *                      array (moduleId => array('active' => true/false,
      *                                               'installed' => true/false)
      * @static
      */
-    function fetchPluginStatus($pluginType) {
+    function fetchPluginStatus($pluginType, $ignoreCache=false) {
 	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/helpers/GalleryPluginHelper_simple.class');
-	return GalleryPluginHelper_simple::fetchPluginStatus($pluginType);
+	return GalleryPluginHelper_simple::fetchPluginStatus($pluginType, $ignoreCache);
     }
 
     /**

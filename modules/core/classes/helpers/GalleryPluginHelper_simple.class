@@ -38,12 +38,13 @@ class GalleryPluginHelper_simple {
      *
      * @param string the plugin type (eg, module, layout, etc)
      * @param string the plugin id
-     * @param string whether or not to initialize the plugin
+     * @param bool whether or not to initialize the plugin
+     * @param int the depth of recursion (don't set this- it's used internally)
      * @return array object GalleryStatus a status code
      *               object the plugin
      * @static
      */
-    function loadPlugin($pluginType, $pluginId, $initialize=true) {
+    function loadPlugin($pluginType, $pluginId, $initialize=true, $depth=0) {
 	global $gallery;
 
 	$cacheKey = "GalleryPluginHelper::loadPlugin($pluginType, $pluginId)";
@@ -67,7 +68,21 @@ class GalleryPluginHelper_simple {
 				      dirname(__FILE__), $pluginType, $pluginId, $pluginType);
 		$ret = GalleryUtilities::requireOnce($pluginFile);
 		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    // If we have a bad path, it may be because our cached plugin list is out of
+		    // date -- in which case we should flush the cache and try again.
+		    if ($depth == 0 && $ret->getErrorCode() & ERROR_BAD_PATH) {
+			GalleryDataCache::remove("GalleryPluginHelper::fetchPluginStatus($pluginType)");
+			GalleryDataCache::removeFromDisk(array('type' => $pluginType,
+							       'itemId' => 'GalleryPluginHelper_fetchPluginStatus',
+							       'id' => '_all'));
+			list ($ret, $plugin) =
+			    GalleryPluginHelper_simple::loadPlugin($pluginType, $pluginId, $initialize, $depth + 1);
+			if ($ret->isError()) {
+			    return array($ret->wrap(__FILE__, __LINE__), null);
+			}
+		    } else {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
 		}
 		
 		if (!class_exists($pluginClass)) {
@@ -201,66 +216,78 @@ class GalleryPluginHelper_simple {
      * Get the status of all plugins of a given type
      *
      * @param string the plugin type (eg 'module', 'layout')
+     * @param bool true if we want to ignore the cache?
      * @return array object GalleryStatus as status code
      *                      array (moduleId => array('active' => true/false,
      *                                               'installed' => true/false)
      * @static
      */
-    function fetchPluginStatus($pluginType) {
+    function fetchPluginStatus($pluginType, $ignoreCache=false) {
 	global $gallery;
 
 	$cacheKey = "GalleryPluginHelper::fetchPluginStatus($pluginType)";
-	if (!GalleryDataCache::containsKey($cacheKey)) {
-	    list ($ret, $plugins) = GalleryPluginHelper_simple::fetchPluginList($pluginType);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+	if ($ignoreCache || !GalleryDataCache::containsKey($cacheKey)) {
+	    if (!$ignoreCache) {
+		$plugins =& GalleryDataCache::getFromDisk(array('type' => $pluginType,
+								'itemId' => 'GalleryPluginHelper_fetchPluginStatus',
+								'id' => '_all'));
 	    }
+	    if (!isset($plugins)) {
+		list ($ret, $plugins) = GalleryPluginHelper_simple::fetchPluginList($pluginType);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
 
-	    $platform = $gallery->getPlatform();
+		$platform = $gallery->getPlatform();
 
-	    /* Scan modules directory for installed modules */
-	    switch ($pluginType) {
-	    case 'module':
-		$pluginsDir = dirname(__FILE__) . '/../../../../modules/';
-		$pluginFile = 'module.inc';
-		break;
+		/* Scan modules directory for installed modules */
+		switch ($pluginType) {
+		case 'module':
+		    $pluginsDir = dirname(__FILE__) . '/../../../../modules/';
+		    $pluginFile = 'module.inc';
+		    break;
 
-	    case 'layout':
-		$pluginsDir = dirname(__FILE__) . '/../../../../layouts/';
-		$pluginFile = 'layout.inc';
-		break;
-	    }
+		case 'layout':
+		    $pluginsDir = dirname(__FILE__) . '/../../../../layouts/';
+		    $pluginFile = 'layout.inc';
+		    break;
+		}
 	    
-	    if ($dir = $platform->opendir($pluginsDir)) {
-		while ($pluginId = $platform->readdir($dir)) {
-		    if ($pluginId{0} == '.') {
-			continue;
-		    }
-		    if (!$platform->is_dir($pluginsDir . $pluginId)) {
-			continue;
-		    }
+		if ($dir = $platform->opendir($pluginsDir)) {
+		    while ($pluginId = $platform->readdir($dir)) {
+			if ($pluginId{0} == '.') {
+			    continue;
+			}
+			if (!$platform->is_dir($pluginsDir . $pluginId)) {
+			    continue;
+			}
 			
-		    $path = $pluginsDir . $pluginId . '/' . $pluginFile;
-		    if ($platform->file_exists($path)) {
-			$plugins[$pluginId]['installed'] = 1;
+			$path = $pluginsDir . $pluginId . '/' . $pluginFile;
+			if ($platform->file_exists($path)) {
+			    $plugins[$pluginId]['installed'] = 1;
+			}
+		    }
+		    $platform->closedir($dir);
+		}
+
+		/* Find and remove plugins that are active, but not installed */
+		foreach ($plugins as $pluginId => $pluginStatus) {
+		    if (!isset($pluginStatus['installed'])) {
+			$gallery->debug("Plugin $pluginId no longer installed");
+			unset($plugins[$pluginId]);
 		    }
 		}
-		$platform->closedir($dir);
-	    }
 
-	    /* Find and remove plugins that are active, but not installed */
-	    foreach ($plugins as $pluginId => $pluginStatus) {
-		if (!isset($pluginStatus['installed'])) {
-		    $gallery->debug("Plugin $pluginId no longer installed");
-		    unset($plugins[$pluginId]);
+		if ($pluginType == 'module') {
+		    /* Force the core module's status */
+		    $plugins['core'] = array('active' => 1, 'installed' => 1);
 		}
-	    }
 
-	    if ($pluginType == 'module') {
-		/* Force the core module's status */
-		$plugins['core'] = array('active' => 1, 'installed' => 1);
+		GalleryDataCache::putToDisk(array('type' => $pluginType,
+						  'itemId' => 'GalleryPluginHelper_fetchPluginStatus',
+						  'id' => '_all'),
+					    $plugins);
 	    }
-
 	    GalleryDataCache::put($cacheKey, $plugins);
 	} else {
 	    $plugins = GalleryDataCache::get($cacheKey);

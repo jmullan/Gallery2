@@ -69,6 +69,10 @@ class GalleryPluginHelper_medium {
 
 	/* Flush the cache */
 	GalleryDataCache::remove("GalleryPluginHelper::fetchPluginStatus($pluginType)");
+	GalleryDataCache::removeFromDisk(array('type' => $pluginType,
+					       'itemId' => 'GalleryPluginHelper_fetchPluginStatus',
+					       'id' => '_all'));
+	
 	GalleryDataCache::remove("GalleryPluginHelper::fetchPluginList($pluginType)");
 
 	return GalleryStatus::success();
@@ -97,6 +101,10 @@ class GalleryPluginHelper_medium {
 
 	/* Flush the cache */
 	GalleryDataCache::remove("GalleryPluginHelper::fetchPluginStatus($pluginType)");
+	GalleryDataCache::removeFromDisk(array('type' => $pluginType,
+					       'itemId' => 'GalleryPluginHelper_fetchPluginStatus',
+					       'id' => '_all'));
+	
 	GalleryDataCache::remove("GalleryPluginHelper::fetchPluginList($pluginType)");
 
 	$event = GalleryCoreApi::newEvent("Gallery::DeactivatePlugin");
