@@ -153,7 +153,8 @@ class LockTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	// Verify that they're all locked
+	// Verify that they're all locked except the item itself
+	$this->assert(!GalleryCoreApi::isReadLocked($this->_album[2]->getId()));
 	$this->assert(GalleryCoreApi::isReadLocked($this->_album[1]->getId()));
 	$this->assert(GalleryCoreApi::isReadLocked($this->_album[0]->getId()));
 	$this->assert(GalleryCoreApi::isReadLocked($this->_parentAlbum->getId()));
@@ -165,5 +166,23 @@ class LockTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }
+
+    function testAcquireReadLockParentsOnRoot() {
+	global $gallery;
+
+	list ($ret, $lockId) = GalleryCoreApi::acquireReadLockParents($this->_getRootId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	// Verify that the root is not read locked
+	$this->assert(!GalleryCoreApi::isReadLocked($this->_getRootId()), 'Root should not be locked');
+
+	// Release locks
+	$ret = GalleryCoreApi::releaseLocks($lockId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }    
 }
 ?>
