@@ -70,19 +70,35 @@
 	<th>
 	  {g->text text="Username"}
 	</th>
+	<th>
+	  {g->text text="Select"}
+	</th>
+	<th>
+	  {g->text text="Username"}
+	</th>
+	<th>
+	  {g->text text="Select"}
+	</th>
+	<th>
+	  {g->text text="Username"}
+	</th>
       </tr>
 
-      {foreach key=uid item=username from=$ChooseObjects.newUsers}
       <tr class="{cycle values="gbEven,gbOdd"}">
+        {foreach name=users key=uid item=username from=$ChooseObjects.newUsers}
 	<td>
 	  <input type="checkbox" name="{g->formVar var="form[migrateUser][$uid]"}" {if $form.migrateUser.$uid}checked="checked"{/if}/>
 	</td>
 	<td>
 	  {$username}
 	</td>
+
+	{if ($smarty.foreach.users.iteration % 3) == 0}
+        </tr> <tr class="{cycle values="gbEven,gbOdd"}">
+        {/if}
+        {/foreach}
       </tr>
-      {/foreach}
-    </table>
+      </table>
     {else}
     <b>
       {g->text text="No available users"}

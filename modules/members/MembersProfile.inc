@@ -74,6 +74,16 @@ class MembersProfileView extends GalleryView {
 	
         $template->setVariable('MembersProfile', $MembersProfile);
 
+	list ($ret, $navigationView) = GalleryView::loadView('core:Navigation');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	list ($ret, $ignored) = $navigationView->loadTemplate($template, $form);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
         return array(GalleryStatus::success(),
 		     array('head' => 'modules/members/templates/MembersProfileHead.tpl',
 			   'body' => 'modules/members/templates/MembersProfile.tpl'));

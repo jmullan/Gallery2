@@ -41,12 +41,6 @@ class NavigationView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	global $gallery;
 
-	$subViewName = GalleryUtilities::getRequestVariables('subView');
-	list ($ret, $subView) = GalleryView::loadView($subViewName);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
 	/* Get system links */
 	list ($ret, $moduleSystemLinks) = $this->_getModuleSystemLinks();
 	if ($ret->isError()) {
@@ -62,20 +56,14 @@ class NavigationView extends GalleryView {
 	$user = $gallery->getActiveUser();
 
 	$Navigation = array();
-	$Navigation['l10Domain'] = $subView->getL10Domain();
 	$Navigation['user'] = $user->getMemberData();
+	$Navigation['l10Domain'] = 'modules_core';
 	$Navigation['sidebar'] = 'modules/core/templates/NavigationSidebar.tpl';
 	$Navigation['moduleSystemContentFiles'] = $moduleSystemContentFiles;
 	$Navigation['moduleSystemLinks'] = $moduleSystemLinks;
 	$template->setVariable('Navigation', $Navigation);
 
-	list ($ret, $results) = $subView->loadTemplate($template, $form);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	return array(GalleryStatus::success(),
-		     array('head' => $results['head'], 'body' => $results['body']));
+	return array(GalleryStatus::success(), null);
     }
 
     /**

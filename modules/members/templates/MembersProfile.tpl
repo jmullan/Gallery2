@@ -9,7 +9,7 @@
     </a>
   </li>
   <li>
-    <a href="{g->url arg1="view=core:Navigation" arg2="subView=members:MembersList"}">
+    <a href="{g->url arg1="view=members:MembersList"}">
       {g->text text="Members List"}
     </a>
   </li>

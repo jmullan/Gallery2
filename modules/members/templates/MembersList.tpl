@@ -37,11 +37,11 @@
 	      <input type="hidden" name="{g->formVar var="form[list][page]"}" value="{$form.list.page}"/>
               <input type="hidden" name="{g->formVar var="form[list][maxPages]"}" value="{$form.list.maxPages}"/> 	
 	      {if ($form.list.page > 1)}
-	      <a href="{g->url arg1="view=core:Navigation" arg2="subView=members:MembersList" arg3="form[list][page]=1"}">
+	      <a href="{g->url arg1="view=members:MembersList" arg2="form[list][page]=1"}">
 		{g->text text="&laquo; first"}
 	      </a>
 	      &nbsp;
-	      <a href="{g->url arg1="view=core:Navigation" arg2="subView=members:MembersList" arg3="form[list][page]=`$form.list.backPage`"}">
+	      <a href="{g->url arg1="view=members:MembersList" arg2="form[list][page]=`$form.list.backPage`"}">
 		{g->text text="&laquo; back"}
 	      </a>
 	      {else}
@@ -57,11 +57,11 @@
             </th>
             <th align="right">
 	      {if ($form.list.page < $form.list.maxPages)}
-	      <a href="{g->url arg1="view=core:Navigation" arg2="subView=members:MembersList" arg3="form[list][page]=`$form.list.nextPage`"}">
+	      <a href="{g->url arg1="view=members:MembersList" arg2="form[list][page]=`$form.list.nextPage`"}">
 		{g->text text="next &raquo;"}
 	      </a>
 	      &nbsp;
-	      <a href="{g->url arg1="view=core:Navigation" arg2="subView=members:MembersList" arg3="form[list][page]=`$form.list.maxPages`"}">
+	      <a href="{g->url arg1="view=members:MembersList" arg2="form[list][page]=`$form.list.maxPages`"}">
 		{g->text text="last &raquo;"}
 	      </a>
 	      {else}
@@ -88,7 +88,7 @@
     {foreach from=$MembersList.users item=user}
     <tr class="{cycle values="gbEven,gbOdd"}">
       <td>
-        <a href="{g->url arg1="view=core:Navigation" arg2="subView=members:MembersProfile" arg3="userId=`$user.id`"}">
+        <a href="{g->url arg1="view=members:MembersProfile" arg2="userId=`$user.id`"}">
 	  {$user.userName}
 	</a>
       </td>

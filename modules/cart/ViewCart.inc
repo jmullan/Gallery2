@@ -127,8 +127,18 @@ class ViewCartView extends GalleryView {
 	$ViewCart['thumbnails'] = $thumbnails;
 	$ViewCart['plugins'] = $plugins;
 	$ViewCart['controller'] = 'cart:ModifyCart';
-
 	$template->setVariable('ViewCart', $ViewCart);
+
+	list ($ret, $navigationView) = GalleryView::loadView('core:Navigation');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	list ($ret, $ignored) = $navigationView->loadTemplate($template, $form);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
 	return array(GalleryStatus::success(),
 		     array('head' => 'modules/cart/templates/ViewCartHead.tpl',
 			   'body' => 'modules/cart/templates/ViewCart.tpl'));

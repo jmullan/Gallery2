@@ -44,11 +44,9 @@ class SearchShowAllController extends GalleryController {
 	global $gallery;
 
 	if (isset($form['action']['scan'])) {
-	    $results['delegate']['view'] = 'core:Navigation';
-	    $results['delegate']['subView'] = 'search:SearchScan';
+	    $results['delegate']['view'] = 'search:SearchScan';
 	} else {
-	    $results['delegate']['view'] = 'core:Navigation';
-	    $results['delegate']['subView'] = 'search:SearchShowAll';
+	    $results['delegate']['view'] = 'search:SearchShowAll';
 	}
 
 	$results['status'] = array();
@@ -187,8 +185,17 @@ class SearchShowAllView extends GalleryView {
 	$SearchShowAll['thumbnails'] = $thumbnails;
 	$SearchShowAll['items'] = $items;
 	$SearchShowAll['controller'] = 'search:SearchShowAll';
-
 	$template->setVariable('SearchShowAll', $SearchShowAll);
+	
+	list ($ret, $navigationView) = GalleryView::loadView('core:Navigation');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	list ($ret, $ignored) = $navigationView->loadTemplate($template, $form);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 	
 	return array(GalleryStatus::success(),
 		     array('head' => 'modules/search/templates/SearchHead.tpl',

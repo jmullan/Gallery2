@@ -85,11 +85,9 @@ class SearchScanController extends GalleryController {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	} else if (isset($form['action']['showAll'])) {
-	    $results['delegate']['view'] = 'core:Navigation';
-	    $results['delegate']['subView'] = 'search:SearchShowAll';
+	    $results['delegate']['view'] = 'search:SearchShowAll';
 	} else {
-	    $results['delegate']['view'] = 'core:Navigation';
-	    $results['delegate']['subView'] = 'search:SearchScan';
+	    $results['delegate']['view'] = 'search:SearchScan';
 	}
 
 	$results['status'] = array();
@@ -219,8 +217,18 @@ class SearchScanView extends GalleryView {
 	$SearchScan['items'] = $items;
 	$SearchScan['controller'] = 'search:SearchScan';
 	$SearchScan['slideshowAvailable'] = $slideshowAvailable;
-
 	$template->setVariable('SearchScan', $SearchScan);
+
+	list ($ret, $navigationView) = GalleryView::loadView('core:Navigation');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	list ($ret, $ignored) = $navigationView->loadTemplate($template, $form);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
 	return array(GalleryStatus::success(),
 		     array('head' => 'modules/search/templates/SearchHead.tpl',
 			   'body' => 'modules/search/templates/SearchScan.tpl'));

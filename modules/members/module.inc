@@ -88,8 +88,7 @@ class MembersModule extends GalleryModule {
      */
     function getSystemLinks() {
 	$links[] = array('text' => $this->translate('Members List'),
-                         'params' => array('view' => 'core:Navigation',
-					   'subView' => 'members:MembersList'));
+                         'params' => array('view' => 'members:MembersList'));
 	return array(GalleryStatus::success(), $links);
     }
 
