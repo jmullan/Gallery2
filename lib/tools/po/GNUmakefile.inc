@@ -25,19 +25,19 @@ MSGFMTSOL = msgfmt -v -o
 all: install
 
 messages.po:
-	perl $(TOOLDIR)/po/extract.pl $(MODULE_DIR) $(EXTRA_DIR) > strings.raw
-	xgettext --keyword=_ -C --no-location strings.raw
-	perl -ne 'print if $$. > 4' < messages.po > messages.tmp
-	cat $(TOOLDIR)/po/header.txt messages.tmp > messages.po
-	$(RM) messages.tmp
+	@perl $(TOOLDIR)/po/extract.pl $(MODULE_DIR) $(EXTRA_DIR) > strings.raw
+	@xgettext --keyword=_ -C --no-location strings.raw
+	@perl -ne 'print if $$. > 4' < messages.po > messages.tmp
+	@cat $(TOOLDIR)/po/header.txt messages.tmp > messages.po
+	@$(RM) messages.tmp
 
 %.po: messages.po
-	perl $(TOOLDIR)/po/premerge-messages.pl $@ messages.po > messages.tmp
-	-msgmerge --update $@ messages.tmp  # ignore errors here, we'll catch them on the msgfmt command
-	$(RM) messages.tmp
+	@perl $(TOOLDIR)/po/premerge-messages.pl $@ messages.po > messages.tmp
+	@-msgmerge --quiet --update $@ messages.tmp  # ignore errors here, we'll catch them on the msgfmt command
+	@$(RM) messages.tmp
 
 clean:
-	$(RM) messages.po
+	@$(RM) messages.po
 
 install: *.po
 	@echo "Checking for os ... ${OSTYPE}"; \
@@ -51,8 +51,7 @@ install: *.po
 		echo "Compiling locale $${LOCALE}:"; \
 		if $(TOOLDIR)/po/shtool mkdir -p ../locale/$${LOCALE}/LC_MESSAGES; then \
 			if test "${OSTYPE}" = "solaris"; then \
-				if ${MSGFMTSOL} ../locale/$${LOCALE}/LC_MESSAGES/${APPLICATION}.mo $${LOCALE}.po; then \
-					echo "  ... done"; \
+				if {MSGFMTSOL} ../locale/$${LOCALE}/LC_MESSAGES/${APPLICATION}.mo $${LOCALE}.po; then \
 					echo; \
 				else \
 					echo "  ... FAILED"; \
@@ -60,7 +59,6 @@ install: *.po
 				fi \
 			else \
 				if ${MSGFMT} ../locale/$${LOCALE}/LC_MESSAGES/${APPLICATION}.mo $${LOCALE}.po; then \
-					echo "  ... done"; \
 					echo; \
 				else \
 					echo "  ... FAILED"; \
