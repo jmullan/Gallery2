@@ -56,16 +56,19 @@ class TemplateAdapterTest extends GalleryTestCase {
 	$result = GalleryTemplateAdapter::adminLinkId($test);
 	$this->assertEquals('gbLink_', $result);
     }
+    
     function testAdminLinkId2() {
 	$test = array('arg1' => array('view' => 'core::ItemAdmin'));
 	$result = GalleryTemplateAdapter::adminLinkId($test);
 	$this->assertEquals('gbLink_core_ItemAdmin', $result);
     }
+    
     function testAdminLinkId3() {
 	$test = array('arg1' => array('view' => '.;-_monkey'));
 	$result = GalleryTemplateAdapter::adminLinkId($test);
 	$this->assertEquals('gbLink__monkey', $result);
     }
+    
     function testAdminLinkId4() {
 	$test = array('arg1' => array('controller' => 'core:Monkey',
 					'view' => 'core:Pirate',
@@ -73,16 +76,19 @@ class TemplateAdapterTest extends GalleryTestCase {
 	$result = GalleryTemplateAdapter::adminLinkId($test);
 	$this->assertEquals('gbLink_core_Monkeycore_Piratecore_Ninja', $result);
     }
+    
     function testSafeCssName1() {
 	$string = 'core:ItemAdmin';
 	$result = GalleryTemplateAdapter::_safeCssName($string);
 	$this->assertEquals('core_ItemAdmin', $result);
     }
+    
     function testSafeCssName2() {
 	$string = 'core::ItemAdmin';
 	$result = GalleryTemplateAdapter::_safeCssName($string);
 	$this->assertEquals('core_ItemAdmin', $result);
     }
+    
     function testSafeCssName3() {
 	$string = '.;-_monkey';
 	$result = GalleryTemplateAdapter::_safeCssName($string);
