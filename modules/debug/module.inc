@@ -51,8 +51,8 @@ class DebugModule extends GalleryModule {
      * @see GalleryModule::autoConfigure()
      */
     function autoConfigure() {
-        /* We don't require any special configuration */
-        return array(GalleryStatus::success(), true);
+	/* We don't require any special configuration */
+	return array(GalleryStatus::success(), true);
     }
 
     /**
@@ -60,30 +60,27 @@ class DebugModule extends GalleryModule {
      */
     function performFactoryRegistrations() {
 	$ret = GalleryCoreApi::registerFactoryImplementation('GalleryStatusFormatter',
-            'DebugStatusFormatter', 'DebugStatusFormatter',
-            'modules/debug/classes/DebugStatusFormatter.class', 'debug', array('text/html'));
+	    'DebugStatusFormatter', 'DebugStatusFormatter',
+	    'modules/debug/classes/DebugStatusFormatter.class', 'debug', array('text/html'));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	return GalleryStatus::success();
-    } 
+    }
 
     /**
      * @see GalleryModule::getItemLinks
      */
     function getItemLinks($items) {
-	global $gallery;
+	list ($ret, $isAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 
 	$links = array();
-	foreach ($items as $item) {
-	    /* Permissions for this item */
-	    list ($ret, $permissions) = GalleryCoreApi::getPermissions($item->getId());
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-	    if (isset($permissions['core.all'])) {
+	if ($isAdmin) {
+	    foreach ($items as $item) {
 		$links[$item->getId()][] =
 		    array('text' => $this->translate('show debug tree'),
 			  'params' => array('view' => 'debug:ShowTree',
