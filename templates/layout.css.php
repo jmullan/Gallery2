@@ -197,7 +197,7 @@ ul.gbAdminList li label { }
 	float: left;
 }
 
-.gbTabBar a, .gbTabBar span {
+.gbTabBar span {
 	padding: 6px 12px 4px 4px;
 	display: block;
 	float: left;
@@ -206,10 +206,6 @@ ul.gbAdminList li label { }
 /* commented Backslash Hack hides rule from IE5-Mac \*/
 .gbTabBar a {float: none;}
 /* End IE5-Mac hack */
-
-.gbTabBar .giSelectedTab a, .gbTabBar .giSelectedTab span {
-	padding-bottom: 5px;
-}
 
 /*      first and default module settings */
 

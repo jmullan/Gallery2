@@ -46,7 +46,9 @@
         </li>
         {else}
         <li>
+          <span>
           <a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=core:AdminLayouts" arg3="mode=defaults"}">{g->text text="Defaults"}</a>
+          </span>
         </li>
         {/if}
 

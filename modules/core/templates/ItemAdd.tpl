@@ -25,7 +25,9 @@
       </li>
       {else}
       <li>
+        <span>
         <a href="{g->url arg1="view=core:ItemAdmin" arg2="subView=core:ItemAdd" arg3="itemId=`$ItemAdmin.item.id`" arg4="addPlugin=`$plugin.id`"}">{$plugin.title}</a>
+        </span>
       </li>
       {/if}
       {/foreach}
