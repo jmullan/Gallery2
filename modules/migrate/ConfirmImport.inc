@@ -38,7 +38,35 @@ class ConfirmImportController extends GalleryController {
         global $gallery;
 	$platform = $gallery->getPlatform();
 	$slash = $platform->getDirectorySeparator();
-
+	/* owner => core.all,comment.all
+	 *
+	 * canRead => core.view,core.viewResizes
+	 * canViewFullImages => core.viewSource
+	 * canViewComments =>
+	 * comment.view,comment.search
+	 * canAddComments => comment.add
+	 * canChangeText => core.edit
+	 * canAddTo => core.addDataItem
+	 * canWrite => core.edit
+	 * canDeleteFrom => core.delete
+	 * canCreateSubAlbum => core.addAlbumItem
+	 *
+	 */
+	
+	$permissionTranslation = array('canRead' => array('core.view',
+							  'core.viewResizes'
+							  ),
+				       'canViewFullImages' => array('core.viewSource'),
+				       'canViewComments' => array('comment.view',
+								  'comment.search'),
+				       'canAddComments' => array('comment.add'),
+				       'canChangeText' => array('core.edit'),
+				       'canAddTo' => array('core.addDataItem'),
+				       'canWrite' => array('core.edit'),
+				       'canDeleteFrom' => array('core.delete'),
+							       'canCreateSubAlbum' => array('core.addAlbumItem')
+				       );
+	
         /* Verify that active user is an admin */
         $ret = GalleryCoreApi::assertUserIsSiteAdministrator();
         if ($ret->isError()) {
@@ -310,6 +338,72 @@ class ConfirmImportController extends GalleryController {
 				
 				// $newAlbumInstance->setorderBy
 				// $newAlbumInstance->setorderDirection
+
+				if (isset($album['perms'])) {
+				    foreach($album['perms'] as $tmpperm => $tmpusers) {
+					foreach($permissionTranslation[$tmpperm] as $tmpTranslatedPerm) {
+					    foreach(array_keys($tmpusers) as $tmpuser) {
+						switch ($tmpuser) {
+						case 'everybody':
+						    list ($ret, $allUsersGroupId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.allUserGroup');
+						    if ($ret->isError()) {
+							return array($ret->wrap(__FILE__, __LINE__), null);
+						    }
+						    if ($allUsersGroupId) {
+							$ret = GalleryCoreApi::addGroupPermission($newAlbumInstance->getId(),
+												     $allUsersGroupId,
+												     $tmpTranslatedPerm,
+												     TRUE
+												     );
+							if ($ret->isError()) {
+							    return array($ret->wrap(__FILE__, __LINE__), null);
+							}
+						    }
+						    break;
+						case 'Logged In':
+						    list ($ret, $everybodyGroupId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.everybodyGroup');
+						    if ($ret->isError()) {
+							return array($ret->wrap(__FILE__, __LINE__), null);
+						    }
+						    if ($everybodyGroupId) {
+							$ret = GalleryCoreApi::addGroupPermission($newAlbumInstance->getId(),
+												     $everybodyGroupId,
+												     $tmpTranslatedPerm,
+												     TRUE
+												     );
+							if ($ret->isError()) {
+							    return array($ret->wrap(__FILE__, __LINE__), null);
+							}
+						    }
+						    break;
+						default:		    
+						    $validPermUID = Gallery1DataParser::isValidUid($albumsPath,$tmpuser);
+						    if ($validPermUID) {
+							list($ret, $permsUserFields) = Gallery1DataParser::getUserFieldsByUid($albumsPath, $tmpuser);
+							if ($ret->isError()) {
+							    return array($ret->wrap(__FILE__, __LINE__), null);
+							}
+							$permUsername = $permsUserFields['username'];
+							list($ret, $permUser) = GalleryCoreApi::fetchUserByUsername($permUsername);
+							if ($ret->isError() && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
+							    return array($ret->wrap(__FILE__, __LINE__), null);
+							}
+							if ($permUser) {
+							    $ret = GalleryCoreApi::addUserPermission($newAlbumInstance->getId(),
+												     $permUser->getId(),
+												     $tmpTranslatedPerm,
+												     true
+												 );
+							    if ($ret->isError()) {
+								return array($ret->wrap(__FILE__, __LINE__), null);
+							    }
+							}
+						    }
+						}
+					    }
+					}
+				    }
+				}				
 				
 				// Set album owner
 				$validUID = Gallery1DataParser::isValidUid($albumsPath,$album['owner']);
@@ -565,7 +659,72 @@ class ConfirmImportController extends GalleryController {
 					}
 				    }
 				}
-				
+				if (isset($album['perms'])) {
+				    foreach($album['perms'] as $tmpperm => $tmpusers) {
+					foreach($permissionTranslation[$tmpperm] as $tmpTranslatedPerm) {
+					    foreach(array_keys($tmpusers) as $tmpuser) {
+						switch ($tmpuser) {
+						case 'everybody':
+						    list ($ret, $allUsersGroupId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.allUserGroup');
+						    if ($ret->isError()) {
+							return array($ret->wrap(__FILE__, __LINE__), null);
+						    }
+						    if ($allUsersGroupId) {
+							$ret = GalleryCoreApi::addGroupPermission($newItem->getId(),
+												     $allUsersGroupId,
+												     $tmpTranslatedPerm,
+												     TRUE
+												     );
+							if ($ret->isError()) {
+							    return array($ret->wrap(__FILE__, __LINE__), null);
+							}
+						    }
+						    break;
+						case 'Logged In':
+						    list ($ret, $everybodyGroupId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.everybodyGroup');
+						    if ($ret->isError()) {
+							return array($ret->wrap(__FILE__, __LINE__), null);
+						    }
+						    if ($everybodyGroupId) {
+							$ret = GalleryCoreApi::addGroupPermission($newItem->getId(),
+												     $everybodyGroupId,
+												     $tmpTranslatedPerm,
+												     TRUE
+												     );
+							if ($ret->isError()) {
+							    return array($ret->wrap(__FILE__, __LINE__), null);
+							}
+						    }
+						    break;
+						default:		    
+						    $validPermUID = Gallery1DataParser::isValidUid($albumsPath,$tmpuser);
+						    if ($validPermUID) {
+							list($ret, $permsUserFields) = Gallery1DataParser::getUserFieldsByUid($albumsPath, $tmpuser);
+							if ($ret->isError()) {
+							    return array($ret->wrap(__FILE__, __LINE__), null);
+							}
+							$permUsername = $permsUserFields['username'];
+							list($ret, $permUser) = GalleryCoreApi::fetchUserByUsername($permUsername);
+							if ($ret->isError() && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
+							    return array($ret->wrap(__FILE__, __LINE__), null);
+							}
+							if ($permUser) {
+							    $ret = GalleryCoreApi::addUserPermission($newItem->getId(),
+												     $permUser->getId(),
+												     $tmpTranslatedPerm,
+												     true
+												 );
+							    if ($ret->isError()) {
+								return array($ret->wrap(__FILE__, __LINE__), null);
+							    }
+							}
+						    }
+						}
+					    }
+					}
+				    }
+				}
+
 				$validUID = Gallery1DataParser::isValidUid($albumsPath,$album['owner']);
 				if ($validUID) {
 				    list($ret, $albumUserFields) = Gallery1DataParser::getUserFieldsByUid($albumsPath, $album['owner']);
@@ -621,89 +780,7 @@ class ConfirmImportController extends GalleryController {
 				    }
 				    $albumNeedsThumbnail = FALSE;
 				}
-								/* owner => core.all,comment.all
-				 *
-				 * canRead => core.view,core.viewResizes
-				 * canViewFullImages => core.viewSource
-				 * canViewComments =>
-				 * comment.view,comment.search
-				 * canAddComments => comment.add
-				 * canChangeText => core.edit
-				 * canAddTo => core.addDataItem
-				 * canWrite => core.edit
-				 * canDeleteFrom => core.delete
-				 * canCreateSubAlbum => core.addAlbumItem
-				 *
-				 */
-
-				$permissionTranslation = array('canRead' => array('core.view',
-										  'core.viewResizes'
-										  ),
-							       'canViewFullImages' => array('core.viewSource'),
-							       'canViewComments' => array('comment.view',
-											'comment.search'),
-							       'canAddComments' => array('comment.add'),
-							       'canChangeText' => array('core.edit'),
-							       'canAddTo' => array('core.addDataItem'),
-							       'canWrite' => array('core.edit'),
-							       'canDeleteFrom' => array('core.delete'),
-							       'canCreateSubAlbum' => array('core.addAlbumItem')
-							       );
-
-				if (isset($album['perms'])) {
-				    foreach($album['perms'] as $tmpperm => $tmpusers) {
-					foreach($permissionTranslation[$tmpperm] as $tmpTranslatedPerm) {
-					    foreach(array_keys($tmpusers) as $tmpuser) {
-						switch ($tmpuser) {
-						case 'everybody':
-						    /*
-						    $allUsersGroupName = GalleryUtilities::utf8ToUnicodeEntities($this->translate('All Users'));
-						    list($ret, $allUsersGroup) = GalleryCoreApi::fetchGroupByGroupName($allUsersGroupName);
-						    if ($ret->isError() && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
-							return array($ret->wrap(__FILE__, __LINE__), null);
-						    }
-						    if ($allUsersGroup) {
-							$ret = GalleryCoreApi::addGroupPermission($newAlbumInstance->getId(),
-												     $allUsersGroup->getId(),
-												     $perm,
-												     TRUE
-												     );
-							if ($ret->isError()) {
-							    return array($ret->wrap(__FILE__, __LINE__), null);
-							}
-						    }
-						    */
-						    break;
-						case 'Logged In':
-						    break;
-						default:		    
-						    $validPermUID = Gallery1DataParser::isValidUid($albumsPath,$tmpuser);
-						    if ($validPermUID) {
-							list($ret, $permsUserFields) = Gallery1DataParser::getUserFieldsByUid($albumsPath, $tmpuser);
-							if ($ret->isError()) {
-							    return array($ret->wrap(__FILE__, __LINE__), null);
-							}
-							$permUsername = $permsUserFields['username'];
-							list($ret, $permUser) = GalleryCoreApi::fetchUserByUsername($permUsername);
-							if ($ret->isError() && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
-							    return array($ret->wrap(__FILE__, __LINE__), null);
-							}
-							if ($permUser) {
-							    $ret = GalleryCoreApi::addUserPermission($newAlbumInstance->getId(),
-												     $permUser->getId(),
-												     $tmpTranslatedPerm,
-												     true
-												 );
-							    if ($ret->isError()) {
-								return array($ret->wrap(__FILE__, __LINE__), null);
-							    }
-							}
-						    }
-						}
-					    }
-					}
-				    }
-				}
+				
 			    }
 			}
 		    }		    		    
