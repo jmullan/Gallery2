@@ -56,8 +56,7 @@ class ImageMagickToolkitHelper {
 
 	/* Scale */
 	$operations['scale']['params'][] = array('type' => 'int',
-						 'description' => $gallery->i18n('target size'), 
-						 'default' => 200);
+						 'description' => $gallery->i18n('target size'));
 	$operations['scale']['description'] = $gallery->i18n('Scale the image to the target size'); 
 	$operations['scale']['mimeTypes'] = $mimeTypes;
 
@@ -66,34 +65,27 @@ class ImageMagickToolkitHelper {
 
 	/* Resize */
 	$operations['resize']['params'][] = array('type' => 'int',
-						  'description' => $gallery->i18n('target width'), 
-						  'default' => 200);
+						  'description' => $gallery->i18n('target width'));
 	$operations['resize']['params'][] = array('type' => 'int',
-						  'description' => $gallery->i18n('target height'), 
-						  'default' => 200);
+						  'description' => $gallery->i18n('target height'));
 	$operations['resize']['description'] = $gallery->i18n('Resize the image to the target dimensions'); 
 	$operations['resize']['mimeTypes'] = $mimeTypes;
 
 	/* Rotate */
 	$operations['rotate']['params'][] = array('type' => 'int',
-						  'description' => $gallery->i18n('rotation degrees'), 
-						  'default' => 90);
+						  'description' => $gallery->i18n('rotation degrees'));
 	$operations['rotate']['description'] = $gallery->i18n('Rotate the image'); 
 	$operations['rotate']['mimeTypes'] = $mimeTypes;
 	
 	/* Crop */
 	$operations['crop']['params'][] = array('type' => 'int',
-						'description' => $gallery->i18n('left edge'), 
-						'default' => 0);
+						'description' => $gallery->i18n('left edge'));
 	$operations['crop']['params'][] = array('type' => 'int',
-						'description' => $gallery->i18n('top edge'), 
-						'default' => 0);
+						'description' => $gallery->i18n('top edge'));
 	$operations['crop']['params'][] = array('type' => 'int',
-						'description' => $gallery->i18n('width'), 
-						'default' => 0);
+						'description' => $gallery->i18n('width'));
 	$operations['crop']['params'][] = array('type' => 'int',
-						'description' => $gallery->i18n('height'), 
-						'default' => 0);
+						'description' => $gallery->i18n('height'));
 	$operations['crop']['description'] = $gallery->i18n('Crop the image'); 
 	$operations['crop']['mimeTypes'] = $mimeTypes;
 

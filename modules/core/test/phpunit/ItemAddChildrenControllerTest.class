@@ -50,10 +50,6 @@ class ItemAddChildrenControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$ret = GalleryPermissionMap::addUserPermission($this->_rootAlbum->getId(),
-						       $gallery->getActiveUserId(),
-						       'core.all',
-						       false);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

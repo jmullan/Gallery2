@@ -71,8 +71,6 @@ class GalleryToolkitOperationParameterMap extends GalleryToolkitOperationParamet
   
         $info['members']['description'] = STORAGE_TYPE_STRING;
   
-        $info['members']['default'] = STORAGE_TYPE_STRING;
-  
         return $info; 
     }
 
@@ -99,10 +97,6 @@ class GalleryToolkitOperationParameterMap extends GalleryToolkitOperationParamet
         }
     
         if (!isset($data['description'])) {
-            return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-        }
-    
-        if (!isset($data['default'])) {
             return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
         }
     

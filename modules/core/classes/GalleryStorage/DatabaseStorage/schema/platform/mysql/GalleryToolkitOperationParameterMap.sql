@@ -31,14 +31,6 @@
         
       )
     
-      ,
-    DB_COLUMN_PREFIXdefault
-      varchar(
-      
-          255
-        
-      )
-    
     , 
   
     INDEX (DB_COLUMN_PREFIXoperationName)

@@ -31,14 +31,6 @@
         
       )
     
-      ,
-    DB_COLUMN_PREFIXdefault
-      VARCHAR(
-      
-          255
-        
-      )
-    
     );
 
   

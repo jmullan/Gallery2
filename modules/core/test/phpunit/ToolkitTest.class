@@ -52,11 +52,9 @@ class ToolkitTest extends GalleryTestCase {
     function testOperation() {
 
 	$params = array(array('type' => 'test-type1',
-			      'description' => 'test-description1',
-			      'default' => 'test-default1'),
+			      'description' => 'test-description1'),
 			array('type' => 'test-type2',
-			      'description' => 'test-description2',
-			      'default' => 'test-default2')
+			      'description' => 'test-description2')
 			);
 	$ret = GalleryToolkitHelper::registerOperation('TestToolkit',
 						       array('test/type'),
@@ -158,11 +156,9 @@ class ToolkitTest extends GalleryTestCase {
 
     function testOperationSequence() {
 	$params = array(array('type' => 'test-type1',
-			      'description' => 'test-description1',
-			      'default' => 'test-default1'),
+			      'description' => 'test-description1'),
 			array('type' => 'test-type2',
-			      'description' => 'test-description2',
-			      'default' => 'test-default2')
+			      'description' => 'test-description2')
 			);
 	$ret = GalleryToolkitHelper::registerOperation('TestToolkit',
 						       array('test/type1'),
