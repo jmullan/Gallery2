@@ -96,7 +96,7 @@ class CodeAuditTest extends CodeAuditTestCase {
      */
     function checkFile($fileName, $buffer) {
 	$fileName = substr($fileName, strlen($this->_baseDir) + 1);
-	$lines = explode($this->_lineEnding, $buffer);
+	$lines = split("(\r\n|\n)", $buffer);
 	$checkSuperglobals = !preg_match('{/test/phpunit|^install/|^upgrade/}', $fileName);
 	for ($i = 0; $i < count($lines); $i++) {
 
@@ -144,7 +144,7 @@ class CodeAuditTest extends CodeAuditTestCase {
 
 	    /* Check for lines wider than 100 characters */
 	    /* Do a simple tab->8spaces conversion.. good enough for this check */
-	    $line = str_replace('	', '        ', $lines[$i]);
+	    $line = str_replace("\t", '        ', $lines[$i]);
 	    if (strlen($line) > 100) {
 		$this->_longLineCount++;
 	    }
