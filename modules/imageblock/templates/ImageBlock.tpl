@@ -34,9 +34,7 @@
 
 	  {if isset($ImageBlockSystemContent.show.views)}
 	  <li>
-	    {g->text one="Viewed: %d time" 
-	             many="Viewed: %d times"
-	             count=$block.viewCount arg1=$block.viewCount}
+	    {g->text text="Views: %d" arg1=$block.viewCount}
 	  </li>
 	  {/if}
 
