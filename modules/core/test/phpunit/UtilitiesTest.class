@@ -186,9 +186,12 @@ class UtilitiesTest extends GalleryTestCase {
     
     function testConvertPathToUrl() {
 	global $gallery;
+
+	// Simulate unix to line up with our mock platform
+	$file = str_replace('\\', '/', __FILE__);
 	
 	$this->assertEquals('modules/core/test/phpunit/UtilitiesTest.class',
-			    GalleryUtilities::convertPathToUrl(__FILE__));
+			    GalleryUtilities::convertPathToUrl($file));
     }
     
     function testRequireOnce() {
@@ -701,7 +704,10 @@ class UtilitiesTestPlatform {
 	    return $file;
 	}
 	
-	return realpath($file);
+	$path = realpath($file);
+
+	// Stick with Unix slashes for the purpose of our tests
+	return str_replace('\\', '/', $path); 
     }
 }
 
