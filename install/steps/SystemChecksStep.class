@@ -258,9 +258,8 @@ class SystemChecksStep extends InstallStep {
 	return array('missing' => $missing, 'modified' => $modified);
     }
 
-    function _abbreviateInSpan($str, $len) {
-	$abbrev = (strlen($str) > $len) ? ('...' . substr($str, -1 * $len)) : $str;
-	return sprintf('<span title="%s">%s</span>', $str, $abbrev);
+    function abbreviate($str, $len=60) {
+	return (strlen($str) > $len) ? ('...' . substr($str, -1 * $len)) : $str;
     }
 }
 ?>

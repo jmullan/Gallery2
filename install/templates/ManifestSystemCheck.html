@@ -30,7 +30,9 @@
     <ul class="manifestListing">
       <?php foreach ($manifest['missing'] as $fileName): ?>
       <li>
-	<?php print $fileName ?>
+	<span title="<?php print $fileName ?>">
+	<?php print SystemChecksStep::abbreviate($fileName) ?>
+        </span>
       </li>
       <?php endforeach; ?>
     </ul>
@@ -70,7 +72,9 @@
     <ul class="manifestListing">
       <?php foreach ($manifest['modified'] as $fileName): ?>
       <li>
-	<?php print $fileName ?>
+	<span title="<?php print $fileName ?>">
+	<?php print SystemChecksStep::abbreviate($fileName) ?>
+        </span>
       </li>
       <?php endforeach; ?>
     </ul>
