@@ -44,7 +44,10 @@
       {g->text text="Edit Group"}
     </h3>
 
-    <input class="giFormGroupname" type="text" name="{g->formVar var="form[text][groupName]"}" size="20" value="{$form.text.groupName}"/>
+    <input id="groupname" class="giFormGroupname" type="text" name="{g->formVar var="form[text][groupName]"}" size="20" value="{$form.text.groupName}" autocomplete="off"/>
+    {g->autoComplete element="groupname"}
+    {g->url forJavascript="true" arg1="view=core:SimpleCallback" arg2="command=lookupGroupname" arg3="prefix=__VALUE__"}
+    {/g->autoComplete}
     <input type="submit" name="{g->formVar var="form[action][editFromText]"}" value="{g->text text="Edit"}"/>
     <input type="submit" name="{g->formVar var="form[action][deleteFromText]"}" value="{g->text text="Delete"}"/>
     <input type="submit" name="{g->formVar var="form[action][addRemoveUsersFromText]"}" value="{g->text text="Add/Remove Users"}"/>

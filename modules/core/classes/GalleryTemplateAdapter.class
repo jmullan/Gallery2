@@ -43,19 +43,18 @@ class GalleryTemplateAdapter {
     var $_theme;
 
     /**
-     * Temporary storage for generated content.
-     *
-     * @var array content
+     * The number of times our block callbacks have been executed 
+     * @var array _callCount
      */
-    var $_content_stack;
-
+    var $_callCount;
+    
     /**
      * Constructor
      */
     function GalleryTemplateAdapter() {
-	$this->_content_stack = array();
+	$this->_callCount = array();
     }
-
+    
     /**
      * Set the active theme
      *
@@ -107,7 +106,13 @@ class GalleryTemplateAdapter {
 	}
 	    
 	$urlGenerator = $gallery->getUrlGenerator();
-	return $urlGenerator->generateUrl($hrefParams);
+	$url = $urlGenerator->generateUrl($hrefParams);
+
+	if (!empty($params['forJavascript'])) {
+	    $url = str_replace('&amp;', '&', $url);
+	}
+	
+	return $url;
     }
 
     /**
@@ -177,10 +182,10 @@ class GalleryTemplateAdapter {
     }
 
     /**
-     * image theme method
+     * Delegate to the appropriate item class to render an image.
      * 
-     * @param array ("params" => ..., "stack" => ...)
-     * @param int maximum dimension on a side
+     * @param array containing item, image, id, name, fallback
+     * @param object Smarty the smarty instance
      * @return string HTML content
      */
     function image($params, &$smarty) {
@@ -245,8 +250,38 @@ class GalleryTemplateAdapter {
 	return $html;
      }
 
+    /**
+     * Allow the current theme to return any style tags
+     * 
+     * @param array
+     * @param object Smarty the smarty instance
+     * @return string HTML content
+     */
      function style($params, &$smarty) {
 	 return $this->_theme->style($params, $smarty);
+     }
+
+     /**
+      * Include our AutoCompletion template.
+      *
+      * @param array
+      * @param object Smarty the smarty instance
+      * @return string HTML content
+      */
+     function autoComplete($params, $content, &$smarty) {
+	 if (!isset($content)) {
+	     if (!isset($this->_callCount['autoComplete'])) {
+		 $this->_callCount['autoComplete'] = 0;
+	     }
+	     return;
+	 }
+	 $this->_callCount['autoComplete']++;
+	 $url = trim($content);
+	 return $smarty->_smarty_include(
+             array('smarty_include_tpl_file' => 'gallery:modules/core/templates/AutoComplete.tpl',
+		   'smarty_include_vars' => array('element' => $params['element'],
+						  'url' => $url,
+						  'callCount' => $this->_callCount['autoComplete'])));
      }
 }
 ?>

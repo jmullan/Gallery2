@@ -292,7 +292,7 @@ class GalleryTemplate {
 	    $smarty->use_sub_dirs = false;
 
 	    $templateAdapter =& $gallery->getTemplateAdapter();
-	    $smarty->register_object('g', $templateAdapter);
+	    $smarty->register_object('g', $templateAdapter, array(), true, array('autoComplete'));
 
 	    $smarty->register_resource('gallery',
 				       array('GalleryTemplate',

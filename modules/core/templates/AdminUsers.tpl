@@ -44,7 +44,11 @@
       {g->text text="Edit User"}
     </h3>
     
-    <input class="giFormUsername" type="text" name="{g->formVar var="form[text][userName]"}" size="20" value="{$form.text.userName}"/> 
+    <input id="username" class="giFormUsername" type="text" name="{g->formVar var="form[text][userName]"}" size="20" value="{$form.text.userName}" autocomplete="off"/> 
+    {g->autoComplete element="username"}
+    {g->url forJavascript="true" arg1="view=core:SimpleCallback" arg2="command=lookupUsername" arg3="prefix=__VALUE__"}
+    {/g->autoComplete}
+
     <input type="submit" name="{g->formVar var="form[action][editFromText]"}" value="{g->text text="Edit"}"/> 
     <input type="submit" name="{g->formVar var="form[action][deleteFromText]"}" value="{g->text text="Delete"}"/>
 

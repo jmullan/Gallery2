@@ -47,7 +47,11 @@
 	{g->text text="New owner"}
       </h2>
 
-      <input class="giFormUsername" type="text" name="{g->formVar var="form[owner][ownerName]"}" value="{$form.owner.ownerName}"/>
+      <input id="ownername" class="giFormUsername" type="text" name="{g->formVar var="form[owner][ownerName]"}" value="{$form.owner.ownerName}" autocomplete="off"/>
+      {g->autoComplete element="ownername"}
+      {g->url forJavascript="true" arg1="view=core:SimpleCallback" arg2="command=lookupUsername" arg3="prefix=__VALUE__"}
+      {/g->autoComplete}
+
       <input type="hidden" name="{g->formVar var="form[serialNumber]"}" value="{$form.serialNumber}"/>
       <input type="submit" name="{g->formVar var="form[action][changeOwner]"}" value="{g->text text="Change"}"/>
 
@@ -139,7 +143,10 @@
       {g->text text="New Group Permission"}
     </h2>
     
-    <input class="giFormGroupname" type="text" name="{g->formVar var="form[group][groupName]"}" value="{$form.group.groupName}"/>
+    <input id="groupname" class="giFormGroupname" type="text" name="{g->formVar var="form[group][groupName]"}" value="{$form.group.groupName}" autocomplete="off"/>
+    {g->autoComplete element="groupname"}
+    {g->url forJavascript="true" arg1="view=core:SimpleCallback" arg2="command=lookupGroupname" arg3="prefix=__VALUE__"}
+    {/g->autoComplete}
 	    
     <select name="{g->formVar var="form[group][permission]"}" size="1">
 	{html_options options=$ItemPermissions.allPermissions selected=$form.group.permission}
@@ -230,7 +237,10 @@
       {g->text text="New User Permission"}
     </h2>
 
-    <input class="giFormUsername" type="text" name="{g->formVar var="form[user][userName]"}" value="{$form.user.userName}"/>
+    <input id="username" class="giFormUsername" type="text" name="{g->formVar var="form[user][userName]"}" value="{$form.user.userName}" autocomplete="off"/>
+    {g->autoComplete element="username"}
+    {g->url forJavascript="true" arg1="view=core:SimpleCallback" arg2="command=lookupUsername" arg3="prefix=__VALUE__"}
+    {/g->autoComplete}
 
     <select name="{g->formVar var="form[user][permission]"}" size="1">
 	{html_options options=$ItemPermissions.allPermissions selected=$form.user.permission}

@@ -41,9 +41,8 @@
   <script type="text/javascript">
     watermarkUrlMap = new Array;
     {foreach from=$ItemEditWatermark.watermarks item=watermark}
-    {capture name=url}{g->url arg1="view=core:DownloadItem" arg2="itemId=`$watermark.id`"}{/capture}
     watermarkUrlMap[{$watermark.id}] = new Array;
-    watermarkUrlMap[{$watermark.id}]['url'] = '{$smarty.capture.url|replace:"&amp;":"&"}';
+    watermarkUrlMap[{$watermark.id}]['url'] = '{g->url forJavascript="true" arg1="view=core:DownloadItem" arg2="itemId=`$watermark.id`"}';
     watermarkUrlMap[{$watermark.id}]['width'] = {$watermark.width};
     watermarkUrlMap[{$watermark.id}]['height'] = {$watermark.height};
     {/foreach}
