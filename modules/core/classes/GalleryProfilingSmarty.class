@@ -25,13 +25,15 @@
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
+require_once(dirname(__FILE__) . '/GallerySmarty.class');
+
 /**
  * A wrapper around Smarty that profiles certain methods
  *
  * @package GalleryCore
  * @subpackage Classes
  */
-class GalleryProfilingSmarty extends Smarty {
+class GalleryProfilingSmarty extends GallerySmarty {
 
     /*
      * ****************************************
@@ -54,12 +56,16 @@ class GalleryProfilingSmarty extends Smarty {
 		   $_smarty_compile_id = null, $_smarty_display = false) {
 
 	GalleryProfiler::start('modules.core.classes.Smarty::fetch');
-	$result = parent::fetch($_smarty_tpl_file,
-				$_smarty_cache_id,
-				$_smarty_compile_id,
-				$_smarty_display);
+	list ($ret, $result) = parent::fetch($_smarty_tpl_file,
+					     $_smarty_cache_id,
+					     $_smarty_compile_id,
+					     $_smarty_display);
 	GalleryProfiler::stop('modules.core.classes.Smarty::fetch');
-	return $result;
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), $result);
+	} else {
+	    return array(GalleryStatus::success(), $result);
+	}
     }
 }
 ?>
