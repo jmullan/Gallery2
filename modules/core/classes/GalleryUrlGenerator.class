@@ -97,12 +97,26 @@ class GalleryUrlGenerator {
      */
     function getCurrentUrl() {
 	if (!empty($_SERVER['REQUEST_URI'])) {
-	    return $_SERVER['REQUEST_URI'];
+	    $path = $_SERVER['REQUEST_URI'];
+	} else if (!empty($_SERVER['SCRIPT_NAME'])) {
+	    $path = $_SERVER['SCRIPT_NAME'];
 	}
-	    
-	if (!empty($_SERVER['SCRIPT_NAME'])) {
-	    return $_SERVER['SCRIPT_NAME'];
+
+	if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') {
+	    $protocol = 'https';
+	    $defaultPort = 443;
+	} else {
+	    $protocol = 'http';
+	    $defaultPort = 80;
 	}
+	
+	if ($_SERVER['SERVER_PORT'] != $defaultPort) {
+	    $port = ':' . $_SERVER['SERVER_PORT'];
+	} else {
+	    $port = '';
+	}
+
+	return sprintf('%s://%s%s%s', $protocol, $_SERVER['SERVER_NAME'], $port, $path);
     }
 
     /**
