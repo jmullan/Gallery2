@@ -46,7 +46,7 @@ class GalleryUser extends GalleryUser_core {
     function getPersistentMemberInfo() {
         $meta = parent::getPersistentMemberInfo();
     
-        $meta['members']['username'] = array(
+        $meta['members']['userName'] = array(
             'class' => 'GalleryUser',
             'type' => STORAGE_TYPE_STRING
         );
@@ -70,26 +70,26 @@ class GalleryUser extends GalleryUser_core {
     }
   
     /**
-     * Get the value of username
+     * Get the value of userName
      *
      * @return STRING the value
      */
-    function getusername() {
-        if (!isset($this->_username)) {
+    function getuserName() {
+        if (!isset($this->_userName)) {
             return null;
         }
-        return $this->_username;
+        return $this->_userName;
     }
 
     /**
-     * Set the value of username
+     * Set the value of userName
      *
      * @param STRING the value
      */
-    function setusername($value) {
+    function setuserName($value) {
     
-        $this->_username = $value;
-        $this->setModifiedFlag('username', MEMBER_MODIFIED);
+        $this->_userName = $value;
+        $this->setModifiedFlag('userName', MEMBER_MODIFIED);
     }
   
     /**

@@ -50,7 +50,7 @@ class GalleryUser_core extends GalleryEntity {
      * The User's username
      *
      * @g2 <member>
-     * @g2   <member-name>username</member-name>
+     * @g2   <member-name>userName</member-name>
      * @g2   <member-type>STRING</member-type>
      * @g2   <member-size>SMALL</member-size>
      * @g2   <indexed/>
@@ -58,10 +58,10 @@ class GalleryUser_core extends GalleryEntity {
      * @g2   <required/>
      * @g2 </member>
      *
-     * @var string $_username
+     * @var string $_userName
      * @access private
      */
-    var $_username;
+    var $_userName;
 
     /**
      * The User's full name
@@ -117,14 +117,14 @@ class GalleryUser_core extends GalleryEntity {
      *
      * @return object GalleryStatus a status code
      */
-    function create($username) {
+    function create($userName) {
 	global $gallery;
 
 	/* Check to see if we have a collision */
 	list($ret, $results) =
 	    $gallery->search(array('select' => 'COUNT([GalleryUser::id])',
-				   'where' => ('[GalleryUser::username]=?')),
-			     array($username));
+				   'where' => ('[GalleryUser::userName]=?')),
+			     array($userName));
 
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -136,13 +136,12 @@ class GalleryUser_core extends GalleryEntity {
 					__FILE__, __LINE__);
 	}
 	
-	/* We don't have a parent, so pass in null */
-	$ret = parent::create(null);
+	$ret = parent::create();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	
-	$this->setUsername($username);
+	$this->setUserName($userName);
 	return GalleryStatus::success();
     }
 
@@ -166,7 +165,7 @@ class GalleryUser_core extends GalleryEntity {
     }
 
     /**
-     * Return a map of usernames => userids
+     * Return a map of userNames => userids
      *
      * You can specify how many usernames to list, and where the windows is in
      * the list of all users.
@@ -174,7 +173,7 @@ class GalleryUser_core extends GalleryEntity {
      * @param int the number of usernames desired
      * @param int the start of the range
      */
-    function getUsernames($count=null, $start=null, $offset=null) {
+    function getUserNames($count=null, $start=null, $offset=null) {
 	global $gallery;
 
 	return $gallery->search(
