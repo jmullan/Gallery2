@@ -1,4 +1,25 @@
 /*
+* Gallery - a web based photo album viewer and editor 
+* Copyright (C) 2000-2004 Bharat Mediratta
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation; either version 2 of the License, or (at
+* your option) any later version.
+*
+* This program is distributed in the hope that it will be useful, but
+* WITHOUT ANY WARRANTY; without even the implied warranty of 
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program; if not, write to the Free Software
+* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+*
+* $Id$
+*/
+
+/*
 	Matrix Theme
 	Gallery 2
 	theme.css
@@ -10,13 +31,8 @@
 /*      Standard CSS definitions */
 
 body {
-	font-family: "Lucida Grande", Verdana, Arial, Helvetica, sans-serif;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-size: 62.5%;
-}
-
-form, div { 
-    margin: 0; 
-    padding 0;
 }
 
 /*      font-size using ems
@@ -38,8 +54,31 @@ body { 62.5% } All font-sizes go to 10px
 p { 1.2em } Font in <p> become 12px
 p span { 1.0em } Font size for <span> (inside <p>) is now 12px
 span { 1.0em } Font size for <span> (not inside <p>) is 10px 
- 
+
+for more info: http://www.clagnut.com/blog/348/ 
+
 */
+
+form, div { 
+    margin: 0; 
+    padding 0;
+}
+
+h1, h2, h3, h4, h5, h6 { font-family: "Gill Sans", Verdana, Arial, Helvetica, sans-serif; }
+
+a {
+        font-weight: bold;
+        text-decoration: none;
+        color: #ae0000;
+}
+a:link {
+        
+}
+a:visited {}
+a:hover {
+	color: #fd6704;
+}
+a:active {}
 
 /*	GALLERY
 	Category 1: Gallery		
