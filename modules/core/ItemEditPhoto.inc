@@ -573,8 +573,29 @@ class ItemEditPhotoView extends GalleryView {
 	}
 	$session->put('core.view.ItemEditPhoto.mode', $mode);
 	
+	/* Load the thumbnail */
+	list ($ret, $thumbnails) =
+	    GalleryDerivativeHelper::fetchThumbnailsByItemIds(array($item->getId()));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+	if (!empty($thumbnails)) {
+	    $thumbnail = $thumbnails[$item->getId()];
+	} else {
+	    $thumbnail = null;
+	    if ($mode == 'editThumbnail') {
+		$mode = 'editPhoto';
+	    }
+	}
+
 	$ItemEditPhoto = array();
 	$ItemEditPhoto['mode'] = $mode;
+	$ItemEditPhoto['showEditThumbnail'] = $thumbnail != null;
+
+	list ($ret, $ItemEditPhoto['isAdmin']) = GalleryUserGroupMap::isUserInSiteAdminGroup();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
 
 	if ($form['formName'] != 'ItemEditPhoto') {
 	    /* First time around, reset the form */
@@ -582,6 +603,22 @@ class ItemEditPhotoView extends GalleryView {
 	    case 'editPhoto':
 		$form['scale']['size'] = '';
 		$form['preserveOriginal'] = 1;
+
+		/* Figure out what options we can provide */
+		list ($ret, $toolkit) =
+		    GalleryToolkitHelper::getToolkitByOperation($item->getMimeType(), 'rotate');
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		$ItemEditPhoto['editPhoto']['can']['rotate'] = isset($toolkit);
+		
+		/* Figure out what options we can provide */
+		list ($ret, $toolkit) =
+		    GalleryToolkitHelper::getToolkitByOperation($item->getMimeType(), 'scale');
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		$ItemEditPhoto['editPhoto']['can']['scale'] = isset($toolkit);
 		break;
 
 	    case 'editSizes':
@@ -622,8 +659,24 @@ class ItemEditPhotoView extends GalleryView {
 		    }
 		    $form['thumbnail']['size'] = $size;
 		}
-		break;
+
+		/* Figure out what options we can provide */
+		list ($ret, $toolkit) =
+		    GalleryToolkitHelper::getToolkitByOperation($item->getMimeType(), 'thumbnail');
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		$ItemEditPhoto['editSizes']['can']['createThumbnail'] = isset($toolkit);
 		
+		/* Figure out what options we can provide */
+		list ($ret, $toolkit) =
+		    GalleryToolkitHelper::getToolkitByOperation($item->getMimeType(), 'scale');
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		$ItemEditPhoto['editSizes']['can']['createResizes'] = isset($toolkit);
+		
+		break;
 	    }
 	    
 	    $form['formName'] = 'ItemEditPhoto';
@@ -669,38 +722,26 @@ class ItemEditPhotoView extends GalleryView {
 	    break;
 
 	case 'editThumbnail':
-
-	    /* XXX: Get this from parent album's prefs, if we don't have a thumbnail? */
 	    $targetThumbnailSize = 0;
 	    $crop = array();
+	    if (preg_match('/thumbnail\|(\d+)/',
+			   $thumbnail->getDerivativeOperations(),
+			   $matches)) {
+		$targetThumbnailSize = $matches[1];
+	    }
 	    
-	    /* Load the thumbnail */
-	    list ($ret, $thumbnails) =
-		GalleryDerivativeHelper::fetchThumbnailsByItemIds(array($item->getId()));
+	    if (preg_match('/crop\|(\d+),(\d+),(\d+),(\d+)/',
+			   $thumbnail->getDerivativeOperations(),
+			   $matches)) {
+		$crop['left'] = $matches[1];
+		$crop['top'] = $matches[2];
+		$crop['width'] = $matches[3];
+		$crop['height'] = $matches[4];
+	    }
+	    
+	    list ($ret, $source) = $gallery->loadEntitiesById($thumbnail->getDerivativeSourceId());
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
-	    }
-	    if (!empty($thumbnails)) {
-		$thumbnail = $thumbnails[$item->getId()];
-		if (preg_match('/thumbnail\|(\d+)/',
-			       $thumbnail->getDerivativeOperations(),
-			       $matches)) {
-		    $targetThumbnailSize = $matches[1];
-		}
-
-		if (preg_match('/crop\|(\d+),(\d+),(\d+),(\d+)/',
-			       $thumbnail->getDerivativeOperations(),
-			       $matches)) {
-		    $crop['left'] = $matches[1];
-		    $crop['top'] = $matches[2];
-		    $crop['width'] = $matches[3];
-		    $crop['height'] = $matches[4];
-		}
-
-		list ($ret, $source) = $gallery->loadEntitiesById($thumbnail->getDerivativeSourceId());
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null);
-		}
 	    }
 	    
 	    /*
@@ -709,7 +750,7 @@ class ItemEditPhotoView extends GalleryView {
 	     */
 	    list ($ret, $derivativeTable) =
 		GalleryDerivativeHelper::fetchDerivativesBySourceIds(array($item->getId()),
-                    array(DERIVATIVE_TYPE_IMAGE_RESIZE, DERIVATIVE_TYPE_IMAGE_THUMBNAIL));
+                    array(DERIVATIVE_TYPE_IMAGE_RESIZE));
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
@@ -746,100 +787,134 @@ class ItemEditPhotoView extends GalleryView {
 		$selected = $source->getId();
 	    }
 
-	    if (empty($crop)) {
-		$crop['left'] = 0;
-		$crop['top'] = 0;
-		$crop['width'] = $source->getWidth();
-		$crop['height'] = $source->getHeight();
-	    }
-
-	    $urlGenerator = $gallery->getUrlGenerator();
-	    $url = $urlGenerator->generateUrl(array('view' => 'core:DownloadItem', 'itemId' => $selected));
-	    
-	    $ItemEditPhoto['editThumbnail']['appletCodeBase'] =
-		GalleryUtilities::convertPathToUrl(dirname(__FILE__)) . '/plugins';
-	    $ItemEditPhoto['editThumbnail']['appletJarFile'] = 'ImageCrop.jar';
-	    $ItemEditPhoto['editThumbnail']['imageUrl'] = $url;
-	    $ItemEditPhoto['editThumbnail']['imageWidth'] = $source->getWidth();
-	    $ItemEditPhoto['editThumbnail']['imageHeight'] = $source->getHeight();
-	    $ItemEditPhoto['editThumbnail']['cropLeft'] = $crop['left'];
-	    $ItemEditPhoto['editThumbnail']['cropTop'] = $crop['top'];
-	    $ItemEditPhoto['editThumbnail']['cropWidth'] = $crop['width'];
-	    $ItemEditPhoto['editThumbnail']['cropHeight'] = $crop['height'];
-	    $ItemEditPhoto['editThumbnail']['targetThumbnailSize'] = $targetThumbnailSize;
-
-	    $aspectlist = array();
-	    list ($ret, $module) = $gallery->loadModule('core');
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
-	    }
-	    
-	    $aspectRatioList[] = array('label' => $module->translate('Screen 4x3'),
-				  'width' => 4,
-				  'height' => 3);
-	    $aspectRatioList[] = array('label' => $module->translate('Photo 5x3'),
-				  'width' => 5,
-				  'height' => 3);
-	    $aspectRatioList[] = array('label' => $module->translate('Photo 6x4'),
-				  'width' => 6,
-				  'height' => 4);
-	    $aspectRatioList[] = array('label' => $module->translate('Photo 7x5'),
-				  'width' => 7,
-				  'height' => 5);
-	    $aspectRatioList[] = array('label' => $module->translate('Photo 10x8'),
-				  'width' => 10,
-				  'height' => 8);
-	    $aspectRatioList[] = array('label' => $module->translate('HDTV 16x9'),
-				  'width' => 16,
-				  'height' => 9);
-	    $aspectRatioList[] = array('label' => $module->translate('CinemaScope 2.35x1'),
-				  'width' => 47,
-				  'height' => 20);
-	    $aspectRatioList[] = array('label' => $module->translate('Square 1x1'),
-				  'width' => 1,
-				  'height' => 1);
-	    $aspectRatioList[] = array('label' => $module->translate('As Image'),
-				  'width' => $item->getWidth(),
-				  'height' => $item->getHeight());
-	    $ItemEditPhoto['editThumbnail']['aspectRatioList'] = $aspectRatioList;
-
-	    $orientationList = array();
-	    $orientationList['landscape'] = $module->translate("Landscape");
-	    $orientationList['portrait'] = $module->translate("Portrait");
-	    $ItemEditPhoto['editThumbnail']['orientationList'] = $orientationList;
-
-
 	    /*
-	     * Figure out which aspect ratio / orientation is closest to the current crop
-	     * settings so that we can start out with those values selected in the dropdowns.
+	     * It's possible that the source was created before we had an appropriate image toolkit, so its
+	     * dimensions can be set to zero, which will cause us problems.  In that case, try rescanning it.
 	     */
-	    $currentAspect = round($crop['width'] / $crop['height'], 2);
-	    $i = 0;
-
-	    /* Set defaults */
-	    $selectedAspect = 0;
-	    $selectedOrientation = "portrait";
-	    $ItemEditPhoto['editThumbnail']['cropRatioWidth'] = $aspectRatioList[0]['width'];
-	    $ItemEditPhoto['editThumbnail']['cropRatioHeight'] = $aspectRatioList[0]['height'];
-	    
-	    foreach ($aspectRatioList as $aspect) {
-		$landscapeCompare = round($aspect['width'] / $aspect['height'], 2);
-		$portraitCompare = round($aspect['height'] / $aspect['width'], 2);
-		if (abs($currentAspect - $landscapeCompare) <= 0.03) {
-		    $selectedAspect = $i;
-		    $selectedOrientation = "landscape";
-		    break;
-		} else if (abs($currentAspect - $portraitCompare) <= 0.03) {
-		    $selectedAspect = $i;
-		    $selectedOrientation = "portrait";
-		    break;
+	    $width = $source->getWidth();
+	    if (empty($width)) {
+		list ($ret, $lockId) = $gallery->acquireWriteLock($source->getId());
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
-		$i++;
+		list ($ret, $source) = $source->refresh();
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		}
+		$ret = $source->rescan();
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		}
+		$ret = $source->save();
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		}
+		$ret = $gallery->releaseLocks($lockId);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		}
 	    }
-	    $ItemEditPhoto['editThumbnail']['selectedAspect'] = $selectedAspect;
-	    $ItemEditPhoto['editThumbnail']['selectedOrientation'] = $selectedOrientation;
-	    $ItemEditPhoto['editThumbnail']['cropRatioWidth'] = $aspectRatioList[$selectedAspect]['width'];
-	    $ItemEditPhoto['editThumbnail']['cropRatioHeight'] = $aspectRatioList[$selectedAspect]['height'];
+
+	    $width = $source->getWidth();
+	    if (empty($width)) {
+		$ItemEditPhoto['editThumbnail']['can']['crop'] = false;
+	    } else {
+		$ItemEditPhoto['editThumbnail']['can']['crop'] = true;
+		if (empty($crop)) {
+		    $crop['left'] = 0;
+		    $crop['top'] = 0;
+		    $crop['width'] = $source->getWidth();
+		    $crop['height'] = $source->getHeight();
+		}
+
+		$urlGenerator = $gallery->getUrlGenerator();
+		$url = $urlGenerator->generateUrl(array('view' => 'core:DownloadItem', 'itemId' => $selected));
+	    
+		$ItemEditPhoto['editThumbnail']['appletCodeBase'] =
+		    GalleryUtilities::convertPathToUrl(dirname(__FILE__)) . '/plugins';
+		$ItemEditPhoto['editThumbnail']['appletJarFile'] = 'ImageCrop.jar';
+		$ItemEditPhoto['editThumbnail']['imageUrl'] = $url;
+		$ItemEditPhoto['editThumbnail']['imageWidth'] = $source->getWidth();
+		$ItemEditPhoto['editThumbnail']['imageHeight'] = $source->getHeight();
+		$ItemEditPhoto['editThumbnail']['cropLeft'] = $crop['left'];
+		$ItemEditPhoto['editThumbnail']['cropTop'] = $crop['top'];
+		$ItemEditPhoto['editThumbnail']['cropWidth'] = $crop['width'];
+		$ItemEditPhoto['editThumbnail']['cropHeight'] = $crop['height'];
+		$ItemEditPhoto['editThumbnail']['targetThumbnailSize'] = $targetThumbnailSize;
+
+		$aspectlist = array();
+		list ($ret, $module) = $gallery->loadModule('core');
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		}
+	    
+		$aspectRatioList[] = array('label' => $module->translate('Screen 4x3'),
+					   'width' => 4,
+					   'height' => 3);
+		$aspectRatioList[] = array('label' => $module->translate('Photo 5x3'),
+					   'width' => 5,
+					   'height' => 3);
+		$aspectRatioList[] = array('label' => $module->translate('Photo 6x4'),
+					   'width' => 6,
+					   'height' => 4);
+		$aspectRatioList[] = array('label' => $module->translate('Photo 7x5'),
+					   'width' => 7,
+					   'height' => 5);
+		$aspectRatioList[] = array('label' => $module->translate('Photo 10x8'),
+					   'width' => 10,
+					   'height' => 8);
+		$aspectRatioList[] = array('label' => $module->translate('HDTV 16x9'),
+					   'width' => 16,
+					   'height' => 9);
+		$aspectRatioList[] = array('label' => $module->translate('CinemaScope 2.35x1'),
+					   'width' => 47,
+					   'height' => 20);
+		$aspectRatioList[] = array('label' => $module->translate('Square 1x1'),
+					   'width' => 1,
+					   'height' => 1);
+		$aspectRatioList[] = array('label' => $module->translate('As Image'),
+					   'width' => $item->getWidth(),
+					   'height' => $item->getHeight());
+		$ItemEditPhoto['editThumbnail']['aspectRatioList'] = $aspectRatioList;
+
+		$orientationList = array();
+		$orientationList['landscape'] = $module->translate("Landscape");
+		$orientationList['portrait'] = $module->translate("Portrait");
+		$ItemEditPhoto['editThumbnail']['orientationList'] = $orientationList;
+
+
+		/*
+		 * Figure out which aspect ratio / orientation is closest to the current crop
+		 * settings so that we can start out with those values selected in the dropdowns.
+		 */
+		$currentAspect = round($crop['width'] / $crop['height'], 2);
+		$i = 0;
+
+		/* Set defaults */
+		$selectedAspect = 0;
+		$selectedOrientation = "portrait";
+		$ItemEditPhoto['editThumbnail']['cropRatioWidth'] = $aspectRatioList[0]['width'];
+		$ItemEditPhoto['editThumbnail']['cropRatioHeight'] = $aspectRatioList[0]['height'];
+	    
+		foreach ($aspectRatioList as $aspect) {
+		    $landscapeCompare = round($aspect['width'] / $aspect['height'], 2);
+		    $portraitCompare = round($aspect['height'] / $aspect['width'], 2);
+		    if (abs($currentAspect - $landscapeCompare) <= 0.03) {
+			$selectedAspect = $i;
+			$selectedOrientation = "landscape";
+			break;
+		    } else if (abs($currentAspect - $portraitCompare) <= 0.03) {
+			$selectedAspect = $i;
+			$selectedOrientation = "portrait";
+			break;
+		    }
+		    $i++;
+		}
+		$ItemEditPhoto['editThumbnail']['selectedAspect'] = $selectedAspect;
+		$ItemEditPhoto['editThumbnail']['selectedOrientation'] = $selectedOrientation;
+		$ItemEditPhoto['editThumbnail']['cropRatioWidth'] = $aspectRatioList[$selectedAspect]['width'];
+		$ItemEditPhoto['editThumbnail']['cropRatioHeight'] = $aspectRatioList[$selectedAspect]['height'];
+	    } 
 	}
 							     
 	$template->setVariable('ItemEditPhoto', $ItemEditPhoto);
