@@ -11,6 +11,8 @@
         
       )
     
+    NOT NULL
+  
       ,
     DB_COLUMN_PREFIXtoolkitId
       varchar(
@@ -19,6 +21,8 @@
         
       )
     
+    NOT NULL
+  
       ,
     DB_COLUMN_PREFIXmimeType
       varchar(
@@ -27,6 +31,8 @@
         
       )
     
+    NOT NULL
+  
     , 
   
     INDEX (DB_COLUMN_PREFIXoperationName)

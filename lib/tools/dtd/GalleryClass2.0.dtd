@@ -2,7 +2,7 @@
 
 <!ELEMENT schema ( schema-name, schema-major, schema-minor ) >
 <!ELEMENT map ( member+, key? ) >
-<!ELEMENT member ( member-name, member-type, member-size?, id?, (indexed | unique)?, required?, linked? ) >
+<!ELEMENT member ( member-name, member-type, member-size?, id?, (indexed | unique)?, required?, primary?, linked? ) >
 <!ELEMENT key ( member-name+ ) >
 
 <!ELEMENT class-name ( #PCDATA ) >
@@ -18,4 +18,6 @@
 <!ELEMENT indexed EMPTY >
 <!ELEMENT unique EMPTY >
 <!ELEMENT linked EMPTY >
+<!ELEMENT primary EMPTY >
 <!ELEMENT id EMPTY >
+<!ATTLIST key primary (true | false) "false">

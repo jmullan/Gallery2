@@ -33,11 +33,6 @@
     (DB_COLUMN_PREFIXparentSequence);
 
   
-    CREATE UNIQUE INDEX ItemAttributesMap_itemId 
-    ON DB_TABLE_PREFIXItemAttributesMap
-    (DB_COLUMN_PREFIXitemId);
-
-  
 
     INSERT INTO DB_TABLE_PREFIXSchema (
       DB_COLUMN_PREFIXname,

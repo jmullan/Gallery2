@@ -7,6 +7,8 @@
   DB_COLUMN_PREFIXitemId
       INTEGER
     
+    NOT NULL
+  
       ,
     DB_COLUMN_PREFIXuserId
       INTEGER
@@ -19,6 +21,8 @@
     DB_COLUMN_PREFIXpermission
       BIT(32)
     
+    NOT NULL
+  
     );
 
   

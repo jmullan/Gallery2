@@ -54,16 +54,13 @@
     );
 
   
-    CREATE INDEX User_id 
-    ON DB_TABLE_PREFIXUser
-    (DB_COLUMN_PREFIXid);
-
-  
+    ALTER TABLE DB_TABLE_PREFIXUser
+    ADD PRIMARY KEY (DB_COLUMN_PREFIXid);
+    
     CREATE UNIQUE INDEX User_userName 
     ON DB_TABLE_PREFIXUser
     (DB_COLUMN_PREFIXuserName);
-
-  
+    
 
     INSERT INTO DB_TABLE_PREFIXSchema (
       DB_COLUMN_PREFIXname,

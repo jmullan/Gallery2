@@ -23,22 +23,6 @@
         
       )
     
-    , 
-  
-    INDEX (DB_COLUMN_PREFIXitemId)
-    
-      ,
-    
-    INDEX (DB_COLUMN_PREFIXorder)
-    
-      ,
-    
-    INDEX (DB_COLUMN_PREFIXderivativeType)
-    
-      ,
-    
-    INDEX (DB_COLUMN_PREFIXderivativeOperations)
-    
 
     ) TYPE=DB_TABLE_TYPE;
 

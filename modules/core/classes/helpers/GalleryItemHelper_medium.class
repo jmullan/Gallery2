@@ -647,9 +647,9 @@ class GalleryItemHelper_medium {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-		// It's possible that the parent id is not set (only for the root album)
+		// It's possible that the parent id is empty (only for the root album)
 		$parentId = $item->getParentId();
-		if (isset($parentId)) {
+		if (!empty($parentId)) {
 		    list ($ret, $preferences) = GalleryCoreApi::fetchDerivativePreferencesForItem($parentId);
 		    if ($ret->isError()) {
 			if (!empty($lockIds)) {
@@ -665,6 +665,7 @@ class GalleryItemHelper_medium {
 			    break;
 			}
 		    }
+
 		    if (empty($derivativeOperations)) {
 			if (!empty($lockIds)) {
 			    // Ignore errors -- we're already in an error handler
@@ -726,7 +727,7 @@ class GalleryItemHelper_medium {
 	 * If we created a new thumbnail for the album, we should seek to propagate the thumbnail up to the
 	 * parent album if it does not have a thumbnail.
 	 */
-	if ($success && $parentId != null && $createdNewParentThumbnail) {
+	if ($success && !empty($parentId) && $createdNewParentThumbnail) {
 	    list ($ret, $thumbTable) = GalleryCoreApi::fetchThumbnailsByItemIds(array($parentId));
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);

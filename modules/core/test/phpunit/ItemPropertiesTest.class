@@ -188,7 +188,9 @@ class ItemPropertiesTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->assertEquals(array('test-key1', 'test-key2'), $keys);
+	$this->assertEquals(2, sizeof($keys));
+	$this->assert(($keys[0] == 'test-key1' && $keys[1] == 'test-key2') ||
+		      ($keys[1] == 'test-key1' && $keys[0] == 'test-key2'));
     }
 
     /**

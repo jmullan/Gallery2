@@ -19,6 +19,8 @@
         
       )
     
+    NOT NULL
+  
       ,
     DB_COLUMN_PREFIXoutputMimeType
       VARCHAR(
@@ -36,18 +38,6 @@
       )
     
     );
-
-  
-    CREATE UNIQUE INDEX ToolkitOperationMap_name_parametersCrc 
-    ON DB_TABLE_PREFIXToolkitOperationMap
-    (DB_COLUMN_PREFIXname
-        ,
-      DB_COLUMN_PREFIXparametersCrc);
-
-  
-    CREATE UNIQUE INDEX ToolkitOperationMap_name 
-    ON DB_TABLE_PREFIXToolkitOperationMap
-    (DB_COLUMN_PREFIXname);
 
   
 

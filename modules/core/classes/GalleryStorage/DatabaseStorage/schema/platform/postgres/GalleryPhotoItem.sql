@@ -20,11 +20,9 @@
     );
 
   
-    CREATE INDEX PhotoItem_id 
-    ON DB_TABLE_PREFIXPhotoItem
-    (DB_COLUMN_PREFIXid);
-
-  
+    ALTER TABLE DB_TABLE_PREFIXPhotoItem
+    ADD PRIMARY KEY (DB_COLUMN_PREFIXid);
+    
 
     INSERT INTO DB_TABLE_PREFIXSchema (
       DB_COLUMN_PREFIXname,

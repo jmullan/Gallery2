@@ -11,6 +11,8 @@
         
       )
     
+    NOT NULL
+  
       ,
     DB_COLUMN_PREFIXpluginId
       VARCHAR(
@@ -19,20 +21,22 @@
         
       )
     
+    NOT NULL
+  
       ,
     DB_COLUMN_PREFIXactive
       SMALLINT
     
+    NOT NULL
+  
     );
 
   
-    CREATE UNIQUE INDEX PluginMap_pluginType_pluginId 
-    ON DB_TABLE_PREFIXPluginMap
-    (DB_COLUMN_PREFIXpluginType
+    ALTER TABLE DB_TABLE_PREFIXPluginMap
+    ADD PRIMARY KEY (DB_COLUMN_PREFIXpluginType
         ,
       DB_COLUMN_PREFIXpluginId);
-
-  
+    
 
     INSERT INTO DB_TABLE_PREFIXSchema (
       DB_COLUMN_PREFIXname,

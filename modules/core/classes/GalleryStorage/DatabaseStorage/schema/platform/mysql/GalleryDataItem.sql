@@ -17,13 +17,15 @@
         
       )
     
+    NOT NULL
+  
       ,
     DB_COLUMN_PREFIXsize
       int(11)
     
     , 
   
-    INDEX (DB_COLUMN_PREFIXid)
+      PRIMARY KEY (DB_COLUMN_PREFIXid)
     
 
     ) TYPE=DB_TABLE_TYPE;

@@ -44,13 +44,6 @@
     (DB_COLUMN_PREFIXlastModificationTime);
 
   
-    CREATE UNIQUE INDEX Session_sessionId_chunk 
-    ON DB_TABLE_PREFIXSession
-    (DB_COLUMN_PREFIXsessionId
-        ,
-      DB_COLUMN_PREFIXchunk);
-
-  
 
     INSERT INTO DB_TABLE_PREFIXSchema (
       DB_COLUMN_PREFIXname,

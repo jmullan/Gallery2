@@ -33,12 +33,6 @@
     
     , 
   
-    UNIQUE KEY (DB_COLUMN_PREFIXsessionId
-        ,
-      DB_COLUMN_PREFIXchunk)
-    
-    , 
-  
     INDEX (DB_COLUMN_PREFIXcreationTime)
     
       ,

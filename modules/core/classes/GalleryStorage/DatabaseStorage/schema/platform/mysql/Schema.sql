@@ -11,13 +11,23 @@
         
       )
     
+    NOT NULL
+  
       ,
     DB_COLUMN_PREFIXmajor
       int(11)
     
+    NOT NULL
+  
       ,
     DB_COLUMN_PREFIXminor
       int(11)
+    
+    NOT NULL
+  
+    , 
+  
+      PRIMARY KEY (DB_COLUMN_PREFIXname)
     
 
     ) TYPE=DB_TABLE_TYPE;

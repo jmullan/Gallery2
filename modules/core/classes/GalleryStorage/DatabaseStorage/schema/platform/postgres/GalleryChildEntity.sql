@@ -13,12 +13,9 @@
     DB_COLUMN_PREFIXparentId
       INTEGER
     
-    );
-
+    NOT NULL
   
-    CREATE INDEX ChildEntity_id 
-    ON DB_TABLE_PREFIXChildEntity
-    (DB_COLUMN_PREFIXid);
+    );
 
   
     CREATE INDEX ChildEntity_parentId 
@@ -26,6 +23,9 @@
     (DB_COLUMN_PREFIXparentId);
 
   
+    ALTER TABLE DB_TABLE_PREFIXChildEntity
+    ADD PRIMARY KEY (DB_COLUMN_PREFIXid);
+    
 
     INSERT INTO DB_TABLE_PREFIXSchema (
       DB_COLUMN_PREFIXname,

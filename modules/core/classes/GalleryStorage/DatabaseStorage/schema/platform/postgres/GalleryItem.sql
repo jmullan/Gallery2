@@ -13,6 +13,8 @@
     DB_COLUMN_PREFIXcanContainChildren
       SMALLINT
     
+    NOT NULL
+  
       ,
     DB_COLUMN_PREFIXdescription
       TEXT
@@ -80,11 +82,6 @@
     );
 
   
-    CREATE INDEX Item_id 
-    ON DB_TABLE_PREFIXItem
-    (DB_COLUMN_PREFIXid);
-
-  
     CREATE INDEX Item_keywords 
     ON DB_TABLE_PREFIXItem
     (DB_COLUMN_PREFIXkeywords);
@@ -105,6 +102,9 @@
     (DB_COLUMN_PREFIXtitle);
 
   
+    ALTER TABLE DB_TABLE_PREFIXItem
+    ADD PRIMARY KEY (DB_COLUMN_PREFIXid);
+    
 
     INSERT INTO DB_TABLE_PREFIXSchema (
       DB_COLUMN_PREFIXname,

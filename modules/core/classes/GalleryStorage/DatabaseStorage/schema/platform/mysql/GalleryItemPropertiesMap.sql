@@ -7,6 +7,8 @@
   DB_COLUMN_PREFIXitemId
       int(11)
     
+    NOT NULL
+  
       ,
     DB_COLUMN_PREFIXkey
       varchar(
@@ -15,15 +17,11 @@
         
       )
     
+    NOT NULL
+  
       ,
     DB_COLUMN_PREFIXvalue
       text
-    
-    , 
-  
-    UNIQUE KEY (DB_COLUMN_PREFIXitemId
-        ,
-      DB_COLUMN_PREFIXkey)
     
 
     ) TYPE=DB_TABLE_TYPE;

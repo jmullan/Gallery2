@@ -19,7 +19,7 @@
     
     , 
   
-    INDEX (DB_COLUMN_PREFIXid)
+      PRIMARY KEY (DB_COLUMN_PREFIXid)
     
 
     ) TYPE=DB_TABLE_TYPE;

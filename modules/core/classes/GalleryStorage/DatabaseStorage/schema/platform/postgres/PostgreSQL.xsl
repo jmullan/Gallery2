@@ -34,10 +34,16 @@
   </xsl:for-each>
 
   <xsl:for-each select="key">
+    <xsl:if test="@primary='true'">
+    ALTER TABLE <xsl:value-of select="$tablePrefix"/><xsl:value-of select="/table/table-name"/>
+    ADD PRIMARY KEY (<xsl:call-template name="indexColumns"/>);
+    </xsl:if>
+
+    <xsl:if test="@primary!='true'">
     CREATE UNIQUE INDEX <xsl:call-template name="indexName"/> 
     ON <xsl:value-of select="$tablePrefix"/><xsl:value-of select="/table/table-name"/>
     (<xsl:call-template name="indexColumns"/>);
-
+    </xsl:if>
   </xsl:for-each>
 
     INSERT INTO <xsl:value-of select="$tablePrefix"/>Schema (

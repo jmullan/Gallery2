@@ -13,12 +13,14 @@
     DB_COLUMN_PREFIXparentId
       int(11)
     
+    NOT NULL
+  
     , 
   
-    INDEX (DB_COLUMN_PREFIXid)
+      PRIMARY KEY (DB_COLUMN_PREFIXid)
     
-      ,
-    
+    , 
+  
     INDEX (DB_COLUMN_PREFIXparentId)
     
 

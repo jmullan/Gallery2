@@ -13,6 +13,8 @@
     DB_COLUMN_PREFIXgroupType
       int(11)
     
+    NOT NULL
+  
       ,
     DB_COLUMN_PREFIXgroupName
       varchar(
@@ -23,11 +25,11 @@
     
     , 
   
-    UNIQUE KEY (DB_COLUMN_PREFIXgroupName)
+      PRIMARY KEY (DB_COLUMN_PREFIXid)
     
-    , 
-  
-    INDEX (DB_COLUMN_PREFIXid)
+      ,
+    
+      UNIQUE KEY (DB_COLUMN_PREFIXgroupName)
     
 
     ) TYPE=DB_TABLE_TYPE;

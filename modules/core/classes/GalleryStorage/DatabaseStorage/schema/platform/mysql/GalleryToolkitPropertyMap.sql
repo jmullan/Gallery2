@@ -11,6 +11,8 @@
         
       )
     
+    NOT NULL
+  
       ,
     DB_COLUMN_PREFIXtype
       varchar(
@@ -19,6 +21,8 @@
         
       )
     
+    NOT NULL
+  
       ,
     DB_COLUMN_PREFIXdescription
       varchar(
@@ -27,6 +31,8 @@
         
       )
     
+    NOT NULL
+  
 
     ) TYPE=DB_TABLE_TYPE;
 

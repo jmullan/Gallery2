@@ -23,10 +23,14 @@
         
       )
     
+    NOT NULL
+  
       ,
     DB_COLUMN_PREFIXderivativeOrder
       int(11)
     
+    NOT NULL
+  
       ,
     DB_COLUMN_PREFIXderivativeSize
       int(11)
@@ -35,6 +39,8 @@
     DB_COLUMN_PREFIXderivativeType
       int(11)
     
+    NOT NULL
+  
       ,
     DB_COLUMN_PREFIXmimeType
       varchar(
@@ -43,12 +49,14 @@
         
       )
     
+    NOT NULL
+  
     , 
   
-    INDEX (DB_COLUMN_PREFIXid)
+      PRIMARY KEY (DB_COLUMN_PREFIXid)
     
-      ,
-    
+    , 
+  
     INDEX (DB_COLUMN_PREFIXderivativeSourceId)
     
       ,

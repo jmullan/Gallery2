@@ -17,6 +17,8 @@
         
       )
     
+    NOT NULL
+  
       ,
     DB_COLUMN_PREFIXsize
       INTEGER
@@ -24,11 +26,9 @@
     );
 
   
-    CREATE INDEX DataItem_id 
-    ON DB_TABLE_PREFIXDataItem
-    (DB_COLUMN_PREFIXid);
-
-  
+    ALTER TABLE DB_TABLE_PREFIXDataItem
+    ADD PRIMARY KEY (DB_COLUMN_PREFIXid);
+    
 
     INSERT INTO DB_TABLE_PREFIXSchema (
       DB_COLUMN_PREFIXname,

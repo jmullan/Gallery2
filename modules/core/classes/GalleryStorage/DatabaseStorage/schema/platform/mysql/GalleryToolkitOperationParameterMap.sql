@@ -11,10 +11,14 @@
         
       )
     
+    NOT NULL
+  
       ,
     DB_COLUMN_PREFIXposition
       int(11)
     
+    NOT NULL
+  
       ,
     DB_COLUMN_PREFIXtype
       varchar(
@@ -23,6 +27,8 @@
         
       )
     
+    NOT NULL
+  
       ,
     DB_COLUMN_PREFIXdescription
       varchar(

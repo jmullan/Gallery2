@@ -7,6 +7,8 @@
   DB_COLUMN_PREFIXitemId
       int(11)
     
+    NOT NULL
+  
       ,
     DB_COLUMN_PREFIXuserId
       int(11)
@@ -19,6 +21,8 @@
     DB_COLUMN_PREFIXpermission
       int(11)
     
+    NOT NULL
+  
     , 
   
     INDEX (DB_COLUMN_PREFIXitemId)

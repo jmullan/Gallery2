@@ -26,26 +26,6 @@
     );
 
   
-    CREATE INDEX DerivativePreferencesMap_itemId 
-    ON DB_TABLE_PREFIXDerivativePreferencesMap
-    (DB_COLUMN_PREFIXitemId);
-
-  
-    CREATE INDEX DerivativePreferencesMap_order 
-    ON DB_TABLE_PREFIXDerivativePreferencesMap
-    (DB_COLUMN_PREFIXorder);
-
-  
-    CREATE INDEX DerivativePreferencesMap_derivativeType 
-    ON DB_TABLE_PREFIXDerivativePreferencesMap
-    (DB_COLUMN_PREFIXderivativeType);
-
-  
-    CREATE INDEX DerivativePreferencesMap_derivativeOperations 
-    ON DB_TABLE_PREFIXDerivativePreferencesMap
-    (DB_COLUMN_PREFIXderivativeOperations);
-
-  
 
     INSERT INTO DB_TABLE_PREFIXSchema (
       DB_COLUMN_PREFIXname,

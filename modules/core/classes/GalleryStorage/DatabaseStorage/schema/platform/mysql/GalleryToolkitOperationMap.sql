@@ -19,6 +19,8 @@
         
       )
     
+    NOT NULL
+  
       ,
     DB_COLUMN_PREFIXoutputMimeType
       varchar(
@@ -34,16 +36,6 @@
           255
         
       )
-    
-    , 
-  
-    UNIQUE KEY (DB_COLUMN_PREFIXname
-        ,
-      DB_COLUMN_PREFIXparametersCrc)
-    
-      ,
-    
-    UNIQUE KEY (DB_COLUMN_PREFIXname)
     
 
     ) TYPE=DB_TABLE_TYPE;

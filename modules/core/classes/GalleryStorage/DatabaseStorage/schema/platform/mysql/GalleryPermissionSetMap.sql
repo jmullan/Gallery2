@@ -11,6 +11,8 @@
         
       )
     
+    NOT NULL
+  
       ,
     DB_COLUMN_PREFIXpermission
       varchar(
@@ -19,6 +21,8 @@
         
       )
     
+    NOT NULL
+  
       ,
     DB_COLUMN_PREFIXdescription
       varchar(
@@ -31,13 +35,17 @@
     DB_COLUMN_PREFIXbits
       int(11)
     
+    NOT NULL
+  
       ,
     DB_COLUMN_PREFIXflags
       int(11)
     
+    NOT NULL
+  
     , 
   
-    UNIQUE KEY (DB_COLUMN_PREFIXpermission)
+      UNIQUE KEY (DB_COLUMN_PREFIXpermission)
     
 
     ) TYPE=DB_TABLE_TYPE;

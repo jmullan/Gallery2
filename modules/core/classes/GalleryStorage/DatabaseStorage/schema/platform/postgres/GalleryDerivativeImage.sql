@@ -20,11 +20,9 @@
     );
 
   
-    CREATE INDEX DerivativeImage_id 
-    ON DB_TABLE_PREFIXDerivativeImage
-    (DB_COLUMN_PREFIXid);
-
-  
+    ALTER TABLE DB_TABLE_PREFIXDerivativeImage
+    ADD PRIMARY KEY (DB_COLUMN_PREFIXid);
+    
 
     INSERT INTO DB_TABLE_PREFIXSchema (
       DB_COLUMN_PREFIXname,

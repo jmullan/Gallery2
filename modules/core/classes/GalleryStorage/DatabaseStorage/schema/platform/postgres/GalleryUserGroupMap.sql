@@ -7,10 +7,14 @@
   DB_COLUMN_PREFIXuserId
       INTEGER
     
+    NOT NULL
+  
       ,
     DB_COLUMN_PREFIXgroupId
       INTEGER
     
+    NOT NULL
+  
     );
 
   

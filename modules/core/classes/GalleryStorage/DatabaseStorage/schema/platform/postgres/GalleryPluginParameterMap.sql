@@ -11,6 +11,8 @@
         
       )
     
+    NOT NULL
+  
       ,
     DB_COLUMN_PREFIXpluginId
       VARCHAR(
@@ -19,10 +21,14 @@
         
       )
     
+    NOT NULL
+  
       ,
     DB_COLUMN_PREFIXitemId
       INTEGER
     
+    NOT NULL
+  
       ,
     DB_COLUMN_PREFIXparameterName
       VARCHAR(
@@ -31,6 +37,8 @@
         
       )
     
+    NOT NULL
+  
       ,
     DB_COLUMN_PREFIXparameterValue
       VARCHAR(
@@ -39,7 +47,14 @@
         
       )
     
+    NOT NULL
+  
     );
+
+  
+    CREATE INDEX PluginParameterMap_pluginType 
+    ON DB_TABLE_PREFIXPluginParameterMap
+    (DB_COLUMN_PREFIXpluginType);
 
   
     CREATE UNIQUE INDEX PluginParameterMap_pluginType_pluginId_itemId_parameterName 
@@ -51,8 +66,7 @@
       DB_COLUMN_PREFIXitemId
         ,
       DB_COLUMN_PREFIXparameterName);
-
-  
+    
 
     INSERT INTO DB_TABLE_PREFIXSchema (
       DB_COLUMN_PREFIXname,

@@ -11,6 +11,8 @@
         
       )
     
+    NOT NULL
+  
       ,
     DB_COLUMN_PREFIXpluginId
       varchar(
@@ -19,13 +21,17 @@
         
       )
     
+    NOT NULL
+  
       ,
     DB_COLUMN_PREFIXactive
       int(1)
     
+    NOT NULL
+  
     , 
   
-    UNIQUE KEY (DB_COLUMN_PREFIXpluginType
+      PRIMARY KEY (DB_COLUMN_PREFIXpluginType
         ,
       DB_COLUMN_PREFIXpluginId)
     

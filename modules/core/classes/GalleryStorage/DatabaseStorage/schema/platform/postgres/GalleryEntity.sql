@@ -50,11 +50,6 @@
     );
 
   
-    CREATE INDEX Entity_id 
-    ON DB_TABLE_PREFIXEntity
-    (DB_COLUMN_PREFIXid);
-
-  
     CREATE INDEX Entity_creationTimestamp 
     ON DB_TABLE_PREFIXEntity
     (DB_COLUMN_PREFIXcreationTimestamp);
@@ -70,6 +65,9 @@
     (DB_COLUMN_PREFIXmodificationTimestamp);
 
   
+    ALTER TABLE DB_TABLE_PREFIXEntity
+    ADD PRIMARY KEY (DB_COLUMN_PREFIXid);
+    
 
     INSERT INTO DB_TABLE_PREFIXSchema (
       DB_COLUMN_PREFIXname,

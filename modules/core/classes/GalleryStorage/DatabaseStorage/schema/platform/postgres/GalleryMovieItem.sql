@@ -24,11 +24,9 @@
     );
 
   
-    CREATE INDEX MovieItem_id 
-    ON DB_TABLE_PREFIXMovieItem
-    (DB_COLUMN_PREFIXid);
-
-  
+    ALTER TABLE DB_TABLE_PREFIXMovieItem
+    ADD PRIMARY KEY (DB_COLUMN_PREFIXid);
+    
 
     INSERT INTO DB_TABLE_PREFIXSchema (
       DB_COLUMN_PREFIXname,

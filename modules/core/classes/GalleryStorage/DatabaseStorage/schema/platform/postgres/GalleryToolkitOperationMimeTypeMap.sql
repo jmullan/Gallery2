@@ -11,6 +11,8 @@
         
       )
     
+    NOT NULL
+  
       ,
     DB_COLUMN_PREFIXtoolkitId
       VARCHAR(
@@ -19,6 +21,8 @@
         
       )
     
+    NOT NULL
+  
       ,
     DB_COLUMN_PREFIXmimeType
       VARCHAR(
@@ -27,6 +31,8 @@
         
       )
     
+    NOT NULL
+  
     );
 
   

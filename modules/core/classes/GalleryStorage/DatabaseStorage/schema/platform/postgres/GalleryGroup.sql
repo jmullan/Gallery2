@@ -13,6 +13,8 @@
     DB_COLUMN_PREFIXgroupType
       INTEGER
     
+    NOT NULL
+  
       ,
     DB_COLUMN_PREFIXgroupName
       VARCHAR(
@@ -24,16 +26,13 @@
     );
 
   
-    CREATE INDEX Group_id 
-    ON DB_TABLE_PREFIXGroup
-    (DB_COLUMN_PREFIXid);
-
-  
+    ALTER TABLE DB_TABLE_PREFIXGroup
+    ADD PRIMARY KEY (DB_COLUMN_PREFIXid);
+    
     CREATE UNIQUE INDEX Group_groupName 
     ON DB_TABLE_PREFIXGroup
     (DB_COLUMN_PREFIXgroupName);
-
-  
+    
 
     INSERT INTO DB_TABLE_PREFIXSchema (
       DB_COLUMN_PREFIXname,

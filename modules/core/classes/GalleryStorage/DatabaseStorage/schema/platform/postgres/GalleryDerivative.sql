@@ -23,10 +23,14 @@
         
       )
     
+    NOT NULL
+  
       ,
     DB_COLUMN_PREFIXderivativeOrder
       INTEGER
     
+    NOT NULL
+  
       ,
     DB_COLUMN_PREFIXderivativeSize
       INTEGER
@@ -35,6 +39,8 @@
     DB_COLUMN_PREFIXderivativeType
       INTEGER
     
+    NOT NULL
+  
       ,
     DB_COLUMN_PREFIXmimeType
       VARCHAR(
@@ -43,12 +49,9 @@
         
       )
     
-    );
-
+    NOT NULL
   
-    CREATE INDEX Derivative_id 
-    ON DB_TABLE_PREFIXDerivative
-    (DB_COLUMN_PREFIXid);
+    );
 
   
     CREATE INDEX Derivative_derivativeSourceId 
@@ -66,6 +69,9 @@
     (DB_COLUMN_PREFIXderivativeType);
 
   
+    ALTER TABLE DB_TABLE_PREFIXDerivative
+    ADD PRIMARY KEY (DB_COLUMN_PREFIXid);
+    
 
     INSERT INTO DB_TABLE_PREFIXSchema (
       DB_COLUMN_PREFIXname,

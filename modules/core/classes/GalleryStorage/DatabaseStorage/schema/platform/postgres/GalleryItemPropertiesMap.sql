@@ -7,6 +7,8 @@
   DB_COLUMN_PREFIXitemId
       INTEGER
     
+    NOT NULL
+  
       ,
     DB_COLUMN_PREFIXkey
       VARCHAR(
@@ -15,18 +17,13 @@
         
       )
     
+    NOT NULL
+  
       ,
     DB_COLUMN_PREFIXvalue
       TEXT
     
     );
-
-  
-    CREATE UNIQUE INDEX ItemPropertiesMap_itemId_key 
-    ON DB_TABLE_PREFIXItemPropertiesMap
-    (DB_COLUMN_PREFIXitemId
-        ,
-      DB_COLUMN_PREFIXkey);
 
   
 

@@ -49,10 +49,10 @@
   
     , 
   
-    INDEX (DB_COLUMN_PREFIXid)
+      PRIMARY KEY (DB_COLUMN_PREFIXid)
     
-      ,
-    
+    , 
+  
     INDEX (DB_COLUMN_PREFIXcreationTimestamp)
     
       ,

@@ -26,9 +26,9 @@
       <xsl:apply-templates select="member"/>
 
       <xsl:if test="requires-id">
-        <index>
+        <key primary="true">
           <column-name>id</column-name>
-        </index>
+        </key>
       </xsl:if>
 
       <xsl:for-each select="member[indexed]">
@@ -55,6 +55,11 @@
         </key>
       </xsl:for-each>
 
+      <xsl:for-each select="member[primary]">
+        <key primary="true">
+          <column-name><xsl:value-of select="member-name"/></column-name>
+        </key>
+      </xsl:for-each>
     </table>
   </xsl:template>
 
@@ -78,6 +83,9 @@
       <xsl:if test="required">
         <not-null/>
       </xsl:if>
+      <xsl:if test="primary">
+        <not-null/>
+      </xsl:if>
     </column>
   </xsl:template>
 
@@ -99,12 +107,23 @@
     </xsl:for-each>
 
     <xsl:for-each select="key">
-      <key>
-        <xsl:for-each select="member-name">
-          <column-name><xsl:value-of select="."/></column-name>
-        </xsl:for-each>
-      </key>
+      <xsl:if test="@primary='true'">
+        <key primary="true">
+          <xsl:for-each select="member-name">
+            <column-name><xsl:value-of select="."/></column-name>
+          </xsl:for-each>
+        </key>
+      </xsl:if>
+
+      <xsl:if test="@primary!='true'">
+        <key>
+          <xsl:for-each select="member-name">
+            <column-name><xsl:value-of select="."/></column-name>
+          </xsl:for-each>
+        </key>
+      </xsl:if>
     </xsl:for-each>
+
   </xsl:template>
 
 </xsl:stylesheet>

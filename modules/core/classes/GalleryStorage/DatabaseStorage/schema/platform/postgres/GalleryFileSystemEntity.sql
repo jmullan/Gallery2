@@ -20,16 +20,14 @@
     );
 
   
-    CREATE INDEX FileSystemEntity_id 
-    ON DB_TABLE_PREFIXFileSystemEntity
-    (DB_COLUMN_PREFIXid);
-
-  
     CREATE INDEX FileSystemEntity_pathComponent 
     ON DB_TABLE_PREFIXFileSystemEntity
     (DB_COLUMN_PREFIXpathComponent);
 
   
+    ALTER TABLE DB_TABLE_PREFIXFileSystemEntity
+    ADD PRIMARY KEY (DB_COLUMN_PREFIXid);
+    
 
     INSERT INTO DB_TABLE_PREFIXSchema (
       DB_COLUMN_PREFIXname,

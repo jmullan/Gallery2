@@ -7,10 +7,14 @@
   DB_COLUMN_PREFIXuserId
       int(11)
     
+    NOT NULL
+  
       ,
     DB_COLUMN_PREFIXgroupId
       int(11)
     
+    NOT NULL
+  
     , 
   
     INDEX (DB_COLUMN_PREFIXuserId)

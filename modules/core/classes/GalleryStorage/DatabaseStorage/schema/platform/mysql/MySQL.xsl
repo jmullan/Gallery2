@@ -28,7 +28,14 @@
   </xsl:if>
 
   <xsl:for-each select="key">
-    UNIQUE KEY (<xsl:call-template name="key"/>)
+    <xsl:if test="@primary='true'">
+      PRIMARY KEY (<xsl:call-template name="key"/>)
+    </xsl:if>
+
+    <xsl:if test="@primary!='true'">
+      UNIQUE KEY (<xsl:call-template name="key"/>)
+    </xsl:if>
+
     <xsl:if test="position()!=last()">
       ,
     </xsl:if>

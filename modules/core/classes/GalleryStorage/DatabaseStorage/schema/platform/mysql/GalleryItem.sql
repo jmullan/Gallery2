@@ -13,6 +13,8 @@
     DB_COLUMN_PREFIXcanContainChildren
       int(1)
     
+    NOT NULL
+  
       ,
     DB_COLUMN_PREFIXdescription
       text
@@ -79,10 +81,10 @@
   
     , 
   
-    INDEX (DB_COLUMN_PREFIXid)
+      PRIMARY KEY (DB_COLUMN_PREFIXid)
     
-      ,
-    
+    , 
+  
     INDEX (DB_COLUMN_PREFIXkeywords)
     
       ,
