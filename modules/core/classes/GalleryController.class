@@ -85,7 +85,9 @@ class GalleryController {
      * directly to the view.
      *
      * <b>Error</b> data is an array of values, like this:
+     * <pre>
      *    array('form[widget][missing]')
+     * </pre>
      *
      * This data is only processed on delegation.  It gets put into the request and is accessible when the
      * delegated view is called.  Since we only redirect on success, you never pass back error data when you
@@ -97,7 +99,6 @@ class GalleryController {
      * in the middle of a workflow.  A good example of this is when we click the "Login" link on the main
      * page.  We pass control to the UserLogin controller, and when its done, it uses the "return" flag to
      * indicate that we should return to the URL where the login link was clicked.
-     * </pre>
      *
      * @param array the form values
      * @return array object GalleryStatus a status code
