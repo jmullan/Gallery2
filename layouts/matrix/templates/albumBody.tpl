@@ -43,7 +43,7 @@
 
     {include file="layouts/matrix/templates/itemNavigator.tpl"}
 
-    <div class="spacer">
+    <div class="gsSpacer">
       &nbsp;
     </div>
   </div>
