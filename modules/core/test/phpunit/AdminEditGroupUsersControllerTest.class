@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -39,7 +39,7 @@ class AdminEditGroupUsersControllerTest extends GalleryControllerTestCase {
 
     function setUp() {
 	parent::setUp();
-	
+
 	/* Create a test group */
 	list ($ret, $this->_group) = $this->_createGroup();
 	if ($ret->isError()) {
@@ -90,7 +90,8 @@ class AdminEditGroupUsersControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'core:AdminEditGroupUsers',
 						      'groupId' => $this->_group->getId()),
-				  'status' => array('removedUsers' => 1),
+				  'status' => array('removedUsers' => 1,
+						    'removedUser' => $this->_user->getUserName()),
 				  'error' => array()),
 			    $results);
     }
@@ -122,7 +123,7 @@ class AdminEditGroupUsersControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'core:AdminEditGroupUsers',
 						      'groupId' => $this->_group->getId()),
-				  'status' => array('removedUsers' => 2),
+				  'status' => array('removedUsers' => 2, 'removedUser' => 2),
 				  'error' => array()),
 			    $results);
 
@@ -135,12 +136,12 @@ class AdminEditGroupUsersControllerTest extends GalleryControllerTestCase {
 
     function testCantRemoveSelfFromSiteAdmins() {
 	global $gallery;
-	
+
 	list ($ret, $adminGroupId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), false);
 	}
-	
+
 	/* Add the user to the site admin group */
 	$ret = GalleryCoreApi::addUserToGroup($this->_user->getId(), $adminGroupId);
 	if ($ret->isError()) {
@@ -156,10 +157,9 @@ class AdminEditGroupUsersControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminEditGroupUsers',
-						      'groupId' => $adminGroupId),
-				  'status' => array('removedUsers' => 0),
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminEditGroupUsers'),
+				  'status' => array(),
 				  'error' => array('form[error][list][cantRemoveSelf]')),
 			    $results);
 
@@ -185,7 +185,7 @@ class AdminEditGroupUsersControllerTest extends GalleryControllerTestCase {
 				  'error' => array()),
 			    $results);
     }
-    
+
     function testAddBogusUser() {
 	GalleryUtilities::putRequestVariable('groupId', $this->_group->getId());
 	GalleryUtilities::putRequestVariable('form[action][add]', 1);
@@ -234,20 +234,20 @@ class AdminEditGroupUsersControllerTest extends GalleryControllerTestCase {
 				  'error' => array('form[error][text][userName][alreadyInGroup]')),
 			    $results);
     }
-    
+
     function _createGroup($groupType=GROUP_NORMAL) {
 	global $gallery;
-	
+
 	list ($ret, $group) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryGroup');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	if (!isset($group)) {
 	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
 			 null);
 	}
-	
+
 	$ret = $group->create('testgroup-'.rand(), $groupType);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -269,17 +269,17 @@ class AdminEditGroupUsersControllerTest extends GalleryControllerTestCase {
 
     function _createUser() {
 	global $gallery;
-	
+
 	list ($ret, $user) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryUser');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	if (!isset($user)) {
 	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
 			 null);
 	}
-	
+
 	$ret = $user->create('testuser-'.rand());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);

@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -53,8 +53,8 @@ class UserPreferencesControllerTest extends GalleryControllerTestCase {
 
     function tearDown() {
 	global $gallery;
-        $session =& $gallery->getSession();
-        $session->put('core.language', $this->_currentLanguage);    
+	$session =& $gallery->getSession();
+	$session->put('core.language', $this->_currentLanguage);
 	$this->_deleteUser($this->_user);
 	parent::tearDown();
     }
@@ -63,21 +63,19 @@ class UserPreferencesControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][cancel]', 1);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('return' => 1,
-				  'redirect' => array('view' => 'core:UserAdmin',
+	$this->assertEquals(array('redirect' => array('view' => 'core:UserAdmin',
 						      'subView' => 'core:UserPreferences'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
-	
+
     }
 
     function testUndo() {
 	GalleryUtilities::putRequestVariable('form[action][undo]', 1);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('return' => 1,
-				  'redirect' => array('view' => 'core:UserAdmin',
+	$this->assertEquals(array('redirect' => array('view' => 'core:UserAdmin',
 						      'subView' => 'core:UserPreferences'),
 				  'status' => array(),
 				  'error' => array()),
@@ -86,7 +84,7 @@ class UserPreferencesControllerTest extends GalleryControllerTestCase {
 
     function testEditAll() {
 	global $gallery;
-        $session =& $gallery->getSession();
+	$session =& $gallery->getSession();
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[fullName]', 'full name');
 	GalleryUtilities::putRequestVariable('form[email]', 'email@test.me');
@@ -165,7 +163,7 @@ class UserPreferencesControllerTest extends GalleryControllerTestCase {
 		/* We have to do 'admin' last for this to work */
 		$this->_addUserToAdminGroup($this->_user);
 	    }
-	    
+
 	    GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	    GalleryUtilities::putRequestVariable('form[fullName]', 'full name');
 	    GalleryUtilities::putRequestVariable('form[email]', 'no-at.test.com');
@@ -228,6 +226,5 @@ class UserPreferencesControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }
-	
 }
 ?>
