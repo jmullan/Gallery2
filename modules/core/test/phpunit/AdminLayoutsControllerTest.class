@@ -364,4 +364,9 @@ class AdminLayoutsTestPlatform {
 	    return 0;
 	}
     }
+
+    // In case GalleryStatus::getAsHtml gets called..
+    function realpath($path) {
+	return realpath($path);
+    }
 }
