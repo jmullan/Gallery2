@@ -187,7 +187,7 @@ class GalleryPluginHelper_simple {
                     AND
                     [GalleryPluginParameterMap::itemId] = ?
                   ';
-    
+
 		list ($ret, $searchResults) =
 		    $gallery->search($query, array($pluginType, $pluginId, $itemId));
 		if ($ret->isError()) {

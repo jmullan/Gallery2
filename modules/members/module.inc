@@ -43,34 +43,24 @@ class MembersModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::install()
+     * @see GalleryModule::upgrade()
      */
-    function install() {
+    function upgrade($currentVersion) {
 	global $gallery;
     	
-	list ($ret, $version) = $this->getModuleParameter('version');
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
- 
-	if ($version != $this->getVersion()) {
-	    $ret = $this->setModuleParameter('version', $this->getVersion());
+	if (!isset($currentVersion)) {
+	    list ($ret, $viewSelectedGroupId) = 
+		GalleryCoreApi::getPluginParameter('module', 'core', 'id.everybodyGroup');
 	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	}
-    	
-	list ($ret, $viewSelectedGroupId) = 
-	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.everybodyGroup');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	foreach (array('canViewMembersModule' => $viewSelectedGroupId,
-		       'version' => $this->getVersion(),
-		       'canViewEmailAddress' => 0) as $key => $value) {
-	    $ret = $this->setModuleParameter($key, $value);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+	    
+	    foreach (array('canViewMembersModule' => $viewSelectedGroupId,
+			   'canViewEmailAddress' => 0) as $key => $value) {
+		$ret = $this->setModuleParameter($key, $value);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
 	    }
 	}
 

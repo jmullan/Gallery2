@@ -88,7 +88,7 @@ function GalleryInitFirstPass($params=array()) {
     if (isset($params['debug'])) {
 	$gallery->setDebug($params['debug']);
     }
-    
+
     /* Sanitize the data path */
     $dataBase = $gallery->getConfig('data.gallery.base');
     if ($dataBase{strlen($dataBase)-1} != $slash) {
@@ -115,10 +115,13 @@ function GalleryInitFirstPass($params=array()) {
     }
 
     /* Initialize our translator */
-    $ret = $gallery->initTranslator();
-    if ($ret->isError()) {
-	return $ret->wrap(__FILE__, __LINE__);
+    if (!isset($params['noDatabase'])) {
+	$ret = $gallery->initTranslator();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
     }
+    
     return GalleryStatus::success();
 }
 

@@ -132,17 +132,76 @@ class GalleryModule {
     }
 
     /**
-     * Perform any install/upgrade tasks required at this point.  This method
+     * Perform any upgrade tasks required at this point.  This method
      * is called if the module version in the module.inc does not match the
-     * version number in the database.  If this method completes successfully,
-     * it should have set its version number in the database appropriately so
-     * that it will not be called again.  Typically a module will call upon the
-     * storage system to load any new tables or alter existing ones, upgrade
-     * any module parameters, and register any new permissions.
+     * version number in the database.  The framework will upgrade database
+     * tables as necessary, but it is the responsibility of the module to:
+     *
+     * 1. Register/unregister permissions
+     * 2. Move or massage data as required by the upgrade
+     *
+     * This method will be called with a null version on an initial install.
+     * @param string the current version (null if this is an initial install)
+     * @return object GalleryStatus a status code
+     * @access protected
+     */
+    function upgrade($currentVersion) {
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Perform the module installation or upgrade, whatever is required.
+     *
+     * It will do the following:
+     * 1. Get the current version of the module (if its already installed)
+     * 2. Request that the storage subsystem install this module's database
+     *    tables (which will also upgrade any tables that require it)
+     * 3. Let the module perform any necessary upgrade tasks.
+     * 4. Set the new module version into the database
+     *
+     * Modules should not need to override this method.  Instead they should
+     * override the upgrade method and put all their module specific logic
+     * there.
      *
      * @return object GalleryStatus a status code
      */
-    function install() {
+    function installOrUpgrade($bootstrap=false) {
+	global $gallery;
+
+	if ($bootstrap) {
+	    /*
+	     * If we're in bootstrap mode, then we may not even have a version
+	     * table.  If we try to query it, we will cause our current
+	     * transaction to abort on some databases.  So, just assume that
+	     * there's no installed version.
+	     */
+	    $installedVersion = null;
+	} else {
+	    list ($ret, $installedVersion) = $this->getModuleParameter('version');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	if ($installedVersion != $this->getVersion()) {
+	    /* The store requires configuration. */
+	    $storage =& $gallery->getStorage();
+	    $ret = $storage->configureStore($this->getId());
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    $ret = $this->upgrade($installedVersion);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    
+	    $ret = $this->setModuleParameter('version', $this->getVersion());
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+	
 	return GalleryStatus::success();
     }
 
@@ -157,11 +216,15 @@ class GalleryModule {
 	/* Find and remove all module permissions */
 	$ret = GalleryCoreApi::unregisterModulePermissions($this->getId());
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* Remove this plugin */
-	GalleryCoreApi::removePlugin('module', $this->getId());
+	$ret = GalleryCoreApi::removePlugin('module', $this->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
 
 	/* Remove all tables */
 	$storage =& $gallery->getStorage();

@@ -1397,6 +1397,23 @@ class DatabaseStorage /* implements GalleryStorage */ {
     }
 
     /**
+     * Return true if at least some set of G2 tables is already installed.
+     * We use the existence of the schema table as our indicator.
+     * @return array object GalleryStatus a status code
+     *               boolean true if the tables are installed
+     */
+    function isInstalled() {
+	/* Get the metabase info about this database */
+	$this->_traceStart();
+	$metatables = $this->_db->MetaTables();
+	$this->_traceStop();
+
+	list ($schemaTableName, $unused) = $this->_translateTableName('Schema');
+	$isInstalled = preg_match("/\b$schemaTableName\b/i", join(' ', $metatables));
+	return array(GalleryStatus::success(), $isInstalled);
+    }
+
+    /**
      * Identify the type of entity associated with the id provided
      *
      * @param int a object id
@@ -1477,10 +1494,12 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	    list ($table, $alias) = $this->_translateTableName($class);
 
 	    $column = $this->_translateColumnName($member);
-	    if ($alias == null) {
+	    if ($alias) {
+		$query = str_replace("[${class}::${member}]", "$alias.$column", $query);
+	    } else if ($class) {
 		$query = str_replace("[${class}::${member}]", "$table.$column", $query);
 	    } else {
-		$query = str_replace("[${class}::${member}]", "$alias.$column", $query);
+		$query = str_replace("[::${member}]", "$column", $query);
 	    }
 	}
 
@@ -1622,7 +1641,6 @@ class DatabaseStorage /* implements GalleryStorage */ {
      */
     function _traceStart() {
 	global $gallery;
-
 	if ($gallery->getDebug()) {
 	    ob_start();
 	}

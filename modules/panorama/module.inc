@@ -68,26 +68,21 @@ class PanoramaModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::install()
+     * @see GalleryModule::upgrade()
      */
-    function install() {
-	list ($ret, $version) = $this->getModuleParameter('version');
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__,__LINE__);
-	}
-
-	if ($version != $this->getVersion()) {
-	    foreach (array( 'version' => $this->getVersion(),
-			    'itemType' => 1,
-			    'itemLink' => 1,
-			    'width' => 800 )
-		     as $key => $value) {
+    function upgrade($currentVersion) {
+	if (!isset($currentVersion)) {
+	    /* Initial install */
+	    foreach (array('itemType' => 1,
+			   'itemLink' => 1,
+			   'width' => 800) as $key => $value) {
 		$ret = $this->setModuleParameter($key, $value);
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
 	}
+	
 	return GalleryStatus::success();
     }
 

@@ -52,30 +52,6 @@ class ImageFrameModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::install()
-     */
-    function install() {
-	global $gallery;
-
-	list ($ret, $version) = $this->getModuleParameter('version');
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__,__LINE__);
-	}
-
-	if ($version != $this->getVersion()) {
-	    foreach (array( 'version' => $this->getVersion() )
-		     as $key => $value) {
-		$ret = $this->setModuleParameter($key, $value);
-		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
-	    }
-	}
-
-	return GalleryStatus::success();
-    }
-
-    /**
      * @see GalleryModule::isRecommendedDuringInstall()
      */
     function isRecommendedDuringInstall() {

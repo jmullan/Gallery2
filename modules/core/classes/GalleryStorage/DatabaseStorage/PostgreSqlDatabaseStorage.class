@@ -170,6 +170,8 @@ class PostgreSqlDatabaseStorage extends DatabaseStorage {
 	    break;
 
 	case 'BITAND':
+	    /* Cast any input values as the 'bit' type */
+	    $args = str_replace('?', 'B?', $args);
 	    $sql = $args[0] . ' & ' . $args[1];
 	    break;
 

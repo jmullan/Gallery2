@@ -57,25 +57,6 @@ class DebugModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::install()
-     */
-    function install() {
-	list ($ret, $version) = $this->getModuleParameter('version');
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	if ($version != $this->getVersion()) {
-	    $ret = $this->setModuleParameter('version', $this->getVersion());
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-	}
-
-	return GalleryStatus::success();
-    }
-	
-    /**
      * @see GalleryModule::getItemLinks
      */
     function getItemLinks($items) {

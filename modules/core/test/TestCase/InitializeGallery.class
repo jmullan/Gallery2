@@ -39,7 +39,7 @@ class InitializeGalleryTestCase extends TestCase {
 	    unset($listeners[$eventName]);
 	}
 
-	$ret = GalleryInitFirstPass();
+	$ret = GalleryInitFirstPass(array('noDatabase' => 1));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -53,7 +53,7 @@ class InitializeGalleryTestCase extends TestCase {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	$ret = $core->install();
+	$ret = $core->installOrUpgrade(true);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -68,23 +68,22 @@ class InitializeGalleryTestCase extends TestCase {
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-	    
-	    if ($module->isRecommendedDuringInstall()) {
-		$ret = $module->install();
+
+	    /* We install everything for development environments */
+	    $ret = $module->installOrUpgrade();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+		
+	    list ($ret, $success) = $module->autoConfigure();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+		
+	    if ($success) {
+		list ($ret, $redirect) = $module->activate();
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
-		}
-		
-		list ($ret, $success) = $module->autoConfigure();
-		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
-		
-		if ($success) {
-		    list ($ret, $redirect) = $module->activate();
-		    if ($ret->isError()) {
-			return $ret->wrap(__FILE__, __LINE__);
-		    }
 		}
 	    }
 	}

@@ -50,27 +50,14 @@ class ImageBlockModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::install()
+     * @see GalleryModule::upgrade()
      */
-    function install() {
+    function upgrade() {
 	global $gallery;
 
-	list ($ret, $version) = $this->getModuleParameter('version');
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__,__LINE__);
-	}
-
-	if ($version != $this->getVersion()) {
-	    /* The store requires configuration. */
-	    $storage =& $gallery->getStorage();
-	    $ret = $storage->configureStore('imageblock');
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-
-	    foreach (array( 'version' => $this->getVersion(),
-			    'blocks' => 'randomImage',
-			    'show' => 'title|date|views' )
+	if (!isset($currentVersion)) {
+	    foreach (array('blocks' => 'randomImage',
+			   'show' => 'title|date|views' )
 		     as $key => $value) {
 		$ret = $this->setModuleParameter($key, $value);
 		if ($ret->isError()) {

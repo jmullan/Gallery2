@@ -65,7 +65,7 @@ class AdminModulesController extends GalleryController {
 	    switch($action) {
 		
 	    case 'install':
-		$ret = $module->install();
+		$ret = $module->installOrUpgrade();
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}

@@ -76,34 +76,6 @@ class CustomFieldModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::install()
-     */
-    function install() {
-	global $gallery;
-
-	list ($ret, $version) = $this->getModuleParameter('version');
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	if ($version != $this->getVersion()) {
-	    /* The store requires configuration. */
-	    $storage =& $gallery->getStorage();
-	    $ret = $storage->configureStore('customfield');
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-
-	    $ret = $this->setModuleParameter('version', $this->getVersion());
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-	}
-
-	return GalleryStatus::success();
-    }
-
-    /**
      * @see GalleryModule::isRecommendedDuringInstall
      */
     function isRecommendedDuringInstall() {

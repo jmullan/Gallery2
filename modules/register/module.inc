@@ -57,30 +57,17 @@ class RegisterModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::install()
+     * @see GalleryModule::upgrade()
      */
-    function install() {
+    function upgrade($currentVersion) {
 	global $gallery;
 
-	list ($ret, $version) = $this->getModuleParameter('version');
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	if ($version != $this->getVersion()) {
-	    /* The store requires configuration. */
-	    $storage =& $gallery->getStorage();
-	    $ret = $storage->configureStore('register');
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-
-	    foreach (array( 'confirmation' => 'admin',
-			    'emailadmins' => 1,
-			    'subject' => $this->translate('Account activation'),
-			    'adminsubject' => $this->translate('New user registration'),
-			    'from' => 'webmaster@' . $_SERVER['SERVER_NAME'],
-			    'version' => $this->getVersion() )
+	if (!isset($currentVersion)) {
+	    foreach (array('confirmation' => 'admin',
+			   'emailadmins' => 1,
+			   'subject' => $this->translate('Account activation'),
+			   'adminsubject' => $this->translate('New user registration'),
+			   'from' => 'webmaster@' . $_SERVER['SERVER_NAME'])
 			 as $key => $value) {
 		$ret = $this->setModuleParameter($key, $value);
 		if ($ret->isError()) {

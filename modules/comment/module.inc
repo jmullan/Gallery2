@@ -63,78 +63,28 @@ class CommentModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::install()
+     * @see GalleryModule::upgrade()
      */
-    function install() {
+    function upgrade($currentVersion) {
 	global $gallery;
 	
-	list ($ret, $version) = $this->getModuleParameter('version');
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	if ($version != $this->getVersion()) {
-	    /* The store requires configuration. */
-	    $storage =& $gallery->getStorage();
-	    $ret = $storage->configureStore('comment');
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-	    
-	    /* Register our permissions */
-	    $ret = GalleryCoreApi::registerPermission($this->getId(),
-							       'comment.add',
-							       $gallery->i18n('[comment] Add comments')); 
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-	    
-	    $ret = GalleryCoreApi::registerPermission($this->getId(),
-							       'comment.edit',
-							       $gallery->i18n('[comment] Edit comments')); 
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-	    
-	    $ret = GalleryCoreApi::registerPermission($this->getId(),
-							       'comment.delete',
-							       $gallery->i18n('[comment] Delete comments')); 
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-	    
-	    $ret = GalleryCoreApi::registerPermission($this->getId(),
-							       'comment.view',
-							       $gallery->i18n('[comment] View comments'));
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-	    
-	    $ret = GalleryCoreApi::registerPermission($this->getId(),
-							       'comment.all',
-							       $gallery->i18n('[comment] All access'), 
-							       GALLERY_PERMISSION_COMPOSITE,
-							       array('comment.add',
-								     'comment.edit',
-								     'comment.delete',
-								     'comment.view'));
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-		
-	    $ret = GalleryCoreApi::registerPermission($this->getId(),
-							       'comment.search',
-							       $gallery->i18n('[comment] Search comments'),
-							       GALLERY_PERMISSION_COMPOSITE,
-							       array('core.view',
-								     'comment.view'));
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-	    
-	    $ret = $this->setModuleParameter('version', $this->getVersion());
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+	if (!isset($currentVersion)) {
+	    /* Initial install.  Register our permissions */
+	    $permissions[] = array('add', $gallery->i18n('[comment] Add comments'), 0, array());
+	    $permissions[] = array('edit', $gallery->i18n('[comment] Edit comments'), 0, array());
+	    $permissions[] = array('delete', $gallery->i18n('[comment] Delete comments'), 0, array());
+	    $permissions[] = array('view', $gallery->i18n('[comment] View comments'), 0, array());
+	    $permissions[] = array('all', $gallery->i18n('[comment] All access'),
+				   GALLERY_PERMISSION_COMPOSITE,
+				   array('comment.add', 'comment.edit', 'comment.delete', 'comment.view'));
+	    $permissions[] = array('search', $gallery->i18n('[comment] Search comments'),
+				   GALLERY_PERMISSION_COMPOSITE,
+				   array('core.view', 'comment.view'));
+	    foreach ($permissions as $p) {
+		$ret = GalleryCoreApi::registerPermission($this->getId(), 'comment.' . $p[0], $p[1], $p[2], $p[3]);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
 	    }
 	}
 	

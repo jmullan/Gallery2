@@ -58,35 +58,19 @@ class NetPbmModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::install()
+     * @see GalleryModule::upgrade()
      */
-    function install() {
-	list ($ret, $version) = $this->getModuleParameter('version');
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	if ($version != $this->getVersion()) {
-	    if (empty($version)) {
-		/*
-		 * This is an initial install. Make sure that we have some
-		 * reasonable defaults.
-		 */
-		foreach (array('path' => '',
-			       'jpegQuality' => '75',
-			       'pnmtojpeg' => 'pnmtojpeg')
-			 as $key => $value) {
-
-		    $ret = $this->setModuleParameter($key, $value);
-		    if ($ret->isError()) {
-			return $ret->wrap(__FILE__, __LINE__);
-		    }
+    function upgrade($currentVersion) {
+	if (!isset($currentVersion)) {
+	    /* Initial install */
+	    foreach (array('path' => '',
+			   'jpegQuality' => '75',
+			   'pnmtojpeg' => 'pnmtojpeg')
+		     as $key => $value) {
+		$ret = $this->setModuleParameter($key, $value);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
 		}
-	    }
-		
-	    $ret = $this->setModuleParameter('version', $this->getVersion());
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 	

@@ -68,7 +68,7 @@ class InstallOtherModulesStep extends InstallStep {
 		}
 
 		if (isset($_REQUEST['activate']) && isset($_REQUEST['module'][$moduleId])) {
-		    $ret = $module->install();
+		    $ret = $module->installOrUpgrade();
 		    if ($ret->isError()) {
 			$templateData['errors'][] =
 				_(sprintf('Unable to install the %s module', $module->getName()));
@@ -118,7 +118,6 @@ class InstallOtherModulesStep extends InstallStep {
 		$templateData['errors'][] = _('Unable to commit database transaction');
 		$templateData['stackTrace'] = $ret->getAsHtml();
 	    }
-	    $this->setComplete(true);
 	    $templateData['bodyFile'] = 'InstallOtherModulesSuccess.html';
 	} else {
 	    $templateData['isComplete'] = $this->isComplete();
@@ -126,6 +125,7 @@ class InstallOtherModulesStep extends InstallStep {
 	    $templateData['groupLabel'] = $groupLabel;
 	    $templateData['bodyFile'] = 'InstallOtherModulesRequest.html';
 	}
+	$this->setComplete(true);
     }
 
     function isRedoable() {

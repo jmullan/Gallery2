@@ -55,21 +55,13 @@ class RandomHighlightModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::install()
+     * @see GalleryModule::upgrade()
      */
-    function install() {
-	list ($ret, $version) = $this->getModuleParameter('version');
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__,__LINE__);
-	}
-
-	if ($version != $this->getVersion()) {
-	    foreach (array('version' => $this->getVersion(),
-			   'duration' => 3600 /* Ten minutes */) as $key => $value) {
-		$ret = $this->setModuleParameter($key, $value);
-		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
+    function upgrade($currentVersion) {
+	if (!isset($currentVersion)) {
+	    $ret = $this->setModuleParameter('duration', 10 * 60 * 60); /* 10 minutes */
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 	return GalleryStatus::success();

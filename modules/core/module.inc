@@ -611,30 +611,12 @@ class CoreModule extends GalleryModule {
      * We pushed all this code into its own file since we need it very rarely so it doesn't make sense to load
      * it every single time.
      */
-    function install() {
-	global $gallery;
-	
-	/*
-	 * Installing the core is an unusual case, since the locations where we
-	 * keep track of what versions are installed may not even exist.  So,
-	 * we have to work under the assumption that the store itself is
-	 * already installed and configured, and our authentication is good.
-	 * So then if we ask for the version number of the core and we get a
-	 * storage error, we can assume that the core's store has not yet been
-	 * configured and do that now.  All other modules can simply ask for
-	 * the version number and expect that to succeed.
-	 */
-	list ($ret, $version) = $this->getModuleParameter('version');
-	if ($ret->isError() & !($ret->getErrorCode() & ERROR_STORAGE_FAILURE)) {
+    function upgrade($currentVersion) {
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/CoreModuleExtras.inc');
+	$ret = CoreModuleExtras::upgrade($this, $currentVersion);
+	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
-	} else if ($ret->isError() || $version != $this->getVersion()) {
-	    require_once(dirname(__FILE__) . '/CoreModuleExtras.inc');
-	    $ret = CoreModuleExtras::install($this);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
 	}
-
 	return GalleryStatus::success();
     }
 }

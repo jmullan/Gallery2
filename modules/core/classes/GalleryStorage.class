@@ -472,6 +472,26 @@ class GalleryStorage {
     }
 
     /**
+     * Return true if enough of this storage system is installed that
+     * there'll be a conflict if you try to do another install.
+     *
+     * @return array object GalleryStatus a status code
+     *               boolean true if the tables are installed
+     */
+    function isInstalled() {
+	if (!$this->_isInitialized) {
+	    $ret = $this->_impl->init();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    } else {
+		$this->_isInitialized = true;
+	    }
+	}
+	
+	return $this->_impl->isInstalled();
+    }
+
+    /**
      * Extracts the class names from a given query
      *
      * Query should be something like

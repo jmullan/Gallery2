@@ -58,32 +58,16 @@ class GdModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::install
+     * @see GalleryModule::upgrade()
      */
-    function install() {
-	list ($ret, $version) = $this->getModuleParameter('version');
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	if ($version != $this->getVersion()) {
-	    if (empty($version)) {
-		/*
-		 * This is an initial install. Make sure that we have some
-		 * reasonable defaults.
-		 */
-		$ret = $this->setModuleParameter('jpegQuality', '75');
-		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
-	    }
-
-	    $ret = $this->setModuleParameter('version', $this->getVersion());
+    function upgrade($currentVersion) {
+	if (!isset($currentVersion)) {
+	    /* Initial install */
+	    $ret = $this->setModuleParameter('jpegQuality', '75');
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
-	
 	return GalleryStatus::success();
     }
 

@@ -58,29 +58,12 @@ class FfmpegModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::install()
+     * @see GalleryModule::upgrade()
      */
-    function install() {
-	list ($ret, $version) = $this->getModuleParameter('version');
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	if ($version != $this->getVersion()) {
-	    if (empty($version)) {
-		/*
-		 * This is an initial install. Make sure that we have some
-		 * reasonable defaults.
-		 */
-		foreach (array('path' => '') as $key => $value) {
-		    $ret = $this->setModuleParameter($key, $value);
-		    if ($ret->isError()) {
-			return $ret->wrap(__FILE__, __LINE__);
-		    }
-		}
-	    }
-		
-	    $ret = $this->setModuleParameter('version', $this->getVersion());
+    function upgrade($currentVersion) {
+	if (!isset($currentVersion)) {
+	    /* Initial install. */
+	    $ret = $this->setModuleParameter('path', '');
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -100,7 +83,6 @@ class FfmpegModule extends GalleryModule {
      * @see GalleryModule::autoConfigure
      */
     function autoConfigure() {
-	/* We don't require any special configuration */
 	global $gallery;
 	
 	list ($ret, $needsConfiguration) = $this->needsConfiguration();

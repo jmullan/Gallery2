@@ -56,38 +56,20 @@ class ExifModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::install()
+     * @see GalleryModule::upgrade()
      */
-    function install() {
+    function upgrade($currentVersion) {
 	global $gallery;
 	
-	list ($ret, $version) = $this->getModuleParameter('version');
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	if ($version != $this->getVersion()) {
-	    /* The store requires configuration. */
-	    $storage =& $gallery->getStorage();
-	    $ret = $storage->configureStore('exif');
+	if (!isset($currentVersion)) {
+	    /* Initial install */
+	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/ExifHelper.class');
+	    $ret = ExifHelper::setDefaultProperties(EXIF_SUMMARY);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-	    
-	    if (empty($version)) {
-		GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/ExifHelper.class');
-		$ret = ExifHelper::setDefaultProperties(EXIF_SUMMARY);
-		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
 		
-		$ret = ExifHelper::setDefaultProperties(EXIF_DETAILED);
-		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
-	    }
-
-	    $ret = $this->setModuleParameter('version', $this->getVersion());
+	    $ret = ExifHelper::setDefaultProperties(EXIF_DETAILED);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }

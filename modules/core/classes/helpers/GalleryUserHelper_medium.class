@@ -200,12 +200,11 @@ class GalleryUserHelper_medium {
 	/* Make sure we have adequate permissions */
 	list ($ret, $inGroup) = GalleryCoreApi::isUserInSiteAdminGroup();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	if (!$inGroup) {
-	    return GalleryStatus::error(ERROR_PERMISSION_DENIED,
-					__FILE__, __LINE__);
+	    return GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__);
 	}
 
 	return GalleryStatus::success();

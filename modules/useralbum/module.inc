@@ -49,20 +49,13 @@ class UserAlbumModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::install()
+     * @see GalleryModule::upgrade()
      */
-    function install() {
+    function upgrade($currentVersion) {
 	global $gallery;
 
-	list ($ret, $version) = $this->getModuleParameter('version');
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__,__LINE__);
-	}
-
-	if ($version != $this->getVersion()) {
-	    foreach (array( 'version' => $this->getVersion(),
-			    'view' => 'everybody',
-			    'fullsize' => '1' )
+	if (!isset($currentVersion)) {
+	    foreach (array('view' => 'everybody', 'fullsize' => '1')
 		     as $key => $value) {
 		$ret = $this->setModuleParameter($key, $value);
 		if ($ret->isError()) {
