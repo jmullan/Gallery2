@@ -515,5 +515,47 @@ class GalleryEmbed {
 	}
 	return GalleryStatus::success();
     }
+
+    /**
+     * Return the SystemContent block for a specific module
+     * 
+     * @param string module id
+     * @return array object GalleryStatus
+     *               string html content
+     */
+    function getSystemContent($moduleId, $contentId) {
+	global $gallery;
+
+	/* Load the module list */
+	list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if (isset($moduleStatus[$moduleId]) && !empty($moduleStatus[$moduleId]['active'])) {
+	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    /* Load our templating engine */
+	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/modules/core/classes/GalleryTemplate.class');
+	    $template = new GalleryTemplate(dirname(__FILE__));
+	    $template->setVariable('l10Domain', 'module_' . $moduleId);
+
+	    /* Load all module-related content for these items */
+	    list ($ret, $systemContent) = $module->loadSystemContent($template);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    if (! empty($systemContent[$contentId])) {
+		return $template->fetch($systemContent[$contentId]);
+	    } else {
+		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), '');
+	    }
+	}
+
+	return array(GalleryStatus::success(), '');
+    }
 }
 ?>
