@@ -373,7 +373,7 @@ class AlbumTest extends GalleryTestCase {
 
 	GalleryDataCache::reset();
 
-	list ($ret, $actual) = $parent->fetchChildren($gallery->getActiveUserId());
+	list ($ret, $actual) = $parent->fetchChildren();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

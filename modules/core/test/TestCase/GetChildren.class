@@ -48,7 +48,7 @@ class GetChildrenTestCase extends TestCase {
 	    $gallery->debug("count: $count[$rootId]");
 
 	    /* Get 'em all */ 
-	    list ($ret, $childIds) = $root->fetchChildren($userId);
+	    list ($ret, $childIds) = $root->fetchChildren();
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }

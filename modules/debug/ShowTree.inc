@@ -98,8 +98,7 @@ class ShowTreeView extends GalleryView {
 	    $currentPath = $entityTree[$current]['completePath'];
 
 	    /* Get the childIds of the current item */
-	    list ($ret, $childIds) =
-		GalleryChildEntityHelper::fetchChildIds($currentItemId);
+	    list ($ret, $childIds) = GalleryChildEntityHelper::fetchChildIds($currentItemId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }

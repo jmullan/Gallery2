@@ -108,8 +108,7 @@ class ItemEditAlbumController extends GalleryController {
 		if (   isset($form['recreateThumbnails'])
 		    || isset($form['recreateResizes']) ) {
 			/* Get the child id => child types */
-			list ($ret, $childIds) =
-				$item->fetchChildIds($gallery->getActiveUserId());
+			list ($ret, $childIds) = $item->fetchChildIds();
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}

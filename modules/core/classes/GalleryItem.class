@@ -431,7 +431,6 @@ class GalleryItem_core extends GalleryFileSystemEntity {
      * by the orderBy field and the direction specified by the orderDirection
      * field, that are visible to the given user.
      *
-     * @param int the user id of the user making the request
      * @param int where to start
      * @param int how many to return
      *
@@ -439,7 +438,7 @@ class GalleryItem_core extends GalleryFileSystemEntity {
      * @return array object GalleryStatus a status code
      *               array integer ids
      */
-    function fetchChildIds($userId, $offset=null, $count=null) {
+    function fetchChildIds($offset=null, $count=null) {
 	global $gallery;
 
 	list ($ret, $permissionBits) = GalleryPermissionSetMap::convertIdsToBits('core.view');
@@ -492,8 +491,8 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	' . $orderClause . '
 	';
 	$data[] = $this->getId();
-	$data[] = $userId;
-	$data[] = $userId;
+	$data[] = $gallery->getActiveUserId();
+	$data[] = $gallery->getActiveUserId();
 	$data[] = $storage->convertIntToBits($permissionBits);
 	$data[] = $storage->convertIntToBits(0);
 	for ($i = 0; $i < $extraIds; $i++) {
@@ -530,10 +529,10 @@ class GalleryItem_core extends GalleryFileSystemEntity {
      * @return array object GalleryStatus a status code
      *               array integer ids
      */
-    function fetchChildren($userId, $offset=null, $count=null) {
+    function fetchChildren($offset=null, $count=null) {
 	global $gallery;
 	
-	list ($ret, $childIds) = $this->fetchChildIds($userId, $offset, $count);
+	list ($ret, $childIds) = $this->fetchChildIds($offset, $count);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

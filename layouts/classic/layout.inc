@@ -110,8 +110,7 @@ class ClassicLayout extends GalleryLayout {
 	}
 
 	/* Get the child id => child types */
-	list ($ret, $childIds) =
-	    $item->fetchChildIds($gallery->getActiveUserId(), $start, $perPage);
+	list ($ret, $childIds) = $item->fetchChildIds($start, $perPage);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -409,8 +408,7 @@ class ClassicLayout extends GalleryLayout {
 
 	/* Count the total number peers */
 	/* Get the child id => child types */
-	list ($ret, $peerIds) =
-	    $parent->fetchChildIds($gallery->getActiveUserId());
+	list ($ret, $peerIds) = $parent->fetchChildIds();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
