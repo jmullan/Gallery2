@@ -52,7 +52,10 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$gallery->_platform = new ItemAddFromServerTestPlatform($gallery->getPlatform());
+	$this->_symlinkAllowedPlatform = new ItemAddFromServerTestPlatform($gallery->getPlatform(), true);
+	$this->_symlinkDisallowedPlatform = new ItemAddFromServerTestPlatform($gallery->getPlatform(), false);
+
+	$gallery->_platform = $this->_symlinkAllowedPlatform;
     }
 
     function tearDown() {
@@ -71,8 +74,59 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	parent::tearDown();
     }
 
+
+    /*
+     * call _testAddChildrenFromLocalServer with the '$useSymlink'
+     * parameter set to false, thus specifying that the files should be
+     * copied.
+     */
     function testAddChildrenFromLocalServer() {
+	return $this->_testAddChildrenFromLocalServer(false);
+    } 
+
+
+    /*
+     * call _testAddChildrenFromLocalSerer specifying that we want to use
+     * a symlink. Also specify that the symlink should be supported (and
+     * thus the mock platform object that supports symlinks will be used.
+     */
+    function testAddChildrenFromLocalServerUsingSymlinkWithSymlinkSupported() {
+	return $this->_testAddChildrenFromLocalServer(true, true);
+    } 
+
+
+    /*
+     * call _testAddChildrenFromLocalSerer specifying that we want to use
+     * a symlink. Also specify that the symlink should >not< be supported
+     * (and thus the mock platform object that does not support symlinks
+     * will be used.
+     */
+    function testAddChildrenFromLocalServerUsingSymlinkWithSymlinkNotSupported() {
+	return $this->_testAddChildrenFromLocalServer(true, false);
+    } 
+
+
+    /**
+     * All 'testAddChildrenFromLocalServer*' tests are very similar, hence
+     * they all run through this method. The two parameters to this method
+     * are: '$useSymlink', which is a boolean specifying if we should try
+     * to add the files using a symlink or not.  The second param is
+     * '$shouldSuceed'.  Since windows based OSes don't support symlinks,
+     * G2 will not support adding a file using symlinks on those OSes.
+     * We have two different mock platform objects, one that supports
+     * symlinks and one that does not.  if we expect using a symlink to
+     * fail, we bail check for that condition, and then bail out 
+     * immediately.
+     */
+    function _testAddChildrenFromLocalServer($useSymlink, $symlinkSupported=true) {
+	
 	global $gallery;
+
+	if ($symlinkSupported) {
+	    $gallery->_platform = $this->_symlinkAllowedPlatform;
+	} else {
+	    $gallery->_platform = $this->_symlinkDisallowedPlatform;
+	}
 
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('form[action][addFromLocalServer]', 1);
@@ -83,11 +137,23 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	GalleryUtilities::putRequestVariable('form[localServerPath]', $baseDir);
 	$files = array('test1.gif', 'test1.jpg', 'test2.gif', 'test3.gif', 'apo\'strophe.jpg');
 	foreach ($files as $fileName) {
-	    GalleryUtilities::putRequestVariable('form[localServerFiles][' . $fileName . ']', 1);
+	    GalleryUtilities::putRequestVariable('form[localServerFiles][' . $fileName . '][selected]', 1);
+	    if ($useSymlink) {
+		GalleryUtilities::putRequestVariable('form[localServerFiles][' . $fileName . '][useSymlink]', 1);
+	    }
 	}
 
 	/* Perform the request and verify that we succeeded */
-	$results = $this->handleRequest($this->_rootAlbum);
+	if ($symlinkSupported) {
+	    $results = $this->handleRequest($this->_rootAlbum);
+	} else {
+	    $results = $this->handleRequest($this->_rootAlbum, ERROR_UNSUPPORTED_OPERATION);
+	    /* we're setting the mock platform back to the one that
+	     * supports symlink for consistency.
+	     */
+	    $gallery->_platform = $this->_symlinkAllowedPlatform;
+	    return;
+	}
 	$this->assertEquals(array(), $results[0]);
 
 	/* We don't know the ids, but we can verify everything else */
@@ -131,7 +197,7 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	$platform = $gallery->getPlatform();
 	$basedir = dirname(__FILE__) . '/../data/';
 	GalleryUtilities::putRequestVariable('form[localServerPath]', $basedir);
-	GalleryUtilities::putRequestVariable('form[localServerFiles][test1.gif]', 1);
+	GalleryUtilities::putRequestVariable('form[localServerFiles][test1.gif][selected]', 1);
 
 	/* Perform the request and verify that we succeeded */
 	$option = new ItemAddPluginTestOption();
@@ -150,8 +216,9 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
  * @subpackage PHPUnit
  */
 class ItemAddFromServerTestPlatform extends GalleryPlatform {
-    function ItemAddFromServerTestPlatform($delegate) {
+    function ItemAddFromServerTestPlatform($delegate, $symlinkSupported) {
 	$this->_delegate = $delegate;
+	$this->_symlinkSupported = $symlinkSupported;
     }
 
     function file_exists($path) {
@@ -176,5 +243,28 @@ class ItemAddFromServerTestPlatform extends GalleryPlatform {
 	}
 	return $this->_delegate->copy($source, $dest);
     }
+
+    function symlink($source, $dest) {
+	switch ($source) {
+	case dirname(__FILE__) . '/../data/\\apo\'strophe.jpg':
+	    /* The windows path is a little weird -- but we can live with it */ 
+	case dirname(__FILE__) . '/../data/apo\'strophe.jpg':
+	    $source = dirname(__FILE__) . '/../data/test1.jpg';
+	    break;
+	}
+
+	if ( $this->_delegate->isSymlinkSupported() == true ) {
+	    return $this->_delegate->symlink($source, $dest);
+	} else {
+	    return $this->copy ( $source, $dest );
+	}
+    }
+
+    function isSymlinkSupported() {
+	return $this->_symlinkSupported;
+	#return $this->_delegate->isSymlinkSupported();
+    }
+
+
 }
 ?>

@@ -7,6 +7,7 @@
  *}
 {if !empty($form.localServerFiles)}
 <script type="text/javascript">
+  var symState = false;
   {* Generate indexes of items that we know, which will correspond to checkbox ids, below *}
   {strip}
   var knownTypeCheckboxIds = new Array(
@@ -26,8 +27,33 @@
     for (i = 0; i < knownTypeCheckboxIds.length; i++) {
       var cb = document.getElementById('cb_' + knownTypeCheckboxIds[i]);
       cb.checked = !cb.checked;
+  {/literal}
+      {if $ItemAddFromServer.showSymlink}toggleSymlinkEnabled(knownTypeCheckboxIds[i]);{/if}
+  {literal}
     }
   }
+
+  function toggleSymlinkEnabled(a) {
+    var cbSymlink = document.getElementById('symlink_' + a );
+    var cbSelected = document.getElementById('cb_' + a );
+    cbSymlink.disabled = ! cbSelected.checked;
+  }
+
+  function invertSymlinkSelection() {
+    symState = !symState;
+    for (i = 0; i < knownTypeCheckboxIds.length; i++) {
+      var cb = document.getElementById('cb_' + knownTypeCheckboxIds[i]);
+      var cbSymlink = document.getElementById('symlink_' + knownTypeCheckboxIds[i]);
+      if (cb.checked == true) {
+        if (symState == false) {
+          cbSymlink.checked = false;
+        } else {
+          cbSymlink.checked = true;
+        }
+      }
+    }
+  }
+
   {/literal}
 </script>
 {/if}
@@ -157,6 +183,11 @@
       <th>
 	{g->text text="Size"}
       </th>
+      {if $ItemAddFromServer.showSymlink}
+        <th>
+          {g->text text="Use Symlink"}
+        </th>
+      {/if}
     </tr>
   
     {foreach name=fileIndex from=$form.localServerFiles item=file}
@@ -164,7 +195,11 @@
     <tr class="{cycle values="gbEven,gbOdd"}">
       {if ($file.type == 'file')}
       <td style="text-align: center">
-	<input type="checkbox" id="cb_{$smarty.foreach.fileIndex.iteration}" name="{g->formVar var="form[localServerFiles][$key]"}"/>
+	<input type="checkbox" id="cb_{$smarty.foreach.fileIndex.iteration}"
+	{if $ItemAddFromServer.showSymlink}
+		onClick="javascript:toggleSymlinkEnabled('{$smarty.foreach.fileIndex.iteration}')"
+	{/if}
+		name="{g->formVar var="form[localServerFiles][$key][selected]"}"/>
       </td>
 
       <td>
@@ -178,6 +213,11 @@
       <td>
 	{g->text one="%d byte" many="%d bytes" count=$file.stat.size arg1=$file.stat.size}
       </td>
+	{if $ItemAddFromServer.showSymlink}
+	  <td align="center">
+            <input type="checkbox" disabled="true" id="symlink_{$smarty.foreach.fileIndex.iteration}" name="{g->formVar var="form[localServerFiles][$key][useSymlink]"}"/>
+	  </td>
+	{/if}
       {else}
       <td>
         &nbsp;
@@ -198,6 +238,11 @@
       <td>
 	&nbsp;
       </td>
+      {if $ItemAddFromServer.showSymlink}
+        <td>
+          &nbsp;
+        </td>
+      {/if}
       {/if}
     </tr>
     {/foreach}
@@ -205,9 +250,17 @@
       <th>
         <input name="selectionToggle" type="checkbox" onClick="javascript:toggleSelections()"/>
       </th>
-      <th colspan="3">
+      <th colspan="{if $ItemAddFromServer.showSymlink}2{else}3{/if}">
         {g->text text="(Un)check all known types"}
       </th>     
+      {if $ItemAddFromServer.showSymlink}
+        <th>
+          {g->text text="(Un)check symlinks"}<br/>{g->text text="for selected items"}
+        </th>     
+        <th align="center">
+          <center><input name="selectionToggle" type="checkbox" onClick="javascript:invertSymlinkSelection()"/></center>
+        </th>
+      {/if}
     </tr>
   </table>
   {capture name="bottomFlagHtml"}

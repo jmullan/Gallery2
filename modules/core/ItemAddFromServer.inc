@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -46,7 +46,7 @@ class ItemAddFromServer extends ItemAddPlugin {
 
 	if (isset($form['action']['findFilesFromLocalServer'])) {
 	    /* Delegate back to the same view */
-	} else if (isset($form['action']['addFromLocalServer'])) {
+	} else if (isset($form['action']['addFromLocalServer']) && !empty($form['localServerFiles'])) {
 	    /* Add the selected items */
 	    $dir = trim($form['localServerPath']);
 
@@ -54,40 +54,46 @@ class ItemAddFromServer extends ItemAddPlugin {
 	    foreach ($form['localServerFiles'] as $fileKey => $unused) {
 		$filename = $fileKey;
 
-		// Build up the file path with the right style of directory separator
-		$slash = $platform->getDirectorySeparator();
-		$filepath = $dir;
-		if ($filepath[strlen($filepath)-1] != $slash) {
-		    $filepath .= $slash;
-		}
-		$filepath .= $filename;
+		$selected = (isset($form['localServerFiles'][$fileKey]['selected']));
+		$useSymlink = (isset($form['localServerFiles'][$fileKey]['useSymlink']));
 
-		// Unescape any special chars in the file path
-		$filepath = urldecode(GalleryUtilities::htmlEntityDecode($filepath));
-		
-		list ($base, $extension) = GalleryUtilities::getFileNameComponents($filename);
-		$mimeType = GalleryCoreApi::convertExtensionToMime($extension);
+		if ($selected) {
+		    // Build up the file path with the right style of directory separator
+		    $slash = $platform->getDirectorySeparator();
+		    $filepath = $dir;
+		    if ($filepath[strlen($filepath)-1] != $slash) {
+			$filepath .= $slash;
+		    }
+		    $filepath .= $filename;
 
-		list ($ret, $newItem) = GalleryCoreApi::addItemToAlbum($filepath,
-								       $filename,
-								       $base,
-								       $base,
-								       $base,
-								       $mimeType,
-								       $item->getId());
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null);
-		}
+		    // Unescape any special chars in the file path
+		    $filepath = urldecode(GalleryUtilities::htmlEntityDecode($filepath));
 
-		foreach ($options as $option) {
-		    list ($ret, $optionErrors) = $option->handleRequestAfterAdd($form, $newItem);
+		    list ($base, $extension) = GalleryUtilities::getFileNameComponents($filename);
+		    $mimeType = GalleryCoreApi::convertExtensionToMime($extension);
+
+		    list ($ret, $newItem) = GalleryCoreApi::addItemToAlbum($filepath,
+									   $filename,
+									   $base,
+									   $base,
+									   $base,
+									   $mimeType,
+									   $item->getId(),
+									   $useSymlink);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null, null);
 		    }
-		    $error = array_merge($error, $optionErrors);
+
+		    foreach ($options as $option) {
+			list ($ret, $optionErrors) = $option->handleRequestAfterAdd($form, $newItem);
+			if ($ret->isError()) {
+			    return array($ret->wrap(__FILE__, __LINE__), null, null);
+			}
+			$error = array_merge($error, $optionErrors);
+		    }
+
+		    $status['addedFiles'][] = array('fileName' => $filename, 'id' => $newItem->getId());
 		}
-		
-		$status['addedFiles'][] = array('fileName' => $filename, 'id' => $newItem->getId());
 	    }
 	}
 
@@ -169,13 +175,13 @@ class ItemAddFromServer extends ItemAddPlugin {
 			} else {
 			    $filePath = $path . '/' . $fileName;
 			}
-			
+
 			if ($platform->is_readable($filePath)) {
 			    if ($platform->is_dir($filePath)) {
 
 				$filePath = $platform->realpath($filePath);
 				$legal = GalleryUtilities::isPathInList($filePath, $localServerDirList);
-				
+
 				$form['localServerFiles'][] =
 				    array('type' => 'directory',
 					  'fileName' => $fileName,
@@ -189,11 +195,11 @@ class ItemAddFromServer extends ItemAddPlugin {
 				    if ($ret->isError()) {
 					return array($ret->wrap(__FILE__, __LINE__), null, null);
 				    }
-				    
+
 				    $mimeTypeItemMap[$mimeType]['names'] =
 					$mimeTypeItemMap[$mimeType]['instance']->itemTypeName();
 				}
-				
+
 				$form['localServerFiles'][] =
 				    array('type' => 'file',
 					  'fileName' => $fileName,
@@ -206,7 +212,7 @@ class ItemAddFromServer extends ItemAddPlugin {
 			}
 		    }
 		    $platform->closedir($handle);
-			  
+
 		} else if ($platform->is_file($path) && !$platform->is_link($path)) {
 		    $mimeType = GalleryCoreApi::getMimeType($path);
 		    if (!isset($mimeTypeItemMap[$mimeType])) {
@@ -270,7 +276,12 @@ class ItemAddFromServer extends ItemAddPlugin {
 	    $template->setVariable('ItemAdmin', $ItemAdmin);
 	}
 
+        /* Do we want to allow symlinks? */
+	$ItemAddFromServer['showSymlink'] = $platform->isSymlinkSupported();
+
 	$template->setVariable('ItemAddFromServer', $ItemAddFromServer);
+
+
 	return array(GalleryStatus::success(),
 		     'modules/core/templates/ItemAddFromServer.tpl',
 		     'modules_core');
