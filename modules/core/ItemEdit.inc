@@ -28,7 +28,7 @@
  */
 
 /**
- * This controller will handle the editing of a photo
+ * This controller will handle the editing of an item
  *
  * @package GalleryCore
  * @subpackage UserInterface
@@ -94,12 +94,14 @@ class ItemEditController extends GalleryController {
 	}
 
 	/* Now let each option process its data */
-	foreach ($optionInstances as $option) {
-	    list ($ret, $optionErrors) = $option->handleRequestAfterEdit($form, $item, $preferred);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+	if (isset($form['action']['save'])) {
+	    foreach ($optionInstances as $option) {
+		list ($ret, $optionErrors) = $option->handleRequestAfterEdit($form, $item, $preferred);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		$error = array_merge($error, $optionErrors);
 	    }
-	    $error = array_merge($error, $optionErrors);
 	}
 
 	if (empty($error)) {
@@ -124,7 +126,7 @@ class ItemEditController extends GalleryController {
 }
 
 /**
- * This view will show options to edit a photo
+ * This view will show options to edit an item
  *
  * @package GalleryCore
  * @subpackage UserInterface
