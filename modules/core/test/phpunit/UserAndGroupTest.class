@@ -730,6 +730,84 @@ class UserAndGroupTest extends GalleryTestCase {
     }
 
     /**
+     * Verify that we can fetch all users from a group with a given substring in their username
+     */
+    function testFetchUsersFromGroupBySubstringAndGroupId() {
+	global $gallery;
+
+	$strSearch = 'rand';
+	$uniqueFirst = rand(0, 65535);
+	$uniqueSecond = rand(0, 65535);
+
+	/* Create a group */
+	list ($ret, $group) = $this->_createRandomGroup();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* fetchUserCount should return 0 */
+	list ($ret, $countBefore) = GalleryCoreApi::fetchUserCount($strSearch, $group->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(0, $countBefore);
+	
+	/* Create the first user */
+	list ($ret, $userFirst) = $this->_createRandomUser($strSearch . $uniqueFirst);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Create the second user */
+	list ($ret, $userSecond) = $this->_createRandomUser($strSearch . $uniqueSecond);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Put the first user into the group */
+	$ret = GalleryCoreApi::addUserToGroup($userFirst->getId(), $group->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	/* Put the second user into the group */
+	$ret = GalleryCoreApi::addUserToGroup($userSecond->getId(), $group->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* fetchUsersForGroup should return one user */
+	list ($ret, $users) = GalleryCoreApi::fetchUsersForGroup(
+					$group->getId(),
+					null,
+					null,
+					$strSearch . $uniqueFirst
+			      );
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(1, count($users));
+
+	/* Delete first user */
+	$ret = $this->_deleteAndVerifyEntity($userFirst->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	/* Delete second user */
+	$ret = $this->_deleteAndVerifyEntity($userSecond->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Delete group */
+	$ret = $this->_deleteAndVerifyEntity($group->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    /**
      * Create user, fetch it by name, delete user
      */
     function testFetchUserByName() {

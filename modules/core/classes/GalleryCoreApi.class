@@ -1539,13 +1539,14 @@ class GalleryCoreApi {
      * @param int the group id
      * @param int the number of userids desired
      * @param int the start of the range
+     * @param string substring to match against the username
      * @return array object GalleryStatus a status code
      *               array user id => user name
      * @static
      */
-    function fetchUsersForGroup($groupId, $count=null, $offset=null) {
+    function fetchUsersForGroup($groupId, $count=null, $offset=null, $substring=null) {
 	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/helpers/GalleryUserGroupHelper_medium.class');
-	return GalleryUserGroupHelper_medium::fetchUsersForGroup($groupId, $count, $offset);
+	return GalleryUserGroupHelper_medium::fetchUsersForGroup($groupId, $count, $offset, $substring);
     }
 
     /**

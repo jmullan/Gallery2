@@ -169,13 +169,15 @@ class GalleryUserGroupHelper_medium {
      * @param int the group id
      * @param int the number of userids desired
      * @param int the start of the range
+     * @param string substring to match against the username
      * @return array object GalleryStatus a status code
      *               array user id => user name
      * @static
      */
-    function fetchUsersForGroup($groupId, $count=null, $offset=null) {
+    function fetchUsersForGroup($groupId, $count=null, $offset=null, $substring=null) {
 	global $gallery;
 
+	$data = array();
 	$query = '
         SELECT
           [GalleryUserGroupMap::userId],
@@ -186,13 +188,23 @@ class GalleryUserGroupHelper_medium {
           [GalleryUserGroupMap::groupId] = ?
           AND
           [GalleryUserGroupMap::userId] = [GalleryUser::id]
+	';
+	$data[] = $groupId;
+	if (!empty($substring)) {
+	    $query .= '
+	      AND
+	      [GalleryUser::userName] LIKE ?
+	    ';
+	    $data[] = "%$substring%";
+	}
+	$query .= '
         ORDER BY
           [GalleryUser::userName]
         ';
 
 	list ($ret, $searchResults) =
 	    $gallery->search($query,
-			      array($groupId),
+			      $data,
 			      array('limit' => array('count' => $count,
 						     'offset' => $offset)));
 	if ($ret->isError()) {
