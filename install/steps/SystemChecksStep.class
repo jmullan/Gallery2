@@ -165,7 +165,7 @@ class SystemChecksStep extends InstallStep {
 	    $templateData['check'][] =
 		array('title' => $title,
 		      'warning' => true,
-		      'notice' => sprintf(_('Warning: Your PHP is configured to limit the post data to a maximum of %sb (<b>post_max_size</b> parameter in php.ini). You should rise this limit to allow uploading bigger files.'), ini_get('post_max_size')),
+		      'notice' => sprintf(_('Warning: Your PHP is configured to limit the post data to a maximum of %sb (<b>post_max_size</b> parameter in php.ini). You should raise this limit to allow uploading bigger files.'), ini_get('post_max_size')),
 		);
 	    $suggestedHtaccess[] = sprintf('php_value post_max_size %sM', $minimumPostsize);
 	} else {
@@ -220,23 +220,21 @@ class SystemChecksStep extends InstallStep {
 	    $path = $base . trim($file);
 
 	    if (!file_exists($path)) {
-		$warnings['missing'][] = $file;
+		$warnings['missing'][] = SystemChecksStep::_abbreviateInSpan($file, 60);
 	    } else {
 		$lines = @file($path);
 		$actualChecksum = sprintf('%u', crc32(join('', $lines)));
 		if ($actualChecksum != $cksum) {
-		    $displayTextMaxSize = 60;	  // doesn't include the ellipses
-		    if (strlen($file) > $displayTextMaxSize) {
-			$abbrev = '...' . substr($file, -1 * $displayTextMaxSize);
-		    } else {
-			$abbrev = $file;
-		    }
-		    $warnings['corrupt'][] =
-			sprintf('<span title="%s">%s</span>', $file, $abbrev);
+		    $warnings['corrupt'][] = SystemChecksStep::_abbreviateInSpan($file, 60);
 		}
 	    }
 	}
 	return $warnings;
+    }
+
+    function _abbreviateInSpan($str, $len) {
+	$abbrev = (strlen($str) > $len) ? ('...' . substr($str, -1 * $len)) : $str;
+	return sprintf('<span title="%s">%s</span>', $str, $abbrev);
     }
 }
 ?>
