@@ -441,7 +441,7 @@ class GalleryItemHelper_advanced {
 	if (!GalleryUtilities::isA($parentAlbum, 'GalleryAlbumItem')) {
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
 	}
-	
+
 	/* create the album object */
 	list ($ret, $album) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryAlbumItem');
 	if ($ret->isError()) {
@@ -474,6 +474,17 @@ class GalleryItemHelper_advanced {
 	$ret = $album->save();
 	if ($ret->isError()) {
 	    GalleryCoreApi::releaseLocks($lockIds);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* set order weight -- add to end of parent album */
+	list ($ret, $maxWeight) =
+	    GalleryCoreApi::fetchExtremeChildWeight($parentAlbumId, HIGHER_WEIGHT);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$ret = GalleryCoreApi::setItemOrderWeight($album->getId(), $maxWeight + 1000);
+	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
