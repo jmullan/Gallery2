@@ -1437,9 +1437,13 @@ class DatabaseStorage extends GalleryStorage {
 	$query .= join(', ', $targetComponents);
 	$query .= ' FROM ';
 	$query .= join(', ', array_keys($targetTableList));
-	$query .= ' WHERE ';
-	$query .= join(' AND ', $whereComponents);
-	$data = $whereData;
+	if (sizeof($whereComponents)) {
+	    $query .= ' WHERE ';
+	    $query .= join(' AND ', $whereComponents);
+	    $data = $whereData;
+	} else {
+	    $data = array();
+	}
 
 	$this->_traceStart();
 	$recordSet = $this->_db->Execute($query, $data);
