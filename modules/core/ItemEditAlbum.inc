@@ -147,6 +147,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 			    } elseif ($ret->isError()) {
 				return array($ret->wrap(__FILE__, __LINE__), null, null);
 			    }
+			    $sourceMimeType = $source->getDerivativeMimeType();
 			} else {
 			    /* There is no thumbnail yet (maybe the file was uploaded
 			       when there was no graphic toolkit). Build new thumbnail
@@ -166,6 +167,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 			    if ($ret->isError()) {
 				return array($ret->wrap(__FILE__, __LINE__), null, null);
 			    }
+			    $sourceMimeType = $source->getMimeType();
 			}
 
 			if ($thumbnail == null) {
@@ -175,7 +177,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 			/* Change the thumbnail */
 			$operation = 'thumbnail|' . $form['thumbnail']['size'];
 			list ($ret, $isSupported, $outputMimeType) =
-			    GalleryCoreApi::isSupportedOperationSequence($source->getMimeType(), $operation);
+			    GalleryCoreApi::isSupportedOperationSequence($sourceMimeType, $operation);
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null, null);
 			}
@@ -183,7 +185,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 			if (!$isSupported) {
 			    $operation = 'convert-to-image/jpeg;' . $operation;
 			    list ($ret, $isSupported, $outputMimeType) =
-				GalleryCoreApi::isSupportedOperationSequence($source->getMimeType(), $operation);
+				GalleryCoreApi::isSupportedOperationSequence($sourceMimeType, $operation);
 			    if ($ret->isError()) {
 				return array($ret->wrap(__FILE__, __LINE__), null, null);
 			    }

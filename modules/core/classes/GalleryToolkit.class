@@ -91,7 +91,6 @@ class GalleryToolkit {
      * (or 'rotate|-90').  The toolkit should only merge the operations if it
      * can do so cleanly.
      *
-     * @param string the input mime type
      * @param string the first operation 
      * @param array mixed the first operation's arguments 
      * @param string the second operation 
@@ -100,7 +99,7 @@ class GalleryToolkit {
      *                $mergedOperation,
      *                $mergedArgs)
      */
-    function mergeOperations($mimeType, $operation1, $args1, $operation2, $args2) {
+    function mergeOperations($operation1, $args1, $operation2, $args2) {
 	return array(false, null, null);
     }
 }

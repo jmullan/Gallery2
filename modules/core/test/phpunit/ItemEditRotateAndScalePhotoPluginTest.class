@@ -143,6 +143,47 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
+	/* Save current serial */
+	$originalSerial = $this->_item->getSerialNumber();
+
+	/* Perform the request and verify that we succeeded */
+	$preferred = null;
+	$results = $this->handleRequest($this->_item, $preferred);
+	$this->assertEquals(array(array(),
+				  $this->_translate('Scaled photo successfully')),
+			    $results);
+
+	/* Verify that we have a preferred again */
+	list ($ret, $preferredIds) =
+	    GalleryCoreApi::fetchPreferredsByItemIds(array($this->_item->getId()));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(1, sizeof($preferredIds), 'there should be a preferred');
+
+	/* Verify that the item serial is the same */
+	list ($ret, $this->_item) = $this->_item->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals($originalSerial, $this->_item->getSerialNumber());
+    }
+
+    function testScaleReplaceOriginal() {
+	global $gallery;
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('form[action][scale]', 1);
+	GalleryUtilities::putRequestVariable('form[scale][size]', 270);
+	GalleryUtilities::putRequestVariable('form[serialNumber]', $this->_item->getSerialNumber());
+	
+	/* Delete the preferred */
+	$ret = GalleryCoreApi::deleteEntityById($this->_derivative[0]->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
 	/* Save current size */
 	$originalSize = $this->_item->getSize();
 
@@ -191,8 +232,7 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	// Note: We use a mock toolkit; output values don't look like normal toolkits
-	$this->assertEquals('rotate+scale|90,+,200', $this->_derivative[0]->getDerivativeOperations());
+	$this->assertEquals('rotate|90;scale|200', $this->_derivative[0]->getDerivativeOperations());
     }
 
     function testScaleMissing() {
@@ -240,7 +280,7 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals('rotate+rotate|90,+,90', $this->_derivative[0]->getDerivativeOperations());
+	$this->assertEquals('rotate|180', $this->_derivative[0]->getDerivativeOperations());
     }
 
     function testRotateCounterClockwise() {
@@ -254,12 +294,9 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 	$this->assertEquals(array(array(), $this->_translate('Rotated photo successfully')),
 			    $results);
 
-	/* Verify that the transform went ok */
+	/* Verify that the derivative is now gone (90 + -90 == 0) */
 	list ($ret, $this->_derivative[0]) = $this->_derivative[0]->refresh();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	$this->assertEquals('rotate+rotate|90,+,-90', $this->_derivative[0]->getDerivativeOperations());
+	$this->assert($ret->getErrorCode() & ERROR_MISSING_OBJECT);
     }
 
     function testRotateFlip() {
@@ -278,7 +315,7 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals('rotate+rotate|90,+,180', $this->_derivative[0]->getDerivativeOperations());
+	$this->assertEquals('rotate|-90', $this->_derivative[0]->getDerivativeOperations());
     }
 
     function testRevertToOriginal() {
@@ -311,7 +348,6 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 	global $gallery;
 
 	/* Use valid inputs */
-	GalleryUtilities::putRequestVariable('form[preserveOriginal]', 'off');
 	GalleryUtilities::putRequestVariable('form[action][scale]', 1);
 	GalleryUtilities::putRequestVariable('form[scale][size]', 270);
 	GalleryUtilities::putRequestVariable('form[serialNumber]', -1);
@@ -363,11 +399,25 @@ class ItemEditRotateAndScalePhotoPluginTestToolkit extends GalleryToolkit {
      * @see GalleryToolkit::mergeOperations()
      * Dummy operation
      */
-    function mergeOperations($mimeType, $operation1, $args1, $operation2, $args2) {
-	// Do something stupid, but predictable
-	return array(GalleryStatus::success(),
-		     $operation1 . '+' . $operation2,
-		     array_merge($args1, array('+'), $args2));
+    function mergeOperations($operation1, $args1, $operation2, $args2) {
+
+	switch (serialize(array($operation1, $args1, $operation2, $args2))) {
+	case serialize(array('rotate', array(0 => '90'), 'rotate', array(0 => '90'))):
+	    return array(true, 'rotate', array('180'));
+	    break;
+
+	case serialize(array('rotate', array(0 => '90'), 'rotate', array(0 => '-90'))):
+	    return array(true, null, null);
+	    break;
+
+	case serialize(array('rotate', array(0 => '90'), 'rotate', array(0 => '180'))):
+	    return array(true, 'rotate', array('-90'));
+	    break;
+
+	default:
+	    return array(false, null, null);
+	}
+
     }
 }
 ?>

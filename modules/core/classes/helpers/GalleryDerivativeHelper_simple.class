@@ -51,18 +51,18 @@ class GalleryDerivativeHelper_simple {
 
 	list ($ret, $derivative) = GalleryCoreApi::loadEntitiesById($derivativeId);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	list ($ret, $current) = $derivative->isCacheCurrent();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	if (!$current) {
 	    list ($ret, $derivative) = GalleryCoreApi::rebuildDerivativeCache($derivativeId);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	}
 	

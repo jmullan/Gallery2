@@ -84,7 +84,8 @@ class GalleryFactoryHelper_medium {
      */
     function unregisterImplementation($classType, $className) {
 	$registry =& GalleryFactoryHelper_simple::_getFactoryData();
-	unset($registry['implementations'][$classType][$className]);
+	unset($registry['implementations'][$classType][strtolower($className)]);
+	unset($registry['ids'][$classType][$className]);
 	foreach ($registry['ids'][$classType] as $id => $name) {
 	    if ($name == $className) {
 		unset($registry['ids'][$classType][$id]);

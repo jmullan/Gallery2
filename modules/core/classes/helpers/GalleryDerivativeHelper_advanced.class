@@ -332,151 +332,104 @@ class GalleryDerivativeHelper_advanced {
     }
 
     /**
-     * Merge a new operation into this derivative's operation list
+     * Merge together two sets of operations into one in the most sensible way.
+     * For example:
      *
-     * @see GalleryToolkit::mergeOperation()
-     *
-     * @param string the command
-     * @return object GalleryStatus a status code
+     * OPERATION SET 1              OPERATION SET 2        RESULT
+     * crop|1,2,3,4;rotate|90       crop|2,3,4,5           crop|2,3,4,5,rotate|90
+     * scale|250;rotate|90          rotate|-90             scale|250
+     * scale|250;rotate|90          rotate|90              scale|250;rotate|180
+     * scale|250;rotate|90          thumbnail|125          thumbnail|125;rotate|180
+     *   
+     * @param string the first set of operations
+     * @param string the second set of operations
+     * @param boolean true if the second set should be added at the beginning of the first set, if it
+     *                     can't be merged.
+     * @return array object GalleryStatus a status code
+     *               the merged operation set
      * @static
      */
-    function mergeOperation(&$derivative, $newOperation, $newArgs, $headMerge=false) {
+    function mergeOperations($operationSet1, $operationSet2, $highPriority=false) {
 	global $gallery;
 
-	/* Load the source */
-	list($ret, $source) = GalleryCoreApi::loadEntitiesById($derivative->getDerivativeSourceId());
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	if (GalleryUtilities::isA($source, 'GalleryDerivative')) {
-	    $mimeType = $source->getDerivativeMimeType();
-	} else {
-	    $mimeType = $source->getMimeType();
-	}
-	$operationString = $derivative->getDerivativeOperations();
-
-	if (empty($operationString)) {
-	    $mergedOperations = $newOperation . '|' . join(',', $newArgs);
-	} else {
-	    /*
-	     * Here things get a little tricky.  When merging operations, we want
-	     * to try to merge against the last operation first because operations
-	     * are cumulative.  However, we can't start from the tail end of the
-	     * operations and merge backwards because we don't know what the input
-	     * mime type is for the last operation.  So perform a tail recursive merge
-	     * on our operations.
-	     */
-	    $operations = split(';', $operationString);
-	    list ($ret, $mergeComplete, $newOperations) =
-		GalleryDerivativeHelper_advanced::_recursiveMergeOperation($mimeType,
-									   $operations,
-									   $newOperation, $newArgs);
+	/* Get all toolkits */
+	$toolkitIds = GalleryCoreApi::getAllFactoryImplementationIds('GalleryToolkit');
+	$toolkits = array();
+	foreach (array_keys($toolkitIds) as $toolkitId) {
+	    list ($ret, $toolkits[$toolkitId]) = GalleryCoreApi::newFactoryInstanceById('GalleryToolkit', $toolkitId);
 	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-
-	    if (!$mergeComplete) {
-		if ($headMerge) {
-		    $mergedOperations = $newOperation . '|' . join(',', $newArgs) . ';' . join(';', $operations);
-		} else {
-		    $mergedOperations = join(';', $operations) . ';' . $newOperation . '|' . join(',', $newArgs);
-		}
-	    } else {
-		$mergedOperations = join(';', $newOperations);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
 
-	$derivative->setDerivativeOperations($mergedOperations);
-
-	return GalleryStatus::success();
-    }
-
-    /**
-     * Tail-recursively merge a new operation onto an existing set of operations
-     *
-     * @param string the mime type of the source for the first operation
-     * @param array the remaining operations in the sequence
-     * @param string the new operation
-     * @param array mixed the new operation's args
-     * @return array object GalleryStatus a status code
-     *               boolean whether the merge was complete or not
-     *               array the merged operations
-     * @access private
-     * @static
-     */
-    function _recursiveMergeOperation($mimeType, $remainingOperations,
-				      $newOperation, $newArgs) {
-
-	if (empty($remainingOperations)) {
-	    /* Trivial case -- no operations left means nothing to merge against */
-	    return array(GalleryStatus::success(), false, array());
-	}
-
-	/*
-	 * Pull the first operation off of the queue and get a toolkit that can
-	 * handle it.  Use the toolkit to figure out what the mime type is for
-	 * the next operation in line.
-	 */
-	$currentOperation = array_shift($remainingOperations);
-	list ($operation, $argString) = split('\|', $currentOperation);
-	$args = split(',', $argString);
-	list($ret, $toolkit, $outputMimeType) =
-	    GalleryCoreApi::getToolkitByOperation($mimeType, $operation);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
-	}
-
-	/* Give the next operation in line the chance to do the merge. */
-	list ($ret, $mergeComplete, $returnedOperations) =
-	    GalleryDerivativeHelper_advanced::_recursiveMergeOperation($outputMimeType, $remainingOperations,
-								       $newOperation, $newArgs);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
-	}
-
-	if ($mergeComplete) {
-	    /*
-	     * If we successfully merged farther on down the line then just
-	     * prepend our operation back at the beginning and declare victory.
-	     */
-	    array_unshift($returnedOperations, $currentOperation);
-	    return array(GalleryStatus::success(), true, $returnedOperations);
+	if (empty($operationSet1)) {
+	    $results = $operationSet2;
+	} else if (empty($operationSet2)) {
+	    $results = $operationSet1;
 	} else {
-
-	    if (!isset($toolkit)) {
-		/*
-		 * There's no applicable toolkit for the current operation.  This
-		 * should only happen if a toolkit goes away.  All we can do at
-		 * this point is to nuke the invalid operation and hope for the best
-		 */
-		return array(GalleryStatus::success(), true, $returnedOperations);
-	    }
-	    
-	    /*
-	     * No joy farther down the line.  Give the toolkit a chance to
-	     * merge against the current operation.
-	     *
-	     * XXX: We should try this against all toolkits, not just the first
-	     * one in line.
-	     */
-	    list ($mergeComplete, $mergedOperation, $mergedArgs) = 
-		$toolkit->mergeOperations($mimeType,
-					  $operation, $args,
-					  $newOperation, $newArgs);
-	    if ($mergeComplete) {
-		/* Success -- prepend our merged operation and return the results */
-		if (!empty($mergedOperation)) {
-		    array_unshift($returnedOperations,
-				  $mergedOperation . '|' . join(',', $mergedArgs));
+	    foreach (split(';', $operationSet1) as $opString) {
+		if (strpos($opString, '|') === false) {
+		    $operations1[] = array('op' => $opString, 'args' => array());
+		} else {
+		    list ($op, $args) = split('\|', $opString);
+		    $operations1[] = array('op' => $op, 'args' => split(',', $args));
 		}
-		return array(GalleryStatus::success(), true, $returnedOperations);
-	    } else {
-		/* No joy -- prepend the current operation and return the results */
-		array_unshift($returnedOperations, $currentOperation);
-		return array(GalleryStatus::success(), false, $returnedOperations);
+	    }
+
+	    foreach (split(';', $operationSet2) as $opString) {
+		if (strpos($opString, '|') === false) {
+		    $operations2[] = array('op' => $opString, 'args' => array());
+		} else {
+		    list ($op, $args) = split('\|', $opString);
+		    $operations2[] = array('op' => $op, 'args' => split(',', $args));
+		}
+	    }
+
+	    /*
+	     * Merge operation set 2 into operation set 1, starting from the tail end of operation set 1 and
+	     * working our way back to the beginning, since operations are cumulative.
+	     */
+	    for ($i = 0; $i < sizeof($operations2); $i++) {
+		$success = false;
+		for ($j = sizeof($operations1)-1; $j >= 0; $j--) {
+		    foreach ($toolkits as $toolkitId => $toolkit) {
+			list ($success, $newOp, $newArgs) =
+			    $toolkit->mergeOperations($operations1[$j]['op'], $operations1[$j]['args'],
+						      $operations2[$i]['op'], $operations2[$i]['args']);
+			if ($success) {
+			    if (isset($newOp)) {
+				$operations1[$j]['op'] = $newOp;
+				$operations1[$j]['args'] = $newArgs;
+			    } else {
+				/* Operations cancelled each other out */
+				array_splice($operations1, $j, 1);
+			    }
+			    break 2;
+			}
+		    }
+		}
+
+		if (!$success) {
+		    /* No merge was possible so add the new operation to the end */
+		    if ($highPriority) {
+			array_unshift($operations1, $operations2[$i]);
+		    } else {
+			$operations1[] = $operations2[$i];
+		    }
+		}
+	    }
+
+	    /* Our merge is complete, so convert our operations back into a string */
+	    $results = '';
+	    for ($i = 0; $i < sizeof($operations1); $i++) {
+		$results[] = $operations1[$i]['op'] . '|' . join(',', $operations1[$i]['args']);
+	    }
+	    if (!empty($results)) {
+		$results = join(';', $results);
 	    }
 	}
+
+	return array(GalleryStatus::success(), $results);
     }
 
     /**

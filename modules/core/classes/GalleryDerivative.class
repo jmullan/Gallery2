@@ -247,7 +247,75 @@ class GalleryDerivative_core extends GalleryChildEntity {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	/* Get the path of the source for the next operation */
+	/* Figure out our target path */
+	list($ret, $destPath) = $this->fetchPath();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/*
+	 * If my source is a thumbnail, then we've got to assume that we've already lost some valuable source
+	 * data that was present further up the chain.  So in that case, seek backwards until we find a source
+	 * that is not a thumbnail and use that as the source file, but merge and apply all the derivative
+	 * operations from the intervening parents to discover the correct operations for this derivative.
+	 * So, if we've got: 
+	 *
+	 * Source Image A (640x480):
+	 * --> Preferred A1: rotate|90
+	 *     --> Derivative A2: crop|259,49,336,252;thumbnail|150
+	 *         --> Derivative A3: thumbnail|75
+	 *             --> Derivative A4: thumbnail|300
+	 *
+	 * Then when we really do our calculations, the real operations we perform should be:
+	 *
+	 * TARGET         SOURCE        OPERATONS
+	 * ---------------------------------------
+	 * Preferred A1:  Source A      rotate|90
+	 * Derivative A2: Preferred A1  crop|259,49,336,252;thumbnail|150
+	 * Derivative A3: Preferred A1  crop|259,49,336,252;thumbnail|75
+	 * Derivative A4: Preferred A1  crop|259,49,336,252;thumbnail|300
+	 */
+
+	/* Figure out our source mime type */
+	if (GalleryUtilities::isA($source, 'GalleryDerivative')) {
+	    $mimeType = $source->getDerivativeMimeType();
+
+	    if ($source->getDerivativeType() == DERIVATIVE_TYPE_IMAGE_THUMBNAIL) {
+		$sources = array($source, $this);
+		while ($sources[0]->getDerivativeType() == DERIVATIVE_TYPE_IMAGE_THUMBNAIL) {
+		    list ($ret, $tmp) = GalleryCoreApi::loadEntitiesById($sources[0]->getDerivativeSourceId());
+		    if ($ret->isError()) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
+
+		    if (!GalleryUtilities::isA($tmp, 'GalleryDerivative') ||
+			    $tmp->getDerivativeType() != DERIVATIVE_TYPE_IMAGE_THUMBNAIL) {
+			/* We've found our true source */
+			$source = $tmp;
+			break;
+		    }
+
+		    array_unshift($sources, $tmp);
+		}
+
+		/* Now gather up all the operations, and reduce it to the smallest possible sequence */
+		$operations = $sources[0]->getDerivativeOperations();
+		for ($i = 1; $i < sizeof($sources); $i++) {
+		    list ($ret, $operations) =
+			GalleryCoreApi::mergeDerivativeOperations($operations, $sources[$i]->getDerivativeOperations());
+		    if ($ret->isError()) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
+		}
+	    } else {
+		$operations = $this->getDerivativeOperations();
+	    }
+	} else {
+	    $mimeType = $source->getMimeType();
+	    $operations = $this->getDerivativeOperations();
+	}
+
+	/* Get the path of the source file */
 	if ($source->isLinked()) {
 	    $linkedEntity = $source->getLinkedEntity();
 	    list($ret, $sourcePath) = $linkedEntity->fetchPath();
@@ -257,23 +325,9 @@ class GalleryDerivative_core extends GalleryChildEntity {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
-	/* Figure out our target path */
-	list($ret, $destPath) = $this->fetchPath();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	/* Figure out our source mime type */
-	if (GalleryUtilities::isA($source, 'GalleryDerivative')) {
-	    $mimeType = $source->getDerivativeMimeType();
-	} else {
-	    $mimeType = $source->getMimeType();
-	}
 	
 	/* Now apply our derivative commands to create the cache file */
-	$operations = split(';', $this->getDerivativeOperations());
-	foreach ($operations as $operation) {
+	foreach (split(';', $operations) as $operation) {
 	    if (empty($operation)) {
 		continue;
 	    }

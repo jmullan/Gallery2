@@ -789,18 +789,27 @@ class GalleryCoreApi {
     }
 
     /**
-     * Merge a new operation into this derivative's operation list
+     * Merge together two sets of operations into one in the most sensible way.
+     * For example:
      *
-     * @see GalleryToolkit::mergeOperation()
-     *
-     * @param string the command
-     * @return object GalleryStatus a status code
+     * OPERATION SET 1              OPERATION SET 2        RESULT
+     * crop|1,2,3,4;rotate|90       crop|2,3,4,5           crop|2,3,4,5,rotate|90
+     * scale|250;rotate|90          rotate|-90             scale|250
+     * scale|250;rotate|90          rotate|90              scale|250;rotate|180
+     * scale|250;rotate|90          thumbnail|125          thumbnail|125;rotate|180
+     *   
+     * @param string the first set of operations
+     * @param string the second set of operations
+     * @param boolean true if the second set should be added at the beginning of the first set, if it
+     *                     can't be merged.
+     * @return array object GalleryStatus a status code
+     *               the merged operation set
      * @static
      */
-    function mergeDerivativeOperation(&$derivative, $newOperation, $newArgs, $headMerge=false) {
+    function mergeDerivativeOperations($operationSet1, $operationSet2, $highPriority=false) {
 	GalleryCoreApi::apiMethodUsed('mergeOperation', 'GalleryDerivativeHelper_advanced');
 	require_once(dirname(__FILE__) . '/helpers/GalleryDerivativeHelper_advanced.class');
-	return GalleryDerivativeHelper_advanced::mergeOperation($derivative, $newOperation, $newArgs, $headMerge);
+	return GalleryDerivativeHelper_advanced::mergeOperations($operationSet1, $operationSet2);
     }
     
     /**

@@ -49,9 +49,9 @@ class ItemEditPhotoThumbnailPluginTest extends ItemEditPluginTestCase {
 
 	/* Register a dummy toolkit */
 	GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
-					       'ItemEditPhotoThumbnailPluginTestToolkit',
-					       'ItemEditPhotoThumbnailPluginTestToolkit',
-					       __FILE__);
+						      'ItemEditPhotoThumbnailPluginTestToolkit',
+						      'ItemEditPhotoThumbnailPluginTestToolkit',
+						      __FILE__);
 
 	/* Register operations that we can perform on our mock data items */
 	$ret = GalleryCoreApi::registerToolkitOperation('ItemEditPhotoThumbnailPluginTestToolkit',
@@ -149,6 +149,14 @@ class ItemEditPhotoThumbnailPluginTest extends ItemEditPluginTestCase {
 	$results = $this->handleRequest($this->_item, $this->_derivative[0]);
 	$this->assertEquals(array(array(), $this->_translate('Thumbnail cropped successfully')),
 			    $results);
+
+	/* Get the thumbnail and verify its operations */
+	list ($ret, $thumbnail) = $thumbnail->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals('rotate|180;crop|50,50,200,200', $thumbnail->getDerivativeOperations());
     }
 
 }
@@ -183,17 +191,6 @@ class ItemEditPhotoThumbnailPluginTestToolkit extends GalleryToolkit {
 	$platform->fclose($fd);
 	
 	return array(GalleryStatus::success(), $mimeType);
-    }
-
-    /**
-     * @see GalleryToolkit::mergeOperations()
-     * Dummy operation
-     */
-    function mergeOperations($mimeType, $operation1, $args1, $operation2, $args2) {
-	// Do something stupid, but predictable
-	return array(GalleryStatus::success(),
-		     $operation1 . '+' . $operation2,
-		     array_merge($args1, array('+'), $args2));
     }
 }
 ?>

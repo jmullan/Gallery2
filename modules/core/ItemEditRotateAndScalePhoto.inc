@@ -103,7 +103,7 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
 	    }
 
 	    /* Force us to preserve original if we're a link */
-	    $preserveOriginal = empty($form['preserveOriginal']);
+	    $preserveOriginal = isset($form['preserveOriginal']);
 	    if (!$preserveOriginal && ($isLinked || $isLinkedTo)) {
 		$preserveOriginal = true;
 	    }
@@ -220,10 +220,13 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
 		    }
 		}
 
-		$ret = GalleryCoreApi::mergeDerivativeOperation($preferred, $operation, $args);
+		$operationString = $operation . '|' . join(',', $args);
+		list ($ret, $operations) =
+		    GalleryCoreApi::mergeDerivativeOperations($preferred->getDerivativeOperations(), $operationString);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
+		$preferred->setDerivativeOperations($operations);
 		
 		$ret = $preferred->save();
 		if ($ret->isError()) {

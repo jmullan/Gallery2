@@ -168,10 +168,12 @@ class SlideshowTest extends GalleryTestCase {
 	    }
 	    $derivative->setDerivativeSourceId($photo->getId());
 	    $derivative->setDerivativeMimeType($photo->getMimeType());
-	    $ret = GalleryCoreApi::mergeDerivativeOperation($derivative, 'rotate', array(90));
+	    list ($ret, $operations) =
+		GalleryCoreApi::mergeDerivativeOperations($derivative->getDerivativeOperations(), 'rotate|90');
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
+	    $derivative->setDerivativeOperations($operations);
 	    $ret = $derivative->save();
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);

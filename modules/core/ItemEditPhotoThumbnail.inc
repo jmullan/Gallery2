@@ -45,6 +45,11 @@ class ItemEditPhotoThumbnail extends ItemEditPlugin {
 	$status = null;
 	$error = array();
 
+		$form['crop']['x'] = 40;
+		$form['crop']['y'] = 40;
+		$form['crop']['width'] = 200;
+		$form['crop']['height'] = 400;
+
 	$remapSourceIds = array();
 	$operation = null;
 	if (isset($form['action']['crop'])) {
@@ -68,16 +73,18 @@ class ItemEditPhotoThumbnail extends ItemEditPlugin {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
 
-		$ret = GalleryCoreApi::mergeDerivativeOperation($thumbnail,
-								'crop',
-								array($form['crop']['x'],
+		list ($ret, $operations) =
+		    GalleryCoreApi::mergeDerivativeOperations($thumbnail->getDerivativeOperations(),
+							      sprintf('crop|%s,%s,%s,%s',
+								      $form['crop']['x'],
 								      $form['crop']['y'],
 								      $form['crop']['width'],
-								      $form['crop']['height']),
-								true);
+								      $form['crop']['height']));
+		
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
+		$thumbnail->setDerivativeOperations($operations);
 
 		$ret = $thumbnail->save();
 		if ($ret->isError()) {

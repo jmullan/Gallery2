@@ -319,6 +319,8 @@ class GalleryToolkitHelper_medium {
 	    }
 	}
 
+	GalleryCoreApi::unregisterFactoryImplementation('GalleryToolkit', $toolkitId);
+
 	return GalleryStatus::success();
     }
 

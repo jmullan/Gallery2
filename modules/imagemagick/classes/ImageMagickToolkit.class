@@ -137,18 +137,23 @@ class ImageMagickToolkit extends GalleryToolkit {
     /**
      * @see GalleryToolkit::mergeOperations()
      */
-    function mergeOperations($mimeType, $operation1, $args1, $operation2, $args2) {
+    function mergeOperations($operation1, $args1, $operation2, $args2) {
 
 	/* We can only merge like operations */
 	if ($operation1 != $operation2) {
-	    return array(false, null, null);
+	    /* But not all like operations have the same name */
+	    $likeOperations = array('resize', 'scale', 'thumbnail');
+	    if (!(in_array($operation1, $likeOperations) && in_array($operation2, $likeOperations))) {
+		return array(false, null, null);
+	    }
 	}
 
 	switch ($operation1) {
 	case 'crop':
 	case 'resize':
 	case 'scale':
-	    /* Second scale, resize, or crop takes precedence */
+	case 'thumbnail':
+	    /* For like operations, the second operation takes precedence */
 	    return array(true, $operation2, $args2);
 	    break;
 

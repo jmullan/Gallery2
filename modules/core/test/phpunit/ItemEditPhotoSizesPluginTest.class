@@ -49,9 +49,9 @@ class ItemEditPhotoSizesPluginTest extends ItemEditPluginTestCase {
 
 	/* Register a dummy toolkit */
 	GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
-					       'ItemEditPhotoSizesPluginTestToolkit',
-					       'ItemEditPhotoSizesPluginTestToolkit',
-					       __FILE__);
+						      'ItemEditPhotoSizesPluginTestToolkit',
+						      'ItemEditPhotoSizesPluginTestToolkit',
+						      __FILE__);
 
 	/* Register operations that we can perform on our mock data items */
 	$ret = GalleryCoreApi::registerToolkitOperation('ItemEditPhotoSizesPluginTestToolkit',
@@ -124,7 +124,7 @@ class ItemEditPhotoSizesPluginTest extends ItemEditPluginTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	parent::tearDown();
     }
 
@@ -252,7 +252,8 @@ class ItemEditPhotoSizesPluginTestToolkit extends GalleryToolkit {
      * @see GalleryToolkit::mergeOperations()
      * Dummy operation
      */
-    function mergeOperations($mimeType, $operation1, $args1, $operation2, $args2) {
+    function mergeOperations($operation1, $args1, $operation2, $args2) {
+	print "ItemEditPhotoSizesPluginTestToolkit!";
 	// Do something stupid, but predictable
 	return array(GalleryStatus::success(),
 		     $operation1 . '+' . $operation2,
