@@ -63,6 +63,8 @@ if (!defined('G2_EMBED')) {
 
     /* Process the request */
     GalleryMain();
+} else {
+    require_once(dirname(__FILE__) . '/init.inc');
 }
 
 function GalleryMain($returnHtml=false) {
