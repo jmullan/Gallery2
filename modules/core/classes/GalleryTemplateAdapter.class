@@ -253,13 +253,13 @@ class GalleryTemplateAdapter {
 	/* Ask the entity to render itself in HTML */
 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($params['item']['id']);
 	if ($ret->isError()) {
-	    /* XXX: is there a more graceful way to handle this? */
+	    /* TODO: is there a more graceful way to handle this? */
 	    return '[Render error: missing item]';
 	}
 
 	list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($params['image']['id']);
 	if ($ret->isError()) {
-	    /* XXX: is there a more graceful way to handle this? */
+	    /* TODO: is there a more graceful way to handle this? */
 	    return '[Render error: missing entity]';
 	}
 
@@ -279,6 +279,10 @@ class GalleryTemplateAdapter {
 	    $params['name'] = null;
 	}
 
+	if (!isset($params['imgmap'])) {
+	    $params['imgmap'] = null;
+	}
+
 	if (!isset($params['fallback'])) {
 	    $params['fallback'] = null;
 	}
@@ -288,14 +292,16 @@ class GalleryTemplateAdapter {
 						'id' => $params['id'],
 						'name' => $params['name'],
 						'maxSize' => $params['maxSize'],
-						'fallback' => $params['fallback']));
+						'fallback' => $params['fallback'],
+						'imgmap' => $params['imgmap']));
 	} else {
 	    $html = $entity->render('HTML', $item,
 				    array('class' => $params['class'],
 					  'id' => $params['id'],
 					  'name' => $params['name'],
 					  'maxSize' => $params['maxSize'],
-					  'fallback' => $params['fallback']));
+					  'fallback' => $params['fallback'],
+					  'imgmap' => $params['imgmap']));
 	}
 
 	if (empty($html)) {
