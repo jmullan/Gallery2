@@ -185,13 +185,13 @@ class ItemAddFromWeb extends ItemAddPlugin {
 			    if ($url[0] == '/') {
 				$tmp = $baseUrlComponents['scheme'] . '://' . $baseUrlComponents['host'];
 				if (!empty($baseUrlComponents['port'])) {
-				    $tmp .= $baseUrlComponents['port'];
+				    $tmp .= ':' . $baseUrlComponents['port'];
 				}
 				$url = $tmp . $url;
 			    } else if (!preg_match('/^\w+:/', $url)) {
 				$tmp = $baseUrlComponents['scheme'] . '://' . $baseUrlComponents['host'];
 				if (!empty($baseUrlComponents['port'])) {
-				    $tmp .= $baseUrlComponents['port'];
+				    $tmp .= ':' . $baseUrlComponents['port'];
 				}
 
 				/*
@@ -259,6 +259,9 @@ class ItemAddFromWeb extends ItemAddPlugin {
 			    }
 
 			    $tmp = $urlComponents['scheme'] . '://' . $urlComponents['host'];
+			    if (!empty($urlComponents['port'])) {
+				$tmp .= ':' . $urlComponents['port'];
+			    }
 			    if (!empty($urlComponents['path'])) {
 				if ($urlComponents['path'][0] != '/' && $tmp[strlen($tmp)-1] != '/') {
 				    $tmp .= '/';
@@ -281,7 +284,7 @@ class ItemAddFromWeb extends ItemAddPlugin {
 	}
 
 	$ItemAddFromWeb = array();
-	$ItemAddFromWeb['webPageUrlCount'] = isset($webPageUrlCount) ? $webPageUrlCount : null;
+	$ItemAddFromWeb['webPageUrlCount'] = isset($webPageUrlCount) ? $webPageUrlCount : 0;
 
 	$session =& $gallery->getSession();
 	$recentPaths = $session->get('core.view.ItemAdd.ItemAddFromWeb.recentPaths');
