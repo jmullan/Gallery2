@@ -109,7 +109,7 @@ function PhpUnitGalleryMain(&$testSuite, $filter) {
 define('FILTER_MAX', 1000000);
 $range = array(1, FILTER_MAX);
 if (isset($_GET['filter'])) {
-    $filter = $_GET['filter'];
+    $filter = trim($_GET['filter']);
 
     if (preg_match('/:(\d+)-(\d+)/', $filter, $matches)) {
 	$range = array($matches[1], $matches[2]);
