@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /**
- * @version $Revision$ $Date$
+ * @version $Revision$
  * @package GalleryCore
  * @subpackage PHPUnit
  * @author Bharat Mediratta <bharat@menalto.com>
@@ -207,6 +207,14 @@ class CoreModuleTest extends GalleryTestCase {
 					   'selectedId' => $this->_parentAlbum->getId(),
 					   'return.x' => 'y'
 					   ));
+	#$links[] = array('text' => $this->_module->translate('copy item'),
+	#		 'params' => array(
+	#				   'view' => 'core:ItemAdmin',
+	#				   'subView' => 'core:ItemCopy',
+	#				   'itemId' => null,
+	#				   'selectedId' => $this->_parentAlbum->getId(),
+	#				   'return.x' => 'y'
+	#				   ));
 	$links[] = array('text' => $this->_module->translate('reorder items'),
 			 'params' => array(
 					   'view' => 'core:ItemAdmin',
