@@ -51,7 +51,7 @@ class AdminEditUserController extends GalleryController {
 	$redirectParams = array();
 	$form = GalleryUtilities::getFormVariables('form.');
 
-	list ($ret, $user) = $gallery->loadEntitiesById($form['userid']);
+	list ($ret, $user) = $gallery->loadEntitiesById($form['userId']);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -65,32 +65,57 @@ class AdminEditUserController extends GalleryController {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$isAnonymous = ($form['userid'] == $anonymousUserId);
+	$isAnonymous = ($form['userId'] == $anonymousUserId);
 
 	if (isset($form['action']['cancel'])) {
 
-	    /* Go back to the AdminUsers view */
-	    $results['view'] = 'core:SiteAdmin';
+	    /* Redirect back to the AdminUsers view */
+	    $redirectParams['view'] = 'core:SiteAdmin';
+	    $redirectParams['subView'] = 'core:AdminUsers';
 	    GalleryUtilities::putRequestVariable('subView', 'core:AdminUsers');
 	    
 	} else if (isset($form['action']['undo'])) {
 
-	    /* Reset our form */
-	    GalleryUtilities::putRequestVariable('form.fullname', $user->getFullName());
+	    /* Reset our form and stay on the same view */
+	    GalleryUtilities::putRequestVariable('form.userName', $user->getUserName());
+	    GalleryUtilities::putRequestVariable('form.fullName', $user->getFullName());
 	    GalleryUtilities::putRequestVariable('form.email', $user->getEmail());
 	    GalleryUtilities::putRequestVariable('form.language', $user->getLanguage());
+	    GalleryUtilities::putRequestVariable('form.password1', '');
+	    GalleryUtilities::putRequestVariable('form.password2', '');
 	    
 	} else if (isset($form['action']['save'])) {
 
 	    /*
-	     * If all the right fields are in place then go ahead and
-	     * edit the user.
+	     * Validate our data before we continue.
 	     */
-	    if ($isAnonymous ||
-		(!empty($form['username']) &&
-		 !empty($form['email']) &&
-		 $form['password1'] == $form['password2'])) {
-		
+	    $error = false;
+	    /* full name is always mandatory */
+	    if (empty($form['fullName'])) {
+		GalleryUtilities::putRequestVariable('form.error.fullName.missing', 1);
+		$error = true;
+	    }
+
+	    /* language is optional for everybody */
+
+	    if (!$isAnonymous) {
+		/* email required for non-anonymous */
+		if (empty($form['email'])) {
+		    GalleryUtilities::putRequestVariable('form.error.email.missing', 1);
+		    $error = true;
+		}
+
+		if ($form['password1'] != $form['password2']) {
+		    GalleryUtilities::putRequestVariable('form.error.password.mismatch', 1);
+		    $error = true;
+		}
+	    }
+
+	    /*
+	     * If all the right fields are in place then go ahead and modify
+	     * the user.
+	     */
+	    if (!$error) {
 		list ($ret, $lockId) = $gallery->acquireWriteLock($user->getId());
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -101,7 +126,7 @@ class AdminEditUserController extends GalleryController {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		
-		$user->setFullname($form['fullname']);
+		$user->setFullname($form['fullName']);
 		if (!$isAnonymous) {
 		    $user->setEmail($form['email']);
 		    $user->setLanguage($form['language']);
@@ -122,8 +147,8 @@ class AdminEditUserController extends GalleryController {
 
 		/* Request a redirect to the confirmation screen */
 		$redirectParams['view'] = 'core:SiteAdmin';
-		$redirectParams['subView'] = 'core:AdminEditUserConfirmation';
-		$redirectParams['username'] = $form['username'];
+		$redirectParams['subView'] = 'core:AdminUsers';
+		$redirectParams['form.status.modifiedUser'] = $form['userName'];
 	    }
 	}
 
@@ -161,71 +186,61 @@ class AdminEditUserView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	    
-	list ($userid, $formName) =
-	    GalleryUtilities::getRequestVariables('userid', 'formName');
+	$formName = GalleryUtilities::getRequestVariables('formName');
 	$form = GalleryUtilities::getFormVariables('form.');
 
-	/* The 'userid' variable is set the first time we come to this page */
-	if (!empty($userid)) {
-	    $form['userid'] = $userid;
+	if ($formName != 'AdminEditUser') {
+	    $form['userId'] = GalleryUtilities::getRequestVariables('userId');
 	}
 	
-	list ($ret, $user) = $gallery->loadEntitiesById($form['userid']);
+	list ($ret, $user) = $gallery->loadEntitiesById($form['userId']);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
+	/* Load the form with user data the first time around. */
+	if ($formName != 'AdminEditUser') {
+	    $form['userName'] = $user->getUserName();
+	    $form['fullName'] = $user->getFullName();
+	    $form['email'] = $user->getEmail();
+	    $form['language'] = $user->getLanguage();
+	}
+
 	/* Email is not required for the anonymous user */
 	list ($ret, $anonymousUserId) =
 	    $gallery->getModuleParameter('core', 'id.anonymousUser');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$isAnonymous = ($form['userid'] == $anonymousUserId);
+	$show['email'] = ($form['userId'] != $anonymousUserId);
+	$show['language'] = ($form['userId'] != $anonymousUserId);
+	$show['password'] = ($form['userId'] != $anonymousUserId);
 
-	if ($formName == 'AdminEditUser') {
-	    /* Complain if any required fields are missing */
-	    if (empty($form['email'])) {
-		if (!$isAnonymous) {
-		    $form['error']['email']['missing'] = 1;
-		}
+	if ($show['language']) {
+	    /* Set up our language selection list */
+	    list ($ret, $module) = $gallery->loadModule('core');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    
-	    if ((isset($form['password1']) && !isset($form['password2'])) ||
-		(isset($form['password2']) && !isset($form['password1']))) {
-		$form['error']['password2']['mismatch'] = 1;
-	    }
-	} else {
-	    /* First time around, load the form with user data */
-	    $form['username'] = $user->getUserName();
-	    $form['fullname'] = $user->getFullName();
-	    $form['email'] = $user->getEmail();
-	    $form['language'] = $user->getLanguage();
-	}
-
-	/* Set up our language selection list */
-	list ($ret, $module) = $gallery->loadModule('core');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	
-	$languageList = array();
-	$languageList[''] = $module->translate('<none>');
-	
-	$translator =& $gallery->getTranslator();
-	$supportedLanguages = $translator->getSupportedLanguages();
-	foreach ($supportedLanguages as $language => $countryList) {
-	    foreach ($countryList as $country => $languageData) {
-		$languageList[$language . '_' . $country] =
-		    $languageData['description'];
+	    $languageList = array();
+	    $languageList[''] = $module->translate('<none>');
+	    $translator =& $gallery->getTranslator();
+	    $supportedLanguages = $translator->getSupportedLanguages();
+	    foreach ($supportedLanguages as $language => $countryList) {
+		foreach ($countryList as $country => $languageData) {
+		    $languageList[$language . '_' . $country] = $languageData['description'];
+		}
 	    }
 	}
 
 	/* Render the HTML body */
 	$template = $this->_getTemplate();
 	$template->setVariable('form', $form);
-	$template->setVariable('isAnonymous', $isAnonymous);
-	$template->setVariable('languageList', $languageList);
+	$template->setVariable('show', $show);
+	if ($show['language']) {
+	    $template->setVariable('languageList', $languageList);
+	}
 	$template->setVariable('controller', 'core:AdminEditUser');
 	$html = $template->render('AdminEditUser.tpl');
 

@@ -1,6 +1,6 @@
   {gallery->form controller="$controller"}
   {gallery->input type="hidden" name="formName"}AdminEditUser{/gallery->input}
-  {gallery->input type="hidden" name="form.userid"}{$form.userid}{/gallery->input}
+  {gallery->input type="hidden" name="form.userId"}{$form.userId}{/gallery->input}
   <table width="100%" border="0" cellspacing="3" cellpadding="3">
 
     <tr>
@@ -16,8 +16,8 @@
 	{gallery->text text="Username"}
       </td>
       <td width="60%">
-	{gallery->input type="hidden" name="form.username"}{$form.username}{/gallery->input}
-	{$form.username}
+	{gallery->input type="hidden" name="form.userName"}{$form.userName}{/gallery->input}
+	{$form.userName}
       </td>
     </tr>
 
@@ -26,17 +26,27 @@
 	{gallery->text text="Full name"}
       </td>
       <td>
-	{gallery->input type="text" name="form.fullname"}{$form.fullname}{/gallery->input}
+	{gallery->input type="text" name="form.fullName"}{$form.fullName}{/gallery->input}
+	{gallery->warningFontColor}
+	{gallery->text text="[required]"}
+	{/gallery->warningFontColor}
       </td>
     </tr>
-      
-    {if $isAnonymous}
+
+    {if isset($form.error.fullName.missing)}
     <tr>
-      <td align="center" colspan="2">
-	{gallery->text text="This is the anonymous user."}
+      <td>
+	&nbsp;
+      </td>
+      <td>
+	{gallery->errorFontColor}
+	{gallery->text text="You must enter a name"}
+	{/gallery->errorFontColor}
       </td>
     </tr>
-    {else}
+    {/if}
+      
+    {if $show.email}
     <tr>
       <td align="right">
 	{gallery->text text="Email address"}
@@ -61,7 +71,9 @@
       </td>
     </tr>
     {/if}
+    {/if}
       
+    {if $show.language}
     <tr>
       <td align="right">
 	{gallery->text text="Language"}
@@ -78,7 +90,9 @@
 	&nbsp;
       </td>
     </tr>
+    {/if}
 
+    {if $show.password}
     <tr>
       <td rowspan="2" align="right">
 	{gallery->text text="Enter a new password twice to change passwords, or leave it blank to leave password unchanged."}
@@ -100,7 +114,7 @@
       </td>
     </tr>
 
-    {if isset($form.error.password2.mismatch)}
+    {if isset($form.error.password.mismatch)}
     <tr>
       <td>
 	&nbsp;
@@ -112,7 +126,6 @@
       </td>
     </tr>
     {/if}
-
     {/if}
       
     <tr>
