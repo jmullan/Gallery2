@@ -21,6 +21,7 @@
  */
 /**
  * @package GalleryCore
+ * @subpackage ClassInterfaces
  * @version $Revision$ $Date$
  * @author Bharat Mediratta <bharat@menalto.com>
  */
