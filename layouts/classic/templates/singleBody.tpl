@@ -14,12 +14,19 @@
 		</tr>
 		<tr>	
 		  <td>
-		    {foreach from=$moduleItemLinks item=module}
-		    {foreach from=$module item=links}
-		    {foreach from=$links item=link}
-		    <a href="{$link.url}">[{$link.text}]</a>
+		    {foreach from=$moduleItemLinks item=itemLinks key=loopId}
+		    {if ($loopId == $item.id)}
+		    <br>
+		    {gallery->text text="Action: "}
+		    {gallery->select onChange="if (this.value) javascript:location.href=this.value"}
+		    <option value=""> {gallery->text text="<< Action >>"}
+		    {foreach from=$itemLinks item=module}
+		    {foreach from=$module item=link}
+		    <option value="{$link.url}"> {$link.text}
 		    {/foreach}
 		    {/foreach}
+		    {/gallery->select}
+		    {/if}
 		    {/foreach}
 		  </td>
 		  <td align="right">
