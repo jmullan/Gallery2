@@ -80,7 +80,7 @@ class DownloadItemView extends GalleryView {
 		return array(GalleryStatus::success(), false);
 	    }
 
-	    $platform =& $gallery->getPlatform();
+	    $platform = $gallery->getPlatform();
 	    if ($platform->file_exists($data['derivativePath'])) {
 		header('Content-type: ' . $data['mimeType']);
 		header('Content-Disposition: inline; filename="' . $data['pseudoFileName'] . '"');

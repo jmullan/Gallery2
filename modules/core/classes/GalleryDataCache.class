@@ -318,7 +318,7 @@ class GalleryDataCache {
 
 	global $gallery;
 	$cacheFile = GalleryDataCache::getCachePath($pathInfo);
-	$platform =& $gallery->getPlatform();
+	$platform = $gallery->getPlatform();
 	GalleryUtilities::guaranteeDirExists(dirname($cacheFile));
 
 	$fd = $platform->fopen($cacheFile, 'wb');
