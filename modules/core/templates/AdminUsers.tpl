@@ -62,7 +62,7 @@
 
 	  <tr>
 	    <td align="center">
-	      {gallery->input type="text" name="form.text.username" size="20"}{$form.text.username}{/gallery->input}
+	      {gallery->input type="text" name="form.text.userName" size="20"}{$form.text.userName}{/gallery->input}
 	      {gallery->input type="submit" name="form.action.editFromText"}{gallery->text text="Edit"}{/gallery->input}
 	      {gallery->input type="submit" name="form.action.deleteFromText"}{gallery->text text="Delete"}{/gallery->input}
 	    </td>	
@@ -73,11 +73,22 @@
 	    <td align="center">
 	      {gallery->errorFontColor}
 	      {gallery->text text="User '%s' does not exist."
-	                   arg1=$form.text.username}
+	                   arg1=$form.text.userName}
 	      {/gallery->errorFontColor}
 	    </td>
 	  </tr>
 	  {/if}
+
+	  {if isset($form.error.text.noUserSpecified)}
+	  <tr>
+	    <td align="center">
+	      {gallery->errorFontColor}
+	      {gallery->text text="You must enter a username"}
+	      {/gallery->errorFontColor}
+	    </td>
+	  </tr>
+	  {/if}
+
 
 	  <tr>
 	    <td>
@@ -106,7 +117,7 @@
 	  <tr>
 	    <td align="center">
 	      {gallery->select name="form.list.userId" size=$form.list.pageSize}
-	      {html_options options=$form.list.usernames}
+	      {html_options options=$form.list.userNames}
 	      {/gallery->select}
 	      {if (!empty($form.list.filter))}
 	      <br>
@@ -126,11 +137,31 @@
 	    </td>
 	  </tr>
 
+	  {if isset($form.error.list.noUserSelected)}
+	  <tr>
+	    <td align="center">
+	      {gallery->errorFontColor}
+	      {gallery->text text="You must select a user"}
+	      {/gallery->errorFontColor}
+	    </td>
+	  </tr>
+	  {/if}
+
 	  {if isset($form.error.list.cantDeleteActiveUser)}
 	  <tr>
 	    <td align="center">
 	      {gallery->errorFontColor}
 	      {gallery->text text="You cannot delete yourself!"}
+	      {/gallery->errorFontColor}
+	    </td>
+	  </tr>
+	  {/if}
+
+	  {if isset($form.error.list.cantDeleteAnonymousUser)}
+	  <tr>
+	    <td align="center">
+	      {gallery->errorFontColor}
+	      {gallery->text text="You cannot delete the anonymous user!"}
 	      {/gallery->errorFontColor}
 	    </td>
 	  </tr>
