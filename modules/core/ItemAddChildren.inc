@@ -109,8 +109,7 @@ class ItemAddChildrenController extends GalleryController {
 					    $file['tmp_name'],
 					    $gallery->getActiveUserId(),
 					    $mimeType,
-					    $extension,
-					    GalleryUtilities::getFileBase($file['name']));
+					    basename($file['name']));
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }

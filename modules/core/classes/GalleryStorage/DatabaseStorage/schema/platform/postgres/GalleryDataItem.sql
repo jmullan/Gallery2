@@ -10,14 +10,6 @@
     NOT NULL
   
       ,
-    DB_COLUMN_PREFIXfileExtension
-      VARCHAR(
-      
-          128
-        
-      )
-    
-      ,
     DB_COLUMN_PREFIXmimeType
       VARCHAR(
       

@@ -100,10 +100,11 @@ class GalleryPhotoItem_core extends GalleryDataItem {
      * @param int the id of the parent GalleryItem
      * @param string the path to the source image
      * @param int the owner of the new item
+     * @param string the mime type
      * @param string the desired name of the new item
      * @return object GalleryStatus a status code
      */
-    function create($parentId, $imageFileName, $ownerId, $mimeType, $extension, $targetName=null) {
+    function create($parentId, $imageFileName, $ownerId, $mimeType, $targetName=null) {
 	global $gallery;
 
 	$platform = $gallery->getPlatform();
@@ -138,7 +139,7 @@ class GalleryPhotoItem_core extends GalleryDataItem {
 
 	/* Create our data item */
 	$ret = parent::create($parentId, $imageFileName, $ownerId,
-			      $mimeType, $extension, $targetName);
+			      $mimeType, $targetName);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

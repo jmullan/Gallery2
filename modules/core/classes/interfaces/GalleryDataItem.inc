@@ -51,11 +51,6 @@ class GalleryDataItem extends GalleryDataItem_core {
     function getPersistentMemberInfo() {
         $meta = parent::getPersistentMemberInfo();
     
-        $meta['members']['fileExtension'] = array(
-            'class' => 'GalleryDataItem',
-            'type' => STORAGE_TYPE_STRING
-        );
-    
         $meta['members']['mimeType'] = array(
             'class' => 'GalleryDataItem',
             'type' => STORAGE_TYPE_STRING
@@ -78,12 +73,6 @@ class GalleryDataItem extends GalleryDataItem_core {
         $data = parent::getMemberData();
         GalleryProfiler::start('GalleryPersistent::getMemberData');
     
-        if (!isset($this->_fileExtension)) {
-            $data['fileExtension'] = null;
-        } else {
-            $data['fileExtension'] = $this->_fileExtension;
-        }
-    
         if (!isset($this->_mimeType)) {
             $data['mimeType'] = null;
         } else {
@@ -98,42 +87,6 @@ class GalleryDataItem extends GalleryDataItem_core {
     
         GalleryProfiler::stop('GalleryPersistent::getMemberData');
         return $data;
-    }
-  
-    /**
-     * Get the value of fileExtension
-     *
-     * @return STRING the value
-     */
-    function getfileExtension() {
-        if (!isset($this->_fileExtension)) {
-            return null;
-        }
-        return $this->_fileExtension;
-    }
-
-    /**
-     * Set the value of fileExtension
-     *
-     * @param STRING the value
-     */
-    function setfileExtension($value) {
-
-        /* 
-         * Convert unset values to null, to avoid generating warnings.
-         */
-	$a = isset($value) ? $value : null;
-	$b = isset($this->_fileExtension) ? $this->_fileExtension : null;
-
-    
-        /* 
-         * Only take action if the value actually changes, but take care not to 
-         * generate warnings for unset values.
-         */
-        if ($a != $b) {
-            $this->_fileExtension = $value;
-            $this->setModifiedFlag('fileExtension', MEMBER_MODIFIED);
-        }
     }
   
     /**

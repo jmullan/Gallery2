@@ -51,8 +51,7 @@ class CreatePhotoItemTestCase extends TestCase {
 			      $imagePath,
 			      $gallery->getActiveUserId(),
 			      $mimeType,
-			      $extension,
-			      'itemPath_' . time());
+			      'itemPath_' . time() . '.' . $extension);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

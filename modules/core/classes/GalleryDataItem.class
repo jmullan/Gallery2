@@ -55,19 +55,6 @@ class GalleryDataItem_core extends GalleryItem {
      */
 
     /**
-     * The file extension of the data file
-     *
-     * @g2 <member>
-     * @g2   <member-name>fileExtension</member-name>
-     * @g2   <member-type>STRING</member-type>
-     * @g2 </member>
-     *
-     * @var string $_fileExtension
-     * @access private
-     */
-    var $_fileExtension;
-
-    /**
      * The mime type of the data file
      *
      * @g2 <member>
@@ -119,11 +106,10 @@ class GalleryDataItem_core extends GalleryItem {
      * @param int the id of the parent GalleryItem
      * @param string the path to a data file to be contained
      * @param int the owner of the new item
-     * @param string the file extension
      * @param string the desired name of the new item
      * @return object GalleryStatus a status code
      */
-    function create($parentId, $inputFileName, $ownerId, $mimeType, $extension, $targetName=null) {
+    function create($parentId, $inputFileName, $ownerId, $mimeType, $targetName=null) {
 	global $gallery;
 	$platform = $gallery->getPlatform();
 
@@ -154,29 +140,30 @@ class GalleryDataItem_core extends GalleryItem {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	list($ret, $parentPath) = $parent->fetchContainerPath($parent);
+	list($ret, $parentPath) = $parent->fetchContainerPath();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	
 	if (empty($targetName)) {
-	    $baseName = GalleryUtilities::getFileBase($inputFileName);
+	    $baseName = basename($inputFileName);
 	} else {
 	    $baseName = $targetName;
 	}
 
 	/* Make sure our base file name is legal */
 	$baseName = $platform->legalizePathComponent($baseName);
+	list ($fileBase, $extension) = GalleryUtilities::getFileNameComponents($baseName);
 
 	/* Don't be intimidated by the first 10 collisions */
 	$retry = 0;
-	$newFileName = $parentPath . $baseName . '.' . $extension;
+	$newFileName = $parentPath . $baseName;
 	while ($platform->file_exists($newFileName)) {
 	    if (++$retry > 10) {
 		return GalleryStatus::error(ERROR_COLLISION, __FILE__, __LINE__);
 	    }
-	    $newFileName = sprintf("%s%s_%03d.%s",
-				   $parentPath, $baseName, $retry, $extension);
+	    $baseName = sprintf('%s_%03d.%s', $fileBase, $retry, $extension);
+	    $newFileName = sprintf('%s%s', $parentPath, $baseName);
 	} 
 	
 	/*
@@ -197,9 +184,8 @@ class GalleryDataItem_core extends GalleryItem {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	/* Set my mime type and file extension */
+	/* Set my mime type and file size */
 	$this->setMimeType($mimeType);
-	$this->setFileExtension($extension);
 	$this->setSize($platform->filesize($newFileName));
 
 	return GalleryStatus::success();
@@ -291,10 +277,6 @@ class GalleryDataItem_core extends GalleryItem {
 	}
 
 	$newPath = dirname($currentPath) . '/' . $newname;
-	$extension = $this->getFileExtension();
-	if (!empty($extension)) {
-	    $newPath .= ".$extension";
-	}
 	
 	/* Check to see if the desired path exists. */
 	if ($platform->file_exists($newPath)) {
@@ -339,9 +321,7 @@ class GalleryDataItem_core extends GalleryItem {
 	
 	return array(GalleryStatus::success(),
 		     $containerPath . 
-		     $this->getPathComponent() .
-		     '.' .
-		     $this->getFileExtension());
+		     $this->getPathComponent());
     }
 }
 

@@ -23,7 +23,7 @@ class CreateRandomTreeTestCase extends TestCase {
     }
 
     function getDescription() {
-	return "Create a random album tree containing $this->_maxItems items";
+	return 'Create a random album tree containing X items';
     }
 
     function testStart($iterations) {
@@ -140,8 +140,7 @@ class CreateRandomTreeTestCase extends TestCase {
 				 $imageFile,
 				 $gallery->getActiveUserId(),
 				 $mimeType,
-				 $extension,
-				 $this->_randomName());
+				 $this->_randomName() . '.' . $extension);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
