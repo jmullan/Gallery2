@@ -577,8 +577,7 @@ class Gallery {
 	
 	if ($searchResults->resultCount() == 0) {
 	    /* This should never happen! */
-	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT,
-					      __FILE__, __LINE__));
+	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
 	}
 	
 	/* Extract the parent id */
