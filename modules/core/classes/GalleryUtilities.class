@@ -252,6 +252,27 @@ class GalleryUtilities {
 	return $array;
     }
 
+
+    /**
+     * Get the user's IP address
+     *
+     * @param string an ip address (or null)
+     * @static
+     */
+    function getUserIpAddress() {
+	if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+	    $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+	} elseif (isset($_SERVER['HTTP_CLIENT_IP'])) {
+	    $ip = $_SERVER['HTTP_CLIENT_IP'];
+	} elseif (isset($_SERVER['REMOTE_ADDR'])) {
+	    $ip = $_SERVER['REMOTE_ADDR'];
+	} else {
+	    return null;
+	}
+	return $ip;
+    }
+
+
     /**
      * Remove all request variables that match the prefix
      *
