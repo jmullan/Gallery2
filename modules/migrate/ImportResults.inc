@@ -56,7 +56,7 @@ class ImportResultsView extends GalleryView {
 	$template->setVariable('ImportResults', $ImportResults);
 	$template->setVariable('controller', 'migrate:ImportResults');
         return array(GalleryStatus::success(),
-		     array('body' => 'modules/migrate/template'));
+		     array('body' => 'modules/migrate/templates/ImportResults.tpl'));
     }
 }
 ?>

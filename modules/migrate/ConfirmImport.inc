@@ -32,7 +32,9 @@ class ConfirmImportController extends GalleryController {
      */
     function handleRequest($form) {
         global $gallery;
-
+	$platform = $gallery->getPlatform();
+	$slash = $platform->getDirectorySeparator();
+	
         /* Verify that active user is an admin */
         $ret = GalleryUserHelper::assertSiteAdministrator();
         if ($ret->isError()) {
@@ -187,22 +189,317 @@ class ConfirmImportController extends GalleryController {
 		 * load it into the targeted G2 top album as set in
 		 * $destinationAlbumID
 		 */
+		$targetAlbumID = FALSE;
+		$newAlbumInstanceId = FALSE;
 		if (!in_array($album['parentAlbumName'],array_keys($form['sourceAlbums']))) {
-		    list ($ret, $finishedAlbums[$album['name']])=ConfirmImportController::importAlbum($destinationAlbumID,$album);
+		    $targetAlbumID= $destinationAlbumID;
 		} else if (in_array($album['parentAlbumName'],array_keys($finishedAlbums))){
 		    /* if the album's parent has already been imported, import
 		     * it into the parent
 		     */
-		    list ($ret, $finishedAlbums[$album['name']])=ConfirmImportController::importAlbum($finishedAlbums[$album['parentAlbumName']],$album);
+		    $targetAlbumID = $finishedAlbums[$album['parentAlbumName']];
 		}
-		/* if the importation failed, error out - we don't want to
-		 * continue.  Otherwise, add a happy note to the list
-		 */
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		} else {
-		    $status['albumImportSuccess'][$album['name']] = 1;
+		if ($targetAlbumID) {
+		    // list ($ret, $importedAlbumID)=ConfirmImportController::importAlbum($targetAlbumID,$album);
+		    /* crappy procedural code ;) */
+		    /* Make sure we have permission do edit the target item */
+		    $ret = GalleryUserHelper::assertHasItemPermission($targetAlbumID, 'core.addAlbumItem');
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		    
+		    /* Try to load targeted parent */
+		    list ($ret, $targetAlbumObject) = $gallery->loadEntitiesById($targetAlbumID);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		    
+		    /* Get a lock on said parent */
+		    list ($ret, $importLockIds[]) = $gallery->acquireReadLock($targetAlbumObject->getId());
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+
+		    /* Check the new album's path component to see if it is valid on the
+		     * local filesystem
+		     */
+		    $platform = $gallery->getPlatform();
+		    if (empty($album['name'])) {
+			$error[] = 'form.error.pathComponent.missing';
+		    } else if (!$platform->isLegalPathComponent($album['name'])) {
+			$error[] = 'form.error.pathComponent.invalid';
+		    }
+		    /* If everything is good so far, we create a new instance to be our new
+		     * album
+		     */
+		    if (empty($error)) {
+			list ($ret, $newAlbumInstance) =
+				GalleryFactory::newInstance('GalleryEntity', 'GalleryAlbumItem');
+			if ($ret->isError()) {
+			    return array($ret->wrap(__FILE__, __LINE__), null);
+			}
+			if (!isset($newAlbumInstance)) {
+			    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
+					 null);
+			}  
+			/* this is where the album is actually created */	    
+			$ret = $newAlbumInstance->create($targetAlbumID, $album['name']);
+			if ($ret->isError()) {
+			    if ($ret->getErrorCode() & ERROR_COLLISION) {
+				$error[] = 'form.error.pathComponent.collision';
+				return array($ret->wrap(__FILE__, __LINE__), null);
+			    }
+			}
+			if (empty($error)) {
+			    $newAlbumInstanceId = $newAlbumInstance->getId();
+			    /*
+			     * Array of example data
+			     * (
+			     *   +[title] => Test Album One
+			     *   +[description] => No description
+			     *   +[summary] =>
+			     *    [nextname] => aaa
+			     *    [bgcolor] =>
+			     *    [textcolor] =>
+			     *    [linkcolor] =>
+			     *    [font] => verdana
+			     *    [border] => 1
+			     *    [bordercolor] => black
+			     *    [returnto] => yes
+			     *    [thumb_size] => 150
+			     *    [resize_size] => 400
+			     *    [rows] => 5
+			     *    [cols] => 5
+			     *    [fit_to_window] => no
+			     *    [use_fullOnly] => no
+			     *    [print_photos] => none
+			     *    [use_exif] => yes
+			     *    [perms] => Array
+			     *        ( [canRead] => Array
+			     *            ( [everybody] => 1 )
+			     *            [canViewFullImages] => Array
+			     *            ( [everybody] => 1 )
+			     *        )
+			     *   +[parentAlbumName] => .root
+			     *   +[clicks] => 0
+			     *   +[clicks_date] => 1056014708
+			     *    [display_clicks] => yes
+			     *    [public_comments] => yes
+			     *    [serial_number] => 8
+			     *    [extra_fields] => Array
+			     *        ( [0] => Description
+			     *        )
+			     *    [cached_photo_count] => 2
+			     *    [photos_separate] => 1
+			     *    [name] => album01
+			     *    [owner] => 1054014347u1233740678
+			     *    [last_mod_time] => 1056015246
+			     */
+			    
+			    /* load up the album with metadata from the old album */ 
+			    $newAlbumInstance->setTitle($album['title']);
+			    $newAlbumInstance->setSummary($album['summary']);
+			    $newAlbumInstance->setKeywords('');
+			    $newAlbumInstance->setDescription($album['description']);
+			    
+			    // $newAlbumInstance->setorderBy
+			    // $newAlbumInstance->setorderDirection
+			    // $newAlbumInstance->setownerId
+			    // $newAlbumInstance->settheme
+			    $newAlbumInstance->setcreationTimestamp($album['last_mod_time']);
+			    $newAlbumInstance->setviewedSinceTimestamp($album['clicks_date']);
+			    /* Save the new album */	    
+			    $ret = $newAlbumInstance->save();
+			    if ($ret->isError()) {
+				return array($ret->wrap(__FILE__, __LINE__), null);
+			    }
+			    /* Click counts must be set after the item is first saved */
+			    $ret = GalleryItemAttributesMap::setViewCount($newAlbumInstanceId, $album['clicks']);
+			    if ($ret->isError()) {
+				return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+			    }
+			}
+		    }
+		    /* we can let the parent album (and anything else that we might
+		     * have tied up) be edited by others now
+		     */
+		    $ret = $gallery->releaseLocks($importLockIds);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    } else {
+			$importLockIds = array();
+		    }
+		    if (isset($newAlbumInstanceId)) {
+			$finishedAlbums[$album['name']] = $newAlbumInstanceId;
+			$status['albumImportSuccess'][$album['name']] = true;
+		    } else {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }	
+		    
+		    unset($photos);
+		    list ($ret, $photos)=Gallery1DataParser::getPhotos($albumsPath . $album['name']);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+
+		    foreach($photos as $j => $importAlbumItem) {
+			if (!isset($importAlbumItem->isAlbumName) || !$importAlbumItem->isAlbumName) {
+			    list ($ret, $item) = $gallery->loadEntitiesById($newAlbumInstanceId);
+			    if ($ret->isError()) {
+				return array($ret->wrap(__FILE__, __LINE__), null);
+			    }
+			    
+			    list ($ret, $lockIds[]) = $gallery->acquireReadLock($item->getId());
+			    if ($ret->isError()) {
+				return array($ret->wrap(__FILE__, __LINE__), null);
+			    }
+			    list ($ret, $thumbnailTable) = GalleryDerivativeHelper::fetchThumbnailsByItemIds($item->getId());
+			    if ($ret->isError()) {
+				return array($ret->wrap(__FILE__, __LINE__), null);
+			    }
+			    $albumNeedsThumbnail = empty($thumbnailTable) ? true : false;
+			    
+			    $dir = $albumsPath . $album['name'] . $slash;
+			    $filename = $importAlbumItem->image->name . '.' . $importAlbumItem->image->type;
+			    $filepath = $dir . $filename;
+			    //echo "<p>$filepath</p>";
+			    list ($base, $extension) = GalleryUtilities::getFileNameComponents($filename);
+			    $mimeType = GalleryUtilities::convertExtensionToMime($extension);
+			    
+			    list ($ret, $newItem) = GalleryItemHelper::addItemToAlbum($filepath,
+										      $base,
+										      $base,
+										      $base,
+										      $base,
+										      $mimeType,
+										      $item->getId());
+			    list ($ret, $lockIds[]) = $gallery->acquireWriteLock($newItem->getId());
+			    if ($ret->isError()) {
+				return array($ret->wrap(__FILE__, __LINE__), null);
+			    }
+			    $newItem->setTitle($importAlbumItem->caption);
+			    $newItem->setSummary('');
+			    $newItem->setKeywords($importAlbumItem->keywords);
+			    //$newItem->setDescription($importAlbumItem->extraFields['description']);
+
+			    // $instance->setownerId
+			    if (isset($importAlbumItem->itemCaptureDate[0])){
+				$newItem->setcreationTimestamp($importAlbumItem->itemCaptureDate[0]);
+			    }
+			    $newItem->setviewedSinceTimestamp($album['clicks_date']);
+			    
+			    if ($albumNeedsThumbnail || $importAlbumItem->highlight) {
+				list ($ret, $success) =
+					GalleryItemHelper::setThumbnailFromItem($item->getId(), $newItem->getId());
+				if ($ret->isError()) {
+				    return array($ret->wrap(__FILE__, __LINE__), null);
+				}
+				$albumNeedsThumbnail = !$success;
+			    }
+			    $ret = $newItem->save();
+			    if ($ret->isError()) {
+				return array($ret->wrap(__FILE__, __LINE__), null);
+			    }
+			    /* Click counts must be set after the item is firstsaved */
+			    //$ret = GalleryItemAttributesMap::setViewCount($newItem->getId(), $importAlbumItem->clicks);
+			    //if ($ret->isError()) {
+			    //	return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+			    //}
+			    $status['addFromLocalServer'][] = array('fileName' => $filename,
+								    'id' => $newItem->getId());
+			    /* albumitem Object
+			     * (
+			     *   +[image] => image Object
+			     *        (
+			     *           +[name] => canon_ae_1
+			     *           +[type] => jpg
+			     *           -[width] => 225
+			     *           -[height] => 165
+			     *           -[resizedName] =>
+			     *            {thumb_x] =>
+			     *            [thumb_y] =>
+			     *            [thumb_width] =>
+			     *            [thumb_height] =>
+			     *            [raw_width] => 225
+			     *            [raw_height] => 165
+			     *           -[version] => 10
+			     *        )
+			     *
+			     *   -[thumbnail] => image Object
+			     *        (
+			     *           -[name] => canon_ae_1.thumb
+			     *           -[type] => jpg
+			     *           -[width] => 150
+			     *           -[height] => 110
+			     *           -[resizedName] =>
+			     *           -[thumb_x] =>
+			     *           -[thumb_y] =>
+			     *           -[thumb_width] =>
+			     *           -[thumb_height] =>
+			     *           -[raw_width] => 150
+			     *           -[raw_height] => 110
+			     *           -[version] => 10
+			     *        )
+			     *
+			     *   -[caption] => canon_ae_1
+			     *    [hidden] =>
+			     *   +[highlight] => 1
+			     *   -[highlightImage] => image Object
+			     *        (
+			     *           -[name] => canon_ae_1.highlight
+			     *           -[type] => jpg
+			     *           -[width] => 200
+			     *           -[height] => 147
+			     *           -[resizedName] =>
+			     *           -[thumb_x] =>
+			     *           -[thumb_y] =>
+			     *           -[thumb_width] =>
+			     *           -[thumb_height] =>
+			     *           -[raw_width] => 200
+			     *           -[raw_height] => 147
+			     *           -[version] => 10
+			     *        )
+			     *
+			     *   +[isAlbumName] =>
+			     *   +[clicks] =>
+			     *   +[keywords] =>
+			     *    [comments] =>
+			     *    [uploadDate] => 1056014783
+			     *   +[itemCaptureDate] => Array
+			     *        (
+			     *           -[seconds] => 23
+			     *           -[minutes] => 26
+			     *           -[hours] => 04
+			     *           -[mday] => 19
+			     *           -[wday] => 4
+			     *           -[mon] => 06
+			     *           -[year] => 2003
+			     *           -[yday] => 169
+			     *           -[weekday] => Thursday
+			     *           -[month] => June
+			     *           +[0] => 1056014783
+			     *        )
+			     *
+			     *   -[exifData] => Array
+			     *        (
+			     *           -[File name] => /www/dev.jpmullan.com/albums/album01/canon_ae_1.jpg
+			     *           -[File size] => 8070 bytes
+			     *           -[File date] => 2003:06:19 04:26:23
+			     *           -[Resolution] => 225 x 165
+			     *           -[Jpeg process] => Baseline
+			     *        )
+			     *
+			     *    [extraFields] => Array
+			     *        (
+			     *        )
+			     *
+			     *   -[version] => 10
+			     *)
+			     */
+			}
+		    }
 		}
+		
 		/* $i keeps track of how many passes we make over the data */
 		$i++;
 	    }
@@ -217,151 +514,8 @@ class ConfirmImportController extends GalleryController {
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;
-
+	
 	return array(GalleryStatus::success(), $results);
-    }
-
-    /* crappy procedural code ;) */
-    
-    function importAlbum($itemId,$album) {
-	global $gallery;
-
-	/* $itemId = GalleryUtilities::getRequestVariables('itemId'); */
-
-	/* Make sure we have permission do edit this item */
-	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'core.addAlbumItem');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	/* Try to load targeted parent */
-	list ($ret, $item) = $gallery->loadEntitiesById($itemId);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	/* Get a lock on said parent */
-	list ($ret, $lockIds[]) = $gallery->acquireReadLock($item->getId());
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	/* create arrays to return indicating success/failure of importation */
-	$status = array();
-	$error = array();
-
-	/* Check the new album's path component to see if it is valid on the
-	 * local filesystem
-	 */
-	$platform = $gallery->getPlatform();
-	if (empty($album['name'])) {
-	    $error[] = 'form.error.pathComponent.missing';
-	} else if (!$platform->isLegalPathComponent($album['name'])) {
-	    $error[] = 'form.error.pathComponent.invalid';
-	}
-	/* If everything is good so far, we create a new instance to be our new
-	 * album
-	 */
-	if (empty($error)) {
-	    list ($ret, $instance) =
-		    GalleryFactory::newInstance('GalleryEntity', 'GalleryAlbumItem');
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    if (!isset($instance)) {
-		return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
-			     null);
-	    }  
-	    /* this is where the album is actually created */	    
-	    $ret = $instance->create($itemId, $album['name']);
-	    if ($ret->isError()) {
-		if ($ret->getErrorCode() & ERROR_COLLISION) {
-		    $error[] = 'form.error.pathComponent.collision';
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-	    }
-	    if (empty($error)) {
-		$id = $instance->getId();
-	    /*
-             * Array of example data
-	     * (
-	     *   +[title] => Test Album One
-	     *   +[description] => No description
-	     *   +[summary] =>
-	     *    [nextname] => aaa
-	     *    [bgcolor] =>
-	     *    [textcolor] =>
-	     *    [linkcolor] =>
-	     *    [font] => verdana
-	     *    [border] => 1
-	     *    [bordercolor] => black
-	     *    [returnto] => yes
-	     *    [thumb_size] => 150
-	     *    [resize_size] => 400
-	     *    [rows] => 5
-	     *    [cols] => 5
-	     *    [fit_to_window] => no
-	     *    [use_fullOnly] => no
-	     *    [print_photos] => none
-	     *    [use_exif] => yes
-	     *    [perms] => Array
-	     *        ( [canRead] => Array
-	     *            ( [everybody] => 1 )
-	     *            [canViewFullImages] => Array
-	     *            ( [everybody] => 1 )
-	     *        )
-	     *   +[parentAlbumName] => .root
-	     *   +[clicks] => 0
-	     *   +[clicks_date] => 1056014708
-	     *    [display_clicks] => yes
-	     *    [public_comments] => yes
-	     *    [serial_number] => 8
-	     *    [extra_fields] => Array
-	     *        ( [0] => Description
-	     *        )
-	     *    [cached_photo_count] => 2
-	     *    [photos_separate] => 1
-	     *    [name] => album01
-	     *    [owner] => 1054014347u1233740678
-	     *    [last_mod_time] => 1056015246
-	     */
-
-		/* load up the album with metadata from the old album */ 
-		$instance->setTitle($album['title']);
-		$instance->setSummary($album['summary']);
-		$instance->setKeywords('');
-		$instance->setDescription($album['description']);
-
-# setorderBy
-# setorderDirection
-# setownerId
-# settheme
-		$instance->setcreationTimestamp($album['last_mod_time']);
-		$instance->setviewedSinceTimestamp($album['clicks_date']);
-		/* Save the new album */	    
-		$ret = $instance->save();
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-		/* Click counts must be set after the item is first saved */
-		$ret = GalleryItemAttributesMap::setViewCount($id, $album['clicks']);
-		if ($ret->isError()) {
-		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-		}
-	    }
-	}
-	/* we can let the parent album (and anything else that we might
-	 * have tied up) be edited by others now
-	 */
-	$ret = $gallery->releaseLocks($lockIds);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	if (isset($id)) {
-	    return array(GalleryStatus::success(), $id);
-	} else {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}	
     }
 }	    
 

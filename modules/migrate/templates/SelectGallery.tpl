@@ -3,6 +3,9 @@
     {g->title}
       {g->text text="Migrate"}
     {/g->title}
+    {g->description}
+      {g->text text="THIS MODULE IS NOT COMPLETE.  USE IT AT YOUR OWN RISK."}
+    {/g->description}
   {/g->banner}
 
   {g->box style="admin"}
