@@ -65,16 +65,20 @@ class GalleryEmbed {
      * (redirect, or output from G2 immediate view like core:DownloadItem) and
      * CMS should not send any additional output.  If isDone is false then check
      * headHtml and bodyHtml keys for content to display via CMS.
+     * Include activeUserName parameter if integration is not calling GalleryEmbed::login()
+     * at CMS login time.
      *
-     * @param string username of active user (null or empty for anonymous/guest user)
+     * @param string (optional) username of active user (empty string for anonymous/guest user)
      * @return array ('isDone' => boolean,
      *                [optional: 'headHtml' => string, 'bodyHtml' => string])
      * @static
      */
-    function handleRequest($activeUserName) {
-	$ret = GalleryEmbed::_checkActiveUser($activeUserName);
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+    function handleRequest($activeUserName=null) {
+	if (isset($activeUserName)) {
+	    $ret = GalleryEmbed::_checkActiveUser($activeUserName);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
 	}
 
 	return GalleryMain(true);
@@ -123,6 +127,31 @@ class GalleryEmbed {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    $session->put('core.id.activeUser', $user->getId());
+	}
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Login the specified user in the G2 session.
+     * If this method is called at CMS login time then activeUserName parameter to
+     * handleRequest() is not required (but a G2 session is created at CMS login time,
+     * even though user may not visit any G2 pages).
+     *
+     * @param string username
+     * @return object GalleryStatus a status object
+     * @static
+     */
+    function login($userName) {
+	global $gallery;
+	list ($ret, $user) = GalleryCoreApi::fetchUserByUserName($userName);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$gallery->setActiveUser($user);
+	$session =& $gallery->getSession();
+	$ret = $session->save();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	return GalleryStatus::success();
     }
