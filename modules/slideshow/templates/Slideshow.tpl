@@ -60,15 +60,15 @@ function preload(i) {
   }
 }
 function slide_view_start() {
+  if (bShowText) show_text();
   preload(move_index(1));
-  timer = setTimeout('goto_next_photo()', iDelay);
+  if (!bPause) timer = setTimeout('goto_next_photo()', iDelay);
 }
 function goto_next_photo() {
   index = move_index(1);
   if (bCanBlend) apply_filter();
   document.images.slide.src = document.getElementById('item_'+index+'_'+item_map[index][iSize]).href;
   linkStop.href = document.getElementById('href_'+index).href;
-  if (bShowText) show_text();
   if (bCanBlend) document.images.slide.filters[0].Play();
 }
 function show_text() {
@@ -95,12 +95,10 @@ function start_stop() {
   spanPause.innerHTML = bPause ? {/literal}'{g->text text="Resume"}'
                                : '{g->text text="Pause"}'; {literal}
 }
-function back_one() {
-  index = move_index(-2);
-  if (bPause) start_stop(); else {
-    clearTimeout(timer);
-    goto_next_photo();
-  }
+function jump(by) {
+  index = move_index(by);
+  clearTimeout(timer);
+  goto_next_photo();
 }
 function apply_filter() {
   f = filters[document.getElementById('filter').selectedIndex];
@@ -110,19 +108,14 @@ function apply_filter() {
 }
 function new_size(size) {
   iSize = size;
-  index = move_index(-1);
-  if (bPause) start_stop(); else {
-    clearTimeout(timer);
-    goto_next_photo();
-  }
+  jump(-1);
 }
 function new_order(direct) {
   iDir = direct;
 }
 function new_delay(delay) {
-  clearTimeout(timer);
   iDelay = delay*1000;
-  if (!bPause) slide_view_start();
+  jump(-1);
 }
 {/literal}
 </script>
@@ -137,7 +130,7 @@ function new_delay(delay) {
         {g->link onClick="start_stop();return false"}
           <span id="pause">{g->text text="Pause"}</span>
         {/g->link} &nbsp;
-        {g->link onClick="back_one();return false"}
+        {g->link onClick="jump(-2);return false"}
           {g->text text="Back One Image"}
         {/g->link} &nbsp;
         {g->link onClick="text_onoff();return false"}
