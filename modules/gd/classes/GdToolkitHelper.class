@@ -1,0 +1,245 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package Gd
+ * @author Ernesto Baschny <ernst@baschny.de>
+ */
+
+/**
+ * A helper class for the GalleryGdToolkit class
+ *
+ * @package Gd
+ * @subpackage Classes
+ */
+class GdToolkitHelper {
+
+    /**
+     * The minimal version of GD that this module supports
+     * 
+     * @return string A version string
+     * @static
+     */
+    function minGdVersion() {
+	return '2.0.1';
+    }
+
+    /**
+     * Figure out what operations and properties are supported by the
+     * image* functions in the PHP installation and return them.
+     *
+     * @param object a GdFunctionality-object to work with
+     * @return object GalleryStatus a status code
+     *	 array('operations' => ...
+     *	       'properties' => ...)
+     * @static
+     */
+    function getOperationsAndProperties($gd = '') {
+	global $gallery;
+
+	if ($gd == '') {
+	    $gd =& GdToolkitHelper::getGdFunctionality();
+	}
+
+	list ($ret, $isSupported) = GdToolkitHelper::isGdVersionSupported('', $gd);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	if (! $isSupported) {
+	    return array(GalleryStatus::success(), array('operations' => array(),
+							 'properties' => array()));
+	}
+	
+	list ($ret, $mimeTypes) = GdToolkitHelper::discoverMimeTypes($gd);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/*
+	 * -------------------- Operations --------------------
+	 */
+
+	$convertToJpegMimeTypes = array_intersect(
+	    array('image/gif', 'image/vnd.wap.wbmp',
+		  'image/x-xbitmap', 'image/x-xpixmap'), $mimeTypes);
+	if (!empty($convertToJpegMimeTypes)) {
+	    $operations['convert-to-image/jpeg']['params'] = array();
+	    $operations['convert-to-image/jpeg']['description'] = $gallery->i18n('Convert to a JPEG');
+	    $operations['convert-to-image/jpeg']['mimeTypes'] = $mimeTypes;
+	    $operations['convert-to-image/jpeg']['outputMimeType'] = 'image/jpeg';
+	}
+
+	/* Scale */
+	$operations['scale']['params'][] = array('type' => 'int',
+						 'description' => $gallery->i18n('target size'));
+	$operations['scale']['description'] = $gallery->i18n('Scale the image to the target size'); 
+	$operations['scale']['mimeTypes'] = $mimeTypes;
+
+	/* Thumbnail is an alias for scale */
+	$operations['thumbnail'] = $operations['scale'];
+
+	/* Resize */
+	$operations['resize']['params'][] = array('type' => 'int',
+						  'description' => $gallery->i18n('target width'));
+	$operations['resize']['params'][] = array('type' => 'int',
+						  'description' => $gallery->i18n('target height'));
+	$operations['resize']['description'] = $gallery->i18n('Resize the image to the target dimensions'); 
+	$operations['resize']['mimeTypes'] = $mimeTypes;
+
+	/* Rotate */
+	if ($gd->functionExists('imageRotate')) {
+	    $operations['rotate']['params'][] = array('type' => 'int',
+						      'description' => $gallery->i18n('rotation degrees'));
+	    $operations['rotate']['description'] = $gallery->i18n('Rotate the image'); 
+	    $operations['rotate']['mimeTypes'] = $mimeTypes;
+	}
+	
+	/* Crop */
+	$operations['crop']['params'][] = array('type' => 'int',
+						'description' => $gallery->i18n('left edge'));
+	$operations['crop']['params'][] = array('type' => 'int',
+						'description' => $gallery->i18n('top edge'));
+	$operations['crop']['params'][] = array('type' => 'int',
+						'description' => $gallery->i18n('width'));
+	$operations['crop']['params'][] = array('type' => 'int',
+						'description' => $gallery->i18n('height'));
+	$operations['crop']['description'] = $gallery->i18n('Crop the image'); 
+	$operations['crop']['mimeTypes'] = $mimeTypes;
+
+	/* Composite */
+	$operations['composite']['params'][] = array('type' => 'string',
+						     'description' => $gallery->i18n('overlay path'));
+	$operations['composite']['params'][] = array('type' => 'string',
+						     'description' => $gallery->i18n('overlay mime type'));
+	$operations['composite']['params'][] = array('type' => 'int',
+						     'description' => $gallery->i18n('overlay width'));
+	$operations['composite']['params'][] = array('type' => 'int',
+						     'description' => $gallery->i18n('overlay height'));
+	$operations['composite']['params'][] = array('type' => 'int',
+						     'description' => $gallery->i18n('alignment location x'));
+	$operations['composite']['params'][] = array('type' => 'int',
+						     'description' => $gallery->i18n('alignment location y'));
+	$operations['composite']['params'][] = array('type' => 'int',
+						     'description' => $gallery->i18n('alignment type'));
+	$operations['composite']['description'] = $gallery->i18n('Composite the image'); 
+	$operations['composite']['mimeTypes'] = $mimeTypes;
+
+	/*
+	 * -------------------- Properties --------------------
+	 */
+
+	/* Dimensions */
+	$properties['dimensions']['type'] = 'int,int';
+	$properties['dimensions']['description'] = $gallery->i18n('Get the width and height of the image');
+	$properties['dimensions']['mimeTypes'] = $mimeTypes;
+
+	return array(GalleryStatus::success(), array('operations' => $operations,
+						     'properties' => $properties));
+    }
+
+    /**
+     * See if this GD version is supported by this module
+     * 
+     * Current GD >= 2.0.1 is supported
+     * 
+     * @param string A gd version string or empty to check the current version
+     * @return array object GalleryStatus
+     *	       boolean true if supported, false otherwise
+     * @static
+     */
+    function isGdVersionSupported($gdVersion = '', $gd = '') {
+	if ($gdVersion == '') {
+	    /* Find out current GD version */
+	    if ($gd == '') {
+		$gd =& GdToolkitHelper::getGdFunctionality();
+	    }
+	    $gdVersion = $gd->discoverGdVersion();
+	}
+	
+	if (preg_match('/^(2\.0\.[1-9]\d*)$/', $gdVersion)) {
+	    return array(GalleryStatus::success(), true);
+	}
+	/* 0.x, 1.x and 2.0(.0) is too old */
+	return array(GalleryStatus::success(), false);
+    }
+    
+    /**
+     * Find out which mime types are supported on this GD.
+     *
+     * @return array object GalleryStatus
+     *	       array supported mime-types
+     * @static
+     */
+    function discoverMimeTypes($gd = '') {
+	if ($gd == '') {
+	    $gd =& GdToolkitHelper::getGdFunctionality();
+	}
+	if (! $gd->functionExists('imageTypes')) {
+	    return array(GalleryStatus::success(), array());
+	}
+
+	$mimeTypes = array();
+	if ($gd->imageTypes() & IMG_GIF) {
+	    $mimeTypes[] = 'image/gif';
+	}
+	if ($gd->imageTypes() & IMG_JPG) {
+	    $mimeTypes[] = 'image/jpeg';
+	}
+	if ($gd->imageTypes() & IMG_PNG) {
+	    $mimeTypes[] = 'image/png';
+	}
+	if ($gd->imageTypes() & IMG_WBMP) {
+	    $mimeTypes[] = 'image/vnd.wap.wbmp';
+	}
+	if ($gd->functionExists('imageXpm')
+	    && $gd->functionExists('imageCreateFromXpm')) {
+	    $mimeTypes[] = 'image/x-xpixmap';
+	}
+	if ($gd->functionExists('imageXbm')
+	    && $gd->functionExists('imageCreateFromXbm')) {
+	    $mimeTypes[] = 'image/x-xbitmap';
+	}
+	
+	if (count($mimeTypes) == 0) {
+	    return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__), null);
+	}
+	return array(GalleryStatus::success(), $mimeTypes);
+    }
+    
+    /**
+     * Factory to get a new GdFunctionality object.
+     * 
+     * @param string the name of the GdFunctionality class we want to use
+     * 
+     * @return object GdFunctionality
+     * @static
+     */
+    function getGdFunctionality() {
+	static $gdFunctionality;
+	if (! $gdFunctionality) {
+	    require_once(dirname(__FILE__) . '/GdFunctionality.class');
+	    $gdFunctionality =& new GdFunctionality();
+	}
+	return $gdFunctionality;
+    }
+}
+?>

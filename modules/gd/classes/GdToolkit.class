@@ -1,0 +1,575 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package Gd
+ * @author Ernesto Baschny <ernst@baschny.de>
+ */
+
+/**
+ * Load required classes
+ */
+require_once(dirname(__FILE__) . '/../../core/classes/GalleryToolkit.class');
+require_once(dirname(__FILE__) . '/GdToolkitHelper.class');
+
+/**
+ * A Gd version of GalleryToolkit
+ *
+ * This class implements the GalleryToolkit API using Gd.
+ *
+ * @package Gd
+ * @subpackage Classes
+ */
+class GdToolkit extends GalleryToolkit {
+
+    var $_gdFunctionality;
+
+    /*
+     * ****************************************
+     *		 Methods
+     * ****************************************
+     */
+
+    /**
+     * Return the current set gdFunctionality.
+     * 
+     * Default is GdFunctionality.class if no other is set.
+     * 
+     * @return object implementation of GdFunctionality
+     */
+    function &_getGdFunctionality() {
+	if (! $this->_gdFunctionality) {
+	    require_once(dirname(__FILE__) . '/GdFunctionality.class');
+	    $this->_gdFunctionality =& new GdFunctionality();
+	}
+	return $this->_gdFunctionality;
+    }
+
+    /**
+     * Set a different GdFunctionality object to be used by this Toolkit
+     * 
+     * This is useful on our phpunit tests, which will make this Toolkit
+     * use a pseudo-gd-implementation that simulates different PHP versions.
+     * 
+     * @return nothing
+     */
+    function setGdFunctionality(&$obj) {
+	$this->_gdFunctionality =& $obj;
+    }
+
+    /**
+     * @see GalleryToolkit::getProperty()
+     */
+    function getProperty($mimeType, $propertyName, $sourceFilename) {
+	switch($propertyName) {
+	case 'dimensions':
+	    list ($ret, $width, $height) = $this->_getImageDimensions($mimeType, $sourceFilename);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__),
+			     null);
+	    }
+	    $results = array((int)$width, (int)$height);
+	    break;
+
+	default:
+	    return array(GalleryStatus::error(ERROR_UNIMPLEMENTED,
+					      __FILE__, __LINE__),
+			 null);
+	}
+
+	return array(GalleryStatus::success(), $results);
+    }
+
+    /**
+     * @see GalleryToolkit::performOperation()
+     */
+    function performOperation($mimeType, $operationName, $sourceFilename, $destFilename, $parameters) {
+	global $gallery;
+	
+	$gd =& $this->_getGdFunctionality();
+
+	$gallery->debug(sprintf("performOperation(%s,%s,%s,%s,%s)", $mimeType, $operationName, $sourceFilename, $destFilename, join('|', $parameters)));
+	
+	$outputMimeType = $mimeType;
+	list($ret, $sourceRes) = $this->_getImageResource($mimeType, $sourceFilename);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
+	switch($operationName) {
+	case 'thumbnail':
+	case 'scale':
+	    /* $parameters[0]: target size */
+	    list ($ret, $width, $height) = $this->_getImageDimensionsForResource($sourceRes);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $gallery->debug("width x height: " . $width . "x" . $height);
+	    if ($operationName == 'thumbnail') {
+		/* Don't enlarge images for a thumbnail */
+		if ($width <= $parameters[0] && $height <= $parameters[0]) {
+		    return array(GalleryStatus::success(), $mimeType);
+		}
+	    }
+	    /* Calculate the scaled width/height */
+	    $destWidth = min($parameters[0], $width);
+	    $destHeight = min($parameters[0], $height);
+	    $prop = $width / $height;
+	    if ($prop > 1) {
+		/* landscape */
+		$destHeight = round($height * $parameters[0] / $width);
+	    } elseif ($prop < 1) {
+		/* portrait */
+		$destWidth = round($width * $parameters[0] / $height);
+	    }
+	    list ($ret, $destRes) = $this->_resizeImageResource($sourceRes,
+						    $destWidth,
+						    $destHeight);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    break;
+	    
+	case 'resize':
+	    /* $parameters[0]: target width
+	     * $parameters[1]: target height
+	     */
+	    list ($ret, $destRes) = $this->_resizeImageResource($sourceRes,
+						    $parameters[0],
+						    $parameters[1]);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    break;
+
+	case 'rotate':
+	    /* PHP >= 4.3.0
+	     * $parameters[0]: rotation degrees
+	     */
+	    $degrees = 0 - $parameters[0];
+	    list ($ret, $destRes) = $gd->imageRotate($sourceRes, $degrees, 0);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    break;
+
+	case 'crop':
+	    /* $parameters[0]: left edge
+	     * $parameters[1]: top edge
+	     * $parameters[2]: width
+	     * $parameters[3]: height
+	     */
+	    list($ret, $destRes) = $gd->imageCreateTruecolor($parameters[2], $parameters[3]);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $ret = $gd->imageCopy($destRes, $sourceRes,
+		       0, 0,    // dst x,y
+		       $parameters[0], $parameters[1],    // src x,y
+		       $parameters[2], $parameters[3]
+		       );
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    break;
+
+	case 'convert-to-image/jpeg':
+	    $destRes = $sourceRes;
+	    $outputMimeType = 'image/jpeg';
+	    break;
+
+	case 'composite':
+	    /* $parameters[0]: overlay path
+	     * $parameters[1]: overlay mime type
+	     * $parameters[2]: overlay width
+	     * $parameters[3]: overlay height
+	     * $parameters[4]: alignment location x
+	     * $parameters[5]: alignment location y
+	     * $parameters[6]: alignment type
+	     */
+	    $cmd = 'composite';
+	    $compositeOverlayPath = $parameters[0];
+	    $compositeOverlayMimeType = $parameters[1];
+	    $compositeWidth = $parameters[2];
+	    $compositeHeight = $parameters[3];
+	    $compositeAlignX = $parameters[4];
+	    $compositeAlignY = $parameters[5];
+	    $compositeAlignmentType = $parameters[6];
+
+	    list ($ret, $sourceWidth, $sourceHeight) = $this->_getImageDimensionsForResource($sourceRes);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    switch ($compositeAlignmentType) {
+	    case 1: // Top - Left
+		$compositeAlignX = 0;
+		$compositeAlignY = 0;
+		break;
+
+	    case 2: // Top
+		$compositeAlignX = ($sourceWidth - $compositeWidth) / 2;
+		$compositeAlignY = 0;
+		break;
+		
+	    case 3: // Top - Right
+		$compositeAlignX = ($sourceWidth - $compositeWidth);
+		$compositeAlignY = 0;
+		break;
+		
+	    case 4: // Left
+		$compositeAlignX = 0;
+		$compositeAlignY = ($sourceHeight - $compositeHeight) / 2;
+		break;
+		
+	    case 5: // Center
+		$compositeAlignX = ($sourceWidth  - $compositeWidth)  / 2;
+		$compositeAlignY = ($sourceHeight - $compositeHeight) / 2;
+		break;
+		
+	    case 6: // Right
+		$compositeAlignX = ($sourceWidth  - $compositeWidth);
+		$compositeAlignY = ($sourceHeight - $compositeHeight) / 2;
+		break;
+		
+	    case 7: // Bottom - Left
+		$compositeAlignX = 0;
+		$compositeAlignY = ($sourceHeight - $compositeHeight);
+		break;
+		
+	    case 8: // Bottom
+		$compositeAlignX = ($sourceWidth  - $compositeWidth) / 2;
+		$compositeAlignY = ($sourceHeight - $compositeHeight);
+		break;
+		
+	    case 9: // Bottom Right
+		$compositeAlignX = ($sourceWidth  - $compositeWidth);
+		$compositeAlignY = ($sourceHeight - $compositeHeight);
+		break;
+		
+	    default: // Other
+		/* Check for percents */
+		if (ereg('([0-9]+)(\%?)', $compositeAlignX, $regs)) {
+		    if ($regs[2] == '%') {
+			$compositeAlignX = round($regs[1] / 100 * ($sourceWidth - $compositeWidth));
+		    } else {
+			$compositeAlignX = $regs[1];
+		    }
+		} else {
+		    $compositeAlignX = 0;
+		}
+		
+		if (ereg('([0-9]+)(\%?)', $compositeAlignY, $regs)) {
+		    if ($regs[2] == '%') {
+			$compositeAlignY = round($regs[1] / 100 * ($sourceHeight - $compositeHeight));
+		    } else {
+			$compositeAlignY = $regs[1];
+		    }
+		} else {
+		    $compositeAlignY = 0;
+		}
+
+		if ($compositeAlignX < 1) { // clip left side
+		    $compositeAlignX = 0;
+		} else if ($compositeAlignX > ($sourceWidth - $compositeWidth)) { // clip right side
+		    $compositeAlignX = ($sourceWidth - $compositeWidth);
+		}
+		
+		if ($compositeAlignY < 1) { // clip top
+		    $compositeAlignY = 0;
+		} else if ($compositeAlignY > ($sourceHeight - $compositeHeight)) { // clip bottom
+		    $compositeAlignY = ($sourceHeight - $compositeHeight);
+		}
+		break;
+	    }
+	    
+	    list($ret, $overlayRes) = $this->_getImageResource($compositeOverlayMimeType,
+							       $compositeOverlayPath);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    
+	    $destRes = $sourceRes;
+	    
+	    $ret = $gd->imageCopyMerge($destRes, $overlayRes,
+				       $compositeAlignX, $compositeAlignY,
+				       0, 0,
+				       $compositeWidth, $compositeHeight,
+				       99
+				      );
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    break;
+	    
+	default:
+	    return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
+	}
+
+	$ret = $this->_saveImageResourceToFile($destRes, $destFilename, $outputMimeType);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	return array(GalleryStatus::success(), $outputMimeType);
+    }
+
+    /**
+     * @see GalleryToolkit::mergeOperations()
+     */
+    function mergeOperations($operation1, $args1, $operation2, $args2) {
+
+	/* We can only merge like operations */
+	if ($operation1 != $operation2) {
+	    /* But not all like operations have the same name */
+	    $likeOperations = array('resize', 'scale', 'thumbnail');
+	    if (!(in_array($operation1, $likeOperations)
+		    && in_array($operation2, $likeOperations))) {
+		return array(false, null, null);
+	    }
+	}
+
+	switch ($operation1) {
+	case 'crop':
+	case 'resize':
+	case 'scale':
+	case 'thumbnail':
+	case 'composite':
+	    /* For like operations, the second operation takes precedence */
+	    return array(true, $operation2, $args2);
+	    break;
+
+	case 'rotate':
+	    /* Rotation is additive */
+	    $rotation = ($args1[0] + $args2[0]) % 360;
+
+	    /* 0 rotation means the operation goes away */
+	    if ($rotation == 0) {
+		return array(true, null, null);
+	    }
+
+	    if ($rotation == 270) {
+		$rotation = -90;
+	    }
+	    return array(true, $operation2, array($rotation));
+
+	default:
+	    return array(false, null, null);
+	}
+    }
+    
+    /**
+     * Return a GD image resource for the given filename so we can
+     * perform other operations on it.
+     * 
+     * @param string the mime-type of the image
+     * @param string the path to the file to read
+     * @return array object GalleryStatus a status code
+     *	       resource the GD resource
+     */
+    function _getImageResource($mimeType, $filename) {
+	$gd =& $this->_getGdFunctionality();
+	$res = null;
+	switch ($mimeType) {
+	case 'image/gif':
+	    list($ret, $res) = $gd->imageCreateFromGif($filename);
+	    break;
+	case 'image/jpeg':
+	    list($ret, $res) = $gd->imageCreateFromJpeg($filename);
+	    break;
+	case 'image/png':
+	    list($ret, $res) = $gd->imageCreateFromPng($filename);
+	    break;
+	case 'image/vnd.wap.wbmp':
+	    list($ret, $res) = $gd->imageCreateFromWbmp($filename);
+	    break;
+	case 'image/x-xpixmap':
+	    list($ret, $res) = $gd->imageCreateFromXpm($filename);
+	    break;
+	case 'image/x-xbitmap':
+	    list($ret, $res) = $gd->imageCreateFromXbm($filename);
+	    break;
+	}
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	if (! $res) {
+	    return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__), null);
+	}
+	return array(GalleryStatus::success(), $res);
+    }
+
+    /**
+     * Save a GD resource to a file with a certain mime-type
+     * 
+     * @param string the mime-type of the image
+     * @param string the path to the file to read
+     * @return object GalleryStatus a status code
+     */
+    function _saveImageResourceToFile($res, $filename, $mimeType) {
+	$gd =& $this->_getGdFunctionality();
+	switch ($mimeType) {
+	case 'image/gif':
+	    $ret = $gd->imageGif($res, $filename);
+	    break;
+	case 'image/jpeg':
+	    list ($ret, $jpegQuality) =
+		    GalleryCoreApi::getPluginParameter('module', 'gd', 'jpegQuality');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    $ret = $gd->imageJpeg($res, $filename, $jpegQuality);
+	    break;
+	case 'image/png':
+	    $ret = $gd->imagePng($res, $filename);
+	    break;
+	case 'image/vnd.wap.wbmp':
+	    $ret = $gd->imageWbmp($res, $filename);
+	    break;
+	case 'image/x-xpixmap':
+	    $ret = $gd->imageXpm($res, $filename);
+	    break;
+	case 'image/x-xbitmap':
+	    $ret = $gd->imageXbm($res, $filename);
+	    break;
+	}
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	return GalleryStatus::success();
+    }
+    
+    /**
+     * Resizes an open GD-resource to the specified size.
+     * 
+     * @param resource the source GD-resource
+     * @param int the destination width
+     * @param int the destination height
+     * @return array object GalleryStatus
+     *	       resource the destination GD-resource
+     */
+    function _resizeImageResource($sourceRes, $destWidth, $destHeight) {
+	global $gallery;
+	
+	$gd =& $this->_getGdFunctionality();
+	$gallery->debug(sprintf("_resizeImageResource(%s,%s,%s)", $sourceRes, $destWidth, $destHeight));
+
+	list ($ret, $sourceWidth) = $gd->imageSX($sourceRes);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	list ($ret, $sourceHeight) = $gd->imageSY($sourceRes);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$gallery->debug(sprintf("source size: %sx%s", $sourceWidth, $sourceHeight));
+	
+	list($ret, $destRes) = $gd->imageCreateTruecolor($destWidth, $destHeight);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$result = false;
+	$ret = $this->_imageCopyResampled($destRes, $sourceRes,
+				 0, 0, 0, 0,    // dst and src X,Y
+				 $destWidth, $destHeight,    // dst W,H
+				 $sourceWidth, $sourceHeight // src W,H
+				 );
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	return array(GalleryStatus::success(), $destRes);
+    }
+
+    /**
+     * @see GalleryGraphics::getImageDimensions()
+     */
+    function _getImageDimensions($mimeType, $filename) {
+	global $gallery;
+
+	/*
+	 * Try PHPs getimagesize first. If it runs afoul of open_basedir
+	 * it'll return false and we can try using the GD functions
+	 */
+	$gd =& $this->_getGdFunctionality();
+	$results = $gd->getImageSize($filename);
+	if (($results != false) &&
+	    (($results[0] > 1) && ($results[1] > 1))) {
+	    return array(GalleryStatus::success(), $results[0], $results[1]);
+	}
+	
+	list($success, $res) = $this->_getImageResource($mimeType, $filename);
+	if (!$success) {
+	    return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__), 0, 0);
+	}
+	
+	return $this->_getImageDimensionsForResource($res);
+    }
+
+    /**
+     * Get the image dimentions for an already opened GD resource.
+     * 
+     * @return array object GalleryStatus
+     *	       int width
+     *	       int height
+     */
+    function _getImageDimensionsForResource($res) {
+	$gd =& $this->_getGdFunctionality();
+	list ($ret, $x) = $gd->imageSx($res);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+	list ($ret, $y) = $gd->imageSy($res);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+	if ($x > 0 && $y > 0) {
+	    return array(GalleryStatus::success(), $x, $y);
+	}
+	return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__),
+		     null, null);
+    }
+    
+    /**
+     * Copy and resize part of an image with resampling or resizing.
+     * 
+     * We will use GD's "resample" functionality and fallback to "resize" 
+     * if "resample" is not available.
+     * 
+     * @return object GalleryStatus
+     */
+    function _imageCopyResampled($dstRes, $srcRes, $dstX, $dstY, $srcX, $srcY, $dstW, $dstH, $srcW, $srcH) {
+	$gd =& $this->_getGdFunctionality();
+	if ($gd->functionExists('imageCopyResampled')) {
+	    $result = $gd->imageCopyResampled($dstRes, $srcRes, $dstX, $dstY, $srcX, $srcY, $dstW, $dstH, $srcW, $srcH);
+	} else {
+	    /* Fallback */
+	    $result = $gd->imageCopyResized($dstRes, $srcRes, $dstX, $dstY, $srcX, $srcY, $dstW, $dstH, $srcW, $srcH);
+	}
+	if ($result) {
+	    return GalleryStatus::success();
+	} else {
+	    return GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__);
+	}
+    }
+
+}
+?>
