@@ -64,10 +64,36 @@ class GalleryFactory {
 	$registry['implementations'][$classType][$className] = $fileName;
 	$registry['ids'][$classType][$id] = $className;
 	foreach ($hints as $hint) {
-	    $registry['hints'][$classType][strtolower($hint)][] = $className;
+	    $registry['hints'][$classType][strtolower($hint)][$className] = 1;
 	}
     }
 
+    /**
+     * Unregister an implementation from the factory by id
+     *
+     * @param string the class type (eg. 'GalleryGraphics')
+     * @param string an id (eg. 'NetPBM')
+     * @static
+     */
+    function unregisterImplementation($classType, $className) {
+	$registry =& GalleryFactory::_getFactoryData();
+	unset($registry['implementations'][$classType][$className]);
+	foreach ($registry['ids'][$classType] as $id => $name) {
+	    if ($name == $className) {
+		unset($registry['ids'][$classType][$id]);
+		break;
+	    }
+	}
+	foreach ($registry['hints'][$classType] as $hint => $names) {
+	    if (isset($names[$className])) {
+		unset($registry['hints'][$classType][$hint][$className]);
+		if (empty($registry['hints'][$classType][$hint])) {
+		    unset($registry['hints'][$classType][$hint]);
+		}
+	    }
+	}
+    }
+    
     /**
      * Create a new instance of the given type
      *
@@ -129,8 +155,10 @@ class GalleryFactory {
 	    return array(GalleryStatus::success(), null);
 	}
 
+	$classNames = array_keys($registry['hints'][$classType][$hint]);
+
 	/* Right now we just use the first available hint */
-	$className = $registry['hints'][$classType][$hint][0];
+	$className = $classNames[0];
 	list ($ret, $instance) = GalleryFactory::newInstance($classType, $className);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -177,17 +205,6 @@ class GalleryFactory {
 	} else {
 	    return null;
 	}
-    }
-
-    /**
-     * Return all the available hints for a class
-     *
-     * @return array (id => className)
-     * @static
-     */
-    function getAllImplementationHints($classType) {
-	$registry =& GalleryFactory::_getFactoryData();
-	return $registry['hints'][$classType];
     }
 }
 ?>
