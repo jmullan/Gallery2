@@ -32,6 +32,9 @@ foreach my $file (@ARGV) {
 
       if (m|<class-name>(.*)</class-name>|) {
 	($schemaName = $1) =~ s/^Gallery//;
+	# Shorten some table names to fit Oracle's 30 char name limit..
+	$schemaName =~ s/Preferences/Prefs/;
+	$schemaName =~ s/Toolkit/Tk/;
       }
 
       if (m|<schema>|) {

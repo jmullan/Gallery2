@@ -27,7 +27,9 @@
     );
 
   <xsl:for-each select="index">
-    CREATE INDEX <xsl:call-template name="indexName"/> 
+    CREATE INDEX <xsl:call-template name="indexName"> 
+      <xsl:with-param name="num">_I<xsl:value-of select="position()"/></xsl:with-param>
+    </xsl:call-template>
     ON <xsl:value-of select="$tablePrefix"/><xsl:value-of select="/table/table-name"/>
     (<xsl:call-template name="indexColumns"/>);
 
@@ -40,7 +42,9 @@
     </xsl:if>
 
     <xsl:if test="@primary!='true'">
-    CREATE UNIQUE INDEX <xsl:call-template name="indexName"/> 
+    CREATE UNIQUE INDEX <xsl:call-template name="indexName"> 
+      <xsl:with-param name="num">_U<xsl:value-of select="position()"/></xsl:with-param>
+    </xsl:call-template>
     ON <xsl:value-of select="$tablePrefix"/><xsl:value-of select="/table/table-name"/>
     (<xsl:call-template name="indexColumns"/>);
     </xsl:if>
@@ -191,7 +195,7 @@
       )
     </xsl:when>
     <xsl:when test="column-type='TEXT'">
-      LONG
+      VARCHAR2(4000)
     </xsl:when>
     <xsl:when test="column-type='BOOLEAN'">
       NUMBER(1)
@@ -203,7 +207,7 @@
       UNKNOWN COLUMN TYPE: <xsl:value-of select="column-type"/>
     </xsl:otherwise>
   </xsl:choose>
-  <xsl:if test="not-null">
+  <xsl:if test="not-null[@empty='disallowed']">
     NOT NULL
   </xsl:if>
   </xsl:template>
@@ -231,8 +235,9 @@
   
   <!-- General purpose index definition -->
   <xsl:template name="indexName">
+    <xsl:param name="num">0</xsl:param>
     <xsl:value-of select="/table/table-name"/>
-    <xsl:for-each select="column-name">_<xsl:value-of select="."/></xsl:for-each>
+    <xsl:value-of select="$num"/>
   </xsl:template>
 
   <xsl:template name="indexColumns">

@@ -1476,6 +1476,12 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	$tableName = str_replace('Gallery', '', $tableName);
 
 	/*
+	 * Other abbreviations to keep table names under Oracle's 30 character limit.
+	 */
+	$tableName = str_replace('Preferences', 'Prefs', $tableName);
+	$tableName = str_replace('Toolkit', 'Tk', $tableName);
+
+	/*
 	 * Deal with aliases, which will be in the form of "table=1", "table=2",
 	 * etc.  Translate "1" into "A", "2" into "B", etc.
 	 */

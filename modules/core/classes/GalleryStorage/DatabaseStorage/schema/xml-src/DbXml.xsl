@@ -87,7 +87,9 @@
         <column-size>MEDIUM</column-size>
       </xsl:if>
       <xsl:if test="required">
-        <not-null/>
+        <xsl:element name="not-null">
+          <xsl:attribute name="empty"><xsl:value-of select="required/@empty"/></xsl:attribute>
+        </xsl:element>
       </xsl:if>
       <xsl:if test="primary">
         <not-null/>
@@ -107,7 +109,9 @@
           <column-size>MEDIUM</column-size>
         </xsl:if>
         <xsl:if test="required">
-          <not-null/>
+          <xsl:element name="not-null">
+            <xsl:attribute name="empty"><xsl:value-of select="required/@empty"/></xsl:attribute>
+          </xsl:element>
         </xsl:if>
         <xsl:if test="primary">
           <not-null/>
