@@ -133,12 +133,26 @@ class GalleryStorage {
     var $_metaInfo;
 
     /**
+     * The debugging flag
+     *
+     * @var boolean $_debug
+     */
+    var $_debug;
+
+    /**
      * Constructor
      *
      * Initialize our Gallery class meta information map
      */
     function GalleryStorage() {
 	$this->_metaInfo = new GalleryClassMetaInfo();
+    }
+
+    /**
+     * Turn debugging on or off.
+     */
+    function setDebug($bool) {
+	$this->_debug = $bool;
     }
 
     /**

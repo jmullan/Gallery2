@@ -522,6 +522,13 @@ class Gallery {
      */
     function setDebug($debug) {
 	$this->_debug = $debug;
+	if (isset($this->_storage)) {
+	    if ($this->_debug) {
+		$this->_storage->setDebug(true);
+	    } else {
+		$this->_storage->setDebug(false);
+	    }
+	}
     }
 
     /**
