@@ -231,27 +231,12 @@ class GalleryItemHelper_medium {
 	$newItem->setDescription($description);
 
 	/* Try to get an originationTimestamp for the just added item */
-	list ($ret, $toolkits) =
-	    GalleryCoreApi::getToolkitsByProperty($mimeType, 'originationTimestamp');
+	list ($ret, $originationTimestamp) = GalleryCoreApi::fetchOriginationTimestamp($newItem);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	if ($toolkits) {
-	    list ($ret, $path) = $newItem->fetchPath();
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    foreach ($toolkits as $toolkit) {
-		list ($ret, $originationTimestamp) =
-			$toolkit->getProperty($mimeType, 'originationTimestamp', $path);
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-		if (is_array($originationTimestamp) && !empty($originationTimestamp[0])) {
-		    $newItem->setOriginationTimestamp($originationTimestamp[0]);
-		    break;
-		}
-	    }
+	if (!empty($originationTimestamp)) {
+	    $newItem->setOriginationTimestamp($originationTimestamp);
 	}
 
 	$ret = $newItem->save();
@@ -265,6 +250,39 @@ class GalleryItemHelper_medium {
 	}
 
 	return array(GalleryStatus::success(), $newItem);
+    }
+
+    /**
+     * Fetch the originationTimestamp through our known toolkits
+     *
+     * @param object the GalleryItem
+     * @return array object GalleryStatus a status code
+     *               int a timestamp or null if nothing was found
+     * @static
+     */
+    function fetchOriginationTimestamp($item) {
+	list ($ret, $toolkits) =
+	    GalleryCoreApi::getToolkitsByProperty($item->getMimeType(), 'originationTimestamp');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	if ($toolkits) {
+	    list ($ret, $path) = $item->fetchPath();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    foreach ($toolkits as $toolkit) {
+		list ($ret, $originationTimestamp) =
+			$toolkit->getProperty($item->getMimeType(), 'originationTimestamp', $path);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		if (is_array($originationTimestamp) && !empty($originationTimestamp[0])) {
+		    return array(GalleryStatus::success(), $originationTimestamp[0]);
+		}
+	    }
+	}
+	return array(GalleryStatus::success(), null);
     }
 
     /**

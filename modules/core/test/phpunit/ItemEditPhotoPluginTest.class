@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -216,6 +216,30 @@ class ItemEditPhotoPluginTest extends ItemEditPluginTestCase {
 					'form[error][resizes][2][size][invalid]'),
 				  null),
 			    $results);
+    }
+
+    function testEditOriginationTimestamp() {
+	global $gallery;
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[thumbnail][size]', 400);
+
+	for ($i = 0; $i < 3; $i++) {
+	    GalleryUtilities::putRequestVariable('form[resizes][' . $i . '][active]', 1);
+	    GalleryUtilities::putRequestVariable('form[resizes][' . $i . '][size]', 100 * ($i+1));
+	}
+	GalleryUtilities::putRequestVariable('form[originationTimestamp][Date_Month]', '08');
+	GalleryUtilities::putRequestVariable('form[originationTimestamp][Date_Day]', '09');
+	GalleryUtilities::putRequestVariable('form[originationTimestamp][Date_Year]', '2003');
+	GalleryUtilities::putRequestVariable('form[originationTimestamp][Time_Hour]', '22');
+	GalleryUtilities::putRequestVariable('form[originationTimestamp][Time_Minute]', '50');
+	GalleryUtilities::putRequestVariable('form[originationTimestamp][Time_Second]', '59');
+
+	/* Perform the request and verify that we are ok */
+	$results = $this->handleRequest($this->_item, $this->_preferred);
+	$this->assertEquals(array(array(), $this->_translate('Changes saved successfully')), $results);
+	$this->assertEquals(mktime(22,50,59,8,9,2003), $this->_item->getOriginationTimestamp());
     }
 }
 

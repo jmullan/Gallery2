@@ -58,6 +58,30 @@
 
 <div class="gbAdmin">
   <h2 class="giTitle">
+    {g->text text="Album Date and Time"}
+  </h2>
+  
+  <p class="giDescription">
+    {g->text text="Set the date and time to be displayed for this album."}
+  </p>
+
+  <p>
+    {capture name=originationTimestampField}{g->formVar var="form[originationTimestamp]"}{/capture}
+    {g->text text="Date:"}
+    {html_select_date time=$form.originationTimestamp field_array=$smarty.capture.originationTimestampField start_year="1970" end_year="+0"}
+    {g->text text="Time:"}
+    {html_select_time time=$form.originationTimestamp field_array=$smarty.capture.originationTimestampField"}
+  </p>
+
+  {if !empty($form.error.originationTimestamp.invalid)}
+  <div class="giError">
+    {g->text text="You must enter a valid date and time"}
+  </div>
+  {/if}
+</div>
+
+<div class="gbAdmin">
+  <h2 class="giTitle">
     {g->text text="Thumbnails"}
   </h2>
   <p class="giDescription">

@@ -54,7 +54,7 @@ class GalleryCoreApi {
      * @return array major number, minor number
      */
     function getApiVersion() {
-	return array(0, 10);
+	return array(0, 11);
     }
 
     /**
@@ -1339,6 +1339,19 @@ class GalleryCoreApi {
     function addExistingItemToAlbum($item, $albumId, $isNew=false) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryItemHelper_medium.class');
 	return GalleryItemHelper_medium::addExistingItemToAlbum($item, $albumId, $isNew);
+    }
+
+    /**
+     * Fetch the originationTimestamp through our known toolkits
+     *
+     * @param object the GalleryItem
+     * @return array object GalleryStatus a status code
+     *               int a timestamp or null if nothing was found
+     * @static
+     */
+    function fetchOriginationTimestamp($item) {
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryItemHelper_medium.class');
+	return GalleryItemHelper_medium::fetchOriginationTimestamp($item);
     }
 
     /**

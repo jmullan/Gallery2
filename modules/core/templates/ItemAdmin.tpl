@@ -5,7 +5,7 @@
  * Gallery will look for that file first and use it if it exists
  * and when you upgrade, your changes will not get overwritten.
  *}
-<form action="{g->url}" enctype="{$ItemAdmin.enctype}" method="post">
+<form name="gItemAdmin" action="{g->url}" enctype="{$ItemAdmin.enctype}" method="post">
   <div>
     {g->hiddenFormVars}
     <input type="hidden" name="{g->formVar var="controller"}" value="{$controller}"/>

@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -47,7 +47,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 	if (isset($form['action']['undo'])) {
 
 	    /* Take no action and we'll be redirected back to the same page which will reset the form */
-	    
+
 	} else if (isset($form['action']['save'])) {
 	    /* Validate the input data. */
 	    if (!is_numeric($form['thumbnail']['size']) || $form['thumbnail']['size'] < 1) {
@@ -160,18 +160,18 @@ class ItemEditAlbum extends ItemEditPlugin {
 				/* Its an album or something else, we can't make a thumbnail */
 				continue;
 			    }
-			    
+
 			    list ($ret, $source) = GalleryCoreApi::fetchPreferredSource($child);
 			    if ($ret->isError()) {
 				return array($ret->wrap(__FILE__, __LINE__), null, null);
 			    }
-			    
+
 			    list ($ret, $thumbnail) =
 				GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative', $source->getEntityType());
 			    if ($ret->isError()) {
 				return array($ret->wrap(__FILE__, __LINE__), null, null);
 			    }
-			    
+
 			    $ret = $thumbnail->create($child->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
 			    if ($ret->isError()) {
 				return array($ret->wrap(__FILE__, __LINE__), null, null);
@@ -215,7 +215,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 			}
 		    }
 		}
-		
+
 		/*
 		 * Recreate the resizes, if requested to do so.
 		 * TODO: We should not delete resizes that we will be
@@ -264,8 +264,8 @@ class ItemEditAlbum extends ItemEditPlugin {
 					continue;
 				    }
 				}
-		
-				list ($ret, $derivative) = 
+
+				list ($ret, $derivative) =
 				    GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative',
 									     $source->getEntityType());
 				if ($ret->isError()) {
@@ -275,7 +275,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 				if (!isset($derivative)) {
 				    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
 						 null, null);
-				}  
+				}
 
 				$ret = $derivative->create($child->getId(), DERIVATIVE_TYPE_IMAGE_RESIZE);
 				if ($ret->isError()) {
@@ -312,6 +312,16 @@ class ItemEditAlbum extends ItemEditPlugin {
 		if (isset($form['orderDirection'])) {
 		    $item->setOrderDirection($form['orderDirection']);
 		}
+		/* Change the originationTimestamp */
+		if (!empty($form['originationTimestamp'])) {
+		    $newOriginationTimestamp = mktime($form['originationTimestamp']['Time_Hour'],
+						      $form['originationTimestamp']['Time_Minute'],
+						      $form['originationTimestamp']['Time_Second'],
+						      $form['originationTimestamp']['Date_Month'],
+						      $form['originationTimestamp']['Date_Day'],
+						      $form['originationTimestamp']['Date_Year']);
+		    $item->setOriginationTimestamp($newOriginationTimestamp);
+		}
 		$item->setSerialNumber($form['serialNumber']);
 
 		list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($item->getId());
@@ -329,13 +339,13 @@ class ItemEditAlbum extends ItemEditPlugin {
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
-		
+
 		/* Prepare our status message */
 		list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
-		
+
 		$status = $module->translate('Settings saved successfully.');
 	    }
 	}
@@ -354,6 +364,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 	    $form['orderDirection'] = $item->getOrderDirection();
 	    $form['layout'] = $item->getLayout();
 	    $form['theme'] = $item->getTheme();
+	    $form['originationTimestamp'] = $item->getOriginationTimestamp();
 	    $form['formName'] = 'ItemEditAlbum';
 
 	    /* Load up the data for the resizes table */
@@ -373,7 +384,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 		case DERIVATIVE_TYPE_IMAGE_THUMBNAIL:
 		    $form['thumbnail']['size'] = $size;
 		    break;
-		    
+
 		case DERIVATIVE_TYPE_IMAGE_RESIZE:
 		    if (empty($size)) {
 			$form['resizes'][] = array('active' => 0, 'size' => '');
@@ -406,7 +417,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 	for ($i = 0; $i < sizeof($form['resizes']); $i++) {
 	    $form['resizes'][$i]['active'] = !empty($form['resizes'][$i]['active']);
 	}
-	
+
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -471,7 +482,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 	$ItemEditAlbum['themeList'] = $themeList;
 	$ItemEditAlbum['orderByList'] = $orderByList;
 	$ItemEditAlbum['orderDirectionList'] = $orderDirectionList;
-	
+
 	$template->setVariable('ItemEditAlbum', $ItemEditAlbum);
 	$template->setVariable('controller', 'core:ItemEditAlbum');
 	return array(GalleryStatus::success(), 'modules/core/templates/ItemEditAlbum.tpl');
