@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /**
- * @version $Version$ $Date$
+ * @version $Revision$ $Date$
  * @package Migrate
  * @subpackage UserInterface
  * @author Jesse Mullan <jmullan@visi.com>
@@ -184,7 +184,9 @@ class ConfirmImportView extends GalleryView {
 	$ConfirmImport['albumsPath'] = $albumsPath;
         $ConfirmImport['destinationAlbumID'] = $destinationAlbumID;
         $ConfirmImport['targetAlbum'] = $targetAlbum;
-
+	if (!isset($form['sourceAlbums'])) {
+	    $form['sourceAlbums']=array();
+	}
         $template->setVariable('controller', 'migrate:ConfirmImport');
 	$template->setVariable('ConfirmImport', $ConfirmImport);
 
