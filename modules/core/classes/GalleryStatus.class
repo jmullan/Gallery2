@@ -35,13 +35,13 @@
  * The operation was a success
  *
  */
-define('SUCCESS', 0x00000000);
+define('GALLERY_SUCCESS', 0x00000000);
 
 /**
  * The operation had errors
  *
  */
-define('ERROR', 0x00000001);
+define('GALLERY_ERROR', 0x00000001);
 
 /**
  * A name collision happened in the filesystem or database as a result of this
@@ -269,7 +269,7 @@ class GalleryStatus {
      * @static
      */
     function error($errorCode, $fileName, $lineNumber) {
-	$status = new GalleryStatus(ERROR | $errorCode, $fileName, $lineNumber);
+	$status = new GalleryStatus(GALLERY_ERROR | $errorCode, $fileName, $lineNumber);
 	if (function_exists('debug_backtrace')) {
 	    $status->setStackTrace(debug_backtrace());
 	}
@@ -291,7 +291,7 @@ class GalleryStatus {
 	 */
 	static $success;
 	if (empty($success)) {
-	    $success = new GalleryStatus(SUCCESS);
+	    $success = new GalleryStatus(GALLERY_SUCCESS);
 	}
 	return $success;
     }
@@ -367,7 +367,7 @@ class GalleryStatus {
      * @return boolean  
      */
     function isError() {
-	return $this->_errorCode & ERROR;
+	return $this->_errorCode & GALLERY_ERROR;
     }
 
     /**
@@ -376,7 +376,7 @@ class GalleryStatus {
      * @return boolean  
      */
     function isSuccess() {
-	return $this->_errorCode == SUCCESS;
+	return $this->_errorCode == GALLERY_SUCCESS;
     }
 
     /**
