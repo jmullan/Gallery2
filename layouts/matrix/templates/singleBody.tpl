@@ -6,7 +6,9 @@
  *}
 {* Jump through hoops because "$layout.imageViews.`$layout.imageViewsIndex`" doesn't work *}
 {assign var="currentIndex" value=$layout.imageViewsIndex}
+{if !empty($layout.imageViews)}
 {assign var="image" value=$layout.imageViews.$currentIndex}
+{/if}
       
 <div id="gsHeader">
   {include file="gallery:layouts/matrix/templates/banner.tpl"}      
@@ -93,8 +95,9 @@
     </div>
 
     <div class="gsSingleImage">
+      {if !empty($layout.imageViews)}
       {capture name="fallback"}
-      <a href="{g->url arg1="view=core:DownloadItem" arg2="itemId=`$image.id`"}">
+      <a href="{g->url arg1="view=core:DownloadItem" arg2="itemId=`$layout.item.id`"}">
         {g->text text="Download this item"} 
       </a>
       {/capture}
@@ -103,6 +106,9 @@
       {g->image item=$layout.item image=$image fallback=$smarty.capture.fallback}
       {else}
       {$smarty.capture.fallback}
+      {/if}
+      {else}
+      {g->text text="There is nothing to view for this item."}
       {/if}
     </div>
 
