@@ -541,7 +541,8 @@ function CreateRootAlbumItem() {
     }
 
     /* Pick the first admin user in the group */
-    $adminId = $results[0][0];
+    $results = array_keys($results);
+    $adminId = $results[0];
 	
     list ($ret, $album) = $gallery->newEntity('GalleryAlbumItem');
     if ($ret->isError()) {
