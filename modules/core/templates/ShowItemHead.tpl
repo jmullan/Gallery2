@@ -1,8 +1,8 @@
   <title>
-    {if empty($item.title)}
-    {$item.pathComponent}
+    {if empty($ShowItem.item.title)}
+    {$ShowItem.item.pathComponent}
     {else}
-    {$item.title}
+    {$ShowItem.item.title}
     {/if}
   </title>
   {gallery->style}

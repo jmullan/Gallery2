@@ -49,14 +49,14 @@ class AdminDeleteGroupController extends GalleryController {
 
 	$results = array();
 	$status = array();
-	$redirectParams = array();
+	$error = array();
 	$groupId = GalleryUtilities::getRequestVariables('groupId');
 	
 	if (isset($form['action']['cancel'])) {
 
 	    /* Go back to the AdminGroups view */
-	    $results['view'] = 'core:SiteAdmin';
-	    GalleryUtilities::putRequestVariable('subView', 'core:AdminGroups');
+	    $redirect['view'] = 'core:SiteAdmin';
+	    $redirect['subView'] = 'core:AdminGroups';
 	    
 	} else if (isset($form['action']['delete'])) {
 
@@ -81,21 +81,20 @@ class AdminDeleteGroupController extends GalleryController {
 		}
 		
 		/* Request a redirect to the confirmation screen */
-		$redirectParams['view'] = 'core:SiteAdmin';
-		$redirectParams['subView'] = 'core:AdminGroups';
+		$redirect['view'] = 'core:SiteAdmin';
+		$redirect['subView'] = 'core:AdminGroups';
 		$status['deletedGroup'] = $group->getGroupName();
 	    }
 	}
 
-	if (!empty($redirectParams)) {
-	    $results['redirect'] = $redirectParams;
-	    $results['status'] = $status;
+	if (!empty($redirect)) {
+	    $results['redirect'] = $redirect;
 	} else {
-	    if (empty($results['view'])) {
-		$results['view'] = 'core:SiteAdmin';
-		GalleryUtilities::putRequestVariable('subView', 'core:AdminDeleteGroup');
-	    }
+	    $results['delegate']['view'] = 'core:SiteAdmin';
+	    $results['delegate']['subView'] = 'core:AdminDeleteGroup';
 	}
+	$results['status'] = $status;
+	$results['error'] = $error;
 
 	return array(GalleryStatus::success(), $results);
     }
@@ -110,9 +109,9 @@ class AdminDeleteGroupController extends GalleryController {
 class AdminDeleteGroupView extends GalleryView {
 
     /**
-     * @see GalleryView::renderBody
+     * @see GalleryView::loadTemplate
      */
-    function renderBody($form) {
+    function loadTemplate(&$template, &$form) {
 	global $gallery;
 	
 	$ret = GalleryUserHelper::assertSiteAdministrator();
@@ -129,19 +128,17 @@ class AdminDeleteGroupView extends GalleryView {
         if ($form['formName'] != 'AdminDeleteGroup') {
 	    /* First time around initialize our form */
 	    $form['groupName'] = $group->getGroupName();
+	    $form['formName'] = 'AdminDeleteGroup';
 	}
+
+	$AdminDeleteGroup = array();
+	$AdminDeleteGroup['group'] = $group->getMemberData();
 
 	/* Render the HTML body */
-	$template = $this->_getTemplate();
-	$template->setVariable('form', $form);
-	$template->setVariable('group', $group->getMemberData());
+	$template->setVariable('AdminDeleteGroup', $AdminDeleteGroup);
 	$template->setVariable('controller', 'core:AdminDeleteGroup');
-	list($ret, $html) = $template->render('AdminDeleteGroup.tpl');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), $html);
-	}
 
-	return array(GalleryStatus::success(), $html);
+	return array(GalleryStatus::success(), '', 'modules/core/templates/AdminDeleteGroup.tpl');
     }
 }
 ?>

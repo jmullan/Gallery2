@@ -73,7 +73,9 @@ class ItemEditAlbumControllerTest extends GalleryControllerTestCase {
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
 						      'subView' => 'core:ItemEditAlbum',
-						      'itemId' => $this->_album->getId())),
+						      'itemId' => $this->_album->getId()),
+				  'status' => array(),
+				  'error' => array()),
 			    $results);
     }
 
@@ -98,7 +100,9 @@ class ItemEditAlbumControllerTest extends GalleryControllerTestCase {
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
 						      'subView' => 'core:ItemEditAlbum',
-						      'itemId' => $this->_album->getId())),
+						      'itemId' => $this->_album->getId()),
+				  'status' => array('saved' => 1),
+				  'error' => array()),
 			    $results);
 
 	list ($ret, $this->_album) = $this->_album->refresh();
@@ -145,13 +149,14 @@ class ItemEditAlbumControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('view' => 'core:ItemAdmin'), $results);
-	$this->assertEquals('core:ItemEditAlbum', GalleryUtilities::getRequestVariables('subView'));
-	$this->assertEquals($this->_album->getId(), (int)GalleryUtilities::getRequestVariables('itemId'));
-	$this->assert(GalleryUtilities::hasRequestVariable('form.error.thumbnail.size.invalid'));
-	$this->assert(GalleryUtilities::hasRequestVariable('form.error.resizes.0.size.invalid'));
-	$this->assert(GalleryUtilities::hasRequestVariable('form.error.resizes.1.size.invalid'));
-	$this->assert(GalleryUtilities::hasRequestVariable('form.error.resizes.2.size.invalid'));
+	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemEditAlbum'),
+				  'status' => array(),
+				  'error' => array('form.error.thumbnail.size.invalid',
+						   'form.error.resizes.0.size.invalid',
+						   'form.error.resizes.1.size.invalid',
+						   'form.error.resizes.2.size.invalid')),
+			    $results);
     }
 
     function testInvalidSave2() {
@@ -166,12 +171,13 @@ class ItemEditAlbumControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('view' => 'core:ItemAdmin'), $results);
-	$this->assertEquals('core:ItemEditAlbum', GalleryUtilities::getRequestVariables('subView'));
-	$this->assertEquals($this->_album->getId(), (int)GalleryUtilities::getRequestVariables('itemId'));
-	$this->assert(GalleryUtilities::hasRequestVariable('form.error.resizes.0.size.missing'));
-	$this->assert(GalleryUtilities::hasRequestVariable('form.error.resizes.1.size.missing'));
-	$this->assert(GalleryUtilities::hasRequestVariable('form.error.resizes.2.size.missing'));
+	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemEditAlbum'),
+				  'status' => array(),
+				  'error' => array('form.error.resizes.0.size.missing',
+						   'form.error.resizes.1.size.missing',
+						   'form.error.resizes.2.size.missing')),
+			    $results);
     }
     
 }

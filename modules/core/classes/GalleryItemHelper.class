@@ -389,6 +389,18 @@ class GalleryItemHelper {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	/* Set the order weight */
+	list ($ret, $maxWeight) =
+	    GalleryItemAttributesMap::fetchExtremeChildWeight($albumId, HIGHER_WEIGHT);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$ret = GalleryItemAttributesMap::setOrderWeight($newItem->getId(), $maxWeight + 1000);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	/*
 	 * Now create thumbnails and resizes according to the
 	 * wishes of the parent album.

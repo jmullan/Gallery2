@@ -37,39 +37,23 @@
 class ItemAdminView extends GalleryView {
 
     /**
-     * @see GalleryView::renderHead
+     * @see GalleryView::loadTemplate
      */
-    function renderHead() {
-	global $gallery;
-	
-	/* Render the HTML head */
-	$template = $this->_getTemplate();
-	list($ret, $html) = $template->render('ItemAdminHead.tpl');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), $html);
-	}
-	
-	return array(GalleryStatus::success(), $html);
-    }
-
-    /**
-     * @see GalleryView::renderBody
-     */
-    function renderBody($form, $status) {
+    function loadTemplate(&$template, &$form) {
 	global $gallery;
 
 	/* Figure out the item we're referring to */
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
 	list ($ret, $item) = $gallery->loadEntitiesById($itemId);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	/* Find its thumbnail */
 	list ($ret, $thumbnailTable) =
 		GalleryDerivativeHelper::fetchThumbnailsByItemIds(array($itemId));
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 	if (empty($thumbnailTable)) {
 	    $thumbnailData = null;
@@ -80,26 +64,19 @@ class ItemAdminView extends GalleryView {
 	     * Rebuild the cache if it's not current, so that we can make sure
 	     * that we've got the appropriate thumbnail dimensions
 	     */
-	    list ($ret, $rebuilt) =
+	    list ($ret, $thumbnail) =
 		GalleryDerivativeHelper::rebuildCacheIfNotCurrent($thumbnail->getId());
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
-	    
+
 	    $thumbnailData = $thumbnail->getMemberData();
-	    
-	    /* Generate scaled dimensions for our thumbnail to fit our page */
-	    list ($thumbnailData['width'],
-		  $thumbnailData['height']) =
-		GalleryUtilities::shrinkDimensionsToFit(200,	
-							$thumbnailData['width'],
-							$thumbnailData['height']);
 	}
 
 	/* Load the module list */
 	list ($ret, $moduleStatus) = $gallery->getModuleStatus();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	/* Get a list of all the admin views for each module */
@@ -112,12 +89,12 @@ class ItemAdminView extends GalleryView {
 	    /* Get the selected module's admin view */
 	    list($ret, $module) = $gallery->loadModule($moduleName);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 
 	    list ($ret, $moduleViews) = $module->getItemAdminViews($item);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 
 	    $subViewChoices = array_merge($subViewChoices, $moduleViews);
@@ -129,18 +106,17 @@ class ItemAdminView extends GalleryView {
 	    $subViewName = $subViewChoices[0]['view'];
 	}
 
-	if (!empty($subViewName)) {
-	    list ($ret, $subView) = GalleryView::loadView($subViewName);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
+	$ItemAdmin = array();
 
-	    list ($ret, $subViewHtml) = $subView->renderBody($form, $status);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	} else {
-	    $subViewHtml = '';
+	list ($ret, $subView) = GalleryView::loadView($subViewName);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+
+	list ($ret, $ItemAdmin['viewHeadFile'], $ItemAdmin['viewBodyFile']) =
+	    $subView->loadTemplate($template, $form);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	/* Get the type of the item */
@@ -150,19 +126,31 @@ class ItemAdminView extends GalleryView {
 	    $itemType = 'item';
 	}
 
-	/* Render our HTML body */
-	$template = $this->_getTemplate($item);
-	$template->setVariable('item', $item->getMemberData());
-	$template->setVariable('itemType', $itemType);
-	$template->setVariable('thumbnail', $thumbnailData);
-	$template->setVariable('subViewChoices', $subViewChoices);
-	$template->setVariable('subViewHtml', $subViewHtml);
-	list($ret, $html) = $template->render('ItemAdmin.tpl');
+	/* Load the item's parents */
+	list ($ret, $parents) = $item->fetchParents();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), $html);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
-	return array(GalleryStatus::success(), $html);
+	/* Render our HTML body */
+	$ItemAdmin['item'] = $item->getMemberData();
+	$ItemAdmin['parents'] = $parents;
+	if (empty($parents)) {
+	    $ItemAdmin['parent'] = null;
+	} else {
+	    $ItemAdmin['parent'] = $parents[sizeof($parents)-1];
+	}
+	$ItemAdmin['itemType'] = $itemType;
+	$ItemAdmin['thumbnail'] = $thumbnailData;
+	$ItemAdmin['subViewChoices'] = $subViewChoices;
+
+	$template->setVariable('ItemAdmin', $ItemAdmin);
+	if (!$template->hasVariable('enctype')) {
+	    $template->setVariable('enctype', 'application/x-www-form-urlencoded');
+	}
+	return array(GalleryStatus::success(),
+		     'modules/core/templates/ItemAdminHead.tpl',
+		     'modules/core/templates/ItemAdmin.tpl');
     }
 }
 ?>

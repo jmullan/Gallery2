@@ -55,6 +55,20 @@ class GalleryAlbumItem_core extends GalleryItem {
      * ****************************************
      */
 
+    /**
+     * The layout to use for this item
+     *
+     * @g2 <member>
+     * @g2   <member-name>layout</member-name>
+     * @g2   <member-type>STRING</member-type>
+     * @g2   <member-size>SMALL</member-size>
+     * @g2 </member>
+     *
+     * @var string $_layout
+     * @access private
+     */
+    var $_layout;
+
     /*
      * ****************************************
      *                 Methods
@@ -101,6 +115,9 @@ class GalleryAlbumItem_core extends GalleryItem {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
+
+	/* Copy some of the parents properties */
+	$this->setLayout($parent->getLayout());
 
 	$ret = $this->_createDir($parentPath . $albumName);
 	if ($ret->isError()) {
@@ -163,6 +180,13 @@ class GalleryAlbumItem_core extends GalleryItem {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
+
+	/* Use the default layout */
+	list($ret, $layout) = $gallery->getModuleParameter('core', 'default.layout');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$this->setLayout($layout);
 
 	return GalleryStatus::success();
     }

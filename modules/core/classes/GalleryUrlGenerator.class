@@ -76,11 +76,18 @@ class GalleryUrlGenerator {
 	}
 	    
 	foreach ($params as $key => $value) {
-	    if ($key == 'href') {
+	    switch($key) {
+	    case 'href':
 		continue;
+
+	    case 'return':
+		$value = GalleryUtilities::getCurrentUrl();
+		/* Fall through */
+
+	    default: 
+		$args[] = GALLERY_FORM_VARIABLE_PREFIX . "$key=" . urlencode($value);
+		break;
 	    }
-	    
-	    $args[] = GALLERY_FORM_VARIABLE_PREFIX . "$key=" . urlencode($value);
 	}
 
 	if (isset($params['href'])) {

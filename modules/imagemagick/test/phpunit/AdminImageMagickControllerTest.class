@@ -87,11 +87,15 @@ class AdminImageMagickControllerTest extends GalleryControllerTestCase {
 
 	GalleryUtilities::putRequestVariable('form.path', "${slash}validPath${slash}");
 	GalleryUtilities::putRequestVariable('form.jpegQuality', '12');
-	GalleryUtilities::putRequestVariable('return.view', 'target');
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'target')), $results);
+	$this->assertEquals(array('return' => 1,
+				  'redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'imagemagick:AdminImageMagick'),
+				  'status' => array('saved' => 1),
+				  'error' => array()),
+			    $results);
 	
 	/* Verify the settings went in properly */
 	$this->assertEquals(array(GalleryStatus::success(), "${slash}validPath${slash}"),
@@ -105,11 +109,15 @@ class AdminImageMagickControllerTest extends GalleryControllerTestCase {
 
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('form.action.cancel', 1);
-	GalleryUtilities::putRequestVariable('return.view', 'target');
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'target')), $results);
+	$this->assertEquals(array('return' => 1,
+				  'redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'imagemagick:AdminImageMagick'),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
     }
     
     function testSaveTestErrorPath() {
@@ -122,14 +130,14 @@ class AdminImageMagickControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.action.save', 1);
 	GalleryUtilities::putRequestVariable('form.path', "${slash}validPathBadBinaries${slash}");
 	GalleryUtilities::putRequestVariable('form.jpegQuality', '12');
-	GalleryUtilities::putRequestVariable('return.view', 'target');
 
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
-	$this->assertEquals('imagemagick:AdminImageMagick', GalleryUtilities::getRequestVariables('subView'));
-	$this->assert(GalleryUtilities::hasRequestVariable('form.error.path.testError'),
-		      'testError error missing');
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'imagemagick:AdminImageMagick'),
+				  'status' => array(),
+				  'error' => array('form.error.path.testError')),
+				  $results);
     }
 
     function testSaveBadPath() {
@@ -142,13 +150,34 @@ class AdminImageMagickControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.action.save', 1);
 	GalleryUtilities::putRequestVariable('form.path', "${slash}invalidPath${slash}");
 	GalleryUtilities::putRequestVariable('form.jpegQuality', '12');
-	GalleryUtilities::putRequestVariable('return.view', 'target');
 
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
-	$this->assertEquals('imagemagick:AdminImageMagick', GalleryUtilities::getRequestVariables('subView'));
-	$this->assert(GalleryUtilities::hasRequestVariable('form.error.path.badPath'), 'badPath error missing');
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'imagemagick:AdminImageMagick'),
+				  'status' => array(),
+				  'error' => array('form.error.path.badPath')),
+			    $results);
+    }
+
+    function testSaveMissingPath() {
+	global $gallery;
+
+	$platform = $gallery->getPlatform();
+	$slash = $platform->getDirectorySeparator();
+	
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('form.action.save', 1);
+	GalleryUtilities::putRequestVariable('form.path', '');
+	GalleryUtilities::putRequestVariable('form.jpegQuality', '12');
+
+	/* Perform the request and verify that we failed */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'imagemagick:AdminImageMagick'),
+				  'status' => array(),
+				  'error' => array('form.error.path.missing')),
+			    $results);
     }
 }
 

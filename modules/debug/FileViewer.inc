@@ -34,23 +34,9 @@
 class FileViewerView extends GalleryView {
 
     /**
-     * @see GalleryView::renderHead()
+     * @see GalleryView::loadTemplate()
      */
-    function renderHead() {
-	/* Render the HTML head */
-	$template = $this->_getTemplate();
-	list($ret, $html) = $template->render('FileViewerHead.tpl');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), $html);
-	}
-	
-	return array(GalleryStatus::success(), $html);
-    }
-
-    /**
-     * @see GalleryView::renderBody()
-     */
-    function renderBody($form) {
+    function loadTemplate(&$template, &$form) {
 	global $gallery;
 
 	list ($file, $line) = GalleryUtilities::getRequestVariables('file', 'line');
@@ -93,21 +79,21 @@ class FileViewerView extends GalleryView {
 	    }
 	}
 
-	/* Render the HTML body */
-	$template = $this->_getTemplate();
+	$FileViewer = array();
 
 	if ($legal) {
-	    $template->setVariable('currentLine', $line);
-	    $template->setVariable('lines', $lines);
-	    list($ret, $html) = $template->render('FileViewerLegalFile.tpl');
-	}  else {
-	    list($ret, $html) = $template->render('FileViewerIllegalFile.tpl');
+	    $bodyFile = 'FileViewerLegalFile.tpl';
+	    $FileViewer['fileName'] = $file;
+	    $FileViewer['currentLine'] = $line;
+	    $FileViewer['lines'] = $lines;
+	} else {
+	    $bodyFile = 'FileViewerIllegalFile.tpl';
 	}
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), $html);
-	}
-	
-	return array(GalleryStatus::success(), $html);
+	$template->setVariable('FileViewer', $FileViewer);
+
+	return array(GalleryStatus::success(),
+		     'modules/debug/templates/FileViewerHead.tpl',
+		     'modules/debug/templates/' . $bodyFile);
     }
 }
 ?>

@@ -38,8 +38,11 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
     function testCancel() {
 	GalleryUtilities::putRequestVariable('form.action.cancel', 1);
 	$results = $this->handleRequest();
-	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
-	$this->assertEquals('core:AdminUsers', GalleryUtilities::getRequestVariables('subView'));
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminUsers'),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
     }
 
     /**
@@ -60,7 +63,8 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	
 	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'core:AdminUsers'),
-				  'status' => array('deletedUser' => $user->getUserName())),
+				  'status' => array('deletedUser' => $user->getUserName()),
+				  'error' => array()),
 			    $results,
 			    'Failed to create user');
 
@@ -69,7 +73,7 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
     }
 
     /**
-     * Try to delete the active user (this will fail)
+     * Try to delete the active user (this will fail silently)
      */
     function testDeleteActiveUser() {
 	global $gallery;
@@ -78,12 +82,15 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.action.delete', 1);
 	
 	$results = $this->handleRequest();
-	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
-	$this->assertEquals('core:AdminDeleteUser', GalleryUtilities::getRequestVariables('subView'));
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminDeleteUser'),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
     }
 
     /**
-     * Try to delete the anonymous user (this will fail)
+     * Try to delete the anonymous user (this will fail silently)
      */
     function testDeleteAnonymousUser() {
 	global $gallery;
@@ -98,8 +105,11 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.action.delete', 1);
 	
 	$results = $this->handleRequest();
-	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
-	$this->assertEquals('core:AdminDeleteUser', GalleryUtilities::getRequestVariables('subView'));
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminDeleteUser'),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
     }
 
     function _createUser() {

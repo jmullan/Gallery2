@@ -1,64 +1,86 @@
-    <table border="0" cellspacing="0" cellpadding="4" width="100%" height="100%">
-	<tr>
-	  <td colspan="2" align="center">
-	    {gallery->biggestFontSize}
-	    {gallery->text text="Gallery Item Administration"}
-	    {/gallery->biggestFontSize}
-	  </td>
-	</tr>
-	
-	<tr>
-	  <td valign="top" width="200" height="100%">
-	    {gallery->lightFrame}
-	    <center>
-	      {gallery->bigFontSize}
-	      <nobr>
-	      {if $itemType == "album"}
-		{gallery->text text="Editing this album"}
-	      {else} 
-		{gallery->text text="Editing this item"}
-	      {/if} 
-	      </nobr>
-	      {/gallery->bigFontSize}
-	      <br>
-	      <a href="{gallery->url view="core:ShowItem" itemId=$item.id}">
-		{if !empty($thumbnail)} 
-		<img src="{gallery->url view='core:DownloadItem' itemId=$thumbnail.id}" 
-		     width="{$thumbnail.width}" 
-		     height="{$thumbnail.height}" 
-		     alt="{$item.title}"
-		     border="0">
-		{else}
-		<br>
-		<i>{gallery->text text="No Thumbnail"}</i>
-		<br>
-		{/if}
-	      </a>
-	    </center>
-	    
-	    <br>
-	    
-	    <nobr>
-	      {gallery->bigFontSize}
-	      {gallery->text text="Available Settings"}
-	      {/gallery->bigFontSize}
-	    </nobr>
-	    
-	    <table border="0" cellspacing="0" cellpadding="0">
-	      {foreach from=$subViewChoices item=choice}
-		<tr>
-		  <td>
-		    <a href="{gallery->url view='core:ItemAdmin' subView=$choice.view itemId=$item.id}">{$choice.name}</a>
-                  </td>
-		</tr>
-	        {/foreach}
-            </table>
-            {/gallery->lightFrame}
-          </td>
-	  <td valign="top" width="100%" height="100%">
-	    {gallery->lightFrame}
-	    {$subViewHtml}
-	    {/gallery->lightFrame}
-	  </td>
-	</tr>
-    </table>
+{gallery->form action_controller="$controller" enctype=$enctype}
+  {gallery->input type="hidden" name="form.formName"}{$form.formName}{/gallery->input}
+  {gallery->input type="hidden" name="itemId"}{$ItemAdmin.item.id}{/gallery->input}
+  
+  {gallery->main}
+    {gallery->pathbar}
+      {foreach from=$ItemAdmin.parents item=parent}
+	{gallery->item}
+	  {gallery->link url_view='core:ShowItem' url_itemId=$parent.id}
+	    {$parent.title|default:$parent.pathComponent}
+	  {/gallery->link}
+	{/gallery->item}
+      {/foreach}
+      {gallery->item}
+	{gallery->link url_view='core:ShowItem' url_itemId=$ItemAdmin.item.id}
+	  {$ItemAdmin.item.title|default:$ItemAdmin.item.pathComponent}
+	{/gallery->link}
+      {/gallery->item}
+    {/gallery->pathbar}
+
+    {gallery->sidebar}
+      {gallery->component}
+	{gallery->simplebox}
+	  {gallery->body}
+	    {if empty($ItemAdmin.thumbnail)}
+	      {gallery->text text="No Thumbnail"}
+	    {else}
+	      {gallery->image item=$ItemAdmin.item image=$ItemAdmin.thumbnail}
+	    {/if}
+	    {$ItemAdmin.item.title}
+	  {/gallery->body}
+	{/gallery->simplebox}
+
+	{gallery->simplebox}
+	  {gallery->body}
+	    {gallery->listingbox}
+	      {gallery->title}
+		{gallery->text text="Options"}
+	      {/gallery->title}
+
+	      {foreach from=$ItemAdmin.subViewChoices item=choice}
+		{gallery->item}
+		  {gallery->link url_view='core:ItemAdmin' url_subView=$choice.view url_itemId=$ItemAdmin.item.id}
+		    {$choice.name}
+		  {/gallery->link}
+		{/gallery->item}
+	      {/foreach}
+	    {/gallery->listingbox}
+	  {/gallery->body}
+	{/gallery->simplebox}
+
+	{gallery->simplebox}
+	  {gallery->body}
+	    {gallery->listingbox}
+	      {gallery->title}
+		{gallery->text text="Navigation"}
+	      {/gallery->title}
+	      {if ($ItemAdmin.itemType == 'item')}
+		{gallery->item}
+		  {gallery->link url_view='core:ShowItem' url_itemId=$ItemAdmin.item.id}
+		    {gallery->text text="Back to Item View"}
+		  {/gallery->link}
+		{/gallery->item}
+		{gallery->item}
+		  {gallery->link url_view='core:ShowItem' url_itemId=$ItemAdmin.parent.id}
+		    {gallery->text text="Back to Album View"}
+		  {/gallery->link}
+		{/gallery->item}
+	      {else}
+		{gallery->item}
+		  {gallery->link url_view='core:ShowItem' url_itemId=$ItemAdmin.item.id}
+		    {gallery->text text="Back to Album View"}
+		  {/gallery->link}
+		{/gallery->item}
+	      {/if}
+	    {/gallery->listingbox}
+	  {/gallery->body}
+	{/gallery->simplebox}
+      {/gallery->component}
+    {/gallery->sidebar}
+
+    {gallery->component}
+      {include file=$ItemAdmin.viewBodyFile l10Domain=$ItemAdmin.viewL10Domain}
+    {/gallery->component}
+  {/gallery->main}
+{/gallery->form}

@@ -49,14 +49,14 @@ class AdminDeleteUserController extends GalleryController {
 
 	$results = array();
 	$status = array();
-	$redirectParams = array();
+	$error = array();
 	$userId = GalleryUtilities::getRequestVariables('userId');
 	
 	if (isset($form['action']['cancel'])) {
 
 	    /* Go back to the AdminUsers view */
-	    $results['view'] = 'core:SiteAdmin';
-	    GalleryUtilities::putRequestVariable('subView', 'core:AdminUsers');
+	    $redirect['view'] = 'core:SiteAdmin';
+	    $redirect['subView'] = 'core:AdminUsers';
 	    
 	} else if (isset($form['action']['delete'])) {
 
@@ -88,21 +88,20 @@ class AdminDeleteUserController extends GalleryController {
 		}
 
 		/* Request a redirect to the confirmation screen */
-		$redirectParams['view'] = 'core:SiteAdmin';
-		$redirectParams['subView'] = 'core:AdminUsers';
+		$redirect['view'] = 'core:SiteAdmin';
+		$redirect['subView'] = 'core:AdminUsers';
 		$status['deletedUser'] = $user->getUsername();
 	    }
 	}
 
-	if (!empty($redirectParams)) {
-	    $results['redirect'] = $redirectParams;
-	    $results['status'] = $status;
+	if (!empty($redirect)) {
+	    $results['redirect'] = $redirect;
 	} else {
-	    if (empty($results['view'])) {
-		$results['view'] = 'core:SiteAdmin';
-		GalleryUtilities::putRequestVariable('subView', 'core:AdminDeleteUser');
-	    }
+	    $results['delegate']['view'] = 'core:SiteAdmin';
+	    $results['delegate']['subView'] = 'core:AdminDeleteUser';
 	}
+	$results['status'] = $status;
+	$results['error'] = $error;
 
 	return array(GalleryStatus::success(), $results);
     }
@@ -117,9 +116,9 @@ class AdminDeleteUserController extends GalleryController {
 class AdminDeleteUserView extends GalleryView {
 
     /**
-     * @see GalleryView::renderBody
+     * @see GalleryView::loadTemplate
      */
-    function renderBody($form) {
+    function loadTemplate(&$template, &$form) {
 	global $gallery;
 	
 	$ret = GalleryUserHelper::assertSiteAdministrator();
@@ -135,21 +134,17 @@ class AdminDeleteUserView extends GalleryView {
 
 	if ($form['formName'] != 'AdminDeleteUser') {
 	    /* First time around initialize our form */
-	    $form['userName'] = $user->getUserName();
+	    $form['formName'] = 'AdminDeleteUser';
 	}
 
+	$AdminDeleteUser = array();
+	$AdminDeleteUser['user'] = $user->getMemberData();
 
 	/* Render the HTML body */
-	$template = $this->_getTemplate();
-	$template->setVariable('form', $form);
-	$template->setVariable('user', $user->getMemberData());
+	$template->setVariable('AdminDeleteUser', $AdminDeleteUser);
 	$template->setVariable('controller', 'core:AdminDeleteUser');
-	list($ret, $html) = $template->render('AdminDeleteUser.tpl');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), $html);
-	}
 
-	return array(GalleryStatus::success(), $html);
+	return array(GalleryStatus::success(), '', 'modules/core/templates/AdminDeleteUser.tpl');
     }
 }
 ?>

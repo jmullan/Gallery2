@@ -1,144 +1,106 @@
-      {gallery->form controller=$controller}
+{gallery->bannerbox}
+  {gallery->title}
+    {gallery->text text="Edit comment"}
+  {/gallery->title}
+{/gallery->bannerbox}
 
-      {gallery->input type="hidden" name="itemId"}{$item.id}{/gallery->input}
-      {gallery->input type="hidden" name="commentId"}{$comment.id}{/gallery->input}
-      {gallery->input type="hidden" name="form.formName"}EditComment{/gallery->input}
-      
-      <!-- Embed the hidden return fields -->
-      {foreach from=$return key=key item=value}
-      {gallery->input type="hidden" name=return.$key}{$value}{/gallery->input}
-      {/foreach}
+{gallery->widget2box}
+  {gallery->widget2}
+    {gallery->title}
+      {gallery->text text="Commenter"}
+      {gallery->textmodifier}
+	{gallery->text text="required"}
+      {/gallery->textmodifier}
+    {/gallery->title}
+    {gallery->body}
+      {* got to put this in a body tag somewhere *}
+      {gallery->input type="hidden" name="commentId"}{$EditComment.comment.id}{/gallery->input}
 
-    <center>
-      {if !empty($thumbnail)}
-      <img src="{gallery->url view='core:DownloadItem' itemId=$thumbnail.id}"
-      {if $thumbnail.width} width="{$thumbnail.width}" {/if}
-      {if $thumbnail.height} height="{$thumbnail.height}" {/if}
-      >
-      {else}
-      <i>{gallery->text text="No thumbnail"}</i>
-      {/if}
-      <br>
-      <b>
-	{if empty($item.title)}
-	{$item.pathComponent}
-	{else}
-	{$item.title}
-	{/if}
-      </b>
-      <br>
-      <table border="0" cellspacing="0" cellpadding="5">
-	  <tr>
-	    <td align="center" colspan="2">
-	      {gallery->bigFontSize}
-	      {gallery->text text="Edit comment"}
-	      {/gallery->bigFontSize}
-	    </td>
-	  </tr>
-	  <tr>
-	    <td>
-	      {gallery->text text="Commenter: "}
-	    </td>
-	    <td>
-	      {gallery->input type="text" name="form.commenterName"}
-	      {$form.commenterName}
-	      {/gallery->input}
-	    </td>
-	  </tr>
+      {gallery->input type="text" name="form.commenterName"}{$form.commenterName}{/gallery->input}
+      {if isset($form.error.commenterName.missing)} 
+	{gallery->error}
+	  {gallery->text text="You must enter a username."}
+	{/gallery->error}
+      {/if} 
 
-	  <!-- {if !empty($form.error.missingCommenterName)} -->
-	  <tr>
-	    <td>
-	      &nbsp;
-	    </td>
-	    <td>
-	      {gallery->errorFontColor}
-	      {gallery->text text="You must enter a username."}
-	      {/gallery->errorFontColor}
-	    </td>
-	  </tr>
-	  <!-- {/if} -->
+      {if isset($form.error.commenterName.invalid)} 
+	{gallery->error}
+	  {gallery->text text="The username you entered is invalid."}
+	{/gallery->error}
+      {/if} 
+    {/gallery->body}
+  {/gallery->widget2}
 
-	  <!-- {if !empty($form.error.invalidCommenterName)} -->
-	  <tr>
-	    <td>
-	      &nbsp;
-	    </td>
-	    <td>
-	      {gallery->errorFontColor}
-	      {gallery->text text="The username you entered is invalid."}
-	      {/gallery->errorFontColor}
-	    </td>
-	  </tr>
-	  <!-- {/if} -->
+  {gallery->widget2}
+    {gallery->title}
+      {gallery->text text="Host: "}
+    {/gallery->title}
+    {gallery->body}
+      {gallery->input type="text" name="form.host"}{$form.host}{/gallery->input}
+    {/gallery->body}
+  {/gallery->widget2}
 
-	  <tr>
-	    <td>
-	      {gallery->text text="Host: "}
-	    </td>
-	    <td>
-	      {gallery->input type="text" name="form.host"}
-	      {$form.host}
-	      {/gallery->input}
-	    </td>
-	  </tr>
+  {gallery->widget2}
+    {gallery->title}
+      {gallery->text text="Date: "}
+      {gallery->textmodifier}
+	{gallery->text text="required"}
+      {/gallery->textmodifier}
+    {/gallery->title}
+    {gallery->body}
+      {gallery->input type="text" name="form.date"}{$form.date}{/gallery->input}
+      {if isset($form.error.date.invalid)} 
+	{gallery->error}
+	  {gallery->text text="The date you entered is invalid."}
+	{/gallery->error}
+      {/if} 
 
-	  <tr>
-	    <td>
-	      {gallery->text text="Date: "}
-	    </td>
-	    <td>
-	      {gallery->input type="text" name="form.date"}
-	      {gallery->date timestamp=$form.date format="%e-%b-%Y %H:%M"}
-	      {/gallery->input}
-	    </td>
-	  </tr>
-	  
-	  <!-- {if !empty($form.error.invalidDate)} -->
-	  <tr>
-	    <td>
-	      &nbsp;
-	    </td>
-	    <td>
-	      {gallery->errorFontColor}
-	      {gallery->text text="The date you entered is invalid."}
-	      {/gallery->errorFontColor}
-	    </td>
-	  </tr>
-	  <!-- {/if} -->
+      {if isset($form.error.date.missing)} 
+	{gallery->error}
+	  {gallery->text text="You must enter a date"}
+	{/gallery->error}
+      {/if} 
+    {/gallery->body}
+  {/gallery->widget2}
 
-	  <!-- {if !empty($form.error.missingDate)} -->
-	  <tr>
-	    <td>
-	      &nbsp;
-	    </td>
-	    <td>
-	      {gallery->errorFontColor}
-	      {gallery->text text="You must enter a date"}
-	      {/gallery->errorFontColor}
-	    </td>
-	  </tr>
-	  <!-- {/if} -->
+  {gallery->widget2}
+    {gallery->title}
+      {gallery->text text="Subject: "}
+      {gallery->textmodifier}
+	{gallery->text text="required"}
+      {/gallery->textmodifier}
+    {/gallery->title}
+    {gallery->body}
+      {gallery->input type="text" size="60" name="form.subject"}{$form.subject}{/gallery->input}
+      {if isset($form.error.subject.missing)} 
+	{gallery->error}
+	  {gallery->text text="You must enter a subject"}
+	{/gallery->error}
+      {/if} 
+    {/gallery->body}
+  {/gallery->widget2}
 
-	  <tr>
-	    <td>
-	      {gallery->text text="Comment: "}
-	    </td>
-	    <td>
-	      {strip}
-	      {gallery->textArea rows="15" cols="60" name="form.comment"}
-	      {$form.comment}
-	      {/gallery->textArea}
-	      {/strip}
-	    </td>
-	  </tr>
+  {gallery->widget2}
+    {gallery->title}
+      {gallery->text text="Comment: "}
+      {gallery->textmodifier}
+	{gallery->text text="required"}
+      {/gallery->textmodifier}
+    {/gallery->title}
+    {gallery->body}
+      {gallery->textarea rows="15" cols="60" name="form.comment"}{$form.comment}{/gallery->textarea}
+      {if isset($form.error.comment.missing)} 
+	{gallery->error}
+	  {gallery->text text="You must enter a comment"}
+	{/gallery->error}
+      {/if} 
+    {/gallery->body}
+  {/gallery->widget2}
 
-	  <tr>
-	    <td colspan="2" align="center">
-	      {gallery->input type="submit" name="form.action.save"}{gallery->text text="Save"}{/gallery->input}
-	      {gallery->input type="submit" name="form.action.cancel"}{gallery->text text="Cancel"}{/gallery->input}
-	    </td>
-	  </tr>
-      </table>
-    </center>
-    {/gallery->form}
+  {gallery->widget2}
+    {gallery->body}
+      {gallery->input type="submit" name="form.action.save"}{gallery->text text="Save"}{/gallery->input}
+      {gallery->input type="submit" name="form.action.cancel"}{gallery->text text="Cancel"}{/gallery->input}
+    {/gallery->body}
+  {/gallery->widget2}
+{/gallery->widget2box}

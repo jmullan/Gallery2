@@ -79,7 +79,6 @@ class CoreModule extends GalleryModule {
 	require_once($classDir . 'GallerySession.class');
 	require_once($classDir . 'GalleryStatus.class');
 	require_once($classDir . 'GalleryTemplate.class');
-	require_once($classDir . 'GalleryTemplateModule.class');
 	require_once($classDir . 'GalleryTemplateAdapter.class');
 	require_once($classDir . 'GalleryTheme.class');
 	require_once($classDir . 'GalleryToolkitHelper.class');
@@ -280,10 +279,10 @@ class CoreModule extends GalleryModule {
 			       'permissions.file' => '0644',
 			       'upload.localServer.dirs' => '',
 			       'exec.expectedStatus' => '0',
-			       'default.orderBy' => 'id',
+			       'default.orderBy' => '',
 			       'default.orderDirection' => '1',
-			       'default.layout' => 'classic',
-			       'default.theme' => 'classic',
+			       'default.layout' => 'matrix',
+			       'default.theme' => 'matrix',
 			       'default.language' => GalleryTranslator::getLanguageCodeFromRequest(),
 			       'session.idParameter' => 'GALLERYSID',
 			       'session.lifetime' => 25 * 365 * 86400, /* 25 years */
@@ -427,17 +426,8 @@ class CoreModule extends GalleryModule {
     /**
      * @see GalleryModule::getItemLinks
      */
-    function getItemLinks($items, $returnUrlParams) {
+    function getItemLinks($items) {
 	global $gallery;
-
-	if (!is_array($items)) {
-	    $items = array($items);
-	}
-
-	/* Format our return-url params */
-	foreach ($returnUrlParams as $param => $value) {
-	    $params['return.' . $param] = $value;
-	}
 
 	/*
 	 * Look up all item admin permissions so that we can decide whether or
@@ -536,8 +526,7 @@ class CoreModule extends GalleryModule {
 		$links[$item->getId()][] =
 		    array('text' => $text,
 			  'params' => array_merge(array('view' => 'core:ItemAdmin',
-							'itemId' => $item->getId()),
-						  $params));
+							'itemId' => $item->getId())));
 	    }
 	    
 	    if ($showAddItemLink) {
@@ -545,8 +534,7 @@ class CoreModule extends GalleryModule {
 		    array('text' => $this->translate('add item'),
 			  'params' => array_merge(array('view' => 'core:ItemAdmin',
 							'subView' => 'core:ItemAddChildren',
-							'itemId' => $item->getId()),
-						  $params));
+							'itemId' => $item->getId())));
 	    }
 
 	    if ($showAddAlbumLink) {
@@ -554,8 +542,7 @@ class CoreModule extends GalleryModule {
 		    array('text' => $this->translate('add album'),
 			  'params' => array_merge(array('view' => 'core:ItemAdmin',
 							'subView' => 'core:ItemAddAlbum',
-							'itemId' => $item->getId()),
-						  $params));
+							'itemId' => $item->getId())));
 	    }
 	    
 	    if ($showPermissionsLink) {
@@ -563,17 +550,20 @@ class CoreModule extends GalleryModule {
 		    array('text' => $this->translate('permissions'),
 			  'params' => array_merge(array('view' => 'core:ItemAdmin',
 							'subView' => 'core:ItemEditPermissions',
-							'itemId' => $item->getId()),
-						  $params));
+							'itemId' => $item->getId())));
 	    }
 	    
 	    if ($showDeleteLink) {
+		if ($itemType == 'album') {
+		    $text = $this->translate('delete album');
+		} else {
+		    $text = $this->translate('delete item');
+		}
 		$links[$item->getId()][] =
-		    array('text' => $this->translate('delete item'),
+		    array('text' => $text,
 			  'params' => array_merge(array('view' => 'core:ItemAdmin',
 							'subView' => 'core:ItemDelete',
-							'itemId' => $item->getId()),
-						  $params));
+							'itemId' => $item->getId())));
 	    }
 
 	    if ($showMoveItemLink) {
@@ -582,8 +572,7 @@ class CoreModule extends GalleryModule {
 			  'params' => array_merge(array('view' => 'core:ItemAdmin',
 							'subView' => 'core:ItemMove',
 							'itemId' => $item->getParentId(),
-							'selectedId' => $item->getId()),
-						  $params));
+							'selectedId' => $item->getId())));
 	    }
 
 	    if ($showAddHighlightLink) {
@@ -591,8 +580,7 @@ class CoreModule extends GalleryModule {
 		    array('text' => $this->translate('make highlight'),
 			  'params' => array_merge(array('view' => 'core:ItemAdmin',
 							'subView' => 'core:ItemMakeHighlight',
-							'itemId' => $item->getId()),
-						  $params));
+							'itemId' => $item->getId())));
 	    }
 
 	    if ($showReorderItemLink) {
@@ -600,57 +588,53 @@ class CoreModule extends GalleryModule {
 		    array('text' => $this->translate('reorder items'),
 			  'params' => array_merge(array('view' => 'core:ItemAdmin',
 							'subView' => 'core:ItemReorder',
-							'itemId' => $item->getId()),
-						  $params));
+							'itemId' => $item->getId())));
 	    }
 	}
 
 	return array(GalleryStatus::success(), $links);
     }
-    
+
     /**
      * @see GalleryModule::getSystemLinks
      */
-    function getSystemLinks($returnUrlParams) {
-	global $gallery;
-
-	list ($ret, $anonymousUserId) = $this->getModuleParameter('id.anonymousUser');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+    function getSystemLinks() {
+        global $gallery;
+	
+        list ($ret, $anonymousUserId) = $this->getModuleParameter('id.anonymousUser');
+        if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-
-	foreach ($returnUrlParams as $param => $value) {
-	    $params['return.' . $param] = $value;
+	
+        $links = array();
+        list ($ret, $isAdmin) = GalleryUserGroupMap::isUserInSiteAdminGroup();
+        if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-
-	$links = array();
-	list ($ret, $isAdmin) = GalleryUserGroupMap::isUserInSiteAdminGroup();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	
+        if ($isAdmin) {
+            $links[] = array('text' => $this->translate('Site admin'),
+                             'params' => array('view' => 'core:SiteAdmin'));
 	}
-
-	if ($isAdmin) {
-	    $links[] = array('text' => $this->translate('site admin'),
-			     'params' => array_merge(array('view' => 'core:SiteAdmin'),
-						     $params));
-	}
-
-	if ($gallery->getActiveUserId() == $anonymousUserId) {
-	    $links[] = array('text' => $this->translate('login'),
-			     'params' => array_merge(array('view' => 'core:Login'),
-						     $params));
+	
+        if ($gallery->getActiveUserId() == $anonymousUserId) {
+            $links[] = array('text' => $this->translate('Login'),
+                             'params' => array('return' => 'true',
+					       'view' => 'core:UserAdmin',
+					       'subView' => 'core:UserLogin'));
 	} else {
-	    $links[] = array('text' => $this->translate('preferences'),
-			     'params' => array_merge(array('view' => 'core:UserPreferences'),
-						     $params));
-	    $links[] = array('text' => $this->translate('logout'),
-			     'params' => array_merge(array('controller' => 'core:Logout'),
-						     $params));
+            $links[] = array('text' => $this->translate('Your account'),
+                             'params' => array('return' => 'true',
+					       'view' => 'core:UserAdmin',
+					       'subView' => 'core:UserPreferences'));
+            $links[] = array('text' => $this->translate('Logout'),
+                             'params' => array('return' => 'true',
+					       'controller' => 'core:Logout'));
 	}
-
-	return array(GalleryStatus::success(), $links);
+	
+        return array(GalleryStatus::success(), $links);
     }
-    
+
     /**
      * @see GalleryModule::getSiteAdminViews();
      */
@@ -666,6 +650,32 @@ class CoreModule extends GalleryModule {
 				 'view' => 'core:AdminModules')));
     }
 
+    /**
+     * @see GalleryModule::getUserAdminViews();
+     */
+    function getUserAdminViews($user) {
+	global $gallery;
+	
+	$views = array();
+
+	list ($ret, $anonymousUserId) = $this->getModuleParameter('id.anonymousUser');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if ($user->getId() != $anonymousUserId) {
+	    $views[] = array('name' => $this->translate('Account Settings'),
+			     'view' => 'core:UserPreferences');
+	    $views[] = array('name' => $this->translate('Change Password'),
+			     'view' => 'core:UserChangePassword');
+	} else {
+	    $views[] = array('name' => $this->translate('Log in'),
+			     'view' => 'core:UserLogin');
+	}
+
+	return array(GalleryStatus::success(), $views);
+    }
+	
     /**
      * @see GalleryModule::getItemAdminViews();
      */
@@ -698,6 +708,10 @@ class CoreModule extends GalleryModule {
 	    if (GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
 	        $views[] = array('name' => $this->translate('Album Settings'),
 				 'view' => 'core:ItemEditAlbum');
+
+	        $views[] = array('name' => $this->translate('Reorder Items'),
+				 'view' => 'core:ItemReorder');
+		
 	    }
 
 	    if (GalleryUtilities::isA($item, 'GalleryDataItem')) {

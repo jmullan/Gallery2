@@ -30,11 +30,6 @@
     );
 
   
-    CREATE INDEX Session_userId 
-    ON DB_TABLE_PREFIXSession
-    (DB_COLUMN_PREFIXuserId);
-
-  
     CREATE INDEX Session_creationTime 
     ON DB_TABLE_PREFIXSession
     (DB_COLUMN_PREFIXcreationTime);

@@ -102,20 +102,6 @@ class GalleryItem_core extends GalleryFileSystemEntity {
     var $_keywords;
 
     /**
-     * The layout to use for this item
-     *
-     * @g2 <member>
-     * @g2   <member-name>layout</member-name>
-     * @g2   <member-type>STRING</member-type>
-     * @g2   <member-size>SMALL</member-size>
-     * @g2 </member>
-     *
-     * @var string $_layout
-     * @access private
-     */
-    var $_layout;
-
-    /**
      * Specify the name of the field that we're using to order children
      *
      * @g2 <member>
@@ -311,7 +297,6 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	
 	$this->setOrderBy($orderBy);
 	$this->setOrderDirection($orderDirection);
 

@@ -37,41 +37,21 @@
 class SiteAdminView extends GalleryView {
 
     /**
-     * @see GalleryView::renderHead
+     * @see GalleryView::loadTemplate
      */
-    function renderHead() {
-	global $gallery;
-	
-	/* Make sure we have adequate permissions */
-	$ret = GalleryUserHelper::assertSiteAdministrator();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	$template = $this->_getTemplate();
-	list($ret, $html) = $template->render('SiteAdminHead.tpl');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), $html);
-	}
-	return array(GalleryStatus::success(), $html);
-    }
-
-    /**
-     * @see GalleryView::renderBody
-     */
-    function renderBody($form, $status) {
+    function loadTemplate(&$template, &$form) {
 	global $gallery;
 
 	/* Make sure we have adequate permissions */
 	$ret = GalleryUserHelper::assertSiteAdministrator();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	/* Load the module list */
 	list ($ret, $moduleStatus) = $gallery->getModuleStatus();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	/* Get a list of all the admin views for each module */
@@ -85,12 +65,12 @@ class SiteAdminView extends GalleryView {
 	    /* Get the selected module's admin view */
 	    list($ret, $module) = $gallery->loadModule($moduleName);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 
 	    list ($ret, $moduleViews) = $module->getSiteAdminViews();
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 
 	    $subViewChoices = array_merge($subViewChoices, $moduleViews);
@@ -98,29 +78,30 @@ class SiteAdminView extends GalleryView {
 
 	/* If we have a specific sub view, render it now */
 	$subViewName = GalleryUtilities::getRequestVariables('subView');
-	if (!empty($subViewName)) {
-	    list ($ret, $subView) = GalleryView::loadView($subViewName);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-	    list ($ret, $subViewHtml) = $subView->renderBody($form, $status);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	} else {
-	    $subViewHtml = '';
+	if (empty($subViewName)) {
+	    $subViewName = 'core:AdminCore';
 	}
 
-	$template = $this->_getTemplate();
-	$template->setVariable('subViewChoices', $subViewChoices);
-	$template->setVariable('subViewHtml', $subViewHtml);
-	list($ret, $html) = $template->render('SiteAdmin.tpl');
-    if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), $html);
-    }
+	/* Set up my view parameters */
+	$SiteAdmin = array('subViewChoices' => $subViewChoices,
+			   'subViewName' => $subViewName);
+	
+	list ($ret, $subView) = GalleryView::loadView($subViewName);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+	
+	list ($ret, $SiteAdmin['viewHeadFile'], $SiteAdmin['viewBodyFile']) =
+	    $subView->loadTemplate($template, $form);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+	$SiteAdmin['viewL10Domain'] = $subView->getL10Domain();
 
-	return array(GalleryStatus::success(), $html);
+	$template->setVariable('SiteAdmin', $SiteAdmin);
+	return array(GalleryStatus::success(),
+		     'modules/core/templates/SiteAdminHead.tpl',
+		     'modules/core/templates/SiteAdmin.tpl');
     }
 }
 ?>

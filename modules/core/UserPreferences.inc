@@ -52,51 +52,41 @@ class UserPreferencesController extends GalleryController {
 	    return array(GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__), null);
 	}
 
-	$return = GalleryUtilities::getFormVariables('return.');
 	$results = array();
 	$status = array();
-	$redirectParams = array();
-
+	$error = array();
 	if (isset($form['action']['cancel'])) {
 
-	    /* Redirect back to the return view */
-	    $redirectParams = $return;
+	    /* Redirect back to the current view */
+	    $redirect['view'] = 'core:UserAdmin';
+	    $redirect['subView'] = 'core:UserPreferences';
 	    
 	} else if (isset($form['action']['undo'])) {
 
 	    /* Redirect back to the same view to reset the form */
-	    $redirectParams['view'] = 'core:UserPreferences';
+	    $redirect['view'] = 'core:UserAdmin';
+	    $redirect['subView'] = 'core:UserPreferences';
 	    
 	} else if (isset($form['action']['save'])) {
 
 	    /*
 	     * Validate our data before we continue.
 	     */
-	    $error = false;
-	    /* full name is always mandatory */
-	    if (empty($form['fullName'])) {
-		GalleryUtilities::putRequestVariable('form.error.fullName.missing', 1);
-		$error = true;
-	    }
 
+	    /* full name is optional */
+	    
 	    /* language is optional for everybody */
 
 	    /* email required for non-anonymous */
 	    if (empty($form['email'])) {
-		GalleryUtilities::putRequestVariable('form.error.email.missing', 1);
-		$error = true;
-	    }
-
-	    if (isset($form['password1']) && $form['password1'] != $form['password2']) {
-		GalleryUtilities::putRequestVariable('form.error.password.mismatch', 1);
-		$error = true;
+		$error[] = 'form.error.email.missing';
 	    }
 
 	    /*
 	     * If all the right fields are in place then go ahead and modify
 	     * the user.
 	     */
-	    if (!$error) {
+	    if (empty($error)) {
 		list ($ret, $lockId) = $gallery->acquireWriteLock($userId);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -112,9 +102,6 @@ class UserPreferencesController extends GalleryController {
 		if (isset($form['language'])) {
 		    $user->setLanguage($form['language']);
 		}
-		if (!empty($form['password1'])) {
-		    $user->changePassword($form['password1']);
-		}
 
 		$ret = $user->save();
 		if ($ret->isError()) {
@@ -127,19 +114,22 @@ class UserPreferencesController extends GalleryController {
 		}
 
 		/* Request a redirect to the confirmation screen */
-		$redirectParams['view'] = 'core:UserPreferences';
+		$redirect['view'] = 'core:UserAdmin';
+		$redirect['subView'] = 'core:UserPreferences';
 		$status['saved'] = 1;
 	    }
 	}
 
-	if (!empty($redirectParams)) {
-	    $results['redirect'] = $redirectParams;
-	    $results['status'] = $status;
+	if (!empty($redirect)) {
+	    $results['return'] = 'true';
+	    $results['redirect'] = $redirect;
 	} else {
-	    if (empty($results['view'])) {
-		$results['view'] = 'core:UserPreferences';
-	    }
+	    $results['delegate']['view'] = 'core:UserAdmin';
+	    $results['delegate']['subView'] = 'core:UserPreferences';
 	}
+	$results['status'] = $status;
+	$results['error'] = $error;
+	
 
 	return array(GalleryStatus::success(), $results);
     }
@@ -155,40 +145,23 @@ class UserPreferencesController extends GalleryController {
 class UserPreferencesView extends GalleryView {
 
     /**
-     * @see GalleryView::renderHead
+     * @see GalleryView::loadTemplate
      */
-    function renderHead() {
+    function loadTemplate(&$template, &$form) {
 	global $gallery;
-	
-	$template = $this->_getTemplate();
-	list($ret, $html) = $template->render('SiteAdminHead.tpl');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), $html);
-	}
-	return array(GalleryStatus::success(), $html);
-    }
-
-    /**
-     * @see GalleryView::renderBody
-     */
-    function renderBody($form) {
-	global $gallery;
-
-	$return = GalleryUtilities::getFormVariables('return.');
 
 	$userId = $gallery->getActiveUserId();
-
 	list ($ret, $anonymousUserId) = $gallery->getModuleParameter('core', 'id.anonymousUser');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 	if ($userId == $anonymousUserId) {
-	    return array(GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__), null);
+	    return array(GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__), null, null);
 	}
 
 	list ($ret, $user) = $gallery->getActiveUser();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 	
 	/* Load the form with user data the first time around. */
@@ -197,12 +170,13 @@ class UserPreferencesView extends GalleryView {
 	    $form['fullName'] = $user->getFullName();
 	    $form['email'] = $user->getEmail();
 	    $form['language'] = $user->getLanguage();
+	    $form['formName'] = 'UserPreferences';
 	}
 
 	/* Set up our language selection list */
 	list ($ret, $module) = $gallery->loadModule('core');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 	
 	$languageList = array();
@@ -215,19 +189,13 @@ class UserPreferencesView extends GalleryView {
 	    }
 	}
 
-	/* Render the HTML body */
-	$template = $this->_getTemplate();
-	$template->setVariable('form', $form);
-	$template->setVariable('return', $return);
-	$template->setVariable('user', $user->getMemberData());
-	$template->setVariable('languageList', $languageList);
-	$template->setVariable('controller', 'core:UserPreferences');
-	list($ret, $html) = $template->render('UserPreferences.tpl');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), $html);
-	}
+	$UserPreferences = array();
+	$UserPreferences['languageList'] = $languageList;
 
-	return array(GalleryStatus::success(), $html);
+	/* Render the HTML body */
+	$template->setVariable('UserPreferences', $UserPreferences);
+	$template->setVariable('controller', 'core:UserPreferences');
+	return array(GalleryStatus::success(), '', 'modules/core/templates/UserPreferences.tpl');
     }
 }
 ?>

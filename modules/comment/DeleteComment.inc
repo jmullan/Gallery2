@@ -42,7 +42,6 @@ class DeleteCommentController extends GalleryController {
 	global $gallery;
 
 	list ($itemId, $commentId) = GalleryUtilities::getRequestVariables('itemId', 'commentId');
-	$return = GalleryUtilities::getFormVariables('return.');
 
 	/* Make sure we have permission to delete a comment */
 	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'comment.delete');
@@ -50,6 +49,8 @@ class DeleteCommentController extends GalleryController {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	$status = array();
+	$error = array();
 	if (isset($form['action']['delete'])) {
 	    /* Delete the comment */
 	    list ($ret, $comment) = $gallery->loadEntitiesById($commentId);
@@ -66,10 +67,27 @@ class DeleteCommentController extends GalleryController {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	} 
 
-	/* Redirect back to the item */
-	$results['redirect'] = $return;
+	    $redirect['view'] = 'core:ItemAdmin';
+	    $redirect['subView'] = 'comment:CommentChangeConfirmation';
+	    $redirect['itemId'] = $itemId;
+	    $status['deleted'] = 1;
+	} else if (isset($form['action']['cancel'])) {
+	    /* Where to go on a cancel?  Go to item admin.*/
+	    $redirect['view'] = 'core:ItemAdmin';
+	    $redirect['itemId'] = (int)$itemId;
+	}
+
+	$results = array();
+	if (!empty($redirect)) {
+	    $results['return'] = 1;
+	    $results['redirect'] = $redirect;
+	} else {
+	    $results['delegate']['view'] = 'core:ItemAdmin';
+	    $results['delegate']['subView'] = 'comment:DeleteComment';
+	}
+	$results['status'] = $status;
+	$results['error'] = $error;
 
 	return array(GalleryStatus::success(), $results);
     }
@@ -85,9 +103,9 @@ class DeleteCommentController extends GalleryController {
 class DeleteCommentView extends GalleryView {
 
     /**
-     * @see GalleryView::renderHead()
+     * @see GalleryView::loadTemplate()
      */
-    function renderHead() {
+    function loadTemplate(&$template, &$form) {
 	global $gallery;
 
 	/* Load our item */
@@ -96,44 +114,19 @@ class DeleteCommentView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	/* Render the HTML head */
-	$template = $this->_getTemplate();
-	$template->setVariable('item', $item->getMemberData());
-	list($ret, $html) = $template->render('DeleteCommentHead.tpl');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), $html);
-	}
-
-	return array(GalleryStatus::success(), $html);
-    }
-    
-    /**
-     * @see GalleryView::renderBody()
-     */
-    function renderBody($form) {
-	global $gallery;
-
-	/* Load our item */
-	list ($ret, $item) = $this->_getItem();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
+	$commentId = GalleryUtilities::getRequestVariables('commentId');
 
 	/* Make sure we have permission to delete a comment */
 	$ret = GalleryUserHelper::assertHasItemPermission($item->getId(), 'comment.delete');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
-	/* Get its thumbnail */
-	list ($ret, $thumbnailTable) = 
-		GalleryDerivativeHelper::fetchThumbnailsByItemIds(array($item->getId()));
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
 
+	if ($form['formName'] != 'DeleteComment') {
+	    $form['formName'] = 'DeleteComment';
+	}
+	
 	/* Load the specific comment */
-	$commentId = GalleryUtilities::getRequestVariables('commentId');
 	list ($ret, $comment) = $gallery->loadEntitiesById($commentId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -146,27 +139,14 @@ class DeleteCommentView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	/* Render the HTML body */
-	$template = $this->_getTemplate();
-	
-	if (!empty($thumbnailTable)) {
-	    $thumbnail = $thumbnailTable[$item->getId()];
-	    $template->setVariable('thumbnail', $thumbnail->getMemberData());
-	}
-	
-	$return = GalleryUtilities::getFormVariables('return.');
+	$DeleteComment = array();
+	$DeleteComment['comment'] = $comment->getMemberData();
+	$DeleteComment['commenter'] = $commenter->getMemberData();
 
-	$template->setVariable('return', $return);
-	$template->setVariable('item', $item->getMemberData());
-	$template->setVariable('comment', $comment->getMemberData());
-	$template->setVariable('commenter', $commenter->getMemberData());
+	$template->setVariable('DeleteComment', $DeleteComment);
 	$template->setVariable('controller', 'comment:DeleteComment');
-	list($ret, $html) = $template->render('DeleteComment.tpl');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), $html);
-	}
 	
-	return array(GalleryStatus::success(), $html);
+	return array(GalleryStatus::success(), '', 'modules/comment/templates/DeleteComment.tpl');
     }
 }
 ?>

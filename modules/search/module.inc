@@ -32,7 +32,7 @@
  *
  * @package Search
  */
-class SearchModule extends GalleryTemplateModule {
+class SearchModule extends GalleryModule {
 
     function SearchModule() {
 	$this->setName('search');
@@ -81,24 +81,14 @@ class SearchModule extends GalleryTemplateModule {
     }
 	
     /**
-     * @see GalleryModule::getSystemContent
+     * @see GalleryModule::oadSystemContent
      */
-    function getSystemContent($returnUrlParams) {
+    function loadSystemContent(&$template) {
 	global $gallery;
 
-	foreach ($returnUrlParams as $param => $value) {
-	    $return[$param] = $value;
-	}
-	
-	$template = $this->_getTemplate();
-	$template->setVariable('view', 'search:SearchScan');
-	$template->setVariable('return', $return);
-	list($ret, $html) = $template->render('SystemContent.tpl');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), $html);
-	}
-
-	return array(GalleryStatus::success(), array('content' => $html));
+	$SearchSystemContent['view'] = 'search:SearchScan';
+	$template->setVariable('SearchSystemContent', $SearchSystemContent);
+	return array(GalleryStatus::success(), 'modules/search/templates/SearchSystemContent.tpl');
     }
 
     /**

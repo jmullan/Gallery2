@@ -59,24 +59,22 @@ class ItemAddAlbumController extends GalleryController {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
-	if (isset($form['action']['create'])) {
-	    $error = false;
 
+	$status = array();
+	$error = array();
+	if (isset($form['action']['create'])) {
 	    /*
 	     * Validate the input data.
 	     */
 	    $platform = $gallery->getPlatform();
 
 	    if (empty($form['pathComponent'])) {
-		GalleryUtilities::putRequestVariable('form.error.pathComponent.missing', 1);
-		$error = true;
+		$error[] = 'form.error.pathComponent.missing';
 	    } else if (!$platform->isLegalPathComponent($form['pathComponent'])) {
-		GalleryUtilities::putRequestVariable('form.error.pathComponent.invalid', 1);
-		$error = true;
+		$error[] = 'form.error.pathComponent.invalid';
 	    }
 
-	    if (!$error) {
+	    if (empty($error)) {
 		list ($ret, $instance) =
 		    GalleryFactory::newInstance('GalleryEntity', 'GalleryAlbumItem');
 		if ($ret->isError()) {
@@ -91,15 +89,14 @@ class ItemAddAlbumController extends GalleryController {
 		$ret = $instance->create($itemId, $form['pathComponent']);
 		if ($ret->isError()) {
 		    if ($ret->getErrorCode() & ERROR_COLLISION) {
-			GalleryUtilities::putRequestVariable('form.error.pathComponent.collision', 1);
-			$error = true;
+			$error[] = 'form.error.pathComponent.collision';
 		    } else {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 		}
 	    }
 
-	    if (!$error) {
+	    if (empty($error)) {
 		$instance->setTitle($form['title']);
 		$instance->setSummary($form['summary']);
 		$instance->setKeywords($form['keywords']);
@@ -110,9 +107,10 @@ class ItemAddAlbumController extends GalleryController {
 		}
 
 		/* Figure out where to redirect upon success */
-		$redirectParams['view'] = 'core:ItemAdmin';
-		$redirectParams['subView'] = 'core:ItemAddAlbum';
-		$redirectParams['itemId'] = $itemId;
+		$redirect['view'] = 'core:ItemAdmin';
+		$redirect['subView'] = 'core:ItemEditAlbum';
+		$redirect['itemId'] = $instance->getId();
+		$status['createdAlbum'] = 1;
 	    }
 	}
 
@@ -121,14 +119,15 @@ class ItemAddAlbumController extends GalleryController {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	if (!empty($redirectParams)) {
-	    $results['redirect'] = $redirectParams;
+	if (!empty($redirect)) {
+	    $results['redirect'] = $redirect;
 	} else {
-	    if (empty($results['view'])) {
-		$results['view'] = 'core:ItemAdmin';
-		GalleryUtilities::putRequestVariable('subView', 'core:ItemAddAlbum');
-	    }
+	    $results['delegate']['view'] = 'core:ItemAdmin';
+	    $results['delegate']['subView'] = 'core:ItemAddAlbum';
 	}
+	$results['status'] = $status;
+	$results['error'] = $error;
+	
 
 	return array(GalleryStatus::success(), $results);
     }
@@ -143,9 +142,9 @@ class ItemAddAlbumController extends GalleryController {
 class ItemAddAlbumView extends GalleryView {
 
     /**
-     * @see GalleryView::renderBody
+     * @see GalleryView::loadTemplate
      */
-    function renderBody($form) {
+    function loadTemplate(&$template, &$form) {
 	global $gallery;
 
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
@@ -167,34 +166,21 @@ class ItemAddAlbumView extends GalleryView {
 
 	} else {
 	    /* First time around, load the form with item data */
-	    $form = array();
 	    $form['pathComponent'] = '';
 	    $form['title'] = '';
 	    $form['summary'] = '';
 	    $form['keywords'] = '';
 	    $form['description'] = '';
+	    $form['formName'] = 'ItemAddAlbum';
 	}
 
-	/* Load the parents */
-	list ($ret, $parents) = $item->fetchParents();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	/* Including myself */
-	$parents[] = $item->getMemberData();
-	
+	$ItemAddAlbum = array();
+
 	/* Render the HTML body */
-	$template = $this->_getTemplate();
-	$template->setVariable('form', $form);
-	$template->setVariable('item', $item->getMemberData());
-	$template->setVariable('parents', $parents);
+	$template->setVariable('ItemAddAlbum', $ItemAddAlbum);
 	$template->setVariable('controller', 'core:ItemAddAlbum');
-	list($ret, $html) = $template->render('ItemAddAlbum.tpl');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), $html);
-	}
 
-	return array(GalleryStatus::success(), $html);
+	return array(GalleryStatus::success(), '', 'modules/core/templates/ItemAddAlbum.tpl');
     }
 }
 ?>

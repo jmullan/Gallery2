@@ -33,10 +33,6 @@
     
     , 
   
-    INDEX (DB_COLUMN_PREFIXuserId)
-    
-      ,
-    
     INDEX (DB_COLUMN_PREFIXcreationTime)
     
       ,

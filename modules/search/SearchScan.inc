@@ -40,13 +40,15 @@ class SearchScanController extends GalleryController {
     function handleRequest($form) {
 	global $gallery;
 
-
+	$results = array();
 	if (isset($form['action']['showAll'])) {
-	    $results['view'] = 'search:SearchShowAll';
+	    $results['delegate']['view'] = 'search:SearchShowAll';
 	} else {
-	    $results['view'] = 'search:SearchScan';
+	    $results['delegate']['view'] = 'search:SearchScan';
 	}
 
+	$results['status'] = array();
+	$results['error'] = array();
 	return array(GalleryStatus::success(), $results);
     }
 }
@@ -58,30 +60,14 @@ class SearchScanController extends GalleryController {
 class SearchScanView extends GalleryView {
 
     /**
-     * @see GalleryView::renderHead
+     * @see GalleryView::loadTemplate
      */
-    function renderHead() {
-	/* Render the HTML body */
-	$template = $this->_getTemplate();
-	list($ret, $html) = $template->render('SearchHead.tpl');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), $html);
-	}
-	
-	return array(GalleryStatus::success(), $html);
-    }
-
-    /**
-     * @see GalleryView::renderBody
-     */
-    function renderBody($form) {
+    function loadTemplate(&$template, &$form) {
 	global $gallery;
 
 	// XXX: Parameterize this
 	$scanSize = 3;
 
-	$return = GalleryUtilities::getFormVariables('return.');
-	
 	/* Find all the modules that support the Search interface */
 	$ids = GalleryFactory::getAllImplementationIds('GallerySearchInterface_1_0');
 	foreach ($ids as $id => $className) {
@@ -100,6 +86,8 @@ class SearchScanView extends GalleryView {
 	    }
 	}
 
+	$items = array();
+	$thumbnails = array();
 	$searchResults = array();
 	$searchResultThumbnails = array();
 	if ($form['formName'] == 'SearchScan' ||
@@ -147,13 +135,22 @@ class SearchScanView extends GalleryView {
 
 	    $thumbnails = array();
 	    if (!empty($itemIds)) {
+
+		/* Fetch items */
+		list ($ret, $itemList) = $gallery->loadEntitiesById($itemIds);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		foreach ($itemList as $item) {
+		    $items[$item->getId()] = $item->getMemberData();
+		}
+		
 		/* Fetch thumbnails */
 		list ($ret, $thumbnailList) =
 		    GalleryDerivativeHelper::fetchThumbnailsByItemIds($itemIds);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-
 		foreach ($thumbnailList as $thumbnail) {
 		    $thumbnails[$thumbnail->getParentId()] = $thumbnail->getMemberData();
 		}
@@ -163,19 +160,17 @@ class SearchScanView extends GalleryView {
 	}
 
 	/* Render the HTML body */
-	$template = $this->_getTemplate();
-	$template->setVariable('controller', 'search:SearchScan');
-	$template->setVariable('modules', $modules);
-	$template->setVariable('form', $form);
-	$template->setVariable('return', $return);
-	$template->setVariable('searchResults', $searchResults);
-	$template->setVariable('thumbnails', $thumbnails);
-	list($ret, $html) = $template->render('SearchScan.tpl');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), $html);
-	}
-	
-	return array(GalleryStatus::success(), $html);
+	$SearchScan = array();
+	$SearchScan['modules'] = $modules;
+	$SearchScan['searchResults'] = $searchResults;
+	$SearchScan['thumbnails'] = $thumbnails;
+	$SearchScan['items'] = $items;
+	$SearchScan['controller'] = 'search:SearchScan';
+
+	$template->setVariable('SearchScan', $SearchScan);
+	return array(GalleryStatus::success(),
+		     'modules/search/templates/SearchHead.tpl',
+		     'modules/search/templates/SearchScan.tpl');
     }
 }
 ?>

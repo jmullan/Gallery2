@@ -48,89 +48,76 @@ class ShowItemView extends GalleryView {
     }
 
     /**
-     * @see GalleryView::renderHead
+     * @see GalleryView::loadTemplate
      */
-    function renderHead() {
+    function loadTemplate(&$template, &$form) {
 	global $gallery;
 
 	list ($ret, $item) = $this->_getItem();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	$template = $this->_getTemplate();
-	$template->setVariable('item', $item->getMemberData());
-	list($ret, $html) = $template->render('ShowItemHead.tpl');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), $html);
-	}
-
-	return array(GalleryStatus::success(), $html);
-    }
-
-    /**
-     * @see GalleryView::renderBody
-     */
-    function renderBody($form) {
-	global $gallery;
-
-	list ($ret, $item) = $this->_getItem();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	/* Make sure we have permission do edit this item */
 	$ret = GalleryUserHelper::assertHasItemPermission($item->getId(), 'core.view');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	/* Update the view count */
 	$ret = GalleryItemAttributesMap::incrementViewCount($item->getId());
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
-	/* Find the right layout for this item  */
-	$layoutName = $item->getLayout();
+	/* Find the right layout for this item */
+	if (GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
+	    $layoutName = $item->getLayout();
+	} else {
+	    list ($ret, $parent) = $gallery->loadEntitiesById($item->getParentId());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+
+	    $layoutName = $parent->getLayout();
+	}
 	if (empty($layoutName)) {
 	    list ($ret, $layoutName) =
 		$gallery->getModuleParameter('core', 'default.layout');
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	}
 
 	/* Load the correct layout */
-	$platform = $gallery->getPlatform();
-
 	if (empty($layoutName)) {
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER,
-					      __FILE__, __LINE__), null);
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null, null);
 	}
 
 	require_once($gallery->getConfig('code.gallery.layouts') .
 		     $layoutName . '/layout.inc');
 	$layoutClassName = $layoutName . 'Layout';
 	if (!class_exists($layoutClassName)) {
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER,
-					      __FILE__, __LINE__), null);
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null, null);
 	}
 	$layout = new $layoutClassName();
-	$ret = $layout->init($layoutName);
+	$layout->init($layoutName);
+
+	$ShowItem = array();
+	$ShowItem['item'] = $item->getMemberData();
+	$ShowItem['layoutL10Domain'] = $layout->getL10Domain();
+	
+	/* Let the layout load the template and get its body file */
+	list ($ret, $ShowItem['layoutBodyFile']) = $layout->loadTemplate($template, $item);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
-	/* Render and retrieve the body */
-	$urlParams['view'] = 'core:ShowItem';
-	$urlParams['itemId'] = $item->getId();
-	list ($ret, $html) = $layout->render($item, $urlParams);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), $html);
-	}
-	
-	return array(GalleryStatus::success(), $html);
+	$template->setVariable('ShowItem', $ShowItem);
+
+	return array(GalleryStatus::success(),
+		     'modules/core/templates/ShowItemHead.tpl',
+		     'modules/core/templates/ShowItem.tpl');
     }
 }
 ?>

@@ -47,7 +47,8 @@ class AdminEditGroupControllerTest extends GalleryControllerTestCase {
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'core:AdminGroups'),
-				  'status' => array()),
+				  'status' => array(),
+				  'error' => array()),
 			    $results);
 	$this->_deleteGroup($group);
     }
@@ -65,7 +66,8 @@ class AdminEditGroupControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'core:AdminEditGroup',
 						      'groupId' => $group->getId()),
-				  'status' => array()),
+				  'status' => array(),
+				  'error' => array()),
 			    $results);
 
 	$this->_deleteGroup($group);
@@ -85,7 +87,27 @@ class AdminEditGroupControllerTest extends GalleryControllerTestCase {
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'core:AdminGroups'),
-				  'status' => array('modifiedGroup' => $newGroupName)),
+				  'status' => array('modifiedGroup' => $newGroupName),
+				  'error' => array()),
+			    $results);
+	$this->_deleteGroup($group);
+    }
+    
+    function testEditGroupMissingName() {
+	list ($ret, $group) = $this->_createGroup();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	GalleryUtilities::putRequestVariable('groupId', $group->getId());
+	GalleryUtilities::putRequestVariable('form.action.save', 1);
+	GalleryUtilities::putRequestVariable('form.groupName', '');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminEditGroup'),
+				  'status' => array(),
+				  'error' => array('form.error.groupName.missing')),
 			    $results);
 	$this->_deleteGroup($group);
     }

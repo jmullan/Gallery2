@@ -41,7 +41,7 @@ class DebugModule extends GalleryModule {
     }
 
     /**
-     * 
+     * @see GalleryModule::init()
      */
     function init() {
 	global $gallery;
@@ -64,7 +64,7 @@ class DebugModule extends GalleryModule {
     }
 
     /**
-     * 
+     * @see GalleryModule::install()
      */
     function install() {
 	list ($ret, $version) = $this->getModuleParameter('version');
@@ -89,7 +89,7 @@ class DebugModule extends GalleryModule {
     }
 	
     /**
-     * 
+     * @see GalleryModule::activate()
      */
     function activate() {
 	global $gallery;
@@ -102,7 +102,7 @@ class DebugModule extends GalleryModule {
     }
 	
     /**
-     * 
+     * @see GalleryModule::deactivate()
      */
     function deactivate() {
 	global $gallery;
@@ -115,6 +115,7 @@ class DebugModule extends GalleryModule {
     }
 	
     /**
+     * @see GalleryModule::needsConfiguration()
      * No configuration needed in this module
      */
     function needsConfiguration() {
@@ -124,14 +125,10 @@ class DebugModule extends GalleryModule {
     }
 
     /**
-     * 
+     * @see GalleryModule::getItemLinks
      */
-    function getItemLinks($items, $returnUrlParams) {
+    function getItemLinks($items) {
 	global $gallery;
-
-	foreach ($returnUrlParams as $param => $value) {
-	    $params['return.' . $param] = $value;
-	}
 
 	$links = array();
 	foreach ($items as $item) {
@@ -144,9 +141,8 @@ class DebugModule extends GalleryModule {
 	    if (isset($permissions['core.all'])) {
 		$links[$item->getId()][] =
 		    array('text' => "show debug tree",
-			  'params' => array_merge(array('view' => 'debug:ShowTree',
-							'itemId' => $item->getId()),
-						  $params));
+			  'params' => array('view' => 'debug:ShowTree',
+					    'itemId' => $item->getId()));
 	    }
 	}
 
@@ -154,7 +150,7 @@ class DebugModule extends GalleryModule {
     }
     
     /**
-     * 
+     * @see GalleryModule::getSiteAdminViews
      */
     function getSiteAdminViews() {
 	return array(GalleryStatus::success(),
@@ -163,7 +159,7 @@ class DebugModule extends GalleryModule {
     }
 
     /**
-     * 
+     * @see GalleryModule::getConfigurationView
      */
     function getConfigurationView() {
 	return array(GalleryStatus::success(), 'debug:AdminDebug');

@@ -9,6 +9,14 @@
     
     NOT NULL
   
+      ,
+    DB_COLUMN_PREFIXlayout
+      varchar(
+      
+          32
+        
+      )
+    
     , 
   
     INDEX (DB_COLUMN_PREFIXid)

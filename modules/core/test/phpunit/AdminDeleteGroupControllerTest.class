@@ -38,8 +38,11 @@ class AdminDeleteGroupControllerTest extends GalleryControllerTestCase {
     function testCancel() {
 	GalleryUtilities::putRequestVariable('form.action.cancel', 1);
 	$results = $this->handleRequest();
-	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
-	$this->assertEquals('core:AdminGroups', GalleryUtilities::getRequestVariables('subView'));
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminGroups'),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
     }
 
     /**
@@ -59,7 +62,8 @@ class AdminDeleteGroupControllerTest extends GalleryControllerTestCase {
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'core:AdminGroups'),
-				  'status' => array('deletedGroup' => $group->getGroupName())),
+				  'status' => array('deletedGroup' => $group->getGroupName()),
+				  'error' => array()),
 			    $results,
 			    'Failed to create user');
 	
@@ -68,7 +72,8 @@ class AdminDeleteGroupControllerTest extends GalleryControllerTestCase {
     }
 
     /**
-     * Try to delete the all users group (this will fail)
+     * Try to delete the all users group (this will fail but with no error message since the
+     * view should never allow this)
      */
     function testDeleteAllUsersGroup() {
 	global $gallery;
@@ -82,12 +87,16 @@ class AdminDeleteGroupControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.action.delete', 1);
 	
 	$results = $this->handleRequest();
-	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
-	$this->assertEquals('core:AdminDeleteGroup', GalleryUtilities::getRequestVariables('subView'));
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminDeleteGroup'),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
     }
 
     /**
-     * Try to delete the site admin group (this will fail)
+     * Try to delete the site admin group (this will fail but with no error message since the
+     * view should never allow this)
      */
     function testDeleteSiteAdminsGroup() {
 	global $gallery;
@@ -101,8 +110,11 @@ class AdminDeleteGroupControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.action.delete', 1);
 	
 	$results = $this->handleRequest();
-	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
-	$this->assertEquals('core:AdminDeleteGroup', GalleryUtilities::getRequestVariables('subView'));
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminDeleteGroup'),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
     }
 
     function _createGroup() {

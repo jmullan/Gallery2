@@ -52,7 +52,9 @@ class AdminCommentsControllerTest extends GalleryControllerTestCase {
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'comment:AdminComments')),
+						      'subView' => 'comment:AdminComments'),
+				  'status' => array(),
+				  'error' => array()),
 				  $results);
     }
 }

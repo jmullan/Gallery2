@@ -1,184 +1,130 @@
-      {gallery->form controller=$controller method="GET"}
-      {gallery->input type="hidden" name="form.formName"}SearchScan{/gallery->input}
+{gallery->form action_controller=$SearchScan.controller}
+  {gallery->input type="hidden" name="form.formName"}SearchScan{/gallery->input}
 
-      <!-- Embed the hidden return fields -->
-      {foreach from=$return key=key item=value}
-      {gallery->input type="hidden" name=return.$key}{$value}{/gallery->input}
+  {gallery->main}
+    {gallery->pathbar}
+      {gallery->item}
+	{gallery->text text="Search"}
+      {/gallery->item}
+    {/gallery->pathbar}
+    
+    {gallery->component}
+      {gallery->bannerbox}
+	{gallery->title}
+	  {gallery->text text="Search the Gallery"}
+	{/gallery->title}
+      {/gallery->bannerbox}
+
+      {gallery->widget1box}
+	{gallery->widget1}
+	  {gallery->title}
+	    {gallery->text text="Search: "}
+	  {/gallery->title}
+	  {gallery->body}
+	    {gallery->input type="text" size="50" name="form.searchCriteria"}{$form.searchCriteria}{/gallery->input}
+	    {if isset($form.error.searchCriteria.missing)}
+	      {gallery->error}
+		{gallery->text text="You must enter some text to search for!"}
+	      {/gallery->error}
+	    {/if}
+	    {gallery->input type="submit" name="form.action.search"}
+	      {gallery->text text="Search"}
+	    {/gallery->input}
+	  {/gallery->body}
+	{/gallery->widget1}
+      {/gallery->widget1box}
+
+      {foreach from=$SearchScan.modules key=moduleId item=moduleInfo}
+	{gallery->detailedbox}
+	  {gallery->title}
+	    {$moduleInfo.name}
+	  {/gallery->title}
+
+	  {gallery->body}
+	    {gallery->widget1box}
+	      {foreach from=$moduleInfo.options key=optionId item=optionInfo}
+		{gallery->widget1}
+		  {gallery->title}
+		    {$optionInfo.description}
+		  {/gallery->title}
+		  {gallery->body}
+		    {capture name=checkboxName}form.options.{$moduleId}.{$optionId}{/capture}
+		    {gallery->input type="checkbox" name=$smarty.capture.checkboxName}
+		      {if isset($form.options.$moduleId.$optionId)}1{/if}
+		    {/gallery->input}
+		  {/gallery->body}
+		{/gallery->widget1}
+	      {/foreach}
+	    {/gallery->widget1box}
+	  {/gallery->body}
+	{/gallery->detailedbox}
       {/foreach}
 
-      {gallery->thinFrame width="100%"}
-    <table border="0" cellspacing="0" cellpadding="0" width="100%">
-	<tr>
-	  <td colspan="2" align="center">
-	    {gallery->highlight1}
-	    <center>
-	      {gallery->biggerFontSize}
-	      {gallery->text text="Search the Gallery"}
-	      {/gallery->biggerFontSize}
-	      
-	      {if !empty($return)}
-	      <br>
-	      <a href="{gallery->url view=$return.view itemId=$return.itemId}">
-		[{gallery->text text="Back to Gallery"}]
-	      </a>
-	      {/if}
-	    </center>
-	    {/gallery->highlight1}
-	  </td>
-	</tr>
+      {if !empty($SearchScan.searchResults)}
+	{gallery->detailedbox}
+	  {gallery->title}
+	    {gallery->text text="Search Results"}
+	  {/gallery->title}
 
-	<tr>
-	  <td colspan="2">
-	    {gallery->text text="Search for: "}
-	    {gallery->input type="text" size="50" name="form.searchCriteria"}{$form.searchCriteria}{/gallery->input}
-	    {gallery->input type="submit" name="form.action.search"}
-	    {gallery->text text="Search"}
-	    {/gallery->input}
-	  </td>
-	</tr>
+	  {gallery->body}
+	    {foreach from=$SearchScan.searchResults key=moduleId item=results}
+	      {gallery->detailedbox}
+		{gallery->title}
+		  {$SearchScan.modules.$moduleId.name}
+		  {if ($results.count > 0)}
+		    {gallery->text text="(Results %d - %d)"
+	            arg1=$results.start
+	            arg2=$results.end}
+		  {/if}
+		  {if ($results.count > $results.end)}
+		    {assign var="moduleId" value=$moduleId}
+		    {gallery->input type="submit" name="form.action.showAll.$moduleId"}
+		      {gallery->text text="Show all %d" arg1=$results.count}
+		    {/gallery->input}
+		  {/if}
+		{/gallery->title}
 
-	<!-- {if isset($form.error.searchCriteria.missing)} -->
-	<tr>
-	  <td colspan="2">
-	    {gallery->errorFontColor}
-	    {gallery->text text="You must enter some text to search for!"}
-	    {/gallery->errorFontColor}
-	  </td>
-	</tr>
-	<!-- {/if} -->
-	
-	<!-- {foreach from=$modules key=moduleId item=moduleInfo} -->
-	<tr>
-	  <td colspan="2">
-	    {gallery->highlight2}
-	    {gallery->bigFontSize}
-	    {$moduleInfo.name}
-	    {/gallery->bigFontSize}
-	    {/gallery->highlight2}
-	  </td>
-	</tr>
-	
-	<!-- {foreach from=$moduleInfo.options key=optionId item=optionInfo} -->
-	<tr>
-	  <td>
-	    &nbsp;
-	  </td>
-	  <td>
-	    {capture name=checkboxName}form.options.{$moduleId}.{$optionId}{/capture}
-	    {gallery->input type="checkbox" name=$smarty.capture.checkboxName}
-	    {if isset($form.options.$moduleId.$optionId)}1{/if}
-	    {/gallery->input}
-	    {$optionInfo.description}
-	  </td>
-	</tr>
-	<!-- {/foreach} -->
-	<!-- {/foreach} -->
-    </table>
-    {/gallery->thinFrame}
+		{gallery->body}
+		  {gallery->table}
+		    {assign var="searchCriteria" value=$form.searchCriteria} 
+		    {foreach from=$results.results item=result} 
+		      {assign var=itemId value=$result.itemId} 
+		      {gallery->row}
+			{gallery->column}
+			  {gallery->link url_view="core:ShowItem" url_itemId=$itemId}
+			    {gallery->image item=$SearchScan.items.$itemId image=$SearchScan.thumbnails.$itemId}
+			  {/gallery->link}
+			{/gallery->column}
 
-    <br>
-
-    <!-- {if !empty($searchResults)} -->
-    {gallery->thinFrame}
-    <table border="0" cellspacing="0" cellpadding="2" width="100%">
-	<tr>
-	  <td colspan="6">
-	    {gallery->highlight1}
-	    <center>
-	      {gallery->biggerFontSize}
-	      {gallery->text text="Search Results"}
-	      {/gallery->biggerFontSize}
-	    </center>
-	    {/gallery->highlight1}
-	  </td>
-	</tr>
-
-	<!-- {foreach from=$searchResults key=moduleId item=results} -->
-
-	<tr>
-	  <td colspan="6">
-	    {gallery->highlight2}
-	    {gallery->bigFontSize}
-	    {$modules.$moduleId.name}
-	    {/gallery->bigFontSize}
-	    &nbsp;
-	    &nbsp;
-	    &nbsp;
-	    {if ($results.count > 0)}
-	    {gallery->text text="(Results %d - %d)"
-	                 arg1=$results.start
-	                 arg2=$results.end}
-	    {/if}
-	    {if ($results.count > $results.end)}
-	    {assign var="moduleId" value=$moduleId}
-	    {gallery->input type="submit" name="form.action.showAll.$moduleId"}
-	    {gallery->text text="Show all %d" arg1=$results.count}
-	    {/gallery->input}
-	    {/if}
-	    {/gallery->highlight2}
-	  </td>
-	</tr>
-
-	<tr>
-	  <td colspan="6">
-	    &nbsp;
-	  </td>
-	</tr>
-
-	<!-- {assign var="searchCriteria" value=$form.searchCriteria} -->
-	<!-- {foreach from=$results.results item=result} -->
-	<!-- {assign var=itemId value=$result.itemId} -->
-	<tr>
-	  <td valign="baseline">
-	    <a href="{gallery->url view=core:ShowItem itemId=$itemId}">
-	      {if isset($thumbnails.$itemId)}
-	      {assign var=thumbnail value=$thumbnails.$itemId}
-	      <img src="{gallery->url view=core:DownloadItem itemId=$thumbnail.id}"
-	      {if ! empty($thumbnail.width)}
-	      width="{$thumbnail.width}"
-	      height="{$thumbnail.height}"
-	      {/if}
-	      border="0"
-	      alt="{gallery->text text="thumbnail"}"
-	      >
-	      {else}
-	      {gallery->text text="No thumbnail"}
-	      {/if}
-	    </a>
-	  </td>
-	  <td>
-	    <table border="0" cellspacing="2" cellpadding="0" width="100%">
-	      <!-- {foreach from=$result.fields item=field} -->
-		<tr>
-		  <td valign="top"><b>{$field.key}</b></td>
-		  <td>{$field.value|default:"&nbsp;"|replace:$searchCriteria:"<b>$searchCriteria</b>"}</td>
-		</tr>
-		<!-- {/foreach} -->
-	    </table>
-	  </td>
-	</tr>
-
-	<!-- {* spacer row *} -->
-	<tr>
-	  <td>
-	    &nbsp;
-	  </td>
-	</tr>
-
-	<!-- {foreachelse} -->
-	<tr>
-	  <td width="20">
-	    &nbsp;
-	  </td>
-	  <td colspan="5">
-	    {gallery->text text="No results"}
-	  </td>
-	</tr>
-	<!-- {/foreach} -->
-	<!-- {/foreach} -->
-    </table>
-    {/gallery->thinFrame}
-    <!-- {/if} -->
-
-    {/gallery->form}
-    
+			{gallery->column}
+			  {gallery->table}
+			    {foreach from=$result.fields item=field} 
+			      {gallery->row}
+				{gallery->column}
+				  {$field.key}
+				{/gallery->column}
+				{gallery->column}
+				  {$field.value|default:"&nbsp;"|replace:$searchCriteria:"<b>$searchCriteria</b>"}
+				{/gallery->column}
+			      {/gallery->row}
+			    {/foreach}
+			  {/gallery->table}
+			{/gallery->column}
+		      {/gallery->row}
+		    {foreachelse} 
+		      {gallery->row}
+			{gallery->column}
+			  {gallery->text text="No results"}
+			{/gallery->column}
+		      {/gallery->row}
+		    {/foreach}
+		  {/gallery->table}
+		{/gallery->body}
+	      {/gallery->detailedbox}
+	    {/foreach}
+	  {/gallery->body}
+	{/gallery->detailedbox}
+      {/if}
+    {/gallery->component}
+  {/gallery->main}
+{/gallery->form}

@@ -98,7 +98,9 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
 						      'subView' => 'core:ItemEditPermissions',
-						      'itemId' => $this->_albumParent->getId())),
+						      'itemId' => $this->_albumParent->getId()),
+				  'status' => array(),
+				  'error' => array()),
 			    $results);
 
 	GalleryDataCache::reset();
@@ -118,9 +120,11 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('view' => 'core:ItemAdmin'), $results);
-	$this->assertEquals('core:ItemEditPermissions', GalleryUtilities::getRequestVariables('subView'));
-	$this->assert(GalleryUtilities::hasRequestVariable('form.error.owner.missingUser'), 'missingUser error missing');
+	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemEditPermissions'),
+				  'status' => array(),
+				  'error' => array('form.error.owner.missingUser')),
+			    $results);
     }
 
     function testChangeOwnerInvalidUser() {
@@ -131,9 +135,11 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('view' => 'core:ItemAdmin'), $results);
-	$this->assertEquals('core:ItemEditPermissions', GalleryUtilities::getRequestVariables('subView'));
-	$this->assert(GalleryUtilities::hasRequestVariable('form.error.owner.invalidUser'), 'invalidUser error missing');
+	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemEditPermissions'),
+				  'status' => array(),
+				  'error' => array('form.error.owner.invalidUser')),
+			    $results);
     }
      
     function testAddGroupPermission() {
@@ -148,7 +154,9 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
 						      'subView' => 'core:ItemEditPermissions',
 						      'itemId' => $this->_albumParent->getId(),
-						      'form.group.groupName' => $this->_group->getGroupName())),
+						      'form.group.groupName' => $this->_group->getGroupName()),
+				  'status' => array(),
+				  'error' => array()),
 			    $results);
 
 	GalleryDataCache::reset();
@@ -182,7 +190,9 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
 						      'subView' => 'core:ItemEditPermissions',
 						      'itemId' => $this->_albumParent->getId(),
-						      'form.group.groupName' => $this->_group->getGroupName())),
+						      'form.group.groupName' => $this->_group->getGroupName()),
+				  'status' => array(),
+				  'error' => array()),
 			    $results);
 
 	GalleryDataCache::reset();
@@ -212,9 +222,11 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('view' => 'core:ItemAdmin'), $results);
-	$this->assertEquals('core:ItemEditPermissions', GalleryUtilities::getRequestVariables('subView'));
-	$this->assert(GalleryUtilities::hasRequestVariable('form.error.group.missingGroup'), 'missingGroup error missing');
+	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemEditPermissions'),
+				  'status' => array(),
+				  'error' => array('form.error.group.missingGroup')),
+			    $results);
     }
 
     function testAddGroupPermissionMissingGroup() {
@@ -226,9 +238,11 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('view' => 'core:ItemAdmin'), $results);
-	$this->assertEquals('core:ItemEditPermissions', GalleryUtilities::getRequestVariables('subView'));
-	$this->assert(GalleryUtilities::hasRequestVariable('form.error.group.invalidGroup'), 'invalidGroup error missing');
+	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemEditPermissions'),
+				  'status' => array(),
+				  'error' => array('form.error.group.invalidGroup')),
+			    $results);
     }
 
     function testAddGroupPermissionInvalidPermission() {
@@ -240,10 +254,11 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('view' => 'core:ItemAdmin'), $results);
-	$this->assertEquals('core:ItemEditPermissions', GalleryUtilities::getRequestVariables('subView'));
-	$this->assert(GalleryUtilities::hasRequestVariable('form.error.group.invalidPermission'),
-		      'invalidPermission error missing');
+	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemEditPermissions'),
+				  'status' => array(),
+				  'error' => array('form.error.group.invalidPermission')),
+			    $results);
     }
 
     function testAddGroupPermissionRedundant() {
@@ -266,10 +281,11 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('view' => 'core:ItemAdmin'), $results);
-	$this->assertEquals('core:ItemEditPermissions', GalleryUtilities::getRequestVariables('subView'));
-	$this->assert(GalleryUtilities::hasRequestVariable('form.error.group.alreadyHadPermission'),
-		      'alreadyHadPermission error missing');
+	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemEditPermissions'),
+				  'status' => array(),
+				  'error' => array('form.error.group.alreadyHadPermission')),
+			    $results);
     }
 
     function testDeleteGroupPermission() {
@@ -294,7 +310,9 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 						      'subView' => 'core:ItemEditPermissions',
 						      'itemId' => $this->_albumParent->getId(),
 						      'form.group.permission' => 'core.edit',
-						      'form.group.groupName' => $this->_group->getGroupName())),
+						      'form.group.groupName' => $this->_group->getGroupName()),
+				  'status' => array(),
+				  'error' => array()),
 			    $results);
 
 	GalleryDataCache::reset();
@@ -330,7 +348,9 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 						      'subView' => 'core:ItemEditPermissions',
 						      'itemId' => $this->_albumParent->getId(),
 						      'form.group.permission' => 'core.edit',
-						      'form.group.groupName' => $this->_group->getGroupName())),
+						      'form.group.groupName' => $this->_group->getGroupName()),
+				  'status' => array(),
+				  'error' => array()),
 			    $results);
 
 	GalleryDataCache::reset();
@@ -359,7 +379,9 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
 						      'subView' => 'core:ItemEditPermissions',
 						      'itemId' => $this->_albumParent->getId(),
-						      'form.user.userName' => $this->_user->getUserName())),
+						      'form.user.userName' => $this->_user->getUserName()),
+				  'status' => array(),
+				  'error' => array()),
 			    $results);
 
 	GalleryDataCache::reset();
@@ -393,7 +415,9 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
 						      'subView' => 'core:ItemEditPermissions',
 						      'itemId' => $this->_albumParent->getId(),
-						      'form.user.userName' => $this->_user->getUserName())),
+						      'form.user.userName' => $this->_user->getUserName()),
+				  'status' => array(),
+				  'error' => array()),
 			    $results);
 
 	GalleryDataCache::reset();
@@ -423,9 +447,11 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('view' => 'core:ItemAdmin'), $results);
-	$this->assertEquals('core:ItemEditPermissions', GalleryUtilities::getRequestVariables('subView'));
-	$this->assert(GalleryUtilities::hasRequestVariable('form.error.user.missingUser'), 'missingUser error missing');
+	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemEditPermissions'),
+				  'status' => array(),
+				  'error' => array('form.error.user.missingUser')),
+			    $results);
     }
 
     function testAddUserPermissionMissingUser() {
@@ -437,9 +463,11 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('view' => 'core:ItemAdmin'), $results);
-	$this->assertEquals('core:ItemEditPermissions', GalleryUtilities::getRequestVariables('subView'));
-	$this->assert(GalleryUtilities::hasRequestVariable('form.error.user.invalidUser'), 'invalidUser error missing');
+	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemEditPermissions'),
+				  'status' => array(),
+				  'error' => array('form.error.user.invalidUser')),
+			    $results);
     }
 
     function testAddUserPermissionInvalidPermission() {
@@ -451,10 +479,11 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('view' => 'core:ItemAdmin'), $results);
-	$this->assertEquals('core:ItemEditPermissions', GalleryUtilities::getRequestVariables('subView'));
-	$this->assert(GalleryUtilities::hasRequestVariable('form.error.user.invalidPermission'),
-		      'invalidPermission error missing');
+	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemEditPermissions'),
+				  'status' => array(),
+				  'error' => array('form.error.user.invalidPermission')),
+			    $results);
     }
 
     function testAddUserPermissionRedundant() {
@@ -477,10 +506,11 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('view' => 'core:ItemAdmin'), $results);
-	$this->assertEquals('core:ItemEditPermissions', GalleryUtilities::getRequestVariables('subView'));
-	$this->assert(GalleryUtilities::hasRequestVariable('form.error.user.alreadyHadPermission'),
-		      'alreadyHadPermission error missing');
+	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemEditPermissions'),
+				  'status' => array(),
+				  'error' => array('form.error.user.alreadyHadPermission')),
+			    $results);
     }
 
     function testDeleteUserPermission() {
@@ -505,13 +535,16 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 						      'subView' => 'core:ItemEditPermissions',
 						      'itemId' => $this->_albumParent->getId(),
 						      'form.user.permission' => 'core.edit',
-						      'form.user.userName' => $this->_user->getUserName())),
+						      'form.user.userName' => $this->_user->getUserName()),
+				  'status' => array(),
+				  'error' => array()),
 			    $results);
 
 	GalleryDataCache::reset();
 
 	/* Fetch all permissions and compare the ones we care about */
-	list ($ret, $permissions) = GalleryPermissionMap::fetchAllPermissionsForItem($this->_albumParent->getId(), false);
+	list ($ret, $permissions) =
+	    GalleryPermissionMap::fetchAllPermissionsForItem($this->_albumParent->getId(), false);
 	foreach ($permissions as $permission) {
 	    if ($permission['userId'] == $this->_user->getId()) {
 		$this->assert(false, 'invalid user permission found');
@@ -541,7 +574,9 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 						      'subView' => 'core:ItemEditPermissions',
 						      'itemId' => $this->_albumParent->getId(),
 						      'form.user.permission' => 'core.edit',
-						      'form.user.userName' => $this->_user->getUserName())),
+						      'form.user.userName' => $this->_user->getUserName()),
+				  'status' => array(),
+				  'error' => array()),
 			    $results);
 
 	GalleryDataCache::reset();

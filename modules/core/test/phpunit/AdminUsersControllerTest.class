@@ -107,9 +107,11 @@ class AdminUsersControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.action.create', 1);
 	
 	$results = $this->handleRequest();
-
-	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
-	$this->assertEquals('core:AdminCreateUser', GalleryUtilities::getRequestVariables('subView'));
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminCreateUser'),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
     }
 
     function testEditFromList() {
@@ -120,17 +122,23 @@ class AdminUsersControllerTest extends GalleryControllerTestCase {
 	
 	$results = $this->handleRequest();
 
-	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
-	$this->assertEquals('core:AdminEditUser', GalleryUtilities::getRequestVariables('subView'));
-	$this->assertEquals($userId, (int)GalleryUtilities::getRequestVariables('userId'));
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminEditUser',
+						      'userId' => $userId),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
 
 	/* Failure - don't select a user */
 	GalleryUtilities::putRequestVariable('form.action.editFromList', 1);
 	GalleryUtilities::removeRequestVariable('form.list.userId');
 	
 	$results = $this->handleRequest();
-
-	$this->assert(GalleryUtilities::hasRequestVariable('form.error.list.noUserSelected'));
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminUsers'),
+				  'status' => array(),
+				  'error' => array('form.error.list.noUserSelected')),
+			    $results);
     }
 
     function testDeleteFromList() {
@@ -147,9 +155,12 @@ class AdminUsersControllerTest extends GalleryControllerTestCase {
 	
 	$results = $this->handleRequest();
 
-	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
-	$this->assertEquals('core:AdminDeleteUser', GalleryUtilities::getRequestVariables('subView'));
-	$this->assertEquals($user->getId(), (int)GalleryUtilities::getRequestVariables('userId'));
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminDeleteUser',
+						      'userId' => $user->getId()),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
 	$this->_deleteUser($user);
 
 	/* Failure - don't select a user */
@@ -157,7 +168,11 @@ class AdminUsersControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::removeRequestVariable('form.list.userId');
 	
 	$results = $this->handleRequest();
-	$this->assert(GalleryUtilities::hasRequestVariable('form.error.list.noUserSelected'));
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminUsers'),
+				  'status' => array(),
+				  'error' => array('form.error.list.noUserSelected')),
+			    $results);
 
 
 	/* Failure - select the anonymous user */
@@ -168,14 +183,22 @@ class AdminUsersControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.action.deleteFromList', 1);
 	GalleryUtilities::putRequestVariable('form.list.userId', $userId);
 	$results = $this->handleRequest();
-	$this->assert(GalleryUtilities::hasRequestVariable('form.error.list.cantDeleteAnonymousUser'));
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminUsers'),
+				  'status' => array(),
+				  'error' => array('form.error.list.cantDeleteAnonymousUser')),
+			    $results);
 	
 
 	/* Failure - select the active user */
 	GalleryUtilities::putRequestVariable('form.action.deleteFromList', 1);
 	GalleryUtilities::putRequestVariable('form.list.userId', $gallery->getActiveUserId());
 	$results = $this->handleRequest();
-	$this->assert(GalleryUtilities::hasRequestVariable('form.error.list.cantDeleteActiveUser'));
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminUsers'),
+				  'status' => array(),
+				  'error' => array('form.error.list.cantDeleteActiveUser')),
+			    $results);
     }
 
     function testEditFromText() {
@@ -189,9 +212,12 @@ class AdminUsersControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.text.userName', $user->getUserName());
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
-	$this->assertEquals('core:AdminEditUser', GalleryUtilities::getRequestVariables('subView'));
-	$this->assertEquals($user->getId(), (int)GalleryUtilities::getRequestVariables('userId'));
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminEditUser',
+						      'userId' => $user->getId()),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
 	$this->_deleteUser($user);
 
 	
@@ -200,19 +226,22 @@ class AdminUsersControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::removeRequestVariable('form.text.userName');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
-	$this->assertEquals('core:AdminUsers', GalleryUtilities::getRequestVariables('subView'));
-	$this->assert(GalleryUtilities::hasRequestVariable('form.error.text.noUserSpecified'));
-
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminUsers'),
+				  'status' => array(),
+				  'error' => array('form.error.text.noUserSpecified')),
+			    $results);
 
 	/* Invalid user name */
 	GalleryUtilities::putRequestVariable('form.action.editFromText', 1);
 	GalleryUtilities::putRequestVariable('form.text.userName', 'some-invalid-user-name-'.rand());
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
-	$this->assertEquals('core:AdminUsers', GalleryUtilities::getRequestVariables('subView'));
-	$this->assert(GalleryUtilities::hasRequestVariable('form.error.text.noSuchUser'));
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminUsers'),
+				  'status' => array(),
+				  'error' => array('form.error.text.noSuchUser')),
+			    $results);
     }
 
     function testDeleteFromText() {
@@ -226,9 +255,12 @@ class AdminUsersControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.text.userName', $user->getUserName());
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
-	$this->assertEquals('core:AdminDeleteUser', GalleryUtilities::getRequestVariables('subView'));
-	$this->assertEquals($user->getId(), (int)GalleryUtilities::getRequestVariables('userId'));
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminDeleteUser',
+						      'userId' => $user->getId()),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
 	$this->_deleteUser($user);
 
 	
@@ -237,19 +269,22 @@ class AdminUsersControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::removeRequestVariable('form.text.userName');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
-	$this->assertEquals('core:AdminUsers', GalleryUtilities::getRequestVariables('subView'));
-	$this->assert(GalleryUtilities::hasRequestVariable('form.error.text.noUserSpecified'));
-
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminUsers'),
+				  'status' => array(),
+				  'error' => array('form.error.text.noUserSpecified')),
+			    $results);
 
 	/* Invalid user name */
 	GalleryUtilities::putRequestVariable('form.action.deleteFromText', 1);
 	GalleryUtilities::putRequestVariable('form.text.userName', 'some-invalid-user-name-'.rand());
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
-	$this->assertEquals('core:AdminUsers', GalleryUtilities::getRequestVariables('subView'));
-	$this->assert(GalleryUtilities::hasRequestVariable('form.error.text.noSuchUser'));
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminUsers'),
+				  'status' => array(),
+				  'error' => array('form.error.text.noSuchUser')),
+			    $results);
     }
 
     function _createUser() {

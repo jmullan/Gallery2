@@ -450,13 +450,10 @@ class GalleryPermissionSetMap_core {
 		$bits = $storage->convertBitsToInt($result[3]);
 
 		list ($ret, $description) =
-		    $translator->translate('modules_' . $result[0],
-					   $gallery->getConfig('code.gallery.modules') . $result[0],
-					   array('text' => $result[2]));
+		    $translator->translate('modules_' . $result[0], array('text' => $result[2]));
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-		
 		
 		$permissions[$result[1]] = array('module' => $result[0],
 						 'permission' => $result[1],

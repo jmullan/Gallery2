@@ -52,18 +52,17 @@ class ItemReorderController extends GalleryController {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$error = false;
+	$status = array();
+	$error = array();
 	if (isset($form['action']['reorder'])) {
 
 	    /* Verify that we've got what we need */
 	    if (empty($form['selectedId'])) {
-		GalleryUtilities::putRequestVariable('form.error.selectedId.missing', 1);
-		$error = true;
+		$error[] = 'form.error.selectedId.missing';
 	    }
 
 	    if (empty($form['targetId'])) {
-		GalleryUtilities::putRequestVariable('form.error.targetId.missing', 1);
-		$error = true;
+		$error[] = 'form.error.targetId.missing';
 	    }
 
 	    $before = 0;
@@ -74,7 +73,7 @@ class ItemReorderController extends GalleryController {
 	    /*
 	     * Make sure that the selectedId and targetId are children of the album
 	     */
-	    if (!$error) {
+	    if (empty($error)) {
 		$selectedId = $form['selectedId'];
 		$targetId = $form['targetId'];
 		list ($ret, $entities) = $gallery->loadEntitiesById(array($selectedId, $targetId));
@@ -88,7 +87,7 @@ class ItemReorderController extends GalleryController {
 		}
 	    }
 
-	    if (!$error) {
+	    if (empty($error)) {
 		$loopCount = 0;
 		while (true) {
 		    /*
@@ -143,20 +142,21 @@ class ItemReorderController extends GalleryController {
 		}
 		
 		// Redirect back to the same page so that we can do more reordering
-		$redirectParams['view'] = 'core:ItemAdmin';
-		$redirectParams['subView'] = 'core:ItemReorder';
-		$redirectParams['itemId'] = $itemId;
+		$redirect['view'] = 'core:ItemAdmin';
+		$redirect['subView'] = 'core:ItemReorder';
+		$redirect['itemId'] = $itemId;
 	    }
 	}
 
-	if (!empty($redirectParams)) {
-	    $results['redirect'] = $redirectParams;
+	if (!empty($redirect)) {
+	    $results['redirect'] = $redirect;
 	} else {
-	    if (empty($results['view'])) {
-		$results['view'] = 'core:ItemAdmin';
-		GalleryUtilities::putRequestVariable('subView', 'core:ItemReorder');
-	    }
+	    $results['delegate']['view'] = 'core:ItemAdmin';
+	    $results['delegate']['subView'] = 'core:ItemReorder';
 	}
+	$results['status'] = $status;
+	$results['error'] = $error;
+	
 
 	return array(GalleryStatus::success(), $results);
     }
@@ -172,9 +172,9 @@ class ItemReorderController extends GalleryController {
 class ItemReorderView extends GalleryView {
 
     /**
-     * 
+     * @see GalleryView::loadTemplate
      */
-    function renderBody($form) {
+    function loadTemplate(&$template, &$form) {
 	global $gallery;
 
 	/* itemId is the album where we want to move items from */
@@ -184,7 +184,7 @@ class ItemReorderView extends GalleryView {
 	    /* No validation at the moment */
         } else {
             /* First time around, load the form with item data */
-            $form = array();
+	    $form['formName'] = 'ItemReorder';
         }
 
         list ($ret, $item) = $gallery->loadEntitiesById($itemId);
@@ -192,43 +192,45 @@ class ItemReorderView extends GalleryView {
             return array($ret->wrap(__FILE__, __LINE__), null);
         }
 
-	/* Get all peers that we can see */
-        list ($ret, $peerIds) = $item->fetchChildIds();
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
-        }
+	$show = array();
+	$ItemReorder = array();
+	$orderBy = $item->getOrderBy();
+	if (!empty($orderBy)) {
+	    $show['automaticOrderMessage'] = 1;
+	} else {
 
-	/* Load all the peers */
-        list ($ret, $peerItems) = $gallery->loadEntitiesById($peerIds);
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
-        }
-
-	/* Build our peers table */
-	$peers = array();
-	foreach ($peerItems as $peerItem) {
-            $peers[$peerItem->getId()] = $peerItem->getMemberData();
-	    if (GalleryUtilities::isA($peerItem, 'GalleryAlbumItem')) {
-		$peerTypes['album'][$peerItem->getId()] = 1;
-	    } else {
-		$peerTypes['data'][$peerItem->getId()] = 1;
+	    /* Get all peers that we can see */
+	    list ($ret, $peerIds) = $item->fetchChildIds();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-            $peers[$peerItem->getId()]['selected'] = isset($form['selectedIds'][$peerItem->getId()]);
-        }
 
-        /* Render the HTML body */
-        $template = $this->_getTemplate();
-        $template->setVariable('item', $item->getMemberData());
-        $template->setVariable('form', $form);
-        $template->setVariable('peers', $peers);
-        $template->setVariable('peerTypes', $peerTypes);
+	    /* Load all the peers */
+	    list ($ret, $peerItems) = $gallery->loadEntitiesById($peerIds);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    /* Build our peers table */
+	    $peers = array();
+	    foreach ($peerItems as $peerItem) {
+		$peers[$peerItem->getId()] = $peerItem->getMemberData();
+		if (GalleryUtilities::isA($peerItem, 'GalleryAlbumItem')) {
+		    $peerTypes['album'][$peerItem->getId()] = 1;
+		} else {
+		    $peerTypes['data'][$peerItem->getId()] = 1;
+		}
+		$peers[$peerItem->getId()]['selected'] = isset($form['selectedIds'][$peerItem->getId()]);
+	    }
+	    $ItemReorder['peers'] = $peers;
+	    $ItemReorder['peerTypes'] = $peerTypes;
+	}
+
+	$ItemReorder['show'] = $show;
+
+        $template->setVariable('ItemReorder', $ItemReorder);
         $template->setVariable('controller', 'core:ItemReorder');
-        list($ret, $html) = $template->render('ItemReorder.tpl');
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), $html);
-        }
-	
-        return array(GalleryStatus::success(), $html);
+        return array(GalleryStatus::success(), '', 'modules/core/templates/ItemReorder.tpl');
     }
 }
 ?>

@@ -47,71 +47,75 @@ class AdminImageMagickController extends GalleryController {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$return = GalleryUtilities::getFormVariables('return.');
+	$error = array();
+	$status = array();
 	if (isset($form['action']['save'])) {
 
-	    /* Set the path.  Guarantee that it's got a trailing slash. */
-	    $platform = $gallery->getPlatform();
-	    $slash = $platform->getDirectorySeparator();
-	    $form['path'] = trim($form['path']);
-	    if (!empty($form['path'])) {
-		if ($form['path']{strlen($form['path'])-1} != $slash) {
-		    $form['path'] .= $slash;
-		}
-	    }
-	    
-	    $saveSuccess = false;
-	    $success = true;
-	    list ($ret, $testResults) = ImageMagickToolkitHelper::testBinaries($form['path']);
-	    if ($ret->isError()) {
-		if ($ret->getErrorCode() & ERROR_BAD_PATH) {
-		    GalleryUtilities::putRequestVariable('form.error.path.badPath', 1);
-		    $success = false;
-		} else {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
+	    if (empty($form['path'])) {
+		$error[] = 'form.error.path.missing';
 	    } else {
-		foreach ($testResults as $testResult) {
-		    /* All tests should work, else this path is not a valid one */
-		    if (! $testResult['success']) {
-			$success = false;
-			GalleryUtilities::putRequestVariable('form.error.path.testError', 1);
-			break;
+		/* Set the path.  Guarantee that it's got a trailing slash. */
+		$platform = $gallery->getPlatform();
+		$slash = $platform->getDirectorySeparator();
+		$form['path'] = trim($form['path']);
+		if (!empty($form['path'])) {
+		    if ($form['path']{strlen($form['path'])-1} != $slash) {
+			$form['path'] .= $slash;
+		    }
+		}
+	    
+		list ($ret, $testResults) = ImageMagickToolkitHelper::testBinaries($form['path']);
+		if ($ret->isError()) {
+		    if ($ret->getErrorCode() & ERROR_BAD_PATH) {
+			$error[] = 'form.error.path.badPath';
+		    } else {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		} else {
+		    $failCount = 0;
+		    foreach ($testResults as $testResult) {
+			/* All tests should work, else this path is not a valid one */
+			if (! $testResult['success']) {
+			    $failCount++;
+			}
+		    }
+
+		    if ($failCount > 0) {
+			$error[] = 'form.error.path.testError';
 		    }
 		}
 	    }
-	    if ($success) {
-		$saveSuccess = true;
+	    
+	    if (empty($error)) {
 		$ret = $gallery->setModuleParameter('imagemagick', 'path', $form['path']);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
+
+	    
+		$ret = $gallery->setModuleParameter('imagemagick', 'jpegQuality', $form['jpegQuality']);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		$redirect['view'] = 'core:SiteAdmin';
+		$redirect['subView'] = 'imagemagick:AdminImageMagick';
+		$status['saved'] = 1;
 	    }
-	    $ret = $gallery->setModuleParameter('imagemagick', 'jpegQuality', $form['jpegQuality']);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
+	} else if (isset($form['action']['cancel'])) {
+	    $redirect['view'] = 'core:SiteAdmin';
+	    $redirect['subView'] = 'imagemagick:AdminImageMagick';
 	}
 
-	/* Figure out where to redirect upon success */
-	if (( isset($form['action']['save']) && $saveSuccess )
-	    || isset($form['action']['cancel']) ) {
-	    if (!empty($return)) {
-		$redirectParams = $return;
-	    } else {
-		$redirectParams['view'] = 'core:SiteAdmin';
-		$redirectParams['subView'] = 'imagemagick:AdminImageMagick';
-	    }
-	}
-
-	if (!empty($redirectParams)) {
-	    $results['redirect'] = $redirectParams;
+	if (!empty($redirect)) {
+	    $results['return'] = 1;
+	    $results['redirect'] = $redirect;
 	} else {
-	    if (empty($results['view'])) {
-		$results['view'] = 'core:SiteAdmin';
-		GalleryUtilities::putRequestVariable('subView', 'imagemagick:AdminImageMagick');
-	    }
+	    $results['delegate']['view'] = 'core:SiteAdmin';
+	    $results['delegate']['subView'] = 'imagemagick:AdminImageMagick';
 	}
+	$results['status'] = $status;
+	$results['error'] = $error;
 
 	return array(GalleryStatus::success(), $results);
     }
@@ -124,13 +128,11 @@ class AdminImageMagickController extends GalleryController {
 class AdminImageMagickView extends GalleryView {
 
     /**
-     * @see GalleryView::renderBody
+     * @see GalleryView::loadTemplate
      */
-    function renderBody($form) {
+    function loadTemplate(&$template, &$form) {
 	global $gallery;
 
-	$return = GalleryUtilities::getFormVariables('return.');
-	
 	/* Load our default values if we didn't just come from this form. */
 	if ($form['formName'] != 'AdminImageMagick') {
 	    foreach (array('path', 'jpegQuality') as $key) {
@@ -140,6 +142,7 @@ class AdminImageMagickView extends GalleryView {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 	    }
+	    $form['formName'] = 'AdminImageMagick';
 	}
 
 	/* Guarantee that the path has a trailing slash. */
@@ -186,20 +189,15 @@ class AdminImageMagickView extends GalleryView {
 	    }
 	}
 
-	/* Render the HTML body */
-	$template = $this->_getTemplate();
-	$template->setVariable('form', $form);
-	$template->setVariable('return', $return);
-	$template->setVariable('tests', $tests);
-	$template->setVariable('mimeTypes', $mimeTypes);
-	$template->setVariable('jpegQualityList', $jpegQualityList);
+	$AdminImageMagick = array();
+	$AdminImageMagick['tests'] = $tests;
+	$AdminImageMagick['mimeTypes'] = $mimeTypes;
+	$AdminImageMagick['jpegQualityList'] = $jpegQualityList;
+
+	$template->setVariable('AdminImageMagick', $AdminImageMagick);
 	$template->setVariable('controller', 'imagemagick:AdminImageMagick');
-	list($ret, $html) = $template->render('AdminImageMagick.tpl');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), $html);
-	}
 	
-	return array(GalleryStatus::success(), $html);
+	return array(GalleryStatus::success(), '', 'modules/imagemagick/templates/AdminImageMagick.tpl');
     }
 }
 ?>

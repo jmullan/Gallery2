@@ -110,7 +110,9 @@ class ItemMakeHighlightControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
-						      'itemId' => $this->_item[0]->getId())),
+						      'itemId' => $this->_item[0]->getId()),
+				  'status' => array(),
+				  'error' => array()),
 			    $results);
     }
     

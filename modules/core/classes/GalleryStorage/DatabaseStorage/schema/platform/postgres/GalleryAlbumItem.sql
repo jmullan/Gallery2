@@ -9,6 +9,14 @@
     
     NOT NULL
   
+      ,
+    DB_COLUMN_PREFIXlayout
+      VARCHAR(
+      
+          32
+        
+      )
+    
     );
 
   

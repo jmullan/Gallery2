@@ -26,14 +26,6 @@
       )
     
       ,
-    DB_COLUMN_PREFIXlayout
-      varchar(
-      
-          32
-        
-      )
-    
-      ,
     DB_COLUMN_PREFIXorderBy
       varchar(
       

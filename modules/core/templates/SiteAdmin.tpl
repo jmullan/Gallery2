@@ -1,43 +1,57 @@
-    <table border="0" cellspacing="0" cellpadding="0" width="100%">
-	<tr>
-	  <td align="center">
-	    <a href="{gallery->url view='core:SiteAdmin'}">
-	      {gallery->biggestFontSize}
-	      {gallery->text text="Gallery Site Administration"}
-	      {/gallery->biggestFontSize}
-	    </a>
-	    <br>
-	    <a href="{gallery->url}">
-	      [{gallery->text text="Browse Gallery"}]
-	    </a>
-	  </td>
-	</tr>
-	<tr>
-	  <td valign=top>
-	    <br>
-	    <center>
-	      {gallery->heavyFrame}
-	      <table border="0" cellspacing="10" cellpadding="10" width="1" height="125">
-		<!-- {counter assign=index start=0 print=false} -->
-		<!-- {section name=outer loop=$subViewChoices step=3} -->
-		  <tr>
-		    <!-- {section name=inner loop=$subViewChoices start=$index max=3} -->
-		    <td align="center">
-		      <a href="{gallery->url view='core:SiteAdmin' subView=$subViewChoices[$index].view}">{$subViewChoices[$index].name}</a>
-		    </td>
-		    <!-- {counter} -->
-		    <!-- {/section} -->
-		  </tr>
-		  <!-- {/section} -->
-	      </table>
-	      {/gallery->heavyFrame}
-	    </center>
-	    <br>
-	  </td>
-	</tr>
-	<tr>
-	  <td>
-	    {$subViewHtml}
-	  </td>
-	</tr>
-    </table>
+{gallery->form action_controller="$controller"}
+  {gallery->input type="hidden" name="form.formName"}{$form.formName}{/gallery->input}
+
+  {gallery->main}
+    {gallery->pathbar}
+      {gallery->item}
+	{gallery->text text="Site Administration"}
+      {/gallery->item}
+    {/gallery->pathbar}
+
+    {gallery->sidebar}
+      {gallery->component}
+	{gallery->simplebox}
+	  {gallery->body}
+	    {gallery->listingbox}
+	      {gallery->title}
+		{gallery->text text="Admin Options"}
+	      {/gallery->title}
+	      {foreach from=$SiteAdmin.subViewChoices item=choice}
+		{if ($SiteAdmin.subViewName == $choice.view)}
+		  {gallery->item selected="true"}
+		    {$choice.name}
+		  {/gallery->item}
+		{else}
+		  {gallery->item}
+		    {gallery->link url_view='core:SiteAdmin' url_subView=$choice.view}
+		      {$choice.name}
+		    {/gallery->link}
+		  {/gallery->item}
+		{/if}
+	      {/foreach}
+	    {/gallery->listingbox}
+	  {/gallery->body}
+	{/gallery->simplebox}
+	
+	{gallery->simplebox}
+	  {gallery->body}
+	    {gallery->listingbox}
+	      {gallery->title}
+		{gallery->text text="Navigation"}
+	      {/gallery->title}
+	      {gallery->item}
+		{gallery->link}
+		  {gallery->text text="Browse Gallery"}
+		{/gallery->link}
+	      {/gallery->item}
+	    {/gallery->listingbox}
+	  {/gallery->body}
+	{/gallery->simplebox}
+      {/gallery->component}
+    {/gallery->sidebar}
+
+    {gallery->component}
+      {include file=$SiteAdmin.viewBodyFile l10Domain=$SiteAdmin.viewL10Domain}
+    {/gallery->component}
+  {/gallery->main}
+{/gallery->form}

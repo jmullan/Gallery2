@@ -73,6 +73,7 @@ class ItemAddChildrenController extends GalleryController {
 	$albumNeedsThumbnail = empty($thumbnailTable) ? true : false;
 
 	$status = array();
+	$error = array();
 	if (isset($form['action']['addFromBrowser'])) {
 	    
 	    /* Upload any new files */
@@ -117,9 +118,9 @@ class ItemAddChildrenController extends GalleryController {
 	    }
 
 	    /* Figure out where to redirect upon success */
-	    $redirectParams['view'] = 'core:ItemAdmin';
-	    $redirectParams['subView'] = 'core:ItemAddChildrenConfirmation';
-	    $redirectParams['itemId'] = $itemId;
+	    $redirect['view'] = 'core:ItemAdmin';
+	    $redirect['subView'] = 'core:ItemAddChildrenConfirmation';
+	    $redirect['itemId'] = $itemId;
 
 	} else if (isset($form['action']['findFilesFromLocalServer'])) {
 	    /* Delegate back to the same view */
@@ -128,17 +129,17 @@ class ItemAddChildrenController extends GalleryController {
 	    $dir = $form['localServerPath'];
 	    
 	    foreach ($form['localServerFiles'] as $fileKey => $unused) {
-		$basename = base64_decode($fileKey);
-		$filename = $dir . '/' . $basename;
-		    
-		$extension = GalleryUtilities::getFileExtension($filename);
+		$filename = base64_decode($fileKey);
+		$filepath = $dir . '/' . $filename;
+
+		list ($base, $extension) = GalleryUtilities::getFileNameComponents($filename);
 		$mimeType = GalleryUtilities::convertExtensionToMime($extension);
 
-		list ($ret, $newItem) = GalleryItemHelper::addItemToAlbum($filename,
-									  $basename,
-									  $basename,
-									  $basename,
-									  $basename,
+		list ($ret, $newItem) = GalleryItemHelper::addItemToAlbum($filepath,
+									  $base,
+									  $base,
+									  $base,
+									  $base,
 									  $mimeType,
 									  $item->getId());
 		if ($ret->isError()) {
@@ -156,14 +157,14 @@ class ItemAddChildrenController extends GalleryController {
 		    }
 		}
 
-		$status['addFromLocalServer'][] = array('fileName' => $basename,
+		$status['addFromLocalServer'][] = array('fileName' => $filename,
 							'id' => $newItem->getId());
 	    }
 
 	    /* Figure out where to redirect upon success */
-	    $redirectParams['view'] = 'core:ItemAdmin';
-	    $redirectParams['subView'] = 'core:ItemAddChildrenConfirmation';
-	    $redirectParams['itemId'] = $itemId;
+	    $redirect['view'] = 'core:ItemAdmin';
+	    $redirect['subView'] = 'core:ItemAddChildrenConfirmation';
+	    $redirect['itemId'] = $itemId;
 	}
 
 	$ret = $gallery->releaseLocks($lockIds);
@@ -171,16 +172,15 @@ class ItemAddChildrenController extends GalleryController {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	if (!empty($redirectParams)) {
-	    $urlGenerator = $gallery->getUrlGenerator();
-	    $results['redirect'] = $redirectParams;
-	    $results['status'] = $status;
+	if (!empty($redirect)) {
+	    $results['redirect'] = $redirect;
 	} else {
-	    if (empty($results['view'])) {
-		$results['view'] = 'core:ItemAdmin';
-		GalleryUtilities::putRequestVariable('subView', 'core:ItemAddChildren');
-	    }
+	    $results['delegate']['view'] = 'core:ItemAdmin';
+	    $results['delegate']['subView'] = 'core:ItemAddChildren';
 	}
+	$results['status'] = $status;
+	$results['error'] = $error;
+	
 
 	return array(GalleryStatus::success(), $results);
     }
@@ -195,9 +195,9 @@ class ItemAddChildrenController extends GalleryController {
 class ItemAddChildrenView extends GalleryView {
 
     /**
-     * @see GalleryView::renderBody
+     * @see GalleryView::loadTemplate
      */
-    function renderBody($form) {
+    function loadTemplate(&$template, &$form) {
 	global $gallery;
 
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
@@ -225,10 +225,9 @@ class ItemAddChildrenView extends GalleryView {
 
 	} else {
 	    /* First time around, load the form with item data */
-	    $form = array();
-
 	    $form['uploadBoxCount'] = 4;
 	    $form['localServerPath'] = '';
+	    $form['formName'] = 'ItemAddChildren';
 	}
 
 	list ($ret, $localServerDirs) = $gallery->getModuleParameter('core', 'uploadLocalServer.dirs');
@@ -321,23 +320,26 @@ class ItemAddChildrenView extends GalleryView {
 			      'itemType' => $mimeTypeItemMap[$mimeType]->itemTypeName(),
 			      'fileKey' => htmlentities($fileName));
 		}
+		$localServerFileCount = sizeof($form['localServerFiles']);
 	    }
 	}
 
-	/* Render the HTML body */
-	$template = $this->_getTemplate();
-	$template->setVariable('form', $form);
-	$template->setVariable('mode', $mode);
-	$template->setVariable('isAdmin', $isAdmin);
-	$template->setVariable('localServerDirList', $localServerDirList);
-	$template->setVariable('item', $item->getMemberData());
-	$template->setVariable('controller', 'core:ItemAddChildren');
-	list($ret, $html) = $template->render('ItemAddChildren.tpl');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), $html);
-	}
+	$ItemAddChildren = array();
 
-	return array(GalleryStatus::success(), $html);
+	$ItemAddChildren['mode'] = $mode;
+	$ItemAddChildren['isAdmin'] = $isAdmin;
+	$ItemAddChildren['localServerDirList'] = $localServerDirList;
+	if (isset($localServerFileCount)) {
+	    $ItemAddChildren['localServerFileCount'] = $localServerFileCount;
+	}
+	
+	$template->setVariable('ItemAddChildren', $ItemAddChildren);
+
+	if ($mode == 'fromBrowser') {
+	    $template->setVariable('enctype', 'multipart/form-data');
+	}
+	$template->setVariable('controller', 'core:ItemAddChildren');
+	return array(GalleryStatus::success(), '', 'modules/core/templates/ItemAddChildren.tpl');
     }
 }
 ?>

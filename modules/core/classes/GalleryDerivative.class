@@ -243,8 +243,7 @@ class GalleryDerivative_core extends GalleryChildEntity {
 	global $gallery;
 
 	/* Load the source */
-	$sourceId = $this->getDerivativeSourceId();
-	list($ret, $source) = $gallery->loadEntitiesById($sourceId);
+	list($ret, $source) = $gallery->loadEntitiesById($this->getDerivativeSourceId());
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

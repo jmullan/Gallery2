@@ -40,13 +40,14 @@ class SearchShowAllController extends GalleryController {
     function handleRequest($form) {
 	global $gallery;
 
-
 	if (isset($form['action']['scan'])) {
-	    $results['view'] = 'search:SearchScan';
+	    $results['delegate']['view'] = 'search:SearchScan';
 	} else {
-	    $results['view'] = 'search:SearchShowAll';
+	    $results['delegate']['view'] = 'search:SearchShowAll';
 	}
 
+	$results['status'] = array();
+	$results['error'] = array();
 	return array(GalleryStatus::success(), $results);
     }
 }
@@ -58,33 +59,21 @@ class SearchShowAllController extends GalleryController {
 class SearchShowAllView extends GalleryView {
 
     /**
-     * @see GalleryView::renderHead
+     * @see GalleryView::loadTemplate
      */
-    function renderHead() {
-	/* Render the HTML body */
-	$template = $this->_getTemplate();
-	list($ret, $html) = $template->render('SearchHead.tpl');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), $html);
-	}
-
-	return array(GalleryStatus::success(), $html);
-    }
-
-    /**
-     * @see GalleryView::renderBody
-     */
-    function renderBody($form) {
+    function loadTemplate(&$template, &$form) {
 	global $gallery;
 
 	// XXX: Parameterize this
 	$pageSize = 10;
 
-	$return = GalleryUtilities::getFormVariables('return.');
-	
-	$searchResults = array();
+	$items = array();
+	$thumbnails = array();
+	$results = array();
 	$searchResultThumbnails = array();
-	if ($form['formName'] == 'SearchShowAll' || $form['formName'] == 'SearchScan') {
+	if ($form['formName'] == 'SearchShowAll' ||
+	    $form['formName'] == 'SearchScan') {
+	    
 	    if (empty($form['searchCriteria'])) {
 		$form['error']['searchCriteria']['missing'] = 1;
 	    } else {
@@ -130,7 +119,7 @@ class SearchShowAllView extends GalleryView {
 		}
 		
 		if (isset($form['options'][$moduleId])) {
-		    list ($ret, $searchResults) =
+		    list ($ret, $results) =
 			$searchInstance->search($form['options'][$moduleId],
 						$form['searchCriteria'],
 						($form['page']-1) * $pageSize,
@@ -139,13 +128,13 @@ class SearchShowAllView extends GalleryView {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 		}
-		$maxPages = ceil($searchResults['count'] / $pageSize);
+		$maxPages = ceil($results['count'] / $pageSize);
 	    }
 
 	    $itemIds = array();
 	    $thumbnails = array();
-	    if (!empty($searchResults['results'])) {
-		foreach ($searchResults['results'] as $result) {
+	    if (!empty($results['results'])) {
+		foreach ($results['results'] as $result) {
 		    if (isset($result['itemId'])) {
 			$itemIds[$result['itemId']] = 1;
 		    }
@@ -153,12 +142,20 @@ class SearchShowAllView extends GalleryView {
 		$itemIds = array_keys($itemIds);
 
 		if (!empty($itemIds)) {
+		    /* Fetch items */
+		    list ($ret, $itemList) = $gallery->loadEntitiesById($itemIds);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		    foreach ($itemList as $item) {
+			$items[$item->getId()] = $item->getMemberData();
+		    }
+		
 		    /* Fetch thumbnails */
 		    list ($ret, $thumbnailList) = GalleryDerivativeHelper::fetchThumbnailsByItemIds($itemIds);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
-
 		    foreach ($thumbnailList as $thumbnail) {
 			$thumbnails[$thumbnail->getParentId()] = $thumbnail->getMemberData();
 		    }
@@ -169,21 +166,20 @@ class SearchShowAllView extends GalleryView {
 	}
 
 	/* Render the HTML body */
-	$template = $this->_getTemplate();
-	$template->setVariable('controller', 'search:SearchShowAll');
-	$template->setVariable('form', $form);
-	$template->setVariable('maxPages', $maxPages);
-	$template->setVariable('moduleInfo', $moduleInfo);
-	$template->setVariable('moduleId', $moduleId);
-	$template->setVariable('return', $return);
-	$template->setVariable('searchResults', $searchResults);
-	$template->setVariable('thumbnails', $thumbnails);
-	list($ret, $html) = $template->render('SearchShowAll.tpl');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), $html);
-	}
+	$SearchShowAll = array();
+	$SearchShowAll['maxPages'] = $maxPages;
+	$SearchShowAll['moduleInfo'] = $moduleInfo;
+	$SearchShowAll['moduleId'] = $moduleId;
+	$SearchShowAll['results'] = $results;
+	$SearchShowAll['thumbnails'] = $thumbnails;
+	$SearchShowAll['items'] = $items;
+	$SearchShowAll['controller'] = 'search:SearchShowAll';
+
+	$template->setVariable('SearchShowAll', $SearchShowAll);
 	
-	return array(GalleryStatus::success(), $html);
+	return array(GalleryStatus::success(),
+		     'modules/search/templates/SearchHead.tpl',
+		     'modules/search/templates/SearchShowAll.tpl');
     }
 }
 ?>

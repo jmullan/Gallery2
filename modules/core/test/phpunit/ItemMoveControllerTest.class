@@ -159,7 +159,9 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
-						      'itemId' => $this->_album[1]->getId())),
+						      'itemId' => $this->_album[1]->getId()),
+				  'status' => array(),
+				  'error' => array()),
 			    $results);
     }
 
@@ -173,10 +175,11 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.action.move', 1);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('view' => 'core:ItemAdmin'), $results);
-	$this->assertEquals('core:ItemMove', GalleryUtilities::getRequestVariables('subView'));
-	$this->assertEquals($this->_album[2]->getId(), (int)GalleryUtilities::getRequestVariables('itemId'));
-	$this->assert(GalleryUtilities::hasRequestVariable('form.error.destination.empty'));
+	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemMove'),
+				  'status' => array(),
+				  'error' => array('form.error.destination.empty')),
+			    $results);
     }
 
     /**
@@ -190,14 +193,13 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.destination', $this->_album[1]->getId());
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('view' => 'core:ItemAdmin'), $results);
-	$this->assertEquals('core:ItemMove', GalleryUtilities::getRequestVariables('subView'));
-	$this->assertEquals($this->_album[0]->getId(),
-			    (int)GalleryUtilities::getRequestVariables('itemId'));
-	$this->assert(GalleryUtilities::hasRequestVariable('form.error.source.' .
-							   $this->_album[1]->getId() .
-							   '.selfMove'),
-		      'missing selfMove error');
+	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemMove'),
+				  'status' => array(),
+				  'error' => array('form.error.source.' .
+						   $this->_album[1]->getId() .
+						   '.selfMove')),
+			    $results);
     }
 
     /**
@@ -211,11 +213,11 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.destination', $this->_album[2]->getId());
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('view' => 'core:ItemAdmin'), $results);
-	$this->assertEquals('core:ItemMove', GalleryUtilities::getRequestVariables('subView'));
-	$this->assertEquals($this->_album[3]->getId(),
-			    (int)GalleryUtilities::getRequestVariables('itemId'));
-	$this->assert(GalleryUtilities::hasRequestVariable('form.error.destination.permission'));
+	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemMove'),
+				  'status' => array(),
+				  'error' => array('form.error.destination.permission')),
+			    $results);
     }
 
     /**
@@ -229,14 +231,13 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.destination', $this->_album[0]->getId());
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('view' => 'core:ItemAdmin'), $results);
-	$this->assertEquals('core:ItemMove', GalleryUtilities::getRequestVariables('subView'));
-	$this->assertEquals($this->_album[3]->getId(),
-			    (int)GalleryUtilities::getRequestVariables('itemId'));
-	$this->assert(GalleryUtilities::hasRequestVariable('form.error.source.' .
-							   $this->_album[4]->getId() . 
-							   '.permission.delete'),
-		      'missing delete permission error');
+	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemMove'),
+				  'status' => array(),
+				  'error' => array('form.error.source.' .
+						   $this->_album[4]->getId() . 
+						   '.permission.delete')),
+			    $results);
     }
 
     /**
@@ -250,13 +251,13 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.destination', $this->_album[1]->getId());
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('view' => 'core:ItemAdmin'), $results);
-	$this->assertEquals('core:ItemMove', GalleryUtilities::getRequestVariables('subView'));
-	$this->assertEquals($this->_album[2]->getId(),
-			    (int)GalleryUtilities::getRequestVariables('itemId'));
-	$this->assert(GalleryUtilities::hasRequestVariable('form.error.source.' .
-							   $this->_album[3]->getId() .
-							   '.permission.addAlbumItem'));
+	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemMove'),
+				  'status' => array(),
+				  'error' => array('form.error.source.' .
+						   $this->_album[3]->getId() .
+						   '.permission.addAlbumItem')),
+			    $results);
     }
 
     /**
@@ -270,13 +271,13 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.destination', $this->_album[0]->getId());
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('view' => 'core:ItemAdmin'), $results);
-	$this->assertEquals('core:ItemMove', GalleryUtilities::getRequestVariables('subView'));
-	$this->assertEquals($this->_album[3]->getId(),
-			    (int)GalleryUtilities::getRequestVariables('itemId'));
-	$this->assert(GalleryUtilities::hasRequestVariable('form.error.source.' .
-							   $this->_item->getId() .
-							   '.permission.addDataItem'));
+	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemMove'),
+				  'status' => array(),
+				  'error' => array('form.error.source.' .
+						   $this->_item->getId() .
+						   '.permission.addDataItem')),
+			    $results);
     }
 }
 ?>

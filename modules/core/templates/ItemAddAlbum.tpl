@@ -1,199 +1,108 @@
-    {gallery->form controller="$controller" enctype="multipart/form-data"}
-    {gallery->input type="hidden" name="form.formName"}ItemAddAlbum{/gallery->input}
-    {gallery->input type="hidden" name="itemId"}{$item.id}{/gallery->input}
-    <table border="0" cellspacing="0" cellpadding="0">
-	<tr>
-	  <td>
-	    <center>
-	      {gallery->biggerFontSize}
-	      {gallery->text text="Add an Album"}
-	      {/gallery->biggerFontSize}
-	    </center>
-	    <br>
-	    {gallery->text text="You can create a new album inside this one."}
-	  </td>
-	</tr>
+{gallery->bannerbox}
+  {gallery->title}
+    {gallery->text text="Add Album"}
+  {/gallery->title}
+{/gallery->bannerbox}
 
-	<tr>
-	  <td>
-	    &nbsp;
-	  </td>
-	</tr>
+{gallery->detailedbox}
+  {gallery->body}
+    {gallery->widget2box}
+      {gallery->widget2}
+	{gallery->title}
+	  {gallery->text text="Name"}
+	{/gallery->title}
 
-	<tr>
-	  <td>
-	    {gallery->bigFontSize}
-	    {gallery->text text="Name"}
-	    {/gallery->bigFontSize}
-	  </td>
-	</tr>
-
-	<tr>
-	  <td>
-	    {gallery->text text="The name represents the location of this item on your hard drive.  It is not visible anywhere, except possibly in the URL.  It must be unique in this album.  <b>Note:</b> You can only use alphanumeric characters, underscore (_) and hyphen (-) in your names."}
-	  </td>
-	</tr>
-
-	<tr>
-	  <td>
-	    {strip}
-	    {foreach from=$parents item=parent}
-	    {if empty($parent.parentId)}
-	    /
-	    {else}
-	    {$parent.pathComponent}/
-	    {/if}
+	{gallery->description}
+	  {gallery->text text="The name of this album on your hard disk.  It must be unique in this album.  Only use alphanumeric characters, underscores or dashes.  You will be able to rename it later."}
+	{/gallery->description}
+	{gallery->body}
+	  {strip}
+	    {foreach from=$ItemAdmin.parents item=parent}
+	      {$parent.pathComponent}/
 	    {/foreach}
-	    {/strip}
-	    {gallery->input type=text size=40 name="form.pathComponent"}{$form.pathComponent}{/gallery->input}
-	  </td>
-	</tr>
+	    {$ItemAdmin.item.pathComponent}/
+	  {/strip}
+	  {gallery->input type="text" size="10" name="form.pathComponent"}{$form.pathComponent}{/gallery->input}
 
-        {if !empty($form.error.pathComponent.invalid)}
-	<tr>
-	  <td>
-	    {gallery->errorFontColor}
-	    {gallery->text text="Your name contains invalid characters.  Please enter another."}
-	    {/gallery->errorFontColor}
-	  </td>
-	</tr>
-        {/if}
+          {if !empty($form.error.pathComponent.invalid)}
+	    {gallery->error}
+	      {gallery->text text="Your name contains invalid characters.  Please enter another."}
+	    {/gallery->error}
+          {/if}
 
-        {if !empty($form.error.pathComponent.missing)}
-	<tr>
-	  <td>
-	    {gallery->errorFontColor}
-	    {gallery->text text="You must enter a name for this album."}
-	    {/gallery->errorFontColor}
-	  </td>
-	</tr>
-        {/if}
+          {if !empty($form.error.pathComponent.missing)}
+	    {gallery->error}
+	      {gallery->text text="You must enter a name for this album."}
+	    {/gallery->error}
+          {/if}
 
-        {if !empty($form.error.pathComponent.collision)}
-	<tr>
-	  <td>
-	    {gallery->errorFontColor}
-	    {gallery->text text="The name you entered is already in use.  Please enter another."}
-	    {/gallery->errorFontColor}
-	  </td>
-	</tr>
-        {/if}
+          {if !empty($form.error.pathComponent.collision)}
+	    {gallery->error}
+	      {gallery->text text="The name you entered is already in use.  Please enter another."}
+	    {/gallery->error}
+          {/if}
+	{/gallery->body}
+      {/gallery->widget2}
 
-	<tr>
-	  <td>
-	    &nbsp;
-	  </td>
-	</tr>
+      {gallery->widget2}
+	{gallery->title}
+	  {gallery->text text="Title"}
+	{/gallery->title}
 
-	<tr>
-	  <td>
-	    {gallery->bigFontSize}
-	    {gallery->text text="Title"}
-	    {/gallery->bigFontSize}
-	  </td>
-	</tr>
+	{gallery->description}
+	  {gallery->text text="This is the album title.  Do not use HTML."}
+	{/gallery->description}
 
-	<tr>
-	  <td>
-	    {gallery->text text="The title can be any character string, and should not contain any HTML"}
-	  </td>
-	</tr>
+	{gallery->body}
+	  {gallery->input type="text" size="40" name="form.title"}{$form.title}{/gallery->input}
+	{/gallery->body}
+      {/gallery->widget2}
 
-	<tr>
-	  <td>
-	    {gallery->input type=text size=40 name="form.title"}{$form.title}{/gallery->input}
-	  </td>
-	</tr>
+      {gallery->widget2}
+	{gallery->title}
+	  {gallery->text text="Summary"}
+	{/gallery->title}
 
-	<tr>
-	  <td>
-	    &nbsp;
-	  </td>
-	</tr>
+	{gallery->description}
+	  {gallery->text text="This is the album summary.  Do not use HTML"}
+	{/gallery->description}
 
-	<tr>
-	  <td>
-	    {gallery->bigFontSize}
-	    {gallery->text text="Summary"}
-	    {/gallery->bigFontSize}
-	  </td>
-	</tr>
+	{gallery->body}
+	  {gallery->input type=text size=40 name="form.summary"}{$form.summary}{/gallery->input}
+	{/gallery->body}
+      {/gallery->widget2}
 
-	<tr>
-	  <td>
-	    {gallery->text text="The summary can be any character string, and should not contain any HTML"}
-	  </td>
-	</tr>
+      {gallery->widget2}
+	{gallery->title}
+	  {gallery->text text="Keywords"}
+	{/gallery->title}
 
-	<tr>
-	  <td>
-	    {gallery->input type=text size=40 name="form.summary"}{$form.summary}{/gallery->input}
-	  </td>
-	</tr>
+	{gallery->description}
+	  {gallery->text text="Keywords are not visible, but are searchable. Do not use HTML."}
+	{/gallery->description}
+	{gallery->body}
+	  {gallery->textarea rows=2 cols=60 name="form.keywords"}{$form.keywords}{/gallery->textarea}
+	{/gallery->body}
+      {/gallery->widget2}
 
-	<tr>
-	  <td>
-	    &nbsp;
-	  </td>
-	</tr>
+      {gallery->widget2}
+	{gallery->title}
+	  {gallery->text text="Description"}
+	{/gallery->title}
 
-	<tr>
-	  <td>
-	    {gallery->bigFontSize}
-	    {gallery->text text="Keywords"}
-	    {/gallery->bigFontSize}
-	  </td>
-	</tr>
+	{gallery->description}
+	  {gallery->text text="This is the long description of the album.  HTML is ok."}
+	{/gallery->description}
+	{gallery->body}
+	  {gallery->textarea rows=4 cols=60 name="form.description"}{$form.description}{/gallery->textarea}
+	{/gallery->body}
+      {/gallery->widget2}
 
-	<tr>
-	  <td>
-	    {gallery->text text="Keywords will not be visible to the end user, but are searchable. This can be any character string.  It should not contain HTML."}
-	  </td>
-	</tr>
-
-	<tr>
-	  <td>
-	    {gallery->textArea rows=2 cols=60 name="form.keywords"}{$form.keywords}{/gallery->textArea}
-	  </td>
-	</tr>
-
-	<tr>
-	  <td>
-	    &nbsp;
-	  </td>
-	</tr>
-
-	<tr>
-	  <td>
-	    {gallery->bigFontSize}
-	    {gallery->text text="Description"}
-	    {/gallery->bigFontSize}
-	  </td>
-	</tr>
-
-	<tr>
-	  <td>
-	    {gallery->text text="A longer description of this item."}
-	  </td>
-	</tr>
-
-	<tr>
-	  <td>
-	    {gallery->textArea rows=8 cols=60 name="form.description"}{$form.description}{/gallery->textArea}
-	  </td>
-	</tr>
-
-	<tr>
-	  <td>
-	    &nbsp;
-	  </td>
-	</tr>
-
-	<tr>
-	  <td>
-	    {gallery->input type="submit" name="form.action.create"}{gallery->text text="Create"}{/gallery->input}
-	  </td>
-	</tr>
-
-    </table>
-    {/gallery->form}
+      {gallery->widget2}
+	{gallery->body}
+	  {gallery->input type="submit" name="form.action.create"}{gallery->text text="Create"}{/gallery->input}
+	{/gallery->body}
+      {/gallery->widget2}
+    {/gallery->widget2box}
+  {/gallery->body}
+{/gallery->detailedbox}

@@ -43,12 +43,11 @@ class GalleryView {
      */
 
     /**
-     * The template instance
+     * The localization domain for this view
      *
-     * @var object GalleryTemplate $_template
      * @access private
      */
-    var $_template;
+    var $_l10Domain;
 
     /*
      * ****************************************
@@ -60,32 +59,10 @@ class GalleryView {
      * Initialize the view
      *
      * @param string the name of the module
-     * @param string the path to the template directory
      */
-    function init($moduleName, $templateDir) {
+    function init($moduleName) {
 	global $gallery;
-	
-	$platform = $gallery->getPlatform();
-	if (!$platform->file_exists($templateDir)) {
-	    if ($gallery->getDebug()) {
-		$gallery->debug("Missing view template dir: $templateDir");
-	    }
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-	
-	$this->_template = new GalleryTemplate($templateDir);
-	$this->_template->setTranslationBase('modules', $moduleName);
-	return GalleryStatus::success();
-    }
-
-    /**
-     * Get the configured GalleryTemplate instance
-     *
-     * @return object GalleryTemplate a template instance
-     * @access protected
-     */
-    function &_getTemplate() {
-	return $this->_template;
+	$this->_l10Domain = 'modules_' . $moduleName;
     }
 
     /**
@@ -109,33 +86,16 @@ class GalleryView {
     }
     
     /**
-     * Return the HTML head content for this view.
+     * Load the template with data from this view.
      *
-     * The content should not include the <head> tags, but it should include
-     * any content that should be contained within those tags in the resulting
-     * HTML.
-     *
-     * @param array mixed the form values
+     * @param array object GalleryTemplate the template instance
+     * @param array array the form values
      * @return array object GalleryStatus a status code
-     *               string html content
+     *               string path to the head template
+     *               string path to the body template
      */
-    function renderHead($form) {
-	return array(GalleryStatus::success(), '');
-    }
-
-    /**
-     * Return the HTML body content for this view.
-     *
-     * The content should not include the <body> tag, but it should include any
-     * content that should be contained within those tags in the resulting
-     * HTML.
-     *
-     * @param array mixed the form values
-     * @return array object GalleryStatus a status code
-     *               string html content
-     */
-    function renderBody($form) {
-	return array(GalleryStatus::success(), '');
+    function loadTemplate(&$template, &$form) {
+	return array(GalleryStatus::success(), null, null);
     }
 
     /**
@@ -193,35 +153,35 @@ class GalleryView {
 	    }
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
 	}
-	$ret = $view->init($module, $moduleDir . 'templates/');
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
+
+	/* Tell the view what module its in */
+	$view->init($module);
 	
 	return array(GalleryStatus::success(), $view);
     }
 
     /**
-     * Return the head and body content with a single call
+     * Prepare all the various things that a view requires in order to load up the
+     * template properly (like the theme, the form variables, the status variables, etc
+     * then call the view's loadTemplate() method and pass in the given template.
      *
      * @return array object GalleryStatus a status code
      *               array ('head' => head HTML, 'body' => body html)
      */
-    function renderHeadAndBody() {
+    function doLoadTemplate(&$template) {
 	global $gallery;
 
-	GalleryProfiler::start('modules.core.classes.GalleryView::renderHeadAndBody');
+	GalleryProfiler::start('modules.core.classes.GalleryView::doLoadTemplate');
 	/* Get the theme name from the view */
 	list ($ret, $themeName) = $this->getThemeName();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
-	
+
 	/* Load and initialize the theme */
-	$theme = new GalleryTheme();
-	$ret = $theme->init($themeName);
+	list ($ret, $theme) = GalleryTheme::loadTheme($themeName);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	/* Pass the theme to the template adapter */
@@ -233,6 +193,7 @@ class GalleryView {
 	if (!isset($form['formName'])) {
 	    $form['formName'] = '';
 	}
+	$template->setVariableByReference('form', $form);
 
 	/* Get our status */
 	$statusId = GalleryUtilities::getRequestVariables('statusId');
@@ -240,30 +201,20 @@ class GalleryView {
 	    $session =& $gallery->getSession();
 	    $status = $session->getStatus($statusId);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	} else {
 	    $status = array();
 	}
+	$template->setVariable('status', $status);
 
-	GalleryProfiler::start('modules.core.classes.GalleryView::renderHead');
-	list ($ret, $head) = $this->renderHead($form, $status);
+	list ($ret, $headFile, $bodyFile) = $this->loadTemplate($template, $form);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
-	GalleryProfiler::stop('modules.core.classes.GalleryView::renderHead');
+	GalleryProfiler::stop('modules.core.classes.GalleryView::doLoadTemplate');
 
-	GalleryProfiler::start('modules.core.classes.GalleryView::renderBody');
-	list ($ret, $body) = $this->renderBody($form, $status);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	GalleryProfiler::stop('modules.core.classes.GalleryView::renderBody');
-	GalleryProfiler::stop('modules.core.classes.GalleryView::renderHeadAndBody');
-	
-	return array(GalleryStatus::success(),
-		     array('head' => $head,
-			   'body' => $body));
+	return array(GalleryStatus::success(), $headFile, $bodyFile);
     }
 
     /**
@@ -275,6 +226,15 @@ class GalleryView {
      */
     function getThemeName() {
 	return array(GalleryStatus::success(), null);
+    }
+
+    /**
+     * Get the localization domain for this view
+     *
+     * @return string
+     */
+    function getL10Domain() {
+	return $this->_l10Domain;
     }
 
     /**

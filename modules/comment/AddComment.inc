@@ -41,10 +41,8 @@ class AddCommentController extends GalleryController {
      */
     function handleRequest($form) {
 	global $gallery;
-	global $HTTP_SERVER_VARS;
 
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
-	$return = GalleryUtilities::getFormVariables('return.');
 
 	/* Make sure we have permission to add a comment */
 	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'comment.add');
@@ -52,39 +50,78 @@ class AddCommentController extends GalleryController {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	if (isset($form['action']['add']) && !empty($form['comment'])) {
-	    /* Add the comment */
-	    list ($ret, $comment) = GalleryFactory::newInstance('GalleryEntity', 'GalleryComment');
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+	$redirect = array();
+	$status = array();
+	$error = array();
+	if (isset($form['action']['add'])) {
+	    
+	    if (empty($form['subject'])) {
+		$error[] = 'form.error.comment.missing';
+	    }
+	    
+	    if (empty($form['comment'])) {
+		$error[] = 'form.error.subject.missing';
 	    }
 
-	    if (!isset($comment)) {
-		return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
-			     null);
-	    }  
+	    if (empty($error)) {
+		/* Add the comment */
+		list ($ret, $comment) = GalleryFactory::newInstance('GalleryEntity', 'GalleryComment');
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		
+		if (!isset($comment)) {
+		    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
+				 null);
+		}  
 
-	    $ret = $comment->create($itemId);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		$ret = $comment->create($itemId);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		
+		/* Sanitize the comment */
+		$form['comment'] = strip_tags($form['comment']);
+		
+		$comment->setCommenterId($gallery->getActiveUserId());
+		$comment->setHost(GalleryUtilities::getRemoteHostAddress());
+		$comment->setSubject($form['subject']);
+		$comment->setComment($form['comment']);
+		$comment->setDate(time());
+		
+		$ret = $comment->save();
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		/* Send the user to a confirmation page, for now */
+		$redirect['view'] = 'core:ItemAdmin';
+		$redirect['subView'] = 'comment:CommentChangeConfirmation';
+		$redirect['itemId'] = (int)$itemId;
+		$status['added'] = 1;
+	    }
+	} else if (isset($form['action']['preview'])) {
+	    if (empty($form['comment'])) {
+		$error[] = 'form.error.comment.missing';
 	    }
 
-	    /* Sanitize the comment */
-	    $form['comment'] = strip_tags($form['comment']);
+	    /* Fall through back to the current view */
+	} else if (isset($form['action']['cancel'])) {
+	    /* Where to go on a cancel?  Go to item admin.*/
+	    $redirect['view'] = 'core:ItemAdmin';
+	    $redirect['itemId'] = (int)$itemId;
+	}
 
-	    $comment->setCommenterId($gallery->getActiveUserId());
-	    $comment->setHost($HTTP_SERVER_VARS['REMOTE_ADDR']);
-	    $comment->setComment($form['comment']);
-	    $comment->setDate(time());
-
-	    $ret = $comment->save();
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	} 
-
-	/* Redirect back to the item */
-	$results['redirect'] = $return;
+	/* Prepare our results */
+	if (!empty($redirect)) {
+	    $results['return'] = 1;
+	    $results['redirect'] = $redirect;
+	} else {
+	    $results['delegate']['view'] = 'core:ItemAdmin';
+	    $results['delegate']['subView'] = 'comment:AddComment';
+	}
+	$results['status'] = $status;
+	$results['error'] = $error;
 
 	return array(GalleryStatus::success(), $results);
     }
@@ -100,30 +137,9 @@ class AddCommentController extends GalleryController {
 class AddCommentView extends GalleryView {
 
     /**
-     * @see GalleryView::renderHead()
+     * @see GalleryView::loadTemplate
      */
-    function renderHead() {
-	global $gallery;
-
-	/* Load our item */
-	list ($ret, $item) = $this->_getItem();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	/* Render the HTML head */
-	$template = $this->_getTemplate();
-	list($ret, $html) = $template->render('AddCommentHead.tpl');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), $html);
-	}
-	return array(GalleryStatus::success(), $html);
-    }
-    
-    /**
-     * @see GalleryView::renderBody()
-     */
-    function renderBody($form) {
+    function loadTemplate(&$template, &$form) {
 	global $gallery;
 
 	/* Load our item */
@@ -138,32 +154,25 @@ class AddCommentView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	
-	/* Get its thumbnail */
-	list ($ret, $thumbnailTable) = 
-		GalleryDerivativeHelper::fetchThumbnailsByItemIds(array($item->getId()));
+	list ($ret, $user) = $gallery->getActiveUser();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	/* Render the HTML body */
-	$template = $this->_getTemplate();
-	
-	if (!empty($thumbnailTable)) {
-	    $thumbnail = $thumbnailTable[$item->getId()];
-	    $template->setVariable('thumbnail', $thumbnail->getMemberData());
+	if ($form['formName'] != 'AddComment') {
+	    $form['formName'] = 'AddComment';
+	    $form['subject'] = '';
+	    $form['comment'] = '';
 	}
 	
-	$return = GalleryUtilities::getFormVariables('return.');
-
-	$template->setVariable('return', $return);
-	$template->setVariable('item', $item->getMemberData());
+	$AddComment = array();
+	$AddComment['user'] = $user->getMemberData();
+	$AddComment['host'] = GalleryUtilities::getRemoteHostAddress();
+	
+	$template->setVariable('AddComment', $AddComment);
 	$template->setVariable('controller', 'comment:AddComment');
-	list($ret, $html) = $template->render('AddComment.tpl');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), $html);
-	}
 	
-	return array(GalleryStatus::success(), $html);
+	return array(GalleryStatus::success(), '', 'modules/comment/templates/AddComment.tpl');
     }
 }
 ?>

@@ -46,8 +46,11 @@ class AdminSearchController extends GalleryController {
 	/* ... take some action here ... */
 
 	/* Figure out where to redirect upon success */
+	$results['return'] = 1;
 	$results['redirect']['view'] = 'core:SiteAdmin';
 	$results['redirect']['subView'] = 'search:AdminSearch';
+	$results['status'] = array();
+	$results['error'] = array();
 
 	return array(GalleryStatus::success(), $results);
     }
@@ -60,20 +63,16 @@ class AdminSearchController extends GalleryController {
 class AdminSearchView extends GalleryView {
 
     /**
-     * @see GalleryView::renderBody
+     * @see GalleryView::loadTemplate
      */
-    function renderBody($form) {
+    function loadTemplate(&$template, &$form) {
 	global $gallery;
 
-	/* Render the HTML body */
-	$template = $this->_getTemplate();
+	$form['formName'] = 'AdminSearch';
 	$template->setVariable('controller', 'comment:AdminSearch');
-	list($ret, $html) = $template->render('AdminSearch.tpl');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), $html);
-	}
-	
-	return array(GalleryStatus::success(), $html);
+	return array(GalleryStatus::success(),
+		     '',
+		     'modules/search/templates/AdminSearch.tpl');
     }
 }
 ?>

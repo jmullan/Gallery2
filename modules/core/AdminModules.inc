@@ -47,6 +47,9 @@ class AdminModulesController extends GalleryController {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	$status = array();
+	$error = array();
+	
 	list($moduleName, $action) = GalleryUtilities::getRequestVariables('moduleName', 'action');
 	if (!empty($moduleName) && !empty($action)) {
 	    list($ret, $module) = $gallery->loadModule($moduleName);
@@ -67,44 +70,48 @@ class AdminModulesController extends GalleryController {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
+		$redirect['view'] = 'core:SiteAdmin';
+		$redirect['subView'] = 'core:AdminModules';
+		$status['installed'] = $moduleName;
 		break;
 		
 	    case 'activate':
 
 		/* Can't activate if we're already active! */
-		if ($isActive) {
-		    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
-				 null);
-		}
+		if (!$isActive) {
+		    list ($ret, $needsConfiguration) = $module->needsConfiguration();
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		
+		    /* Can't activate if we need to be configured! */
+		    if ($needsConfiguration) {
+			return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
+				     null);
+		    }
+		
+		    $ret = $module->activate();
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
 
-		list ($ret, $needsConfiguration) = $module->needsConfiguration();
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-		
-		/* Can't activate if we need to be configured! */
-		if ($needsConfiguration) {
-		    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
-				 null);
-		}
-		
-		$ret = $module->activate();
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    $redirect['view'] = 'core:SiteAdmin';
+		    $redirect['subView'] = 'core:AdminModules';
+		    $status['activated'] = $moduleName;
 		}
 		break;
 		
 	    case 'deactivate':
 
 		/* Can't deactivate if we're not active! */
-		if (!$isActive) {
-		    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
-				 null);
-		}
-
-		$ret = $module->deactivate();
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		if ($isActive) {
+		    $ret = $module->deactivate();
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		    $redirect['view'] = 'core:SiteAdmin';
+		    $redirect['subView'] = 'core:AdminModules';
+		    $status['deactivated'] = $moduleName;
 		}
 		break;
 
@@ -114,9 +121,14 @@ class AdminModulesController extends GalleryController {
 	    }
 	}
 
-	/* Figure out where to redirect upon success */
-	$results['redirect']['view'] = 'core:SiteAdmin';
-	$results['redirect']['subView'] = 'core:AdminModules';
+	if (!empty($redirect)) {
+	    $results['redirect'] = $redirect;
+	} else {
+	    $results['delegate']['view'] = 'core:SiteAdmin';
+	    $results['delegate']['subView'] = 'core:AdminModules';
+	}
+	$results['status'] = $status;
+	$results['error'] = $error;
 
 	return array(GalleryStatus::success(), $results);
     }
@@ -131,9 +143,9 @@ class AdminModulesController extends GalleryController {
 class AdminModulesView extends GalleryView {
 
     /**
-     * @see GalleryView::renderBody
+     * @see GalleryView::loadTemplate
      */
-    function renderBody($form) {
+    function loadTemplate(&$template, &$form) {
 	global $gallery;
 	
 	$ret = GalleryUserHelper::assertSiteAdministrator();
@@ -150,6 +162,11 @@ class AdminModulesView extends GalleryView {
 	list ($ret, $moduleStatus) = $gallery->getModuleStatus();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if ($form['formName'] != 'AdminModules') {
+	    /* We have no form variables */
+	    $form['formName'] = 'AdminModules';
 	}
 
 	ksort($moduleStatus);
@@ -217,16 +234,13 @@ class AdminModulesView extends GalleryView {
 	    $modules[] = $entry;
 	}
 
+	$AdminModules['modules'] = $modules;
+
 	/* Render the HTML body */
-	$template = $this->_getTemplate();
-	$template->setVariable('modules', $modules);
+	$template->setVariable('AdminModules', $AdminModules);
 	$template->setVariable('controller', 'core:AdminModules');
-	list($ret, $html) = $template->render('AdminModules.tpl');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), $html);
-	}
 	
-	return array(GalleryStatus::success(), $html);
+	return array(GalleryStatus::success(), '', 'modules/core/templates/AdminModules.tpl');
     }
 }
 ?>

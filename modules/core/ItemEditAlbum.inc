@@ -55,34 +55,32 @@ class ItemEditAlbumController extends GalleryController {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	$status = array();
+	$error = array();
 	if (isset($form['action']['undo'])) {
 
 	    /* Redirect back to the same view to reset the form */
-	    $redirectParams['view'] = 'core:ItemAdmin';
-	    $redirectParams['subView'] = 'core:ItemEditAlbum';
-	    $redirectParams['itemId'] = $itemId;
+	    $redirect['view'] = 'core:ItemAdmin';
+	    $redirect['subView'] = 'core:ItemEditAlbum';
+	    $redirect['itemId'] = $itemId;
 	    
 	} else if (isset($form['action']['save'])) {
 	    /* Validate the input data. */
-	    $error = false;
 	    if (!is_numeric($form['thumbnail']['size'])) {
-		GalleryUtilities::putRequestVariable('form.error.thumbnail.size.invalid', 1);
-		$error = true;
+		$error[] = 'form.error.thumbnail.size.invalid';
 	    }
 
 	    for ($i = 0; $i < sizeof($form['resizes']); $i++) {
 		if (!empty($form['resizes'][$i]['active'])) {
 		    if (empty($form['resizes'][$i]['size'])) {
-			GalleryUtilities::putRequestVariable('form.error.resizes.' . $i . '.size.missing', 1);
-			$error = true;
+			$error[] = 'form.error.resizes.' . $i . '.size.missing';
 		    } else if (!is_numeric($form['resizes'][$i]['size'])) {
-			GalleryUtilities::putRequestVariable('form.error.resizes.' . $i . '.size.invalid', 1);
-			$error = true;
+			$error[] = 'form.error.resizes.' . $i . '.size.invalid';
 		    }
 		}
 	    }
 
-	    if (!$error) {
+	    if (empty($error)) {
 		/* Delete existing derivative preferences */
 		$ret = GalleryDerivativePreferencesMap::removeMapEntry(
 		    array('itemId' => $item->getId()));
@@ -117,8 +115,7 @@ class ItemEditAlbumController extends GalleryController {
 		}
 
 		/* Load the children if we might need them */
-		if (   isset($form['recreateThumbnails'])
-		    || isset($form['recreateResizes']) ) {
+		if (isset($form['recreateThumbnails']) || isset($form['recreateResizes']) ) {
 			/* Get the child id => child types */
 			list ($ret, $childIds) = $item->fetchChildIds();
 			if ($ret->isError()) {
@@ -277,20 +274,21 @@ class ItemEditAlbumController extends GalleryController {
 		}
 		
 		/* Figure out where to redirect upon success */
-		$redirectParams['view'] = 'core:ItemAdmin';
-		$redirectParams['subView'] = 'core:ItemEditAlbum';
-		$redirectParams['itemId'] = $itemId;
+		$redirect['view'] = 'core:ItemAdmin';
+		$redirect['subView'] = 'core:ItemEditAlbum';
+		$redirect['itemId'] = $itemId;
+		$status['saved'] = 1;
 	    }
 	}
 
-	if (!empty($redirectParams)) {
-	    $results['redirect'] = $redirectParams;
+	if (!empty($redirect)) {
+	    $results['redirect'] = $redirect;
 	} else {
-	    if (empty($results['view'])) {
-		$results['view'] = 'core:ItemAdmin';
-		GalleryUtilities::putRequestVariable('subView', 'core:ItemEditAlbum');
-	    }
+	    $results['delegate']['view'] = 'core:ItemAdmin';
+	    $results['delegate']['subView'] = 'core:ItemEditAlbum';
 	}
+	$results['status'] = $status;
+	$results['error'] = $error;
 
 	return array(GalleryStatus::success(), $results);
     }
@@ -305,9 +303,9 @@ class ItemEditAlbumController extends GalleryController {
 class ItemEditAlbumView extends GalleryView {
 
     /**
-     * @see GalleryView::renderBody
+     * @see GalleryView::loadTemplate
      */
-    function renderBody($form) {
+    function loadTemplate(&$template, &$form) {
 	global $gallery;
 
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
@@ -324,14 +322,13 @@ class ItemEditAlbumView extends GalleryView {
 	}
 
 	if ($form['formName'] != 'ItemEditAlbum') {
-	    /* First time around, load the form with item data */
-	    $form = array();
-
 	    $form['orderBy'] = $item->getOrderBy();
 	    $form['orderDirection'] = $item->getOrderDirection();
 	    $form['layout'] = $item->getLayout();
 	    $form['theme'] = $item->getTheme();
-	    
+	    $form['formName'] = 'ItemEditAlbum';
+
+	    /* Load up the data for the resizes table */
 	    list ($ret, $preferences) =
 		GalleryDerivativePreferencesMap::fetchPreferencesForItem($item->getId());
 	    if ($ret->isError()) {
@@ -370,10 +367,19 @@ class ItemEditAlbumView extends GalleryView {
 	    while ($extraBlanks-- > 0) {
 		$form['resizes'][] = array('active' => 0, 'size' => '');
 	    }
+
+	    /* Always force these to be false */
 	    $form['recreateThumbnails'] = false;
 	    $form['recreateResizes'] = false;
 	}
 
+	/* Checkboxes are annoying in that they are empty if false */
+	$form['recreateThumbnails'] = !empty($form['recreateThumbnails']);
+	$form['recreateResizes'] = !empty($form['recreateThumbnails']);
+	for ($i = 0; $i < sizeof($form['resizes']); $i++) {
+	    $form['resizes'][$i]['active'] = !empty($form['resizes'][$i]['active']);
+	}
+	
 	list ($ret, $module) = $gallery->loadModule('core');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -412,21 +418,14 @@ class ItemEditAlbumView extends GalleryView {
 	    closedir($dir);
 	}
 	
-	/* Render the HTML body */
-	$template = $this->_getTemplate();
-	$template->setVariable('form', $form);
-	$template->setVariable('item', $item->getMemberData());
-	$template->setVariable('layoutList', $layoutList);
-	$template->setVariable('themeList', GalleryTheme::getThemes());
-	$template->setVariable('orderByList', $orderByList);
-	$template->setVariable('orderDirectionList', $orderDirectionList);
+	$ItemEditAlbum['layoutList'] = $layoutList;
+	$ItemEditAlbum['themeList'] = GalleryTheme::getThemeList();
+	$ItemEditAlbum['orderByList'] = $orderByList;
+	$ItemEditAlbum['orderDirectionList'] = $orderDirectionList;
+	
+	$template->setVariable('ItemEditAlbum', $ItemEditAlbum);
 	$template->setVariable('controller', 'core:ItemEditAlbum');
-	list($ret, $html) = $template->render('ItemEditAlbum.tpl');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), $html);
-	}
-
-	return array(GalleryStatus::success(), $html);
+	return array(GalleryStatus::success(), '', 'modules/core/templates/ItemEditAlbum.tpl');
     }
 }
 ?>

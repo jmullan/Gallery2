@@ -44,6 +44,41 @@ class GalleryAlbumItem extends GalleryAlbumItem_core {
   
 
   
+    /**
+     * Return meta information about the members of this class
+     *
+     * @return array member => array(type, class)
+     */
+    function getPersistentMemberInfo() {
+        $meta = parent::getPersistentMemberInfo();
+    
+        $meta['members']['layout'] = array(
+            'class' => 'GalleryAlbumItem',
+            'type' => STORAGE_TYPE_STRING
+        );
+    
+        return $meta;
+    }
+
+    /**
+     * Get the data from this persistent object as an associative array
+     *
+     * @return array memberName => memberValue
+     */
+    function getMemberData() {
+        $data = parent::getMemberData();
+        GalleryProfiler::start('modules.core.classes.GalleryPersistent::getMemberData');
+    
+        if (!isset($this->_layout)) {
+            $data['layout'] = null;
+        } else {
+            $data['layout'] = $this->_layout;
+        }
+    
+        GalleryProfiler::stop('modules.core.classes.GalleryPersistent::getMemberData');
+        return $data;
+    }
+  
 
     /**
      * Return the name of this class with the proper mix of uppercase and
@@ -56,5 +91,41 @@ class GalleryAlbumItem extends GalleryAlbumItem_core {
     }
 
     
+    /**
+     * Get the value of layout
+     *
+     * @return STRING the value
+     */
+    function getlayout() {
+        if (!isset($this->_layout)) {
+            return null;
+        }
+        return $this->_layout;
+    }
+
+    /**
+     * Set the value of layout
+     *
+     * @param STRING the value
+     */
+    function setlayout($value) {
+
+        /* 
+         * Convert unset values to null, to avoid generating warnings.
+         */
+	$a = isset($value) ? $value : null;
+	$b = isset($this->_layout) ? $this->_layout : null;
+
+    
+        /* 
+         * Only take action if the value actually changes, but take care not to 
+         * generate warnings for unset values.
+         */
+        if ($a != $b) {
+            $this->_layout = $value;
+            $this->setModifiedFlag('layout', MEMBER_MODIFIED);
+        }
+    }
+  
 }
 ?>

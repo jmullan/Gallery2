@@ -183,7 +183,7 @@ class GalleryUtilities {
 	}
 
 	/* Perform any necessary transformations on our values */
-	GalleryUtilities::_processInputValues($values);
+	GalleryUtilities::sanitizeInputValues($values);
 	
 	/*
 	 * Now split out any keys that contain a field separator (_) into
@@ -279,52 +279,13 @@ class GalleryUtilities {
 	}
 
 	/* Sanitize the input */
-	GalleryUtilities::_processInputValues($values);
+	GalleryUtilities::sanitizeInputValues($values);
 
 	if (sizeof($values) == 1) {
 	    return $values[0];
 	} else {
 	    return $values;
 	}
-    }
-
-    /**
-     * Remove any potentially dangerous content from input values.
-     *
-     * @param string an input value 
-     * @return string the sanitized version 
-     * @static
-     */
-    function sanitizeInputValue($value) {
-	/* Undo the damage caused by magic_quotes */
-	if (get_magic_quotes_gpc()) {
-	    if (is_array($value)) {
-		/* XXX: this only handles arrays 1 level deep */
-		foreach ($value as $subKey => $subValue) {
-		    $value[$subKey] = stripslashes($subValue);
-		}
-	    } else {
-		$value = stripslashes($value);
-	    }
-	}
-
-	/*
-	 * This was lifted verbatim from PostNuke 0.72
-	 */
-	$search = array('|</?\s*SCRIPT.*?>|si',
-			'|</?\s*FRAME.*?>|si',
-			'|</?\s*OBJECT.*?>|si',
-			'|</?\s*META.*?>|si',
-			'|</?\s*APPLET.*?>|si',
-			'|</?\s*LINK.*?>|si',
-			'|</?\s*IFRAME.*?>|si',
-			'|STYLE\s*=\s*"[^"]*"|si',
-			'|javascript|si');
-	$replace = array('');
-
-	$value = preg_replace($search, $replace, $value);
-
-	return $value;
     }
 
     /**
@@ -801,16 +762,21 @@ class GalleryUtilities {
      * 1.  Convert UTF-8 values to Unicode entities
      * 2.  Sanitize any input values to remove dangerous values
      */
-    function _processInputValues(&$values) {
+    function sanitizeInputValues(&$values) {
 	foreach (array_keys($values) as $key) {
 	    if (is_array($values[$key])) {
-		GalleryUtilities::_processInputValues($values[$key]);
+		GalleryUtilities::sanitizeInputValues($values[$key]);
 	    } else {
 		/* Convert UTF-8 to Unicode entities */
 		$values[$key] = GalleryUtilities::utf8ToUnicodeEntities($values[$key]);
 
-		/* Sanitize the input */
-		$values[$key] = GalleryUtilities::sanitizeInputValue($values[$key]);
+		/* Undo the damage caused by magic_quotes */
+		if (get_magic_quotes_gpc()) {
+		    $values[$key] = stripslashes($values[$key]);
+		}
+
+		/* Sanitize dangerous html entities */
+		$values[$key] = htmlentities($values[$key]);
 	    }
 	}
     }
@@ -879,6 +845,26 @@ class GalleryUtilities {
 	    }
 	}
 	return false;
+    }
+
+    /**
+     * Return the address of the remote host.
+     *
+     * @return string the remote host address
+     */
+    function getRemoteHostAddress() {
+	global $HTTP_SERVER_VARS;
+	return $HTTP_SERVER_VARS['REMOTE_ADDR'];
+    }
+
+    /**
+     * Return the current URL
+     *
+     * @return string the current URL
+     */
+    function getCurrentUrl() {
+	global $HTTP_SERVER_VARS;
+	return $HTTP_SERVER_VARS['REQUEST_URI'];
     }
 }
 ?>

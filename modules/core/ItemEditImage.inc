@@ -67,14 +67,18 @@ class ItemEditImageController extends GalleryController {
 	    $preferred = $preferredTable[$item->getId()];
 	}
 
+	$redirectParams = array();
+	$status = array();
+	$error = array();
+
 	$remapSourceIds = array();
 	$operation = null;
 	/* Figure out which command we're taking */
 	if (isset($form['action']['scale'])) {
 	    if (!isset($form['scale']['size'])) {
-		GalleryUtilities::putRequestVariable('form.error.scale.size.missing', 1);
+		$error[] = 'form.error.scale.size.missing';
 	    } else if (!is_numeric($form['scale']['size']) || $form['scale']['size'] < 1) {
-		GalleryUtilities::putRequestVariable('form.error.scale.size.invalid', 1);
+		$error[] = 'form.error.scale.size.invalid';
 	    } else {
 		$operation = 'scale';
 		$args = array($form['scale']['size']);
@@ -98,9 +102,10 @@ class ItemEditImageController extends GalleryController {
 		$remapSourceIds = array($preferred->getId(), $item->getId(), null);
 
 		/* Figure out where to redirect upon success */
-		$redirectParams['view'] = 'core:ItemAdmin';
-		$redirectParams['subView'] = 'core:ItemEditImage';
-		$redirectParams['itemId'] = $itemId;
+		$redirect['view'] = 'core:ItemAdmin';
+		$redirect['subView'] = 'core:ItemEditImage';
+		$redirect['itemId'] = $itemId;
+		$status['revertedImage'] = 1;
 	    }
 	}
 
@@ -257,9 +262,18 @@ class ItemEditImageController extends GalleryController {
 	    }
 
 	    /* Figure out where to redirect upon success */
-	    $redirectParams['view'] = 'core:ItemAdmin';
-	    $redirectParams['subView'] = 'core:ItemEditImage';
-	    $redirectParams['itemId'] = $itemId;
+	    $redirect['view'] = 'core:ItemAdmin';
+	    $redirect['subView'] = 'core:ItemEditImage';
+	    $redirect['itemId'] = $itemId;
+	    switch ($operation) {
+	    case 'rotate':
+		$status['rotatedImage'] = 1;
+		break;
+
+	    case 'scale':
+		$status['scaledImage'] = 1;
+		break;
+	    }
 	}
 
 	/* Check to see if we need to remap any derivative source ids */
@@ -271,14 +285,14 @@ class ItemEditImageController extends GalleryController {
 	    }
 	}
 
-	if (!empty($redirectParams)) {
-	    $results['redirect'] = $redirectParams;
+	if (!empty($redirect)) {
+	    $results['redirect'] = $redirect;
 	} else {
-	    if (empty($results['view'])) {
-		$results['view'] = 'core:ItemAdmin';
-		GalleryUtilities::putRequestVariable('subView', 'core:ItemEditImage');
-	    }
+	    $results['delegate']['view'] = 'core:ItemAdmin';
+	    $results['delegate']['subView'] = 'core:ItemEditImage';
 	}
+	$results['status'] = $status;
+	$results['error'] = $error;
 
 	return array(GalleryStatus::success(), $results);
     }
@@ -293,9 +307,9 @@ class ItemEditImageController extends GalleryController {
 class ItemEditImageView extends GalleryView {
 
     /**
-     * @see GalleryView::renderBody
+     * @see GalleryView::loadTemplate
      */
-    function renderBody($form) {
+    function loadTemplate(&$template, &$form) {
 	global $gallery;
 
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
@@ -315,6 +329,7 @@ class ItemEditImageView extends GalleryView {
 	    /* First time around, load the form with item data */
 	    $form['scale']['size'] = '';
 	    $form['preserveOriginal'] = 1;
+	    $form['formName'] = 'ItemEditImage';
 	}
 
 	/* Check to see if we have a preferred source */
@@ -328,19 +343,13 @@ class ItemEditImageView extends GalleryView {
 	} else {
 	    $hasPreferredSource = true;
 	}
-							     
-	/* Render the HTML body */
-	$template = $this->_getTemplate();
-	$template->setVariable('hasPreferredSource', $hasPreferredSource);
-	$template->setVariable('form', $form);
-	$template->setVariable('item', $item->getMemberData());
-	$template->setVariable('controller', 'core:ItemEditImage');
-	list($ret, $html) = $template->render('ItemEditImage.tpl');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), $html);
-	}
 
-	return array(GalleryStatus::success(), $html);
+	$ItemEditImage = array();
+	$ItemEditImage['hasPreferredSource'] = $hasPreferredSource;
+							     
+	$template->setVariable('ItemEditImage', $ItemEditImage);
+	$template->setVariable('controller', 'core:ItemEditImage');
+	return array(GalleryStatus::success(), '', 'modules/core/templates/ItemEditImage.tpl');
     }
 }
 ?>

@@ -1,32 +1,30 @@
-      {gallery->form controller=$controller}
-      {gallery->input type="hidden" name="form.formName"}ItemDelete{/gallery->input}
-      {gallery->input type="hidden" name="itemId"}{$item.id}{/gallery->input}
-      
-    <table border="0" cellspacing="0" cellpadding="5">
-	<tr>
-	  <td align="center">
-	    {gallery->bigFontSize}
-	    {gallery->text text="Do you really want to delete this item?"}
-	    {/gallery->bigFontSize}
-	  </td>
-	</tr>
+{gallery->bannerbox}
+  {gallery->title}
+    {gallery->text text="Delete Item"}
+  {/gallery->title}
+{/gallery->bannerbox}
 
-	<!-- {if ($childCount > 0)} -->
-	<tr>
-	  <td>
-	    {gallery->text one="This item has %d child."
-	                 many="This item has %d children."
-	                 count=$childCount
-	                 arg1=$childCount}
-	    {gallery->text text="If you delete it, all of its children and any related data will be deleted also!"}
-	  </td>
-	</tr>
-        <!-- {/if} -->
+{gallery->detailedbox}
+  {gallery->title}
+    {gallery->text text="Are you sure?"}
+  {/gallery->title}
 
-	<tr>
-	  <td align="center">
-	    {gallery->input type="submit" name="form.action.delete"}{gallery->text text="Yes, delete it!"}{/gallery->input}
-	  </td>
-	</tr>
-    </table>
-    {/gallery->form}
+  {gallery->description}
+    {if ($ItemDelete.itemType == 'album')}
+      {if ($ItemDelete.childCount > 0)}
+	{gallery->text one="This album has %d child." many="This album has %d children." 
+	               count=$ItemDelete.childCount 
+	               arg1=$childCount}
+	{gallery->text text="Removing this album will remove all of its children also.  There is no undo!"}
+      {else}
+	{gallery->text text="This album is empty.  This will completely remove this album from Gallery.  There is no undo!"}
+      {/if}
+    {else}
+      {gallery->text text="This will completely remove this item from Gallery. There is no undo!"}
+    {/if}
+  {/gallery->description}
+
+  {gallery->body}
+    {gallery->input type="submit" name="form.action.delete"}{gallery->text text="Delete"}{/gallery->input}
+  {/gallery->body}
+{/gallery->detailedbox}

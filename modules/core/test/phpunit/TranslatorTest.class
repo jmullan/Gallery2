@@ -98,13 +98,12 @@ class TranslatorTest extends GalleryTestCase {
 	global $gallery;
 
 	$domain = 'modules_core';
-	$path = $gallery->getConfig('code.gallery.modules') . 'core';
 
 	$translator = new GalleryTranslator();
 	$translator->init('de_DE');
 
 	/* Singular text data */
-	list ($ret, $results) = $translator->translate($domain, $path, array('text' => 'Description'));
+	list ($ret, $results) = $translator->translate($domain, array('text' => 'Description'));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -115,7 +114,7 @@ class TranslatorTest extends GalleryTestCase {
 	}
 
 	/* Plural text data */
-	list ($ret, $results) = $translator->translate($domain, $path,
+	list ($ret, $results) = $translator->translate($domain,
 						       array('one' => 'There is %d user in the system.',
 							     'many' => 'There are %d total users in the system.',
 							     'count' => 1,
@@ -130,7 +129,7 @@ class TranslatorTest extends GalleryTestCase {
 	}
 	
 	/* Plural text data */
-	list ($ret, $results) = $translator->translate($domain, $path,
+	list ($ret, $results) = $translator->translate($domain,
 						       array('one' => 'There is %d user in the system.',
 							     'many' => 'There are %d total users in the system.',
 							     'count' => 2,

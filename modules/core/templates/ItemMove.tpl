@@ -1,3 +1,19 @@
+{gallery->bannerbox}
+  {gallery->title}
+    {gallery->text text="Move an Item"}
+  {/gallery->title}
+{/gallery->bannerbox}
+    
+{gallery->detailedbox}
+  {gallery->title}
+    {gallery->text text="Source"}
+  {/gallery->title}
+
+  {gallery->description}
+    {gallery->text text="Choose the items you want to move"}
+  {/gallery->description}
+      
+  {gallery->body}
     <script type="text/javascript" language="javascript">
       // Validation code.  This Javascript snippet validates the source and destination
       // information to make sure that you don't attempt to do something that you shouldn't,
@@ -10,16 +26,16 @@
       // The user can add data items to these albums
       permission = new Array();
       permission['addDataItem'] = new Array();
-      {foreach from=$albumIds.addDataItem item=id}
+      {foreach from=$ItemMove.albumIds.addDataItem item=id}
       permission['addDataItem'][{$id}] = 1;
       {/foreach}
       
       // The user can add album items to these albums
       permission['addAlbumItem'] = new Array();
-      {foreach from=$albumIds.addAlbumItem item=id}
+      {foreach from=$ItemMove.albumIds.addAlbumItem item=id}
       permission['addAlbumItem'][{$id}] = 1;
       {/foreach}
-
+    
       // Check what the destination album accepts.  If it can handle data items and
       // album items then we're done.  Else, scan the selected items and make sure that
       // we haven't selected something that we can't handle.  If we have, then remove
@@ -27,39 +43,39 @@
       function checkPermissions(form, quiet) {ldelim}
           destinationId = form.elements['{gallery->elementName name="form.destination"}'].value;
           if (permission['addDataItem'][destinationId] && permission['addAlbumItem'][destinationId]) {ldelim}
-              {foreach from=$peerTypes.album key=id item=unused}
+              {foreach from=$ItemMove.peerTypes.album key=id item=unused}
               form.elements['{gallery->elementName name="form.selectedIds.$id"}'].disabled = 0;
               {/foreach}
-              {foreach from=$peerTypes.data key=id item=unused}
+              {foreach from=$ItemMove.peerTypes.data key=id item=unused}
               form.elements['{gallery->elementName name="form.selectedIds.$id"}'].disabled = 0;
               {/foreach}
               return;
           {rdelim}
-
+    
           changed = 0;
           if (permission['addDataItem'][destinationId]) {ldelim}
-              {foreach from=$peerTypes.album key=id item=unused}
+              {foreach from=$ItemMove.peerTypes.album key=id item=unused}
               if (form.elements['{gallery->elementName name="form.selectedIds.$id"}'].checked) {ldelim}
                   form.elements['{gallery->elementName name="form.selectedIds.$id"}'].checked = 0;
                   changed = 1;
               {rdelim}
               form.elements['{gallery->elementName name="form.selectedIds.$id"}'].disabled = 1;
               {/foreach}
-              {foreach from=$peerTypes.data key=id item=unused}
+              {foreach from=$ItemMove.peerTypes.data key=id item=unused}
               form.elements['{gallery->elementName name="form.selectedIds.$id"}'].disabled = 0;
               {/foreach}
               if (changed && !quiet) {ldelim}
                   alert("{gallery->text text="The destination you chose does not accept sub-albums, so all sub-albums have been deselected."}");
               {rdelim}
           {rdelim} else {ldelim}
-              {foreach from=$peerTypes.data key=id item=unused}
+              {foreach from=$ItemMove.peerTypes.data key=id item=unused}
               if (form.elements['{gallery->elementName name="form.selectedIds.$id"}'].checked) {ldelim}
                   form.elements['{gallery->elementName name="form.selectedIds.$id"}'].checked = 0;
                   changed = 1;
               {rdelim}
               form.elements['{gallery->elementName name="form.selectedIds.$id"}'].disabled = 1;
               {/foreach}
-              {foreach from=$peerTypes.album key=id item=unused}
+              {foreach from=$ItemMove.peerTypes.album key=id item=unused}
               form.elements['{gallery->elementName name="form.selectedIds.$id"}'].disabled = 0;
               {/foreach}
               if (changed && !quiet) {ldelim}
@@ -69,191 +85,87 @@
       {rdelim}
     </script>
     
-      {gallery->form controller="$controller"}
-      {gallery->input type="hidden" name="form.formName"}ItemMove{/gallery->input}
-      {gallery->input type="hidden" name="itemId"}{$item.id}{/gallery->input}
-    <table border="0" cellspacing="0" cellpadding="0">
-	<tr>
-	  <td>
-	    <center>
-	      {gallery->biggerFontSize}
-	      {gallery->text text="Move an Item"}
-	      {/gallery->biggerFontSize}
-	    </center>
-	  </td>
-	</tr>
-
-	<tr>
-	  <td>
-	    &nbsp;
-	  </td>
-	</tr>
-
-	<tr>
-	  <td>
-	    {gallery->bigFontSize}
-	    {gallery->text text="Items to move"}
-	    {/gallery->bigFontSize}
-	  </td>
-	</tr>
-
-	<tr>
-	  <td>
-	    {gallery->text text="Choose the items you want to move"}
-	  </td>
-	</tr>
-
-	<tr>
-	  <td>
-	    <table>
-	      <!-- {foreach from=$peers item=item} -->
-	      <!-- {assign var="peerItemId" value=$item.id} -->
-		<tr>
-		  <td>
-		    {gallery->input type="checkbox" name="form.selectedIds.$peerItemId"}{$item.selected}{/gallery->input}
-		  </td>
-		  <td>
-		    {if $item.title}
-		    {$item.title}
-		    {else}
-		    {$item.pathComponent}
-		    {/if}
-		    <i>
-		      {if isset($peerTypes.data.$peerItemId)}
-		      {gallery->text text="(data)"}
-		      {/if}
-		      {if isset($peerTypes.album.$peerItemId)}
-		      {gallery->text text="(album)"}
-		      {/if}
-		    </i>
-		  </td>
-		</tr>
-
-		<!-- {if !empty($form.error.source.$peerItemId.permission.delete)} -->
-		<tr>
-		  <td colspan="2">
-		    {gallery->errorFontColor}
-		    {gallery->text text="You are not allowed to move this item away from here."}<br>
-		    {/gallery->errorFontColor}
-		  </td>
-		</tr>
-		<!-- {/if} -->
-
-		<!-- {if !empty($form.error.source.$peerItemId.permission.addAlbumItem)} -->
-		<tr>
-		  <td colspan="2">
-		    {gallery->errorFontColor}
-		    {gallery->text text="You are not allowed to move an album to the chosen destination."}<br>
-		    {/gallery->errorFontColor}
-		  </td>
-		</tr>
-		<!-- {/if} -->
-
-		<!-- {if !empty($form.error.source.$peerItemId.permission.addDataItem)} -->
-		<tr>
-		  <td colspan="2">
-		    {gallery->errorFontColor}
-		    {gallery->text text="You are not allowed to move an item to the chosen destination."}<br>
-		    {/gallery->errorFontColor}
-		  </td>
-		</tr>
-		<!-- {/if} -->
-
-		<!-- {if !empty($form.error.source.$peerItemId.selfMove)} -->
-		<tr>
-		  <td colspan="2">
-		    {gallery->errorFontColor}
-		    {gallery->text text="You cannot move an album into its own subtree."}<br>
-		    {/gallery->errorFontColor}
-		  </td>
-		</tr>
-		<!-- {/if} -->
-		<!-- {/foreach} -->
-	    </table>
-	  </td>
-	</tr>
-
-	<tr>
-	  <td>
-	    &nbsp;
-	  </td>
-	</tr>
-
-	<tr>
-	  <td>
-	    {gallery->bigFontSize}
-	    {gallery->text text="Destination"}
-	    {/gallery->bigFontSize}
-	  </td>
-	</tr>
-
-	<tr>
-	  <td>
-	    {gallery->text text="Choose the destination of the selected items"}
-	  </td>
-	</tr>
-
-	<tr>
-	  <td>
-	    <table>
-		<tr>
-		  <td>
-		    {gallery->select name="form.destination" onChange="javascript:checkPermissions(this.form)"}
-		    {foreach from=$albumTree item=album}
-		    <option value="{$album.data.id}">
-		      {"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"|repeat:$album.depth}`--
-		      {$album.data.title|default:$album.data.pathComponent}
-		    </option>
-		    {/foreach}
-		    {/gallery->select}
-		  </td>
-		</tr>
-	    </table>
-	  </td>
-	</tr>
-
-	<!-- {if !empty($form.error.destination.permission)} -->
-	<tr>
-	  <td>
-	    {gallery->errorFontColor}
-	    {gallery->text text="You don't have the permission to add items in this album"}
-	    {/gallery->errorFontColor}
-	  </td>
-	</tr>
-	<!-- {/if} -->
-
-	<!-- {if !empty($form.error.destination.empty)} -->
-	<tr>
-	  <td>
-	    {gallery->errorFontColor}
-	    {gallery->text text="No destination chosen"}
-	    {/gallery->errorFontColor}
-	  </td>
-	</tr>
-	<!-- {/if} -->
-
-	<tr>
-	  <td>
+    {gallery->widget1box}
+      {foreach from=$ItemMove.peers item=peer}
+	{assign var="peerItemId" value=$peer.id}
 	    
-	  </td>
-	</tr>
+	{gallery->widget1}
+	  {gallery->body}
+	    {gallery->input type="checkbox" name="form.selectedIds.$peerItemId"}{$peer.selected}{/gallery->input}
+	    {$peer.title|default:$peer.pathComponent}
+	    {if isset($ItemMove.peerTypes.data.$peerItemId)}
+	      {gallery->text text="(data)"}
+	    {/if}
+	    {if isset($ItemMove.peerTypes.album.$peerItemId)}
+	      {gallery->text text="(album)"}
+	    {/if}
+	    
+	    {if !empty($form.error.source.$peerItemId.permission.delete)}
+	      {gallery->error}
+		{gallery->text text="You are not allowed to move this item away from here."}<br>
+	      {/gallery->error}
+	    {/if}
+	    
+	    {if !empty($form.error.source.$peerItemId.permission.addAlbumItem)}
+	      {gallery->error}
+		{gallery->text text="You are not allowed to move an album to the chosen destination."}<br>
+	      {/gallery->error}
+	    {/if}
 
-	<tr>
-	  <td>
-	    &nbsp;
-	  </td>
-	</tr>
+	    {if !empty($form.error.source.$peerItemId.permission.addDataItem)}
+	      {gallery->error}
+		{gallery->text text="You are not allowed to move an item to the chosen destination."}<br>
+	      {/gallery->error}
+	    {/if}
+	    
+	    {if !empty($form.error.source.$peerItemId.selfMove)}
+	      {gallery->error}
+		{gallery->text text="You cannot move an album into its own subtree."}<br>
+	      {/gallery->error}
+	    {/if}
+	  {/gallery->body}
+	{/gallery->widget1}
+      {/foreach}
+    {/gallery->widget1box}
+  {/gallery->body}
+{/gallery->detailedbox}
 
-	<tr>
-	  <td>
-	    {gallery->input type="submit" name="form.action.move"}{gallery->text text="Move"}{/gallery->input}
-	    {gallery->input type="submit" name="form.action.cancel"}{gallery->text text="Cancel"}{/gallery->input}
-	  </td>
-	</tr>
+{gallery->detailedbox}
+  {gallery->title}
+    {gallery->text text="Destination"}
+  {/gallery->title}
+  
+  {gallery->description}
+    {gallery->text text="Choose a new album for them"}
+  {/gallery->description}
+  
+  {gallery->body}
+    {gallery->select name="form.destination" onChange="javascript:checkPermissions(this.form)"}
+      {foreach from=$ItemMove.albumTree item=album}
+	<option value="{$album.data.id}">
+	{"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"|repeat:$album.depth}`--
+	{$album.data.title|default:$album.data.pathComponent}
+	</option>
+      {/foreach}
+    {/gallery->select}
+    
+    {if !empty($form.error.destination.permission)}
+      {gallery->error}
+	{gallery->text text="You don't have the permission to add items in this album"}
+      {/gallery->error}
+    {/if}
+    
+    {if !empty($form.error.destination.empty)}
+      {gallery->error}
+	{gallery->text text="No destination chosen"}
+      {/gallery->error}
+    {/if}
+  {/gallery->body}
+{/gallery->detailedbox}
 
-    </table>
-    {/gallery->form}
-
-    <script type="text/javascript" language="javascript">
-      checkPermissions(document.forms[0], true);
-    </script>
+{gallery->detailedbox}
+  {gallery->body}
+    {gallery->input type="submit" name="form.action.move"}{gallery->text text="Move"}{/gallery->input}
+    {gallery->input type="submit" name="form.action.cancel"}{gallery->text text="Cancel"}{/gallery->input}
+  {/gallery->body}
+{/gallery->detailedbox}

@@ -32,7 +32,7 @@
  *
  * @package Comment
  */
-class CommentModule extends GalleryTemplateModule {
+class CommentModule extends GalleryModule {
 
     function CommentModule() {
 	$this->setName('comment');
@@ -133,21 +133,13 @@ class CommentModule extends GalleryTemplateModule {
 	    }
 	    
 	    $ret = GalleryPermissionSetMap::registerPermission($this->getName(),
-							       'comment.viewIp',
-							       $gallery->i18n('[comment] View commenter\'s IP address'));
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-	    
-	    $ret = GalleryPermissionSetMap::registerPermission($this->getName(),
 							       'comment.all',
 							       $gallery->i18n('[comment] All access'), 
 							       GALLERY_PERMISSION_COMPOSITE,
 							       array('comment.add',
 								     'comment.edit',
 								     'comment.delete',
-								     'comment.view',
-								     'comment.viewIp'));
+								     'comment.view'));
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -174,16 +166,8 @@ class CommentModule extends GalleryTemplateModule {
     /**
      * @see GalleryModule::getItemLinks()
      */
-    function getItemLinks($items, $returnUrlParams) {
+    function getItemLinks($items) {
 	global $gallery;
-
-	if (!is_array($items)) {
-	    $items = array($items);
-	}
-
-	foreach ($returnUrlParams as $param => $value) {
-	    $params['return.' . $param] = $value;
-	}
 
 	$links = array();
 	foreach ($items as $item) {
@@ -194,7 +178,9 @@ class CommentModule extends GalleryTemplateModule {
 	    }
 
 	    if (isset($permissions['comment.add'])) {
-		$params['view'] = 'comment:AddComment';
+		$params['return'] = 'true';
+		$params['view'] = 'core:ItemAdmin';
+		$params['subView'] = 'comment:AddComment';
 		$params['itemId'] = $item->getId();
 		$links[$item->getId()][] =
 		    array('text' => $this->translate('add comment'),
@@ -206,20 +192,10 @@ class CommentModule extends GalleryTemplateModule {
     }
 
     /**
-     * Return module-specific summary content about the item
-     *
-     * @param object GalleryItem a target item
-     * @param array key => value parameters provided by the
-     *              parent view -- the module can augment or override these.
-     * @return array object GalleryStatus a status code
-     *               array (itemId => string HTML content)
+     * @see GalleryModule::loadItemSummaries()
      */
-    function getItemSummaries($items, $returnUrlParams) {
+    function getItemSummaries($items) {
 	global $gallery;
-
-	if (!is_array($items)) {
-	    $items = array($items);
-	}
 
 	$ids = array();
 	foreach ($items as $item) {
@@ -242,11 +218,11 @@ class CommentModule extends GalleryTemplateModule {
 
 	    if (isset($permissions['comment.view'])) {
 		if (!empty($commentCounts[$item->getId()])) {
-		    $message['one'] = '%d comment';
-		    $message['many'] = '%d comments';
-		    $message['count'] = $commentCounts[$item->getId()];
-		    $message['arg1'] = $commentCounts[$item->getId()];
-		    $summaries[$item->getId()] = $this->translate($message);
+		    $summaries[$item->getId()] =
+			$this->translate(array('one' => '%d comment',
+					       'many' => '%d comments',
+					       'count' => $commentCounts[$item->getId()],
+					       'arg1' => $commentCounts[$item->getId()]));
 		}
 	    }
 	}
@@ -255,16 +231,9 @@ class CommentModule extends GalleryTemplateModule {
     }
 
     /**
-     * Return module-specific summary content about the item
-     *
-     * @param object GalleryItem a target item
-     * @param array key => value parameters provided by the
-     *              parent view -- the module can augment or override these.
-     * @return array object GalleryStatus a status code
-     *               array (itemId => string HTML content)
-     * @todo parameterize the $viewMax option
+     * @see GalleryModule::loadItemDetails()
      */
-    function getItemDetails($item, $returnUrlParams) {
+    function loadItemDetails(&$template, $item) {
 	global $gallery;
 
 	list ($ret, $permissions) = GalleryItemHelper::getPermissions($item->getId());
@@ -291,57 +260,53 @@ class CommentModule extends GalleryTemplateModule {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$html = null;
-	if (!empty($counts[$item->getId()])) {
+	$commenters = array();
+	if (isset($counts[$item->getId()])) {
 	    $totalComments = $counts[$item->getId()];
-
-	    /* Render the comments */
-	    $users = array();
-	    $commentData = array();
-	    foreach ($comments as $comment) {
+	    
+	    for ($i = 0; $i < sizeof($comments); $i++) {
+		/* Get the commenter ids */
+		$commenters[$comments[$i]->getCommenterId()] = 1;
+			
 		/* Extract the member data */
-		$memberData = $comment->getMemberData();
+		$comments[$i] = $comments[$i]->getMemberData();
+	    }
 
-		/* Associate the commenter's info */
-		$commenterId = $memberData['commenterId'];
-		if (empty($users[$commenterId])) {
-		    list ($ret, $user) = $gallery->loadEntitiesById($commenterId);
-		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-		    }
-
-		    $users[$commenterId] = $user->getMemberData();
+	    /* Load all the commenters */
+	    if (sizeof($commenters) > 0) {
+		list ($ret, $commentersList) = $gallery->loadEntitiesById(array_keys($commenters));
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-		$memberData['commenter'] = $users[$commenterId];
-		$commentData[] = $memberData;
 	    }
 
-	    list ($ret, $permissions) = GalleryItemHelper::getPermissions($item->getId());
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+	    foreach ($commentersList as $commenter) {
+		$commenters[$commenter->getId()] = $commenter->getMemberData();
 	    }
-
-	    foreach (array('add' => 'comment.add',
-			   'delete' => 'comment.delete',
-			   'edit' => 'comment.edit',
-			   'viewIp' => 'comment.viewIp')
-		 as $canFlag => $permission) {
-		$can[$canFlag] = isset($permissions[$permission]);
-	    }
-
-	    /* Render the comments */
-	    $template = $this->_getTemplate();
-	    $template->setVariable('comments', $commentData);
-	    $template->setVariable('can', $can);
-	    $template->setVariable('item', $item->getMemberData());
-	    $template->setVariable('totalComments', $totalComments);
-	    list($ret, $html) = $template->render('ItemDetails.tpl');
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), $html);
-	    }
+	} else {
+	    $totalComments = 0;
 	}
 
-	return array(GalleryStatus::success(), $html);
+	list ($ret, $permissions) = GalleryItemHelper::getPermissions($item->getId());
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
+	foreach (array('delete' => 'comment.delete',
+		       'edit' => 'comment.edit')
+		 as $canFlag => $permission) {
+	    $can[$canFlag] = isset($permissions[$permission]);
+	}
+
+	$CommentItemDetails = array();
+	$CommentItemDetails['comments'] = $comments;
+	$CommentItemDetails['commenters'] = $commenters;
+	$CommentItemDetails['can'] = $can;
+	$CommentItemDetails['item'] = $item->getMemberData();
+	$CommentItemDetails['totalComments'] = $totalComments;
+	$template->setVariable('CommentItemDetails', $CommentItemDetails);
+
+	return array(GalleryStatus::success(), 'modules/comment/templates/CommentItemDetails.tpl');
     }
     
     /**
@@ -353,6 +318,30 @@ class CommentModule extends GalleryTemplateModule {
 	return array(GalleryStatus::success(),
 		     array(array('name' => $this->translate('Comments'),
 				 'view' => 'comment:AdminComments')));
+    }
+
+    /**
+     * @see GalleryModule::getItemAdminViews();
+     */
+    function getItemAdminViews($item) {
+	$views = array();
+	list ($ret, $permissions) = GalleryItemHelper::getPermissions($item->getId());
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if (isset($permissions['comment.add'])) {
+	        $views[] = array('name' => $this->translate('Add Comment'),
+				 'view' => 'comment:AddComment');
+	}
+
+	if (isset($permissions['comment.edit']) ||
+	    isset($permissions['comment.delete'])) {
+	        $views[] = array('name' => $this->translate('View Comments'),
+				 'view' => 'comment:ShowComments');
+	}
+	
+	return array(GalleryStatus::success(), $views);
     }
 
     /**

@@ -36,34 +36,11 @@
 class SecurityViolationView extends GalleryView {
 
     /**
-     * @see GalleryView::renderHead
+     * @see GalleryView::loadTemplate
      */
-    function renderHead() {
-	global $gallery;
-
-	list ($ret, $module) = $gallery->loadModule('core');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	$text = $module->translate("Security Violation!");
-	$html = "<title>$text</title>";
-	return array(GalleryStatus::success(), $html);
-    }
-
-
-    /**
-     * @see GalleryView::renderBody
-     */
-    function renderBody($form) {
-	global $gallery;
-
-	list ($ret, $module) = $gallery->loadModule('core');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	$text = $module->translate("Security Violation!");
-	return array(GalleryStatus::success(), $text);
+    function loadTemplate(&$template, &$form) {
+	return array(GalleryStatus::success(),
+		     'modules/core/templates/SecurityViolationHead.tpl',
+		     'modules/core/templates/SecurityViolation.tpl');
     }
 }

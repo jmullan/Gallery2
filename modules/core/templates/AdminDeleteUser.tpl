@@ -1,31 +1,21 @@
-  {gallery->form controller="$controller"}
-  {gallery->input type="hidden" name="form.formName"}AdminDeleteUser{/gallery->input}
-  {gallery->input type="hidden" name="userId"}{$user.id}{/gallery->input}
-  <table width="100%" border="0" cellspacing="3" cellpadding="3">
+{gallery->bannerbox}
+  {gallery->title}
+    {gallery->text text="Delete User"}
+  {/gallery->title}
+{/gallery->bannerbox}
 
-    <tr>
-      <td align="center" colspan="2">
-	{gallery->bigFontSize}
-	{gallery->text text="Delete a user"}
-	{/gallery->bigFontSize}
-      </td>
-    </tr>
+{gallery->detailedbox}
+  {gallery->title}
+    {gallery->text text="Are you sure?"}
+  {/gallery->title}
 
-    <tr>
-      <td align="center">
-	{gallery->text text="Do you really want to delete user '%s'?"
-	             arg1=$user.userName}
-      </td>
-    </tr>
+  {gallery->description}
+    {gallery->text text="This will completely remove <b>%s</b> from Gallery.  There is no undo!" arg1=$AdminDeleteUser.user.userName}
+  {/gallery->description}
 
-    <tr>
-      <td align="center" colspan="2">
-	{gallery->input type="submit" name="form.action.delete"}{gallery->text text="Delete"}{/gallery->input}
-	{gallery->input type="submit" name="form.action.cancel"}{gallery->text text="Cancel"}{/gallery->input}
-      </td>
-    </tr>
-      
-  </table>
-  {/gallery->form}
-
-  
+  {gallery->body}
+    {gallery->input type="hidden" name="userId"}{$AdminDeleteUser.user.id}{/gallery->input}
+    {gallery->input type="submit" name="form.action.delete"}{gallery->text text="Delete"}{/gallery->input}
+    {gallery->input type="submit" name="form.action.cancel"}{gallery->text text="Cancel"}{/gallery->input}
+  {/gallery->body}
+{/gallery->detailedbox}

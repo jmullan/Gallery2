@@ -36,26 +36,11 @@
 class ShowTreeView extends GalleryView {
 
     /**
-     * 
+     * @see GalleryView::loadTemplate
      */
-    function renderHead() {
-	/* Render the HTML head */
-	$template = $this->_getTemplate();
-	list($ret, $html) = $template->render('DebugHead.tpl');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), $html);
-	}
-    
-	return array(GalleryStatus::success(), $html);
-    }
-
-    /**
-     * 
-     */
-    function renderBody($form) {
+    function loadTemplate(&$template, &$form) {
 	global $gallery;
 
-	$return = GalleryUtilities::getFormVariables('return.');
 	list ($entityId, $itemId) = GalleryUtilities::getRequestVariables('entityId', 'itemId');
 
 	/* Make sure we have permission */
@@ -66,7 +51,7 @@ class ShowTreeView extends GalleryView {
 
 	/* Try the entity id.  Fall back to the item id, then the root album id */
 	if (empty($entityId)) {
-	    if (empty($itemId)) {
+	    if (!empty($itemId)) {
 		$entityId = $itemId;
 	    } else {
 		list ($ret, $entityId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
@@ -96,24 +81,27 @@ class ShowTreeView extends GalleryView {
 	}
 
 	foreach ($entityObjects as $entity) {
+	    if (GalleryUtilities::isA($entity, 'GalleryItem')) {
+		$isItem[$entity->getId()] = 1;
+	    } else {
+		$isItem[$entity->getId()] = 0;
+	    }
 	    $entityTable[$entity->getId()] = $entity->getMemberData();
 	}
 
 	/* Render the HTML body */
-	$template = $this->_getTemplate();
-	$template->setVariable('view', 'debug:ShowTree');
-	$template->setVariable('parentIds', $parentIds);
-	$template->setVariable('childIds', $childIds);
-	$template->setVariable('entityId', $entityId);
-	$template->setVariable('entityTable', $entityTable);
-	$template->setVariable('form', $form);
-	$template->setVariable('return', $return);
-	list($ret, $html) = $template->render('ShowTree.tpl');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), $html);
-	}
-	
-	return array(GalleryStatus::success(), $html);
+	$ShowTree = array();
+	$ShowTree['parentIds'] = $parentIds;
+	$ShowTree['childIds'] = $childIds;
+	$ShowTree['entityId'] = $entityId;
+	$ShowTree['entityTable'] = $entityTable;
+	$ShowTree['isItem'] = $isItem;
+	$ShowTree['form'] = $form;
+	$template->setVariable('ShowTree', $ShowTree);
+
+	return array(GalleryStatus::success(),
+		     'modules/debug/templates/DebugHead.tpl',
+		     'modules/debug/templates/ShowTree.tpl');
     }
 }
 ?>

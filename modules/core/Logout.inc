@@ -47,8 +47,11 @@ class LogoutController extends GalleryController {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
-	$results['redirect'] = GalleryUtilities::getFormVariables('return.');
+
+	$results['return'] = 1;
+	$results['redirect']['view'] = 'core:ShowItem';
+	$results['status'] = array();
+	$results['error'] = array();
 
 	return array(GalleryStatus::success(), $results);
     }

@@ -22,6 +22,14 @@
       )
     
       ,
+    DB_COLUMN_PREFIXsubject
+      varchar(
+      
+          128
+        
+      )
+    
+      ,
     DB_COLUMN_PREFIXcomment
       text
     

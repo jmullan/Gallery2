@@ -37,9 +37,9 @@
 class ItemAddChildrenConfirmationView extends GalleryView {
 
     /**
-     * @see GalleryView::renderBody
+     * @see GalleryView::loadTemplate
      */
-    function renderBody($form, $status) {
+    function loadTemplate(&$template, &$form) {
 	global $gallery;
 
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
@@ -52,6 +52,7 @@ class ItemAddChildrenConfirmationView extends GalleryView {
 	 * We know what kind of operation happened, but for now let's compress
 	 * it down so that the template doesn't have to know.
 	 */
+	$status = $template->getVariable('status');
 	if (!empty($status)) {
 	    if (isset($status['addFromLocalServer'])) {
 		$status = $status['addFromLocalServer'];
@@ -61,19 +62,16 @@ class ItemAddChildrenConfirmationView extends GalleryView {
 	    $count = sizeof($status);
 	} else {
 	    $count = 0;
+	    $status = array();
 	}
 
-	/* Render the HTML body */
-	$template = $this->_getTemplate();
-	$template->setVariable('status', $status);
-	$template->setVariable('count', $count);
-	$template->setVariable('item', $item->getMemberData());
-	list($ret, $html) = $template->render('ItemAddChildrenConfirmation.tpl');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), $html);
-	}
+	$ItemAddChildrenConfirmation = array();
+	$ItemAddChildrenConfirmation['count'] = $count;
+	$ItemAddChildrenConfirmation['status'] = $status;
 
-	return array(GalleryStatus::success(), $html);
+	$template->setVariable('ItemAddChildrenConfirmation', $ItemAddChildrenConfirmation);
+	$template->setVariable('controller', '');
+	return array(GalleryStatus::success(), '', 'modules/core/templates/ItemAddChildrenConfirmation.tpl');
     }
 }
 ?>

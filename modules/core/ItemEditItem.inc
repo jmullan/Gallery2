@@ -50,12 +50,14 @@ class ItemEditItemController extends GalleryController {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	$status = array();
+	$error = array();
 	if (isset($form['action']['undo'])) {
 
 	    /* Redirect back to the same view to reset the form */
-	    $redirectParams['view'] = 'core:ItemAdmin';
-	    $redirectParams['subView'] = 'core:ItemEditItem';
-	    $redirectParams['itemId'] = $itemId;
+	    $redirect['view'] = 'core:ItemAdmin';
+	    $redirect['subView'] = 'core:ItemEditItem';
+	    $redirect['itemId'] = $itemId;
 	    
 	} else if (isset($form['action']['save'])) {
 	    /*
@@ -63,9 +65,9 @@ class ItemEditItemController extends GalleryController {
 	     */
 	    $platform = $gallery->getPlatform();
 	    if (empty($form['pathComponent'])) {
-		GalleryUtilities::putRequestVariable('form.error.pathComponent.missing', 1);
+		$error[] = 'form.error.pathComponent.missing';
 	    } else if (!$platform->isLegalPathComponent($form['pathComponent'])) {
-		GalleryUtilities::putRequestVariable('form.error.pathComponent.invalid', 1);
+		$error[] = 'form.error.pathComponent.invalid';
 	    } else {
 		list ($ret, $lockId) = $gallery->acquireWriteLock($itemId);
 		if ($ret->isError()) {
@@ -87,7 +89,7 @@ class ItemEditItemController extends GalleryController {
 		}
 
 		if ($ret->isError() && $ret->getErrorCode() & ERROR_COLLISION) {
-		    GalleryUtilities::putRequestVariable('form.error.pathComponent.collision', 1);
+		    $error[] = 'form.error.pathComponent.collision';
 		} else {
 		    $item->setTitle($form['title']);
 		    $item->setSummary($form['summary']);
@@ -100,9 +102,10 @@ class ItemEditItemController extends GalleryController {
 		    }
 
 		    /* Figure out where to redirect upon success */
-		    $redirectParams['view'] = 'core:ItemAdmin';
-		    $redirectParams['subView'] = 'core:ItemEditItem';
-		    $redirectParams['itemId'] = $itemId;
+		    $redirect['view'] = 'core:ItemAdmin';
+		    $redirect['subView'] = 'core:ItemEditItem';
+		    $redirect['itemId'] = $itemId;
+		    $status['saved'] = 1;
 		}
 
 		$ret = $gallery->releaseLocks($lockId);
@@ -112,14 +115,15 @@ class ItemEditItemController extends GalleryController {
 	    }
 	}
 
-	if (!empty($redirectParams)) {
-	    $results['redirect'] = $redirectParams;
+	if (!empty($redirect)) {
+	    $results['redirect'] = $redirect;
 	} else {
-	    if (empty($results['view'])) {
-		$results['view'] = 'core:ItemAdmin';
-		GalleryUtilities::putRequestVariable('subView', 'core:ItemEditItem');
-	    }
+	    $results['delegate']['view'] = 'core:ItemAdmin';
+	    $results['delegate']['subView'] = 'core:ItemEditItem';
 	}
+	$results['status'] = $status;
+	$results['error'] = $error;
+	
 
 	return array(GalleryStatus::success(), $results);
     }
@@ -134,9 +138,9 @@ class ItemEditItemController extends GalleryController {
 class ItemEditItemView extends GalleryView {
 
     /**
-     * @see GalleryView::renderBody
+     * @see GalleryView::loadTemplate
      */
-    function renderBody($form) {
+    function loadTemplate(&$template, &$form) {
 	global $gallery;
 
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
@@ -159,26 +163,16 @@ class ItemEditItemView extends GalleryView {
 	    $form['keywords'] = $item->getKeywords();
 	    $form['description'] = $item->getDescription();
 	    $form['pathComponent'] = $item->getPathComponent();
+	    $form['formName'] = 'ItemEditItem';
 	}
 
-	/* Load the parents */
-	list ($ret, $parents) = $item->fetchParents();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
+	$ItemEditItem = array();
 
 	/* Render the HTML body */
-	$template = $this->_getTemplate();
-	$template->setVariable('form', $form);
-	$template->setVariable('item', $item->getMemberData());
-	$template->setVariable('parents', $parents);
+	$template->setVariable('ItemEditItem', $ItemEditItem);
 	$template->setVariable('controller', 'core:ItemEditItem');
-	list($ret, $html) = $template->render('ItemEditItem.tpl');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), $html);
-	}
 
-	return array(GalleryStatus::success(), $html);
+	return array(GalleryStatus::success(), '', 'modules/core/templates/ItemEditItem.tpl');
     }
 }
 ?>

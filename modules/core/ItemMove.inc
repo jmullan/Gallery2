@@ -46,10 +46,11 @@ class ItemMoveController extends GalleryController {
 
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
 
+	$status = array();
+	$error = array();
 	if (isset($form['action']['move'])) {
 
 	    /* First check if everything would be okay with the change */
-	    $problem = false;
 	    $canAddItem = false;
 	    $canAddAlbum = false;
 	    if (!empty($form['destination'])) {
@@ -64,8 +65,7 @@ class ItemMoveController extends GalleryController {
 		$canAddItem = isset($permissions['core.addDataItem']);
 		$canAddAlbum = isset($permissions['core.addAlbumItem']);
 		if (!$canAddAlbum && !$canAddItem) {
-		    $problem = true;
-		    GalleryUtilities::putRequestVariable('form.error.destination.permission', 1);
+		    $error[] = 'form.error.destination.permission';
 		}
 
 		/* Load the destination item */
@@ -85,11 +85,10 @@ class ItemMoveController extends GalleryController {
 		}
 		$newParentAncestorIds[] = $newParentId;
 	    } else {
-		$problem = true;
-		GalleryUtilities::putRequestVariable('form.error.destination.empty', 1);
+		$error[] = 'form.error.destination.empty';
 	    }
 	    
-	    if (!$problem && !empty($form['selectedIds'])) {
+	    if (empty($error) && !empty($form['selectedIds'])) {
 		$selectedIds = array_keys($form['selectedIds']);
 		GalleryUtilities::putRequestVariable('form.selectedIds', $selectedIds);
 		
@@ -111,9 +110,7 @@ class ItemMoveController extends GalleryController {
 
 		    foreach ($newParentAncestorIds as $newParentAncestorId) {
 			if ($selectedId == $newParentAncestorId) {
-			    $problem = true;
-			    GalleryUtilities::putRequestVariable('form.error.source.' . $selectedId .
-								 '.selfMove', 1);
+			    $error[] = 'form.error.source.' . $selectedId . '.selfMove';
 			    continue 2; // Skip out of the foreach($selectedItem) also
 			}
 		    }
@@ -126,26 +123,20 @@ class ItemMoveController extends GalleryController {
 
 		    /* Can we delete this item from here? */
 		    if (! isset($permissions['core.delete'])) {
-			$problem = true;
-			GalleryUtilities::putRequestVariable('form.error.source.' . $selectedId .
-							     '.permission.delete', 1);
+			$error[] = 'form.error.source.' . $selectedId . '.permission.delete';
 		    }
 		    
 		    /* Check if the destination allows this source to be added */
 		    if ($selectedItem->getCanContainChildren() && ! $canAddAlbum) {
-			$problem = true;
-			GalleryUtilities::putRequestVariable('form.error.source.' . $selectedId .
-							     '.permission.addAlbumItem', 1);
+			$error[] = 'form.error.source.' . $selectedId . '.permission.addAlbumItem';
 		    } elseif (! $selectedItem->getCanContainChildren() && ! $canAddItem) {
-			$problem = true;
-			GalleryUtilities::putRequestVariable('form.error.source.' . $selectedId .
-							     '.permission.addDataItem', 1);
+			$error[] = 'form.error.source.' . $selectedId . '.permission.addDataItem';
 		    }
 		}
 		$oldParentIds = array_values(array_unique($oldParentIds));
 	    }
 	    
-	    if (!$problem && !empty($selectedIds) && !empty($newParentId)) {
+	    if (empty($error) && !empty($selectedIds) && !empty($newParentId)) {
 
 		/* Read lock myself, my parent id and the new parent id */
 		$lockIds = array();
@@ -179,19 +170,19 @@ class ItemMoveController extends GalleryController {
 		}
 
 		/* Figure out where to redirect upon success */
-		$redirectParams['view'] = 'core:ItemAdmin';
-		$redirectParams['itemId'] = $itemId;
+		$redirect['view'] = 'core:ItemAdmin';
+		$redirect['itemId'] = $itemId;
 	    }
 	}
 
-	if (!empty($redirectParams)) {
-	    $results['redirect'] = $redirectParams;
+	if (!empty($redirect)) {
+	    $results['redirect'] = $redirect;
 	} else {
-	    if (empty($results['view'])) {
-		$results['view'] = 'core:ItemAdmin';
-		GalleryUtilities::putRequestVariable('subView', 'core:ItemMove');
-	    }
+	    $results['delegate']['view'] = 'core:ItemAdmin';
+	    $results['delegate']['subView'] = 'core:ItemMove';
 	}
+	$results['status'] = $status;
+	$results['error'] = $error;
 
 	return array(GalleryStatus::success(), $results);
     }
@@ -209,21 +200,19 @@ class ItemMoveView extends GalleryView {
     /**
      * 
      */
-    function renderBody($form) {
+    function loadTemplate(&$template, &$form) {
 	global $gallery;
 
 	/* itemId is the album where we want to move items from */
 	list ($itemId, $selectedId) = GalleryUtilities::getRequestVariables('itemId', 'selectedId');
 
-        if ($form['formName'] == 'ItemMove') {
-	    /* No validation at the moment */
-        } else {
+        if ($form['formName'] != 'ItemMove') {
             /* First time around, load the form with item data */
-            $form = array();
             if ($selectedId) {
                 $form['selectedIds'][$selectedId] = true;
             }
             $form['destination'] = '';
+	    $form['formName'] = 'ItemMove';
         }
 
         list ($ret, $item) = $gallery->loadEntitiesById($itemId);
@@ -288,21 +277,16 @@ class ItemMoveView extends GalleryView {
 
 	$albumTree = $this->_createAlbumTree($albums);
 
-        /* Render the HTML body */
-        $template = $this->_getTemplate();
-	$template->setVariable('albumIds', $albumIds);
-        $template->setVariable('item', $item->getMemberData());
-        $template->setVariable('form', $form);
-        $template->setVariable('peers', $peers);
-        $template->setVariable('peerTypes', $peerTypes);
-        $template->setVariable('albumTree', $albumTree);
-        $template->setVariable('controller', 'core:ItemMove');
-        list($ret, $html) = $template->render('ItemMove.tpl');
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), $html);
-        }
+	$ItemMove = array();
 
-        return array(GalleryStatus::success(), $html);
+	$ItemMove['albumIds'] = $albumIds;
+        $ItemMove['peers'] = $peers;
+        $ItemMove['peerTypes'] = $peerTypes;
+        $ItemMove['albumTree'] = $albumTree;
+        $template->setVariable('ItemMove', $ItemMove);
+        $template->setVariable('controller', 'core:ItemMove');
+
+        return array(GalleryStatus::success(), '', 'modules/core/templates/ItemMove.tpl');
     }
 
     /**

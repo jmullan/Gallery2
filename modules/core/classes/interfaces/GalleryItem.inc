@@ -67,11 +67,6 @@ class GalleryItem extends GalleryItem_core {
             'type' => STORAGE_TYPE_STRING
         );
     
-        $meta['members']['layout'] = array(
-            'class' => 'GalleryItem',
-            'type' => STORAGE_TYPE_STRING
-        );
-    
         $meta['members']['orderBy'] = array(
             'class' => 'GalleryItem',
             'type' => STORAGE_TYPE_STRING
@@ -135,12 +130,6 @@ class GalleryItem extends GalleryItem_core {
             $data['keywords'] = null;
         } else {
             $data['keywords'] = $this->_keywords;
-        }
-    
-        if (!isset($this->_layout)) {
-            $data['layout'] = null;
-        } else {
-            $data['layout'] = $this->_layout;
         }
     
         if (!isset($this->_orderBy)) {
@@ -311,42 +300,6 @@ class GalleryItem extends GalleryItem_core {
         if ($a != $b) {
             $this->_keywords = $value;
             $this->setModifiedFlag('keywords', MEMBER_MODIFIED);
-        }
-    }
-  
-    /**
-     * Get the value of layout
-     *
-     * @return STRING the value
-     */
-    function getlayout() {
-        if (!isset($this->_layout)) {
-            return null;
-        }
-        return $this->_layout;
-    }
-
-    /**
-     * Set the value of layout
-     *
-     * @param STRING the value
-     */
-    function setlayout($value) {
-
-        /* 
-         * Convert unset values to null, to avoid generating warnings.
-         */
-	$a = isset($value) ? $value : null;
-	$b = isset($this->_layout) ? $this->_layout : null;
-
-    
-        /* 
-         * Only take action if the value actually changes, but take care not to 
-         * generate warnings for unset values.
-         */
-        if ($a != $b) {
-            $this->_layout = $value;
-            $this->setModifiedFlag('layout', MEMBER_MODIFIED);
         }
     }
   

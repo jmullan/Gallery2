@@ -41,9 +41,7 @@ class EditCommentController extends GalleryController {
     function handleRequest($form) {
 	global $gallery;
 
-	list ($itemId, $commentId) =
-	    GalleryUtilities::getRequestVariables('itemId', 'commentId');
-	$return = GalleryUtilities::getFormVariables('return.');
+	list ($itemId, $commentId) = GalleryUtilities::getRequestVariables('itemId', 'commentId');
 
 	/* Make sure we have permission to edit a comment */
 	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'comment.edit');
@@ -51,6 +49,8 @@ class EditCommentController extends GalleryController {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	$status = array();
+	$error = array();
 	if (isset($form['action']['save'])) {
 	    /* Edit the comment */
 	    list ($ret, $comment) = $gallery->loadEntitiesById($commentId);
@@ -64,32 +64,34 @@ class EditCommentController extends GalleryController {
 	    }
 
 	    /* Verify the input parameters */
-	    $valid = true;
 	    if (empty($form['commenterName'])) {
-		GalleryUtilities::putRequestVariable('form.error.missingCommenterName', 1);
-		$valid = false;
+		$error[] = 'form.error.commenterName.missing';
 	    } else {
 		list ($ret, $commenter) = GalleryUserHelper::fetchUserByUsername($form['commenterName']);
 		if ($ret->isError()) {
-		    GalleryUtilities::putRequestVariable('form.error.invalidCommenterName', 1);
-		    $valid = false;
+		    $error[] = 'form.error.commenterName.invalid';
 		}
 	    }
 
+	    $longDate = null;
 	    if (empty($form['date'])) {
-		GalleryUtilities::putRequestVariable('form.error.missingDate', 1);
-		$valid = false;
+		$error[] = 'form.error.date.missing';
 	    } else {
-		$newDate = strtotime($form['date']);
-		if ($newDate == -1) {
-		    GalleryUtilities::putRequestVariable('form.error.invalidDate', 1);
-		    $valid = false;
-		} else {
-		    $form['date'] = $newDate;
+		$longDate = strtotime($form['date']);
+		if ($longDate == -1) {
+		    $error[] = 'form.error.invalidDate';
 		}
 	    }
 
-	    if ($valid) {
+	    if (empty($form['subject'])) {
+		$error[] = 'form.error.subject.missing';
+	    }
+
+	    if (empty($form['comment'])) {
+		$error[] = 'form.error.comment.missing';
+	    }
+
+	    if (empty($error)) {
 		list ($ret, $lockId) = $gallery->acquireWriteLock(array($comment->getId()));
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -99,11 +101,12 @@ class EditCommentController extends GalleryController {
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-		
+
 		$comment->setCommenterId($commenter->getId());
 		$comment->setHost($form['host']);
+		$comment->setSubject($form['subject']);
 		$comment->setComment($form['comment']);
-		$comment->setDate($form['date']);
+		$comment->setDate($longDate);
 		$ret = $comment->save();
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -113,17 +116,29 @@ class EditCommentController extends GalleryController {
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-	    
-		/* Redirect back to the return path */
-		$results['redirect'] = $return;
-	    } else {
-		/* Stay on the same page */
-		$results['view'] = 'comment:EditComment';
+
+		$status['changed'] = 1;
+		$redirect['view'] = 'core:ItemAdmin';
+		$redirect['subView'] = 'comment:CommentChangeConfirmation';
+		$redirect['itemId'] = (int)$itemId;
 	    }
-	} else {
-	    /* Redirect back to the return path */
-	    $results['redirect'] = $return;
+	} else if (isset($form['action']['cancel'])) {
+	    /* Where to go on a cancel?  Go to item admin.*/
+	    $redirect['view'] = 'core:ItemAdmin';
+	    $redirect['itemId'] = (int)$itemId;
 	}
+
+	if (!empty($redirect)) {
+	    /* Redirect back to the confirmation page by default */
+	    $results['return'] = 1;
+	    $results['redirect'] = $redirect;
+	} else {
+	    /* Stay on the same page */
+	    $results['delegate']['view'] = 'core:ItemAdmin';
+	    $results['delegate']['subView'] = 'comment:EditComment';
+	}
+	$results['status'] = $status;
+	$results['error'] = $error;
 
 	return array(GalleryStatus::success(), $results);
     }
@@ -139,94 +154,60 @@ class EditCommentController extends GalleryController {
 class EditCommentView extends GalleryView {
 
     /**
-     * @see GalleryView::renderHead()
+     * @see GalleryView::loadTemplate
      */
-    function renderHead() {
+    function loadTemplate(&$template, &$form) {
 	global $gallery;
 
 	/* Load our item */
 	list ($ret, $item) = $this->_getItem();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	/* Render the HTML head */
-	$template = $this->_getTemplate();
-	$template->setVariable('item', $item->getMemberData());
-	list($ret, $html) = $template->render('EditCommentHead.tpl');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), $html);
-	}
-	return array(GalleryStatus::success(), $html);
-    }
-    
-    /**
-     * @see GalleryView::renderBody()
-     */
-    function renderBody($form) {
-	global $gallery;
-
-	/* Load our item */
-	list ($ret, $item) = $this->_getItem();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	/* Make sure we have permission to edit a comment */
 	$ret = GalleryUserHelper::assertHasItemPermission($item->getId(), 'comment.edit');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
-	/* Get its thumbnail */
-	list ($ret, $thumbnailTable) = 
-		GalleryDerivativeHelper::fetchThumbnailsByItemIds(array($item->getId()));
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
+	$commentId = GalleryUtilities::getRequestVariables('commentId');
 
 	/* Load the specific comment */
-	$commentId = GalleryUtilities::getRequestVariables('commentId');
 	list ($ret, $comment) = $gallery->loadEntitiesById($commentId);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+
+	/* Make sure the comment is associated with the item */
+	if ($comment->getParentId() != $item->getId()) {
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null, null);
 	}
 
 	/* Associate the commenter's info */
 	$commenterId = $comment->getCommenterId();
 	list ($ret, $commenter) = $gallery->loadEntitiesById($commenterId);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	if ($form['formName'] != 'EditComment') {
 	    $form['commenterName'] = $commenter->getUserName();
 	    $form['host'] = $comment->getHost();
-	    $form['date'] = $comment->getDate();
 	    $form['comment'] = $comment->getComment();
-	}
-	
-	/* Render the HTML body */
-	$template = $this->_getTemplate();
-	
-	if (!empty($thumbnailTable)) {
-	    $thumbnail = $thumbnailTable[$item->getId()];
-	    $template->setVariable('thumbnail', $thumbnail->getMemberData());
-	}
-	
-	$return = GalleryUtilities::getFormVariables('return.');
+	    $form['subject'] = $comment->getSubject();
+	    $form['formName'] = 'EditComment';
 
-	$template->setVariable('return', $return);
-	$template->setVariable('item', $item->getMemberData());
-	$template->setVariable('comment', $comment->getMemberData());
-	$template->setVariable('form', $form);
-	$template->setVariable('controller', 'comment:EditComment');
-	list($ret, $html) = $template->render('EditComment.tpl');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), $html);
+	    // XXX: this needs internationalization
+	    $form['date'] = strftime('%D %T', $comment->getDate());
 	}
+
+	$EditComment['comment'] = $comment->getMemberData();
+
+	$template->setVariable('EditComment', $EditComment);
+	$template->setVariable('controller', 'comment:EditComment');
 	
-	return array(GalleryStatus::success(), $html);
+	return array(GalleryStatus::success(), '', 'modules/comment/templates/EditComment.tpl');
     }
 }
 ?>

@@ -57,20 +57,26 @@ class UserPreferencesControllerTest extends GalleryControllerTestCase {
 
     function testCancel() {
 	GalleryUtilities::putRequestVariable('form.action.cancel', 1);
-	GalleryUtilities::putRequestVariable('return.x', 'y');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('x' => 'y'),
-				  'status' => array()),
+	$this->assertEquals(array('return' => 'true',
+				  'redirect' => array('view' => 'core:UserAdmin',
+						      'subView' => 'core:UserPreferences'),
+				  'status' => array(),
+				  'error' => array()),
 			    $results);
+	
     }
 
     function testUndo() {
 	GalleryUtilities::putRequestVariable('form.action.undo', 1);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:UserPreferences'),
-				  'status' => array()),
+	$this->assertEquals(array('return' => 'true',
+				  'redirect' => array('view' => 'core:UserAdmin',
+						      'subView' => 'core:UserPreferences'),
+				  'status' => array(),
+				  'error' => array()),
 			    $results);
     }
 
@@ -79,12 +85,13 @@ class UserPreferencesControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.fullName', 'full name');
 	GalleryUtilities::putRequestVariable('form.email', 'email');
 	GalleryUtilities::putRequestVariable('form.language', 'language');
-	GalleryUtilities::putRequestVariable('form.password1', 'newPassword');
-	GalleryUtilities::putRequestVariable('form.password2', 'newPassword');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:UserPreferences'),
-				  'status' => array('saved' => 1)),
+	$this->assertEquals(array('return' => 'true',
+				  'redirect' => array('view' => 'core:UserAdmin',
+						      'subView' => 'core:UserPreferences'),
+				  'status' => array('saved' => 1),
+				  'error' => array()),
 			    $results);
 
 	/* Load back the user object and make sure the data got saved */
@@ -96,7 +103,6 @@ class UserPreferencesControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals($this->_user->getFullName(), 'full name');
 	$this->assertEquals($this->_user->getEmail(), 'email');
 	$this->assertEquals($this->_user->getLanguage(), 'language');
-	$this->assert($this->_user->isCorrectPassword('newPassword'));
     }
 
     function testEditRequiredOnly() {
@@ -105,41 +111,25 @@ class UserPreferencesControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.email', 'email');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:UserPreferences'),
-				  'status' => array('saved' => 1)),
+	$this->assertEquals(array('return' => 'true',
+				  'redirect' => array('view' => 'core:UserAdmin',
+						      'subView' => 'core:UserPreferences'),
+				  'status' => array('saved' => 1),
+				  'error' => array()),
 			    $results);
     }
 
-    function testEditPasswordMismatch() {
-	GalleryUtilities::putRequestVariable('form.action.save', 1);
-	GalleryUtilities::putRequestVariable('form.fullName', 'full name');
-	GalleryUtilities::putRequestVariable('form.email', 'email');
-	GalleryUtilities::putRequestVariable('form.password1', 'a');
-	GalleryUtilities::putRequestVariable('form.password2', 'b');
-
-	$results = $this->handleRequest();
-	$this->assertEquals(array('view' => 'core:UserPreferences'), $results);
-	$this->assert(GalleryUtilities::hasRequestVariable('form.error.password.mismatch'));
-    }
-    
     function testEditMissingEmail() {
 	GalleryUtilities::putRequestVariable('form.action.save', 1);
 	GalleryUtilities::putRequestVariable('form.fullName', 'full name');
 	// GalleryUtilities::putRequestVariable('form.email', 'email');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('view' => 'core:UserPreferences'), $results);
-	$this->assert(GalleryUtilities::hasRequestVariable('form.error.email.missing'));
-    }
-    
-    function testEditMissingFullName() {
-	GalleryUtilities::putRequestVariable('form.action.save', 1);
-	// GalleryUtilities::putRequestVariable('form.fullName', 'full name');
-	GalleryUtilities::putRequestVariable('form.email', 'email');
-
-	$results = $this->handleRequest();
-	$this->assertEquals(array('view' => 'core:UserPreferences'), $results);
-	$this->assert(GalleryUtilities::hasRequestVariable('form.error.fullName.missing'));
+	$this->assertEquals(array('delegate' => array('view' => 'core:UserAdmin',
+						      'subView' => 'core:UserPreferences'),
+				  'status' => array(),
+				  'error' => array('form.error.email.missing')),
+			    $results);
     }
 }
 ?>

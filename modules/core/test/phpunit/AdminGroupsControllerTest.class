@@ -108,8 +108,11 @@ class AdminGroupsControllerTest extends GalleryControllerTestCase {
 	
 	$results = $this->handleRequest();
 
-	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
-	$this->assertEquals('core:AdminCreateGroup', GalleryUtilities::getRequestVariables('subView'));
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminCreateGroup'),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
     }
 
     function testEditFromList() {
@@ -120,18 +123,23 @@ class AdminGroupsControllerTest extends GalleryControllerTestCase {
 	
 	$results = $this->handleRequest();
 
-	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
-	$this->assertEquals('core:AdminEditGroup', GalleryUtilities::getRequestVariables('subView'));
-	$this->assertEquals($groupId, (int)GalleryUtilities::getRequestVariables('groupId'));
-
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminEditGroup',
+						      'groupId' => $groupId),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
 	
 	/* Failure - don't select a group */
 	GalleryUtilities::putRequestVariable('form.action.editFromList', 1);
 	GalleryUtilities::removeRequestVariable('form.list.groupId');
 	
 	$results = $this->handleRequest();
-
-	$this->assert(GalleryUtilities::hasRequestVariable('form.error.list.noGroupSelected'));
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminGroups'),
+				  'status' => array(),
+				  'error' => array('form.error.list.noGroupSelected')),
+			    $results);
     }
 
     function testEditUsersFromList() {
@@ -148,17 +156,23 @@ class AdminGroupsControllerTest extends GalleryControllerTestCase {
 	
 	$results = $this->handleRequest();
 
-	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
-	$this->assertEquals('core:AdminEditGroupUsers', GalleryUtilities::getRequestVariables('subView'));
-	$this->assertEquals((int)$groupId, (int)GalleryUtilities::getRequestVariables('groupId'));
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminEditGroupUsers',
+						      'groupId' => $groupId),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
 	
 	/* Failure - don't select a group */
 	GalleryUtilities::putRequestVariable('form.action.addRemoveUsersFromList', 1);
 	GalleryUtilities::removeRequestVariable('form.list.groupId');
 	
 	$results = $this->handleRequest();
-
-	$this->assert(GalleryUtilities::hasRequestVariable('form.error.list.noGroupSelected'));
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminGroups'),
+				  'status' => array(),
+				  'error' => array('form.error.list.noGroupSelected')),
+			    $results);
 
 	/* Failure - select the all users group */
 	list ($ret, $groupId) = $gallery->getModuleParameter('core', 'id.allUserGroup');
@@ -170,9 +184,11 @@ class AdminGroupsControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.list.groupId', $groupId);
 	
 	$results = $this->handleRequest();
-
-	$this->assert(GalleryUtilities::hasRequestVariable('form.error.list.cantEditUsers'));
-	
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminGroups'),
+				  'status' => array(),
+				  'error' => array('form.error.list.cantEditUsers')),
+			    $results);
     }
 
     function testDeleteFromList() {
@@ -189,9 +205,12 @@ class AdminGroupsControllerTest extends GalleryControllerTestCase {
 	
 	$results = $this->handleRequest();
 
-	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
-	$this->assertEquals('core:AdminDeleteGroup', GalleryUtilities::getRequestVariables('subView'));
-	$this->assertEquals($group->getId(), (int)GalleryUtilities::getRequestVariables('groupId'));
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminDeleteGroup',
+						      'groupId' => $group->getId()),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
 	$this->_deleteGroup($group);
 
 	
@@ -200,8 +219,11 @@ class AdminGroupsControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::removeRequestVariable('form.list.groupId');
 	
 	$results = $this->handleRequest();
-	$this->assert(GalleryUtilities::hasRequestVariable('form.error.list.noGroupSelected'));
-
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminGroups'),
+				  'status' => array(),
+				  'error' => array('form.error.list.noGroupSelected')),
+			    $results);
 
 	/* Failure - select the all users group */
 	list ($ret, $groupId) = $gallery->getModuleParameter('core', 'id.allUserGroup');
@@ -211,8 +233,11 @@ class AdminGroupsControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.action.deleteFromList', 1);
 	GalleryUtilities::putRequestVariable('form.list.groupId', $groupId);
 	$results = $this->handleRequest();
-	$this->assert(GalleryUtilities::hasRequestVariable('form.error.list.cantDeleteAllUsersGroup'));
-	
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminGroups'),
+				  'status' => array(),
+				  'error' => array('form.error.list.cantDeleteAllUsersGroup')),
+			    $results);
 
 	/* Failure - select the admin users group */
 	list ($ret, $groupId) = $gallery->getModuleParameter('core', 'id.adminGroup');
@@ -222,7 +247,11 @@ class AdminGroupsControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.action.deleteFromList', 1);
 	GalleryUtilities::putRequestVariable('form.list.groupId', $groupId);
 	$results = $this->handleRequest();
-	$this->assert(GalleryUtilities::hasRequestVariable('form.error.list.cantDeleteAdminGroup'));
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminGroups'),
+				  'status' => array(),
+				  'error' => array('form.error.list.cantDeleteAdminGroup')),
+			    $results);
     }
 
     function testEditFromText() {
@@ -236,30 +265,35 @@ class AdminGroupsControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.text.groupName', $group->getGroupName());
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
-	$this->assertEquals('core:AdminEditGroup', GalleryUtilities::getRequestVariables('subView'));
-	$this->assertEquals($group->getId(), (int)GalleryUtilities::getRequestVariables('groupId'));
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminEditGroup',
+						      'groupId' => $group->getId()),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
 	$this->_deleteGroup($group);
 
-	
 	/* Missing group name */
 	GalleryUtilities::putRequestVariable('form.action.editFromText', 1);
 	GalleryUtilities::removeRequestVariable('form.text.groupName');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
-	$this->assertEquals('core:AdminGroups', GalleryUtilities::getRequestVariables('subView'));
-	$this->assert(GalleryUtilities::hasRequestVariable('form.error.text.noGroupSpecified'));
-
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminGroups'),
+				  'status' => array(),
+				  'error' => array('form.error.text.noGroupSpecified')),
+			    $results);
 
 	/* Invalid group name */
 	GalleryUtilities::putRequestVariable('form.action.editFromText', 1);
 	GalleryUtilities::putRequestVariable('form.text.groupName', 'some-invalid-group-name-'.rand());
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
-	$this->assertEquals('core:AdminGroups', GalleryUtilities::getRequestVariables('subView'));
-	$this->assert(GalleryUtilities::hasRequestVariable('form.error.text.noSuchGroup'));
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminGroups'),
+				  'status' => array(),
+				  'error' => array('form.error.text.noSuchGroup')),
+			    $results);
     }
 
     function testDeleteFromText() {
@@ -273,30 +307,35 @@ class AdminGroupsControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.text.groupName', $group->getGroupName());
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
-	$this->assertEquals('core:AdminDeleteGroup', GalleryUtilities::getRequestVariables('subView'));
-	$this->assertEquals($group->getId(), (int)GalleryUtilities::getRequestVariables('groupId'));
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminDeleteGroup',
+						      'groupId' => $group->getId()),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
 	$this->_deleteGroup($group);
 
-	
 	/* Missing group name */
 	GalleryUtilities::putRequestVariable('form.action.deleteFromText', 1);
 	GalleryUtilities::removeRequestVariable('form.text.groupName');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
-	$this->assertEquals('core:AdminGroups', GalleryUtilities::getRequestVariables('subView'));
-	$this->assert(GalleryUtilities::hasRequestVariable('form.error.text.noGroupSpecified'));
-
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminGroups'),
+				  'status' => array(),
+				  'error' => array('form.error.text.noGroupSpecified')),
+			    $results);
 
 	/* Invalid group name */
 	GalleryUtilities::putRequestVariable('form.action.deleteFromText', 1);
 	GalleryUtilities::putRequestVariable('form.text.groupName', 'some-invalid-group-name-'.rand());
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
-	$this->assertEquals('core:AdminGroups', GalleryUtilities::getRequestVariables('subView'));
-	$this->assert(GalleryUtilities::hasRequestVariable('form.error.text.noSuchGroup'));
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminGroups'),
+				  'status' => array(),
+				  'error' => array('form.error.text.noSuchGroup')),
+			    $results);
     }
 
     function testEditUsersFromText() {
@@ -310,29 +349,35 @@ class AdminGroupsControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.text.groupName', $group->getGroupName());
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
-	$this->assertEquals('core:AdminEditGroupUsers', GalleryUtilities::getRequestVariables('subView'));
-	$this->assertEquals($group->getId(), (int)GalleryUtilities::getRequestVariables('groupId'));
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminEditGroupUsers',
+						      'groupId' => $group->getId()),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
 	$this->_deleteGroup($group);
 
-	
 	/* Missing group name */
 	GalleryUtilities::putRequestVariable('form.action.addRemoveUsersFromText', 1);
 	GalleryUtilities::removeRequestVariable('form.text.groupName');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
-	$this->assertEquals('core:AdminGroups', GalleryUtilities::getRequestVariables('subView'));
-	$this->assert(GalleryUtilities::hasRequestVariable('form.error.text.noGroupSpecified'));
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminGroups'),
+				  'status' => array(),
+				  'error' => array('form.error.text.noGroupSpecified')),
+			    $results);
 
 	/* Invalid group name */
 	GalleryUtilities::putRequestVariable('form.action.addRemoveUsersFromText', 1);
 	GalleryUtilities::putRequestVariable('form.text.groupName', 'some-invalid-group-name-'.rand());
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
-	$this->assertEquals('core:AdminGroups', GalleryUtilities::getRequestVariables('subView'));
-	$this->assert(GalleryUtilities::hasRequestVariable('form.error.text.noSuchGroup'));
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminGroups'),
+				  'status' => array(),
+				  'error' => array('form.error.text.noSuchGroup')),
+			    $results);
     }
 
     function _createGroup() {

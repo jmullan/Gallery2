@@ -54,6 +54,8 @@ class AdminCommentsController extends GalleryController {
 	$redirectParams['subView'] = 'comment:AdminComments';
 
 	$results['redirect'] = $redirectParams;
+	$results['status'] = array();
+	$results['error'] = array();
 
 	return array(GalleryStatus::success(), $results);
     }
@@ -69,20 +71,16 @@ class AdminCommentsController extends GalleryController {
 class AdminCommentsView extends GalleryView {
 
     /**
-     * @see GalleryView::renderBody()
+     * @see GalleryView::loadTemplate
      */
-    function renderBody($form) {
+    function loadTemplate(&$template, &$form) {
 	global $gallery;
 
-	/* Render the HTML body */
-	$template = $this->_getTemplate();
+	$form['formName'] = 'AdminComments';
 	$template->setVariable('controller', 'comment:AdminComments');
-	list($ret, $html) = $template->render('AdminComments.tpl');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), $html);
-	}
-	
-	return array(GalleryStatus::success(), $html);
+	return array(GalleryStatus::success(),
+		     '',
+		     'modules/comment/templates/AdminComments.tpl');
     }
 }
 ?>

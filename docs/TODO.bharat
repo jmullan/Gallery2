@@ -1,11 +1,16 @@
 SHORT TERM
 ----------
+- augment debug code listing using http://us2.php.net/manual/en/function.highlight-file.php
+- Uploading hundreds of files stores too much (>64K) data in the session status
+  field, breaking the session
 - Fix the AdminEditUser code so that it can change the username
+- Fix AdminEditGroup so that it detects missing and duplicate group names
 - implement simple/advanced user setting
 - make query definitions static where possible
 - investigate why "CreateRandomTree" test case isn't an ACID transaction
   (while it's running, you can see the items getting added to the db from 
    another transaction??)
+- let the UrlGenerator delegate to the views to create and parse URLs.
 
 MEDIUM TERM
 -----------

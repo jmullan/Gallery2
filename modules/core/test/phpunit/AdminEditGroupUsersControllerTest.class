@@ -35,22 +35,6 @@ class AdminEditGroupUsersControllerTest extends GalleryControllerTestCase {
 	$this->GalleryControllerTestCase($methodName, 'core:AdminEditGroupUsers');
     }
 
-    function testDone() {
-	list ($ret, $group) = $this->_createGroup();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	GalleryUtilities::putRequestVariable('groupId', $group->getId());
-	GalleryUtilities::putRequestVariable('form.action.done', 1);
-
-
-	$results = $this->handleRequest();
-	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
-	$this->assertEquals('core:AdminGroups', GalleryUtilities::getRequestVariables('subView'));
-	$this->_deleteGroup($group);
-    }
-
     function setUp() {
 	parent::setUp();
 	
@@ -75,6 +59,25 @@ class AdminEditGroupUsersControllerTest extends GalleryControllerTestCase {
 	parent::tearDown();
     }
     
+    function testDone() {
+	list ($ret, $group) = $this->_createGroup();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	GalleryUtilities::putRequestVariable('groupId', $group->getId());
+	GalleryUtilities::putRequestVariable('form.action.done', 1);
+
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminGroups'),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
+	$this->_deleteGroup($group);
+    }
+
     function testRemoveUser() {
 	/* Add the user to the group */
 	$ret = GalleryUserGroupMap::addUserToGroup($this->_user->getId(), $this->_group->getId());
@@ -91,7 +94,8 @@ class AdminEditGroupUsersControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'core:AdminEditGroupUsers',
 						      'groupId' => $this->_group->getId()),
-				  'status' => array('removedUser' => $this->_user->getUserName())),
+				  'status' => array('removedUser' => $this->_user->getUserName()),
+				  'error' => array()),
 			    $results);
     }
 
@@ -105,7 +109,8 @@ class AdminEditGroupUsersControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'core:AdminEditGroupUsers',
 						      'groupId' => $this->_group->getId()),
-				  'status' => array('addedUser' => $this->_user->getUserName())),
+				  'status' => array('addedUser' => $this->_user->getUserName()),
+				  'error' => array()),
 			    $results);
     }
     
@@ -116,9 +121,11 @@ class AdminEditGroupUsersControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 
-	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
-	$this->assertEquals('core:AdminEditGroupUsers', GalleryUtilities::getRequestVariables('subView'));
-	$this->assert(GalleryUtilities::hasRequestVariable('form.error.text.userName.invalid'));
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminEditGroupUsers'),
+				  'status' => array(),
+				  'error' => array('form.error.text.userName.invalid')),
+			    $results);
     }
 
     function testAddMissingUser() {
@@ -128,9 +135,11 @@ class AdminEditGroupUsersControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 
-	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
-	$this->assertEquals('core:AdminEditGroupUsers', GalleryUtilities::getRequestVariables('subView'));
-	$this->assert(GalleryUtilities::hasRequestVariable('form.error.text.userName.missing'));
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminEditGroupUsers'),
+				  'status' => array(),
+				  'error' => array('form.error.text.userName.missing')),
+			    $results);
     }
     
     function _createGroup() {

@@ -37,56 +37,15 @@
 class ShowCommentsView extends GalleryView {
 
     /**
-     * @see GalleryView::renderHead()
+     * @see GalleryView::loadTemplate
      */
-    function renderHead() {
+    function loadTemplate(&$template, &$form) {
 	global $gallery;
 
 	/* Load our item */
 	list ($ret, $item) = $this->_getItem();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	/* Load our item */
-	list ($ret, $item) = $this->_getItem();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	
-	/* Render the HTML head */
-	$template = $this->_getTemplate();
-	$template->setVariable('item', $item->getMemberData());
-	list($ret, $html) = $template->render('ShowCommentsHead.tpl');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), $html);
-	}
-    
-	return array(GalleryStatus::success(), $html);
-    }
-    
-    /**
-     * @see GalleryView::renderBody
-     */
-    function renderBody($form) {
-	global $gallery;
-
-	/* Load our item */
-	list ($ret, $item) = $this->_getItem();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	/* Find its thumbnail */
-	list ($ret, $thumbnailTable) =
-		GalleryDerivativeHelper::fetchThumbnailsByItemIds(array($item->getId()));
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	if (empty($thumbnailTable)) {
-	    $thumbnailData = null;
-	} else {
-	    $thumbnail = $thumbnailTable[$item->getId()];
 	}
 
 	list ($ret, $comments) =
@@ -95,58 +54,52 @@ class ShowCommentsView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$commentData = array();
-	$users = array();
-	foreach ($comments as $comment) {
-	    /* Extract the member data */
-	    $memberData = $comment->getMemberData();
+	$commenters = array();
+	if (!empty($comments)) {
+	    for ($i = 0; $i < sizeof($comments); $i++) {
+		/* Get the commenter ids */
+		$commenters[$comments[$i]->getCommenterId()] = 1;
+			
+		/* Extract the member data */
+		$comments[$i] = $comments[$i]->getMemberData();
+	    }
 
-	    /* Associate the commenter's info */
-	    $commenterId = $memberData['commenterId'];
-	    if (empty($users[$commenterId])) {
-		list ($ret, $user) = $gallery->loadEntitiesById($commenterId);
+	    /* Load all the commenters */
+	    if (sizeof($commenters) > 0) {
+		list ($ret, $commentersList) = $gallery->loadEntitiesById(array_keys($commenters));
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-
-		$users[$commenterId] = $user->getMemberData();
 	    }
-	    $memberData['commenter'] = $users[$commenterId];
-	    $commentData[] = $memberData;
-	}
 
-	/* Render the HTML body */
-	$template = $this->_getTemplate();
-
-	if (!empty($thumbnail)) {
-	    $template->setVariable('thumbnail', $thumbnail->getMemberData());
+	    foreach ($commentersList as $commenter) {
+		$commenters[$commenter->getId()] = $commenter->getMemberData();
+	    }
 	}
-	
-	$return = GalleryUtilities::getFormVariables('return.');
 
 	list ($ret, $permissions) = GalleryItemHelper::getPermissions($item->getId());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	foreach (array('add' => 'comment.add',
-		       'delete' => 'comment.delete',
-		       'edit' => 'comment.edit',
-		       'viewIp' => 'comment.viewIp')
+	foreach (array('delete' => 'comment.delete',
+		       'edit' => 'comment.edit')
 		 as $canFlag => $permission) {
 	    $can[$canFlag] = isset($permissions[$permission]);
 	}
 
-	$template->setVariable('comments', $commentData);
-	$template->setVariable('can', $can);
-	$template->setVariable('return', $return);
-	$template->setVariable('item', $item->getMemberData());
-	list($ret, $html) = $template->render('ShowComments.tpl');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), $html);
-	}
-	
-	return array(GalleryStatus::success(), $html);
+	$ShowComments = array();
+	$ShowComments['comments'] = $comments;
+	$ShowComments['commenters'] = $commenters;
+	$ShowComments['can'] = $can;
+	$template->setVariable('ShowComments', $ShowComments);
+
+	/*
+	 * We don't have a form, so don't need a controller, but ItemAdmin demands
+	 * one so just leave it blank.
+	 */
+	$template->setVariable('controller', '');
+	return array(GalleryStatus::success(), '', 'modules/comment/templates/ShowComments.tpl');
     }
 }
 ?>

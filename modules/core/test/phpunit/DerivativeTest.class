@@ -176,7 +176,7 @@ class DerivativeTest extends GalleryTestCase {
 
     function testExpireDerivatives() {
 
-	list ($ret, $rebuilt) =
+	list ($ret, $this->_mockDerivative[0], $rebuilt) =
 	    GalleryDerivativeHelper::rebuildCacheIfNotCurrent($this->_mockDerivative[0]->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -204,7 +204,7 @@ class DerivativeTest extends GalleryTestCase {
 
     function testRebuild() {
 
-	list ($ret, $rebuilt) =
+	list ($ret, $this->_mockDerivative[1], $rebuilt) =
 	    GalleryDerivativeHelper::rebuildCacheIfNotCurrent($this->_mockDerivative[1]->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));

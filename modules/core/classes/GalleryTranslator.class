@@ -294,7 +294,7 @@ class GalleryTranslator {
      * @return array object GalleryStatus a status code
      *               string the localized value
      */
-    function translate($domain, $basePath, $data) {
+    function translate($domain, $data) {
 	global $gallery;
 
 	GalleryProfiler::start('modules.core.classes.GalleryTranslator::translate');
@@ -308,7 +308,11 @@ class GalleryTranslator {
 
 	if ($gallery->getConfig('function.exists.dgettext')) {
 	    if (isset($domain) && !isset($this->_boundDomains[$domain])) {
-		$basePath .= '/locale';
+		list ($componentType, $componentName) = split('_', $domain);
+		$basePath = sprintf('%s%s/%s/locale',
+				    $gallery->getConfig('code.gallery.base'),
+				    $componentType,
+				    $componentName);
 		if ($gallery->getDebug()) {
 		    $gallery->debug("Binding text domain: $domain -> $basePath");
 		}
@@ -386,7 +390,7 @@ class GalleryTranslator {
 	 * This is a useful debug routine.  Uncomment it to have every
 	 * string prefixed with the domain it was localized in.
 	 */
-	// $localized = "[$domain: $localized]";
+	//$localized = "[$domain: $localized]";
 
 	GalleryProfiler::stop('modules.core.classes.GalleryTranslator::translate');
 	

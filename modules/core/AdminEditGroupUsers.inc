@@ -48,7 +48,8 @@ class AdminEditGroupUsersController extends GalleryController {
 	}
 
 	$results = array();
-	$redirectParams = array();
+	$error = array();
+	$status = array();
 
 	/* Load the group */
 	$groupId = GalleryUtilities::getRequestVariables('groupId');
@@ -60,8 +61,8 @@ class AdminEditGroupUsersController extends GalleryController {
 	if (isset($form['action']['done'])) {
 
 	    /* Go back to the AdminGroups view */
-	    $results['view'] = 'core:SiteAdmin';
-	    GalleryUtilities::putRequestVariable('subView', 'core:AdminGroups');
+	    $redirect['view'] = 'core:SiteAdmin';
+	    $redirect['subView'] = 'core:AdminGroups';
 	    
 	} else if ($group->getGroupType() != GROUP_ALL_USERS) {
 	    if (isset($form['action']['remove'])) {
@@ -79,9 +80,9 @@ class AdminEditGroupUsersController extends GalleryController {
 		    }
 		    
 		    /* Redirect back to the same view */
-		    $redirectParams['view'] = 'core:SiteAdmin';
-		    $redirectParams['subView'] = 'core:AdminEditGroupUsers';
-		    $redirectParams['groupId'] = $group->getId();
+		    $redirect['view'] = 'core:SiteAdmin';
+		    $redirect['subView'] = 'core:AdminEditGroupUsers';
+		    $redirect['groupId'] = $group->getId();
 		    $status['removedUser'] = $user->getUsername();
 		}
 	    
@@ -89,13 +90,13 @@ class AdminEditGroupUsersController extends GalleryController {
 
 		/* Add the user to the group */
 		if (empty($form['text']['userName'])) {
-		    GalleryUtilities::putRequestVariable('form.error.text.userName.missing', 1);
+		    $error[] = 'form.error.text.userName.missing';
 		} else {
 		    list ($ret, $user) =
 			GalleryUserHelper::fetchUserByUsername($form['text']['userName']);
 
 		    if ($ret->isError() && ($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
-			GalleryUtilities::putRequestVariable('form.error.text.userName.invalid', 1);
+			$error[] = 'form.error.text.userName.invalid';
 		    } else if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    } else {
@@ -106,24 +107,23 @@ class AdminEditGroupUsersController extends GalleryController {
 			}
 		    
 			/* Redirect back to the same view */
-			$redirectParams['view'] = 'core:SiteAdmin';
-			$redirectParams['subView'] = 'core:AdminEditGroupUsers';
-			$redirectParams['groupId'] = $group->getId();
+			$redirect['view'] = 'core:SiteAdmin';
+			$redirect['subView'] = 'core:AdminEditGroupUsers';
+			$redirect['groupId'] = $group->getId();
 			$status['addedUser'] = $user->getUsername();
 		    }
 		}
 	    }
 	}
 
-	if (!empty($redirectParams)) {
-	    $results['redirect'] = $redirectParams;
-	    $results['status'] = $status;
+	if (!empty($redirect)) {
+	    $results['redirect'] = $redirect;
 	} else {
-	    if (empty($results['view'])) {
-		$results['view'] = 'core:SiteAdmin';
-		GalleryUtilities::putRequestVariable('subView', 'core:AdminEditGroupUsers');
-	    }
+	    $results['delegate']['view'] = 'core:SiteAdmin';
+	    $results['delegate']['subView'] = 'core:AdminEditGroupUsers';
 	}
+	$results['status'] = $status;
+	$results['error'] = $error;
 
 	return array(GalleryStatus::success(), $results);
     }
@@ -139,9 +139,9 @@ class AdminEditGroupUsersController extends GalleryController {
 class AdminEditGroupUsersView extends GalleryView {
 
     /**
-     * @see GalleryView::renderBody
+     * @see GalleryView::loadTemplate
      */
-    function renderBody($form, $status) {
+    function loadTemplate(&$template, &$form) {
 	global $gallery;
 
 	$ret = GalleryUserHelper::assertSiteAdministrator();
@@ -159,6 +159,7 @@ class AdminEditGroupUsersView extends GalleryView {
 	/* First time on this page, initialize form fields */
 	if ($form['formName'] != 'AdminEditGroupUsers') {
 	    $form['text']['userName'] = '';
+	    $form['formName'] = 'AdminEditGroupUsers';
 	}
 
 	/* Initialize the user list */
@@ -169,18 +170,14 @@ class AdminEditGroupUsersView extends GalleryView {
 	$form['userCount'] = sizeof($users);
 	$form['list']['users'] = $users;
 
-	/* Render the HTML body */
-	$template = $this->_getTemplate();
-	$template->setVariable('form', $form);
-	$template->setVariable('status', $status);
-	$template->setVariable('group', $group->getMemberData());
-	$template->setVariable('controller', 'core:AdminEditGroupUsers');
-	list($ret, $html) = $template->render('AdminEditGroupUsers.tpl');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), $html);
-	}
+	$AdminEditGroupUsers = array();
+	$AdminEditGroupUsers['group'] = $group->getMemberData();
 
-	return array(GalleryStatus::success(), $html);
+	/* Render the HTML body */
+	$template->setVariable('AdminEditGroupUsers', $AdminEditGroupUsers);
+	$template->setVariable('controller', 'core:AdminEditGroupUsers');
+
+	return array(GalleryStatus::success(), '', 'modules/core/templates/AdminEditGroupUsers.tpl');
     }
 }
 ?>

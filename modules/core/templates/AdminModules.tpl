@@ -1,41 +1,51 @@
-  {gallery->form controller="$controller"}
-  <center>
-    <table border="1" cellspacing="0" cellpadding="5" width="80%">
-      <tr>
-	<th> {gallery->text text="Module Name"} </th>
-	<th> {gallery->text text="Version"} </th>
-	<th> {gallery->text text="Description"} </th>
-	<th> {gallery->text text="Actions"} </th>
-      </tr>
+{gallery->bannerbox}
+  {gallery->title}
+    Gallery Modules
+  {/gallery->title}
+{/gallery->bannerbox}
 
-      {foreach from=$modules item=module}
-      <tr>
-	<td>
-	  {$module.name}
-	</td>
-	<td>
-	  {$module.version}
-	</td>
-	<td>
-	  {$module.description}
-	</td>	
-	<td>
-	  {if (!empty($module.action))}
-	  {if (empty($module.action.controller)) }
-	  <a href="{gallery->url view='core:SiteAdmin' subView=$module.action.view return_view='core:SiteAdmin' return_subView='core:AdminModules'}">
-	    {$module.action.text}
-	  </a>
-	  {else}
-	  <a href="{gallery->url controller=$module.action.controller moduleName=$module.action.moduleName action=$module.action.action}">
-	    {$module.action.text}
-	  </a>
-	  {/if}
-	  {else}
-	  &nbsp;
-	  {/if}
-	</td>	
-      </tr>
+{gallery->detailedbox}
+  {gallery->description}
+    {gallery->text text="Gallery features come as separate modules.  You can download and install modules to add more features to your Gallery, or you can disable features if you don't want to use them.  In order to use a feature, you must install, configure (if necessary) and activate it.  If you don't wish to use a feature, you can deactivate it."}
+  {/gallery->description}
+
+  {gallery->body}
+    {gallery->table width="100%"}
+      {gallery->row}
+	{gallery->column header="true"} {gallery->text text="Module Name"} {/gallery->column}
+	{gallery->column header="true"} {gallery->text text="Version"} {/gallery->column}
+	{gallery->column header="true"} {gallery->text text="Description"} {/gallery->column}
+	{gallery->column header="true"} {gallery->text text="Actions"} {/gallery->column}
+      {/gallery->row}
+
+      {foreach from=$AdminModules.modules item=module}
+	{gallery->row}
+	  {gallery->column}
+	    {$module.name}
+	  {/gallery->column}
+	  {gallery->column}
+	    {$module.version}
+	  {/gallery->column}
+	  {gallery->column}
+	    {$module.description}
+	  {/gallery->column}	
+	  {gallery->column}
+	    {if (!empty($module.action))}
+	      {if (empty($module.action.controller)) }
+		{gallery->link url_return="true" url_view='core:SiteAdmin' url_subView=$module.action.view}
+		  {$module.action.text}
+		{/gallery->link}
+	      {else}
+		{gallery->link url_controller=$module.action.controller url_moduleName=$module.action.moduleName url_action=$module.action.action}
+		  {$module.action.text}
+		{/gallery->link}
+	      {/if}
+	    {else}
+	      &nbsp;
+	    {/if}
+	  {/gallery->column}	
+	{/gallery->row}
       {/foreach}
-    </table>
-  </center>
-  {/gallery->form}
+    {/gallery->table}
+  {/gallery->body}
+{/gallery->detailedbox}

@@ -92,6 +92,10 @@ class GallerySmarty extends Smarty {
     function trigger_error($error_msg, $error_type = E_USER_WARNING) {
 	global $gallery;
 
+	if ($gallery->getDebug()) {
+	    $gallery->debug(sprintf('Smarty error: %s (%s)', $error_msg, $error_type));
+	}
+
 	/* Store this error for later usage */
 	$this->_lastGalleryStatus = GalleryStatus::error(ERROR_BAD_PARAMETER,
                                                          $this->_lastFileLine[0],

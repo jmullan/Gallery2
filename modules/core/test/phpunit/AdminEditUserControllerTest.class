@@ -56,7 +56,8 @@ class AdminEditUserControllerTest extends GalleryControllerTestCase {
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'core:AdminUsers'),
-				  'status' => array()),
+				  'status' => array(),
+				  'error' => array()),
 			    $results);
     }
 
@@ -68,7 +69,8 @@ class AdminEditUserControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'core:AdminEditUser',
 						      'userId' => $this->_user->getId()),
-				  'status' => array()),
+				  'status' => array(),
+				  'error' => array()),
 			    $results);
     }
 
@@ -86,7 +88,8 @@ class AdminEditUserControllerTest extends GalleryControllerTestCase {
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'core:AdminUsers'),
-				  'status' => array('modifiedUser' => $newUserName)),
+				  'status' => array('modifiedUser' => $newUserName),
+				  'error' => array()),
 			    $results);
     }
 
@@ -102,10 +105,12 @@ class AdminEditUserControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.password2', '');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
-	$this->assertEquals('core:AdminEditUser', GalleryUtilities::getRequestVariables('subView'));
-	$this->assert(GalleryUtilities::hasRequestVariable('form.error.email.missing'));
-	$this->assert(GalleryUtilities::hasRequestVariable('form.error.password.mismatch'));
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminEditUser'),
+				  'status' => array(),
+				  'error' => array('form.error.email.missing',
+						   'form.error.password.mismatch')),
+			    $results);
     }
 }
 ?>

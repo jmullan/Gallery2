@@ -42,12 +42,20 @@ class GalleryTheme {
      */
 
     /**
-     * The template instance
+     * The theme directory
      *
-     * @var object GalleryTemplate $_template
+     * @var string $_baseDir;
      * @access private
      */
-    var $_template;
+    var $_baseDir;
+
+    /**
+     * The theme url
+     *
+     * @var string $_baseUrl;
+     * @access private
+     */
+    var $_baseUrl;
 
     /*
      * ****************************************
@@ -56,12 +64,38 @@ class GalleryTheme {
      */
 
     /**
+     * Constructor
+     *
+     * @param string the path to the theme directory
+     */
+    function GalleryTheme($themeDir) {
+	$this->_baseDir = $themeDir;
+	$this->_baseUrl = GalleryUtilities::convertPathToRelativeUrl($themeDir) . '/';
+    }
+
+    /**
+     * Get the theme url.
+     * @return string the theme url
+     */
+    function getBaseUrl() {
+	return $this->_baseUrl;
+    }
+
+    /**
+     * Get the theme directory.
+     * @return string the theme directory
+     */
+    function getBaseDir() {
+	return $this->_baseDir;
+    }
+
+    /**
      * Get an array of available theme-names
      *
      * @static
      * @return array string name of the themes
      */
-     function getThemes() {
+     function getThemeList() {
 	global $gallery;
 
 	$platform = $gallery->getPlatform();
@@ -74,7 +108,7 @@ class GalleryTheme {
 		}
 
 		if ($platform->is_dir("$themeDir$subdir")) {
-		    $file = "$themeDir$subdir/templates";
+		    $file = "$themeDir$subdir/theme.inc";
 		    if ($platform->file_exists($file)) {
 			$themeList[] = $subdir;
 		    }
@@ -89,58 +123,74 @@ class GalleryTheme {
      * Initialize this instance to use the theme specified.
      *
      * @param themeName the name of a theme in the themes directory.
-     * @return object GalleryStatus a status code
+     * @return array object GalleryStatus a status code
+     *               object a GalleryTheme instance
      */
-    function init($themeName=null) {
+    function loadTheme($themeName=null) {
 	global $gallery;
 
+	GalleryProfiler::start('modules.core.classes.GalleryTheme::loadTheme');
+	
 	/* If we don't have a theme name then use the default theme. */
 	if (empty($themeName)) {
-	    list ($ret, $themeName) =
-		$gallery->getModuleParameter('core', 'default.theme');
+	    list ($ret, $themeName) = $gallery->getModuleParameter('core', 'default.theme');
 	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
 
-	$themeDir = $gallery->getConfig('code.gallery.themes') . $themeName . '/';
-	$templateDir = $themeDir . 'templates/';
 	$platform = $gallery->getPlatform();
-	if (!$platform->file_exists($templateDir)) {
-	    if ($gallery->getDebug()) {
-		$gallery->debug("Missing theme template dir: $templateDir");
+	$themeDir = $gallery->getConfig('code.gallery.themes') . $themeName . '/';
+
+	$themeClass = $themeDir . 'theme.inc';
+	if ($platform->file_exists($themeClass)) {
+	    require_once($themeClass);
+
+	    /*
+	     * Expect the theme class name to be the same as the theme
+	     * name plus "Theme"
+	     */
+	    $themeClassName = $themeName . "Theme";
+	    if (!class_exists($themeClassName)) {
+		if ($gallery->getDebug()) {
+		    $gallery->debug("Theme $themeName must have a class named '$themeClassName'");
+		}
+		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
 	    }
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+
+	    $theme = new $themeClassName($themeDir);
+	    if (!GalleryUtilities::isA($theme, 'GalleryTheme')) {
+		if ($gallery->getDebug()) {
+		    $gallery->debug("Theme $themeName is not an instance of GalleryTheme");
+		}
+		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	    }
+	} else {
+	    if ($gallery->getDebug()) {
+		$gallery->debug("Theme $themeName is missing theme.inc");
+	    }
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
 	}
+	GalleryProfiler::stop('modules.core.classes.GalleryTheme::loadTheme');
 
-	$themeData['dir'] = $themeDir;
-	$themeData['url'] = GalleryUtilities::convertPathToRelativeUrl($themeDir);
-	$this->_template = new GalleryTemplate($templateDir);
-	$this->_template->setVariable('theme', $themeData);
-
-	return GalleryStatus::success();
+	return array(GalleryStatus::success(), $theme);
     }
     
-    /**
-     * Get the configured GalleryTemplate instance
-     *
-     * @return object GalleryTemplate a template instance
-     * @access protected
-     */
-    function &_getTemplate() {
-	return $this->_template;
-    }
+    /*************************************************************
+     * Built-in theme methods
+     *************************************************************/
 
     /**
      * Return an HTML form 
      *
-     * @param array data in key/value pairs
+     * @param array template context data
      * @param string HTML content to go inside the form
      * @return string a complete HTML form
      */
-    function form($params, $content) {
+    function form($context, $content) {
 	global $gallery;
 
+	$params = $context['params'];
 	/* Embed the session key, if we're not using cookies */
 	$session =& $gallery->getSession();
 	if (!($session->isUsingCookies())) {
@@ -158,8 +208,14 @@ class GalleryTheme {
 
 	/* Prepare the tag */
 	$results = '<form';
-	$hiddenFields = '';
+	$actionParams = array();
 	foreach ($params as $caseSensitiveKey => $value) {
+
+	    if (!strncmp($caseSensitiveKey, 'action_', 7)) {
+		$actionParams[substr($caseSensitiveKey, 7)] = $value;
+		continue;
+	    }
+	    
 	    /* Force the key to lower case */
 	    $key = strtolower($caseSensitiveKey);
 	    switch($key) {
@@ -193,15 +249,22 @@ class GalleryTheme {
 	    case 'onkeyup':
 		$results .= " $key=\"$value\"";
 		break;
-
-	    default:
-		$hiddenFields .= '<input type="hidden" name="' .
-		    GALLERY_FORM_VARIABLE_PREFIX . $caseSensitiveKey .
-		    '" value="' . $value . "\">\n";
 	    }
 	}
 	$results .= ">\n";
-	$results .= $hiddenFields;
+
+	/*
+	 * Add the "return" parameter to the action params if it exists
+	 */
+	if (GalleryUtilities::hasRequestVariable('return')) {
+	    $actionParams['return'] = GalleryUtilities::getRequestVariables('return');
+	}
+
+	foreach ($actionParams as $key => $value) {
+	    $results .= sprintf('<input type="hidden" name="%s" value="%s">',
+				GALLERY_FORM_VARIABLE_PREFIX . $key, $value);
+	}
+	
 	$results .= $content;
 	$results .= "\n</form>\n";
 
@@ -211,13 +274,17 @@ class GalleryTheme {
     /**
      * Return a themed <input> tag
      *
-     * @param array key => value attributes
+     * @param array template context data
      * @return HTML content
      */
-    function input($params, $content=null) {
+    function input($context, $content=null) {
+	$params = $context['params'];
+	
 	/* Do some preprocessing */
 	$params['value'] = trim($content);
-	$params['name'] = GALLERY_FORM_VARIABLE_PREFIX . $params['name'];
+	if (isset($params['name'])) {
+	    $params['name'] = GALLERY_FORM_VARIABLE_PREFIX . $params['name'];
+	}
 	if (empty($params['type'])) {
 	    $params['type'] = 'text';
 	}
@@ -289,11 +356,13 @@ class GalleryTheme {
     /**
      * Return a themed <select> .. </select> block
      *
-     * @param array key => value attributes
+     * @param array template context data
      * @param string content to go inside the block
      * @return HTML content
      */
-    function select($params, $content) {
+    function select($context, $content) {
+	$params = $context['params'];
+	
 	/* Translate the form variable name */
 	if (isset($params['name'])) {
 	    $params['name'] = GALLERY_FORM_VARIABLE_PREFIX . $params['name'];
@@ -349,11 +418,13 @@ class GalleryTheme {
     /**
      * Return a themed <textarea> .. </textarea> block
      *
-     * @param array key => value attributes
+     * @param array template context data
      * @param string content to go inside the block
      * @return HTML content
      */
-    function textarea($params, $content) {
+    function textarea($context, $content) {
+	$params = $context['params'];
+	
 	/* Translate the form variable name */
 	if (isset($params['name'])) {
 	    $params['name'] = GALLERY_FORM_VARIABLE_PREFIX . $params['name'];
@@ -410,199 +481,378 @@ class GalleryTheme {
     }
 
     /**
-     * Return 1 or more <style> blocks
+     * Return a themed <a> .. </a> block
      *
-     * @param array key => value attributes
+     * @param array template context data
+     * @param string content to go inside the block
      * @return HTML content
      */
-    function style($params) {
-	return $this->_renderTemplate('style', $params);
-    }
+    function link($context, $content) {
+	global $gallery;
+	$params = $context['params'];
 
-    /**
-     * Return the given content as in a very small font
-     *
-     * @param array key => value attributes
-     * @param string content to go inside the block
-     * @return HTML content
-     */
-    function smallestFontSize($params, $content) {
-	return $this->_renderTemplate('smallestFontSize', $params, $content);
-    }
-
-    /**
-     * Return the given content as in a smaller font
-     *
-     * @param array key => value attributes
-     * @param string content to go inside the block
-     * @return HTML content
-     */
-    function smallerFontSize($params, $content) {
-	return $this->_renderTemplate('smallerFontSize', $params, $content);
-    }
-
-    /**
-     * Return the given content as in a small font
-     *
-     * @param array key => value attributes
-     * @param string content to go inside the block
-     * @return HTML content
-     */
-    function smallFontSize($params, $content) {
-	return $this->_renderTemplate('smallFontSize', $params, $content);
-    }
-
-    /**
-     * Return the given content as in a large font
-     *
-     * @param array key => value attributes
-     * @param string content to go inside the block
-     * @return HTML content
-     */
-    function bigFontSize($params, $content) {
-	return $this->_renderTemplate('bigFontSize', $params, $content);
-    }
-
-    /**
-     * Return the given content as in a larger font
-     *
-     * @param array key => value attributes
-     * @param string content to go inside the block
-     * @return HTML content
-     */
-    function biggerFontSize($params, $content) {
-	return $this->_renderTemplate('biggerFontSize', $params, $content);
-    }
-
-    /**
-     * Return the given content as in a very large font
-     *
-     * @param array key => value attributes
-     * @param string content to go inside the block
-     * @return HTML content
-     */
-    function biggestFontSize($params, $content) {
-	return $this->_renderTemplate('biggestFontSize', $params, $content);
-    }
-
-    /**
-     * Return the given content in a "happy" font color
-     *
-     * @param array key => value attributes
-     * @param string content to go inside the block
-     * @return HTML content
-     */
-    function successFontColor($params, $content) {
-	return $this->_renderTemplate('successFontColor', $params, $content);
-    }
-
-    /**
-     * Return the given content in a "pay attention!" font color
-     *
-     * @param array key => value attributes
-     * @param string content to go inside the block
-     * @return HTML content
-     */
-    function warningFontColor($params, $content) {
-	return $this->_renderTemplate('warningFontColor', $params, $content);
-    }
-
-    /**
-     * Return the given content in a "this is bad!" font color
-     *
-     * @param array key => value attributes
-     * @param string content to go inside the block
-     * @return HTML content
-     */
-    function errorFontColor($params, $content) {
-	return $this->_renderTemplate('errorFontColor', $params, $content);
-    }
-
-    /**
-     * Return the given content inside a highlight box
-     *
-     * @param array key => value attributes
-     * @param string content to go inside the block
-     * @return HTML content
-     */
-    function highlight1($params, $content) {
-	return $this->_renderTemplate('highlight1', $params, $content);
-    }
-    
-    /**
-     * Return the given content inside a highlight box
-     *
-     * @param array key => value attributes
-     * @param string content to go inside the block
-     * @return HTML content
-     */
-    function highlight2($params, $content) {
-	return $this->_renderTemplate('highlight2', $params, $content);
-    }
-    
-    /**
-     * Return the given content inside a thin themed frame
-     *
-     * @param array key => value attributes
-     * @param string content to go inside the block
-     * @return HTML content
-     */
-    function thinFrame($params, $content) {
-	return $this->_renderTemplate('thinFrame', $params, $content);
-    }
-
-    /**
-     * Return the given content inside a light themed frame
-     *
-     * @param array key => value attributes
-     * @param string content to go inside the block
-     * @return HTML content
-     */
-    function lightFrame($params, $content) {
-	return $this->_renderTemplate('lightFrame', $params, $content);
-    }
-
-    /**
-     * Return the given content inside a heavy themed frame
-     *
-     * @param array key => value attributes
-     * @param string content to go inside the block
-     * @return HTML content
-     */
-    function heavyFrame($params, $content) {
-	return $this->_renderTemplate('heavyFrame', $params, $content);
-    }
-
-    /**
-     * Return the given content inside a 3D themed frame
-     *
-     * @param array key => value attributes
-     * @param string content to go inside the block
-     * @return HTML content
-     */
-    function threeDFrame($params, $content) {
-	return $this->_renderTemplate('threeDFrame', $params, $content);
-    }
-
-    /**
-     * Render the given template
-     *
-     * @param templateName the template file name
-     * @param params array template data
-     * @param content string template data
-     * @access protected
-     */
-    function _renderTemplate($templateName, $params, $content=null) {
-	$template = $this->_getTemplate();
-	$template->setVariable('params', $params);
-	$template->setVariable('content', $content);
-	list($ret, $html) = $template->render($templateName . '.tpl');
-	if ($ret->isError()) {
-	    $ret = $ret->wrap(__FILE__, __LINE__);
-	    return $ret->getAsHtml();
+	/* All the user to pass in bulk params */
+	if (isset($params['params'])) {
+	    foreach ($params['params'] as $key => $value) {
+		$params['url_' . $key] = $value;
+	    }
+	    unset($params['params']);
 	}
-	return $html;
+	
+	/* Translate the form variable name */
+	if (isset($params['name'])) {
+	    $params['name'] = GALLERY_FORM_VARIABLE_PREFIX . $params['name'];
+	}
+
+	/* Prepare the tag */
+	$results = '<a';
+	$hrefParams = array();
+	$javascript = null;
+	foreach ($params as $origKey => $value) {
+
+	    if (!strncmp($origKey, 'url_', 4)) {
+		$hrefParams[substr($origKey, 4)] = $value;
+		continue;
+	    }
+	    
+	    /* Force the key to lower case */
+	    $key = strtolower($origKey);
+	    
+	    switch($key) {
+	    case 'charset':
+	    case 'type':
+	    case 'name':
+	    case 'hreflang':
+	    case 'rel':
+	    case 'rev':
+	    case 'accesskey':
+	    case 'shape':
+	    case 'coords':
+	    case 'tabindex':
+	    case 'onfocus':
+	    case 'onblur':
+		$results .= " $key=\"$value\"";
+		break;
+
+	    /* Generic attributes */
+	    case 'id':
+	    case 'class':
+	    case 'style':
+	    case 'title':
+	    case 'lang':
+	    case 'dir':
+	    case 'onclick':
+	    case 'ondblclick':
+	    case 'onmousedown':
+	    case 'onmouseup':
+	    case 'onmouseover':
+	    case 'onmouseout':
+	    case 'onkeypress':
+	    case 'onkeydown':
+	    case 'onkeyup':
+		$results .= " $key=\"$value\"";
+		break;
+
+	    case 'javascript':
+		$javascript = $value;
+		break;
+	    }
+	}
+
+	if ($javascript) {
+	    $href = "javascript:$javascript";
+	} else {
+	    $urlGenerator = $gallery->getUrlGenerator();
+	    $href = $urlGenerator->generateUrl($hrefParams);
+	}
+	$results .= " href=\"$href\"";
+	
+	$results .= '>';
+	$results .= $content;
+	$results .= '</a>';
+
+	return $results;
+    }
+
+    /*************************************************************
+     * Standard theme methods
+     *************************************************************/
+    //(setq last-kbd-macro (read-kbd-macro "C-s /** C-a C-@ M-> 3*<C-p> C-w C-l C-x i GalleryTheme.inc RET C-x C-s"))
+    /**
+     * style theme method
+     * @param array the template context
+     * @return string HTML content
+     */
+    function style($context) {
+        trigger_error("Undefined theme function: style", E_USER_ERROR);
+    }
+
+    /**
+     * image theme method
+     * @param array the template context
+     * @return string HTML content
+     */
+    function image($context) {
+        trigger_error("Undefined theme function: image", E_USER_ERROR);
+    }
+
+    /**
+     * error theme method
+     * @param array the template context
+     * @param string optional content
+     * @return string HTML content
+     */
+    function error($context, $content) {
+        trigger_error("Undefined theme function: error", E_USER_ERROR);
+    }
+
+    /**
+     * status theme method
+     * @param array the template context
+     * @param string optional content
+     * @return string HTML content
+     */
+    function status($context, $content) {
+        trigger_error("Undefined theme function: status", E_USER_ERROR);
+    }
+
+    /**
+     * textmodifier theme method
+     * @param array the template context
+     * @param string optional content
+     * @return string HTML content
+     */
+    function textmodifier($context, $content) {
+        trigger_error("Undefined theme function: textmodifier", E_USER_ERROR);
+    }
+
+    /**
+     * globalheader theme method
+     * @param array the template context
+     * @param string optional content
+     * @return string HTML content
+     */
+    function globalheader($context, $content) {
+        trigger_error("Undefined theme function: globalheader", E_USER_ERROR);
+    }
+
+    /**
+     * main theme method
+     * @param array the template context
+     * @param array optional ("params" => array, "content" => header content)
+     * @param array optional ("params" => array, "content" => footer content)
+     * @param array optional ("params" => array, "content" => pathbar content)
+     * @param array optional (array("params" => array, "content" => sidebar content), ...)
+     * @param array optional (array("params" => array, "content" => component content), ...)
+     * @return string HTML content
+     */
+    function main($context, $header, $footer, $pathbar, $sidebar_array, $component_array) {
+        trigger_error("Undefined theme function: main", E_USER_ERROR);
+    }
+
+    /**
+     * globalfooter theme method
+     * @param array the template context
+     * @param string optional content
+     * @return string HTML content
+     */
+    function globalfooter($context, $content) {
+        trigger_error("Undefined theme function: globalfooter", E_USER_ERROR);
+    }
+
+    /**
+     * header theme method
+     * @param array the template context
+     * @param string optional content
+     * @return string HTML content
+     */
+    function header($context, $content) {
+        trigger_error("Undefined theme function: header", E_USER_ERROR);
+    }
+
+    /**
+     * footer theme method
+     * @param array the template context
+     * @param string optional content
+     * @return string HTML content
+     */
+    function footer($context, $content) {
+        trigger_error("Undefined theme function: footer", E_USER_ERROR);
+    }
+
+    /**
+     * pathbar theme method
+     * @param array the template context
+     * @param array mandatory (array("params" => array, "content" => item content), ...)
+     * @return string HTML content
+     */
+    function pathbar($context, $item_array) {
+        trigger_error("Undefined theme function: pathbar", E_USER_ERROR);
+    }
+
+    /**
+     * sidebar theme method
+     * @param array the template context
+     * @param array mandatory (array("params" => array, "content" => component content), ...)
+     * @return string HTML content
+     */
+    function sidebar($context, $component_array) {
+        trigger_error("Undefined theme function: sidebar", E_USER_ERROR);
+    }
+
+    /**
+     * bannerbox theme method
+     * @param array the template context
+     * @param array optional ("params" => array, "content" => title content)
+     * @param array optional ("params" => array, "content" => description content)
+     * @param array optional (array("params" => array, "content" => component content), ...)
+     * @return string HTML content
+     */
+    function bannerbox($context, $title, $description, $component_array) {
+        trigger_error("Undefined theme function: bannerbox", E_USER_ERROR);
+    }
+
+    /**
+     * linksbox theme method
+     * @param array the template context
+     * @param array mandatory (array("params" => array, "content" => item content), ...)
+     * @return string HTML content
+     */
+    function linksbox($context, $item_array) {
+        trigger_error("Undefined theme function: linksbox", E_USER_ERROR);
+    }
+
+    /**
+     * infobox theme method
+     * @param array the template context
+     * @param array mandatory (array("params" => array, "content" => item content), ...)
+     * @return string HTML content
+     */
+    function infobox($context, $item_array) {
+        trigger_error("Undefined theme function: infobox", E_USER_ERROR);
+    }
+
+    /**
+     * listingbox theme method
+     * @param array the template context
+     * @param array optional ("params" => array, "content" => title content)
+     * @param array mandatory (array("params" => array, "content" => item content), ...)
+     * @return string HTML content
+     */
+    function listingbox($context, $title, $item_array) {
+        trigger_error("Undefined theme function: listingbox", E_USER_ERROR);
+    }
+
+    /**
+     * imagebox theme method
+     * @param array the template context
+     * @param array optional ("params" => array, "content" => title content)
+     * @param array optional ("params" => array, "content" => description content)
+     * @param array mandatory ("params" => array, "content" => body content)
+     * @return string HTML content
+     */
+    function imagebox($context, $title, $description, $body) {
+        trigger_error("Undefined theme function: imagebox", E_USER_ERROR);
+    }
+
+    /**
+     * detailedbox theme method
+     * @param array the template context
+     * @param array mandatory ("params" => array, "content" => title content)
+     * @param array mandatory ("params" => array, "content" => description content)
+     * @param array mandatory ("params" => array, "content" => body content)
+     * @return string HTML content
+     */
+    function detailedbox($context, $title, $description, $body) {
+        trigger_error("Undefined theme function: detailedbox", E_USER_ERROR);
+    }
+
+    /**
+     * tabbedbox theme method
+     * @param array the template context
+     * @param array optional ("params" => array, "content" => title content)
+     * @param array mandatory (array("params" => array, "content" => item content), ...)
+     * @param array mandatory ("params" => array, "content" => body content)
+     * @return string HTML content
+     */
+    function tabbedbox($context, $title, $item_array, $body) {
+        trigger_error("Undefined theme function: tabbedbox", E_USER_ERROR);
+    }
+
+    /**
+     * simplebox theme method
+     * @param array the template context
+     * @param array optional ("params" => array, "content" => title content)
+     * @param array mandatory ("params" => array, "content" => body content)
+     * @return string HTML content
+     */
+    function simplebox($context, $title, $body) {
+        trigger_error("Undefined theme function: simplebox", E_USER_ERROR);
+    }
+
+    /**
+     * widget1box theme method
+     * @param array the template context
+     * @param array optional ("params" => array, "content" => title content)
+     * @param array mandatory (array("params" => array, "content" => widget1 content), ...)
+     * @return string HTML content
+     */
+    function widget1box($context, $title, $widget1_array) {
+        trigger_error("Undefined theme function: widget1box", E_USER_ERROR);
+    }
+
+    /**
+     * widget2box theme method
+     * @param array the template context
+     * @param array optional ("params" => array, "content" => title content)
+     * @param array mandatory (array("params" => array, "content" => widget2 content), ...)
+     * @return string HTML content
+     */
+    function widget2box($context, $title, $widget2_array) {
+        trigger_error("Undefined theme function: widget2box", E_USER_ERROR);
+    }
+
+    /**
+     * widget1 theme method
+     * @param array the template context
+     * @param array optional ("params" => array, "content" => title content)
+     * @param array mandatory ("params" => array, "content" => body content)
+     * @return string HTML content
+     */
+    function widget1($context, $title, $body) {
+        trigger_error("Undefined theme function: widget1", E_USER_ERROR);
+    }
+
+    /**
+     * widget2 theme method
+     * @param array the template context
+     * @param array optional ("params" => array, "content" => title content)
+     * @param array optional ("params" => array, "content" => description content)
+     * @param array mandatory ("params" => array, "content" => body content)
+     * @return string HTML content
+     */
+    function widget2($context, $title, $description, $body) {
+        trigger_error("Undefined theme function: widget2", E_USER_ERROR);
+    }
+
+    /**
+     * table theme method
+     * @param array the template context
+     * @param array mandatory (array("params" => array, "content" => row content), ...)
+     * @return string HTML content
+     */
+    function table($context, $row_array) {
+        trigger_error("Undefined theme function: table", E_USER_ERROR);
+    }
+
+    /**
+     * row theme method
+     * @param array the template context
+     * @param array mandatory (array("params" => array, "content" => column content), ...)
+     * @return string HTML content
+     */
+    function row($context, $column_array) {
+        trigger_error("Undefined theme function: row", E_USER_ERROR);
     }
 }
-
 ?>

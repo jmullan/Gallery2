@@ -1,213 +1,233 @@
-      {gallery->form controller="$controller"}
-    <table>
+{gallery->bannerbox}
+  {gallery->title}
+    {gallery->text text="General Settings"}
+  {/gallery->title}
+{/gallery->bannerbox}
 
-	<tr>
-	  <td colspan="2" align="center">
-	    {gallery->biggerFontSize}
-	    {gallery->text text="Gallery Settings"}
-	    {/gallery->biggerFontSize}
-	  </td>
-	</tr>
+{if isset($status)}
+  {gallery->detailedbox}
+    {gallery->body}
+      {gallery->status}
+	{if isset($status.saved)}
+	  {gallery->text text="Settings saved successfully"}
+	{/if}
+      {/gallery->status}
+    {/gallery->body}
+  {/gallery->detailedbox}
+{/if}
 
-	<tr>
-	  <td colspan="2">
-	    {gallery->bigFontSize}
-	    {gallery->text text="Defaults"}
-	    {/gallery->bigFontSize}
-	    <br>
-	    {gallery->text text="These are default values.  They can be overridden in each album."}
-	  </td>
-	</tr>
+{gallery->detailedbox}
+  {gallery->title}
+    {gallery->text text="Defaults"}
+  {/gallery->title}
 
-	<tr>
-	  <td align="right">
-	    {gallery->text text="Album sort order:"}
-	  </td>
-	  <td>
-	    {gallery->select name="form.default.orderBy"}
-	    {html_options options=$orderByList selected=$form.default.orderBy}
-	    {/gallery->select}
-	    {gallery->select name="form.default.orderDirection"}
-	    {html_options options=$orderDirectionList selected=$form.default.orderDirection}
-	    {/gallery->select}
-	  </td>
-	</tr>
+  {gallery->description}
+    {gallery->text text="These are default values.  They can be overridden in each album."}
+  {/gallery->description}
 
-	<tr>	
-	  <td align="right">
-	    {gallery->text text="Default layout"}
-	  </td>
-	  <td>
-	    {gallery->select name="form.default.layout"}
-	    {html_options values=$layoutList selected=$form.default.layout output=$layoutList}
-	    {/gallery->select}
-	  </td>
-	</tr>
+  {gallery->body}
+    {gallery->widget1box}
+      {gallery->widget1}
+	{gallery->title}
+	  {gallery->text text="Default sort order"}
+	{/gallery->title}
 
-	<tr>	
-	  <td align="right">
-	    {gallery->text text="Default theme"}
-	  </td>
-	  <td>
-	    {gallery->select name="form.default.theme"}
-	    {html_options values=$themeList selected=$form.default.theme output=$themeList}
-	    {/gallery->select}
-	  </td>
-	</tr>
+	{gallery->body}
+	  {gallery->select name="form.default.orderBy"}
+	    {html_options options=$AdminCore.orderByList selected=$form.default.orderBy}
+	  {/gallery->select}
 
-	<tr>
-	  <td>
-	    &nbsp;
-	  </td>
-	</tr>
+	  {gallery->select name="form.default.orderDirection"}
+	    {html_options options=$AdminCore.orderDirectionList selected=$form.default.orderDirection}
+	  {/gallery->select}
+	{/gallery->body}
+      {/gallery->widget1}
 
-	<tr>
-	  <td colspan="2">
-	    {gallery->bigFontSize}
-	    {gallery->text text="Language settings"}
-	    {/gallery->bigFontSize}
-	    <br>
-	    {gallery->text text="Select language defaults for Gallery. Individual users can override this setting in their personal preferences."}
-	  </td>
-	</tr>
+      {gallery->widget1}
+	{gallery->title}
+	  {gallery->text text="Default layout"}
+	{/gallery->title}
 
-	<tr>	
-	  <td align="right">
-	    {gallery->text text="Default language"}
-	  </td>
-	  <td>
-	    {gallery->select name="form.default.language"}
-	    {html_options options=$languageList selected=$form.default.language}
-	    {/gallery->select}
-	  </td>
-	</tr>
+	{gallery->body}
+	  {gallery->select name="form.default.layout"}
+	    {html_options values=$AdminCore.layoutList selected=$form.default.layout output=$AdminCore.layoutList}
+	  {/gallery->select}
+	{/gallery->body}
+      {/gallery->widget1}
 
-	<tr>
-	  <td>
-	    &nbsp;
-	  </td>
-	</tr>
+      {gallery->widget1}
+	{gallery->title}
+	  {gallery->text text="Default theme"}
+	{/gallery->title}
 
-	<tr>
-	  <td colspan="2">
-	    {gallery->bigFontSize}
-	    {gallery->text text="Filesystem Permissions"}
-	    {/gallery->bigFontSize}
-	    <br>
-	    {gallery->text text="Here you can specify the default permissions for files and directories that Gallery creates. This doesn't apply to files/directories that Gallery has already created."}
-	  </td>
-	</tr>
+	{gallery->body}
+	  {gallery->select name="form.default.theme"}
+	    {html_options values=$AdminCore.themeList selected=$form.default.theme output=$AdminCore.themeList}
+	  {/gallery->select}
+	{/gallery->body}
+      {/gallery->widget1}
+    {/gallery->widget1box}
+  {/gallery->body}
+{/gallery->detailedbox}
 
-	<tr>	
-	  <td align="right">
-	    {gallery->text text="New directories"}
-	  </td>
-	  <td>
-	    {gallery->select name="form.permissions.directory"}
-	    {html_options values=$permissionsDirectoryList selected=$form.permissions.directory output=$permissionsDirectoryList}
-	    {/gallery->select}
-	  </td>
-	</tr>
+{gallery->detailedbox}
+  {gallery->title}
+    {gallery->text text="Language settings"}
+  {/gallery->title}
+  {gallery->description}
+    {gallery->text text="Select language defaults for Gallery. Individual users can override this setting in their personal preferences."}
+  {/gallery->description}
+  
+  {gallery->body}
+    {gallery->widget1box}
+      {gallery->widget1}
+	{gallery->title}
+	  {gallery->text text="Default language"}
+	{/gallery->title}
+	
+	{gallery->body}
+	  {gallery->select name="form.default.language"}
+	    {html_options options=$AdminCore.languageList selected=$form.default.language}
+	  {/gallery->select}
+	{/gallery->body}
+      {/gallery->widget1}
+    {/gallery->widget1box}
+  {/gallery->body}
+{/gallery->detailedbox}
 
-	<tr>
-	  <td align="right">
-	    {gallery->text text="New files"}
-	  </td>
-	  <td>
-	    {gallery->select name="form.permissions.file"}
-	    {html_options values=$permissionsFileList selected=$form.permissions.file output=$permissionsFileList}
-	    {/gallery->select}
-	  </td>
-	</tr>
+{gallery->detailedbox}
+  {gallery->title}
+    {gallery->text text="Filesystem Permissions"}
+  {/gallery->title}
+  {gallery->description}
+    {gallery->text text="Specify the default permissions for files and directories that Gallery creates. This doesn't apply to files/directories that Gallery has already created."}
+  {/gallery->description}
+  
+  {gallery->body}
+    {gallery->widget1box}
+      {gallery->widget1}
+	{gallery->title}
+	  {gallery->text text="New directories"}
+	{/gallery->title}
+	
+	{gallery->body}
+	  {gallery->select name="form.permissions.directory"}
+	    {html_options values=$AdminCore.permissionsDirectoryList selected=$form.permissions.directory output=$AdminCore.permissionsDirectoryList}
+	  {/gallery->select}
+	{/gallery->body}
+      {/gallery->widget1}
+      
+      {gallery->widget1}
+	{gallery->title}
+	  {gallery->text text="New files"}
+	{/gallery->title}
+	
+	{gallery->body}
+	  {gallery->select name="form.permissions.file"}
+	    {html_options values=$AdminCore.permissionsFileList selected=$form.permissions.file output=$AdminCore.permissionsFileList}
+	  {/gallery->select}
+	{/gallery->body}
+      {/gallery->widget1}
+    {/gallery->widget1box}
+  {/gallery->body}
+{/gallery->detailedbox}
 
-	<tr>
-	  <td>
-	    &nbsp;
-	  </td>
-	</tr>
+{gallery->detailedbox}
+  {gallery->title}
+    {gallery->text text="Local Server Upload Paths"}
+  {/gallery->title}
+  
+  {gallery->description}
+    {gallery->text text="Specify the legal directories on the local server where a user can store files and then upload them into Gallery using the <i>Upload from Local Server</i> feature.  The paths you enter here and all the files and directories under those paths will be available to any Gallery user who has upload privileges, so you should limit this to directories that won't contain sensitive data (eg. /tmp or /usr/ftp/incoming)"}
+  {/gallery->description}
+  
+  {gallery->body}
+    {gallery->widget1box}
+      {gallery->widget1}
+	{gallery->title}
+	  {gallery->text text="Legal Paths"}
+	{/gallery->title}
+	{gallery->body}
+	  {gallery->select name="form.uploadLocalServer.selectedDir" size="5"}
+	    {html_options values=$AdminCore.localServerDirList selected=$form.uploadFromLocalServer.selectedDir output=$AdminCore.localServerDirList}
+	  {/gallery->select}
 
-	<tr>
-	  <td colspan="2">
-	    {gallery->bigFontSize}
-	    {gallery->text text="Upload Options"}
-	    {/gallery->bigFontSize}
-	    <br>
-	    {gallery->text text="Specify the legal directories on the local server where a user can store files and then upload them into Gallery using the <i>Upload from Local Server</i> feature.  The paths you enter here and all the files and directories under those paths will be available to any Gallery user who has upload privileges, so you should limit this to directories that won't contain sensitive data (eg. /tmp or /usr/ftp/incoming)"}
-	  </td>
-	</tr>
+	  <br/>
 
-	<tr>	
-	  <td align="right" valign="top">
-	    {gallery->text text="Allowed Local Server Directories"}
-	    <br>
-	    {gallery->input type="submit" name="form.action.removeUploadLocalServerDir"}
-	    {gallery->text text="Remove Selected"}
-	    {/gallery->input}
-	  </td>
-	  <td>
-	    {gallery->select name="form.uploadLocalServer.selectedDir" size="5"}
-	    {html_options values=$localServerDirList selected=$form.uploadFromLocalServer.selectedDir 
-                          output=$localServerDirList}
-	    {/gallery->select}
-	    <br>
-	    {gallery->input type="text" name="form.uploadLocalServer.newDir"}{/gallery->input}
-	    {gallery->input type="submit" name="form.action.addUploadLocalServerDir"}
-	    {gallery->text text="Add New"}
-	    {/gallery->input}
-	  </td>
-	</tr>
+	  {gallery->input type="submit" name="form.action.removeUploadLocalServerDir"}
+	    {gallery->text text="remove"}
+	  {/gallery->input}
 
-	<tr>
-	  <td>
-	    &nbsp;
-	  </td>
-	</tr>
+	  <br/>
 
-	<tr>
-	  <td colspan="2">
-	    {gallery->bigFontSize}
-	    {gallery->text text="Session Settings"}
-	    {/gallery->bigFontSize}
-	    <br>
-	    {gallery->text text="Specify the lifetime of the session here."}
-	  </td>
-	</tr>
+	  {gallery->input type="submit" name="form.action.addUploadLocalServerDir"}
+	    {gallery->text text="add"}
+	  {/gallery->input}
+	  {gallery->input type="text" name="form.uploadLocalServer.newDir"}{/gallery->input}
 
-	<tr>
-	  <td align="right">
-	    {gallery->text text="Lifetime"}
-	  </td>
-	  <td>
-	    {gallery->select name="session.lifetime"}
-	    {html_options options=$sessionTimeList selected=$form.session.lifetime}
-	    {/gallery->select}
-	  </td>
-	</tr>
+	  {if isset($form.error.uploadLocalServer.newDir.missing)}
+	    {gallery->error}
+	      {gallery->text text="You must enter a directory to add."}
+	    {/gallery->error}
+	  {/if}
 
-	<tr>
-	  <td align="right">
-	    {gallery->text text="Inactivity Timeout"}
-	  </td>
-	  <td>
-	    {gallery->select name="session.inactivityTimeout"}
-	    {html_options options=$sessionTimeList selected=$form.session.inactivityTimeout}
-	    {/gallery->select}
-	  </td>
-	</tr>
+	  {if isset($form.error.uploadLocalServer.selectedDir.missing)}
+	    {gallery->error}
+	      {gallery->text text="You must select a directory to remove"}
+	    {/gallery->error}
+	  {/if}
 
-	<tr>
-	  <td>
-	    &nbsp;
-	  </td>
-	</tr>
+	{/gallery->body}
+      {/gallery->widget1}
+    {/gallery->widget1box}
+  {/gallery->body}
+{/gallery->detailedbox}
 
-	<tr>
-	  <td colspan="2" align="center">
-	    {gallery->input type="submit" name="form.action.save"}{gallery->text text="Save Changes"}{/gallery->input}
-	    {gallery->input type="submit" name="form.action.reset"}{gallery->text text="Reset"}{/gallery->input}
-	  </td>
-	</tr>
+{gallery->detailedbox}
+  {gallery->title}
+    {gallery->text text="Session Settings"}
+  {/gallery->title}
+  
+  {gallery->description}
+    {gallery->text text="Specify the lifetime of the session here."}
+  {/gallery->description}
+  
+  {gallery->body}
+    {gallery->widget1box}
+      {gallery->widget1}
+	{gallery->title}
+	  {gallery->text text="Lifetime"}
+	{/gallery->title}
+	
+	{gallery->body}
+	  {gallery->select name="session.lifetime"}
+	    {html_options options=$AdminCore.sessionTimeList selected=$form.session.lifetime}
+	  {/gallery->select}
+	{/gallery->body}
+      {/gallery->widget1}
+      
+      {gallery->widget1}
+	{gallery->title}
+	  {gallery->text text="Inactivity Timeout"}
+	{/gallery->title}
+	
+	{gallery->body}
+	  {gallery->select name="session.inactivityTimeout"}
+	    {html_options options=$AdminCore.sessionTimeList selected=$form.session.inactivityTimeout}
+	  {/gallery->select}
+	{/gallery->body}
+      {/gallery->widget1}
+    {/gallery->widget1box}
+  {/gallery->body}
+{/gallery->detailedbox}
 
-    </table>
-    {/gallery->form}
-    
+{gallery->detailedbox}
+  {gallery->body}
+    {gallery->input type="submit" name="form.action.save"}
+      {gallery->text text="save"}
+    {/gallery->input}
+    {gallery->input type="submit" name="form.action.reset"}
+      {gallery->text text="reset"}
+    {/gallery->input}
+  {/gallery->body}
+{/gallery->detailedbox}

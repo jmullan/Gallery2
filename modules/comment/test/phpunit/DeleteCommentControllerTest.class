@@ -89,10 +89,15 @@ class DeleteCommentControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('itemId', $this->_item[0]->getId());
 	GalleryUtilities::putRequestVariable('commentId', $this->_comment[0]->getId());
 	GalleryUtilities::putRequestVariable('form.action.delete', 1);
-	GalleryUtilities::putRequestVariable('return.x', 'y');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('x' => 'y')), $results);
+	$this->assertEquals(array('return' => 1,
+				  'redirect' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'comment:CommentChangeConfirmation',
+						      'itemId' => $this->_item[0]->getId()),
+				  'status' => array('deleted' => 1),
+				  'error' => array()),
+			    $results);
     }
 
     /**
@@ -102,7 +107,6 @@ class DeleteCommentControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('itemId', $this->_item[0]->getId());
 	GalleryUtilities::putRequestVariable('commentId', 123123123);
 	GalleryUtilities::putRequestVariable('form.action.delete', 1);
-	GalleryUtilities::putRequestVariable('return.x', 'y');
 
 	$results = $this->handleRequest(ERROR_MISSING_OBJECT);
     }
@@ -114,9 +118,25 @@ class DeleteCommentControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('itemId', $this->_item[0]->getId());
 	GalleryUtilities::putRequestVariable('commentId', $this->_comment[1]->getId());
 	GalleryUtilities::putRequestVariable('form.action.delete', 1);
-	GalleryUtilities::putRequestVariable('return.x', 'y');
 
 	$results = $this->handleRequest(ERROR_BAD_PARAMETER);
     }
+
+    function testCancelDelete() {
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('itemId', $this->_item[0]->getId());
+	GalleryUtilities::putRequestVariable('commentId', $this->_comment[1]->getId());
+	GalleryUtilities::putRequestVariable('form.action.cancel', 1);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('return' => 1,
+				  'redirect' => array('view' => 'core:ItemAdmin',
+						      'itemId' => $this->_item[0]->getId()),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
+    }
+    
 }
 ?>

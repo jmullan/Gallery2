@@ -323,7 +323,7 @@ class ImageMagickToolkitTestPlatform {
 		       $cmd[0][3] == 'testPerformOperations1.gif') {
 		return array(1, array());
 	    } else if ($cmd[0][1] == '-quality' &&
-		       $cmd[0][2] == '75' &&
+		       preg_match('/\d+/', $cmd[0][2]) &&
 		       $cmd[0][3] == '-scale' &&
 		       $cmd[0][4] == '100x100' &&
 		       $cmd[0][5] == 'testPerformOperations4.jpg') {
@@ -333,7 +333,7 @@ class ImageMagickToolkitTestPlatform {
 		       $cmd[0][3] == 'testPerformOperations6.tiff') {
 		return array(1, array());
 	    } else if ($cmd[0][1] == '-quality' &&
-		       $cmd[0][2] == '75' &&
+		       preg_match('/\d+/', $cmd[0][2]) &&
 		       $cmd[0][3] == '-crop' &&
 		       $cmd[0][4] == '1x2+3+4' &&
 		       $cmd[0][5] == 'testPerformOperations8.png') {

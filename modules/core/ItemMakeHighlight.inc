@@ -54,6 +54,8 @@ class ItemMakeHighlightController extends GalleryController {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	$status = array();
+	$error = array();
 	if (isset($form['action']['makeHighlight'])) {
 	    $ret = GalleryItemHelper::setThumbnailFromItem($parentId, $itemId);
 	    if ($ret->isError()) {
@@ -61,26 +63,19 @@ class ItemMakeHighlightController extends GalleryController {
 	    }
 	    
 	    /* Figure out where to redirect upon success */
-	    $redirectParams['view'] = 'core:ItemAdmin';
-	    $redirectParams['itemId'] = $item->getId();
+	    $redirect['view'] = 'core:ItemAdmin';
+	    $redirect['itemId'] = $item->getId();
 	}
 
-	if (!empty($redirectParams)) {
-	    $results['redirect'] = $redirectParams;
+	if (!empty($redirect)) {
+	    $results['redirect'] = $redirect;
 	} else {
-	    if (empty($results['view'])) {
-		$results['view'] = 'core:ItemAdmin';
-		GalleryUtilities::putRequestVariable('subView', 'core:ItemDelete');
-	    }
+	    $results['delegate']['view'] = 'core:ItemAdmin';
+	    $results['delegate']['subView'] = 'core:ItemDelete';
 	}
-
-	if (isset($lockIds)) {
-	    $ret = $gallery->releaseLocks($lockIds);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	}
-
+	$results['status'] = $status;
+	$results['error'] = $error;
+	
 	return array(GalleryStatus::success(), $results);
     }
 }
@@ -96,7 +91,7 @@ class ItemMakeHighlightView extends GalleryView {
     /**
      * 
      */
-    function renderBody($form) {
+    function loadTemplate(&$template, &$form) {
 	global $gallery;
 
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
@@ -113,27 +108,17 @@ class ItemMakeHighlightView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	if ($form['formName'] == 'ItemMakeHighlight') {
-
-	    /* Complain if we have any invalid data */
-
-	} else {
-	    /* First time around, load the form with item data */
-	    $form = array();
-
+	if ($form['formName'] != 'ItemMakeHighlight') {
+	    $form['formName'] = 'ItemMakeHighlight';
 	}
+
+	$ItemMakeHighlight = array();
 
 	/* Render the HTML body */
-	$template = $this->_getTemplate();
-	$template->setVariable('form', $form);
-	$template->setVariable('item', $item->getMemberData());
+	$template->setVariable('ItemMakeHighlight', $ItemMakeHighlight);
 	$template->setVariable('controller', 'core:ItemMakeHighlight');
-	list($ret, $html) = $template->render('ItemMakeHighlight.tpl');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), $html);
-	}
 
-	return array(GalleryStatus::success(), $html);
+	return array(GalleryStatus::success(), '', 'modules/core/templates/ItemMakeHighlight.tpl');
     }
 }
 ?>

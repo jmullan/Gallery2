@@ -105,6 +105,8 @@ class CoreModuleTest extends GalleryTestCase {
 					'view' => 'core:ItemEditItem'),
 				  array('name' => $this->_module->translate('Album Settings'),
 					'view' => 'core:ItemEditAlbum'),
+				  array('name' => $this->_module->translate('Reorder Items'),
+					'view' => 'core:ItemReorder'),
 				  array('name' => $this->_module->translate('Delete Item'),
 					'view' => 'core:ItemDelete'),
 				  array('name' => $this->_module->translate('Permissions'),
@@ -127,40 +129,41 @@ class CoreModuleTest extends GalleryTestCase {
     }
 
     function testGetSystemLinks() {
-	global $gallery;
+        global $gallery;
 	
-	list ($ret, $content) = $this->_module->getSystemLinks(array('x' => 'y'));
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        list ($ret, $content) = $this->_module->getSystemLinks();
+        if ($ret->isError()) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	
-	$this->assertEquals(array(
-				  array('text' => $this->_module->translate('site admin'),
-					'params' => array('view' => 'core:SiteAdmin',
-							  'return.x' => 'y')),
-				  array('text' => $this->_module->translate('preferences'),
-					'params' => array('view' => 'core:UserPreferences',
-							  'return.x' => 'y')),
-				  array('text' => $this->_module->translate('logout'),
-					'params' => array('controller' => 'core:Logout',
-							  'return.x' => 'y'))
-				  ),
-			    $content);
+        $this->assertEquals(array(
+                                  array('text' => $this->_module->translate('Site admin'),
+                                        'params' => array('view' => 'core:SiteAdmin')),
+                                  array('text' => $this->_module->translate('Your account'),
+                                        'params' => array('return' => 'true',
+							  'view' => 'core:UserAdmin',
+                                                          'subView' => 'core:UserPreferences')),
+                                  array('text' => $this->_module->translate('Logout'),
+                                        'params' => array('return' => 'true',
+							  'controller' => 'core:Logout'))
+                                  ),
+                            $content);
     }
 
-    function testGetSystemContent() {
-	list ($ret, $content) = $this->_module->getSystemContent(array('x' => 'y'));
+    function testLoadSystemContent() {
+	$template = new CoreModuleMockTemplate();
+	list ($ret, $file) = $this->_module->loadSystemContent($template);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->assertEquals(array(), $content);
+	$this->assertEquals(null, $file);
     }
 
     function testGetItemLinks() {
 	global $gallery;
 
-	list ($ret, $content) = $this->_module->getItemLinks($this->_parentAlbum, array('x' => 'y'));
+	list ($ret, $content) = $this->_module->getItemLinks(array($this->_parentAlbum));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -169,35 +172,30 @@ class CoreModuleTest extends GalleryTestCase {
 			 'params' => array(
 					   'view' => 'core:ItemAdmin',
 					   'itemId' => $this->_parentAlbum->getId(),
-					   'return.x' => 'y',
 					   ));
 	$links[] = array('text' => $this->_module->translate('add item'),
 			 'params' => array(
 					   'view' => 'core:ItemAdmin',
 					   'subView' => 'core:ItemAddChildren',
 					   'itemId' => $this->_parentAlbum->getId(),
-					   'return.x' => 'y'
 					   ));
 	$links[] = array('text' => $this->_module->translate('add album'),
 			 'params' => array(
 					   'view' => 'core:ItemAdmin',
 					   'subView' => 'core:ItemAddAlbum',
 					   'itemId' => $this->_parentAlbum->getId(),
-					   'return.x' => 'y'
 					   ));
 	$links[] = array('text' => $this->_module->translate('permissions'),
 			 'params' => array(
 					   'view' => 'core:ItemAdmin',
 					   'subView' => 'core:ItemEditPermissions',
 					   'itemId' => $this->_parentAlbum->getId(),
-					   'return.x' => 'y'
 					   ));
-	$links[] = array('text' => $this->_module->translate('delete item'),
+	$links[] = array('text' => $this->_module->translate('delete album'),
 			 'params' => array(
 					   'view' => 'core:ItemAdmin',
 					   'subView' => 'core:ItemDelete',
 					   'itemId' => $this->_parentAlbum->getId(),
-					   'return.x' => 'y'
 					   ));
 	$links[] = array('text' => $this->_module->translate('move item'),
 			 'params' => array(
@@ -205,31 +203,31 @@ class CoreModuleTest extends GalleryTestCase {
 					   'subView' => 'core:ItemMove',
 					   'itemId' => null,
 					   'selectedId' => $this->_parentAlbum->getId(),
-					   'return.x' => 'y'
 					   ));
-	#$links[] = array('text' => $this->_module->translate('copy item'),
-	#		 'params' => array(
-	#				   'view' => 'core:ItemAdmin',
-	#				   'subView' => 'core:ItemCopy',
-	#				   'itemId' => null,
-	#				   'selectedId' => $this->_parentAlbum->getId(),
-	#				   'return.x' => 'y'
-	#				   ));
+	/*
+	$links[] = array('text' => $this->_module->translate('copy item'),
+			 'params' => array(
+					   'view' => 'core:ItemAdmin',
+					   'subView' => 'core:ItemCopy',
+					   'itemId' => null,
+					   'selectedId' => $this->_parentAlbum->getId(),
+					   ));
+	*/
 	$links[] = array('text' => $this->_module->translate('reorder items'),
 			 'params' => array(
 					   'view' => 'core:ItemAdmin',
 					   'subView' => 'core:ItemReorder',
 					   'itemId' => null,
 					   'itemId' => $this->_parentAlbum->getId(),
-					   'return.x' => 'y'
+
 					   ));
 	$this->assertEquals(array($this->_parentAlbum->getId() => $links), $content);
     }
     
     function testGetItemSummaries() {
 	global $gallery;
-	
-	list ($ret, $content) = $this->_module->getItemSummaries($this->_parentAlbum, array('x' => 'y'));
+
+	list ($ret, $content) = $this->_module->getItemSummaries(array($this->_parentAlbum));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -240,12 +238,13 @@ class CoreModuleTest extends GalleryTestCase {
     function testGetItemDetails() {
 	global $gallery;
 	
-	list ($ret, $content) = $this->_module->getItemSummaries($this->_parentAlbum, array('x' => 'y'));
+	$template = new CoreModuleMockTemplate();
+	list ($ret, $content) = $this->_module->loadItemDetails($template, $this->_parentAlbum);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->assertEquals(array(), $content);
+	$this->assertEquals(null, $content);
     }
 
     function testSetModuleParameter() {
@@ -263,6 +262,11 @@ class CoreModuleTest extends GalleryTestCase {
 	}
 
 	$this->assertEquals($value, $newValue);
+    }
+}
+
+class CoreModuleMockTemplate {
+    function setVariable() {
     }
 }
 ?>

@@ -53,6 +53,8 @@ class AdminCoreController extends GalleryController {
 	}
 	$localServerDirList = split(',', $localServerDirs);
 
+	$error = array();
+	$status = array();
 	if (isset($form['action']['save'])) {
 	    foreach (array('permissions.directory',
 			   'permissions.file',
@@ -72,6 +74,9 @@ class AdminCoreController extends GalleryController {
 		    }
 		}
 	    }
+	    $status['saved'] = 1;
+	    $redirect['view'] = 'core:SiteAdmin';
+	    $redirect['subView'] = 'core:AdminCore';
 	} else if (isset($form['action']['addUploadLocalServerDir'])) {
 	    $path = $form['uploadLocalServer']['newDir'];
 	    if (!empty($path)) {
@@ -89,10 +94,15 @@ class AdminCoreController extends GalleryController {
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
+		$status['addedDir'] = 1;
+		$redirect['view'] = 'core:SiteAdmin';
+		$redirect['subView'] = 'core:AdminCore';
+	    } else {
+		$error[] = 'form.error.uploadLocalServer.newDir.missing';
 	    }
 	} else if (isset($form['action']['removeUploadLocalServerDir'])) {
-	    $path = $form['uploadLocalServer']['selectedDir'];
-	    if (!empty($path)) {
+	    if (!empty($form['uploadLocalServer']['selectedDir'])) {
+		$path = $form['uploadLocalServer']['selectedDir'];
 		$flip = array_flip($localServerDirList);
 		if (isset($flip[$path])) {
 		    unset($flip[$path]);
@@ -104,16 +114,26 @@ class AdminCoreController extends GalleryController {
 			unset($localServerDirList[$i]);
 		    }
 		}
-	    }
-	    $ret = $gallery->setModuleParameter('core', 'uploadLocalServer.dirs', join(',', $localServerDirList));
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		$ret = $gallery->setModuleParameter('core', 'uploadLocalServer.dirs', join(',', $localServerDirList));
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		$status['removedDir'] = 1;
+		$redirect['view'] = 'core:SiteAdmin';
+		$redirect['subView'] = 'core:AdminCore';
+	    } else {
+		$error[] = 'form.error.uploadLocalServer.selectedDir.missing';
 	    }
 	}
 
-	/* Figure out where to redirect upon success */
-	$results['redirect']['view'] = 'core:SiteAdmin';
-	$results['redirect']['subView'] = 'core:AdminCore';
+	if (!empty($redirect)) {
+	    $results['redirect'] = $redirect;
+	} else {
+	    $results['delegate']['view'] = 'core:SiteAdmin';
+	    $results['delegate']['subView'] = 'core:AdminCore';
+	}
+	$results['status'] = $status;
+	$results['error'] = $error;
 
 	return array(GalleryStatus::success(), $results);
     }
@@ -128,9 +148,9 @@ class AdminCoreController extends GalleryController {
 class AdminCoreView extends GalleryView {
 
     /**
-     * @see GalleryView::renderBody
+     * @see GalleryView::loadTemplate
      */
-    function renderBody($form) {
+    function loadTemplate(&$template, &$form) {
 	global $gallery;
 	
 	$ret = GalleryUserHelper::assertSiteAdministrator();
@@ -138,26 +158,29 @@ class AdminCoreView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	    
-	/* Load up our form data */
-	foreach (array('permissions.directory',
-		       'permissions.file',
-		       'exec.expectedStatus',
-		       'default.orderBy',
-		       'default.orderDirection',
-		       'default.layout',
-		       'default.theme',
-		       'default.language',
-		       'session.lifetime',
-		       'session.inactivityTimeout') as $key) {
+	if ($form['formName'] != 'AdminCore') {
+	    /* Load up our form data */
+	    foreach (array('permissions.directory',
+			   'permissions.file',
+			   'exec.expectedStatus',
+			   'default.orderBy',
+			   'default.orderDirection',
+			   'default.layout',
+			   'default.theme',
+			   'default.language',
+			   'session.lifetime',
+			   'session.inactivityTimeout') as $key) {
 
-	    list ($ret, $value) =
-		$gallery->getModuleParameter('core', $key);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		list ($ret, $value) =
+		    $gallery->getModuleParameter('core', $key);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		list ($outer, $inner) = split('\.', $key);
+		$form[$outer][$inner] = $value;
 	    }
-
-	    list ($outer, $inner) = split('\.', $key);
-	    $form[$outer][$inner] = $value;
+	    $form['formName'] = 'AdminCore';
 	}
 
 	list ($ret, $module) = $gallery->loadModule('core');
@@ -184,8 +207,8 @@ class AdminCoreView extends GalleryView {
 
 	/* Set up our sort direction selection list */
 	$orderDirectionList = array();
-	$orderDirectionList[ORDER_ASCENDING] = $module->translate("Ascending");
-	$orderDirectionList[ORDER_DESCENDING] = $module->translate("Descending");
+	$orderDirectionList[ORDER_ASCENDING] = $module->translate('Ascending');
+	$orderDirectionList[ORDER_DESCENDING] = $module->translate('Descending');
 
 	$platform = $gallery->getPlatform();
 
@@ -258,25 +281,21 @@ class AdminCoreView extends GalleryView {
 	$permissionsDirectoryList = array('700', '750', '755', '770', '775', '777');
 	$permissionsFileList = array('600', '640', '644', '660', '664', '666');
 
-	/* Render the HTML body */
-	$template = $this->_getTemplate();
-	$template->setVariable('form', $form);
-	$template->setVariable('layoutList', $layoutList);
-	$template->setVariable('themeList', GalleryTheme::getThemes());
-	$template->setVariable('localServerDirList', $localServerDirList);
-	$template->setVariable('languageList', $languageList);
-	$template->setVariable('orderByList', $orderByList);
-	$template->setVariable('orderDirectionList', $orderDirectionList);
-	$template->setVariable('permissionsDirectoryList', $permissionsDirectoryList);
-	$template->setVariable('permissionsFileList', $permissionsFileList);
-	$template->setVariable('sessionTimeList', $sessionTimeList);
-	$template->setVariable('controller', 'core:AdminCore');
-	list($ret, $html) = $template->render('AdminCore.tpl');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), $html);
-	}
+	$AdminCore = array();
+	$AdminCore['layoutList'] = $layoutList;
+	$AdminCore['themeList'] = GalleryTheme::getThemeList();
+	$AdminCore['localServerDirList'] = $localServerDirList;
+	$AdminCore['languageList'] = $languageList;
+	$AdminCore['orderByList'] = $orderByList;
+	$AdminCore['orderDirectionList'] = $orderDirectionList;
+	$AdminCore['permissionsDirectoryList'] = $permissionsDirectoryList;
+	$AdminCore['permissionsFileList'] = $permissionsFileList;
+	$AdminCore['sessionTimeList'] = $sessionTimeList;
 	
-	return array(GalleryStatus::success(), $html);
+	$template->setVariable('controller', 'core:AdminCore');
+	$template->setVariable('AdminCore', $AdminCore);
+
+	return array(GalleryStatus::success(), '', 'modules/core/templates/AdminCore.tpl');
     }
 }
 ?>

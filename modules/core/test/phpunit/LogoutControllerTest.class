@@ -55,10 +55,13 @@ class LogoutControllerTest extends GalleryControllerTestCase {
 
     function testLogout() {
 	global $gallery;
-	GalleryUtilities::putRequestVariable('return.x', 'y');
 	
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('x' => 'y')), $results);
+	$this->assertEquals(array('return' => 1,
+				  'redirect' => array('view' => 'core:ShowItem'),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
 	$this->assertEquals(1, $gallery->_session->getResetCallCount());
     }
 }

@@ -49,12 +49,12 @@ class AdminCreateUserController extends GalleryController {
 
 	$results = array();
 	$status = array();
-	$redirectParams = array();
+	$error = array();
 	if (isset($form['action']['cancel'])) {
 
 	    /* Go back to the AdminUsers view */
-	    $results['view'] = 'core:SiteAdmin';
-	    GalleryUtilities::putRequestVariable('subView', 'core:AdminUsers');
+	    $redirect['view'] = 'core:SiteAdmin';
+	    $redirect['subView'] = 'core:AdminUsers';
 	    
 	} else if (isset($form['action']['create'])) {
 	    /*
@@ -83,7 +83,7 @@ class AdminCreateUserController extends GalleryController {
 		    }
 
 		    // Set our error status and fall back to the view.
-		    GalleryUtilities::putRequestVariable('form.error.userName.exists', 1);
+		    $error[] = 'form.error.userName.exists';
 		} else {
 		    $user->setEmail($form['email']);
 		    $user->setFullName($form['fullName']);
@@ -96,34 +96,33 @@ class AdminCreateUserController extends GalleryController {
 		    }
 
 		    /* Request a redirect to the confirmation screen */
-		    $redirectParams['view'] = 'core:SiteAdmin';
-		    $redirectParams['subView'] = 'core:AdminUsers';
+		    $redirect['view'] = 'core:SiteAdmin';
+		    $redirect['subView'] = 'core:AdminUsers';
 		    $status['createdUser'] = $form['userName'];
 		}
 	    } else {
 		foreach (array('userName', 'email', 'password1', 'password2') as $key) {
 		    if (empty($form[$key])) {
-			GalleryUtilities::putRequestVariable('form.error.' . $key . '.missing', 1);
+			$error[] = 'form.error.' . $key . '.missing';
 		    }
 		}
 
 		if (!empty($form['password1']) &&
 		        !empty($form['password2']) &&
 		        $form['password1'] != $form['password2']) {
-		    GalleryUtilities::putRequestVariable('form.error.password.mismatch', 1);
+		    $error[] = 'form.error.password2.mismatch';
 		}
 	    }
 	}
 
-	if (!empty($redirectParams)) {
-	    $results['redirect'] = $redirectParams;
-	    $results['status'] = $status;
+	if (!empty($redirect)) {
+	    $results['redirect'] = $redirect;
 	} else {
-	    if (empty($results['view'])) {
-		$results['view'] = 'core:SiteAdmin';
-		GalleryUtilities::putRequestVariable('subView', 'core:AdminCreateUser');
-	    }
+	    $results['delegate']['view'] = 'core:SiteAdmin';
+	    $results['delegate']['subView'] = 'core:AdminCreateUser';
 	}
+	$results['status'] = $status;
+	$results['error'] = $error;
 
 	return array(GalleryStatus::success(), $results);
     }
@@ -138,9 +137,9 @@ class AdminCreateUserController extends GalleryController {
 class AdminCreateUserView extends GalleryView {
 
     /**
-     * @see GalleryView::renderBody
+     * @see GalleryView::loadTemplate
      */
-    function renderBody($form) {
+    function loadTemplate(&$template, &$form) {
 	global $gallery;
 	
 	$ret = GalleryUserHelper::assertSiteAdministrator();
@@ -154,6 +153,7 @@ class AdminCreateUserView extends GalleryView {
 	    $form['email'] = '';
 	    $form['fullName'] = '';
 	    $form['language'] = '';
+	    $form['formName'] = 'AdminCreateUser';
 	}
 
 	/* Set up our language selection list */
@@ -173,17 +173,13 @@ class AdminCreateUserView extends GalleryView {
 	    }
 	}
 
-	/* Render the HTML body */
-	$template = $this->_getTemplate();
-	$template->setVariable('form', $form);
-	$template->setVariable('languageList', $languageList);
-	$template->setVariable('controller', 'core:AdminCreateUser');
-	list($ret, $html) = $template->render('AdminCreateUser.tpl');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), $html);
-	}
+	$AdminCreateUser = array();
+	$AdminCreateUser['languageList'] = $languageList;
 
-	return array(GalleryStatus::success(), $html);
+	$template->setVariable('AdminCreateUser', $AdminCreateUser);
+	$template->setVariable('controller', 'core:AdminCreateUser');
+
+	return array(GalleryStatus::success(), '', 'modules/core/templates/AdminCreateUser.tpl');
     }
 }
 ?>

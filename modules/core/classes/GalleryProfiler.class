@@ -297,6 +297,8 @@ class GalleryProfiler {
      * @static
      */
     function sortByEventTime($cmpA, $cmpB) {
+	global $gallery;
+	$gallery->guaranteeTimeLimit(5);
 
 	$eventTimeA = explode(' ', $cmpA['eventTime']);
 	$eventTimeB = explode(' ', $cmpB['eventTime']);

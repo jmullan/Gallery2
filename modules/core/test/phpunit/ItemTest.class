@@ -359,6 +359,12 @@ class ItemTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+
+	list ($ret, $maxWeight) =
+	    GalleryItemAttributesMap::fetchExtremeChildWeight($this->_childItems[0]->getId(), HIGHER_WEIGHT);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 	
 	list ($ret, $newItem) = GalleryItemHelper::addItemToAlbum(__FILE__,
 								  'itemName',
@@ -377,12 +383,21 @@ class ItemTest extends GalleryTestCase {
 	}
 
 	$this->assert(GalleryUtilities::isA($newItem, 'GalleryDataItem'), 'newItem is not a GalleryDataItem');
-	$this->assertEquals($newItem->getPathComponent(), 'itemName');
-	$this->assertEquals($newItem->getTitle(), 'title');
-	$this->assertEquals($newItem->getSummary(), 'caption');
-	$this->assertEquals($newItem->getDescription(), 'description');
-	$this->assertEquals($newItem->getMimeType(), 'application/unknown');
-	$this->assertEquals($newItem->getParentId(), $this->_childItems[0]->getId());
+	$this->assertEquals('itemName', $newItem->getPathComponent());
+	$this->assertEquals('title', $newItem->getTitle());
+	$this->assertEquals('caption', $newItem->getSummary());
+	$this->assertEquals('description', $newItem->getDescription());
+	$this->assertEquals('application/unknown', $newItem->getMimeType());
+	$this->assertEquals($this->_childItems[0]->getId(), $newItem->getParentId());
+	
+	/* Test the order weight */
+	list ($ret, $weights) = GalleryItemAttributesMap::fetchOrderWeights(array($newItem->getId()));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assert(isset($weights[$newItem->getId()]));
+	$this->assert($weights[$newItem->getId()] > $maxWeight);
     }
 }
 

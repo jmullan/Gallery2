@@ -1,142 +1,118 @@
-  {gallery->form controller="$controller"}
-  {gallery->input type="hidden" name="form.formName"}AdminEditUser{/gallery->input}
-  {gallery->input type="hidden" name="userId"}{$user.id}{/gallery->input}
-  <table width="100%" border="0" cellspacing="3" cellpadding="3">
+{gallery->bannerbox}
+  {gallery->title}
+    {gallery->text text="Edit a user"}
+  {/gallery->title}
+{/gallery->bannerbox}
 
-    <tr>
-      <td align="center" colspan="2">
-	{gallery->bigFontSize}
-	{gallery->text text="Edit a user"}
-	{/gallery->bigFontSize}
-      </td>
-    </tr>
+{gallery->detailedbox}
+  {gallery->body}
+    {gallery->widget2box}
+      {gallery->widget2}
+	{gallery->title}
+	  {gallery->text text="Username"}
+	{/gallery->title}
+	{gallery->body}
+	  {gallery->input type="hidden" name="form.userName"}{$form.userName}{/gallery->input}
+	  {gallery->input type="hidden" name="userId"}{$AdminEditUser.user.id}{/gallery->input}
+	  {$form.userName}
+	{/gallery->body}
+      {/gallery->widget2}
 
-    <tr>
-      <td align="right" width="40%">
-	{gallery->text text="Username"}
-      </td>
-      <td width="60%">
-	{gallery->input type="hidden" name="form.userName"}{$form.userName}{/gallery->input}
-	{$form.userName}
-      </td>
-    </tr>
+      {gallery->widget2}
+	{gallery->title}
+	  {gallery->text text="Full Name"}
+	{/gallery->title}
+	{gallery->body}
+	  {gallery->input size="32" type="text" name="form.fullName"}{$form.fullName}{/gallery->input}
+	{/gallery->body}
+      {/gallery->widget2}
 
-    <tr>
-      <td align="right">
-	{gallery->text text="Full name"}
-      </td>
-      <td>
-	{gallery->input type="text" name="form.fullName"}{$form.fullName}{/gallery->input}
-	{gallery->warningFontColor}
-	{gallery->text text="[required]"}
-	{/gallery->warningFontColor}
-      </td>
-    </tr>
+      {if $AdminEditUser.show.email}
+	{gallery->widget2}
+	  {gallery->title}
+	    {gallery->text text="Email Address"}
+	    {gallery->textmodifier}
+	      {gallery->text text="required"}
+	    {/gallery->textmodifier}
+	  {/gallery->title}
+	  {gallery->body}
+	    {gallery->input size="32" type="text" name="form.email"}{$form.email}{/gallery->input}
+	    
+	    {if isset($form.error.email.missing)}
+	      {gallery->error}
+		{gallery->text text="You must enter an email address"}
+	      {/gallery->error}
+	    {/if}
+	    
+	  {/gallery->body}
+	{/gallery->widget2}
+      {/if}
 
-    {if isset($form.error.fullName.missing)}
-    <tr>
-      <td>
-	&nbsp;
-      </td>
-      <td>
-	{gallery->errorFontColor}
-	{gallery->text text="You must enter a name"}
-	{/gallery->errorFontColor}
-      </td>
-    </tr>
-    {/if}
-      
-    {if $show.email}
-    <tr>
-      <td align="right">
-	{gallery->text text="Email address"}
-      </td>
-      <td>
-	{gallery->input type="text" name="form.email"}{$form.email}{/gallery->input}
-	{gallery->warningFontColor}
-	{gallery->text text="[required]"}
-	{/gallery->warningFontColor}
-      </td>
-    </tr>
-      
-    {if isset($form.error.email.missing)}
-    <tr>
-      <td>
-	&nbsp;
-      </td>
-      <td>
-	{gallery->errorFontColor}
-	{gallery->text text="You must enter an email address"}
-	{/gallery->errorFontColor}
-      </td>
-    </tr>
-    {/if}
-    {/if}
-      
-    {if $show.language}
-    <tr>
-      <td align="right">
-	{gallery->text text="Language"}
-      </td>
-      <td>
-	{gallery->select name="form.language"}
-	  {html_options options=$languageList selected=$form.language}
-	{/gallery->select}
-      </td>
-    </tr>
+      {if $AdminEditUser.show.language}
+	{gallery->widget2}
+	  {gallery->title}
+	    {gallery->text text="Language"}
+	  {/gallery->title}
+	  {gallery->body}
+	    {gallery->select name="form.language"}
+	      {html_options options=$AdminEditUser.languageList selected=$form.language}
+	    {/gallery->select}
+	  {/gallery->body}
+	{/gallery->widget2}
 
-    <tr>
-      <td colspan="2" align="right">
-	&nbsp;
-      </td>
-    </tr>
-    {/if}
+	{gallery->widget2}
+	  {gallery->title}
+	    {gallery->text text="Password"}
+	    {gallery->textmodifier}
+	      {gallery->text text="required"}
+	    {/gallery->textmodifier}
+	  {/gallery->title}
+	  {gallery->body}
+	    {gallery->input size="32" type="password" name="form.password1"}{/gallery->input}
 
-    {if $show.password}
-    <tr>
-      <td rowspan="2" align="right">
-	{gallery->text text="Enter a new password twice to change passwords, or leave it blank to leave password unchanged."}
-      </td>
-      <td>
-	{gallery->input type="password" name="form.password1"}{/gallery->input}
-	{gallery->warningFontColor}
-	{gallery->text text="[required]"}
-	{/gallery->warningFontColor}
-      </td>
-    </tr>
-      
-    <tr>
-      <td>
-	{gallery->input type="password" name="form.password2"}{/gallery->input}
-	{gallery->warningFontColor}
-	{gallery->text text="[required]"}
-	{/gallery->warningFontColor}
-      </td>
-    </tr>
+	    {if isset($form.error.password1.missing)}
+	      {gallery->error}
+		{gallery->text text="You must enter a password"}
+	      {/gallery->error}
+	    {/if}
+	    
+	  {/gallery->body}
+	{/gallery->widget2}
+      {/if}
 
-    {if isset($form.error.password.mismatch)}
-    <tr>
-      <td>
-	&nbsp;
-      </td>
-      <td>
-	{gallery->errorFontColor}
-	{gallery->text text="The passwords you entered did not match"}
-	{/gallery->errorFontColor}
-      </td>
-    </tr>
-    {/if}
-    {/if}
-      
-    <tr>
-      <td align="center" colspan="2">
-	{gallery->input type="submit" name="form.action.save"}{gallery->text text="Save"}{/gallery->input}
-	{gallery->input type="submit" name="form.action.undo"}{gallery->text text="Undo"}{/gallery->input}
-	{gallery->input type="submit" name="form.action.cancel"}{gallery->text text="Cancel"}{/gallery->input}
-      </td>
-    </tr>
-      
-  </table>
-  {/gallery->form}
+      {if $AdminEditUser.show.password}
+	{gallery->widget2}
+	  {gallery->title}
+	    {gallery->text text="Verify Password"}
+	    {gallery->textmodifier}
+	      {gallery->text text="required"}
+	    {/gallery->textmodifier}
+	  {/gallery->title}
+	  {gallery->body}
+	    {gallery->input size="32" type="password" name="form.password2"}{/gallery->input}
 
-  
+	    {if isset($form.error.password2.missing)}
+	      {gallery->error}
+		{gallery->text text="You must enter the password a second time"}
+	      {/gallery->error}
+	    {/if}
+	    
+	    {if isset($form.error.password2.mismatch)}
+	      {gallery->error}
+		{gallery->text text="The passwords you entered did not match"}
+	      {/gallery->error}
+	    {/if}
+	  {/gallery->body}
+	{/gallery->widget2}
+      {/if}
+
+      {gallery->widget2}
+	{gallery->body}
+	  {gallery->input type="submit" name="form.action.save"}{gallery->text text="edit user"}{/gallery->input}
+	  {gallery->input type="submit" name="form.action.undo"}{gallery->text text="undo"}{/gallery->input}
+	  {gallery->input type="submit" name="form.action.cancel"}{gallery->text text="cancel"}{/gallery->input}
+	{/gallery->body}
+      {/gallery->widget2}
+    {/gallery->widget2box}
+  {/gallery->body}
+{/gallery->detailedbox}

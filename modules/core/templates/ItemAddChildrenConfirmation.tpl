@@ -1,35 +1,37 @@
+{gallery->bannerbox}
+  {gallery->title}
+    {gallery->text text="Upload Complete"}
+  {/gallery->title}
+{/gallery->bannerbox}
 
-    <center>
-      {if ($count)}
-      {gallery->biggerFontSize}
-      {gallery->successFontColor}
-      {gallery->text one="Successfully added %d file."
-                     many="Successfully added %d files."
-                     count=$count
-                     arg1=$count}
-      {/gallery->successFontColor}
-      {/gallery->biggerFontSize}
-
-      <table>
-	<!-- {foreach from=$status item=entry} -->
-	  <tr>
-	    <td>
+{gallery->detailedbox}
+  {gallery->title}
+    {if ($ItemAddChildrenConfirmation.count)}
+      {gallery->text one="Successfully added %d file." many="Successfully added %d files." count=$ItemAddChildrenConfirmation.count arg1=$ItemAddChildrenConfirmation.count}
+    {else}
+      {gallery->text text="No files added."}
+    {/if}
+  {/gallery->title}
+  
+  {if sizeof($status) > 0}
+    {gallery->body}
+      {gallery->table}
+	{foreach from=$status.addFromLocalServer item=entry}
+	  {gallery->row}
+	    {gallery->column}
 	      {gallery->text text="Added %s" arg1=$entry.fileName}
-	    </td>
-	  </tr>
-	<!-- {/foreach} -->
-      </table>
-      {else}
-      {gallery->biggerFontSize}
-      {gallery->warningFontColor}
-      {gallery->text text="Did not add any files."}
-      {/gallery->warningFontColor}
-      {/gallery->biggerFontSize}
-      {/if}
+	    {/gallery->column}
+	  {/gallery->row}
+	{/foreach}
+      {/gallery->table}
+    {/gallery->body}
+  {/if}
+{/gallery->detailedbox}
 
-      <br>
-
-      <a href="{gallery->url view="core:ItemAdmin" subView="core:ItemAddChildren" itemId=$item.id}">
-	{gallery->text text="Add more files"}
-      </a>
-    </center>
+{gallery->detailedbox}
+  {gallery->body}
+    {gallery->link url_view="core:ItemAdmin" url_subView="core:ItemAddChildren" url_itemId=$ItemAdmin.item.id}
+      {gallery->text text="Add more files"}
+    {/gallery->link}
+  {/gallery->body}
+{/gallery->detailedbox}

@@ -67,6 +67,12 @@ class GalleryControllerTestCase extends GalleryTestCase {
 	    }
 	} else if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	} else {
+	    /* Check to make sure we got back everything we want */
+	    $this->assert(isset($results['status']), 'controller results missing status');
+	    $this->assert(isset($results['error']), 'controller results missing error');
+	    $this->assert(isset($results['redirect']) || isset($results['delegate']),
+			  'controller results needs one of (redirect, delegate)');
 	}
 
 	return $results;

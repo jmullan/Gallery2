@@ -56,6 +56,8 @@ class ItemEditPermissionsController extends GalleryController {
 	    $applyToChildren = false;
 	}
 
+	$status = array();
+	$error = array();
 	if (isset($form['action']['deleteGroupPermission'])) {
 	    /* Figure out which one we're working with */
 	    $index = array_pop(array_keys($form['action']['deleteGroupPermission']));
@@ -71,15 +73,15 @@ class ItemEditPermissionsController extends GalleryController {
 	    }
 
 	    /* Figure out where to redirect upon success */
-	    $redirectParams['view'] = 'core:ItemAdmin';
-	    $redirectParams['subView'] = 'core:ItemEditPermissions';
-	    $redirectParams['itemId'] = $itemId;
-	    $redirectParams['form.group.permission'] = $permissionId;
+	    $redirect['view'] = 'core:ItemAdmin';
+	    $redirect['subView'] = 'core:ItemEditPermissions';
+	    $redirect['itemId'] = $itemId;
+	    $redirect['form.group.permission'] = $permissionId;
 
 	    /* Stuff the group name back into the form for easy re-adding */
 	    list ($ret, $group) = $gallery->loadEntitiesById($groupId);
 	    if ($ret->isSuccess()) {
-		$redirectParams['form.group.groupName'] = $group->getGroupName();
+		$redirect['form.group.groupName'] = $group->getGroupName();
 	    }
 	} else if (isset($form['action']['deleteUserPermission'])) {
 	    /* Figure out which one we're working with */
@@ -96,28 +98,28 @@ class ItemEditPermissionsController extends GalleryController {
 	    }
 
 	    /* Figure out where to redirect upon success */
-	    $redirectParams['view'] = 'core:ItemAdmin';
-	    $redirectParams['subView'] = 'core:ItemEditPermissions';
-	    $redirectParams['itemId'] = $itemId;
-	    $redirectParams['form.user.permission'] = $permissionId;
+	    $redirect['view'] = 'core:ItemAdmin';
+	    $redirect['subView'] = 'core:ItemEditPermissions';
+	    $redirect['itemId'] = $itemId;
+	    $redirect['form.user.permission'] = $permissionId;
 
 	    /* Stuff the values back into the form for easy re-adding */
 	    list ($ret, $user) = $gallery->loadEntitiesById($userId);
 	    if ($ret->isSuccess()) {
-		$redirectParams['form.user.userName'] = $user->getUserName();
+		$redirect['form.user.userName'] = $user->getUserName();
 	    }
 	} else if (isset($form['action']['addUserPermission'])) {
 
 	    /* Handle create user permission actions */
 	    if (empty($form['user']['userName'])) {
-		GalleryUtilities::putRequestVariable('form.error.user.missingUser', 1);
+		$error[] = 'form.error.user.missingUser';
 	    } else {
 		/* Validate the user */
 		list ($ret, $user) =
 		    GalleryUserHelper::fetchUserByUserName($form['user']['userName']);
 		if ($ret->isError()) {
 		    if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
-			GalleryUtilities::putRequestVariable('form.error.user.invalidUser', 1);
+			$error[] = 'form.error.user.invalidUser';
 		    } else {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
@@ -131,7 +133,7 @@ class ItemEditPermissionsController extends GalleryController {
 		}
 
 		if (empty($allPermissions[$permission])) {
-		    GalleryUtilities::putRequestVariable('form.error.user.invalidPermission', 1);
+		    $error[] = 'form.error.user.invalidPermission';
 		    $permission = null;
 		}
 
@@ -156,12 +158,12 @@ class ItemEditPermissionsController extends GalleryController {
 			}
 
 			/* Figure out where to redirect upon success */
-			$redirectParams['view'] = 'core:ItemAdmin';
-			$redirectParams['subView'] = 'core:ItemEditPermissions';
-			$redirectParams['itemId'] = $itemId;
-			$redirectParams['form.user.userName'] = $user->getUserName();
+			$redirect['view'] = 'core:ItemAdmin';
+			$redirect['subView'] = 'core:ItemEditPermissions';
+			$redirect['itemId'] = $itemId;
+			$redirect['form.user.userName'] = $user->getUserName();
 		    } else {
-			GalleryUtilities::putRequestVariable('form.error.user.alreadyHadPermission', 1);
+			$error[] = 'form.error.user.alreadyHadPermission';
 		    }
 
 		}
@@ -170,14 +172,14 @@ class ItemEditPermissionsController extends GalleryController {
 
 	    /* Handle create group permission actions */
 	    if (empty($form['group']['groupName'])) {
-		GalleryUtilities::putRequestVariable('form.error.group.missingGroup', 1);
+		$error[] = 'form.error.group.missingGroup';
 	    } else {
 		/* Validate the group */
 		list ($ret, $group) =
 		    GalleryGroupHelper::fetchGroupByGroupName($form['group']['groupName']);
 		if ($ret->isError()) {
 		    if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
-			GalleryUtilities::putRequestVariable('form.error.group.invalidGroup', 1);
+			$error[] = 'form.error.group.invalidGroup';
 		    } else {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
@@ -191,7 +193,7 @@ class ItemEditPermissionsController extends GalleryController {
 		}
 
 		if (empty($allPermissions[$permission])) {
-		    GalleryUtilities::putRequestVariable('form.error.group.invalidPermission', 1);
+		    $error[] = 'form.error.group.invalidPermission';
 		    $permission = null;
 		}
 
@@ -215,18 +217,18 @@ class ItemEditPermissionsController extends GalleryController {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
 			/* Figure out where to redirect upon success */
-			$redirectParams['view'] = 'core:ItemAdmin';
-			$redirectParams['subView'] = 'core:ItemEditPermissions';
-			$redirectParams['itemId'] = $itemId;
-			$redirectParams['form.group.groupName'] = $group->getGroupName();
+			$redirect['view'] = 'core:ItemAdmin';
+			$redirect['subView'] = 'core:ItemEditPermissions';
+			$redirect['itemId'] = $itemId;
+			$redirect['form.group.groupName'] = $group->getGroupName();
 		    } else {
-			GalleryUtilities::putRequestVariable('form.error.group.alreadyHadPermission', 1);
+			$error[] = 'form.error.group.alreadyHadPermission';
 		    }
 		}
 	    }
 	} else if (isset($form['action']['changeOwner'])) {
 	    if (empty($form['owner']['ownerName'])) {
-		GalleryUtilities::putRequestVariable('form.error.owner.missingUser', 1);
+		$error[] = 'form.error.owner.missingUser';
 	    } else {
 		$ret = GalleryUserHelper::assertSiteAdministrator();
 		if ($ret->isError()) {
@@ -238,7 +240,7 @@ class ItemEditPermissionsController extends GalleryController {
 		    GalleryUserHelper::fetchUserByUserName($form['owner']['ownerName']);
 		if ($ret->isError()) {
 		    if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
-			GalleryUtilities::putRequestVariable('form.error.owner.invalidUser', 1);
+			$error[] = 'form.error.owner.invalidUser';
 		    } else {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
@@ -272,21 +274,21 @@ class ItemEditPermissionsController extends GalleryController {
 		    }
 
 		    /* Figure out where to redirect upon success */
-		    $redirectParams['view'] = 'core:ItemAdmin';
-		    $redirectParams['subView'] = 'core:ItemEditPermissions';
-		    $redirectParams['itemId'] = $itemId;
+		    $redirect['view'] = 'core:ItemAdmin';
+		    $redirect['subView'] = 'core:ItemEditPermissions';
+		    $redirect['itemId'] = $itemId;
 		}
 	    }
 	}
 
-	if (!empty($redirectParams)) {
-	    $results['redirect'] = $redirectParams;
+	if (!empty($redirect)) {
+	    $results['redirect'] = $redirect;
 	} else {
-	    if (empty($results['view'])) {
-		$results['view'] = 'core:ItemAdmin';
-		GalleryUtilities::putRequestVariable('subView', 'core:ItemEditPermissions');
-	    }
+	    $results['delegate']['view'] = 'core:ItemAdmin';
+	    $results['delegate']['subView'] = 'core:ItemEditPermissions';
 	}
+	$results['status'] = $status;
+	$results['error'] = $error;
 
 	return array(GalleryStatus::success(), $results);
     }
@@ -301,9 +303,9 @@ class ItemEditPermissionsController extends GalleryController {
 class ItemEditPermissionsView extends GalleryView {
 
     /**
-     * @see GalleryView::renderBody
+     * @see GalleryView::loadTemplate
      */
-    function renderBody($form) {
+    function loadTemplate(&$template, &$form) {
 	global $gallery;
 
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
@@ -336,6 +338,7 @@ class ItemEditPermissionsView extends GalleryView {
 	    }
 	    
 	    $form['owner']['ownerName'] = '';
+	    $form['formName'] = 'ItemEditPermissions';
 	}
 
 	/* Get all available permissions */
@@ -442,21 +445,16 @@ class ItemEditPermissionsView extends GalleryView {
 	$can['applyToSubItems'] = $item->getCanContainChildren();
 
 	/* Render the HTML body */
-	$template = $this->_getTemplate();
-	$template->setVariable('form', $form);
-	$template->setVariable('item', $item->getMemberData());
-	$template->setVariable('owner', $owner->getMemberData());
-	$template->setVariable('can', $can);
-	$template->setVariable('userPermissions', $userPermissions);
-	$template->setVariable('groupPermissions', $groupPermissions);
-	$template->setVariable('allPermissions', $allPermissions);
-	$template->setVariable('controller', 'core:ItemEditPermissions');
-	list($ret, $html) = $template->render('ItemEditPermissions.tpl');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), $html);
-	}
+	$ItemEditPermissions['owner'] = $owner->getMemberData();
+	$ItemEditPermissions['can'] = $can;
+	$ItemEditPermissions['userPermissions'] = $userPermissions;
+	$ItemEditPermissions['groupPermissions'] = $groupPermissions;
+	$ItemEditPermissions['allPermissions'] = $allPermissions;
 
-	return array(GalleryStatus::success(), $html);
+	$template->setVariable('ItemEditPermissions', $ItemEditPermissions);
+	$template->setVariable('controller', 'core:ItemEditPermissions');
+
+	return array(GalleryStatus::success(), '', 'modules/core/templates/ItemEditPermissions.tpl');
     }
 }
 ?>

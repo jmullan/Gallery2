@@ -62,6 +62,11 @@ class GalleryComment extends GalleryComment_core {
             'type' => STORAGE_TYPE_STRING
         );
     
+        $meta['members']['subject'] = array(
+            'class' => 'GalleryComment',
+            'type' => STORAGE_TYPE_STRING
+        );
+    
         $meta['members']['comment'] = array(
             'class' => 'GalleryComment',
             'type' => STORAGE_TYPE_TEXT
@@ -94,6 +99,12 @@ class GalleryComment extends GalleryComment_core {
             $data['host'] = null;
         } else {
             $data['host'] = $this->_host;
+        }
+    
+        if (!isset($this->_subject)) {
+            $data['subject'] = null;
+        } else {
+            $data['subject'] = $this->_subject;
         }
     
         if (!isset($this->_comment)) {
@@ -198,6 +209,42 @@ class GalleryComment extends GalleryComment_core {
         if ($a != $b) {
             $this->_host = $value;
             $this->setModifiedFlag('host', MEMBER_MODIFIED);
+        }
+    }
+  
+    /**
+     * Get the value of subject
+     *
+     * @return STRING the value
+     */
+    function getsubject() {
+        if (!isset($this->_subject)) {
+            return null;
+        }
+        return $this->_subject;
+    }
+
+    /**
+     * Set the value of subject
+     *
+     * @param STRING the value
+     */
+    function setsubject($value) {
+
+        /* 
+         * Convert unset values to null, to avoid generating warnings.
+         */
+	$a = isset($value) ? $value : null;
+	$b = isset($this->_subject) ? $this->_subject : null;
+
+    
+        /* 
+         * Only take action if the value actually changes, but take care not to 
+         * generate warnings for unset values.
+         */
+        if ($a != $b) {
+            $this->_subject = $value;
+            $this->setModifiedFlag('subject', MEMBER_MODIFIED);
         }
     }
   

@@ -88,10 +88,7 @@ class GalleryModule {
 	}
 
 	$translator =& $gallery->getTranslator();
-	list ($ret, $content) = $translator->translate(
-	    'modules_' . $this->getName(),
-	    $gallery->getConfig('code.gallery.modules') . $this->getName(), $params);
-
+	list ($ret, $content) = $translator->translate('modules_' . $this->getName(), $params);
 	if ($ret->isError()) {
 	    if ($gallery->getDebug()) {
 		$gallery->debug($ret->getAsHtml());
@@ -216,7 +213,7 @@ class GalleryModule {
     }
 
     /**
-     * Get the name of the GalleryView containing the various item
+     * Get the list of GalleryViews containing the various item
      * administration views for this module.  The module should check
      * permissions and item type to determine which views are applicable for
      * the authenticated user.  As with getSiteAdminViews(), the view title
@@ -227,6 +224,20 @@ class GalleryModule {
      *               array( array('name' => name, 'view' => view), ...)
      */
     function getItemAdminViews($item) {
+	return array(GalleryStatus::success(), null);
+    }
+
+    /**
+     * Get the list of GalleryViews containing the various user administration
+     * views for this module.  The module should check permissions and item
+     * type to determine which views are applicable for the authenticated user.
+     * As with getSiteAdminViews(), the view title text must be localized.
+     *
+     * @param object GalleryUser a user
+     * @return array object GalleryStatus a status code
+     *               array( array('name' => name, 'view' => view), ...)
+     */
+    function getUserAdminViews($user) {
 	return array(GalleryStatus::success(), null);
     }
 
@@ -251,17 +262,15 @@ class GalleryModule {
      * listed in getSiteAdminViews().  As with getSiteAdminViews(), the view
      * title text must be localized.
      *
-     * @param array key => value parameters provided by the
-     *              parent view -- the module can augment or override these.
      * @return array object GalleryStatus a status code
      *               array(array('text' => 'localized text',
      *                           'params' => array(key => value, key => value))
      *                     ...)
      */
-    function getSystemLinks($returnUrlParams) {
+    function getSystemLinks() {
 	return array(GalleryStatus::success(), array());
     }
-
+    
     /**
      * Return system level content.  This is similar to system links, but it's
      * actually HTML content and not a link to a view.  It must be localized
@@ -269,14 +278,12 @@ class GalleryModule {
      * things like the search module that want to embed a search box on every
      * page.
      *
-     * @param mixed object GalleryItem a target item
-     * @param array key => value parameters provided by the
-     *              parent view -- the module can augment or override these.
+     * @param object GalleryTemplate a template
      * @return array object GalleryStatus a status code
-     *               array(array('content' => 'localized content'))
+     *               string template file path
      */
-    function getSystemContent($returnUrlParams) {
-	return array(GalleryStatus::success(), array());
+    function loadSystemContent(&$template) {
+	return array(GalleryStatus::success(), null);
     }
 
     /**
@@ -284,28 +291,24 @@ class GalleryModule {
      * These are links to item specific module views.  For example, the
      * comments module uses this to link to the "add comments" view.
      *
-     * @param mixed object GalleryItem a target item, or array of object GalleryItem
-     * @param array key => value parameters provided by the
-     *              parent view -- the module can augment or override these.
+     * @param array object GalleryItem 
      * @return array object GalleryStatus a status code
      *               array(itemId => array(array('text' => 'localized text',
      *                                           'params' => array(key => value, key => value))
      *                                     ...))
      */
-    function getItemLinks($item, $returnUrlParams) {
+    function getItemLinks($items) {
 	return array(GalleryStatus::success(), array());
     }
 
     /**
      * Return module-specific summary content about the item
      *
-     * @param mixed object GalleryItem a target item, or array of object GalleryItem
-     * @param array key => value parameters provided by the
-     *              parent view -- the module can augment or override these.
+     * @param array object GalleryItem 
      * @return array object GalleryStatus a status code
      *               string HTML content
      */
-    function getItemSummaries($item, $returnUrlParams) {
+    function getItemSummaries($items) {
 	return array(GalleryStatus::success(), array());
     }
 
@@ -315,14 +318,13 @@ class GalleryModule {
      * item content.  In theory it should be more detailed than the item
      * summaries.
      *
-     * @param mixed object GalleryItem a target item
-     * @param array key => value parameters provided by the
-     *              parent view -- the module can augment or override these.
+     * @param object GalleryTemplate a template
+     * @param object GalleryItem 
      * @return array object GalleryStatus a status code
-     *               string HTML content
+     *               string path to template file to include 
      */
-    function getItemDetails($item, $returnUrlParams) {
-	return array(GalleryStatus::success(), array());
+    function loadItemDetails(&$template, $item) {
+	return array(GalleryStatus::success(), null);
     }
 
     /**

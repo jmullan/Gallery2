@@ -131,7 +131,9 @@ class ItemEditImageControllerTest extends GalleryControllerTestCase {
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
 						      'subView' => 'core:ItemEditImage',
-						      'itemId' => $this->_item->getId())),
+						      'itemId' => $this->_item->getId()),
+				  'status' => array('scaledImage' => 1),
+				  'error' => array()),
 			    $results);
 
 	/* Verify that the transform went ok */
@@ -151,10 +153,11 @@ class ItemEditImageControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('view' => 'core:ItemAdmin'), $results);
-	$this->assertEquals('core:ItemEditImage', GalleryUtilities::getRequestVariables('subView'));
-	$this->assertEquals($this->_item->getId(), (int)GalleryUtilities::getRequestVariables('itemId'));
-	$this->assert(GalleryUtilities::hasRequestVariable('form.error.scale.size.missing'));
+	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemEditImage'),
+				  'status' => array(),
+				  'error' => array('form.error.scale.size.missing')),
+			    $results);
     }
     
     function testScaleInvalid() {
@@ -167,10 +170,11 @@ class ItemEditImageControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('view' => 'core:ItemAdmin'), $results);
-	$this->assertEquals('core:ItemEditImage', GalleryUtilities::getRequestVariables('subView'));
-	$this->assertEquals($this->_item->getId(), (int)GalleryUtilities::getRequestVariables('itemId'));
-	$this->assert(GalleryUtilities::hasRequestVariable('form.error.scale.size.invalid'));
+	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemEditImage'),
+				  'status' => array(),
+				  'error' => array('form.error.scale.size.invalid')),
+			    $results);
     }
 
     function testRotateClockwise() {
@@ -184,7 +188,9 @@ class ItemEditImageControllerTest extends GalleryControllerTestCase {
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
 						      'subView' => 'core:ItemEditImage',
-						      'itemId' => $this->_item->getId())),
+						      'itemId' => $this->_item->getId()),
+				  'status' => array('rotatedImage' => 1),
+				  'error' => array()),
 			    $results);
 
 	/* Verify that the transform went ok */
@@ -206,7 +212,9 @@ class ItemEditImageControllerTest extends GalleryControllerTestCase {
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
 						      'subView' => 'core:ItemEditImage',
-						      'itemId' => $this->_item->getId())),
+						      'itemId' => $this->_item->getId()),
+				  'status' => array('rotatedImage' => 1),
+				  'error' => array()),
 			    $results);
 
 	/* Verify that the transform went ok */
@@ -228,7 +236,9 @@ class ItemEditImageControllerTest extends GalleryControllerTestCase {
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
 						      'subView' => 'core:ItemEditImage',
-						      'itemId' => $this->_item->getId())),
+						      'itemId' => $this->_item->getId()),
+				  'status' => array('rotatedImage' => 1),
+				  'error' => array()),
 			    $results);
 
 	/* Verify that the transform went ok */
@@ -250,7 +260,9 @@ class ItemEditImageControllerTest extends GalleryControllerTestCase {
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
 						      'subView' => 'core:ItemEditImage',
-						      'itemId' => $this->_item->getId())),
+						      'itemId' => $this->_item->getId()),
+				  'status' => array('revertedImage' => 1),
+				  'error' => array()),
 			    $results);
 
 	/* Verify that the preferred is gone */
