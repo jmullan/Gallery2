@@ -681,6 +681,21 @@ class GalleryPlatform {
     }
 
     /**
+     * Flush an open file pointer
+     *
+     * @param resource the handle
+     * @return boolean true on success, false on failure
+     */
+    function fflush($handle) {
+	global $gallery;
+	if ($gallery->getDebug()) {
+	    $gallery->debug("fflush($handle)");
+	}
+
+	return fflush($handle);
+    }
+
+    /**
      * Tests for end-of-file on a file pointer
      *
      * @param resource the handle
