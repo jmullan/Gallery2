@@ -14,7 +14,7 @@
 
   </div>
 
-  {if (isset($status))}
+  {if isset($status.linked)}
   <div id="gsStatus">
     <div class="giStatus">
       {g->text text="Successfully linked"}
