@@ -124,7 +124,7 @@ class OracleDatabaseStorage extends DatabaseStorage {
 	    while (count($args) > 1) {
 		$sql[] = 'WHEN ' . array_shift($args) . ' THEN ' . array_shift($args);
 	    }
-	    $sql = 'CASE ' . implode(' ', $args) . ' ELSE ' . $args[0];
+	    $sql = 'CASE ' . implode(' ', $args) . ' ELSE ' . $args[0] . ' END';
 	    break;
 
 	default:
