@@ -75,7 +75,6 @@
               </a>
             </li>
           {/if}
-          </li>
           {/foreach}
         </ul>
       </div>
