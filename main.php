@@ -369,7 +369,7 @@ function _GalleryMain($returnHtml=false) {
 	}
 	$main['validationUri'] = urlencode($main['validationUri']);
 
-	$main['gallery']['version'] = '2.0-alpha-3 (Farva)';
+	$main['gallery']['version'] = '2.0-alpha-CVS';
 	$template->setVariable('main', $main);
 	$template->setVariable('l10Domain', 'modules_core');
 
@@ -401,7 +401,8 @@ function _GalleryMain($returnHtml=false) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    return array(GalleryStatus::success(),
-			 array('isDone' => false, 'headHtml' => $headHtml, 'bodyHtml' => $bodyHtml));
+			 array('isDone' => false, 'headHtml' => $headHtml, 'bodyHtml' => $bodyHtml,
+'templateData' => $template->hasVariable('layout') ? $template->getVariable('layout') : array()));
 	}
     }
 
