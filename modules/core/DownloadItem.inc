@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -47,13 +47,11 @@ class DownloadItemView extends GalleryView {
      * @see GalleryView::renderShortcut
      */
     function renderShortcut() {
-	global $gallery;
-
 	/*
-	 * If the browser passes us a request with an 'If-Modified-Since' header, then its already got a
-	 * cached copy of this file.  And since our links always include a serial number, and any change
-	 * triggers a serial number change, this means that its cache is always up to date.  We don't even
-	 * need to check the modification date.  
+	 * If the browser passes us a request with an 'If-Modified-Since' header, then its already
+	 * got a cached copy of this file.  And since our links always include a serial number,
+	 * and any change triggers a serial number change, this means that its cache is always up
+	 * to date.  We don't even need to check the modification date.
 	 */
 	if (function_exists('getallheaders')) {
 	    $headers = GetAllHeaders();
@@ -68,60 +66,28 @@ class DownloadItemView extends GalleryView {
 	if (empty($itemId)) {
 	    return array(GalleryStatus::success(), false);
 	}
-	
+
 	/* Try to load our shortcut data file */
+	global $gallery;
+	$platform = $gallery->getPlatform();
 	$data = GalleryDataCache::getFromDisk(array('type' => 'derivative-meta',
 						    'itemId' => $itemId));
-	if (isset($data)) {
-	    /* Make sure we have permission */
-	    $ret = GalleryCoreApi::assertHasItemPermission($data['permissionItemId'],
-							   $data['permission']);
+	if (isset($data) && $platform->file_exists($data['derivativePath'])) {
+
+	    $ret = $this->_sendFile($data);
 	    if ($ret->isError()) {
 		return array(GalleryStatus::success(), false);
 	    }
-
-	    $platform = $gallery->getPlatform();
-	    if ($platform->file_exists($data['derivativePath'])) {
-		header('Content-type: ' . $data['mimeType']);
-		header('Content-Disposition: inline; filename="' . $data['pseudoFileName'] . '"');
-		$stats = $platform->stat($data['derivativePath']);
-		if ($stats[7] > 0) {
-		    header('Content-length: ' . $stats[7]);
-		}
-		header('Last-Modified: ' . GalleryUtilities::getHttpDate($stats[9]));
-
-		/*
-		 * Don't use readfile() because it buffers the entire file in memory
-		 * Profiling shows that this approach is as efficient as fpassthru()
-		 * but we get to call guaranteeTimeLimit which prevents it from failing on
-		 * very large files.
-		 */
-		if ($fd = $platform->fopen($data['derivativePath'], 'rb')) {
-		    while (true) {
-			$data = $platform->fread($fd, 65535);
-			if (strlen($data) == 0) {
-			    break;
-			}
-			print $data;
-			$gallery->guaranteeTimeLimit(30);
-		    }
-		    
-		    $platform->fclose($fd);
-		}
-
-		return array(GalleryStatus::success(), true);
-	    }
+	    return array(GalleryStatus::success(), true);
 	}
 
 	return array(GalleryStatus::success(), false);
     }
-    
+
     /**
      * @see GalleryView::renderImmediate
      */
     function renderImmediate($status, $error) {
-	global $gallery;
-
 	/* Figure out which item we're talking about */
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
 	if (empty($itemId)) {
@@ -134,8 +100,8 @@ class DownloadItemView extends GalleryView {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-        /* Figure out the filename */
-        list ($ret, $pseudoFileName) = GalleryUtilities::getPseudoFileName($item);
+	/* Figure out the filename */
+	list ($ret, $pseudoFileName) = GalleryUtilities::getPseudoFileName($item);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -146,7 +112,7 @@ class DownloadItemView extends GalleryView {
 	    case DERIVATIVE_TYPE_IMAGE_THUMBNAIL:
 		$requiredPermission = 'core.view';
 		break;
-		
+
 	    case DERIVATIVE_TYPE_IMAGE_RESIZE:
 		$requiredPermission = 'core.viewResizes';
 		break;
@@ -161,12 +127,6 @@ class DownloadItemView extends GalleryView {
 	    $itemForPermission = $item->getId();
 	}
 
-	/* Make sure we have it */
-	$ret = GalleryCoreApi::assertHasItemPermission($itemForPermission, $requiredPermission);
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
 	/* Get the path to the file */
 	list ($ret, $path) = $item->fetchPath();
 	if ($ret->isError()) {
@@ -179,22 +139,37 @@ class DownloadItemView extends GalleryView {
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-
-	    $size = $item->getDerivativeSize();
-	} else {
-	    $size = $item->getSize();
 	}
 
-	$mimeType = $item->getMimeType();
-	header('Content-type: ' . $mimeType);
-	header('Content-Disposition: inline; filename="' . $pseudoFileName . '"');
-	
-	if ($size > 0) {
-	    header('Content-length: ' . $size);
+	$ret = $this->_sendFile(array('permissionItemId' => $itemForPermission,
+				      'permission' => $requiredPermission,
+				      'mimeType' => $item->getMimeType(),
+				      'pseudoFileName' => $pseudoFileName,
+				      'derivativePath' => $path));
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
+	return GalleryStatus::success();
+    }
+
+    function _sendFile($data) {
+	global $gallery;
 	$platform = $gallery->getPlatform();
-	$stats = $platform->stat($path);
+
+	/* Make sure we have permission */
+	$ret = GalleryCoreApi::assertHasItemPermission($data['permissionItemId'],
+						       $data['permission']);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	header('Content-type: ' . $data['mimeType']);
+	header('Content-Disposition: inline; filename="' . $data['pseudoFileName'] . '"');
+	$stats = $platform->stat($data['derivativePath']);
+	if ($stats[7] > 0) {
+	    header('Content-length: ' . $stats[7]);
+	}
 	header('Last-Modified: ' . GalleryUtilities::getHttpDate($stats[9]));
 
 	/*
@@ -203,7 +178,7 @@ class DownloadItemView extends GalleryView {
 	 * but we get to call guaranteeTimeLimit which prevents it from failing on
 	 * very large files.
 	 */
-	if ($fd = $platform->fopen($path, 'rb')) {
+	if ($fd = $platform->fopen($data['derivativePath'], 'rb')) {
 	    while (true) {
 		$data = $platform->fread($fd, 65535);
 		if (strlen($data) == 0) {
@@ -212,7 +187,6 @@ class DownloadItemView extends GalleryView {
 		print $data;
 		$gallery->guaranteeTimeLimit(30);
 	    }
-	    
 	    $platform->fclose($fd);
 	}
 
@@ -224,20 +198,20 @@ class DownloadItemView extends GalleryView {
      */
     function rewriteQueryString($params) {
 	global $gallery;
-	
+
 	/* We know who we are */
 	unset($params['view']);
 
 	$itemId = $params['itemId'];
 	unset($params['itemId']);
-	
+
 	$buf = '/' . $itemId;
-	
+
 	list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($itemId);
 	if ($ret->isError()) {
 	    return null;
 	}
-	
+
 	$buf .= '-' . $entity->getSerialNumber();
 	unset($params['serialNumber']);
 
@@ -246,14 +220,14 @@ class DownloadItemView extends GalleryView {
 	    return null;
 	}
 	$buf .= '/' . $pseudoFileName;
-	
+
 	if (strpos($pseudoFileName, '.') === false) {
 	    $extension = GalleryCoreApi::convertMimeToExtension($entity->getMimeType());
 	    if (!empty($extension)) {
 		$buf .= '.' . $extension;
 	    }
 	}
-	
+
 	/* Add in anything else as a standard query element */
 	if (!empty($params)) {
 	    $urlGenerator = $gallery->getUrlGenerator();
