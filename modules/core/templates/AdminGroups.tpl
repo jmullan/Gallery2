@@ -15,7 +15,7 @@
   </div>
 
   {if isset($status)}
-  <div class="gsStatus">
+  <div id="gsStatus">
     <div class="giStatus">
       {if isset($status.deletedGroup)}
 	{g->text text="Removed group '%s'" arg1=$status.deletedGroup}
