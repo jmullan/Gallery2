@@ -34,7 +34,7 @@ function GalleryInit() {
      */
     require_once($galleryBase . 'modules/core/module.inc');
     $coreModule = new CoreModule();
-    $ret = $coreModule->init();
+    $ret = $coreModule->bootstrap();
     if ($ret->isError()) {
 	return $ret->wrap(__FILE__, __LINE__);
     }
@@ -44,7 +44,7 @@ function GalleryInit() {
      * as everything else is configurable via the application itself.
      */
 
-    /* Gallery paths */
+    /* Assign $gallery from global, for ease of use */
     $gallery =& $GLOBALS['gallery'];
 
     $platform = $gallery->getPlatform();
@@ -109,6 +109,35 @@ function GalleryInit() {
 	return $ret->wrap(__FILE__, __LINE__);
     }
 
+    /*
+     * Set our active user id.  Check to see if we have one in our session.  If
+     * not, make us the anonymous user.  If we don't have a session, this will
+     * initiate one for us.
+     */
+    list ($ret, $activeUserId) = $gallery->getSessionValue('core.id.activeUser');
+    if ($ret->isError()) {
+	return $ret->wrap(__FILE__, __LINE__);
+    }
+    if (empty($activeUserId)) {
+	/* No active user -- be anonymous */
+	list ($ret, $activeUserId) = $gallery->getModuleParameter('core', 'id.anonymousUser');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$ret = $gallery->putSessionValue('core.id.activeUser', $activeUserId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+    }
+    $gallery->setActiveUserId($activeUserId);
+
+    /* Now it's safe to init the core */
+    $ret = $coreModule->init();
+    if ($ret->isError()) {
+	return $ret->wrap(__FILE__, __LINE__);
+    }
+    
     /* Load the module list */
     GalleryProfiler::start('GalleryInit.load-modules');
     list ($ret, $moduleStatus) = $gallery->getModuleStatus();

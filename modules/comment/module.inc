@@ -49,12 +49,31 @@ class CommentModule extends GalleryModule {
 					       'GalleryComment',
 					       $classDir . 'GalleryComment.class');
 
-	GalleryPermissionMap::registerPermission('comment.add', 'Add Comment', false);
-	GalleryPermissionMap::registerPermission('comment.edit', 'Edit Comment', false);
-	GalleryPermissionMap::registerPermission('comment.delete', 'Delete Comment', false);
-	GalleryPermissionMap::registerPermission('comment.view', 'View Comments', false);
-	GalleryPermissionMap::registerPermission('comment.viewIp', 'View IP', false);
+	GalleryPermissionMap::registerPermission('comment.full',
+						 $this->translate('Full control over this item\'s comments'),
+						 false);
 
+	GalleryPermissionMap::registerPermission('comment.add',
+						 $this->translate('Add a comment to this item'),
+						 false);
+
+	GalleryPermissionMap::registerPermission('comment.edit',
+						 $this->translate('Edit this item\'s comments'),
+						 false);
+
+	GalleryPermissionMap::registerPermission('comment.delete',
+						 $this->translate('Delete this item\'s comments'),
+						 false);
+
+	GalleryPermissionMap::registerPermission('comment.view',
+						 $this->translate('View comments for this item'),
+						 false);
+
+	GalleryPermissionMap::registerPermission('comment.viewIp',
+						 $this->translate('View the commenter\'s internet address'),
+						 false);
+
+	
 	return parent::init();
     }
 

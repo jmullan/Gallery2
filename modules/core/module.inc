@@ -35,9 +35,14 @@ class CoreModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::init();
+     * This method is not in GalleryModule.  It's a special method for the
+     * CoreModule that allows us to bootstrap G2 far enough up so that we can
+     * actually install and initialize the core.  It has no dependencies, so it
+     * can be safely called right at the very beginning of the G2 code.
+     *
+     * @return object GalleryStatus a status code
      */
-    function init() {
+    function bootstrap() {
 	$classDir = dirname(__FILE__) . '/classes/';
 
 	/* Load all the core Gallery classes */
@@ -80,20 +85,20 @@ class CoreModule extends GalleryModule {
 
 	/* Configure the Platform */
 	$gallery->setConfig('platform.type', strtolower(PHP_OS));
-	
-	/* Register all core permissions */
-	GalleryPermissionMap::registerPermission('core.all', 'Full', true);
-	GalleryPermissionMap::registerPermission('core.view', 'View', false);
-	GalleryPermissionMap::registerPermission('core.viewResizes', 'View Resizes', false);
-	GalleryPermissionMap::registerPermission('core.viewSource', 'View Original', false);
-	GalleryPermissionMap::registerPermission('core.viewAll', 'View All', false);
-	GalleryPermissionMap::registerPermission('core.addAlbum', 'Add Album', true);
-	GalleryPermissionMap::registerPermission('core.addItem', 'Add Item', true);
-	GalleryPermissionMap::registerPermission('core.change', 'Change', true);
-	GalleryPermissionMap::registerPermission('core.move', 'Move', true);
-	GalleryPermissionMap::registerPermission('core.changeText', 'Change Text', true);
-	GalleryPermissionMap::registerPermission('core.delete', 'Delete', true);
-	
+
+	/* Register platform implementations */
+	GalleryFactory::registerImplementation('GalleryPlatform',
+					       'UnixPlatform',
+					       'Unix',
+					       $classDir . 'GalleryPlatform/UnixPlatform.class',
+					       array(FACTORY_DEFAULT));
+
+	GalleryFactory::registerImplementation('GalleryPlatform',
+					       'WinNtPlatform',
+					       'WinNT',
+					       $classDir . 'GalleryPlatform/UnixPlatform.class',
+					       array('winnt'));
+
 	/* Register our entity implementations */
 	GalleryFactory::registerImplementation('GalleryEntity',
 					       'GalleryEntity',
@@ -145,19 +150,6 @@ class CoreModule extends GalleryModule {
 					       'GalleryUnknownItem',
 					       $classDir . 'GalleryUnknownItem.class');
 
-	/* Register platform implementations */
-	GalleryFactory::registerImplementation('GalleryPlatform',
-					       'UnixPlatform',
-					       'Unix',
-					       $classDir . 'GalleryPlatform/UnixPlatform.class',
-					       array(FACTORY_DEFAULT));
-
-	GalleryFactory::registerImplementation('GalleryPlatform',
-					       'WinNtPlatform',
-					       'WinNT',
-					       $classDir . 'GalleryPlatform/UnixPlatform.class',
-					       array('winnt'));
-
 	/* Register GalleryDataItem implementations */
 	GalleryFactory::registerImplementation('GalleryDataItem',
 					       'GalleryPhotoItem',
@@ -174,6 +166,62 @@ class CoreModule extends GalleryModule {
 					       array(FACTORY_DEFAULT));
 						     
 
+	return GalleryStatus::success();
+    }
+
+    /**
+     * @see GalleryModule::init();
+     */
+    function init() {
+	global $gallery;
+
+	$classDir = dirname(__FILE__) . '/classes/';
+	
+	/* Register all core permissions */
+	GalleryPermissionMap::registerPermission('core.all',
+						 $this->translate('All permissions'),
+						 true);
+	
+	GalleryPermissionMap::registerPermission('core.view',
+						 $this->translate('View this item'),
+						 false);
+	
+	GalleryPermissionMap::registerPermission('core.viewResizes',
+						 $this->translate('View resized versions of this item'),
+						 false);
+	
+	GalleryPermissionMap::registerPermission('core.viewSource',
+						 $this->translate('View the original version of this item'),
+						 false);
+	
+	GalleryPermissionMap::registerPermission('core.viewAll',
+						 $this->translate('View all versions of this item'),
+						 false);
+	
+	GalleryPermissionMap::registerPermission('core.addAlbum',
+						 $this->translate('Add an album to this item'),
+						 true);
+	
+	GalleryPermissionMap::registerPermission('core.addItem',
+						 $this->translate('Add an item to this item'),
+						 true);
+	
+	GalleryPermissionMap::registerPermission('core.change',
+						 $this->translate('Change the properties of this item'),
+						 true);
+	
+	GalleryPermissionMap::registerPermission('core.move',
+						 $this->translate('Move this item'),
+						 true);
+	
+	GalleryPermissionMap::registerPermission('core.changeText',
+						 $this->translate('Change this item\'s text'),
+						 true);
+	
+	GalleryPermissionMap::registerPermission('core.delete',
+						 $this->translate('Delete this item'),
+						 true);
+	
 	return parent::init();
     }
 
@@ -715,7 +763,7 @@ class CoreModule extends GalleryModule {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	/* Give all users some stuff */
+	/* Give all users some permissions */
 	list ($ret, $groupId) = $this->getModuleParameter('id.allUserGroup');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);

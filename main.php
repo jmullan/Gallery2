@@ -64,29 +64,6 @@ function GalleryMain($startTime) {
     $gallery->setConfig('url.gallery.base', '');
 
     /*
-     * Set our active user id.  Check to see if we have one in our session.  If
-     * not, make us the anonymous user.  If we don't have a session, this will
-     * initiate one for us.
-     */
-    list ($ret, $activeUserId) = $gallery->getSessionValue('core.id.activeUser');
-    if ($ret->isError()) {
-	return $ret->wrap(__FILE__, __LINE__);
-    }
-    if (empty($activeUserId)) {
-	/* No active user -- be anonymous */
-	list ($ret, $activeUserId) = $gallery->getModuleParameter('core', 'id.anonymousUser');
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	$ret = $gallery->putSessionValue('core.id.activeUser', $activeUserId);
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-    }
-    $gallery->setActiveUserId($activeUserId);
-
-    /*
      * Create, configure and register our template adapter.
      */
     $templateAdapter = new GalleryTemplateAdapter();

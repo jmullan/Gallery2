@@ -579,8 +579,10 @@ class Gallery {
      * @return array object GalleryPlatform the Gallery platform object
      */
     function getPlatform() {
+
 	if (!isset($this->_platform)) {
 	    $platformType = $this->getConfig('platform.type');
+
 	    list ($ret, $this->_platform) =
 		GalleryFactory::newInstanceByHint('GalleryPlatform', $platformType);
 
