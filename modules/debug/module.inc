@@ -40,7 +40,7 @@ class DebugModule extends GalleryModule {
 	$this->setId('debug');
 	$this->setName('Debugging');
 	$this->setDescription($gallery->i18n('Debugging and Developer Tools'));
-	$this->setVersion('1.0');
+	$this->setVersion('0.8');
     }
 
     /**

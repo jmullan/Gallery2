@@ -42,7 +42,7 @@ class CoreModule extends GalleryModule {
     function CoreModule() {
 	$this->setId('core');
 	$this->setName('Core');
-	$this->setVersion('1.0');
+	$this->setVersion('0.8');
 
 	/*
 	 * We can't set our description until we have a $gallery object so

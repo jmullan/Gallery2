@@ -40,7 +40,7 @@ class NetPbmModule extends GalleryModule {
 	$this->setId('netpbm');
 	$this->setName('NetPBM');
 	$this->setDescription($gallery->i18n('NetPBM Graphics Toolkit'));
-	$this->setVersion('1.0');
+	$this->setVersion('0.8');
     }
 
     /**

@@ -39,7 +39,7 @@ class MigrateModule extends GalleryModule {
 	$this->setId('migrate');
 	$this->setName('Migration');
 	$this->setDescription($gallery->i18n('Migrate your Gallery 1 albums to Gallery 2'));
-	$this->setVersion('1.0');
+	$this->setVersion('0.8');
     }
     
     /**

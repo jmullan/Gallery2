@@ -360,14 +360,6 @@ function GalleryMain() {
 	}
 
 	print $html;
-
-	/* Debug/Optimization code -- remove me eventually */
-	if (false) {
-	    printf("<pre>%s</pre>", print_r($GLOBALS['GalleryCoreApi'], 1));
-	    printf("<pre>\b(%s)\b\n\n&nbsp;</pre>", join("|", get_declared_classes()));
-	    printf("<pre>%s</pre>", print_r(get_declared_classes(), 1));
-	    printf("<pre>%s</pre>", print_r(GalleryCoreApi::apiMethodRoundup(), 1));
-	}
     }
 
     return GalleryStatus::success();

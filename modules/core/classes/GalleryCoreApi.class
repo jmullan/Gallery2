@@ -34,6 +34,21 @@
 class GalleryCoreApi {
 
     /**
+     * Return the major and minor version of this API.
+     *
+     * When we add to the API, we'll bump the minor version.  When we change or remove something from the API
+     * we'll change the major version.  When writing a module, you should verify that the major version of the
+     * API exactly matches the version you expect, and that the minor number is the same, or higher than the
+     * version you expect.  If the minor number is lower, that means that the API is older than you expect.
+     * If the major number is different it means the API has changes that may cause your module to break.
+     *
+     * @return array major number, minor number
+     */
+    function getApiVersion() {
+	return array(0, 8);
+    }
+
+    /**
      * Set a given plugin instance in the plugin cache
      *
      * The core module can't be loaded from inside Gallery with the
@@ -44,7 +59,6 @@ class GalleryCoreApi {
      * @static
      */
     function setPluginInstance($pluginType, $pluginId, &$instance) {
-	GalleryCoreApi::apiMethodUsed('setPluginInstance', 'GalleryPluginHelper_simple');
 	require_once(dirname(__FILE__) . '/helpers/GalleryPluginHelper_simple.class');
 	GalleryPluginHelper_simple::setPluginInstance($pluginType, $pluginId, $instance);
     }
@@ -61,7 +75,6 @@ class GalleryCoreApi {
      * @static
      */
     function registerFactoryImplementation($classType, $className, $id, $fileName, $hints=array()) {
-	GalleryCoreApi::apiMethodUsed('registerFactoryImplementation', 'GalleryFactoryHelper_simple');
 	require_once(dirname(__FILE__) . '/helpers/GalleryFactoryHelper_simple.class');
 	GalleryFactoryHelper_simple::registerImplementation($classType, $className, $id, $fileName, $hints);
     }
@@ -76,7 +89,6 @@ class GalleryCoreApi {
      * @static
      */
     function newFactoryInstanceByHint($classType, $hints) {
-	GalleryCoreApi::apiMethodUsed('newFactoryInstanceByHint', 'GalleryFactoryHelper_simple');
 	require_once(dirname(__FILE__) . '/helpers/GalleryFactoryHelper_simple.class');
 	return GalleryFactoryHelper_simple::newInstanceByHint($classType, $hints);
     }
@@ -89,7 +101,6 @@ class GalleryCoreApi {
      * @static
      */
     function newFactoryInstance($classType, $className=null) {
-	GalleryCoreApi::apiMethodUsed('newFactoryInstance', 'GalleryFactoryHelper_simple');
 	require_once(dirname(__FILE__) . '/helpers/GalleryFactoryHelper_simple.class');
 	return GalleryFactoryHelper_simple::newInstance($classType, $className);
     }
@@ -104,7 +115,6 @@ class GalleryCoreApi {
      * @static
      */
     function newFactoryInstanceById($classType, $id) {
-	GalleryCoreApi::apiMethodUsed('newFactoryInstanceById', 'GalleryFactoryHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryFactoryHelper_medium.class');
 	return GalleryFactoryHelper_medium::newInstanceById($classType, $id);
     }
@@ -116,7 +126,6 @@ class GalleryCoreApi {
      * @static
      */
     function getAllFactoryImplementationIds($classType) {
-	GalleryCoreApi::apiMethodUsed('getAllFactoryImplementationIds', 'GalleryFactoryHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryFactoryHelper_medium.class');
 	return GalleryFactoryHelper_medium::getAllImplementationIds($classType);
     }
@@ -129,7 +138,6 @@ class GalleryCoreApi {
      * @static
      */
     function unregisterFactoryImplementation($classType, $className) {
-	GalleryCoreApi::apiMethodUsed('unregisterFactoryImplementation', 'GalleryFactoryHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryFactoryHelper_medium.class');
 	return GalleryFactoryHelper_medium::unregisterImplementation($classType, $className);
     }    
@@ -145,7 +153,6 @@ class GalleryCoreApi {
      * @static
      */
     function loadPlugin($pluginType, $pluginId, $initialize=true) {
-	GalleryCoreApi::apiMethodUsed('loadPlugin', 'GalleryPluginHelper_simple');
 	require_once(dirname(__FILE__) . '/helpers/GalleryPluginHelper_simple.class');
 	return GalleryPluginHelper_simple::loadPlugin($pluginType, $pluginId, $initialize);
     }
@@ -162,7 +169,6 @@ class GalleryCoreApi {
      * @static
      */
     function getPluginParameter($pluginType, $pluginId, $parameterName, $itemId=0) {
-	GalleryCoreApi::apiMethodUsed('getPluginParameter', 'GalleryPluginHelper_simple');
 	require_once(dirname(__FILE__) . '/helpers/GalleryPluginHelper_simple.class');
 	return GalleryPluginHelper_simple::getParameter($pluginType, $pluginId,
 							$parameterName, $itemId);
@@ -179,7 +185,6 @@ class GalleryCoreApi {
      * @static
      */
     function fetchAllPluginParameters($pluginType, $pluginId, $itemId=0) {
-	GalleryCoreApi::apiMethodUsed('fetchAllPluginParameters', 'GalleryPluginHelper_simple');
 	require_once(dirname(__FILE__) . '/helpers/GalleryPluginHelper_simple.class');
 	return GalleryPluginHelper_simple::fetchAllParameters($pluginType, $pluginId, $itemId);
     }
@@ -192,7 +197,6 @@ class GalleryCoreApi {
      * @static
      */
     function removePluginParametersForItemId($itemId) {
-	GalleryCoreApi::apiMethodUsed('removeParametersForItemId', 'GalleryPluginHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryPluginHelper_medium.class');
 	return GalleryPluginHelper_medium::removeParametersForItemId($itemId);
     }
@@ -207,7 +211,6 @@ class GalleryCoreApi {
      * @static
      */
     function getPluginStatus($pluginType) {
-	GalleryCoreApi::apiMethodUsed('getPluginStatus', 'GalleryPluginHelper_simple');
 	require_once(dirname(__FILE__) . '/helpers/GalleryPluginHelper_simple.class');
 	return GalleryPluginHelper_simple::getPluginStatus($pluginType);
     }
@@ -221,7 +224,6 @@ class GalleryCoreApi {
      * @static
      */
     function activatePlugin($pluginType, $pluginId) {
-	GalleryCoreApi::apiMethodUsed('activatePlugin', 'GalleryPluginHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryPluginHelper_medium.class');
 	return GalleryPluginHelper_medium::activate($pluginType, $pluginId);
     }
@@ -235,7 +237,6 @@ class GalleryCoreApi {
      * @static
      */
     function deactivatePlugin($pluginType, $pluginId) {
-	GalleryCoreApi::apiMethodUsed('deactivatePlugin', 'GalleryPluginHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryPluginHelper_medium.class');
 	return GalleryPluginHelper_medium::deactivate($pluginType, $pluginId);
     }
@@ -249,7 +250,6 @@ class GalleryCoreApi {
      * @static
      */
     function removePlugin($pluginType, $pluginId) {
-	GalleryCoreApi::apiMethodUsed('removePlugin', 'GalleryPluginHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryPluginHelper_medium.class');
 	return GalleryPluginHelper_medium::remove($pluginType, $pluginId);
     }
@@ -262,7 +262,6 @@ class GalleryCoreApi {
      * @static
      */
     function unloadPlugin($pluginType, $pluginId) {
-	GalleryCoreApi::apiMethodUsed('unloadPlugin', 'GalleryPluginHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryPluginHelper_medium.class');
 	return GalleryPluginHelper_medium::unloadPlugin($pluginType, $pluginId);
     }
@@ -276,7 +275,6 @@ class GalleryCoreApi {
      * @static
      */
     function getAllPluginIds($pluginType) {
-	GalleryCoreApi::apiMethodUsed('getAllPluginIds', 'GalleryPluginHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryPluginHelper_medium.class');
 	return GalleryPluginHelper_medium::getAllPluginIds($pluginType);
     }
@@ -292,7 +290,6 @@ class GalleryCoreApi {
      * @static
      */
     function removePluginParameter($pluginType, $pluginId, $parameterName, $itemId=0) {
-	GalleryCoreApi::apiMethodUsed('removePluginParameter', 'GalleryPluginHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryPluginHelper_medium.class');
 	return GalleryPluginHelper_medium::removeParameter($pluginType, $pluginId, $parameterName, $itemId);
     }
@@ -306,7 +303,6 @@ class GalleryCoreApi {
      * @static
      */
     function removeAllPluginParameters($pluginType, $pluginId) {
-	GalleryCoreApi::apiMethodUsed('removeAllPluginParameters', 'GalleryPluginHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryPluginHelper_medium.class');
 	return GalleryPluginHelper_medium::removeAllParameters($pluginType, $pluginId);
     }
@@ -322,7 +318,6 @@ class GalleryCoreApi {
      * @static
      */
     function setPluginParameter($pluginType, $pluginId, $parameterName, $parameterValue, $itemId=0) {
-	GalleryCoreApi::apiMethodUsed('setPluginParameter', 'GalleryPluginHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryPluginHelper_medium.class');
 	return GalleryPluginHelper_medium::setParameter($pluginType, $pluginId,
 							$parameterName, $parameterValue, $itemId);
@@ -337,7 +332,6 @@ class GalleryCoreApi {
      * @static
      */
     function assertHasItemPermission($itemId, $permission) {
-	GalleryCoreApi::apiMethodUsed('assertHasItemPermission', 'GalleryUserHelper_simple');
 	require_once(dirname(__FILE__) . '/helpers/GalleryUserHelper_simple.class');
 	return GalleryUserHelper_simple::assertHasItemPermission($itemId, $permission);
     }
@@ -351,7 +345,6 @@ class GalleryCoreApi {
      * @static
      */
     function hasItemPermission($itemId, $permission) {
-	GalleryCoreApi::apiMethodUsed('hasItemPermission', 'GalleryUserHelper_simple');
 	require_once(dirname(__FILE__) . '/helpers/GalleryUserHelper_simple.class');
 	return GalleryUserHelper_simple::hasItemPermission($itemId, $permission);
     }    
@@ -370,7 +363,6 @@ class GalleryCoreApi {
      * @static
      */
     function fetchUsernames($count=null, $offset=null, $substring=null) {
-	GalleryCoreApi::apiMethodUsed('fetchUsernames', 'GalleryUserHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryUserHelper_medium.class');
 	return GalleryUserHelper_medium::fetchUsernames($count, $offset, $substring);
     }
@@ -382,7 +374,6 @@ class GalleryCoreApi {
      * @static
      */
     function fetchUserCount($substring=null) {
-	GalleryCoreApi::apiMethodUsed('fetchUserCount', 'GalleryUserHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryUserHelper_medium.class');
 	return GalleryUserHelper_medium::fetchUserCount($substring);
     }
@@ -399,7 +390,6 @@ class GalleryCoreApi {
      * @static
      */
     function fetchUserByUserName($userName=null) {
-	GalleryCoreApi::apiMethodUsed('fetchUserByUserName', 'GalleryUserHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryUserHelper_medium.class');
 	return GalleryUserHelper_medium::fetchUserByUserName($userName);
     }
@@ -412,7 +402,6 @@ class GalleryCoreApi {
      * @static
      */
     function assertUserIsSiteAdministrator() {
-	GalleryCoreApi::apiMethodUsed('assertSiteAdministrator', 'GalleryUserHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryUserHelper_medium.class');
 	return GalleryUserHelper_medium::assertSiteAdministrator();
     }
@@ -431,7 +420,6 @@ class GalleryCoreApi {
      * @static
      */
     function fetchGroupNames($count=null, $offset=null, $substring=null) {
-	GalleryCoreApi::apiMethodUsed('fetchGroupNames', 'GalleryGroupHelper_simple');
 	require_once(dirname(__FILE__) . '/helpers/GalleryGroupHelper_simple.class');
 	return GalleryGroupHelper_simple::fetchGroupNames($count, $offset, $substring);
     }
@@ -446,7 +434,6 @@ class GalleryCoreApi {
      * @static
      */
     function fetchGroupCount($substring=null) {
-	GalleryCoreApi::apiMethodUsed('fetchGroupCount', 'GalleryGroupHelper_simple');
 	require_once(dirname(__FILE__) . '/helpers/GalleryGroupHelper_simple.class');
 	return GalleryGroupHelper_simple::fetchGroupCount($substring);
     }
@@ -463,7 +450,6 @@ class GalleryCoreApi {
      * @static
      */
     function fetchGroupByGroupName($groupName=null) {
-	GalleryCoreApi::apiMethodUsed('fetchGroupByGroupName', 'GalleryGroupHelper_simple');
 	require_once(dirname(__FILE__) . '/helpers/GalleryGroupHelper_simple.class');
 	return GalleryGroupHelper_simple::fetchGroupByGroupName($groupName);
     }
@@ -477,7 +463,6 @@ class GalleryCoreApi {
      * @static
      */
     function convertPermissionIdsToBits($permissionIds) {
-	GalleryCoreApi::apiMethodUsed('convertPermissionIdsToBits', 'GalleryPermissionHelper_simple');
 	require_once(dirname(__FILE__) . '/helpers/GalleryPermissionHelper_simple.class');
 	return GalleryPermissionHelper_simple::convertIdsToBits($permissionIds);
     }
@@ -492,7 +477,6 @@ class GalleryCoreApi {
      * @static
      */
     function convertPermissionBitsToIds($permissionBits, $compress=false) {
-	GalleryCoreApi::apiMethodUsed('convertPermissionBitsToIds', 'GalleryPermissionHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryPermissionHelper_medium.class');
 	return GalleryPermissionHelper_medium::convertBitsToIds($permissionBits, $compress);
     }
@@ -506,7 +490,6 @@ class GalleryCoreApi {
      * @static
      */
     function fetchPermissionsForItems($itemIds) {
-	GalleryCoreApi::apiMethodUsed('fetchPermissionsForItems', 'GalleryPermissionHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryPermissionHelper_medium.class');
 	return GalleryPermissionHelper_medium::fetchPermissionsForItems($itemIds);
     }
@@ -519,7 +502,6 @@ class GalleryCoreApi {
      * @static
      */
     function getPermissions($itemId) {
-	GalleryCoreApi::apiMethodUsed('getPermissions', 'GalleryPermissionHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryPermissionHelper_medium.class');
 	return GalleryPermissionHelper_medium::getPermissions($itemId);
     }
@@ -533,7 +515,6 @@ class GalleryCoreApi {
      * @static
      */
     function studyPermissions($itemIds) {
-	GalleryCoreApi::apiMethodUsed('studyPermissions', 'GalleryPermissionHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryPermissionHelper_medium.class');
 	return GalleryPermissionHelper_medium::studyPermissions($itemIds);
     }
@@ -547,7 +528,6 @@ class GalleryCoreApi {
      * @static
      */
     function addUserPermission($itemId, $userId, $permission, $applyToChildren=false) {
-	GalleryCoreApi::apiMethodUsed('addUserPermission', 'GalleryPermissionHelper_advanced');
 	require_once(dirname(__FILE__) . '/helpers/GalleryPermissionHelper_advanced.class');
 	return GalleryPermissionHelper_advanced::addUserPermission($itemId, $userId, $permission, $applyToChildren);
     }
@@ -561,7 +541,6 @@ class GalleryCoreApi {
      * @static
      */
     function addGroupPermission($itemId, $groupId, $permission, $applyToChildren=false) {
-	GalleryCoreApi::apiMethodUsed('addGroupPermission', 'GalleryPermissionHelper_advanced');
 	require_once(dirname(__FILE__) . '/helpers/GalleryPermissionHelper_advanced.class');
 	return GalleryPermissionHelper_advanced::addGroupPermission($itemId, $groupId, $permission, $applyToChildren);
     }
@@ -574,7 +553,6 @@ class GalleryCoreApi {
      * @static
      */
     function removeUserPermission($itemId, $userId, $permission, $applyToChildren=false) {
-	GalleryCoreApi::apiMethodUsed('removeUserPermission', 'GalleryPermissionHelper_advanced');
 	require_once(dirname(__FILE__) . '/helpers/GalleryPermissionHelper_advanced.class');
 	return GalleryPermissionHelper_advanced::removeUserPermission($itemId, $userId,
 								      $permission, $applyToChildren);
@@ -588,7 +566,6 @@ class GalleryCoreApi {
      * @static
      */
     function removeGroupPermission($itemId, $groupId, $permission, $applyToChildren=false) {
-	GalleryCoreApi::apiMethodUsed('removeGroupPermission', 'GalleryPermissionHelper_advanced');
 	require_once(dirname(__FILE__) . '/helpers/GalleryPermissionHelper_advanced.class');
 	return GalleryPermissionHelper_advanced::removeGroupPermission($itemId, $groupId,
 								       $permission, $applyToChildren);
@@ -602,7 +579,6 @@ class GalleryCoreApi {
      * @static
      */
     function removeItemPermissions($itemId) {
-	GalleryCoreApi::apiMethodUsed('removeItemPermissions', 'GalleryPermissionHelper_advanced');
 	require_once(dirname(__FILE__) . '/helpers/GalleryPermissionHelper_advanced.class');
 	return GalleryPermissionHelper_advanced::removeItemPermissions($itemId);
     }
@@ -619,7 +595,6 @@ class GalleryCoreApi {
      * @static
      */
     function fetchAllPermissionsForItem($itemId, $compress=false) {
-	GalleryCoreApi::apiMethodUsed('fetchAllPermissionsForItem', 'GalleryPermissionHelper_advanced');
 	require_once(dirname(__FILE__) . '/helpers/GalleryPermissionHelper_advanced.class');
 	return GalleryPermissionHelper_advanced::fetchAllPermissionsForItem($itemId, $compress);
     }
@@ -633,7 +608,6 @@ class GalleryCoreApi {
      * @static
      */
     function copyPermissions($itemId, $fromId) {
-	GalleryCoreApi::apiMethodUsed('copyPermissions', 'GalleryPermissionHelper_advanced');
 	require_once(dirname(__FILE__) . '/helpers/GalleryPermissionHelper_advanced.class');
 	return GalleryPermissionHelper_advanced::copyPermissions($itemId, $fromId);
     }
@@ -650,7 +624,6 @@ class GalleryCoreApi {
      * @static
      */
     function hasPermission($itemId, $userIds, $groupIds, $permission) {
-	GalleryCoreApi::apiMethodUsed('hasPermission', 'GalleryPermissionHelper_advanced');
 	require_once(dirname(__FILE__) . '/helpers/GalleryPermissionHelper_advanced.class');
 	return GalleryPermissionHelper_advanced::hasPermission($itemId, $userIds, $groupIds, $permission);
     }
@@ -667,7 +640,6 @@ class GalleryCoreApi {
      * @static
      */
     function registerPermission($module, $permissionId, $description, $flags=0, $composites=array()) {
-	GalleryCoreApi::apiMethodUsed('registerPermission', 'GalleryPermissionHelper_advanced');
 	require_once(dirname(__FILE__) . '/helpers/GalleryPermissionHelper_advanced.class');
 	return GalleryPermissionHelper_advanced::registerPermission($module, $permissionId,
 								    $description, $flags, $composites);
@@ -683,7 +655,6 @@ class GalleryCoreApi {
      * @static
      */
     function getPermissionIds($flags=0) {
-	GalleryCoreApi::apiMethodUsed('getPermissionIds', 'GalleryPermissionHelper_advanced');
 	require_once(dirname(__FILE__) . '/helpers/GalleryPermissionHelper_advanced.class');
 	return GalleryPermissionHelper_advanced::getPermissionIds($flags);
     }
@@ -698,7 +669,6 @@ class GalleryCoreApi {
      * @static
      */
     function getSubPermissions($permissionId) {
-	GalleryCoreApi::apiMethodUsed('getSubPermissions', 'GalleryPermissionHelper_advanced');
 	require_once(dirname(__FILE__) . '/helpers/GalleryPermissionHelper_advanced.class');
 	return GalleryPermissionHelper_advanced::getSubPermissions($permissionId);
     }
@@ -710,7 +680,6 @@ class GalleryCoreApi {
      * @static
      */
     function unregisterModulePermissions($moduleId) {
-	GalleryCoreApi::apiMethodUsed('unregisterModulePermissions', 'GalleryPermissionHelper_advanced');
 	require_once(dirname(__FILE__) . '/helpers/GalleryPermissionHelper_advanced.class');
 	return GalleryPermissionHelper_advanced::unregisterModulePermissions($moduleId);
     }
@@ -727,7 +696,6 @@ class GalleryCoreApi {
      * @static
      */
     function rebuildDerivativeCacheIfNotCurrent($derivativeId) {
-	GalleryCoreApi::apiMethodUsed('rebuildDerivativeCacheIfNotCurrent', 'GalleryDerivativeHelper_simple');
 	require_once(dirname(__FILE__) . '/helpers/GalleryDerivativeHelper_simple.class');
 	return GalleryDerivativeHelper_simple::rebuildCacheIfNotCurrent($derivativeId);
     }
@@ -741,7 +709,6 @@ class GalleryCoreApi {
      * @static
      */
     function rebuildDerivativeCache($derivativeId) {
-	GalleryCoreApi::apiMethodUsed('rebuildDerivativeCache', 'GalleryDerivativeHelper_advanced');
 	require_once(dirname(__FILE__) . '/helpers/GalleryDerivativeHelper_advanced.class');
 	return GalleryDerivativeHelper_advanced::rebuildCache($derivativeId);
     }    
@@ -754,7 +721,6 @@ class GalleryCoreApi {
      * @static
      */
     function expireDerivativeTreeBySourceIds($ids) {
-	GalleryCoreApi::apiMethodUsed('expireDerivativeTreeBySourceIds', 'GalleryDerivativeHelper_advanced');
 	require_once(dirname(__FILE__) . '/helpers/GalleryDerivativeHelper_advanced.class');
 	return GalleryDerivativeHelper_advanced::expireDerivativeTreeBySourceIds($ids);
     }
@@ -768,7 +734,6 @@ class GalleryCoreApi {
      * @static
      */
     function invalidateDerivativeDimensionsBySourceIds($ids) {
-	GalleryCoreApi::apiMethodUsed('invalidateDerivativeDimensionsBySourceId', 'GalleryDerivativeHelper_advanced');
 	require_once(dirname(__FILE__) . '/helpers/GalleryDerivativeHelper_advanced.class');
 	return GalleryDerivativeHelper_advanced::invalidateDerivativeDimensionsBySourceIds($ids);
     }
@@ -785,7 +750,6 @@ class GalleryCoreApi {
      *               object GalleryEntity (either a GalleryDataItem or a GalleryDerivative) the preferred source
      */
     function fetchPreferredSource($item) {
-	GalleryCoreApi::apiMethodUsed('fetchPreferredSource', 'GalleryDerivativeHelper_advanced');
 	require_once(dirname(__FILE__) . '/helpers/GalleryDerivativeHelper_advanced.class');
 	return GalleryDerivativeHelper_advanced::fetchPreferredSource($item);
     }
@@ -799,7 +763,6 @@ class GalleryCoreApi {
      * @static
      */
     function fetchThumbnailsByItemIds($ids) {
-	GalleryCoreApi::apiMethodUsed('fetchThumbnailsByItemIds', 'GalleryDerivativeHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryDerivativeHelper_medium.class');
 	return GalleryDerivativeHelper_medium::fetchThumbnailsByItemIds($ids);
     }
@@ -813,7 +776,6 @@ class GalleryCoreApi {
      * @static
      */
     function fetchPreferredsByItemIds($ids) {
-	GalleryCoreApi::apiMethodUsed('fetchPreferredsByItemIds', 'GalleryDerivativeHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryDerivativeHelper_medium.class');
 	return GalleryDerivativeHelper_medium::fetchPreferredsByItemIds($ids);
     }
@@ -828,7 +790,6 @@ class GalleryCoreApi {
      * @static
      */
     function fetchResizesByItemIds($ids) {
-	GalleryCoreApi::apiMethodUsed('fetchResizesByItemIds', 'GalleryDerivativeHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryDerivativeHelper_medium.class');
 	return GalleryDerivativeHelper_medium::fetchResizesByItemIds($ids);
     }
@@ -852,7 +813,6 @@ class GalleryCoreApi {
      * @static
      */
     function mergeDerivativeOperations($operationSet1, $operationSet2, $highPriority=false) {
-	GalleryCoreApi::apiMethodUsed('mergeOperation', 'GalleryDerivativeHelper_advanced');
 	require_once(dirname(__FILE__) . '/helpers/GalleryDerivativeHelper_advanced.class');
 	return GalleryDerivativeHelper_advanced::mergeOperations($operationSet1, $operationSet2, $highPriority);
     }
@@ -868,7 +828,6 @@ class GalleryCoreApi {
      * @static
      */
     function fetchDerivativesBySourceIds($ids, $types=array()) {
-	GalleryCoreApi::apiMethodUsed('fetchDerivativesBySourceIds', 'GalleryDerivativeHelper_advanced');
 	require_once(dirname(__FILE__) . '/helpers/GalleryDerivativeHelper_advanced.class');
 	return GalleryDerivativeHelper_advanced::fetchDerivativesBySourceIds($ids, $types);
     }
@@ -884,7 +843,6 @@ class GalleryCoreApi {
      * @static
      */
     function pruneDerivativeOperations($ids, $operations) {
-	GalleryCoreApi::apiMethodUsed('pruneDerivativeOperations', 'GalleryDerivativeHelper_advanced');
 	require_once(dirname(__FILE__) . '/helpers/GalleryDerivativeHelper_advanced.class');
 	return GalleryDerivativeHelper_advanced::pruneDerivativeOperations($ids, $operations);
     }
@@ -898,7 +856,6 @@ class GalleryCoreApi {
      * @static
      */
     function remapSourceIds($originalSourceId, $newSourceId) {
-	GalleryCoreApi::apiMethodUsed('remapSourceIds', 'GalleryDerivativeHelper_advanced');
 	require_once(dirname(__FILE__) . '/helpers/GalleryDerivativeHelper_advanced.class');
 	return GalleryDerivativeHelper_advanced::remapSourceIds($originalSourceId, $newSourceId);
     }
@@ -915,7 +872,6 @@ class GalleryCoreApi {
      * @static
      */
     function copyDerivativePreferences($sourceId, $targetId) {
-	GalleryCoreApi::apiMethodUsed('copyDerivativePreferences', 'GalleryDerivativeHelper_advanced');
 	require_once(dirname(__FILE__) . '/helpers/GalleryDerivativeHelper_advanced.class');
 	return GalleryDerivativeHelper_advanced::copyPreferences($sourceId, $targetId);
     }
@@ -929,7 +885,6 @@ class GalleryCoreApi {
      * @static
      */
     function fetchDerivativePreferencesForItem($targetId) {
-	GalleryCoreApi::apiMethodUsed('fetchDerivativePreferencesForItem', 'GalleryDerivativeHelper_advanced');
 	require_once(dirname(__FILE__) . '/helpers/GalleryDerivativeHelper_advanced.class');
 	return GalleryDerivativeHelper_advanced::fetchPreferencesForItem($targetId);
     }
@@ -945,7 +900,6 @@ class GalleryCoreApi {
      * @static
      */
     function addDerivativePreference($order, $itemId, $derivativeType, $derivativeOperations) {
-	GalleryCoreApi::apiMethodUsed('addPreference', 'GalleryDerivativeHelper_advanced');
 	require_once(dirname(__FILE__) . '/helpers/GalleryDerivativeHelper_advanced.class');
 	return GalleryDerivativeHelper_advanced::addPreference($order, $itemId, $derivativeType,
 							       $derivativeOperations);
@@ -959,7 +913,6 @@ class GalleryCoreApi {
      * @static
      */
     function removeDerivativePreferencesForItem($itemId) {
-	GalleryCoreApi::apiMethodUsed('removePreferenceForItem', 'GalleryDerivativeHelper_advanced');
 	require_once(dirname(__FILE__) . '/helpers/GalleryDerivativeHelper_advanced.class');
 	return GalleryDerivativeHelper_advanced::removePreferencesForItem($itemId);
     }
@@ -974,7 +927,6 @@ class GalleryCoreApi {
      * @static
      */
     function estimateDerivativeDimensions(&$derivative, $source) {
-	GalleryCoreApi::apiMethodUsed('estimateDerivativeDimensions', 'GalleryToolkitHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryToolkitHelper_medium.class');
 	return GalleryToolkitHelper_medium::estimateDerivativeDimensions($derivative, $source);
     }
@@ -986,7 +938,6 @@ class GalleryCoreApi {
      * @static
      */
     function incrementItemViewCount($itemId, $step=1) {
-	GalleryCoreApi::apiMethodUsed('incrementItemViewCount', 'GalleryItemAttributesHelper_simple');
 	require_once(dirname(__FILE__) . '/helpers/GalleryItemAttributesHelper_simple.class');
 	return GalleryItemAttributesHelper_simple::incrementViewCount($itemId, $step);
     }
@@ -998,7 +949,6 @@ class GalleryCoreApi {
      * @static
      */
     function createItemAttributes($itemId, $parentSequence) {
-	GalleryCoreApi::apiMethodUsed('createItemAttributes', 'GalleryItemAttributesHelper_advanced');
 	require_once(dirname(__FILE__) . '/helpers/GalleryItemAttributesHelper_advanced.class');
 	return GalleryItemAttributesHelper_advanced::createItemAttributes($itemId, $parentSequence);
     }
@@ -1009,7 +959,6 @@ class GalleryCoreApi {
      * @static
      */
     function removeItemAttributes($itemId) {
-	GalleryCoreApi::apiMethodUsed('removeItemAttributes', 'GalleryItemAttributesHelper_advanced');
 	require_once(dirname(__FILE__) . '/helpers/GalleryItemAttributesHelper_advanced.class');
 	return GalleryItemAttributesHelper_advanced::removeItemAttributes($itemId);
     }
@@ -1021,7 +970,6 @@ class GalleryCoreApi {
      * @static
      */
     function setItemViewCount($itemId, $count) {
-	GalleryCoreApi::apiMethodUsed('setItemViewCount', 'GalleryItemAttributesHelper_advanced');
 	require_once(dirname(__FILE__) . '/helpers/GalleryItemAttributesHelper_advanced.class');
 	return GalleryItemAttributesHelper_advanced::setViewCount($itemId, $count);
     }
@@ -1032,7 +980,6 @@ class GalleryCoreApi {
      * @static
      */
     function fetchItemViewCount($itemId) {
-	GalleryCoreApi::apiMethodUsed('fetchItemViewCount', 'GalleryItemAttributesHelper_advanced');
 	require_once(dirname(__FILE__) . '/helpers/GalleryItemAttributesHelper_advanced.class');
 	return GalleryItemAttributesHelper_advanced::fetchViewCount($itemId);
     }
@@ -1043,7 +990,6 @@ class GalleryCoreApi {
      * @static
      */
     function fetchItemViewCounts($itemIds) {
-	GalleryCoreApi::apiMethodUsed('fetchItemViewCounts', 'GalleryItemAttributesHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryItemAttributesHelper_medium.class');
 	return GalleryItemAttributesHelper_medium::fetchViewCounts($itemIds);
     }
@@ -1055,7 +1001,6 @@ class GalleryCoreApi {
      * @static
      */
     function setItemOrderWeight($itemId, $orderWeight) {
-	GalleryCoreApi::apiMethodUsed('setItemOrderWeight', 'GalleryItemAttributesHelper_advanced');
 	require_once(dirname(__FILE__) . '/helpers/GalleryItemAttributesHelper_advanced.class');
 	return GalleryItemAttributesHelper_advanced::setOrderWeight($itemId, $orderWeight);
     }
@@ -1067,7 +1012,6 @@ class GalleryCoreApi {
      * @static
      */
     function fetchItemOrderWeight($itemId) {
-	GalleryCoreApi::apiMethodUsed('fetchItemOrderWeights', 'GalleryItemAttributesHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryItemAttributesHelper_medium.class');
 	return GalleryItemAttributesHelper_medium::fetchOrderWeight($itemId);
     }
@@ -1079,7 +1023,6 @@ class GalleryCoreApi {
      * @static
      */
     function fetchItemOrderWeights($itemIds) {
-	GalleryCoreApi::apiMethodUsed('fetchItemOrderWeights', 'GalleryItemAttributesHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryItemAttributesHelper_medium.class');
 	return GalleryItemAttributesHelper_medium::fetchOrderWeights($itemIds);
     }
@@ -1095,7 +1038,6 @@ class GalleryCoreApi {
      * @static
      */
     function rebalanceChildOrderWeights($parentItemId, $spacing=1000) {
-	GalleryCoreApi::apiMethodUsed('rebalanceChildOrderWeights', 'GalleryItemAttributesHelper_advanced');
 	require_once(dirname(__FILE__) . '/helpers/GalleryItemAttributesHelper_advanced.class');
 	return GalleryItemAttributesHelper_advanced::rebalanceChildOrderWeights($parentItemId, $spacing);
     }
@@ -1108,7 +1050,6 @@ class GalleryCoreApi {
      * @static
      */
     function fetchExtremeChildWeight($itemId, $direction) {
-	GalleryCoreApi::apiMethodUsed('fetchExtremeChildWeight', 'GalleryItemAttributesHelper_advanced');
 	require_once(dirname(__FILE__) . '/helpers/GalleryItemAttributesHelper_advanced.class');
 	return GalleryItemAttributesHelper_advanced::fetchExtremeChildWeight($itemId, $direction);
     }
@@ -1122,7 +1063,6 @@ class GalleryCoreApi {
      * @static
      */
     function fetchNextItemWeight($itemId, $direction) {
-	GalleryCoreApi::apiMethodUsed('fetchNextItemWeight', 'GalleryItemAttributesHelper_advanced');
 	require_once(dirname(__FILE__) . '/helpers/GalleryItemAttributesHelper_advanced.class');
 	return GalleryItemAttributesHelper_advanced::fetchNextWeight($itemId, $direction);
     }
@@ -1136,7 +1076,6 @@ class GalleryCoreApi {
      * @static
      */
     function setParentSequence($itemId, $parentSequence) {
-	GalleryCoreApi::apiMethodUsed('setParentSequence', 'GalleryItemAttributesHelper_advanced');
 	require_once(dirname(__FILE__) . '/helpers/GalleryItemAttributesHelper_advanced.class');
 	return GalleryItemAttributesHelper_advanced::setParentSequence($itemId, $parentSequence);
     }
@@ -1150,7 +1089,6 @@ class GalleryCoreApi {
      * @static
      */
     function updateParentSequence($oldParentSequence, $newParentSequence) {
-	GalleryCoreApi::apiMethodUsed('updateParentSequence', 'GalleryItemAttributesHelper_advanced');
 	require_once(dirname(__FILE__) . '/helpers/GalleryItemAttributesHelper_advanced.class');
 	return GalleryItemAttributesHelper_advanced::updateParentSequence($oldParentSequence, $newParentSequence);
     }
@@ -1163,7 +1101,6 @@ class GalleryCoreApi {
      * @static
      */
     function fetchParentSequence($itemId) {
-	GalleryCoreApi::apiMethodUsed('fetchParentSequence', 'GalleryItemAttributesHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryItemAttributesHelper_medium.class');
 	return GalleryItemAttributesHelper_medium::fetchParentSequence($itemId);
     }
@@ -1177,7 +1114,6 @@ class GalleryCoreApi {
      * @static
      */
     function fetchLayout($item) {
-	GalleryCoreApi::apiMethodUsed('fetchLayout', 'GalleryItemHelper_simple');
 	require_once(dirname(__FILE__) . '/helpers/GalleryItemHelper_simple.class');
 	return GalleryItemHelper_simple::fetchLayout($item);
     }
@@ -1193,7 +1129,6 @@ class GalleryCoreApi {
      * @static
      */
     function fetchChildCounts($itemIds) {
-	GalleryCoreApi::apiMethodUsed('fetchChildCounts', 'GalleryItemHelper_simple');
 	require_once(dirname(__FILE__) . '/helpers/GalleryItemHelper_simple.class');
 	return GalleryItemHelper_simple::fetchChildCounts($itemIds);
     }
@@ -1207,7 +1142,6 @@ class GalleryCoreApi {
      * @static
      */
     function fetchDescendentCounts($itemIds) {
-	GalleryCoreApi::apiMethodUsed('fetchDescendentCounts', 'GalleryItemHelper_simple');
 	require_once(dirname(__FILE__) . '/helpers/GalleryItemHelper_simple.class');
 	return GalleryItemHelper_simple::fetchDescendentCounts($itemIds);
     }
@@ -1225,7 +1159,6 @@ class GalleryCoreApi {
      * @static
      */
     function fetchItemizedDescendentCounts($itemIds) {
-	GalleryCoreApi::apiMethodUsed('fetchItemizedDescendentCounts', 'GalleryItemHelper_advanced');
 	require_once(dirname(__FILE__) . '/helpers/GalleryItemHelper_advanced.class');
 	return GalleryItemHelper_advanced::fetchItemizedDescendentCounts($itemIds);
     }
@@ -1241,7 +1174,6 @@ class GalleryCoreApi {
      * @static
      */
     function fetchItemIdCount($itemType, $permission='core.view') {
-	GalleryCoreApi::apiMethodUsed('fetchItemIdCount', 'GalleryItemHelper_simple');
 	require_once(dirname(__FILE__) . '/helpers/GalleryItemHelper_simple.class');
 	return GalleryItemHelper_simple::fetchItemIdCount($itemType, $permission);
     }
@@ -1260,7 +1192,6 @@ class GalleryCoreApi {
      * @static
      */
     function fetchChildItemIdsWithPermission($itemId, $permissionId) {
-	GalleryCoreApi::apiMethodUsed('fetchChildItemIdsWithPermission', 'GalleryItemHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryItemHelper_medium.class');
 	return GalleryItemHelper_medium::fetchChildItemIdsWithPermission($itemId, $permissionId);
     }
@@ -1279,7 +1210,6 @@ class GalleryCoreApi {
      * @static
      */
     function fetchLinkableChildItemIdsWithPermission($itemId, $permissionId) {
-	GalleryCoreApi::apiMethodUsed('fetchLinkableChildItemIdsWithPermission', 'GalleryItemHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryItemHelper_medium.class');
 	return GalleryItemHelper_medium::fetchLinkableChildItemIdsWithPermission($itemId, $permissionId);
     }
@@ -1295,7 +1225,6 @@ class GalleryCoreApi {
      * @static
      */
     function fetchAllItemIds($itemType, $permission='core.view') {
-	GalleryCoreApi::apiMethodUsed('fetchAllItemIds', 'GalleryItemHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryItemHelper_medium.class');
 	return GalleryItemHelper_medium::fetchAllItemIds($itemType, $permission);
     }
@@ -1312,7 +1241,6 @@ class GalleryCoreApi {
      * @static
      */
     function newItemByMimeType($mimeType) {
-	GalleryCoreApi::apiMethodUsed('newItemByMimeType', 'GalleryItemHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryItemHelper_medium.class');
 	return GalleryItemHelper_medium::newItemByMimeType($mimeType);
     }
@@ -1333,7 +1261,6 @@ class GalleryCoreApi {
      */
     function addItemToAlbum($fileName, $itemName, $title, $summary,
 			    $description, $mimeType, $albumId) {
-	GalleryCoreApi::apiMethodUsed('addItemToAlbum', 'GalleryItemHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryItemHelper_medium.class');
 	return GalleryItemHelper_medium::addItemToAlbum($fileName, $itemName, $title, $summary,
 							$description, $mimeType, $albumId);
@@ -1348,7 +1275,6 @@ class GalleryCoreApi {
      * @static
      */
     function addExistingItemToAlbum($item, $albumId) {
-	GalleryCoreApi::apiMethodUsed('addExistingItemToAlbum', 'GalleryItemHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryItemHelper_medium.class');
 	return GalleryItemHelper_medium::addExistingItemToAlbum($item, $albumId);
     }
@@ -1364,7 +1290,6 @@ class GalleryCoreApi {
      * @static
      */
     function setThumbnailFromItem($itemId, $fromItemId) {
-	GalleryCoreApi::apiMethodUsed('setThumbnailFromItem', 'GalleryItemHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryItemHelper_medium.class');
 	return GalleryItemHelper_medium::setThumbnailFromItem($itemId, $fromItemId);
     }
@@ -1379,7 +1304,6 @@ class GalleryCoreApi {
      * @static
      */
     function guaranteeAlbumHasThumbnail($itemId) {
-	GalleryCoreApi::apiMethodUsed('guaranteeAlbumHasThumbnail', 'GalleryItemHelper_advanced');
 	require_once(dirname(__FILE__) . '/helpers/GalleryItemHelper_advanced.class');
 	return GalleryItemHelper_advanced::guaranteeAlbumHasThumbnail($itemId);
     }
@@ -1392,7 +1316,6 @@ class GalleryCoreApi {
      * @static
      */
     function removeItemProperty($itemId, $key) {
-	GalleryCoreApi::apiMethodUsed('removeItemProperty', 'GalleryItemHelper_advanced');
 	require_once(dirname(__FILE__) . '/helpers/GalleryItemHelper_advanced.class');
 	return GalleryItemHelper_advanced::removeProperty($itemId, $key);
     }
@@ -1407,7 +1330,6 @@ class GalleryCoreApi {
      * @static
      */
     function setItemProperty($itemId, $key, $value) {
-	GalleryCoreApi::apiMethodUsed('setItemProperty', 'GalleryItemHelper_advanced');
 	require_once(dirname(__FILE__) . '/helpers/GalleryItemHelper_advanced.class');
 	return GalleryItemHelper_advanced::setProperty($itemId, $key, $value);
     }
@@ -1420,7 +1342,6 @@ class GalleryCoreApi {
      * @static
      */
     function removeItemProperties($itemId) {
-	GalleryCoreApi::apiMethodUsed('removeItemProperties', 'GalleryItemHelper_advanced');
 	require_once(dirname(__FILE__) . '/helpers/GalleryItemHelper_advanced.class');
 	return GalleryItemHelper_advanced::removeProperties($itemId);
     }
@@ -1433,7 +1354,6 @@ class GalleryCoreApi {
      * @static
      */
     function fetchItemPropertyKeys($itemId) {
-	GalleryCoreApi::apiMethodUsed('fetchItemPropertyKeys', 'GalleryItemHelper_advanced');
 	require_once(dirname(__FILE__) . '/helpers/GalleryItemHelper_advanced.class');
 	return GalleryItemHelper_advanced::fetchPropertyKeys($itemId);
     }
@@ -1448,7 +1368,6 @@ class GalleryCoreApi {
      * @static
      */
     function fetchItemProperty($itemId, $key) {
-	GalleryCoreApi::apiMethodUsed('fetchItemProperty', 'GalleryItemHelper_advanced');
 	require_once(dirname(__FILE__) . '/helpers/GalleryItemHelper_advanced.class');
 	return GalleryItemHelper_advanced::fetchProperty($itemId, $key);
     }
@@ -1462,7 +1381,6 @@ class GalleryCoreApi {
      * @static
      */
     function fetchAllItemProperties($itemId) {
-	GalleryCoreApi::apiMethodUsed('fetchAllItemProperties', 'GalleryItemHelper_advanced');
 	require_once(dirname(__FILE__) . '/helpers/GalleryItemHelper_advanced.class');
 	return GalleryItemHelper_advanced::fetchAllProperties($itemId);
     }
@@ -1475,7 +1393,6 @@ class GalleryCoreApi {
      * @static
      */
     function isUserInSiteAdminGroup() {
-	GalleryCoreApi::apiMethodUsed('isUserInSiteAdminGroup', 'GalleryUserGroupHelper_simple');
 	require_once(dirname(__FILE__) . '/helpers/GalleryUserGroupHelper_simple.class');
 	return GalleryUserGroupHelper_simple::isUserInSiteAdminGroup();
     }
@@ -1489,7 +1406,6 @@ class GalleryCoreApi {
      * @static
      */
     function isUserInGroup($userId, $groupId) {
-	GalleryCoreApi::apiMethodUsed('isUserInGroup', 'GalleryUserGroupHelper_simple');
 	require_once(dirname(__FILE__) . '/helpers/GalleryUserGroupHelper_simple.class');
 	return GalleryUserGroupHelper_simple::isUserInGroup($userId, $groupId);
     }    
@@ -1503,7 +1419,6 @@ class GalleryCoreApi {
      * @static
      */
     function addUserToGroup($userId, $groupId) {
-	GalleryCoreApi::apiMethodUsed('addUserToGroup', 'GalleryUserGroupHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryUserGroupHelper_medium.class');
 	return GalleryUserGroupHelper_medium::addUserToGroup($userId, $groupId);
     }
@@ -1516,7 +1431,6 @@ class GalleryCoreApi {
      * @static
      */
     function removeUserFromGroup($userId, $groupId) {
-	GalleryCoreApi::apiMethodUsed('removeUserFromGroup', 'GalleryUserGroupHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryUserGroupHelper_medium.class');
 	return GalleryUserGroupHelper_medium::removeUserFromGroup($userId, $groupId);
     }
@@ -1529,7 +1443,6 @@ class GalleryCoreApi {
      * @static
      */
     function removeUserFromAllGroups($userId) {
-	GalleryCoreApi::apiMethodUsed('removeUserFromAllGroups', 'GalleryUserGroupHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryUserGroupHelper_medium.class');
 	return GalleryUserGroupHelper_medium::removeUserFromAllGroups($userId);
     }
@@ -1542,7 +1455,6 @@ class GalleryCoreApi {
      * @static
      */
     function removeAllUsersFromGroup($groupId) {
-	GalleryCoreApi::apiMethodUsed('removeAllUsersFromGroup', 'GalleryUserGroupHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryUserGroupHelper_medium.class');
 	return GalleryUserGroupHelper_medium::removeAllUsersFromGroup($groupId);
     }
@@ -1561,7 +1473,6 @@ class GalleryCoreApi {
      * @static
      */
     function fetchUsersForGroup($groupId, $count=null, $offset=null) {
-	GalleryCoreApi::apiMethodUsed('fetchUsersForGroup', 'GalleryUserGroupHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryUserGroupHelper_medium.class');
 	return GalleryUserGroupHelper_medium::fetchUsersForGroup($groupId, $count, $offset);
     }
@@ -1580,7 +1491,6 @@ class GalleryCoreApi {
      * @static
      */
     function fetchGroupsForUser($userId, $count=null, $offset=null) {
-	GalleryCoreApi::apiMethodUsed('fetchGroupsForUser', 'GalleryUserGroupHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryUserGroupHelper_medium.class');
 	return GalleryUserGroupHelper_medium::fetchGroupsForUser($userId, $count, $offset);
     }	
@@ -1594,7 +1504,6 @@ class GalleryCoreApi {
      * @static
      */
     function fetchItemIdByPath($path) {
-	GalleryCoreApi::apiMethodUsed('fetchItemIdByPath', 'GalleryFileSystemEntityHelper_simple');
 	require_once(dirname(__FILE__) . '/helpers/GalleryFileSystemEntityHelper_simple.class');
 	return GalleryFileSystemEntityHelper_simple::fetchItemIdByPath($path);
     }
@@ -1611,7 +1520,6 @@ class GalleryCoreApi {
      * @static
      */
     function checkPathCollision($pathComponent, $newParentId) {
-	GalleryCoreApi::apiMethodUsed('checkPathCollision', 'GalleryFileSystemEntityHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryFileSystemEntityHelper_medium.class');
 	return GalleryFileSystemEntityHelper_medium::checkPathCollision($pathComponent, $newParentId);
     }
@@ -1627,7 +1535,6 @@ class GalleryCoreApi {
      * @static
      */
     function getLegalPathComponent($pathComponent, $parentId) {
-	GalleryCoreApi::apiMethodUsed('getLegalPathComponent', 'GalleryFileSystemEntityHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryFileSystemEntityHelper_medium.class');
 	return GalleryFileSystemEntityHelper_medium::getLegalPathComponent($pathComponent, $parentId);
     }
@@ -1646,7 +1553,6 @@ class GalleryCoreApi {
      * @static
      */
     function fetchChildIdByPathComponent($parentId, $pathComponent) {
-	GalleryCoreApi::apiMethodUsed('fetchChildIdByPathComponent', 'GalleryFileSystemEntityHelper_simple');
 	require_once(dirname(__FILE__) . '/helpers/GalleryFileSystemEntityHelper_simple.class');
 	return GalleryFileSystemEntityHelper_simple::fetchChildIdByPathComponent($parentId, $pathComponent);
     }
@@ -1673,7 +1579,6 @@ class GalleryCoreApi {
     function registerToolkitOperation($toolkitId, $mimeTypes, $operationName,
 				      $parameterTypesArray, $description,
 				      $outputMimeType='', $priority=5) {
-	GalleryCoreApi::apiMethodUsed('registerToolkitOperation', 'GalleryToolkitHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryToolkitHelper_medium.class');
 	return GalleryToolkitHelper_medium::registerOperation($toolkitId, $mimeTypes, $operationName,
 							      $parameterTypesArray, $description,
@@ -1690,7 +1595,6 @@ class GalleryCoreApi {
      * @static
      */
     function unregisterToolkitOperation($toolkitId, $operationName, $mimeTypes=array()) {
-	GalleryCoreApi::apiMethodUsed('unregisterToolkitOperation', 'GalleryToolkitHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryToolkitHelper_medium.class');
 	return GalleryToolkitHelper_medium::unregisterOperation($toolkitId, $operationName, $mimeTypes);
     }
@@ -1713,7 +1617,6 @@ class GalleryCoreApi {
      * @static
      */
     function registerToolkitProperty($toolkitId, $mimeTypes, $propertyName, $type, $description) {
-	GalleryCoreApi::apiMethodUsed('registerToolkitProperty', 'GalleryToolkitHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryToolkitHelper_medium.class');
 	return GalleryToolkitHelper_medium::registerProperty($toolkitId, $mimeTypes,
 							     $propertyName, $type, $description);
@@ -1729,7 +1632,6 @@ class GalleryCoreApi {
      * @static
      */
     function unregisterToolkit($toolkitId) {
-	GalleryCoreApi::apiMethodUsed('unregisterToolkit', 'GalleryToolkitHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryToolkitHelper_medium.class');
 	return GalleryToolkitHelper_medium::unregisterToolkit($toolkitId);
     }
@@ -1749,7 +1651,6 @@ class GalleryCoreApi {
      *                                  ...)
      */
     function getToolkitOperations($mimeType) {
-	GalleryCoreApi::apiMethodUsed('getToolkitOperations', 'GalleryToolkitHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryToolkitHelper_medium.class');
 	return GalleryToolkitHelper_medium::getOperations($mimeType);
     }
@@ -1764,7 +1665,6 @@ class GalleryCoreApi {
      *               array(mime type => array(toolkit ids))
      */
     function getToolkitOperationMimeTypes($operationName) {
-	GalleryCoreApi::apiMethodUsed('getToolkitOperationMimeTypes', 'GalleryToolkitHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryToolkitHelper_medium.class');
 	return GalleryToolkitHelper_medium::getOperationMimeTypes($operationName);
     }
@@ -1783,7 +1683,6 @@ class GalleryCoreApi {
      *
      */
     function getToolkitProperties($mimeType) {
-	GalleryCoreApi::apiMethodUsed('getToolkitProperties', 'GalleryToolkitHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryToolkitHelper_medium.class');
 	return GalleryToolkitHelper_medium::getProperties($mimeType);
     }
@@ -1801,7 +1700,6 @@ class GalleryCoreApi {
      * @static
      */
     function getToolkitByOperation($mimeType, $operationName) {
-	GalleryCoreApi::apiMethodUsed('getToolkitByOperation', 'GalleryToolkitHelper_simple');
 	require_once(dirname(__FILE__) . '/helpers/GalleryToolkitHelper_simple.class');
 	return GalleryToolkitHelper_simple::getToolkitByOperation($mimeType, $operationName);
     }
@@ -1819,7 +1717,6 @@ class GalleryCoreApi {
      * @static
      */
     function isSupportedOperationSequence($mimeType, $operations) {
-	GalleryCoreApi::apiMethodUsed('isSupportedOperationSequence', 'GalleryToolkitHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryToolkitHelper_medium.class');
 	return GalleryToolkitHelper_medium::isSupportedOperationSequence($mimeType, $operations);
     }
@@ -1836,7 +1733,6 @@ class GalleryCoreApi {
      * @static
      */
     function getToolkitByProperty($mimeType, $propertyName) {
-	GalleryCoreApi::apiMethodUsed('getToolkitByProperty', 'GalleryToolkitHelper_simple');
 	require_once(dirname(__FILE__) . '/helpers/GalleryToolkitHelper_simple.class');
 	return GalleryToolkitHelper_simple::getToolkitByProperty($mimeType, $propertyName);
     }
@@ -1848,7 +1744,6 @@ class GalleryCoreApi {
      * @static
      */
     function newEvent($eventName) {
-	GalleryCoreApi::apiMethodUsed('newEvent', 'GalleryEventHelper_simple');
 	require_once(dirname(__FILE__) . '/helpers/GalleryEventHelper_simple.class');
 	return GalleryEventHelper_simple::newEvent($eventName);
     }
@@ -1861,7 +1756,6 @@ class GalleryCoreApi {
      * @static
      */
     function registerEventListener($eventName, &$listener) {
-	GalleryCoreApi::apiMethodUsed('registerEventListener', 'GalleryEventHelper_simple');
 	require_once(dirname(__FILE__) . '/helpers/GalleryEventHelper_simple.class');
 	return GalleryEventHelper_simple::registerEventListener($eventName, $listener);
     }
@@ -1874,7 +1768,6 @@ class GalleryCoreApi {
      * @static
      */
     function postEvent($event) {
-	GalleryCoreApi::apiMethodUsed('postEvent', 'GalleryEventHelper_simple');
 	require_once(dirname(__FILE__) . '/helpers/GalleryEventHelper_simple.class');
 	return GalleryEventHelper_simple::postEvent($event);
     }
@@ -1891,7 +1784,6 @@ class GalleryCoreApi {
      * @static
      */
     function acquireReadLock($ids, $timeout=10) {
-	GalleryCoreApi::apiMethodUsed('acquireReadLock', 'GalleryLockHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryLockHelper_medium.class');
 	return GalleryLockHelper_medium::acquireReadLock($ids, $timeout);
     }
@@ -1909,7 +1801,6 @@ class GalleryCoreApi {
      * @static
      */
     function acquireReadLockParents($id, $timeout=10) {
-	GalleryCoreApi::apiMethodUsed('acquireReadLockParents', 'GalleryLockHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryLockHelper_medium.class');
 	return GalleryLockHelper_medium::acquireReadLockParents($id, $timeout);
     }
@@ -1923,7 +1814,6 @@ class GalleryCoreApi {
      * @static
      */
     function isReadLocked($id) {
-	GalleryCoreApi::apiMethodUsed('isReadLocked', 'GalleryLockHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryLockHelper_medium.class');
 	return GalleryLockHelper_medium::isReadLocked($id);
     }
@@ -1939,7 +1829,6 @@ class GalleryCoreApi {
      * @static
      */
     function acquireWriteLock($ids, $timeout=10) {
-	GalleryCoreApi::apiMethodUsed('acquireWriteLock', 'GalleryLockHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryLockHelper_medium.class');
 	return GalleryLockHelper_medium::acquireWriteLock($ids, $timeout);
     }
@@ -1953,7 +1842,6 @@ class GalleryCoreApi {
      * @static
      */
     function isWriteLocked($id) {
-	GalleryCoreApi::apiMethodUsed('isWriteLocked', 'GalleryLockHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryLockHelper_medium.class');
 	return GalleryLockHelper_medium::isWriteLocked($id);
     }
@@ -1966,7 +1854,6 @@ class GalleryCoreApi {
      * @static
      */
     function releaseLocks($lockIds) {
-	GalleryCoreApi::apiMethodUsed('releaseLocks', 'GalleryLockHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryLockHelper_medium.class');
 	return GalleryLockHelper_medium::releaseLocks($lockIds);
     }
@@ -1979,7 +1866,6 @@ class GalleryCoreApi {
      * @static
      */
     function releaseAllLocks($haltOnFailure=true) {
-	GalleryCoreApi::apiMethodUsed('releaseAllLocks', 'GalleryLockHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryLockHelper_medium.class');
 	return GalleryLockHelper_medium::releaseAllLocks($haltOnFailure);
     }
@@ -1992,7 +1878,6 @@ class GalleryCoreApi {
      * @static
      */
     function refreshLocks($freshUntil) {
-	GalleryCoreApi::apiMethodUsed('refreshLocks', 'GalleryLockHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryLockHelper_medium.class');
 	return GalleryLockHelper_medium::refreshLocks($freshUntil);
     }
@@ -2005,7 +1890,6 @@ class GalleryCoreApi {
      * @static
      */
     function getLockIds() {
-	GalleryCoreApi::apiMethodUsed('getLockIds', 'GalleryLockHelper_simple');
 	require_once(dirname(__FILE__) . '/helpers/GalleryLockHelper_simple.class');
 	return GalleryLockHelper_simple::getLockIds();
     }
@@ -2019,7 +1903,6 @@ class GalleryCoreApi {
      * @static
      */
     function loadEntitiesById($ids) {
-	GalleryCoreApi::apiMethodUsed('loadEntitiesById', 'GalleryEntityHelper_simple');
 	require_once(dirname(__FILE__) . '/helpers/GalleryEntityHelper_simple.class');
 	return GalleryEntityHelper_simple::loadEntitiesById($ids);
     }
@@ -2032,7 +1915,6 @@ class GalleryCoreApi {
      * @static
      */
     function deleteEntityById($id) {
-	GalleryCoreApi::apiMethodUsed('deleteEntityById', 'GalleryEntityHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryEntityHelper_medium.class');
 	return GalleryEntityHelper_medium::deleteEntityById($id);
     }
@@ -2046,7 +1928,6 @@ class GalleryCoreApi {
      * @static
      */
     function fetchEntitiesLinkedTo($targetId) {
-	GalleryCoreApi::apiMethodUsed('fetchEntitiesLinkedTo', 'GalleryEntityHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryEntityHelper_medium.class');
 	return GalleryEntityHelper_medium::fetchEntitiesLinkedTo($targetId);
     }
@@ -2066,7 +1947,6 @@ class GalleryCoreApi {
      * @static
      */
     function fetchChildItemIds($item, $offset=null, $count=null) {
-	GalleryCoreApi::apiMethodUsed('fetchChildItemIds', 'GalleryChildEntityHelper_simple');
 	require_once(dirname(__FILE__) . '/helpers/GalleryChildEntityHelper_simple.class');
 	return GalleryChildEntityHelper_simple::fetchChildItemIds($item, $offset, $count);
     }
@@ -2084,7 +1964,6 @@ class GalleryCoreApi {
      * @static
      */
     function fetchChildDataItemIds($item, $offset=null, $count=null) {
-	GalleryCoreApi::apiMethodUsed('fetchChildDataItemIds', 'GalleryChildEntityHelper_simple');
 	require_once(dirname(__FILE__) . '/helpers/GalleryChildEntityHelper_simple.class');
 	return GalleryChildEntityHelper_simple::fetchChildDataItemIds($item, $offset, $count);
     }
@@ -2102,7 +1981,6 @@ class GalleryCoreApi {
      * @static
      */
     function fetchChildItemIdsIgnorePermissions($item, $offset=null, $count=null) {
-	GalleryCoreApi::apiMethodUsed('fetchChildItemIdsIgnorePermissions', 'GalleryChildEntityHelper_simple');
 	require_once(dirname(__FILE__) . '/helpers/GalleryChildEntityHelper_simple.class');
 	return GalleryChildEntityHelper_simple::fetchChildItemIdsIgnorePermissions($item, $offset, $count);
     }
@@ -2116,52 +1994,8 @@ class GalleryCoreApi {
      * @static
      */
     function fetchParents($item) {
-	GalleryCoreApi::apiMethodUsed('fetchParents', 'GalleryChildEntityHelper_simple');
 	require_once(dirname(__FILE__) . '/helpers/GalleryChildEntityHelper_simple.class');
 	return GalleryChildEntityHelper_simple::fetchParents($item);
-    }
-    
-    
-    // Debug
-    function apiMethodUsed($name) {
-	if (!isset($GLOBALS['GalleryCoreApi'][$name])) {
-	    $GLOBALS['GalleryCoreApi'][$name] = 0;
-	}
-	$GLOBALS['GalleryCoreApi'][$name]++;
-    }
-
-    function getUnusedButLoadedApiMethods() {
-	global $gallery;
-
-	$platform = $gallery->getPlatform();
-	$fd = $platform->fopen(__FILE__, "r");
-	while ($line = $platform->fgets($fd, 4096)) {
-	    if (preg_match("/GalleryCoreApi::apiMethodUsed\('(.*)', '(.*)'\)/", $line, $regs)) {
-		$methods[$regs[1]] = $regs[2];
-	    }
-	}
-	$platform->fclose($fd);
-
-	$types = array();
-	foreach ($methods as $method => $type) {
-	    if (isset($GLOBALS['GalleryCoreApi'][$method])) {
-		$types[$type] = 1;
-	    }
-	}
-
-	foreach ($methods as $method => $type) {
-	    if (!isset($types[$type])) {
-		unset($methods[$method]);
-	    }
-	    
-	    if (isset($GLOBALS['GalleryCoreApi'][$method])) {
-		unset($methods[$method]);
-	    }
-	}
-
-	asort($methods);
-
-	return $methods;
     }
 }
 ?>

@@ -171,8 +171,6 @@ class GalleryDataCache {
      * @static
      */
     function get($key) {
-	GalleryCoreApi::apiMethodUsed("GalleryDataCache::get");
-	
 	$cache =& GalleryDataCache::_getCache();
 	if (!isset($cache['protected'][$key])) {
 	    $cache['timestamps'][$key] = time() + microtime();
@@ -188,10 +186,6 @@ class GalleryDataCache {
      * @static
      */
     function containsKey($key) {
-	GalleryCoreApi::apiMethodUsed(sprintf("GalleryDataCache::containsKey = %s",
-					      isset($cache['keys'][$key]) ? "hit" : "miss",
-					      $key));
-	
 	$cache =& GalleryDataCache::_getCache();
 	return isset($cache['keys'][$key]);
     }
