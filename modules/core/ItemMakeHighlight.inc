@@ -99,7 +99,9 @@ class ItemMakeHighlightController extends GalleryController {
 		}
 	    }
 	    if (empty($derivativeCommands)) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array(GalleryStatus::error(ERROR_MISSING_VALUE,
+						  __FILE__, __LINE__),
+			     null);
 	    }
 
 	    $ret = $derivative->create($parentId, DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
