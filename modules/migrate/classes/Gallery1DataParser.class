@@ -207,11 +207,13 @@ class Gallery1DataParser {
 	    $tmp .= $slash;
 	}
 	$path = trim($tmp);
+	$albumPath = explode($slash,$path);
+	$albumName = $albumPath[count($albumPath)-2];
         list ($ret, $album) = Gallery1DataParser::loadFile($path . 'album.dat');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-
+	$album->fields['name'] = $albumName;
 	if (!$album->fields['parentAlbumName']){
 	    $album->fields['parentAlbumName'] = '.root';
 	}
