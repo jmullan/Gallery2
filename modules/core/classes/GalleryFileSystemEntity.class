@@ -344,7 +344,8 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
      * long as the entire tree is at least read locked.
      *
      * @access public
-     * @return array a GalleryStatus status, string a path
+     * @return array object GalleryStatus a status code,
+     *         array path component names
      */
     function fetchLogicalPath() {
 	global $gallery;
@@ -366,8 +367,7 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
 
 	$path = $parentPath . $this->getPathComponent();
 	if ($this->isContainer()) {
-	    $platform = $gallery->getPlatform();
-	    $path .= $platform->getDirectorySeparator();
+	    $path .= '/';
 	}
 
 	return array(GalleryStatus::success(), $path);
@@ -400,6 +400,15 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
 	 */
 	$logicalPath = substr($logicalPath, 1);
 	
+	/*
+	 * Logical path is slash (/) delimited.  Convert that to the platform's actual 
+	 * directory separator.
+	 */
+	$platform = $gallery->getPlatform();
+	if ($platform->getDirectorySeparator() != '/') {
+	    $logicalPath = str_replace('/', $platform->getDirectorySeparator(), $logicalPath);
+	}
+
 	return array(GalleryStatus::success(), $absolutePath . $logicalPath);
     }
 }

@@ -84,6 +84,77 @@ class FileSystemTest extends GalleryTestCase {
 	$this->assertEquals($this->_albums[2]->getId(), $id);
     }
 
+    function testFetchLogicalPath() {
+	list ($ret, $root) = GalleryCoreApi::loadEntitiesById($this->_getRootId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	list ($ret, $logicalPath) = $root->fetchLogicalPath();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals('/', $logicalPath);
+	
+	list ($ret, $logicalPath) = $this->_albums[1]->fetchLogicalPath();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(sprintf('/%s/%s/',
+				    $this->_albums[0]->getPathComponent(),
+				    $this->_albums[1]->getPathComponent()),
+			    $logicalPath);
+
+	list ($ret, $item) = $this->_createRandomDataItem($this->_albums[1]->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	list ($ret, $logicalPath) = $item->fetchLogicalPath();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(sprintf('/%s/%s/%s',
+				    $this->_albums[0]->getPathComponent(),
+				    $this->_albums[1]->getPathComponent(),
+				    $item->getPathComponent()),
+			    $logicalPath);
+    }
+
+    function testFetchPath() {
+	global $gallery;
+	$originalPlatform = $gallery->getPlatform();
+	$gallery->_platform = new FileSystemTestPlatform('/');
+	$gallery->setConfig('data.gallery.albums', '');
+	
+	list ($ret, $path) = $this->_albums[1]->fetchPath();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(sprintf('%s/%s/',
+				    $this->_albums[0]->getPathComponent(),
+				    $this->_albums[1]->getPathComponent()),
+			    $path);
+
+	$gallery->_platform = new FileSystemTestPlatform('\\');
+	
+	list ($ret, $path) = $this->_albums[1]->fetchPath();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(sprintf('%s\\%s\\',
+				    $this->_albums[0]->getPathComponent(),
+				    $this->_albums[1]->getPathComponent()),
+			    $path);
+
+	$gallery->_platform = $originalPlatform;
+    }
+
     function testFetchChildIdByPathComponent() {
 	list ($ret, $id) = GalleryCoreApi::fetchChildIdByPathComponent(
 	    $this->_albums[1]->getId(), $this->_albums[2]->getPathComponent());
@@ -161,6 +232,16 @@ class FileSystemTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+    }
+}
+
+class FileSystemTestPlatform {
+    function FileSystemTestPlatform($separator) {
+	$this->_separator = $separator;
+    }
+
+    function getDirectorySeparator() {
+	return $this->_separator;
     }
 }
 

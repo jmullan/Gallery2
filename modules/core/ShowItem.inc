@@ -162,13 +162,6 @@ class ShowItemView extends GalleryView {
 	list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($params['itemId']);
 	if ($ret->isSuccess()) {
 	    list ($ret, $path) = $entity->fetchLogicalPath();
-
-	    // Url paths always use / as a separator
-	    $platform = $gallery->getPlatform();
-	    if ($platform->getDirectorySeparator() == '\\') {
-		$path = str_replace("\\", "/", $path);
-	    }
-
 	    if ($ret->isSuccess()) {
 		$buf .= $path;
 		unset($params['itemId']);
