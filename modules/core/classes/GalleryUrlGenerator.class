@@ -220,7 +220,7 @@ class GalleryUrlGenerator {
 	if ($forceG2Base && !empty($this->_relativeG2Path)) {
 	    $relativePath = $this->_relativeG2Path;
 	    while (strncmp($relativePath, '../', 3) == 0) {
-		$url = dirname($url) . '/';
+		$url = preg_replace('|/[^/]+/?$|', '/', $url);
 		$relativePath = substr($relativePath, 3);
 	    }
 	    $url .= $relativePath;
