@@ -29,6 +29,19 @@ function GalleryMain(&$testSuite, $filter) {
     }
 
     /*
+     * Specify the base URL to the Gallery.  In standalone mode this will be the
+     * empty string (since everything is relative to main.php).  But when we're
+     * embedded, we need to put in the relative path from the outer app to the
+     * Gallery directory (eg for PostNuke it might be 'modules/gallery')
+     */
+    $gallery->setConfig('url.gallery.base', '');
+
+    /* Configure out url Generator for standalone mode. */
+    $urlGenerator = new GalleryUrlGenerator($gallery->getConfig('url.gallery.base') .
+					    'main.php');
+    $gallery->setUrlGenerator($urlGenerator);
+    
+    /*
      * Commit our transaction here because we're going to have a new
      * transaction for every test.
      */
