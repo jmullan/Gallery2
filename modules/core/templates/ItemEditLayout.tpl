@@ -49,7 +49,7 @@
       </td>
 
       <td align="center">
-	<input type="checkbox" name="{g->formVar var="form[useGlobal][$settingKey]"}" onclick="javascript:toggleGlobal('{$settingKey}')" value="{$form.useGlobal.$settingKey}"
+	<input type="checkbox" name="{g->formVar var="form[useGlobal][$settingKey]"}" onclick="javascript:toggleGlobal('{$settingKey}')"
 	{if ($setting.value == $ItemEditLayout.globalParams.$settingKey)}
 	  checked="checked"
 	{/if}
