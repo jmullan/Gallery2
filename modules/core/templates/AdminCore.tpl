@@ -23,12 +23,12 @@
     {/if}
     {if isset($status.addedDir)}
     <div class="giStatus">
-      {g->text text="Added local upload dir successfully"}
+      {g->text text="Added local upload directory successfully"}
     </div>
     {/if}
     {if isset($status.removedDir)}
     <div class="giStatus">
-      {g->text text="Removed local upload dir successfully"}
+      {g->text text="Removed local upload directory successfully"}
     </div>
     {/if}
   </div>
