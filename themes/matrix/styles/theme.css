@@ -202,7 +202,6 @@ body {
 }
 
 #gsAlbumContents .gbItemAlbum {
-	width: 100%;
 	background-color: #eee;
 	padding: 8px 0;
 }
@@ -328,12 +327,11 @@ body {
 }
 
 .giDescription {
+	display: block;
 	font-size: 1em;
 	margin: 2px 0px;
 	padding: 0;
 }
-
-.giDescription span { display: block; }
 
 .giInfo {
 	display: block;
@@ -356,7 +354,7 @@ span.giCount { }
 
 /*  thumbnails */
 .giThumbImage, .giThumbMovie, .giThumbOther {
-	border: 0px;
+	border: 0;
 	float: left;
 	margin: 0 8px 8px 8px;
 }
@@ -366,13 +364,9 @@ span.giCount { }
 .giActionSelect {
 	display: block;
 	margin-top: 4px;
-}
-
-.giActionSelect select { 
 	font-size: 1.0em; 
 	background: #eee;
 }
-
 
 
 /*  .giThumbBorder {}
