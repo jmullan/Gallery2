@@ -50,20 +50,37 @@ class RandomHighlightDerivativeImage_core extends GalleryDerivativeImage {
      * @see GalleryEntity::onLoad
      */
     function onLoad() {
-	global $gallery;
-
+	static $loop = array();
 	$ret = parent::onLoad();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	// Check age and set new highlight if needed..
+	$picknew = false;
+	$id = $this->getId();
 	list ($ret, $duration) =
 	    GalleryCoreApi::getPluginParameter('module', 'randomhighlight', 'duration');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	if (time() - $this->getModificationTimestamp() > $duration) {
+	if (time() - $this->getModificationTimestamp() > $duration && !isset($loop[$id])) {
+	    // Lock and refresh to ensure another request didn't just update highlight..
+	    list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($id);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    $loop[$id] = true;
+	    list ($ret, $item) = $this->refresh();
+	    if ($ret->isError()) {
+		GalleryCoreApi::releaseLocks($lockId);
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    if ($this->getSerialNumber() == $item->getSerialNumber()) {
+		$picknew = true;
+	    }
+	}
+	if ($picknew) {
 	    list ($ret, $album) = GalleryCoreApi::loadEntitiesById($this->getParentId());
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
@@ -82,10 +99,6 @@ class RandomHighlightDerivativeImage_core extends GalleryDerivativeImage {
 	    $thumbnails = array_values($thumbnails);
 	    $highlight = $thumbnails[rand(0, count($thumbnails)-1)];
 
-	    list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($this->getId());
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
 	    $this->setDerivativeSourceId($highlight->getId());
 	    GalleryCoreApi::estimateDerivativeDimensions($this, $highlight);
 	    $this->save();
@@ -96,6 +109,8 @@ class RandomHighlightDerivativeImage_core extends GalleryDerivativeImage {
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
+	}
+	if (isset($lockId)) {
 	    $ret = GalleryCoreApi::releaseLocks($lockId);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
