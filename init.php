@@ -66,7 +66,9 @@ function GalleryInitFirstPass($params=array()) {
     }
 
     /* Configure our url Generator for standalone mode. */
-    $urlGenerator = new GalleryUrlGenerator( defined('G2_EMBED_URI') ? G2_EMBED_URI : 'main.php' );
+    $urlGenerator = new GalleryUrlGenerator(
+			isset($params['embedUri']) ? $params['embedUri'] : 'main.php',
+			isset($params['relativeG2Path']) ? $params['relativeG2Path'] : null );
     $urlGenerator->registerViewPrefix('view', 'core:ShowItem');
     $urlGenerator->registerViewPrefix('download', 'core:DownloadItem');
 
@@ -103,7 +105,6 @@ function GalleryInitFirstPass($params=array()) {
     if ($ret->isError()) {
 	return $ret->wrap(__FILE__, __LINE__);
     }
-    $session =& $gallery->getSession();
 
     /* Initialize our translator */
     $ret = $gallery->initTranslator();
