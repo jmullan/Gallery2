@@ -42,14 +42,14 @@ class ItemMakeHighlightController extends GalleryController {
 
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
 
-	list ($ret, $item) = $gallery->loadEntitiesById($itemId);
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$parentId = $item->getParentId();
 
 	/* Make sure we have permission to edit this item */
-	$ret = GalleryUserHelper::assertHasItemPermission($parentId, 'core.edit');
+	$ret = GalleryCoreApi::assertHasItemPermission($parentId, 'core.edit');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -58,7 +58,7 @@ class ItemMakeHighlightController extends GalleryController {
 	$error = array();
 	if (isset($form['action']['makeHighlight'])) {
 	    /* XXX: What should we do if this fails? */
-	    list ($ret, $success) = GalleryItemHelper::setThumbnailFromItem($parentId, $itemId);
+	    list ($ret, $success) = GalleryCoreApi::setThumbnailFromItem($parentId, $itemId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -98,14 +98,14 @@ class ItemMakeHighlightView extends GalleryView {
 
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
 
-	list ($ret, $item) = $gallery->loadEntitiesById($itemId);
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$parentId = $item->getParentId();
 
 	/* Make sure we have permission do edit the parent of this item */
-	$ret = GalleryUserHelper::assertHasItemPermission($parentId, 'core.edit');
+	$ret = GalleryCoreApi::assertHasItemPermission($parentId, 'core.edit');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

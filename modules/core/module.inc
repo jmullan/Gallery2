@@ -62,39 +62,16 @@ class CoreModule extends GalleryModule {
 	$classDir = dirname(__FILE__) . '/classes/';
 
 	/* Load all the core Gallery classes */
+ 	require_once($classDir . 'GalleryConstants.class');
 	require_once($classDir . 'Gallery.class');
-	require_once($classDir . 'GalleryChildEntityHelper.class');
-	require_once($classDir . 'GalleryController.class');
-	require_once($classDir . 'GalleryDataCache.class');
-	require_once($classDir . 'GalleryDerivativeHelper.class');
-	require_once($classDir . 'GalleryDerivativePreferencesMap.class');
-	require_once($classDir . 'GalleryEvent.class');
-	require_once($classDir . 'GalleryEventListener.class');
-	require_once($classDir . 'GalleryFileSystemEntityHelper.class');
-	require_once($classDir . 'GalleryItemPropertiesMap.class');
-	require_once($classDir . 'GalleryItemHelper.class');
-	require_once($classDir . 'GalleryLayout.class');
-	require_once($classDir . 'GalleryLock.class');
-	require_once($classDir . 'GalleryPluginMap.class');
-	require_once($classDir . 'GalleryPluginParameterMap.class');
-	require_once($classDir . 'GalleryPermissionSetMap.class');
-	require_once($classDir . 'GalleryPermissionMap.class');
-	require_once($classDir . 'GalleryProfiler.class');
-	require_once($classDir . 'GallerySession.class');
 	require_once($classDir . 'GalleryStatus.class');
-	require_once($classDir . 'GalleryTemplate.class');
-	require_once($classDir . 'GalleryTemplateAdapter.class');
-	require_once($classDir . 'GalleryTheme.class');
-	require_once($classDir . 'GalleryToolkitHelper.class');
-	require_once($classDir . 'GalleryUserGroupMap.class');
-	require_once($classDir . 'GalleryUserHelper.class');
-	require_once($classDir . 'GalleryGroupHelper.class');
-	require_once($classDir . 'GalleryUtilities.class');
-	require_once($classDir . 'GalleryUrlGenerator.class');
-	require_once($classDir . 'GalleryView.class');
-	require_once($classDir . 'GalleryFactory.class');
-	require_once($classDir . 'GalleryItemAttributesMap.class');
-
+ 	require_once($classDir . 'GalleryDataCache.class');
+	require_once($classDir . 'GalleryCoreApi.class');
+ 	require_once($classDir . 'GalleryUrlGenerator.class');
+ 	require_once($classDir . 'GallerySession.class');
+ 	require_once($classDir . 'GalleryUtilities.class');
+ 	require_once($classDir . 'GalleryView.class');
+	
 	/*
 	 * Set up our Gallery global.  It's important to use a reference here because
 	 * the constructor registers a shutdown function and ties it to the instance in
@@ -104,114 +81,114 @@ class CoreModule extends GalleryModule {
 	 */
 	$gallery =& new Gallery();
 	$GLOBALS['gallery'] =& $gallery;
-	GalleryPluginMap::setPluginInstance('module', 'core', $this);
+	GalleryCoreApi::setPluginInstance('module', 'core', $this);
 
 	/* Configure the Platform */
 	$gallery->setConfig('platform.type', strtolower(PHP_OS));
 
 	/* Register platform implementations */
-	GalleryFactory::registerImplementation('GalleryPlatform',
-					       'UnixPlatform',
-					       'Unix',
-					       $classDir . 'GalleryPlatform/UnixPlatform.class',
-					       array('unix', '*'));
+	GalleryCoreApi::registerFactoryImplementation('GalleryPlatform',
+						      'UnixPlatform',
+						      'Unix',
+						      $classDir . 'GalleryPlatform/UnixPlatform.class',
+						      array('unix', '*'));
 
-	GalleryFactory::registerImplementation('GalleryPlatform',
-					       'WinNtPlatform',
-					       'WinNT',
-					       $classDir . 'GalleryPlatform/WinNtPlatform.class',
-					       array('winnt'));
+	GalleryCoreApi::registerFactoryImplementation('GalleryPlatform',
+						      'WinNtPlatform',
+						      'WinNT',
+						      $classDir . 'GalleryPlatform/WinNtPlatform.class',
+						      array('winnt'));
 
 	/* Register our entity implementations */
-	GalleryFactory::registerImplementation('GalleryEntity',
-					       'GalleryEntity',
-					       'GalleryEntity',
-					       $classDir . 'GalleryEntity.class');
+	GalleryCoreApi::registerFactoryImplementation('GalleryEntity',
+						      'GalleryEntity',
+						      'GalleryEntity',
+						      $classDir . 'GalleryEntity.class');
 	
-	GalleryFactory::registerImplementation('GalleryEntity',
-					       'GalleryChildEntity',
-					       'GalleryChildEntity',
-					       $classDir . 'GalleryChildEntity.class');
+	GalleryCoreApi::registerFactoryImplementation('GalleryEntity',
+						      'GalleryChildEntity',
+						      'GalleryChildEntity',
+						      $classDir . 'GalleryChildEntity.class');
 	
-	GalleryFactory::registerImplementation('GalleryEntity',
-					       'GalleryAlbumItem',
-					       'GalleryAlbumItem',
-					       $classDir . 'GalleryAlbumItem.class');
+	GalleryCoreApi::registerFactoryImplementation('GalleryEntity',
+						      'GalleryAlbumItem',
+						      'GalleryAlbumItem',
+						      $classDir . 'GalleryAlbumItem.class');
 	
-	GalleryFactory::registerImplementation('GalleryEntity',
-					       'GalleryUser',
-					       'GalleryUser',
-					       $classDir . 'GalleryUser.class');
+	GalleryCoreApi::registerFactoryImplementation('GalleryEntity',
+						      'GalleryUser',
+						      'GalleryUser',
+						      $classDir . 'GalleryUser.class');
 	
-	GalleryFactory::registerImplementation('GalleryEntity',
-					       'GalleryGroup',
-					       'GalleryGroup',
-					       $classDir . 'GalleryGroup.class');
+	GalleryCoreApi::registerFactoryImplementation('GalleryEntity',
+						      'GalleryGroup',
+						      'GalleryGroup',
+						      $classDir . 'GalleryGroup.class');
 	
-	GalleryFactory::registerImplementation('GalleryEntity',
-					       'GalleryDerivative',
-					       'GalleryDerivative',
-					       $classDir . 'GalleryDerivative.class');
+	GalleryCoreApi::registerFactoryImplementation('GalleryEntity',
+						      'GalleryDerivative',
+						      'GalleryDerivative',
+						      $classDir . 'GalleryDerivative.class');
 	
-	GalleryFactory::registerImplementation('GalleryEntity',
-					       'GalleryDerivativeImage',
-					       'GalleryDerivativeImage',
-					       $classDir . 'GalleryDerivativeImage.class');
+	GalleryCoreApi::registerFactoryImplementation('GalleryEntity',
+						      'GalleryDerivativeImage',
+						      'GalleryDerivativeImage',
+						      $classDir . 'GalleryDerivativeImage.class');
 	
-	GalleryFactory::registerImplementation('GalleryEntity',
-					       'GalleryMovieItem',
-					       'GalleryMovieItem',
-					       $classDir . 'GalleryMovieItem.class');
+	GalleryCoreApi::registerFactoryImplementation('GalleryEntity',
+						      'GalleryMovieItem',
+						      'GalleryMovieItem',
+						      $classDir . 'GalleryMovieItem.class');
 	
-	GalleryFactory::registerImplementation('GalleryEntity',
-					       'GalleryAnimationItem',
-					       'GalleryAnimationItem',
-					       $classDir . 'GalleryAnimationItem.class');
+	GalleryCoreApi::registerFactoryImplementation('GalleryEntity',
+						      'GalleryAnimationItem',
+						      'GalleryAnimationItem',
+						      $classDir . 'GalleryAnimationItem.class');
 	
-	GalleryFactory::registerImplementation('GalleryEntity',
-					       'GalleryPhotoItem',
-					       'GalleryPhotoItem',
-					       $classDir . 'GalleryPhotoItem.class');
+	GalleryCoreApi::registerFactoryImplementation('GalleryEntity',
+						      'GalleryPhotoItem',
+						      'GalleryPhotoItem',
+						      $classDir . 'GalleryPhotoItem.class');
 	
-	GalleryFactory::registerImplementation('GalleryEntity',
-					       'GalleryUnknownItem',
-					       'GalleryUnknownItem',
-					       $classDir . 'GalleryUnknownItem.class');
+	GalleryCoreApi::registerFactoryImplementation('GalleryEntity',
+						      'GalleryUnknownItem',
+						      'GalleryUnknownItem',
+						      $classDir . 'GalleryUnknownItem.class');
 
 	/* Register GalleryItem implementations */
-	GalleryFactory::registerImplementation('GalleryItem',
-					       'GalleryPhotoItem',
-					       'GalleryPhotoItem',
-					       $classDir . 'GalleryPhotoItem.class',
-					       array('image/*'));
+	GalleryCoreApi::registerFactoryImplementation('GalleryItem',
+						      'GalleryPhotoItem',
+						      'GalleryPhotoItem',
+						      $classDir . 'GalleryPhotoItem.class',
+						      array('image/*'));
 
-	GalleryFactory::registerImplementation('GalleryItem',
-					       'GalleryMovieItem',
-					       'GalleryMovieItem',
-					       $classDir . 'GalleryMovieItem.class',
-					       array('video/x-msvideo',
-						     'video/quicktime',
-						     'video/mpeg',
-						     'video/x.ms.asf'));
+	GalleryCoreApi::registerFactoryImplementation('GalleryItem',
+						      'GalleryMovieItem',
+						      'GalleryMovieItem',
+						      $classDir . 'GalleryMovieItem.class',
+						      array('video/x-msvideo',
+							    'video/quicktime',
+							    'video/mpeg',
+							    'video/x.ms.asf'));
 
-	GalleryFactory::registerImplementation('GalleryItem',
-					       'GalleryAnimationItem',
-					       'GalleryAnimationItem',
-					       $classDir . 'GalleryAnimationItem.class',
-					       array('application/x-director',
-						     'application/x-shockwave-flash'));
+	GalleryCoreApi::registerFactoryImplementation('GalleryItem',
+						      'GalleryAnimationItem',
+						      'GalleryAnimationItem',
+						      $classDir . 'GalleryAnimationItem.class',
+						      array('application/x-director',
+							    'application/x-shockwave-flash'));
 
-	GalleryFactory::registerImplementation('GalleryItem',
-					       'GalleryUnknownItem',
-					       'GalleryUnknownItem',
-					       $classDir . 'GalleryUnknownItem.class',
-					       array('*'));
+	GalleryCoreApi::registerFactoryImplementation('GalleryItem',
+						      'GalleryUnknownItem',
+						      'GalleryUnknownItem',
+						      $classDir . 'GalleryUnknownItem.class',
+						      array('*'));
 
 	/* Register our search implementation */
-	GalleryFactory::registerImplementation('GallerySearchInterface_1_0',
-					       'GalleryCoreSearch',
-					       'core',
-					       $classDir . 'GalleryCoreSearch.class');
+	GalleryCoreApi::registerFactoryImplementation('GallerySearchInterface_1_0',
+						      'GalleryCoreSearch',
+						      'core',
+						      $classDir . 'GalleryCoreSearch.class');
 
 	/* Now we have a $gallery instance and can set our description */
 	$this->setDescription($gallery->i18n('Gallery 2 Core Module'));
@@ -327,7 +304,7 @@ class CoreModule extends GalleryModule {
 		}
 
 		/* Activate the Matrix layout */
-		list ($ret, $layout) = GalleryPluginMap::loadPlugin('layout', 'matrix');
+		list ($ret, $layout) = GalleryCoreApi::loadPlugin('layout', 'matrix');
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), false);
 		}
@@ -346,82 +323,82 @@ class CoreModule extends GalleryModule {
 		 * extractor can find it.
 		 */
 		/* Register all core permissions */
-		$ret = GalleryPermissionSetMap::registerPermission($this->getId(),
-								   'core.all',
-								   $gallery->i18n('All access'),
-								   GALLERY_PERMISSION_ALL_ACCESS);
+		$ret = GalleryCoreApi::registerPermission($this->getId(),
+							  'core.all',
+							  $gallery->i18n('All access'),
+							  GALLERY_PERMISSION_ALL_ACCESS);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), false);
 		}
 
-		$ret = GalleryPermissionSetMap::registerPermission($this->getId(),
-								   'core.view',
-								   $gallery->i18n('[core] View item')); 
+		$ret = GalleryCoreApi::registerPermission($this->getId(),
+							  'core.view',
+							  $gallery->i18n('[core] View item')); 
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), false);
 		}
 
-		$ret = GalleryPermissionSetMap::registerPermission($this->getId(),
-								   'core.viewResizes',
-								   $gallery->i18n('[core] View resized version(s)')); 
+		$ret = GalleryCoreApi::registerPermission($this->getId(),
+							  'core.viewResizes',
+							  $gallery->i18n('[core] View resized version(s)')); 
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), false);
 		}
 	    
-		$ret = GalleryPermissionSetMap::registerPermission($this->getId(),
-								   'core.viewSource',
-								   $gallery->i18n('[core] View original version')); 
+		$ret = GalleryCoreApi::registerPermission($this->getId(),
+							  'core.viewSource',
+							  $gallery->i18n('[core] View original version')); 
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), false);
 		}
 	    
-		$ret = GalleryPermissionSetMap::registerPermission($this->getId(),
-								   'core.viewAll',
-								   $gallery->i18n('[core] View all versions'), 
-								   GALLERY_PERMISSION_COMPOSITE,
-								   array('core.view',
-									 'core.viewResizes',
-									 'core.viewSource'));
+		$ret = GalleryCoreApi::registerPermission($this->getId(),
+							  'core.viewAll',
+							  $gallery->i18n('[core] View all versions'), 
+							  GALLERY_PERMISSION_COMPOSITE,
+							  array('core.view',
+								'core.viewResizes',
+								'core.viewSource'));
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), false);
 		}
 
-		$ret = GalleryPermissionSetMap::registerPermission($this->getId(),
-								   'core.addAlbumItem',
-								   $gallery->i18n('[core] Add sub-album'), 
-								   GALLERY_PERMISSION_ITEM_ADMIN);
+		$ret = GalleryCoreApi::registerPermission($this->getId(),
+							  'core.addAlbumItem',
+							  $gallery->i18n('[core] Add sub-album'), 
+							  GALLERY_PERMISSION_ITEM_ADMIN);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), false);
 		}
 
-		$ret = GalleryPermissionSetMap::registerPermission($this->getId(),
-								   'core.addDataItem',
-								   $gallery->i18n('[core] Add sub-item'), 
-								   GALLERY_PERMISSION_ITEM_ADMIN);
+		$ret = GalleryCoreApi::registerPermission($this->getId(),
+							  'core.addDataItem',
+							  $gallery->i18n('[core] Add sub-item'), 
+							  GALLERY_PERMISSION_ITEM_ADMIN);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), false);
 		}
 	    
-		$ret = GalleryPermissionSetMap::registerPermission($this->getId(),
-								   'core.edit',
-								   $gallery->i18n('[core] Edit item'), 
-								   GALLERY_PERMISSION_ITEM_ADMIN);
+		$ret = GalleryCoreApi::registerPermission($this->getId(),
+							  'core.edit',
+							  $gallery->i18n('[core] Edit item'), 
+							  GALLERY_PERMISSION_ITEM_ADMIN);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), false);
 		}
 
-		$ret = GalleryPermissionSetMap::registerPermission($this->getId(),
-								   'core.changePermissions',
-								   $gallery->i18n('[core] Change item permissions'), 
-								   GALLERY_PERMISSION_ITEM_ADMIN);
+		$ret = GalleryCoreApi::registerPermission($this->getId(),
+							  'core.changePermissions',
+							  $gallery->i18n('[core] Change item permissions'), 
+							  GALLERY_PERMISSION_ITEM_ADMIN);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), false);
 		}
 
-		$ret = GalleryPermissionSetMap::registerPermission($this->getId(),
-								   'core.delete',
-								   $gallery->i18n('[core] Delete item'), 
-								   GALLERY_PERMISSION_ITEM_ADMIN);
+		$ret = GalleryCoreApi::registerPermission($this->getId(),
+							  'core.delete',
+							  $gallery->i18n('[core] Delete item'), 
+							  GALLERY_PERMISSION_ITEM_ADMIN);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), false);
 		}
@@ -470,7 +447,7 @@ class CoreModule extends GalleryModule {
     function getItemLinks($items) {
 	global $gallery;
 
-	list ($ret, $rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
+	list ($ret, $rootId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -480,14 +457,14 @@ class CoreModule extends GalleryModule {
 	foreach ($items as $item) {
 	    $itemIds[] = $item->getId();
 	}
-	list ($ret, $childCounts) = GalleryItemHelper::fetchChildCounts($itemIds);
+	list ($ret, $childCounts) = GalleryCoreApi::fetchChildCounts($itemIds);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* Fetch thumbnail ids */
 	list ($ret, $thumbTable) =
-	    GalleryDerivativeHelper::fetchThumbnailsByItemIds($itemIds, DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
+	    GalleryCoreApi::fetchThumbnailsByItemIds($itemIds, DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -495,7 +472,7 @@ class CoreModule extends GalleryModule {
 	$links = array();
 	foreach ($items as $item) {
 	    /* Permissions for this item */
-	    list ($ret, $permissions) = GalleryItemHelper::getPermissions($item->getId());
+	    list ($ret, $permissions) = GalleryCoreApi::getPermissions($item->getId());
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -504,7 +481,7 @@ class CoreModule extends GalleryModule {
 	    $isAlbum = $item->getCanContainChildren();
 
 	    /* Permissions for its parent */
-	    list ($ret, $parentPermissions) = GalleryItemHelper::getPermissions($item->getParentId());
+	    list ($ret, $parentPermissions) = GalleryCoreApi::getPermissions($item->getParentId());
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -547,12 +524,12 @@ class CoreModule extends GalleryModule {
 
 	    if ($item->isLinkable()) {
 		if ($isAlbum) {
-		    list ($ret, $count) = GalleryItemHelper::fetchItemIdCount('GalleryAlbumItem', 'core.addAlbumItem');
+		    list ($ret, $count) = GalleryCoreApi::fetchItemIdCount('GalleryAlbumItem', 'core.addAlbumItem');
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 		} else {
-		    list ($ret, $count) = GalleryItemHelper::fetchItemIdCount('GalleryAlbumItem', 'core.addDataItem');
+		    list ($ret, $count) = GalleryCoreApi::fetchItemIdCount('GalleryAlbumItem', 'core.addDataItem');
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
@@ -678,7 +655,7 @@ class CoreModule extends GalleryModule {
 	}
 	
         $links = array();
-        list ($ret, $isAdmin) = GalleryUserGroupMap::isUserInSiteAdminGroup();
+        list ($ret, $isAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
         if ($ret->isError()) {
             return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -758,14 +735,14 @@ class CoreModule extends GalleryModule {
 	global $gallery;
 
 	$views = array();
-	list ($ret, $permissions) = GalleryItemHelper::getPermissions($item->getId());
+	list ($ret, $permissions) = GalleryCoreApi::getPermissions($item->getId());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$isAlbum = $item->getCanContainChildren();
 	if ($isAlbum) {
-	    list ($ret, $childCounts) = GalleryItemHelper::fetchChildCounts(array($item->getId()));
+	    list ($ret, $childCounts) = GalleryCoreApi::fetchChildCounts(array($item->getId()));
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -776,7 +753,7 @@ class CoreModule extends GalleryModule {
 
 	/* Fetch thumbnail ids */
 	list ($ret, $thumbTable) =
-	    GalleryDerivativeHelper::fetchDerivativesBySourceIds(array($item->getId()),
+	    GalleryCoreApi::fetchDerivativesBySourceIds(array($item->getId()),
 								 DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -784,12 +761,12 @@ class CoreModule extends GalleryModule {
 	$hasThumb = !empty($thumbTable[$item->getId()]);
 
 	$parentId = $item->getParentId();
-	list ($ret, $parentPermissions) = GalleryItemHelper::getPermissions($parentId);
+	list ($ret, $parentPermissions) = GalleryCoreApi::getPermissions($parentId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	list ($ret, $rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
+	list ($ret, $rootId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -890,7 +867,7 @@ class CoreModule extends GalleryModule {
 	    return GalleryStatus::success();
 	}
     
-	list ($ret, $group) = GalleryFactory::newInstance('GalleryEntity', 'GalleryGroup');
+	list ($ret, $group) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryGroup');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -935,7 +912,7 @@ class CoreModule extends GalleryModule {
 	    return GalleryStatus::success();
 	}
     
-	list ($ret, $group) = GalleryFactory::newInstance('GalleryEntity', 'GalleryGroup');
+	list ($ret, $group) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryGroup');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -980,7 +957,7 @@ class CoreModule extends GalleryModule {
 	    return GalleryStatus::success();
 	}
     
-	list ($ret, $user) = GalleryFactory::newInstance('GalleryEntity', 'GalleryUser');
+	list ($ret, $user) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryUser');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -1024,7 +1001,7 @@ class CoreModule extends GalleryModule {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	list ($ret, $results) = GalleryUserGroupMap::fetchUsersForGroup($adminGroupId);
+	list ($ret, $results) = GalleryCoreApi::fetchUsersForGroup($adminGroupId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -1034,7 +1011,7 @@ class CoreModule extends GalleryModule {
 	}
 
 	/* Create the user */
-	list ($ret, $user) = GalleryFactory::newInstance('GalleryEntity', 'GalleryUser');
+	list ($ret, $user) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryUser');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -1058,8 +1035,7 @@ class CoreModule extends GalleryModule {
 	}
 
 	/* Add her to the admin group */
-	$ret = GalleryUserGroupMap::addUserToGroup($user->getId(),
-						   $adminGroupId);
+	$ret = GalleryCoreApi::addUserToGroup($user->getId(), $adminGroupId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -1087,7 +1063,7 @@ class CoreModule extends GalleryModule {
 	    return GalleryStatus::success();
 	}
 
-	list ($ret, $album) = GalleryFactory::newInstance('GalleryEntity', 'GalleryAlbumItem');
+	list ($ret, $album) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryAlbumItem');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -1116,7 +1092,7 @@ class CoreModule extends GalleryModule {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	$ret = GalleryPermissionMap::addGroupPermission($album->getId(),
+	$ret = GalleryCoreApi::addGroupPermission($album->getId(),
 							$groupId,
 							'core.viewAll');
 	if ($ret->isError()) {
@@ -1129,7 +1105,7 @@ class CoreModule extends GalleryModule {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	$ret = GalleryPermissionMap::addGroupPermission($album->getId(),
+	$ret = GalleryCoreApi::addGroupPermission($album->getId(),
 							$groupId,
 							'core.all');
 	if ($ret->isError()) {

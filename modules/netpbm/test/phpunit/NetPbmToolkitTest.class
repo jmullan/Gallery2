@@ -301,7 +301,7 @@ class NetPbmToolkitTestPlatform {
 
     function init() {
 	global $gallery;
-	list ($ret, $this->_netPbmPath) = $gallery->getModuleParameter('netpbm', 'path');
+	list ($ret, $this->_netPbmPath) = GalleryCoreApi::getPluginParameter('module', 'netpbm', 'path');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -396,7 +396,7 @@ class NetPbmToolkitTestPlatform {
     
     function is_dir($path) {
 	global $gallery;
-	list ($ret, $netPbmPath) = $gallery->getModuleParameter('netpbm', 'path');
+	list ($ret, $netPbmPath) = GalleryCoreApi::getPluginParameter('module', 'netpbm', 'path');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

@@ -45,12 +45,12 @@ class ItemEditLayoutController extends GalleryController {
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
 	
 	/* Make sure we have permission do edit this item */
-	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'core.edit');
+	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.edit');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
-	list ($ret, $item) = $gallery->loadEntitiesById($itemId);
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
@@ -60,7 +60,7 @@ class ItemEditLayoutController extends GalleryController {
 	$errorMessage = array();
 
 	if (isset($form['action']['save'])) {
-	    list ($ret, $layout) = GalleryItemHelper::fetchLayout($item);
+	    list ($ret, $layout) = GalleryCoreApi::fetchLayout($item);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -145,17 +145,17 @@ class ItemEditLayoutView extends GalleryView {
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
 
 	/* Make sure we have permission do edit this item */
-	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'core.edit');
+	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.edit');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	list ($ret, $item) = $gallery->loadEntitiesById($itemId);
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	list ($ret, $layout) = GalleryItemHelper::fetchLayout($item);
+	list ($ret, $layout) = GalleryCoreApi::fetchLayout($item);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -168,14 +168,14 @@ class ItemEditLayoutView extends GalleryView {
 
 	/* Fetch the global-only params */
 	list ($ret, $globalParams) =
-	    GalleryPluginParameterMap::fetchAllParameters('layout', $layout->getId());
+	    GalleryCoreApi::fetchAllPluginParameters('layout', $layout->getId());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* Fetch the item-only params */
 	list ($ret, $itemParams) =
-	    GalleryPluginParameterMap::fetchAllParameters('layout', $layout->getId(), $itemId);
+	    GalleryCoreApi::fetchAllPluginParameters('layout', $layout->getId(), $itemId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

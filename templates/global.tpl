@@ -22,9 +22,5 @@
       {if isset($main.debug)}
 	{include file="templates/debug.tpl"}
       {/if}
-
-      {if isset($main.profile)}
-	{include file="templates/profile.tpl"}
-      {/if}
   </body>
 </html>

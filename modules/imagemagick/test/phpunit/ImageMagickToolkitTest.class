@@ -320,7 +320,7 @@ class ImageMagickToolkitTestPlatform {
 
     function exec($cmd) {
 	global $gallery;
-	list ($ret, $imageMagickPath) = $gallery->getModuleParameter('imagemagick', 'path');
+	list ($ret, $imageMagickPath) = GalleryCoreApi::getPluginParameter('module', 'imagemagick', 'path');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

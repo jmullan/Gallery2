@@ -46,7 +46,7 @@ class ExifExtractorTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	list ($ret, $lockId) = $gallery->acquireReadLock($album->getId());
+	list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($album->getId());
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -64,17 +64,17 @@ class ExifExtractorTest extends GalleryTestCase {
 	    }
 	    $photoIds[] = $photoId;
 	}
-	$ret = $gallery->releaseLocks($lockId);
+	$ret = GalleryCoreApi::releaseLocks($lockId);
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $module) = $gallery->loadModule('exif');
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'exif');
 	if ($ret->isError() || !isset($module)) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	list ($ret, $exif) =
-	    GalleryFactory::newInstance('ExifInterface_1_0', 'ExifExtractor');
+	    GalleryCoreApi::newFactoryInstance('ExifInterface_1_0', 'ExifExtractor');
 	if ($ret->isError() || !isset($exif)) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -86,7 +86,7 @@ class ExifExtractorTest extends GalleryTestCase {
 
     function _addPhoto($parentId, $imagePath, $index) {
 	list ($ret, $photo) =
-	    GalleryFactory::newInstance('GalleryEntity', 'GalleryPhotoItem');
+	    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryPhotoItem');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -115,12 +115,12 @@ class ExifExtractorTest extends GalleryTestCase {
     function _addDerivative($photo, $toolkitType,
 			    $derivativeType, $derivativeOperation) {
 	list ($ret, $toolkit, $outputMimeType) =
-	    GalleryToolkitHelper::getToolkitByOperation(
+	    GalleryCoreApi::getToolkitByOperation(
 				  $photo->getMimeType(), $toolkitType);
 	if ($ret->isError() || !isset($toolkit)) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	list ($ret, $derivative) = GalleryFactory::newInstance(
+	list ($ret, $derivative) = GalleryCoreApi::newFactoryInstance(
 				   'GalleryEntity', 'GalleryDerivativeImage');
 	if ($ret->isError() || !isset($derivative)) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -144,7 +144,7 @@ class ExifExtractorTest extends GalleryTestCase {
      */
     function tearDown() {
 	global $gallery;
-	$ret = $gallery->deleteEntityById($this->_album->getId());
+	$ret = GalleryCoreApi::deleteEntityById($this->_album->getId());
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

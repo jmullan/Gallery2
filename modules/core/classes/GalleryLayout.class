@@ -141,7 +141,7 @@ class GalleryLayout {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	list ($ret, $currentParameters) = GalleryPluginParameterMap::fetchAllParameters('layout', $this->getId());
+	list ($ret, $currentParameters) = GalleryCoreApi::fetchAllPluginParameters('layout', $this->getId());
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -159,7 +159,7 @@ class GalleryLayout {
 	    }
 	}
 
-	$ret = GalleryPluginMap::activate('layout', $this->getId());
+	$ret = GalleryCoreApi::activatePlugin('layout', $this->getId());
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -174,7 +174,7 @@ class GalleryLayout {
      */
     function deactivate() {
 	global $gallery;
-	$ret = GalleryPluginMap::deactivate('layout', $this->getId());
+	$ret = GalleryCoreApi::deactivatePlugin('layout', $this->getId());
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -207,10 +207,8 @@ class GalleryLayout {
     function _loadModuleSystemContent(&$template) {
 	global $gallery;
 
-	GalleryProfiler::start('modules.core.classes.GalleryLayout::_loadModuleSystemContent');
-
 	/* Load the module list */
-	list ($ret, $moduleStatus) = GalleryPluginMap::getPluginStatus('module');
+	list ($ret, $moduleStatus) = GalleryCoreApi::getPluginStatus('module');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -221,7 +219,7 @@ class GalleryLayout {
 		continue;
 	    }
 	    
-	    list ($ret, $module) = $gallery->loadModule($moduleId);
+	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -236,8 +234,6 @@ class GalleryLayout {
 		unset($systemContent[$moduleId]);
 	    }
 	}
-
-	GalleryProfiler::stop('modules.core.classes.GalleryLayout::_loadModuleSystemContent');
 
 	return array(GalleryStatus::success(), $systemContent);
     }
@@ -255,10 +251,8 @@ class GalleryLayout {
     function _getModuleSystemLinks() {
 	global $gallery;
 
-        GalleryProfiler::start('modules.core.classes.GalleryLayout::_getModuleSystemLinks');
-	
         /* Load the module list */
-        list ($ret, $moduleStatus) = GalleryPluginMap::getPluginStatus('module');
+        list ($ret, $moduleStatus) = GalleryCoreApi::getPluginStatus('module');
         if ($ret->isError()) {
             return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -271,7 +265,7 @@ class GalleryLayout {
                 continue;
 	    }
 	    
-            list ($ret, $module) = $gallery->loadModule($moduleId);
+            list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
             if ($ret->isError()) {
                 return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -286,8 +280,6 @@ class GalleryLayout {
                 unset($links[$moduleId]);
 	    }
 	}
-	
-        GalleryProfiler::stop('modules.core.classes.GalleryLayout::_getModuleSystemLinks');
 	
         return array(GalleryStatus::success(), $links);
     }
@@ -306,14 +298,12 @@ class GalleryLayout {
     function _getModuleItemLinks($items) {
 	global $gallery;
 
-	GalleryProfiler::start('modules.core.classes.GalleryLayout::_getModuleItemLinks');
-
 	if (!is_array($items)) {
 	    $items = array($items);
 	}
 
 	/* Load the module list */
-	list ($ret, $moduleStatus) = GalleryPluginMap::getPluginStatus('module');
+	list ($ret, $moduleStatus) = GalleryCoreApi::getPluginStatus('module');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -326,7 +316,7 @@ class GalleryLayout {
 		continue;
 	    }
 	    
-	    list ($ret, $module) = $gallery->loadModule($moduleId);
+	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -346,8 +336,6 @@ class GalleryLayout {
 	    }
 	}
 
-	GalleryProfiler::stop('modules.core.classes.GalleryLayout::_getModuleItemLinks');
-
 	return array(GalleryStatus::success(), $itemLinks);
     }
 
@@ -362,14 +350,12 @@ class GalleryLayout {
     function _getModuleItemSummaries($items) {
 	global $gallery;
 
-	GalleryProfiler::start('modules.core.classes.GalleryLayout::_getModuleItemSummaries');
-
 	if (!is_array($items)) {
 	    $items = array($items);
 	}
 	
 	/* Load the module list */
-	list ($ret, $moduleStatus) = GalleryPluginMap::getPluginStatus('module');
+	list ($ret, $moduleStatus) = GalleryCoreApi::getPluginStatus('module');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -380,7 +366,7 @@ class GalleryLayout {
 		continue;
 	    }
 
-	    list ($ret, $module) = $gallery->loadModule($moduleId);
+	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -395,8 +381,6 @@ class GalleryLayout {
 		$itemSummaries[$itemId][$moduleId] = $html;
 	    }
 	}
-
-	GalleryProfiler::stop('modules.core.classes.GalleryLayout::_getModuleItemSummaries');
 
 	return array(GalleryStatus::success(), $itemSummaries);
     }
@@ -413,10 +397,8 @@ class GalleryLayout {
     function _loadModuleItemDetails(&$template, $item) {
 	global $gallery;
 
-	GalleryProfiler::start('modules.core.classes.GalleryLayout::_loadModuleItemDetails');
-
 	/* Load the module list */
-	list ($ret, $moduleStatus) = GalleryPluginMap::getPluginStatus('module');
+	list ($ret, $moduleStatus) = GalleryCoreApi::getPluginStatus('module');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -427,7 +409,7 @@ class GalleryLayout {
 		continue;
 	    }
 
-	    list ($ret, $module) = $gallery->loadModule($moduleId);
+	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -441,8 +423,6 @@ class GalleryLayout {
 		unset($itemDetails[$moduleId]);
 	    }
 	}
-
-	GalleryProfiler::stop('modules.core.classes.GalleryLayout::_loadModuleItemDetails');
 
 	return array(GalleryStatus::success(), $itemDetails);
     }
@@ -462,7 +442,7 @@ class GalleryLayout {
 	global $gallery;
 
 	/* Study all permissions */
-	$ret = GalleryItemHelper::studyPermissions($itemIds);
+	$ret = GalleryCoreApi::studyPermissions($itemIds);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -480,7 +460,7 @@ class GalleryLayout {
     function fetchParameters($itemId=null) {
 	/* Fetch global params */
 	list ($ret, $params) =
-	    GalleryPluginParameterMap::fetchAllParameters('layout', $this->getId(), null);
+	    GalleryCoreApi::fetchAllPluginParameters('layout', $this->getId(), null);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -488,7 +468,7 @@ class GalleryLayout {
 	/* Then fetch item params (if applicable) */
 	if (isset($itemId)) {
 	    list ($ret, $local) =
-		GalleryPluginParameterMap::fetchAllParameters('layout', $this->getId(), $itemId);
+		GalleryCoreApi::fetchAllPluginParameters('layout', $this->getId(), $itemId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -509,7 +489,7 @@ class GalleryLayout {
      *               mixed value
      */
     function getParameter($parameterName, $parameterValue, $itemId=0) {
-	list ($ret, $value) = GalleryPluginParameterMap::getParameter('layout',
+	list ($ret, $value) = GalleryCoreApi::getPluginParameter('layout',
 								      $this->getId(),
 								      $parameterName,
 								      $itemId);
@@ -529,7 +509,7 @@ class GalleryLayout {
      * @return object GalleryStatus a status code
      */
     function setParameter($parameterName, $parameterValue, $itemId=0) {
-	$ret = GalleryPluginParameterMap::setParameter('layout',
+	$ret = GalleryCoreApi::setPluginParameter('layout',
 						       $this->getId(),
 						       $parameterName, $parameterValue,
 						       $itemId);
@@ -548,7 +528,7 @@ class GalleryLayout {
      * @return object GalleryStatus a status code
      */
     function removeItemParameter($parameterName, $itemId) {
-	$ret = GalleryPluginParameterMap::removeParameter('layout', $this->getId(), $parameterName, $itemId);
+	$ret = GalleryCoreApi::removePluginParameter('layout', $this->getId(), $parameterName, $itemId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

@@ -55,18 +55,17 @@ class CommentModule extends GalleryModule {
 	}
 	
 	$classDir = dirname(__FILE__) . '/classes/';
-	require_once($classDir . 'GalleryCommentHelper.class');
 
-	GalleryFactory::registerImplementation('GalleryEntity',
-					       'GalleryComment',
-					       'GalleryComment',
-					       $classDir . 'GalleryComment.class');
+	GalleryCoreApi::registerFactoryImplementation('GalleryEntity',
+						      'GalleryComment',
+						      'GalleryComment',
+						      $classDir . 'GalleryComment.class');
 
 	/* Register our search implementation */
-	GalleryFactory::registerImplementation('GallerySearchInterface_1_0',
-					       'GalleryCommentSearch',
-					       'comment',
-					       $classDir . 'GalleryCommentSearch.class');
+	GalleryCoreApi::registerFactoryImplementation('GallerySearchInterface_1_0',
+						      'GalleryCommentSearch',
+						      'comment',
+						      $classDir . 'GalleryCommentSearch.class');
 	
 	return GalleryStatus::success();
     }
@@ -109,35 +108,35 @@ class CommentModule extends GalleryModule {
 	    }
 
 	    /* Register our permissions */
-	    $ret = GalleryPermissionSetMap::registerPermission($this->getId(),
+	    $ret = GalleryCoreApi::registerPermission($this->getId(),
 							       'comment.add',
 							       $gallery->i18n('[comment] Add comments')); 
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), false);
 	    }
 	    
-	    $ret = GalleryPermissionSetMap::registerPermission($this->getId(),
+	    $ret = GalleryCoreApi::registerPermission($this->getId(),
 							       'comment.edit',
 							       $gallery->i18n('[comment] Edit comments')); 
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), false);
 	    }
 	    
-	    $ret = GalleryPermissionSetMap::registerPermission($this->getId(),
+	    $ret = GalleryCoreApi::registerPermission($this->getId(),
 							       'comment.delete',
 							       $gallery->i18n('[comment] Delete comments')); 
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), false);
 	    }
 	    
-	    $ret = GalleryPermissionSetMap::registerPermission($this->getId(),
+	    $ret = GalleryCoreApi::registerPermission($this->getId(),
 							       'comment.view',
 							       $gallery->i18n('[comment] View comments'));
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), false);
 	    }
 	    
-	    $ret = GalleryPermissionSetMap::registerPermission($this->getId(),
+	    $ret = GalleryCoreApi::registerPermission($this->getId(),
 							       'comment.all',
 							       $gallery->i18n('[comment] All access'), 
 							       GALLERY_PERMISSION_COMPOSITE,
@@ -149,7 +148,7 @@ class CommentModule extends GalleryModule {
 		return array($ret->wrap(__FILE__, __LINE__), false);
 	    }
 		
-	    $ret = GalleryPermissionSetMap::registerPermission($this->getId(),
+	    $ret = GalleryCoreApi::registerPermission($this->getId(),
 							       'comment.search',
 							       $gallery->i18n('[comment] Search comments'),
 							       GALLERY_PERMISSION_COMPOSITE,
@@ -191,8 +190,7 @@ class CommentModule extends GalleryModule {
 
 	$links = array();
 	foreach ($items as $item) {
-
-	    list ($ret, $permissions) = GalleryItemHelper::getPermissions($item->getId());
+	    list ($ret, $permissions) = GalleryCoreApi::getPermissions($item->getId());
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -222,6 +220,7 @@ class CommentModule extends GalleryModule {
 	    $ids[] = $item->getId();
 	}
 
+	require_once(dirname(__FILE__) . '/classes/GalleryCommentHelper.class');
 	list ($ret, $commentCounts) = GalleryCommentHelper::fetchCommentCounts($ids);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -231,7 +230,7 @@ class CommentModule extends GalleryModule {
 	foreach ($items as $item) {
 	    $message = array();
 
-	    list ($ret, $permissions) = GalleryItemHelper::getPermissions($item->getId());
+	    list ($ret, $permissions) = GalleryCoreApi::getPermissions($item->getId());
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -256,7 +255,7 @@ class CommentModule extends GalleryModule {
     function loadItemDetails(&$template, $item) {
 	global $gallery;
 
-	list ($ret, $permissions) = GalleryItemHelper::getPermissions($item->getId());
+	list ($ret, $permissions) = GalleryCoreApi::getPermissions($item->getId());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -268,6 +267,7 @@ class CommentModule extends GalleryModule {
 	/* XXX: parameterize this */
 	$viewMax = 3;
 
+	require_once(dirname(__FILE__) . '/classes/GalleryCommentHelper.class');
 	list ($ret, $comments) =
 	    GalleryCommentHelper::fetchComments($item->getId(), $viewMax, ORDER_DESCENDING);
 	if ($ret->isError()) {
@@ -294,7 +294,7 @@ class CommentModule extends GalleryModule {
 
 	    /* Load all the commenters */
 	    if (sizeof($commenters) > 0) {
-		list ($ret, $commentersList) = $gallery->loadEntitiesById(array_keys($commenters));
+		list ($ret, $commentersList) = GalleryCoreApi::loadEntitiesById(array_keys($commenters));
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -307,7 +307,7 @@ class CommentModule extends GalleryModule {
 	    $totalComments = 0;
 	}
 
-	list ($ret, $permissions) = GalleryItemHelper::getPermissions($item->getId());
+	list ($ret, $permissions) = GalleryCoreApi::getPermissions($item->getId());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -345,7 +345,7 @@ class CommentModule extends GalleryModule {
      */
     function getItemAdminViews($item) {
 	$views = array();
-	list ($ret, $permissions) = GalleryItemHelper::getPermissions($item->getId());
+	list ($ret, $permissions) = GalleryCoreApi::getPermissions($item->getId());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

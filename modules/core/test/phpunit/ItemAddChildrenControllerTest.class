@@ -56,7 +56,7 @@ class ItemAddChildrenControllerTest extends GalleryControllerTestCase {
     function tearDown() {
 	global $gallery;
 
-	$gallery->deleteEntityById($this->_rootAlbum->getId());
+	GalleryCoreApi::deleteEntityById($this->_rootAlbum->getId());
 	$gallery->_platform = $this->_savePlatform;
 	
 	parent::tearDown();
@@ -114,13 +114,13 @@ class ItemAddChildrenControllerTest extends GalleryControllerTestCase {
 
 	$seenWeights = array();
 	foreach ($ids as $id) {
-	    list ($ret, $viewCount) = GalleryItemAttributesMap::fetchViewCount($id);
+	    list ($ret, $viewCount) = GalleryCoreApi::fetchItemViewCount($id);
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	    $this->assertEquals(0, $viewCount);
 	    
-	    list ($ret, $orderWeight) = GalleryItemAttributesMap::fetchOrderWeight($id);
+	    list ($ret, $orderWeight) = GalleryCoreApi::fetchItemOrderWeight($id);
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
@@ -168,13 +168,13 @@ class ItemAddChildrenControllerTest extends GalleryControllerTestCase {
 
 	$seenWeights = array();
 	foreach ($ids as $id) {
-	    list ($ret, $viewCount) = GalleryItemAttributesMap::fetchViewCount($id);
+	    list ($ret, $viewCount) = GalleryCoreApi::fetchItemViewCount($id);
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	    $this->assertEquals(0, $viewCount);
 	    
-	    list ($ret, $orderWeight) = GalleryItemAttributesMap::fetchOrderWeight($id);
+	    list ($ret, $orderWeight) = GalleryCoreApi::fetchItemOrderWeight($id);
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }

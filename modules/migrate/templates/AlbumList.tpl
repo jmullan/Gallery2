@@ -1,6 +1,6 @@
 <li>
 	<p>
-		{gallery->input type="checkbox" name="form[migratealbum][$albumName]"}1{/gallery->input}
+		{g->input type="checkbox" name="form[migratealbum][$albumName]"}1{/g->input}
 		<span class="albumname">{$albumName}</span>
 		<span class="albumtitle" style="font-weight: bold;">{$albumList[$albumName].title}</span>
 	</p>

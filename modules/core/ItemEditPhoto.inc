@@ -45,18 +45,18 @@ class ItemEditPhotoController extends GalleryController {
 	list ($itemId, $mode) = GalleryUtilities::getRequestVariables('itemId', 'mode');
 
 	/* Make sure we have permission do edit this item */
-	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'core.edit');
+	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.edit');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	list ($ret, $item) = $gallery->loadEntitiesById($itemId);
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* Check to see if we have a preferred source */
-	list ($ret, $preferredTable) = GalleryDerivativeHelper::fetchPreferredsByItemIds(array($item->getId()));
+	list ($ret, $preferredTable) = GalleryCoreApi::fetchPreferredsByItemIds(array($item->getId()));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -94,7 +94,7 @@ class ItemEditPhotoController extends GalleryController {
 		$args = array(180);
 	    } else if (isset($form['action']['revertToOriginal'])) {
 		if (!empty($preferred)) {
-		    $ret = $gallery->deleteEntityById($preferred->getId());
+		    $ret = GalleryCoreApi::deleteEntityById($preferred->getId());
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
@@ -118,7 +118,7 @@ class ItemEditPhotoController extends GalleryController {
 		    $isLinked = true;
 		    $isLinkedTo = false;
 		} else {
-		    list ($ret, $linkedIds) = GalleryItemHelper::fetchEntitiesLinkedTo($itemId);
+		    list ($ret, $linkedIds) = GalleryCoreApi::fetchEntitiesLinkedTo($itemId);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
@@ -151,7 +151,7 @@ class ItemEditPhotoController extends GalleryController {
 
 		    /* Get the appropriate toolkit */
 		    list ($ret, $toolkit) =
-			GalleryToolkitHelper::getToolkitByOperation($item->getMimeType(), $operation);
+			GalleryCoreApi::getToolkitByOperation($item->getMimeType(), $operation);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
@@ -182,7 +182,7 @@ class ItemEditPhotoController extends GalleryController {
 		    $gallery->debug('checking is modified');
 		    /* Save the item, if it's modified */
 		    if ($item->isModified()) {
-			list ($ret, $lockId) = $gallery->acquireWriteLock($item->getId());
+			list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($item->getId());
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
@@ -191,17 +191,17 @@ class ItemEditPhotoController extends GalleryController {
 			
 			$ret = $item->save();
 			if ($ret->isError()) {
-			    $gallery->releaseLocks($lockId);
+			    GalleryCoreApi::releaseLocks($lockId);
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
 
-			$ret = $gallery->releaseLocks($lockId);
+			$ret = GalleryCoreApi::releaseLocks($lockId);
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
 		    }
 
-		    $ret = GalleryDerivativeHelper::expireDerivativeTreeBySourceIds(array($item->getId()));
+		    $ret = GalleryCoreApi::expireDerivativeTreeBySourceIds(array($item->getId()));
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
@@ -212,7 +212,7 @@ class ItemEditPhotoController extends GalleryController {
 		    /* If we have no preferred, then create one */
 		    if (empty($preferred)) {
 			list ($ret, $preferred) =
-			    GalleryFactory::newInstance('GalleryEntity', 'GalleryDerivativeImage');
+			    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryDerivativeImage');
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
@@ -234,7 +234,7 @@ class ItemEditPhotoController extends GalleryController {
 			/*
 			 * Otherwise, lock the preferred so that we can modify it
 			 */
-			list ($ret, $lockIds[]) = $gallery->acquireWriteLock($preferred->getId());
+			list ($ret, $lockIds[]) = GalleryCoreApi::acquireWriteLock($preferred->getId());
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
@@ -245,7 +245,7 @@ class ItemEditPhotoController extends GalleryController {
 			}
 		    }
 
-		    $ret = $preferred->mergeOperation($operation, $args);
+		    $ret = GalleryCoreApi::mergeDerivativeOperation($preferred, $operation, $args);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
@@ -256,7 +256,7 @@ class ItemEditPhotoController extends GalleryController {
 		    }
 
 		    if (!empty($lockIds)) {
-			$ret = $gallery->releaseLocks($lockIds);
+			$ret = GalleryCoreApi::releaseLocks($lockIds);
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
@@ -268,7 +268,7 @@ class ItemEditPhotoController extends GalleryController {
 		     */
 		    $derivativeOperations = $preferred->getDerivativeOperations();
 		    if (empty($derivativeOperations)) {
-			$ret = $gallery->deleteEntityById($preferred->getId());
+			$ret = GalleryCoreApi::deleteEntityById($preferred->getId());
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
@@ -300,7 +300,7 @@ class ItemEditPhotoController extends GalleryController {
 		 * any derived images in that case.
 		 */
 		if ($operation == 'rotate') {
-		    $ret = GalleryDerivativeHelper::pruneDerivativeOperations(array($item->getId()), array('crop'));
+		    $ret = GalleryCoreApi::pruneDerivativeOperations(array($item->getId()), array('crop'));
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
@@ -324,7 +324,7 @@ class ItemEditPhotoController extends GalleryController {
 
 	    /* Check to see if we need to remap any derivative source ids */
 	    if (!empty($remapSourceIds)) {
-		$ret = GalleryDerivativeHelper::remapSourceIds($remapSourceIds[0],
+		$ret = GalleryCoreApi::remapSourceIds($remapSourceIds[0],
 							       $remapSourceIds[1]);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -357,7 +357,7 @@ class ItemEditPhotoController extends GalleryController {
 		if (empty($error)) {
 		    /* Load the thumbnail */
 		    list ($ret, $thumbTable) =
-			GalleryDerivativeHelper::fetchThumbnailsByItemIds($item->getId());
+			GalleryCoreApi::fetchThumbnailsByItemIds($item->getId());
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
@@ -368,7 +368,7 @@ class ItemEditPhotoController extends GalleryController {
 			$thumbnail->setDerivativeOperations('thumbnail|' . $form['thumbnail']['size']);
 
 			if ($thumbnail->isModified()) {
-			    list ($ret, $lockId) = $gallery->acquireWriteLock($thumbnail->getId());
+			    list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($thumbnail->getId());
 			    if ($ret->isError()) {
 				return array($ret->wrap(__FILE__, __LINE__), null);
 			    }
@@ -377,7 +377,7 @@ class ItemEditPhotoController extends GalleryController {
 			    if ($ret->isError()) {
 				return array($ret->wrap(__FILE__, __LINE__), null);
 			    }
-			    $ret = $gallery->releaseLocks(array($lockId));
+			    $ret = GalleryCoreApi::releaseLocks(array($lockId));
 			    if ($ret->isError()) {
 				return array($ret->wrap(__FILE__, __LINE__), null);
 			    }
@@ -385,14 +385,14 @@ class ItemEditPhotoController extends GalleryController {
 		    } else {
 			/* Create the thumbnail */
 			list ($ret, $toolkit, $outputMimeType) =
-			    GalleryToolkitHelper::getToolkitByOperation($item->getMimeType(), 'thumbnail');
+			    GalleryCoreApi::getToolkitByOperation($item->getMimeType(), 'thumbnail');
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
 
 			if (isset($toolkit)) {
 			    list ($ret, $thumbnail) = 
-				GalleryFactory::newInstance('GalleryEntity', 'GalleryDerivativeImage');
+				GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryDerivativeImage');
 			    if ($ret->isError()) {
 				return array($ret->wrap(__FILE__, __LINE__), null);
 			    }
@@ -420,13 +420,13 @@ class ItemEditPhotoController extends GalleryController {
 
 		    /* Get and delete all current resizes */
 		    list ($ret, $resizesTable) =
-			GalleryDerivativeHelper::fetchResizesByItemIds($item->getId());
+			GalleryCoreApi::fetchResizesByItemIds($item->getId());
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 		    foreach ($resizesTable as $resizes) {
 			foreach ($resizes as $resize) {
-			    $ret = $gallery->deleteEntityById($resize->getId());
+			    $ret = GalleryCoreApi::deleteEntityById($resize->getId());
 			    if ($ret->isError()) {
 				return array($ret->wrap(__FILE__, __LINE__), null);
 			    }
@@ -438,7 +438,7 @@ class ItemEditPhotoController extends GalleryController {
 		     * the resizes
 		     */
 		    list ($ret, $toolkit, $outputMimeType) =
-			GalleryToolkitHelper::getToolkitByOperation($item->getMimeType(), 'scale');
+			GalleryCoreApi::getToolkitByOperation($item->getMimeType(), 'scale');
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
@@ -451,7 +451,7 @@ class ItemEditPhotoController extends GalleryController {
 			    }
 
 			    list ($ret, $derivative) = 
-				GalleryFactory::newInstance('GalleryEntity', 'GalleryDerivativeImage');
+				GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryDerivativeImage');
 			    if ($ret->isError()) {
 				return array($ret->wrap(__FILE__, __LINE__), null);
 			    }
@@ -491,7 +491,7 @@ class ItemEditPhotoController extends GalleryController {
 	    if (isset($form['action']['crop'])) {
 		/* Load the thumbnail */
 		list ($ret, $thumbnails) =
-		    GalleryDerivativeHelper::fetchThumbnailsByItemIds(array($item->getId()));
+		    GalleryCoreApi::fetchThumbnailsByItemIds(array($item->getId()));
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -499,7 +499,7 @@ class ItemEditPhotoController extends GalleryController {
 		if (!empty($thumbnails)) {
 		    $thumbnail = $thumbnails[$item->getId()];
 
-		    list ($ret, $lock) = $gallery->acquireWriteLock($thumbnail->getId());
+		    list ($ret, $lock) = GalleryCoreApi::acquireWriteLock($thumbnail->getId());
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
@@ -508,13 +508,14 @@ class ItemEditPhotoController extends GalleryController {
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
-		    
-		    $ret = $thumbnail->mergeOperation('crop',
-						      array($form['crop']['x'],
-							    $form['crop']['y'],
-							    $form['crop']['width'],
-							    $form['crop']['height']),
-						      true);
+
+		    $ret = GalleryCoreApi::mergeDerivativeOperation($thumbnail,
+								    'crop',
+								    array($form['crop']['x'],
+									  $form['crop']['y'],
+									  $form['crop']['width'],
+									  $form['crop']['height']),
+								    true);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
@@ -524,7 +525,7 @@ class ItemEditPhotoController extends GalleryController {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 
-		    $ret = $gallery->releaseLocks($lock);
+		    $ret = GalleryCoreApi::releaseLocks($lock);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
@@ -569,12 +570,12 @@ class ItemEditPhotoView extends GalleryView {
 	list ($itemId, $mode) = GalleryUtilities::getRequestVariables('itemId', 'mode');
 
 	/* Make sure we have permission do edit this item */
-	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'core.edit');
+	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.edit');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	list ($ret, $item) = $gallery->loadEntitiesById($itemId);
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -595,7 +596,7 @@ class ItemEditPhotoView extends GalleryView {
 	
 	/* Load the thumbnail */
 	list ($ret, $thumbnails) =
-	    GalleryDerivativeHelper::fetchThumbnailsByItemIds(array($item->getId()));
+	    GalleryCoreApi::fetchThumbnailsByItemIds(array($item->getId()));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -613,7 +614,7 @@ class ItemEditPhotoView extends GalleryView {
 	$ItemEditPhoto['serialNumber'] = $item->getSerialNumber();
 	$ItemEditPhoto['showEditThumbnail'] = $thumbnail != null;
 
-	list ($ret, $ItemEditPhoto['isAdmin']) = GalleryUserGroupMap::isUserInSiteAdminGroup();
+	list ($ret, $ItemEditPhoto['isAdmin']) = GalleryCoreApi::isUserInSiteAdminGroup();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -629,7 +630,7 @@ class ItemEditPhotoView extends GalleryView {
 	    case 'editSizes':
 		/* Load the resizes */
 		list ($ret, $resizes) =
-		    GalleryDerivativeHelper::fetchResizesByItemIds(array($item->getId()));
+		    GalleryCoreApi::fetchResizesByItemIds(array($item->getId()));
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -651,7 +652,7 @@ class ItemEditPhotoView extends GalleryView {
 
 		/* Load the thumbnail */
 		list ($ret, $thumbnails) =
-		    GalleryDerivativeHelper::fetchThumbnailsByItemIds(array($item->getId()));
+		    GalleryCoreApi::fetchThumbnailsByItemIds(array($item->getId()));
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -677,7 +678,7 @@ class ItemEditPhotoView extends GalleryView {
 		$ItemEditPhoto['editPhoto']['isLinked'] = true;
 		$ItemEditPhoto['editPhoto']['isLinkedTo'] = false;
 	    } else {
-		list ($ret, $linkedIds) = GalleryItemHelper::fetchEntitiesLinkedTo($itemId);
+		list ($ret, $linkedIds) = GalleryCoreApi::fetchEntitiesLinkedTo($itemId);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -688,7 +689,7 @@ class ItemEditPhotoView extends GalleryView {
 	    
 	    /* Check to see if we have a preferred source */
 	    list ($ret, $results) =
-		GalleryDerivativeHelper::fetchPreferredsByItemIds(array($item->getId()));
+		GalleryCoreApi::fetchPreferredsByItemIds(array($item->getId()));
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -701,7 +702,7 @@ class ItemEditPhotoView extends GalleryView {
 
 	    /* Figure out what options we can provide */
 	    list ($ret, $toolkit) =
-		GalleryToolkitHelper::getToolkitByOperation($item->getMimeType(), 'rotate');
+		GalleryCoreApi::getToolkitByOperation($item->getMimeType(), 'rotate');
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -709,7 +710,7 @@ class ItemEditPhotoView extends GalleryView {
 		
 	    /* Figure out what options we can provide */
 	    list ($ret, $toolkit) =
-		GalleryToolkitHelper::getToolkitByOperation($item->getMimeType(), 'scale');
+		GalleryCoreApi::getToolkitByOperation($item->getMimeType(), 'scale');
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -740,7 +741,7 @@ class ItemEditPhotoView extends GalleryView {
 
 	    /* Figure out what options we can provide */
 	    list ($ret, $toolkit) =
-		GalleryToolkitHelper::getToolkitByOperation($item->getMimeType(), 'thumbnail');
+		GalleryCoreApi::getToolkitByOperation($item->getMimeType(), 'thumbnail');
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -748,7 +749,7 @@ class ItemEditPhotoView extends GalleryView {
 		
 	    /* Figure out what options we can provide */
 	    list ($ret, $toolkit) =
-		GalleryToolkitHelper::getToolkitByOperation($item->getMimeType(), 'scale');
+		GalleryCoreApi::getToolkitByOperation($item->getMimeType(), 'scale');
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -773,7 +774,7 @@ class ItemEditPhotoView extends GalleryView {
 		$crop['height'] = $matches[4];
 	    }
 	    
-	    list ($ret, $source) = $gallery->loadEntitiesById($thumbnail->getDerivativeSourceId());
+	    list ($ret, $source) = GalleryCoreApi::loadEntitiesById($thumbnail->getDerivativeSourceId());
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -783,7 +784,7 @@ class ItemEditPhotoView extends GalleryView {
 	     * the original image.
 	     */
 	    list ($ret, $derivativeTable) =
-		GalleryDerivativeHelper::fetchDerivativesBySourceIds(array($item->getId()),
+		GalleryCoreApi::fetchDerivativesBySourceIds(array($item->getId()),
                     array(DERIVATIVE_TYPE_IMAGE_RESIZE));
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
@@ -798,7 +799,7 @@ class ItemEditPhotoView extends GalleryView {
 		    if (empty($width)) {
 			/* Perhaps this derivative hasn't been calculated yet .. try calculating it */
 			list ($ret, $derivative) =
-			    GalleryDerivativeHelper::rebuildCacheIfNotCurrent($derivative->getId());
+			    GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($derivative->getId());
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
@@ -827,7 +828,7 @@ class ItemEditPhotoView extends GalleryView {
 	     */
 	    $width = $source->getWidth();
 	    if (empty($width)) {
-		list ($ret, $lockId) = $gallery->acquireWriteLock($source->getId());
+		list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($source->getId());
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -843,7 +844,7 @@ class ItemEditPhotoView extends GalleryView {
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-		$ret = $gallery->releaseLocks($lockId);
+		$ret = GalleryCoreApi::releaseLocks($lockId);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -877,7 +878,7 @@ class ItemEditPhotoView extends GalleryView {
 		$ItemEditPhoto['editThumbnail']['targetThumbnailSize'] = $targetThumbnailSize;
 
 		$aspectlist = array();
-		list ($ret, $module) = $gallery->loadModule('core');
+		list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}

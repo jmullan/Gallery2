@@ -64,7 +64,7 @@ class PermissionTest extends GalleryTestCase {
 	    }
 
 	    /* Remove all permissions from it */
-	    $ret = GalleryPermissionMap::removeItemPermissions($this->_albums[$i]->getId());
+	    $ret = GalleryCoreApi::removeItemPermissions($this->_albums[$i]->getId());
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
@@ -73,7 +73,7 @@ class PermissionTest extends GalleryTestCase {
 	     * Add core.changePermissions to all the items so that we can
 	     * propagate changes.
 	     */
-	    $ret = GalleryPermissionMap::addUserPermission($this->_albums[$i]->getId(),
+	    $ret = GalleryCoreApi::addUserPermission($this->_albums[$i]->getId(),
 							   $gallery->getActiveUserId(),
 							   'core.changePermissions',
 							   false);
@@ -93,7 +93,7 @@ class PermissionTest extends GalleryTestCase {
 	global $gallery;
 
 	/* Delete our items */
-	$ret = $gallery->deleteEntityById($this->_albums[0]->getId());
+	$ret = GalleryCoreApi::deleteEntityById($this->_albums[0]->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -104,9 +104,9 @@ class PermissionTest extends GalleryTestCase {
     /**
      * Add some user and group permissions and test retrieving them.
      * This covers:
-     *       GalleryPermissionMap::addUserPermission
-     *       GalleryPermissionMap::addGroupPermission
-     *       GalleryPermissionMap::fetchAllPermissionsForItem
+     *       GalleryCoreApi::addUserPermission
+     *       GalleryCoreApi::addGroupPermission
+     *       GalleryCoreApi::fetchAllPermissionsForItem
      */
     function testAddUserAndGroupPermission() {
 	global $gallery;
@@ -114,7 +114,7 @@ class PermissionTest extends GalleryTestCase {
 	$userId = $gallery->getActiveUserId();
 
 	list ($ret, $groupIds) =
-	    GalleryUserGroupMap::fetchGroupsForUser($userId);
+	    GalleryCoreApi::fetchGroupsForUser($userId);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -123,7 +123,7 @@ class PermissionTest extends GalleryTestCase {
 	$groupId = $groupIds[0];
 
 	/* Add user permission to just this item */
-	$ret = GalleryPermissionMap::addUserPermission($this->_albums[0]->getId(),
+	$ret = GalleryCoreApi::addUserPermission($this->_albums[0]->getId(),
 						       $userId,
 						       'core.edit',
 						       false);
@@ -132,7 +132,7 @@ class PermissionTest extends GalleryTestCase {
 	}
 
 	/* Add group permission to just this item */
-	$ret = GalleryPermissionMap::addGroupPermission($this->_albums[0]->getId(),
+	$ret = GalleryCoreApi::addGroupPermission($this->_albums[0]->getId(),
 							$groupId,
 							'core.edit',
 							false);
@@ -142,7 +142,7 @@ class PermissionTest extends GalleryTestCase {
 	
 
 	/* Add user permission to this item and its children */
-	$ret = GalleryPermissionMap::addUserPermission($this->_albums[0]->getId(),
+	$ret = GalleryCoreApi::addUserPermission($this->_albums[0]->getId(),
 						       $userId,
 						       'core.viewAll',
 						       true);
@@ -151,7 +151,7 @@ class PermissionTest extends GalleryTestCase {
 	}
 
 	/* Add group permission to this item and its children */
-	$ret = GalleryPermissionMap::addGroupPermission($this->_albums[0]->getId(),
+	$ret = GalleryCoreApi::addGroupPermission($this->_albums[0]->getId(),
 							$groupId,
 							'core.delete',
 							true);
@@ -162,13 +162,13 @@ class PermissionTest extends GalleryTestCase {
 	/* Retrieve permissions and compare */
 	for ($i = 0; $i < sizeof($this->_albums); $i++) {
 	    list ($ret, $uncompressedPerms) = 
-		GalleryPermissionMap::fetchAllPermissionsForItem($this->_albums[$i]->getId(), false);
+		GalleryCoreApi::fetchAllPermissionsForItem($this->_albums[$i]->getId(), false);
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 
 	    list ($ret, $compressedPerms) = 
-		GalleryPermissionMap::fetchAllPermissionsForItem($this->_albums[$i]->getId(), true);
+		GalleryCoreApi::fetchAllPermissionsForItem($this->_albums[$i]->getId(), true);
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
@@ -218,8 +218,8 @@ class PermissionTest extends GalleryTestCase {
      * Test copying permissions from one item to another
      * This covers:
      *
-     *     GalleryPermissionMap::addUserPermission
-     *     GalleryPermissionMap::fetchPermissionsForItems
+     *     GalleryCoreApi::addUserPermission
+     *     GalleryCoreApi::fetchPermissionsForItems
      */
     function testCopyPermissions() {
 	global $gallery;
@@ -227,7 +227,7 @@ class PermissionTest extends GalleryTestCase {
 	$userId = $gallery->getActiveUserId();
 
 	/* Add user permission to the 2nd item */
-	$ret = GalleryPermissionMap::addUserPermission($this->_albums[1]->getId(),
+	$ret = GalleryCoreApi::addUserPermission($this->_albums[1]->getId(),
 						       $userId,
 						       'core.viewAll',
 						       false);
@@ -236,17 +236,17 @@ class PermissionTest extends GalleryTestCase {
 	}
 
 	/* Copy permissions to the root item */
-	$ret = GalleryPermissionMap::copyPermissions($this->_albums[0]->getId(),
-						     $this->_albums[1]->getId());
+	$ret = GalleryCoreApi::copyPermissions($this->_albums[0]->getId(),
+					       $this->_albums[1]->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* Fetch and compare */
 	list ($ret, $perms) =
-	    GalleryPermissionMap::fetchPermissionsForItems(array($this->_albums[0]->getId(),
-								 $this->_albums[1]->getId()),
-							   $userId);
+	    GalleryCoreApi::fetchPermissionsForItems(array($this->_albums[0]->getId(),
+							   $this->_albums[1]->getId()),
+						     $userId);
 	$this->assertEquals($perms[$this->_albums[0]->getId()],
 			    $perms[$this->_albums[1]->getId()]);
     }
@@ -255,9 +255,9 @@ class PermissionTest extends GalleryTestCase {
      * Test copying permissions from one item to another
      * This covers:
      *
-     *     GalleryPermissionMap::addUserPermission
-     *     GalleryPermissionMap::addGroupPermission
-     *     GalleryPermissionMap::hasPermission
+     *     GalleryCoreApi::addUserPermission
+     *     GalleryCoreApi::addGroupPermission
+     *     GalleryCoreApi::hasPermission
      */
     function testHasPermission() {
 	global $gallery;
@@ -265,7 +265,7 @@ class PermissionTest extends GalleryTestCase {
 	$userId = $gallery->getActiveUserId();
 
 	list ($ret, $groupIds) =
-	    GalleryUserGroupMap::fetchGroupsForUser($userId);
+	    GalleryCoreApi::fetchGroupsForUser($userId);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -274,11 +274,11 @@ class PermissionTest extends GalleryTestCase {
 	$groupId = $groupIds[0];
 	
 	/* Add user permission to the 2nd item */
-	$ret = GalleryPermissionMap::addUserPermission($this->_albums[0]->getId(),
+	$ret = GalleryCoreApi::addUserPermission($this->_albums[0]->getId(),
 						       $userId,
 						       'core.viewAll',
 						       false);
-	$ret = GalleryPermissionMap::addGroupPermission($this->_albums[0]->getId(),
+	$ret = GalleryCoreApi::addGroupPermission($this->_albums[0]->getId(),
 							$groupId,
 							'core.delete',
 							false);
@@ -288,7 +288,7 @@ class PermissionTest extends GalleryTestCase {
 
 	/* User has component of composite permission */
 	list ($ret, $hasPermission) =
-	    GalleryPermissionMap::hasPermission($this->_albums[0]->getId(),
+	    GalleryCoreApi::hasPermission($this->_albums[0]->getId(),
 						array($userId),
 						array(),
 						'core.view');
@@ -299,7 +299,7 @@ class PermissionTest extends GalleryTestCase {
 	
 	/* User has composite permission */
 	list ($ret, $hasPermission) =
-	    GalleryPermissionMap::hasPermission($this->_albums[0]->getId(),
+	    GalleryCoreApi::hasPermission($this->_albums[0]->getId(),
 						array($userId),
 						array(),
 						'core.viewAll');
@@ -310,7 +310,7 @@ class PermissionTest extends GalleryTestCase {
 	
 	/* User does not have permission */
 	list ($ret, $hasPermission) =
-	    GalleryPermissionMap::hasPermission($this->_albums[0]->getId(),
+	    GalleryCoreApi::hasPermission($this->_albums[0]->getId(),
 						array($userId),
 						array(),
 						'core.edit');
@@ -321,7 +321,7 @@ class PermissionTest extends GalleryTestCase {
 
 	/* Group has composite permission */
 	list ($ret, $hasPermission) =
-	    GalleryPermissionMap::hasPermission($this->_albums[0]->getId(),
+	    GalleryCoreApi::hasPermission($this->_albums[0]->getId(),
 						array(),
 						array($groupId),
 						'core.delete');
@@ -332,7 +332,7 @@ class PermissionTest extends GalleryTestCase {
 	
 	/* Group has composite permission */
 	list ($ret, $hasPermission) =
-	    GalleryPermissionMap::hasPermission($this->_albums[0]->getId(),
+	    GalleryCoreApi::hasPermission($this->_albums[0]->getId(),
 						array(),
 						array($groupId),
 						'core.edit');

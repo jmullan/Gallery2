@@ -49,7 +49,7 @@ class UserAdminView extends GalleryView {
 	}
 	    
 	/* Load the module list */
-	list ($ret, $moduleStatus) = GalleryPluginMap::getPluginStatus('module');
+	list ($ret, $moduleStatus) = GalleryCoreApi::getPluginStatus('module');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -62,7 +62,7 @@ class UserAdminView extends GalleryView {
 	    }
 
 	    /* Get the selected module's admin view */
-	    list($ret, $module) = $gallery->loadModule($moduleId);
+	    list($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -75,7 +75,7 @@ class UserAdminView extends GalleryView {
 	    $subViewChoices = array_merge($subViewChoices, $moduleViews);
 	}
 
-	list ($ret, $anonymousUserId) = $gallery->getModuleParameter('core', 'id.anonymousUser');
+	list ($ret, $anonymousUserId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

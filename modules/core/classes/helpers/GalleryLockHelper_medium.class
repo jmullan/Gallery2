@@ -1,0 +1,300 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+// The simple version holds the static lock table
+require_once(dirname(__FILE__) . '/GalleryLockHelper_simple.class');
+
+/**
+ * Helper class for handling locking
+ *
+ * @package GalleryCore
+ * @subpackage Classes
+ * @abstract
+ */
+class GalleryLockHelper_medium {
+
+    /**
+     * Read Lock one or more objects
+     *
+     * @access public
+     * @param array ids to lock
+     * @param integer how long to wait for the lock before giving up
+     * @return array object GalleryStatus a status code
+     *               int the lock id
+     */
+    function acquireReadLock($ids, $timeout=10) {
+	global $gallery;
+	
+	$storage = $gallery->getStorage();
+	list ($ret, $lock) = $storage->acquireReadLock($ids, $timeout);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$lockId = $lock->getId();
+
+	$locks =& GalleryLockHelper_simple::_getLocks();
+	$locks[$lockId] = $lock;
+	
+	return array($ret->wrap(__FILE__, __LINE__), $lockId);
+    }
+
+    /**
+     * Acquire read locks on all the parents of this id.  This is useful when
+     * we're going to do a filesystem related operation and we want to make
+     * sure that the tree does not change out from underneath us.
+     *
+     * @access public
+     * @param integer an id to lock
+     * @param integer how long to wait for the lock before giving up
+     * @return array object GalleryStatus a status code
+     *               object GalleryLock a lock
+     */
+    function acquireReadLockParents($id, $timeout=10) {
+	global $gallery;
+
+	$storage = $gallery->getStorage();
+
+	/* Get the parent entity id */
+	$query = '
+        SELECT
+          [GalleryChildEntity::parentId]
+        FROM
+          [GalleryChildEntity]
+        WHERE
+          [GalleryChildEntity::id] = ?
+        ';
+
+	list ($ret, $searchResults) = $gallery->search($query, array($id));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
+	if ($searchResults->resultCount() == 0) {
+	    /* This should never happen! */
+	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
+	}
+	
+	/* Extract the parent id */
+	while ($result = $searchResults->nextResult()) {
+	    $parentId = $result[0];
+	}
+	
+	if ($parentId == null) {
+	    
+	    /* No parent -- we're at the root */
+	    return array(GalleryStatus::success(), null);
+	}
+	
+	/* Don't both read locking if we already have a read or write lock. */
+	if (!(GalleryLockHelper_medium::isWriteLocked($parentId) ||
+	      GalleryLockHelper_medium::isReadLocked($parentId))) {
+	    
+	    /* Read lock the parent */
+	    list ($ret, $lock1) = GalleryLockHelper_medium::acquireReadLock($parentId, $timeout);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+	
+	/* Then lock all ancestors of the parent */
+	list ($ret, $lock2) = GalleryLockHelper_medium::acquireReadLockParents($parentId, $timeout);
+	if ($ret->isError()) {
+	    GalleryLockHelper_medium::releaseLocks($lock1);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Merge the locks down to a single lock. */
+	if (empty($lock1) && empty($lock2)) {
+	    $lockId = null;
+	} else if (empty($lock1) && !empty($lock2)) {
+	    $lockId = $lock2;
+	} else if (!empty($lock1) && empty($lock2)) {
+	    $lockId = $lock1;
+	} else {
+	    $locks =& GalleryLockHelper_simple::_getLocks();
+	    $locks[$lock1]->merge($locks[$lock2]);
+	    unset($locks[$lock2]);
+	    $lockId = $lock1;
+	}
+
+	return array(GalleryStatus::success(), $lockId);
+    }
+
+    /**
+     * Return true if the given id is read locked or write locked.
+     *
+     * @access public
+     * @param int an entity id
+     * @return boolean true if the entity is read locked
+     */
+    function isReadLocked($id) {
+	$locks =& GalleryLockHelper_simple::_getLocks();
+	foreach (array_keys($locks) as $lockId) {
+	    $lock =& $locks[$lockId];
+
+	    if ($lock->getLockType() != LOCK_READ && $lock->getLockType() != LOCK_WRITE) {
+		continue;
+	    }
+
+	    $ids = $lock->getEntityIds();
+	    if (in_array($id, $ids)) {
+		return true;
+	    }
+	}
+
+	return false;
+    }
+
+    /**
+     * Write lock one or more objects
+     *
+     * @access public
+     * @param array ids to lock
+     * @param integer how long to wait for the lock before giving up
+     * @return array object GalleryStatus a status code
+     *               int the lock id
+     */
+    function acquireWriteLock($ids, $timeout=10) {
+	global $gallery;
+
+	$storage = $gallery->getStorage();
+	list ($ret, $lock) = $storage->acquireWriteLock($ids, $timeout);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$lockId = $lock->getId();
+
+	$locks =& GalleryLockHelper_simple::_getLocks();
+	$locks[$lockId] = $lock;
+	return array(GalleryStatus::success(), $lockId);
+    }
+
+    /**
+     * Return true if the given id is write locked
+     *
+     * @access public
+     * @param int an entity id
+     * @return boolean true if the entity is write locked
+     */
+    function isWriteLocked($id) {
+	$locks =& GalleryLockHelper_simple::_getLocks();
+	foreach (array_keys($locks) as $lockId) {
+	    $lock =& $locks[$lockId];
+
+	    if ($lock->getLockType() != LOCK_WRITE) {
+		continue;
+	    }
+
+	    $ids = $lock->getEntityIds();
+	    if (in_array($id, $ids)) {
+		return true;
+	    }
+	}
+
+	return false;
+    }
+
+    /**
+     * Release the given lock(s)
+     *
+     * @param array a list of lock ids, or a single lock id
+     * @return object GalleryStatus a status code
+     */
+    function releaseLocks($lockIds) {
+	global $gallery;
+	
+	if (!is_array($lockIds)) {
+	    $lockIds = array($lockIds);
+	}
+
+	$locks =& GalleryLockHelper_simple::_getLocks();
+
+	/* Check all parameters before starting to release locks */
+	foreach ($lockIds as $lockId) {
+	    if (empty($lockId)) {
+		continue;
+	    }
+	    
+	    if (!isset($locks[$lockId])) {
+		return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    }
+	}
+
+	/* Now release all locks */
+	foreach ($lockIds as $lockId) {
+	    if (empty($lockId)) {
+		continue;
+	    }
+	    
+	    $gallery->guaranteeTimeLimit(5);
+	    $ret = $locks[$lockId]->release();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    unset($locks[$lockId]);
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Let go of all of our locks.
+     *
+     * @param string halt after the first failure?  default: yes
+     * @return object GalleryStatus a status code
+     * @access private
+     */
+    function releaseAllLocks($haltOnFailure=true) {
+	global $gallery;
+
+	$locks =& GalleryLockHelper_simple::_getLocks();
+	
+	$errorRet = null;
+	foreach ($locks as $lockId => $lock) {
+	    $gallery->guaranteeTimeLimit(5);
+	    if ($lock->isLocked()) {
+		$ret = $lock->release();
+		if ($ret->isError()) {
+		    $errorRet = $ret->wrap(__FILE__, __LINE__);
+		    if ($haltOnFailure) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
+		} else {
+		    unset($locks[$lockId]);
+		}
+	    }
+	}
+
+	if (!empty($errorRet)) {
+	    return $errorRet;
+	} else {
+	    return GalleryStatus::success();
+	}
+    }
+}

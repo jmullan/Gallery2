@@ -231,7 +231,7 @@ class GalleryEntity_core extends GalleryPersistent {
 	 * Newly created objects don't need to be locked 'cause they're not in
 	 * the database yet.  Everything else does.
 	 */
-	if (!$gallery->isWriteLocked($this->getId())) {
+	if (!GalleryCoreApi::isWriteLocked($this->getId())) {
 	    if (!$this->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED)) {
 		return GalleryStatus::error(ERROR_LOCK_REQUIRED,
 					    __FILE__, __LINE__);
@@ -242,9 +242,9 @@ class GalleryEntity_core extends GalleryPersistent {
 	    /* Change the modification date */
 	    $this->setModificationTimestamp(time());
 
-	    $event = new GalleryEvent("GalleryEntity::save");
+	    $event = GalleryCoreApi::newEvent("GalleryEntity::save");
 	    $event->setEntity($this);
-	    $ret = $gallery->postEvent($event);
+	    $ret = GalleryCoreApi::postEvent($event);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -263,7 +263,7 @@ class GalleryEntity_core extends GalleryPersistent {
 	     * cache in two separate places.
 	     */
 	    $id = $this->getId();
-	    GalleryDataCache::put("Gallery::loadEntitiesById($id)", $this);
+	    GalleryDataCache::put("GalleryEntityHelper::loadEntitiesById($id)", $this);
 	}
 	
 	return GalleryStatus::success();
@@ -306,14 +306,14 @@ class GalleryEntity_core extends GalleryPersistent {
     function delete() {
 	global $gallery;
 
-	if (!$gallery->isWriteLocked($this->getId())) {
+	if (!GalleryCoreApi::isWriteLocked($this->getId())) {
 	    return GalleryStatus::error(ERROR_LOCK_REQUIRED,
 					__FILE__, __LINE__);
 	}
 
-	$event = new GalleryEvent("GalleryEntity::delete");
+	$event = GalleryCoreApi::newEvent('GalleryEntity::delete');
 	$event->setEntity($this);
-	$ret = $gallery->postEvent($event);
+	$ret = GalleryCoreApi::postEvent($event);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -333,7 +333,7 @@ class GalleryEntity_core extends GalleryPersistent {
 
 	$linkId = $this->getLinkId();
 	if (isset($linkId)) {
-	    list ($ret, $this->_linkedEntity) = $gallery->loadEntitiesById($this->_linkId);
+	    list ($ret, $this->_linkedEntity) = GalleryCoreApi::loadEntitiesById($this->_linkId);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -409,7 +409,7 @@ class GalleryEntity_core extends GalleryPersistent {
      */
     function detachLink() {
 	if (!$this->isLinked()) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__, "Not a link!");
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__, 'Not a link!');
 	}
 
 	/* Save off the linked entity */

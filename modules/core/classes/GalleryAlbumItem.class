@@ -100,7 +100,7 @@ class GalleryAlbumItem_core extends GalleryItem {
 	/* Albums can contain children */
 	$this->setCanContainChildren(true);
 
-	list($ret, $parent) = $gallery->loadEntitiesById($parentId);
+	list($ret, $parent) = GalleryCoreApi::loadEntitiesById($parentId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -111,7 +111,7 @@ class GalleryAlbumItem_core extends GalleryItem {
 	}
 
 	/* Copy over derivative preferences from the parent */
-	$ret = GalleryDerivativePreferencesMap::copyPreferences($parentId, $this->getId());
+	$ret = GalleryCoreApi::copyDerivativePreferences($parentId, $this->getId());
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -136,7 +136,7 @@ class GalleryAlbumItem_core extends GalleryItem {
 	global $gallery;
 
 	/* See if we already have a root */
-	list ($ret, $rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
+	list ($ret, $rootId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -156,26 +156,22 @@ class GalleryAlbumItem_core extends GalleryItem {
 
 	/* Create default preferences */
 	/* XXX: parameterize this */
-	$ret = GalleryDerivativePreferencesMap::addMapEntry(
-	    array('order' => 0,
-		  'itemId' => $this->getId(),
-		  'derivativeType' => DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
-		  'derivativeOperations' => 'thumbnail|150'));
+	$ret = GalleryCoreApi::addDerivativePreference(0, $this->getId(),
+						       DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
+						       'thumbnail|150');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	$ret = GalleryDerivativePreferencesMap::addMapEntry(
-	    array('order' => 0,
-		  'itemId' => $this->getId(),
-		  'derivativeType' => DERIVATIVE_TYPE_IMAGE_RESIZE,
-		  'derivativeOperations' => 'scale|640'));
+	$ret = GalleryCoreApi::addDerivativePreference(0, $this->getId(),
+						       DERIVATIVE_TYPE_IMAGE_RESIZE,
+						       'scale|640');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* Use the default layout */
-	list($ret, $layout) = $gallery->getModuleParameter('core', 'default.layout');
+	list($ret, $layout) = GalleryCoreApi::getPluginParameter('module', 'core', 'default.layout');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -194,7 +190,7 @@ class GalleryAlbumItem_core extends GalleryItem {
 	
 	$platform = $gallery->getPlatform();
 
-	list($ret, $perm) = $gallery->getModuleParameter('core', 'permissions.directory');
+	list($ret, $perm) = GalleryCoreApi::getPluginParameter('module', 'core', 'permissions.directory');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -239,8 +235,7 @@ class GalleryAlbumItem_core extends GalleryItem {
 	}
 
 	/* Delete derivative preferences */
-	$ret = GalleryDerivativePreferencesMap::removeMapEntry(
-	    array('itemId' => $this->getId()));
+	$ret = GalleryCoreApi::removeDerivativePreferencesForItem($this->getId());
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -279,7 +274,7 @@ class GalleryAlbumItem_core extends GalleryItem {
 	/*
 	 * Read lock the parent so that we don't have a race condition below.
 	 */
-	list ($ret, $lockId) = $gallery->acquireReadLock($this->getParentId());
+	list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($this->getParentId());
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -320,7 +315,7 @@ class GalleryAlbumItem_core extends GalleryItem {
 	}
 
 	/* Release locks */
-	$ret = $gallery->releaseLocks($lockId);
+	$ret = GalleryCoreApi::releaseLocks($lockId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -340,7 +335,7 @@ class GalleryAlbumItem_core extends GalleryItem {
      */
     function move($newParentId) {
 	/* Get the current parent sequence */
-	list ($ret, $oldParentSequence) = GalleryItemAttributesMap::fetchParentSequence($this->getId());
+	list ($ret, $oldParentSequence) = GalleryCoreApi::fetchParentSequence($this->getId());
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -351,14 +346,14 @@ class GalleryAlbumItem_core extends GalleryItem {
 	}
 
 	/* Figure out the new one */
-	list ($ret, $newParentSequence) = GalleryItemAttributesMap::fetchParentSequence($this->getParentId());
+	list ($ret, $newParentSequence) = GalleryCoreApi::fetchParentSequence($this->getParentId());
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	$newParentSequence[] = $this->getParentId();
 
 	/* Convert this item and all of its children to the new sequence */
-	$ret = GalleryItemAttributesMap::updateParentSequence($oldParentSequence, $newParentSequence);
+	$ret = GalleryCoreApi::updateParentSequence($oldParentSequence, $newParentSequence);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

@@ -152,7 +152,7 @@ class GalleryChildEntity_core extends GalleryEntity {
 
 	$parentId = $this->getParentId();
 	if (isset($parentId)) {
-	    list ($ret, $parent) = $gallery->loadEntitiesById($this->getParentId());
+	    list ($ret, $parent) = GalleryCoreApi::loadEntitiesById($this->getParentId());
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }

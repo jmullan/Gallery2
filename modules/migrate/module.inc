@@ -51,8 +51,7 @@ class MigrateModule extends GalleryModule {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	$classDir = dirname(__FILE__) . '/classes/';
-	require_once($classDir . 'Gallery1DataParser.class');
+
 	return GalleryStatus::success();
     }
 

@@ -1,0 +1,311 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * Track all plugins and their state
+ *
+ * @package GalleryCore
+ * @subpackage Classes
+ */
+class GalleryPluginHelper_simple {
+    
+    /**
+     * Set a given plugin instance in the plugin cache
+     *
+     * The core module can't be loaded from inside Gallery with the
+     * loadModule() call for chicken-and-egg reasons, so we have to be able to
+     * set it here.
+     *
+     * @param object a plugin
+     */
+    function setPluginInstance($pluginType, $pluginId, &$instance) {
+	GalleryDataCache::putByReference("GalleryPluginHelper::loadPlugin($pluginType, $pluginId)",
+					 $instance);
+    }
+
+    /**
+     * Load and initialize the given plugin
+     *
+     * @param string the plugin type (eg, module, layout, etc)
+     * @param string the plugin id
+     * @param string whether or not to initialize the plugin
+     * @return array object GalleryStatus a status code
+     *               object the plugin
+     */
+    function loadPlugin($pluginType, $pluginId, $initialize=true) {
+	global $gallery;
+
+	$cacheKey = "GalleryPluginHelper::loadPlugin($pluginType, $pluginId)";
+	if (!GalleryDataCache::containsKey($cacheKey)) {
+
+	    switch($pluginType) {
+	    case 'module':
+		$pluginSuperClass = 'GalleryModule';
+		$pluginClass = $pluginId . 'Module';
+		break;
+		
+	    case 'layout':
+		$pluginSuperClass = 'GalleryLayout';
+		$pluginClass = $pluginId . 'Layout';
+		break;
+	    }
+
+	    if (!class_exists($pluginClass)) {
+		require_once(sprintf('%s/../%s.class', dirname(__FILE__), $pluginSuperClass));
+		$pluginFile = sprintf('%s/../../../../%ss/%s/%s.inc',
+				      dirname(__FILE__), $pluginType, $pluginId, $pluginType);
+		$ret = GalleryUtilities::requireOnce($pluginFile);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		
+		if (!class_exists($pluginClass)) {
+		    return array(GalleryStatus::error(ERROR_BAD_MODULE, __FILE__, __LINE__,
+						      "Class $pluginClass does not exist"), null);
+		}
+	    }
+
+	    /* Instantiate and initialize it */
+	    $plugin = new $pluginClass();
+	    if ($initialize) {
+		$ret = $plugin->init();
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	    }
+
+	    /* Store it in our table */
+	    GalleryDataCache::put($cacheKey, $plugin, true);
+	} else {
+	    $plugin = GalleryDataCache::get($cacheKey);
+	}
+
+	return array(GalleryStatus::success(), $plugin);
+    }
+
+    /**
+     * Convenience method to retrieve a plugin parameter
+     *
+     * @param string the plugin type
+     * @param string the plugin id
+     * @param string the parameter name
+     * @param string optional item id
+     * @return array object GalleryStatus a status code
+     *               string a value
+     */
+    function getParameter($pluginType, $pluginId, $parameterName, $itemId=0) {
+
+	/* Convert null to 0, just in case */
+	if ($itemId == null) {
+	    $itemId = 0;
+	}
+	
+	list ($ret, $params) =
+	    GalleryPluginHelper_simple::fetchAllParameters($pluginType, $pluginId, $itemId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Return the value, or null if the param doesn't exist */
+	if (!isset($params[$parameterName])) {
+	    return array(GalleryStatus::success(), null);
+	} else {
+	    return array(GalleryStatus::success(), $params[$parameterName]);
+	}
+    }
+
+    /**
+     * Get all the parameters for this plugin
+     *
+     * @param string the type of the plugin
+     * @param string the id of the plugin
+     * @param integer the id of item (or null for a global setting)
+     * @return array object GalleryStatus a status code
+     *               array (parameterName => parameterValue)
+     * @static
+     */
+    function fetchAllParameters($pluginType, $pluginId, $itemId=0) {
+	global $gallery;
+	if (empty($pluginType) || empty($pluginId)) {
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+					      sprintf("Missing pluginType [%s] or pluginId [%s]",
+						      $pluginType,
+						      $pluginId)),
+			 null);
+	}
+
+	/* Convert null to 0, just in case */
+	if ($itemId == null) {
+	    $itemId = 0;
+	}
+	
+	$cacheKey = "GalleryPluginHelper::fetchAllParameters($pluginType, $pluginId, $itemId)";
+	if (!GalleryDataCache::containsKey($cacheKey)) {
+	    $query = '
+              SELECT
+                [GalleryPluginParameterMap::parameterName],
+                [GalleryPluginParameterMap::parameterValue]
+              FROM
+                [GalleryPluginParameterMap]
+              WHERE
+                [GalleryPluginParameterMap::pluginType] = ?
+                AND
+                [GalleryPluginParameterMap::pluginId] = ?
+                AND
+                [GalleryPluginParameterMap::itemId] = ?
+              ';
+
+	    list ($ret, $searchResults) =
+		$gallery->search($query, array($pluginType, $pluginId, $itemId));
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    $data = array();
+	    while ($result = $searchResults->nextResult()) {
+		$data[$result[0]] = $result[1];
+	    }
+
+	    GalleryDataCache::put($cacheKey, $data);
+	} else {
+	    $data = GalleryDataCache::get($cacheKey);
+	}
+	
+	return array(GalleryStatus::success(), $data);
+    }
+
+    /**
+     * Get the status of all plugins of a given type
+     *
+     * @param string the plugin type (eg 'module', 'layout')
+     * @return array object GalleryStatus as status code
+     *                      array (moduleId => array('active' => true/false,
+     *                                               'installed' => true/false)
+     */
+    function getPluginStatus($pluginType) {
+	global $gallery;
+	
+	$cacheKey = "GalleryPluginHelper::getPluginStatus($pluginType)";
+	if (!GalleryDataCache::containsKey($cacheKey)) {
+	    list ($ret, $plugins) = GalleryPluginHelper_simple::fetchPluginList($pluginType);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    $platform = $gallery->getPlatform();
+
+	    /* Scan modules directory for installed modules */
+	    switch ($pluginType) {
+	    case 'module':
+		$pluginsDir = dirname(__FILE__) . '/../../../../modules/';
+		$pluginFile = 'module.inc';
+		break;
+
+	    case 'layout':
+		$pluginsDir = dirname(__FILE__) . '/../../../../layouts/';
+		$pluginFile = 'layout.inc';
+		break;
+	    }
+		
+	    if ($dir = $platform->opendir($pluginsDir)) {
+		while ($pluginId = $platform->readdir($dir)) {
+		    if ($pluginId{0} == '.') {
+			continue;
+		    }
+		    if (!$platform->is_dir($pluginsDir . $pluginId)) {
+			continue;
+		    }
+			
+		    $path = $pluginsDir . $pluginId . '/' . $pluginFile;
+		    if ($platform->file_exists($path)) {
+			$plugins[$pluginId]['installed'] = 1;
+		    }
+		}
+		$platform->closedir($dir);
+	    }
+
+	    /* Find and remove plugins that are active, but not installed */
+	    foreach ($plugins as $pluginId => $pluginStatus) {
+		if (!isset($pluginStatus['installed'])) {
+		    $gallery->debug("Plugin $pluginId no longer installed");
+		    unset($plugins[$pluginId]);
+		}
+	    }
+
+	    if ($pluginType == 'module') {
+		/* Force the core module's status */
+		$plugins['core'] = array('active' => 1, 'installed' => 1);
+	    }
+
+	    GalleryDataCache::put($cacheKey, $plugins);
+	} else {
+	    $plugins = GalleryDataCache::get($cacheKey);
+	}
+
+	return array(GalleryStatus::success(), $plugins);
+    }
+
+    /**
+     * Return a plugin list by plugin type
+     *
+     * @param string the plugin type
+     * @return array GalleryStatus a status code
+     *               array an array of (pluginId => (active, version))
+     * @static
+     */
+    function fetchPluginList($pluginType) {
+	global $gallery;
+
+	if (empty($pluginType)) {
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+					      "Missing plugin type"),
+			 null);
+	}
+
+	$query = '
+        SELECT
+          [GalleryPluginMap::pluginId],
+          [GalleryPluginMap::active]
+        FROM
+          [GalleryPluginMap]
+        WHERE
+          [GalleryPluginMap::pluginType] = ?
+        ';
+	
+	list ($ret, $searchResults) = $gallery->search($query, array($pluginType));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$data = array();
+	while ($result = $searchResults->nextResult()) {
+	    $data[$result[0]] = array('active' => $result[1]);
+	}
+	
+	return array(GalleryStatus::success(), $data);
+    }
+}

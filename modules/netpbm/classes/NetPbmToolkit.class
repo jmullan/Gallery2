@@ -347,13 +347,13 @@ class NetPbmToolkit extends GalleryToolkit {
 	global $gallery;
 
 	list ($ret, $pnmtojpeg) =
-	    $gallery->getModuleParameter('netpbm', 'pnmtojpeg');
+	    GalleryCoreApi::getPluginParameter('module', 'netpbm', 'pnmtojpeg');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	list ($ret, $jpegQuality) =
-	    $gallery->getModuleParameter('netpbm', 'jpegQuality');
+	    GalleryCoreApi::getPluginParameter('module', 'netpbm', 'jpegQuality');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -426,7 +426,7 @@ class NetPbmToolkit extends GalleryToolkit {
 	$platform = $gallery->getPlatform();
 
 	list ($ret, $netPbmPath) =
-	    $gallery->getModuleParameter('netpbm', 'path');
+	    GalleryCoreApi::getPluginParameter('module', 'netpbm', 'path');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

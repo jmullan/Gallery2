@@ -144,12 +144,12 @@ class AdminUsersControllerTest extends GalleryControllerTestCase {
     function testDeleteAnonymous() {
 	global $gallery;
 	
-	list ($ret, $anonymousUserId) = $gallery->getModuleParameter('core', 'id.anonymousUser');
+	list ($ret, $anonymousUserId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $anonymousUser) = $gallery->loadEntitiesById($anonymousUserId);
+	list ($ret, $anonymousUser) = GalleryCoreApi::loadEntitiesById($anonymousUserId);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -187,7 +187,7 @@ class AdminUsersControllerTest extends GalleryControllerTestCase {
     function _createUser() {
 	global $gallery;
 	
-	list ($ret, $user) = GalleryFactory::newInstance('GalleryEntity', 'GalleryUser');
+	list ($ret, $user) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryUser');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -210,7 +210,7 @@ class AdminUsersControllerTest extends GalleryControllerTestCase {
 
     function _deleteUser($user) {
 	global $gallery;
-	$ret = $gallery->deleteEntityById($user->getId());
+	$ret = GalleryCoreApi::deleteEntityById($user->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

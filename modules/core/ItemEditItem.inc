@@ -45,7 +45,7 @@ class ItemEditItemController extends GalleryController {
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
 
 	/* Make sure we have permission do edit this item */
-	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'core.edit');
+	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.edit');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -60,12 +60,12 @@ class ItemEditItemController extends GalleryController {
 	    $redirect['itemId'] = $itemId;
 	    
 	} else if (isset($form['action']['save'])) {
-	    list ($ret, $rootAlbumId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
+	    list ($ret, $rootAlbumId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    list ($ret, $item) = $gallery->loadEntitiesById($itemId);
+	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -85,7 +85,7 @@ class ItemEditItemController extends GalleryController {
 	    }
 	    
 	    if (empty($error)) {
-		list ($ret, $lockId) = $gallery->acquireWriteLock($itemId);
+		list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($itemId);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -123,7 +123,7 @@ class ItemEditItemController extends GalleryController {
 			    $item->rename($originalPathComponent);
 			}
 			    
-			$gallery->releaseLocks($lockId);
+			GalleryCoreApi::releaseLocks($lockId);
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 
@@ -134,7 +134,7 @@ class ItemEditItemController extends GalleryController {
 		    $status['saved'] = 1;
 		}
 
-		$ret = $gallery->releaseLocks($lockId);
+		$ret = GalleryCoreApi::releaseLocks($lockId);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -172,12 +172,12 @@ class ItemEditItemView extends GalleryView {
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
 
 	/* Make sure we have permission do edit this item */
-	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'core.edit');
+	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.edit');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	list ($ret, $item) = $gallery->loadEntitiesById($itemId);
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -193,7 +193,7 @@ class ItemEditItemView extends GalleryView {
 	    $form['formName'] = 'ItemEditItem';
 	}
 
-	list ($ret, $rootAlbumId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
+	list ($ret, $rootAlbumId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

@@ -97,7 +97,7 @@ class GalleryCommentHelper {
 	/* Load all the comments at once */
 	$comments = array();
 	if (!empty($allIds)) {
-	    list ($ret, $comments) = $gallery->loadEntitiesById($allIds);
+	    list ($ret, $comments) = GalleryCoreApi::loadEntitiesById($allIds);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }

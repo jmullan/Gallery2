@@ -49,8 +49,7 @@ class ExifExtractor extends ExifInterface_1_0 {
 
 	$data = array();
 	foreach ($itemIds as $itemId) {
-	    list ($ret, $item) =
-		$gallery->loadEntitiesById($itemId);
+	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -65,6 +64,7 @@ class ExifExtractor extends ExifInterface_1_0 {
 	    }
 	    $data[$itemId] = array();
 	    $rawExifData = read_exif_data_raw($path, false);
+	    require_once(dirname(__FILE__) . '/ExifHelper.class');
 	    foreach (ExifHelper::getExifKeys() as $property => $keyData) {
 		if (!empty($properties) && !in_array($property, $properties)) {
 		    continue;

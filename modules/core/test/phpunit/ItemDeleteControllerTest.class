@@ -50,7 +50,7 @@ class ItemDeleteControllerTest extends GalleryControllerTestCase {
     function tearDown() {
 	global $gallery;
 	
-	$ret = $gallery->deleteEntityById($this->_album->getId());
+	$ret = GalleryCoreApi::deleteEntityById($this->_album->getId());
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -159,7 +159,7 @@ class ItemDeleteControllerTest extends GalleryControllerTestCase {
 	    
 	    /* remove permissions for some */
 	    if (($i % 3) == 0) {
-		$ret = GalleryPermissionMap::removeItemPermissions($items[$i]->getId());
+		$ret = GalleryCoreApi::removeItemPermissions($items[$i]->getId());
 		if ($ret->isError()) {
 		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 		}

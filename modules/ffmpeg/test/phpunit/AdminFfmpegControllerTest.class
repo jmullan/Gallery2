@@ -40,7 +40,7 @@ class AdminFfmpegControllerTest extends GalleryControllerTestCase {
 	parent::setUp();
 
 	foreach (array('path') as $param) {
-	    list ($ret, $this->_saveParameters[$param]) = $gallery->getModuleParameter('ffmpeg', $param);
+	    list ($ret, $this->_saveParameters[$param]) = GalleryCoreApi::getPluginParameter('module', 'ffmpeg', $param);
 	    if ($ret->isError()) {
 		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -58,7 +58,7 @@ class AdminFfmpegControllerTest extends GalleryControllerTestCase {
 	$gallery->_platform = $this->_platform;
 	
 	foreach (array('path') as $param) {
-	    $ret = $gallery->setModuleParameter('ffmpeg', $param, $this->_saveParameters[$param]);
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'ffmpeg', $param, $this->_saveParameters[$param]);
 	    if ($ret->isError()) {
 		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -83,7 +83,7 @@ class AdminFfmpegControllerTest extends GalleryControllerTestCase {
 			    $results);
 	
 	/* Verify the settings went in properly */
-	list ($ret, $path) = $gallery->getModuleParameter('ffmpeg', 'path');
+	list ($ret, $path) = GalleryCoreApi::getPluginParameter('module', 'ffmpeg', 'path');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -107,7 +107,7 @@ class AdminFfmpegControllerTest extends GalleryControllerTestCase {
 			    $results);
 	
 	/* Verify the settings went in properly */
-	list ($ret, $path) = $gallery->getModuleParameter('ffmpeg', 'path');
+	list ($ret, $path) = GalleryCoreApi::getPluginParameter('module', 'ffmpeg', 'path');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

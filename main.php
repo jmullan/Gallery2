@@ -21,7 +21,7 @@
  */
 
 /* Go! */
-$ret = GalleryMain(microtime());
+$ret = GalleryMain();
 
 /* Save our session */
 if ($ret->isSuccess()) {
@@ -57,7 +57,7 @@ if ($ret->isError()) {
     return;
 }
 
-function GalleryMain($startTime) {
+function GalleryMain() {
 
     /* Initialize Gallery */
     require_once(dirname(__FILE__) . '/init.php');
@@ -78,9 +78,6 @@ function GalleryMain($startTime) {
      * @global Gallery $gallery
      */
     $gallery =& $GLOBALS['gallery'];
-    GalleryProfiler::start('main.GalleryMain', $startTime);
-    GalleryProfiler::start('init.GalleryInitFirstPass', $startTime);
-    GalleryProfiler::stop('init.GalleryInitFirstPass');
 
     /* Init our storage */
     $ret = GalleryInitStorage();
@@ -134,6 +131,7 @@ function GalleryMain($startTime) {
 
     /* Load and run the appropriate controller */
     if (empty($redirectUrl) && !empty($controllerName)) {
+	require_once(dirname(__FILE__) . '/modules/core/classes/GalleryController.class');
 	list ($ret, $controller) = GalleryController::loadController($controllerName);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -223,8 +221,6 @@ function GalleryMain($startTime) {
 	}
     }
 
-    $template = new GalleryTemplate(dirname(__FILE__) . '/templates/');
-    
     $showGlobal = true;
     if (empty($redirectUrl)) {
 	/* Load and run the appropriate view */
@@ -256,6 +252,8 @@ function GalleryMain($startTime) {
 		$showGlobal = false;
 	    }
 	} else {
+	    require_once(dirname(__FILE__) . '/modules/core/classes/GalleryTemplate.class');
+	    $template = new GalleryTemplate(dirname(__FILE__) . '/templates/');
 	    list ($ret, $results) = $view->doLoadTemplate($template);
 	    if ($ret->isError()) {
 		$main['error'] = $ret->getAsHtml();
@@ -292,10 +290,14 @@ function GalleryMain($startTime) {
 	}
     } else {
 	/* Set the default theme for the redirect page */
+	require_once(dirname(__FILE__) . '/modules/core/classes/GalleryTheme.class');
 	list ($ret, $theme) = GalleryTheme::loadTheme();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
+
+	require_once(dirname(__FILE__) . '/modules/core/classes/GalleryTemplate.class');
+	$template = new GalleryTemplate(dirname(__FILE__) . '/templates/');
 
 	/* Pass the theme to the template adapter */
 	$templateAdapter =& $gallery->getTemplateAdapter();
@@ -309,11 +311,6 @@ function GalleryMain($startTime) {
 		$main['debug'] = $gallery->getDebugBuffer();
 	    }
 	} 
-
-	if ($gallery->isProfiling()) {
-	    GalleryProfiler::stop('main.GalleryMain');
-	    $main['profile'] = GalleryProfiler::getProfile();
-	}
 
 	$main['gallery']['version'] = '2';
 	$template->setVariable('main', $main);
@@ -331,6 +328,13 @@ function GalleryMain($startTime) {
 	}
 	
 	print $html;
+
+	if (false) {
+	    printf("<pre>%s</pre>", print_r($GLOBALS['GalleryCoreApi'], 1));
+	    printf("<pre>\b(%s)\b\n\n&nbsp;</pre>", join("|", get_declared_classes()));
+	    printf("<pre>%s</pre>", print_r(get_declared_classes(), 1));
+	    printf("<pre>%s</pre>", print_r(GalleryCoreApi::apiMethodRoundup(), 1));
+	}
     }
 
     return GalleryStatus::success();

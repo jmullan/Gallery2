@@ -134,6 +134,19 @@ class UtilitiesTest extends GalleryTestCase {
 			    GalleryUtilities::getFormVariables('utilitiestest'));
     }
 
+    /**
+     * Test the error condition where we have a value in _POST and we put the same value back via
+     * putRequestVariable -- make sure that the new value overwrites the old.
+     */
+    function testGetFormVariables3() {
+	global $HTTP_POST_VARS;
+	$HTTP_POST_VARS[GALLERY_FORM_VARIABLE_PREFIX . 'utilitiestest']['list']['filter'] = 'x';
+	GalleryUtilities::putRequestVariable('utilitiestest[list][filter]', 'y');
+
+	$this->assertEquals(array('list' => array('filter' => 'y')),
+			    GalleryUtilities::getFormVariables('utilitiestest'));
+    }
+
     function testGetRequestVariables() {
 	GalleryUtilities::putRequestVariable('utilitiestest[x]', 'blah');
 	$this->assertEquals('blah', GalleryUtilities::getRequestVariables('utilitiestest[x]'));
@@ -374,7 +387,7 @@ class UtilitiesTest extends GalleryTestCase {
 	/* Make up some bogus albums that we can use to simulate our tree. */
 	for ($i = 0; $i < 7; $i++) {
 	    list ($ret, $albums[$i]) =
-		GalleryFactory::newInstance('GalleryEntity', 'GalleryAlbumItem');
+		GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryAlbumItem');
 	    $albums[$i]->setId($i);
 	}
 

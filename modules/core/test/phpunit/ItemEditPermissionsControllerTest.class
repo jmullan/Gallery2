@@ -64,17 +64,17 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
     function tearDown() {
 	global $gallery;
 
-	$ret = $gallery->deleteEntityById($this->_albumParent->getId());
+	$ret = GalleryCoreApi::deleteEntityById($this->_albumParent->getId());
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$ret = $gallery->deleteEntityById($this->_group->getId());
+	$ret = GalleryCoreApi::deleteEntityById($this->_group->getId());
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	    
-	$ret = $gallery->deleteEntityById($this->_user->getId());
+	$ret = GalleryCoreApi::deleteEntityById($this->_user->getId());
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -160,7 +160,7 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 	/* Fetch all permissions and compare the ones we care about */
 	$count = 0;
 	list ($ret, $permissions) =
-	    GalleryPermissionMap::fetchAllPermissionsForItem($this->_albumParent->getId(), false);
+	    GalleryCoreApi::fetchAllPermissionsForItem($this->_albumParent->getId(), false);
 	foreach ($permissions as $permission) {
 	    if ($permission['groupId'] == $this->_group->getId()) {
 		$this->assertEquals(array('userId' => 0,
@@ -196,7 +196,7 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 	/* Fetch all permissions and compare the ones we care about */
 	$count = 0;
 	foreach (array($this->_albumParent, $this->_albumChild) as $album) {
-	    list ($ret, $permissions) = GalleryPermissionMap::fetchAllPermissionsForItem($album->getId(), false);
+	    list ($ret, $permissions) = GalleryCoreApi::fetchAllPermissionsForItem($album->getId(), false);
 	    foreach ($permissions as $permission) {
 		if ($permission['groupId'] == $this->_group->getId()) {
 		    $this->assertEquals(array('userId' => 0,
@@ -261,7 +261,7 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 	
 	/* Add a group permission */
-	$ret = GalleryPermissionMap::addGroupPermission($this->_albumParent->getId(),
+	$ret = GalleryCoreApi::addGroupPermission($this->_albumParent->getId(),
 							$this->_group->getId(),
 							'core.edit',
 							false);
@@ -287,7 +287,7 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
     function testDeleteGroupPermission() {
 
 	/* Add a group permission */
-	$ret = GalleryPermissionMap::addGroupPermission($this->_albumParent->getId(),
+	$ret = GalleryCoreApi::addGroupPermission($this->_albumParent->getId(),
 							$this->_group->getId(),
 							'core.edit',
 							false);
@@ -314,7 +314,7 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 	GalleryDataCache::reset();
 
 	/* Fetch all permissions and compare the ones we care about */
-	list ($ret, $permissions) = GalleryPermissionMap::fetchAllPermissionsForItem($this->_albumParent->getId(), false);
+	list ($ret, $permissions) = GalleryCoreApi::fetchAllPermissionsForItem($this->_albumParent->getId(), false);
 	foreach ($permissions as $permission) {
 	    if ($permission['groupId'] == $this->_group->getId()) {
 		$this->assert(false, 'invalid group permission found');
@@ -324,7 +324,7 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 
     function testDeleteGroupPermissionCascade() {
 	/* Add a group permission */
-	$ret = GalleryPermissionMap::addGroupPermission($this->_albumParent->getId(),
+	$ret = GalleryCoreApi::addGroupPermission($this->_albumParent->getId(),
 							$this->_group->getId(),
 							'core.edit',
 							true);
@@ -354,7 +354,7 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 	/* Fetch all permissions and compare the ones we care about */
 	foreach (array($this->_albumParent, $this->_albumChild) as $album) {
 	    list ($ret, $permissions) =
-		GalleryPermissionMap::fetchAllPermissionsForItem($album->getId(), false);
+		GalleryCoreApi::fetchAllPermissionsForItem($album->getId(), false);
 	    foreach ($permissions as $permission) {
 		if ($permission['groupId'] == $this->_group->getId()) {
 		    $this->assert(false, 'invalid group permission found: ' . serialize($permission));
@@ -385,7 +385,7 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 	/* Fetch all permissions and compare the ones we care about */
 	$count = 0;
 	list ($ret, $permissions) =
-	    GalleryPermissionMap::fetchAllPermissionsForItem($this->_albumParent->getId(), false);
+	    GalleryCoreApi::fetchAllPermissionsForItem($this->_albumParent->getId(), false);
 	foreach ($permissions as $permission) {
 	    if ($permission['userId'] == $this->_user->getId()) {
 		$this->assertEquals(array('userId' => $this->_user->getId(),
@@ -421,7 +421,7 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 	/* Fetch all permissions and compare the ones we care about */
 	$count = 0;
 	foreach (array($this->_albumParent, $this->_albumChild) as $album) {
-	    list ($ret, $permissions) = GalleryPermissionMap::fetchAllPermissionsForItem($album->getId(), false);
+	    list ($ret, $permissions) = GalleryCoreApi::fetchAllPermissionsForItem($album->getId(), false);
 	    foreach ($permissions as $permission) {
 		if ($permission['userId'] == $this->_user->getId()) {
 		    $this->assertEquals(array('userId' => $this->_user->getId(),
@@ -486,7 +486,7 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 	
 	/* Add a user permission */
-	$ret = GalleryPermissionMap::addUserPermission($this->_albumParent->getId(),
+	$ret = GalleryCoreApi::addUserPermission($this->_albumParent->getId(),
 							$this->_user->getId(),
 							'core.edit',
 							false);
@@ -512,7 +512,7 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
     function testDeleteUserPermission() {
 
 	/* Add a user permission */
-	$ret = GalleryPermissionMap::addUserPermission($this->_albumParent->getId(),
+	$ret = GalleryCoreApi::addUserPermission($this->_albumParent->getId(),
 							$this->_user->getId(),
 							'core.edit',
 							false);
@@ -540,7 +540,7 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 
 	/* Fetch all permissions and compare the ones we care about */
 	list ($ret, $permissions) =
-	    GalleryPermissionMap::fetchAllPermissionsForItem($this->_albumParent->getId(), false);
+	    GalleryCoreApi::fetchAllPermissionsForItem($this->_albumParent->getId(), false);
 	foreach ($permissions as $permission) {
 	    if ($permission['userId'] == $this->_user->getId()) {
 		$this->assert(false, 'invalid user permission found');
@@ -550,7 +550,7 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 
     function testDeleteUserPermissionCascade() {
 	/* Add a user permission */
-	$ret = GalleryPermissionMap::addUserPermission($this->_albumParent->getId(),
+	$ret = GalleryCoreApi::addUserPermission($this->_albumParent->getId(),
 							$this->_user->getId(),
 							'core.edit',
 							true);
@@ -580,7 +580,7 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 	/* Fetch all permissions and compare the ones we care about */
 	foreach (array($this->_albumParent, $this->_albumChild) as $album) {
 	    list ($ret, $permissions) =
-		GalleryPermissionMap::fetchAllPermissionsForItem($album->getId(), false);
+		GalleryCoreApi::fetchAllPermissionsForItem($album->getId(), false);
 	    foreach ($permissions as $permission) {
 		if ($permission['userId'] == $this->_user->getId()) {
 		    $this->assert(false, 'invalid user permission found: ' . serialize($permission));

@@ -131,6 +131,12 @@ class GalleryView {
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
 	}
 
+	/*
+	 * We bundle view and controller classes together, so we need the controller
+	 * superclass to load the view
+	 */ 
+	require_once(dirname(__FILE__) . '/GalleryController.class');
+	
 	$ret = GalleryUtilities::requireOnce($fileName);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -165,7 +171,6 @@ class GalleryView {
     function doLoadTemplate(&$template) {
 	global $gallery;
 
-	GalleryProfiler::start('modules.core.classes.GalleryView::doLoadTemplate');
 	/* Get the theme name from the view */
 	list ($ret, $themeName) = $this->getThemeName();
 	if ($ret->isError()) {
@@ -173,6 +178,7 @@ class GalleryView {
 	}
 
 	/* Load and initialize the theme */
+	require_once(dirname(__FILE__) . '/GalleryTheme.class');
 	list ($ret, $theme) = GalleryTheme::loadTheme($themeName);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
@@ -206,7 +212,6 @@ class GalleryView {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
-	GalleryProfiler::stop('modules.core.classes.GalleryView::doLoadTemplate');
 
 	return array(GalleryStatus::success(), $results);
     }
@@ -264,14 +269,14 @@ class GalleryView {
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
 	if (empty($itemId)) {
 	    list ($ret, $itemId) =
-		$gallery->getModuleParameter('core', 'id.rootAlbum');
+		GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
 
 	/* Load the item */
-	list ($ret, $item) = $gallery->loadEntitiesById($itemId);
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

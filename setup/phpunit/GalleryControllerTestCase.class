@@ -39,6 +39,7 @@ class GalleryControllerTestCase extends GalleryTestCase {
     function GalleryControllerTestCase($methodName, $controllerName) {
 	$this->GalleryTestCase($methodName);
 
+	require_once(dirname(__FILE__) . '/../../modules/core/classes/GalleryController.class');
 	list ($ret, $this->_controller) = GalleryController::loadController($controllerName);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -58,7 +59,7 @@ class GalleryControllerTestCase extends GalleryTestCase {
 	$form = GalleryUtilities::getFormVariables('form');
 
 	list ($ret, $results) = $this->_controller->handleRequest($form);
-	if ($errorCode != null) {
+	if (isset($errorCode)) {
 	    if (($ret->getErrorCode() & $errorCode) != $errorCode) {
 		$this->assert(false,
 			      sprintf('Expected error code (%s) but received (%s)',

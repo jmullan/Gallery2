@@ -25,62 +25,6 @@
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
-/* Storage constants */
-
-/**
- * Integer type
- *
- */
-define('STORAGE_TYPE_INTEGER', 0x00000001);
-
-/**
- * String type
- *
- */
-define('STORAGE_TYPE_STRING', 0x00000002);
-
-/**
- * Text type
- *
- */
-define('STORAGE_TYPE_TEXT', 0x00000004);
-
-/**
- * Text type
- *
- */
-define('STORAGE_TYPE_BOOLEAN', 0x00000008);
-
-/**
- * Timestamp type
- *
- */
-define('STORAGE_TYPE_TIMESTAMP', 0x00000010);
-
-/**
- * ID type
- *
- */
-define('STORAGE_TYPE_ID', 0x00000020);
-
-/**
- * Bits type
- *
- */
-define('STORAGE_TYPE_BIT', 0x00000040);
-
-/**
- * Newly created flag
- *
- */
-define('STORAGE_FLAG_NEWLY_CREATED', 0x00000001);
-
-/**
- * Deleted flag
- *
- */
-define('STORAGE_FLAG_DELETED', 0x00000002);
-
 /**
  * Interface to the storage mechanism
  *
@@ -438,7 +382,7 @@ class GalleryStorage {
 	global $gallery;
 
 	if (empty($this->_entityInfoCache[$entityName])) {
-	    list ($ret, $entity) = GalleryFactory::newInstance('GalleryEntity', $entityName);
+	    list ($ret, $entity) = GalleryCoreApi::newFactoryInstance('GalleryEntity', $entityName);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -482,7 +426,7 @@ class GalleryStorage {
 
 	if (!isset($this->_classTypeCache[$className])) {
 	    list ($ret, $instance) =
-		GalleryFactory::newInstance('GalleryEntity', $className);
+		GalleryCoreApi::newFactoryInstance('GalleryEntity', $className);
 	    
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);

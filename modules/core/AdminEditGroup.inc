@@ -42,7 +42,7 @@ class AdminEditGroupController extends GalleryController {
     function handleRequest($form) {
 	global $gallery;
 
-	$ret = GalleryUserHelper::assertSiteAdministrator();
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -52,7 +52,7 @@ class AdminEditGroupController extends GalleryController {
 	$error = array();
 
 	$groupId = GalleryUtilities::getRequestVariables('groupId');
-	list ($ret, $group) = $gallery->loadEntitiesById($groupId);
+	list ($ret, $group) = GalleryCoreApi::loadEntitiesById($groupId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -78,7 +78,7 @@ class AdminEditGroupController extends GalleryController {
 
 	    if (empty($error)) {
 		/* Save our changes */
-		list ($ret, $lockId) = $gallery->acquireWriteLock($groupId);
+		list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($groupId);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -96,7 +96,7 @@ class AdminEditGroupController extends GalleryController {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		
-		$ret = $gallery->releaseLocks($lockId);
+		$ret = GalleryCoreApi::releaseLocks($lockId);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -135,13 +135,13 @@ class AdminEditGroupView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	global $gallery;
 	
-	$ret = GalleryUserHelper::assertSiteAdministrator();
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	    
 	$groupId = GalleryUtilities::getRequestVariables('groupId');
-	list ($ret, $group) = $gallery->loadEntitiesById($groupId);
+	list ($ret, $group) = GalleryCoreApi::loadEntitiesById($groupId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

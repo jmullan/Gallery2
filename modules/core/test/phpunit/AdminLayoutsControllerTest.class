@@ -52,14 +52,12 @@ class AdminLayoutsControllerTest extends GalleryControllerTestCase {
 
 	/* Delete our layouts */
 	foreach (array('testLayoutId1', 'testLayoutId2') as $layoutId) {
-	    $ret = GalleryPluginMap::removeMapEntry(array('pluginType' => 'layout',
-							  'pluginId' => $layoutId));
+	    $ret = GalleryCoreApi::removePlugin('layout', $layoutId);
 	    if ($ret->isError()) {
 		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	    
-	    $ret = GalleryPluginParameterMap::removeMapEntry(array('pluginType' => 'layout',
-								   'pluginId' => $layoutId));
+	    $ret = GalleryCoreApi::removePlugin('layout', $layoutId);
 	    if ($ret->isError()) {
 		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
@@ -82,7 +80,7 @@ class AdminLayoutsControllerTest extends GalleryControllerTestCase {
 				  'error' => array()),
 			    $results);
 
-	list ($ret, $pluginStatus) = GalleryPluginMap::getPluginStatus('layout');
+	list ($ret, $pluginStatus) = GalleryCoreApi::getPluginStatus('layout');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -92,7 +90,7 @@ class AdminLayoutsControllerTest extends GalleryControllerTestCase {
 
     function testDeactivate() {
 	foreach (array('testLayoutId1', 'testLayoutId2') as $layoutId) {
-	    $ret = GalleryPluginMap::activate('layout', $layoutId);
+	    $ret = GalleryCoreApi::activatePlugin('layout', $layoutId);
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
@@ -109,7 +107,7 @@ class AdminLayoutsControllerTest extends GalleryControllerTestCase {
 				  'error' => array()),
 			    $results);
 
-	list ($ret, $pluginStatus) = GalleryPluginMap::getPluginStatus('layout');
+	list ($ret, $pluginStatus) = GalleryCoreApi::getPluginStatus('layout');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -173,6 +171,7 @@ class AdminLayoutsControllerTest extends GalleryControllerTestCase {
     }
 }
 
+require_once(dirname(__FILE__) . '/../../classes/GalleryLayout.class');
 class TestLayoutId1Layout extends GalleryLayout {
 
     /**
@@ -306,9 +305,11 @@ class AdminLayoutsTestPlatform {
 
 	/*
 	 * Can't use realpath() directly here because these paths are bogus!  Build up
-	 * the path based on GalleryPlugin instead, as that's what'll be passing in this path
+	 * the path based on GalleryPluginHelper_simple instead, as that's what'll be passing
+	 * in this path
 	 */
-	$base = realpath(dirname(__FILE__) . '/../../../../modules/core/classes') . '/../../../layouts/';
+	$base = realpath(dirname(__FILE__) . '/../../../../modules/core/classes/helpers') .
+	    '/../../../../layouts/';
 	switch($path) {
 	case $base . 'testLayoutId1/layout.inc':
 	case $base . 'testLayoutId2/layout.inc':

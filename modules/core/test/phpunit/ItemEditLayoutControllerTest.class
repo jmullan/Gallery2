@@ -47,7 +47,7 @@ class ItemEditLayoutControllerTest extends GalleryControllerTestCase {
 	}
 
 	/* Assign our test layout */
-	list ($ret, $lockId) = $gallery->acquireWriteLock($this->_album->getId());
+	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($this->_album->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -58,7 +58,7 @@ class ItemEditLayoutControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$ret = $gallery->releaseLocks($lockId);
+	$ret = GalleryCoreApi::releaseLocks($lockId);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -76,7 +76,7 @@ class ItemEditLayoutControllerTest extends GalleryControllerTestCase {
 	/* Restore the platform */
 	$gallery->_platform = $this->_savePlatform;
 	
-	$ret = $gallery->deleteEntityById($this->_album->getId());
+	$ret = GalleryCoreApi::deleteEntityById($this->_album->getId());
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

@@ -45,17 +45,17 @@ class ItemAddAlbumController extends GalleryController {
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
 
 	/* Make sure we have permission do edit this item */
-	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'core.addAlbumItem');
+	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.addAlbumItem');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	list ($ret, $item) = $gallery->loadEntitiesById($itemId);
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	list ($ret, $lockIds[]) = $gallery->acquireReadLock($item->getId());
+	list ($ret, $lockIds[]) = GalleryCoreApi::acquireReadLock($item->getId());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -76,7 +76,7 @@ class ItemAddAlbumController extends GalleryController {
 
 	    if (empty($error)) {
 		list ($ret, $instance) =
-		    GalleryFactory::newInstance('GalleryEntity', 'GalleryAlbumItem');
+		    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryAlbumItem');
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -114,7 +114,7 @@ class ItemAddAlbumController extends GalleryController {
 	    }
 	}
 
-	$ret = $gallery->releaseLocks($lockIds);
+	$ret = GalleryCoreApi::releaseLocks($lockIds);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -150,12 +150,12 @@ class ItemAddAlbumView extends GalleryView {
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
 
 	/* Make sure we have permission do edit this item */
-	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'core.addAlbumItem');
+	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.addAlbumItem');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	list ($ret, $item) = $gallery->loadEntitiesById($itemId);
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

@@ -55,7 +55,7 @@ class ShowItemView extends GalleryView {
 	    $theme = $item->getTheme();
 	} else {
 	    $parentId = $item->getParentId();
-	    list ($ret, $parent) = $gallery->loadEntitiesById($parentId);
+	    list ($ret, $parent) = GalleryCoreApi::loadEntitiesById($parentId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -78,18 +78,18 @@ class ShowItemView extends GalleryView {
 	}
 
 	/* Make sure we have permission to view this item */
-	$ret = GalleryUserHelper::assertHasItemPermission($item->getId(), 'core.view');
+	$ret = GalleryCoreApi::assertHasItemPermission($item->getId(), 'core.view');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* Update the view count */
-	$ret = GalleryItemAttributesMap::incrementViewCount($item->getId());
+	$ret = GalleryCoreApi::incrementItemViewCount($item->getId());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	list ($ret, $layout) = GalleryItemHelper::fetchLayout($item);
+	list ($ret, $layout) = GalleryCoreApi::fetchLayout($item);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -126,7 +126,7 @@ class ShowItemView extends GalleryView {
 
 	/* Transform the id into a path */
 	$buf = '';
-	list ($ret, $entity) = $gallery->loadEntitiesById($params['itemId']);
+	list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($params['itemId']);
 	if ($ret->isSuccess()) {
 	    list ($ret, $path) = $entity->fetchLogicalPath();
 	    if ($ret->isSuccess()) {
@@ -153,7 +153,7 @@ class ShowItemView extends GalleryView {
 	$itemId = null;
 	$origQueryString = $queryString;
 	while ($itemId == null && !empty($queryString)) {
-	    list ($ret, $itemId) = GalleryFileSystemEntityHelper::fetchItemIdByPath(urldecode($queryString));
+	    list ($ret, $itemId) = GalleryCoreApi::fetchItemIdByPath(urldecode($queryString));
 	    if ($ret->isError() && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }

@@ -51,14 +51,14 @@ class ItemOrderTest extends GalleryTestCase {
 
 	/* Give us full perms */
 	$userId = $gallery->getActiveUserId();
-	$ret = GalleryPermissionMap::addUserPermission($this->_parentItem->getId(),
+	$ret = GalleryCoreApi::addUserPermission($this->_parentItem->getId(),
 						       $userId, 'core.all', false);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* Lock and refresh it */
-	list ($ret, $lockId) = $gallery->acquireWriteLock($this->_parentItem->getId());
+	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($this->_parentItem->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -77,7 +77,7 @@ class ItemOrderTest extends GalleryTestCase {
 	}
 	
 	/* Unlock it */
-	$ret = $gallery->releaseLocks($lockId);
+	$ret = GalleryCoreApi::releaseLocks($lockId);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -94,7 +94,7 @@ class ItemOrderTest extends GalleryTestCase {
     function tearDown() {
 	global $gallery;
 
-	$ret = $gallery->deleteEntityById($this->_parentItem->getId());
+	$ret = GalleryCoreApi::deleteEntityById($this->_parentItem->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -107,7 +107,7 @@ class ItemOrderTest extends GalleryTestCase {
 
 	/* Assign the item order in reverse */
 	for ($i = 0; $i < sizeof($this->_childItems); $i++) {
-	    $ret = GalleryItemAttributesMap::setOrderWeight($this->_childItems[$i]->getId(), 100-$i);
+	    $ret = GalleryCoreApi::setItemOrderWeight($this->_childItems[$i]->getId(), 100-$i);
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }

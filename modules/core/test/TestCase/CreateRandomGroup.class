@@ -28,7 +28,7 @@ class CreateRandomGroupTestCase extends TestCase {
 	$collisionCount = 0;
 	while ($i < $iterations) {
 	    $gallery->guaranteeTimeLimit(5);
-	    list ($ret, $group) = GalleryFactory::newInstance('GalleryEntity', 'GalleryGroup');
+	    list ($ret, $group) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryGroup');
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }

@@ -55,13 +55,12 @@ class DebugModule extends GalleryModule {
 	}
 
 	$classDir = dirname(__FILE__) . '/classes/';
-	require_once($classDir . 'DebugHelper.class');
 
-	GalleryFactory::registerImplementation('GalleryStatusFormatter',
-					       'DebugStatusFormatter',
-					       'DebugStatusFormatter',
-					       $classDir . 'DebugStatusFormatter.class',
-					       array('text/html'));
+	GalleryCoreApi::registerFactoryImplementation('GalleryStatusFormatter',
+						      'DebugStatusFormatter',
+						      'DebugStatusFormatter',
+						      $classDir . 'DebugStatusFormatter.class',
+						      array('text/html'));
 
 	return GalleryStatus::success();
     }
@@ -138,7 +137,7 @@ class DebugModule extends GalleryModule {
 	$links = array();
 	foreach ($items as $item) {
 	    /* Permissions for this item */
-	    list ($ret, $permissions) = GalleryItemHelper::getPermissions($item->getId());
+	    list ($ret, $permissions) = GalleryCoreApi::getPermissions($item->getId());
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }

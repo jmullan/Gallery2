@@ -50,7 +50,7 @@ function GalleryMain(&$testSuite, $filter) {
 	return $ret->wrap(__FILE__, __LINE__);
     }
 
-    list ($ret, $isSiteAdmin) = GalleryUserGroupMap::isUserInSiteAdminGroup();
+    list ($ret, $isSiteAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
     if ($ret->isError()) {
 	print $ret->getAsHtml();
 	return;
@@ -61,7 +61,7 @@ function GalleryMain(&$testSuite, $filter) {
 	/*
 	 * Load the test cases for every active module.
 	 */
-	list ($ret, $moduleStatusList) = GalleryPluginMap::getPluginStatus('module');
+	list ($ret, $moduleStatusList) = GalleryCoreApi::getPluginStatus('module');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -127,7 +127,7 @@ if ($ret->isError()) {
     return;
 }
 
-list ($ret, $moduleStatusList) = GalleryPluginMap::getPluginStatus('module');
+list ($ret, $moduleStatusList) = GalleryCoreApi::getPluginStatus('module');
 if ($ret->isError()) {
     $ret = $ret->wrap(__FILE__, __LINE__);
     print $ret->getAsHtml();
@@ -140,7 +140,7 @@ if (!$session->isUsingCookies()) {
     $sessionKey = GALLERY_FORM_VARIABLE_PREFIX . $sessionKey;
 }
 
-list ($ret, $isSiteAdmin) = GalleryUserGroupMap::isUserInSiteAdminGroup();
+list ($ret, $isSiteAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
 if ($ret->isError()) {
     $ret = $ret->wrap(__FILE__, __LINE__);
     print $ret->getAsHtml();

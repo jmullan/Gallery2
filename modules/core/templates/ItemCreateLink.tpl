@@ -2,8 +2,6 @@
   {g->banner}
     {g->title}
       {g->text text="Link an Item"}
-      <br>
-      NOT FULLY IMPLEMENTED YET!  STAY TUNED!
     {/g->title}
   {/g->banner}
 

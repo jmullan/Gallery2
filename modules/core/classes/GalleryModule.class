@@ -154,7 +154,7 @@ class GalleryModule {
 	if ($needs) {
 	    return GalleryStatus::error(ERROR_CONFIGURATION_REQUIRED, __FILE__, __LINE__);
 	} else {
-	    $ret = GalleryPluginMap::activate('module', $this->getId());
+	    $ret = GalleryCoreApi::activatePlugin('module', $this->getId());
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -169,7 +169,7 @@ class GalleryModule {
      * @return object GalleryStatus a status code
      */
     function deactivate() {
-	$ret = GalleryPluginMap::deactivate('module', $this->getId());
+	$ret = GalleryCoreApi::deactivatePlugin('module', $this->getId());
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -186,7 +186,7 @@ class GalleryModule {
     function isActive() {
 	global $gallery;
 
-	list($ret, $moduleStatus) = GalleryPluginMap::getPluginStatus('module');
+	list($ret, $moduleStatus) = GalleryCoreApi::getPluginStatus('module');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -372,7 +372,7 @@ class GalleryModule {
     function getModuleParameter($parameterName) {
 	global $gallery;
 	list ($ret, $value) =
-	    $gallery->getModuleParameter($this->getId(), $parameterName);
+	    GalleryCoreApi::getPluginParameter('module', $this->getId(), $parameterName);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -385,7 +385,7 @@ class GalleryModule {
      */
     function setModuleParameter($parameterName, $parameterValue) {
 	global $gallery;
-	$ret = $gallery->setModuleParameter($this->getId(),
+	$ret = GalleryCoreApi::setPluginParameter('module', $this->getId(),
 					    $parameterName, $parameterValue);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);

@@ -25,47 +25,30 @@
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
-require_once(dirname(__FILE__) . '/GallerySmarty.class');
+require_once(dirname(__FILE__) . '/../GalleryItemAttributesMap.class');
 
 /**
- * A wrapper around Smarty that profiles certain methods
  *
  * @package GalleryCore
  * @subpackage Classes
  */
-class GalleryProfilingSmarty extends GallerySmarty {
-
-    /*
-     * ****************************************
-     *                 Members
-     * ****************************************
-     */
-
-    /*
-     * ****************************************
-     *                 Methods
-     * ****************************************
-     */
+class GalleryItemAttributesHelper_simple {
 
     /**
-     * Profile Smarty's fetch method
-     *
-     * @see Smarty::fetch
+     * Update the view count for this item id
+     * @param int the item id
+     * @param int the amount to increment
      */
-    function fetch($_smarty_tpl_file, $_smarty_cache_id = null,
-		   $_smarty_compile_id = null, $_smarty_display = false) {
-
-	GalleryProfiler::start('modules.core.classes.Smarty::fetch');
-	list ($ret, $result) = parent::fetch($_smarty_tpl_file,
-					     $_smarty_cache_id,
-					     $_smarty_compile_id,
-					     $_smarty_display);
-	GalleryProfiler::stop('modules.core.classes.Smarty::fetch');
+    function incrementViewCount($itemId, $step=1) {
+	$func = '= [GalleryItemAttributesMap::viewCount] + ?';
+	$ret = GalleryItemAttributesMap::updateMapEntry(array('itemId' => $itemId),
+							array('viewCount' => array($func, $step)));
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), $result);
-	} else {
-	    return array(GalleryStatus::success(), $result);
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
+
+	return GalleryStatus::success();
     }
+    
 }
 ?>

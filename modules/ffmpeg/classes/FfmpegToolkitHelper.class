@@ -46,7 +46,7 @@ class FfmpegToolkitHelper {
 	global $gallery;
 
 	list ($ret, $ffmpegPath) =
-	    $gallery->getModuleParameter('ffmpeg', 'path');
+	    GalleryCoreApi::getPluginParameter('module', 'ffmpeg', 'path');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -122,7 +122,7 @@ class FfmpegToolkitHelper {
 	}
 
 	/* We need to translate some strings */
-	list($ret, $module) = $gallery->loadModule('ffmpeg');
+	list($ret, $module) = GalleryCoreApi::loadPlugin('module', 'ffmpeg');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}

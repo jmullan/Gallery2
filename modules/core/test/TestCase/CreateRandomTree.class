@@ -30,7 +30,7 @@ class CreateRandomTreeTestCase extends TestCase {
 	global $gallery;
 
 	list ($ret, $rootId) =
-	    $gallery->getModuleParameter('core', 'id.rootAlbum');
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -46,7 +46,7 @@ class CreateRandomTreeTestCase extends TestCase {
 	}
 	$this->_maxItems = $iterations;
 
-	list($ret, $lockIds[]) = $gallery->acquireReadLock($rootId);
+	list($ret, $lockIds[]) = GalleryCoreApi::acquireReadLock($rootId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -59,7 +59,7 @@ class CreateRandomTreeTestCase extends TestCase {
 	}
 
 	/* Release our locks */
-	$ret = $gallery->releaseLocks($lockIds);
+	$ret = GalleryCoreApi::releaseLocks($lockIds);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -84,7 +84,7 @@ class CreateRandomTreeTestCase extends TestCase {
 	}
 
 	/* Create a random album */
-	list ($ret, $album) = GalleryFactory::newInstance('GalleryEntity', 'GalleryAlbumItem');
+	list ($ret, $album) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryAlbumItem');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -115,7 +115,7 @@ class CreateRandomTreeTestCase extends TestCase {
 	}
 
 	/* Read lock it */
-	list($ret, $lockIds[]) = $gallery->acquireReadLock($album->getId());
+	list($ret, $lockIds[]) = GalleryCoreApi::acquireReadLock($album->getId());
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -138,7 +138,7 @@ class CreateRandomTreeTestCase extends TestCase {
 	    $extension = GalleryUtilities::getFileExtension($imageFile);
 
 	    /* Create the item */
-	    list ($ret, $item) = GalleryItemHelper::newItemByMimeType($mimeType);
+	    list ($ret, $item) = GalleryCoreApi::newItemByMimeType($mimeType);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -168,14 +168,14 @@ class CreateRandomTreeTestCase extends TestCase {
 	    }
 
 	    list ($ret, $toolkit, $outputMimeType) =
-		GalleryToolkitHelper::getToolkitByOperation($item->getMimeType(), 'thumbnail');
+		GalleryCoreApi::getToolkitByOperation($item->getMimeType(), 'thumbnail');
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
 	    /* Create a derivative image for the thumbnail */
 	    if (isset($toolkit)) {
-		list ($ret, $thumbnail) = GalleryFactory::newInstance('GalleryEntity', 'GalleryDerivativeImage');
+		list ($ret, $thumbnail) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryDerivativeImage');
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
@@ -199,7 +199,7 @@ class CreateRandomTreeTestCase extends TestCase {
 
 		/* If this is the first image in the album, make it the highlight */
 		if ($i == 0) {
-		    list ($ret, $thumbnail) = GalleryFactory::newInstance('GalleryEntity', 'GalleryDerivativeImage');
+		    list ($ret, $thumbnail) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryDerivativeImage');
 		    if ($ret->isError()) {
 			return $ret->wrap(__FILE__, __LINE__);
 		    }
@@ -224,7 +224,7 @@ class CreateRandomTreeTestCase extends TestCase {
 	    }
 
 	    list ($ret, $toolkit, $outputMimeType) =
-		GalleryToolkitHelper::getToolkitByOperation($item->getMimeType(), 'scale');
+		GalleryCoreApi::getToolkitByOperation($item->getMimeType(), 'scale');
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -236,7 +236,7 @@ class CreateRandomTreeTestCase extends TestCase {
 		    $gallery->debug("<h3> Create $rand2 resizes </h3>");
 		}
 		for ($j = 0; $j < $rand2; $j++) {
-		    list ($ret, $resize) = GalleryFactory::newInstance('GalleryEntity', 'GalleryDerivativeImage');
+		    list ($ret, $resize) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryDerivativeImage');
 		    if ($ret->isError()) {
 			return $ret->wrap(__FILE__, __LINE__);
 		    }
@@ -265,7 +265,7 @@ class CreateRandomTreeTestCase extends TestCase {
 	    /* 1-3 random comments */
 	    $rand3 = rand(1, 3);
 	    for ($j = 0; $j < $rand3; $j++) {
-		list ($ret, $comment) = GalleryFactory::newInstance('GalleryEntity', 'GalleryComment');
+		list ($ret, $comment) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryComment');
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}

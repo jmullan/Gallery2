@@ -60,7 +60,7 @@ class ItemEditMovieControllerTest extends GalleryControllerTestCase {
 
 	$gallery->_platform = $this->_platform;
 	
-	$ret = $gallery->deleteEntityById($this->_album->getId());
+	$ret = GalleryCoreApi::deleteEntityById($this->_album->getId());
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

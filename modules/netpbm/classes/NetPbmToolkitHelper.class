@@ -46,7 +46,7 @@ class NetPbmToolkitHelper {
 	global $gallery;
 
 	list ($ret, $netPbmPath) =
-	    $gallery->getModuleParameter('netpbm', 'path');
+	    GalleryCoreApi::getPluginParameter('module', 'netpbm', 'path');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -60,7 +60,7 @@ class NetPbmToolkitHelper {
 	$paths = array();
 	foreach (array('pnmtojpeg') as $key) {
 	    list ($ret, $paths[$key]) = 
-		$gallery->getModuleParameter('netpbm', $key);
+		GalleryCoreApi::getPluginParameter('module', 'netpbm', $key);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -163,7 +163,7 @@ class NetPbmToolkitHelper {
 	}
 
 	/* We need to translate some strings */
-	list($ret, $module) = $gallery->loadModule('netpbm');
+	list($ret, $module) = GalleryCoreApi::loadPlugin('module', 'netpbm');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}

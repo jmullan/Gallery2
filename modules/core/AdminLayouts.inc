@@ -42,7 +42,7 @@ class AdminLayoutsController extends GalleryController {
     function handleRequest($form) {
 	global $gallery;
 
-	$ret = GalleryUserHelper::assertSiteAdministrator();
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -53,7 +53,7 @@ class AdminLayoutsController extends GalleryController {
 
 	$layoutId = GalleryUtilities::getRequestVariables('layoutId');
 	if (!empty($layoutId) && !empty($form['action'])) {
-	    list ($ret, $layoutStatusList) = GalleryPluginMap::getPluginStatus('layout');
+	    list ($ret, $layoutStatusList) = GalleryCoreApi::getPluginStatus('layout');
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -66,7 +66,7 @@ class AdminLayoutsController extends GalleryController {
 	    
 	    $layoutStatus = $layoutStatusList[$layoutId];
 
-	    list ($ret, $layout) = GalleryPluginMap::loadPlugin('layout', $layoutId);
+	    list ($ret, $layout) = GalleryCoreApi::loadPlugin('layout', $layoutId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -177,12 +177,12 @@ class AdminLayoutsView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	global $gallery;
 	
-	$ret = GalleryUserHelper::assertSiteAdministrator();
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-        list ($ret, $coreModule) = $gallery->loadModule('core');
+        list ($ret, $coreModule) = GalleryCoreApi::loadPlugin('module', 'core');
         if ($ret->isError()) {
             return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -193,7 +193,7 @@ class AdminLayoutsView extends GalleryView {
 	}
 	
 	/* Load the module list */
-	list ($ret, $layouts) = GalleryPluginMap::getPluginStatus('layout');
+	list ($ret, $layouts) = GalleryCoreApi::getPluginStatus('layout');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -201,7 +201,7 @@ class AdminLayoutsView extends GalleryView {
 	/* Transform it to include all the layout data that we want to display */
 	$activeCount = 0;
 	foreach ($layouts as $id => $layoutStatus) {
-	    list ($ret, $layout) = GalleryPluginMap::loadPlugin('layout', $id);
+	    list ($ret, $layout) = GalleryCoreApi::loadPlugin('layout', $id);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -233,7 +233,7 @@ class AdminLayoutsView extends GalleryView {
 
 	case 'editLayout':
 	    /* Load the config settings from the active layout */
-	    list ($ret, $layout) = GalleryPluginMap::loadPlugin('layout', $layoutId);
+	    list ($ret, $layout) = GalleryCoreApi::loadPlugin('layout', $layoutId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }

@@ -46,7 +46,7 @@ class ItemReorderControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$ret = GalleryPermissionMap::addUserPermission($this->_parentAlbum->getId(),
+	$ret = GalleryCoreApi::addUserPermission($this->_parentAlbum->getId(),
 						       $gallery->getActiveUserId(),
 						       'core.all');
 	if ($ret->isError()) {
@@ -60,7 +60,7 @@ class ItemReorderControllerTest extends GalleryControllerTestCase {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 
-	    $ret = GalleryItemAttributesMap::setOrderWeight($this->_child[$i]->getId(), $i * 1000);
+	    $ret = GalleryCoreApi::setItemOrderWeight($this->_child[$i]->getId(), $i * 1000);
 	    if ($ret->isError()) {
 		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -71,7 +71,7 @@ class ItemReorderControllerTest extends GalleryControllerTestCase {
     function tearDown() {
 	global $gallery;
 
-	$ret = $gallery->deleteEntityById($this->_parentAlbum->getId());
+	$ret = GalleryCoreApi::deleteEntityById($this->_parentAlbum->getId());
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -217,7 +217,7 @@ class ItemReorderControllerTest extends GalleryControllerTestCase {
     function testReorderItemsWithoutPermissions() {
 	global $gallery;
 
-	$ret = GalleryPermissionMap::removeItemPermissions($this->_parentAlbum->getId());
+	$ret = GalleryCoreApi::removeItemPermissions($this->_parentAlbum->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -285,7 +285,7 @@ class ItemReorderControllerTest extends GalleryControllerTestCase {
 
 	/* Pack 'em in tight */
 	for ($i = 0; $i < 5; $i++) {
-	    $ret = GalleryItemAttributesMap::setOrderWeight($this->_child[$i]->getId(), $i);
+	    $ret = GalleryCoreApi::setItemOrderWeight($this->_child[$i]->getId(), $i);
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
@@ -327,7 +327,7 @@ class ItemReorderControllerTest extends GalleryControllerTestCase {
 
 	/* Pack 'em in tight */
 	for ($i = 0; $i < 5; $i++) {
-	    $ret = GalleryItemAttributesMap::setOrderWeight($this->_child[$i]->getId(), $i);
+	    $ret = GalleryCoreApi::setItemOrderWeight($this->_child[$i]->getId(), $i);
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }

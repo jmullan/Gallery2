@@ -41,13 +41,13 @@ class FactoryTest extends GalleryTestCase {
 	global $gallery;
 	
 	$path = dirname(__FILE__) . '/../../../../modules/core/test/phpunit/FactoryTest.class';
-	GalleryFactory::registerImplementation('FactoryTest',
+	GalleryCoreApi::registerFactoryImplementation('FactoryTest',
 					       'FactoryTestDummy',
 					       'FactoryTestDummyId',
 					       $path,
 					       array('dummy'));
 
-	GalleryFactory::registerImplementation('FactoryTest',
+	GalleryCoreApi::registerFactoryImplementation('FactoryTest',
 					       'FactoryTestDummyIllegalPath',
 					       'FactoryTestDummyIllegalPathId',
 					       'ILLEGAL_PATH!',
@@ -55,10 +55,10 @@ class FactoryTest extends GalleryTestCase {
     }
 
     function tearDown() {
-	GalleryFactory::unregisterImplementation('FactoryTest',
-						 'FactoryTestDummy');
-	GalleryFactory::unregisterImplementation('FactoryTest',
-						 'FactoryTestDummyIllegalPath');
+	GalleryCoreApi::unregisterFactoryImplementation('FactoryTest',
+							'FactoryTestDummy');
+	GalleryCoreApi::unregisterFactoryImplementation('FactoryTest',
+							'FactoryTestDummyIllegalPath');
 
 	parent::tearDown();
     }
@@ -68,7 +68,7 @@ class FactoryTest extends GalleryTestCase {
      * a bad path.
      */
     function testNewInstanceIllegalPath() {
-	list ($ret, $instance) = GalleryFactory::newInstance('FactoryTest', 'FactoryTestDummyIllegalPath');
+	list ($ret, $instance) = GalleryCoreApi::newFactoryInstance('FactoryTest', 'FactoryTestDummyIllegalPath');
 	$this->assert($ret->getErrorCode() & ERROR_BAD_PATH);
     }
 
@@ -76,7 +76,7 @@ class FactoryTest extends GalleryTestCase {
      * Register an implementation, create new instance
      */
     function testNewInstance() {
-	list ($ret, $instance) = GalleryFactory::newInstance('FactoryTest', 'FactoryTestDummy');
+	list ($ret, $instance) = GalleryCoreApi::newFactoryInstance('FactoryTest', 'FactoryTestDummy');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -89,7 +89,7 @@ class FactoryTest extends GalleryTestCase {
      * empty instance
      */
     function testMissingInstance() {
-	list ($ret, $instance) = GalleryFactory::newInstance('FactoryTest', 'MISSING IMPLEMENTATION NAME');
+	list ($ret, $instance) = GalleryCoreApi::newFactoryInstance('FactoryTest', 'MISSING IMPLEMENTATION NAME');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -101,7 +101,7 @@ class FactoryTest extends GalleryTestCase {
      * Register an implementation, create new instance given only class type
      */
     function testNewInstanceNoClass() {
-	list ($ret, $instance) = GalleryFactory::newInstance('FactoryTest');
+	list ($ret, $instance) = GalleryCoreApi::newFactoryInstance('FactoryTest');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -114,7 +114,7 @@ class FactoryTest extends GalleryTestCase {
      * empty instance
      */
     function testMissingInstanceNoClass() {
-	list ($ret, $instance) = GalleryFactory::newInstance('MISSING CLASS TYPE');
+	list ($ret, $instance) = GalleryCoreApi::newFactoryInstance('MISSING CLASS TYPE');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -126,7 +126,7 @@ class FactoryTest extends GalleryTestCase {
      * Register an implementation, create instance by hint
      */
     function testNewInstanceByHint() {
-	list ($ret, $instance) = GalleryFactory::newInstanceByHint('FactoryTest', 'dummy');
+	list ($ret, $instance) = GalleryCoreApi::newFactoryInstanceByHint('FactoryTest', 'dummy');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -138,7 +138,7 @@ class FactoryTest extends GalleryTestCase {
      * Register an implementation, create instance by id
      */
     function testNewInstanceById() {
-	list ($ret, $instance) = GalleryFactory::newInstanceById('FactoryTest', 'FactoryTestDummyId');
+	list ($ret, $instance) = GalleryCoreApi::newFactoryInstanceById('FactoryTest', 'FactoryTestDummyId');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -150,7 +150,7 @@ class FactoryTest extends GalleryTestCase {
      * Register an implementation, get all implementation ids
      */
     function testGetAllImplementationIds() {
-	$ids = GalleryFactory::getAllImplementationIds('FactoryTest');
+	$ids = GalleryCoreApi::getAllFactoryImplementationIds('FactoryTest');
 	$this->assertEquals(array('FactoryTestDummyId' => 'factorytestdummy',
 				  'FactoryTestDummyIllegalPathId' => 'factorytestdummyillegalpath'),
 			    $ids);

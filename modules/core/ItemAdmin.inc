@@ -44,14 +44,13 @@ class ItemAdminView extends GalleryView {
 
 	/* Figure out the item we're referring to */
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
-	list ($ret, $item) = $gallery->loadEntitiesById($itemId);
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* Find its thumbnail */
-	list ($ret, $thumbnailTable) =
-		GalleryDerivativeHelper::fetchThumbnailsByItemIds(array($itemId));
+	list ($ret, $thumbnailTable) = GalleryCoreApi::fetchThumbnailsByItemIds(array($itemId));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -64,8 +63,7 @@ class ItemAdminView extends GalleryView {
 	     * Rebuild the cache if it's not current, so that we can make sure
 	     * that we've got the appropriate thumbnail dimensions
 	     */
-	    list ($ret, $thumbnail) =
-		GalleryDerivativeHelper::rebuildCacheIfNotCurrent($thumbnail->getId());
+	    list ($ret, $thumbnail) = GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($thumbnail->getId());
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -74,7 +72,7 @@ class ItemAdminView extends GalleryView {
 	}
 
 	/* Load the module list */
-	list ($ret, $moduleStatus) = GalleryPluginMap::getPluginStatus('module');
+	list ($ret, $moduleStatus) = GalleryCoreApi::getPluginStatus('module');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -87,7 +85,7 @@ class ItemAdminView extends GalleryView {
 	    }
 
 	    /* Get the selected module's admin view */
-	    list($ret, $module) = $gallery->loadModule($moduleId);
+	    list($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -155,7 +153,7 @@ class ItemAdminView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	list ($ret, $isSiteAdmin) = GalleryUserGroupMap::isUserInSiteAdminGroup();
+	list ($ret, $isSiteAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

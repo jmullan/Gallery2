@@ -61,14 +61,14 @@ class ItemEditItemControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 
 	foreach ($this->_item as $item) {
-	    $ret = $gallery->deleteEntityById($item->getId());
+	    $ret = GalleryCoreApi::deleteEntityById($item->getId());
 	    if ($ret->isError()) {
 		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
 
 	foreach ($this->_album as $album) {
-	    $ret = $gallery->deleteEntityById($album->getId());
+	    $ret = GalleryCoreApi::deleteEntityById($album->getId());
 	    if ($ret->isError()) {
 		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
@@ -208,7 +208,7 @@ class ItemEditItemControllerTest extends GalleryControllerTestCase {
     function testRenameRoot() {
 	global $gallery;
 	
-	list ($ret, $rootAlbum) = $gallery->loadEntitiesById($this->_getRootId());
+	list ($ret, $rootAlbum) = GalleryCoreApi::loadEntitiesById($this->_getRootId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

@@ -47,7 +47,7 @@ class CommentSearchTest extends GalleryTestCase {
 	
 	parent::setUp();
 
-	list ($ret, $moduleStatusList) = GalleryPluginMap::getPluginStatus('module');
+	list ($ret, $moduleStatusList) = GalleryCoreApi::getPluginStatus('module');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -56,7 +56,7 @@ class CommentSearchTest extends GalleryTestCase {
 	    return $this->assert(false, 'Search module not installed');
 	}
 
-	list ($ret, $groupId) = $gallery->getModuleParameter('core', 'id.allUserGroup');
+	list ($ret, $groupId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.allUserGroup');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -73,7 +73,7 @@ class CommentSearchTest extends GalleryTestCase {
 	    /* Create some comments */
 	    for ($i = 0; $i < 2; $i++) {
 		list ($ret, $this->_comment[$j][$i]) =
-		    GalleryFactory::newInstance('GalleryEntity', 'GalleryComment');
+		    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryComment');
 		if ($ret->isError()) {
 		    print $ret->getAsHtml();
 		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -93,10 +93,15 @@ class CommentSearchTest extends GalleryTestCase {
 		}
 	    }
 
-	    GalleryPermissionMap::removeItemPermissions($this->_item[$j]->getId());
+	    $ret = GalleryCoreApi::removeItemPermissions($this->_item[$j]->getId());
+	    if ($ret->isError()) {
+		print $ret->getAsHtml();
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+		
 	    switch($j) {
 	    case 0:
-		$ret = GalleryPermissionMap::addUserPermission($this->_item[$j]->getId(),
+		$ret = GalleryCoreApi::addUserPermission($this->_item[$j]->getId(),
 							       $gallery->getActiveUserId(),
 							       'core.view');
 		if ($ret->isError()) {
@@ -106,7 +111,7 @@ class CommentSearchTest extends GalleryTestCase {
 		break;
 		
 	    case 1:
-		$ret = GalleryPermissionMap::addGroupPermission($this->_item[$j]->getId(),
+		$ret = GalleryCoreApi::addGroupPermission($this->_item[$j]->getId(),
 								$groupId,
 								'comment.view');
 		if ($ret->isError()) {
@@ -116,7 +121,7 @@ class CommentSearchTest extends GalleryTestCase {
 		break;
 		
 	    case 2:
-		$ret = GalleryPermissionMap::addUserPermission($this->_item[$j]->getId(),
+		$ret = GalleryCoreApi::addUserPermission($this->_item[$j]->getId(),
 							       $gallery->getActiveUserId(),
 							       'comment.search');
 		if ($ret->isError()) {
@@ -126,7 +131,7 @@ class CommentSearchTest extends GalleryTestCase {
 		break;
 		
 	    case 3:
-		$ret = GalleryPermissionMap::addGroupPermission($this->_item[$j]->getId(),
+		$ret = GalleryCoreApi::addGroupPermission($this->_item[$j]->getId(),
 								$groupId,
 								'comment.search');
 		if ($ret->isError()) {
@@ -138,7 +143,7 @@ class CommentSearchTest extends GalleryTestCase {
 	}
 
 	list ($ret, $this->_commentSearch) =
-	    GalleryFactory::newInstance('GallerySearchInterface_1_0', 'GalleryCommentSearch');
+	    GalleryCoreApi::newFactoryInstance('GallerySearchInterface_1_0', 'GalleryCommentSearch');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -146,7 +151,7 @@ class CommentSearchTest extends GalleryTestCase {
 
 	$this->assert(isset($this->_commentSearch), 'Missing GalleryCommentSearch instance');
 
-	list ($ret, $this->_module) = $gallery->loadModule('comment');
+	list ($ret, $this->_module) = GalleryCoreApi::loadPlugin('module', 'comment');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -169,7 +174,7 @@ class CommentSearchTest extends GalleryTestCase {
 
 	if (!empty($this->_item)) {
 	    foreach ($this->_item as $item) {
-		$ret = $gallery->deleteEntityById($item->getId());
+		$ret = GalleryCoreApi::deleteEntityById($item->getId());
 		if ($ret->isError()) {
 		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 		}

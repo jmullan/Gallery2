@@ -63,7 +63,7 @@ class FileSystemTest extends GalleryTestCase {
     function tearDown() {
 	global $gallery;
 
-	$ret = $gallery->deleteEntityById($this->_albums[0]->getId());
+	$ret = GalleryCoreApi::deleteEntityById($this->_albums[0]->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -76,7 +76,7 @@ class FileSystemTest extends GalleryTestCase {
 	for ($i = 0; $i < sizeof($this->_albums); $i++) {
 	    $path .= $this->_albums[$i]->getPathComponent() . '/';
 	}
-	list ($ret, $id) = GalleryFileSystemEntityHelper::fetchItemIdByPath($path);
+	list ($ret, $id) = GalleryCoreApi::fetchItemIdByPath($path);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -85,7 +85,7 @@ class FileSystemTest extends GalleryTestCase {
     }
 
     function testFetchChildIdByPathComponent() {
-	list ($ret, $id) = GalleryFileSystemEntityHelper::fetchChildIdByPathComponent(
+	list ($ret, $id) = GalleryCoreApi::fetchChildIdByPathComponent(
 	    $this->_albums[1]->getId(), $this->_albums[2]->getPathComponent());
 
 	$this->assertEquals($this->_albums[2]->getId(), $id);
@@ -98,7 +98,7 @@ class FileSystemTest extends GalleryTestCase {
     function testCreateCollision() {
 	global $gallery;
 
-	list ($ret, $lockId) = $gallery->acquireWriteLock($this->_albums[0]->getId());
+	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($this->_albums[0]->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -121,7 +121,7 @@ class FileSystemTest extends GalleryTestCase {
 	    }
 	}
 
-	$ret = $gallery->releaseLocks($lockId);
+	$ret = GalleryCoreApi::releaseLocks($lockId);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

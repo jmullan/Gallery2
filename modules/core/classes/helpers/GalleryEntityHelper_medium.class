@@ -1,0 +1,157 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * Helper class for GalleryEntities
+ *
+ * @package GalleryCore
+ * @subpackage Classes
+ * @abstract
+ */
+class GalleryEntityHelper_medium {
+
+    /**
+     * Delete the entity with the given id 
+     *
+     * @param int the id of a GalleryEntity to delete
+     * @return object GalleryStatus a status code 
+     */
+    function deleteEntityById($id) {
+	if (empty($id)) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	}
+	$lockIds = array();
+
+	/* Don't write lock it if it's already locked somewhere else */
+	if (!GalleryCoreApi::isWriteLocked($id)) {
+	    list ($ret, $lockIds[]) = GalleryCoreApi::acquireWriteLock($id);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+	
+	list ($ret, $entity) = GalleryEntityHelper_simple::loadEntitiesById($id);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	if (GalleryUtilities::isA($entity, 'GalleryChildEntity')) {
+	    list ($ret, $lockIds[]) = GalleryCoreApi::acquireReadLockParents($id);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	/* If this item has links to it, make one of those links the master */
+	list ($ret, $linkedIds) = GalleryEntityHelper_medium::fetchEntitiesLinkedTo($id);
+	if ($ret->isError()) {
+	    $this->releaseLocks($lockIds);
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	if (!empty($linkedIds)) {
+	    /* Lock all of the linked items */
+	    list ($ret, $lockIds[]) = GalleryCoreApi::acquireWriteLock($linkedIds);
+	    if ($ret->isError()) {
+		$this->releaseLocks($lockIds);
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    /* Make the first link the master, and point the rest at it */
+	    list ($ret, $linkedEntities) = GalleryEntityHelper_simple::loadEntitiesById($linkedIds);
+
+	    $ret = $linkedEntities[0]->detachLink();
+	    if ($ret->isError()) {
+		GalleryCoreApi::releaseLocks($lockIds);
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    $ret = $linkedEntities[0]->save();
+	    if ($ret->isError()) {
+		GalleryCoreApi::releaseLocks($lockIds);
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    for ($i = 1; $i < sizeof($linkedEntities); $i++) {
+		$linkedEntities[$i]->setLinkId($linkedEntities[0]->getId());
+		$linkedEntities[$i]->setLinkedEntity($linkedEntities[0]);
+		$ret = $linkedEntities[$i]->save();
+		if ($ret->isError()) {
+		    GalleryCoreApi::releaseLocks($lockIds);
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+	}
+
+	$ret = $entity->delete();
+	if ($ret->isError()) {
+	    GalleryCoreApi::releaseLocks($lockIds);
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	$ret = GalleryCoreApi::releaseLocks($lockIds);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Fetch the ids of the entities linked to the target entity
+     *
+     * @param int the target entity id
+     * @return array object GalleryStatus a status code
+     *               array entity ids
+     */
+    function fetchEntitiesLinkedTo($targetId) {
+	global $gallery;
+	
+	$query = '
+        SELECT
+          [GalleryEntity::id]
+        FROM
+          [GalleryEntity]
+        WHERE
+          [GalleryEntity::linkId] = ?
+        ORDER BY
+          [GalleryEntity::id] ASC
+        ';
+	$storage = $gallery->getStorage();
+	list ($ret, $searchResults) = $gallery->search($query, array($targetId));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
+	$linkedIds = array();
+	while ($result = $searchResults->nextResult()) {
+	    $linkedIds[] = $result[0];
+	}
+
+	return array(GalleryStatus::success(), $linkedIds);
+    }
+}
+?>

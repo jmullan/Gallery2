@@ -44,7 +44,7 @@ class ShowTreeView extends GalleryView {
 	list ($entityId, $itemId) = GalleryUtilities::getRequestVariables('entityId', 'itemId');
 
 	/* Make sure we have permission */
-	$ret = GalleryUserHelper::assertSiteAdministrator();
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -54,7 +54,7 @@ class ShowTreeView extends GalleryView {
 	    if (!empty($itemId)) {
 		$entityId = $itemId;
 	    } else {
-		list ($ret, $entityId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
+		list ($ret, $entityId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -62,20 +62,20 @@ class ShowTreeView extends GalleryView {
 	}
 
 	/* Get the parent ids leading up to this entity */
-	list ($ret, $parentIds) = GalleryItemAttributesMap::fetchParentSequence($entityId);
+	list ($ret, $parentIds) = GalleryCoreApi::fetchParentSequence($entityId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* Get all of this entity's children */
-	list ($ret, $childIds) = GalleryChildEntityHelper::fetchChildIds($entityId);
+	list ($ret, $childIds) = GalleryCoreApi::fetchChildIds($entityId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* Load everything at once */
 	list ($ret, $entityObjects) =
-	    $gallery->loadEntitiesById(array_merge($parentIds, $childIds, array($entityId)));
+	    GalleryCoreApi::loadEntitiesById(array_merge($parentIds, $childIds, array($entityId)));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

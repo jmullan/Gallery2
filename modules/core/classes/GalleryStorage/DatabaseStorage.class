@@ -845,6 +845,7 @@ class DatabaseStorage extends GalleryStorage {
 	 * Create a GalleryLock object and initialize it with the relevant
 	 * data.
 	 */
+	require_once(dirname(__FILE__) . '/../GalleryLock.class');
 	$lock = new GalleryLock();
 	$lock->acquireLock($lockId, LOCK_READ, $entityIds);
 
@@ -967,6 +968,7 @@ class DatabaseStorage extends GalleryStorage {
 	 * Create a GalleryLock object and initialize it with the relevant
 	 * data.
 	 */
+	require_once(dirname(__FILE__) . '/../GalleryLock.class');
 	$lock = new GalleryLock();
 	$lock->acquireLock($lockId, LOCK_WRITE, $entityIds);
 

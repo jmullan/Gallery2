@@ -42,7 +42,7 @@ class AdminImageMagickController extends GalleryController {
     function handleRequest($form) {
 	global $gallery;
 
-	$ret = GalleryUserHelper::assertSiteAdministrator();
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -87,13 +87,13 @@ class AdminImageMagickController extends GalleryController {
 	    }
 	    
 	    if (empty($error)) {
-		$ret = $gallery->setModuleParameter('imagemagick', 'path', $form['path']);
+		$ret = GalleryCoreApi::setPluginParameter('module', 'imagemagick', 'path', $form['path']);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
 	    
-		$ret = $gallery->setModuleParameter('imagemagick', 'jpegQuality', $form['jpegQuality']);
+		$ret = GalleryCoreApi::setPluginParameter('module', 'imagemagick', 'jpegQuality', $form['jpegQuality']);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -137,7 +137,7 @@ class AdminImageMagickView extends GalleryView {
 	if ($form['formName'] != 'AdminImageMagick') {
 	    foreach (array('path', 'jpegQuality') as $key) {
 		list ($ret, $form[$key]) =
-		    $gallery->getModuleParameter('imagemagick', $key);
+		    GalleryCoreApi::getPluginParameter('module', 'imagemagick', $key);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}

@@ -225,7 +225,7 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 					__FILE__, __LINE__);
 	}
 
-	list($ret, $parent) = $gallery->loadEntitiesById($parentId);
+	list($ret, $parent) = GalleryCoreApi::loadEntitiesById($parentId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -281,13 +281,13 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 
 	/* Pick up the default order */
 	list ($ret, $orderBy) =
-	    $gallery->getModuleParameter('core', 'default.orderBy');
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'default.orderBy');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	list ($ret, $orderDirection) =
-	    $gallery->getModuleParameter('core', 'default.orderDirection');
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'default.orderDirection');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -309,7 +309,7 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	list($ret, $parent) = $gallery->loadEntitiesById($parentId);
+	list($ret, $parent) = GalleryCoreApi::loadEntitiesById($parentId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -431,7 +431,7 @@ class GalleryItem_core extends GalleryFileSystemEntity {
     function fetchChildIds($offset=null, $count=null) {
 	global $gallery;
 
-	list ($ret, $permissionBits) = GalleryPermissionSetMap::convertIdsToBits('core.view');
+	list ($ret, $permissionBits) = GalleryCoreApi::convertPermissionIdsToBits('core.view');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -536,7 +536,7 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	list ($ret, $children) = $gallery->loadEntitiesById($childIds);
+	list ($ret, $children) = GalleryCoreApi::loadEntitiesById($childIds);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -553,17 +553,13 @@ class GalleryItem_core extends GalleryFileSystemEntity {
     function fetchParents() {
 	global $gallery;
 
-	GalleryProfiler::start('modules.core.classes.GalleryItem::fetchParents');
-
 	if (GalleryUtilities::isA($this, 'GalleryAlbumItem')) {
-	    list ($ret, $parentIds) =
-		GalleryItemAttributesMap::fetchParentSequence($this->getId());
+	    list ($ret, $parentIds) = GalleryCoreApi::fetchParentSequence($this->getId());
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	} else {
-	    list ($ret, $parentIds) =
-		GalleryItemAttributesMap::fetchParentSequence($this->getParentId());
+	    list ($ret, $parentIds) = GalleryCoreApi::fetchParentSequence($this->getParentId());
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -571,7 +567,7 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	}
 
 	if (!empty($parentIds)) {
-	    list ($ret, $parents) = $gallery->loadEntitiesById($parentIds);
+	    list ($ret, $parents) = GalleryCoreApi::loadEntitiesById($parentIds);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -579,8 +575,6 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	    $parents = array();
 	}
 
-	GalleryProfiler::stop('modules.core.classes.GalleryItem::fetchParents');
-	
 	return array(GalleryStatus::success(), $parents);
     }
 
@@ -611,7 +605,7 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	}
 
 	while ($result = $searchResults->nextResult()) {
-	    $ret = $gallery->deleteEntityById($result[0]);
+	    $ret = GalleryCoreApi::deleteEntityById($result[0]);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -624,9 +618,9 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	}
 
 	/* Remove all my properties, permissions, view counts */
-	$ret1 = GalleryItemPropertiesMap::removeProperties($this->getId());
-	$ret2 = GalleryPermissionMap::removeItemPermissions($this->getId());
-	$ret3 = GalleryItemAttributesMap::removeItemAttributes($this->getId());
+	$ret1 = GalleryCoreApi::removeItemProperties($this->getId());
+	$ret2 = GalleryCoreApi::removeItemPermissions($this->getId());
+	$ret3 = GalleryCoreApi::removeItemAttributes($this->getId());
 	
 	if ($ret1->isError()) {
 	    return $ret1->wrap(__FILE__, __LINE__);
@@ -667,14 +661,13 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 
 	if ($newItem) {
 	    if ($this->getParentId()) {
-		$ret = GalleryPermissionMap::copyPermissions($this->getId(),
-							     $this->getParentId());
+		$ret = GalleryCoreApi::copyPermissions($this->getId(), $this->getParentId());
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 
 		list ($ret, $parentSequence) =
-		    GalleryItemAttributesMap::fetchParentSequence($this->getParentId());
+		    GalleryCoreApi::fetchParentSequence($this->getParentId());
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
@@ -684,7 +677,7 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	    }
 
 	    /* Create an empty attribute entry */
-	    $ret = GalleryItemAttributesMap::createItemAttributes($this->getId(), $parentSequence);
+	    $ret = GalleryCoreApi::createItemAttributes($this->getId(), $parentSequence);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }

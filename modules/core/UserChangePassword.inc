@@ -44,7 +44,7 @@ class UserChangePasswordController extends GalleryController {
 
 	$userId = $gallery->getActiveUserId();
 
-	list ($ret, $anonymousUserId) = $gallery->getModuleParameter('core', 'id.anonymousUser');
+	list ($ret, $anonymousUserId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -89,12 +89,12 @@ class UserChangePasswordController extends GalleryController {
 	     * the user.
 	     */
 	    if (empty($error)) {
-		list ($ret, $lockId) = $gallery->acquireWriteLock($userId);
+		list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($userId);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-		list ($ret, $user) = $gallery->loadEntitiesById($userId);
+		list ($ret, $user) = GalleryCoreApi::loadEntitiesById($userId);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -106,7 +106,7 @@ class UserChangePasswordController extends GalleryController {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-		$ret = $gallery->releaseLocks($lockId);
+		$ret = GalleryCoreApi::releaseLocks($lockId);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}

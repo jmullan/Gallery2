@@ -52,13 +52,13 @@ class ItemCreateLinkControllerTest extends GalleryControllerTestCase {
 	    switch ($i) {
 	    case 0:
 		/* Can add data items */
-		$ret = GalleryPermissionMap::removeItemPermissions($albumId);
+		$ret = GalleryCoreApi::removeItemPermissions($albumId);
 		if ($ret->isError()) {
 		    print $ret->getAsHtml();
 		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 		}
 		
-		$ret = GalleryPermissionMap::addUserPermission($albumId, $userId, 'core.addDataItem');
+		$ret = GalleryCoreApi::addUserPermission($albumId, $userId, 'core.addDataItem');
 		if ($ret->isError()) {
 		    print $ret->getAsHtml();
 		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -67,7 +67,7 @@ class ItemCreateLinkControllerTest extends GalleryControllerTestCase {
 
 	    case 1:
 		/* Can't do squat */
-		$ret = GalleryPermissionMap::removeItemPermissions($albumId);
+		$ret = GalleryCoreApi::removeItemPermissions($albumId);
 		if ($ret->isError()) {
 		    print $ret->getAsHtml();
 		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -93,7 +93,7 @@ class ItemCreateLinkControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 
 	for ($i = 0; $i < sizeof($this->_albums); $i++) {
-	    $ret = $gallery->deleteEntityById($this->_albums[$i]->getId());
+	    $ret = GalleryCoreApi::deleteEntityById($this->_albums[$i]->getId());
 	    if ($ret->isError()) {
 		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }

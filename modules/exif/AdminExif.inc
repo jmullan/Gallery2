@@ -20,6 +20,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+require_once(dirname(__FILE__) . '/classes/ExifHelper.class');
+require_once(dirname(__FILE__) . '/classes/ExifPropertiesMap.class');
+
 /**
  * @version $Revision$ $Date$
  * @package Exif
@@ -41,7 +44,7 @@ class AdminExifController extends GalleryController {
     function handleRequest($form) {
 	global $gallery;
 
-	$ret = GalleryUserHelper::assertSiteAdministrator();
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -347,7 +350,7 @@ class AdminExifView extends GalleryView {
 
 	$mode = GalleryUtilities::getRequestVariables('mode');
 	
-	$ret = GalleryUserHelper::assertSiteAdministrator();
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -357,7 +360,7 @@ class AdminExifView extends GalleryView {
 	    $form['formName'] = 'AdminExif';
 	}
 
-	list ($ret, $module) = $gallery->loadModule('exif');
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'exif');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

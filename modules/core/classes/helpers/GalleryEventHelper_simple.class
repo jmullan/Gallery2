@@ -1,0 +1,81 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * Helper class for GalleryItems
+ *
+ * @package GalleryCore
+ * @subpackage Classes
+ * @abstract
+ */
+class GalleryEventHelper_simple {
+
+    /**
+     * Create a new event with the given name
+     */
+    function newEvent($eventName) {
+	require_once(dirname(__FILE__) . '/../GalleryEvent.class');
+	$event = new GalleryEvent();
+	$event->setEventName($eventName);
+	return $event;
+    }
+
+    /**
+     * Register an event listener
+     *
+     * @param string the name of the event (eg "GalleryEntity::save")
+     * @param object a GalleryEventListener instance
+     */
+    function registerEventListener($eventName, &$listener) {
+	if (empty($this->_eventListeners[$eventName])) {
+	    $this->_eventListeners[$eventName] = array();
+	}
+
+	$this->_eventListeners[$eventName][] =& $listener;
+    }
+
+    /**
+     * Deliver an event to anybody listening
+     *
+     * @param string the name of the event (eg "GalleryEntity::save")
+     * @param object a GalleryEvent
+     * @return object GalleryStatus a status code
+     */
+    function postEvent($event) {
+	if (!empty($this->_eventListeners[$event->getEventName()])) {
+	    $listeners = $this->_eventListeners[$event->getEventName()];
+	    for ($i = 0; $i < sizeof($listeners); $i++) {
+		$ret = $listeners[$i]->handleEvent($event);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+	}
+
+	return GalleryStatus::success();
+    }
+}

@@ -36,7 +36,7 @@ class CreatePhotoItemTestCase extends TestCase {
 	global $gallery;
 
 	list ($ret, $rootId) =
-	    $gallery->getModuleParameter('core', 'id.rootAlbum');
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -48,12 +48,12 @@ class CreatePhotoItemTestCase extends TestCase {
 	 * ancestors too so that shit doesn't move around while we're working
 	 * on it, but in this case we know it's the root.
 	 */
-	list ($ret, $lockIds[]) = $gallery->acquireReadLock($rootId);
+	list ($ret, $lockIds[]) = GalleryCoreApi::acquireReadLock($rootId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	list ($ret, $photo) = GalleryFactory::newInstance('GalleryEntity', 'GalleryPhotoItem');
+	list ($ret, $photo) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryPhotoItem');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -82,20 +82,20 @@ class CreatePhotoItemTestCase extends TestCase {
 	}
 
 	/* Release our locks */
-	$ret = $gallery->releaseLocks($lockIds);
+	$ret = GalleryCoreApi::releaseLocks($lockIds);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	list ($ret, $toolkit, $outputMimeType) =
-	    GalleryToolkitHelper::getToolkitByOperation($photo->getMimeType(), 'thumbnail');
+	    GalleryCoreApi::getToolkitByOperation($photo->getMimeType(), 'thumbnail');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	if (isset($toolkit)) {
 	    /* Create a thumbnail */
-	    list ($ret, $thumbnail) = GalleryFactory::newInstance('GalleryEntity', 'GalleryDerivativeImage');
+	    list ($ret, $thumbnail) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryDerivativeImage');
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -120,14 +120,14 @@ class CreatePhotoItemTestCase extends TestCase {
 	}
 
 	list ($ret, $toolkit, $outputMimeType) =
-	    GalleryToolkitHelper::getToolkitByOperation($photo->getMimeType(), 'scale');
+	    GalleryCoreApi::getToolkitByOperation($photo->getMimeType(), 'scale');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	if (isset($toolkit)) {
 	    /* Create a resize */
-	    list ($ret, $resize) = GalleryFactory::newInstance('GalleryEntity', 'GalleryDerivativeImage');
+	    list ($ret, $resize) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryDerivativeImage');
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }

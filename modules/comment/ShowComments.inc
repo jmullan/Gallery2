@@ -48,6 +48,7 @@ class ShowCommentsView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	require_once(dirname(__FILE__) . '/classes/GalleryCommentHelper.class');
 	list ($ret, $comments) =
 	    GalleryCommentHelper::fetchComments($item->getId(), null, ORDER_ASCENDING);
 	if ($ret->isError()) {
@@ -66,7 +67,7 @@ class ShowCommentsView extends GalleryView {
 
 	    /* Load all the commenters */
 	    if (sizeof($commenters) > 0) {
-		list ($ret, $commentersList) = $gallery->loadEntitiesById(array_keys($commenters));
+		list ($ret, $commentersList) = GalleryCoreApi::loadEntitiesById(array_keys($commenters));
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -77,7 +78,7 @@ class ShowCommentsView extends GalleryView {
 	    }
 	}
 
-	list ($ret, $permissions) = GalleryItemHelper::getPermissions($item->getId());
+	list ($ret, $permissions) = GalleryCoreApi::getPermissions($item->getId());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

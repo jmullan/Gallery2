@@ -40,7 +40,7 @@ class CoreModuleTest extends GalleryTestCase {
 	global $gallery;
 	parent::setUp();
 	
-	list ($ret, $this->_module) = $gallery->loadModule('core'); 
+	list ($ret, $this->_module) = GalleryCoreApi::loadPlugin('module', 'core'); 
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -51,7 +51,7 @@ class CoreModuleTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$ret = GalleryPermissionMap::addUserPermission($this->_parentAlbum->getId(),
+	$ret = GalleryCoreApi::addUserPermission($this->_parentAlbum->getId(),
 						       $gallery->getActiveUserId(),
 						       'core.all');
 	if ($ret->isError()) {
@@ -63,7 +63,7 @@ class CoreModuleTest extends GalleryTestCase {
     function tearDown() {
 	global $gallery;
 
-	$ret = $gallery->deleteEntityById($this->_parentAlbum->getId());
+	$ret = GalleryCoreApi::deleteEntityById($this->_parentAlbum->getId());
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -266,7 +266,7 @@ class CoreModuleTest extends GalleryTestCase {
 	}
 
 	/* Clean up */
-	$ret = GalleryPluginParameterMap::removeParameter('module', 'core', $key);
+	$ret = GalleryCoreApi::removePluginParameter('module', 'core', $key);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

@@ -41,13 +41,13 @@ class ItemMakeHighlightControllerTest extends GalleryControllerTestCase {
 	parent::setUp();
 
 	/* Register a dummy toolkit */
-	GalleryFactory::registerImplementation('GalleryToolkit',
+	GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
 					       'ItemMakeHighlightTestToolkit',
 					       'ItemMakeHighlightTestToolkit',
 					       __FILE__);
 	
 	/* Register operations that we can perform on our mock data items */
-	$ret = GalleryToolkitHelper::registerOperation('ItemMakeHighlightTestToolkit',
+	$ret = GalleryCoreApi::registerToolkitOperation('ItemMakeHighlightTestToolkit',
 						       array('test/file-0'),
 						       'thumbnail',
 						       array(array('type' => 'int', 'description' => 'foo')),
@@ -83,14 +83,14 @@ class ItemMakeHighlightControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 
 	if (isset($this->_album)) {
-	    $ret = $gallery->deleteEntityById($this->_album->getId());
+	    $ret = GalleryCoreApi::deleteEntityById($this->_album->getId());
 	    if ($ret->isError()) {
 		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
 	
 	/* Unregister */
-	$ret = GalleryToolkitHelper::unregisterToolkit('ItemMakeHighlightTestToolkit');
+	$ret = GalleryCoreApi::unregisterToolkit('ItemMakeHighlightTestToolkit');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

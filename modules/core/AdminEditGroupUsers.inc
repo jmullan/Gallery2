@@ -42,7 +42,7 @@ class AdminEditGroupUsersController extends GalleryController {
     function handleRequest($form) {
 	global $gallery;
 
-	$ret = GalleryUserHelper::assertSiteAdministrator();
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -53,7 +53,7 @@ class AdminEditGroupUsersController extends GalleryController {
 
 	/* Load the group */
 	$groupId = GalleryUtilities::getRequestVariables('groupId');
-	list ($ret, $group) = $gallery->loadEntitiesById($groupId);
+	list ($ret, $group) = GalleryCoreApi::loadEntitiesById($groupId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -69,12 +69,12 @@ class AdminEditGroupUsersController extends GalleryController {
 
 		/* Remove the user from the group */
 		if (!empty($form['list']['userId'])) {
-		    list ($ret, $user) = $gallery->loadEntitiesById($form['list']['userId']);
+		    list ($ret, $user) = GalleryCoreApi::loadEntitiesById($form['list']['userId']);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 
-		    $ret = GalleryUserGroupMap::removeUserFromGroup($user->getId(), $groupId);
+		    $ret = GalleryCoreApi::removeUserFromGroup($user->getId(), $groupId);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
@@ -93,15 +93,14 @@ class AdminEditGroupUsersController extends GalleryController {
 		    $error[] = 'form[error][text][userName][missing]';
 		} else {
 		    list ($ret, $user) =
-			GalleryUserHelper::fetchUserByUsername($form['text']['userName']);
+			GalleryCoreApi::fetchUserByUsername($form['text']['userName']);
 
 		    if ($ret->isError() && ($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
 			$error[] = 'form[error][text][userName][invalid]';
 		    } else if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    } else {
-			$ret = GalleryUserGroupMap::addUserToGroup($user->getId(),
-								   $groupId);
+			$ret = GalleryCoreApi::addUserToGroup($user->getId(), $groupId);
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
@@ -144,14 +143,14 @@ class AdminEditGroupUsersView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	global $gallery;
 
-	$ret = GalleryUserHelper::assertSiteAdministrator();
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	    
 	/* Load the group */
 	$groupId = GalleryUtilities::getRequestVariables('groupId');
-	list ($ret, $group) = $gallery->loadEntitiesById($groupId);
+	list ($ret, $group) = GalleryCoreApi::loadEntitiesById($groupId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -163,7 +162,7 @@ class AdminEditGroupUsersView extends GalleryView {
 	}
 
 	/* Initialize the user list */
-	list ($ret, $users) = GalleryUserGroupMap::fetchUsersForGroup($group->getId());
+	list ($ret, $users) = GalleryCoreApi::fetchUsersForGroup($group->getId());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

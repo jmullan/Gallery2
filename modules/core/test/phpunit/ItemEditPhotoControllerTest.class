@@ -46,41 +46,41 @@ class ItemEditPhotoControllerTest extends GalleryControllerTestCase {
 	}
 
 	/* Register a dummy toolkit */
-	GalleryFactory::registerImplementation('GalleryToolkit',
+	GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
 					       'ItemEditPhotoTestToolkit',
 					       'ItemEditPhotoTestToolkit',
 					       __FILE__);
 
 	/* Register operations that we can perform on our mock data items */
-	$ret = GalleryToolkitHelper::registerOperation('ItemEditPhotoTestToolkit',
-						       array('test/file'),
-						       'scale',
-						       array(array('type' => 'int',
-								   'description' => 'test')),
-						       'test-description');
+	$ret = GalleryCoreApi::registerToolkitOperation('ItemEditPhotoTestToolkit',
+							array('test/file'),
+							'scale',
+							array(array('type' => 'int',
+								    'description' => 'test')),
+							'test-description');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$ret = GalleryToolkitHelper::registerOperation('ItemEditPhotoTestToolkit',
-						       array('test/file'),
-						       'rotate',
-						       array(array('type' => 'int',
-								   'description' => 'test')),
-						       'test-description');
+	$ret = GalleryCoreApi::registerToolkitOperation('ItemEditPhotoTestToolkit',
+							array('test/file'),
+							'rotate',
+							array(array('type' => 'int',
+								    'description' => 'test')),
+							'test-description');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	
-	$ret = GalleryToolkitHelper::registerOperation('ItemEditPhotoTestToolkit',
-						       array('test/file'),
-						       'resize',
-						       array(array('type' => 'int',
-								   'description' => 'test'),
-							     array('type' => 'int',
-								   'description' => 'test')),
-						       'test-description',
-						       '');
+	$ret = GalleryCoreApi::registerToolkitOperation('ItemEditPhotoTestToolkit',
+							array('test/file'),
+							'resize',
+							array(array('type' => 'int',
+								    'description' => 'test'),
+							      array('type' => 'int',
+								    'description' => 'test')),
+							'test-description',
+							'');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -112,13 +112,13 @@ class ItemEditPhotoControllerTest extends GalleryControllerTestCase {
     function tearDown() {
 	global $gallery;
 
-	$ret = $gallery->deleteEntityById($this->_album->getId());
+	$ret = GalleryCoreApi::deleteEntityById($this->_album->getId());
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	
 	/* Unregister */
-	$ret = GalleryToolkitHelper::unregisterToolkit('ItemEditPhotoTestToolkit');
+	$ret = GalleryCoreApi::unregisterToolkit('ItemEditPhotoTestToolkit');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -139,7 +139,7 @@ class ItemEditPhotoControllerTest extends GalleryControllerTestCase {
 	
 
 	/* Delete the preferred */
-	$ret = $gallery->deleteEntityById($this->_derivative[0]->getId());
+	$ret = GalleryCoreApi::deleteEntityById($this->_derivative[0]->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -159,7 +159,7 @@ class ItemEditPhotoControllerTest extends GalleryControllerTestCase {
 
 	/* Verify that we don't have a preferred */
 	list ($ret, $preferredIds) =
-	    GalleryDerivativeHelper::fetchPreferredsByItemIds(array($this->_item->getId()));
+	    GalleryCoreApi::fetchPreferredsByItemIds(array($this->_item->getId()));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -381,7 +381,7 @@ class ItemEditPhotoControllerTest extends GalleryControllerTestCase {
 
 	/* Examine the thumbnail and make sure it lines up */
 	list ($ret, $thumbTable) =
-	    GalleryDerivativeHelper::fetchThumbnailsByItemIds(array($this->_item->getId()));
+	    GalleryCoreApi::fetchThumbnailsByItemIds(array($this->_item->getId()));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -392,7 +392,7 @@ class ItemEditPhotoControllerTest extends GalleryControllerTestCase {
 
 	/* Examine the resizes and make sure they line up */
 	list ($ret, $resizeTable) =
-	    GalleryDerivativeHelper::fetchResizesByItemIds(array($this->_item->getId()));
+	    GalleryCoreApi::fetchResizesByItemIds(array($this->_item->getId()));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -500,7 +500,7 @@ class ItemEditPhotoControllerTest extends GalleryControllerTestCase {
 	
 
 	/* Delete the preferred */
-	$ret = $gallery->deleteEntityById($this->_derivative[0]->getId());
+	$ret = GalleryCoreApi::deleteEntityById($this->_derivative[0]->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

@@ -80,7 +80,7 @@ class AdminEditGroupUsersControllerTest extends GalleryControllerTestCase {
 
     function testRemoveUser() {
 	/* Add the user to the group */
-	$ret = GalleryUserGroupMap::addUserToGroup($this->_user->getId(), $this->_group->getId());
+	$ret = GalleryCoreApi::addUserToGroup($this->_user->getId(), $this->_group->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -145,7 +145,7 @@ class AdminEditGroupUsersControllerTest extends GalleryControllerTestCase {
     function _createGroup() {
 	global $gallery;
 	
-	list ($ret, $group) = GalleryFactory::newInstance('GalleryEntity', 'GalleryGroup');
+	list ($ret, $group) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryGroup');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -168,7 +168,7 @@ class AdminEditGroupUsersControllerTest extends GalleryControllerTestCase {
 
     function _deleteGroup($group) {
 	global $gallery;
-	$ret = $gallery->deleteEntityById($group->getId());
+	$ret = GalleryCoreApi::deleteEntityById($group->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -177,7 +177,7 @@ class AdminEditGroupUsersControllerTest extends GalleryControllerTestCase {
     function _createUser() {
 	global $gallery;
 	
-	list ($ret, $user) = GalleryFactory::newInstance('GalleryEntity', 'GalleryUser');
+	list ($ret, $user) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryUser');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -200,7 +200,7 @@ class AdminEditGroupUsersControllerTest extends GalleryControllerTestCase {
 
     function _deleteUser($user) {
 	global $gallery;
-	$ret = $gallery->deleteEntityById($user->getId());
+	$ret = GalleryCoreApi::deleteEntityById($user->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

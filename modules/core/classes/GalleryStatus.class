@@ -407,7 +407,7 @@ class GalleryStatus {
 	list ($codes, $trace) = $this->_getAsArray();
 
 	list ($ret, $formatter) =
-	    GalleryFactory::newInstanceByHint('GalleryStatusFormatter', 'text/html');
+	    GalleryCoreApi::newFactoryInstanceByHint('GalleryStatusFormatter', 'text/html');
 	if ($ret->isError() || !isset($formatter)) {
 	    $formatter = new GalleryStatusFormatterHtml();
 	}
@@ -423,7 +423,7 @@ class GalleryStatus {
 	list ($codes, $trace) = $this->_getAsArray();
 
 	list ($ret, $formatter) =
-	    GalleryFactory::newInstance('GalleryStatusFormatter', 'text/plain');
+	    GalleryCoreApi::newFactoryInstance('GalleryStatusFormatter', 'text/plain');
 	if ($ret->isError() || !isset($formatter)) {
 	    $formatter = new GalleryStatusFormatterText();
 	}

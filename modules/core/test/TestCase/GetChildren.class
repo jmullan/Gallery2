@@ -25,7 +25,7 @@ class GetChildrenTestCase extends TestCase {
 	global $gallery;
 
 	list ($ret, $rootId) =
-	    $gallery->getModuleParameter('core', 'id.rootAlbum');
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -33,14 +33,14 @@ class GetChildrenTestCase extends TestCase {
 	$userId = $gallery->getActiveUserId();
 
 	/* Load the root */
-	list ($ret, $root) = $gallery->loadEntitiesById($rootId);
+	list ($ret, $root) = GalleryCoreApi::loadEntitiesById($rootId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	for ($i = 0; $i < $iterations; $i++) {
 	    /* Get the child count */
-	    list ($ret, $count) = GalleryItemHelper::fetchChildCounts(array($root->getId()));
+	    list ($ret, $count) = GalleryCoreApi::fetchChildCounts(array($root->getId()));
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }

@@ -45,19 +45,19 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$session =& $gallery->getsession();
+	$session =& $gallery->getSession();
 	$this->_saveUserId = $session->get('core.id.activeUser');
     }
 
     function tearDown() {
 	global $gallery;
 	
-	$ret = $gallery->deleteEntityById($this->_user->getId());
+	$ret = GalleryCoreApi::deleteEntityById($this->_user->getId());
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	
-	$session =& $gallery->getsession();
+	$session =& $gallery->getSession();
 	$session->put('core.id.activeUser', $this->_saveUserId);
 	
 	parent::tearDown();

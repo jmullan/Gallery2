@@ -142,12 +142,12 @@ class AdminGroupsControllerTest extends GalleryControllerTestCase {
 
     function testDeleteSiteAdminGroupFromText() {
 	global $gallery;
-	list ($ret, $id) = $gallery->getModuleParameter('core', 'id.adminGroup');
+	list ($ret, $id) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	list ($ret, $group) = $gallery->loadEntitiesById($id);
+	list ($ret, $group) = GalleryCoreApi::loadEntitiesById($id);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -165,12 +165,12 @@ class AdminGroupsControllerTest extends GalleryControllerTestCase {
 
     function testDeleteAllUsersGroupFromText() {
 	global $gallery;
-	list ($ret, $id) = $gallery->getModuleParameter('core', 'id.allUserGroup');
+	list ($ret, $id) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.allUserGroup');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	list ($ret, $group) = $gallery->loadEntitiesById($id);
+	list ($ret, $group) = GalleryCoreApi::loadEntitiesById($id);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -188,12 +188,12 @@ class AdminGroupsControllerTest extends GalleryControllerTestCase {
 
     function testEditAllUsersGroupUsersFromText() {
 	global $gallery;
-	list ($ret, $id) = $gallery->getModuleParameter('core', 'id.allUserGroup');
+	list ($ret, $id) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.allUserGroup');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	list ($ret, $group) = $gallery->loadEntitiesById($id);
+	list ($ret, $group) = GalleryCoreApi::loadEntitiesById($id);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -255,7 +255,7 @@ class AdminGroupsControllerTest extends GalleryControllerTestCase {
     function _createGroup() {
 	global $gallery;
 	
-	list ($ret, $group) = GalleryFactory::newInstance('GalleryEntity', 'GalleryGroup');
+	list ($ret, $group) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryGroup');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -278,7 +278,7 @@ class AdminGroupsControllerTest extends GalleryControllerTestCase {
 
     function _deleteGroup($group) {
 	global $gallery;
-	$ret = $gallery->deleteEntityById($group->getId());
+	$ret = GalleryCoreApi::deleteEntityById($group->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

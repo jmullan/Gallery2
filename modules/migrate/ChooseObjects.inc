@@ -19,13 +19,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
+require_once(dirname(__FILE__) . '/classes/Gallery1DataParser.class');
+
 /**
  * @version $Revision$ $Date$
  * @package Migrate
  * @subpackage UserInterface
  * @author Jesse Mullan <jmullan@visi.com>
  */
-
 class ChooseObjectsController extends GalleryController {
     /**
      * @see GalleryController::handleRequest()
@@ -34,7 +36,7 @@ class ChooseObjectsController extends GalleryController {
         global $gallery;
 
         // Verify that active user is an admin
-        $ret = GalleryUserHelper::assertSiteAdministrator();
+        $ret = GalleryCoreApi::assertUserIsSiteAdministrator();
         if ($ret->isError()) {
             return array($ret->wrap(__FILE__, __LINE__), null);
         }
@@ -91,7 +93,7 @@ class ChooseObjectsView extends GalleryView {
 	}
 	    
 	foreach($allUsers as $uid => $userName) {
-	    list($ret, $testUser) = GalleryUserHelper::fetchUserByUsername($userName);
+	    list($ret, $testUser) = GalleryCoreApi::fetchUserByUsername($userName);
 	    if ($ret->isError() && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -126,20 +128,20 @@ class ChooseObjectsView extends GalleryView {
 	}
 
 	/* Get all possible destinations (where user has write permission) */
-        list ($ret, $rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
+        list ($ret, $rootId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
         if ($ret->isError()) {
             return array($ret->wrap(__FILE__, __LINE__), null);
         }
 
 	/* Get ids of all all albums where we can add new album items */
         list ($ret, $albumIds) =
-	    GalleryItemHelper::fetchAllItemIds('GalleryAlbumItem', 'core.addAlbumItem');
+	    GalleryCoreApi::fetchAllItemIds('GalleryAlbumItem', 'core.addAlbumItem');
         if ($ret->isError()) {
             return array($ret->wrap(__FILE__, __LINE__), null);
         }
 	
 	/* Load all the album entities */
-        list ($ret, $albums) = $gallery->loadEntitiesById($albumIds);
+        list ($ret, $albums) = GalleryCoreApi::loadEntitiesById($albumIds);
         if ($ret->isError()) {
             return array($ret->wrap(__FILE__, __LINE__), null);
         }

@@ -78,7 +78,7 @@ class AdminDeleteGroupControllerTest extends GalleryControllerTestCase {
     function testDeleteAllUsersGroup() {
 	global $gallery;
 
-	list ($ret, $groupId) = $gallery->getModuleParameter('core', 'id.allUserGroup');
+	list ($ret, $groupId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.allUserGroup');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -101,7 +101,7 @@ class AdminDeleteGroupControllerTest extends GalleryControllerTestCase {
     function testDeleteSiteAdminsGroup() {
 	global $gallery;
 
-	list ($ret, $groupId) = $gallery->getModuleParameter('core', 'id.adminGroup');
+	list ($ret, $groupId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -120,7 +120,7 @@ class AdminDeleteGroupControllerTest extends GalleryControllerTestCase {
     function _createGroup() {
 	global $gallery;
 	
-	list ($ret, $group) = GalleryFactory::newInstance('GalleryEntity', 'GalleryGroup');
+	list ($ret, $group) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryGroup');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -143,7 +143,7 @@ class AdminDeleteGroupControllerTest extends GalleryControllerTestCase {
 
     function _deleteGroup($group) {
 	global $gallery;
-	$ret = $gallery->deleteEntityById($group->getId());
+	$ret = GalleryCoreApi::deleteEntityById($group->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

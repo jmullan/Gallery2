@@ -44,7 +44,7 @@ class DeleteCommentController extends GalleryController {
 	list ($itemId, $commentId) = GalleryUtilities::getRequestVariables('itemId', 'commentId');
 
 	/* Make sure we have permission to delete a comment */
-	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'comment.delete');
+	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'comment.delete');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -53,7 +53,7 @@ class DeleteCommentController extends GalleryController {
 	$error = array();
 	if (isset($form['action']['delete'])) {
 	    /* Delete the comment */
-	    list ($ret, $comment) = $gallery->loadEntitiesById($commentId);
+	    list ($ret, $comment) = GalleryCoreApi::loadEntitiesById($commentId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -63,7 +63,7 @@ class DeleteCommentController extends GalleryController {
 		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
 	    }
 
-	    $ret = $gallery->deleteEntityById($comment->getId());
+	    $ret = GalleryCoreApi::deleteEntityById($comment->getId());
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -117,7 +117,7 @@ class DeleteCommentView extends GalleryView {
 	$commentId = GalleryUtilities::getRequestVariables('commentId');
 
 	/* Make sure we have permission to delete a comment */
-	$ret = GalleryUserHelper::assertHasItemPermission($item->getId(), 'comment.delete');
+	$ret = GalleryCoreApi::assertHasItemPermission($item->getId(), 'comment.delete');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -127,14 +127,14 @@ class DeleteCommentView extends GalleryView {
 	}
 	
 	/* Load the specific comment */
-	list ($ret, $comment) = $gallery->loadEntitiesById($commentId);
+	list ($ret, $comment) = GalleryCoreApi::loadEntitiesById($commentId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* Associate the commenter's info */
 	$commenterId = $comment->getCommenterId();
-	list ($ret, $commenter) = $gallery->loadEntitiesById($commenterId);
+	list ($ret, $commenter) = GalleryCoreApi::loadEntitiesById($commenterId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

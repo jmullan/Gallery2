@@ -45,7 +45,7 @@ class AddCommentController extends GalleryController {
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
 
 	/* Make sure we have permission to add a comment */
-	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'comment.add');
+	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'comment.add');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -65,7 +65,7 @@ class AddCommentController extends GalleryController {
 	    
 	    if (empty($error)) {
 		/* Add the comment */
-		list ($ret, $comment) = GalleryFactory::newInstance('GalleryEntity', 'GalleryComment');
+		list ($ret, $comment) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryComment');
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -153,7 +153,7 @@ class AddCommentView extends GalleryView {
 	}
 
 	/* Make sure we have permission to add a comment */
-	$ret = GalleryUserHelper::assertHasItemPermission($item->getId(), 'comment.add');
+	$ret = GalleryCoreApi::assertHasItemPermission($item->getId(), 'comment.add');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

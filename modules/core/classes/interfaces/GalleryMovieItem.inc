@@ -77,7 +77,6 @@ class GalleryMovieItem extends GalleryMovieItem_core {
      */
     function getMemberData() {
         $data = parent::getMemberData();
-        GalleryProfiler::start('modules.core.classes.GalleryPersistent::getMemberData');
     
 	if (isset($this->_linkedEntity)) {
 	    if (!isset($this->_linkedEntity->_width)) {
@@ -115,7 +114,6 @@ class GalleryMovieItem extends GalleryMovieItem_core {
 	    $data['duration'] = $this->_duration;
 	}
 	
-        GalleryProfiler::stop('modules.core.classes.GalleryPersistent::getMemberData');
         return $data;
     }
   

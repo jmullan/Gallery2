@@ -136,8 +136,7 @@ class GalleryDerivativeImage_core extends GalleryDerivative {
 	    
 	    $result = $searchResults->nextResult();
 	    if ($result[0] > 0) {
-		return GalleryStatus::error(ERROR_COLLISION,
-					    __FILE__, __LINE__);
+		return GalleryStatus::error(ERROR_COLLISION, __FILE__, __LINE__);
 	    }
 	}
 
@@ -173,7 +172,7 @@ class GalleryDerivativeImage_core extends GalleryDerivative {
 
 	/* Update our dimensions */
 	$mimeType = $this->getDerivativeMimeType();
-	list ($ret, $toolkit) = GalleryToolkitHelper::getToolkitByProperty($mimeType, 'dimensions');
+	list ($ret, $toolkit) = GalleryCoreApi::getToolkitByProperty($mimeType, 'dimensions');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -193,26 +192,6 @@ class GalleryDerivativeImage_core extends GalleryDerivative {
 	    $this->setWidth($dimensions[0]);
 	    $this->setHeight($dimensions[1]);
 	}
-
-	return GalleryStatus::success();
-    }
-
-    /**
-     * Break this derivative's dependencies
-     *
-     * This is used when the object's derivativeSource gets deleted
-     *
-     * @return object GalleryStatus a status code
-     */
-    function breakDerivativeDependency() {
-	$ret = parent::breakDerivativeDependency();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	/* We've got no dimensions any more */
-	$this->setWidth(0);
-	$this->setHeight(0);
 
 	return GalleryStatus::success();
     }

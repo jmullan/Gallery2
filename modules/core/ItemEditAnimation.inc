@@ -45,12 +45,12 @@ class ItemEditAnimationController extends GalleryController {
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
 
 	/* Make sure we have permission do edit this item */
-	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'core.edit');
+	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.edit');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	list ($ret, $item) = $gallery->loadEntitiesById($itemId);
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -73,7 +73,7 @@ class ItemEditAnimationController extends GalleryController {
 	    }
 
 	    if (empty($error)) {
-		list ($ret, $lock) = $gallery->acquireWriteLock($item->getId());
+		list ($ret, $lock) = GalleryCoreApi::acquireWriteLock($item->getId());
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -88,11 +88,11 @@ class ItemEditAnimationController extends GalleryController {
 		$item->setSerialNumber($form['serialNumber']);
 		$ret = $item->save();
 		if ($ret->isError()) {
-		    $gallery->releaseLocks($lock);
+		    GalleryCoreApi::releaseLocks($lock);
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-		$gallery->releaseLocks($lock);
+		GalleryCoreApi::releaseLocks($lock);
 
 		/* Figure out where to redirect upon success */
 		$redirect['view'] = 'core:ItemAdmin';
@@ -132,12 +132,12 @@ class ItemEditAnimationView extends GalleryView {
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
 
 	/* Make sure we have permission do edit this item */
-	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'core.edit');
+	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.edit');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	list ($ret, $item) = $gallery->loadEntitiesById($itemId);
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

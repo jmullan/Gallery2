@@ -38,7 +38,7 @@ class AdminSearchController extends GalleryController {
 	global $gallery;
 
 	/* Make sure we have adequate permissions */
-	$ret = GalleryUserHelper::assertSiteAdministrator();
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

@@ -41,13 +41,13 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
         global $gallery;
 
 	/* get id of root album */
-	list ($ret, $rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
+	list ($ret, $rootId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 	if ($ret->isError()) {
 	    print "<p><b>ERROR getting root id</b></p>";
 	    print $ret->getAsHtml();
 	}
 	/* Try to root album */
-	list ($ret, $rootObject) = $gallery->loadEntitiesById($rootId);
+	list ($ret, $rootObject) = GalleryCoreApi::loadEntitiesById($rootId);
 	if ($ret->isError()) {
 	    print "<p><b>ERROR loading root album</b></p>";
 	    print $ret->getAsHtml();	    
@@ -56,7 +56,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	/* create a new album instance - we need this to actually create an
 	 * album
 	 */
- 	list ($ret, $newAlbumInstance) = GalleryFactory::newInstance('GalleryEntity', 'GalleryAlbumItem');
+ 	list ($ret, $newAlbumInstance) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryAlbumItem');
 	if ($ret->isError()) {
 	    print "<p><b>ERROR creating new album instance</b></p>";
 	    print $ret->getAsHtml();
@@ -64,7 +64,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	
 		
 	/* Get a lock on the root album */
-	list ($ret, $phpunitMigrateLockIds[]) = $gallery->acquireReadLock($rootObject->getId());
+	list ($ret, $phpunitMigrateLockIds[]) = GalleryCoreApi::acquireReadLock($rootObject->getId());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -91,7 +91,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	}
 	$this->temporaryAlbumID = $newAlbumInstance->getId();
 
-	$ret = $gallery->releaseLocks($phpunitMigrateLockIds);
+	$ret = GalleryCoreApi::releaseLocks($phpunitMigrateLockIds);
 	if ($ret->isError()) {
 	    print "<p><b>ERROR releasing locks</b></p>";
 	    print $ret->getAsHtml();
@@ -102,16 +102,16 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
     function tearDown() {
         global $gallery;
 	/* Clean up our test user */
-	list ($ret, $user) = GalleryUserHelper::fetchUserByUsername('phpunit_foobar');
+	list ($ret, $user) = GalleryCoreApi::fetchUserByUsername('phpunit_foobar');
 	if ($ret->isSuccess()) {
-	    $ret = $gallery->deleteEntityById($user->getId());
+	    $ret = GalleryCoreApi::deleteEntityById($user->getId());
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
 	/* Clean up our test album */
 	
-	$ret = $gallery->deleteEntityById($this->temporaryAlbumID);
+	$ret = GalleryCoreApi::deleteEntityById($this->temporaryAlbumID);
 	if ($ret->isError()) {
 	    print "<p><b>ERROR deleting" . $this->temporaryAlbumID . "</b></p>";
 	    print $ret->getAsHtml();
@@ -139,7 +139,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 			    $results);
 
 	/* Verify the user exists */
-	list ($ret, $user) = GalleryUserHelper::fetchUserByUsername('phpunit_foobar');
+	list ($ret, $user) = GalleryCoreApi::fetchUserByUsername('phpunit_foobar');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

@@ -50,7 +50,7 @@ class LockTest extends GalleryTestCase {
     function tearDown() {
 	global $gallery;
 
-	$ret = $gallery->deleteEntityById($this->_parentAlbum->getId());
+	$ret = GalleryCoreApi::deleteEntityById($this->_parentAlbum->getId());
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -64,14 +64,14 @@ class LockTest extends GalleryTestCase {
 
 	$targetId = $gallery->getActiveUserId();
 	
-	list ($ret, $lockId) = $gallery->acquireWriteLock($targetId);
+	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($targetId);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->assert($gallery->isWriteLocked($targetId));
+	$this->assert(GalleryCoreApi::isWriteLocked($targetId));
 
-	$ret = $gallery->releaseLocks($lockId);
+	$ret = GalleryCoreApi::releaseLocks($lockId);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -82,16 +82,16 @@ class LockTest extends GalleryTestCase {
 
 	$ids = array($gallery->getActiveUserId(), $this->_getRootId());
 
-	list ($ret, $lockId) = $gallery->acquireWriteLock($ids);
+	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($ids);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	foreach ($ids as $id) {
-	    $this->assert($gallery->isWriteLocked($id));
+	    $this->assert(GalleryCoreApi::isWriteLocked($id));
 	}
 
-	$ret = $gallery->releaseLocks($lockId);
+	$ret = GalleryCoreApi::releaseLocks($lockId);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -102,14 +102,14 @@ class LockTest extends GalleryTestCase {
 
 	$targetId = $gallery->getActiveUserId();
 	
-	list ($ret, $lockId) = $gallery->acquireReadLock($targetId);
+	list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($targetId);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->assert($gallery->isReadLocked($targetId));
+	$this->assert(GalleryCoreApi::isReadLocked($targetId));
 
-	$ret = $gallery->releaseLocks($lockId);
+	$ret = GalleryCoreApi::releaseLocks($lockId);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -120,16 +120,16 @@ class LockTest extends GalleryTestCase {
 
 	$ids = array($gallery->getActiveUserId(), $this->_getRootId());
 
-	list ($ret, $lockId) = $gallery->acquireReadLock($ids);
+	list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($ids);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	foreach ($ids as $id) {
-	    $this->assert($gallery->isReadLocked($id));
+	    $this->assert(GalleryCoreApi::isReadLocked($id));
 	}
 
-	$ret = $gallery->releaseLocks($lockId);
+	$ret = GalleryCoreApi::releaseLocks($lockId);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -148,19 +148,19 @@ class LockTest extends GalleryTestCase {
 	    $parentId = $this->_album[$i]->getId();
 	}
 
-	list ($ret, $lockId) = $gallery->acquireReadLockParents($this->_album[2]->getId());
+	list ($ret, $lockId) = GalleryCoreApi::acquireReadLockParents($this->_album[2]->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	// Verify that they're all locked
-	$this->assert($gallery->isReadLocked($this->_album[1]->getId()));
-	$this->assert($gallery->isReadLocked($this->_album[0]->getId()));
-	$this->assert($gallery->isReadLocked($this->_parentAlbum->getId()));
-	$this->assert($gallery->isReadLocked($this->_getRootId()));
+	$this->assert(GalleryCoreApi::isReadLocked($this->_album[1]->getId()));
+	$this->assert(GalleryCoreApi::isReadLocked($this->_album[0]->getId()));
+	$this->assert(GalleryCoreApi::isReadLocked($this->_parentAlbum->getId()));
+	$this->assert(GalleryCoreApi::isReadLocked($this->_getRootId()));
 
 	// Release locks
-	$ret = $gallery->releaseLocks($lockId);
+	$ret = GalleryCoreApi::releaseLocks($lockId);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

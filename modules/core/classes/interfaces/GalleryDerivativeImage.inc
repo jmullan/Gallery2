@@ -72,7 +72,6 @@ class GalleryDerivativeImage extends GalleryDerivativeImage_core {
      */
     function getMemberData() {
         $data = parent::getMemberData();
-        GalleryProfiler::start('modules.core.classes.GalleryPersistent::getMemberData');
     
 	if (!isset($this->_width)) {
  	    $data['width'] = null;
@@ -86,7 +85,6 @@ class GalleryDerivativeImage extends GalleryDerivativeImage_core {
 	    $data['height'] = $this->_height;
 	}
 	
-        GalleryProfiler::stop('modules.core.classes.GalleryPersistent::getMemberData');
         return $data;
     }
   

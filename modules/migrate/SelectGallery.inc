@@ -19,12 +19,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
+require_once(dirname(__FILE__) . '/classes/Gallery1DataParser.class');
+
 /**
  * @version $Revision$ $Date$
  * @package Migrate
  * @subpackage UserInterface
  */
-
 class SelectGalleryController extends GalleryController {
     /**
      * @see GalleryController::handleRequest()
@@ -33,7 +35,7 @@ class SelectGalleryController extends GalleryController {
         global $gallery;
 
         // Verify that active user is an admin
-        $ret = GalleryUserHelper::assertSiteAdministrator();
+        $ret = GalleryCoreApi::assertUserIsSiteAdministrator();
         if ($ret->isError()) {
             return array($ret->wrap(__FILE__, __LINE__), null);
         }

@@ -40,14 +40,14 @@ class AdminImageMagickControllerTest extends GalleryControllerTestCase {
 	parent::setUp();
 
 	list ($ret, $this->_saveParameters['path']) =
-	    $gallery->getModuleParameter('imagemagick', 'path');
+	    GalleryCoreApi::getPluginParameter('module', 'imagemagick', 'path');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	
 	list ($ret, $this->_saveParameters['jpegQuality']) =
-	    $gallery->getModuleParameter('imagemagick', 'jpegQuality');
+	    GalleryCoreApi::getPluginParameter('module', 'imagemagick', 'jpegQuality');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -62,13 +62,13 @@ class AdminImageMagickControllerTest extends GalleryControllerTestCase {
 
 	$gallery->_platform = $this->_platform;
 	
-	$ret = $gallery->setModuleParameter('imagemagick', 'path', $this->_saveParameters['path']);
+	$ret = GalleryCoreApi::setPluginParameter('module', 'imagemagick', 'path', $this->_saveParameters['path']);
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	
-	$ret = $gallery->setModuleParameter('imagemagick', 'jpegQuality', $this->_saveParameters['jpegQuality']);
+	$ret = GalleryCoreApi::setPluginParameter('module', 'imagemagick', 'jpegQuality', $this->_saveParameters['jpegQuality']);
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -100,9 +100,9 @@ class AdminImageMagickControllerTest extends GalleryControllerTestCase {
 	
 	/* Verify the settings went in properly */
 	$this->assertEquals(array(GalleryStatus::success(), "${slash}validPath${slash}"),
-			    $gallery->getModuleParameter('imagemagick', 'path'));
+			    GalleryCoreApi::getPluginParameter('module', 'imagemagick', 'path'));
 	$this->assertEquals(array(GalleryStatus::success(), '12'),
-			    $gallery->getModuleParameter('imagemagick', 'jpegQuality'));
+			    GalleryCoreApi::getPluginParameter('module', 'imagemagick', 'jpegQuality'));
     }
 
     function testCancel() {

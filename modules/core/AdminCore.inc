@@ -41,13 +41,13 @@ class AdminCoreController extends GalleryController {
     function handleRequest($form) {
 	global $gallery;
 
-	$ret = GalleryUserHelper::assertSiteAdministrator();
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* Get the list of legal local server dirs */
-	list ($ret, $localServerDirs) = $gallery->getModuleParameter('core', 'uploadLocalServer.dirs');
+	list ($ret, $localServerDirs) = GalleryCoreApi::getPluginParameter('module', 'core', 'uploadLocalServer.dirs');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -70,7 +70,7 @@ class AdminCoreController extends GalleryController {
 			   'misc.markup') as $key) {
 		list ($outer, $inner) = split('\.', $key);
 		if (isset($form[$outer][$inner])) {
-		    $ret = $gallery->setModuleParameter('core', $key, $form[$outer][$inner]);
+		    $ret = GalleryCoreApi::setPluginParameter('module', 'core', $key, $form[$outer][$inner]);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
@@ -104,7 +104,7 @@ class AdminCoreController extends GalleryController {
 		    }
 		}
 		
-		$ret = $gallery->setModuleParameter('core', 'uploadLocalServer.dirs', join(',', $localServerDirList));
+		$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'uploadLocalServer.dirs', join(',', $localServerDirList));
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -127,7 +127,7 @@ class AdminCoreController extends GalleryController {
 			unset($localServerDirList[$i]);
 		    }
 		}
-		$ret = $gallery->setModuleParameter('core', 'uploadLocalServer.dirs', join(',', $localServerDirList));
+		$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'uploadLocalServer.dirs', join(',', $localServerDirList));
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -166,7 +166,7 @@ class AdminCoreView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	global $gallery;
 	
-	$ret = GalleryUserHelper::assertSiteAdministrator();
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -187,7 +187,7 @@ class AdminCoreView extends GalleryView {
 			   'misc.markup') as $key) {
 
 		list ($ret, $value) =
-		    $gallery->getModuleParameter('core', $key);
+		    GalleryCoreApi::getPluginParameter('module', 'core', $key);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -199,13 +199,13 @@ class AdminCoreView extends GalleryView {
 	    $form['uploadLocalServer']['newDir'] = '';
 	}
 
-	list ($ret, $module) = $gallery->loadModule('core');
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* Get the list of legal local server dirs */
-	list ($ret, $localServerDirs) = $gallery->getModuleParameter('core', 'uploadLocalServer.dirs');
+	list ($ret, $localServerDirs) = GalleryCoreApi::getPluginParameter('module', 'core', 'uploadLocalServer.dirs');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -235,7 +235,7 @@ class AdminCoreView extends GalleryView {
 	$platform = $gallery->getPlatform();
 
 	/* Set up our language selection list */
-	list ($ret, $module) = $gallery->loadModule('core');
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -295,19 +295,19 @@ class AdminCoreView extends GalleryView {
 				    'bbcode' => $module->translate('BBCode'),
 				    'html' => $module->translate('Raw HTML'));
 
-	list ($ret, $rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
+	list ($ret, $rootId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	list ($ret, $layoutStatusList) = GalleryPluginMap::getPluginStatus('layout');
+	list ($ret, $layoutStatusList) = GalleryCoreApi::getPluginStatus('layout');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$layoutList = array();
 	foreach (array_keys($layoutStatusList) as $layoutId) {
-	    list ($ret, $layout) = GalleryPluginMap::loadPlugin('layout', $layoutId);
+	    list ($ret, $layout) = GalleryCoreApi::loadPlugin('layout', $layoutId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }

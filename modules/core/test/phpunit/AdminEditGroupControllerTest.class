@@ -115,7 +115,7 @@ class AdminEditGroupControllerTest extends GalleryControllerTestCase {
     function _createGroup() {
 	global $gallery;
 	
-	list ($ret, $group) = GalleryFactory::newInstance('GalleryEntity', 'GalleryGroup');
+	list ($ret, $group) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryGroup');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -138,7 +138,7 @@ class AdminEditGroupControllerTest extends GalleryControllerTestCase {
 
     function _deleteGroup($group) {
 	global $gallery;
-	$ret = $gallery->deleteEntityById($group->getId());
+	$ret = GalleryCoreApi::deleteEntityById($group->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

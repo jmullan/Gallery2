@@ -47,7 +47,7 @@ class ItemReorderController extends GalleryController {
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
 
 	/* Check permissions */
-	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'core.edit');
+	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.edit');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -76,7 +76,7 @@ class ItemReorderController extends GalleryController {
 	    if (empty($error)) {
 		$selectedId = $form['selectedId'];
 		$targetId = $form['targetId'];
-		list ($ret, $entities) = $gallery->loadEntitiesById(array($selectedId, $targetId));
+		list ($ret, $entities) = GalleryCoreApi::loadEntitiesById(array($selectedId, $targetId));
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -95,12 +95,12 @@ class ItemReorderController extends GalleryController {
 		     * this after every rebalance, too)
 		     */
 		    list ($ret, $orderWeights) =
-			    GalleryItemAttributesMap::fetchOrderWeights(array($selectedId, $targetId));
+			GalleryCoreApi::fetchItemOrderWeights(array($selectedId, $targetId));
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 		    
-		    list ($ret, $next) = GalleryItemAttributesMap::fetchNextWeight($targetId,
+		    list ($ret, $next) = GalleryCoreApi::fetchNextItemWeight($targetId,
                         $before ? LOWER_WEIGHT : HIGHER_WEIGHT);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
@@ -129,14 +129,14 @@ class ItemReorderController extends GalleryController {
 		    }
 
 		    /* A delta of 0 means that we don't have room, so rebalance */
-		    $ret = GalleryItemAttributesMap::rebalanceChildOrderWeights($itemId);
+		    $ret = GalleryCoreApi::rebalanceChildOrderWeights($itemId);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 		}
 		$newWeight = $orderWeights[$targetId] + $delta;
 		
-		$ret = GalleryItemAttributesMap::setOrderWeight($selectedId, $newWeight);
+		$ret = GalleryCoreApi::setItemOrderWeight($selectedId, $newWeight);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -187,7 +187,7 @@ class ItemReorderView extends GalleryView {
 	    $form['formName'] = 'ItemReorder';
         }
 
-        list ($ret, $item) = $gallery->loadEntitiesById($itemId);
+        list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
         if ($ret->isError()) {
             return array($ret->wrap(__FILE__, __LINE__), null);
         }
@@ -206,7 +206,7 @@ class ItemReorderView extends GalleryView {
 	    }
 
 	    /* Load all the peers */
-	    list ($ret, $peerItems) = $gallery->loadEntitiesById($peerIds);
+	    list ($ret, $peerItems) = GalleryCoreApi::loadEntitiesById($peerIds);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }

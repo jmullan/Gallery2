@@ -145,7 +145,7 @@ class FfmpegToolkitTestPlatform {
 
     function init() {
 	global $gallery;
-	list ($ret, $this->_ffmpegPath) = $gallery->getModuleParameter('ffmpeg', 'path');
+	list ($ret, $this->_ffmpegPath) = GalleryCoreApi::getPluginParameter('module', 'ffmpeg', 'path');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -217,7 +217,7 @@ class FfmpegToolkitTestPlatform {
 
     function is_dir($path) {
 	global $gallery;
-	list ($ret, $ffmpegPath) = $gallery->getModuleParameter('ffmpeg', 'path');
+	list ($ret, $ffmpegPath) = GalleryCoreApi::getPluginParameter('module', 'ffmpeg', 'path');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

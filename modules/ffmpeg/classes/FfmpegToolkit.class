@@ -176,7 +176,7 @@ class FfmpegToolkit extends GalleryToolkit {
      */
     function _ffmpeg($sourceFilename, $args) {
 	global $gallery;
-	list ($ret, $ffmpegPath) = $gallery->getModuleParameter('ffmpeg', 'path');
+	list ($ret, $ffmpegPath) = GalleryCoreApi::getPluginParameter('module', 'ffmpeg', 'path');
 	$platform = $gallery->getPlatform();
 
 	/*

@@ -26,14 +26,14 @@
  */
 
 /**
- * A helper class for GalleryGroups
+ * A helper class for GalleryUsers
  *
- * Utility functions useful in managing GalleryGroups
+ * Utility functions useful in managing GalleryUsers
  *
  * @package GalleryCore
  * @subpackage Classes
  */
-class GalleryGroupHelper {
+class GalleryUserHelper_medium {
 	
     /*
      * ****************************************
@@ -42,41 +42,41 @@ class GalleryGroupHelper {
      */
 
     /**
-     * Return a map of groupNames => groupids
+     * Return a map of userNames => userids
      *
-     * You can specify how many groupnames to list, and where the windows is in
-     * the list of all groups.
+     * You can specify how many usernames to list, and where the windows is in
+     * the list of all users.
      *
-     * @param int [optional] the number of groupnames desired
+     * @param int [optional] the number of usernames desired
      * @param int [optional] the start of the range
      * @param string [optional] a substring to match 
      * @return array object GalleryStatus a status code
-     *               array (groupname, groupname, ...)
+     *               array (username, username, ...)
      * @static
      */
-    function fetchGroupnames($count=null, $offset=null, $substring=null) {
+    function fetchUsernames($count=null, $offset=null, $substring=null) {
 	global $gallery;
 
 	$data = array();
 	$query = '
         SELECT
-          [GalleryGroup::id],
-          [GalleryGroup::groupName]
+          [GalleryUser::id],
+          [GalleryUser::userName]
         FROM
-          [GalleryGroup]
+          [GalleryUser]
         ';
 
 	if (!empty($substring)) {
 	    $query .= '
         WHERE
-	  [GalleryGroup::groupName] LIKE ?
+	  [GalleryUser::userName] LIKE ?
             ';
 	    $data[] = "%$substring%";
 	}
 
 	$query .= '
         ORDER BY
-          [GalleryGroup::groupName] ASC
+          [GalleryUser::userName] ASC
         ';
 	
 	list ($ret, $searchResults) =
@@ -88,38 +88,35 @@ class GalleryGroupHelper {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$groupnames = array();
+	$usernames = array();
 	while ($result = $searchResults->nextResult()) {
-	    $groupnames[$result[0]] = $result[1];
+	    $usernames[$result[0]] = $result[1];
 	}
 
-	return array(GalleryStatus::success(), $groupnames);
+	return array(GalleryStatus::success(), $usernames);
     }
 
     /**
-     * Return a map of groupNames => groupids
+     * Return the total umber of users
      *
-     * You can specify how many groupnames to list, and where the windows is in
-     * the list of all groups.
-     *
-     * @param string the substring to match
+     * @param string an optional substring to match against the username
      * @static
      */
-    function fetchGroupCount($substring=null) {
+    function fetchUserCount($substring=null) {
 	global $gallery;
 
 	$data = array();
 	$query = '
         SELECT
-          COUNT([GalleryGroup::id])
+          COUNT([GalleryUser::id])
         FROM
-          [GalleryGroup]
+          [GalleryUser]
         ';
 
 	if (!empty($substring)) {
 	    $query .= '
         WHERE
-	  [GalleryGroup::groupName] LIKE ?
+	  [GalleryUser::userName] LIKE ?
             ';
 	    $data[] = "%$substring%";
 	}
@@ -129,34 +126,34 @@ class GalleryGroupHelper {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$groupnames = array();
+	$usernames = array();
 	$result = $searchResults->nextResult();
 	return array(GalleryStatus::success(), (int)$result[0]);
     }
 
     /**
-     * Return a map of groupNames => groupids
+     * Return a map of userNames => userids
      *
-     * You can specify how many groupnames to list, and where the windows is in
-     * the list of all groups.
+     * You can specify how many usernames to list, and where the windows is in
+     * the list of all users.
      *
-     * @param string the groupname
+     * @param string the username
      * @return array object GalleryStatus a status code
-     *               object GalleryGroup a group
+     *               object GalleryUser a user
      * @static
      */
-    function fetchGroupByGroupName($groupName=null) {
+    function fetchUserByUserName($userName=null) {
 	global $gallery;
 
         $query = '
         SELECT
-          [GalleryGroup::id]
+          [GalleryUser::id]
         FROM
-          [GalleryGroup]
+          [GalleryUser]
         WHERE
-          [GalleryGroup::groupName] = ?
+          [GalleryUser::userName] = ?
         ';
-	list ($ret, $searchResults) = $gallery->search($query, array($groupName));
+	list ($ret, $searchResults) = $gallery->search($query, array($userName));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -166,14 +163,37 @@ class GalleryGroupHelper {
 	} else {
 	    $result = $searchResults->nextResult();
 	    $id = $result[0];
-	    list ($ret, $group) = $gallery->loadEntitiesById($id);
+	    list ($ret, $user) = GalleryCoreApi::loadEntitiesById($id);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    return array(GalleryStatus::success(), $group);
+	    return array(GalleryStatus::success(), $user);
 	}
     }
-    
+
+    /**
+     * Assert that the active user is a site administrator
+     *
+     * @return object GalleryStatus success if the user is an administrator
+     *                              ERROR_PERMISSION_DENIED if not.
+     * @static
+     */
+    function assertSiteAdministrator() {
+	global $gallery;
+
+	/* Make sure we have adequate permissions */
+	list ($ret, $inGroup) = GalleryCoreApi::isUserInSiteAdminGroup();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if (!$inGroup) {
+	    return GalleryStatus::error(ERROR_PERMISSION_DENIED,
+					__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
 }
 ?>

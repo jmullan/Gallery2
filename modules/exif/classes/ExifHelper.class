@@ -105,6 +105,7 @@ class ExifHelper {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
 
+	require_once(dirname(__FILE__) . '/ExifPropertiesMap.class');
 	$ret = ExifPropertiesMap::setProperties($viewMode, $properties);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -137,6 +138,7 @@ class ExifHelper {
 	}
 
 	$results = array();
+	require_once(dirname(__FILE__) . '/ExifPropertiesMap.class');
 	list ($ret, $properties) = ExifPropertiesMap::getProperties($viewMode);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);

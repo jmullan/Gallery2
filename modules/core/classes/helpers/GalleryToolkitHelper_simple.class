@@ -1,0 +1,154 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * This is a helper class that provides an interface to the GalleryToolkit
+ * api.  Modules that implement a GalleryToolkit interface can register their
+ * various operations and properties using this class, and then classes that
+ * want to use a toolkit operation or property can locate the appropriate
+ * toolkit by operation/property and mime type.
+ *
+ * @package GalleryCore
+ * @subpackage Classes
+ * @abstract
+ */
+class GalleryToolkitHelper_simple {
+
+    /**
+     * Get a toolkit that can perform the given operation
+     *
+     * @access public
+     * @static
+     * @param string a mime type
+     * @param string the operation name
+     * @return array object GalleryStatus a status code
+     *               object GalleryToolkit a toolkit
+     *               string a result mime type
+     * @todo use priorities for choosing the correct toolkit
+     */
+    function getToolkitByOperation($mimeType, $operationName) {
+	global $gallery;
+
+	$cacheKey = "GalleryToolkitHelper::getToolkitByOperation($mimeType, $operationName)";
+	if (!GalleryDataCache::containsKey($cacheKey)) {
+	    $query = '
+            SELECT
+              [GalleryToolkitOperationMimeTypeMap::toolkitId],
+              [GalleryToolkitOperationMap::outputMimeType]
+            FROM
+              [GalleryToolkitOperationMap],
+              [GalleryToolkitOperationMimeTypeMap]
+            WHERE
+              [GalleryToolkitOperationMap::name] = [GalleryToolkitOperationMimeTypeMap::operationName]
+              AND
+              [GalleryToolkitOperationMimeTypeMap::mimeType] = ?
+              AND
+              [GalleryToolkitOperationMap::name] = ?
+            ';
+
+	    list ($ret, $searchResults) = $gallery->search($query, array($mimeType, $operationName));
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    $toolkit = null;
+	    $outputMimeType = null;
+	    if ($searchResults->resultCount() > 0) {
+		$result = $searchResults->nextResult();
+
+		$toolkitId = $result[0];
+		$outputMimeType = empty($result[1]) ? $mimeType : $result[1];
+
+		list ($ret, $toolkit) = 
+		    GalleryCoreApi::newFactoryInstanceById('GalleryToolkit', $toolkitId);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	    }
+	    GalleryDataCache::put($cacheKey, array($toolkit, $outputMimeType));
+	} else {
+	    list ($toolkit, $outputMimeType) = GalleryDataCache::get($cacheKey);
+	}
+
+	return array(GalleryStatus::success(), $toolkit, $outputMimeType);
+    }
+
+    /**
+     * Get a toolkit that can retrieve the given property
+     *
+     * @access public
+     * @static
+     * @param string a mime type
+     * @param string the property name
+     * @return array object GalleryStatus a status code
+     *               object GalleryToolkit a toolkit
+     * @todo use priorties for choosing the correct toolkit
+     */
+    function getToolkitByProperty($mimeType, $propertyName) {
+	global $gallery;
+
+	$cacheKey = "GalleryToolkitHelper::getToolkitByProperty($mimeType, $propertyName)";
+	if (!GalleryDataCache::containsKey($cacheKey)) {
+	    $query = '
+            SELECT
+              [GalleryToolkitPropertyMimeTypeMap::toolkitId]
+            FROM
+              [GalleryToolkitPropertyMap],
+              [GalleryToolkitPropertyMimeTypeMap]
+            WHERE
+              [GalleryToolkitPropertyMap::name] = [GalleryToolkitPropertyMimeTypeMap::propertyName]
+              AND
+              [GalleryToolkitPropertyMimeTypeMap::mimeType] = ?
+              AND
+              [GalleryToolkitPropertyMap::name] = ?
+            ';
+
+	    list ($ret, $searchResults) =
+		$gallery->search($query, array($mimeType, $propertyName));
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    $toolkit = null;
+	    if ($searchResults->resultCount() > 0) {
+		$result = $searchResults->nextResult();
+		
+		list ($ret, $toolkit) = 
+		    GalleryCoreApi::newFactoryInstanceById('GalleryToolkit', $result[0]);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	    }
+	    GalleryDataCache::put($cacheKey, $toolkit);
+	} else {
+	    $toolkit = GalleryDataCache::get($cacheKey);
+	}
+
+	return array(GalleryStatus::success(), $toolkit);
+    }
+}
+?>

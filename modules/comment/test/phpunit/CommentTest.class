@@ -55,7 +55,7 @@ class CommentTest extends GalleryTestCase {
 	/* Create a few comments */
 	for ($i = 0; $i < 3; $i++) {
 	    list ($ret, $this->_comment[$i]) =
-		GalleryFactory::newInstance('GalleryEntity', 'GalleryComment');
+		GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryComment');
 	    if ($ret->isError()) {
 		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -83,7 +83,7 @@ class CommentTest extends GalleryTestCase {
 	
 	parent::tearDown();
 
-	$ret = $gallery->deleteEntityById($this->_item->getId());
+	$ret = GalleryCoreApi::deleteEntityById($this->_item->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -113,7 +113,7 @@ class CommentTest extends GalleryTestCase {
 	global $gallery;
 	
 	/* Create a comment */
-	list ($ret, $comment) = GalleryFactory::newInstance('GalleryEntity', 'GalleryComment');
+	list ($ret, $comment) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryComment');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -129,7 +129,7 @@ class CommentTest extends GalleryTestCase {
 	}
 
 	/* Modify it */
-	list ($ret, $lockId) = $gallery->acquireWriteLock($comment->getId());
+	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($comment->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -140,13 +140,13 @@ class CommentTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$ret = $gallery->releaseLocks($lockId);
+	$ret = GalleryCoreApi::releaseLocks($lockId);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* Delete it */
-	$ret = $gallery->deleteEntityById($comment->getId());
+	$ret = GalleryCoreApi::deleteEntityById($comment->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

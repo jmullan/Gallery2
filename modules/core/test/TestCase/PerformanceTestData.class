@@ -27,12 +27,12 @@ class PerformanceTestDataTestCase extends TestCase {
     function testStart() {
 	global $gallery;
 	
-	list ($ret, $rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
+	list ($ret, $rootId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	list ($ret, $album) = GalleryFactory::newInstance('GalleryEntity', 'GalleryAlbumItem');
+	list ($ret, $album) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryAlbumItem');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -41,7 +41,7 @@ class PerformanceTestDataTestCase extends TestCase {
 	    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
 	}
 
-	list ($ret, $lockIds[]) = $gallery->acquireReadLock($rootId);
+	list ($ret, $lockIds[]) = GalleryCoreApi::acquireReadLock($rootId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -63,14 +63,14 @@ class PerformanceTestDataTestCase extends TestCase {
 
 	/* Leggo of our locks */
 	if (isset($lockIds)) {
-	    $ret = $gallery->releaseLocks($lockIds);
+	    $ret = GalleryCoreApi::releaseLocks($lockIds);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    unset($lockIds);
 	}
 
-	list ($ret, $lockIds[]) = $gallery->acquireWriteLock($album->getId());
+	list ($ret, $lockIds[]) = GalleryCoreApi::acquireWriteLock($album->getId());
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -79,7 +79,7 @@ class PerformanceTestDataTestCase extends TestCase {
 	$mimeType = 'image/jpeg';
 	for ($i = 0; $i < 27; $i++) {
 	    list ($ret, $item) =
-		GalleryItemHelper::addItemToAlbum($imageFile,
+		GalleryCoreApi::addItemToAlbum($imageFile,
 						  "image-$i",
 						  "test image $i",
 						  "summary for test image $i",
@@ -93,7 +93,7 @@ class PerformanceTestDataTestCase extends TestCase {
 
 	/* Leggo of our locks */
 	if (isset($lockIds)) {
-	    $ret = $gallery->releaseLocks($lockIds);
+	    $ret = GalleryCoreApi::releaseLocks($lockIds);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }

@@ -103,22 +103,6 @@ class Gallery {
     var $_eventListeners;
 
     /**
-     * The current GalleryGraphics
-     *
-     * @var object GalleryGraphics $_graphics
-     * @access private
-     */
-    var $_graphics;
-
-    /**
-     * A list of all the locks that have been acquired during this request
-     *
-     * @var array $_locks
-     * @access private
-     */
-    var $_locks;
-
-    /**
      * An instance of the GalleryPlatform class
      *
      * @var object GalleryPlatform $_platform
@@ -195,7 +179,6 @@ class Gallery {
      */
     function Gallery() {
 	$this->reset();
-	$this->_locks = array();
 	$this->_activeUserId = null;
 	    
 	/* Set up a shutdown function to release any hanging locks. */
@@ -213,174 +196,15 @@ class Gallery {
     }
 
     /**
-     * Load the GalleryEntities with the ids specified
-     *
-     * @param mixed the ids (or id) of the GalleryEntities to load
-     * @return array object GalleryStatus a status code,
-     *               mixed one GalleryEntity or an array of GalleryEntities
-     */
-    function loadEntitiesById($ids) {
-	GalleryProfiler::start('modules.core.classes.Gallery::loadEntitiesById');
-
-	$this->guaranteeTimeLimit(5);
-	    
-	if (empty($ids)) {
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
-	}
-
-	if (is_array($ids)) {
-	    $returnArray = true;
-	} else {
-	    $returnArray = false;
-	    $ids = array($ids);
-	}
-
-	/* Grab what we can from the cache and make up a list of what's missing */
-	$cached = array();
-	$missing = array();
-	foreach ($ids as $id) {
-	    if (GalleryDataCache::containsKey("Gallery::loadEntitiesById($id)")) {
-		$cached[$id] = GalleryDataCache::get("Gallery::loadEntitiesById($id)");
-	    } else {
-		$missing[] = $id;
-	    }
-	}
-
-	if (!empty($missing)) {
-	    /* Get our storage object */
-	    $storage = $this->getStorage();
-	    
-	    /* Load the entities from our persistent store */
-	    list ($ret, $missing) = $storage->loadEntities($missing);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	}
-
-	/* Move the new entities into the cache */
-	foreach ($missing as $entity) {
-	    $id = $entity->getId();
-	    GalleryDataCache::put("Gallery::loadEntitiesById($id)", $entity);
-	    $cached[$id] = $entity;
-	}
-
-	/* Build up the results from the cache */
-	$results = array();
-	foreach ($ids as $id) {
-	    $results[] = $cached[$id];
-	}
-	
-	GalleryProfiler::stop('modules.core.classes.Gallery::loadEntitiesById');
-
-	if (!$returnArray) {
-	    $results = $results[0];
-	}
-
-	return array(GalleryStatus::success(), $results);
-    }
-
-    /**
-     * Delete the entity with the given id 
-     *
-     * @param int the id of a GalleryEntity to delete
-     * @return object GalleryStatus a status code 
-     */
-    function deleteEntityById($id) {
-	GalleryProfiler::start('modules.core.classes.Gallery::deleteEntityById');
-
-	if (empty($id)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-	$lockIds = array();
-
-	/* Don't write lock it if it's already locked somewhere else */
-	if (!$this->isWriteLocked($id)) {
-	    list ($ret, $lockIds[]) = $this->acquireWriteLock($id);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-	}
-	
-	list ($ret, $entity) = $this->loadEntitiesById($id);
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	if (GalleryUtilities::isA($entity, 'GalleryChildEntity')) {
-	    list ($ret, $lockIds[]) = $this->acquireReadLockParents($id);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-	}
-
-	/* If this item has links to it, make one of those links the master */
-	list ($ret, $linkedIds) = GalleryItemHelper::fetchEntitiesLinkedTo($id);
-	if ($ret->isError()) {
-	    $this->releaseLocks($lockIds);
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	if (!empty($linkedIds)) {
-	    /* Lock all of the linked items */
-	    list ($ret, $lockIds[]) = $this->acquireWriteLock($linkedIds);
-	    if ($ret->isError()) {
-		$this->releaseLocks($lockIds);
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-
-	    /* Make the first link the master, and point the rest at it */
-	    list ($ret, $linkedEntities) = $this->loadEntitiesById($linkedIds);
-
-	    $ret = $linkedEntities[0]->detachLink();
-	    if ($ret->isError()) {
-		$this->releaseLocks($lockIds);
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-
-	    $ret = $linkedEntities[0]->save();
-	    if ($ret->isError()) {
-		$this->releaseLocks($lockIds);
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-	    for ($i = 1; $i < sizeof($linkedEntities); $i++) {
-		$linkedEntities[$i]->setLinkId($linkedEntities[0]->getId());
-		$linkedEntities[$i]->setLinkedEntity($linkedEntities[0]);
-		$ret = $linkedEntities[$i]->save();
-		if ($ret->isError()) {
-		    $this->releaseLocks($lockIds);
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
-	    }
-	}
-
-	$ret = $entity->delete();
-	if ($ret->isError()) {
-	    $this->releaseLocks($lockIds);
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-	
-	$ret = $this->releaseLocks($lockIds);
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	GalleryProfiler::stop('modules.core.classes.Gallery::deleteEntityById');
-	return GalleryStatus::success();
-    }
-
-    /**
      * @see GalleryStorage::search()
      */
     function search($query, $data=array(), $options=array()) {
-	GalleryProfiler::start('modules.core.classes.Gallery::search');
-
 	$storage = $this->getStorage();
 	list ($ret, $results) = $storage->search($query, $data, $options);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	GalleryProfiler::stop('modules.core.classes.Gallery::search');
 	return array(GalleryStatus::success(), $results);
     }
 
@@ -423,7 +247,7 @@ class Gallery {
      */
     function getActiveUser() {
 	if (empty($this->_activeUser)) {
-	    list ($ret, $user) = $this->loadEntitiesById($this->getActiveUserId());
+	    list ($ret, $user) = GalleryCoreApi::loadEntitiesById($this->getActiveUserId());
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -467,8 +291,6 @@ class Gallery {
      * @return object GalleryStatus a status code
      */
     function initSession() {
-	GalleryProfiler::start('modules.core.classes.Gallery::initSession');
-
 	if (empty($this->_session)) {
 	    $this->_session = new GallerySession();
 	    $ret = $this->_session->init();
@@ -477,7 +299,6 @@ class Gallery {
 	    }
 	}
 
-	GalleryProfiler::stop('modules.core.classes.Gallery::initSession');
 	return GalleryStatus::success();
     }
 
@@ -509,7 +330,7 @@ class Gallery {
 
 	    foreach (array($platformType, '*') as $type) {
 		list ($ret, $this->_platform) =
-		    GalleryFactory::newInstanceByHint('GalleryPlatform', $type);
+		    GalleryCoreApi::newFactoryInstanceByHint('GalleryPlatform', $type);
 
 		/*
 		 * The platform factory should never fail.  It's highly
@@ -537,259 +358,6 @@ class Gallery {
     }
 
     /**
-     * Read Lock one or more objects
-     *
-     * @access public
-     * @param array ids to lock
-     * @param integer how long to wait for the lock before giving up
-     * @return array object GalleryStatus a status code
-     *               int the lock id
-     */
-    function acquireReadLock($ids, $timeout=10) {
-
-	GalleryProfiler::start('modules.core.classes.Gallery::acquireReadLock');
-
-	$storage = $this->getStorage();
-	
-	list ($ret, $lock) =
-	    $storage->acquireReadLock($ids, $timeout);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	$lockId = $lock->getId();
-	$this->_locks[$lockId] = $lock;
-
-	GalleryProfiler::stop('modules.core.classes.Gallery::acquireReadLock');
-
-	return array($ret->wrap(__FILE__, __LINE__), $lockId);
-    }
-
-    /**
-     * Acquire read locks on all the parents of this id.  This is useful when
-     * we're going to do a filesystem related operation and we want to make
-     * sure that the tree does not change out from underneath us.
-     *
-     * @access public
-     * @param integer an id to lock
-     * @param integer how long to wait for the lock before giving up
-     * @return array object GalleryStatus a status code
-     *               object GalleryLock a lock
-     */
-    function acquireReadLockParents($id, $timeout=10) {
-	global $gallery;
-
-	$storage = $this->getStorage();
-
-	/* Get the parent entity id */
-	$query = '
-        SELECT
-          [GalleryChildEntity::parentId]
-        FROM
-          [GalleryChildEntity]
-        WHERE
-          [GalleryChildEntity::id] = ?
-        ';
-
-	list ($ret, $searchResults) = $gallery->search($query, array($id));
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	
-	if ($searchResults->resultCount() == 0) {
-	    /* This should never happen! */
-	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
-	}
-	
-	/* Extract the parent id */
-	while ($result = $searchResults->nextResult()) {
-	    $parentId = $result[0];
-	}
-	
-	if ($parentId == null) {
-	    
-	    /* No parent -- we're at the root */
-	    return array(GalleryStatus::success(), null);
-	}
-	
-	/* Don't both read locking if we already have a read or write lock. */
-	if (!($this->isWriteLocked($parentId) || $this->isReadLocked($parentId))) {
-	    
-	    /* Read lock the parent */
-	    list ($ret, $lock1) = $this->acquireReadLock($parentId, $timeout);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	}
-	
-	/* Then lock all ancestors of the parent */
-	list ($ret, $lock2) = $this->acquireReadLockParents($parentId, $timeout);
-	if ($ret->isError()) {
-	    $this->releaseLocks($lock1);
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	/* Merge the locks down to a single lock. */
-	if (empty($lock1) && empty($lock2)) {
-	    $lockId = null;
-	} else if (empty($lock1) && !empty($lock2)) {
-	    $lockId = $lock2;
-	} else if (!empty($lock1) && empty($lock2)) {
-	    $lockId = $lock1;
-	} else {
-	    $this->_locks[$lock1]->merge($this->_locks[$lock2]);
-	    unset($this->_locks[$lock2]);
-	    $lockId = $lock1;
-	}
-
-	return array(GalleryStatus::success(), $lockId);
-    }
-
-    /**
-     * Return true if the given id is read locked or write locked.
-     *
-     * @access public
-     * @param int an entity id
-     * @return boolean true if the entity is read locked
-     */
-    function isReadLocked($id) {
-	foreach (array_keys($this->_locks) as $lockId) {
-	    $lock =& $this->_locks[$lockId];
-
-	    if ($lock->getLockType() != LOCK_READ && $lock->getLockType() != LOCK_WRITE) {
-		continue;
-	    }
-
-	    $ids = $lock->getEntityIds();
-	    if (in_array($id, $ids)) {
-		return true;
-	    }
-	}
-
-	return false;
-    }
-
-    /**
-     * Write lock one or more objects
-     *
-     * @access public
-     * @param array ids to lock
-     * @param integer how long to wait for the lock before giving up
-     * @return array object GalleryStatus a status code
-     *               int the lock id
-     */
-    function acquireWriteLock($ids, $timeout=10) {
-
-	$storage = $this->getStorage();
-	list ($ret, $lock) = $storage->acquireWriteLock($ids, $timeout);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	$lockId = $lock->getId();
-	$this->_locks[$lockId] = $lock;
-	return array(GalleryStatus::success(), $lockId);
-    }
-
-    /**
-     * Return true if the given id is write locked
-     *
-     * @access public
-     * @param int an entity id
-     * @return boolean true if the entity is write locked
-     */
-    function isWriteLocked($id) {
-
-	foreach (array_keys($this->_locks) as $lockId) {
-	    $lock =& $this->_locks[$lockId];
-
-	    if ($lock->getLockType() != LOCK_WRITE) {
-		continue;
-	    }
-
-	    $ids = $lock->getEntityIds();
-	    if (in_array($id, $ids)) {
-		return true;
-	    }
-	}
-
-	return false;
-    }
-
-    /**
-     * Release the given lock(s)
-     *
-     * @param array a list of lock ids, or a single lock id
-     * @return object GalleryStatus a status code
-     */
-    function releaseLocks($lockIds) {
-	if (!is_array($lockIds)) {
-	    $lockIds = array($lockIds);
-	}
-
-	/* Check all parameters before starting to release locks */
-	foreach ($lockIds as $lockId) {
-	    if (empty($lockId)) {
-		continue;
-	    }
-	    
-	    if (!isset($this->_locks[$lockId])) {
-		return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	    }
-	}
-
-	/* Now release all locks */
-	foreach ($lockIds as $lockId) {
-	    if (empty($lockId)) {
-		continue;
-	    }
-	    
-	    $this->guaranteeTimeLimit(5);
-	    $ret = $this->_locks[$lockId]->release();
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-	    unset($this->_locks[$lockId]);
-	}
-
-	return GalleryStatus::success();
-    }
-
-    /**
-     * Let go of all of our locks.  We expect to call this from within the
-     * shutdown routine so allow for the fact that we don't want to halt on the
-     * first failure.
-     *
-     * @param string halt after the first failure?  default: no
-     * @return object GalleryStatus a status code
-     * @access private
-     */
-    function _releaseAllLocks($haltOnFailure=false) {
-	/* Release any hanging locks */
-	$errorRet = null;
-	foreach ($this->_locks as $lock) {
-	    $this->guaranteeTimeLimit(5);
-	    if ($lock->isLocked()) {
-		/* Bitch at the developer! */
-		$this->debug('Lock id ' . $lock->getId() . ' was left hanging!');
-		$ret = $lock->release();
-		if ($ret->isError()) {
-		    $errorRet = $ret->wrap(__FILE__, __LINE__);
-		    if ($haltOnFailure) {
-			return $ret->wrap(__FILE__, __LINE__);
-		    }
-		}
-	    }
-	}
-	$this->_locks = array();
-	if (!empty($errorRet)) {
-	    return $errorRet;
-	} else {
-	    return GalleryStatus::success();
-	}
-    }
-
-    /**
      * Perform any necessary shutdown tasks.
      *
      * This should only be invoked as a register_shutdown callback.
@@ -798,8 +366,16 @@ class Gallery {
      */
     function _shutdown() {
 
+	/* Bitch about open locks */
+	$lockIds = GalleryCoreApi::getLockIds();
+	foreach ($lockIds as $lockId) {
+	    if ($this->getDebug()) {
+		$this->debug(sprintf('Lock id %d was left hanging!', $lockId));
+	    }
+	}
+		 
 	/* Release all locks and ignore any errors */
-	$this->_releaseAllLocks(false);
+	GalleryCoreApi::releaseAllLocks(false);
 
 	/* Roll back any transactions */
 	$this->rollbackTransaction();
@@ -812,8 +388,6 @@ class Gallery {
      * @return object GalleryStatus a status code
      */
     function initStorage() {
-	GalleryProfiler::start('modules.core.classes.Gallery::initStorage');
-
 	$type = $this->getConfig('storage.type');
 	$config = $this->getConfig('storage.config');
 	    
@@ -832,7 +406,6 @@ class Gallery {
 	}
 	$this->_storage = $storage;
 
-	GalleryProfiler::stop('modules.core.classes.Gallery::initStorage');
 	return GalleryStatus::success();
     }
 
@@ -901,74 +474,6 @@ class Gallery {
     }
 
     /**
-     * Convenience method to load a specific module
-     *
-     * @param string the module id
-     * @return array object GalleryStatus a status code
-     *               object GalleryModule the module
-     */
-    function loadModule($moduleId, $initialize=true) {
-	list ($ret, $module) = GalleryPluginMap::loadPlugin('module', $moduleId, $initialize);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	return array(GalleryStatus::success(), $module);
-    }
-
-    /**
-     * Convenience method to get all module ids
-     *
-     * @return array object GalleryStatus a status code
-     *               string module names
-     */
-    function getAllModuleIds() {
-	list ($ret, $moduleId) = GalleryPluginMap::getAllPluginIds('module');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	return array(GalleryStatus::success(), $moduleId);
-    }
-
-    /**
-     * Convenience method to retrieve a module parameter
-     *
-     * @param string the module id
-     * @param string the parameter name
-     * @return array object GalleryStatus a status code
-     *               string a value
-     */
-    function getModuleParameter($moduleId, $parameterName, $itemId=0) {
-	list ($ret, $value) =
-	    GalleryPluginParameterMap::getParameter('module', $moduleId, $parameterName, $itemId);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	
-	return array(GalleryStatus::success(), $value);
-    }
-
-    /**
-     * Convenience method to set a module parameter
-     *
-     * @param string the module id
-     * @param string the parameter name
-     * @param string the value
-     * @return object GalleryStatus a status code
-     */
-    function setModuleParameter($moduleId, $parameterName, $parameterValue, $itemId=0) {
-	$ret = GalleryPluginParameterMap::setParameter('module', $moduleId,
-						       $parameterName, $parameterValue,
-						       $itemId);
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	return GalleryStatus::success();
-    }
-
-    /**
      * Set the URL generator
      *
      * @param object GalleryUrlGenerator
@@ -1019,7 +524,8 @@ class Gallery {
 
 	    /* Nothing specified for the user -- try the default */
 	    if (empty($language)) {
-		list ($ret, $language) = $this->getModuleParameter('core', 'default.language');
+		list ($ret, $language) =
+		    GalleryCoreApi::getPluginParameter('module', 'core', 'default.language');
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
@@ -1215,47 +721,13 @@ class Gallery {
     }
 
     /**
-     * Register an event listener
-     *
-     * @param string the name of the event (eg "GalleryEntity::save")
-     * @param object a GalleryEventListener instance
-     */
-    function registerEventListener($eventName, &$listener) {
-	if (empty($this->_eventListeners[$eventName])) {
-	    $this->_eventListeners[$eventName] = array();
-	}
-
-	$this->_eventListeners[$eventName][] =& $listener;
-    }
-
-    /**
-     * Deliver an event to anybody listening
-     *
-     * @param string the name of the event (eg "GalleryEntity::save")
-     * @param object a GalleryEvent
-     * @return object GalleryStatus a status code
-     */
-    function postEvent($event) {
-	if (!empty($this->_eventListeners[$event->getEventName()])) {
-	    $listeners = $this->_eventListeners[$event->getEventName()];
-	    for ($i = 0; $i < sizeof($listeners); $i++) {
-		$ret = $listeners[$i]->handleEvent($event);
-		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
-	    }
-	}
-
-	return GalleryStatus::success();
-    }
-
-    /**
      * Return the template adapter.  There is only ever one in the system.
      *
      * @return object GalleryTemplateAdapter
      */
     function &getTemplateAdapter() {
 	if (!isset($this->_templateAdapter)) {
+	    require_once(dirname(__FILE__) . '/GalleryTemplateAdapter.class');
 	    $this->_templateAdapter = new GalleryTemplateAdapter();
 	}
 

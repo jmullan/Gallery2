@@ -57,10 +57,10 @@ class FfmpegModule extends GalleryModule {
 	$classDir = dirname(__FILE__) . '/classes/';
 
 	/* Register our graphics class with the factory */
-	GalleryFactory::registerImplementation('GalleryToolkit',
-					       'FfmpegToolkit',
-					       'Ffmpeg',
-					       $classDir . 'FfmpegToolkit.class');
+	GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
+						      'FfmpegToolkit',
+						      'Ffmpeg',
+						      $classDir . 'FfmpegToolkit.class');
 
 	return GalleryStatus::success();
     }
@@ -179,7 +179,7 @@ class FfmpegModule extends GalleryModule {
 			
 	    if ($failCount == 0) {
 		/* We have a winner */
-		$ret = $gallery->setModuleParameter('ffmpeg', 'path', $path);
+		$ret = GalleryCoreApi::setPluginParameter('module', 'ffmpeg', 'path', $path);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), false);
 		}
@@ -213,7 +213,7 @@ class FfmpegModule extends GalleryModule {
 	}
 
 	foreach ($results['operations'] as $operation => $info) {
-	    $ret = GalleryToolkitHelper::registerOperation('Ffmpeg',
+	    $ret = GalleryCoreApi::registerToolkitOperation('Ffmpeg',
 							   $info['mimeTypes'],
 							   $operation,
 							   $info['params'],
@@ -225,7 +225,7 @@ class FfmpegModule extends GalleryModule {
 	}
 
 	foreach ($results['properties'] as $property => $info) {
-	    $ret = GalleryToolkitHelper::registerProperty('Ffmpeg',
+	    $ret = GalleryCoreApi::registerToolkitProperty('Ffmpeg',
 							  $info['mimeTypes'],
 							  $property,
 							  $info['type'],
@@ -250,7 +250,7 @@ class FfmpegModule extends GalleryModule {
 	}
 
 	/* Unregister all of our properties and operations */
-	$ret = GalleryToolkitHelper::unregisterToolkit('Ffmpeg');
+	$ret = GalleryCoreApi::unregisterToolkit('Ffmpeg');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

@@ -42,7 +42,7 @@ class AdminDeleteUserController extends GalleryController {
     function handleRequest($form) {
 	global $gallery;
 
-	$ret = GalleryUserHelper::assertSiteAdministrator();
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -65,7 +65,7 @@ class AdminDeleteUserController extends GalleryController {
 	     * ourself (can't do either of those).
 	     */
 	    list ($ret, $anonymousUserId) =
-		$gallery->getModuleParameter('core', 'id.anonymousUser');
+		GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -76,13 +76,13 @@ class AdminDeleteUserController extends GalleryController {
 	     * in case we can't delete.
 	     */
 	    if ($userId != $anonymousUserId && $userId != $gallery->getActiveUserId()) {
-		list ($ret, $user) = $gallery->loadEntitiesById($userId);
+		list ($ret, $user) = GalleryCoreApi::loadEntitiesById($userId);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		
 		/* Delete the user */
-		$ret = $gallery->deleteEntityById($user->getId());
+		$ret = GalleryCoreApi::deleteEntityById($user->getId());
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -121,13 +121,13 @@ class AdminDeleteUserView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	global $gallery;
 	
-	$ret = GalleryUserHelper::assertSiteAdministrator();
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	    
 	$userId = GalleryUtilities::getRequestVariables('userId');
-	list ($ret, $user) = $gallery->loadEntitiesById($userId);
+	list ($ret, $user) = GalleryCoreApi::loadEntitiesById($userId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

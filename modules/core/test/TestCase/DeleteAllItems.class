@@ -27,7 +27,7 @@ class DeleteAllItemsTestCase extends TestCase {
 	while (true) {
 	    $gallery->setTimeLimit(60);
 
-	    list ($ret, $rootAlbumId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
+	    list ($ret, $rootAlbumId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -62,7 +62,7 @@ class DeleteAllItemsTestCase extends TestCase {
 
 	    while ($result = $results->nextResult()) {
 		$id = $result[0];
-		$ret = $gallery->deleteEntityById($id);
+		$ret = GalleryCoreApi::deleteEntityById($id);
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}

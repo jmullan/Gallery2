@@ -40,7 +40,7 @@ class AdminNetPbmControllerTest extends GalleryControllerTestCase {
 	parent::setUp();
 
 	foreach (array('path', 'jpegQuality', 'pnmtojpeg') as $param) {
-	    list ($ret, $this->_saveParameters[$param]) = $gallery->getModuleParameter('netpbm', $param);
+	    list ($ret, $this->_saveParameters[$param]) = GalleryCoreApi::getPluginParameter('module', 'netpbm', $param);
 	    if ($ret->isError()) {
 		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -58,7 +58,7 @@ class AdminNetPbmControllerTest extends GalleryControllerTestCase {
 	$gallery->_platform = $this->_platform;
 	
 	foreach (array('path', 'jpegQuality', 'pnmtojpeg') as $param) {
-	    $ret = $gallery->setModuleParameter('netpbm', $param, $this->_saveParameters[$param]);
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'netpbm', $param, $this->_saveParameters[$param]);
 	    if ($ret->isError()) {
 		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -86,11 +86,11 @@ class AdminNetPbmControllerTest extends GalleryControllerTestCase {
 	
 	/* Verify the settings went in properly */
 	$this->assertEquals(array(GalleryStatus::success(), '/validPath/'),
-			    $gallery->getModuleParameter('netpbm', 'path'));
+			    GalleryCoreApi::getPluginParameter('module', 'netpbm', 'path'));
 	$this->assertEquals(array(GalleryStatus::success(), '12'),
-			    $gallery->getModuleParameter('netpbm', 'jpegQuality'));
+			    GalleryCoreApi::getPluginParameter('module', 'netpbm', 'jpegQuality'));
 	$this->assertEquals(array(GalleryStatus::success(), 'ppmtojpeg'),
-			    $gallery->getModuleParameter('netpbm', 'pnmtojpeg'));
+			    GalleryCoreApi::getPluginParameter('module', 'netpbm', 'pnmtojpeg'));
     }
 
     function testCancel() {

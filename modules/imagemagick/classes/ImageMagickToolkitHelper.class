@@ -129,7 +129,7 @@ class ImageMagickToolkitHelper {
 	global $gallery;
 
 	if (empty($imageMagickPath)) {
-	    list ($ret, $imageMagickPath) = $gallery->getModuleParameter('imagemagick', 'path');
+	    list ($ret, $imageMagickPath) = GalleryCoreApi::getPluginParameter('module', 'imagemagick', 'path');
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -206,7 +206,7 @@ class ImageMagickToolkitHelper {
 	}
 
 	/* We need to translate some strings */
-	list($ret, $module) = $gallery->loadModule('imagemagick');
+	list($ret, $module) = GalleryCoreApi::loadPlugin('module', 'imagemagick');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

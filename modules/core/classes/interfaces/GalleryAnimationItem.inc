@@ -72,7 +72,6 @@ class GalleryAnimationItem extends GalleryAnimationItem_core {
      */
     function getMemberData() {
         $data = parent::getMemberData();
-        GalleryProfiler::start('modules.core.classes.GalleryPersistent::getMemberData');
     
 	if (isset($this->_linkedEntity)) {
 	    if (!isset($this->_linkedEntity->_width)) {
@@ -98,7 +97,6 @@ class GalleryAnimationItem extends GalleryAnimationItem_core {
 	    $data['height'] = $this->_height;
 	}
 	
-        GalleryProfiler::stop('modules.core.classes.GalleryPersistent::getMemberData');
         return $data;
     }
   

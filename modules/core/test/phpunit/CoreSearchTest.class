@@ -47,7 +47,7 @@ class CoreSearchTest extends GalleryTestCase {
 	
 	parent::setUp();
 
-	list ($ret, $moduleStatusList) = GalleryPluginMap::getPluginStatus('module');
+	list ($ret, $moduleStatusList) = GalleryCoreApi::getPluginStatus('module');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -56,7 +56,7 @@ class CoreSearchTest extends GalleryTestCase {
 	    return $this->assert(false, 'Search module not installed');
 	}
 
-	list ($ret, $groupId) = $gallery->getModuleParameter('core', 'id.allUserGroup');
+	list ($ret, $groupId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.allUserGroup');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -81,12 +81,17 @@ class CoreSearchTest extends GalleryTestCase {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 
-	    GalleryPermissionMap::removeItemPermissions($this->_item[$i]->getId());
+	    $ret = GalleryCoreApi::removeItemPermissions($this->_item[$i]->getId());
+	    if ($ret->isError()) {
+		print $ret->getAsHtml();
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    
 	    switch($i) {
 	    case 1:
 	    case 2:
 	    case 3:
-		$ret = GalleryPermissionMap::addUserPermission($this->_item[$i]->getId(),
+		$ret = GalleryCoreApi::addUserPermission($this->_item[$i]->getId(),
 							       $gallery->getActiveUserId(),
 							       'core.view');
 		if ($ret->isError()) {
@@ -98,7 +103,7 @@ class CoreSearchTest extends GalleryTestCase {
 	}
 
 	list ($ret, $this->_coreSearch) =
-	    GalleryFactory::newInstance('GallerySearchInterface_1_0', 'GalleryCoreSearch');
+	    GalleryCoreApi::newFactoryInstance('GallerySearchInterface_1_0', 'GalleryCoreSearch');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -106,7 +111,7 @@ class CoreSearchTest extends GalleryTestCase {
 
 	$this->assert(isset($this->_coreSearch), 'Missing GalleryCoreSearch instance');
 
-	list ($ret, $this->_module) = $gallery->loadModule('core');
+	list ($ret, $this->_module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -128,7 +133,7 @@ class CoreSearchTest extends GalleryTestCase {
 	parent::tearDown();
 
 	if (!empty($this->_parentAlbum)) {
-	    $ret = $gallery->deleteEntityById($this->_parentAlbum->getId());
+	    $ret = GalleryCoreApi::deleteEntityById($this->_parentAlbum->getId());
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }

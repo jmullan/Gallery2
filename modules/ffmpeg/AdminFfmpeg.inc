@@ -42,7 +42,7 @@ class AdminFfmpegController extends GalleryController {
     function handleRequest(&$form) {
 	global $gallery;
 
-	$ret = GalleryUserHelper::assertSiteAdministrator();
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -112,7 +112,7 @@ class AdminFfmpegController extends GalleryController {
 	    }
 	    
 	    if (empty($error) && isset($form['action']['save'])) {
-		$ret = $gallery->setModuleParameter('ffmpeg', 'path', $form['path']);
+		$ret = GalleryCoreApi::setPluginParameter('module', 'ffmpeg', 'path', $form['path']);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -155,7 +155,7 @@ class AdminFfmpegView extends GalleryView {
 	/* Load our default values if we didn't just come from this form. */
 	if ($form['formName'] != 'AdminFfmpeg') {
 	    foreach (array('path') as $key) {
-		list ($ret, $form[$key]) = $gallery->getModuleParameter('ffmpeg', $key);
+		list ($ret, $form[$key]) = GalleryCoreApi::getPluginParameter('module', 'ffmpeg', $key);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}

@@ -49,7 +49,7 @@ class ItemEditAlbumControllerTest extends GalleryControllerTestCase {
     function tearDown() {
 	global $gallery;
 
-	$ret = $gallery->deleteEntityById($this->_album->getId());
+	$ret = GalleryCoreApi::deleteEntityById($this->_album->getId());
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -114,8 +114,7 @@ class ItemEditAlbumControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals('bletch', $this->_album->getOrderDirection());
 
 	/* Verify derivative preferences */
-	list ($ret, $preferences) =
-	    GalleryDerivativePreferencesMap::fetchPreferencesForItem($this->_album->getId());
+	list ($ret, $preferences) = GalleryCoreApi::fetchDerivativePreferencesForItem($this->_album->getId());
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

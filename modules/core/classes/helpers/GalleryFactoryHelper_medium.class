@@ -1,0 +1,104 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * A factory for creating all different kinds of objects
+ *
+ * @package GalleryCore
+ * @subpackage Classes
+ * @abstract
+ */
+class GalleryFactoryHelper_medium {
+
+    /**
+     * Create a new instance of the given type based on the id provided
+     *
+     * @param string the class type (eg. 'GalleryGraphics')
+     * @param string the class name (eg. 'NetPBM')
+     * @return array object GalleryStatus a status code,
+     *               object an instance
+     * @static
+     */
+    function newInstanceById($classType, $id) {
+	$registry =& GalleryFactoryHelper_simple::_getFactoryData();
+
+	if (empty($registry['ids'][$classType][$id])) {
+	    return array(GalleryStatus::success(), null);
+	}
+
+	$className = $registry['ids'][$classType][$id];
+	list ($ret, $instance) = GalleryFactoryHelper_simple::newInstance($classType, $className);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	return array(GalleryStatus::success(), $instance);
+    }
+
+
+    /**
+     * Return the ids of all the available implementations for a class
+     *
+     * @return array (id => className)
+     * @static
+     */
+    function getAllImplementationIds($classType) {
+	$registry =& GalleryFactoryHelper_simple::_getFactoryData();
+	if (isset($registry['ids'][$classType])) {
+	    return $registry['ids'][$classType];
+	} else {
+	    return null;
+	}
+    }
+
+    /**
+     * Unregister an implementation from the factory by id
+     *
+     * @param string the class type (eg. 'GalleryGraphics')
+     * @param string an id (eg. 'NetPBM')
+     * @static
+     */
+    function unregisterImplementation($classType, $className) {
+	$registry =& GalleryFactoryHelper_simple::_getFactoryData();
+	unset($registry['implementations'][$classType][$className]);
+	foreach ($registry['ids'][$classType] as $id => $name) {
+	    if ($name == $className) {
+		unset($registry['ids'][$classType][$id]);
+		break;
+	    }
+	}
+	foreach ($registry['hints'][$classType] as $hint => $names) {
+	    if (isset($names[$className])) {
+		unset($registry['hints'][$classType][$hint][$className]);
+		if (empty($registry['hints'][$classType][$hint])) {
+		    unset($registry['hints'][$classType][$hint]);
+		}
+	    }
+	}
+    } 
+}
+?>

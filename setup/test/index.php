@@ -75,7 +75,7 @@ function GalleryTestHarness() {
     /*
      * Load the test cases for every module (active or not).
      */
-    list ($ret, $moduleIds) = $gallery->getAllModuleIds();
+    list ($ret, $moduleIds) = GalleryCoreApi::getAllPluginIds('module');
     if ($ret->isError()) {
 	return $ret->wrap(__FILE__, __LINE__);
     }
@@ -177,6 +177,7 @@ function GalleryTestHarness() {
     }
 
     /* Get the Smarty instance. */
+    require_once(dirname(__FILE__) . '/../../modules/core/classes/GalleryTemplate.class');    
     $template = new GalleryTemplate(dirname(__FILE__) . '/templates');
     $template->setVariable('tests', $tests);
     $template->setVariable('results', $results);

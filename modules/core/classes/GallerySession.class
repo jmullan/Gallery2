@@ -163,7 +163,8 @@ class GallerySession_core {
 	global $HTTP_POST_VARS;
 
 	// Inactivity timeout for user sessions
-	list ($ret, $this->_sessionIdParameter) = $gallery->getModuleParameter('core', 'session.idParameter');
+	list ($ret, $this->_sessionIdParameter) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'session.idParameter');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -205,7 +206,8 @@ class GallerySession_core {
 	 */
 	$cookie = 'Set-Cookie: ' . $this->_sessionIdParameter . '=' . $this->_sessionId;
 
-	list ($ret, $sessionLifetime) = $gallery->getModuleParameter('core', 'session.lifetime');
+	list ($ret, $sessionLifetime) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'session.lifetime');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -332,13 +334,13 @@ class GallerySession_core {
 	global $gallery;
 	
 	list ($ret, $sessionInactivityTimeout) =
-	    $gallery->getModuleParameter('core', 'session.inactivityTimeout');
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'session.inactivityTimeout');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	list ($ret, $lifetime) =
-	    $gallery->getModuleParameter('core', 'session.lifetime');
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'session.lifetime');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

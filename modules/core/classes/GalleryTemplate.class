@@ -232,7 +232,6 @@ class GalleryTemplate {
 	global $gallery;
 	static $smarty;
 
-	GalleryProfiler::start('modules.core.classes.Gallery::getSmarty');
 	if (!isset($smarty)) {
 	    /*
 	     * Load and configure Smarty.
@@ -267,8 +266,6 @@ class GalleryTemplate {
 	    $smarty->register_object('g', $templateAdapter, array(), true,
 				      GalleryTemplateAdapter::getBlockMethods());
 	}
-
-	GalleryProfiler::stop('modules.core.classes.Gallery::getSmarty');
 
 	return $smarty;
     }

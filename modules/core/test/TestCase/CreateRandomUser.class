@@ -28,7 +28,7 @@ class CreateRandomUserTestCase extends TestCase {
 	$collisionCount = 0;
 	while ($i < $iterations) {
 	    $gallery->guaranteeTimeLimit(5);
-	    list ($ret, $user) = GalleryFactory::newInstance('GalleryEntity', 'GalleryUser');
+	    list ($ret, $user) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryUser');
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }

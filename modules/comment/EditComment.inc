@@ -44,7 +44,7 @@ class EditCommentController extends GalleryController {
 	list ($itemId, $commentId) = GalleryUtilities::getRequestVariables('itemId', 'commentId');
 
 	/* Make sure we have permission to edit a comment */
-	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'comment.edit');
+	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'comment.edit');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -53,7 +53,7 @@ class EditCommentController extends GalleryController {
 	$error = array();
 	if (isset($form['action']['save'])) {
 	    /* Edit the comment */
-	    list ($ret, $comment) = $gallery->loadEntitiesById($commentId);
+	    list ($ret, $comment) = GalleryCoreApi::loadEntitiesById($commentId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -67,7 +67,7 @@ class EditCommentController extends GalleryController {
 	    if (empty($form['commenterName'])) {
 		$error[] = 'form[error][commenterName][missing]';
 	    } else {
-		list ($ret, $commenter) = GalleryUserHelper::fetchUserByUsername($form['commenterName']);
+		list ($ret, $commenter) = GalleryCoreApi::fetchUserByUsername($form['commenterName']);
 		if ($ret->isError()) {
 		    $error[] = 'form[error][commenterName][invalid]';
 		}
@@ -92,7 +92,7 @@ class EditCommentController extends GalleryController {
 	    }
 
 	    if (empty($error)) {
-		list ($ret, $lockId) = $gallery->acquireWriteLock(array($comment->getId()));
+		list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock(array($comment->getId()));
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -112,7 +112,7 @@ class EditCommentController extends GalleryController {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-		$ret = $gallery->releaseLocks($lockId);
+		$ret = GalleryCoreApi::releaseLocks($lockId);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -166,7 +166,7 @@ class EditCommentView extends GalleryView {
 	}
 
 	/* Make sure we have permission to edit a comment */
-	$ret = GalleryUserHelper::assertHasItemPermission($item->getId(), 'comment.edit');
+	$ret = GalleryCoreApi::assertHasItemPermission($item->getId(), 'comment.edit');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -174,7 +174,7 @@ class EditCommentView extends GalleryView {
 	$commentId = GalleryUtilities::getRequestVariables('commentId');
 
 	/* Load the specific comment */
-	list ($ret, $comment) = $gallery->loadEntitiesById($commentId);
+	list ($ret, $comment) = GalleryCoreApi::loadEntitiesById($commentId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -186,7 +186,7 @@ class EditCommentView extends GalleryView {
 
 	/* Associate the commenter's info */
 	$commenterId = $comment->getCommenterId();
-	list ($ret, $commenter) = $gallery->loadEntitiesById($commenterId);
+	list ($ret, $commenter) = GalleryCoreApi::loadEntitiesById($commenterId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

@@ -75,7 +75,6 @@ class <xsl:value-of select="class-name"/> extends <xsl:value-of select="class-na
      */
     function getMemberData() {
         $data = parent::getMemberData();
-        GalleryProfiler::start('modules.core.classes.GalleryPersistent::getMemberData');
     <xsl:for-each select="member">
  	<xsl:if test="linked">
 	if (isset($this->_linkedEntity)) {
@@ -98,7 +97,6 @@ class <xsl:value-of select="class-name"/> extends <xsl:value-of select="class-na
 	}
 	</xsl:if>
     </xsl:for-each>
-        GalleryProfiler::stop('modules.core.classes.GalleryPersistent::getMemberData');
         return $data;
     }
   </xsl:if>

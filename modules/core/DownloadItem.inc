@@ -71,7 +71,7 @@ class DownloadItemView extends GalleryView {
 	}
 
 	/* Load the item */
-	list ($ret, $item) = $gallery->loadEntitiesById($itemId);
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -98,8 +98,7 @@ class DownloadItemView extends GalleryView {
 	}
 
 	/* Make sure we have it */
-	$ret = GalleryUserHelper::assertHasItemPermission($itemForPermission,
-							  $requiredPermission);
+	$ret = GalleryCoreApi::assertHasItemPermission($itemForPermission, $requiredPermission);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -112,7 +111,7 @@ class DownloadItemView extends GalleryView {
 
 	/* Rebuild derivative cache, if necessary */
 	if (GalleryUtilities::isA($item, 'GalleryDerivative')) {
-	    list ($ret, $item) = GalleryDerivativeHelper::rebuildCacheIfNotCurrent($item->getId());
+	    list ($ret, $item) = GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($item->getId());
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -122,6 +121,13 @@ class DownloadItemView extends GalleryView {
 	} else {
 	    $size = $item->getSize();
 	    $mimeType = $item->getMimeType();
+	}
+
+	if (false) {
+	    printf("<pre>%s</pre>", print_r($GLOBALS['GalleryCoreApi'], 1));
+	    printf("<pre>\b(%s)\b\n\n&nbsp;</pre>", join("|", get_declared_classes()));
+	    printf("<pre>%s</pre>", print_r(get_declared_classes(), 1));
+	    return GalleryStatus::success();
 	}
 
 	if ($size > 0) {
@@ -152,7 +158,7 @@ class DownloadItemView extends GalleryView {
 	
 	$buf = '/' . $itemId;
 
-	list ($ret, $entity) = $gallery->loadEntitiesById($itemId);
+	list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($itemId);
 	if ($ret->isSuccess()) {
 	    $buf .= '-' . $entity->getSerialNumber();
 	    unset($params['serialNumber']);
@@ -163,7 +169,7 @@ class DownloadItemView extends GalleryView {
 	    } else {
 		$mimeType = $entity->getDerivativeMimeType();
 
-		list ($ret, $sourceEntity) = $gallery->loadEntitiesById($entity->getDerivativeSourceId());
+		list ($ret, $sourceEntity) = GalleryCoreApi::loadEntitiesById($entity->getDerivativeSourceId());
 		if ($ret->isSuccess()) {
 		    if (GalleryUtilities::isA($sourceEntity, 'GalleryDataItem')) {
 			$pseudoFileName = $sourceEntity->getPathComponent();

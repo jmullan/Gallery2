@@ -39,6 +39,8 @@ class AdminExifControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 	parent::setUp();
 
+	require_once(dirname(__FILE__) . '/../../classes/ExifHelper.class');
+	require_once(dirname(__FILE__) . '/../../classes/ExifPropertiesMap.class');
 	list ($ret, $this->_save['summary']) = ExifPropertiesMap::getProperties(EXIF_SUMMARY);
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();

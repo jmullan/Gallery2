@@ -26,6 +26,8 @@
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
+require_once(dirname(__FILE__) . '/../../classes/GalleryEventListener.class');
+
 /**
  * Test Event functionality
  */
@@ -41,11 +43,11 @@ class EventTest extends GalleryTestCase {
 	$eventName = "EventTest::test";
 
 	$listener = new EventTestEventListener($this);
-	$gallery->registerEventListener($eventName, $listener);
+	GalleryCoreApi::registerEventListener($eventName, $listener);
 	
-	$event = new GalleryEvent($eventName);
+	$event = GalleryCoreApi::newEvent($eventName);
 	$event->setEntity("bogus entity");
-	$ret = $gallery->postEvent($event);
+	$ret = GalleryCoreApi::postEvent($event);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

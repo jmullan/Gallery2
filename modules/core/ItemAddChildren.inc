@@ -44,17 +44,17 @@ class ItemAddChildrenController extends GalleryController {
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
 
 	/* Make sure we have permission do edit this item */
-	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'core.addDataItem');
+	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.addDataItem');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	list ($ret, $item) = $gallery->loadEntitiesById($itemId);
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	list ($ret, $lockIds[]) = $gallery->acquireReadLock($item->getId());
+	list ($ret, $lockIds[]) = GalleryCoreApi::acquireReadLock($item->getId());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -91,13 +91,13 @@ class ItemAddChildrenController extends GalleryController {
 			$mimeType = GalleryUtilities::convertExtensionToMime($extension);
 		    }
 
-		    list ($ret, $newItem) = GalleryItemHelper::addItemToAlbum($file['tmp_name'],
-									      basename($file['name']),
-									      basename($file['name']),
-									      $file['caption'],
-									      $file['caption'],
-									      $mimeType,
-									      $item->getId());
+		    list ($ret, $newItem) = GalleryCoreApi::addItemToAlbum($file['tmp_name'],
+									   basename($file['name']),
+									   basename($file['name']),
+									   $file['caption'],
+									   $file['caption'],
+									   $mimeType,
+									   $item->getId());
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
@@ -125,13 +125,13 @@ class ItemAddChildrenController extends GalleryController {
 		list ($base, $extension) = GalleryUtilities::getFileNameComponents($filename);
 		$mimeType = GalleryUtilities::convertExtensionToMime($extension);
 
-		list ($ret, $newItem) = GalleryItemHelper::addItemToAlbum($filepath,
-									  $base,
-									  $base,
-									  $base,
-									  $base,
-									  $mimeType,
-									  $item->getId());
+		list ($ret, $newItem) = GalleryCoreApi::addItemToAlbum($filepath,
+								       $base,
+								       $base,
+								       $base,
+								       $base,
+								       $mimeType,
+								       $item->getId());
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -171,13 +171,13 @@ class ItemAddChildrenController extends GalleryController {
 		    list ($base, $extension) = GalleryUtilities::getFileNameComponents(basename($url));
 		    $mimeType = GalleryUtilities::convertExtensionToMime($extension);
 
-		    list ($ret, $newItem) = GalleryItemHelper::addItemToAlbum($tmpFile,
-									      $base,
-									      $base,
-									      $base,
-									      $base,
-									      $mimeType,
-									      $item->getId());
+		    list ($ret, $newItem) = GalleryCoreApi::addItemToAlbum($tmpFile,
+									   $base,
+									   $base,
+									   $base,
+									   $base,
+									   $mimeType,
+									   $item->getId());
 		    $platform->unlink($tmpFile);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
@@ -194,7 +194,7 @@ class ItemAddChildrenController extends GalleryController {
 	    $redirect['itemId'] = $itemId;
 	}
 
-	$ret = $gallery->releaseLocks($lockIds);
+	$ret = GalleryCoreApi::releaseLocks($lockIds);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -230,17 +230,17 @@ class ItemAddChildrenView extends GalleryView {
 	$mode = GalleryUtilities::getRequestVariables('mode');
 
 	/* Make sure we have permission do edit this item */
-	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'core.addDataItem');
+	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.addDataItem');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	list ($ret, $isAdmin) = GalleryUserGroupMap::isUserInSiteAdminGroup();
+	list ($ret, $isAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	list ($ret, $item) = $gallery->loadEntitiesById($itemId);
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -257,7 +257,7 @@ class ItemAddChildrenView extends GalleryView {
 	    $form['formName'] = 'ItemAddChildren';
 	}
 
-	list ($ret, $localServerDirs) = $gallery->getModuleParameter('core', 'uploadLocalServer.dirs');
+	list ($ret, $localServerDirs) = GalleryCoreApi::getPluginParameter('module', 'core', 'uploadLocalServer.dirs');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -319,7 +319,7 @@ class ItemAddChildrenView extends GalleryView {
 			    $mimeType = GalleryUtilities::getMimeType($fileName);
 			    if (!isset($mimeTypeItemMap[$mimeType])) {
 				list ($ret, $mimeTypeItemMap[$mimeType]) =
-				    GalleryItemHelper::newItemByMimeType($mimeType);
+				    GalleryCoreApi::newItemByMimeType($mimeType);
 				if ($ret->isError()) {
 				    return array($ret->wrap(__FILE__, __LINE__), null);
 				}
@@ -338,7 +338,7 @@ class ItemAddChildrenView extends GalleryView {
 		} else if ($platform->is_file($path) && !$platform->is_link($path)) {
 		    $mimeType = GalleryUtilities::getMimeType($path);
 		    if (!isset($mimeTypeItemMap[$mimeType])) {
-			list ($ret, $mimeTypeItemMap[$mimeType]) = GalleryItemHelper::newItemByMimeType($mimeType);
+			list ($ret, $mimeTypeItemMap[$mimeType]) = GalleryCoreApi::newItemByMimeType($mimeType);
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
@@ -475,7 +475,7 @@ class ItemAddChildrenView extends GalleryView {
 
 			    if (!isset($mimeTypeItemMap[$mimeType])) {
 				list ($ret, $mimeTypeItemMap[$mimeType]) =
-				    GalleryItemHelper::newItemByMimeType($mimeType);
+				    GalleryCoreApi::newItemByMimeType($mimeType);
 				if ($ret->isError()) {
 				    return array($ret->wrap(__FILE__, __LINE__), null);
 				}

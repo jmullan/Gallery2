@@ -155,7 +155,7 @@ class GalleryPhotoItem_core extends GalleryDataItem {
 	}
 
 	$mimeType = $this->getMimeType();
-	list ($ret, $toolkit) = GalleryToolkitHelper::getToolkitByProperty($mimeType, 'dimensions');
+	list ($ret, $toolkit) = GalleryCoreApi::getToolkitByProperty($mimeType, 'dimensions');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

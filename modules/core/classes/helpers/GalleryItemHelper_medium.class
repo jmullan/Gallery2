@@ -25,24 +25,6 @@
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
-/*
- * ****************************************
- *             Ordering Tags
- * ****************************************
- */
-
-/**
- * Order in an ascending fashion
- *
- */
-define('ORDER_ASCENDING', 'asc');
-
-/**
- * Order in an descending fashion
- *
- */
-define('ORDER_DESCENDING', 'desc');
-
 /**
  * Helper class for GalleryItems
  *
@@ -50,76 +32,7 @@ define('ORDER_DESCENDING', 'desc');
  * @subpackage Classes
  * @abstract
  */
-class GalleryItemHelper {
-
-    /**
-     * Return the number of children for the items specified, that are visible to the
-     * user specified.
-     *
-     * @access public
-     * @param array item ids
-     * @param int user id
-     * @return array object GalleryStatus a status code
-     *               int a count
-     * @static
-     */
-    function fetchChildCounts($itemIds) {
-	global $gallery;
-
-	if (empty($itemIds)) {
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
-			 null);
-	}
-
-	$storage = $gallery->getStorage();
-
-	list ($ret, $permissionBits) = GalleryPermissionSetMap::convertIdsToBits('core.view');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	foreach ($itemIds as $itemId) {
-	    $parentIdClause[] = '[GalleryChildEntity::parentId] = ?';
-	}
-
-	$query = '
-        SELECT
-          [GalleryChildEntity::parentId], COUNT(DISTINCT([GalleryChildEntity::id]))
-        FROM
-          [GalleryChildEntity], [GalleryUserGroupMap], [GalleryPermissionMap]
-        WHERE
-          ( ' . join(' OR ', $parentIdClause) . ' )
-          AND
-          [GalleryPermissionMap::itemId] = [GalleryChildEntity::id]
-          AND
-          ([GalleryPermissionMap::userId] = ?
-           OR
-           ([GalleryUserGroupMap::userId] = ?
-            AND
-            [GalleryPermissionMap::groupId] = [GalleryUserGroupMap::groupId]))
-          AND
-          [GalleryPermissionMap::permission] & ? > ?
-        GROUP BY
-          [GalleryChildEntity::parentId]
-        ';
-	$data = $itemIds;
-	$data[] = $gallery->getActiveUserId();
-	$data[] = $gallery->getActiveUserId();
-	$data[] = $storage->convertIntToBits($permissionBits);
-	$data[] = $storage->convertIntToBits(0);
-
-	list ($ret, $searchResults) = $gallery->search($query, $data);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	$counts = array();
-	while ($result = $searchResults->nextResult()) {
-	    $counts[$result[0]] = $result[1];
-	}
-
-	return array(GalleryStatus::success(), $counts);
-    }
+class GalleryItemHelper_medium {
 
     /**
      * Return the ids of all the child items of the given item that have the
@@ -143,7 +56,7 @@ class GalleryItemHelper {
 	}
 
 	$storage = $gallery->getStorage();
-	list ($ret, $permissionBits) = GalleryPermissionSetMap::convertIdsToBits($permissionId);
+	list ($ret, $permissionBits) = GalleryCoreApi::convertPermissionIdsToBits($permissionId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -208,7 +121,7 @@ class GalleryItemHelper {
 			 null);
 	}
 
-	list ($ret, $permissionBits) = GalleryPermissionSetMap::convertIdsToBits(array($permission));
+	list ($ret, $permissionBits) = GalleryCoreApi::convertPermissionIdsToBits(array($permission));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -257,130 +170,6 @@ class GalleryItemHelper {
     }
 
     /**
-     * Return the number of of items that match the given type and have the
-     * given permission (defaults to 'core.view')
-     *
-     * @access public
-     * @param string an item type (eg, 'GalleryAlbumItem')
-     * @return array object GalleryStatus a status code
-     *               int a count
-     * @static
-     */
-    function fetchItemIdCount($itemType, $permission='core.view') {
-	global $gallery;
-
-	if (empty($itemType)) {
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
-			 null);
-	}
-
-	$cacheKey = "GalleryItemHelper::fetchItemIdCount($itemType, $permission)";
-	if (GalleryDataCache::containsKey($cacheKey)) {
-	    $count = GalleryDataCache::get($cacheKey);
-	} else {
-	    list ($ret, $permissionBits) =
-		GalleryPermissionSetMap::convertIdsToBits(array($permission));
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-	    $storage = $gallery->getStorage();
-	    $query = '
-            SELECT
-              COUNT(DISTINCT([GalleryItem::id]))
-            FROM
-              [GalleryEntity], [GalleryItem], [GalleryUserGroupMap], [GalleryPermissionMap]
-            WHERE
-              [GalleryEntity::entityType] = ?
-              AND
-              [GalleryItem::id] = [GalleryEntity::id]
-              AND
-              [GalleryPermissionMap::itemId] = [GalleryEntity::id]
-              AND
-              ([GalleryPermissionMap::userId] = ?
-               OR
-               ([GalleryUserGroupMap::userId] = ?
-                AND
-                [GalleryPermissionMap::groupId] = [GalleryUserGroupMap::groupId]))
-              AND
-              [GalleryPermissionMap::permission] & ? = ?
-            ';
-	    $data = array();
-	    $data[] = $itemType;
-	    $data[] = $gallery->getActiveUserId();
-	    $data[] = $gallery->getActiveUserId();
-	    $data[] = $storage->convertIntToBits($permissionBits);
-	    $data[] = $storage->convertIntToBits($permissionBits);
-	    
-	    list ($ret, $searchResults) = $gallery->search($query, $data);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    
-	    if ($searchResults->resultCount() != 1) {
-		return array(GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__), false);
-	    }
-	    
-	    $result = $searchResults->nextResult();
-	    $count = (int)$result[0];
-	} 
-
-	return array(GalleryStatus::success(), $count);
-    }
-
-    /**
-     * Study the permissions for all items (for the given user)
-     *
-     * @param array GalleryItem ids
-     * @param int a user id
-     * @return object GalleryStatus a status code
-     * @static
-     */
-    function studyPermissions($itemIds) {
-
-	list ($ret, $permissionsTable) = GalleryPermissionMap::fetchPermissionsForItems($itemIds);
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	/* Cache the permissions */
-	foreach ($permissionsTable as $itemId => $permissions) {
-	    $cacheKey = "GalleryItemHelper::getPermissions($itemId)";
-	    GalleryDataCache::put($cacheKey, $permissions);
-	}
-	    
-	return GalleryStatus::success();
-    }
-
-    /**
-     * Return all the permissions that the given user has for the given item.
-     *
-     * @return array object GalleryStatus a status code
-     *               array (perm1, perm2)
-     * @static
-     */
-    function getPermissions($itemId) {
-	$cacheKey = "GalleryItemHelper::getPermissions($itemId)";
-	if (GalleryDataCache::containsKey($cacheKey)) {
-	    $permissions = GalleryDataCache::get($cacheKey);
-	} else {
-	    list ($ret, $permissionsTable) = GalleryPermissionMap::fetchPermissionsForItems(array($itemId));
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-	    if (isset($permissionsTable[$itemId])) {
-		$permissions = $permissionsTable[$itemId];
-	    } else {
-		$permissions = null;
-	    }
-	    GalleryDataCache::put($cacheKey, $permissions);
-	}
-
-	return array(GalleryStatus::success(), $permissions);
-    }
-
-    /**
      * Return the appropriate GalleryItem instance for the mime type provided.
      *
      * Use the GalleryFactory to try to find an exact match to the mime type.
@@ -393,7 +182,7 @@ class GalleryItemHelper {
     function newItemByMimeType($mimeType) {
 
 	/* Try the whole mime type */
-	list ($ret, $instance) = GalleryFactory::newInstanceByHint('GalleryItem', $mimeType);
+	list ($ret, $instance) = GalleryCoreApi::newFactoryInstanceByHint('GalleryItem', $mimeType);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -401,7 +190,7 @@ class GalleryItemHelper {
 	if (!isset($instance)) {
 	    /* No? Try the major type only */
 	    $mimeType = substr($mimeType, 0, strpos($mimeType, '/')) . '/*';
-	    list ($ret, $instance) = GalleryFactory::newInstanceByHint('GalleryItem', $mimeType);
+	    list ($ret, $instance) = GalleryCoreApi::newFactoryInstanceByHint('GalleryItem', $mimeType);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -409,7 +198,7 @@ class GalleryItemHelper {
 	    if (!isset($instance)) {
 		/* No? Try all types */
 		$mimeType = '*';
-		list ($ret, $instance) = GalleryFactory::newInstanceByHint('GalleryItem', $mimeType);
+		list ($ret, $instance) = GalleryCoreApi::newFactoryInstanceByHint('GalleryItem', $mimeType);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -442,7 +231,7 @@ class GalleryItemHelper {
 	 * Assume that we've got a working mime type, go ahead and
 	 * get an appropriate GalleryDataItem from the GalleryFactory.
 	 */
-	list ($ret, $newItem) = GalleryItemHelper::newItemByMimeType($mimeType);
+	list ($ret, $newItem) = GalleryCoreApi::newItemByMimeType($mimeType);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -461,7 +250,7 @@ class GalleryItemHelper {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$ret = GalleryItemHelper::addExistingItemToAlbum($newItem, $albumId);
+	$ret = GalleryCoreApi::addExistingItemToAlbum($newItem, $albumId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -479,13 +268,12 @@ class GalleryItemHelper {
     function addExistingItemToAlbum($item, $albumId) {
 	
 	/* Set the order weight */
-	list ($ret, $maxWeight) =
-	    GalleryItemAttributesMap::fetchExtremeChildWeight($albumId, HIGHER_WEIGHT);
+	list ($ret, $maxWeight) = GalleryCoreApi::fetchExtremeChildWeight($albumId, HIGHER_WEIGHT);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	$ret = GalleryItemAttributesMap::setOrderWeight($item->getId(), $maxWeight + 1000);
+	$ret = GalleryCoreApi::setItemOrderWeight($item->getId(), $maxWeight + 1000);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -494,7 +282,7 @@ class GalleryItemHelper {
 	 * Now create thumbnails and resizes according to the
 	 * wishes of the parent album.
 	 */
-	list ($ret, $preferences) = GalleryDerivativePreferencesMap::fetchPreferencesForItem($albumId);
+	list ($ret, $preferences) = GalleryCoreApi::fetchDerivativePreferencesForItem($albumId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -507,7 +295,7 @@ class GalleryItemHelper {
 	     */
 	    $operations = $preference['derivativeOperations'];
 	    list ($ret, $isSupported, $outputMimeType) =
-		GalleryToolkitHelper::isSupportedOperationSequence($mimeType, $operations);
+		GalleryCoreApi::isSupportedOperationSequence($mimeType, $operations);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -519,7 +307,7 @@ class GalleryItemHelper {
 		if ($preference['derivativeType'] == DERIVATIVE_TYPE_IMAGE_THUMBNAIL) {
 		    $operations = 'convert-to-image/jpeg;' . $preference['derivativeOperations'];
 		    list ($ret, $isSupported, $outputMimeType) =
-			GalleryToolkitHelper::isSupportedOperationSequence($mimeType, $operations);
+			GalleryCoreApi::isSupportedOperationSequence($mimeType, $operations);
 		    if ($ret->isError()) {
 			return $ret->wrap(__FILE__, __LINE__);
 		    }
@@ -534,7 +322,8 @@ class GalleryItemHelper {
 		}
 	    }
 
-	    list ($ret, $derivative) = GalleryFactory::newInstance('GalleryEntity', 'GalleryDerivativeImage');
+	    list ($ret, $derivative) =
+		GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryDerivativeImage');
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -555,7 +344,7 @@ class GalleryItemHelper {
 	    if (!GalleryUtilities::isViewableMimeType($outputMimeType)) {
 		$tmpOperations = $preference['derivativeOperations'] . ';convert-to-image/jpeg';
 		list ($ret, $isSupported, $outputMimeType) =
-		    GalleryToolkitHelper::isSupportedOperationSequence($mimeType, $tmpOperations);
+		    GalleryCoreApi::isSupportedOperationSequence($mimeType, $tmpOperations);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -579,13 +368,13 @@ class GalleryItemHelper {
 	}
 
 	/* See if the album has a thumbnail.  If not, try to use this item as the thumbnail. */
-	list ($ret, $thumbnailTable) = GalleryDerivativeHelper::fetchThumbnailsByItemIds($albumId);
+	list ($ret, $thumbnailTable) = GalleryCoreApi::fetchThumbnailsByItemIds($albumId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	if (empty($thumbnailTable)) {
-	    list ($ret, $success) = GalleryItemHelper::setThumbnailFromItem($albumId, $item->getId());
+	    list ($ret, $success) = GalleryCoreApi::setThumbnailFromItem($albumId, $item->getId());
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -608,7 +397,7 @@ class GalleryItemHelper {
 
 	/* Load the current album thumbnail. */ 
 	list ($ret, $thumbnailTable) =
-	    GalleryDerivativeHelper::fetchThumbnailsByItemIds(array($itemId, $fromItemId));
+	    GalleryCoreApi::fetchThumbnailsByItemIds(array($itemId, $fromItemId));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), false);
 	}
@@ -625,7 +414,7 @@ class GalleryItemHelper {
 	$sourceMimeType = null;
 	
 	/* 1. The fromItem's preferred derivative's source id */
-	list ($ret, $derivatives) = GalleryDerivativeHelper::fetchPreferredsByItemIds(array($fromItemId));
+	list ($ret, $derivatives) = GalleryCoreApi::fetchPreferredsByItemIds(array($fromItemId));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -644,7 +433,7 @@ class GalleryItemHelper {
 
 	/* 3. The item data itself */
 	if (!$sourceMimeType) {
-	    list ($ret, $fromItem) = $gallery->loadEntitiesById($fromItemId);
+	    list ($ret, $fromItem) = GalleryCoreApi::loadEntitiesById($fromItemId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -660,7 +449,7 @@ class GalleryItemHelper {
 	 * thumbnail and that means that we're done.
 	 */
 	if (isset($source)) {
-	    list ($ret, $lockIds[]) = $gallery->acquireReadLock($source->getId());
+	    list ($ret, $lockIds[]) = GalleryCoreApi::acquireReadLock($source->getId());
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -670,7 +459,7 @@ class GalleryItemHelper {
 		$derivative = $thumbnailTable[$itemId];
 	    
 		/* Modify existing thumbnail */
-		list ($ret, $lockIds[]) = $gallery->acquireWriteLock($derivative->getId());
+		list ($ret, $lockIds[]) = GalleryCoreApi::acquireWriteLock($derivative->getId());
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -683,7 +472,7 @@ class GalleryItemHelper {
 		$success = true;
 	    } else {
 		/* Create a new one */
-		list ($ret, $derivative) = GalleryFactory::newInstance('GalleryEntity', 'GalleryDerivativeImage');
+		list ($ret, $derivative) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryDerivativeImage');
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -705,7 +494,7 @@ class GalleryItemHelper {
 		 * parent's preferences if we're creating a new thumbnail for
 		 * an item.
 		 */
-		list ($ret, $preferences) = GalleryDerivativePreferencesMap::fetchPreferencesForItem($itemId);
+		list ($ret, $preferences) = GalleryCoreApi::fetchDerivativePreferencesForItem($itemId);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -725,7 +514,7 @@ class GalleryItemHelper {
 		 * they're supported by an active toolkit.
 		 */
 		list ($ret, $isSupported, $outputMimeType) =
-		    GalleryToolkitHelper::isSupportedOperationSequence($sourceMimeType,
+		    GalleryCoreApi::isSupportedOperationSequence($sourceMimeType,
 								       $derivativeOperations);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -750,7 +539,7 @@ class GalleryItemHelper {
 	    }
 
 	    if (isset($lockIds)) {
-		$ret = $gallery->releaseLocks($lockIds);
+		$ret = GalleryCoreApi::releaseLocks($lockIds);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -758,82 +547,6 @@ class GalleryItemHelper {
 	}
 
 	return array(GalleryStatus::success(), $success);
-    }
-
-    /**
-     * Return the correct layout for this item
-     *
-     * @param object GalleryItem
-     * @return array object GalleryStatus a status code
-     *               object GalleryLayout a layout instance
-     */
-    function fetchLayout($item) {
-	global $gallery;
-	
-	/* Find the right layout for this item */
-	if (GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
-	    $layoutId = $item->getLayout();
-	} else {
-	    list ($ret, $parent) = $gallery->loadEntitiesById($item->getParentId());
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
-	    }
-
-	    $layoutId = $parent->getLayout();
-	}
-	
-	if (empty($layoutId)) {
-	    list ($ret, $layoutId) = $gallery->getModuleParameter('core', 'default.layout');
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
-	    }
-	}
-
-	/* Load the correct layout */
-	if (empty($layoutId)) {
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
-	}
-
-	list ($ret, $layout) = GalleryPluginMap::loadPlugin('layout', $layoutId);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	return array(GalleryStatus::success(), $layout);
-    }
-
-    /**
-     * Fetch the ids of the entities linked to the target entity
-     *
-     * @param int the target entity id
-     * @return array object GalleryStatus a status code
-     *               array entity ids
-     */
-    function fetchEntitiesLinkedTo($targetId) {
-	global $gallery;
-	
-	$query = '
-        SELECT
-          [GalleryEntity::id]
-        FROM
-          [GalleryEntity]
-        WHERE
-          [GalleryEntity::linkId] = ?
-        ORDER BY
-          [GalleryEntity::id] ASC
-        ';
-	$storage = $gallery->getStorage();
-	list ($ret, $searchResults) = $gallery->search($query, array($targetId));
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	
-	$linkedIds = array();
-	while ($result = $searchResults->nextResult()) {
-	    $linkedIds[] = $result[0];
-	}
-
-	return array(GalleryStatus::success(), $linkedIds);
     }
 }
 ?>

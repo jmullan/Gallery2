@@ -129,11 +129,10 @@ class GalleryTheme {
     function loadTheme($themeName=null) {
 	global $gallery;
 
-	GalleryProfiler::start('modules.core.classes.GalleryTheme::loadTheme');
-	
 	/* If we don't have a theme name then use the default theme. */
 	if (empty($themeName)) {
-	    list ($ret, $themeName) = $gallery->getModuleParameter('core', 'default.theme');
+	    list ($ret, $themeName) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'default.theme');
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -165,7 +164,6 @@ class GalleryTheme {
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
 					      "Theme $themeName is missing theme.inc"), null);
 	}
-	GalleryProfiler::stop('modules.core.classes.GalleryTheme::loadTheme');
 
 	return array(GalleryStatus::success(), $theme);
     }
@@ -589,13 +587,13 @@ class GalleryTheme {
 	$params = $context['params'];
 
 	/* Ask the entity to render itself in HTML */
-	list ($ret, $item) = $gallery->loadEntitiesById($params['item']['id']);
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($params['item']['id']);
 	if ($ret->isError()) {
 	    // XXX: is there a more graceful way to handle this?
 	    return '[Render error: missing item]';
 	}
 	
-	list ($ret, $entity) = $gallery->loadEntitiesById($params['image']['id']);
+	list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($params['image']['id']);
 	if ($ret->isError()) {
 	    // XXX: is there a more graceful way to handle this?
 	    return '[Render error: missing entity]';

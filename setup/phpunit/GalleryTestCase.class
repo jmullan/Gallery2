@@ -69,7 +69,7 @@ class GalleryTestCase extends TestCase {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	list ($ret, $this->_rootAlbumId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
+	list ($ret, $this->_rootAlbumId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -87,9 +87,9 @@ class GalleryTestCase extends TestCase {
 	global $HTTP_POST_FILES;
 
 	/* Make sure we're not hanging onto any locks */
-	if (!empty($gallery->_locks)) {
-	    /* Bend the API slightly and release all locks */
-	    $gallery->_releaseAllLocks(false);
+	$lockIds = GalleryCoreApi::getLockIds();
+	if (!empty($lockIds)) {
+	    GalleryCoreApi::releaseAllLocks(false);
 	    $this->assert(0, 'There are unreleased locks!');
 	}
 	
@@ -139,7 +139,7 @@ class GalleryTestCase extends TestCase {
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
 	}
 	
-	list ($ret, $album) = GalleryFactory::newInstance('GalleryEntity', 'GalleryAlbumItem');
+	list ($ret, $album) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryAlbumItem');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -148,7 +148,7 @@ class GalleryTestCase extends TestCase {
 	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
 	}
 
-	list ($ret, $lockIds[]) = $gallery->acquireReadLock($parentId);
+	list ($ret, $lockIds[]) = GalleryCoreApi::acquireReadLock($parentId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -170,7 +170,7 @@ class GalleryTestCase extends TestCase {
 
 	/* Leggo of our locks */
 	if (isset($lockIds)) {
-	    $ret = $gallery->releaseLocks($lockIds);
+	    $ret = GalleryCoreApi::releaseLocks($lockIds);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -192,7 +192,7 @@ class GalleryTestCase extends TestCase {
 				   $fields=array(), $inputFile=__FILE__) {
 	global $gallery;
 
-	list ($ret, $item) = GalleryItemHelper::newItemByMimeType($mimeType);
+	list ($ret, $item) = GalleryCoreApi::newItemByMimeType($mimeType);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -201,7 +201,7 @@ class GalleryTestCase extends TestCase {
 	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
 	}
 
-	list ($ret, $lockIds[]) = $gallery->acquireReadLock($parentId);
+	list ($ret, $lockIds[]) = GalleryCoreApi::acquireReadLock($parentId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -234,7 +234,7 @@ class GalleryTestCase extends TestCase {
 
 	/* Leggo of our locks */
 	if (isset($lockIds)) {
-	    $ret = $gallery->releaseLocks($lockIds);
+	    $ret = GalleryCoreApi::releaseLocks($lockIds);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -258,7 +258,7 @@ class GalleryTestCase extends TestCase {
 	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
 	}
 
-	list ($ret, $lockIds[]) = $gallery->acquireReadLock(array($parentId, $targetItem->getId()));
+	list ($ret, $lockIds[]) = GalleryCoreApi::acquireReadLock(array($parentId, $targetItem->getId()));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -278,7 +278,7 @@ class GalleryTestCase extends TestCase {
 
 	/* Leggo of our locks */
 	if (isset($lockIds)) {
-	    $ret = $gallery->releaseLocks($lockIds);
+	    $ret = GalleryCoreApi::releaseLocks($lockIds);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -288,7 +288,7 @@ class GalleryTestCase extends TestCase {
     }
     
     function _createRandomUser($userTag=null) {
-	list ($ret, $user) = GalleryFactory::newInstance('GalleryEntity', 'GalleryUser');
+	list ($ret, $user) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryUser');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -319,7 +319,7 @@ class GalleryTestCase extends TestCase {
     }
 
     function _createRandomGroup($groupTag=null) {
-	list ($ret, $group) = GalleryFactory::newInstance('GalleryEntity', 'GalleryGroup');
+	list ($ret, $group) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryGroup');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -349,7 +349,7 @@ class GalleryTestCase extends TestCase {
 	global $gallery;
 
 	list ($ret, $derivative) = 
-	    GalleryFactory::newInstance('GalleryEntity', 'GalleryDerivativeImage');
+	    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryDerivativeImage');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -375,7 +375,7 @@ class GalleryTestCase extends TestCase {
     function _deleteAndVerifyEntity($id) {
 	global $gallery;
 
-	$ret = $gallery->deleteEntityById($id);
+	$ret = GalleryCoreApi::deleteEntityById($id);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -393,7 +393,7 @@ class GalleryTestCase extends TestCase {
 	
 	GalleryDataCache::reset();
 
-	list ($ret, $entity) = $gallery->loadEntitiesById($id);
+	list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($id);
 	if ($ret->isError()) {
 	    if (!$ret->getErrorCode() & ERROR_MISSING_OBJECT) {
 		return $ret->wrap(__FILE__, __LINE__);
@@ -412,7 +412,7 @@ class GalleryTestCase extends TestCase {
 	GalleryDataCache::reset();
 
 	/* Load it back from the storage */
-	list ($ret, $newEntity) = $gallery->loadEntitiesById($entity->getId());
+	list ($ret, $newEntity) = GalleryCoreApi::loadEntitiesById($entity->getId());
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -426,7 +426,7 @@ class GalleryTestCase extends TestCase {
     function _createUser() {
 	global $gallery;
 	
-	list ($ret, $user) = GalleryFactory::newInstance('GalleryEntity', 'GalleryUser');
+	list ($ret, $user) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryUser');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -449,7 +449,7 @@ class GalleryTestCase extends TestCase {
 
     function _deleteUser($user) {
 	global $gallery;
-	$ret = $gallery->deleteEntityById($user->getId());
+	$ret = GalleryCoreApi::deleteEntityById($user->getId());
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

@@ -42,7 +42,7 @@ class AdminDeleteGroupController extends GalleryController {
     function handleRequest($form) {
 	global $gallery;
 
-	$ret = GalleryUserHelper::assertSiteAdministrator();
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -61,7 +61,7 @@ class AdminDeleteGroupController extends GalleryController {
 	} else if (isset($form['action']['delete'])) {
 
 	    /* Only allow users to delete GROUP_NORMAL groups. */
-	    list ($ret, $group) = $gallery->loadEntitiesById($groupId);
+	    list ($ret, $group) = GalleryCoreApi::loadEntitiesById($groupId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -72,7 +72,7 @@ class AdminDeleteGroupController extends GalleryController {
 	     * in case we can't delete.
 	     */
 	    if ($group->getGroupType() == GROUP_NORMAL) {
-		$ret = $gallery->deleteEntityById($group->getId());
+		$ret = GalleryCoreApi::deleteEntityById($group->getId());
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -111,13 +111,13 @@ class AdminDeleteGroupView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	global $gallery;
 	
-	$ret = GalleryUserHelper::assertSiteAdministrator();
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$groupId = GalleryUtilities::getRequestVariables('groupId');
-	list ($ret, $group) = $gallery->loadEntitiesById($groupId);
+	list ($ret, $group) = GalleryCoreApi::loadEntitiesById($groupId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

@@ -39,7 +39,7 @@ class GalleryCoreSearch extends GallerySearchInterface_1_0 {
     function getSearchModuleInfo() {
 	global $gallery;
 
-	list ($ret, $module) = $gallery->loadModule('core');
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -137,7 +137,7 @@ class GalleryCoreSearch extends GallerySearchInterface_1_0 {
         ';
 
 	list ($ret, $viewPermission) =
-	    GalleryPermissionSetMap::convertIdsToBits('core.view');
+	    GalleryCoreApi::convertPermissionIdsToBits('core.view');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -169,7 +169,7 @@ class GalleryCoreSearch extends GallerySearchInterface_1_0 {
 	}
 
 
-	list ($ret, $module) = $gallery->loadModule('core');
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

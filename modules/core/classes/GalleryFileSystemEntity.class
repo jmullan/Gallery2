@@ -97,13 +97,13 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
 	 * Realistically, the entire parent tree must be locked but it's not
 	 * really practical to check the entire tree so just check the parent.
 	 */
-	if (!$gallery->isReadLocked($parentId)) {
+	if (!GalleryCoreApi::isReadLocked($parentId)) {
 	    return GalleryStatus::error(ERROR_LOCK_REQUIRED,
 					__FILE__, __LINE__);
 	}
 
 	list ($ret, $pathComponent) =
-	    GalleryFileSystemEntityHelper::getLegalPathComponent($pathComponent, $parentId);
+	    GalleryCoreApi::getLegalPathComponent($pathComponent, $parentId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -158,8 +158,7 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
 	}
 
 	list ($ret, $pathComponent) =
-	    GalleryFileSystemEntityHelper::getLegalPathComponent($entity->getPathComponent(),
-								 $parentId);
+	    GalleryCoreApi::getLegalPathComponent($entity->getPathComponent(), $parentId);
 	$ret = parent::create($parentId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -186,7 +185,7 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
     function rename($newPathComponent) {
 	global $gallery;
 
-	list ($ret, $rootAlbumId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
+	list ($ret, $rootAlbumId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 	if ($this->getId() == $rootAlbumId) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
@@ -197,7 +196,7 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
 
 	$parentId = $this->getParentId();
 	list ($ret, $newPathComponent) =
-	    GalleryFilesystemEntityHelper::getLegalPathComponent($newPathComponent, $parentId);
+	    GalleryCoreApi::getLegalPathComponent($newPathComponent, $parentId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -226,7 +225,7 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
 	}
 
 	/* Make sure the old parent and the new parent are read locked */
-	if (!($gallery->isReadLocked($newParentId) && $gallery->isReadLocked($this->getParentId()))) {
+	if (!(GalleryCoreApi::isReadLocked($newParentId) && GalleryCoreApi::isReadLocked($this->getParentId()))) {
 	    return GalleryStatus::error(ERROR_LOCK_REQUIRED, __FILE__, __LINE__,
 					sprintf("One parent id (%d or %d) is not read locked",
 						$newParentId,
@@ -234,7 +233,7 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
 	}
 
 	/* Get the new parent */
-	list ($ret, $newParent) = $gallery->loadEntitiesById($newParentId);
+	list ($ret, $newParent) = GalleryCoreApi::loadEntitiesById($newParentId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -244,7 +243,7 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
 	}
 
 	list ($ret, $newPathComponent) =
-	    GalleryFileSystemEntityHelper::getLegalPathComponent($this->getPathComponent(), $newParentId);
+	    GalleryCoreApi::getLegalPathComponent($this->getPathComponent(), $newParentId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -294,8 +293,8 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
 	 */
 	$parentId = $this->getParentId();
 	if (!empty($parentId)) {
-	    if (!$gallery->isReadLocked($parentId) &&
-		    !$gallery->isWriteLocked($parentId)) {
+	    if (!GalleryCoreApi::isReadLocked($parentId) &&
+		    !GalleryCoreApi::isWriteLocked($parentId)) {
 		return GalleryStatus::error(ERROR_LOCK_REQUIRED,
 					    __FILE__, __LINE__);
 	    }

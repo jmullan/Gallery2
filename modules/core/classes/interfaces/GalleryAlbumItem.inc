@@ -67,7 +67,6 @@ class GalleryAlbumItem extends GalleryAlbumItem_core {
      */
     function getMemberData() {
         $data = parent::getMemberData();
-        GalleryProfiler::start('modules.core.classes.GalleryPersistent::getMemberData');
     
 	if (!isset($this->_layout)) {
  	    $data['layout'] = null;
@@ -75,7 +74,6 @@ class GalleryAlbumItem extends GalleryAlbumItem_core {
 	    $data['layout'] = $this->_layout;
 	}
 	
-        GalleryProfiler::stop('modules.core.classes.GalleryPersistent::getMemberData');
         return $data;
     }
   

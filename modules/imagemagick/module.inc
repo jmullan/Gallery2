@@ -58,10 +58,10 @@ class ImageMagickModule extends GalleryModule {
 	$classDir = dirname(__FILE__) . '/classes/';
 
 	/* Register our graphics class with the factory */
-	GalleryFactory::registerImplementation('GalleryToolkit',
-					       'ImageMagickToolkit',
-					       'ImageMagick',
-					       $classDir . 'ImageMagickToolkit.class');
+	GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
+						      'ImageMagickToolkit',
+						      'ImageMagick',
+						      $classDir . 'ImageMagickToolkit.class');
 
 	return GalleryStatus::success();
     }
@@ -126,23 +126,23 @@ class ImageMagickModule extends GalleryModule {
 
 	foreach ($results['operations'] as $operation => $info) {
 	    $outputMimeType = isset($info['outputMimeType']) ? $info['outputMimeType'] : '';
-	    $ret = GalleryToolkitHelper::registerOperation('ImageMagick',
-							   $info['mimeTypes'],
-							   $operation,
-							   $info['params'],
-							   $info['description'],
-							   $outputMimeType);
+	    $ret = GalleryCoreApi::registerToolkitOperation('ImageMagick',
+							    $info['mimeTypes'],
+							    $operation,
+							    $info['params'],
+							    $info['description'],
+							    $outputMimeType);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 
 	foreach ($results['properties'] as $property => $info) {
-	    $ret = GalleryToolkitHelper::registerProperty('ImageMagick',
-							  $info['mimeTypes'],
-							  $property,
-							  $info['type'],
-							  $info['description']);
+	    $ret = GalleryCoreApi::registerToolkitProperty('ImageMagick',
+							   $info['mimeTypes'],
+							   $property,
+							   $info['type'],
+							   $info['description']);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -163,7 +163,7 @@ class ImageMagickModule extends GalleryModule {
 	}
 	
 	/* Unregister all of our properties and operations */
-	$ret = GalleryToolkitHelper::unregisterToolkit('ImageMagick');
+	$ret = GalleryCoreApi::unregisterToolkit('ImageMagick');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -276,7 +276,7 @@ class ImageMagickModule extends GalleryModule {
 
 	    if ($failCount == 0) {
 		/* We have a winner */
-		$ret = $gallery->setModuleParameter('imagemagick', 'path', $path);
+		$ret = GalleryCoreApi::setPluginParameter('module', 'imagemagick', 'path', $path);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), false);
 		}

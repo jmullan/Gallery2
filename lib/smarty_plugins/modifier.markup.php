@@ -35,7 +35,7 @@ function smarty_modifier_markup($text) {
     static $parser;
     
     if (!isset($parser)) {
-	list ($ret, $markup) = $gallery->getModuleParameter('core', 'misc.markup');
+	list ($ret, $markup) = GalleryCoreApi::getPluginParameter('module', 'core', 'misc.markup');
 	if ($ret->isError()) {
 	    /* This code is used by the UI -- we can't return an error.  Choose something safe */
 	    $markup = 'none';

@@ -69,10 +69,10 @@ class SearchScanView extends GalleryView {
 	$scanSize = 3;
 
 	/* Find all the modules that support the Search interface */
-	$ids = GalleryFactory::getAllImplementationIds('GallerySearchInterface_1_0');
+	$ids = GalleryCoreApi::getAllFactoryImplementationIds('GallerySearchInterface_1_0');
 	foreach ($ids as $id => $className) {
 	    list ($ret, $searchInstances[$id]) =
-		GalleryFactory::newInstance('GallerySearchInterface_1_0', $className);
+		GalleryCoreApi::newFactoryInstance('GallerySearchInterface_1_0', $className);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -137,7 +137,7 @@ class SearchScanView extends GalleryView {
 	    if (!empty($itemIds)) {
 
 		/* Fetch items */
-		list ($ret, $itemList) = $gallery->loadEntitiesById($itemIds);
+		list ($ret, $itemList) = GalleryCoreApi::loadEntitiesById($itemIds);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -147,7 +147,7 @@ class SearchScanView extends GalleryView {
 		
 		/* Fetch thumbnails */
 		list ($ret, $thumbnailList) =
-		    GalleryDerivativeHelper::fetchThumbnailsByItemIds($itemIds);
+		    GalleryCoreApi::fetchThumbnailsByItemIds($itemIds);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}

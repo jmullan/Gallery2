@@ -26,6 +26,8 @@
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
+require_once(dirname(__FILE__) . '/../../classes/GalleryCommentHelper.class');
+
 /**
  * AddComment controller tests
  */
@@ -51,7 +53,7 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
     function tearDown() {
 	global $gallery;
 
-	$ret = $gallery->deleteEntityById($this->_item->getId());
+	$ret = GalleryCoreApi::deleteEntityById($this->_item->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

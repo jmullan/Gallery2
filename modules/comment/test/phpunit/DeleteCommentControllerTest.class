@@ -47,7 +47,7 @@ class DeleteCommentControllerTest extends GalleryControllerTestCase {
 	    }
 
 	    /* Create a comment in it that we can delete */
-	    list ($ret, $this->_comment[$i]) = GalleryFactory::newInstance('GalleryEntity', 'GalleryComment');
+	    list ($ret, $this->_comment[$i]) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryComment');
 	    if ($ret->isError()) {
 		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -71,7 +71,7 @@ class DeleteCommentControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 
 	for ($i = 0; $i < sizeof($this->_item); $i++) {
-	    $ret = $gallery->deleteEntityById($this->_item[$i]->getId());
+	    $ret = GalleryCoreApi::deleteEntityById($this->_item[$i]->getId());
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }

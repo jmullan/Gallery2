@@ -41,51 +41,51 @@ class ItemCreateResizesControllerTest extends GalleryControllerTestCase {
 	parent::setUp();
 	
 	/* Register a mock data item type */
-	GalleryFactory::registerImplementation('GalleryItem',
+	GalleryCoreApi::registerFactoryImplementation('GalleryItem',
 					       'ItemCreateResizesTestItem',
 					       'ItemCreateResizesTestItem',
 					       __FILE__,
 					       array('test/*'));
 
 	/* Register a dummy toolkit */
-	GalleryFactory::registerImplementation('GalleryToolkit',
+	GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
 					       'ItemCreateResizesTestToolkit',
 					       'ItemCreateResizesTestToolkit',
 					       __FILE__);
 
 	/* Register operations that we can perform on our mock data items */
-	$ret = GalleryToolkitHelper::registerOperation('ItemCreateResizesTestToolkit',
-						       array('test/file'),
-						       'thumbnail',
-						       array(array('type' => 'int',
-								   'description' => 'test')),
-						       'test-description',
-						       '');
+	$ret = GalleryCoreApi::registerToolkitOperation('ItemCreateResizesTestToolkit',
+						 array('test/file'),
+						 'thumbnail',
+						 array(array('type' => 'int',
+							     'description' => 'test')),
+						 'test-description',
+						 '');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$ret = GalleryToolkitHelper::registerOperation('ItemCreateResizesTestToolkit',
-						       array('test/file'),
-						       'resize',
-						       array(array('type' => 'int',
-								   'description' => 'test'),
-							     array('type' => 'int',
-								   'description' => 'test')),
-						       'test-description',
-						       '');
+	$ret = GalleryCoreApi::registerToolkitOperation('ItemCreateResizesTestToolkit',
+						 array('test/file'),
+						 'resize',
+						 array(array('type' => 'int',
+							     'description' => 'test'),
+						       array('type' => 'int',
+							     'description' => 'test')),
+						 'test-description',
+						 '');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* Create a mock data item */
-	list ($ret, $lockId) = $gallery->acquireReadLock($this->_getRootId());
+	list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($this->_getRootId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	
 	/* Create a new item */
-	list ($ret, $this->_item) = GalleryItemHelper::newItemByMimeType('test/foo');
+	list ($ret, $this->_item) = GalleryCoreApi::newItemByMimeType('test/foo');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -102,7 +102,7 @@ class ItemCreateResizesControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$ret = $gallery->releaseLocks($lockId);
+	$ret = GalleryCoreApi::releaseLocks($lockId);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -111,13 +111,13 @@ class ItemCreateResizesControllerTest extends GalleryControllerTestCase {
     function tearDown() {
 	global $gallery;
 
-	$ret = $gallery->deleteEntityById($this->_item->getId());
+	$ret = GalleryCoreApi::deleteEntityById($this->_item->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	
 	/* Unregister dummy toolkit */
-	$ret = GalleryToolkitHelper::unregisterToolkit('ItemCreateResizesTestToolkit');
+	$ret = GalleryCoreApi::unregisterToolkit('ItemCreateResizesTestToolkit');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -149,7 +149,7 @@ class ItemCreateResizesControllerTest extends GalleryControllerTestCase {
 
 	/* Examine the thumbnail and make sure it lines up */
 	list ($ret, $thumbTable) =
-	    GalleryDerivativeHelper::fetchThumbnailsByItemIds(array($this->_item->getId()));
+	    GalleryCoreApi::fetchThumbnailsByItemIds(array($this->_item->getId()));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -160,7 +160,7 @@ class ItemCreateResizesControllerTest extends GalleryControllerTestCase {
 
 	/* Examine the resizes and make sure they line up */
 	list ($ret, $resizeTable) =
-	    GalleryDerivativeHelper::fetchResizesByItemIds(array($this->_item->getId()));
+	    GalleryCoreApi::fetchResizesByItemIds(array($this->_item->getId()));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

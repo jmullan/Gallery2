@@ -40,8 +40,7 @@ class SlideshowView extends GalleryView {
 	if (!$item->getCanContainChildren()) {
 	    // Photo: do slideshow of parent album, start at this photo
 	    $startId = $item->getId();
-	    list ($ret, $item) =
-		$gallery->loadEntitiesById($item->getParentId());
+	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($item->getParentId());
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -76,32 +75,32 @@ class SlideshowView extends GalleryView {
 	$itemList = array();
 	$childItems = array();
 	if (!empty($childIds)) {
-	    $ret = GalleryItemHelper::studyPermissions($childIds);
+	    $ret = GalleryCoreApi::studyPermissions($childIds);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    list ($ret, $childItems) = $gallery->loadEntitiesById($childIds);
+	    list ($ret, $childItems) = GalleryCoreApi::loadEntitiesById($childIds);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    list ($ret, $preferredFullImages) =
-		GalleryDerivativeHelper::fetchPreferredsByItemIds($childIds);
+		GalleryCoreApi::fetchPreferredsByItemIds($childIds);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    list ($ret, $resizedImages) =
-		GalleryDerivativeHelper::fetchResizesByItemIds($childIds);
+		GalleryCoreApi::fetchResizesByItemIds($childIds);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    list ($ret, $thumbnails) =
-		GalleryDerivativeHelper::fetchThumbnailsByItemIds($childIds);
+		GalleryCoreApi::fetchThumbnailsByItemIds($childIds);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    // If an Exif extractor is available try to get capture dates..
 	    list ($ret, $exifExtractor) =
-		GalleryFactory::newInstance('ExifInterface_1_0');
+		GalleryCoreApi::newFactoryInstance('ExifInterface_1_0');
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -131,7 +130,7 @@ class SlideshowView extends GalleryView {
 	    if (!$child->getCanContainChildren()) {
 
 		list ($ret, $permissions) =
-		    GalleryItemHelper::getPermissions($childId);
+		    GalleryCoreApi::getPermissions($childId);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -162,7 +161,7 @@ class SlideshowView extends GalleryView {
 		    // Rebuild derivatives if needed so width/height known..
 		    if (is_a($image, 'GalleryDerivativeImage')) {
 			list ($ret, $image) =
-			    GalleryDerivativeHelper::rebuildCacheIfNotCurrent(
+			    GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent(
 				    $image->getId());
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);

@@ -57,10 +57,10 @@ class NetPbmModule extends GalleryModule {
 	$classDir = dirname(__FILE__) . '/classes/';
 
 	/* Register our graphics class with the factory */
-	GalleryFactory::registerImplementation('GalleryToolkit',
-					       'NetPbmToolkit',
-					       'NetPBM',
-					       $classDir . 'NetPbmToolkit.class');
+	GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
+						      'NetPbmToolkit',
+						      'NetPBM',
+						      $classDir . 'NetPbmToolkit.class');
 
 	return GalleryStatus::success();
     }
@@ -204,12 +204,12 @@ class NetPbmModule extends GalleryModule {
 		if ($jpegWorking == 2) {
 		    if ($failCount <= $lowestFailCount) {
 			/* We have a winner */
-			$ret = $gallery->setModuleParameter('netpbm', 'path', $path);
+			$ret = GalleryCoreApi::setPluginParameter('module', 'netpbm', 'path', $path);
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), false);
 			}
 			
-			$ret = $gallery->setModuleParameter('netpbm', 'pnmtojpeg', $pnmtojpeg);
+			$ret = GalleryCoreApi::setPluginParameter('module', 'netpbm', 'pnmtojpeg', $pnmtojpeg);
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), false);
 			}
@@ -253,7 +253,7 @@ class NetPbmModule extends GalleryModule {
 
 	foreach ($results['operations'] as $operation => $info) {
 	    $outputMimeType = isset($info['outputMimeType']) ? $info['outputMimeType'] : '';
-	    $ret = GalleryToolkitHelper::registerOperation('NetPBM',
+	    $ret = GalleryCoreApi::registerToolkitOperation('NetPBM',
 							   $info['mimeTypes'],
 							   $operation,
 							   $info['params'],
@@ -265,7 +265,7 @@ class NetPbmModule extends GalleryModule {
 	}
 
 	foreach ($results['properties'] as $property => $info) {
-	    $ret = GalleryToolkitHelper::registerProperty('NetPBM',
+	    $ret = GalleryCoreApi::registerToolkitProperty('NetPBM',
 							  $info['mimeTypes'],
 							  $property,
 							  $info['type'],
@@ -290,7 +290,7 @@ class NetPbmModule extends GalleryModule {
 	}
 
 	/* Unregister all of our properties and operations */
-	$ret = GalleryToolkitHelper::unregisterToolkit('NetPBM');
+	$ret = GalleryCoreApi::unregisterToolkit('NetPBM');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

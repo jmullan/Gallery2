@@ -112,7 +112,6 @@ class GalleryItem extends GalleryItem_core {
      */
     function getMemberData() {
         $data = parent::getMemberData();
-        GalleryProfiler::start('modules.core.classes.GalleryPersistent::getMemberData');
     
 	if (!isset($this->_canContainChildren)) {
  	    $data['canContainChildren'] = null;
@@ -174,7 +173,6 @@ class GalleryItem extends GalleryItem_core {
 	    $data['viewedSinceTimestamp'] = $this->_viewedSinceTimestamp;
 	}
 	
-        GalleryProfiler::stop('modules.core.classes.GalleryPersistent::getMemberData');
         return $data;
     }
   

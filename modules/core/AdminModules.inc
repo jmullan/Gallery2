@@ -42,7 +42,7 @@ class AdminModulesController extends GalleryController {
     function handleRequest() {
 	global $gallery;
 
-	$ret = GalleryUserHelper::assertSiteAdministrator();
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -52,7 +52,7 @@ class AdminModulesController extends GalleryController {
 	
 	list($moduleId, $action) = GalleryUtilities::getRequestVariables('moduleId', 'action');
 	if (!empty($moduleId) && !empty($action)) {
-	    list($ret, $module) = $gallery->loadModule($moduleId);
+	    list($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -147,18 +147,18 @@ class AdminModulesView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	global $gallery;
 	
-	$ret = GalleryUserHelper::assertSiteAdministrator();
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-        list ($ret, $coreModule) = $gallery->loadModule('core');
+        list ($ret, $coreModule) = GalleryCoreApi::loadPlugin('module', 'core');
         if ($ret->isError()) {
             return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	
 	/* Load the module list */
-	list ($ret, $moduleStatus) = GalleryPluginMap::getPluginStatus('module');
+	list ($ret, $moduleStatus) = GalleryCoreApi::getPluginStatus('module');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -172,7 +172,7 @@ class AdminModulesView extends GalleryView {
 
 	foreach ($moduleStatus as $moduleId => $status) {
 	    /* Get the selected module's admin view */
-	    list($ret, $module) = $gallery->loadModule($moduleId);
+	    list($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }

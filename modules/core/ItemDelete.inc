@@ -53,19 +53,19 @@ class ItemDeleteController extends GalleryController {
 		$selectedIds = array_keys($form['selectedIds']);
 		
 		/* get the rootId, so we don't try to delete it */
-		list ($ret, $rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
+		list ($ret, $rootId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		
-		$ret = GalleryItemHelper::studyPermissions($selectedIds);
+		$ret = GalleryCoreApi::studyPermissions($selectedIds);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		
 		foreach ($selectedIds as $selectedId) {
 		    /* Make sure we have permission to delete this item */
-		    list ($ret, $permissions) = GalleryItemHelper::getPermissions($selectedId);
+		    list ($ret, $permissions) = GalleryCoreApi::getPermissions($selectedId);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
@@ -84,7 +84,7 @@ class ItemDeleteController extends GalleryController {
 		
 		/* if we're still here than all are deletable */
 		foreach ($selectedIds as $selectedId) {
-		    $ret = $gallery->deleteEntityById($selectedId);
+		    $ret = GalleryCoreApi::deleteEntityById($selectedId);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
@@ -135,13 +135,13 @@ class ItemDeleteView extends GalleryView {
 	    $form['formName'] = 'ItemDelete';
 	}
 	
-	list($ret, $item) = $gallery->loadEntitiesById($itemId);
+	list($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	
 	list($ret, $peerIds) =
-		GalleryItemHelper::fetchChildItemIdsWithPermission($itemId, 'core.delete');
+	    GalleryCoreApi::fetchChildItemIdsWithPermission($itemId, 'core.delete');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -150,7 +150,7 @@ class ItemDeleteView extends GalleryView {
 	$peerTypes = array();
 	if (!empty($peerIds)) {
 	    /* load peers */
-	    list($ret, $peerItems) = $gallery->loadEntitiesById($peerIds);
+	    list($ret, $peerItems) = GalleryCoreApi::loadEntitiesById($peerIds);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }

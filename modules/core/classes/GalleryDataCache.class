@@ -38,56 +38,21 @@
  */
 class GalleryDataCache {
 
-    /*
-     * ****************************************
-     *                 Members
-     * ****************************************
-     */
-
     /**
-     * Our data cache
+     * Get the static cache
      *
-     * @var array
-     * @access private
-     */
-    var $_cache = array();
-    
-    /**
-     * Protected cache entries
-     *
-     * @var array
-     * @access private
-     */
-    var $_protected = array();
-    
-    /*
-     * ****************************************
-     *                 Methods
-     * ****************************************
-     */
-
-    /**
-     * Constructor
-     */
-    function GalleryDataCache() {
-	$this->_cache = array();
-    }
-
-    /**
-     * Get the singleton of this class
-     *
-     * @return object GalleryDataCache
-     * @access private
-     * @staticvar GalleryDataCache $galleryDataCache The only DataCache that we will need
+     * @return array the cache
+     * @staticvar cache the singleton cache
      * @static
+     * @private
      */
-    function &_singleton() {
-	static $galleryDataCache;
-	if (empty($galleryDataCache)) {
-	    $galleryDataCache = new GalleryDataCache();
+    function &_getCache() {
+	static $cache;
+	if (!isset($cache)) {
+	    $cache['keys'] = array();
+	    $cache['protected'] = array();
 	}
-
-	return $galleryDataCache;
+	return $cache;
     }
 
     /**
@@ -101,16 +66,10 @@ class GalleryDataCache {
      * @static
      */
     function put($key, $data, $protected=false) {
-	    
-	/* Delegate to the singleton */
-	if (empty($this) || get_class($this) != 'gallerydatacache') {
-	    $galleryDataCache =& GalleryDataCache::_singleton();
-	    return $galleryDataCache->put($key, $data, $protected);
-	}
-
-	$this->_cache[$key] = $data;
+	$cache =& GalleryDataCache::_getCache();
+	$cache['keys'][$key] = $data;
 	if ($protected) {
-	    $this->_protected[$key] = 1;
+	    $cache['protected'][$key] = 1;
 	}
     }
 
@@ -122,15 +81,9 @@ class GalleryDataCache {
      * @static
      */
     function remove($key) {
-	    
-	/* Delegate to the singleton */
-	if (empty($this) || get_class($this) != 'gallerydatacache') {
-	    $galleryDataCache =& GalleryDataCache::_singleton();
-	    return $galleryDataCache->remove($key);
-	}
-
-	unset($this->_cache[$key]);
-	unset($this->_protected[$key]);
+	$cache =& GalleryDataCache::_getCache();
+	unset($cache['keys'][$key]);
+	unset($cache['protected'][$key]);
     }
 
     /**
@@ -144,16 +97,10 @@ class GalleryDataCache {
      * @static
      */
     function putByReference($key, &$data, $protected=false) {
-	    
-	/* Delegate to the singleton */
-	if (empty($this) || get_class($this) != 'gallerydatacache') {
-	    $galleryDataCache =& GalleryDataCache::_singleton();
-	    return $galleryDataCache->putByReference($key, $data, $protected);
-	}
-
-	$this->_cache[$key] =& $data;
+	$cache =& GalleryDataCache::_getCache();
+	$cache['keys'][$key] =& $data;
 	if ($protected) {
-	    $this->_protected[$key] = 1;
+	    $cache['protected'][$key] = 1;
 	}
     }
 
@@ -165,15 +112,10 @@ class GalleryDataCache {
      * @static
      */
     function get($key) {
-	global $gallery;
-
-	/* Delegate to the singleton */
-	if (empty($this) || get_class($this) != 'gallerydatacache') {
-	    $galleryDataCache =& GalleryDataCache::_singleton();
-	    return $galleryDataCache->get($key);
-	}
-
-	return $this->_cache[$key];
+	GalleryCoreApi::apiMethodUsed("GalleryDataCache::get");
+	
+	$cache =& GalleryDataCache::_getCache();
+	return $cache['keys'][$key];
     }
 
     /**
@@ -184,15 +126,23 @@ class GalleryDataCache {
      * @static
      */
     function containsKey($key) {
-	global $gallery;
+	GalleryCoreApi::apiMethodUsed(sprintf("GalleryDataCache::containsKey = %s",
+					      isset($cache['keys'][$key]) ? "hit" : "miss",
+					      $key));
+	
+	$cache =& GalleryDataCache::_getCache();
+	return isset($cache['keys'][$key]);
+    }
 
-	/* Delegate to the singleton */
-	if (empty($this) || get_class($this) != 'gallerydatacache') {
-	    $galleryDataCache =& GalleryDataCache::_singleton();
-	    return $galleryDataCache->containsKey($key);
-	}
-
-	return isset($this->_cache[$key]);
+    /**
+     * Return all the keys in the cache
+     *
+     * @return array string keys
+     * @static
+     */
+    function getAllKeys() {
+	$cache =& GalleryDataCache::_getCache();
+	return array_keys($cache['keys']);
     }
 
     /**
@@ -202,18 +152,14 @@ class GalleryDataCache {
      * @static
      */
     function reset($purgeProtected=false) {
-	/* Delegate to the singleton */
-	if (empty($this) || get_class($this) != 'gallerydatacache') {
-	    $galleryDataCache =& GalleryDataCache::_singleton();
-	    return $galleryDataCache->reset();
-	}
+	$cache =& GalleryDataCache::_getCache();
 
 	if ($purgeProtected) {
-	    $this->_cache = array();
+	    $cache['keys'] = array();
 	} else {
-	    foreach (array_keys($this->_cache) as $key) {
-		if (!isset($this->_protected[$key])) {
-		    unset($this->_cache[$key]);
+	    foreach (array_keys($cache['keys']) as $key) {
+		if (!isset($cache['protected'][$key])) {
+		    unset($cache['keys'][$key]);
 		}
 	    }
 	}

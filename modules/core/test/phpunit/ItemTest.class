@@ -46,7 +46,7 @@ class ItemTest extends GalleryTestCase {
 
 	$userId = $gallery->getActiveUserId();
 	list ($ret, $groupIds) =
-	    GalleryUserGroupMap::fetchGroupsForUser($userId);
+	    GalleryCoreApi::fetchGroupsForUser($userId);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -60,7 +60,7 @@ class ItemTest extends GalleryTestCase {
 	}
 
 	/* Remove all permissions */
-	$ret = GalleryPermissionMap::removeItemPermissions($this->_parentItem->getId());
+	$ret = GalleryCoreApi::removeItemPermissions($this->_parentItem->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -72,7 +72,7 @@ class ItemTest extends GalleryTestCase {
 	    }
 
 	    /* Remove all permissions */
-	    $ret = GalleryPermissionMap::removeItemPermissions($this->_childItems[$i]->getId());
+	    $ret = GalleryCoreApi::removeItemPermissions($this->_childItems[$i]->getId());
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
@@ -82,7 +82,7 @@ class ItemTest extends GalleryTestCase {
 		// Can't view this one
 		
 		// Has an extra perm that we care about
-		$ret = GalleryPermissionMap::addUserPermission($this->_childItems[$i]->getId(),
+		$ret = GalleryCoreApi::addUserPermission($this->_childItems[$i]->getId(),
 							       $userId,
 							       'core.delete',
 							       false);
@@ -93,7 +93,7 @@ class ItemTest extends GalleryTestCase {
 
 	    case 1:
 		// Can view via user perm
-		$ret = GalleryPermissionMap::addUserPermission($this->_childItems[$i]->getId(),
+		$ret = GalleryCoreApi::addUserPermission($this->_childItems[$i]->getId(),
 							       $userId,
 							       'core.view',
 							       false);
@@ -102,7 +102,7 @@ class ItemTest extends GalleryTestCase {
 		}
 
 		// Can add data item via group perm
-		$ret = GalleryPermissionMap::addGroupPermission($this->_childItems[$i]->getId(),
+		$ret = GalleryCoreApi::addGroupPermission($this->_childItems[$i]->getId(),
 								$groupId,
 								'core.addDataItem',
 								false);
@@ -111,7 +111,7 @@ class ItemTest extends GalleryTestCase {
 		}
 
 		// Can add data item via group perm
-		$ret = GalleryPermissionMap::addGroupPermission($this->_childItems[$i]->getId(),
+		$ret = GalleryCoreApi::addGroupPermission($this->_childItems[$i]->getId(),
 								$groupId,
 								'core.edit',
 								false);
@@ -123,7 +123,7 @@ class ItemTest extends GalleryTestCase {
 
 	    case 2:
 		// Can view via group perm
-		$ret = GalleryPermissionMap::addGroupPermission($this->_childItems[$i]->getId(),
+		$ret = GalleryCoreApi::addGroupPermission($this->_childItems[$i]->getId(),
 								$groupId,
 								'core.view',
 								false);
@@ -132,7 +132,7 @@ class ItemTest extends GalleryTestCase {
 		}
 
 		// Has an extra perm that we care about
-		$ret = GalleryPermissionMap::addGroupPermission($this->_childItems[$i]->getId(),
+		$ret = GalleryCoreApi::addGroupPermission($this->_childItems[$i]->getId(),
 								$groupId,
 								'core.delete',
 								false);
@@ -145,13 +145,13 @@ class ItemTest extends GalleryTestCase {
 	}
 
 	/* Register a dummy toolkit */
-	GalleryFactory::registerImplementation('GalleryToolkit',
+	GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
 					       'ItemTestToolkit',
 					       'ItemTestToolkit',
 					       __FILE__);
 	
 	/* Register an operation that we can perform on our mock data items */
-	$ret = GalleryToolkitHelper::registerOperation('ItemTestToolkit',
+	$ret = GalleryCoreApi::registerToolkitOperation('ItemTestToolkit',
 						       array('test/image'),
 						       'thumbnail',
 						       array(array('type' => 'int', 'description' => 'foo')),
@@ -161,7 +161,7 @@ class ItemTest extends GalleryTestCase {
 	}
 
 	/* Register a conversion operation that we can perform on our mock data items */
-	$ret = GalleryToolkitHelper::registerOperation('ItemTestToolkit',
+	$ret = GalleryCoreApi::registerToolkitOperation('ItemTestToolkit',
 						       array('test/movie'),
 						       'convert-to-image/jpeg',
 						       array(),
@@ -176,13 +176,13 @@ class ItemTest extends GalleryTestCase {
     function tearDown() {
 	global $gallery;
 
-	$ret = $gallery->deleteEntityById($this->_parentItem->getId());
+	$ret = GalleryCoreApi::deleteEntityById($this->_parentItem->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	
 	/* Unregister dummy toolkit */
-	$ret = GalleryToolkitHelper::unregisterToolkit('ItemTestToolkit');
+	$ret = GalleryCoreApi::unregisterToolkit('ItemTestToolkit');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -194,7 +194,7 @@ class ItemTest extends GalleryTestCase {
 	global $gallery;
 
 	/* Lock and refresh it */
-	list ($ret, $lockId) = $gallery->acquireWriteLock($this->_parentItem->getId());
+	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($this->_parentItem->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -214,7 +214,7 @@ class ItemTest extends GalleryTestCase {
 	}
 
 	/* Unlock it */
-	$ret = $gallery->releaseLocks($lockId);
+	$ret = GalleryCoreApi::releaseLocks($lockId);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -231,25 +231,25 @@ class ItemTest extends GalleryTestCase {
     }
 
     function testNewItemByMimeType() {
-	list ($ret, $instance) = GalleryItemHelper::newItemByMimeType('image/jpeg');
+	list ($ret, $instance) = GalleryCoreApi::newItemByMimeType('image/jpeg');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals('galleryphotoitem', get_class($instance));
 
-	list ($ret, $instance) = GalleryItemHelper::newItemByMimeType('image/randomimagetype');
+	list ($ret, $instance) = GalleryCoreApi::newItemByMimeType('image/randomimagetype');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals('galleryphotoitem', get_class($instance));
 
-	list ($ret, $instance) = GalleryItemHelper::newItemByMimeType('video/x-msvideo');
+	list ($ret, $instance) = GalleryCoreApi::newItemByMimeType('video/x-msvideo');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals('gallerymovieitem', get_class($instance));
 
-	list ($ret, $instance) = GalleryItemHelper::newItemByMimeType('randomtype/randomtype');
+	list ($ret, $instance) = GalleryCoreApi::newItemByMimeType('randomtype/randomtype');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -259,7 +259,7 @@ class ItemTest extends GalleryTestCase {
     function testGetChildCounts() {
 	global $gallery;
 
-	list ($ret, $counts) = GalleryItemHelper::fetchChildCounts(array($this->_parentItem->getId()));
+	list ($ret, $counts) = GalleryCoreApi::fetchChildCounts(array($this->_parentItem->getId()));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -277,7 +277,7 @@ class ItemTest extends GalleryTestCase {
 	global $gallery;
 
 	list ($ret, $itemIds) =
-	    GalleryItemHelper::fetchChildItemIdsWithPermission($this->_parentItem->getId(),
+	    GalleryCoreApi::fetchChildItemIdsWithPermission($this->_parentItem->getId(),
 							       'core.delete');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -294,13 +294,13 @@ class ItemTest extends GalleryTestCase {
     }
 
     function testGetPermissions() {
-	list ($ret, $perms) = GalleryItemHelper::getPermissions($this->_childItems[0]->getId());
+	list ($ret, $perms) = GalleryCoreApi::getPermissions($this->_childItems[0]->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(array('core.delete' => 1), $perms);
 
-	list ($ret, $perms) = GalleryItemHelper::getPermissions($this->_childItems[1]->getId());
+	list ($ret, $perms) = GalleryCoreApi::getPermissions($this->_childItems[1]->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -308,7 +308,7 @@ class ItemTest extends GalleryTestCase {
 				  'core.addDataItem' => 1,
 				  'core.edit' => 1), $perms);
 
-	list ($ret, $perms) = GalleryItemHelper::getPermissions($this->_childItems[2]->getId());
+	list ($ret, $perms) = GalleryCoreApi::getPermissions($this->_childItems[2]->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -317,7 +317,7 @@ class ItemTest extends GalleryTestCase {
     }
 
     function testFetchAllItemIds() {
-	list ($ret, $ids) = GalleryItemHelper::fetchAllItemIds('GalleryAlbumItem');
+	list ($ret, $ids) = GalleryCoreApi::fetchAllItemIds('GalleryAlbumItem');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -328,7 +328,7 @@ class ItemTest extends GalleryTestCase {
 	$this->assert(in_array($this->_childItems[1]->getId(), $ids), 'child 1');
 	$this->assert(in_array($this->_childItems[2]->getId(), $ids), 'child 2');
 
-	list ($ret, $ids) = GalleryItemHelper::fetchAllItemIds('GalleryAlbumItem', 'core.addDataItem');
+	list ($ret, $ids) = GalleryCoreApi::fetchAllItemIds('GalleryAlbumItem', 'core.addDataItem');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -351,7 +351,7 @@ class ItemTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $success) = GalleryItemHelper::setThumbnailFromItem($this->_childItems[1]->getId(),
+	list ($ret, $success) = GalleryCoreApi::setThumbnailFromItem($this->_childItems[1]->getId(),
 									$this->_childItems[0]->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -359,7 +359,7 @@ class ItemTest extends GalleryTestCase {
 	$this->assert($success, 'should be able to set thumbnail');
 
 	list ($ret, $thumbTable) =
-	    GalleryDerivativeHelper::fetchThumbnailsByItemIds($this->_childItems[1]->getId());
+	    GalleryCoreApi::fetchThumbnailsByItemIds($this->_childItems[1]->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -383,7 +383,7 @@ class ItemTest extends GalleryTestCase {
 	global $gallery;
 	
 	/* Lock and refresh parent */
-	list ($ret, $lockId) = $gallery->acquireWriteLock($this->_parentItem->getId());
+	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($this->_parentItem->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -401,13 +401,13 @@ class ItemTest extends GalleryTestCase {
 	$ret = $unknownItem->save();
 
 	/* Unlock parent */
-	$ret = $gallery->releaseLocks($lockId);
+	$ret = GalleryCoreApi::releaseLocks($lockId);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	
 	list ($ret, $success) =
-	    GalleryItemHelper::setThumbnailFromItem($this->_childItems[1]->getId(), $unknownItem->getId());
+	    GalleryCoreApi::setThumbnailFromItem($this->_childItems[1]->getId(), $unknownItem->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -415,14 +415,14 @@ class ItemTest extends GalleryTestCase {
 	$this->assert(!$success, 'should not be able to set thumbnail');
 
 	list ($ret, $thumbTable) =
-	    GalleryDerivativeHelper::fetchThumbnailsByItemIds($this->_childItems[1]->getId());
+	    GalleryCoreApi::fetchThumbnailsByItemIds($this->_childItems[1]->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$this->assert(!isset($thumbTable[$this->_childItems[1]->getId()]));
 
-	$ret = $gallery->deleteEntityById($unknownItem->getId());
+	$ret = GalleryCoreApi::deleteEntityById($unknownItem->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -431,18 +431,18 @@ class ItemTest extends GalleryTestCase {
     function testAddItemToAlbum() {
 	global $gallery;
 
-	list ($ret, $lockId) = $gallery->acquireReadLock($this->_childItems[0]->getId());
+	list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($this->_childItems[0]->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $maxWeight) =
-	    GalleryItemAttributesMap::fetchExtremeChildWeight($this->_childItems[0]->getId(), HIGHER_WEIGHT);
+	    GalleryCoreApi::fetchExtremeChildWeight($this->_childItems[0]->getId(), HIGHER_WEIGHT);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	
-	list ($ret, $newItem) = GalleryItemHelper::addItemToAlbum(__FILE__,
+	list ($ret, $newItem) = GalleryCoreApi::addItemToAlbum(__FILE__,
 								  'itemName',
 								  'title',
 								  'caption',
@@ -453,7 +453,7 @@ class ItemTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$ret = $gallery->releaseLocks($lockId);
+	$ret = GalleryCoreApi::releaseLocks($lockId);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -467,7 +467,7 @@ class ItemTest extends GalleryTestCase {
 	$this->assertEquals($this->_childItems[0]->getId(), $newItem->getParentId());
 	
 	/* Test the order weight */
-	list ($ret, $weights) = GalleryItemAttributesMap::fetchOrderWeights(array($newItem->getId()));
+	list ($ret, $weights) = GalleryCoreApi::fetchItemOrderWeights(array($newItem->getId()));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -479,28 +479,27 @@ class ItemTest extends GalleryTestCase {
     function testAddMovieToAlbum() {
 	global $gallery;
 
-	list ($ret, $lockId) = $gallery->acquireReadLock($this->_childItems[0]->getId());
+	list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($this->_childItems[0]->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* Delete existing derivative preferences */
-	$ret = GalleryDerivativePreferencesMap::removeMapEntry(array('itemId' => $this->_childItems[0]->getId()));
+	$ret = GalleryCoreApi::removeDerivativePreferencesForItem($this->_childItems[0]->getId());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* Add a thumbnail preference */
-	$ret = GalleryDerivativePreferencesMap::addMapEntry(array('order' => 0,
-								  'itemId' => $this->_childItems[0]->getId(),
-								  'derivativeType' => DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
-								  'derivativeOperations' => 'thumbnail|100'));
+	$ret = GalleryCoreApi::addDerivativePreference(0, $this->_childItems[0]->getId(),
+						       DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
+						       'thumbnail|100');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* Add our item to the album */
-	list ($ret, $newItem) = GalleryItemHelper::addItemToAlbum(__FILE__,
+	list ($ret, $newItem) = GalleryCoreApi::addItemToAlbum(__FILE__,
 								  'itemName',
 								  'title',
 								  'caption',
@@ -511,7 +510,7 @@ class ItemTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$ret = $gallery->releaseLocks($lockId);
+	$ret = GalleryCoreApi::releaseLocks($lockId);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -523,7 +522,7 @@ class ItemTest extends GalleryTestCase {
 	 *  - it has operations of convert-to-image/jpeg;thumbnail|100
 	 */
 	list ($ret, $derivativeTable) =
-	    GalleryDerivativeHelper::fetchDerivativesBySourceIds(array($newItem->getId()));
+	    GalleryCoreApi::fetchDerivativesBySourceIds(array($newItem->getId()));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -544,14 +543,14 @@ class ItemTest extends GalleryTestCase {
 	global $gallery;
 
 	/* Switch to the anonymous user id so that this returns false */
-        list ($ret, $anonymousUserId) = $gallery->getModuleParameter('core', 'id.anonymousUser');
+        list ($ret, $anonymousUserId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
         if ($ret->isError()) {
             return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$gallery->setActiveUserId($anonymousUserId);
 	
 	list ($ret, $count) =
-	    GalleryItemHelper::fetchItemIdCount('GalleryAlbumItem', 'core.changePermissions');
+	    GalleryCoreApi::fetchItemIdCount('GalleryAlbumItem', 'core.changePermissions');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -564,7 +563,7 @@ class ItemTest extends GalleryTestCase {
 
 	/* We're the admin user so this should return a positive value */
 	list ($ret, $count) =
-	    GalleryItemHelper::fetchItemIdCount('GalleryAlbumItem', 'core.changePermissions');
+	    GalleryCoreApi::fetchItemIdCount('GalleryAlbumItem', 'core.changePermissions');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -608,7 +607,7 @@ class ItemTest extends GalleryTestCase {
 	}
 
 	/* Delete the original, now all links should point to the first link */
-	$ret = $gallery->deleteEntityById($item->getId());
+	$ret = GalleryCoreApi::deleteEntityById($item->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -647,7 +646,7 @@ class ItemTest extends GalleryTestCase {
 	}
 
 	list ($ret, $parentSequence) =
-	    GalleryItemAttributesMap::fetchParentSequence($item->getId());
+	    GalleryCoreApi::fetchParentSequence($item->getId());
 
 	$this->assertEquals($this->_childItems[0]->getId(), $item->getParentId());
 	$this->assertEquals(array($this->_getRootId(),
@@ -656,13 +655,13 @@ class ItemTest extends GalleryTestCase {
 			    $parentSequence);
 
 	list ($ret, $locks[]) =
-	    $gallery->acquireReadLock(array($this->_childItems[0]->getId(),
+	    GalleryCoreApi::acquireReadLock(array($this->_childItems[0]->getId(),
 					    $this->_childItems[1]->getId()));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $locks[]) = $gallery->acquireWriteLock($item->getId());
+	list ($ret, $locks[]) = GalleryCoreApi::acquireWriteLock($item->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -685,7 +684,7 @@ class ItemTest extends GalleryTestCase {
 	GalleryDataCache::reset();
 
 	list ($ret, $parentSequence) =
-	    GalleryItemAttributesMap::fetchParentSequence($item->getId());
+	    GalleryCoreApi::fetchParentSequence($item->getId());
 
 	$this->assertEquals($this->_childItems[1]->getId(), $item->getParentId());
 	$this->assertEquals(array($this->_getRootId(),
@@ -693,7 +692,7 @@ class ItemTest extends GalleryTestCase {
 				  $this->_childItems[1]->getId()),
 			    $parentSequence);
 
-	$ret = $gallery->releaseLocks($locks);
+	$ret = GalleryCoreApi::releaseLocks($locks);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

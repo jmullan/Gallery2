@@ -170,7 +170,7 @@ class GalleryMovieItem_core extends GalleryDataItem {
 	}
 
 	$mimeType = $this->getMimeType();
-	list ($ret, $toolkit) = GalleryToolkitHelper::getToolkitByProperty($mimeType, 'dimensions_and_duration');
+	list ($ret, $toolkit) = GalleryCoreApi::getToolkitByProperty($mimeType, 'dimensions_and_duration');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

@@ -113,9 +113,7 @@ function GalleryInitStorage() {
 function GalleryInitSecondPass() {
     global $gallery;
 
-    GalleryProfiler::start('init.GalleryInitSecondPass');
-
-    list ($ret, $coreModule) = $gallery->loadModule('core');
+    list ($ret, $coreModule) = GalleryCoreApi::loadPlugin('module', 'core');
     if ($ret->isError()) {
 	return $ret->wrap(__FILE__, __LINE__);
     }
@@ -149,7 +147,8 @@ function GalleryInitSecondPass() {
     $activeUserId = $session->get('core.id.activeUser');
     if (empty($activeUserId)) {
 	/* No active user -- be anonymous */
-	list ($ret, $activeUserId) = $gallery->getModuleParameter('core', 'id.anonymousUser');
+	list ($ret, $activeUserId) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -171,8 +170,7 @@ function GalleryInitSecondPass() {
     }
     
     /* Load the module list */
-    GalleryProfiler::start('init.GalleryInit#load-modules');
-    list ($ret, $moduleStatus) = GalleryPluginMap::getPluginStatus('module');
+    list ($ret, $moduleStatus) = GalleryCoreApi::getPluginStatus('module');
     if ($ret->isError()) {
 	return $ret->wrap(__FILE__, __LINE__);
     }
@@ -181,7 +179,7 @@ function GalleryInitSecondPass() {
 	if (empty($status['active'])) {
 	    /* If we just installed the core module then try auto configuring this module. */
 	    if ($coreWasInstalled) {
-		list ($ret, $module) = $gallery->loadModule($moduleId, false);
+		list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId, false);
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
@@ -195,7 +193,7 @@ function GalleryInitSecondPass() {
 			 * try again using the AdminModules view.  So let's just eat the error and not worry
 			 * about it.
 			 */
-			GalleryPluginMap::unloadPlugin('module', $moduleId);
+			GalleryCoreApi::unloadPlugin('module', $moduleId);
 			continue;
 		    }
 		    
@@ -203,7 +201,7 @@ function GalleryInitSecondPass() {
 		    list ($ret, $success) = $module->autoConfigure();
 		    if ($ret->isError()) {
 			/* As above, we don't want to fail even if there is an error */
-			GalleryPluginMap::unloadPlugin('module', $moduleId);
+			GalleryCoreApi::unloadPlugin('module', $moduleId);
 			continue;
 		    }
 
@@ -212,7 +210,7 @@ function GalleryInitSecondPass() {
 			$ret = $module->activate();
 			if ($ret->isError()) {
 			    /* As above, we don't want to fail even if there is an error */
-			    GalleryPluginMap::unloadPlugin('module', $moduleId);
+			    GalleryCoreApi::unloadPlugin('module', $moduleId);
 			    continue;
 			}
 
@@ -220,23 +218,20 @@ function GalleryInitSecondPass() {
 			$module->init();
 			if ($ret->isError()) {
 			    /* As above, we don't want to fail even if there is an error */
-			    $gallery->unloadModule($moduleId);
-			    GalleryPluginMap::unloadPlugin('module', $moduleId);
+			    GalleryCoreApi::unloadPlugin('module', $moduleId);
 			    continue;
 			}
 		    }
 		}
 	    }
 	} else {
-	    list ($ret, $module) = $gallery->loadModule($moduleId);
+	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 
     }
-    GalleryProfiler::stop('init.GalleryInit#load-modules');
-    GalleryProfiler::stop('init.GalleryInitSecondPass');
 
     return GalleryStatus::success();
 }

@@ -42,7 +42,7 @@ class AdminNetPbmController extends GalleryController {
     function handleRequest($form) {
 	global $gallery;
 
-	$ret = GalleryUserHelper::assertSiteAdministrator();
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -89,7 +89,7 @@ class AdminNetPbmController extends GalleryController {
 	    }
 	    
 	    if (empty($error)) {
-		$ret = $gallery->setModuleParameter('netpbm', 'path', $form['path']);
+		$ret = GalleryCoreApi::setPluginParameter('module', 'netpbm', 'path', $form['path']);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -97,7 +97,7 @@ class AdminNetPbmController extends GalleryController {
 		/*
 		 * Set the image quality
 		 */
-		$ret = $gallery->setModuleParameter('netpbm', 'jpegQuality', $form['jpegQuality']);
+		$ret = GalleryCoreApi::setPluginParameter('module', 'netpbm', 'jpegQuality', $form['jpegQuality']);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -105,7 +105,7 @@ class AdminNetPbmController extends GalleryController {
 		/*
 		 * Set the pnmtojpeg binary name
 		 */
-		$ret = $gallery->setModuleParameter('netpbm', 'pnmtojpeg', $form['pnmtojpeg']);
+		$ret = GalleryCoreApi::setPluginParameter('module', 'netpbm', 'pnmtojpeg', $form['pnmtojpeg']);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -149,7 +149,7 @@ class AdminNetPbmView extends GalleryView {
 	if ($form['formName'] != 'AdminNetPbm') {
 	    foreach (array('path', 'jpegQuality', 'pnmtojpeg') as $key) {
 		list ($ret, $form[$key]) =
-		    $gallery->getModuleParameter('netpbm', $key);
+		    GalleryCoreApi::getPluginParameter('module', 'netpbm', $key);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}

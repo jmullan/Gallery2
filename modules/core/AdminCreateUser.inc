@@ -42,7 +42,7 @@ class AdminCreateUserController extends GalleryController {
     function handleRequest($form) {
 	global $gallery;
 
-	$ret = GalleryUserHelper::assertSiteAdministrator();
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -66,7 +66,7 @@ class AdminCreateUserController extends GalleryController {
 	        !empty($form['password1']) &&
 	        $form['password1'] == $form['password2']) {
 	    
-		list ($ret, $user) = GalleryFactory::newInstance('GalleryEntity', 'GalleryUser');
+		list ($ret, $user) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryUser');
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -142,7 +142,7 @@ class AdminCreateUserView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	global $gallery;
 	
-	$ret = GalleryUserHelper::assertSiteAdministrator();
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -157,7 +157,7 @@ class AdminCreateUserView extends GalleryView {
 	}
 
 	/* Set up our language selection list */
-	list ($ret, $module) = $gallery->loadModule('core');
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

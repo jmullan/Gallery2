@@ -137,12 +137,12 @@ class AdminCreateUserControllerTest extends GalleryControllerTestCase {
     function _deleteUser($userName) {
 	global $gallery;
 	
-	list ($ret, $user) = GalleryUserHelper::fetchUserByUserName($userName);
+	list ($ret, $user) = GalleryCoreApi::fetchUserByUserName($userName);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$ret = $gallery->deleteEntityById($user->getId());
+	$ret = GalleryCoreApi::deleteEntityById($user->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

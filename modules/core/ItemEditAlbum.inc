@@ -45,12 +45,12 @@ class ItemEditAlbumController extends GalleryController {
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
 
 	/* Make sure we have permission do edit this item */
-	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'core.edit');
+	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.edit');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	list ($ret, $item) = $gallery->loadEntitiesById($itemId);
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -82,18 +82,15 @@ class ItemEditAlbumController extends GalleryController {
 
 	    if (empty($error)) {
 		/* Delete existing derivative preferences */
-		$ret = GalleryDerivativePreferencesMap::removeMapEntry(
-		    array('itemId' => $item->getId()));
+		$ret = GalleryCoreApi::removeDerivativePreferencesForItem($item->getId());
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
 		/* Add the thumbnail size back in */
-		$ret = GalleryDerivativePreferencesMap::addMapEntry(
-                    array('order' => 0,
-			  'itemId' => $item->getId(),
-			  'derivativeType' => DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
-			  'derivativeOperations' => 'thumbnail|' . $form['thumbnail']['size']));
+		$ret = GalleryCoreApi::addDerivativePreference(0, $item->getId(),
+							       DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
+							       'thumbnail|' . $form['thumbnail']['size']);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -104,11 +101,9 @@ class ItemEditAlbumController extends GalleryController {
 			continue;
 		    }
 
-		    $ret = GalleryDerivativePreferencesMap::addMapEntry(
-	                array('order' => $i,
-			      'itemId' => $item->getId(),
-			      'derivativeType' => DERIVATIVE_TYPE_IMAGE_RESIZE,
-			      'derivativeOperations' => 'scale|' . $form['resizes'][$i]['size']));
+		    $ret = GalleryCoreApi::addDerivativePreference($i, $item->getId(),
+								   DERIVATIVE_TYPE_IMAGE_RESIZE,
+								   'scale|' . $form['resizes'][$i]['size']);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
@@ -125,7 +120,7 @@ class ItemEditAlbumController extends GalleryController {
 			$childItems = array();
 			if (!empty($childIds)) {
 			    /* Load the children */
-			    list ($ret, $childItems) = $gallery->loadEntitiesById($childIds);
+			    list ($ret, $childItems) = GalleryCoreApi::loadEntitiesById($childIds);
 			    if ($ret->isError()) {
 				return array($ret->wrap(__FILE__, __LINE__), null);
 			    }
@@ -145,7 +140,7 @@ class ItemEditAlbumController extends GalleryController {
 		if (isset($form['recreateThumbnails'])) {
 		    /* Load the thumbnail of the children */
 		    list ($ret, $thumbTable) =
-			    GalleryDerivativeHelper::fetchThumbnailsByItemIds($childIds);
+			    GalleryCoreApi::fetchThumbnailsByItemIds($childIds);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
@@ -161,7 +156,7 @@ class ItemEditAlbumController extends GalleryController {
 			/* Change the thumbnail */
 			$operation = 'thumbnail|' . $form['thumbnail']['size'];
 			list ($ret, $isSupported) =
-			    GalleryToolkitHelper::isSupportedOperationSequence($child->getMimeType(), $operation);
+			    GalleryCoreApi::isSupportedOperationSequence($child->getMimeType(), $operation);
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
@@ -169,7 +164,7 @@ class ItemEditAlbumController extends GalleryController {
 			if (!$isSupported) {
 			    $operation = 'convert-to-image/jpeg;' . $operation;
 			    list ($ret, $isSupported) =
-				GalleryToolkitHelper::isSupportedOperationSequence($child->getMimeType(), $operation);
+				GalleryCoreApi::isSupportedOperationSequence($child->getMimeType(), $operation);
 			    if ($ret->isError()) {
 				return array($ret->wrap(__FILE__, __LINE__), null);
 			    }
@@ -178,7 +173,7 @@ class ItemEditAlbumController extends GalleryController {
 			if ($isSupported) {
 			    $thumbnail->setDerivativeOperations($operation);
 			    if ($thumbnail->isModified()) {
-				list ($ret, $lockIds[]) = $gallery->acquireWriteLock($thumbnail->getId());
+				list ($ret, $lockIds[]) = GalleryCoreApi::acquireWriteLock($thumbnail->getId());
 				if ($ret->isError()) {
 				    return array($ret->wrap(__FILE__, __LINE__), null);
 				}
@@ -198,13 +193,13 @@ class ItemEditAlbumController extends GalleryController {
 		if (isset($form['recreateResizes'])) {
 		    /* Get and delete all current resizes */
 		    list ($ret, $resizesTable) =
-			GalleryDerivativeHelper::fetchResizesByItemIds($childIds);
+			GalleryCoreApi::fetchResizesByItemIds($childIds);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 		    foreach ($resizesTable as $resizes) {
 			foreach ($resizes as $resize) {
-			    $ret = $gallery->deleteEntityById($resize->getId());
+			    $ret = GalleryCoreApi::deleteEntityById($resize->getId());
 			}
 		    }
 
@@ -221,7 +216,7 @@ class ItemEditAlbumController extends GalleryController {
 			 * the resizes
 			 */
 			list ($ret, $toolkit, $outputMimeType) =
-			    GalleryToolkitHelper::getToolkitByOperation($child->getMimeType(), 'scale');
+			    GalleryCoreApi::getToolkitByOperation($child->getMimeType(), 'scale');
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
@@ -233,7 +228,7 @@ class ItemEditAlbumController extends GalleryController {
 				}
 
 				list ($ret, $derivative) = 
-				    GalleryFactory::newInstance('GalleryEntity', 'GalleryDerivativeImage');
+				    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryDerivativeImage');
 				if ($ret->isError()) {
 				    return array($ret->wrap(__FILE__, __LINE__), null);
 				}
@@ -261,7 +256,7 @@ class ItemEditAlbumController extends GalleryController {
 		    }
 		}
 
-		$ret = $gallery->releaseLocks($lockIds);
+		$ret = GalleryCoreApi::releaseLocks($lockIds);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -273,18 +268,18 @@ class ItemEditAlbumController extends GalleryController {
 		$item->setOrderDirection($form['orderDirection']);
 		$item->setSerialNumber($form['serialNumber']);
 
-		list ($ret, $lockId) = $gallery->acquireWriteLock($item->getId());
+		list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($item->getId());
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
 		$ret = $item->save();
 		if ($ret->isError()) {
-		    $gallery->releaseLocks($lockId);
+		    GalleryCoreApi::releaseLocks($lockId);
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-		$ret = $gallery->releaseLocks($lockId);
+		$ret = GalleryCoreApi::releaseLocks($lockId);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -327,12 +322,12 @@ class ItemEditAlbumView extends GalleryView {
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
 
 	/* Make sure we have permission do edit this item */
-	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'core.edit');
+	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.edit');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	list ($ret, $item) = $gallery->loadEntitiesById($itemId);
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -346,8 +341,7 @@ class ItemEditAlbumView extends GalleryView {
 	    $form['serialNumber'] = $item->getSerialNumber();
 
 	    /* Load up the data for the resizes table */
-	    list ($ret, $preferences) =
-		GalleryDerivativePreferencesMap::fetchPreferencesForItem($item->getId());
+	    list ($ret, $preferences) = GalleryCoreApi::fetchDerivativePreferencesForItem($item->getId());
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -397,7 +391,7 @@ class ItemEditAlbumView extends GalleryView {
 	    $form['resizes'][$i]['active'] = !empty($form['resizes'][$i]['active']);
 	}
 	
-	list ($ret, $module) = $gallery->loadModule('core');
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -421,13 +415,13 @@ class ItemEditAlbumView extends GalleryView {
 	$orderDirectionList[ORDER_DESCENDING] = $module->translate("Descending");
 
 	/* Set up our layout selection list */
-	list ($ret, $layoutStatusList) = GalleryPluginMap::getPluginStatus('layout');
+	list ($ret, $layoutStatusList) = GalleryCoreApi::getPluginStatus('layout');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$layoutList = array();
 	foreach ($layoutStatusList as $layoutId => $layoutStatus) {
-	    list ($ret, $layout) = GalleryPluginMap::loadPlugin('layout', $layoutId);
+	    list ($ret, $layout) = GalleryCoreApi::loadPlugin('layout', $layoutId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }

@@ -42,7 +42,7 @@ class AdminGroupsController extends GalleryController {
     function handleRequest($form) {
 	global $gallery;
 
-	$ret = GalleryUserHelper::assertSiteAdministrator();
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -54,7 +54,7 @@ class AdminGroupsController extends GalleryController {
 	$group = null;
 	if (!empty($form['text']['groupName'])) {
 	    list ($ret, $group) =
-		GalleryGroupHelper::fetchGroupByGroupName($form['text']['groupName']);
+		GalleryCoreApi::fetchGroupByGroupName($form['text']['groupName']);
 	    if ($ret->isError()) {
 		if (!($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -165,7 +165,7 @@ class AdminGroupsView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	global $gallery;
 	
-	$ret = GalleryUserHelper::assertSiteAdministrator();
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -176,7 +176,6 @@ class AdminGroupsView extends GalleryView {
 	    $form['formName'] = 'AdminGroups';
 	}
 
-
 	/* Set some defaults, if necessary */
 	if (!isset($form['list']['filter'])) {
 	    $form['list']['filter'] = '';
@@ -186,7 +185,7 @@ class AdminGroupsView extends GalleryView {
 	    $form['list']['page'] = 1;
 	}
 
-	list ($ret, $totalGroupCount) = GalleryGroupHelper::fetchGroupCount();
+	list ($ret, $totalGroupCount) = GalleryCoreApi::fetchGroupCount();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -196,7 +195,7 @@ class AdminGroupsView extends GalleryView {
 
 	/* If we have a filter, find out how many groups match it */
 	if (!empty($form['list']['filter'])) {
-	    list ($ret, $form['list']['count']) = GalleryGroupHelper::fetchGroupCount($form['list']['filter']);
+	    list ($ret, $form['list']['count']) = GalleryCoreApi::fetchGroupCount($form['list']['filter']);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -213,7 +212,7 @@ class AdminGroupsView extends GalleryView {
 	$form['list']['backPage'] = max(1, $form['list']['page']-1);
 
 	list ($ret, $groupNames) = 
-	    GalleryGroupHelper::fetchGroupNames($form['list']['pageSize'],
+	    GalleryCoreApi::fetchGroupNames($form['list']['pageSize'],
 						(($form['list']['page'] - 1) *
 						 $form['list']['pageSize']),
 						$form['list']['filter']);
@@ -221,12 +220,12 @@ class AdminGroupsView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	list ($ret, $allUserGroupId) = $gallery->getModuleParameter('core', 'id.allUserGroup');
+	list ($ret, $allUserGroupId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.allUserGroup');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	
-	list ($ret, $adminGroupId) = $gallery->getModuleParameter('core', 'id.adminGroup');
+	list ($ret, $adminGroupId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -245,7 +244,6 @@ class AdminGroupsView extends GalleryView {
 		$form['list']['groupNames'][$groupId]['can']['editUsers'] = true;
 	    }
 	}
-	
 
 	$AdminGroups = array();
 	$AdminGroups['totalGroupCount'] = $totalGroupCount;

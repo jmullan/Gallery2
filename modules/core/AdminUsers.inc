@@ -43,7 +43,7 @@ class AdminUsersController extends GalleryController {
     function handleRequest($form) {
 	global $gallery;
 
-	$ret = GalleryUserHelper::assertSiteAdministrator();
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -54,7 +54,7 @@ class AdminUsersController extends GalleryController {
 	$user = null;
 	if (!empty($form['text']['userName'])) {
 	    list ($ret, $user) =
-		GalleryUserHelper::fetchUserByUserName($form['text']['userName']);
+		GalleryCoreApi::fetchUserByUserName($form['text']['userName']);
 	    if ($ret->isError()) {
 		if (!($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -99,7 +99,7 @@ class AdminUsersController extends GalleryController {
 		 * ourself (can't do either of those).
 		 */
 		list ($ret, $anonymousUserId) =
-		    $gallery->getModuleParameter('core', 'id.anonymousUser');
+		    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -148,7 +148,7 @@ class AdminUsersView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	global $gallery;
 	
-	$ret = GalleryUserHelper::assertSiteAdministrator();
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -168,7 +168,7 @@ class AdminUsersView extends GalleryView {
 	}
 
 	/* Fetch the user count every time we reload */
-	list ($ret, $totalUserCount) = GalleryUserHelper::fetchUserCount();
+	list ($ret, $totalUserCount) = GalleryCoreApi::fetchUserCount();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -178,7 +178,7 @@ class AdminUsersView extends GalleryView {
 
 	/* If we have a filter, find out how many users match it */
 	if (!empty($form['list']['filter'])) {
-	    list ($ret, $form['list']['count']) = GalleryUserHelper::fetchUserCount($form['list']['filter']);
+	    list ($ret, $form['list']['count']) = GalleryCoreApi::fetchUserCount($form['list']['filter']);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -195,7 +195,7 @@ class AdminUsersView extends GalleryView {
 	$form['list']['backPage'] = max(1, $form['list']['page']-1);
 
 	list ($ret, $userNames) =
-	    GalleryUserHelper::fetchUserNames($form['list']['pageSize'],
+	    GalleryCoreApi::fetchUserNames($form['list']['pageSize'],
 					      ($form['list']['page'] - 1) * $form['list']['pageSize'],
 					      $form['list']['filter']);
 	if ($ret->isError()) {
@@ -203,7 +203,7 @@ class AdminUsersView extends GalleryView {
 	}
 
 	list ($ret, $anonymousUserId) =
-	    $gallery->getModuleParameter('core', 'id.anonymousUser');
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

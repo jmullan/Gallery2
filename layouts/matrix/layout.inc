@@ -105,8 +105,6 @@ class MatrixLayout extends GalleryLayout {
      * @see GalleryLayout::render
      */
     function loadTemplate(&$template, $item) {
-	GalleryProfiler::start('layouts.matrix.layout::loadTemplate');
-
 	list ($ret, $params) = $this->fetchParameters($item->getId());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -130,7 +128,6 @@ class MatrixLayout extends GalleryLayout {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	GalleryProfiler::stop('layouts.matrix.layout::loadTemplate');
 	return array(GalleryStatus::success(), $file);
     }
 
@@ -189,7 +186,7 @@ class MatrixLayout extends GalleryLayout {
 
 	/* Count the total number of children */
 	/* XXX: we could combine this with the other fetchChildCounts() call below */
-	list ($ret, $totalChildCount) = GalleryItemHelper::fetchChildCounts(array($item->getId()));
+	list ($ret, $totalChildCount) = GalleryCoreApi::fetchChildCounts(array($item->getId()));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -202,7 +199,7 @@ class MatrixLayout extends GalleryLayout {
 	/* Count the total number of descendents */
 	/* XXX: we could combine this with the other fetchDescendentCounts() call below */
 	list ($ret, $totalDescendentCount) =
-	    GalleryItemAttributesMap::fetchDescendentCounts(array($item->getId()));
+	    GalleryCoreApi::fetchDescendentCounts(array($item->getId()));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -222,7 +219,7 @@ class MatrixLayout extends GalleryLayout {
 	$childItems = array();
 	if (!empty($childIds)) {
 	    /* Load the children */
-	    list ($ret, $childItems) = $gallery->loadEntitiesById($childIds);
+	    list ($ret, $childItems) = GalleryCoreApi::loadEntitiesById($childIds);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -242,12 +239,12 @@ class MatrixLayout extends GalleryLayout {
 	    }
 
 	    /* Get the "grandchild" counts */
-	    list ($ret, $childCounts) = GalleryItemHelper::fetchChildCounts($childIds);
+	    list ($ret, $childCounts) = GalleryCoreApi::fetchChildCounts($childIds);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    list ($ret, $descendentCounts) = GalleryItemAttributesMap::fetchDescendentCounts($childIds);
+	    list ($ret, $descendentCounts) = GalleryCoreApi::fetchDescendentCounts($childIds);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -285,8 +282,7 @@ class MatrixLayout extends GalleryLayout {
 	    }
 
 	    /* Load the thumbnails */
-	    list ($ret, $thumbTable) =
-		    GalleryDerivativeHelper::fetchThumbnailsByItemIds($childIds);
+	    list ($ret, $thumbTable) = GalleryCoreApi::fetchThumbnailsByItemIds($childIds);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -301,7 +297,7 @@ class MatrixLayout extends GalleryLayout {
 		if (isset($thumbTable[$id])) {
 		    /* Rebuild cache, to be prepared to the getMemberData() call */
 		    list ($ret, $thumbTable[$id]) =
-			GalleryDerivativeHelper::rebuildCacheIfNotCurrent($thumbTable[$id]->getId());
+			GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($thumbTable[$id]->getId());
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
@@ -318,7 +314,7 @@ class MatrixLayout extends GalleryLayout {
 	if (empty($childIds)) {
 	    $viewCounts = array();
 	} else {
-	    list ($ret, $viewCounts) = GalleryItemAttributesMap::fetchViewCounts($childIds);
+	    list ($ret, $viewCounts) = GalleryCoreApi::fetchItemViewCounts($childIds);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -427,7 +423,7 @@ class MatrixLayout extends GalleryLayout {
 	foreach ($childIds as $childId) {
 	    $ownerIds[$childTable[$childId]['ownerId']] = 1;
 	}
-	list ($ret, $tmp) = $gallery->loadEntitiesById(array_keys($ownerIds));
+	list ($ret, $tmp) = GalleryCoreApi::loadEntitiesById(array_keys($ownerIds));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -450,7 +446,7 @@ class MatrixLayout extends GalleryLayout {
 	    $c += $width;
 	}
 
-	list ($ret, $rootAlbumId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
+	list ($ret, $rootAlbumId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -512,7 +508,7 @@ class MatrixLayout extends GalleryLayout {
 	 */
 	$imageViews = array();
 	$can = array();
-	list ($ret, $permissions) = GalleryItemHelper::getPermissions($item->getId());
+	list ($ret, $permissions) = GalleryCoreApi::getPermissions($item->getId());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -526,7 +522,7 @@ class MatrixLayout extends GalleryLayout {
 	if (isset($permissions['core.viewResizes'])) {
 	    /* Load the resizes */
 	    list ($ret, $resizes) =
-		GalleryDerivativeHelper::fetchResizesByItemIds(array($item->getId()));
+		GalleryCoreApi::fetchResizesByItemIds(array($item->getId()));
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -537,7 +533,7 @@ class MatrixLayout extends GalleryLayout {
 	    if (!empty($resizes)) {
 		foreach ($resizes[$item->getId()] as $resize) {
 		    /* Rebuild cache, to be prepared to the getMemberData() call */
-		    list ($ret, $resize) = GalleryDerivativeHelper::rebuildCacheIfNotCurrent($resize->getId());
+		    list ($ret, $resize) = GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($resize->getId());
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
@@ -555,7 +551,7 @@ class MatrixLayout extends GalleryLayout {
 	if (isset($permissions['core.viewSource'])) {
 	    /* Add the full version */
 	    list ($ret, $preferred) =
-		GalleryDerivativeHelper::fetchPreferredsByItemIds(array($item->getId()));
+		GalleryCoreApi::fetchPreferredsByItemIds(array($item->getId()));
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -583,7 +579,7 @@ class MatrixLayout extends GalleryLayout {
 
 	    /* Load the thumbnail */
 	    list ($ret, $thumbnails) =
-		GalleryDerivativeHelper::fetchThumbnailsByItemIds(array($item->getId()));
+		GalleryCoreApi::fetchThumbnailsByItemIds(array($item->getId()));
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -673,7 +669,7 @@ class MatrixLayout extends GalleryLayout {
 	}
 
 	/* Get the owner */
-	list ($ret, $owner) = $gallery->loadEntitiesById($item->getOwnerId());
+	list ($ret, $owner) = GalleryCoreApi::loadEntitiesById($item->getOwnerId());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -721,7 +717,7 @@ class MatrixLayout extends GalleryLayout {
 	 * of children of my parent and then iterate through it to find our
 	 * current index.
 	 */
-	list ($ret, $parent) = $gallery->loadEntitiesById($item->getParentId());
+	list ($ret, $parent) = GalleryCoreApi::loadEntitiesById($item->getParentId());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -763,7 +759,7 @@ class MatrixLayout extends GalleryLayout {
 	}
 
 	/* Load them all */
-	list ($ret, $peers) = $gallery->loadEntitiesById($peers);
+	list ($ret, $peers) = GalleryCoreApi::loadEntitiesById($peers);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

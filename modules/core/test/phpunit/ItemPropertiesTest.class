@@ -57,7 +57,7 @@ class ItemPropertiesTest extends GalleryTestCase {
      */
     function tearDown() {
 	global $gallery;
-	$ret = $gallery->deleteEntityById($this->_item->getId());
+	$ret = GalleryCoreApi::deleteEntityById($this->_item->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -68,20 +68,20 @@ class ItemPropertiesTest extends GalleryTestCase {
     /**
      * Test setting a property.  Exercises:
      *
-     *   GalleryItemPropertiesMap::setProperty
-     *   GalleryItemPropertiesMap::fetchProperty
+     *   GalleryCoreApi::setItemProperty
+     *   GalleryCoreApi::fetchItemProperty
      *
      */
     function testSetProperty() {
 	$key = 'test-key';
 	$value = 'test-value';
 
-	$ret = GalleryItemPropertiesMap::setProperty($this->_item->getId(), $key, $value);
+	$ret = GalleryCoreApi::setItemProperty($this->_item->getId(), $key, $value);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $newValue) = GalleryItemPropertiesMap::fetchProperty($this->_item->getId(), $key);
+	list ($ret, $newValue) = GalleryCoreApi::fetchItemProperty($this->_item->getId(), $key);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -92,8 +92,8 @@ class ItemPropertiesTest extends GalleryTestCase {
     /**
      * Test setting a property and then overwriting it.  Exercises:
      *
-     *   GalleryItemPropertiesMap::setProperty
-     *   GalleryItemPropertiesMap::fetchProperty
+     *   GalleryCoreApi::setItemProperty
+     *   GalleryCoreApi::fetchItemProperty
      *
      */
     function testUpdateProperty() {
@@ -101,17 +101,17 @@ class ItemPropertiesTest extends GalleryTestCase {
 	$value1 = 'test-value1';
 	$value2 = 'test-value2';
 
-	$ret = GalleryItemPropertiesMap::setProperty($this->_item->getId(), $key, $value1);
+	$ret = GalleryCoreApi::setItemProperty($this->_item->getId(), $key, $value1);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$ret = GalleryItemPropertiesMap::setProperty($this->_item->getId(), $key, $value2);
+	$ret = GalleryCoreApi::setItemProperty($this->_item->getId(), $key, $value2);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $newValue) = GalleryItemPropertiesMap::fetchProperty($this->_item->getId(), $key);
+	list ($ret, $newValue) = GalleryCoreApi::fetchItemProperty($this->_item->getId(), $key);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -122,9 +122,9 @@ class ItemPropertiesTest extends GalleryTestCase {
     /**
      * Test setting properties and then removing them.  Exercises:
      *
-     *   GalleryItemPropertiesMap::setProperty
-     *   GalleryItemPropertiesMap::removeProperties
-     *   GalleryItemPropertiesMap::fetchPropertyKeys
+     *   GalleryCoreApi::setItemProperty
+     *   GalleryCoreApi::removeItemProperties
+     *   GalleryCoreApi::fetchItemPropertyKeys
      *
      */
     function testRemoveProperties() {
@@ -133,24 +133,24 @@ class ItemPropertiesTest extends GalleryTestCase {
 	$key2 = 'test-key2';
 	$value2 = 'test-value2';
 
-	$ret = GalleryItemPropertiesMap::setProperty($this->_item->getId(), $key1, $value1);
+	$ret = GalleryCoreApi::setItemProperty($this->_item->getId(), $key1, $value1);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$ret = GalleryItemPropertiesMap::setProperty($this->_item->getId(), $key2, $value2);
+	$ret = GalleryCoreApi::setItemProperty($this->_item->getId(), $key2, $value2);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$ret = GalleryItemPropertiesMap::removeProperties($this->_item->getId());
+	$ret = GalleryCoreApi::removeItemProperties($this->_item->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	GalleryDataCache::reset();
 
-	list ($ret, $keys) = GalleryItemPropertiesMap::fetchPropertyKeys($this->_item->getId());
+	list ($ret, $keys) = GalleryCoreApi::fetchItemPropertyKeys($this->_item->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -161,8 +161,8 @@ class ItemPropertiesTest extends GalleryTestCase {
     /**
      * Test fetching property keys
      *
-     *   GalleryItemPropertiesMap::setProperty
-     *   GalleryItemPropertiesMap::fetchPropertyKeys
+     *   GalleryCoreApi::setItemProperty
+     *   GalleryCoreApi::fetchItemPropertyKeys
      *
      */
     function testFetchPropertyKeys() {
@@ -171,19 +171,19 @@ class ItemPropertiesTest extends GalleryTestCase {
 	$key2 = 'test-key2';
 	$value2 = 'test-value2';
 
-	$ret = GalleryItemPropertiesMap::setProperty($this->_item->getId(), $key1, $value1);
+	$ret = GalleryCoreApi::setItemProperty($this->_item->getId(), $key1, $value1);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$ret = GalleryItemPropertiesMap::setProperty($this->_item->getId(), $key2, $value2);
+	$ret = GalleryCoreApi::setItemProperty($this->_item->getId(), $key2, $value2);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	GalleryDataCache::reset();
 
-	list ($ret, $keys) = GalleryItemPropertiesMap::fetchPropertyKeys($this->_item->getId());
+	list ($ret, $keys) = GalleryCoreApi::fetchItemPropertyKeys($this->_item->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -194,8 +194,8 @@ class ItemPropertiesTest extends GalleryTestCase {
     /**
      * Test fetching all properties
      *
-     *   GalleryItemPropertiesMap::setProperty
-     *   GalleryItemPropertiesMap::fetchAllProperties
+     *   GalleryCoreApi::setItemProperty
+     *   GalleryCoreApi::fetchAllItemProperties
      */
     function testFetchAllProperties() {
 	$key1 = 'test-key1';
@@ -203,19 +203,19 @@ class ItemPropertiesTest extends GalleryTestCase {
 	$key2 = 'test-key2';
 	$value2 = 'test-value2';
 
-	$ret = GalleryItemPropertiesMap::setProperty($this->_item->getId(), $key1, $value1);
+	$ret = GalleryCoreApi::setItemProperty($this->_item->getId(), $key1, $value1);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$ret = GalleryItemPropertiesMap::setProperty($this->_item->getId(), $key2, $value2);
+	$ret = GalleryCoreApi::setItemProperty($this->_item->getId(), $key2, $value2);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	GalleryDataCache::reset();
 
-	list ($ret, $keys) = GalleryItemPropertiesMap::fetchAllProperties($this->_item->getId());
+	list ($ret, $keys) = GalleryCoreApi::fetchAllItemProperties($this->_item->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

@@ -216,7 +216,8 @@ class ImageMagickToolkit extends GalleryToolkit {
 
 	$command = array($this->_imageMagickCmd('convert'));
 
-	list ($ret, $jpegQuality) = $gallery->getModuleParameter('imagemagick', 'jpegQuality');
+	list ($ret, $jpegQuality) =
+		GalleryCoreApi::getPluginParameter('module', 'imagemagick', 'jpegQuality');
 	if ($ret->isError()) {
 	    @$platform->unlink($tmpFilename);
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -282,7 +283,7 @@ class ImageMagickToolkit extends GalleryToolkit {
 
 	$platform = $gallery->getPlatform();
 	list ($ret, $imageMagickPath) =
-	    $gallery->getModuleParameter('imagemagick', 'path');
+		GalleryCoreApi::getPluginParameter('module', 'imagemagick', 'path');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

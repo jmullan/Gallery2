@@ -41,7 +41,7 @@ class GalleryCommentSearch extends GallerySearchInterface_1_0 {
     function getSearchModuleInfo() {
 	global $gallery;
 
-	list ($ret, $module) = $gallery->loadModule('comment');
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'comment');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -60,7 +60,7 @@ class GalleryCommentSearch extends GallerySearchInterface_1_0 {
 	global $gallery;
 
 	list ($ret, $commentBits) =
-	    GalleryPermissionSetMap::convertIdsToBits('comment.search');
+	    GalleryCoreApi::convertPermissionIdsToBits('comment.search');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -145,7 +145,7 @@ class GalleryCommentSearch extends GallerySearchInterface_1_0 {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-        list ($ret, $module) = $gallery->loadModule('comment');
+        list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'comment');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

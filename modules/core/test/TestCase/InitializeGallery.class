@@ -96,7 +96,7 @@ class InitializeGalleryTestCase extends TestCase {
 	}
 
 	/* For testing purposes, add a couple of local upload dirs */
-	$ret = $gallery->setModuleParameter('core', 'uploadLocalServer.dirs',
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'uploadLocalServer.dirs',
 					    join(',',
 						 array('/usr/www/website/menalto.com/albums',
 						       '/usr/www/website/menalto.com/dev/gallery/gallery',
@@ -106,7 +106,7 @@ class InitializeGalleryTestCase extends TestCase {
 	}
 
 	/* Enable short urls */
-	$ret = $gallery->setModuleParameter('core', 'misc.useShortUrls', 'true');
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'misc.useShortUrls', 'true');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

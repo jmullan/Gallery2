@@ -103,7 +103,7 @@ class SearchShowAllView extends GalleryView {
 
 		$moduleId = $form['moduleId'];
 		list ($ret, $searchInstance) =
-		    GalleryFactory::newInstanceById('GallerySearchInterface_1_0', $form['moduleId']);
+		    GalleryCoreApi::newFactoryInstanceById('GallerySearchInterface_1_0', $form['moduleId']);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -143,7 +143,7 @@ class SearchShowAllView extends GalleryView {
 
 		if (!empty($itemIds)) {
 		    /* Fetch items */
-		    list ($ret, $itemList) = $gallery->loadEntitiesById($itemIds);
+		    list ($ret, $itemList) = GalleryCoreApi::loadEntitiesById($itemIds);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
@@ -152,7 +152,7 @@ class SearchShowAllView extends GalleryView {
 		    }
 		
 		    /* Fetch thumbnails */
-		    list ($ret, $thumbnailList) = GalleryDerivativeHelper::fetchThumbnailsByItemIds($itemIds);
+		    list ($ret, $thumbnailList) = GalleryCoreApi::fetchThumbnailsByItemIds($itemIds);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }

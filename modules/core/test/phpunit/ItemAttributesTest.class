@@ -56,7 +56,7 @@ class ItemAttributesTest extends GalleryTestCase {
     function tearDown() {
 	global $gallery;
 
-	$ret = $gallery->deleteEntityById($this->_parentItem->getId());
+	$ret = GalleryCoreApi::deleteEntityById($this->_parentItem->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -67,13 +67,13 @@ class ItemAttributesTest extends GalleryTestCase {
     /**
      * Update the view count and verify it
      */
-    function testSetViewCount() {
-	$ret = GalleryItemAttributesMap::setViewCount($this->_childItems[0]->getId(), 999);
+    function testSetItemViewCount() {
+	$ret = GalleryCoreApi::setItemViewCount($this->_childItems[0]->getId(), 999);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $viewCount) = GalleryItemAttributesMap::fetchViewCount($this->_childItems[0]->getId());
+	list ($ret, $viewCount) = GalleryCoreApi::fetchItemViewCount($this->_childItems[0]->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -84,18 +84,18 @@ class ItemAttributesTest extends GalleryTestCase {
     /**
      * Update the view count and verify it
      */
-    function testIncrementViewCount() {
-	$ret = GalleryItemAttributesMap::setViewCount($this->_childItems[0]->getId(), 999);
+    function testIncrementItemViewCount() {
+	$ret = GalleryCoreApi::setItemViewCount($this->_childItems[0]->getId(), 999);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$ret = GalleryItemAttributesMap::incrementViewCount($this->_childItems[0]->getId(), 3);
+	$ret = GalleryCoreApi::incrementItemViewCount($this->_childItems[0]->getId(), 3);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $viewCount) = GalleryItemAttributesMap::fetchViewCount($this->_childItems[0]->getId());
+	list ($ret, $viewCount) = GalleryCoreApi::fetchItemViewCount($this->_childItems[0]->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -107,12 +107,12 @@ class ItemAttributesTest extends GalleryTestCase {
      * Update the view count and verify it
      */
     function testSetOrderWeight() {
-	$ret = GalleryItemAttributesMap::setOrderWeight($this->_childItems[0]->getId(), 123);
+	$ret = GalleryCoreApi::setItemOrderWeight($this->_childItems[0]->getId(), 123);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $orderWeight) = GalleryItemAttributesMap::fetchOrderWeight($this->_childItems[0]->getId());
+	list ($ret, $orderWeight) = GalleryCoreApi::fetchItemOrderWeight($this->_childItems[0]->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -124,23 +124,23 @@ class ItemAttributesTest extends GalleryTestCase {
      * Set the weights to something sequential then verify that we can find the next
      * higher or lower weight.
      */
-    function testFetchNextWeight() {
+    function testFetchNextItemWeight() {
 	for ($i = 0; $i < sizeof($this->_childItems); $i++) {
-	    $ret = GalleryItemAttributesMap::setOrderWeight($this->_childItems[$i]->getId(), $i);
+	    $ret = GalleryCoreApi::setItemOrderWeight($this->_childItems[$i]->getId(), $i);
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
 
 	list ($ret, $higher) =
-	    GalleryItemAttributesMap::fetchNextWeight($this->_childItems[1]->getId(), HIGHER_WEIGHT);
+	    GalleryCoreApi::fetchNextItemWeight($this->_childItems[1]->getId(), HIGHER_WEIGHT);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals($higher, 2);
 
 	list ($ret, $lower) =
-	    GalleryItemAttributesMap::fetchNextWeight($this->_childItems[1]->getId(), LOWER_WEIGHT);
+	    GalleryCoreApi::fetchNextItemWeight($this->_childItems[1]->getId(), LOWER_WEIGHT);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -154,21 +154,21 @@ class ItemAttributesTest extends GalleryTestCase {
 	$this->assert(false);
 
 	for ($i = 0; $i < sizeof($this->_childItems); $i++) {
-	    $ret = GalleryItemAttributesMap::setOrderWeight($this->_childItems[$i]->getId(), 100+$i);
+	    $ret = GalleryCoreApi::setItemOrderWeight($this->_childItems[$i]->getId(), 100+$i);
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
 
 	list ($ret, $max) =
-	    GalleryItemAttributesMap::fetchMaxChildWeight($this->_parentItem->getId(), HIGHER_WEIGHT);
+	    GalleryCoreApi::fetchMaxChildWeight($this->_parentItem->getId(), HIGHER_WEIGHT);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals($max, 102);
 
 	list ($ret, $min) =
-	    GalleryItemAttributesMap::fetchMaxChildWeight($this->_parentItem->getId(), LOWER_WEIGHT);
+	    GalleryCoreApi::fetchMaxChildWeight($this->_parentItem->getId(), LOWER_WEIGHT);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -180,19 +180,19 @@ class ItemAttributesTest extends GalleryTestCase {
      */
     function testRebalanceOrderWeights() {
 	for ($i = 0; $i < sizeof($this->_childItems); $i++) {
-	    $ret = GalleryItemAttributesMap::setOrderWeight($this->_childItems[$i]->getId(), $i);
+	    $ret = GalleryCoreApi::setItemOrderWeight($this->_childItems[$i]->getId(), $i);
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
-	$ret = GalleryItemAttributesMap::rebalanceChildOrderWeights($this->_parentItem->getId(), 100);
+	$ret = GalleryCoreApi::rebalanceChildOrderWeights($this->_parentItem->getId(), 100);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$count = sizeof($this->_childItems);
 	for ($i = 0; $i < $count; $i++) {
-	    list ($ret, $weight) = GalleryItemAttributesMap::fetchOrderWeight($this->_childItems[$i]->getId());
+	    list ($ret, $weight) = GalleryCoreApi::fetchItemOrderWeight($this->_childItems[$i]->getId());
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
@@ -206,7 +206,7 @@ class ItemAttributesTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $parentSequence) = GalleryItemAttributesMap::fetchParentSequence($album->getId());
+	list ($ret, $parentSequence) = GalleryCoreApi::fetchParentSequence($album->getId());
 	$this->assertEquals(array($this->_getRootId(),
 				  $this->_parentItem->getId(),
 				  $this->_childItems[1]->getId()),
@@ -218,7 +218,7 @@ class ItemAttributesTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	
-	list ($ret, $parentSequence) = GalleryItemAttributesMap::fetchParentSequence($item->getId());
+	list ($ret, $parentSequence) = GalleryCoreApi::fetchParentSequence($item->getId());
 	$this->assertEquals(array($this->_getRootId(),
 				  $this->_parentItem->getId(),
 				  $this->_childItems[1]->getId(),
@@ -241,18 +241,18 @@ class ItemAttributesTest extends GalleryTestCase {
 	}
 
 	/* Drop perms for one item and one album */
-	$ret = GalleryPermissionMap::removeItemPermissions($item[0]->getId());
+	$ret = GalleryCoreApi::removeItemPermissions($item[0]->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$ret = GalleryPermissionMap::removeItemPermissions($this->_childItems[0]->getId());
+	$ret = GalleryCoreApi::removeItemPermissions($this->_childItems[0]->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* Verify our counts */
 	list ($ret, $counts) =
-	    GalleryItemAttributesMap::fetchDescendentCounts(array($this->_parentItem->getId(),
+	    GalleryCoreApi::fetchDescendentCounts(array($this->_parentItem->getId(),
 								  $album->getId()));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
