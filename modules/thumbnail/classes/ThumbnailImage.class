@@ -40,12 +40,12 @@ require_once(dirname(__FILE__) . '/../../core/classes/GalleryEntity.class');
  * @g2   <schema-minor>0</schema-minor>
  * @g2 </schema>
  * @g2 <requires-id/>
- * 
+ *
  * @package Thumbnail
  * @subpackage Classes
  */
 class ThumbnailImage_core extends GalleryEntity {
-	
+
     /*
      * ****************************************
      *                 Members
@@ -302,7 +302,7 @@ class ThumbnailImage_core extends GalleryEntity {
 	    /* Shrink our dimensions if necessary */
 	    if (isset($params['maxSize'])) {
 		list ($width, $height) =
-		    GalleryUtilities::shrinkDimensionsToFit($params['maxSize'], $width, $height);
+		    GalleryUtilities::shrinkDimensionsToFit($width, $height, $params['maxSize']);
 	    }
 
 	    $sizeStr = ($width > 0 && $height > 0)

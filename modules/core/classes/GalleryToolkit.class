@@ -66,16 +66,16 @@ class GalleryToolkit {
     /**
      * Perform a certain operation
      *
-     * Perform the wanted operation on sourceFilename and write the results in      
+     * Perform the wanted operation on sourceFilename and write the results in
      * destFilename.
-     *	
+     *
      * @access public
      * @param string a mime type
      * @param string the operation name
      * @param string the source file name
      * @param string the destination file name (it will be overwritten if it exists)
      * @param array mixed parameters
-     * @param array (optional) context data 
+     * @param array (optional) context data
      * @return array object GalleryStatus a status code
      *               string the output mime type
      *               array context data
@@ -99,7 +99,7 @@ class GalleryToolkit {
      */
     function applyTransform($transformOperation, $targetOperations, $reverse=false) {
 	$transformedOperations = $targetOperations;
-	
+
 	/* Right now, only the rotate operation will cause issues */
 	if (!strncmp($transformOperation, 'rotate', 6)) {
 	    /* And it will only cause issues to the crop operation */
@@ -117,7 +117,7 @@ class GalleryToolkit {
 			break;
 		    }
 		}
-		
+
 		$newOperations = array();
 		foreach (split(';', $targetOperations) as $operation) {
 		    if (!strncmp($operation, 'crop', 4)) {
@@ -130,7 +130,7 @@ class GalleryToolkit {
 			    $newWidth = $height;
 			    $newHeight = $width;
 			    break;
-			    
+
 			case '-90':
 			case '270':
 			    $newX = $y;
@@ -153,7 +153,7 @@ class GalleryToolkit {
 			    $newWidth = $width;
 			    $newHeight = $height;
 			}
-			
+
 			$newOperations[] = sprintf('crop|%s,%s,%s,%s', $newX, $newY, $newWidth, $newHeight);
 		    } else {
 			$newOperations[] = $operation;
@@ -165,7 +165,7 @@ class GalleryToolkit {
 
 	return array(true, $transformedOperations);
     }
-	
+
 
     /**
      * Merge two operations together in an intelligent way.  The end result of
@@ -175,9 +175,9 @@ class GalleryToolkit {
      * (or 'rotate|-90').  The toolkit should only merge the operations if it
      * can do so cleanly.
      *
-     * @param string the first operation 
-     * @param array mixed the first operation's arguments 
-     * @param string the second operation 
+     * @param string the first operation
+     * @param array mixed the first operation's arguments
+     * @param string the second operation
      * @param array mixed the second operation's arguments
      * @return array (true if the operation was success,
      *                $mergedOperation,
@@ -239,7 +239,7 @@ class GalleryToolkit {
 		    $target = $matches[1];
 		    if (!empty($target)) {
 			list ($newWidth, $newHeight) =
-			    GalleryUtilities::shrinkDimensionsToFit($matches[1], $width, $height);
+			    GalleryUtilities::shrinkDimensionsToFit($width, $height, $matches[1]);
 			$derivative->setWidth($newWidth);
 			$derivative->setHeight($newHeight);
 		    }

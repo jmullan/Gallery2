@@ -42,7 +42,7 @@ define('GALLERY_FORM_VARIABLE_PREFIX', 'g2_');
  * Try not to jam too many methods into this class.  Only put methods here if
  * they are of obvious value to the class layer and there's no other home for
  * them.
- * 
+ *
  * @package GalleryCore
  * @subpackage Classes
  * @static
@@ -75,7 +75,7 @@ class GalleryUtilities {
 	}
 
 	$pos++;
-	
+
 	/* If it's the last char in the name, just return the base */
 	if ($pos >= strlen($filename)) {
 	    return array(substr($filename, 0, $pos-1), '');
@@ -178,7 +178,7 @@ class GalleryUtilities {
 	    }
 	    $form = GalleryUtilities::array_merge_replace($form, $postForm);
 	}
-	
+
 	if (isset($_GET[$key])) {
 	    $form = GalleryUtilities::array_merge_replace($form, $_GET[$key]);
 	}
@@ -203,7 +203,7 @@ class GalleryUtilities {
      * @author Tobias Tom <t.tom@succont.de>
      * @param array $array first array with 'replaceable' values
      * @param array $newValues array which will be merged into first one
-     * @return array resulting array 
+     * @return array resulting array
      */
     function array_merge_replace($array, $newValues) {
 	foreach ($newValues as $key => $value) {
@@ -244,7 +244,7 @@ class GalleryUtilities {
 	unset($_FILES[$key]);
 	unset($_GET[$key]);
     }
-    
+
 
     /**
      * Return the specified request variables
@@ -299,7 +299,7 @@ class GalleryUtilities {
 
     /**
      * Push the given key => value pair back into the request
-     * 
+     *
      * @param string the key
      * @param string the value
      * @param boolean (optional) false to omit gallery variable prefix (not recommended)
@@ -341,7 +341,7 @@ class GalleryUtilities {
 
     /**
      * Check to see if the given key is in the request
-     * 
+     *
      * @param string the key
      * @param string the value
      * @param boolean (optional) false to omit gallery variable prefix (not recommended)
@@ -357,7 +357,7 @@ class GalleryUtilities {
 
     /**
      * Remove a request variable
-     * 
+     *
      * @param string the key
      * @param boolean (optional) false to omit gallery variable prefix (not recommended)
      * @static
@@ -416,7 +416,7 @@ class GalleryUtilities {
 	if (is_array($count)) {
 	    $count = sizeof($count);
 	}
-	
+
 	$markers = array();
 	for ($i = 0; $i < $count; $i++) {
 	    $markers[$i] = '?';
@@ -482,18 +482,21 @@ class GalleryUtilities {
      * aspect ratio, but only if the dimensions are already larger than the
      * target (in other words, don't increase the dimensions)
      *
-     * @param int target size
      * @param int width
      * @param int height
+     * @param int target width
+     * @param int (optional) target height, defaults to same as width
      * @return array(width, height)
      * @static
      */
-    function shrinkDimensionsToFit($target, $width, $height) {
-	if ($width > $target || $height > $target) {
-	    list ($width, $height) =
-		GalleryUtilities::scaleDimensionsToFit($target, $width, $height);
+    function shrinkDimensionsToFit($width, $height, $targetWidth, $targetHeight=null) {
+	if (!isset($targetHeight)) {
+	    $targetHeight = $targetWidth;
 	}
-
+	if ($width > $targetWidth || $height > $targetHeight) {
+	    list ($width, $height) =
+		GalleryUtilities::scaleDimensionsToFit($width, $height, $targetWidth, $targetHeight);
+	}
 	return array($width, $height);
     }
 
@@ -501,22 +504,25 @@ class GalleryUtilities {
      * Scale the given width/height to a new target size, maintaining
      * aspect ratio
      *
-     * @param int target size
      * @param int width
      * @param int height
+     * @param int target width
+     * @param int (optional) target height, defaults to same as width
      * @return array(width, height)
      * @static
      */
-    function scaleDimensionsToFit($target, $width, $height) {
-
-	if ($width > $height) {
-	    $height = (int)($target * ($height / $width));
-	    $width = (int)$target;
-	} else {
-	    $width = (int)($target * ($width / $height));
-	    $height = (int)$target;
+    function scaleDimensionsToFit($width, $height, $targetWidth, $targetHeight=null) {
+	if (!isset($targetHeight)) {
+	    $targetHeight = $targetWidth;
 	}
-	
+	$aspect = $height / $width;
+	if ($aspect < $targetHeight / $targetWidth) {
+	    $width = (int)$targetWidth;
+	    $height = (int)round($targetWidth * $aspect);
+	} else {
+	    $width = (int)round($targetHeight / $aspect);
+	    $height = (int)$targetHeight;
+	}
 	return array($width, $height);
     }
 
@@ -550,7 +556,7 @@ class GalleryUtilities {
     function isExactlyA($instance, $className) {
 	return (!strcasecmp(get_class($instance), $className));
     }
-    
+
     /**
      * Takes a string of utf-8 encoded characters and converts it to a string
      * of unicode entities.  Each unicode entity has the form &#nnnnn; n={0..9}
@@ -656,7 +662,7 @@ class GalleryUtilities {
 		}
 
 		GalleryUtilities::sanitizeInputValues($value[$newKey]);
-	    } 
+	    }
 	} else {
 	    /* First & into &amp; so it htmlentities can convert it into
 	     * &amp;amp;, which can then be converted back into &amp; when we
@@ -705,7 +711,7 @@ class GalleryUtilities {
 	}
 	return $cookedText;
     }
-    
+
     /**
      * Undo the preprocessing done in sanitizeInputValues (useful when we
      * put values back into the request)
@@ -720,7 +726,7 @@ class GalleryUtilities {
 	    if (get_magic_quotes_gpc()) {
 		$value = addslashes($value);
 	    }
-	    
+
 	    /* Unsanitize dangerous html entities */
 	    $value = GalleryUtilities::htmlEntityDecode($value);
 	}
@@ -736,7 +742,7 @@ class GalleryUtilities {
 	if (function_exists("html_entity_decode")) {
 	    return html_entity_decode($string, ENT_QUOTES);
 	}
-	
+
 	static $translation_table = null;
 	if (!isset($translation_table)) {
 	    $translation_table = get_html_translation_table(HTML_ENTITIES, ENT_QUOTES);
@@ -849,7 +855,7 @@ class GalleryUtilities {
 	    $platform->mkdir($dir);
 	}
     }
-    
+
     /**
      * Turn a set of albums into a depth tree suitable for display in a
      * hierarchical format.
@@ -860,7 +866,7 @@ class GalleryUtilities {
 	if (empty($albums)) {
 	    return array();
 	}
-	
+
 	/* Index the albums by id */
 	$map = array();
 	foreach ($albums as $album) {
@@ -924,7 +930,7 @@ class GalleryUtilities {
      * @return string pseudoFileName a filename
      */
     function getPseudoFileName($entity) {
-    
+
         /*
 	 * If our GalleryEntity is a GalleryFileSystemEntity, then we've got a path component so we're cool.
 	 * If it's a derivative, then get the pseudo filename of its derivative source and use that instead.
@@ -949,14 +955,14 @@ class GalleryUtilities {
         } else {
 	    return array(GalleryStatus::success(), 'unknown');
 	}
-	
+
 	return array(GalleryStatus::success(), $pseudoFileName);
     }
 
     /**
      * Return a date and time string that is conformant to RFC 2616
      *
-     * @param integer the unix timestamp of the date we want to return, 
+     * @param integer the unix timestamp of the date we want to return,
      *                empty if we want the current time
      * @return string a date-string conformant to the RFC 2616
      *
@@ -966,7 +972,7 @@ class GalleryUtilities {
 	if ($time == '') {
 	    $time = time();
 	}
-	/* Use fixed list of weekdays and months, so we don't have to 
+	/* Use fixed list of weekdays and months, so we don't have to
 	 * fiddle with locale stuff
 	 */
 	$months = array('01' => 'Jan', '02' => 'Feb', '03' => 'Mar',

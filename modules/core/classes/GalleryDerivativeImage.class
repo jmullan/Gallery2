@@ -126,14 +126,13 @@ class GalleryDerivativeImage_core extends GalleryDerivative {
                AND [GalleryDerivative::derivativeType] = ?)
               AND ([GalleryChildEntity::id] = [GalleryDerivative::id])
             ';
-              
 
 	    list($ret, $searchResults) =
 		$gallery->search($query, array($parentId, $derivativeType));
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-	    
+
 	    $result = $searchResults->nextResult();
 	    if ($result[0] > 0) {
 		return GalleryStatus::error(ERROR_COLLISION, __FILE__, __LINE__,
@@ -161,7 +160,7 @@ class GalleryDerivativeImage_core extends GalleryDerivative {
      * derivative commands and feed them into the appropriate graphics toolkits
      * to perform the transformation necessary to create this derivative from
      * its source.
-     * 
+     *
      * @access public
      * @return object GalleryStatus a status code
      */
@@ -201,7 +200,7 @@ class GalleryDerivativeImage_core extends GalleryDerivative {
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-	
+
 	    $this->setWidth($dimensions[0]);
 	    $this->setHeight($dimensions[1]);
 	}
@@ -227,7 +226,7 @@ class GalleryDerivativeImage_core extends GalleryDerivative {
 	    /* Shrink our dimensions if necessary */
 	    if (isset($params['maxSize'])) {
 		list ($width, $height) =
-		    GalleryUtilities::shrinkDimensionsToFit($params['maxSize'], $width, $height);
+		    GalleryUtilities::shrinkDimensionsToFit($width, $height, $params['maxSize']);
 	    }
 
 	    $sizeStr = '';

@@ -60,21 +60,21 @@ class UtilitiesTest extends GalleryTestCase {
 	$this->assertEquals('base_without_extension', $base);
 	$this->assertEquals('', $extension);
     }
-    
+
     function testGetFileNameComponents3() {
 	list ($base, $extension) = GalleryUtilities::getFileNameComponents('base_ending_in_.');
 	$this->assertEquals('base_ending_in_', $base);
 	$this->assertEquals('', $extension);
     }
-    
+
     function testGetFileExtension() {
 	$this->assertEquals('extension', GalleryUtilities::getFileExtension('base.extension'));
     }
-    
+
     function testGetFileBase() {
 	$this->assertEquals('base', GalleryUtilities::getFileBase('base.extension'));
     }
-    
+
 
     function testMaliciousBrowserInput1() {
 	GalleryUtilities::putRequestVariable('test[a]', '<a href="javascript:alert(\'hi\')">yo</a>');
@@ -89,7 +89,7 @@ class UtilitiesTest extends GalleryTestCase {
 				  'badvalue' => '&lt;a href=&quot;javascript:alert(&#039;hi&#039;)&quot;&gt;yo&lt;/a&gt;'),
 			    GalleryUtilities::getRequestVariables('test[a]'));
     }
-    
+
     function testGetFormVariables() {
 	GalleryUtilities::putRequestVariable('utilitiestest[outer1][inner1]', '1');
 	GalleryUtilities::putRequestVariable('utilitiestest[outer1][inner\'2][a]', '2');
@@ -115,7 +115,7 @@ class UtilitiesTest extends GalleryTestCase {
 		      'tmp_name' => array('1' => 'c:\apache\tmp\php195.tmp', '/tmp/php195.tmp', null, null),
 		      'error' => array('1' => 0, 0, 4, 4),
 		      'size' => array('1' => 1779802, 102323, 0, 0));
-	    
+
 	$this->assertEquals(array('name' => array('1' => 'DSCF0001.JPG', 'DSCF0002.GIF', null, null),
 				  'type' => array('1' => 'image/pjpeg', 'image/gif', null, null),
 				  'tmp_name' => array('1' => 'c:\apache\tmp\php195.tmp', '/tmp/php195.tmp', null, null),
@@ -178,23 +178,21 @@ class UtilitiesTest extends GalleryTestCase {
 	$rawInput = '<ScRiPt foo=bar>blah</SCRIPT> test test <IFRAME> <b> foo </b> </IFRAME>';
 	GalleryUtilities::sanitizeInputValues($rawInput);
 	$this->assertEquals('&lt;ScRiPt foo=bar&gt;blah&lt;/SCRIPT&gt; test test &lt;IFRAME&gt; &lt;b&gt; foo &lt;/b&gt; &lt;/IFRAME&gt;', $rawInput);
-	
     }
-    
+
     function testSanitizeInputValue2() {
 	$rawInput = 'Opções de Administração';
 	GalleryUtilities::sanitizeInputValues($rawInput);
 	$this->assertEquals('Op&#36133;s de Administra&#34991;', $rawInput);
-	
     }
-    
+
     function testMakeMarkers() {
 	$this->assertEquals('?, ?, ?, ?, ?',
 			    GalleryUtilities::makeMarkers(5));
 	$this->assertEquals('?, ?, ?, ?, ?',
 			    GalleryUtilities::makeMarkers(array(1, 2, 'foo', 4, 'baz')));
     }
-    
+
     function testConvertPathToUrl() {
 	global $gallery;
 
@@ -228,29 +226,35 @@ class UtilitiesTest extends GalleryTestCase {
     function testRequireOnce() {
 	$ret = GalleryUtilities::requireOnce('bogus path');
 	$this->assert($ret->getErrorCode() & ERROR_BAD_PATH);
-			    
+
 	$ret = GalleryUtilities::requireOnce(__FILE__);
 	$this->assert($ret->isSuccess());
     }
-    
+
     function testShrinkDimensionsToFit() {
-	$results = GalleryUtilities::shrinkDimensionsToFit(341, 1024, 768);
-	$this->assertEquals(array(341, 255), $results);
-	
-	$results = GalleryUtilities::shrinkDimensionsToFit(5000, 1024, 768);
+	$results = GalleryUtilities::shrinkDimensionsToFit(1024, 768, 341);
+	$this->assertEquals(array(341, 256), $results);
+
+	$results = GalleryUtilities::shrinkDimensionsToFit(1024, 768, 5000);
 	$this->assertEquals(array(1024, 768), $results);
 
+	$results = GalleryUtilities::shrinkDimensionsToFit(800, 600, 1600, 300);
+	$this->assertEquals(array(400, 300), $results);
+
 	// make sure ints are returned even if size param is a string
-	$results = GalleryUtilities::shrinkDimensionsToFit("150", 150, 200);
-	$this->assertEquals(array(112, 150), $results);
+	$results = GalleryUtilities::shrinkDimensionsToFit(150, 200, "150");
+	$this->assertEquals(array(113, 150), $results);
 	$this->assertEquals(150, $results[1]);
     }
-    
+
     function testScaleDimensionsToFit() {
-	$results = GalleryUtilities::scaleDimensionsToFit(921, 1024, 768);
-	$this->assertEquals(array(921, 690), $results);
+	$results = GalleryUtilities::scaleDimensionsToFit(1024, 768, 921);
+	$this->assertEquals(array(921, 691), $results);
+
+	$results = GalleryUtilities::scaleDimensionsToFit(800, 600, 1200, 800);
+	$this->assertEquals(array(1067, 800), $results);
     }
-    
+
     function testIsA() {
 	$this->assert(GalleryUtilities::isA(new UtilitiesTest("x"), 'GalleryTestCase'));
 	$this->assert(GalleryUtilities::isA(new UtilitiesTest("x"), 'UtilitiesTest'));
@@ -306,7 +310,7 @@ class UtilitiesTest extends GalleryTestCase {
     function testRemoveFormVariables() {
 	GalleryUtilities::putRequestVariable('utilitiestest[a]', 'b');
 	GalleryUtilities::putRequestVariable('utilitiestest[c]', 'd');
-	
+
 	$this->assertEquals(array('a' => 'b',
 				  'c' => 'd'),
 			    GalleryUtilities::getFormVariables('utilitiestest'));
@@ -316,7 +320,7 @@ class UtilitiesTest extends GalleryTestCase {
 
 	GalleryUtilities::putRequestVariable('utilitiestest[a]', 'b', false);
 	GalleryUtilities::putRequestVariable('utilitiestest[c]', 'd', false);
-	
+
 	$this->assertEquals(array('a' => 'b',
 				  'c' => 'd'),
 			    GalleryUtilities::getFormVariables('utilitiestest', false));
@@ -372,7 +376,7 @@ class UtilitiesTest extends GalleryTestCase {
 	$albums[4]->setParentId(1);
 	$albums[5]->setParentId(1);
 	$albums[6]->setParentId(4);
-	       
+
 	$tree = GalleryUtilities::createAlbumTree($albums);
 	$this->assert($tree[0]['depth'] == 0);
 	$this->assert($tree[0]['data']['id'] == 0);
@@ -452,7 +456,7 @@ class UtilitiesTestPlatform {
     function UtilitiesTestPlatform(&$testCase) {
 	$this->_testCase =& $testCase;
     }
-    
+
     function realpath($file) {
 	/* These are used in testIsPathInList */
 	switch ($file) {
@@ -463,11 +467,11 @@ class UtilitiesTestPlatform {
 	case '/fo':
 	    return $file;
 	}
-	
+
 	$path = realpath($file);
 
 	// Stick with Unix slashes for the purpose of our tests
-	return str_replace('\\', '/', $path); 
+	return str_replace('\\', '/', $path);
     }
 
     function getDirectorySeparator() {
