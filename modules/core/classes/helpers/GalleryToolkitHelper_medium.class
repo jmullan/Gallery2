@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -39,7 +39,7 @@
 class GalleryToolkitHelper_medium {
 
     /**
-     * Register the operations that a toolkit is able to perform on a 
+     * Register the operations that a toolkit is able to perform on a
      * certain mime type
      *
      * This should be called by a module that provides a toolkit to
@@ -96,7 +96,7 @@ class GalleryToolkitHelper_medium {
 	require_once(dirname(__FILE__) . '/../GalleryToolkitOperationMap.class');
 	require_once(dirname(__FILE__) . '/../GalleryToolkitOperationParameterMap.class');
 	require_once(dirname(__FILE__) . '/../GalleryToolkitOperationMimeTypeMap.class');
-	    
+
 	if ($searchResults->resultCount() > 0) {
 	    $result = $searchResults->nextResult();
 	    if ($result[0] != $crc || $result[1] != $outputMimeType) {
@@ -200,7 +200,7 @@ class GalleryToolkitHelper_medium {
 	/* Require any classes that we're going to need */
 	require_once(dirname(__FILE__) . '/../GalleryToolkitPropertyMap.class');
 	require_once(dirname(__FILE__) . '/../GalleryToolkitPropertyMimeTypeMap.class');
-	    
+
 	if ($searchResults->resultCount() > 0) {
 	    $result = $searchResults->nextResult();
 	    if ($result[0] != $type) {
@@ -316,7 +316,7 @@ class GalleryToolkitHelper_medium {
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-	    
+
 	    $ret = GalleryToolkitOperationParameterMap::removeMapEntry(array('operationName' => $result[0]));
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
@@ -423,7 +423,7 @@ class GalleryToolkitHelper_medium {
 		$pointers[$result[0]]['parameters'][] =
 		    array('type' => $result[3], 'description' => $result[4]);
 	    }
-	    
+
 	    GalleryDataCache::put($cacheKey, $data);
 	} else {
 	    $data = GalleryDataCache::get($cacheKey);
@@ -520,6 +520,50 @@ class GalleryToolkitHelper_medium {
     }
 
     /**
+     * Get list of toolkits/priorities in managed priority range (20-40) for which
+     * another toolkit supports a same operation and mime type.
+     *
+     * @return array object GalleryStatus a status code
+     *               array (toolkitId=>priority, ..)
+     * @static
+     */
+    function getRedundantPriorities() {
+	global $gallery;
+
+	$cacheKey = "GalleryToolkitHelper::getRedundantPriorities()";
+	if (!GalleryDataCache::containsKey($cacheKey)) {
+
+	    list ($ret, $results) = $gallery->search(
+	    'SELECT [GalleryToolkitOperationMimeTypeMap::operationName],
+		    [GalleryToolkitOperationMimeTypeMap::mimeType],
+		    [GalleryToolkitOperationMimeTypeMap::toolkitId],
+		    [GalleryToolkitOperationMimeTypeMap::priority]
+	      FROM [GalleryToolkitOperationMimeTypeMap]
+	     WHERE [GalleryToolkitOperationMimeTypeMap::priority] >= 20
+	       AND [GalleryToolkitOperationMimeTypeMap::priority] <= 40');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    $data = $priorityList = array();
+	    while ($result = $results->nextResult()) {
+		$data[$result[0] . '::' . $result[1]][$result[2]] = (int)$result[3];
+	    }
+	    foreach ($data as $opMime => $list) {
+		if (count($list) > 1) {
+		    foreach ($list as $toolkit => $priority) {
+			$priorityList[$toolkit] = $priority;
+		    }
+		}
+	    }
+	    GalleryDataCache::put($cacheKey, $priorityList);
+	} else {
+	    $priorityList = GalleryDataCache::get($cacheKey);
+	}
+	return array(GalleryStatus::success(), $priorityList);
+    }
+
+    /**
      * Verify that a given mime-type/operation-sequence combination is
      * supported by our existing toolkits by walking the sequence and making
      * sure that we have a toolkit that can handle each operation.
@@ -540,7 +584,7 @@ class GalleryToolkitHelper_medium {
 	    } else {
 		list($operationName, $operationArgs) = split('\|', $operation);
 	    }
-	    
+
 	    /* Get the appropriate toolkit */
 	    list ($ret, $toolkit, $mimeType) =
 		GalleryCoreApi::getToolkitByOperation($mimeType, $operationName);

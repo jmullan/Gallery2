@@ -1827,6 +1827,19 @@ class GalleryCoreApi {
     }
 
     /**
+     * Get list of toolkits/priorities in managed priority range (20-40) for which
+     * another toolkit supports a same operation and mime type.
+     *
+     * @return array object GalleryStatus a status code
+     *               array (toolkitId=>priority, ..)
+     * @static
+     */
+    function getRedundantToolkitPriorities() {
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/helpers/GalleryToolkitHelper_medium.class');
+	return GalleryToolkitHelper_medium::getRedundantPriorities();
+    }
+
+    /**
      * Create a new event with the given name
      * @param string the event name
      * @return object GalleryEvent an event with the given name

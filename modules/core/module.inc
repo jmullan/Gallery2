@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -34,7 +34,7 @@ class CoreModule extends GalleryModule {
 
     function CoreModule() {
 	global $gallery;
-	
+
 	$this->setId('core');
 	$this->setName('Core');
 	$this->setVersion('0.8');
@@ -52,64 +52,64 @@ class CoreModule extends GalleryModule {
      */
     function performFactoryRegistrations() {
 	$classDir = dirname(__FILE__) . '/classes/';
-	
+
 	/* Register our entity implementations */
 	GalleryCoreApi::registerFactoryImplementation('GalleryEntity',
 						      'GalleryEntity',
 						      'GalleryEntity',
 						      $classDir . 'GalleryEntity.class');
-	
+
 	GalleryCoreApi::registerFactoryImplementation('GalleryEntity',
 						      'GalleryChildEntity',
 						      'GalleryChildEntity',
 						      $classDir . 'GalleryChildEntity.class');
-	
+
 	GalleryCoreApi::registerFactoryImplementation('GalleryEntity',
 						      'GalleryAlbumItem',
 						      'GalleryAlbumItem',
 						      $classDir . 'GalleryAlbumItem.class');
-	
+
 	GalleryCoreApi::registerFactoryImplementation('GalleryEntity',
 						      'GalleryUser',
 						      'GalleryUser',
 						      $classDir . 'GalleryUser.class');
-	
+
 	GalleryCoreApi::registerFactoryImplementation('GalleryEntity',
 						      'GalleryGroup',
 						      'GalleryGroup',
 						      $classDir . 'GalleryGroup.class');
-	
+
 	GalleryCoreApi::registerFactoryImplementation('GalleryEntity',
 						      'GalleryDerivative',
 						      'GalleryDerivative',
 						      $classDir . 'GalleryDerivative.class');
-	
+
 	GalleryCoreApi::registerFactoryImplementation('GalleryEntity',
 						      'GalleryDerivativeImage',
 						      'GalleryDerivativeImage',
 						      $classDir . 'GalleryDerivativeImage.class');
-	
+
 	GalleryCoreApi::registerFactoryImplementation('GalleryDerivative',
 						      'GalleryDerivativeImage',
 						      'GalleryDerivativeImage',
 						      $classDir . 'GalleryDerivativeImage.class',
 						      array('*'));
-	
+
 	GalleryCoreApi::registerFactoryImplementation('GalleryEntity',
 						      'GalleryMovieItem',
 						      'GalleryMovieItem',
 						      $classDir . 'GalleryMovieItem.class');
-	
+
 	GalleryCoreApi::registerFactoryImplementation('GalleryEntity',
 						      'GalleryAnimationItem',
 						      'GalleryAnimationItem',
 						      $classDir . 'GalleryAnimationItem.class');
-	
+
 	GalleryCoreApi::registerFactoryImplementation('GalleryEntity',
 						      'GalleryPhotoItem',
 						      'GalleryPhotoItem',
 						      $classDir . 'GalleryPhotoItem.class');
-	
+
 	GalleryCoreApi::registerFactoryImplementation('GalleryEntity',
 						      'GalleryUnknownItem',
 						      'GalleryUnknownItem',
@@ -166,7 +166,7 @@ class CoreModule extends GalleryModule {
 						      'ItemEditMovie',
 						      'ItemEditMovie',
 						      dirname(__FILE__) . '/ItemEditMovie.inc');
-	
+
 	GalleryCoreApi::registerFactoryImplementation('ItemEditPlugin',
 						      'ItemEditAlbum',
 						      'ItemEditAlbum',
@@ -197,12 +197,12 @@ class CoreModule extends GalleryModule {
 						      'ItemAddFromBrowser',
 						      'ItemAddFromBrowser',
 						      dirname(__FILE__) . '/ItemAddFromBrowser.inc');
-	
+
 	GalleryCoreApi::registerFactoryImplementation('ItemAddPlugin',
 						      'ItemAddFromServer',
 						      'ItemAddFromServer',
 						      dirname(__FILE__) . '/ItemAddFromServer.inc');
-	
+
 	GalleryCoreApi::registerFactoryImplementation('ItemAddPlugin',
 						      'ItemAddFromWeb',
 						      'ItemAddFromWeb',
@@ -317,7 +317,7 @@ class CoreModule extends GalleryModule {
 					    'subView' => 'core:ItemAddAlbum',
 					    'itemId' => $item->getId()));
 	    }
-	    
+
 	    if (isset($permissions['core.changePermissions'])) {
 		$links[$item->getId()][] =
 		    array('text' => $this->translate('edit permissions'),
@@ -380,7 +380,7 @@ class CoreModule extends GalleryModule {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	$links = array();
 	list ($ret, $isAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
 	if ($ret->isError()) {
@@ -459,21 +459,30 @@ class CoreModule extends GalleryModule {
      * @see GalleryModule::getSiteAdminViews();
      */
     function getSiteAdminViews() {
-	return array(GalleryStatus::success(),
-		     array(array('name' => $this->translate('General'),
-				 'view' => 'core:AdminCore'),
-			   array('name' => $this->translate('Modules'),
-				 'view' => 'core:AdminModules'),
-			   array('name' => $this->translate('Layouts and Themes'),
-				 'view' => 'core:AdminLayouts',
-				 'group' => 'display',
-				 'groupLabel' => $this->translate('Display')),
-			   array('name' => $this->translate('Users'),
-				 'view' => 'core:AdminUsers'),
-			   array('name' => $this->translate('Groups'),
-				 'view' => 'core:AdminGroups')
-			   )
-		     );
+	$data = array(array('name' => $this->translate('General'),
+			    'view' => 'core:AdminCore'),
+		      array('name' => $this->translate('Modules'),
+			    'view' => 'core:AdminModules'),
+		      array('name' => $this->translate('Layouts and Themes'),
+			    'view' => 'core:AdminLayouts',
+			    'group' => 'display',
+			    'groupLabel' => $this->translate('Display')),
+		      array('name' => $this->translate('Users'),
+			    'view' => 'core:AdminUsers'),
+		      array('name' => $this->translate('Groups'),
+			    'view' => 'core:AdminGroups')
+		      );
+	list ($ret, $list) = GalleryCoreApi::getRedundantToolkitPriorities();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	if (!empty($list)) {
+	    $data[] = array('name' => $this->translate('Toolkit Priority'),
+			    'view' => 'core:AdminToolkitPriority',
+			    'group' => 'toolkits',
+			    'groupLabel' => $this->translate('Graphics Toolkits'));
+	}
+	return array(GalleryStatus::success(), $data);
     }
 
     /**
@@ -481,7 +490,7 @@ class CoreModule extends GalleryModule {
      */
     function getUserAdminViews($user) {
 	global $gallery;
-	
+
 	$views = array();
 
 	if (GalleryCapabilities::can('login')) {
@@ -503,7 +512,7 @@ class CoreModule extends GalleryModule {
 
 	return array(GalleryStatus::success(), $views);
     }
-	
+
     /**
      * @see GalleryModule::getItemAdminViews();
      */
@@ -555,7 +564,7 @@ class CoreModule extends GalleryModule {
 				     'view' => 'core:ItemReorder');
 		}
 	    }
-	    
+
 	    /* Edit view for all item types */
 	    $views[] = array('name' => $this->translate(array('text' => 'Edit %s', 'arg1' => $itemTypeNames[0])),
 			     'view' => 'core:ItemEdit');
@@ -565,7 +574,7 @@ class CoreModule extends GalleryModule {
 				 'view' => 'core:ItemMakeHighlight');
 	    }
 	}
-	
+
 	if (isset($permissions['core.viewSource']) && GalleryCapabilities::can('link')) {
 	    if ($item->getIsLinkable()) {
 		if ($isAlbum) {
@@ -586,7 +595,7 @@ class CoreModule extends GalleryModule {
 		}
 	    }
 	}
-	
+
 	if (isset($permissions['core.delete'])) {
 	    if ($item->getId() != $rootId) {
 		$views[] = array('name' => $this->translate(array('text' => 'Delete %s', 'arg1' => $itemTypeNames[0])),
@@ -596,26 +605,26 @@ class CoreModule extends GalleryModule {
 				 'view' => 'core:ItemMoveSingle');
 	    }
 	}
-	
+
 	if (isset($permissions['core.changePermissions'])) {
 	    $views[] = array('name' => $this->translate('Edit Permissions'),
 			     'view' => 'core:ItemPermissions');
 	}
-	
+
 	if (isset($permissions['core.addDataItem'])) {
 	    if ($item->getCanContainChildren()) {
 	        $views[] = array('name' => $this->translate('Add Items'),
 				 'view' => 'core:ItemAdd');
 	    }
 	}
-	
+
 	if (isset($permissions['core.addAlbumItem'])) {
 	    if ($item->getCanContainChildren()) {
 	        $views[] = array('name' => $this->translate('Add Sub-Album'),
 				 'view' => 'core:ItemAddAlbum');
 	    }
 	}
-	
+
 	return array(GalleryStatus::success(), $views);
     }
 

@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -40,7 +40,7 @@ class ToolkitTest extends GalleryTestCase {
 
     function setUp() {
 	parent::setUp();
-	
+
 	/* Register a dummy toolkit */
 	GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
 					       'TestToolkit',
@@ -128,7 +128,7 @@ class ToolkitTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	$this->assertEquals(null, $toolkit);
     }
 
@@ -317,7 +317,7 @@ class ToolkitTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	$this->assertEquals(200, $derivative->getWidth());
 	$this->assertEquals(150, $derivative->getHeight());
     }
@@ -347,7 +347,7 @@ class ToolkitTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	$this->assertEquals(150, $derivative->getWidth());
 	$this->assertEquals(113, $derivative->getHeight());
     }
@@ -405,6 +405,62 @@ class ToolkitTest extends GalleryTestCase {
 	$this->assert($success);
 	$this->assertEquals('rotate|90;crop|15,45,50,40', $result, 'test 4');
     }
+
+    function testGetMaximumManagedPriority() {
+	$ret = GalleryCoreApi::registerToolkitOperation('TestToolkit',
+		array('test/type'), 'test-operation', array(),
+		'test-description', 'test/outputType', 40);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $priority) = GalleryCoreApi::getMaximumManagedToolkitPriority();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals('40', $priority);
+
+	$ret = GalleryCoreApi::unregisterToolkit('TestToolkit');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    function testGetRedundantPriorities() {
+	$ret = GalleryCoreApi::registerToolkitOperation('TestToolkit',
+		array('test/type'), 'test-operation', array(),
+		'test-description', 'test/outputType', 30);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::registerToolkitOperation('TestToolkit2',
+		array('test/type'), 'test-operation', array(),
+		'test-description', 'test/outputType', 27);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $list) = GalleryCoreApi::getRedundantToolkitPriorities();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assert(count($list) >= 2, 'count');
+	$this->assertEquals(30, $list['TestToolkit'], 'TestToolkit');
+	$this->assertEquals(27, $list['TestToolkit2'], 'TestToolkit2');
+
+	$ret = GalleryCoreApi::unregisterToolkit('TestToolkit');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::unregisterToolkit('TestToolkit2');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
 }
 
 /**
@@ -415,5 +471,4 @@ class ToolkitTest extends GalleryTestCase {
  */
 class TestToolkit { }
 class TestToolkit2 { }
-
 ?>
