@@ -102,6 +102,9 @@ class ItemAdminView extends GalleryView {
 	usort($subViewChoiceData, array($this, 'sortByName'));
 
 	$subViewName = GalleryUtilities::getRequestVariables('subView');
+	if ($subViewName == 'core:ItemAdmin') {
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	}
 
 	/* Turn sub view choices into url params */
 	$subViewChoices = array();

@@ -90,6 +90,9 @@ class UserAdminView extends GalleryView {
 
 	/* If we have a specific sub view, load it now */
 	$subViewName = GalleryUtilities::getRequestVariables('subView');
+	if ($subViewName == 'core:UserAdmin') {
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	}
 	if (empty($subViewName) && !empty($subViewChoices)) {
 	    $subViewName = $subViewChoices[0]['view'];
 	}

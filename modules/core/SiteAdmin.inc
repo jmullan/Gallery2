@@ -146,6 +146,9 @@ class SiteAdminView extends GalleryView {
 
 	/* If we have a specific sub view, render it now */
 	$subViewName = GalleryUtilities::getRequestVariables('subView');
+	if ($subViewName == 'core:SiteAdmin') {
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	}
 	if (empty($subViewName)) {
 	    $subViewName = 'core:AdminCore';
 	}
