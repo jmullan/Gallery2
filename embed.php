@@ -397,7 +397,7 @@ class GalleryEmbed {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/modules/core/classes/ExternalIdMap.class');
-	$ret = ExternalIdMap::addMapEntry(array('externalId' => $extUserId,
+	$ret = ExternalIdMap::addMapEntry(array('externalId' => $extGroupId,
 			      'entityType' => 'GalleryGroup', 'entityId' => $group->getId()));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
