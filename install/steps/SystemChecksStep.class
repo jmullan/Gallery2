@@ -247,12 +247,6 @@ class SystemChecksStep extends InstallStep {
 		    $warnings['corrupt'][] = $this->_abbreviateInSpan($file, 60);
 		}
 	    }
-
-	    // Abort if things get out of hand
-	    if (sizeof($warnings['missing']) > 30 ||
-		sizeof($warnings['corrupt']) > 30) {
-		break;
-	    }
 	}
 	return $warnings;
     }
