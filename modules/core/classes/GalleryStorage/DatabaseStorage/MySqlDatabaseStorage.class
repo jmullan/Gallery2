@@ -122,11 +122,15 @@ class MySqlDatabaseStorage extends DatabaseStorage {
 	    break;
 
 	case 'CASE': // condition value (condition value)* else-value
-	    $sql = array();
-	    for ($i = 0; count($args) > 1; $i++) {
-		$sql[] = 'IF(' . array_shift($args) . ', ' . array_shift($args) . ', ';
+	    if (count($args) == 3) {
+		$sql = sprintf('IF(%s)', implode(', ', $args));
+	    } else {
+		$sql = array();
+		while (count($args) > 1) {
+		    $sql[] = 'WHEN ' . array_shift($args) . ' THEN ' . array_shift($args);
+		}
+		$sql = 'CASE ' . implode(' ', $sql) . ' ELSE ' . $args[0] . ' END';
 	    }
-	    $sql = implode('', $sql) . $args[0] . str_repeat(')', $i);
 	    break;
 
 	default:
