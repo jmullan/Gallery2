@@ -138,8 +138,18 @@ class DownloadItemView extends GalleryView {
 	$platform = $gallery->getPlatform();
 	$stats = $platform->stat($path);
 	header('Last-Modified: ' . gmstrftime('%a, %e %b %G %R %Z', $stats[9]));
-	
-	$platform->readfile($path);
+
+	// Don't use readfile() because it buffers the entire file in memory
+	if ($fd = $platform->fopen($path, 'rb')) {
+	    while (true) {
+		$data = $platform->fread($fd, 8192);
+		if (strlen($data) == 0) {
+		    break;
+		}
+		print $data;
+	    }
+	    $platform->fclose($fd);
+	}
 
 	return GalleryStatus::success();
     }
@@ -181,9 +191,11 @@ class DownloadItemView extends GalleryView {
 		$buf .= '/' . $pseudoFileName;
 	    }
 
-	    $extension = GalleryUtilities::convertMimeToExtension($mimeType);
-	    if (!empty($extension)) {
-		$buf .= '.' . $extension;
+	    if (!isset($pseudoFileName) || strpos($pseudoFileName, '.') === false) {
+		$extension = GalleryUtilities::convertMimeToExtension($mimeType);
+		if (!empty($extension)) {
+		    $buf .= '.' . $extension;
+		}
 	    }
 	}
 
