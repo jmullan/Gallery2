@@ -322,6 +322,7 @@ class GalleryPluginHelper_medium {
 	 * we don't have an existing parameter by that name.  Otherwise, it's
 	 * an update.
 	 */
+        GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryPluginHelper_simple.class');
 	list ($ret, $params) =
 	    GalleryPluginHelper_simple::fetchAllParameters($pluginType, $pluginId, $itemId);
 	if ($ret->isError()) {
