@@ -11,19 +11,17 @@
  * @package GalleryCore
  * @subpackage TestCase
  */
-class ReInitializeGalleryTestCase extends TestCase {
+class ResetGalleryTestCase extends TestCase {
 
     function getDescription() {
-	return 'Reset the database and the gallery data area.  ' .
-		'Create root album, anonymous user.';
+	return 'Reset Gallery to the point right after setup.php';
     }
 
     function getDependencies() {
 	global $gallery;
 	
 	$dependencies = array(array('moduleId' => 'core', 'testName' => 'EmptyGallery'),
-			      array('moduleId' => 'core', 'testName' => 'InitializeGallery'),
-			      array('moduleId' => 'debug', 'testName' => 'ActivateModule'),
+			      array('moduleId' => 'core', 'testName' => 'CleanStore'),
 			      );
 
 	return $dependencies;
