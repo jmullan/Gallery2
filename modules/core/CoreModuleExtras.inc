@@ -79,7 +79,7 @@ class CoreModuleExtras {
 		GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/GalleryTranslator.class');
 		foreach (array('permissions.directory' => '0755',
 			       'permissions.file' => '0644',
-			       'upload.localServer.dirs' => '',
+			       'uploadLocalServer.dirs' => '',
 			       'exec.expectedStatus' => '0',
 			       'default.orderBy' => '',
 			       'default.orderDirection' => '1',
