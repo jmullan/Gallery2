@@ -11,7 +11,7 @@
   </h2>
   
   <p class="giDescription">
-    {g->text text="You can select which part of the photo will be used for the thumbnail.  This will have no effect on the resized or original versions of the image.  To reset the image to its default size, double-click on the blue box so that it encloses the entire image, and then submit."}
+    {g->text text="You can select which part of the photo will be used for the thumbnail.  This will have no effect on the resized or original versions of the image."}
   </p>
 
   {if $ItemEditPhotoThumbnail.editThumbnail.can.crop}
@@ -132,6 +132,8 @@
   <input id="crop_width" type="hidden" name="{g->formVar var="form[crop][width]"}"/>
   <input id="crop_height" type="hidden" name="{g->formVar var="form[crop][height]"}"/>
   <input type="submit" name="{g->formVar var="form[action][crop]"}" onclick="javascript:setCropFields(); submit()" value="{g->text text="Crop"}"/>
+  <input type="submit" name="{g->formVar var="form[action][reset]"}" onclick="javascript:setCropFields(); submit()" value="{g->text
+text="Reset to default"}"/>
   {else}
   <b>
     {g->text text="There are no graphics toolkits enabled that support this type of photo, so we cannot crop the thumbnail."}

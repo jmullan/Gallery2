@@ -45,7 +45,7 @@ class ItemEditPhotoThumbnail extends ItemEditPlugin {
 	$status = null;
 	$error = array();
 
-	if (isset($form['action']['crop'])) {
+	if (isset($form['action']['crop']) || isset($form['action']['reset'])) {
 	    /* Load the thumbnail */
 	    list ($ret, $thumbnails) =
 		GalleryCoreApi::fetchThumbnailsByItemIds(array($item->getId()));
@@ -55,67 +55,99 @@ class ItemEditPhotoThumbnail extends ItemEditPlugin {
 
 	    if (!empty($thumbnails)) {
 		$thumbnail = $thumbnails[$item->getId()];
-
-		/* Get our source */
-		list ($ret, $source) = GalleryCoreApi::loadEntitiesById($thumbnail->getDerivativeSourceId());
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-
-		list ($ret, $lock) = GalleryCoreApi::acquireWriteLock($thumbnail->getId());
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null);
-		}
-
-		list ($ret, $thumbnail) = $thumbnail->refresh();
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null);
-		}
-
-		if (empty($form['crop']['width'])) {
-		    $cropX = 0;
-		    $cropY = 0;
-		    $cropWidth = 100;
-		    $cropHeight = 100;
-		} else {
-		    $cropX = round(100 * $form['crop']['x'] / $source->getWidth(), 3);
-		    $cropY = round(100 * $form['crop']['y'] / $source->getHeight(), 3);
-		    $cropWidth = round(100 * $form['crop']['width'] / $source->getWidth(), 3);
-		    $cropHeight = round(100 * $form['crop']['height'] / $source->getHeight(), 3);
-		}
-
-		// TODO: Remove the crop if it's the same dimensions as the original
-		list ($ret, $operations) =
-		    GalleryCoreApi::mergeDerivativeOperations($thumbnail->getDerivativeOperations(),
-							      sprintf('crop|%s,%s,%s,%s',
-								      $cropX,
-								      $cropY,
-								      $cropWidth,
-								      $cropHeight),
-							      true);
-		
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null);
-		}
-		$thumbnail->setDerivativeOperations($operations);
-
-		$ret = $thumbnail->save();
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null);
-		}
-
-		$ret = GalleryCoreApi::releaseLocks($lock);
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null);
-		}
-
-		/* Figure out where to redirect upon success */
-		list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null);
-		}
-		$status = $module->translate('Thumbnail cropped successfully');
 	    }
+	}
+
+	if (isset($form['action']['crop']) && isset($thumbnail)) {
+	    /* Get our source */
+	    list ($ret, $source) = GalleryCoreApi::loadEntitiesById($thumbnail->getDerivativeSourceId());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    list ($ret, $lock) = GalleryCoreApi::acquireWriteLock($thumbnail->getId());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+
+	    list ($ret, $thumbnail) = $thumbnail->refresh();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+
+	    if (empty($form['crop']['width'])) {
+		$cropX = 0;
+		$cropY = 0;
+		$cropWidth = 100;
+		$cropHeight = 100;
+	    } else {
+		$cropX = round(100 * $form['crop']['x'] / $source->getWidth(), 3);
+		$cropY = round(100 * $form['crop']['y'] / $source->getHeight(), 3);
+		$cropWidth = round(100 * $form['crop']['width'] / $source->getWidth(), 3);
+		$cropHeight = round(100 * $form['crop']['height'] / $source->getHeight(), 3);
+	    }
+
+	    list ($ret, $operations) =
+		GalleryCoreApi::mergeDerivativeOperations($thumbnail->getDerivativeOperations(),
+							  sprintf('crop|%s,%s,%s,%s',
+								  $cropX,
+								  $cropY,
+								  $cropWidth,
+								  $cropHeight),
+							  true);
+	    
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+	    $thumbnail->setDerivativeOperations($operations);
+
+	    $ret = $thumbnail->save();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+
+	    $ret = GalleryCoreApi::releaseLocks($lock);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+
+	    /* Figure out where to redirect upon success */
+	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+	    $status = $module->translate('Thumbnail cropped successfully');
+	} elseif (isset($form['action']['reset']) && isset($thumbnail)) {
+	    list ($ret, $lock) = GalleryCoreApi::acquireWriteLock($thumbnail->getId());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+
+	    list ($ret, $thumbnail) = $thumbnail->refresh();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+	    $operations =
+		GalleryCoreApi::removeDerivativeOperation('crop', $thumbnail->getDerivativeOperations());
+
+	    $thumbnail->setDerivativeOperations($operations);
+	
+	    $ret = $thumbnail->save();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+
+	    $ret = GalleryCoreApi::releaseLocks($lock);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+
+	    /* Figure out where to redirect upon success */
+	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+	    $status = $module->translate('Thumbnail reset successfully');
 	}
 
 	return array(GalleryStatus::success(), $error, $status);

@@ -101,6 +101,12 @@ class ItemEditPhotoThumbnailPluginTest extends ItemEditPluginTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
+	list ($ret, $this->_item2) = $this->_createRandomDataItem($this->_album->getId(),
+								 'test/file',
+								 array('width' => 640, 'height' => 480),
+								 __FILE__,
+								 'ItemEditPhotoThumbnailTestItem');
+
 	list ($ret, $this->_derivative[0]) =
 	    $this->_createDerivative($this->_item, $this->_item->getId(),
 				     DERIVATIVE_TYPE_IMAGE_PREFERRED,
@@ -117,10 +123,27 @@ class ItemEditPhotoThumbnailPluginTest extends ItemEditPluginTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+
+	list ($ret, $this->_derivative[2]) =
+	    $this->_createDerivative($this->_item2, $this->_item2->getId(),
+				     DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 'scale|200');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $this->_lock) = GalleryCoreApi::acquireWriteLock($this->_derivative[2]->getId());
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
     }
 
     function tearDown() {
 	global $gallery;
+
+	$ret = GalleryCoreApi::releaseLocks($this->_lock);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
 
 	GalleryCoreApi::unregisterFactoryImplementation('GalleryEntity', 'ItemEditPhotoThumbnailTestItem');
 
@@ -188,6 +211,44 @@ class ItemEditPhotoThumbnailPluginTest extends ItemEditPluginTestCase {
 	// The crop operation is expressed in percentages, not in pixels
 	$this->assertEquals('crop|0,0,100,100;scale|200',
 			    $this->_derivative[1]->getDerivativeOperations());
+    }
+
+    function testResetThumbnail() {
+	list ($ret, $operations) = 
+	    GalleryCoreApi::mergeDerivativeOperations('crop|0,0,100,100', $this->_derivative[2]->getDerivativeOperations());
+
+	$this->_derivative[2]->setDerivativeOperations($operations);
+
+	$ret = $this->_derivative[2]->save();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Get the thumbnail and verify its operations */
+	list ($ret, $this->_derivative[2]) = $this->_derivative[2]->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	// The crop operation is expressed in percentages, not in pixels
+	$this->assertEquals('crop|0,0,100,100;scale|200',
+			    $this->_derivative[2]->getDerivativeOperations());
+
+	GalleryUtilities::putRequestVariable('form[action][reset]', 1);
+
+	$results = $this->handleRequest($this->_item2, $this->_derivative[2]);
+	$this->assertEquals(array(array(), $this->_translate('Thumbnail reset successfully')),
+			    $results, 'Incorrect response from handler');
+
+	/* Get the thumbnail and verify its operations */
+	list ($ret, $this->_derivative[2]) = $this->_derivative[2]->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	// The crop operation is expressed in percentages, not in pixels
+	$this->assertEquals('scale|200',
+			    $this->_derivative[2]->getDerivativeOperations(), 'Crop value not removed');
     }
 }
 
