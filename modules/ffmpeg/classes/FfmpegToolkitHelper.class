@@ -87,7 +87,8 @@ class FfmpegToolkitHelper {
 
 	/* Dimensions */
 	$properties['dimensions']['type'] = 'int,int';
-	$properties['dimensions']['description'] = $gallery->i18n('Get the width and height of the movie');
+	$properties['dimensions']['description'] =
+	    $gallery->i18n('Get the width and height of the movie');
 	$properties['dimensions']['mimeTypes'] = $mimeTypes;
 
 	$properties['dimensions-and-duration']['type'] = 'int,int,float';
@@ -126,7 +127,8 @@ class FfmpegToolkitHelper {
 	 */
 	if (!$platform->isRestrictedByOpenBasedir($ffmpegPath)) {
 	    if (!$platform->file_exists($ffmpegPath) || !$platform->is_file($ffmpegPath)) {
-		return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__), null, null, null);
+		return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__),
+			     null, null, null);
 	    }
 	}
 
