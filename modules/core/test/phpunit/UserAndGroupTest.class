@@ -230,6 +230,76 @@ class UserAndGroupTest extends GalleryTestCase {
     }
 
     /**
+     * Create duplicate group
+     */
+    function testCreateDuplicateGroup() {
+	global $gallery;
+
+	$groupTag = rand();
+
+	list ($ret, $group) = $this->_createRandomGroup($groupTag);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	GalleryDataCache::reset();
+
+	/* Verify it */
+	$ret = $this->_verifyEntity($group);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	GalleryDataCache::reset();
+
+	/* Create it again */
+	list ($ret, $duplicateGroup) = $this->_createRandomGroup($groupTag);
+	$this->assert($ret->getErrorCode() & ERROR_COLLISION, 'There should have been a collision');
+	$this->assert(!isset($duplicateGroup));
+	
+	/* Delete it */
+	$ret = $this->_deleteAndVerifyEntity($group->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    /**
+     * Create duplicate user
+     */
+    function testCreateDuplicateUser() {
+	global $gallery;
+
+	$userTag = rand();
+
+	list ($ret, $user) = $this->_createRandomUser($userTag);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	GalleryDataCache::reset();
+
+	/* Verify it */
+	$ret = $this->_verifyEntity($user);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	GalleryDataCache::reset();
+
+	/* Create it again */
+	list ($ret, $duplicateUser) = $this->_createRandomUser($userTag);
+	$this->assert($ret->getErrorCode() & ERROR_COLLISION, 'There should have been a collision');
+	$this->assert(!isset($duplicateUser));
+	
+	/* Delete it */
+	$ret = $this->_deleteAndVerifyEntity($user->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    /**
      * Create group, modify group, delete group
      */
     function testCreateAndModifyGroup() {
