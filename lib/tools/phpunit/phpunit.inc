@@ -163,8 +163,8 @@ class Assert {
 	      }
 	  }
 	  else if (is_array($value)) {
-	      if (phpversion() >= '4.3.0') {
-		  $translateValue = '<pre>' . htmlentities(print_r($value, 1)) . '</pre>';
+	      if (phpversion() >= '4.2.0') {
+		  $translateValue = '<pre>' . htmlentities(var_export($value, 1)) . '</pre>';
 	      } else {
 		  $translateValue = htmlentities(serialize($value));
 	      }
