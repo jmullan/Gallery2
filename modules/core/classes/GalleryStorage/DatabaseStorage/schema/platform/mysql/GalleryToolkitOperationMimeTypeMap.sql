@@ -3,7 +3,7 @@
     -- why it looks so ugly.  Editing it by hand would be a bad idea.
     --
 
-    CREATE TABLE DB_TABLE_PREFIXTkOperationMimeTypeMap (
+    CREATE TABLE DB_TABLE_PREFIXTkOperatnMimeTypeMap (
   DB_COLUMN_PREFIXoperationName
       varchar(
       
@@ -55,7 +55,7 @@
       DB_COLUMN_PREFIXmajor,
       DB_COLUMN_PREFIXminor
       ) VALUES (
-      'TkOperationMimeTypeMap',
+      'TkOperatnMimeTypeMap',
       1,
       0
       );

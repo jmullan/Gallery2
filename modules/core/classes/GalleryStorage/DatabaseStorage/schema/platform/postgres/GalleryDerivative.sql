@@ -60,17 +60,17 @@
     );
 
   
-    CREATE INDEX DB_TABLE_PREFIXDerivative_843485338 
+    CREATE INDEX DB_TABLE_PREFIXDerivative_85338 
     ON DB_TABLE_PREFIXDerivative
     (DB_COLUMN_PREFIXderivativeSourceId);
 
   
-    CREATE INDEX DB_TABLE_PREFIXDerivative_397325243 
+    CREATE INDEX DB_TABLE_PREFIXDerivative_25243 
     ON DB_TABLE_PREFIXDerivative
     (DB_COLUMN_PREFIXderivativeOrder);
 
   
-    CREATE INDEX DB_TABLE_PREFIXDerivative_3011797216 
+    CREATE INDEX DB_TABLE_PREFIXDerivative_97216 
     ON DB_TABLE_PREFIXDerivative
     (DB_COLUMN_PREFIXderivativeType);
 

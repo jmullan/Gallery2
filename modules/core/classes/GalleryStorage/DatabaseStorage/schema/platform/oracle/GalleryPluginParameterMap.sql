@@ -42,7 +42,7 @@
     );
 
   
-    CREATE INDEX DB_TABLE_PREFIXPluginParameterMap_4202412808
+    CREATE INDEX DB_TABLE_PREFIXPluginParameterMap_12808
     ON DB_TABLE_PREFIXPluginParameterMap
     (DB_COLUMN_PREFIXpluginType
         ,
@@ -50,7 +50,7 @@
         ,
       DB_COLUMN_PREFIXitemId);
   
-    CREATE INDEX DB_TABLE_PREFIXPluginParameterMap_23380596
+    CREATE INDEX DB_TABLE_PREFIXPluginParameterMap_80596
     ON DB_TABLE_PREFIXPluginParameterMap
     (DB_COLUMN_PREFIXpluginType);
   

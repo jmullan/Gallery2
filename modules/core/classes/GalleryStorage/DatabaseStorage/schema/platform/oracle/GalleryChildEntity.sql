@@ -18,7 +18,7 @@
     );
 
   
-    CREATE INDEX DB_TABLE_PREFIXChildEntity_284052718
+    CREATE INDEX DB_TABLE_PREFIXChildEntity_52718
     ON DB_TABLE_PREFIXChildEntity
     (DB_COLUMN_PREFIXparentId);
   

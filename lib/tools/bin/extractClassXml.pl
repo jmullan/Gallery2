@@ -35,6 +35,7 @@ foreach my $file (@ARGV) {
 	# Shorten some table names to fit Oracle's 30 char name limit..
 	$schemaName =~ s/Preferences/Prefs/;
 	$schemaName =~ s/Toolkit/Tk/;
+	$schemaName =~ s/TkOperation/TkOperatn/;
       }
 
       if (m|<schema>|) {

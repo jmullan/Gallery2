@@ -20,7 +20,7 @@
     );
 
   
-    CREATE INDEX DB_TABLE_PREFIXFileSystemEntity_2814003406 
+    CREATE INDEX DB_TABLE_PREFIXFileSystemEntity_3406 
     ON DB_TABLE_PREFIXFileSystemEntity
     (DB_COLUMN_PREFIXpathComponent);
 

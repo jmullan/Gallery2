@@ -30,7 +30,7 @@
     );
 
   
-    CREATE INDEX DB_TABLE_PREFIXImageBlockCacheMap_778501627 
+    CREATE INDEX DB_TABLE_PREFIXImageBlockCacheMap_1627 
     ON DB_TABLE_PREFIXImageBlockCacheMap
     (DB_COLUMN_PREFIXuserId
         ,

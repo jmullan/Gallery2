@@ -22,7 +22,7 @@
     );
 
   
-    CREATE UNIQUE INDEX DB_TABLE_PREFIXExifPropertiesMap_968978674 
+    CREATE UNIQUE INDEX DB_TABLE_PREFIXExifPropertiesMap_78674 
     ON DB_TABLE_PREFIXExifPropertiesMap
     (DB_COLUMN_PREFIXproperty
         ,
