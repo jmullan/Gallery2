@@ -52,6 +52,7 @@
 	       element="subject"
 	       firstMarkupBar="true"}
       <input type="text" size="60" id="subject" name="{g->formVar var="form[subject]"}" value="{$form.subject}"/>
+      <script type="text/javascript">document.forms[0]['{g->formVar var="form[subject]"}'].focus();</script>
 
       {if isset($form.error.subject.missing)}
       <div class="giError">
