@@ -4,9 +4,7 @@
 
 <ul class="gbBreadCrumb">
   <li class="giBreadCrumbFirst">
-    <a href="{g->url}">
-      {g->text text="Gallery"}
-    </a>
+    <a href="{g->url}">{g->text text="Gallery"}</a>
   </li>
   <li>
     {g->text text="Members List"}

@@ -4,14 +4,10 @@
 
 <ul class="gbBreadCrumb">
   <li class="giBreadCrumbFirst">
-    <a href="{g->url}">
-      {g->text text="Gallery"}
-    </a>
+    <a href="{g->url}">{g->text text="Gallery"}</a>
   </li>
   <li>
-    <a href="{g->url arg1="view=members:MembersList"}">
-      {g->text text="Members List"}
-    </a>
+    <a href="{g->url arg1="view=members:MembersList"}">{g->text text="Members List"}</a>
   </li>
   <li>
     {g->text text="Member Profile"}
