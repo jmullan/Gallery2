@@ -306,7 +306,11 @@ class AdminCoreView extends GalleryView {
 	}
 
 	$layoutList = array();
-	foreach (array_keys($layoutStatusList) as $layoutId) {
+	foreach ($layoutStatusList as $layoutId => $layoutStatus) {
+	    if (empty($layoutStatus['active'])) {
+		continue;
+	    }
+	    
 	    list ($ret, $layout) = GalleryCoreApi::loadPlugin('layout', $layoutId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
