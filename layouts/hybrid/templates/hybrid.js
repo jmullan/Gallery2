@@ -265,7 +265,7 @@ function image_zoom(on,noresize) { // Set full/fit size
   document.full_size.className = 'off';
   document.fit_size.className = 'on';
   var h = app_wh - toolbar_getheight() - data_ih[image_index];
-  document.getElementById('image').style.paddingTop =
+  document.getElementById('image_view').style.paddingTop =
    max(Math.floor(h/2),0) + 'px';
   document.view.width = data_iw[image_index];
   document.view.height = data_ih[image_index];
