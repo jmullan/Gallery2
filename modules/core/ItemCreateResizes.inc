@@ -53,6 +53,7 @@ class ItemCreateResizesController extends GalleryController {
 	}
 
 	if (isset($form['action']['save'])) {
+
 	    /* Validate the input data. */
 	    $error = false;
 	    if (!is_numeric($form['thumbnail']['size'])) {
@@ -72,24 +73,60 @@ class ItemCreateResizesController extends GalleryController {
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-		$thumbnail = $thumbTable[$item->getId()];
 
-		/* Change the thumbnail */
-		$thumbnail->setDerivativeOperations('thumbnail|' . $form['thumbnail']['size']);
+		if (isset($thumbTable[$item->getId()])) {
+		    /* Change the thumbnail */
+		    $thumbnail = $thumbTable[$item->getId()];
+		    $thumbnail->setDerivativeOperations('thumbnail|' . $form['thumbnail']['size']);
 
-		if ($thumbnail->isModified()) {
-		    list ($ret, $lockId) = $gallery->acquireWriteLock($thumbnail->getId());
+		    if ($thumbnail->isModified()) {
+			list ($ret, $lockId) = $gallery->acquireWriteLock($thumbnail->getId());
+			if ($ret->isError()) {
+			    return array($ret->wrap(__FILE__, __LINE__), null);
+			}
+			$thumbnail->expireCache();
+			$ret = $thumbnail->save();
+			if ($ret->isError()) {
+			    return array($ret->wrap(__FILE__, __LINE__), null);
+			}
+			$ret = $gallery->releaseLocks(array($lockId));
+			if ($ret->isError()) {
+			    return array($ret->wrap(__FILE__, __LINE__), null);
+			}
+		    }
+		} else {
+		    /* Create the thumbnail */
+		    list ($ret, $toolkit, $outputMimeType) =
+			GalleryToolkitHelper::getToolkitByOperation($item->getMimeType(), 'thumbnail');
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
-		    $thumbnail->expireCache();
-		    $ret = $thumbnail->save();
-		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-		    }
-		    $ret = $gallery->releaseLocks(array($lockId));
-		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+
+		    if (isset($toolkit)) {
+			list ($ret, $thumbnail) = 
+			    GalleryFactory::newInstance('GalleryEntity', 'GalleryDerivativeImage');
+			if ($ret->isError()) {
+			    return array($ret->wrap(__FILE__, __LINE__), null);
+			}
+			
+			if (!isset($thumbnail)) {
+			    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
+					 null);
+			}  
+			
+			$ret = $thumbnail->create($item->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
+			if ($ret->isError()) {
+			    return array($ret->wrap(__FILE__, __LINE__), null);
+			}
+
+			$thumbnail->setDerivativeMimeType($outputMimeType);
+			$thumbnail->setDerivativeSourceId($item->getId());
+			$thumbnail->setDerivativeOperations('thumbnail|' . $form['thumbnail']['size']);
+			
+			$ret = $thumbnail->save();
+			if ($ret->isError()) {
+			    return array($ret->wrap(__FILE__, __LINE__), null);
+			}
 		    }
 		}
 
