@@ -1,7 +1,7 @@
 {foreach from=$ImageBlockSystemContent.blocks item=block}
 {g->box}
 {g->title}
-  {g->text text="`$block.title`"}
+  {g->text text=$block.title}
 {/g->title}
 {g->element}
   {g->link arg1="view=core:ShowItem" arg2="itemId=`$block.id`"}
