@@ -124,7 +124,7 @@ class AdminLayoutsController extends GalleryController {
 		list ($outer, $inner) = explode('.', $key);
 		if (isset($form[$outer][$inner])) {
 		    $value = $form[$outer][$inner];
-		    if ($key == 'default.orderBy' && isset($form['default']['presort'])) {
+		    if ($key == 'default.orderBy' && !empty($form['default']['presort'])) {
 			$value = $form['default']['presort'] . '|' . $value;
 		    }
 		    $ret = GalleryCoreApi::setPluginParameter('module', 'core', $key, $value);
