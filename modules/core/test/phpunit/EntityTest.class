@@ -127,6 +127,23 @@ class EntityTest extends GalleryTestCase {
 	$this->_entity->setModificationTimestamp($oldValue);
 	$this->assert(!$this->_entity->isModified(), 'is not modified');
     }
+
+    function testSetSetSet() {
+	// Ensure modified flag stays set if value goes null->A->B->A (ie first set of A
+	// doesn't become the "original value" when it should stay as null)
+
+	list ($ret, $entity) =
+	    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'EntityTestEntity');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assert(!$entity->isModified(), 'not yet modified');
+	$entity->setIsLinkable(true);
+	$entity->setIsLinkable(false);
+	$entity->setIsLinkable(true);
+	$this->assert($entity->isModified(), 'is modified');
+    }
 }
 
 /**

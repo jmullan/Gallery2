@@ -108,7 +108,7 @@ class GalleryPersistent {
      * @param mixed the new field value
      */
     function setModifiedFlag($name, $newValue) {
-	if (!isset($this->_persistentStatus->originalValue[$name])) {
+	if (!array_key_exists($name, $this->_persistentStatus->originalValue)) {
 	    $method = 'get' . $name;
 	    $this->_persistentStatus->originalValue[$name] = $this->$method();
 	}
