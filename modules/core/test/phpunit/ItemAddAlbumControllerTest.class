@@ -104,13 +104,23 @@ class ItemAddAlbumControllerTest extends GalleryControllerTestCase {
 	/* Then re-use the path component that we know will conflict */
 	GalleryUtilities::putRequestVariable('form[pathComponent]', $subAlbum->getPathComponent());
 
-	/* Perform the request and verify that we failed */
+	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemAddAlbum'),
-				  'status' => array(),
-				  'error' => array('form[error][pathComponent][collision]')),
+	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemEdit',
+						      'editPlugin' => 'ItemEditAlbum',
+						      'itemId' => $this->_getSecondChildId()),
+				  'status' => array('createdAlbum' => 1),
+				  'error' => array()),
 			    $results);
+
+	list ($ret, $newAlbum) = GalleryCoreApi::loadEntitiesById($this->_getSecondChildId());
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	// Verify that the new album's path component is unique (it's got _001 as a suffix)
+	$this->assertEquals($subAlbum->getPathComponent() . '_001', $newAlbum->getPathComponent());
     }
     
     function testAddAlbumMissingName() {
@@ -159,6 +169,14 @@ class ItemAddAlbumControllerTest extends GalleryControllerTestCase {
 	list ($ret, $ids) = GalleryCoreApi::fetchChildItemIds($this->_parentAlbum);
 	$this->assertEquals(1, sizeof($ids));
 	return $ids[0];
+    }
+
+    function _getSecondChildId() {
+	list ($ret, $ids) = GalleryCoreApi::fetchChildItemIds($this->_parentAlbum);
+	$this->assertEquals(2, sizeof($ids));
+
+	// We want the larger id, since it's the newer one
+	return max($ids[0], $ids[1]);
     }
 }
 ?>
