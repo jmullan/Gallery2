@@ -109,9 +109,11 @@ class GalleryAnimationItem_core extends GalleryDataItem {
      * @param string the path to the source animation
      * @param string the mime type
      * @param string the desired name of the new item
+     * @param boolean (optional) a boolean true if we should symlink instead 
+     *        of copy (default is false).
      * @return object GalleryStatus a status code
      */
-    function create($parentId, $animationFileName, $mimeType, $targetName=null) {
+    function create($parentId, $animationFileName, $mimeType, $targetName=null, $symlink=false) {
 	global $gallery;
 
 	$platform = $gallery->getPlatform();
@@ -126,7 +128,7 @@ class GalleryAnimationItem_core extends GalleryDataItem {
 	}
 
 	/* Create our data item */
-	$ret = parent::create($parentId, $animationFileName, $mimeType, $targetName);
+	$ret = parent::create($parentId, $animationFileName, $mimeType, $targetName, $symlink);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

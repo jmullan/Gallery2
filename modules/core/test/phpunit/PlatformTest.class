@@ -53,6 +53,13 @@ class PlatformTest extends GalleryTestCase {
 	$this->assert($this->_platform->unlink($this->_destFile));
     }
     
+    function testSymlink() {
+	if ($this->_platform->isSymlinkSupported()) {
+	    $this->assert($this->_platform->symlink($this->_sourceFile, $this->_destFile));
+	    $this->assert($this->_platform->unlink($this->_destFile));
+	}
+    }
+    
     function testMoveUploadedFile() {
 	// XXX: How do we test this?  We don't have an uploaded file :-(
 	$this->assert(!$this->_platform->move_uploaded_file($this->_sourceFile, $this->_destFile));

@@ -110,9 +110,11 @@ class GalleryDataItem_core extends GalleryItem {
      * @param string the path to a data file to be contained
      * @param string the mime type of the new item
      * @param string (optional) the desired name of the new item
+     * @param boolean (optional) a boolean true if we should symlink instead 
+     *        of copy (default is false).
      * @return object GalleryStatus a status code
      */
-    function create($parentId, $inputFileName, $mimeType, $targetName=null) {
+    function create($parentId, $inputFileName, $mimeType, $targetName=null, $symlink=false) {
 	global $gallery;
 	$platform = $gallery->getPlatform();
 
@@ -171,9 +173,18 @@ class GalleryDataItem_core extends GalleryItem {
 	 * We have to write lock the container to be sure that this doesn't
 	 * happen.
 	 */
-	/* Copy the file to its new location */
-	if (!$platform->copy($inputFileName, $newFileName)) {
-	    return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__);
+	if ($symlink) {
+	    if (!$platform->isSymlinkSupported()) {
+		return GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__);
+	    }
+	    if (!$platform->symlink($inputFileName, $newFileName)) {
+		return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__);
+	    }
+	} else {
+	    /* Copy the file to its new location */
+	    if (!$platform->copy($inputFileName, $newFileName)) {
+		return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__);
+	    }
 	}
 
 	/* Set my file size */

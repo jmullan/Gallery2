@@ -189,6 +189,61 @@ class DataItemTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }
+
+
+    /**
+     * Create an data item being a symlink to an existing file
+     */
+    function testCreateSymlink() {
+	global $gallery;
+
+	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($this->_album->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $basePath) = $this->_album->fetchPath();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$platform = $gallery->getPlatform();
+	$canSymlink = $platform->isSymlinkSupported();
+
+	$entity = new GalleryDataItem();
+	$ret = $entity->create($this->_album->getId(),
+				   __FILE__,
+				   'text/plain',
+				   'valid_path.txt', true);
+	if ($ret->isError()) {
+	    /* On not supported platforms, this should return an ERROR_UNSUPPORTED_OPERATION */
+	    if ($canSymlink || (!$canSymlink && !($ret->getErrorCode() & ERROR_UNSUPPORTED_OPERATION))) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $ret = GalleryCoreApi::releaseLocks($lockId);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    return;
+	}
+
+	$ret = $entity->save();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $entityPath) = $entity->fetchPath();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assert(is_link($entityPath));
+
+	$ret = GalleryCoreApi::releaseLocks($lockId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
 }
 
 ?>

@@ -192,5 +192,14 @@ class WinNtPlatform extends GalleryPlatform {
 	}
 	return $list;
     }
+
+
+    /**
+     * @see GalleryPlatform::isSymlinkSupported
+     */
+    function isSymlinkSupported() {
+	return false;
+    }
+
 }
 ?>

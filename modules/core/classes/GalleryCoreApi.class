@@ -1312,15 +1312,17 @@ class GalleryCoreApi {
      * @param string the description of the new item
      * @param string the mime type of the new item
      * @param int the id of the target album
+     * @param boolean (optional) a boolean true if we should symlink instead 
+     *        of copy (default is false).
      * @return array object GalleryStatus a status code
      *               object GalleryDataItem a new item
      * @static
      */
     function addItemToAlbum($fileName, $itemName, $title, $summary,
-			    $description, $mimeType, $albumId) {
+			    $description, $mimeType, $albumId, $symlink=false) {
 	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/helpers/GalleryItemHelper_medium.class');
 	return GalleryItemHelper_medium::addItemToAlbum($fileName, $itemName, $title, $summary,
-							$description, $mimeType, $albumId);
+							$description, $mimeType, $albumId, $symlink);
     }
     
     /**

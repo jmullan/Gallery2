@@ -63,6 +63,29 @@ class GalleryPlatform {
     }
 
     /**
+     * Symlink a file 
+     *
+     * @param string the source file
+     * @param string the destination file
+     * @return bool TRUE if the copy succeeded, FALSE otherwise.
+     * @access public
+     */
+    function symlink($source, $dest) {
+	global $gallery;
+	if ($gallery->getDebug()) {
+	    $gallery->debug("symlink($source, $dest)");
+	}
+	
+	$umask = umask(0133);
+	$results = symlink($source, $dest);
+	umask($umask);
+
+	return $results;
+    }
+
+
+
+    /**
      * Move an uploaded file to a new location and return the new location.
      *
      * If the second filename is not provided, a new file is created in the
@@ -1016,6 +1039,21 @@ class GalleryPlatform {
 	/* This must be implemented in a platform specific way */
 	assert(false);
     }
+
+
+    /**
+     * Retrun a boolean specifying whether or not this platform can perform
+     * a symbolic link (symlink) command
+     *
+     * @return boolean true if the platform supports symlinks
+     *
+     * @access public
+     */
+    function isSymlinkSupported() {
+	/* This must be implemented in a platform specific way */
+	assert(false);
+    }
+
 
     /**
      * chdir -- change working directory
