@@ -205,7 +205,8 @@ function CheckConfigFileExists() {
 }
 
 function CheckFileDirective() {
-    if (strstr(__FILE__, 'setup/setup.php')) {
+    if (strstr(__FILE__, 'setup/setup.php') ||
+	strstr(__FILE__, 'setup\\setup.php')) {
 	return 1;
     } else {
 	return 0;
