@@ -50,12 +50,14 @@
       </script>
 
       <div id="gsSearchContents">
-	<div class="gbTopFlag">
-	  <h1 class="giTitle">
-	  {g->text text="Search the Gallery"}
-	  </h1>
-	</div>
-
+	    <div class="gbTopFlag">
+		  <div class="gbTitleBanner">
+	        <h1 class="gbTitle">
+	        {g->text text="Search the Gallery"}
+	        </h1>
+	      </div>
+	    </div>
+	    
 	<div class="gbAdmin">
 	  <div class="gbDataEntry">
 	    <input type="text" size="50" name="{g->formVar var="form[searchCriteria]"}" value="{$form.searchCriteria}" onfocus="this.style.background='#fff';" onblur="this.style.background='#eee';"/>

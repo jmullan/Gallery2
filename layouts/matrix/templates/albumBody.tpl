@@ -191,7 +191,7 @@
         {/if}
 
         {if ($layout.currentPage == $page)}
-        <li>
+        <li class="giSelected">
           {$page}
         </li>
         {else}

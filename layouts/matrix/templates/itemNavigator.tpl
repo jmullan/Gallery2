@@ -8,7 +8,7 @@
     isset($layout.navigator.back) ||
     isset($layout.navigator.next) ||
     isset($layout.navigator.last)}
-<ul class="giHorizontalLinks">
+<ul class="giHorizontalLinksLeft">
   {if isset($layout.navigator.first)}
   <li><a href="{g->url params=$layout.navigator.first}">{g->text text="&lt;&lt; first"}</a></li>
   {/if}
@@ -17,7 +17,9 @@
   <li>
     <a href="{g->url params=$layout.navigator.back}">{g->text text="&lt; previous"}</a></li>
   {/if}
+</ul>
 
+<ul class="giHorizontalLinks">
   {if isset($layout.navigator.next)}
   <li><a href="{g->url params=$layout.navigator.next}">{g->text text="next &gt;"}</a></li>
   {/if}
