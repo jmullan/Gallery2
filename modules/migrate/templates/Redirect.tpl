@@ -16,5 +16,5 @@
 &lt;/IfModule&gt;</pre>
 
 <p>
-  {g->text text="This will also work in your Gallery2 directory if G2 is installed in the path where G1 used to be."}
+  {g->text text="Note that the mod_rewrite Apache module is required. This will also work in your Gallery2 directory if G2 is installed in the path where G1 used to be, and in your G1 albums directory if you wish to redirect links to image files and album directories."}
 </p>

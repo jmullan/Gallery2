@@ -44,11 +44,59 @@ class RedirectController extends GalleryController {
 
 	list($file, $full, $page) = GalleryUtilities::getRequestVariables('file', 'full', 'page');
 	$path = preg_split('|/|', $file, -1, PREG_SPLIT_NO_EMPTY);
+	$view = 'core:ShowItem';
 
 	if (count($path) > 1) {
+	    // Check for direct link to image file (name.type, name.thumb.type, name.sized.type)
+	    $file = explode('.', $path[1]);
+	    switch (count($file)) {
+	    case 3:
+		if ($file[1] == 'sized') {
+		    $derivative = DERIVATIVE_TYPE_IMAGE_RESIZE;
+		} else if ($file[1] == 'thumb') {
+		    $derivative = DERIVATIVE_TYPE_IMAGE_THUMBNAIL;
+		}
+	    case 2:
+		$view = 'core:DownloadItem';
+		$path[1] = $file[0];
+		if (!isset($derivative)) {
+		    $derivative = DERIVATIVE_TYPE_IMAGE_PREFERRED;
+		}
+	    }
+
 	    list ($ret, $id) = G1MigrateHelper::fetchMapping($path[0], $path[1]);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    if (isset($id) && isset($derivative)) {
+		switch ($derivative) {
+		case DERIVATIVE_TYPE_IMAGE_PREFERRED:
+		    list ($ret, $data) = GalleryCoreApi::fetchPreferredsByItemIds(array($id));
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		    break;
+		case DERIVATIVE_TYPE_IMAGE_RESIZE:
+		    list ($ret, $data) = GalleryCoreApi::fetchResizesByItemIds(array($id));
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		    break;
+		case DERIVATIVE_TYPE_IMAGE_THUMBNAIL:
+		    list ($ret, $data) = GalleryCoreApi::fetchThumbnailsByItemIds(array($id));
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		    break;
+		}
+		if (!empty($data)) {
+		    $item = $data[$id];
+		    if (is_array($item)) {
+			$item = array_shift($item);
+		    }
+		    $id = $item->getId();
+		}
 	    }
 	} else {
 	    list ($ret, $id) = G1MigrateHelper::fetchMapping($path[0]);
@@ -60,7 +108,7 @@ class RedirectController extends GalleryController {
 	/* Redirect browser */
 	$results = array('redirect' => array());
 	$results['redirect']['href'] = $_SERVER['SCRIPT_NAME'];
-	$results['redirect']['view'] = 'core:ShowItem';
+	$results['redirect']['view'] = $view;
 
 	if (isset($id)) {
 	    $results['redirect']['itemId'] = $id;

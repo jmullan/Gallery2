@@ -42,9 +42,24 @@ class RedirectControllerTest extends GalleryControllerTestCase {
     function setUp() {
 	parent::setUp();
 
+	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_getRootId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $this->_thumb) = $this->_createDerivative($this->_item, $this->_item->getId(),
+							      DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $this->_sized) = $this->_createDerivative($this->_item, $this->_item->getId(),
+							      DERIVATIVE_TYPE_IMAGE_RESIZE);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
 	$this->_albumId = 12345;
 	$this->_albumName = 'testalbum-' . rand();
-	$this->_itemId = 54321;
+	$this->_itemId = $this->_item->getId();
 	$this->_itemName = 'testitem-' . rand();
 
 	// Add map entries..
@@ -65,11 +80,16 @@ class RedirectControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	$ret = GalleryCoreApi::deleteEntityById($this->_itemId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 
 	parent::tearDown();
     }
 
     function testRedirect() {
+	// Album
 	GalleryUtilities::putRequestVariable('file', $this->_albumName);
 
 	$results = $this->handleRequest();
@@ -80,6 +100,7 @@ class RedirectControllerTest extends GalleryControllerTestCase {
 				  'error' => array()),
 			    $results, 'album');
 
+	// Album with trailing slash
 	GalleryUtilities::putRequestVariable('file', $this->_albumName . '/');
 
 	$results = $this->handleRequest();
@@ -90,6 +111,7 @@ class RedirectControllerTest extends GalleryControllerTestCase {
 				  'error' => array()),
 			    $results, 'album trailing slash');
 
+	// Album page 2
 	GalleryUtilities::putRequestVariable('file', $this->_albumName);
 	GalleryUtilities::putRequestVariable('page', '2');
 
@@ -102,6 +124,7 @@ class RedirectControllerTest extends GalleryControllerTestCase {
 				  'error' => array()),
 			    $results, 'album page 2');
 
+	// Item
 	GalleryUtilities::removeRequestVariable('page');
 	GalleryUtilities::putRequestVariable('file', $this->_albumName . '/' . $this->_itemName);
 
@@ -113,6 +136,7 @@ class RedirectControllerTest extends GalleryControllerTestCase {
 				  'error' => array()),
 			    $results, 'item');
 
+	// Item full size
 	GalleryUtilities::putRequestVariable('file', $this->_albumName . '/' . $this->_itemName);
 	GalleryUtilities::putRequestVariable('full', '1');
 
@@ -125,6 +149,7 @@ class RedirectControllerTest extends GalleryControllerTestCase {
 				  'error' => array()),
 			    $results, 'item full size');
 
+	// Invalid item
 	GalleryUtilities::removeRequestVariable('full');
 	GalleryUtilities::putRequestVariable('file', 'invalid-' . rand() . '/aaa');
 
@@ -134,6 +159,42 @@ class RedirectControllerTest extends GalleryControllerTestCase {
 				  'status' => array(),
 				  'error' => array()),
 			    $results, 'invalid item');
+
+	// Direct link to full size image
+	GalleryUtilities::putRequestVariable('file',
+	    $this->_albumName . '/' . $this->_itemName . '.jpg');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('href' => $_SERVER['SCRIPT_NAME'],
+						      'view' => 'core:DownloadItem',
+						      'itemId' => $this->_itemId),
+				  'status' => array(),
+				  'error' => array()),
+			    $results, 'item image file');
+
+	// Direct link to resized image
+	GalleryUtilities::putRequestVariable('file',
+	    $this->_albumName . '/' . $this->_itemName . '.sized.jpg');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('href' => $_SERVER['SCRIPT_NAME'],
+						      'view' => 'core:DownloadItem',
+						      'itemId' => $this->_sized->getId()),
+				  'status' => array(),
+				  'error' => array()),
+			    $results, 'item resized file');
+
+	// Direct link to thumbnail image
+	GalleryUtilities::putRequestVariable('file',
+	    $this->_albumName . '/' . $this->_itemName . '.thumb.jpg');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('href' => $_SERVER['SCRIPT_NAME'],
+						      'view' => 'core:DownloadItem',
+						      'itemId' => $this->_thumb->getId()),
+				  'status' => array(),
+				  'error' => array()),
+			    $results, 'item thumbnail file');
     }
 }
 ?>
