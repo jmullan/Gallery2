@@ -4,7 +4,7 @@
  * Gallery will look for that file first and use it if it exists
  * and when you upgrade, your changes will not get overwritten.
  *}
-<br />
+<br/>
 <div class="giDescription">
   {g->text text="A tile layout consists of a background image shown as a grid of tiles with thumbnails for other images placed in any tile position over the background.  Set the size and number of tiles, select the background image and assign thumbnail positions below.  Row 1, Column 1 is the upper left corner."}
 </div>
@@ -27,17 +27,17 @@
 <th>{g->text text="Title"}</th>
 <th>{g->text text="Row"}</th>
 <th>{g->text text="Column"}</th></tr>
-{foreach from=$layout.itemList key=i item=it}
+{foreach from=$layout.children key=i item=it}
   {if isset($it.image)}
     <tr><td>
-    {if isset($it.thumb)}
-      {g->image item=$it.data image=$it.thumb class=thumb}
+    {if isset($it.thumbnail)}
+      {g->image item=$it image=$it.thumbnail maxSize=100 class=thumb}
     {else} {g->text text="no thumbnail"} {/if}
     </td><td>
     <input type="radio" name="{g->formVar var="form[backgroundId]"}" value="{$it.image.id}"
       {if $layout.params.backgroundId==$it.image.id}checked{/if}>
     </td><td>
-    <span class="giTitle">{$it.data.title|markup}</span>
+    <span class="giTitle">{$it.title|markup}</span>
     </td><td>
     {assign var="key" value="row_`$it.image.id`"}
     <input type="text" size="3" name="{g->formVar var="form[row_`$it.image.id`]"}" value="{$layout.params[$key]|default:''}">

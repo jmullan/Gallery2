@@ -56,7 +56,10 @@
 {/section}
 </table>
 {else}
-  {g->text text="The layout has not been configured."}
+  {g->text text="The layout has not been"}
+  <a href="{g->url arg1="view=core:ItemAdmin" arg2="subView=core:ItemEdit" arg3="editPlugin=ItemEditLayout" arg4="itemId=`$layout.item.id`"}">
+    {g->text text="configured."}
+  </a>
 {/if}
 </div>
 </div>
