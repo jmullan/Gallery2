@@ -56,26 +56,29 @@ class ItemEditImageController extends GalleryController {
 	}
 
 	/* Check to see if we have a preferred source */
-	list ($ret, $results) = GalleryDerivativeHelper::fetchPreferredsByItemIds(
+	list ($ret, $preferredTable) = GalleryDerivativeHelper::fetchPreferredsByItemIds(
             array($item->getId()));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	
 	$preferred = null;
-	if (!empty($results[$item->getId()])) {
-	    $preferred = $results[$item->getId()];
+	if (!empty($preferredTable[$item->getId()])) {
+	    $preferred = $preferredTable[$item->getId()];
 	}
-
 
 	$remapSourceIds = array();
 	$operation = null;
 	/* Figure out which command we're taking */
-	if (isset($form['action']['scale']) &&
-	        is_numeric($form['scale']['size']) &&
-	        $form['scale']['size'] > 0) {
-	    $operation = 'scale';
-	    $args = array($form['scale']['size']);
+	if (isset($form['action']['scale'])) {
+	    if (!isset($form['scale']['size'])) {
+		GalleryUtilities::putRequestVariable('form.error.scale.size.missing', 1);
+	    } else if (!is_numeric($form['scale']['size']) || $form['scale']['size'] < 1) {
+		GalleryUtilities::putRequestVariable('form.error.scale.size.invalid', 1);
+	    } else {
+		$operation = 'scale';
+		$args = array($form['scale']['size']);
+	    }
 	} else if (isset($form['action']['rotate']['clockwise'])) {
 	    $operation = 'rotate';
 	    $args = array(90);
@@ -128,12 +131,12 @@ class ItemEditImageController extends GalleryController {
 		list ($ret, $toolkit) =
 		    GalleryToolkitHelper::getToolkitByOperation($item->getMimeType(), $operation);
 		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
 		if (!isset($toolkit)) {
 		    /* This should never happen */
-		    return GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
+		    return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
 		}
 
 		/* Perform the operation */
@@ -229,8 +232,7 @@ class ItemEditImageController extends GalleryController {
 		    }
 		}
 
-		$ret = GalleryDerivativeHelper::expireDerivativeTreeBySourceIds(
-	            array($preferred->getId()));
+		$ret = GalleryDerivativeHelper::expireDerivativeTreeBySourceIds(array($preferred->getId()));
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -315,28 +317,14 @@ class ItemEditImageView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	if ($form['formName'] == 'ItemEditImage') {
-
-	    /* Complain if we have any invalid data */
-	    if (!empty($form['action']['scale'])) {
-		if (empty($form['scale']['size'])) {
-		    $form['error']['scale']['size']['missing'] = 1;
-		} else if (!is_numeric($form['scale']['size']) ||
-			   $form['scale']['size'] <= 0) {
-		    $form['error']['scale']['size']['invalid'] = 1;
-		}
-	    }
-	    
-	} else {
+	if ($form['formName'] != 'ItemEditImage') {
 	    /* First time around, load the form with item data */
-	    $form = array();
 	    $form['scale']['size'] = '';
 	    $form['preserveOriginal'] = 1;
 	}
 
 	/* Check to see if we have a preferred source */
-	list ($ret, $results) = GalleryDerivativeHelper::fetchPreferredsByItemIds(
-            array($item->getId()));
+	list ($ret, $results) = GalleryDerivativeHelper::fetchPreferredsByItemIds(array($item->getId()));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
