@@ -154,7 +154,7 @@ class ItemEditDataItemControllerTest extends GalleryControllerTestCase {
 
     function testInvalidItem() {
 	/* Use invalid inputs */
-	GalleryUtilities::putRequestVariable('itemId', '123456789' . rand());
+	GalleryUtilities::putRequestVariable('itemId', '1234' . rand(1, 99999));
 	GalleryUtilities::putRequestVariable('form.action.save', 1);
 
 	/* Perform the request and verify that we failed */
