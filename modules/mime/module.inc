@@ -37,7 +37,7 @@ class MimeModule extends GalleryModule {
     function MimeModule() {
         global $gallery;    
         $this->setId('mime');               /* this must match the directory name */
-        $this->setName('MIME maintenance'); /* this is the module name            */
+        $this->setName('MIME Maintenance'); /* this is the module name            */
         $this->setDescription($gallery->i18n('Maintain MIME types and file extensions'));
         $this->setVersion('0.9.4');
         $this->setGroup('data', $this->translate('Extra Data'));
