@@ -308,7 +308,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 
 	    list ($ret, $outputMimeType, $context) =
 		$this->_toolkit->performOperation('image/png', 'crop',
-						  'test[640x480].png', 'output[329x250].png',
+						  'test[640x480].png', 'output[640x480].png',
 						  array('24.667', '23.5', '51.375', '52'),
 						  $context);
 	    if ($ret->isError()) {
@@ -325,7 +325,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 
 	    list ($ret, $outputMimeType, $context) =
 		$this->_toolkit->performOperation('image/png', 'thumbnail',
-						  'output[329x250].png', 'output.png',
+						  'output[640x480].png', 'output.png',
 						  array('150'), $context);
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -335,7 +335,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 		array('-quality', '75', '-crop', '329x250+158+113'),
 		$environment['removeMetaDataSwitch'],
 		array('-size', '150x150', '-geometry', '150x150',
-		      'output[329x250].png', 'output.png')),
+		      'output[640x480].png', 'output.png')),
 		$this->_files['output.png']['operation']['convert'], 'output ' . $this->_envName());
 	    $this->assertEquals(array('next.toolkit' => null, 'next.operation' => null),
 				$context, 'context at end ' . $this->_envName());
@@ -343,6 +343,54 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 	    unset($this->_files['output.png']);
 	}
     }
+
+    // Ensure queued operations that affect image size are taken into account
+    // for subsequent operations..
+    function testOperationSequenceSizeChange() {
+	global $gallery;
+	$gallery->_platform->_copyOk = true;
+
+	foreach ($this->_environments as $environment) {
+	    $this->_setEnvironment($environment);
+	    $context = array('next.toolkit' => $this->_toolkit, 'next.operation' => 'thumbnail');
+
+	    list ($ret, $outputMimeType, $context) =
+		$this->_toolkit->performOperation('image/png', 'crop',
+						  'test[640x480].png', 'output[640x480].png',
+						  array('24.667', '23.5', '51.375', '28'),
+						  $context);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+
+	    $this->assertEquals(array(), $this->_files, 'no exec yet ' . $this->_envName());
+	    $context['next.toolkit'] = null;
+	    $context['next.operation'] = null;
+	    $this->assertEquals(array('next.toolkit' => null, 'next.operation' => null,
+				      'imagemagick.transform' => array('-crop', '329x134+158+113'),
+				      'imagemagick.mime' => 'image/png'),
+				$context, 'context after crop ' . $this->_envName());
+
+	    list ($ret, $outputMimeType, $context) =
+		$this->_toolkit->performOperation('image/png', 'thumbnail',
+						  'output[640x480].png', 'output.png',
+						  array('150'), $context);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+
+	    $this->assertEquals(array_merge(
+		array('-quality', '75', '-crop', '329x134+158+113'),
+		$environment['removeMetaDataSwitch'],
+		array('output[640x480].png', 'output.png')),
+		$this->_files['output.png']['operation']['convert'], 'output ' . $this->_envName());
+	    $this->assertEquals(array('next.toolkit' => null, 'next.operation' => null),
+				$context, 'context at end ' . $this->_envName());
+
+	    unset($this->_files['output.png']);
+	}
+    }
+
 
     function testGetProperties() {
 	foreach ($this->_environments as $environment) {
