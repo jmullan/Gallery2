@@ -382,7 +382,7 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest($this->_item, $this->_derivative[0]);
-	$this->assertEquals(array(array(), $this->_translate('Restored original photo successfully')),
+	$this->assertEquals(array(array(), $this->_translate('Reverted rotate and scale changes successfully')),
 			    $results);
 
 	/* Verify that the preferred is gone */
@@ -406,6 +406,44 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 	}
 	$this->assertEquals('crop|10,60,40,30;scale|200', $this->_derivative[1]->getDerivativeOperations());
 	
+    }
+
+    function testRevertToOriginalWithPostfilter() {
+	global $gallery;
+
+	/* Put a postfilter on our derivative */
+	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($this->_derivative[0]->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->_derivative[0]->setDerivativeOperations('rotate|90;bogus|1,2,3');
+	$this->_derivative[0]->setPostFilterOperations('bogus|4,5,6');
+	$ret = $this->_derivative[0]->save();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::releaseLocks($lockId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('form[action][revertToOriginal]', 1);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest($this->_item, $this->_derivative[0]);
+	$this->assertEquals(array(array(), $this->_translate('Reverted rotate and scale changes successfully')),
+			    $results);
+
+	/* Verify that the preferred is still there */
+	list ($ret, $this->_derivative[0]) = $this->_derivative[0]->refresh();
+	$this->assert($ret->isSuccess());
+
+	/* Make sure that its postfilter is still the same, but its rotate op is gone */
+	$this->assertEquals('bogus|1,2,3', $this->_derivative[0]->getDerivativeOperations());
+	$this->assertEquals('bogus|4,5,6', $this->_derivative[0]->getPostFilterOperations());
     }
 
     function testScaleWithInvalidSerialNumber() {

@@ -72,28 +72,63 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
 	    $args = array(180);
 	} else if (isset($form['action']['revertToOriginal'])) {
 	    if (!empty($preferred)) {
-		/* Let our change ripple down the derivative tree, if necessary */
+		/*
+		 * Pull out the rotate and scale operations and let our change ripple
+		 * down the derivative tree, if necessary
+		 */
+		$remainingOperations = array();
 		foreach (split(';', $preferred->getDerivativeOperations()) as $tmpOperation) {
-		    $ret = GalleryCoreApi::adjustDependentDerivatives($preferred->getId(),
-								      $tmpOperation,
-								      true);
+		    if (preg_match("/^(rotate|scale)\|/", $tmpOperation)) {
+			$ret = GalleryCoreApi::adjustDependentDerivatives($preferred->getId(),
+									  $tmpOperation,
+									  true);
+			if ($ret->isError()) {
+			    return array($ret->wrap(__FILE__, __LINE__), null, null);
+			}
+		    } else {
+			$remainingOperations[] = $tmpOperation;
+		    }
+		}
+
+		list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($preferred->getId());
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		}
+		list ($ret, $preferred) = $preferred->refresh();
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		}
+
+		if ($remainingOperations) {
+		    $preferred->setDerivativeOperations(join(';', $remainingOperations));
+		} else {
+		    $preferred->setDerivativeOperations(null);
+		}
+		
+		$ret = $preferred->save();
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		}
+		    
+		$ret = GalleryCoreApi::releaseLocks($lockId);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		}
+
+		if ($preferred->hasNoOperations()) {
+		    $ret = GalleryCoreApi::remapSourceIds($preferred->getId(), $preferred->getDerivativeSourceId());
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    }
+		    
+		    $ret = GalleryCoreApi::deleteEntityById($preferred->getId());
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null, null);
 		    }
 		}
-
-		$ret = GalleryCoreApi::remapSourceIds($preferred->getId(), $preferred->getDerivativeSourceId());
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null);
-		}
-
-		$ret = GalleryCoreApi::deleteEntityById($preferred->getId());
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null);
-		}
-
+		
 		/* Prepare our status message */
-		$status = $module->translate('Restored original photo successfully');
+		$status = $module->translate('Reverted rotate and scale changes successfully');
 	    }
 	}
 
@@ -345,7 +380,11 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
 	if (empty($results)) {
 	    $ItemEditRotateAndScalePhoto['editPhoto']['hasPreferredSource'] = false;
 	} else {
-	    $ItemEditRotateAndScalePhoto['editPhoto']['hasPreferredSource'] = true;
+	    if (preg_match("/(rotate|scale)\|/", $results[$item->getId()]->getDerivativeOperations())) {
+		$ItemEditRotateAndScalePhoto['editPhoto']['hasPreferredSource'] = true;
+	    } else {
+		$ItemEditRotateAndScalePhoto['editPhoto']['hasPreferredSource'] = false;
+	    }
 	}
 
 	/* Figure out what options we can provide */
