@@ -106,7 +106,7 @@ class SlideshowModule extends GalleryModule {
 	$links = array();
 	foreach ($items as $item) {
 	    $links[$item->getId()][] =
-		array('text' => $this->translate('slideshow'),
+		array('text' => $this->translate('view slideshow'),
 		      'params' => array(
 			'view' => 'slideshow:Slideshow',
 			'itemId' => $item->getId()));

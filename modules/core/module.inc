@@ -603,7 +603,7 @@ class CoreModule extends GalleryModule {
 	    
 	    if (isset($permissions['core.changePermissions'])) {
 		$links[$item->getId()][] =
-		    array('text' => $this->translate('permissions'),
+		    array('text' => $this->translate('edit permissions'),
 			  'params' => array('view' => 'core:ItemAdmin',
 					    'subView' => 'core:ItemPermissions',
 					    'itemId' => $item->getId()));
