@@ -156,7 +156,10 @@ class LayoutTest extends GalleryTestCase {
 
 	/* Attempt to deactivate the layout */
 	list ($ret, $redirect) = $this->_layout->deactivate();
-	$this->assertEquals(GALLERY_ERROR | ERROR_BAD_PARAMETER, $ret->getErrorCode(),
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array('href' => 'upgrade/'), $redirect,
 			    'cannot deactivate default layout');
 
 	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'default.layout', 'foo');

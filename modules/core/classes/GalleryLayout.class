@@ -284,8 +284,13 @@ class GalleryLayout extends GalleryPlugin {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	if ($defaultLayout == $this->getId()) {
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
-					      'Can\'t deactivate default layout'), null);
+	    /*
+	     * Can't deactivate default layout.  UI doesn't offer this option, so we should
+	     * only reach this code if default layout needs to be upgraded.  loadPlugin
+	     * will see a redirect url is returned and jump to upgrader (the actual redirect
+	     * returned below isn't used).
+	     */
+	    return array(GalleryStatus::success(), array('href' => 'upgrade/'));
 	}
 
 	list ($ret, $redirect) = parent::deactivate();
