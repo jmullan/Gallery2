@@ -79,6 +79,11 @@ class ThumbnailToolkit extends GalleryToolkit {
 					"Failed copying $thumbPath -> $destFilename"), null, null);
 	}
 
+	if (isset($context['width'])) {
+	    $context['width'] = $thumbImage->getWidth();
+	    $context['height'] = $thumbImage->getHeight();
+	}
+
 	return array(GalleryStatus::success(), $outputMimeType, $context);
     }
 }
