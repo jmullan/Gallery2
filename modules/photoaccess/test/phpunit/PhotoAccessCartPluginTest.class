@@ -164,7 +164,7 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->assertEquals(array('href' => 'http://beta.photoaccess.com/REDIRECT_URL'), $urlParams);
+	$this->assertEquals(array('href' => 'http://www.photoaccess.com/REDIRECT_URL'), $urlParams);
     }
 }
 
@@ -181,7 +181,7 @@ class PhotoAccessCartPluginTestPlatform {
     }
 
     function fsockopen($target, $port, &$errno, &$errstr, $timeout) {
-	if ($target == 'beta.photoaccess.com' && $port == '80') {
+	if ($target == 'www.photoaccess.com' && $port == '80') {
 	    return 'test-resource-1';
 	}
 
@@ -213,7 +213,7 @@ class PhotoAccessCartPluginTestPlatform {
 	$expectedPost =
 	    join("\r\n", 
 		 array('POST /buy/anonCartXML.jsp HTTP/1.0',
-		       'Host: beta.photoaccess.com',
+		       'Host: www.photoaccess.com',
 		       'User-Agent: Test User Agent',
 		       'Content-Type: application/x-www-form-urlencoded',
 		       'Content-Length: ' . strlen($postData),
