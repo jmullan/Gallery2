@@ -1,3 +1,4 @@
+<?php
 /*
  * Gallery - a web based photo album viewer and editor 
  * Copyright (C) 2000-2004 Bharat Mediratta
@@ -23,18 +24,20 @@
  * Matrix Layout for Gallery 2
  * by Ross A. Reyman, Jon Huang, and Chad Kieffer
  *
- * /themes/matrix/styles/layout.css
+ * /layouts/matrix/layout.css
  *
- * This css file provides positioning support for Gallery's 
- * module templates (search, cart, etc.).
+ * This css file provides positioning support for the matrix layout.
+ * Specifically, it is used by templates in layouts/matrix/templates/.
  *
  */
+header("Content-type: text/css");
+?>
 
 /* ******************************************************************************************
  * Standard CSS definitions, redefine HTML tags
  */
 
-form, div, h1, h2, h3, h4, h5, h6 {
+form, div, h1, h2, h3, h4, h5, h6  {
     margin: 0;
     padding: 0;
 }
@@ -230,10 +233,6 @@ ul.gbAdminList li label { }
 .gbMenu ul, .gbMenu ol {
 	margin: 0;
 	padding: 0;
-}
-
-.gbMenu ul ul {
-	margin: 0 0 0.5em 1.0em;
 }
 
 .gbMenu:after {

@@ -54,7 +54,7 @@ class MatrixTheme extends GalleryTheme {
 	
 	$view = GalleryUtilities::getRequestVariables('view');
 	if ($view != 'core:ShowItem') {
-	    $style[] = sprintf($format, $this->getBaseUrl() . 'styles/layout.css');
+	    $style[] = sprintf($format, $this->getBaseUrl() . 'styles/layout.css.php');
 	}
 
 	return join("\n", $style);
