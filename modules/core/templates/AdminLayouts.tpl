@@ -115,7 +115,6 @@
 	</tr>
 	{/foreach}
       </table>
-    </div>
     {/if}
 
     {if ($AdminLayouts.mode == "editLayout")}

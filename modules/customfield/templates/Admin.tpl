@@ -36,6 +36,7 @@ var pickdata = new Array();
 {counter start=-1 print=no}
 {foreach from=$form.set item=set}{foreach from=$form.fields[$set.key] item=item}
 pickdata[{counter}] = '{foreach from=$item.choices item=choice}{$choice}\n{/foreach}';
+{assign var="nonempty" value="1"}
 {/foreach}{/foreach}
 {literal}
 function pickfield(s) {
@@ -199,6 +200,7 @@ function pickfield(s) {
     {g->text text="Custom fields allow freeform text entry by default. Enter values below to restrict field values to a specific list of choices. Enter one choice per line. Remove all choices to return to freeform text. Note that existing field values will not be changed or deleted when a picklist is added."}
   </p>
 
+  {if isset($nonempty)}
   <table class="gbDataTable"><tr>
     <td> {g->text text="Field:"} </td>
     <td> <select name="{g->formVar var="form[pickField]"}" id="picksel"
@@ -215,6 +217,9 @@ function pickfield(s) {
     </td>
   </tr></table>
   <script type="text/javascript">if (pickdata.length>0) pickfield(document.getElementById('picksel'));</script>
+  {else}
+    <p class="giInfo"> {g->text text="Add a custom field above to enable this section."} </p>
+  {/if}
 </div>
 
 <div class="gbButtons">

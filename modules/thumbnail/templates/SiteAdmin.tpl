@@ -13,8 +13,8 @@
     </div>
   </div>
 
-  {if isset($status)}
   <div id="gsStatus">
+  {if !empty($status)}
     {if isset($status.add)}
       <div class="giStatus">{g->text text="New image added successfully"}</div>
     {/if}
@@ -39,15 +39,13 @@
     {if isset($status.imagemime_error)}
       <div class="giError">{g->text text="Thumbnail image must be a JPEG"}</div>
     {/if}
-  </div>
   {/if}
   {if !empty($form.badMime)}
-  <div id="gsStatus">
-    <div class="giError">{g->text text="Warning: Other modules provide thumbnail support for some types.  Settings below for these mime types will not be used:"}
+    <p class="giError">{g->text text="Warning: Other modules provide thumbnail support for some types.  Settings below for these mime types will not be used:"}
       {foreach from=$form.badMime item=mime}{$mime} {/foreach}
-    </div>
-  </div>
+    </p>
   {/if}
+  </div>
 
   {if !empty($form.list)}
   <div class="gbAdmin">
@@ -109,7 +107,7 @@
     {g->text text="Default thumbnail for mime type:"}
     <input type="text" name="{g->formVar var="form[mimeType]"}" size="30" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/><br/>
     <select name="{g->formVar var="form[blah]"}"
-     onchange="this.form['{g->formVar var="form[mimeType]"}'].value=this.value;this.selectedIndex=0;this.blur()"/>
+     onchange="this.form['{g->formVar var="form[mimeType]"}'].value=this.value;this.selectedIndex=0;this.blur()">
     <option value="">{g->text text="&laquo; Choose type or enter above &raquo;"}</option>
     {foreach from=$form.mimeMap key=mime item=extlist}
       <option value="{$mime}">{$mime} ({$extlist})</option>
@@ -140,7 +138,7 @@
 
   <div class="gbBottomFlag">
     <div class="gbButtons">
-      <input type="submit" name="{g->formVar var="form[action][add]"}" value="{g->text text="save"}" class="button"/>
+      <input type="submit" name="{g->formVar var="form[action][add]"}" value="{g->text text="Save"}" class="button"/>
     </div>
   </div>
 </div>
