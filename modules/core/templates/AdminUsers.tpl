@@ -28,14 +28,22 @@
 
 	  <tr>
 	    <td align="center">
-	      {galleryInput type="input" name="form.text.username" size="20"}{/galleryInput}
+	      {galleryInput type="input" name="form.text.username" size="20"}{$form.text.username}{/galleryInput}
+	      {galleryInput type="submit" name="form.action.editFromText"}{galleryText text="Edit"}{/galleryInput}
+	      {galleryInput type="submit" name="form.action.deleteFromText"}{galleryText text="Delete"}{/galleryInput}
 	    </td>	
 	  </tr>
+
+	  <tr>
+	    <td>
+	      <br><br>
+	      {galleryText text="Or you can create a new user here."}
+	    </td>
+	  </tr>
+
 	  <tr>
 	    <td align="center">
-	      {galleryInput type="submit" name="form.action.editFromText"}{galleryText text="Edit"}{/galleryInput}
-	      {galleryInput type="submit" name="form.action.createFromText"}{galleryText text="Create"}{/galleryInput}
-	      {galleryInput type="submit" name="form.action.deleteFromText"}{galleryText text="Delete"}{/galleryInput}
+	      {galleryInput type="submit" name="form.action.create"}{galleryText text="Create"}{/galleryInput}
 	    </td>
 	  </tr>
 	</table>
@@ -55,7 +63,7 @@
 	      {gallerySelect name="form.userList.username" size=$form['userList']['pageSize']}
 	      {html_options options=$form['userList']['usernames'] output=$form['userList']['usernames']}
 	      {/gallerySelect}
-	      {if (!empty($form.filter))}
+	      {if (!empty($form.userList.filter))}
 	      <br>
 	      {galleryText one="%d user matches your filter"
 			   many="%d users match your filter"
@@ -95,7 +103,7 @@
 	    <td align="center">
 	      {galleryInput type="submit" name="form.action.filterClear"}{galleryText text="Clear"}{/galleryInput}
 	      {galleryInput type="submit" name="form.action.filterBySubstring"}{galleryText text="Filter:"}{/galleryInput}
-	      {galleryInput type="text" name="form.filter"}{$form.filter}{/galleryInput}
+	      {galleryInput type="text" name="form.userList.filter"}{$form.userList.filter}{/galleryInput}
 	    </td>
 	  </tr>
 	</table>
@@ -104,4 +112,5 @@
     </tr>
   </table>
   {/galleryForm}
+
   

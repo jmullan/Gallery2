@@ -35,60 +35,63 @@ class AdminUsersController extends GalleryController {
 	$urlParams['view'] = 'core:SiteAdmin';
 	$urlParams['subView'] = 'core:AdminUsers';
 
-	list ($page,
-	      $maxPages,
-	      $listUsername,
-	      $textUsername,
-	      $filter) =
-	    GalleryUtilities::getRequestVariables('form.userList.page',
+	list ($form['text']['username'],
+	      $form['userList']['page'],
+	      $form['userList']['maxPages'],
+	      $form['userList']['username'],
+	      $form['userList']['filter']) =
+	    GalleryUtilities::getRequestVariables('form.text.username',
+						  'form.userList.page',
 						  'form.userList.maxPages',
 						  'form.userList.username',
-						  'form.text.username',
-						  'form.filter');
+						  'form.userList.filter');
 	foreach (array('firstPage', 'backPage', 'nextPage', 'lastPage',
 		       'filterClear', 'filterBySubstring',
-		       'createFromText', 'editFromText', 'deleteFromText')
+		       'create',
+		       'editFromText', 'deleteFromText')
 		 as $actionName) {
 	    $action = GalleryUtilities::getRequestVariables('form.action.' . $actionName);
 	    if (!empty($action)) {
 		switch ($actionName) {
 		case 'firstPage':
-		    $page = 1;
+		    $form['userList']['page'] = 1;
 		    break;
 
 		case 'backPage':
-		    $page = max(0, $page-1);
+		    $form['userList']['page'] = max(0, $form['userList']['page']-1);
 		    break;
 
 		case 'nextPage':
-		    $page = min($page+1, $maxPages);
+		    $form['userList']['page'] = min($form['userList']['page']+1,
+						    $form['userList']['maxPages']);
 		    break;
 
 		case 'lastPage':
-		    $page = $maxPages;
+		    $form['userList']['page'] = $form['userList']['maxPages'];
 		    break;
 
 		case 'filterClear':
-		    $filter = null;
+		    $form['userList']['filter'] = null;
 		    break;
 
-		case 'createFromText':
-		    if (!empty($textUsername)) {
-			$urlParams['subView'] = 'core:AdminCreateUser';
-			$urlParams['username'] = $textUsername;
-		    }
+		case 'create':
+		    $urlParams['subView'] = 'core:AdminCreateUser';
 		    break;
 		}
 	    }
 	}
 
 	/* Pass on our navigation parameters */
-	if ($page != 1) {
-	    $urlParams['form.userList.page'] = $page;
+	if ($form['userList']['page'] != 1) {
+	    $urlParams['form.userList.page'] = $form['userList']['page'];
 	}
 
-	if (!empty($filter)) {
-	    $urlParams['form.filter'] = $filter;
+	if (!empty($form['text']['username'])) {
+	    $urlParams['form.text.username'] = $form['text']['username'];
+	}
+	
+	if (!empty($form['userList']['filter'])) {
+	    $urlParams['form.userList.filter'] = $form['userList']['filter'];
 	}
 	    
 	$templateAdapter = $gallery->getTemplateAdapter();
@@ -124,8 +127,14 @@ class AdminUsersView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$form['filter'] = GalleryUtilities::getRequestVariables('form.filter');
-	
+	/* Load some standard form parameters */
+	list ($form['userList']['filter'],
+	      $form['userList']['page'],
+	      $form['text']['username']) =
+	    GalleryUtilities::getRequestVariables('form.userList.filter',
+						  'form.userList.page',
+						  'form.text.username');
+
 	list ($ret, $totalUserCount) = GalleryUserHelper::fetchUserCount();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -134,13 +143,12 @@ class AdminUsersView extends GalleryView {
 	$userList = array();
 	$form['userList']['count'] = $totalUserCount;
 	$form['userList']['pageSize'] = 15;
-	$form['userList']['page'] = GalleryUtilities::getRequestVariables('form.userList.page');
 	if (empty($form['userList']['page'])) {
 	    $form['userList']['page'] = 1;
 	}
 
-	if (!empty($form['filter'])) {
-	    list ($ret, $form['userList']['count']) = GalleryUserHelper::fetchUserCount($form['filter']);
+	if (!empty($form['userList']['filter'])) {
+	    list ($ret, $form['userList']['count']) = GalleryUserHelper::fetchUserCount($form['userList']['filter']);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -154,7 +162,7 @@ class AdminUsersView extends GalleryView {
 	list ($ret, $form['userList']['usernames']) =
 	    GalleryUserHelper::fetchUserNames($form['userList']['pageSize'],
 					      ($form['userList']['page'] - 1) * $form['userList']['pageSize'],
-					      $form['filter']);
+					      $form['userList']['filter']);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
