@@ -67,15 +67,6 @@ function GalleryInitFirstPass() {
     $platform = $gallery->getPlatform();
     $slash = $platform->getDirectorySeparator();
     
-    $gallery->setConfig('code.gallery.base', $galleryBase);
-    $gallery->setConfig('code.gallery.layouts', $galleryBase . 'layouts' . $slash);
-    $gallery->setConfig('code.gallery.themes', $galleryBase . 'themes' . $slash);
-    $gallery->setConfig('code.gallery.modules', $galleryBase . 'modules' . $slash);
-    $gallery->setConfig('code.gallery.setup', $galleryBase . 'setup' . $slash);
-
-    /* Smarty paths */
-    $gallery->setConfig('code.smarty.base', $galleryBase . 'lib' . $slash . 'smarty' . $slash);
-
     /* Load our local configuration */
     include(dirname(__FILE__) . $slash . 'config.php');
 

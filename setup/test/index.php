@@ -69,8 +69,7 @@ function GalleryTestHarness() {
      */
     $gallery->setActiveUserId(4);
 
-    $modulesDir = $gallery->getConfig('code.gallery.modules');
-
+    $modulesDir = dirname(__FILE__) . '/../../modules/';
     $platform = $gallery->getPlatform();
 
     /*

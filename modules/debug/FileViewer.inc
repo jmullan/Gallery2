@@ -47,7 +47,7 @@ class FileViewerView extends GalleryView {
 	}
 
 	/* Make sure the file is on the approved list */
-	$moduleDir = $gallery->getConfig('code.gallery.modules');
+	$moduleDir = dirname(__FILE)) . '/../../modules/';
 	$platform = $gallery->getPlatform();
 	$approved = false;
 	$approvedChecksum = 0;
@@ -71,7 +71,7 @@ class FileViewerView extends GalleryView {
 	}
 
 	if ($approved) {
-	    $base = $gallery->getConfig('code.gallery.base');
+	    $base = dirname(__FILE__) . '/../../';
 	    $lines = $platform->file($base . '/' . $file);
 	    $actualChecksum = sprintf("%u", crc32(join("", $lines)));
 	    if ($approvedChecksum == $actualChecksum) {

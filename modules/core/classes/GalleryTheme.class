@@ -100,7 +100,7 @@ class GalleryTheme {
 
 	$platform = $gallery->getPlatform();
 	$themeList = array();
-	$themeDir = $gallery->getConfig('code.gallery.themes');
+	$themeDir = dirname(__FILE__) . '/../../../themes/';
 	if ($dir = $platform->opendir($themeDir)) {
 	    while (($subdir = $platform->readdir($dir)) !== false) {
 		if ($subdir{0} == '.' || $subdir == 'CVS') {
@@ -140,7 +140,7 @@ class GalleryTheme {
 	}
 
 	$platform = $gallery->getPlatform();
-	$themeDir = $gallery->getConfig('code.gallery.themes') . $themeName . '/';
+	$themeDir = dirname(__FILE__) . '/../../../themes/' . $themeName . '/';
 
 	$themeClass = $themeDir . 'theme.inc';
 	if ($platform->file_exists($themeClass)) {

@@ -40,7 +40,7 @@ class FactoryTest extends GalleryTestCase {
 
 	global $gallery;
 	
-	$path = $gallery->getConfig('code.gallery.modules') . 'core/test/phpunit/FactoryTest.class';
+	$path = dirname(__FILE__) . '/../../../../modules/core/test/phpunit/FactoryTest.class';
 	GalleryFactory::registerImplementation('FactoryTest',
 					       'FactoryTestDummy',
 					       'FactoryTestDummyId',

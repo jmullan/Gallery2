@@ -223,7 +223,7 @@ function GalleryMain($startTime) {
 	}
     }
 
-    $template = new GalleryTemplate($gallery->getConfig('code.gallery.base') . 'templates/');
+    $template = new GalleryTemplate(dirname(__FILE__) . '/templates/');
     
     $showGlobal = true;
     if (empty($redirectUrl)) {

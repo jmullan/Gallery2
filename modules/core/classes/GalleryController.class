@@ -74,8 +74,7 @@ class GalleryController {
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__, "$controllerName can't be parsed"));
 	}
 
-	$fileName = $gallery->getConfig('code.gallery.modules') .
-	    $module . '/' . $class . '.inc';
+	$fileName = dirname(__FILE__) . '/../../../modules/' . $module . '/' . $class . '.inc';
 
 	$platform = $gallery->getPlatform();
 	if (!$platform->file_exists($fileName)) {

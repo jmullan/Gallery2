@@ -247,7 +247,8 @@ class ItemEditLayoutTestPlatform {
 
     function opendir($path) {
 	global $gallery;
-	if ($path == $gallery->getConfig('code.gallery.layouts')) {
+
+	if ($path == dirname(__FILE__) . '/../../../../layouts/') {
 	    return 'TEST_VALID_RESOURCE';
 	} else {
 	    return null;
@@ -278,7 +279,7 @@ class ItemEditLayoutTestPlatform {
     function file_exists($path) {
 	global $gallery;
 	
-	$base = $gallery->getConfig('code.gallery.layouts');
+	$base = dirname(__FILE__) . '/../../../../layouts/';
 	switch($path) {
 	case $base . 'ItemEditLayoutController/layout.inc':
 	    return 1;
@@ -291,7 +292,7 @@ class ItemEditLayoutTestPlatform {
     function is_dir($path) {
 	global $gallery;
 	
-	$base = $gallery->getConfig('code.gallery.layouts');
+	$base = dirname(__FILE__) . '/../../../../layouts/';
 	switch($path) {
 	case $base . 'ItemEditLayoutControllerTest':
 	    return 1;

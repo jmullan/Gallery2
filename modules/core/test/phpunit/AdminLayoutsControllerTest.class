@@ -272,7 +272,7 @@ class AdminLayoutsTestPlatform {
 
     function opendir($path) {
 	global $gallery;
-	if ($path == $gallery->getConfig('code.gallery.layouts')) {
+	if (realpath($path) == realpath(dirname(__FILE__) . '/../../../../layouts')) {
 	    return 'TEST_VALID_RESOURCE';
 	} else {
 	    return null;
@@ -303,8 +303,12 @@ class AdminLayoutsTestPlatform {
 
     function file_exists($path) {
 	global $gallery;
-	
-	$base = $gallery->getConfig('code.gallery.layouts');
+
+	/*
+	 * Can't use realpath() directly here because these paths are bogus!  Build up
+	 * the path based on GalleryPlugin instead, as that's what'll be passing in this path
+	 */
+	$base = realpath(dirname(__FILE__) . '/../../../../modules/core/classes') . '/../../../layouts/';
 	switch($path) {
 	case $base . 'testLayoutId1/layout.inc':
 	case $base . 'testLayoutId2/layout.inc':
@@ -319,11 +323,11 @@ class AdminLayoutsTestPlatform {
     function is_dir($path) {
 	global $gallery;
 	
-	$base = $gallery->getConfig('code.gallery.layouts');
-	switch($path) {
-	case $base . 'testLayoutId1':
-	case $base . 'testLayoutId2':
-	case $base . 'anotherTestLayoutId':
+	$base = realpath(dirname(__FILE__) . '/../../../../layouts');
+	switch(realpath($path)) {
+	case $base . '/testLayoutId1':
+	case $base . '/testLayoutId2':
+	case $base . '/anotherTestLayoutId':
 	    return 1;
 
 	default:

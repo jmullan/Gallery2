@@ -30,8 +30,7 @@
  * parent class exists. This is only because we are the core module; other
  * modules should not have to do stuff like this.
  */
-$classDir = dirname(__FILE__) . '/classes/';
-require_once($classDir . 'GalleryModule.class');
+require_once(dirname(__FILE__) . '/classes/GalleryModule.class');
 
 /**
  * The implementation of the core-module

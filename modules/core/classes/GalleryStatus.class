@@ -467,7 +467,7 @@ class GalleryStatus {
 	
 	$codes = $this->getErrorCodeConstants($this->_errorCode);
 	$trace = array();
-	$base = $gallery->getConfig('code.gallery.base');
+	$base = realpath(dirname(__FILE__) . '/../../../') . '/';
 	if (empty($this->_stackTrace)) {
 	    for ($i = 0; $i < count($this->_fileName); $i++) {
 		$trace[] = array('file' => str_replace($base, '', $this->_fileName[$i]),

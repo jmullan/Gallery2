@@ -311,8 +311,8 @@ class GalleryTranslator {
 	if ($gallery->getConfig('function.exists.dgettext')) {
 	    if (isset($domain) && !isset($this->_boundDomains[$domain])) {
 		list ($componentType, $componentName) = split('_', $domain);
-		$basePath = sprintf('%s%s/%s/locale',
-				    $gallery->getConfig('code.gallery.base'),
+		$basePath = sprintf('%s/%s/%s/locale',
+				    realpath(dirname(__FILE__) . '/../../..'),
 				    $componentType,
 				    $componentName);
 		if ($gallery->getDebug()) {

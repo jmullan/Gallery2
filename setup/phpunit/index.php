@@ -67,7 +67,7 @@ function GalleryMain(&$testSuite, $filter) {
 	}
 
 	$platform = $gallery->getPlatform();
-	$modulesDir = $gallery->getConfig('code.gallery.modules');
+	$modulesDir = dirname(__FILE__) . '/../../modules/';
 	$suiteArray = array();
 	foreach ($moduleStatusList as $moduleId => $moduleStatus) {
 	    if (empty($moduleStatus['active'])) {

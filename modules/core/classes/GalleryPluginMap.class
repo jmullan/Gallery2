@@ -218,12 +218,12 @@ class GalleryPluginMap_core {
 	    /* Scan modules directory for installed modules */
 	    switch ($pluginType) {
 	    case 'module':
-		$pluginsDir = $gallery->getConfig('code.gallery.modules');
+		$pluginsDir = dirname(__FILE__) . '/../../../modules/';
 		$pluginFile = 'module.inc';
 		break;
 
 	    case 'layout':
-		$pluginsDir = $gallery->getConfig('code.gallery.layouts');
+		$pluginsDir = dirname(__FILE__) . '/../../../layouts/';
 		$pluginFile = 'layout.inc';
 		break;
 	    }
@@ -286,12 +286,12 @@ class GalleryPluginMap_core {
 
 	    switch($pluginType) {
 	    case 'module':
-		$pluginFile = $gallery->getConfig('code.gallery.modules') . $pluginId . '/module.inc';
+		$pluginFile = dirname(__FILE__) . '/../../../modules/' . $pluginId . '/module.inc';
 		$pluginClass = $pluginId . 'Module';
 		break;
 		
 	    case 'layout':
-		$pluginFile = $gallery->getConfig('code.gallery.layouts') . $pluginId . '/layout.inc';
+		$pluginFile = dirname(__FILE__) . '/../../../layouts/' . $pluginId . '/layout.inc';
 		$pluginClass = $pluginId . 'Layout';
 		break;
 	    }
@@ -351,12 +351,12 @@ class GalleryPluginMap_core {
 
 	switch($pluginType) {
 	case 'module':
-	    $pluginsDir = $gallery->getConfig('code.gallery.modules');
+	    $pluginsDir = dirname(__FILE__) . '/../../../modules/';
 	    $pluginFile = 'module.inc';
 	    break;
 	    
 	case 'layout':
-	    $pluginsDir = $gallery->getConfig('code.gallery.layouts');
+	    $pluginsDir = dirname(__FILE__) . '/../../../layouts/';
 	    $pluginFile = 'layout.inc';
 	    break;
 	}

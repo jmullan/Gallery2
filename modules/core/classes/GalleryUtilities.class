@@ -562,7 +562,7 @@ class GalleryUtilities {
     function convertPathToUrl($path) {
 	global $gallery;
 
-	$dirbase = $gallery->getConfig('code.gallery.base');
+	$dirbase = realpath(dirname(__FILE__) . '/../../..') . '/';
 
 	/*
 	 * Factor the gallery code base out of the path, accounting for
