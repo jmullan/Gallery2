@@ -168,9 +168,11 @@ class ChildTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
+	sort($childIds);
 	$this->assertEquals(array($this->_child[0]->getId(),
 				  $this->_child[1]->getId()),
-			    $childIds);
+			    $childIds,
+			    "root children");
 
 	for ($i = 0; $i < 2; $i++) {
 	    list ($ret, $childIds) = GalleryChildEntityHelper::fetchChildIds($this->_child[$i]->getId());
@@ -178,9 +180,11 @@ class ChildTest extends GalleryTestCase {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 
+	    sort($childIds);
 	    $this->assertEquals(array($this->_derivative[$i][0]->getId(),
 				      $this->_derivative[$i][1]->getId()),
-				$childIds);
+				$childIds,
+				"child $i's children");
 	}
     }
 
