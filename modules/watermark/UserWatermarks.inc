@@ -90,9 +90,13 @@ class UserWatermarksController extends GalleryController {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    $status['add'] = 1;
+	    $results['redirect']['view'] = 'core:UserAdmin';
+	    $results['redirect']['subView'] = 'watermark:UserWatermarkEdit';
+	    $results['redirect']['itemId'] = $item->getId();
 	} else if (isset($form['action']['add'])) {
 	    $error[] = 'form[error][missingFile]';
+	    $results['delegate']['view'] = 'core:UserAdmin';
+	    $results['delegate']['subView'] = 'watermark:UserWatermarks';
 	} else if (isset($form['action']['delete']) &&
 		   isset($form['delete']['itemId'])) {
 
@@ -117,15 +121,10 @@ class UserWatermarksController extends GalleryController {
 	    }
 	    
 	    $status['delete'] = 1;
-	}
-
-	if (!empty($error)) {
-	    $results['delegate']['view'] = 'core:UserAdmin';
-	    $results['delegate']['subView'] = 'watermark:UserWatermarks';
-	} else {
 	    $results['redirect']['view'] = 'core:UserAdmin';
 	    $results['redirect']['subView'] = 'watermark:UserWatermarks';
 	}
+
 	$results['status'] = $status;
 	$results['error'] = $error;
 
@@ -155,23 +154,26 @@ class UserWatermarksView extends GalleryView {
 	    return array(GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__), null);
 	}
 
-	if ($form['formName'] != 'UserWatermarks') {
-	    $form['formName'] = 'UserWatermarks';
-	}
-	list ($ret, $list) = WatermarkHelper::fetchWatermarks();
+	list ($ret, $watermarks) = WatermarkHelper::fetchWatermarks();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$form['list'] = array();
-	foreach ($list as $id => $info) {
+	foreach ($watermarks as $id => $watermark) {
 	    /* Exclude site-wide watermarks (and, in the case of admins -- other people's) */
-	    if ($info['ownerId'] != $gallery->getActiveUserId()) {
+	    if ($watermark->getOwnerId() != $gallery->getActiveUserId()) {
 		continue;
 	    }
 	    
-	    $form['list'][] = array('id' => $id, 'name' => $info['fileName']);
+	    $watermarks[$id] = $watermark->getMemberData();
 	}
 
+	if ($form['formName'] != 'UserWatermarks') {
+	    $form['formName'] = 'UserWatermarks';
+	    if (!empty($watermarks)) {
+		$form['watermarkId'] = array_shift(array_keys($watermarks));
+	    }
+	}
+	
 	/* Set the form's encoding type since we're uploading binary files */
 	if ($template->hasVariable('UserAdmin')) {
 	    $UserAdmin =& $template->getVariableByReference('UserAdmin');
@@ -181,6 +183,10 @@ class UserWatermarksView extends GalleryView {
 	    $template->setVariable('UserAdmin', $UserAdmin);
 	}
 
+	$UserWatermarks = array();
+	$UserWatermarks['watermarks'] = $watermarks;
+
+	$template->setVariable('UserWatermarks', $UserWatermarks);
 	$template->setVariable('controller', 'watermark:UserWatermarks');
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/watermark/templates/UserWatermarks.tpl'));

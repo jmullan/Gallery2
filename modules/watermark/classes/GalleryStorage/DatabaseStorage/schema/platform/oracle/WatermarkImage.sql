@@ -10,6 +10,26 @@
     NOT NULL
   
       ,
+    DB_COLUMN_PREFIXapplyToPreferred
+      NUMBER(1)
+    
+      ,
+    DB_COLUMN_PREFIXapplyToResizes
+      NUMBER(1)
+    
+      ,
+    DB_COLUMN_PREFIXapplyToThumbnail
+      NUMBER(1)
+    
+      ,
+    DB_COLUMN_PREFIXname
+      VARCHAR2(
+       128 
+      )
+    
+    NOT NULL
+  
+      ,
     DB_COLUMN_PREFIXfileName
       VARCHAR2(
        128 
@@ -39,11 +59,25 @@
     DB_COLUMN_PREFIXownerId
       INTEGER
     
+      ,
+    DB_COLUMN_PREFIXxPercentage
+      VARCHAR2(
+       32 
+      )
+    
+      ,
+    DB_COLUMN_PREFIXyPercentage
+      VARCHAR2(
+       32 
+      )
+    
     );
 
   
     ALTER TABLE DB_TABLE_PREFIXWatermarkImage
       ADD PRIMARY KEY (DB_COLUMN_PREFIXid)
+  
+      ADD UNIQUE (DB_COLUMN_PREFIXname)
   
       ADD UNIQUE (DB_COLUMN_PREFIXfileName)
   ;

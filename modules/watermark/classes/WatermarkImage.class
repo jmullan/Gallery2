@@ -53,7 +53,62 @@ class WatermarkImage_core extends GalleryEntity {
      */
 
     /**
-     * The watermark image filename.
+     * Should this watermark be applied to the preferred derivative?
+     *
+     * @g2 <member>
+     * @g2   <member-name>applyToPreferred</member-name>
+     * @g2   <member-type>BOOLEAN</member-type>
+     * @g2 </member>
+     *
+     * @var bool $_applyToPreferred
+     * @access private
+     */
+    var $_applyToPreferred;
+
+    /**
+     * Should this watermark be applied to resize derivatives?
+     *
+     * @g2 <member>
+     * @g2   <member-name>applyToResizes</member-name>
+     * @g2   <member-type>BOOLEAN</member-type>
+     * @g2 </member>
+     *
+     * @var int $_applyToResizes
+     * @access private
+     */
+    var $_applyToResizes;
+
+    /**
+     * Should this watermark be applied to the thumbnail derivative?
+     *
+     * @g2 <member>
+     * @g2   <member-name>applyToThumbnail</member-name>
+     * @g2   <member-type>BOOLEAN</member-type>
+     * @g2 </member>
+     *
+     * @var int $_applyToThumbnail
+     * @access private
+     */
+    var $_applyToThumbnail;
+
+    /**
+     * The symbolic name of this watermark, eg "My Watermark"
+     *
+     * @g2 <member>
+     * @g2   <member-name>name</member-name>
+     * @g2   <member-type>STRING</member-type>
+     * @g2   <member-size>MEDIUM</member-size>
+     * @g2   <unique/>
+     * @g2   <required/>
+     * @g2 </member>
+     *
+     * @var string $_name
+     * @access private
+     */
+    var $_name;
+
+    /**
+     * The watermark image filename, in the g2data/watermark directory
      *
      * @g2 <member>
      * @g2   <member-name>fileName</member-name>
@@ -134,6 +189,38 @@ class WatermarkImage_core extends GalleryEntity {
      */
     var $_ownerId;
 
+    /**
+     * The desired location of this watermark on the target
+     * image on the x-axis.  Stored as a string instead of an
+     * integer so that we can have float values.
+     *
+     * @g2 <member>
+     * @g2   <member-name>xPercentage</member-name>
+     * @g2   <member-type>STRING</member-type>
+     * @g2   <member-size>SMALL</member-size>
+     * @g2 </member>
+     *
+     * @var string $_xPercentage
+     * @access private
+     */
+    var $_xPercentage;
+
+    /**
+     * The desired location of this watermark on the target
+     * image on the y-axis.  Stored as a string instead of an
+     * integer so that we can have float values.
+     *
+     * @g2 <member>
+     * @g2   <member-name>yPercentage</member-name>
+     * @g2   <member-type>STRING</member-type>
+     * @g2   <member-size>SMALL</member-size>
+     * @g2 </member>
+     *
+     * @var string $_yPercentage
+     * @access private
+     */
+    var $_yPercentage;
+
     /*
      * ****************************************
      *                 Methods
@@ -172,15 +259,15 @@ class WatermarkImage_core extends GalleryEntity {
 	 */
 	$targetName = str_replace('.', '_', $targetName);
 	
-	list ($ret, $list) = WatermarkHelper::fetchWatermarks();
+	list ($ret, $watermarks) = WatermarkHelper::fetchWatermarks();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* Uniquify name */
 	while (true) {
-	    foreach ($list as $entry) {
-		if ($entry['fileName'] == $targetName) {
+	    foreach ($watermarks as $watermark) {
+		if ($watermark->getFilename() == $targetName) {
 		    $targetName = "_$targetName";
 		    continue 2; // repeat this foreach loop
 		}
@@ -193,10 +280,16 @@ class WatermarkImage_core extends GalleryEntity {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
+	$this->setName($targetName);
 	$this->setFileName($targetName);
 	$this->setMimeType($mimeType);
 	$this->setWidth(0);
 	$this->setHeight(0);
+	$this->setXPercentage(100);
+	$this->setYPercentage(100);
+	$this->setApplyToPreferred(false);
+	$this->setApplyToResizes(true);
+	$this->setApplyToThumbnail(true);
 	$this->setOwnerId($gallery->getActiveUserId());
 
 	$platform = $gallery->getPlatform();

@@ -52,6 +52,26 @@ class WatermarkImage extends WatermarkImage_core {
     function getPersistentMemberInfo() {
 	$meta = parent::getPersistentMemberInfo();
     
+	$meta['members']['applyToPreferred'] = array(
+	    'class' => 'WatermarkImage',
+	    'type' => STORAGE_TYPE_BOOLEAN
+	);
+    
+	$meta['members']['applyToResizes'] = array(
+	    'class' => 'WatermarkImage',
+	    'type' => STORAGE_TYPE_BOOLEAN
+	);
+    
+	$meta['members']['applyToThumbnail'] = array(
+	    'class' => 'WatermarkImage',
+	    'type' => STORAGE_TYPE_BOOLEAN
+	);
+    
+	$meta['members']['name'] = array(
+	    'class' => 'WatermarkImage',
+	    'type' => STORAGE_TYPE_STRING
+	);
+    
 	$meta['members']['fileName'] = array(
 	    'class' => 'WatermarkImage',
 	    'type' => STORAGE_TYPE_STRING
@@ -82,6 +102,16 @@ class WatermarkImage extends WatermarkImage_core {
 	    'type' => STORAGE_TYPE_INTEGER
 	);
     
+	$meta['members']['xPercentage'] = array(
+	    'class' => 'WatermarkImage',
+	    'type' => STORAGE_TYPE_STRING
+	);
+    
+	$meta['members']['yPercentage'] = array(
+	    'class' => 'WatermarkImage',
+	    'type' => STORAGE_TYPE_STRING
+	);
+    
 	return $meta;
     }
 
@@ -93,6 +123,30 @@ class WatermarkImage extends WatermarkImage_core {
     function getMemberData() {
 	$data = parent::getMemberData();
     
+	if (!isset($this->_applyToPreferred)) {
+ 	    $data['applyToPreferred'] = null;
+ 	} else {
+	    $data['applyToPreferred'] = $this->_applyToPreferred;
+	}
+	
+	if (!isset($this->_applyToResizes)) {
+ 	    $data['applyToResizes'] = null;
+ 	} else {
+	    $data['applyToResizes'] = $this->_applyToResizes;
+	}
+	
+	if (!isset($this->_applyToThumbnail)) {
+ 	    $data['applyToThumbnail'] = null;
+ 	} else {
+	    $data['applyToThumbnail'] = $this->_applyToThumbnail;
+	}
+	
+	if (!isset($this->_name)) {
+ 	    $data['name'] = null;
+ 	} else {
+	    $data['name'] = $this->_name;
+	}
+	
 	if (!isset($this->_fileName)) {
  	    $data['fileName'] = null;
  	} else {
@@ -129,6 +183,18 @@ class WatermarkImage extends WatermarkImage_core {
 	    $data['ownerId'] = $this->_ownerId;
 	}
 	
+	if (!isset($this->_xPercentage)) {
+ 	    $data['xPercentage'] = null;
+ 	} else {
+	    $data['xPercentage'] = $this->_xPercentage;
+	}
+	
+	if (!isset($this->_yPercentage)) {
+ 	    $data['yPercentage'] = null;
+ 	} else {
+	    $data['yPercentage'] = $this->_yPercentage;
+	}
+	
 	return $data;
     }
   
@@ -155,6 +221,175 @@ class WatermarkImage extends WatermarkImage_core {
     }
 
     
+    /**
+     * Get the value of applyToPreferred
+     *
+     * @return BOOLEAN the value
+     */
+    function getapplyToPreferred() {
+ 	
+
+	if (!isset($this->_applyToPreferred)) {
+	    return null;
+	}
+
+	return $this->_applyToPreferred;
+    }
+
+    /**
+     * Set the value of applyToPreferred
+     *
+     * @param BOOLEAN the value
+     */
+    function setapplyToPreferred($value) {
+    
+	/* Set the incoming value to be a 1 or 0 */
+	$value = empty($value) ? 0 : 1;
+      
+	/* 
+	 * Convert unset values to null, to avoid generating warnings.
+	 */
+	$a = isset($value) ? $value : null;
+	$b = isset($this->_applyToPreferred) ? $this->_applyToPreferred : null;
+
+	/* 
+	 * Only take action if the value actually changes, but take care not to 
+	 * generate warnings for unset values.
+	 */
+    
+	if ($a !== $b) {
+      
+	    $this->setModifiedFlag('applyToPreferred', $value);
+	    $this->_applyToPreferred = $value;
+	}
+    }
+  
+    /**
+     * Get the value of applyToResizes
+     *
+     * @return BOOLEAN the value
+     */
+    function getapplyToResizes() {
+ 	
+
+	if (!isset($this->_applyToResizes)) {
+	    return null;
+	}
+
+	return $this->_applyToResizes;
+    }
+
+    /**
+     * Set the value of applyToResizes
+     *
+     * @param BOOLEAN the value
+     */
+    function setapplyToResizes($value) {
+    
+	/* Set the incoming value to be a 1 or 0 */
+	$value = empty($value) ? 0 : 1;
+      
+	/* 
+	 * Convert unset values to null, to avoid generating warnings.
+	 */
+	$a = isset($value) ? $value : null;
+	$b = isset($this->_applyToResizes) ? $this->_applyToResizes : null;
+
+	/* 
+	 * Only take action if the value actually changes, but take care not to 
+	 * generate warnings for unset values.
+	 */
+    
+	if ($a !== $b) {
+      
+	    $this->setModifiedFlag('applyToResizes', $value);
+	    $this->_applyToResizes = $value;
+	}
+    }
+  
+    /**
+     * Get the value of applyToThumbnail
+     *
+     * @return BOOLEAN the value
+     */
+    function getapplyToThumbnail() {
+ 	
+
+	if (!isset($this->_applyToThumbnail)) {
+	    return null;
+	}
+
+	return $this->_applyToThumbnail;
+    }
+
+    /**
+     * Set the value of applyToThumbnail
+     *
+     * @param BOOLEAN the value
+     */
+    function setapplyToThumbnail($value) {
+    
+	/* Set the incoming value to be a 1 or 0 */
+	$value = empty($value) ? 0 : 1;
+      
+	/* 
+	 * Convert unset values to null, to avoid generating warnings.
+	 */
+	$a = isset($value) ? $value : null;
+	$b = isset($this->_applyToThumbnail) ? $this->_applyToThumbnail : null;
+
+	/* 
+	 * Only take action if the value actually changes, but take care not to 
+	 * generate warnings for unset values.
+	 */
+    
+	if ($a !== $b) {
+      
+	    $this->setModifiedFlag('applyToThumbnail', $value);
+	    $this->_applyToThumbnail = $value;
+	}
+    }
+  
+    /**
+     * Get the value of name
+     *
+     * @return STRING the value
+     */
+    function getname() {
+ 	
+
+	if (!isset($this->_name)) {
+	    return null;
+	}
+
+	return $this->_name;
+    }
+
+    /**
+     * Set the value of name
+     *
+     * @param STRING the value
+     */
+    function setname($value) {
+    
+	/* 
+	 * Convert unset values to null, to avoid generating warnings.
+	 */
+	$a = isset($value) ? $value : null;
+	$b = isset($this->_name) ? $this->_name : null;
+
+	/* 
+	 * Only take action if the value actually changes, but take care not to 
+	 * generate warnings for unset values.
+	 */
+    
+	if ($a != $b) {
+      
+	    $this->setModifiedFlag('name', $value);
+	    $this->_name = $value;
+	}
+    }
+  
     /**
      * Get the value of fileName
      *
@@ -412,6 +647,86 @@ class WatermarkImage extends WatermarkImage_core {
       
 	    $this->setModifiedFlag('ownerId', $value);
 	    $this->_ownerId = $value;
+	}
+    }
+  
+    /**
+     * Get the value of xPercentage
+     *
+     * @return STRING the value
+     */
+    function getxPercentage() {
+ 	
+
+	if (!isset($this->_xPercentage)) {
+	    return null;
+	}
+
+	return $this->_xPercentage;
+    }
+
+    /**
+     * Set the value of xPercentage
+     *
+     * @param STRING the value
+     */
+    function setxPercentage($value) {
+    
+	/* 
+	 * Convert unset values to null, to avoid generating warnings.
+	 */
+	$a = isset($value) ? $value : null;
+	$b = isset($this->_xPercentage) ? $this->_xPercentage : null;
+
+	/* 
+	 * Only take action if the value actually changes, but take care not to 
+	 * generate warnings for unset values.
+	 */
+    
+	if ($a != $b) {
+      
+	    $this->setModifiedFlag('xPercentage', $value);
+	    $this->_xPercentage = $value;
+	}
+    }
+  
+    /**
+     * Get the value of yPercentage
+     *
+     * @return STRING the value
+     */
+    function getyPercentage() {
+ 	
+
+	if (!isset($this->_yPercentage)) {
+	    return null;
+	}
+
+	return $this->_yPercentage;
+    }
+
+    /**
+     * Set the value of yPercentage
+     *
+     * @param STRING the value
+     */
+    function setyPercentage($value) {
+    
+	/* 
+	 * Convert unset values to null, to avoid generating warnings.
+	 */
+	$a = isset($value) ? $value : null;
+	$b = isset($this->_yPercentage) ? $this->_yPercentage : null;
+
+	/* 
+	 * Only take action if the value actually changes, but take care not to 
+	 * generate warnings for unset values.
+	 */
+    
+	if ($a != $b) {
+      
+	    $this->setModifiedFlag('yPercentage', $value);
+	    $this->_yPercentage = $value;
 	}
     }
   

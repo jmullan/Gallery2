@@ -160,11 +160,8 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($map[$this->_expectedName]['id']);
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	$this->assertEquals('image/jpeg', $item->getMimeType(), 'Watermark mime type incorrect');
+	$this->assertEquals('image/jpeg', $map[$this->_expectedName]->getMimeType(),
+			    'Watermark mime type incorrect');
     }
 
     function testDelete() {
@@ -190,7 +187,8 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 	// Delete it
 	GalleryUtilities::removeFormVariables('form');
 	GalleryUtilities::putRequestVariable('form[action][delete]', '1');
-	GalleryUtilities::putRequestVariable('form[delete][itemId]', $map[$this->_expectedName]['id']);
+	GalleryUtilities::putRequestVariable('form[delete][itemId]',
+					     $map[$this->_expectedName]->getId());
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
@@ -200,7 +198,7 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 			    $results, 'Delete');
 
 	// Verify that it's gone
-	$ret = $this->_verifyMissing($map[$this->_expectedName]['id']);
+	$ret = $this->_verifyMissing($map[$this->_expectedName]->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -241,29 +239,26 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 	}
 	$this->assert(isset($map[$expectedName]), 'Watermark is missing');
 
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($map[$expectedName]['id']);
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	$this->assertEquals('application/unknown', $item->getMimeType(), 'Watermark mime type incorrect');
+	$this->assertEquals('application/unknown', $map[$expectedName]->getMimeType(),
+			    'Watermark mime type incorrect');
 
-	list ($ret, $path) = $item->fetchPath();
+	list ($ret, $path) = $map[$expectedName]->fetchPath();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	// We're expecting the same name, but the file extension changed to .dat
+	// We're expecting the same name, but the . changed to _ in the file extension
 	$this->assertEquals($expectedName, basename($path));
     }
 
     function _fetchWatermarkMapByFilename() {
-	list ($ret, $items) = WatermarkHelper::fetchWatermarks();
+	list ($ret, $watermarks) = WatermarkHelper::fetchWatermarks();
 	if ($ret->isError()) {
 	    return array($this->wrap(__FILE__, __LINE__), null);
 	}
 	$results = array();
-	foreach ($items as $id => $item) {
-	    $results[$item['fileName']] = array_merge(array('id' => $id), $item);
+	foreach ($watermarks as $id => $watermark) {
+	    $results[$watermark->getFileName()] = $watermark;
 	}
 	return array(GalleryStatus::success(), $results);
     }

@@ -60,6 +60,12 @@ class WatermarkModule extends GalleryModule {
 						      'ItemEditWatermark',
 						      dirname(__FILE__) . '/ItemEditWatermark.inc');
 
+	/* Register our item add plugins */
+	GalleryCoreApi::registerFactoryImplementation('ItemAddOption',
+						      'WatermarkOption',
+						      'WatermarkOption',
+						      dirname(__FILE__) . '/WatermarkOption.inc');
+	
 	return GalleryStatus::success();
     }
 

@@ -10,6 +10,28 @@
     NOT NULL
   
       ,
+    DB_COLUMN_PREFIXapplyToPreferred
+      SMALLINT
+    
+      ,
+    DB_COLUMN_PREFIXapplyToResizes
+      SMALLINT
+    
+      ,
+    DB_COLUMN_PREFIXapplyToThumbnail
+      SMALLINT
+    
+      ,
+    DB_COLUMN_PREFIXname
+      VARCHAR(
+      
+          128
+        
+      )
+    
+    NOT NULL
+  
+      ,
     DB_COLUMN_PREFIXfileName
       VARCHAR(
       
@@ -43,11 +65,31 @@
     DB_COLUMN_PREFIXownerId
       INTEGER
     
+      ,
+    DB_COLUMN_PREFIXxPercentage
+      VARCHAR(
+      
+          32
+        
+      )
+    
+      ,
+    DB_COLUMN_PREFIXyPercentage
+      VARCHAR(
+      
+          32
+        
+      )
+    
     );
 
   
     ALTER TABLE DB_TABLE_PREFIXWatermarkImage
     ADD PRIMARY KEY (DB_COLUMN_PREFIXid);
+    
+    CREATE UNIQUE INDEX DB_TABLE_PREFIXWatermarkImage_1579384326 
+    ON DB_TABLE_PREFIXWatermarkImage
+    (DB_COLUMN_PREFIXname);
     
     CREATE UNIQUE INDEX DB_TABLE_PREFIXWatermarkImage_2620999259 
     ON DB_TABLE_PREFIXWatermarkImage

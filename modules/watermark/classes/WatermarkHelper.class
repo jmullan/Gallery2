@@ -72,9 +72,7 @@ class WatermarkHelper {
 	$data = array();
 	$query = '
 	SELECT
-	  [WatermarkImage::id],
-	  [WatermarkImage::ownerId],
-	  [WatermarkImage::fileName]
+	  [WatermarkImage::id]
 	FROM
 	  [WatermarkImage], [GalleryPermissionMap]
 	WHERE
@@ -110,13 +108,27 @@ class WatermarkHelper {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$items = array();
+	// Get all ids
+	$ids = array();
 	while ($result = $searchResults->nextResult()) {
-	    list($items[$result[0]]['ownerId'],
-		 $items[$result[0]]['fileName']) = array($result[1], $result[2]);
+	    $ids[] = $result[0];
 	}
 
-	return array(GalleryStatus::success(), $items);
+	// Convert them to entities
+	$watermarks = array();
+	if (!empty($ids)) {
+	    list ($ret, $entities) = GalleryCoreApi::loadEntitiesById($ids);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    
+	    // Build an id => watermark map
+	    foreach ($entities as $entity) {
+		$watermarks[$entity->getId()] = $entity;
+	    }
+	}
+
+	return array(GalleryStatus::success(), $watermarks);
     }
 
     /**
@@ -152,6 +164,148 @@ class WatermarkHelper {
 
 	return array(GalleryStatus::success(), $ids);
     }
-    
+
+    /**
+     * Apply the given watermark to the given item.  Expect the item to be locked already.  
+     *
+     * @param object WatermarkImage the watermark
+     * @param object GalleryDataItem an image
+     * @param string the x overlay location (in percentage)
+     * @param string the y overlay location (in percentage)
+     * @param array an array of DERIVATIVE_TYPE_IMAGE_XXX => true/false
+     * @return object GalleryStatus a status code
+     */
+    function watermarkItem($watermark, $item, $xPercent, $yPercent, $whichDerivatives) {
+	list ($ret, $derivativeTable) = GalleryCoreApi::fetchDerivativesByItemIds(array($item->getId()));
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Weed out derivatives that we don't want to modify */
+	$derivatives = array();
+	$add = array();
+	$remove = array();
+	$hasPreferred = false;
+	if (isset($derivativeTable[$item->getId()])) {
+	    $derivatives = $derivativeTable[$item->getId()];
+	    foreach ($derivatives as $derivative) {
+		if ($whichDerivatives[$derivative->getDerivativeType()]) {
+		    $add[] = $derivative->getId();
+		} else {
+		    $remove[] = $derivative->getId();
+		}
+		if ($derivative->getDerivativeType() == DERIVATIVE_TYPE_IMAGE_PREFERRED) {
+		    $hasPreferred = true;
+		}
+	    }
+	}
+
+	/* If they want to modify the original, and we don't have one -- create a preferred */
+	if ($whichDerivatives[DERIVATIVE_TYPE_IMAGE_PREFERRED] && !$hasPreferred) {
+	    list ($ret, $preferred) =
+		GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative', $item->getEntityType());
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+		    
+	    if (!isset($preferred)) {
+		return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
+	    }
+		
+	    $ret = $preferred->create($item->getId(), DERIVATIVE_TYPE_IMAGE_PREFERRED);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    $preferred->setDerivativeSourceId($item->getId());
+	    $preferred->setMimeType($item->getMimeType());
+
+	    $ret = GalleryCoreApi::remapSourceIds($item->getId(), $preferred->getId());
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    $ret = $preferred->save();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    /*
+	     * Add it to the list to get a watermark.
+	     * TODO: just add the watermark here instead of modifying and re-saving the
+	     *       preferred below.
+	     */
+	    $derivatives[] = $preferred;
+	    $add[] = $preferred->getId();
+	}
+
+	if (!empty($derivatives)) {
+	    list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock(array_merge($add, $remove));
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    foreach ($derivatives as $derivative) {
+		list ($ret, $derivative) = $derivative->refresh();
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+
+		if (in_array($derivative->getId(), $add)) {
+		    $filter = sprintf('composite|watermark/%s,%s,%d,%d,manual,%2.3f,%2.3f',
+				      $watermark->getFileName(),
+				      $watermark->getMimeType(),
+				      $watermark->getWidth(),
+				      $watermark->getHeight(),
+				      $xPercent,
+				      $yPercent);
+		    list ($ret, $newPostFilters) =
+			GalleryCoreApi::mergeDerivativeOperations($derivative->getPostFilterOperations(), $filter);
+		    if ($ret->isError()) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
+		} else if (in_array($derivative->getId(), $remove)) {
+		    $newPostFilters =
+			GalleryCoreApi::removeDerivativeOperation('composite',
+								  $derivative->getPostFilterOperations());
+		}
+		$derivative->setPostFilterOperations($newPostFilters);
+
+		if ($derivative->getDerivativeType() == DERIVATIVE_TYPE_IMAGE_PREFERRED) {
+		    $preferred = $derivative;
+		}
+
+		$ret = $derivative->save(true);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+
+	    $ret = GalleryCoreApi::releaseLocks($lockId);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	if (isset($preferred)) {
+	    list ($ret, $preferred) = $preferred->refresh();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+		
+	    if ($preferred->hasNoOperations()) {
+		$ret = GalleryCoreApi::remapSourceIds($preferred->getId(), $preferred->getDerivativeSourceId());
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+
+		$ret = GalleryCoreApi::deleteEntityById($preferred->getId());
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+	}
+	return GalleryStatus::success();
+    }
 }
 ?>
