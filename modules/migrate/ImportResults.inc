@@ -39,7 +39,7 @@ class ImportResultsView extends GalleryView {
 	
 	$status = $template->getVariable('status');
 	$counts = array();
-	foreach (array('userImportFailure', 'userImportSuccess') as $key) {
+	foreach (array('userImportFailure', 'userImportSuccess','albumImportFailure', 'albumImportSuccess') as $key) {
 	    if (isset($status[$key])) {
 		$counts[$key] = sizeof($status[$key]);
 	    } else {

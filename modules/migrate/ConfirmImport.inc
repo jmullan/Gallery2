@@ -42,7 +42,11 @@ class ConfirmImportController extends GalleryController {
 	$albumsPath = GalleryUtilities::getRequestVariables('albumsPath');
 
 	$error = array();
-	$status = array('userImportFailure'=>array(),'userImportSuccess'=>array());
+	$status = array('userImportFailure'=>array(),
+			'userImportSuccess'=>array(),
+			'albumImportFailure'=>array(),
+			'albumImportSuccess'=>array()
+			);
 	if (isset($form['action']['import'])) {
 	    list ($ret, $uidMap) = Gallery1DataParser::getUserUids($albumsPath);
 	    if ($ret->isError()) {
@@ -134,6 +138,11 @@ class ConfirmImportController extends GalleryController {
 		    list ($ret, $finishedAlbums[$album['name']])=Gallery1DataParser::importAlbum($destinationAlbumID,$album);
 		} else if (in_array($album['parentAlbumName'],array_keys($finishedAlbums))){
 		    list ($ret, $finishedAlbums[$album['name']])=Gallery1DataParser::importAlbum($finishedAlbums[$album['parentAlbumName']],$album);
+		}
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		} else {
+		    $status['albumImportSuccess'][$album['name']] = 1;
 		}
 		$i++;
 	    }
