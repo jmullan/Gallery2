@@ -22,4 +22,5 @@ var path = '{$layout.cookiePath}';
 <script type="text/javascript" src="{$layout.layoutUrl}/templates/tile.js"></script>
 <style type="text/css">
 div.empty {ldelim} width:{$layout.params.cellWidth}px; height:{$layout.params.cellHeight}px {rdelim}
+td img {ldelim} display:block {rdelim}
 </style>
