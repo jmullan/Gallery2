@@ -254,15 +254,30 @@ class ClassicLayout extends GalleryLayout {
 
 	/* Add the full version */
 	$gallery->debug('XXX: missing view-full permission check');
-	if (is_subclass_of($item, 'GalleryDataItem')) {
-	    $dataItem = array('size' => $item->getSize(),
-			      'id' => $item->getId());
-		
+	list ($ret, $preferred) =
+	    GalleryDerivativeHelper::fetchPreferredsByItemIds(array($item->getId()));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Show the preferred item, if it's there */
+	if (empty($preferred)) {
 	    if (is_subclass_of($item, 'GalleryDataItem')) {
-		$dataItem['height'] = $item->getHeight();
-		$dataItem['width'] = $item->getWidth();
+		$dataItem = array('size' => $item->getSize(),
+				  'id' => $item->getId());
+		
+		if (is_subclass_of($item, 'GalleryDataItem')) {
+		    $dataItem['height'] = $item->getHeight();
+		    $dataItem['width'] = $item->getWidth();
+		}
+		$imageViews[] = $dataItem;
 	    }
-	    $imageViews[] = $dataItem;
+	} else {
+	    $preferred = $preferred[$item->getId()];
+	    $imageViews[] = array('height' => $preferred->getHeight(),
+				  'width' => $preferred->getWidth(),
+				  'size' => $preferred->getDerivativeSize(),
+				  'id' => $preferred->getId());
 	}
 
 	/*
