@@ -126,6 +126,53 @@ class ItemEditPhotoControllerTest extends GalleryControllerTestCase {
 	parent::tearDown();
     }
 
+    function testScalePreserveOriginal() {
+	global $gallery;
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
+	GalleryUtilities::putRequestVariable('mode', 'editPhoto');
+	GalleryUtilities::putRequestVariable('form[preserveOriginal]', 'on');
+	GalleryUtilities::putRequestVariable('form[action][scale]', 1);
+	GalleryUtilities::putRequestVariable('form[scale][size]', 270);
+
+	/* Delete the preferred */
+	$ret = $gallery->deleteEntityById($this->_derivative[0]->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Save current size */
+	$originalSize = $this->_item->getSize();
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemEditPhoto',
+						      'mode' => 'editPhoto',
+						      'itemId' => $this->_item->getId()),
+				  'status' => array('editPhoto' => array('scaledPhoto' => 1)),
+				  'error' => array()),
+			    $results);
+
+	/* Verify that we don't have a preferred */
+	list ($ret, $preferredIds) =
+	    GalleryDerivativeHelper::fetchPreferredsByItemIds(array($this->_item->getId()));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(0, sizeof($preferredIds), 'there should be no preferreds');
+
+	/* Verify that the item modification time has changed */
+	list ($ret, $this->_item) = $this->_item->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$newSize = $this->_item->getSize();
+	$this->assert($originalSize != $newSize, 'Item size should have changed');
+    }
+
     function testScale() {
 	global $gallery;
 
@@ -443,8 +490,17 @@ class ItemEditPhotoTestToolkit extends GalleryToolkit {
     function performOperation($mimeType, $operationName, $sourceFilename,
 			      $destFilename, $parameters) {
 	global $gallery;
+
+
 	$platform = $gallery->getPlatform();
-	$platform->copy($sourceFilename, $destFilename);
+	if ($sourceFilename != $destFilename) {
+	    $platform->copy($sourceFilename, $destFilename);
+	}
+
+	$fd = $platform->fopen($destFilename, 'a');
+	fwrite($fd, $operationName);
+	$platform->fclose($fd);
+	
 	return array(GalleryStatus::success(), $mimeType);
     }
 
