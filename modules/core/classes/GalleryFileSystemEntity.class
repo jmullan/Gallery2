@@ -235,17 +235,9 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
 	    return GalleryStatus::success();
 	}
 
-	/*
-	 * Read lock the parent so that we don't have a race condition below.
-	 */
-	$lockIds = array();
-	list ($ret, $lockIds[]) = $gallery->acquireReadLock($newParentId);
-	if ($ret->isError()) {
-	    return $ret;
-	}
-	list ($ret, $lockIds[]) = $gallery->acquireReadLock($this->getParentId());
-	if ($ret->isError()) {
-	    return $ret;
+	/* Make sure the old parent and the new parent are read locked */
+	if (!($gallery->isReadLocked($newParentId) && $gallery->isReadLocked($this->getParentId()))) {
+	    return GalleryStatus::error(ERROR_LOCK_REQUIRED, __FILE__, __LINE__);
 	}
 
 	/*
@@ -307,12 +299,6 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
 
 	if (!$platform->rename($currentPath, $newFileName)) {
 	    return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);
-	}
-
-	/* Release locks */
-	$ret = $gallery->releaseLocks($lockIds);
-	if ($ret->isError()) {
-	    return $ret;
 	}
 
 	return GalleryStatus::success();
