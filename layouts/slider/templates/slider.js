@@ -48,7 +48,7 @@ function app_init() {
  }
  window.image_loaded = image_loaded;
  var i = app_getcookie();
- if (i < -1) image_show(data_view >= 0 ? data_view : 0);
+ if (i < -1 && data_count > 0) image_show(data_view >= 0 ? data_view : 0);
 }
 function app_onresize() {
  app_getwinsize();
@@ -84,7 +84,7 @@ function app_getcookie() {
    v = c.substring(i,j);
    n = parseInt(v);
    switch (it++) {
-    case 1: r=n; if (n >= 0) image_show(n); break;
+    case 1: r=n; if (n >= 0 && data_count > 0) image_show(n); break;
    }
   }
  }
@@ -222,7 +222,7 @@ function toolbar_setbuttons() {
  document.prev_off.className = j<0?'on':'off';
 }
 function options_onoff() {
- if (!options_on) set_itemLinks(image_index);
+ if (!options_on && data_count > 0) set_itemLinks(image_index);
  ui_vis('options', options_on=options_on?0:1);
 }
 function thumbs_horizvert() {
