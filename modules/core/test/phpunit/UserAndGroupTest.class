@@ -1,0 +1,394 @@
+<?php
+/*
+ * $RCSfile
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * Test User and Group functionality
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ *
+ */
+class UserAndGroupTest extends GalleryTestCase {
+
+    function UserAndGroupTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    function _createRandomUser() {
+	list ($ret, $user) = GalleryFactory::newInstance('GalleryEntity', 'GalleryUser');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	if (!isset($user)) {
+	    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
+	}  
+
+	$ret = $user->create('testuser-' . rand());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$user->setFullName('User 1');
+	$user->changePassword('password');
+	$user->setEmail('user1@gallery.com');
+
+	$ret = $user->save();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return array(GalleryStatus::success(), $user);
+    }
+
+    function _createRandomGroup() {
+	list ($ret, $group) = GalleryFactory::newInstance('GalleryEntity', 'GalleryGroup');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	if (!isset($group)) {
+	    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
+	}
+	
+	$ret = $group->create('testgroup-' . rand());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$group->setGroupName('Test Group ' . rand());
+
+	$ret = $group->save();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	return array(GalleryStatus::success(), $group);
+    }
+    
+    /**
+     * Create user, delete user
+     */
+    function testCreateUser() {
+	global $gallery;
+
+	/* Create a new user */
+	list ($ret, $user) = $this->_createRandomUser();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	GalleryDataCache::reset();
+
+	/* Verify it */
+	$ret = $this->_verifyEntity($user);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Delete it */
+	$ret = $this->_deleteAndVerifyEntity($user->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    /**
+     * Create user, modify user, delete user
+     */
+    function testCreateAndModifyUser() {
+	global $gallery;
+
+	/* Create a new user */
+	list ($ret, $user) = $this->_createRandomUser();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Lock and refresh it */
+	list ($ret, $lockId) = $gallery->acquireWriteLock($user->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $user) = $user->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Modify it */
+	$user->setFullName('newname-' . rand());
+
+	/* Save it */
+	$ret = $user->save();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Unlock it */
+	$ret = $gallery->releaseLocks($lockId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Verify it */
+	$ret = $this->_verifyEntity($user);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	/* Delete it */
+	$ret = $this->_deleteAndVerifyEntity($user->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    /**
+     * Create group, delete group
+     */
+    function testCreateGroup() {
+	global $gallery;
+
+	list ($ret, $group) = $this->_createRandomGroup();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	GalleryDataCache::reset();
+
+	/* Verify it */
+	$ret = $this->_verifyEntity($group);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Delete it */
+	$ret = $this->_deleteAndVerifyEntity($group->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    /**
+     * Create group, modify group, delete group
+     */
+    function testCreateAndModifyGroup() {
+	global $gallery;
+
+	/* Create a new group */
+	list ($ret, $group) = $this->_createRandomGroup();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Lock and refresh it */
+	list ($ret, $lockId) = $gallery->acquireWriteLock($group->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $group) = $group->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Modify it */
+	$group->setGroupName('newname-' . rand());
+
+	/* Save it */
+	$ret = $group->save();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Unlock it */
+	$ret = $gallery->releaseLocks($lockId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Verify it */
+	$ret = $this->_verifyEntity($group);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	/* Delete it */
+	$ret = $this->_deleteAndVerifyEntity($group->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    /**
+     * Create user, create group, add user to group, remove user from group,
+     * delete user, delete group
+     */
+    function testAddAndRemoveUserFromGroup() {
+	global $gallery;
+
+	/* Create a user */
+	list ($ret, $user) = $this->_createRandomUser();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Create a group */
+	list ($ret, $group) = $this->_createRandomGroup();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Put the user into the group */
+	$ret = GalleryUserGroupMap::addUserToGroup($user->getId(), $group->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Verify */
+	list ($ret, $inGroup) = GalleryUserGroupMap::isUserInGroup($user->getId(), $group->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert($inGroup);
+
+	/* Remove user from group */
+	$ret = GalleryUserGroupMap::removeUserFromGroup($user->getId(), $group->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Verify */
+	list ($ret, $inGroup) = GalleryUserGroupMap::isUserInGroup($user->getId(), $group->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(!$inGroup);
+
+	/* Delete user */
+	$ret = $this->_deleteAndVerifyEntity($user->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Delete group */
+	$ret = $this->_deleteAndVerifyEntity($group->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    /**
+     * Create group, fetch group names, make sure it's in there, delete group
+     */
+    function testFetchGroupNames() {
+	global $gallery;
+
+	list ($ret, $group) = $this->_createRandomGroup();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	GalleryDataCache::reset();
+
+	list ($ret, $names) = GalleryGroupHelper::fetchGroupNames();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assert(in_array($group->getGroupName(), $names));
+
+	/* Delete it */
+	$ret = $this->_deleteAndVerifyEntity($group->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    /**
+     * Count groups, Create group, count groups again, delete group
+     */
+    function testFetchGroupCount() {
+	global $gallery;
+
+	list ($ret, $countBefore) = GalleryGroupHelper::fetchGroupCount();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $group) = $this->_createRandomGroup();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	GalleryDataCache::reset();
+
+	list ($ret, $countAfter) = GalleryGroupHelper::fetchGroupCount();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals($countBefore, $countAfter - 1);
+
+	/* Delete it */
+	$ret = $this->_deleteAndVerifyEntity($group->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    /**
+     * Create group, fetch it by name, delete group
+     */
+    function testFetchGroupByName() {
+	global $gallery;
+
+	list ($ret, $group) = $this->_createRandomGroup();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	GalleryDataCache::reset();
+
+	list ($ret, $newGroup) = GalleryGroupHelper::fetchGroupByGroupName($group->getGroupName());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals($group, $newGroup);
+
+	/* Delete it */
+	$ret = $this->_deleteAndVerifyEntity($group->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+}
+
+?>

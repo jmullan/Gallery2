@@ -1,0 +1,118 @@
+<?php
+/*
+ * $RCSfile
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package Gallery
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * Gallery specific version of PHPUnit's TestCase class.  
+ */
+class GalleryTestCase extends TestCase {
+
+    function GalleryTestCase($methodName) {
+	$this->TestCase($methodName);
+    }
+
+    function failWithStatus($ret) {
+	global $gallery;
+	
+	// Fail with as much debug info as we can muster.
+	$this->assert(false, $ret->getAsHtml() . $gallery->getDebugBuffer());
+    }
+
+    function setUp() {
+	global $gallery;
+
+	/* Start with a clean slate*/
+	$gallery->reset();
+	$gallery->clearDebugBuffer();
+	
+	$ret = $gallery->beginTransaction();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+    }
+
+    function tearDown() {
+	global $gallery;
+	
+	$ret = $gallery->commitTransaction();
+	if ($ret->isError()) {
+	    $ret = $ret->wrap(__FILE__, __LINE__);
+	    $this->fail($ret->getAsText());
+	}
+    }
+
+    function _deleteAndVerifyEntity($id) {
+	global $gallery;
+
+	$ret = $gallery->deleteEntityById($id);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$ret = $this->_verifyMissing($id);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+    
+    function _verifyMissing($id) {
+	global $gallery;
+	
+	GalleryDataCache::reset();
+
+	list ($ret, $entity) = $gallery->loadEntitiesById($id);
+	if ($ret->isError()) {
+	    if (!$ret->getErrorCode() & ERROR_MISSING_OBJECT) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	} else {
+	    // We failed to delete!
+	    return GalleryStatus::error(ERROR_UNKNOWN, __FILE__, __LINE__);
+	} 
+
+	return GalleryStatus::success();
+    }
+
+    function _verifyEntity($entity) {
+	global $gallery;
+	
+	GalleryDataCache::reset();
+	
+	/* Load it back from the storage */
+	list ($ret, $newEntity) = $gallery->loadEntitiesById($entity->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Verify it */
+	$this->assertEquals($entity, $newEntity);
+
+	return GalleryStatus::success();
+    }
+}
+?>
