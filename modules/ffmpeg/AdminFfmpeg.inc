@@ -172,6 +172,9 @@ class AdminFfmpegView extends GalleryView {
 		$form['error']['path']['missing'] = 1;
 	    } else {
 		list ($ret, $tests, $mimeTypes) = FfmpegToolkitHelper::testBinary($form['path']);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
 	    }
 	}
 
