@@ -435,9 +435,11 @@ class ImageMagickToolkit extends GalleryToolkit {
 	switch ($mimeType) {
 	case 'image/gif':
 	    // In case it's an animated gif..
-	    $command[] = '-coalesce';
-	    $command[] = '%s';
-	    $args[] = '-deconstruct';
+	    if ($cmd == 'convert') {
+		$command[] = '-coalesce';
+		$command[] = '%s';
+		$args[] = '-deconstruct';
+	    }
 	    break;
 
 	case 'image/tiff':
