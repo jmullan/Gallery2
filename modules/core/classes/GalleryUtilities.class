@@ -947,7 +947,7 @@ class GalleryUtilities {
 	global $gallery;
 
 	$components = parse_url($url);
-	$port = empty($components['port']) ? 80 : empty($components['port']);
+	$port = empty($components['port']) ? 80 : $components['port'];
 	if (empty($components['path'])) {
 	    $components['path'] = '/';
 	}
