@@ -81,8 +81,8 @@ if ($OPTS{'REPORT_FILE'}) {
   print STDERR "Writing file: $OPTS{REPORT_FILE}\n";
   my $fd = gensym;
   open($fd, ">$OPTS{REPORT_FILE}") || die;
-  my $now = time();
-  out($fd, 0, "<report date=\"$now\">");
+  my $now = scalar(gmtime());
+  out($fd, 0, "<report date=\"$now GMT\">");
   foreach my $locale (keys %report) {
     out($fd, 1, "<locale id=\"$locale\">");
 
