@@ -888,6 +888,9 @@ class Gallery {
 		    if ($moduleName{0} == '.') {
 			continue;
 		    }
+		    if (!$platform->is_dir($modulesDir . $moduleName)) {
+		        continue;
+		    }
 
 		    $path = $modulesDir . $moduleName . '/module.inc';
 		    if ($platform->file_exists($path)) {
