@@ -49,9 +49,6 @@ msgstr "Paramètres de présentation %s"
 msgid "&laquo; None &raquo;"
 msgstr "&laquo; Aucun &raquo;"
 
-msgid "&laquo; Parent Directory &raquo;"
-msgstr "&laquo; Répertoire parent &raquo;"
-
 msgid "&laquo; back"
 msgstr "&laquo; retour"
 
@@ -66,6 +63,10 @@ msgstr "&laquo; thème par défaut &raquo;"
 
 msgid "&laquo; first"
 msgstr "&laquo; premier"
+
+#, fuzzy
+msgid "&laquo; no presort &raquo;"
+msgstr "&laquo; Aucun &raquo;"
 
 msgid "(Un)check all known types"
 msgstr "(Dé)cocher tous les types connus"
@@ -184,6 +185,10 @@ msgstr "L'album a été créé avec succès."
 
 msgid "Album"
 msgstr "Album"
+
+#, fuzzy
+msgid "Albums First"
+msgstr "Paramètres généraux"
 
 msgid "All Layouts"
 msgstr "Toutes les présentations"
@@ -337,6 +342,9 @@ msgstr "Vider"
 
 msgid "Confirm module uninstall"
 msgstr "Confirmer la désinstallation du module"
+
+msgid "Copy base filenames to:"
+msgstr ""
 
 #, c-format
 msgid "Core API Required: %s (available: %s)"
@@ -637,7 +645,8 @@ msgid ""
 "thumbnail once and save it, but if you create them at upload time it makes "
 "viewing albums for the first time go faster at the expense of a longer "
 "upload time."
-msgstr "Gallery peut créer les vignette lors de l'import ou lors du premier "
+msgstr ""
+"Gallery peut créer les vignette lors de l'import ou lors du premier "
 "affichage de la vignette. Dans les deux cas, la vignette n'est créée qu'une "
 "seule fois et est sauvegardée. Cependant, si vous choisissez la création des "
 "vignettes à l'import, le premier affichage d'un album sera plus rapide, mais "
@@ -649,12 +658,13 @@ msgid ""
 "little extra disk space but prevents your original from getting damaged.  "
 "Disabling this option will cause any actions (rotating, scaling, etc) to "
 "modify the original."
-msgstr "Gallery ne modifie pas la photo originale pour une rotation ou une "
-"mise à l'échelle. En fait, la photo est dupliquée et Gallery travaille sur une "
+msgstr ""
+"Gallery ne modifie pas la photo originale pour une rotation ou une mise à "
+"l'échelle. En fait, la photo est dupliquée et Gallery travaille sur une "
 "copie. Celà nécessite un supplément d'espace disque mais assure que les "
 "images originales ne soient pas altérées. Désactiver cette option entrainera "
-"la modification de l'image originale suite à n'importe quelle opération ("
-"rotation, mise à l'échelle...)."
+"la modification de l'image originale suite à n'importe quelle opération "
+"(rotation, mise à l'échelle...)."
 
 msgid ""
 "Gallery features come as separate modules.  You can download and install "
@@ -671,12 +681,13 @@ msgid ""
 "Apache 1, but not on Apache 2.  If you're using Apache 2 you must use the %"
 "s.  Use this %s to find out if short URLs work for you.  If the link returns "
 "a webserver error then they don't work for you."
-msgstr "Gallery permet d'utiliser des URL compactes, bien que ce format ne "
-"soit pas supporté sur tous les serveurs Web. Il est activé par défaut sur "
-"Apache 1.x, mais pas sur Apache 2.x. Si vous utilisez Apache 2.x, vous devez "
-"utiliser la %s. Utilisez cette %s pour vérifier sur les URL courtes sont "
-"supportées sur votre système. Si ce lien retourne une erreur, alors les URL "
-"compactes ne sont pas supportées."
+msgstr ""
+"Gallery permet d'utiliser des URL compactes, bien que ce format ne soit pas "
+"supporté sur tous les serveurs Web. Il est activé par défaut sur Apache 1.x, "
+"mais pas sur Apache 2.x. Si vous utilisez Apache 2.x, vous devez utiliser la "
+"%s. Utilisez cette %s pour vérifier sur les URL courtes sont supportées sur "
+"votre système. Si ce lien retourne une erreur, alors les URL compactes ne "
+"sont pas supportées."
 
 #, fuzzy
 msgid "Gallery version"
@@ -780,7 +791,7 @@ msgstr "Module incompatible&nbsp;!"
 msgid "Incorrect password"
 msgstr "Mot de passe incorrect"
 
-msgid "Inherit these settings from parent album"
+msgid "Inherit settings from parent album"
 msgstr ""
 
 msgid "Installed"
@@ -859,9 +870,6 @@ msgstr "Déconnexion"
 msgid "Make Highlight"
 msgstr "Mettre en vignette titre de l'album"
 
-msgid "Manual Sort Order"
-msgstr "Ordre de classement manuel"
-
 msgid "Manual sort order"
 msgstr "Ordre de classement manuel"
 
@@ -895,6 +903,13 @@ msgstr "Nom du module"
 
 msgid "Modules"
 msgstr "Modules"
+
+#, fuzzy
+msgid "More.."
+msgstr "Déplacer"
+
+msgid "Most Viewed First"
+msgstr ""
 
 #, c-format
 msgid "Move %s"
@@ -968,6 +983,9 @@ msgstr "Aucun élément n'a été sélectionné pour être supprimé"
 msgid "None"
 msgstr "Aucun"
 
+msgid "Nothing added since no items were selected"
+msgstr ""
+
 msgid "Operating system"
 msgstr ""
 
@@ -993,6 +1011,10 @@ msgstr "Propriétaire"
 #, fuzzy
 msgid "PHP version"
 msgstr "Version"
+
+#, fuzzy
+msgid "Parent Directory"
+msgstr "Répertoire"
 
 msgid "Password changed successfully"
 msgstr "Mot de passe modifié avec succès."
@@ -1393,17 +1415,17 @@ msgid ""
 "Only use alphanumeric characters, underscores or dashes.  You will be able "
 "to rename it later."
 msgstr ""
-"Le nom de cet album sur votre disque. Il doit être unique pour cet album.<br />"
-"<b>Note:</b> Vous pouvez seulement utiliser des caractères alphanumériques, "
-"soulignés (_) et tirets (-) pour les noms."
+"Le nom de cet album sur votre disque. Il doit être unique pour cet album."
+"<br /><b>Note:</b> Vous pouvez seulement utiliser des caractères "
+"alphanumériques, soulignés (_) et tirets (-) pour les noms."
 
 msgid ""
 "The name of this item on your hard disk.  It must be unique in this album.  "
 "Only use alphanumeric characters, underscores or dashes."
 msgstr ""
-"Le nom de cet élément sur votre disque. Il doit être unique pour cet album. <br />"
-"<b>Note:</b> Vous pouvez seulement utiliser des caractères alphanumériques, "
-"soulignés (_) et tirets (-) pour les noms."
+"Le nom de cet élément sur votre disque. Il doit être unique pour cet album. "
+"<br /><b>Note:</b> Vous pouvez seulement utiliser des caractères "
+"alphanumériques, soulignés (_) et tirets (-) pour les noms."
 
 msgid "The name you entered is already in use.  Please choose another."
 msgstr ""
@@ -1694,12 +1716,13 @@ msgstr "Boîte à outils"
 msgid "Toolkits"
 msgstr "Boîte à outils"
 
+#, fuzzy
 msgid ""
 "Transfer files that are already on your server into your Gallery.  The files "
 "must already have been uploaded to your server some other way (like FTP) and "
-"must be placed in a directory where they are accessibly by anyelement on the "
-"server.  If you're on Unix this means that the files and the directory the "
-"files are in should have modes of at least 755."
+"must be placed in a directory where they are accessibly by any element on "
+"the server.  If you're on Unix this means that the files and the directory "
+"the files are in should have modes of at least 755."
 msgstr ""
 "Transférer les dossiers qui sont déjà sur votre serveur vers Gallery. Les "
 "fichiers doivent avoir été déjà envoyés sur votre serveur d'une autre "
@@ -1735,6 +1758,10 @@ msgstr "Inconnu"
 
 msgid "Upload Complete"
 msgstr "Téléchargement terminé"
+
+#, fuzzy
+msgid "Upload files directly from your computer."
+msgstr "Télécharger un fichier directement depuis votre ordinateur"
 
 msgid "Use As Parent&rsquo;s Thumbnail?"
 msgstr "Utiliser pour la vignette du dossier parent&nbsp;?"
@@ -2009,11 +2036,12 @@ msgid ""
 "Your change cannot be completed because somebody else has made a conflicting "
 "change to the same item.  Use the back button in your browser to go back to "
 "the page you were on, then <b>reload that page</b> and try your change again."
-msgstr "Votre modification ne peut pas être prise en compte car quelqu'un "
-"d'autre vient de réaliser une modification sur cet élément entrainant un conflit "
-"avec la votre. Utiliser le bouton de retour de votre navigateur pour retourner "
-"sur la page précédente, ensuite <b>rechargez la page</b> et réessayer "
-"d'appliquer votre modification."
+msgstr ""
+"Votre modification ne peut pas être prise en compte car quelqu'un d'autre "
+"vient de réaliser une modification sur cet élément entrainant un conflit "
+"avec la votre. Utiliser le bouton de retour de votre navigateur pour "
+"retourner sur la page précédente, ensuite <b>rechargez la page</b> et "
+"réessayer d'appliquer votre modification."
 
 msgid "Your login information is incorrect.  Please try again."
 msgstr "Vos informations de connexion sont incorrectes. Merci de réessayer."
@@ -2179,10 +2207,6 @@ msgid "edit %s"
 msgstr "éditer %s"
 
 #, fuzzy
-msgid "edit caption"
-msgstr "éditer les permissions"
-
-#, fuzzy
 msgid "edit captions"
 msgstr "Options d'administration"
 
@@ -2301,6 +2325,10 @@ msgstr "URL"
 
 msgid "user"
 msgstr "utilisateur"
+
+#, fuzzy
+msgid "with"
+msgstr "Largeur"
 
 msgid "yes"
 msgstr "oui"
@@ -2428,14 +2456,15 @@ msgid_plural "This group contains %d users"
 msgstr[0] "Ce groupe contient %d utilisateur"
 msgstr[1] "Ce groupe contient %d utilisateurs"
 
-#, c-format
-msgid "Upload a file directly from your computer."
-msgid_plural "Upload up to %d files directly from your computer."
-msgstr[0] "Télécharger un fichier directement depuis votre ordinateur"
-msgstr[1] "Télécharger jusqu'à %d fichiers directement depuis votre ordinateur"
+#~ msgid "&laquo; Parent Directory &raquo;"
+#~ msgstr "&laquo; Répertoire parent &raquo;"
 
-#~ msgid "Album Basics"
-#~ msgstr "Paramètres généraux"
+#~ msgid "Manual Sort Order"
+#~ msgstr "Ordre de classement manuel"
+
+#, fuzzy
+#~ msgid "edit caption"
+#~ msgstr "éditer les permissions"
 
 #~ msgid "Conflict Detected"
 #~ msgstr "Conflit détecté"

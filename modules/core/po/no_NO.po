@@ -21,7 +21,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Gallery: Core 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-01-10 11:05+0100\n"
+"POT-Creation-Date: 2005-01-18 15:28+0100\n"
 "PO-Revision-Date: 2005-01-13 16:00+0100\n"
 "Last-Translator: Jon Harald Carlsen <jon.harald@carlsen.cc>\n"
 "Language-Team: Norwegian <gallery-devel@lists.sourceforge.net>\n"
@@ -50,9 +50,6 @@ msgstr "%s "
 msgid "&laquo; None &raquo;"
 msgstr "&laquo; Ingen &raquo;"
 
-msgid "&laquo; Parent Directory &raquo;"
-msgstr "&laquo; Foreldre-katalog &raquo;"
-
 msgid "&laquo; back"
 msgstr "&laquo; tilbake"
 
@@ -67,6 +64,10 @@ msgstr "&laquo; standard tema &raquo;"
 
 msgid "&laquo; first"
 msgstr "&laquo; f&oslash;rst"
+
+#, fuzzy
+msgid "&laquo; no presort &raquo;"
+msgstr "&laquo; Ingen &raquo;"
 
 msgid "(Un)check all known types"
 msgstr "Mark&#233;r/ikke mark&#233;r alle kjente typer"
@@ -96,19 +97,18 @@ msgstr "(foresl&aring;tt)"
 msgid "180&deg;"
 msgstr "180&grader;"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "<b>Note:</b> You can upload up to %s at one time.  If you want to upload "
 "more than that, you must upload the files separately, use a different upload "
 "format, or ask your system administrator to allow larger uploads."
 msgstr ""
-"<b>Notat:</b> Du kan laste opp til %s om gangen. Ingen fil kan v&aelig;re "
-"st&oslash;rre enn %s. Hvis du vil laste opp mer enn dette, m&aring; du laste "
-"oppfilene en etter en, bruke forskjellige opplastningsformater, eller "
-"sp&oslash;rresystem administratoren din om &aring; tillate st&oslash;rre "
-"opplastninger."
+"<b>Notat:</b> Du kan laste opp til %s om gangen.  Hvis du vil laste opp mer "
+"enn dette, m&aring; du laste oppfilene en etter en, bruke forskjellige "
+"opplastningsformater, eller sp&oslash;rresystem administratoren din om "
+"&aring; tillate st&oslash;rre opplastninger."
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "<b>Note:</b> You can upload up to %s at one time.  No individual file may be "
 "larger than %s. If you want to upload more than that, you must upload the "
@@ -188,6 +188,9 @@ msgstr "Album laget"
 
 msgid "Album"
 msgstr "Album"
+
+msgid "Albums First"
+msgstr ""
 
 msgid "All Layouts"
 msgstr "Alle layouter"
@@ -341,6 +344,9 @@ msgstr "Fjern"
 
 msgid "Confirm module uninstall"
 msgstr "Bekreft avinstallasjon av modul"
+
+msgid "Copy base filenames to:"
+msgstr ""
 
 #, c-format
 msgid "Core API Required: %s (available: %s)"
@@ -805,7 +811,8 @@ msgstr "Ikke-kompatibel modul!"
 msgid "Incorrect password"
 msgstr "Feil passord"
 
-msgid "Inherit these settings from parent album"
+#, fuzzy
+msgid "Inherit settings from parent album"
 msgstr "Arv disse innstillingene fra foreldre-album"
 
 msgid "Installed"
@@ -884,9 +891,6 @@ msgstr "Logg ut"
 msgid "Make Highlight"
 msgstr "Mark&#233;r"
 
-msgid "Manual Sort Order"
-msgstr "Manuell sorteringsrekkef&oslash;lge"
-
 msgid "Manual sort order"
 msgstr "Manuell sorteringsrekkef&oslash;lge"
 
@@ -919,6 +923,13 @@ msgstr "Modulnavn"
 
 msgid "Modules"
 msgstr "Moduler"
+
+#, fuzzy
+msgid "More.."
+msgstr "Flytt"
+
+msgid "Most Viewed First"
+msgstr ""
 
 #, c-format
 msgid "Move %s"
@@ -990,6 +1001,9 @@ msgstr "Ingen filer var mark&#233;rt for &aring; slettes"
 msgid "None"
 msgstr "Ingen"
 
+msgid "Nothing added since no items were selected"
+msgstr ""
+
 msgid "Operating system"
 msgstr "Operasjons system"
 
@@ -1013,6 +1027,10 @@ msgstr "Eier"
 
 msgid "PHP version"
 msgstr "PHP versjon"
+
+#, fuzzy
+msgid "Parent Directory"
+msgstr "Katalog"
 
 msgid "Password changed successfully"
 msgstr "Endring av passord vellykket"
@@ -1705,9 +1723,9 @@ msgstr "Verkt&oslash;ybokser"
 msgid ""
 "Transfer files that are already on your server into your Gallery.  The files "
 "must already have been uploaded to your server some other way (like FTP) and "
-"must be placed in a directory where they are accessibly by anyelement on the "
-"server.  If you're on Unix this means that the files and the directory the "
-"files are in should have modes of at least 755."
+"must be placed in a directory where they are accessibly by any element on "
+"the server.  If you're on Unix this means that the files and the directory "
+"the files are in should have modes of at least 755."
 msgstr ""
 "Overf&oslash;r filer som allerede er p&aring; din server til ditt Gallery. "
 "Filene m&aring; v&aelig;re lastet opp til serveren allerede p&aring; ett "
@@ -1742,6 +1760,10 @@ msgstr "Ukjent"
 
 msgid "Upload Complete"
 msgstr "Opplasting ferdig"
+
+#, fuzzy
+msgid "Upload files directly from your computer."
+msgstr "Last opp en fil direkte fra din maskin."
 
 msgid "Use As Parent&rsquo;s Thumbnail?"
 msgstr "Bruk som foreldre&rsquo;s miniatyrbilde?"
@@ -2176,9 +2198,6 @@ msgstr "endre %s tilganger"
 msgid "edit %s"
 msgstr "endre %s"
 
-msgid "edit caption"
-msgstr "endre tittel"
-
 msgid "edit captions"
 msgstr "endre titler"
 
@@ -2296,6 +2315,10 @@ msgstr "url"
 
 msgid "user"
 msgstr "bruker"
+
+#, fuzzy
+msgid "with"
+msgstr "Bredde"
 
 msgid "yes"
 msgstr "ja"
@@ -2423,8 +2446,11 @@ msgid_plural "This group contains %d users"
 msgstr[0] "Denne gruppen inneholder %d bruker"
 msgstr[1] "Denne gruppen inneholder %d brukere"
 
-#, c-format
-msgid "Upload a file directly from your computer."
-msgid_plural "Upload up to %d files directly from your computer."
-msgstr[0] "Last opp en fil direkte fra din maskin."
-msgstr[1] "Last opp til %d filer direkte fra din maskin."
+#~ msgid "&laquo; Parent Directory &raquo;"
+#~ msgstr "&laquo; Foreldre-katalog &raquo;"
+
+#~ msgid "Manual Sort Order"
+#~ msgstr "Manuell sorteringsrekkef&oslash;lge"
+
+#~ msgid "edit caption"
+#~ msgstr "endre tittel"
