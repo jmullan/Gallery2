@@ -307,7 +307,12 @@ class CoreModuleExtras {
 		    }
 
 		    list ($ret, $ignored) = $layout->activate();
-		    if ($ret->isError()) {
+		    if ($ret->isError() &&
+			!($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
+			/*
+			 * Layout getSettings may try to load ImageFrame interface, but
+			 * ImageFrame may need to be upgraded.. ignore version mismatch here.
+			 */
 			return $ret->wrap(__FILE__, __LINE__);
 		    }
 		}
