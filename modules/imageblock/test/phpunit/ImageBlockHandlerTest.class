@@ -55,11 +55,6 @@ class ImageBlockHandlerTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $this->_moveAlbum) = $this->_createRandomAlbum($this->_getRootId());
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
 	$ret = ImageBlockDisabledMap::addMapEntry(array('itemId' => $this->_handlerAlbum->getId()));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -78,6 +73,13 @@ class ImageBlockHandlerTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::deleteEntityById($this->_handlerAlbum->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	if (!empty($this->_moveAlbum)) {
+	    $ret = GalleryCoreApi::deleteEntityById($this->_moveAlbum->getId());
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
 	}
 
 	parent::tearDown();
@@ -112,6 +114,11 @@ class ImageBlockHandlerTest extends GalleryTestCase {
 
     function testImageBlockDisabledMapHandlerItemMove() {
 	list ($ret, $this->_moveItem) = $this->_createRandomDataItem($this->_moveAlbum->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $this->_moveAlbum) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
