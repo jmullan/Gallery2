@@ -137,7 +137,9 @@ class GalleryGroup extends GalleryGroup_core {
          * Only take action if the value actually changes, but take care not to 
          * generate warnings for unset values.
          */
-        if ($a != $b) {
+    
+        if ($a !== $b) {
+      
             $this->_groupType = $value;
             $this->setModifiedFlag('groupType', MEMBER_MODIFIED);
         }
@@ -173,7 +175,9 @@ class GalleryGroup extends GalleryGroup_core {
          * Only take action if the value actually changes, but take care not to 
          * generate warnings for unset values.
          */
+    
         if ($a != $b) {
+      
             $this->_groupName = $value;
             $this->setModifiedFlag('groupName', MEMBER_MODIFIED);
         }

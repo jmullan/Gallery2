@@ -165,7 +165,9 @@ class GalleryUser extends GalleryUser_core {
          * Only take action if the value actually changes, but take care not to 
          * generate warnings for unset values.
          */
+    
         if ($a != $b) {
+      
             $this->_userName = $value;
             $this->setModifiedFlag('userName', MEMBER_MODIFIED);
         }
@@ -201,7 +203,9 @@ class GalleryUser extends GalleryUser_core {
          * Only take action if the value actually changes, but take care not to 
          * generate warnings for unset values.
          */
+    
         if ($a != $b) {
+      
             $this->_fullName = $value;
             $this->setModifiedFlag('fullName', MEMBER_MODIFIED);
         }
@@ -237,7 +241,9 @@ class GalleryUser extends GalleryUser_core {
          * Only take action if the value actually changes, but take care not to 
          * generate warnings for unset values.
          */
+    
         if ($a != $b) {
+      
             $this->_hashedPassword = $value;
             $this->setModifiedFlag('hashedPassword', MEMBER_MODIFIED);
         }
@@ -273,7 +279,9 @@ class GalleryUser extends GalleryUser_core {
          * Only take action if the value actually changes, but take care not to 
          * generate warnings for unset values.
          */
+    
         if ($a != $b) {
+      
             $this->_email = $value;
             $this->setModifiedFlag('email', MEMBER_MODIFIED);
         }
@@ -309,7 +317,9 @@ class GalleryUser extends GalleryUser_core {
          * Only take action if the value actually changes, but take care not to 
          * generate warnings for unset values.
          */
+    
         if ($a != $b) {
+      
             $this->_language = $value;
             $this->setModifiedFlag('language', MEMBER_MODIFIED);
         }

@@ -137,7 +137,9 @@ class GalleryAnimationItem extends GalleryAnimationItem_core {
          * Only take action if the value actually changes, but take care not to 
          * generate warnings for unset values.
          */
-        if ($a != $b) {
+    
+        if ($a !== $b) {
+      
             $this->_width = $value;
             $this->setModifiedFlag('width', MEMBER_MODIFIED);
         }
@@ -178,7 +180,9 @@ class GalleryAnimationItem extends GalleryAnimationItem_core {
          * Only take action if the value actually changes, but take care not to 
          * generate warnings for unset values.
          */
-        if ($a != $b) {
+    
+        if ($a !== $b) {
+      
             $this->_height = $value;
             $this->setModifiedFlag('height', MEMBER_MODIFIED);
         }

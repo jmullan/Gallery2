@@ -170,7 +170,9 @@ class GalleryComment extends GalleryComment_core {
          * Only take action if the value actually changes, but take care not to 
          * generate warnings for unset values.
          */
-        if ($a != $b) {
+    
+        if ($a !== $b) {
+      
             $this->_commenterId = $value;
             $this->setModifiedFlag('commenterId', MEMBER_MODIFIED);
         }
@@ -206,7 +208,9 @@ class GalleryComment extends GalleryComment_core {
          * Only take action if the value actually changes, but take care not to 
          * generate warnings for unset values.
          */
+    
         if ($a != $b) {
+      
             $this->_host = $value;
             $this->setModifiedFlag('host', MEMBER_MODIFIED);
         }
@@ -242,7 +246,9 @@ class GalleryComment extends GalleryComment_core {
          * Only take action if the value actually changes, but take care not to 
          * generate warnings for unset values.
          */
+    
         if ($a != $b) {
+      
             $this->_subject = $value;
             $this->setModifiedFlag('subject', MEMBER_MODIFIED);
         }
@@ -278,7 +284,9 @@ class GalleryComment extends GalleryComment_core {
          * Only take action if the value actually changes, but take care not to 
          * generate warnings for unset values.
          */
+    
         if ($a != $b) {
+      
             $this->_comment = $value;
             $this->setModifiedFlag('comment', MEMBER_MODIFIED);
         }
@@ -319,7 +327,9 @@ class GalleryComment extends GalleryComment_core {
          * Only take action if the value actually changes, but take care not to 
          * generate warnings for unset values.
          */
-        if ($a != $b) {
+    
+        if ($a !== $b) {
+      
             $this->_date = $value;
             $this->setModifiedFlag('date', MEMBER_MODIFIED);
         }

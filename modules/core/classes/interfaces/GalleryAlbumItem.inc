@@ -121,7 +121,9 @@ class GalleryAlbumItem extends GalleryAlbumItem_core {
          * Only take action if the value actually changes, but take care not to 
          * generate warnings for unset values.
          */
+    
         if ($a != $b) {
+      
             $this->_layout = $value;
             $this->setModifiedFlag('layout', MEMBER_MODIFIED);
         }

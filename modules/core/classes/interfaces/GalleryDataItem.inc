@@ -132,7 +132,9 @@ class GalleryDataItem extends GalleryDataItem_core {
          * Only take action if the value actually changes, but take care not to 
          * generate warnings for unset values.
          */
+    
         if ($a != $b) {
+      
             $this->_mimeType = $value;
             $this->setModifiedFlag('mimeType', MEMBER_MODIFIED);
         }
@@ -173,7 +175,9 @@ class GalleryDataItem extends GalleryDataItem_core {
          * Only take action if the value actually changes, but take care not to 
          * generate warnings for unset values.
          */
-        if ($a != $b) {
+    
+        if ($a !== $b) {
+      
             $this->_size = $value;
             $this->setModifiedFlag('size', MEMBER_MODIFIED);
         }

@@ -225,7 +225,9 @@ class GalleryItem extends GalleryItem_core {
          * Only take action if the value actually changes, but take care not to 
          * generate warnings for unset values.
          */
+    
         if ($a != $b) {
+      
             $this->_canContainChildren = $value;
             $this->setModifiedFlag('canContainChildren', MEMBER_MODIFIED);
         }
@@ -261,7 +263,9 @@ class GalleryItem extends GalleryItem_core {
          * Only take action if the value actually changes, but take care not to 
          * generate warnings for unset values.
          */
+    
         if ($a != $b) {
+      
             $this->_description = $value;
             $this->setModifiedFlag('description', MEMBER_MODIFIED);
         }
@@ -297,7 +301,9 @@ class GalleryItem extends GalleryItem_core {
          * Only take action if the value actually changes, but take care not to 
          * generate warnings for unset values.
          */
+    
         if ($a != $b) {
+      
             $this->_keywords = $value;
             $this->setModifiedFlag('keywords', MEMBER_MODIFIED);
         }
@@ -333,7 +339,9 @@ class GalleryItem extends GalleryItem_core {
          * Only take action if the value actually changes, but take care not to 
          * generate warnings for unset values.
          */
+    
         if ($a != $b) {
+      
             $this->_orderBy = $value;
             $this->setModifiedFlag('orderBy', MEMBER_MODIFIED);
         }
@@ -369,7 +377,9 @@ class GalleryItem extends GalleryItem_core {
          * Only take action if the value actually changes, but take care not to 
          * generate warnings for unset values.
          */
+    
         if ($a != $b) {
+      
             $this->_orderDirection = $value;
             $this->setModifiedFlag('orderDirection', MEMBER_MODIFIED);
         }
@@ -410,7 +420,9 @@ class GalleryItem extends GalleryItem_core {
          * Only take action if the value actually changes, but take care not to 
          * generate warnings for unset values.
          */
-        if ($a != $b) {
+    
+        if ($a !== $b) {
+      
             $this->_ownerId = $value;
             $this->setModifiedFlag('ownerId', MEMBER_MODIFIED);
         }
@@ -446,7 +458,9 @@ class GalleryItem extends GalleryItem_core {
          * Only take action if the value actually changes, but take care not to 
          * generate warnings for unset values.
          */
+    
         if ($a != $b) {
+      
             $this->_summary = $value;
             $this->setModifiedFlag('summary', MEMBER_MODIFIED);
         }
@@ -482,7 +496,9 @@ class GalleryItem extends GalleryItem_core {
          * Only take action if the value actually changes, but take care not to 
          * generate warnings for unset values.
          */
+    
         if ($a != $b) {
+      
             $this->_theme = $value;
             $this->setModifiedFlag('theme', MEMBER_MODIFIED);
         }
@@ -518,7 +534,9 @@ class GalleryItem extends GalleryItem_core {
          * Only take action if the value actually changes, but take care not to 
          * generate warnings for unset values.
          */
+    
         if ($a != $b) {
+      
             $this->_title = $value;
             $this->setModifiedFlag('title', MEMBER_MODIFIED);
         }
@@ -559,7 +577,9 @@ class GalleryItem extends GalleryItem_core {
          * Only take action if the value actually changes, but take care not to 
          * generate warnings for unset values.
          */
-        if ($a != $b) {
+    
+        if ($a !== $b) {
+      
             $this->_viewedSinceTimestamp = $value;
             $this->setModifiedFlag('viewedSinceTimestamp', MEMBER_MODIFIED);
         }

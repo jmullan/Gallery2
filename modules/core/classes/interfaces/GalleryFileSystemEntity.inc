@@ -121,7 +121,9 @@ class GalleryFileSystemEntity extends GalleryFileSystemEntity_core {
          * Only take action if the value actually changes, but take care not to 
          * generate warnings for unset values.
          */
+    
         if ($a != $b) {
+      
             $this->_pathComponent = $value;
             $this->setModifiedFlag('pathComponent', MEMBER_MODIFIED);
         }

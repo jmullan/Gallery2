@@ -126,7 +126,9 @@ class GalleryChildEntity extends GalleryChildEntity_core {
          * Only take action if the value actually changes, but take care not to 
          * generate warnings for unset values.
          */
-        if ($a != $b) {
+    
+        if ($a !== $b) {
+      
             $this->_parentId = $value;
             $this->setModifiedFlag('parentId', MEMBER_MODIFIED);
         }

@@ -170,7 +170,9 @@ class GalleryEntity extends GalleryEntity_core {
          * Only take action if the value actually changes, but take care not to 
          * generate warnings for unset values.
          */
-        if ($a != $b) {
+    
+        if ($a !== $b) {
+      
             $this->_id = $value;
             $this->setModifiedFlag('id', MEMBER_MODIFIED);
         }
@@ -211,7 +213,9 @@ class GalleryEntity extends GalleryEntity_core {
          * Only take action if the value actually changes, but take care not to 
          * generate warnings for unset values.
          */
-        if ($a != $b) {
+    
+        if ($a !== $b) {
+      
             $this->_creationTimestamp = $value;
             $this->setModifiedFlag('creationTimestamp', MEMBER_MODIFIED);
         }
@@ -252,7 +256,9 @@ class GalleryEntity extends GalleryEntity_core {
          * Only take action if the value actually changes, but take care not to 
          * generate warnings for unset values.
          */
-        if ($a != $b) {
+    
+        if ($a !== $b) {
+      
             $this->_modificationTimestamp = $value;
             $this->setModifiedFlag('modificationTimestamp', MEMBER_MODIFIED);
         }
@@ -293,7 +299,9 @@ class GalleryEntity extends GalleryEntity_core {
          * Only take action if the value actually changes, but take care not to 
          * generate warnings for unset values.
          */
-        if ($a != $b) {
+    
+        if ($a !== $b) {
+      
             $this->_serialNumber = $value;
             $this->setModifiedFlag('serialNumber', MEMBER_MODIFIED);
         }
@@ -329,7 +337,9 @@ class GalleryEntity extends GalleryEntity_core {
          * Only take action if the value actually changes, but take care not to 
          * generate warnings for unset values.
          */
+    
         if ($a != $b) {
+      
             $this->_entityType = $value;
             $this->setModifiedFlag('entityType', MEMBER_MODIFIED);
         }

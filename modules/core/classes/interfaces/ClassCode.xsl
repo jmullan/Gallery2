@@ -236,7 +236,14 @@ class <xsl:value-of select="class-name"/> extends <xsl:value-of select="class-na
          * Only take action if the value actually changes, but take care not to 
          * generate warnings for unset values.
          */
+    <xsl:choose>
+      <xsl:when test="member-type='INTEGER'">
+        if ($a !== $b) {
+      </xsl:when>
+      <xsl:otherwise>
         if ($a != $b) {
+      </xsl:otherwise>
+    </xsl:choose>
             $this->_<xsl:value-of select="member-name"/> = $value;
             $this->setModifiedFlag('<xsl:value-of select="member-name"/>', MEMBER_MODIFIED);
         }

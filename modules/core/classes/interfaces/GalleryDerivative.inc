@@ -181,7 +181,9 @@ class GalleryDerivative extends GalleryDerivative_core {
          * Only take action if the value actually changes, but take care not to 
          * generate warnings for unset values.
          */
-        if ($a != $b) {
+    
+        if ($a !== $b) {
+      
             $this->_derivativeSourceId = $value;
             $this->setModifiedFlag('derivativeSourceId', MEMBER_MODIFIED);
         }
@@ -217,7 +219,9 @@ class GalleryDerivative extends GalleryDerivative_core {
          * Only take action if the value actually changes, but take care not to 
          * generate warnings for unset values.
          */
+    
         if ($a != $b) {
+      
             $this->_derivativeOperations = $value;
             $this->setModifiedFlag('derivativeOperations', MEMBER_MODIFIED);
         }
@@ -258,7 +262,9 @@ class GalleryDerivative extends GalleryDerivative_core {
          * Only take action if the value actually changes, but take care not to 
          * generate warnings for unset values.
          */
-        if ($a != $b) {
+    
+        if ($a !== $b) {
+      
             $this->_derivativeOrder = $value;
             $this->setModifiedFlag('derivativeOrder', MEMBER_MODIFIED);
         }
@@ -299,7 +305,9 @@ class GalleryDerivative extends GalleryDerivative_core {
          * Only take action if the value actually changes, but take care not to 
          * generate warnings for unset values.
          */
-        if ($a != $b) {
+    
+        if ($a !== $b) {
+      
             $this->_derivativeSize = $value;
             $this->setModifiedFlag('derivativeSize', MEMBER_MODIFIED);
         }
@@ -340,7 +348,9 @@ class GalleryDerivative extends GalleryDerivative_core {
          * Only take action if the value actually changes, but take care not to 
          * generate warnings for unset values.
          */
-        if ($a != $b) {
+    
+        if ($a !== $b) {
+      
             $this->_derivativeType = $value;
             $this->setModifiedFlag('derivativeType', MEMBER_MODIFIED);
         }
@@ -376,7 +386,9 @@ class GalleryDerivative extends GalleryDerivative_core {
          * Only take action if the value actually changes, but take care not to 
          * generate warnings for unset values.
          */
+    
         if ($a != $b) {
+      
             $this->_derivativeMimeType = $value;
             $this->setModifiedFlag('derivativeMimeType', MEMBER_MODIFIED);
         }
