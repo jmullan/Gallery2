@@ -574,6 +574,49 @@ class GalleryTheme {
 	return $results;
     }
 
+    /**
+     * image theme method
+     * 
+     * @param array ("params" => ..., "stack" => ...)
+     * @param int maximum dimension on a side
+     * @return string HTML content
+     */
+    function image($context, $class=null, $maxSize=null) {
+ 	global $gallery;
+
+ 	$urlGenerator = $gallery->getUrlGenerator();
+ 	$params = $context['params'];
+ 	$src = $urlGenerator->generateUrl(array('view' => 'core:DownloadItem',
+ 						'itemId' => $params['image']['id']));
+
+	list ($width, $height) = array($params['image']['width'], $params['image']['height']);
+
+	/* Shrink our dimensions if necessary */
+	if (isset($maxSize)) {
+ 	    list ($width, $height) = GalleryUtilities::shrinkDimensionsToFit(140, $width, $height);
+ 	}
+ 
+ 	$title = $params['item']['title'];
+ 	if (empty($title)) {
+ 	    $title = $params['item']['pathComponent'];
+ 	}
+
+	if (isset($class)) {
+	    $classString = sprintf('class="%s"', $class);
+	} else {
+	    $classString = '';
+	}
+
+ 	$result = sprintf('<img border="0" %s src="%s" width="%s" height="%s" alt="%s" longdesc="%s"/>',
+			  $classString,
+ 			  $src,
+ 			  $width,
+ 			  $height,
+ 			  $title,
+ 			  $params['item']['description']);
+ 	return $result;
+     }
+
     /*************************************************************
      * Standard theme methods
      *************************************************************/
@@ -619,16 +662,6 @@ class GalleryTheme {
      */
      function error($context, $content) {
          trigger_error('Undefined theme function: error', E_USER_ERROR);
-     }
-
-    /**
-     * image theme method
-     * 
-     * @param array ("params" => ..., "stack" => ...)
-     * @return string HTML content
-     */
-     function image($context) {
-         trigger_error('Undefined theme function: image', E_USER_ERROR);
      }
 
     /**

@@ -44,10 +44,10 @@ class MatrixTheme extends GalleryTheme {
      * @param string HTML content 
      * @return string HTML content
      */
-     function style($context) {
-	 $themeCss = $this->getBaseUrl() . 'styles/theme.css';
-	 return '<style type="text/css" media="all">@import url(' . $themeCss . ');</style>';
-     }
+    function style($context) {
+	$themeCss = $this->getBaseUrl() . 'styles/theme.css';
+	return '<style type="text/css" media="all">@import url(' . $themeCss . ');</style>';
+    }
 
     /**
      * success theme method
@@ -56,9 +56,9 @@ class MatrixTheme extends GalleryTheme {
      * @param string HTML content 
      * @return string HTML content
      */
-     function success($context, $content) {
+    function success($context, $content) {
 	return '<span class="success">' . $content . '</span>';
-     }
+    }
 
     /**
      * warning theme method
@@ -67,9 +67,9 @@ class MatrixTheme extends GalleryTheme {
      * @param string HTML content 
      * @return string HTML content
      */
-     function warning($context, $content) {
+    function warning($context, $content) {
 	return '<span class="warning">' . $content . '</span>';
-     }
+    }
 
     /**
      * error theme method
@@ -78,9 +78,9 @@ class MatrixTheme extends GalleryTheme {
      * @param string HTML content 
      * @return string HTML content
      */
-     function error($context, $content) {
+    function error($context, $content) {
 	return '<p class="error">' . $content . '</p>';
-     }
+    }
 
     /**
      * image theme method
@@ -88,56 +88,17 @@ class MatrixTheme extends GalleryTheme {
      * @param array ("params" => ..., "stack" => ...)
      * @return string HTML content
      */
-     function image($context) {
- 	global $gallery;
- 	$urlGenerator = $gallery->getUrlGenerator();
- 
- 	$params = $context['params'];
- 	$src = $urlGenerator->generateUrl(array('view' => 'core:DownloadItem',
- 						'itemId' => $params['image']['id']));
-
+    function image($context) {
+	$class = "image";
+	
 	/* Shrink down images that we display in the sidebar */
- 	if (in_array('sidebar', $context['stack'])) {
- 	    list ($width, $height) =
- 		GalleryUtilities::shrinkDimensionsToFit(140,
- 							$params['image']['width'],
- 							$params['image']['height']);
- 	} else {
- 	    list ($width, $height) = array($params['image']['width'],
- 					   $params['image']['height']);
- 	}
- 
- 	$title = $params['item']['title'];
- 	if (empty($title)) {
- 	    $title = $params['item']['pathComponent'];
- 	}
-
-	if (isset($params['image']['derivativeType'])) {
-	    switch($params['image']['derivativeType']) {
-	    case DERIVATIVE_TYPE_IMAGE_RESIZE:
-		; // fall through
-		
-	    case DERIVATIVE_TYPE_IMAGE_PREFERRED:
-		$imageClass = "fullsize_image";
-		break;
-		
-	    case DERIVATIVE_TYPE_IMAGE_THUMBNAIL:
-		$imageClass = "thumbnail_image";
-		break;
-	    }
+	if (in_array('sidebar', $context['stack'])) {
+	    return parent::image($context, $class, 140);
 	} else {
-	    $imageClass = "fullsize_image";
+	    /* Else just display them normally */
+	    return parent::image($context, $class);
 	}
-
- 	$result = sprintf('<img class="%s" src="%s" width="%s" height="%s" alt="%s" longdesc="%s"/>',
-			  $imageClass,
- 			  $src,
- 			  $width,
- 			  $height,
- 			  $title,
- 			  $params['item']['description']);
- 	return $result;
-     }
+    }
 
     /**
      * listing theme method
@@ -146,7 +107,7 @@ class MatrixTheme extends GalleryTheme {
      * @param array ("params" => array, "content" => item HTML content)
      * @return string HTML content
      */
-     function listing($context, $item_array) {
+    function listing($context, $item_array) {
 	$buf = '<table class="listing"> ';
 	$buf .= '<tr> <td> <ul class="listing_list">';
 	foreach ($item_array as $item) {
@@ -158,7 +119,7 @@ class MatrixTheme extends GalleryTheme {
 	}
 	$buf .= '</ul> </td> </tr> </table>';
 	return $buf;
-     }
+    }
 
     /**
      * breadcrumb theme method
@@ -167,7 +128,7 @@ class MatrixTheme extends GalleryTheme {
      * @param array ("params" => array, "content" => item HTML content)
      * @return string HTML content
      */
-     function breadcrumb($context, $item_array) {
+    function breadcrumb($context, $item_array) {
 	$buf = '<table class="breadcrumb_inner"> <tr> ';
 	for ($i = 0; $i < sizeof($item_array); $i++) {
 	    $buf .= '<td class="breadcrumb_item">' . $item_array[$i]['content'] . '</td>';
@@ -177,7 +138,7 @@ class MatrixTheme extends GalleryTheme {
 	}
 	$buf .= ' </tr> </table>';
 	return $buf;
-     }
+    }
 
     /**
      * linkset theme method
@@ -187,7 +148,7 @@ class MatrixTheme extends GalleryTheme {
      * @param array ("params" => array, "content" => item HTML content)
      * @return string HTML content
      */
-     function linkset($context, $title, $item_array) {
+    function linkset($context, $title, $item_array) {
 	$buf = '<span class="linksbox"> ';
 	if (!empty($title['content'])) {
 	    $buf .= $title['content'];
@@ -201,7 +162,7 @@ class MatrixTheme extends GalleryTheme {
 	}
 	$buf .= '</span>';
 	return $buf;
-     }
+    }
 
     /**
      * actionset theme method
@@ -211,20 +172,20 @@ class MatrixTheme extends GalleryTheme {
      * @param array ("params" => array, "content" => actionitem HTML content)
      * @return string HTML content
      */
-     function actionset($context, $title, $actionitem_array) {
-	 $buf = '';
-	 if (!empty($title['content'])) {
-	     $buf .= '<span class="actionset_title">' . $title['content'] . '</span>';
-	 }
+    function actionset($context, $title, $actionitem_array) {
+	$buf = '';
+	if (!empty($title['content'])) {
+	    $buf .= '<span class="actionset_title">' . $title['content'] . '</span>';
+	}
 
-	 // TODO: How about having this call GalleryTheme::select, instead?
-	 $buf .= '<select onChange="if (this.value) javascript:location.href=this.value">';
-	 foreach ($actionitem_array as $actionitem) {
-	     $buf .= $actionitem['content'];
-	 }
-	 $buf .= '</select>';
-	 return $buf;
-     }
+	// TODO: How about having this call GalleryTheme::select, instead?
+	$buf .= '<select onChange="if (this.value) javascript:location.href=this.value">';
+	foreach ($actionitem_array as $actionitem) {
+	    $buf .= $actionitem['content'];
+	}
+	$buf .= '</select>';
+	return $buf;
+    }
 
     /**
      * infoset theme method
@@ -233,14 +194,14 @@ class MatrixTheme extends GalleryTheme {
      * @param array ("params" => array, "content" => item HTML content)
      * @return string HTML content
      */
-     function infoset($context, $item_array) {
+    function infoset($context, $item_array) {
 	$buf = '<table class="infoset"> ';
 	foreach ($item_array as $item) {
 	    $buf .= '<tr> <td class="infoset_item"> ' . $item['content'] . '</td> </tr>';
 	}
 	$buf .= '</table>';
 	return $buf;
-     }
+    }
 
     /**
      * tabset theme method
@@ -249,7 +210,7 @@ class MatrixTheme extends GalleryTheme {
      * @param array ("params" => array, "content" => item HTML content)
      * @return string HTML content
      */
-     function tabset($context, $item_array) {
+    function tabset($context, $item_array) {
 	$imageUrl = $this->getBaseUrl() . 'images/';
 	$buf = '<table class="tabset"> <tr>';
 
@@ -298,7 +259,7 @@ class MatrixTheme extends GalleryTheme {
 			$right[0], $right[1], $right[2]);
 	$buf .= '</tr> </table>';
 	return $buf;
-     }
+    }
 
     /**
      * table theme method
@@ -307,17 +268,17 @@ class MatrixTheme extends GalleryTheme {
      * @param array ("params" => array, "content" => row HTML content)
      * @return string HTML content
      */
-     function table($context, $row_array) {
-	 switch($context['params']['style']) {
-	 case 'canvas':
-	 case 'admin_listing':
-	 case 'admin_widgets':
-	     $table_class = 'table_' . $context['params']['style'];
-	     break;
+    function table($context, $row_array) {
+	switch($context['params']['style']) {
+	case 'canvas':
+	case 'admin_listing':
+	case 'admin_widgets':
+	    $table_class = 'table_' . $context['params']['style'];
+	    break;
 
-	 default:
-	     $table_class = 'table';
-	 }
+	default:
+	    $table_class = 'table';
+	}
 	     
 	$buf = '<table class="' . $table_class . '">';
 	for ($i = 0; $i < sizeof($row_array); $i++) {
@@ -330,7 +291,7 @@ class MatrixTheme extends GalleryTheme {
 	}
 	$buf .= '</table>';
 	return $buf;
-     }
+    }
 
     /**
      * row theme method
@@ -339,7 +300,7 @@ class MatrixTheme extends GalleryTheme {
      * @param array ("params" => array, "content" => column HTML content)
      * @return string HTML content
      */
-     function row($context, $column_array) {
+    function row($context, $column_array) {
 	for ($i = 0; $i < sizeof($column_array); $i++) {
 	    $attrs = "";
 	    foreach (array('align', 'width', 'colspan', 'rowspan', 'valign') as $attrName) {
@@ -356,7 +317,7 @@ class MatrixTheme extends GalleryTheme {
 	    }
 	}
 	return $buf;
-     }
+    }
 
     /**
      * main theme method
@@ -367,7 +328,7 @@ class MatrixTheme extends GalleryTheme {
      * @param array ("params" => array, "content" => pagebox HTML content)
      * @return string HTML content
      */
-     function main($context, $breadcrumb, $sidebar_array, $pagebox) {
+    function main($context, $breadcrumb, $sidebar_array, $pagebox) {
 	$buf = '<table class="main"> ';
 
 	// Breadcrumb row
@@ -399,7 +360,7 @@ class MatrixTheme extends GalleryTheme {
 
 	$buf .= '</table>';
 	return $buf;
-     }
+    }
 
     /**
      * sidebar theme method
@@ -408,19 +369,19 @@ class MatrixTheme extends GalleryTheme {
      * @param array ("params" => array, "content" => element HTML content)
      * @return string HTML content
      */
-     function sidebar($context, $element_array) {
-	 $buf = '<table class="sidebar">';
-	 if ($context['params']['side'] == 'right') {
-	     $class="sidebar_box_right";
-	 } else {
-	     $class="sidebar_box_left";
-	 }
-	 foreach ($element_array as $element) {
-	     $buf .= '<tr> <td class="' . $class . '"> ' . $element['content'] . ' </td> </tr>';
-	 }
-	 $buf .= '</table>';
-	 return $buf;
-     }
+    function sidebar($context, $element_array) {
+	$buf = '<table class="sidebar">';
+	if ($context['params']['side'] == 'right') {
+	    $class="sidebar_box_right";
+	} else {
+	    $class="sidebar_box_left";
+	}
+	foreach ($element_array as $element) {
+	    $buf .= '<tr> <td class="' . $class . '"> ' . $element['content'] . ' </td> </tr>';
+	}
+	$buf .= '</table>';
+	return $buf;
+    }
 
     /**
      * itemthumbnail theme method
@@ -433,36 +394,33 @@ class MatrixTheme extends GalleryTheme {
      * @param array ("params" => array, "content" => actionset HTML content)
      * @return string HTML content
      */
-     function itemthumbnail($context, $title, $description, $media, $infoset, $actionset) {
-	 switch ($context['params']['style']) {
-	 case 'album':
-	     $buf = '<table class="albumthumbnail">';
-	     $buf .= '<tr>';
-	     $buf .= '<td class="albumthumbnail_media">' . $media['content'] . '</td>';
-	     $buf .= '<td class="albumthumbnail_data"> <table class="albumthumbnail_inner"> ';
-	     $buf .= '<tr> <td class="albumthumbnail_title">' . $title['content'] . '<td>';
-	     $buf .= '<tr> <td class="albumthumbnail_description">' . $description['content'] . '<td> </tr>';
-	     $buf .= '<tr> <td class="albumthumbnail_infoset">' . $infoset['content'] . '<td> </tr>';
-	     $buf .= '</table> </td>';
-	     $buf .= '</tr>';
-	     $buf .= '<tr> <td colspan="2" class="albumthumbnail_actionset">' . $actionset['content'] . '<td> </tr>';
-	     $buf .= '</table>';
-	     break;
+    function itemthumbnail($context, $title, $description, $media, $infoset, $actionset) {
+	switch ($context['params']['style']) {
+	case 'album':
+	    $buf = '<table class="albumthumbnail">';
+	    $buf .= '<tr>';
+	    $buf .= '<td class="albumthumbnail_media">' . $media['content'] . '</td>';
+	    $buf .= '<td class="albumthumbnail_data"> <table class="albumthumbnail_inner"> ';
+	    $buf .= '<tr> <td class="albumthumbnail_title">' . $title['content'] . '<td>';
+	    $buf .= '<tr> <td class="albumthumbnail_description">' . $description['content'] . '<td> </tr>';
+	    $buf .= '<tr> <td class="albumthumbnail_infoset">' . $infoset['content'] . '<td> </tr>';
+	    $buf .= '</table> </td>';
+	    $buf .= '</tr>';
+	    $buf .= '<tr> <td colspan="2" class="albumthumbnail_actionset">' . $actionset['content'] . '<td> </tr>';
+	    $buf .= '</table>';
+	    break;
 
-	 case 'item':
-	 default:
-	     $buf = '';
-	     $buf = '<div class="itemthumbnail">';
-	     $buf .= $media['content'];
-	     $buf .= '<br/>';
-	     $buf .= '<span class="itemthumbnail_title">' . $title['content'] . '</span>';
-	     $buf .= '<br/>';
-	     $buf .= '<span class="itemthumbnail_actionset">' . $actionset['content'] . '</span>';
-	     $buf .= '</div>';
-	     break;
-	 }
-	 return $buf;
-     }
+	case 'item':
+	default:
+	    $buf = '<table class="itemthumbnail">';
+	    $buf .= '<tr> <td class="itemthumbnail_media">' . $media['content'] . '</td> </tr>';
+	    $buf .= '<tr> <td class="itemthumbnail_title">' . $title['content'] . '</td> </tr>';
+	    $buf .= '<tr> <td class="itemthumbnail_actionset">' . $actionset['content'] . '</td> </tr>';
+	    $buf .= '</table>';
+	    break;
+	}
+	return $buf;
+    }
 
     /**
      * itemview theme method
@@ -474,10 +432,10 @@ class MatrixTheme extends GalleryTheme {
      * @param array ("params" => array, "content" => footer HTML content)
      * @return string HTML content
      */
-     function itemview($context, $title, $description, $media, $footer) {
-	 // This theme doesn't return anything but the image for the item view
-	 return $media['content'];
-     }
+    function itemview($context, $title, $description, $media, $footer) {
+	// This theme doesn't return anything but the image for the item view
+	return $media['content'];
+    }
 
     /**
      * tabbedbox theme method
@@ -488,7 +446,7 @@ class MatrixTheme extends GalleryTheme {
      * @param array ("params" => array, "content" => element HTML content)
      * @return string HTML content
      */
-     function tabbedbox($context, $tabset, $footer, $element_array) {
+    function tabbedbox($context, $tabset, $footer, $element_array) {
 	$buf = '<table class="tabbedbox">';
 	if (!empty($title['content'])) {
 	    $buf .= '<tr> <td class="tabbedbox_title"> ' . $title['content'] . '</td> </tr> ';
@@ -501,7 +459,7 @@ class MatrixTheme extends GalleryTheme {
 	}
 	$buf .= '</table>';
 	return $buf;
-     }
+    }
 
     /**
      * box theme method
@@ -514,21 +472,21 @@ class MatrixTheme extends GalleryTheme {
      * @param array ("params" => array, "content" => element HTML content)
      * @return string HTML content
      */
-     function box($context, $title, $subtitle, $description, $footer, $element_array) {
-	 $subTitleOnSeparateRow = false;
-	 switch($context['params']['style']) {
-	 case 'sidebar':
-	     $subTitleOnSeparateRow = true;
+    function box($context, $title, $subtitle, $description, $footer, $element_array) {
+	$subTitleOnSeparateRow = false;
+	switch($context['params']['style']) {
+	case 'sidebar':
+	    $subTitleOnSeparateRow = true;
 	     
-	 case 'admin':
-	 case 'debug':
-	 case 'comment':
-	     $class = 'box_' . $context['params']['style'];
-	     break;
+	case 'admin':
+	case 'debug':
+	case 'comment':
+	    $class = 'box_' . $context['params']['style'];
+	    break;
 
-	 default:
-	     $class = 'box';
-	 }
+	default:
+	    $class = 'box';
+	}
 	 
 	$buf = '<table class="' . $class . '"> ';
 
@@ -566,7 +524,7 @@ class MatrixTheme extends GalleryTheme {
 	}
 	$buf .= '</table>';
 	return $buf;
-     }
+    }
 
     /**
      * pagebox theme method
@@ -575,36 +533,36 @@ class MatrixTheme extends GalleryTheme {
      * @param array ("params" => array, "content" => element HTML content)
      * @return string HTML content
      */
-     function pagebox($context, $element_array) {
-	 $buf = '<table class="pagebox">';
-	 if (!empty($banner['content'])) {
-	     $buf .= '<tr> <td> ' . $banner['content'] . '</td> </tr>';
-	 }
+    function pagebox($context, $element_array) {
+	$buf = '<table class="pagebox">';
+	if (!empty($banner['content'])) {
+	    $buf .= '<tr> <td> ' . $banner['content'] . '</td> </tr>';
+	}
 
-	 if (!empty($description['content'])) {
-	     $buf .= '<tr> <td class="pagebox_description"> ' . $banner['content'] . '</td> </tr>';
-	 }
+	if (!empty($description['content'])) {
+	    $buf .= '<tr> <td class="pagebox_description"> ' . $banner['content'] . '</td> </tr>';
+	}
 
-	 foreach ($element_array as $element) {
-	     switch($element['name']) {
-	     case 'success':
-	     case 'error':
-		 $class = 'pagebox_element_' . $element['name'];
-		 break;
+	foreach ($element_array as $element) {
+	    switch($element['name']) {
+	    case 'success':
+	    case 'error':
+		$class = 'pagebox_element_' . $element['name'];
+		break;
 
-	     default:
-		 $class = 'pagebox_element';
-	     }
-	     $buf .= '<tr> <td class="' . $class . '"> ' . $element['content'] . '</td> </tr>';
-	 }
+	    default:
+		$class = 'pagebox_element';
+	    }
+	    $buf .= '<tr> <td class="' . $class . '"> ' . $element['content'] . '</td> </tr>';
+	}
 	 
-	 if (!empty($footer['content'])) {
-	     $buf .= '<tr> <td class="pagebox_footer"> ' . $footer['content'] . '</td> </tr>';
-	 }
-	 $buf .= '</table>';
+	if (!empty($footer['content'])) {
+	    $buf .= '<tr> <td class="pagebox_footer"> ' . $footer['content'] . '</td> </tr>';
+	}
+	$buf .= '</table>';
 
-	 return $buf;
-     }
+	return $buf;
+    }
 
     /**
      * banner theme method
@@ -615,7 +573,7 @@ class MatrixTheme extends GalleryTheme {
      * @param array ("params" => array, "content" => element HTML content)
      * @return string HTML content
      */
-     function banner($context, $title, $description, $element_array) {
+    function banner($context, $title, $description, $element_array) {
 	$buf = '<table class="bannerbox">';
 	if (empty($element_array)) {
 	    if (!empty($title['content'])) {
@@ -645,7 +603,7 @@ class MatrixTheme extends GalleryTheme {
 	}
 	$buf .= '</table>';
 	return $buf;
-     }
+    }
 
     /**
      * item theme method
@@ -655,25 +613,25 @@ class MatrixTheme extends GalleryTheme {
      * @param array ("params" => array, "content" => subtitle HTML content)
      * @return string HTML content
      */
-     function item($context, $title, $subtitle) {
-	 switch($context['stack'][0]) {
-	 case 'breadcrumb':
-	 case 'listing':
-	 case 'linkset':
-	 case 'infoset':
-	 case 'tabset':
-	     $buf = '<span class="title">' . $title['content'] . '</span>';
+    function item($context, $title, $subtitle) {
+	switch($context['stack'][0]) {
+	case 'breadcrumb':
+	case 'listing':
+	case 'linkset':
+	case 'infoset':
+	case 'tabset':
+	    $buf = '<span class="title">' . $title['content'] . '</span>';
 	     
-	     if (!empty($subtitle)) {
-		 $buf .= '<span class="subtitle">' . $subtitle['content'] . '</span>';
-	     }
-	     return $buf;
-	     break;
+	    if (!empty($subtitle)) {
+		$buf .= '<span class="subtitle">' . $subtitle['content'] . '</span>';
+	    }
+	    return $buf;
+	    break;
 
-	 default:
-	     trigger_error(sprintf('Unexpected item parent: %s', $context['stack'][0]), E_USER_ERROR);
-	 }
-     }
+	default:
+	    trigger_error(sprintf('Unexpected item parent: %s', $context['stack'][0]), E_USER_ERROR);
+	}
+    }
 
     /**
      * actionitem theme method
@@ -683,13 +641,13 @@ class MatrixTheme extends GalleryTheme {
      * @param array ("params" => array, "content" => value HTML content)
      * @return string HTML content
      */
-     function actionitem($context, $title, $value) {
-	 $buf = '<option label="' . $title['content'] . '" value="' . $value['content'] . '"';
-	 if ($context['params']['selected'] == 'true') {
-	     $buf .= 'SELECTED';
-	 }
-	 $buf .= '>' . $title['content'] . '</option>';
-	 return $buf;
-     }
+    function actionitem($context, $title, $value) {
+	$buf = '<option label="' . $title['content'] . '" value="' . $value['content'] . '"';
+	if ($context['params']['selected'] == 'true') {
+	    $buf .= 'SELECTED';
+	}
+	$buf .= '>' . $title['content'] . '</option>';
+	return $buf;
+    }
 }
 ?>

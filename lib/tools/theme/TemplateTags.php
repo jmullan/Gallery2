@@ -43,6 +43,7 @@ $builtin_tag['form'] = 1;
 $builtin_tag['select'] = 1;
 $builtin_tag['textarea'] = 1;
 $builtin_tag['link'] = 1;
+$builtin_tag['image'] = 1;
 
 $tags['style'] = array('children' => 'content');
 $tags['input'] = array('children' => 'content');
