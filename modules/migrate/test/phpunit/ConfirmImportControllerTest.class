@@ -1051,7 +1051,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 				      . 'Hello World ' . "\r\n"
 				      . 'Norwegian Norsk' . "\r\n"
 				      . 'Hallo Verden' . "\r\n"
-				      . 'Gallery er s&#229; utrolig bra at jeg har satt det opp t...',              // title
+				      . 'Gallery er s&#229; utrolig bra at jeg har satt det opp til...',              // title
 				      '',                                  // summary
 				      NULL,      // keywords
 				      'Western European (ISO)' . "\r\n"
@@ -1195,7 +1195,8 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	    }
 	    $this->assertEquals(array('CHARSET=8859-1, fr-Fr, Hello World, french, fran&#231;ais, Bonjour Monde'
 				      . "\r\n"
-				      . 'Voil&#224; du texte contenant des caract&#232;res a...',              // title
+				      . 'Voil&#224; du texte contenant des caract&#232;res '
+				      . 'accentu&#233;s. &#231;&#224;...',              // title
 				      '',                                  // summary
 				      NULL,      // keywords
 				      'CHARSET=8859-1, fr-Fr, Hello World, french, fran&#231;ais, Bonjour Monde'
@@ -1339,7 +1340,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 				      . "Hello World\r\n"
 				      . "Russian\r\n"
 				      . "&#1056;&#1091;&#1089;&#1089;&#1082;&#1080;&#1081;\r\n"
-				      . "&#1047;&#1076;&#1088;&#1072;&#1074;...",              // title
+				      .'&#1047;&#1076;&#1088;&#1072;&#1074;&#1089;&#1090;&#1074;&#1091;&#1081;...',
 				      '',                                  // summary
 				      'Gallery 2 migration testing',      // keywords
 				      "Russian - KOI-8\r\n"
