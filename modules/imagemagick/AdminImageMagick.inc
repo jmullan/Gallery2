@@ -48,18 +48,18 @@ class AdminImageMagickController extends GalleryController {
 	}
 
 	$return = GalleryUtilities::getFormVariables('return.');
-
-	/* Set the path.  Guarantee that it's got a trailing slash. */
-	$platform = $gallery->getPlatform();
-	$slash = $platform->getDirectorySeparator();
-	$form['path'] = trim($form['path']);
-	if (!empty($form['path'])) {
-	    if ($form['path']{strlen($form['path'])-1} != $slash) {
-		$form['path'] .= $slash;
-	    }
-	}
-
 	if (isset($form['action']['save'])) {
+
+	    /* Set the path.  Guarantee that it's got a trailing slash. */
+	    $platform = $gallery->getPlatform();
+	    $slash = $platform->getDirectorySeparator();
+	    $form['path'] = trim($form['path']);
+	    if (!empty($form['path'])) {
+		if ($form['path']{strlen($form['path'])-1} != $slash) {
+		    $form['path'] .= $slash;
+		}
+	    }
+	    
 	    $saveSuccess = false;
 	    $success = true;
 	    list ($ret, $testResults) = ImageMagickToolkitHelper::testBinaries($form['path']);
