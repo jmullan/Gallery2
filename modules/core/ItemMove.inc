@@ -48,11 +48,11 @@ class ItemMoveController extends GalleryController {
 
 	if (isset($form['action']['move'])) {
 
-	    /* First check if everything would be okey with the change */
+	    /* First check if everything would be okay with the change */
 	    $problem = false;
 	    $canAddItem = false;
 	    $canAddAlbum = false;
-	    if ($form['destination']) {
+	    if (!empty($form['destination'])) {
 		/* Check if we can add albums or items here */
 		$newParentId = $form['destination'];
 		GalleryUtilities::putRequestVariable('form.destination', $newParentId);
@@ -61,12 +61,8 @@ class ItemMoveController extends GalleryController {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-		if (isset($permissions['core.addDataItem'])) {
-		    $canAddItem = true;
-		}
-		if (isset($permissions['core.addAlbumItem'])) {
-		    $canAddAlbum = true;
-		}
+		$canAddItem = isset($permissions['core.addDataItem']);
+		$canAddAlbum = isset($permissions['core.addAlbumItem']);
 		if (!$canAddAlbum && !$canAddItem) {
 		    $problem = true;
 		    GalleryUtilities::putRequestVariable('form.error.destination.permission', 1);
@@ -93,7 +89,7 @@ class ItemMoveController extends GalleryController {
 		GalleryUtilities::putRequestVariable('form.error.destination.empty', 1);
 	    }
 	    
-	    if ($form['selectedIds']) {
+	    if (!$problem && !empty($form['selectedIds'])) {
 		$selectedIds = array_keys($form['selectedIds']);
 		GalleryUtilities::putRequestVariable('form.selectedIds', $selectedIds);
 		
@@ -106,15 +102,18 @@ class ItemMoveController extends GalleryController {
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-		
+
+		$oldParentIds = array();
 		foreach ($selectedItems as $selectedItem) {
 		    $selectedId = $selectedItem->getId();
 
 		    /* Can't move into a tree that is included in the source */
+
 		    foreach ($newParentAncestorIds as $newParentAncestorId) {
 			if ($selectedId == $newParentAncestorId) {
 			    $problem = true;
-			    GalleryUtilities::putRequestVariable('form.error.source.' . $selectedId . '.selfMove', 1);
+			    GalleryUtilities::putRequestVariable('form.error.source.' . $selectedId .
+								 '.selfMove', 1);
 			    continue 2; // Skip out of the foreach($selectedItem) also
 			}
 		    }
@@ -124,20 +123,23 @@ class ItemMoveController extends GalleryController {
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
-		    
+
 		    /* Can we delete this item from here? */
 		    if (! isset($permissions['core.delete'])) {
 			$problem = true;
-			GalleryUtilities::putRequestVariable('form.error.source.' . $selectedId . '.permission.delete', 1);
+			GalleryUtilities::putRequestVariable('form.error.source.' . $selectedId .
+							     '.permission.delete', 1);
 		    }
 		    
 		    /* Check if the destination allows this source to be added */
 		    if ($selectedItem->getCanContainChildren() && ! $canAddAlbum) {
 			$problem = true;
-			GalleryUtilities::putRequestVariable('form.error.source.' . $selectedId . '.permission.addAlbumItem', 1);
+			GalleryUtilities::putRequestVariable('form.error.source.' . $selectedId .
+							     '.permission.addAlbumItem', 1);
 		    } elseif (! $selectedItem->getCanContainChildren() && ! $canAddItem) {
 			$problem = true;
-			GalleryUtilities::putRequestVariable('form.error.source.' . $selectedId . '.permission.addDataItem', 1);
+			GalleryUtilities::putRequestVariable('form.error.source.' . $selectedId .
+							     '.permission.addDataItem', 1);
 		    }
 		}
 		$oldParentIds = array_values(array_unique($oldParentIds));
@@ -147,12 +149,13 @@ class ItemMoveController extends GalleryController {
 
 		/* Read lock myself, my parent id and the new parent id */
 		$lockIds = array();
-		list ($ret, $lockIds[]) = $gallery->acquireReadLock(array($newParentId, $itemId));
+		list ($ret, $lockIds[]) =
+		    $gallery->acquireReadLock(array($newParentId, $itemId));
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-		/* Write locok all the items we're moving */
+		/* Write lock all the items we're moving */
 		list ($ret, $lockIds[]) = $gallery->acquireWriteLock($selectedIds);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
