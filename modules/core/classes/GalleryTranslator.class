@@ -47,14 +47,6 @@ class GalleryTranslator {
     var $_boundDomains;
 
     /**
-     * The active character set.
-     *
-     * @var string $_activeCharset
-     * @access private
-     */
-    var $_activeCharset;
-
-    /**
      * Does the active language read right-to-left?
      *
      * @var array $_isRightToLeft
@@ -104,7 +96,7 @@ class GalleryTranslator {
     /**
      * Return our language data
      *
-     * @return array array['language code']['country code'] = array('description', 'charset code')
+     * @return array array['language code']['country code'] = array('description', 'right-to-left'?)
      *         array array('country' => 'default language code',
      *                     'country' => 'default language code',
      *                     ...)
@@ -116,141 +108,113 @@ class GalleryTranslator {
 
 	if (empty($supportedLanguages)) {
 	    /* XXX: Move this information into a configuration file */
-	    // German
+	    /* German */
 	    $supportedLanguages['de']['DE']['description'] = 'Deutsch';
-	    $supportedLanguages['de']['DE']['charset'] = 'UTF-8';
 	    $defaultCountry['de'] = 'DE';
 
-	    // Greek
+	    /* Greek */
 	    $supportedLanguages['el']['GR']['description'] = 'Greek';
-	    $supportedLanguages['el']['GR']['charset'] = 'UTF-8';
 	    $defaultCountry['el'] = 'GR';
 
-	    // English
+	    /* English */
 	    $supportedLanguages['en']['US']['description'] = 'English (US)';
-	    $supportedLanguages['en']['US']['charset'] = 'UTF-8';
 	    $supportedLanguages['en']['GB']['description'] = 'English (UK)';
-	    $supportedLanguages['en']['GB']['charset'] = 'UTF-8';
 	    $defaultCountry['en'] = 'US';
 
-	    // Spanish
+	    /* Spanish */
 	    $supportedLanguages['es']['AR']['description'] = 'Espa&#241;ol (AR)';
-	    $supportedLanguages['es']['AR']['charset'] = 'UTF-8';
 	    $defaultCountry['es'] = 'AR';
 
-	    // Spanish
+	    /* Spanish */
 	    $supportedLanguages['es']['MX']['description'] = 'Espa&#241;ol (MX)';
-	    $supportedLanguages['es']['MX']['charset'] = 'UTF-8';
 	    $defaultCountry['es'] = 'MX';
 
-	    // Finnish
+	    /* Finnish */
 	    $supportedLanguages['fi']['FI']['description'] = 'Suomi';
-	    $supportedLanguages['fi']['FI']['charset'] = 'UTF-8';
 	    $defaultCountry['fi'] = 'FI';
 
-	    // Polish
+	    /* Polish */
 	    $supportedLanguages['pl']['PL']['description'] = 'Polski';
-	    $supportedLanguages['pl']['PL']['charset'] = 'UTF-8';
 	    $defaultCountry['pl'] = 'PL';
 
-	    // Portuguese
+	    /* Portuguese */
 	    $supportedLanguages['pt']['BR']['description'] = 'Portugu&#234;s Brasileiro';
-	    $supportedLanguages['pt']['BR']['charset'] = 'UTF-8';
 	    $supportedLanguages['pt']['PT']['description'] = 'Portugu&#234;s (PT)';
-	    $supportedLanguages['pt']['PT']['charset'] = 'UTF-8';
 	    $defaultCountry['pt'] = 'BR';
 
-	    // Chinese
+	    /* Chinese */
 	    $supportedLanguages['zh']['CN']['description'] = '&#31616;&#20307;&#20013;&#25991;';
-	    $supportedLanguages['zh']['CN']['charset'] = 'UTF-8';
 	    $supportedLanguages['zh']['TW']['description'] = '&#32321;&#39636;&#20013;&#25991;';
-	    $supportedLanguages['zh']['TW']['charset'] = 'UTF-8';
 	    $defaultCountry['zh'] = 'TW';
 
-	    // Dutch
+	    /* Dutch */
 	    $supportedLanguages['nl']['NL']['description'] = 'Nederlands';
-	    $supportedLanguages['nl']['NL']['charset'] = 'UTF-8';
 	    $defaultCountry['nl'] = 'NL';
 
-	    // Norwegian
+	    /* Norwegian */
 	    $supportedLanguages['no']['NO']['description'] = 'Norsk bokm&#229;l';
-	    $supportedLanguages['no']['NO']['charset'] = 'UTF-8';
 	    $defaultCountry['no'] = 'NO';
 
-	    // Japanese
+	    /* Japanese */
 	    $supportedLanguages['ja']['JP']['description'] = '&#x65e5;&#x672c;&#x8a9e;';
-	    $supportedLanguages['ja']['JP']['charset'] = 'UTF-8';
 	    $defaultCountry['ja'] = 'JP';
 
-	    // Irish
+	    /* Irish */
 	    $supportedLanguages['ga']['IE']['description'] = 'Irish';
-	    $supportedLanguages['ga']['IE']['charset'] = 'UTF-8';
 	    $defaultCountry['ga'] = 'IE';
 
-	    // French
+	    /* French */
 	    $supportedLanguages['fr']['FR']['description'] = 'Fran&#231;ais';
-	    $supportedLanguages['fr']['FR']['charset'] = 'UTF-8';
 	    $defaultCountry['fr'] = 'FR';
 
-	    // Swedish
+	    /* Swedish */
 	    $supportedLanguages['sv']['SE']['description'] = 'Svenska';
-	    $supportedLanguages['sv']['SE']['charset'] = 'UTF-8';
 	    $defaultCountry['sv'] = 'SE';
 
-	    // Hebrew
+	    /* Hebrew */
 	    $supportedLanguages['he']['IL']['description'] = '&#1506;&#1489;&#1512;&#1497;&#1514;';
-	    $supportedLanguages['he']['IL']['charset'] = 'UTF-8';
 	    $supportedLanguages['he']['IL']['right-to-left'] = true;
 	    $defaultCountry['he'] = 'IL';
 
-	    // Italian
+	    /* Italian */
 	    $supportedLanguages['it']['IT']['description'] = 'Italiano';
-	    $supportedLanguages['it']['IT']['charset'] = 'UTF-8';
 	    $defaultCountry['it'] = 'IT';
 
-	    // Danish
+	    /* Danish */
 	    $supportedLanguages['da']['DK']['description'] = 'Dansk';
-	    $supportedLanguages['da']['DK']['charset'] = 'UTF-8';
 	    $defaultCountry['da'] = 'DK';
 
-	    // Turkish
+	    /* Turkish */
 	    $supportedLanguages['tr']['TR']['description'] = 'T&#252;rk&#231;e';
-	    $supportedLanguages['tr']['TR']['charset'] = 'UTF-8';
 	    $defaultCountry['tr'] = 'TR';
 
-	    // Serbian
+	    /* Serbian */
 	    $supportedLanguages['sr']['YU']['description'] = 'Srpski';
-	    $supportedLanguages['sr']['YU']['charset'] = 'UTF-8';
 	    $defaultCountry['sr'] = 'YU';
 
-	    // Slovenian
+	    /* Slovenian */
 	    $supportedLanguages['sl']['SI']['description'] = 'Sloven&#353;&#269;ina';
-	    $supportedLanguages['sl']['SI']['charset'] = 'UTF-8';
 	    $defaultCountry['sl'] = 'SI';
 
-	    // Thai
+	    /* Thai */
 	    $supportedLanguages['th']['TH']['description'] = 'Thai';
-	    $supportedLanguages['th']['TH']['charset'] = 'UTF-8';
 	    $defaultCountry['th'] = 'TH';
 
-	    // Latvian
+	    /* Latvian */
 	    $supportedLanguages['lv']['LV']['description'] = 'Latvie&#353;u';
-	    $supportedLanguages['lv']['LV']['charset'] = 'UTF-8';
 	    $defaultCountry['lv'] = 'LV';
 
-	    // Russian
-	    $supportedLanguages['ru']['RU']['description'] = '&#1056;&#1091;&#1089;&#1089;&#1082;&#1080;&#1081;';
-	    $supportedLanguages['ru']['RU']['charset'] = 'UTF-8';
+	    /* Russian */
+	    $supportedLanguages['ru']['RU']['description'] =
+		'&#1056;&#1091;&#1089;&#1089;&#1082;&#1080;&#1081;';
 	    $defaultCountry['ru'] = 'RU';
 
-	    // Czech
+	    /* Czech */
 	    $supportedLanguages['cs']['CZ']['description'] = '&#x010c;esky';
-	    $supportedLanguages['cs']['CZ']['charset'] = 'UTF-8';
 	    $defaultCountry['cs'] = 'CZ';
 
-	    // Dutch
+	    /* Dutch */
 	    $supportedLanguages['nl']['NL']['description'] = 'Nederlands';
-	    $supportedLanguages['nl']['NL']['charset'] = 'UTF-8';
 	    $defaultCountry['nl'] = 'NL';
 	}
 
@@ -262,7 +226,7 @@ class GalleryTranslator {
      * Return our language data
      *
      * @return array['language code']['country code'] =
-     *              array('description', 'charset code')
+     *              array('description', 'right-to-left'?)
      */
     function getSupportedLanguages() {
 	/* Get our language data */
@@ -285,13 +249,6 @@ class GalleryTranslator {
 
 	/* If we're using gettext, try to bind to a language */
 	if (function_exists('dgettext')) {
-	    /*
-	     * Set the appropriate charset in our HTTP header
-	     */
-	    $this->_activeCharset = $data['charset'];
-	    if (!headers_sent()) {
-		header('Content-Type: text/html; charset=' . $this->_activeCharset);
-	    }
 	    $this->_isRightToLeft = isset($data['right-to-left']);
 	    /*
 	     * Some systems only require LANG, others (like Mandrake) seem to require
@@ -307,6 +264,11 @@ class GalleryTranslator {
 	    setlocale(LC_ALL, $languageCode);
 	}
 
+	/* Set the appropriate charset in our HTTP header */
+	if (!headers_sent()) {
+	    header('Content-Type: text/html; charset=UTF-8');
+	}
+
 	return GalleryStatus::success();
     }
 
@@ -316,7 +278,7 @@ class GalleryTranslator {
      * @param string the language code hint
      * @param boolean (optional) if false, return array(null,null) for no match instead of en_US
      * @return array (string a language code in <language>_<COUNTRY> format,
-     *                array data about this language code (description,charset))
+     *                array data about this language code (description,right-to-left?))
      * @static
      */
     function getSupportedLanguageCode($languageCode, $fallback=true) {
@@ -412,7 +374,7 @@ class GalleryTranslator {
 		bindtextdomain($domain, $basePath);
 		textdomain($domain);
 		if (function_exists('bind_textdomain_codeset')) {
-		    bind_textdomain_codeset($domain, $this->_activeCharset);
+		    bind_textdomain_codeset($domain, 'UTF-8');
 		}
 		$this->_boundDomains[$domain] = $basePath;
 	    }
@@ -452,11 +414,11 @@ class GalleryTranslator {
 		$codeSet = nl_langinfo(CODESET);
 		/* Suppress warnings, which can happen in $codeSet is not supported */
 		if (function_exists('mb_convert_encoding')) {
-		    $localized = @mb_convert_encoding($localized, $this->_activeCharset, $codeSet);
+		    $localized = @mb_convert_encoding($localized, 'UTF-8', $codeSet);
 		} else if (function_exists('iconv')) {
-		    $localized = @iconv($codeSet, $this->_activeCharset, $localized);
+		    $localized = @iconv($codeSet, 'UTF-8', $localized);
 		} else if (function_exists('recode_string')) {
-		    $localized = @recode_string($codeSet . '..' . $this->_activeCharset, $localized);
+		    $localized = @recode_string($codeSet . '..UTF-8', $localized);
 		}
 	    }
 	} else {
