@@ -216,7 +216,6 @@ class CoreModuleExtras {
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-	    /* fall through */
 
 	case '0.8.3':
 	case '0.8.4':
@@ -236,7 +235,6 @@ class CoreModuleExtras {
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-	    /* fall through */
 
 	case '0.8.6':
 	case '0.8.7':
@@ -244,7 +242,6 @@ class CoreModuleExtras {
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-	    /* fall through */
 
 	case '0.8.8':
 	case '0.8.9':
@@ -260,7 +257,6 @@ class CoreModuleExtras {
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-	    /* fall through */
 
 	case '0.8.10':
 	case '0.8.11':
@@ -269,7 +265,6 @@ class CoreModuleExtras {
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-	    /* fall through */
 
 	case '0.8.13':
 	    /*
@@ -306,11 +301,9 @@ class CoreModuleExtras {
 		    }
 		}
 	    }
-	    /* fall through */
 
 	case '0.8.14':
 	    /* Added Entity::onLoadHandlers; default all values to null, so nothing to do */
-	    /* fall through */
 
 	case '0.8.15':
 	    /* Removed GalleryItemPropertiesMap.. drop the table */
@@ -330,15 +323,12 @@ class CoreModuleExtras {
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-	    /* fall through */
 
 	case '0.8.16':
 	    /* Schema updates: GalleryPluginMap, GalleryPluginParameterMap, GalleryGroup */
-	    /* fall through */
 
 	case '0.8.17':
 	    /* Beta 1! */
-	    /* fall through */
 
 	case '0.9.0':
 	    $ret = GalleryCoreApi::removePluginParameter('modules', 'core', 'misc.useShortUrls');
@@ -348,6 +338,9 @@ class CoreModuleExtras {
 
 	case '0.9.1':
 	    /* Set g2 version to 2.0-beta-1+ */
+
+	case '0.9.2':
+	    /* Changed the data cache format */
 	    break;
 
 	default:

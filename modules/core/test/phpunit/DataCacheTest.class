@@ -131,31 +131,33 @@ class DataCacheTest extends GalleryTestCase {
 	$gallery->setConfig('data.gallery.cache', '/data/cache/');
 	$gallery->setPlatform(new DataCacheTestPlatform());
 	
-	$testdata = "testdata";
+	$testdata = "testdata c:\foo\bar";
 	GalleryDataCache::putToDisk(array('type' => 'entity', 'itemId' => 1), $testdata);
-	$this->assertEquals(htmlentities("<?php \$data = unserialize('s:8:\"testdata\";'); ?>"),
-            htmlentities(DataCacheTestPlatform::getFileContents('/data/cache/entity/0/0/1.inc')));
+	$this->assertEquals('|' . serialize($testdata),
+            DataCacheTestPlatform::getFileContents('/data/cache/entity/0/0/1.inc'));
 	DataCacheTestPlatform::reset();
 
 	GalleryDataCache::putToDisk(array('type' => 'entity', 'itemId' => 1),
 				    $testdata, array('required-class'));
-	$this->assertEquals(
-           htmlentities("<?php GalleryCoreApi::relativeRequireOnce(\"required-class\"); " .
-					 "\$data = unserialize('s:8:\"testdata\";'); ?>"),
-            htmlentities(DataCacheTestPlatform::getFileContents('/data/cache/entity/0/0/1.inc')));
+	$this->assertEquals('required-class|' . serialize($testdata),
+            DataCacheTestPlatform::getFileContents('/data/cache/entity/0/0/1.inc'));
+	DataCacheTestPlatform::reset();
+	
+	GalleryDataCache::putToDisk(array('type' => 'entity', 'itemId' => 1),
+				    $testdata, array('required-class1', 'required-class2'));
+	$this->assertEquals('required-class1,required-class2|' . serialize($testdata),
+            DataCacheTestPlatform::getFileContents('/data/cache/entity/0/0/1.inc'));
 	DataCacheTestPlatform::reset();
 	
 	GalleryDataCache::putToDisk(array('type' => 'entity', 'itemId' => 21), $testdata);
-	$this->assertEquals(htmlentities("<?php \$data = unserialize('s:8:\"testdata\";'); ?>"),
-            htmlentities(DataCacheTestPlatform::getFileContents('/data/cache/entity/0/2/21.inc')));
+	$this->assertEquals('|' . serialize($testdata),
+            DataCacheTestPlatform::getFileContents('/data/cache/entity/0/2/21.inc'));
 	DataCacheTestPlatform::reset();
 
 	$testdata = '|test#with\'funky"chars? \\*&%$[]}{ end';
 	GalleryDataCache::putToDisk(array('type' => 'entity', 'itemId' => 721), $testdata);
-	$this->assertEquals(
-            htmlentities("<?php \$data = unserialize('s:37:\"|test#with" .
-			 "\\'funky\"chars? \\*&%\$[]}{ end\";'); ?>"),
-            htmlentities(DataCacheTestPlatform::getFileContents('/data/cache/entity/7/2/721.inc')));
+	$this->assertEquals('|' . serialize($testdata),
+            DataCacheTestPlatform::getFileContents('/data/cache/entity/7/2/721.inc'));
 	DataCacheTestPlatform::reset();
     }
     
