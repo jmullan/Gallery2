@@ -76,7 +76,6 @@ class SiteAdminView extends GalleryView {
 	    $subViewChoices = array_merge($subViewChoices, $moduleViews);
 	}
 	// Sort and group..
-	usort($subViewChoices, 'SiteAdminView_viewSort');
 	$subViewGroups = $groupLabels = array();
 	foreach ($subViewChoices as $adminView) {
 	    if (!isset($adminView['group'])) {
@@ -97,6 +96,9 @@ class SiteAdminView extends GalleryView {
 	// Set labels..
 	foreach (array_keys($subViewGroups) as $group) {
 	    $data =& $subViewGroups[$group];
+	    if ($data[0]['group'] != 'gallery') {
+		usort($data, 'SiteAdminView_viewSort');
+	    }
 	    if (isset($groupLabels[$group])) {
 		$tmp = -1;
 		foreach ($groupLabels[$group] as $label => $count) {
@@ -166,7 +168,7 @@ function SiteAdminView_viewSort($a, $b) {
     } else {
 	$an = $a['name'];
 	$bn = $b['name'];
-	if ($an == $bn || $ag == 'gallery') { // Don't sort gallery group
+	if ($an == $bn) {
 	    return 0;
 	} else {
 	    return ($an > $bn) ? 1 : -1;
