@@ -39,8 +39,7 @@
   
   <div class="gbAdmin">
     <p class="giDescription">
-     {g->text text="This will select if email addresses are displayed in the member profiles.
-                    Administrators will always be able to see email addresses."}
+      {g->text text="This will select if email addresses are displayed in the member profiles.  Administrators will always be able to see email addresses."}
     </p>
     
     <table style="gbDataEntry">

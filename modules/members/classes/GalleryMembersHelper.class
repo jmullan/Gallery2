@@ -139,7 +139,7 @@ class GalleryMembersHelper {
     }
 
     /**
-     * Return if the user has permission to view the
+     * Return true if the user has permission to view the
      * Members Module
      *
      * @param int User id
@@ -147,7 +147,7 @@ class GalleryMembersHelper {
      *                bool canViewMembersModule permission)
      * @static
      */
-    function canViewMembersModule($userId){
+    function canViewMembersModule($userId) {
         global $gallery;
         list ($ret, $viewSelectedGroupId) = 
             GalleryCoreApi::getPluginParameter('module', 'members', 'canViewMembersModule');
@@ -163,7 +163,7 @@ class GalleryMembersHelper {
     }
 
     /**
-     * Return if the user has permission to view the
+     * Return true if the user has permission to view the
      * members email address inside the members profile
      *
      * @param int User id
@@ -171,10 +171,10 @@ class GalleryMembersHelper {
      *                bool canViewProfileEmail permission)
      * @static
      */
-    function canViewProfileEmail($userId){
+    function canViewProfileEmail($userId) {
         global $gallery;
         $result = false;
-        /* can the user view email addresses in the member profile */
+        /* Can the user view email addresses in the member profile? */
 	list ($ret, $resultOne) = 
             GalleryCoreApi::getPluginParameter('module', 'members', 'canViewEmailAddress');
 	if ($ret->isError()) {
@@ -193,8 +193,9 @@ class GalleryMembersHelper {
             return array($ret->wrap(__FILE__, __LINE__), null);
         }
 
-	/* user can see member email in the profile if they are an admin, 
-	 * or if the module setting says they are allowed to
+	/*
+	 * User can see member email in the profile if they are an admin, 
+	 * or if the module setting says they are allowed to.
 	 */
         if ($resultOne || $resultTwo) {
             $result = true;
@@ -204,7 +205,7 @@ class GalleryMembersHelper {
     }
     
     /**
-     * Return the days since the user's creationTimestamp
+     * Return the calendar days since the user's creationTimestamp.  
      *
      * @param int User id
      * @return array (object GalleryStatus a status code,
