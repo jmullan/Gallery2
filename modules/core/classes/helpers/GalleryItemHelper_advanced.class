@@ -433,7 +433,7 @@ class GalleryItemHelper_advanced {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	
-	if ($parentAlbum->getentityType() != 'GalleryAlbumItem') {
+	if (!GalleryUtilities::isA($parentAlbum, 'GalleryAlbumItem')) {
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
 	}
 	
@@ -448,7 +448,6 @@ class GalleryItemHelper_advanced {
 	}
 
 	/* acquire lock to reference the parent in our new object */
-	// todo: do we really need this, since the parent's id will not change? Or should the caller do this?
 	list ($ret, $lockIds[]) = GalleryCoreApi::acquireReadLock($parentAlbumId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
