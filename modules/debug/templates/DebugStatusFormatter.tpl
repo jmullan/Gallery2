@@ -1,4 +1,4 @@
-    {g->text text="Error (%s)" arg1=$codes}
+    {g->text text="Error (%s): %s" arg1=$codes arg2=$message}
     <ul>
       {foreach from=$trace item=traceEntry}
       <li> 
