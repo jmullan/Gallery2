@@ -92,7 +92,12 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    $data[] = implode('/', $sequence) . (empty($sequence) ? '' : '/') . $parentId . '/%';
+	    if (!empty($sequence)) {
+		$sequence = implode('/', $sequence) . '/';
+	    } else {
+		$sequence = '';
+	    }
+	    $data[] = $sequence . $parentId . '/%';
 	}
 
 	/* Build the query */
@@ -364,21 +369,31 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	global $gallery;
 	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/ImageBlockDisabledMap.class');
 
+	$parentAlbumId = $parentAlbum->getId();
 	$childIds = array();
+
 	if ($recursive) { 
 	    $select[] = '[GalleryItemAttributesMap::itemId]';
 	    $from[] = '[GalleryItemAttributesMap]';
 	    $where[] = '[GalleryItemAttributesMap::parentSequence] LIKE ? OR [GalleryItemAttributesMap::itemId] = ?';
-	    list ($ret, $sequence) = GalleryCoreApi::fetchParentSequence($parentAlbum->getId());
 
-	    /* We don't care about ERROR_MISSING_OBJECT because it's generated if 
+	    /* 
+	     * We don't care about ERROR_MISSING_OBJECT because it's generated if 
 	     * the album is at the top-level
 	     */
+	    list ($ret, $sequence) = GalleryCoreApi::fetchParentSequence($parentAlbum->getId());
 	    if ($ret->isError() && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
 		    return $ret->wrap(__FILE__, __LINE__);
 	    }
-	    $data[] = (empty($sequence) ? '/' : implode('/', $sequence)) . (empty($sequence) ? '' : '/') . 
-		    $parentAlbum->getId() . '/%';
+
+	    /* Prevent issues with empty implode(), below */
+	    if (!empty($sequence)) {
+		$sequence = implode('/', $sequence) . '/';
+	    } else {
+		$sequence = '';
+	    }
+
+	    $data[] = $sequence . $parentAlbumId . '/%';
 	    $data[] = $parentAlbum->getId();
 
 	    /* Build the query */
