@@ -70,26 +70,42 @@ class UnixPlatform extends GalleryPlatform {
     /**
      * Execute a command and record the results and status.
      *
-     * If the optional debugfile parameter is specified, dump the STDERR
-     * results from executing this command out to the file.  (Unix only)
-     *
      * @param string the command to excute
      * @param array the location to put output from the command 
-     * @param int the location to put the status code from the command
-     * @param string optional file to record STDERR output
-     * @return bool TRUE if the copy succeeded, FALSE otherwise.
+     * @return bool TRUE if the command succeeded, FALSE otherwise.
      * @access public
      */
-    function exec($cmd, &$results, &$status, $debugFile='') {
+    function exec($cmd, &$results) {
+	global $gallery;
 
-	/* Import it for completeness sake */
-	$debugFile = $this->importPath($debugFile);
-	
-	if (!empty($debugFile)) {
-		$cmd = "($cmd) 2>$debugfile";
+	/* If we're in debug mode, redirect STDERR to a file */
+	if ($gallery->getDebug()) {
+	    $tempDir = $gallery->getConfig('core.directory.temp');
+	    $debugFile = tempnam($tempDir, 'g2dbg');
+	    $cmd = "($cmd) 2>$debugFile";
 	}
-	
-	return exec($cmd, $results, $status);
+
+	$gallery->debug("Executing: $cmd");
+	exec($cmd, $results, $status);
+	$expected = $gallery->getConfig('core.expectedStatus');
+
+	/* Read any debug output and dump it out */
+	if ($gallery->getDebug()) {
+	    $platform = $gallery->getPlatform();
+	    if ($platform->file_exists($debugFile)) {
+		if ($fd = $platform->fopen($debugFile, "r")) {
+		    while (!feof($fd)) {
+			$buf = fgets($fd, 4096);
+			$gallery->debug($buf);
+		    }
+		    fclose($fd);
+		}
+		unlink($debugFile);
+		$gallery->debug("Status: $status (expected $expected)");
+	    }
+	}
+
+	return ($status == $expected);
     }
 }
 ?>
