@@ -176,13 +176,13 @@ class GalleryPendingUser extends GalleryPendingUser_core {
      * @param STRING the value
      */
     function setuserName($value) {
+    
 	/* 
 	 * Convert unset values to null, to avoid generating warnings.
 	 */
 	$a = isset($value) ? $value : null;
 	$b = isset($this->_userName) ? $this->_userName : null;
 
-    
 	/* 
 	 * Only take action if the value actually changes, but take care not to 
 	 * generate warnings for unset values.
@@ -216,13 +216,13 @@ class GalleryPendingUser extends GalleryPendingUser_core {
      * @param STRING the value
      */
     function setfullName($value) {
+    
 	/* 
 	 * Convert unset values to null, to avoid generating warnings.
 	 */
 	$a = isset($value) ? $value : null;
 	$b = isset($this->_fullName) ? $this->_fullName : null;
 
-    
 	/* 
 	 * Only take action if the value actually changes, but take care not to 
 	 * generate warnings for unset values.
@@ -256,13 +256,13 @@ class GalleryPendingUser extends GalleryPendingUser_core {
      * @param STRING the value
      */
     function sethashedPassword($value) {
+    
 	/* 
 	 * Convert unset values to null, to avoid generating warnings.
 	 */
 	$a = isset($value) ? $value : null;
 	$b = isset($this->_hashedPassword) ? $this->_hashedPassword : null;
 
-    
 	/* 
 	 * Only take action if the value actually changes, but take care not to 
 	 * generate warnings for unset values.
@@ -296,13 +296,13 @@ class GalleryPendingUser extends GalleryPendingUser_core {
      * @param STRING the value
      */
     function setemail($value) {
+    
 	/* 
 	 * Convert unset values to null, to avoid generating warnings.
 	 */
 	$a = isset($value) ? $value : null;
 	$b = isset($this->_email) ? $this->_email : null;
 
-    
 	/* 
 	 * Only take action if the value actually changes, but take care not to 
 	 * generate warnings for unset values.
@@ -336,13 +336,13 @@ class GalleryPendingUser extends GalleryPendingUser_core {
      * @param STRING the value
      */
     function setlanguage($value) {
+    
 	/* 
 	 * Convert unset values to null, to avoid generating warnings.
 	 */
 	$a = isset($value) ? $value : null;
 	$b = isset($this->_language) ? $this->_language : null;
 
-    
 	/* 
 	 * Only take action if the value actually changes, but take care not to 
 	 * generate warnings for unset values.
@@ -376,13 +376,13 @@ class GalleryPendingUser extends GalleryPendingUser_core {
      * @param STRING the value
      */
     function setregistrationKey($value) {
+    
 	/* 
 	 * Convert unset values to null, to avoid generating warnings.
 	 */
 	$a = isset($value) ? $value : null;
 	$b = isset($this->_registrationKey) ? $this->_registrationKey : null;
 
-    
 	/* 
 	 * Only take action if the value actually changes, but take care not to 
 	 * generate warnings for unset values.

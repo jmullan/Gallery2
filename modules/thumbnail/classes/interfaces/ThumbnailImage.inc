@@ -50,39 +50,39 @@ class ThumbnailImage extends ThumbnailImage_core {
      * @return array member => array(type, class)
      */
     function getPersistentMemberInfo() {
-        $meta = parent::getPersistentMemberInfo();
+	$meta = parent::getPersistentMemberInfo();
     
-        $meta['members']['fileName'] = array(
-            'class' => 'ThumbnailImage',
-            'type' => STORAGE_TYPE_STRING
-        );
+	$meta['members']['fileName'] = array(
+	    'class' => 'ThumbnailImage',
+	    'type' => STORAGE_TYPE_STRING
+	);
     
-        $meta['members']['mimeType'] = array(
-            'class' => 'ThumbnailImage',
-            'type' => STORAGE_TYPE_STRING
-        );
+	$meta['members']['mimeType'] = array(
+	    'class' => 'ThumbnailImage',
+	    'type' => STORAGE_TYPE_STRING
+	);
     
-        $meta['members']['size'] = array(
-            'class' => 'ThumbnailImage',
-            'type' => STORAGE_TYPE_INTEGER
-        );
+	$meta['members']['size'] = array(
+	    'class' => 'ThumbnailImage',
+	    'type' => STORAGE_TYPE_INTEGER
+	);
     
-        $meta['members']['width'] = array(
-            'class' => 'ThumbnailImage',
-            'type' => STORAGE_TYPE_INTEGER
-        );
+	$meta['members']['width'] = array(
+	    'class' => 'ThumbnailImage',
+	    'type' => STORAGE_TYPE_INTEGER
+	);
     
-        $meta['members']['height'] = array(
-            'class' => 'ThumbnailImage',
-            'type' => STORAGE_TYPE_INTEGER
-        );
+	$meta['members']['height'] = array(
+	    'class' => 'ThumbnailImage',
+	    'type' => STORAGE_TYPE_INTEGER
+	);
     
-        $meta['members']['itemMimeTypes'] = array(
-            'class' => 'ThumbnailImage',
-            'type' => STORAGE_TYPE_STRING
-        );
+	$meta['members']['itemMimeTypes'] = array(
+	    'class' => 'ThumbnailImage',
+	    'type' => STORAGE_TYPE_STRING
+	);
     
-        return $meta;
+	return $meta;
     }
 
     /**
@@ -91,7 +91,7 @@ class ThumbnailImage extends ThumbnailImage_core {
      * @return array memberName => memberValue
      */
     function getMemberData() {
-        $data = parent::getMemberData();
+	$data = parent::getMemberData();
     
 	if (!isset($this->_fileName)) {
  	    $data['fileName'] = null;
@@ -129,7 +129,7 @@ class ThumbnailImage extends ThumbnailImage_core {
 	    $data['itemMimeTypes'] = $this->_itemMimeTypes;
 	}
 	
-        return $data;
+	return $data;
     }
   
 
@@ -140,7 +140,7 @@ class ThumbnailImage extends ThumbnailImage_core {
      * @return string class name
      */
     function getClassName() {
-        return 'ThumbnailImage';
+	return 'ThumbnailImage';
     }
 
     /** 
@@ -163,11 +163,11 @@ class ThumbnailImage extends ThumbnailImage_core {
     function getfileName() {
  	
 
-        if (!isset($this->_fileName)) {
-            return null;
-        }
+	if (!isset($this->_fileName)) {
+	    return null;
+	}
 
-        return $this->_fileName;
+	return $this->_fileName;
     }
 
     /**
@@ -176,23 +176,23 @@ class ThumbnailImage extends ThumbnailImage_core {
      * @param STRING the value
      */
     function setfileName($value) {
-        /* 
-         * Convert unset values to null, to avoid generating warnings.
-         */
+    
+	/* 
+	 * Convert unset values to null, to avoid generating warnings.
+	 */
 	$a = isset($value) ? $value : null;
 	$b = isset($this->_fileName) ? $this->_fileName : null;
 
+	/* 
+	 * Only take action if the value actually changes, but take care not to 
+	 * generate warnings for unset values.
+	 */
     
-        /* 
-         * Only take action if the value actually changes, but take care not to 
-         * generate warnings for unset values.
-         */
-    
-        if ($a != $b) {
+	if ($a != $b) {
       
-            $this->_fileName = $value;
-            $this->setModifiedFlag('fileName', MEMBER_MODIFIED);
-        }
+	    $this->_fileName = $value;
+	    $this->setModifiedFlag('fileName', MEMBER_MODIFIED);
+	}
     }
   
     /**
@@ -203,11 +203,11 @@ class ThumbnailImage extends ThumbnailImage_core {
     function getmimeType() {
  	
 
-        if (!isset($this->_mimeType)) {
-            return null;
-        }
+	if (!isset($this->_mimeType)) {
+	    return null;
+	}
 
-        return $this->_mimeType;
+	return $this->_mimeType;
     }
 
     /**
@@ -216,23 +216,23 @@ class ThumbnailImage extends ThumbnailImage_core {
      * @param STRING the value
      */
     function setmimeType($value) {
-        /* 
-         * Convert unset values to null, to avoid generating warnings.
-         */
+    
+	/* 
+	 * Convert unset values to null, to avoid generating warnings.
+	 */
 	$a = isset($value) ? $value : null;
 	$b = isset($this->_mimeType) ? $this->_mimeType : null;
 
+	/* 
+	 * Only take action if the value actually changes, but take care not to 
+	 * generate warnings for unset values.
+	 */
     
-        /* 
-         * Only take action if the value actually changes, but take care not to 
-         * generate warnings for unset values.
-         */
-    
-        if ($a != $b) {
+	if ($a != $b) {
       
-            $this->_mimeType = $value;
-            $this->setModifiedFlag('mimeType', MEMBER_MODIFIED);
-        }
+	    $this->_mimeType = $value;
+	    $this->setModifiedFlag('mimeType', MEMBER_MODIFIED);
+	}
     }
   
     /**
@@ -243,11 +243,11 @@ class ThumbnailImage extends ThumbnailImage_core {
     function getsize() {
  	
 
-        if (!isset($this->_size)) {
-            return null;
-        }
+	if (!isset($this->_size)) {
+	    return null;
+	}
 
-        return $this->_size;
+	return $this->_size;
     }
 
     /**
@@ -256,28 +256,28 @@ class ThumbnailImage extends ThumbnailImage_core {
      * @param INTEGER the value
      */
     function setsize($value) {
-        /* 
-         * Convert unset values to null, to avoid generating warnings.
-         */
+    
+	/* Type cast the incoming value to be an integer */
+	if ($value != null) {
+	    $value = (int)$value;
+	}
+      
+	/* 
+	 * Convert unset values to null, to avoid generating warnings.
+	 */
 	$a = isset($value) ? $value : null;
 	$b = isset($this->_size) ? $this->_size : null;
 
+	/* 
+	 * Only take action if the value actually changes, but take care not to 
+	 * generate warnings for unset values.
+	 */
     
-        /* Type case the incoming value to be an integer */
-        if ($value != null) {
-            $value = (int)$value;
-        }
+	if ($a !== $b) {
       
-        /* 
-         * Only take action if the value actually changes, but take care not to 
-         * generate warnings for unset values.
-         */
-    
-        if ($a !== $b) {
-      
-            $this->_size = $value;
-            $this->setModifiedFlag('size', MEMBER_MODIFIED);
-        }
+	    $this->_size = $value;
+	    $this->setModifiedFlag('size', MEMBER_MODIFIED);
+	}
     }
   
     /**
@@ -288,11 +288,11 @@ class ThumbnailImage extends ThumbnailImage_core {
     function getwidth() {
  	
 
-        if (!isset($this->_width)) {
-            return null;
-        }
+	if (!isset($this->_width)) {
+	    return null;
+	}
 
-        return $this->_width;
+	return $this->_width;
     }
 
     /**
@@ -301,28 +301,28 @@ class ThumbnailImage extends ThumbnailImage_core {
      * @param INTEGER the value
      */
     function setwidth($value) {
-        /* 
-         * Convert unset values to null, to avoid generating warnings.
-         */
+    
+	/* Type cast the incoming value to be an integer */
+	if ($value != null) {
+	    $value = (int)$value;
+	}
+      
+	/* 
+	 * Convert unset values to null, to avoid generating warnings.
+	 */
 	$a = isset($value) ? $value : null;
 	$b = isset($this->_width) ? $this->_width : null;
 
+	/* 
+	 * Only take action if the value actually changes, but take care not to 
+	 * generate warnings for unset values.
+	 */
     
-        /* Type case the incoming value to be an integer */
-        if ($value != null) {
-            $value = (int)$value;
-        }
+	if ($a !== $b) {
       
-        /* 
-         * Only take action if the value actually changes, but take care not to 
-         * generate warnings for unset values.
-         */
-    
-        if ($a !== $b) {
-      
-            $this->_width = $value;
-            $this->setModifiedFlag('width', MEMBER_MODIFIED);
-        }
+	    $this->_width = $value;
+	    $this->setModifiedFlag('width', MEMBER_MODIFIED);
+	}
     }
   
     /**
@@ -333,11 +333,11 @@ class ThumbnailImage extends ThumbnailImage_core {
     function getheight() {
  	
 
-        if (!isset($this->_height)) {
-            return null;
-        }
+	if (!isset($this->_height)) {
+	    return null;
+	}
 
-        return $this->_height;
+	return $this->_height;
     }
 
     /**
@@ -346,28 +346,28 @@ class ThumbnailImage extends ThumbnailImage_core {
      * @param INTEGER the value
      */
     function setheight($value) {
-        /* 
-         * Convert unset values to null, to avoid generating warnings.
-         */
+    
+	/* Type cast the incoming value to be an integer */
+	if ($value != null) {
+	    $value = (int)$value;
+	}
+      
+	/* 
+	 * Convert unset values to null, to avoid generating warnings.
+	 */
 	$a = isset($value) ? $value : null;
 	$b = isset($this->_height) ? $this->_height : null;
 
+	/* 
+	 * Only take action if the value actually changes, but take care not to 
+	 * generate warnings for unset values.
+	 */
     
-        /* Type case the incoming value to be an integer */
-        if ($value != null) {
-            $value = (int)$value;
-        }
+	if ($a !== $b) {
       
-        /* 
-         * Only take action if the value actually changes, but take care not to 
-         * generate warnings for unset values.
-         */
-    
-        if ($a !== $b) {
-      
-            $this->_height = $value;
-            $this->setModifiedFlag('height', MEMBER_MODIFIED);
-        }
+	    $this->_height = $value;
+	    $this->setModifiedFlag('height', MEMBER_MODIFIED);
+	}
     }
   
     /**
@@ -378,11 +378,11 @@ class ThumbnailImage extends ThumbnailImage_core {
     function getitemMimeTypes() {
  	
 
-        if (!isset($this->_itemMimeTypes)) {
-            return null;
-        }
+	if (!isset($this->_itemMimeTypes)) {
+	    return null;
+	}
 
-        return $this->_itemMimeTypes;
+	return $this->_itemMimeTypes;
     }
 
     /**
@@ -391,23 +391,23 @@ class ThumbnailImage extends ThumbnailImage_core {
      * @param STRING the value
      */
     function setitemMimeTypes($value) {
-        /* 
-         * Convert unset values to null, to avoid generating warnings.
-         */
+    
+	/* 
+	 * Convert unset values to null, to avoid generating warnings.
+	 */
 	$a = isset($value) ? $value : null;
 	$b = isset($this->_itemMimeTypes) ? $this->_itemMimeTypes : null;
 
+	/* 
+	 * Only take action if the value actually changes, but take care not to 
+	 * generate warnings for unset values.
+	 */
     
-        /* 
-         * Only take action if the value actually changes, but take care not to 
-         * generate warnings for unset values.
-         */
-    
-        if ($a != $b) {
+	if ($a != $b) {
       
-            $this->_itemMimeTypes = $value;
-            $this->setModifiedFlag('itemMimeTypes', MEMBER_MODIFIED);
-        }
+	    $this->_itemMimeTypes = $value;
+	    $this->setModifiedFlag('itemMimeTypes', MEMBER_MODIFIED);
+	}
     }
   
 }
