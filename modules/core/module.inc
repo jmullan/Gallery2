@@ -209,8 +209,6 @@ class CoreModule extends GalleryModule {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	
-	$classDir = dirname(__FILE__) . '/classes/';
-	
 	return GalleryStatus::success();
     }
 
