@@ -65,6 +65,7 @@ span { 1.0em } Font size for <span> (not inside <p>) is 10px
 	color: #bbb;
 	margin: 0;
 	padding: 8px;
+	border-top: 1px solid #ccc;
 }
 
 #gsSidebar, #gsAdminSidebar {
@@ -102,11 +103,9 @@ span { 1.0em } Font size for <span> (not inside <p>) is 10px
     padding: 0;
 }
 
-* html #gsAlbumContents { overflow: auto; } /* style for IE */
+/* html #gsAlbumContents { overflow: auto; }*/ /* style for IE */
 
-.gbExif {
-    padding: 8px 14px;
-}
+.gbExif { padding: 8px 14px; }
 
 /*      .gbDataTable	*/
 /*      count from 0 Ñ first row is even...     */
@@ -438,7 +437,9 @@ td.gbItemAlbum { background-color: #eee; }
 	padding: 0;
 }
 
-#gsSearchContents .gbItemImage img { border: 0px; }
+#gsSearchContents .gbItemImage img, #gsSearchContents .gbItemAlbum img { border: 0px; }
+
+#gsSearchContents .giTitle { margin: 0 14px; padding: 0; }
 
 /*	  #gsAdminContents	*/
 
@@ -647,21 +648,18 @@ discused the options of generating a table-based border (ie_test) and alistapart
 #SearchSystemContent { font-size: 1.1em; }
 
 
-.gbAdmin .button,
-.gbMenu .button,
-#gsSearchContents .button,
-.giMarkupBar .button, 
-.gbButtons .button,
-.giActionSelect .button {
+.button {
     margin: 0 3px 0 0;
     padding: 1px 3px; 
     color: #333; 
     background:#eee; 
-    border: 2px solid #eee; 
+    border: 2px solid #e7e7e7; 
     border-right: 2px solid #666; 
     border-bottom: 2px solid #666; 
     text-decoration: none; 
 }
+
+.gbBottomFlag .button { border-top-color: #fff; border-left-color: #fff; }
 
 .giMarkupBar { margin: 4px 0; }
 

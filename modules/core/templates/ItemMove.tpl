@@ -178,10 +178,10 @@
     </table>
 
     {if ($ItemMove.page > 1)}
-    <input type="submit" name="{g->formVar var="form[action][previous]"}" value="{g->text text="Previous Page"}"/>
+    <input type="submit" name="{g->formVar var="form[action][previous]"}" value="{g->text text="Previous Page"}" class="button"/>
     {/if}
     {if ($ItemMove.page < $ItemMove.numPages)}
-    <input type="submit" name="{g->formVar var="form[action][next]"}" value="{g->text text="Next Page"}"/>
+    <input type="submit" name="{g->formVar var="form[action][next]"}" value="{g->text text="Next Page"}" class="button"/>
     {/if}
   </div>
     
@@ -222,8 +222,8 @@
     {foreach from=$ItemMove.selectedIds item=selectedId}
     <input type="hidden" name="{g->formVar var="form[selectedIds][$selectedId]"}" value="on"/>
     {/foreach}
-    <input type="submit" name="{g->formVar var="form[action][move]"}" value="{g->text text="Move"}"/>
-    <input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
+    <input type="submit" name="{g->formVar var="form[action][move]"}" value="{g->text text="Move"}" class="button"/>
+    <input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}" class="button"/>
   </div>
   {else}
   <div class="gbAdmin">

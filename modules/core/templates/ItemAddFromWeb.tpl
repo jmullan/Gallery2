@@ -4,6 +4,7 @@
  * Gallery will look for that file first and use it if it exists
  * and when you upgrade, your changes will not get overwritten.
  *}
+<div class="gsContents">
 <div class="gbAdmin">
   {if !empty($form.webPageUrls)}
   <script type="text/javascript">
@@ -33,7 +34,7 @@
       {g->text text="URL"}
     </div>
 
-    <input type="text" size="80" name="{g->formVar var="form[webPage]"}" value="{$form.webPage}"/>
+    <input type="text" size="80" name="{g->formVar var="form[webPage]"}" value="{$form.webPage}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
     
     {if isset($form.error.webPage.missing)}
     <div class="giError">
@@ -67,7 +68,7 @@
   </ul>
   {/if}
 
-  <input type="submit" name="{g->formVar var="form[action][findFilesFromWebPage]"}" value="{g->text text="Find Files"}"/>
+  <input type="submit" name="{g->formVar var="form[action][findFilesFromWebPage]"}" value="{g->text text="Find Files"}" class="button"/>
   {else} {* {if empty($form.webPageUrls)} *}
   <b>
     {g->text text="URL: %s" arg1=$form.webPage}
@@ -110,6 +111,11 @@
     </tr>
     {/foreach}
   </table>
-  <input type="submit" name="{g->formVar var="form[action][addFromWebPage]"}" value="{g->text text="Add URLs"}"/>
+  <div class="gbBottomFlag">
+    <div class="gbButtons">
+      <input type="submit" name="{g->formVar var="form[action][addFromWebPage]"}" value="{g->text text="Add URLs"}"/>
+    </div>
+  </div>
   {/if} {* {if !empty($form.webPageUrls)} *}
+</div>
 </div>

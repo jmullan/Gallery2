@@ -26,7 +26,7 @@
     {/if}
     {/foreach}
     {/strip}
-    <input type="text" size="40" name="{g->formVar var="form[pathComponent]"}" value="{$form.pathComponent}"/>
+    <input type="text" size="40" name="{g->formVar var="form[pathComponent]"}" value="{$form.pathComponent}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
 
     {if !empty($form.error.pathComponent.invalid)}
     <div class="giError">
@@ -60,7 +60,7 @@
              viewL10domain="modules_core" 
 	     element="title"
 	     firstMarkupBar="true"}
-    <input id="title" type="text" size="40" name="{g->formVar var="form[title]"}" value="{$form.title}"/>
+    <input id="title" type="text" size="40" name="{g->formVar var="form[title]"}" value="{$form.title}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
   </div>
 
   <div class="gbDataEntry">
@@ -74,7 +74,7 @@
     {include file="gallery:modules/core/templates/MarkupBar.tpl" 
              viewL10domain="modules_core" 
 	     element="summary"}
-    <input id="summary" type="text" size="40" name="{g->formVar var="form[summary]"}" value="{$form.summary}"/>
+    <input id="summary" type="text" size="40" name="{g->formVar var="form[summary]"}" value="{$form.summary}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
   </div>
 
   <div class="gbDataEntry">
@@ -84,7 +84,7 @@
     <div class="giDescription">
       {g->text text="Keywords are not visible, but are searchable."}
     </div>
-    <textarea rows="2" cols="60" name="{g->formVar var="form[keywords]"}">{$form.keywords}</textarea>
+    <textarea rows="2" cols="60" name="{g->formVar var="form[keywords]"}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';">{$form.keywords}</textarea>
   </div>
 
   <div class="gbDataEntry">
@@ -97,12 +97,12 @@
     {include file="gallery:modules/core/templates/MarkupBar.tpl" 
              viewL10domain="modules_core" 
 	     element="description"}
-    <textarea id="description" rows="4" cols="60" name="{g->formVar var="form[description]"}">{$form.description}</textarea>
+    <textarea id="description" rows="4" cols="60" name="{g->formVar var="form[description]"}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';">{$form.description}</textarea>
   </div>
 </div>
 
 <div class="gbButtons">
-  <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}"/>
-  <input type="submit" name="{g->formVar var="form[action][undo]"}" value="{g->text text="Undo"}"/>
+  <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}" class="button"/>
+  <input type="submit" name="{g->formVar var="form[action][undo]"}" value="{g->text text="Undo"}" class="button"/>
 </div>
 

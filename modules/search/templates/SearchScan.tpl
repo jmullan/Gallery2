@@ -154,9 +154,11 @@
 	{/if}
 	
         <div class="gbBottomFlag">
+          <div class="gbButtons">
             {if $resultCount>0 && $SearchScan.slideshowAvailable}
             <input type="submit" name="{g->formVar var="form[action][slideshow]"}" value="{g->text text="View these results in a slideshow"}" class="button"/>
             {/if}
+          </div>
         </div>
       </div>  
     </form>

@@ -4,6 +4,7 @@
  * Gallery will look for that file first and use it if it exists
  * and when you upgrade, your changes will not get overwritten.
  *}
+<div class="gsContents">
 <div class="gbAdmin">
   {if !empty($form.localServerFiles)}
   <script type="text/javascript">
@@ -46,7 +47,7 @@
       {g->text text="Server Path"}
     </div>
 
-    <input type="text" size="80" name="{g->formVar var="form[localServerPath]"}" value="{$form.localServerPath}"/>
+    <input type="text" size="80" name="{g->formVar var="form[localServerPath]"}" value="{$form.localServerPath}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
 
     {if isset($form.error.localServerPath.missing)}
     <div class="giError">
@@ -100,7 +101,7 @@
     {/foreach}
   </ul>
   {/if}
-  <input type="submit" name="{g->formVar var="form[action][findFilesFromLocalServer]"}" value="{g->text text="Find Files"}"/>
+  <input type="submit" name="{g->formVar var="form[action][findFilesFromLocalServer]"}" value="{g->text text="Find Files"}" class="button"/>
 
   {else} {* {if empty($form.localServerFiles)} *}
   <b>
@@ -188,10 +189,12 @@
     {/foreach}
   </table>
 
-  <input type="submit" name="{g->formVar var="form[action][addFromLocalServer]"}" value="{g->text text="Add Files"}"/>
+  <div class="gbBottomFlag">
+    <div class="gbButtons">
+      <input type="submit" name="{g->formVar var="form[action][addFromLocalServer]"}" value="{g->text text="Add Files"}" class="button"/>
+    </div>
+  </div>
   {/if} {* {if !empty($form.localServerFiles)} *}
   {/if} {* {if empty($ItemAddFromServer.localServerDirList)} *}
 </div>
-
-
-
+</div>

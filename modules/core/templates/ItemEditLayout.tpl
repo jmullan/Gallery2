@@ -36,7 +36,7 @@
       </td>
       <td>
 	{if ($setting.type == 'text-field')}
-	<input type="text" size="6" name="{g->formVar var="form[key][$settingKey]"}" onkeypress="javascript:changeSetting('{$settingKey}')" value="{$form.key.$settingKey}"/>
+	<input type="text" size="6" name="{g->formVar var="form[key][$settingKey]"}" onkeypress="javascript:changeSetting('{$settingKey}')" value="{$form.key.$settingKey}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
 	{elseif ($setting.type == 'single-select')}
 	<select name="{g->formVar var="form[key][$settingKey]"}" onChange="javascript:changeSetting('{$settingKey}')">
 	    {html_options options=$setting.choices selected=$setting.value}
@@ -119,6 +119,8 @@
   </script>
 
  {/if}
- <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}"/>
- <input type="submit" name="{g->formVar var="form[action][undo]"}" value="{g->text text="Undo"}"/>
+</div>
+<div class="gbButtons">
+  <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}" class="button"/>
+  <input type="submit" name="{g->formVar var="form[action][undo]"}" value="{g->text text="Undo"}" class="button"/>
 </div>

@@ -47,9 +47,9 @@
 	{g->text text="New owner"}
       </div>
 
-      <input type="text" name="{g->formVar var="form[owner][ownerName]"}" value="{$form.owner.ownerName}"/>
+      <input type="text" name="{g->formVar var="form[owner][ownerName]"}" value="{$form.owner.ownerName}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
       <input type="hidden" name="{g->formVar var="form[serialNumber]"}" value="{$form.serialNumber}"/>
-      <input type="submit" name="{g->formVar var="form[action][changeOwner]"}" value="{g->text text="Change"}"/>
+      <input type="submit" name="{g->formVar var="form[action][changeOwner]"}" value="{g->text text="Change"}" class="button"/>
 
       {if !empty($form.error.owner.missingUser)}
       <div class="giError">
@@ -123,7 +123,7 @@
 	  {/if}
 
 	  {if ! empty($entry.deleteList)}
-	  <input type="submit" name="{g->formVar var="form[action][deleteGroupPermission][$index]"}" value="{g->text text="Remove"}"/>
+	  <input type="submit" name="{g->formVar var="form[action][deleteGroupPermission][$index]"}" value="{g->text text="Remove"}" class="button"/>
 	  {else}
 	  &nbsp;
 	  {/if}
@@ -139,13 +139,13 @@
       {g->text text="New Group Permission"}
     </div>
     
-    <input type="text" name="{g->formVar var="form[group][groupName]"}" value="{$form.group.groupName}"/>
+    <input type="text" name="{g->formVar var="form[group][groupName]"}" value="{$form.group.groupName}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
 	    
     <select name="{g->formVar var="form[group][permission]"}" size="1">
 	{html_options options=$ItemPermissions.allPermissions selected=$form.group.permission}
     </select>
 
-    <input type="submit" name="{g->formVar var="form[action][addGroupPermission]"}" value="{g->text text="Add Permission"}"/>
+    <input type="submit" name="{g->formVar var="form[action][addGroupPermission]"}" value="{g->text text="Add Permission"}" class="button"/>
 
     {if !empty($form.error.group.invalidPermission)}
     <div class="giError">
@@ -214,7 +214,7 @@
 	  &nbsp;
 	  {/if}
 	  {if ! empty($entry.deleteList) }
-	  <input type="submit" name="{g->formVar var="form[action][deleteUserPermission][$index]"}" value="{g->text text="Remove"}"/>
+	  <input type="submit" name="{g->formVar var="form[action][deleteUserPermission][$index]"}" value="{g->text text="Remove"}" class="button"/>
 	  {else}
 	  &nbsp;
 	  {/if}
@@ -230,13 +230,13 @@
       {g->text text="New User Permission"}
     </div>
 
-    <input type="text" name="{g->formVar var="form[user][userName]"}" value="{$form.user.userName}"/>
+    <input type="text" name="{g->formVar var="form[user][userName]"}" value="{$form.user.userName}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
 
     <select name="{g->formVar var="form[user][permission]"}" size="1">
 	{html_options options=$ItemPermissions.allPermissions selected=$form.user.permission}
     </select>
       
-    <input type="submit" name="{g->formVar var="form[action][addUserPermission]"}" value="{g->text text="Add Permission"}"/>
+    <input type="submit" name="{g->formVar var="form[action][addUserPermission]"}" value="{g->text text="Add Permission"}" class="button"/>
 
     {if !empty($form.error.user.invalidPermission)}
     <div class="giError">

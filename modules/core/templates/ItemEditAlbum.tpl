@@ -69,7 +69,7 @@
     {g->text text=" Every item requires a thumbnail. Set the default value in pixels here."}
   </div>
   
-  <input type="text" size="6" name="{g->formVar var="form[thumbnail][size]"}" value="{$form.thumbnail.size}"/>
+  <input type="text" size="6" name="{g->formVar var="form[thumbnail][size]"}" value="{$form.thumbnail.size}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
     
   {if !empty($form.error.thumbnail.size.invalid)}
   <div class="giError">
@@ -104,7 +104,7 @@
 	       {if $form.resizes.$index.active}checked="checked"{/if} />
       </td>
       <td>
-	<input type="text" size="6" name="{g->formVar var="form[resizes][$index][size]"}" value="{$form.resizes.$index.size}"/>
+	<input type="text" size="6" name="{g->formVar var="form[resizes][$index][size]"}" value="{$form.resizes.$index.size}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
       </td>
     </tr>
 
@@ -152,6 +152,6 @@
 </div>
 
 <div class="gbButtons">
-  <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}"/>
-  <input type="submit" name="{g->formVar var="form[action][undo]"}" value="{g->text text="Undo"}"/>
+  <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}" class="button"/>
+  <input type="submit" name="{g->formVar var="form[action][undo]"}" value="{g->text text="Undo"}" class="button"/>
 </div>

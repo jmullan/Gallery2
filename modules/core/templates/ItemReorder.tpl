@@ -52,8 +52,8 @@
   </div>
 
   <div class="gbButtons">
-    <input type="submit" name="{g->formVar var="form[action][reorder]"}" value="{g->text text="Reorder"}"/>
-    <input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
+    <input type="submit" name="{g->formVar var="form[action][reorder]"}" value="{g->text text="Reorder"}" class="button"/>
+    <input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}" class="button"/>
   </div>
   {/if}
 </div>
