@@ -520,6 +520,15 @@ class GalleryUtilities {
 	    $extensionMap['forward']['asf'] = 'video/x.ms.asf';
 	    
 	    $extensionMap['reverse'] = array_flip($extensionMap['forward']);
+
+	    $mimeMap = array();
+	    foreach ($extensionMap['forward'] as $ext => $mime) {
+		if (!isset($mimeMap[$mime])) {
+		    $mimeMap[$mime] = array();
+		}
+		$mimeMap[$mime][] = $ext;
+	    }
+	    $extensionMap['reverseToArray'] = $mimeMap;
 	}
 	
 	return $extensionMap;
@@ -546,8 +555,8 @@ class GalleryUtilities {
     /**
      * Convert a mime type to a file extension
      *
-     * @param string a file extension
-     * @return string a mime type 
+     * @param string a mime type
+     * @return string a file extension
      * @static
      */
     function convertMimeToExtension($mimeType) {
@@ -559,6 +568,17 @@ class GalleryUtilities {
 	} else {
 	    return $extensionMap['reverse'][$mimeType];
 	}
+    }
+
+    /**
+     * Return mime types and applicable file extensions
+     *
+     * @return array (string mime type => array(string extension))
+     * @static
+     */
+    function getMimeTypeMap() {
+	$extensionMap =& GalleryUtilities::_getExtensionMap();
+	return $extensionMap['reverseToArray'];
     }
 
     /**
