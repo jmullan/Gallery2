@@ -22,7 +22,7 @@
 	<table width="100%" border="0">
 	  <tr>
 	    <td>
-	      {galleryText text="If you know the username of you'd like to work with, you can enter it here."}
+	      {galleryText text="If you know the username you'd like to work with, you can enter it here."}
 	    </td>
 	  </tr>
 
