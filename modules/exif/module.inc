@@ -134,7 +134,7 @@ class ExifModule extends GalleryModule {
 	if ($mode == 'detailed') {
 	    $filter = EXIF_DETAILED;
 	} else {
-	    $filter = EXIF_SIMPLE;
+	    $filter = EXIF_SUMMARY;
 	}
 
 	list ($ret, $exifData) = ExifHelper::getExifData($path, $filter);
