@@ -8,7 +8,7 @@
   <div class="gbTopFlag">
     <div class="gbTitle">
       <h2 class="giTitle">
-        {g->text text="Self Registration Settings"}
+        {g->text text="Registration Settings"}
       </h2>
     </div>
   </div>
@@ -28,25 +28,19 @@
   {/if}
 
   <div class="gbAdmin">
-    <p class="giDescription">
-      {g->text text="Self Registration allows users to register for an account and optionally sends a confirmation email."}
-    </p>
-  </div>
-
-  <div class="gbAdmin">
     <h3> {g->text text="Confirmation Policy"} </h3>
     <p class="giDescription">
-     {g->text text="The Self Registration module can accept new registrations instantly or require the user to click a confirmation link in an email that is sent by the module."}
+     {g->text text="The Registration module can accept new user registrations instantly, require the user to click a confirmation link in an email that is sent by the module, or require account activation by a site administrator."}
     </p>
     
     <table style="admin_widgets">
       <tr>
 	<td>
-	  {g->text text="Choose your preferred policy:"}
+	  {g->text text="Choose policy:"}
 	</td>
 	<td>
-	  <select name="{g->formVar var="form[emailconfirmation]"}">
-	    {html_options options=$SelfRegistration.emailConfirmationList selected=$form.emailconfirmation}
+	  <select name="{g->formVar var="form[confirmation]"}">
+	    {html_options options=$SelfRegistration.emailConfirmationList selected=$form.confirmation}
 	  </select>
 	</td>
       </tr>
@@ -55,22 +49,10 @@
 
   <div class="gbAdmin">
     <h3> {g->text text="Email details"} </h3>
-    <p class="giDescription">
-      {g->text text="If you choose to send confirmation emails, please specify subject and sender as they should appear to the users."}
-    </p>
-    
     <table style="admin_widgets">
       <tr>
 	<td>
-	  {g->text text="Email Subject:"}
-	</td>
-	<td>
-	  <input type="text" name="{g->formVar var="form[subject]"}" value="{$form.subject}" size="30"/>
-	</td>
-      </tr>
-      <tr>
-	<td>
-	  {g->text text="Sender Email address (From):"}
+	  {g->text text="Sender(From) Email Address:"}
 	</td>
 	<td>
 	  <input type="text" name="{g->formVar var="form[from]"}" value="{$form.from}" size="30"/>
@@ -78,20 +60,32 @@
       </tr>
       <tr>
 	<td>
-	  {g->text text="Really send emails? ('No' for only pretending to do so):"}
+	  {g->text text="Confirmation Email Subject:"}
 	</td>
 	<td>
-	  <select name="{g->formVar var="form[reallysend]"}">
-	    {html_options options=$SelfRegistration.reallySendList selected=$form.reallysend}
-	  </select>
+	  <input type="text" name="{g->formVar var="form[subject]"}" value="{$form.subject}" size="30"/>
+	</td>
+      </tr>
+      <tr>
+	<td>
+	  {g->text text="Admin Email Subject:"}
+	</td>
+	<td>
+	  <input type="text" name="{g->formVar var="form[adminsubject]"}" value="{$form.adminsubject}" size="30"/>
+	</td>
+      </tr>
+      <tr>
+	<td colspan="2">
+	  <input type="checkbox" name="{g->formVar var="form[emailadmins]"}"{if $form.emailadmins} checked="checked"{/if}/>
+	  {g->text text="Email Site Administrators for all new registrations"}
 	</td>
       </tr>
     </table>
   </div>
 
   <div class="gbButtons">
-    <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}"/>
-    <input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Reset"}"/>
+    <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}" class="button"/>
+    <input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Reset"}" class="button"/>
   </div>
 
   {if $form.list.count>0}
@@ -130,6 +124,7 @@
 	<th> {g->text text="Username"} </th>
 	<th> {g->text text="Full Name"} </th>
 	<th> {g->text text="Email"} </th>
+	<th> {g->text text="Date"} </th>
 	<th> {g->text text="Action"} </th>
       </tr>
 
@@ -138,6 +133,7 @@
 	<td> {$user.userName} </td>
 	<td> {$user.fullName} </td>
 	<td> {$user.email} </td>
+	<td> {g->date timestamp=$user.creationTimestamp} </td>
 	<td>
 	  <div class="giHorizontalLinks">
 	    <span>

@@ -38,7 +38,7 @@ class RegisterModule extends GalleryModule {
 	$this->setId('register');
 	$this->setName('Registration');
 	$this->setDescription($gallery->i18n('New User Registration'));
-	$this->setVersion('0.5');
+	$this->setVersion('0.8');
 	$this->setGroup('gallery', $gallery->i18n('Gallery'));
     }
 
@@ -75,8 +75,10 @@ class RegisterModule extends GalleryModule {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
-	    foreach (array( 'emailconfirmation' => 'true',
+	    foreach (array( 'confirmation' => 'admin',
+			    'emailadmins' => 1,
 			    'subject' => $this->translate('Account activation'),
+			    'adminsubject' => $this->translate('New user registration'),
 			    'from' => 'webmaster@' . $_SERVER['SERVER_NAME'],
 			    'version' => $this->getVersion() )
 			 as $key => $value) {

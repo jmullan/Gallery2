@@ -72,7 +72,7 @@ class UserSelfRegistrationController extends GalleryController {
 	    * create the user.
 	    */
 	    if (!empty($form['userName']) &&
-			!empty($form['fullName']) && // added by S.E., 17.06.04
+			!empty($form['fullName']) &&
 			!empty($form['email']) &&
 			!empty($form['password1']) &&
 			$form['password1'] == $form['password2']) {
@@ -110,13 +110,13 @@ class UserSelfRegistrationController extends GalleryController {
 			
 		    /* send a confirmation email if activated in module settings */
 		    /* otherwise create the "real" user right now */
-		    list($ret, $sendConfirmation) = GalleryCoreApi::getPluginParameter(
-						'module', 'register', 'emailconfirmation');
+		    list($ret, $params) =
+			GalleryCoreApi::fetchAllPluginParameters('module', 'register');
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 
-		    if ($sendConfirmation != 'false') {
+		    if ($params['confirmation'] == 'email') {
 			/* send confirmation email */
 			$ret = GalleryPendingUserHelper::sendConfirmationEmail($user);
 			if ($ret->isError()) {
@@ -124,13 +124,22 @@ class UserSelfRegistrationController extends GalleryController {
 			}
 			$status['registeredUser'] = $form['userName'];
 
-		    } else {
+		    } else if ($params['confirmation'] == 'auto') {
 			/* turn the pending user into a real user right now */
 			$ret = GalleryPendingUserHelper::createGalleryUser($user);
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
 			$status['activatedUser'] = $form['userName'];
+		    } else { // confirmation == 'admin'
+			$status['registeredUserNoEmail'] = $form['userName'];
+		    }
+
+		    if ($params['emailadmins']) {
+			$ret = GalleryPendingUserHelper::sendAdminEmail($user);
+			if ($ret->isError()) {
+			    return array($ret->wrap(__FILE__, __LINE__), null);
+			}
 		    }
 		    /* end of added part */
 			

@@ -46,7 +46,9 @@ class AdminSelfRegistrationController extends GalleryController {
 	$status = array();
 	if (isset($form['action']['save'])) {
 
-	    foreach (array('emailconfirmation', 'subject', 'from', 'reallysend') as $key) {
+	    $form['emailadmins'] = isset($form['emailadmins']) ? 1 : 0;
+	    foreach (array('confirmation', 'emailadmins', 'adminsubject', 'subject', 'from')
+		    as $key) {
 		if (isset($form[$key])) {
 		    $ret = GalleryCoreApi::setPluginParameter(
 					   'module', 'register', $key, trim($form[$key]));
@@ -124,7 +126,8 @@ class AdminSelfRegistrationView extends GalleryView {
 
 	/* Load our default values if we didn't just come from this form. */
 	if ($form['formName'] != 'AdminSelfRegistration') {
-	    foreach (array('emailconfirmation', 'subject', 'from', 'reallysend') as $key) {
+	    foreach (array('confirmation', 'emailadmins', 'adminsubject', 'subject', 'from')
+		    as $key) {
 		list ($ret, $form[$key]) =
 		    GalleryCoreApi::getPluginParameter('module', 'register', $key);
 		if ($ret->isError()) {
@@ -161,8 +164,9 @@ class AdminSelfRegistrationView extends GalleryView {
 
 	$selfregistration = array();
 	$selfregistration['emailConfirmationList'] = array(
-	    'true' => $module->translate('Use confirmation emails'),
-	    'false' => $module->translate('Accept without confirmation') );
+	    'admin' => $module->translate('Activation by administrator'),
+	    'email' => $module->translate('Use confirmation emails'),
+	    'auto' => $module->translate('Accept without confirmation') );
 	$selfregistration['reallySendList'] = array(
 	    'true' => $module->translate('Yes'), 'false' => $module->translate('No') );
 	$template->setVariable('SelfRegistration', $selfregistration);

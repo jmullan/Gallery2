@@ -23,7 +23,7 @@
  * @version $Revision$ $Date$
  * @package SelfRegistration
  * @subpackage PHPUnit
- * @author Sebastian Eichner <mailsp@sebastian-eichner.de>
+ * @author Sebastian Eichner <mailsp@sebastian-eichner.de>, Alan Harder <alan.harder@sun.com>
  */
 
 
@@ -40,7 +40,7 @@ class AdminSelfRegistrationControllerTest extends GalleryControllerTestCase {
     function AdminSelfRegistrationControllerTest($methodName) {
 	$this->GalleryControllerTestCase($methodName, 'register:AdminSelfRegistration');
 
-	$this->paramNames = array('emailconfirmation', 'subject', 'from', 'reallysend');
+	$this->paramNames = array('confirmation', 'emailadmins', 'adminsubject', 'subject', 'from');
     }
 
     function setUp() {
@@ -97,9 +97,10 @@ class AdminSelfRegistrationControllerTest extends GalleryControllerTestCase {
 
     function testAdminSelfRegistrationControllerSave() {
 
-	GalleryUtilities::putRequestVariable('form[emailconfirmation]', 'true');
+	GalleryUtilities::putRequestVariable('form[confirmation]', 'email');
 	GalleryUtilities::putRequestVariable('form[from]', 'tester@nobody.org');
 	GalleryUtilities::putRequestVariable('form[subject]', 'Testmail');
+	GalleryUtilities::putRequestVariable('form[adminsubject]', 'Testmail');
 	GalleryUtilities::putRequestVariable('form[action][save]', '1');
 
 	$results = $this->handleRequest();
@@ -113,9 +114,11 @@ class AdminSelfRegistrationControllerTest extends GalleryControllerTestCase {
     
 	GalleryDataCache::reset();
 
-	$valueMap = array('emailconfirmation'=>'true',
+	$valueMap = array('confirmation'=>'email',
 		'from' => 'tester@nobody.org',
 		'subject' => 'Testmail',
+		'adminsubject' => 'Testmail',
+		'emailadmins' => '0',
 	);
 	foreach ($valueMap as $key => $expectedValue) {
 	    list ($ret, $realValue) = GalleryCoreApi::getPluginParameter('module', 'register', $key);

@@ -15,19 +15,25 @@
 
   <div class="gbAdmin">
 
-  {if isset($status.registeredUser)}
+  {if isset($status.registeredUser) || isset($status.registeredUserNoEmail)}
     <div class="gbDataEntry">
       <span>
 	{g->text text="Your registration was successful."}
       </span>
     </div>
     <div class="gbDataEntry">
+      {if isset($status.registeredUserNoEmail)}
+      <span>
+	{g->text text="Your registration will be processed and your account activated soon."}
+      </span>
+      {else}
       <span>
 	{g->text text="You will shortly receive an email containing a link. You have to click this link to confirm and activate your account."}
       </span>
       <span>
 	{g->text text="This procedure is necessary to prevent account abuse."}
       </span>
+      {/if}
     </div>
 
   {elseif isset($status.activatedUser)}
