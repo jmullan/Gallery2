@@ -145,7 +145,7 @@
 	{/g->title}
 
 	{g->description}
-	  {g->text text="The ImageMagick module can support files with the following MIME types"}
+	  {g->text text="The NetPBM module can support files with the following MIME types"}
 	{/g->description}
 	
 	{g->element}
