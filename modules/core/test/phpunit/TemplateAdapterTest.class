@@ -75,17 +75,17 @@ class TemplateAdapterTest extends GalleryTestCase {
     }
     function testSafeCssName1() {
 	$string = 'core:ItemAdmin';
-	$result = GalleryTemplateAdapter::safeCssName($string);
+	$result = GalleryTemplateAdapter::_safeCssName($string);
 	$this->assertEquals('core_ItemAdmin', $result);
     }
     function testSafeCssName2() {
 	$string = 'core::ItemAdmin';
-	$result = GalleryTemplateAdapter::safeCssName($string);
+	$result = GalleryTemplateAdapter::_safeCssName($string);
 	$this->assertEquals('core_ItemAdmin', $result);
     }
     function testSafeCssName3() {
 	$string = '.;-_monkey';
-	$result = GalleryTemplateAdapter::safeCssName($string);
+	$result = GalleryTemplateAdapter::_safeCssName($string);
 	$this->assertEquals('_monkey', $result);
     }
 }
