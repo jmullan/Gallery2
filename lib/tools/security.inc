@@ -44,7 +44,6 @@ $gallery = new GalleryStub();
 
 /* Load config.php */
 if (file_exists(dirname(__FILE__) . '/../../config.php')) {
-    require_once(dirname(__FILE__) . '/../../modules/core/classes/GalleryUtilities.class');
     include(dirname(__FILE__) . '/../../config.php');
 } else {
     include(dirname(__FILE__) . '/messages/messageHeader.inc');

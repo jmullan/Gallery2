@@ -25,6 +25,8 @@
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
+GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryUtilities.class');
+
 /**
  * Url Generator
  *
@@ -580,7 +582,7 @@ class GalleryUrlGenerator {
 		}
 	    }
 	}
-	
+
 	/* Force direct-g2 url for core:DownloadItem view, even if embedded: */
 	if (isset($params['view']) && $params['view'] == 'core:DownloadItem'
 		&& !isset($params['href'])) {
