@@ -38,10 +38,10 @@ class CartModule extends GalleryModule /* and GalleryEventListener */ {
 	$this->setId('cart');
 	$this->setName('Cart');
 	$this->setDescription($gallery->i18n('Shopping Cart Module'));
-	$this->setVersion('0.8.7');
+	$this->setVersion('0.8.8');
 	$this->setGroup('commerce', $this->translate('Commerce'));
 	$this->setCallbacks('getItemLinks|loadSystemContent|registerEventListeners');
-	$this->setRequiredCoreApi(array(3, 0));
+	$this->setRequiredCoreApi(array(4, 0));
 	$this->setRequiredModuleApi(array(0, 9));
     }
 

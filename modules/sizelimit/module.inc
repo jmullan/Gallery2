@@ -39,10 +39,10 @@ class SizeLimitModule extends GalleryModule {
         $this->setId('sizelimit');      /* this must match the directory name */
         $this->setName('Size Limit');   /* this is the module name            */
         $this->setDescription($gallery->i18n('Define picture size limit'));
-        $this->setVersion('0.8.7');
+        $this->setVersion('0.8.8');
         $this->setGroup('display', $gallery->i18n('Display'));
         $this->setCallbacks('registerEventListeners');
-        $this->setRequiredCoreApi(array(3, 0));
+        $this->setRequiredCoreApi(array(4, 0));
         $this->setRequiredModuleApi(array(0, 9));
     }
 

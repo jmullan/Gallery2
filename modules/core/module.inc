@@ -38,13 +38,13 @@ class CoreModule extends GalleryModule {
 	$this->setId('core');
 	$this->setName('Core');
 	$this->setGalleryVersion('2.0-alpha-4+');
-	$this->setVersion('0.8.15');
+	$this->setVersion('0.8.16');
 	$this->setDescription($gallery->i18n('Gallery 2 Core Module'));
 	$this->setGroup('gallery', $this->translate('Gallery'));
 	$this->setCallbacks('registerEventListeners|' .
 			    'getItemLinks|getSystemLinks|loadSystemContent|' .
 			    'getSiteAdminViews|getUserAdminViews|getItemAdminViews');
-	$this->setRequiredCoreApi(array(3, 4));
+	$this->setRequiredCoreApi(array(4, 0));
 	$this->setRequiredModuleApi(array(0, 9));
     }
 

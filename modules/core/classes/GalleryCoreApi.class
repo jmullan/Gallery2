@@ -54,8 +54,7 @@ class GalleryCoreApi {
      * @return array major number, minor number
      */
     function getApiVersion() {
-	/* TODO: on the next major version change, delete GalleryCoreApi::fetchLayout() */
-	return array(3, 4);
+	return array(4, 0);
     }
 
     /**
@@ -1187,8 +1186,7 @@ class GalleryCoreApi {
 
     /**
      * Return the correct layout for this item.  If the appropriate layout cannot be loaded,
-     * we fall back on the default.  And if that can't be loaded, then we return
-     * null.
+     * we fall back on the default.  And if that can't be loaded, then we return null.
      *
      * @param object GalleryItem
      * @return array object GalleryStatus a status code
@@ -1450,83 +1448,6 @@ class GalleryCoreApi {
     function fetchAlbumTree($itemId=null, $depth=null) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryItemHelper_advanced.class');
 	return GalleryItemHelper_advanced::fetchAlbumTree($itemId, $depth);
-    }
-
-    /**
-     * Remove the specific item/key pair
-     *
-     * @param int the id of the GalleryItem
-     * @return object GalleryStatus a status code
-     * @static
-     */
-    function removeItemProperty($itemId, $key) {
-	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryItemHelper_advanced.class');
-	return GalleryItemHelper_advanced::removeProperty($itemId, $key);
-    }
-
-    /**
-     * Change the specific item/key pair
-     *
-     * @param int the id of the GalleryItem
-     * @param string the name of the property
-     * @param string the value of the proprety
-     * @return object GalleryStatus a status code
-     * @static
-     */
-    function setItemProperty($itemId, $key, $value) {
-	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryItemHelper_advanced.class');
-	return GalleryItemHelper_advanced::setProperty($itemId, $key, $value);
-    }
-
-    /**
-     * Remove all properties for the given item id
-     *
-     * @param int the id of the GalleryItem
-     * @return object GalleryStatus a status code
-     * @static
-     */
-    function removeItemProperties($itemId) {
-	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryItemHelper_advanced.class');
-	return GalleryItemHelper_advanced::removeProperties($itemId);
-    }
-
-    /**
-     * Return a list of all the property keys for this item
-     *
-     * @return array object GalleryStatus a status code
-     *               array property keys
-     * @static
-     */
-    function fetchItemPropertyKeys($itemId) {
-	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryItemHelper_advanced.class');
-	return GalleryItemHelper_advanced::fetchPropertyKeys($itemId);
-    }
-
-    /**
-     * Get the value for a specific property
-     *
-     * @param int the id of the GalleryItem
-     * @param string the desired key
-     * @return array object GalleryStatus a status code
-     *               string value
-     * @static
-     */
-    function fetchItemProperty($itemId, $key) {
-	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryItemHelper_advanced.class');
-	return GalleryItemHelper_advanced::fetchProperty($itemId, $key);
-    }
-
-    /**
-     * Get all the key/values for a specific GalleryItem
-     *
-     * @param int the id of the GalleryItem
-     * @return array object GalleryStatus a status code
-     *               array key => value pairs
-     * @static
-     */
-    function fetchAllItemProperties($itemId) {
-	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryItemHelper_advanced.class');
-	return GalleryItemHelper_advanced::fetchAllProperties($itemId);
     }
 
     /**
@@ -2353,24 +2274,6 @@ class GalleryCoreApi {
     function postToWebPage($url, $postDataArray, $extraHeaders=array()) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/WebHelper_simple.class');
 	return WebHelper_simple::postToWebPage($url, $postDataArray, $extraHeaders);
-    }
-
-
-    /**
-     * OBSOLETE!  This should get deleted in the next major GalleryCoreApi revision.
-     *
-     * Return the correct layout for this item.  If the appropriate layout cannot be loaded,
-     * we fall back on the default.  And if that can't be loaded, then we return
-     * null.
-     *
-     * @param object GalleryItem
-     * @return array object GalleryStatus a status code
-     *               object GalleryLayout a layout instance
-     * @static
-     */
-    function fetchLayout($item) {
-	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryItemHelper_simple.class');
-	return GalleryItemHelper_simple::fetchLayout($item);
     }
 
     /**

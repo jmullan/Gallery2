@@ -181,7 +181,7 @@ class CoreModuleExtras {
 		}
 	    }
 
-	    $currentVersion = '0.8.15';
+	    $currentVersion = '0.8.16';
 	    break;
 
 	case '0.8':
@@ -319,6 +319,22 @@ class CoreModuleExtras {
 	case '0.8.14':
 	    /* Added Entity::onLoadHandlers; default all values to null, so nothing to do */
 	    $currentVersion = '0.8.15';
+	    /* fall through */
+
+	case '0.8.15':
+	    /* Removed GalleryItemPropertiesMap.. drop the table */
+	    $storage =& $gallery->getStorage();
+
+	    $query = '
+	    DROP TABLE [GalleryItemPropertiesMap]
+	    ';
+
+	    $ret = $storage->execute($query);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    $currentVersion = '0.8.16';
 	    break;
 
 	default:

@@ -312,13 +312,13 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 
 	/* Delete any children */
 	$query = '
-        SELECT
-          [GalleryChildEntity::id]
-        FROM
-          [GalleryChildEntity]
-        WHERE
-          [GalleryChildEntity::parentId] = ?
-        ';
+	SELECT
+	  [GalleryChildEntity::id]
+	FROM
+	  [GalleryChildEntity]
+	WHERE
+	  [GalleryChildEntity::parentId] = ?
+	';
 	list ($ret, $searchResults) =
 	    $gallery->search($query, array($this->getId()));
 	if ($ret->isError()) {
@@ -328,10 +328,11 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	while ($result = $searchResults->nextResult()) {
 	    $ret = GalleryCoreApi::deleteEntityById($result[0]);
 	    /*
-	     * Deletes can cascade in interesting ways.  For example, deleting a derivative will get rid of
-	     * any other derivatives that are sourced to it, so it's possible that deleting children here can
-	     * lead to a MISSING_OBJECT result unless we re-run the parent/child query each time.  Easier to
-	     * just ignore the MISSING_OBJECT error since we only care that it's gone.
+	     * Deletes can cascade in interesting ways.  For example, deleting a derivative will
+	     * get rid of any other derivatives that are sourced to it, so it's possible that
+	     * deleting children here can lead to a MISSING_OBJECT result unless we re-run the
+	     * parent/child query each time.  Easier to just ignore the MISSING_OBJECT error
+	     * since we only care that it's gone.
 	     */
 	    if ($ret->isError() && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
 		return $ret->wrap(__FILE__, __LINE__);
@@ -345,20 +346,14 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	}
 
 	/* Remove all my properties, permissions, view counts */
-	$ret1 = GalleryCoreApi::removeItemProperties($this->getId());
-	$ret2 = GalleryCoreApi::removeItemPermissions($this->getId());
-	$ret3 = GalleryCoreApi::removeItemAttributes($this->getId());
+	$ret1 = GalleryCoreApi::removeItemPermissions($this->getId());
+	$ret2 = GalleryCoreApi::removeItemAttributes($this->getId());
 
 	if ($ret1->isError()) {
 	    return $ret1->wrap(__FILE__, __LINE__);
 	}
-
 	if ($ret2->isError()) {
 	    return $ret2->wrap(__FILE__, __LINE__);
-	}
-
-	if ($ret3->isError()) {
-	    return $ret3->wrap(__FILE__, __LINE__);
 	}
 
 	if ($this->getParentId()) {
@@ -388,8 +383,8 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	}
 
 	$event = GalleryCoreApi::newEvent('Gallery::ViewableTreeChange');
-	$event->setData(array('userId' => null, 'itemId' => empty($parentId) ? $this->getParentId()
-							   : array($parentId, $this->getParentId())));
+	$event->setData(array('userId' => null, 'itemId' =>
+	    empty($parentId) ? $this->getParentId() : array($parentId, $this->getParentId())));
 	list ($ret) = GalleryCoreApi::postEvent($event);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);

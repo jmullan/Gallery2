@@ -38,10 +38,10 @@ class ShutterflyModule extends GalleryModule {
 	$this->setId('shutterfly');
 	$this->setName('Shutterfly');
 	$this->setDescription($gallery->i18n('Shutterfly Photo Printing Module'));
-	$this->setVersion('0.6.0');
+	$this->setVersion('0.6.1');
 	$this->setGroup('commerce', $this->translate('Commerce'));
 	$this->setCallbacks('getItemLinks');
-	$this->setRequiredCoreApi(array(3, 0));
+	$this->setRequiredCoreApi(array(4, 0));
 	$this->setRequiredModuleApi(array(0, 9));
     }
 
