@@ -315,6 +315,10 @@ class ImageMagickToolkitTestPlatform {
 				      'test.tif[3] TIFF 50x50+0+0 DirectClass 8-bit 7.8k 0.000u 0:01'));
 	    } else if (strstr($cmd[0][1], 'test.gif')) {
 		return array(1, array('test.gif GIF 50x50+0+0 PseudoClass 8c 8-bit 232.0 0.000u 0:01'));
+	    } else if ($cmd[0][1] == 'testPerformOperations1.gif') {
+		return array(1, array('testPerformOperations1.gif GIF 300x400+0+0 PseudoClass 8c 8-bit 232.0 0.000u 0:01'));
+	    } else if ($cmd[0][1] == 'testPerformOperations4.jpg') {
+		return array(1, array('testPerformOperations1.jpg GIF x100x200+0+0 PseudoClass 8c 8-bit 232.0 0.000u 0:01'));
 	    }
 	    break;
 

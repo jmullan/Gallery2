@@ -318,6 +318,20 @@ class NetPbmToolkitTestPlatform {
 	    return array(1, array('stdin:  Image 0:        PGM raw, 30 by 40  maxval 255'));
 	}
 
+	if (serialize($cmd) ==
+	    serialize(array(array($this->_netPbmPath . 'giftopnm', '--quiet', 'testPerformOperations1.gif'),
+			    array($this->_netPbmPath . 'pnmfile', '--allimages')))) {
+
+	    return array(1, array('stdin:  Image 0:        PGM raw, 100 by 200  maxval 255'));
+	}
+
+	if (serialize($cmd) ==
+	    serialize(array(array($this->_netPbmPath . 'jpegtopnm', '--quiet', 'testPerformOperations4.jpg'),
+			    array($this->_netPbmPath . 'pnmfile', '--allimages')))) {
+
+	    return array(1, array('stdin:  Image 0:        PGM raw, 200 by 300  maxval 255'));
+	}
+	
 	switch($cmd[0][0]) {
 	case '/validPath/giftopnm':
 	case '/validPath/ppmtogif':
