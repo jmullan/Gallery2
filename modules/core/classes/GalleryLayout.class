@@ -590,7 +590,9 @@ class GalleryLayout {
 	// -------------------------------------------------------------------------------------
 	// 'systemLinks', 'systemContentFiles', 'itemLinks', 'itemSummaries', 'itemDetailFiles'
 	// Load links and content from all active modules
-	if (isset($load['systemLinks']) || isset($load['systemContentFiles'])) {
+	if (isset($load['systemLinks']) || isset($load['systemContentFiles'])
+		|| isset($load['itemLinks']) || isset($load['itemSummaries'])
+		|| isset($load['itemDetailFiles'])) {
 	    if (isset($load['systemLinks'])) {
 		$layout['systemLinks'] = array();
 	    }
