@@ -55,7 +55,7 @@ class SystemChecksStep extends InstallStep {
 	// assert compatible version of PHP
 	if (!function_exists('version_compare') || version_compare(phpversion(), '4.1.0') < 0) {
 	    $templateData['check'][] =
-		array('title' => _('PHP Version'),
+		array('title' => _('PHP version >= 4.1.0'),
 		      'error' => true,
 		      'notice' => sprintf(_("Error: Gallery 2 requires PHP version 4.1.0 or newer. You have PHP version %s installed. Contact your webserver administrator to request an upgrade, available at the <a href=\"http://php.net/\">PHP website</a>."), phpversion()));
 	    $failCount++;
@@ -67,7 +67,7 @@ class SystemChecksStep extends InstallStep {
 	// assert that __FILE__ works correctly
 	if (!SystemChecksStep::CheckFileDirective()) {
 	    $templateData['check'][] =
-		array('title' => _('FILE Directive'),
+		array('title' => _('FILE directive supported'),
 		      'error' => true,
 		      'notice' => _('Error: your PHP __FILE__ directive is not functioning correctly. Please file a support request with your webserver administrator or in the Gallery forums.'));
 	    $failCount++;
@@ -79,7 +79,7 @@ class SystemChecksStep extends InstallStep {
 	// Make sure that safe mode is not enabled
 	if ((bool)ini_get('safe_mode')) {
 	    $templateData['check'][] =
-		array('title' => _('Safe Mode'),
+		array('title' => _('Safe mode disabled'),
 		      'error' => true,
 		      'notice' => _('Error: Your version of PHP is configured with safe mode enabled.  You must disable safe mode before Gallery will run.'));
 	    $failCount++;
@@ -91,14 +91,14 @@ class SystemChecksStep extends InstallStep {
 	// Make sure session.auto_start is OFF during the installer
 	if ((bool)ini_get('session.auto_start')) {
 	    $templateData['check'][] =
-		array('title' => _('Session Auto-Start Off'),
+		array('title' => _('Session auto-start disabled'),
 		      'error' => true,
 		      'notice' => _('Error: Your PHP is configured to auto-start sessions (session.auto_start = 1 in php.ini). Please turn that feature off before continuing with the installer.'));
 	    $suggestedHtaccess[] = 'php_value session.auto_start 0';
 	    $failCount++;
 	} else {
 	    $templateData['check'][] =
-		array('title' => _('Session Auto-Start'), 'success' => true);
+		array('title' => _('Session Auto-Start disabled'), 'success' => true);
 	}
 
 	// Warning when exec() is disabled
@@ -115,7 +115,7 @@ class SystemChecksStep extends InstallStep {
 	
 	// Warning if memory_limit is set and is too low
 	$memoryLimit = ini_get('memory_limit');
-	$title = sprintf('%s (%s)', _('Memory Limit'), ($memoryLimit == '' ? 'no limit' : $memoryLimit . 'b'));
+	$title = sprintf('%s (%s)', _('Memory limit'), ($memoryLimit == '' ? 'no limit' : $memoryLimit . 'b'));
 	$minimumMemoryLimit = 16;
 	if ($memoryLimit != '' && ($this->_getBytes($memoryLimit) / (1024 * 1024)) < $minimumMemoryLimit) {
 	    $templateData['check'][] =
@@ -132,18 +132,18 @@ class SystemChecksStep extends InstallStep {
 	// Warning if file_uploads are not allowed
 	if (! (bool)ini_get('file_uploads')) {
 	    $templateData['check'][] =
-		array('title' => 'File Uploads Allowed',
+		array('title' => 'File uploads allowed',
 		      'warning' => true,
 		      'notice' => _('Warning: Your PHP is configured not to allow file uploads (<b>file_uploads</b> parameter in php.ini). You will need to enable this option if you want to upload files to your Gallery with a web browser.'),
 		);
 	    $suggestedHtaccess[] = 'php_flag file_uploads on';
 	} else {
 	    $templateData['check'][] =
-		array('title' => 'File Uploads Allowed', 'success' => true);
+		array('title' => 'File uploads allowed', 'success' => true);
 	}
 
 	// Warning if upload_max_filesize is less than 2M
-	$title = sprintf('%s (%sb)', _('Maximum Upload Size'), ini_get('upload_max_filesize'));
+	$title = sprintf('%s (%sb)', _('Maximum upload size'), ini_get('upload_max_filesize'));
 	$minimumUploadsize = 2;
 	$uploadSize = $this->_getBytes(ini_get('upload_max_filesize')) / (1024 * 1024);
 	if ($uploadSize < $minimumUploadsize) {
@@ -159,7 +159,7 @@ class SystemChecksStep extends InstallStep {
 	}
 
 	// Warning if post_max_size is less than 2M
-	$title = sprintf('%s (%sb)', _('Maximum POST Size'), ini_get('post_max_size'));
+	$title = sprintf('%s (%sb)', _('Maximum POST size'), ini_get('post_max_size'));
 	$minimumPostsize = 2;
 	if ((int)ini_get('post_max_size') < $minimumPostsize) {
 	    $templateData['check'][] =
@@ -174,7 +174,7 @@ class SystemChecksStep extends InstallStep {
 	}
 
 	// Check all files against MANIFEST
-	$title = _('File Integrity');
+	$title = _('Gallery file integrity');
 	if (SystemChecksStep::CheckFileDirective()) {
 	    $warnings = SystemChecksStep::CheckManifest();
 	} else {
@@ -224,15 +224,34 @@ class SystemChecksStep extends InstallStep {
 	}
 	$warnings = array();
 	foreach ($manifest as $file => $info) {
+	    if ($file == 'MANIFEST') {
+		continue;
+	    }
+	    
 	    $path = $base . $file;
 	    if (!file_exists($path)) {
-		$warnings['missing'][] = SystemChecksStep::_abbreviateInSpan($file, 60);
+		$warnings['missing'][] = $this->_abbreviateInSpan($file, 60);
 	    } else {
-		$lines = @file($path);
-		$actualChecksum = sprintf('%u', crc32(join('', $lines)));
-		if ($actualChecksum != $info['checksum']) {
-		    $warnings['corrupt'][] = SystemChecksStep::_abbreviateInSpan($file, 60);
+		/*
+		 * Use size comparison instead of checksum for speed.  We have
+		 * two sizes, one calculated with unix eols, one with windows
+		 * eols.
+		 */
+		$actualSize = filesize($path);
+		if ($actualSize != $info['size'] && $actualSize != $info['size_crlf']) {
+		    # This can be useful debug info
+		    if (false) {
+			printf("%s (expected: %s/%s, actual: %s)<br/>", $file,
+			       $info['size'], $info['size_crlf'], $actualSize);
+		    }
+		    $warnings['corrupt'][] = $this->_abbreviateInSpan($file, 60);
 		}
+	    }
+
+	    // Abort if things get out of hand
+	    if (sizeof($warnings['missing']) > 30 ||
+		sizeof($warnings['corrupt']) > 30) {
+		break;
 	    }
 	}
 	return $warnings;
