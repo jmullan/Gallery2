@@ -113,7 +113,7 @@ class CoreModuleTest extends GalleryTestCase {
 					'view' => 'core:ItemMove',
 					'itemId' => $this->_parentAlbum->getParentId(),
 					'selectedId' => $this->_parentAlbum->getId()),
-				  array('name' => $this->_module->translate('Permissions'),
+				  array('name' => $this->_module->translate('Edit Permissions'),
 					'view' => 'core:ItemPermissions'),
 				  array('name' => $this->_module->translate('Add Items'),
 					'view' => 'core:ItemAdd'),
@@ -191,7 +191,7 @@ class CoreModuleTest extends GalleryTestCase {
 					   'subView' => 'core:ItemAddAlbum',
 					   'itemId' => $this->_parentAlbum->getId(),
 					   ));
-	$links[] = array('text' => $this->_module->translate('permissions'),
+	$links[] = array('text' => $this->_module->translate('edit permissions'),
 			 'params' => array(
 					   'view' => 'core:ItemAdmin',
 					   'subView' => 'core:ItemPermissions',

@@ -813,7 +813,7 @@ class CoreModule extends GalleryModule {
 	}
 	
 	if (isset($permissions['core.changePermissions'])) {
-	    $views[] = array('name' => $this->translate('Permissions'),
+	    $views[] = array('name' => $this->translate('Edit Permissions'),
 			     'view' => 'core:ItemPermissions');
 	}
 	
