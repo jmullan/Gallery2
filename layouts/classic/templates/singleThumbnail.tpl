@@ -1,7 +1,7 @@
-  <a href="{galleryUrl view=core:ShowItem itemId=$child.id}">
-    {if !empty($child.thumbnail)}
-    {assign var="thumbnail" value=$child.thumbnail}
-    <img src="{galleryUrl view=core:DownloadItem itemId=$thumbnail.id}"
+    <a href="{galleryUrl view=core:ShowItem itemId=$child.id}">
+      {if !empty($child.thumbnail)}
+      {assign var="thumbnail" value=$child.thumbnail}
+      <img src="{galleryUrl view=core:DownloadItem itemId=$thumbnail.id}"
       {if ($thumbnail.width && $thumbnail.height)}
       width="{$thumbnail.width}"
       height="{$thumbnail.height}"
@@ -13,7 +13,9 @@
       {/if}
       border="0"
       >
-    {else}
-    {$child.id}
-    {/if}
-  </a>
+      {else}
+      <br>
+      <i>{galleryText text="No thumbnail"}</i>
+      <br>
+      {/if}
+    </a>

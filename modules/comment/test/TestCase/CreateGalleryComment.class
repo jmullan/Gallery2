@@ -16,7 +16,7 @@ class CreateGalleryCommentTestCase extends TestCase {
 	}
 	
 	/* Create the comment */
-	list ($ret, $comment) = $gallery->newEntity("GalleryComment");
+	list ($ret, $comment) = GalleryFactory::newInstance('GalleryEntity', 'GalleryComment');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

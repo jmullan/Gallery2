@@ -11,7 +11,7 @@ class CreateAndDeleteUserTestCase extends TestCase {
 
 	/* Create the user */
 	$gallery->debug('Create a new user');
-	list ($ret, $user) = $gallery->newEntity('GalleryUser');
+	list ($ret, $user) = GalleryFactory::newInstance('GalleryEntity', 'GalleryUser');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

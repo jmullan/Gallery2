@@ -56,6 +56,11 @@ class GalleryDataItem extends GalleryDataItem_core {
             'type' => STORAGE_TYPE_STRING
         );
     
+        $meta['members']['size'] = array(
+            'class' => 'GalleryDataItem',
+            'type' => STORAGE_TYPE_INTEGER
+        );
+    
         return $meta;
     }
 
@@ -78,6 +83,12 @@ class GalleryDataItem extends GalleryDataItem_core {
             $data['mimeType'] = null;
         } else {
             $data['mimeType'] = $this->_mimeType;
+        }
+    
+        if (!isset($this->_size)) {
+            $data['size'] = null;
+        } else {
+            $data['size'] = $this->_size;
         }
     
         GalleryProfiler::stop('GalleryPersistent::getMemberData');
@@ -153,6 +164,47 @@ class GalleryDataItem extends GalleryDataItem_core {
         if ($a != $b) {
             $this->_mimeType = $value;
             $this->setModifiedFlag('mimeType', MEMBER_MODIFIED);
+        }
+    }
+  
+    /**
+     * Get the value of size
+     *
+     * @return INTEGER the value
+     */
+    function getsize() {
+        if (!isset($this->_size)) {
+            return null;
+        }
+        return $this->_size;
+    }
+
+    /**
+     * Set the value of size
+     *
+     * @param INTEGER the value
+     */
+    function setsize($value) {
+
+        /* 
+         * Convert unset values to null, to avoid generating warnings.
+         */
+	$a = isset($value) ? $value : null;
+	$b = isset($this->_size) ? $this->_size : null;
+
+    
+        /* Type case the incoming value to be an integer */
+        if ($value != null) {
+            $value = (int)$value;
+        }
+      
+        /* 
+         * Only take action if the value actually changes, but take care not to 
+         * generate warnings for unset values.
+         */
+        if ($a != $b) {
+            $this->_size = $value;
+            $this->setModifiedFlag('size', MEMBER_MODIFIED);
         }
     }
   

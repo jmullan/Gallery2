@@ -369,7 +369,7 @@ class GalleryStorage {
 	global $gallery;
 
 	if (empty($this->_entityInfoCache[$entityName])) {
-	    list ($ret, $entity) = $gallery->newEntity($entityName);
+	    list ($ret, $entity) = GalleryFactory::newInstance('GalleryEntity', $entityName);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -409,34 +409,16 @@ class GalleryStorage {
 	global $gallery;
 
 	if (!isset($this->_classTypeCache[$className])) {
-	    if (!class_exists($className)) {
-		$array = $gallery->lookupRegistry('GalleryEntity.' . $className);
-		if (empty($array)) {
-		    $gallery->debug("Unknown class type: $className");
-		    return array(GalleryStatus::error(ERROR_BAD_PARAMETER,
-						      __FILE__, __LINE__),
-				 null);
-		}
-
-		$platform = $gallery->getPlatform();
-
-		if (!$platform->file_exists($array[0])) {
-		    $gallery->debug("Class file missing: $array[0]");
-		    return array(GalleryStatus::error(ERROR_BAD_PARAMETER,
-						      __FILE__, __LINE__),
-				 null);
-		}
-		
-		require_once($array[0]);
-		if (!class_exists($className)) {
-		    $gallery->debug("Class $className not defined in file $array[0]");
-		    return array(GalleryStatus::error(ERROR_BAD_PARAMETER,
-						      __FILE__, __LINE__),
-				 null);
-		}
+	    list ($ret, $instance) =
+		GalleryFactory::newInstance('GalleryEntity', $className);
+	    
+	    if ($ret->isError()) {
+		return array(GalleryStatus::error(ERROR_BAD_PARAMETER,
+						  __FILE__, __LINE__),
+			     null);
 	    }
 	    
-	    $this->_classTypeCache[$className] = new $className;
+	    $this->_classTypeCache[$className] = $instance ;
 	}
 
 	if (method_exists($this->_classTypeCache[$className], 'getPersistentMemberInfo')) {

@@ -207,8 +207,8 @@ class AdminCoreView extends GalleryView {
 	$permissionsFileList = array('600', '640', '644', '660', '664', '666');
 
 	/* Set up our graphics selection list */
-	require_once(dirname(__FILE__) . '/classes/GalleryGraphicsFactory.class');
-	$graphicsTypeList = GalleryGraphicsFactory::getAllImplementationIds();
+	$idsToClassNames = GalleryFactory::getAllImplementationIds('GalleryGraphics');
+	$graphicsTypeList = array_flip($idsToClassNames);	
 
 	/* Render the HTML body */
 	$this->_initTemplate(dirname(__FILE__) . '/templates');

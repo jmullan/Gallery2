@@ -127,6 +127,7 @@ class GalleryUtilities {
     function getFormVariables($prefix) {
 	global $gallery;
 	global $HTTP_POST_VARS;
+	global $HTTP_POST_FILES;
 	global $HTTP_GET_VARS;
 	
 	/*
@@ -154,6 +155,13 @@ class GalleryUtilities {
 	    }
 	}
 
+	foreach (array_keys($HTTP_POST_FILES) as $key) {
+	    if (preg_match("/^${prefix}_?(.*)/", $key, $matches)) {
+		$formKey = $matches[1];
+		$values[$formKey] = $HTTP_POST_FILES[$key];
+	    }
+	}
+
 	/* Sanitize the input */
 	foreach (array_keys($values) as $key) {
 	    $values[$key] = GalleryUtilities::sanitizeInputValue($values[$key]);
@@ -178,7 +186,15 @@ class GalleryUtilities {
 	    for ($i = 0; $i < sizeof($components) - 1; $i++) {
 		$base =& $base[$components[$i]];
 	    }
-	    $base[$components[sizeof($components)-1]] = $value;
+	    
+	    if (is_array($value)) {
+		/* XXX: this only handles arrays 1 level deep */
+		foreach ($value as $subKey => $subValue) {
+		    $base[$components[sizeof($components)-1]][$subKey] = $subValue;
+		}
+	    } else {
+		$base[$components[sizeof($components)-1]] = $value;
+	    }
 	}
 
 	return $form;
@@ -240,7 +256,14 @@ class GalleryUtilities {
 	
 	/* Undo the damage caused by magic_quotes */
 	if (get_magic_quotes_gpc()) {
-	    $value = stripslashes($value);
+	    if (is_array($value)) {
+		/* XXX: this only handles arrays 1 level deep */
+		foreach ($value as $subKey => $subValue) {
+		    $value[$subKey] = stripslashes($subValue);
+		}
+	    } else {
+		$value = stripslashes($value);
+	    }
 	}
 
 	/*
@@ -281,19 +304,30 @@ class GalleryUtilities {
     }
 
     /**
-     * Convert a file extension to a mime type
+     * Return a singleton copy of a map of file extensions to mime types
      *
-     * @param string a file extension
-     * @return string a mime type 
+     * @return array
      */
-    function convertExtensionToMime($extension) {
+    function _getExtensionToMimeMap() {
 	static $extensionMap;
 
 	if (empty($extensionMap)) {
 	    /*
-	     * This data lifted from Apache's mime.types listing.
+	     * This data lifted from Apache's mime.types listing.  Since
+	     * convertMimeToExtension will walk this map comparing mime types,
+	     * we've put this in order of the types that are expected to be
+	     * most frequently used.  
 	     */
-	    $extensionMap = array('Z'	    => 'application/x-compress',
+	    $extensionMap = array(
+				  // Frequently used extensions
+				  'jpg'	    => 'image/jpeg',
+				  'jpeg'    => 'image/jpeg',
+				  'png'	    => 'image/png',
+				  'gif'	    => 'image/gif',
+				  'jpe'	    => 'image/jpeg',
+
+				  // All the rest, sorted alphabetically
+				  'Z'	    => 'application/x-compress',
 				  'ai'	    => 'application/postscript',
 				  'aif'	    => 'audio/x-aiff',
 				  'aifc'    => 'audio/x-aiff',
@@ -323,7 +357,6 @@ class GalleryUtilities {
 				  'etx'	    => 'text/x-setext',
 				  'exe'	    => 'application/octet-stream',
 				  'ez'	    => 'application/andrew-inset',
-				  'gif'	    => 'image/gif',
 				  'gtar'    => 'application/x-gtar',
 				  'gz'	    => 'application/x-gzip',
 				  'hdf'	    => 'application/x-hdf',
@@ -334,9 +367,6 @@ class GalleryUtilities {
 				  'ief'	    => 'image/ief',
 				  'iges'    => 'model/iges',
 				  'igs'	    => 'model/iges',
-				  'jpe'	    => 'image/jpeg',
-				  'jpeg'    => 'image/jpeg',
-				  'jpg'	    => 'image/jpeg',
 				  'js'	    => 'application/x-javascript',
 				  'kar'	    => 'audio/midi',
 				  'latex'   => 'application/x-latex',
@@ -367,7 +397,6 @@ class GalleryUtilities {
 				  'pdf'	    => 'application/pdf',
 				  'pgm'	    => 'image/x-portable-graymap',
 				  'pgn'	    => 'application/x-chess-pgn',
-				  'png'	    => 'image/png',
 				  'pnm'	    => 'image/x-portable-anymap',
 				  'ppm'	    => 'image/x-portable-pixmap',
 				  'ppt'	    => 'application/vnd.ms-powerpoint',
@@ -437,11 +466,42 @@ class GalleryUtilities {
 				  );
 	}
 
-	if (empty($extensionMap[$extension])) {
+	return $extensionMap;
+    }
+
+    /**
+     * Convert a file extension to a mime type
+     *
+     * @param string a file extension
+     * @return string a mime type 
+     */
+    function convertExtensionToMime($extension) {
+	$map = GalleryUtilities::_getExtensionToMimeMap();
+	if (empty($map[$extension])) {
 	    return 'application/unknown';
 	} else {
-	    return $extensionMap[$extension];
+	    return $map[$extension];
 	}
+    }
+
+    /**
+     * Convert a mime type to a file extension
+     *
+     * XXX: Note that this is very slow!
+     *
+     * @param string a mime type 
+     * @return string a file extension, or null
+     */
+    function convertMimeToExtension($extension) {
+	$map = GalleryUtilities::_getExtensionToMimeMap();
+
+	foreach ($map as $key => $value) {
+	    if ($value == $extension) {
+		return $key;
+	    }
+	}
+
+	return null;
     }
 
     /**

@@ -64,6 +64,40 @@ class GalleryPermissionMap_core {
      */
     
     /**
+     * Get the static permission registry
+     *
+     * @return array
+     * @access private
+     */
+    function &_getPermissionRegistry() {
+	static $permissionRegistry = array();
+	return $permissionRegistry;
+    }
+
+    /**
+     * Register a new permission
+     *
+     * @param string the id of the permission
+     * @param string the (not localized) description of the permission
+     * @param int whether the permission relates to item administration
+     */
+    function registerPermission($id, $description, $isItemAdmin=false) {
+	$registry =& GalleryPermissionMap::_getPermissionRegistry();
+	$registry['id'][$id] = $description;
+	$registry['itemAdmin'][$id] = $isItemAdmin;
+    }
+
+    /**
+     * Return the ids of all permissions relating to item administration
+     *
+     * @return array permission ids
+     */
+    function getItemAdminPermissions() {
+	$registry =& GalleryPermissionMap::_getPermissionRegistry();
+	return array_keys($registry['itemAdmin']);
+    }
+
+    /**
      * Add the given itemid, userid, permission mapping
      *
      * @param int the id of the GalleryGroup

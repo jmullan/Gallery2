@@ -43,27 +43,17 @@ class CommentModule extends GalleryModule {
 	
 	$classDir = dirname(__FILE__) . '/classes/';
 	require_once($classDir . 'GalleryCommentHelper.class');
-	
-	$gallery->addRegistry('GalleryEntity.GalleryComment',
-			      $classDir . 'GalleryComment.class');
 
-	/* Register all comment permissions */
-	$gallery->addRegistry('GalleryPermissionMap',
-			      array('id' => 'comment.add',
-				    'description' => 'Add comment',
-				    'itemAdmin' => false),
-			      array('id' => 'comment.edit',
-				    'description' => 'Edit comment',
-				    'itemAdmin' => false),
-			      array('id' => 'comment.delete',
-				    'description' => 'Delete comment',
-				    'itemAdmin' => false),
-			      array('id' => 'comment.view',
-				    'description' => 'View comments',
-				    'itemAdmin' => false),
-			      array('id' => 'comment.viewIp',
-				    'description' => 'View IP',
-				    'itemAdmin' => false));
+	GalleryFactory::registerImplementation('GalleryEntity',
+					       'GalleryComment',
+					       'GalleryComment',
+					       $classDir . 'GalleryComment.class');
+
+	GalleryPermissionMap::registerPermission('comment.add', 'Add Comment', false);
+	GalleryPermissionMap::registerPermission('comment.edit', 'Edit Comment', false);
+	GalleryPermissionMap::registerPermission('comment.delete', 'Delete Comment', false);
+	GalleryPermissionMap::registerPermission('comment.view', 'View Comments', false);
+	GalleryPermissionMap::registerPermission('comment.viewIp', 'View IP', false);
 
 	return parent::init();
     }

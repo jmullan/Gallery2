@@ -134,6 +134,13 @@ class GalleryTemplateAdapter {
 		$params[$sessionKey] = $sessionId;
 	    }
 	}
+
+	$enctype = null;
+	if (!empty($params['enctype'])) {
+	    $enctype = $params['enctype'];
+	    unset($params['enctype']);
+	}
+	
 	if (empty($params['method'])) {
 	    $method = 'POST';
 	} else {
@@ -141,7 +148,11 @@ class GalleryTemplateAdapter {
 	    unset($params['method']);
 	}
 
-	$result = '<form method="' . $method . '" action="' . $baseUrl . '">';
+	$result = '<form method="' . $method . '" action="' . $baseUrl . '"';
+	if (!empty($enctype)) {
+	    $result .= ' enctype="' . $enctype . '"';
+	}
+	$result .= '">';
 	$result .= "\n";
 	foreach ($params as $key => $value) {
 	    $result .= '<input type="hidden" ' .

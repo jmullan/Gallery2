@@ -28,7 +28,7 @@ class CreatePhotoItemTestCase extends TestCase {
 	}
 
 	print("Creating new photo item\n");
-	list ($ret, $photo) = $gallery->newEntity('GalleryPhotoItem');
+	list ($ret, $photo) = GalleryFactory::newInstance('GalleryEntity', 'GalleryPhotoItem');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -59,7 +59,7 @@ class CreatePhotoItemTestCase extends TestCase {
 	}
 
 	/* Create a thumbnail */
-	list ($ret, $thumbnail) = $gallery->newEntity('GalleryDerivativeImage');
+	list ($ret, $thumbnail) = GalleryFactory::newInstance('GalleryEntity', 'GalleryDerivativeImage');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -79,7 +79,7 @@ class CreatePhotoItemTestCase extends TestCase {
 	}
 
 	/* Create a resize */
-	list ($ret, $resize) = $gallery->newEntity('GalleryDerivativeImage');
+	list ($ret, $resize) = GalleryFactory::newInstance('GalleryEntity', 'GalleryDerivativeImage');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

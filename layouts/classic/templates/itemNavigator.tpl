@@ -21,7 +21,9 @@
 	{/if}
       </td>
       <td align="center">
-	{$itemIndex} (of {$totalPeerCount})
+	{galleryText text="Viewing item %d (of %d)"
+	             arg1=$itemIndex
+	             arg2=$totalPeerCount}
       </td>
       <td width=72>
 	{if isset($navigator.nextItem)}

@@ -48,7 +48,7 @@ class AdminCreateGroupController extends GalleryController {
 	     */
 	    if (!empty($form['groupName'])) {
 	    
-		list ($ret, $group) = $gallery->newEntity('GalleryGroup');
+		list ($ret, $group) = GalleryFactory::newInstance('GalleryEntity', 'GalleryGroup');
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}

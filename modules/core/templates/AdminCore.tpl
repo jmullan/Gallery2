@@ -142,7 +142,7 @@
       </td>
       <td>
 	{gallerySelect name="graphics.type"}
-	  {html_options values=$graphicsTypeList selected=$form.graphics.type output=$graphicsTypeList}
+	  {html_options options=$graphicsTypeList selected=$form.graphics.type}
 	{/gallerySelect}
       </td>
     </tr>

@@ -28,8 +28,6 @@ require_once($classDir . 'GalleryModule.class');
 
 class CoreModule extends GalleryModule {
 
-    var $_gallery;
-
     function CoreModule() {
 	$this->setName('core');
 	$this->setDescription('Core Gallery functionality');
@@ -66,6 +64,7 @@ class CoreModule extends GalleryModule {
 	require_once($classDir . 'GalleryUtilities.class');
 	require_once($classDir . 'GalleryView.class');
 	require_once($classDir . 'GalleryViewCountMap.class');
+	require_once($classDir . 'GalleryFactory.class');
 
 	/*
 	 * Set up our Gallery global.  It's important to use a reference here because
@@ -80,63 +79,93 @@ class CoreModule extends GalleryModule {
 
 	/* Configure the Platform */
 	$gallery->setConfig('platform.type', strtolower(PHP_OS));
-
+	
 	/* Register all core permissions */
-	$gallery->addRegistry('GalleryPermissionMap',
-			      array('id' => 'core.all',
-				    'description' => 'Full',
-				    'itemAdmin' => true),
-			      array('id' => 'core.view',
-				    'description' => 'View',
-				    'itemAdmin' => false),
-			      array('id' => 'core.viewResizes',
-				    'description' => 'View Resizes',
-				    'itemAdmin' => false),
-			      array('id' => 'core.viewSource',
-				    'description' => 'View Original',
-				    'itemAdmin' => false),
-			      array('id' => 'core.viewAll',
-				    'description' => 'View All',
-				    'itemAdmin' => false),
-			      array('id' => 'core.insert',
-				    'description' => 'Insert',
-				    'itemAdmin' => true),
-			      array('id' => 'core.change',
-				    'description' => 'Change',
-				    'itemAdmin' => true),
-			      array('id' => 'core.move',
-				    'description' => 'Move',
-				    'itemAdmin' => true),
-			      array('id' => 'core.changeText',
-				    'description' => 'Change Text',
-				    'itemAdmin' => true),
-			      array('id' => 'core.delete',
-				    'description' => 'Delete',
-				    'itemAdmin' => true));
-
-	$this->_gallery =& $gallery;
-
+	GalleryPermissionMap::registerPermission('core.all', 'Full', true);
+	GalleryPermissionMap::registerPermission('core.view', 'View', false);
+	GalleryPermissionMap::registerPermission('core.viewResizes', 'View Resizes', false);
+	GalleryPermissionMap::registerPermission('core.viewSource', 'View Original', false);
+	GalleryPermissionMap::registerPermission('core.viewAll', 'View All', false);
+	GalleryPermissionMap::registerPermission('core.addAlbum', 'Add Album', true);
+	GalleryPermissionMap::registerPermission('core.addItem', 'Add Item', true);
+	GalleryPermissionMap::registerPermission('core.change', 'Change', true);
+	GalleryPermissionMap::registerPermission('core.move', 'Move', true);
+	GalleryPermissionMap::registerPermission('core.changeText', 'Change Text', true);
+	GalleryPermissionMap::registerPermission('core.delete', 'Delete', true);
+	
 	/* Register our entity implementations */
-	$gallery->addRegistry('GalleryEntity.GalleryEntity',
-			      $classDir . 'GalleryEntity.class');
-	$gallery->addRegistry('GalleryEntity.GalleryChildEntity',
-			      $classDir . 'GalleryChildEntity.class');
-	$gallery->addRegistry('GalleryEntity.GalleryAlbumItem',
-			      $classDir . 'GalleryAlbumItem.class');
-	$gallery->addRegistry('GalleryEntity.GalleryUser',
-			      $classDir . 'GalleryUser.class');
-	$gallery->addRegistry('GalleryEntity.GalleryGroup',
-			      $classDir . 'GalleryGroup.class');
-	$gallery->addRegistry('GalleryEntity.GalleryDerivative',
-			      $classDir . 'GalleryDerivative.class');
-	$gallery->addRegistry('GalleryEntity.GalleryDerivativeImage',
-			      $classDir . 'GalleryDerivativeImage.class');
-	$gallery->addRegistry('GalleryEntity.GalleryMovieItem',
-			      $classDir . 'GalleryMovieItem.class');
-	$gallery->addRegistry('GalleryEntity.GalleryPhotoItem',
-			      $classDir . 'GalleryPhotoItem.class');
-	$gallery->addRegistry('GalleryEntity.GalleryUnknownItem',
-			      $classDir . 'GalleryUnknownItem.class');
+	GalleryFactory::registerImplementation('GalleryEntity',
+					       'GalleryEntity',
+					       'GalleryEntity',
+					       $classDir . 'GalleryEntity.class');
+	
+	GalleryFactory::registerImplementation('GalleryEntity',
+					       'GalleryChildEntity',
+					       'GalleryChildEntity',
+					       $classDir . 'GalleryChildEntity.class');
+	
+	GalleryFactory::registerImplementation('GalleryEntity',
+					       'GalleryAlbumItem',
+					       'GalleryAlbumItem',
+					       $classDir . 'GalleryAlbumItem.class');
+	
+	GalleryFactory::registerImplementation('GalleryEntity',
+					       'GalleryUser',
+					       'GalleryUser',
+					       $classDir . 'GalleryUser.class');
+	
+	GalleryFactory::registerImplementation('GalleryEntity',
+					       'GalleryGroup',
+					       'GalleryGroup',
+					       $classDir . 'GalleryGroup.class');
+	
+	GalleryFactory::registerImplementation('GalleryEntity',
+					       'GalleryDerivative',
+					       'GalleryDerivative',
+					       $classDir . 'GalleryDerivative.class');
+	
+	GalleryFactory::registerImplementation('GalleryEntity',
+					       'GalleryDerivativeImage',
+					       'GalleryDerivativeImage',
+					       $classDir . 'GalleryDerivativeImage.class');
+	
+	GalleryFactory::registerImplementation('GalleryEntity',
+					       'GalleryMovieItem',
+					       'GalleryMovieItem',
+					       $classDir . 'GalleryMovieItem.class');
+	
+	GalleryFactory::registerImplementation('GalleryEntity',
+					       'GalleryPhotoItem',
+					       'GalleryPhotoItem',
+					       $classDir . 'GalleryPhotoItem.class');
+	
+	GalleryFactory::registerImplementation('GalleryEntity',
+					       'GalleryUnknownItem',
+					       'GalleryUnknownItem',
+					       $classDir . 'GalleryUnknownItem.class');
+
+	/* Register platform implementations */
+	GalleryFactory::registerImplementation('GalleryPlatform',
+					       'UnixPlatform',
+					       'Unix',
+					       $classDir . 'GalleryPlatform/UnixPlatform.class',
+					       array(FACTORY_DEFAULT));
+
+	GalleryFactory::registerImplementation('GalleryPlatform',
+					       'WinNtPlatform',
+					       'WinNT',
+					       $classDir . 'GalleryPlatform/UnixPlatform.class',
+					       array('winnt'));
+
+	/* Register GalleryDataItem implementations */
+	GalleryFactory::registerImplementation('GalleryDataItem',
+					       'GalleryPhotoItem',
+					       'GalleryPhotoItem',
+					       $classDir . 'GalleryPhotoItem.class',
+					       array('image/jpeg',
+						     'image/gif',
+						     'image/png'));
+						     
 
 	return parent::init();
     }
@@ -237,21 +266,16 @@ class CoreModule extends GalleryModule {
 	    $items = array($items);
 	}
 
+	/* Format our return-url params */
 	foreach ($returnUrlParams as $param => $value) {
 	    $params['return.' . $param] = $value;
 	}
 
 	/*
-	 * See if the user has any admin permissions.  If so, display the "[edit
-	 * item]" link.
+	 * Look up all item admin permissions so that we can decide whether or
+	 * not to display the "[edit item]" link.
 	 */
-	$adminPermissions = array();
-	$permissions = $gallery->lookupRegistry('GalleryPermissionMap');
-	foreach ($permissions as $permission) {
-	    if (!empty($permission['itemAdmin'])) {
-		$adminPermissions[] = $permission['id'];
-	    }
-	}
+	$adminPermissions = GalleryPermissionMap::getItemAdminPermissions();
 
 	/*
 	 * If we're a site admin, then we always have edit permission.  Else,
@@ -383,6 +407,13 @@ class CoreModule extends GalleryModule {
 	    }
 	}
 	
+	if (array_intersect(array('core.all', 'core.addItem'), $permissions)) {
+	    if ($item->isContainer()) {
+	        $views[] = array('name' => $this->translate('Add Items'),
+				 'view' => 'core:ItemAddChildren');
+	    }
+	}
+	
 	return array(GalleryStatus::success(), $views);
     }
     
@@ -403,7 +434,7 @@ class CoreModule extends GalleryModule {
 	    return GalleryStatus::success();
 	}
     
-	list ($ret, $group) = $gallery->newEntity('GalleryGroup');
+	list ($ret, $group) = GalleryFactory::newInstance('GalleryEntity', 'GalleryGroup');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -443,7 +474,7 @@ class CoreModule extends GalleryModule {
 	    return GalleryStatus::success();
 	}
     
-	list ($ret, $group) = $gallery->newEntity('GalleryGroup');
+	list ($ret, $group) = GalleryFactory::newInstance('GalleryEntity', 'GalleryGroup');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -483,7 +514,7 @@ class CoreModule extends GalleryModule {
 	    return GalleryStatus::success();
 	}
     
-	list ($ret, $user) = $gallery->newEntity('GalleryUser');
+	list ($ret, $user) = GalleryFactory::newInstance('GalleryEntity', 'GalleryUser');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -531,7 +562,7 @@ class CoreModule extends GalleryModule {
 	}
 
 	/* Create the user */
-	list ($ret, $user) = $gallery->newEntity('GalleryUser');
+	list ($ret, $user) = GalleryFactory::newInstance('GalleryEntity', 'GalleryUser');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -591,7 +622,7 @@ class CoreModule extends GalleryModule {
 	$results = array_keys($results);
 	$adminId = $results[0];
 	
-	list ($ret, $album) = $gallery->newEntity('GalleryAlbumItem');
+	list ($ret, $album) = GalleryFactory::newInstance('GalleryEntity', 'GalleryAlbumItem');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

@@ -26,7 +26,7 @@ class CreateAndDeleteAlbumItemTestCase extends TestCase {
 	global $gallery;
 
 	$gallery->debug("Creating new album item\n");
-	list ($ret, $album) = $gallery->newEntity('GalleryAlbumItem');
+	list ($ret, $album) = GalleryFactory::newInstance('GalleryEntity', 'GalleryAlbumItem');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

@@ -225,35 +225,44 @@ class ClassicLayout extends GalleryLayout {
      */
     function _renderSingle($item, $urlParams, $properties) {
 	global $gallery;
-	$showMode = GalleryUtilities::getRequestVariables('showMode');
-	if ($showMode == 'full') {
-	    /* XXX: perform permission check here ("can user see full size")*/
-	    $gallery->debug('XXX: missing view-full permission check');
-	    $this->_setTemplateVariable('image', $item->getMemberData());
+
+	/*
+	 * Figure out all possible views of this item that the user can see and
+	 * get them into an acceptable format for the template engine.
+	 */
+	$imageViews = array();
 	    
-	} else {
+	/* Load the resizes */
+	list ($ret, $resizes) =
+	    GalleryDerivativeHelper::fetchResizesByItemIds(array($item->getId()));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 
-	    /* Which resize are we displaying? */
-	    $resizeIndex = GalleryUtilities::getRequestVariables('resizeIndex');
-	    if (empty($resizeIndex)) {
-		$resizeIndex = 0;
+	$imageViewsIndex = GalleryUtilities::getRequestVariables('imageViewsIndex');
+	if (empty($imageViewsIndex)) {
+	    $imageViewsIndex = 0;
+	}
+	
+	$gallery->debug('XXX: missing view-resize permission check');
+	foreach ($resizes[$item->getId()] as $resize) {
+	    $imageViews[] = array('height' => $resize->getHeight(),
+				  'width' => $resize->getWidth(),
+				  'size' => $resize->getDerivativeSize(),
+				  'id' => $resize->getId());
+	}
+
+	/* Add the full version */
+	$gallery->debug('XXX: missing view-full permission check');
+	if (is_subclass_of($item, 'GalleryDataItem')) {
+	    $dataItem = array('size' => $item->getSize(),
+			      'id' => $item->getId());
+		
+	    if (is_subclass_of($item, 'GalleryDataItem')) {
+		$dataItem['height'] = $item->getHeight();
+		$dataItem['width'] = $item->getWidth();
 	    }
-
-	    /* Load the resizes */
-	    list ($ret, $resizes) =
-		    GalleryDerivativeHelper::fetchResizesByItemIds(array($item->getId()));
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-	    $resizes = $resizes[$item->getId()];
-	    if ($resizeIndex >= sizeof($resizes)) {
-		$resizeIndex = sizeof($resizes) - 1;
-	    }
-
-	    /* XXX: perform permission check here ("can user see resizes ")*/
-	    $gallery->debug('XXX: missing view-resize permission check');
-	    $this->_setTemplateVariable('image', $resizes[$resizeIndex]->getMemberData());
+	    $imageViews[] = $dataItem;
 	}
 
 	/*
@@ -328,8 +337,10 @@ class ClassicLayout extends GalleryLayout {
 	$this->_setTemplateVariable('layoutUrl',
 	    GalleryUtilities::convertPathToRelativeUrl(dirname(__FILE__)));
 	$this->_setTemplateVariable('parents', $parents);
+	$this->_setTemplateVariable('item', $item->getMemberData());
 	$this->_setTemplateVariable('itemIndex', $itemIndex+1);
-	$this->_setTemplateVariable('nextResizeIndex', $resizeIndex+1);
+	$this->_setTemplateVariable('imageViews', $imageViews);
+	$this->_setTemplateVariable('imageViewsIndex', $imageViewsIndex);
 	$this->_setTemplateVariable('totalPeerCount', $totalPeerCount);
 	
 	/* Parse the header and body and send them back */

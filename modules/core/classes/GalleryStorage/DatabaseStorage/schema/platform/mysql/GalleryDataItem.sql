@@ -27,6 +27,10 @@
         
       )
     
+      ,
+    COLUMN_PREFIXsize
+      int(11)
+    
     , 
   
     INDEX (COLUMN_PREFIXid)

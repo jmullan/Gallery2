@@ -14,7 +14,7 @@ class CreateModifyAndDeleteUserTestCase extends TestCase {
 	global $gallery;
 
 	for ($i = 0; $i < $iterations; $i++) {
-	    list ($ret, $user) = $gallery->newEntity('GalleryUser');
+	    list ($ret, $user) = GalleryFactory::newInstance('GalleryEntity', 'GalleryUser');
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }

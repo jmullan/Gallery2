@@ -35,7 +35,7 @@ class AddCommentController extends GalleryController {
 
 	if (isset($form['action']['add']) && !empty($form['comment'])) {
 	    /* Add the comment */
-	    list ($ret, $comment) = $gallery->newEntity('GalleryComment');
+	    list ($ret, $comment) = GalleryFactory::newInstance('GalleryEntity', 'GalleryComment');
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -105,12 +105,12 @@ class AddCommentView extends GalleryView {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$thumbnail = $thumbnailTable[$item->getId()];
 
 	/* Render the HTML body */
 	$this->_initTemplate(dirname(__FILE__) . '/templates');
 	
 	if (!empty($thumbnailTable)) {
+	    $thumbnail = $thumbnailTable[$item->getId()];
 	    $this->_setTemplateVariable('thumbnail', $thumbnail->getMemberData());
 	}
 	

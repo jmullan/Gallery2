@@ -44,10 +44,10 @@ class NetPbmModule extends GalleryModule {
 	$classDir = dirname(__FILE__) . '/classes/';
 
 	/* Register our graphics class with the factory */
-	$gallery->addRegistry('GalleryGraphicsFactory',
-			      array('id' => 'netpbm',
-				    'classFile' => $classDir . 'NetPbmGraphics.class',
-				    'className' => 'NetPbmGraphics'));
+	GalleryFactory::registerImplementation('GalleryGraphics',
+					       'NetPbmGraphics',
+					       'NetPBM',
+					       $classDir . 'NetPbmGraphics.class');
 
 	return parent::init();
     }

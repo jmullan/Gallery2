@@ -48,20 +48,43 @@ class GalleryPlatform {
 	$gallery->debug("copy($source, $dest)");
 	
 	$umask = umask(0133);
-	$results = copy($source, $dest);
+	if (is_uploaded_file($source)) {
+	    $results = move_uploaded_file($source, $dest);
+	} else {
+	    $results = copy($source, $dest);
+	}
 	umask($umask);
 
 	return $results;
     }
 
     /**
-     * Return the system-wide temporary directory
+     * Move an uploaded file to a new location and return the new location.
      *
-     * @return string a directory path
+     * If the second filename is not provided, a new file is created in the
+     * Gallery temporary directory.
+     *
+     * @return string the new file name, if the move was successful
      * @access public
      */
-    function tempdir() {
-	return getenv("TEMP");
+    function move_uploaded_file($filename, $newFilename=null) {
+	global $gallery;
+	$gallery->debug("move_uploaded_file($filename, $newFilename)");
+
+	if (empty($newFilename)) {
+	    $tmpDir = $gallery->getConfig('data.gallery.tmp');
+	    $newFilename = tempnam($tmpDir, 'MUF_');
+	    if ($newFilename == null) {
+		return null;
+	    }
+	    $gallery->debug("chose new file name: $newFilename");
+	}
+
+	if (move_uploaded_file($filename, $newFilename)) {
+	    return $newFilename;
+	} else {
+	    return null;
+	}
     }
 
     /**
@@ -75,7 +98,7 @@ class GalleryPlatform {
 	global $gallery;
 	$gallery->debug("file_exists($filename)");
 
-	return @file_exists($filename);
+	return is_uploaded_file($filename) || file_exists($filename);
     }
 
     /**
@@ -368,7 +391,7 @@ class GalleryPlatform {
 	return "ABCDEFGHIJKLMNOPQRSTUVWXYZ" .
 	    "abcdefghijklmnopqrstuvwxyz" .
 	    "0123456789" .
-	    "_-";
+	    "_-.";
     }
     
     /**

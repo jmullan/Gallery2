@@ -9,7 +9,7 @@ class CreateGroupAndUsersTestCase extends TestCase {
     function testStart() {
 	global $gallery;
 
-	list ($ret, $group) = $gallery->newEntity('GalleryGroup');
+	list ($ret, $group) = GalleryFactory::newInstance('GalleryEntity', 'GalleryGroup');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -23,7 +23,7 @@ class CreateGroupAndUsersTestCase extends TestCase {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	list ($ret, $user1) = $gallery->newEntity('GalleryUser');
+	list ($ret, $user1) = GalleryFactory::newInstance('GalleryEntity', 'GalleryUser');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -41,7 +41,7 @@ class CreateGroupAndUsersTestCase extends TestCase {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	
-	list ($ret, $user2) = $gallery->newEntity('GalleryUser');
+	list ($ret, $user2) = GalleryFactory::newInstance('GalleryEntity', 'GalleryUser');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

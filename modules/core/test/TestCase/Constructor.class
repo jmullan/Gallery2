@@ -14,7 +14,7 @@ class ConstructorTestCase extends TestCase {
 	global $gallery;
 	
 	for ($i = 0; $i < $iterations; $i++) {
-	    list ($ret, $entity) = $gallery->newEntity('GalleryEntity');
+	    list ($ret, $entity) = GalleryFactory::newInstance('GalleryEntity', 'GalleryEntity');
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }

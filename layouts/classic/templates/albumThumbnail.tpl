@@ -1,21 +1,21 @@
-  {galleryHeavyFrame}
-  <a href="{galleryUrl view=core:ShowItem itemId=$child.id}">
-    {if !empty($child.thumbnail)}
-    {assign var="thumbnail" value=$child.thumbnail}
-    <img src="{galleryUrl view=core:DownloadItem itemId=$thumbnail.id}"
+      {galleryHeavyFrame}
+    <a href="{galleryUrl view=core:ShowItem itemId=$child.id}">
+      {if !empty($child.thumbnail)}
+      {assign var="thumbnail" value=$child.thumbnail}
+      <img src="{galleryUrl view=core:DownloadItem itemId=$thumbnail.id}"
       {if ($thumbnail.width && $thumbnail.height)}
-      width="{$thumbnail.width}"
-      height="{$thumbnail.height}"
+           width="{$thumbnail.width}"
+           height="{$thumbnail.height}"
       {/if}
       {if !empty($child.title)}
-      alt="{$child.title}"
+           alt="{$child.title}"
       {else}
-      alt="{$child.pathComponent}"
+           alt="{$child.pathComponent}"
       {/if}
-      border="0"
+           border="0"
       >
-    {else}
-    {$child.id}
-    {/if}
-  </a>
-  {/galleryHeavyFrame}
+      {else}
+      <i>{galleryText text="No thumbnail"}</i>
+      {/if}
+    </a>
+    {/galleryHeavyFrame}

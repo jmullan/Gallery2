@@ -145,16 +145,6 @@ class Gallery {
     var $_profile;
     
     /**
-     * A transitory registry used to share data between modules (eg, you can
-     * register an implementation in the registry so that a factory can find
-     * it).  You can only add to the registry, you can't delete.
-     *
-     * @var arrayobject GalleryRegistry $_registry
-     * @access private
-     */
-    var $_registry;
-
-    /**
      * Storage for all session variables.  
      *
      * @var object GallerySession $_session
@@ -206,7 +196,6 @@ class Gallery {
      */
     function Gallery() {
 	$this->reset();
-	$this->_registry = array();
 	$this->_boundDomains = array();
 	$this->_eventListeners = array();
 	    
@@ -452,11 +441,7 @@ class Gallery {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    
-	    /* Load the factory class */
-	    require_once(dirname(__FILE__) . '/GalleryGraphicsFactory.class');
-
-	    list($ret, $this->_graphics) =
-		GalleryGraphicsFactory::newInstance($type);
+	    list($ret, $this->_graphics) = GalleryFactory::newInstance('GalleryGraphics', $type);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -595,12 +580,20 @@ class Gallery {
      */
     function getPlatform() {
 	if (!isset($this->_platform)) {
-
-	    /* Load the factory class */
-	    require_once(dirname(__FILE__) . '/GalleryPlatformFactory.class');
-
 	    $platformType = $this->getConfig('platform.type');
-	    $this->_platform = GalleryPlatformFactory::newInstance($platformType);
+	    list ($ret, $this->_platform) =
+		GalleryFactory::newInstanceByHint('GalleryPlatform', $platformType);
+
+	    /*
+	     * The platform factory should never fail.  It's highly
+	     * inconvenient to have to return an error code from this function,
+	     * so just drop a debug message if there was a failure.
+	     */
+	    if ($ret->isError()) {
+		$this->debug("Failed to get the platform!");
+		$this->debug($ret->getAsHtml());
+		return null;
+	    }
 	}
 	
 	return $this->_platform;
@@ -1253,62 +1246,6 @@ class Gallery {
 	}
 
 	return array(GalleryStatus::success(), &$this->_translator);
-    }
-
-    /**
-     * Add any number of new entries to the registry
-     *
-     * Note:  the key value of the registry is case insensitive!
-     *
-     * @param string the key
-     * @param mixed the value, ...
-     */
-    function addRegistry($key, $value) {
-	$count = func_num_args();
-	$key = strtolower(func_get_arg(0));
-	for ($i = 1; $i < $count; $i++) {
-	    $this->_registry[$key][] = func_get_arg($i);
-	}
-    }
-
-    /**
-     * Return the registry values associated with the given key
-     *
-     * @param string the key
-     * @return mixed the value
-     */
-    function lookupRegistry($key) {
-	$key = strtolower($key);
-	if (empty($this->_registry[$key])) {
-	    return array();
-	}
-	return $this->_registry[$key];
-    }
-
-    /**
-     * Create a new GalleryEntity of the given type
-     *
-     * Look up the location of the entity's class definition from the registry,
-     * then load that specific file and instantiate the class
-     *
-     * @return array object GalleryStatus a status code
-     *               object a GalleryEntity
-     */
-    function newEntity($className) {
-	list ($filename) = $this->lookupRegistry('GalleryEntity.' . $className);
-
-	if (empty($filename)) {
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
-			 null);
-	}
-
-	require_once($filename);
-	if (!class_exists($className)){
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
-			 null);
-	}
-    
-	return array(GalleryStatus::success(), new $className);
     }
 
     /**

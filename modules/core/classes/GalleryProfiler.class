@@ -58,8 +58,9 @@ class GalleryProfiler {
      * Get the singleton of this class
      *
      * @return object GalleryProfiler
+     * @access private
      */
-    function &singleton() {
+    function &_singleton() {
 	static $galleryProfiler;
 	if (empty($galleryProfiler)) {
 	    $galleryProfiler = new GalleryProfiler();
@@ -88,7 +89,7 @@ class GalleryProfiler {
 	    
 	/* Delegate to the singleton */
 	if (empty($this) || get_class($this) != 'galleryprofiler') {
-	    $galleryProfiler =& GalleryProfiler::singleton();
+	    $galleryProfiler =& GalleryProfiler::_singleton();
 	    return $galleryProfiler->start($key, $start);
 	}
 
@@ -117,7 +118,7 @@ class GalleryProfiler {
 	    
 	/* Delegate to the singleton */
 	if (empty($this) || get_class($this) != 'galleryprofiler') {
-	    $galleryProfiler =& GalleryProfiler::singleton();
+	    $galleryProfiler =& GalleryProfiler::_singleton();
 	    return $galleryProfiler->stop($key);
 	}
 
@@ -139,7 +140,7 @@ class GalleryProfiler {
     function getProfile() {
 	/* Delegate to the singleton */
 	if (empty($this) || get_class($this) != 'galleryprofiler') {
-	    $galleryProfiler =& GalleryProfiler::singleton();
+	    $galleryProfiler =& GalleryProfiler::_singleton();
 	    return $galleryProfiler->getProfile();
 	}
 

@@ -51,7 +51,7 @@ class AdminCreateUserController extends GalleryController {
 	        !empty($form['password1']) &&
 	        $form['password1'] == $form['password2']) {
 	    
-		list ($ret, $user) = $gallery->newEntity('GalleryUser');
+		list ($ret, $user) = GalleryFactory::newInstance('GalleryEntity', 'GalleryUser');
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}

@@ -32,7 +32,7 @@ class CreateNestedAlbumItemTestCase extends TestCase {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    
-	    list ($ret, $nested[$i]) = $gallery->newEntity('GalleryAlbumItem');
+	    list ($ret, $nested[$i]) = GalleryFactory::newInstance('GalleryEntity', 'GalleryAlbumItem');
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }

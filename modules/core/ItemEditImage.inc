@@ -158,7 +158,7 @@ class ItemEditImageController extends GalleryController {
 	    } else {
 		/* If we have no preferred, then create one */
 		if (empty($preferred)) {
-		    list ($ret, $preferred) = $gallery->newEntity('GalleryDerivativeImage');
+		    list ($ret, $preferred) = GalleryFactory::newInstance('GalleryEntity', 'GalleryDerivativeImage');
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }

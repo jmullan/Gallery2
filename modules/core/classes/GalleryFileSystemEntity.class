@@ -85,6 +85,7 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
 	$platform = $gallery->getPlatform();
 
 	if (!$platform->isLegalPathComponent($path)) {
+	    $gallery->debug("illegal path component: $path");
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
 					__FILE__, __LINE__);
 	}

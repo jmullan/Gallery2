@@ -40,6 +40,9 @@ class DownloadItemView extends GalleryView {
 					__FILE__, __LINE__);
 	}
 
+	$gallery->debug("XXX Missing security checks to see if we can " .
+			"view this item or resize");
+
 	/* Load the item */
 	list ($ret, $item) = $gallery->loadEntitiesById($itemId);
 	if ($ret->isError()) {
@@ -66,18 +69,16 @@ class DownloadItemView extends GalleryView {
 		}
 	    }
 
+	    $mimeType = $item->getDerivativeMimeType();
 	    $size = $item->getDerivativeSize();
 	} else {
-	    list ($ret, $size) = $item->getSize();
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
+	    $size = $item->getSize();
+	    $mimeType = $item->getMimeType();
 	}
 
 	if ($size > 0) {
 	    header('Content-length: ' . $size);
 	}
-	$mimeType = $item->getDerivativeMimeType();
 	header('Content-type: ' . $mimeType);
 	readfile($path);
 

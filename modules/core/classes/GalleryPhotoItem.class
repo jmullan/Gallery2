@@ -88,7 +88,7 @@ class GalleryPhotoItem_core extends GalleryDataItem {
      * @param string the desired name of the new item
      * @return object GalleryStatus a status code
      */
-    function create($parentId, $imageFileName, $ownerId, $targetName=null) {
+    function create($parentId, $imageFileName, $ownerId, $mimeType, $targetName=null) {
 	global $gallery;
 
 	$platform = $gallery->getPlatform();
@@ -110,8 +110,7 @@ class GalleryPhotoItem_core extends GalleryDataItem {
 	}
 
 	list($ret, $width, $height) =
-	    $graphics->getImageDimensions($this->getMimeType(),
-					  $imageFileName);
+	    $graphics->getImageDimensions($mimeType, $imageFileName);
 	if ($ret->isError()) {
 
 	    /*
@@ -123,7 +122,7 @@ class GalleryPhotoItem_core extends GalleryDataItem {
 	}
 
 	/* Create our data item */
-	$ret = parent::create($parentId, $imageFileName, $ownerId, $targetName);
+	$ret = parent::create($parentId, $imageFileName, $ownerId, $mimeType, $targetName);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

@@ -56,8 +56,19 @@ setup/setup.php
    6c.  Go to the 'modules' tab.  Click the 'install' and then
 	'activate' links next to 'comment'.
 
-7. We don't yet have an interface to add images.  But we can do it
-   via the test harness.  Browse to the test harness:
+7. Go back to the top level of the Gallery.  There's no link back
+   right now so you have to enter:
+
+	main.php
+
+   by hand.  Click [edit item] and edit the properties of the top
+   level album.  When you're done adding photos, click on the icon
+   in the top left (or "no thumbnail" if you're at the top level)
+   to go back to the main album view.
+
+8. Use the test harness to create a whole bunch of albums and photos
+   (this is a nice way to see what a fully populated gallery is going to 
+   look like).  Browse to the test harness:
 
 	setup/test/index.php
 
@@ -77,12 +88,12 @@ setup/setup.php
 9. Try adding a comment on an album or item.  
 
 10. Browse back to gallery/main.php and you should be able to 
-see your tree and wander around it.
+    see your tree and wander around it.
 
 11. Browse to gallery/main.php?g2_view=core:SiteAdmin and you'll
-see the Site Admin framework.  User and group management are
-functionally complete now.  Try creating and editting users and
-groups, and try adding and removing users from groups.
+    see the Site Admin framework.  User and group management are
+    functionally complete now.  Try creating and editting users and
+    groups, and try adding and removing users from groups.
 
 
 --- 
@@ -99,7 +110,7 @@ of it is cosmetic, some of it structural.
 
 * You can't do much item editting
 
-* You can't upload photos/movies yet
+* Uploading is still primitive.
 
 * Haven't yet implemented these features:
 	- rating

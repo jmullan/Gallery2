@@ -72,6 +72,19 @@ class GalleryDataItem_core extends GalleryItem {
      */
     var $_mimeType;
 
+    /**
+     * The byte size of the data file
+     *
+     * @g2 <member>
+     * @g2   <member-name>size</member-name>
+     * @g2   <member-type>INTEGER</member-type>
+     * @g2 </member>
+     *
+     * @var string $_size
+     * @access private
+     */
+    var $_size;
+
     /*
      * ****************************************
      *                 Methods
@@ -88,7 +101,7 @@ class GalleryDataItem_core extends GalleryItem {
      * @param string the desired name of the new item
      * @return object GalleryStatus a status code
      */
-    function create($parentId, $inputFileName, $ownerId, $targetName=null) {
+    function create($parentId, $inputFileName, $ownerId, $mimeType, $targetName=null) {
 	global $gallery;
 	$platform = $gallery->getPlatform();
 
@@ -98,7 +111,8 @@ class GalleryDataItem_core extends GalleryItem {
 					__FILE__, __LINE__);
 	}
 
-	if (!$platform->file_exists($inputFileName)) {
+	if (!$platform->is_uploaded_file($inputFileName) &&
+	        !$platform->file_exists($inputFileName)) {
 	    return GalleryStatus::error(ERROR_BAD_PATH,
 					__FILE__, __LINE__);
 	}
@@ -124,22 +138,24 @@ class GalleryDataItem_core extends GalleryItem {
 	}
 	
 	if (empty($targetName)) {
-	    $baseName = basename($inputFileName);
+	    $baseName = GalleryUtilities::getFileBase($inputFileName);
 	} else {
-	    $baseName = basename($targetName);
-
-	    /* If we change the name, try to preserve the file tag */
-	    $baseName = $baseName . '.' .
-		    GalleryUtilities::getFileExtension($inputFileName);
+	    $baseName = $targetName;
 	}
-	$pathComponent = substr($baseName, 0, strrpos($baseName, '.'));
-	$newFileName = $parentPath . $baseName;
 
-	/* Do a collision check */
-	if ($platform->file_exists($newFileName)) {
-	    return GalleryStatus::error(ERROR_COLLISION,
-					__FILE__, __LINE__);
-	}
+	/* Choose an appropriate extension */
+	$extension = GalleryUtilities::convertMimeToExtension($mimeType);
+
+	/* Don't be intimidated by the first 10 collisions */
+	$retry = 0;
+	$newFileName = $parentPath . $baseName . '.' . $extension;
+	while ($platform->file_exists($newFileName)) {
+	    if (++$retry > 10) {
+		return GalleryStatus::error(ERROR_COLLISION, __FILE__, __LINE__);
+	    }
+	    $newFileName = sprintf("%s%s_%03d.%s",
+				   $parentPath, $baseName, $retry, $extension);
+	} 
 	
 	/*
 	 * XXX: Race condition here!  It's possible for two threads to be
@@ -153,15 +169,16 @@ class GalleryDataItem_core extends GalleryItem {
 					__FILE__, __LINE__);
 	}
 
-	$ret = parent::create($parentId, $pathComponent, $ownerId);
+	$ret = parent::create($parentId, $baseName, $ownerId);
 	if ($ret->isError()) {
 	    $platform->unlink($newFileName);
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* Set my mime type and file extension */
-	$this->setMimeType(GalleryUtilities::getMimeType($inputFileName));
-	$this->setFileExtension(GalleryUtilities::getFileExtension($inputFileName));
+	$this->setMimeType($mimeType);
+	$this->setFileExtension($extension);
+	$this->setSize($platform->filesize($newFileName));
 
 	return GalleryStatus::success();
     }
@@ -207,31 +224,6 @@ class GalleryDataItem_core extends GalleryItem {
      */
     function rescan() {
 	return GalleryStatus::success();
-    }
-
-    /**
-     * Get the size of the source object.  
-     * 
-     * @access public
-     * @return array object GalleryStatus a status code
-     *               int the size of the object, -1 if unknown
-     */
-    function fetchSize() {
-	global $gallery;
-	$platform = $gallery->getPlatform();
-
-	list($ret, $path) = $this->fetchPath();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), false);
-	}
-	
-	if ($platform->file_exists($path)) {
-	    $size = $platform->filesize($path);
-	} else {
-	    $size = -1;
-	}
-
-	return array(GalleryStatus::success(), $size);
     }
 
     /**
