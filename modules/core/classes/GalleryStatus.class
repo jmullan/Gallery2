@@ -193,7 +193,16 @@ class GalleryStatus {
      * @return object GalleryStatus a successful status
      */
     function success() {
-	return new GalleryStatus(SUCCESS);
+
+	/*
+	 * Use a static singleton for the success object, so that we don't have
+	 * to construct new objects needlessly.
+	 */
+	static $success;
+	if (empty($success)) {
+	    $success = new GalleryStatus(SUCCESS);
+	}
+	return $success;
     }
 
     /**
