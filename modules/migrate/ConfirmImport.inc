@@ -48,7 +48,9 @@ class ConfirmImportController extends GalleryController {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    
+	    if (!isset($form['migrateUser'])) {
+		$form['migrateUser']=array();
+	    }
 	    foreach (array_keys ($form['migrateUser']) as $uid) {
 		$userName = $uidMap[$uid];
 		list ($ret, $fields) =
