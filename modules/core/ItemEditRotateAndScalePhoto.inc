@@ -52,14 +52,15 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
 
 	$operation = null;
 	/* Figure out which command we're taking */
-	if (isset($form['action']['scale'])) {
-	    if (empty($form['scale']['size'])) {
-		$error[] = 'form[error][scale][size][missing]';
-	    } else if (!is_numeric($form['scale']['size']) || $form['scale']['size'] < 1) {
-		$error[] = 'form[error][scale][size][invalid]';
+	if (isset($form['action']['resize'])) {
+	    if (empty($form['resize']['width']) || empty($form['resize']['height'])) {
+		$error[] = 'form[error][resize][size][missing]';
+	    } else if (!is_numeric($form['resize']['width']) || $form['resize']['width'] < 1
+		       || !is_numeric($form['resize']['height']) || $form['resize']['height'] < 1) {
+		$error[] = 'form[error][resize][size][invalid]';
 	    } else {
-		$operation = 'scale';
-		$args = array($form['scale']['size']);
+		$operation = 'resize';
+		$args = array($form['resize']['width'], $form['resize']['height']);
 	    }
 	} else if (isset($form['action']['rotate']['clockwise'])) {
 	    $operation = 'rotate';
@@ -73,12 +74,12 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
 	} else if (isset($form['action']['revertToOriginal'])) {
 	    if (!empty($preferred)) {
 		/*
-		 * Pull out the rotate and scale operations and let our change ripple
+		 * Pull out the rotate and resize operations and let our change ripple
 		 * down the derivative tree, if necessary
 		 */
 		$remainingOperations = array();
 		foreach (split(';', $preferred->getDerivativeOperations()) as $tmpOperation) {
-		    if (preg_match("/^(rotate|scale)\|/", $tmpOperation)) {
+		    if (preg_match("/^(rotate|resize|scale)\|/", $tmpOperation)) {
 			$ret = GalleryCoreApi::adjustDependentDerivatives($preferred->getId(),
 									  $tmpOperation,
 									  true);
@@ -328,7 +329,7 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
 		$status = $module->translate('Rotated photo successfully');
 		break;
 
-	    case 'scale':
+	    case 'resize':
 		$status = $module->translate('Scaled photo successfully');
 		break;
 	    }
@@ -352,7 +353,7 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
 
 	if ($form['formName'] != 'ItemEditRotateAndScalePhoto') {
 	    /* First time around, reset the form */
-	    $form['scale']['size'] = '';
+	    $form['resize']['width'] = $form['resize']['height'] = '';
 	    $form['preserveOriginal'] = 1;
 	    $form['formName'] = 'ItemEditRotateAndScalePhoto';
 	}
@@ -380,7 +381,7 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
 	if (empty($results)) {
 	    $ItemEditRotateAndScalePhoto['editPhoto']['hasPreferredSource'] = false;
 	} else {
-	    if (preg_match("/(rotate|scale)\|/", $results[$item->getId()]->getDerivativeOperations())) {
+	    if (preg_match("/(rotate|resize|scale)\|/", $results[$item->getId()]->getDerivativeOperations())) {
 		$ItemEditRotateAndScalePhoto['editPhoto']['hasPreferredSource'] = true;
 	    } else {
 		$ItemEditRotateAndScalePhoto['editPhoto']['hasPreferredSource'] = false;
@@ -388,20 +389,18 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
 	}
 
 	/* Figure out what options we can provide */
-	list ($ret, $toolkit) =
-	    GalleryCoreApi::getToolkitByOperation($item->getMimeType(), 'rotate');
+	list ($ret, $toolkit) = GalleryCoreApi::getToolkitByOperation($item->getMimeType(), 'rotate');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$ItemEditRotateAndScalePhoto['editPhoto']['can']['rotate'] = isset($toolkit);
 		
 	/* Figure out what options we can provide */
-	list ($ret, $toolkit) =
-	    GalleryCoreApi::getToolkitByOperation($item->getMimeType(), 'scale');
+	list ($ret, $toolkit) = GalleryCoreApi::getToolkitByOperation($item->getMimeType(), 'resize');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$ItemEditRotateAndScalePhoto['editPhoto']['can']['scale'] = isset($toolkit);
+	$ItemEditRotateAndScalePhoto['editPhoto']['can']['resize'] = isset($toolkit);
 
 	$template->setVariable('ItemEditRotateAndScalePhoto', $ItemEditRotateAndScalePhoto);
 	$template->setVariable('controller', 'core:ItemEditRotateAndScalePhoto');

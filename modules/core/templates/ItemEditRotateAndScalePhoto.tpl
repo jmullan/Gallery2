@@ -38,12 +38,12 @@
   </h2>
   
   <p class="giDescription">
-    {g->text text="Shrink or enlarge the original photo.  When Gallery scales a photo, it maintains the same aspect ratio (height to width) of the original photo to avoid distortion.  Your photo will be scaled until the larger side is the same as the value you enter here."}
+    {g->text text="Shrink or enlarge the original photo.  When Gallery scales a photo, it maintains the same aspect ratio (height to width) of the original photo to avoid distortion.  Your photo will be scaled until it fits inside a bounding box with the size you enter here."}
   </p>
   
-  {if $ItemEditRotateAndScalePhoto.editPhoto.can.scale}
-  <input type="text" size="6" name="{g->formVar var="form[scale][size]"}" value="{$form.scale.size}"/>
-  <input type="submit" name="{g->formVar var="form[action][scale]"}" value="{g->text text="Scale"}"/>
+  {if $ItemEditRotateAndScalePhoto.editPhoto.can.resize}
+  {g->dimensions formVar="form[resize]" width=$form.resize.width height=$form.resize.height}
+  <input type="submit" name="{g->formVar var="form[action][resize]"}" value="{g->text text="Scale"}"/>
   {else}
   <b>
     {g->text text="There are no graphics toolkits enabled that support this type of photo, so we cannot scale it."}
@@ -55,13 +55,13 @@
   </b>
   {/if}
 
-  {if !empty($form.error.scale.size.missing)}
+  {if !empty($form.error.resize.size.missing)}
   <div class="giError">
     {g->text text="You must enter a size"}
   </div>
   {/if}
   
-  {if !empty($form.error.scale.size.invalid)}
+  {if !empty($form.error.resize.size.invalid)}
   <div class="giError">
     {g->text text="You must enter a number (greater than zero)"}
   </div>
@@ -73,7 +73,7 @@
   {include file="gallery:`$option.file`" l10Domain=$option.l10Domain}
 {/foreach}
 
-{if $ItemEditRotateAndScalePhoto.editPhoto.can.rotate || $ItemEditRotateAndScalePhoto.editPhoto.can.scale}
+{if $ItemEditRotateAndScalePhoto.editPhoto.can.rotate || $ItemEditRotateAndScalePhoto.editPhoto.can.resize}
 <div class="gbAdmin">
   {if empty($ItemEditRotateAndScalePhoto.editPhoto.hasPreferredSource)}
   <h2 class="giTitle">
