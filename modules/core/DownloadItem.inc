@@ -142,11 +142,12 @@ class DownloadItemView extends GalleryView {
 	// Don't use readfile() because it buffers the entire file in memory
 	if ($fd = $platform->fopen($path, 'rb')) {
 	    while (true) {
-		$data = $platform->fread($fd, 8192);
+		$data = $platform->fread($fd, 65536);
 		if (strlen($data) == 0) {
 		    break;
 		}
 		print $data;
+		$gallery->guaranteeTimeLimit(30);
 	    }
 	    $platform->fclose($fd);
 	}
