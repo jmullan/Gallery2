@@ -3,12 +3,12 @@ SHORT TERM
 - Uploading hundreds of files stores too much (>64K) data in the session status
   field, breaking the session
 - Fix AdminEditGroup so that it detects missing and duplicate group names
-- implement simple/advanced user setting
 - make query definitions static where possible
 - investigate why "CreateRandomTree" test case isn't an ACID transaction
   (while it's running, you can see the items getting added to the db from 
    another transaction??)
-- let the UrlGenerator delegate to the views to create and parse URLs.
+- Create a SecurityAudit test that trawls the code for badness like
+  improper use of HTTP_GET_VARS, etc.
 
 MEDIUM TERM
 -----------
@@ -17,15 +17,9 @@ MEDIUM TERM
     GalleryToolkit operations
 - database
   - Use proper row locking with Postgres
-  - combine tables to avoid excessive joins
-- themes
-  - either add a way to generate a list of elements to the theme API
-    or let the theme API specify colors (background, foreground, alternates, etc).  
-- comments
-  - GalleryComment's module.inc getItemDetails should delegate to a view
-    instead of being inline in module.inc
+  - combine tables to avoid excessive joins?
 - optimization
-  - use primary keys wherever possible
+  - use primary keys in the database wherever possible
   - Come up with an easy way for *Map classes to cache their results.
   - put size/mimeType into GalleryFileSystemEntity, since anything on the
     filesystem should have both (and then we can remove it from GalleryDataItem
@@ -36,17 +30,15 @@ MEDIUM TERM
     look at an item, instead when we are putting up a breadcrumb link
     set a "focusOnItemId" parameter and let the view go to the right
     page if the user clicks that link.
-  - The tricky question is, how does the layout learn enough from the
-    module to know how to lay out the requested info?  
   - simplify the layout code -- separation of renderAlbum and renderSingle is
     too bulky, complex
 - security
   - test harness and setup code should not be available to the public
-  - We're still not sanitizing text input values appropriately.  Black hats
-    can sneak in javascript injection.
 
 LONG TERM
 ---------
+- Concepts
+  - implement simple/advanced user setting
 - Features
   - design and implement select/cut/copy/paste multi-edit functionality
 - Modules
@@ -54,6 +46,5 @@ LONG TERM
   - printing
     - Shutterfly, fotokasten
   - slideshow
-  - checksum
   - workflow (notification, moderation, etc)
 
