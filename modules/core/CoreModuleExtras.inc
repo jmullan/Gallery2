@@ -85,8 +85,6 @@ class CoreModuleExtras {
 	 *  3.  Update the '0' block to make any appropriate changes for initial
 	 *      installs.  Merge them in with the existing install code as
 	 *      appropriate.
-	 *  4.  Update the $currentVersion variable at the bottom of the switch
-	 *      to the new version.
 	 */
 	switch ($currentVersion) {
 	case '0':
@@ -347,6 +345,9 @@ class CoreModuleExtras {
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
+
+	case '0.9.1':
+	    /* Set g2 version to 2.0-beta-1+ */
 	    break;
 
 	default:
