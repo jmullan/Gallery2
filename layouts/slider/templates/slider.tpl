@@ -5,7 +5,7 @@
  * and when you upgrade, your changes will not get overwritten.
  *}
 <div style="position:absolute;visibility:hidden;left:0px">
-{foreach from=$layout.itemList key=i item=it}
+{foreach from=$layout.children key=i item=it}
   {if isset($it.image)}
     {if isset($it.renderItem)}
       <a id="img_{$it.imageIndex}" href="{g->url arg1="view=core:ShowItem"
@@ -15,7 +15,7 @@
           arg2="itemId=`$it.image.id`"
           arg3="serialNumber=`$it.image.serialNumber`"}"></a>
     {/if}
-    <span id="title_{$it.imageIndex}">{$it.data.title|markup}</span>
+    <span id="title_{$it.imageIndex}">{$it.title|default:$it.pathComponent|markup}</span>
   {/if}
 {/foreach}
 </div>
@@ -43,9 +43,9 @@
 <noscript><p class="giError">
     {g->text text="Warning: This site requires javascript."}
 </p></noscript>
-{foreach from=$layout.itemList key=i item=it}
+{foreach from=$layout.children key=i item=it}
 {if isset($it.image)}<a href="" onclick="image_show({$it.imageIndex});return false"
- >{if isset($it.thumb)}{g->image item=$it.data image=$it.thumb class=hthumb}{
+ >{if isset($it.thumbnail)}{g->image item=$it image=$it.thumbnail class=hthumb}{
    else}<p>{g->text text="no thumbnail"}</p>{/if}</a
  >{/if}
 {/foreach}
@@ -55,7 +55,7 @@
 
 {* Slideshow options *}
 <div id="options" class="gbMenu" style="visibility:hidden">
-  {include file="gallery:layouts/slider/templates/sidebar.tpl"}
+  {include file="gallery:templates/sidebar.tpl"}
   <div class="sideopt">
   <div class="gbMenu">
     <div class="giTitle"> {g->text text="Slideshow&nbsp;Options"} </div>
