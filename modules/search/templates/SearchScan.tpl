@@ -1,5 +1,5 @@
       {gallery->form controller=$controller method="GET"}
-      {gallery->input type="hidden" name="formName"}SearchScan{/gallery->input}
+      {gallery->input type="hidden" name="form.formName"}SearchScan{/gallery->input}
 
       <!-- Embed the hidden return fields -->
       {foreach from=$return key=key item=value}

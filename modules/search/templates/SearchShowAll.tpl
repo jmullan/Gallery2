@@ -1,5 +1,5 @@
       {gallery->form controller=$controller method="GET"}
-      {gallery->input type="hidden" name="formName"}SearchShowAll{/gallery->input}
+      {gallery->input type="hidden" name="form.formName"}SearchShowAll{/gallery->input}
       {gallery->input type="hidden" name="form.moduleId"}{$form.moduleId}{/gallery->input}
       {gallery->input type="hidden" name="form.page"}{$form.page}{/gallery->input}
 

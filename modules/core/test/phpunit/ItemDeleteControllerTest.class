@@ -70,10 +70,7 @@ class ItemDeleteControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.action.delete', 1);
 
 	/* Perform the request and verify that we succeeded */
-	list ($ret, $results) = $this->_controller->handleRequest();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$results = $this->handleRequest();
 	$this->assertRedirect(array('view' => 'core:ItemAdmin',
 				    'itemId' => $album->getParentId()),
 			      $results);
@@ -96,10 +93,7 @@ class ItemDeleteControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.action.delete', 1);
 
 	/* Perform the request and verify that we failed */
-	list ($ret, $results) = $this->_controller->handleRequest();
-	if (!($ret->getErrorCode() & ERROR_BAD_PARAMETER)) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$results = $this->handleRequest(ERROR_BAD_PARAMETER);
     }
 
     /**
@@ -113,10 +107,7 @@ class ItemDeleteControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.action.delete', 1);
 
 	/* Perform the request and verify that we failed */
-	list ($ret, $results) = $this->_controller->handleRequest();
-	if (!($ret->getErrorCode() & ERROR_PERMISSION_DENIED)) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$results = $this->handleRequest(ERROR_PERMISSION_DENIED);
     }
     
 }

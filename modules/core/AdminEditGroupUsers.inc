@@ -39,7 +39,7 @@ class AdminEditGroupUsersController extends GalleryController {
     /**
      * @see GalleryController::handleRequest
      */
-    function handleRequest() {
+    function handleRequest($form) {
 	global $gallery;
 
 	$ret = GalleryUserHelper::assertSiteAdministrator();
@@ -49,8 +49,6 @@ class AdminEditGroupUsersController extends GalleryController {
 
 	$results = array();
 	$redirectParams = array();
-	$formName = GalleryUtilities::getRequestVariables('formName');
-	$form = GalleryUtilities::getFormVariables('form.');
 
 	/* Load the group */
 	list ($ret, $group) = $gallery->loadEntitiesById($form['groupId']);
@@ -142,7 +140,7 @@ class AdminEditGroupUsersView extends GalleryView {
     /**
      * @see GalleryView::renderBody
      */
-    function renderBody() {
+    function renderBody($form) {
 	global $gallery;
 
 	$ret = GalleryUserHelper::assertSiteAdministrator();
@@ -150,10 +148,8 @@ class AdminEditGroupUsersView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	    
-	$formName = GalleryUtilities::getRequestVariables('formName');
-	$form = GalleryUtilities::getFormVariables('form.');
 
-	if ($formName != 'AdminEditGroupUsers' && !isset($form['groupId'])) {
+	if ($form['formName'] != 'AdminEditGroupUsers' && !isset($form['groupId'])) {
 	    $form['groupId'] = GalleryUtilities::getRequestVariables('groupId');
 	}
 
@@ -167,7 +163,7 @@ class AdminEditGroupUsersView extends GalleryView {
 	$form['groupName'] = $group->getGroupName();
 
 	/* First time on this page, initialize form fields */
-	if ($formName != 'AdminEditGroupUsers') {
+	if ($form['formName'] != 'AdminEditGroupUsers') {
 	    $form['text']['userName'] = '';
 	}
 

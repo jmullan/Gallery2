@@ -1,5 +1,5 @@
     {gallery->form controller="$controller"}
-    {gallery->input type="hidden" name="formName"}ItemCreateResizes{/gallery->input}
+    {gallery->input type="hidden" name="form.formName"}ItemCreateResizes{/gallery->input}
     {gallery->input type="hidden" name="itemId"}{$item.id}{/gallery->input}
     <table border="0" cellspacing="0" cellpadding="0">
 	<tr>

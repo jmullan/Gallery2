@@ -1,5 +1,5 @@
       {gallery->form controller="$controller"}
-      {gallery->input type="hidden" name="formName"}AdminNetPbm{/gallery->input}
+      {gallery->input type="hidden" name="form.formName"}AdminNetPbm{/gallery->input}
 
       <!-- Embed the hidden return fields -->
       {foreach from=$return key=key item=value}

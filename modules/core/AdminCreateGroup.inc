@@ -39,7 +39,7 @@ class AdminCreateGroupController extends GalleryController {
     /**
      * @see GalleryController::handleRequest
      */
-    function handleRequest() {
+    function handleRequest($form) {
 	global $gallery;
 
 	$ret = GalleryUserHelper::assertSiteAdministrator();
@@ -49,7 +49,6 @@ class AdminCreateGroupController extends GalleryController {
 
 	$results = array();
 	$redirectParams = array();
-	$form = GalleryUtilities::getFormVariables('form.');
 
 	if (isset($form['action']['cancel'])) {
 
@@ -123,7 +122,7 @@ class AdminCreateGroupView extends GalleryView {
     /**
      * @see GalleryView::renderBody
      */
-    function renderBody() {
+    function renderBody($form) {
 	global $gallery;
 	
 	$ret = GalleryUserHelper::assertSiteAdministrator();
@@ -131,10 +130,8 @@ class AdminCreateGroupView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	    
-	$formName = GalleryUtilities::getRequestVariables('formName');
-	$form = GalleryUtilities::getFormVariables('form.');
 
-	if ($formName != 'AdminCreateGroup') {
+	if ($form['formName'] != 'AdminCreateGroup') {
 	    // Set the form defaults
 	    $form['groupName'] = '';
 	}

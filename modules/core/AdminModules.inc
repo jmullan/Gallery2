@@ -136,7 +136,7 @@ class AdminModulesView extends GalleryView {
     /**
      * @see GalleryView::renderBody
      */
-    function renderBody() {
+    function renderBody($form) {
 	global $gallery;
 	
 	$ret = GalleryUserHelper::assertSiteAdministrator();

@@ -55,7 +55,7 @@ class SecurityViolationView extends GalleryView {
     /**
      * @see GalleryView::renderBody
      */
-    function renderBody() {
+    function renderBody($form) {
 	global $gallery;
 
 	list ($ret, $module) = $gallery->loadModule('core');

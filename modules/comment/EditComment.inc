@@ -38,12 +38,11 @@ class EditCommentController extends GalleryController {
     /**
      * @see GalleryController::handleRequest()
      */
-    function handleRequest() {
+    function handleRequest($form) {
 	global $gallery;
 
 	list ($itemId, $commentId) =
 	    GalleryUtilities::getRequestVariables('itemId', 'commentId');
-	$form = GalleryUtilities::getFormVariables('form.');
 	$return = GalleryUtilities::getFormVariables('return.');
 
 	/* Make sure we have permission to edit a comment */
@@ -163,7 +162,7 @@ class EditCommentView extends GalleryView {
     /**
      * @see GalleryView::renderBody()
      */
-    function renderBody() {
+    function renderBody($form) {
 	global $gallery;
 
 	/* Load our item */
@@ -199,9 +198,7 @@ class EditCommentView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$form = GalleryUtilities::getFormVariables('form.');
-	$formName = GalleryUtilities::getRequestVariables('formName');
-	if ($formName != 'EditComment') {
+	if ($form['formName'] != 'EditComment') {
 	    $form['commenterName'] = $commenter->getUserName();
 	    $form['host'] = $comment->getHost();
 	    $form['date'] = $comment->getDate();

@@ -39,12 +39,11 @@ class AddCommentController extends GalleryController {
     /**
      * @see GalleryController::handleRequest()
      */
-    function handleRequest() {
+    function handleRequest($form) {
 	global $gallery;
 	global $HTTP_SERVER_VARS;
 
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
-	$form = GalleryUtilities::getFormVariables('form.');
 	$return = GalleryUtilities::getFormVariables('return.');
 
 	/* Make sure we have permission to add a comment */
@@ -122,7 +121,7 @@ class AddCommentView extends GalleryView {
     /**
      * @see GalleryView::renderBody()
      */
-    function renderBody() {
+    function renderBody($form) {
 	global $gallery;
 
 	/* Load our item */

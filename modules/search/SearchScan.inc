@@ -37,10 +37,9 @@ class SearchScanController extends GalleryController {
     /**
      * @see GalleryController::handleRequest
      */
-    function handleRequest() {
+    function handleRequest($form) {
 	global $gallery;
 
-	$form = GalleryUtilities::getFormVariables('form.');
 
 	if (isset($form['action']['showAll'])) {
 	    $results['view'] = 'search:SearchShowAll';
@@ -72,15 +71,13 @@ class SearchScanView extends GalleryView {
     /**
      * @see GalleryView::renderBody
      */
-    function renderBody() {
+    function renderBody($form) {
 	global $gallery;
 
 	// XXX: Parameterize this
 	$scanSize = 3;
 
-	$form = GalleryUtilities::getFormVariables('form.');
 	$return = GalleryUtilities::getFormVariables('return.');
-	$formName = GalleryUtilities::getRequestVariables('formName');
 	
 	/* Find all the modules that support the Search interface */
 	$ids = GalleryFactory::getAllImplementationIds('GallerySearchInterface_1_0');
@@ -103,9 +100,9 @@ class SearchScanView extends GalleryView {
 	$searchResults = array();
 	$searchResultItems = array();
 	$searchResultThumbnails = array();
-	if ($formName == 'SearchScan' ||
-	    $formName == 'SearchShowAll' ||
-	    $formName == 'SearchSystemContent') {
+	if ($form['formName'] == 'SearchScan' ||
+	    $form['formName'] == 'SearchShowAll' ||
+	    $form['formName'] == 'SearchSystemContent') {
 	    
 	    if (empty($form['searchCriteria'])) {
 		$form['error']['searchCriteria']['missing'] = 1;
@@ -114,7 +111,7 @@ class SearchScanView extends GalleryView {
 		$form['searchCriteria'] =
 		    SearchUtilities::sanitizeSearchCriteria($form['searchCriteria']);
 		
-		if (isset($form['useDefaultSettings']) || $formName == 'SearchShowAll') {
+		if (isset($form['useDefaultSettings']) || $form['formName'] == 'SearchShowAll') {
 		    foreach ($searchInstances as $id => $instance) {
 			$form['options'][$id] = $modules[$id]['options'];
 		    }

@@ -124,8 +124,11 @@ function GalleryMain($startTime) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
+	/* Get our form variables */
+	$form = GalleryUtilities::getFormVariables('form.');
+
 	/* Let the controller handle the input */
-	list ($ret, $results) = $controller->handleRequest();
+	list ($ret, $results) = $controller->handleRequest($form);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

@@ -39,7 +39,7 @@ class AdminCreateUserController extends GalleryController {
     /**
      * @see GalleryController::handleRequest
      */
-    function handleRequest() {
+    function handleRequest($form) {
 	global $gallery;
 
 	$ret = GalleryUserHelper::assertSiteAdministrator();
@@ -49,8 +49,6 @@ class AdminCreateUserController extends GalleryController {
 
 	$results = array();
 	$redirectParams = array();
-	$form = GalleryUtilities::getFormVariables('form.');
-
 	if (isset($form['action']['cancel'])) {
 
 	    /* Go back to the AdminUsers view */
@@ -141,7 +139,7 @@ class AdminCreateUserView extends GalleryView {
     /**
      * @see GalleryView::renderBody
      */
-    function renderBody() {
+    function renderBody($form) {
 	global $gallery;
 	
 	$ret = GalleryUserHelper::assertSiteAdministrator();
@@ -149,10 +147,7 @@ class AdminCreateUserView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	    
-	$formName = GalleryUtilities::getRequestVariables('formName');
-	$form = GalleryUtilities::getFormVariables('form.');
-
-	if ($formName != 'AdminCreateUser') {
+	if ($form['formName'] != 'AdminCreateUser') {
 	    /* First time around, set our defaults here. */
 	    $form['userName'] = '';
 	    $form['email'] = '';

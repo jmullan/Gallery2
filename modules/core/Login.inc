@@ -39,11 +39,10 @@ class LoginController extends GalleryController {
     /**
      * @see GalleryController::handleRequest
      */
-    function handleRequest() {
+    function handleRequest($form) {
 	global $gallery;
 
 	$results = array();
-	$form = GalleryUtilities::getFormVariables('form.');
 	$return = GalleryUtilities::getFormVariables('return.');
 
 	if (isset($form['action']['login'])) {
@@ -107,14 +106,12 @@ class LoginView extends GalleryView {
     /**
      * @see GalleryView::renderBody
      */
-    function renderBody() {
+    function renderBody($form) {
 	global $gallery;
 
-	$form = GalleryUtilities::getFormVariables('form.');
 	$return = GalleryUtilities::getFormVariables('return.');
-	$formName = GalleryUtilities::getRequestVariables('formName');
 
-	if ($formName == 'Login') {
+	if ($form['formName'] == 'Login') {
 	    if (empty($form['username'])) {
 		$form['error']['username']['missing'] = 1;
 	    }

@@ -40,7 +40,7 @@ class AdminUsersController extends GalleryController {
     /**
      * @see GalleryController::handleRequest
      */
-    function handleRequest() {
+    function handleRequest($form) {
 	global $gallery;
 
 	$ret = GalleryUserHelper::assertSiteAdministrator();
@@ -49,8 +49,6 @@ class AdminUsersController extends GalleryController {
 	}
 
 	$results = array();
-	$form = GalleryUtilities::getFormVariables('form.');
-
 	$user = null;
 	if (!empty($form['text']['userName'])) {
 	    list ($ret, $user) =
@@ -174,7 +172,7 @@ class AdminUsersView extends GalleryView {
     /**
      * @see GalleryView::renderBody
      */
-    function renderBody() {
+    function renderBody($form) {
 	global $gallery;
 	
 	$ret = GalleryUserHelper::assertSiteAdministrator();
@@ -182,9 +180,6 @@ class AdminUsersView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	    
-	/* Load some standard form parameters */
-	$form = GalleryUtilities::getFormVariables('form.');
-
 	/* Set some defaults, if necessary */
 	if (!isset($form['list']['filter'])) {
 	    $form['list']['filter'] = '';

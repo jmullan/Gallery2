@@ -49,12 +49,10 @@ class ShowTreeView extends GalleryView {
     /**
      * 
      */
-    function renderBody() {
+    function renderBody($form) {
 	global $gallery;
 
-	$form = GalleryUtilities::getFormVariables('form.');
 	$return = GalleryUtilities::getFormVariables('return.');
-	$formName = GalleryUtilities::getRequestVariables('formName');
 	list ($entityId, $itemId) = GalleryUtilities::getRequestVariables('entityId', 'itemId');
 
 	/* Make sure we have permission */

@@ -2,7 +2,7 @@
 
       {gallery->input type="hidden" name="itemId"}{$item.id}{/gallery->input}
       {gallery->input type="hidden" name="commentId"}{$comment.id}{/gallery->input}
-      {gallery->input type="hidden" name="formName"}EditComment{/gallery->input}
+      {gallery->input type="hidden" name="form.formName"}EditComment{/gallery->input}
       
       <!-- Embed the hidden return fields -->
       {foreach from=$return key=key item=value}

@@ -1,5 +1,5 @@
   {gallery->form controller="$controller"}
-  {gallery->input type="hidden" name="formName"}AdminCreateGroup{/gallery->input}
+  {gallery->input type="hidden" name="form.formName"}AdminCreateGroup{/gallery->input}
   <table width="100%" border="0" cellspacing="3" cellpadding="3">
 
     <tr>

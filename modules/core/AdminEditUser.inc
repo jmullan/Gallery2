@@ -39,7 +39,7 @@ class AdminEditUserController extends GalleryController {
     /**
      * @see GalleryController::handleRequest
      */
-    function handleRequest() {
+    function handleRequest($form) {
 	global $gallery;
 
 	$ret = GalleryUserHelper::assertSiteAdministrator();
@@ -49,7 +49,6 @@ class AdminEditUserController extends GalleryController {
 
 	$results = array();
 	$redirectParams = array();
-	$form = GalleryUtilities::getFormVariables('form.');
 
 	list ($ret, $user) = $gallery->loadEntitiesById($form['userId']);
 	if ($ret->isError()) {
@@ -178,7 +177,7 @@ class AdminEditUserView extends GalleryView {
     /**
      * @see GalleryView::renderBody
      */
-    function renderBody() {
+    function renderBody($form) {
 	global $gallery;
 	
 	$ret = GalleryUserHelper::assertSiteAdministrator();
@@ -186,10 +185,8 @@ class AdminEditUserView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	    
-	$formName = GalleryUtilities::getRequestVariables('formName');
-	$form = GalleryUtilities::getFormVariables('form.');
 
-	if ($formName != 'AdminEditUser') {
+	if ($form['formName'] != 'AdminEditUser') {
 	    $form['userId'] = GalleryUtilities::getRequestVariables('userId');
 	}
 	
@@ -199,7 +196,7 @@ class AdminEditUserView extends GalleryView {
 	}
 
 	/* Load the form with user data the first time around. */
-	if ($formName != 'AdminEditUser') {
+	if ($form['formName'] != 'AdminEditUser') {
 	    $form['userName'] = $user->getUserName();
 	    $form['fullName'] = $user->getFullName();
 	    $form['email'] = $user->getEmail();

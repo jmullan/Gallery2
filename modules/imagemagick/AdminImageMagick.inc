@@ -39,7 +39,7 @@ class AdminImageMagickController extends GalleryController {
     /**
      * @see GalleryController::handleRequest
      */
-    function handleRequest() {
+    function handleRequest($form) {
 	global $gallery;
 
 	$ret = GalleryUserHelper::assertSiteAdministrator();
@@ -47,7 +47,6 @@ class AdminImageMagickController extends GalleryController {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$form = GalleryUtilities::getFormVariables('form.');
 	$return = GalleryUtilities::getFormVariables('return.');
 
 	/* Set the path.  Guarantee that it's got a trailing slash. */
@@ -128,15 +127,13 @@ class AdminImageMagickView extends GalleryView {
     /**
      * @see GalleryView::renderBody
      */
-    function renderBody() {
+    function renderBody($form) {
 	global $gallery;
 
-	$form = GalleryUtilities::getFormVariables('form.');
 	$return = GalleryUtilities::getFormVariables('return.');
-	$formName = GalleryUtilities::getRequestVariables('formName');
 	
 	/* Load our default values if we didn't just come from this form. */
-	if ($formName != 'AdminImageMagick') {
+	if ($form['formName'] != 'AdminImageMagick') {
 	    foreach (array('path', 'jpegQuality') as $key) {
 		list ($ret, $form[$key]) =
 		    $gallery->getModuleParameter('imagemagick', $key);

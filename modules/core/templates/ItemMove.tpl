@@ -70,7 +70,7 @@
     </script>
     
       {gallery->form controller="$controller"}
-      {gallery->input type="hidden" name="formName"}ItemMove{/gallery->input}
+      {gallery->input type="hidden" name="form.formName"}ItemMove{/gallery->input}
       {gallery->input type="hidden" name="itemId"}{$itemId}{/gallery->input}
     <table border="0" cellspacing="0" cellpadding="0">
 	<tr>

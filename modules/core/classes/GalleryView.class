@@ -113,10 +113,11 @@ class GalleryView {
      * any content that should be contained within those tags in the resulting
      * HTML.
      *
+     * @param array mixed the form values
      * @return array object GalleryStatus a status code
      *               string html content
      */
-    function renderHead() {
+    function renderHead($form) {
 	return array(GalleryStatus::success(), '');
     }
 
@@ -127,10 +128,11 @@ class GalleryView {
      * content that should be contained within those tags in the resulting
      * HTML.
      *
+     * @param array mixed the form values
      * @return array object GalleryStatus a status code
      *               string html content
      */
-    function renderBody() {
+    function renderBody($form) {
 	return array(GalleryStatus::success(), '');
     }
 
@@ -213,15 +215,21 @@ class GalleryView {
 	$templateAdapter =& $gallery->getTemplateAdapter();
 	$templateAdapter->setTheme($theme);
 	
+	/* Get our form variables */
+	$form = GalleryUtilities::getFormVariables('form.');
+	if (!isset($form['formName'])) {
+	    $form['formName'] = '';
+	}
+	
 	GalleryProfiler::start('GalleryView::renderHead');
-	list ($ret, $head) = $this->renderHead();
+	list ($ret, $head) = $this->renderHead($form);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	GalleryProfiler::stop('GalleryView::renderHead');
-	
+
 	GalleryProfiler::start('GalleryView::renderBody');
-	list ($ret, $body) = $this->renderBody();
+	list ($ret, $body) = $this->renderBody($form);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

@@ -35,11 +35,10 @@
  */
 class ItemCreateResizesController extends GalleryController {
 
-    function handleRequest() {
+    function handleRequest($form) {
 	global $gallery;
 
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
-	$form = GalleryUtilities::getFormVariables('form.');
 
 	/* Make sure we have permission do edit this item */
 	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'core.changeProperties');
@@ -221,12 +220,10 @@ class ItemCreateResizesView extends GalleryView {
     /**
      *
      */
-    function renderBody() {
+    function renderBody($form) {
 	global $gallery;
 
-	list ($itemId, $formName) =
-	    GalleryUtilities::getRequestVariables('itemId', 'formName');
-	$form = GalleryUtilities::getFormVariables('form.');
+	$itemId = GalleryUtilities::getRequestVariables('itemId');
 
 	/* Make sure we have permission do edit this item */
 	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'core.changeProperties');
@@ -239,7 +236,7 @@ class ItemCreateResizesView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	if ($formName == 'ItemCreateResizes') {
+	if ($form['formName'] == 'ItemCreateResizes') {
 
 	    /* Complain if we have any invalid data */
 	    if (empty($form['thumbnail']['size'])) {

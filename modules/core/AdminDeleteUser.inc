@@ -39,7 +39,7 @@ class AdminDeleteUserController extends GalleryController {
     /**
      * @see GalleryController::handleRequest
      */
-    function handleRequest() {
+    function handleRequest($form) {
 	global $gallery;
 
 	$ret = GalleryUserHelper::assertSiteAdministrator();
@@ -49,7 +49,6 @@ class AdminDeleteUserController extends GalleryController {
 
 	$results = array();
 	$redirectParams = array();
-	$form = GalleryUtilities::getFormVariables('form.');
 	
 	if (isset($form['action']['cancel'])) {
 
@@ -118,7 +117,7 @@ class AdminDeleteUserView extends GalleryView {
     /**
      * @see GalleryView::renderBody
      */
-    function renderBody() {
+    function renderBody($form) {
 	global $gallery;
 	
 	$ret = GalleryUserHelper::assertSiteAdministrator();
@@ -126,9 +125,7 @@ class AdminDeleteUserView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	    
-	$formName = GalleryUtilities::getRequestVariables('formName');
-	$form = GalleryUtilities::getFormVariables('form.');
-	if ($formName != 'AdminDeleteUser') {
+	if ($form['formName'] != 'AdminDeleteUser') {
 	    $form['userId'] = GalleryUtilities::getRequestVariables('userId');
 	}
 

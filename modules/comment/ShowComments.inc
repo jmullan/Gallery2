@@ -65,7 +65,7 @@ class ShowCommentsView extends GalleryView {
     /**
      * @see GalleryView::renderBody
      */
-    function renderBody() {
+    function renderBody($form) {
 	global $gallery;
 
 	/* Load our item */

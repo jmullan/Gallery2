@@ -37,10 +37,7 @@ class AdminCreateUserControllerTest extends GalleryControllerTestCase {
     
     function testCancel() {
 	GalleryUtilities::putRequestVariable('form.action.cancel', 1);
-	list ($ret, $results) = $this->_controller->handleRequest();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$results = $this->handleRequest();
 	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
 	$this->assertEquals('core:AdminUsers', GalleryUtilities::getRequestVariables('subView'));
     }
@@ -55,10 +52,7 @@ class AdminCreateUserControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.password1', 'password');
 	GalleryUtilities::putRequestVariable('form.password2', 'password');
 	
-	list ($ret, $results) = $this->_controller->handleRequest();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$results = $this->handleRequest();
 	$this->assertRedirect(array('view' => 'core:SiteAdmin',
 				    'subView' => 'core:AdminUsers',
 				    'form.status.createdUser' => $userName),
@@ -72,10 +66,7 @@ class AdminCreateUserControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.action.create', 1);
 
 	/* Create one user */
-	list ($ret, $results) = $this->_controller->handleRequest();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$results = $this->handleRequest();
 	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
 	$this->assertEquals('core:AdminCreateUser', GalleryUtilities::getRequestVariables('subView'));
 	$this->assert(GalleryUtilities::hasRequestVariable('form.error.userName.missing'));
@@ -96,10 +87,7 @@ class AdminCreateUserControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.password1', 'passwordRight');
 	GalleryUtilities::putRequestVariable('form.password2', 'passwordWrong');
 	
-	list ($ret, $results) = $this->_controller->handleRequest();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$results = $this->handleRequest();
 
 	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
 	$this->assertEquals('core:AdminCreateUser', GalleryUtilities::getRequestVariables('subView'));
@@ -119,10 +107,7 @@ class AdminCreateUserControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.password1', 'password');
 	GalleryUtilities::putRequestVariable('form.password2', 'password');
 	
-	list ($ret, $results) = $this->_controller->handleRequest();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$results = $this->handleRequest();
 	$this->assertRedirect(array('view' => 'core:SiteAdmin',
 				    'subView' => 'core:AdminUsers',
 				    'form.status.createdUser' => $userName),
@@ -130,10 +115,7 @@ class AdminCreateUserControllerTest extends GalleryControllerTestCase {
 
 
 	/* Create a second user with the same name */
-	list ($ret, $results) = $this->_controller->handleRequest();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$results = $this->handleRequest();
 	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
 	$this->assertEquals('core:AdminCreateUser', GalleryUtilities::getRequestVariables('subView'));
 	$this->assert(GalleryUtilities::hasRequestVariable('form.error.userName.exists'));

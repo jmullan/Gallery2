@@ -41,11 +41,10 @@ class ItemMoveController extends GalleryController {
      * Move the selected items into the destination album, if all the
      * permissions are set correctly.
      */
-    function handleRequest() {
+    function handleRequest($form) {
 	global $gallery;
 
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
-	$form = GalleryUtilities::getFormVariables('form.');
 
 	if (isset($form['action']['move'])) {
 
@@ -208,15 +207,13 @@ class ItemMoveView extends GalleryView {
     /**
      * 
      */
-    function renderBody() {
+    function renderBody($form) {
 	global $gallery;
 
 	/* itemId is the album where we want to move items from */
-	list ($itemId, $formName, $selectedId) =
-	    GalleryUtilities::getRequestVariables('itemId', 'formName', 'selectedId');
-	$form = GalleryUtilities::getFormVariables('form.');
+	list ($itemId, $selectedId) = GalleryUtilities::getRequestVariables('itemId', 'selectedId');
 
-        if ($formName == 'ItemMove') {
+        if ($form['formName'] == 'ItemMove') {
 	    /* No validation at the moment */
         } else {
             /* First time around, load the form with item data */

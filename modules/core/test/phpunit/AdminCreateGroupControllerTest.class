@@ -38,10 +38,7 @@ class AdminCreateGroupControllerTest extends GalleryControllerTestCase {
     function testCancel() {
 	GalleryUtilities::putRequestVariable('form.action.cancel', 1);
 
-	list ($ret, $results) = $this->_controller->handleRequest();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$results = $this->handleRequest();
 	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
 	$this->assertEquals('core:AdminGroups', GalleryUtilities::getRequestVariables('subView'));
     }
@@ -51,10 +48,7 @@ class AdminCreateGroupControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.action.create', 1);
 	GalleryUtilities::putRequestVariable('form.groupName', $groupName);
 	
-	list ($ret, $results) = $this->_controller->handleRequest();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$results = $this->handleRequest();
 	$this->assertRedirect(array('view' => 'core:SiteAdmin',
 				    'subView' => 'core:AdminGroups',
 				    'form.status.createdGroup' => $groupName),
@@ -67,10 +61,7 @@ class AdminCreateGroupControllerTest extends GalleryControllerTestCase {
 	/* Create one group */
 	GalleryUtilities::putRequestVariable('form.action.create', 1);
 	
-	list ($ret, $results) = $this->_controller->handleRequest();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$results = $this->handleRequest();
 	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
 	$this->assertEquals('core:AdminCreateGroup', GalleryUtilities::getRequestVariables('subView'));
 	$this->assert(GalleryUtilities::hasRequestVariable('form.error.groupName.missing'));
@@ -84,10 +75,7 @@ class AdminCreateGroupControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.action.create', 1);
 	GalleryUtilities::putRequestVariable('form.groupName', $groupName);
 	
-	list ($ret, $results) = $this->_controller->handleRequest();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$results = $this->handleRequest();
 	$this->assertRedirect(array('view' => 'core:SiteAdmin',
 				    'subView' => 'core:AdminGroups',
 				    'form.status.createdGroup' => $groupName),
@@ -95,10 +83,7 @@ class AdminCreateGroupControllerTest extends GalleryControllerTestCase {
 
 
 	/* Create a second group with the same name */
-	list ($ret, $results) = $this->_controller->handleRequest();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$results = $this->handleRequest();
 	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
 	$this->assertEquals('core:AdminCreateGroup', GalleryUtilities::getRequestVariables('subView'));
 	$this->assert(GalleryUtilities::hasRequestVariable('form.error.groupName.exists'));

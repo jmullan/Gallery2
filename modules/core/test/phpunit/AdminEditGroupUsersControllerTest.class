@@ -44,10 +44,7 @@ class AdminEditGroupUsersControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.action.done', 1);
 	GalleryUtilities::putRequestVariable('form.groupId', $group->getId());
 
-	list ($ret, $results) = $this->_controller->handleRequest();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$results = $this->handleRequest();
 	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
 	$this->assertEquals('core:AdminGroups', GalleryUtilities::getRequestVariables('subView'));
 	$this->_deleteGroup($group);
@@ -88,10 +85,7 @@ class AdminEditGroupUsersControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.list.userId', $this->_user->getId());
 	GalleryUtilities::putRequestVariable('form.groupId', $this->_group->getId());
 
-	list ($ret, $results) = $this->_controller->handleRequest();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$results = $this->handleRequest();
 
 	$this->assertRedirect(array('view' => 'core:SiteAdmin',
 				    'subView' => 'core:AdminEditGroupUsers',
@@ -105,10 +99,7 @@ class AdminEditGroupUsersControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.text.userName', $this->_user->getUserName());
 	GalleryUtilities::putRequestVariable('form.groupId', $this->_group->getId());
 
-	list ($ret, $results) = $this->_controller->handleRequest();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$results = $this->handleRequest();
 
 	$this->assertRedirect(array('view' => 'core:SiteAdmin',
 				    'subView' => 'core:AdminEditGroupUsers',
@@ -122,10 +113,7 @@ class AdminEditGroupUsersControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.text.userName', 'bogus-user-'.rand());
 	GalleryUtilities::putRequestVariable('form.groupId', $this->_group->getId());
 
-	list ($ret, $results) = $this->_controller->handleRequest();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$results = $this->handleRequest();
 
 	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
 	$this->assertEquals('core:AdminEditGroupUsers', GalleryUtilities::getRequestVariables('subView'));
@@ -137,10 +125,7 @@ class AdminEditGroupUsersControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.text.userName', '');
 	GalleryUtilities::putRequestVariable('form.groupId', $this->_group->getId());
 
-	list ($ret, $results) = $this->_controller->handleRequest();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$results = $this->handleRequest();
 
 	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
 	$this->assertEquals('core:AdminEditGroupUsers', GalleryUtilities::getRequestVariables('subView'));

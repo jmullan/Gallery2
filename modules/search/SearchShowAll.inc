@@ -37,10 +37,9 @@ class SearchShowAllController extends GalleryController {
     /**
      * @see GalleryController::handleRequest
      */
-    function handleRequest() {
+    function handleRequest($form) {
 	global $gallery;
 
-	$form = GalleryUtilities::getFormVariables('form.');
 
 	if (isset($form['action']['scan'])) {
 	    $results['view'] = 'search:SearchScan';
@@ -72,20 +71,18 @@ class SearchShowAllView extends GalleryView {
     /**
      * @see GalleryView::renderBody
      */
-    function renderBody() {
+    function renderBody($form) {
 	global $gallery;
 
 	// XXX: Parameterize this
 	$pageSize = 2;
 
-	$form = GalleryUtilities::getFormVariables('form.');
 	$return = GalleryUtilities::getFormVariables('return.');
-	$formName = GalleryUtilities::getRequestVariables('formName');
 	
 	$searchResults = array();
 	$searchResultItems = array();
 	$searchResultThumbnails = array();
-	if ($formName == 'SearchShowAll' || $formName == 'SearchScan') {
+	if ($form['formName'] == 'SearchShowAll' || $form['formName'] == 'SearchScan') {
 	    if (empty($form['searchCriteria'])) {
 		$form['error']['searchCriteria']['missing'] = 1;
 	    } else {

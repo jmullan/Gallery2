@@ -37,11 +37,10 @@ class ItemMakeHighlightController extends GalleryController {
     /**
      * 
      */
-    function handleRequest() {
+    function handleRequest($form) {
 	global $gallery;
 
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
-	$form = GalleryUtilities::getFormVariables('form.');
 
 	list ($ret, $item) = $gallery->loadEntitiesById($itemId);
 	if ($ret->isError()) {
@@ -182,12 +181,10 @@ class ItemMakeHighlightView extends GalleryView {
     /**
      * 
      */
-    function renderBody() {
+    function renderBody($form) {
 	global $gallery;
 
-	list ($itemId, $formName) =
-	    GalleryUtilities::getRequestVariables('itemId', 'formName');
-	$form = GalleryUtilities::getFormVariables('form.');
+	$itemId = GalleryUtilities::getRequestVariables('itemId');
 
 	list ($ret, $item) = $gallery->loadEntitiesById($itemId);
 	if ($ret->isError()) {
@@ -201,7 +198,7 @@ class ItemMakeHighlightView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	if ($formName == 'ItemMakeHighlight') {
+	if ($form['formName'] == 'ItemMakeHighlight') {
 
 	    /* Complain if we have any invalid data */
 

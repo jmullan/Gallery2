@@ -1,5 +1,5 @@
       {gallery->form view="$view" method="GET"}
-      {gallery->input type="hidden" name="formName"}FilterMembers{/gallery->input}
+      {gallery->input type="hidden" name="form.formName"}FilterMembers{/gallery->input}
       {gallery->input type="hidden" name="itemId"}{$itemId}{/gallery->input}
   
     <table border="0" cellspacing="0" cellpadding="0" width="100%">

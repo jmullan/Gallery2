@@ -52,7 +52,7 @@ class ItemAdminView extends GalleryView {
     /**
      * @see GalleryView::renderBody
      */
-    function renderBody() {
+    function renderBody($form) {
 	global $gallery;
 
 	/* Figure out the item we're referring to */
@@ -132,7 +132,7 @@ class ItemAdminView extends GalleryView {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    list ($ret, $subViewHtml) = $subView->renderBody();
+	    list ($ret, $subViewHtml) = $subView->renderBody($form);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }

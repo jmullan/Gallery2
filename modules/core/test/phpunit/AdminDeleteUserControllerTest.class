@@ -37,10 +37,7 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 
     function testCancel() {
 	GalleryUtilities::putRequestVariable('form.action.cancel', 1);
-	list ($ret, $results) = $this->_controller->handleRequest();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$results = $this->handleRequest();
 	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
 	$this->assertEquals('core:AdminUsers', GalleryUtilities::getRequestVariables('subView'));
     }
@@ -59,10 +56,7 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.action.delete', 1);
 	GalleryUtilities::putRequestVariable('form.userId', $user->getId());
 	
-	list ($ret, $results) = $this->_controller->handleRequest();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$results = $this->handleRequest();
 	
 	$this->assertRedirect(array('view' => 'core:SiteAdmin',
 				    'subView' => 'core:AdminUsers',
@@ -83,10 +77,7 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.action.delete', 1);
 	GalleryUtilities::putRequestVariable('form.userId', $gallery->getActiveUserId());
 	
-	list ($ret, $results) = $this->_controller->handleRequest();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$results = $this->handleRequest();
 	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
 	$this->assertEquals('core:AdminDeleteUser', GalleryUtilities::getRequestVariables('subView'));
     }
@@ -106,10 +97,7 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.action.delete', 1);
 	GalleryUtilities::putRequestVariable('form.userId', $anonymousUserId);
 	
-	list ($ret, $results) = $this->_controller->handleRequest();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$results = $this->handleRequest();
 	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
 	$this->assertEquals('core:AdminDeleteUser', GalleryUtilities::getRequestVariables('subView'));
     }

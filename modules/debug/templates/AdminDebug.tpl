@@ -1,5 +1,5 @@
       {gallery->form controller="$controller"}
-      {gallery->input type="hidden" name="formName"}AdminDebug{/gallery->input}
+      {gallery->input type="hidden" name="form.formName"}AdminDebug{/gallery->input}
     <table border="0" cellspacing="0" cellpadding="0" width="100%">
       
 	<tr>

@@ -76,10 +76,7 @@ class AdminModulesControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('action', 'install');
 
 	/* Perform the request and verify that we succeeded */
-	list ($ret, $results) = $this->_controller->handleRequest();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$results = $this->handleRequest();
 
 	$this->assertRedirect(array('view' => 'core:SiteAdmin',
 				    'subView' => 'core:AdminModules'),
@@ -95,10 +92,7 @@ class AdminModulesControllerTest extends GalleryControllerTestCase {
 	 */
 	GalleryUtilities::putRequestVariable('moduleName', 'ConfigNotRequired');
 	GalleryUtilities::putRequestVariable('action', 'activate');
-	list ($ret, $results) = $this->_controller->handleRequest();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$results = $this->handleRequest();
 
 	$this->assertRedirect(array('view' => 'core:SiteAdmin',
 				    'subView' => 'core:AdminModules'),
@@ -112,10 +106,7 @@ class AdminModulesControllerTest extends GalleryControllerTestCase {
 	 */
 	GalleryUtilities::putRequestVariable('moduleName', 'ConfigRequired');
 	GalleryUtilities::putRequestVariable('action', 'activate');
-	list ($ret, $results) = $this->_controller->handleRequest();
-	$this->assert($ret->getErrorCode() & ERROR_BAD_PARAMETER);
-	$this->assert(!AdminModulesTestModule::wasCalled('ConfigRequired', 'activate'),
-		      'activate was called');
+	$results = $this->handleRequest(ERROR_BAD_PARAMETER);
     }
 
     function testDeactivate() {
@@ -125,10 +116,7 @@ class AdminModulesControllerTest extends GalleryControllerTestCase {
 	$gallery->_modules['_status']['ConfigNotRequired']['active'] = 1;
 	GalleryUtilities::putRequestVariable('moduleName', 'ConfigNotRequired');
 	GalleryUtilities::putRequestVariable('action', 'deactivate');
-	list ($ret, $results) = $this->_controller->handleRequest();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$results = $this->handleRequest();
 
 	$this->assertRedirect(array('view' => 'core:SiteAdmin', 'subView' => 'core:AdminModules'), $results);
 	$this->assert(AdminModulesTestModule::wasCalled('ConfigNotRequired', 'deactivate'), 'deactivate not called');
@@ -137,9 +125,7 @@ class AdminModulesControllerTest extends GalleryControllerTestCase {
 	$gallery->_modules['_status']['ConfigRequired']['active'] = 0;
 	GalleryUtilities::putRequestVariable('moduleName', 'ConfigRequired');
 	GalleryUtilities::putRequestVariable('action', 'deactivate');
-	list ($ret, $results) = $this->_controller->handleRequest();
-	$this->assert($ret->getErrorCode() & ERROR_BAD_PARAMETER, 'expected error did not get returned');
-	$this->assert(!AdminModulesTestModule::wasCalled('ConfigRequired', 'deactivate'), 'deactivate was called');
+	$results = $this->handleRequest(ERROR_BAD_PARAMETER);
     }
 }
 

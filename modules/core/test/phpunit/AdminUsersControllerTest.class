@@ -39,10 +39,7 @@ class AdminUsersControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.action.firstPage', 1);
 	GalleryUtilities::putRequestVariable('form.list.page', 23);
 	
-	list ($ret, $results) = $this->_controller->handleRequest();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$results = $this->handleRequest();
 
 	$this->assertEquals(1, (int)GalleryUtilities::getRequestVariables('form.list.page'));
     }
@@ -52,10 +49,7 @@ class AdminUsersControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.action.backPage', 1);
 	GalleryUtilities::putRequestVariable('form.list.page', 5);
 	
-	list ($ret, $results) = $this->_controller->handleRequest();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$results = $this->handleRequest();
 
 	$this->assertEquals(4, (int)GalleryUtilities::getRequestVariables('form.list.page'));
 
@@ -63,10 +57,7 @@ class AdminUsersControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.action.backPage', 1);
 	GalleryUtilities::putRequestVariable('form.list.page', 0);
 	
-	list ($ret, $results) = $this->_controller->handleRequest();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$results = $this->handleRequest();
 
 	$this->assertEquals(1, (int)GalleryUtilities::getRequestVariables('form.list.page'));
 
@@ -78,10 +69,7 @@ class AdminUsersControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.list.page', 5);
 	GalleryUtilities::putRequestVariable('form.list.maxPages', 17);
 	
-	list ($ret, $results) = $this->_controller->handleRequest();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$results = $this->handleRequest();
 
 	$this->assertEquals(6, (int)GalleryUtilities::getRequestVariables('form.list.page'));
 
@@ -90,10 +78,7 @@ class AdminUsersControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.list.page', 17);
 	GalleryUtilities::putRequestVariable('form.list.maxPages', 17);
 	
-	list ($ret, $results) = $this->_controller->handleRequest();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$results = $this->handleRequest();
 
 	$this->assertEquals(17, (int)GalleryUtilities::getRequestVariables('form.list.page'));
 
@@ -104,10 +89,7 @@ class AdminUsersControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.list.page', 3);
 	GalleryUtilities::putRequestVariable('form.list.maxPages', 17);
 	
-	list ($ret, $results) = $this->_controller->handleRequest();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$results = $this->handleRequest();
 
 	$this->assertEquals(17, (int)GalleryUtilities::getRequestVariables('form.list.page'));
     }
@@ -116,10 +98,7 @@ class AdminUsersControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.action.filterClear', 1);
 	GalleryUtilities::putRequestVariable('form.list.filter', 'foo');
 	
-	list ($ret, $results) = $this->_controller->handleRequest();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$results = $this->handleRequest();
 
 	$this->assertEquals('', GalleryUtilities::getRequestVariables('form.list.filter'));
     }
@@ -127,10 +106,7 @@ class AdminUsersControllerTest extends GalleryControllerTestCase {
     function testCreate() {
 	GalleryUtilities::putRequestVariable('form.action.create', 1);
 	
-	list ($ret, $results) = $this->_controller->handleRequest();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$results = $this->handleRequest();
 
 	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
 	$this->assertEquals('core:AdminCreateUser', GalleryUtilities::getRequestVariables('subView'));
@@ -142,10 +118,7 @@ class AdminUsersControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.action.editFromList', 1);
 	GalleryUtilities::putRequestVariable('form.list.userId', $userId);
 	
-	list ($ret, $results) = $this->_controller->handleRequest();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$results = $this->handleRequest();
 
 	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
 	$this->assertEquals('core:AdminEditUser', GalleryUtilities::getRequestVariables('subView'));
@@ -155,10 +128,7 @@ class AdminUsersControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.action.editFromList', 1);
 	GalleryUtilities::removeRequestVariable('form.list.userId');
 	
-	list ($ret, $results) = $this->_controller->handleRequest();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$results = $this->handleRequest();
 
 	$this->assert(GalleryUtilities::hasRequestVariable('form.error.list.noUserSelected'));
     }
@@ -175,10 +145,7 @@ class AdminUsersControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.action.deleteFromList', 1);
 	GalleryUtilities::putRequestVariable('form.list.userId', $user->getId());
 	
-	list ($ret, $results) = $this->_controller->handleRequest();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$results = $this->handleRequest();
 
 	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
 	$this->assertEquals('core:AdminDeleteUser', GalleryUtilities::getRequestVariables('subView'));
@@ -189,10 +156,7 @@ class AdminUsersControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.action.deleteFromList', 1);
 	GalleryUtilities::removeRequestVariable('form.list.userId');
 	
-	list ($ret, $results) = $this->_controller->handleRequest();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$results = $this->handleRequest();
 	$this->assert(GalleryUtilities::hasRequestVariable('form.error.list.noUserSelected'));
 
 
@@ -203,20 +167,14 @@ class AdminUsersControllerTest extends GalleryControllerTestCase {
 	}
 	GalleryUtilities::putRequestVariable('form.action.deleteFromList', 1);
 	GalleryUtilities::putRequestVariable('form.list.userId', $userId);
-	list ($ret, $results) = $this->_controller->handleRequest();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$results = $this->handleRequest();
 	$this->assert(GalleryUtilities::hasRequestVariable('form.error.list.cantDeleteAnonymousUser'));
 	
 
 	/* Failure - select the active user */
 	GalleryUtilities::putRequestVariable('form.action.deleteFromList', 1);
 	GalleryUtilities::putRequestVariable('form.list.userId', $gallery->getActiveUserId());
-	list ($ret, $results) = $this->_controller->handleRequest();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$results = $this->handleRequest();
 	$this->assert(GalleryUtilities::hasRequestVariable('form.error.list.cantDeleteActiveUser'));
     }
 
@@ -230,10 +188,7 @@ class AdminUsersControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.action.editFromText', 1);
 	GalleryUtilities::putRequestVariable('form.text.userName', $user->getUserName());
 
-	list ($ret, $results) = $this->_controller->handleRequest();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$results = $this->handleRequest();
 	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
 	$this->assertEquals('core:AdminEditUser', GalleryUtilities::getRequestVariables('subView'));
 	$this->assertEquals($user->getId(), (int)GalleryUtilities::getRequestVariables('userId'));
@@ -244,10 +199,7 @@ class AdminUsersControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.action.editFromText', 1);
 	GalleryUtilities::removeRequestVariable('form.text.userName');
 
-	list ($ret, $results) = $this->_controller->handleRequest();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$results = $this->handleRequest();
 	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
 	$this->assertEquals('core:AdminUsers', GalleryUtilities::getRequestVariables('subView'));
 	$this->assert(GalleryUtilities::hasRequestVariable('form.error.text.noUserSpecified'));
@@ -257,10 +209,7 @@ class AdminUsersControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.action.editFromText', 1);
 	GalleryUtilities::putRequestVariable('form.text.userName', 'some-invalid-user-name-'.rand());
 
-	list ($ret, $results) = $this->_controller->handleRequest();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$results = $this->handleRequest();
 	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
 	$this->assertEquals('core:AdminUsers', GalleryUtilities::getRequestVariables('subView'));
 	$this->assert(GalleryUtilities::hasRequestVariable('form.error.text.noSuchUser'));
@@ -276,10 +225,7 @@ class AdminUsersControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.action.deleteFromText', 1);
 	GalleryUtilities::putRequestVariable('form.text.userName', $user->getUserName());
 
-	list ($ret, $results) = $this->_controller->handleRequest();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$results = $this->handleRequest();
 	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
 	$this->assertEquals('core:AdminDeleteUser', GalleryUtilities::getRequestVariables('subView'));
 	$this->assertEquals($user->getId(), (int)GalleryUtilities::getRequestVariables('userId'));
@@ -290,10 +236,7 @@ class AdminUsersControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.action.deleteFromText', 1);
 	GalleryUtilities::removeRequestVariable('form.text.userName');
 
-	list ($ret, $results) = $this->_controller->handleRequest();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$results = $this->handleRequest();
 	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
 	$this->assertEquals('core:AdminUsers', GalleryUtilities::getRequestVariables('subView'));
 	$this->assert(GalleryUtilities::hasRequestVariable('form.error.text.noUserSpecified'));
@@ -303,10 +246,7 @@ class AdminUsersControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.action.deleteFromText', 1);
 	GalleryUtilities::putRequestVariable('form.text.userName', 'some-invalid-user-name-'.rand());
 
-	list ($ret, $results) = $this->_controller->handleRequest();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$results = $this->handleRequest();
 	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
 	$this->assertEquals('core:AdminUsers', GalleryUtilities::getRequestVariables('subView'));
 	$this->assert(GalleryUtilities::hasRequestVariable('form.error.text.noSuchUser'));

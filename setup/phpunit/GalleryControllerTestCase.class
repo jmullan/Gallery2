@@ -67,5 +67,21 @@ class GalleryControllerTestCase extends GalleryTestCase {
 	$urlGenerator = $gallery->getUrlGenerator();
 	$this->assertEquals(array('redirect' => $urlGenerator->generateUrl($params)), $redirectUrl, $message);
     }
+
+    function handleRequest($errorCode=null) {
+	/* Get our form variables */
+	$form = GalleryUtilities::getFormVariables('form.');
+
+	list ($ret, $results) = $this->_controller->handleRequest($form);
+	if ($errorCode != null) {
+	    if ($ret->getErrorCode() & $errorCode != $errorCode) {
+		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	} else if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	return $results;
+    }
 }
 ?>

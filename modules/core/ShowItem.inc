@@ -67,7 +67,7 @@ class ShowItemView extends GalleryView {
     /**
      * @see GalleryView::renderBody
      */
-    function renderBody() {
+    function renderBody($form) {
 	global $gallery;
 
 	list ($ret, $item) = $this->_getItem();

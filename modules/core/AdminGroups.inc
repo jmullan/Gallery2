@@ -39,7 +39,7 @@ class AdminGroupsController extends GalleryController {
     /**
      * @see GalleryController::handleRequest
      */
-    function handleRequest() {
+    function handleRequest($form) {
 	global $gallery;
 
 	$ret = GalleryUserHelper::assertSiteAdministrator();
@@ -48,7 +48,6 @@ class AdminGroupsController extends GalleryController {
 	}
 
 	$results = array();
-	$form = GalleryUtilities::getFormVariables('form.');
 
 	$group = null;
 	if (!empty($form['text']['groupName'])) {
@@ -213,7 +212,7 @@ class AdminGroupsView extends GalleryView {
     /**
      * @see GalleryView::renderBody
      */
-    function renderBody() {
+    function renderBody($form) {
 	global $gallery;
 	
 	$ret = GalleryUserHelper::assertSiteAdministrator();
@@ -222,7 +221,6 @@ class AdminGroupsView extends GalleryView {
 	}
 	    
 	/* Load some standard form parameters */
-	$form = GalleryUtilities::getFormVariables('form.');
 
 	/* Set some defaults, if necessary */
 	if (!isset($form['list']['filter'])) {

@@ -39,11 +39,10 @@ class ItemDeleteController extends GalleryController {
     /**
      * @see GalleryController::handleRequest
      */
-    function handleRequest() {
+    function handleRequest($form) {
 	global $gallery;
 
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
-	$form = GalleryUtilities::getFormVariables('form.');
 
 	/* Make sure we have permission do edit this item */
 	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'core.delete');
@@ -107,12 +106,10 @@ class ItemDeleteView extends GalleryView {
     /**
      * @see GalleryView::renderBody
      */
-    function renderBody() {
+    function renderBody($form) {
 	global $gallery;
 
-	list ($itemId, $formName) =
-	    GalleryUtilities::getRequestVariables('itemId', 'formName');
-	$form = GalleryUtilities::getFormVariables('form.');
+	$itemId = GalleryUtilities::getRequestVariables('itemId');
 
 	/* Make sure we have permission do edit this item */
 	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'core.delete');

@@ -66,10 +66,7 @@ class ItemAddAlbumControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.description', 'description');
 
 	/* Perform the request and verify that we succeeded */
-	list ($ret, $results) = $this->_controller->handleRequest();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$results = $this->handleRequest();
 	$this->assertRedirect(array('view' => 'core:ItemAdmin',
 				    'subView' => 'core:ItemAddAlbum',
 				    'itemId' => $this->_rootId),
@@ -92,20 +89,14 @@ class ItemAddAlbumControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.description', 'description');
 
 	/* Perform the request and verify that we succeeded */
-	list ($ret, $results) = $this->_controller->handleRequest();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$results = $this->handleRequest();
 	$this->assertRedirect(array('view' => 'core:ItemAdmin',
 				    'subView' => 'core:ItemAddAlbum',
 				    'itemId' => $this->_rootId),
 			      $results);
 
 	/* Now do it a second time with the same name */
-	list ($ret, $results) = $this->_controller->handleRequest();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$results = $this->handleRequest();
 	$this->assertEquals(array('view' => 'core:ItemAdmin'), $results);
 	$this->assert('core:ItemAddAlbum', GalleryUtilities::getRequestVariables('subView'));
 	$this->assert(GalleryUtilities::hasRequestVariable('form.error.pathComponent.collision'));
@@ -126,10 +117,7 @@ class ItemAddAlbumControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.description', 'description');
 
 	/* Perform the request and verify that we succeeded */
-	list ($ret, $results) = $this->_controller->handleRequest();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$results = $this->handleRequest();
 	$this->assertEquals(array('view' => 'core:ItemAdmin'), $results);
 	$this->assert('core:ItemAddAlbum', GalleryUtilities::getRequestVariables('subView'));
 	$this->assert(GalleryUtilities::hasRequestVariable('form.error.pathComponent.missing'));
@@ -148,10 +136,7 @@ class ItemAddAlbumControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.description', 'description');
 
 	/* Perform the request and verify that we succeeded */
-	list ($ret, $results) = $this->_controller->handleRequest();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$results = $this->handleRequest();
 	$this->assertEquals(array('view' => 'core:ItemAdmin'), $results);
 	$this->assert('core:ItemAddAlbum', GalleryUtilities::getRequestVariables('subView'));
 	$this->assert(GalleryUtilities::hasRequestVariable('form.error.pathComponent.invalid'));

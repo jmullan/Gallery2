@@ -1,5 +1,5 @@
 {gallery->form view="$view" method="GET"}
-{gallery->input type="hidden" name="formName"}SearchSystemContent{/gallery->input}
+{gallery->input type="hidden" name="form.formName"}SearchSystemContent{/gallery->input}
 <a href="{gallery->url view="search:SearchScan" return_view=$return.view return_itemId=$return.itemId}">
 {gallery->text text="Search: "}
 </a>

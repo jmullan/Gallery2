@@ -135,10 +135,7 @@ class ItemCreateResizesControllerTest extends GalleryControllerTestCase {
 	}
 	    
 	/* Perform the request and verify that we succeeded */
-	list ($ret, $results) = $this->_controller->handleRequest();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$results = $this->handleRequest();
 	$this->assertRedirect(array('view' => 'core:ItemAdmin',
 				    'subView' => 'core:ItemCreateResizes',
 				    'itemId' => $this->_item->getId()),

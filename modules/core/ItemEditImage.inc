@@ -39,11 +39,10 @@ class ItemEditImageController extends GalleryController {
     /**
      * @see GalleryController::handleRequest
      */
-    function handleRequest() {
+    function handleRequest($form) {
 	global $gallery;
 
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
-	$form = GalleryUtilities::getFormVariables('form.');
 
 	/* Make sure we have permission do edit this item */
 	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'core.changeProperties');
@@ -300,12 +299,10 @@ class ItemEditImageView extends GalleryView {
     /**
      * @see GalleryView::renderBody
      */
-    function renderBody() {
+    function renderBody($form) {
 	global $gallery;
 
-	list ($itemId, $formName) =
-	    GalleryUtilities::getRequestVariables('itemId', 'formName');
-	$form = GalleryUtilities::getFormVariables('form.');
+	$itemId = GalleryUtilities::getRequestVariables('itemId');
 
 	/* Make sure we have permission do edit this item */
 	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'core.changeProperties');
@@ -318,7 +315,7 @@ class ItemEditImageView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	if ($formName == 'ItemEditImage') {
+	if ($form['formName'] == 'ItemEditImage') {
 
 	    /* Complain if we have any invalid data */
 	    if (!empty($form['action']['scale'])) {
