@@ -34,7 +34,7 @@
 class WatermarkHelper {
 
     /**
-     * Return a map of itemId => fileName
+     * Return a map of watermarks available to the active user
      *
      * You can specify how many items to list, and where the windows is in
      * the list of all items.
@@ -43,7 +43,7 @@ class WatermarkHelper {
      * @param int [optional] the start of the range
      * @param string [optional] a substring to match
      * @return array object GalleryStatus a status code
-     *               array of itemId=>fileName
+     *               array of itemId=>watermark
      * @static
      */
     function fetchWatermarks($count=null, $offset=null, $substring=null) {
