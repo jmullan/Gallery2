@@ -220,28 +220,10 @@ class GalleryUtilities {
      */
     function getRequestVariables() {
 	global $gallery;
-	global $HTTP_POST_VARS;
-	global $HTTP_GET_VARS;
 
 	$values = array();
 	foreach (func_get_args() as $argName) {
-	    /* Prepend our prefix here */
-	    $argName = GALLERY_FORM_VARIABLE_PREFIX . $argName;
-
-	    /*
-	     * Convert dots to underscores.  Some versions of PHP seem to do
-	     * this when processing POST data, so we force the issue here so
-	     * that we get consistent behaviour across all versions.
-	     */
-	    $argName = strtr($argName, '.', '_');
-	    
-	    if (!empty($HTTP_GET_VARS[$argName])) {
-		$values[] = $HTTP_GET_VARS[$argName];
-	    } else if (!empty($HTTP_POST_VARS[$argName])) {
-		$values[] = $HTTP_POST_VARS[$argName];
-	    } else {
-		$values[] = null;
-	    }
+	    $values[] = GalleryUtilities::_getRequestVariable($argName);
 	}
 
 	/* Sanitize the input */
@@ -314,6 +296,39 @@ class GalleryUtilities {
 	$HTTP_GET_VARS[$key] = $value;
     }
 
+    /**
+     * Check to see if the given key is in the request
+     * 
+     * @param string the key
+     * @param string the value
+     * @static
+     */
+    function hasRequestVariable($key) {
+	$value = GalleryUtilities::_getRequestVariable($key);
+	return !empty($value);
+    }
+
+    /**
+     * Remove a request variable
+     * 
+     * @param string the key
+     * @param string the value
+     * @static
+     */
+    function removeRequestVariable($key) {
+	global $HTTP_POST_VARS;
+	global $HTTP_GET_VARS;
+	
+	/*
+	 * Convert dots to underscores.  Some versions of PHP seem to do
+	 * this when processing POST data, so we force the issue here so
+	 * that we get consistent behaviour across all versions.
+	 */
+	$key = strtr(GALLERY_FORM_VARIABLE_PREFIX . $key, '.', '_');
+	unset($HTTP_POST_VARS[$key]);
+	unset($HTTP_GET_VARS[$key]);
+    }
+    
     /**
      * Return a singleton copy of a map of file extensions to mime types
      *
@@ -735,6 +750,34 @@ class GalleryUtilities {
 		$values[$key] = GalleryUtilities::sanitizeInputValue($values[$key]);
 	    }
 	}
+    }
+
+    /**
+     * Return a specified request variable from the GET or POST vars.
+     *
+     * @param string a single key
+     * @return string a single value
+     * @static
+     */
+    function _getRequestVariable($argName) {
+	global $HTTP_POST_VARS;
+	global $HTTP_GET_VARS;
+	
+	/*
+	 * Convert dots to underscores.  Some versions of PHP seem to do
+	 * this when processing POST data, so we force the issue here so
+	 * that we get consistent behaviour across all versions.
+	 */
+	$argName = strtr(GALLERY_FORM_VARIABLE_PREFIX . $argName, '.', '_');
+	
+	if (!empty($HTTP_GET_VARS[$argName])) {
+	    $value = $HTTP_GET_VARS[$argName];
+	} else if (!empty($HTTP_POST_VARS[$argName])) {
+	    $value = $HTTP_POST_VARS[$argName];
+	} else {
+	    $value = null;
+	}
+	return $value;
     }
 }
 ?>
