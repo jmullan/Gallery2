@@ -182,7 +182,7 @@ class GalleryPluginHelper_medium {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
 
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/../GalleryPluginParameterMap.class');
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryPluginParameterMap.class');
 	$ret = GalleryPluginParameterMap::removeMapEntry(array('itemId' => $itemId));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -221,7 +221,7 @@ class GalleryPluginHelper_medium {
 	    $itemId = 0;
 	}
 
-	require_once(dirname(__FILE__) . '/../GalleryPluginParameterMap.class');
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryPluginParameterMap.class');
 	$ret = GalleryPluginParameterMap::removeMapEntry(array('pluginType' => $pluginType,
 							       'pluginId' => $pluginId,
 							       'itemId' => $itemId,
@@ -290,7 +290,7 @@ class GalleryPluginHelper_medium {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
 
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/../GalleryPluginParameterMap.class');
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryPluginParameterMap.class');
 	$ret = GalleryPluginParameterMap::removeMapEntry(array('pluginType' => $pluginType,
 							       'pluginId' => $pluginId));
 	if ($ret->isError()) {
@@ -332,7 +332,7 @@ class GalleryPluginHelper_medium {
 	 * we don't have an existing parameter by that name.  Otherwise, it's
 	 * an update.
 	 */
-        GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryPluginHelper_simple.class');
+        GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryPluginHelper_simple.class');
 	list ($ret, $params) =
 	    GalleryPluginHelper_simple::fetchAllParameters($pluginType, $pluginId, $itemId);
 	if ($ret->isError()) {
@@ -388,7 +388,7 @@ class GalleryPluginHelper_medium {
 	    $itemId = 0;
 	}
 
-	require_once(dirname(__FILE__) . '/../GalleryPluginParameterMap.class');
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryPluginParameterMap.class');
 	$ret = GalleryPluginParameterMap::addMapEntry(
 	    array('pluginType' => $pluginType,
 		  'pluginId' => $pluginId,
@@ -427,7 +427,7 @@ class GalleryPluginHelper_medium {
 	    $itemId = 0;
 	}
 
-	require_once(dirname(__FILE__) . '/../GalleryPluginParameterMap.class');
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryPluginParameterMap.class');
 	$ret = GalleryPluginParameterMap::updateMapEntry(
 	    array('pluginType' => $pluginType,
 		  'pluginId' => $pluginId,
