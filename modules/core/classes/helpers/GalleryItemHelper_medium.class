@@ -799,5 +799,22 @@ class GalleryItemHelper_medium {
 
 	return GalleryStatus::success();
     }
+
+    /**
+     * Handler for Gallery::ViewableTreeChange event.
+     *
+     * @param object GalleryEvent the event
+     * @return object GalleryStatus a status code
+     */
+    function handleEvent($event) {
+	if ($event->getEventName() == 'Gallery::ViewableTreeChange') {
+	    $param = $event->getEntity();
+	    $ret = $this->invalidateDescendentCountCaches($param['userId'], $param['itemId']);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+	return GalleryStatus::success();
+    }
 }
 ?>

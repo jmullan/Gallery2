@@ -402,7 +402,9 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	    return $ret3->wrap(__FILE__, __LINE__);
 	}
 
-	$ret = GalleryCoreApi::invalidateDescendentCountCaches(null, $this->getParentId());
+	$event = GalleryCoreApi::newEvent('Gallery::ViewableTreeChange');
+	$event->setEntity(array('userId' => null, 'itemId' => $this->getParentId()));
+	$ret = GalleryCoreApi::postEvent($event);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -418,7 +420,9 @@ class GalleryItem_core extends GalleryFileSystemEntity {
      * @return object GalleryStatus a status code
      */
     function move($newParentId) {
-	$ret = GalleryCoreApi::invalidateDescendentCountCaches(null, $this->getParentId());
+	$event = GalleryCoreApi::newEvent('Gallery::ViewableTreeChange');
+	$event->setEntity(array('userId' => null, 'itemId' => $this->getParentId()));
+	$ret = GalleryCoreApi::postEvent($event);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -428,7 +432,8 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	$ret = GalleryCoreApi::invalidateDescendentCountCaches(null, $this->getParentId());
+	$event->setEntity(array('userId' => null, 'itemId' => $this->getParentId()));
+	$ret = GalleryCoreApi::postEvent($event);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -481,7 +486,9 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	    }
 
 	    if ($this->getParentId()) {
-		$ret = GalleryCoreApi::invalidateDescendentCountCaches(null, $this->getParentId());
+		$event = GalleryCoreApi::newEvent('Gallery::ViewableTreeChange');
+		$event->setEntity(array('userId' => null, 'itemId' => $this->getParentId()));
+		$ret = GalleryCoreApi::postEvent($event);
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}

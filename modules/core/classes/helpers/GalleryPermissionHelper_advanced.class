@@ -47,7 +47,9 @@ class GalleryPermissionHelper_advanced {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	$ret = GalleryCoreApi::invalidateDescendentCountCaches($userId, $itemId);
+	$event = GalleryCoreApi::newEvent('Gallery::ViewableTreeChange');
+	$event->setEntity(array('userId' => $userId, 'itemId' => $itemId));
+	$ret = GalleryCoreApi::postEvent($event);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -74,8 +76,10 @@ class GalleryPermissionHelper_advanced {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	$event = GalleryCoreApi::newEvent('Gallery::ViewableTreeChange');
 	foreach (array_keys($userIds) as $userId) {
-	    $ret = GalleryCoreApi::invalidateDescendentCountCaches($userId, $itemId);
+	    $event->setEntity(array('userId' => $userId, 'itemId' => $itemId));
+	    $ret = GalleryCoreApi::postEvent($event);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -183,8 +187,10 @@ class GalleryPermissionHelper_advanced {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
-	$ret = GalleryCoreApi::invalidateDescendentCountCaches($userId, $itemId);
+
+	$event = GalleryCoreApi::newEvent('Gallery::ViewableTreeChange');
+	$event->setEntity(array('userId' => $userId, 'itemId' => $itemId));
+	$ret = GalleryCoreApi::postEvent($event);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -210,8 +216,10 @@ class GalleryPermissionHelper_advanced {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	$event = GalleryCoreApi::newEvent('Gallery::ViewableTreeChange');
 	foreach (array_keys($userIds) as $userId) {
-	    $ret = GalleryCoreApi::invalidateDescendentCountCaches($userId, $itemId);
+	    $event->setEntity(array('userId' => $userId, 'itemId' => $itemId));
+	    $ret = GalleryCoreApi::postEvent($event);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }

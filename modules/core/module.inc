@@ -274,7 +274,11 @@ class CoreModule extends GalleryModule {
 	$urlGenerator =& $gallery->getUrlGenerator();
 	$urlGenerator->registerViewPrefix('view', 'core:ShowItem');
 	$urlGenerator->registerViewPrefix('download', 'core:DownloadItem');
-	
+
+	require_once(dirname(__FILE__) . '/classes/helpers/GalleryItemHelper_medium.class');
+	GalleryCoreApi::registerEventListener('Gallery::ViewableTreeChange',
+					      new GalleryItemHelper_medium());
+
 	return GalleryStatus::success();
     }
 
