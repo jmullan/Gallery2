@@ -342,7 +342,7 @@ class ClassicLayout extends GalleryLayout {
 
 	    /* Show the preferred item, if it's there */
 	    if (empty($preferred)) {
-		if (is_subclass_of($item, 'GalleryDataItem')) {
+		if (GalleryUtilities::isA($item, 'GalleryDataItem')) {
 		    $dataItem = array('size' => $item->getSize(),
 				      'id' => $item->getId());
 

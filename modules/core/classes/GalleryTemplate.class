@@ -114,7 +114,6 @@ class GalleryTemplate {
 	    /*
 	     * Load and configure Smarty.
 	     */
-	    define('SMARTY_DIR', $gallery->getConfig('code.smarty.base'));
 	    require_once($gallery->getConfig('code.smarty.base') . 'Smarty.class.php');
 
 	    if ($gallery->isProfiling()) {

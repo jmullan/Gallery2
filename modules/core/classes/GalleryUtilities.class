@@ -612,5 +612,25 @@ class GalleryUtilities {
 	
 	return array($width, $height);
     }
+
+    /**
+     * Figure out if the object specified is an instance of or an instance of a
+     * sub class of the class specified.
+     *
+     * @param object any kind of object
+     * @param string a class name
+     * @return boolean true or false
+     * @static
+     */
+    function isA($instance, $className) {
+	global $gallery;
+
+	if ($gallery->getConfig('function.exists.is_a')) {
+	    return is_a($instance, $className);
+	} else {
+	    return (is_subclass_of($instance, $className) ||
+		    !strcasecmp(get_class($instance), $className));
+	}
+    }
 }
 ?>

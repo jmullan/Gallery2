@@ -166,7 +166,7 @@ class GalleryView {
 	}
 
 	$view = new $viewClassName();
-	if (!is_subclass_of($view, "GalleryView")) {
+	if (!GalleryUtilities::isA($view, 'GalleryView')) {
 	    $gallery->debug("Class $viewClassName is not a subclass of GalleryView");
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
 	}

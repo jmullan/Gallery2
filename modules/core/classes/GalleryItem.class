@@ -357,7 +357,7 @@ class GalleryItem_core extends GalleryFileSystemEntity {
      * a new table, the [GalleryChildEntity::id] will contain the current
      * ID. Eventualy another table mentioned in the condition will have to
      * be included too, the calling function has to decide that (using
-     * GalleryStorage::extractTables());
+     * GalleryStorage::extractClasses())
      *
      * @return array string an order clause, string a row matching condition
      * @access private
@@ -446,8 +446,8 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 
 	$storage = $gallery->getStorage();
 
-	/* List of tables that we will need */
-	$tables = array('[GalleryChildEntity]', '[GalleryUserGroupMap]', '[GalleryPermissionMap]');
+	/* List of classes that we will need */
+	$classes = array('[GalleryChildEntity]', '[GalleryUserGroupMap]', '[GalleryPermissionMap]');
 
 	list($orderClause, $extraWhere) = $this->_fetchOrderInfo();
 	$extraIds = 0;
@@ -455,11 +455,11 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	    $extraIds = substr_count($extraWhere, '?');
 	    $extraWhere = 'AND ' . $extraWhere;
 
-	    list ($ret, $orderTables) = $storage->extractTables($extraWhere);
+	    list ($ret, $orderClasses) = $storage->extractClasses($extraWhere);
 	    if ($ret->isError()) {
     		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    $tables = array_unique(array_merge($tables, $orderTables));
+	    $classes = array_unique(array_merge($classes, $orderClasses));
 	}
 	if (!empty($orderClause)) {
 	    $orderClause = 'ORDER BY ' . $orderClause;
@@ -470,7 +470,7 @@ class GalleryItem_core extends GalleryFileSystemEntity {
         SELECT
           DISTINCT([GalleryChildEntity::id])
         FROM
-          ' . join(', ', $tables) . '
+          ' . join(', ', $classes) . '
         WHERE
           [GalleryChildEntity::parentId] = ?
           AND

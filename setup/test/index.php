@@ -11,9 +11,9 @@ if ($ret->isError()) {
     print $ret->getAsHtml();
 
     if ($gallery->getDebug() == 'buffered') {
-	print "<pre>";
+	print '<pre>';
 	print $gallery->getDebugBuffer();
-	print "</pre>";
+	print '</pre>';
     }
 }
 
@@ -129,9 +129,9 @@ function GalleryTestHarness() {
 
     /* Suppress preliminary debug output */
     if (0) {
-	print "<pre>";
+	print '<pre>';
 	print_r($gallery->getDebugBuffer());
-	print "</pre>";
+	print '</pre>';
     }
     $gallery->clearDebugBuffer();
 
@@ -185,10 +185,10 @@ function GalleryTestHarness() {
 }
 
 function shorten($number) {
-    $number = str_replace("000000", "M", $number);
-    $number = str_replace("00000", "00K", $number);
-    $number = str_replace("0000", "0K", $number);
-    $number = str_replace("000", "K", $number);
+    $number = str_replace('000000', 'M', $number);
+    $number = str_replace('00000', '00K', $number);
+    $number = str_replace('0000', '0K', $number);
+    $number = str_replace('000', 'K', $number);
     return $number;
 }
 

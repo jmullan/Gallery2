@@ -141,6 +141,19 @@ class GalleryDerivative_core extends GalleryChildEntity {
      */
 
     /**
+     * Data items that can be viewed inline (photos, movies, etc) should return
+     * true.  Items that can't be viewed inline (word documents, text, etc)
+     * should return false.
+     *
+     * Classes that return true for this query must implement getWidth() and getHeight()
+     *
+     * @return boolean true if this data item can be viewed inline
+     */
+    function canBeViewedInline() {
+	return false;
+    }
+
+    /**
      * Delete this GalleryEntity
      *
      * @access public

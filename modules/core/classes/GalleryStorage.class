@@ -388,25 +388,28 @@ class GalleryStorage {
     }
 
     /**
-     * Extracts the table names from a given query
+     * Extracts the class names from a given query
      *
      * Query should be something like
-     * '[GalleryItem::id] = ? AND [GalleryPhotoItem::itemId] = ?'
+     * '[GalleryItem::id] = ? AND [GalleryPhotoItem::id] = ?'
+     *
+     * Results would be:
+     * array('[GalleryItem]', 'GalleryPhotoItem')
      *
      * @param string query
      * @return array GalleryStatus a return status,
      *               array strings table names
      */
-    function extractTables($query) {
+    function extractClasses($query) {
     	$regexp = '/\[([^:]*)::[^\]]*\]/';
-	$tables = array();
-	while (preg_match($regexp, $query, $matches)) {
-	    $tables[] = '[' . $matches[1] . ']';
-	    $query = preg_replace($regexp, "", $query);
+	$classes = array();
+
+	preg_match_all($regexp, $query, $matches, PREG_PATTERN_ORDER);
+	foreach ($matches as $match) {
+	    $classes['[' . $match . ']']++;
 	}
 	return array(GalleryStatus::success(),
-		     array_unique($tables));
-
+		     array_keys($classes));
     }
 
     /**

@@ -6,14 +6,20 @@
 	<tr>
 	  <td align="center">
 	    {galleryBigFontSize}
-	    {galleryText text="Do you want to make this item the highlight of its album?"}
+	    {galleryText text="Do you want to make this item the highlight of its parent album?"}
 	    {/galleryBigFontSize}
 	  </td>
 	</tr>
 
 	<tr>
+	  <td>
+	    {galleryText text="Each album can have a thumbnail image that is representative of its contents.  This is called the <i>highlight image</i>.  You can select this item's thumbnail to be the album's highlight image."}
+	  </td>
+	</tr>
+
+	<tr>
 	  <td align="center">
-	    {galleryInput type="submit" name="form.action.makeHighlight"}{galleryText text="Yes, this is the highlight!"}{/galleryInput}
+	    {galleryInput type="submit" name="form.action.makeHighlight"}{galleryText text="Yes, make this item the highlight!"}{/galleryInput}
 	  </td>
 	</tr>
     </table>

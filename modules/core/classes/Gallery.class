@@ -299,7 +299,7 @@ class Gallery {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	
-	if (is_subclass_of($entity, 'GalleryChildEntity')) {
+	if (GalleryUtilities::isA($entity, 'GalleryChildEntity')) {
 	    list ($ret, $newLock) = $this->acquireReadLockParents($id);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
@@ -504,7 +504,7 @@ class Gallery {
 	     * so just drop a debug message if there was a failure.
 	     */
 	    if ($ret->isError()) {
-		$this->debug("Failed to get the platform!");
+		$this->debug('Failed to get the platform!');
 		$this->debug($ret->getAsHtml());
 		return null;
 	    }
@@ -742,7 +742,7 @@ class Gallery {
 	foreach ($this->_locks as $lock) {
 	    if ($lock->isLocked()) {
 		/* Bitch at the developer! */
-		$this->debug("Lock id " . $lock->getId() . " was left hanging!");
+		$this->debug('Lock id ' . $lock->getId() . ' was left hanging!');
 		$lock->release();
 	    }
 	}
@@ -1213,8 +1213,8 @@ class Gallery {
 	}
 	if (!empty($this->_debug)) {
 	    error_reporting(E_ALL);
-	    ini_set("short_open_tag", false);
-	    ini_set("allow_call_time_pass_reference", false);
+	    ini_set('short_open_tag', false);
+	    ini_set('allow_call_time_pass_reference', false);
 	}
     }
 
@@ -1272,7 +1272,7 @@ class Gallery {
 		    if (!empty($session)) {
 			list ($param, $id) = $session->getSessionDescriptor();
 		    } else {
-			$id = "<no session id>";
+			$id = '<no session id>';
 		    }
 		    fwrite($fd, "$date [" . $id . "] $msg\n");
 		    fclose($fd);

@@ -47,9 +47,9 @@ if ($ret->isError()) {
     print $ret->getAsHtml();
 
     if ($gallery->getDebug() == 'buffered') {
-	print "<pre>";
+	print '<pre>';
 	print $gallery->getDebugBuffer();
-	print "</pre>";
+	print '</pre>';
     }
 
     /* Nuke our transaction, too */

@@ -63,7 +63,7 @@ class DownloadItemView extends GalleryView {
 	}
 
 	/* Figure out what permission we need to view this item */
-	if (is_subclass_of($item, 'GalleryDerivative')) {
+	if (GalleryUtilities::isA($item, 'GalleryDerivative')) {
 	    switch($item->getDerivativeType()) {
 	    case DERIVATIVE_TYPE_IMAGE_THUMBNAIL:
 		$requiredPermission = 'core.view';
@@ -97,7 +97,7 @@ class DownloadItemView extends GalleryView {
 	}
 
 	/* Rebuild derivative cache, if necessary */
-	if (is_subclass_of($item, 'GalleryDerivative')) {
+	if (GalleryUtilities::isA($item, 'GalleryDerivative')) {
 	    list ($ret, $rebuild) = $item->rebuildCacheIfNotCurrent();
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);

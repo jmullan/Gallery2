@@ -224,16 +224,16 @@ class CoreModule extends GalleryModule {
 	 * configured and do that now.  All other modules can simply ask for
 	 * the version number and expect that to succeed.
 	 */
-	$gallery->debug("Trying to load core version.  If you see an error like " .
-			"<b>table Xxx doesn't exist</b> here, that's OK.");
+	$gallery->debug('Trying to load core version.  If you see an error like ' .
+			'<b>table Xxx doesn\'t exist</b> here, that\'s OK.');
 
 	list ($ret, $version) = $this->getModuleParameter('version');
 	if ($ret->isError() & !($ret->getErrorCode() & ERROR_STORAGE_FAILURE)) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	} else if ($ret->isError() || $version != $this->getVersion()) {
 
-	    $gallery->debug("Can't load core version -- " .
-			    "<b>assuming that the core needs installation</b>");
+	    $gallery->debug('Can\'t load core version -- ' .
+			    '<b>assuming that the core needs installation</b>');
 
 	    /*
 	     * On some databases, our transaction is hosed at this point.  So
@@ -396,11 +396,11 @@ class CoreModule extends GalleryModule {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 		
-		foreach (array("_createAllUsersGroup",
-			       "_createSiteAdminsGroup",
-			       "_createAnonymousUser",
-			       "_createAdminUser",
-			       "_createRootAlbumItem") as $func) {
+		foreach (array('_createAllUsersGroup',
+			       '_createSiteAdminsGroup',
+			       '_createAnonymousUser',
+			       '_createAdminUser',
+			       '_createRootAlbumItem') as $func) {
 
 		    $ret = $this->$func();
 		    if ($ret->isError()) {
@@ -454,11 +454,10 @@ class CoreModule extends GalleryModule {
 	    $showPermissionsLink = false;
 	    $showAddHighlightLink = false;
 	    
-	    if (is_subclass_of($item, 'GalleryAlbumItem')
-		    || get_class($item) == strtolower('GalleryAlbumItem')) {
-		$itemType = "album";
+	    if (GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
+		$itemType = 'album';
 	    } else {
-		$itemType = "item";
+		$itemType = 'item';
 	    }
 
 	    /* Permissions for this item */
@@ -520,7 +519,7 @@ class CoreModule extends GalleryModule {
 	    }
 
 	    if ($showEditLink) {
-		if ($itemType == "album") {
+		if ($itemType == 'album') {
 		    $text = $this->translate('edit album');
 		} else {
 		    $text = $this->translate('edit item');
@@ -663,13 +662,12 @@ class CoreModule extends GalleryModule {
 	}
 
 	if (isset($permissions['core.changeProperties'])) {
-	    if (is_subclass_of($item, 'GalleryAlbumItem') ||
-		    get_class($item) == strtolower('GalleryAlbumItem')) {
+	    if (GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
 	        $views[] = array('name' => $this->translate('Album Settings'),
 				 'view' => 'core:ItemEditAlbum');
 	    }
 
-	    if (is_subclass_of($item, 'GalleryDataItem')) {
+	    if (GalleryUtilities::isA($item, 'GalleryDataItem')) {
 		list ($ret, $graphics) = $gallery->getGraphics();
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -931,8 +929,8 @@ class CoreModule extends GalleryModule {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	$album->setTitle($this->translate("Gallery"));
-	$album->setDescription($this->translate("This is the top of your Gallery"));
+	$album->setTitle($this->translate('Gallery'));
+	$album->setDescription($this->translate('This is the top of your Gallery'));
 
 	$ret = $album->save();
 	if ($ret->isError()) {

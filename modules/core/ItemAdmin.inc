@@ -140,11 +140,10 @@ class ItemAdminView extends GalleryView {
 	}
 
 	/* Get the type of the item */
-	if (is_subclass_of($item, "GalleryAlbumItem")
-	    || get_class($item) == strtolower('GalleryAlbumItem')) {
-	    $itemType = "album";
+	if (GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
+	    $itemType = 'album';
 	} else {
-	    $itemType = "item";
+	    $itemType = 'item';
 	}
 
 	/* Render our HTML body */

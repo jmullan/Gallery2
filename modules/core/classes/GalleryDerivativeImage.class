@@ -87,7 +87,7 @@ class GalleryDerivativeImage_core extends GalleryDerivative {
      */
 
     /**
-     * @see GalleryDataItem::canBeViewedInline()
+     * @see GalleryDerivative::canBeViewedInline()
      */
     function canBeViewedInline() {
 	return true;
@@ -254,7 +254,7 @@ class GalleryDerivativeImage_core extends GalleryDerivative {
 	}
 
 	/* If the source is a derivative, make sure the it's current */
-	if (is_subclass_of($source, 'GalleryDerivative')) {
+	if (GalleryUtilities::isA($source, 'GalleryDerivative')) {
 	    list ($ret, $isCurrent) = $source->isCacheCurrent();
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);

@@ -25,5 +25,5 @@
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
-header("Location: main.php");
+header('Location: main.php');
 ?>

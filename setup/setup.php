@@ -22,7 +22,7 @@
 
 ob_start();
 
-if (phpversion() < "4.0.4") {
+if (phpversion() < '4.0.4') {
     error('oldPhp');
     return;
 }
@@ -211,7 +211,7 @@ function CheckDirectories() {
     }
 
     $testfile = $dataBase . '/setup' . rand(1, 10000);
-    if ($fd = $platform->fopen($testfile, "w")) {
+    if ($fd = $platform->fopen($testfile, 'w')) {
 	fclose($fd);
 	$platform->unlink($testfile);
     } else {
