@@ -49,14 +49,14 @@ class AdminLayoutsControllerTest extends GalleryControllerTestCase {
 	 * load it in our tests (our dummy platform will feed in mock data)
 	 */
 	GalleryDataCache::remove("GalleryPluginHelper::fetchPluginStatus(layout)");
+
+	list ($ret, $this->_params) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
     }
 
-    /**
-     *
-     */
     function tearDown() {
-	global $gallery;
-
 	/* Delete our layouts */
 	foreach (array('testLayoutId1', 'testLayoutId2') as $layoutId) {
 	    $ret = GalleryCoreApi::removeAllPluginParameters('layout', $layoutId);
@@ -69,7 +69,14 @@ class AdminLayoutsControllerTest extends GalleryControllerTestCase {
 		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
-
+	foreach ($this->_params as $key => $value) {
+	    if (strpos($key, 'default.') === 0) {
+		$ret = GalleryCoreApi::setPluginParameter('module', 'core', $key, $value);
+		if ($ret->isError()) {
+		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		}
+	    }
+	}
 	parent::tearDown();
     }
 
@@ -176,12 +183,42 @@ class AdminLayoutsControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(2, (int)$map['rows']);
 	$this->assertEquals(4, (int)$map['columns']);
     }
+
+    function testSaveDefaults() {
+	GalleryUtilities::putRequestVariable('form[default][orderBy]', 'viewCount');
+	GalleryUtilities::putRequestVariable('form[default][orderDirection]', 'desc');
+	GalleryUtilities::putRequestVariable('form[default][presort]', 'albumsFirst');
+	GalleryUtilities::putRequestVariable('form[default][layout]', 'matrix');
+	GalleryUtilities::putRequestVariable('form[default][theme]', 'matrix');
+	GalleryUtilities::putRequestVariable('form[default][newAlbumsUseDefaults]', 'true');
+	GalleryUtilities::putRequestVariable('form[action][saveDefaults]', 1);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminLayouts',
+						      'mode' => 'defaults'),
+				  'status' => array('savedDefaults' => 1),
+				  'error' => array()),
+			    $results);
+
+	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals('albumsFirst|viewCount', $params['default.orderBy'], 'orderBy');
+	$this->assertEquals('desc', $params['default.orderDirection'], 'orderDirection');
+	$this->assertEquals('matrix', $params['default.layout'], 'layout');
+	$this->assertEquals('matrix', $params['default.theme'], 'theme');
+	$this->assertEquals('true', $params['default.newAlbumsUseDefaults'], 'newAlbumsUseDefaults');
+    }
 }
 
 /**
  * Required classes
  */
-require_once(dirname(__FILE__) . '/../../classes/GalleryLayout.class');
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryLayout.class');
 
 /**
  * Test Layout that fails to validate settings
@@ -195,8 +232,6 @@ class TestLayoutId1Layout extends GalleryLayout {
      * @see GalleryLayout::getSettings()
      */
     function getSettings($itemId=0) {
-	global $gallery;
-
 	$settings = array();
 	$settings[] = array('key' => 'rows',
 			    'name' => 'Rows per album page',
@@ -258,8 +293,6 @@ class TestLayoutId2Layout extends GalleryLayout {
      * @see GalleryLayout::getSettings()
      */
     function getSettings($itemId=0) {
-	global $gallery;
-
 	$settings = array();
 	$settings[] = array('key' => 'rows',
 			    'name' => 'Rows per album page',
@@ -295,7 +328,6 @@ class AdminLayoutsTestPlatform {
     }
 
     function opendir($path) {
-	global $gallery;
 	if (realpath($path) == realpath(dirname(__FILE__) . '/../../../../layouts')) {
 	    return 'TEST_VALID_RESOURCE';
 	} else {
@@ -326,8 +358,6 @@ class AdminLayoutsTestPlatform {
     }
 
     function file_exists($path) {
-	global $gallery;
-
 	/*
 	 * Can't use realpath() directly here because these paths are bogus!  Build up
 	 * the path based on GalleryPluginHelper_simple instead, as that's what'll be passing
@@ -342,7 +372,7 @@ class AdminLayoutsTestPlatform {
 	    return 1;
 
 	default:
-	    if (preg_match('/smarty.templates_c/', $path)) {
+	    if (preg_match('/smarty.templates_c|module.inc$/', $path)) {
 		return file_exists($path);
 	    }
 	    return 0;
@@ -350,8 +380,6 @@ class AdminLayoutsTestPlatform {
     }
 
     function is_dir($path) {
-	global $gallery;
-
 	$base = realpath(dirname(__FILE__) . '/../../../../layouts');
 	$path = realpath($path);
 

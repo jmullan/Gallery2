@@ -313,7 +313,11 @@ class ItemEditAlbum extends ItemEditPlugin {
 		/* Save basic settings */
 		$item->setLayout($form['layout']);
 		$item->setTheme($form['theme']);
-		$item->setOrderBy($form['orderBy']);
+		if (!empty($form['presort'])) {
+		    $item->setOrderBy($form['presort'] . '|' . $form['orderBy']);
+		} else {
+		    $item->setOrderBy($form['orderBy']);
+		}
 		if (isset($form['orderDirection'])) {
 		    $item->setOrderDirection($form['orderDirection']);
 		}
@@ -355,7 +359,14 @@ class ItemEditAlbum extends ItemEditPlugin {
 	global $gallery;
 
 	if ($form['formName'] != 'ItemEditAlbum') {
-	    $form['orderBy'] = $item->getOrderBy();
+	    $tmp = explode('|', $item->getOrderBy(), 2);
+	    if (count($tmp) < 2) {
+		$form['orderBy'] = $item->getOrderBy();
+		$form['presort'] = '';
+	    } else {
+		$form['orderBy'] = $tmp[1];
+		$form['presort'] = $tmp[0];
+	    }
 	    $form['orderDirection'] = $item->getOrderDirection();
 	    $form['layout'] = $item->getLayout();
 	    $form['theme'] = $item->getTheme();
@@ -418,43 +429,13 @@ class ItemEditAlbum extends ItemEditPlugin {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$platform = $gallery->getPlatform();
-
 	/* Set up our sort order selection list */
-	$orderByList = array(  '' => $module->translate('&laquo; default sort order &raquo;'),
-		    'orderWeight' => $module->translate('Manual sort order'),
-			  'title' => $module->translate('Title'),
-			'summary' => $module->translate('Summary'),
-	   'originationTimestamp' => $module->translate('Origination Date'),
-	      'creationTimestamp' => $module->translate('Creation Date'),
-	'creationTimestampAlbumsFirst' => $module->translate('Creation Date, Albums First'),
-	  'modificationTimestamp' => $module->translate('Last Changed Date'),
-		    'description' => $module->translate('Description'),
-		       'keywords' => $module->translate('Keywords'),
-		  'pathComponent' => $module->translate('Name'),
-		      'viewCount' => $module->translate('View Count'));
-	list ($ret, $implIds) = GalleryCoreApi::getAllFactoryImplementationIds('GallerySortInterface_1_0');
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/GallerySortInterface_1_1.class');
+	list ($ret, $orderByList, $presortList, $orderDirectionList) =
+	    GallerySortInterface_1_1::getAllSortOrders();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-
-	foreach ($implIds as $sortId => $className) {
-	    list ($ret, $sort) =
-		GalleryCoreApi::newFactoryInstance('GallerySortInterface_1_0', $className);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    list ($ret, $sortName) = $sort->getSortName();
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    $orderByList[$sortId] = $sortName;
-	}
-
-	/* Set up our sort direction selection list */
-	$orderDirectionList = array(
-	     ORDER_ASCENDING => $module->translate('Ascending'),
-	    ORDER_DESCENDING => $module->translate('Descending'));
 
 	/* Set up our layout selection list */
 	list ($ret, $layoutStatusList) = GalleryCoreApi::fetchPluginStatus('layout');
@@ -481,6 +462,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 	$ItemEditAlbum['layoutList'] = $layoutList;
 	$ItemEditAlbum['themeList'] = $themeList;
 	$ItemEditAlbum['orderByList'] = $orderByList;
+	$ItemEditAlbum['presortList'] = $presortList;
 	$ItemEditAlbum['orderDirectionList'] = $orderDirectionList;
 
 	$template->setVariable('ItemEditAlbum', $ItemEditAlbum);

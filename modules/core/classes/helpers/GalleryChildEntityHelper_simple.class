@@ -456,106 +456,122 @@ class GalleryChildEntityHelper_simple {
 	    }
 	}
 
-	switch ($orderDirection) {
-	case ORDER_DESCENDING:
-	    $direction = ' DESC';
-	    break;
+	$directionList = explode('|', $orderDirection);
+	$direction = '';
+	$order = $select = $condition = $join = array();
+	foreach (explode('|', $orderBy) as $orderType) {
+	    if (!empty($directionList)) {
+		$direction = (array_shift($directionList) == ORDER_DESCENDING) ? ' DESC' : '';
+	    }
 
-	case ORDER_ASCENDING:
-	default:
-	    $direction = '';
+	    $column = null;
+	    switch ($orderType) {
+	    case 'id':
+		$column = '[GalleryItem::id]';
+		break;
+
+	    case 'title':
+		$column = '[GalleryItem::title]';
+		$condition[] = '[GalleryItem::id] = [GalleryChildEntity::id]';
+		break;
+
+	    case 'summary':
+		$column = '[GalleryItem::summary]';
+		$condition[] = '[GalleryItem::id] = [GalleryChildEntity::id]';
+		break;
+
+	    case 'creationTimestamp':
+		$column = '[GalleryEntity::creationTimestamp]';
+		$condition[] = '[GalleryEntity::id] = [GalleryChildEntity::id]';
+		break;
+
+	    case 'modificationTimestamp':
+		$column = '[GalleryEntity::modificationTimestamp]';
+		$condition[] = '[GalleryEntity::id] = [GalleryChildEntity::id]';
+		break;
+
+	    case 'description':
+		$column = '[GalleryItem::description]';
+		$condition[] = '[GalleryItem::id] = [GalleryChildEntity::id]';
+		break;
+
+	    case 'keywords':
+		$column = '[GalleryItem::keywords]';
+		$condition[] = '[GalleryItem::id] = [GalleryChildEntity::id]';
+		break;
+
+	    case 'pathComponent':
+		$column = '[GalleryFileSystemEntity::pathComponent]';
+		$condition[] = '[GalleryFileSystemEntity::id] = [GalleryChildEntity::id]';
+		break;
+
+	    case 'viewCount':
+		$column = '[GalleryItemAttributesMap::viewCount]';
+		$condition[] = '[GalleryItemAttributesMap::itemId] = [GalleryChildEntity::id]';
+		break;
+
+	    case 'viewedFirst':
+		$order[] = '[GalleryItemAttributesMap::viewCount] DESC';
+		$select[] = '[GalleryItemAttributesMap::viewCount]';
+		$condition[] = '[GalleryItemAttributesMap::itemId] = [GalleryChildEntity::id]';
+		break;
+
+	    case 'orderWeight':
+		$order[] = '[GalleryItemAttributesMap::orderWeight]';
+		$select[] = '[GalleryItemAttributesMap::orderWeight]';
+		$condition[] = '[GalleryItemAttributesMap::itemId] = [GalleryChildEntity::id]';
+		break;
+
+	    case 'originationTimestamp':
+		$column = '[GalleryItem::originationTimestamp]';
+		$condition[] = '[GalleryItem::id] = [GalleryChildEntity::id]';
+		break;
+
+	    case 'albumsFirst':
+		list ($ret, $case) = $storage->getFunctionSql('CASE',
+		    array("[GalleryAlbumItem::id] IS NULL", '1', '0'));
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null, null, null, null);
+		}
+		$join[] = 'LEFT JOIN [GalleryAlbumItem] ON [GalleryChildEntity::id] = [GalleryAlbumItem::id]';
+		$select[] = $case;
+		$order[] = 2 + count($order);
+		break;
+
+	    default:
+		list ($ret, $sort) =
+		    GalleryCoreApi::newFactoryInstanceById('GallerySortInterface_1_1', $orderType);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null, null, null, null);
+		}
+		if (!isset($sort)) {
+		    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__,
+						      $orderType), null, null, null, null);
+		}
+		list ($ret, $orderClause, $select[], $conditionClause, $joinClause) =
+		    $sort->getSortOrder($direction);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null, null, null, null);
+		}
+		for ($i = 1; $i <= 3; $i++) {
+		    $orderClause = preg_replace("{%$i%}", $i + 1 + count($order), $orderClause);
+		}
+		$order[] = $orderClause;
+		if (!empty($conditionClause)) {
+		    $condition[] = $conditionClause;
+		}
+		if (!empty($joinClause)) {
+		    $join[] = $joinClause;
+		}
+	    }
+	    if (isset($column)) {
+		$order[] = $column . $direction;
+		$select[] = $column;
+	    }
 	}
 
-	$join = '';
-	switch ($orderBy) {
-	case 'id':
-	    $orderColumn = '[GalleryItem::id]';
-	    $condition = '';
-	    break;
-
-	case 'title':
-	    $orderColumn = '[GalleryItem::title]';
-	    $condition = '[GalleryItem::id] = [GalleryChildEntity::id]';
-	    break;
-
-	case 'summary':
-	    $orderColumn = '[GalleryItem::summary]';
-	    $condition = '[GalleryItem::id] = [GalleryChildEntity::id]';
-	    break;
-
-	case 'creationTimestamp':
-	    $orderColumn = '[GalleryEntity::creationTimestamp]';
-	    $condition = '[GalleryEntity::id] = [GalleryChildEntity::id]';
-	    break;
-
-	case 'modificationTimestamp':
-	    $orderColumn = '[GalleryEntity::modificationTimestamp]';
-	    $condition = '[GalleryEntity::id] = [GalleryChildEntity::id]';
-	    break;
-
-	case 'description':
-	    $orderColumn = '[GalleryItem::description]';
-	    $condition = '[GalleryItem::id] = [GalleryChildEntity::id]';
-	    break;
-
-	case 'keywords':
-	    $orderColumn = '[GalleryItem::keywords]';
-	    $condition = '[GalleryItem::id] = [GalleryChildEntity::id]';
-	    break;
-
-	case 'pathComponent':
-	    $orderColumn = '[GalleryFileSystemEntity::pathComponent]';
-	    $condition = '[GalleryFileSystemEntity::id] = [GalleryChildEntity::id]';
-	    break;
-
-	case 'viewCount':
-	    $orderColumn = '[GalleryItemAttributesMap::viewCount]';
-	    $condition = '[GalleryItemAttributesMap::itemId] = [GalleryChildEntity::id]';
-	    break;
-
-	case 'orderWeight':
-	    $orderColumn = '[GalleryItemAttributesMap::orderWeight]';
-	    $condition = '[GalleryItemAttributesMap::itemId] = [GalleryChildEntity::id]';
-	    $direction = '';
-	    break;
-
-	case 'originationTimestamp':
-	    $orderColumn = '[GalleryItem::originationTimestamp]';
-	    $condition = '[GalleryItem::id] = [GalleryChildEntity::id]';
-	    break;
-
-	case 'creationTimestampAlbumsFirst':
-	    list ($ret, $case) = $storage->getFunctionSql('CASE',
-		array("[GalleryAlbumItem::id] IS NULL", '1', '0'));
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null, null, null);
-	    }
-	    $join = 'LEFT JOIN [GalleryAlbumItem] ON [GalleryEntity::id] = [GalleryAlbumItem::id]';
-	    $orderColumn = "$case, [GalleryEntity::creationTimestamp]";
-	    $orderClause = "2, 3$direction";
-	    $condition = '[GalleryEntity::id] = [GalleryChildEntity::id]';
-	    break;
-
-	default:
-	    list ($ret, $sort) =
-		GalleryCoreApi::newFactoryInstanceById('GallerySortInterface_1_0', $orderBy);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null, null, null);
-	    }
-	    if (!isset($sort)) {
-		return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__,
-						  $orderBy), null, null, null, null);
-	    }
-	    list ($ret, $orderClause, $orderColumn, $condition) = $sort->getSortInfo($direction);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null, null, null);
-	    }
-	}
-	if (!isset($orderClause)) {
-	    $orderClause = $orderColumn . $direction;
-	}
-
-	return array(GalleryStatus::success(), $orderClause, $orderColumn, $condition, $join);
+	return array(GalleryStatus::success(), implode(', ', $order),
+		     implode(', ', $select), implode(' AND ', $condition), implode(' ', $join));
     }
 }
 ?>

@@ -68,7 +68,7 @@ class NewItemsSiteAdminController extends GalleryController {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    if ($default == 'NewItems') {
+	    if (strpos($default, 'NewItems') !== false) {
 		$ret = GalleryCoreApi::setPluginParameter(
 				     'module', 'core', 'default.orderBy', 'orderWeight');
 		if ($ret->isError()) {
@@ -124,7 +124,7 @@ class NewItemsSiteAdminView extends GalleryView {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$form['isDefault'] = $default == 'NewItems';
+	$form['isDefault'] = strpos($default, 'NewItems') !== false;
 
 	$template->setVariable('controller', 'newitems:NewItemsSiteAdmin');
 	return array(GalleryStatus::success(),

@@ -18,11 +18,17 @@
   <select name="{g->formVar var="form[orderDirection]"}">
       {html_options options=$ItemEditAlbum.orderDirectionList selected=$form.orderDirection}
   </select>
+  {g->text text="with"}
+  <select name="{g->formVar var="form[presort]"}">
+      {html_options options=$ItemEditAlbum.presortList selected=$form.presort}
+  </select>
   <script type="text/javascript">
     function pickOrder() {ldelim}
       var list = '{g->formVar var="form[orderBy]"}';
       var index = document.forms[0].elements[list].selectedIndex;
       list = '{g->formVar var="form[orderDirection]"}';
+      document.forms[0].elements[list].disabled = (index <= 1) ?1:0;
+      list = '{g->formVar var="form[presort]"}';
       document.forms[0].elements[list].disabled = (index <= 1) ?1:0;
     {rdelim}
     pickOrder();

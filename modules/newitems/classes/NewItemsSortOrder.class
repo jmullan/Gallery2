@@ -21,9 +21,11 @@
  */
 /**
  * @version $Revision$ $Date$
- * @package Core
+ * @package NewItems
  * @author Alan Harder <alan.harder@sun.com>
  */
+
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GallerySortInterface_1_1.class');
 
 /**
  * Sort with new items shown first, followed by other items sorted by view count.
@@ -31,25 +33,24 @@
  * @package NewItems
  * @subpackage Classes
  */
-class NewItemsSortOrder {
+class NewItemsSortOrder extends GallerySortInterface_1_1 {
 
     /**
-     * @see GallerySortInterface_1_0::getSortName
+     * @see GallerySortInterface_1_1::getSortInfo
      */
-    function getSortName() {
+    function getSortInfo() {
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'newitems');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	return array(GalleryStatus::success(),
-		     $module->translate('New Items, then by View Count'));
+	return array(GalleryStatus::success(), $module->translate('New Items First'), true);
     }
 
     /**
-     * @see GallerySortInterface_1_0::getSortInfo
+     * @see GallerySortInterface_1_1::getSortOrder
      */
-    function getSortInfo($direction) {
+    function getSortOrder($direction) {
 	global $gallery;
 	$storage =& $gallery->getStorage();
 
@@ -59,15 +60,12 @@ class NewItemsSortOrder {
 	}
 	$newTime = time() - $newTime * 86400;
 	list ($ret, $case) = $storage->getFunctionSql('CASE',
-	    array("[GalleryEntity::creationTimestamp] > $newTime",
-		  '[GalleryEntity::creationTimestamp]', '0'));
+	    array("[GalleryEntity::creationTimestamp] > $newTime", '0', '1'));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null, null);
 	}
 
-	return array(GalleryStatus::success(), "2 DESC, 3$direction",
-		     "$case, [GalleryItemAttributesMap::viewCount]",
-		     '[GalleryEntity::id] = [GalleryChildEntity::id] AND
-		      [GalleryItemAttributesMap::itemId] = [GalleryChildEntity::id]');
+	return array(GalleryStatus::success(), '%1%', $case,
+		     '[GalleryEntity::id] = [GalleryChildEntity::id]', null);
     }
 }

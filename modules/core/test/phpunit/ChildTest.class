@@ -130,7 +130,7 @@ class ChildTest extends GalleryTestCase {
 
     function testAlbumFirstOrder() {
 	list ($ret, $album) = $this->_createRandomAlbum($this->_root->getId(),
-				      array('orderBy' => 'creationTimestampAlbumsFirst',
+				      array('orderBy' => 'albumsFirst|creationTimestamp',
 					    'orderDirection' => ORDER_DESCENDING));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));

@@ -121,7 +121,11 @@ class AdminLayoutsController extends GalleryController {
 			   ) as $key) {
 		list ($outer, $inner) = explode('.', $key);
 		if (isset($form[$outer][$inner])) {
-		    $ret = GalleryCoreApi::setPluginParameter('module', 'core', $key, $form[$outer][$inner]);
+		    $value = $form[$outer][$inner];
+		    if ($key == 'default.orderBy' && isset($form['default']['presort'])) {
+			$value = $form['default']['presort'] . '|' . $value;
+		    }
+		    $ret = GalleryCoreApi::setPluginParameter('module', 'core', $key, $value);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
@@ -287,59 +291,41 @@ class AdminLayoutsView extends GalleryView {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
+		if ($key == 'default.orderBy') {
+		    $tmp = explode('|', $value, 2);
+		    if (count($tmp) == 2) {
+			$value = $tmp[1];
+			$form['default']['presort'] = $tmp[0];
+		    } else {
+			$form['default']['presort'] = '';
+		    }
+		}
+
 		list ($outer, $inner) = explode('.', $key);
 		$form[$outer][$inner] = $value;
 	    }
 
 	    $newAlbumsUseDefaultsList = array(
-		'false' => $module->translate('Inherit these settings from parent album'),
+		'false' => $module->translate('Inherit settings from parent album'),
 		'true' => $module->translate('Use these settings')
 	    );
 
 	    /* Set up our sort order selection list */
-	    $orderByList = array(
-		'orderWeight' => $module->translate('Manual Sort Order'),
-		'title' => $module->translate('Title'),
-		'summary' => $module->translate('Summary'),
-		'originationTimestamp' => $module->translate('Origination Date'),
-		'creationTimestamp' => $module->translate('Creation Date'),
-		'creationTimestampAlbumsFirst' => $module->translate('Creation Date, Albums First'),
-		'modificationTimestamp' => $module->translate('Last Changed Date'),
-		'description' => $module->translate('Description'),
-		'keywords' => $module->translate('Keywords'),
-		'pathComponent' => $module->translate('Name'),
-		'viewCount' => $module->translate('View Count'),
-	    );
-	    list ($ret, $implIds) =
-		GalleryCoreApi::getAllFactoryImplementationIds('GallerySortInterface_1_0');
+	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/GallerySortInterface_1_1.class');
+	    list ($ret, $orderByList, $presortList, $orderDirectionList) =
+		GallerySortInterface_1_1::getAllSortOrders(false);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    foreach ($implIds as $sortId => $className) {
-		list ($ret, $sort) =
-		    GalleryCoreApi::newFactoryInstance('GallerySortInterface_1_0', $className);
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-		list ($ret, $sortName) = $sort->getSortName();
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-		$orderByList[$sortId] = $sortName;
-	    }
-	    /* Set up our sort direction selection list */
-	    $orderDirectionList = array(
-		ORDER_ASCENDING => $module->translate('Ascending'),
-		ORDER_DESCENDING => $module->translate('Descending')
-	    );
-
 	    $AdminLayouts['orderByList'] = $orderByList;
+	    $AdminLayouts['presortList'] = $presortList;
 	    $AdminLayouts['orderDirectionList'] = $orderDirectionList;
 	    $AdminLayouts['layoutList'] = $layoutList;
 	    $AdminLayouts['themeList'] = GalleryTheme::getThemeList();
 	    $AdminLayouts['newAlbumsUseDefaultsList'] = $newAlbumsUseDefaultsList;
 	    break;
+
 	case 'config':
 	    foreach (array_keys($layouts) as $id) {
 		$actions = array();

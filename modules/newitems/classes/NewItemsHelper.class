@@ -43,7 +43,7 @@ class NewItemsHelper {
     function fetchAlbumCount() {
 	global $gallery;
 	$query = 'SELECT COUNT([GalleryAlbumItem::id]) FROM [GalleryAlbumItem] ' .
-		 'WHERE [GalleryAlbumItem::orderBy] = \'NewItems\'';
+		 'WHERE [GalleryAlbumItem::orderBy] LIKE \'%NewItems%\'';
 
 	list ($ret, $results) = $gallery->search($query);
 	if ($ret->isError()) {
@@ -58,7 +58,7 @@ class NewItemsHelper {
     }
 
     /**
-     * Reset all RandomHighlight derivatives back to their normal type
+     * Remove NewItems sort from all albums
      *
      * @return GalleryStatus a status code
      * @static
@@ -66,7 +66,7 @@ class NewItemsHelper {
     function resetNewItemSorts() {
 	global $gallery;
 	$query = 'SELECT [GalleryAlbumItem::id] FROM [GalleryAlbumItem] ' .
-		 'WHERE [GalleryAlbumItem::orderBy] = \'NewItems\'';
+		 'WHERE [GalleryAlbumItem::orderBy] LIKE \'%NewItems%\'';
 
 	list ($ret, $results) = $gallery->search($query);
 	if ($ret->isError()) {

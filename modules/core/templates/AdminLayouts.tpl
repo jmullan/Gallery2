@@ -154,11 +154,17 @@
             <select name="{g->formVar var="form[default][orderDirection]"}">
                 {html_options options=$AdminLayouts.orderDirectionList selected=$form.default.orderDirection}
             </select>
+            {g->text text="with"}
+            <select name="{g->formVar var="form[default][presort]"}">
+                {html_options options=$AdminLayouts.presortList selected=$form.default.presort}
+            </select>
             <script type="text/javascript">
             function pickOrder() {ldelim}
                 var list = '{g->formVar var="form[default][orderBy]"}';
                 var index = document.forms[0].elements[list].selectedIndex;
                 list = '{g->formVar var="form[default][orderDirection]"}';
+                document.forms[0].elements[list].disabled = (index == 0) ?1:0;
+                list = '{g->formVar var="form[default][presort]"}';
                 document.forms[0].elements[list].disabled = (index == 0) ?1:0;
               {rdelim}
               pickOrder();
