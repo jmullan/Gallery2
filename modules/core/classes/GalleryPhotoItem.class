@@ -110,7 +110,6 @@ class GalleryPhotoItem_core extends GalleryDataItem {
      */
     function create($parentId, $imageFileName, $mimeType, $targetName=null, $symlink=false) {
 	global $gallery;
-
 	$platform = $gallery->getPlatform();
 
 	/* Validate the input filename */
@@ -119,7 +118,7 @@ class GalleryPhotoItem_core extends GalleryDataItem {
 	}
 
 	if (!$platform->file_exists($imageFileName)) {
-	    return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);
+	    return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__, $imageFileName);
 	}
 
 	/* Create our data item */
@@ -149,8 +148,6 @@ class GalleryPhotoItem_core extends GalleryDataItem {
      * @see GalleryDataItem::rescan()
      */
     function rescan() {
-	global $gallery;
-
 	$ret = parent::rescan();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -190,7 +187,6 @@ class GalleryPhotoItem_core extends GalleryDataItem {
      * @see GalleryEntity::itemTypeName
      */
     function itemTypeName($localized = true) {
-	global $gallery;
 	if ($localized) {
 	    list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
 	    if (! $ret->isError()) {
@@ -204,7 +200,7 @@ class GalleryPhotoItem_core extends GalleryDataItem {
      * @see GalleryDataItem::render
      */
     function render($format, $params) {
- 	global $gallery;
+	global $gallery;
 
 	switch($format) {
 	case 'HTML':
