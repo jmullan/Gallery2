@@ -96,6 +96,8 @@ class GalleryUrlGenerator {
      * @return string the current URL
      */
     function getCurrentUrl() {
+	global $gallery;
+	
 	if (!empty($_SERVER['REQUEST_URI'])) {
 	    $path = $_SERVER['REQUEST_URI'];
 	} else if (!empty($_SERVER['SCRIPT_NAME'])) {
@@ -116,7 +118,11 @@ class GalleryUrlGenerator {
 	    $port = '';
 	}
 
-	return sprintf('%s://%s%s%s', $protocol, $_SERVER['SERVER_NAME'], $port, $path);
+	return sprintf('%s://%s%s%s',
+		       $protocol,
+		       $_SERVER['HTTP_HOST'],
+		       $port,
+		       $path);
     }
 
     /**
@@ -239,7 +245,19 @@ class GalleryUrlGenerator {
 
 	/* Swap in the actual url for the 'return' placeholder, if necessary */
 	if (isset($params['return'])) {
-	    $params['return'] = urlencode($this->getCurrentUrl());
+	    $params['return'] = $this->getCurrentUrl();
+
+	    /*
+	     * In very rare cases (like when you first access the app) it's possible to not be using cookies,
+	     * but not have the session id in the url yet.  Detect that case and add the url here.
+	     */
+	    if (!($session->isUsingCookies())) {
+		if (empty($_SERVER['QUERY_STRING']) || strpos($_SERVER['QUERY_STRING'], $sessionKey) === false) {
+		    $params['return'] .= $this->buildQueryString(array($sessionKey => $sessionId));
+		}
+	    }
+
+	    $params['return'] = urlencode($params['return']);
 	}
 
 	/* Escape all values */

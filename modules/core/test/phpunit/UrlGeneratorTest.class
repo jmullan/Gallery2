@@ -42,7 +42,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 
     function setUp() {
 	$_SERVER['REQUEST_URI'] = '/gallery2/phpunit_test.php?foo=bar';
-	$_SERVER['SERVER_NAME'] = 'example.com';
+	$_SERVER['HTTP_HOST'] = 'example.com';
 	$_SERVER['SERVER_PORT'] = 80;
 
 	$this->_urlGenerator = new GalleryUrlGenerator('phpunit_test.php');
