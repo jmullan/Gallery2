@@ -88,11 +88,7 @@ class AdminEditUserController extends GalleryController {
 	     * Validate our data before we continue.
 	     */
 	    $error = false;
-	    /* full name is always mandatory */
-	    if (empty($form['fullName'])) {
-		GalleryUtilities::putRequestVariable('form.error.fullName.missing', 1);
-		$error = true;
-	    }
+	    /* full name is optional for everybody */
 
 	    /* language is optional for everybody */
 
@@ -123,7 +119,7 @@ class AdminEditUserController extends GalleryController {
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-		
+
 		$user->setFullname($form['fullName']);
 		if (!$isAnonymous) {
 		    $user->setEmail($form['email']);

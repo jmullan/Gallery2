@@ -105,7 +105,6 @@ class AdminEditUserControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
 	$this->assertEquals('core:AdminEditUser', GalleryUtilities::getRequestVariables('subView'));
 	$this->assert(GalleryUtilities::hasRequestVariable('form.error.email.missing'));
-	$this->assert(GalleryUtilities::hasRequestVariable('form.error.fullName.missing'));
 	$this->assert(GalleryUtilities::hasRequestVariable('form.error.password.mismatch'));
     }
 }
