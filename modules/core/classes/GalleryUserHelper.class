@@ -100,5 +100,41 @@ class GalleryUserHelper {
 	$result = $searchResults->nextResult();
 	return array(GalleryStatus::success(), $result[0]);
     }
+
+    /**
+     * Return a map of userNames => userids
+     *
+     * You can specify how many usernames to list, and where the windows is in
+     * the list of all users.
+     *
+     * @param string the username
+     * @return array object GalleryStatus a status code
+     *               object GalleryUser a user
+     */
+    function fetchUserByUsername($username=null) {
+	global $gallery;
+
+	list ($ret, $searchResults) =
+	    $gallery->search(array('select' => '[GalleryUser::id]',
+				   'where' => '[GalleryUser::username] = ?'),
+			     array($username));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if ($searchResults->resultCount() == 0) {
+	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
+	} else {
+	    $result = $searchResults->nextResult();
+	    $id = $result[0];
+	    list ($ret, $user) = $gallery->loadEntitiesById($id);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    return array(GalleryStatus::success(), $user);
+	}
+    }
+    
 }
 ?>
