@@ -347,7 +347,8 @@ class GalleryLayout extends GalleryPlugin {
 	$layout['show'] = array('sidebar' => GalleryCapabilities::can('showSidebar'),
 				'sidebarGreeting' => GalleryCapabilities::can('showSidebarGreeting'),
 				'sidebarActions' => true,
-				'sidebarPeers' => isset($load['peers']));
+				'sidebarPeers' => isset($load['peers']),
+				'pathbar' => GalleryCapabilities::can('showPathbar'));
 
 	// -------------------------------------------------------------------------------------
 	// 'owner'
