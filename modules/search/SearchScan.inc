@@ -26,7 +26,7 @@
  */
 
 /* Pull in required classes */
-require(dirname(__FILE__) . '/classes/SearchUtilities.class');
+require_once(dirname(__FILE__) . '/classes/SearchUtilities.class');
 
 /**
  * @package Search

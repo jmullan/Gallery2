@@ -125,6 +125,7 @@
 	  </td>
 	</tr>
 
+	<!-- {assign var="searchCriteria" value=$form.searchCriteria} -->
 	<!-- {foreach from=$results.ids item=resultId} -->
 	<tr>
 	  <td rowspan="2">
@@ -155,7 +156,7 @@
 	    &nbsp;
 	  </td>
 	  <td valign="top" width="100%">
-	    {$searchResultItems.$resultId.title|default:"&nbsp;"|replace:$form.searchCriteria:"<b>$`form.searchCriteria`</b>"}
+	    {$searchResultItems.$resultId.title|default:"&nbsp;"|replace:$searchCriteria:"<b>$searchCriteria</b>"}
 	  </td>
 	</tr>
 	
@@ -164,7 +165,7 @@
 	    <b>{gallery->text text="Description: "}</b>
 	  </td>
 	  <td valign="top">
-	    {$searchResultItems.$resultId.description|default:"&nbsp;"|replace:$form.searchCriteria:"<b>$`form.searchCriteria`</b>"}
+	    {$searchResultItems.$resultId.description|default:"&nbsp;"|replace:$searchCriteria:"<b>$searchCriteria</b>"}
 	  </td>
 	</tr>
 
