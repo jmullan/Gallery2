@@ -85,7 +85,14 @@
     </center>
     {/if}
 
-    <a href="http://validator.w3.org/check/referer">validate this page</a>
+    <a href="http://validator.w3.org/check/referer">
+      [{galleryText text="Validate this Page"}]
+    </a>
+
+    <a href="http://gallery.sourceforge.net">
+      [{galleryText text="Powered by Gallery %s"
+                    arg1=$gallery.version}]
+    </a>
     
   </body>
 </html>

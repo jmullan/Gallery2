@@ -173,7 +173,10 @@ function GalleryMain($startTime) {
 	    $master['profile'] = GalleryProfiler::getProfile();
 	}
 
+	$galleryData['version'] = '2';
+
 	$smarty->assign('master', $master);
+	$smarty->assign('gallery', $galleryData);
 	$smarty->display('global.tpl');
     }
 
