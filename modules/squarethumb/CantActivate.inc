@@ -40,7 +40,6 @@ class CantActivateView extends GalleryView {
      */
     function loadTemplate(&$template, &$form) {
 	return array(GalleryStatus::success(),
-		     array('head' => 'modules/squarethumb/templates/CantActivateHead.tpl',
-			   'body' => 'modules/squarethumb/templates/CantActivate.tpl'));
+		     array('body' => 'modules/squarethumb/templates/CantActivate.tpl'));
     }
 }
