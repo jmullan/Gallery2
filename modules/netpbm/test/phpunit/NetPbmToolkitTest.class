@@ -45,13 +45,13 @@ class NetPbmToolkitTest extends GalleryTestCase {
     }
 
     /**
-     * 
+     *
      */
     function setUp() {
 	global $gallery;
 
 	parent::setUp();
-	
+
 	/* Save the platform */
 	$gallery->_platform = new NetPbmToolkitTestPlatform($gallery->getPlatform());
 	$ret = $gallery->_platform->init();
@@ -88,7 +88,7 @@ class NetPbmToolkitTest extends GalleryTestCase {
      */
     function tearDown() {
 	global $gallery;
-	
+
 	foreach ($this->_save as $key => $value) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'netpbm', $key, $value);
 	    if ($ret->isError()) {
@@ -163,7 +163,7 @@ class NetPbmToolkitTest extends GalleryTestCase {
                                               array('testPerformOperations12.gif', // image
 						    'image/gif', // mime type
 						    50, 50, // image width, height
-						    'top-right', 
+						    'top-right',
 						    0, 0)); // image alignment x, y (overridden by top-right alignment)
         if ($ret->isError()) {
             return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -188,7 +188,7 @@ class NetPbmToolkitTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	list ($ret, $mimeType) =
             $this->_toolkit->performOperation('image/jpeg', 'rotate',
                                               'testPerformOperations13.jpg',
@@ -204,6 +204,114 @@ class NetPbmToolkitTest extends GalleryTestCase {
 					      'BOGUS',
 					      array('BOGUS'));
 	$this->assert($ret->getErrorCode() & ERROR_UNSUPPORTED_OPERATION, 'bad op');
+    }
+
+    // Ensure operation sequence is processed with one exec()
+    function testOperationSequence() {
+	list ($ret, $netPbmPath) = GalleryCoreApi::getPluginParameter('module', 'netpbm', 'path');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$context = array('next.toolkit' => $this->_toolkit, 'next.operation' => 'thumbnail');
+	list ($ret, $mimeType, $context) =
+	    $this->_toolkit->performOperation('image/png', 'crop',
+					      'testPerformOperations8.png',
+					      'testPerformOperations8.png',
+					      array('24.667', '23.5', '51.375', '52'), $context);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$context['next.toolkit'] = null;
+	$context['next.operation'] = null;
+	$this->assertEquals(array('next.toolkit' => null, 'next.operation' => null,
+	    'width' => 103, 'height' => 156,
+	    'netpbm.transform' => array(
+		array($netPbmPath . 'pnmcut', (float)49, (float)71, (float)103, (float)156)),
+	    'netpbm.mime' => 'image/png'),
+	    $context, 'context');
+
+	list ($ret, $mimeType, $context) =
+	    $this->_toolkit->performOperation('image/png', 'thumbnail',
+					      'testPerformOperations8.png',
+					      'testPerformOperations15.png',
+					      array(100, 100), $context);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    // Ensure queued operations that affect image size are taken into account
+    // for subsequent operations..
+    function testOperationSequenceSizeChange() {
+	list ($ret, $netPbmPath) = GalleryCoreApi::getPluginParameter('module', 'netpbm', 'path');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$operations = array(
+	    'composite', array('testPerformOperations12.gif',
+			       'image/gif', 50, 50, 'bottom', 0, 0),
+	    'rotate', array(-90),
+	    'resize', array(640, 480),
+	    'composite', array('testPerformOperations12.gif',
+			       'image/gif', 50, 50, 'manual', 22.5, 46),
+	    'thumbnail', array(150));
+	$expectedContexts = array(
+	    array('netpbm.tmp' => array('TEMPFILE', 'TEMPFILE'), 'width' => 200, 'height' => 300,
+		  'netpbm.transform' => array(array($netPbmPath . 'pnmcomp', '-align=center',
+						    '-valign=bottom', '-alpha=TEMPFILE', 'TEMPFILE')),
+		  'netpbm.mime' => 'image/png'),
+	    array('netpbm.tmp' => array('TEMPFILE', 'TEMPFILE'), 'width' => 300, 'height' => 200,
+		  'netpbm.transform' => array(array($netPbmPath . 'pnmcomp', '-align=center',
+						    '-valign=bottom', '-alpha=TEMPFILE', 'TEMPFILE'),
+					      array($netPbmPath . 'pnmflip', '-ccw')),
+		  'netpbm.mime' => 'image/png'),
+	    array('netpbm.tmp' => array('TEMPFILE', 'TEMPFILE'), 'width' => 640, 'height' => 427,
+		  'netpbm.transform' => array(array($netPbmPath . 'pnmcomp', '-align=center',
+						    '-valign=bottom', '-alpha=TEMPFILE', 'TEMPFILE'),
+					      array($netPbmPath . 'pnmflip', '-ccw'),
+					      array($netPbmPath . 'pnmscale', '--quiet',
+						    '-xsize', 640, '-ysize', 480)),
+		  'netpbm.mime' => 'image/png'),
+	    array('netpbm.tmp' => array('TEMPFILE', 'TEMPFILE', 'TEMPFILE', 'TEMPFILE'),
+		  'width' => 640, 'height' => 427,
+		  'netpbm.transform' => array(array($netPbmPath . 'pnmcomp', '-align=center',
+						    '-valign=bottom', '-alpha=TEMPFILE', 'TEMPFILE'),
+					      array($netPbmPath . 'pnmflip', '-ccw'),
+					      array($netPbmPath . 'pnmscale', '--quiet',
+						    '-xsize', 640, '-ysize', 480),
+					      array($netPbmPath . 'pnmcomp', '-xoff=144',
+						    '-yoff=196', '-alpha=TEMPFILE', 'TEMPFILE')),
+		  'netpbm.mime' => 'image/png'),
+	    array('width' => 150, 'height' => 100)
+	);
+
+	$context = array('next.toolkit' => $this->_toolkit);
+	$mimeType = 'image/png';
+
+	for ($i = $j = 0; $i < count($operations); $i += 2) {
+	    if ($i + 2 < count($operations)) {
+		$context['next.operation'] = $operations[$i+2];
+	    } else {
+		$context['next.operation'] = $context['next.toolkit'] = null;
+	    }
+
+	    list ($ret, $mimeType, $context) =
+		$this->_toolkit->performOperation($mimeType, $operations[$i],
+						  'testPerformOperations8.png',
+						  'testPerformOperations8.png',
+						  $operations[$i+1], $context);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+
+	    $checkContext = $context;
+	    unset($checkContext['next.toolkit']);
+	    unset($checkContext['next.operation']);
+	    $this->assertEquals($expectedContexts[$j++], $checkContext, 'context $j');
+	}
     }
 
     function testGetProperties() {
@@ -419,7 +527,7 @@ class NetPbmToolkitTest extends GalleryTestCase {
 				  array('name' => 'ppmtobmp', 'success' => 1, 'message' => array()),
 				  array('name' => 'pnmcomp', 'success' => 1, 'message' => array())),
 			    $results);
-	
+
 	$this->assertEquals(array('image/gif',
 				  'image/jpeg',
 				  'image/pjpeg',
@@ -493,7 +601,7 @@ class NetPbmToolkitTestPlatform {
 	    serialize(array(array('/usr/local/bin/jhead', '-te', 'testPerformOperations4.jpg', 'TEMPFILE')))) {
 	    return array(1, array(), array());
 	}
-	
+
 	if (serialize($cmd) ==
 	    serialize(array(array($this->_netPbmPath . 'jpegtopnm', '--quiet', 'testPerformOperations4.jpg'),
 			    array($this->_netPbmPath . 'pnmscale', '--quiet', '-xysize', 100, 100),
@@ -573,6 +681,30 @@ class NetPbmToolkitTestPlatform {
 	if (serialize($cmd) ==
 	        serialize(array(array('/validJheadPath/jhead', '-te', 'testPerformOperations13.jpg',
 				      'TEMPFILE')))) {
+	    return array(1, array(), array());
+	}
+
+	/** Crop/Resize a PNG */
+	if (serialize($cmd) == serialize(array(
+		array($this->_netPbmPath . 'pngtopnm', '--quiet', 'testPerformOperations8.png'),
+		array($this->_netPbmPath . 'pnmcut', (float)49, (float)71, (float)103, (float)156),
+		array($this->_netPbmPath . 'pnmscale', '--quiet', '-xysize', 100, 100),
+		array($this->_netPbmPath . 'pnmtopng', '>', 'TEMPFILE')))) {
+	    return array(1, array(), array());
+	}
+
+	/** Huge pipe */
+	if (serialize($cmd) == serialize(array(
+		array($this->_netPbmPath . 'pngtopnm', '--quiet', 'testPerformOperations8.png'),
+		array($this->_netPbmPath . 'pnmcomp', '-align=center',
+		      '-valign=bottom', '-alpha=TEMPFILE', 'TEMPFILE'),
+		array($this->_netPbmPath . 'pnmflip', '-ccw'),
+		array($this->_netPbmPath . 'pnmscale', '--quiet',
+		      '-xsize', 640, '-ysize', 480),
+		array($this->_netPbmPath . 'pnmcomp', '-xoff=144',
+		      '-yoff=196', '-alpha=TEMPFILE', 'TEMPFILE'),
+		array($this->_netPbmPath . 'pnmscale', '--quiet', '-xysize', 150, 150),
+		array($this->_netPbmPath . 'pnmtopng', '>', 'TEMPFILE')))) {
 	    return array(1, array(), array());
 	}
 
@@ -658,7 +790,7 @@ class NetPbmToolkitTestPlatform {
 
 	return false;
     }
-    
+
     function is_dir($path) {
 	global $gallery;
 	list ($ret, $netPbmPath) = GalleryCoreApi::getPluginParameter('module', 'netpbm', 'path');
@@ -695,6 +827,9 @@ class NetPbmToolkitTestPlatform {
     function realpath($file) {
 	return $this->_platform->realpath($file);
     }
-}
 
+    function copy($src, $dset) {
+	return 1;
+    }
+}
 ?>
