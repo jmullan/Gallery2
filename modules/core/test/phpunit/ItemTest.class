@@ -179,7 +179,12 @@ class ItemTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
+	GalleryCoreApi::registerFactoryImplementation('GalleryItem',
+						      'ItemTestMovieItem',
+						      'ItemTestMovieItem',
+						      dirname(__FILE__),
+						      array('test/movie'));
     }
 
     function tearDown() {
@@ -195,6 +200,8 @@ class ItemTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+
+	GalleryCoreApi::unregisterFactoryImplementation('GalleryItem', 'ItemTestMovieItem');
 	
 	parent::tearDown();
     }
@@ -350,9 +357,33 @@ class ItemTest extends GalleryTestCase {
     }
 
     function testSetThumbnailFromItem() {
-	// Attach a derivative to one item, then associated it with another
+	/* Create album tree */
+	$parentId = $this->_parentItem->getId();
+	for ($i = 0; $i < 3; $i++) {
+	    list ($ret, $album[$i]) = $this->_createRandomAlbum($parentId);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $parentId = $album[$i]->getId();
+	}
+	
+	/* Set the preference for one album to something unusual */
+	$ret = GalleryCoreApi::removeDerivativePreferencesForItem($album[0]->getId());
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Add a thumbnail preference */
+	$ret = GalleryCoreApi::addDerivativePreference(0, $album[0]->getId(),
+						       DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
+						       'thumbnail|123');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Then attach a derivative to one item and  associate it with another */
 	list ($ret, $derivative) =
-	    $this->_createDerivative($this->_childItems[0]->getId(),
+	    $this->_createDerivative($album[2]->getId(),
 				     DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
 				     'itemtest-operation',
 				     'test/image');
@@ -360,27 +391,62 @@ class ItemTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $success) = GalleryCoreApi::setThumbnailFromItem($this->_childItems[1]->getId(),
-									$this->_childItems[0]->getId());
+	list ($ret, $success) = GalleryCoreApi::setThumbnailFromItem($album[1]->getId(), $album[2]->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert($success, 'should be able to set thumbnail');
 
+	/*
+	 * At this point, $this->_childItems[1]'s thumbnail should match $this->_childItem[0]'s preference,
+	 * and $this->_childItem[0]'s thumbnail should match $this->_parentItem's preference
+	 */
+
 	list ($ret, $thumbTable) =
-	    GalleryCoreApi::fetchThumbnailsByItemIds(array($this->_childItems[1]->getId()));
+	    GalleryCoreApi::fetchThumbnailsByItemIds(array($album[0]->getId(),
+							   $album[1]->getId()));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->assert(isset($thumbTable[$this->_childItems[1]->getId()]));
-	$newDerivative = $thumbTable[$this->_childItems[1]->getId()];
-	$this->assert(GalleryUtilities::isA($newDerivative, 'GalleryDerivative'));
-
-	if (!isset($newDerivative)) {
-	    return $this->fail("new derivative missing!");
+	// Make sure that child(1) has a thumbnail matching child(0)'s preference
+	list ($ret, $preferences) = GalleryCoreApi::fetchDerivativePreferencesForItem($album[0]->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals($newDerivative->getDerivativeSourceId(), $derivative->getId());
+	$thumbnailPreference = null;
+	for ($i = 0; $i < sizeof($preferences); $i++) {
+	    if (preg_match('/thumbnail/', $preferences[$i]['derivativeOperations'])) {
+		$thumbnailPreference = $preferences[$i];
+		break;
+	    }
+	}
+	$this->assert(isset($thumbnailPreference), 'missing thumbnail preference');
+	$this->assert(isset($thumbTable[$album[1]->getId()]), 'child(1) should have a thumbnail');
+	$this->assertEquals($thumbTable[$album[1]->getId()]->getDerivativeOperations(),
+			    $thumbnailPreference['derivativeOperations']);
+
+	// Make sure that child(0) has a thumbnail matching parentItem's preference
+	list ($ret, $preferences) = GalleryCoreApi::fetchDerivativePreferencesForItem($this->_parentItem->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$thumbnailPreference = null;
+	for ($i = 0; $i < sizeof($preferences); $i++) {
+	    if (preg_match('/thumbnail/', $preferences[$i]['derivativeOperations'])) {
+		$thumbnailPreference = $preferences[$i];
+		break;
+	    }
+	}
+	$this->assert(isset($thumbnailPreference), 'missing thumbnail preference');
+	$this->assert(isset($thumbTable[$album[0]->getId()]), 'child(0) should have a thumbnail');
+	$this->assertEquals($thumbTable[$album[0]->getId()]->getDerivativeOperations(),
+			    $thumbnailPreference['derivativeOperations']);
+
+	// Make sure that the derivatives are linked together properly
+	$thumb0 = $thumbTable[$album[0]->getId()];
+	$thumb1 = $thumbTable[$album[1]->getId()];
+	$this->assertEquals($thumb0->getDerivativeSourceId(), $thumb1->getId());
     }
 
     /*
@@ -502,7 +568,7 @@ class ItemTest extends GalleryTestCase {
 	/* Add a thumbnail preference */
 	$ret = GalleryCoreApi::addDerivativePreference(0, $this->_childItems[0]->getId(),
 						       DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
-						       'thumbnail|100');
+						       'thumbnail|101');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -545,7 +611,7 @@ class ItemTest extends GalleryTestCase {
 
 	$derivative = $derivativeTable[$newItem->getId()][0];
 	$this->assertEquals(DERIVATIVE_TYPE_IMAGE_THUMBNAIL, $derivative->getDerivativeType());
-	$this->assertEquals('convert-to-image/jpeg;thumbnail|100', $derivative->getDerivativeOperations());
+	$this->assertEquals('convert-to-image/jpeg;thumbnail|101', $derivative->getDerivativeOperations());
     }
 
     function testFetchItemIdCount() {
@@ -718,4 +784,18 @@ class ItemTest extends GalleryTestCase {
  * @subpackage PHPUnit
  */
 class ItemTestToolkit extends GalleryToolkit { }
+
+
+/**
+ * Required classes
+ */
+require_once(dirname(__FILE__) . '/../../classes/GalleryMovieItem.class');
+
+/**
+ * Test movie item
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class ItemTestMovieItem extends GalleryMovieItem { }
 ?>

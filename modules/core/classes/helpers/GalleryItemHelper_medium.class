@@ -437,6 +437,9 @@ class GalleryItemHelper_medium {
 	 */
 	$source = null;
 	$sourceMimeType = null;
+	$parentId = null;
+	$createdNewParentThumbnail = false;
+	$success = false;
 	
 	/* 1. The fromItem's preferred derivative's source id */
 	list ($ret, $derivatives) = GalleryCoreApi::fetchPreferredsByItemIds(array($fromItemId));
@@ -510,47 +513,57 @@ class GalleryItemHelper_medium {
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
+
+		$createdNewParentThumbnail = true;
 	    
 		/*
-		 * Get the derivativeOperations to generate a thumbnail for the
-		 * item.
-		 *
-		 * XXX: this will only work with albums!  We need to check the
-		 * parent's preferences if we're creating a new thumbnail for
-		 * an item.
+		 * The dimensions of the album's thumbnail are governed by the album's parent, so load the
+		 * album, get its parent's id, get that album's preferences and use those for the thumbnail.
 		 */
-		list ($ret, $preferences) = GalleryCoreApi::fetchDerivativePreferencesForItem($itemId);
+		list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-		
-		foreach ($preferences as $preference) {
-		    if ($preference['derivativeType'] == DERIVATIVE_TYPE_IMAGE_THUMBNAIL) {
-			$derivativeOperations = $preference['derivativeOperations'];
-			break;
+
+		// It's possible that the parent id is not set (only for the root album)
+		$parentId = $item->getParentId();
+		if (isset($parentId)) {
+		    list ($ret, $preferences) = GalleryCoreApi::fetchDerivativePreferencesForItem($parentId);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
-		}
-		if (empty($derivativeOperations)) {
-		    return array(GalleryStatus::error(ERROR_MISSING_VALUE, __FILE__, __LINE__), null);
-		}
 
-		/*
-		 * Validate the stored preferences to make sure that
-		 * they're supported by an active toolkit.
-		 */
-		list ($ret, $isSupported, $outputMimeType) =
-		    GalleryCoreApi::isSupportedOperationSequence($sourceMimeType,
-								       $derivativeOperations);
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
+		    foreach ($preferences as $preference) {
+			if ($preference['derivativeType'] == DERIVATIVE_TYPE_IMAGE_THUMBNAIL) {
+			    $derivativeOperations = $preference['derivativeOperations'];
+			    break;
+			}
+		    }
+		    if (empty($derivativeOperations)) {
+			return array(GalleryStatus::error(ERROR_MISSING_VALUE, __FILE__, __LINE__), null);
+		    }
 
-		if ($isSupported) {
-		    $success = true;
-		    $derivative->setDerivativeOperations($derivativeOperations);
-		    $derivative->setDerivativeMimeType($outputMimeType);
+		    /*
+		     * Validate the stored preferences to make sure that
+		     * they're supported by an active toolkit.
+		     */
+		    list ($ret, $isSupported, $outputMimeType) =
+			GalleryCoreApi::isSupportedOperationSequence($sourceMimeType, $derivativeOperations);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+
+		    if ($isSupported) {
+			$success = true;
+			$derivative->setDerivativeOperations($derivativeOperations);
+			$derivative->setDerivativeMimeType($outputMimeType);
+		    }
 		} else {
-		    $success = false;
+		    /*
+		     * There's no parent id, which means the target album is the root, which means it doesn't
+		     * need a thumbnail so even though we didn't create one this is a success.
+		     */
+		    $success = true;
 		}
 	    }
 
@@ -565,6 +578,24 @@ class GalleryItemHelper_medium {
 
 	    if (isset($lockIds)) {
 		$ret = GalleryCoreApi::releaseLocks($lockIds);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	    }
+	}
+
+	/*
+	 * If we created a new thumbnail for the album, we should seek to propagate the thumbnail up to the
+	 * parent album if it does not have a thumbnail.
+	 */
+	if ($success && $parentId != null && $createdNewParentThumbnail) {
+	    list ($ret, $thumbTable) = GalleryCoreApi::fetchThumbnailsByItemIds(array($parentId));
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    if (empty($thumbTable)) {
+		list ($ret, $success) = GalleryItemHelper_medium::setThumbnailFromItem($parentId, $itemId);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
