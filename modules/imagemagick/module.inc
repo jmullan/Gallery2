@@ -226,8 +226,10 @@ class ImageMagickModule extends GalleryModule {
 		$paths[] = $path;
 	    }
 	    
-	    /* Double-quoting the paths removes any ambiguity about the 
-	       double-slashes being escaped or not */
+	    /*
+	     * Double-quoting the paths removes any ambiguity about the
+	     * double-slashes being escaped or not
+	     */
 	    $paths[] = "C:\\Program Files\\ImageMagick\\";
 	    $paths[] = "C:\\apps\ImageMagick\\";
 	    $paths[] = "C:\\ImageMagick\\";
