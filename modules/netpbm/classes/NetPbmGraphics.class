@@ -130,11 +130,11 @@ class NetPbmGraphics extends GalleryGraphics {
 
 	switch($degrees) {
 	case -90:
-	    $flipArgument = "-cw";
+	    $flipArgument = "-ccw";
 	    break;
 
 	case 90:
-	    $flipArgument = "-ccw";
+	    $flipArgument = "-cw";
 	    break;
 
 	case 180:
@@ -259,6 +259,7 @@ class NetPbmGraphics extends GalleryGraphics {
 	    break;
 
 	case 'image/jpeg':
+	case 'image/pjpeg':
 	    $cmd = $this->_pnmCmd('jpegtopnm');
 	    break;
 
@@ -307,6 +308,7 @@ class NetPbmGraphics extends GalleryGraphics {
 			 $filename);
 	    break;
 
+	case 'image/pjpeg':
 	case 'image/jpeg':
 	    $cmd = array($this->_pnmCmd($pnmtojpeg),
 			 '--quality=' . $jpegQuality,
