@@ -155,18 +155,23 @@ class Assert {
       if (phpversion() >= '4.0.0') {
 	  if (is_object($value)) {
 	      if (method_exists($value, "toString") ) {
-		  $translateValue = $value->toString();
+		  $translateValue = htmlspecialchars($value->toString());
 	      }
 	      else {
-		  $translateValue = serialize($value);
+		  $translateValue = htmlspecialchars(serialize($value));
 	      }
 	  }
 	  else if (is_array($value)) {
-	      $translateValue = serialize($value);
+	      if (phpversion() >= '4.3.0') {
+		  $translateValue = '<pre>' . htmlspecialchars(print_r($value, 1)) . '</pre>';
+	      } else {
+		  $translateValue = htmlspecialchars(serialize($value));
+	      }
 	  }
+      } else {
+	  $translateValue = htmlspecialchars($translateValue);
       }
-      $htmlValue = "<code class=\"$class\">"
-	   . htmlspecialchars($translateValue) . "</code>";
+      $htmlValue = "<code class=\"$class\">" . $translateValue . "</code>";
       if (phpversion() >= '4.0.0') {
 	  if (is_bool($value)) {
 	      $htmlValue = $value ? "<i>true</i>" : "<i>false</i>";
