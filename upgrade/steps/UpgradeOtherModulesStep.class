@@ -77,6 +77,8 @@ class UpgradeOtherModulesStep extends UpgradeStep {
 
 	    ksort($modules);
 	    foreach (array_keys($modules) as $moduleId) {
+		$gallery->guaranteeTimeLimit(120);
+		
 		$module =& $modules[$moduleId];
 		$moduleIsUpgradeable[$moduleId] =
 		    !empty($moduleList[$moduleId]['version']) &&
