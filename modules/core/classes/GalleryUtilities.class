@@ -1,0 +1,72 @@
+<?php
+/*
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2002 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+/**
+ * A collection of useful utilities that have no obvious home
+ *
+ * All of these utilities should be accessed in a static sense,
+ * ie:
+ *
+ *   GalleryUtilities::getFileType($filename);
+ *
+ * Try not to jam too many methods into this class.  Only put methods here if
+ * they are of obvious value to the class layer and there's no other home for
+ * them.
+ * 
+ * @version $Id$
+ * @package GalleryCore
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+class GalleryUtilities {
+    /*
+     * ****************************************
+     *                 Methods
+     * ****************************************
+     */
+
+    /**
+     * Get the type of the file from its filename
+     *
+     * Eg, "foo.jpg" yields "jpg"
+     *     "foo.bar.jpeg" yields "jpeg"
+     *
+     * @param string the filename
+     * @return string the file type
+     */
+    function getFileType($filename) {
+
+	$pos = strrpos($filename, '.');
+
+	/* No dot == bogus */
+	if ($pos === false) {
+	    return null;
+	}
+
+	$pos++;
+	
+	/* If it's the last char in the name, it's also bogus */
+	if ($pos >= strlen($filename)) {
+	    return null;
+	}
+
+	return substr($filename, $pos);
+    }
+}
+?>
