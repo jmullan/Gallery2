@@ -75,6 +75,7 @@ class DatabaseStorage extends GalleryStorage {
      * Internal pointer to ADOdb database object
      *
      * @var object ADOdb $_db
+     * @access private
      */
     var $_db;
 
@@ -82,6 +83,7 @@ class DatabaseStorage extends GalleryStorage {
      * The type of database we're connecting to (eg 'mysql', 'postgres')
      *
      * @var string $_type
+     * @access private
      */
     var $_type;
     
@@ -89,6 +91,7 @@ class DatabaseStorage extends GalleryStorage {
      * Name of the database user
      * 
      * @var string $_username
+     * @access private
      */
     var $_username;
     
@@ -96,6 +99,7 @@ class DatabaseStorage extends GalleryStorage {
      * Password for the database user
      * 
      * @var string $_password
+     * @access private
      */
     var $_password;
     
@@ -103,6 +107,7 @@ class DatabaseStorage extends GalleryStorage {
      * Name of the database to use
      * 
      * @var string $_database
+     * @access private
      */
     var $_database;
 
@@ -110,6 +115,7 @@ class DatabaseStorage extends GalleryStorage {
      * Host the database runs on
      * 
      * @var string $_hostname
+     * @access private
      */
     var $_hostname;
 
@@ -681,7 +687,7 @@ class DatabaseStorage extends GalleryStorage {
 	    }
 
 	    foreach ($queryList as $queryAndData) {
-		list ($query, $data) = $queryAndData;
+		list($query, $data) = $queryAndData;
 		$recordSet = $this->_db->Execute($query, $data);
 
 		if (!$recordSet) {

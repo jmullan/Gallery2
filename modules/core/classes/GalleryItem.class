@@ -73,84 +73,6 @@ define("PERMISSION_CHANGE_TEXT", 0x00000080);
  */
 define("PERMISSION_DELETE", 0x00000100);
 
-/*
- * ****************************************
- *          GalleryItem Properties
- * ****************************************
- */
-
-/**
- * Creation date as a string in "YYYYMMDDHHMMSS" format (we don't want it
- * limited by the epoch)
- *
- * @constant PROPERTY_CREATIONDATE
- */
-define("PROPERTY_CREATIONDATE", "creationDate");
-
-/**
- * Last modification date as an integer unix timestamp
- *
- * @constant PROPERTY_MODIFICATIONDATE
- */
-define("PROPERTY_MODIFICATIONDATE", "modificationDate");
-
-/**
- * View count start date as an integer unix timestamp
- *
- * @constant PROPERTY_VIEWEDSINCEDATE
- */
-define("PROPERTY_VIEWEDSINCEDATE", "viewedSinceDate");
-
-
-/**
- * View count as an integer
- *
- * @constant PROPERTY_VIEWCOUNT
- */
-define("PROPERTY_VIEWCOUNT", "viewCount");
-
-/**
- * Key words about this item
- *
- * @constant PROPERTY_KEYWORDS
- */
-define("PROPERTY_KEYWORDS", "keywords" );
-
-/**
- * A short title of this item
- *
- * @constant PROPERTY_TITLE
- */
-define("PROPERTY_TITLE", "title");
-
-/**
- * A longer description of of this item
- *
- * @constant PROPERTY_DESCRIPTION
- */
-define("PROPERTY_DESCRIPTION", "description");
-
-/**
- * Is HTML allowed in the title & description?
- *
- * @constant PROPERTY_ISHTMLALLOWED
- */
-define("PROPERTY_ISHTMLALLOWED", "isHtmlAllowed");
-
-/**
- * Is this item hidden?
- *
- * @constant PROPERTY_ISHIDDEN
- */
-define("PROPERTY_ISHIDDEN", "isHidden");
-
-/**
- * Does this item inherit permissions from its parents?
- *
- * @constant PROPERTY_INHERITSPERMISSIONS
- */
-define("PROPERTY_INHERITSPERMISSIONS", "inheritsPermissions");
-
 /**
  * Abstract base class for all objects in the Gallery
  * composite tree
@@ -184,6 +106,7 @@ class GalleryItem extends FileSystemNucleus {
      * @gallery flag STORAGE_TYPE_INTEGER
      *
      * @var object GalleryList $_childIds
+     * @access private
      */
     var $_childIds;
 
@@ -195,6 +118,7 @@ class GalleryItem extends FileSystemNucleus {
      * @gallery flag STORAGE_TYPE_INTEGER
      *
      * @var object GalleryList $_commentIds
+     * @access private
      */
     var $_commentIds;
 
@@ -204,7 +128,8 @@ class GalleryItem extends FileSystemNucleus {
      * @gallery persistent
      * @gallery flag STORAGE_TYPE_TEXT
      *
-     * @var int $_description;
+     * @var int $_description
+     * @access private
      */
     var $_description;
 
@@ -214,7 +139,8 @@ class GalleryItem extends FileSystemNucleus {
      * @gallery persistent
      * @gallery flag STORAGE_TYPE_BOOLEAN
      *
-     * @var int $_isHtmlAllowed;
+     * @var int $_isHtmlAllowed
+     * @access private
      */
     var $_isHtmlAllowed;
 	     
@@ -225,7 +151,8 @@ class GalleryItem extends FileSystemNucleus {
      * @gallery flag STORAGE_TYPE_STRING
      * @gallery flag STORAGE_MODIFIER_LARGE
      *
-     * @var int $_keywords;
+     * @var int $_keywords
+     * @access private
      */
     var $_keywords;
 
@@ -237,6 +164,7 @@ class GalleryItem extends FileSystemNucleus {
      * @gallery flag STORAGE_MODIFIER_REQUIRED
      *
      * @var int $_ownerId
+     * @access private
      */
     var $_ownerId;
 
@@ -251,6 +179,7 @@ class GalleryItem extends FileSystemNucleus {
      * @gallery flag STORAGE_TYPE_TEXT
      *
      * @var object GalleryMap $_properties
+     * @access private
      */
     var $_properties;
 
@@ -261,6 +190,7 @@ class GalleryItem extends FileSystemNucleus {
      * @gallery flag STORAGE_TYPE_INTEGER
      *
      * @var int $_thumbnailId
+     * @access private
      */
     var $_thumbnailId;
 
@@ -271,7 +201,8 @@ class GalleryItem extends FileSystemNucleus {
      * @gallery flag STORAGE_TYPE_STRING
      * @gallery flag STORAGE_MODIFIER_REQUIRED
      *
-     * @var int $_title;
+     * @var int $_title
+     * @access private
      */
     var $_title;
 
@@ -282,7 +213,8 @@ class GalleryItem extends FileSystemNucleus {
      * @gallery flag STORAGE_TYPE_INTEGER
      * @gallery flag
      *
-     * @var int $_viewCount;
+     * @var int $_viewCount
+     * @access private
      */
     var $_viewCount;
 
@@ -293,7 +225,8 @@ class GalleryItem extends FileSystemNucleus {
      * @gallery flag STORAGE_TYPE_TIMESTAMP
      * @gallery flag STORAGE_MODIFIER_REQUIRED
      *
-     * @var int $_viewedSinceTimestamp;
+     * @var int $_viewedSinceTimestamp
+     * @access private
      */
     var $_viewedSinceTimestamp;
  
@@ -305,8 +238,8 @@ class GalleryItem extends FileSystemNucleus {
      * @gallery flag STORAGE_TYPE_STRING
      * @gallery flag STORAGE_MODIFIER_MEDIUM
      *
-     * @var object GalleryMap $_allowedPermissions;
-     * @private
+     * @var object GalleryMap $_allowedPermissions
+     * @access private
      */
     var $_allowedPermissions;
     
@@ -318,10 +251,22 @@ class GalleryItem extends FileSystemNucleus {
      * @gallery flag STORAGE_TYPE_STRING
      * @gallery flag STORAGE_MODIFIER_MEDIUM
      *
-     * @var object GalleryMap $_deniedPermissions;
-     * @private
+     * @var object GalleryMap $_deniedPermissions
+     * @access private
      */
     var $_deniedPermissions;
+
+    /**
+     * A GalleryMap of child items that have different permissions than we do
+     *
+     * @gallery persistent
+     * @gallery flag STORAGE_TYPE_MAP
+     * @gallery flag STORAGE_TYPE_INTEGER
+     *
+     * @var object GalleryMap $_permissionExceptions
+     * @access private
+     */
+    var $_permissionExceptions;
 
     /*
      * ****************************************
@@ -450,30 +395,35 @@ class GalleryItem extends FileSystemNucleus {
      * @access public
      * @param string user id
      * @param string permission name
-     * @return boolean true if the given user id has the given permission for this item
+     * @return array object GalleryStatus a status code,
+     *               boolean true if the given user id has the
+     *                       given permission for this item
      */
     function hasPermission($userId, $perm) {
 
 	/* Check for an explicit deny.  Deny supercedes allow. */
 	$denied = $this->_deniedPermissions->get($userId);
 	if ($denied && ($denied & $perm)) {
-	    return false;
+	    return array(GalleryStatus::success(), false);
 	}
 
 	/* Check for an explicit allow */
 	$allowed = $this->_allowedPermissions->get($userId);
 	if ($allowed && ($allowed & $perm)) {
-	    return true;
+	    return array(GalleryStatus::success(), true);
 	}
 
 	/* Defer to the parent */
-	$parent =& $this->getParent();
+	list($ret, $parent) = $this->_getParent();
+	if ($ret->isError()) {
+	    return array($ret, null);
+	}
 	if ($parent) {
 	    return $parent->hasPermission($userId, $perm);
 	}
 
 	/* No clear answer, so the default is deny */
-	return false;
+	return array(GalleryStatus::success(), false);
     }
 
     /**
@@ -485,13 +435,16 @@ class GalleryItem extends FileSystemNucleus {
      * @access public
      * @param string the id of the user
      * @param int the specific permission
+     * @return object GalleryStatus a status code
      */
     function allowPermission($userId, $perm) {
 
-	/*
-	 * Clear the permissions for this id.
-	 */
-	$this->removePermission($userId, $perm);
+	/* If the user was denied this permission, un-deny them */
+	$denied = $this->_deniedPermissions->get($userId);
+	if ($denied && ($denied & $perm)) {
+	    $denied = ($denied ^ $perm);
+	    $this->_deniedPermissions->set($userId, $denied);
+	}
 
 	/* Grant the permission */
 	$allowed = $this->_allowedPermissions->get($userId);
@@ -499,6 +452,8 @@ class GalleryItem extends FileSystemNucleus {
 	    $allowed = ($allowed | $perm);
 	    $this->_allowedPermissions->set($userId, $allowed);
 	}
+
+	return $this->_updateParentPermissionExceptions($userId);
     }
 
     /**
@@ -510,21 +465,25 @@ class GalleryItem extends FileSystemNucleus {
      * @access public
      * @param string the id of the user
      * @param int the specific permission
+     * @return object GalleryStatus a status code
      */
     function denyPermission($userId, $perm) {
 
-	/*
-	 * Clear the permission for this id.
-	 */
-	$this->removePermission($userId, $perm);
+	/* If the user was allowed this permission, un-allow them */
+	$allowed = $this->_allowedPermissions->get($userId);
+	if ($allowed && ($allowed & $perm)) {
+	    $allowed = ($allowed ^ $perm);
+	    $this->_allowedPermissions->set($userId, $allowed);
+	}
 
-	/* Grant the permission */
+	/* Add the permission to the deny list */
 	$denied = $this->_deniedPermissions->get($userId);
 	if (!($denied && ($denied & $perm))) {
 	    $denied = ($denied | $perm);
 	    $this->_deniedPermissions->set($userId, $denied);
 	}
 
+	return $this->_updateParentPermissionExceptions($userId);
     }
 
     /**
@@ -553,6 +512,37 @@ class GalleryItem extends FileSystemNucleus {
 	    $denied = ($denied ^ $perm);
 	    $this->_deniedPermissions->set($userId, $denied);
 	}
+
+	return $this->_updateParentPermissionExceptions($userId);
+    }
+
+    /**
+     * Update the parent's permission exception map
+     *
+     * If the permissions for this object differs from that of
+     * the parent's, then mark this object as an exception in
+     * the parent's map.
+     *
+     * @return object GalleryStatus a status code
+     */
+    function _updateParentPermissionExceptions($userId) {
+
+	list ($ret, $parent) = $this->_getParent();
+	if ($ret->isError()) {
+	    return $ret;
+	}
+	
+	$allowed = $this->_allowedPermissions->get($userId);
+	$denied = $this->_deniedPermissions->get($userId);
+
+	/* If we're different in any way, then we're an exception */
+	if ($allowed || $denied) {
+	    $permissionExceptions->put($this->getId(), 1);
+	} else {
+	    $permissionExceptions->remove($this->getId());
+	}
+
+	return $parent->save();
     }
 
     /**
@@ -563,10 +553,15 @@ class GalleryItem extends FileSystemNucleus {
      * the ones specific to this particular item.  
      *
      * @access public
-     * @return array two associative arrays, the allowed and denied permission set
+     * @return array object GalleryStatus a status code,
+     *               array two associative arrays,
+     *                     the allowed and denied permission set
      */
     function getAllPermissions() {
-	$parent =& $this->getParent();
+	list($ret, $parent) = $this->_getParent();
+	if ($ret->isError()) {
+	    return $ret;
+	}
 	if ($parent) {
 	    list($allowed, $denied) = $parent->getAllPermissions();
 	} else {
@@ -666,16 +661,11 @@ class GalleryItem extends FileSystemNucleus {
     function delete() {
 	global $gallery;
 	
-	$ret = parent::delete();
-	if ($ret->isError()) {
-	    return $ret;
-	}
-
 	/*
 	 * Remove this item from its parent
 	 */
 	if (isset($this->_parentId)) {
-	    list ($ret, $parent) = $gallery->loadNucleusById($this->_parentId);
+	    list($ret, $parent) = $this->_getParent();
 	    if ($ret->isError()) {
 		return $ret;
 	    }
@@ -713,6 +703,21 @@ class GalleryItem extends FileSystemNucleus {
 	     * Empty out our child list
 	     */
 	    $childIds->splice(0);
+	}
+
+	/* Delete my thumbnail */
+	$thumbnailId = $this->getThumbnailId();
+	if (!empty($thumbnailId)) {
+	    $ret = $gallery->deleteNucleusById($thumbnailId);
+	    if ($ret->isError()) {
+		return $ret;
+	    }
+	}
+
+	/* Delete myself */
+	$ret = parent::delete();
+	if ($ret->isError()) {
+	    return $ret;
 	}
 
 	return GalleryStatus::success();

@@ -39,14 +39,16 @@ class Gallery {
     /**
      * The id of the root AlbumItem in the Gallery
      *
-     * @var	string
+     * @var string $_rootAlbumItemId
+     * @access private
      */
     var $_rootAlbumItemId;
 
     /**
      * The id of the active user
      *
-     * @var	int
+     * @var int $_activeUserId
+     * @access private
      */
     var $_activeUserId;
 
@@ -56,21 +58,16 @@ class Gallery {
      * can be modified but they can't be saved so it's not a good
      * idea.  
      *
-     * @var	object	GalleryMap	$_config;
+     * @var array $_config
+     * @access private
      */
     var $_config;
 
     /**
-     * An instance of the user database class
-     *
-     * @var	object	UserDatabase	$_userDatabase;
-     */
-    var $_userDatabase;
-
-    /**
      * The current GalleryImageToolkit
      *
-     * @var object	GalleryImageToolkit	$_imageToolkit;
+     * @var object GalleryImageToolkit $_imageToolkit
+     * @access private
      */
     var $_imageToolkit;
 
@@ -78,23 +75,24 @@ class Gallery {
      * Storage for all session variables.  Contains an instance
      * of the GalleryMap class.
      *
-     * @var	object	GalleryMap	 $_session;
+     * @var object GalleryMap $_session
+     * @access private
      */
     var $_session;
 
     /**
      * The backend persistent store for the Gallery class
      *
+     * @var object GalleryStorage $_storage
      * @access private
-     * @var	object	GalleryStorage	 $_storage;
      */
     var $_storage;
 
     /**
      * Our lock object
      *
+     * @var object GalleryLock $_lock
      * @access private
-     * @var	object	GalleryLock	$_lock;
      */
     var $_lock;
 
@@ -102,16 +100,16 @@ class Gallery {
      * An associative array mapping GalleryItem ids to unique GalleryItem
      * instances.
      *
+     * @var array $_nucleusCache
      * @access private
-     * @var array $_nucleusCache;
      */
     var $_nucleusCache;
     
     /**
      * An instance of the GalleryPlatform class
      *
+     * @var object GalleryPlatform $_platform
      * @access private
-     * @var object GalleryPlatform $_platform;
      */
     var $_platform;
 
@@ -119,6 +117,7 @@ class Gallery {
      * The current debugging mode.  One of 'buffered', 'logged', 'immediate' or false
      * 
      * @var bool $_debug
+     * @access private
      */
     var $_debug;
     
@@ -126,6 +125,7 @@ class Gallery {
      * Where to send debug output (when the debugging mode is set to 'logged')
      * 
      * @var bool $_debugLogFile
+     * @access private
      */
     var $_debugLogFile;
     
@@ -134,6 +134,7 @@ class Gallery {
      * to 'buffered'
      * 
      * @var bool $_debugBuffer
+     * @access private
      */
     var $_debugBuffer;
     
@@ -269,7 +270,7 @@ class Gallery {
 					__FILE__, __LINE__);
 	}
 
-	list ($ret, $nucleus) = $this->_storage->loadNucleus($id);
+	list($ret, $nucleus) = $this->_storage->loadNucleus($id);
 	if ($ret->isError()) {
 	    return $ret;
 	}

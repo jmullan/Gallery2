@@ -32,7 +32,8 @@ class GalleryLock {
     /**
      * List of currently acquired locks
      *
-     * @var array $_lockList 
+     * @var array $_lockList
+     * @access private
      */
     var $_lockList;
 
@@ -40,6 +41,7 @@ class GalleryLock {
      * Do we have a lock or not?
      *
      * @var boolean _isLockAcquired
+     * @access private
      */
     var $_isLockAcquired;
 
@@ -47,6 +49,7 @@ class GalleryLock {
      * Do we have a world lock or not?
      *
      * @var boolean _isWorldLock
+     * @access private
      */
     var $_isWorldLock;
 

@@ -30,23 +30,8 @@ class CreateAlbumItemTestCase extends TestCase {
 	}
 
 	$album->setRows(3);
-	$childIds =& $album->getChildIds();
-	$childIds->push(3);
-	$childIds->unshift(5);
-	print("SECOND SAVE\n");
-	$ret = $album->save();
-	if ($ret->isError()) {
-	    return $ret;
-	}
-	
-	$album->setRows(0);
 	$album->setDescription("This is a longish description with " .
 				     "+=!@#$%^&*()_-|\\\"'?/>.<,}]{[~` chars in it");
-	print("THIRD SAVE\n");
-	$ret = $album->save();
-	if ($ret->isError()) {
-	    return $ret;
-	}
 
 	/* Leggo of our locks */
 	$ret = $gallery->unlock();

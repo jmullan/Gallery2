@@ -11,20 +11,29 @@ class DeleteAllItemsTestCase extends TestCase {
     function testStart() {
 	global $gallery;
 
-	list ($ret, $results) = $gallery->search(array(),
-						 array('GalleryNucleus::id'));
-	if ($ret->isError()) {
-	    return $ret;
-	}
-
 	$ret = $gallery->lockWorld();
 	if ($ret->isError()) {
 	    return $ret;
 	}
+	    
+	/*
+	 * Since objects depend on each other, we need to search, delete one
+	 * object, then search again.  Not very efficient.
+	 */
+	while (true) {
+	    list ($ret, $results) =
+		    $gallery->search(array(), array('GalleryNucleus::id'));
+	    if ($ret->isError()) {
+		return $ret;
+	    }
 
-	$results = array_reverse($results);
-	foreach ($results as $row) {
-	    $id = $row['GalleryNucleus::id'];
+	    if (sizeof($results) == 0) {
+		break;
+	    }
+	    
+	    $id = $results[0]['GalleryNucleus::id'];
+	    $id = 4;
+	    print "<H2> Delete Item $id </H2>\n";
 	    $ret = $gallery->deleteNucleusById($id);
 	    if ($ret->isError()) {
 		return $ret;
@@ -35,7 +44,7 @@ class DeleteAllItemsTestCase extends TestCase {
 	if ($ret->isError()) {
 	    return $ret;
 	}
-	
+
 	return GalleryStatus::success();
     }
 }
