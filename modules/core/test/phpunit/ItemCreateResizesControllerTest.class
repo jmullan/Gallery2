@@ -62,7 +62,8 @@ class ItemCreateResizesControllerTest extends GalleryControllerTestCase {
 	$ret = GalleryToolkitHelper::registerOperation('ItemCreateResizesTestToolkit',
 						       array('test/file'),
 						       'thumbnail',
-						       array(array('type' => 'int')),
+						       array(array('type' => 'int',
+								   'description' => 'test')),
 						       'test-description',
 						       '');
 	if ($ret->isError()) {
@@ -72,8 +73,10 @@ class ItemCreateResizesControllerTest extends GalleryControllerTestCase {
 	$ret = GalleryToolkitHelper::registerOperation('ItemCreateResizesTestToolkit',
 						       array('test/file'),
 						       'resize',
-						       array(array('type' => 'int'),
-							     array('type' => 'int')),
+						       array(array('type' => 'int',
+								   'description' => 'test'),
+							     array('type' => 'int',
+								   'description' => 'test')),
 						       'test-description',
 						       '');
 	if ($ret->isError()) {

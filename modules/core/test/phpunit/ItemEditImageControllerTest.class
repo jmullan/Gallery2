@@ -60,7 +60,8 @@ class ItemEditImageControllerTest extends GalleryControllerTestCase {
 	$ret = GalleryToolkitHelper::registerOperation('ItemEditImageTestToolkit',
 						       array('test/file'),
 						       'scale',
-						       array(array('type' => 'int')),
+						       array(array('type' => 'int',
+								   'description' => 'test')),
 						       'test-description');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -69,7 +70,8 @@ class ItemEditImageControllerTest extends GalleryControllerTestCase {
 	$ret = GalleryToolkitHelper::registerOperation('ItemEditImageTestToolkit',
 						       array('test/file'),
 						       'rotate',
-						       array(array('type' => 'int')),
+						       array(array('type' => 'int',
+								   'description' => 'test')),
 						       'test-description');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
