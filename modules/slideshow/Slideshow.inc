@@ -195,8 +195,7 @@ class SlideshowView extends GalleryView {
 		    // Rebuild derivatives if needed so width/height known..
 		    if (GalleryUtilities::isA($image, 'GalleryDerivativeImage')) {
 			list ($ret, $image) =
-			    GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent(
-				    $image->getId());
+			    GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($image->getId());
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}

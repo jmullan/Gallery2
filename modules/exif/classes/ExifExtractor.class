@@ -61,7 +61,7 @@ class ExifExtractor extends ExifInterface_1_0 {
 	    }
 	    // Only look at JPEG DataItems..
 	    if (!GalleryUtilities::isA($item, 'GalleryDataItem') ||
-		    $item->getMimeType() != 'image/jpeg') {
+		    ($item->getMimeType() != 'image/jpeg' && $item->getMimeType() != 'image/pjpeg')) {
 		continue;
 	    }
 	    list($ret, $path) = $item->fetchPath();

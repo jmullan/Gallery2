@@ -21,7 +21,7 @@
  */
 /**
  * @version $Revision$ $Date$
- * @package GalleryCore
+' * @package GalleryCore
  * @subpackage PHPUnit
  * @author Bharat Mediratta <bharat@menalto.com>
  */
@@ -42,6 +42,39 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 
 	parent::setUp();
 
+	/* Register a dummy entity */
+	GalleryCoreApi::registerFactoryImplementation('GalleryEntity',
+						      'ItemEditAlbumPluginTestDataItem',
+						      'ItemEditAlbumPluginTestDataItem',
+						      __FILE__);
+
+	/* Register a dummy toolkit */
+	GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
+						      'ItemEditAlbumPluginTestToolkit',
+						      'ItemEditAlbumPluginTestToolkit',
+						      __FILE__);
+
+	/* Register operations that we can perform on our mock data items */
+	$ret = GalleryCoreApi::registerToolkitOperation('ItemEditAlbumPluginTestToolkit',
+							array('test/file'),
+							'scale',
+							array(array('type' => 'int',
+								    'description' => 'test')),
+							'test-description');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::registerToolkitOperation('ItemEditAlbumPluginTestToolkit',
+							array('test/file'),
+							'thumbnail',
+							array(array('type' => 'int',
+								    'description' => 'test')),
+							'test-description');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -54,6 +87,12 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	$ret = GalleryCoreApi::deleteEntityById($this->_album->getId());
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Unregister */
+	$ret = GalleryCoreApi::unregisterToolkit('ItemEditAlbumPluginTestToolkit');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	
 	parent::tearDown();
@@ -182,5 +221,107 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 
 	$results = $this->handleRequest($this->_album, $this->_preferred, ERROR_OBSOLETE_DATA);
     }
+
+    function testSaveAndRecreate() {
+
+	/* Create some children */
+	for ($i = 0; $i < 2; $i++) {
+	    list ($ret, $child[$i]) = $this->_createRandomDataItem($this->_album->getId(), 'test/file',
+								   array(),
+								   __FILE__,
+								   'ItemEditAlbumPluginTestDataItem');
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+
+	    /* The first item has a thumbnail and a resize, the second has a preferred */
+	    if ($i == 0) {
+		list ($ret, $ignore) = $this->_createDerivative($child[$i]->getId(),
+								DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
+								'thumbnail|100',
+								'test/file');
+		if ($ret->isError()) {
+		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		}
+
+		list ($ret, $ignore) = $this->_createDerivative($child[$i]->getId(),
+								DERIVATIVE_TYPE_IMAGE_RESIZE,
+								'scale|100',
+								'test/file');
+		if ($ret->isError()) {
+		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		}
+	    } else if ($i == 1) {
+		list ($ret, $ignore) = $this->_createDerivative($child[$i]->getId(),
+								DERIVATIVE_TYPE_IMAGE_PREFERRED,
+								'rotate|90',
+								'test/file');
+		if ($ret->isError()) {
+		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		}
+	    }
+	}
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[layout]', 'foo');
+	GalleryUtilities::putRequestVariable('form[theme]', 'bar');
+	GalleryUtilities::putRequestVariable('form[orderBy]', 'baz');
+	GalleryUtilities::putRequestVariable('form[orderDirection]', 'bletch');
+	GalleryUtilities::putRequestVariable('form[thumbnail][size]', 123);
+	GalleryUtilities::putRequestVariable('form[resizes][0][active]', 1);
+	GalleryUtilities::putRequestVariable('form[resizes][0][size]', 234);
+	GalleryUtilities::putRequestVariable('form[resizes][1][active]', 1);
+	GalleryUtilities::putRequestVariable('form[resizes][1][size]', 345);
+	GalleryUtilities::putRequestVariable('form[resizes][2][active]', 1);
+	GalleryUtilities::putRequestVariable('form[resizes][2][size]', 456);
+	GalleryUtilities::putRequestVariable('form[recreateThumbnails]', 1);
+	GalleryUtilities::putRequestVariable('form[recreateResizes]', 1);
+	GalleryUtilities::putRequestVariable('form[serialNumber]', $this->_album->getSerialNumber());
+	
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest($this->_album, $this->_preferred);
+	$this->assertEquals(array(array(),
+				  $this->_translate('Settings saved successfully.')),
+			    $results);
+
+	list ($ret, $this->_album) = $this->_album->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Verify the thumbnail and resizes on our children */
+	list ($ret, $thumbnails) = GalleryCoreApi::fetchThumbnailsByItemIds(array($child[0]->getId(), $child[1]->getId()));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals('thumbnail|123', $thumbnails[$child[0]->getId()]->getDerivativeOperations());
+	
+	list ($ret, $resizes) = GalleryCoreApi::fetchResizesByItemIds(array($child[0]->getId(), $child[1]->getId()));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	for ($i = 0; $i < 2; $i++) {
+	    $this->assertEquals('scale|234', $resizes[$child[$i]->getId()][0]->getDerivativeOperations());
+	    $this->assertEquals('scale|345', $resizes[$child[$i]->getId()][1]->getDerivativeOperations());
+	    $this->assertEquals('scale|456', $resizes[$child[$i]->getId()][2]->getDerivativeOperations());
+	}
+    }
 }
+
+/**
+ * Mock data item
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class ItemEditAlbumPluginTestDataItem extends GalleryDataItem { }
+
+/**
+ * Mock toolkit
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class ItemEditAlbumPluginTestToolkit extends GalleryToolkit { }
 ?>

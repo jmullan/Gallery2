@@ -535,6 +535,7 @@ class CoreModule extends GalleryModule {
 	    }
 
 	    $isRoot = ($item->getId() == $rootId);
+	    $isParentRoot = ($item->getParentId() == $rootId);
 	    $isAlbum = $item->getCanContainChildren();
 
 	    /* Permissions for its parent */
@@ -622,7 +623,7 @@ class CoreModule extends GalleryModule {
 					    'selectedId' => $item->getId()));
 	    }
 
-	    if (!$isRoot && isset($thumbTable[$item->getId()]) && isset($permissions['core.edit'])) {
+	    if (!$isRoot && !$isParentRoot && isset($thumbTable[$item->getId()]) && isset($permissions['core.edit'])) {
 		$links[$item->getId()][] =
 		    array('text' => $this->translate('make highlight'),
 			  'params' => array('view' => 'core:ItemAdmin',

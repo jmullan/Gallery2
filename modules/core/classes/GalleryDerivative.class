@@ -126,14 +126,14 @@ class GalleryDerivative_core extends GalleryChildEntity {
      * The mime type of data file
      *
      * @g2 <member>
-     * @g2   <member-name>derivativeMimeType</member-name>
+     * @g2   <member-name>mimeType</member-name>
      * @g2   <member-type>STRING</member-type>
      * @g2 </member>
      *
-     * @var string $_derivativeMimeType
+     * @var string $_mimeType
      * @access private
      */
-    var $_derivativeMimeType;
+    var $_mimeType;
 
     /*
      * ****************************************
@@ -270,33 +270,29 @@ class GalleryDerivative_core extends GalleryChildEntity {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	/*
-	 * If my source is a thumbnail, then we've got to assume that we've already lost some valuable source
-	 * data that was present further up the chain.  So in that case, seek backwards until we find a source
-	 * that is not a thumbnail and use that as the source file, but merge and apply all the derivative
-	 * operations from the intervening parents to discover the correct operations for this derivative.
-	 * So, if we've got: 
-	 *
-	 * Source Image A (640x480):
-	 * --> Preferred A1: rotate|90
-	 *     --> Derivative A2: crop|259,49,336,252;thumbnail|150
-	 *         --> Derivative A3: thumbnail|75
-	 *             --> Derivative A4: thumbnail|300
-	 *
-	 * Then when we really do our calculations, the real operations we perform should be:
-	 *
-	 * TARGET         SOURCE        OPERATONS
-	 * ---------------------------------------
-	 * Preferred A1:  Source A      rotate|90
-	 * Derivative A2: Preferred A1  crop|259,49,336,252;thumbnail|150
-	 * Derivative A3: Preferred A1  crop|259,49,336,252;thumbnail|75
-	 * Derivative A4: Preferred A1  crop|259,49,336,252;thumbnail|300
-	 */
-
-	/* Figure out our source mime type */
 	if (GalleryUtilities::isA($source, 'GalleryDerivative')) {
-	    $mimeType = $source->getDerivativeMimeType();
-
+	    /*
+	     * If my source is a thumbnail, then we've got to assume that we've already lost some valuable source
+	     * data that was present further up the chain.  So in that case, seek backwards until we find a source
+	     * that is not a thumbnail and use that as the source file, but merge and apply all the derivative
+	     * operations from the intervening parents to discover the correct operations for this derivative.
+	     * So, if we've got: 
+	     *
+	     * Source Image A (640x480):
+	     * --> Preferred A1: rotate|90
+	     *     --> Derivative A2: crop|259,49,336,252;thumbnail|150
+	     *         --> Derivative A3: thumbnail|75
+	     *             --> Derivative A4: thumbnail|300
+	     *
+	     * Then when we really do our calculations, the real operations we perform should be:
+	     *
+	     * TARGET         SOURCE        OPERATONS
+	     * ---------------------------------------
+	     * Preferred A1:  Source A      rotate|90
+	     * Derivative A2: Preferred A1  crop|259,49,336,252;thumbnail|150
+	     * Derivative A3: Preferred A1  crop|259,49,336,252;thumbnail|75
+	     * Derivative A4: Preferred A1  crop|259,49,336,252;thumbnail|300
+	     */
 	    if ($source->getDerivativeType() == DERIVATIVE_TYPE_IMAGE_THUMBNAIL) {
 		$sources = array($source, $this);
 		while ($sources[0]->getDerivativeType() == DERIVATIVE_TYPE_IMAGE_THUMBNAIL) {
@@ -328,7 +324,6 @@ class GalleryDerivative_core extends GalleryChildEntity {
 		$operations = $this->getDerivativeOperations();
 	    }
 	} else {
-	    $mimeType = $source->getMimeType();
 	    $operations = $this->getDerivativeOperations();
 	}
 
@@ -344,6 +339,7 @@ class GalleryDerivative_core extends GalleryChildEntity {
 	}
 	
 	/* Now apply our derivative commands to create the cache file */
+	$mimeType = $source->getMimeType();
 	foreach (split(';', $operations) as $operation) {
 	    if (empty($operation)) {
 		continue;
@@ -391,7 +387,7 @@ class GalleryDerivative_core extends GalleryChildEntity {
 	}
 
 	/* Update our info */
-	$this->setDerivativeMimeType($mimeType);
+	$this->setMimeType($mimeType);
 	$this->setDerivativeSize($size);
 	
 	return GalleryStatus::success();

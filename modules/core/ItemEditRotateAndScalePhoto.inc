@@ -50,7 +50,6 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
 	$status = null;
 	$error = array();
 
-	$remapSourceIds = array();
 	$operation = null;
 	/* Figure out which command we're taking */
 	if (isset($form['action']['scale'])) {
@@ -73,12 +72,15 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
 	    $args = array(180);
 	} else if (isset($form['action']['revertToOriginal'])) {
 	    if (!empty($preferred)) {
-		$ret = GalleryCoreApi::deleteEntityById($preferred->getId());
+		$ret = GalleryCoreApi::remapSourceIds($preferred->getId(), $preferred->getDerivativeSourceId());
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
 
-		$remapSourceIds = array($preferred->getId(), $item->getId(), null);
+		$ret = GalleryCoreApi::deleteEntityById($preferred->getId());
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		}
 
 		/* Prepare our status message */
 		$status = $module->translate('Restored original photo successfully');
@@ -115,9 +117,12 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
 		/*
 		 * We have no preferred photo, and we're not preserving the
 		 * original.  So, we're changing the original photo here.  Make
-		 * the appropriate change, then expire the derivative tree. 
+		 * the appropriate change, then expire the derivative tree.
+		 *
+		 * Note that we are explicitly not allowing linked items to execute
+		 * this code!
 		 */
-
+		
 		/* Get the path of the source */
 		list($ret, $sourcePath) = $item->fetchPath();
 		if ($ret->isError()) {
@@ -180,9 +185,6 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
-
-		/* Remember the source id for later */
-		$sourceId = $item->getId();
 	    } else {
 		/* If we have no preferred, then create one */
 		if (empty($preferred)) {
@@ -201,10 +203,14 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null, null);
 		    }
-		    
+
 		    $preferred->setDerivativeSourceId($item->getId());
-		    $preferred->setDerivativeMimeType($item->getMimeType());
-		    $remapSourceIds = array($item->getId(), $preferred->getId());
+		    $preferred->setMimeType($item->getMimeType());
+
+		    $ret = GalleryCoreApi::remapSourceIds($item->getId(), $preferred->getId());
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    }
 		} else {
 		    /*
 		     * Otherwise, lock the preferred so that we can modify it
@@ -247,27 +253,15 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
 		 */
 		$derivativeOperations = $preferred->getDerivativeOperations();
 		if (empty($derivativeOperations)) {
-		    $ret = GalleryCoreApi::deleteEntityById($preferred->getId());
+		    $ret = GalleryCoreApi::remapSourceIds($preferred->getId(), $preferred->getDerivativeSourceId());
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null, null);
 		    }
 
-		    /*
-		     * If we were remapping the source ids, that means that we
-		     * just created a new preferred, so stop doing that.
-		     * Otherwise, remap the preferred id back to the item id.
-		     */
-		    if (empty($remapSourceIds)) {
-			$remapSourceIds = array($preferred->getId(), $item->getId(), null);
-		    } else {
-			$remapSourceIds = array();
+		    $ret = GalleryCoreApi::deleteEntityById($preferred->getId());
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null, null);
 		    }
-
-		    /* Remember the new source id for later */
-		    $sourceId = $item->getId();
-		} else {
-		    /* Remember the preferred id for later */
-		    $sourceId = $preferred->getId();
 		}
 	    }
 
@@ -294,14 +288,6 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
 	    case 'scale':
 		$status = $module->translate('Scaled photo successfully');
 		break;
-	    }
-	}
-
-	/* Check to see if we need to remap any derivative source ids */
-	if (!empty($remapSourceIds)) {
-	    $ret = GalleryCoreApi::remapSourceIds($remapSourceIds[0], $remapSourceIds[1]);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	}
 

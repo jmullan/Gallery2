@@ -45,8 +45,6 @@ class ItemEditPhotoSizes extends ItemEditPlugin {
 	$status = null;
 	$error = array();
 
-	$remapSourceIds = array();
-	$operation = null;
 	if (isset($form['action']['save'])) {
 
 	    /* Validate the input data. */
@@ -98,9 +96,14 @@ class ItemEditPhotoSizes extends ItemEditPlugin {
 			}
 		    }
 		} else {
+		    list ($ret, $source) = GalleryCoreApi::fetchPreferredSource($item);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    }
+
 		    /* Create the thumbnail */
 		    list ($ret, $toolkit, $outputMimeType) =
-			GalleryCoreApi::getToolkitByOperation($item->getMimeType(), 'thumbnail');
+			GalleryCoreApi::getToolkitByOperation($source->getMimeType(), 'thumbnail');
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null, null);
 		    }
@@ -122,8 +125,8 @@ class ItemEditPhotoSizes extends ItemEditPlugin {
 			    return array($ret->wrap(__FILE__, __LINE__), null, null);
 			}
 
-			$thumbnail->setDerivativeMimeType($outputMimeType);
-			$thumbnail->setDerivativeSourceId($item->getId());
+			$thumbnail->setMimeType($outputMimeType);
+			$thumbnail->setDerivativeSourceId($source->getId());
 			$thumbnail->setDerivativeOperations('thumbnail|' . $form['thumbnail']['size']);
 			
 			$ret = $thumbnail->save();
@@ -148,12 +151,17 @@ class ItemEditPhotoSizes extends ItemEditPlugin {
 		    }
 		}
 
+		list ($ret, $source) = GalleryCoreApi::fetchPreferredSource($item);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		}
+		
 		/*
 		 * Make sure that we have a toolkit before adding back
 		 * the resizes
 		 */
 		list ($ret, $toolkit, $outputMimeType) =
-		    GalleryCoreApi::getToolkitByOperation($item->getMimeType(), 'scale');
+		    GalleryCoreApi::getToolkitByOperation($source->getMimeType(), 'scale');
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
@@ -181,8 +189,8 @@ class ItemEditPhotoSizes extends ItemEditPlugin {
 			    return array($ret->wrap(__FILE__, __LINE__), null, null);
 			}
 
-			$derivative->setDerivativeMimeType($outputMimeType);
-			$derivative->setDerivativeSourceId($item->getId());
+			$derivative->setMimeType($outputMimeType);
+			$derivative->setDerivativeSourceId($source->getId());
 			$derivative->setDerivativeOperations('scale|' . $form['resizes'][$i]['size']);
 
 			$ret = $derivative->save();

@@ -116,12 +116,11 @@ class DownloadItemView extends GalleryView {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
-	    $mimeType = $item->getDerivativeMimeType();
 	    $size = $item->getDerivativeSize();
 	} else {
 	    $size = $item->getSize();
-	    $mimeType = $item->getMimeType();
 	}
+	$mimeType = $item->getMimeType();
 
 	if (false) {
 	    printf("<pre>%s</pre>", print_r($GLOBALS['GalleryCoreApi'], 1));
@@ -175,11 +174,8 @@ class DownloadItemView extends GalleryView {
 	    unset($params['serialNumber']);
 
 	    if (GalleryUtilities::isA($entity, 'GalleryDataItem')) {
-		$mimeType = $entity->getMimeType();
 		$pseudoFileName = $entity->getPathComponent();
 	    } else {
-		$mimeType = $entity->getDerivativeMimeType();
-
 		list ($ret, $sourceEntity) = GalleryCoreApi::loadEntitiesById($entity->getDerivativeSourceId());
 		if ($ret->isSuccess()) {
 		    if (GalleryUtilities::isA($sourceEntity, 'GalleryDataItem')) {
@@ -187,6 +183,7 @@ class DownloadItemView extends GalleryView {
 		    }
 		}
 	    }
+	    $mimeType = $entity->getMimeType();
 
 	    if (isset($pseudoFileName)) {
 		$buf .= '/' . $pseudoFileName;

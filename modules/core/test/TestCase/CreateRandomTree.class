@@ -190,7 +190,7 @@ class CreateRandomTreeTestCase extends TestCase {
 		}
 		$thumbnail->setDerivativeSourceId($item->getId());
 		$thumbnail->setDerivativeOperations('thumbnail|100');
-		$thumbnail->setDerivativeMimeType($outputMimeType);
+		$thumbnail->setMimeType($outputMimeType);
 
 		$ret = $thumbnail->save();
 		if ($ret->isError()) {
@@ -214,7 +214,7 @@ class CreateRandomTreeTestCase extends TestCase {
 		    }
 		    $thumbnail->setDerivativeSourceId($item->getId());
 		    $thumbnail->setDerivativeOperations('thumbnail|100');
-		    $thumbnail->setDerivativeMimeType($outputMimeType);
+		    $thumbnail->setMimeType($outputMimeType);
 		
 		    $ret = $thumbnail->save();
 		    if ($ret->isError()) {
@@ -253,7 +253,7 @@ class CreateRandomTreeTestCase extends TestCase {
 		    $scale = 300 * ($j+1);
 		    $resize->setDerivativeSourceId($item->getId());
 		    $resize->setDerivativeOperations("scale|$scale");
-		    $resize->setDerivativeMimeType($outputMimeType);
+		    $resize->setMimeType($outputMimeType);
 
 		    $ret = $resize->save();
 		    if ($ret->isError()) {

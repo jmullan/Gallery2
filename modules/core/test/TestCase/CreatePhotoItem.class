@@ -112,7 +112,7 @@ class CreatePhotoItemTestCase extends TestCase {
 	    /* Make it a derivative from the source image */
 	    $thumbnail->setDerivativeSourceId($photo->getId());
 	    $thumbnail->setDerivativeOperations('thumbnail|200');
-	    $thumbnail->setDerivativeMimeType($outputMimeType);
+	    $thumbnail->setMimeType($outputMimeType);
 	    $ret = $thumbnail->save();
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
@@ -144,7 +144,7 @@ class CreatePhotoItemTestCase extends TestCase {
 	    /* Make it a derivative from the source image */
 	    $resize->setDerivativeSourceId($photo->getId());
 	    $resize->setDerivativeOperations('scale|600');
-	    $resize->setDerivativeMimeType($outputMimeType);
+	    $resize->setMimeType($outputMimeType);
 	    $ret = $resize->save();
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);

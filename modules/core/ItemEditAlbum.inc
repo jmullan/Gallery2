@@ -147,31 +147,32 @@ class ItemEditAlbum extends ItemEditPlugin {
 			    } elseif ($ret->isError()) {
 				return array($ret->wrap(__FILE__, __LINE__), null, null);
 			    }
-			    if (GalleryUtilities::isA($source, 'GalleryDerivative')) {
-				$sourceMimeType = $source->getDerivativeMimeType();
-			    } else {
-				$sourceMimeType = $source->getMimeType();
-			    }
 			} else {
-			    /* There is no thumbnail yet (maybe the file was uploaded
-			       when there was no graphic toolkit). Build new thumbnail
-			       from source if its a GalleryDataItem (with mimeType) */
-			    $source = $child;
-			    $sourceId = $childId;
-			    if (!GalleryUtilities::isA($source, 'GalleryDataItem')) {
+			    /*
+			     * There is no thumbnail yet (maybe the file was uploaded
+			     * when there was no graphic toolkit). Build new thumbnail
+			     * from source if its a GalleryDataItem (with mimeType)
+			     */
+			    if (!GalleryUtilities::isA($child, 'GalleryDataItem')) {
 				/* Its an album or something else, we can't make a thumbnail */
 				continue;
 			    }
+			    
+			    list ($ret, $source) = GalleryCoreApi::fetchPreferredSource($child);
+			    if ($ret->isError()) {
+				return array($ret->wrap(__FILE__, __LINE__), null, null);
+			    }
+			    
 			    list ($ret, $thumbnail) =
 				GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryDerivativeImage');
 			    if ($ret->isError()) {
 				return array($ret->wrap(__FILE__, __LINE__), null, null);
 			    }
-			    $ret = $thumbnail->create($sourceId, DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
+			    
+			    $ret = $thumbnail->create($child->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
 			    if ($ret->isError()) {
 				return array($ret->wrap(__FILE__, __LINE__), null, null);
 			    }
-			    $sourceMimeType = $source->getMimeType();
 			}
 
 			if ($thumbnail == null) {
@@ -181,7 +182,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 			/* Change the thumbnail */
 			$operation = 'thumbnail|' . $form['thumbnail']['size'];
 			list ($ret, $isSupported, $outputMimeType) =
-			    GalleryCoreApi::isSupportedOperationSequence($sourceMimeType, $operation);
+			    GalleryCoreApi::isSupportedOperationSequence($source->getMimeType(), $operation);
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null, null);
 			}
@@ -189,15 +190,15 @@ class ItemEditAlbum extends ItemEditPlugin {
 			if (!$isSupported) {
 			    $operation = 'convert-to-image/jpeg;' . $operation;
 			    list ($ret, $isSupported, $outputMimeType) =
-				GalleryCoreApi::isSupportedOperationSequence($sourceMimeType, $operation);
+				GalleryCoreApi::isSupportedOperationSequence($source->getMimeType(), $operation);
 			    if ($ret->isError()) {
 				return array($ret->wrap(__FILE__, __LINE__), null, null);
 			    }
 			}
 
 			if ($isSupported) {
-			    $thumbnail->setDerivativeMimeType($outputMimeType);
-			    $thumbnail->setDerivativeSourceId($sourceId);
+			    $thumbnail->setMimeType($outputMimeType);
+			    $thumbnail->setDerivativeSourceId($source->getId());
 			    $thumbnail->setDerivativeOperations($operation);
 			    if ($thumbnail->isModified()) {
 				list ($ret, $lockIds[]) = GalleryCoreApi::acquireWriteLock($thumbnail->getId());
@@ -219,8 +220,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 		/*      again moments later again */
 		if (isset($form['recreateResizes'])) {
 		    /* Get and delete all current resizes */
-		    list ($ret, $resizesTable) =
-			GalleryCoreApi::fetchResizesByItemIds($childIds);
+		    list ($ret, $resizesTable) = GalleryCoreApi::fetchResizesByItemIds($childIds);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null, null);
 		    }
@@ -232,18 +232,18 @@ class ItemEditAlbum extends ItemEditPlugin {
 
 		    /* Add the new resizes */
 		    foreach ($childItems as $child) {
-			$childId = $child->getId();
-
 			if (!GalleryUtilities::isA($child, 'GalleryDataItem')) {
 			    continue;
 			}
 
-			/*
-			 * Make sure that we have a toolkit before adding back
-			 * the resizes
-			 */
+			list ($ret, $source) = GalleryCoreApi::fetchPreferredSource($child);
+			if ($ret->isError()) {
+			    return array($ret->wrap(__FILE__, __LINE__), null, null);
+			}
+
+			/* Make sure that we have a toolkit before adding back the resizes */
 			list ($ret, $toolkit, $outputMimeType) =
-			    GalleryCoreApi::getToolkitByOperation($child->getMimeType(), 'scale');
+			    GalleryCoreApi::getToolkitByOperation($source->getMimeType(), 'scale');
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null, null);
 			}
@@ -265,13 +265,13 @@ class ItemEditAlbum extends ItemEditPlugin {
 						 null, null);
 				}  
 
-				$ret = $derivative->create($childId, DERIVATIVE_TYPE_IMAGE_RESIZE);
+				$ret = $derivative->create($child->getId(), DERIVATIVE_TYPE_IMAGE_RESIZE);
 				if ($ret->isError()) {
 				    return array($ret->wrap(__FILE__, __LINE__), null, null);
 				}
 
-				$derivative->setDerivativeMimeType($outputMimeType);
-				$derivative->setDerivativeSourceId($child->getId());
+				$derivative->setMimeType($outputMimeType);
+				$derivative->setDerivativeSourceId($source->getId());
 				$derivative->setDerivativeOperations('scale|' . $form['resizes'][$i]['size']);
 
 				$ret = $derivative->save();

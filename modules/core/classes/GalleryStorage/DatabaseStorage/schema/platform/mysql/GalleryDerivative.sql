@@ -36,7 +36,7 @@
       int(11)
     
       ,
-    DB_COLUMN_PREFIXderivativeMimeType
+    DB_COLUMN_PREFIXmimeType
       varchar(
       
           128

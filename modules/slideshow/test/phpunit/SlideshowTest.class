@@ -250,7 +250,7 @@ class SlideshowTest extends GalleryTestCase {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$derivative->setDerivativeSourceId($photo->getId());
-	$derivative->setDerivativeMimeType($photo->getMimeType());
+	$derivative->setMimeType($photo->getMimeType());
 	$derivative->setDerivativeOperations('testoperation|0');
 	if ($size) {
 	    // Set scaled size:

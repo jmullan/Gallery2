@@ -298,7 +298,7 @@ class GalleryItemHelper_medium {
 	}
 
 	/* Don't make derivatives for unknown items -- even if we recognize the mime type */
-	if (get_class($item) != 'galleryunknownitem') {
+	if (!GalleryUtilities::isA($item, 'GalleryUnknownItem')) {
 	    /*
 	     * Now create thumbnails and resizes according to the
 	     * wishes of the parent album.
@@ -308,7 +308,13 @@ class GalleryItemHelper_medium {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
-	    $mimeType = $item->getMimeType();
+	    list ($ret, $source) = GalleryCoreApi::fetchPreferredSource($item);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    $mimeType = $source->getMimeType();
+	    
 	    foreach ($preferences as $preference) {
 		/*
 		 * Validate the stored preferences to make sure that
@@ -377,8 +383,8 @@ class GalleryItemHelper_medium {
 		    }
 		}
 
-		$derivative->setDerivativeMimeType($outputMimeType);
-		$derivative->setDerivativeSourceId($item->getId());
+		$derivative->setMimeType($outputMimeType);
+		$derivative->setDerivativeSourceId($source->getId());
 		$derivative->setDerivativeOperations($operations);
 			
 		$ret = $derivative->save();
@@ -447,14 +453,14 @@ class GalleryItemHelper_medium {
 	}
 	if (!empty($derivatives[$fromItemId])) {
 	    $source = $derivatives[$fromItemId];
-	    $sourceMimeType = $source->getDerivativeMimeType();
+	    $sourceMimeType = $source->getMimeType();
 	}
 
 	/* 2. The item's thumbnail's source id */
 	if (!$sourceMimeType) {
 	    if (!empty($thumbnailTable[$fromItemId])) {
 		$source = $thumbnailTable[$fromItemId];
-		$sourceMimeType = $source->getDerivativeMimeType();
+		$sourceMimeType = $source->getMimeType();
 	    }
 	}
 
@@ -555,7 +561,7 @@ class GalleryItemHelper_medium {
 		    if ($isSupported) {
 			$success = true;
 			$derivative->setDerivativeOperations($derivativeOperations);
-			$derivative->setDerivativeMimeType($outputMimeType);
+			$derivative->setMimeType($outputMimeType);
 		    }
 		} else {
 		    /*

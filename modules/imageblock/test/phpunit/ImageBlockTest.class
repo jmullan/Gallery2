@@ -146,7 +146,7 @@ class ImageBlockTest extends GalleryTestCase {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$derivative->setDerivativeSourceId($src->getId());
-	$derivative->setDerivativeMimeType($src->getMimeType());
+	$derivative->setMimeType($src->getMimeType());
 	$derivative->setDerivativeOperations('testoperation|0');
 	if ($size) {
 	    // Set scaled size:

@@ -134,7 +134,7 @@ class ExifModule extends GalleryModule {
 	}
 
 	/* And those data items have to be JPEGs */
-	if ($item->getMimeType() != 'image/jpeg') {
+	if ($item->getMimeType() != 'image/jpeg' && $item->getMimeType() != 'image/pjpeg') {
 	    return array(GalleryStatus::success(), '');
 	}
 	    

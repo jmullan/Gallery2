@@ -109,7 +109,7 @@ class PanoramaItemEdit extends ItemEditPlugin {
 	$width = empty($preferred)
 	    ? $item->getWidth() : $preferred[$item->getId()]->getWidth();
 	$mimeType = empty($preferred)
-	    ? $item->getMimeType() : $preferred[$item->getId()]->getDerivativeMimeType();
+	    ? $item->getMimeType() : $preferred[$item->getId()]->getMimeType();
 	return ($width > $param['width'] &&
 	    ($mimeType == 'image/jpeg' || $mimeType == 'image/gif'));
     }

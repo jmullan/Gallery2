@@ -77,7 +77,7 @@ class GalleryDerivative extends GalleryDerivative_core {
             'type' => STORAGE_TYPE_INTEGER
         );
     
-        $meta['members']['derivativeMimeType'] = array(
+        $meta['members']['mimeType'] = array(
             'class' => 'GalleryDerivative',
             'type' => STORAGE_TYPE_STRING
         );
@@ -123,10 +123,10 @@ class GalleryDerivative extends GalleryDerivative_core {
 	    $data['derivativeType'] = $this->_derivativeType;
 	}
 	
-	if (!isset($this->_derivativeMimeType)) {
- 	    $data['derivativeMimeType'] = null;
+	if (!isset($this->_mimeType)) {
+ 	    $data['mimeType'] = null;
  	} else {
-	    $data['derivativeMimeType'] = $this->_derivativeMimeType;
+	    $data['mimeType'] = $this->_mimeType;
 	}
 	
         return $data;
@@ -370,32 +370,32 @@ class GalleryDerivative extends GalleryDerivative_core {
     }
   
     /**
-     * Get the value of derivativeMimeType
+     * Get the value of mimeType
      *
      * @return STRING the value
      */
-    function getderivativeMimeType() {
+    function getmimeType() {
  	
 
-        if (!isset($this->_derivativeMimeType)) {
+        if (!isset($this->_mimeType)) {
             return null;
         }
 
-        return $this->_derivativeMimeType;
+        return $this->_mimeType;
     }
 
     /**
-     * Set the value of derivativeMimeType
+     * Set the value of mimeType
      *
      * @param STRING the value
      */
-    function setderivativeMimeType($value) {
+    function setmimeType($value) {
 
         /* 
          * Convert unset values to null, to avoid generating warnings.
          */
 	$a = isset($value) ? $value : null;
-	$b = isset($this->_derivativeMimeType) ? $this->_derivativeMimeType : null;
+	$b = isset($this->_mimeType) ? $this->_mimeType : null;
 
     
         /* 
@@ -405,8 +405,8 @@ class GalleryDerivative extends GalleryDerivative_core {
     
         if ($a != $b) {
       
-            $this->_derivativeMimeType = $value;
-            $this->setModifiedFlag('derivativeMimeType', MEMBER_MODIFIED);
+            $this->_mimeType = $value;
+            $this->setModifiedFlag('mimeType', MEMBER_MODIFIED);
         }
     }
   

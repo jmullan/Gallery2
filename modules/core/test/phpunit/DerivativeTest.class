@@ -435,6 +435,60 @@ class DerivativeTest extends GalleryTestCase {
 	$this->assertEquals('C|4,5;B|1,2', $result);
 
     }
+
+    function testFetchPreferredSource() {
+	/* No link or preferred --> return the item itself */
+	list ($ret, $item) = $this->_createRandomDataItem($this->_root->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $source) = GalleryCoreApi::fetchPreferredSource($item);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals($item, $source);
+
+	/* Linked to another item that has no preferred --> the other item */	
+	list ($ret, $link) = $this->_createLinkedItem($this->_root->getId(), $item);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	list ($ret, $source) = GalleryCoreApi::fetchPreferredSource($link);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals($item, $source);
+
+	/* Linked to another item that has a preferred --> the other item's preferred */
+	list ($ret, $itemPreferred) = $this->_createDerivative($item->getId(), DERIVATIVE_TYPE_IMAGE_PREFERRED);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	list ($ret, $source) = GalleryCoreApi::fetchPreferredSource($link);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals($itemPreferred, $source);
+
+	/* Item that has a preferred --> the preferred */
+	list ($ret, $linkPreferred) = $this->_createDerivative($link->getId(), DERIVATIVE_TYPE_IMAGE_PREFERRED);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	list ($ret, $source) = GalleryCoreApi::fetchPreferredSource($link);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals($linkPreferred, $source);
+    }    
 }
 
 /**

@@ -441,7 +441,7 @@ class AlbumTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$derivative->setDerivativeMimeType('test/file');
+	$derivative->setMimeType('test/file');
 	$derivative->setDerivativeSourceId($this->_parentAlbum->getId());
 	$derivative->setDerivativeOperations('bogus|1,2');
 	$ret = $derivative->save();

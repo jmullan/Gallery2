@@ -69,9 +69,6 @@ class ItemEditController extends GalleryController {
 	$status = array();
 	$error = array();
 
-	$remapSourceIds = array();
-	$operation = null;
-
 	/* Load the correct edit plugin */
 	list ($ret, $plugin) = GalleryCoreApi::newFactoryInstanceById('ItemEditPlugin', $editPlugin);
 	if ($ret->isError()) {

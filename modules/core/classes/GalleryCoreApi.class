@@ -746,6 +746,23 @@ class GalleryCoreApi {
     }
 
     /**
+     * Return the preferred source for this item by returning the first occurrence of the following:
+     * 1. This item's preferred derivative
+     * 2. This item's linked item's preferred derivative (if applicable)
+     * 3. This item's linked item (if applicable)
+     * 4. This item itself
+     *
+     * @param object GalleryDataItem the target item
+     * @return array object GalleryObject a status code
+     *               object GalleryEntity (either a GalleryDataItem or a GalleryDerivative) the preferred source
+     */
+    function fetchPreferredSource($item) {
+	GalleryCoreApi::apiMethodUsed('fetchPreferredSource', 'GalleryDerivativeHelper_advanced');
+	require_once(dirname(__FILE__) . '/helpers/GalleryDerivativeHelper_advanced.class');
+	return GalleryDerivativeHelper_advanced::fetchPreferredSource($item);
+    }
+
+    /**
      * Convenience function to fetch the thumbnail for an item id
      *
      * @param array GalleryItem ids

@@ -36,7 +36,7 @@
       INTEGER
     
       ,
-    DB_COLUMN_PREFIXderivativeMimeType
+    DB_COLUMN_PREFIXmimeType
       VARCHAR(
       
           128

@@ -45,8 +45,6 @@ class ItemEditPhotoThumbnail extends ItemEditPlugin {
 	$status = null;
 	$error = array();
 
-	$remapSourceIds = array();
-	$operation = null;
 	if (isset($form['action']['crop'])) {
 	    /* Load the thumbnail */
 	    list ($ret, $thumbnails) =
@@ -68,13 +66,19 @@ class ItemEditPhotoThumbnail extends ItemEditPlugin {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
 
+		$cropX = !empty($form['crop']['x']) ? $form['crop']['x'] : 0;
+		$cropY = !empty($form['crop']['y']) ? $form['crop']['y'] : 0;
+		$cropWidth = !empty($form['crop']['width']) ? $form['crop']['width'] : $item->getWidth();
+		$cropHeight = !empty($form['crop']['height']) ? $form['crop']['height'] : $item->getHeight();
+
+		// TODO: Remove the crop if it's the same dimensions as the original
 		list ($ret, $operations) =
 		    GalleryCoreApi::mergeDerivativeOperations($thumbnail->getDerivativeOperations(),
 							      sprintf('crop|%s,%s,%s,%s',
-								      $form['crop']['x'],
-								      $form['crop']['y'],
-								      $form['crop']['width'],
-								      $form['crop']['height']));
+								      $cropX,
+								      $cropY,
+								      $cropWidth,
+								      $cropHeight));
 		
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
@@ -325,7 +329,7 @@ class ItemEditPhotoThumbnail extends ItemEditPlugin {
      * @see ItemEditPlugin::isSupported
      */
     function isSupported($item, $thumbnail) {
-	return (GalleryUtilities::isA($item, 'GalleryPhotoItem'));
+	return ($thumbnail != null && GalleryUtilities::isA($item, 'GalleryPhotoItem'));
     }
 
     /**

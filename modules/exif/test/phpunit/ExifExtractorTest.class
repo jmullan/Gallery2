@@ -119,8 +119,7 @@ class ExifExtractorTest extends GalleryTestCase {
     function _addDerivative($photo, $toolkitType,
 			    $derivativeType, $derivativeOperation) {
 	list ($ret, $toolkit, $outputMimeType) =
-	    GalleryCoreApi::getToolkitByOperation(
-				  $photo->getMimeType(), $toolkitType);
+	    GalleryCoreApi::getToolkitByOperation($photo->getMimeType(), $toolkitType);
 	if ($ret->isError() || !isset($toolkit)) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -135,7 +134,7 @@ class ExifExtractorTest extends GalleryTestCase {
 	}
 	$derivative->setDerivativeSourceId($photo->getId());
 	$derivative->setDerivativeOperations($derivativeOperation);
-	$derivative->setDerivativeMimeType($outputMimeType);
+	$derivative->setMimeType($outputMimeType);
 	$ret = $derivative->save();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
