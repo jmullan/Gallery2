@@ -9,13 +9,13 @@
       {assign var="image" value=$layout.imageViews.$currentIndex}
       
   <div id="gsHeader">
-	<div class="gbTitleBanner">
-	  <!-- img banner -->
-	</div>
+    {include file="gallery:layouts/matrix/templates/banner.tpl"}      
   </div>
-    {include file="gallery:layouts/matrix/templates/sidebar.tpl"}      
-	{include file="gallery:layouts/matrix/templates/pathbar.tpl"}
-      <div id="gsAlbumContents">
+  
+{include file="gallery:layouts/matrix/templates/sidebar.tpl"}      
+{include file="gallery:layouts/matrix/templates/pathbar.tpl"}
+
+  <div id="gsAlbumContents">
 	<div class="gbTopFlag">
 	  <div class="gbTitleBanner">
 	    <div class="giTitle">

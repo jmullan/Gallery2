@@ -5,13 +5,10 @@
  * and when you upgrade, your changes will not get overwritten.
  *}
 <div id="gsHeader">
-  <div class="gbTitleBanner">
-    <!-- img banner -->
-  </div>
+  {include file="gallery:layouts/matrix/templates/banner.tpl"}      
 </div>
 
 {include file="gallery:layouts/matrix/templates/sidebar.tpl"}
-
 {include file="gallery:layouts/matrix/templates/pathbar.tpl"}
 
 <div id="gsAlbumContents">
