@@ -4,6 +4,20 @@
  * Gallery will look for that file first and use it if it exists
  * and when you upgrade, your changes will not get overwritten.
  *}
+
+{if isset($status)}
+<div id="gsStatus">
+  <div class="giStatus">
+  {if isset($status.saved)}
+  {g->text text="Settings saved successfully."}
+  {/if}
+  {if isset($status.createdAlbum)}
+  {g->text text="Album created successfully."}
+  {/if}
+  </div>
+</div>
+{/if}
+
 <div class="gbAdmin">
   <div class="giTitle">
     {g->text text="Sort order"}
