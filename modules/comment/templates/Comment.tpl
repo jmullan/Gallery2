@@ -8,7 +8,7 @@
   <h3 class="giTitle">
     {$comment.subject|markup}
   </h3>
-  {if isset($can.edit) || isset($can.delete) || (isset($can.view) && isset($truncate))}
+  {if isset($can) && ($can.edit || $can.delete || ($can.view && isset($truncate)))}
 
   <ul class="giHorizontalLinks">
     {if $can.edit}
@@ -48,7 +48,7 @@
 
   <p class="giInfo">
     {capture name="date"}{g->date timestamp=$comment.date format="%e-%b-%Y %H:%M"}{/capture}
-    {if isset($can.edit)}
+    {if isset($can) && $can.edit}
 
     {g->text text="Posted by %s on %s (%s)" 
              arg1=$user.fullName|default:$user.userName
