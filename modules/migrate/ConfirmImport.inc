@@ -698,7 +698,7 @@ class ConfirmImportController extends GalleryController {
 				    }
 				}
 
-				if (isset($importAlbumItem['owner'] && strcmp($importAlbumItem['owner'],$album['owner']) {
+				if (isset($importAlbumItem['owner']) && strcmp($importAlbumItem['owner'],$album['owner'])) {
 				    $validItemUID = Gallery1DataParser::isValidUid($albumsPath,$importAlbumItem['owner']);
 				    if ($validItemUID) {
 					list($ret, $albumItemUserFields) = Gallery1DataParser::getUserFieldsByUid($albumsPath, $importAlbumItem['owner']);
