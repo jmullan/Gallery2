@@ -25,7 +25,7 @@
 	{/if}
       {/if}
       {if isset($status.upgraded)}
-	{g->text text="Successfully upgraded module %s" arg1=$status.activated}
+	{g->text text="Successfully upgraded module %s" arg1=$status.upgraded}
       {/if}
       {if isset($status.activated)}
 	{g->text text="Successfully activated module %s" arg1=$status.activated}
