@@ -124,6 +124,6 @@ function redirectBackToSelf() {
 	$port = ':' . $port;
     }
     $query = !empty($_SERVER['QUERY_STRING']) ? ('?' . $_SERVER['QUERY_STRING']) : '';
-    header(sprintf('Location: %s://%s%s%s', $protocol, $domain, $port, $_SERVER['PHP_SELF'], $query));
+    header(sprintf('Location: %s://%s%s%s%s', $protocol, $domain, $port, $_SERVER['PHP_SELF'], $query));
 }
 ?>
