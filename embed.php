@@ -22,10 +22,10 @@
 /**
  * Access point for external application in which Gallery is embedded.
  * Three interaction modes:
- *  1) Single GalleryEmbed::handleRequest() call
- *  2) Single GalleryEmbed::logout() call
- *  3) GalleryEmbed::init() followed by other GalleryEmbed/G2 calls,
+ *  1) GalleryEmbed::init(g2Request=true) followed by GalleryEmbed::handleRequest()
+ *  2) GalleryEmbed::init() followed by other GalleryEmbed/G2 calls,
  *     end with GalleryEmbed::done() <-- REQUIRED
+ *  3) Single GalleryEmbed::logout() call
  *
  * @package GalleryMain
  * @version $Revision$ $Date$
@@ -49,17 +49,17 @@ class GalleryEmbed {
      *   'gallerySessionId' => (optional) To support cookieless browsing, pass in G2 session id
      *                    (when cookies not in use, CMS must track this value between requests)
      * )
-     * @param boolean (optional) if true, call GalleryInitSecondPass too
+     * @param boolean (optional) if false, call GalleryInitSecondPass too
      * @return array object GalleryStatus a status object
      *               string G2 session id
      * @static
      */
-    function init($initParams, $initSecondPass=true) {
+    function init($initParams, $g2Request=false) {
 	$ret = GalleryInitFirstPass($initParams);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	if ($initSecondPass) {
+	if (!$g2Request) {
 	    $ret = GalleryInitSecondPass();
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
@@ -100,18 +100,13 @@ class GalleryEmbed {
      * Include activeUserName parameter if integration is not calling GalleryEmbed::login()
      * at CMS login time.
      *
-     * @param array see GalleryEmbed::init() for info on init values
      * @param string (optional) username of active user (empty string for anonymous/guest user)
      * @return array object GalleryStatus a status object
      *               array ('isDone' => boolean,
      *                      [optional: 'headHtml' => string, 'bodyHtml' => string])
      * @static
      */
-    function handleRequest($initParams, $activeUserName=null) {
-	$ret = GalleryEmbed::init($initParams, false);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
+    function handleRequest($activeUserName=null) {
 	if (isset($activeUserName)) {
 	    $ret = GalleryEmbed::_checkActiveUser($activeUserName);
 	    if ($ret->isError()) {
