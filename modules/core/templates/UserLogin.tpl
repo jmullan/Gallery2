@@ -16,7 +16,7 @@
   <div class="gbAdmin">
     <div class="gbDataEntry">
       <h2 class="giTitle">
-	{g->text text="User name"}
+	{g->text text="Username"}
       </h2>
 
       <input type="text" name="{g->formVar var="form[username]"}" value="{$form.username}"/>
