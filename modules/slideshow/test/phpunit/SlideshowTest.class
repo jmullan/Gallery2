@@ -45,6 +45,17 @@ class SlideshowTest extends GalleryTestCase {
 	parent::setUp();
 	global $gallery;
 
+	/* Register a dummy toolkit and operation */
+	GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
+	    'SlideshowToolkit', 'SlideshowToolkit', __FILE__);
+	$ret = GalleryCoreApi::registerToolkitOperation('SlideshowToolkit',
+	    array('image/gif', 'image/jpeg'), 'testoperation',
+	    array(array('type' => 'int', 'description' => 'size')), 'desc');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
 	// Create a new subalbum and give AllUser group only core.view
 	list ($ret, $album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret->isError()) {
@@ -87,9 +98,11 @@ class SlideshowTest extends GalleryTestCase {
 	$imagePaths = array($prefix . '1.gif', $prefix . '2.gif',
 	    $prefix . '3.gif', $prefix . '4.gif',
 	    dirname(__FILE__) . '/../../../exif/test/data/CanonS30.small.jpg');
+	$imageSizes = array(array(62,75), array(200,178), array(120,54),
+			    array(366,292), array(38,50));
 	for ($i = 0; $i < 10; $i++) {
 	    list ($ret, $photoDatum) = $this->_addPhoto($album->getId(),
-		  $imagePaths[$i%5], $i + 1, $photoSizes[$i]);
+		  $imagePaths[$i%5], $imageSizes[$i%5], $i + 1, $photoSizes[$i]);
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
@@ -127,7 +140,7 @@ class SlideshowTest extends GalleryTestCase {
 	$this->_guestId = $guestId;
     }
 
-    function _addPhoto($parentId, $imagePath, $index, $sizes) {
+    function _addPhoto($parentId, $imagePath, $imageSize, $index, $sizes) {
 	list ($ret, $photo) =
 	    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryPhotoItem');
 	if ($ret->isError()) {
@@ -149,41 +162,25 @@ class SlideshowTest extends GalleryTestCase {
 	if ($index % 2) {
 	    $photo->setDescription("Description $index");
 	}
+	$photo->setWidth($imageSize[0]);
+	$photo->setHeight($imageSize[1]);
 	$ret = $photo->save();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$idData = array('id' => $photo->getId());
 	if (in_array('P', $sizes)) {
-	    // add preferred image, by rotating
-	    list ($ret, $derivative) = GalleryCoreApi::newFactoryInstance(
-		'GalleryEntity', 'GalleryDerivativeImage');
+	    // add preferred image, with fake rotate|90 (just swap wd/ht)
+	    list ($ret, $idData['P']) =
+		$this->_addDerivative($photo, DERIVATIVE_TYPE_IMAGE_PREFERRED);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    $ret = $derivative->create($photo->getId(),
-				       DERIVATIVE_TYPE_IMAGE_PREFERRED);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    $derivative->setDerivativeSourceId($photo->getId());
-	    $derivative->setDerivativeMimeType($photo->getMimeType());
-	    list ($ret, $operations) =
-		GalleryCoreApi::mergeDerivativeOperations($derivative->getDerivativeOperations(), 'rotate|90');
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    $derivative->setDerivativeOperations($operations);
-	    $ret = $derivative->save();
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    $idData['P'] = $derivative->getId();
 	}
 	if (in_array('T', $sizes)) {
 	    // add thumbnail
 	    list ($ret, $idData['T']) = $this->_addDerivative($photo,
-		'thumbnail', DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 'thumbnail|150');
+		DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 150);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -191,7 +188,7 @@ class SlideshowTest extends GalleryTestCase {
 	if (in_array('R', $sizes)) {
 	    // add one resize
 	    list ($ret, $idData['R']) = $this->_addDerivative($photo,
-		'scale', DERIVATIVE_TYPE_IMAGE_RESIZE, 'scale|300');
+		DERIVATIVE_TYPE_IMAGE_RESIZE, 300);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -199,7 +196,7 @@ class SlideshowTest extends GalleryTestCase {
 	if (in_array('R2', $sizes)) {
 	    // add another resize
 	    list ($ret, $idData['R2']) = $this->_addDerivative($photo,
-		'scale', DERIVATIVE_TYPE_IMAGE_RESIZE, 'scale|600');
+		DERIVATIVE_TYPE_IMAGE_RESIZE, 600);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -207,14 +204,7 @@ class SlideshowTest extends GalleryTestCase {
 	return array(GalleryStatus::success(), $idData);
     }
 
-    function _addDerivative($photo, $toolkitType,
-			    $derivativeType, $derivativeOperation) {
-	list ($ret, $toolkit, $outputMimeType) =
-	    GalleryCoreApi::getToolkitByOperation(
-				  $photo->getMimeType(), $toolkitType);
-	if ($ret->isError() || !isset($toolkit)) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
+    function _addDerivative($photo, $derivativeType, $size=0) {
 	list ($ret, $derivative) = GalleryCoreApi::newFactoryInstance(
 				   'GalleryEntity', 'GalleryDerivativeImage');
 	if ($ret->isError() || !isset($derivative)) {
@@ -225,8 +215,28 @@ class SlideshowTest extends GalleryTestCase {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$derivative->setDerivativeSourceId($photo->getId());
-	$derivative->setDerivativeOperations($derivativeOperation);
-	$derivative->setDerivativeMimeType($outputMimeType);
+	$derivative->setDerivativeMimeType($photo->getMimeType());
+	$derivative->setDerivativeOperations('testoperation|0');
+	if ($size) {
+	    // Set scaled size:
+	    $w = $photo->getWidth();
+	    $h = $photo->getHeight();
+	    if ($w <= $size && $h <= $size &&
+		    $derivativeType==DERIVATIVE_TYPE_IMAGE_THUMBNAIL) {
+		$derivative->setWidth($w);
+		$derivative->setHeight($h);
+	    } else if ($w >= $h) {
+		$derivative->setWidth($size);
+		$derivative->setHeight((int)($size*$h/$w));
+	    } else {
+		$derivative->setHeight($size);
+		$derivative->setWidth((int)($size*$w/$h));
+	    }
+	} else {
+	    // Set rotated size (swap wd/ht):
+	    $derivative->setWidth($photo->getHeight());
+	    $derivative->setHeight($photo->getWidth());
+	}
 	$ret = $derivative->save();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -240,6 +250,11 @@ class SlideshowTest extends GalleryTestCase {
     function tearDown() {
 	global $gallery;
 	$ret = GalleryCoreApi::deleteEntityById($this->_album->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	/* Unregister dummy toolkit */
+	$ret = GalleryCoreApi::unregisterToolkit('SlideshowToolkit');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -358,8 +373,6 @@ class SlideshowTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	return;
-
 	// core.viewSource permission: see full/preferred and thumb
 	$ret = GalleryCoreApi::removeGroupPermission(
 			$this->_album->getId(), $this->_allUsersGroupId,
@@ -441,4 +454,26 @@ class SlideshowTest extends GalleryTestCase {
     // test with links?
 }
 
+/**
+ * Required classes
+ */
+require_once(dirname(__FILE__) . '/../../../core/classes/GalleryToolkit.class');
+
+/**
+ * Test toolkit
+ * @package Slideshow
+ * @subpackage PHPUnit
+ */
+class SlideshowToolkit extends GalleryToolkit {
+    function performOperation($mimeType, $operationName, $sourceFilename,
+			      $destFilename, $parameters) {
+	/* Just copy file and return dummy mime type */
+	global $gallery;
+	$platform = $gallery->getPlatform();
+	if (!$platform->copy($sourceFilename, $destFilename)) {
+	    return array(GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__), null);
+	}
+	return array(GalleryStatus::success(), 'test/image');
+    }
+}
 ?>
