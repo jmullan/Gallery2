@@ -188,7 +188,7 @@ class GalleryItemAttributesMap_core {
      * @param int the order weight
      */
     function fetchOrderWeight($itemId) {
-	list ($ret, $orderWeights) = GalleryItemAttributesMap::fetchOrderWeight(array($itemId));
+	list ($ret, $orderWeights) = GalleryItemAttributesMap::fetchOrderWeights(array($itemId));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

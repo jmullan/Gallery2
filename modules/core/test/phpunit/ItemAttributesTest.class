@@ -110,9 +110,8 @@ class ItemAttributesTest extends GalleryTestCase {
 
     /**
      * Update the view count and verify it
-     * TODO: commented out because it was making Apache2/PHP 4.2.2 on my laptop crash
      */
-    function xx_testSetOrderWeight() {
+    function testSetOrderWeight() {
 	$ret = GalleryItemAttributesMap::setOrderWeight($this->_childItems[0]->getId(), 123);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -128,9 +127,8 @@ class ItemAttributesTest extends GalleryTestCase {
 
     /**
      * Update the view count and verify it
-     * TODO: commented out because it was making Apache2/PHP 4.2.2 on my laptop crash
      */
-    function xx_testRebalanceOrderWeights() {
+    function testRebalanceOrderWeights() {
 	for ($i = 0; $i < sizeof($this->_childItems); $i++) {
 	    $ret = GalleryItemAttributesMap::setOrderWeight($this->_childItems[$i]->getId(), $i);
 	    if ($ret->isError()) {
