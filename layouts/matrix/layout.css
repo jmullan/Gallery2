@@ -109,14 +109,23 @@
 	margin-top: 0;
 }
 
+.gbMenu:after {
+    content: "."; 
+    display: block; 
+    height: 0; 
+    clear: both; 
+    visibility: hidden;
+}
 
-/*      spacers neeed for expanding layouts */
+/* Hides from IE-mac \*/
+* html .Menu { height: 1%; }
+/* End hide from IE-mac */
+
+/*
+        spacers neeed for expanding layouts -   we should be able to delete this soon :)
+
+*/
 .guSpacer, .gpSpacer, .gsSpacer, .gbSpacer, .giSpacer { clear: both; }
-
-
-/*      default */
-
-
 
 /*      #gsHeader       */
 
