@@ -502,7 +502,6 @@ function printNavBar() {
 	}
 	$navbar .= "</li>\n";
     }
-    $navbar .= "<li class=\"navitem\"><span class=\"nav_num\" style=\"font-weight: bold;\">?!?</span>&nbsp;<span class=\"nav_text\"><a target=\"_blank\" href=\"../README.html\">Installer Help File</a></span></li>\n";
     $navbar .= "</ol>\n";
 }
 
