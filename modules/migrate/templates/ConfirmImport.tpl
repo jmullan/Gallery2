@@ -113,12 +113,14 @@
       <input type="hidden" name="{g->formVar var="form[urlRedirect]"}" value="{$form.urlRedirect}"/>
     </div>
   {/if}
+  {if isset($form.generateThumbnails)}
   <div class="gbAdmin">
     <p class="giDescription">
     <input type="hidden" name="{g->formVar var="form[generateThumbnails]"}" value="{$form.generateThumbnails}" />
     {g->text text="Thumbnails will be generated during migration"}
     </p> 
   </div>
+  {/if}
   <div class="gbButtons">
     <input type="hidden" name="{g->formVar var="albumsPath"}" value="{$ConfirmImport.albumsPath}"/>
     <input type="submit" name="{g->formVar var="form[action][import]"}" value="{g->text text="Import"}"/>
