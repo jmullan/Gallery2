@@ -49,7 +49,11 @@
         
                   <option {$selected} value="{g->url arg1="view=core:ShowItem" arg2="itemId=`$layout.item.id`" arg3="imageViewsIndex=`$smarty.section.imageView.index`"}">
                     {if empty($layout.imageViews[imageView].width)}
-                    {g->text text="Unknown"}
+                      {if isset($layout.imageViews[imageView].isSource)}
+                      {g->text text="Source"}
+                      {else}
+                      {g->text text="Unknown"}
+                      {/if}
                     {else}
                     {g->text text="%dx%d" arg1=$layout.imageViews[imageView].width arg2=$layout.imageViews[imageView].height}
                     {/if}
@@ -64,7 +68,7 @@
                 {g->text text="Full size: "}
                 {capture name="fullSize"}
                 {if empty($layout.sourceImage.width)}
-                {g->text text="Unknown"}
+                {$layout.sourceImage.itemTypeName.0}
                 {else}
                 {g->text text="%dx%d" arg1=$layout.sourceImage.width arg2=$layout.sourceImage.height}
                 {/if}
@@ -96,7 +100,7 @@
       {if !empty($layout.imageViews)}
       {capture name="fallback"}
       <a href="{g->url arg1="view=core:DownloadItem" arg2="itemId=`$layout.item.id`"}">
-        {g->text text="Download this item"} 
+        {g->text text="Download this %s" arg1=`$layout.sourceImage.itemTypeName.1`} 
       </a>
       {/capture}
 

@@ -636,6 +636,8 @@ class MatrixLayout extends GalleryLayout {
 		$sourceImage = $preferred[$item->getId()]->getMemberData();
 		$can['viewInline'][] = 1;
 	    }
+	    $sourceImage['itemTypeName'] = $item->itemTypeName();
+	    $sourceImage['isSource'] = true;
 	    $imageViews[] = $sourceImage;
 	    $sourceImageViewIndex = sizeof($imageViews)-1;
 	}
