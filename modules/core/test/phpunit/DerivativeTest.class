@@ -41,7 +41,7 @@ class DerivativeTest extends GalleryTestCase {
 
     function setUp() {
 	global $gallery;
-	
+
 	parent::setUp();
 
 	/* Create a root container to hold all our test items */
@@ -56,13 +56,13 @@ class DerivativeTest extends GalleryTestCase {
 						      'DerivativeTestItem',
 						      __FILE__,
 						      array('test/*'));
-	
+
 	/* Register a dummy toolkit */
 	GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
 						      'DerivativeTestToolkit',
 						      'DerivativeTestToolkit',
 						      __FILE__);
-	
+
 	/* Register an operation that we can perform on our mock data items */
 	$ret = GalleryCoreApi::registerToolkitOperation('DerivativeTestToolkit',
 							array('test/file'),
@@ -91,10 +91,10 @@ class DerivativeTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	parent::tearDown();
     }
-    
+
 
     function testRemapSourceIds() {
 	list ($ret, $item1) = $this->_createRandomAlbum($this->_root->getId());
@@ -132,7 +132,7 @@ class DerivativeTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $parentDerivative) = 
+	list ($ret, $parentDerivative) =
 	    $this->_createDerivative($item1, $item1->getId(),
 				     DERIVATIVE_TYPE_IMAGE_RESIZE,
 				     'bogus-operation|123', 'image/jpeg', array('width' => 100, 'height' => 200));
@@ -162,7 +162,7 @@ class DerivativeTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	$this->assertEquals(0, $subDerivative->getWidth());
 	$this->assertEquals(0, $subDerivative->getHeight());
     }
@@ -197,7 +197,7 @@ class DerivativeTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	list ($ret, $current) = $derivative->isCacheCurrent();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -255,13 +255,13 @@ class DerivativeTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	$ops =& DerivativeTestToolkit::getPerformedOperations();
 	$this->assertEquals(array(array('test/file',
 					'test-operation',
 					$sourcePath,
 					$firstDestPath,
-					array('testRebuildThumbnailOfSmallerThumbnail-1')), 
+					array('testRebuildThumbnailOfSmallerThumbnail-1')),
 				  array('test/file',
 					'test-operation',
 					$sourcePath,
@@ -339,7 +339,7 @@ class DerivativeTest extends GalleryTestCase {
 
     function testAdjustDependentDerivatives() {
 	global $gallery;
-	
+
 	/*
 	 * Create a derivative with a operation that we want to adjust.  Parent it to an item that will get
 	 * deleted so that tearDown will get rid of it for us.
@@ -416,12 +416,12 @@ class DerivativeTest extends GalleryTestCase {
 
 	$this->assertEquals($item, $source);
 
-	/* Linked to another item that has no preferred --> the other item */	
+	/* Linked to another item that has no preferred --> the other item */
 	list ($ret, $link) = $this->_createLinkedItem($this->_root->getId(), $item);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	list ($ret, $source) = GalleryCoreApi::fetchPreferredSource($link);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -435,7 +435,7 @@ class DerivativeTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	list ($ret, $source) = GalleryCoreApi::fetchPreferredSource($link);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -449,7 +449,7 @@ class DerivativeTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	list ($ret, $source) = GalleryCoreApi::fetchPreferredSource($link);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -482,7 +482,7 @@ class DerivativeTest extends GalleryTestCase {
 	 * TARGET         SOURCE  OPERATONS                                  POSTFILTER
 	 * -----------------------------------------------------------------------------------------------
 	 * Preferred  A1: A.jpg   rotate|90                                  watermark|A1
-	 * Derivative A2: A.jpg   rotate|90;crop|25,49,33,25;thumbnail|150    
+	 * Derivative A2: A.jpg   rotate|90;crop|25,49,33,25;thumbnail|150
 	 * Derivative A3: A.jpg   rotate|90;crop|25,49,33,25;thumbnail|75    test|A3;watermark|A3
 	 * Derivative A4: A.jpg   rotate|90;crop|25,49,33,25;thumbnail|300
 	 * Derivative A5: A.jpg   rotate|90;thumbnail|100
@@ -542,7 +542,7 @@ class DerivativeTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	list ($ret, $B1) = $this->_createDerivative($itemB, $itemB->getId(),
 						    DERIVATIVE_TYPE_IMAGE_RESIZE,
 						    '',
@@ -580,7 +580,7 @@ class DerivativeTest extends GalleryTestCase {
 	}
 	$this->assertEquals($source, $itemA);
 	$this->assertEquals(array('rotate|90', 'crop|25,49,33,25', 'thumbnail|300'), $operations);
-	
+
 	list ($ret, $source, $operations) = $A5->fetchFinalOperations();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -603,7 +603,7 @@ class DerivativeTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	$this->assert($derivative->hasNoOperations());
     }
 
@@ -641,21 +641,21 @@ class DerivativeTestToolkit extends GalleryToolkit {
 	}
 	return $operations;
     }
-    
+
     /**
      * @see GalleryToolkit::performOperation()
      * Dummy operation
      */
     function performOperation($mimeType, $operationName, $sourceFilename,
-			      $destFilename, $parameters) {
+			      $destFilename, $parameters, $context=array()) {
 	global $gallery;
 
 	$ops =& DerivativeTestToolkit::getPerformedOperations();
 	$ops[] = array($mimeType, $operationName, $sourceFilename, $destFilename, $parameters);
-	
+
 	$platform = $gallery->getPlatform();
 	$platform->copy($sourceFilename, $destFilename);
-	return array(GalleryStatus::success(), $mimeType);
+	return array(GalleryStatus::success(), $mimeType, $context);
     }
 
     /**
@@ -673,11 +673,11 @@ class DerivativeTestToolkit extends GalleryToolkit {
 	    }
 
 	    if ($operation1 == 'test-operation' &&
-		$args1[0] == 'testRebuildThumbnailOfSmallerThumbnail-1' && 
+		$args1[0] == 'testRebuildThumbnailOfSmallerThumbnail-1' &&
 		$args2[0] == 'testRebuildThumbnailOfSmallerThumbnail-2') {
 		return array(true, $operation2, $args2);
 	    }
-		
+
 	    return array(true, $operation2, $args2);
 	}
 	return array(false, null, null);

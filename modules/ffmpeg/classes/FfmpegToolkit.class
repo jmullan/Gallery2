@@ -82,7 +82,7 @@ class FfmpegToolkit extends GalleryToolkit {
      * @see GalleryToolkit::performOperation()
      */
     function performOperation($mimeType, $operationName, $sourceFilename,
-			      $destFilename, $parameters) {
+			      $destFilename, $parameters, $context=array()) {
 	global $gallery;
 	$platform = $gallery->getPlatform();
 
@@ -90,46 +90,47 @@ class FfmpegToolkit extends GalleryToolkit {
 	$tmpFilename = $platform->tempnam($tmpDir, 'fmpg_');
 	if (empty($tmpFilename)) {
 	    /* This can happen if the $tmpDir path is bad */
-	    return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);
+	    return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__), null, null);
 	}
 
 	$outputMimeType = null;
 	switch($operationName) {
 	case 'convert-to-image/jpeg':
 	    $args = array('-f', 'singlejpeg', '-t', '0.001', '-y', $tmpFilename);
-	    if (isset($gallery->_ffmpeg_offset)) {
-		array_unshift($args, '-ss', $gallery->_ffmpeg_offset);
-		unset($gallery->_ffmpeg_offset);
+	    if (isset($context['ffmpeg.offset'])) {
+		array_unshift($args, '-ss', $context['ffmpeg.offset']);
+		unset($context['ffmpeg.offset']);
 	    }
 	    list ($ret, $results) = $this->_ffmpeg($sourceFilename, $args);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 
 	    $success = $platform->rename($tmpFilename, $destFilename);
 	    @$platform->unlink($tmpFilename);
 	    if (!$success) {
 		return array(GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
-			    "Failed renaming $tmpFilename -> $destFilename"), null);
+			    "Failed renaming $tmpFilename -> $destFilename"), null, null);
 	    }
 	    $outputMimeType = 'image/jpeg';
 	    break;
 
 	case 'select-offset':
 	    // Doesn't change file; just remembers offset for future operation..
-	    $gallery->_ffmpeg_offset = $parameters[0];
+	    $context['ffmpeg.offset'] = $parameters[0];
 	    if (!$platform->copy($sourceFilename, $destFilename)) {
 		return array(GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
-			    "Failed copying $sourceFilename -> $destFilename"), null);
+			    "Failed copying $sourceFilename -> $destFilename"), null, null);
 	    }
 	    $outputMimeType = $mimeType;
 	    break;
 
 	default:
-	    return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
+	    return array(GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
+					      "$operationName $mimeType"), null, null);
 	}
 
-	return array(GalleryStatus::success(), $outputMimeType);
+	return array(GalleryStatus::success(), $outputMimeType, $context);
     }
 
     function _getMovieDimensions($mimeType, $sourceFilename) {
@@ -164,7 +165,7 @@ class FfmpegToolkit extends GalleryToolkit {
 		$successfulRun = true;
 		$duration = 3600*$regs[1] + 60*$regs[2] + $regs[3];
 	    }
-	    
+
 	    if (preg_match("/Stream.*?Video:.*?(\d+)x(\d+)/", $resultLine, $regs)) {
 		$successfulRun = true;
 		list ($width, $height) = array($regs[1], $regs[2]);

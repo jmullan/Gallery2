@@ -75,12 +75,14 @@ class GalleryToolkit {
      * @param string the source file name
      * @param string the destination file name (it will be overwritten if it exists)
      * @param array mixed parameters
+     * @param array (optional) context data 
      * @return array object GalleryStatus a status code
      *               string the output mime type
+     *               array context data
      */
     function performOperation($mimeType, $operationName, $sourceFilename,
-			      $destFilename, $parameters) {
-	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
+			      $destFilename, $parameters, $context=array()) {
+	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null, null);
     }
 
     /**

@@ -224,26 +224,26 @@ class SquareThumbTestToolkit extends GalleryToolkit {
 	}
     }
 
-    function performOperation($mimeType, $operationName,
-			      $sourceFilename, $destFilename, $parameters) {
+    function performOperation($mimeType, $operationName, $sourceFilename,
+			      $destFilename, $parameters, $context=array()) {
 	switch ($operationName) {
 	case 'crop':
 	    switch ($sourceFilename) {
 	    case 'testPerformOperations7':
 	    case 'testPerformOperations9':
 	    case 'testPerformOperations13':
-		return array(GalleryStatus::success(), $mimeType);
+		return array(GalleryStatus::success(), $mimeType, $context);
 	    }
 	    break;
 	case 'scale':
 	    if (!strncmp('sqt', basename($sourceFilename), 3) ||
 		$sourceFilename == 'testPerformOperations11') {
-		return array(GalleryStatus::success(), $mimeType);
+		return array(GalleryStatus::success(), $mimeType, $context);
 	    }
 	    break;
 	}
 	return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
-					  "$operationName $sourceFilename"), null);
+					  "$operationName $sourceFilename"), null, null);
     }
 }
 ?>

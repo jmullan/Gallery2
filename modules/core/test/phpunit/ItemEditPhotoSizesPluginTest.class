@@ -73,7 +73,7 @@ class ItemEditPhotoSizesPluginTest extends ItemEditPluginTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	$ret = GalleryCoreApi::registerToolkitOperation('ItemEditPhotoSizesPluginTestToolkit',
 							array('test/file'),
 							'resize',
@@ -121,7 +121,7 @@ class ItemEditPhotoSizesPluginTest extends ItemEditPluginTestCase {
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	/* Unregister */
 	$ret = GalleryCoreApi::unregisterToolkit('ItemEditPhotoSizesPluginTestToolkit');
 	if ($ret->isError()) {
@@ -142,7 +142,7 @@ class ItemEditPhotoSizesPluginTest extends ItemEditPluginTestCase {
 	    GalleryUtilities::putRequestVariable('form[resizes][' . $i . '][active]', 1);
 	    GalleryUtilities::putRequestVariable('form[resizes][' . $i . '][size]', 100 * ($i+1));
 	}
-	    
+
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest($this->_item, $this->_preferred);
 	$this->assertEquals(array(array(), $this->_translate('Changes saved successfully')),
@@ -165,7 +165,7 @@ class ItemEditPhotoSizesPluginTest extends ItemEditPluginTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	if (!empty($resizeTable[$this->_item->getId()])) {
 	    $this->assertEquals(3, sizeof($resizeTable[$this->_item->getId()]));
 	    for ($i = 0; $i < 3; $i++) {
@@ -185,7 +185,7 @@ class ItemEditPhotoSizesPluginTest extends ItemEditPluginTestCase {
 	for ($i = 0; $i < 3; $i++) {
 	    GalleryUtilities::putRequestVariable('form[resizes][' . $i . '][active]', 1);
 	}
-	    
+
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest($this->_item, $this->_preferred);
 	$this->assertEquals(array(array('form[error][thumbnail][size][missing]',
@@ -207,7 +207,7 @@ class ItemEditPhotoSizesPluginTest extends ItemEditPluginTestCase {
 	    GalleryUtilities::putRequestVariable('form[resizes][' . $i . '][active]', 1);
 	    GalleryUtilities::putRequestVariable('form[resizes][' . $i . '][size]', 'x' . rand());
 	}
-	    
+
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest($this->_item, $this->_preferred);
 	$this->assertEquals(array(array('form[error][thumbnail][size][invalid]',
@@ -235,9 +235,8 @@ class ItemEditPhotoSizesPluginTestToolkit extends GalleryToolkit {
      * Dummy operation
      */
     function performOperation($mimeType, $operationName, $sourceFilename,
-			      $destFilename, $parameters) {
+			      $destFilename, $parameters, $context=array()) {
 	global $gallery;
-
 
 	$platform = $gallery->getPlatform();
 	if ($sourceFilename != $destFilename) {
@@ -247,8 +246,8 @@ class ItemEditPhotoSizesPluginTestToolkit extends GalleryToolkit {
 	$fd = $platform->fopen($destFilename, 'a');
 	fwrite($fd, $operationName);
 	$platform->fclose($fd);
-	
-	return array(GalleryStatus::success(), $mimeType);
+
+	return array(GalleryStatus::success(), $mimeType, $context);
     }
 
     /**

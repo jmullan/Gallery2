@@ -72,7 +72,8 @@ class NetPbmToolkit extends GalleryToolkit {
     /**
      * @see GalleryToolkit::performOperation()
      */
-    function performOperation($mimeType, $operationName, $sourceFilename, $destFilename, $parameters) {
+    function performOperation($mimeType, $operationName, $sourceFilename,
+			      $destFilename, $parameters, $context=array()) {
 	global $gallery;
 	/* By default we keep the same output type */
 	$outputMimeType = $mimeType;
@@ -84,7 +85,7 @@ class NetPbmToolkit extends GalleryToolkit {
 	    /* Don't enlarge images for a thumbnail */
 	    list ($ret, $width, $height) = $this->_getImageDimensions($mimeType, $sourceFilename);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    if ($width <= $parameters[0] && $height <= $parameters[0]) {
 		$transform = null;
@@ -127,7 +128,7 @@ class NetPbmToolkit extends GalleryToolkit {
 	    default:
 		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
 						  "Bad rotation argument: $parameters[0]"),
-			     null);
+			     null, null);
 	    }
 	    
 	    $transform = array($this->_pnmCmd('pnmflip'), $flipArgument);
@@ -137,7 +138,7 @@ class NetPbmToolkit extends GalleryToolkit {
 	    /* Crop is expressed in percentages so we have to know the dimensions of the input file */
 	    list ($ret, $width, $height) = $this->_getImageDimensions($mimeType, $sourceFilename);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    $transform = array($this->_pnmCmd('pnmcut'),
 			       round(($parameters[0] / 100) * $width),
@@ -167,7 +168,7 @@ class NetPbmToolkit extends GalleryToolkit {
 	        /* This can happen if the $tmpDir path is bad */
 	        return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__,
 	                                          "Could not create tmp file in '$tmpDir'"),
-	                     null);
+	                     null, null);
 	    }
 	    
 	    $tmpAlpha = $platform->tempnam($tmpDir, 'npbm_');
@@ -175,7 +176,7 @@ class NetPbmToolkit extends GalleryToolkit {
 	        /* This can happen if the $tmpDir path is bad */
 	        return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__,
 	                                          "Could not create tmp file in '$tmpDir'"),
-	                     null);
+	                     null, null);
 	    }
 
 	    switch ($compositeOverlayMimeType) {
@@ -225,7 +226,7 @@ class NetPbmToolkit extends GalleryToolkit {
 	    default:
 	        return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__,
 	                                          "mimeType not handled: $compositeOverlayMimeType"),
-	                     null);
+	                     null, null);
 	    }
 
 	    // Execute commands
@@ -233,7 +234,7 @@ class NetPbmToolkit extends GalleryToolkit {
 	    if (!$ret) {
 	        return array(GalleryStatus::error(ERROR_UNKNOWN, __FILE__, __LINE__,
 	                                          "Could not get/convert/extract overlay"),
-	                     null);
+	                     null, null);
 	    }
 	    if (isset($getAlphaCmd)) {
 	        list($ret, $output) = $platform->exec(array($getAlphaCmd));
@@ -293,7 +294,7 @@ class NetPbmToolkit extends GalleryToolkit {
 		// Use the alignments we received
 		list ($ret, $sourceWidth, $sourceHeight) = $this->_getImageDimensions($mimeType, $sourceFilename);
 		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
 
 		// Convert from percentages to pixels
@@ -312,9 +313,8 @@ class NetPbmToolkit extends GalleryToolkit {
 
 	    default:
 		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
-					      "Unknown composite alignment type: $compositeAlignmentType"),
-			 null);
-		
+				    "Unknown composite alignment type: $compositeAlignmentType"),
+			 null, null);
 	    }
 
 	    if ($useAlpha) {
@@ -326,9 +326,8 @@ class NetPbmToolkit extends GalleryToolkit {
 	    break; // case composite
 	    
 	default:
-	    return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__,
-					      "Unknown operation: $operationName"),
-			 null);
+	    return array(GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
+					      "$operationName $mimeType"), null, null);
 	}
 
 	$ret = $this->_transformImage($mimeType, $transform, $sourceFilename,
@@ -346,10 +345,10 @@ class NetPbmToolkit extends GalleryToolkit {
 	    }
 	}
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
-	return array(GalleryStatus::success(), $outputMimeType);
+	return array(GalleryStatus::success(), $outputMimeType, $context);
     }
 
     /**

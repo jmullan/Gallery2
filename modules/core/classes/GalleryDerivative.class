@@ -216,7 +216,7 @@ class GalleryDerivative_core extends GalleryChildEntity {
 
 	/* Expire our cache, and don't abort if this fails */
 	$ret = $this->expireCache();
-	    
+
 	return GalleryStatus::success();
     }
 
@@ -262,7 +262,7 @@ class GalleryDerivative_core extends GalleryChildEntity {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
-	    
+
 	    /* Expire anything that depends on me */
 	    $ret = GalleryCoreApi::expireDerivativeTreeBySourceIds(array($this->getId()));
 	    if ($ret->isError()) {
@@ -276,27 +276,27 @@ class GalleryDerivative_core extends GalleryChildEntity {
     /**
      * Rebuild the cache.  This should never be called directly; instead you
      * should call GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($derivativeId)
-     * 
+     *
      * @access public
      * @return object GalleryStatus a status code
      */
     function rebuildCache() {
 	global $gallery;
-	
+
 	/* Figure out our target path */
 	list($ret, $destPath) = $this->fetchPath();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	/* Make sure our path is legit */ 
+	/* Make sure our path is legit */
 	GalleryUtilities::guaranteeDirExists(dirname($destPath));
 
 	list ($ret, $source, $operations) = $this->fetchFinalOperations();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	/* Get the path of the source file */
 	if ($source->isLinked()) {
 	    $linkedEntity = $source->getLinkedEntity();
@@ -307,14 +307,15 @@ class GalleryDerivative_core extends GalleryChildEntity {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	/* Now apply our derivative commands to create the cache file */
 	$mimeType = $source->getMimeType();
+	$context = array();
 	foreach ($operations as $operation) {
 	    if (strpos($operation, '|') === false) {
 		list($operationName, $operationArgs) = array($operation, null);
 	    } else {
-		list($operationName, $operationArgs) = split('\|', $operation);
+		list($operationName, $operationArgs) = explode('|', $operation);
 	    }
 
 	    /* Get the appropriate toolkit */
@@ -326,16 +327,18 @@ class GalleryDerivative_core extends GalleryChildEntity {
 
 	    if (!isset($toolkit)) {
 		/* XXX: What can we do now? */
-		return GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
+		return GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
+					    "$operationName $mimeType");
 	    }
 
 	    /* Perform the operation */
-	    list ($ret, $outputMimeType) =
+	    list ($ret, $outputMimeType, $context) =
 		$toolkit->performOperation($mimeType,
 					   $operationName,
 					   $sourcePath,
 					   $destPath,
-					   split(',', $operationArgs));
+					   explode(',', $operationArgs),
+					   $context);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -361,11 +364,11 @@ class GalleryDerivative_core extends GalleryChildEntity {
 	case DERIVATIVE_TYPE_IMAGE_THUMBNAIL:
 	    $requiredPermission = 'core.view';
 	    break;
-	    
+
 	case DERIVATIVE_TYPE_IMAGE_RESIZE:
 	    $requiredPermission = 'core.viewResizes';
 	    break;
-	    
+
 	case DERIVATIVE_TYPE_IMAGE_PREFERRED:
 	    $requiredPermission = 'core.viewSource';
 	    break;
@@ -379,11 +382,11 @@ class GalleryDerivative_core extends GalleryChildEntity {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	GalleryDataCache::putToDisk(array('type' => 'derivative-meta',
 					  'itemId' => $this->getId()),
 				    $data);
-	
+
 	return GalleryStatus::success();
     }
 
@@ -412,7 +415,7 @@ class GalleryDerivative_core extends GalleryChildEntity {
 	     *      don't want for our derivative
 	     *
 	     * So seek backwards to the source file, then merge and apply all the derivative operations from
-	     * the intervening parents to discover the correct operations for this derivative.  
+	     * the intervening parents to discover the correct operations for this derivative.
 	     */
 	    $sources = array($source, $this);
 	    while (GalleryUtilities::isA($sources[0], 'GalleryDerivative')) {
@@ -426,14 +429,14 @@ class GalleryDerivative_core extends GalleryChildEntity {
 		    $source = $tmp;
 		    break;
 		}
-		
+
 		array_unshift($sources, $tmp);
 	    }
 
 	    /* Now gather up all the operations, and reduce it to the smallest possible sequence */
 	    $operations = $sources[0]->getDerivativeOperations();
 	    for ($i = 1; $i < sizeof($sources); $i++) {
-		foreach (split(';', $sources[$i]->getDerivativeOperations()) as $newOperation) {
+		foreach (explode(';', $sources[$i]->getDerivativeOperations()) as $newOperation) {
 		    list ($ret, $operations) =
 			GalleryCoreApi::mergeDerivativeOperations($operations, $newOperation);
 		    if ($ret->isError()) {
@@ -448,9 +451,9 @@ class GalleryDerivative_core extends GalleryChildEntity {
 	/* Merge in the postfilter operations */
 	$postFilters = $this->getPostFilterOperations();
 	if (empty($operations)) {
-	    $operations = split(';', $postFilters);
+	    $operations = explode(';', $postFilters);
 	} else {
-	    foreach (split(';', $postFilters) as $newOperation) {
+	    foreach (explode(';', $postFilters) as $newOperation) {
 		list ($ret, $operations) =
 		    GalleryCoreApi::mergeDerivativeOperations($operations, $newOperation);
 		if ($ret->isError()) {
@@ -458,17 +461,17 @@ class GalleryDerivative_core extends GalleryChildEntity {
 		}
 	    }
 
-	    $operations = split(';', $operations);
+	    $operations = explode(';', $operations);
 	}
 
 	return array(GalleryStatus::success(), $source, $operations);
     }
-    
+
     /**
      * Is the cache for this item still current?
      *
      * If the cache is expired, it can be rebuilt with rebuildCache()
-     * 
+     *
      * @access public
      * @return array object GalleryStatus a status code,
      *               boolean false if the item is expired (ie, empty cache)
@@ -488,7 +491,7 @@ class GalleryDerivative_core extends GalleryChildEntity {
 
     /**
      * Expire the cache.
-     * 
+     *
      * @access public
      * @return object GalleryStatus a status code
      */
@@ -507,7 +510,7 @@ class GalleryDerivative_core extends GalleryChildEntity {
 
 	return GalleryStatus::success();
     }
-    
+
     /**
      * Get the full path to the data file.
      *

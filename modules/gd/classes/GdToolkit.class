@@ -132,7 +132,8 @@ class GdToolkit extends GalleryToolkit {
     /**
      * @see GalleryToolkit::performOperation()
      */
-    function performOperation($mimeType, $operationName, $sourceFilename, $destFilename, $parameters) {
+    function performOperation($mimeType, $operationName, $sourceFilename,
+			      $destFilename, $parameters, $context=array()) {
 	$gd =& $this->_getGdFunctionality();
 
 	global $gallery;
@@ -145,7 +146,7 @@ class GdToolkit extends GalleryToolkit {
 	$outputMimeType = $mimeType;
 	list($ret, $sourceRes) = $this->_getImageResource($mimeType, $sourceFilename);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 	
 	switch($operationName) {
@@ -154,12 +155,12 @@ class GdToolkit extends GalleryToolkit {
 	    /* $parameters[0]: target size */
 	    list ($ret, $width, $height) = $this->_getImageDimensionsForResource($sourceRes);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    if ($operationName == 'thumbnail') {
 		/* Don't enlarge images for a thumbnail */
 		if ($width <= $parameters[0] && $height <= $parameters[0]) {
-		    return array(GalleryStatus::success(), $mimeType);
+		    return array(GalleryStatus::success(), $mimeType, $context);
 		}
 	    }
 	    /* Calculate the scaled width/height */
@@ -177,7 +178,7 @@ class GdToolkit extends GalleryToolkit {
 								$destWidth,
 								$destHeight);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    break;
 	    
@@ -190,7 +191,7 @@ class GdToolkit extends GalleryToolkit {
 						    $parameters[0],
 						    $parameters[1]);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    break;
 
@@ -202,7 +203,7 @@ class GdToolkit extends GalleryToolkit {
 	    $degrees = 0 - $parameters[0];
 	    list ($ret, $destRes) = $gd->imageRotate($sourceRes, $degrees, 0);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    break;
 
@@ -217,7 +218,7 @@ class GdToolkit extends GalleryToolkit {
 	    /* source dimensions are required to convert from percentages to pixels  */
 	    list ($ret, $width, $height) = $this->_getImageDimensionsForResource($sourceRes);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    $pixelX = round($parameters[0] / 100 * $width);
 	    $pixelY = round($parameters[1] / 100 * $height);
@@ -226,13 +227,13 @@ class GdToolkit extends GalleryToolkit {
 
 	    list($ret, $destRes) = $this->_getTrueColorImageRes($pixelWidth, $pixelHeight);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    $ret = $gd->imageCopy($destRes, $sourceRes,
 				  0, 0,				          // dst x,y
 				  $pixelX, $pixelY, $pixelWidth, $pixelHeight);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    break;
 
@@ -262,7 +263,7 @@ class GdToolkit extends GalleryToolkit {
 
 	    list ($ret, $sourceWidth, $sourceHeight) = $this->_getImageDimensionsForResource($sourceRes);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 
 	    switch ($compositeAlignmentType) {
@@ -317,8 +318,8 @@ class GdToolkit extends GalleryToolkit {
 
 	    default:
 		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
-						  "Unknown composite alignment type: $compositeAlignmentType"),
-			     null);
+				    "Unknown composite alignment type: $compositeAlignmentType"),
+			     null, null);
 	    }
 
 	    // Convert from percentages to pixels
@@ -335,7 +336,7 @@ class GdToolkit extends GalleryToolkit {
 	    list($ret, $overlayRes) = $this->_getImageResource($compositeOverlayMimeType,
 							       $dataDir . $compositeOverlayPath);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    
 	    $destRes = $sourceRes;
@@ -346,19 +347,20 @@ class GdToolkit extends GalleryToolkit {
 				       99
 				      );
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    break;
 	    
 	default:
-	    return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
+	    return array(GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
+					      "$operationName $mimeType"), null, null);
 	}
 
 	$ret = $this->_saveImageResourceToFile($destRes, $destFilename, $outputMimeType);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
-	return array(GalleryStatus::success(), $outputMimeType);
+	return array(GalleryStatus::success(), $outputMimeType, $context);
     }
 
     /**

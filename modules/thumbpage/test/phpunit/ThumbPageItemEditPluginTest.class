@@ -133,10 +133,5 @@ class ThumbPageTestToolkit extends GalleryToolkit {
 	}
 	return array(GalleryStatus::success(), array(5));
     }
-    function performOperation($mimeType, $operationName,
-			      $sourceFilename, $destFilename, $parameters) {
-	return array(GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
-					  "$operationName $sourceFilename"), null);
-    }
 }
 ?>

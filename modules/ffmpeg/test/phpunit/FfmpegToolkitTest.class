@@ -385,7 +385,7 @@ class FfmpegToolkitTest extends GalleryTestCase {
     function testPerformOperationWithOffset() {
 	global $gallery;
 
-	list ($ret, $results) =
+	list ($ret, $results, $context) =
 	    $this->_toolkit->performOperation('video/avi',
 					      'select-offset',
 					      'testPerformOperation1.avi',
@@ -395,19 +395,20 @@ class FfmpegToolkitTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals($results, 'video/avi', 'mime after offset');
-	$this->assertEquals('1.2', $gallery->_ffmpeg_offset, 'offset');
+	$this->assertEquals(array('ffmpeg.offset' => '1.2'), $context, 'offset');
 
-	list ($ret, $results) =
+	list ($ret, $results, $context) =
 	    $this->_toolkit->performOperation('video/avi',
 					      'convert-to-image/jpeg',
 					      'testPerformOperation2.avi',
 					      'testPerformOperation3.jpg',
-					      array());
+					      array(),
+					      $context);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals($results, 'image/jpeg', 'mime after convert');
-	$this->assert(!isset($gallery->_ffmpeg_offset), 'no offset');
+	$this->assertEquals(array(), $context, 'no offset');
     }
 }
 
@@ -752,6 +753,9 @@ class FfmpegToolkitTestPlatform {
     function tempnam($dir, $prefix) {
 	return 'TEMPFILE';
     }
-}
 
+    function realpath($path) {
+	return $path;
+    }
+}
 ?>

@@ -73,7 +73,7 @@ class ItemEditPhotoThumbnailPluginTest extends ItemEditPluginTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	$ret = GalleryCoreApi::registerToolkitOperation('ItemEditPhotoThumbnailPluginTestToolkit',
 							array('test/file'),
 							'resize',
@@ -128,13 +128,13 @@ class ItemEditPhotoThumbnailPluginTest extends ItemEditPluginTestCase {
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	/* Unregister */
 	$ret = GalleryCoreApi::unregisterToolkit('ItemEditPhotoThumbnailPluginTestToolkit');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	parent::tearDown();
     }
 
@@ -200,15 +200,15 @@ class ItemEditPhotoThumbnailTestItem extends GalleryUnknownItem {
     function setWidth($width) {
 	$this->_width = $width;
     }
-    
+
     function getWidth() {
 	return $this->_width;
     }
-    
+
     function setHeight($height) {
 	$this->_height = $height;
     }
-    
+
     function getHeight() {
 	return $this->_height;
     }
@@ -231,9 +231,8 @@ class ItemEditPhotoThumbnailPluginTestToolkit extends GalleryToolkit {
      * Dummy operation
      */
     function performOperation($mimeType, $operationName, $sourceFilename,
-			      $destFilename, $parameters) {
+			      $destFilename, $parameters, $context=array()) {
 	global $gallery;
-
 
 	$platform = $gallery->getPlatform();
 	if ($sourceFilename != $destFilename) {
@@ -243,8 +242,8 @@ class ItemEditPhotoThumbnailPluginTestToolkit extends GalleryToolkit {
 	$fd = $platform->fopen($destFilename, 'a');
 	fwrite($fd, $operationName);
 	$platform->fclose($fd);
-	
-	return array(GalleryStatus::success(), $mimeType);
+
+	return array(GalleryStatus::success(), $mimeType, $context);
     }
 }
 ?>

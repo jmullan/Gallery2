@@ -293,7 +293,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 						  'BOGUS',
 						  array('BOGUS'));
 
-	    $this->assert($ret->getErrorCode() & ERROR_UNIMPLEMENTED);
+	    $this->assert($ret->getErrorCode() & ERROR_UNSUPPORTED_OPERATION, 'bad op');
 	}
     }
 

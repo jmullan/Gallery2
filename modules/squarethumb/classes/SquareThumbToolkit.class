@@ -49,26 +49,28 @@ class SquareThumbToolkit extends GalleryToolkit {
      * @see GalleryToolkit::performOperation()
      */
     function performOperation($mimeType, $operationName, $sourceFilename,
-			      $destFilename, $parameters) {
+			      $destFilename, $parameters, $context=array()) {
 	global $gallery;
 	$platform = $gallery->getPlatform();
 	$tmpDir = $gallery->getConfig('data.gallery.tmp');
 
 	if ($operationName != 'thumbnail') {
-	    return array(GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__), null);
+	    return array(GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
+					      "$operationName $mimeType"), null, null);
 	}
 
 	/* Get dimensions */
 	list ($ret, $toolkit) = GalleryCoreApi::getToolkitByProperty($mimeType, 'dimensions');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 	if (!isset($toolkit)) {
-	    return array(GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__), null);
+	    return array(GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
+					      "dimensions $mimeType"), null, null);
 	}
 	list ($ret, $dimensions) = $toolkit->getProperty($mimeType, 'dimensions', $sourceFilename);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 	list ($width, $height) = $dimensions;
 
@@ -76,15 +78,16 @@ class SquareThumbToolkit extends GalleryToolkit {
 	    /* Crop to square */
 	    list ($ret, $toolkit) = GalleryCoreApi::getToolkitByOperation($mimeType, 'crop');
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    if (!isset($toolkit)) {
-		return array(GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__), null);
+		return array(GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
+						  "crop $mimeType"), null, null);
 	    }
 	    if ($width > $parameters[0] && $height > $parameters[0]) {
 		$cropFilename = $tmpFilename = $platform->tempnam($tmpDir, 'sqth_');
 		if (empty($tmpFilename)) {
-		    return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);
+		    return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__), null, null);
 		}
 	    } else {
 		$cropFilename = $destFilename;
@@ -98,7 +101,7 @@ class SquareThumbToolkit extends GalleryToolkit {
 		if (isset($tmpFilename)) {
 		    @$platform->unlink($tmpFilename);
 		}
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    $sourceFilename = $cropFilename;
 	}
@@ -111,13 +114,14 @@ class SquareThumbToolkit extends GalleryToolkit {
 		if (isset($tmpFilename)) {
 		    @$platform->unlink($tmpFilename);
 		}
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    if (!isset($toolkit)) {
 		if (isset($tmpFilename)) {
 		    @$platform->unlink($tmpFilename);
 		}
-		return array(GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__), null);
+		return array(GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
+						  "scale $mimeType"), null, null);
 	    }
 	    list ($ret, $mimeType) = $toolkit->performOperation(
 				     $mimeType, 'scale', $sourceFilename, $destFilename, $parameters);
@@ -125,14 +129,14 @@ class SquareThumbToolkit extends GalleryToolkit {
 		if (isset($tmpFilename)) {
 		    @$platform->unlink($tmpFilename);
 		}
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	}
 	if (isset($tmpFilename)) {
 	    @$platform->unlink($tmpFilename);
 	}
 
-	return array(GalleryStatus::success(), $mimeType);
+	return array(GalleryStatus::success(), $mimeType, $context);
     }
 
     /**

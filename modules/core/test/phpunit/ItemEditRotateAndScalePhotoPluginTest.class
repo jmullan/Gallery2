@@ -76,7 +76,7 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	$ret = GalleryCoreApi::registerToolkitOperation('ItemEditRotateAndScalePhotoPluginTestToolkit',
 							array('test/file'),
 							'resize',
@@ -129,13 +129,13 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	/* Unregister */
 	$ret = GalleryCoreApi::unregisterToolkit('ItemEditRotateAndScalePhotoPluginTestToolkit');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	parent::tearDown();
     }
 
@@ -153,7 +153,7 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	/* Delete the preferred */
 	$ret = GalleryCoreApi::deleteEntityById($this->_derivative[0]->getId());
 	if ($ret->isError()) {
@@ -200,13 +200,13 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 	GalleryUtilities::putRequestVariable('form[action][scale]', 1);
 	GalleryUtilities::putRequestVariable('form[scale][size]', 270);
 	GalleryUtilities::putRequestVariable('form[serialNumber]', $this->_item->getSerialNumber());
-	
+
 	/* Reparent the thumbnail cause we're going to want to check it later */
 	$ret = GalleryCoreApi::remapSourceIds($this->_derivative[0]->getId(), $this->_item->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	/* Delete the preferred */
 	$ret = GalleryCoreApi::deleteEntityById($this->_derivative[0]->getId());
 	if ($ret->isError()) {
@@ -283,7 +283,7 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 	$this->assertEquals(array(array('form[error][scale][size][missing]'), null),
 			    $results);
     }
-    
+
     function testScaleInvalid() {
 	global $gallery;
 
@@ -405,7 +405,7 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals('crop|10,60,40,30;scale|200', $this->_derivative[1]->getDerivativeOperations());
-	
+
     }
 
     function testRevertToOriginalWithPostfilter() {
@@ -481,9 +481,8 @@ class ItemEditRotateAndScalePhotoPluginTestToolkit extends GalleryToolkit {
      * Dummy operation
      */
     function performOperation($mimeType, $operationName, $sourceFilename,
-			      $destFilename, $parameters) {
+			      $destFilename, $parameters, $context=array()) {
 	global $gallery;
-
 
 	$platform = $gallery->getPlatform();
 	if ($sourceFilename != $destFilename) {
@@ -493,8 +492,8 @@ class ItemEditRotateAndScalePhotoPluginTestToolkit extends GalleryToolkit {
 	$fd = $platform->fopen($destFilename, 'a');
 	fwrite($fd, $operationName);
 	$platform->fclose($fd);
-	
-	return array(GalleryStatus::success(), $mimeType);
+
+	return array(GalleryStatus::success(), $mimeType, $context);
     }
 
     /**

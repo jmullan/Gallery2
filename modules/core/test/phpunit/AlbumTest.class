@@ -621,12 +621,11 @@ class AlbumTestToolkit extends GalleryToolkit {
      * Dummy operation
      */
     function performOperation($mimeType, $operationName, $sourceFilename,
-			      $destFilename, $parameters) {
+			      $destFilename, $parameters, $context=array()) {
 	global $gallery;
 	$platform = $gallery->getPlatform();
 	$platform->copy($sourceFilename, $destFilename);
-	return array(GalleryStatus::success(), $mimeType);
+	return array(GalleryStatus::success(), $mimeType, $context);
     }
 }
-
 ?>
