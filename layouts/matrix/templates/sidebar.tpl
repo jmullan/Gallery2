@@ -22,6 +22,11 @@
     </ul>
   </div>
 
+  {* Search form, if module's activated *}
+  {if $layout.moduleSystemContentFiles.search}
+	{include file="gallery:modules/search/templates/SearchSystemContent.tpl"} 
+  {/if}
+
   {* Album actions, if there are any *}
   {if (isset($layout.moduleItemLinks[$layout.item.id]))}
   <div class="gbMenu">
@@ -66,7 +71,7 @@
 
   {* Extra modules system content *}
   {foreach from=$layout.moduleSystemContentFiles key=moduleId item=moduleFile}
-  {if ($moduleId != 'core')}
+  {if ($moduleId != 'core' && $moduleId != 'search')}
   {include file="gallery:$moduleFile" l10Domain="modules_$moduleId"}
   {/if}
   {/foreach}
