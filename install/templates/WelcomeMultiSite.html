@@ -8,17 +8,56 @@
 							    : _(' reconfigure '))
 		. $templateData['galleryId'] ?>
     </p>
+    <script type="text/javascript">
+      <!--
+      function toggle(objId, togId) {
+        var o = document.getElementById(objId), t = document.getElementById(togId);
+        if (o.style.display == 'none') {
+          o.style.display = 'block';
+          t.innerHTML = '-';
+        } else {
+          o.style.display = 'none';
+          t.innerHTML = '+';
+        }
+      }  
+      //-->
+    </script>
     <p>
-      <?php printf(_('Below is a <a href="%s">sample</a> .htaccess for Apache to point <tt>/mygallery</tt> to a <tt>gallery2</tt> directory where the Gallery code resides.'), 'index.php?step=' . $stepNumber . '&downloadHtaccess=1') ?>
-      <div class="example"><pre>RedirectMatch permanent ^/mygallery$ /mygallery/main.php
+      <?php print _('There are multiple methods to direct different URLs to the same Gallery code:') ?>
+    </p>
+    <ul class="sectionList"><li>
+      <?php print _('If you have a shell account on a unix server create a symbolic link.') ?>
+      &nbsp;
+      <span id="symlink-toggle" class="showHideToggle"
+       onclick="toggle('symlink-info', 'symlink-toggle')"> + </span>
+      <div id="symlink-info" style="display:none;padding:0.5em">
+        <div class="example" style="margin:0.5em">
+<pre>cd /location/for/new/gallery
+ln -s /path/to/gallery2 newgallery
+ls newgallery</pre>
+        </div>
+        <?php print _('The last line is to verify the link path is correct. It should list the files in the gallery2 directory including <tt>main.php</tt>.') ?>
+      </div>
+    </li><li>
+      <?php print _('Otherwise use an Apache <tt>.htaccess</tt> file.') ?>
+      &nbsp;
+      <span id="htaccess-toggle" class="showHideToggle"
+       onclick="toggle('htaccess-info', 'htaccess-toggle')"> + </span>
+      <div id="htaccess-info" style="display:none;padding:0.5em">
+        <?php printf(_('Below is a <a href="%s">sample</a> .htaccess to point <tt>/path/photos</tt> to a <tt>gallery2</tt> directory where the Gallery code resides.'), 'index.php?step=' . $stepNumber . '&downloadHtaccess=1') ?>
+        <div class="example" style="margin:0.5em">
+<pre>RedirectMatch permanent ^/<b>path/photos</b>$ /<b>path/photos</b>/main.php
 &lt;IfModule mod_rewrite.c&gt;
 RewriteEngine On
-RewriteBase /mygallery
-RewriteRule ^(.*)$ /gallery2/$1
-&lt;/IfModule&gt;</pre></div>
-    </p>
+RewriteBase /<b>path/photos</b>
+RewriteRule ^(.*)$ /<b>path/gallery2</b>/$1
+&lt;/IfModule&gt;</pre>
+        </div>
+        <?php print _('Create the <tt>photos</tt> directory in the appropriate location and place the .htaccess file there. Modify the items in <b>bold</b> above with the correct paths. Note these are URL paths and not filesystem paths.') ?>
+      </div>
+    </li></ul>
     <p>
-      <?php print _('To configure a new Gallery site first put the .htaccess file in place and verify it works by browsing to main.php.  This will bring up the previously configured Gallery site.  Then rerun this installer <i>using the new URL</i>.  After configuration the original and new URLs will display separate Gallery sites.') ?>
+      <?php print _('To configure a new Gallery site first setup the new URL as described above and verify it works by browsing to <tt>main.php</tt>. This will bring up the previously configured Gallery site. Then rerun this installer <i>using the new URL</i>. After configuration the original and new URLs will display separate Gallery sites.') ?>
     </p>
 
     <div class="go">
