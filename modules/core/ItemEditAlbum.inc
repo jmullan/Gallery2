@@ -327,12 +327,12 @@ class ItemEditAlbumView extends GalleryView {
 	/* Make sure we have permission do edit this item */
 	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'core.edit');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	list ($ret, $item) = $gallery->loadEntitiesById($itemId);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	if ($form['formName'] != 'ItemEditAlbum') {
@@ -346,7 +346,7 @@ class ItemEditAlbumView extends GalleryView {
 	    list ($ret, $preferences) =
 		GalleryDerivativePreferencesMap::fetchPreferencesForItem($item->getId());
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    foreach ($preferences as $preference) {
@@ -396,7 +396,7 @@ class ItemEditAlbumView extends GalleryView {
 	
 	list ($ret, $module) = $gallery->loadModule('core');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$platform = $gallery->getPlatform();
@@ -419,13 +419,13 @@ class ItemEditAlbumView extends GalleryView {
 	/* Set up our layout selection list */
 	list ($ret, $layoutStatusList) = GalleryPluginMap::getPluginStatus('layout');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$layoutList = array();
 	foreach ($layoutStatusList as $layoutId => $layoutStatus) {
 	    list ($ret, $layout) = GalleryPluginMap::loadPlugin('layout', $layoutId);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    $layoutList[$layoutId] = $layout->getName();
 	}
@@ -443,7 +443,8 @@ class ItemEditAlbumView extends GalleryView {
 	
 	$template->setVariable('ItemEditAlbum', $ItemEditAlbum);
 	$template->setVariable('controller', 'core:ItemEditAlbum');
-	return array(GalleryStatus::success(), '', 'modules/core/templates/ItemEditAlbum.tpl');
+	return array(GalleryStatus::success(),
+		     array('body' => 'modules/core/templates/ItemEditAlbum.tpl'));
     }
 }
 ?>

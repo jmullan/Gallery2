@@ -178,8 +178,8 @@ class SearchShowAllView extends GalleryView {
 	$template->setVariable('SearchShowAll', $SearchShowAll);
 	
 	return array(GalleryStatus::success(),
-		     'modules/search/templates/SearchHead.tpl',
-		     'modules/search/templates/SearchShowAll.tpl');
+		     array('head' => 'modules/search/templates/SearchHead.tpl',
+			   'body' => 'modules/search/templates/SearchShowAll.tpl'));
     }
 }
 ?>

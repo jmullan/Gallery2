@@ -137,13 +137,13 @@ class ItemDeleteView extends GalleryView {
 	
 	list($ret, $item) = $gallery->loadEntitiesById($itemId);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	
 	list($ret, $peerIds) =
 		GalleryItemHelper::fetchChildItemIdsWithPermission($itemId, 'core.delete');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	
 	$peers = array();
@@ -152,7 +152,7 @@ class ItemDeleteView extends GalleryView {
 	    /* load peers */
 	    list($ret, $peerItems) = $gallery->loadEntitiesById($peerIds);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    
 	    /* build peers table */
@@ -174,7 +174,8 @@ class ItemDeleteView extends GalleryView {
 	$template->setVariable('controller', 'core:ItemDelete');
 	$template->setVariable('ItemDelete', $ItemDelete);
 	
-	return array(GalleryStatus::success(), '', 'modules/core/templates/ItemDelete.tpl');
+	return array(GalleryStatus::success(),
+		     array('body' => 'modules/core/templates/ItemDelete.tpl'));
 	
     }
 }

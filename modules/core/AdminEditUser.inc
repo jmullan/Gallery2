@@ -191,13 +191,13 @@ class AdminEditUserView extends GalleryView {
 	
 	$ret = GalleryUserHelper::assertSiteAdministrator();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	    
 	$userId = GalleryUtilities::getRequestVariables('userId');
 	list ($ret, $user) = $gallery->loadEntitiesById($userId);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* Load the form with user data the first time around. */
@@ -213,7 +213,7 @@ class AdminEditUserView extends GalleryView {
 	list ($ret, $anonymousUserId) =
 	    $gallery->getModuleParameter('core', 'id.anonymousUser');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$show['email'] = ($userId != $anonymousUserId);
 	$show['language'] = ($userId != $anonymousUserId);
@@ -223,7 +223,7 @@ class AdminEditUserView extends GalleryView {
 	    /* Set up our language selection list */
 	    list ($ret, $module) = $gallery->loadModule('core');
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    
 	    $languageList = array();
@@ -246,7 +246,8 @@ class AdminEditUserView extends GalleryView {
 
 	$template->setVariable('AdminEditUser', $AdminEditUser);
 	$template->setVariable('controller', 'core:AdminEditUser');
-	return array(GalleryStatus::success(), '', 'modules/core/templates/AdminEditUser.tpl');
+	return array(GalleryStatus::success(),
+		     array('body' => 'modules/core/templates/AdminEditUser.tpl'));
     }
 }
 ?>

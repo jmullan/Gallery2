@@ -256,11 +256,39 @@ function GalleryMain($startTime) {
 		$showGlobal = false;
 	    }
 	} else {
-	    list($ret, $main['viewHeadFile'], $main['viewBodyFile']) = $view->doLoadTemplate($template);
+	    list ($ret, $results) = $view->doLoadTemplate($template);
 	    if ($ret->isError()) {
 		$main['error'] = $ret->getAsHtml();
+	    } else {
+		if (isset($results['redirect'])) {
+		    $redirectUrl = $urlGenerator->generateUrl($results['redirect']);
+		    if ($gallery->getDebug() == false) {
+			/*
+			 * The URL generator makes HTML 4.01 compliant URLs using
+			 * &amp; but we don't want those in our Location: header.
+			 */
+			$redirectUrl = str_replace('&amp;', '&', $redirectUrl);
+			
+			header("Location: $redirectUrl");
+			return GalleryStatus::success();
+		    } else {
+			$main['redirectUrl'] = $redirectUrl;
+		    }
+		} else {
+		    if (isset($results['head'])) {
+			$main['viewHeadFile'] = $results['head'];
+		    } else {
+			$main['viewHeadFile'] = '';
+		    }
+		    
+		    if (isset($results['body'])) {
+			$main['viewBodyFile'] = $results['body'];
+		    } else {
+			$main['viewBodyFile'] = '';
+		    }
+		    $main['viewL10Domain'] = $view->getL10Domain();
+		}
 	    }
-	    $main['viewL10Domain'] = $view->getL10Domain();
 	}
     } else {
 	/* Set the default theme for the redirect page */

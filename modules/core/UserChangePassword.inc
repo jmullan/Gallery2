@@ -153,7 +153,8 @@ class UserChangePasswordView extends GalleryView {
 
 	/* Render the HTML body */
 	$template->setVariable('controller', 'core:UserChangePassword');
-	return array(GalleryStatus::success(), '', 'modules/core/templates/UserChangePassword.tpl');
+	return array(GalleryStatus::success(),
+		     array('body' => 'modules/core/templates/UserChangePassword.tpl'));
     }
 }
 ?>

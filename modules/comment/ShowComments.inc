@@ -99,7 +99,8 @@ class ShowCommentsView extends GalleryView {
 	 * one so just leave it blank.
 	 */
 	$template->setVariable('controller', '');
-	return array(GalleryStatus::success(), '', 'modules/comment/templates/ShowComments.tpl');
+	return array(GalleryStatus::success(),
+		     array('body' => 'modules/comment/templates/ShowComments.tpl'));
     }
 }
 ?>

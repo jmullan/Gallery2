@@ -146,7 +146,8 @@ class DeleteCommentView extends GalleryView {
 	$template->setVariable('DeleteComment', $DeleteComment);
 	$template->setVariable('controller', 'comment:DeleteComment');
 	
-	return array(GalleryStatus::success(), '', 'modules/comment/templates/DeleteComment.tpl');
+	return array(GalleryStatus::success(),
+		     array('body' => 'modules/comment/templates/DeleteComment.tpl'));
     }
 }
 ?>

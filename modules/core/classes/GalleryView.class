@@ -202,13 +202,13 @@ class GalleryView {
 	}
 	$template->setVariable('status', $status);
 
-	list ($ret, $headFile, $bodyFile) = $this->loadTemplate($template, $form);
+	list ($ret, $results) = $this->loadTemplate($template, $form);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 	GalleryProfiler::stop('modules.core.classes.GalleryView::doLoadTemplate');
 
-	return array(GalleryStatus::success(), $headFile, $bodyFile);
+	return array(GalleryStatus::success(), $results);
     }
 
     /**

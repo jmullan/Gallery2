@@ -100,8 +100,8 @@ class ShowTreeView extends GalleryView {
 	$template->setVariable('ShowTree', $ShowTree);
 
 	return array(GalleryStatus::success(),
-		     'modules/debug/templates/DebugHead.tpl',
-		     'modules/debug/templates/ShowTree.tpl');
+		     array('head' => 'modules/debug/templates/DebugHead.tpl',
+			   'body' => 'modules/debug/templates/ShowTree.tpl'));
     }
 }
 ?>

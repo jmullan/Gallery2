@@ -199,7 +199,7 @@ class ItemMoveController extends GalleryController {
 class ItemMoveView extends GalleryView {
 
     /**
-     * 
+     * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
 	global $gallery;
@@ -218,14 +218,14 @@ class ItemMoveView extends GalleryView {
 
         list ($ret, $item) = $gallery->loadEntitiesById($itemId);
         if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null, null);
+            return array($ret->wrap(__FILE__, __LINE__), null);
         }
 
 	/* Get all peers that we can delete */
         list ($ret, $peerIds) =
             GalleryItemHelper::fetchChildItemIdsWithPermission($itemId, 'core.delete');
         if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null, null);
+            return array($ret->wrap(__FILE__, __LINE__), null);
         }
 
 	$albumIds = array();
@@ -236,7 +236,7 @@ class ItemMoveView extends GalleryView {
 	    /* Load all the peers */
 	    list ($ret, $peerItems) = $gallery->loadEntitiesById($peerIds);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    /* Build our peers table */
@@ -254,21 +254,21 @@ class ItemMoveView extends GalleryView {
 	    /* Get all possible destinations (where user has write permission) */
 	    list ($ret, $rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    /* Get ids of all all albums where we can add new data items */
 	    list ($ret, $albumIds['addDataItem']) =
 		GalleryItemHelper::fetchAllItemIds('GalleryAlbumItem', 'core.addDataItem');
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    /* Get ids of all all albums where we can add new album items */
 	    list ($ret, $albumIds['addAlbumItem']) =
 		GalleryItemHelper::fetchAllItemIds('GalleryAlbumItem', 'core.addAlbumItem');
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    /* Merge them together to get the master list of ids */
@@ -278,7 +278,7 @@ class ItemMoveView extends GalleryView {
 	    /* Load all the album entities */
 	    list ($ret, $albums) = $gallery->loadEntitiesById($albumIds['allIds']);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    $albumTree = $this->_createAlbumTree($albums);
@@ -293,7 +293,8 @@ class ItemMoveView extends GalleryView {
         $template->setVariable('ItemMove', $ItemMove);
         $template->setVariable('controller', 'core:ItemMove');
 
-        return array(GalleryStatus::success(), '', 'modules/core/templates/ItemMove.tpl');
+        return array(GalleryStatus::success(),
+		     array('body' => 'modules/core/templates/ItemMove.tpl'));
     }
 
     /**

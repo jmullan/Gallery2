@@ -92,8 +92,8 @@ class FileViewerView extends GalleryView {
 	$template->setVariable('FileViewer', $FileViewer);
 
 	return array(GalleryStatus::success(),
-		     'modules/debug/templates/FileViewerHead.tpl',
-		     'modules/debug/templates/' . $bodyFile);
+		     array('head' => 'modules/debug/templates/FileViewerHead.tpl',
+			   'body' => 'modules/debug/templates/' . $bodyFile);
     }
 }
 ?>

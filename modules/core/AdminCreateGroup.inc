@@ -126,7 +126,7 @@ class AdminCreateGroupView extends GalleryView {
 	
 	$ret = GalleryUserHelper::assertSiteAdministrator();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	    
 
@@ -140,7 +140,8 @@ class AdminCreateGroupView extends GalleryView {
 	$template->setVariable('AdminCreateGroup', $AdminCreateGroup);
 	$template->setVariable('controller', 'core:AdminCreateGroup');
 
-	return array(GalleryStatus::success(), '', 'modules/core/templates/AdminCreateGroup.tpl');
+	return array(GalleryStatus::success(),
+		     array('body' => 'modules/core/templates/AdminCreateGroup.tpl'));
     }
 }
 ?>

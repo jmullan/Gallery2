@@ -45,13 +45,13 @@ class UserAdminView extends GalleryView {
 	$userId = $gallery->getActiveUserId();
 	list ($ret, $user) = $gallery->getActiveUser();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	    
 	/* Load the module list */
 	list ($ret, $moduleStatus) = GalleryPluginMap::getPluginStatus('module');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* Get a list of all the admin views for each module */
@@ -64,12 +64,12 @@ class UserAdminView extends GalleryView {
 	    /* Get the selected module's admin view */
 	    list($ret, $module) = $gallery->loadModule($moduleId);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    list ($ret, $moduleViews) = $module->getUserAdminViews($user);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    $subViewChoices = array_merge($subViewChoices, $moduleViews);
@@ -77,7 +77,7 @@ class UserAdminView extends GalleryView {
 
 	list ($ret, $anonymousUserId) = $gallery->getModuleParameter('core', 'id.anonymousUser');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$show['userInPathbar'] = ($userId != $anonymousUserId);
 
@@ -96,21 +96,22 @@ class UserAdminView extends GalleryView {
 	if (!empty($subViewName)) {
 	    list ($ret, $subView) = GalleryView::loadView($subViewName);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    
-	    list ($ret, $UserAdmin['viewHeadFile'], $UserAdmin['viewBodyFile']) = 
-		$subView->loadTemplate($template, $form);
+	    list ($ret, $results) = $subView->loadTemplate($template, $form);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
+
+	    $UserAdmin['viewBodyFile'] = $results['body'];
 	    $UserAdmin['viewL10Domain'] = $subView->getL10Domain();
 	}
 
 	$template->setVariable('UserAdmin', $UserAdmin);
 	return array(GalleryStatus::success(),
-		     'modules/core/templates/UserAdminHead.tpl',
-		     'modules/core/templates/UserAdmin.tpl');
+		     array('head' => 'modules/core/templates/UserAdminHead.tpl',
+			   'body' => 'modules/core/templates/UserAdmin.tpl'));
     }
 }
 ?>

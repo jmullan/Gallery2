@@ -144,7 +144,7 @@ class AdminCreateUserView extends GalleryView {
 	
 	$ret = GalleryUserHelper::assertSiteAdministrator();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	    
 	if ($form['formName'] != 'AdminCreateUser') {
@@ -159,7 +159,7 @@ class AdminCreateUserView extends GalleryView {
 	/* Set up our language selection list */
 	list ($ret, $module) = $gallery->loadModule('core');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$languageList = array();
 	$languageList[''] = $module->translate('<none>');
@@ -179,7 +179,8 @@ class AdminCreateUserView extends GalleryView {
 	$template->setVariable('AdminCreateUser', $AdminCreateUser);
 	$template->setVariable('controller', 'core:AdminCreateUser');
 
-	return array(GalleryStatus::success(), '', 'modules/core/templates/AdminCreateUser.tpl');
+	return array(GalleryStatus::success(),
+		     array('body' => 'modules/core/templates/AdminCreateUser.tpl'));
     }
 }
 ?>

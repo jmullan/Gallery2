@@ -167,7 +167,7 @@ class AdminCoreView extends GalleryView {
 	
 	$ret = GalleryUserHelper::assertSiteAdministrator();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	    
 	if ($form['formName'] != 'AdminCore') {
@@ -187,7 +187,7 @@ class AdminCoreView extends GalleryView {
 		list ($ret, $value) =
 		    $gallery->getModuleParameter('core', $key);
 		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
 		list ($outer, $inner) = split('\.', $key);
@@ -199,13 +199,13 @@ class AdminCoreView extends GalleryView {
 
 	list ($ret, $module) = $gallery->loadModule('core');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* Get the list of legal local server dirs */
 	list ($ret, $localServerDirs) = $gallery->getModuleParameter('core', 'uploadLocalServer.dirs');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$localServerDirList = split(',', $localServerDirs);
 	for ($i = 0; $i < sizeof($localServerDirList); $i++) {
@@ -234,7 +234,7 @@ class AdminCoreView extends GalleryView {
 	/* Set up our language selection list */
 	list ($ret, $module) = $gallery->loadModule('core');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$languageList = array();
 	$languageList[''] = $module->translate('&laquo; None &raquo;');
@@ -290,19 +290,19 @@ class AdminCoreView extends GalleryView {
 
 	list ($ret, $rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	list ($ret, $layoutStatusList) = GalleryPluginMap::getPluginStatus('layout');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$layoutList = array();
 	foreach (array_keys($layoutStatusList) as $layoutId) {
 	    list ($ret, $layout) = GalleryPluginMap::loadPlugin('layout', $layoutId);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    $layoutList[$layoutId] = $layout->getName();
@@ -324,7 +324,8 @@ class AdminCoreView extends GalleryView {
 	$template->setVariable('controller', 'core:AdminCore');
 	$template->setVariable('AdminCore', $AdminCore);
 
-	return array(GalleryStatus::success(), '', 'modules/core/templates/AdminCore.tpl');
+	return array(GalleryStatus::success(),
+		     array('body' => 'modules/core/templates/AdminCore.tpl'));
     }
 }
 ?>

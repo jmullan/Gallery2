@@ -114,7 +114,8 @@ class UserLoginView extends GalleryView {
 	}
 
 	$template->setVariable('controller', 'core:UserLogin');
-	return array(GalleryStatus::success(), '', 'modules/core/templates/UserLogin.tpl');
+	return array(GalleryStatus::success(),
+		     array('body' => 'modules/core/templates/UserLogin.tpl'));
     }
 }
 ?>

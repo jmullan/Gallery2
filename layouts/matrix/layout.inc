@@ -147,15 +147,43 @@ class MatrixLayout extends GalleryLayout {
     function _loadAlbumTemplate(&$template, $item, $properties) {
 	global $gallery;
 
-	/* Figure out what page we're on */
-	$page = GalleryUtilities::getRequestVariables('page');
-	if (empty($page)) {
-	    $page = 1;
-	}
-
 	$rows = $properties['rows'];
 	$columns = $properties['columns'];
 	$perPage = $rows * $columns;
+	
+	/* Figure out what page we're on */
+	$page = GalleryUtilities::getRequestVariables('page');
+	if (empty($page)) {
+	    /*
+	     * We don't have a page number.  If we have a highlight id, then figure out what
+	     * page that id is on and redirect to that page.
+	     */
+	    $highlightId = GalleryUtilities::getRequestVariables('highlightId');
+	    if (!empty($highlightId)) {
+		list ($ret, $childIds) = $item->fetchChildIds();
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		$page = 1;
+		for ($i = 0; $i < sizeof($childIds); $i++) {
+		    if ($childIds[$i] == $highlightId) {
+			/* Found it */
+			$page = ceil(($i+1) / $perPage);
+			break;
+		    }
+		}
+
+		/* Redirect to the new page */
+		$results['redirect'] = array('view' => 'core:ShowItem',
+					     'itemId' => $item->getId(),
+					     'page' => $page);
+		return array(GalleryStatus::success(), $results);
+	    } else {
+		$page = 1;
+	    }
+	}
+
 	$start = $perPage * ($page - 1);
 	$children = array();
 
@@ -416,7 +444,8 @@ class MatrixLayout extends GalleryLayout {
 	$layout['item'] = $item->getMemberData();
 
 	$template->setVariable('layout', $layout);
-	return array(GalleryStatus::success(), 'layouts/matrix/templates/albumBody.tpl');
+	return array(GalleryStatus::success(),
+		     array('body' => 'layouts/matrix/templates/albumBody.tpl'));
     }
 
 
@@ -630,7 +659,8 @@ class MatrixLayout extends GalleryLayout {
 	$layout['navigator'] = $navigator;
 
 	$template->setVariable('layout', $layout);
-	return array(GalleryStatus::success(), 'layouts/matrix/templates/singleBody.tpl');
+	return array(GalleryStatus::success(),
+		     array('body' => 'layouts/matrix/templates/singleBody.tpl'));
     }
 
     function _loadPeerInfo($item) {

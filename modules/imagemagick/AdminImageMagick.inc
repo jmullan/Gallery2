@@ -197,7 +197,8 @@ class AdminImageMagickView extends GalleryView {
 	$template->setVariable('AdminImageMagick', $AdminImageMagick);
 	$template->setVariable('controller', 'imagemagick:AdminImageMagick');
 	
-	return array(GalleryStatus::success(), '', 'modules/imagemagick/templates/AdminImageMagick.tpl');
+	return array(GalleryStatus::success(),
+		     array('body' => 'modules/imagemagick/templates/AdminImageMagick.tpl'));
     }
 }
 ?>

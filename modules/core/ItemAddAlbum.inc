@@ -152,12 +152,12 @@ class ItemAddAlbumView extends GalleryView {
 	/* Make sure we have permission do edit this item */
 	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'core.addAlbumItem');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	list ($ret, $item) = $gallery->loadEntitiesById($itemId);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	if ($form['formName'] == 'ItemAddAlbum') {
@@ -180,7 +180,8 @@ class ItemAddAlbumView extends GalleryView {
 	$template->setVariable('ItemAddAlbum', $ItemAddAlbum);
 	$template->setVariable('controller', 'core:ItemAddAlbum');
 
-	return array(GalleryStatus::success(), '', 'modules/core/templates/ItemAddAlbum.tpl');
+	return array(GalleryStatus::success(),
+		     array('body' => 'modules/core/templates/ItemAddAlbum.tpl'));
     }
 }
 ?>

@@ -91,7 +91,7 @@ class ItemMakeHighlightController extends GalleryController {
 class ItemMakeHighlightView extends GalleryView {
 
     /**
-     * 
+     * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
 	global $gallery;
@@ -100,14 +100,14 @@ class ItemMakeHighlightView extends GalleryView {
 
 	list ($ret, $item) = $gallery->loadEntitiesById($itemId);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$parentId = $item->getParentId();
 
 	/* Make sure we have permission do edit the parent of this item */
 	$ret = GalleryUserHelper::assertHasItemPermission($parentId, 'core.edit');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	if ($form['formName'] != 'ItemMakeHighlight') {
@@ -120,7 +120,8 @@ class ItemMakeHighlightView extends GalleryView {
 	$template->setVariable('ItemMakeHighlight', $ItemMakeHighlight);
 	$template->setVariable('controller', 'core:ItemMakeHighlight');
 
-	return array(GalleryStatus::success(), '', 'modules/core/templates/ItemMakeHighlight.tpl');
+	return array(GalleryStatus::success(),
+		     array('body' => 'modules/core/templates/ItemMakeHighlight.tpl'));
     }
 }
 ?>

@@ -163,12 +163,12 @@ class ItemEditItemView extends GalleryView {
 	/* Make sure we have permission do edit this item */
 	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'core.edit');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	list ($ret, $item) = $gallery->loadEntitiesById($itemId);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	if ($form['formName'] != 'ItemEditItem') {
@@ -183,7 +183,7 @@ class ItemEditItemView extends GalleryView {
 
 	list ($ret, $rootAlbumId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$can = array();
@@ -198,7 +198,8 @@ class ItemEditItemView extends GalleryView {
 	$template->setVariable('ItemEditItem', $ItemEditItem);
 	$template->setVariable('controller', 'core:ItemEditItem');
 
-	return array(GalleryStatus::success(), '', 'modules/core/templates/ItemEditItem.tpl');
+	return array(GalleryStatus::success(),
+		     array('body' => 'modules/core/templates/ItemEditItem.tpl'));
     }
 }
 ?>

@@ -146,14 +146,14 @@ class AdminEditGroupUsersView extends GalleryView {
 
 	$ret = GalleryUserHelper::assertSiteAdministrator();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	    
 	/* Load the group */
 	$groupId = GalleryUtilities::getRequestVariables('groupId');
 	list ($ret, $group) = $gallery->loadEntitiesById($groupId);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* First time on this page, initialize form fields */
@@ -165,7 +165,7 @@ class AdminEditGroupUsersView extends GalleryView {
 	/* Initialize the user list */
 	list ($ret, $users) = GalleryUserGroupMap::fetchUsersForGroup($group->getId());
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$form['userCount'] = sizeof($users);
 	$form['list']['users'] = $users;
@@ -177,7 +177,8 @@ class AdminEditGroupUsersView extends GalleryView {
 	$template->setVariable('AdminEditGroupUsers', $AdminEditGroupUsers);
 	$template->setVariable('controller', 'core:AdminEditGroupUsers');
 
-	return array(GalleryStatus::success(), '', 'modules/core/templates/AdminEditGroupUsers.tpl');
+	return array(GalleryStatus::success(),
+		     array('body' => 'modules/core/templates/AdminEditGroupUsers.tpl'));
     }
 }
 ?>

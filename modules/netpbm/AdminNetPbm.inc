@@ -203,7 +203,8 @@ class AdminNetPbmView extends GalleryView {
 
 	$template->setVariable('AdminNetPbm', $AdminNetPbm);
 	$template->setVariable('controller', 'netpbm:AdminNetPbm');
-	return array(GalleryStatus::success(), '', 'modules/netpbm/templates/AdminNetPbm.tpl');
+	return array(GalleryStatus::success(),
+		     array('body' => 'modules/netpbm/templates/AdminNetPbm.tpl'));
     }
 }
 ?>

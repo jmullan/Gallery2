@@ -176,7 +176,8 @@ class AddCommentView extends GalleryView {
 	$template->setVariable('AddComment', $AddComment);
 	$template->setVariable('controller', 'comment:AddComment');
 	
-	return array(GalleryStatus::success(), '', 'modules/comment/templates/AddComment.tpl');
+	return array(GalleryStatus::success(),
+		     array('body' => 'modules/comment/templates/AddComment.tpl'));
     }
 }
 ?>

@@ -46,14 +46,14 @@ class ItemAdminView extends GalleryView {
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
 	list ($ret, $item) = $gallery->loadEntitiesById($itemId);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* Find its thumbnail */
 	list ($ret, $thumbnailTable) =
 		GalleryDerivativeHelper::fetchThumbnailsByItemIds(array($itemId));
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	if (empty($thumbnailTable)) {
 	    $thumbnailData = null;
@@ -67,7 +67,7 @@ class ItemAdminView extends GalleryView {
 	    list ($ret, $thumbnail) =
 		GalleryDerivativeHelper::rebuildCacheIfNotCurrent($thumbnail->getId());
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    $thumbnailData = $thumbnail->getMemberData();
@@ -76,7 +76,7 @@ class ItemAdminView extends GalleryView {
 	/* Load the module list */
 	list ($ret, $moduleStatus) = GalleryPluginMap::getPluginStatus('module');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* Get a list of all the admin views for each module */
@@ -89,12 +89,12 @@ class ItemAdminView extends GalleryView {
 	    /* Get the selected module's admin view */
 	    list($ret, $module) = $gallery->loadModule($moduleId);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    list ($ret, $moduleViews) = $module->getItemAdminViews($item);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    $subViewChoiceData = array_merge($subViewChoiceData, $moduleViews);
@@ -131,13 +131,7 @@ class ItemAdminView extends GalleryView {
 
 	list ($ret, $subView) = GalleryView::loadView($subViewName);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
-	}
-
-	list ($ret, $ItemAdmin['viewHeadFile'], $ItemAdmin['viewBodyFile']) =
-	    $subView->loadTemplate($template, $form);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* Get the type of the item */
@@ -150,10 +144,15 @@ class ItemAdminView extends GalleryView {
 	/* Load the item's parents */
 	list ($ret, $parents) = $item->fetchParents();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	/* Render our HTML body */
+	list ($ret, $results) = $subView->loadTemplate($template, $form);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$ItemAdmin['viewBodyFile'] = $results['body'];
 	$ItemAdmin['item'] = $item->getMemberData();
 	$ItemAdmin['parents'] = $parents;
 	if (empty($parents)) {
@@ -172,8 +171,8 @@ class ItemAdminView extends GalleryView {
 	}
 
 	return array(GalleryStatus::success(),
-		     'modules/core/templates/ItemAdminHead.tpl',
-		     'modules/core/templates/ItemAdmin.tpl');
+		     array('head' => 'modules/core/templates/ItemAdminHead.tpl',
+			   'body' => 'modules/core/templates/ItemAdmin.tpl'));
     }
 
     function sortByName($a, $b) {

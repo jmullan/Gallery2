@@ -162,13 +162,13 @@ class EditCommentView extends GalleryView {
 	/* Load our item */
 	list ($ret, $item) = $this->_getItem();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* Make sure we have permission to edit a comment */
 	$ret = GalleryUserHelper::assertHasItemPermission($item->getId(), 'comment.edit');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$commentId = GalleryUtilities::getRequestVariables('commentId');
@@ -176,19 +176,19 @@ class EditCommentView extends GalleryView {
 	/* Load the specific comment */
 	list ($ret, $comment) = $gallery->loadEntitiesById($commentId);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* Make sure the comment is associated with the item */
 	if ($comment->getParentId() != $item->getId()) {
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null, null);
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
 	}
 
 	/* Associate the commenter's info */
 	$commenterId = $comment->getCommenterId();
 	list ($ret, $commenter) = $gallery->loadEntitiesById($commenterId);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	if ($form['formName'] != 'EditComment') {
@@ -207,7 +207,8 @@ class EditCommentView extends GalleryView {
 	$template->setVariable('EditComment', $EditComment);
 	$template->setVariable('controller', 'comment:EditComment');
 	
-	return array(GalleryStatus::success(), '', 'modules/comment/templates/EditComment.tpl');
+	return array(GalleryStatus::success(),
+		     array('body' => 'modules/comment/templates/EditComment.tpl'));
     }
 }
 ?>

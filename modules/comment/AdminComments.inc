@@ -79,8 +79,7 @@ class AdminCommentsView extends GalleryView {
 	$form['formName'] = 'AdminComments';
 	$template->setVariable('controller', 'comment:AdminComments');
 	return array(GalleryStatus::success(),
-		     '',
-		     'modules/comment/templates/AdminComments.tpl');
+		     array('body' => 'modules/comment/templates/AdminComments.tpl'));
     }
 }
 ?>

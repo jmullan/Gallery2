@@ -47,8 +47,8 @@ class ShowItemView extends GalleryView {
 	}
 
 	/*
-	 * In the near term, we don't allow data items to have their own theme, even though there's room for
-	 * it.  Instead, draw them theme from the parent album.
+	 * In the near term, we don't allow data items to have their own theme, even though
+	 * there's room for it.  Instead, draw them theme from the parent album.
 	 */
 	$theme = null;
 	if (GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
@@ -74,41 +74,45 @@ class ShowItemView extends GalleryView {
 
 	list ($ret, $item) = $this->_getItem();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	/* Make sure we have permission do edit this item */
+	/* Make sure we have permission to view this item */
 	$ret = GalleryUserHelper::assertHasItemPermission($item->getId(), 'core.view');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* Update the view count */
 	$ret = GalleryItemAttributesMap::incrementViewCount($item->getId());
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	list ($ret, $layout) = GalleryItemHelper::fetchLayout($item);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$ShowItem = array();
-	$ShowItem['item'] = $item->getMemberData();
-	$ShowItem['layoutL10Domain'] = $layout->getL10Domain();
-	
 	/* Let the layout load the template and get its body file */
-	list ($ret, $ShowItem['layoutBodyFile']) = $layout->loadTemplate($template, $item);
+	list ($ret, $results) = $layout->loadTemplate($template, $item);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$template->setVariable('ShowItem', $ShowItem);
-
-	return array(GalleryStatus::success(),
-		     'modules/core/templates/ShowItemHead.tpl',
-		     'modules/core/templates/ShowItem.tpl');
+	if (isset($results['redirect'])) {
+	    return array(GalleryStatus::success(), $results);
+	} else {
+	    $ShowItem = array();
+	    $ShowItem['item'] = $item->getMemberData();
+	    $ShowItem['layoutL10Domain'] = $layout->getL10Domain();
+	    $ShowItem['layoutBodyFile'] = $results['body'];
+	    $template->setVariable('ShowItem', $ShowItem);
+	    
+	    return array(GalleryStatus::success(),
+			 array('head' => 'modules/core/templates/ShowItemHead.tpl',
+			       'body' => 'modules/core/templates/ShowItem.tpl'));
+	}
     }
 
     /**

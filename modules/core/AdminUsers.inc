@@ -150,7 +150,7 @@ class AdminUsersView extends GalleryView {
 	
 	$ret = GalleryUserHelper::assertSiteAdministrator();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	if ($form['formName'] != 'AdminUsers') {
@@ -170,7 +170,7 @@ class AdminUsersView extends GalleryView {
 	/* Fetch the user count every time we reload */
 	list ($ret, $totalUserCount) = GalleryUserHelper::fetchUserCount();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$form['list']['count'] = $totalUserCount;
@@ -180,7 +180,7 @@ class AdminUsersView extends GalleryView {
 	if (!empty($form['list']['filter'])) {
 	    list ($ret, $form['list']['count']) = GalleryUserHelper::fetchUserCount($form['list']['filter']);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
 
@@ -199,13 +199,13 @@ class AdminUsersView extends GalleryView {
 					      ($form['list']['page'] - 1) * $form['list']['pageSize'],
 					      $form['list']['filter']);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	list ($ret, $anonymousUserId) =
 	    $gallery->getModuleParameter('core', 'id.anonymousUser');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$myUserId = $gallery->getActiveUserId();
@@ -227,7 +227,8 @@ class AdminUsersView extends GalleryView {
 	$template->setVariable('AdminUsers', $AdminUsers);
 	$template->setVariable('controller', 'core:AdminUsers');
 
-	return array(GalleryStatus::success(), '', 'modules/core/templates/AdminUsers.tpl');
+	return array(GalleryStatus::success(),
+		     array('body' => 'modules/core/templates/AdminUsers.tpl'));
     }
 }
 ?>

@@ -179,12 +179,12 @@ class AdminLayoutsView extends GalleryView {
 	
 	$ret = GalleryUserHelper::assertSiteAdministrator();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
         list ($ret, $coreModule) = $gallery->loadModule('core');
         if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null, null);
+            return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	list ($layoutId, $mode) = GalleryUtilities::getRequestVariables('layoutId', 'mode');
@@ -195,7 +195,7 @@ class AdminLayoutsView extends GalleryView {
 	/* Load the module list */
 	list ($ret, $layouts) = GalleryPluginMap::getPluginStatus('layout');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* Transform it to include all the layout data that we want to display */
@@ -203,7 +203,7 @@ class AdminLayoutsView extends GalleryView {
 	foreach ($layouts as $id => $layoutStatus) {
 	    list ($ret, $layout) = GalleryPluginMap::loadPlugin('layout', $id);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    $layouts[$id]['active'] = empty($layoutStatus['active']) ? 0 : 1;
@@ -235,12 +235,12 @@ class AdminLayoutsView extends GalleryView {
 	    /* Load the config settings from the active layout */
 	    list ($ret, $layout) = GalleryPluginMap::loadPlugin('layout', $layoutId);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    list ($ret, $AdminLayouts['settings']) = $layout->getSettings(null);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    break;
 	}
@@ -264,7 +264,8 @@ class AdminLayoutsView extends GalleryView {
 	$template->setVariable('AdminLayouts', $AdminLayouts);
 	$template->setVariable('controller', 'core:AdminLayouts');
 	
-	return array(GalleryStatus::success(), '', 'modules/core/templates/AdminLayouts.tpl');
+	return array(GalleryStatus::success(),
+		     array('body' => 'modules/core/templates/AdminLayouts.tpl'));
     }
 }
 ?>

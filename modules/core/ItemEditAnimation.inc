@@ -132,12 +132,12 @@ class ItemEditAnimationView extends GalleryView {
 	/* Make sure we have permission do edit this item */
 	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'core.edit');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	list ($ret, $item) = $gallery->loadEntitiesById($itemId);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	if ($form['formName'] != 'ItemEditAnimation') {
@@ -151,7 +151,8 @@ class ItemEditAnimationView extends GalleryView {
 							     
 	$template->setVariable('ItemEditAnimation', $ItemEditAnimation);
 	$template->setVariable('controller', 'core:ItemEditAnimation');
-	return array(GalleryStatus::success(), '', 'modules/core/templates/ItemEditAnimation.tpl');
+	return array(GalleryStatus::success(),
+		     array('body' => 'modules/core/templates/ItemEditAnimation.tpl'));
     }
 }
 ?>

@@ -149,18 +149,18 @@ class AdminModulesView extends GalleryView {
 	
 	$ret = GalleryUserHelper::assertSiteAdministrator();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
         list ($ret, $coreModule) = $gallery->loadModule('core');
         if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null, null);
+            return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	
 	/* Load the module list */
 	list ($ret, $moduleStatus) = GalleryPluginMap::getPluginStatus('module');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	if ($form['formName'] != 'AdminModules') {
@@ -174,7 +174,7 @@ class AdminModulesView extends GalleryView {
 	    /* Get the selected module's admin view */
 	    list($ret, $module) = $gallery->loadModule($moduleId);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    $entry = array();
@@ -184,7 +184,7 @@ class AdminModulesView extends GalleryView {
 		if (empty($status['active'])) {
 		    list ($ret, $version) = $module->getModuleParameter('version');
 		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null, null);
+			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 
 		    /*
@@ -204,13 +204,13 @@ class AdminModulesView extends GalleryView {
 			 */
 			list ($ret, $needsConfig) = $module->needsConfiguration();
 			if ($ret->isError()) {
-			    return array($ret->wrap(__FILE__, __LINE__), null, null);
+			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
 
 			if ($needsConfig) {
 			    list ($ret, $configView) = $module->getConfigurationView();
 			    if ($ret->isError()) {
-				return array($ret->wrap(__FILE__, __LINE__), null, null);
+				return array($ret->wrap(__FILE__, __LINE__), null);
 			    }
 			    $entry['action'] = array('text' => $coreModule->translate('configure'),
 						     'view' => $configView);
@@ -240,7 +240,8 @@ class AdminModulesView extends GalleryView {
 	$template->setVariable('AdminModules', $AdminModules);
 	$template->setVariable('controller', 'core:AdminModules');
 	
-	return array(GalleryStatus::success(), '', 'modules/core/templates/AdminModules.tpl');
+	return array(GalleryStatus::success(),
+		     array('body' => 'modules/core/templates/AdminModules.tpl'));
     }
 }
 ?>

@@ -236,12 +236,12 @@ class ItemCreateResizesView extends GalleryView {
 	/* Make sure we have permission do edit this item */
 	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'core.edit');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	list ($ret, $item) = $gallery->loadEntitiesById($itemId);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	if ($form['formName'] == 'ItemCreateResizes') {
@@ -261,7 +261,7 @@ class ItemCreateResizesView extends GalleryView {
 	    list ($ret, $resizes) =
 		GalleryDerivativeHelper::fetchResizesByItemIds(array($item->getId()));
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    if (!empty($resizes)) {
@@ -283,7 +283,7 @@ class ItemCreateResizesView extends GalleryView {
 	    list ($ret, $thumbnails) =
 		GalleryDerivativeHelper::fetchThumbnailsByItemIds(array($item->getId()));
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    if (!empty($thumbnails)) {
 		$thumbnail = $thumbnails[$item->getId()];
@@ -312,7 +312,8 @@ class ItemCreateResizesView extends GalleryView {
 							     
 	$template->setVariable('ItemCreateResizes', $ItemCreateResizes);
 	$template->setVariable('controller', 'core:ItemCreateResizes');
-	return array(GalleryStatus::success(), '', 'modules/core/templates/ItemCreateResizes.tpl');
+	return array(GalleryStatus::success(),
+		     array('body' => 'modules/core/templates/ItemCreateResizes.tpl'));
     }
 }
 ?>

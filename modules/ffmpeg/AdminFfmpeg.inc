@@ -181,7 +181,8 @@ class AdminFfmpegView extends GalleryView {
 
 	$template->setVariable('AdminFfmpeg', $AdminFfmpeg);
 	$template->setVariable('controller', 'ffmpeg:AdminFfmpeg');
-	return array(GalleryStatus::success(), '', 'modules/ffmpeg/templates/AdminFfmpeg.tpl');
+	return array(GalleryStatus::success(),
+		     array('body' => 'modules/ffmpeg/templates/AdminFfmpeg.tpl'));
     }
 }
 ?>

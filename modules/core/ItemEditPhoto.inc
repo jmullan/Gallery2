@@ -551,12 +551,12 @@ class ItemEditPhotoView extends GalleryView {
 	/* Make sure we have permission do edit this item */
 	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'core.edit');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	list ($ret, $item) = $gallery->loadEntitiesById($itemId);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/*
@@ -577,7 +577,7 @@ class ItemEditPhotoView extends GalleryView {
 	list ($ret, $thumbnails) =
 	    GalleryDerivativeHelper::fetchThumbnailsByItemIds(array($item->getId()));
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	if (!empty($thumbnails)) {
 	    $thumbnail = $thumbnails[$item->getId()];
@@ -594,7 +594,7 @@ class ItemEditPhotoView extends GalleryView {
 
 	list ($ret, $ItemEditPhoto['isAdmin']) = GalleryUserGroupMap::isUserInSiteAdminGroup();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	if ($form['formName'] != 'ItemEditPhoto') {
@@ -626,7 +626,7 @@ class ItemEditPhotoView extends GalleryView {
 		list ($ret, $resizes) =
 		    GalleryDerivativeHelper::fetchResizesByItemIds(array($item->getId()));
 		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
 		if (!empty($resizes)) {
@@ -648,7 +648,7 @@ class ItemEditPhotoView extends GalleryView {
 		list ($ret, $thumbnails) =
 		    GalleryDerivativeHelper::fetchThumbnailsByItemIds(array($item->getId()));
 		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		if (!empty($thumbnails)) {
 		    $thumbnail = $thumbnails[$item->getId()];
@@ -687,7 +687,7 @@ class ItemEditPhotoView extends GalleryView {
 	    /* Check to see if we have a preferred source */
 	    list ($ret, $results) = GalleryDerivativeHelper::fetchPreferredsByItemIds(array($item->getId()));
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 		
 	    if (empty($results)) {
@@ -741,7 +741,7 @@ class ItemEditPhotoView extends GalleryView {
 	    
 	    list ($ret, $source) = $gallery->loadEntitiesById($thumbnail->getDerivativeSourceId());
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    
 	    /*
@@ -752,7 +752,7 @@ class ItemEditPhotoView extends GalleryView {
 		GalleryDerivativeHelper::fetchDerivativesBySourceIds(array($item->getId()),
                     array(DERIVATIVE_TYPE_IMAGE_RESIZE));
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    $selected = array();
@@ -766,7 +766,7 @@ class ItemEditPhotoView extends GalleryView {
 			list ($ret, $derivative) =
 			    GalleryDerivativeHelper::rebuildCacheIfNotCurrent($derivative->getId());
 			if ($ret->isError()) {
-			    return array($ret->wrap(__FILE__, __LINE__), null, null);
+			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
 			list ($width, $height) = array($derivative->getWidth(), $derivative->getHeight());
 			if (empty($width)) {
@@ -795,23 +795,23 @@ class ItemEditPhotoView extends GalleryView {
 	    if (empty($width)) {
 		list ($ret, $lockId) = $gallery->acquireWriteLock($source->getId());
 		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		list ($ret, $source) = $source->refresh();
 		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		$ret = $source->rescan();
 		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		$ret = $source->save();
 		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		$ret = $gallery->releaseLocks($lockId);
 		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 	    }
 
@@ -845,7 +845,7 @@ class ItemEditPhotoView extends GalleryView {
 		$aspectlist = array();
 		list ($ret, $module) = $gallery->loadModule('core');
 		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 	    
 		$aspectRatioList[] = array('label' => $module->translate('Screen 4x3'),
@@ -919,7 +919,8 @@ class ItemEditPhotoView extends GalleryView {
 							     
 	$template->setVariable('ItemEditPhoto', $ItemEditPhoto);
 	$template->setVariable('controller', 'core:ItemEditPhoto');
-	return array(GalleryStatus::success(), '', 'modules/core/templates/ItemEditPhoto.tpl');
+	return array(GalleryStatus::success(),
+		     array('body' => 'modules/core/templates/ItemEditPhoto.tpl'));
     }
 }
 ?>

@@ -40,7 +40,7 @@ class SecurityViolationView extends GalleryView {
      */
     function loadTemplate(&$template, &$form) {
 	return array(GalleryStatus::success(),
-		     'modules/core/templates/SecurityViolationHead.tpl',
-		     'modules/core/templates/SecurityViolation.tpl');
+		     array('head' => 'modules/core/templates/SecurityViolationHead.tpl',
+			   'body' => 'modules/core/templates/SecurityViolation.tpl'));
     }
 }

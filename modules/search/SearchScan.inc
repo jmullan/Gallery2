@@ -169,8 +169,8 @@ class SearchScanView extends GalleryView {
 
 	$template->setVariable('SearchScan', $SearchScan);
 	return array(GalleryStatus::success(),
-		     'modules/search/templates/SearchHead.tpl',
-		     'modules/search/templates/SearchScan.tpl');
+		     array('head' => 'modules/search/templates/SearchHead.tpl',
+			   'body' => 'modules/search/templates/SearchScan.tpl'));
     }
 }
 ?>

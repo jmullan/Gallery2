@@ -75,8 +75,7 @@ class AdminDebugView extends GalleryView {
 	$form['formName'] = 'AdminDebug';
 	$template->setVariable('controller', 'comment:AdminDebug');
 	return array(GalleryStatus::success(),
-		     '',
-		     'modules/debug/templates/AdminDebug.tpl');
+		     array('body' => 'modules/debug/templates/AdminDebug.tpl'));
     }
 }
 ?>

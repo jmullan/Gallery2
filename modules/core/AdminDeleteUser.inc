@@ -123,13 +123,13 @@ class AdminDeleteUserView extends GalleryView {
 	
 	$ret = GalleryUserHelper::assertSiteAdministrator();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	    
 	$userId = GalleryUtilities::getRequestVariables('userId');
 	list ($ret, $user) = $gallery->loadEntitiesById($userId);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	if ($form['formName'] != 'AdminDeleteUser') {
@@ -144,7 +144,8 @@ class AdminDeleteUserView extends GalleryView {
 	$template->setVariable('AdminDeleteUser', $AdminDeleteUser);
 	$template->setVariable('controller', 'core:AdminDeleteUser');
 
-	return array(GalleryStatus::success(), '', 'modules/core/templates/AdminDeleteUser.tpl');
+	return array(GalleryStatus::success(),
+		     array('body' => 'modules/core/templates/AdminDeleteUser.tpl'));
     }
 }
 ?>

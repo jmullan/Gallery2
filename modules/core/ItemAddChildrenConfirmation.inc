@@ -45,7 +45,7 @@ class ItemAddChildrenConfirmationView extends GalleryView {
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
 	list ($ret, $item) = $gallery->loadEntitiesById($itemId);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	
 	/*
@@ -71,7 +71,8 @@ class ItemAddChildrenConfirmationView extends GalleryView {
 
 	$template->setVariable('ItemAddChildrenConfirmation', $ItemAddChildrenConfirmation);
 	$template->setVariable('controller', '');
-	return array(GalleryStatus::success(), '', 'modules/core/templates/ItemAddChildrenConfirmation.tpl');
+	return array(GalleryStatus::success(),
+		     array('body' => 'modules/core/templates/ItemAddChildrenConfirmation.tpl'));
     }
 }
 ?>

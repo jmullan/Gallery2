@@ -45,13 +45,13 @@ class SiteAdminView extends GalleryView {
 	/* Make sure we have adequate permissions */
 	$ret = GalleryUserHelper::assertSiteAdministrator();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* Load the module list */
 	list ($ret, $moduleStatus) = GalleryPluginMap::getPluginStatus('module');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* Get a list of all the admin views for each module */
@@ -65,12 +65,12 @@ class SiteAdminView extends GalleryView {
 	    /* Get the selected module's admin view */
 	    list($ret, $module) = $gallery->loadModule($moduleId);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    list ($ret, $moduleViews) = $module->getSiteAdminViews();
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    $subViewChoices = array_merge($subViewChoices, $moduleViews);
@@ -88,20 +88,20 @@ class SiteAdminView extends GalleryView {
 	
 	list ($ret, $subView) = GalleryView::loadView($subViewName);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	
-	list ($ret, $SiteAdmin['viewHeadFile'], $SiteAdmin['viewBodyFile']) =
-	    $subView->loadTemplate($template, $form);
+	list ($ret, $results) = $subView->loadTemplate($template, $form);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+	$SiteAdmin['viewBodyFile'] = $results['body'];
 	$SiteAdmin['viewL10Domain'] = $subView->getL10Domain();
 
 	$template->setVariable('SiteAdmin', $SiteAdmin);
 	return array(GalleryStatus::success(),
-		     'modules/core/templates/SiteAdminHead.tpl',
-		     'modules/core/templates/SiteAdmin.tpl');
+		     array('head' => 'modules/core/templates/SiteAdminHead.tpl',
+			   'body' => 'modules/core/templates/SiteAdmin.tpl'));
     }
 }
 ?>

@@ -80,20 +80,20 @@ class ChooseObjectsView extends GalleryView {
 
 	$albumsPath = GalleryUtilities::getRequestVariables('albumsPath');
 	if ($albumsPath == null) {
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null, null);
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
 	}
 
 	$existingUsers = array();
 	$newUsers = array();
 	list($ret, $allUsers) = Gallery1DataParser::getUserUids($albumsPath);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	    
 	foreach($allUsers as $uid => $userName) {
 	    list($ret, $testUser) = GalleryUserHelper::fetchUserByUsername($userName);
 	    if ($ret->isError() && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    if ($testUser) {
@@ -122,7 +122,7 @@ class ChooseObjectsView extends GalleryView {
 	}
 	list ($ret, $g1AlbumTree) = $this->_createG1AlbumTree($albumsPath);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* Get all possible destinations (where user has write permission) */
@@ -154,7 +154,8 @@ class ChooseObjectsView extends GalleryView {
 	$template->setVariable('ChooseObjects', $ChooseObjects);
         $template->setVariable('controller', 'migrate:ChooseObjects');
 	
-        return array(GalleryStatus::success(), '', 'modules/migrate/templates/ChooseObjects.tpl');
+        return array(GalleryStatus::success(),
+		     array('body' => 'modules/migrate/templates/ChooseObjects.tpl'));
     }
 
     /**

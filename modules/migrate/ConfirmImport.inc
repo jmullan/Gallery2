@@ -380,11 +380,11 @@ class ConfirmImportView extends GalleryView {
         $destinationAlbumID = $form['destinationAlbumID'];
 	list ($ret, $uids) = Gallery1DataParser::getUserUids($albumsPath);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	list ($ret, $albums) = Gallery1DataParser::getAlbumList($albumsPath);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	list ($ret, $targetAlbum) = $gallery->loadEntitiesById($destinationAlbumID);
         if ($ret->isError()) {
@@ -430,7 +430,8 @@ class ConfirmImportView extends GalleryView {
         $ConfirmImport['targetAlbum'] = $targetAlbum;
         $template->setVariable('controller', 'migrate:ConfirmImport');
 	$template->setVariable('ConfirmImport', $ConfirmImport);
-	return array(GalleryStatus::success(), '', 'modules/migrate/templates/ConfirmImport.tpl');
+	return array(GalleryStatus::success(),
+		     array('body' => 'modules/migrate/templates/ConfirmImport.tpl'));
     }
 }
 ?>

@@ -1,13 +1,19 @@
 {g->breadcrumb}
-  {foreach from=$layout.parents item=parent}
+  {section name=parent loop=$layout.parents}
     {g->item}
       {g->title}
-	{g->link url_view='core:ShowItem' url_itemId=$parent.id}
-	  {$parent.title|default:$parent.pathComponent}
-	{/g->link}
+	{if ! $smarty.section.parent.last}
+	  {g->link url_view='core:ShowItem' url_itemId=$layout.parents[parent].id url_highlightId=$layout.parents[parent.index_next].id}
+	    {$layout.parents[parent].title|default:$layout.parents[parent].pathComponent}
+	  {/g->link}
+	{else}
+	  {g->link url_view='core:ShowItem' url_itemId=$layout.parents[parent].id url_highlightId=$layout.item.id}
+	    {$layout.parents[parent].title|default:$layout.parents[parent].pathComponent}
+	  {/g->link}
+	{/if}
       {/g->title}
     {/g->item}
-  {/foreach}
+  {/section}
   {g->item}
     {g->title}
       {g->link url_view='core:ShowItem' url_itemId=$layout.item.id}

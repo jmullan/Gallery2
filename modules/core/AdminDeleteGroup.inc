@@ -113,13 +113,13 @@ class AdminDeleteGroupView extends GalleryView {
 	
 	$ret = GalleryUserHelper::assertSiteAdministrator();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$groupId = GalleryUtilities::getRequestVariables('groupId');
 	list ($ret, $group) = $gallery->loadEntitiesById($groupId);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
         if ($form['formName'] != 'AdminDeleteGroup') {
@@ -135,7 +135,8 @@ class AdminDeleteGroupView extends GalleryView {
 	$template->setVariable('AdminDeleteGroup', $AdminDeleteGroup);
 	$template->setVariable('controller', 'core:AdminDeleteGroup');
 
-	return array(GalleryStatus::success(), '', 'modules/core/templates/AdminDeleteGroup.tpl');
+	return array(GalleryStatus::success(),
+		     array('body' => 'modules/core/templates/AdminDeleteGroup.tpl'));
     }
 }
 ?>

@@ -167,7 +167,7 @@ class AdminGroupsView extends GalleryView {
 	
 	$ret = GalleryUserHelper::assertSiteAdministrator();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	    
 	/* Load some standard form parameters */
@@ -188,7 +188,7 @@ class AdminGroupsView extends GalleryView {
 
 	list ($ret, $totalGroupCount) = GalleryGroupHelper::fetchGroupCount();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$form['list']['count'] = $totalGroupCount;
@@ -198,7 +198,7 @@ class AdminGroupsView extends GalleryView {
 	if (!empty($form['list']['filter'])) {
 	    list ($ret, $form['list']['count']) = GalleryGroupHelper::fetchGroupCount($form['list']['filter']);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
 
@@ -218,17 +218,17 @@ class AdminGroupsView extends GalleryView {
 						 $form['list']['pageSize']),
 						$form['list']['filter']);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	list ($ret, $allUserGroupId) = $gallery->getModuleParameter('core', 'id.allUserGroup');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	
 	list ($ret, $adminGroupId) = $gallery->getModuleParameter('core', 'id.adminGroup');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$form['list']['groupNames'] = array();
@@ -253,7 +253,8 @@ class AdminGroupsView extends GalleryView {
 	$template->setVariable('AdminGroups', $AdminGroups);
 	$template->setVariable('controller', 'core:AdminGroups');
 
-	return array(GalleryStatus::success(), '', 'modules/core/templates/AdminGroups.tpl');
+	return array(GalleryStatus::success(),
+		     array('body' => 'modules/core/templates/AdminGroups.tpl'));
     }
 }
 ?>

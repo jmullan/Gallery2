@@ -147,23 +147,23 @@ class ItemEditLayoutView extends GalleryView {
 	/* Make sure we have permission do edit this item */
 	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'core.edit');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	list ($ret, $item) = $gallery->loadEntitiesById($itemId);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	list ($ret, $layout) = GalleryItemHelper::fetchLayout($item);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* Get the per-item settings (global + item) */
 	list ($ret, $settings) = $layout->getSettings($item->getId());
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* Fetch the global-only params */
@@ -208,7 +208,8 @@ class ItemEditLayoutView extends GalleryView {
 	
 	$template->setVariable('ItemEditLayout', $ItemEditLayout);
 	$template->setVariable('controller', 'core:ItemEditLayout');
-	return array(GalleryStatus::success(), '', 'modules/core/templates/ItemEditLayout.tpl');
+	return array(GalleryStatus::success(),
+		     array('body' => 'modules/core/templates/ItemEditLayout.tpl'));
     }
 }
 ?>
