@@ -25,7 +25,7 @@
     </li>
     {/foreach}
     
-    <li>
+    <li {if empty($ItemAdmin.parents)}class="giBreadCrumbFirst"{/if}>
       <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$ItemAdmin.item.id`"}">
         {$ItemAdmin.item.title|default:$ItemAdmin.item.pathComponent|markup}
       </a>
