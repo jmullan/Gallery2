@@ -229,7 +229,7 @@ class AdminLayoutsView extends GalleryView {
 
 	list ($layoutId, $mode) = GalleryUtilities::getRequestVariables('layoutId', 'mode');
 	if (empty($mode)) {
-	    $mode = 'config';
+	    $mode = 'defaults';
 	}
 	
 	/* Load the module list */
