@@ -171,7 +171,7 @@ class BBCode {
 					continue;
 				}
 				// if the tag does not have a closing tag
-				if ($this->codes[$tag_contents]['flags']['no_close_tag']) {
+				if (isset($this->codes[$tag_contents]['flags']['no_close_tag'])) {
 					$saved_newtext .= '[';
 					$cpos = $npos+1;
 					continue;
@@ -259,7 +259,7 @@ class BBCode {
 					$upper_elem = $this->_parser_stack_last_elem ($parser_stack);
 					// if this is an element without a closing tag and the last element in the parser stack
 					// is the same => close it
-					if ($this->codes[$tag_name]['flags']['no_close_tag']) {
+					if (isset($this->codes[$tag_name]['flags']['no_close_tag'])) {
 						if ($upper_elem == $tag_name) {
 							$ctn = array_pop ($parser_stack);
 							// look at the processing type of the bb code
