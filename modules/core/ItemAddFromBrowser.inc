@@ -53,7 +53,6 @@ class ItemAddFromBrowser extends ItemAddPlugin {
 		    $file = array('name' => $form['name'][$i],
 				  'type' => $form['type'][$i],
 				  'tmp_name' => $form['tmp_name'][$i],
-				  'error' => $form['error'][$i],
 				  'size' => $form['size'][$i],
 				  'caption' => $form['caption'][$i]);
 		    
