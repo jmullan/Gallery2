@@ -8,20 +8,20 @@
 <script type="text/javascript">
 // <![CDATA[
 function checkForm() {ldelim}
-	sc = document.SearchSystemContent.searchCriteria.value;
-    if (sc == '{g->text text="Search the Gallery"}' || sc == '') {ldelim}
-		alert('Please enter keywords to search.');
-		document.SearchSystemContent.searchCriteria.focus;
-		return false;
-	{rdelim} else {ldelim}
-	   document.getElementById('SearchSystemContent').submit();
-	{rdelim}
+  sc = document.getElementById('SearchSystemContent').searchCriteria.value;
+  if (sc == '{g->text text="Search the Gallery"}' || sc == '') {ldelim}
+    alert('{g->text text="Please enter keywords to search."}');
+    document.SearchSystemContent.searchCriteria.focus;
+    return false;
+  {rdelim} else {ldelim}
+     document.getElementById('SearchSystemContent').submit();
+  {rdelim}
 {rdelim}
 // ]]>
 </script>
 
 <div class="gbMenu">
-  <form name="SearchSystemContent" id="SearchSystemContent" action="{g->url}" method="post">
+  <form id="SearchSystemContent" action="{g->url}" method="post">
     <p>
       <input type="hidden" name="{g->formVar var="view"}" value="core:Navigation"/>
       <input type="hidden" name="{g->formVar var="subView"}" value="{$SearchSystemContent.subView}"/>

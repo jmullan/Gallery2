@@ -44,9 +44,11 @@ class SearchShowAllController extends GalleryController {
 	global $gallery;
 
 	if (isset($form['action']['scan'])) {
-	    $results['delegate']['view'] = 'search:SearchScan';
+	    $results['delegate']['view'] = 'core:Navigation';
+	    $results['delegate']['subView'] = 'search:SearchScan';
 	} else {
-	    $results['delegate']['view'] = 'search:SearchShowAll';
+	    $results['delegate']['view'] = 'core:Navigation';
+	    $results['delegate']['subView'] = 'search:SearchShowAll';
 	}
 
 	$results['status'] = array();
