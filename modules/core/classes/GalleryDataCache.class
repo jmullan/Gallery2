@@ -277,7 +277,6 @@ class GalleryDataCache {
 	}
 
 	global $gallery;
-
 	$platform = $gallery->getPlatform();
 	if ($pathInfo['type'] == 'entity' || isset($pathInfo['id'])) {
 	    $cacheFile = GalleryDataCache::getCachePath($pathInfo);
@@ -291,7 +290,7 @@ class GalleryDataCache {
 	} else {
 	    list ($ret, $pluginStatus) = GalleryCoreApi::fetchPluginStatus($pathInfo['type']);
 	    if ($ret->isError()) {
-		return $this->failWithStatus(__FILE__, __LINE__);
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    
 	    foreach (array_keys($pluginStatus) as $pluginId) {
