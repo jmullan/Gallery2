@@ -69,12 +69,12 @@ class ItemAddFromWebTest extends ItemAddPluginTestCase {
 
 	$ret = GalleryCoreApi::releaseLocks($this->_lockIds);
 	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$ret = GalleryCoreApi::deleteEntityById($this->_rootAlbum->getId());
 	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	parent::tearDown();
@@ -371,6 +371,10 @@ class ItemAddFromWebTestPlatform  {
 	
 	print "Unexpected fopen($filename, $modes)";
 	return null;
+    }
+
+    function realpath($path) {
+	return realpath($path);
     }
 }
 ?>
