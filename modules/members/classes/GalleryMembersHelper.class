@@ -35,7 +35,7 @@
  * @subpackage Classes
  */
 class GalleryMembersHelper {
-	
+
     /*
      * ****************************************
      *                 Methods
@@ -79,7 +79,7 @@ class GalleryMembersHelper {
 	$storage =& $gallery->getStorage();
 	$groupIds = array_keys($groupIds);
 	$groupIdMarkers = GalleryUtilities::makeMarkers($groupIds);
-	list ($ret, $andPermission) = 
+	list ($ret, $andPermission) =
             $storage->getFunctionSql('BITAND', array('[GalleryPermissionMap::permission]', '?'));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -149,17 +149,17 @@ class GalleryMembersHelper {
      */
     function canViewMembersModule($userId) {
         global $gallery;
-        list ($ret, $viewSelectedGroupId) = 
+        list ($ret, $viewSelectedGroupId) =
             GalleryCoreApi::getPluginParameter('module', 'members', 'canViewMembersModule');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	    
+
         list ($ret, $result) = GalleryCoreApi::isUserInGroup($userId, $viewSelectedGroupId);
         if ($ret->isError()) {
             return array($ret->wrap(__FILE__, __LINE__), null);
         }
-        return array(GalleryStatus::success(), $result);    
+        return array(GalleryStatus::success(), $result);
     }
 
     /**
@@ -175,37 +175,37 @@ class GalleryMembersHelper {
         global $gallery;
         $result = false;
         /* Can the user view email addresses in the member profile? */
-	list ($ret, $resultOne) = 
+	list ($ret, $resultOne) =
             GalleryCoreApi::getPluginParameter('module', 'members', 'canViewEmailAddress');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	    
-	list ($ret, $groupId) = 
+
+	list ($ret, $groupId) =
             GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
-	/* is the current user an admin */    
+
+	/* is the current user an admin */
 	list ($ret, $resultTwo) = GalleryCoreApi::isUserInGroup($userId, $groupId);
         if ($ret->isError()) {
             return array($ret->wrap(__FILE__, __LINE__), null);
         }
 
 	/*
-	 * User can see member email in the profile if they are an admin, 
+	 * User can see member email in the profile if they are an admin,
 	 * or if the module setting says they are allowed to.
 	 */
         if ($resultOne || $resultTwo) {
             $result = true;
         }
-        
-        return array(GalleryStatus::success(), $result);    
+
+        return array(GalleryStatus::success(), $result);
     }
-    
+
     /**
-     * Return the calendar days since the user's creationTimestamp.  
+     * Return the calendar days since the user's creationTimestamp.
      *
      * @param int User id
      * @return array (object GalleryStatus a status code,
@@ -223,37 +223,36 @@ class GalleryMembersHelper {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
         $query = '
         SELECT
           [GalleryEntity::creationTimestamp],
-	' . $now . '	
+	' . $now . '
         FROM
           [GalleryEntity]
         WHERE
           [GalleryEntity::id] = ?
         ';
-    
-    	
+
 	$data[] = $userId;
     	list ($ret, $searchResults) = $gallery->search($query, $data);
     	if ($ret->isError()) {
     	    return array($ret->wrap(__FILE__, __LINE__), null);
     	}
-    
+
 	$result = $searchResults->nextResult();
 
 	/* We only want the date, set the time on both timestamps to midnight */
 	$fixedNow = mktime(0, 0, 0, date("n", (int)$result[1]), date("j", (int)$result[1]), date("Y", (int)$result[1]));
-	$fixedCreation = 
+	$fixedCreation =
 	    mktime(0, 0, 0, date("n", (int)$result[0]), date("j", (int)$result[0]), date("Y", (int)$result[0]));
-	
-	/* The difference in the creationTimestamp and Now, divided by the number of seconds in a day gives us 
-	 * a result in days
+
+	/* The difference in the creationTimestamp and Now, divided by the number of seconds
+	 * in a day gives us a result in days
 	 */
 	$return = ($fixedNow - $fixedCreation) / (24 * 60 * 60);
 
-        return array(GalleryStatus::success(), $return);  
+        return array(GalleryStatus::success(), (int)$return);
     }
 }
 ?>
