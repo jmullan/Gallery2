@@ -109,14 +109,14 @@ class CreateRandomTreeTestCase extends TestCase {
 	/* Create some derivative preferences */
 	$ret = GalleryCoreApi::removeDerivativePreferencesForItem($album->getId());
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	
 	$ret = GalleryCoreApi::addDerivativePreference(0, $album->getId(),
 						       DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
 						       'thumbnail|' . rand(200,300));
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	
 	for ($i = 0; $i < rand(2, 4); $i++) {
@@ -124,7 +124,7 @@ class CreateRandomTreeTestCase extends TestCase {
 							   DERIVATIVE_TYPE_IMAGE_RESIZE,
 							   'scale|' . rand(300,700));
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 
