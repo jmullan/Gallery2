@@ -17,8 +17,10 @@
 		<tr>	
 		  <td>
 		    {foreach from=$moduleItemLinks item=module}
-		    {foreach from=$module item=link}
+		    {foreach from=$module item=links}
+		    {foreach from=$links item=link}
 		    <a href="{$link.url}">[{$link.text}]</a>
+		    {/foreach}
 		    {/foreach}
 		    {/foreach}
 		  </td>
@@ -83,6 +85,18 @@
 		<i>{$child.summary}</i>
 		{else}
 		&nbsp;
+		{/if}
+
+		{if !empty($child.childCount)}
+		<br>
+		{gallerySmallerFont}
+		{galleryText one="This album contains %d item"
+                             many="This album contains %d items"
+                             count=$child.childCount
+                             arg1=$child.childCount}
+		{/gallerySmallerFont}
+		{else}
+		&nbsp
 		{/if}
 		
 		{if (!empty($child.moduleSummaries)) }

@@ -48,6 +48,7 @@ class CoreModule extends GalleryModule {
 	require_once($classDir . 'GalleryEvent.class');
 	require_once($classDir . 'GalleryEventListener.class');
 	require_once($classDir . 'GalleryItemPropertiesMap.class');
+	require_once($classDir . 'GalleryItemHelper.class');
 	require_once($classDir . 'GalleryLayout.class');
 	require_once($classDir . 'GalleryLock.class');
 	require_once($classDir . 'GalleryModuleMap.class');
@@ -165,6 +166,12 @@ class CoreModule extends GalleryModule {
 					       array('image/jpeg',
 						     'image/gif',
 						     'image/png'));
+
+	GalleryFactory::registerImplementation('GalleryDataItem',
+					       'GalleryUnknownItem',
+					       'GalleryUnknownItem',
+					       $classDir . 'GalleryUnknownItem.class',
+					       array(FACTORY_DEFAULT));
 						     
 
 	return parent::init();
@@ -276,7 +283,7 @@ class CoreModule extends GalleryModule {
 	 * not to display the "[edit item]" link.
 	 */
 	$adminPermissions = GalleryPermissionMap::getItemAdminPermissions();
-
+	
 	/*
 	 * If we're a site admin, then we always have edit permission.  Else,
 	 * figure out what groups we're in and use that to make the determination.
@@ -290,21 +297,43 @@ class CoreModule extends GalleryModule {
 	$links = array();
 	foreach ($items as $item) {
 	    if ($isSiteAdmin) {
-		$hasPermission = true; 
+		$showEditLink = true;
+		$showAddItemLink = $item->canContainChildren();
 	    } else {
-		list ($ret, $hasPermission) =
+		list ($ret, $showEditLink) =
 		    GalleryUserHelper::hasItemPermission($item->getId(),
 							 $gallery->getActiveUserId(),
 							 $adminPermissions);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
+
+		if ($item->canContainChildren()) {
+		    list ($ret, $showAddItemLink) =
+			GalleryUserHelper::hasItemPermission($item->getId(),
+							     $gallery->getActiveUserId(),
+							     array('core.all', 'core.addItem'));
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		} else {
+		    $showAddItemLink = false;
+		}
 	    }
 
-	    if ($hasPermission) {
-		$links[$item->getId()] =
+	    if ($showEditLink) {
+		$links[$item->getId()][] =
 		    array('text' => $this->translate('edit item'),
 			  'params' => array_merge(array('view' => 'core:ItemAdmin',
+							'itemId' => $item->getId()),
+						  $params));
+	    }
+	    
+	    if ($showAddItemLink) {
+		$links[$item->getId()][] =
+		    array('text' => $this->translate('add item'),
+			  'params' => array_merge(array('view' => 'core:ItemAdmin',
+							'subView' => 'core:ItemAddChildren',
 							'itemId' => $item->getId()),
 						  $params));
 	    }
@@ -389,7 +418,7 @@ class CoreModule extends GalleryModule {
 	}
 
 	if (array_intersect(array('core.all', 'core.change'), $permissions)) {
-	    if ($item->isContainer()) {
+	    if ($item->canContainChildren()) {
 	        $views[] = array('name' => $this->translate('Album Settings'),
 				 'view' => 'core:ItemEditAlbum');
 	    }
@@ -408,7 +437,7 @@ class CoreModule extends GalleryModule {
 	}
 	
 	if (array_intersect(array('core.all', 'core.addItem'), $permissions)) {
-	    if ($item->isContainer()) {
+	    if ($item->canContainChildren()) {
 	        $views[] = array('name' => $this->translate('Add Items'),
 				 'view' => 'core:ItemAddChildren');
 	    }

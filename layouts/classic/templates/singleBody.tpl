@@ -6,8 +6,10 @@
 		<tr>	
 		  <td>
 		    {foreach from=$moduleItemLinks item=module}
-		    {foreach from=$module item=link}
+		    {foreach from=$module item=links}
+		    {foreach from=$links item=link}
 		    <a href="{$link.url}">[{$link.text}]</a>
+		    {/foreach}
 		    {/foreach}
 		    {/foreach}
 		  </td>
@@ -47,8 +49,10 @@
 		<tr>
 		  <td align=center>
 		    {strip}
-		    {galleryThinFrame}
 		    {assign var="image" value=$imageViews.$imageViewsIndex}
+
+		    {if ($image.inline)}
+		    {galleryThinFrame}
 		    <img src="{galleryUrl view=core:DownloadItem itemId=$image.id}"
 		    {if ($image.width && $image.height)}
 		         width="{$image.width}"
@@ -57,6 +61,11 @@
 		         border="0"
 		    >
 		    {/galleryThinFrame}
+		    {else}
+		    <a href="{galleryUrl view=core:DownloadItem itemId=$image.id}">
+		    {galleryText text="Download this item"} 
+		    </a>
+		    {/if}
 		    {/strip}
 		  </td>
 		</tr>
@@ -75,6 +84,7 @@
 		      <b>
 			{/if}
 
+			{if $imageViews[imageView].inline}
 			[
 			{if empty($imageViews[imageView].width)}
 			{galleryText text="??? x ???"}
@@ -82,6 +92,7 @@
 			{galleryText text="%d x %d" arg1=$imageViews[imageView].width arg2=$imageViews[imageView].height}
 			{/if}
 			]
+			{/if}
 
 			{if $smarty.section.imageView.index == $imageViewsIndex}
 		      </b>

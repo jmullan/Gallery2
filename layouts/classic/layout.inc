@@ -85,15 +85,22 @@ class ClassicLayout extends GalleryLayout {
 	$children = array();
 
 	/* Count the total number of children */
+	/* XXX: we could combine this with the other getChildCounts() call below */
 	list ($ret, $totalChildCount) =
-	    $item->fetchChildCount($gallery->getActiveUserId());
+	    GalleryItemHelper::getChildCounts(array($item->getId()),
+					      $gallery->getActiveUserId());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	if (empty($totalChildCount)) {
+	    $totalChildCount = 0;
+	} else {
+	    $totalChildCount = $totalChildCount[$item->getId()];
 	}
 
 	/* Get the child id => child types */
 	list ($ret, $childIds) =
-	    $item->fetchChildren($gallery->getActiveUserId(), $start, $perPage);
+	    $item->fetchChildIds($gallery->getActiveUserId(), $start, $perPage);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -112,6 +119,13 @@ class ClassicLayout extends GalleryLayout {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
+	    /* Get the "grandchild" counts */
+	    list ($ret, $childCounts) =
+		GalleryItemHelper::getChildCounts($childIds, $gallery->getActiveUserId());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
             /* Create a table of child id -> child data */
 	    $childTable = array();
 	    foreach ($childEntities as $child) {
@@ -122,6 +136,10 @@ class ClassicLayout extends GalleryLayout {
 		    $childTable[$childId]['moduleSummaries'] = $moduleChildSummaries[$childId];
 		} else {
 		    $childTable[$childId]['moduleSummaries'] = array();
+		}
+
+		if (!empty($childCounts[$childId])) {
+		    $childTable[$childId]['childCount'] = $childCounts[$childId];
 		}
 	    }
 
@@ -233,6 +251,7 @@ class ClassicLayout extends GalleryLayout {
 	$imageViews = array();
 	    
 	/* Load the resizes */
+	$gallery->debug('XXX: missing view-resize permission check');
 	list ($ret, $resizes) =
 	    GalleryDerivativeHelper::fetchResizesByItemIds(array($item->getId()));
 	if ($ret->isError()) {
@@ -243,13 +262,15 @@ class ClassicLayout extends GalleryLayout {
 	if (empty($imageViewsIndex)) {
 	    $imageViewsIndex = 0;
 	}
-	
-	$gallery->debug('XXX: missing view-resize permission check');
-	foreach ($resizes[$item->getId()] as $resize) {
-	    $imageViews[] = array('height' => $resize->getHeight(),
-				  'width' => $resize->getWidth(),
-				  'size' => $resize->getDerivativeSize(),
-				  'id' => $resize->getId());
+
+	if (!empty($resizes)) {
+	    foreach ($resizes[$item->getId()] as $resize) {
+		$imageViews[] = array('inline' => true,
+				      'height' => $resize->getHeight(),
+				      'width' => $resize->getWidth(),
+				      'size' => $resize->getDerivativeSize(),
+				      'id' => $resize->getId());
+	    }
 	}
 
 	/* Add the full version */
@@ -265,16 +286,21 @@ class ClassicLayout extends GalleryLayout {
 	    if (is_subclass_of($item, 'GalleryDataItem')) {
 		$dataItem = array('size' => $item->getSize(),
 				  'id' => $item->getId());
-		
-		if (is_subclass_of($item, 'GalleryDataItem')) {
+
+		if ($item->canBeViewedInline()) {
+		    $dataItem['inline'] = true;
 		    $dataItem['height'] = $item->getHeight();
 		    $dataItem['width'] = $item->getWidth();
+		} else {
+		    $dataItem['inline'] = false;
 		}
+		
 		$imageViews[] = $dataItem;
 	    }
 	} else {
 	    $preferred = $preferred[$item->getId()];
-	    $imageViews[] = array('height' => $preferred->getHeight(),
+	    $imageViews[] = array('inline' => true,
+				  'height' => $preferred->getHeight(),
 				  'width' => $preferred->getWidth(),
 				  'size' => $preferred->getDerivativeSize(),
 				  'id' => $preferred->getId());
@@ -296,7 +322,7 @@ class ClassicLayout extends GalleryLayout {
 	/* Count the total number peers */
 	/* Get the child id => child types */
 	list ($ret, $peerIds) =
-	    $parent->fetchChildren($gallery->getActiveUserId());
+	    $parent->fetchChildIds($gallery->getActiveUserId());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

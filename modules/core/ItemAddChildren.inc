@@ -99,35 +99,45 @@ class ItemAddChildrenController extends GalleryController {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 
-		    /*
-		     * Now create thumbnails and resizes according to the
-		     * wishes of the parent album.
-		     */
-		    list ($ret, $preferences) =
-			GalleryDerivativePreferencesMap::fetchPreferencesForItem($item->getId());
+		    list ($ret, $graphics) = $gallery->getGraphics();
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 
-		    foreach ($preferences as $preference) {
-			list ($ret, $derivative) = 
-			    GalleryFactory::newInstance('GalleryEntity', 'GalleryDerivativeImage');
+		    /*
+		     * Create derivatives if we support the mime type.
+		     */
+		    if ($graphics->isSupportedMimeType($newItem->getMimeType())) {
+			/*
+			 * Now create thumbnails and resizes according to the
+			 * wishes of the parent album.
+			 */
+			list ($ret, $preferences) =
+			    GalleryDerivativePreferencesMap::fetchPreferencesForItem($item->getId());
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
 
-			$ret = $derivative->create($newItem->getId(), $preference['derivativeType']);
-			if ($ret->isError()) {
-			    return array($ret->wrap(__FILE__, __LINE__), null);
-			}
+			foreach ($preferences as $preference) {
+			    list ($ret, $derivative) = 
+				GalleryFactory::newInstance('GalleryEntity', 'GalleryDerivativeImage');
+			    if ($ret->isError()) {
+				return array($ret->wrap(__FILE__, __LINE__), null);
+			    }
 
-			$derivative->setDerivativeMimeType($newItem->getMimeType());
-			$derivative->setDerivativeSourceId($newItem->getId());
-			$derivative->setDerivativeCommands($preference['derivativeCommands']);
+			    $ret = $derivative->create($newItem->getId(), $preference['derivativeType']);
+			    if ($ret->isError()) {
+				return array($ret->wrap(__FILE__, __LINE__), null);
+			    }
+
+			    $derivative->setDerivativeMimeType($newItem->getMimeType());
+			    $derivative->setDerivativeSourceId($newItem->getId());
+			    $derivative->setDerivativeCommands($preference['derivativeCommands']);
 			
-			$ret = $derivative->save();
-			if ($ret->isError()) {
-			    return array($ret->wrap(__FILE__, __LINE__), null);
+			    $ret = $derivative->save();
+			    if ($ret->isError()) {
+				return array($ret->wrap(__FILE__, __LINE__), null);
+			    }
 			}
 		    }
 		}

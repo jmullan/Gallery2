@@ -57,8 +57,12 @@ class ImageMagickGraphics extends GalleryGraphics {
      */
     function getImageDimensions($mimeType, $filename) {
 
-	/* Run it through PHP first, it's faster and more portable. */
-	$ret = getimagesize($filename);
+	/*
+	 * Run it through PHP first, it's faster and more portable.  Suppress
+	 * output, though, since this may run afoul of open_basedir.  If it
+	 * does, then it'll return false and we can use ImageMagick.
+	 */
+	$ret = @getimagesize($filename);
 	if (($ret != false) &&
 	    (($ret[0] > 1) && ($ret[1] > 1))) {
 	    return array(GalleryStatus::success(), $ret[0], $ret[1]);

@@ -84,7 +84,10 @@ class GalleryPermissionMap_core {
     function registerPermission($id, $description, $isItemAdmin=false) {
 	$registry =& GalleryPermissionMap::_getPermissionRegistry();
 	$registry['id'][$id] = $description;
-	$registry['itemAdmin'][$id] = $isItemAdmin;
+
+	if ($isItemAdmin) {
+	    $registry['itemAdmin'][$id] = $isItemAdmin;
+	}
     }
 
     /**

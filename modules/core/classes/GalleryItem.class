@@ -24,20 +24,6 @@
  * ****************************************
  */
 
-/**
- * Order in an ascending fashion
- *
- * @constant ORDER_ASCENDING
- */
-define('ORDER_ASCENDING', 1);
-
-/**
- * Order in an descending fashion
- *
- * @constant ORDER_DESCENDING
- */
-define('ORDER_DESCENDING', 2);
-
 /* Load the parent class */
 require_once(dirname(__FILE__) . '/GalleryFileSystemEntity.class');
 
@@ -365,142 +351,6 @@ class GalleryItem_core extends GalleryFileSystemEntity {
     }
 
     /**
-     * Return the id of the GalleryDerivativeImage that is the thumbnail for
-     * this item.
-     *
-     * @return array object GalleryStatus a status code
-     *         int an id, null if there is none
-     */
-    function fetchThumbnailId() {
-	global $gallery;
-
-
-	list ($ret, $thumbnailTable) =
-	    GalleryDerivative::fetchDerivatives($this->getId(),
-						DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	$thumbnailId = null;
-	if (!empty($thumbnailTable[$this->getId()])) {
-	    $thumbnailId = $thumbnailTable[$this->getId()][0];
-	}
-
-	return array(GalleryStatus::success(), $thumbnailId);
-    }
-
-    /**
-     * Return the number of children in this Entity that are visible to the
-     * user specified.
-     *
-     * @access public
-     * @return array object GalleryStatus a status code
-     *               int a count
-     */
-    function fetchChildCount($userId) {
-	global $gallery;
-
-	$where = '[GalleryChildEntity::parentId] = ?';
-	$data[] = $this->getId();
-
-	$where .= ' AND [GalleryPermissionMap::itemId] = [GalleryChildEntity::id]';
-
-	/* Figure out what groups this user is in. */
-	list ($ret, $groupIds) =
-	    GalleryUserGroupMap::fetchGroupsForUser($userId);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	$groupIdString = join(', ', array_values($groupIds));
-	    
-	$where .= ' AND';
-	$where .= ' ([GalleryItem::ownerId] = ? OR';
-	$data[] = $userId;
-	$where .= ' (([GalleryPermissionMap::groupId] IN (' .
-	    $groupIdString . ')';
-	$where .= ' OR [GalleryPermissionMap::userId] = ?)';
-	$data[] = $userId;
-	$where .= ' AND';
-	$where .= ' [GalleryPermissionMap::permission] IN (?, ?, ?)))';
-	$data = array_merge($data, array('core.view', 'core.viewAll', 'core.all'));
-
-	list ($ret, $searchResults) = 
-	    $gallery->search(array('select' => 'COUNT(DISTINCT([GalleryChildEntity::id]))',
-				   'where' => $where),
-			     $data);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	$ids = array();
-	$result = $searchResults->nextResult();
-	$count = $result[0];
-	return array(GalleryStatus::success(), $count);
-    }
-
-    /**
-     * Return the ids of the children of this entity, in the order specified
-     * by the orderBy field and the direction specified by the orderDirection
-     * field, that are visible to the given user.
-     *
-     * @param int the user id of the user making the request
-     * @param int where to start
-     * @param int how many to return
-     *
-     * @access public
-     * @return array object GalleryStatus a status code
-     *               array integer ids
-     */
-    function fetchChildrenWithTypes($userId, $offset=null, $count=null) {
-	global $gallery;
-
-	$where = '[GalleryChildEntity::parentId] = ?';
-	$data[] = $this->getId();
-
-	$where .= ' AND [GalleryPermissionMap::itemId] = [GalleryChildEntity::id]';
-
-	/* Figure out what groups this user is in. */
-	list ($ret, $groupIds) =
-	    GalleryUserGroupMap::fetchGroupsForUser($userId);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	$groupIdString = join(', ', array_values($groupIds));
-
-	$where .= ' AND';
-	$where .= ' ([GalleryItem::ownerId] = ? OR';
-	$data[] = $userId;
-	$where .= ' (([GalleryPermissionMap::groupId] IN (' .
-	    $groupIdString . ')';
-	$where .= ' OR [GalleryPermissionMap::userId] = ?)';
-	$data[] = $userId;
-	$where .= ' AND';
-	$where .= ' [GalleryPermissionMap::permission] IN (?, ?, ?)))';
-	$data = array_merge($data, array('core.view', 'core.viewAll', 'core.all'));
-
-	$orderBy = $this->_fetchOrderClause();
-	list ($ret, $searchResults) = 
-	    $gallery->search(array('select' => ('DISTINCT([GalleryChildEntity::id]), ' .
-						'[GalleryEntity::entityType]'),
-				   'where' => $where,
-				   'order-by' => $orderBy,
-				   'limit' => array('count' => $count,
-						    'offset' => $offset)),
-			     $data);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	$ids = array();
-	while ($result = $searchResults->nextResult()) {
-	    $ids[$result[0]] = $result[1];
-	}
-	
-	return array(GalleryStatus::success(), $ids);
-    }
-
-    /**
      * Determine the sort order clause from this items settings
      *
      * @return string an order clause
@@ -571,7 +421,7 @@ class GalleryItem_core extends GalleryFileSystemEntity {
      * @return array object GalleryStatus a status code
      *               array integer ids
      */
-    function fetchChildren($userId, $offset=null, $count=null) {
+    function fetchChildIds($userId, $offset=null, $count=null) {
 	global $gallery;
 
 	$where = '[GalleryChildEntity::parentId] = ?';
@@ -579,30 +429,15 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 
 	$where .= ' AND [GalleryPermissionMap::itemId] = [GalleryChildEntity::id]';
 
-	/* Figure out what groups this user is in. */
-	list ($ret, $groupIds) =
-	    GalleryUserGroupMap::fetchGroupsForUser($userId);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	$groupIdString = join(', ', array_values($groupIds));
-	    
-	$where .= ' AND';
-	$where .= ' ([GalleryItem::ownerId] = ? OR';
-	$data[] = $userId;
-	$where .= ' (([GalleryPermissionMap::groupId] IN (' .
-	    $groupIdString . ')';
-	$where .= ' OR [GalleryPermissionMap::userId] = ?)';
-	$data[] = $userId;
-	$where .= ' AND';
-	$where .= ' [GalleryPermissionMap::permission] IN (?, ?, ?)))';
-	$data = array_merge($data, array('core.view', 'core.viewAll', 'core.all'));
+	list ($clause, $clauseData) =
+	    GalleryItemHelper::getViewPermissionClause($userId);
+	$where .= ' AND ' . $clause;
+	$data = array_merge($data, $clauseData);
 
-	$orderBy = $this->_fetchOrderClause();
 	list ($ret, $searchResults) = 
 	    $gallery->search(array('select' => 'DISTINCT([GalleryChildEntity::id])',
 				   'where' => $where,
-				   'order-by' => $orderBy,
+				   'order-by' => $this->_fetchOrderClause(),
 				   'limit' => array('count' => $count,
 						    'offset' => $offset)),
 			     $data);
@@ -616,6 +451,35 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	}
 	
 	return array(GalleryStatus::success(), $ids);
+    }
+
+    /**
+     * Return the children of this entity, in the order specified by the
+     * orderBy field and the direction specified by the orderDirection field,
+     * that are visible to the given user.
+     *
+     * @param int the user id of the user making the request
+     * @param int where to start
+     * @param int how many to return
+     *
+     * @access public
+     * @return array object GalleryStatus a status code
+     *               array integer ids
+     */
+    function fetchChildren($userId, $offset=null, $count=null) {
+	global $gallery;
+	
+	list ($ret, $childIds) = $this->fetchChildIds($userId, $offset, $count);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	list ($ret, $children) = $gallery->loadEntitiesById($childIds);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	return array(GalleryStatus::success(), $children);
     }
 
     /**

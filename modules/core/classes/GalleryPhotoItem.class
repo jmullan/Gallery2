@@ -80,6 +80,13 @@ class GalleryPhotoItem_core extends GalleryDataItem {
      */
 
     /**
+     * @see GalleryDataItem::canBeViewedInline()
+     */
+    function canBeViewedInline() {
+	return true;
+    }
+    
+    /**
      * Create a new ImageContainer from an image file
      *
      * @param int the id of the parent GalleryItem

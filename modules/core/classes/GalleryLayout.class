@@ -147,6 +147,10 @@ class GalleryLayout {
 		$links[$moduleName][$i]['url'] =
 		    $templateAdapter->url($links[$moduleName][$i]['params']);
 	    }
+
+	    if (empty($links[$moduleName])) {
+		unset($links[$moduleName]);
+	    }
 	}
 
 	GalleryProfiler::stop('GalleryLayout::_getModuleSystemLinks');
@@ -201,15 +205,12 @@ class GalleryLayout {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    /* Turn the URL params into an actual URL */
-	    foreach ($moduleLinks as $itemId => $links) {
-		$moduleLinks[$itemId]['url'] =
-		    $templateAdapter->url($moduleLinks[$itemId]['params']);
-	    }
-	    
 	    /* Refactor into: array[itemId][moduleName][links] */
 	    foreach ($moduleLinks as $itemId => $links) {
-		$itemLinks[$itemId][$moduleName] = $links;
+		foreach ($links as $link) {
+		    $link['url'] = $templateAdapter->url($link['params']);
+		    $itemLinks[$itemId][$moduleName][] = $link;
+		}
 	    }
 	}
 
