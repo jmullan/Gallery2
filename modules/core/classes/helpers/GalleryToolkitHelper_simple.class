@@ -68,6 +68,8 @@ class GalleryToolkitHelper_simple {
               [GalleryToolkitOperationMimeTypeMap::mimeType] = ?
               AND
               [GalleryToolkitOperationMap::name] = ?
+            ORDER BY 
+              [GalleryToolkitOperationMimeTypeMap::priority] ASC
             ';
 
 	    list ($ret, $searchResults) = $gallery->search($query, array($mimeType, $operationName));

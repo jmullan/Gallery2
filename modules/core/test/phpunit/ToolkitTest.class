@@ -46,6 +46,10 @@ class ToolkitTest extends GalleryTestCase {
 					       'TestToolkit',
 					       'TestToolkit',
 					       __FILE__);
+	GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
+					       'TestToolkit2',
+					       'TestToolkit2',
+					       __FILE__);
     }
 
     function testOperation() {
@@ -87,8 +91,33 @@ class ToolkitTest extends GalleryTestCase {
 	$this->assertEquals(new TestToolkit(), $toolkit);
 	$this->assertEquals('test/outputType', $outputMimeType);
 
+	/* Register another toolkit with same operation/mimetype, higher priority */
+	$ret = GalleryCoreApi::registerToolkitOperation('TestToolkit2',
+						       array('test/type'),
+						       'test-operation',
+						       $params,
+						       'test-description2',
+						       'test/outputType', 3);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Get the toolkit */
+	list ($ret, $toolkit, $outputMimeType) =
+	    GalleryCoreApi::getToolkitByOperation('test/type', 'test-operation');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(new TestToolkit2(), $toolkit);
+	$this->assertEquals('test/outputType', $outputMimeType);
+
 	/* Unregister */
 	$ret = GalleryCoreApi::unregisterToolkit('TestToolkit');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::unregisterToolkit('TestToolkit2');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -271,5 +300,6 @@ class ToolkitTest extends GalleryTestCase {
  * @subpackage PHPUnit
  */
 class TestToolkit { }
+class TestToolkit2 { }
 
 ?>

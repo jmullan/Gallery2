@@ -1623,17 +1623,18 @@ class GalleryCoreApi {
      * @param array a list of parameters that this operation requires
      * @param string a translatable description of this operation
      * @param string the output mime type after performing this operation
+     * @param integer priority of this implementation vs other toolkits
      * @return object GalleryStatus a status code
      * @static
      */
     function registerToolkitOperation($toolkitId, $mimeTypes, $operationName,
 				      $parameterTypesArray, $description,
-				      $outputMimeType='') {
+				      $outputMimeType='', $priority=5) {
 	GalleryCoreApi::apiMethodUsed('registerToolkitOperation', 'GalleryToolkitHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryToolkitHelper_medium.class');
 	return GalleryToolkitHelper_medium::registerOperation($toolkitId, $mimeTypes, $operationName,
 							      $parameterTypesArray, $description,
-							      $outputMimeType);
+							      $outputMimeType, $priority);
     }
 
     /**

@@ -33,6 +33,12 @@
     
     NOT NULL
   
+      ,
+    DB_COLUMN_PREFIXpriority
+      int(11)
+    
+    NOT NULL
+  
     , 
   
     INDEX (DB_COLUMN_PREFIXoperationName)

@@ -70,6 +70,8 @@ class GalleryToolkitOperationMimeTypeMap extends GalleryToolkitOperationMimeType
   
         $info['members']['mimeType'] = STORAGE_TYPE_STRING;
   
+        $info['members']['priority'] = STORAGE_TYPE_INTEGER;
+  
         return $info; 
     }
 
@@ -92,6 +94,10 @@ class GalleryToolkitOperationMimeTypeMap extends GalleryToolkitOperationMimeType
         }
     
         if (!isset($data['mimeType'])) {
+            return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+        }
+    
+        if (!isset($data['priority'])) {
             return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
         }
     

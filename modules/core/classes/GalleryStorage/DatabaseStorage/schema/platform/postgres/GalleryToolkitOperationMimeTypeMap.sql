@@ -33,6 +33,12 @@
     
     NOT NULL
   
+      ,
+    DB_COLUMN_PREFIXpriority
+      INTEGER
+    
+    NOT NULL
+  
     );
 
   

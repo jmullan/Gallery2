@@ -51,14 +51,15 @@ class GalleryToolkitHelper_medium {
      * @param array the applicable mime types for this operation
      * @param string the id of the operation
      * @param array a list of parameters that this operation requires
-     * @param string the output mime type after performing this operation
      * @param string a translatable description of this operation
+     * @param string the output mime type after performing this operation
+     * @param integer priority of this implementation vs other toolkits
      * @return object GalleryStatus a status code
      * @static
      */
     function registerOperation($toolkitId, $mimeTypes, $operationName,
 			       $parameterTypesArray, $description,
-			       $outputMimeType='') {
+			       $outputMimeType='', $priority=5) {
 	global $gallery;
 
 	/*
@@ -144,9 +145,18 @@ class GalleryToolkitHelper_medium {
 	    $ret = GalleryToolkitOperationMimeTypeMap::addMapEntry(
 		array('operationName' => $operationName,
 		      'toolkitId' => $toolkitId,
-		      'mimeType' => $mimeType));
+		      'mimeType' => $mimeType,
+		      'priority' => $priority));
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	/* Invalidate our cache */
+	$cacheKeyPattern = "GalleryToolkitHelper::";
+	foreach (GalleryDataCache::getAllKeys() as $key) {
+	    if (!strncmp($key, $cacheKeyPattern, strlen($cacheKeyPattern))) {
+		GalleryDataCache::remove($key);
 	    }
 	}
 
