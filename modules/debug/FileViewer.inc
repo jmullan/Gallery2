@@ -47,7 +47,7 @@ class FileViewerView extends GalleryView {
 	}
 
 	/* Make sure the file is on the approved list */
-	$moduleDir = dirname(__FILE)) . '/../../modules/';
+	$moduleDir = dirname(__FILE__) . '/../';
 	$platform = $gallery->getPlatform();
 	$approved = false;
 	$approvedChecksum = 0;
