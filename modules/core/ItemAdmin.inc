@@ -152,6 +152,11 @@ class ItemAdminView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	list ($ret, $isSiteAdmin) = GalleryUserGroupMap::isUserInSiteAdminGroup();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	$ItemAdmin['viewBodyFile'] = $results['body'];
 	$ItemAdmin['item'] = $item->getMemberData();
 	$ItemAdmin['parents'] = $parents;
@@ -164,6 +169,7 @@ class ItemAdminView extends GalleryView {
 	$ItemAdmin['thumbnail'] = $thumbnailData;
 	$ItemAdmin['subViewChoices'] = $subViewChoices;
 	$ItemAdmin['viewL10Domain'] = $subView->getL10Domain();
+	$ItemAdmin['isSiteAdmin'] = $isSiteAdmin;
 
 	$template->setVariable('ItemAdmin', $ItemAdmin);
 	if (!$template->hasVariable('enctype')) {

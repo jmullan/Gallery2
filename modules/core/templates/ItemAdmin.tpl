@@ -83,6 +83,15 @@
 	      {/g->title}
 	    {/g->item}
 	  {/if}
+	  {if ($ItemAdmin.isSiteAdmin)}
+	    {g->item}
+	      {g->title}
+		{g->link arg1="view=core:SiteAdmin"}
+		  {g->text text="Site Admin"}
+		{/g->link}
+	      {/g->title}
+	    {/g->item}
+	  {/if}
 	{/g->listing}
       {/g->box}
     {/g->sidebar}
