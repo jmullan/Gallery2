@@ -99,8 +99,7 @@ class ItemDeleteController extends GalleryController {
 	    }
 
 	    /* Figure out where to redirect upon success */
-	    $redirect['view'] = 'core:ItemAdmin';
-	    $redirect['subView'] = 'core:ItemDelete';
+	    $redirect['view'] = 'core:ShowItem';
 	    $redirect['itemId'] = $itemId;
 	} else if (isset($form['action']['next'])) {
 	    $page = GalleryUtilities::getRequestVariables('page');
@@ -121,7 +120,6 @@ class ItemDeleteController extends GalleryController {
 	}
 		
 	if (!empty($redirect)) {
-	    $results['return'] = 1;
 	    $results['redirect'] = $redirect;
 	} else {
 	    $results['delegate']['view'] = 'core:ItemAdmin';
