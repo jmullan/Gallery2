@@ -135,8 +135,8 @@ class ItemEditPhotoController extends GalleryController {
 
 		/* If we don't have a preferred and we're preserving, then create one */
 		$lockIds = array();
-		if (empty($preferred) && !$preserveOriginal) {
 
+		if (empty($preferred) && !$preserveOriginal) {
 		    /*
 		     * We have no preferred photo, and we're not preserving the
 		     * original.  So, we're changing the original photo here.  Make
@@ -179,15 +179,19 @@ class ItemEditPhotoController extends GalleryController {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 
+		    $gallery->debug('checking is modified');
 		    /* Save the item, if it's modified */
 		    if ($item->isModified()) {
 			list ($ret, $lockId) = $gallery->acquireWriteLock($item->getId());
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
-		    
+
+			$item->setSerialNumber($form['serialNumber']);
+			
 			$ret = $item->save();
 			if ($ret->isError()) {
+			    $gallery->releaseLocks($lockId);
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
 
@@ -606,6 +610,7 @@ class ItemEditPhotoView extends GalleryView {
 
 	$ItemEditPhoto = array();
 	$ItemEditPhoto['mode'] = $mode;
+	$ItemEditPhoto['serialNumber'] = $item->getSerialNumber();
 	$ItemEditPhoto['showEditThumbnail'] = $thumbnail != null;
 
 	list ($ret, $ItemEditPhoto['isAdmin']) = GalleryUserGroupMap::isUserInSiteAdminGroup();

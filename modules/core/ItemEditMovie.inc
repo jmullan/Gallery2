@@ -85,8 +85,10 @@ class ItemEditMovieController extends GalleryController {
 
 		$item->setWidth($form['width']);
 		$item->setHeight($form['height']);
+		$item->setSerialNumber($form['serialNumber']);
 		$ret = $item->save();
 		if ($ret->isError()) {
+		    $gallery->releaseLocks($lock);
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
@@ -144,6 +146,7 @@ class ItemEditMovieView extends GalleryView {
 	    /* First time around, load the form with item data */
 	    $form['width'] = $item->getWidth();
 	    $form['height'] = $item->getHeight();
+	    $form['serialNumber'] = $item->getSerialNumber();
 	    $form['formName'] = 'ItemEditMovie';
 	}
 

@@ -91,6 +91,7 @@
 	{if $ItemEditPhoto.editPhoto.can.rotate}
 	  {g->element}
 	    {g->input type="hidden" name="mode"}editPhoto{/g->input}
+	    {g->input type="hidden" name="form[serialNumber]"}{$form.serialNumber}{/g->input}
 	    {g->input type="submit" name="form[action][rotate][counterClockwise]"}
 	      {g->text text="CC 90&deg;"}
 	    {/g->input}

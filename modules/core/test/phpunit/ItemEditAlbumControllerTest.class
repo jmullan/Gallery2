@@ -90,7 +90,9 @@ class ItemEditAlbumControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[resizes][1][size]', 345);
 	GalleryUtilities::putRequestVariable('form[resizes][2][active]', 1);
 	GalleryUtilities::putRequestVariable('form[resizes][2][size]', 456);
-
+	GalleryUtilities::putRequestVariable('form[serialNumber]', $this->_album->getSerialNumber());
+	
+	
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
@@ -175,5 +177,26 @@ class ItemEditAlbumControllerTest extends GalleryControllerTestCase {
 			    $results);
     }
     
+
+    function testInvalidSerialNumber() {
+	/* valid inputs */
+	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[layout]', 'foo');
+	GalleryUtilities::putRequestVariable('form[theme]', 'bar');
+	GalleryUtilities::putRequestVariable('form[orderBy]', 'baz');
+	GalleryUtilities::putRequestVariable('form[orderDirection]', 'bletch');
+	GalleryUtilities::putRequestVariable('form[thumbnail][size]', 123);
+	GalleryUtilities::putRequestVariable('form[resizes][0][active]', 1);
+	GalleryUtilities::putRequestVariable('form[resizes][0][size]', 234);
+	GalleryUtilities::putRequestVariable('form[resizes][1][active]', 1);
+	GalleryUtilities::putRequestVariable('form[resizes][1][size]', 345);
+	GalleryUtilities::putRequestVariable('form[resizes][2][active]', 1);
+	GalleryUtilities::putRequestVariable('form[resizes][2][size]', 456);
+	/* invalid serial number */
+	GalleryUtilities::putRequestVariable('form[serialNumber]', -1);
+
+	$results = $this->handleRequest(ERROR_OBSOLETE_DATA);
+    }
 }
 ?>

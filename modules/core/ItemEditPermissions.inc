@@ -263,8 +263,10 @@ class ItemEditPermissionsController extends GalleryController {
 		    }
 		    
 		    $item->setOwnerId($user->getId());
+		    $item->setSerialNumber($form['serialNumber']);
 		    $ret = $item->save();
 		    if ($ret->isError()) {
+			$gallery->releaseLocks($lockId);
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 		
@@ -321,6 +323,7 @@ class ItemEditPermissionsView extends GalleryView {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+	$form['serialNumber'] = $item->getSerialNumber();
 
 	if ($form['formName'] == 'ItemEditPermissions') {
 	    /* Complain if we have any invalid data */

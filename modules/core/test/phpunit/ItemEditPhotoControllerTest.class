@@ -135,6 +135,8 @@ class ItemEditPhotoControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[preserveOriginal]', 'on');
 	GalleryUtilities::putRequestVariable('form[action][scale]', 1);
 	GalleryUtilities::putRequestVariable('form[scale][size]', 270);
+	GalleryUtilities::putRequestVariable('form[serialNumber]', $this->_item->getSerialNumber());
+	
 
 	/* Delete the preferred */
 	$ret = $gallery->deleteEntityById($this->_derivative[0]->getId());
@@ -181,6 +183,7 @@ class ItemEditPhotoControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('mode', 'editPhoto');
 	GalleryUtilities::putRequestVariable('form[action][scale]', 1);
 	GalleryUtilities::putRequestVariable('form[scale][size]', 200);
+	GalleryUtilities::putRequestVariable('form[serialNumber]', $this->_item->getSerialNumber());
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
@@ -209,6 +212,8 @@ class ItemEditPhotoControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
 	GalleryUtilities::putRequestVariable('mode', 'editPhoto');
 	GalleryUtilities::putRequestVariable('form[action][scale]', 1);
+	GalleryUtilities::putRequestVariable('form[serialNumber]', $this->_item->getSerialNumber());
+	
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
@@ -228,6 +233,7 @@ class ItemEditPhotoControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][scale]', 1);
 	GalleryUtilities::putRequestVariable('form[scale][size]', 'scooby doo');
 
+
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
@@ -244,6 +250,7 @@ class ItemEditPhotoControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
 	GalleryUtilities::putRequestVariable('mode', 'editPhoto');
 	GalleryUtilities::putRequestVariable('form[action][rotate][clockwise]', 1);
+	GalleryUtilities::putRequestVariable('form[serialNumber]', $this->_item->getSerialNumber());
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
@@ -479,6 +486,32 @@ class ItemEditPhotoControllerTest extends GalleryControllerTestCase {
 				  'error' => array()),
 			    $results);
     }
+
+    function testScaleWithInvalidSerialNumber() {
+	global $gallery;
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
+	GalleryUtilities::putRequestVariable('mode', 'editPhoto');
+	GalleryUtilities::putRequestVariable('form[preserveOriginal]', 'on');
+	GalleryUtilities::putRequestVariable('form[action][scale]', 1);
+	GalleryUtilities::putRequestVariable('form[scale][size]', 270);
+	GalleryUtilities::putRequestVariable('form[serialNumber]', -1);
+	
+
+	/* Delete the preferred */
+	$ret = $gallery->deleteEntityById($this->_derivative[0]->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Save current size */
+	$originalSize = $this->_item->getSize();
+
+	$results = $this->handleRequest(ERROR_OBSOLETE_DATA);
+    }
+
+
 }
 
 // Dummy test toolkit

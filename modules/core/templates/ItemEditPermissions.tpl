@@ -38,6 +38,7 @@
 
 	{g->element}
 	  {g->input type="text" name="form[owner][ownerName]"}{$form.owner.ownerName}{/g->input}
+	  {g->input type="hidden" name="form[serialNumber]"}{$form.serialNumber}{/g->input}
 	  {g->input type="submit" name="form[action][changeOwner]"}
 	    {g->text text="Change"}
 	  {/g->input}

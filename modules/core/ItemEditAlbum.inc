@@ -271,6 +271,7 @@ class ItemEditAlbumController extends GalleryController {
 		$item->setTheme($form['theme']);
 		$item->setOrderBy($form['orderBy']);
 		$item->setOrderDirection($form['orderDirection']);
+		$item->setSerialNumber($form['serialNumber']);
 
 		list ($ret, $lockId) = $gallery->acquireWriteLock($item->getId());
 		if ($ret->isError()) {
@@ -279,6 +280,7 @@ class ItemEditAlbumController extends GalleryController {
 
 		$ret = $item->save();
 		if ($ret->isError()) {
+		    $gallery->releaseLocks($lockId);
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
@@ -341,6 +343,7 @@ class ItemEditAlbumView extends GalleryView {
 	    $form['layout'] = $item->getLayout();
 	    $form['theme'] = $item->getTheme();
 	    $form['formName'] = 'ItemEditAlbum';
+	    $form['serialNumber'] = $item->getSerialNumber();
 
 	    /* Load up the data for the resizes table */
 	    list ($ret, $preferences) =

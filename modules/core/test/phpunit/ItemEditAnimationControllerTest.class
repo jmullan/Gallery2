@@ -70,6 +70,7 @@ class ItemEditAnimationControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
 	GalleryUtilities::putRequestVariable('form[width]', 123);
 	GalleryUtilities::putRequestVariable('form[height]', 456);
+	GalleryUtilities::putRequestVariable('form[serialNumber]', $this->_item->getSerialNumber());
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 
 	/* Perform the request and verify that we succeeded */
@@ -98,6 +99,7 @@ class ItemEditAnimationControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
 	GalleryUtilities::putRequestVariable('form[width]', '');
 	GalleryUtilities::putRequestVariable('form[height]', '');
+	GalleryUtilities::putRequestVariable('form[serialNumber]', $this->_item->getSerialNumber());
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 
 	/* Perform the request and verify that we succeeded */
@@ -136,6 +138,18 @@ class ItemEditAnimationControllerTest extends GalleryControllerTestCase {
 				  'error' => array('form[error][width][invalid]',
 						   'form[error][height][invalid]')),
 			    $results);
+    }
+
+    function testInvalidSerialNumber() {
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
+	GalleryUtilities::putRequestVariable('form[width]', 123);
+	GalleryUtilities::putRequestVariable('form[height]', 456);
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	/* use invalid serial number */
+	GalleryUtilities::putRequestVariable('form[serialNumber]', -1);
+	
+	$results = $this->handleRequest(ERROR_OBSOLETE_DATA);	
     }
 }
 ?>

@@ -88,7 +88,8 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('itemId', $this->_albumParent->getId());
 	GalleryUtilities::putRequestVariable('form[action][changeOwner]', 1);
 	GalleryUtilities::putRequestVariable('form[owner][ownerName]', $this->_user->getUserName());
-
+	GalleryUtilities::putRequestVariable('form[serialNumber]', $this->_albumParent->getSerialNumber());
+	
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',

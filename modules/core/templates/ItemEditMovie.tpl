@@ -60,6 +60,7 @@
     {/g->table}
 	  
     {g->element}
+      {g->input type="hidden" name="form[serialNumber]"}{$form.serialNumber}{/g->input}
       {g->input type="submit" name="form[action][save]"}
 	{g->text text="Save"}
       {/g->input}
