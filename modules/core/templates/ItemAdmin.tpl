@@ -55,7 +55,7 @@
         <h2> {g->text text="Options"} </h2>
 	<ul>
 	  {foreach from=$ItemAdmin.subViewChoices key=choiceName item=choiceParams}
-	    <li id="gbLink_{$choiceParams.controller|default:''|safecssname}{$choiceParams.view|default:''|safecssname}{$choiceParams.subView|default:''|safecssname}">
+	    <li class="gbAdminLink" id="{adminlinkid arg1=$choiceParams}">
 	    {if isset($choiceParams.active)}
 	      {$choiceName}
 	    {else}

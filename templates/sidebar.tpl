@@ -60,8 +60,7 @@
     <h3 class="giTitle">{g->text text="Actions"}</h3>
     <ul>
     {foreach from=$layout.itemLinks item=link}
-      <li class="gbAdminLink" id="gbLink_{$link.params.controller|default:''|safecssname}{$link.params.view|default:''|safecssname}{$link.params.subView|default:''|safecssname}">
-      <a href="{$link.url}">{$link.text}</a></li>
+      <li class="gbAdminLink" id="{adminlinkid arg1=$link.params}"><a href="{$link.url}">{$link.text}</a></li>
     {/foreach}
     </ul>
   </div>
