@@ -21,6 +21,7 @@
  */
 /**
  * Access point for external application in which Gallery is embedded.
+ * See docs/EMBEDDING for more information on using this class.
  * Three interaction modes:
  *  1) GalleryEmbed::init(array(..)) followed by GalleryEmbed::handleRequest()
  *  2) GalleryEmbed::init() followed by other GalleryEmbed/G2 calls,
