@@ -65,16 +65,28 @@
     {g->element}
       {if !empty($form.localServerFiles)}
 	<script type="text/javascript" language="javascript">
+	  function toggleSelections() {ldelim}
+	    form = document.forms[0];
+	    state = form.elements['{g->elementName name="selectionToggle"}'].checked;
+	    {foreach from=$form.localServerFiles item=file}
+	    form.elements['{g->elementName name="form[localServerFiles][`$file.fileKey`]"}'].checked = state;
+	    {/foreach}
+	  {rdelim}
+	</script>
+      {/if}
+
+      {if !empty($form.webPageUrls)}
+        <script type="text/javascript" language="javascript">
           function toggleSelections() {ldelim}
             form = document.forms[0];
             state = form.elements['{g->elementName name="selectionToggle"}'].checked;
-  	    {foreach from=$form.localServerFiles item=file}
-            form.elements['{g->elementName name="form[localServerFiles][`$file.fileKey`]"}'].checked = state;
+            {foreach from=$form.webPageUrls item=url}
+  	    form.elements['{g->elementName name="form[webPageUrl][`$url.url`]"}'].checked = state;
   	    {/foreach}
-          {rdelim}
-	</script>
+  	  {rdelim}
+        </script>
       {/if}
-	
+
       {if ($ItemAddChildren.mode == 'fromLocalServer')}
 	<script type="text/javascript" language="javascript">
           function selectPath(path) {ldelim}
@@ -184,6 +196,7 @@
 		{g->input type="submit" name="form[action][findFilesFromLocalServer]"}{g->text text="Find Files"}{/g->input}
 	      {/g->element}
 	    {else} {* {if empty($form.localServerFiles)} *}
+
 	      {g->element style="emphasized"}
 		{g->text text="Directory: %s" arg1=$form.localServerPath}
 		{g->link arg1="view=core:ItemAdmin" arg2="subView=core:ItemAddChildren" arg3="itemId=`$ItemAdmin.item.id`" arg4="form[localServerPath]=`$form.localServerPath`" arg5="form[formName]=ItemAddChildren"}
@@ -294,7 +307,7 @@
 	      {foreach from=$form.webPageUrls item=url}
 		{g->row}
 		  {g->column}
-		    {g->input type="checkbox" name="form[webPageUrl][$url]"}{/g->input}
+		    {g->input type="checkbox" name="form[webPageUrl][`$url.url`]"}{/g->input}
 		  {/g->column}
 		  {g->column}
 		    {$url.url}
@@ -305,6 +318,9 @@
 		{/g->row}
 	      {/foreach}
 	    {/g->table}
+	    {g->element style="emphasized"}
+	      NOTE: ADDING URLS DOES NOT WORK YET
+	    {/g->element}
 	    {g->input type="submit" name="form[action][addFromWebPage]"}{g->text text="Add URLs"}{/g->input}
 	  {/if} {* {if !empty($form.webPageUrls)} *}
 	{/g->box}
