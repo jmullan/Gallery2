@@ -68,11 +68,18 @@ class ItemAddFromBrowser extends ItemAddPlugin {
 			$mimeType = GalleryCoreApi::convertExtensionToMime($extension);
 		    }
 
+		    $filename = basename($file['name']);
+		    list ($base, $extension) = GalleryUtilities::getFileNameComponents($filename);
+		    $title = ($form['set']['title'] == 'filename') ? $base
+			   : (($form['set']['title'] == 'caption') ? $file['caption'] : '');
+		    $summary = empty($form['set']['summary']) ? '' : $file['caption'];
+		    $description = empty($form['set']['description']) ? '' : $file['caption'];
+
 		    list ($ret, $newItem) = GalleryCoreApi::addItemToAlbum($file['tmp_name'],
-									   basename($file['name']),
-									   basename($file['name']),
-									   $file['caption'],
-									   $file['caption'],
+									   $filename,
+									   $title,
+									   $summary,
+									   $description,
 									   $mimeType,
 									   $item->getId());
 		    if ($ret->isError()) {
@@ -127,14 +134,19 @@ class ItemAddFromBrowser extends ItemAddPlugin {
 	    /* First time around, load the form with item data */
 	    $form['uploadBoxCount'] = 20;
 	    $form['visibleBoxCount'] = 4;
+	    $form['set'] = array('title' => 'filename', 'summary' => 1, 'description' => 1);
 	    $form['formName'] = 'ItemAddFromBrowser';
 	}
 
-	$ItemAddFromBrowser = array();
-	$ItemAddFromBrowser['totalUploadSize'] = $totalUploadSize;
-	$ItemAddFromBrowser['maxFileSize'] = $maxFileSize;
-	$ItemAddFromBrowser['uploadsPermitted'] = $fileUploadsBool;
-	$template->setVariable('ItemAddFromBrowser', $ItemAddFromBrowser);
+	$titleList = array('filename' => $module->translate('Base filename'),
+			   'caption' => $module->translate('Caption'),
+			   '' => $module->translate('Blank'));
+
+	$template->setVariable('ItemAddFromBrowser',
+	    array('totalUploadSize' => $totalUploadSize,
+		  'maxFileSize' => $maxFileSize,
+		  'uploadsPermitted' => $fileUploadsBool,
+		  'titleList' => $titleList));
 
 	/* Set the ItemAdmin form's encoding type specially since we're uploading binary files */
 	if ($template->hasVariable('ItemAdmin')) {

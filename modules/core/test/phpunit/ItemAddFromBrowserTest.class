@@ -85,11 +85,16 @@ class ItemAddFromBrowserTest extends ItemAddPluginTestCase {
 	    GalleryUtilities::putRequestVariable('form[type][' . $i . ']',
 						 GalleryCoreApi::getMimeType($fullPath));
 	    GalleryUtilities::putRequestVariable('form[tmp_name][' . $i . ']', $fullPath);
-	    GalleryUtilities::putRequestVariable('form[size][' . $i . ']', $platform->filesize($fullPath));
+	    GalleryUtilities::putRequestVariable('form[size][' . $i . ']',
+						 $platform->filesize($fullPath));
 	    GalleryUtilities::putRequestVariable('form[error][' . $i . ']', 0);
-	    GalleryUtilities::putRequestVariable('form[caption][' . $i . ']', 'this is a caption for ' . $file);
+	    GalleryUtilities::putRequestVariable('form[caption][' . $i . ']',
+						 'this is a caption for ' . $file);
 	}
 	GalleryUtilities::putRequestVariable('form[uploadBoxCount]', $i);
+	GalleryUtilities::putRequestVariable('form[set][title]', 'filename');
+	GalleryUtilities::putRequestVariable('form[set][summary]', 1);
+	GalleryUtilities::putRequestVariable('form[set][description]', 1);
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest($this->_rootAlbum);
@@ -108,6 +113,7 @@ class ItemAddFromBrowserTest extends ItemAddPluginTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	$this->assertEquals(4, count($ids), 'child count');
 
 	$seenWeights = array();
 	foreach ($ids as $id) {
@@ -124,16 +130,29 @@ class ItemAddFromBrowserTest extends ItemAddPluginTestCase {
 	    $this->assert(!isset($seenWeights[$orderWeight]), 'Seen this weight before');
 	    $seenWeights[$orderWeight] = 1;
 	}
+
+	list ($ret, $items) = GalleryCoreApi::loadEntitiesById($ids);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	foreach ($items as $item) {
+	    list ($base, $extension) =
+		GalleryUtilities::getFileNameComponents($item->getPathComponent());
+	    $this->assertEquals($base, $item->getTitle(), 'title');
+	    $value = $item->getSummary();
+	    $this->assert(!empty($value), 'summary');
+	    $value = $item->getDescription();
+	    $this->assert(!empty($value), 'description');
+	}
     }
 
     function testAddUnknownChildFromBrowser() {
 	global $gallery;
+	$platform = $gallery->getPlatform();
 
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('form[action][addFromBrowser]', 1);
-
-	$platform = $gallery->getPlatform();
-
 	GalleryUtilities::putRequestVariable('form[name][1]', basename(__FILE__));
 	GalleryUtilities::putRequestVariable('form[type][1]', 'test/unknown-type');
 	GalleryUtilities::putRequestVariable('form[tmp_name][1]', __FILE__);
@@ -141,6 +160,7 @@ class ItemAddFromBrowserTest extends ItemAddPluginTestCase {
 	GalleryUtilities::putRequestVariable('form[error][1]', 0);
 	GalleryUtilities::putRequestVariable('form[caption][1]', 'a caption');
 	GalleryUtilities::putRequestVariable('form[uploadBoxCount]', 1);
+	GalleryUtilities::putRequestVariable('form[set][title]', 'caption');
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest($this->_rootAlbum);
@@ -150,18 +170,66 @@ class ItemAddFromBrowserTest extends ItemAddPluginTestCase {
 	$this->assertEquals(basename(__FILE__), $results[1]['addedFiles'][0]['fileName']);
 	$this->assert(isset($results[1]['addedFiles'][0]['id']), 'Id is not set');
 
-	/* Verify item attributes (like order weight) */
+	/* Verify item attributes */
 	list ($ret, $ids) = GalleryCoreApi::fetchChildItemIds($this->_rootAlbum);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	$this->assertEquals(1, count($ids), 'child count');
 
-	$this->assertEquals(1, sizeof($ids));
 	list ($ret, $viewCount) = GalleryCoreApi::fetchItemViewCount($ids[0]);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(0, $viewCount);
+
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($ids[0]);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('a caption', $item->getTitle(), 'title');
+	$this->assertEquals(null, $item->getSummary(), 'summary');
+	$this->assertEquals(null, $item->getDescription(), 'description');
+    }
+
+    function testAddWithEmptyTitle() {
+	global $gallery;
+	$platform = $gallery->getPlatform();
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('form[action][addFromBrowser]', 1);
+	GalleryUtilities::putRequestVariable('form[name][1]', basename(__FILE__));
+	GalleryUtilities::putRequestVariable('form[type][1]', 'test/unknown-type');
+	GalleryUtilities::putRequestVariable('form[tmp_name][1]', __FILE__);
+	GalleryUtilities::putRequestVariable('form[size][1]', $platform->filesize(__FILE__));
+	GalleryUtilities::putRequestVariable('form[error][1]', 0);
+	GalleryUtilities::putRequestVariable('form[caption][1]', 'a caption');
+	GalleryUtilities::putRequestVariable('form[uploadBoxCount]', 1);
+	GalleryUtilities::putRequestVariable('form[set][title]', '');
+	GalleryUtilities::putRequestVariable('form[set][summary]', 1);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest($this->_rootAlbum);
+	$this->assertEquals(array(), $results[0]);
+
+	/* We don't know the ids, but we can verify everything else */
+	$this->assertEquals(basename(__FILE__), $results[1]['addedFiles'][0]['fileName']);
+	$this->assert(isset($results[1]['addedFiles'][0]['id']), 'Id is not set');
+
+	/* Verify item attributes */
+	list ($ret, $ids) = GalleryCoreApi::fetchChildItemIds($this->_rootAlbum);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(1, count($ids), 'child count');
+
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($ids[0]);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(null, $item->getTitle(), 'title');
+	$this->assertEquals('a caption', $item->getSummary(), 'summary');
+	$this->assertEquals(null, $item->getDescription(), 'description');
     }
 }
 ?>

@@ -52,6 +52,21 @@
     {/literal}</script>
   {/if}
 </div>
+<div class="gbAdmin">
+  {g->text text="Set item titles from:"}
+  <select name="{g->formVar var="form[set][title]"}">
+    {html_options options=$ItemAddFromBrowser.titleList selected=$form.set.title}
+  </select>
+  &nbsp;
+  {g->text text="Assign caption to:"}
+  <input type="checkbox" id="captionSummary" name="{g->formVar var="form[set][summary]"}"
+   {if !empty($form.set.summary)}checked="checked"{/if}/>
+  <label for="captionSummary"> {g->text text="Summary"} </label>
+  &nbsp;
+  <input type="checkbox" id="captionDescription" name="{g->formVar var="form[set][description]"}"
+   {if !empty($form.set.description)}checked="checked"{/if}/>
+  <label for="captionDescription"> {g->text text="Description"} </label>
+</div>
 
 {* Include our extra ItemAddOptions *}
 {foreach from=$ItemAdd.options item=option}
@@ -62,14 +77,14 @@
 
 <div class="gbBottomFlag">
   <div class="gbButtons">
-    <input type="submit" name="{g->formVar var="form[action][addFromBrowser]"}" 
+    <input type="submit" name="{g->formVar var="form[action][addFromBrowser]"}"
     value="{g->text text="Add Items"}"/>
   </div>
 </div>
 {else}
 <div class="gbAdmin">
   <div class="giError">
-    {g->text text="Your webserver is configured to disallow file uploads from your web browser at this time.  Please contact your system administrator for assistance."}  
+    {g->text text="Your webserver is configured to disallow file uploads from your web browser at this time.  Please contact your system administrator for assistance."}
   </div>
 </div>
 {/if}
