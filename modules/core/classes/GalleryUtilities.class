@@ -945,7 +945,7 @@ class GalleryUtilities {
 	    return (chr(192 + ($num >> 6)) .
 		    chr(128 + ($num & 63)));
 	}
-	if ($num < 32768) {
+	if ($num < 65535) {
 	    return (chr(224 + ($num >> 12)) .
 		    chr(128 + (($num >> 6 ) & 63)) .
 		    chr(128 + ($num & 63)));

@@ -788,6 +788,15 @@ class UtilitiesTest extends GalleryTestCase {
 	$this->assertEquals("\xc3\xb1",
 			    GalleryUtilities::unicodeValueToUtf8Value('xF1'),
 			    'hex');
+
+	/* Test 2^15 boundary */
+	$this->assertEquals("\xe7\xbf\xbf",
+			    GalleryUtilities::unicodeValueToUtf8Value('x7FFF'),
+			    '2^15 - 1');
+
+	$this->assertEquals("\xe8\x80\x80",
+			    GalleryUtilities::unicodeValueToUtf8Value('x8000'),
+			    '2^15');
     }
 
     function testUnicodeEntitiesToUtf8() {
