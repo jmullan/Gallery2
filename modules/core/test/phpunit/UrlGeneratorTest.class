@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -68,7 +68,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 	    $values[] = GalleryUtilities::prefixFormVariable($key) . '=' . htmlentities($value);
 	}
 
-	// If we're not using cookies, expect there to be an additional value
+	/* If we're not using cookies, expect there to be an additional value */
 	$session =& $gallery->getSession();
 	if (!$session->isUsingCookies()) {
 	    $values[] = GalleryUtilities::prefixFormVariable($session->getKey()) .
@@ -78,7 +78,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 
 	$this->assertEquals($expected, $actual);
 
-	// Simulate embbeded with full url as embedUri
+	/* Simulate embbeded with full url as embedUri */
 	$_SERVER['REQUEST_URI'] = '/cms/otherpage?foo=bar';
 	$urlGenerator = new GalleryUrlGenerator('http://example.com/cms/phpunit_test.php?module=gallery2', '../gallery2/');
 
@@ -86,7 +86,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 	    join('&amp;', $values), $urlGenerator->generateUrl($params),
 	    'embedded');
 
-	// Simulate embedded
+	/* Simulate embedded */
 	$_SERVER['REQUEST_URI'] = '/cms/phpunit_test.php?module=gallery2&foo=bar';
 	$urlGenerator = new GalleryUrlGenerator('phpunit_test.php?module=gallery2', '../gallery2/');
 
@@ -94,7 +94,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 	    join('&amp;', $values), $urlGenerator->generateUrl($params),
 	    'embedded');
 
-	// Simulate cookieless embedded
+	/* Simulate cookieless embedded */
 	$urlGenerator = new GalleryUrlGenerator('phpunit_test.php?module=gallery2',
 						'../gallery2/', 'CMSSID=123456');
 
@@ -124,7 +124,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 			    $this->_urlGenerator->generateUrl(array('href' => 'test/test.css')),
 			    'relative');
 
-	// Simulate embedded
+	/* Simulate embedded */
 	$_SERVER['REQUEST_URI'] = '/cms/phpunit_test.php?module=gallery2&foo=bar';
 	$urlGenerator = new GalleryUrlGenerator('phpunit_test.php?module=gallery2', '../gallery2/');
 
@@ -132,7 +132,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 			    $urlGenerator->generateUrl(array('href' => 'test/test.css')),
 			    'relative embedded');
 
-	// Embedded, trailing slash omitted
+	/* Embedded, trailing slash omitted */
 	$urlGenerator = new GalleryUrlGenerator('phpunit_test.php?module=gallery2', '../gallery2');
 
 	$this->assertEquals('http://example.com/gallery2/test/test.css' . $qs,
@@ -152,7 +152,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 	    $values[] = GalleryUtilities::prefixFormVariable($key) . '=' . htmlentities($value);
 	}
 
-	// No matter what, expect the session id
+	/* No matter what, expect the session id */
 	$session =& $gallery->getSession();
 	$values[] = GalleryUtilities::prefixFormVariable($session->getKey()) .
 	    '=' . $session->getId();
@@ -172,7 +172,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 	    $values[] = GalleryUtilities::prefixFormVariable($key) . '=' . htmlentities($value);
 	}
 
-	// No matter what, expect no session id
+	/* No matter what, expect no session id */
 	$expected = 'http://example.com/gallery2/phpunit_test.php?' . join('&amp;', $values);
 	$this->assertEquals($expected, $actual);
     }
@@ -181,13 +181,13 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$expected = 'http://example.com/gallery2/phpunit_test.php?foo=bar';
 	$this->assertEquals($expected, $this->_urlGenerator->getCurrentUrl());
 
-	// IIS.. no REQUEST_URI; has SCRIPT_NAME..
+	/* IIS.. no REQUEST_URI; has SCRIPT_NAME.. */
 	unset($_SERVER['REQUEST_URI']);
 	$_SERVER['SCRIPT_NAME'] = '/gallery2/phpunit_test.php';
 	$expected = 'http://example.com/gallery2/phpunit_test.php';
 	$this->assertEquals($expected, $this->_urlGenerator->getCurrentUrl(), 'iis');
 
-	// Sometimes IIS has PATH_INFO value the same as SCRIPT_NAME..
+	/* Sometimes IIS has PATH_INFO value the same as SCRIPT_NAME.. */
 	$_SERVER['PATH_INFO'] = $_SERVER['SCRIPT_NAME'];
 	$this->assertEquals($expected, $this->_urlGenerator->getCurrentUrl(), 'iis path_info');
     }
@@ -195,7 +195,7 @@ class UrlGeneratorTest extends GalleryTestCase {
     function testGetCurrentUrlDir() {
 	$this->assertEquals('http://example.com/gallery2/', $this->_urlGenerator->getCurrentUrlDir());
 
-	// Simulate embedded..
+	/* Simulate embedded.. */
 	$_SERVER['REQUEST_URI'] = '/phpunit_test.php?module=gallery2&foo=bar';
 	$urlGenerator = new GalleryUrlGenerator('phpunit_test.php?module=gallery2', 'gallery2/');
 	$this->assertEquals('http://example.com/', $urlGenerator->getCurrentUrlDir());
@@ -210,7 +210,7 @@ class UrlGeneratorTest extends GalleryTestCase {
     function testGetCurrentDomain() {
 	$_SERVER['HTTP_HOST'] = 'http_host';
 	$this->assertEquals('http_host', $this->_urlGenerator->getCurrentDomain());
-	
+
 	$_SERVER['HTTP_X_FORWARDED_SERVER'] = 'http_x_forwarded_server';
 	$this->assertEquals('http_x_forwarded_server', $this->_urlGenerator->getCurrentDomain());
     }
@@ -221,10 +221,10 @@ class UrlGeneratorTest extends GalleryTestCase {
     function testMakeUrl1() {
 	$this->assertEquals('http://example.com/test/path.php',
 			    $this->_urlGenerator->makeUrl('/test/path.php'), 'with slash');
-	
+
 	$this->assertEquals('http://example.com/test/test.jpg',
 			    $this->_urlGenerator->makeUrl('test/test.jpg'), 'no slash');
-	
+
 	$this->assertEquals('http://example.com/',
 			    $this->_urlGenerator->makeUrl(''), 'empty');
     }
@@ -233,7 +233,7 @@ class UrlGeneratorTest extends GalleryTestCase {
      * Test non-standard ports go in both HTTP_HOST and SERVER_PORT
      */
     function testMakeUrl2() {
-	$_SERVER['HTTP_HOST'] = 'example.com:8080'; 
+	$_SERVER['HTTP_HOST'] = 'example.com:8080';
 	$_SERVER['SERVER_PORT'] = 8080;
 	$this->assertEquals('http://example.com:8080/test.php?fun=yes',
 			    $this->_urlGenerator->makeUrl('/test.php?fun=yes'));
@@ -277,7 +277,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 	    $values[] = GalleryUtilities::prefixFormVariable($key) . '=' . htmlentities($value);
 	}
 
-	// If we're not using cookies, expect there to be an additional value
+	/* If we're not using cookies, expect there to be an additional value */
 	$session =& $gallery->getSession();
 	if (!$session->isUsingCookies()) {
 	    $values[] = GalleryUtilities::prefixFormVariable($session->getKey()) .
@@ -292,7 +292,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 	global $gallery;
 	$session =& $gallery->getSession();
 
-	// Setup..
+	/* Setup.. */
 	list ($ret, $testAlbum) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -306,7 +306,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	// Test url..
+	/* Test url.. */
 	$params = array('view' => 'core:ShowItem', 'itemId' => $testAlbum->getId());
 	foreach ($params as $key => $value) {
 	    $values[] = GalleryUtilities::prefixFormVariable($key) . '=' . htmlentities($value);
@@ -319,17 +319,17 @@ class UrlGeneratorTest extends GalleryTestCase {
 	}
 	$long = 'http://example.com/gallery2/phpunit_test.php?' . join('&amp;', $values);
 
-	// View prefix for short urls..
+	/* View prefix for short urls.. */
 	$this->_urlGenerator->registerViewPrefix('test', 'core:ShowItem');
 
-	// Long url..
+	/* Long url.. */
 	$this->assertEquals($long, $this->_urlGenerator->generateUrl($params), 'long url');
 
-	// Force short url..
+	/* Force short url.. */
 	$params['forceShortUrls'] = 'true';
 	$this->assertEquals($short, $this->_urlGenerator->generateUrl($params), 'force short url');
 
-	// Short url..
+	/* Short url.. */
 	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'misc.useShortUrls', 'true');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -337,12 +337,12 @@ class UrlGeneratorTest extends GalleryTestCase {
 	unset($params['forceShortUrls']);
 	$this->assertEquals($short, $this->_urlGenerator->generateUrl($params), 'short url');
 
-	// IIS/CGI.. no REQUEST_URI; has SCRIPT_NAME and PATH_INFO..
+	/* IIS/CGI.. no REQUEST_URI; has SCRIPT_NAME and PATH_INFO.. */
 	unset($_SERVER['REQUEST_URI']);
 	$_SERVER['SCRIPT_NAME'] = '/gallery2/phpunit_test.php';
 	$this->assertEquals($short, $this->_urlGenerator->generateUrl($params), 'cgi short url');
 
-	// Cleanup..
+	/* Cleanup.. */
 	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'misc.useShortUrls', $saveParam);
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -354,16 +354,16 @@ class UrlGeneratorTest extends GalleryTestCase {
     }
 
     function testParseCurrentUrl() {
-	// Setup..
+	/* Setup.. */
 	list ($ret, $testAlbum) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	// View prefix for short urls..
+	/* View prefix for short urls.. */
 	$this->_urlGenerator->registerViewPrefix('test', 'core:ShowItem');
 
-	// No path info..
+	/* No path info.. */
 	list ($ret, $redirect) = $this->_urlGenerator->parseCurrentUrl();
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -372,7 +372,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 	list ($view, $itemId) = GalleryUtilities::getRequestVariables('view', 'itemId');
 	$this->assert(empty($view) && empty($itemId), 'no values');
 
-	// Path info in REQUEST_URI..
+	/* Path info in REQUEST_URI.. */
 	$_SERVER['REQUEST_URI'] = '/gallery2/phpunit_test.php/test/' . $testAlbum->getPathComponent() . '/';
 	list ($ret, $redirect) = $this->_urlGenerator->parseCurrentUrl();
 	if ($ret->isError()) {
@@ -385,7 +385,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 	GalleryUtilities::removeFormVariables('view');
 	GalleryUtilities::removeFormVariables('itemId');
 
-	// Extra stuff in path info..
+	/* Extra stuff in path info.. */
 	$_SERVER['REQUEST_URI'] = '/gallery2/phpunit_test.php/test/' . $testAlbum->getPathComponent() . '/badpath';
 	list ($ret, $redirect) = $this->_urlGenerator->parseCurrentUrl();
 	if ($ret->isError()) {
@@ -399,7 +399,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 	GalleryUtilities::removeFormVariables('view');
 	GalleryUtilities::removeFormVariables('itemId');
 
-	// IIS/CGI: Path info in SCRIPT_NAME and PATH_INFO..
+	/* IIS/CGI: Path info in SCRIPT_NAME and PATH_INFO.. */
 	$_SERVER['SCRIPT_NAME'] = '/gallery2/phpunit_test.php';
 	$_SERVER['PATH_INFO'] = '/test/' . $testAlbum->getPathComponent() . '/';
 	unset($_SERVER['REQUEST_URI']);
@@ -414,7 +414,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 	GalleryUtilities::removeFormVariables('view');
 	GalleryUtilities::removeFormVariables('itemId');
 
-	// Cleanup..
+	/* Cleanup.. */
 	$ret = GalleryCoreApi::deleteEntityById($testAlbum->getId());
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -457,15 +457,15 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$_GET['g2_fromNavId'] = 'fromNavId';
 	$expected = 'http://example.com/gallery2/phpunit_test.php?g2_foo=bar';
 
-	// Normal behaviour (php+apache)
+	/* Normal behaviour (php+apache) */
 	$this->assertEquals($expected, $this->_urlGenerator->getNavigationReturnUrl());
 
-	// IIS: no REQUEST_URI, just SCRIPT_NAME
+	/* IIS: no REQUEST_URI, just SCRIPT_NAME */
 	unset($_SERVER['REQUEST_URI']);
 	$_SERVER['SCRIPT_NAME'] = '/gallery2/phpunit_test.php';
 	$this->assertEquals($expected, $this->_urlGenerator->getNavigationReturnUrl(), 'iis');
 
-	// Sometimes IIS has PATH_INFO value the same as SCRIPT_NAME..
+	/* Sometimes IIS has PATH_INFO value the same as SCRIPT_NAME.. */
 	$_SERVER['PATH_INFO'] = $_SERVER['SCRIPT_NAME'];
 	$this->assertEquals($expected, $this->_urlGenerator->getNavigationReturnUrl(), 'iis path_info');
     }
@@ -473,23 +473,23 @@ class UrlGeneratorTest extends GalleryTestCase {
     function testGetNavigationReturnUrlNoCookies() {
 	global $gallery;
 
-	// Session without cookies
+	/* Session without cookies */
 	$session =& $gallery->getSession();
 	$savedIsUsingCookies = $session->_isUsingCookies;
 	$session->_isUsingCookies = false;
 
-	// No other params in URL
+	/* No other params in URL */
 	$expected = 'http://example.com/gallery2/phpunit_test.php';
 	$this->assertEquals($expected . '?' . GalleryUtilities::prefixFormVariable($session->getKey()) . '=' . $session->getId(),
 			    $this->_urlGenerator->getNavigationReturnUrl());
 
-	// With other params in URL
+	/* With other params in URL */
 	$_GET['g2_foo'] = 'bar';
 	$expected = 'http://example.com/gallery2/phpunit_test.php?g2_foo=bar';
 	$this->assertEquals($expected . '&amp;' . GalleryUtilities::prefixFormVariable($session->getKey()) . '=' . $session->getId(),
 			    $this->_urlGenerator->getNavigationReturnUrl());
 
-	// With session already in URL
+	/* With session already in URL */
 	$_GET['g2_foo'] = 'bar';
 	$_GET[GalleryUtilities::prefixFormVariable($session->getKey())] = $session->getId();
 	$expected = 'http://example.com/gallery2/phpunit_test.php?g2_foo=bar';
@@ -527,7 +527,7 @@ class UrlGeneratorTestPlatform extends GalleryPlatform {
 	switch($filename) {
 	case './test/local/test1.css':
 	    return false;
-	    
+
 	case './test/test1.css':
 	case './test/local/test2.css':
 	    return true;
