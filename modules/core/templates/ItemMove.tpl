@@ -14,7 +14,7 @@
 
   </div>
 
-  {if (isset($status))}
+  {if isset($status.moved)}
   <div id="gsStatus">
     <div class="giStatus">
       {g->text one="Successfully moved %d item"
