@@ -46,7 +46,8 @@ class ItemAddFromWeb extends ItemAddPlugin {
 
 	if (isset($form['action']['findFilesFromWebPage'])) {
 	    /* Delegate back to the same view */
-	} else if (isset($form['action']['addFromWebPage'])) {
+	} else if (isset($form['action']['addFromWebPage']) && isset($form['webPageUrls'])
+                && !empty($form['webPageUrls'])) {
 	    $platform = $gallery->getPlatform();
 	    foreach (array_keys($form['webPageUrls']) as $url) {
 		/* Copy the file locally */
