@@ -29,6 +29,8 @@
  * Perform all necessary initialization of the Gallery framework
  */
 function GalleryInitFirstPass($params=array()) {
+    ini_set('magic_quotes_runtime', 0);
+
     /* Specify that when an assertion fails, we terminate right away. */
     assert_options(ASSERT_BAIL, 1);
 

@@ -33,6 +33,12 @@
 /* Show all errors. */
 @ini_set('display_errors', 1);
 
+/*
+ * Disable magic_quotes runtime -- it causes problems with legitimate quotes
+ * in our SQL, as well as reading/writing the config.php
+ */
+@ini_set('magic_quotes_runtime', 0);
+
 require_once(dirname(__FILE__) . '/GalleryStub.class');
 require_once(dirname(__FILE__) . '/InstallStep.class');
 
