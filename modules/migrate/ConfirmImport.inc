@@ -216,7 +216,7 @@ class ConfirmImportController extends GalleryController {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 		
-		$desiredname = $album['name'];
+		$desiredname = $platform->legalizePathComponent($album['name']);
 		$k = 0;
 		$invalidName = TRUE;
 		while($invalidName) {
@@ -379,7 +379,7 @@ class ConfirmImportController extends GalleryController {
 			    }
 			    
 
-			    $ret = GalleryCoreApi::addDerivativePreference($i, $newAlbumInstanceId,
+			    $ret = GalleryCoreApi::addDerivativePreference(1, $newAlbumInstanceId,
 									   DERIVATIVE_TYPE_IMAGE_RESIZE,
 									   'scale|' . $album['resize_size']);
 			    if ($ret->isError()) {
@@ -679,6 +679,8 @@ class ConfirmImportView extends GalleryView {
      */
     function loadTemplate(&$template, &$form) {
         global $gallery;
+	$platform = $gallery->getPlatform();
+	$illegalAlbumNames = array();
 	$existingAlbums = array();
 	$albumsValidOwner = array();
 	if (!isset($form['sourceAlbums'])) {
@@ -724,6 +726,11 @@ class ConfirmImportView extends GalleryView {
 	    } else {
 		$existingAlbums[$album['name']] = $existingAlbumId;
 	    }
+	    if (!$platform->isLegalPathComponent($album['name'])){
+		$illegalAlbumNames[$album['name']] = $platform->legalizePathComponent($album['name']);
+	    } else {
+		$illegalAlbumNames[$album['name']] = FALSE;
+	    }
 	    $validUid = Gallery1DataParser::isValidUid($albumsPath,$album['owner']);
 	    if ($validUid){
 		list($ret, $testUser) = Gallery1DataParser::getUserFieldsByUid($albumsPath, $album['owner']);
@@ -750,6 +757,7 @@ class ConfirmImportView extends GalleryView {
 	$ConfirmImport['albums'] = $albums;
 	$ConfirmImport['albumsPath'] = $albumsPath;
 	$ConfirmImport['existingAlbums'] = $existingAlbums;
+	$ConfirmImport['illegalAlbumNames'] = $illegalAlbumNames;
         $ConfirmImport['destinationAlbumID'] = $destinationAlbumID;
 	$ConfirmImport['albumValidOwner'] = $albumValidOwner;
         $ConfirmImport['targetAlbum'] = $targetAlbum;
