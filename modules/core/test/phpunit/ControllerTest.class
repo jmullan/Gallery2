@@ -2,7 +2,7 @@
 /*
  * $RCSfile$
  *
- * Gallery - a web based photo album viewer and editor
+ * Gallery - a web based photo album controllerer and editor
  * Copyright (C) 2000-2003 Bharat Mediratta
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -34,71 +34,38 @@
  *
  */
 class ControllerTest extends GalleryTestCase {
-
-    var $_wasActive;
-    var $_module;
-
     function ControllerTest($methodName) {
 	$this->GalleryTestCase($methodName);
     }
 
     function setUp() {
 	parent::setUp();
-
-	list($ret, $this->_module) = GalleryCoreApi::loadPlugin('module', 'comment');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	list ($ret, $this->_wasActive) = $this->_module->isActive();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-    }
-
-    function tearDown() {
-	list ($ret, $isActive) = $this->_module->isActive();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	$ret = null;
-	if ($isActive && ! $this->_wasActive) {
-	    list ($ret, $status) = $this->_module->deactivate();
-	} elseif (! $isActive && $this->_wasActive) {
-	    list ($ret, $status) = $this->_module->activate();
-	}
-	if ($ret && $ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	parent::tearDown();
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryPluginHelper_medium.class');
+	GalleryPluginHelper_medium::setPluginInstance('module', 'controllertest', new ControllerTestModule());
     }
 
     function testLoadControllerSuccess() {
-	list ($ret, $status) = $this->_module->activate();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	
 	require_once(dirname(__FILE__) . '/../../classes/GalleryController.class');
-	list ($ret, $controller) = GalleryController::loadController('comment:EditComment');
+	list ($ret, $controller) = GalleryController::loadController('core:ItemEdit');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }
 
     function testLoadControllerFail() {
-	list ($ret, $status) = $this->_module->deactivate();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	require_once(dirname(__FILE__) . '/../../classes/GalleryController.class');
-	list ($ret, $controller) = GalleryController::loadController('comment:EditComment');
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryController.class');
+	list ($ret, $controller) = GalleryController::loadController('controllertest:SomeRandomController');
 	if ($ret->isError() && $ret->getErrorCode() & ERROR_PERMISSION_DENIED) {
 	    // this is what we expect
 	} else {
 	    $this->assert(false, 'The controller of a deactivated module should not load.');
 	}
+    }
+}
+
+class ControllerTestModule {
+    function isActive() {
+	return array(GalleryStatus::success(), false);
     }
 }
 
