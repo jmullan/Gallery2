@@ -255,9 +255,13 @@ class GalleryDerivative_core extends GalleryChildEntity {
      * @param array the remaining operations in the sequence
      * @param string the new operation
      * @param array mixed the new operation's args
+     * @return array object GalleryStatus a status code
+     *               boolean whether the merge was complete or not
+     *               array the merged operations
      * @access private
      */
     function _recursiveMergeOperation($mimeType, $remainingOperations, $newOperation, $newArgs) {
+
 	if (empty($remainingOperations)) {
 	    /* Trivial case -- no operations left means nothing to merge against */
 	    return array(GalleryStatus::success(), false, array());
@@ -277,11 +281,6 @@ class GalleryDerivative_core extends GalleryChildEntity {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
-	if (!isset($toolkit)) {
-	    /* XXX: What can we do now? */
-	    return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
-	}
-
 	/* Give the next operation in line the chance to do the merge. */
 	list ($ret, $mergeComplete, $returnedOperations) =
 	    $this->_recursiveMergeOperation($outputMimeType, $remainingOperations, $newOperation, $newArgs);
@@ -297,6 +296,16 @@ class GalleryDerivative_core extends GalleryChildEntity {
 	    array_unshift($returnedOperations, $currentOperation);
 	    return array(GalleryStatus::success(), true, $returnedOperations);
 	} else {
+
+	    if (!isset($toolkit)) {
+		/*
+		 * There's no applicable toolkit for the current operation.  This
+		 * should only happen if a toolkit goes away.  All we can do at
+		 * this point is to nuke the invalid operation and hope for the best
+		 */
+		return array(GalleryStatus::success(), true, $returnedOperations);
+	    }
+	    
 	    /*
 	     * No joy farther down the line.  Give the toolkit a chance to
 	     * merge against the current operation.
