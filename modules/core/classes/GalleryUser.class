@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -32,9 +32,9 @@ GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryEntity.class');
 
 /**
  * Representation of a single user
- * 
- * This class is the container for information about Gallery     
- * users.  Each instance of User contains a unique user id. It   
+ *
+ * This class is the container for information about Gallery
+ * users.  Each instance of User contains a unique user id. It
  * must be implemented by a class that has a persistent store for
  * the relevant user data.
  *
@@ -50,7 +50,7 @@ GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryEntity.class');
  * @subpackage Classes
  */
 class GalleryUser_core extends GalleryEntity {
-	
+
     /*
      * ****************************************
      *                 Members
@@ -166,12 +166,12 @@ class GalleryUser_core extends GalleryEntity {
 	    return GalleryStatus::error(ERROR_COLLISION,
 					__FILE__, __LINE__);
 	}
-	
+
 	$ret = parent::create();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	$this->setUserName($userName);
 	return GalleryStatus::success();
     }
@@ -183,7 +183,11 @@ class GalleryUser_core extends GalleryEntity {
      * @return boolean true if the password is correct
      */
     function isCorrectPassword($password) {
-	return !strcmp(md5($password), $this->getHashedPassword());
+	$valid = $this->getHashedPassword();
+	$salt = substr($valid, 0, 4);
+	// Support both old (G1 thru 1.4.0; G2 thru alpha-4) and new password schemes:
+	$guess = (strlen($valid) == 32) ? md5($password) : ($salt . md5($salt . $password));
+	return !strcmp($guess, $valid);
     }
 
     /**
@@ -192,7 +196,13 @@ class GalleryUser_core extends GalleryEntity {
      * @param string a plaintext password
      */
     function changePassword($newPassword) {
-	$this->setHashedPassword(md5($newPassword));
+	$salt = '';
+	for ($i = 0; $i < 4; $i++) {
+	    $char = mt_rand(48, 109);
+	    $char += ($char > 90) ? 13 : ($char > 57) ? 7 : 0;
+	    $salt .= chr($char);
+	}
+	$this->setHashedPassword($salt . md5($salt . $newPassword));
     }
 
     /**
@@ -226,7 +236,7 @@ class GalleryUser_core extends GalleryEntity {
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
-	
+
 		$ret = GalleryCoreApi::addUserToGroup($this->getId(), $groupId);
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
@@ -241,15 +251,15 @@ class GalleryUser_core extends GalleryEntity {
      * Delete this GalleryUser
      *
      * Do some bookkeeping, like removing the user from all groups,
-	 * remapping his items to a site admin user and removing all 
-	 * of his permissions
+     * remapping his items to a site admin user and removing all
+     * of his permissions
      *
      * @access public
      * @return object GalleryStatus a status code
      */
     function delete() {
 	global $gallery;
-	
+
 	/*
 	 * First assign all items of this user to another owner
 	 * You should call remapOwner() before calling $user->delete()
@@ -263,8 +273,8 @@ class GalleryUser_core extends GalleryEntity {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	if ($isAdmin) { 
-	    $newOwnerId = $gallery->getActiveUserId();		
+	if ($isAdmin) {
+	    $newOwnerId = $gallery->getActiveUserId();
 	} else { /* Get any of the Site Admins */
 	    list ($ret, $siteAdminGroupId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
 	    if ($ret->isError()) {
@@ -278,28 +288,28 @@ class GalleryUser_core extends GalleryEntity {
 		return GalleryStatus::error(ERROR_UNKNOWN, __FILE__, __LINE__);
 	    }
 	    $adminUser = array_keys($adminUser);
-	    $newOwnerId = $adminUser[0];	
+	    $newOwnerId = $adminUser[0];
 	}
-	
+
 	/* Now remap the owner of all of his items */
 	$ret = GalleryCoreApi::remapOwnerId($this->getId(), $newOwnerId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	/* Delete all of his permissions from the permissions map table */
 	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryPermissionMap.class');
 	$ret = GalleryPermissionMap::removeMapEntry(array('userId' => $this->getId()));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	/* And remove him from all groups he was a member of */
 	$ret = GalleryCoreApi::removeUserFromAllGroups($this->getId());
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	/* And finally delete the user from the database */
 	$ret = parent::delete();
 	if ($ret->isError()) {
