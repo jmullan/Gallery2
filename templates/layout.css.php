@@ -217,7 +217,6 @@ ul.gbAdminList li label { }
 	margin: 0;
 	padding: 0 0 0 8px;
 	float: left;
-	background-image: none;
 }
 
 .gbTabBar span {
@@ -279,12 +278,10 @@ ul.gbAdminList li label { }
 .gbBreadCrumb li {
 	display: inline;
 	padding: 0 0 0 14px;
-	background-image: none;
 }
 
 .gbBreadCrumb li.giBreadCrumbFirst {
 	padding: 0;
-	background-image: none;
 }
 
 /*      inside gsAlbumContents or gsAdmiinContents */
