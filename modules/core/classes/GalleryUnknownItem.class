@@ -60,6 +60,14 @@ class GalleryUnknownItem_core extends GalleryDataItem {
      *                 Methods
      * ****************************************
      */
+
+    /**
+     * @see GalleryItem::itemTypeName
+     */
+    function itemTypeName() {
+	global $gallery;
+	return $gallery->i18n('Unknown');
+    }
 }
 
 include(dirname(__FILE__) . '/interfaces/GalleryUnknownItem.inc');

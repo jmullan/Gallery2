@@ -60,6 +60,14 @@ class GalleryMovieItem_core extends GalleryDataItem {
      *                 Methods
      * ****************************************
      */
+
+    /**
+     * @see GalleryItem::itemTypeName
+     */
+    function itemTypeName() {
+	global $gallery;
+	return $gallery->i18n('Movie');
+    }
 }
 
 include(dirname(__FILE__) . '/interfaces/GalleryMovieItem.inc');

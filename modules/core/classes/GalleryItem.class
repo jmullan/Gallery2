@@ -648,6 +648,17 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	
 	return GalleryStatus::success();
     }
+
+    /**
+     *
+     * Return the internationalized (but NOT localized) name of this item type.
+     * Subclasses should override this to provide their own name.
+     *
+     * @return string the type name
+     */
+    function itemTypeName() {
+	assert(false);
+    }
 }
 
 include(dirname(__FILE__) . '/interfaces/GalleryItem.inc');
