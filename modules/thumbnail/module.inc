@@ -91,7 +91,7 @@ class ThumbnailModule extends GalleryModule {
 	if (!empty($mimeTypeMap)) {
 	    $ret = GalleryCoreApi::registerToolkitOperation('Thumbnail',
 				   array_keys($mimeTypeMap), 'convert-to-image/jpeg', array(),
-				   $gallery->i18n('Convert to a JPEG'), 'image/jpeg', 8);
+				   $gallery->i18n('Convert to a JPEG'), 'image/jpeg', 50);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }

@@ -1752,7 +1752,6 @@ class GalleryCoreApi {
      * Get a toolkit that can perform the given operation
      *
      * @access public
-     * @static
      * @param string a mime type
      * @param string the operation name
      * @return array object GalleryStatus a status code
@@ -1813,6 +1812,18 @@ class GalleryCoreApi {
     function getToolkitByProperty($mimeType, $propertyName) {
 	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/helpers/GalleryToolkitHelper_simple.class');
 	return GalleryToolkitHelper_simple::getToolkitByProperty($mimeType, $propertyName);
+    }
+
+    /**
+     * Get maximum priority value (lowest priority) in managed priority range (20-40)
+     *
+     * @return array object GalleryStatus a status code
+     *               int priority
+     * @static
+     */
+    function getMaximumManagedToolkitPriority() {
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/helpers/GalleryToolkitHelper_simple.class');
+	return GalleryToolkitHelper_simple::getMaximumManagedPriority();
     }
 
     /**

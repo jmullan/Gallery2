@@ -241,6 +241,12 @@ class NetPbmModule extends GalleryModule {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	list ($ret, $priority) = GalleryCoreApi::getMaximumManagedToolkitPriority();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$priority++;
+
 	foreach ($results['operations'] as $operation => $info) {
 	    $outputMimeType = isset($info['outputMimeType']) ? $info['outputMimeType'] : '';
 	    $ret = GalleryCoreApi::registerToolkitOperation('NetPBM',
@@ -248,7 +254,7 @@ class NetPbmModule extends GalleryModule {
 							   $operation,
 							   $info['params'],
 							   $info['description'],
-							   $outputMimeType);
+							   $outputMimeType, $priority);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }

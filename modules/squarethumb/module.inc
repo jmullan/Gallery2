@@ -87,7 +87,7 @@ class SquareThumbModule extends GalleryModule {
 	if (!empty($mimeTypes)) {
 	    $ret = GalleryCoreApi::registerToolkitOperation('SquareThumb', $mimeTypes, 'thumbnail',
 			array(array('type' => 'int', 'description' => $gallery->i18n('target size'))),
-			$gallery->i18n('Create square thumbnail'), '', 3);
+			$gallery->i18n('Create square thumbnail'), '', 10);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }

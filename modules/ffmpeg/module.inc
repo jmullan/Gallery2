@@ -179,13 +179,19 @@ class FfmpegModule extends GalleryModule {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	list ($ret, $priority) = GalleryCoreApi::getMaximumManagedToolkitPriority();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$priority++;
+
 	foreach ($results['operations'] as $operation => $info) {
 	    $ret = GalleryCoreApi::registerToolkitOperation('Ffmpeg',
 							   $info['mimeTypes'],
 							   $operation,
 							   $info['params'],
 							   $info['description'],
-							   $info['outputMimeType']);
+							   $info['outputMimeType'], $priority);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }

@@ -217,7 +217,7 @@ class ThumbnailHelper {
 
 	$ret = GalleryCoreApi::registerToolkitOperation('Thumbnail',
 				array($mimeType), 'convert-to-image/jpeg', array(),
-				$gallery->i18n('Convert to a JPEG'), 'image/jpeg', 8);
+				$gallery->i18n('Convert to a JPEG'), 'image/jpeg', 50);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -268,7 +268,7 @@ class ThumbnailHelper {
 	    global $gallery;
 	    $ret = GalleryCoreApi::registerToolkitOperation('Thumbnail',
 				   array($mimeType), 'convert-to-image/jpeg', array(),
-				   $gallery->i18n('Convert to a JPEG'), 'image/jpeg', 8);
+				   $gallery->i18n('Convert to a JPEG'), 'image/jpeg', 50);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
