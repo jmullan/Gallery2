@@ -43,7 +43,7 @@ class LanguageTest extends GalleryControllerTestCase {
 	parent::setUp();
 	$session =& $gallery->getSession();
 	$this->_sessionLanguage = $session->get('core.language');
-	$this->_user =& $gallery->getActiveUser();
+	$this->_user = $gallery->getActiveUser();
 	list ($ret, $this->_siteLanguage) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'default.language');
 	if ($ret->isError()) {
