@@ -10,21 +10,13 @@ class CreateAlbumItemTestCase extends TestCase {
 	global $gallery;
 
 	print("Creating new album item\n");
-	$album = new AlbumItem();
-	$ret = $album->createRoot("test",
-				  $gallery->getActiveUserId());
-
-	if ($ret->isError()) {
-	    return $ret;
-	}
-
-	/* Commit the cache */
-	$ret = $gallery->commitCache();
-	if ($ret->isError()) {
-	    return $ret;
-	}
-	
 	$ret = $gallery->lockWorld();
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
+	$album = new AlbumItem();
+	$ret = $album->createRoot("test", $gallery->getActiveUserId());
 	if ($ret->isError()) {
 	    return $ret;
 	}
