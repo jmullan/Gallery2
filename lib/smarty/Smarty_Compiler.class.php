@@ -34,7 +34,7 @@
  * @link http://smarty.php.net/
  * @author Monte Ohrt <monte@ispi.net>
  * @author Andrei Zmievski <andrei@php.net>
- * @version 2.6.0-RC2-cvs
+ * @version 2.6.1-dev
  * @copyright 2001-2003 ispi of Lincoln, Inc.
  * @package Smarty
  */
@@ -265,13 +265,13 @@ class Smarty_Compiler extends Smarty {
         preg_match_all("!{$ldq}\s*literal\s*{$rdq}(.*?){$ldq}\s*/literal\s*{$rdq}!s", $source_content, $_match);
         $this->_literal_blocks = $_match[1];
         $source_content = preg_replace("!{$ldq}\s*literal\s*{$rdq}(.*?){$ldq}\s*/literal\s*{$rdq}!s",
-                                        $this->quote_replace($this->left_delimiter.'literal'.$this->right_delimiter), $source_content);
+                                        $this->_quote_replace($this->left_delimiter.'literal'.$this->right_delimiter), $source_content);
 
         /* Pull out the php code blocks. */
         preg_match_all("!{$ldq}php{$rdq}(.*?){$ldq}/php{$rdq}!s", $source_content, $_match);
         $this->_php_blocks = $_match[1];
         $source_content = preg_replace("!{$ldq}php{$rdq}(.*?){$ldq}/php{$rdq}!s",
-                                        $this->quote_replace($this->left_delimiter.'php'.$this->right_delimiter), $source_content);
+                                        $this->_quote_replace($this->left_delimiter.'php'.$this->right_delimiter), $source_content);
 
         /* Gather all template tags. */
         preg_match_all("!{$ldq}\s*(.*?)\s*{$rdq}!s", $source_content, $_match);
@@ -336,7 +336,7 @@ class Smarty_Compiler extends Smarty {
             $strip_tags_modified = preg_replace('![\r\n]+!m', '', $strip_tags_modified);
             for ($i = 0, $for_max = count($strip_tags); $i < $for_max; $i++)
                 $compiled_content = preg_replace("!{$ldq}strip{$rdq}.*?{$ldq}/strip{$rdq}!s",
-                                                  $this->quote_replace($strip_tags_modified[$i]),
+                                                  $this->_quote_replace($strip_tags_modified[$i]),
                                                   $compiled_content, 1);
         }
 
@@ -922,6 +922,7 @@ class Smarty_Compiler extends Smarty {
         $assign_var = (empty($attrs['assign'])) ? '' : $this->_dequote($attrs['assign']);
         $once_var = (empty($attrs['once']) || $attrs['once']=='false') ? 'false' : 'true';
 
+        $arg_list = array();
         foreach($attrs as $arg_name => $arg_value) {
             if($arg_name != 'file' AND $arg_name != 'once' AND $arg_name != 'assign') {
                 if(is_bool($arg_value))
@@ -930,7 +931,7 @@ class Smarty_Compiler extends Smarty {
             }
         }
 
-        $_params = "array('smarty_file' => " . $attrs['file'] . ", 'smarty_assign' => '$assign_var', 'smarty_once' => $once_var, 'smarty_include_vars' => array(".implode(',', (array)$arg_list)."))";
+        $_params = "array('smarty_file' => " . $attrs['file'] . ", 'smarty_assign' => '$assign_var', 'smarty_once' => $once_var, 'smarty_include_vars' => array(".implode(',', $arg_list)."))";
 
         return "<?php require_once(SMARTY_DIR . 'core' . DIRECTORY_SEPARATOR . 'core.smarty_include_php.php');\nsmarty_core_smarty_include_php($_params, \$this); ?>" . $this->_additional_newline;
     }
@@ -1587,6 +1588,7 @@ class Smarty_Compiler extends Smarty {
         if(count($_math_vars) > 1) {
             $_first_var = "";
             $_complete_var = "";
+            $_output = "";
             // simple check if there is any math, to stop recursion (due to modifiers with "xx % yy" as parameter)
             foreach($_math_vars as $_k => $_math_var) {
                 $_math_var = $_math_vars[$_k];
@@ -1674,7 +1676,11 @@ class Smarty_Compiler extends Smarty {
                     if (is_numeric($_index)) {
                         $_output .= "[$_index]";
                     } elseif ($_index{0} == '$') {
-                        $_output .= "[\$this->_tpl_vars['" . substr($_index, 1) . "']]";
+                        if (strpos($_index, '.') !== false) {
+                            $_output .= '[' . $this->_parse_var($_index) . ']';
+                        } else {
+                            $_output .= "[\$this->_tpl_vars['" . substr($_index, 1) . "']]";
+                        }
                     } else {
                         $_var_parts = explode('.', $_index);
                         $_var_section = $_var_parts[0];
@@ -2027,6 +2033,17 @@ class Smarty_Compiler extends Smarty {
         }
     }
 
+
+    /**
+     * Quote subpattern references
+     *
+     * @param string $string
+     * @return string
+     */
+    function _quote_replace($string)
+    {
+        return preg_replace('![\\$]\d!', '\\\\\\0', $string);
+    }
 
     /**
      * display Smarty syntax error

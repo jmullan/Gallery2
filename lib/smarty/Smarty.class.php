@@ -40,7 +40,7 @@
  * @author Monte Ohrt <monte@ispi.net>
  * @author Andrei Zmievski <andrei@php.net>
  * @package Smarty
- * @version 2.6.0-RC2-cvs
+ * @version 2.6.1-dev
  */
 
 /* $Id$ */
@@ -112,6 +112,13 @@ class Smarty
      * @var boolean
      */
     var $debugging       =  false;
+
+    /**
+     * When set, smarty does uses this value as error_reporting-level.
+     *
+     * @var boolean
+     */
+    var $tpl_error_reporting  =  null;
 
     /**
      * This is the path to the debug console template. If not set,
@@ -343,13 +350,6 @@ class Smarty
     var $global_assign   =  array('HTTP_SERVER_VARS' => array('SCRIPT_NAME'));
 
     /**
-     * The value of "undefined". Leave it alone :-)
-     *
-     * @var null
-     */
-    var $undefined       =  null;
-
-    /**
      * This indicates which filters are automatically loaded into Smarty.
      *
      * @var array array of filter names
@@ -490,7 +490,7 @@ class Smarty
      *
      * @var string
      */
-    var $_version              = '2.6.0-RC2-cvs';
+    var $_version              = '2.6.1-dev';
 
     /**
      * current template inclusion depth
@@ -602,14 +602,14 @@ class Smarty
                     if (isset($GLOBALS[$key][$var])) {
                         $this->assign($var, $GLOBALS[$key][$var]);
                     } else {
-                        $this->assign($var, $this->undefined);
+                        $this->assign($var, null);
                     }
                 }
             } else {
                 if (isset($GLOBALS[$var_name])) {
                     $this->assign($var_name, $GLOBALS[$var_name]);
                 } else {
-                    $this->assign($var_name, $this->undefined);
+                    $this->assign($var_name, null);
                 }
             }
         }
@@ -993,7 +993,7 @@ class Smarty
 
         if (!empty($this->cache_handler_func)) {
             return call_user_func_array($this->cache_handler_func,
-                                  array('clear', &$this, &$dummy, $tpl_file, $cache_id, $compile_id));
+                                  array('clear', &$this, &$dummy, $tpl_file, $cache_id, $compile_id, $exp_time));
         } else {
             $_params = array('auto_base' => $this->cache_dir,
                             'auto_source' => $tpl_file,
@@ -1015,8 +1015,9 @@ class Smarty
     function clear_all_cache($exp_time = null)
     {
         if (!empty($this->cache_handler_func)) {
+            $dummy = null;
             call_user_func_array($this->cache_handler_func,
-                           array('clear', &$this, &$dummy));
+                           array('clear', &$this, &$dummy, null, null, null, $exp_time));
         } else {
             $_params = array('auto_base' => $this->cache_dir,
                             'auto_source' => null,
@@ -1168,7 +1169,8 @@ class Smarty
     {
         static $_cache_info = array();
 
-        $_smarty_old_error_level = $this->debugging ? error_reporting() : error_reporting(error_reporting() & ~E_NOTICE);
+        $_smarty_old_error_level = $this->debugging ? error_reporting() : error_reporting(isset($this->tpl_error_reporting) 
+               ? $this->tpl_error_reporting : error_reporting() & ~E_NOTICE);
 
         if (!$this->debugging && $this->debugging_ctrl == 'URL'
                && @strstr($GLOBALS['HTTP_SERVER_VARS']['QUERY_STRING'], $this->_smarty_debug_id)) {
@@ -1386,17 +1388,6 @@ class Smarty
         } else {
             unset($this->_config[0]['vars'][$var]);
         }
-    }
-
-    /**
-     * Quote subpattern references
-     *
-     * @param string $string
-     * @return string
-     */
-    function quote_replace($string)
-    {
-        return preg_replace('![\\$]\d!', '\\\\\\0', $string);
     }
 
     /**
@@ -1621,7 +1612,7 @@ class Smarty
                 } else {
                     $_return = call_user_func_array(
                         $this->default_template_handler_func,
-                        array($_resource_type, $_resource_name, &$params['source_content'], &$params['resource_timestamp'], &$this));
+                        array($_params['resource_type'], $_params['resource_name'], &$params['source_content'], &$params['resource_timestamp'], &$this));
                 }
             }
         }
@@ -1701,7 +1692,7 @@ class Smarty
                 }
                 return false;
             }
-        } else {
+        } elseif (empty($this->_plugins['resource'][$params['resource_type']])) {
             $_params = array('type' => $params['resource_type']);
             require_once(SMARTY_DIR . 'core' . DIRECTORY_SEPARATOR . 'core.load_resource_plugin.php');
             smarty_core_load_resource_plugin($_params, $this);
@@ -1993,11 +1984,8 @@ class Smarty
      * wrapper for include() retaining $this
      * @return mixed
      */
-    function _include($filename, $once=false, $vars=null)
+    function _include($filename, $once=false, $params=null)
     {
-        if (is_array($vars))
-            extract($vars, EXTR_PREFIX_SAME, 'include_php_');
-
         if ($once) {
             return include_once($filename);
         } else {
@@ -2010,11 +1998,8 @@ class Smarty
      * wrapper for eval() retaining $this
      * @return mixed
      */
-    function _eval($code, $vars=null)
+    function _eval($code, $params=null)
     {
-        if (is_array($vars))
-            extract($vars, EXTR_PREFIX_SAME, 'include_php_');
-
         return eval($code);
     }
     /**#@-*/
