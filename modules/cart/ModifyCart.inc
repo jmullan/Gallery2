@@ -51,42 +51,106 @@ class ModifyCartController extends GalleryController {
 
 	$error = array();
 	$status = array();
-	if (!isset($form['action']) || isset($form['action']['update'])) {
-	    /* Update counts */
-	    if (isset($form['counts'])) {
-		foreach ($form['counts'] as $itemId => $count) {
-		    if ($count <= 0) {
-			unset($cartItemIds[$itemId]);
-		    } else {
-			$cartItemIds[$itemId] = (int)$count;
+	$results = array();
+	if (!isset($form['action']) || isset($form['action']['modify'])) {
+	    switch ($form['pluginId']) {
+	    case 'updateCart':
+		/* Update counts */
+		if (isset($form['counts'])) {
+		    foreach ($form['counts'] as $itemId => $count) {
+			if ($count <= 0) {
+			    unset($cartItemIds[$itemId]);
+			} else {
+			    $cartItemIds[$itemId] = (int)$count;
+			}
 		    }
 		}
-	    }
 	    
-	    /* Delete whatever needs deleting */
-	    if (isset($form['delete'])) {
-		foreach ($form['delete'] as $itemId => $junk) {
-		    unset($cartItemIds[$itemId]);
+		/* Delete whatever needs deleting */
+		if (isset($form['delete'])) {
+		    foreach ($form['delete'] as $itemId => $junk) {
+			unset($cartItemIds[$itemId]);
+		    }
 		}
-	    }
 
-	    /* Update the cart values */
-	    $ret = CartHelper::setCartItemCounts($cartItemIds);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		/* Update the cart values */
+		$ret = CartHelper::setCartItemCounts($cartItemIds);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		$status['cartModified'] = 1;
+		break;
+
+	    case 'emptyCart':
+		/* Empty the cart */
+		$ret = CartHelper::setCartItemCounts(array());
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		$status['cartModified'] = 1;
+		break;
+
+	    default:
+		/* Expect it to be one of our plugins */
+		require_once(dirname(__FILE__) . '/classes/CartPluginInterface_1_0.class');
+		list ($ret, $cartPlugin) =
+		    GalleryCoreApi::newFactoryInstanceById('CartPluginInterface_1_0', $form['pluginId']);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		if (!isset($cartPlugin)) {
+		    break;
+		}
+
+		/* Pass in only the types the plugin supports */
+		list ($ret, $itemList) = GalleryCoreApi::loadEntitiesById(array_keys($cartItemIds));
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		$fulfillmentCart = array();
+		$supportedTypes = $cartPlugin->getSupportedItemTypes();
+		foreach ($itemList as $item) {
+		    foreach ($supportedTypes as $type) {
+			if ($type == '*' || GalleryUtilities::isA($item, $type)) {
+			    $fulfillmentCart[$item->getId()] = $cartItemIds[$item->getId()];
+			    break;
+			}
+		    }
+		}
+
+		list ($ret, $redirect) = $cartPlugin->fulfillCart($fulfillmentCart);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		/* Remove the fulfilled items */
+		foreach (array_keys($fulfillmentCart) as $id) {
+		    unset($cartItemIds[$id]);
+		}
+
+		/* Save the modified cart */
+		$ret = CartHelper::setCartItemCounts($cartItemIds);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		if (!isset($redirect['href'])) {
+		    /* If we're redirecting offsite, don't include the status */
+		    $status['cartModified'] = 1;
+		}
+
+		/* Redirect according to the wishes of the cart plugin */
+		$results['redirect'] = $redirect;
+		break;
 	    }
-	    $status['cartModified'] = 1;
-	} else if (isset($form['action']['empty'])) {
-	    /* Empty the cart */
-	    $ret = CartHelper::setCartItemCounts(array());
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    $status['cartModified'] = 1;
 	}
 
 	/* Prepare our results */
-	$results['redirect']['view'] = 'cart:ViewCart';
+	if (!isset($results['redirect'])) {
+	    $results['redirect']['view'] = 'cart:ViewCart';
+	}
 	$results['status'] = $status;
 	$results['error'] = $error;
 

@@ -17,9 +17,17 @@
 	  {/if}
 	{/g->success}
       {/if}
+
+      {g->box}
+	{g->element}
+	  {g->link}
+	    {g->text text="Browse Gallery"}
+	  {/g->link}
+	{/g->element}
+      {/g->box}
       
       {g->box}
-	{g->table evenodd="true"}
+	{g->table evenodd="true" style="admin_listing"}
 	  {g->row header="true"}
 	    {g->column header="true"}
 	      {g->text text="Quantity"}
@@ -27,6 +35,10 @@
 
 	    {g->column colspan="2" align="center" header="true"}
 	      {g->text text="Item"}
+	    {/g->column}
+
+	    {g->column header="true"}
+	      {g->text text="Type"}
 	    {/g->column}
 
 	    {g->column header="true"}
@@ -74,6 +86,10 @@
 		{/g->table}
 	      {/g->column}
 
+	      {g->column}
+		{$ViewCart.itemTypeNames[$item.id].0}
+	      {/g->column}
+
 	      {g->column align="center"}
 		{g->input type="checkbox" name="form[delete][`$item.id`]"}{/g->input}
 	      {/g->column}
@@ -84,9 +100,18 @@
 
       {g->box}
 	{g->element}
-	  {g->input type="submit" name="form[action][update]"}{g->text text="Update Cart"}{/g->input}
-	  {g->input type="submit" name="form[action][empty]"}{g->text text="Empty Cart"}{/g->input}
+
+	  {g->select name="form[pluginId]"}
+	    <option label="{g->text text="Update Quantities"}" value="updateCart"> {g->text text="Update Quantities"} </option>
+	    <option label="{g->text text="Empty Cart"}" value="emptyCart"> {g->text text="Empty Cart"} </option>
+
+	    {foreach from=$ViewCart.plugins key=pluginId item=pluginData}
+	      <option label="{$pluginData.actionDisplayName}" value="{$pluginId}"> {$pluginData.actionDisplayName} </option>
+	    {/foreach}
+	  {/g->select}
 	{/g->element}
+
+	{g->input type="submit" name="form[action][modify]"}{g->text text="Go"}{/g->input}
       {/g->box}
 
     {/g->pagebox}

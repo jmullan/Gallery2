@@ -57,8 +57,31 @@ class ViewCartView extends GalleryView {
 	    $form['formName'] = 'ViewCart';
 	}
 
+	/* Find all our cart plugins */
+	require_once(dirname(__FILE__) . '/classes/CartPluginInterface_1_0.class');
+	$ids = GalleryCoreApi::getAllFactoryImplementationIds('CartPluginInterface_1_0');
+	$plugins = array();
+	foreach ($ids as $id => $className) {
+	    list ($ret, $instances[$id]) =
+		GalleryCoreApi::newFactoryInstance('CartPluginInterface_1_0', $className);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    /*
+	     * Figure out what types each plugin can handle so that we can cue the UI to only send it the 
+	     * ones of the appropriate types.
+	     */
+	    $plugins[$id]['supportedItemTypes'] = $instances[$id]->getSupportedItemTypes();
+	    list ($ret, $plugins[$id]['actionDisplayName']) = $instances[$id]->getActionDisplayName();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+
 	$items = array();
 	$thumbnails = array();
+	$itemTypeNames = array();
 	if (!empty($cartItemIds)) {
 	    /* Fetch items */
 	    list ($ret, $itemList) = GalleryCoreApi::loadEntitiesById(array_keys($cartItemIds));
@@ -67,6 +90,23 @@ class ViewCartView extends GalleryView {
 	    }
 	    foreach ($itemList as $item) {
 		$items[$item->getId()] = $item->getMemberData();
+
+		/* TODO: This is a O(N^3) operation -- probably should be optimized */
+		foreach ($plugins as $pluginId => $pluginData) {
+		    foreach ($pluginData['supportedItemTypes'] as $type) {
+			if ($type == '*') {
+			    $plugins[$id]['supported'][$item->getId()] = 1;
+			    break;
+			} else {
+			    if (GalleryUtilities::isA($item, $type)) {
+				$plugins[$id]['supported'][$item->getId()] = 1;
+				break;
+			    }
+			}
+		    }
+		}
+
+		$itemTypeNames[$item->getId()] = $item->itemTypeName();
 	    }
 		
 	    /* Fetch thumbnails */
@@ -79,10 +119,12 @@ class ViewCartView extends GalleryView {
 		$thumbnails[$thumbnail->getParentId()] = $thumbnail->getMemberData();
 	    }
 	}
-
+	
 	$ViewCart = array();
 	$ViewCart['items'] = $items;
+	$ViewCart['itemTypeNames'] = $itemTypeNames;
 	$ViewCart['thumbnails'] = $thumbnails;
+	$ViewCart['plugins'] = $plugins;
 	$ViewCart['controller'] = 'cart:ModifyCart';
 
 	$template->setVariable('ViewCart', $ViewCart);

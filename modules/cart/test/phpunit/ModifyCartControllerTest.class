@@ -83,8 +83,9 @@ class ModifyCartControllerTest extends GalleryControllerTestCase {
     function testUpdateCart() {
 
 	GalleryUtilities::putRequestVariable('form[delete][1]', 'on');
-	GalleryUtilities::putRequestVariable('form[count][2]', 5);
-	GalleryUtilities::putRequestVariable('form[action][update]', 1);
+	GalleryUtilities::putRequestVariable('form[counts][2]', 5);
+	GalleryUtilities::putRequestVariable('form[action][modify]', 1);
+	GalleryUtilities::putRequestVariable('form[pluginId]', 'updateCart');
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
@@ -99,11 +100,12 @@ class ModifyCartControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->assertEquals(array(2 => 3), $cartItemCounts);
+	$this->assertEquals(array(2 => 5), $cartItemCounts);
     }
 
     function testEmptyCart() {
-	GalleryUtilities::putRequestVariable('form[action][empty]', 1);
+	GalleryUtilities::putRequestVariable('form[action][modify]', 1);
+	GalleryUtilities::putRequestVariable('form[pluginId]', 'emptyCart');
 	
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
