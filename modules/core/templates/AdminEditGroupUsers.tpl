@@ -32,34 +32,111 @@
     <p class="giDescription">
       {g->text one="This group contains %d user"
                many="This group contains %d users"
-               count=$form.userCount
-               arg1=$form.userCount}
+               count=$AdminEditGroupUsers.totalUserCount
+               arg1=$AdminEditGroupUsers.totalUserCount}
     </p>
   </div>
 
-  {if !empty($form.list.users)}
+  {if isset($form.error.list.noUserSelected)}
+  <div class="giError">
+    {g->text text="You must select a user to remove."}
+  </div>
+  {/if}
+
+  {if isset($form.error.list.cantRemoveSelf)}
+  <div class="giError">
+    {g->text text="You can't remove yourself from this group."}
+  </div>
+  {/if}
+
+  {if !empty($form.list.userNames)}
   <div class="gbAdmin">
-    <h2 class="giTitle">
-      {g->text text="Remove Member"}
-    </h2>
+    <h3 class="giTitle">
+      {g->text text="Members"}
+    </h3>
 
-    <select name="{g->formVar var="form[list][userId]"}" size="1">
-	{html_options options=$form.list.users}
-    </select>
+    <table class="gbDataTable">
+      {if ($form.list.maxPages > 1)}
+      <tr>
+	<th colspan="2">
+	  <table>
+	    <tr>
+	      <th align="left">
+		<input type="hidden" name="{g->formVar var="form[list][page]"}" value="{$form.list.page}"/>
+		<input type="hidden" name="{g->formVar var="form[list][maxPages]"}" value="{$form.list.maxPages}"/>
+		  
+		{if ($form.list.page > 1)}
+		<a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=core:AdminEditGroupUsers" arg3="form[list][page]=1" arg4="groupId=`$AdminEditGroupUsers.group.id`"}">{g->text text="&laquo; first"}</a>
+		&nbsp;
+		<a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=core:AdminEditGroupUsers" arg3="form[list][page]=`$form.list.backPage`" arg4="groupId=`$AdminEditGroupUsers.group.id`"}">{g->text text="&laquo; back"}</a>
+		{/if}
+	      </th>
 
-    <input type="submit" name="{g->formVar var="form[action][remove]"}" value="{g->text text="Remove"}"/>
+	      <th align="center">
+		{g->text text="Viewing page %d of %d"
+		         arg1=$form.list.page
+		         arg2=$form.list.maxPages}
+	      </th>
 
-    {if isset($form.error.list.noUserSelected)}
-    <div class="giError">
-      {g->text text="You must select a user to remove."}
+	      <th align="right">
+		{if ($form.list.page < $form.list.maxPages)}
+		<a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=core:AdminEditGroupUsers" arg3="form[list][page]=`$form.list.nextPage`" arg4="groupId=`$AdminEditGroupUsers.group.id`"}">{g->text text="next &raquo;"}</a>
+		&nbsp;
+		<a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=core:AdminEditGroupUsers" arg3="form[list][page]=`$form.list.maxPages`" arg4="groupId=`$AdminEditGroupUsers.group.id`"}">{g->text text="last &raquo;"}</a>
+		{/if}
+	      </th>
+	    </tr>
+	  </table>
+	</th>
+      </tr>
+      {/if}
+	  
+      <tr>
+	<th>
+	</th>
+	<th>
+	  {g->text text="Username"}
+	</th>
+      </tr>
+
+      {foreach from=$form.list.userNames key=userId item=user}
+      <tr class="{cycle values="gbEven,gbOdd"}">
+	<td>
+          {if ($user.can.remove)}
+	  <span>
+            <input type="checkbox" name="{g->formVar var="form[userIds][$userId]}">
+	  </span>
+	  {/if}
+	</td>
+
+	<td>
+	  {$user.userName}
+	</td>
+      </tr>
+      {/foreach}
+    </table>
+
+    {if !empty($form.list.filter) || ($form.list.maxPages > 1)}
+    <input type="text" name="{g->formVar var="form[list][filter]"}" value="{$form.list.filter}"/>
+    <input type="submit" name="{g->formVar var="form[action][filterBySubstring]"}" value="{g->text text="Filter:"}"/>
+    <input type="submit" name="{g->formVar var="form[action][filterClear]"}" value="{g->text text="Clear"}"/>
+    {/if}
+      
+    {if (!empty($form.list.filter))}
+    <span>
+      {g->text one="%d user matches your filter"
+               many="%d users match your filter"
+               count=$form.list.count
+               arg1=$form.list.count}
+    </span>
+    {/if}
+
+    {if $AdminEditGroupUsers.canRemove}
+    <div>
+      <input type="submit" name="{g->formVar var="form[action][remove]"}" value="{g->text text="Remove selected"}"/>
     </div>
     {/if}
 
-    {if isset($form.error.list.cantRemoveSelf)}
-    <div class="giError">
-      {g->text text="You can't remove yourself from this group."}
-    </div>
-    {/if}
   </div>
   {/if}
 

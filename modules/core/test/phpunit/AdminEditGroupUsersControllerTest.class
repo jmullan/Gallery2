@@ -83,16 +83,54 @@ class AdminEditGroupUsersControllerTest extends GalleryControllerTestCase {
 
 	GalleryUtilities::putRequestVariable('groupId', $this->_group->getId());
 	GalleryUtilities::putRequestVariable('form[action][remove]', 1);
-	GalleryUtilities::putRequestVariable('form[list][userId]', $this->_user->getId());
+	GalleryUtilities::putRequestVariable(sprintf('form[userIds][%s]', $this->_user->getId()), 1);
 
 	$results = $this->handleRequest();
 
 	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'core:AdminEditGroupUsers',
 						      'groupId' => $this->_group->getId()),
-				  'status' => array('removedUser' => $this->_user->getUserName()),
+				  'status' => array('removedUsers' => 1),
 				  'error' => array()),
 			    $results);
+    }
+
+    function testRemoveMultipleUser() {
+	/* Create a second user */
+	list ($ret, $newUser) = $this->_createRandomUser();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Add the users to the group */
+	$ret = GalleryCoreApi::addUserToGroup($this->_user->getId(), $this->_group->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::addUserToGroup($newUser->getId(), $this->_group->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	GalleryUtilities::putRequestVariable('groupId', $this->_group->getId());
+	GalleryUtilities::putRequestVariable('form[action][remove]', 1);
+	GalleryUtilities::putRequestVariable(sprintf('form[userIds][%s]', $this->_user->getId()), 1);
+	GalleryUtilities::putRequestVariable(sprintf('form[userIds][%s]', $newUser->getId()), 1);
+
+	$results = $this->handleRequest();
+
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminEditGroupUsers',
+						      'groupId' => $this->_group->getId()),
+				  'status' => array('removedUsers' => 2),
+				  'error' => array()),
+			    $results);
+
+	/* Delete it */
+	$ret = $this->_deleteAndVerifyEntity($newUser->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
     }
 
     function testCantRemoveSelfFromSiteAdmins() {
@@ -114,13 +152,14 @@ class AdminEditGroupUsersControllerTest extends GalleryControllerTestCase {
 
 	GalleryUtilities::putRequestVariable('groupId', $adminGroupId);
 	GalleryUtilities::putRequestVariable('form[action][remove]', 1);
-	GalleryUtilities::putRequestVariable('form[list][userId]', $this->_user->getId());
+	GalleryUtilities::putRequestVariable(sprintf('form[userIds][%s]', $this->_user->getId()), 1);
 
 	$results = $this->handleRequest();
 
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminEditGroupUsers'),
-				  'status' => array(),
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminEditGroupUsers',
+						      'groupId' => $adminGroupId),
+				  'status' => array('removedUsers' => 0),
 				  'error' => array('form[error][list][cantRemoveSelf]')),
 			    $results);
 

@@ -148,7 +148,7 @@
 
 	    {if ($group.can.editUsers)}
 	    <span>
-	      <a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=core:AdminEditGroupUsers" arg3="groupId=$groupId"}">{g->text text="edit users"}</a>
+	      <a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=core:AdminEditGroupUsers" arg3="groupId=$groupId"}">{g->text text="members"}</a>
 	    </span>
 	    {/if}
 	  </div>

@@ -58,7 +58,12 @@ class AdminEditGroupUsersController extends GalleryController {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	if (isset($form['action']['done'])) {
+	if (isset($form['action']['filterClear'])) {
+
+	    /* Clear the filter */
+	    GalleryUtilities::putRequestVariable('form[list][filter]', null);
+
+	} else if (isset($form['action']['done'])) {
 
 	    /* Go back to the AdminGroups view */
 	    $redirect['view'] = 'core:SiteAdmin';
@@ -68,14 +73,15 @@ class AdminEditGroupUsersController extends GalleryController {
 	    if (isset($form['action']['remove'])) {
 
 		/* Remove the user from the group */
-		if (!empty($form['list']['userId'])) {
+		$removedUsers = 0;
+		foreach ($form['userIds'] as $userId => $dummy) {
 
 		    /* Can't remove yourself from the site admins list */
 		    if ($group->getGroupType() == GROUP_SITE_ADMINS &&
-			$form['list']['userId'] == $gallery->getActiveUserId()) {
+			$userId == $gallery->getActiveUserId()) {
 			$error[] = 'form[error][list][cantRemoveSelf]';
 		    } else {
-			list ($ret, $user) = GalleryCoreApi::loadEntitiesById($form['list']['userId']);
+			list ($ret, $user) = GalleryCoreApi::loadEntitiesById($userId);
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
@@ -84,14 +90,15 @@ class AdminEditGroupUsersController extends GalleryController {
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
-		    
-			/* Redirect back to the same view */
-			$redirect['view'] = 'core:SiteAdmin';
-			$redirect['subView'] = 'core:AdminEditGroupUsers';
-			$redirect['groupId'] = $group->getId();
-			$status['removedUser'] = $user->getUsername();
+			$removedUsers++;
 		    }
 		}
+
+		/* Redirect back to the same view */
+		$redirect['view'] = 'core:SiteAdmin';
+		$redirect['subView'] = 'core:AdminEditGroupUsers';
+		$redirect['groupId'] = $group->getId();
+		$status['removedUsers'] = $removedUsers;
 	    
 	    } else if (isset($form['action']['add'])) {
 
@@ -154,7 +161,15 @@ class AdminEditGroupUsersView extends GalleryView {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	    
+
+	/* Set some defaults, if necessary */
+	if (!isset($form['list']['filter'])) {
+	    $form['list']['filter'] = '';
+	}
+	if (empty($form['list']['page'])) {
+	    $form['list']['page'] = 1;
+	}
+
 	/* Load the group */
 	$groupId = GalleryUtilities::getRequestVariables('groupId');
 	list ($ret, $group) = GalleryCoreApi::loadEntitiesById($groupId);
@@ -169,15 +184,57 @@ class AdminEditGroupUsersView extends GalleryView {
 	}
 
 	/* Initialize the user list */
-	list ($ret, $users) = GalleryCoreApi::fetchUsersForGroup($group->getId());
+	list ($ret, $totalUserCount) = GalleryCoreApi::fetchUserCount(null, $group->getId());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$form['userCount'] = sizeof($users);
-	$form['list']['users'] = $users;
+	$form['list']['count'] = $totalUserCount;
+	$form['list']['pageSize'] = $totalUserCount > 10 ? 10 : $totalUserCount + 2;
+
+	if (!empty($form['list']['filter'])) {
+	    list ($ret, $form['list']['count']) = GalleryCoreApi::fetchUserCount(
+							$form['list']['filter'],
+							$group->getId()
+						  );
+	}
+
+	/* Figure out our max pages, make sure our current page fits in it */
+	$form['list']['maxPages'] = ceil($form['list']['count'] / $form['list']['pageSize']);
+	if ($form['list']['page'] > $form['list']['maxPages']) {
+	    $form['list']['page'] = $form['list']['maxPages'];
+	}
+
+	/* Calculate the next/back pages */
+	$form['list']['nextPage'] = min($form['list']['page']+1, $form['list']['maxPages']);
+	$form['list']['backPage'] = max(1, $form['list']['page']-1);
+
+	list ($ret, $users) = GalleryCoreApi::fetchUsersForGroup(
+					$group->getId(),
+					$form['list']['pageSize'],
+					(($form['list']['page'] - 1) * $form['list']['pageSize']),
+					$form['list']['filter']
+			      );
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$form['list']['userNames'] = array();
+	$canRemove = false;
+	foreach ($users as $userId => $userName) {
+	    $form['list']['userNames'][$userId]['userName'] = $userName;
+	    if ($group->getGroupType() == GROUP_SITE_ADMINS
+		&& $userId == $gallery->getActiveUserId()) {
+		$form['list']['userNames'][$userId]['can']['remove'] = false;
+	    } else {
+		$form['list']['userNames'][$userId]['can']['remove'] = true;
+		$canRemove = true;
+	    }
+	}
 
 	$AdminEditGroupUsers = array();
+	$AdminEditGroupUsers['totalUserCount'] = $totalUserCount;
+	$AdminEditGroupUsers['canRemove'] = $canRemove;
 	$AdminEditGroupUsers['group'] = $group->getMemberData();
 
 	/* Render the HTML body */
