@@ -131,6 +131,14 @@ table td {
   /* clear: none; */
 }
 
+.box_element {
+  /* width: 100%; */
+  margin: 0px 0px 0px 0px;
+  padding: 2px 0px 2px 0px;
+  /* background-color: transparent; */
+  /* clear: none; */
+}
+
 .box_title { 
   margin: 0px 0px 4px 0px;
   padding: 0px 0px 0px 0px;
@@ -390,7 +398,7 @@ table td {
 .sidebar {
   text-align: left;
   vertical-align: top;
-  width: 130px;
+  width: auto; 
   height: auto;
   margin: 0px 0px 0px 0px;
   padding: 0px 0px 0px 0px;
@@ -405,24 +413,24 @@ table td {
 .sidebar_box_left {
   text-align: left;
   vertical-align: top;
-  width: auto;
+  width: 130px;
   height: auto;
   margin: 0px 0px 0px 0px;
   padding: 4px 4px 4px 4px;
   background-color: #fff;
-  border-right: 1px solid #ddd;
+  /* border-right: 1px solid #ddd; */
   border-bottom: 1px solid #ddd;
 }
 
 .sidebar_box_right {
   text-align: left;
   vertical-align: top;
-  width: auto;
+  width: 130px;
   height: auto;
   margin: 0px 0px 0px 0px;
   padding: 4px 4px 4px 4px;
   background-color: #fff;
-  border-left: 1px solid #ddd;
+  /* border-left: 1px solid #ddd; */
   border-bottom: 1px solid #ddd;
   font-size: 69%;
 }
@@ -471,7 +479,7 @@ table td {
 
 .error { 
   font-weight: bold;
-  color: #c00;
+  color: #440000;
 }
 
 .table { 
@@ -535,15 +543,15 @@ table td {
 
 .tabbedbox {  
   /* width: 100%;*/
-  margin-left: 12px;
+  /* margin-left: 12px; */
   border-collapse: collapse;
   border-spacing: 0px;
 }
 
 .tabbedbox_tabset {  
-  width: auto;
+  width: 100%;
   padding: 0px 0px 0px 0px;
-  border-right: 0px solid #ccc;
+  /* border-right: 0px solid #ccc; */
   border-collapse: collapse;
   border-spacing: 0px;
 }
@@ -553,6 +561,14 @@ table td {
   height: 5px;
 }
 
+.tabbedbox_element {  
+  /* width: 100%;*/
+  padding-left: 12px;
+  border-collapse: collapse;
+  border-spacing: 0px;
+  background-color: #CCCCCC;
+}
+
 .tabset {  
   width: auto;
   border-collapse: collapse;
@@ -560,6 +576,10 @@ table td {
 }
 
 .tabset_tab_tween { 
+}
+
+.tabset_tab_no_tab { 
+  width: 100%;
 }
 
 .tabset_inactivetab { 

@@ -260,6 +260,8 @@ class VeloriaTheme extends GalleryTheme {
 	}
 	$buf .= sprintf('<td class="tabset_tab_tween"><img src="%s" width="%s" height="%s" alt=""/></td>',
 			$right[0], $right[1], $right[2]);
+	$buf .= sprintf('<td class="tabset_tab_no_tab" style="background-image: url(%s);">&nbsp;</td>', 
+			$imageUrl . 'tab-no-tab.gif');
 	$buf .= '</tr> </table>';
 	return $buf;
     }
