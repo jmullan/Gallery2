@@ -261,11 +261,11 @@ class Gallery1DataParser {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-
 	$uids = array();
 	foreach ($userDB->userMap as $username => $uid) {
-	    if (!ereg('^[0-9]{9,}[^0-9][0-9]+$', $username) &&
-		    !eregi('nobody|everybody|loggedin', $username)) {
+	    if (!isValidUid($username))
+		&& !eregi('nobody|everybody|loggedin', $username)
+		&& isValidUid($uid)) {
 		$uids[$uid] = $username;
 	    }
 	}
@@ -279,14 +279,12 @@ class Gallery1DataParser {
      * @return boolean True or False
      */
     function isValidUid($uid) {
-	if (ereg('^[0-9]{9,}[^0-9][0-9]+$', $uid)) {
+	if (ereg('^[0-9]{9,}_[0-9]+$', $uid)) {
 	    return array(GalleryStatus::success(), TRUE);
 	} else {
 	    return array(GalleryStatus::success(), FALSE);
 	}
     }
-
-    
     
     /**
      * Load user metadata given a path and username
@@ -302,19 +300,12 @@ class Gallery1DataParser {
         if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
         }
-
 	$usernames = array_flip($uids);
         $uid = $usernames[$username];
-	
-	list ($ret, $user) = Gallery1DataParser::loadFile($path . '.users/' . $uid);
-        if ($ret->isError()) {
+	list ($ret, $fields) = Gallery1DataParser::getUserFieldsByUid($path, $uid);
+	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
-        }
-
-	foreach ($user as $key => $value){
-	    $fields[$key] = $value;
 	}
-	
 	return array(GalleryStatus::success(), $fields);
     }
     /**
@@ -327,21 +318,20 @@ class Gallery1DataParser {
      */
     function getUserFieldsByUid($path, $uid) {
         global $gallery;
-
-	list ($ret, $user) = Gallery1DataParser::loadFile($path . '.users/' . $uid);
-        if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-        }
-
-	foreach ($user as $key => $value){
-	    $fields[$key] = $value;
+	$fields = array();
+	if (isValidUid($uid)) {
+	    list ($ret, $user) = Gallery1DataParser::loadFile($path . '.users/' . $uid);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    foreach ($user as $key => $value){
+		$fields[$key] = $value;
+	    }
 	}
-	
 	return array(GalleryStatus::success(), $fields);
     }
-
-
 }
+
 /* Define these classes so that unserialize can use them */
 /**
  * A stub class into which various G1 objects can be unserialized.
