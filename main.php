@@ -18,47 +18,64 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-/* Start profiling. */
-list ($usec, $sec) = explode(" ", microtime());
-$start = ((float)$usec + (float)$sec);
-
 /* Initialize Gallery */
 require(dirname(__FILE__) . '/init.php');
 
-/* Figure out the target module/page */
-list($gPage, $gModule) =
-    GalleryUtilities::getRequestVariables('gPage', 'gModule');
+/* Figure out the target module/controller */
+list($viewName, $controllerName) =
+    GalleryUtilities::getRequestVariables('gView', 'gController');
 
-/* Make sure that the requested module/page combo is clean */
-if (ereg("[^[:alnum:]_.]", $gPage) || ereg("[^[:alnum:]_.]", $gModule)) {
-    $gModule = 'core';
-    $gPage = 'SecurityViolation';
-}
-
-if (empty($gModule) || empty($gPage)) {
-    $gModule = 'core';
-    $gPage = 'ShowItem';
-}
-
-/* Pass control to that module/page and record its output */
-include($gallery->getConfig('core.directory.modules') .
-	$gModule . '/' . $gPage . '.inc');
-
-/* Stop profiling */
-list ($usec, $sec) = explode(" ", microtime());
-$stop = ((float)$usec + (float)$sec);
-$elapsed = $stop - $start;
-
-/* Display the global output */
-$smarty = $gallery->getSmarty();
-if ($gallery->getDebug()) {
-    $master['profile'] = "Page generation: $elapsed secs";
-    if ($gallery->getDebug() == 'buffered') {
-	$master['debug'] = $gallery->getDebugBuffer();
+/* Load and run the appropriate controller */
+if (!empty($controllerName)) {
+    ereg('^([[:alnum:]]+):([[:alnum:]]+)$', $controllerName, $regs);
+    if (sizeof($regs) == 3) {
+	$module = $regs[1];
+	$class = $regs[2];
+	require_once($gallery->getConfig('core.directory.modules') .
+		     $module . '/' . $class . '.inc');
+	$controllerClassName = $class . 'Controller';
+	$controller = new $controllerClassName;
+    
+	/* Let the controller handle the input */
+	$ret = $controller->handleRequest();
+    
+	/*
+	 * XXX: Handle errors in an unclean fashion for now
+	 * eventually push this out into its own view
+	 */
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return;
+	}
+    } else {
+	$viewName = 'core:SecurityViolation';
     }
 }
-$master['layout'] = $gallery->getLayoutData('output');
 
-$smarty->assign('master', $master);
-$smarty->display('global.tpl');
+/* Load and run the appropriate view */
+if (empty($viewName)) {
+    $module = 'core';
+    $class = 'ShowItem';
+} else {
+    ereg('^([[:alnum:]]+):([[:alnum:]]+)$', $viewName, $regs);
+    if (sizeof($regs) != 3) {
+	$module = 'core';
+	$class = 'SecurityViolation';
+    } else {
+	$module = $regs[1];
+	$class = $regs[2];
+    }
+}
+
+require_once($gallery->getConfig('core.directory.modules') .
+	     $module . '/' . $class . '.inc');
+$viewClassName = $class . 'View';
+$view = new $viewClassName;
+    
+/* Render the view */
+$ret = $view->render();
+if ($ret->isError()) {
+    print $ret->getAsHtml();
+    return;
+}
 ?>
