@@ -60,8 +60,7 @@ sub extract {
       my ($one, $many) = ($1, $2);
       $one =~ s/\"/\\\"/sg;	# escape double-quotes
       $many =~ s/\"/\\\"/sg;	# escape double-quotes
-      $strings{qq{gettext("$one")}}++;
-      $strings{qq{ngettext("$many")}}++;
+      $strings{qq{ngettext("$one", "$many")}}++;
     }
 
     # grab phrases of this format: translate('.....')
