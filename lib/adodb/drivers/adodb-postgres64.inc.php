@@ -546,7 +546,9 @@ select viewname,'V' from pg_views where viewname like $mask";
 		//print_r($rez);
 		// check if no data returned, then no need to create real recordset
 		if ($rez && pg_numfields($rez) <= 0) {
-			if (is_resource($this->_resultid)) pg_freeresult($this->_resultid);
+		        if (is_resource($this->_resultid) && get_resource_type($this->_resultid) == 'pgsql result') {
+			    pg_freeresult($this->_resultid);
+			}
 			$this->_resultid = $rez;
 			return true;
 		}
