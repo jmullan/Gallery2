@@ -130,7 +130,7 @@ class FlockLockSystem extends GalleryLockSystem {
 		list ($fd, $lockFile) = $lockInfo;
 		$platform->fclose($fd);
 		if ($platform->file_exists($lockFile)) {
-		    $platform->unlink($lockFile);
+		    @$platform->unlink($lockFile);
 		}
 	    }
 	    unset($this->_locks[$lockId]);
@@ -152,7 +152,7 @@ class FlockLockSystem extends GalleryLockSystem {
 		list ($fd, $lockFile) = $lockInfo;
 		$platform->fclose($fd);
 		if ($platform->file_exists($lockFile)) {
-		    $platform->unlink($lockFile);
+		    @$platform->unlink($lockFile);
 		}
 	    }
 	    unset($this->_locks[$lockId]);
@@ -233,7 +233,7 @@ class FlockLockSystem extends GalleryLockSystem {
 		    list ($fd, $lockFile) = $lockInfo;
 		    $platform->fclose($fd);
 		    if ($platform->file_exists($lockFile)) {
-			$platform->unlink($lockFile);
+			@$platform->unlink($lockFile);
 		    }
 		}
 		return array(GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__), null);
@@ -264,7 +264,7 @@ class FlockLockSystem extends GalleryLockSystem {
 			list ($fd, $lockFile) = $lockInfo;
 			$platform->fclose($fd);
 			if ($platform->file_exists($lockFile)) {
-			    $platform->unlink($lockFile);
+			    @$platform->unlink($lockFile);
 			}
 		    }
 		    return array(GalleryStatus::error(ERROR_LOCK_TIMEOUT, __FILE__, __LINE__),
