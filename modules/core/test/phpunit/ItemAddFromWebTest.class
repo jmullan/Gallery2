@@ -363,7 +363,7 @@ class ItemAddFromWebTestPlatform  {
 	}
 
 	// Pass lock requests
-	if (preg_match("|/locks/|", $filename)) {
+	if (preg_match("|\blocks\b|", $filename)) {
 	    return fopen($filename, $modes);
 	}
 	
