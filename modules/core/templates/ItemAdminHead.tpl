@@ -8,4 +8,7 @@
 <title>
   {g->text text="Gallery Item Administration"}
 </title>
+{if !empty($ItemAdmin.viewHeadFile)}
+{include file="gallery:`$ItemAdmin.viewHeadFile`" l10Domain=$ItemAdmin.viewL10Domain}
+{/if}
 {g->style}
