@@ -27,7 +27,7 @@
   <tr>
   {if $data.hVT}<td class="LLT"></td>{else}<td class="LL"{if $data.hVT or $data.hVB}
    style="height:expression((document.getElementById('IFid{$IF_count}').height-{$data.hVT+$data.hVB})+'px')"
-   {/if}><div class="V"></div></td>{/if}
+   {/if}><div class="V">&nbsp;</div></td>{/if}
   <td rowspan="{$data.rowspan}" colspan="{$data.colspan}">{if
    isset($ImageFrame_pre)}{$ImageFrame_pre}{/if}{if isset($src)}<img src="{$src}" alt=""
    id="IFid{$IF_count}"/>{else}{g->image item=$item image=$image
@@ -35,16 +35,16 @@
    isset($ImageFrame_post)}{$ImageFrame_post}{/if}</td>
   {if $data.hVT}<td class="RRT"></td>{else}<td class="RR"{if $data.hVT or $data.hVB}
    style="height:expression((document.getElementById('IFid{$IF_count}').height-{$data.hVT+$data.hVB})+'px')"
-   {/if}><div class="V"></div></td>{/if}
+   {/if}><div class="V">&nbsp;</div></td>{/if}
   </tr>
   {if $data.hVT}
     <tr>
     <td class="LL"{if $data.hVT or $data.hVB}
      style="height:expression((document.getElementById('IFid{$IF_count}').height-{$data.hVT+$data.hVB})+'px')"
-    {/if}><div class="V"></div></td>
+    {/if}><div class="V">&nbsp;</div></td>
     <td class="RR"{if $data.hVT or $data.hVB}
      style="height:expression((document.getElementById('IFid{$IF_count}').height-{$data.hVT+$data.hVB})+'px')"
-    {/if}><div class="V"></div></td>
+    {/if}><div class="V">&nbsp;</div></td>
     </tr>
   {/if}
   {if $data.hVB}
