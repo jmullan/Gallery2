@@ -52,7 +52,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 	
 	/* Save the platform */
 	$this->_savePlatform = $gallery->getPlatform();
-	$gallery->_platform = new ImageMagickToolkitTestPlatform();
+	$gallery->_platform = new ImageMagickToolkitTestPlatform($this->_savePlatform);
 
 	/* Get a toolkit to work with */
 	$this->_toolkit = new ImageMagickToolkit();
@@ -288,6 +288,10 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 
 class ImageMagickToolkitTestPlatform {
 
+    function ImageMagickToolkitTestPlatform($originalPlatform) {
+	$this->_platform = $originalPlatform;
+    }
+
     function exec($cmd) {
 	global $gallery;
 	list ($ret, $imageMagickPath) = $gallery->getModuleParameter('imagemagick', 'path');
@@ -388,6 +392,10 @@ class ImageMagickToolkitTestPlatform {
 	    break;
 	}
 	return false;
+    }
+
+    function getDirectorySeparator() {
+	return $this->_platform->getDirectorySeparator();
     }
 }
 

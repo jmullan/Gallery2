@@ -126,14 +126,15 @@ class ImageMagickToolkitHelper {
 	    }
 	}
 
-	$command = array($imageMagickPath . 'identify',
-			 dirname(__FILE__) . '/../test/data/test.gif',
-			 dirname(__FILE__) . '/../test/data/test.jpg',
-			 dirname(__FILE__) . '/../test/data/test.png',
-			 dirname(__FILE__) . '/../test/data/test.tif',
-			);
-
 	$platform = $gallery->getPlatform();
+	$slash = $platform->getDirectorySeparator();
+	$dataPath = dirname(__FILE__) . "${slash}..${slash}test${slash}data${slash}";
+	$command = array($imageMagickPath . 'identify',
+			 $dataPath . 'test.gif',
+			 $dataPath . 'test.jpg',
+			 $dataPath . 'test.png',
+			 $dataPath . 'test.tif');
+
 	list ($success, $results) = $platform->exec(array($command));
 	if (!$success) {
 	    return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE,
@@ -199,14 +200,15 @@ class ImageMagickToolkitHelper {
 	/* What do we want to test */
 	$binaries = array('identify', 'convert');
 
+	$slash = $platform->getDirectorySeparator();
+	$dataPath = dirname(__FILE__) . "${slash}..${slash}test${slash}data${slash}";
+
 	/* Test each binary */
 	$testArray = array();
 	foreach ($binaries as $binary) {
 	    switch ($binary) {
 	    case 'identify':
-		$command = array($imageMagickPath . 'identify',
-				 dirname(__FILE__) . '/../test/data/test.gif'
-				);
+	        $command = array($imageMagickPath . 'identify', $dataPath . 'test.gif');
 		list ($success, $results) = $platform->exec(array($command));
 		if (!$success) {
 		    $testArray[] = array('name' => 'identify',
@@ -239,7 +241,7 @@ class ImageMagickToolkitHelper {
 		}
 		$command = array($imageMagickPath . 'convert',
 				 '-scale', '200x200',
-				 dirname(__FILE__) . '/../test/data/test.gif',
+				 $dataPath . 'test.gif',
 				 $tmpFilename
 				);
 		list ($success, $results) = $platform->exec(array($command));

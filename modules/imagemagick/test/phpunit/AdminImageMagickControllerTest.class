@@ -54,7 +54,7 @@ class AdminImageMagickControllerTest extends GalleryControllerTestCase {
 	}
 
 	$this->_platform = $gallery->getPlatform();
-	$gallery->_platform = new AdminImageMagickControllerTestPlatform();
+	$gallery->_platform = new AdminImageMagickControllerTestPlatform($this->_platform);
     }
 
     function tearDown() {
@@ -79,9 +79,14 @@ class AdminImageMagickControllerTest extends GalleryControllerTestCase {
     function testSaveGoodPath() {
 	global $gallery;
 
+	$platform = $gallery->getPlatform();
+	$slash = $platform->getDirectorySeparator();
+
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('form.action.save', 1);
-	GalleryUtilities::putRequestVariable('form.path', '/validPath/');
+
+	/* use addslashes() here to escape the \ slash char on windows */
+	GalleryUtilities::putRequestVariable('form.path', addslashes("${slash}validPath${slash}"));
 	GalleryUtilities::putRequestVariable('form.jpegQuality', '12');
 	GalleryUtilities::putRequestVariable('return.view', 'target');
 
@@ -90,7 +95,7 @@ class AdminImageMagickControllerTest extends GalleryControllerTestCase {
 	$this->assertRedirect(array('view' => 'target'), $results);
 
 	/* Verify the settings went in properly */
-	$this->assertEquals(array(GalleryStatus::success(), '/validPath/'),
+	$this->assertEquals(array(GalleryStatus::success(), "${slash}validPath${slash}"),
 			    $gallery->getModuleParameter('imagemagick', 'path'));
 	$this->assertEquals(array(GalleryStatus::success(), '12'),
 			    $gallery->getModuleParameter('imagemagick', 'jpegQuality'));
@@ -111,9 +116,12 @@ class AdminImageMagickControllerTest extends GalleryControllerTestCase {
     function testSaveTestErrorPath() {
 	global $gallery;
 
+	$platform = $gallery->getPlatform();
+	$slash = $platform->getDirectorySeparator();
+
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('form.action.save', 1);
-	GalleryUtilities::putRequestVariable('form.path', '/validPathBadBinaries/');
+	GalleryUtilities::putRequestVariable('form.path', addslashes("${slash}validPathBadBinaries${slash}"));
 	GalleryUtilities::putRequestVariable('form.jpegQuality', '12');
 	GalleryUtilities::putRequestVariable('return.view', 'target');
 
@@ -121,15 +129,19 @@ class AdminImageMagickControllerTest extends GalleryControllerTestCase {
 	$results = $this->handleRequest();
 	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
 	$this->assertEquals('imagemagick:AdminImageMagick', GalleryUtilities::getRequestVariables('subView'));
-	$this->assert(GalleryUtilities::hasRequestVariable('form.error.path.testError'), 'testError error missing');
+	$this->assert(GalleryUtilities::hasRequestVariable('form.error.path.testError'),
+		      'testError error missing');
     }
 
     function testSaveBadPath() {
 	global $gallery;
 
+	$platform = $gallery->getPlatform();
+	$slash = $platform->getDirectorySeparator();
+	
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('form.action.save', 1);
-	GalleryUtilities::putRequestVariable('form.path', '/invalidPath/');
+	GalleryUtilities::putRequestVariable('form.path', addslashes("${slash}invalidPath${slash}"));
 	GalleryUtilities::putRequestVariable('form.jpegQuality', '12');
 	GalleryUtilities::putRequestVariable('return.view', 'target');
 
@@ -142,14 +154,16 @@ class AdminImageMagickControllerTest extends GalleryControllerTestCase {
 }
 
 class AdminImageMagickControllerTestPlatform {
-    function getDirectorySeparator() {
-	return '/';
-    }
 
+    function AdminImageMagickControllerTestPlatform($originalPlatform) {
+	$this->_platform = $originalPlatform;
+    }
+    
     function file_exists($path) {
+	$slash = $this->getDirectorySeparator();
 	switch ($path) {
-	case '/validPath/':
-	case '/validPathBadBinaries/':
+	case "${slash}validPath${slash}":
+	case "${slash}validPathBadBinaries${slash}":
 	    return true;
 	}
 	
@@ -157,9 +171,10 @@ class AdminImageMagickControllerTestPlatform {
     }
 
     function is_dir($dir) {
+	$slash = $this->getDirectorySeparator();
 	switch ($dir) {
-	case '/validPath/':
-	case '/validPathBadBinaries/':
+	case "${slash}validPath${slash}":
+	case "${slash}validPathBadBinaries${slash}":
 	    return true;
 	}
 	
@@ -175,16 +190,21 @@ class AdminImageMagickControllerTestPlatform {
     }
 
     function exec($args) {
+	$slash = $this->getDirectorySeparator();
 	switch ($args[0][0]) {
-	case '/validPath/identify':
-	    return array(1, array('test.gif GIF 50x50+0+0 PseudoClass 8c 8-bit 232.0 0.000u 0:01'));
+	case "${slash}validPath${slash}identify":
+	    return array(1, array("test.gif GIF 50x50+0+0 PseudoClass 8c 8-bit 232.0 0.000u 0:01"));
 	    
-	case '/validPath/convert':
+	case "${slash}validPath${slash}convert":
 	    return array(1, array());
 
 	default:
 	    return array(0, null);
 	}
+    }
+
+    function getDirectorySeparator() {
+	return $this->_platform->getDirectorySeparator();
     }
 }
 ?>
