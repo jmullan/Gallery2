@@ -105,8 +105,14 @@ class GalleryTemplateAdapter {
 	    }
 	}
 
+	if (isset($params['forceSessionId'])) {
+	    $forceSessionId = $params['forceSessionId'];
+	} else {
+	    $forceSessionId = null;
+	}
+
 	$urlGenerator = $gallery->getUrlGenerator();
-	$url = $urlGenerator->generateUrl($hrefParams);
+	$url = $urlGenerator->generateUrl($hrefParams, $forceSessionId);
 
 	if (!empty($params['forJavascript'])) {
 	    $url = str_replace('&amp;', '&', $url);
