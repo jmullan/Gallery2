@@ -480,19 +480,21 @@ class CoreModule extends GalleryModule {
 	
 	$views = array();
 
-	list ($ret, $anonymousUserId) = $this->getModuleParameter('id.anonymousUser');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
+	if (GalleryCapabilities::can('login')) {
+	    list ($ret, $anonymousUserId) = $this->getModuleParameter('id.anonymousUser');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
 
-	if ($user->getId() != $anonymousUserId) {
-	    $views[] = array('name' => $this->translate('Account Settings'),
-			     'view' => 'core:UserPreferences');
-	    $views[] = array('name' => $this->translate('Change Password'),
-			     'view' => 'core:UserChangePassword');
-	} else {
-	    $views[] = array('name' => $this->translate('Login'),
-			     'view' => 'core:UserLogin');
+	    if ($user->getId() != $anonymousUserId) {
+	        $views[] = array('name' => $this->translate('Account Settings'),
+				 'view' => 'core:UserPreferences');
+	        $views[] = array('name' => $this->translate('Change Password'),
+				 'view' => 'core:UserChangePassword');
+	    } else {
+	        $views[] = array('name' => $this->translate('Login'),
+				 'view' => 'core:UserLogin');
+	    }
 	}
 
 	return array(GalleryStatus::success(), $views);

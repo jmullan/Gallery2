@@ -80,6 +80,11 @@ class UserPreferencesController extends GalleryController {
 	    /* email required for non-anonymous */
 	    if (empty($form['email'])) {
 		$error[] = 'form[error][email][missing]';
+	    } else {
+		$form['email'] = trim($form['email']);
+		if (!GalleryUtilities::isValidEmailString($form['email'])) {
+		    $error[] = 'form[error][email][invalid]';
+		}
 	    }
 
 	    /*

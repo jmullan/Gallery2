@@ -56,6 +56,11 @@
         {g->text text="You must enter an email address"}
       </div>
       {/if}
+      {if isset($form.error.email.invalid)}
+      <div class="giError">
+        {g->text text="Invalid email address"}
+      </div>
+      {/if}
     </div>
       
     {if $UserPreferences.translationsSupported}

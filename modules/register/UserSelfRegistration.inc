@@ -67,15 +67,26 @@ class UserSelfRegistrationController extends GalleryController {
 	    $redirect['view'] = 'core:UserAdmin';
 	    
 	} else if (isset($form['action']['create'])) {
+
+	    /* Validate inputs */
+	    foreach (array('userName', 'email', 'password1', 'password2', 'fullName') as $key) {
+		if (empty($form[$key])) {
+		    $error[] = 'form[error][' . $key . '][missing]';
+		}
+	    }
+	    if (!empty($form['email']) && !GalleryUtilities::isValidEmailString($form['email'])) {
+		$error[] = 'form[error][email][invalid]';
+	    }
+	    if (!empty($form['password1']) && !empty($form['password2']) &&
+			$form['password1'] != $form['password2']) {
+		$error[] = 'form[error][password2][mismatch]';
+	    }
+
 	    /*
 	    * If all the right fields are in place then go ahead and
 	    * create the user.
 	    */
-	    if (!empty($form['userName']) &&
-			!empty($form['fullName']) &&
-			!empty($form['email']) &&
-			!empty($form['password1']) &&
-			$form['password1'] == $form['password2']) {
+	    if (empty($error)) {
 
 		list ($ret, $user) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryPendingUser');
 		if ($ret->isError()) {
@@ -97,7 +108,6 @@ class UserSelfRegistrationController extends GalleryController {
 		} else {
 		    $user->setEmail($form['email']);
 		    $user->setFullName($form['fullName']);
-		    //$gallery->debug(print_r($form));
 		    //$user->setLanguage($form['language']);
 		    $user->changePassword($form['password1']);
 
@@ -106,8 +116,6 @@ class UserSelfRegistrationController extends GalleryController {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 
-		    /* this part is added for UserSelfRegistration; keep this on updates */
-			
 		    /* send a confirmation email if activated in module settings */
 		    /* otherwise create the "real" user right now */
 		    list($ret, $params) =
@@ -141,22 +149,10 @@ class UserSelfRegistrationController extends GalleryController {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
 		    }
-		    /* end of added part */
-			
+
 		    /* Request a redirect to the confirmation screen */
 		    $redirect['view'] = 'core:UserAdmin';
 		    $redirect['subView'] = 'register:SelfRegistrationSuccess';
-		}
-	    } else {
-		foreach (array('userName', 'email', 'password1', 'password2', 'fullName') as $key) {
-		    if (empty($form[$key])) {
-			$error[] = 'form[error][' . $key . '][missing]';
-		    }
-		}
-		if (!empty($form['password1']) &&
-			!empty($form['password2']) &&
-			$form['password1'] != $form['password2']) {
-		    $error[] = 'form[error][password2][mismatch]';
 		}
 	    }
 	}
