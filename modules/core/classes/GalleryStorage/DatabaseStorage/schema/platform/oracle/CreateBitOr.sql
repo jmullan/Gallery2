@@ -38,7 +38,10 @@ create or replace type body BIT_OR_IMPL is
     self.val := (self.val + ctx2.val) - BitAND(self.val, ctx2.val);
     return ODCIConst.Success;
   end;
-end;
+end;;
+
+-- Extra semicolon above ensures executed statement includes a semicolon at the end
+-- (one is stripped off when this file is split into multiple blocks)
 
 create or replace function BIT_OR(input number) return number
   parallel_enable aggregate using BIT_OR_IMPL;

@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -67,23 +67,23 @@ class DatabaseStorage /* implements GalleryStorage */ {
 
     /**
      * Name of the database user
-     * 
+     *
      * @var string $_username
      * @access private
      */
     var $_username;
-    
+
     /**
      * Password for the database user
-     * 
+     *
      * @var string $_password
      * @access private
      */
     var $_password;
-    
+
     /**
      * Name of the database to use
-     * 
+     *
      * @var string $_database
      * @access private
      */
@@ -91,7 +91,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 
     /**
      * Host the database runs on
-     * 
+     *
      * @var string $_hostname
      * @access private
      */
@@ -99,7 +99,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 
     /**
      * A DatabaseSchema instance, used to check and update the schema
-     * 
+     *
      * @var object DatabaseSchema an instance of the DatabaseSchema class
      * @access private
      */
@@ -187,7 +187,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	return GalleryStatus::success();
     }
 
@@ -197,10 +197,10 @@ class DatabaseStorage /* implements GalleryStorage */ {
      * @return array object GalleryStatus a status code
      *               object a database resource
      * @access private
-     */ 
+     */
     function _getConnection($forceNew=false) {
 	global $gallery;
-	
+
 	if (empty($this->_hostname)) {
 	    return array(GalleryStatus::error(ERROR_MISSING_VALUE, __FILE__, __LINE__), null);
 	}
@@ -241,7 +241,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 
 	return array(GalleryStatus::success(), $db);
     }
-    
+
     /**
      * Load the GalleryEntities with the ids specified
      *
@@ -279,13 +279,13 @@ class DatabaseStorage /* implements GalleryStorage */ {
 
 	    /* Get unique target ids */
 	    $targetIds = array_keys($targetIdHash);
-	    
+
 	    /* Get our member info for this class */
 	    list ($ret, $memberInfo) = $this->_describeEntityMembers($className);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    
+
 	    $idCol = $this->_translateColumnName('id');
 
 	    /* Build up our query */
@@ -304,7 +304,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	    }
 	    $tables = array_keys($tables);
 	    $columns = array_keys($columns);
-	    
+
 	    for ($i = 0; $i < sizeof($tables); $i++) {
 		if ($i == 0) {
 		    $where[] = $tables[$i] . '.' . $idCol . ' IN (' . $markers . ')';
@@ -343,12 +343,12 @@ class DatabaseStorage /* implements GalleryStorage */ {
 
 		    for ($i = 0; $i < sizeof($callbacks); $i++) {
 			$value = $row[$i];
-		    
+
 			/* Convert the database representation to a timestamp */
 			if ($types[$i] & STORAGE_TYPE_TIMESTAMP) {
 			    $value = $this->_db->UnixTimeStamp($value);
 			}
-			
+
 			/* Store the value in the object */
 			$entity->$callbacks[$i]($value);
 		    }
@@ -356,7 +356,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 		    $entity->clearModifiedFlags();
 		    $entities[$entity->getId()] = $entity;
 		}
-		
+
 		$recordSet->Close();
 	    } else {
 		return array(GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__), null);
@@ -442,7 +442,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 		 * need to insert into in order for this class to be completely
 		 * serialized.
 		 */
-		
+
 		if (!isset($dataTable[$tableName])) {
 		    $dataTable[$tableName] = array();
 		}
@@ -460,7 +460,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	if ($entity->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED)) {
 	    /*
 	     * Iterate through the data table and make up an INSERT statement
-	     * for each table that requires one. 
+	     * for each table that requires one.
 	     */
 	    foreach ($dataTable as $tableName => $columnChanges) {
 
@@ -499,7 +499,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	    foreach ($dataTable as $tableName => $columnChanges) {
 		$changeList = array();
 		$data = array();
-		
+
 		foreach ($columnChanges as $columnName => $value) {
 		    $changeList[] = $columnName . '=?';
 		    $data[] = $value;
@@ -590,7 +590,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	$idCol = $this->_translateColumnName('id');
 
 	$tables = array();
@@ -616,12 +616,12 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	}
 
 	$entity->setPersistentFlag(STORAGE_FLAG_DELETED);
-	    
+
 	return GalleryStatus::success();
     }
 
     /**
-     * Create a new GalleryEntity 
+     * Create a new GalleryEntity
      *
      * @access public
      * @param object GalleryEntity the GalleryEntity to put the data in
@@ -642,7 +642,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	$entity->setId($id);
 	$entity->setSerialNumber(0);
 	$entity->setPersistentFlag(STORAGE_FLAG_NEWLY_CREATED);
-	
+
 	return GalleryStatus::success();
     }
 
@@ -697,13 +697,13 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	    } else {
 		$count = $optional['limit']['count'];
 	    }
-	    
+
 	    if (empty($optional['limit']['offset'])) {
 		$offset = -1;
 	    } else {
 		$offset = $optional['limit']['offset'];
 	    }
-	    
+
 	    $this->_traceStart();
 	    $recordSet = $this->_db->SelectLimit($query, $count, $offset, $data);
 	    $this->_traceStop();
@@ -712,7 +712,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	    $recordSet = $this->_db->Execute($query, $data);
 	    $this->_traceStop();
 	}
-	
+
 	if ($recordSet) {
 	    return array(GalleryStatus::success(),
 			 new DatabaseSearchResults($recordSet));
@@ -734,7 +734,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	$this->_traceStart();
 	$recordSet = $this->_db->Execute($statement, $data);
 	$this->_traceStop();
-	
+
 	if ($recordSet) {
 	    return GalleryStatus::success();
 	} else {
@@ -766,7 +766,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 		    $value = $this->_db->DBTimeStamp($value);
 		}
 	    }
-	    
+
 	    $data[] = $value;
 	}
 
@@ -928,7 +928,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	$query = 'UPDATE ' . $tableName . ' ';
 	$query .= 'SET ' . join(', ', $set) . ' ';
 	$data = array_merge($data, $setdata);
-	
+
 	$query .= 'WHERE '  . join(' AND ', $where);
 	$data = array_merge($data, $wheredata);
 
@@ -948,7 +948,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
      */
     function _getModuleSql($moduleId) {
 	global $gallery;
-	
+
 	$platform = $gallery->getPlatform();
 	$sqlDir = dirname(__FILE__) . '/../../../../modules/' . $moduleId .
 	    '/classes/GalleryStorage/DatabaseStorage/schema/platform/' .
@@ -993,16 +993,16 @@ class DatabaseStorage /* implements GalleryStorage */ {
      */
     function configureStore($moduleId) {
 	global $gallery;
-	
+
 	if (empty($this->_db)) {
 	    return GalleryStatus::error(ERROR_STORAGE_CONNECTION, __FILE__, __LINE__);
 	}
-	
+
 	list ($ret, $tableDefinition, $tableAlter) = $this->_getModuleSql($moduleId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	/* Get the metabase info about this database */
 	$this->_traceStart();
 	$metatables = $this->_db->MetaTables();
@@ -1107,16 +1107,16 @@ class DatabaseStorage /* implements GalleryStorage */ {
      */
     function unconfigureStore($moduleId) {
 	global $gallery;
-	
+
 	if (empty($this->_db)) {
 	    return GalleryStatus::error(ERROR_STORAGE_CONNECTION, __FILE__, __LINE__);
 	}
-	
+
 	list ($ret, $tableDefinition, $tableAlter) = $this->_getModuleSql($moduleId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	/* Get the metabase info about this database */
 	$this->_traceStart();
 	$metatables = $this->_db->MetaTables();
@@ -1155,7 +1155,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 		if (empty($recordSet)) {
 		    return GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
 		}
-	    } 
+	    }
 
 	    $cleanQuery = sprintf('DELETE FROM %s where %s=?',
 				  $schemaTableName, $schemaColumnName);
@@ -1177,7 +1177,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
      */
     function _loadTableVersions() {
 	global $gallery;
-	
+
 	$GLOBALS['ADODB_FETCH_MODE'] = ADODB_FETCH_NUM;
 	$this->_traceStart();
 	list ($schemaTableName, $unused) = $this->_translateTableName('Schema');
@@ -1188,12 +1188,12 @@ class DatabaseStorage /* implements GalleryStorage */ {
 					 ' FROM ' .
 					 $schemaTableName);
 	$this->_traceStop();
-	
+
 	if (empty($recordSet)) {
 	    return array(GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__,
 					      'Error reading schema table'), null);
 	}
-	
+
 	$tableVersions = array();
 	while ($row = $recordSet->FetchRow()) {
 	    $tableVersions[$row[0]] = array($row[1], $row[2]);
@@ -1211,16 +1211,19 @@ class DatabaseStorage /* implements GalleryStorage */ {
      */
     function _executeSqlFile($fileName) {
 	global $gallery;
-	
+
 	$platform = $gallery->getPlatform();
-	
+
 	if ($fd = $platform->fopen($fileName, 'r')) {
 	    $buffer = null;
 	    while (!$platform->feof($fd)) {
 		$buffer .= $platform->fgets($fd, 4096);
 	    }
-		
-	    foreach (split(';', $buffer) as $query) {
+
+	    /* Split the file where semicolons are followed by a blank line..
+	     * PL/SQL blocks will have other semicolons, so we can't split on every one.
+	     */
+	    foreach (preg_split('/; *\r?\n *\r?\n/s', $buffer) as $query) {
 		$query = trim($query);
 		if (!empty($query)) {
 		    $query = str_replace('DB_TABLE_PREFIX', $this->_tablePrefix, $query);
@@ -1230,7 +1233,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 		    foreach ($this->getSqlReplacements() as $key => $value) {
 			$query = str_replace($key, $value, $query);
 		    }
-		    
+
 		    $this->_traceStart();
 		    $recordSet = $this->_db->Execute($query);
 		    $this->_traceStop();
@@ -1306,7 +1309,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 
 	return GalleryStatus::success();
     }
-    
+
     /**
      * Begin a new transaction, if the storage layer supports them.
      *
@@ -1326,7 +1329,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 		return GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
 	    }
 	}
-	
+
 	return GalleryStatus::success();
     }
 
@@ -1342,12 +1345,12 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	    $this->_traceStart();
 	    $ok = $this->_db->CommitTrans();
 	    $this->_traceStop();
-	    
+
 	    if (!$ok) {
 		return GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
 	    }
 	}
-	
+
 	return GalleryStatus::success();
     }
 
@@ -1363,15 +1366,15 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	    $this->_traceStart();
 	    $ok = $this->_db->RollbackTrans();
 	    $this->_traceStop();
-	    
+
 	    if (!$ok) {
 		return GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
 	    }
 	}
-	
+
 	return GalleryStatus::success();
     }
-    
+
     /**
      * Database specific string replacements in our SQL files.
      *
@@ -1390,7 +1393,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
     function getProfilingHtml() {
 	$this->_traceStart();
 	 $perf =& NewPerfMonitor($this->_db);
-	 $buf = $perf->SuspiciousSQL();    
+	 $buf = $perf->SuspiciousSQL();
 	 $buf .= $perf->ExpensiveSQL();
 	$this->_traceStop();
 	 return $buf;
@@ -1449,7 +1452,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	    $this->_traceStart();
 	    $recordSet = $this->_db->Execute($query, $checkIds);
 	    $this->_traceStop();
-	    
+
 	    if ($recordSet) {
 		while ($row = $recordSet->FetchRow()) {
 		    if (empty($row[1])) {
