@@ -7,7 +7,7 @@
       {foreach from=$ItemAdmin.parents item=parent}
 	{g->item}
 	  {g->title}
-	    {g->link arg1="view=core:ShowItem" arg2="itemId=$parent.id"}
+	    {g->link arg1="view=core:ShowItem" arg2="itemId=`$parent.id`"}
 	      {$parent.title|default:$parent.pathComponent}
 	    {/g->link}
 	  {/g->title}
