@@ -713,7 +713,14 @@ class DatabaseStorage extends GalleryStorage {
 	}
 
 	/* Serial number didn't match -- reload the entity */
-	return $this->loadEntities($entity->getId());
+	list ($ret, $freshEntity) = $this->loadEntities($entity->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$entity &= $freshEntity;
+
+	return GalleryStatus::success();
     }
 
     /**
@@ -1677,6 +1684,10 @@ class DatabaseStorage extends GalleryStorage {
 	if ($returnArray) {
 	    $results = array();
 	    foreach ($ids as $id) {
+		if (empty($this->_entityTypeCache[$id])) {
+		    return array(GalleryStatus::error(ERROR_MISSING_OBJECT,
+						      __FILE__, __LINE__), null);
+		}
 		$results[] = $this->_entityTypeCache[$id];
 	    }
 	} else {

@@ -229,7 +229,13 @@ class GalleryEntity_core extends GalleryPersistent {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	return $storage->refreshEntity($this);
+	
+	$ret = $storage->refreshEntity($this);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
     }
 
     /**
