@@ -89,8 +89,7 @@ class SquareThumbModule extends GalleryModule {
      * @see GalleryModule::canBeAutoInstalled
      */
     function canBeAutoInstalled() {
-	/* We could autoinstall, but not everyone wants square thumbnails */
-	return false;
+	return true;
     }
 
     /**
