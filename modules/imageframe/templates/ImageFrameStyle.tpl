@@ -17,12 +17,14 @@ img.ImageFrame_{$id} {ldelim} {$data.style} {rdelim}
 {if !empty($data.imageLLT)}table.ImageFrame_{$id} .LLT {ldelim} height:{$data.heightLLT}px; background:url({$data.imageLLT}) no-repeat; {rdelim}
 {/if}
 {if !empty($data.imageLL)}table.ImageFrame_{$id} .LL {ldelim} width:{$data.widthLL}px; background:url({$data.imageLL}) repeat-y; {rdelim}
+table.ImageFrame_{$id} .LL div.V {ldelim} width:{$data.widthLL}px; {rdelim}
 {/if}
 {if !empty($data.imageLLB)}table.ImageFrame_{$id} .LLB {ldelim} height:{$data.heightLLB}px; background:url({$data.imageLLB}) no-repeat; {rdelim}
 {/if}
 {if !empty($data.imageRRT)}table.ImageFrame_{$id} .RRT {ldelim} height:{$data.heightRRT}px; background:url({$data.imageRRT}) no-repeat; {rdelim}
 {/if}
 {if !empty($data.imageRR)}table.ImageFrame_{$id} .RR {ldelim} width:{$data.widthRR}px; background:url({$data.imageRR}) repeat-y; {rdelim}
+table.ImageFrame_{$id} .RR div.V {ldelim} width:{$data.widthRR}px; {rdelim}
 {/if}
 {if !empty($data.imageRRB)}table.ImageFrame_{$id} .RRB {ldelim} height:{$data.heightRRB}px; background:url({$data.imageRRB}) no-repeat; {rdelim}
 {/if}
