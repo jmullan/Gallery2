@@ -99,7 +99,8 @@
 
       {if ($child.canContainChildren && $layout.showAlbumOwner) || (!$child.canContainChildren && $layout.showImageOwner)}
       <li>
-	{g->text text="Owner: %s" arg1=$layout.owners[$child.ownerId].fullName|default:$owner.userName}
+	{g->text text="Owner: %s"
+	         arg1=$layout.owners[$child.ownerId].fullName|default:$layout.owners[$child.ownerId].userName}
       </li>
       {/if}
 
