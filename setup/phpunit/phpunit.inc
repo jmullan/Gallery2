@@ -654,9 +654,17 @@ class PrettyTestResult extends TestResult {
     if ($nFailures == 0)
       return;
 
-	echo "<h2>Failure Details</h2>";
-    print("\n<ol>\n");
     $failures = $this->getFailures();
+    $newFilter = array();
+    foreach ($failures as $failure) {
+	$newFilter[$failure->getClassName() . '.' . $failure->getTestName()] = 1;
+    }
+    printf('<input type="button" onClick="javascript:reRun(\'%s\');" value="Re-run broken tests">',
+	   '(' . join('|', array_keys($newFilter)) . ')');
+    
+    echo "<h2>Failure Details</h2>";
+    print("\n<ol>\n");
+    reset($failures);
     while (list($i, $failure) = each($failures)) {
       $failedTestName = $failure->getTestName();
       printf("\n<li>%s</li>\n", $failedTestName);
@@ -669,14 +677,6 @@ class PrettyTestResult extends TestResult {
       print("</ul>");
     }
     print("</ol>\n");
-
-    $newFilter = array();
-    foreach ($failures as $failure) {
-	$newFilter[] = $failure->getClassName() . '.' . $failure->getTestName();
-    }
-
-    //    printf('<input type="button" onClick="javascript:setFilter(\'%s\'); document.forms[0].submit\'" value="Re-run broken tests">', '(' . join('|', $newFilter) . ')');
-    printf('<input type="button" onClick="javascript:reRun(\'%s\');" value="Re-run broken tests">', '(' . join('|', $newFilter) . ')');
   }
 
   function _startTest($test) {
