@@ -111,11 +111,10 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	if (!empty($moduleStatusList['comment']['active'])) {
-	    $this->testComments = TRUE;
-	} else {
-	    $this->testComments = FALSE;
-	}
+	$this->testComments = !empty($moduleStatusList['comment']['active']);
+	// Comment permissions might be registered in db even though module isn't active:
+	list ($ret, $bits) = GalleryCoreApi::convertPermissionIdsToBits('comment.all');
+	$this->commentPermissionsExist = $ret->isSuccess();
     }
 
     function tearDown() {
@@ -258,7 +257,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	list ($ret, $cols) = $layout->getParameter('cols',$testAlbumId);
+	list ($ret, $cols) = $layout->getParameter('columns',$testAlbumId);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -347,8 +346,8 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 					      'derivativeOperations' => 'scale|400'
 					      )
 					),
-				  3,                                     // rows
-				  NULL                                   // cols
+				  '5',                                   // rows
+				  '5'                                    // cols
 				  ),
 			    array($testAlbum->getTitle(),                // title
 				  $testAlbum->getSummary(),              // summary
@@ -707,7 +706,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
      *     )
      * )
      *
-     * owner => core.all,comment.all
+     * owner => core.all (also gives comment.all)
      *
      * canRead => core.view,core.viewResizes
      * canViewFullImages => core.viewSource
@@ -769,7 +768,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	$testPermsResult = array();
 	
 	$testPerms['admin'] = array('core.all' => true,
-				    'comment.all' => true && $this->testComments
+				    'comment.all' => true && $this->commentPermissionsExist
 				    );
 	$testPerms['phpunitfoo001'] = array('core.view' => true,
 					    'core.viewResizes' => true,
@@ -936,7 +935,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	$testPerms = array();
 	$testPermsResult = array();
 	$testPerms['admin'] = array('core.all' => true,
-				    'comment.all' => true && $this->testComments
+				    'comment.all' => true && $this->commentPermissionsExist
 				    );
 	$testPerms['phpunitfoo001'] = array('core.view' => true,
 					    'core.viewResizes' => true,
@@ -1048,7 +1047,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	    $testPerms = array();
 	    $testPermsResult = array();
 	    $testPerms['admin'] = array('core.all' => true,
-					'comment.all' => true && $this->testComments
+					'comment.all' => true && $this->commentPermissionsExist
 					);
 	    $testPerms['phpunitfoo001'] = array('core.view' => false,
 						'core.viewResizes' => false,
@@ -1194,7 +1193,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	    $testPerms = array();
 	    $testPermsResult = array();
 	    $testPerms['admin'] = array('core.all' => true,
-					'comment.all' => true && $this->testComments
+					'comment.all' => true && $this->commentPermissionsExist
 					);
 	    $testPerms['phpunitfoo001'] = array('core.view' => false,
 						'core.viewResizes' => false,
@@ -1337,7 +1336,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	    $testPerms = array();
 	    $testPermsResult = array();
 	    $testPerms['admin'] = array('core.all' => true,
-					'comment.all' => true && $this->testComments
+					'comment.all' => true && $this->commentPermissionsExist
 					);
 	    $testPerms['phpunitfoo001'] = array('core.view' => false,
 						'core.viewResizes' => false,

@@ -52,7 +52,7 @@ class ConfirmImportController extends GalleryController {
 	    $importComments = FALSE;
 	}
 
-	/* owner => core.all,comment.all
+	/* owner => core.all (which also gives comment.all)
 	 *
 	 * canRead => core.view,core.viewResizes
 	 * canViewFullImages => core.viewSource
@@ -468,16 +468,6 @@ class ConfirmImportController extends GalleryController {
 				    if ($ret->isError()) {
 					return array($ret->wrap(__FILE__, __LINE__), null);
 				    }
-				    if ($importComments) {
-					$ret = GalleryCoreApi::addGroupPermission($newAlbumInstance->getId(),
-										  $adminUsersGroupId,
-										  'comment.all',
-										  FALSE
-										  );
-					if ($ret->isError()) {
-					    return array($ret->wrap(__FILE__, __LINE__), null);
-					}
-				    }
 				}
 				
 				// Set album owner permissions
@@ -502,16 +492,6 @@ class ConfirmImportController extends GalleryController {
 									     );
 				    if ($ret->isError()) {
 					return array($ret->wrap(__FILE__, __LINE__), null);
-				    }
-				    if ($importComments) {
-					$ret = GalleryCoreApi::addUserPermission($newAlbumInstance->getId(),
-										 $owner->getId(),
-										 'comment.all',
-										 true
-										 );
-					if ($ret->isError()) {
-					    return array($ret->wrap(__FILE__, __LINE__), null);
-					}
 				    }
 				}
 				
