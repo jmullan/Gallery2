@@ -35,6 +35,7 @@
  */
 class UrlGeneratorTest extends GalleryTestCase {
     var $_urlGenerator;
+    var $_savedGet;
 
     function UrlGeneratorTest($methodName) {
 	$this->GalleryTestCase($methodName);
@@ -45,11 +46,13 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$_SERVER['HTTP_HOST'] = 'example.com';
 	$_SERVER['SERVER_PORT'] = 80;
 
+	$this->_savedGet = $_GET;
 	$this->_urlGenerator = new GalleryUrlGenerator('phpunit_test.php');
 	parent::setUp();
     }
 
     function tearDown() {
+	$_GET = $this->_savedGet;
 	parent::tearDown();
     }
 
@@ -408,6 +411,27 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$_SERVER['REQUEST_URI'] = '/apps/cms/index.php?module=gallery2&foo=bar';
 	$urlGenerator = new GalleryUrlGenerator('index.php?module=gallery2', '../../gallery2/');
 	$this->assertEquals('/', $urlGenerator->getCookiePath(), 'test 7');
+    }
+
+    function testGetNavigationReturnUrl() {
+	$_GET['g2_foo'] = 'bar';
+	$_GET['g2_return'] = 'http://blabla';
+	$_GET['g2_returnName'] = 'name';
+	$_GET['g2_navId'] = 'navId';
+	$_GET['g2_fromNavId'] = 'fromNavId';
+	$expected = 'http://example.com/gallery2/phpunit_test.php?g2_foo=bar';
+
+	// Normal behaviour (php+apache)
+	$this->assertEquals($expected, $this->_urlGenerator->getNavigationReturnUrl());
+
+	// IIS: no REQUEST_URI, just SCRIPT_NAME
+	unset($_SERVER['REQUEST_URI']);
+	$_SERVER['SCRIPT_NAME'] = '/gallery2/phpunit_test.php';
+	$this->assertEquals($expected, $this->_urlGenerator->getNavigationReturnUrl(), 'iis');
+
+	// Sometimes IIS has PATH_INFO value the same as SCRIPT_NAME..
+	$_SERVER['PATH_INFO'] = $_SERVER['SCRIPT_NAME'];
+	$this->assertEquals($expected, $this->_urlGenerator->getNavigationReturnUrl(), 'iis path_info');
     }
 }
 ?>

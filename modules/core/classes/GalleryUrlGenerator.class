@@ -456,19 +456,25 @@ class GalleryUrlGenerator {
 
 	$session =& $gallery->getSession();
 	$path = '';
-	if (!empty($_SERVER['SCRIPT_NAME'])) {
+	if (!empty($_SERVER['REQUEST_URI'])) {
+	    $path = $_SERVER['REQUEST_URI'];
+	    if ($pos = strpos($_SERVER['REQUEST_URI'], '?')) {
+		/* We'll add the query params later */
+		$path = substr($path, 0, $pos);
+	    }
+	} else if (!empty($_SERVER['SCRIPT_NAME'])) {
 	    $path = $_SERVER['SCRIPT_NAME'];
 	    if (!empty($_SERVER['PATH_INFO']) && $_SERVER['PATH_INFO'] != $path) {
 		$path .= $_SERVER['PATH_INFO'];
 	    }
-	    $urlVariables = GalleryUtilities::getUrlVariablesFiltered(array('return', 'returnName', 'navId', 'fromNavId'));
-	    $path .= '?';
-	    $args = array();
-	    foreach ($urlVariables as $key => $value) {
-		$args[] = $key . '=' . $value;
-	    }
-	    $path .= join('&amp;', $args);
 	}
+	$urlVariables = GalleryUtilities::getUrlVariablesFiltered(array('return', 'returnName', 'navId', 'fromNavId'));
+	$path .= '?';
+	$args = array();
+	foreach ($urlVariables as $key => $value) {
+	    $args[] = $key . '=' . $value;
+	}
+	$path .= join('&amp;', $args);
 	$return = $this->makeUrl($path);
 
 	/*
