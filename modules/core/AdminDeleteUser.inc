@@ -141,6 +141,7 @@ class AdminDeleteUserView extends GalleryView {
 	/* Render the HTML body */
 	$template = $this->_getTemplate();
 	$template->setVariable('form', $form);
+	$template->setVariable('user', $user->getMemberData());
 	$template->setVariable('controller', 'core:AdminDeleteUser');
 	$html = $template->render('AdminDeleteUser.tpl');
 
