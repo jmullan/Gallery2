@@ -168,6 +168,37 @@ class ItemAddFromBrowserTest extends ItemAddPluginTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(0, $viewCount);
-    }    
+    }
+
+    function testAddWithOption() {
+	global $gallery;
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('form[action][addFromBrowser]', 1);
+
+	$platform = $gallery->getPlatform();
+	$fullPath = dirname(__FILE__) . '/../data/test1.gif';
+	if (get_magic_quotes_gpc()) {
+	    $fullPath = addslashes($fullPath);
+	}
+	    
+	GalleryUtilities::putRequestVariable('form[name][1]', basename($fullPath));
+	GalleryUtilities::putRequestVariable('form[type][1]',
+					     GalleryCoreApi::getMimeType($fullPath));
+	GalleryUtilities::putRequestVariable('form[tmp_name][1]', $fullPath);
+	GalleryUtilities::putRequestVariable('form[size][1]', $platform->filesize($fullPath));
+	GalleryUtilities::putRequestVariable('form[error][1]', 0);
+	GalleryUtilities::putRequestVariable('form[caption][1]', 'this is a caption for ' . basename($fullPath));
+	GalleryUtilities::putRequestVariable('form[uploadBoxCount]', 1);
+
+	/* Perform the request and verify that our option got called */
+	$option = new ItemAddPluginTestOption();
+	$results = $this->handleRequest($this->_rootAlbum, null, array($option));
+
+	list ($form, $item) = $option->getData();
+	$this->assertEquals($platform->filesize($fullPath), $item->getSize());
+	$this->assert(isset($form['action']['addFromBrowser']));
+    }
 }
+
 ?>

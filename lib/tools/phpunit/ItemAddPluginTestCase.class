@@ -68,11 +68,11 @@ class ItemAddPluginTestCase extends GalleryTestCase {
 	parent::tearDown();
     }
 
-    function handleRequest(&$item, $errorCode=null) {
+    function handleRequest(&$item, $errorCode=null, $options=array()) {
 	/* Get our form variables */
 	$form = GalleryUtilities::getFormVariables('form');
 
-	list ($ret, $error, $status) = $this->_plugin->handleRequest($form, $item);
+	list ($ret, $error, $status) = $this->_plugin->handleRequest($form, $item, $options);
 	if (isset($errorCode)) {
 	    if (($ret->getErrorCode() & $errorCode) != $errorCode) {
 		$this->assert(false,
@@ -98,6 +98,47 @@ class ItemAddPluginTestCase extends GalleryTestCase {
 
     function _translate($message) {
 	return $this->_module->translate($message);
+    }
+}
+
+/**
+ * Test ItemAddOption that we can use in our plugin unit tests.
+ *
+ * One tricky thing here is that our tests are going to create an instance of this class, then pass a copy of
+ * it in to the plugin.  The plugin will then make calls on it, and we want to record the values passed in to
+ * those calls.  However, we can't record anything in the copy of the instance because the test doesn't have
+ * access to the copy.  So instead, assign each instance a unique key and keep a map of those unique keys to
+ * another instance so that all copies of one instance can share the same data.  This means that when we get
+ * back to the test and call getData(), we'll get the same data that was saved by any other copy of the same
+ * instance.
+ */
+class ItemAddPluginTestOption extends ItemAddOption {
+    function ItemAddPluginTestOption() {
+	$this->_key = rand();
+    }
+
+    function &_getInstance($key) {
+	static $map;
+	if (!isset($map)) {
+	    $map = array();
+	}
+
+	if (!isset($map[$key])) {
+	    $map[$key] = new ItemAddPluginTestOption();
+	}
+	return $map[$key];
+    }
+    
+    function handleRequestAfterAdd($form, &$item) {
+	$instance =& $this->_getInstance($this->_key);
+	$instance->_form = $form;
+	$instance->_item = $item;
+	return array(GalleryStatus::success(), array());
+    }
+
+    function getData() {
+	$instance =& $this->_getInstance($this->_key);
+	return array($instance->_form, $instance->_item);
     }
 }
 ?>

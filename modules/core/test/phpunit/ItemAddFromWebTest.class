@@ -104,6 +104,22 @@ class ItemAddFromWebTest extends ItemAddPluginTestCase {
 	$this->assertEquals('http://www.test.com/apo\'strophe.jpg', $results[1]['addedFiles'][3]['fileName']);
 	$this->assert(isset($results[1]['addedFiles'][3]['id']));
     }
+
+    function testAddWithOption() {
+	global $gallery;
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('form[action][addFromWebPage]', 1);
+	GalleryUtilities::putRequestVariable('form[webPageUrls][http://www.test.com/test1.gif]', 1);
+
+	/* Perform the request and verify that we succeeded */
+	$option = new ItemAddPluginTestOption();
+	$results = $this->handleRequest($this->_rootAlbum, null, array($option));
+
+	list ($form, $item) = $option->getData();
+	$this->assert(isset($form['webPageUrls']['http://www.test.com/test1.gif']));
+	$this->assertEquals('test1.gif', $item->getPathComponent());
+    }    
 }
 
 /**

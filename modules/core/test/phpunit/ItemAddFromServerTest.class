@@ -121,6 +121,26 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	    $seenWeights[$orderWeight] = 1;
 	}
     }
+
+    function testAddWithOption() {
+	global $gallery;
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('form[action][addFromLocalServer]', 1);
+
+	$platform = $gallery->getPlatform();
+	$basedir = dirname(__FILE__) . '/../data/';
+	GalleryUtilities::putRequestVariable('form[localServerPath]', $basedir);
+	GalleryUtilities::putRequestVariable('form[localServerFiles][test1.gif]', 1);
+
+	/* Perform the request and verify that we succeeded */
+	$option = new ItemAddPluginTestOption();
+	$results = $this->handleRequest($this->_rootAlbum, null, array($option));
+
+	list ($form, $item) = $option->getData();
+	$this->assert($basedir, $form['localServerPath']);
+	$this->assertEquals($platform->filesize($basedir . 'test1.gif'), $item->getSize());
+    }    
 }
 
 /**
