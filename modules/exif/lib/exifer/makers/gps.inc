@@ -167,50 +167,53 @@ function parseGPS($block,&$result,$offset,$seek, $globalOffset) {
 	$num=hexdec($num);
 	$result['GPS']['NumTags'] = $num;
 
-	$block = fread( $seek, $num*12 );
-	$place = 0;
-	
-	//loop thru all tags  Each field is 12 bytes
-	for($i=0;$i<$num;$i++) {
+	if ($num > 0) {
+		$block = fread( $seek, $num*12 );
+		$place = 0;
+
+		//loop thru all tags  Each field is 12 bytes
+		for($i=0;$i<$num;$i++) {
 			//2 byte tag
-		$tag = bin2hex(substr($block,$place,2));$place+=2;
-		if($intel==1) $tag = intel2Moto($tag);
-		$tag_name = lookup_GPS_tag($tag);
+			$tag = bin2hex(substr($block,$place,2));$place+=2;
+			if($intel==1) $tag = intel2Moto($tag);
+			$tag_name = lookup_GPS_tag($tag);
+	
+			//2 byte datatype
+			$type = bin2hex(substr($block,$place,2));$place+=2;
+			if($intel==1) $type = intel2Moto($type);
+			lookup_type($type,$size);
 		
-		//2 byte datatype
-		$type = bin2hex(substr($block,$place,2));$place+=2;
-		if($intel==1) $type = intel2Moto($type);
-		lookup_type($type,$size);
+			//4 byte number of elements
+			$count = bin2hex(substr($block,$place,4));$place+=4;
+			if($intel==1) $count = intel2Moto($count);
+			$bytesofdata = $size*hexdec($count);
 		
-		//4 byte number of elements
-		$count = bin2hex(substr($block,$place,4));$place+=4;
-		if($intel==1) $count = intel2Moto($count);
-		$bytesofdata = $size*hexdec($count);
-		
-		//4 byte value or pointer to value if larger than 4 bytes
-		$value = substr($block,$place,4);$place+=4;
-		
-		if($bytesofdata<=4) {
-			$data = $value;
-		} else {
-			$value = bin2hex($value);
-			if($intel==1) $value = intel2Moto($value);
+			//4 byte value or pointer to value if larger than 4 bytes
+			$value = substr($block,$place,4);$place+=4;
 			
-			$v = fseek($seek,$globalOffset+hexdec($value));  //offsets are from TIFF header which is 12 bytes from the start of the file
-			if($v==0) {
-				$data = fread($seek, $bytesofdata);
-			} else if($v==-1) {
-				$result['Errors'] = $result['Errors']++;
+			if($bytesofdata<=4) {
+				$data = $value;
+			} else {
+				$value = bin2hex($value);
+				if($intel==1) $value = intel2Moto($value);
+				
+				//offsets are from TIFF header which is 12 bytes from the start of the file
+				$v = fseek($seek,$globalOffset+hexdec($value));  
+				if($v==0) {
+					$data = fread($seek, $bytesofdata);
+				} else if($v==-1) {
+					$result['Errors'] = $result['Errors']++;
+				}
 			}
-		}
 			
-		if($result['VerboseOutput']==1) {
-			$result['GPS'][$tag_name] = formatGPSData($type,$tag,$intel,$data);
-			$result['GPS'][$tag_name."_Verbose"]['RawData'] = bin2hex($data);
-			$result['GPS'][$tag_name."_Verbose"]['Type'] = $type;
-			$result['GPS'][$tag_name."_Verbose"]['Bytes'] = $bytesofdata;
-		} else {
-			$result['GPS'][$tag_name] = formatGPSData($type,$tag,$intel,$data);
+			if($result['VerboseOutput']==1) {
+				$result['GPS'][$tag_name] = formatGPSData($type,$tag,$intel,$data);
+				$result['GPS'][$tag_name."_Verbose"]['RawData'] = bin2hex($data);
+				$result['GPS'][$tag_name."_Verbose"]['Type'] = $type;
+				$result['GPS'][$tag_name."_Verbose"]['Bytes'] = $bytesofdata;
+			} else {
+				$result['GPS'][$tag_name] = formatGPSData($type,$tag,$intel,$data);
+			}
 		}
 	}
 }
