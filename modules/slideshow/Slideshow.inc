@@ -36,9 +36,10 @@ class SlideshowView extends GalleryView {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+	$startId = null;
 	if (!$item->getCanContainChildren()) {
 	    // Photo: do slideshow of parent album, start at this photo
-	    $startid = $item->getId();
+	    $startId = $item->getId();
 	    list ($ret, $item) =
 		$gallery->loadEntitiesById($item->getParentId());
 	    if ($ret->isError()) {
@@ -47,7 +48,7 @@ class SlideshowView extends GalleryView {
 	}
 
 	list ($ret, $itemList, $start) =
-	    $this->buildSlideshow($item, $startid);
+	    $this->buildSlideshow($item, $startId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -66,7 +67,7 @@ class SlideshowView extends GalleryView {
     /**
      * Build data set to be used by template to render slideshow
      */
-    function buildSlideshow($item, $startid = null) {
+    function buildSlideshow($item, $startId = null) {
 	global $gallery;
 	list ($ret, $childIds) = $item->fetchChildIds();
 	if ($ret->isError()) {
@@ -83,25 +84,25 @@ class SlideshowView extends GalleryView {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    list ($ret, $preferredFullImg) =
+	    list ($ret, $preferredFullImages) =
 		GalleryDerivativeHelper::fetchPreferredsByItemIds($childIds);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    list ($ret, $resizedImg) =
+	    list ($ret, $resizedImages) =
 		GalleryDerivativeHelper::fetchResizesByItemIds($childIds);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
 	$urlGenerator = $gallery->getUrlGenerator();
-	if (empty($startid)) {
+	if (empty($startId)) {
 	    $start = 0;
 	}
 	foreach ($childItems as $child) {
 
 	    $childId = $child->getId();
-	    if (!isset($start) && $childId == $startid) {
+	    if (!isset($start) && $childId == $startId) {
 		$start = count($itemList);
 	    }
 
@@ -115,14 +116,14 @@ class SlideshowView extends GalleryView {
 
 		$image = null;
 		if (isset($permissions['core.viewResizes']) &&
-			isset($resizedImg[$childId])) {
+			isset($resizedImages[$childId])) {
 		    // Just get the first resized size
-		    $image = current($resizedImg[$childId]);
+		    $image = current($resizedImages[$childId]);
 		    //XXX cache refresh?
 		} else if (isset($permissions['core.viewSource'])) {
 		    // Full size; check for preferred copy
-		    if (isset($preferredFullImg[$childId])) {
-			$image = $preferredFullImg[$childId];
+		    if (isset($preferredFullImages[$childId])) {
+			$image = $preferredFullImages[$childId];
 		    } else if ($child->canBeViewedInline()) {
 			$image = $child;
 		    }
