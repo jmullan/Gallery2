@@ -319,28 +319,15 @@ class DataCacheTestPlatform {
 	$record =& DataCacheTestPlatform::getRecord();
 	return isset($record['deleted-dir'][$path]);
     }
-    
-    function fopen($path, $modes) {
+
+    function atomicWrite($filename, $data) {
 	$record =& DataCacheTestPlatform::getRecord();
-	if ($modes == 'wb') {
-	    $record['contents'][$path] = '';
-	} else if ($modes == 'rb') {
-	    $record['contents'][$path] = 'contents of ' . $path;
-	}
-	return $path;
+	$record['contents'][$filename] = $data;
+	return strlen($data);
     }
 
     function flock($handle, $type) {
 	// Ignore for now
-    }
-
-    function fwrite($handle, $data) {
-	$record =& DataCacheTestPlatform::getRecord();
-	if (!isset($record['contents'][$handle])) {
-	    $record['contents'][$handle] = '';
-	}
-	
-	$record['contents'][$handle] .= $data;
     }
 
     function unlink($filename) {
@@ -351,10 +338,6 @@ class DataCacheTestPlatform {
     function recursiveRmDir($dir) {
 	$record =& DataCacheTestPlatform::getRecord();
 	$record['deleted-dir'][$dir] = 1;
-    }
-
-    function fclose($handle) {
-	// Ignore for now
     }
 
     function file_exists($path) {

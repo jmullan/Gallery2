@@ -372,18 +372,6 @@ class GalleryEntity_core extends GalleryPersistent {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	
-	$results =& $gallery->getLockSystem();
-	$ret = $results[0];
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	$lockSystem =& $results[1];
-	$ret = $lockSystem->deleteLock($this->getId());
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
 	$storage =& $gallery->getStorage();
 	$ret = $storage->deleteEntity($this);
 	if ($ret->isError()) {

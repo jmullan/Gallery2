@@ -402,16 +402,9 @@ class GalleryDataCache {
 	$platform = $gallery->getPlatform();
 	GalleryUtilities::guaranteeDirExists(dirname($cacheFile));
 
-	$fd = $platform->fopen($cacheFile, 'wb');
-
-	/* Open and lock the file.  Continue, even if this fails */
-	$wouldBlock = false;
-	$platform->flock($fd, LOCK_EX, $wouldBlock);
-	
-	if ($fd) {
-	    $platform->fwrite($fd, join(',', $requiredClasses) . "|" . serialize($data));
-	    $platform->fclose($fd);
-	}
+	/* This will either succeed, or leave no trace of its attempt. */
+	$platform->atomicWrite(
+	    $cacheFile, join(',', $requiredClasses) . "|" . serialize($data));
     }
 
     /**

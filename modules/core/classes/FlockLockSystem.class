@@ -126,8 +126,12 @@ class FlockLockSystem extends GalleryLockSystem {
 		continue;
 	    }
 
-	    foreach ($this->_locks[$lockId]['fds'] as $fd) {
+	    foreach ($this->_locks[$lockId]['lockInfo'] as $lockInfo) {
+		list ($fd, $lockFile) = $lockInfo;
 		$platform->fclose($fd);
+		if ($platform->file_exists($lockFile)) {
+		    $platform->unlink($lockFile);
+		}
 	    }
 	    unset($this->_locks[$lockId]);
 	}
@@ -144,8 +148,12 @@ class FlockLockSystem extends GalleryLockSystem {
 	$platform = $gallery->getPlatform();
 	$gallery->guaranteeTimeLimit(count($this->_locks));
 	foreach ($this->_locks as $lockId => $lock) {
-	    foreach ($lock['fds'] as $fd) {
+	    foreach ($lock['lockInfo'] as $lockInfo) {
+		list ($fd, $lockFile) = $lockInfo;
 		$platform->fclose($fd);
+		if ($platform->file_exists($lockFile)) {
+		    $platform->unlink($lockFile);
+		}
 	    }
 	    unset($this->_locks[$lockId]);
 	}
@@ -162,48 +170,14 @@ class FlockLockSystem extends GalleryLockSystem {
 	/* Flush one byte to each lock file to update its timestamp */
 	$platform = $gallery->getPlatform();
 	foreach ($this->_locks as $lockId => $lock) {
-	    foreach ($lock['fds'] as $fd) {
+	    foreach ($lock['lockInfo'] as $lockInfo) {
+		list ($fd, $lockFile) = $lockInfo;
 		$count = $platform->fwrite($fd, '.');
 		if ($count == 0) {
 		    return GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
 		}
 		$platform->fflush($fd);
 	    }
-	}
-
-	return GalleryStatus::success();
-    }
-
-    /**
-     * @see GalleryLockSystem::deleteLock()
-     */
-    function deleteLock($id) {
-	global $gallery;
-
-	/*
-	 * Release the lock before we delete the lock file.  This is tricky --
-	 * we may have locked this entity along with other ones.  Surgically
-	 * extract this entity id from the lock, but leave the lock around even
-	 * if its empty since it's going to get released later on by whoever
-	 * acquired it.  If we don't close the file before we try to delete it,
-	 * Windows will cry.
-	 */
-	$platform = $gallery->getPlatform();
-	foreach (array_keys($this->_locks) as $lockId) {
-	    for ($i = 0; $i < sizeof($this->_locks[$lockId]['ids']); $i++) {
-		if ($this->_locks[$lockId]['ids'][$i] == $id) {
-		    $platform->fclose($this->_locks[$lockId]['fds'][$i]);
-		    array_splice($this->_locks[$lockId]['ids'], $i, 1);
-		    array_splice($this->_locks[$lockId]['fds'], $i, 1);
-		    break;
-		}
-	    }
-	}
-
-	/* Now it's safe to delete the lock file */
-	$lockFile = $this->_getLockFile($id);
-	if (!@$platform->unlink($lockFile)) {
-	    return GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
 	}
 
 	return GalleryStatus::success();
@@ -244,9 +218,7 @@ class FlockLockSystem extends GalleryLockSystem {
      */
     function _acquireLock($ids, $timeout, $lockType) {
 	global $gallery;
-
 	$cutoffTime = time() + $timeout;
-
 	$platform = $gallery->getPlatform();
 
 	/* Get a file handle for all the files first */
@@ -255,10 +227,14 @@ class FlockLockSystem extends GalleryLockSystem {
 	    $lockFile = $this->_getLockFile($id);
 	    $fd = $platform->fopen($lockFile, 'wb+');
 	    if ($fd) {
-		$notLocked[] =& $fd;
+		$notLocked[] = array($fd, $lockFile);
 	    } else {
-		foreach ($open as $fd) {
+		foreach ($open as $lockInfo) {
+		    list ($fd, $lockFile) = $lockInfo;
 		    $platform->fclose($fd);
+		    if ($platform->file_exists($lockFile)) {
+			$platform->unlink($lockFile);
+		    }
 		}
 		return array(GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__), null);
 	    }
@@ -270,26 +246,33 @@ class FlockLockSystem extends GalleryLockSystem {
 	while (!empty($notLocked)) {
 	    $tmp = $notLocked;
 	    $notLocked = array();
-	    foreach ($tmp as $fd) {
+	    foreach ($tmp as $lockInfo) {
+		list ($fd, $lockFile) = $lockInfo;
 		$flockType = ($lockType == LOCK_READ) ? LOCK_SH : LOCK_EX;
 		$flockReturned = $platform->flock($fd, $flockType | LOCK_NB, $wouldBlock);
 		if ($flockReturned && !$wouldBlock) {
-		    $locked[] = $fd;
+		    $locked[] = $lockInfo;
 		} else {
 		    /* Remember that it's not locked and keep going */
-		    $notLocked[] = $fd;
+		    $notLocked[] = $lockInfo;
 		}
 	    }
 
 	    if (!empty($notLocked)) {
 		if (time() > $cutoffTime) {
-		    foreach (array_merge($locked, $notLocked) as $fd) {
+		    foreach (array_merge($locked, $notLocked) as $lockInfo) {
+			list ($fd, $lockFile) = $lockInfo;
 			$platform->fclose($fd);
+			if ($platform->file_exists($lockFile)) {
+			    $platform->unlink($lockFile);
+			}
 		    }
-		    return array(GalleryStatus::error(ERROR_LOCK_TIMEOUT, __FILE__, __LINE__), null);
+		    return array(GalleryStatus::error(ERROR_LOCK_TIMEOUT, __FILE__, __LINE__),
+				 null);
 		}
 
 		/* Wait a second and try any unacquired locks again */
+		$gallery->debug('Waiting for a lock');
 		sleep(1);
 	    }
 	}
@@ -297,7 +280,7 @@ class FlockLockSystem extends GalleryLockSystem {
 	$lockId = md5(microtime());
 	$this->_locks[$lockId] = array('type' => $lockType,
 				       'ids' => $ids,
-				       'fds' => $locked);
+				       'lockInfo' => $locked);
 	return array(GalleryStatus::success(), $lockId);
     }
 

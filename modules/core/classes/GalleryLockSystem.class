@@ -119,17 +119,6 @@ class GalleryLockSystem {
     }
 
     /**
-     * Delete the given lock entirely, which should only be used when the entity
-     * goes away forever.
-     *
-     * @return object GalleryStatus a status code
-     * @abstract
-     */
-    function deleteLock($id) {
-	return GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
-    }
-
-    /**
      * Return the ids of all the locks we hold
      *
      * @return array lock ids

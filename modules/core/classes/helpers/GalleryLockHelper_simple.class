@@ -275,25 +275,5 @@ class GalleryLockHelper_simple {
 
 	return GalleryStatus::success();
     }
-
-    /**
-     * @see GalleryLockSystem::deleteLock
-     */
-    function deleteLock($id) {
-	global $gallery;
-	$result =& $gallery->getLockSystem();
-	$ret = $result[0];
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-	$lockSystem =& $result[1];
-
-	$ret = $lockSystem->deleteLock($id);
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	return GalleryStatus::success();
-    }
 }
 ?>

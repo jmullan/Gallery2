@@ -74,8 +74,8 @@ class FastDownloadTest extends GalleryTestCase {
 	global $gallery;
 	$bytesWritten = '';
 	$platform = new FastDownloadTestCreateFastDownloadPlatform($bytesWritten);
-	$platform->setStat(7, 50);	  // content length
-	$platform->setStat(9, 1);	  // last mod date
+	$platform->setStat(7, 50);	  /* content length */
+	$platform->setStat(9, 1);	  /* last mod date */
 	$gallery->setPlatform($platform);
 
 	list ($ret, $anonymousUserId) =
@@ -236,24 +236,25 @@ class FastDownloadTestCreateFastDownloadPlatform {
 	return $this->_stat;
     }
 
+    function atomicWrite($file, $data) {
+	$this->_buf .= $data;
+    }
+
+    function file_exists($path) {
+	/* locking code calls this */
+	return file_exists($path);
+    }
+
     function fopen($file, $mode) {
 	return "$file-$mode";
     }
 
-    function fwrite($handle, $text) {
-	$this->_buf .= $text;
+    function fclose() {
     }
 
     function flock($handle, $operation, &$wouldblock) {
 	$wouldblock = false;
 	return true;
-    }
-
-    function fclose($handle) {
-    }
-
-    function getFwriteBuffer() {
-	return $this->_buf;
     }
 }
 

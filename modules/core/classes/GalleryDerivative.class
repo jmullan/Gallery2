@@ -498,18 +498,12 @@ class GalleryDerivative_core extends GalleryChildEntity {
 
 	    $fastDownloadFilePath = GalleryDataCache::getCachePath(
 		array('type' => 'fast-download', 'itemId' => $this->getId()));
-
-	    /* TODO: Protect this from concurrent writes using a temp file */
-	    $fd = $platform->fopen($fastDownloadFilePath, 'w');
-	    if ($fd) {
-		$buf = sprintf('<?php function GalleryFastDownload() { ' .
-			       'return $GLOBALS[\'gallery\']->fastDownload(\'%s\', \'%s\', ' .
-			       '\'%s\', \'%s\', %d);} ?>',
-			       $relativePath, $pseudoFileName, $lastModified,
-			       $this->getMimeType(), $contentLength);
-		$platform->fwrite($fd, $buf);
-		$platform->fclose($fd);
-	    }
+	    $buf = sprintf('<?php function GalleryFastDownload() { ' .
+			   'return $GLOBALS[\'gallery\']->fastDownload(\'%s\', \'%s\', ' .
+			   '\'%s\', \'%s\', %d);} ?>',
+			   $relativePath, $pseudoFileName, $lastModified,
+			   $this->getMimeType(), $contentLength);
+	    $platform->atomicWrite($fastDownloadFilePath, $buf);
 	}
 
 	return GalleryStatus::success();

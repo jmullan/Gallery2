@@ -318,39 +318,24 @@ class PlatformTest extends GalleryTestCase {
 	$this->assertEquals(false, $fd);
     }
 
-    function testConcurrentReadWrite() {
+    function testAtomicWrite() {
 	global $gallery;
 	$platform = $gallery->getPlatform();
 
-	/* XXX: We should test if our operations are really concurrent-safe,
+	/*
+	 * We should test if our operations are really concurrent-safe,
          * but we cannot do that without having multiple processes accessing
          * the same file, which is not possible in our test-framework (yet)
 	 */
 	$testData1 = "this is a test\nmultiline\ntest";
-
-	$ret = $platform->concurrentWrite($this->_destFile, $testData1, 'wb');
-	if ($ret->isError()) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	list ($ret, $output) = $platform->concurrentRead($this->_destFile, 'rb');
-	if ($ret->isError()) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$this->assert($platform->atomicWrite($this->_destFile, $testData1, 'wb'), 'write 1 failed');
+	$output = join('', $platform->file($this->_destFile));
 	$this->assertEquals($testData1, $output);
 
 	/* Now write another text to the same file and see if its ok */
 	$testData2 = "this is a test\nmultiline\ntest\nmore\ntext";
-
-	$ret = $platform->concurrentWrite($this->_destFile, $testData2, 'wb');
-	if ($ret->isError()) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	list ($ret, $output) = $platform->concurrentRead($this->_destFile, 'rb');
-	if ($ret->isError()) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$this->assert($platform->atomicWrite($this->_destFile, $testData2, 'wb'), 'write 2 failed');
+	$output = join('', $platform->file($this->_destFile));
 	$this->assertEquals($testData2, $output);
     }
 

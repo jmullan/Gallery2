@@ -289,10 +289,7 @@ class GallerySession {
 				      $this->_sessionData));
 	if ($serialized != $this->_loadedSessionData) {
 	    $sessionFile = $gallery->getConfig('data.gallery.sessions') . $this->_sessionId;
-	    $ret = $platform->concurrentWrite($sessionFile, $serialized);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
+	    $platform->atomicWrite($sessionFile, $serialized);
 	} else {
 	    /*
 	     * 5% of the time touch the session file so that it doesn't get expired.
@@ -534,18 +531,25 @@ class GallerySession {
 
 	$valid = false;
 	if ($platform->file_exists($sessionFile)) {
-	    list ($ret, $serialized) = $platform->concurrentRead($sessionFile);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+	    $serialized = '';
+	    $fd = $platform->fopen($sessionFile, 'rb');
+	    if ($fd) {
+		while (!$platform->feof($fd)) {
+		    $serialized .= $platform->fread($fd, 4096);
+		}
+		$platform->fclose($fd);
 	    }
-	    $data = unserialize($serialized);
-	    if (sizeof($data) == 3) {
-		list ($this->_creationTime,
-		      $this->_remoteIdentifier,
-		      $this->_sessionData) = $data;
-		$this->_loadedSessionData = $serialized;
+
+	    if ($serialized) {
+		$data = unserialize($serialized);
+		if (sizeof($data) == 3) {
+		    list ($this->_creationTime,
+			  $this->_remoteIdentifier,
+			  $this->_sessionData) = $data;
+		    $this->_loadedSessionData = $serialized;
+		}
+		$valid = true;
 	    }
-	    $valid = true;
 	}
 
 	if (!$valid) {
