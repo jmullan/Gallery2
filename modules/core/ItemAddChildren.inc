@@ -375,7 +375,7 @@ class ItemAddChildrenView extends GalleryView {
 		$form['error']['webPage']['missing'] = 1;
 	    } else {
 		$baseUrlComponents = parse_url($form['webPage']);
-		if ($baseUrlComponents['scheme'] != 'http') {
+		if (empty($baseUrlComponents['scheme']) || $baseUrlComponents['scheme'] != 'http') {
 		    $form['error']['webPage']['invalid'] = 1;
 		} else {
 		    list ($buffer, $headers, $actualUrl) =
