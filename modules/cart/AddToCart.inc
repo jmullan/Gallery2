@@ -53,7 +53,7 @@ class AddToCartController extends GalleryController {
 
 	/* Figure out what ids we care about */
 	if ($item->getCanContainChildren()) {
-	    list ($ret, $ids) = GalleryCoreApi::fetchChildItemIds($item);
+	    list ($ret, $ids) = GalleryCoreApi::fetchChildDataItemIds($item);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }

@@ -1899,7 +1899,6 @@ class GalleryCoreApi {
 	return GalleryEntityHelper_medium::fetchEntitiesLinkedTo($targetId);
     }
 
-
     /**
      * Return the ids of the children of this entity, in the order specified
      * by the orderBy field and the direction specified by the orderDirection
@@ -1919,6 +1918,23 @@ class GalleryCoreApi {
 	return GalleryChildEntityHelper_simple::fetchChildItemIds($item, $offset, $count);
     }
 
+    /**
+     * Same as fetchChildItemIds except we only want data items
+     *
+     * @param object GalleryItem an item
+     * @param int where to start
+     * @param int how many to return
+     *
+     * @access public
+     * @return array object GalleryStatus a status code
+     *               array integer ids
+     */
+    function fetchChildDataItemIds($item, $offset=null, $count=null) {
+	GalleryCoreApi::apiMethodUsed('fetchChildDataItemIds', 'GalleryChildEntityHelper_simple');
+	require_once(dirname(__FILE__) . '/helpers/GalleryChildEntityHelper_simple.class');
+	return GalleryChildEntityHelper_simple::fetchChildDataItemIds($item, $offset, $count);
+    }
+    
     /**
      * Same as fetchChildItemIds, except that we ignore permissions
      *
