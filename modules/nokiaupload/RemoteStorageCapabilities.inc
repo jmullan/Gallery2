@@ -52,7 +52,7 @@ class RemoteStorageCapabilitiesView extends GalleryView {
 	LogFile::mark('RemoteStorageCapabilitiesView');
 	LogFile::writeRequest();
 
-	$capabilities = ImageUploadApi::getRSCapabilities();
+	$capabilities = ImageUploadHelper::getRSCapabilities();
 
 	if (empty($capabilities)) {
 	    $reply = NOKIAUPLOAD_ERR_UNKNOWN . "\r\n";
