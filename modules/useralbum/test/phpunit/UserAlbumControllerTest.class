@@ -60,12 +60,6 @@ class UserAlbumControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$ret = GalleryCoreApi::setPluginParameter('module', 'useralbum', 'create', 'access');
-	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
 	list ($ret, $this->_userWithAlbum) = $this->_createRandomUser();
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
@@ -121,6 +115,12 @@ class UserAlbumControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 	$gallery->setActiveUser($this->_userWithoutAlbum);
 
+	/* Disable OnAccess creation and test to verify that album is not created */
+	$ret = GalleryCoreApi::setPluginParameter('module', 'useralbum', 'create', 'immediate');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
 	$results = $this->handleRequest();
 
 	list ($ret, $albumId) = GalleryCoreApi::getPluginParameter(
@@ -128,7 +128,28 @@ class UserAlbumControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assert(isset($albumId), 'album id');
+	$this->assert(empty($albumId), 'Album should not have been created');
+
+	$this->assertEquals(array('delegate' => array('view' => 'core:ShowItem',
+						      'itemId' => $albumId),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
+
+	/* Enable OnAccess creation and test to verify that album is created */
+	$ret = GalleryCoreApi::setPluginParameter('module', 'useralbum', 'create', 'access');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$results = $this->handleRequest();
+
+	list ($ret, $albumId) = GalleryCoreApi::getPluginParameter(
+	    'module', 'useralbum', 'albumId', $this->_userWithoutAlbum->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(isset($albumId), 'Album was not created');
 
 	$this->assertEquals(array('delegate' => array('view' => 'core:ShowItem',
 						      'itemId' => $albumId),
