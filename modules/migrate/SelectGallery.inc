@@ -60,6 +60,19 @@ class SelectGalleryController extends GalleryController {
 	}
 
 	if (empty($error)) {
+	    /* Save our albums path in the session */
+	    $session =& $gallery->getSession();
+	    $recentPaths = $session->get('migrate.view.SelectGallery.recentPaths');
+	    if (empty($recentPaths)) {
+		$recentPaths = array();
+	    }
+	    if (isset($recentPaths[$form['albumsPath']])) {
+		$recentPaths[$form['albumsPath']]++;
+	    } else {
+		$recentPaths[$form['albumsPath']] = 1;
+	    }
+	    $session->put('migrate.view.SelectGallery.recentPaths', $recentPaths);
+	    
 	    $redirect['view'] = 'core:SiteAdmin';
 	    $redirect['subView'] = 'migrate:ChooseObjects';
 	    $redirect['albumsPath'] = $form['albumsPath'];
@@ -90,7 +103,18 @@ class SelectGalleryView extends GalleryView {
 	    $form['albumsPath'] = '';
 	}
 
+	/* Load our recent paths from the session */
+	$session =& $gallery->getSession();
+	$recentPaths = $session->get('migrate.view.SelectGallery.recentPaths');
+	if (empty($recentPaths)) {
+	    $recentPaths = array();
+	}
+
+	$SelectGallery = array();
+	$SelectGallery['recentPaths'] = $recentPaths;
+
         $template->setVariable('controller', 'migrate:SelectGallery');
+	$template->setVariable('SelectGallery', $SelectGallery);
         return array(GalleryStatus::success(),
 		     array('body' => 'modules/migrate/templates/SelectGallery.tpl'));
     }
