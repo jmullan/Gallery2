@@ -174,7 +174,9 @@ class ClassicLayout extends GalleryLayout {
 
 	    /* put it all together */
 	    $i = 0;
-	    $gallery->debug("Begin: Rebuilding cache");
+	    if ($gallery->getDebug()) {
+		$gallery->debug("Begin: Rebuilding cache");
+	    }
 	    foreach ($childIds as $id) {
 		$children[$i] = $childTable[$id];
 		if (isset($thumbTable[$id])) {
@@ -188,7 +190,9 @@ class ClassicLayout extends GalleryLayout {
 		}
 		$i++;
 	    }
-	    $gallery->debug("End: Rebuilding cache");
+	    if ($gallery->getDebug()) {
+		$gallery->debug("End: Rebuilding cache");
+	    }
 	}
 	
 	/* Set up the navigator */
@@ -312,7 +316,9 @@ class ClassicLayout extends GalleryLayout {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    $gallery->debug("Begin: Rebuilding cache");
+	    if ($gallery->getDebug()) {
+		$gallery->debug("Begin: Rebuilding cache");
+	    }
 	    if (!empty($resizes)) {
 		foreach ($resizes[$item->getId()] as $resize) {
 		    /* Rebuild cache, to be prepared to the getMemberData() call */
@@ -327,7 +333,9 @@ class ClassicLayout extends GalleryLayout {
 					  'id' => $resize->getId());
 		}
 	    }
-	    $gallery->debug("End: Rebuilding cache");
+	    if ($gallery->getDebug()) {
+		$gallery->debug("End: Rebuilding cache");
+	    }
 	}
 
 	/* If the user can see the full version, add it to the list */

@@ -474,7 +474,9 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	}
 	$options = array();
 	$options['limit'] = array('count' => $count, 'offset' => $offset);
-	$gallery->debug_r($options);
+	if ($gallery->getDebug()) {
+	    $gallery->debug_r($options);
+	}
 	list ($ret, $searchResults) = $gallery->search($query, $data, $options);
 	
 	if ($ret->isError()) {

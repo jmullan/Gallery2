@@ -67,7 +67,9 @@ class GalleryView {
 	
 	$platform = $gallery->getPlatform();
 	if (!$platform->file_exists($templateDir)) {
-	    $gallery->debug("Missing view template dir: $templateDir");
+	    if ($gallery->getDebug()) {
+		$gallery->debug("Missing view template dir: $templateDir");
+	    }
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
 	
@@ -157,7 +159,9 @@ class GalleryView {
 	    $module = $regs[1];
 	    $class = $regs[2];
 	} else {
-	    $gallery->debug("$viewName can't be parsed");
+	    if ($gallery->getDebug()) {
+		$gallery->debug("$viewName can't be parsed");
+	    }
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
 	}
 
@@ -176,13 +180,17 @@ class GalleryView {
 
 	$viewClassName = $class . 'View';
 	if (!class_exists($viewClassName)) {
-	    $gallery->debug("Class $viewClassName not defined in $viewName");
+	    if ($gallery->getDebug()) {
+		$gallery->debug("Class $viewClassName not defined in $viewName");
+	    }
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
 	}
 
 	$view = new $viewClassName();
 	if (!GalleryUtilities::isA($view, 'GalleryView')) {
-	    $gallery->debug("Class $viewClassName is not a subclass of GalleryView");
+	    if ($gallery->getDebug()) {
+		$gallery->debug("Class $viewClassName is not a subclass of GalleryView");
+	    }
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
 	}
 	$ret = $view->init($module, $moduleDir . 'templates/');

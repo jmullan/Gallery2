@@ -108,7 +108,9 @@ class GalleryFactory {
 	if (!class_exists($className)) {
 	    $registry =& GalleryFactory::_getFactoryData();
 	    if (empty($registry['implementations'][$classType][$className])) {
-		$gallery->debug("Unimplemented: $classType, $className");
+		if ($gallery->getDebug()) {
+		    $gallery->debug("Unimplemented: $classType, $className");
+		}
 		return array(GalleryStatus::success(), null);
 	    }
 	    

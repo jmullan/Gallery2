@@ -245,7 +245,9 @@ class GallerySession_core {
 						    'key' => $key,
 						    'value' => $this->_valueMap[$key]));
 		} else {
-		    $gallery->debug("Unknown status for session key $key: $status");
+		    if ($gallery->getDebug()) {
+			$gallery->debug("Unknown status for session key $key: $status");
+		    }
 		}
 
 		if ($ret->isError()) {

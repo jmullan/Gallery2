@@ -69,7 +69,9 @@ function ErrorHandler($dbms, $fn, $errno, $errmsg, $p1=false, $p2=false)
     }
 
     global $gallery;
-    $gallery->debug($s);
+    if ($gallery->getDebug()) {
+	$gallery->debug($s);
+    }
     
     //print "<p>$s</p>";
     //trigger_error($s,E_USER_ERROR);

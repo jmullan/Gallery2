@@ -107,7 +107,9 @@ class GalleryDerivativeImage_core extends GalleryDerivative {
 	if ($derivativeType != DERIVATIVE_TYPE_IMAGE_THUMBNAIL &&
 	        $derivativeType != DERIVATIVE_TYPE_IMAGE_RESIZE &&
 	        $derivativeType != DERIVATIVE_TYPE_IMAGE_PREFERRED) {
-	    $gallery->debug("Unknown derivative type: $derivativeType");
+	    if ($gallery->getDebug()) {
+		$gallery->debug("Unknown derivative type: $derivativeType");
+	    }
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
 					__FILE__, __LINE__);
 	}

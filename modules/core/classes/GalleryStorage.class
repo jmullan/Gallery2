@@ -531,8 +531,10 @@ class GalleryStorage {
 	    $buf = ob_get_contents();
 	    ob_end_clean();
 
-	    $gallery->debug($buf);
-	    //$gallery->debug("Elapsed: $elapsed");
+	    if ($gallery->getDebug()) {
+		$gallery->debug($buf);
+		//$gallery->debug("Elapsed: $elapsed");
+	    }
 	}
     }
 }

@@ -107,7 +107,9 @@ class GalleryTheme {
 	$templateDir = $themeDir . 'templates/';
 	$platform = $gallery->getPlatform();
 	if (!$platform->file_exists($templateDir)) {
-	    $gallery->debug("Missing theme template dir: $templateDir");
+	    if ($gallery->getDebug()) {
+		$gallery->debug("Missing theme template dir: $templateDir");
+	    }
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
 

@@ -217,8 +217,10 @@ class GalleryUserHelper {
 	}
 
 	if (!$hasPermission) {
-	    $gallery->debug("user id: $userId doesn't have " .
-			    "permission: $permission for item id: $itemId");
+	    if ($gallery->getDebug()) {
+		$gallery->debug("user id: $userId doesn't have " .
+				"permission: $permission for item id: $itemId");
+	    }
 	    return GalleryStatus::error(ERROR_PERMISSION_DENIED,
 					__FILE__, __LINE__);
 	}

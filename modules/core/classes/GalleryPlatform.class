@@ -50,7 +50,9 @@ class GalleryPlatform {
      */
     function copy($source, $dest) {
 	global $gallery;
-	$gallery->debug("copy($source, $dest)");
+	if ($gallery->getDebug()) {
+	    $gallery->debug("copy($source, $dest)");
+	}
 	
 	$umask = umask(0133);
 	if (is_uploaded_file($source)) {
@@ -74,7 +76,9 @@ class GalleryPlatform {
      */
     function move_uploaded_file($filename, $newFilename=null) {
 	global $gallery;
-	$gallery->debug("move_uploaded_file($filename, $newFilename)");
+	if ($gallery->getDebug()) {
+	    $gallery->debug("move_uploaded_file($filename, $newFilename)");
+	}
 
 	if (empty($newFilename)) {
 	    $tmpDir = $gallery->getConfig('data.gallery.tmp');
@@ -82,7 +86,9 @@ class GalleryPlatform {
 	    if ($newFilename == null) {
 		return null;
 	    }
-	    $gallery->debug("chose new file name: $newFilename");
+	    if ($gallery->getDebug()) {
+		$gallery->debug("chose new file name: $newFilename");
+	    }
 	}
 
 	if (move_uploaded_file($filename, $newFilename)) {
@@ -101,7 +107,9 @@ class GalleryPlatform {
      */
     function file_exists($filename) {
 	global $gallery;
-	$gallery->debug("file_exists($filename)");
+	if ($gallery->getDebug()) {
+	    $gallery->debug("file_exists($filename)");
+	}
 
 	return is_uploaded_file($filename) || file_exists($filename);
     }
@@ -115,7 +123,9 @@ class GalleryPlatform {
      */
     function is_link($filename) {
 	global $gallery;
-	$gallery->debug("is_link($filename)");
+	if ($gallery->getDebug()) {
+	    $gallery->debug("is_link($filename)");
+	}
 	
 	return is_link($filename);
     }
@@ -129,7 +139,9 @@ class GalleryPlatform {
      */
     function is_dir($filename) {
 	global $gallery;
-	$gallery->debug("is_dir($filename)");
+	if ($gallery->getDebug()) {
+	    $gallery->debug("is_dir($filename)");
+	}
 	
 	return is_dir($filename);
     }
@@ -143,7 +155,9 @@ class GalleryPlatform {
      */
     function is_file($filename) {
 	global $gallery;
-	$gallery->debug("is_file($filename)");
+	if ($gallery->getDebug()) {
+	    $gallery->debug("is_file($filename)");
+	}
 	
 	return is_file($filename);
     }
@@ -157,7 +171,9 @@ class GalleryPlatform {
      */
     function is_writeable($filename) {
 	global $gallery;
-	$gallery->debug("is_writeable($filename)");
+	if ($gallery->getDebug()) {
+	    $gallery->debug("is_writeable($filename)");
+	}
 	
 	return is_writeable($filename);
     }
@@ -171,7 +187,9 @@ class GalleryPlatform {
      */
     function is_readable($filename) {
 	global $gallery;
-	$gallery->debug("is_readable($filename)");
+	if ($gallery->getDebug()) {
+	    $gallery->debug("is_readable($filename)");
+	}
 	
 	return is_readable($filename);
     }
@@ -185,7 +203,9 @@ class GalleryPlatform {
      */
     function is_uploaded_file($filename) {
 	global $gallery;
-	$gallery->debug("is_uploaded_file($filename)");
+	if ($gallery->getDebug()) {
+	    $gallery->debug("is_uploaded_file($filename)");
+	}
 	
 	return is_uploaded_file($filename);
     }
@@ -199,7 +219,9 @@ class GalleryPlatform {
      */
     function is_executable($filename) {
 	global $gallery;
-	$gallery->debug("is_executable($filename)");
+	if ($gallery->getDebug()) {
+	    $gallery->debug("is_executable($filename)");
+	}
 	
 	return is_executable($filename);
     }
@@ -213,7 +235,9 @@ class GalleryPlatform {
      */
     function filesize($filename) {
 	global $gallery;
-	$gallery->debug("filesize($filename)");
+	if ($gallery->getDebug()) {
+	    $gallery->debug("filesize($filename)");
+	}
 	
 	return filesize($filename);
     }
@@ -229,7 +253,9 @@ class GalleryPlatform {
      */
     function file($filename, $use_include_path=false) {
 	global $gallery;
-	$gallery->debug("file($filename, $use_include_path)");
+	if ($gallery->getDebug()) {
+	    $gallery->debug("file($filename, $use_include_path)");
+	}
 	
 	return file($filename, $use_include_path);
     }
@@ -245,7 +271,9 @@ class GalleryPlatform {
      */
     function fopen($filename, $mode, $use_include_path=0) {
 	global $gallery;
-	$gallery->debug("fopen($filename, $mode, $use_include_path)");
+	if ($gallery->getDebug()) {
+	    $gallery->debug("fopen($filename, $mode, $use_include_path)");
+	}
 	
 	return fopen($filename, $mode, $use_include_path);
     }
@@ -259,7 +287,9 @@ class GalleryPlatform {
      */
     function opendir($path) {
 	global $gallery;
-	$gallery->debug("opendir($path)");
+	if ($gallery->getDebug()) {
+	    $gallery->debug("opendir($path)");
+	}
 	
 	return opendir($path);
     }
@@ -276,7 +306,9 @@ class GalleryPlatform {
      */
     function rename($oldname, $newname) {
 	global $gallery;
-	$gallery->debug("rename($oldname, $newname)");
+	if ($gallery->getDebug()) {
+	    $gallery->debug("rename($oldname, $newname)");
+	}
 
 	return rename($oldname, $newname);
     }
@@ -290,7 +322,9 @@ class GalleryPlatform {
      */
     function stat($filename) {
 	global $gallery;
-	$gallery->debug("stat($filename)");
+	if ($gallery->getDebug()) {
+	    $gallery->debug("stat($filename)");
+	}
 	
 	return stat($filename);
     }
@@ -310,7 +344,9 @@ class GalleryPlatform {
      */
     function getimagesize($filename) {
 	global $gallery;
-	$gallery->debug("getimagesize($filename)");
+	if ($gallery->getDebug()) {
+	    $gallery->debug("getimagesize($filename)");
+	}
 	return getimagesize($filename);
     }
 
@@ -323,7 +359,9 @@ class GalleryPlatform {
      */
     function unlink($filename) {
 	global $gallery;
-	$gallery->debug("unlink($filename)");
+	if ($gallery->getDebug()) {
+	    $gallery->debug("unlink($filename)");
+	}
 	
 	return unlink($filename);
     }
@@ -337,7 +375,9 @@ class GalleryPlatform {
      */
     function rmdir($filename) {
 	global $gallery;
-	$gallery->debug("rmdir($filename)");
+	if ($gallery->getDebug()) {
+	    $gallery->debug("rmdir($filename)");
+	}
 	
 	return rmdir($filename);
     }
@@ -351,7 +391,9 @@ class GalleryPlatform {
      */
     function recursiveRmdir($dirname) {
 	global $gallery;
-	$gallery->debug("recursiveRmdir($dirname)");
+	if ($gallery->getDebug()) {
+	    $gallery->debug("recursiveRmdir($dirname)");
+	}
 
 	if (!($fd = $this->opendir($dirname))) {
 	    return false;
@@ -396,7 +438,9 @@ class GalleryPlatform {
 
 	/* Convert string permission representation to octal */
 	$octalPerms = octdec($stringPerms);
-	$gallery->debug(sprintf("mkdir(%s, %o)", $path, $octalPerms));
+	if ($gallery->getDebug()) {
+	    $gallery->debug(sprintf("mkdir(%s, %o)", $path, $octalPerms));
+	}
 	
 	$umask = umask(0);
 

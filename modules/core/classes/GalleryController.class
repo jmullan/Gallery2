@@ -71,7 +71,9 @@ class GalleryController {
 	    $module = $regs[1];
 	    $class = $regs[2];
 	} else {
-	    $gallery->debug("$controllerName can't be parsed");
+	    if ($gallery->getDebug()) {
+		$gallery->debug("$controllerName can't be parsed");
+	    }
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__));
 	}
 
@@ -90,7 +92,9 @@ class GalleryController {
 
 	$controllerClassName = $class . 'Controller';
 	if (!class_exists($controllerClassName)) {
-	    $gallery->debug("Class $controllerClassName not defined in ${moduleName}:$controllerName");
+	    if ($gallery->getDebug()) {
+		$gallery->debug("Class $controllerClassName not defined in ${moduleName}:$controllerName");
+	    }
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__));
 	}
 	

@@ -93,7 +93,9 @@ class GalleryModule {
 	    $gallery->getConfig('code.gallery.modules') . $this->getName(), $params);
 
 	if ($ret->isError()) {
-	    $gallery->debug($ret->getAsHtml());
+	    if ($gallery->getDebug()) {
+		$gallery->debug($ret->getAsHtml());
+	    }
 	    return 'Translation error';
 	} else {
 	    return $content;

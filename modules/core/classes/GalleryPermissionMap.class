@@ -252,7 +252,9 @@ class GalleryPermissionMap_core {
 	}
 
 	if (!isset($currentBitsTable[$itemId])) {
-	    $gallery->debug("Tried to remove a non-existant permission!");
+	    if ($gallery->getDebug()) {
+		$gallery->debug("Tried to remove a non-existant permission!");
+	    }
 	    return GalleryStatus::success();
 	    
 	    /*

@@ -95,7 +95,9 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
 	$platform = $gallery->getPlatform();
 
 	if (!$platform->isLegalPathComponent($path)) {
-	    $gallery->debug("illegal path component: $path");
+	    if ($gallery->getDebug()) {
+		$gallery->debug("illegal path component: $path");
+	    }
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
 					__FILE__, __LINE__);
 	}
@@ -238,9 +240,11 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
 
 	/* Make sure the old parent and the new parent are read locked */
 	if (!($gallery->isReadLocked($newParentId) && $gallery->isReadLocked($this->getParentId()))) {
-	    $gallery->debug(sprintf("One parent id (%d or %d) is not read locked",
-				    $newParentId,
-				    $this->getParentId()));
+	    if ($gallery->getDebug()) {
+		$gallery->debug(sprintf("One parent id (%d or %d) is not read locked",
+					$newParentId,
+					$this->getParentId()));
+	    }
 	    return GalleryStatus::error(ERROR_LOCK_REQUIRED, __FILE__, __LINE__);
 	}
 

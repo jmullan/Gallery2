@@ -113,7 +113,9 @@ class GalleryPermissionSetMap_core {
 	}
 
 	if (isset($permissionTable[$permissionId])) {
-	    $gallery->debug('Duplicate permission id: ' . $permissionId);
+	    if ($gallery->getDebug()) {
+		$gallery->debug('Duplicate permission id: ' . $permissionId);
+	    }
 	    return GalleryStatus::error(ERROR_COLLISION, __FILE__, __LINE__);
 	}
 
@@ -126,8 +128,10 @@ class GalleryPermissionSetMap_core {
 	    $flags |= GALLERY_PERMISSION_COMPOSITE;
 	} else if ($flags & GALLERY_PERMISSION_COMPOSITE) {
 	    if (empty($composites)) {
-		$gallery->debug("Permission $permissionId is marked as a composite, " .
-				"but didn't specify any composites!");
+		if ($gallery->getDebug()) {
+		    $gallery->debug("Permission $permissionId is marked as a composite, " .
+				    "but didn't specify any composites!");
+		}
 		return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	    }
 
@@ -202,7 +206,9 @@ class GalleryPermissionSetMap_core {
 	$results = 0;
 	foreach ($permissionIds as $id) {
 	    if (!isset($allPermissions[$id])) {
-		$gallery->debug("Unknown permission id: $id");
+		if ($gallery->getDebug()) {
+		    $gallery->debug("Unknown permission id: $id");
+		}
 		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
 			     null);
 	    }

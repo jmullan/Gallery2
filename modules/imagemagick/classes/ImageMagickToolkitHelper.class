@@ -234,7 +234,9 @@ class ImageMagickToolkitHelper {
 		$tmpFilename = tempnam($tmpDir, 'imgk_');
 		if (empty($tmpFilename)) {
 		    /* This can happen if the $tmpDir path is bad */
-		    $gallery->debug('Could not create tmp file in \'' . $tmpDir . '\'');
+		    if ($gallery->getDebug()) {
+			$gallery->debug('Could not create tmp file in \'' . $tmpDir . '\'');
+		    }
 		    return array(GalleryStatus::error(ERROR_BAD_PATH,
 						      __FILE__, __LINE__),
 				 null);

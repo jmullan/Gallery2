@@ -313,7 +313,9 @@ class DatabaseStorage extends GalleryStorage {
 	$classNames = array();
 	for ($i = 0; $i < sizeof($ids); $i++) {
 	    if (empty($types[$i])) {
-		$gallery->debug("Missing object for id $ids[$i]");
+		if ($gallery->getDebug()) {
+		    $gallery->debug("Missing object for id $ids[$i]");
+		}
 		return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
 	    }
 	    $classNames[$types[$i]][$ids[$i]] = 1;
@@ -1148,7 +1150,9 @@ class DatabaseStorage extends GalleryStorage {
 	}
 
 	if (empty($where)) {
-	    $gallery->debug('Missing where clause');
+	    if ($gallery->getDebug()) {
+		$gallery->debug('Missing where clause');
+	    }
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
 
@@ -1337,7 +1341,9 @@ class DatabaseStorage extends GalleryStorage {
 			 * database, but has no matching version info in the
 			 * schema table.  How can this be?  Leave it alone.
 			 */
-			$gallery->debug("Table $rawTableName: missing entry in Schema table");
+			if ($gallery->getDebug()) {
+			    $gallery->debug("Table $rawTableName: missing entry in Schema table");
+			}
 			break;
 		    }
 
@@ -1387,7 +1393,9 @@ class DatabaseStorage extends GalleryStorage {
 	$this->_traceStop();
 	
 	if (empty($recordSet)) {
-	    $gallery->debug('Error reading schema table');
+	    if ($gallery->getDebug()) {
+		$gallery->debug('Error reading schema table');
+	    }
 	    return array(GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__), null);
 	}
 
@@ -1431,13 +1439,17 @@ class DatabaseStorage extends GalleryStorage {
 		    $recordSet = $this->_db->Execute($query);
 		    $this->_traceStop();
 		    if (empty($recordSet)) {
-			$gallery->debug("Error trying to load $fileName");
+			if ($gallery->getDebug()) {
+			    $gallery->debug("Error trying to load $fileName");
+			}
 			return GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
 		    }
 		}
 	    }
 	} else {
-	    $gallery->debug("Unable to read file $fileName");
+	    if ($gallery->getDebug()) {
+		$gallery->debug("Unable to read file $fileName");
+	    }
 	    return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);
 	}
 

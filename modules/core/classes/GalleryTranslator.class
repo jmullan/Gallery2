@@ -264,10 +264,14 @@ class GalleryTranslator {
 	if ($gallery->getConfig('function.exists.dgettext')) {
 	    if (isset($domain) && !isset($this->_boundDomains[$domain])) {
 		$basePath .= '/locale';
-		$gallery->debug("Binding text domain: $domain -> $basePath");
+		if ($gallery->getDebug()) {
+		    $gallery->debug("Binding text domain: $domain -> $basePath");
+		}
 		$result = bindtextdomain($domain, $basePath);
 		if ($result != $basePath) {
-		    $gallery->debug("Got [$result] binding $basePath");
+		    if ($gallery->getDebug()) {
+			$gallery->debug("Got [$result] binding $basePath");
+		    }
 		    return array(GalleryStatus::error(ERROR_UNKNOWN, __FILE__, __LINE__),
 				 null);
 		}

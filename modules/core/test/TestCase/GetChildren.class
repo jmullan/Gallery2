@@ -45,7 +45,9 @@ class GetChildrenTestCase extends TestCase {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
-	    $gallery->debug("count: $count[$rootId]");
+	    if ($gallery->getDebug()) {
+		$gallery->debug("count: $count[$rootId]");
+	    }
 
 	    /* Get 'em all */ 
 	    list ($ret, $childIds) = $root->fetchChildren();
@@ -53,7 +55,9 @@ class GetChildrenTestCase extends TestCase {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
-	    $gallery->debug_r($childIds);
+	    if ($gallery->getDebug()) {
+		$gallery->debug_r($childIds);
+	    }
 	}
 	
 	return GalleryStatus::success();

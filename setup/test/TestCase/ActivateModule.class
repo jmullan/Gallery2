@@ -36,7 +36,9 @@ class ActivateModuleTestCase extends TestCase {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	} else {
-	    $gallery->debug($this->_moduleName . ' is already activated.');
+	    if ($gallery->getDebug()) {
+		$gallery->debug($this->_moduleName . ' is already activated.');
+	    }
 	}
 
 	return GalleryStatus::success();
