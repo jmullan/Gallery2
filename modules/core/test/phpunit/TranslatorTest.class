@@ -43,13 +43,17 @@ class TranslatorTest extends GalleryTestCase {
 	global $HTTP_SERVER_VARS;
 	
 	parent::setUp();
-	$this->_acceptLanguageSave = $HTTP_SERVER_VARS['HTTP_ACCEPT_LANGUAGE'];
+	if (isset($HTTP_SERVER_VARS['HTTP_ACCEPT_LANGUAGE'])) {
+	    $this->_acceptLanguageSave = $HTTP_SERVER_VARS['HTTP_ACCEPT_LANGUAGE'];
+	}
     }
 
     function tearDown() {
 	global $HTTP_SERVER_VARS;
 
-	$HTTP_SERVER_VARS['HTTP_ACCEPT_LANGUAGE'] = $this->_acceptLanguageSave;
+	if (isset($this->_acceptLanguageSave)) {
+	    $HTTP_SERVER_VARS['HTTP_ACCEPT_LANGUAGE'] = $this->_acceptLanguageSave;
+	}
 	parent::tearDown();
     }
 
