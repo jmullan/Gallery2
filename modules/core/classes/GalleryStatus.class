@@ -551,7 +551,7 @@ class GalleryStatusFormatterText extends GalleryStatusFormatter {
     function format($codes, $trace, $message=null) {
 	$buf = 'Error (' . join(', ', $codes) . ')';
 	if (!is_null($message)) {
-	    $buf .= ' : ' . $message;
+	    $buf .= ' : ' . htmlentities($message);
 	}
 	foreach ($trace as $traceEntry) {
 	    $buf .= sprintf("<B>in</B> %s <B>at line</B> %d",
