@@ -210,8 +210,9 @@ class ThumbPageModule extends GalleryModule /* and GalleryEventListener */ {
      */
     function handleEvent($event) {
 	/*
-	 * We're going to deactivate this module which will generate another Gallery::DeactivatePlugin
-	 * event, so make sure that we don't handle *that* event and get into an infinite loop!
+	 * We're going to deactivate this module which will generate another
+	 * Gallery::DeactivatePlugin event, so make sure that we don't handle
+	 * *that* event and get into an infinite loop! 
 	 */
 	$data = $event->getData();
 	if ($event->getEventName() == 'Gallery::DeactivatePlugin' &&
@@ -225,7 +226,7 @@ class ThumbPageModule extends GalleryModule /* and GalleryEventListener */ {
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-		// Reactivate may fail if toolkit support no longer found..
+		/* Reactivate may fail if toolkit support no longer found. */
 		list ($ret, $redirect) = $this->activate();
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
