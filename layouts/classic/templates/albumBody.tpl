@@ -50,7 +50,7 @@
 	  {section name=outer loop=$children step=$properties.columns}
 	  <tr>
 	    {section name=inner loop=$children start=$child max=$properties.columns}
-	    <td align=center>
+	    <td align="center">
 	      {if $children[$child].entityType == 'galleryalbumitem'}
 	      {include file="albumThumbnail.tpl"}
 	      {else}
