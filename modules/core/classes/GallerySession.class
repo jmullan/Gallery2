@@ -348,8 +348,8 @@ class GallerySession {
      */
     function regenerate() {
 	/* Store the current session data */
-        $localSessionData = $this->_sessionData;
-        $localLoadedSessionData = $this->_loadedSessionData;
+	$localSessionData = $this->_sessionData;
+	$localLoadedSessionData = $this->_loadedSessionData;
 
 	/* Reset the session data to create a new session id */
 	$this->reset();
@@ -357,6 +357,28 @@ class GallerySession {
 	/* Restore the stored session data */
 	$this->_sessionData = $localSessionData;
 	$this->_loadedSessionData = $localLoadedSessionData;
+
+	/* Replace old session id with new one in any return or navigation urls */
+	$key = GalleryUtilities::prefixFormVariable($this->getKey()) . '=';
+	$match = '/' . $key . '[a-fA-F0-9]+/';
+	$replace = $key . $this->getId();
+
+	if (GalleryUtilities::hasRequestVariable('return')) {
+	    GalleryUtilities::putRequestVariable('return',
+		preg_replace($match, $replace,
+			     GalleryUtilities::getRequestVariables('return')));
+	}
+
+	if ($this->exists('core.navigation')) {
+	    $navigation = $this->get('core.navigation');
+	    foreach (array_keys($navigation) as $navId) {
+		if (isset($navigation[$navId]['data']['returnUrl'])) {
+		    $navigation[$navId]['data']['returnUrl'] =
+			preg_replace($match, $replace, $navigation[$navId]['data']['returnUrl']);
+		}
+	    }
+	    $this->put('core.navigation', $navigation);
+	}
 
 	return GalleryStatus::success();
     }
