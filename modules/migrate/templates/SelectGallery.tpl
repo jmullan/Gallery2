@@ -14,9 +14,14 @@
       <p class="giDescription">
       This operation takes data (images, albums, users, etc.) from <strong>Gallery 1</strong> and brings it into <strong>Gallery 2</strong>.
       </p>
-      <em>
+      <p><strong>
+           {g->text text="Before you migrate any data you must try adding an album and image through the main gallery interface first.  This will show you if your gallery is correctly set up."}
+         </strong>
+      </p>
+      <p><em>
 	{g->text text="This module is unfinished.  It should not harm your Gallery 1 data, but use it at your own risk."}
-      </em>
+	</em>
+      </p>
     </div>
   </div>
 
