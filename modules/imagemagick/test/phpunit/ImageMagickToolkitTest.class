@@ -1,0 +1,394 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package ImageMagick
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+require_once(dirname(__FILE__) . '/../../classes/ImageMagickToolkitHelper.class');
+require_once(dirname(__FILE__) . '/../../classes/ImageMagickToolkit.class');
+
+/**
+ * Test ImageMagickToolkit functionality
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ *
+ */
+class ImageMagickToolkitTest extends GalleryTestCase {
+
+    function ImageMagickToolkitTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    /**
+     * 
+     */
+    function setUp() {
+	global $gallery;
+
+	parent::setUp();
+	
+	/* Save the platform */
+	$this->_savePlatform = $gallery->getPlatform();
+	$gallery->_platform = new ImageMagickToolkitTestPlatform();
+
+	/* Get a toolkit to work with */
+	$this->_toolkit = new ImageMagickToolkit();
+    }
+
+    /**
+     *
+     */
+    function tearDown() {
+	global $gallery;
+	
+	/* Restore the platform */
+	$gallery->_platform = $this->_savePlatform;
+
+	parent::tearDown();
+    }
+
+    function testPerformOperations() {
+	list ($ret, $mimeType) =
+	    $this->_toolkit->performOperation('image/gif', 'thumbnail',
+					      'testPerformOperations1.gif',
+					      'testPerformOperations2.gif',
+					      array(100, 100));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $mimeType) =
+	    $this->_toolkit->performOperation('image/jpeg', 'thumbnail',
+					      'testPerformOperations4.jpg',
+					      'testPerformOperations5.jpg',
+					      array(100, 100));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $mimeType) =
+	    $this->_toolkit->performOperation('image/jpeg', 'thumbnail',
+					      'testPerformOperations4.jpg',
+					      'testPerformOperations5.jpg',
+					      array(100, 100));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $mimeType) =
+	    $this->_toolkit->performOperation('image/tiff', 'rotate',
+					      'testPerformOperations6.tiff',
+					      'testPerformOperations7.tiff',
+					      array(90));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $mimeType) =
+	    $this->_toolkit->performOperation('image/png', 'crop',
+					      'testPerformOperations8.png',
+					      'testPerformOperations9.png',
+					      array(1, 2, 3, 4));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $mimeType) =
+	    $this->_toolkit->performOperation('image/png', 'BOGUS',
+					      'BOGUS',
+					      'BOGUS',
+					      array('BOGUS'));
+	$this->assert($ret->getErrorCode() & ERROR_UNIMPLEMENTED);
+    }
+
+    function testGetProperties() {
+	list ($ret, $results) =
+	    $this->_toolkit->getProperty('image/gif', 'dimensions', 'testGetProperties1.gif');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array(10, 20), $results);
+
+	list ($ret, $results) =
+	    $this->_toolkit->getProperty('image/gif', 'dimensions', 'testGetProperties2.gif');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array(30, 40), $results);
+
+	list ($ret, $results) =
+	    $this->_toolkit->getProperty('image/gif', 'BOGUS', 'BOGUS');
+	$this->assert($ret->getErrorCode() & ERROR_UNIMPLEMENTED);
+    }
+
+    function testMergeOperations() {
+	list ($success, $operation, $args) =
+	    $this->_toolkit->mergeOperations('image/gif', 'crop', array(1, 2), 'crop', array(3, 4));
+	$this->assert($success);
+	$this->assertEquals('crop', $operation);
+	$this->assertEquals(array(3, 4), $args);
+
+	list ($success, $operation, $args) =
+	    $this->_toolkit->mergeOperations('image/gif', 'resize', array(1, 2), 'resize', array(3, 4));
+	$this->assert($success);
+	$this->assertEquals('resize', $operation);
+	$this->assertEquals(array(3, 4), $args);
+
+	list ($success, $operation, $args) =
+	    $this->_toolkit->mergeOperations('image/gif', 'rotate', array(90), 'rotate', array(90));
+	$this->assert($success);
+	$this->assertEquals('rotate', $operation);
+	$this->assertEquals(array(180), $args);
+
+	list ($success, $operation, $args) =
+	    $this->_toolkit->mergeOperations('image/gif', 'rotate', array(270), 'rotate', array(180));
+	$this->assert($success);
+	$this->assertEquals('rotate', $operation);
+	$this->assertEquals(array(90), $args);
+
+	list ($success, $operation, $args) =
+	    $this->_toolkit->mergeOperations('image/gif', 'rotate', array(90), 'rotate', array(-180));
+	$this->assert($success);
+	$this->assertEquals('rotate', $operation);
+	$this->assertEquals(array(-90), $args);
+
+	list ($success, $operation, $args) =
+	    $this->_toolkit->mergeOperations('image/gif', 'rotate', array(90), 'rotate', array(180));
+	$this->assert($success);
+	$this->assertEquals('rotate', $operation);
+	$this->assertEquals(array(-90), $args);
+
+	list ($success, $operation, $args) =
+	    $this->_toolkit->mergeOperations('image/gif', 'rotate', array(270), 'rotate', array(90));
+	$this->assert($success);
+	$this->assertEquals(null, $operation);
+	$this->assertEquals(null, $args);
+
+	list ($success, $operation, $args) =
+	    $this->_toolkit->mergeOperations('image/gif', 'crop', array(1, 2), 'thumbnail', array(3, 4));
+	$this->assert(!$success);
+    }
+
+    function testDiscoverMimeTypes() {
+	list ($ret, $results) = ImageMagickToolkitHelper::discoverMimeTypes('/validPath/');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array('image/gif',
+				  'image/jpeg',
+				  'image/pjpeg',
+				  'image/png',
+				  'image/tiff'), $results);
+    }
+
+    function testGetOperationsAndProperties() {
+	list ($ret, $results) = ImageMagickToolkitHelper::getOperationsAndProperties();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array('scale' => array('params' =>
+						   array(array('type' => 'int',
+							       'description' => 'target size')),
+						   'description' => 'Scale the image to the target size',
+						   'mimeTypes' => array('image/gif',
+									'image/jpeg',
+									'image/pjpeg',
+									'image/png',
+									'image/tiff')
+						   ),
+				  'thumbnail' => array('params' =>
+						       array(array('type' => 'int',
+								   'description' => 'target size')),
+						       'description' => 'Scale the image to the target size',
+						       'mimeTypes' => array('image/gif',
+									    'image/jpeg',
+									    'image/pjpeg',
+									    'image/png',
+									    'image/tiff')),
+				  'resize' => array('params' =>
+						    array(array('type' => 'int',
+								'description' => 'target width'),
+							  array('type' => 'int',
+								'description' => 'target height')),
+						    'description' => 'Resize the image to the target dimensions',
+						    'mimeTypes' => array('image/gif',
+									 'image/jpeg',
+									 'image/pjpeg',
+									 'image/png',
+									 'image/tiff')),
+				  'rotate' => array('params' =>
+						    array(array('type' => 'int',
+								'description' => 'rotation degrees')),
+						    'description' => 'Rotate the image',
+						    'mimeTypes' => array('image/gif',
+									 'image/jpeg',
+									 'image/pjpeg',
+									 'image/png',
+									 'image/tiff')),
+				  'crop' => array('params' =>
+						  array(array('type' => 'int',
+							      'description' => 'left edge'),
+							array('type' => 'int',
+							      'description' => 'top edge'),
+							array('type' => 'int',
+							      'description' => 'width'),
+							array('type' => 'int',
+							      'description' => 'height')),
+						  'description' => 'Crop the image',
+						  'mimeTypes' => array('image/gif',
+								       'image/jpeg',
+								       'image/pjpeg',
+								       'image/png',
+								       'image/tiff'))),
+			    $results['operations']);
+	$this->assertEquals(array('dimensions' => array('type' => 'int,int',
+							'description' => 'Get the width and height of the image',
+							'mimeTypes' => array('image/gif',
+									     'image/jpeg',
+									     'image/pjpeg',
+									     'image/png',
+									     'image/tiff'))),
+			    $results['properties']);
+    }
+
+    function testBinaries() {
+	list ($ret, $results) = ImageMagickToolkitHElper::testBinaries('/validPath/');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(array(array('name' => 'identify', 'success' => 1),
+				  array('name' => 'convert', 'success' => 1)),
+			    $results);
+    }
+}
+
+class ImageMagickToolkitTestPlatform {
+
+    function exec($cmd) {
+	global $gallery;
+	list ($ret, $imageMagickPath) = $gallery->getModuleParameter('imagemagick', 'path');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	switch($cmd[0][0]) {
+	case '/validPath/identify':
+	case $imageMagickPath . 'identify':
+	    if ($cmd[0][1] == 'testGetProperties2.gif') {
+		return array(1, array('testGetProperties2.gif GIF 30x40+0+0 PseudoClass 8c 8-bit 232.0 0.000u 0:01'));
+	    } else if (sizeof($cmd[0]) == 5) {
+		return array(1, array('test.gif GIF 50x50+0+0 PseudoClass 8c 8-bit 232.0 0.000u 0:01',
+				      'test.jpg[1] JPEG 50x50+0+0 DirectClass 8-bit 763.0 0.000u 0:01',
+				      'test.png[2] PNG 50x50+0+0 DirectClass 8-bit 730.0 0.000u 0:01',
+				      'test.tif[3] TIFF 50x50+0+0 DirectClass 8-bit 7.8k 0.000u 0:01'));
+	    } else if (strstr($cmd[0][1], 'test.gif')) {
+		return array(1, array('test.gif GIF 50x50+0+0 PseudoClass 8c 8-bit 232.0 0.000u 0:01'));
+	    }
+	    break;
+
+	case $imageMagickPath . 'convert':
+	case '/validPath/convert':
+	    if ($cmd[0][1] == '-scale' && $cmd[0][2] == '200x200') {
+		return array(1, array());
+	    } else if ($cmd[0][1] == '-scale' &&
+		       $cmd[0][2] == '100x100' &&
+		       $cmd[0][3] == 'testPerformOperations1.gif') {
+		return array(1, array());
+	    } else if ($cmd[0][1] == '-quality' &&
+		       $cmd[0][2] == '75' &&
+		       $cmd[0][3] == '-scale' &&
+		       $cmd[0][4] == '100x100' &&
+		       $cmd[0][5] == 'testPerformOperations4.jpg') {
+		return array(1, array());
+	    } else if ($cmd[0][1] == '-rotate' &&
+		       $cmd[0][2] == '90' &&
+		       $cmd[0][3] == 'testPerformOperations6.tiff') {
+		return array(1, array());
+	    } else if ($cmd[0][1] == '-quality' &&
+		       $cmd[0][2] == '75' &&
+		       $cmd[0][3] == '-crop' &&
+		       $cmd[0][4] == '1x2+3+4' &&
+		       $cmd[0][5] == 'testPerformOperations8.png') {
+		return array(1, array());
+	    }
+	    break;
+	}
+
+	print_r($cmd);
+	return array(0, 'unprepared for exec()');
+    }
+
+    function rename($oldName, $newName) {
+	switch ($newName) {
+	case 'testPerformOperations2.gif':
+	case 'testPerformOperations5.jpg':
+	case 'testPerformOperations7.tiff':
+	case 'testPerformOperations9.png':
+	    return true;
+
+	default:
+	    print "rename($oldName, $newName) unexpected<br>";
+	    return false;
+	}
+    }
+
+    function isRestrictedByOpenBasedir($path) {
+	switch($path) {
+	case '/validPath/':
+	    return false;
+	}
+    }
+
+    function file_exists($path) {
+	switch($path) {
+	case '/validPath/':
+	    return true;
+	}
+    }
+    
+    function is_dir($path) {
+	switch($path) {
+	case '/validPath/':
+	    return true;
+	}
+    }
+
+    function unlink($path) {
+	// we don't create any files, so no need to unlink any
+    }
+
+    function getimagesize($path) {
+	switch($path) {
+	case 'testGetProperties1.gif':
+	    return array(10, 20);
+	    break;
+	}
+	return false;
+    }
+}
+
+?>
