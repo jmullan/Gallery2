@@ -32,8 +32,8 @@ require_once(dirname(__FILE__) . '/modules/core/classes/GalleryUtilities.class')
  * Everything else should be inside it so that we do not pollute the namespace
  * (especially important when we're embedded inside another application).
  */
-$gallery =& new Gallery(); 
-$GLOBALS['$gallery'] =& $gallery;
+$GLOBALS['gallery'] =& new Gallery();
+$gallery =& $GLOBALS['gallery'];
 
 include(dirname(__FILE__) . '/config.php');
 ?>
