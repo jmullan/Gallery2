@@ -33,47 +33,47 @@
  */
 class EventHandlerTest extends GalleryTestCase {
     function EventHandlerTest($methodname) {
-        $this->GalleryTestCase($methodname);
+	$this->GalleryTestCase($methodname);
     }
-    
+
     function setUp() {
-        parent::setUp();
-        
-        list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
-        if ($ret->isError()) {
-            print $ret->getAsHtml();
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-        }        
-        $this->_markForCleanup($this->_album);    
+	parent::setUp();
+
+	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markForCleanup($this->_album);
     }
 
     function testCopy() {
-        $event = GalleryCoreApi::newEvent('GalleryEntity::save');
-        foreach (array('width' => 768, 'height' => 1024, 'size' => 1000, 'keepOriginal' => 1) 
-            as $key => $value) {
-            $ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit', 
-                $key, $value, $this->_album->getId());
-            if ($ret->isError()) {
-                return $ret->wrap(__FILE__, __LINE__);
-            }
-        }
-        list ($ret, $this->_childAlbum) = $this->_createRandomAlbum($this->_album->getId());
-        if ($ret->isError()) {
-            return $ret->wrap(__FILE__, __LINE__);
-        }
+	$event = GalleryCoreApi::newEvent('GalleryEntity::save');
+	foreach (array('width' => 768, 'height' => 1024, 'size' => 1000, 'keepOriginal' => 1)
+	    as $key => $value) {
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit',
+		$key, $value, $this->_album->getId());
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+	list ($ret, $this->_childAlbum) = $this->_createRandomAlbum($this->_album->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 
-	require_once(dirname(__FILE__) . '/../../module.inc');
-        list($ret, $data) = SizeLimitModule::handleEvent($event);
-        if ($ret->isError()) {
-            return $ret->wrap(__FILE__, __LINE__);
-        }
-        list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters(
-            'module', 'sizelimit', $this->_album->getId());
-        if ($ret->isError()) {
-            return $ret->wrap(__FILE__, __LINE__);
-        }
-        $this->assertEquals(array('width' => 768, 'height' => 1024, 'size' => 1000, 
-            'keepOriginal' => 1), $params, 'Copied Album');
+	GalleryCoreApi::relativeRequireOnce('modules/sizelimit/module.inc');
+	list($ret, $data) = SizeLimitModule::handleEvent($event);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters(
+	    'module', 'sizelimit', $this->_album->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$this->assertEquals(array('width' => 768, 'height' => 1024, 'size' => 1000,
+	    'keepOriginal' => 1), $params, 'Copied Album');
     }
 }
 ?>
