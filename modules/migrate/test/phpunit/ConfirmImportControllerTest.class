@@ -164,6 +164,21 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 			    $results);
     }
 
+    function testCancelImport() {
+	global $gallery;
+        GalleryUtilities::putRequestVariable('form[action][cancel]', 1);
+        $results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'migrate:SelectGallery'),
+				  'status' => array('userImportFailure' => array(),
+						    'userImportSuccess' => array(),
+						    'albumImportFailure' => array(),
+						    'albumImportSuccess' => array()
+						    ),
+				  'error' => array()),
+			    $results);
+    }
+
     function testImportAlbumSuccessful() {
 	global $gallery;
 	$platform = $gallery->getPlatform();

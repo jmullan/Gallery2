@@ -51,6 +51,10 @@ class ConfirmImportController extends GalleryController {
 			'albumImportSuccess'=>array()
 			);
 	/* The other option is "cancel", I believe */
+	if (isset($form['action']['cancel'])) {
+	    $redirect['view'] = 'core:SiteAdmin';
+	    $redirect['subView'] = 'migrate:SelectGallery';
+	}
 	if (isset($form['action']['import'])) {
 	    /* get list of userids in advance */
 	    list ($ret, $uidMap) = Gallery1DataParser::getUserUids($albumsPath);
@@ -282,21 +286,21 @@ class ConfirmImportController extends GalleryController {
 			     *   +[title] => Test Album One
 			     *   +[description] => No description
 			     *   +[summary] =>
-			     *    [bgcolor] =>
-			     *    [textcolor] =>
-			     *    [linkcolor] =>
-			     *    [font] => verdana
-			     *    [border] => 1
-			     *    [bordercolor] => black
-			     *    [returnto] => yes
+			     *   -[bgcolor] =>
+			     *   -[textcolor] =>
+			     *   -[linkcolor] =>
+			     *   -[font] => verdana
+			     *   -[border] => 1
+			     *   -[bordercolor] => black
+			     *   -[returnto] => yes
 			     *   +[thumb_size] => 150
 			     *   +[resize_size] => 400
 			     *   +[rows] => 5
 			     *   +[cols] => 5
-			     *    [fit_to_window] => no
-			     *    [use_fullOnly] => no
-			     *    [print_photos] => none
-			     *    [use_exif] => yes
+			     *   -[fit_to_window] => no
+			     *   -[use_fullOnly] => no
+			     *   -[print_photos] => none
+			     *   -[use_exif] => yes
 			     *    [perms] => Array
 			     *        ( [canRead] => Array
 			     *            ( [everybody] => 1 )
@@ -306,14 +310,14 @@ class ConfirmImportController extends GalleryController {
 			     *   +[parentAlbumName] => .root
 			     *   +[clicks] => 0
 			     *   +[clicks_date] => 1056014708
-			     *    [display_clicks] => yes
-			     *    [public_comments] => yes
+			     *   -[display_clicks] => yes
+			     *   -[public_comments] => yes
 			     *    [extra_fields] => Array
 			     *        ( [0] => Description
 			     *        )
 			     *   +[name] => album01
 			     *   +[owner] => 1054014347u1233740678
-			     *    [last_mod_time] => 1056015246
+			     *   -[last_mod_time] => 1056015246
 			     */
 			    
 			    /* load up the album with metadata from the old album */ 
@@ -492,9 +496,14 @@ class ConfirmImportController extends GalleryController {
 			    $newItem->setSummary('');
 			    $newItem->setKeywords($importAlbumItem->keywords);
 
-			    // $instance->setownerId
+			    /* $instance->setownerId */
+			    /*
 			    if (isset($importAlbumItem->itemCaptureDate[0])){
 				$newItem->setcreationTimestamp($importAlbumItem->itemCaptureDate[0]);
+			    }
+			    */
+			    if (isset($importAlbumItem->uploadDate)){
+				$newItem->setcreationTimestamp($importAlbumItem->uploadDate);
 			    }
 			    $newItem->setviewedSinceTimestamp($album['clicks_date']);
 			    
