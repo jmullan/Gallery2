@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -40,14 +40,14 @@ class EntityCounterEventListener /* extends GalleryEventListener */ {
 	$this->_count = 0;
 	$this->_ids = array();
     }
-    
+
     function handleEvent($event) {
 	switch ($event->getEventName()) {
 	case 'GalleryEntity::delete':
 	    $entity = $event->getEntity();
 	    $this->_count--;
 	    break;
-	    
+
 	case 'GalleryEntity::save':
 	    $entity = $event->getEntity();
 	    if ($entity->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED)) {
@@ -119,7 +119,7 @@ class TestEventListener /* extends GalleryEventListener */ {
 }
 
 /**
- * Gallery specific version of PHPUnit's TestCase class.  
+ * Gallery specific version of PHPUnit's TestCase class.
  * @package Gallery
  * @subpackage PHPUnit
  */
@@ -168,7 +168,7 @@ class GalleryTestCase extends TestCase {
 	$counter->setCount(0);
 
 	GalleryDataCache::setFileCachingEnabled(false);
-	
+
 	parent::setUp();
 
 	switch (strtolower(get_class($gallery->getPlatform()))) {
@@ -192,7 +192,7 @@ class GalleryTestCase extends TestCase {
 	$this->_saveVars[] = $gallery->getActiveUser();
 	$this->_saveVars[] = $gallery->getUrlGenerator();
 	$this->_saveVars[] = $gallery->_config;
-    
+
 	$_GET = array();
 	$_POST = array();
 	$_FILES = array();
@@ -202,7 +202,7 @@ class GalleryTestCase extends TestCase {
 	    $_GET[GALLERY_FORM_VARIABLE_PREFIX . $session->getKey()] = $session->getId();
 	}
 	$this->_saveSID = $session->getId();
-	
+
 	/*
 	 * Try to ensure enough time for this test to complete.  If a test
 	 * needs more time, then it should extend the limit itself.
@@ -238,15 +238,15 @@ class GalleryTestCase extends TestCase {
 	    $ret = GalleryCoreApi::deleteEntityById($entity->getId());
 	    if ($ret->isError()) {
 		print $ret->getAsHtml();
-		return $this->failWithStatus(__FILE__, __LINE__);
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
-	    
+
 	foreach ($this->_cleanup['factoryModuleId'] as $moduleId) {
 	    $ret = GalleryCoreApi::unregisterFactoryImplementationsByModuleId($moduleId);
 	    if ($ret->isError()) {
 		print $ret->getAsHtml();
-		return $this->failWithStatus(__FILE__, __LINE__);
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
 
@@ -279,7 +279,7 @@ class GalleryTestCase extends TestCase {
 	parent::tearDown();
 
 	GalleryDataCache::setFileCachingEnabled(true);
-	
+
 	$counter =& GalleryTestCase::getEntityCounter();
 	$this->assert($counter->getCount() == 0,
 		      sprintf('%d entities were created and not deleted <br/>' .
@@ -336,7 +336,7 @@ class GalleryTestCase extends TestCase {
 	if (empty($parentId)) {
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
 	}
-	
+
 	list ($ret, $album) = GalleryCoreApi::createAlbum($parentId, 'albumtest' . rand(),
 							     'This is my title', 'This is my summary',
 							     'This is my description', null);
@@ -349,20 +349,20 @@ class GalleryTestCase extends TestCase {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    
+
 	    /* Change some settings */
-    
+
 	    foreach ($fields as $field => $value) {
 		$func = "set$field";
 		$album->$func($value);
 	    }
-    
+
 	    /* Save it */
 	    $ret = $album->save();
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-    
+
 	    /* Leggo of our locks */
 	    if (isset($lockIds)) {
 		$ret = GalleryCoreApi::releaseLocks($lockIds);
@@ -374,7 +374,7 @@ class GalleryTestCase extends TestCase {
 
 	return array(GalleryStatus::success(), $album);
     }
-    
+
 
     /*
      * Create a random data item
@@ -410,7 +410,7 @@ class GalleryTestCase extends TestCase {
 	if (get_magic_quotes_gpc()) {
 	    $inputFile = addslashes($inputFile);
 	}
-	
+
 	$ret = $item->create($parentId, $inputFile, $mimeType,
 			     'test-' . rand(1, 5000) . '.dat');
 	if ($ret->isError()) {
@@ -443,7 +443,7 @@ class GalleryTestCase extends TestCase {
 
 	return array(GalleryStatus::success(), $item);
     }
-    
+
     /*
      * Create a random data item
      *
@@ -487,7 +487,7 @@ class GalleryTestCase extends TestCase {
 
 	return array(GalleryStatus::success(), $linkedItem);
     }
-    
+
     function _createRandomUser($userTag=null) {
 	list ($ret, $user) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryUser');
 	if ($ret->isError()) {
@@ -532,7 +532,7 @@ class GalleryTestCase extends TestCase {
 	if (!isset($groupTag)) {
 	    $groupTag = rand();
 	}
-	
+
 	$ret = $group->create('Test Group ' . $groupTag);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -542,16 +542,16 @@ class GalleryTestCase extends TestCase {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	return array(GalleryStatus::success(), $group);
     }
-    
+
     function _createDerivative(&$parent, $sourceId, $type, $operations='test-operation|100', $mimeType='test/file',
 			       $fields=array()) {
 	global $gallery;
 	$parentId = $parent->getId();
 
-	list ($ret, $derivative) = 
+	list ($ret, $derivative) =
 	    GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative', $parent->getEntityType());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -571,15 +571,15 @@ class GalleryTestCase extends TestCase {
 	    $func = "set$field";
 	    $derivative->$func($value);
 	}
-			
+
 	$ret = $derivative->save();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	return array(GalleryStatus::success(), $derivative);
     }
-    
+
     function _deleteAndVerifyEntity($id) {
 	global $gallery;
 
@@ -595,10 +595,10 @@ class GalleryTestCase extends TestCase {
 
 	return GalleryStatus::success();
     }
-    
+
     function _verifyMissing($id) {
 	global $gallery;
-	
+
 	GalleryDataCache::reset();
 
 	list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($id);
@@ -609,14 +609,14 @@ class GalleryTestCase extends TestCase {
 	} else {
 	    // We failed to delete!
 	    return GalleryStatus::error(ERROR_UNKNOWN, __FILE__, __LINE__);
-	} 
+	}
 
 	return GalleryStatus::success();
     }
 
     function _verifyEntity($entity) {
 	global $gallery;
-	
+
 	GalleryDataCache::reset();
 
 	/* Load it back from the storage */
@@ -633,17 +633,17 @@ class GalleryTestCase extends TestCase {
 
     function _createUser($fields=array()) {
 	global $gallery;
-	
+
 	list ($ret, $user) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryUser');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	if (!isset($user)) {
 	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
 			 null);
 	}
-	
+
 	$ret = $user->create('testuser-'.rand());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -652,7 +652,7 @@ class GalleryTestCase extends TestCase {
 	foreach ($fields as $key => $value) {
 	    eval("\$user->set$key(\$value);");
 	}
-	
+
 	$ret = $user->save();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -687,14 +687,14 @@ class GalleryTestCase extends TestCase {
 		} else if (empty($keys2) && !empty($keys1)) {
 		    return sprintf("[$context] extra keys in array 1: %s", join(',', $keys1));
 		}
-		
+
 		$key1 = array_shift($keys1);
 		$key2 = array_shift($keys2);
 
 		if ($key1 !== $key2) {
 		    return "[$context] $key1 !== $key2";
 		}
-		
+
 		$err = $this->DeepCompare($obj1[$key1], $obj2[$key2], "$context $key1");
 		if (isset($err)) {
 		    return $err;
