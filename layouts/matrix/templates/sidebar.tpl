@@ -65,7 +65,7 @@
   {foreach from=$layout.moduleSystemContentFiles key=moduleName item=moduleFile}
     {if ($moduleName != 'core')}
       {g->box style="sidebar"}
-	{include file=$moduleFile l10Domain="module_$moduleName"}
+	{include file=$moduleFile l10Domain="modules_$moduleName"}
       {/g->box}
     {/if}
   {/foreach}
