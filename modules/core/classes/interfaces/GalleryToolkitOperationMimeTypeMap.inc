@@ -96,19 +96,19 @@ class GalleryToolkitOperationMimeTypeMap extends GalleryToolkitOperationMimeType
     function addMapEntry($data) {
 	global $gallery;
     
-	if (!isset($data['operationName'])) {
+	if (!array_key_exists('operationName', $data)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
     
-	if (!isset($data['toolkitId'])) {
+	if (!array_key_exists('toolkitId', $data)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
     
-	if (!isset($data['mimeType'])) {
+	if (!array_key_exists('mimeType', $data)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
     
-	if (!isset($data['priority'])) {
+	if (!array_key_exists('priority', $data)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
     

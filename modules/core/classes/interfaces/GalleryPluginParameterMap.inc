@@ -98,23 +98,23 @@ class GalleryPluginParameterMap extends GalleryPluginParameterMap_core {
     function addMapEntry($data) {
 	global $gallery;
     
-	if (!isset($data['pluginType'])) {
+	if (!array_key_exists('pluginType', $data)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
     
-	if (!isset($data['pluginId'])) {
+	if (!array_key_exists('pluginId', $data)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
     
-	if (!isset($data['itemId'])) {
+	if (!array_key_exists('itemId', $data)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
     
-	if (!isset($data['parameterName'])) {
+	if (!array_key_exists('parameterName', $data)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
     
-	if (!isset($data['parameterValue'])) {
+	if (!array_key_exists('parameterValue', $data)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
     

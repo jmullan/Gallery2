@@ -151,7 +151,7 @@ class <xsl:value-of select="class-name"/> extends <xsl:value-of select="class-na
     function addMapEntry($data) {
 	global $gallery;
     <xsl:for-each select="member/member-name">
-	if (!isset($data['<xsl:value-of select="."/>'])) {
+	if (!array_key_exists('<xsl:value-of select="."/>', $data)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
     </xsl:for-each>

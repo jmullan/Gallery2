@@ -94,15 +94,15 @@ class G1MigrateMap extends G1MigrateMap_core {
     function addMapEntry($data) {
 	global $gallery;
     
-	if (!isset($data['itemId'])) {
+	if (!array_key_exists('itemId', $data)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
     
-	if (!isset($data['g1album'])) {
+	if (!array_key_exists('g1album', $data)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
     
-	if (!isset($data['g1item'])) {
+	if (!array_key_exists('g1item', $data)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
     

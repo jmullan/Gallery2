@@ -94,15 +94,15 @@ class ExifPropertiesMap extends ExifPropertiesMap_core {
     function addMapEntry($data) {
 	global $gallery;
     
-	if (!isset($data['property'])) {
+	if (!array_key_exists('property', $data)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
     
-	if (!isset($data['viewMode'])) {
+	if (!array_key_exists('viewMode', $data)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
     
-	if (!isset($data['sequence'])) {
+	if (!array_key_exists('sequence', $data)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
     

@@ -96,19 +96,19 @@ class GalleryToolkitOperationParameterMap extends GalleryToolkitOperationParamet
     function addMapEntry($data) {
 	global $gallery;
     
-	if (!isset($data['operationName'])) {
+	if (!array_key_exists('operationName', $data)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
     
-	if (!isset($data['position'])) {
+	if (!array_key_exists('position', $data)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
     
-	if (!isset($data['type'])) {
+	if (!array_key_exists('type', $data)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
     
-	if (!isset($data['description'])) {
+	if (!array_key_exists('description', $data)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
     

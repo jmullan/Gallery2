@@ -96,19 +96,19 @@ class GalleryItemAttributesMap extends GalleryItemAttributesMap_core {
     function addMapEntry($data) {
 	global $gallery;
     
-	if (!isset($data['itemId'])) {
+	if (!array_key_exists('itemId', $data)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
     
-	if (!isset($data['viewCount'])) {
+	if (!array_key_exists('viewCount', $data)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
     
-	if (!isset($data['orderWeight'])) {
+	if (!array_key_exists('orderWeight', $data)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
     
-	if (!isset($data['parentSequence'])) {
+	if (!array_key_exists('parentSequence', $data)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
     

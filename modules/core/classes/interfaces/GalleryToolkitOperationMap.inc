@@ -96,19 +96,19 @@ class GalleryToolkitOperationMap extends GalleryToolkitOperationMap_core {
     function addMapEntry($data) {
 	global $gallery;
     
-	if (!isset($data['name'])) {
+	if (!array_key_exists('name', $data)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
     
-	if (!isset($data['parametersCrc'])) {
+	if (!array_key_exists('parametersCrc', $data)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
     
-	if (!isset($data['outputMimeType'])) {
+	if (!array_key_exists('outputMimeType', $data)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
     
-	if (!isset($data['description'])) {
+	if (!array_key_exists('description', $data)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
     

@@ -98,23 +98,23 @@ class CustomFieldMap extends CustomFieldMap_core {
     function addMapEntry($data) {
 	global $gallery;
     
-	if (!isset($data['itemId'])) {
+	if (!array_key_exists('itemId', $data)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
     
-	if (!isset($data['field'])) {
+	if (!array_key_exists('field', $data)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
     
-	if (!isset($data['value'])) {
+	if (!array_key_exists('value', $data)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
     
-	if (!isset($data['setId'])) {
+	if (!array_key_exists('setId', $data)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
     
-	if (!isset($data['setType'])) {
+	if (!array_key_exists('setType', $data)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
     

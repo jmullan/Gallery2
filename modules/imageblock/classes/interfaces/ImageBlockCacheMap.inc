@@ -96,19 +96,19 @@ class ImageBlockCacheMap extends ImageBlockCacheMap_core {
     function addMapEntry($data) {
 	global $gallery;
     
-	if (!isset($data['userId'])) {
+	if (!array_key_exists('userId', $data)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
     
-	if (!isset($data['itemType'])) {
+	if (!array_key_exists('itemType', $data)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
     
-	if (!isset($data['itemTimestamp'])) {
+	if (!array_key_exists('itemTimestamp', $data)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
     
-	if (!isset($data['itemId'])) {
+	if (!array_key_exists('itemId', $data)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
     

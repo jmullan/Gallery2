@@ -96,19 +96,19 @@ class GalleryDerivativePreferencesMap extends GalleryDerivativePreferencesMap_co
     function addMapEntry($data) {
 	global $gallery;
     
-	if (!isset($data['itemId'])) {
+	if (!array_key_exists('itemId', $data)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
     
-	if (!isset($data['order'])) {
+	if (!array_key_exists('order', $data)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
     
-	if (!isset($data['derivativeType'])) {
+	if (!array_key_exists('derivativeType', $data)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
     
-	if (!isset($data['derivativeOperations'])) {
+	if (!array_key_exists('derivativeOperations', $data)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
     

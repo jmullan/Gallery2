@@ -94,15 +94,15 @@ class GalleryPluginMap extends GalleryPluginMap_core {
     function addMapEntry($data) {
 	global $gallery;
     
-	if (!isset($data['pluginType'])) {
+	if (!array_key_exists('pluginType', $data)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
     
-	if (!isset($data['pluginId'])) {
+	if (!array_key_exists('pluginId', $data)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
     
-	if (!isset($data['active'])) {
+	if (!array_key_exists('active', $data)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
     

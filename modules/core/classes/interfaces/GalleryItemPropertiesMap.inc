@@ -94,15 +94,15 @@ class GalleryItemPropertiesMap extends GalleryItemPropertiesMap_core {
     function addMapEntry($data) {
 	global $gallery;
     
-	if (!isset($data['itemId'])) {
+	if (!array_key_exists('itemId', $data)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
     
-	if (!isset($data['key'])) {
+	if (!array_key_exists('key', $data)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
     
-	if (!isset($data['value'])) {
+	if (!array_key_exists('value', $data)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
     

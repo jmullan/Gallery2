@@ -98,23 +98,23 @@ class GalleryPermissionSetMap extends GalleryPermissionSetMap_core {
     function addMapEntry($data) {
 	global $gallery;
     
-	if (!isset($data['module'])) {
+	if (!array_key_exists('module', $data)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
     
-	if (!isset($data['permission'])) {
+	if (!array_key_exists('permission', $data)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
     
-	if (!isset($data['description'])) {
+	if (!array_key_exists('description', $data)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
     
-	if (!isset($data['bits'])) {
+	if (!array_key_exists('bits', $data)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
     
-	if (!isset($data['flags'])) {
+	if (!array_key_exists('flags', $data)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
     

@@ -92,11 +92,11 @@ class CartMap extends CartMap_core {
     function addMapEntry($data) {
 	global $gallery;
     
-	if (!isset($data['sessionId'])) {
+	if (!array_key_exists('sessionId', $data)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
     
-	if (!isset($data['itemIds'])) {
+	if (!array_key_exists('itemIds', $data)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
     
