@@ -36,8 +36,13 @@ class GalleryControllerTestCase extends GalleryTestCase {
      */
     var $_controller;
 
-    function GalleryTestCase($methodName) {
-	$this->TestCase($methodName);
+    function GalleryControllerTestCase($methodName, $controllerName) {
+	$this->GalleryTestCase($methodName);
+
+	list ($ret, $this->_controller) = GalleryController::loadController($controllerName);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
     }
 
     function setUp() {
@@ -48,10 +53,6 @@ class GalleryControllerTestCase extends GalleryTestCase {
 	/* Clear out any form vars */
 	GalleryUtilities::removeFormVariables('form.');
 
-	list ($ret, $this->_controller) = GalleryController::loadController($this->getControllerName());
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
     }
 
     function tearDown() {
