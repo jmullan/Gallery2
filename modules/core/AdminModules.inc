@@ -72,7 +72,7 @@ class AdminModulesController extends GalleryController {
 
 		$redirect['view'] = 'core:SiteAdmin';
 		$redirect['subView'] = 'core:AdminModules';
-		$status['installed'] = $moduleId;
+		$status['installed'] = $module->getName();
 		break;
 		
 	    case 'activate':
