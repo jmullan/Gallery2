@@ -48,12 +48,13 @@ class GalleryTestCase extends TestCase {
 
 	/* Start with a clean slate*/
 	$gallery->reset();
-	$gallery->clearDebugBuffer();
 	
 	$ret = $gallery->beginTransaction();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
+
+	$gallery->clearDebugBuffer();
     }
 
     function assert($boolean, $message=null) {
@@ -149,7 +150,6 @@ class GalleryTestCase extends TestCase {
 	}
 
 	$ids = array_keys($results);
-
 	$gallery->setActiveUserId($ids[0]);
 
 	return GalleryStatus::success();
