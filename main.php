@@ -330,18 +330,18 @@ function GalleryMain() {
 	$template->setVariable('l10Domain', 'modules_core');
 
 	if (isset($main['redirectUrl'])) {
-	    list($ret, $html) = $template->render('redirect.tpl');
+	    list ($ret, $html) = $template->fetch('redirect.tpl');
 	} else if (isset($main['error'])) {
-	    list($ret, $html) = $template->render('error.tpl');
+	    list ($ret, $html) = $template->fetch('error.tpl');
 	} else {
-	    list($ret, $html) = $template->render('global.tpl');
+	    list ($ret, $html) = $template->fetch('global.tpl');
 	}
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	
 	print $html;
-
+	
 	if (false) {
 	    printf("<pre>%s</pre>", print_r($GLOBALS['GalleryCoreApi'], 1));
 	    printf("<pre>\b(%s)\b\n\n&nbsp;</pre>", join("|", get_declared_classes()));

@@ -182,7 +182,7 @@ function GalleryTestHarness() {
     $template->setVariable('tests', $tests);
     $template->setVariable('results', $results);
     $template->setVariable('rollup', $rollup);
-    list($ret, $html) = $template->render('index.tpl');
+    list($ret, $html) = $template->fetch('index.tpl');
     if ($ret->isError()) {
 	return $ret->wrap(__FILE__, __LINE__);
     }

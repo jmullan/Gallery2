@@ -43,7 +43,7 @@ class DebugStatusFormatter {
 	$template->setVariable('codes', join(" ", $codes));
 	$template->setVariable('message', htmlentities($message));
 	$template->setVariable('trace', $trace);
-	list ($ret, $html) = $template->render('DebugStatusFormatter.tpl');
+	list ($ret, $html) = $template->fetch('DebugStatusFormatter.tpl');
 	if ($ret->isError()) {
 	    return $ret->getAsHtml();
 	} else {

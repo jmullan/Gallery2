@@ -108,12 +108,8 @@
 	{assign var="id" value=$layout.item.id}
 	{if !empty($layout.moduleItemLinks.$id)}
 	<div class="giActionSelect">
-	  <div class="giTitle">
-	    {g->text text="&laquo; actions &raquo;"}
-	  </div>
-	  
 	  <select onchange="javascript:if (this.value) location.href=this.value">
-	    <option value="">&nbsp;</option>
+	    <option value="">{g->text text="&laquo; actions &raquo;"}</option>
 
 	  {foreach from=$layout.moduleItemLinks.$id item=link}
 	  <option value="{$link.url}">{$link.text}</option>
