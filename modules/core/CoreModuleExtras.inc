@@ -48,7 +48,7 @@ class CoreModuleExtras {
 	 * We store our version outside of the database so that we can upgrade
 	 * even if the database is in an undependable state.
 	 */
-	$versions = $this->getInstalledVersions();
+	$versions = $module->getInstalledVersions();
 	$currentVersion = $versions['core'];
 
 	if (!isset($currentVersion)) {
@@ -193,17 +193,17 @@ class CoreModuleExtras {
 	     */
 	    $storage =& $gallery->getStorage();
 	    $query = '
-                  UPDATE
-                    [GalleryPluginParameterMap]
-                  SET
-                    [::parameterName] = ?
-                  WHERE
-                    [GalleryPluginParameterMap::parameterName] = ?
-                    AND
-                    [GalleryPluginParameterMap::pluginType] = \'module\'
-                    AND
-                    [GalleryPluginParameterMap::itemId] = 0
-                ';
+		  UPDATE
+		    [GalleryPluginParameterMap]
+		  SET
+		    [::parameterName] = ?
+		  WHERE
+		    [GalleryPluginParameterMap::parameterName] = ?
+		    AND
+		    [GalleryPluginParameterMap::pluginType] = \'module\'
+		    AND
+		    [GalleryPluginParameterMap::itemId] = 0
+		';
 	    $ret = $storage->execute($query, array('_version', 'version'));
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
@@ -232,11 +232,11 @@ class CoreModuleExtras {
 	     */
 	    $storage =& $gallery->getStorage();
 	    $query = '
-                  UPDATE
-                    [GalleryItem]
-                  SET
-                    [::originationTimestamp] = [::viewedSinceTimestamp]
-                ';
+		  UPDATE
+		    [GalleryItem]
+		  SET
+		    [::originationTimestamp] = [::viewedSinceTimestamp]
+		';
 	    $ret = $storage->execute($query, array());
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
@@ -742,7 +742,7 @@ class CoreModuleExtras {
 	foreach ($regs as $entry) {
 	    $ret = GalleryCoreApi::registerFactoryImplementation(
 		$entry[0], $entry[1], $entry[1],
-                $entry[2] == 'class' ?
+		$entry[2] == 'class' ?
 		  sprintf('modules/core/classes/%s.class', $entry[1]) :
 		  sprintf('modules/core/%s.inc', $entry[1]),
 		'core', $entry[3], 4);
