@@ -163,6 +163,7 @@ class GallerySession_core {
 	    $this->_sessionId = $HTTP_COOKIE_VARS[$this->_sessionIdParameter];
 	    $this->_isUsingCookies = true;
 	} else {
+	    $this->_isUsingCookies = false;
 	    $this->_sessionId =
 		GalleryUtilities::getRequestVariables($this->_sessionIdParameter);
 	} 
