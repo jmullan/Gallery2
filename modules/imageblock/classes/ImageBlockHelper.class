@@ -189,7 +189,8 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	    /* Fall through to pick new item */
 
 	default:
-	    list ($ret, $data) = ImageBlockHelper::fetchViewableData($itemType, $order, $parentId);
+	    list ($ret, $data) =
+		ImageBlockHelper::fetchViewableData($itemType, $order, $parentId, $userId);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
