@@ -63,7 +63,18 @@ class GalleryFactoryHelper_simple {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
+	/* Load core first */
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$module->performFactoryRegistrations();
+
 	foreach (array_keys($status) as $moduleId) {
+	    if ($moduleId == 'core') {
+		continue;
+	    }
+	    
 	    if (!empty($status[$moduleId]['active'])) {
 		list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
 		if ($ret->isError()) {
