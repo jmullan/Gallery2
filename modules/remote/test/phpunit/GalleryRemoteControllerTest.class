@@ -302,6 +302,21 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 
 	$this->assertEquals('title', $newAlbum->getTitle());
 	$this->assertEquals('desc', $newAlbum->getDescription());
+    }
+
+    function testNoop() {
+	global $gallery;
+
+	$platform = $gallery->getPlatform();
+	GalleryUtilities::putRequestVariable('form[cmd]', 'no-op');
+	
+	$results = $this->handleRequest();
+	$this->assertEquals(array(), $results['error']);
+	$this->assertEquals('remote:GalleryRemote', $results['delegate']['view']);
+
+	$response = $results['status']['controllerResponse'];
+	$this->assertEquals($this->_code['SUCCESS'], (int)$response->getProperty('status'));
+	$this->assert($response->hasProperty('status_text'));
     }    
 }
 ?>
