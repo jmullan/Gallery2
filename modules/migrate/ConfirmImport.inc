@@ -176,7 +176,7 @@ class ConfirmImportController extends GalleryController {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    
+
 	    $itemsCreated = array();
 
 	    /* Get list of userids in advance */
@@ -253,7 +253,7 @@ class ConfirmImportController extends GalleryController {
 		    $user->setEmail($fields['email']);
 		    $user->setHashedPassword($fields['password']);
 		    $user->setFullName(
-                        Gallery1DataParser::convertString($fields['fullname'], $sourceEncoding));
+			Gallery1DataParser::convertString($fields['fullname'], $sourceEncoding));
 
 		    /*
 		     * $fields['canCreateAlbums'] if they have that perm, give them "core.addAlbumItem"
@@ -470,7 +470,7 @@ class ConfirmImportController extends GalleryController {
 				}
 				if (isset($album['summary'])) {
 				    $newAlbumInstance->setDescription(
-                                        $this->convertHtmlToBbcode($album['summary'], $sourceEncoding));
+					$this->convertHtmlToBbcode($album['summary'], $sourceEncoding));
 				}
 				$newAlbumInstance->setKeywords('');
 				if (isset($album['description'])) {
@@ -507,7 +507,7 @@ class ConfirmImportController extends GalleryController {
 					}
 					list($ret, $owner) =
 					    GalleryCoreApi::fetchUserByUsername(
-					        Gallery1DataParser::convertString(
+						Gallery1DataParser::convertString(
 						    $albumUserFields['username'], $sourceEncoding));
 					if ($ret->isError()) {
 					    if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
@@ -845,13 +845,24 @@ class ConfirmImportController extends GalleryController {
 				    $importAlbumItem->keywords, $sourceEncoding));
 
 
-				/*
-			    if (isset($importAlbumItem->itemCaptureDate[0])){
-				$newItem->setcreationTimestamp($importAlbumItem->itemCaptureDate[0]);
-			    }
-				*/
 				if (isset($importAlbumItem->uploadDate)){
 				    $newItem->setCreationTimestamp($importAlbumItem->uploadDate);
+				}
+				if (isset($importAlbumItem->itemCaptureDate)){
+				    /* Before 1.4.5-cvs-b106 this was an associative array */
+				    if (is_array($importAlbumItem->itemCaptureDate)) {
+					$newItem->setOriginationTimestamp(
+					    mktime($importAlbumItem->itemCaptureDate['hours'],
+						   $importAlbumItem->itemCaptureDate['minutes'],
+						   $importAlbumItem->itemCaptureDate['seconds'],
+						   $importAlbumItem->itemCaptureDate['mon'],
+						   $importAlbumItem->itemCaptureDate['mday'],
+						   $importAlbumItem->itemCaptureDate['year']));
+				    } else {
+					$newItem->setOriginationTimestamp(
+					    $importAlbumItem->itemCaptureDate);
+				    }
+				} else if (isset($importAlbumItem->uploadDate)){
 				    $newItem->setOriginationTimestamp($importAlbumItem->uploadDate);
 				}
 				if (isset($album['clicks_date']) && $album['clicks_date']>0) {
