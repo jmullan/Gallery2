@@ -182,7 +182,7 @@
   </div>
   <div class="gbMenu">
     <ul><li>
-      <a href="http://validator.w3.org/check/referer"><img style="border: 0px"
+      <a href="http://validator.w3.org/check?uri={$main.validationUri}&amp;ss=1"><img style="border: 0px"
          src="{g->url href="images/xhtml10.png"}"
          alt="{g->text text="This page is valid XHTML 1.0"}"
          height="15" width="80" /></a>

@@ -38,13 +38,13 @@
 	{if ($setting.type == 'text-field')}
 	<input type="text" size="6" name="{g->formVar var="form[key][$settingKey]"}" onkeypress="javascript:changeSetting('{$settingKey}')" value="{$form.key.$settingKey}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
 	{elseif ($setting.type == 'single-select')}
-	<select name="{g->formVar var="form[key][$settingKey]"}" onChange="javascript:changeSetting('{$settingKey}')">
+	<select name="{g->formVar var="form[key][$settingKey]"}" onchange="javascript:changeSetting('{$settingKey}')">
 	    {html_options options=$setting.choices selected=$setting.value}
 	</select>
 	{elseif ($setting.type == 'checkbox')}
         <input type="checkbox" name="{g->formVar var="form[key][$settingKey]"}" 
         {if !empty($setting.value)}checked="checked"{/if}
-	onChange="javascript:changeSetting('{$settingKey}')"/>
+	onchange="javascript:changeSetting('{$settingKey}')"/>
 	{/if}
       </td>
 

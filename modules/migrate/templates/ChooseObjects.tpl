@@ -31,7 +31,7 @@
       {g->text text="Select the users to migrate"}
     </div>
 
-    <script language="javascript">
+    <script type="text/javascript">
       //<![CDATA[
       function setCheck(val) {ldelim}
           ufne=document.forms[0];
@@ -134,7 +134,7 @@
 	{foreach from=$ChooseObjects.g1AlbumTree item=album}
 	<option value="{$album.data.urlencodedname}">
   	  {"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"|repeat:$album.depth}`--
-  	  {g->text text="%s (%s)" arg1=$album.data.title arg2=$album.data.name}
+  	  {g->text text="%s (%s)" arg1=$album.data.title|htmlentities arg2=$album.data.name}
 	</option>
         {/foreach}
       </select>

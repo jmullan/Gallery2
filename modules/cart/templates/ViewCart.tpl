@@ -20,8 +20,6 @@
   
   <div id="gsOtherContents">
 
-    <form action="{g->url}" method="post">
-      
     <div class="gbTopFlag">
       <div class="gbTitleBanner">
         <h1 class="gbTitle">
@@ -33,7 +31,7 @@
     <div class="gbNavBar">
       <div class="gbAdmin">
     	<select name="{g->formVar var="form[pluginId]"}" class="giActionSelect" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';">
-    	  <option label="{g->text text="&laquo; cart actions &raquo;"}" value="" selected>{g->text text="&laquo; cart actions &raquo;"}</option>
+    	  <option label="{g->text text="&laquo; cart actions &raquo;"}" value="" selected="selected">{g->text text="&laquo; cart actions &raquo;"}</option>
     	  <option label="{g->text text="Update Quantities"}" value="updateCart"> {g->text text="Update Quantities"} </option>
     	  <option label="{g->text text="Empty Cart"}" value="emptyCart"> {g->text text="Empty Cart"} </option>
     	  {foreach from=$ViewCart.plugins key=pluginId item=pluginData}
@@ -45,32 +43,34 @@
     </div>
 
   
-    {if isset($status)}
+    {if isset($status) || empty($ViewCart.items)}
     <div id="gsStatus">
       {if isset($status.cartModified)}
       <div class="giStatus">
 	{g->text text="Cart updated successfully"}
       </div>
       {/if}
+
+      {if empty($ViewCart.items)}
+      <div class="giEmpty">
+        <p>
+          {g->text text="Your cart is empty."}
+        </p>
+        <p>
+          {g->text text="To add items, browse the gallery and select 'Add to cart' from the item's action menu."}
+        </p>
+      </div>
+      {/if}
     </div>
     {/if}
 
-    {if empty($ViewCart.items)}
-    <div id="gsStatus">
-      <div class="giEmpty">
-          <p>
-          {g->text text="Your cart is empty."}
-          </p>
-          <p>
-          {g->text text="To add items, browse the gallery and select 'Add to cart' from the item's action menu."}
-          </p>
-      </div>
-    </div>
-    {else}
+    {if !empty($ViewCart.items)}
     <form action="{g->url}" method="post">
-      {g->hiddenFormVars}
-      <input type="hidden" name="{g->formVar var="controller"}" value="{$ViewCart.controller}"/>
-      <input type="hidden" name="{g->formVar var="form[formName]"}" value="{$form.formName}"/>
+      <div>
+        {g->hiddenFormVars}
+        <input type="hidden" name="{g->formVar var="controller"}" value="{$ViewCart.controller}"/>
+        <input type="hidden" name="{g->formVar var="form[formName]"}" value="{$form.formName}"/>
+      </div>
 
       <div class="gbAdmin">
     	<table class="gbDataTable">
