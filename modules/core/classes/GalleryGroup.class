@@ -148,7 +148,7 @@ class GalleryGroup_core extends GalleryEntity {
      * @param int the number of usernames desired
      * @param int the start of the range
      */
-    function getGroupnames($count=null, $offset=null) {
+    function fetchGroupnames($count=null, $offset=null) {
 	global $gallery;
 
 	return $gallery->search(

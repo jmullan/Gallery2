@@ -28,6 +28,10 @@
       int(11)
     
       ,
+    COLUMN_PREFIXderivativeType
+      int(11)
+    
+      ,
     COLUMN_PREFIXderivativeMimeType
       varchar(
       

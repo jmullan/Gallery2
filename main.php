@@ -22,6 +22,12 @@ $ret = GalleryMain();
 if ($ret->isError()) {
     $ret = $ret->wrap(__FILE__, __LINE__);
     print $ret->getAsHtml();
+
+    if ($gallery->getDebug() == 'buffered') {
+	print "<pre>";
+	print $gallery->getDebugBuffer();
+	print "</pre>";
+    }
     return;
 }
 

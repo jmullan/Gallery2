@@ -344,7 +344,7 @@ class GalleryItem_core extends GalleryFileSystemEntity {
      * @return object GalleryStatus a status code
      */
     function incrementViewCount($increment=1) {
-	list ($ret, $count) = GalleryViewCountMap::getCount($this->getId());
+	list ($ret, $count) = GalleryViewCountMap::fetchCount($this->getId());
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -364,23 +364,20 @@ class GalleryItem_core extends GalleryFileSystemEntity {
      * @return array object GalleryStatus a status code
      *         int an id, null if there is none
      */
-    function getThumbnailId() {
+    function fetchThumbnailId() {
 	global $gallery;
-	
-	list ($ret, $searchResults) = 
-	    $gallery->search(
-	        array('select' => '[GalleryDerivativeImage::id]',
-		      'where' => ('[GalleryDerivativeImage::imageType] = ?' .
-				  ' AND [GalleryChildEntity::parentId] = ?')),
-		array(IMAGE_TYPE_THUMBNAIL, $this->getId()));
+
+
+	list ($ret, $thumbnailTable) =
+	    GalleryDerivative::fetchDerivatives($this->getId(),
+						DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$thumbnailId = null;
-	if ($searchResults->resultCount() > 0) {
-	    $result = $searchResults->nextResult();
-	    $thumbNailId = $result[0];
+	if (!empty($thumbnailTable[$this->getId()])) {
+	    $thumbnailId = $thumbnailTable[$this->getId()][0];
 	}
 
 	return array(GalleryStatus::success(), $thumbnailId);
@@ -394,7 +391,7 @@ class GalleryItem_core extends GalleryFileSystemEntity {
      * @return array object GalleryStatus a status code
      *               int a count
      */
-    function countChildren($userId) {
+    function fetchChildCount($userId) {
 	global $gallery;
 
 	$where = '[GalleryChildEntity::parentId] = ?';
@@ -404,7 +401,7 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 
 	/* Figure out what groups this user is in. */
 	list ($ret, $groupIds) =
-	    GalleryUserGroupMap::getGroupsForUser($userId);
+	    GalleryUserGroupMap::fetchGroupsForUser($userId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -448,7 +445,7 @@ class GalleryItem_core extends GalleryFileSystemEntity {
      * @return array object GalleryStatus a status code
      *               array integer ids
      */
-    function getChildrenWithTypes($userId, $offset=null, $count=null) {
+    function fetchChildrenWithTypes($userId, $offset=null, $count=null) {
 	global $gallery;
 
 	$where = '[GalleryChildEntity::parentId] = ?';
@@ -458,7 +455,7 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 
 	/* Figure out what groups this user is in. */
 	list ($ret, $groupIds) =
-	    GalleryUserGroupMap::getGroupsForUser($userId);
+	    GalleryUserGroupMap::fetchGroupsForUser($userId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -515,7 +512,7 @@ class GalleryItem_core extends GalleryFileSystemEntity {
      * @return array object GalleryStatus a status code
      *               array integer ids
      */
-    function getChildren($userId, $offset=null, $count=null) {
+    function fetchChildren($userId, $offset=null, $count=null) {
 	global $gallery;
 
 	$where = '[GalleryChildEntity::parentId] = ?';
@@ -525,7 +522,7 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 
 	/* Figure out what groups this user is in. */
 	list ($ret, $groupIds) =
-	    GalleryUserGroupMap::getGroupsForUser($userId);
+	    GalleryUserGroupMap::fetchGroupsForUser($userId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -566,6 +563,31 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	}
 	
 	return array(GalleryStatus::success(), $ids);
+    }
+
+    /**
+     * Load all the parents of this item
+     *
+     * @return array object GalleryStatus a status code 
+     *               array(GalleryItem, ...)
+     */
+    function fetchParents() {
+	global $gallery;
+
+	$parents = array();
+	$parentId = $this->getParentId();
+	while (!empty($parentId)) {
+
+	    list ($ret, $parent) = $gallery->loadEntitiesById($parentId);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    array_unshift($parents, $parent->getMemberData());
+	    $parentId = $parent->getParentId();
+	}
+
+	return array(GalleryStatus::success(), $parents);
     }
 
     /**

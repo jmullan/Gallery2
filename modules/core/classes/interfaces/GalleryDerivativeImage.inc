@@ -56,11 +56,6 @@ class GalleryDerivativeImage extends GalleryDerivativeImage_core {
             'type' => STORAGE_TYPE_INTEGER
         );
     
-        $meta['members']['imageType'] = array(
-            'class' => 'GalleryDerivativeImage',
-            'type' => STORAGE_TYPE_INTEGER
-        );
-    
         return $meta;
     }
 
@@ -75,8 +70,6 @@ class GalleryDerivativeImage extends GalleryDerivativeImage_core {
         $data['width'] = $this->_width;
     
         $data['height'] = $this->_height;
-    
-        $data['imageType'] = $this->_imageType;
     
         return $data;
     }
@@ -129,31 +122,6 @@ class GalleryDerivativeImage extends GalleryDerivativeImage_core {
       
         $this->_height = $value;
         $this->setModifiedFlag('height', MEMBER_MODIFIED);
-    }
-  
-    /**
-     * Get the value of imageType
-     *
-     * @return INTEGER the value
-     */
-    function getimageType() {
-        if (!isset($this->_imageType)) {
-            return null;
-        }
-        return $this->_imageType;
-    }
-
-    /**
-     * Set the value of imageType
-     *
-     * @param INTEGER the value
-     */
-    function setimageType($value) {
-    
-        $value = (int)$value;
-      
-        $this->_imageType = $value;
-        $this->setModifiedFlag('imageType', MEMBER_MODIFIED);
     }
   
 }

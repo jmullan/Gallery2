@@ -21,15 +21,9 @@
 class ClassicLayout extends GalleryLayout {
 
     /**
-     * Render the item
-     *
-     * @param object GalleryItem the item to render.  Can be any subclass of
-     *               GalleryItem
-     * @param array the layout properties
-     * @return array object GalleryStatus a status code
-     *         string the html body
+     * @see GalleryLayout::render
      */
-    function render($item) {
+    function render($item, $urlParams) {
 
 	/* Look up my properties */
 	//list ($ret, $properties) =
@@ -38,9 +32,9 @@ class ClassicLayout extends GalleryLayout {
 			    'columns' => 3);
 
 	if ($item->canContainChildren()) {
-	    return $this->_renderAlbum($item, $properties);
+	    return $this->_renderAlbum($item, $urlParams, $properties);
 	} else {
-	    return $this->_renderSingle($item, $properties);
+	    return $this->_renderSingle($item, $urlParams, $properties);
 	}
     }
 
@@ -49,12 +43,14 @@ class ClassicLayout extends GalleryLayout {
      *
      * @param object GalleryItem the item to render.  Can be any subclass of
      *               GalleryItem
+     * @param array key => value url parameters provided by the
+     *              parent view -- the module can augment or override these.
      * @param array the layout properties
      * @return array object GalleryStatus a status code
      *         string the HTML body
      * @access private
      */
-    function _renderAlbum($item, $properties) {
+    function _renderAlbum($item, $urlParams, $properties) {
 	global $gallery;
 
 	/* Figure out what page we're on */
@@ -79,14 +75,14 @@ class ClassicLayout extends GalleryLayout {
 
 	/* Count the total number of children */
 	list ($ret, $totalChildCount) =
-	    $item->countChildren($gallery->getActiveUserId());
+	    $item->fetchChildCount($gallery->getActiveUserId());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* Get the child id => child types */
 	list ($ret, $childIds) =
-	    $item->getChildren($gallery->getActiveUserId(), $start, $perPage);
+	    $item->fetchChildren($gallery->getActiveUserId(), $start, $perPage);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -106,7 +102,8 @@ class ClassicLayout extends GalleryLayout {
 	    
 	    /* Load the thumbnails */
 	    list ($ret, $imageTable) =
-		$this->_loadDerivativeImages($childIds, IMAGE_TYPE_THUMBNAIL);
+		GalleryDerivative::loadDerivatives($childIds,
+						   DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -145,7 +142,13 @@ class ClassicLayout extends GalleryLayout {
 	}
 
 	/* Load the parents */
-	list ($ret, $parents) = $this->_loadParents($item);
+	list ($ret, $parents) = $item->fetchParents();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Get item links */
+	list ($ret, $moduleItemLinks) = $this->_getModuleItemLinks($item, $urlParams);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -155,8 +158,9 @@ class ClassicLayout extends GalleryLayout {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	$smarty->assign('item', $item->getMemberData());
+	$smarty->assign('moduleItemLinks', $moduleItemLinks);
 	$smarty->assign('navigator', $navigator);
 	$smarty->assign('children', $children);
 	$smarty->assign('properties', $properties);
@@ -179,12 +183,14 @@ class ClassicLayout extends GalleryLayout {
      *
      * @param object GalleryItem the item to render.  Can be any subclass of
      *               GalleryItem
+     * @param array key => value url parameters provided by the
+     *              parent view -- the module can augment or override these.
      * @param array the layout properties
      * @return array object GalleryStatus a status code
      *         string the HTML body
      * @access private
      */
-    function _renderSingle($item, $properties) {
+    function _renderSingle($item, $urlParams, $properties) {
 	global $gallery;
 
 	list ($ret, $smarty) = $gallery->getSmarty();
@@ -198,6 +204,7 @@ class ClassicLayout extends GalleryLayout {
 	$showMode = GalleryUtilities::getRequestVariables('showMode');
 	if ($showMode == 'full') {
 	    /* XXX: perform permission check here ("can user see full size")*/
+	    $gallery->debug('XXX: missing view-full permission check');
 	    $smarty->assign('image', $item->getMemberData());
 	    
 	} else {
@@ -210,8 +217,8 @@ class ClassicLayout extends GalleryLayout {
 
 	    /* Load the resizes */
 	    list ($ret, $imageTable) =
-		$this->_loadDerivativeImages($item->getId(),
-					     IMAGE_TYPE_RESIZE);
+		GalleryDerivative::loadDerivatives($item->getId(),
+						   DERIVATIVE_TYPE_IMAGE_RESIZE);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -224,15 +231,12 @@ class ClassicLayout extends GalleryLayout {
 	    }
 
 	    $resizes = $imageTable[$item->getId()];
-
 	    if ($resizeIndex >= sizeof($resizes)) {
-		return array(GalleryStatus::error(ERROR_BAD_PARAMETER,
-						  __FILE__, __LINE__),
-			     null);
+		$resizeIndex = sizeof($resizes) - 1;
 	    }
 
 	    /* XXX: perform permission check here ("can user see resizes ")*/
-	    
+	    $gallery->debug('XXX: missing view-resize permission check');
 	    $smarty->assign('image', $resizes[$resizeIndex]);
 	}
 
@@ -250,7 +254,7 @@ class ClassicLayout extends GalleryLayout {
 	/* Count the total number peers */
 	/* Get the child id => child types */
 	list ($ret, $peerIds) =
-	    $parent->getChildren($gallery->getActiveUserId());
+	    $parent->fetchChildren($gallery->getActiveUserId());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -275,17 +279,25 @@ class ClassicLayout extends GalleryLayout {
 	}
 
 	/* Load the parents */
-	list ($ret, $parents) = $this->_loadParents($item);
+	list ($ret, $parents) = $item->fetchParents();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Get item links */
+	list ($ret, $moduleItemLinks) = $this->_getModuleItemLinks($item, $urlParams);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* Tell Smarty about everything we've learned */
 	$smarty->assign('navigator', $navigator);
+	$smarty->assign('moduleItemLinks', $moduleItemLinks);
 	$smarty->assign('layoutUrl',
 			GalleryUtilities::convertPathToRelativeUrl(dirname(__FILE__)));
 	$smarty->assign('parents', $parents);
 	$smarty->assign('itemIndex', $itemIndex+1);
+	$smarty->assign('nextResizeIndex', $resizeIndex+1);
 	$smarty->assign('totalPeerCount', $totalPeerCount);
 	
 	/* Parse the header and body and send them back */

@@ -90,11 +90,11 @@ class AdminModulesController extends GalleryController {
 	}
 
 	/* Figure out where to redirect upon success */
-	$stateVariables['view'] = 'core:SiteAdmin';
-	$stateVariables['subView'] = 'core:AdminModules';
+	$urlParams['view'] = 'core:SiteAdmin';
+	$urlParams['subView'] = 'core:AdminModules';
 
 	$templateAdapter = $gallery->getTemplateAdapter();
-	$results['redirect'] = $templateAdapter->url($stateVariables);
+	$results['redirect'] = $templateAdapter->url($urlParams);
 
 	return array(GalleryStatus::success(), $results);
     }

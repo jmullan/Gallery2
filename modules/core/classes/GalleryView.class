@@ -62,7 +62,7 @@ class GalleryView {
      *               string html content
      */
     function renderHead() {
-	return false;
+	return array(GalleryStatus::success(), '');
     }
 
     /**
@@ -76,7 +76,7 @@ class GalleryView {
      *               string html content
      */
     function renderBody() {
-	return false;
+	return array(GalleryStatus::success(), '');
     }
 
     /**
@@ -128,15 +128,24 @@ class GalleryView {
     /**
      * Load the theme with the given name
      *
-     * @param string a theme name
+     * @param object GalleryItem an item (or empty, for the default theme)
      * @return object GalleryStatus a status code
      */
-    function _activateTheme($themeName) {
+    function _activateTheme($item) {
 	global $gallery;
 
-	list ($ret, $platform) = $gallery->getPlatform();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	/* Figure out the right theme */
+	$themeName = false;
+	if (!empty($item)) {
+	    $themeName = $item->getTheme();
+	}
+
+	if (empty($themeName)) {
+	    list ($ret, $themeName) =
+		$gallery->getModuleParameter('core', 'default.theme');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
 	}
 
 	require_once($gallery->getConfig('code.gallery.themes') .
@@ -180,6 +189,33 @@ class GalleryView {
 	}
 	return array(GalleryStatus::success(), new $layoutClassName());
     }
-    
+
+    /**
+     * Return the current item, as specified in the 'itemId' request variable
+     *
+     * @return array object GalleryStatus a status code
+     *               object GalleryItem an item
+     */
+    function _getItem() {
+	global $gallery;
+	
+	/* If we don't have an item id, default to the root */
+	$itemId = GalleryUtilities::getRequestVariables('itemId');
+	if (empty($itemId)) {
+	    list ($ret, $itemId) =
+		$gallery->getModuleParameter('core', 'id.rootAlbum');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+
+	/* Load the item */
+	list ($ret, $item) = $gallery->loadEntitiesById($itemId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	return array(GalleryStatus::success(), $item);
+    }
 }
 ?>

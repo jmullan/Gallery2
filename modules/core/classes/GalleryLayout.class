@@ -25,99 +25,54 @@ class GalleryLayout {
      *
      * @param object GalleryItem the item to render.  Can be any subclass of
      *               GalleryItem
-     * @param array the layout properties
+     * @param array key => value url parameters provided by the
+     *              parent view -- the module can augment or override these.
      * @return array object GalleryStatus a status code
      *         string the html body
      */
-    function render($item) {
+    function render($item, $urlParams) {
 	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__),
 		     null);
     }
 
     /**
-     * Load all the parents of this item
+     * Call getItemLinks on every active module
      *
-     * @param string the id of a GalleryItem
-     * @return array object GalleryStatus a status code 
-     *               array(GalleryItem, ...)
+     * @param object GalleryItem a target item
+     * @param array key => value parameters provided by the
+     *              parent view -- the module can augment or override these.
+     * @return array object GalleryStatus a status code
+     *               array ('module' => array 0 or more array('text' => 'localized text',
+     *                                                        'params' => array(key => value, key => value)))
      */
-    function _loadParents($item) {
+    function _getModuleItemLinks($item, $urlParams) {
 	global $gallery;
 
-	$parents = array();
-	$parentId = $item->getParentId();
-	while (!empty($parentId)) {
-
-	    list ($ret, $parent) = $gallery->loadEntitiesById($parentId);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-	    array_unshift($parents, $parent->getMemberData());
-	    $parentId = $parent->getParentId();
-	}
-
-	return array(GalleryStatus::success(), $parents);
-    }
-
-    /**
-     * Load the derivative images for the ids/types specified
-     *
-     * @param array GalleryItem ids
-     * @param array image types 
-     * @return array object GalleryStatus a status code 
-     *               array(GalleryItem id => GalleryDerivativeImage, ...)
-     */
-    function _loadDerivativeImages($ids, $imageTypes) {
-	global $gallery;
-	
-	if (!is_array($ids)) {
-	    $ids = array($ids);
-	}
-
-	if (!is_array($imageTypes)) {
-	    $imageTypes = array($imageTypes);
-	}
-	    
-	/* Look up the ids of all their thumbnail images */
-	$idMarkers = GalleryUtilities::makeMarkers(sizeof($ids));
-	$imageTypeMarkers = GalleryUtilities::makeMarkers(sizeof($imageTypes));
-	$data = array_merge(array('GalleryDerivativeImage'),
-			    $imageTypes,
-			    $ids);
-	list ($ret, $searchResults) = $gallery->search(
-            array('select' => ('[GalleryDerivativeImage::id], ' .
-			       '[GalleryChildEntity::parentId]'),
-		  'where' => ('[GalleryEntity::entityType]=? AND ' .
-			      '[GalleryDerivativeImage::imageType] IN (' .
-			      $imageTypeMarkers . ') AND ' .
-			      '[GalleryChildEntity::parentId] IN (' .
-			      $idMarkers . ')')),
-            $data);
-	    
+	/* Load the module list */
+	list ($ret, $moduleStatus) = $gallery->getModuleStatus();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$imageTable = array();
-	if ($searchResults->resultCount() > 0) {
-	    $imageIds = array();
-	    while ($result = $searchResults->nextResult()) {
-		$imageIds[] = $result[0];
+	$itemLinks = array();
+	foreach ($moduleStatus as $moduleName => $status) {
+	    if (empty($status['active'])) {
+		continue;
 	    }
-		
-	    /* Load all the derivative images */
-	    list ($ret, $imageEntities) = $gallery->loadEntitiesById($imageIds);
+
+	    list ($ret, $module) = $gallery->loadModule($moduleName);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-		
-	    /* Create a table of child id -> image data */
-	    foreach ($imageEntities as $image) {
-		$imageTable[$image->getParentId()][] = $image->getMemberData();
+
+	    list ($ret, $itemLinks[$moduleName]) =
+		$module->getItemLinks($item, $urlParams);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
 
-	return array(GalleryStatus::success(), $imageTable);
+	return array(GalleryStatus::success(), $itemLinks);
     }
+
 }

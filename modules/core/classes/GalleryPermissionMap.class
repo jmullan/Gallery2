@@ -196,7 +196,7 @@ class GalleryPermissionMap_core {
      * @return array object GalleryStatus a status code
      *               array group ids
      */
-    function getPermissionsForItem($itemId) {
+    function fetchPermissionsForItem($itemId) {
 	global $gallery;
 
 	if (empty($itemId)) {
@@ -244,7 +244,7 @@ class GalleryPermissionMap_core {
 	}
 
 	list ($ret, $permissions) =
-	    GalleryPermissionMap::getPermissionsForItem($fromId);
+	    GalleryPermissionMap::fetchPermissionsForItem($fromId);
 
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);

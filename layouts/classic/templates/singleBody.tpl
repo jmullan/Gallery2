@@ -4,7 +4,11 @@
 	<table border="1" width="100%" cellspacing="0%" cellpadding="0%">
 	  <tr>
 	    <td align="right">
-	      Module links go here
+	      {foreach from=$moduleItemLinks item=module}
+	      {foreach from=$module item=link}
+	      [<a href="{$link.url}">{$link.text}</a>]
+	      {/foreach}
+	      {/foreach}
 	    </td>
 	  </tr>
 	</table>
@@ -28,7 +32,7 @@
 	<table border="1" width="100%" cellspacing="0%" cellpadding="0%">
 	  <tr>
 	    <td align=center>
-	      <a href="{galleryUrl view=core:ShowItem itemId=$item.id}">
+	      <a href="{galleryUrl view=core:ShowItem itemId=$item.id resizeIndex=$nextResizeIndex}">
 		<img src="{galleryUrl view=core:DownloadItem itemId=$image.id}"
 		  {if ($image.width && $image.height)}
 		  width="{$image.width}"

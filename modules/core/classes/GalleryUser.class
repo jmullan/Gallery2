@@ -81,15 +81,15 @@ class GalleryUser_core extends GalleryEntity {
      * The User's password in a hashed form.
      *
      * @g2 <member>
-     * @g2   <member-name>password</member-name>
+     * @g2   <member-name>hashedPassword</member-name>
      * @g2   <member-type>STRING</member-type>
      * @g2   <member-size>SMALL</member-size>
      * @g2 </member>
      *
-     * @var string $_password
+     * @var string $_hashedPassword
      * @access private
      */
-    var $_password;
+    var $_hashedPassword;
 
     /**
      * The User's email address.
@@ -166,7 +166,7 @@ class GalleryUser_core extends GalleryEntity {
      * @return boolean true if the password is correct
      */
     function isCorrectPassword($password) {
-	return !strcmp(md5($password), $this->getPassword());
+	return !strcmp(md5($password), $this->getHashedPassword());
     }
 
     /**
@@ -175,7 +175,7 @@ class GalleryUser_core extends GalleryEntity {
      * @param string a plaintext password
      */
     function changePassword($newPassword) {
-	$this->setPassword(md5($newPassword));
+	$this->setHashedPassword(md5($newPassword));
     }
 
     /**
@@ -187,7 +187,7 @@ class GalleryUser_core extends GalleryEntity {
      * @param int the number of usernames desired
      * @param int the start of the range
      */
-    function getUserNames($count=null, $start=null, $offset=null) {
+    function fetchUserNames($count=null, $start=null, $offset=null) {
 	global $gallery;
 
 	return $gallery->search(

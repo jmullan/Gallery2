@@ -118,7 +118,7 @@ class GalleryDataItem_core extends GalleryItem {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	list($ret, $parentPath) = $parent->getContainerPath($parent);
+	list($ret, $parentPath) = $parent->fetchContainerPath($parent);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -186,7 +186,7 @@ class GalleryDataItem_core extends GalleryItem {
 	}
 
 	/* Delete our source file */
-	list($ret, $path) = $this->getPath();
+	list($ret, $path) = $this->fetchPath();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -212,14 +212,14 @@ class GalleryDataItem_core extends GalleryItem {
      * @return array object GalleryStatus a status code
      *               int the size of the object, -1 if unknown
      */
-    function getSize() {
+    function fetchSize() {
 	global $gallery;
 	list($ret, $platform) = $gallery->getPlatform();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	list($ret, $path) = $this->getPath();
+	list($ret, $path) = $this->fetchPath();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), false);
 	}
@@ -240,7 +240,7 @@ class GalleryDataItem_core extends GalleryItem {
      * @return array object GalleryStatus a status code,
      *               string a path where children can store their data files
      */
-    function getPath() {
+    function fetchPath() {
 	global $gallery;
 
 	/*
@@ -249,7 +249,7 @@ class GalleryDataItem_core extends GalleryItem {
 	 * the nearest parent who is a container (eg an AlbumItem), because a
 	 * container has a directory for the items it contains.
 	 */
-	list($ret, $containerPath) = $this->getContainerPath();
+	list($ret, $containerPath) = $this->fetchContainerPath();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

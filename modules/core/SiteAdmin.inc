@@ -86,7 +86,7 @@ class SiteAdminView extends GalleryView {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    list ($ret, $moduleViews) = $module->getAdminViews();
+	    list ($ret, $moduleViews) = $module->getSiteAdminViews();
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -148,7 +148,7 @@ class SiteAdminView extends GalleryView {
 	}
 
 	/* Activate the theme */
-	$ret = $this->_activateTheme($themeName);
+	$ret = $this->_activateTheme(false);
 	if ($ret->isError()) {
 	    return $ret;
 	}

@@ -214,20 +214,20 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
      * @return array object GalleryStatus a status code,
      *               string a path where children can store their data files
      */
-    function getContainerPath() {
+    function fetchContainerPath() {
 	global $gallery;
 	
 	if ($this->isContainer()) {
-	    return $this->getPath();
+	    return $this->fetchPath();
 	} else {
 	    $parentId = $this->getParentId();
 	    if (!empty($parentId)) {
-		list($ret, $parent) = $this->getParent();
+		list($ret, $parent) = $this->fetchParent();
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-		return $parent->getContainerPath();
+		return $parent->fetchContainerPath();
 	    } else {
 		return array(GalleryStatus::error(ERROR_BAD_PATH,
 						  __FILE__, __LINE__));
@@ -251,17 +251,17 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
      * @access public
      * @return array a GalleryStatus status, string a path
      */
-    function getPath() {
+    function fetchPath() {
 	global $gallery;
 
 	$parentId = $this->getParentId();
 	if (!empty($parentId)) {
-	    list($ret, $parent) = $this->getParent();
+	    list($ret, $parent) = $this->fetchParent();
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    list($ret, $path) = $parent->getPath();
+	    list($ret, $path) = $parent->fetchPath();
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }

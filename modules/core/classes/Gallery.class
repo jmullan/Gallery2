@@ -771,7 +771,7 @@ class Gallery {
     function getModuleStatus() {
 
 	if (!isset($this->_modules['_status'])) {
-	    list ($ret, $modules) = GalleryModuleMap::getModuleList();
+	    list ($ret, $modules) = GalleryModuleMap::fetchModuleList();
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -923,7 +923,7 @@ class Gallery {
     function getAllModuleParameters($moduleName) {
 	if (!isset($this->_modules[$moduleName]['parameters'])) {
 	    list ($ret, $this->_modules[$moduleName]['parameters']) =
-		GalleryModuleParameterMap::getAllParameters($moduleName);
+		GalleryModuleParameterMap::fetchAllParameters($moduleName);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -983,7 +983,7 @@ class Gallery {
 	 */
 	if (!isset($this->_modules[$moduleName]['parameters'])) {
 	    list ($ret, $this->_modules[$moduleName]['parameters']) =
-		GalleryModuleParameterMap::getAllParameters($moduleName);
+		GalleryModuleParameterMap::fetchAllParameters($moduleName);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }

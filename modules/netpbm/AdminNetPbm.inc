@@ -105,11 +105,11 @@ class AdminNetPbmController extends GalleryController {
 	
 
 	/* Figure out where to redirect upon success */
-	$stateVariables['view'] = 'core:SiteAdmin';
-	$stateVariables['subView'] = 'netpbm:AdminNetPbm';
+	$urlParams['view'] = 'core:SiteAdmin';
+	$urlParams['subView'] = 'netpbm:AdminNetPbm';
 
 	$templateAdapter = $gallery->getTemplateAdapter();
-	$results['redirect'] = $templateAdapter->generateUrl($stateVariables);
+	$results['redirect'] = $templateAdapter->url($urlParams);
 
 	return array(GalleryStatus::success(), $results);
     }
@@ -148,24 +148,27 @@ class AdminNetPbmView extends GalleryView {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
-	foreach (array('jpegtopnm',
-		       'giftopnm',
-		       $pnmtojpeg,
-		       'ppmtogif',
-		       'pnmtopng',
-		       'pnmscale',
-		       'pnmfile',
-		       'ppmquant',
-		       'pnmcut',
-		       'pnmrotate',
-		       'pnmflip') as $binary) {
 
-	    $cmd = array($path . $binary, '--version');
-	    list ($ret, $results) = GalleryUtilities::exec(array($cmd));
-	    $tests[] = array('name' => $binary,
-			     'status' => $ret,
-			     'results' => $results);
+	$tests = array();
+	if (!empty($path)) {
+	    foreach (array('jpegtopnm',
+			   'giftopnm',
+			   $pnmtojpeg,
+			   'ppmtogif',
+			   'pnmtopng',
+			   'pnmscale',
+			   'pnmfile',
+			   'ppmquant',
+			   'pnmcut',
+			   'pnmrotate',
+			   'pnmflip') as $binary) {
+
+		$cmd = array($path . $binary, '--version');
+		list ($ret, $results) = GalleryUtilities::exec(array($cmd));
+		$tests[] = array('name' => $binary,
+				 'status' => $ret,
+				 'results' => $results);
+	    }
 	}
 
 	/* Render the HTML body */

@@ -102,7 +102,7 @@ class GalleryAlbumItem_core extends GalleryItem {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	
-	list($ret, $parentPath) = $parent->getPath();
+	list($ret, $parentPath) = $parent->fetchPath();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -195,7 +195,7 @@ class GalleryAlbumItem_core extends GalleryItem {
 	}
 
 	/* Get my path */
-	list($ret, $path) = $this->getPath();
+	list($ret, $path) = $this->fetchPath();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -249,7 +249,7 @@ class GalleryAlbumItem_core extends GalleryItem {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	list($ret, $currentPath) = $this->getPath();
+	list($ret, $currentPath) = $this->fetchPath();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

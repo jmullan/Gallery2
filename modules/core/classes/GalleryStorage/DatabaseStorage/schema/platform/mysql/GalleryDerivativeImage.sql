@@ -19,10 +19,6 @@
     COLUMN_PREFIXheight
       int(11)
     
-      ,
-    COLUMN_PREFIXimageType
-      int(11)
-    
     , 
   
     INDEX (COLUMN_PREFIXid)

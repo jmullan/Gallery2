@@ -97,7 +97,7 @@ class GalleryChildEntity_core extends GalleryEntity {
      * @return array object GalleryStatus a status code
      *               object GalleryItem the parent item
      */
-    function getParent() {
+    function fetchParent() {
 	global $gallery;
 	return $gallery->loadEntitiesById($this->getParentId());
     }

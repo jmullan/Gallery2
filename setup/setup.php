@@ -477,7 +477,7 @@ function CreateAdminUser() {
 	return $ret->wrap(__FILE__, __LINE__);
     }
 
-    list ($ret, $results) = GalleryUserGroupMap::getUsersForGroup($adminGroupId);
+    list ($ret, $results) = GalleryUserGroupMap::fetchUsersForGroup($adminGroupId);
     if ($ret->isError()) {
 	return $ret->wrap(__FILE__, __LINE__);
     }
@@ -530,7 +530,7 @@ function CreateRootAlbumItem() {
 	return $ret->wrap(__FILE__, __LINE__);
     }
 
-    list ($ret, $results) = GalleryUserGroupMap::getUsersForGroup($adminGroupId);
+    list ($ret, $results) = GalleryUserGroupMap::fetchUsersForGroup($adminGroupId);
     if ($ret->isError()) {
 	return $ret->wrap(__FILE__, __LINE__);
     }

@@ -134,7 +134,7 @@ class GalleryUserGroupMap_core {
      * @return array object GalleryStatus a status code
      *               array group ids
      */
-    function getUsersForGroup($groupId, $count=null, $offset=null) {
+    function fetchUsersForGroup($groupId, $count=null, $offset=null) {
 	global $gallery;
 
 	list ($ret, $searchResults) = 
@@ -167,7 +167,7 @@ class GalleryUserGroupMap_core {
      * @return array object GalleryStatus a status code
      *               array group ids
      */
-    function getGroupsForUser($userId, $count=null, $offset=null) {
+    function fetchGroupsForUser($userId, $count=null, $offset=null) {
 	global $gallery;
 
 	list ($ret, $searchResults) = 

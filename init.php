@@ -133,8 +133,8 @@ function galleryTemplateCallback($params, $content) {
      *
      * One idiosyncracy: block functions are called twice, once at the start
      * and once at the end.  The first time around, the $content parameter is
-     * empty.  To simplify our system, we're going to ignore the first call.
-     * So, if $content is empty, we'll just return.  Note that if this is a
+     * null.  To simplify our system, we're going to ignore the first call.
+     * So, if $content is null, we'll just return.  Note that if this is a
      * function call, $content actually contains a smarty instance so it won't
      * be empty.
      */
@@ -142,7 +142,7 @@ function galleryTemplateCallback($params, $content) {
     if (is_object($content)) {
 	$content = false;
     } else {
-	if (empty($content)) {
+	if ($content === null) {
 	    /* Ignore the first of a two part call */
 	    return;
 	}

@@ -61,7 +61,7 @@ class CreateAndDeleteUserTestCase extends TestCase {
 
     function _dumpGroups($userId) {
 	list ($ret, $groupIds) = 
-	    GalleryUserGroupMap::getGroupsForUser($userId);
+	    GalleryUserGroupMap::fetchGroupsForUser($userId);
 	print_r($groupIds);
     }
 }

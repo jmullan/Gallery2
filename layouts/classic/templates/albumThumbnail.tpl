@@ -1,4 +1,3 @@
-
   <a href="{galleryUrl view=core:ShowItem itemId=$children[$child].id}">
     {if !empty($children[$child].thumbnail)}
     {assign var="thumbnail" value=$children[$child].thumbnail}

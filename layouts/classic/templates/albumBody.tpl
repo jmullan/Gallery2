@@ -10,7 +10,11 @@
 	      {/if}
 	    </td>
 	    <td align="right">
-	      Module links will go here
+	      {foreach from=$moduleItemLinks item=module}
+	      {foreach from=$module item=link}
+	      [<a href="{$link.url}">{$link.text}</a>]
+	      {/foreach}
+	      {/foreach}
 	    </td>
 	  </tr>
 	</table>

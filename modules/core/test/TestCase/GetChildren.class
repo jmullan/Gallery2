@@ -29,7 +29,7 @@ class GetChildrenTestCase extends TestCase {
 
 	for ($i = 0; $i < $iterations; $i++) {
 	    /* Count 'em all */
-	    list ($ret, $count) = $root->countChildren($userId);
+	    list ($ret, $count) = $root->fetchChildCount($userId);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -37,7 +37,7 @@ class GetChildrenTestCase extends TestCase {
 	    $gallery->debug("count: $count");
 
 	    /* Get 'em all */ 
-	    list ($ret, $childIds) = $root->getChildren($userId);
+	    list ($ret, $childIds) = $root->fetchChildren($userId);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }

@@ -53,9 +53,9 @@ class NetPbmModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::getAdminViews
+     * @see GalleryModule::getSiteAdminViews
      */
-    function getAdminViews() {
+    function getSiteAdminViews() {
 	global $gallery;
 
 	return array(GalleryStatus::success(),

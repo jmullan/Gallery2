@@ -154,14 +154,14 @@ class GalleryModule {
      * @return array object GalleryStatus a status code
      *               array( array('name' => name, 'view' => view), ...)
      */
-    function getAdminViews() {
+    function getSiteAdminViews() {
 	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
     }
 
     /**
      * Get the name of the GalleryView containing the administration
      * view specifically for configuring this module.  It may be one that is
-     * also listed in getAdminViews()
+     * also listed in getSiteAdminViews()
      *
      * @param the type of view requested
      * @return array object GalleryStatus a status code
@@ -169,6 +169,20 @@ class GalleryModule {
      */
     function getConfigurationView() {
 	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
+    }
+
+    /**
+     * Return 0 or more item-specific links to an arbitrary module view.
+     *
+     * @param object GalleryItem a target item
+     * @param array key => value parameters provided by the
+     *              parent view -- the module can augment or override these.
+     * @return array object GalleryStatus a status code
+     *               array 0 or more array('text' => 'localized text',
+     *                                     'params' => array(key => value, key => value))
+     */
+    function getItemLinks($item, $urlParams) {
+	return array(GalleryStatus::success(), array());
     }
 
     /* Getters and setters below */

@@ -69,18 +69,6 @@ class GalleryDerivativeImage_core extends GalleryDerivative {
      */
     var $_height;
 
-    /**
-     * The type of this image.  One of:
-     *    IMAGE_TYPE_THUMBNAIL
-     *    IMAGE_TYPE_RESIZE
-     *
-     * @g2 <member>
-     * @g2   <member-name>imageType</member-name>
-     * @g2   <member-type>INTEGER</member-type>
-     * @g2 </member>
-     */
-    var $_imageType;
-
     /*
      * ****************************************
      *                 Methods
@@ -94,16 +82,16 @@ class GalleryDerivativeImage_core extends GalleryDerivative {
      * @param int the type of derivative image
      * @return object GalleryStatus a status code
      */
-    function create($parentId, $imageType) {
+    function create($parentId, $derivativeType) {
 	global $gallery;
 
 	/* We can't have more than one thumbnail */
-	if ($imageType == IMAGE_TYPE_THUMBNAIL) {
+	if ($derivativeType == DERIVATIVE_TYPE_IMAGE_THUMBNAIL) {
 	    list($ret, $searchResults) =
 		$gallery->search(array('select' => 'COUNT([GalleryChildEntity::id])',
-				   'where' => ('[GalleryChildEntity::parentId]=? AND ' .
-					       '[GalleryDerivativeImage::imageType]=?')),
-			     array($parentId, $imageType));
+				       'where' => ('[GalleryChildEntity::parentId]=? AND ' .
+						   '[GalleryDerivative::derivativeType]=?')),
+			     array($parentId, $derivativeType));
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -120,8 +108,8 @@ class GalleryDerivativeImage_core extends GalleryDerivative {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	/* Save our image type */
-	$this->setImageType($imageType);
+	/* Save our derivative type */
+	$this->setDerivativeType($derivativeType);
 
 	return GalleryStatus::success();
     }
@@ -162,12 +150,12 @@ class GalleryDerivativeImage_core extends GalleryDerivative {
 	}
 
 	/* Get the path of the source for the next operation */
-	list($ret, $sourcePath) = $source->getPath();
+	list($ret, $sourcePath) = $source->fetchPath();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	list($ret, $destPath) = $this->getPath();
+	list($ret, $destPath) = $this->fetchPath();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

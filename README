@@ -1,5 +1,85 @@
-Gallery 2.
+Welcome to Gallery 2.0.  Currently this is in a *very* pre-alpha state. 
+I'm still working on the overall framework, and I'm taking the time to
+really do it right.  Once I'm satisfied that it's good and solid, I'll
+start to add all the various application features.
 
-Otherwise known as G2. 
+You should be able to install and play with a new G2 by following
+these instructions:
 
-Two Be? or Not Two Be? Only time will tell. 
+1. Get the latest G2 code
+
+2. Wipe out your existing data tree.  This is not absolutely 
+necessary, but it's helpful in terms of providing feedback
+on the install process.  You should probably wipe your old G2
+database, if you have one, as the data model may change without
+notice.
+
+3. Copy setup/config.php-dist to gallery/config.php and edit it.
+There are instructions in the file.  It should be pretty self
+explanatory.  I recommend setting your debug mode to 'buffered'
+so that you can see what's happening.
+
+4. Browse to gallery/setup/setup.php and follow its instructions.
+They are pretty sparse at the moment, but it *should* walk you
+through the process of creating a new data directory and a new
+database.  If it fails, you might want to look through the code.
+It's entirely in setup/setup.php
+
+5. Browse to the Gallery Site Administrator:
+
+	main.php?g2_view=core:SiteAdmin
+
+   5a.  Go to the 'modules' tab.  Click the 'configure' link next
+        to NetPBM.  Enter the path to your NetPBM binaries and save
+	it.  Repeat until all test results are positive.
+
+   5b.  Go to the 'modules' tab.  Click the 'activate' link next to
+	NetPBM.
+
+   5c.  Go to the 'modules' tab.  Click the 'configure' link next
+	to 'comment'.  Click the 'configure' button.
+
+   5d.  Go to the 'modules' tab.  Click the 'activate' link next to
+	'comment'.
+
+6. We don't yet have an interface to add images.  But we can do it
+   via the test harness.  Browse to the test harness:
+
+	setup/test/index.php
+
+   6a.  Click the 50, 500, 1K or 10K link next to 'CreateRandomTree'.
+	This will create a relatively boring tree of albums and 
+	photos for you.
+
+7. Go to the main interface:
+
+	main.php
+
+   and browse around.
+
+8. Try adding a comment on an album or item.  
+
+By this point, you should be able to go to your main Gallery
+page which will be unimpressive.  It'll have no data in it
+so you'll just see a pretty empty table at the top of the page
+and a whole lot of debug stuff below.
+
+
+6. Configure NetPBM and activate it.  Vallimar, I have changed
+so much stuff around here that I haven't had a chance to get your
+ImageMagick code in yet :-/.  Immediately after activating NetPBM
+the UI may still report it as inactive.  Click the "test harness"
+link at the top of the page (that triggers a clean refresh) and
+it should say "active"
+
+7. Run 500 iterations of CreateRandomTree.  This will simulate
+creating a (pretty boring) tree of photos and albums for you.
+
+8. Browse back to gallery/main.php and you should be able to 
+see your tree and wander around it.
+
+9. Browse to gallery/main.php?g2_view=core:SiteAdmin and you'll
+see the Site Admin framework.  It is /very/ weak right now; I've
+really just been working on the framework.  But it'll give you
+an idea of how things should work.
+

@@ -31,19 +31,8 @@ class ShowItemView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	/* Figure out what theme to use and calculate its relative URL */
-	$themeName = $item->getTheme();
-
-	list ($ret, $themeName) = $item->getTheme();
-	if (empty($themeName)) {
-	    list ($ret, $themeName) =
-		$gallery->getModuleParameter('core', 'default.theme');
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	}
-
-	$ret = $this->_activateTheme($themeName);
+	/* Activate the theme for this item */
+	$ret = $this->_activateTheme($item);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -94,34 +83,13 @@ class ShowItemView extends GalleryView {
 	}
 
 	/* Render and retrieve the body */
-	list ($ret, $html) = $layout->render($item);
+	$urlParams['view'] = 'core:ShowItem';
+	list ($ret, $html) = $layout->render($item, $urlParams);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	
 	return array(GalleryStatus::success(), $html);
-    }
-
-    function _getItem() {
-	global $gallery;
-	
-	/* If we don't have an item id, default to the root */
-	$itemId = GalleryUtilities::getRequestVariables('itemId');
-	if (empty($itemId)) {
-	    list ($ret, $itemId) =
-		$gallery->getModuleParameter('core', 'id.rootAlbum');
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	}
-
-	/* Load the item */
-	list ($ret, $item) = $gallery->loadEntitiesById($itemId);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	return array(GalleryStatus::success(), $item);
     }
 }
 ?>

@@ -176,7 +176,7 @@ class GalleryItemPropertiesMap_core {
      * @return array object GalleryStatus a status code
      *               array group ids
      */
-    function getPropertyKeys($itemId) {
+    function fetchPropertyKeys($itemId) {
 	global $gallery;
 
 	if (empty($itemId)) {
@@ -207,7 +207,7 @@ class GalleryItemPropertiesMap_core {
      * @return array object GalleryStatus a status code
      *               string value
      */
-    function getProperty($itemId, $key) {
+    function fetchProperty($itemId, $key) {
 	global $gallery;
 
 	if (empty($itemId) || empty($key)) {
@@ -239,7 +239,7 @@ class GalleryItemPropertiesMap_core {
      * @return array object GalleryStatus a status code
      *               array key => value pairs
      */
-    function getAllProperties($itemId, $key) {
+    function fetchAllProperties($itemId, $key) {
 	global $gallery;
 
 	if (empty($itemId)) {

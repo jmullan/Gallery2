@@ -47,7 +47,7 @@ class DownloadItemView extends GalleryView {
 	}
 
 	/* Get the path to the file */
-	list ($ret, $path) = $item->getPath();
+	list ($ret, $path) = $item->fetchPath();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

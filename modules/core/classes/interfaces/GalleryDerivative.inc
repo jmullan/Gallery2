@@ -61,6 +61,11 @@ class GalleryDerivative extends GalleryDerivative_core {
             'type' => STORAGE_TYPE_INTEGER
         );
     
+        $meta['members']['derivativeType'] = array(
+            'class' => 'GalleryDerivative',
+            'type' => STORAGE_TYPE_INTEGER
+        );
+    
         $meta['members']['derivativeMimeType'] = array(
             'class' => 'GalleryDerivative',
             'type' => STORAGE_TYPE_STRING
@@ -82,6 +87,8 @@ class GalleryDerivative extends GalleryDerivative_core {
         $data['derivativeCommands'] = $this->_derivativeCommands;
     
         $data['derivativeSize'] = $this->_derivativeSize;
+    
+        $data['derivativeType'] = $this->_derivativeType;
     
         $data['derivativeMimeType'] = $this->_derivativeMimeType;
     
@@ -159,6 +166,31 @@ class GalleryDerivative extends GalleryDerivative_core {
       
         $this->_derivativeSize = $value;
         $this->setModifiedFlag('derivativeSize', MEMBER_MODIFIED);
+    }
+  
+    /**
+     * Get the value of derivativeType
+     *
+     * @return INTEGER the value
+     */
+    function getderivativeType() {
+        if (!isset($this->_derivativeType)) {
+            return null;
+        }
+        return $this->_derivativeType;
+    }
+
+    /**
+     * Set the value of derivativeType
+     *
+     * @param INTEGER the value
+     */
+    function setderivativeType($value) {
+    
+        $value = (int)$value;
+      
+        $this->_derivativeType = $value;
+        $this->setModifiedFlag('derivativeType', MEMBER_MODIFIED);
     }
   
     /**

@@ -64,7 +64,7 @@ class CreatePhotoItemTestCase extends TestCase {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	$ret = $thumbnail->create($photo->getId(), IMAGE_TYPE_THUMBNAIL);
+	$ret = $thumbnail->create($photo->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -84,7 +84,7 @@ class CreatePhotoItemTestCase extends TestCase {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	$ret = $resize->create($photo->getId(), IMAGE_TYPE_RESIZE);
+	$ret = $resize->create($photo->getId(), DERIVATIVE_TYPE_IMAGE_RESIZE);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
