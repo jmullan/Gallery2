@@ -44,20 +44,21 @@ class GalleryUserGroupHelper_medium {
     function addUserToGroup($userId, $groupId) {
 	global $gallery;
 	if (empty($userId) || empty($groupId)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
-					__FILE__, __LINE__);
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
 
-	/*
-	 * Add a new entry in our groups table to represent this
-	 * relationship.
-	 */
+	/* Add a new entry in our groups table to represent this relationship. */
 	require_once(dirname(__FILE__) . '/../GalleryUserGroupMap.class');
-	$ret = GalleryUserGroupMap::addMapEntry(array("userId" => $userId,
-						      "groupId" => $groupId));
+	$ret = GalleryUserGroupMap::addMapEntry(array('userId' => $userId, 'groupId' => $groupId));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
+
+	$ret = GalleryCoreApi::invalidateDescendentCountCaches($userId, null);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
 	return GalleryStatus::success();
     }
 
@@ -71,19 +72,21 @@ class GalleryUserGroupHelper_medium {
     function removeUserFromGroup($userId, $groupId) {
 	global $gallery;
 	if (empty($userId) || empty($groupId)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
-					__FILE__, __LINE__);
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
 
-	/*
-	 * Remove this relationship from our groups table.
-	 */
+	/* Remove this relationship from our groups table. */
 	require_once(dirname(__FILE__) . '/../GalleryUserGroupMap.class');
-	$ret = GalleryUserGroupMap::removeMapEntry(array("userId" => $userId,
-							 "groupId" => $groupId));
+	$ret = GalleryUserGroupMap::removeMapEntry(array('userId' => $userId, 'groupId' => $groupId));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
+
+	$ret = GalleryCoreApi::invalidateDescendentCountCaches($userId, null);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
 	return GalleryStatus::success();
     }
 
@@ -97,18 +100,21 @@ class GalleryUserGroupHelper_medium {
     function removeUserFromAllGroups($userId) {
 	global $gallery;
 	if (empty($userId)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
-					__FILE__, __LINE__);
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
 
-	/*
-	 * Remove this relationship from our groups table.
-	 */
+	/* Remove this relationship from our groups table. */
 	require_once(dirname(__FILE__) . '/../GalleryUserGroupMap.class');
-	$ret = GalleryUserGroupMap::removeMapEntry(array("userId" => $userId));
+	$ret = GalleryUserGroupMap::removeMapEntry(array('userId' => $userId));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
+
+	$ret = GalleryCoreApi::invalidateDescendentCountCaches($userId, null);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
 	return GalleryStatus::success();
     }
 
@@ -122,15 +128,24 @@ class GalleryUserGroupHelper_medium {
     function removeAllUsersFromGroup($groupId) {
 	global $gallery;
 	if (empty($groupId)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
-					__FILE__, __LINE__);
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
 
-	/*
-	 * Remove this relationship from our groups table.
-	 */
+	list ($ret, $userIds) = GalleryCoreApi::fetchUsersForGroup($groupId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	foreach (array_keys($userIds) as $userId) {
+	    $ret = GalleryCoreApi::invalidateDescendentCountCaches($userId, null);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	/* Remove this relationship from our groups table. */
 	require_once(dirname(__FILE__) . '/../GalleryUserGroupMap.class');
-	$ret = GalleryUserGroupMap::removeMapEntry(array("groupId" => $groupId));
+	$ret = GalleryUserGroupMap::removeMapEntry(array('groupId' => $groupId));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

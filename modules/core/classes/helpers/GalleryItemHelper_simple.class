@@ -150,6 +150,80 @@ class GalleryItemHelper_simple {
     }
 
     /**
+     * Get any descendent counts that we can from the cache, and then failing that recalculate them using
+     * fetchUncachedDescendentCounts and cache the new values
+     *
+     *
+     * @param int the item ids
+     * @return array object GalleryStatus a status code
+     *               array(id => ##, id => ##)
+     * @static
+     */
+    function fetchDescendentCounts($itemIds) {
+	global $gallery;
+	$activeUserId = $gallery->getActiveUserId();
+
+	require_once(dirname(__FILE__) . '/../GalleryDescendentCountsMap.class');
+	$query = sprintf('
+         SELECT
+           [GalleryDescendentCountsMap::itemId], [GalleryDescendentCountsMap::descendentCount]
+         FROM
+           [GalleryDescendentCountsMap]
+         WHERE
+           [GalleryDescendentCountsMap::userId] = ?
+           AND
+           [GalleryDescendentCountsMap::itemId] IN (%s)
+        ', GalleryUtilities::makeMarkers(sizeof($itemIds)));
+	$storage = $gallery->getStorage();
+
+	$data = array();
+	$data[] = $activeUserId;
+	array_splice($data, sizeof($data), 0, $itemIds);
+
+	list ($ret, $searchResults) = $gallery->search($query, $data);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$counts = array();
+	while ($result = $searchResults->nextResult()) {
+	    $counts[$result[0]] = $result[1];
+	}
+
+	/* Now we have all the results that were cached.  Get the rest */
+	$remaining = array();
+	foreach ($itemIds as $itemId) {
+	    if (!isset($counts[$itemId])) {
+		$remaining[] = $itemId;
+	    }
+	}
+
+	if (!empty($remaining)) {
+	    list ($ret, $results) = GalleryItemHelper_simple::fetchUncachedDescendentCounts($remaining);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    /* Update the cache */
+	    foreach ($results as $itemId => $count) {
+		$ret = GalleryDescendentCountsMap::addMapEntry(array('userId' => $activeUserId,
+								     'itemId' => $itemId,
+								     'descendentCount' => $count));
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	    }
+
+	    /* Merge the results together.  Array_merge() renumbers numerical indices so we can't use it */
+	    foreach ($results as $key => $value) {
+		$counts[$key] = $value;
+	    }
+	}
+	
+	return array(GalleryStatus::success(), $counts);
+    }
+
+    /**
      * Fetch the number of descendents for a given item
      *
      * @param int the item id
@@ -157,7 +231,7 @@ class GalleryItemHelper_simple {
      *               array(id => ##, id => ##)
      * @static
      */
-    function fetchDescendentCounts($itemIds) {
+    function fetchUncachedDescendentCounts($itemIds) {
 	global $gallery;
 
 	list ($ret, $permissionBits) = GalleryCoreApi::convertPermissionIdsToBits(array('core.view'));
@@ -171,10 +245,10 @@ class GalleryItemHelper_simple {
 	}
 
 	$groupIds = array_keys($groupIds);
-	$groupIdMarkers = GalleryUtilities::makeMarkers($groupIds);
+	$groupIdMarkers = GalleryUtilities::makeMarkers(sizeof($groupIds));
 	
 	$storage = $gallery->getStorage();
-	$markers = GalleryUtilities::makeMarkers($itemIds);
+	$markers = GalleryUtilities::makeMarkers(sizeof($itemIds));
 
 	list ($ret, $concat) =
 	    $storage->getFunctionSql('CONCAT',
@@ -224,7 +298,7 @@ class GalleryItemHelper_simple {
 	while ($result = $searchResults->nextResult()) {
 	    $counts[$result[0]] = $result[1];
 	}
-	
+
 	return array(GalleryStatus::success(), $counts);
     }
 

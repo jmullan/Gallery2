@@ -122,8 +122,7 @@ class GalleryChildEntity_core extends GalleryEntity {
 	global $gallery;
 
 	if (empty($newParentId)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
-					__FILE__, __LINE__);
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
 
 	/* Set the new parent id */

@@ -46,6 +46,11 @@ class GalleryPermissionHelper_advanced {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
+
+	$ret = GalleryCoreApi::invalidateDescendentCountCaches($userId, $itemId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 	
 	return GalleryStatus::success();
     }
@@ -62,6 +67,18 @@ class GalleryPermissionHelper_advanced {
 	$ret = GalleryPermissionHelper_advanced::_addPermission($itemId, 0, $groupId, $permission, $applyToChildren);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	list ($ret, $userIds) = GalleryCoreApi::fetchUsersForGroup($groupId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	foreach (array_keys($userIds) as $userId) {
+	    $ret = GalleryCoreApi::invalidateDescendentCountCaches($userId, $itemId);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
 	}
 	
 	return GalleryStatus::success();
@@ -141,16 +158,16 @@ class GalleryPermissionHelper_advanced {
 	    }
 	    foreach ($childIds as $childId) {
 		$ret = GalleryPermissionHelper_advanced::_addPermission($childId,
-							    $userId,
-							    $groupId,
-							    $permission,
-							    $applyToChildren);
+									$userId,
+									$groupId,
+									$permission,
+									$applyToChildren);
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
 	}
-	
+
 	return GalleryStatus::success();
     }
 
@@ -163,10 +180,15 @@ class GalleryPermissionHelper_advanced {
      */
     function removeUserPermission($itemId, $userId, $permission, $applyToChildren=false) {
 	$ret = GalleryPermissionHelper_advanced::_removePermission($itemId, $userId, 0, $permission, $applyToChildren);
-	
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
+	
+	$ret = GalleryCoreApi::invalidateDescendentCountCaches($userId, $itemId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
 	return GalleryStatus::success();
     }
 
@@ -179,10 +201,22 @@ class GalleryPermissionHelper_advanced {
      */
     function removeGroupPermission($itemId, $groupId, $permission, $applyToChildren=false) {
 	$ret = GalleryPermissionHelper_advanced::_removePermission($itemId, 0, $groupId, $permission, $applyToChildren);
-	
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
+	
+	list ($ret, $userIds) = GalleryCoreApi::fetchUsersForGroup($groupId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	foreach (array_keys($userIds) as $userId) {
+	    $ret = GalleryCoreApi::invalidateDescendentCountCaches($userId, $itemId);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+	
 	return GalleryStatus::success();
     }
 

@@ -401,9 +401,40 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	if ($ret3->isError()) {
 	    return $ret3->wrap(__FILE__, __LINE__);
 	}
+
+	$ret = GalleryCoreApi::invalidateDescendentCountCaches(null, $this->getParentId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 	
 	return GalleryStatus::success();
     }
+
+    /**
+     * Move item to a new parent
+     *
+     * @access public
+     * @param int the id of the new parent GalleryItem
+     * @return object GalleryStatus a status code
+     */
+    function move($newParentId) {
+	$ret = GalleryCoreApi::invalidateDescendentCountCaches(null, $this->getParentId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	$ret = parent::move($newParentId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$ret = GalleryCoreApi::invalidateDescendentCountCaches(null, $this->getParentId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }    
 
     /**
      * Save the changes to this GalleryItem
@@ -414,7 +445,6 @@ class GalleryItem_core extends GalleryFileSystemEntity {
      * @return object GalleryStatus a status code
      */
     function save() {
-
 	if ($this->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED)) {
 	    $newItem = true;
 	} else {
@@ -448,6 +478,13 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	    $ret = GalleryCoreApi::createItemAttributes($this->getId(), $parentSequence);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    if ($this->getParentId()) {
+		$ret = GalleryCoreApi::invalidateDescendentCountCaches(null, $this->getParentId());
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
 	    }
 	}
 	

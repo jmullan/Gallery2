@@ -1170,6 +1170,32 @@ class GalleryCoreApi {
     }
 
     /**
+     * Invalidate our descendent count cache, any time we make a change that would possibly affect
+     * any of our counts:
+     * <ul>
+     * <li> adding a new item
+     * <li> deleting an item
+     * <li> moving an item
+     * <li> changing view permissions on an item
+     * <li> adding a user to a group
+     * <li> removing a user from a group
+     * </ul>
+     *
+     * If you provide just a user id, it will invalidate all cached values for that user.  If you provide just
+     * an item id, it'll invalidate that id and all of its parents for all users.  If you provide both, it will only
+     * invalidate for the intersection of the user and the item ids. 
+     *
+     * @param int a user id
+     * @param array a parent sequence
+     * @return object GalleryStatus a status code
+     */
+    function invalidateDescendentCountCaches($userId, $itemId) {
+	GalleryCoreApi::apiMethodUsed('invalidateDescendentCountCaches', 'GalleryItemHelper_medium');
+	require_once(dirname(__FILE__) . '/helpers/GalleryItemHelper_medium.class');
+	return GalleryItemHelper_medium::invalidateDescendentCountCaches($userId, $itemId);
+    }
+
+    /**
      * Fetch the breakdown of descendents for a given item.  Note: this call is more expensive than
      * GalleryCoreApi::fetchDescendentCounts(), so use that version where possible.
      *

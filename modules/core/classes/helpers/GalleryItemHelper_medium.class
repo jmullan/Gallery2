@@ -741,5 +741,63 @@ class GalleryItemHelper_medium {
 
 	return array(GalleryStatus::success(), $success);
     }
+
+    /**
+     * Invalidate our descendent count cache, any time we make a change that would possibly affect
+     * any of our counts:
+     * <ul>
+     * <li> adding a new item
+     * <li> deleting an item
+     * <li> moving an item
+     * <li> changing view permissions on an item
+     * <li> adding a user to a group
+     * <li> removing a user from a group
+     * </ul>
+     *
+     * If you provide just a user id, it will invalidate all cached values for that user.  If you provide just
+     * an item id, it'll invalidate that id and all of its parents for all users.  If you provide both, it will only
+     * invalidate for the intersection of the user and the item ids. 
+     *
+     * @param int a user id
+     * @param array a parent sequence
+     * @return object GalleryStatus a status code
+     */
+    function invalidateDescendentCountCaches($userId, $itemId) {
+	require_once(dirname(__FILE__) . '/../GalleryDescendentCountsMap.class');
+	
+	if (isset($userId) && !isset($itemId)) {
+	    $ret = GalleryDescendentCountsMap::removeMapEntry(array('userId' => $userId));
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	if (isset($itemId)) {
+	    list ($ret, $parentSequence) = GalleryCoreApi::fetchParentSequence($itemId);
+	    if ($ret->isError()) {
+		if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
+		    // It's legal to invalidate for objects that are in the process of being created
+		    return GalleryStatus::success();
+		}
+		
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    $parentSequence[] = $itemId;
+	    
+	    foreach ($parentSequence as $parentId) {
+		if (isset($userId)) {
+		    $ret = GalleryDescendentCountsMap::removeMapEntry(array('userId' => $userId,
+									    'itemId' => $parentId));
+		} else {
+		    $ret = GalleryDescendentCountsMap::removeMapEntry(array('itemId' => $parentId));
+		}
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+	}
+
+	return GalleryStatus::success();
+    }
 }
 ?>
