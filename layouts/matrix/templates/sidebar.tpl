@@ -30,17 +30,12 @@
   {* Album actions, if there are any *}
   {if (isset($layout.moduleItemLinks[$layout.item.id]))}
   <div class="gbMenu">
-    <h3 class="giTitle">
-      {g->text text="Actions"}
-    </h3>
-
-    <ul>
+    <select onchange="javascript:if (this.value) location.href=this.value" class="giActionSelect">
+      <option label="&laquo; actions &raquo;" value="">&laquo; actions &raquo;</option>
       {foreach from=$layout.moduleItemLinks[$layout.item.id] item=link}
-      <li>
-        <a href="{$link.url}">{$link.text}</a>
-      </li>
+      <option label="{$link.text}" value="{$link.url}">{$link.text}</option>
       {/foreach}
-    </ul>
+    </select>
   </div>
   {/if}
 
