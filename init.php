@@ -98,18 +98,18 @@ function GalleryInitFirstPass($params=array()) {
     $gallery->setConfig('data.smarty.base', $dataBase . 'smarty' . $slash);
     $gallery->setConfig('data.smarty.templates_c', $dataBase . 'smarty' . $slash . 'templates_c' . $slash);
 
-    /* Initialize our translator */
-    $ret = $gallery->initTranslator();
-    if ($ret->isError()) {
-	return $ret->wrap(__FILE__, __LINE__);
-    }
-
     /* Initialize our session */
     $ret = $gallery->initSession();
     if ($ret->isError()) {
 	return $ret->wrap(__FILE__, __LINE__);
     }
     $session =& $gallery->getSession();
+
+    /* Initialize our translator */
+    $ret = $gallery->initTranslator();
+    if ($ret->isError()) {
+	return $ret->wrap(__FILE__, __LINE__);
+    }
 
     return GalleryStatus::success();
 }

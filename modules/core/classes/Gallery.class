@@ -198,6 +198,10 @@ class Gallery {
 	$activeUserId = $session->get('core.id.activeUser');
 	if ($activeUserId != $user->getId()) {
 	    $session->put('core.id.activeUser', $user->getId());
+	    $language = $user->getLanguage();
+	    if (!empty($language)) {
+		$session->put('core.language', $language);
+	    }
 	}
     }
     
@@ -390,37 +394,59 @@ class Gallery {
 	if (empty($this->_translator)) {
 	    /* Load the translator class */
 	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryTranslator.class');
-	    
+
+	    list ($ret, $language) = $this->getActiveLanguageCode();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
 	    $this->_translator = new GalleryTranslator();
-
-	    $language = null;
-	    $activeUser = $this->getActiveUser();
-	    if (!empty($activeUser)) {
-		$language = $activeUser->getLanguage();
-	    }
-
-	    /* Nothing specified for the user -- try the default */
-	    if (empty($language)) {
-		list ($ret, $language) =
-		    GalleryCoreApi::getPluginParameter('module', 'core', 'default.language');
-		if ($ret->isError()) {
-		    if ($ret->getErrorCode() & ERROR_STORAGE_FAILURE) {
-			/*
-			 * During installation it's possible that the database isn't around yet when we
-			 * want a translator.  Just keep going.
-			 */
-		    } else {
-			return $ret->wrap(__FILE__, __LINE__);
-		    }
-		}
-	    }
-
 	    $ret = $this->_translator->init($language);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Get the active language code.
+     *
+     * @return array object GalleryStatus a status code
+     *               string language code
+     */
+    function getActiveLanguageCode() {
+	$session =& $this->getSession();
+	$language = $session->get('core.language');
+
+	if (empty($language)) {
+	    list ($ret, $language) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'default.language');
+	    if ($ret->isError()) {
+		if ($ret->getErrorCode() & ERROR_STORAGE_FAILURE) {
+		    /*
+		     * During installation it's possible that the database isn't around yet.
+		     * Just keep going.
+		     */
+		} else {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	    }
+	}
+
+	return array(GalleryStatus::success(), $language);
+    }
+
+    /**
+     * Set the active language code for this session.
+     *
+     * @param string language code
+     * @return object GalleryStatus a status code
+     */
+    function setActiveLanguageCode($language) {
+	$session =& $this->getSession();
+	$session->put('core.language', $language);
 	return GalleryStatus::success();
     }
 
