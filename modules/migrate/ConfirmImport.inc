@@ -355,21 +355,44 @@ class ConfirmImportController extends GalleryController {
 				    $newAlbumInstance->setDescription($this->convertHtmlToBbcode($album['description']));
 				}
 				// $newAlbumInstance->settheme
-				if (isset($album['last_mod_time'])) {
-				    $newAlbumInstance->setcreationTimestamp($album['last_mod_time']);
+				if (isset($album['last_mod_time']) && $album['last_mod_time']) {
+				    if (isset($album['clicks_date']) && $album['clicks_date']>0 && $album['clicks_date']<$album['last_mod_time']){
+					$newAlbumInstance->setcreationTimestamp($album['clicks_date']);
+				    } else {
+					$newAlbumInstance->setcreationTimestamp($album['last_mod_time']);
+				    }
 				}
-				if (isset($album['clicks_date'])) {
+				if (isset($album['clicks_date']) && $album['clicks_date']>0) {
 				    $newAlbumInstance->setviewedSinceTimestamp($album['clicks_date']);
 				}
+				
+				// $newAlbumInstance->setorderBy
+				// $newAlbumInstance->setorderDirection
+
+				// Set album owner
+				$validUID = Gallery1DataParser::isValidUid($albumsPath,$album['owner']);
+				if ($validUID) {
+				    list($ret, $albumUserFields) = Gallery1DataParser::getUserFieldsByUid($albumsPath, $album['owner']);
+				    if ($ret->isError()) {
+					return array($ret->wrap(__FILE__, __LINE__), null);
+				    }
+				    list($ret, $owner) = GalleryCoreApi::fetchUserByUsername($albumUserFields['username']);
+				    if ($ret->isError()) {
+					if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
+					    $owner = $gallery->getActiveUser();
+					} else {
+					    return array($ret->wrap(__FILE__, __LINE__), null);
+					}
+				    }
+				    $newAlbumInstance->setOwnerId($owner->getId());
+				}
+
 				/* Save the new album */	    
 				$ret = $newAlbumInstance->save();
 				if ($ret->isError()) {
 				    return array($ret->wrap(__FILE__, __LINE__), null);
 				}
 
-				
-				// $newAlbumInstance->setorderBy
-				// $newAlbumInstance->setorderDirection
 
 				$ret = GalleryCoreApi::removeItemPermissions($newAlbumInstance->getId());
 				if ($ret->isError()) {
@@ -393,7 +416,40 @@ class ConfirmImportController extends GalleryController {
 					return array($ret->wrap(__FILE__, __LINE__), null);
 				    }
 				}
-									                                                                             
+
+				// Set album owner permissions
+				$validUID = Gallery1DataParser::isValidUid($albumsPath,$album['owner']);
+				if ($validUID) {
+				    list($ret, $albumUserFields) = Gallery1DataParser::getUserFieldsByUid($albumsPath, $album['owner']);
+				    if ($ret->isError()) {
+					return array($ret->wrap(__FILE__, __LINE__), null);
+				    }
+				    list($ret, $owner) = GalleryCoreApi::fetchUserByUsername($albumUserFields['username']);
+				    if ($ret->isError()) {
+					if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
+					    $owner = $gallery->getActiveUser();
+					} else {
+					    return array($ret->wrap(__FILE__, __LINE__), null);
+					}
+				    }
+				    $ret = GalleryCoreApi::addUserPermission($newAlbumInstance->getId(),
+									     $owner->getId(),
+									     'core.all',
+									     true
+									     );
+				    if ($ret->isError()) {
+					return array($ret->wrap(__FILE__, __LINE__), null);
+				    }
+				    $ret = GalleryCoreApi::addUserPermission($newAlbumInstance->getId(),
+									     $owner->getId(),
+									     'comment.all',
+									     true
+									     );
+				    if ($ret->isError()) {
+					return array($ret->wrap(__FILE__, __LINE__), null);
+				    }				    
+				}
+
 				if (isset($album['perms'])) {
 				    foreach($album['perms'] as $tmpperm => $tmpusers) {
 					foreach($permissionTranslation[$tmpperm] as $tmpTranslatedPerm) {
@@ -456,41 +512,7 @@ class ConfirmImportController extends GalleryController {
 				    }
 				}				
 				
-				// Set album owner
-				$validUID = Gallery1DataParser::isValidUid($albumsPath,$album['owner']);
-				if ($validUID) {
-				    list($ret, $albumUserFields) = Gallery1DataParser::getUserFieldsByUid($albumsPath, $album['owner']);
-				    if ($ret->isError()) {
-					return array($ret->wrap(__FILE__, __LINE__), null);
-				    }
-				    list($ret, $owner) = GalleryCoreApi::fetchUserByUsername($albumUserFields['username']);
-				    if ($ret->isError()) {
-					if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
-					    $owner = $gallery->getActiveUser();
-					} else {
-					    return array($ret->wrap(__FILE__, __LINE__), null);
-					}
-				    }
-				    $newAlbumInstance->setOwnerId($owner->getId());
-				    $ret = GalleryCoreApi::addUserPermission($newAlbumInstance->getId(),
-									     $owner->getId(),
-									     'core.all',
-									     true
-									     );
-				    if ($ret->isError()) {
-					return array($ret->wrap(__FILE__, __LINE__), null);
-				    }
-				    $ret = GalleryCoreApi::addUserPermission($newAlbumInstance->getId(),
-									     $owner->getId(),
-									     'comment.all',
-									     true
-									     );
-				    if ($ret->isError()) {
-					return array($ret->wrap(__FILE__, __LINE__), null);
-				    }				    
-				}
 
-				
 				/* Click counts must be set after the item is first saved */
 				$ret = GalleryCoreApi::setItemViewCount($newAlbumInstanceId, $album['clicks']);
 				if ($ret->isError()) {
