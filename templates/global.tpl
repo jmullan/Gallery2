@@ -51,9 +51,7 @@
 
     {* If debugging or profiling is enabled, we'll display it here *}
     {if isset($main.debug) || isset($main.profile)}
-    <div id="gpDebug">
       {include file="gallery:templates/debug.tpl"}
-    </div>
     {/if}
   </body>
 </html>
