@@ -46,102 +46,143 @@ class AdminExifController extends GalleryController {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	/* Get the list of legal local server dirs */
-	list ($ret, $localServerDirs) = $gallery->getModuleParameter('core', 'uploadLocalServer.dirs');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	$localServerDirList = split(',', $localServerDirs);
-
 	$error = array();
 	$status = array();
-	if (isset($form['action']['save'])) {
-	    foreach (array('permissions.directory',
-			   'permissions.file',
-			   'exec.expectedStatus',
-			   'default.orderBy',
-			   'default.orderDirection',
-			   'default.layout',
-			   'default.theme',
-			   'default.language',
-			   'session.lifetime',
-			   'session.inactivityTimeout',
-			   'misc.useShortUrls') as $key) {
-		if (isset($form[$key])) {
-		    $ret = $gallery->setModuleParameter('core', $key, $form[$key]);
-		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-		    }
-		}
+	if (isset($form['action']['availableToSummary'])) {
+	    list ($ret, $properties) = ExifPropertiesMap::getProperties(EXIF_SUMMARY);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    $status['saved'] = 1;
-	    $redirect['view'] = 'core:SiteAdmin';
-	    $redirect['subView'] = 'core:AdminExif';
-	} else if (isset($form['action']['addUploadLocalServerDir'])) {
-	    $path = $form['uploadLocalServer']['newDir'];
 
-	    $platform = $gallery->getPlatform();
-	    if (empty($path)) {
-		$error[] = 'form[error][uploadLocalServer][newDir][missing]';
-	    } else if ($platform->isRestrictedByOpenBasedir($path)) {
-		$error[] = 'form[error][uploadLocalServer][newDir][restrictedByOpenBasedir]';
-	    } else if (!$platform->is_readable($path)) {
-		$error[] = 'form[error][uploadLocalServer][newDir][notReadable]';
-	    } else if (!$platform->is_dir($path)) {
-		$error[] = 'form[error][uploadLocalServer][newDir][notADirectory]';
-	    } 
-
-	    if (empty($error)) {
-		if (!in_array($path, $localServerDirList)) {
-		    $localServerDirList[] = $path;
+	    if (isset($form['available'])) {
+		$count = 0;
+		foreach ($form['available'] as $property) {
+		    if (!in_array($property, $properties)) {
+			$properties[] = $property;
+			$count++;
+		    }
+		    sort($properties);
 		}
 
-		for ($i = 0; $i < sizeof($localServerDirList); $i++) {
-		    if (empty($localServerDirList[$i])) {
-			unset($localServerDirList[$i]);
-		    }
+		$ret = ExifPropertiesMap::setProperties(EXIF_SUMMARY, $properties);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		
-		$ret = $gallery->setModuleParameter('core', 'uploadLocalServer.dirs', join(',', $localServerDirList));
+		$status['added']['summary'] = $count;
+		$redirect['view'] = 'core:SiteAdmin';
+		$redirect['subView'] = 'exif:AdminExif';
+	    } else {
+		$error[] = 'form[error][available][missing]';
+	    }
+
+	} else if (isset($form['action']['availableToDetailed'])) {
+	    list ($ret, $properties) = ExifPropertiesMap::getProperties(EXIF_DETAILED);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    if (isset($form['available'])) {
+		$count = 0;
+		foreach ($form['available'] as $property) {
+		    if (!in_array($property, $properties)) {
+			$properties[] = $property;
+			$count++;
+		    }
+		    sort($properties);
+		}
+
+		$ret = ExifPropertiesMap::setProperties(EXIF_DETAILED, $properties);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-		$status['addedDir'] = 1;
-		$redirect['view'] = 'core:SiteAdmin';
-		$redirect['subView'] = 'core:AdminExif';
-	    } else {
-	    }
-	} else if (isset($form['action']['removeUploadLocalServerDir'])) {
-	    if (!empty($form['uploadLocalServer']['selectedDir'])) {
-		$path = $form['uploadLocalServer']['selectedDir'];
-		$flip = array_flip($localServerDirList);
-		if (isset($flip[$path])) {
-		    unset($flip[$path]);
-		}
-		$localServerDirList = array_flip($flip);
 
-		for ($i = 0; $i < sizeof($localServerDirList); $i++) {
-		    if (empty($localServerDirList[$i])) {
-			unset($localServerDirList[$i]);
+		$status['added']['detailed'] = $count;
+		$redirect['view'] = 'core:SiteAdmin';
+		$redirect['subView'] = 'exif:AdminExif';
+	    } else {
+		$error[] = 'form[error][available][missing]';
+	    }
+	} else if (isset($form['action']['removeFromSummary'])) {
+	    list ($ret, $properties) = ExifPropertiesMap::getProperties(EXIF_SUMMARY);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    if (isset($form['summary'])) {
+		$count = 0;
+		$newProperties = array();
+		for ($i = 0; $i < sizeof($properties); $i++) {
+		    if (!in_array($properties[$i], $form['summary'])) {
+			$newProperties[] = $properties[$i];
+		    } else {
+			$count++;
 		    }
 		}
-		$ret = $gallery->setModuleParameter('core', 'uploadLocalServer.dirs', join(',', $localServerDirList));
+
+		$ret = ExifPropertiesMap::setProperties(EXIF_SUMMARY, $newProperties);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-		$status['removedDir'] = 1;
+
+		$status['removed']['summary'] = $count;
 		$redirect['view'] = 'core:SiteAdmin';
-		$redirect['subView'] = 'core:AdminExif';
+		$redirect['subView'] = 'exif:AdminExif';
 	    } else {
-		$error[] = 'form[error][uploadLocalServer][selectedDir][missing]';
+		$error[] = 'form[error][available][missing]';
 	    }
+
+	} else if (isset($form['action']['resetSummary'])) {
+	    $ret = ExifHelper::setDefaultProperties(EXIF_SUMMARY);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $status['restored']['summary'] = 1;
+	    $redirect['view'] = 'core:SiteAdmin';
+	    $redirect['subView'] = 'exif:AdminExif';
+	} else if (isset($form['action']['removeFromDetailed'])) {
+	    list ($ret, $properties) = ExifPropertiesMap::getProperties(EXIF_DETAILED);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    if (isset($form['detailed'])) {
+		$count = 0;
+		$newProperties = array();
+		for ($i = 0; $i < sizeof($properties); $i++) {
+		    if (!in_array($properties[$i], $form['detailed'])) {
+			$newProperties[] = $properties[$i];
+		    } else {
+			$count++;
+		    }
+		}
+
+		$ret = ExifPropertiesMap::setProperties(EXIF_DETAILED, $newProperties);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		$status['removed']['detailed'] = $count;
+		$redirect['view'] = 'core:SiteAdmin';
+		$redirect['subView'] = 'exif:AdminExif';
+	    } else {
+		$error[] = 'form[error][available][missing]';
+	    }
+	} else if (isset($form['action']['resetDetailed'])) {
+	    $ret = ExifHelper::setDefaultProperties(EXIF_DETAILED);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $status['restored']['detailed'] = 1;
+	    $redirect['view'] = 'core:SiteAdmin';
+	    $redirect['subView'] = 'exif:AdminExif';
 	}
 
 	if (!empty($redirect)) {
 	    $results['redirect'] = $redirect;
 	} else {
 	    $results['delegate']['view'] = 'core:SiteAdmin';
-	    $results['delegate']['subView'] = 'core:AdminExif';
+	    $results['delegate']['subView'] = 'exif:AdminExif';
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;
@@ -163,7 +204,7 @@ class AdminExifView extends GalleryView {
      */
     function loadTemplate(&$template, &$form) {
 	global $gallery;
-	
+
 	$mode = GalleryUtilities::getRequestVariables('mode');
 	
 	$ret = GalleryUserHelper::assertSiteAdministrator();
@@ -176,64 +217,70 @@ class AdminExifView extends GalleryView {
 	    $form['formName'] = 'AdminExif';
 	}
 
-	/*
-	 * If the mode is empty get it from the session.  If it's empty there,
-	 * default to uploading from the browser.  Either way, save the user's
-	 * preference in the session.
-	 */
-	$session =& $gallery->getSession();
-	if (empty($mode)) {
-	    $mode = $session->get('exif.view.AdminExif.mode');
-	    if (empty($mode)) {
-		$mode = 'general';
-	    }
-	}
-	$session->put('exif.view.AdminExif.mode', $mode);
-
 	list ($ret, $module) = $gallery->loadModule('exif');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$results = array();
-	list ($ret, $params) = GalleryPluginParameterMap::fetchAllParameters('module', 'exif', null);
+	$exifKeys = ExifHelper::getExifKeys();
+	$visibleKeys = array();
+
+	/* Prepare the summary list */
+	$summaryList = array();
+	list ($ret, $tmp) = ExifPropertiesMap::getProperties(EXIF_SUMMARY);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-
-	$exifKeys = array();
-	foreach (ExifHelper::getExifKeys() as $key => $data) {
-	    $exifKeys[$key] = array('title' => $module->translate($data[1]));
-	    if (isset($params[$key])) {
-		switch($params[$key]) {
-		case EXIF_SIMPLE:
-		    $exifKeys[$key]['status'] = 'simple';
-		    break;
-
-		case EXIF_ADVANCED:
-		    $exifKeys[$key]['status'] = 'advanced';
-		    break;
-		}
-	    } else {
-		$exifKeys[$key]['status'] = 'hidden';
-	    }
+	foreach ($tmp as $property) {
+	    $summaryList[$module->translate($exifKeys[$property][2])][$property] =
+		$module->translate($exifKeys[$property][1]);
+	    $visibleKeys[$property] = isset($visibleKeys[$property]) ? $visibleKeys[$property]+1 : 1;
 	}
 
-	uasort($exifKeys, array($this, 'titleComparator'));
+	foreach (array_keys($summaryList) as $section) {
+	    asort($summaryList[$section]);
+	}
+	
+	/* Prepare the detailed list */
+	$detailedList = array();
+	list ($ret, $tmp) = ExifPropertiesMap::getProperties(EXIF_DETAILED);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	foreach ($tmp as $property) {
+	    $detailedList[$module->translate($exifKeys[$property][2])][$property] =
+		$module->translate($exifKeys[$property][1]);
+	    $visibleKeys[$property] = isset($visibleKeys[$property]) ? $visibleKeys[$property]+1 : 1;
+	}
+
+	foreach (array_keys($detailedList) as $section) {
+	    asort($detailedList[$section]);
+	}
+
+	/* Anything not summary and detailed is available */
+	$availableList = array();
+	foreach ($exifKeys as $key => $data) {
+	    if (isset($visibleKeys[$key]) && $visibleKeys[$key] == 2) {
+		continue;
+	    }
+
+	    $availableList[$module->translate($data[2])][$key] = $module->translate($data[1]);
+	}
+
+	foreach (array_keys($availableList) as $section) {
+	    asort($availableList[$section]);
+	}
 
 	$AdminExif = array();
-	$AdminExif['mode'] = $mode;
-	$AdminExif['keys'] = $exifKeys;
+	$AdminExif['availableList'] = $availableList;
+	$AdminExif['summaryList'] = $summaryList;
+	$AdminExif['detailedList'] = $detailedList;
 	
-	$template->setVariable('controller', 'core:AdminExif');
+	$template->setVariable('controller', 'exif:AdminExif');
 	$template->setVariable('AdminExif', $AdminExif);
 
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/exif/templates/AdminExif.tpl'));
-    }
-
-    function titleComparator($a, $b) {
-	return strcmp($a['title'], $b['title']);
     }
 }
 ?>

@@ -45,9 +45,9 @@ class SwitchDetailModeControllerTest extends GalleryControllerTestCase {
 	parent::tearDown();
     }
 
-    function testSwitchToSimple() {
+    function testSwitchToSummary() {
 	global $gallery;
-	GalleryUtilities::putRequestVariable('mode', 'simple');
+	GalleryUtilities::putRequestVariable('mode', 'summary');
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
@@ -62,12 +62,12 @@ class SwitchDetailModeControllerTest extends GalleryControllerTestCase {
 	if (!$session->exists('exif.module.loadItemDetails.mode')) {
 	    $this->fail('Missing session value');
 	}
-	$this->assertEquals('simple', $session->get('exif.module.loadItemDetails.mode'));
+	$this->assertEquals('summary', $session->get('exif.module.loadItemDetails.mode'));
     }
 
-    function testSwitchToAdvanced() {
+    function testSwitchToDetailed() {
 	global $gallery;
-	GalleryUtilities::putRequestVariable('mode', 'advanced');
+	GalleryUtilities::putRequestVariable('mode', 'detailed');
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
@@ -82,7 +82,7 @@ class SwitchDetailModeControllerTest extends GalleryControllerTestCase {
 	if (!$session->exists('exif.module.loadItemDetails.mode')) {
 	    $this->fail('Missing session value');
 	}
-	$this->assertEquals('advanced', $session->get('exif.module.loadItemDetails.mode'));
+	$this->assertEquals('detailed', $session->get('exif.module.loadItemDetails.mode'));
     }
     
     function testSwitchToBogus() {
@@ -102,7 +102,7 @@ class SwitchDetailModeControllerTest extends GalleryControllerTestCase {
 	if (!$session->exists('exif.module.loadItemDetails.mode')) {
 	    $this->fail('Missing session value');
 	}
-	$this->assertEquals('simple', $session->get('exif.module.loadItemDetails.mode'));
+	$this->assertEquals('summary', $session->get('exif.module.loadItemDetails.mode'));
     }
 }
 ?>

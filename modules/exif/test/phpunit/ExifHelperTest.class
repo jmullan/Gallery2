@@ -40,22 +40,61 @@ class ExifHelperTest extends GalleryTestCase {
     }
 
     /**
-     *
+     * @see GalleryTestCase::setUp()
      */
     function setUp() {
 	parent::setUp();
+
+	list ($ret, $this->_save['summary']) = ExifPropertiesMap::getProperties(EXIF_SUMMARY);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $this->_save['detailed']) = ExifPropertiesMap::getProperties(EXIF_DETAILED);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = ExifHelper::setDefaultProperties(EXIF_SUMMARY);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = ExifHelper::setDefaultProperties(EXIF_DETAILED);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
     }
 
     /**
-     *
+     * @see GalleryTestCase::tearDown()
      */
     function tearDown() {
 	parent::tearDown();
+
+	$ret = ExifPropertiesMap::setProperties(EXIF_SUMMARY, $this->_save['summary']);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = ExifPropertiesMap::setProperties(EXIF_DETAILED, $this->_save['detailed']);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
     }
 
+    /**
+     * Test getting EXIF data from a test file
+     */
     function testGetExifData() {
 	list ($ret, $exifData) =
-	    ExifHelper::getExifData(dirname(__FILE__) . '/../data/CanonS30.small.jpg', EXIF_SIMPLE);
+	    ExifHelper::getExifData(dirname(__FILE__) . '/../data/CanonS30.small.jpg', EXIF_SUMMARY);
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -81,10 +120,13 @@ class ExifHelperTest extends GalleryTestCase {
 	$this->assertEquals(2, $verifiedCount);
     }
 
+    /**
+     * Test getting all the EXIF keys
+     */
     function testGetExifKeys() {
 	/* There are a bajillion keys.  Do a quick sanity check */
 	$exifKeys = ExifHelper::getExifKeys();
-	$this->assertEquals(234, sizeof($exifKeys));
+	$this->assertEquals(226, sizeof($exifKeys));
 	$this->assert(isset($exifKeys['IFD0.ImageType']));
     }
 }

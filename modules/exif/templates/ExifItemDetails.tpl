@@ -7,10 +7,10 @@
     {g->linkset}
       {g->item}
 	{g->title}
-	  {if ($ExifItemDetails.mode == 'simple')}
+	  {if ($ExifItemDetails.mode == 'summary')}
 	    {g->text text="summary"}
 	  {else}
-	    {g->link url_return="true" url_controller="exif:SwitchDetailMode" url_mode="simple"}
+	    {g->link url_return="true" url_controller="exif:SwitchDetailMode" url_mode="summary"}
 	      {g->text text="summary"}
 	    {/g->link}
 	  {/if}
@@ -18,10 +18,10 @@
       {/g->item}
       {g->item}
 	{g->title}
-	  {if ($ExifItemDetails.mode == 'advanced')}
+	  {if ($ExifItemDetails.mode == 'detailed')}
 	    {g->text text="details"}
 	  {else}
-	    {g->link url_return="true" url_controller="exif:SwitchDetailMode" url_mode="advanced"}
+	    {g->link url_return="true" url_controller="exif:SwitchDetailMode" url_mode="detailed"}
 	      {g->text text="details"}
 	    {/g->link}
 	  {/if}

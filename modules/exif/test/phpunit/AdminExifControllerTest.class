@@ -38,15 +38,187 @@ class AdminExifControllerTest extends GalleryControllerTestCase {
     function setUp() {
 	global $gallery;
 	parent::setUp();
+
+	list ($ret, $this->_save['summary']) = ExifPropertiesMap::getProperties(EXIF_SUMMARY);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $this->_save['detailed']) = ExifPropertiesMap::getProperties(EXIF_DETAILED);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = ExifHelper::setDefaultProperties(EXIF_SUMMARY);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = ExifHelper::setDefaultProperties(EXIF_DETAILED);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
     }
 
     function tearDown() {
 	global $gallery;
 	parent::tearDown();
+
+	$ret = ExifPropertiesMap::setProperties(EXIF_SUMMARY, $this->_save['summary']);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = ExifPropertiesMap::setProperties(EXIF_DETAILED, $this->_save['detailed']);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
     }
 
-    function testSaveSettings() {
-	$this->assert(false, 'This test is not yet implemented');
+    function testSaveAvailableToSummary() {
+	GalleryUtilities::putRequestVariable('form[available][0]', 'IFD1.SubjectLocation');
+	GalleryUtilities::putRequestVariable('form[available][1]', 'SubIFD.Sharpness');
+	GalleryUtilities::putRequestVariable('form[action][availableToSummary]', 1);
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'exif:AdminExif'),
+				  'status' => array('added' => array('summary' => 2)),
+				  'error' => array()),
+			    $results);
+
+	/* Make sure they're there */
+	list ($ret, $properties) = ExifPropertiesMap::getProperties(EXIF_SUMMARY);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assert(in_array('IFD1.SubjectLocation', $properties));
+	$this->assert(in_array('SubIFD.Sharpness', $properties));
+    }
+
+    function testRemoveFromSummary() {
+	GalleryUtilities::putRequestVariable('form[summary][0]', 'IFD0.Make');
+	GalleryUtilities::putRequestVariable('form[summary][1]', 'SubIFD.ISOSpeedRatings');
+	GalleryUtilities::putRequestVariable('form[action][removeFromSummary]', 1);
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'exif:AdminExif'),
+				  'status' => array('removed' => array('summary' => 2)),
+				  'error' => array()),
+			    $results);
+
+	/* Make sure they're gone */
+	list ($ret, $properties) = ExifPropertiesMap::getProperties(EXIF_SUMMARY);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assert(!in_array('IFD0.Make', $properties));
+	$this->assert(!in_array('SubIFD.ISOSpeedRatings', $properties));
+    }
+
+    function testResetSummary() {
+	/* Remove all properties */
+	$ret = ExifPropertiesMap::setProperties(EXIF_SUMMARY, array());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	GalleryUtilities::putRequestVariable('form[action][resetSummary]', 1);
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'exif:AdminExif'),
+				  'status' => array('restored' => array('summary' => 1)),
+				  'error' => array()),
+			    $results);
+
+	/* Make sure they're all back again */
+	list ($ret, $properties) = ExifPropertiesMap::getProperties(EXIF_SUMMARY);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(14, sizeof($properties));
+	$this->assert(in_array('IFD0.Make', $properties));
+	$this->assert(in_array('SubIFD.ISOSpeedRatings', $properties));
+    }
+
+    function testSaveAvailableToDetailed() {
+	GalleryUtilities::putRequestVariable('form[available][0]', 'IFD1.SubjectLocation');
+	GalleryUtilities::putRequestVariable('form[available][1]', 'Nikon.FocusMode');
+	GalleryUtilities::putRequestVariable('form[action][availableToDetailed]', 1);
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'exif:AdminExif'),
+				  'status' => array('added' => array('detailed' => 2)),
+				  'error' => array()),
+			    $results);
+
+	/* Make sure they're there */
+	list ($ret, $properties) = ExifPropertiesMap::getProperties(EXIF_DETAILED);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assert(in_array('IFD1.SubjectLocation', $properties));
+	$this->assert(in_array('SubIFD.Sharpness', $properties));
+    }
+
+    function testRemoveFromDetailed() {
+	GalleryUtilities::putRequestVariable('form[detailed][0]', 'IFD0.Make');
+	GalleryUtilities::putRequestVariable('form[detailed][1]', 'SubIFD.ISOSpeedRatings');
+	GalleryUtilities::putRequestVariable('form[action][removeFromDetailed]', 1);
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'exif:AdminExif'),
+				  'status' => array('removed' => array('detailed' => 2)),
+				  'error' => array()),
+			    $results);
+
+	/* Make sure they're gone */
+	list ($ret, $properties) = ExifPropertiesMap::getProperties(EXIF_DETAILED);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assert(!in_array('IFD0.Make', $properties));
+	$this->assert(!in_array('SubIFD.ISOSpeedRatings', $properties));
+    }
+
+    function testResetDetailed() {
+	/* Remove all properties */
+	$ret = ExifPropertiesMap::setProperties(EXIF_DETAILED, array());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	GalleryUtilities::putRequestVariable('form[action][resetDetailed]', 1);
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'exif:AdminExif'),
+				  'status' => array('restored' => array('detailed' => 1)),
+				  'error' => array()),
+			    $results);
+
+	/* Make sure they're all back again */
+	list ($ret, $properties) = ExifPropertiesMap::getProperties(EXIF_DETAILED);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(29, sizeof($properties));
+	$this->assert(in_array('IFD0.Make', $properties));
+	$this->assert(in_array('SubIFD.ISOSpeedRatings', $properties));
     }
 }
 ?>

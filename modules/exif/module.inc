@@ -55,6 +55,7 @@ class ExifModule extends GalleryModule {
 	}
 
 	require_once(dirname(__FILE__) . '/classes/ExifHelper.class');
+	require_once(dirname(__FILE__) . '/classes/ExifPropertiesMap.class');
 	
 	return GalleryStatus::success();
     }
@@ -71,47 +72,22 @@ class ExifModule extends GalleryModule {
 	}
 
 	if ($version != $this->getVersion()) {
+	    /* The store requires configuration. */
+	    $storage = $gallery->getStorage();
+	    $ret = $storage->configureStore('exif');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    
 	    if (empty($version)) {
-		/*
-		 * This is an initial install. Make sure that we have some
-		 * reasonable defaults.
-		 */
-		foreach (array(
-			       'IFD0.DateTime' => EXIF_SIMPLE,
-			       'IFD0.ImageType' => EXIF_ADVANCED,
-			       'IFD0.Make' => EXIF_SIMPLE,
-			       'IFD0.Model' => EXIF_SIMPLE,
-			       'IFD0.Orientation' => EXIF_ADVANCED,
-			       'IFD0.PhotoshopSettings' => EXIF_ADVANCED,
-			       'IFD0.ResolutionUnit' => EXIF_ADVANCED,
-			       'IFD0.xResolution' => EXIF_ADVANCED,
-			       'IFD0.yResolution' => EXIF_ADVANCED,
-			       'IFD1.Compression' => EXIF_ADVANCED,
-			       'SubIFD.ApertureValue' => EXIF_SIMPLE,
-			       'SubIFD.BrightnessValue' => EXIF_ADVANCED,
-			       'SubIFD.ColorSpace' => EXIF_SIMPLE,
-			       'SubIFD.Contrast' => EXIF_ADVANCED,
-			       'SubIFD.ExposureBiasValue' => EXIF_SIMPLE,
-			       'SubIFD.ExposureMode' => EXIF_ADVANCED,
-			       'SubIFD.ExposureProgram' => EXIF_SIMPLE,
-			       'SubIFD.ExposureTime' => EXIF_SIMPLE,
-			       'SubIFD.FNumber' => EXIF_SIMPLE,
-			       'SubIFD.Flash' => EXIF_SIMPLE,
-			       'SubIFD.FlashEnergy' => EXIF_ADVANCED,
-			       'SubIFD.FocalLength' => EXIF_SIMPLE,
-			       'SubIFD.ISOSpeedRatings' => EXIF_SIMPLE,
-			       'SubIFD.MeteringMode' => EXIF_SIMPLE,
-			       'SubIFD.Saturation' => EXIF_ADVANCED,
-			       'SubIFD.SceneType' => EXIF_ADVANCED,
-			       'SubIFD.Sharpness' => EXIF_ADVANCED,
-			       'SubIFD.ShutterSpeedValue' => EXIF_SIMPLE,
-			       'SubIFD.SubjectDistance' => EXIF_ADVANCED,
-			       )
-			 as $key => $value) {
-		    $ret = $this->setModuleParameter($key, $value);
-		    if ($ret->isError()) {
-			return $ret->wrap(__FILE__, __LINE__);
-		    }
+		$ret = ExifHelper::setDefaultProperties(EXIF_SUMMARY);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+		
+		$ret = ExifHelper::setDefaultProperties(EXIF_DETAILED);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
 
@@ -151,12 +127,12 @@ class ExifModule extends GalleryModule {
 	if (empty($mode)) {
 	    $mode = $session->get('exif.module.loadItemDetails.mode');
 	    if (empty($mode)) {
-		$mode = 'simple';
+		$mode = 'summary';
 	    }
 	}
 
-	if ($mode == 'advanced') {
-	    $filter = EXIF_ADVANCED;
+	if ($mode == 'detailed') {
+	    $filter = EXIF_DETAILED;
 	} else {
 	    $filter = EXIF_SIMPLE;
 	}

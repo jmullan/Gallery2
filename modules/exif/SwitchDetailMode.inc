@@ -42,8 +42,8 @@ class SwitchDetailModeController extends GalleryController {
 	global $gallery;
 
 	$mode = GalleryUtilities::getRequestVariables('mode');
-	if ($mode != 'simple' && $mode != 'advanced') {
-	    $mode = 'simple';
+	if ($mode != 'summary' && $mode != 'detailed') {
+	    $mode = 'summary';
 	}
 
 	/* Store the new mode in the session */
