@@ -1,0 +1,86 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2005 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Alan Harder <alan.harder@sun.com>
+ */
+
+/**
+ * Scan through all of our source code and verify that we're not doing anything "bad"
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class CodeAuditTest extends CodeAuditTestCase {
+
+    function CodeAuditTest($methodName) {
+	$this->CodeAuditTestCase($methodName);
+
+	$this->_exception = array(
+	    'endphp' => array('layout.css.php' => 1)
+	);
+    }
+
+    /**
+     * @see CodeAuditTestCase::shouldCheckFile()
+     */
+    function shouldCheckFile($fileName) {
+	if (substr($fileName, -4) == '.tpl' || basename($fileName) == 'GNUmakefile.inc') {
+	    return false;
+	}
+	return true;
+    }
+
+    /**
+     * @see CodeAuditTestCase::checkFile()
+     */
+    function checkFile($fileName, $buffer) {
+	$fileName = substr($fileName, strlen($this->_baseDir) + 1);
+	$lines = explode("\n", $buffer);
+	for ($i = 0; $i < count($lines); $i++) {
+
+	    /* Check that Session and UrlGenerator are always accessed by-reference */
+	    if (preg_match_all('/= *\$gallery->get(Session|UrlGenerator)/', $lines[$i], $matches)) {
+		foreach (array_unique($matches[1]) as $item) {
+		    $this->assert(false,
+				  sprintf('%s gets %s by value instead of by reference on line %d',
+					  $fileName, $item, $i + 1));
+		}
+	    }
+
+	    /* Check that we don't have CRLF (windows-type newlines) */
+	    if (!isset($crlfHit) && strpos($lines[$i], "\r") !== false) {
+		$crlfHit = true;
+		$this->assert(false, sprintf('%s has CR character on line %d', $fileName, $i + 1));
+	    }
+	}
+
+	/* Check that php files end with ?> */
+	if (!isset($this->_exception['endphp'][basename($fileName)])
+		&& !preg_match('/\?>$/', $buffer)) {
+	    $this->assert(false, $fileName . ' does not end with ?&gt;');
+	}
+    }
+}
+?>
