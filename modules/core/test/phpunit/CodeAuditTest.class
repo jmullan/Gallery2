@@ -39,7 +39,12 @@ class CodeAuditTest extends CodeAuditTestCase {
 	$this->CodeAuditTestCase($methodName);
 
 	$this->_exception = array(
-	    'endphp' => array('layout.css.php' => 1)
+	    'endphp' => array('layout.css.php' => 1),
+	    'superglobals' => array(
+				'main.php' => 1,
+				'GalleryUtilities.class' => 1,
+				'GalleryUrlGenerator.class' => 1,
+	    ),
 	);
 	$this->_longLineCount = 0;
     }
@@ -67,6 +72,16 @@ class CodeAuditTest extends CodeAuditTestCase {
 		foreach (array_unique($matches[1]) as $item) {
 		    $this->assert(false,
 				  sprintf('%s gets %s by value instead of by reference on line %d',
+					  $fileName, $item, $i + 1));
+		}
+	    }
+
+	    if (preg_match_all('/\$_(REQUEST|POST|GET|SESSION|FILES|SERVER)/', $lines[$i], $matches) &&
+		    !isset($this->_exception['superglobals'][basename($fileName)]) && 
+		    !preg_match('/(test\/phpunit|^install\/|^upgrade\/)/', $fileName)) {
+		foreach (array_unique($matches[1]) as $item) {
+		    $this->assert(false,
+				  sprintf('%s uses the %s superglobal instead of its helper on line %d',
 					  $fileName, $item, $i + 1));
 		}
 	    }
