@@ -112,7 +112,9 @@ class GalleryUrlGenerator {
 
 	return sprintf('%s://%s%s',
 		       $protocol,
-		       $_SERVER['HTTP_HOST'],
+		       isset($_SERVER['HTTP_X_FORWARDED_SERVER'])
+		       ? $_SERVER['HTTP_X_FORWARDED_SERVER']
+		       : $_SERVER['HTTP_HOST'],
 		       $path);
     }
 
@@ -165,7 +167,7 @@ class GalleryUrlGenerator {
 		}
 
 		if (empty($this->_viewPrefixRegistry['forward'][$prefix])) {
-		    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+		    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
 		}
 
 		$viewName = $this->_viewPrefixRegistry['forward'][$prefix];
