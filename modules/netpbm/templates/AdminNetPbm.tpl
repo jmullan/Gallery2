@@ -1,4 +1,5 @@
   {galleryForm controller="$controller"}
+  {galleryInput type="hidden" name="formName"}AdminNetPbm{/galleryInput}
   <table>
 
     <tr>
@@ -24,7 +25,7 @@
 	{galleryText text="Path to NetPBM:"}
       </td>
       <td>
-	{galleryInput name="path"}{$form.path}{/galleryInput}
+	{galleryInput name="form.path"}{$form.path}{/galleryInput}
       </td>
     </tr>
 
@@ -33,7 +34,7 @@
 	{galleryText text="JPEG Quality"}
       </td>
       <td>
-	{gallerySelect name="jpegQuality"}
+	{gallerySelect name="form.jpegQuality"}
 	  {html_options values=$jpegQualityList selected=$form.jpegQuality output=$jpegQualityList}
 	{/gallerySelect}
       </td>

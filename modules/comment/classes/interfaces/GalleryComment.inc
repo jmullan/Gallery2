@@ -76,6 +76,7 @@ class GalleryComment extends GalleryComment_core {
      */
     function getMemberData() {
         $data = parent::getMemberData();
+        GalleryProfiler::start('GalleryPersistent::getMemberData');
     
         $data['commenterId'] = $this->_commenterId;
     
@@ -85,6 +86,7 @@ class GalleryComment extends GalleryComment_core {
     
         $data['date'] = $this->_date;
     
+        GalleryProfiler::stop('GalleryPersistent::getMemberData');
         return $data;
     }
   
@@ -109,8 +111,12 @@ class GalleryComment extends GalleryComment_core {
     
         $value = (int)$value;
       
-        $this->_commenterId = $value;
-        $this->setModifiedFlag('commenterId', MEMBER_MODIFIED);
+
+        /* Only take action if the value actually changes */
+        if (!isset($this->_commenterId) || $this->_commenterId != $value) {
+            $this->_commenterId = $value;
+            $this->setModifiedFlag('commenterId', MEMBER_MODIFIED);
+        }
     }
   
     /**
@@ -132,8 +138,12 @@ class GalleryComment extends GalleryComment_core {
      */
     function sethost($value) {
     
-        $this->_host = $value;
-        $this->setModifiedFlag('host', MEMBER_MODIFIED);
+
+        /* Only take action if the value actually changes */
+        if (!isset($this->_host) || $this->_host != $value) {
+            $this->_host = $value;
+            $this->setModifiedFlag('host', MEMBER_MODIFIED);
+        }
     }
   
     /**
@@ -155,8 +165,12 @@ class GalleryComment extends GalleryComment_core {
      */
     function setcomment($value) {
     
-        $this->_comment = $value;
-        $this->setModifiedFlag('comment', MEMBER_MODIFIED);
+
+        /* Only take action if the value actually changes */
+        if (!isset($this->_comment) || $this->_comment != $value) {
+            $this->_comment = $value;
+            $this->setModifiedFlag('comment', MEMBER_MODIFIED);
+        }
     }
   
     /**
@@ -178,8 +192,12 @@ class GalleryComment extends GalleryComment_core {
      */
     function setdate($value) {
     
-        $this->_date = $value;
-        $this->setModifiedFlag('date', MEMBER_MODIFIED);
+
+        /* Only take action if the value actually changes */
+        if (!isset($this->_date) || $this->_date != $value) {
+            $this->_date = $value;
+            $this->setModifiedFlag('date', MEMBER_MODIFIED);
+        }
     }
   
 }

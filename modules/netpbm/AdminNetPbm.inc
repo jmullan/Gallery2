@@ -31,37 +31,32 @@ class AdminNetPbmController extends GalleryController {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	/* Set the form values */
-	foreach (array('path', 'jpegQuality') as $key) {
-	    $value = GalleryUtilities::getRequestVariables($key);
+	$form = GalleryUtilities::getFormVariables('form.');
 
-	    /* Normalize the path */
-	    if ($key == 'path') {
-		list ($ret, $platform) = $gallery->getPlatform();
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-
-		$value = $platform->exportPath($value);
-
-		/* Guarantee a trailing slash */
-		if ($value{strlen($value)-1} != '/') {
-		    $value .= '/';
-		}
-	    }
-	    
-	    $ret = $gallery->setModuleParameter('netpbm', $key, $value);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
+	/*
+	 * Set the path.  Normalize it and guarantee that it's got a trailing slash.
+	 */
+	list ($ret, $platform) = $gallery->getPlatform();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-
-	list ($ret, $path) = $gallery->getModuleParameter('netpbm', 'path');
+	
+	$form['path'] = $platform->exportPath($form['path']);
+	
+	/* Guarantee a trailing slash */
+	if ($form['path']{strlen($form['path'])-1} != '/') {
+	    $form['path'] .= '/';
+	}
+	    
+	$ret = $gallery->setModuleParameter('netpbm', 'path', $form['path']);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	list ($ret, $platform) = $gallery->getPlatform();
+	/*
+	 * Set the image quality
+	 */
+	$ret = $gallery->setModuleParameter('netpbm', 'jpegQuality', $form['jpegQuality']);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -69,7 +64,7 @@ class AdminNetPbmController extends GalleryController {
 	/* Scan for the appropriate version of p?mtojpeg */
 	foreach (array('pnmtojpeg', 'ppmtojpeg') as $name) {
 	    $executable = $platform->executablePath($name);
-	    if ($platform->file_exists($path . '/' . $name)) {
+	    if ($platform->file_exists($form['path'] . '/' . $name)) {
 		$ret = $gallery->setModuleParameter('netpbm', 'pnmtojpeg', $name);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -103,13 +98,12 @@ class AdminNetPbmController extends GalleryController {
 	    }
 	}
 	
-
 	/* Figure out where to redirect upon success */
-	$urlParams['view'] = 'core:SiteAdmin';
-	$urlParams['subView'] = 'netpbm:AdminNetPbm';
+	$redirectParams['view'] = 'core:SiteAdmin';
+	$redirectParams['subView'] = 'netpbm:AdminNetPbm';
 
 	$templateAdapter = $gallery->getTemplateAdapter();
-	$results['redirect'] = $templateAdapter->url($urlParams);
+	$results['redirect'] = $templateAdapter->url($redirectParams);
 
 	return array(GalleryStatus::success(), $results);
     }
@@ -124,24 +118,16 @@ class AdminNetPbmView extends GalleryView {
 	global $gallery;
 
 	foreach (array('path', 'jpegQuality') as $key) {
-
-	    list ($ret, $value) =
+	    list ($ret, $form[$key]) =
 		$gallery->getModuleParameter('netpbm', $key);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    $form[$key] = $value;
 	}
 
 	/* Set up our jpeg quality selection list */
 	for ($i = 95; $i >= 50; $i -= 5) {
 	    $jpegQualityList[] = $i;
-	}
-
-	/* If we have a NetPBM path, then try to test the binaries */
-	list ($ret, $path) = $gallery->getModuleParameter('netpbm', 'path');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	list ($ret, $pnmtojpeg) = $gallery->getModuleParameter('netpbm', 'pnmtojpeg');
@@ -151,7 +137,7 @@ class AdminNetPbmView extends GalleryView {
 
 	GalleryProfiler::start('AdminNetPbmView::renderBody().test-binaries');
 	$tests = array();
-	if (!empty($path)) {
+	if (!empty($form['path'])) {
 	    foreach (array('jpegtopnm',
 			   'giftopnm',
 			   $pnmtojpeg,
@@ -164,7 +150,7 @@ class AdminNetPbmView extends GalleryView {
 			   'pnmrotate',
 			   'pnmflip') as $binary) {
 
-		$cmd = array($path . $binary, '--version');
+		$cmd = array($form['path'] . $binary, '--version');
 		list ($ret, $results) = GalleryUtilities::exec(array($cmd));
 		$tests[] = array('name' => $binary,
 				 'status' => $ret,
