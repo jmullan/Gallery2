@@ -22,7 +22,7 @@
     );
 
   
-    CREATE UNIQUE INDEX ExifPropertiesMap_property_viewMode 
+    CREATE UNIQUE INDEX ExifPropertiesMap_U1
     ON DB_TABLE_PREFIXExifPropertiesMap
     (DB_COLUMN_PREFIXproperty
         ,

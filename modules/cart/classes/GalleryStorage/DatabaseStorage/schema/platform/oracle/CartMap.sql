@@ -15,7 +15,7 @@
   
       ,
     DB_COLUMN_PREFIXitemIds
-      LONG
+      VARCHAR2(4000)
     
     );
 

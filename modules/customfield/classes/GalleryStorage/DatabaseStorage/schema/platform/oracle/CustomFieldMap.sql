@@ -38,7 +38,7 @@
     );
 
   
-    CREATE INDEX CustomFieldMap_itemId 
+    CREATE INDEX CustomFieldMap_I1
     ON DB_TABLE_PREFIXCustomFieldMap
     (DB_COLUMN_PREFIXitemId);
 

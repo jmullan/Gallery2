@@ -35,7 +35,7 @@
     
       ,
     DB_COLUMN_PREFIXcomment
-      LONG
+      VARCHAR2(4000)
     
       ,
     DB_COLUMN_PREFIXdate
@@ -46,7 +46,7 @@
     );
 
   
-    CREATE INDEX Comment_date 
+    CREATE INDEX Comment_I1
     ON DB_TABLE_PREFIXComment
     (DB_COLUMN_PREFIXdate);
 
