@@ -68,6 +68,25 @@ class GalleryUser extends GalleryUser_core {
     
         return $meta;
     }
+
+    /**
+     * Get the data from this persistent object as an associative array
+     *
+     * @return array memberName => memberValue
+     */
+    function getMemberData() {
+        $data = parent::getMemberData();
+    
+        $data['userName'] = $this->_userName;
+    
+        $data['fullname'] = $this->_fullname;
+    
+        $data['password'] = $this->_password;
+    
+        $data['email'] = $this->_email;
+    
+        return $data;
+    }
   
     /**
      * Get the value of userName

@@ -63,6 +63,23 @@ class GalleryDerivative extends GalleryDerivative_core {
     
         return $meta;
     }
+
+    /**
+     * Get the data from this persistent object as an associative array
+     *
+     * @return array memberName => memberValue
+     */
+    function getMemberData() {
+        $data = parent::getMemberData();
+    
+        $data['derivativeSourceId'] = $this->_derivativeSourceId;
+    
+        $data['derivativeCommands'] = $this->_derivativeCommands;
+    
+        $data['derivativeSize'] = $this->_derivativeSize;
+    
+        return $data;
+    }
   
     /**
      * Get the value of derivativeSourceId

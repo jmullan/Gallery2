@@ -78,6 +78,29 @@ class GalleryEntity extends GalleryEntity_core {
     
         return $meta;
     }
+
+    /**
+     * Get the data from this persistent object as an associative array
+     *
+     * @return array memberName => memberValue
+     */
+    function getMemberData() {
+        $data = parent::getMemberData();
+    
+        $data['id'] = $this->_id;
+    
+        $data['creationTimestamp'] = $this->_creationTimestamp;
+    
+        $data['dataVersion'] = $this->_dataVersion;
+    
+        $data['modificationTimestamp'] = $this->_modificationTimestamp;
+    
+        $data['serialNumber'] = $this->_serialNumber;
+    
+        $data['entityType'] = $this->_entityType;
+    
+        return $data;
+    }
   
     /**
      * Get the value of id

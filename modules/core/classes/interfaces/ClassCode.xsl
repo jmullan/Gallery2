@@ -61,6 +61,19 @@ class <xsl:value-of select="class-name"/> extends <xsl:value-of select="class-na
     </xsl:for-each>
         return $meta;
     }
+
+    /**
+     * Get the data from this persistent object as an associative array
+     *
+     * @return array memberName => memberValue
+     */
+    function getMemberData() {
+        $data = parent::getMemberData();
+    <xsl:for-each select="member">
+        $data['<xsl:value-of select="member-name"/>'] = $this->_<xsl:value-of select="member-name"/>;
+    </xsl:for-each>
+        return $data;
+    }
   </xsl:if>
 
     <xsl:apply-templates select="map" />
@@ -96,7 +109,9 @@ class <xsl:value-of select="class-name"/> extends <xsl:value-of select="class-na
         }
     </xsl:for-each>
 
-        list ($ret, $storage) = $gallery->getStorage();
+	$reply =&amp; $gallery->getStorage();
+	$ret = $reply[0];
+	$storage =&amp; $reply[1];
         if ($ret->isError()) {
             return $ret->wrap(__FILE__, __LINE__);
         }
@@ -116,13 +131,39 @@ class <xsl:value-of select="class-name"/> extends <xsl:value-of select="class-na
         if (sizeof($data) == 0) {
             return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
         }
-        list ($ret, $storage) = $gallery->getStorage();
+	$reply =&amp; $gallery->getStorage();
+	$ret = $reply[0];
+	$storage =&amp; $reply[1];
 
         if ($ret->isError()) {
             return $ret->wrap(__FILE__, __LINE__);
         }
 
         return $storage->removeMapEntry('<xsl:value-of select="/class/class-name"/>', $data);
+    }
+
+    /**
+     * Update an entry in this map
+     *
+     * @param array the entry to match
+     * @param array the values to change
+     * @return object GalleryStatus a status code
+     */
+    function updateMapEntry($match, $change) {
+	global $gallery;
+
+	if (sizeof($match) == 0 || sizeof($change) == 0) {
+            return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+        }
+	$reply =&amp; $gallery->getStorage();
+	$ret = $reply[0];
+	$storage =&amp; $reply[1];
+
+        if ($ret->isError()) {
+            return $ret->wrap(__FILE__, __LINE__);
+        }
+
+        return $storage->updateMapEntry('<xsl:value-of select="/class/class-name"/>', $match, $change);
     }
   </xsl:template>
 

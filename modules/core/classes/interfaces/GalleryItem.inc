@@ -56,6 +56,11 @@ class GalleryItem extends GalleryItem_core {
             'type' => STORAGE_TYPE_BOOLEAN
         );
     
+        $meta['members']['layout'] = array(
+            'class' => 'GalleryItem',
+            'type' => STORAGE_TYPE_STRING
+        );
+    
         $meta['members']['keywords'] = array(
             'class' => 'GalleryItem',
             'type' => STORAGE_TYPE_STRING
@@ -86,17 +91,43 @@ class GalleryItem extends GalleryItem_core {
             'type' => STORAGE_TYPE_STRING
         );
     
-        $meta['members']['viewCount'] = array(
-            'class' => 'GalleryItem',
-            'type' => STORAGE_TYPE_INTEGER
-        );
-    
         $meta['members']['viewedSinceTimestamp'] = array(
             'class' => 'GalleryItem',
             'type' => STORAGE_TYPE_INTEGER
         );
     
         return $meta;
+    }
+
+    /**
+     * Get the data from this persistent object as an associative array
+     *
+     * @return array memberName => memberValue
+     */
+    function getMemberData() {
+        $data = parent::getMemberData();
+    
+        $data['description'] = $this->_description;
+    
+        $data['isHtmlAllowed'] = $this->_isHtmlAllowed;
+    
+        $data['layout'] = $this->_layout;
+    
+        $data['keywords'] = $this->_keywords;
+    
+        $data['orderBy'] = $this->_orderBy;
+    
+        $data['orderDirection'] = $this->_orderDirection;
+    
+        $data['orderWeight'] = $this->_orderWeight;
+    
+        $data['ownerId'] = $this->_ownerId;
+    
+        $data['title'] = $this->_title;
+    
+        $data['viewedSinceTimestamp'] = $this->_viewedSinceTimestamp;
+    
+        return $data;
     }
   
     /**
@@ -145,6 +176,29 @@ class GalleryItem extends GalleryItem_core {
       
         $this->_isHtmlAllowed = $value;
         $this->setModifiedFlag('isHtmlAllowed', MEMBER_MODIFIED);
+    }
+  
+    /**
+     * Get the value of layout
+     *
+     * @return STRING the value
+     */
+    function getlayout() {
+        if (!isset($this->_layout)) {
+            return null;
+        }
+        return $this->_layout;
+    }
+
+    /**
+     * Set the value of layout
+     *
+     * @param STRING the value
+     */
+    function setlayout($value) {
+    
+        $this->_layout = $value;
+        $this->setModifiedFlag('layout', MEMBER_MODIFIED);
     }
   
     /**
@@ -287,31 +341,6 @@ class GalleryItem extends GalleryItem_core {
     
         $this->_title = $value;
         $this->setModifiedFlag('title', MEMBER_MODIFIED);
-    }
-  
-    /**
-     * Get the value of viewCount
-     *
-     * @return INTEGER the value
-     */
-    function getviewCount() {
-        if (!isset($this->_viewCount)) {
-            return null;
-        }
-        return $this->_viewCount;
-    }
-
-    /**
-     * Set the value of viewCount
-     *
-     * @param INTEGER the value
-     */
-    function setviewCount($value) {
-    
-        $value = (int)$value;
-      
-        $this->_viewCount = $value;
-        $this->setModifiedFlag('viewCount', MEMBER_MODIFIED);
     }
   
     /**

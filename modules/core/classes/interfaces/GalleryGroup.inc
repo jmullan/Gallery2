@@ -58,6 +58,21 @@ class GalleryGroup extends GalleryGroup_core {
     
         return $meta;
     }
+
+    /**
+     * Get the data from this persistent object as an associative array
+     *
+     * @return array memberName => memberValue
+     */
+    function getMemberData() {
+        $data = parent::getMemberData();
+    
+        $data['groupType'] = $this->_groupType;
+    
+        $data['groupName'] = $this->_groupName;
+    
+        return $data;
+    }
   
     /**
      * Get the value of groupType

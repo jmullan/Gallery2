@@ -63,6 +63,23 @@ class GalleryDerivativeImage extends GalleryDerivativeImage_core {
     
         return $meta;
     }
+
+    /**
+     * Get the data from this persistent object as an associative array
+     *
+     * @return array memberName => memberValue
+     */
+    function getMemberData() {
+        $data = parent::getMemberData();
+    
+        $data['width'] = $this->_width;
+    
+        $data['height'] = $this->_height;
+    
+        $data['imageType'] = $this->_imageType;
+    
+        return $data;
+    }
   
     /**
      * Get the value of width

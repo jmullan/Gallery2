@@ -53,6 +53,19 @@ class GalleryChildEntity extends GalleryChildEntity_core {
     
         return $meta;
     }
+
+    /**
+     * Get the data from this persistent object as an associative array
+     *
+     * @return array memberName => memberValue
+     */
+    function getMemberData() {
+        $data = parent::getMemberData();
+    
+        $data['parentId'] = $this->_parentId;
+    
+        return $data;
+    }
   
     /**
      * Get the value of parentId

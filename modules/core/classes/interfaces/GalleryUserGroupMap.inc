@@ -71,7 +71,9 @@ class GalleryUserGroupMap extends GalleryUserGroupMap_core {
         }
     
 
-        list ($ret, $storage) = $gallery->getStorage();
+	$reply =& $gallery->getStorage();
+	$ret = $reply[0];
+	$storage =& $reply[1];
         if ($ret->isError()) {
             return $ret->wrap(__FILE__, __LINE__);
         }
@@ -91,13 +93,39 @@ class GalleryUserGroupMap extends GalleryUserGroupMap_core {
         if (sizeof($data) == 0) {
             return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
         }
-        list ($ret, $storage) = $gallery->getStorage();
+	$reply =& $gallery->getStorage();
+	$ret = $reply[0];
+	$storage =& $reply[1];
 
         if ($ret->isError()) {
             return $ret->wrap(__FILE__, __LINE__);
         }
 
         return $storage->removeMapEntry('GalleryUserGroupMap', $data);
+    }
+
+    /**
+     * Update an entry in this map
+     *
+     * @param array the entry to match
+     * @param array the values to change
+     * @return object GalleryStatus a status code
+     */
+    function updateMapEntry($match, $change) {
+	global $gallery;
+
+	if (sizeof($match) == 0 || sizeof($change) == 0) {
+            return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+        }
+	$reply =& $gallery->getStorage();
+	$ret = $reply[0];
+	$storage =& $reply[1];
+
+        if ($ret->isError()) {
+            return $ret->wrap(__FILE__, __LINE__);
+        }
+
+        return $storage->updateMapEntry('GalleryUserGroupMap', $match, $change);
     }
   
 }

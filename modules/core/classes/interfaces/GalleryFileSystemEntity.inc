@@ -53,6 +53,19 @@ class GalleryFileSystemEntity extends GalleryFileSystemEntity_core {
     
         return $meta;
     }
+
+    /**
+     * Get the data from this persistent object as an associative array
+     *
+     * @return array memberName => memberValue
+     */
+    function getMemberData() {
+        $data = parent::getMemberData();
+    
+        $data['pathComponent'] = $this->_pathComponent;
+    
+        return $data;
+    }
   
     /**
      * Get the value of pathComponent
