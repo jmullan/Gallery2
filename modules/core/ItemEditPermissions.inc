@@ -59,7 +59,7 @@ class ItemEditPermissionsController extends GalleryController {
 	if (isset($form['action']['deleteGroupPermission'])) {
 	    /* Figure out which one we're working with */
 	    $index = array_pop(array_keys($form['action']['deleteGroupPermission']));
-	    
+
 	    /* Handle delete group perm actions */
 	    list ($groupId, $permissionId) = split(',', $form['group']['delete'][$index]);
 	    $ret = GalleryPermissionMap::removeGroupPermission($itemId,
@@ -70,17 +70,17 @@ class ItemEditPermissionsController extends GalleryController {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    /* Stuff the values back into the form for easy re-adding */
-	    list ($ret, $group) = $gallery->loadEntitiesById($groupId);
-	    if ($ret->isSuccess()) {
-		$redirectParams['form.group.groupName'] = $group->getGroupName();
-	    }
-	    $redirectParams['form.group.permission'] = $permissionId;
-
 	    /* Figure out where to redirect upon success */
 	    $redirectParams['view'] = 'core:ItemAdmin';
 	    $redirectParams['subView'] = 'core:ItemEditPermissions';
 	    $redirectParams['itemId'] = $itemId;
+	    $redirectParams['form.group.permission'] = $permissionId;
+
+	    /* Stuff the group name back into the form for easy re-adding */
+	    list ($ret, $group) = $gallery->loadEntitiesById($groupId);
+	    if ($ret->isSuccess()) {
+		$redirectParams['form.group.groupName'] = $group->getGroupName();
+	    }
 	} else if (isset($form['action']['deleteUserPermission'])) {
 	    /* Figure out which one we're working with */
 	    $index = array_pop(array_keys($form['action']['deleteUserPermission']));
