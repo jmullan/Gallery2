@@ -53,8 +53,7 @@
 	    <div class="gbTopFlag">
 		   <div class="gbTitleBanner">
 	          <h1 class="gbTitle">
-	          {g->text text="Gallery Search Results Summary for "}
-	         '{$form.searchCriteria}'
+	          {g->text text="Search the Gallery"}
 	          </h1>
 	       </div>
 	    </div>
