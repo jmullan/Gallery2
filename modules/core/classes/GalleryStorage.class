@@ -149,14 +149,13 @@ class GalleryStorage {
     }
 
     /**
-     * Load a new GalleryEntity from storage
+     * Load the GalleryEntities with the ids specified
      *
-     * @access public
-     * @param string the id of the stored GalleryEntity
+     * @param mixed the ids (or id) of the GalleryEntities to load
      * @return array object GalleryStatus a status code,
-     *               object GalleryEntity
+     *               mixed one GalleryEntity or an array of GalleryEntities
      */
-    function loadEntity($id) {
+    function loadEntities($id) {
 	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED,
 					  __FILE__, __LINE__),
 		     null);
@@ -293,6 +292,18 @@ class GalleryStorage {
      * @return object GalleryStatus a status code
      */
     function removeMapEntry($map, $entry) {
+	return GalleryStatus::error(ERROR_UNIMPLEMENTED,
+				    __FILE__, __LINE__);
+    }
+
+    /**
+     * Update an entry in this map
+     *
+     * @param array the entry to match
+     * @param array the values to change
+     * @return object GalleryStatus a status code
+     */
+    function updateMapEntry($map, $match, $change) {
 	return GalleryStatus::error(ERROR_UNIMPLEMENTED,
 				    __FILE__, __LINE__);
     }
