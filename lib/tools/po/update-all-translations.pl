@@ -14,6 +14,7 @@ $basedir =~ s{/(lib|docs|layouts|modules|setup|templates|themes)/.*}{};
 find(\&locatePoDir, $basedir);
 
 foreach my $poDir (keys(%PO_DIRS)) {
+  print STDERR "BUILDING IN >> $poDir <<\n";
   chdir $poDir;
   system("gmake install clean");
 }
