@@ -399,7 +399,8 @@ class GalleryPlatform {
      *
      * @param array(array('cmd', 'arg'), ...)
      * @param array the location to put output from the command 
-     * @return bool TRUE if the command succeeded, FALSE otherwise.
+     * @return array(bool TRUE if the command succeeded, FALSE otherwise,
+     *               string output from the command)
      * @access public
      */
     function exec($cmdArray) {

@@ -1,0 +1,49 @@
+<?php
+
+class ConfigureImageMagickTestCase extends TestCase {
+    var $_moduleName = 'imagemagick';
+
+    function getDescription() {
+	return "Configure the $this->_moduleName module";
+    }
+
+    function testStart() {
+	global $gallery;
+
+	list ($ret, $module) = $gallery->loadModule($this->_moduleName);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$ret = $module->init();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	$ret = $module->install();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Hardcode a path we know will work (on Bharat's dev box) */
+	$platform = $gallery->getPlatform();
+	if (get_class($platform) == 'unixplatform') {
+	    $path = '/usr/local/bin/';
+	} else {
+	    $path = 'c:\\apps\\imagemagick\\';
+	}
+	$ret = $module->setModuleParameter('path', $path);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$ret = $gallery->setModuleParameter('core', 'graphics.type', 'ImageMagickGraphics');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+}
+
+?>

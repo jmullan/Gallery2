@@ -19,19 +19,20 @@
  */
 
 /**
- * NetPBM Graphics Module
+ * ImageMagick Graphics Module
  *
- * This module provides the NetPBM graphics toolkit for Gallery
+ * This module provides the ImageMagick graphics toolkit for Gallery
  *
  * @version $Id$
- * @package NetPBM
+ * @package ImageMagick
+ * @author Vallimar <vallimar@sexorcisto.com>
  * @author Bharat Mediratta <bharat@menalto.com>
  */
-class NetPbmModule extends GalleryModule {
+class ImageMagickModule extends GalleryModule {
 
-    function NetPbmModule() {
-	$this->setName('netpbm');
-	$this->setDescription('NetPBM Graphics Toolkit');
+    function ImageMagickModule() {
+	$this->setName('imagemagick');
+	$this->setDescription('ImageMagick Graphics Toolkit');
 	$this->setVersion('1.0');
     }
 
@@ -45,9 +46,9 @@ class NetPbmModule extends GalleryModule {
 
 	/* Register our graphics class with the factory */
 	GalleryFactory::registerImplementation('GalleryGraphics',
-					       'NetPbmGraphics',
-					       'NetPBM',
-					       $classDir . 'NetPbmGraphics.class');
+					       'ImageMagickGraphics',
+					       'ImageMagick',
+					       $classDir . 'ImageMagickGraphics.class');
 
 	return parent::init();
     }
@@ -68,8 +69,7 @@ class NetPbmModule extends GalleryModule {
 		 * reasonable defaults.
 		 */
 		foreach (array('path' => '',
-			       'jpegQuality' => '75',
-			       'pnmtojpeg' => 'pnmtojpeg')
+			       'jpegQuality' => '75')
 			 as $key => $value) {
 
 		    $ret = $this->setModuleParameter($key, $value);
@@ -87,28 +87,28 @@ class NetPbmModule extends GalleryModule {
 	
 	return GalleryStatus::success();
     }
-	
+
     /**
      * @see GalleryModule::activate
      */
     function activate() {
 	global $gallery;
-	
+
 	$ret = parent::activate();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	
 	/*
-	 * If our graphics type is not NetPBM, set it now.
+	 * If our graphics type is not Imagemagick, set it now.
 	 */
 	list($ret, $graphicsType) = $gallery->getModuleParameter('core', 'graphics.type');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	if ($graphicsType != 'netpbmgraphics') {
-	    $ret = $gallery->setModuleParameter('core', 'graphics.type', 'netpbmgraphics');
+	if ($graphicsType != 'imagemagickgraphics') {
+	    $ret = $gallery->setModuleParameter('core', 'graphics.type', 'ImageMagickGraphics');
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -127,7 +127,7 @@ class NetPbmModule extends GalleryModule {
 	 * This module requires all fields to be filled out before it can be
 	 * activated. 
 	 */
-	foreach (array('path', 'jpegQuality', 'pnmtojpeg') as $key) {
+	foreach (array('path', 'jpegQuality') as $key) {
 	    list ($ret, $value) = $this->getModuleParameter($key);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
@@ -146,15 +146,15 @@ class NetPbmModule extends GalleryModule {
      */
     function getSiteAdminViews() {
 	return array(GalleryStatus::success(),
-		     array(array('name' => $this->translate('NetPBM'),
-				 'view' => 'netpbm:AdminNetPbm')));
+		     array(array('name' => $this->translate('ImageMagick'),
+				 'view' => 'imagemagick:AdminImageMagick')));
     }
 
     /**
      * @see GalleryModule::getConfigurationView
      */
     function getConfigurationView() {
-	return array(GalleryStatus::success(), 'netpbm:AdminNetPbm');
+	return array(GalleryStatus::success(), 'imagemagick:AdminImageMagick');
     }
 }
 ?>

@@ -232,7 +232,7 @@ class ItemEditImageController extends GalleryController {
 		    }
 		}
 	    }
-	    
+
 	    /* Figure out where to redirect upon success */
 	    $redirectParams['view'] = 'core:ItemAdmin';
 	    $redirectParams['subView'] = 'core:ItemEditImage';

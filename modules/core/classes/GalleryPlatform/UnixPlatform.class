@@ -32,12 +32,7 @@ require_once(dirname(__FILE__) . '/../GalleryPlatform.class');
 class UnixPlatform extends GalleryPlatform {
 
     /**
-     * Execute a command and record the results and status.
-     *
-     * @param array(array('cmd', 'arg'), ...)
-     * @param array the location to put output from the command 
-     * @return bool TRUE if the command succeeded, FALSE otherwise.
-     * @access public
+     * @see GalleryPlatform::exec()
      */
     function exec($cmdArray) {
 	global $gallery;

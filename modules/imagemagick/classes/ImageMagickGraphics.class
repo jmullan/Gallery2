@@ -22,23 +22,24 @@
 require_once(dirname(__FILE__) . '/../../core/classes/GalleryGraphics.class');
 
 /**
- * A NetPBM version of GalleryGraphics
+ * A ImageMagick version of GalleryGraphics
  *
- * This class implements the GalleryGraphics API using NetPBM.
+ * This class implements the GalleryGraphics API using ImageMagick.
  *
  * @version $Id$
- * @package NetPbmGraphics
+ * @package ImageMagickGraphics
+ * @author Vallimar <vallimar@sexorcisto.net>
  * @author Bharat Mediratta <bharat@menalto.com>
  */
-class NetPbmGraphics extends GalleryGraphics {
+class ImageMagickGraphics extends GalleryGraphics {
     /*
      * ****************************************
      *                 Methods
      * ****************************************
      */
 
-    function NetPbmGraphics() {
-	/* Supported functions */
+    function ImageMagickGraphics() {
+	/* Configure our support */
 	$this->_supportedFunctions = (IMAGE_FUNCTION_RESIZE |
 				      IMAGE_FUNCTION_SCALE |
 				      IMAGE_FUNCTION_ROTATE |
@@ -56,22 +57,23 @@ class NetPbmGraphics extends GalleryGraphics {
      */
     function getImageDimensions($mimeType, $filename) {
 
-	list($ret, $convertToPnmCmd) = $this->_convertToPnmCmd($mimeType, $filename);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	/* Run it through PHP first, it's faster and more portable. */
+	$ret = getimagesize($filename);
+	if (($ret != false) &&
+	    (($ret[0] > 1) && ($ret[1] > 1))) {
+	    return array(GalleryStatus::success(), $ret[0], $ret[1]);
 	}
-	
+
 	list($ret, $output) =
-		$this->_exec(array($convertToPnmCmd,
-				   array($this->_pnmCmd('pnmfile'),
-					 '--allimages')));
+	    $this->_exec(array($this->_imageMagickCmd('identify'),
+			       $filename));
 
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	foreach ($output as $line) {
-	    if (ereg('([0-9]+) by ([0-9]+)', $line, $regs)) {
+	    if (ereg('([0-9]+)x([0-9]+)', $line, $regs)) {
 		return array(GalleryStatus::success(), $regs[1], $regs[2]);
 	    }
 	}
@@ -91,10 +93,7 @@ class NetPbmGraphics extends GalleryGraphics {
 	}
 
 	return $this->_transformImage($mimeType,
-				      array($this->_pnmCmd('pnmscale'),
-					    '--quiet',
-					    '-xsize', $width,
-					    '-ysize', $height),
+				      array('-geometry', $width .'x'. $height),
 				      $sourceFilename,
 				      $destFilename);
     }
@@ -109,9 +108,7 @@ class NetPbmGraphics extends GalleryGraphics {
 	}
 	
 	return $this->_transformImage($mimeType,
-				      array($this->_pnmCmd('pnmscale'),
-					    '--quiet',
-					    '-xysize', $targetSize, $targetSize),
+				      array('-scale', $targetSize .'x'. $targetSize),
 				      $sourceFilename,
 				      $destFilename);
     }
@@ -124,27 +121,9 @@ class NetPbmGraphics extends GalleryGraphics {
 	    return GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION,
 					__FILE__, __LINE__);
 	}
-
-	switch($degrees) {
-	case -90:
-	    $flipArgument = "-cw";
-	    break;
-
-	case 90:
-	    $flipArgument = "-ccw";
-	    break;
-
-	case 180:
-	    $flipArgument = "-r180";
-	    break;
-
-	default:
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-
+	
 	return $this->_transformImage($mimeType,
-				      array($this->_pnmCmd('pnmflip'),
-					    $flipArgument),
+				      array('-rotate', $degrees),
 				      $sourceFilename,
 				      $destFilename);
     }
@@ -158,9 +137,10 @@ class NetPbmGraphics extends GalleryGraphics {
 					__FILE__, __LINE__);
 	}
 	
+	$mimeType = GalleryUtilities::getMimeType($filename);
 	return $this->_transformImage($mimeType,
-				      array($this->_pnmCmd('pnmcut'),
-					    $x, $y, $width, $height),
+				      array('-crop', $width . 'x' . $height .
+					    '+' . $x . '+' . $y),
 				      $sourceFilename,
 				      $destFilename);
     }
@@ -187,47 +167,50 @@ class NetPbmGraphics extends GalleryGraphics {
     /**
      * Do the given transform on the source image 
      *
-     * @param string a mime type
      * @param string the command to execute
      * @param string the path to a source file
      * @param string the path to a destination file
      * @return object GalleryStatus a status code
      */
-    function _transformImage($mimeType, $command, $sourceFilename, $destFilename) {
+    function _transformImage($mimeType, $args, $sourceFilename, $destFilename) {
 	global $gallery;
-
-	/* Figure out our convert-to-pnm command */
-	list($ret, $convertToPnmCmd) = $this->_convertToPnmCmd($mimeType, $sourceFilename);
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
 
 	/* Get a temp file name and figure out our convert-from-pnm command */
 	$tmpDir = $gallery->getConfig('data.gallery.tmp');
-	$tmpFilename = tempnam($tmpDir, 'npbm_');
+	$tmpFilename = tempnam($tmpDir, 'imgk_');
 	if (empty($tmpFilename)) {
 	    /* This can happen if the $tmpDir path is bad */
 	    return GalleryStatus::error(ERROR_BAD_PATH,
 					__FILE__, __LINE__);
 	}
 
-	list($ret, $convertFromPnmCmd) =
-		$this->_convertFromPnmCmd($mimeType, $tmpFilename);
+	$command = array($this->_imageMagickCmd('convert'));
+
+	list ($ret, $jpegQuality) =
+	    $gallery->getModuleParameter('imagemagick', 'jpegQuality');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
+	    
+	switch($mimeType) {
+	case 'image/png'  :
+	case 'image/jpeg' :
+	    $command[] = '-quality';
+	    $command[] = $jpegQuality;
+	    break;
+	}
 
 	/* Do the conversion */
-	list($ret, $output) = 
-		$this->_exec(array($convertToPnmCmd,
-				   $command,
-				   $convertFromPnmCmd));
+	$command = array_merge($command, $args);
+	$command[] = $sourceFilename;
+	$command[] = $tmpFilename;
+	list($ret, $output) = $this->_exec($command);
+
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$platform = $gallery->getPlatform();
-
 	$success = $platform->rename($tmpFilename, $destFilename);
 	if (!$success) {
 	    $gallery->debug("Failed renaming $tmpFilename -> $destFilename");
@@ -237,105 +220,36 @@ class NetPbmGraphics extends GalleryGraphics {
 	    return GalleryStatus::success();
 	}
     }
+
+    /**
+     * Return the full path to the ImageMagick command
+     *
+     * @access private
+     * @param string an ImageMagick command (eg. "convert")
+     */
+    function _imageMagickCmd($cmd) {
+	global $gallery;
+
+	$platform = $gallery->getPlatform();
+	list ($ret, $imageMagickPath) =
+	    $gallery->getModuleParameter('imagemagick', 'path');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return $imageMagickPath . $cmd;
+    }
 		
-    /**
-     * Generate the correct command to convert an image type to PNM.
-     *
-     * @param string the path to an image file
-     * @return array object GalleryStatus a status code,
-     *               array 1 or more string commands
-     */
-    function _convertToPnmCmd($mimeType, $filename) {
-	global $gallery;
-
-	switch($mimeType) {
-	case 'image/png':
-	    $cmd = $this->_pnmCmd('pngtopnm');
-	    break;
-
-	case 'image/jpeg':
-	    $cmd = $this->_pnmCmd('jpegtopnm');
-	    break;
-
-	case 'image/gif':
-	    $cmd = $this->_pnmCmd('giftopnm');
-	    break;
-
-	default:
-	    $gallery->debug('Unsupported file type: ' . $mimeType);
-	    return array(GalleryStatus::error(ERROR_UNSUPPORTED_FILE_TYPE,
-					      __FILE__, __LINE__),
-			 null);
-	}
-
-	return array(GalleryStatus::success(),
-		     array($cmd, '--quiet', $filename));
-    }
-
-    /**
-     * Generate the correct command to convert an image type from PNM.
-     *
-     * @param string the path to an image file
-     * @param string the path to an image file
-     * @return array object GalleryStatus a status code,
-     *               array 1 or more string commands
-     */
-    function _convertFromPnmCmd($mimeType, $filename) {
-	global $gallery;
-
-	list ($ret, $pnmtojpeg) =
-	    $gallery->getModuleParameter('netpbm', 'pnmtojpeg');
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	list ($ret, $jpegQuality) =
-	    $gallery->getModuleParameter('netpbm', 'jpegQuality');
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	switch($mimeType) {
-	case 'image/png':
-	    $cmd = array($this->_pnmCmd('pnmtopng'),
-			 '>',
-			 $filename);
-	    break;
-
-	case 'image/jpeg':
-	    $cmd = array($this->_pnmCmd($pnmtojpeg),
-			 '--quality=' . $jpegQuality,
-			 '>',
-			 $filename);
-	    break;
-
-	case 'image/gif':
-	    $cmd = array(array($this->_pnmCmd('ppmquant'),
-			       '256'),
-			 array($this->_pnmCmd('ppmtogif'),
-			       '>',
-			       $filename));
-	    break;
-
-	default:
-	    return array(GalleryStatus::error(ERROR_UNSUPPORTED_FILE_TYPE,
-					      __FILE__, __LINE__),
-			 null);
-	}
-
-	return array(GalleryStatus::success(), $cmd);
-    }
-
     /**
      * Execute the command.  Flatten the command array first.
      *
+     * @see GalleryUtilities::exec
      */
-    function _exec($cmdArray) {
+    function _exec($command) {
 	global $gallery;
-	
-	$cmdArray = $this->_extractCommands($cmdArray);
+
 	$platform = $gallery->getPlatform();
-	list ($success, $results) = $platform->exec($cmdArray);
+	list ($success, $results) = $platform->exec(array($command));
 	if (!$success) {
 	    return array(GalleryStatus::error(ERROR_GRAPHICS_FAILURE,
 					      __FILE__, __LINE__),
@@ -344,73 +258,5 @@ class NetPbmGraphics extends GalleryGraphics {
 
 	return array(GalleryStatus::success(), $results);
     }	
-
-    /**
-     * Return the full path to the NetPBM command
-     *
-     * @access private
-     * @param string a netpbm command (eg. "giftopnm")
-     */
-    function _pnmCmd($cmd) {
-	global $gallery;
-	$platform = $gallery->getPlatform();
-
-	list ($ret, $netPbmPath) =
-	    $gallery->getModuleParameter('netpbm', 'path');
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-	   
-	return $netPbmPath . $cmd;
-    }
-
-    /**
-     * Extract a single array of commands from a multilevel array of commands
-     *
-     * The command array may wind up being multilevel, eg:
-     *
-     * array(
-     *   array('cmd', 'args'),
-     *   array('cmd', 'args'),
-     *   array(
-     *     array('cmd', 'args'),
-     *     array('cmd', 'args')
-     *   ),
-     * )
-     *
-     * Extract the commands as a single level array:
-     *
-     * array(
-     *   array('cmd', 'args'),
-     *   array('cmd', 'args'),
-     *   array('cmd', 'args'),
-     *   array('cmd', 'args')
-     * )
-     *
-     * While maintaining the order.
-     *
-     * @param array a multilevel set of commands
-     * @param array a single level set of commands
-     */
-    function _extractCommands($cmdArray, $level=0) {
-
-	$results = array();
-	$arrayElements = 0;
-	foreach (array_values($cmdArray) as $cmd) {
-	    if (is_array($cmd)) {
-		$results = array_merge($results, $this->_extractCommands($cmd, $level+1));
-		$arrayElements++;
-	    } else {
-		array_push($results, $cmd);
-	    }
-	}
-
-	if ($arrayElements == count($cmdArray)) {
-	    return $results;
-	} else {
-	    return array($results);
-	}
-    }
-    
 }
 ?>
