@@ -1434,8 +1434,18 @@ class DatabaseStorage extends GalleryStorage {
 	$metatables = $this->_db->MetaTables();
 	$this->_traceStop();
 
+	/*
+	 * Some databases (notably MySQL on Win32) don't support mixed case
+	 * table names.  So, when we get the meta table list back, it's lower
+	 * case.  Force all metatable listings to lower case and then expect
+	 * them to be lowercase so that we're consistent.
+	 */
+	for ($i = 0; $i < sizeof($metatables); $i++) {
+	    $metatables[$i] = strtolower($metatables[$i]);
+	}
+
 	/* Do the schema table first */
-	if (!in_array($this->_prefixTableName('Schema'), $metatables)) {
+	if (!in_array(strtolower($this->_prefixTableName('Schema')), $metatables)) {
 	    $ret = $this->_executeSqlFile($tableDefinition['Schema']);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
@@ -1459,7 +1469,7 @@ class DatabaseStorage extends GalleryStorage {
 		continue;
 	    }
 	    
-	    if (!in_array($this->_prefixTableName($tableName), $metatables)) {
+	    if (!in_array(strtolower($this->_prefixTableName($tableName)), $metatables)) {
 		$ret = $this->_executeSqlFile($sqlFile);
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
@@ -1705,7 +1715,7 @@ class DatabaseStorage extends GalleryStorage {
      * @access private
      */
     function _prefixColumnName($columnName) {
-	return $this->_columnPrefix . strtolower($columnName);
+	return $this->_columnPrefix . $columnName;
     }
 
     /**
@@ -1716,7 +1726,7 @@ class DatabaseStorage extends GalleryStorage {
      * @access private
      */
     function _prefixTableName($tableName) {
-	return $this->_tablePrefix . strtolower($tableName);
+	return $this->_tablePrefix . $tableName;
     }
 
     /**
