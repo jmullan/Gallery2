@@ -31,9 +31,9 @@
  * @package GalleryCore
  * @subpackage PHPUnit
  */
-class UserPreferencesControllerTest extends GalleryControllerTestCase {
+class UserPreferencesControllerTest2 extends GalleryControllerTestCase {
 
-    function UserPreferencesControllerTest($methodName) {
+    function UserPreferencesControllerTest2($methodName) {
 	$this->GalleryControllerTestCase($methodName, 'core:UserPreferences');
     }
 
@@ -45,104 +45,29 @@ class UserPreferencesControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-
-	$this->_saveUser = $gallery->getActiveUser();
-	$gallery->setActiveUser($this->_user);
     }
 
     function tearDown() {
 	global $gallery;
 	$this->_deleteUser($this->_user);
-	$gallery->setActiveUser($this->_saveUser);
 	parent::tearDown();
     }
 
-    function testCancel() {
-	GalleryUtilities::putRequestVariable('form[action][cancel]', 1);
-
-	$results = $this->handleRequest();
-	$this->assertEquals(array('return' => 1,
-				  'redirect' => array('view' => 'core:UserAdmin',
-						      'subView' => 'core:UserPreferences'),
-				  'status' => array(),
-				  'error' => array()),
-			    $results);
-	
-    }
-
-    function testUndo() {
-	GalleryUtilities::putRequestVariable('form[action][undo]', 1);
-
-	$results = $this->handleRequest();
-	$this->assertEquals(array('return' => 1,
-				  'redirect' => array('view' => 'core:UserAdmin',
-						      'subView' => 'core:UserPreferences'),
-				  'status' => array(),
-				  'error' => array()),
-			    $results);
-    }
-
-    function testEditAll() {
-	GalleryUtilities::putRequestVariable('form[action][save]', 1);
-	GalleryUtilities::putRequestVariable('form[fullName]', 'full name');
-	GalleryUtilities::putRequestVariable('form[email]', 'email@test.me');
-	GalleryUtilities::putRequestVariable('form[language]', 'language');
-
-	$results = $this->handleRequest();
-	$this->assertEquals(array('return' => 1,
-				  'redirect' => array('view' => 'core:UserAdmin',
-						      'subView' => 'core:UserPreferences'),
-				  'status' => array('saved' => 1),
-				  'error' => array()),
-			    $results);
-
-	/* Load back the user object and make sure the data got saved */
-	list ($ret, $this->_user) = $this->_user->refresh();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	$this->assertEquals($this->_user->getFullName(), 'full name');
-	$this->assertEquals($this->_user->getEmail(), 'email@test.me');
-	$this->assertEquals($this->_user->getLanguage(), 'language');
-    }
-
-    function testEditRequiredOnly() {
-	GalleryUtilities::putRequestVariable('form[action][save]', 1);
-	GalleryUtilities::putRequestVariable('form[fullName]', 'full name');
-	GalleryUtilities::putRequestVariable('form[email]', '  email_with-leading@space.test-o.com');
-
-	$results = $this->handleRequest();
-	$this->assertEquals(array('return' => 1,
-				  'redirect' => array('view' => 'core:UserAdmin',
-						      'subView' => 'core:UserPreferences'),
-				  'status' => array('saved' => 1),
-				  'error' => array()),
-			    $results);
-
-	/* Load back the user object and make sure the data got saved */
-	list ($ret, $this->_user) = $this->_user->refresh();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	$this->assertEquals($this->_user->getFullName(), 'full name');
-	$this->assertEquals($this->_user->getEmail(), 'email_with-leading@space.test-o.com');
-    }
-
+    /*
+	administrators are not required to fill in the email but regular users are
+	The testEditMissingEmail() in UserPreferencesControllerTest tests regular users
+    */
     function testEditMissingEmail() {
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[fullName]', 'full name');
-	/*
-	 * Test should pass, without this being present:
-	 *   GalleryUtilities::putRequestVariable('form[email]', '');
-	 */
+	GalleryUtilities::putRequestVariable('form[email]', '');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:UserAdmin',
+	$this->assertEquals(array('return' => 1,
+				  'redirect' => array('view' => 'core:UserAdmin',
 						      'subView' => 'core:UserPreferences'),
-				  'status' => array(),
-				  'error' => array('form[error][email][missing]')),
+				  'status' => array('saved' => 1),
+				  'error' => array()),
 			    $results);
     }
 

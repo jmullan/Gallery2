@@ -107,12 +107,15 @@ class AdminEditUserController extends GalleryController {
 
 	    /* language is optional for everybody */
 
-	    if (!$isAnonymous) {
-		/* email required for non-anonymous */
-		if (empty($form['email'])) {
-		    $error[] = 'form[error][email][missing]';
-		}
+	    /* email is suggested, but optional for administrator edits */
+            if (!empty($form['email'])) {
+                $form['email'] = trim($form['email']);
+                if (!GalleryUtilities::isValidEmailString($form['email'])) {
+                    $error[] = 'form[error][email][invalid]';
+                }
+            }
 
+	    if (!$isAnonymous) {
 		if ($form['password1'] != $form['password2']) {
 		    $error[] = 'form[error][password2][mismatch]';
 		}

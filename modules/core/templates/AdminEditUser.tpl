@@ -52,9 +52,9 @@
     <div class="gbDataEntry">
       <h3 class="giTitle">
 	{g->text text="E-mail Address"}
-        <div class="giSubtitle">
-          {g->text text="required"}
-        </div>
+        <span class="giSubtitle">
+          {g->text text="(suggested)"}
+        </span>
       </h3>
 
       <input size="32" type="text" name="{g->formVar var="form[email]"}" value="{$form.email}"/>
@@ -62,6 +62,11 @@
       {if isset($form.error.email.missing)}
       <div class="giError">
 	{g->text text="You must enter an email address"}
+      </div>
+      {/if}
+      {if isset($form.error.email.invalid)}
+      <div class="giError">
+        {g->text text="Invalid email address"}
       </div>
       {/if}
     </div>
@@ -84,7 +89,7 @@
       <h3 class="giTitle">
 	{g->text text="Password"}
         <span class="giSubtitle">
-          {g->text text="required"}
+          {g->text text="(required)"}
         </span>
       </h3>
       <input size="32" type="password" name="{g->formVar var="form[password1]"}"/>
@@ -100,7 +105,7 @@
       <h3 class="giTitle">
 	{g->text text="Verify Password"}
         <span class="giSubtitle">
-          {g->text text="required"}
+          {g->text text="(required)"}
         </span>
       </h3>
       

@@ -45,9 +45,15 @@
     <div class="gbDataEntry">
       <h3 class="giTitle">
         {g->text text="E-mail Address"}
-        <span class="giSubtitle">
-          {g->text text="(required)"}
-        </span>
+	{if !isset($UserAdmin.isSiteAdmin)}
+          <span class="giSubtitle">
+            {g->text text="(required)"}
+          </span>
+	{else}
+	  <span class="giSubtitle">
+	    {g->text text="(suggested)"}
+	  </span>
+	{/if}
       </h3>
       
       <input type="text" name="{g->formVar var="form[email]"}" value="{$form.email}"/>

@@ -77,15 +77,29 @@ class UserPreferencesController extends GalleryController {
 	    
 	    /* language is optional for everybody */
 
-	    /* email required for non-anonymous */
-	    if (empty($form['email'])) {
+	    list ($ret, $isAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }   
+
+	    /* 
+	     * email is required for non-anonymous 
+	     * but optional for administrators 
+	     */
+	    if (empty($form['email']) && !$isAdmin) {
 		$error[] = 'form[error][email][missing]';
-	    } else {
+	    } elseif (!empty($form['email'])) {
 		$form['email'] = trim($form['email']);
 		if (!GalleryUtilities::isValidEmailString($form['email'])) {
 		    $error[] = 'form[error][email][invalid]';
 		}
 	    }
+
+	    /*
+	     * Set a default if for some reason it doesn't get sent from the
+	     * browser
+	     */
+	    $form['email'] = empty($form['email']) ? '' : $form['email'];
 
 	    /*
 	     * If all the right fields are in place then go ahead and modify
@@ -104,6 +118,7 @@ class UserPreferencesController extends GalleryController {
 		
 		$user->setFullname($form['fullName']);
 		$user->setEmail($form['email']);
+
 		if (isset($form['language'])) {
 		    $user->setLanguage($form['language']);
 		}
