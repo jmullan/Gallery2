@@ -284,6 +284,10 @@ class Gallery1DataParserTest extends GalleryControllerTestCase {
 	$valid = Gallery1DataParser::isValidUid($this->_albumsDir, '1057837115_2072132305');
 	$this->assertEquals($valid,TRUE);	
     }
+    function testIsInvalidMissingUid() {
+	$valid = Gallery1DataParser::isValidUid($this->_albumsDir, '1057837115_20721323');
+	$this->assertEquals($valid,FALSE);
+    }
     function testIsInvalidUid1() {
 	$valid = Gallery1DataParser::isValidUid($this->_albumsDir, '5');
 	$this->assertEquals($valid,FALSE);
