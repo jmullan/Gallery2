@@ -288,19 +288,13 @@ function GalleryMain($returnHtml=false) {
 		    if (isset($results['html'])) {
 			$main['html'] = $results['html'];
 		    }
-		    if (isset($results['onLoad'])) {
-			$main['onLoad'] = $results['onLoad'];
-		    }
-		    if (isset($results['onUnload'])) {
-			$main['onUnload'] = $results['onUnload'];
-		    }
-		    
+
 		    if (isset($results['head'])) {
 			$main['viewHeadFile'] = $results['head'];
 		    } else {
 			$main['viewHeadFile'] = '';
 		    }
-		    
+
 		    if (isset($results['body'])) {
 			$main['viewBodyFile'] = $results['body'];
 		    } else {

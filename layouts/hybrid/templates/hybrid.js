@@ -4,6 +4,13 @@ var app_agent = navigator.userAgent.toLowerCase(); // Client sniff..
 var app_version = parseInt(navigator.appVersion);
 var app_is_ie = app_agent.indexOf('msie')>=0 && app_agent.indexOf('opera')<0;
 var app_is_safari = app_agent.indexOf('safari')>=0;
+if (document.all&&window.attachEvent) { // IE-Win
+  window.attachEvent("onload", app_onload);
+  window.attachEvent("onunload", app_setcookie);
+} else if (window.addEventListener) { // Others
+  window.addEventListener("load", app_onload, false);
+  window.addEventListener("unload", app_setcookie, false);
+}
 function app_getwinsize() {
  var obj = document.getElementById('album').offsetParent;
  if (obj && obj.tagName != 'BODY' && obj.tagName != 'HTML') {

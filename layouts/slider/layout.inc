@@ -169,8 +169,7 @@ class SliderLayout extends GalleryLayout {
 	$template->setVariable('layout', $layout);
 	return array(GalleryStatus::success(),
 		array('body' => 'layouts/slider/templates/slider.tpl',
-		      'head' => 'layouts/slider/templates/header.tpl',
-		      'onUnload' => 'app_setcookie()'));
+		      'head' => 'layouts/slider/templates/header.tpl'));
     }
 
     function _buildItemList(&$item) {

@@ -258,8 +258,7 @@ class HybridLayout extends GalleryLayout {
 	$template->setVariable('layout', $layout);
 	return array(GalleryStatus::success(),
 		array('body' => 'layouts/hybrid/templates/hybrid.tpl',
-		      'head' => 'layouts/hybrid/templates/header.tpl',
-		'onLoad' => 'app_onload()', 'onUnload' => 'app_setcookie()'));
+		      'head' => 'layouts/hybrid/templates/header.tpl'));
     }
 
     function _buildItemList(&$item) {

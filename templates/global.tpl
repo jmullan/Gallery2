@@ -26,14 +26,7 @@
     {* Content that G2 wants to display inside the <head> element *}
     {include file="gallery:`$main.viewHeadFile`" l10Domain=$main.viewL10Domain}
   </head>
-  <body
-    {if isset($main.onLoad)}
-    onload="{$main.onLoad}"
-    {/if}
-    {if isset($main.onUnload)}
-    onunload="{$main.onUnload}"
-    {/if}>
-
+  <body>
     <div id="gallery">
       <div id="gsHeader">
         <img src="{g->url href="images/galleryLogo_sm.png"}" alt="" />
