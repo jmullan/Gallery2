@@ -72,8 +72,8 @@ sub extract {
     }
 
 
-    # grab phrases of this format { galleryText ..... }
-    while ($data =~ /(\{\s*galleryText\s+.*?[^\\]\})/sg) {
+    # grab phrases of this format {gallery->text ..... }
+    while ($data =~ /(\{\s*gallery->text\s+.*?[^\\]\})/sg) {
       my $string = $1;
       my $text;
       my $one;
