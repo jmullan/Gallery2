@@ -50,10 +50,13 @@ class ItemMoveSingleControllerTest extends GalleryControllerTestCase {
 	$ret = GalleryCoreApi::registerToolkitOperation('ItemMoveSingleTestToolkit',
 		array('image/test'), 'thumbnail',
 		array(array('type' => 'int', 'description' => 'foo')), 'test-description');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 	$ret = GalleryCoreApi::registerToolkitOperation('ItemMoveSingleTestToolkit',
 		array('image/test'), 'scale',
 		array(array('type' => 'int', 'description' => 'foo')), 'test-description');
-
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -64,14 +67,14 @@ class ItemMoveSingleControllerTest extends GalleryControllerTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->_setDerivativePreferences($this->_rootAlbum->getId(), 150, 400);
+	$this->_setDerivativePreferences($this->_rootAlbum->getId(), 150, 300, 400);
 	
 	list ($ret, $this->_destinationAlbum) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->_setDerivativePreferences($this->_destinationAlbum->getId(), 200, 400, 600);
+	$this->_setDerivativePreferences($this->_destinationAlbum->getId(), 200, 400, 600, 800);
 	
 	/* Create a data item */
 	list ($ret, $this->_item) = $this->_createRandomDataItem(
@@ -164,7 +167,8 @@ class ItemMoveSingleControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 
 	/* Create derivatives according to prefs of original album */
-	$ret = GalleryCoreApi::addExistingItemToAlbum($this->_item, $this->_rootAlbum->getId());
+	$ret = GalleryCoreApi::addExistingItemToAlbum(
+				$this->_item, $this->_rootAlbum->getId(), true);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -173,6 +177,7 @@ class ItemMoveSingleControllerTest extends GalleryControllerTestCase {
 	$sizes = $this->_getDerivativeSizes($this->_item->getId());
 	$this->assertEquals(array(
 	    array('type' => DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 'op' => 'thumbnail|150'),
+	    array('type' => DERIVATIVE_TYPE_IMAGE_RESIZE, 'op' => 'scale|300'),
 	    array('type' => DERIVATIVE_TYPE_IMAGE_RESIZE, 'op' => 'scale|400')),
 	    $sizes, 'Initial derivative sizes');
 
@@ -193,18 +198,46 @@ class ItemMoveSingleControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-
 	$this->assertEquals(array($this->_getRootId(),
 				  $this->_destinationAlbum->getId()),
-			    $parentSequence);
+			    $parentSequence, 'Parent sequence');
 
 	/* Verify derivatives were recreated with preferences of new parent album */
 	$sizes = $this->_getDerivativeSizes($this->_item->getId());
 	$this->assertEquals(array(
 	    array('type' => DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 'op' => 'thumbnail|200'),
+	    /* Order differs because old 400 kept as-is, and old 300 is reused for 600. */
+	    array('type' => DERIVATIVE_TYPE_IMAGE_RESIZE, 'op' => 'scale|600'),
 	    array('type' => DERIVATIVE_TYPE_IMAGE_RESIZE, 'op' => 'scale|400'),
-	    array('type' => DERIVATIVE_TYPE_IMAGE_RESIZE, 'op' => 'scale|600')),
+	    array('type' => DERIVATIVE_TYPE_IMAGE_RESIZE, 'op' => 'scale|800')),
 	    $sizes, 'Derivative sizes after move');
+
+	/* Move back */
+	GalleryUtilities::putRequestVariable('form[destination]', $this->_rootAlbum->getId());
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemMoveSingle',
+						      'itemId' => $this->_item->getId()),
+				  'status' => array('moved' => 1),
+				  'error' => array()),
+			    $results);
+
+	/* Verify parent sequence */
+	list ($ret, $parentSequence) = GalleryCoreApi::fetchParentSequence($this->_item->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array($this->_getRootId(),
+				  $this->_rootAlbum->getId()),
+			    $parentSequence, 'Parent sequence 2');
+
+	/* Verify derivatives were recreated with preferences of new parent album */
+	$sizes = $this->_getDerivativeSizes($this->_item->getId());
+	$this->assertEquals(array(
+	    array('type' => DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 'op' => 'thumbnail|150'),
+	    array('type' => DERIVATIVE_TYPE_IMAGE_RESIZE, 'op' => 'scale|300'),
+	    array('type' => DERIVATIVE_TYPE_IMAGE_RESIZE, 'op' => 'scale|400')),
+	    $sizes, 'Derivative sizes after move 2');
     }
 
     /**

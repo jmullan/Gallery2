@@ -121,12 +121,13 @@ class ItemMoveSingleController extends GalleryController {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-		list ($ret, $lockIds[]) = GalleryCoreApi::acquireReadLockParents($item->getParentId());
+		$oldParentId = $item->getParentId();
+		list ($ret, $lockIds[]) = GalleryCoreApi::acquireReadLockParents($oldParentId);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-		list ($ret, $lockIds[]) = GalleryCoreApi::acquireReadLock(array($newParentId, $item->getParentId()));
+		list ($ret, $lockIds[]) = GalleryCoreApi::acquireReadLock(array($newParentId, $oldParentId));
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -137,7 +138,7 @@ class ItemMoveSingleController extends GalleryController {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-		/* Refresh the item in case it changed while it was locked */
+		/* Refresh the item in case it changed before it was locked */
 		list ($ret, $item) = $item->refresh();
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -154,6 +155,14 @@ class ItemMoveSingleController extends GalleryController {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
+		if (GalleryUtilities::isA($item, 'GalleryDataItem')) {
+		    /* Update for derivative preferences of new parent */
+		    $ret = GalleryCoreApi::addExistingItemToAlbum($item, $newParentId);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		}
+
 		/* Release all locks */
 		$ret = GalleryCoreApi::releaseLocks($lockIds);
 		if ($ret->isError()) {
@@ -161,16 +170,11 @@ class ItemMoveSingleController extends GalleryController {
 		}
 
 		/* Fix thumbnail integrity */
-		list ($ret, $success) = GalleryCoreApi::guaranteeAlbumHasThumbnail($item->getParentId());
+		list ($ret, $success) = GalleryCoreApi::guaranteeAlbumHasThumbnail($oldParentId);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-		list ($ret, $success) = GalleryCoreApi::guaranteeAlbumHasThumbnail($newParentId);
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-		
 		$status['moved'] = 1;
 
 		/* Figure out where to redirect upon success */

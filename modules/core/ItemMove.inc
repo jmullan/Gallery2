@@ -150,19 +150,21 @@ class ItemMoveController extends GalleryController {
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
+
+		    if (GalleryUtilities::isA($selectedItem, 'GalleryDataItem')) {
+			/* Update for derivative preferences of new parent */
+			$ret = GalleryCoreApi::addExistingItemToAlbum($selectedItem, $newParentId);
+			if ($ret->isError()) {
+			    return array($ret->wrap(__FILE__, __LINE__), null);
+			}
+		    }
 		}
 		$ret = GalleryCoreApi::releaseLocks($lockIds);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-
 		list ($ret, $success) = GalleryCoreApi::guaranteeAlbumHasThumbnail($itemId);
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-
-		list ($ret, $success) = GalleryCoreApi::guaranteeAlbumHasThumbnail($newParentId);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}

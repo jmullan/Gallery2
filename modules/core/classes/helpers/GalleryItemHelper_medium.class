@@ -338,7 +338,7 @@ class GalleryItemHelper_medium {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$ret = GalleryCoreApi::addExistingItemToAlbum($newItem, $albumId);
+	$ret = GalleryCoreApi::addExistingItemToAlbum($newItem, $albumId, true);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -351,10 +351,11 @@ class GalleryItemHelper_medium {
      *
      * @param object GalleryItem the source item
      * @param int the id of the target album
+     * @param boolean if true, skip check for existing derivatives
      * @return object GalleryStatus a status code
      * @static
      */
-    function addExistingItemToAlbum($item, $albumId) {
+    function addExistingItemToAlbum($item, $albumId, $isNew=false) {
 	
 	/* Set the order weight */
 	list ($ret, $maxWeight) = GalleryCoreApi::fetchExtremeChildWeight($albumId, HIGHER_WEIGHT);
@@ -383,7 +384,30 @@ class GalleryItemHelper_medium {
 
 	$mimeType = $source->getMimeType();
 
-	$itemHasThumbnail = false;
+	/* Get existing derivatives */
+	$derivs = array(DERIVATIVE_TYPE_IMAGE_THUMBNAIL => array(),
+			DERIVATIVE_TYPE_IMAGE_RESIZE => array());
+	if (!$isNew) {
+	    list ($ret, $tmp) = GalleryCoreApi::fetchThumbnailsByItemIds(array($item->getId()));
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    if (!empty($tmp)) {
+		$thumb = array_shift($tmp);
+		$derivs[DERIVATIVE_TYPE_IMAGE_THUMBNAIL][$thumb->getDerivativeOperations()] = $thumb;
+	    }
+	    list ($ret, $tmp) = GalleryCoreApi::fetchResizesByItemIds(array($item->getId()));
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    if (!empty($tmp)) {
+		foreach (array_shift($tmp) as $resize) {
+		    $derivs[DERIVATIVE_TYPE_IMAGE_RESIZE][$resize->getDerivativeOperations()] = $resize;
+		}
+	    }
+	}
+	$itemHasThumbnail = !empty($derivs[DERIVATIVE_TYPE_IMAGE_THUMBNAIL]);
+
 	foreach ($preferences as $preference) {
 	    $operations = $preference['derivativeOperations'];
 
@@ -396,7 +420,15 @@ class GalleryItemHelper_medium {
 		    }
 		}
 	    }
-		
+
+	    /* Check if we already have a derivative with matching type and operations.
+	     * If so, keep it.
+	     */
+	    if (isset($derivs[$preference['derivativeType']][$operations])) {
+		unset($derivs[$preference['derivativeType']][$operations]);
+		continue;
+	    }
+
 	    /*
 	     * Validate the stored preferences to make sure that
 	     * they're supported by an active toolkit.
@@ -429,28 +461,13 @@ class GalleryItemHelper_medium {
 		}
 	    }
 
-	    list ($ret, $derivative) =
-		GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative', $source->getEntityType());
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-
-	    if (!isset($derivative)) {
-		return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
-	    }
-
-	    $ret = $derivative->create($item->getId(), $preference['derivativeType']);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-
 	    /*
 	     * If the output type isn't viewable, then try to turn it into a form that *is*
 	     * viewable.
 	     */
 	    if (!GalleryCoreApi::isViewableMimeType($outputMimeType)) {
 		$tmpOperations = $preference['derivativeOperations'] . ';convert-to-image/jpeg';
-		list ($ret, $isSupported, $outputMimeType) =
+		list ($ret, $isSupported, $tmpOutputMimeType) =
 		    GalleryCoreApi::isSupportedOperationSequence($mimeType, $tmpOperations);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -458,8 +475,39 @@ class GalleryItemHelper_medium {
 		
 		if ($isSupported) {
 		    $operations = $tmpOperations;
+		    $outputMimeType = $tmpOutputMimeType;
 		} else {
 		    /* Oh well */
+		}
+	    }
+
+	    if (!empty($derivs[$preference['derivativeType']])) {
+
+		/* We have a derivative of this type we can reuse.
+		 * Save operation below will clear the derivative cache.
+		 */
+		$derivative = array_shift($derivs[$preference['derivativeType']]);
+		list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($derivative->getId());
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+
+	    } else {
+
+		/* Create a new derivative */
+		list ($ret, $derivative) = GalleryCoreApi::newFactoryInstanceByHint(
+					   'GalleryDerivative', $source->getEntityType());
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+
+		if (!isset($derivative)) {
+		    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
+		}
+
+		$ret = $derivative->create($item->getId(), $preference['derivativeType']);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
 
@@ -474,8 +522,26 @@ class GalleryItemHelper_medium {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
+	    if (isset($lockId)) {
+		$ret = GalleryCoreApi::releaseLocks(array($lockId));
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+		unset($lockId);
+	    }
+
 	    if ($preference['derivativeType'] == DERIVATIVE_TYPE_IMAGE_THUMBNAIL) {
 		$itemHasThumbnail = true;
+	    }
+	}
+
+	/* Delete any old derivatives that have not been reused */
+	foreach ($derivs as $tmp) {
+	    foreach ($tmp as $derivative) {
+		$ret = GalleryCoreApi::deleteEntityById($derivative->getId());
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
 	    }
 	}
 

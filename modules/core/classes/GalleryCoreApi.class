@@ -1271,12 +1271,13 @@ class GalleryCoreApi {
      *
      * @param object GalleryItem the source item
      * @param int the id of the target album
+     * @param boolean if true, skip check for existing derivatives
      * @return object GalleryStatus a status code
      * @static
      */
-    function addExistingItemToAlbum($item, $albumId) {
+    function addExistingItemToAlbum($item, $albumId, $isNew=false) {
 	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/helpers/GalleryItemHelper_medium.class');
-	return GalleryItemHelper_medium::addExistingItemToAlbum($item, $albumId);
+	return GalleryItemHelper_medium::addExistingItemToAlbum($item, $albumId, $isNew);
     }
     
     /**
