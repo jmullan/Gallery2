@@ -52,7 +52,8 @@ class ItemDeleteController extends GalleryController {
 		$selectedIds = array_keys($form['selectedIds']);
 
 		/* get the rootId, so we don't try to delete it */
-		list ($ret, $rootId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
+		list ($ret, $rootId) =
+		    GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -70,8 +71,9 @@ class ItemDeleteController extends GalleryController {
 		    }
 
 		    if ( !isset($permissions['core.delete'])) {
-			return array(GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__,
-							  "Don't have permission to delete this item"), null);
+			return array(
+			    GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__,
+				"Don't have permission to delete this item"), null);
 		    }
 
 		    /* Make sure we're not deleting the root album */
@@ -98,13 +100,28 @@ class ItemDeleteController extends GalleryController {
 		/* What do we do if we weren't successful?  No thumbnail, I guess */
 	    }
 
-	    /* Figure out where to redirect upon success */
-	    $redirect['view'] = 'core:ShowItem';
-	    $redirect['itemId'] = $itemId;
+	    /*
+	     * Figure out where to redirect upon success.
+	     * Can't use return url because it may be for an item we just deleted, but
+	     * check for g2_page param and include that if found (matrix layout specific..)
+	     */
+	    $results['redirect'] = array('view' => 'core:ShowItem',
+					 'itemId' => $itemId);
+
+	    $urlGenerator =& $gallery->getUrlGenerator();
+	    list ($ret, $links) = $urlGenerator->getNavigationLinks(1);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    if (count($links) > 0 &&
+		    preg_match('{' . GalleryUtilities::prefixFormVariable('page') . '=(\d+)}',
+			       $links[0]['url'], $match)) {
+		$results['redirect']['page'] = $match[1];
+	    }
 	} else if (isset($form['action']['next'])) {
 	    $page = GalleryUtilities::getRequestVariables('page');
 	    list($ret, $peerIds) =
-		    GalleryCoreApi::fetchChildItemIdsWithPermission($itemId, 'core.delete');
+		GalleryCoreApi::fetchChildItemIdsWithPermission($itemId, 'core.delete');
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -121,9 +138,7 @@ class ItemDeleteController extends GalleryController {
 	    $results['return'] = 1;
 	}
 
-	if (!empty($redirect)) {
-	    $results['redirect'] = $redirect;
-	} else {
+	if (!empty($results['delegate'])) {
 	    $results['delegate']['view'] = 'core:ItemAdmin';
 	    $results['delegate']['subView'] = 'core:ItemDelete';
 	}
@@ -220,7 +235,8 @@ class ItemDeleteView extends GalleryView {
 		} else {
 		    $peerTypes['data'][$peerItem->getId()] = 1;
 		}
-		$peers[$peerItem->getId()]['selected'] = isset($form['selectedIds'][$peerItem->getId()]);
+		$peers[$peerItem->getId()]['selected'] =
+		    isset($form['selectedIds'][$peerItem->getId()]);
 
 		/* While we're at it, attach the thumbnails */
 		if (isset($thumbnails[$peerItem->getId()])) {
