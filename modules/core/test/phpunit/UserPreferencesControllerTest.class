@@ -172,7 +172,7 @@ class UserPreferencesControllerTest extends GalleryControllerTestCase {
 				  'error' => array('form[error][email][invalid]')),
 			    $results, 'space');
 
-	GalleryUtilities::putRequestVariable('form[email]', 'bad.suffix@test.comm');
+	GalleryUtilities::putRequestVariable('form[email]', 'bad.suffix@test.commm');
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'core:UserAdmin',
