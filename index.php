@@ -24,6 +24,5 @@
  * @package Gallery
  * @author Bharat Mediratta <bharat@menalto.com>
  */
-
-header('Location: main.php');
+include(dirname(__FILE__) . '/main.php');
 ?>
