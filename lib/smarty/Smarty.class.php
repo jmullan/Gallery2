@@ -1504,6 +1504,19 @@ function _run_insert_handler($args)
         		$res .= str_replace($_dir_sep_enc,'^',urlencode($auto_source));
 			}
 		}
+
+		/*
+		 * Force a namespace for each template_dir
+		 *
+		 * -BM 10/18/2002
+		 */
+		$templateDir = $this->template_dir;
+		if (!strncmp($auto_source, 'file:', 5)) {
+		    $templateDir = dirname(substr($auto_source, 5));
+		}
+		$res = $auto_base . DIR_SEP .
+		    substr(md5($templateDir), 0, 16) .
+		    '^' . basename($auto_source);
 		
         return $res;
     }
