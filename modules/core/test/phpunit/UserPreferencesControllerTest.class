@@ -46,14 +46,12 @@ class UserPreferencesControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->_saveUser = $gallery->getActiveUser();
 	$gallery->setActiveUser($this->_user);
     }
 
     function tearDown() {
 	global $gallery;
 	$this->_deleteUser($this->_user);
-	$gallery->setActiveUser($this->_saveUser);
 	parent::tearDown();
     }
 
@@ -133,16 +131,34 @@ class UserPreferencesControllerTest extends GalleryControllerTestCase {
     function testEditMissingEmail() {
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[fullName]', 'full name');
-	/*
-	 * Test should pass, without this being present:
-	 *   GalleryUtilities::putRequestVariable('form[email]', '');
-	 */
 
+	/* As a non-admin, we'll get an error about it being missing */
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'core:UserAdmin',
 						      'subView' => 'core:UserPreferences'),
 				  'status' => array(),
 				  'error' => array('form[error][email][missing]')),
+			    $results);
+
+	/* Make ourselves an admin */
+	list ($ret, $adminGroupId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::addUserToGroup($this->_user->getId(), $adminGroupId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Now it lets us submit with a missing email */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('return' => 1,
+				  'redirect' => array('view' => 'core:UserAdmin',
+						      'subView' => 'core:UserPreferences'),
+				  'status' => array('saved' => 1),
+				  'error' => array()),
 			    $results);
     }
 
