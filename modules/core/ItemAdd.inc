@@ -157,9 +157,9 @@ class ItemAddView extends GalleryView {
 	 */
 	$session =& $gallery->getSession();
 	$addPluginSessionKey = 'core.view.ItemAdd.addPlugin.' . get_class($item);
-	if (empty($addPlugin)) {
+	if (empty($addPlugin) || !isset($pluginInstances[$addPlugin])) {
 	    $addPlugin = $session->get($addPluginSessionKey);
-	    if (empty($addPlugin)) {
+	    if (empty($addPlugin) || !isset($pluginInstances[$addPlugin])) {
 		$ids = array_keys($pluginInstances);
 		$addPlugin = $ids[0];
 	    }
