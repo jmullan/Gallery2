@@ -184,8 +184,8 @@ class GalleryTestCase extends TestCase {
      */
     function _createRandomDataItem($parentId, $mimeType='application/unknown', $fields=array()) {
 	global $gallery;
-	
-	list ($ret, $item) = GalleryFactory::newInstance('GalleryEntity', 'GalleryUnknownItem');
+
+	list ($ret, $item) = GalleryItemHelper::newItemByMimeType($mimeType);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
