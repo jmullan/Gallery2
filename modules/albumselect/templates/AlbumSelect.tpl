@@ -11,7 +11,7 @@
 {foreach from=$AlbumSelectSystemContent.tree item=node}
   {assign var="item" value=$AlbumSelectSystemContent.treeItems[$node.id]}
   <option value="{g->url arg1="view=core:ShowItem" arg2="itemId=`$node.id`"}">
-    {$item.title|default:$item.pathComponent|indent:$node.depth:"-- "|markup}
+    {$item.title|default:$item.pathComponent|entitytruncate:20|indent:$node.depth:"-- "|markup}
   </option>
 {/foreach}
 </select>
