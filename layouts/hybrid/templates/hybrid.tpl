@@ -13,7 +13,7 @@
 /><img id="slide__rand" src="{$layout.layoutUrl}/images/rand.png" width="18" height="18" class="off" onclick="slide_onoff()" alt="Start Slideshow" title="Start Slideshow"
 /></div>
 <table class="gbTitleBanner" cellspacing="0"><tr><td>
-<span id="album_title" class="giTitle">{$layout.item.title|default:$layout.item.pathComponent|markup}</span>
+<span id="album_title" class="giTitle">{$layout.item.title|markup}</span>
 <span id="album_summary" class="giDescription">{if isset($layout.item.summary)}
 <br />{$layout.item.summary|markup}{/if}</span>
 </td><td>
@@ -83,7 +83,7 @@
       <span id="title_{$it.imageIndex}" class="giTitle">
     {else},-1)" /></span><span class="giTitle">{/if}
   {else}<span class="giTitle">{/if}
-  {$it.title|default:$it.pathComponent|markup}</span></span></td>
+  {$it.title|markup}</span></span></td>
   </tr><tr>
   <td><span class="giDescription" {if isset($it.image)}id="text_{$it.imageIndex}"{/if}>
   {if isset($it.summary)}{$it.summary|markup}<br />{/if}

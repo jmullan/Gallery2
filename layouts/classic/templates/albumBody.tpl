@@ -17,7 +17,7 @@
         <tr>
           <td>
             <h1 class="giTitle">
-              {$layout.item.title|default:$layout.item.pathComponent|markup}
+              {$layout.item.title|markup}
             </h1>
             <p class="giDescription">
               {$layout.item.description|markup}
@@ -93,7 +93,7 @@
 	</div></td><td class="info">
 
           <h2 class="giTitle">
-            {$child.title|default:$child.pathComponent|markup}
+            {$child.title|markup}
           </h2>
 
           <p class="giDescription">

@@ -33,7 +33,7 @@
   <span id="image_view"></span>
 </div>
 
-<div class="giTitle">{$layout.item.title|default:$layout.item.pathComponent|markup}</div>
+<div class="giTitle">{$layout.item.title|markup}</div>
 
 {if isset($layout.params.bgSerialNumber)}
 <table id="tile" style="background-image:url({g->url arg1="view=core:DownloadItem" arg2="itemId=`$layout.params.backgroundId`" arg3="serialNumber=`$layout.params.bgSerialNumber`"})" cellspacing="0">

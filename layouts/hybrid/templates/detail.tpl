@@ -17,7 +17,7 @@
     <td>{g->image item=$layout.item image=$layout.thumbnail}</td>
   {/if}
   <td valign="top"><br>
-    {$layout.item.title|default:$layout.item.pathComponent|markup}<br>
+    {$layout.item.title|markup}<br>
     {g->text text="Owner: %s" arg1=$layout.owner.fullName|default:$layout.owner.userName}<br>
     {g->text one="Viewed: %d time" many="Viewed: %d times"
              count=$layout.viewCount arg1=$layout.viewCount}<br>

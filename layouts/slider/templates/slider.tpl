@@ -15,7 +15,7 @@
           arg2="itemId=`$it.image.id`"
           arg3="serialNumber=`$it.image.serialNumber`"}"></a>
     {/if}
-    <span id="title_{$it.imageIndex}">{$it.title|default:$it.pathComponent|markup}</span>
+    <span id="title_{$it.imageIndex}">{$it.title|markup}</span>
     <select id="links_{$it.imageIndex}">
      {foreach from=$it.itemLinks item=link}
       <option label="{$link.text}" value="{$link.url}">{$link.text}</option>
