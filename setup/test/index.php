@@ -114,7 +114,7 @@ function runTest($testName) {
     if ($ret1->isSuccess()) {
 	print 'Status: Success<br>';
     } else {
-	print 'Status: ' . $ret->getAsString();
+	print 'Status: ' . $ret1->getAsString();
     }
 
     print '<br>';
@@ -124,7 +124,7 @@ function runTest($testName) {
     if ($ret2->isSuccess()) {
 	print 'Status: Success<br>';
     } else {
-	print 'Status: ' . $ret->getAsString();
+	print 'Status: ' . $ret2->getAsString();
     }
 
     print '<hr>';

@@ -1,0 +1,45 @@
+<?php
+
+class CreateGalleryCommentTestCase extends TestCase {
+
+    function getDescription() {
+	return "Create a new comment attached to the root album";
+    }
+
+    function testStart() {
+	global $gallery;
+
+	$rootId = $gallery->getConfigValue('core.root.id');
+	list ($ret, $root) = GalleryNucleus::load($rootId);
+	var_dump($root->getId());
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
+	$comment = new GalleryComment();
+	$ret = $comment->create($root);
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
+	$ret = $gallery->lockLocal(array($root->getId(),
+					 $comment->getId()));
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
+	$comment->setComment('Weirdolet writes: "Ananova are reporting that ultra-dense, pollen sized strangelets (aka nuggets of strange quarks) travelling at 900,000 miles per hour hit the earth, violently pass through it and have done on at least two occasions already. It\'s also reported, allegedly, in the Sunday telegraph but I haven\'t found it there yet :P Coming to a particle accelerator near you soon ... ?" Another reader has found the story at the Telegraph.');
+	$comment->setDate(time());
+	$comment->setEmailAddress('bozo@slashdot.org');
+	$comment->setHostname('www.slashdot.org');
+	$comment->setName('Cmdr Taco');
+	$ret = GalleryNucleus::saveMany(array(&$root, &$comment));
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
+	return GalleryStatus::success();
+    }
+}
+
+?>

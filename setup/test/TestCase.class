@@ -33,6 +33,10 @@ class TestCase {
 	$this->traceStart();
 	$ret = $this->testCleanup();
 	$this->traceStop();
+
+	/* Release any locks the tests left hanging */
+	global $gallery;
+	$gallery->unlock();
 	
 	return $ret;
     }
