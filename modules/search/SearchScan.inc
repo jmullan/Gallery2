@@ -62,7 +62,7 @@ class SearchScanController extends GalleryController {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    
+
 	    foreach ($ids as $id => $className) {
 		list ($ret, $searchInstances[$id]) =
 		    GalleryCoreApi::newFactoryInstance('GallerySearchInterface_1_0', $className);
@@ -126,7 +126,7 @@ class SearchScanView extends GalleryView {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	foreach ($ids as $id => $className) {
 	    list ($ret, $searchInstances[$id]) =
 		GalleryCoreApi::newFactoryInstance('GallerySearchInterface_1_0', $className);
@@ -225,7 +225,7 @@ class SearchScanView extends GalleryView {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	$slideshowAvailable = !empty($ids);
 
 	/* Render the HTML body */
@@ -248,9 +248,14 @@ class SearchScanView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'search');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$template->title($module->translate('Gallery Search'));
 	return array(GalleryStatus::success(),
-		     array('head' => 'modules/search/templates/SearchHead.tpl',
-			   'body' => 'modules/search/templates/SearchScan.tpl'));
+		     array('body' => 'modules/search/templates/SearchScan.tpl'));
     }
 }
 ?>

@@ -52,7 +52,8 @@ class ShowTreeView extends GalleryView {
 	    if (!empty($itemId)) {
 		$entityId = $itemId;
 	    } else {
-		list ($ret, $entityId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
+		list ($ret, $entityId) =
+		    GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -106,9 +107,14 @@ class ShowTreeView extends GalleryView {
 	$ShowTree['form'] = $form;
 	$template->setVariable('ShowTree', $ShowTree);
 
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'debug');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$template->title($module->translate('Gallery Debug'));
 	return array(GalleryStatus::success(),
-		     array('head' => 'modules/debug/templates/DebugHead.tpl',
-			   'body' => 'modules/debug/templates/ShowTree.tpl'));
+		     array('body' => 'modules/debug/templates/ShowTree.tpl'));
     }
 }
 ?>

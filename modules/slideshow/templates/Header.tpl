@@ -53,4 +53,3 @@
     filters[15] = 'RANDOM';
     // ]]>
 </script>
-{g->style}

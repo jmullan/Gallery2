@@ -8,10 +8,6 @@
   {$layout.item.title|default:$layout.item.pathComponent|markup:stripBbcodeAndHtml}
 </title>
 <link rel="stylesheet" type="text/css" href="{$layout.layoutUrl}/templates/hybrid.css"/>
-{g->style}
-{if isset($layout.albumFrame) || isset($layout.imageFrame)}
-  {imageframe_style}
-{/if}
 <script type="text/javascript">
 {if $layout.imageCount==1}
 var data_iw = new Array(1); data_iw[0] = {$layout.imageWidths};

@@ -118,7 +118,6 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	    } else {
 		$smarty =& $template->_getSmarty();
 		$smarty->register_block('imageframe', array('GalleryTemplateAdapter', 'nullBlock'));
-		$smarty->register_function('imageframe_style', array('GalleryTemplateAdapter', 'nullFunction'));
 	    }
 
 	    $ImageBlockSystemContent['blocks'] = $blocks;

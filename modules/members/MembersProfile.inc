@@ -40,47 +40,47 @@ class MembersProfileView extends GalleryView {
      */
     function loadTemplate(&$template, &$form) {
 	global $gallery;
-	
+
 	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/GalleryMembersHelper.class');
-        list ($ret, $result) = 
-            GalleryMembersHelper::canViewMembersModule($gallery->getActiveUserId());
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
+	list ($ret, $result) =
+	    GalleryMembersHelper::canViewMembersModule($gallery->getActiveUserId());
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-        if (!$result) {
-            return array(GalleryStatus::success(), 
-                         array('redirect' => array('view' => 'core:ShowItem')));
-        }
+	if (!$result) {
+	    return array(GalleryStatus::success(),
+			 array('redirect' => array('view' => 'core:ShowItem')));
+	}
 
 	$userId = GalleryUtilities::getRequestVariables('userId');
 	if (empty($userId)) {
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
 	}
-	
-	if ($form['formName'] != 'MembersProfile') {    
+
+	if ($form['formName'] != 'MembersProfile') {
 	    /* Set some defaults */
 	    $form['formName'] = 'MembersProfile';
 	}
 
-        $MembersProfile = array();
+	$MembersProfile = array();
 
-        /* Bring in the root album information for the breadcrumb */
-        list ($ret, $rootAlbumId) =
-            GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
-        }
-        list ($ret, $rootAlbum) = GalleryCoreApi::loadEntitiesById($rootAlbumId);
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
-        }
-        $MembersProfile['rootAlbum'] = $rootAlbum->getMemberData();
+	/* Bring in the root album information for the breadcrumb */
+	list ($ret, $rootAlbumId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	list ($ret, $rootAlbum) = GalleryCoreApi::loadEntitiesById($rootAlbumId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$MembersProfile['rootAlbum'] = $rootAlbum->getMemberData();
 
-        list ($ret, $user) = GalleryCoreApi::loadEntitiesById($userId);
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
-        }
-        $MembersProfile['user'] = $user->getMemberData();
+	list ($ret, $user) = GalleryCoreApi::loadEntitiesById($userId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$MembersProfile['user'] = $user->getMemberData();
 
 	list ($ret, $lastItems) = GalleryMembersHelper::fetchLastUserItems($user->getId(),
 									   0, 5, ORDER_DESCENDING);
@@ -92,21 +92,21 @@ class MembersProfileView extends GalleryView {
 	foreach ($lastItems as $item) {
 	    $MembersProfile['lastItems'][] = $item->getMemberData();
 	}
-	
+
 	list ($ret, $daysSinceCreation) = GalleryMembersHelper::daysSinceCreation($user->getId());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$MembersProfile['daysSinceCreation'] = $daysSinceCreation;
-    
-        list ($ret, $canViewProfileEmail) = 
-            GalleryMembersHelper::canViewProfileEmail($gallery->getActiveUserId());
-        if ($ret->isError()) {
+
+	list ($ret, $canViewProfileEmail) =
+	    GalleryMembersHelper::canViewProfileEmail($gallery->getActiveUserId());
+	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$MembersProfile['canViewProfileEmail'] = $canViewProfileEmail;
-        
-        $template->setVariable('MembersProfile', $MembersProfile);
+
+	$template->setVariable('MembersProfile', $MembersProfile);
 
 	list ($ret, $navigationView) = GalleryView::loadView('core:Navigation');
 	if ($ret->isError()) {
@@ -117,10 +117,15 @@ class MembersProfileView extends GalleryView {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
-        return array(GalleryStatus::success(),
-		     array('head' => 'modules/members/templates/MembersProfileHead.tpl',
-        		   'body' => 'modules/members/templates/MembersProfile.tpl'));
+
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'members');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$template->title($module->translate('Members Profile'));
+	return array(GalleryStatus::success(),
+		     array('body' => 'modules/members/templates/MembersProfile.tpl'));
     }
 }
 ?>

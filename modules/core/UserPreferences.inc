@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -44,7 +44,8 @@ class UserPreferencesController extends GalleryController {
 
 	$userId = $gallery->getActiveUserId();
 
-	list ($ret, $anonymousUserId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	list ($ret, $anonymousUserId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -60,32 +61,27 @@ class UserPreferencesController extends GalleryController {
 	    /* Redirect back to the current view */
 	    $redirect['view'] = 'core:UserAdmin';
 	    $redirect['subView'] = 'core:UserPreferences';
-	    
+
 	} else if (isset($form['action']['undo'])) {
 
 	    /* Redirect back to the same view to reset the form */
 	    $redirect['view'] = 'core:UserAdmin';
 	    $redirect['subView'] = 'core:UserPreferences';
-	    
+
 	} else if (isset($form['action']['save'])) {
 
-	    /*
-	     * Validate our data before we continue.
-	     */
+	    /* Validate our data before we continue. */
 
 	    /* full name is optional */
-	    
+
 	    /* language is optional for everybody */
 
 	    list ($ret, $isAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }   
+	    }
 
-	    /* 
-	     * email is required for non-anonymous 
-	     * but optional for administrators 
-	     */
+	    /* email is required for non-anonymous but optional for administrators */
 	    if (empty($form['email']) && !$isAdmin) {
 		$error[] = 'form[error][email][missing]';
 	    } else if (!empty($form['email'])) {
@@ -95,16 +91,10 @@ class UserPreferencesController extends GalleryController {
 		}
 	    }
 
-	    /*
-	     * Set a default if for some reason it doesn't get sent from the
-	     * browser
-	     */
+	    /* Set a default if for some reason it doesn't get sent from the browser */
 	    $form['email'] = empty($form['email']) ? '' : $form['email'];
 
-	    /*
-	     * If all the right fields are in place then go ahead and modify
-	     * the user.
-	     */
+	    /* If all the right fields are in place then go ahead and modify the user. */
 	    if (empty($error)) {
 		list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($userId);
 		if ($ret->isError()) {
@@ -115,7 +105,7 @@ class UserPreferencesController extends GalleryController {
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-		
+
 		$user->setFullname($form['fullName']);
 		$user->setEmail($form['email']);
 
@@ -149,7 +139,7 @@ class UserPreferencesController extends GalleryController {
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;
-	
+
 
 	return array(GalleryStatus::success(), $results);
     }
@@ -171,7 +161,8 @@ class UserPreferencesView extends GalleryView {
 	global $gallery;
 
 	$userId = $gallery->getActiveUserId();
-	list ($ret, $anonymousUserId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	list ($ret, $anonymousUserId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -180,7 +171,7 @@ class UserPreferencesView extends GalleryView {
 	}
 
 	$user = $gallery->getActiveUser();
-	
+
 	/* Load the form with user data the first time around. */
 	if ($form['formName'] != 'UserPreferences') {
 	    $form['userName'] = $user->getUserName();
@@ -195,7 +186,7 @@ class UserPreferencesView extends GalleryView {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	$languageList = array();
 	$languageList[''] = $module->translate('<none>');
 	$translator =& $gallery->getTranslator();

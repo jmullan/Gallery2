@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -89,12 +89,12 @@ class ItemAdminView extends GalleryView {
 		    }
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-		
+
 		list ($ret, $moduleViews) = $module->getItemAdminViews($item);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-		
+
 		$subViewChoiceData = array_merge($subViewChoiceData, $moduleViews);
 	    }
 	}
@@ -124,7 +124,7 @@ class ItemAdminView extends GalleryView {
 	    if (!isset($params['itemId'])) {
 		$params['itemId'] = $item->getId();
 	    }
-	    
+
 	    $subViewChoices[$name] = $params;
 	}
 
@@ -162,12 +162,13 @@ class ItemAdminView extends GalleryView {
 
 	/* Our sub view may have set some hints, like the encoding type */
 	if ($template->hasVariable('ItemAdmin')) {
-	    $ItemAdmin =& $template->getVariableByReference('ItemAdmin'); 
+	    $ItemAdmin =& $template->getVariableByReference('ItemAdmin');
 	} else {
 	    $ItemAdmin = array();
 	}
 
-	list ($ret, $rootAlbumId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
+	list ($ret, $rootAlbumId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
@@ -175,6 +176,11 @@ class ItemAdminView extends GalleryView {
 	/* Get the links for navigating back to where we came from */
 	$urlGenerator =& $gallery->getUrlGenerator();
 	list ($ret, $navigationLinks) = $urlGenerator->getNavigationLinks();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+
+	list($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
@@ -198,10 +204,9 @@ class ItemAdminView extends GalleryView {
 	}
 
 	$template->setVariable('ItemAdmin', $ItemAdmin);
-
+	$template->title($module->translate('Gallery Item Administration'));
 	return array(GalleryStatus::success(),
-		     array('head' => 'modules/core/templates/ItemAdminHead.tpl',
-			   'body' => 'modules/core/templates/ItemAdmin.tpl'));
+		     array('body' => 'modules/core/templates/ItemAdmin.tpl'));
     }
 
     function sortByName($a, $b) {
@@ -213,7 +218,7 @@ class ItemAdminView extends GalleryView {
      */
     function getViewDescription() {
 	global $gallery;
-	
+
 	/* Get the description from the current subView */
 	$subViewName = GalleryUtilities::getRequestVariables('subView');
 	if (empty($subViewName)) {
@@ -223,7 +228,7 @@ class ItemAdminView extends GalleryView {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	return $subView->getViewDescription();
     }
 }

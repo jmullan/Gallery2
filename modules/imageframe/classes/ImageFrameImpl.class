@@ -76,8 +76,8 @@ class ImageFrameImpl extends ImageFrameInterface_1_1 {
 						   'style' => 'border:1px solid black'));
 	    $smarty =& $template->_getSmarty();
 	    $smarty->register_block('imageframe', array($this, 'renderImageFrame'));
-	    $smarty->register_function('imageframe_style', array($this, 'renderImageFrameStyle'));
 	    $template->setVariable('ImageFrameData', array());
+	    $template->head('modules/imageframe/templates/ImageFrameStyle.tpl');
 	}
 	$data =& $template->getVariableByReference('ImageFrameData');
 
@@ -127,21 +127,6 @@ class ImageFrameImpl extends ImageFrameInterface_1_1 {
 	}
 
 	return GalleryStatus::success();
-    }
-
-    /**
-     * Smarty callback for ImageFrame CSS
-     */
-    function renderImageFrameStyle($params, &$smarty) {
-	static $isDone;
-	if (isset($isDone)) {
-	    return '';
-	}
-	$isDone = true;
-	return $smarty->_smarty_include(
-	    array('smarty_include_tpl_file' =>
-		      'gallery:modules/imageframe/templates/ImageFrameStyle.tpl',
-		  'smarty_include_vars' => array()));
     }
 
     /**

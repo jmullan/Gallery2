@@ -160,9 +160,9 @@ class TileLayout extends GalleryLayout {
 	    }
 	}
 
+	$template->head('layouts/tile/templates/header.tpl');
 	return array(GalleryStatus::success(),
-		array('head' => 'layouts/tile/templates/header.tpl',
-		      'body' => 'layouts/tile/templates/tile.tpl'));
+		     array('body' => 'layouts/tile/templates/tile.tpl'));
     }
 
     function _buildItemList($childIds, &$children) {

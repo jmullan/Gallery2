@@ -8,7 +8,6 @@
   {$layout.item.title|default:$layout.item.pathComponent|markup:stripBbcodeAndHtml}
 </title>
 <link rel="stylesheet" type="text/css" href="{$layout.layoutUrl}/templates/tile.css"/>
-{g->style}
 <script type="text/javascript">
 {if $layout.imageCount==1}
 var image_width = new Array(1); image_width[0] = {$layout.imageWidths};

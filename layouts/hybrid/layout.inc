@@ -62,7 +62,7 @@ class HybridLayout extends GalleryLayout {
 			    'image' => $image->getMemberData());
 	    $template->setVariable('layout', $layout);
 	    return array(GalleryStatus::success(),
-	                 array('html' => 'layouts/hybrid/templates/render.tpl'));
+			 array('html' => 'layouts/hybrid/templates/render.tpl'));
 	}
 
 	if (!$item->getCanContainChildren() && !$detail) {
@@ -90,7 +90,7 @@ class HybridLayout extends GalleryLayout {
 		$layout['thumbnail'] = $thumbnail[$item->getId()]->getMemberData();
 	    }
 	    return array(GalleryStatus::success(),
-	                 array('html' => 'layouts/hybrid/templates/detail.tpl'));
+			 array('html' => 'layouts/hybrid/templates/detail.tpl'));
 	}
 
 	list ($ret, $params) = $this->fetchParameters($item->getId());
@@ -167,16 +167,14 @@ class HybridLayout extends GalleryLayout {
 		$imageFrameInitialized = true;
 	    }
 	}
-
 	if (!$imageFrameInitialized) {
 	    $smarty =& $template->_getSmarty();
 	    $smarty->register_block('imageframe', array('GalleryTemplateAdapter', 'nullBlock'));
-	    $smarty->register_function('imageframe_style', array('GalleryTemplateAdapter', 'nullFunction'));
 	}
 
+	$template->head('layouts/hybrid/templates/header.tpl');
 	return array(GalleryStatus::success(),
-		array('body' => 'layouts/hybrid/templates/hybrid.tpl',
-		      'head' => 'layouts/hybrid/templates/header.tpl'));
+		     array('body' => 'layouts/hybrid/templates/hybrid.tpl'));
     }
 
     function _buildItemList($childIds, &$children) {

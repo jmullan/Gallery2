@@ -7,7 +7,6 @@
 <title>
   {g->text text="Error"}
 </title>
-{g->style}
 {literal}
 <style type="text/css">
   <!--

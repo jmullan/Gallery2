@@ -265,7 +265,6 @@ function _GalleryMain($returnHtml=false) {
 	    if (isset($results['html'])) {
 		$main['html'] = $results['html'];
 	    }
-	    $main['viewHeadFile'] = isset($results['head']) ? $results['head'] : '';
 	    $main['viewBodyFile'] = isset($results['body']) ? $results['body'] : '';
 	    $main['viewL10Domain'] = $view->getL10Domain();
 	}
@@ -408,9 +407,9 @@ function _GalleryMain_errorHandler($error, $g2Data=null, $initOk=true) {
 
     list ($ret, $isAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
     $isAdmin = $ret->isSuccess() && $isAdmin;
+    $template->head('templates/errorHead.tpl', 'modules_core');
     $main = array('isAdmin' => $isAdmin,
 		  'error' => array('stackTrace' => $error->getAsHtml($isAdmin)),
-		  'viewHeadFile' => 'templates/errorHead.tpl',
 		  'viewBodyFile' => 'templates/errorBody.tpl',
 		  'viewL10Domain' => 'modules_core');
     _GalleryMain_setupMain($main);

@@ -105,7 +105,7 @@ class GalleryView {
      * @param object GalleryTemplate the template instance
      * @param array the form values
      * @return array object GalleryStatus a status code
-     *               array ('head' => head HTML, 'body' => body html)
+     *               array ('body'/'html' => string template or 'redirect' => array)
      */
     function loadTemplate(&$template, &$form) {
 	return array(GalleryStatus::success(), null);
@@ -201,7 +201,7 @@ class GalleryView {
      * then call the view's loadTemplate() method and pass in the given template.
      *
      * @return array object GalleryStatus a status code
-     *               array ('head' => head HTML, 'body' => body html)
+     *               array ('body'/'html' => string template or 'redirect' => array)
      */
     function doLoadTemplate(&$template) {
 	global $gallery;

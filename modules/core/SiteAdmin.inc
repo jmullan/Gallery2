@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -48,17 +48,17 @@ class SiteAdminView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-        /* Bring in the root album information for the breadcrumb */
-        list ($ret, $rootAlbumId) =
-            GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
-        }
-        list ($ret, $rootAlbum) = GalleryCoreApi::loadEntitiesById($rootAlbumId);
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
-        }
-        $rootAlbumData = $rootAlbum->getMemberData();
+	/* Bring in the root album information for the breadcrumb */
+	list ($ret, $rootAlbumId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	list ($ret, $rootAlbum) = GalleryCoreApi::loadEntitiesById($rootAlbumId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$rootAlbumData = $rootAlbum->getMemberData();
 
 	/* Get system links */
 	list ($ret, $moduleSystemLinks) = $this->_getModuleSystemLinks();
@@ -157,7 +157,7 @@ class SiteAdminView extends GalleryView {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	list ($ret, $results) = $subView->loadTemplate($template, $form);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -177,6 +177,11 @@ class SiteAdminView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
+	list($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+
 	/* Set up my view parameters */
 	$SiteAdmin['rootAlbum'] = $rootAlbumData;
 	$SiteAdmin['moduleSystemLinks'] = $moduleSystemLinks;
@@ -187,9 +192,9 @@ class SiteAdminView extends GalleryView {
 	$SiteAdmin['viewL10Domain'] = $subView->getL10Domain();
 
 	$template->setVariable('SiteAdmin', $SiteAdmin);
+	$template->title($module->translate('Gallery Site Administration'));
 	return array(GalleryStatus::success(),
-		     array('head' => 'modules/core/templates/SiteAdminHead.tpl',
-			   'body' => 'modules/core/templates/SiteAdmin.tpl'));
+		     array('body' => 'modules/core/templates/SiteAdmin.tpl'));
     }
 
     /**
@@ -197,7 +202,7 @@ class SiteAdminView extends GalleryView {
      */
     function getViewDescription() {
 	global $gallery;
-	
+
 	/* Get the description from the current subView */
 	$subViewName = GalleryUtilities::getRequestVariables('subView');
 	if (empty($subViewName)) {
@@ -207,7 +212,7 @@ class SiteAdminView extends GalleryView {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	list ($ret, $description) = $subView->getViewDescription();
 	if (!empty($description)) {
 	    return array(GalleryStatus::success(), $description);

@@ -70,10 +70,15 @@ class SampleView extends GalleryView {
 	    }
 	}
 
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'imageframe');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	$template->setVariable('ImageFrameSample', $ImageFrameSample);
+	$template->title($module->translate('Image Frame Samples'));
 	return array(GalleryStatus::success(),
-	    array('head' => 'modules/imageframe/templates/SampleHead.tpl',
-		  'body' => 'modules/imageframe/templates/SampleBody.tpl'));
+	    array('body' => 'modules/imageframe/templates/SampleBody.tpl'));
     }
 }
 ?>

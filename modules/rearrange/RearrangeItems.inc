@@ -192,9 +192,9 @@ class RearrangeItemsView extends GalleryView {
 
 	$template->setVariable('RearrangeItems', $RearrangeItems);
 	$template->setVariable('controller', 'rearrange:RearrangeItems');
+	$template->head('modules/rearrange/templates/Header.tpl');
 	return array(GalleryStatus::success(),
-		     array('head' => 'modules/rearrange/templates/Header.tpl',
-			   'body' => 'modules/rearrange/templates/RearrangeItems.tpl'));
+		     array('body' => 'modules/rearrange/templates/RearrangeItems.tpl'));
     }
 
     /**

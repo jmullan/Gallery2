@@ -198,9 +198,14 @@ class SearchShowAllView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'search');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$template->title($module->translate('Gallery Search'));
 	return array(GalleryStatus::success(),
-		     array('head' => 'modules/search/templates/SearchHead.tpl',
-			   'body' => 'modules/search/templates/SearchShowAll.tpl'));
+		     array('body' => 'modules/search/templates/SearchShowAll.tpl'));
     }
 }
 ?>

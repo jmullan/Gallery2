@@ -70,9 +70,9 @@ class SlideshowView extends GalleryView {
 	$SlideShow['count'] = count($itemList);
 	$SlideShow['start'] = $start;
 	$template->setVariable('SlideShow', $SlideShow);
+	$template->head('modules/slideshow/templates/Header.tpl');
 	return array(GalleryStatus::success(),
-	       array('head' => 'modules/slideshow/templates/Header.tpl',
-	             'body' => 'modules/slideshow/templates/Slideshow.tpl'));
+		     array('body' => 'modules/slideshow/templates/Slideshow.tpl'));
     }
 
     /**
@@ -89,7 +89,7 @@ class SlideshowView extends GalleryView {
 		array(800,800),     // 2:  ..800x600
 		array(1024,1024),   // 3: ..1024x768
 		array(1280,1280),   // 4: ..1280x1024
-	    );          // 5:  >1280x1024
+	    );                      // 5:  >1280x1024
 	    list ($ret, $this->exifExtractor) =
 		GalleryCoreApi::newFactoryInstance('ExifInterface_1_0');
 	    if ($ret->isError()) {

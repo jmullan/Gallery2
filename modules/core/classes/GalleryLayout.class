@@ -175,7 +175,7 @@ class GalleryLayout extends GalleryPlugin {
      * @param array object GalleryTemplate the template instance
      * @param object GalleryItem the item to display
      * @return array object GalleryStatus a status code
-     *               array ('head' => head HTML, 'body' => body html)
+     *               array ('body'/'html' => string template or 'redirect' => array)
      */
     function loadTemplate(&$template, $item) {
 	return array(GalleryStatus::success(), null);

@@ -194,19 +194,16 @@ class MatrixLayout extends GalleryLayout {
 		$imageFrameInitialized = true;
 	    }
 	}
-
 	if (!$imageFrameInitialized) {
 	    $smarty =& $template->_getSmarty();
 	    $smarty->register_block('imageframe', array('GalleryTemplateAdapter', 'nullBlock'));
-	    $smarty->register_function('imageframe_style', array('GalleryTemplateAdapter', 'nullFunction'));
 	}
 
 	if (is_array($bodyFile)) {
 	    return array(GalleryStatus::success(), $bodyFile);
 	} else {
-	    return array(GalleryStatus::success(),
-			 array('head' => 'layouts/matrix/templates/head.tpl',
-			       'body' => $bodyFile));
+	    $template->head('layouts/matrix/templates/head.tpl');
+	    return array(GalleryStatus::success(), array('body' => $bodyFile));
 	}
     }
 

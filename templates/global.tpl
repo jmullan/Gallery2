@@ -20,7 +20,11 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 
     {* Content that G2 wants to display inside the <head> element *}
-    {include file="gallery:`$main.viewHeadFile`" l10Domain=$main.viewL10Domain}
+    {if isset($head.title)}<title>{$head.title}</title>{/if}
+    {foreach from=$head.tpl key=tpl item=l10Domain}
+      {include file="gallery:`$tpl`" l10Domain=$l10Domain}
+    {/foreach}
+    {g->style}
   </head>
   <body>
     <div id="gallery"{if $main.isRightToLeft} style="direction:rtl"{/if}>

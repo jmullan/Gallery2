@@ -97,6 +97,7 @@ class GalleryTemplate {
 	$this->_compiledTemplateDir = $gallery->getConfig('data.smarty.templates_c') .
 	    '%%' . sprintf("%u", crc32($templateDir));
 	$this->_smarty =& GalleryTemplate::_getSmarty();
+	$this->setVariable('head', array('tpl' => array()));
     }
 
     /**
@@ -150,6 +151,29 @@ class GalleryTemplate {
      */
     function setVariableByReference($key, &$value) {
 	$this->_smarty->assign_by_ref($key, $value);
+    }
+
+    /**
+     * Add a template to include in the <head> section
+     * @param string template path
+     * @param string (optional) localization domain; default={1stdir}_{2nddir} from template path
+     */
+    function head($tpl, $l10Domain=null) {
+	$head =& $this->getVariableByReference('head');
+	if (!isset($l10Domain)) {
+	    list ($type, $id, $junk) = explode('/', $tpl, 3);
+	    $l10Domain = $type . '_' . $id;
+	}
+	$head['tpl'][$tpl] = $l10Domain;
+    }
+
+    /**
+     * Set the title to include in the <head> section
+     * @param string localized title
+     */
+    function title($title) {
+	$head =& $this->getVariableByReference('head');
+	$head['title'] = $title;
     }
 
     /**
