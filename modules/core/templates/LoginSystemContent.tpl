@@ -4,8 +4,8 @@
  * may overwrite it.  Instead, copy it into a new directory called "local" and edit that
  * version.  Gallery will look for that file first and use it if it exists.
  *}
-<form id="LoginSystemContent" action="{g->url}" method="post">
 <div class="gbBlock">
+<form id="LoginSystemContent" action="{g->url}" method="post"><div>
   {g->hiddenFormVars}
   <input type="hidden" name="{g->formVar var="controller"}" value="core:UserLogin" />
   <input type="hidden" name="{g->formVar var="form[formName]"}" value="UserLogin" />
@@ -20,5 +20,5 @@
   <input type="password" id="giFormPassword" size="10" name="{g->formVar var="form[password]"}"/>
   <input type="submit" class="inputTypeSubmit"
    name="{g->formVar var="form[action][login]"}" value="{g->text text="Login"}"/>
+</div></form>
 </div>
-</form>
