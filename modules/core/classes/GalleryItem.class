@@ -96,6 +96,20 @@ class GalleryItem_core extends GalleryFileSystemEntity {
     var $_isHtmlAllowed;
 	     
     /**
+     * The layout to use for this album
+     *
+     * @g2 <member>
+     * @g2   <member-name>layout</member-name>
+     * @g2   <member-type>STRING</member-type>
+     * @g2   <member-size>SMALL</member-size>
+     * @g2 </member>
+     *
+     * @var string $_layout
+     * @access private
+     */
+    var $_layout;
+
+    /**
      * A set of keywords that describe this item
      *
      * @g2 <member>
@@ -170,6 +184,7 @@ class GalleryItem_core extends GalleryFileSystemEntity {
      * @g2 <member>
      * @g2  <member-name>title</member-name>
      * @g2  <member-type>STRING</member-type>
+     * @g2  <member-size>LARGE</member-size>
      * @g2  <indexed/>
      * @g2  <required/>
      * @g2 </member>
@@ -178,19 +193,6 @@ class GalleryItem_core extends GalleryFileSystemEntity {
      * @access private
      */
     var $_title;
-
-    /**
-     * How many times this item has been viewed
-     *
-     * @g2 <member>
-     * @g2  <member-name>viewCount</member-name>
-     * @g2  <member-type>INTEGER</member-type>
-     * @g2 </member>
-     *
-     * @var int $_viewCount
-     * @access private
-     */
-    var $_viewCount;
 
     /**
      * Date and time marking the beginning of the view count
@@ -244,7 +246,7 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 					__FILE__, __LINE__);
 	}
 
-	list($ret, $parent) = $gallery->loadEntityById($parentId);
+	list($ret, $parent) = $gallery->loadEntitiesById($parentId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -267,7 +269,7 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 
 	/* Adopt the parent's ordering scheme */
 	$this->setOrderBy($parent->getOrderBy());
-	$this->setOrderBy($parent->getOrderDirection());
+	$this->setOrderDirection($parent->getOrderDirection());
 
 	return GalleryStatus::success();
     }
@@ -306,6 +308,55 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	$this->setOrderDirection($gallery->getConfig('core.default.orderDirection'));
 
 	return GalleryStatus::success();
+    }
+
+    /**
+     * Convenienve method to increment the view count for this item
+     *
+     * @param int how much to increment the count
+     * @return object GalleryStatus a status code
+     */
+    function incrementViewCount($increment=1) {
+	list ($ret, $count) = GalleryViewCountMap::getCount($this->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$ret = GalleryViewCountMap::updateCount($this->getId(), $count+1);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Return the id of the GalleryDerivativeImage that is the thumbnail for
+     * this item.
+     *
+     * @return array object GalleryStatus a status code
+     *         int an id, null if there is none
+     */
+    function getThumbnailId() {
+	global $gallery;
+	
+	list ($ret, $searchResults) = 
+	    $gallery->search(
+	        array('select' => '[GalleryDerivativeImage::id]',
+		      'where' => ('[GalleryDerivativeImage::imageType] = ?' .
+				  ' AND [GalleryChildEntity::parentId] = ?')),
+		array(IMAGE_TYPE_THUMBNAIL, $this->getId()));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$thumbnailId = null;
+	if ($searchResults->resultCount() > 0) {
+	    $result = $searchResults->nextResult();
+	    $thumbNailId = $result[0];
+	}
+
+	return array(GalleryStatus::success(), $thumbnailId);
     }
 
     /**
@@ -457,9 +508,10 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	/* Remove all my properties and permissions */
+	/* Remove all my properties, permissions, view counts */
 	$ret1 = GalleryItemPropertiesMap::removeProperties($this->getId());
 	$ret2 = GalleryPermissionMap::removePermissions($this->getId());
+	$ret3 = GalleryViewCount::removeCount($this->getId());
 	
 	if ($ret1->isError()) {
 	    return $ret1->wrap(__FILE__, __LINE__);
@@ -469,6 +521,10 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	    return $ret2->wrap(__FILE__, __LINE__);
 	}
 
+	if ($ret3->isError()) {
+	    return $ret3->wrap(__FILE__, __LINE__);
+	}
+	
 	return GalleryStatus::success();
     }
 
@@ -482,15 +538,10 @@ class GalleryItem_core extends GalleryFileSystemEntity {
      */
     function save() {
 
-	/*
-	 * If I'm a new item and I have a parent, adopt my parent's
-	 * permissions
-	 */
-	if ($this->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED) &&
-	        $this->getParentId()) {
-	    $copyPermissions = true;
+	if ($this->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED)) {
+	    $newItem = true;
 	} else {
-	    $copyPermissions = false;
+	    $newItem = false;
 	}
 
 	/* Save myself */
@@ -499,9 +550,17 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	if ($copyPermissions) {
-	    $ret = GalleryPermissionMap::copyPermissions($this->getId(),
-							 $this->getParentId());
+	if ($newItem) {
+	    if ($this->getParentId()) {
+		$ret = GalleryPermissionMap::copyPermissions($this->getId(),
+							     $this->getParentId());
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+
+	    /* Zero out the view count */
+	    $ret = GalleryViewCountMap::setCount($this->getId(), 0);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
