@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -84,7 +84,7 @@ class ItemPermissionsController extends GalleryController {
 	} else if (isset($form['action']['deleteUserPermission'])) {
 	    /* Figure out which one we're working with */
 	    $index = array_pop(array_keys($form['action']['deleteUserPermission']));
-	    
+
 	    /* Handle delete group perm actions */
 	    list ($userId, $permissionId) = split(',', $form['user']['delete'][$index]);
 	    $ret = GalleryCoreApi::removeUserPermission($itemId, $userId,
@@ -230,7 +230,7 @@ class ItemPermissionsController extends GalleryController {
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-		
+
 		/* Validate the user */
 		list ($ret, $user) =
 		    GalleryCoreApi::fetchUserByUserName($form['owner']['ownerName']);
@@ -247,7 +247,7 @@ class ItemPermissionsController extends GalleryController {
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
-		    
+
 		    list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($item->getId());
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
@@ -257,7 +257,7 @@ class ItemPermissionsController extends GalleryController {
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
-		    
+
 		    $item->setOwnerId($user->getId());
 		    $item->setSerialNumber($form['serialNumber']);
 		    $ret = $item->save();
@@ -265,7 +265,7 @@ class ItemPermissionsController extends GalleryController {
 			GalleryCoreApi::releaseLocks($lockId);
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
-		
+
 		    $ret = GalleryCoreApi::releaseLocks($lockId);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
@@ -332,11 +332,11 @@ class ItemPermissionsView extends GalleryView {
 	    if (empty($form['user']['userName'])) {
 		$form['user']['userName'] = '';
 	    }
-	    
+
 	    if (empty($form['user']['permission'])) {
 		$form['user']['permission'] = '';
 	    }
-	    
+
 	    if (empty($form['group']['groupName'])) {
 		$form['group']['groupName'] = '';
 	    }
@@ -344,7 +344,7 @@ class ItemPermissionsView extends GalleryView {
 	    if (empty($form['group']['permission'])) {
 		$form['group']['permission'] = '';
 	    }
-	    
+
 	    $form['owner']['ownerName'] = '';
 	    $form['formName'] = 'ItemPermissions';
 	}
@@ -357,7 +357,7 @@ class ItemPermissionsView extends GalleryView {
 	ksort($allPermissions);
 
 	/* Get all permissions for the item. */
-	list ($ret, $permissions) = 
+	list ($ret, $permissions) =
 	    GalleryCoreApi::fetchAllPermissionsForItem($itemId, true);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -376,6 +376,9 @@ class ItemPermissionsView extends GalleryView {
 
 	list ($ret, $userAndGroupEntities) =
 	    GalleryCoreApi::loadEntitiesById(array_keys($userAndGroupEntityIds));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 
 	/* Convert them into a hash map by entity id */
 	foreach ($userAndGroupEntities as $entity) {
@@ -393,7 +396,7 @@ class ItemPermissionsView extends GalleryView {
 	 * Now create the separate user and group permission maps.
 	 *
 	 * Silently ignore any permissions that we come across that aren't part
-	 * of the permission registry.  They may be permission associated with 
+	 * of the permission registry.  They may be permission associated with
 	 * modules that are not currently active.
 	 */
 	$userPermissions = array();
@@ -407,14 +410,14 @@ class ItemPermissionsView extends GalleryView {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-		$userPermissions[] = 
+		$userPermissions[] =
 		    array('permission' =>
 			  array('id' => $permission['permission'],
 				'description' => $allPermissions[$permission['permission']]),
 			  'user' => $userAndGroupEntityMap[$permission['userId']],
 			  'deleteList' => $subPermissions);
 	    }
-	    
+
 	    if (!empty($permission['groupId']) && isset($allPermissions[$permission['permission']])) {
 
 		if ($permission['groupId'] != $adminGroupId) {
@@ -426,7 +429,7 @@ class ItemPermissionsView extends GalleryView {
 		} else {
 		    $subPermissions = array();
 		}
-		
+
 		$groupPermissions[] =
 		    array('permission' =>
 			  array('id' => $permission['permission'],
