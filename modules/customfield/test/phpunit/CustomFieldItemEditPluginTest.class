@@ -1,0 +1,125 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package CustomField
+ * @subpackage PHPUnit
+ * @author Alan Harder <alan.harder@sun.com>
+ */
+
+/**
+ * Load required classes
+ */
+require_once(dirname(__FILE__) . '/../../classes/CustomFieldHelper.class');
+
+/**
+ * CustomFieldItemEdit controller tests
+ * @package CustomField
+ * @subpackage PHPUnit
+ */
+class CustomFieldItemEditPluginTest extends ItemEditPluginTestCase {
+
+    function CustomFieldItemEditPluginTest($methodName) {
+	$this->ItemEditPluginTestCase($methodName, 'customfield', 'CustomFieldItemEdit');
+    }
+
+    function setUp() {
+	parent::setUp();
+
+	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_getRootId(), 'image/test', array(), __FILE__, 'GalleryPhotoItem');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $this->_params) = GalleryCoreApi::fetchAllPluginParameters('module', 'customfield');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = CustomFieldHelper::saveParameters(array(
+	    'common' => array(
+		array('field' => 'Catalog Id',
+		      'summary' => false, 'detail' => true, 'choices' => array())
+	    ),
+	    'album' => array(),
+	    'photo' => array(
+		array('field' => 'Location',
+		      'summary' => true, 'detail' => true, 'choices' => array()),
+		array('field' => 'Category',
+		      'summary' => false, 'detail' => false, 'choices' => array('A', 'B'))
+	    )
+	));
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    function tearDown() {
+	$ret = GalleryCoreApi::deleteEntityById($this->_item->getId());
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	foreach ($this->_params as $key => $value) {
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'customfield', $key, $value);
+	    if ($ret->isError()) {
+		print $ret->getAsHtml();
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+	parent::tearDown();
+    }
+
+    function testCustomFieldPlugin() {
+
+	GalleryUtilities::putRequestVariable('form[fields][Catalog Id]', '123');
+	GalleryUtilities::putRequestVariable('form[fields][Location]', 'There');
+	GalleryUtilities::putRequestVariable('form[fields][Category]', 'B');
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+
+	$results = $this->handleRequest($this->_item, $this->_item);
+	$this->assertEquals(array(array(), $this->_translate('Changes saved successfully')),
+			    $results);
+
+	list ($ret, $data) = CustomFieldHelper::fetchFieldValues($this->_item->getId(), 'summary');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array('Location' => 'There'), $data, 'Summary data');
+
+	list ($ret, $data) = CustomFieldHelper::fetchFieldValues($this->_item->getId(), 'detail');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array('Catalog Id' => '123', 'Location' => 'There'),
+			    $data, 'Detail data');
+
+	list ($ret, $data) = CustomFieldHelper::fetchFieldValues($this->_item->getId(), null, 'photo');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array('Catalog Id' => '123', 'Location' => 'There', 'Category' => 'B'),
+			    $data, 'All data');
+    }
+}
+?>

@@ -1,0 +1,254 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package CustomField
+ * @author Alan Harder <alan.harder@sun.com>
+ */
+
+/**
+ * A helper class for the Custom Field module.
+ *
+ * @package CustomField
+ * @subpackage Classes
+ */
+class CustomFieldHelper {
+
+    /**
+     * Load and decode module parameters
+     *
+     * @param array sets to load; all by default
+     * @return array GalleryStatus a status code
+     *               mixed containing id, creationTimestamp, viewCount of
+     *                     item or null if none found
+     * @static
+     */
+    function loadParameters($sets = array('common', 'album', 'photo')) {
+	list ($ret, $param) = GalleryCoreApi::fetchAllPluginParameters('module', 'customfield');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	foreach ($sets as $set) {
+	    $result[$set] = array();
+	    foreach ((!empty($param[$set]) ? explode('|', $param[$set]) : array()) as $tmp) {
+		$list = explode('`', $tmp);
+		$result[$set][] = array('field' => $list[0],
+					'summary' => ($list[1]=='1'), 'detail' => ($list[2]=='1'),
+					'choices' => array_splice($list, 3));
+	    }
+	}
+	return array(GalleryStatus::success(), $result);
+    }
+
+    /**
+     * Encode and save module parameters
+     *
+     * @param array data to save
+     * @return GalleryStatus a status code
+     * @static
+     */
+    function saveParameters($param) {
+	foreach (array('common', 'album', 'photo') as $set) {
+	    if (!isset($param[$set])) {
+		continue;
+	    }
+	    $list = array();
+	    foreach ($param[$set] as $item) {
+		$list[] = $item['field'] . '`' . ($item['summary']?1:0) . '`' . ($item['detail']?1:0)
+			. (!empty($item['choices']) ? ('`' . implode('`', $item['choices'])) : '');
+	    }
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'customfield', $set, implode('|', $list));
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Find a field in a parameter list
+     *
+     * @param array parameter list
+     * @param string field to find
+     * @return int index or -1 if not found
+     * @static
+     */
+    function findParameter(&$list, $field) {
+	foreach ($list as $i => $item) {
+	    if ($item['field'] == $field) {
+		return $i;
+	    }
+	}
+	return -1;
+    }
+
+    /**
+     * Delete custom field values for given field
+     *
+     * @param string field to delete
+     * @param string 'album' or 'photo' -- don't delete values for items of this type
+     * @return GalleryStatus a status code
+     * @static
+     */
+    function deleteField($field, $exceptType=null) {
+	global $gallery;
+	$storage = $gallery->getStorage();
+
+	switch ($exceptType) {
+
+	/* No syntax perform delete-with-subquery that is both portable and works on
+	 * older mysql/postgres versions.. so a brute force method is used here.
+	 */
+	case 'album':
+	    $typeClass = 'GalleryAlbumItem';
+	case 'photo':
+	    if (!isset($typeClass)) {
+		$typeClass = 'GalleryPhotoItem';
+	    }
+	    $query = 'SELECT [GalleryEntity::id] FROM [GalleryEntity]
+		      WHERE [GalleryEntity::entityType] <> ?';
+	    list ($ret, $searchResults) = $gallery->search($query, array($typeClass));
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    $query = 'DELETE FROM [CustomFieldMap] WHERE [CustomFieldMap::field] = ?
+						     AND [CustomFieldMap::itemId] IN (';
+	    for ($rec = true; $rec;) {
+		$idList = array();
+		for ($i = 0; $i < 300 && $rec = $searchResults->nextResult(); $i++) {
+		    $idList[] = $rec[0];
+		}
+		if (!empty($idList)) {
+		    $ret = $storage->execute($query . implode(',', $idList) . ')', array($field));
+		    if ($ret->isError()) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
+		}
+	    }
+	    break;
+
+	default:
+	    require_once(dirname(__FILE__) . '/CustomFieldMap.class');
+	    $ret = CustomFieldMap::removeMapEntry(array('field' => $field));
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Load custom field values for specified item
+     *
+     * @param int item id
+     * @param string if specified then only include fields for that view (summary or detail)
+     * @param string if specified then include in results all valid fields for
+     *               this type, even if item has no value
+     * @return array GalleryStatus a status code
+     *               array(field => value)
+     *               array loadParameters result
+     * @static
+     */
+    function fetchFieldValues($itemId, $viewType=null, $fillSet=null) {
+	global $gallery;
+	$data = $result = array();
+
+	list ($ret, $param) = CustomFieldHelper::loadParameters();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+
+	$query = 'SELECT [CustomFieldMap::field], [CustomFieldMap::value]
+		  FROM [CustomFieldMap] WHERE [CustomFieldMap::itemId] = ?';
+
+	list ($ret, $searchResults) = $gallery->search($query, array($itemId));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+	while ($rec = $searchResults->nextResult()) {
+	    $data[$rec[0]] = $rec[1];
+	}
+
+	foreach (array('common', 'album', 'photo') as $set) {
+	    foreach ($param[$set] as $item) {
+		$field = $item['field'];
+		if (isset($viewType) && !$item[$viewType]) {
+		    continue;
+		}
+		if (isset($data[$field])) {
+		    $result[$field] = $data[$field];
+		}
+		else if (isset($fillSet) && ($set == 'common' || $set == $fillSet)) {
+		    $result[$field] = '';
+		}
+	    }
+	}
+
+	return array(GalleryStatus::success(), $result, $param);
+    }
+
+    /**
+     * Save custom field values for specified item, overwriting any existing values
+     *
+     * @param int item id
+     * @param array (field => value)
+     * @return GalleryStatus a status code
+     * @static
+     */
+    function saveFieldValues($itemId, $fields) {
+	require_once(dirname(__FILE__) . '/CustomFieldMap.class');
+	$ret = CustomFieldMap::removeMapEntry(array('itemId' => $itemId));
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	foreach ($fields as $field => $value) {
+	    if (!empty($value)) {
+		$ret = CustomFieldMap::addMapEntry(
+		    array('itemId' => $itemId, 'field' => $field, 'value' => $value));
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+	}
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Event handler for GalleryEntity::delete event
+     * Remove any custom field values for entity being deleted.
+     *
+     * @param object GalleryEvent the event
+     * @return object GalleryStatus a status code
+     */
+    function handleEvent($event) {
+	require_once(dirname(__FILE__) . '/CustomFieldMap.class');
+	if ($event->getEventName() == 'GalleryEntity::delete') {
+	    $item = $event->getEntity();
+	    $ret = CustomFieldMap::removeMapEntry(array('itemId' => $item->getId()));
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+	return GalleryStatus::success();
+    }
+}
+?>
