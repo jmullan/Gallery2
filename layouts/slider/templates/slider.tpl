@@ -55,6 +55,9 @@
 
 {* Slideshow options *}
 <div id="options" class="gbMenu" style="visibility:hidden">
+  {include file="gallery:layouts/slider/templates/sidebar.tpl"}
+  <div class="sideopt">
+  <div class="gbMenu">
     <div class="giTitle"> {g->text text="Slideshow&nbsp;Options"} </div>
     <ul><li>
 	{g->text text="delay"}:
@@ -73,11 +76,15 @@
 	 <option value="0">{g->text text="random"}</option>
 	</select> <br />
     </li></ul>
+  </div>
+  <div class="gbMenu">
     <div class="giTitle" style="margin-top:3px"> {g->text text="Image&nbsp;Bar"} </div>
     <ul><li>
 	<a href="" onclick="options_onoff();thumbs_horizvert();return false">
 	{g->text text="Horizontal/Vertical"}</a>
     </li></ul>
+  </div>
+  </div>
 </div>
 
 <script type="text/javascript">app_init();</script>

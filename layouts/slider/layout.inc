@@ -123,6 +123,49 @@ class SliderLayout extends GalleryLayout {
 	    }
 	}
 
+	/* Get system links */
+	list ($ret, $moduleSystemLinks) = $this->_getModuleSystemLinks();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Get system content */
+	list ($ret, $moduleSystemContentFiles) = $this->_loadModuleSystemContent($template);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Get item links and flatten out the modules */
+	$moduleItemLinks = array();
+	list ($ret, $tmp) = $this->_getModuleItemLinks($item);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	foreach ($tmp as $tmpId => $moduleLinks) {
+	    foreach ($moduleLinks as $module => $links) {
+		$moduleItemLinks = array_merge($moduleItemLinks, $links);
+	    }
+	}
+	usort($moduleItemLinks, array($this, '_sortItemLinks'));
+
+	/* Load the parents */
+	list ($ret, $parents) = GalleryCoreApi::fetchParents($item);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	for ($i = 0; $i < sizeof($parents); $i++) {
+	    $parents[$i] = $parents[$i]->getMemberData();
+	}
+
+	/* Get the active user */
+	$user = $gallery->getActiveUser();
+
+	$layout['moduleSystemLinks'] = $moduleSystemLinks;
+	$layout['moduleSystemContentFiles'] = $moduleSystemContentFiles;
+	$layout['moduleItemLinks'] = $moduleItemLinks;
+	$layout['parents'] = $parents;
+	$layout['user'] = $user->getMemberData();
+
 	$template->setVariable('layout', $layout);
 	return array(GalleryStatus::success(),
 		array('body' => 'layouts/slider/templates/slider.tpl',
