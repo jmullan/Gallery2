@@ -122,7 +122,7 @@ class GalleryPlatform {
 	    $gallery->debug("file_exists($filename)");
 	}
 
-	return is_uploaded_file($filename) || file_exists($filename);
+	return is_uploaded_file($filename) || @file_exists($filename);
     }
 
     /**
@@ -170,7 +170,7 @@ class GalleryPlatform {
 	    $gallery->debug("is_file($filename)");
 	}
 	
-	return @is_file($filename);
+	return @file_exists($filename) && @is_file($filename);
     }
 
     /**
