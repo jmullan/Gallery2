@@ -180,10 +180,6 @@ class ItemAddFromServer extends ItemAddPlugin {
 
 			if ($fileName == '..') {
 			    $filePath = $platform->realpath($path . $slash . '..');
-			    if (!GalleryUtilities::isPathInList($filePath, $localServerDirList)) {
-				continue;
-			    }
-			    $fileName = $module->translate('Parent Directory');
 			} else {
 			    $filePath = $path . '/' . $fileName;
 			}

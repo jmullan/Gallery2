@@ -225,7 +225,15 @@
 
       <td>
 	{if $file.legal}
-	<a href="{g->url arg1="controller=core:ItemAdd" arg2="addPlugin=ItemAddFromServer" arg3="form[localServerPath]=$key" arg4="itemId=`$ItemAdmin.item.id`" arg5="form[action][findFilesFromLocalServer]=1" arg6="form[formName]=ItemAddFromServer"}">{$file.fileName|escape}</a>
+        {strip}
+	<a href="{g->url arg1="controller=core:ItemAdd" arg2="addPlugin=ItemAddFromServer" arg3="form[localServerPath]=$key" arg4="itemId=`$ItemAdmin.item.id`" arg5="form[action][findFilesFromLocalServer]=1" arg6="form[formName]=ItemAddFromServer"}">
+	  {if $file.fileName == ".."}
+          &laquo; {g->text text="Parent Directory"} &raquo;
+          {else}
+	  {$file.fileName|escape}
+          {/if}
+        </a>
+        {/strip}
 	{else}
 	<i>{$file.fileName|escape}</i>
 	{/if}
