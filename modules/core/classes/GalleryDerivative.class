@@ -319,6 +319,10 @@ class GalleryDerivative_core extends GalleryChildEntity {
 	if (method_exists($source, 'getWidth') && method_exists($source, 'getHeight')) {
 	    $context['width'] = $source->getWidth();
 	    $context['height'] = $source->getHeight();
+	    if ($context['width'] == 0 && $context['height'] == 0) {
+		/* Don't put unknown size into context */
+		$context = array();
+	    }
 	}
 
 	/* Now apply our derivative commands to create the cache file */
