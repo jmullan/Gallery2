@@ -349,7 +349,7 @@ class SessionTest extends GalleryTestCase {
 	$this->assert(count($session->getNavigation($navId[8])) == 0, '#2 navId[8] not deleted');
     }
 
-    function testSameSessionDifferentUserAgent() {
+    function testSameSessionDifferentRemoteIdentifier() {
 
 	foreach (array('with-cookies', 'without-cookies') as $type) {
 	    if ($type == 'with-cookies') {
@@ -359,9 +359,12 @@ class SessionTest extends GalleryTestCase {
 		GalleryUtilities::putRequestVariable(SESSION_ID_PARAMETER, 'TESTSID');
 		unset($_COOKIE[SESSION_ID_PARAMETER]);
 	    }
+	    unset($_SERVER['HTTP_X_FORWARDED_FOR']);
+	    unset($_SERVER['HTTP_CLIENT_IP']);
 	    
 	    /* Create a test session with cookie support put well known data in it. */
 	    $_SERVER['HTTP_USER_AGENT'] = 'TEST_USER_AGENT';
+	    $_SERVER['REMOTE_ADDR'] = '1.2.3.4';
 	    $session = new GallerySession();
 	    $ret = $session->init();
 	    if ($ret->isError()) {
@@ -373,11 +376,9 @@ class SessionTest extends GalleryTestCase {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 
-	    /*
-	     * Connect to the same session from the same IP and verify that our data
-	     * is still there.
-	     */
+	    /* Verify that we can connect to the same session with the same identifying data */
 	    $_SERVER['HTTP_USER_AGENT'] = 'TEST_USER_AGENT';
+	    $_SERVER['REMOTE_ADDR'] = '1.2.3.4';
 	    $session = new GallerySession();
 	    $ret = $session->init();
 	    if ($ret->isError()) {
@@ -390,11 +391,39 @@ class SessionTest extends GalleryTestCase {
 	    }
  	    $this->assertEquals($session->getSessionId(), 'TESTSID', 'session id changed!');
 
-	    /*
-	     * Connect to the same session from a different IP and verify that our data
-	     * is now gone, and that we now have a different cookie id.
-	     */
+	    /* Vary only the IP, it should still work */
+	    $_SERVER['HTTP_USER_AGENT'] = 'TEST_USER_AGENT';
+	    $_SERVER['REMOTE_ADDR'] = '6.7.9.9';
+	    $session = new GallerySession();
+	    $ret = $session->init();
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $this->assert($session->get('my-key'), 'verify ' . $type);
+	    $ret = $session->save();
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+ 	    $this->assertEquals($session->getSessionId(), 'TESTSID', 'session id changed!');
+
+	    /* Vary only the user agent, it should still work */
 	    $_SERVER['HTTP_USER_AGENT'] = 'DIFFERENT_USER_AGENT';
+	    $_SERVER['REMOTE_ADDR'] = '1.2.3.4';
+	    $session = new GallerySession();
+	    $ret = $session->init();
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $this->assert($session->get('my-key'), 'verify ' . $type);
+	    $ret = $session->save();
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+ 	    $this->assertEquals($session->getSessionId(), 'TESTSID', 'session id changed!');
+
+	    /* Vary both.  Our data is gone, and we have a different cookie id */
+	    $_SERVER['HTTP_USER_AGENT'] = 'DIFFERENT_USER_AGENT';
+	    $_SERVER['REMOTE_ADDR'] = '3.5.7.9';
 	    $session = new GallerySession();
 	    $ret = $session->init();
 	    if ($ret->isError()) {
@@ -407,11 +436,9 @@ class SessionTest extends GalleryTestCase {
 	    }
 	    $this->assert($session->getSessionId() != 'TESTSID');
 
-	    /*
-	     * Connect to the same session from the original IP and verify that our data
-	     * is still valid.
-	     */
+	    /* Verify that our original session has not been nuked */
 	    $_SERVER['HTTP_USER_AGENT'] = 'TEST_USER_AGENT';
+	    $_SERVER['REMOTE_ADDR'] = '1.2.3.4';
 	    $session = new GallerySession();
 	    $ret = $session->init();
 	    if ($ret->isError()) {
@@ -428,6 +455,18 @@ class SessionTest extends GalleryTestCase {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
+    }
+
+    function testCompareIdentifiers() {
+	$this->assertEquals(1, GallerySession::_compareIdentifiers(array(0), array(0)));
+	$this->assertEquals(1, GallerySession::_compareIdentifiers(array(0), array(0, 1)));
+	$this->assertEquals(1, GallerySession::_compareIdentifiers(array(0, 1), array(0)));
+	$this->assertEquals(2, GallerySession::_compareIdentifiers(array('x', 1, 'y'), array('x', 0, 'y')));
+	$this->assertEquals(0, GallerySession::_compareIdentifiers(array(1), 'x'));
+	$this->assertEquals(0, GallerySession::_compareIdentifiers(array(1), null));
+	$this->assertEquals(0, GallerySession::_compareIdentifiers(null, array(1)));
+	$this->assertEquals(0, GallerySession::_compareIdentifiers(null, null));
+	$this->assertEquals(0, GallerySession::_compareIdentifiers('x', 'x'));
     }
 }
 ?>

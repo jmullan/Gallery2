@@ -101,10 +101,10 @@ class GallerySession {
     var $_cookiePath;
 
     /**
-     * An identifying value that we can use to verify that the session is coming
+     * A set of identifying values that we can use to verify that the session is coming
      * from the same browser as it used to (to prevent session hijacking).
      *
-     * @var string $_remoteIdentifier
+     * @var array $_remoteIdentifier
      * @access private
      */
     var $_remoteIdentifier;
@@ -179,9 +179,14 @@ class GallerySession {
 	/* Verify the remote address to avoid casual session hijacking */
 	$currentRemoteIdentifier = $this->_getRemoteIdentifier();
 
-	if (!isset($this->_remoteIdentifier) || $this->_remoteIdentifier != $currentRemoteIdentifier) {
-	    $gallery->debug(sprintf('Session hijack detected: saved: %s vs. current: %s',
-				    $this->_remoteIdentifier, $currentRemoteIdentifier));
+	if (!isset($this->_remoteIdentifier) ||
+	        $this->_compareIdentifiers($this->_remoteIdentifier, $currentRemoteIdentifier) == 0) {
+	    if ($gallery->getDebug()) {
+		$gallery->debug('Session hijack detected: saved vs. current below');
+		$gallery->debug_r($this->_remoteIdentifier);
+		$gallery->debug_r($currentRemoteIdentifier);
+	    }
+	    
 	    /*
 	     * The session was not created from this browser address, so reset
 	     * our data to prevent hijacking.
@@ -518,7 +523,33 @@ class GallerySession {
      * @access private
      */
     function _getRemoteIdentifier() {
-	return md5($_SERVER['HTTP_USER_AGENT']);
+	return array(GalleryUtilities::getRemoteHostAddress(), md5($_SERVER['HTTP_USER_AGENT']));
+    }
+
+    /**
+     * Compare two arrays and return a score consisting of 1 point for every
+     * matching element in the arrays.
+     * Example input:
+     *   $a = array(0, 'x', 2);
+     *   $b = array(0, 'y', 2);
+     * Example output: 
+     *   2
+     * (indexes 0 and 2 match.  index 1 does not)
+     *
+     * @return int a score
+     */
+    function _compareIdentifiers($a, $b) {
+	$score = 0;
+	if (is_array($a) && is_array($b)) {
+	    for ($i = 0; $i < sizeof($a); $i++) {
+		if (sizeof($b) > $i) {
+		    if ($a[$i] == $b[$i]) {
+			$score++;
+		    }
+		}
+	    }
+	}
+	return $score;
     }
 
     /**
