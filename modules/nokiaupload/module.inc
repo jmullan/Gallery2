@@ -87,7 +87,7 @@ class NokiaUploadModule extends GalleryModule {
      * @see GalleryModule::getConfigurationView
      */
     function getConfigurationView() {
-	return array(GalleryStatus::success(), 'nokiaupload:Configure');
+	return 'nokiaupload:Configure';
     }
 }
 ?>

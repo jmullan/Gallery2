@@ -188,8 +188,7 @@ class ExifModule extends GalleryModule {
      * @see GalleryModule::getConfigurationView()
      */
     function getConfigurationView() {
-	global $gallery;
-	return array(GalleryStatus::success(), 'exif:AdminExif');
+	return 'exif:AdminExif';
     }
 
 }

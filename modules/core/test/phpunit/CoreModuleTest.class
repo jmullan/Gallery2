@@ -122,11 +122,7 @@ class CoreModuleTest extends GalleryTestCase {
     }
 
     function testGetConfigurationView() {
-	list ($ret, $content) = $this->_module->getConfigurationView();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
+	$content = $this->_module->getConfigurationView();
 	$this->assertEquals(null, $content);
     }
 

@@ -285,7 +285,7 @@ class FfmpegModule extends GalleryModule {
      * @see GalleryModule::getConfigurationView()
      */
     function getConfigurationView() {
-	return array(GalleryStatus::success(), 'ffmpeg:AdminFfmpeg');
+	return 'ffmpeg:AdminFfmpeg';
     }
 }
 ?>

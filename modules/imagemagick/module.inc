@@ -296,7 +296,7 @@ class ImageMagickModule extends GalleryModule {
      * @see GalleryModule::getConfigurationView
      */
     function getConfigurationView() {
-	return array(GalleryStatus::success(), 'imagemagick:AdminImageMagick');
+	return 'imagemagick:AdminImageMagick';
     }
 }
 ?>

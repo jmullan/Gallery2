@@ -210,10 +210,7 @@ class AdminModulesView extends GalleryView {
 			}
 
 			if ($needsConfig) {
-			    list ($ret, $configView) = $module->getConfigurationView();
-			    if ($ret->isError()) {
-				return array($ret->wrap(__FILE__, __LINE__), null);
-			    }
+			    $configView = $module->getConfigurationView();
 			    $entry['action'] = array('text' => $coreModule->translate('configure'),
 						     'view' => $configView);
 			} else {

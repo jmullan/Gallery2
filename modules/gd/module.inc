@@ -232,7 +232,7 @@ class GdModule extends GalleryModule {
      * @see GalleryModule::getConfigurationView
      */
     function getConfigurationView() {
-	return array(GalleryStatus::success(), 'gd:AdminGd');
+	return 'gd:AdminGd';
     }
 }
 ?>

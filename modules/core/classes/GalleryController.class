@@ -127,11 +127,12 @@ class GalleryController {
 	    $module = $regs[1];
 	    $class = $regs[2];
 	} else {
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__, "$controllerName can't be parsed"),
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+					      "$controllerName can't be parsed"),
 			 null);
 	}
 
-	/* Check if this module is active before continuing */
+	/* If the module is not active, only let site admins use the config controller */
 	list ($ret, $plugin) = GalleryCoreApi::loadPlugin('module', $module, false);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -140,9 +141,16 @@ class GalleryController {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	if (! $isActive) {
-	    return array(GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__),
-			 null);
+	if (!$isActive) {
+	    if ($controllerName == $plugin->getConfigurationView()) {
+		$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	    } else {
+		return array(GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__),
+			     null);
+	    }
 	}
 
 	$fileName = dirname(__FILE__) . '/../../../modules/' . $module . '/' . $class . '.inc';

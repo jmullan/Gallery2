@@ -49,21 +49,6 @@ class GalleryCoreApi {
     }
 
     /**
-     * Set a given plugin instance in the plugin cache
-     *
-     * The core module can't be loaded from inside Gallery with the
-     * loadModule() call for chicken-and-egg reasons, so we have to be able to
-     * set it here.
-     *
-     * @param object Plugin a plugin instance
-     * @static
-     */
-    function setPluginInstance($pluginType, $pluginId, &$instance) {
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/helpers/GalleryPluginHelper_simple.class');
-	GalleryPluginHelper_simple::setPluginInstance($pluginType, $pluginId, $instance);
-    }
-
-    /**
      * Register a new implementation with the factory
      *
      * @param string the class type (eg. 'GalleryGraphics')

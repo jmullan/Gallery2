@@ -350,7 +350,7 @@ class NetPbmModule extends GalleryModule {
      * @see GalleryModule::getConfigurationView()
      */
     function getConfigurationView() {
-	return array(GalleryStatus::success(), 'netpbm:AdminNetPbm');
+	return 'netpbm:AdminNetPbm';
     }
 }
 ?>
