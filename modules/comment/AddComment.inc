@@ -161,6 +161,12 @@ class AddCommentView extends GalleryView {
 	    $form['formName'] = 'AddComment';
 	    $form['subject'] = '';
 	    $form['comment'] = '';
+	} else {
+	    foreach (array('subject', 'comment') as $key) {
+		if (empty($form[$key])) {
+		    $form[$key] = '';
+		}
+	    }
 	}
 
 	$AddComment = array();
