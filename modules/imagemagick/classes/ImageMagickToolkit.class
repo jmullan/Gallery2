@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -433,6 +433,13 @@ class ImageMagickToolkit extends GalleryToolkit {
 	}
 
 	switch ($mimeType) {
+	case 'image/gif':
+	    // In case it's an animated gif..
+	    $command[] = '-coalesce';
+	    $command[] = '%s';
+	    $args[] = '-deconstruct';
+	    break;
+
 	case 'image/tiff':
 	case 'application/pdf':
 	case 'application/postscript':
@@ -449,8 +456,8 @@ class ImageMagickToolkit extends GalleryToolkit {
 	}
 
 	/*
-	 * Prepare our command.  If one of the arguments is %s, then put the source file path there, else put
-	 * it at the end.
+	 * Prepare our command.  If one of the arguments is %s, then put the source file path there,
+	 * else put it at the end.
 	 */
 	if (!empty($args)) {
 	    $command = array_merge($command, $args);
