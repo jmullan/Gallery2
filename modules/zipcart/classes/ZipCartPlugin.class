@@ -184,7 +184,8 @@ class ZipCartPlugin extends CartPluginInterface_1_0 {
 	    return array(GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__), null);
 	}
 
-	return array(GalleryStatus::success(), array('view' => 'zipcart:Download', 'file' => $zipFile));
+	return array(GalleryStatus::success(),
+		     array('view' => 'zipcart:Download', 'file' => basename($zipFile)));
     }
 
     function mkdir_p($path) {

@@ -48,6 +48,9 @@ class DownloadView extends GalleryView {
 	$platform = $gallery->getPlatform();
 
 	$file = GalleryUtilities::getRequestVariables('file');
+	if (!empty($file)) {
+	    $file = $gallery->getConfig('data.gallery.tmp') . $file;
+	}
 	if (!$platform->is_readable($file)) {
 	    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
 	}

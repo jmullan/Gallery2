@@ -197,7 +197,7 @@ class ZipCartPluginTest extends GalleryTestCase {
 	}
 
 	$this->assertEquals(array('view' => 'zipcart:Download',
-				  'file' => $gallery->_zipCartTempnam . '.zip'),
+				  'file' => basename($gallery->_zipCartTempnam . '.zip')),
 			    $urlParams);
 	$platform = $gallery->getPlatform();
 	@$platform->unlink($gallery->_zipCartTempnam);
