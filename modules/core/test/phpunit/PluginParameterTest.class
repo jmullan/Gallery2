@@ -179,7 +179,44 @@ class PluginParameterTest extends GalleryTestCase {
 
 	$this->assertEquals(array(), $params);
     }
-    
-}
 
+    function testRemovePluginParameterByValue() {
+
+	$beforeArray = array('0' => 'bar', '1' => 'bar', '2' => 'baz', '3' => 'blat');
+	foreach ($beforeArray as $item => $val) {
+	    /* Set test parameters */
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'unitTestModule', 
+						      'foo1', $val, $item);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+
+	    /* Verify that parameters were set */
+	    list ($ret, $param) = 
+		    GalleryCoreApi::getPluginParameter('module', 'unitTestModule', 'foo1', $item);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $this->assertEquals($param, $val, 'Parameter "foo1" (' . $item . ') should be ' . $val);
+	}
+
+	/* Remove all 'foo1' => 'bar' pairs */
+	$ret = GalleryCoreApi::removePluginParameterByValue('module', 'unitTestModule',
+							    'foo1', 'bar');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Verify that 'foo1' => 'bar' is deleted and other values remain */
+	$afterArray = array('0' => null, '1' => null, '2' => 'baz', '3' => 'blat');
+	foreach ($afterArray as $item => $val) {
+	    list ($ret, $param) = 
+		    GalleryCoreApi::getPluginParameter('module', 'unitTestModule', 'foo1', $item);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $this->assertEquals($param, $val, 'Parameter "foo1" (' . $item . ') should be ' . $val);
+	}
+    }
+}
 ?>
