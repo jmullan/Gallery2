@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -53,10 +53,10 @@ class GalleryPermissionHelper_advanced {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	return GalleryStatus::success();
     }
-	
+
     /**
      * Add the given itemid, userid, permission mapping
      *
@@ -84,7 +84,7 @@ class GalleryPermissionHelper_advanced {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
-	
+
 	return GalleryStatus::success();
     }
 
@@ -143,18 +143,18 @@ class GalleryPermissionHelper_advanced {
 								  'groupId' => $groupId),
 							    array('permission' => $newBits));
 	    }
-						     
+
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
-	
+
 	/*
 	 * Apply to all my children, if necessary.
 	 */
 	if ($applyToChildren) {
 	    $gallery->guaranteeTimeLimit(5);
-	    list ($ret, $childIds) = 
+	    list ($ret, $childIds) =
 		GalleryCoreApi::fetchChildItemIdsWithPermission($itemId, 'core.changePermissions');
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
@@ -193,7 +193,7 @@ class GalleryPermissionHelper_advanced {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	return GalleryStatus::success();
     }
 
@@ -209,7 +209,7 @@ class GalleryPermissionHelper_advanced {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	list ($ret, $userIds) = GalleryCoreApi::fetchUsersForGroup($groupId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -223,7 +223,7 @@ class GalleryPermissionHelper_advanced {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
-	
+
 	return GalleryStatus::success();
     }
 
@@ -262,12 +262,12 @@ class GalleryPermissionHelper_advanced {
 		$gallery->debug("Tried to remove a non-existant permission!");
 	    }
 	    return GalleryStatus::success();
-	    
+
 	    /*
 	     * If we fail with an error here, then applyToChildren permission
 	     * deletes will fail because we don't know if the permission exists
 	     * before we try to remove it.
-	     * 
+	     *
 	     * return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
 	     */
 	}
@@ -288,7 +288,7 @@ class GalleryPermissionHelper_advanced {
 								  'groupId' => $groupId),
 							    array('permission' => $newBits));
 	    }
-						     
+
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -299,7 +299,7 @@ class GalleryPermissionHelper_advanced {
 	 */
 	if ($applyToChildren) {
 	    $gallery->guaranteeTimeLimit(5);
-	    list ($ret, $childIds) = 
+	    list ($ret, $childIds) =
 		GalleryCoreApi::fetchChildItemIdsWithPermission($itemId, 'core.changePermissions');
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
@@ -315,7 +315,7 @@ class GalleryPermissionHelper_advanced {
 		}
 	    }
 	}
-	
+
 	return GalleryStatus::success();
     }
 
@@ -373,7 +373,7 @@ class GalleryPermissionHelper_advanced {
         ORDER BY
           [GalleryPermissionMap::permission] ASC
         ';
-	
+
 	list($ret, $searchResults) = $gallery->search($query, array($itemId));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -445,7 +445,7 @@ class GalleryPermissionHelper_advanced {
 	}
 	return array(GalleryStatus::success(), $permission);
     }
-    
+
     /**
      * Copy a set of permissions from one id to another
      *
@@ -680,7 +680,7 @@ class GalleryPermissionHelper_advanced {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	return array(GalleryStatus::success(), $ids);
     }
 
@@ -700,10 +700,11 @@ class GalleryPermissionHelper_advanced {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	$ids = array();
 	foreach ($allPermissions as $key => $info) {
-	    if ($info['module'] == $moduleId) {
+	    /* Remove this module's non-composite permissions from all entities.. */
+	    if ($info['module'] == $moduleId && !($info['flags'] & GALLERY_PERMISSION_COMPOSITE)) {
 		$ids[] = $key;
 	    }
 	}
@@ -719,10 +720,10 @@ class GalleryPermissionHelper_advanced {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	return GalleryStatus::success();
     }
-    
+
     /**
      * Return an unused permission bit that we can use for our purposes
      *
@@ -741,15 +742,15 @@ class GalleryPermissionHelper_advanced {
 	foreach ($allPermissions as $permission) {
 	    /*
 	     * Should we exclude composites from the scan?  We have to exclude
-	     * the "all access" composite, since that covers all the bits.  
+	     * the "all access" composite, since that covers all the bits.
 	     * If we exclude composites then we may run afoul of a problem
 	     * where a permission bit is removed but it's still part of a
-	     * different permission's composite.  
+	     * different permission's composite.
 	     */
 	    if ($permission['flags'] & GALLERY_PERMISSION_ALL_ACCESS) {
 		continue;
 	    }
-		
+
 	    $bitSet |= $permission['bits'];
 	}
 
@@ -810,7 +811,7 @@ class GalleryPermissionHelper_advanced {
      */
     function _removePermissionsFromAllItems($permissionIds) {
 	global $gallery;
-	
+
 	list ($ret, $removeBits) = GalleryCoreApi::convertPermissionIdsToBits($permissionIds);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -820,10 +821,10 @@ class GalleryPermissionHelper_advanced {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	$storage =& $gallery->getStorage();
 	list ($ret, $andNotPermission) = $storage->getFunctionSql('BITAND',
-            array('[GalleryPermissionMap::permission]', '~?'));
+	    array('[GalleryPermissionMap::permission]', '~?'));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
