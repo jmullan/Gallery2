@@ -209,6 +209,7 @@ class DatabaseStorage extends GalleryStorage {
 
 	$this->_traceStart();
 	$this->_db = ADONewConnection($this->getType());
+	$this->_traceStop();
 	if (empty($this->_db)) {
 	    return GalleryStatus::error(ERROR_DATABASE_FAILURE,
 					__FILE__, __LINE__);
@@ -222,6 +223,7 @@ class DatabaseStorage extends GalleryStorage {
 	    $this->_db->debug = true;
 	}
 
+	$this->_traceStart();
 	$ret = $this->_db->PConnect($this->_hostname,
 				    $this->_username,
 				    $this->_password,
@@ -256,104 +258,133 @@ class DatabaseStorage extends GalleryStorage {
     }
 
     /**
-     * Load a new GalleryEntity from storage
+     * Load the GalleryEntities with the ids specified
      *
-     * @access public
-     * @param string the id of the stored GalleryEntity
-     * @return array object GalleryStatus a status code, object GalleryEntity
+     * @param mixed the ids (or id) of the GalleryEntities to load
+     * @return array object GalleryStatus a status code,
+     *               mixed one GalleryEntity or an array of GalleryEntities
      */
-    function loadEntity($id) {
+    function loadEntities($ids) {
 	if ($this->_connectionStatus != DATABASE_STATUS_CONNECTED) {
 	    return array(GalleryStatus::error(ERROR_DATABASE_CONNECTION,
 					      __FILE__, __LINE__),
 			 null);
 	}
 
-	$this->_traceStart();
-	
-	/*
-	 * Figure out what kind of entity this is
-	 */
-	list($ret, $className) = $this->_identifyEntity($id);
+	if (is_array($ids)) {
+	    $returnArray = true;
+	} else {
+	    $returnArray = false;
+	    $ids = array($ids);
+	}
+
+	/* Identify all the ids at once */
+	list ($ret, $types) = $this->_identifyEntities($ids);
 	if ($ret->isError()) {
-	    $this->_traceStop();
-	    return array($ret, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	/*
-	 * Create a new instance of the class.
-	 */
-	$entity = new $className;
-	if (empty($entity)) {
-	    return array(GalleryStatus::error(ERROR_BAD_DATA,
-					      __FILE__, __LINE__),
-			 null);
+	/* Separate the ids by type */
+	$classNames = array();
+	for ($i = 0; $i < sizeof($ids); $i++) {
+	    $classNames[$types[$i]][] = $ids[$i];
 	}
 
+	/* Load them in groups */
+	foreach ($classNames as $className => $targetIds) {
+	    /* Get our member info for this class */
+	    $memberInfo = $this->_describeEntityMembers($className);
+	    $idCol = $this->_prefixColumnName('id');
 
-	/*
-	 * Get our member info for this class
-	 */
-	$memberInfo = $this->_describeEntityMembers($className);
-	$idCol = $this->_prefixColumnName('id');
 
-	$columns = array();
-	$tables = array();
-	$where = array();
-	$types = array();
-	$data = array();
-	foreach ($memberInfo['members'] as $columnName => $columnInfo) {
-	    $tableName = $this->_prefixTableName($columnInfo['class']);
-	    $types[] = $columnInfo['type'];
-	    $callbacks[] = 'set' . ucFirst($columnName);
-	    $columns[$tableName . '.' . $this->_prefixColumnName($columnName)] = 1;
-
-	    if (empty($tables[$tableName])) {
+	    /* Build up our query */
+	    $columns = array();
+	    $tables = array();
+	    $where = array();
+	    $types = array();
+	    $callbacks = array();
+	    $markers = $this->_makeMarkers(sizeof($targetIds));
+	    foreach ($memberInfo['members'] as $columnName => $columnInfo) {
+		$tableName = $this->_prefixTableName($columnInfo['class']);
+		$types[] = $columnInfo['type'];
+		$callbacks[] = 'set' . ucFirst($columnName);
+		$columns[$tableName . '.' . $this->_prefixColumnName($columnName)] = 1;
 		$tables[$tableName] = 1;
-		$where[] = $tableName . '.' . $idCol . '=?';
-		$data[] = $id;
 	    }
-	}
+	    $tables = array_keys($tables);
+	    $columns = array_keys($columns);
+	    
+	    for ($i = 0; $i < sizeof($tables); $i++) {
+		if ($i == 0) {
+		    $where[] = $tables[$i] . '.' . $idCol .
+			' IN (' . $markers . ')';
+		} else {
+		    $where[] = $tables[$i] . '.' . $idCol . '=' .
+			$tables[0] . '.' . $idCol;
+		}
+	    }
+	    
+	    $query = 'SELECT ';
+	    $query .= join(', ', $columns);
+	    $query .= ' FROM ';
+	    $query .= join(', ', $tables);
+	    $query .= ' WHERE ';
+	    $query .= join(' AND ', $where);
 
-	$query = 'SELECT ';
-	$query .= join(', ', array_keys($columns));
-	$query .= ' FROM ';
-	$query .= join(', ', array_keys($tables));
-	$query .= ' WHERE ';
-	$query .= join(' AND ', $where);
+	    /* Execute the query */
+	    $GLOBALS['ADODB_FETCH_MODE'] = ADODB_FETCH_NUM;
+	    $this->_traceStart();
+	    $recordSet = $this->_db->Execute($query, $targetIds);
+	    $this->_traceStop();
+	    if ($recordSet) {
+		if ($recordSet->RecordCount() != sizeof($targetIds)) {
+		    return array(GalleryStatus::error(ERROR_MISSING_OBJECT,
+						      __FILE__, __LINE__),
+				 null);
+		}
 
-	$GLOBALS['ADODB_FETCH_MODE'] = ADODB_FETCH_NUM;
-	$recordSet = $this->_db->Execute($query, $data);
-	if ($recordSet) {
-	    if ($recordSet->RecordCount() == 0) {
-		return array(GalleryStatus::error(ERROR_MISSING_OBJECT,
+		/* Process all the results */
+		while ($row = $recordSet->FetchRow()) {
+		    $entity = new $className;
+		    if (empty($entity)) {
+			return array(GalleryStatus::error(ERROR_BAD_DATA,
+							  __FILE__, __LINE__),
+				     null);
+		    }
+
+		    for ($i = 0; $i < sizeof($callbacks); $i++) {
+			$value = $row[$i];
+		    
+			/* Convert the database representation to a timestamp */
+			if ($types[$i] & STORAGE_TYPE_TIMESTAMP) {
+			    $value = $this->_db->UnixTimeStamp($value);
+			}
+			
+			/* Store the value in the object */
+			$entity->$callbacks[$i]($value);
+		    }
+
+		    $entity->clearModifiedFlags();
+		    $entities[$entity->getId()] = $entity;
+		}
+		$recordSet->Close();
+	    } else {
+		return array(GalleryStatus::error(ERROR_DATABASE_FAILURE,
 						  __FILE__, __LINE__),
 			     null);
 	    }
-
-	    $row = $recordSet->FetchRow();
-	    for ($i = 0; $i < sizeof($callbacks); $i++) {
-		$value = $row[$i];
-
-		/* Convert the database representation to a timestamp */
-		if ($types[$i] & STORAGE_TYPE_TIMESTAMP) {
-		    $value = $this->_db->UnixTimeStamp($value);
-		}
-
-		/* Store the value in the object */
-		$entity->$callbacks[$i]($value);
-	    }
-	    $recordSet->Close();
-
-	    $entity->clearModifiedFlags();
-	    $this->_traceStop();
-	    return array(GalleryStatus::success(), $entity);
-	} else {
-	    $this->_traceStop();
-	    return array(GalleryStatus::error(ERROR_DATABASE_FAILURE,
-					      __FILE__, __LINE__),
-			 null);
 	}
+
+	/* Assemble the entities in the right order and return them */
+	$result = array();
+	foreach ($ids as $id) {
+	    $result[] = $entities[$id];
+	}
+
+	if (!$returnArray) {
+	    $result = $result[0];
+	}
+	return array(GalleryStatus::success(), $result);
     }
 
     /**
@@ -369,8 +400,6 @@ class DatabaseStorage extends GalleryStorage {
 					__FILE__, __LINE__);
 	}
 
-	$this->_traceStart();
-	
 	/*
 	 * Update the serial number, but remember the original one
 	 */
@@ -452,9 +481,10 @@ class DatabaseStorage extends GalleryStorage {
 		$query .= join(', ', $columns);
 		$query .= ') VALUES (' . $markers . ')';
 
+		$this->_traceStart();
 		$recordSet = $this->_db->Execute($query, $data);
+		$this->_traceStop();
 		if (!$recordSet) {
-		    $this->_traceStop();
 		    return GalleryStatus::error(ERROR_DATABASE_FAILURE,
 						__FILE__, __LINE__);
 		}
@@ -505,16 +535,16 @@ class DatabaseStorage extends GalleryStorage {
 	     */
 	    foreach ($queryList as $queryAndData) {
 		list($query, $data) = $queryAndData;
+		$this->_traceStart();
 		$recordSet = $this->_db->Execute($query, $data);
+		$this->_traceStop();
 
 		if (!$recordSet) {
-		    $this->_traceStop();
 		    return GalleryStatus::error(ERROR_DATABASE_FAILURE,
 						__FILE__, __LINE__);
 		} else {
 		    $affectedRows = $this->_db->Affected_Rows();
 		    if ($affectedRows == 0) {
-			$this->_traceStop();
 			return GalleryStatus::error(ERROR_OBSOLETE_DATA,
 						    __FILE__, __LINE__);
 		    } else if ($affectedRows > 1) {
@@ -522,7 +552,6 @@ class DatabaseStorage extends GalleryStorage {
 			 * Holy shit, we just updated more than one row!  What do
 			 * we do now?
 			 */
-			$this->_traceStop();
 			return GalleryStatus::error(ERROR_DATABASE_FAILURE,
 						    __FILE__, __LINE__);
 		    }
@@ -533,8 +562,6 @@ class DatabaseStorage extends GalleryStorage {
 	$entity->clearPersistentFlag(STORAGE_FLAG_NEWLY_CREATED);
 	$entity->clearModifiedFlags();
 
-	$this->_traceStop();
-	
 	return GalleryStatus::success();
     }
 
@@ -561,8 +588,6 @@ class DatabaseStorage extends GalleryStorage {
 	    return;
 	}
 
-	$this->_traceStart();
-	
 	/*
 	 * Get our persistent and member info for this class
 	 */
@@ -582,9 +607,10 @@ class DatabaseStorage extends GalleryStorage {
 	    $query = 'DELETE FROM ' . $tableName .
 		    ' WHERE ' . $idCol . '=?';
 	    $data = array($entity->getId());
+	    $this->_traceStart();
 	    $recordSet = $this->_db->Execute($query, $data);
+	    $this->_traceStop();
 	    if (!$recordSet) {
-		$this->_traceStop();
 		return GalleryStatus::error(ERROR_DATABASE_FAILURE,
 					    __FILE__, __LINE__);
 	    }
@@ -592,7 +618,6 @@ class DatabaseStorage extends GalleryStorage {
 
 	$entity->setPersistentFlag(STORAGE_FLAG_DELETED);
 	    
-	$this->_traceStop();
 	return GalleryStatus::success();
     }
 
@@ -640,8 +665,6 @@ class DatabaseStorage extends GalleryStorage {
 					__FILE__, __LINE__);
 	}
 
-	$this->_traceStart();
-	
 	/*
 	 * Check the serial number to see if the current entity is up to
 	 * date
@@ -655,21 +678,21 @@ class DatabaseStorage extends GalleryStorage {
 	$data = array($entity->getId());
 		
 	$GLOBALS['ADODB_FETCH_MODE'] = ADODB_FETCH_NUM;
+	$this->_traceStart();
 	$recordSet = $this->_db->Execute($query, $data);
+	$this->_traceStop();
 	if (!$recordSet || $recordSet->RecordCount() == 0) {
-	    $this->_traceStop();
 	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT,
 					      __FILE__, __LINE__),
 			 null);
 	}
 
 	if ($recordSet->FetchField(0) == $entity->getSerialNumber()) {
-	    $this->_traceStop();
 	    return array(GalleryStatus::success(), $entity);
 	}
 
 	/* Serial number didn't match -- reload the entity */
-	return $this->loadEntity($entity->getId());
+	return $this->loadEntities($entity->getId());
     }
 
     /**
@@ -769,7 +792,9 @@ class DatabaseStorage extends GalleryStorage {
 	$query = 'DELETE FROM ' . $lockTable . ' ' .
 		'WHERE ' . $lockIdCol . '=? AND ' . $requestCol . '=1';
 	$data = array($lockId);
+	$this->_traceStart();
 	$recordSet = $this->_db->execute($query, $data);
+	$this->_traceStop();
 	if (!$recordSet) {
 	    $this->_releaseLockById($lockId);
 	    return array(GalleryStatus::error(ERROR_DATABASE_FAILURE,
@@ -875,7 +900,9 @@ class DatabaseStorage extends GalleryStorage {
 		    '(' . $lockIdCol . ', ' . $writeEntityIdCol .
 		    ') VALUES (?, ?)';
 	    $data = array($lockId, $entityId);
+	    $this->_traceStart();
 	    $recordSet = $this->_db->execute($query, $data);
+	    $this->_traceStop();
 	    if (!$recordSet) {
 		$this->_releaseLockById($lockId);
 		return array(GalleryStatus::error(ERROR_DATABASE_FAILURE,
@@ -889,7 +916,9 @@ class DatabaseStorage extends GalleryStorage {
 	$query = 'DELETE FROM ' . $lockTable . ' ' .
 		'WHERE ' . $lockIdCol . '=? AND ' . $requestCol . '=1';
 	$data = array($lockId);
+	$this->_traceStart();
 	$recordSet = $this->_db->execute($query, $data);
+	$this->_traceStop();
 	if (!$recordSet) {
 	    $this->_releaseLockById($lockId);
 	    return array(GalleryStatus::error(ERROR_DATABASE_FAILURE,
@@ -1063,7 +1092,6 @@ class DatabaseStorage extends GalleryStorage {
 
 	/* Run it with the right limits and return the results */
 	$GLOBALS['ADODB_FETCH_MODE'] = ADODB_FETCH_BOTH;
-	$this->_traceStart();
 
 	if (isset($query['limit']) && sizeof($query['limit'])) {
 	    if (empty($query['limit']['count'])) {
@@ -1078,11 +1106,14 @@ class DatabaseStorage extends GalleryStorage {
 		$offset = $query['limit']['offset'];
 	    }
 	    
+	    $this->_traceStart();
 	    $recordSet = $this->_db->SelectLimit($finalQuery, $count, $offset, $data);
+	    $this->_traceStop();
 	} else {
+	    $this->_traceStart();
 	    $recordSet = $this->_db->Execute($finalQuery, $data);
+	    $this->_traceStop();
 	}
-	$this->_traceStop();
 	if ($recordSet) {
 	    return array(GalleryStatus::success(),
 			 new DatabaseSearchResults($recordSet));
@@ -1175,6 +1206,53 @@ class DatabaseStorage extends GalleryStorage {
     }
 
     /**
+     * Update an entry in this map
+     *
+     * @param array the entry to match
+     * @param array the values to change
+     * @return object GalleryStatus a status code
+     */
+    function updateMapEntry($mapName, $match, $change) {
+
+	$mapInfo = $this->_describeMapMembers($mapName);
+	$tableName = $this->_prefixTableName($mapName);
+	$data = array();
+	foreach ($mapInfo['members'] as $memberName => $memberType) {
+	    if (isset($match[$memberName])) {
+		$where[] = $this->_prefixColumnName($memberName) . '=?';
+		$wheredata[] = $match[$memberName];
+	    }
+
+	    if (isset($change[$memberName])) {
+		$set[] = $this->_prefixColumnName($memberName) . '=?';
+		$setdata[] = $change[$memberName];
+	    }
+	}
+
+	if (sizeof($set) == 0 || sizeof($where) == 0) {
+	    return GalleryStatus::error(ERROR_BAD_DATA,
+					__FILE__, __LINE__);
+	}
+
+	$query = 'UPDATE ' . $tableName . ' ';
+	$query .= 'SET ' . join(' AND ', $set) . ' ';
+	$data = array_merge($data, $setdata);
+	
+	$query .= 'WHERE '  . join(' AND ', $where);
+	$data = array_merge($data, $wheredata);
+
+	$this->_traceStart();
+	$recordSet = $this->_db->Execute($query, $data);
+	$this->_traceStop();
+	if (!$recordSet) {
+	    return GalleryStatus::error(ERROR_DATABASE_FAILURE,
+					__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
      * Create the database.
      *
      * @return object GalleryStatus a status code
@@ -1212,7 +1290,6 @@ class DatabaseStorage extends GalleryStorage {
 	$query = 'CREATE DATABASE ' . $this->_database;
 	$recordSet = $db->Execute($query);
 	$db->Close();
-	$this->_traceStop();
 	
 	if (empty($recordSet)) {
 	    return GalleryStatus::error(ERROR_DATABASE_FAILURE,
@@ -1345,7 +1422,6 @@ class DatabaseStorage extends GalleryStorage {
 	$query = 'DROP DATABASE ' . $this->_database;
 	$recordSet = $db->Execute($query);
 	$db->Close();
-	$this->_traceStop();
 	
 	if (empty($recordSet)) {
 	    return GalleryStatus::error(ERROR_DATABASE_FAILURE,
@@ -1361,32 +1437,45 @@ class DatabaseStorage extends GalleryStorage {
      * @param int a object id
      * @return array a GalleryStatus and a string class name
      */
-    function _identifyEntity($id) {
-	assert('!empty($id)');
+    function _identifyEntities($ids) {
+	assert('!empty($ids)');
 
-	if (empty($this->_entityTypeCache[$id])) {
+	if (!is_array($ids)) {
+	    $ids = array($ids);
+	    $returnArray = false;
+	} else {
+	    $returnArray = true;
+	}
+
+	$checkIds = array();
+	foreach ($ids as $id) {
+	    if (empty($this->_entityTypeCache[$id])) {
+		$checkIds[] = $id;
+	    }
+	}
+
+	if (!empty($checkIds)) {
 	    $idCol = $this->_prefixColumnName('id');
 	    $entityTypeCol = $this->_prefixColumnName('entityType');
 	    $table = $this->_prefixTableName('GalleryEntity');
-	    $query = 'SELECT ' . $entityTypeCol .
+	    $markers = $this->_makeMarkers(sizeof($checkIds));
+	    $query = 'SELECT ' . $idCol . ', ' . $entityTypeCol .
 		    ' FROM ' . $table .
-		    ' WHERE ' . $idCol . '=?';
-	    $data = array($id);
+		    ' WHERE ' . $idCol . ' IN (' . $markers . ')';
 
 	    $GLOBALS['ADODB_FETCH_MODE'] = ADODB_FETCH_NUM;
-	    $recordSet = $this->_db->Execute($query, $data);
+	    $this->_traceStart();
+	    $recordSet = $this->_db->Execute($query, $checkIds);
+	    $this->_traceStop();
 	    
 	    if ($recordSet) {
-		if ($recordSet->RecordCount() == 1) {
-		    $type = $recordSet->fields[0];
-		    $recordSet->Close();
-		}
-		
-		if (empty($type)) {
-		    return array(GalleryStatus::error(ERROR_MISSING_OBJECT,
-						      __FILE__, __LINE__), null);
-		} else {
-		    $this->_entityTypeCache[$id] = $type;
+		while ($row = $recordSet->FetchRow()) {
+		    if (empty($row[1])) {
+			return array(GalleryStatus::error(ERROR_MISSING_OBJECT,
+							  __FILE__, __LINE__), null);
+		    } else {
+			$this->_entityTypeCache[$row[0]] = $row[1];
+		    }
 		}
 	    } else {
 		return array(GalleryStatus::error(ERROR_DATABASE_FAILURE,
@@ -1395,7 +1484,16 @@ class DatabaseStorage extends GalleryStorage {
 	    }
 	}
 
-	return array(GalleryStatus::success(), $this->_entityTypeCache[$id]);
+	if ($returnArray) {
+	    $results = array();
+	    foreach ($ids as $id) {
+		$results[] = $this->_entityTypeCache[$id];
+	    }
+	} else {
+	    $results = $this->_entityTypeCache[$ids[0]];
+	}
+
+	return array(GalleryStatus::success(), $results);
     }
 
     /**
