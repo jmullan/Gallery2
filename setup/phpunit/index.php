@@ -2,6 +2,7 @@
 require_once('../../init.php');
 require_once('phpunit.inc');
 require_once('GalleryTestCase.class');
+require_once('GalleryControllerTestCase.class');
 
 function GalleryMain(&$testSuite, $filter) {
     global $HTTP_GET_VARS;
