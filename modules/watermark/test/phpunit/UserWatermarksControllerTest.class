@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -50,6 +50,7 @@ class UserWatermarksControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $this->_user) = $this->_createUser();
 	if ($ret->isError()) {
+	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -61,9 +62,18 @@ class UserWatermarksControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 	$ret = $this->_deleteUser($this->_user);
 	if ($ret->isError()) {
+	    print $ret->getAsHtml();
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
+	if (isset($this->_idToDelete)) {
+	    $ret = GalleryCoreApi::deleteEntityById($this->_idToDelete);
+	    if ($ret->isError()) {
+		print $ret->getAsHtml();
+		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+
 	$gallery->setActiveUser($this->_saveUser);
 	parent::tearDown();
     }
@@ -117,14 +127,14 @@ class UserWatermarksControllerTest extends GalleryControllerTestCase {
 
     function testDeleteWatermark() {
 	global $gallery;
-	
+
 	/* Create a watermark (it'll be created as our active user) */
 	$watermark = new WatermarkImage();
 	$ret = $watermark->create(__FILE__, 'test/file', 'phpunit_' . rand() . '.gif');
 	if ($ret->isError()) {
 	    return $this->failWithStatus(__FILE__, __LINE__);
 	}
-	
+
 	$ret = $watermark->save();
 	if ($ret->isError()) {
 	    return $this->failWithStatus(__FILE__, __LINE__);
@@ -201,6 +211,62 @@ class UserWatermarksControllerTest extends GalleryControllerTestCase {
 
 	// We're expecting the same name, but the . changed to _ in the file extension
 	$this->assertEquals($expectedName, basename($path));
+    }
+
+    function testAddWatermarkSameFilenameAsOtherUser() {
+	global $gallery;
+	$platform = $gallery->getPlatform();
+
+	// Start with admin user..
+	$gallery->setActiveUser($this->_saveUser);
+
+	$dataFile = dirname(__FILE__) . '/../../../core/test/data/test1.gif';
+	$rand = rand();
+	$targetName = sprintf('phpunit_%s.gif', $rand);
+	$expectedName = sprintf('phpunit_%s_gif', $rand);
+	GalleryUtilities::putRequestVariable('form[action][add]', 1);
+	GalleryUtilities::putRequestVariable('form[name][1]', $targetName);
+	GalleryUtilities::putRequestVariable('form[type][1]', 'image/gif');
+	GalleryUtilities::putRequestVariable('form[tmp_name][1]', $dataFile);
+	GalleryUtilities::putRequestVariable('form[size][1]', $platform->filesize($dataFile));
+	GalleryUtilities::putRequestVariable('form[error][1]', 0);
+
+	$results = $this->handleRequest();
+	$counter =& GalleryTestCase::getEntityCounter();
+	$this->_idToDelete = $expectedId = $counter->getRecentEntityId('WatermarkImage');
+	$this->assertEquals(array('redirect' => array('view' => 'core:UserAdmin',
+						      'subView' => 'watermark:UserWatermarkEdit',
+						      'itemId' => $expectedId),
+				  'status' => array(),
+				  'error' => array()),
+			    $results, 'Add first watermark');
+
+	// Verify the watermark exists
+	list ($ret, $map) = $this->_fetchWatermarkMapByFilename();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(isset($map[$expectedName]), 'First watermark not added');
+
+	// Now change active user and add watermark with same filename..
+	$gallery->setActiveUser($this->_user);
+	$expectedName = '_' . $expectedName;
+
+	$results = $this->handleRequest();
+	$expectedId = $counter->getRecentEntityId('WatermarkImage');
+	$this->assertEquals(array('redirect' => array('view' => 'core:UserAdmin',
+						      'subView' => 'watermark:UserWatermarkEdit',
+						      'itemId' => $expectedId),
+				  'status' => array(),
+				  'error' => array()),
+			    $results, 'Add second watermark');
+
+	// Verify the watermark exists
+	list ($ret, $map) = $this->_fetchWatermarkMapByFilename();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(isset($map[$expectedName]), 'Second watermark not added');
     }
 
     function _fetchWatermarkMapByFilename() {

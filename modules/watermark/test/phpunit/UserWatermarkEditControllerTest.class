@@ -50,39 +50,54 @@ class UserWatermarkEditControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $this->_user) = $this->_createUser();
 	if ($ret->isError()) {
+	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_saveUser = $gallery->getActiveUser();
 	$gallery->setActiveUser($this->_user);
 
 	/* Create a watermark */
-	$watermark = new WatermarkImage();
-	$ret = $watermark->create(__FILE__, 'test/file', 'phpunit_' . rand() . '.gif');
+	list ($ret, $this->_watermark) = $this->_createWatermark();
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus(__FILE__, __LINE__);
+	}
+    }
+
+    function _createWatermark() {
+	$watermark = new WatermarkImage();
+	$ret = $watermark->create(__FILE__, 'test/file', 'phpunit_' . rand() . '.gif');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$ret = $watermark->save();
 	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$ret = GalleryCoreApi::addUserPermission($watermark->getId(), $this->_user->getId(), 'core.all');
 	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$this->_watermark = $watermark;
+	return array(GalleryStatus::success(), $watermark);
     }
 
     function tearDown() {
 	global $gallery;
 	$ret = $this->_deleteUser($this->_user);
 	if ($ret->isError()) {
+	    print $ret->getAsHtml();
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	if (isset($this->_idToDelete)) {
+	    $ret = GalleryCoreApi::deleteEntityById($this->_idToDelete);
+	    if ($ret->isError()) {
+		print $ret->getAsHtml();
+		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
 	}
 
 	$gallery->setActiveUser($this->_saveUser);
@@ -168,6 +183,65 @@ class UserWatermarkEditControllerTest extends GalleryControllerTestCase {
 	}
 
 	$this->assertEquals(1, $this->_watermark->getSerialNumber());
+    }
+
+    function testEditWatermarkDuplicateName() {
+	list ($ret, $watermark) = $this->_createWatermark();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	GalleryUtilities::putRequestVariable('itemId', $this->_watermark->getId());
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[name]', $watermark->getName());
+	GalleryUtilities::putRequestVariable('form[xPercentage]', '25.51');
+	GalleryUtilities::putRequestVariable('form[yPercentage]', '50.12');
+	GalleryUtilities::putRequestVariable('form[whichDerivative][resizes]', 'on');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core:UserAdmin',
+						      'subView' => 'watermark:UserWatermarkEdit'),
+				  'status' => array(),
+				  'error' => array('form[error][name][duplicate]')),
+			    $results);
+    }
+
+    function testEditWatermarkSameNameAsOtherUserWatermark() {
+	global $gallery;
+	$gallery->setActiveUser($this->_saveUser);
+	list ($ret, $watermark) = $this->_createWatermark();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_idToDelete = $watermark->getId();
+	$gallery->setActiveUser($this->_user);
+
+	GalleryUtilities::putRequestVariable('itemId', $this->_watermark->getId());
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[name]', $watermark->getName());
+	GalleryUtilities::putRequestVariable('form[xPercentage]', '25.51');
+	GalleryUtilities::putRequestVariable('form[yPercentage]', '50.12');
+	GalleryUtilities::putRequestVariable('form[whichDerivative][resizes]', 'on');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:UserAdmin',
+						      'subView' => 'watermark:UserWatermarks'),
+				  'status' => array('saved' => 1),
+				  'error' => array()),
+			    $results);
+
+	// Verify the watermark
+	list ($ret, $this->_watermark) = $this->_watermark->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals($watermark->getName(), $this->_watermark->getName());
+	$this->assertEquals('25.51', $this->_watermark->getXPercentage());
+	$this->assertEquals('50.12', $this->_watermark->getYPercentage());
+	$this->assert(!$this->_watermark->getApplyToPreferred(), 'shouldn\'t have preferred');
+	$this->assert($this->_watermark->getApplyToResizes(), 'missing resizes');
+	$this->assert(!$this->_watermark->getApplyToThumbnail(), 'shouldn\'t have thumbnail');
     }
 
     function testCancel() {
