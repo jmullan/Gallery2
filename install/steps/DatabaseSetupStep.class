@@ -49,14 +49,14 @@ class DatabaseSetupStep extends InstallStep {
 	switch ($this->_config['type']) {
             case 'mysql':
             case 'mysqlt':
-            	if (!function_exists('mysql_connection')) {
+            	if (!function_exists('mysql_connect')) {
                     $templateData['error']['phpDbMissing'] =
                         'You must have the MySQL PHP module installed';
                 }
                 break;
             case 'postgres7':
             case 'postgres':
-            	if (!function_exists('pgsql_connect')) {
+            	if (!function_exists('pg_connect')) {
                     $templateData['error']['phpDbMissing'] =
                         'You must have the PostgreSQL PHP module installed';
                 }
