@@ -228,7 +228,7 @@ class HybridLayout extends GalleryLayout {
 	}
 	$list = array();
 	foreach (array('albumFrame', 'imageFrame') as $key) {
-	    if (isset($params[$key])) {
+	    if (!empty($params[$key])) {
 		$list[] = $params[$key];
 	    }
 	}
@@ -410,6 +410,7 @@ class HybridLayout extends GalleryLayout {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+	$params = array_merge(array('albumFrame' => '', 'imageFrame' => ''), $params);
 
 	/* Image frame settings, if available */
 	list ($ret, $imageframe) =
@@ -427,13 +428,6 @@ class HybridLayout extends GalleryLayout {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    $sample = ' (<a href="' . $sampleUrl . '">' .  $gallery->i18n('View Samples') . '</a>)';
-
-	    if (!isset($params['albumFrame'])) {
-		$params['albumFrame'] = '';
-	    }
-	    if (!isset($params['imageFrame'])) {
-		$params['imageFrame'] = '';
-	    }
 
 	    $settings[] = array('key' => 'albumFrame',
 				'name' => $gallery->i18n('Album Frame') . $sample,
