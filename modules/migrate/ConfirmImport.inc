@@ -94,7 +94,6 @@ class ConfirmImportController extends GalleryController {
 		 * before this was simply building the framework.
 		 */
 		$ret = $user->create($fields['username']);
-
 		/* Was there an error? */
 		if ($ret->isError()) {
 		    /* ERROR_COLLISION is when you try to create something that
@@ -158,7 +157,6 @@ class ConfirmImportController extends GalleryController {
 	    }
 	    /* Convert the form variable into a local temporary variable */
 	    $destinationAlbumID = $form['destinationAlbumID'];
-
 	    /* Go through the list of selected gallery1 albums to import */
 	    foreach (array_keys ($form['sourceAlbums']) as $sourceAlbumName) {
 		/* attempt to load the metadata from the selected album into a
@@ -184,6 +182,7 @@ class ConfirmImportController extends GalleryController {
 	    */
 	    while ($albumfields && $i<count($form['sourceAlbums'])^2) {
 		$album = array_shift($albumfields);
+		
 		/* if the album's parent is not in the list of sourcealbums,
 		 * load it into the targeted G2 top album as set in
 		 * $destinationAlbumID
@@ -402,6 +401,15 @@ class ConfirmImportController extends GalleryController {
 			    if ($ret->isError()) {
 				return array($ret->wrap(__FILE__, __LINE__), null);
 			    }
+
+			    if (isset($newAlbumInstanceId)) {
+				$finishedAlbums[$album['name']] = $newAlbumInstanceId;
+				$status['albumImportSuccess'][$album['name']] = $newAlbumInstanceId;
+			    } else {
+				return array($ret->wrap(__FILE__, __LINE__), null);
+			    }	
+
+
 			}
 		    }
 		    /* we can let the parent album (and anything else that we might
@@ -413,12 +421,6 @@ class ConfirmImportController extends GalleryController {
 		    } else {
 			$importLockIds = array();
 		    }
-		    if (isset($newAlbumInstanceId)) {
-			$finishedAlbums[$album['name']] = $newAlbumInstanceId;
-			$status['albumImportSuccess'][$album['name']] = true;
-		    } else {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-		    }	
 		    
 		    unset($photos);
 		    list ($ret, $photos)=Gallery1DataParser::getPhotos($albumsPath . $album['name']);
@@ -435,7 +437,7 @@ class ConfirmImportController extends GalleryController {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 		    
-		    list ($ret, $lockIds[]) = $gallery->acquireReadLock($item->getId());
+		    list ($ret, $importLockIds[]) = $gallery->acquireReadLock($item->getId());
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
@@ -468,7 +470,7 @@ class ConfirmImportController extends GalleryController {
 				return array($ret->wrap(__FILE__, __LINE__), null);
 			    }
 			    
-			    list ($ret, $lockIds[]) = $gallery->acquireWriteLock($newItem->getId());
+			    list ($ret, $importLockIds[]) = $gallery->acquireWriteLock($newItem->getId());
 			    if ($ret->isError()) {
 				return array($ret->wrap(__FILE__, __LINE__), null);
 			    }
@@ -566,7 +568,7 @@ class ConfirmImportController extends GalleryController {
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
-		    list ($ret, $lockIds[]) = $gallery->acquireReadLock($item->getId());
+		    list ($ret, $importLockIds[]) = $gallery->acquireReadLock($item->getId());
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
@@ -579,6 +581,15 @@ class ConfirmImportController extends GalleryController {
 	    
 	    $redirect['view'] = 'core:SiteAdmin';
 	    $redirect['subView'] = 'migrate:ImportResults';
+	    
+	}
+	if (isset($importLockIds)) {
+	    $ret = $gallery->releaseLocks($importLockIds);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    } else {
+		$importLockIds = array();
+	    }
 	}
 	if (!empty($redirect)) {
 	    $results['redirect'] = $redirect;
