@@ -599,6 +599,9 @@ class TextTestResult extends TestResult {
 // beacuse the standard test result provided looks
 // rubbish.
 class PrettyTestResult extends TestResult {
+
+    var $_totalElapsed = 0;
+    
   /* Specialize TestResult to produce text/html report */
   function PrettyTestResult() {
     $this->TestResult();  // call superclass constructor
@@ -615,6 +618,7 @@ class PrettyTestResult extends TestResult {
     $nFailures = $this->countFailures();
 	echo "<h2>Summary</h2>";
 
+    printf("<p>%2.4f seconds elapsed<br>", $this->_totalElapsed);
     printf("<p>%s test%s run<br>", $nRun, ($nRun == 1) ? '' : 's');
     printf("%s failure%s.<br>\n", $nFailures, ($nFailures == 1) ? '' : 's');
     if ($nFailures == 0)
@@ -646,7 +650,8 @@ class PrettyTestResult extends TestResult {
        ? " class=\"Failure\">FAIL"
        : " class=\"Pass\">OK";
 
-    $elapsed = $test->elapsed();
+    $elapsed = sprintf("%2.4f", $test->elapsed());
+    $this->_totalElapsed += $elapsed;
     printf("<TD$outcome</TD><TD>$elapsed</TD></TR>");
     flush();
   }
