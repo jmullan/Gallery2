@@ -67,20 +67,10 @@ class ItemMoveController extends GalleryController {
 		    $error[] = 'form[error][destination][permission]';
 		}
 
-		/* Load the destination item */
-		list($ret, $newParent) = GalleryCoreApi::loadEntitiesById($newParentId);
+		/* Load destination parent ids: we don't want recursive moves */
+		list($ret, $newParentAncestorIds) = GalleryCoreApi::fetchParentSequence($newParentId);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-
-		/* Load its parents: we don't want recursive moves */
-		list($ret, $newParentAncestors) = GalleryCoreApi::fetchParents($newParent);
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-		$newParentAncestorIds = array();
-		foreach ($newParentAncestors as $thisItem) {
-		    $newParentAncestorIds[] = $thisItem['id'];
 		}
 		$newParentAncestorIds[] = $newParentId;
 	    } else {
@@ -105,12 +95,9 @@ class ItemMoveController extends GalleryController {
 		    $selectedId = $selectedItem->getId();
 
 		    /* Can't move into a tree that is included in the source */
-
-		    foreach ($newParentAncestorIds as $newParentAncestorId) {
-			if ($selectedId == $newParentAncestorId) {
-			    $error[] = 'form[error][source][' . $selectedId . '][selfMove]';
-			    continue 2; // Skip out of the foreach($selectedItem) also
-			}
+		    if (in_array($selectedId, $newParentAncestorIds)) {
+			$error[] = 'form[error][source][' . $selectedId . '][selfMove]';
+			continue;
 		    }
 		    
 		    $oldParentIds[] = $selectedItem->getParentId();

@@ -234,25 +234,25 @@ class ItemTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals('galleryphotoitem', get_class($instance));
+	$this->assertEquals('galleryphotoitem', strtolower(get_class($instance)));
 
 	list ($ret, $instance) = GalleryCoreApi::newItemByMimeType('image/randomimagetype');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals('galleryphotoitem', get_class($instance));
+	$this->assertEquals('galleryphotoitem', strtolower(get_class($instance)));
 
 	list ($ret, $instance) = GalleryCoreApi::newItemByMimeType('video/x-msvideo');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals('gallerymovieitem', get_class($instance));
+	$this->assertEquals('gallerymovieitem', strtolower(get_class($instance)));
 
 	list ($ret, $instance) = GalleryCoreApi::newItemByMimeType('randomtype/randomtype');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals('galleryunknownitem', get_class($instance));
+	$this->assertEquals('galleryunknownitem', strtolower(get_class($instance)));
     }
 
     function testGetChildCounts() {
@@ -358,7 +358,7 @@ class ItemTest extends GalleryTestCase {
 	$this->assert($success, 'should be able to set thumbnail');
 
 	list ($ret, $thumbTable) =
-	    GalleryCoreApi::fetchThumbnailsByItemIds($this->_childItems[1]->getId());
+	    GalleryCoreApi::fetchThumbnailsByItemIds(array($this->_childItems[1]->getId()));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -414,7 +414,7 @@ class ItemTest extends GalleryTestCase {
 	$this->assert(!$success, 'should not be able to set thumbnail');
 
 	list ($ret, $thumbTable) =
-	    GalleryCoreApi::fetchThumbnailsByItemIds($this->_childItems[1]->getId());
+	    GalleryCoreApi::fetchThumbnailsByItemIds(array($this->_childItems[1]->getId()));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

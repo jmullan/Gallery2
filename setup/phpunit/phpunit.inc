@@ -29,8 +29,10 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE |
-		E_CORE_ERROR | E_CORE_WARNING);
+
+//error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE |
+//   		E_CORE_ERROR | E_CORE_WARNING);
+error_reporting(E_ALL);
 
 /*
 interface Test {
@@ -71,11 +73,11 @@ if (phpversion() >= '4') {
     }
 }
 
-class Exception {
+class PHPUnitException {
     /* Emulate a Java exception, sort of... */
   var $message;
   var $type;
-  function Exception($message, $type = 'FAILURE') {
+  function PHPUnitException($message, $type = 'FAILURE') {
     $this->message = $message;
     $this->type = $type;
   }
@@ -303,13 +305,13 @@ class TestCase extends Assert /* implements Test */ {
     //printf("TestCase::fail(%s)<br>\n", ($message) ? $message : '');
     /* JUnit throws AssertionFailedError here.  We just record the
        failure and carry on */
-    $this->fExceptions[] = new Exception($message, 'FAILURE');
+    $this->fExceptions[] = new PHPUnitException($message, 'FAILURE');
   }
 
   function error($message) {
     /* report error that requires correction in the test script
        itself, or (heaven forbid) in this testing infrastructure */
-    $this->fExceptions[] = new Exception($message, 'ERROR');
+    $this->fExceptions[] = new PHPUnitException($message, 'ERROR');
     $this->fResult->stop();	// [does not work]
   }
 

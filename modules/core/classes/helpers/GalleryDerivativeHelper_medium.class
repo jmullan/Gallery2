@@ -125,7 +125,9 @@ class GalleryDerivativeHelper_medium {
     function _loadDerivatives($itemIds, $sourceIds, $types=array()) {
 	global $gallery;
 	
-	if (empty($itemIds) && empty($sourceIds)) {
+	if (empty($itemIds) && empty($sourceIds) ||
+	    empty($itemIds) && !is_array($sourceIds) ||
+	    empty($sourceIds) && !is_array($itemIds)) {
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
 			 null);
 	}

@@ -239,13 +239,13 @@ class ImageMagickToolkitHelper {
 		if (!$success) {
 		    $testArray[] = array('name' => 'identify',
 					 'success' => false,
-					 'message' => array_merge($module->translate('Problem executing binary:'),
+					 'message' => array_merge(array($module->translate('Problem executing binary:')),
 								  $results)
 					 );
 		} elseif (! ereg('(GIF.*PseudoClass|PseudoClass.*GIF)', join(',', $results))) {
 		    $testArray[] = array('name' => 'identify',
 					 'success' => false,
-					 'message' => array_merge($module->translate('Binary output:'),
+					 'message' => array_merge(array($module->translate('Binary output:')),
 								  $results)
 					 );
 		} else {
@@ -284,7 +284,7 @@ class ImageMagickToolkitHelper {
 		if (!$success) {
 		    $testArray[] = array('name' => 'convert',
 					 'success' => false,
-					 'message' => array_merge($module->translate('Problem executing binary:'),
+					 'message' => array_merge(array($module->translate('Problem executing binary:')),
 								  $results)
 					);
 		} elseif (join('', $results) != '') {
@@ -294,7 +294,7 @@ class ImageMagickToolkitHelper {
 		     */
 		    $testArray[] = array('name' => 'convert',
 					 'success' => false,
-					 'message' => array_merge($module->translate('Binary output:'),
+					 'message' => array_merge(array($module->translate('Binary output:')),
 								  $results)
 					 );
 		} else {

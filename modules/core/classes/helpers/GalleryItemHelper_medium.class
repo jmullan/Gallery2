@@ -391,7 +391,7 @@ class GalleryItemHelper_medium {
 	    }
 
 	    /* See if the album has a thumbnail.  If not, try to use this item as the thumbnail. */
-	    list ($ret, $thumbnailTable) = GalleryCoreApi::fetchThumbnailsByItemIds($albumId);
+	    list ($ret, $thumbnailTable) = GalleryCoreApi::fetchThumbnailsByItemIds(array($albumId));
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }

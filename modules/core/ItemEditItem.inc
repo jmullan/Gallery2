@@ -79,7 +79,7 @@ class ItemEditItem extends ItemEditPlugin {
 		 * first.  If there's no collision then make the rest of the changes.
 		 */
 		$originalPathComponent = $item->getPathComponent();
-		if ($item->getPathComponent() != $form['pathComponent']) {	
+		if (isset($form['pathComponent']) && $item->getPathComponent() != $form['pathComponent']) {	
 		    if ($isRootAlbum) {
 			GalleryCoreApi::releaseLocks($lockId);
 			return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null, null);
@@ -102,7 +102,7 @@ class ItemEditItem extends ItemEditPlugin {
 	    
 		    $ret = $item->save();
 		    if ($ret->isError()) {
-			if ($originalPathComponent != $form['pathComponent']) {
+			if (isset($form['pathComponent']) && $originalPathComponent != $form['pathComponent']) {
 			    /*
 			     * Move the file back and hope that this succeeds
 			     * since we're already in an error state

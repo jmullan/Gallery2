@@ -75,7 +75,7 @@ class ItemCreateResizesController extends GalleryController {
 	    
 	    if (empty($error)) {
 		/* Load the thumbnail */
-		list ($ret, $thumbTable) = GalleryCoreApi::fetchThumbnailsByItemIds($item->getId());
+		list ($ret, $thumbTable) = GalleryCoreApi::fetchThumbnailsByItemIds(array($item->getId()));
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -138,7 +138,7 @@ class ItemCreateResizesController extends GalleryController {
 
 		/* Get and delete all current resizes */
 		list ($ret, $resizesTable) =
-		    GalleryCoreApi::fetchResizesByItemIds($item->getId());
+		    GalleryCoreApi::fetchResizesByItemIds(array($item->getId()));
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}

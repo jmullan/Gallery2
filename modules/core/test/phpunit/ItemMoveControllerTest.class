@@ -109,9 +109,16 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 		    print $ret->getAsHtml();
 		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 		}
+		break;
 
 	    case 3:
 		/* full permissions */
+		$ret = GalleryCoreApi::addUserPermission($itemId, $userId, 'core.all');
+		if ($ret->isError()) {
+		    print $ret->getAsHtml();
+		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		}
+		
 		break;
 
 	    case 4:
@@ -277,6 +284,26 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[selectedIds]', array($this->_album[1]->getId() => 1));
 	GalleryUtilities::putRequestVariable('form[action][move]', 1);
 	GalleryUtilities::putRequestVariable('form[destination]', $this->_album[1]->getId());
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemMove'),
+				  'status' => array(),
+				  'error' => array('form[error][source][' .
+						   $this->_album[1]->getId() .
+						   '][selfMove]')),
+			    $results);
+    }
+
+    /**
+     * Test moving an item into its own child
+     */
+    function testMoveItemIntoChild() {
+	global $gallery;
+	GalleryUtilities::putRequestVariable('itemId', $this->_album[0]->getId());
+	GalleryUtilities::putRequestVariable('form[selectedIds]', array($this->_album[1]->getId() => 1));
+	GalleryUtilities::putRequestVariable('form[action][move]', 1);
+	GalleryUtilities::putRequestVariable('form[destination]', $this->_album[3]->getId());
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',

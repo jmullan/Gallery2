@@ -445,7 +445,7 @@ class ConfirmImportController extends GalleryController {
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
-		    list ($ret, $thumbnailTable) = GalleryCoreApi::fetchThumbnailsByItemIds($item->getId());
+		    list ($ret, $thumbnailTable) = GalleryCoreApi::fetchThumbnailsByItemIds(array($item->getId()));
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }

@@ -249,9 +249,10 @@ class GalleryAlbumItem_core extends GalleryItem {
 	/* Remove my directory and everything in it */
 	$platform = $gallery->getPlatform();
 
-	if (!$platform->recursiveRmdir($path)) {
-	    return GalleryStatus::error(ERROR_BAD_PATH,
-				       __FILE__, __LINE__);
+	if ($platform->file_exists($path)) {
+	    if (!$platform->recursiveRmdir($path)) {
+		return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);
+	    }
 	}
 
 	return GalleryStatus::success();
