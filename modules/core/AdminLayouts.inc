@@ -158,7 +158,7 @@ class AdminLayoutsController extends GalleryController {
 		    } else {
 			$value = $form['key'][$setting['key']];
 		    }
-		    if ($setting['value'] != $value) {
+		    if ($setting['value'] !== $value) {
 			$ret = $layout->setParameter($setting['key'], $value);
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
