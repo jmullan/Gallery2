@@ -1,0 +1,178 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * ItemEditAlbum controller tests
+ */
+class ItemEditAlbumControllerTest extends GalleryControllerTestCase {
+
+    function ItemEditAlbumControllerTest($methodName) {
+	$this->GalleryControllerTestCase($methodName, 'core:ItemEditAlbum');
+    }
+
+    function setUp() {
+	global $gallery;
+
+	parent::setUp();
+
+	list ($ret, $rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $this->_album) = $this->_createRandomAlbum($rootId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    function tearDown() {
+	global $gallery;
+
+	$ret = $gallery->deleteEntityById($this->_album->getId());
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	parent::tearDown();
+    }
+
+    function testUndo() {
+	global $gallery;
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
+	GalleryUtilities::putRequestVariable('form.action.undo', 1);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertRedirect(array('view' => 'core:ItemAdmin',
+				    'subView' => 'core:ItemEditAlbum',
+				    'itemId' => $this->_album->getId()),
+			      $results);
+    }
+
+    function testSave() {
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
+	GalleryUtilities::putRequestVariable('form.action.save', 1);
+	GalleryUtilities::putRequestVariable('form.layout', 'foo');
+	GalleryUtilities::putRequestVariable('form.theme', 'bar');
+	GalleryUtilities::putRequestVariable('form.orderBy', 'baz');
+	GalleryUtilities::putRequestVariable('form.orderDirection', 'bletch');
+	GalleryUtilities::putRequestVariable('form.thumbnail.size', 123);
+	GalleryUtilities::putRequestVariable('form.resizes.0.active', 1);
+	GalleryUtilities::putRequestVariable('form.resizes.0.size', 234);
+	GalleryUtilities::putRequestVariable('form.resizes.1.active', 1);
+	GalleryUtilities::putRequestVariable('form.resizes.1.size', 345);
+	GalleryUtilities::putRequestVariable('form.resizes.2.active', 1);
+	GalleryUtilities::putRequestVariable('form.resizes.2.size', 456);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertRedirect(array('view' => 'core:ItemAdmin',
+				    'subView' => 'core:ItemEditAlbum',
+				    'itemId' => $this->_album->getId()),
+			      $results);
+
+	list ($ret, $this->_album) = $this->_album->refresh();
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Verify basic settings */
+	$this->assertEquals('foo', $this->_album->getLayout());
+	$this->assertEquals('bar', $this->_album->getTheme());
+	$this->assertEquals('baz', $this->_album->getOrderBy());
+	$this->assertEquals('bletch', $this->_album->getOrderDirection());
+
+	/* Verify derivative preferences */
+	list ($ret, $preferences) =
+	    GalleryDerivativePreferencesMap::fetchPreferencesForItem($this->_album->getId());
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(array(array('order' => 0,
+				  'derivativeType' => 2,
+				  'derivativeOperations' => 'scale|234'),
+			    array('order' => 0,
+				  'derivativeType' => 2,
+				  'derivativeOperations' => 'scale|345'),
+			    array('order' => 0,
+				  'derivativeType' => 2,
+				  'derivativeOperations' => 'scale|456')),
+		      $preferences);
+    }
+
+    function testInvalidSave() {
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
+	GalleryUtilities::putRequestVariable('form.action.save', 1);
+	GalleryUtilities::putRequestVariable('form.thumbnail.size', 'foo');
+	GalleryUtilities::putRequestVariable('form.resizes.0.active', 1);
+	GalleryUtilities::putRequestVariable('form.resizes.0.size', 'foo');
+	GalleryUtilities::putRequestVariable('form.resizes.1.active', 1);
+	GalleryUtilities::putRequestVariable('form.resizes.1.size', 'foo');
+	GalleryUtilities::putRequestVariable('form.resizes.2.active', 1);
+	GalleryUtilities::putRequestVariable('form.resizes.2.size', 'foo');
+
+	/* Perform the request and verify that we failed */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('view' => 'core:ItemAdmin'), $results);
+	$this->assertEquals('core:ItemEditAlbum', GalleryUtilities::getRequestVariables('subView'));
+	$this->assertEquals($this->_album->getId(), (int)GalleryUtilities::getRequestVariables('itemId'));
+	$this->assert(GalleryUtilities::hasRequestVariable('form.error.thumbnail.size.invalid'));
+	$this->assert(GalleryUtilities::hasRequestVariable('form.error.resizes.0.size.invalid'));
+	$this->assert(GalleryUtilities::hasRequestVariable('form.error.resizes.1.size.invalid'));
+	$this->assert(GalleryUtilities::hasRequestVariable('form.error.resizes.2.size.invalid'));
+    }
+
+    function testInvalidSave2() {
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
+	GalleryUtilities::putRequestVariable('form.action.save', 1);
+	GalleryUtilities::putRequestVariable('form.thumbnail.size', 123);
+	GalleryUtilities::putRequestVariable('form.resizes.0.active', 1);
+	GalleryUtilities::putRequestVariable('form.resizes.1.active', 1);
+	GalleryUtilities::putRequestVariable('form.resizes.2.active', 1);
+
+	/* Perform the request and verify that we failed */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('view' => 'core:ItemAdmin'), $results);
+	$this->assertEquals('core:ItemEditAlbum', GalleryUtilities::getRequestVariables('subView'));
+	$this->assertEquals($this->_album->getId(), (int)GalleryUtilities::getRequestVariables('itemId'));
+	$this->assert(GalleryUtilities::hasRequestVariable('form.error.resizes.0.size.missing'));
+	$this->assert(GalleryUtilities::hasRequestVariable('form.error.resizes.1.size.missing'));
+	$this->assert(GalleryUtilities::hasRequestVariable('form.error.resizes.2.size.missing'));
+    }
+    
+}
+?>
