@@ -1212,7 +1212,7 @@ class Gallery {
 	$now = time();
 	if (empty($this->_timeLimit) || ($this->_timeLimit - $now < $limit)) {
 	    $this->debug("[$now] can't guarantee $limit -- extending!");
-	    $this->setTimeLimit($limit);
+	    $this->setTimeLimit(max($limit, 30));
 	}
     }
 
