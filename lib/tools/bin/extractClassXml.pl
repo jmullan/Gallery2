@@ -7,10 +7,12 @@ use Getopt::Long;
 my $DTD;
 my $OUTFILE;
 my $STUB_OK = 0;
+my $QUIET = 0;
 
 GetOptions("dtd:s" => \$DTD,
 	   "out:s" => \$OUTFILE,
-	   "stub-ok+" => \$STUB_OK);
+	   "stub-ok+" => \$STUB_OK,
+	   "quiet!" => \$QUIET);
 
 foreach my $file (@ARGV) {
   my $tagCount = 0;
@@ -44,7 +46,7 @@ foreach my $file (@ARGV) {
   # It's gotta have more than the class-name, schema-version tags.
   #
   if ($tagCount == 0 || ($tagCount <= 2 && !$STUB_OK)) {
-    print STDERR "No tags detected\n";
+    print STDERR "No tags detected\n" unless ($QUIET);
     unlink($xml);
   }
 }
