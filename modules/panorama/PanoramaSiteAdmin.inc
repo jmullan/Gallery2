@@ -100,13 +100,13 @@ class PanoramaSiteAdminView extends GalleryView {
 	}
 	if ($form['formName'] != 'PanoramaSiteAdmin') {
 	    $form['formName'] = 'PanoramaSiteAdmin';
-	    foreach (array('itemType', 'itemLink', 'width') as $key) {
-		list ($ret, $param) =
-		    GalleryCoreApi::getPluginParameter('module', 'panorama', $key);
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-		$form[$key] = $param;
+	    list ($ret, $param) =
+		GalleryCoreApi::fetchAllPluginParameters('module', 'panorama');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    foreach ($param as $key => $value) {
+		$form[$key] = $value;
 	    }
 	}
 	list ($ret, $form['count']) = PanoramaHelper::fetchItemCount();

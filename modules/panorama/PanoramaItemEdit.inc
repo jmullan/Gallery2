@@ -93,16 +93,12 @@ class PanoramaItemEdit extends ItemEditPlugin {
      * @see ItemEditPlugin::isSupported
      */
     function isSupported($item, $thumbnail) {
-	if (get_class($item) != 'galleryphotoitem' &&
-		get_class($item) != 'panoramaphotoitem') {
+	if (strcasecmp(get_class($item), 'GalleryPhotoItem') &&
+		strcasecmp(get_class($item), 'PanoramaPhotoItem')) {
 	    return false;
 	}
-	list ($ret, $on) = GalleryCoreApi::getPluginParameter('module', 'panorama', 'itemType');
-	if ($ret->isError() || !$on) {
-	    return false;
-	}
-	list ($ret, $viewWidth) = GalleryCoreApi::getPluginParameter('module', 'panorama', 'width');
-	if ($ret->isError()) {
+	list ($ret, $param) = GalleryCoreApi::fetchAllPluginParameters('module', 'panorama');
+	if ($ret->isError() || !$param['itemType']) {
 	    return false;
 	}
 	list ($ret, $preferred) =
@@ -114,7 +110,7 @@ class PanoramaItemEdit extends ItemEditPlugin {
 	    ? $item->getWidth() : $preferred[$item->getId()]->getWidth();
 	$mimeType = empty($preferred)
 	    ? $item->getMimeType() : $preferred[$item->getId()]->getDerivativeMimeType();
-	return ($width > $viewWidth &&
+	return ($width > $param['width'] &&
 	    ($mimeType == 'image/jpeg' || $mimeType == 'image/gif'));
     }
 

@@ -92,6 +92,10 @@ class PanoramaHelper {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+	$ret = GalleryCoreApi::studyPermissions($ids);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 
 	$data = array();
 	foreach ($items as $item) {
@@ -190,7 +194,10 @@ class PanoramaHelper {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	while ($result = $searchResults->nextResult()) {
+	for ($i = 0; $result = $searchResults->nextResult();) {
+	    if ($i++ % 10 == 0) {
+		$gallery->guaranteeTimeLimit(5);
+	    }
 	    $id = (int)$result[0];
 	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($id);
 	    if ($ret->isError()) {

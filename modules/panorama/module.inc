@@ -142,17 +142,13 @@ class PanoramaModule extends GalleryModule {
      */
     function getItemLinks($items) {
 	$links = array();
-	list ($ret, $on) = $this->getModuleParameter('itemLink');
+	list ($ret, $param) = GalleryCoreApi::fetchAllPluginParameters('module', 'panorama');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	if ($on) {
+	if ($param['itemLink']) {
 	    require_once(dirname(__FILE__) . '/classes/PanoramaHelper.class');
 	    list ($ret, $images) = PanoramaHelper::fetchViewableImages($items);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    list ($ret, $viewWidth) = $this->getModuleParameter('width');
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -166,8 +162,8 @@ class PanoramaModule extends GalleryModule {
 		// Applet supports jpeg and gif images
 		if (GalleryUtilities::isA($item, 'GalleryPhotoItem') &&
 		    !GalleryUtilities::isA($item, 'PanoramaPhotoItem') &&
-		    ($mimeType == 'image/jpeg' || $mimeType == 'image/gif') &&
-			$width > $viewWidth &&
+		    preg_match(':^image/(gif|p?jpeg)$:', $mimeType) &&
+			$width > $param['width'] &&
 			($image->getHeight() / $width < 0.6)) {
 		    $links[$item->getId()][] =
 			array('text' => $this->translate('view panorama'),
