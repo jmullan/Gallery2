@@ -46,11 +46,17 @@ class GalleryTestCase extends TestCase {
 
 	parent::setUp();
 
-	/* Clear out any request vars */
+	/* Clear out any request vars, but preserve the session id */
 	$this->_saveVars = array($_GET, $_POST, $_FILES, $_SERVER, $_ENV);
 	$_GET = array();
 	$_POST = array();
 	$_FILES = array();
+
+	$session =& $gallery->getSession();
+	if (!$session->isUsingCookies()) {
+	    list ($sessionKey, $sessionId) = $session->getSessionDescriptor();
+	    $_GET[GALLERY_FORM_VARIABLE_PREFIX . $sessionKey] = $sessionId;
+	}
 	
 	/*
 	 * Try to ensure enough time for this test to complete.  If a test
