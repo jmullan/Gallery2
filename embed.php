@@ -118,13 +118,12 @@ class GalleryEmbed {
 	    }
 	}
 
-        // set language
-        if (isset($languageCode)) {
-            global $gallery;
-            $session =& $gallery->getSession();
-            list ($languageCode) = GalleryTranslator::getSupportedLanguageCode($languageCode);
-            $session->put('core.language', $languageCode);
-        }
+	// set language
+	if (isset($languageCode)) {
+	    global $gallery;
+	    list ($languageCode) = GalleryTranslator::getSupportedLanguageCode($languageCode);
+	    $gallery->setActiveLanguageCode($languageCode);
+	}
 
 	$data = GalleryMain(true);
 	return array(GalleryStatus::success(), $data);
@@ -332,7 +331,7 @@ class GalleryEmbed {
 	}
 
 	if (isset($args['username'])) {
-	    $user->setuserName($args['username']);
+	    $user->setUserName($args['username']);
 	}
 	if (isset($args['email'])) {
 	    $user->setEmail($args['email']);
@@ -344,9 +343,9 @@ class GalleryEmbed {
 	    list ($languageCode) = GalleryTranslator::getSupportedLanguageCode($args['language']);
 	    $user->setLanguage($languageCode);
 	}
-        if (isset($args['creationtimestamp'])) {
-            $user->setcreationTimestamp($args['creationtimestamp']);
-        }
+	if (isset($args['creationtimestamp'])) {
+	    $user->setCreationTimestamp($args['creationtimestamp']);
+	}
     }
 
     /**
