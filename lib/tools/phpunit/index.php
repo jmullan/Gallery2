@@ -4,7 +4,7 @@
  * @subpackage PHPUnit
  */   
 include('../security.inc');
-require_once('../../init.php');
+require_once('../../../init.php');
 require_once('phpunit.inc');
 require_once('GalleryTestCase.class');
 require_once('GalleryControllerTestCase.class');
@@ -30,7 +30,7 @@ function GalleryMain(&$testSuite, $filter) {
     }
 
     /* Configure out url Generator for phpunit mode. */
-    $urlGenerator = new GalleryUrlGenerator('../../main.php');
+    $urlGenerator = new GalleryUrlGenerator('../../../main.php');
     $gallery->setUrlGenerator($urlGenerator);
     
     $ret = GalleryInitSecondPass();
@@ -72,7 +72,7 @@ function GalleryMain(&$testSuite, $filter) {
 	}
 
 	$platform = $gallery->getPlatform();
-	$modulesDir = dirname(__FILE__) . '/../../modules/';
+	$modulesDir = dirname(__FILE__) . '/../../../modules/';
 	$suiteArray = array();
 	foreach ($moduleStatusList as $moduleId => $moduleStatus) {
 	    if (empty($moduleStatus['active'])) {
@@ -201,7 +201,7 @@ print "</pre>";
     click the Reload Page button.  That will transfer your session from
     the page where you logged in over to this page.
     <br>
-    <a href="../../main.php?g2_view=core:UserAdmin&g2_subView=core:UserLogin&g2_return=<?php echo $_SERVER['REQUEST_URI']?>">[ login ]</a>
+    <a href="../../../main.php?g2_view=core:UserAdmin&g2_subView=core:UserLogin&g2_return=<?php echo $_SERVER['REQUEST_URI']?>">[ login ]</a>
     <form>
       <input type="text" size=33 name="<?php echo $sessionKey?>">
       <input type="submit" value="Reload page">

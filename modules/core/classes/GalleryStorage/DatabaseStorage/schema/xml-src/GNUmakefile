@@ -29,7 +29,7 @@ $(OUTDIR)/%.xml: $(G2_TMPDIR)/%.xml $(XSLFILE)
 	fi
 
 $(G2_TMPDIR)/%.xml: $(CLASSDIR)/%.class
-	perl $(TOOLDIR)/extractClassXml.pl \
+	perl $(TOOLDIR)/bin/extractClassXml.pl \
 		--dtd=../$(TOOLDIR)/dtd/GalleryClass2.0.dtd $^ \
 		--out=$@
 	if [ -f $@ ]; then $(VALIDATOR) $@; fi

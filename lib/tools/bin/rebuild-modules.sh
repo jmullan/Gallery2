@@ -1,7 +1,7 @@
 #!/bin/sh
 CURDIR=`pwd`
 
-cd ../../modules
+cd ../../../modules
 cvs update -kk `find . -name '*.inc' | egrep 'classes/interfaces'`
 cvs update -kk `find . -name '*.sql'`
 

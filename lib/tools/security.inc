@@ -32,14 +32,13 @@ class GalleryStub {
 
     function setDebug() { }
     function setDebugLogFile() { }
-    function setProfile() { }
 }
 
 $gallery = new GalleryStub();
 
 /* Load config.php */
-if (file_exists(dirname(__FILE__) . '/../config.php')) {
-    include(dirname(__FILE__) . '/../config.php');
+if (file_exists(dirname(__FILE__) . '/../../config.php')) {
+    include(dirname(__FILE__) . '/../../config.php');
 } else {
     include(dirname(__FILE__) . '/messages/messageHeader.inc');
     include(dirname(__FILE__) . '/messages/missingConfig.inc');

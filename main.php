@@ -345,7 +345,7 @@ function GalleryMain() {
 	    urlencode($urlGenerator->appendParamsToUrl($urlGenerator->getCurrentUrl(),
 						       array($sessionDescriptor[0] => $sessionDescriptor[1])));
 
-	$main['gallery']['version'] = '2';
+	$main['gallery']['version'] = '2.0-alpha-1';
 	$template->setVariable('main', $main);
 	$template->setVariable('l10Domain', 'modules_core');
 

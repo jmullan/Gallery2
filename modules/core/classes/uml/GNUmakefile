@@ -22,7 +22,7 @@ $(G2_TMPDIR):
 		> $@; fi
 
 $(G2_TMPDIR)/%.xml: $(CLASSDIR)/%.class
-	perl $(TOOLDIR)/extractClassXml.pl \
+	perl $(TOOLDIR)/bin/extractClassXml.pl \
 		--dtd=../$(TOOLDIR)/dtd/GalleryClass2.0.dtd \
 		--stub-ok \
 		--out $@ \

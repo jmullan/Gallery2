@@ -1,6 +1,6 @@
 <?php
 include('../security.inc');
-require_once('../../init.php');
+require_once('../../../init.php');
 require_once('TestCase.class');
 require_once('TestCase/ActivateModule.class');
 require_once('TestCase/InstallModule.class');
@@ -65,7 +65,7 @@ function GalleryTestHarness() {
     global $gallery;
     global $tests;
 
-    $modulesDir = dirname(__FILE__) . '/../../modules/';
+    $modulesDir = dirname(__FILE__) . '/../../../modules/';
     $platform = $gallery->getPlatform();
 
     /*
@@ -173,7 +173,7 @@ function GalleryTestHarness() {
     }
 
     /* Get the Smarty instance. */
-    require_once(dirname(__FILE__) . '/../../modules/core/classes/GalleryTemplate.class');    
+    require_once(dirname(__FILE__) . '/../../../modules/core/classes/GalleryTemplate.class');    
     $template = new GalleryTemplate(dirname(__FILE__) . '/templates');
     $template->setVariable('tests', $tests);
     $template->setVariable('results', $results);
