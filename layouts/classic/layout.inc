@@ -62,7 +62,7 @@ class ClassicLayout extends MatrixLayout {
 	$params = array_merge(
 	    array('rows' => 10, 'columns' => 1, 'showImageOwner' => 0, 'showAlbumOwner' => 1,
 		  'albumFrame' => '', 'itemFrame' => '', 'photoFrame' => '', 'showSubalbums' => 1,
-		  'useCaptureDate' => 0),
+		  'subalbumDepth' => 0, 'useCaptureDate' => 0),
 	    $params);
 
 	$settings = array();
@@ -80,6 +80,11 @@ class ClassicLayout extends MatrixLayout {
 			    'name' => $gallery->i18n('Show subalbum links'),
 			    'type' => 'checkbox',
 			    'value' => $params['showSubalbums']);
+	$settings[] = array('key' => 'subalbumDepth',
+			    'name' => $gallery->i18n('Depth of subalbums links (0=no limit)'),
+			    'type' => 'text-field',
+			    'type-params' => array('size' => 2),
+			    'value' => $params['subalbumDepth']);
 	$settings[] = array('key' => 'showImageOwner',
 			    'name' => $gallery->i18n('Show image owners'),
 			    'type' => 'checkbox',
@@ -130,6 +135,17 @@ class ClassicLayout extends MatrixLayout {
     }
 
     /**
+     * @see MatrixLayout::validateSettings
+     */
+    function validateSettings($settings) {
+	$error = parent::validateSettings($settings);
+	if (!is_numeric($settings['subalbumDepth'])) {
+	    $error['subalbumDepth'] = $this->translate('You must enter a number');
+	}
+	return $error;
+    }
+
+    /**
      * @see MatrixLayout::_loadAlbumTemplate
      */
     function _loadAlbumTemplate(&$template, $item, $properties) {
@@ -146,7 +162,8 @@ class ClassicLayout extends MatrixLayout {
 	$layout['showSubalbums'] = $properties['showSubalbums'];
 
 	if ($properties['showSubalbums']) {
-	    list ($ret, $tree) = GalleryCoreApi::fetchAlbumTree($item->getId());
+	    list ($ret, $tree) = GalleryCoreApi::fetchAlbumTree($item->getId(),
+			$properties['subalbumDepth'] > 0 ? $properties['subalbumDepth'] + 1 : null);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
