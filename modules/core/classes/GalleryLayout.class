@@ -374,6 +374,9 @@ class GalleryLayout {
      *      ^if childIds non-empty also set childCount on each child item that canContainChildren
      *   descendentCount = number of descendents for item
      *      ^if childIds non-empty also set descendentCount on each child that canContainChildren
+     *   parents = array of ancestor data; also set parent key (direct parent data)
+     *   peers = array of peer data (first, last and a window of peers around this item),
+     *           also set peerCount = total number of peers, peerItemIndex = index of this item
      *   systemLinks = array of array('text'=>.., 'params'=>.., 'url'=>.., 'moduleId'=>..)
      *   systemContentFiles = array of moduleId => template file path
      *   itemLinks = array of array('text'=>.., 'params'=>.., 'url'=>.., 'moduleId'=>..)
@@ -426,6 +429,56 @@ class GalleryLayout {
 		$childOwnerIds[$child->getOwnerId()] = true;
 	    }
 	    $childOwnerIds = array_keys($childOwnerIds);
+	}
+	if (isset($load['parents'])) {
+	    list ($ret, $parentSequence) = GalleryCoreApi::fetchParentSequence($itemId);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    foreach ($parentSequence as $id) {
+		$ids[$id] = true;
+	    }
+	}
+	if (isset($load['peers'])) {
+	    $peerIds = array();
+	    if ($item->getParentId() != null) {
+		list ($ret, $parent) = GalleryCoreApi::loadEntitiesById($item->getParentId());
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+		list ($ret, $peerIds) = GalleryCoreApi::fetchChildItemIds($parent);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+		foreach (array_keys($peerIds) as $i) {
+		    if ($peerIds[$i] == $itemId) {
+			$peerItemIndex = $i;
+			break;
+		    }
+		}
+		$peerWindowSize = 6;
+		$peerLast = count($peerIds) - 1;
+		$peerNeighborStart = max($peerItemIndex - (int)($peerWindowSize/2), 0);
+		$peerNeighborEnd = min($peerItemIndex + (int)($peerWindowSize/2), $peerLast);
+		// If the window is pinned to one end, expand it to the entire windowSize
+		if ($peerNeighborStart == 0) {
+		    $peerNeighborEnd = min($peerLast, $peerWindowSize-1);
+		} else if ($peerNeighborEnd == $peerLast) {
+		    $peerNeighborStart = max($peerLast - $peerWindowSize, 0);
+		}
+		if ($peerNeighborStart > 0) {
+		    $peers[0] = $peerIds[0];
+		}
+		for ($i = $peerNeighborStart; $i <= $peerNeighborEnd; $i++) {
+		    $peers[$i] = $peerIds[$i];
+		}
+		if ($peerNeighborEnd < $peerLast) {
+		    $peers[$peerLast] = $peerIds[$peerLast];
+		}
+		foreach ($peers as $id) {
+		    $ids[$id] = true;
+		}
+	    }
 	}
 	if (!empty($ids)) {
 	    list ($ret, $list) = GalleryCoreApi::loadEntitiesById(array_keys($ids));
@@ -500,6 +553,29 @@ class GalleryLayout {
 	    $layout['descendentCount'] =
 		isset($descendentCount[$itemId]) ? $descendentCount[$itemId] : 0;
 	    $childData[] = 'descendentCount';
+	}
+
+	// -------------------------------------------------------------------------------------
+	// 'parents'
+	if (isset($load['parents'])) {
+	    $layout['parents'] = array();
+	    foreach ($parentSequence as $id) {
+		$layout['parents'][] = $entities[$id]->getMemberData();
+	    }
+	    $layout['parent'] = empty($parentSequence) ? null : $layout['parents'][0];
+	}
+
+	// -------------------------------------------------------------------------------------
+	// 'peers'
+	if (isset($load['peers'])) {
+	    $layout['peers'] = array();
+	    $layout['peerCount'] = count($peerIds);
+	    $layout['peerItemIndex'] = isset($peerItemIndex) ? $peerItemIndex : 0;
+	    foreach ($peers as $i => $id) {
+		$peer = $entities[$id]->getMemberData();
+		$peer['peerIndex'] = $i + 1;
+		$layout['peers'][] = $peer;
+	    }
 	}
 
 	// -------------------------------------------------------------------------------------

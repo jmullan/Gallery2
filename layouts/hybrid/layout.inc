@@ -106,7 +106,7 @@ class HybridLayout extends GalleryLayout {
 	}
 
 	$ret = $this->loadLayoutTemplate($template, $item,
-	    array('owner', 'viewCount', 'systemLinks', 'systemContentFiles', 'itemLinks'),
+	    array('owner', 'viewCount', 'parents', 'systemLinks', 'systemContentFiles', 'itemLinks'),
 	    $childIds);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -143,15 +143,6 @@ class HybridLayout extends GalleryLayout {
 	    }
 	}
 
-	/* Load the parents */
-	list ($ret, $parents) = GalleryCoreApi::fetchParents($item);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	for ($i = 0; $i < sizeof($parents); $i++) {
-	    $parents[$i] = $parents[$i]->getMemberData();
-	}
-
 	/* Prepare image frames, if available */
 	list ($ret, $imageframe) =
 	    GalleryCoreApi::newFactoryInstance('ImageFrameInterface_1_0');
@@ -175,7 +166,6 @@ class HybridLayout extends GalleryLayout {
 	}
 
 	$layout['layoutUrl'] = GalleryUtilities::convertPathToUrl(dirname(__FILE__));
-	$layout['parents'] = $parents;
 	$layout['params'] = $params;
 
 	return array(GalleryStatus::success(),

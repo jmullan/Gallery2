@@ -248,7 +248,7 @@ class MatrixLayout extends GalleryLayout {
 	}
 
 	$ret = $this->loadLayoutTemplate($template, $item,
-	    array('owner', 'viewCount', 'childCount', 'descendentCount',
+	    array('owner', 'viewCount', 'childCount', 'descendentCount', 'parents', 'peers',
 		  'systemLinks', 'systemContentFiles', 'itemLinks', 'itemSummaries',
 		  'itemDetailFiles', 'thumbnails'),
 	    $childIds);
@@ -336,45 +336,16 @@ class MatrixLayout extends GalleryLayout {
 	    $jumprange[] = $totalPages;
 	}
 
-	/* Get peer info */
-	list ($ret, $peers, $peerIds, $totalPeerCount, $itemIndex) = $this->_loadPeerInfo($item);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	/* Load the parents */
-	list ($ret, $parents) = GalleryCoreApi::fetchParents($item);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	for ($i = 0; $i < sizeof($parents); $i++) {
-	    $parents[$i] = $parents[$i]->getMemberData();
-	}
-
-	list ($ret, $rootAlbumId) =
-	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
 	$show = array();
-	$show['peerSidebarBox'] = ($item->getId() != $rootAlbumId);
+	$show['peerSidebarBox'] = ($layout['peerCount'] > 0);
 
 	$layout['show'] = $show;
 	$layout['columnSize'] = $properties['columns'];
 	$layout['currentPage'] = $page;
 	$layout['totalPageCount'] = $totalPages;
-	$layout['totalPeerCount'] = $totalPeerCount;
-	$layout['peers'] = $peers;
 	$layout['navigator'] = $navigator;
 	$layout['jumprange'] = $jumprange;
 	$layout['layoutUrl'] = GalleryUtilities::convertPathToUrl(dirname(__FILE__));
-	$layout['parents'] = $parents;
-	if (!empty($parents)) {
-	    $layout['parent'] = $parents[sizeof($parents)-1];
-	} else {
-	    $layout['parent'] = null;
-	}
 	$layout['showAlbumOwner'] = $properties['showAlbumOwner'];
 	$layout['showImageOwner'] = $properties['showImageOwner'];
 	$layout['useCaptureDate'] = $properties['useCaptureDate'];
@@ -410,7 +381,7 @@ class MatrixLayout extends GalleryLayout {
 
 	/* Can we see this item at all? */
 	if (!isset($permissions['core.view'])) {
-	    return array(GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__, "Permission denied"), null);
+	    return array(GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__), null);
 	}
 
 	/* If the user can see resized versions, add those to the list */
@@ -493,40 +464,31 @@ class MatrixLayout extends GalleryLayout {
 	}
 
 	/* Don't let the index overflow the images array */
-	$imageViewsIndex = min($imageViewsIndex, sizeof($imageViews) - 1);
-
-	/* Get peer info */
-	list ($ret, $peers, $peerIds, $totalPeerCount, $itemIndex) = $this->_loadPeerInfo($item);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	$navigator = array();
-	if ($itemIndex > 0) {
-	    $navigator['first'] = array('view' => 'core:ShowItem', 'itemId' => $peerIds[0]);
-	    $navigator['back'] = array('view' => 'core:ShowItem', 'itemId' => $peerIds[$itemIndex-1]);
-	}
-
-	if ($itemIndex < $totalPeerCount-1) {
-	    $navigator['next'] = array('view' => 'core:ShowItem', 'itemId' => $peerIds[$itemIndex+1]);
-	    $navigator['last'] = array('view' => 'core:ShowItem', 'itemId' => $peerIds[sizeof($peerIds)-1]);
-	}
-
-	/* Load the parents */
-	list ($ret, $parents) = GalleryCoreApi::fetchParents($item);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	for ($i = 0; $i < sizeof($parents); $i++) {
-	    $parents[$i] = $parents[$i]->getMemberData();
-	}
+	$imageViewsIndex = min($imageViewsIndex, count($imageViews) - 1);
 
 	$ret = $this->loadLayoutTemplate($template, $item,
-	    array('owner', 'systemLinks', 'systemContentFiles', 'itemLinks', 'itemDetailFiles'));
+	    array('owner', 'parents', 'peers',
+		  'systemLinks', 'systemContentFiles', 'itemLinks', 'itemDetailFiles'));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$layout =& $template->getVariableByReference('layout');
+
+	$navigator = array();
+	$itemIndex = $layout['peerItemIndex'];
+	if ($itemIndex > 0) {
+	    $navigator['first'] = array('view' => 'core:ShowItem',
+					'itemId' => $layout['peers'][0]['id']);
+	    $navigator['back'] = array('view' => 'core:ShowItem',
+				       'itemId' => $layout['peers'][$itemIndex-1]['id']);
+	}
+
+	if ($itemIndex < $layout['peerCount']-1) {
+	    $navigator['next'] = array('view' => 'core:ShowItem',
+				       'itemId' => $layout['peers'][$itemIndex+1]['id']);
+	    $navigator['last'] = array('view' => 'core:ShowItem',
+				       'itemId' => $layout['peers'][$layout['peerCount']-1]['id']);
+	}
 
 	/* Load the EXIF data */
 	if ($properties['useCaptureDate']) {
@@ -560,99 +522,14 @@ class MatrixLayout extends GalleryLayout {
 
 	$layout['show'] = $show;
 	$layout['baseUrl'] = GalleryUtilities::convertPathToUrl(dirname(__FILE__));
-	$layout['parents'] = $parents;
-	$layout['peers'] = $peers;
-	if (!empty($parents)) {
-	    $layout['parent'] = $parents[sizeof($parents)-1];
-	} else {
-	    $layout['parent'] = null;
-	}
 	$layout['imageViews'] = $imageViews;
 	$layout['sourceImage'] = $sourceImage;
 	$layout['imageViewsIndex'] = $imageViewsIndex;
-	$layout['totalPeerCount'] = $totalPeerCount;
 	$layout['navigator'] = $navigator;
 	$layout['showImageOwner'] = $properties['showImageOwner'];
 	$layout['useCaptureDate'] = $properties['useCaptureDate'];
 
 	return array(GalleryStatus::success(), 'layouts/matrix/templates/singleBody.tpl');
-    }
-
-    function _loadPeerInfo($item) {
-	if ($item->getParentId() == null) {
-	    return array(GalleryStatus::success(), array(), array(), 0, 0);
-	}
-
-	/*
-	 * In order to figure out where we are, we have to load the entire list
-	 * of children of my parent and then iterate through it to find our
-	 * current index.
-	 */
-	list ($ret, $parent) = GalleryCoreApi::loadEntitiesById($item->getParentId());
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null, null, null);
-	}
-
-	list ($ret, $peerIds) = GalleryCoreApi::fetchChildItemIds($parent);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null, null, null);
-	}
-
-	$totalPeerCount = sizeof($peerIds);
-
-	for ($i = 0; $i < $totalPeerCount; $i++) {
-	    if ($peerIds[$i] == $item->getId()) {
-		$itemIndex = $i;
-	    }
-	}
-
-	/* Get a window of peer ids around us */
-	$windowSize = 6;
-	$peers = array();
-	$neighborStart = max($itemIndex - (int)($windowSize/2), 0);
-	$neighborEnd = min($itemIndex + (int)($windowSize/2), sizeof($peerIds)-1);
-
-	/* If the window is pinned to one end, expand it to the entire windowSize */
-	if ($neighborStart == 0) {
-	    $neighborEnd = min(sizeof($peerIds)-1, $windowSize-1);
-	} else if ($neighborEnd == sizeof($peerIds)-1) {
-	    $neighborStart = max(sizeof($peerIds)-1 - $windowSize, 0);
-	}
-
-	if ($neighborStart > 0) {
-	    $peers[] = $peerIds[0];
-	}
-	for ($i = $neighborStart; $i <= $neighborEnd; $i++) {
-	    $peers[] = $peerIds[$i];
-	}
-	if ($neighborEnd < sizeof($peerIds) - 1) {
-	    $peers[] = $peerIds[sizeof($peerIds)-1];
-	}
-
-	/* Load them all */
-	list ($ret, $peers) = GalleryCoreApi::loadEntitiesById($peers);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null, null, null);
-	}
-
-	/* Tag them with their index and convert to member data */
-	$j = 0;
-	if ($neighborStart > 0) {
-	    $peers[0] = array('index' => 1, 'peer' => $peers[0]->getMemberData());
-	    $j++;
-	}
-
-	for ($i = $neighborStart; $i <= $neighborEnd; $i++) {
-	    $peers[$j] = array('index' => $i + 1, 'peer' => $peers[$j]->getMemberData());
-	    $j++;
-	}
-
-	/* Load the last peer, if its not in the window */
- 	if ($neighborEnd < sizeof($peerIds)-1) {
-	    $peers[$j] = array('index' => sizeof($peerIds), 'peer' => $peers[$j]->getMemberData());
- 	}
-
-	return array(GalleryStatus::success(), $peers, $peerIds, $totalPeerCount, $itemIndex);
     }
 }
 ?>
