@@ -48,7 +48,7 @@ class LogoutControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 	
 	/* Restore our session */
-	$this->_saveSession = $gallery->_session;
+	$gallery->_session = $this->_saveSession;
 	
 	parent::tearDown();
     }
