@@ -88,8 +88,8 @@ class InstallOtherModulesStep extends InstallStep {
 		    }
 
 		    if (!$success) {
-			$templateData['errors'][] =
-				_(sprintf('Unable to auto configure the %s module', $module->getName()));
+			/* This is not really an error, just a warning */
+			$templateData['needsConfiguration'][$moduleId] = $module->getName();
 			continue;
 		    }
 		

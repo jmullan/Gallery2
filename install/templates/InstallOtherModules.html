@@ -4,16 +4,8 @@
       function checkAll(newValue) {
          for (var i = 0; i < document.forms[0].length; i++) {
              var element = document.forms[0].elements[i];
-             if (element.type == 'checkbox') {
+             if (element.type == 'checkbox' && element.name.substr(0,6) == 'module') {
                  element.checked = newValue;
-             }
-         }
-      }
-      function toggleAll() {
-         for (var i = 0; i < document.forms[0].length; i++) {
-             var element = document.forms[0].elements[i];
-             if (element.type == 'checkbox') {
-                 element.checked = !element.checked;
              }
          }
       }
@@ -29,9 +21,20 @@
     <?php if (isset($templateData['activated'])): ?>
     <?php foreach ($templateData['activated'] as $moduleId => $moduleName): ?>
     <h2 class="success">
-      <?php print _(sprintf("Activated the <i>%s</i> module successfully", $moduleName)) ?>
+      <?php print _(sprintf("Activated the <i>%s</i> module successfully", $moduleName)); ?>
     </h2>
     <?php endforeach; ?>
+    <?php endif; ?>
+
+    <?php if (isset($templateData['needsConfiguration'])): ?>
+    <?php foreach ($templateData['needsConfiguration'] as $moduleId => $moduleName): ?>
+    <h2 class="warning">
+      <?php print _(sprintf("The <i>%s</i> module was installed, but needs configuration to be activated", $moduleName)); ?>
+    </h2>
+    <?php endforeach; ?>
+    <p>
+      <?php print _("After finishing this installation, login as Admin and browse to Site Admin. Go to the <i>Modules</i> view and configure the above listed modules."); ?>
+    </p>
     <?php endif; ?>
 
     <?php if (!empty($templateData['groupedModules'])): ?>
@@ -60,7 +63,7 @@
           <?php if ($module->canBeAutoInstalled()): ?>
 	  <tr<?php if ($counter % 2 == 0) print ' style="background:#eee;"' ?>>
             <td>
-              <input type=checkbox name="module[<?php print $id ?>]" selected="selected"/>
+              <input type=checkbox name="module[<?php print $id ?>]" checked="checked"/>
             </td>
             <td class="modules">
               <?php print $module->getName() ?>
@@ -76,13 +79,17 @@
 	  <?php endif; ?>
 	  <?php endforeach; ?>
 	<?php endforeach; ?>
+        <tr style="background: #ccc;">
+          <td>
+            <input type="checkbox" onclick="checkAll(this.checked);" checked="checked"/>
+          </td>
+          <td colspan="3">
+            <?php print _("(un)check all") ?>
+          </td>
+        </tr>
       </table>
-      <input type="button" onclick="checkAll(true)" value="<?php print _("check all") ?>"/>
-      <input type="button" onclick="toggleAll()" value="<?php print _("toggle") ?>"/>
-      <input type="button" onclick="checkAll(false)" value="<?php print _("uncheck all") ?>"/>
       <br/>
       <input type="hidden" name="step" value="<?php print $currentStep->getStepNumber() ?>"/>
-      <input type="submit" name="action[activate]" value="<?php print _("activate selected modules")?>"/>
+      <input type="submit" name="action[activate]" value="<?php print _("install and activate selected modules")?>"/>
     </form>
     <?php endif; ?>
-
