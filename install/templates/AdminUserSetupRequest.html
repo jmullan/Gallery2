@@ -19,7 +19,8 @@
 	    <?php print _('Password') ?>
 	  </td>
 	  <td>
-	    <input name="passwordA" type="password" value="<?php print $templateData['passwordA']?>" />
+	    <input name="passwordA" type="password"
+	     value="<?php print $templateData['passwordA']?>" />
 	  </td>
 	</tr>
 	<?php if (isset($templateData['error']['passwordA_missing'])): ?>
@@ -34,7 +35,8 @@
 	    <?php print _('(type again)') ?>
 	  </td>
 	  <td>
-	    <input name="passwordB" type="password" value="<?php print $templateData['passwordB']?>" />
+	    <input name="passwordB" type="password"
+	     value="<?php print $templateData['passwordB']?>" />
 	  </td>
 	</tr>
       </table>
@@ -51,7 +53,7 @@
       <?php endif; ?>
     </form>
 
-    <p><span class="error">*</span> <?php print _("For the Alpha version, the default username ('admin') cannot be modified in the installer. You can change the name later on via the user administration page in your Gallery.") ?></p>
+    <p><span class="error">*</span> <?php print _("For the Beta version, the default username ('admin') cannot be modified in the installer. You can change the name later on via the user administration page in your Gallery.") ?></p>
 
     <div class="go">
       <span class="goToNext">
