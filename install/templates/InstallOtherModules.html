@@ -34,7 +34,7 @@
     <?php endforeach; ?>
     <?php endif; ?>
 
-    <?php if (!empty($templateData['modules'])): ?>
+    <?php if (!empty($templateData['groupedModules'])): ?>
     <form>
       <table class="modules">
         <tr style="background: #ccc;">
@@ -51,25 +51,30 @@
             <?php print _("Description") ?>
           </th>
         </tr>
-        <?php $counter = 0; ?>
-        <?php foreach ($templateData['modules'] as $id => $module): ?>
-        <?php if ($module->canBeAutoInstalled()): ?>
-        <tr<?php if ($counter % 2 != 0) print ' style="background:#eee;"' ?>>
-          <td>
-            <input type=checkbox name="module[<?php print $id ?>]" selected="selected"/>
-          </td>
-          <td class="modules">
-            <?php print $module->getName() ?>
-          </td>
-          <td>
-            <?php print $module->getVersion() ?>
-          </td>
-          <td>
-            <?php print $module->getDescription() ?>
-          </td>
-        </tr>
-	<?php $counter++; ?>
-	<?php endif; ?>
+        <?php foreach ($templateData['groupedModules'] as $group => $modules): ?>
+	  <tr style="background:#ffff">
+	    <td colspan="4"><h3><?php print $templateData['groupLabel'][$group] ?></h3></td>
+	  </tr>
+	  <?php $counter = 0; ?>
+          <?php foreach ($modules as $id => $module): ?>
+          <?php if ($module->canBeAutoInstalled()): ?>
+	  <tr<?php if ($counter % 2 == 0) print ' style="background:#eee;"' ?>>
+            <td>
+              <input type=checkbox name="module[<?php print $id ?>]" selected="selected"/>
+            </td>
+            <td class="modules">
+              <?php print $module->getName() ?>
+            </td>
+            <td>
+              <?php print $module->getVersion() ?>
+            </td>
+            <td>
+              <?php print $module->getDescription() ?>
+            </td>
+          </tr>
+	  <?php $counter++; ?>
+	  <?php endif; ?>
+	  <?php endforeach; ?>
 	<?php endforeach; ?>
       </table>
       <input type="button" onclick="checkAll(true)" value="<?php print _("check all") ?>"/>

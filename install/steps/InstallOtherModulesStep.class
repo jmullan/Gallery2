@@ -52,6 +52,9 @@ class InstallOtherModulesStep extends InstallStep {
 		}
 	    }
 
+	    $groupedModules = array();
+	    $groupLabel = array();
+	    ksort($modules);
 	    foreach (array_keys($modules) as $moduleId) {
 		$module =& $modules[$moduleId];
 		list ($ret, $isActive) = $module->isActive();
@@ -94,6 +97,7 @@ class InstallOtherModulesStep extends InstallStep {
 		    if ($ret->isSuccess()) {
 			unset($modules[$moduleId]);
 			$templateData['activated'][$moduleId] = $module->getName();
+			continue;
 		    } else {
 			$templateData['errors'][] =
 				_(sprintf('Unable to activate the %s module', $module->getName()));
@@ -108,11 +112,19 @@ class InstallOtherModulesStep extends InstallStep {
 		    $templateData['errors'][] = _('Unable to commit database transaction');
 		    $templateData['stackTrace'] = $ret->getAsHtml();
 		}
+		$group = $module->getGroup();
+		if (empty($group)) {
+		    $group = array('group' => 'others', 'groupLabel' => _('Other'));
+		}
+		$groupedModules[$group['group']][$moduleId] =& $module;
+		$groupLabel[$group['group']] = $group['groupLabel'];
 	    }
+	    ksort($groupedModules);
 	}
 
 	$this->setComplete(true);
-	$templateData['modules'] =& $modules;
+	$templateData['groupedModules'] =& $groupedModules;
+	$templateData['groupLabel'] = $groupLabel;
 	$templateData['bodyFile'] = 'InstallOtherModules.html';
     }
 }
