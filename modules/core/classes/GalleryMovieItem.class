@@ -107,7 +107,7 @@ class GalleryMovieItem_core extends GalleryDataItem {
      * @see GalleryDataItem::canBeViewedInline()
      */
     function canBeViewedInline() {
-	return true;
+	return ($this->getWidth() != 0 && $this->getHeight() != 0);
     }
     
     /**
