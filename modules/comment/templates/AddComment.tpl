@@ -1,78 +1,79 @@
-{g->pagebox}
-  {g->banner}
-    {g->title}
-      {g->text text="Add Comment"}
-    {/g->title}
-  {/g->banner}
+<div id="gsAdminContents">
+  <div class="gbTopFlag">
+    <div class="gbTitle">
+      <div class="giTitle">
+	{g->text text="Add Comment"}
+      </div>
+    </div>
+
+    <div class="spacer">
+      &nbsp;
+    </div>
+  </div>
 
   {if isset($form.action.preview)}
-    {g->box style="admin"}
-      {g->title}
-	{g->text text="Comment Preview"}
-      {/g->title}
-      
-      {g->box style="comment"}
-	{g->title}
-	  {$form.subject|markup}
-	{/g->title}
-	{g->element}
-	  {$form.comment|markup}
-	{/g->element}
-      {/g->box}
-    {/g->box}
+  <div class="gbAdmin">
+    <div class="giTitle">
+      {g->text text="Comment Preview"}
+    </div>
+
+    <div class="gbDataEntry">
+      <div class="giTitle">
+	{$form.subject|markup}
+      </div>
+
+      {$form.comment|markup}
+    </div>
+  </div>
   {/if}
 
-  {g->box style="admin"}
-    {g->box}
-      {g->title}
+  <div class="gbAdmin">
+    <div class="gbDataEntry">
+      <div class="giTitle">
 	{g->text text="Posted by"}
-      {/g->title}
-      {g->element}
-	{g->text text="%s (%s)" arg1=$AddComment.user.fullName arg2=$AddComment.host}
-      {/g->element}
-    {/g->box}
+      </div>
 
-    {g->box}
-      {g->title}
+      {g->text text="%s (%s)" arg1=$AddComment.user.fullName arg2=$AddComment.host}
+    </div>
+
+    <div class="gbDataEntry">
+      <div class="giTitle">
 	{g->text text="Subject"}
-      {/g->title}
-      {g->subtitle}
+      </div>
+      <div class="giSubtitle">
 	{g->text text="required"}
-      {/g->subtitle}
+      </div>
 
-      {g->element}
-	{g->input type="text" size="60" name="form[subject]"}{$form.subject}{/g->input}
-      {/g->element}
-    {/g->box}
+      <input type="text" size="60" name="{g->formVar var="form[subject]"}" value="{$form.subject}"/>
 
-    {if isset($form.error.subject.missing)}
-      {g->error}
+      {if isset($form.error.subject.missing)}
+      <div class="giError">
 	{g->text text="You must enter a subject!"}
-      {/g->error}
-    {/if}
+      </div>
+      {/if}
+    </div>
 
-    {g->box}
-      {g->title}
+    <div class="gbDataEntry">
+      <div class="giTitle">
 	{g->text text="Comment"}
-      {/g->title}
-      {g->subtitle}
+      </div>
+      <div class="giSubtitle">
 	{g->text text="required"}
-      {/g->subtitle}
-      {g->element}
-	{g->textarea rows="15" cols="60" name="form[comment]"}{$form.comment}{/g->textarea}
-      {/g->element}
-    {/g->box}
+      </div>
+
+      <textarea rows="15" cols="60" name="{g->formVar var="form[comment]"}">{$form.comment}</textarea>
+    </div>
 
     {if isset($form.error.comment.missing)}
-      {g->error}
-	{g->text text="You must enter a comment!"}
-      {/g->error}
+    <div class="giError">
+      {g->text text="You must enter a comment!"}
+    </div>
     {/if}
-  {/g->box}
+  </div>
 
-  {g->element}
-    {g->input type="submit" name="form[action][preview]"}{g->text text="preview"}{/g->input}
-    {g->input type="submit" name="form[action][add]"}{g->text text="save"}{/g->input}
-    {g->input type="submit" name="form[action][cancel]"}{g->text text="cancel"}{/g->input}
-  {/g->element}
-{/g->pagebox}
+  <div class="gbAdmin">
+    <input type="submit" name="{g->formVar var="form[action][preview]"}" value="{g->text text="preview"}"/>
+    <input type="submit" name="{g->formVar var="form[action][add]"}" value="{g->text text="save"}"/>
+    <input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="cancel"}"/>
+  </div>
+</div>

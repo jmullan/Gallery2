@@ -1,121 +1,101 @@
-{g->box style="admin"}
-  {g->title}
+<div class="gbAdmin">
+  <div class="giTitle">
     {g->text text="Rotate"}
-  {/g->title}
+  </div>
 
-  {g->description}
+  <div class="giDescription">
     {g->text text="You can only rotate the photo in 90 degree increments."}
-  {/g->description}
+  </div>
 
   {if $ItemEditRotateAndScalePhoto.editPhoto.can.rotate}
-    {g->element}
-      {g->input type="hidden" name="mode"}editPhoto{/g->input}
-      {g->input type="submit" name="form[action][rotate][counterClockwise]"}
-	{g->text text="CC 90&deg;"}
-      {/g->input}
-      &nbsp;
-      {g->input type="submit" name="form[action][rotate][flip]"}
-	{g->text text="180&deg;"}
-      {/g->input}
-      &nbsp;
-      {g->input type="submit" name="form[action][rotate][clockwise]"}
-	{g->text text="C 90&deg;"}
-      {/g->input}
-    {/g->element}
+  <input type="hidden" name="{g->formVar var="mode"}" value="editPhoto"/>
+  <input type="submit" name="{g->formVar var="form[action][rotate][counterClockwise]"}" value="{g->text text="CC 90&deg;"}"/>
+  &nbsp;
+  <input type="submit" name="{g->formVar var="form[action][rotate][flip]"}" value="{g->text text="180&deg;"}"/>
+  &nbsp;
+  <input type="submit" name="{g->formVar var="form[action][rotate][clockwise]"}" value="{g->text text="C 90&deg;"}"/>
   {else}
-    {g->element style="emphasized"}
-      {g->text text="There are no graphics toolkits enabled that support this type of photo, so we cannot rotate it."}
-      {if $ItemEditRotateAndScalePhoto.isAdmin} 
-	{g->link arg1="view=core:SiteAdmin" arg2="subView=core:AdminModules"}
-	  {g->text text="site admin"}
-	{/g->link}
-      {/if}
-    {/g->element}
+  <b>
+    {g->text text="There are no graphics toolkits enabled that support this type of photo, so we cannot rotate it."}
+    {if $ItemEditRotateAndScalePhoto.isAdmin} 
+    <a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=core:AdminModules"}">
+      {g->text text="site admin"}
+    </a>
+    {/if}
+  </b>
   {/if}
-{/g->box}
+</div>
 
-{g->box style="admin"}
-  {g->title}
+<div class="gbAdmin">
+  <div class="giTitle">
     {g->text text="Scale"}
-  {/g->title}
-
-  {g->description}
-    {g->text text="Shrink or enlarge the original photo.  When Gallery scales a photo, it maintains the same aspect ratio (height to width) of the original photo to avoid distortion.  The value you enter below (in pixels) forms a bounding box.  Gallery will scale the photo until it is as large as possible while still fitting inside the box."}
-  {/g->description}
+  </div>
   
-
+  <div class="giDescription">
+    {g->text text="Shrink or enlarge the original photo.  When Gallery scales a photo, it maintains the same aspect ratio (height to width) of the original photo to avoid distortion.  Your photo will be scaled until the larger side is the same as the value you enter here."}
+  </div>
+  
   {if $ItemEditRotateAndScalePhoto.editPhoto.can.scale}
-    {g->element}
-      {g->input type="text" size="6" name="form[scale][size]"}{$form.scale.size}{/g->input}
-      {g->input type="submit" name="form[action][scale]"}
-	{g->text text="Scale"}
-      {/g->input}
-    {/g->element}
+  <input type="text" size="6" name="{g->formVar var="form[scale][size]"}" value="{$form.scale.size}"/>
+  <input type="submit" name="{g->formVar var="form[action][scale]"}" value="{g->text text="Scale"}"/>
   {else}
-    {g->element style="emphasized"}
-      {g->text text="There are no graphics toolkits enabled that support this type of photo, so we cannot scale it."}
-      {if $ItemEditRotateAndScalePhoto.isAdmin} 
-	{g->link arg1="view=core:SiteAdmin" arg2="subView=core:AdminModules"}
-	  {g->text text="site admin"}
-	{/g->link}
-      {/if}
-    {/g->element}
+  <b>
+    {g->text text="There are no graphics toolkits enabled that support this type of photo, so we cannot scale it."}
+    {if $ItemEditRotateAndScalePhoto.isAdmin} 
+    <a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=core:AdminModules"}">
+      {g->text text="site admin"}
+    </a>
+    {/if}
+  </b>
   {/if}
 
   {if !empty($form.error.scale.size.missing)}
-    {g->error}
-      {g->text text="You must enter a size"}
-    {/g->error}
+  <div class="giError">
+    {g->text text="You must enter a size"}
+  </div>
   {/if}
-
+  
   {if !empty($form.error.scale.size.invalid)}
-    {g->error}
-      {g->text text="You must enter a number (greater than zero)"}
-    {/g->error}
+  <div class="giError">
+    {g->text text="You must enter a number (greater than zero)"}
+  </div>
   {/if}
-{/g->box}
+</div>
 
 {if $ItemEditRotateAndScalePhoto.editPhoto.can.rotate || $ItemEditRotateAndScalePhoto.editPhoto.can.scale}
-  {g->box style="admin"}
-    {if empty($ItemEditRotateAndScalePhoto.editPhoto.hasPreferredSource)}
-      {g->title}
-	{g->text text="Preserve Original"}
-      {/g->title}
+<div class="gbAdmin">
+  {if empty($ItemEditRotateAndScalePhoto.editPhoto.hasPreferredSource)}
+  <div class="giTitle">
+    {g->text text="Preserve Original"}
+  </div>
 
-      {g->description}
-	{g->text text="Gallery does not modify your original photo when rotating and scaling. Instead, it duplicates your photo and works with copies.  This requires a little extra disk space but prevents your original from getting damaged.  Disabling this option will cause any actions (rotating, scaling, etc) to modify the original."}
-      {/g->description}
+  <div class="giDescription">
+    {g->text text="Gallery does not modify your original photo when rotating and scaling. Instead, it duplicates your photo and works with copies.  This requires a little extra disk space but prevents your original from getting damaged.  Disabling this option will cause any actions (rotating, scaling, etc) to modify the original."}
+  </div>
 
-      {if $ItemEditRotateAndScalePhoto.editPhoto.isLinked}
-	{g->element style="emphasized"}
-	  {g->text text="This is a link to another photo, so you cannot change the original"}
-	{/g->element}
-      {else}
-	{if $ItemEditRotateAndScalePhoto.editPhoto.isLinkedTo}
-	  {g->element style="emphasized"}
-	    {g->text text="There are links to this photo, so you cannot change the original"}
-	  {/g->element}
-	{else}
-	  {g->element}
-	    {g->input type="checkbox" name="form[preserveOriginal]"}{$form.preserveOriginal}{/g->input} {g->text text="Preserve Original Photo"}
-	  {/g->element}
-	{/if}
-      {/if}
-    {else}
-      {g->title}
-	{g->text text="Modified Photo"}
-      {/g->title}
+  {if $ItemEditRotateAndScalePhoto.editPhoto.isLinked}
+  <b>
+    {g->text text="This is a link to another photo, so you cannot change the original"}
+  </b>
+  {else}
+  {if $ItemEditRotateAndScalePhoto.editPhoto.isLinkedTo}
+  <b>
+    {g->text text="There are links to this photo, so you cannot change the original"}
+  </b>
+  {else}
+  <input type="checkbox" name="{g->formVar var="form[preserveOriginal]"}" {if $form.preserveOriginal}checked="checked"}{/if}/> {g->text text="Preserve Original Photo"}
+  {/if}
+  {/if}
+  {else}
+  <div class="giTitle">
+    {g->text text="Modified Photo"}
+  </div>
 
-      {g->description}
-	{g->text text="You are using a copy of the original photo that has been scaled or rotated.  The original photo is still available, but is no longer being used.  Any changes you make will be applied to the copy instead."}
-      {/g->description}
-
-      {g->element}
-	{g->input type="submit" name="form[action][revertToOriginal]"}
-	  {g->text text="Restore original"}
-	{/g->input}
-      {/g->element}
-    {/if}
-  {/g->box}
+  <div class="giDescription">
+    {g->text text="You are using a copy of the original photo that has been scaled or rotated.  The original photo is still available, but is no longer being used.  Any changes you make will be applied to the copy instead."}
+  </div>
+	
+  <input type="submit" name="{g->formVar var="form[action][revertToOriginal]"}" value="{g->text text="Restore original"}"/>
+  {/if}
+</div>
 {/if}
-

@@ -1,70 +1,70 @@
-{g->pagebox}
-  {g->banner}
-    {g->title}
-      {g->text text="Account Settings"}
-    {/g->title}
-  {/g->banner}
+<div id="gsAdminContents">
+  <div class="gbTopFlag">
+    <div class="gbTitle">
+      <div class="giTitle">
+	{g->text text="Account Settings"}
+      </div>
+    </div>
+  </div>
 
   {if isset($status)}
-    {g->success}
-      {if isset($status.saved)}
-	{g->text text="Account settings saved successfully"}
-      {/if}
-    {/g->success}
+  <div id="gsStatus">
+    {if isset($status.saved)}
+    <div class="giStatus">
+      {g->text text="Account settings saved successfully"}
+    </div>
+    {/if}
+  </div>
   {/if}
 
-  {g->box style="admin"}
-    {g->box}
-      {g->title}
+  <div class="gbAdmin">
+    <div class="gbDataEntry">
+      <div class="giTitle">
 	{g->text text="Username"}
-      {/g->title}
-      {g->element}
-	{$UserAdmin.user.userName}
-      {/g->element}
-    {/g->box}
+      </div>
 
-    {g->box}
-      {g->title}
+      {$UserAdmin.user.userName}
+    </div>
+
+    <div class="gbDataEntry">
+      <div class="giTitle">
 	{g->text text="Full name"}
-      {/g->title}
-      {g->element}
-	{g->input type="text" name="form[fullName]"}{$form.fullName}{/g->input}
-      {/g->element}
-    {/g->box}
+      </div>
 
-    {g->box}
-      {g->title}
+      <input type="text" name="{g->formVar var="form[fullName]"}" value="{$form.fullName}"/>
+    </div>
+
+    <div class="gbDataEntry">
+      <div class="giTitle">
 	{g->text text="Email address"}
-      {/g->title}
-      {g->subtitle}
+      </div>
+      <div class="giSubtitle">
 	{g->text text="required"}
-      {/g->subtitle}
-      {g->element}
-	{g->input type="text" name="form[email]"}{$form.email}{/g->input}
-      {/g->element}
-    {/g->box}
+      </div>
 
-    {if isset($form.error.email.missing)}
-      {g->error}
+      <input type="text" name="{g->formVar var="form[email]"}" value="{$form.email}"/>
+
+      {if isset($form.error.email.missing)}
+      <div class="giError">
 	{g->text text="You must enter an email address"}
-      {/g->error}
-    {/if}
-
-    {g->box}
-      {g->title}
+      </div>
+      {/if}
+    </div>
+      
+    <div class="gbDataEntry">
+      <div class="giTitle">
 	{g->text text="Language"}
-      {/g->title}
-      {g->element}
-	{g->select name="form[language]"}
-	  {html_options options=$UserPreferences.languageList selected=$form.language}
-	{/g->select}
-      {/g->element}
-    {/g->box}
+      </div>
 
-    {g->element}
-      {g->input type="submit" name="form[action][save]"}{g->text text="Save"}{/g->input}
-      {g->input type="submit" name="form[action][undo]"}{g->text text="Undo"}{/g->input}
-      {g->input type="submit" name="form[action][cancel]"}{g->text text="Cancel"}{/g->input}
-    {/g->element}
-  {/g->box}
-{/g->pagebox}
+      <select name="{g->formVar var="form[language]"}">
+	  {html_options options=$UserPreferences.languageList selected=$form.language}
+      </select>
+    </div>
+  </div>
+
+  <div class="gbAdmin">
+    <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}"/>
+    <input type="submit" name="{g->formVar var="form[action][undo]"}" value="{g->text text="Undo"}"/>
+    <input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
+  </div>
+</div>

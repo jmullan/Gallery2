@@ -268,8 +268,7 @@ class GalleryTemplate {
 	    $smarty->use_sub_dirs = false;
 
 	    $templateAdapter =& $gallery->getTemplateAdapter();
-	    $smarty->register_object('g', $templateAdapter, array(), true,
-				      GalleryTemplateAdapter::getBlockMethods());
+	    $smarty->register_object('g', $templateAdapter);
 	}
 
 	return $smarty;

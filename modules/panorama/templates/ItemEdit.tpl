@@ -1,15 +1,14 @@
-{g->box style="admin"}
-  {g->description}
+<div class="gbAdmin">
+  <div class="giDescription">
     {g->text text="Note that panorama view only applies to full size photo, not resizes."}
-  {/g->description}
-  {g->element}
-    {g->input type="checkbox" name="form[isPanorama]"}{$form.isPanorama}{/g->input}
+  </div>
+
+  <input id="isPanorama" type="checkbox" name="{g->formVar var="form[isPanorama]"}" {if $form.isPanorama}checked="checked"{/if}/>
+  <label for="isPanorama">
     {g->text text="Activate panorama viewer applet for this photo"}
-  {/g->element}
-  {g->box}
-    {g->description} {/g->description}
-    {g->element}
-      {g->input type="submit" name="form[action][save]"}{g->text text="Save"}{/g->input}
-    {/g->element}
-  {/g->box}
-{/g->box}
+  </label>
+</div>
+
+<div class="gbAdmin">
+  <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}"/>
+</div>

@@ -1,40 +1,47 @@
-{g->pagebox}
-  {g->banner}
-    {g->title}
-      {g->text text="Create A New Group"}
-    {/g->title}
-  {/g->banner}
+<div id="gsAdminContents">
+  <div class="gbTopFlag">
+    <div class="gbTitle">
+      <div class="giTitle">
+	{g->text text="Create A New Group"}
+      </div>
+    </div>
 
-  {g->box style="admin"}
-    {g->title}
-      {g->text text="Group Name"}
-    {/g->title}
+    <div class="spacer">
+      &nbsp;
+    </div>
+  </div>
 
-    {g->subtitle}
-      {g->text text="required"}
-    {/g->subtitle}
+  <div class="gbAdmin">
+    <div class="gbDataEntry">
+      <div class="giTitle">
+	{g->text text="Group Name"}
+      </div>
+      
+      <div class="giSubtitle">
+	{g->text text="required"}
+      </div>
 
-    {g->element}
-      {g->input type="text" name="form[groupName]"}{$form.groupName}{/g->input}
-    {/g->element}
+      <input type="text" name="{g->formVar var="form[groupName]"}" value="{$form.groupName}"/>
 
-    {if isset($form.error.groupName.missing)}
-      {g->error}
+      {if isset($form.error.groupName.missing)}
+      <div class="giError">
 	{g->text text="You must enter a group name"}
-      {/g->error}
-    {/if}
+      </div>
+      {/if}
     
-    {if isset($form.error.groupName.exists)}
-      {g->error}
+      {if isset($form.error.groupName.exists)}
+      <div class="giError">
 	{g->text text="Group '%s' already exists" arg1=$form.groupName}
-      {/g->error}
-    {/if}
-  {/g->box}
+      </div>
+      {/if}
+    </div>
+  </div>
 
-  {g->box}
-    {g->element}
-      {g->input type="submit" name="form[action][create]"}{g->text text="Create Group"}{/g->input}
-      {g->input type="submit" name="form[action][cancel]"}{g->text text="Cancel"}{/g->input}
-    {/g->element}
-  {/g->box}
-{/g->pagebox}
+  <div class="gbBottomFlag">
+    <div class="giActionSelect">
+      <input type="submit" name="{g->formVar var="form[action][create]"}" value="{g->text text="Create Group"}"/>
+      <input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
+    </div>
+  </div>
+</div>
+

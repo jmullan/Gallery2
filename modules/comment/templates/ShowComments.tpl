@@ -1,23 +1,31 @@
-{g->pagebox}
-  {g->banner}
-    {g->title}
-      {g->text text="View Comments"}
-    {/g->title}
-  {/g->banner}
+<div id="gsAdminContents">
+  <div class="gbTopFlag">
+    <div class="gbTitle">
+      <div class="giTitle">
+	{g->text text="View Comments"}
+      </div>
+    </div>
+
+    <div class="spacer">
+      &nbsp;
+    </div>
+  </div>
 
   {if isset($status)}
-    {g->success}
+  <div id="gsStatus">
+    <div class="giStatus">
       {if isset($status.changed)}
-	{g->text text="Comment changed successfully"}
+      {g->text text="Comment changed successfully"}
       {/if}
-    {/g->success}
+    </div>
+  </div>
   {/if}
 
-  {g->box style="admin"}
+  <div class="gbAdmin">
     {if empty($ShowComments.comments)}
-      {g->title}
+      <div class="giTitle">
 	{g->text text="There are no comments for this item"}
-      {/g->title}
+      </div>
     {else}
       {foreach from=$ShowComments.comments item=comment}
 	{assign var="userId" value=$comment.commenterId}
@@ -25,5 +33,5 @@
 	{include file="modules/comment/templates/Comment.tpl" user=$user comment=$comment item=$ItemAdmin.item can=$ShowComments.can}
       {/foreach}
     {/if}
-  {/g->box}
-{/g->pagebox}
+  </div>
+</div>

@@ -1,149 +1,137 @@
-{g->pagebox}
-  {g->banner}
-    {g->title}
-      {g->text text="ImageMagick Settings"}
-    {/g->title}
-  {/g->banner}
+<div id="gsAdminContents">
+  <div class="gbTopFlag">
+    <div class="gbTitle">
+      <div class="giTitle">
+	{g->text text="ImageMagick Settings"}
+      </div>
+    </div>
+    
+    <div class="spacer">
+      &nbsp;
+    </div>
+  </div>
 
   {if isset($status)}
-    {g->success}
-      {if isset($status.saved)}
-	{g->text text="Settings saved successfully"}
-      {/if}
-    {/g->success}
+  <div id="gsStatus">
+    {if isset($status.saved)}
+    <div class="giStatus">
+      {g->text text="Settings saved successfully"}
+    </div>
+    {/if}
+  </div>
   {/if}
 
-  {g->box style="admin"}
-    {g->description}
+  <div class="gbAdmin">
+    <div class="giDescription">
       {g->text text="ImageMagick is a graphics toolkit that can be used to process images that you upload to Gallery.  You must install the ImageMagick binaries on your machine, then enter the path to them in the text box below.  If you're on a Unix machine, don't forget to make the binaries executable (<i>chmod 755 *</i> in the ImageMagick directory should do it)"}
-    {/g->description}
-    
-    {g->table style="admin_widgets"}
-      {g->row}
-	{g->column}
-	  {g->text text="Path to ImageMagick:"}
-	{/g->column}
+    </div>
 
-	{g->column}
-	  {g->input type="text" name="form[path]"}{$form.path}{/g->input}
-	{/g->column}
-      {/g->row}
+    <div class="gbDataEntry">
+      <div class="giTitle">
+	{g->text text="ImageMagick Path"}
+      </div>
+
+      <input type="text" name="{g->formVar var="form[path]"}" value="{$form.path}"/>
 	
       {if isset($form.error.path.missing)}
-	{g->row}
-	  {g->column colspan=2}
-	    {g->error}
-	      {g->text text="You must enter a path to your ImageMagick binaries"}
-	    {/g->error}
-	  {/g->column}
-	{/g->row}
+      <div class="giError">
+	{g->text text="You must enter a path to your ImageMagick binaries"}
+      </div>
       {/if}
 
       {if isset($form.error.path.testError)}
-	{g->row}
-	  {g->column colspan=2}
-	    {g->error}
-	      {g->text text="The path you entered doesn't contain valid ImageMagick binaries. Use the 'test' button to check where the error is."}
-	    {/g->error}
-	  {/g->column}
-	{/g->row}
+      <div class="giError">
+	{g->text text="The path you entered doesn't contain valid ImageMagick binaries. Use the 'test' button to check where the error is."}
+      </div>
       {/if}
 
       {if isset($form.error.path.badPath)}
-	{g->row}
-	  {g->column colspan=2}
-	    {g->error}
-	      {g->text text="The path you entered isn't a valid path."}
-	    {/g->error}
-	  {/g->column}
-	{/g->row}
+      <div class="giError">
+	{g->text text="The path you entered isn't a valid path."}
+      </div>
       {/if}
+    </div>
 
-      {g->row}
-	{g->column}
-	  {g->text text="JPEG Quality"}
-	{/g->column}
+    <div class="gbDataEntry">
+      <div class="giTitle">
+	{g->text text="JPEG Quality"}
+      </div>
 
-	{g->column}
-	  {g->select name="form[jpegQuality]"}
-	    {html_options values=$AdminImageMagick.jpegQualityList selected=$form.jpegQuality output=$AdminImageMagick.jpegQualityList}
-	  {/g->select}
-	{/g->column}
-      {/g->row}
-    {/g->table}
-  {/g->box}
+      <select name="{g->formVar var="form[jpegQuality]"}">
+	  {html_options values=$AdminImageMagick.jpegQualityList selected=$form.jpegQuality output=$AdminImageMagick.jpegQualityList}
+      </select>
+    </div>
+  </div>
 
-  {g->box style="admin"}
-    {g->element}
-      {g->input type="submit" name="form[action][save]"}{g->text text="Save Settings"}{/g->input}
-      {g->input type="submit" name="form[action][test]"}{g->text text="Test Settings"}{/g->input}
-      {g->input type="submit" name="form[action][cancel]"}{g->text text="Cancel"}{/g->input}
-    {/g->element}
-  {/g->box}
+  <div class="gbAdmin">
+    <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="Save Settings"}"/>
+    <input type="submit" name="{g->formVar var="form[action][test]"}" value="{g->text text="Test Settings"}"/>
+    <input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
+  </div>
 
   {if !empty($AdminImageMagick.tests)}
-    {g->box style="admin"}
-      {g->title}
-	{g->text text="ImageMagick binary test results"}
-      {/g->title}
-      
-      {g->table style="admin_listing" evenodd="true"}
-	{g->row}
-	  {g->column header="true"}
-	    {g->text text="Binary Name"}
-	  {/g->column}
-	  {g->column header="true"}
-	    {g->text text="Pass/Fail"}
-	  {/g->column}
-	{/g->row}
-
-	{foreach from=$AdminImageMagick.tests item=test}
-	  {g->row}
-	    {g->column}
-	      {$test.name}
-	    {/g->column}
-	    {g->column}
-	      {if ($test.success)}
-		{g->success}
-		  {g->text text="Passed"}
-		{/g->success}
-	      {else}
-		{g->error}
-		  {g->text text="Failed"}
-		{/g->error}
-
-		{if ! empty($test.message)}
-		  {g->text text="Error messages:"}
-		  <br />
-		  {g->error}
-		    {foreach from=$test.message item=line}
-		      <pre>{$line}</pre>
-		    {/foreach}
-		  {/g->error}
-		{/if}
-	      {/if}
-	    {/g->column}
-	  {/g->row}
-	{/foreach}
-      {/g->table}
-    {/g->box}
+  <div class="gbAdmin">
+    <div class="giTitle">
+      {g->text text="ImageMagick binary test results"}
+    </div>
     
-    {if $AdminImageMagick.mimeTypes}
-      {g->box style="admin"}
-	{g->title}
-	  {g->text text="Supported MIME Types"}
-	{/g->title}
+    <table class="gbDataTable">
+      <tr>
+	<th>
+	  {g->text text="Binary Name"}
+	</th>
+	<th>
+	  {g->text text="Pass/Fail"}
+	</th>
+      </tr>
+
+      {foreach from=$AdminImageMagick.tests item=test}
+      <tr class="{cycle values="gbEven,gbOdd"}">
+	<td>
+	  {$test.name}
+	</td>
+	<td>
+	  {if ($test.success)}
+	  <div class="giSuccess">
+	    {g->text text="Passed"}
+	  </div>
+	  {else}
+	  <div class="giError">
+	    {g->text text="Failed"}
+	  </div>
+
+	  {if ! empty($test.message)}
+	  {g->text text="Error messages:"}
+	  <br />
+	  <div class="giError">
+	    {foreach from=$test.message item=line}
+	    <pre>{$line}</pre>
+	    {/foreach}
+	  </div>
+	  {/if}
+	  {/if}
+	</td>
+      </tr>
+      {/foreach}
+    </table>
+  </div>
+    
+  {if $AdminImageMagick.mimeTypes}
+  <div class="gbAdmin">
+    <div class="giTitle">
+      {g->text text="Supported MIME Types"}
+    </div>
+    
+    <div class="giDescription">
+      {g->text text="The ImageMagick module can support files with the following MIME types"}
+    </div>
 	
-	{g->description}
-	  {g->text text="The ImageMagick module can support files with the following MIME types"}
-	{/g->description}
-	
-	{g->element}
-	  {foreach from=$AdminImageMagick.mimeTypes item=mimeType}
-	    {$mimeType} 
-	  {/foreach}
-	{/g->element}
-      {/g->box}
-    {/if}
+    {foreach from=$AdminImageMagick.mimeTypes item=mimeType}
+    <span>
+      {$mimeType} 
+    </span>
+    {/foreach}
+  </div>
   {/if}
-{/g->pagebox}
+  {/if}
+</div>

@@ -119,16 +119,25 @@ class MatrixLayout extends GalleryLayout {
 	}
 
 	if ($item->getCanContainChildren()) {
-	    list ($ret, $file) = $this->_loadAlbumTemplate($template, $item, $params);
+	    list ($ret, $bodyFile) = $this->_loadAlbumTemplate($template, $item, $params);
 	} else {
-	    list ($ret, $file) = $this->_loadSingleTemplate($template, $item, $params);
+	    list ($ret, $bodyFile) = $this->_loadSingleTemplate($template, $item, $params);
 	}
+
+	$layout =& $template->getVariableByReference('layout');
+	$layout['title'] = $item->getTitle();
+	if (empty($layout['title'])) {
+	    $layout['title'] = $item->getPathComponent();
+	}
+	$layout['layoutUrl'] = GalleryUtilities::convertPathToUrl(dirname(__FILE__));
 
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	return array(GalleryStatus::success(), $file);
+	return array(GalleryStatus::success(),
+		     array('head' => 'layouts/matrix/templates/head.tpl',
+			   'body' => $bodyFile));
     }
 
     /**
@@ -427,22 +436,8 @@ class MatrixLayout extends GalleryLayout {
 	    $owners[$owner->getId()] = $owner->getMemberData();
 	}
 
-	/* Assemble the children into rows of columns */
-	$r = 0;
-	$c = 0;
-	$childRows = array();
-	foreach ($children as $child) {
-	    $width = $child['canContainChildren'] ? $properties['columns'] : 1;
-
-	    if ($c + $width > $properties['columns']) {
-		$r++;
-		$c = 0;
-	    }
-	    $childRows[$r][$c] = $child;
-	    $c += $width;
-	}
-
-	list ($ret, $rootAlbumId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
+	list ($ret, $rootAlbumId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -459,7 +454,7 @@ class MatrixLayout extends GalleryLayout {
 	$layout['moduleSystemContentFiles'] = $moduleSystemContentFiles;
 	$layout['moduleSystemLinks'] = $moduleSystemLinks;
 	$layout['moduleItemDetailFiles'] = $moduleItemDetailFiles;
-	$layout['childRows'] = $childRows;
+	$layout['children'] = $children;
 	$layout['columnSize'] = $properties['columns'];
 	$layout['currentPage'] = $page;
 	$layout['totalPageCount'] = $totalPages;
@@ -479,8 +474,7 @@ class MatrixLayout extends GalleryLayout {
 	$layout['item'] = $item->getMemberData();
 
 	$template->setVariable('layout', $layout);
-	return array(GalleryStatus::success(),
-		     array('body' => 'layouts/matrix/templates/albumBody.tpl'));
+	return array(GalleryStatus::success(), 'layouts/matrix/templates/albumBody.tpl');
     }
 
 
@@ -697,8 +691,7 @@ class MatrixLayout extends GalleryLayout {
 	$layout['navigator'] = $navigator;
 
 	$template->setVariable('layout', $layout);
-	return array(GalleryStatus::success(),
-		     array('body' => 'layouts/matrix/templates/singleBody.tpl'));
+	return array(GalleryStatus::success(), 'layouts/matrix/templates/singleBody.tpl');
     }
 
     function _loadPeerInfo($item) {

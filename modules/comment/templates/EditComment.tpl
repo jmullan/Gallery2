@@ -1,115 +1,109 @@
-{g->pagebox}
-  {g->banner}
-    {g->title}
-      {g->text text="Edit comment"}
-    {/g->title}
-  {/g->banner}
+<div id="gsAdminContents">
+  <div class="gbTopFlag">
+    <div class="gbTitle">
+      <div class="giTitle">
+	{g->text text="Edit comment"}
+      </div>
+    </div>
 
-  {g->box style="admin"}
-    {g->box}
-      {g->title}
+    <div class="spacer">
+      &nbsp;
+    </div>
+  </div>
+
+  <div class="gbAdmin">
+    <div class="gbDataEntry">
+      <div class="giTitle">
 	{g->text text="Commenter"}
-      {/g->title}
-      {g->subtitle}
+      </div>
+      <div class="giSubtitle">
 	{g->text text="required"}
-      {/g->subtitle}
+      </div>
 
-      {g->element}
-	{* got to put this in a body tag somewhere *}
-	{g->input type="hidden" name="commentId"}{$EditComment.comment.id}{/g->input}
+      <input type="hidden" name="{g->formVar var="commentId"}" value="{$EditComment.comment.id}"/>
+      <input type="text" name="{g->formVar var="form[commenterName]"}" value="{$form.commenterName}"/>
 
-	{g->input type="text" name="form[commenterName]"}{$form.commenterName}{/g->input}
-      {/g->element}
-    {/g->box}
-
-    {if isset($form.error.commenterName.missing)} 
-      {g->error}
+      {if isset($form.error.commenterName.missing)} 
+      <div class="giError">
 	{g->text text="You must enter a username."}
-      {/g->error}
-    {/if} 
+      </div>
+      {/if} 
       
-    {if isset($form.error.commenterName.invalid)} 
-      {g->error}
+      {if isset($form.error.commenterName.invalid)} 
+      <div class="giError">
 	{g->text text="The username you entered is invalid."}
-      {/g->error}
-    {/if} 
-
-    {g->box}
-      {g->title}
+      </div>
+      {/if} 
+    </div>
+      
+    <div class="gbDataEntry">
+      <div class="giTitle">
 	{g->text text="Host: "}
-      {/g->title}
-      {g->element}
-	{g->input type="text" name="form[host]"}{$form.host}{/g->input}
-      {/g->element}
-    {/g->box}
+      </div>
 
-    {g->box}
-      {g->title}
+      <input type="text" name="{g->formVar var="form[host]"}" value="{$form.host}"/>
+    </div>
+
+    <div class="gbDataEntry">
+      <div class="giTitle">
 	{g->text text="Date: "}
-      {/g->title}
-      {g->subtitle}
+      </div>
+      <div class="giSubtitle">
 	{g->text text="required"}
-      {/g->subtitle}
+      </div>
 
-      {g->element}
-	{g->input type="text" name="form[date]"}{$form.date}{/g->input}
-      {/g->element}
-    {/g->box}
+      <input type="text" name="{g->formVar var="form[date]"}" value="{$form.date}"/>
 
-    {if isset($form.error.date.invalid)} 
-      {g->error}
+      {if isset($form.error.date.invalid)} 
+      <div class="giError">
 	{g->text text="The date you entered is invalid."}
-      {/g->error}
-    {/if} 
-
-    {if isset($form.error.date.missing)} 
-      {g->error}
+      </div>
+      {/if} 
+      
+      {if isset($form.error.date.missing)} 
+      <div class="giError">
 	{g->text text="You must enter a date"}
-      {/g->error}
-    {/if} 
+      </div>
+      {/if} 
+    </div>
 
-    {g->box}
-      {g->title}
+    <div class="gbDataEntry">
+      <div class="giTitle">
 	{g->text text="Subject: "}
-      {/g->title}
-      {g->subtitle}
+      </div>
+      <div class="giSubtitle">
 	{g->text text="required"}
-      {/g->subtitle}
+      </div>
 
-      {g->element}
-	{g->input type="text" size="60" name="form[subject]"}{$form.subject}{/g->input}
-      {/g->element}
-    {/g->box}
+      <input type="text" size="60" name="{g->formVar var="form[subject]"}" value="{$form.subject}"/>
 
-    {if isset($form.error.subject.missing)} 
-      {g->error}
+      {if isset($form.error.subject.missing)} 
+      <div class="giError">
 	{g->text text="You must enter a subject"}
-      {/g->error}
-    {/if} 
+      </div>
+      {/if} 
+    </div>
 
-    {g->box}
-      {g->title}
+    <div class="gbDataEntry">
+      <div class="giTitle">
 	{g->text text="Comment: "}
-      {/g->title}
-      {g->subtitle}
+      </div>
+      <div class="giSubtitle">
 	{g->text text="required"}
-      {/g->subtitle}
-      {g->element}
-	{g->textarea rows="15" cols="60" name="form[comment]"}{$form.comment}{/g->textarea}
-      {/g->element}
-    {/g->box}
+      </div>
 
-    {if isset($form.error.comment.missing)} 
-      {g->error}
+      <textarea rows="15" cols="60" name="{g->formVar var="form[comment]"}">{$form.comment}</textarea>
+
+      {if isset($form.error.comment.missing)} 
+      <div class="giError">
 	{g->text text="You must enter a comment"}
-      {/g->error}
-    {/if} 
-  {/g->box}
+      </div>
+      {/if} 
+    </div>
+  </div>
 
-  {g->box}
-    {g->element}
-      {g->input type="submit" name="form[action][save]"}{g->text text="Save"}{/g->input}
-      {g->input type="submit" name="form[action][cancel]"}{g->text text="Cancel"}{/g->input}
-    {/g->element}
-  {/g->box}
-{/g->pagebox}
+  <div class="gbAdmin">
+    <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}"/>
+    <input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
+  </div>
+</div>

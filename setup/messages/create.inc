@@ -5,7 +5,7 @@ is valid.
 
 <p>
 
-<form method="POST">
+<form method="post">
 <?php foreach ($_POST as $key => $value) { ?>
 <?php if ($key == 'submit') { continue; } ?>
     <input type="hidden" name="<?php echo $key ?>" value="<?php echo $value ?>">

@@ -1,16 +1,11 @@
-{if !empty($main.debug)}
-  {g->box style="debug"}
-    {g->title}
+<div id="gpDebug">
+  <div class="giTitle">
       {g->text text="Gallery Debug Output"} 
-    {/g->title}
+  </div>
 
-    {g->element}
+  <span>
       <pre>
       {$main.debug}
       </pre>
-    {/g->element}
-  {/g->box}
-{/if}
-
-{debug output=""}
-
+  </span>
+</div>

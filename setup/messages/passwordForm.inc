@@ -8,7 +8,7 @@
 
     <br><br>
     
-    <form method="POST">
+    <form method="post">
     Password: 
     <input type="password" name="g2_password">
     <input type="submit" value="Go">

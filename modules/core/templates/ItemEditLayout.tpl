@@ -1,93 +1,94 @@
-{g->box style="admin"}
-  {g->description}
+<div class="gbAdmin">
+  <div class="giDescription">
     {g->text text="This album is configured to use the <b>%s</b> layout. These settings only apply to the layout for this album." arg1=$ItemEditLayout.layout.name}
-  {/g->description}
-
+  </div>
+  
   {if !empty($ItemEditLayout.settings)}
-    {g->table style="admin_widgets"}
-      {g->row}
-	{g->column header="true"}
-	  {g->text text="Setting"}
-	{/g->column}
-	{g->column header="true"}
-	  {g->text text="Value"}
-	{/g->column}
-	{g->column colspan="2" header="true"}
-	  {g->text text="Use Global"}
-	{/g->column}
-      {/g->row}
+  <table class="gbDataTable">
+    <tr>
+      <th>
+	{g->text text="Setting"}
+      </th>
+      <th>
+	{g->text text="Value"}
+      </th>
+      <th colspan="2">
+	{g->text text="Use Global"}
+      </th>
+    </tr>
 
-      {foreach from=$ItemEditLayout.settings item=setting}
-	{assign var="settingKey" value=$setting.key}
-	{g->row}
-	  {g->column}
-	    {g->text text=$setting.name l10Domain=$ItemEditLayout.layout.l10Domain}
-	  {/g->column}
-	  {g->column}
-	    {if ($setting.type == 'text-field')}
-	      {g->input type="text" size="6" name="form[key][$settingKey]" onKeyPress="javascript:changeSetting('$settingKey')"}{$form.key.$settingKey}{/g->input}
-	    {elseif ($setting.type == 'single-select')}
-	      {g->select name="form[key][$settingKey]" onChange="javascript:changeSetting('$settingKey')"}
-		{html_options options=$setting.choices selected=$setting.value}
-	      {/g->select}
-	    {/if}
-	  {/g->column}
-	  {g->column}
-	    &nbsp;
-	  {/g->column}
-	  {g->column}
-	    {g->input type="checkbox" name="form[useGlobal][$settingKey]" onClick="javascript:toggleGlobal('$settingKey')"}{$form.useGlobal.$settingKey}{/g->input}
-	  {/g->column}
-	{/g->row}
-	{if isset($form.error.key.$settingKey.invalid)}
-	  {g->row}
-	    {g->column colspan="2"}
-	      {g->error}
-		{$form.errorMessage.$settingKey}
-	      {/g->error}
-	    {/g->column}
-	  {/g->row}
+    {foreach from=$ItemEditLayout.settings item=setting}
+    {assign var="settingKey" value=$setting.key}
+    <tr class="{cycle values="gbEven,gbOdd"}">
+      <td>
+	{g->text text=$setting.name l10Domain=$ItemEditLayout.layout.l10Domain}
+      </td>
+      <td>
+	{if ($setting.type == 'text-field')}
+	<input type="text" size="6" name="{g->formVar var="form[key][$settingKey]"}" onkeypress="javascript:changeSetting('$settingKey')" value="{$form.key.$settingKey}"/>
+	{elseif ($setting.type == 'single-select')}
+	<select name="{g->formVar var="form[key][$settingKey]"}" onChange="javascript:changeSetting('$settingKey')">
+	    {html_options options=$setting.choices selected=$setting.value}
+	</select>
 	{/if}
-      {/foreach}
-    {/g->table}
+      </td>
+
+      <td>
+	&nbsp;
+      </td>
+
+      <td>
+	<input type="checkbox" name="{g->formVar var="form[useGlobal][$settingKey]"}" onclick="javascript:toggleGlobal('$settingKey')" value="{$form.useGlobal.$settingKey}"/>
+      </td>
+    </tr>
+
+    {if isset($form.error.key.$settingKey.invalid)}
+    <tr>
+      <td colspan="2">
+	<div class="giError">
+	  {$form.errorMessage.$settingKey}
+	</div>
+      </td>
+    </tr>
+    {/if}
+    {/foreach}
+  </table>
   {else}
-    {g->element style="emphasized"}
-      {g->text text="There are no settings for this layout"}
-    {/g->element}
+  <b>
+    {g->text text="There are no settings for this layout"}
+  </b>
   {/if}
-{/g->box}
+</div>
 
-{g->box style="admin"}
-  {g->element}
-    <script type="text/javascript" language="javascript">
-      var isSaved = new Array;
-      var savedValues = new Array;
-      var globalValues = new Array;
-      {foreach from=$ItemEditLayout.globalParams key=key item=value}
-        globalValues['{$key}'] = '{$value}';
-      {/foreach}
+<div class="gbAdmin">
+  <script type="text/javascript">
+    var isSaved = new Array;
+    var savedValues = new Array;
+    var globalValues = new Array;
+    {foreach from=$ItemEditLayout.globalParams key=key item=value}
+      globalValues['{$key}'] = '{$value}';
+    {/foreach}
 
-      function toggleGlobal(key) {ldelim}
-        inputWidget = '{g->elementName name="form[key]["}' + key + ']';
-        toggleWidget = '{g->elementName name="form[useGlobal]["}' + key + ']';
-        if (document.forms[0].elements[toggleWidget].checked) {ldelim}
-          savedValues[key] = document.forms[0].elements[inputWidget].value;
-          isSaved[key] = true;
-          document.forms[0].elements[inputWidget].value = globalValues[key];
-        {rdelim} else {ldelim}
-          if (isSaved[key]) {ldelim}
-            document.forms[0].elements[inputWidget].value = savedValues[key];
-          {rdelim}
+    function toggleGlobal(key) {ldelim}
+      inputWidget = '{g->elementName name="form[key]["}' + key + ']';
+      toggleWidget = '{g->elementName name="form[useGlobal]["}' + key + ']';
+      if (document.forms[0].elements[toggleWidget].checked) {ldelim}
+        savedValues[key] = document.forms[0].elements[inputWidget].value;
+        isSaved[key] = true;
+        document.forms[0].elements[inputWidget].value = globalValues[key];
+      {rdelim} else {ldelim}
+        if (isSaved[key]) {ldelim}
+          document.forms[0].elements[inputWidget].value = savedValues[key];
         {rdelim}
       {rdelim}
+    {rdelim}
 
-      function changeSetting(key) {ldelim}
-        toggleWidget = '{g->elementName name="form[useGlobal]["}' + key + ']';
-        document.forms[0].elements[toggleWidget].checked = false;
-      {rdelim}
-    </script>
+    function changeSetting(key) {ldelim}
+      toggleWidget = '{g->elementName name="form[useGlobal]["}' + key + ']';
+      document.forms[0].elements[toggleWidget].checked = false;
+    {rdelim}
+  </script>
 
-    {g->input type="submit" name="form[action][save]"}{g->text text="Save"}{/g->input}
-    {g->input type="submit" name="form[action][undo]"}{g->text text="Undo"}{/g->input}
-  {/g->element}
-{/g->box}
+  <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}"/>
+  <input type="submit" name="{g->formVar var="form[action][undo]"}" value="{g->text text="Undo"}"/>
+</div>

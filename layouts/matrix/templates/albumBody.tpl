@@ -1,242 +1,191 @@
-{g->main}
+<div id="gsHeader">
+  <div class="gbTitleBanner">
+    <!-- img banner -->
+  </div>
+
   {include file="layouts/matrix/templates/pathbar.tpl"}
-  {include file="layouts/matrix/templates/sidebar.tpl"}
+</div>
 
-  {g->pagebox}
-    {g->banner}
-      {g->title}
+<div id="gsAlbumContents">
+  <div class="gbTopFlag">
+    <div class="gbTitleBanner">
+      <div class="giTitle">
 	{$layout.item.title|markup}
-      {/g->title}
-      {g->description}
+      </div>
+      <div class="giDescription">
 	{$layout.item.summary|markup}
-      {/g->description}
+      </div>
+    </div>
 
-      {g->infoset}
-	{g->item}
-	  {g->title}
-	    {capture name=creationTimestamp}
-	      {g->date timestamp=$layout.item.creationTimestamp}
-	    {/capture}
-	    {g->text text="Date: %s" arg1=$smarty.capture.creationTimestamp}
-	  {/g->title}
-	{/g->item}
+    <div class="giInfo">
+      <span>
+	{capture name=creationTimestamp}
+	{g->date timestamp=$layout.item.creationTimestamp}
+	{/capture}
+	{g->text text="Date: %s" arg1=$smarty.capture.creationTimestamp}
+      </span>
 
-	{g->item}
-	  {g->title}
-	    {g->text one="Size: %d item" 
-	    many="Size: %d items" 
-	    count=$layout.totalChildCount 
-	    arg1=$layout.totalChildCount}
-	    {g->text one="(%d item total)"
-	    many="(%d items total)"
-	    count=$layout.totalDescendentCount
-	    arg1=$layout.totalDescendentCount}
-	  {/g->title}
-	{/g->item}
+      <span>
+	{g->text one="Size: %d item" 
+	         many="Size: %d items" 
+	         count=$layout.totalChildCount 
+	         arg1=$layout.totalChildCount}
+	{g->text one="(%d item total)"
+	         many="(%d items total)"
+	         count=$layout.totalDescendentCount
+	         arg1=$layout.totalDescendentCount}
+      </span>
 	
-	{g->item}
-	  {g->title}
-	    {g->text text="Owner: %s" arg1=$layout.owner.fullName|default:$layout.owner.userName}
-	  {/g->title}
-	{/g->item}
-      {/g->infoset}
+      <span>
+	{g->text text="Owner: %s" arg1=$layout.owner.fullName|default:$layout.owner.userName}
+      </span>
+    </div>
 
-      {include file="layouts/matrix/templates/itemNavigator.tpl"}
-    {/g->banner}
+    {include file="layouts/matrix/templates/itemNavigator.tpl"}
 
-    {g->box style="canvas"}
+    <div class="spacer">
+      &nbsp;
+    </div>
+  </div>
       
-      {g->element}
-	{g->table style="canvas"}
-	  {foreach from=$layout.childRows item=childRow}
-	    {g->row}
-	      {foreach from=$childRow item=child}
-		{assign var="childId" value=$child.id}
-		{if $child.canContainChildren} 
-		  {assign var="style" value="album"}
-		  {assign var="colspan" value=$layout.columnSize}
-		{else}
-		  {assign var="style" value="item"}
-		  {assign var="colspan" value="1"}
-		{/if}
-		{g->column colspan=$colspan}
-		  {g->itemthumbnail style=$style}
-		    {g->title}
-		      {if $child.canContainChildren}
-			{g->text text="Album: %s" arg1=$child.title|default:$child.pathComponent}
-		      {else}
-			{$child.title|default:$child.pathComponent|markup}
-		      {/if}
-		    {/g->title}
-		    {g->description}
-		      {$child.description|truncate:512|markup}
-		    {/g->description}
-		    {g->media}
-		      {g->link arg1="view=core:ShowItem" arg2="itemId=`$child.id`"}
-			{if isset($child.thumbnail)}
-			  {g->image item=$child image=$child.thumbnail}
-			{else}
-			  {g->text text="no thumbnail"}
-			{/if}
-		      {/g->link arg1="view=core:ShowItem" arg2="itemId=`$child.id`"}
-		    {/g->media}
-		    {g->infoset}
-		      {g->item}
-			{capture name=modificationTimestamp}
-			  {g->date timestamp=$child.modificationTimestamp}
-			{/capture}
-			{g->title}
-			  {g->text text="Date: %s" arg1=$smarty.capture.modificationTimestamp}
-			{/g->title}
-		      {/g->item}
+  {counter start=0 print=no assign=childrenInColumnCount}
+  {foreach from=$layout.children item=child}
+  <div class="{if $child.canContainChildren}gbItemAlbum{else}gbItemImage{/if}">
+    <div class="giThumbImage">
+      <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$child.id`"}">
+	{if isset($child.thumbnail)}
+	{g->image item=$child image=$child.thumbnail class="giThumbImage"}
+	{else}
+	{g->text text="no thumbnail"}
+	{/if}
+      </a>
 
-		      {g->item}
-			{g->title}
-			  {assign var="ownerId" value=$child.ownerId}
-			  {assign var="owner" value=$layout.owners.$ownerId}
-			  {g->text text="Owner: %s" arg1=$owner.fullName|default:$owner.userName}
-			{/g->title}
-		      {/g->item}
-
-		      {g->item}
-			{g->title}
-			  {g->text one="Size: %d item"
-			  many="Size: %d items"
-			  count=$child.childCount
-			  arg1=$child.childCount}
-			  {g->text one="(%d item total)"
-			  many="(%d items total)"
-			  count=$child.descendentCount
-			  arg1=$child.descendentCount}
-			{/g->title}
-		      {/g->item}
-
-		      {g->item}
-			{g->title}
-			  {g->text one="Viewed: %d time"
-			  many="Viewed: %d times"
-			  count=$layout.viewCounts.$childId
-			  arg1=$layout.viewCounts.$childId}
-			{/g->title}
-		      {/g->item}
-		    {/g->infoset}
-
-		    {if !empty($layout.moduleItemLinks.$childId)}
-		      {g->actionset}
-			{g->actionitem}
-			  {g->title}
-			    {if $child.canContainChildren} 
-			      {g->text text="&laquo; album actions &raquo;"}
-			    {else}
-			      {g->text text="&laquo; item actions &raquo;"}
-			    {/if}
-			  {/g->title}
-			  {g->value}
-			    &nbsp;
-			  {/g->value}
-			{/g->actionitem}
-			{foreach from=$layout.moduleItemLinks.$childId item=link}
-			  {g->actionitem}
-			    {g->title}
-			      {$link.text}
-			    {/g->title}
-			    
-			    {g->value}
-			      {$link.url}
-			    {/g->value}
-			  {/g->actionitem}
-			{/foreach}
-		      {/g->actionset}
-		    {/if}
-		  {/g->itemthumbnail}
-		{/g->column}
-	      {/foreach}
-	    {/g->row}
-	  {foreachelse}
-	    {g->row}
-	      {g->column align="center"}
-		{g->text text="This album is empty"}
-	      {/g->column}
-	    {/g->row}
-	  {/foreach}
-	{/g->table}
-      {/g->element}
-    {/g->box}
-
-    {if !empty($layout.moduleItemDetailFiles)}
-      {foreach from=$layout.moduleItemDetailFiles key=moduleId item=detailFile}
-	{g->box}
-	  {include file=$detailFile l10Domain="modules_$moduleId"}
-	{/g->box}
-      {/foreach}
-    {/if}
-
-    {g->banner}
-      {assign var="id" value=$layout.item.id}
-      {if isset($layout.moduleItemLinks.$id)}
-	{g->actionset}
-	  {g->actionitem}
-	    {g->title}
-	      {g->text text="&laquo; album actions &raquo;"}
-	    {/g->title}
-	    {g->value}
-	      &nbsp;
-	    {/g->value}
-	  {/g->actionitem}
-	  {foreach from=$layout.moduleItemLinks.$id item=link}
-	    {g->actionitem}
-	      {g->title}
-		{$link.text}
-	      {/g->title}
-	      
-	      {g->value}
-		{$link.url}
-	      {/g->value}
-	    {/g->actionitem}
-	  {/foreach}
-	{/g->actionset}
-      {/if}
-
-      {g->linkset}
-	{g->title}
-	  {g->text text="Page"}
-	{/g->title}
-	
-	{assign var="lastPage" value=0}
-	{foreach name=jumprange from=$layout.jumprange item=page}
-	  {if ($page - $lastPage >= 2)}
-	    {g->item}
-	      {g->title}
-		{if ($page - $lastPage == 2)}
-		  {g->link arg1="view=core:ShowItem" arg2="itemId=`$layout.item.id`" arg3="page=`$page-1`"}
-		    {$page-1}
-		  {/g->link}
-		{else}
-		  ...
-		{/if}
-	      {/g->title}
-	    {/g->item}
-	  {/if}
+      {if !empty($layout.moduleItemLinks[$child.id])}
+      <div class="giActionSelect">
+	<select onchange="javascript:if (this.value) location.href=this.value">
+	  <option label="{if $child.canContainChildren}{g->text text="&laquo; album actions &raquo;"}{else}{g->text text="&laquo; item actions &raquo;"}{/if}" value="">{if $child.canContainChildren}{g->text text="&laquo; album actions &raquo;"}{else}{g->text text="&laquo; item actions &raquo;"}{/if}</option>
 	  
-	  {if ($layout.currentPage == $page)}
-	    {g->item}
-	      {g->title}
-		{$page}
-	      {/g->title}
-	    {/g->item}
-	  {else}
-	    {g->item}
-	      {g->title}
-		{g->link arg1="view=core:ShowItem" arg2="itemId=`$layout.item.id`" arg3="page=$page"}
-		  {$page}
-		{/g->link}
-	      {/g->title}
-	    {/g->item}
-	  {/if}
-	  {assign var="lastPage" value=$page}
-	{/foreach}
-      {/g->linkset}
+	  {foreach from=$layout.moduleItemLinks[$child.id] item=link}
+	  <option label="{$link.text}" value="{$link.url}">{$link.text}</option>
+	  {/foreach}
+        </select>
+      </div>
+      {/if}
+    </div>
 
-    {/g->banner}
-  {/g->pagebox}
-{/g->main}
+    <div class="giTitle">
+      {if $child.canContainChildren}
+      {g->text text="Album: %s" arg1=$child.title|default:$child.pathComponent}
+      {else}
+      {$child.title|default:$child.pathComponent|markup}
+      {/if}
+    </div>
+
+    <div class="giDescription">
+      {$child.description|truncate:512|markup}
+    </div>
+
+    <div class="giInfo">
+      <span>
+	{capture name=modificationTimestamp}
+	{g->date timestamp=$child.modificationTimestamp}
+	{/capture}
+	{g->text text="Date: %s" arg1=$smarty.capture.modificationTimestamp}
+      </span>
+
+      <span>
+	{g->text text="Owner: %s" arg1=$layout.owners[$child.ownerId].fullName|default:$owner.userName}
+      </span>
+
+      <span>
+	{g->text one="Size: %d item"
+	many="Size: %d items"
+	count=$child.childCount
+	arg1=$child.childCount}
+	{g->text one="(%d item total)"
+	many="(%d items total)"
+	count=$child.descendentCount
+	arg1=$child.descendentCount}
+      </span>
+
+      <span>
+	{g->text one="Viewed: %d time"
+	many="Viewed: %d times"
+	count=$layout.viewCounts[$child.id]
+	arg1=$layout.viewCounts[$child.id]}
+      </span>
+    </div>
+  </div>
+
+  {counter}
+  {if ($child.canContainChildren || ($childrenInColumnCount % $layout.columnSize == 0))}
+  <div class="gsSpacer">
+    &nbsp;
+  </div>
+  {counter start=0 print=no assign=childrenInColumnCount}
+  {/if}
+  {foreachelse}
+  <div>
+    {g->text text="This album is empty"}
+  </div>
+  {/foreach}
+
+  <div class="gsSpacer">
+    &nbsp;
+  </div>
+
+  {if !empty($layout.moduleItemDetailFiles)}
+  {foreach from=$layout.moduleItemDetailFiles key=moduleId item=detailFile}
+  {include file=$detailFile l10Domain="modules_$moduleId"}
+  {/foreach}
+  {/if}
+
+  <div class="gbBottomFlag">
+    <div class="giActionSelect">
+      {if isset($layout.moduleItemLinks[$layout.item.id])}
+      <select onchange="javascript:if (this.value) location.href=this.value">
+	<option label="{g->text text="&laquo; album actions &raquo;"}" value="">{g->text text="&laquo; album actions &raquo;"}</option>
+        {foreach from=$layout.moduleItemLinks[$layout.item.id] item=link}
+        <option label="{$link.text}" value="{$link.url}">{$link.text}</option>
+        {/foreach}
+      </select>
+      {/if}
+    </div>
+
+    <div class="giHorizontalLinks">
+      <div class="giTitle">
+	{g->text text="Page"}
+      </div>
+      
+      {assign var="lastPage" value=0}
+      {foreach name=jumprange from=$layout.jumprange item=page}
+      {if ($page - $lastPage >= 2)}
+      <span>
+	{if ($page - $lastPage == 2)}
+	<a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$layout.item.id`" arg3="page=`$page-1`"}">
+	  {$page-1}
+	</a>
+	{else}
+	...
+	{/if}
+      </span>
+      {/if}
+	  
+      {if ($layout.currentPage == $page)}
+      <span>
+	{$page}
+      </span>
+      {else}
+      <span> 
+	<a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$layout.item.id`" arg3="page=$page"}">
+	  {$page}
+	</a>
+      </span>
+      {/if}
+      {assign var="lastPage" value=$page}
+      {/foreach}
+    </div>
+  </div>
+</div>
+
+{include file="layouts/matrix/templates/sidebar.tpl"}

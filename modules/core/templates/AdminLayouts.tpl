@@ -1,12 +1,19 @@
-{g->pagebox}
-  {g->banner}
-    {g->title}
-      {g->text text="Gallery Layouts"}
-    {/g->title}
-  {/g->banner}
+<div id="gsAdminContents">
+  <div class="gbTopFlag">
+    <div class="gbTitle">
+      <div class="giTitle">
+	{g->text text="Gallery Layouts"}
+      </div>
+    </div>
+
+    <div class="spacer">
+      &nbsp;
+    </div>
+  </div>
 
   {if isset($status)}
-    {g->success}
+  <div id="gsStatus">
+    <div class="giStatus">
       {if isset($status.activated)}
 	{g->text text="Successfully activated layout %s" arg1=$status.activated}
       {/if}
@@ -19,153 +26,152 @@
       {if isset($status.restoredLayout)}
 	{g->text text="Restored layout settings"}
       {/if}
-    {/g->success}
+    </div>
+  </div>
   {/if}
 
-  {g->tabbedbox}
-    {g->tabset}
-      {g->item}
-	{g->title}
-	  {if ($AdminLayouts.mode == 'config')}
-	    {g->text text="All Layouts"}
-	  {else}
-	    {g->link arg1="view=core:SiteAdmin" arg2="subView=core:AdminLayouts" arg3="mode=config"}
-	      {g->text text="All Layouts"}
-	    {/g->link}
-	  {/if}
-	{/g->title}
-      {/g->item}
+  <div class="gbAdmin">
+    <div class="gbTabBar">
+      <ul>
+	{if ($AdminLayouts.mode == 'config')}
+	<li class="giSelectedTab"> 
+	  {g->text text="All Layouts"}
+	</li>
+        {else}
+        <li>
+	  <a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=core:AdminLayouts" arg3="mode=config"}">{g->text text="All Layouts"}</a>
+	</li>
+        {/if}
 
-      {foreach from=$AdminLayouts.layouts key=layoutId item=layout}
-	{if $AdminLayouts.layouts.$layoutId.active}
-	  {g->item}
-	    {g->title}
-	      {if ($AdminLayouts.mode == 'editLayout') && ($AdminLayouts.layoutId == $layoutId)}
-		{g->text text=$layout.name l10Domain=$layout.l10Domain}
-	      {else}
-		{g->link arg1="view=core:SiteAdmin" arg2="subView=core:AdminLayouts" arg3="mode=editLayout" arg4="layoutId=$layoutId"}
-		  {g->text text=$layout.name l10Domain=$layout.l10Domain}
-		{/g->link}
+        {foreach from=$AdminLayouts.layouts key=layoutId item=layout}
+        {if $AdminLayouts.layouts.$layoutId.active}
+        {if ($AdminLayouts.mode == 'editLayout') && ($AdminLayouts.layoutId == $layoutId)}
+        <li class="giSelectedTab">
+	  {g->text text=$layout.name l10Domain=$layout.l10Domain}
+	</li>
+	{else}
+        <li>
+	  <a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=core:AdminLayouts" arg3="mode=editLayout" arg4="layoutId=$layoutId"}">{g->text text=$layout.name l10Domain=$layout.l10Domain}</a>
+        </li>
+        {/if}
+        {/if}
+        {/foreach}
+      </ul>
+    </div>
+
+    <div class="gbSpacer">
+      &nbsp;
+    </div>
+
+    {if ($AdminLayouts.mode == 'config')}
+    <div class="gbAdmin">
+      <div class="giTitle">
+	{g->text text="Layout Configuration"}
+      </div>
+
+      <div class="giDescription">
+	{g->text text="Gallery has layouts that can change the way that you navigate around your albums.  You can download and install new layouts, or you can disable layouts if you don't want to use them.  By default, new layouts are disabled.  They must be enabled before you can use them."}
+      </div>
+
+      <table class="gbDataTable">
+	<tr>
+	  <th> {g->text text="Layout Name"} </th>
+	  <th> {g->text text="Version"} </th>
+	  <th> {g->text text="Description"} </th>
+	  <th> {g->text text="Actions"} </th>
+	</tr>
+
+	{foreach from=$AdminLayouts.layouts key=layoutId item=layout}
+	<tr class="{cycle values="gbEven,gbOdd"}">
+	  <td>
+	    {$layout.name}
+	  </td>
+
+	  <td align="center">
+	    {$layout.version}
+	  </td>
+
+	  <td>
+	    {g->text text=$layout.description l10Domain=$layout.l10Domain}
+	  </td>
+
+	  <td>
+	    <div class="giHorizontalLinks">
+	      {if (isset($layout.actions.activate))}
+	      <span>
+		<a href="{g->url arg1="controller=core:AdminLayouts" arg2="form[action][activate]=1" arg3="layoutId=$layoutId"}">{g->text text="activate"}</a>
+	      </span>
 	      {/if}
-	    {/g->title}
-	  {/g->item}
+
+	      {if (isset($layout.actions.deactivate))}
+	      <span>
+		<a href="{g->url arg1="controller=core:AdminLayouts" arg2="form[action][deactivate]=1" arg3="layoutId=$layoutId"}">{g->text text="deactivate"}</a>
+	      </span>
+	      {/if}
+	    </div>
+	  </td>
+	</tr>
+	{/foreach}
+      </table>
+    </div>
+    {/if}
+
+    {if ($AdminLayouts.mode == "editLayout")}
+    <div class="gbAdmin">
+      <div class="giTitle">
+	{g->text text="%s Layout Settings" arg1=$AdminLayouts.layouts[$AdminLayouts.layoutId].name}
+      </div>
+
+      <div class="giDescription">
+	{g->text text="These are the global settings for the layout.  They can be overridden at the album level."}
+      </div>
+
+      {if !empty($AdminLayouts.settings)}
+      <table>
+	{foreach from=$AdminLayouts.settings item=setting}
+	{assign var="settingKey" value=$setting.key}
+	<tr class="{cycle values="gbEven,gbOdd"}">
+	  <td>
+	    {g->text text=$setting.name l10Domain=$layout.l10Domain}
+	  </td>
+
+	  <td>
+	    {if ($setting.type == 'text-field')}
+	    <input type="text" size="6" name="{g->formVar var="form[key][$settingKey]"}" value="{$form.key.$settingKey}"/>
+	    {elseif ($setting.type == 'single-select')}
+	    <select name="{g->formVar var="form[key][$settingKey]"}">
+		{html_options options=$setting.choices selected=$setting.value}
+	    </select>
+	    {/if}
+	  </td>
+	</tr>
+
+	{if isset($form.error.key.$settingKey.invalid)}
+	<tr>
+	  <td colspan="2">
+	    <div class="giError">
+	      {$form.errorMessage.$settingKey}
+	    </div>
+	  </td>
+	</tr>
 	{/if}
-      {/foreach}
-    {/g->tabset}
-
-    {g->element}
-      {if ($AdminLayouts.mode == 'config')}
-	{g->box style="admin"}
-	  {g->title}
-	    {g->text text="Layout Configuration"}
-	  {/g->title}
-	    
-	  {g->description}
-	    {g->text text="Gallery has layouts that can change the way that you navigate around your albums.  You can download and install new layouts, or you can disable layouts if you don't want to use them.  By default, new layouts are disabled.  They must be enabled before you can use them."}
-	  {/g->description}
-
-	  {g->table style="admin_listing" evenodd="true"}
-	    {g->row}
-	      {g->column header="true"} {g->text text="Layout Name"} {/g->column}
-	      {g->column header="true"} {g->text text="Version"} {/g->column}
-	      {g->column header="true"} {g->text text="Description"} {/g->column}
-	      {g->column header="true"} {g->text text="Actions"} {/g->column}
-	    {/g->row}
-
-	    {foreach from=$AdminLayouts.layouts key=layoutId item=layout}
-	      {g->row}
-		{g->column}
-		  {$layout.name}
-		{/g->column}
-		{g->column width="10%" align="center" }
-		  {$layout.version}
-		{/g->column}
-		{g->column}
-		  {g->text text=$layout.description l10Domain=$layout.l10Domain}
-		{/g->column}	
-		{g->column}
-		  {g->linkset}
-		    {if (isset($layout.actions.activate))}
-		      {g->item}
-			{g->title}
-			  {g->link arg1="controller=core:AdminLayouts" arg2="form[action][activate]=1" arg3="layoutId=$layoutId"}
-			    {g->text text="activate"}
-			  {/g->link}
-			{/g->title}
-		      {/g->item}
-		    {/if}
-		    {if (isset($layout.actions.deactivate))}
-		      {g->item}
-			{g->title}
-			  {g->link arg1="controller=core:AdminLayouts" arg2="form[action][deactivate]=1" arg3="layoutId=$layoutId"}
-			    {g->text text="deactivate"}
-			  {/g->link}
-			{/g->title}
-		      {/g->item}
-		    {/if}
-		  {/g->linkset}
-		{/g->column}	
-	      {/g->row}
-	    {/foreach}
-	  {/g->table}
-	{/g->box}
+	{/foreach}
+      </table>
+      {else}
+      <span>
+	{g->text text="There are no settings for this layout"}
+      </span>
       {/if}
+    </div>
 
-      {if ($AdminLayouts.mode == "editLayout")}
-	{g->box style="admin"}
-	  {g->title}
-	    {g->text text="%s Layout Settings" arg1=$AdminLayouts.layouts[$AdminLayouts.layoutId].name}
-	  {/g->title}
-
-	  {g->description}
-	    {g->text text="These are the global settings for the layout.  They can be overridden at the album level."}
-	  {/g->description}
-
-	  {if !empty($AdminLayouts.settings)}
-	    {g->table style="admin_widgets"}
-	      {foreach from=$AdminLayouts.settings item=setting}
-		{assign var="settingKey" value=$setting.key}
-		{g->row}
-		  {g->column}
-		    {g->text text=$setting.name l10Domain=$layout.l10Domain}
-		  {/g->column}
-		  {g->column}
-		    {if ($setting.type == 'text-field')}
-		      {g->input type="text" size="6" name="form[key][$settingKey]"}{$form.key.$settingKey}{/g->input}
-		    {elseif ($setting.type == 'single-select')}
-		      {g->select name="form[key][$settingKey]"}
-			{html_options options=$setting.choices selected=$setting.value}
-		      {/g->select}
-		    {/if}
-		  {/g->column}
-		{/g->row}
-		{if isset($form.error.key.$settingKey.invalid)}
-		  {g->row}
-		    {g->column colspan="2"}
-		      {g->error}
-			{$form.errorMessage.$settingKey}
-		      {/g->error}
-		    {/g->column}
-		  {/g->row}
-		{/if}
-	      {/foreach}
-	    {/g->table}
-	  {else}
-	    {g->element style="emphasized"}
-	      {g->text text="There are no settings for this layout"}
-	    {/g->element}
-	  {/if}
-	{/g->box}
-
-	{g->box style="admin"}
-	  {g->element}
-	    {g->input type="hidden" name="layoutId"}{$AdminLayouts.layoutId}{/g->input}
-	    {g->input type="hidden" name="mode"}editLayout{/g->input}
-	    {g->input type="submit" name="form[action][saveLayout]"}{g->text text="Save"}{/g->input}
-	    {g->input type="submit" name="form[action][undoLayout]"}{g->text text="Undo"}{/g->input}
-	  {/g->element}
-	{/g->box}
-      {/if}
-    {/g->element}
-  {/g->tabbedbox}
-{/g->pagebox}
+    <div class="gbBottomFlag">
+      <div class="giActionSelect">
+	<input type="hidden" name="{g->formVar var="layoutId"}" value="{$AdminLayouts.layoutId}"/>
+	<input type="hidden" name="{g->formVar var="mode"}" value="editLayout"/>
+	<input type="submit" name="{g->formVar var="form[action][saveLayout]"}" value="{g->text text="Save"}"/>
+	<input type="submit" name="{g->formVar var="form[action][undoLayout]"}" value="{g->text text="Undo"}"/>
+      </div>
+    </div>
+    {/if}
+  </div>
+</div>

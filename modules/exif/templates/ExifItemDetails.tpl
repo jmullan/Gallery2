@@ -1,51 +1,48 @@
-{g->box style="comment"}
-  {g->title}
+<div style="gbExif">
+  <div class="giTitle">
     {g->text text="Photo Properties"}
-  {/g->title}
+  </div>
 
   {if isset($ExifItemDetails.mode)}
-  {g->subtitle}
-    {g->linkset}
-      {g->item}
-	{g->title}
-	  {if ($ExifItemDetails.mode == 'summary')}
-	    {g->text text="summary"}
-	  {else}
-	    {g->link arg1="return=true" arg2="controller=exif:SwitchDetailMode" arg3="mode=summary"}
-	      {g->text text="summary"}
-	    {/g->link}
-	  {/if}
-	{/g->title}
-      {/g->item}
-      {g->item}
-	{g->title}
-	  {if ($ExifItemDetails.mode == 'detailed')}
-	    {g->text text="details"}
-	  {else}
-	    {g->link arg1="return=true" arg2="controller=exif:SwitchDetailMode" arg3="mode=detailed"}
-	      {g->text text="details"}
-	    {/g->link}
-	  {/if}
-	{/g->title}
-      {/g->item}
-    {/g->linkset}
-  {/g->subtitle}
+  <div class="giSubtitle">
+    <div class="giHorizontalLinks">
+      <span>
+	{if ($ExifItemDetails.mode == 'summary')}
+	{g->text text="summary"}
+	{else}
+	<a href="{g->url arg1="return=true" arg2="controller=exif:SwitchDetailMode" arg3="mode=summary"}">
+	  {g->text text="summary"}
+	</a>
+	{/if}
+      </span>
+
+      <span>
+	{if ($ExifItemDetails.mode == 'detailed')}
+	{g->text text="details"}
+	{else}
+	<a href="{g->url arg1="return=true" arg2="controller=exif:SwitchDetailMode" arg3="mode=detailed"}">
+	  {g->text text="details"}
+	</a>
+	{/if}
+      </span>
+    </div>
+  </div>
   {/if}
 
   {if !empty($ExifItemDetails.exifData)}
-  {g->table evenodd="true"}
+  <table class="gbDataTable">
     {section name=outer loop=$ExifItemDetails.exifData step=2}
-      {g->row}
-	{section name=inner loop=$ExifItemDetails.exifData start=$smarty.section.outer.index max=2}
-	  {g->column width="15%"}
-	    {g->text text=$ExifItemDetails.exifData[inner].title}
-	  {/g->column}
-	  {g->column width="35%"}
-	    {$ExifItemDetails.exifData[inner].value}
-	  {/g->column}
-	{/section}
-      {/g->row}
+    <tr class="{cycle values="gbEven,gbOdd"}">
+      {section name=inner loop=$ExifItemDetails.exifData start=$smarty.section.outer.index max=2}
+      <td>
+	{g->text text=$ExifItemDetails.exifData[inner].title}
+      </td>
+      <td>
+	{$ExifItemDetails.exifData[inner].value}
+      </td>
+      {/section}
+    </tr>
     {/section}
-  {/g->table}
+  </table>
   {/if}
-{/g->box}
+</div>

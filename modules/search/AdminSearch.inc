@@ -69,7 +69,7 @@ class AdminSearchView extends GalleryView {
 	global $gallery;
 
 	$form['formName'] = 'AdminSearch';
-	$template->setVariable('controller', 'comment:AdminSearch');
+	$template->setVariable('controller', 'search:AdminSearch');
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/search/templates/AdminSearch.tpl'));
     }

@@ -1,12 +1,12 @@
-{g->link arg1="view=debug:ShowTree" arg2="entityId=$entityId"}
-  {g->text text="%d: (%s)" arg1=$entityId arg2=$ShowTree.entityTable.$entityId._className}
-{/g->link}
+    <a href="{g->url arg1="view=debug:ShowTree" arg2="entityId=$entityId"}">
+      {g->text text="%d: (%s)" arg1=$entityId arg2=$ShowTree.entityTable.$entityId._className}
+    </a>
 
-{if !empty($ShowTree.isItem.$entityId)}
-  {g->link arg1="itemId=$entityId"}
-    {g->text text="[browse]"}
-  {/g->link}
-{/if}
+    {if !empty($ShowTree.isItem.$entityId)}
+    <a href="{g->url arg1="itemId=$entityId"}">
+      {g->text text="[browse]"}
+    </a>
+    {/if}
 
   
 

@@ -173,7 +173,11 @@ class AdminFfmpegView extends GalleryView {
 	    } else {
 		list ($ret, $tests, $mimeTypes) = FfmpegToolkitHelper::testBinary($form['path']);
 		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    if ($ret->getErrorCode() & ERROR_BAD_PATH) {
+			$form['error']['path']['badPath'] = 1;
+		    } else {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
 		}
 	    }
 	}

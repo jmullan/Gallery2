@@ -1,74 +1,69 @@
-{g->pagebox}
-  {g->banner}
-    {g->title}
-      {g->text text="Migrate"}
+<div id="gsAdminContents">
+  <div class="gbTopFlag">
+    <div class="gbTitle">
+      <div class="giTitle">
+	{g->text text="Gallery 1 to Gallery 2 Data Migration"}
+      </div>
 
-    {/g->title}
-    {g->description}
-      {g->text text="THIS MODULE IS NOT COMPLETE.  USE IT AT YOUR OWN RISK."}
-    {/g->description}
-  {/g->banner}
+      <div class="giDescription">
+	<i>
+	  {g->text text="This module is unfinished.  It should not harm your Gallery 1 data, but use it at your own risk."}
+	</i>
+      </div>
+    </div>
 
-  {g->box style="admin"}
-    {g->title}
-      {g->text text="Enter the path to migrate"}
-    {/g->title}
-    {g->description}
-      {g->text text="Use this module to migrate a gallery from v1 to this version."}
-    {/g->description}
+    <div class="spacer">
+      &nbsp;
+    </div>
+  </div>
 
-    {g->box}
-      {g->title}
+  <div class="gbAdmin">
+    <div class="giDescription">
+      {g->text text="This process will copy data from an existing Gallery 1 installation.  It won't modify your Gallery 1 data in any way.  You must enter the path to your Gallery 1 <i>albums</i> directory.  If you enter the wrong path, we'll let you know so it's safe to experiment.  Example: <i>/path/to/albums</i>"}
+    </div>
+
+    <div class="gbDataEntry">
+      <div class="giTitle">
 	{g->text text="Path:"}
-      {/g->title}
+      </div>
 
-      {g->element}
-	{g->text text="Enter the path to the directory containing your albums and the albumdb.dat file."}
-	{g->text text="For instance: /path/to/albums/"}
-	{g->input type="text" size="60" name="form[albumsPath]"}{$form.albumsPath}{/g->input}
-      {/g->element}
-    {/g->box}
+      <input type="text" size="60" name="{g->formVar var="form[albumsPath]"}" value="{$form.albumsPath}"/>
 
-    {if isset($form.error.albumsPath.missing)}
-      {g->error}
+      {if isset($form.error.albumsPath.missing)}
+      <div class="giError">
 	{g->text text="You did not enter a path."}
-      {/g->error}
-    {/if}
-
-    {if isset($form.error.albumsPath.invalid)}
-      {g->error}
+      </div>
+      {/if}
+      
+      {if isset($form.error.albumsPath.invalid)}
+      <div class="giError">
 	{g->text text="The path that you entered is invalid."}
-      {/g->error}
-    {/if}
+      </div>
+      {/if}
+    </div>
 
     {if !empty($SelectGallery.recentPaths)}
-      {g->element}
-	<script type="text/javascript" language="javascript">
-          function selectPath(path) {ldelim}
-            document.forms[0].elements['{g->elementName name="form[albumsPath]"}'].value = path;
-          {rdelim}
-	</script>
+    <script type="text/javascript">
+      function selectPath(path) {ldelim}
+        document.forms[0].elements['{g->elementName name="form[albumsPath]"}'].value = path;
+      {rdelim}
+    </script>
 
-	{g->text text="Recent paths:"}
-	{g->listing}
-	  {foreach from=$SelectGallery.recentPaths key=path item=count}
-            {capture name="escapedPath"}{$path|replace:"\\":"\\\\"}{/capture}
-	    {g->item}
-	      {g->title}
-		{g->link javascript="selectPath('`$smarty.capture.escapedPath`')"}
-		  {$path}
-		{/g->link}
-	      {/g->title}
-	    {/g->item}
-	  {/foreach}
-	{/g->listing}
-      {/g->element}
+    <br />
+
+    {g->text text="Recent paths:"}
+    <ul>
+      {foreach from=$SelectGallery.recentPaths key=path item=count}
+      {capture name="escapedPath"}{$path|replace:"\\":"\\\\"}{/capture}
+      <li>
+	<a href="{g->url javascript="selectPath('`$smarty.capture.escapedPath`')"}">
+	  {$path}
+	</a>
+      </li>
+      {/foreach}
+    </ul>
     {/if}
-	
-    {g->element}
-      {g->input type="submit" name="form[action][select]"}
-	{g->text text="Select"}
-      {/g->input}
-    {/g->element}
-  {/g->box}
-{/g->pagebox}
+
+    <input type="submit" name="{g->formVar var="form[action][select]"}" value="{g->text text="Select"}"/>
+  </div>
+</div>

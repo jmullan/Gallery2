@@ -1,17 +1,22 @@
-{g->pagebox}
-  {g->banner}
-    {g->title}
-      {g->text text="Use as parent's thumbnail?"}
-    {/g->title}
-  {/g->banner}
+<div id="gsAdminContents">
+  <div class="gbTopFlag">
+    <div class="gbTitle">
+      <div class="giTitle">
+	{g->text text="Use as parent's thumbnail?"}
+      </div>
+    </div>
 
-  {g->box style="admin"}
-    {g->description}
-      {g->text text="You can make use this item as the thumbnail for its parent album."}
-    {/g->description}
+    <div class="spacer">
+      &nbsp;
+    </div>
+  </div>
+
+  <div class="gbAdmin">
+    <div class="giDescription">
+      {g->text text="You can make this item the thumbnail for its parent album."}
+    </div>
     
-    {g->element}
-      {g->input type="submit" name="form[action][makeHighlight]"}{g->text text="Yes, highlight this item!"}{/g->input}
-    {/g->element}
-  {/g->box}
-{/g->pagebox}
+    <input type="submit" name="{g->formVar var="form[action][makeHighlight]"}" value="{g->text text="Yes, highlight this item!"}"/>
+  </div>
+</div>
+

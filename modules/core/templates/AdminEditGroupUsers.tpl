@@ -1,12 +1,19 @@
-{g->pagebox}
-  {g->banner}
-    {g->title}
-      {g->text text="Edit Group Members"}
-    {/g->title}
-  {/g->banner}
+<div id="gsAdminContents">
+  <div class="gbTopFlag">
+    <div class="gbTitle">
+      <div class="giTitle">
+	{g->text text="Edit Group Members"}
+      </div>
+    </div>
+    
+    <div class="spacer">
+      &nbsp;
+    </div>
+  </div>
 
   {if isset($status)}
-    {g->success}
+  <div id="gsStatus">
+    <div class="giStatus">
       {if isset($status.addedUser)}
 	{g->text text="Added user '%s' to group" arg1=$status.addedUser}
       {/if}
@@ -14,70 +21,64 @@
       {if isset($status.removedUser)}
 	{g->text text="Removed user '%s' from group" arg1=$status.removedUser}
       {/if}
-    {/g->success}
+    </div>
+  </div>
   {/if}
 
-  {g->box style="admin"}
-    {g->description}
+  <div class="gbAdmin">
+    <div class="giDescription">
       {g->text one="This group contains %d user"
-      many="This group contains %d users"
-      count=$form.userCount
-      arg1=$form.userCount}
-    {/g->description}
-  {/g->box}
+               many="This group contains %d users"
+               count=$form.userCount
+               arg1=$form.userCount}
+    </div>
+  </div>
 
   {if !empty($form.list.users)}
-    {g->box style="admin"}
-      {g->title}
-	{g->text text="Remove Member"}
-      {/g->title}
+  <div class="gbAdmin">
+    <div class="giTitle">
+      {g->text text="Remove Member"}
+    </div>
 
-      {g->element}
-	{g->select name="form[list][userId]" size=1}
-	  {html_options options=$form.list.users}
-	{/g->select}
-	{g->input type="submit" name="form[action][remove]"}
-	  {g->text text="Remove"}
-	{/g->input}
-      {/g->element}
+    <select name="{g->formVar var="form[list][userId]"}" size="1">
+	{html_options options=$form.list.users}
+    </select>
 
-      {if isset($form.error.list.noUserSelected)}
-	{g->error}
-	  {g->text text="You must select a user to remove."}
-	{/g->error}
-      {/if}
-    {/g->box}
+    <input type="submit" name="{g->formVar var="form[action][remove]"}" value="{g->text text="Remove"}"/>
+
+    {if isset($form.error.list.noUserSelected)}
+    <div class="giError">
+      {g->text text="You must select a user to remove."}
+    </div>
+    {/if}
+  </div>
   {/if}
 
-  {g->box style="admin"}
-    {g->title}
+  <div class="gbAdmin">
+    <div class="giTitle">
       {g->text text="Add Member"}
-    {/g->title}
+    </div>
 
-    {g->element}
-      {g->input type="text" name="form[text][userName]"}{$form.text.userName}{/g->input}
-      {g->input type="submit" name="form[action][add]"}
-	{g->text text="Add"}
-      {/g->input}
-    {/g->element}
+    <input type="text" name="{g->formVar var="form[text][userName]"}" value="{$form.text.userName}"/>
+    <input type="submit" name="{g->formVar var="form[action][add]"}" value="{g->text text="Add"}"/>
 
     {if isset($form.error.text.userName.missing)}
-      {g->error}
-	{g->text text="You must enter a username."}
-      {/g->error}
+    <div class="giError">
+      {g->text text="You must enter a username."}
+    </div>
     {/if}
 
     {if isset($form.error.text.userName.invalid)}
-      {g->error}
-	{g->text text="User '%s' does not exist." arg1=$form.text.userName}
-      {/g->error}
+    <div class="giError">
+      {g->text text="User '%s' does not exist." arg1=$form.text.userName}
+    </div>
     {/if}
-  {/g->box}
+  </div>
 
-  {g->box style="admin"}
-    {g->element}
-      {g->input type="hidden" name="groupId"}{$AdminEditGroupUsers.group.id}{/g->input}
-      {g->input type="submit" name="form[action][done]"}{g->text text="Done"}{/g->input}
-    {/g->element}
-  {/g->box}
-{/g->pagebox}
+  <div class="gbBottomFlag">
+    <div class="giActionSelect">
+      <input type="hidden" name="{g->formVar var="groupId"}" value="{$AdminEditGroupUsers.group.id}"/>
+      <input type="submit" name="{g->formVar var="form[action][done]"}" value="{g->text text="Done"}"/>
+    </div>
+  </div>
+</div>

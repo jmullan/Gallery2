@@ -1,24 +1,32 @@
-{g->pagebox}
-  {g->banner}
-    {g->title}
-      {g->text text="Delete a group"}
-    {/g->title}
-  {/g->banner}
+<div id="gsAdminContents">
+  <div class="gbTopFlag">
+    <div class="gbTitle">
+      <div class="giTitle">
+	{g->text text="Delete a group"}
+      </div>
+    </div>
+    
+    <div class="spacer">
+      &nbsp;
+    </div>
+  </div>
 
-  {g->box style="admin"}
-    {g->title}
+  <div class="gbAdmin">
+    <div class="giTitle">
       {g->text text="Are you sure?"}
-    {/g->title}
+    </div>
 
-    {g->description}
+    <div class="giDescription">
       {g->text text="This will completely remove <b>%s</b> from Gallery.  There is no undo!"
       arg1=$AdminDeleteGroup.group.groupName}
-    {/g->description}
+    </div>
 
-    {g->element}
-      {g->input type="hidden" name="groupId"}{$AdminDeleteGroup.group.id}{/g->input}
-      {g->input type="submit" name="form[action][delete]"}{g->text text="Delete"}{/g->input}
-      {g->input type="submit" name="form[action][cancel]"}{g->text text="Cancel"}{/g->input}
-    {/g->element}
-  {/g->box}
-{/g->pagebox}
+    <div class="gbBottomFlag">
+      <div class="giActionSelect">
+	<input type="hidden" name="{g->formVar var="groupId"}" value="{$AdminDeleteGroup.group.id}"/>
+	<input type="submit" name="{g->formVar var="form[action][delete]"}" value="{g->text text="Delete"}"/>
+	<input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
+      </div>
+    </div>
+  </div>
+</div>

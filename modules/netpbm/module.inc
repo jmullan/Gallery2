@@ -231,8 +231,7 @@ class NetPbmModule extends GalleryModule {
 	}
 	/* Now try each path in turn to see which ones work for jhead */
 	foreach ($paths as $path) {
-	    list ($ret, $testResults) =
-	        NetPbmToolkitHelper::testJhead($path);
+	    list ($ret, $testResults) = NetPbmToolkitHelper::testJhead($path);
 	    if ($ret->isError()) {
 	        return array($ret->wrap(__FILE__, __LINE__), false);
 	    }

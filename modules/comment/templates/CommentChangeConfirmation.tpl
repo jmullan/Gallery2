@@ -1,21 +1,29 @@
-{g->pagebox}
-  {g->banner}
-    {g->title}
-      {g->text text="Comment change confirmation"}
-    {/g->title}
-  {/g->banner}
+<div id="gsAdminContents">
+  <div class="gbTopFlag">
+    <div class="gbTitle">
+      <div class="giTitle">
+	{g->text text="Comment change confirmation"}
+      </div>
+    </div>
+
+    <div class="spacer">
+      &nbsp;
+    </div>
+  </div>
 
   {if isset($status)}
-    {g->success}
+  <div id="gsStatus">
+    <div class="giStatus">
       {if isset($status.added)}
-	{g->text text="Comment added successfully"}
+      {g->text text="Comment added successfully"}
       {/if}
       {if isset($status.deleted)}
-	{g->text text="Comment deleted successfully"}
+      {g->text text="Comment deleted successfully"}
       {/if}
       {if isset($status.saved)}
-	{g->text text="Comment modified successfully"}
+      {g->text text="Comment modified successfully"}
       {/if}
-    {/g->success}
+    </div>
+  </div>
   {/if}
-{/g->pagebox}
+</div>

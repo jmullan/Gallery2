@@ -1,25 +1,30 @@
-{g->pagebox}
-  {g->banner}
-    {g->title}
-      {g->text text="Delete this comment?"}
-    {/g->title}
-  {/g->banner}
+<div id="gsAdminContents">
+  <div class="gbTopFlag">
+    <div class="gbTitle">
+      <div class="giTitle">
+	{g->text text="Delete this comment?"}
+      </div>
+    </div>
 
-  {g->box style="admin"}
-    {g->title}
+    <div class="spacer">
+      &nbsp;
+    </div>
+  </div>
+
+  <div class="gbAdmin">
+    <div class="giTitle">
       {g->text text="Are you sure?"}
-    {/g->title}
-
-    {g->description}
+    </div>
+    
+    <div class="giDescription">
       {g->text text="Delete this comment?  There is no undo!"}
-    {/g->description}
+    </div>
+    
+    <input type="hidden" name="{g->formVar var="commentId"}" value="{$DeleteComment.comment.id}"/>
+    <input type="submit" name="{g->formVar var="form[action][delete]"}" value="{g->text text="Delete"}"/>
+    <input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
+  </div>
 
-    {g->element}
-      {g->input type="hidden" name="commentId"}{$DeleteComment.comment.id}{/g->input}
-      {g->input type="submit" name="form[action][delete]"}{g->text text="Delete"}{/g->input}
-      {g->input type="submit" name="form[action][cancel]"}{g->text text="Cancel"}{/g->input}
-    {/g->element}
-  {/g->box}
-
-  {include file="modules/comment/templates/Comment.tpl" item=$ItemAdmin.item comment=$DeleteComment.comment user=$DeleteComment.commenter}
-{/g->pagebox}
+  {include file="modules/comment/templates/Comment.tpl" 
+           item=$ItemAdmin.item comment=$DeleteComment.comment user=$DeleteComment.commenter}
+</div>

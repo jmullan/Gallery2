@@ -1,149 +1,144 @@
-{g->pagebox}
-  {g->banner}
-    {g->title}
-      {g->text text="Select Albums and Users"}
-    {/g->title}
-  {/g->banner}
+<div id="gsAdminContents">
+  <div class="gbTopFlag">
+    <div class="gbTitle">
+      <div class="giTitle">
+	{g->text text="Select Albums and Users"}
+      </div>
+    </div>
+
+    <div class="spacer">
+      &nbsp;
+    </div>
+  </div>
 
   {if isset($form.error.nothingSelected)}
-    {g->error}
+  <div id="gsStatus">
+    <div class="giError">
       {g->text text="You must choose something to import!"}
-    {/g->error}
+    </div>
+  </div>
   {/if}
 
-  {g->box style="admin"}
-    {g->title}
+  <div class="gbAdmin"}
+    <div class="giTitle">
       {g->text text="Import Users"}
-    {/g->title}
+    </div>
 
-    {g->description}
+    <div class="giDescription">
       {g->text text="Select the users to migrate"}
-    {/g->description}
+    </div>
 
-
-    {g->element}
-      <script language="javascript">
-      // <!-- 
-
+    <script language="javascript">
+      //<![CDATA[
       function setCheck(val) {ldelim}
-      ufne=document.forms[0];
-      len = ufne.elements.length;
-      for(i = 0 ; i < len ; i++) {ldelim}
-      if (ufne.elements[i].name.substring(0,20)=='g2_form[migrateUser]') {ldelim}
-      ufne.elements[i].checked=val;
+          ufne=document.forms[0];
+	  len = ufne.elements.length;
+	  for(i = 0 ; i < len ; i++) {ldelim}
+              if (ufne.elements[i].name.substring(0,20)=='g2_form[migrateUser]') {ldelim}
+	          ufne.elements[i].checked=val;
+	      {rdelim}
+	  {rdelim}
       {rdelim}
-      {rdelim}
-      {rdelim}
-      function invertCheck() {ldelim}
-      ufne=document.forms[0];
-      len = ufne.elements.length;
-      for(i = 0 ; i < len ; i++) {ldelim}
-      if (ufne.elements[i].name.substring(0,20)=='g2_form[migrateUser]') {ldelim}
-      ufne.elements[i].checked = !(ufne.elements[i].checked);
-      {rdelim}
-      {rdelim}
-      {rdelim}
-      // -->
-     </script>
-      <p><span class="popup">
-      <a href="javascript:setCheck(1)">Check All</a> -
-      <a href="javascript:setCheck(0)">Clear All</a> -
-      <a href="javascript:invertCheck()">Invert Selection</a>
-      </span></p>
 
-{/g->element}
+      function invertCheck() {ldelim}
+	  ufne=document.forms[0];
+	  len = ufne.elements.length;
+	  for(i = 0 ; i < len ; i++) {ldelim}
+	      if (ufne.elements[i].name.substring(0,20)=='g2_form[migrateUser]') {ldelim}
+	          ufne.elements[i].checked = !(ufne.elements[i].checked);
+	      {rdelim}
+	  {rdelim}
+      {rdelim}
+      // ]]>
+     </script>
+
+    <span>
+      <a href="javascript:setCheck(1)">{g->text text="Check All"}</a>
+      <a href="javascript:setCheck(0)">{g->text text="Clear All"}</a>
+      <a href="javascript:invertCheck()">{g->text text="Invert Selection"}</a>
+    </span>
 
     {if (sizeof($ChooseObjects.newUsers) > 0)} 
-      {g->table style="admin_listing" evenodd="true"}
-	{g->row}
-	  {g->column header="true"}
-	    {g->text text="Select"}
-	  {/g->column}
-	  {g->column header="true"}
-	    {g->text text="Username"}
-	  {/g->column}
-	{/g->row}
+    <table class="gbDataTable">
+      <tr>
+	<th>
+	  {g->text text="Select"}
+	</th>
+	<th>
+	  {g->text text="Username"}
+	</th>
+      </tr>
 
-	{foreach key=uid item=username from=$ChooseObjects.newUsers}
-	  {g->row}
-	    {g->column width="10%"}
-              {g->input type="checkbox" name="form[migrateUser][$uid]"}{$form.migrateUser.$uid}{/g->input}
-	    {/g->column}
-	    {g->column}
-              {$username}
-	    {/g->column}
-	  {/g->row}
-	{/foreach}
-      {/g->table}
+      {foreach key=uid item=username from=$ChooseObjects.newUsers}
+      <tr class="{cycle values="gbEven,gbOdd"}">
+	<td>
+	  <input type="checkbox" name="{g->formVar var="form[migrateUser][$uid]"}" {if $form.migrateUser.$uid}checked="checked"{/if}/>
+	</td>
+	<td>
+	  {$username}
+	</td>
+      </tr>
+      {/foreach}
+    </table>
     {else}
-      {g->element style="emphasized"}
-	{g->text text="No available users"}
-      {/g->element}
+    <b>
+      {g->text text="No available users"}
+    </b>
     {/if}
 
     {if sizeof($ChooseObjects.existingUsers) > 0}
-      {g->element}
-	{g->text text="These users are already in your gallery, and will not be imported:"}
-      {/g->element}
+    <div class="giTitle">
+      {g->text text="These users are already in your gallery, and will not be imported:"}
+    </div>
 
-      {g->element}
-	{foreach key=uid item=username from=$ChooseObjects.existingUsers}
-          {$username} 
-	{/foreach}
-      {/g->element}
+    {foreach key=uid item=username from=$ChooseObjects.existingUsers}
+    {$username} <br/>
+    {/foreach}
     {/if}
-  {/g->box}
+  </div>
 
-  {g->box style="admin"}
-    {g->title}
+  <div class="gbAdmin">
+    <div class="giTitle">
       {g->text text="Import Albums"}
-    {/g->title}
+    </div>
 
-    {g->description}
+    <div class="giDescription">
       {g->text text="Select the albums to migrate"}
-    {/g->description}
+    </div>
 
-    {g->element style="emphasized"}
-      Note: album migration is not completely implemented.  Please use at your own risk.
-    {/g->element}
+    <div class="gbDataEntry">
+      <div class="giTitle">
+	{g->text text="Source:"}
+      </div>
 
-    {g->element style="emphasized"}
-      {g->text text="Source:"}
-    {/g->element}
-
-    {g->element}
-      {g->select multiple="true" size="10" name="form[sourceAlbums][]"}
-        {foreach from=$ChooseObjects.g1AlbumTree item=album}
-  	  <option value="{$album.data.urlencodedname}">
+      <select multiple="multiple" size="10" name="{g->formVar var="form[sourceAlbums][]"}">
+	{foreach from=$ChooseObjects.g1AlbumTree item=album}
+	<option value="{$album.data.urlencodedname}">
   	  {"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"|repeat:$album.depth}`--
   	  {g->text text="%s (%s)" arg1=$album.data.title arg2=$album.data.name}
-  	  </option>
+	</option>
         {/foreach}
-      {/g->select}
-    {/g->element}
+      </select>
+    </div>
 
-    {g->element style="emphasized"}
-      {g->text text="Destination:"}
-    {/g->element}
+    <div class="gbDataEntry">
+      <div class="giTitle">
+	{g->text text="Destination:"}
+      </div>
 
-    {g->element}
-      {g->select name="form[destinationAlbumID]"}
-        {foreach from=$ChooseObjects.g2AlbumTree item=album}
-  	  <option value="{$album.data.id}">
+      <select name="{g->formVar var="form[destinationAlbumID]"}">
+	{foreach from=$ChooseObjects.g2AlbumTree item=album}
+	<option value="{$album.data.id}">
   	  {"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"|repeat:$album.depth}`--
   	  {$album.data.title|default:$album.data.pathComponent}
-  	  </option>
+	</option>
         {/foreach}
-      {/g->select}
-    {/g->element}
-  {/g->box}
+      </select>
+    </div>
+  </div>
 
-  {g->box style="admin"}
-    {g->element}
-      {g->input type="hidden" name="albumsPath"}{$ChooseObjects.albumsPath}{/g->input}
-      {g->input type="submit" name="form[action][import]"}
-	{g->text text="Import"}
-      {/g->input}
-    {/g->element}
-  {/g->box}
-{/g->pagebox}
+  <div class="gbAdmin">
+    <input type="hidden" name="{g->formVar var="albumsPath"}" value="{$ChooseObjects.albumsPath}"/>
+    <input type="submit" name="{g->formVar var="form[action][import]"}" value="{g->text text="Import"}"/>
+  </div>
+</div>

@@ -1,77 +1,83 @@
-{g->pagebox}
-  {g->banner}
-    {g->title}
-      {g->text text="Link an Item"}
-    {/g->title}
-  {/g->banner}
+<div id="gsAdminContents">
+  <div class="gbTopFlag">
+    <div class="gbTitle">
+      <div class="giTitle">
+	{g->text text="Link an Item"}
+      </div>
+    </div>
+    
+    <div class="spacer">
+      &nbsp;
+    </div>
+  </div>
 
   {if (isset($status))}
-    {g->success}
+  <div id="gsStatus">
+    <div class="giStatus">
       {g->text one="Successfully linked %d item"
                many="Successfully linked %d items" 
                count=$status.linked.count
                arg1=$status.linked.count}
-    {/g->success}
+    </div>
+  </div>
   {/if}
 
   {if !empty($ItemCreateLink.peers)}
-    {g->box style="admin"}
-      {g->title}
-	{g->text text="Source"}
-      {/g->title}
+  <div class="gbAdmin">
+    <div class="giTitle">
+      {g->text text="Source"}
+    </div>
       
-      {g->description}
-	{g->text text="Choose the items you want to link"}
-      {/g->description}
+    <div class="giDescription">
+      {g->text text="Choose the items you want to link"}
+    </div>
 
-      {foreach from=$ItemCreateLink.peers item=peer}
-	{assign var="peerItemId" value=$peer.id}
-	{g->element}
-  	  {g->input type="checkbox" name="form[selectedIds][$peerItemId]"}{$peer.selected}{/g->input}
-  	  {$peer.title|default:$peer.pathComponent}
-	{/g->element}
+    {foreach from=$ItemCreateLink.peers item=peer}
+    {assign var="peerItemId" value=$peer.id}
+    <input type="checkbox" name="{g->formVar var="form[selectedIds][$peerItemId]"}"
+    {if $peer.selected}checked="checked"{/if}
+    />
+    {$peer.title|default:$peer.pathComponent}
+    <br />
+    {/foreach}
+  </div>
+
+  <div class="gbAdmin">
+    <div class="giTitle">
+      {g->text text="Destination"}
+    </div>
+      
+    <div class="giDescription">
+      {g->text text="Choose a new album for the link"}
+    </div>
+      
+    <select name="{g->formVar var="form[destination]"}">
+      {foreach from=$ItemCreateLink.albumTree item=album}
+      <option value="{$album.data.id}">
+	{"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"|repeat:$album.depth}`--
+	{$album.data.title|default:$album.data.pathComponent}
+      </option>
       {/foreach}
-    {/g->box}
+    </select>
 
-    {g->box style="admin"}
-      {g->title}
-	{g->text text="Destination"}
-      {/g->title}
-      
-      {g->description}
-	{g->text text="Choose a new album for the link"}
-      {/g->description}
-      
-      {g->element}
-	{g->select name="form[destination]"}
-          {foreach from=$ItemCreateLink.albumTree item=album}
-  	    <option value="{$album.data.id}">
-  	    {"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"|repeat:$album.depth}`--
-  	    {$album.data.title|default:$album.data.pathComponent}
-  	    </option>
-          {/foreach}
-	{/g->select}
-      {/g->element}
-
-      {if !empty($form.error.destination.empty)}
-	{g->error}
-  	  {g->text text="No destination chosen"}
-	{/g->error}
-      {/if}
-    {/g->box}
+    {if !empty($form.error.destination.empty)}
+    <div class="giError">
+      {g->text text="No destination chosen"}
+    </div>
+    {/if}
+  </div>
     
-    {g->box style="admin"}
-      {g->element}
-	{g->input type="submit" name="form[action][link]"}{g->text text="Link"}{/g->input}
-	{g->input type="submit" name="form[action][cancel]"}{g->text text="Cancel"}{/g->input}
-      {/g->element}
-    {/g->box}
+  <div class="gbBottomFlag">
+    <div class="giActionSelect">
+      <input type="submit" name="{g->formVar var="form[action][link]"}" value="{g->text text="Link"}"/>
+      <input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
+    </div>
+  </div>
   {else}
-    {g->box style="admin"}
-      {g->description}
-	{g->text text="This album contains no items to link."}
-      {/g->description}
-    {/g->box}
+  <div class="gbAdmin">
+    <div class="giDescription">
+      {g->text text="This album contains no items to link."}
+    </div>
+  </div>
   {/if}
-
-{/g->pagebox}
+</div>

@@ -1,0 +1,177 @@
+/*
+	matrix.css - core Gallery 2 css
+	by Ross A. Reyman and Jon Huang
+
+*/
+
+/* ***************** DEBUG ********************** */
+
+
+/* try uncommenting this when working on the layout CSS alone to see the boxes*/
+/* div, table {border-width: 1;
+            border-style: inset;
+            border-color: #EEEEEE; 
+            padding: 1;
+            marging: 1; }
+*/
+
+
+/* ***************** GALLERY  ********************** */
+/*   Category 1: Gallery                             */
+/*    declare where to put Gallery Module            */
+
+/*  main container. Ignore in stand-alone install */
+#gallery { }
+
+
+/* ***************** SECTIONS ********************** */
+/*   Category 2: section definitions                 */
+/* declare relative or absolute section positions    */
+
+#gsHeader {  }
+
+#gsSidebar {
+	float: left;
+	width: 148px;
+	padding: 0 12px;
+}
+
+#gsComments { 
+	padding: 8px;
+}
+
+/* Status message display section */
+#gsStatus {
+	padding: 10px;
+	margin-top: 4px;
+	margin-bottom: 4px;
+ }
+
+
+/* gsXxxxContents	elements are the main 'holder' for the page. */
+
+#gsAlbumContents {
+	float: left;
+	width: 72%;
+	min-width: 596px;
+}
+
+#gsSearchContents { }
+
+#gsItemImages {
+	display: block;
+
+	clear: all;
+}
+
+#gsAlbumImages {
+	display: block;
+
+	clear: all;
+}
+
+/* ***************** BOXES ******************************* */
+/*   Category 3: box definitions                           */
+/* declare relative position of boxes inside main sections */
+/* Declare relative pos. in relation to containing section */
+
+/* ********** global    *************** */
+
+.gbDataEntry {
+	margin: 6 0px;
+}
+
+/* Menus don't need to be global, but currently are */
+.gbMenu { 
+	padding: 16px 0;
+	margin: 16px 0;
+}
+
+/* spacers neeed for expanding layouts */
+.guSpacer, .gpSpacer, .gsSpacer, .gbSpacer, .giSpacer { clear: both; }
+
+
+/* ********** default   *************** */
+
+
+
+/* ********** #gsHeader *************** */
+
+#gsHeader .gbTitleBanner { 
+	padding-top: 6px;
+	padding-bottom: 6px;
+}
+
+#gsHeader .gbBreadCrumb { padding: 8px; }
+
+/* ********** #gsAlbumContents ******** */
+
+#gsAlbumContents .gbTitleBanner {
+	float: left;
+	width: 256px;
+	padding: 8px 0;
+}
+
+#gsAlbumContents .gbItemAlbum {
+	clear: both;
+	float: left;
+	width: 97%;
+	margin: 8px 8px 0 0;
+	padding: 8px;
+}
+
+/* individual items */
+#gsAlbumContents .gbItemImage,
+#gsAlbumContents .gbItemMovie,
+#gsAlbumContents .gbItemOther {
+	float: left;
+	/*	IE max-width >> http://www.svendtofte.com/code/max_width_in_ie/ */
+	min-height: 216px;
+	height: expression(this.scrollHeight < 216? '216px' : 'auto' );
+	max-width: 172px;
+	width: expression(document.body.clientWidth > 172? '172px': 'auto' );
+	margin: 8px 8px 0 0;
+	padding: 8px;
+}
+
+#gsAlbumContents .gbExif { }
+
+#gsAlbumContents .gbBottomFlag { 
+			display: block; 
+			padding: 8px;
+}
+
+#gsAlbumContents div.giHorizontalLinks {
+	float: right;
+}
+
+/* ************* #gsCommentBox ************ */
+
+#gsComments .gbComment { 
+			padding: 8px 0 16px 0;
+}
+
+/* ************* gsSidebar **************** */
+
+/* a default for any unknown div in #gsSideBar */
+#gsSidebar div { }
+
+
+/* ************* gsComments *************** */
+
+#gsComments .gbComment div.giHorizontalLinks {
+	float: none;
+}
+
+/* ************* #gsSearchContents *********** */
+
+/* The title banner is the light grey 'search' at the very top */
+#gsSearchContents .gbTitleBanner { }
+
+#gsSearchContents .gbItemImage { clear: left; }
+
+#gsSearchContents .gbForm { }
+
+
+/* ************** Status classes ***************** */
+

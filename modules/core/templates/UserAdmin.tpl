@@ -1,67 +1,64 @@
-{g->form arg1="controller=$controller"}
-  {g->input type="hidden" name="form[formName]"}{$form.formName}{/g->input}
+<form action="{g->url}" method="post">
+  <p>
+    <input type="hidden" name="{g->formVar var="controller"}" value="{$controller}"/>
+    <input type="hidden" name="{g->formVar var="form[formName]"}" value="{$form.formName}"/>
+  </p>
 
-  {g->main}
-    {g->breadcrumb}
-      {g->item}
-	{g->title}
-	  {g->text text="Your Account"}
-	{/g->title}
-      {/g->item}
-      {if ($UserAdmin.show.userInPathbar)}
-	{g->item}
-	  {g->title}
-	    {$UserAdmin.user.fullName|default:$UserAdmin.user.userName}
-	  {/g->title}
-	{/g->item}
-      {/if}
-    {/g->breadcrumb}
+  <div id="gsHeader">
+    <div class="gbTitleBanner">
+      <div class="gbBreadCrumb">
+        <span>
+          {g->text text="Your Account"}
+        </span>
 
-    {g->sidebar}
-      {g->box style="sidebar"}
-	{g->title}
-	  {g->text text="User Options"}
-	{/g->title}
+        {if ($UserAdmin.show.userInPathbar)}
+        <span>
+          {$UserAdmin.user.fullName|default:$UserAdmin.user.userName}
+        </span>
+        {/if}
+      </div>
+    </div>
+  </div>
 
-	{g->listing}
-	  {foreach from=$UserAdmin.subViewChoices item=choice}
-	    {if ($UserAdmin.subViewName == $choice.view)}
-	      {g->item selected="true"}
-		{g->title}
-		  {$choice.name}
-		{/g->title}
-	      {/g->item}
-	    {else}
-	      {g->item}
-		{g->title}
-		  {g->link arg1="view=core:UserAdmin" arg2="subView=`$choice.view`"}
-		    {$choice.name}
-		  {/g->link}
-		{/g->title}
-	      {/g->item}
-	    {/if}
-	  {/foreach}
-	{/g->listing}
-      {/g->box}
-      
-      {g->box style="sidebar"}
-	{g->title}
-	  {g->text text="Navigation"}
-	{/g->title}
+  <div id="gsAdminSidebar">
+    <div class="gbMenu">
+      <div class="giTitle">
+        {g->text text="User Options"}
+      </div>
 
-	{g->listing}
-	  {g->item}
-	    {g->title}
-	      {g->link}
-		{g->text text="Browse Gallery"}
-	      {/g->link}
-	    {/g->title}
-	  {/g->item}
-	{/g->listing}
-      {/g->box}
-    {/g->sidebar}
+      <ul>
+        {foreach from=$UserAdmin.subViewChoices item=choice}
+        {if ($UserAdmin.subViewName == $choice.view)}
+        <li class="giSelected">
+          {$choice.name}
+        </li>
+        {else}
+        <li>
+          <div class="giTitle">
+            <a href="{g->url arg1="view=core:UserAdmin" arg2="subView=`$choice.view`"}">
+              {$choice.name}
+            </a>
+          </div>
+        </li> 
+        {/if}
+        {/foreach}
+      </ul>
+    </div>
+    
+    <div class="gbMenu">
+      <div class="giTitle">
+        {g->text text="Navigation"}
+      </div>
 
-    {include file=$UserAdmin.viewBodyFile l10Domain=$UserAdmin.viewL10Domain}
+      <ul>
+        <li>
+          <a href="{g->url}">
+            {g->text text="Browse Gallery"}
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
 
-  {/g->main}
-{/g->form}
+  {include file=$UserAdmin.viewBodyFile l10Domain=$UserAdmin.viewL10Domain}
+</form>

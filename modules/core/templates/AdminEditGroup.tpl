@@ -1,33 +1,42 @@
-{g->pagebox}
-  {g->banner}
-    {g->title}
-      {g->text text="Edit a group"}
-    {/g->title}
-  {/g->banner}
+<div id="gsAdminContents">
+  <div class="gbTopFlag">
+    <div class="gbTitle">
+      <div class="giTitle">
+	{g->text text="Edit a group"}
+      </div>
+    </div>
+    
+    <div class="spacer">
+      &nbsp;
+    </div>
+  </div>
 
-  {g->box style="admin"}
-    {g->title}
-      {g->text text="Group Name"}
-    {/g->title}
-    {g->subtitle}
-      {g->text text="required"}
-    {/g->subtitle}
+  <div class="gbAdmin">
+    <div class="gbDataEntry">
+      <div class="giTitle">
+	{g->text text="Group Name"}
+      </div>
+      
+      <div class="giSubtitle">
+	{g->text text="required"}
+      </div>
 
-    {g->element}
-      {g->input type="text" name="form[groupName]"}{$form.groupName}{/g->input}
-      {g->input type="hidden" name="groupId"}{$AdminEditGroup.group.id}{/g->input}
-    {/g->element}
+      <input type="text" name="{g->formVar var="form[groupName]"}" value="{$form.groupName}"/>
+      <input type="hidden" name="{g->formVar var="groupId"}" value="{$AdminEditGroup.group.id}"/>
 
-    {if isset($form.error.groupName.missing)}
-      {g->error}
+      {if isset($form.error.groupName.missing)}
+      <div class="giError">
 	{g->text text="You must enter a group name"}
-      {/g->error}
-    {/if}
+      </div>
+      {/if}
+    </div>
+  </div>
 
-    {g->element}
-      {g->input type="submit" name="form[action][save]"}{g->text text="Save"}{/g->input}
-      {g->input type="submit" name="form[action][undo]"}{g->text text="Undo"}{/g->input}
-      {g->input type="submit" name="form[action][cancel]"}{g->text text="Cancel"}{/g->input}
-    {/g->element}
-  {/g->box}
-{/g->pagebox}
+  <div class="gbBottomFlag">
+    <div class="giActionSelect">
+      <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}"/>
+      <input type="submit" name="{g->formVar var="form[action][undo]"}" value="{g->text text="Undo"}"/>
+      <input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
+    </div>
+  </div>
+</div>

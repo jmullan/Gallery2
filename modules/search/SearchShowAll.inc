@@ -67,7 +67,7 @@ class SearchShowAllView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	global $gallery;
 
-	// XXX: Parameterize this
+	// TODO: Parameterize this
 	$pageSize = 10;
 
 	$items = array();
@@ -113,15 +113,14 @@ class SearchShowAllView extends GalleryView {
 		}
 
 		if (!isset($searchInstance)) {
-		    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
-				 null);
+		    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
 		}
 		
 		list ($ret, $moduleInfo) = $searchInstance->getSearchModuleInfo();
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-		
+
 		if (isset($form['options'][$moduleId])) {
 		    list ($ret, $results) =
 			$searchInstance->search($form['options'][$moduleId],

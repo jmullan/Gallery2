@@ -1,39 +1,42 @@
-{g->pagebox}
-  {g->banner}
-    {g->title}
-      {g->text text="Upload Complete"}
-    {/g->title}
-  {/g->banner}
+<div id="gsAdminContents">
+  <div class="gbTopFlag">
+    <div class="gbTitle">
+      <div class="giTitle">
+	{g->text text="Upload Complete"}
+      </div>
+    </div>
+    
+    <div class="spacer">
+      &nbsp;
+    </div>
+  </div>
 
-  {g->box style="admin"}
-    {g->title}
+  <div class="gbAdmin">
+    <div class="giTitle">
       {if isset($ItemAddConfirmation.count)}
-	{g->text one="Successfully added %d file." 
-	         many="Successfully added %d files." 
-	         count=$ItemAddConfirmation.count 
-	         arg1=$ItemAddConfirmation.count}
+      {g->text one="Successfully added %d file." 
+	       many="Successfully added %d files." 
+	       count=$ItemAddConfirmation.count 
+	       arg1=$ItemAddConfirmation.count}
       {else}
-	{g->text text="No files added."}
+      {g->text text="No files added."}
       {/if}
-    {/g->title}
+    </div>
 
     {foreach from=$ItemAddConfirmation.status.addedFiles item=entry}
-      {g->element}
-	{capture name="itemLink"}
-	  {g->link arg1="view=core:ShowItem" arg2="itemId=`$entry.id`"}
-	    {$entry.fileName}
-	  {/g->link}
-	{/capture}
-	{g->text text="Added %s" arg1=$smarty.capture.itemLink}
-      {/g->element}
+    {capture name="itemLink"}
+    <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$entry.id`"}">
+      {$entry.fileName}
+    </a>
+    {/capture}
+    {g->text text="Added %s" arg1=$smarty.capture.itemLink}
+    <br/>
     {/foreach}
-  {/g->box}
+  </div>
 
-  {g->box style="admin"}
-    {g->element}
-      {g->link arg1="view=core:ItemAdmin" arg2="subView=core:ItemAdd" arg3="itemId=`$ItemAdmin.item.id`"}
-	{g->text text="Add more files"}
-      {/g->link}
-    {/g->element}
-  {/g->box}
-{/g->pagebox}
+  <div class="gbAdmin">
+    <a href="{g->url arg1="view=core:ItemAdmin" arg2="subView=core:ItemAdd" arg3="itemId=`$ItemAdmin.item.id`"}">
+      {g->text text="Add more files"}
+    </a>
+  </div>
+</div>

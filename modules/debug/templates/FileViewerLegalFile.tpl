@@ -1,42 +1,28 @@
-{g->main}
-  {g->pagebox}
-    {g->banner}
-      {g->title}
-	{g->text text="Source code for file: %s" arg1=$FileViewer.fileName} 
-      {/g->title}
-    {/g->banner}
+<div id="gsHeader">
+  <div class="gbTitleBanner">
+    <div class="giTitle">
+      {g->text text="Source code for file: %s" arg1=$FileViewer.fileName} 
+    </div>
+  </div>
+</div>
 
-    {g->box}
-      {counter print=false start=1 assign=lineNumber}
-      {g->table}
-	{foreach from=$FileViewer.lines item=line}
-	  {g->row}
-	    {g->column}
-	      {if ($lineNumber == $FileViewer.currentLine)}
-		--->
-	      {else}
-		&nbsp;
-	      {/if}
-	    {/g->column}
-	    {g->column}
-	      <a name="{$lineNumber}">
-	      {$lineNumber}
-	      </a>
-	    {/g->column}
+<div id="gsAdminContents">
+  {foreach name=lineWalker from=$FileViewer.lines item=line}
+  {if ($smarty.foreach.lineWalker.iteration == $FileViewer.currentLine)}
+  <span style="background: #cdcdcd">
+  {/if}
 
-	    {g->column}
-	      {if ($lineNumber == $FileViewer.currentLine)}
-		<b>
-	      {/if}
-	      {$line|escape|replace:" ":"&nbsp;"|replace:"\t":"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"}
-	      {if ($lineNumber == $FileViewer.currentLine)}
-		</b>
-	      {/if}
-	    {/g->column}
-	  {/g->row}
-	  {counter}
-	{/foreach}
-      {/g->table}
-    {/g->box}
-  {/g->pagebox}
-{/g->main}
+    <span style="min-width:50px">
+      <a name="{$smarty.foreach.lineWalker.iteration}">
+	{$smarty.foreach.lineWalker.iteration}
+      </a>
+    </span>
+    {$line|escape|replace:" ":"&nbsp;"|replace:"\t":"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"}
+    
+  {if ($smarty.foreach.lineWalker.iteration == $FileViewer.currentLine)}
+    </span>
+  {/if}
+
+  <br/>
+  {/foreach}
+</div>

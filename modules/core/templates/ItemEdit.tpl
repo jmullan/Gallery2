@@ -1,44 +1,48 @@
-{g->pagebox}
-  {g->banner}
-    {g->title}
-      {g->text text="Edit %s" arg1=$ItemEdit.itemTypeNames.0}
-
-      <!-- Gotta put this somewhere; move it when we switch to pure HTML templates -->
-      {g->input type="hidden" name="editPlugin"}{$ItemEdit.editPlugin}{/g->input}
-      {g->input type="hidden" name="form[serialNumber]"}{$form.serialNumber}{/g->input}
-    {/g->title}
-  {/g->banner}
+<div id="gsAdminContents">
+  <div class="gbTopFlag">
+    <div class="gbTitle">
+      <div class="giTitle">
+	{g->text text="Edit %s" arg1=$ItemEdit.itemTypeNames.0}
+      </div>
+    </div>
+    
+    <div class="spacer">
+      &nbsp;
+    </div>
+  </div>
+  <input type="hidden" name="{g->formVar var="editPlugin"}" value="{$ItemEdit.editPlugin}"/>
+  <input type="hidden" name="{g->formVar var="form[serialNumber]"}" value="{$form.serialNumber}"/>
 
   {if isset($status)}
-    {g->success}
+  <div id="gsStatus">
+    <div class="giStatus">
       {if isset($status.editMessage)}
-	{$status.editMessage}
+      {$status.editMessage}
       {/if}
-    {/g->success}
+    </div>
+  </div>
   {/if}
 
-  {g->tabbedbox}
-    {g->tabset}
-      {foreach from=$ItemEdit.plugins item=plugin} 
+  <div class="gbAdmin">
+    <div class="gbTabBar">
+      <ul>
+	{foreach from=$ItemEdit.plugins item=plugin} 
 	{if $plugin.isSelected}
-	  {g->item selected="true"}
-	    {g->title}
-	      {$plugin.title}
-	    {/g->title}
-	  {/g->item}
-	{else}
-	  {g->item}
-	    {g->title}
-	      {g->link arg1="view=core:ItemAdmin" arg2="subView=core:ItemEdit" arg3="itemId=`$ItemAdmin.item.id`" arg4="editPlugin=`$plugin.id`"}
-		{$plugin.title}
-	      {/g->link}
-	    {/g->title}
-	  {/g->item}
-	{/if}
-      {/foreach}
-    {/g->tabset}
+	<li class="giSelectedTab">
+	  {$plugin.title}
+	</li>
+        {else}
+        <li>
+	  <a href="{g->url arg1="view=core:ItemAdmin" arg2="subView=core:ItemEdit" arg3="itemId=`$ItemAdmin.item.id`" arg4="editPlugin=`$plugin.id`"}">
+	    {$plugin.title}
+	  </a>
+        </li>
+        {/if}
+        {/foreach}
+      </ul>
+    </div>
 
     {include file=$ItemEdit.pluginFile l10Domain=$ItemAdmin.viewL10Domain}
 
-  {/g->tabbedbox}
-{/g->pagebox}
+  </div>
+</div>

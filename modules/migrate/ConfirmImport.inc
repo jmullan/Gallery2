@@ -764,6 +764,7 @@ class ConfirmImportView extends GalleryView {
 	    }
 	    $i++;
 	}
+
 	$ConfirmImport = array();
 	$ConfirmImport['uids'] = $uids;
 	$ConfirmImport['albums'] = $albums;
@@ -772,7 +773,7 @@ class ConfirmImportView extends GalleryView {
 	$ConfirmImport['illegalAlbumNames'] = $illegalAlbumNames;
         $ConfirmImport['destinationAlbumID'] = $destinationAlbumID;
 	$ConfirmImport['albumValidOwner'] = $albumValidOwner;
-        $ConfirmImport['targetAlbum'] = $targetAlbum;
+        $ConfirmImport['targetAlbum'] = $targetAlbum->getMemberData();
 	$ConfirmImport['urlDecoded'] = $urlDecoded;
 	$ConfirmImport['titles'] = $titles;
         $template->setVariable('controller', 'migrate:ConfirmImport');

@@ -1,54 +1,56 @@
-{g->pagebox}
-  {g->banner}
-    {g->title}
-      {g->text text="Reorder Album"}
-    {/g->title}
-  {/g->banner}
+<div id="gsAdminContents">
+  <div class="gbTopFlag">
+    <div class="gbTitle">
+      <div class="giTitle">
+	{g->text text="Reorder Album"}
+      </div>
+    </div>
+    
+    <div class="spacer">
+      &nbsp;
+    </div>
+  </div>
 
   {if isset($ItemReorder.show.automaticOrderMessage)}
-    {g->box style="admin"}
-      {g->description}
-	{g->text text="This album has an automatic sort order specified, so you cannot change the order of items manually.  You must remove the automatic sort order to continue."}
-	{g->link arg1="view=core:ItemAdmin" arg2="subView=core:ItemEditAlbum" arg3="itemId=`$ItemAdmin.item.id`"}
-	  {g->text text="[change]"}
-	{/g->link}
-      {/g->description}
-    {/g->box}
+  <div class="gbAdmin">
+    <div class="giDescription">
+      {g->text text="This album has an automatic sort order specified, so you cannot change the order of items manually.  You must remove the automatic sort order to continue."}
+      <a href="{g->url arg1="view=core:ItemAdmin" arg2="subView=core:ItemEditAlbum" arg3="itemId=`$ItemAdmin.item.id`"}" value="{g->text text="[change]"}"/>
+    </div>
+  </div>
   {else}
-    {g->box style="admin"}
-      {g->description}
-	{g->text text="Change the order of the items in this album."}
-      {/g->description}
+  <div class="gbAdmin">
+    <div class="giDescription">
+      {g->text text="Change the order of the items in this album."}
+    </div>
 
-      {g->box}
-	{g->title}
-	  {g->text text="Move this item"}
-	{/g->title}
+    <div class="gbDataEntry">
+      <div class="giTitle">
+	{g->text text="Move this item"}
+      </div>
 
-	{g->element}
-	  {g->select name="form[selectedId]"}
-	    {foreach from=$ItemReorder.peers item=peer}
-	      <option value="{$peer.id}"> {$peer.title|default:$peer.pathComponent}
-	    {/foreach}
-	  {/g->select}
-	  {g->select name="form[placement]"}
-	    <option value="before"> {g->text text="before"}
-	    <option value="after"> {g->text text="after"}
-	  {/g->select}
-	  {g->select name="form[targetId]"}
-	    {foreach from=$ItemReorder.peers item=peer}
-	      <option value="{$peer.id}"> {$peer.title|default:$peer.pathComponent}
-	    {/foreach}
-	  {/g->select}
-	{/g->element}
-      {/g->box}
-    {/g->box}
+      <select name="{g->formVar var="form[selectedId]"}">
+	{foreach from=$ItemReorder.peers item=peer}
+	<option value="{$peer.id}"> {$peer.title|default:$peer.pathComponent} </option>
+	{/foreach}
+      </select>
+	
+      <select name="{g->formVar var="form[placement]"}">
+	<option value="before"> {g->text text="before"} </option>
+	<option value="after"> {g->text text="after"} </option>
+      </select>
 
-    {g->box}
-      {g->element}
-	{g->input type="submit" name="form[action][reorder]"}{g->text text="Reorder"}{/g->input}
-	{g->input type="submit" name="form[action][cancel]"}{g->text text="Cancel"}{/g->input}
-      {/g->element}
-    {/g->box}
+      <select name="{g->formVar var="form[targetId]"}">
+	{foreach from=$ItemReorder.peers item=peer}
+	<option value="{$peer.id}"> {$peer.title|default:$peer.pathComponent} </option>
+	{/foreach}
+      </select>
+    </div>
+  </div>
+
+  <div class="gbAdmin">
+    <input type="submit" name="{g->formVar var="form[action][reorder]"}" value="{g->text text="Reorder"}"/>
+    <input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
+  </div>
   {/if}
-{/g->pagebox}
+</div>

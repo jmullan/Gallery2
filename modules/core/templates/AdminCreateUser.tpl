@@ -1,122 +1,123 @@
-{g->pagebox}
-  {g->banner}
-    {g->title}
-      {g->text text="Create A New User"}
-    {/g->title}
-  {/g->banner}
+<div id="gsAdminContents">
+  <div class="gbTopFlag">
+    <div class="gbTitle">
+      <div class="giTitle">
+	{g->text text="Create A New User"}
+      </div>
+    </div>
+    
+    <div class="spacer">
+      &nbsp;
+    </div>
+  </div>
 
-  {g->box style="admin"}
-    {g->box}
-      {g->title}
+  <div class="gbAdmin">
+    <div class="gbDataEntry">
+      <div class="giTitle">
 	{g->text text="Username"}
-      {/g->title}
-      {g->subtitle}
+      </div>
+
+      <div class="giSubtitle">
 	{g->text text="required"}
-      {/g->subtitle}
+      </div>
 
-      {g->element}
-	{g->input size="32" type="text" name="form[userName]"}{$form.userName}{/g->input}
-      {/g->element}
-    {/g->box}
+      <input size="32" type="text" name="{g->formVar var="form[userName]"}" value="{$form.userName}"/>
 
-    {if isset($form.error.userName.missing)}
-      {g->error}
+      {if isset($form.error.userName.missing)}
+      <div class="giError">
 	{g->text text="You must enter a username"}
-      {/g->error}
-    {/if}
+      </div>
+      {/if}
     
-    {if isset($form.error.userName.exists)}
-      {g->error}
+      {if isset($form.error.userName.exists)}
+      <div class="giError">
 	{g->text text="Username '%s' already exists" arg1=$form.userName}
-      {/g->error}
-    {/if}
+      </div>
+      {/if}
+    </div>
 
-    {g->box}
-      {g->title}
+    <div class="gbDataEntry">
+      <div class="giTitle">
 	{g->text text="Full Name"}
-      {/g->title}
-      {g->element}
-	{g->input size="32" type="text" name="form[fullName]"}{$form.fullName}{/g->input}
-      {/g->element}
-    {/g->box}
+      </div>
+      
+      <input size="32" type="text" name="{g->formVar var="form[fullName]"}" value="{$form.fullName}"/>
+    </div>
 
-    {g->box}
-      {g->title}
+    <div class="gbDataEntry">
+      <div class="giTitle">
 	{g->text text="Email Address"}
-      {/g->title}
-      {g->subtitle}
-	{g->text text="required"}
-      {/g->subtitle}
+      </div>
 
-      {g->element}
-	  {g->input size="32" type="text" name="form[email]"}{$form.email}{/g->input}
-      {/g->element}
-    {/g->box}
+      <div class="giSubtitle">
+	{g->text text="required"}
+      </div>
+
+      <input size="32" type="text" name="{g->formVar var="form[email]"}" value="{$form.email}"/>
 	  
-    {if isset($form.error.email.missing)}
-      {g->error}
+      {if isset($form.error.email.missing)}
+      <div class="giError">
 	{g->text text="You must enter an email address"}
-      {/g->error}
-    {/if}
+      </div>
+      {/if}
+    </div>
 
-    {g->box}
-      {g->title}
+    <div class="gbDataEntry">
+      <div class="giTitle">
 	{g->text text="Language"}
-      {/g->title}
-      {g->element}
-	{g->select name="form[language]"}
+      </div>
+
+      <select name="{g->formVar var="form[language]"}">
 	  {html_options options=$AdminCreateUser.languageList selected=$form.language}
-	{/g->select}
-      {/g->element}
-    {/g->box}
+      </select>
+    </div>
 
-    {g->box}
-      {g->title}
+    <div class="gbDataEntry">
+      <div class="giTitle">
 	{g->text text="Password"}
-      {/g->title}
-      {g->subtitle}
+      </div>
+      <div class="giSubtitle">
 	{g->text text="required"}
-      {/g->subtitle}
-      {g->element}
-	  {g->input size="32" type="password" name="form[password1]"}{/g->input}
-      {/g->element}
-    {/g->box}
+      </div>
 
-    {if isset($form.error.password1.missing)}
-      {g->error}
+      <input size="32" type="password" name="{g->formVar var="form[password1]"}"/>
+
+      {if isset($form.error.password1.missing)}
+      <div class="giError">
 	{g->text text="You must enter a password"}
-      {/g->error}
-    {/if}
+      </div>
+      {/if}
+    </div>
 
-    {g->box}
-      {g->title}
+    <div class="gbDataEntry">
+      <div class="giTitle">
 	{g->text text="Verify Password"}
-      {/g->title}
-      {g->subtitle}
+      </div>
+      <div class="giSubtitle">
 	{g->text text="required"}
-      {/g->subtitle}
-      {g->element}
-	  {g->input size="32" type="password" name="form[password2]"}{/g->input}
-      {/g->element}
-    {/g->box}
+      </div>
 
-    {if isset($form.error.password2.missing)}
-      {g->error}
+      <input size="32" type="password" name="{g->formVar var="form[password2]"}"/>
+
+      {if isset($form.error.password2.missing)}
+      <div class="giError">
 	{g->text text="You must enter the password a second time"}
-      {/g->error}
-    {/if}
-    
-    {if isset($form.error.password2.mismatch)}
-      {g->error}
+      </div>
+      {/if}
+      
+      {if isset($form.error.password2.mismatch)}
+      <div class="giError">
 	{g->text text="The passwords you entered did not match"}
-      {/g->error}
-    {/if}
+      </div>
+      {/if}
+    </div>
 
-    {g->box}
-      {g->element}
-	{g->input type="submit" name="form[action][create]"}{g->text text="Create User"}{/g->input}
-	{g->input type="submit" name="form[action][cancel]"}{g->text text="Cancel"}{/g->input}
-      {/g->element}
-    {/g->box}
-  {/g->box}
-{/g->pagebox}
+    <div class="gbBottomFlag">
+      <div class="giActionSelect">
+	<input type="submit" name="{g->formVar var="form[action][create]"}" value="{g->text text="Create User"}"/>
+	<input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
+      </div>
+    </div>
+  </div>
+</div>
+

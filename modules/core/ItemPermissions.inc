@@ -333,8 +333,16 @@ class ItemPermissionsView extends GalleryView {
 		$form['user']['userName'] = '';
 	    }
 	    
+	    if (empty($form['user']['permission'])) {
+		$form['user']['permission'] = '';
+	    }
+	    
 	    if (empty($form['group']['groupName'])) {
 		$form['group']['groupName'] = '';
+	    }
+
+	    if (empty($form['group']['permission'])) {
+		$form['group']['permission'] = '';
 	    }
 	    
 	    $form['owner']['ownerName'] = '';

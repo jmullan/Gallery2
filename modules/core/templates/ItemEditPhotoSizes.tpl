@@ -1,86 +1,83 @@
-{g->box style="admin"}
-  {g->title}
+<div class="gbAdmin">
+  <div class="giTitle">
     {g->text text="Thumbnail"}
-  {/g->title}
-
-  {g->description}
+  </div>
+  
+  <div class="giDescription">
     {g->text text="Set the size of the thumbnail.  The largest side of the thumbnail will be no larger than this value."}
-  {/g->description}
-
+  </div>
+  
   {if $ItemEditPhotoSizes.editSizes.can.createThumbnail}
-    {g->element}
-      {g->input type=text size=6 name="form[thumbnail][size]"}{$form.thumbnail.size}{/g->input}
-    {/g->element}
+  <input type="text" size="6" name="{g->formVar var="form[thumbnail][size]"}" value="{$form.thumbnail.size}"/>
   {else}
-    {g->element style="emphasized"}
-      {g->text text="There are no graphics toolkits enabled that support this type of photo, so we cannot create or modify a thumbnail."}
-      {if $ItemEditPhotoSizes.isAdmin} 
-	{g->link arg1="view=core:SiteAdmin" arg2="subView=core:AdminModules"}
-	  {g->text text="site admin"}
-	{/g->link}
-      {/if}
-    {/g->element}
+  <b>
+    {g->text text="There are no graphics toolkits enabled that support this type of photo, so we cannot create or modify a thumbnail."}
+    {if $ItemEditPhotoSizes.isAdmin} 
+    <a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=core:AdminModules"}">
+      {g->text text="site admin"}
+    </a>
+    {/if}
+  </b>
   {/if}
-{/g->box}
 
-{if !empty($form.error.thumbnail.size.missing)}
-  {g->error}
+  {if !empty($form.error.thumbnail.size.missing)}
+  <div class="giError">
     {g->text text="You must enter a thumbnail size"}
-  {/g->error}
-{/if}
-
-{if !empty($form.error.thumbnail.size.invalid)}
-  {g->error}
+  </div>
+  {/if}
+  
+  {if !empty($form.error.thumbnail.size.invalid)}
+  <div class="giError">
     {g->text text="You must enter a number (greater than zero)"}
-  {/g->error}
-{/if}
+  </div>
+  {/if}
+</div>
 
-{g->box style="admin"}
-  {g->title}
+<div class="gbAdmin">
+  <div class="giTitle">
     {g->text text="Resized Photos"}
-  {/g->title}
+  </div>
 
-  {g->description}
+  <div class="giDescription">
     {g->text text="These sizes are alternate resized versions of the original you would like to have available for viewing."}
-  {/g->description}
+  </div>
 
   {if $ItemEditPhotoSizes.editSizes.can.createThumbnail}
-    {counter start=0 assign=index}
-    {foreach from=$form.resizes item=resize}
-      {g->element}
-	{g->input type="checkbox" name="form[resizes][$index][active]"}{$form.resizes.$index.active}{/g->input}
-	{g->input type="text" size="6" name="form[resizes][$index][size]"}{$form.resizes.$index.size}{/g->input}
-      {/g->element}
+  {counter start=0 assign=index}
+  {foreach from=$form.resizes item=resize}
+  <input type="checkbox" name="{g->formVar var="form[resizes][$index][active]"}" {if $form.resizes.$index.active}checked="checked"{/if}/>
+  <input type="text" size="6" name="{g->formVar var="form[resizes][$index][size]"}" value="{$form.resizes.$index.size}"/>
 
-      {if !empty($form.error.resizes.$index.size.missing)}
-	{g->error}
-	  {g->text text="You must enter a valid size"}
-	{/g->error}
-      {/if}
-      
-      {if !empty($form.error.resizes.$index.size.invalid)}
-	{g->error}
-	  {g->text text="You must enter a number (greater than zero)"}
-	{/g->error}
-      {/if}
-      {counter}
-    {/foreach}
-  {else}
-    {g->element style="emphasized"}
-      {g->text text="There are no graphics toolkits enabled that support this type of photo, so we cannot create or modify resized versions."}
-      {if $ItemEditPhotoSizes.isAdmin} 
-	{g->link arg1="view=core:SiteAdmin" arg2="subView=core:AdminModules"}
-	  {g->text text="site admin"}
-	{/g->link}
-      {/if}
-    {/g->element}
+  <br/>
+
+  {if !empty($form.error.resizes.$index.size.missing)}
+  <div class="giError">
+    {g->text text="You must enter a valid size"}
+  </div>
   {/if}
-{/g->box}
+      
+  {if !empty($form.error.resizes.$index.size.invalid)}
+  <div class="giError">
+    {g->text text="You must enter a number (greater than zero)"}
+  </div>
+  {/if}
+  {counter}
+  {/foreach}
+  {else}
+  <b>
+    {g->text text="There are no graphics toolkits enabled that support this type of photo, so we cannot create or modify resized versions."}
+    {if $ItemEditPhotoSizes.isAdmin} 
+    <a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=core:AdminModules"}">
+      {g->text text="site admin"}
+    </a>
+    {/if}
+  </b>
+  {/if}
+</div>
 
-{g->box}
-  {g->element}
-    {g->input type="hidden" name="mode"}editSizes{/g->input}
-    {g->input type="submit" name="form[action][save]"}{g->text text="Save"}{/g->input}
-    {g->input type="submit" name="form[action][undo]"}{g->text text="Undo"}{/g->input}
-  {/g->element}
-{/g->box}
+<div class="gbAdmin">
+  <input type="hidden" name="{g->formVar var="mode"}" value="editSizes"/>
+  <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}"/>
+  <input type="submit" name="{g->formVar var="form[action][undo]"}" value="{g->text text="Undo"}"/>
+</div>
+

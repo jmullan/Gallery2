@@ -1,53 +1,46 @@
-{capture name="date"}{g->date timestamp=$comment.date format="%e-%b-%Y %H:%M"}{/capture}
-{g->box style="comment"}
-  {g->title}
+<div class="gbComment">
+  <div class="giTitle">
     {$comment.subject|markup}
-  {/g->title}
+  </div>
   {if isset($can.edit) || isset($can.delete)}
-    {g->subtitle}
-      {g->linkset}
-	{if $can.edit}
-	  {g->item}
-	    {g->title}
-	      {g->link arg1="return=true" arg2="view=core:ItemAdmin" arg3="subView=comment:EditComment" arg4="itemId=`$item.id`" arg5="commentId=`$comment.id`"}
-		{g->text text="edit"}
-	      {/g->link}
-	    {/g->title}
-	  {/g->item}
-	{/if}
-	{if $can.delete}
-	  {g->item}
-	    {g->title}
-	      {g->link arg1="return=true" arg2="view=core:ItemAdmin" arg3="subView=comment:DeleteComment" arg4="itemId=`$item.id`" arg5="commentId=`$comment.id`"}
-		{g->text text="delete"}
-	      {/g->link}
-	    {/g->title}
-	  {/g->item}
-	{/if}
-      {/g->linkset}
+  <div class="giSubtitle">
+    <div class="giHorizontalLinks">
+      {if $can.edit}
+      <span>
+	<a href="{g->url arg1="return=true" arg2="view=core:ItemAdmin" arg3="subView=comment:EditComment" arg4="itemId=`$item.id`" arg5="commentId=`$comment.id`"}">
+	  {g->text text="edit"}
+	</a>
+      </span>
+      {/if}
 
-    {/g->subtitle}
+      {if $can.delete}
+      <span>
+	<a href="{g->url arg1="return=true" arg2="view=core:ItemAdmin" arg3="subView=comment:DeleteComment" arg4="itemId=`$item.id`" arg5="commentId=`$comment.id`"}">
+	  {g->text text="delete"}
+	</a>
+      </span>
+      {/if}
+    </div>
+  </div>
   {/if}
 
-  {g->description}
+  <div class="giDescription">
+    {capture name="date"}{g->date timestamp=$comment.date format="%e-%b-%Y %H:%M"}{/capture}
     {if isset($can.edit)}
-      {g->text text="Posted by %s on %s (%s)" 
-      arg1=$user.fullName|default:$user.userName
-      arg2=$smarty.capture.date
-      arg3=$comment.host}
+    {g->text text="Posted by %s on %s (%s)" 
+             arg1=$user.fullName|default:$user.userName
+             arg2=$smarty.capture.date
+             arg3=$comment.host}
     {else}
-      {g->text text="Posted by %s on %s" 
-      arg1=$user.fullName|default:$user.userName
-      arg2=$smarty.capture.date}
+    {g->text text="Posted by %s on %s" 
+             arg1=$user.fullName|default:$user.userName
+             arg2=$smarty.capture.date}
     {/if}
+  </div>
 
-  {/g->description}
-
-  {g->element}
-    {if isset($truncate)}
-      {$comment.comment|truncate:$truncate|markup}
-    {else}
-      {$comment.comment|markup}
-    {/if}
-  {/g->element}
-{/g->box}
+  {if isset($truncate)}
+  {$comment.comment|truncate:$truncate|markup}
+  {else}
+  {$comment.comment|markup}
+  {/if}
+</div>

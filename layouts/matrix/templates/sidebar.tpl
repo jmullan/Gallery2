@@ -1,73 +1,62 @@
-{g->sidebar side="right"}
-
+<div id="gsSidebar">
   {* Module links *}
-  {g->box style="sidebar"}
-    {g->title}
+  <div class="gbMenu">
+    <div class="giTitle">
       {g->text text="Greetings, %s!" arg1=$layout.user.fullName|default:$layout.user.userName}
-    {/g->title}
+    </div>
 
-    {g->listing}
+    <ul>
       {foreach from=$layout.moduleSystemLinks item=module}
-	{foreach from=$module item=link}
-	  {g->item}
-	    {g->title}
-	      {g->link params=$link.params}{$link.text}{/g->link}
-	    {/g->title}
-	  {/g->item}
-	{/foreach}
+      {foreach from=$module item=link}
+      <li>
+	<a href="{g->url params=$link.params}">{$link.text}</a>
+      </li>
       {/foreach}
-    {/g->listing}
-  {/g->box}
+      {/foreach}
+    </ul>
+  </div>
 
   {* List of peer items *}
   {if $layout.show.peerSidebarBox}
-    {g->box style="sidebar"}
-      {g->title}
+  <div class="gbMenu">
+    <div class="giTitle">
 	{$layout.parent.title|default:$layout.parent.pathComponent}
-      {/g->title}
-      {g->subtitle}
+    </div>
+    <span class="giDescription">
 	{g->text one="(%d item)" many="(%d items)" count=$layout.totalPeerCount arg1=$layout.totalPeerCount}
-      {/g->subtitle}
+    </span>
 
-      {g->listing}
-	{assign var="lastIndex" value=0}
-	{foreach from=$layout.peers item=peer}
-	  {assign var="title" value=$peer.peer.title|default:$peer.peer.pathComponent}
-	  {if ($peer.index - $lastIndex > 1)}
-	    {g->item}
-	      {g->title}
-		...
-	      {/g->title}
-	    {/g->item}
-	  {/if}
+    <ul>
+      {assign var="lastIndex" value=0}
+      {foreach from=$layout.peers item=peer}
+      {assign var="title" value=$peer.peer.title|default:$peer.peer.pathComponent}
+      {if ($peer.index - $lastIndex > 1)}
+      <li>
+	...
+      </li>
+      {/if}
 
-	  {if ($peer.peer.id == $layout.item.id)}
-	    {g->item selected="true"}
-	      {g->title}
-		{g->text text="%d. %s" arg1=$peer.index arg2=$title|truncate:14}
-	      {/g->title}
-	    {/g->item}
-	  {else}
-	    {g->item}
-	      {g->title}
-		{g->link arg1="view=core:ShowItem" arg2="itemId=`$peer.peer.id`"}
-		  {g->text text="%d. %s" arg1=$peer.index arg2=$title|truncate:14}
-		{/g->link}
-	      {/g->title}
-	    {/g->item}
-	  {/if}
-	  {assign var="lastIndex" value=$peer.index}
-	{/foreach}
-      {/g->listing}
-    {/g->box}
+      {if ($peer.peer.id == $layout.item.id)}
+      <li class="giSelected">
+        {g->text text="%d. %s" arg1=$peer.index arg2=$title|truncate:14}
+      </li>
+      {else}
+      <li>
+        <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$peer.peer.id`"}">
+	  {g->text text="%d. %s" arg1=$peer.index arg2=$title|truncate:14}
+	</a>
+      </li>
+      {/if}
+      {assign var="lastIndex" value=$peer.index}
+      {/foreach}
+    </ul>
+  </div>
   {/if}
 
   {* Extra modules system content *}
   {foreach from=$layout.moduleSystemContentFiles key=moduleId item=moduleFile}
-    {if ($moduleId != 'core')}
-      {g->box style="sidebar"}
-	{include file=$moduleFile l10Domain="modules_$moduleId"}
-      {/g->box}
-    {/if}
+  {if ($moduleId != 'core')}
+  {include file=$moduleFile l10Domain="modules_$moduleId"}
+  {/if}
   {/foreach}
-{/g->sidebar}
+</div>

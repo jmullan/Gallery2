@@ -1,70 +1,70 @@
-{g->pagebox}
-  {g->banner}
-    {g->title}
-      {g->text text="Change Password"}
-    {/g->title}
-  {/g->banner}
+<div id="gsAdminContents">
+  <div class="gbTopFlag">
+    <div class="gbTitle">
+      <div class="giTitle">
+	{g->text text="Change Password"}
+      </div>
+    </div>
+  </div>
 
   {if isset($status)}
-    {g->success}
-      {if isset($status.changedPassword)}
-	{g->text text="Password changed successfully"}
-      {/if}
-    {/g->success}
+  <div id="gsStatus">
+    {if isset($status.changedPassword)}
+    <div class="giStatus">
+      {g->text text="Password changed successfully"}
+    </div>
+    {/if}
+  </div>
   {/if}
 
-  {g->box}
-    {g->description}
+  <div class="gbAdmin">
+    <div class="giDescription">
       {g->text text="You must enter a new password twice to change passwords."}
-    {/g->description}
-  {/g->box}
+    </div>
+  
+    <div class="gbDataEntry">
+      <div class="giTitle">
+	{g->text text="Password"}
+      </div>
+      <div class="giSubtitle">
+	{g->text text="required"}
+      </div>
 
-  {g->box}
-    {g->title}
-      {g->text text="Password"}
-    {/g->title}
-    {g->subtitle}
-      {g->text text="required"}
-    {/g->subtitle}
-    {g->element}
-      {g->input type="password" name="form[password1]"}{/g->input}
-    {/g->element}
-    {if isset($form.error.password1.missing)}
-      {g->error}
+      <input type="password" name="{g->formVar var="form[password1]"}"/>
+
+      {if isset($form.error.password1.missing)}
+      <div class="giError">
 	{g->text text="You must enter a password"}
-      {/g->error}
-    {/if}
-  {/g->box}
+      </div>
+      {/if}
+    </div>
 
-  {g->box}
-    {g->title}
-      {g->text text="Verify Password"}
-    {/g->title}
-    {g->subtitle}
-      {g->text text="required"}
-    {/g->subtitle}
-    {g->element}
-      {g->input type="password" name="form[password2]"}{/g->input}
-    {/g->element}
+    <div class="gbDataEntry">
+      <div class="giTitle">
+	{g->text text="Verify Password"}
+      </div>
+      <div class="giSubtitle">
+	{g->text text="required"}
+      </div>
 
-    {if isset($form.error.password2.missing)}
-      {g->error}
+      <input type="password" name="{g->formVar var="form[password2]"}"/>
+
+      {if isset($form.error.password2.missing)}
+      <div class="giError">
 	{g->text text="You must enter your password again!"}
-      {/g->error}
-    {/if}
-
-    {if isset($form.error.password2.mismatch)}
-      {g->error}
+      </div>
+      {/if}
+      
+      {if isset($form.error.password2.mismatch)}
+      <div class="giError">
 	{g->text text="The passwords you entered did not match"}
-      {/g->error}
-    {/if}
-  {/g->box}
+      </div>
+      {/if}
+    </div>
+  </div>
 
-  {g->box}
-    {g->element}
-      {g->input type="submit" name="form[action][save]"}{g->text text="Change"}{/g->input}
-      {g->input type="submit" name="form[action][cancel]"}{g->text text="Cancel"}{/g->input}
-    {/g->element}
-  {/g->box}
-{/g->pagebox}
-
+  <div class="gbAdmin">
+    <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="Change"}"/>
+    <input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
+  </div>
+</div>

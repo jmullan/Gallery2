@@ -100,6 +100,7 @@ class InitializeGalleryTestCase extends TestCase {
 					    join(',',
 						 array('/usr/www/website/menalto.com/albums',
 						       '/usr/www/website/menalto.com/dev/gallery/gallery',
+						       dirname(dirname(dirname(dirname(__FILE__)))),
 						       '/tmp')));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);

@@ -1,22 +1,19 @@
-{g->breadcrumb}
+<div class="gbBreadCrumb">
   {section name=parent loop=$layout.parents}
-    {g->item}
-      {g->title}
-	{if ! $smarty.section.parent.last}
-	  {g->link arg1="view=core:ShowItem" arg2="itemId=`$layout.parents[parent].id`" arg3="highlightId=`$layout.parents[parent.index_next].id`"}
-	    {$layout.parents[parent].title|default:$layout.parents[parent].pathComponent|markup}
-	  {/g->link}
-	{else}
-	  {g->link arg1="view=core:ShowItem" arg2="itemId=`$layout.parents[parent].id`" arg3="highlightId=`$layout.item.id`"}
-	    {$layout.parents[parent].title|default:$layout.parents[parent].pathComponent|markup}
-	  {/g->link}
-	{/if}
-      {/g->title}
-    {/g->item}
+  <span>
+    {if ! $smarty.section.parent.last}
+    <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$layout.parents[parent].id`" arg3="highlightId=`$layout.parents[parent.index_next].id`"}">
+      {$layout.parents[parent].title|default:$layout.parents[parent].pathComponent|markup}
+    </a>
+    {else}
+    <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$layout.parents[parent].id`" arg3="highlightId=`$layout.item.id`"}">
+      {$layout.parents[parent].title|default:$layout.parents[parent].pathComponent|markup}
+    </a>
+    {/if}
+  </span>
   {/section}
-  {g->item}
-    {g->title}
-      {$layout.item.title|default:$layout.item.pathComponent|markup}
-    {/g->title}
-  {/g->item}
-{/g->breadcrumb}
+
+  <span>
+    {$layout.item.title|default:$layout.item.pathComponent|markup}
+  </span>
+</div>

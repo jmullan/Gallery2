@@ -1,90 +1,99 @@
-{g->pagebox}
-  {g->banner}
-    {g->title}
-      {g->text text="Confirm Migration"}
-    {/g->title}
-  {/g->banner}
+<div id="gsAdminContents">
+  <div class="gbTopFlag">
+    <div class="gbTitle">
+      <div class="giTitle">
+	{g->text text="Confirm Migration"}
+      </div>
+    </div>
 
-  {g->box style="admin"}
-    {g->title}
-      {g->text text="Users to import"}
-    {/g->title}
+    <div class="spacer">
+      &nbsp;
+    </div>
+  </div>
+
+  <div class="gbAdmin">
+    <div class="giTitle">
+      {g->text text="Users to import:"}
+    </div>
+
     {if isset($form.migrateUser)}
-     {g->element}
-       {foreach from=$form.migrateUser key=uid item=junk}
-	 {$ConfirmImport.uids.$uid} &nbsp;
-	 {g->input type="hidden" name="form[migrateUser][$uid]"}1{/g->input}
-       {/foreach}
-     {/g->element}
+      {foreach from=$form.migrateUser key=uid item=junk}
+      <input type="hidden" name="{g->formVar var="form[migrateUser][$uid]"}" value="1"/>
+      {$ConfirmImport.uids.$uid} &nbsp;
+      {/foreach}
+    </table>
     {/if}
-  {/g->box}
+  </div>
 
-  {g->box style="admin"}
-    {g->title}
+  <div class="gbAdmin">
+    <div class="giTitle">
       {g->text text="Albums to import"}
-    {/g->title}
+    </div>
 
-    {g->element}
-      {g->table style="admin_listing" evenodd="true"}
-	{g->row}
-	  {g->column header="true"}
-	    {g->text text="Album Name"}
-	  {/g->column}
-	  {g->column header="true"}
-	    {g->text text="Album Title"}
-	  {/g->column}
-	  {g->column header="true"}
-	    {g->text text="Album Notes"}
-	  {/g->column}
-	{/g->row}
-	{foreach from=$form.sourceAlbums item=albumName}
-	  {g->row}
-	    {g->column width="25%"}
-	      {$ConfirmImport.urlDecoded.$albumName}
-	      {g->input type="hidden" name="form[sourceAlbums][$albumName]"}1{/g->input}
-	    {/g->column}
-	    {g->column}
-	      {$ConfirmImport.titles.$albumName}
-	    {/g->column}
-	    {g->column}
-	      <p>
-              {if ($ConfirmImport.existingAlbums.$albumName)> 0}
-		{g->text text="An album already exists with this name.  This album will be renamed."}<br />
-	      {/if}
-	      {if ($ConfirmImport.illegalAlbumNames.$albumName) != ''}
-		{g->text text="This album has an illegal name and will be renamed: "}{$ConfirmImport.illegalAlbumNames.$albumName}<br />
-	      {/if}
-	      {if (!$ConfirmImport.albumValidOwner.$albumName)}
-                {g->text text="This album's owner hasn't been imported"}
-              {/if}
-	      </p>
-            {/g->column}
-	  {/g->row}
-	{/foreach}
-      {/g->table}
-      {g->table style="admin_listing" evenodd="true"}
-	{g->row}
-	  {g->column header="true"}
-            Top level albums and albums whose parents are not
-            selected will be imported into this album:
-          {/g->column}
-        {/g->row}
-	{g->row}
-	  {g->column}
-            {$ConfirmImport.targetAlbum->_title}:
-            {$ConfirmImport.targetAlbum->_description}
-            {g->input type="hidden" name="form[destinationAlbumID]"}{$ConfirmImport.destinationAlbumID}{/g->input}
-	  {/g->column}
-        {/g->row}
-      {/g->table}
-    {/g->element}
-  {/g->box}
+    <table class="gbDataTable">
+      <tr>
+	<th>
+	  {g->text text="Album Name"}
+	</th>
+	<th>
+	  {g->text text="Album Title"}
+	</th>
+	<th>
+	  {g->text text="Album Notes"}
+	</th>
+      </tr>
 
-  {g->box style="admin"}
-    {g->element}
-      {g->input type="hidden" name="albumsPath"}{$ConfirmImport.albumsPath}{/g->input}
-      {g->input type="submit" name="form[action][import]"}{g->text text="Import"}{/g->input}
-      {g->input type="submit" name="form[action][cancel]"}{g->text text="Cancel"}{/g->input}
-    {/g->element}
-  {/g->box}
-{/g->pagebox}
+      {foreach from=$form.sourceAlbums item=albumName}
+      <tr class="{cycle values="gbEven,gbOdd"}">
+	<td>
+	  {$ConfirmImport.urlDecoded.$albumName}
+	  <input type="hidden" name="{g->formVar var="form[sourceAlbums][$albumName]"}" value="1"/>
+	</td>
+
+	<td>
+	  {$ConfirmImport.titles.$albumName}
+	</td>
+
+	<td>
+	  {if ($ConfirmImport.existingAlbums.$albumName)> 0}
+	  {g->text text="An album already exists with this name.  This album will be renamed."}
+	  <br />
+	  {/if}
+
+	  {if ($ConfirmImport.illegalAlbumNames.$albumName) != ''}
+	  {g->text text="This album has an illegal name and will be renamed to <i>%s</i>" 
+	           arg1=$ConfirmImport.illegalAlbumNames.$albumName}
+	  <br />
+	  {/if}
+
+	  {if (!$ConfirmImport.albumValidOwner.$albumName)}
+	  {g->text text="This album's owner hasn't been imported"}
+	  {/if}
+	</td>
+      </tr>
+      {/foreach}
+    </table>
+  </div>
+
+  <div class="gbAdmin">
+    <div class="giDescription">
+      {g->text text="Top level albums and albums whose parents are not selected will be imported into this album:"}
+    </div>
+
+    <div class="giInfo">
+      <span>
+	{g->text text="Title: %s" arg1=$ConfirmImport.targetAlbum.title}
+      </span>
+      <span>
+	{g->text text="Description: %s" arg1=$ConfirmImport.targetAlbum.description}
+      </span>
+    </div>
+    <input type="hidden" name="{g->formVar var="form[destinationAlbumID]"}" value="{$ConfirmImport.destinationAlbumID}"/>
+  </div>
+
+  <div class="gbAdmin">
+    <input type="hidden" name="{g->formVar var="albumsPath"}" value="{$ConfirmImport.albumsPath}"/>
+    <input type="submit" name="{g->formVar var="form[action][import]"}" value="{g->text text="Import"}"/>
+    <input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
+  </div>
+</div>

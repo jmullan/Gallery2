@@ -1,178 +1,188 @@
-{g->pagebox}
-  {g->banner}
-    {g->title}
-      {g->text text="EXIF Settings"}
-    {/g->title}
-  {/g->banner}
+<div id="gsAdminContents">
+  <div class="gbTopFlag">
+    <div class="gbTitle">
+      <div class="giTitle">
+	{g->text text="EXIF Settings"}
+      </div>
+    </div>
+    
+    <div class="spacer">
+      &nbsp;
+    </div>
+  </div>
 
   {if isset($status)}
-    {g->success}
-      {if isset($status.added.summary)}
-	{g->text one="Added %d property to the Summary view"
-	         many="Added %d properties to the Summary view"
-	         count=$status.added.summary
-	         arg1=$status.added.summary}
-      {/if}
-      {if isset($status.removed.summary)}
-	{g->text one="Removed %d property from the Summary view"
-	         many="Removed %d properties from the Summary view"
-	         count=$status.removed.summary
-	         arg1=$status.removed.summary}
-      {/if}
-      {if isset($status.restored.summary)}
-	{g->text text="Restored the default properties for the Summary view"}
-      {/if}
-      {if isset($status.movedUp.summary)}
-	{g->text one="Moved %d property up in the Summary view"
-	         many="Moved %d properties up in the Summary view"
-	         count=$status.movedUp.summary
-	         arg1=$status.movedUp.summary}
-      {/if}
-      {if isset($status.movedDown.summary)}
-	{g->text one="Moved %d property down in the Summary view"
-	         many="Moved %d properties down in the Summary view"
-	         count=$status.movedDown.summary
-	         arg1=$status.movedDown.summary}
-      {/if}
-      {if isset($status.added.detailed)}
-	{g->text one="Added %d property to the Detailed view"
-	         many="Added %d properties to the Detailed view"
-	         count=$status.added.detailed
-	         arg1=$status.added.detailed}
-      {/if}
-      {if isset($status.removed.detailed)}
-	{g->text one="Removed %d property from the Detailed view"
-	         many="Removed %d properties from the Detailed view"
-	         count=$status.removed.detailed
-	         arg1=$status.removed.detailed}
-      {/if}
-      {if isset($status.restored.detailed)}
-	{g->text text="Restored the default properties for the Detailed view"}
-      {/if}
-      {if isset($status.movedUp.detailed)}
-	{g->text one="Moved %d property up in the Detailed view"
-	         many="Moved %d properties up in the Detailed view"
-	         count=$status.movedUp.detailed
-	         arg1=$status.movedUp.detailed}
-      {/if}
-      {if isset($status.movedDown.detailed)}
-	{g->text one="Moved %d property down in the Detailed view"
-	         many="Moved %d properties down in the Detailed view"
-	         count=$status.movedDown.detailed
-	         arg1=$status.movedDown.detailed}
-      {/if}
-    {/g->success}
+  <div id="gsStatus">
+    {if isset($status.added.summary)}
+    <div class="giStatus">
+      {g->text one="Added %d property to the Summary view"
+	       many="Added %d properties to the Summary view"
+	       count=$status.added.summary
+	       arg1=$status.added.summary}
+    </div>
+    {/if}
+    {if isset($status.removed.summary)}
+    <div class="giStatus">
+      {g->text one="Removed %d property from the Summary view"
+	       many="Removed %d properties from the Summary view"
+	       count=$status.removed.summary
+	       arg1=$status.removed.summary}
+    </div>
+    {/if}
+    {if isset($status.restored.summary)}
+    <div class="giStatus">
+      {g->text text="Restored the default properties for the Summary view"}
+    </div>
+    {/if}
+    {if isset($status.movedUp.summary)}
+    <div class="giStatus">
+      {g->text one="Moved %d property up in the Summary view"
+	       many="Moved %d properties up in the Summary view"
+	       count=$status.movedUp.summary
+	       arg1=$status.movedUp.summary}
+    </div>
+    {/if}
+    {if isset($status.movedDown.summary)}
+    <div class="giStatus">
+      {g->text one="Moved %d property down in the Summary view"
+	       many="Moved %d properties down in the Summary view"
+	       count=$status.movedDown.summary
+	       arg1=$status.movedDown.summary}
+    </div>
+    {/if}
+    {if isset($status.added.detailed)}
+    <div class="giStatus">
+      {g->text one="Added %d property to the Detailed view"
+	       many="Added %d properties to the Detailed view"
+	       count=$status.added.detailed
+	       arg1=$status.added.detailed}
+    </div>
+    {/if}
+    {if isset($status.removed.detailed)}
+    <div class="giStatus">
+      {g->text one="Removed %d property from the Detailed view"
+	       many="Removed %d properties from the Detailed view"
+	       count=$status.removed.detailed
+	       arg1=$status.removed.detailed}
+    </div>
+    {/if}
+    {if isset($status.restored.detailed)}
+    <div class="giStatus">
+      {g->text text="Restored the default properties for the Detailed view"}
+    </div>
+    {/if}
+    {if isset($status.movedUp.detailed)}
+    <div class="giStatus">
+      {g->text one="Moved %d property up in the Detailed view"
+	       many="Moved %d properties up in the Detailed view"
+	       count=$status.movedUp.detailed
+	       arg1=$status.movedUp.detailed}
+    </div>
+    {/if}
+    {if isset($status.movedDown.detailed)}
+    <div class="giStatus">
+      {g->text one="Moved %d property down in the Detailed view"
+	       many="Moved %d properties down in the Detailed view"
+	       count=$status.movedDown.detailed
+	       arg1=$status.movedDown.detailed}
+    </div>
+    {/if}
+  </div>
   {/if}
 
-  {g->box style="admin"}
-    {g->description}
+  <div class="gbAdmin">
+    <div class="giDescription">
       {g->text text="Gallery can display the EXIF data that is embedded in photos taken by most digital cameras."}
-    {/g->description}
-  {/g->box}
+    </div>
+  </div>
 
-  {g->box style="admin"}
-    {g->title}
+  <div class="gbAdmin">
+    <div class="giTitle">
       {g->text text="Summary and Detailed EXIF displays"}
-    {/g->title}
-    {g->description}
+    </div>
+    <div class="giDescription">
       {g->text text="There can be a great deal of EXIF information stored in photos from modern digital cameras.  We display that data in two different views, summary and detailed.  You can choose which properties are displayed in each view."}
-    {/g->description}
+    </div>
 
-    {g->table style="admin_widgets"}
-      {g->row}
-	{g->column header="true"}
+    <table class="gbDataTable">
+      <tr>
+	<th>
 	  {g->text text="Available"}
-	{/g->column}
-	{g->column header="true"}
+	</th>
+	<th>
 	  {g->text text="Summary"}
-	{/g->column}
-	{g->column header="true"}
+	</th>
+	<th>
 	  {g->text text="Detailed"}
-	{/g->column}
-      {/g->row}
-      {g->row}
-	{g->column}
-	  {g->select name="form[available][]" size="20" multiple="true"}
+	</th>
+      </tr>
+
+      <tr>
+	<td>
+	  <select name="{g->formVar var="form[available][]"}" size="20" multiple="multiple">
 	    {html_options options=$AdminExif.availableList}
-	  {/g->select}
-	{/g->column}
-	{g->column}
-	  {g->select name="form[summary][]" size="20" multiple="true"}
-	    {html_options options=$AdminExif.summaryList}
-	  {/g->select}
-	{/g->column}
-	{g->column}
-	  {g->select name="form[detailed][]" size="20" multiple="true"}
-	    {html_options options=$AdminExif.detailedList}
-	  {/g->select}
-	{/g->column}
-      {/g->row}
+	  </select>
+	</td>
+	<td>
+	  <select name="{g->formVar var="form[summary][]"}" size="20" multiple="multiple">
+	      {html_options options=$AdminExif.summaryList}
+	  </select>
+	</td>
+	<td>
+	  <select name="{g->formVar var="form[detailed][]"}" size="20" multiple="multiple">
+	      {html_options options=$AdminExif.detailedList}
+	  </select>
+	</td>
+      </tr>
+
       {if isset($form.error.available.missing) || isset($form.error.summary.missing) || isset($form.error.detailed.missing)}
-	{g->row}
-	  {g->column colspan="3"}
-	    {g->error}
-	      {if isset($form.error.available.missing)}
-		{g->text text="You must select at least one value in the available column"}
-	      {/if}
-	      {if isset($form.error.summary.missing)}
-		{g->text text="You must select at least one value in the summary column"}
-	      {/if}
-	      {if isset($form.error.detailed.missing)}
-		{g->text text="You must select at least one value in the detailed column"}
-	      {/if}
-	    {/g->error}
-	  {/g->column}
-	{/g->row}
+      <tr>
+	<td colspan="3">
+	  <div class="giError">
+	    {if isset($form.error.available.missing)}
+	    {g->text text="You must select at least one value in the available column"}
+	    {/if}
+	    {if isset($form.error.summary.missing)}
+	    {g->text text="You must select at least one value in the summary column"}
+	    {/if}
+	    {if isset($form.error.detailed.missing)}
+	    {g->text text="You must select at least one value in the detailed column"}
+	    {/if}
+	  </div>
+	</td>
+      </tr>
       {/if}
-      {g->row}
-	{g->column}
-	  {g->input type="submit" name="form[action][availableToSummary]"}
-	    {g->text text="Add to Summary"}
-	  {/g->input}
-	  {g->input type="submit" name="form[action][availableToDetailed]"}
-	    {g->text text="Add to Detailed"}
-	  {/g->input}
-	{/g->column}
-	{g->column}
-	  {g->input type="submit" name="form[action][removeFromSummary]"}
-	    {g->text text="Remove"}
-	  {/g->input}
-	  {g->input type="submit" name="form[action][moveUpSummary]"}
-	    {g->text text="Up"}
-	  {/g->input}
-	  {g->input type="submit" name="form[action][moveDownSummary]"}
-	    {g->text text="Down"}
-	  {/g->input}
-	{/g->column}
-	{g->column}
-	  {g->input type="submit" name="form[action][removeFromDetailed]"}
-	    {g->text text="Remove"}
-	  {/g->input}
-	  {g->input type="submit" name="form[action][moveUpDetailed]"}
-	    {g->text text="Up"}
-	  {/g->input}
-	  {g->input type="submit" name="form[action][moveDownDetailed]"}
-	    {g->text text="Down"}
-	  {/g->input}
-	{/g->column}
-      {/g->row}
-    {/g->table}
-  {/g->box}
-  
-  {g->box style="admin"}
-    {g->title}
+
+      <tr>
+	<td>
+	  <input type="submit" name="{g->formVar var="form[action][availableToSummary]"}" value="{g->text text="Add to Summary"}"/>
+	  <input type="submit" name="{g->formVar var="form[action][availableToDetailed]"}" value="{g->text text="Add to Detailed"}"/>
+	</td>
+
+	<td>
+	  <input type="submit" name="{g->formVar var="form[action][removeFromSummary]"}" value="{g->text text="Remove"}"/>
+	  <input type="submit" name="{g->formVar var="form[action][moveUpSummary]"}" value="{g->text text="Up"}"/>
+	  <input type="submit" name="{g->formVar var="form[action][moveDownSummary]"}" value="{g->text text="Down"}"/>
+	</td>
+
+	<td>
+	  <input type="submit" name="{g->formVar var="form[action][removeFromDetailed]"}" value="{g->text text="Remove"}"/>
+	  <input type="submit" name="{g->formVar var="form[action][moveUpDetailed]"}" value="{g->text text="Up"}"/>
+	  <input type="submit" name="{g->formVar var="form[action][moveDownDetailed]"}" value="{g->text text="Down"}"/>
+	</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="gbAdmin">
+    <div class="giTitle">
       {g->text text="Reset to Defaults"}
-    {/g->title}
-    {g->description}
+    </div>
+    <div class="giDescription">
       {g->text text="Restore the original values for the Summary and Detailed views.  Use with caution, there is no undo!"}
-    {/g->description}
-    {g->element}
-      {g->input type="submit" name="form[action][resetSummary]"}
-	{g->text text="Restore Summary Defaults"}
-      {/g->input}
-      {g->input type="submit" name="form[action][resetDetailed]"}
-	{g->text text="Restore Detailed Defaults"}
-      {/g->input}
-    {/g->element}
-  {/g->box}
-{/g->pagebox}
+    </div>
+
+    <input type="submit" name="{g->formVar var="form[action][resetSummary]"}" value="{g->text text="Restore Summary Defaults"}"/>
+    <input type="submit" name="{g->formVar var="form[action][resetDetailed]"}" value="{g->text text="Restore Detailed Defaults"}"/>
+  </div>
+</div>

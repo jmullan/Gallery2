@@ -1,103 +1,100 @@
-{g->form arg1="controller=$controller" enctype=$ItemAdmin.enctype}
-  {g->input type="hidden" name="form[formName]"}{$form.formName}{/g->input}
-  {g->input type="hidden" name="itemId"}{$ItemAdmin.item.id}{/g->input}
+<forme action="{g->url}" nctype="{$ItemAdmin.enctype}" method="post">
+  <p>
+    {g->hiddenFormVars}
+    <input type="hidden" name="{g->formVar var="controller"}" value="{$controller}"/>
+    <input type="hidden" name="{g->formVar var="form[formName]"}" value="{$form.formName}"/>
+    <input type="hidden" name="{g->formVar var="itemId"}" value="{$ItemAdmin.item.id}"/>
+  </p>
   
-  {g->main}
-    {g->breadcrumb}
-      {foreach from=$ItemAdmin.parents item=parent}
-	{g->item}
-	  {g->title}
-	    {g->link arg1="view=core:ShowItem" arg2="itemId=`$parent.id`"}
-	      {$parent.title|default:$parent.pathComponent|markup}
-	    {/g->link}
-	  {/g->title}
-	{/g->item}
-      {/foreach}
-      {g->item}
-	{g->title}
-	  {g->link arg1="view=core:ShowItem" arg2="itemId=`$ItemAdmin.item.id`"}
-	    {$ItemAdmin.item.title|default:$ItemAdmin.item.pathComponent|markup}
-	  {/g->link}
-	{/g->title}
-      {/g->item}
-    {/g->breadcrumb}
+  <div id="gsHeader">
+    <div class="gbTitleBanner">
+      <div class="gbBreadCrumb">
+        {foreach from=$ItemAdmin.parents item=parent}
+        <span>
+          <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$parent.id`"}">
+            {$parent.title|default:$parent.pathComponent|markup}
+          </a>
+        </span>
+        {/foreach}
+        
+        <span>
+          <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$ItemAdmin.item.id`"}">
+            {$ItemAdmin.item.title|default:$ItemAdmin.item.pathComponent|markup}
+          </a>
+        </span>
+      </div>
+    </div>
+  </div>
 
-    {g->sidebar}
-      {if !$ItemAdmin.isRootAlbum}
-	{g->box style="sidebar"}
-	  {g->element}
-	    {if empty($ItemAdmin.thumbnail)}
-	      {g->text text="No Thumbnail"}
-	    {else}
-	      {g->image item=$ItemAdmin.item image=$ItemAdmin.thumbnail}
-	    {/if}
-	  {/g->element}
-	  {g->footer}
-	    {$ItemAdmin.item.title|markup}
-	  {/g->footer}
-	{/g->box}
+  <div id="gsAdminSidebar">
+    {if !$ItemAdmin.isRootAlbum}
+    <div class="gbMenu">
+      {if empty($ItemAdmin.thumbnail)}
+      <span>
+        {g->text text="No Thumbnail"}
+      </span>
+      {else}
+      {g->image item=$ItemAdmin.item image=$ItemAdmin.thumbnail}
       {/if}
 
-      {g->box style="sidebar"}
-	{g->title}
-	  {g->text text="Options"}
-	{/g->title}
+      <div class="giTitle">
+        {$ItemAdmin.item.title|markup}
+      </div>
+    </div>
+    {/if}
 
-	{g->listing}
-	  {foreach from=$ItemAdmin.subViewChoices key=choiceName item=choiceParams}
-	    {g->item}
-	      {g->title}
-		{g->link params=$choiceParams}
-		  {$choiceName}
-		{/g->link}
-	      {/g->title}
-	    {/g->item}
-	  {/foreach}
-	{/g->listing}
-      {/g->box}
+    <div class="gbMenu">
+      <div class="giTitle">
+        {g->text text="Options"}
+      </div>
+      
+      <ul>
+        {foreach from=$ItemAdmin.subViewChoices key=choiceName item=choiceParams}
+        <li>
+          <a href="{g->url params=$choiceParams}">
+            {$choiceName}
+          </a>
+        </li>
+        {/foreach}
+      </ul>
+    </div>
+    
+    <div class="gbMenu">
+      <div class="giTitle">
+        {g->text text="Navigation"}
+      </div>
+      
+      <ul>
+        {if ($ItemAdmin.itemType == 'item')}
+        <li>
+          <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$ItemAdmin.item.id`"}">
+            {g->text text="Back to Item View"}
+          </a>
+        </li>
+        
+        <li>
+          <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$ItemAdmin.parent.id`"}">
+            {g->text text="Back to Album View"}
+          </a>
+        </li>
+        {else}
+        <li>
+          <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$ItemAdmin.item.id`"}">
+            {g->text text="Back to Album View"}
+          </a>
+        </li>
+        {/if}
 
-      {g->box style="sidebar"}
-	{g->title}
-	  {g->text text="Navigation"}
-	{/g->title}
-	{g->listing}
-	  {if ($ItemAdmin.itemType == 'item')}
-	    {g->item}
-	      {g->title}
-		{g->link arg1="view=core:ShowItem" arg2="itemId=`$ItemAdmin.item.id`"}
-		  {g->text text="Back to Item View"}
-		{/g->link}
-	      {/g->title}
-	    {/g->item}
-	    {g->item}
-	      {g->title}
-		{g->link arg1="view=core:ShowItem" arg2="itemId=`$ItemAdmin.parent.id`"}
-		  {g->text text="Back to Album View"}
-		{/g->link}
-	      {/g->title}
-	    {/g->item}
-	  {else}
-	    {g->item}
-	      {g->title}
-		{g->link arg1="view=core:ShowItem" arg2="itemId=`$ItemAdmin.item.id`"}
-		  {g->text text="Back to Album View"}
-		{/g->link}
-	      {/g->title}
-	    {/g->item}
-	  {/if}
-	  {if ($ItemAdmin.isSiteAdmin)}
-	    {g->item}
-	      {g->title}
-		{g->link arg1="view=core:SiteAdmin"}
-		  {g->text text="Site Admin"}
-		{/g->link}
-	      {/g->title}
-	    {/g->item}
-	  {/if}
-	{/g->listing}
-      {/g->box}
-    {/g->sidebar}
+        {if ($ItemAdmin.isSiteAdmin)}
+        <li>
+          <a href="{g->url arg1="view=core:SiteAdmin"}">
+            {g->text text="Site Admin"}
+          </a>
+        </li>
+        {/if}
+      </ul>
+    </div>
+  </div>
 
-    {include file=$ItemAdmin.viewBodyFile l10Domain=$ItemAdmin.viewL10Domain}
-  {/g->main}
-{/g->form}
+  {include file=$ItemAdmin.viewBodyFile l10Domain=$ItemAdmin.viewL10Domain}
+</form>

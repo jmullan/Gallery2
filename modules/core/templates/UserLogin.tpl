@@ -1,51 +1,49 @@
-{g->pagebox}
-  {g->banner}
-    {g->title}
-      {g->text text="Log in to your account"}
-    {/g->title}
-  {/g->banner}
+<div id="gsAdminContents">
+  <div class="gbTopFlag">
+    <div class="gbTitle">
+      <div class="giTitle">
+	{g->text text="Log in to your account"}
+      </div>
+    </div>
+  </div>
 
-  {g->box style="admin"}
-    {g->box}
-      {g->title}
+  <div class="gbAdmin">
+    <div class="gbDataEntry">
+      <div class="giTitle">
 	{g->text text="User name"}
-      {/g->title}
-      {g->element}
-	{g->input type="text" name="form[username]"}{$form.username}{/g->input}
-      {/g->element}
-    {/g->box}
+      </div>
 
-    {if isset($form.error.username.missing)}
-      {g->error}
+      <input type="text" name="{g->formVar var="form[username]"}" value="{$form.username}"/>
+
+      {if isset($form.error.username.missing)}
+      <div class="giError">
 	{g->text text="You must enter a username"}
-      {/g->error}
-    {/if}
+      </div>
+      {/if}
+    </div>
 
-    {g->box}
-      {g->title}
+    <div class="gbDataEntry">
+      <div class="giTitle">
 	{g->text text="Password"}
-      {/g->title}
+      </div>
 
-      {g->element}
-	{g->input type="password" name="form[password]"}{/g->input}
-      {/g->element}
-    {/g->box}
+      <input type="password" name="{g->formVar var="form[password]"}"/>
 
-    {if isset($form.error.password.missing)}
-      {g->error}
+      {if isset($form.error.password.missing)}
+      <div class="giError">
 	{g->text text="You must enter a password"}
-      {/g->error}
-    {/if}
-
-    {if isset($form.error.invalidPassword)}
-      {g->error}
+      </div>
+      {/if}
+      
+      {if isset($form.error.invalidPassword)}
+      <div class="giError">
 	{g->text text="Your login information is incorrect.  Please try again."}
-      {/g->error}
-    {/if}
+      </div>
+      {/if}
+    </div>
+  </div>
 
-    {g->footer}
-      {g->input type="submit" name="form[action][login]"}{g->text text="Login"}{/g->input}
-      {g->input type="submit" name="form[action][cancel]"}{g->text text="Cancel"}{/g->input}
-    {/g->footer}
-  {/g->box}
-{/g->pagebox}
+  <input type="submit" name="{g->formVar var="form[action][login]"}" value="{g->text text="Login"}"/>
+  <input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
+  </div>
+</div>

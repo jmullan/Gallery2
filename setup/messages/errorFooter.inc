@@ -3,7 +3,7 @@
 <br>
 
 When you think you have resolved this problem, you can click this button to try again:
-<form method="POST">
+<form method="post">
 <?php foreach ($_POST as $key => $value) { ?>
     <input type="hidden" name="<?php echo $key ?>" value="<?php echo $value ?>">
 <?php } ?>

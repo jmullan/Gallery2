@@ -1,15 +1,19 @@
-{g->main}
-  {g->pagebox}
-    {g->banner}
-      {g->title}
+<div id="gsAdminContents">
+  <div class="gbTopFlag">
+    <div class="gbTitle">
+      <div class="giTitle">
 	{g->text text="Security Violation"}
-      {/g->title}
-    {/g->banner}
+      </div>
+    </div>
 
-    {g->box}
-      {g->description}
-	{g->text text="The action you attempted is not permitted."}
-      {/g->description}
-    {/g->box}
-  {/g->pagebox}
-{/g->main}
+    <div class="spacer">
+      &nbsp;
+    </div>
+  </div>
+
+  <div class="gbAdmin">
+    <div class="giDescription">
+      {g->text text="The action you attempted is not permitted."}
+    </div>
+  </div>
+</div>

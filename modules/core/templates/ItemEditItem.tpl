@@ -1,100 +1,91 @@
-{g->box style="admin"}
+<div class="gbAdmin">
   {if isset($ItemEditItem.can.changePathComponent)}
-    {g->box}
-      {g->title}
-	{g->text text="Name"}
-      {/g->title}
-      {g->subtitle}
-	{g->text text="required"}
-      {/g->subtitle}
-      {g->description}
-	{g->text text="The name of this item on your hard disk.  It must be unique in this album.  Only use alphanumeric characters, underscores or dashes."}
-      {/g->description}
-      {g->element}
-	{strip}
-	  {foreach from=$ItemAdmin.parents item=parent}
-	    {if empty($parent.parentId)}
-	      /
-	    {else}
-	      {$parent.pathComponent}/
-	    {/if}
-	  {/foreach}
-	{/strip}
-	{g->input type=text size=40 name="form[pathComponent]"}{$form.pathComponent}{/g->input}
-      {/g->element}
-    {/g->box}
+  <div class="gbDataEntry">
+    <div class="giTitle">
+      {g->text text="Name"}
+    </div>
+    <div class="giSubtitle">
+      {g->text text="required"}
+    </div>
+    <div class="giDescription">
+      {g->text text="The name of this item on your hard disk.  It must be unique in this album.  Only use alphanumeric characters, underscores or dashes."}
+    </div>
+    
+    {strip}
+    {foreach from=$ItemAdmin.parents item=parent}
+    {if empty($parent.parentId)}
+    /
+    {else}
+    {$parent.pathComponent}/
+    {/if}
+    {/foreach}
+    {/strip}
+    <input type="text" size="40" name="{g->formVar var="form[pathComponent]"}" value="{$form.pathComponent}"/>
 
     {if !empty($form.error.pathComponent.invalid)}
-      {g->error}
-	{g->text text="Your name contains invalid characters.  Please choose another."}
-      {/g->error}
+    <div class="giError">
+      {g->text text="Your name contains invalid characters.  Please choose another."}
+    </div>
     {/if}
-
+    
     {if !empty($form.error.pathComponent.missing)}
-      {g->error}
-	{g->text text="You must enter a name for this item."}
-      {/g->error}
+    <div class="giError">
+      {g->text text="You must enter a name for this item."}
+    </div>
     {/if}
-
+    
     {if !empty($form.error.pathComponent.collision)}
-      {g->error}
-	{g->text text="The name you entered is already in use.  Please choose another."}
-      {/g->error}
+    <div class="giError">
+      {g->text text="The name you entered is already in use.  Please choose another."}
+    </div>
     {/if}
-  {/if}
+    {/if}
+  </div>
 
-  {g->box}
-    {g->title}
+  <div class="gbDataEntry">
+    <div class="giTitle">
       {g->text text="Title"}
-    {/g->title}
-    {g->description}
+    </div>
+    <div class="giDescription">
       {g->text text="The title of this item."}
-    {/g->description}
-    {g->element}
-      {g->input type="text" size="40" name="form[title]"}{$form.title}{/g->input}
-    {/g->element}
-  {/g->box}
+    </div>
 
-  {g->box}
-    {g->title}
+    <input type="text" size="40" name="{g->formVar var="form[title]"}" value="{$form.title}"/>
+  </div>
+
+  <div class="gbDataEntry">
+    <div class="giTitle">
       {g->text text="Summary"}
-    {/g->title}
-    {g->description}
+    </div>
+    <div class="giDescription">
       {g->text text="The summary of this item."}
-    {/g->description}
-    {g->element}
-      {g->input type="text" size="40" name="form[summary]"}{$form.summary}{/g->input}
-    {/g->element}
-  {/g->box}
+    </div>
+    <input type="text" size="40" name="{g->formVar var="form[summary]"}" value="{$form.summary}"/>
+  </div>
 
-  {g->box}
-    {g->title}
+  <div class="gbDataEntry">
+    <div class="giTitle">
       {g->text text="Keywords"}
-    {/g->title}
-    {g->description}
+    </div>
+    <div class="giDescription">
       {g->text text="Keywords are not visible, but are searchable."}
-    {/g->description}
-    {g->element}
-      {g->textarea rows="2" cols="60" name="form[keywords]"}{$form.keywords}{/g->textarea}
-    {/g->element}
-  {/g->box}
+    </div>
+    <textarea rows="2" cols="60" name="{g->formVar var="form[keywords]"}">{$form.keywords}</textarea>
+  </div>
 
-  {g->box}
-    {g->title}
+  <div class="gbDataEntry">
+    <div class="giTitle">
       {g->text text="Description"}
-    {/g->title}
-    {g->description}
+    </div>
+    <div class="giDescription">
       {g->text text="This is the long description of the item."}
-    {/g->description}
-    {g->element}
-      {g->textarea rows="4" cols="60" name="form[description]"}{$form.description}{/g->textarea}
-    {/g->element}
-  {/g->box}
+    </div>
+    <textarea rows="4" cols="60" name="{g->formVar var="form[description]"}">{$form.description}</textarea>
+  </div>
+</div>
 
-  {g->box}
-    {g->element}
-      {g->input type="submit" name="form[action][save]"}{g->text text="Save"}{/g->input}
-      {g->input type="submit" name="form[action][undo]"}{g->text text="Undo"}{/g->input}
-    {/g->element}
-  {/g->box}
-{/g->box}
+<div class="gbAdmin">
+  <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}"/>
+  <input type="submit" name="{g->formVar var="form[action][undo]"}" value="{g->text text="Undo"}"/>
+</div>
+

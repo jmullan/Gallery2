@@ -1,22 +1,23 @@
-{g->main}
-  {g->pagebox}
-    {g->banner}
-      {g->title}
+<div id="gsAdminContents">
+  <div class="gbTopFlag">
+    <div class="gbTitle">
+      <div class="giTitle">
 	{g->text text="PhotoAccess Fulfillment Error"}
-      {/g->title}
-    {/g->banner}
+      </div>
+    </div>
 
-    {g->box style="admin"}
-      {g->element}
-	{g->text text="An error occurred while sending your photos over to PhotoAccess.com for printing.  If this failure occurs more than once, please contact your system administrator for assistance."}
-      {/g->element}
+    <div class="spacer">
+      &nbsp;
+    </div>
+  </div>
 
-      {g->element}
-	{g->link arg1="view=cart:ViewCart"}
-	  {g->text text="View your cart"}
-	{/g->link}
-      {/g->element}
-    {/g->box}
-  {/g->pagebox}
-{/g->main}
-  
+  <div class="gbAdmin">
+    <div class="giDescription">
+      {g->text text="An error occurred while sending your photos over to PhotoAccess.com for printing.  If this failure occurs more than once, please contact your system administrator for assistance."}
+    </div>
+
+    <a href="{g->url arg1="view=cart:ViewCart"}">
+      {g->text text="View your cart"}
+    </a>
+  </div>
+</div>

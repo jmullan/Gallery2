@@ -1,61 +1,50 @@
-{g->form arg1="controller=$controller"
-         enctype=$SiteAdmin.enctype|default:"application/x-www-form-urlencoded"}
-  {g->input type="hidden" name="form[formName]"}{$form.formName}{/g->input}
+<form action="{g->url}" enctype="{$SiteAdmin.enctype|default:"application/x-www-form-urlencoded"}" method="post">
+  <p>
+    {g->hiddenFormVars}
+    <input type="hidden" name="{g->formVar var="controller"}" value="{$controller}"/>
+    <input type="hidden" name="{g->formVar var="form[formName]"}" value="{$form.formName}" />
+  </p>
+    
+  <div id="gsHeader">
+    <div class="gbTitleBanner">
+      <div class="giTitle">
+	{g->text text="Site Administration"}
+      </div>
+    </div>
+  </div>
 
-  {g->main}
-    {g->breadcrumb}
-      {g->item}
-	{g->title}
-	  {g->text text="Site Administration"}
-	{/g->title}
-      {/g->item}
-    {/g->breadcrumb}
+  <div id="gsAdminSidebar">
+    <div class="gbMenu">
+      <div class="giTitle"> {g->text text="Admin Options"} </div>
 
-    {g->sidebar}
-      {g->box style="sidebar"}
-	{g->title}
-	  {g->text text="Admin Options"}
-	{/g->title}
+      <!-- TODO: Figure out how to get icons in here in a modular way -->
+      <ul>
+	{foreach from=$SiteAdmin.subViewChoices item=choice}
+	{if ($SiteAdmin.subViewName == $choice.view)}
+        <li class="giSelected"> {$choice.name} </li>
+	{else}
+	<li>
+	  <a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=`$choice.view`"}">
+	    {$choice.name}
+	  </a>
+	</li>
+	{/if}
+	{/foreach}
+      </ul>
+    </div>
 
-	{g->listing}
-	  {foreach from=$SiteAdmin.subViewChoices item=choice}
-	    {if ($SiteAdmin.subViewName == $choice.view)}
-	      {g->item selected="true"}
-		{g->title}
-		  {$choice.name}
-		{/g->title}
-	      {/g->item}
-	    {else}
-	      {g->item}
-		{g->title}
-		  {g->link arg1="view=core:SiteAdmin" arg2="subView=`$choice.view`"}
-		    {$choice.name}
-		  {/g->link}
-		{/g->title}
-	      {/g->item}
-	    {/if}
-	  {/foreach}
-	{/g->listing}
-      {/g->box}
+    <div class="gbMenu">
+	<div class="giTitle"> {g->text text="Navigation"} </div>
 	
-      {g->box style="sidebar"}
-	{g->title}
-	  {g->text text="Navigation"}
-	{/g->title}
+        <ul>
+	  <li> 
+	    <a href="{g->url}">
+	      {g->text text="Browse Gallery"}
+	    </a>
+	  </li>
+	</ul>
+    </div>
+  </div>
 
-	{g->listing}
-	  {g->item}
-	    {g->title}
-	      {g->link}
-		{g->text text="Browse Gallery"}
-	      {/g->link}
-	    {/g->title}
-	  {/g->item}
-	{/g->listing}
-      {/g->box}
-    {/g->sidebar}
-
-    {include file=$SiteAdmin.viewBodyFile l10Domain=$SiteAdmin.viewL10Domain}
-
-  {/g->main}
-{/g->form}
+  {include file=$SiteAdmin.viewBodyFile l10Domain=$SiteAdmin.viewL10Domain}
+</form>

@@ -1,12 +1,19 @@
-{g->pagebox}
-  {g->banner}
-    {g->title}
-      {g->text text="Group Management"}
-    {/g->title}
-  {/g->banner}
+<div id="gsAdminContents">
+  <div class="gbTopFlag">
+    <div class="gbTitle">
+      <div class="giTitle">
+	{g->text text="Group Management"}
+      </div>
+    </div>
+    
+    <div class="spacer">
+      &nbsp;
+    </div>
+  </div>
 
   {if isset($status)}
-    {g->success}
+  <div class="gsStatus">
+    <div class="giStatus">
       {if isset($status.deletedGroup)}
 	{g->text text="Removed group '%s'" arg1=$status.deletedGroup}
       {/if}
@@ -16,181 +23,159 @@
       {if isset($status.modifiedGroup)}
 	{g->text text="Modified group '%s'" arg1=$status.modifiedGroup}
       {/if}
-    {/g->success}
+    </div>
+  </div>
   {/if}
 
-  {g->box style="admin"}
-    {g->description}
+  <div class="gbAdmin">
+    <div class="giDescription">
       {g->text one="There is %d group in the system." 
-      many="There are %d total groups in the system." 
-      count=$AdminGroups.totalGroupCount
-      arg1=$AdminGroups.totalGroupCount}
-    {/g->description}
-  {/g->box}
+               many="There are %d total groups in the system." 
+               count=$AdminGroups.totalGroupCount
+               arg1=$AdminGroups.totalGroupCount}
+    </div>
+  </div>
 
-  {g->box style="admin"}
-    {g->title}
+  <div class="gbAdmin">
+    <div class="giTitle">
       {g->text text="Edit Group"}
-    {/g->title}
+    </div>
 
-    {g->element}
-      {g->input type="text" name="form[text][groupName]" size="20"}{$form.text.groupName}{/g->input}
-    {/g->element}
+    <input type="text" name="{g->formVar var="form[text][groupName]"}" size="20" value="{$form.text.groupName}"/>
+
+    <br />
 
     {if isset($form.error.text.noSuchGroup)}
-      {g->error}
-	{g->text text="Group '%s' does not exist." arg1=$form.text.groupName}
-      {/g->error}
+    <div class="giError">
+      {g->text text="Group '%s' does not exist." arg1=$form.text.groupName}
+    </div>
     {/if}
 
     {if isset($form.error.text.noGroupSpecified)}
-      {g->error}
-	{g->text text="You must enter a group name"}
-      {/g->error}
+    <div class="giError">
+      {g->text text="You must enter a group name"}
+    </div>
     {/if}
 
     {if isset($form.error.text.cantDeleteGroup)}
-      {g->error}
-	{g->text text="You cannot delete that group"}
-      {/g->error}
+    <div class="giError">
+      {g->text text="You cannot delete that group"}
+    </div>
     {/if}
 
     {if isset($form.error.text.cantEditGroupUsers)}
-      {g->error}
-	{g->text text="You cannot edit that group's users"}
-      {/g->error}
+    <div class="giError">
+      {g->text text="You cannot edit that group's users"}
+    </div>
     {/if}
 
-    {g->element}
-      {g->input type="submit" name="form[action][editFromText]"}{g->text text="Edit"}{/g->input}
-      {g->input type="submit" name="form[action][deleteFromText]"}{g->text text="Delete"}{/g->input}
-      {g->input type="submit" name="form[action][addRemoveUsersFromText]"}{g->text text="Add/Remove Users"}{/g->input}
-    {/g->element}
-  {/g->box}
+    <input type="submit" name="{g->formVar var="form[action][editFromText]"}" value="{g->text text="Edit"}"/>
+    <input type="submit" name="{g->formVar var="form[action][deleteFromText]"}" value="{g->text text="Delete"}"/>
+    <input type="submit" name="{g->formVar var="form[action][addRemoveUsersFromText]"}" value="{g->text text="Add/Remove Users"}"/>
+  </div>
 
-  {g->box style="admin"}
-    {g->title}
+  <div class="gbAdmin">
+    <div class="giTitle">
       {g->text text="Edit Group (by list)"}
-    {/g->title}
+    </div>
 
-    {g->table style="admin_listing" evenodd="true"}
+    <table class="gbDataTable">
       {if ($form.list.maxPages > 1)}
-	{g->row}
-	  {g->column header="true" colspan="2"}
-	    {g->table style="admin_listing"}
-	      {g->row}
-		{g->column align="left" header="true" width="33%"}
-		  {g->input type="hidden" name="form[list][page]"}{$form.list.page}{/g->input}
-		  {g->input type="hidden" name="form[list][maxPages]"}{$form.list.maxPages}{/g->input}
+      <tr>
+	<th colspan="2">
+	  <table>
+	    <tr>
+	      <th align="left">
+		<input type="hidden" name="{g->formVar var="form[list][page]"}" value="{$form.list.page}"/>
+		<input type="hidden" name="{g->formVar var="form[list][maxPages]"}" value="{$form.list.maxPages}"/>
 		  
-		  {if ($form.list.page > 1)}
-		    {g->link arg1="view=core:SiteAdmin" arg2="subView=core:AdminGroups" arg3="form[list][page]=1"}
-		      {g->text text="&laquo; first"}
-		    {/g->link}
-		    &nbsp;
-		    {g->link arg1="view=core:SiteAdmin" arg2="subView=core:AdminGroups" arg3="form[list][page]=`$form.list.backPage`"}
-		      {g->text text="&laquo; back"}
-		    {/g->link}
-		  {/if}
-		{/g->column}
+		{if ($form.list.page > 1)}
+		<a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=core:AdminGroups" arg3="form[list][page]=1"}">{g->text text="&laquo; first"}</a>
+		&nbsp;
+		<a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=core:AdminGroups" arg3="form[list][page]=`$form.list.backPage`"}">{g->text text="&laquo; back"}</a>
+		{/if}
+	      </th>
 
-		{g->column align="center" header="true" width="33%"}
-		  {g->text text="Viewing page %d of %d"
-		  arg1=$form.list.page
-		  arg2=$form.list.maxPages}
-		{/g->column}
+	      <th align="center">
+		{g->text text="Viewing page %d of %d"
+		         arg1=$form.list.page
+		         arg2=$form.list.maxPages}
+	      </th>
 
-		{g->column align="right" header="true" width="33%"}
-		  {if ($form.list.page < $form.list.maxPages)}
-		    {g->link arg1="view=core:SiteAdmin" arg2="subView=core:AdminGroups" arg3="form[list][page]=`$form.list.nextPage`"}
-		      {g->text text="next &raquo;"}
-		    {/g->link}
-		    &nbsp;
-		    {g->link arg1="view=core:SiteAdmin" arg2="subView=core:AdminGroups" arg3="form[list][page]=`$form.list.maxPages`"}
-		      {g->text text="last &raquo;"}
-		    {/g->link}
-		  {/if}
-		{/g->column}
-	      {/g->row}
-	    {/g->table}
-	  {/g->column}
-	{/g->row}
+	      <th align="right">
+		{if ($form.list.page < $form.list.maxPages)}
+		<a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=core:AdminGroups" arg3="form[list][page]=`$form.list.nextPage`"}">{g->text text="next &raquo;"}</a>
+		&nbsp;
+		<a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=core:AdminGroups" arg3="form[list][page]=`$form.list.maxPages`"}">{g->text text="last &raquo;"}</a>
+		{/if}
+	      </th>
+	    </tr>
+	  </table>
+	</th>
+      </tr>
       {/if}
 	  
-      {g->row}
-	{g->column header="true"}
+      <tr>
+	<th>
 	  {g->text text="Group Name"}
-	{/g->column}
-	{g->column header="true"}
+	</th>
+	<th>
 	  {g->text text="Action"}
-	{/g->column}
-      {/g->row}
+	</th>
+      </tr>
 
       {foreach from=$form.list.groupNames key=groupId item=group}
-	{g->row}
-	  {g->column}
-	    {$group.groupName}
-	  {/g->column}
+      <tr class="{cycle values="gbEven,gbOdd"}">
+	<td>
+	  {$group.groupName}
+	</td>
 
-	  {g->column}
-	    {g->linkset}
-	      {g->item}
-		{g->title}
-		  {g->link arg1="view=core:SiteAdmin" arg2="subView=core:AdminEditGroup" arg3="groupId=$groupId"}
-		    {g->text text="edit"}
-		  {/g->link}
-		{/g->title}
-	      {/g->item}
+	<td>
+	  <div class="giHorizontalLinks">
+	    <span>
+	      <a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=core:AdminEditGroup" arg3="groupId=$groupId"}">{g->text text="edit"}</a>
+	    </span>
 
-	      {if ($group.can.delete)}
-		{g->item}
-		  {g->title}
-		    {g->link arg1="view=core:SiteAdmin" arg2="subView=core:AdminDeleteGroup" arg3="groupId=$groupId"}
-		      {g->text text="delete"}
-		    {/g->link}
-		  {/g->title}
-		{/g->item}
-	      {/if}
+	    {if ($group.can.delete)}
+	    <span>
+	      <a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=core:AdminDeleteGroup" arg3="groupId=$groupId"}">{g->text text="delete"}</a>
+	    </span>
+	    {/if}
 
-	      {if ($group.can.editUsers)}
-		{g->item}
-		  {g->title}
-		    {g->link arg1="view=core:SiteAdmin" arg2="subView=core:AdminEditGroupUsers" arg3="groupId=$groupId"}
-		      {g->text text="edit users"}
-		    {/g->link}
-		  {/g->title}
-		{/g->item}
-	      {/if}
-	    {/g->linkset}
-	  {/g->column}
-	{/g->row}
+	    {if ($group.can.editUsers)}
+	    <span>
+	      <a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=core:AdminEditGroupUsers" arg3="groupId=$groupId"}">{g->text text="edit users"}</a>
+	    </span>
+	    {/if}
+	  </div>
+	</td>
+      </tr>
       {/foreach}
-    {/g->table}
+    </table>
 
     {if !empty($form.list.filter) || ($form.list.maxPages > 1)}
-      {g->element}
-	{g->input type="text" name="form[list][filter]"}{$form.list.filter}{/g->input}
-	{g->input type="submit" name="form[action][filterBySubstring]"}{g->text text="Filter:"}{/g->input}
-	{g->input type="submit" name="form[action][filterClear]"}{g->text text="Clear"}{/g->input}
-      {/g->element}
+    <input type="text" name="{g->formVar var="form[list][filter]"}" value="{$form.list.filter}"/>
+    <input type="submit" name="{g->formVar var="form[action][filterBySubstring]"}" value="{g->text text="Filter:"}"/>
+    <input type="submit" name="{g->formVar var="form[action][filterClear]"}" value="{g->text text="Clear"}"/>
     {/if}
       
     {if (!empty($form.list.filter))}
-      {g->element}
-	{g->text one="%d group matches your filter"
-	many="%d groups match your filter"
-	count=$form.list.count
-	arg1=$form.list.count}
-      {/g->element}
+    <span>
+      {g->text one="%d group matches your filter"
+               many="%d groups match your filter"
+               count=$form.list.count
+               arg1=$form.list.count}
+    </span>
     {/if}
-  {/g->box}
+  </div>
 
-  {g->box style="admin"}
-    {g->title}
-      {g->text text="Create Group"}
-    {/g->title}
-    {g->element}
-      {g->input type="submit" name="form[action][create]"}{g->text text="Create"}{/g->input}
-    {/g->element}
-  {/g->box}
-{/g->pagebox}
+  <div class="gbAdmin">
+    <div class="gbDataEntry">
+      <div class="giTitle">
+	{g->text text="Create Group"}
+      </div>
+
+      <input type="submit" name="{g->formVar var="form[action][create]"}" value="{g->text text="Create"}"/>
+    </div>
+  </div>
+</div>

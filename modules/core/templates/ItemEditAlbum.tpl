@@ -1,139 +1,137 @@
-{g->box style="admin"}
-  {g->title}
+<div class="gbAdmin">
+  <div class="giTitle">
     {g->text text="Sort order"}
-  {/g->title}
-  {g->description}
+  </div>
+  <div class="giDescription">
     {g->text text="This sets the default sort order for the album.  This applies to all new items."}
-  {/g->description}
-  {g->element}
-    {g->select name="form[orderBy]"}
+  </div>
+
+  <select name="{g->formVar var="form[orderBy]"}">
       {html_options options=$ItemEditAlbum.orderByList selected=$form.orderBy}
-    {/g->select}
-    {g->select name="form[orderDirection]"}
+  </select>
+
+  <select name="{g->formVar var="form[orderDirection]"}">
       {html_options options=$ItemEditAlbum.orderDirectionList selected=$form.orderDirection}
-    {/g->select}
-  {/g->element}
-{/g->box}
+  </select>
+</div>
 
-{g->box style="admin"}
-  {g->title}
+<div class="gbAdmin">
+  <div class="giTitle">
     {g->text text="Layout"}
-  {/g->title}
-  {g->description}
+  </div>
+  <div class="giDescription">
     {g->text text="Choose a layout for this album. (The way the album is arranged on the page.)"}
-  {/g->description}
-  {g->element}
-    {g->select name="form[layout]"}
+  </div>
+
+  <select name="{g->formVar var="form[layout]"}">
       {html_options options=$ItemEditAlbum.layoutList selected=$form.layout}
-    {/g->select}
-  {/g->element}
-{/g->box}
+  </select>
+</div>
 
-{g->box style="admin"}
-  {g->title}
+<div class="gbAdmin">
+  <div class="giTitle">
     {g->text text="Theme"}
-  {/g->title}
-  {g->description}
+  </div>
+  <div class="giDescription">
     {g->text text="Choose a theme for this album.  (The look and feel of this album)"}
-  {/g->description}
-  {g->element}
-    {g->select name="form[theme]"}
+  </div>
+
+  <select name="{g->formVar var="form[theme]"}">
       {html_options options=$ItemEditAlbum.themeList selected=$form.theme}
-    {/g->select}
-  {/g->element}
-{/g->box}
+  </select>
+</div>
 
-{g->box style="admin"}
-  {g->title}
+<div class="gbAdmin">
+  <div class="giTitle">
     {g->text text="Thumbnails"}
-  {/g->title}
-  {g->description}
+  </div>
+  <div class="giDescription">
     {g->text text=" Every item requires a thumbnail. Set the default value in pixels here."}
-  {/g->description}
-  {g->element}
-    {g->input type=text size=6 name="form[thumbnail][size]"}{$form.thumbnail.size}{/g->input}
-  {/g->element}
+  </div>
   
+  <input type="text" size="6" name="{g->formVar var="form[thumbnail][size]"}" value="{$form.thumbnail.size}"/>
+    
   {if !empty($form.error.thumbnail.size.invalid)}
-    {g->error}
-      {g->text text="You must enter a number (greater than zero)"}
-    {/g->error}
+  <div class="giError">
+    {g->text text="You must enter a number (greater than zero)"}
+  </div>
   {/if}
-{/g->box}
+</div>
 
-{g->box style="admin"}
-  {g->title}
+<div class="gbAdmin">
+  <div class="giTitle">
     {g->text text="Resized Images"}
-  {/g->title}
-  {g->description}
+  </div>
+  <div class="giDescription">
     {g->text text="Each item in your album can have multiple sizes. Define the default sizes here."}
-  {/g->description}
-  {g->element}
-    {g->table style="admin_listing" evenodd="true"}
-      {g->row}
-	{g->column width="10%" header="true" align="center"}
-	  {g->text text="Active"}
-	{/g->column}
-	{g->column header="true"}
-	  {g->text text="Target Size (pixels)"}
-	{/g->column}
-      {/g->row}
-      {counter start=0 assign=index}
-      {foreach from=$form.resizes item=resize}
-	{g->row}
-	  {g->column align="center"}
-	    {g->input type="checkbox" name="form[resizes][$index][active]"}{$form.resizes.$index.active}{/g->input}
-	  {/g->column}
-	  {g->column}
-	    {g->input type="text" size="6" name="form[resizes][$index][size]"}{$form.resizes.$index.size}{/g->input}
-	  {/g->column}
-	{/g->row}
+  </div>
 
-	{if !empty($form.error.resizes.$index.size.missing)}
-	  {g->row}
-	    {g->column colspan="2"}
-	      {g->error}
-		{g->text text="You must enter a valid size"}
-	      {/g->error}
-	    {/g->column}
-	  {/g->row}
-	{/if}
-	
-	{if !empty($form.error.resizes.$index.size.invalid)}
-	  {g->row}
-	    {g->column colspan="2"}
-	      {g->error}
-		{g->text text="You must enter a number (greater than zero)"}
-	      {/g->error}
-	    {/g->column}
-	  {/g->row}
-	{/if}
-	{counter}
-      {/foreach}
-    {/g->table}
-  {/g->element}
-{/g->box}
+  <table class="gbDataTable">
+    <tr>
+      <th align="center">
+	{g->text text="Active"}
+      </th>
+      <th>
+	{g->text text="Target Size (pixels)"}
+      </th>
+    </tr>
 
-{g->box style="admin"}
-  {g->title}
+    {counter start=0 assign=index}
+    {foreach from=$form.resizes item=resize}
+    <tr class="{cycle values="gbEven,gbOdd"}">
+      <td align="center">
+	<input type="checkbox" name="{g->formVar var="form[resizes][$index][active]"}" 
+	       {if $form.resizes.$index.active}checked="checked"{/if} />
+      </td>
+      <td>
+	<input type="text" size="6" name="{g->formVar var="form[resizes][$index][size]"}" value="{$form.resizes.$index.size}"/>
+      </td>
+    </tr>
+
+    {if !empty($form.error.resizes.$index.size.missing)}
+    <tr>
+      <td colspan="2">
+	<div class="giError">
+	  {g->text text="You must enter a valid size"}
+	</div>
+      </td>
+    </tr>
+    {/if}
+	  
+    {if !empty($form.error.resizes.$index.size.invalid)}
+    <tr>
+      <td colspan="2">
+	<div class="giError">
+	  {g->text text="You must enter a number (greater than zero)"}
+	</div>
+      </td>
+    </tr>
+    {/if}
+    {counter}
+    {/foreach}
+  </table>
+</div>
+
+<div class="gbAdmin">
+  <div class="giTitle">
     {g->text text="Recreate thumbnails and resizes"}
-  {/g->title}
-  {g->description}
+  </div>
+  <div class="giDescription">
     {g->text text="The thumbnail and resized image settings are for all new items. To apply these settings to all the items in your album, check the appropriate box."}
-  {/g->description}
-  {g->element}
-    {g->input type="checkbox" name="form[recreateThumbnails]"}{$form.recreateThumbnails}{/g->input}
-    {g->text text="Recreate thumbnails"}
-  {/g->element}
-  {g->element}
-    {g->input type="checkbox" name="form[recreateResizes]"}{$form.recreateResizes}{/g->input}
-    {g->text text="Recreate resized images"}
-  {/g->element}
-{/g->box}
+  </div>
 
-{g->box style="admin"}
-  {g->element}
-    {g->input type="submit" name="form[action][save]"}{g->text text="Save"}{/g->input}
-    {g->input type="submit" name="form[action][undo]"}{g->text text="Undo"}{/g->input}
-  {/g->element}
-{/g->box}
+  <input type="checkbox" name="{g->formVar var="form[recreateThumbnails]"}"
+         {if $form.recreateThumbnails}checked="checked"{/if} />
+  {g->text text="Recreate thumbnails"}
+
+  <br/>
+
+  <input type="checkbox" name="{g->formVar var="form[recreateResizes]"}"
+         {if $form.recreateResizes}checked="checked"{/if} />
+  {g->text text="Recreate resized images"}
+</div>
+
+<div class="gbAdmin">
+  <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}"/>
+  <input type="submit" name="{g->formVar var="form[action][undo]"}" value="{g->text text="Undo"}"/>
+</div>

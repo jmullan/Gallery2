@@ -1,61 +1,96 @@
-{g->pagebox}
-  {g->banner}
-    {g->title} {g->text text="Image Block Admin"} {/g->title}
-  {/g->banner}
+<div id="gsAdminContents">
+  <div class="gbTopFlag">
+    <div class="gbTitle">
+      <div class="giTitle">
+	{g->text text="Image Block Admin"}
+      </div>
+    </div>
+
+    <div class="spacer">
+      &nbsp;
+    </div>
+  </div>
+
   {if isset($status.saved)}
-    {g->success}{g->text text="Settings saved successfully"}{/g->success}
+  <div id="gsStatus">
+    <div class="giStatus">
+      {g->text text="Settings saved successfully"}
+    </div>
+  </div>
   {/if}
-  {g->box style="admin"}
-    {g->title} {g->text text="Image Blocks"} {/g->title}
-    {g->description} {/g->description}
-    {g->element}
-      {g->input type="checkbox" name="form[randomImage]"}{$form.randomImage}{/g->input}
+
+  <div class="gbAdmin">
+    <div class="giTitle">
+      {g->text text="Image Blocks"}
+    </div>
+
+    <input id="randomImage" type="checkbox" name="{g->formVar var="form[randomImage]"}" {if $form.randomImage}checked="checked"{/if}/>
+    <label for="randomImage">
       {g->text text="Random Image"}
-    {/g->element}{g->element}
-      {g->input type="checkbox" name="form[recentImage]"}{$form.recentImage}{/g->input}
+    </label>
+    <br/>
+
+    <input id="recentImage" type="checkbox" name="{g->formVar var="form[recentImage]"}" {if $form.recentImage}checked="checked"{/if}/>
+    <label for="recentImage">
       {g->text text="Newest Image"}
-    {/g->element}{g->element}
-      {g->input type="checkbox" name="form[viewedImage]"}{$form.viewedImage}{/g->input}
+    </label>
+    <br/>
+
+    <input id="viewedImage" type="checkbox" name="{g->formVar var="form[viewedImage]"}" {if $form.viewedImage}checked="checked"{/if}/>
+    <label for="viewedImage">
       {g->text text="Most Viewed Image"}
-    {/g->element}{g->element}
-      {g->input type="checkbox" name="form[randomAlbum]"}{$form.randomAlbum}{/g->input}
+    </label>
+    <br/>
+
+    <input id="randomAlbum" type="checkbox" name="{g->formVar var="form[randomAlbum]"}" {if $form.randomAlbum}checked="checked"{/if}/>
+    <label for="randomAlbum">
       {g->text text="Random Album"}
-    {/g->element}{g->element}
-      {g->input type="checkbox" name="form[recentAlbum]"}{$form.recentAlbum}{/g->input}
+    </label>
+    <br/>
+
+    <input id="recentAlbum" type="checkbox" name="{g->formVar var="form[recentAlbum]"}" {if $form.recentAlbum}checked="checked"{/if}/>
+    <label for="recentAlbum">
       {g->text text="Newest Album"}
-    {/g->element}{g->element}
-      {g->input type="checkbox" name="form[viewedAlbum]"}{$form.viewedAlbum}{/g->input}
+    </label>
+    <br/>
+
+    <input id="viewedAlbum" type="checkbox" name="{g->formVar var="form[viewedAlbum]"}" {if $form.viewedAlbum}checked="checked"{/if}/>
+    <label for="viewedAlbum">
       {g->text text="Most Viewed Album"}
-    {/g->element}
-  {/g->box}
-  {g->box style="admin"}
-    {g->title} {g->text text="Show"} {/g->title}
-    {g->description} {/g->description}
-    {g->element}
-      {g->input type="checkbox" name="form[title]"}{$form.title}{/g->input}
+    </label>
+  </div>
+
+  <div class="gbAdmin">
+    <div class="giTitle">
+      {g->text text="Show"}
+    </div>
+
+    <input id="title" type="checkbox" name="{g->formVar var="form[title]"}" {if $form.title}checked="checked"{/if}/>
+    <label for="title">
       {g->text text="Title"}
-    {/g->element}
-    {g->element}
-      {g->input type="checkbox" name="form[date]"}{$form.date}{/g->input}
+    </label>
+    <br/>
+
+    <input id="date" type="checkbox" name="{g->formVar var="form[date]"}" {if $form.date}checked="checked"{/if}/>
+    <label for="date">
       {g->text text="Date"}
-    {/g->element}
-    {g->element}
-      {g->input type="checkbox" name="form[views]"}{$form.views}{/g->input}
+    </label>
+    <br/>
+
+    <input id="views" type="checkbox" name="{g->formVar var="form[views]"}" {if $form.views}checked="checked"{/if}/>
+    <label for="views">
       {g->text text="View Count"}
-    {/g->element}
-    {g->element}
-      {g->input type="checkbox" name="form[owner]"}{$form.owner}{/g->input}
+    </label>
+    <br/>
+
+    <input id="owner" type="checkbox" name="{g->formVar var="form[owner]"}" {if $form.owner}checked="checked"{/if}/>
+    <label for="owner">
       {g->text text="Owner"}
-    {/g->element}
-  {/g->box}
-  {g->box style="admin"}
-    {g->element}
-      {g->input type="submit" name="form[action][save]"}
-        {g->text text="save"}
-      {/g->input}
-      {g->input type="submit" name="form[action][reset]"}
-        {g->text text="reset"}
-      {/g->input}
-    {/g->element}
-  {/g->box}
-{/g->pagebox}
+    </label>
+  </div>
+
+  <div class="gbAdmin">
+    <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="save"}"/>
+    <input type="submit" name="{g->formVar var="form[action][reset]"}" value="{g->text text="reset"}"/>
+  </div>
+</div>
