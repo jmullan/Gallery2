@@ -175,6 +175,7 @@
 ><div id="toolbar" style="visibility:hidden"><div id="tools_left"
 ><img name="text_on" src="{$layout.layoutUrl}/images/up.png" width="18" height="18" class="on" onclick="text_onoff()" alt="Show text" title="Show text"
 ><img name="text_off" src="{$layout.layoutUrl}/images/down.png" width="18" height="18" class="off" onclick="text_onoff()" alt="Hide text" title="Hide text"
+><img src="{$layout.layoutUrl}/images/alb.png" width="18" height="18" class="on" onclick="image_vis(0)" alt="Back to Album View" title="Back to Album View"
 ><img name="slide_poz" src="{$layout.layoutUrl}/images/poz.png" width="18" height="18" class="off" onclick="slide_onoff()" alt="Pause Slideshow" title="Pause Slideshow"
 ><img name="slide_fwd" src="{$layout.layoutUrl}/images/fwd.png" width="18" height="18" class="on" onclick="slide_onoff()" alt="Start Slideshow" title="Start Slideshow"
 ><img name="slide_rev" src="{$layout.layoutUrl}/images/rev.png" width="18" height="18" class="off" onclick="slide_onoff()" alt="Start Slideshow" title="Start Slideshow"

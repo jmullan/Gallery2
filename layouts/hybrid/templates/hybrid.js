@@ -46,7 +46,7 @@ function app_init() {
  if (app_is_safari) { //For Safari:
   document.onresize = app_onresize;
   document.getElementById('album_tools').style.width = '38px';
-  document.getElementById('tools_left').style.width = '38px';
+  document.getElementById('tools_left').style.width = '57px';
   document.getElementById('tools_right').style.width = '76px';
   document.getElementById('tools_right').style.paddingRight = '8px';
  }
