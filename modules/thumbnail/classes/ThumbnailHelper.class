@@ -162,11 +162,12 @@ class ThumbnailHelper {
      * @param string name for image
      * @param string path to image file
      * @param string mime type of image file
+     * @param array known width and height of image (used if toolkit is unable to get size)
      * @return array object GalleryStatus a status code
      *               id of newly created object
      * @static
      */
-    function addItem($mimeType, $filename, $tmpfile, $fileMimeType) {
+    function addItem($mimeType, $filename, $tmpfile, $fileMimeType, $knownSize=array()) {
 	global $gallery;
 	/*
 	 * If we don't get useful data from the form or its a type we don't
@@ -195,6 +196,11 @@ class ThumbnailHelper {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$item->setitemMimeTypes($mimeType);
+	if ($item->getWidth()==0 && $item->getHeight()==0 &&
+		isset($knownSize['width']) && isset($knownSize['height'])) {
+	    $item->setWidth($knownSize['width']);
+	    $item->setHeight($knownSize['height']);
+	}
 	$ret = $item->save();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);

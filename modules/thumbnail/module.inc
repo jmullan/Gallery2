@@ -155,7 +155,8 @@ class ThumbnailModule extends GalleryModule {
 			    'GalleryEntity', 'ThumbnailImage', 'ThumbnailImage',
 			    dirname(__FILE__) . '/classes/ThumbnailImage.class');
 			list ($ret, $itemId[$mimeImage]) = ThumbnailHelper::addItem($mime,
-			    $mimeImage, dirname(__FILE__) . '/images/' . $mimeImage, 'image/jpeg');
+			    $mimeImage, dirname(__FILE__) . '/images/' . $mimeImage, 'image/jpeg',
+			    array('width' => 400, 'height' => 352));
 			if ($ret->isError()) {
 			    return $ret->wrap(__FILE__, __LINE__);
 			}
