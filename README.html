@@ -121,7 +121,7 @@
   </head>
 
   <body>
-    <img src="images/g2Logo.gif" alt="Gallery 2.0 Beta" />
+    <img src="images/g2Logo.gif" alt="Gallery 2.0 Beta 1" />
     <p>
       Welcome to Gallery 2.0 (G2). This is the first &ldquo;Beta&rdquo; release of G2,
       code named <b>&ldquo;Dark Fibre&rdquo;</b>.  Please read through this document carefully
@@ -225,13 +225,13 @@
     <h2><a name="when_not_to_use">When not to use G2 Beta</a></h2>
     <p>
       Do not use it as the main repository for your data.  Do not use
-      it for a production web site.  We will probably not provide an
-      easy upgrade path to the next release until we reach beta.  We
-      know that it&rsquo;s much better than G1, and it may be tempting to
-      just replace your G1 with it.  But be warned that we know that
-      <b>the database schema will change</b> between now and beta and
-      we won&rsquo;t support upgrading your G2 Alpha data so if you use it
-      in production, you&rsquo;re on your own.
+      it for a production web site.  Although we provide an upgrade
+      path we will not provide the same level of support for G2 that
+      we provide for G1 until we get to release candidates.  We know
+      that G2 is much better than G1, and it may be tempting to just
+      replace your G1 with it.  But we're still making plenty of
+      changes and mistakes happen so if you use it in production, be
+      prepared to dig into it yourself and fix things if they break.
     </p>
 
     <div class="important">
@@ -247,7 +247,7 @@
       </span>
     </div>
 
-    <h2><a name="whats_new">What&rsquo;s new in G2 Beta</a></h2>
+    <h2><a name="whats_new">What&rsquo;s new in G2 Beta 1 (Dark Fibre)</a></h2>
 
     <p>
       G2 has been redesigned from the ground up and is database driven! It is secure,
@@ -855,6 +855,20 @@
 	<div class="instructions">
 	  <h3>PostgreSQL</h3>
 	  <code>
+	    createdb gallery2 -E UNICODE
+	  </code>
+	  <br/>
+	  <br/>
+	  <i>If it complains that UNICODE is not a valid encoding name, then try:</i>
+	  <br/>
+	  <code>
+	    createdb gallery2 -E SQL_ASCII
+	  </code>
+	  <br/>
+	  <br/>
+	  <i>If it complains about that, too then try:</i>
+	  <br/>
+	  <code>
 	    createdb gallery2
 	  </code>
         </div>
@@ -1164,15 +1178,13 @@
 
     <h2><a name="updating">Updating your Gallery 2 Installation</a></h2>
     <p>
-      Until G2 hits beta, you <i>may</i> have to discard your current
-      G2 data any time you upgrade.  The proper way to upgrade is to
-      <a href="#get_latest_code">get the latest code</a> and overwrite
-      your existing copy with it.  If you see weird errors, then
-      it&rsquo;s time to delete your database.  Starting with Alpha-4,
-      you should be able to upgrade to future versions of Gallery 2.
-      However, we're still working the kinks out of the upgrade
-      process so <b>we reserve the right to screw up horribly</b>
-      between now and beta.
+      The proper way to upgrade is to <a href="#get_latest_code">get
+      the latest code</a> and overwrite your existing copy with it.
+      If you see weird errors, then it&rsquo;s time to delete your
+      database.  Starting with Alpha-4, you should be able to upgrade
+      to future versions of Gallery 2.  However, we're still working
+      the kinks out of the upgrade process so <b>we reserve the right
+      to screw up horribly</b> between now and the final release.
     </p>
 
     <div class="instructions">
