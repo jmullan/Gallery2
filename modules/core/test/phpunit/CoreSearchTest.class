@@ -63,10 +63,15 @@ class CoreSearchTest extends GalleryTestCase {
 
 	$this->_randomKey = "a" . rand(1,100000) . "z";
 
+	list ($ret, $this->_parentAlbum) = $this->_createRandomAlbum($this->_getRootId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
 	$this->_item = array();
 	for ($i = 0; $i < 4; $i++) {
 	    list ($ret, $this->_item[$i]) =
-		$this->_createRandomDataItem($this->_getRootId(),
+		$this->_createRandomDataItem($this->_parentAlbum->getId(),
 					     'application/unknown',
 					     array('title' => 'Title ' . $this->_randomKey,
 						   'description' => 'Description ' . $this->_randomKey,
@@ -122,12 +127,10 @@ class CoreSearchTest extends GalleryTestCase {
 	
 	parent::tearDown();
 
-	if (!empty($this->_item)) {
-	    foreach ($this->_item as $item) {
-		$ret = $gallery->deleteEntityById($item->getId());
-		if ($ret->isError()) {
-		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-		}
+	if (!empty($this->_parentAlbum)) {
+	    $ret = $gallery->deleteEntityById($this->_parentAlbum->getId());
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
     }
@@ -344,7 +347,7 @@ class CoreSearchTest extends GalleryTestCase {
 
     function testSearchLinks() {
 	/* Create a link and make sure it shows up in the search results */
-	list ($ret, $linkedItem) = $this->_createLinkedItem($this->_getRootId(), $this->_item[1]);
+	list ($ret, $linkedItem) = $this->_createLinkedItem($this->_parentAlbum->getId(), $this->_item[1]);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
