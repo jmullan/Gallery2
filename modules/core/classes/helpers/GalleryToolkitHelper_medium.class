@@ -575,10 +575,10 @@ class GalleryToolkitHelper_medium {
 		}
 
 		if (isset($toolkit)) {
-		    $toolkit->estimateDimensions(&$derivative, $source);
+		    $toolkit->estimateDimensions($derivative, $source);
 		} else {
 		    // Fall back on the best-guess behaviour
-		    GalleryToolkit::estimateDimensions(&$derivative, $source);
+		    GalleryToolkit::estimateDimensions($derivative, $source);
 		}
 	    }
 	}
