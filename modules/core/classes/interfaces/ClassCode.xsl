@@ -6,7 +6,7 @@
   
   <xsl:template match="class">&lt;?php
 /*
- * $RCSfile
+ * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2003 Bharat Mediratta
