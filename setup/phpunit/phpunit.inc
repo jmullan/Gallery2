@@ -151,7 +151,6 @@ class Assert {
   }
 
   function _formatValue($value, $class="") {
-      $translateValue = htmlentities($value);
       if (phpversion() >= '4.0.0') {
 	  if (is_object($value)) {
 	      if (method_exists($value, "toString") ) {
@@ -167,7 +166,12 @@ class Assert {
 	      } else {
 		  $translateValue = htmlentities(serialize($value));
 	      }
+	  } else {
+	      $translateValue = htmlentities($value);
 	  }
+      }
+      else {
+	  $translateValue = $value;
       }
       $htmlValue = "<code class=\"$class\">" . $translateValue . "</code>";
       if (phpversion() >= '4.0.0') {
