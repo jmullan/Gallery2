@@ -233,20 +233,17 @@ class SlideshowTest extends GalleryTestCase {
 	    'Slideshow data size');
 	$slideIds = array();
 	foreach ($slideData as $slide) {
-	    foreach (array('id','src','href') as $attribute) {
+	    foreach (array('id','sourceId','sourceSerial') as $attribute) {
 		$this->assert(isset($slide[$attribute]),
 		    "Slideshow item missing $attribute attribute");
 	    }
 	    $this->assert(isset($expectedResults[$slide['id']]),
 			  "Slide id " . $slide['id'] . " not expected");
 	    // Verify source for this slide comes from expected derivative..
-	    $this->assert(
-		preg_match('|/download/(\d+)-|', $slide['src'], $sourceId)
-		&& !empty($sourceId), 'Slide ' .
-		$slide['id'] . ' source url bad format: ' . $slide['src']);
-	    if (isset($expectedResults[$slide['id']]) && !empty($sourceId)) {
-		$this->assertEquals(strval($expectedResults[$slide['id']]),
-		    $sourceId[1],
+	    if (isset($expectedResults[$slide['id']]) &&
+		isset($slide['sourceId'])) {
+		$this->assertEquals(
+		    $expectedResults[$slide['id']], $slide['sourceId'],
 		    'Slide ' . $slide['id'] .  ' sourced from wrong id<br>' .
 		    var_export($this->_photoData, TRUE));
 	    }

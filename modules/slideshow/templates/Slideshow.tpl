@@ -1,6 +1,9 @@
 {foreach from=$SlideShow.itemList key=i item=it}
-<a id="item_{$i}" href="{$it.src}"></a>
-<a id="href_{$i}" href="{$it.href}"></a>
+{g->link id="item_$i" arg1="view=core:DownloadItem"
+    arg2="itemId=`$it.sourceId`" arg3="serialNumber=`$it.sourceSerial`"
+}{/g->link}
+{g->link id="href_$i" arg1="view=core:ShowItem" arg2="itemId=`$it.id`"
+}{/g->link}
 {/foreach}
 <script language="JavaScript" type="text/JavaScript">
 var image = new Image(), timer, stoplink;
@@ -48,7 +51,7 @@ function goto_next_photo() {
             document.images.slide.onload = slide_view_start;
             document.images.slide.onerror = goto_next_photo;
             document.images.slide.src =
-              '{$SlideShow.itemList[$SlideShow.start].src}';
+              document.getElementById('item_{$SlideShow.start}').href;
           </script>
         {/g->media}
       {/g->itemview}

@@ -95,7 +95,6 @@ class SlideshowView extends GalleryView {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
-	$urlGenerator = $gallery->getUrlGenerator();
 	if (empty($startId)) {
 	    $start = 0;
 	}
@@ -143,14 +142,8 @@ class SlideshowView extends GalleryView {
 		if (isset($image)) {
 		    $itemList[] = array(
 			'id' => $childId,
-			'src' => $urlGenerator->generateUrl(array(
-				  'view' => 'core:DownloadItem',
-				  'itemId' => $image->getId(),
-				  'serialNumber' => $image->getSerialNumber())),
-			'href' => $urlGenerator->generateUrl(array(
-				  'view' => 'core:ShowItem',
-				  'itemId' => $childId))
-			);
+			'sourceId' => $image->getId(),
+			'sourceSerial' => $image->getSerialNumber());
 		}
 	    }
 	}
