@@ -1,4 +1,5 @@
 {*
+ * $Revision$ $Date$
  * If you want to customize this file, do not edit it directly.
  * Instead, copy it to ItemCreateLink.tpl.local and edit that version instead.
  * Gallery will look for that file first and use it if it exists
