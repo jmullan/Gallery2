@@ -189,7 +189,12 @@ class GallerySession {
 		$this->_cookieDomain = substr($this->_cookieDomain, 0, $colon);
 	    }
 
-	    $cookie .= '; path=' . $this->_cookiePath . '; domain=' . $this->_cookieDomain;
+	    $cookie .= '; path=' . $this->_cookiePath;
+
+	    /* Only add a "domain=" part if we have a fqdn */
+	    if (strpos($this->_cookieDomain, '.')) {
+		$cookie .= '; domain=.' . $this->_cookieDomain;
+	    }
 
 	    /*
 	     * Tag on the HttpOnly modifier.  IE 6.0 SP1 will prevent any cookies
