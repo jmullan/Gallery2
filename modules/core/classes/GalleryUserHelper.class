@@ -51,7 +51,7 @@ class GalleryUserHelper {
     function fetchUsernames($count=null, $offset=null, $substring=null) {
 	global $gallery;
 
-	$params['select'] = '[GalleryUser::userName]';
+	$params['select'] = '[GalleryUser::id], [GalleryUser::userName]';
 	$params['limit'] = array('count' => $count, 'offset' => $offset);
 	$params['order-by'] = '[GalleryUser::userName] ASC';
 
@@ -68,7 +68,7 @@ class GalleryUserHelper {
 
 	$usernames = array();
 	while ($result = $searchResults->nextResult()) {
-	    $usernames[] = $result[0];
+	    $usernames[$result[0]] = $result[1];
 	}
 
 	return array(GalleryStatus::success(), $usernames);

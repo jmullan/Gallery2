@@ -118,13 +118,13 @@ class AdminDeleteUserView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$username = GalleryUtilities::getRequestVariables('username');
+	$userid = GalleryUtilities::getRequestVariables('userid');
 
 	/*
 	 * Check to see if we're trying to delete the anonymous user, or
 	 * ourself (can't do either of those).
 	 */
-	list ($ret, $user) = GalleryUserHelper::fetchUserByUsername($username);
+	list ($ret, $user) = $gallery->loadEntitiesById($userid);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -135,15 +135,15 @@ class AdminDeleteUserView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	
-	$isAnonymous = ($user->getId() == $anonymousUserId);
-	$isSelf = ($user->getId() == $gallery->getActiveUserId());
+	$isAnonymous = ($userid == $anonymousUserId);
+	$isSelf = ($userid == $gallery->getActiveUserId());
 
 	/* Render the HTML body */
 	list ($ret, $smarty) = $gallery->getSmarty();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$smarty->assign('username', $username);
+	$smarty->assign('username', $user->getUserName());
 	$smarty->assign('isSelf', $isSelf);
 	$smarty->assign('isAnonymous', $isAnonymous);
 	$smarty->assign('controller', 'core:AdminDeleteUser');

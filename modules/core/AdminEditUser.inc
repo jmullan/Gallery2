@@ -145,13 +145,13 @@ class AdminEditUserView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$username = GalleryUtilities::getRequestVariables('username');
+	$userid = GalleryUtilities::getRequestVariables('userid');
 	$form = GalleryUtilities::getFormVariables('form');
 
-	/* The 'username' variable is set the first time we come to the page */
+	/* The 'userid' variable is set the first time we come to this page */
 	$firstTime = false;
-	if (!empty($username)) {
-	    $form['username'] = $username;
+	if (!empty($userid)) {
+	    $form['userid'] = $userid;
 	    $firstTime = true;
 	}
 	
@@ -162,10 +162,9 @@ class AdminEditUserView extends GalleryView {
 	}
 	$smarty->template_dir = dirname(__FILE__) . '/templates';
 
-	list ($ret, $user) = GalleryUserHelper::fetchUserByUsername($form['username']);
+	list ($ret, $user) = $gallery->loadEntitiesById($form['userid']);
 	if ($ret->isError()) {
 	    if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
-		$smarty->assign('username', $form['username']);
 		$html = $smarty->fetch('AdminEditUserMissing.tpl');
 	    } else {
 		return array($ret->wrap(__FILE__, __LINE__), null);
@@ -177,15 +176,12 @@ class AdminEditUserView extends GalleryView {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    
-	    if ($user->getId() == $anonymousUserId) {
-		$isAnonymous = true;
-	    } else {
-		$isAnonymous = false;
-	    }
+
+	    $isAnonymous = ($form['userid'] == $anonymousUserId);
 	    
 	    if ($firstTime) {
 		/* First time around, load the form with user data */
+		$form['username'] = $user->getUserName();
 		$form['fullname'] = $user->getFullName();
 		$form['email'] = $user->getEmail();
 		$form['language'] = $user->getLanguage();

@@ -34,6 +34,17 @@
 	    </td>	
 	  </tr>
 
+	  {if isset($form.error.text.noSuchUser)}
+	  <tr>
+	    <td align="center">
+	      {galleryErrorFontColor}
+	      {galleryText text="User '%s' does not exist."
+	                   arg1=$form.text.username}
+	      {/galleryErrorFontColor}
+	    </td>
+	  </tr>
+	  {/if}
+
 	  <tr>
 	    <td>
 	      <br><br>
@@ -60,8 +71,8 @@
 
 	  <tr>
 	    <td align="center">
-	      {gallerySelect name="form.list.username" size=$form['list']['pageSize']}
-	      {html_options values=$form['list']['usernames'] output=$form['list']['usernames']}
+	      {gallerySelect name="form.list.userid" size=$form['list']['pageSize']}
+	      {html_options options=$form['list']['usernames']}
 	      {/gallerySelect}
 	      {if (!empty($form.list.filter))}
 	      <br>
