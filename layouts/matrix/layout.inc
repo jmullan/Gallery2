@@ -135,9 +135,14 @@ class MatrixLayout extends GalleryLayout {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	return array(GalleryStatus::success(),
-		     array('head' => 'layouts/matrix/templates/head.tpl',
-			   'body' => $bodyFile));
+	if (is_array($bodyFile)) {
+	    return array(GalleryStatus::success(), $bodyFile);
+	} else {
+	    return array(GalleryStatus::success(),
+			 array('head' => 'layouts/matrix/templates/head.tpl',
+			       'body' => $bodyFile));
+	}
+
     }
 
     /**
