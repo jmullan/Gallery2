@@ -29,6 +29,8 @@ $poFiles = findPoFiles("../../..");
 $type = 'summary';
 if (!empty($_REQUEST['type']) && $_REQUEST['type'] == 'detail') {
     $type = 'detail';
+} else if (php_sapi_name() == 'cli' && $argv[1] == 'detail') {
+    $type = 'detail';
 }
 
 ini_set('magic_quotes_runtime', false);
