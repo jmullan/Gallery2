@@ -224,10 +224,6 @@ class DatabaseStorage /* implements GalleryStorage */ {
     function _getConnection($forceNew=false) {
 	global $gallery;
 
-	if (empty($this->_hostname)) {
-	    return array(GalleryStatus::error(ERROR_MISSING_VALUE, __FILE__, __LINE__), null);
-	}
-
 	$this->_traceStart();
 	$db =& ADONewConnection($this->getAdoDbType());
 	$this->_traceStop();
