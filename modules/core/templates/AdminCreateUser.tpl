@@ -15,14 +15,14 @@
 	{gallery->text text="Username"}
       </td>
       <td width="60%">
-	{gallery->input type="text" name="form.username"}{$form.username}{/gallery->input}
+	{gallery->input type="text" name="form.userName"}{$form.userName}{/gallery->input}
 	{gallery->warningFontColor}
 	{gallery->text text="[required]"}
 	{/gallery->warningFontColor}
       </td>
     </tr>
 
-    {if isset($form.error.username.missing)}
+    {if isset($form.error.userName.missing)}
     <tr>
       <td>
 	&nbsp;
@@ -35,7 +35,7 @@
     </tr>
     {/if}
       
-    {if isset($form.error.username.exists)}
+    {if isset($form.error.userName.exists)}
     <tr>
       <td>
 	&nbsp;
@@ -43,7 +43,7 @@
       <td>
 	{gallery->errorFontColor}
 	{gallery->text text="Username '%s' already exists"
-	             arg1=$form.username}
+	             arg1=$form.userName}
 	{/gallery->errorFontColor}
       </td>
     </tr>
@@ -54,7 +54,7 @@
 	{gallery->text text="Full name"}
       </td>
       <td>
-	{gallery->input type="text" name="form.fullname"}{$form.fullname}{/gallery->input}
+	{gallery->input type="text" name="form.fullName"}{$form.fullName}{/gallery->input}
       </td>
     </tr>
       

@@ -50,7 +50,7 @@ class AdminCreateUserController extends GalleryController {
 	$results = array();
 	$redirectParams = array();
 	$form = GalleryUtilities::getFormVariables('form.');
-	
+
 	if (isset($form['action']['cancel'])) {
 
 	    /* Go back to the AdminUsers view */
@@ -62,7 +62,7 @@ class AdminCreateUserController extends GalleryController {
 	     * If all the right fields are in place then go ahead and
 	     * create the user.
 	     */
-	    if (!empty($form['username']) &&
+	    if (!empty($form['userName']) &&
 	        !empty($form['email']) &&
 	        !empty($form['password1']) &&
 	        $form['password1'] == $form['password2']) {
@@ -77,19 +77,17 @@ class AdminCreateUserController extends GalleryController {
 				 null);
 		}
 		
-		$ret = $user->create($form['username']);
+		$ret = $user->create($form['userName']);
 		if ($ret->isError()) {
-		    if ($ret->getErrorCode() & ERROR_COLLISION) {
-			/*
-			 * Fall through -- the view will let the user know about
-			 * the duplication.
-			 */
-		    } else {
+		    if (!($ret->getErrorCode() & ERROR_COLLISION)) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
+
+		    // Set our error status and fall back to the view.
+		    GalleryUtilities::putRequestVariable('form.error.userName.exists', 1);
 		} else {
 		    $user->setEmail($form['email']);
-		    $user->setFullname($form['fullname']);
+		    $user->setFullName($form['fullName']);
 		    $user->setLanguage($form['language']);
 		    $user->changePassword($form['password1']);
 		
@@ -101,7 +99,19 @@ class AdminCreateUserController extends GalleryController {
 		    /* Request a redirect to the confirmation screen */
 		    $redirectParams['view'] = 'core:SiteAdmin';
 		    $redirectParams['subView'] = 'core:AdminCreateUserConfirmation';
-		    $redirectParams['username'] = $form['username'];
+		    $redirectParams['userName'] = $form['userName'];
+		}
+	    } else {
+		foreach (array('userName', 'email', 'password1', 'password2') as $key) {
+		    if (empty($form[$key])) {
+			GalleryUtilities::putRequestVariable('form.error.' . $key . '.missing', 1);
+		    }
+		}
+
+		if (!empty($form['password1']) &&
+		        !empty($form['password2']) &&
+		        $form['password1'] != $form['password2']) {
+		    GalleryUtilities::putRequestVariable('form.error.password.mismatch', 1);
 		}
 	    }
 	}
@@ -142,41 +152,11 @@ class AdminCreateUserView extends GalleryView {
 	$formName = GalleryUtilities::getRequestVariables('formName');
 	$form = GalleryUtilities::getFormVariables('form.');
 
-	if ($formName == 'AdminCreateUser') {
-	    /*
-	     * Our form was posted.  Audit the inputs.
-	     */
-	    $errors = array();
-	    foreach (array('username', 'email', 'password1', 'password2') as $key) {
-		if (empty($form[$key])) {
-		    $form['error'][$key]['missing'] = 1;
-		}
-	    }
-
-	    if (!empty($form['username'])) {
-		list ($ret, $user) = GalleryUserHelper::fetchUserByUsername($form['username']);
-		if ($ret->isError()) {
-		    if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
-			/* We're good -- no use by that name */
-		    } else {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-		    }
-		} else {
-		    /* A user exists by that name */
-		    $form['error']['username']['exists'] = 1;
-		}
-	    }
-		    
-	    if (empty($form['error'])) {
-		if ($form['password1'] != $form['password2']) {
-		    $form['error']['password2']['mismatch'] = 1;
-		}
-	    }
-	} else {
+	if ($formName != 'AdminCreateUser') {
 	    /* First time around, set our defaults here. */
-	    $form['username'] = '';
+	    $form['userName'] = '';
 	    $form['email'] = '';
-	    $form['fullname'] = '';
+	    $form['fullName'] = '';
 	    $form['language'] = '';
 	}
 
