@@ -385,13 +385,14 @@ class GalleryStatus {
      * @return string 
      */
     function getAsHtml() {
-	$data = $this->_getAsArray();
-	$buf = array_shift($data);
-	if (count($data)) {
-	    $buf .= '<ul><li>' . join('<li>', $data) . '</ul>';
-	}
+	list ($codes, $trace) = $this->_getAsArray();
 
-	return $buf;
+	list ($ret, $formatter) =
+	    GalleryFactory::newInstanceByHint('GalleryStatusFormatter', 'text/html');
+	if ($ret->isError() || !isset($formatter)) {
+	    $formatter = new GalleryStatusFormatterHtml();
+	}
+	return $formatter->format($codes, $trace);
     }
 
     /**
@@ -400,8 +401,14 @@ class GalleryStatus {
      * @return string 
      */
     function getAsText() {
-	$data = $this->_getAsArray();
-	return join("\n\t", $data);
+	list ($codes, $trace) = $this->_getAsArray();
+
+	list ($ret, $formatter) =
+	    GalleryFactory::newInstance('GalleryStatusFormatter', 'text/plain');
+	if ($ret->isError() || !isset($formatter)) {
+	    $formatter = new GalleryStatusFormatterText();
+	}
+	return $formatter->format($codes, $trace);
     }
 
     /**
@@ -425,39 +432,98 @@ class GalleryStatus {
 		}
 	    }
 	} else {
-	    $codes[] = "UnknownErrorName";
+	    $codes[] = 'UnknownErrorName';
 	}
 
-	$results = array();
-	$results[] = 'Error (' . join(', ', $codes) . ')';
-
+	$trace = array();
 	$base = $gallery->getConfig('code.gallery.base');
-
 	if (empty($this->_stackTrace)) {
 	    for ($i = 0; $i < count($this->_fileName); $i++) {
-		$results[] = '<B>in</B> ' .
-		    str_replace($base, '', $this->_fileName[$i])  .
-		    ' <B>at line</B> ' .
-		    $this->_lineNumber[$i];
+		$trace[] = array('file' => str_replace($base, '', $this->_fileName[$i]),
+				 'line' => $this->_lineNumber[$i],
+				 'class' => null,
+				 'function' => null);
 	    }
 	} else {
 	    foreach ($this->_stackTrace as $traceEntry) {
-		$buf = '<B>in</B> ' . str_replace($base, '', $traceEntry['file']);
-		$buf .= ' <a href="debugger.php?'
-			. 'file=' . str_replace($base, '', $traceEntry['file'])
-			. '&amp;line=' . $traceEntry['line'] . '#line' . $traceEntry['line'] . '">link</a>';
-			;
-		if (isset($traceEntry['class']) && isset($traceEntry['function'])) {
-		    $buf .= " ($traceEntry[class]::$traceEntry[function]) ";
-		} else if (isset($traceEntry['class'])) {
-		    $buf .= " ($traceEntry[function]) ";
-		}
-		$buf .= " <B>at line</B> $traceEntry[line]";
-		$results[] = $buf;
+		$trace[] = array('file' => str_replace($base, '', $traceEntry['file']),
+				 'line' => $traceEntry['line'],
+				 'class' => empty($traceEntry['class']) ? null : $traceEntry['class'],
+				 'function' => empty($traceEntry['function']) ?
+				                     null : $traceEntry['function']);
 	    }
 	}  
 
-	return $results;
+	return array($codes, $trace);
     }
 }
+
+/**
+ * Public interface for formatting status results.
+ *
+ * @package GalleryCore
+ * @subpackage Classes
+ */
+class GalleryStatusFormatter {
+    function format($codes, $trace) {
+	return "Unimplemented";
+    }
+}
+
+/**
+ * HTML status formatter
+ *
+ * @package GalleryCore
+ * @subpackage Classes
+ */
+class GalleryStatusFormatterHtml extends GalleryStatusFormatter {
+
+    /**
+     * @see GalleryStatus::format()
+     */
+    function format($codes, $trace) {
+	$buf = 'Error (' . join(', ', $codes) . ')';
+	$buf .= '<UL>';
+	foreach ($trace as $traceEntry) {
+	    $buf .= sprintf("<LI><B>in</B> %s <B>at line</B> %d",
+			    $traceEntry['file'], $traceEntry['line']);
+	    if (isset($traceEntry['class']) && isset($traceEntry['function'])) {
+		$buf .= " ($traceEntry[class]::$traceEntry[function]) ";
+	    } else if (isset($traceEntry['class'])) {
+		$buf .= " ($traceEntry[function]) ";
+	    }
+	}
+	$buf .= '</UL>';
+
+	return $buf;
+    }
+}
+
+/**
+ * Text status formatter
+ *
+ * @package GalleryCore
+ * @subpackage Classes
+ */
+class GalleryStatusFormatterText extends GalleryStatusFormatter {
+
+    /**
+     * @see GalleryStatus::format()
+     */
+    function format($codes, $trace) {
+	$buf = 'Error (' . join(', ', $codes) . ')';
+	foreach ($trace as $traceEntry) {
+	    $buf .= sprintf("<B>in</B> %s <B>at line</B> %d",
+			    $traceEntry['file'], $traceEntry['line']);
+	    if (isset($traceEntry['class']) && isset($traceEntry['function'])) {
+		$buf .= " ($traceEntry[class]::$traceEntry[function]) ";
+	    } else if (isset($traceEntry['class'])) {
+		$buf .= " ($traceEntry[function]) ";
+	    }
+	    $buf .= "\n";
+	}
+	return $buf;
+    }
+}
+
 ?>

@@ -54,6 +54,12 @@ class DebugModule extends GalleryModule {
 	$classDir = dirname(__FILE__) . '/classes/';
 	require_once($classDir . 'DebugHelper.class');
 
+	GalleryFactory::registerImplementation('GalleryStatusFormatter',
+					       'DebugStatusFormatter',
+					       'DebugStatusFormatter',
+					       $classDir . 'DebugStatusFormatter.class',
+					       array('text/html'));
+
 	return GalleryStatus::success();
     }
 
