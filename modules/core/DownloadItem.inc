@@ -137,7 +137,7 @@ class DownloadItemView extends GalleryView {
 
 	$platform = $gallery->getPlatform();
 	$stats = $platform->stat($path);
-	header('Last-Modified: ' . strftime('%a, %e %b %G %R %Z', $stats[9]));
+	header('Last-Modified: ' . gmstrftime('%a, %e %b %G %R %Z', $stats[9]));
 	
 	$platform->readfile($path);
 
