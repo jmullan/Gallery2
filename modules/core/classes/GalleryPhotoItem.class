@@ -219,13 +219,21 @@ class GalleryPhotoItem_core extends GalleryDataItem {
 		    GalleryUtilities::shrinkDimensionsToFit($params['maxSize'], $width, $height);
 	    }
 
-	    $sizeStr = ($width > 0 && $height > 0)
-		? sprintf(' width="%s" height="%s"', $width, $height) : '';
+	    $sizeStr = '';
+	    if ($width > 0 && $height > 0) {
+		$sizeStr = sprintf(' width="%s" height="%s"', $width, $height);
+	    }
 
-	    return sprintf('<img%s src="%s"%s%s alt="%s" longdesc="%s"/>',
+	    $nameStr = '';
+	    if (isset($params['name'])) {
+		$nameStr = sprintf(' name="%s"', $params['name']);
+	    }
+
+	    return sprintf('<img%s src="%s"%s%s%s alt="%s" longdesc="%s"/>',
 			   $params['class'] ? ' class="' . $params['class'] . '"' : '',
 			   $src,
 			   $sizeStr,
+			   $nameStr,
 			   $params['id'] ? ' id="' . $params['id'] . '"' : '',
 			   $this->getTitle() ? $this->getTitle() : $this->getPathComponent(),
 			   $this->getDescription());

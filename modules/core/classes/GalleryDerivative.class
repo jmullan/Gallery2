@@ -139,6 +139,24 @@ class GalleryDerivative_core extends GalleryChildEntity {
      */
     var $_mimeType;
 
+    /**
+     * More operations that are applied at the very end of the derivative operations,
+     * and are not carried down to derivatives that depend on this one.  Useful for
+     * operations like watermarking that change the derivative in a way that we don't
+     * want to propagate.
+     *
+     * @g2 <member>
+     * @g2   <member-name>postFilterOperations</member-name>
+     * @g2   <member-type>STRING</member-type>
+     * @g2   <member-size>LARGE</member-size>
+     * @g2   <required/>
+     * @g2 </member>
+     *
+     * @var int $_postFilterOperations
+     * @access private
+     */
+    var $_postFilterOperations;
+
     /*
      * ****************************************
      *                 Methods
@@ -264,12 +282,6 @@ class GalleryDerivative_core extends GalleryChildEntity {
     function rebuildCache() {
 	global $gallery;
 	
-	/* Load the source */
-	list($ret, $source) = GalleryCoreApi::loadEntitiesById($this->getDerivativeSourceId());
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
 	/* Figure out our target path */
 	list($ret, $destPath) = $this->fetchPath();
 	if ($ret->isError()) {
@@ -279,63 +291,11 @@ class GalleryDerivative_core extends GalleryChildEntity {
 	/* Make sure our path is legit */ 
 	GalleryUtilities::guaranteeDirExists(dirname($destPath));
 
-	if (GalleryUtilities::isA($source, 'GalleryDerivative')) {
-	    /*
-	     * If my source is a thumbnail, then we've got to assume that we've already lost some valuable source
-	     * data that was present further up the chain.  So in that case, seek backwards until we find a source
-	     * that is not a thumbnail and use that as the source file, but merge and apply all the derivative
-	     * operations from the intervening parents to discover the correct operations for this derivative.
-	     * So, if we've got: 
-	     *
-	     * Source Image A (640x480):
-	     * --> Preferred A1: rotate|90
-	     *     --> Derivative A2: crop|25.9,49,33.6,25.2;thumbnail|150
-	     *         --> Derivative A3: thumbnail|75
-	     *             --> Derivative A4: thumbnail|300
-	     *
-	     * Then when we really do our calculations, the real operations we perform should be:
-	     *
-	     * TARGET         SOURCE        OPERATONS
-	     * ---------------------------------------
-	     * Preferred A1:  Source A      rotate|90
-	     * Derivative A2: Preferred A1  crop|25.9,49,33.6,25.2;thumbnail|150
-	     * Derivative A3: Preferred A1  crop|25.9,49,33.6,25.2;thumbnail|75
-	     * Derivative A4: Preferred A1  crop|25.9,49,33.6,25.2;thumbnail|300
-	     */
-	    if ($source->getDerivativeType() == DERIVATIVE_TYPE_IMAGE_THUMBNAIL) {
-		$sources = array($source, $this);
-		while ($sources[0]->getDerivativeType() == DERIVATIVE_TYPE_IMAGE_THUMBNAIL) {
-		    list ($ret, $tmp) = GalleryCoreApi::loadEntitiesById($sources[0]->getDerivativeSourceId());
-		    if ($ret->isError()) {
-			return $ret->wrap(__FILE__, __LINE__);
-		    }
-
-		    if (!GalleryUtilities::isA($tmp, 'GalleryDerivative') ||
-			    $tmp->getDerivativeType() != DERIVATIVE_TYPE_IMAGE_THUMBNAIL) {
-			/* We've found our true source */
-			$source = $tmp;
-			break;
-		    }
-
-		    array_unshift($sources, $tmp);
-		}
-
-		/* Now gather up all the operations, and reduce it to the smallest possible sequence */
-		$operations = $sources[0]->getDerivativeOperations();
-		for ($i = 1; $i < sizeof($sources); $i++) {
-		    list ($ret, $operations) =
-			GalleryCoreApi::mergeDerivativeOperations($operations, $sources[$i]->getDerivativeOperations());
-		    if ($ret->isError()) {
-			return $ret->wrap(__FILE__, __LINE__);
-		    }
-		}
-	    } else {
-		$operations = $this->getDerivativeOperations();
-	    }
-	} else {
-	    $operations = $this->getDerivativeOperations();
+	list ($ret, $source, $operations) = $this->fetchFinalOperations();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
+	
 	/* Get the path of the source file */
 	if ($source->isLinked()) {
 	    $linkedEntity = $source->getLinkedEntity();
@@ -349,10 +309,7 @@ class GalleryDerivative_core extends GalleryChildEntity {
 	
 	/* Now apply our derivative commands to create the cache file */
 	$mimeType = $source->getMimeType();
-	foreach (split(';', $operations) as $operation) {
-	    if (empty($operation)) {
-		continue;
-	    }
+	foreach ($operations as $operation) {
 	    if (strpos($operation, '|') === false) {
 		list($operationName, $operationArgs) = array($operation, null);
 	    } else {
@@ -428,6 +385,83 @@ class GalleryDerivative_core extends GalleryChildEntity {
 	
 	return GalleryStatus::success();
     }
+
+    /**
+     * Get the complete set of operations required by this derivative.  This will return the original source
+     * GalleryDataItem and an array of all the operations that must be performed in order to
+     * create the correct output file, including the post filter.
+     *
+     * @return array object GalleryStatus a status code
+     *               object GalleryDataItem a data item
+     *               array the operations
+     */
+    function fetchFinalOperations() {
+	/* Load the source */
+	list($ret, $source) = GalleryCoreApi::loadEntitiesById($this->getDerivativeSourceId());
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+
+	if (GalleryUtilities::isA($source, 'GalleryDerivative')) {
+	    /*
+	     * In order to build our derivative, we need to complete set of commands from the original
+	     * source file.  We can't rely on intervening files for two reasons:
+	     *  1.  Larger derivatives sourced on derivatives would lead to upsampling
+	     *  2.  The source derivative's cached data file may have postfilters applied, which we
+	     *      don't want for our derivative
+	     *
+	     * So seek backwards to the source file, then merge and apply all the derivative operations from
+	     * the intervening parents to discover the correct operations for this derivative.  
+	     */
+	    $sources = array($source, $this);
+	    while (GalleryUtilities::isA($sources[0], 'GalleryDerivative')) {
+		list ($ret, $tmp) = GalleryCoreApi::loadEntitiesById($sources[0]->getDerivativeSourceId());
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		}
+
+		if (!GalleryUtilities::isA($tmp, 'GalleryDerivative')) {
+		    /* We've found our true source */
+		    $source = $tmp;
+		    break;
+		}
+		
+		array_unshift($sources, $tmp);
+	    }
+
+	    /* Now gather up all the operations, and reduce it to the smallest possible sequence */
+	    $operations = $sources[0]->getDerivativeOperations();
+	    for ($i = 1; $i < sizeof($sources); $i++) {
+		foreach (split(';', $sources[$i]->getDerivativeOperations()) as $newOperation) {
+		    list ($ret, $operations) =
+			GalleryCoreApi::mergeDerivativeOperations($operations, $newOperation);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    }
+		}
+	    }
+	} else {
+	    $operations = $this->getDerivativeOperations();
+	}
+
+	/* Merge in the postfilter operations */
+	$postFilters = $this->getPostFilterOperations();
+	if (empty($operations)) {
+	    $operations = split(';', $postFilters);
+	} else {
+	    foreach (split(';', $postFilters) as $newOperation) {
+		list ($ret, $operations) =
+		    GalleryCoreApi::mergeDerivativeOperations($operations, $newOperation);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		}
+	    }
+
+	    $operations = split(';', $operations);
+	}
+
+	return array(GalleryStatus::success(), $source, $operations);
+    }
     
     /**
      * Is the cache for this item still current?
@@ -498,6 +532,17 @@ class GalleryDerivative_core extends GalleryChildEntity {
      */
     function render($format, $item, $params) {
 	return null;
+    }
+
+    /**
+     * Return true if we have no derivative or postfilter operations
+     *
+     * @param bool true if there are no operations
+     */
+    function hasNoOperations() {
+	$derivativeOperations = $this->getDerivativeOperations();
+	$postfilterOperations = $this->getPostFilterOperations();
+	return (empty($derivativeOperations) && empty($postfilterOperations));
     }
 }
 
