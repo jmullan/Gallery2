@@ -66,11 +66,10 @@
 /*      gsXxxxContents - elements are the main 'holder' for the page. */
 
 #gsAlbumContents {
-        float: left;
-	width: 73%;
+	float: none;
+	width: auto;
 	/* min-width: 596px;  non ie */
-        border: 1px none blue;
-	margin: 0;
+	margin: 0 0 0 157px;
 	padding: 0;
 }
 
@@ -94,9 +93,7 @@
 
 /*      global  */
 
-.gbDataEntry {
-	margin: 6 0px;
-}
+.gbDataEntry { margin: 6 0px; }
 
 /*      first and default module settings */
 .gbMenu { 
@@ -116,6 +113,8 @@
     clear: both; 
     visibility: hidden;
 }
+
+#gsSidebar .giThumbImage { margin: 4px 0; }
 
 /* Hides from IE-mac \*/
 * html .Menu { height: 1%; }
@@ -141,16 +140,17 @@
 	padding: 0 0;
 }
 
-#gsFooter {
+#gsFooter { 
 	clear: both;
+	margin: 0 0 0 156px;
 }
 
 /*      #gsAlbumContents        */
 
 #gsAlbumContents .gbTitleBanner {
 	float: left;
-	width: 256px;
-	padding: 8px 0;
+	width: 400px;
+	padding: 8px;
 }
 
 #gsAlbumContents .gbItemAlbum {
@@ -180,7 +180,7 @@
 	max-width: 172px;
 	width: expression(document.body.clientWidth > 172? '172px': 'auto' );
 	margin: 8px 8px 0 0;
-	padding: 8px 0;
+	padding: 8px;
 }
 
 #gsAlbumContents .gbExif { }
@@ -189,7 +189,7 @@
 	display: block; 
 	clear: both;
 	padding: 0;
-        margin: 0;
+	margin: 0;
 }
 
 .gbTopFlag:after, .gbBottomFlag:after {
