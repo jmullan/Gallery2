@@ -232,6 +232,8 @@ class Gallery {
     function loadEntitiesById($ids) {
 	GalleryProfiler::start('Gallery::loadEntitiesById');
 	
+	$this->guaranteeTimeLimit(5);
+	    
 	if (empty($ids)) {
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER,
 					      __FILE__, __LINE__),
@@ -719,6 +721,7 @@ class Gallery {
 
 	/* Now release all locks */
 	foreach ($lockIds as $lockId) {
+	    $this->guaranteeTimeLimit(5);
 	    $ret = $this->_locks[$lockId]->release();
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
@@ -740,6 +743,7 @@ class Gallery {
 
 	/* Release any hanging locks */
 	foreach ($this->_locks as $lock) {
+	    $this->guaranteeTimeLimit(5);
 	    if ($lock->isLocked()) {
 		/* Bitch at the developer! */
 		$this->debug('Lock id ' . $lock->getId() . ' was left hanging!');
