@@ -42,6 +42,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 
     function setUp() {
 	$this->_urlGenerator = new GalleryUrlGenerator('test.php');
+	parent::setUp();
     }
 
     function testGenerateUrl() {
