@@ -39,19 +39,19 @@
       <input type="text" size="10" name="{g->formVar var="form[pathComponent]"}" value="{$form.pathComponent}"/>
 
       {if !empty($form.error.pathComponent.invalid)}
-      <div class="giDescription">
+      <div class="giError">
 	{g->text text="Your name contains invalid characters.  Please enter another."}
       </div>
       {/if}
       
       {if !empty($form.error.pathComponent.missing)}
-      <div class="giDescription">
+      <div class="giError">
 	{g->text text="You must enter a name for this album."}
       </div>
       {/if}
       
       {if !empty($form.error.pathComponent.collision)}
-      <div class="giDescription">
+      <div class="giError">
 	{g->text text="The name you entered is already in use.  Please enter another."}
       </div>
       {/if}
@@ -66,7 +66,11 @@
 	{g->text text="This is the album title."}
       </div>
 
-      <input type="text" size="40" name="{g->formVar var="form[title]"}" value="{$form.title}"/>
+      {include file="gallery:modules/core/templates/MarkupBar.tpl" 
+               viewL10domain="modules_core" 
+	       element="title"
+	       firstMarkupBar="true"}
+      <input type="text" id="title" size="40" name="{g->formVar var="form[title]"}" value="{$form.title}"/>
     </div>
 
     <div class="gbDataEntry">
@@ -78,7 +82,10 @@
 	{g->text text="This is the album summary."}
       </div>
 
-      <input type=text size=40 name="{g->formVar var="form[summary]"}" value="{$form.summary}"/>
+      {include file="gallery:modules/core/templates/MarkupBar.tpl" 
+               viewL10domain="modules_core" 
+	       element="summary"}
+      <input type="text" id="summary" size="40" name="{g->formVar var="form[summary]"}" value="{$form.summary}"/>
     </div>
 
     <div class="gbDataEntry">
@@ -90,7 +97,7 @@
 	{g->text text="Keywords are not visible, but are searchable."}
       </div>
 
-      <textarea rows=2 cols=60 name="{g->formVar var="form[keywords]"}">{$form.keywords}</textarea>
+      <textarea rows="2" cols="60" name="{g->formVar var="form[keywords]"}">{$form.keywords}</textarea>
     </div>
 
     <div class="gbDataEntry">
@@ -102,7 +109,10 @@
 	{g->text text="This is the long description of the album."}
       </div>
 
-      <textarea rows=4 cols=60 name="{g->formVar var="form[description]"}">{$form.description}</textarea>
+      {include file="gallery:modules/core/templates/MarkupBar.tpl" 
+               viewL10domain="modules_core" 
+	       element="description"}
+      <textarea id="description" rows="4" cols="60" name="{g->formVar var="form[description]"}">{$form.description}</textarea>
     </div>
 
     <div class="gbBottomFlag">
