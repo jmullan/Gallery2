@@ -79,7 +79,8 @@ class ItemEditControllerTest extends GalleryControllerTestCase {
 
     function testHandleRequestWithPreferred() {
 	list ($ret, $this->_preferred) =
-	    $this->_createDerivative($this->_item, DERIVATIVE_TYPE_IMAGE_PREFERRED, 'rotate|90');
+	    $this->_createDerivative($this->_item, $this->_item->getId(),
+				     DERIVATIVE_TYPE_IMAGE_PREFERRED, 'rotate|90');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
