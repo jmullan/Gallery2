@@ -280,16 +280,28 @@ class GalleryMembersHelper {
      * @static
      */
     function daysSinceCreation($userId){
+	global $gallery;
 	list ($ret, $user) = GalleryCoreApi::loadEntitiesById($userId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	$query = '
+	SELECT
+	  NOW()
+	';
+
+        list ($ret, $queryResult) = $gallery->search($query);
+        if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
+        }
+        $result = $queryResult->nextResult();
+        $nowStamp = $result[0];
 	/* The difference in the day of  creationTimestamp and todays date, divided by the number of seconds
 	 * in a day , gives us a result in days
 	 */
 
-	$todayStamp = strtotime(date("F j, Y", time()));
+	$todayStamp = strtotime(date("F j, Y", strtotime($nowStamp)));
 	$creationStamp = strtotime(date("F j, Y", $user->getCreationTimestamp()));
 	$age = ($todayStamp - $creationStamp) / (24 * 60 * 60);
 
