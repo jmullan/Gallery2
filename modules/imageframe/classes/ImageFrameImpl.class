@@ -1,0 +1,135 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package ImageFrame
+ * @author Alan Harder <alan.harder@sun.com>
+ */
+
+/**
+ * Load the parent class
+ */
+require_once(dirname(__FILE__) . '/ImageFrameInterface_1_0.class');
+
+/**
+ * Implementation of the ImageFrameInterface for rendering a frame around an image
+ *
+ * @package ImageFrame
+ * @subpackage Classes
+ */
+class ImageFrameImpl extends ImageFrameInterface_1_0 {
+
+    /**
+     * @see ImageFrameInterface_1_0::getImageFrameList()
+     */
+    function getImageFrameList() {
+	global $gallery;
+	$platform = $gallery->getPlatform();
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'imageframe');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$frames = array('none' => $module->translate('None'),
+			'solid' => $module->translate('Solid'));
+	$dir = dirname(__FILE__) . '/../frames';
+	if ($platform->is_dir($dir) && $platform->is_readable($dir) && $fd = $platform->opendir($dir)) {
+	    while ($file = $platform->readdir($fd)) {
+		$subdir = "$dir/$file";
+		$frameinc = "$subdir/frame.inc";
+		if ($platform->is_dir($subdir) && $platform->file_exists($frameinc)) {
+		    require($frameinc);
+		    $frames[$file] = $module->translate($frameData['name']);
+		}
+	    }
+	}
+	return array(GalleryStatus::success(), $frames);
+    }
+
+    /**
+     * @see ImageFrameInterface_1_0::getImageFrameData()
+     */
+    function getImageFrameData($frameIds) {
+	global $gallery;
+	$platform = $gallery->getPlatform();
+	if (!is_array($frameIds)) {
+	    $frameIds = array($frameIds);
+	}
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'imageframe');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$baseUrl = GalleryUtilities::convertPathToUrl(dirname(__FILE__) . '/../frames');
+
+	$defn = array('none' => array('type'=>'none'),
+	    'solid' => array('type'=>'style','style'=>'border:1px solid black'));
+
+	$data = array();
+	foreach ($frameIds as $id) {
+	    if (isset($defn[$id])) {
+		$data[$id] = $defn[$id];
+	    } else {
+		$dir = dirname(__FILE__) . "/../frames/$id";
+		$frameinc = "$dir/frame.inc";
+		if ($platform->is_dir($dir) && $platform->file_exists($frameinc)) {
+		    require($frameinc);
+		    $dat = array('type' => isset($frameData['style']) ? 'style' : 'image');
+		    foreach ($frameData as $key => $value) {
+			if ($key == 'name' || $key == 'description') {
+			    $dat[$key] = $module->translate($value);
+			} else if (!strncmp($key, 'image', 5) && $value) {
+			    $dat[$key] = "$baseUrl/$id/" . $value;
+			} else {
+			    $dat[$key] = $value;
+			}
+		    }
+		    if ($dat['type'] == 'image') {
+			$dat['wHL'] = max($frameData['widthTTL'], $frameData['widthBBL']);
+			$dat['wHR'] = max($frameData['widthTTR'], $frameData['widthBBR']);
+			$dat['hVT'] = max($frameData['heightLLT'], $frameData['heightRRT']);
+			$dat['hVB'] = max($frameData['heightLLB'], $frameData['heightRRB']);
+			$dat['rowspan'] = 1 + ($dat['hVT']>0?1:0) + ($dat['hVB']>0?1:0);
+			$dat['colspan'] = 1 + ($dat['wHL']>0?1:0) + ($dat['wHR']>0?1:0);
+		    }
+		    $data[$id] = $dat;
+		}
+	    }
+	}
+
+	return array(GalleryStatus::success(),
+	    'modules/imageframe/templates/ImageFrame.tpl',
+	    'modules/imageframe/templates/ImageFrameStyle.tpl', $data);
+    }
+
+    /**
+     * @see ImageFrameInterface_1_0::getSampleView()
+     */
+    function getSampleUrl($itemId=null) {
+	global $gallery;
+	$urlGenerator = $gallery->getUrlGenerator();
+	$params = array('view' => 'imageframe:Sample');
+	if (isset($itemId)) {
+	    $params['itemId'] = $itemId;
+	}
+	return array(GalleryStatus::success(), $urlGenerator->generateUrl($params));
+    }
+}

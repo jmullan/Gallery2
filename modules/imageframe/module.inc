@@ -1,0 +1,104 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package ImageFrame
+ * @author Alan Harder <alan.harder@sun.com>
+ */
+
+/**
+ * The implementation of the Image Frame module
+ *
+ * @package ImageFrame
+ */
+class ImageFrameModule extends GalleryModule {
+
+    function ImageFrameModule() {
+	global $gallery;
+	$this->setId('imageframe');
+	$this->setName('ImageFrame');
+	$this->setDescription($gallery->i18n('Render frames around images'));
+	$this->setVersion('0.5');
+    }
+
+    /**
+     * @see GalleryModule::init()
+     */
+    function init() {
+	$ret = parent::init();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	GalleryCoreApi::registerFactoryImplementation(
+	    'ImageFrameInterface_1_0', 'ImageFrameImpl', 'ImageFrame',
+	    dirname(__FILE__) . '/classes/ImageFrameImpl.class');
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * @see GalleryModule::install()
+     */
+    function install() {
+	global $gallery;
+
+	list ($ret, $version) = $this->getModuleParameter('version');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__,__LINE__), false);
+	}
+
+	$installed = false;
+	if ($version != $this->getVersion()) {
+	    if (empty($version)) {
+		/* Initial install */
+		$installed = true;
+	    }
+
+	    foreach (array( 'version' => $this->getVersion() )
+		     as $key => $value) {
+		$ret = $this->setModuleParameter($key, $value);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), false);
+		}
+	    }
+	}
+
+	return array(GalleryStatus::success(), $installed);
+    }
+
+    /**
+     * @see GalleryModule::canBeAutoInstalled()
+     */
+    function canBeAutoInstalled() {
+	return true;
+    }
+
+    /**
+     * @see GalleryModule::autoConfigure()
+     */
+    function autoConfigure() {
+	/* We don't require any special configuration */
+	return array(GalleryStatus::success(), true);
+    }
+}
+?>
