@@ -2,7 +2,7 @@
 	Matrix Theme
 	Gallery 2
 	theme.css
-	by Ross A. Reyman, Jon Huang and Chad Kiefer
+	by Ross A. Reyman, Jon Huang and Chad Kieffer
 
         This css file defines all aspects of the Gallery layout.
 	
@@ -105,17 +105,27 @@ body {
 .gbEven { background-color: #fff; }
 .gbOdd { background-color: #eee; }
 
-.gbExif .gbEven { text-align: right; }
-.gbExif .gbOdd {
-        text-align: left;
-        font-weight: normal;
+.gbExif .gbEven { 
+    text-align: right; 
+    border-bottom: 1px solid #eee; 
+}
+.gbExif .gbOdd { 
+    text-align: left;
+    font-weight: normal; 
+    border-bottom: 1px solid #eee; 
 }
 
-table.gbDataTable tr td {
-        border-bottom: 1px solid #eee;
-        font-weight: bold;
-        padding: 4px;
+table.gbDataTable th { 
+    background: #eee; 
+    padding: 10px;
 }
+
+table.gbDataTable td {
+    font-weight: bold;
+    padding: 4px; 
+}
+
+table.gbDataTable img { border: none; }
 
 #gsComments {
         clear: both;
