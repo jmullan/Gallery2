@@ -585,6 +585,33 @@ class UtilitiesTest extends GalleryTestCase {
 	$this->assert(!GalleryUtilities::isCompatibleWithApi(array(2), array(2)), 'input error 3');
 	$this->assert(!GalleryUtilities::isCompatibleWithApi(array('1', '2'), array('1', 2)), 'input error 4');
     }
+
+    function testGetPhpIniBool() {
+	$iniVal = ini_get('define_syslog_variables');
+
+	$oldval = ini_set('define_syslog_variables', '');
+	$this->assert(!GalleryUtilities::getPhpIniBool('define_syslog_variables'), 'Blank should be false');
+
+	$oldval = ini_set('define_syslog_variables', 'off');
+	$this->assert(!GalleryUtilities::getPhpIniBool('define_syslog_variables'), 'Off should be false');
+
+	$oldval = ini_set('define_syslog_variables', '0');
+	$this->assert(!GalleryUtilities::getPhpIniBool('define_syslog_variables'), '0 should be false');
+
+	$oldval = ini_set('define_syslog_variables', false);
+	$this->assert(!GalleryUtilities::getPhpIniBool('define_syslog_variables'), 'false should be false');
+
+	$oldval = ini_set('define_syslog_variables', 'on');
+	$this->assert( GalleryUtilities::getPhpIniBool('define_syslog_variables'), 'On should be true');
+
+	$oldval = ini_set('define_syslog_variables', '1');
+	$this->assert( GalleryUtilities::getPhpIniBool('define_syslog_variables'), '1 should be true');
+
+	$oldval = ini_set('define_syslog_variables', true);
+	$this->assert( GalleryUtilities::getPhpIniBool('define_syslog_variables'), 'true should be true');
+
+	$oldval = ini_set('define_syslog_variables', $iniVal);
+    }
 }
 
 /**

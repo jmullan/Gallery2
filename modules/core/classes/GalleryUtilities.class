@@ -1290,12 +1290,13 @@ class GalleryUtilities {
      */
     function getPhpIniBool($ini_string) {
 	$value = ini_get($ini_string);
+	echo "'$value'\n";
 
-	if (!strcasecmp('on', $value) || $value == true) {
+	if (!strcasecmp('on', $value) || $value == 1 || $value === true) {
 	    return true;
 	}
 
-	if (!strcasecmp('off', $value) || $value == false) {
+	if (!strcasecmp('off', $value) || $value == 0 || $value === false) {
 	    return false;
 	}
 
