@@ -126,4 +126,23 @@ class RedirectController extends GalleryController {
 	return array(GalleryStatus::success(), $results);
     }
 }
+
+/**
+ * View returns .htaccess file
+ */
+class RedirectView extends GalleryView {
+    /**
+     * @see GalleryView::loadTemplate
+     */
+    function loadTemplate(&$template, &$form) {
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	header('Content-type: text/plain');
+	$template->setVariable('uriBase', $_SERVER['SCRIPT_NAME']);
+	return array(GalleryStatus::success(),
+		     array('html' => 'modules/migrate/templates/Htaccess.tpl'));
+    }
+}
 ?>
