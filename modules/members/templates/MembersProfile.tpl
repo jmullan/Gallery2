@@ -76,7 +76,7 @@
 
 	    <td>
 	      <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$item.id`"}">
-		{$item.title}
+		{$item.title|default:$item.pathComponent}
 	      </a>
 	    </td>
 	  </tr>
