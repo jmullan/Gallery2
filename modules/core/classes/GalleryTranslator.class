@@ -80,76 +80,92 @@ class GalleryTranslator {
      */
 
     function GalleryTranslator() {
-
-	/* XXX: Move this information into a configuration file */
-	$this->_supportedLanguages = array();
-	$this->_defaultCountry = array();
-
-	$this->_supportedLanguages['de']['DE']['description'] = 'German';
-	$this->_supportedLanguages['de']['DE']['charset'] = 'UTF-8';
-	$this->_defaultCountry['de'] = 'DE';
-	
-	$this->_supportedLanguages['el']['GR']['description'] = 'Greek';
-	$this->_supportedLanguages['el']['GR']['charset'] = 'UTF-8';
-	$this->_defaultCountry['el'] = 'GR';
-    
-	$this->_supportedLanguages['en']['US']['description'] = 'English (US)';
-	$this->_supportedLanguages['en']['US']['charset'] = 'UTF-8';
-	$this->_supportedLanguages['en']['GB']['description'] = 'English (UK)';
-	$this->_supportedLanguages['en']['GB']['charset'] = 'UTF-8';
-	$this->_defaultCountry['en'] = 'US';
-    
-	$this->_supportedLanguages['es']['AR']['description'] = 'Spanish (AR)';
-	$this->_supportedLanguages['es']['AR']['charset'] = 'UTF-8';
-	$this->_defaultCountry['es'] = 'AR';
-    
-	$this->_supportedLanguages['fi']['FI']['description'] = 'Finnish';
-	$this->_supportedLanguages['fi']['FI']['charset'] = 'UTF-8';
-	$this->_defaultCountry['fi'] = 'FI';
-    
-	$this->_supportedLanguages['pl']['PL']['description'] = 'Polish';
-	$this->_supportedLanguages['pl']['PL']['charset'] = 'UTF-8';
-	$this->_defaultCountry['pl'] = 'PL';
-	
-	$this->_supportedLanguages['pt']['BR']['description'] = 'Portuguese (BR)';
-	$this->_supportedLanguages['pt']['BR']['charset'] = 'UTF-8';
-	$this->_defaultCountry['pt'] = 'BR';
-	
-	$this->_supportedLanguages['zh']['TW']['description'] = 'Chinese (Traditional)';
-	$this->_supportedLanguages['zh']['TW']['charset'] = 'UTF-8';
-	$this->_defaultCountry['zh'] = 'TW';
-
-	$this->_supportedLanguages['nl']['NL']['description'] = 'Dutch';
-	$this->_supportedLanguages['nl']['NL']['charset'] = 'UTF-8';
-	$this->_defaultCountry['nl'] = 'NL';
-
-	$this->_supportedLanguages['no']['NO']['description'] = 'Norwegian';
-	$this->_supportedLanguages['no']['NO']['charset'] = 'UTF-8';
-	$this->_defaultCountry['no'] = 'NO';
-
-	$this->_supportedLanguages['pt']['BR']['description'] = 'Portuguese (BR)';
-	$this->_supportedLanguages['pt']['BR']['charset'] = 'UTF-8';
-	$this->_defaultCountry['pt'] = 'BR';
-
-	$this->_supportedLanguages['ja']['JP']['description'] = 'Japanese';
-	$this->_supportedLanguages['ja']['JP']['charset'] = 'UTF-8';
-	$this->_defaultCountry['ja'] = 'JP';
-
-	$this->_supportedLanguages['ga']['IE']['description'] = 'Irish';
-	$this->_supportedLanguages['ga']['IE']['charset'] = 'UTF-8';
-	$this->_defaultCountry['ga'] = 'IE';
-
 	$this->_boundDomains = array();
     }
 
     /**
+     * Return our language data
+     *
+     * @return array array['language code']['country code'] = array('description', 'charset code')
+     *         array array('country' => 'default language code',
+     *                     'country' => 'default language code',
+     *                     ...)
+     */
+    function getLanguageData() {
+	static $supportedLanguages = array();
+	static $defaultCountry = array();
+	
+	if (empty($supportedLanguages)) {
+	    /* XXX: Move this information into a configuration file */
+	    $supportedLanguages['de']['DE']['description'] = 'German';
+	    $supportedLanguages['de']['DE']['charset'] = 'UTF-8';
+	    $defaultCountry['de'] = 'DE';
+	
+	    $supportedLanguages['el']['GR']['description'] = 'Greek';
+	    $supportedLanguages['el']['GR']['charset'] = 'UTF-8';
+	    $defaultCountry['el'] = 'GR';
+    
+	    $supportedLanguages['en']['US']['description'] = 'English (US)';
+	    $supportedLanguages['en']['US']['charset'] = 'UTF-8';
+	    $supportedLanguages['en']['GB']['description'] = 'English (UK)';
+	    $supportedLanguages['en']['GB']['charset'] = 'UTF-8';
+	    $defaultCountry['en'] = 'US';
+    
+	    $supportedLanguages['es']['AR']['description'] = 'Spanish (AR)';
+	    $supportedLanguages['es']['AR']['charset'] = 'UTF-8';
+	    $defaultCountry['es'] = 'AR';
+    
+	    $supportedLanguages['fi']['FI']['description'] = 'Finnish';
+	    $supportedLanguages['fi']['FI']['charset'] = 'UTF-8';
+	    $defaultCountry['fi'] = 'FI';
+    
+	    $supportedLanguages['pl']['PL']['description'] = 'Polish';
+	    $supportedLanguages['pl']['PL']['charset'] = 'UTF-8';
+	    $defaultCountry['pl'] = 'PL';
+	
+	    $supportedLanguages['pt']['BR']['description'] = 'Portuguese (BR)';
+	    $supportedLanguages['pt']['BR']['charset'] = 'UTF-8';
+	    $defaultCountry['pt'] = 'BR';
+	
+	    $supportedLanguages['zh']['TW']['description'] = 'Chinese (Traditional)';
+	    $supportedLanguages['zh']['TW']['charset'] = 'UTF-8';
+	    $defaultCountry['zh'] = 'TW';
+
+	    $supportedLanguages['nl']['NL']['description'] = 'Dutch';
+	    $supportedLanguages['nl']['NL']['charset'] = 'UTF-8';
+	    $defaultCountry['nl'] = 'NL';
+
+	    $supportedLanguages['no']['NO']['description'] = 'Norwegian';
+	    $supportedLanguages['no']['NO']['charset'] = 'UTF-8';
+	    $defaultCountry['no'] = 'NO';
+
+	    $supportedLanguages['pt']['BR']['description'] = 'Portuguese (BR)';
+	    $supportedLanguages['pt']['BR']['charset'] = 'UTF-8';
+	    $defaultCountry['pt'] = 'BR';
+
+	    $supportedLanguages['ja']['JP']['description'] = 'Japanese';
+	    $supportedLanguages['ja']['JP']['charset'] = 'UTF-8';
+	    $defaultCountry['ja'] = 'JP';
+
+	    $supportedLanguages['ga']['IE']['description'] = 'Irish';
+	    $supportedLanguages['ga']['IE']['charset'] = 'UTF-8';
+	    $defaultCountry['ga'] = 'IE';
+	}
+
+	return array($supportedLanguages, $defaultCountry);
+    }
+
+    /**
      * Return the list of languages that we support.
+     * Return our language data
      *
      * @return array['language code']['country code'] =
      *              array('description', 'charset code')
      */
     function getSupportedLanguages() {
-	return $this->_supportedLanguages;
+	/* Get our language data */
+	list ($supportedLanguages, $defaultCountry) = GalleryTranslator::getLanguageData();
+	return $supportedLanguages;
     }
 
     /**
@@ -169,11 +185,14 @@ class GalleryTranslator {
 	/* Split the language code into language/country */
 	list ($language, $country) = split('_', $languageCode);
 
+	/* Get our language data */
+	list ($supportedLanguages, $defaultCountry) = GalleryTranslator::getLanguageData();
+
 	/* If we're using gettext, try to bind to a language */
 	if ($gallery->getConfig('function.exists.dgettext')) {
 	    
 	    /* Set the appropriate charset in our HTTP header */
-	    $this->_activeCharset = $this->_supportedLanguages[$language][$country]['charset'];
+	    $this->_activeCharset = $supportedLanguages[$language][$country]['charset'];
 	    if (!headers_sent()) {
 		header('Content-Type: text/html; charset=' . $this->_activeCharset);
 	    }
@@ -204,6 +223,9 @@ class GalleryTranslator {
     function getLanguageCodeFromRequest() {
 	global $HTTP_SERVER_VARS;
 
+	/* Get our language data */
+	list ($supportedLanguages, $defaultCountry) = GalleryTranslator::getLanguageData();
+	
 	/* Take the first thing the browser accepts that we can use */
 	if (isset($HTTP_SERVER_VARS['HTTP_ACCEPT_LANGUAGE'])) {
 	    foreach (explode(',', $HTTP_SERVER_VARS['HTTP_ACCEPT_LANGUAGE'])
@@ -219,12 +241,14 @@ class GalleryTranslator {
 		} else {
 		    /* We only received a language code -- try the default country. */
 		    $language = $code;
-		    if (isset($this->_defaultCountry[$language])) {
-			$country = $this->_defaultCountry[$language];
+		    if (isset($defaultCountry[$language])) {
+			$country = $defaultCountry[$language];
+		    } else {
+			$country = null;
 		    }
 		}
 
-		if (isset($this->_supportedLanguages[$language][$country])) {
+		if (isset($supportedLanguages[$language][$country])) {
 		    break;
 		} else {
 		    $language = null;
