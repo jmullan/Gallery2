@@ -97,7 +97,7 @@
 
       {g->element style="emphasized"}
 	{g->text text="Directory: %s" arg1=$form.localServerPath}
-	{g->link arg1="view=core:ItemAdmin" arg2="subView=core:ItemAddFromServer" arg3="itemId=`$ItemAdmin.item.id`" arg4="form[localServerPath]=`$form.localServerPath`" arg5="form[formName]=ItemAddFromServer"}
+	{g->link arg1="view=core:ItemAdmin" arg2="subView=core:ItemAdd" arg3="itemId=`$ItemAdmin.item.id`" arg4="form[localServerPath]=`$form.localServerPath`" arg5="form[formName]=ItemAddFromServer" arg6="addPlugin=ItemAddFromServer"}
 	  {g->text text="change"}
 	{/g->link}
 	{g->input type="hidden" name="form[localServerPath]"}{$form.localServerPath}{/g->input}
