@@ -98,7 +98,7 @@
 	    </td>
 	  </tr>
 
-	  {if (!$test.success) && !empty($test.results)}
+	  {if empty($test.success) && !empty($test.results)}
 	  <tr>
 	    <td colspan="2">
 	      {galleryText text="Error messages:"}
