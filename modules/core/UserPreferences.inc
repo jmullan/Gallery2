@@ -187,7 +187,7 @@ class UserPreferencesView extends GalleryView {
 	}
 
 	$UserPreferences = array();
-	$UserPreferences['translationsSupported'] = function_exists('dngettext');
+	$UserPreferences['translationsSupported'] = $translator->canTranslate();
 	$UserPreferences['languageList'] = $languageList;
 
 	/* Render the HTML body */

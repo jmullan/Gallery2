@@ -84,6 +84,15 @@ class GalleryTranslator {
     }
 
     /**
+     * Can we translate?
+     *
+     * @return boolean
+     */
+    function canTranslate() {
+	return function_exists('dgettext');
+    }
+
+    /**
      * Return our language data
      *
      * @return array array['language code']['country code'] = array('description', 'charset code')

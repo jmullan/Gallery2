@@ -339,7 +339,7 @@ class AdminCoreView extends GalleryView {
 	$AdminCore['localServerDirList'] = $localServerDirList;
 	$AdminCore['languageList'] = $languageList;
 	$AdminCore['languageSelectorList'] = $languageSelectorList;
-	$AdminCore['translationsSupported'] = function_exists('dgettext');
+	$AdminCore['translationsSupported'] = $translator->canTranslate();
 	$AdminCore['orderByList'] = $orderByList;
 	$AdminCore['orderDirectionList'] = $orderDirectionList;
 	$AdminCore['permissionsDirectoryList'] = $permissionsDirectoryList;
