@@ -296,7 +296,7 @@ class GalleryTranslator {
      * @return array object GalleryStatus a status code
      *               string the localized value
      */
-    function translate($domain, $data) {
+    function translateDomain($domain, $data) {
 	global $gallery;
 
 	GalleryProfiler::start('modules.core.classes.GalleryTranslator::translate');
@@ -396,27 +396,6 @@ class GalleryTranslator {
 
 	GalleryProfiler::stop('modules.core.classes.GalleryTranslator::translate');
 	
-	return array(GalleryStatus::success(), $localized);
-    }
-
-    /**
-     * Convenience method for doing module specific translations (which is the
-     * common case)
-     *
-     * @param string the module name
-     * @param mixed a single string, or an array of parameters
-     * @return array object GalleryStatus a status code
-     *               string the localized value
-     */
-    function translateModule($moduleName, $data) {
-	global $gallery;
-	list ($ret, $localized) = $this->translate('modules_' . $moduleName,
-						   $gallery->getConfig('code.gallery.modules') . $moduleName,
-						   $data);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
 	return array(GalleryStatus::success(), $localized);
     }
 }

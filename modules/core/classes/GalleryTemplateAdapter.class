@@ -118,7 +118,7 @@ class GalleryTemplateAdapter {
 
 	$domain = $smarty->_tpl_vars['l10Domain'];
 	$translator =& $gallery->getTranslator();
-	list ($ret, $text) = $translator->translate($domain, $params);
+	list ($ret, $text) = $translator->translateDomain($domain, $params);
 	if ($ret->isError()) {
 	    return "[Translation error]";
 	} else {
