@@ -190,6 +190,13 @@ class GallerySession {
 	    $urlComponents = parse_url($urlGenerator->getCurrentUrlDir());
 	    $this->_cookiePath = $urlComponents['path'];
 	    $this->_cookieDomain = $urlGenerator->getCurrentDomain();
+	    
+	    /* remove port number in the domain */
+	    $colon = strpos($this->_cookieDomain, ':');
+	    if ($colon) {
+		$this->_cookieDomain = substr($this->_cookieDomain, 0, $colon);
+	    }
+	    
 	    $cookie  .= '; path=' . $this->_cookiePath;
 	    $cookie .= '; domain=' . $this->_cookieDomain;
 
