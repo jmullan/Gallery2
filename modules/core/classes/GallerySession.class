@@ -426,7 +426,7 @@ class GallerySession {
 	     * one to the other with '='.
 	     */
 	    $this->_sessionData = unserialize($serialized);
-	    $this->_loadedSessionData = array_merge($this->_sessionData);
+	    $this->_loadedSessionData = array_merge(array(), $this->_sessionData);
 	} else {
 	    /* No session file */
 	    $this->_sessionData = array();
