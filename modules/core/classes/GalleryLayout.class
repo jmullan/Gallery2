@@ -268,7 +268,7 @@ class GalleryLayout extends GalleryPlugin {
      *   parents = array of ancestor data; also set parent key (direct parent data)
      *   peers = array of peer data (first, last and a window of peers around this item),
      *      also set peerIds(of all peers), peerCount(total count),
-     *      peerItemIndex(index of this item)
+     *      peerItemIndex(index of this item in peers array)
      *   systemLinks = array of array('text'=>.., 'params'=>.., 'url'=>.., 'moduleId'=>..)
      *   systemContent = array of moduleId => array(contentId => template file path, ...)
      *   itemLinks = array of array('text'=>.., 'params'=>.., 'url'=>.., 'moduleId'=>..)
@@ -521,7 +521,7 @@ class GalleryLayout extends GalleryPlugin {
 	    $layout['peerCount'] = count($peerIds);
 
 	    if (isset($load['peerThumbnails'])) {
-		list ($ret, $thumbTable) = GalleryCoreApi::fetchThumbnailsByItemIds($peerIds);
+		list ($ret, $thumbTable) = GalleryCoreApi::fetchThumbnailsByItemIds($peers);
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
@@ -539,7 +539,7 @@ class GalleryLayout extends GalleryPlugin {
 		if (isset($thumbTable[$id])) {
 		    $peer['thumbnail'] = $thumbTable[$id]->getMemberData();
 		}
-		
+
 		$layout['peers'][] = $peer;
 		$j++;
 	    }
@@ -677,7 +677,7 @@ class GalleryLayout extends GalleryPlugin {
 		$childData[] = 'itemLinks';
 	    }
 	}
-	
+
 	/*
 	 * --------------------------------------------------------------------------------------
 	 * 'thumbnails'

@@ -289,7 +289,7 @@ class MatrixLayout extends GalleryLayout {
 	    $navigator['first']['urlParams'] = array('view' => 'core:ShowItem',
 						     'itemId' => $item->getId(),
 						     'page' => 1);
-	    
+
 	    if ($page - 1 != 1) {
 		$navigator['back']['urlParams'] = array('view' => 'core:ShowItem',
 							'itemId' => $item->getId(),
@@ -302,7 +302,7 @@ class MatrixLayout extends GalleryLayout {
 							'itemId' => $item->getId(),
 							'page' => $page+1);
 	    }
-	    
+
 	    $navigator['last']['urlParams'] = array('view' => 'core:ShowItem',
 						    'itemId' => $item->getId(),
 						    'page' => $totalPages);
@@ -467,26 +467,29 @@ class MatrixLayout extends GalleryLayout {
 	$itemIndex = $layout['peerItemIndex'];
 	if ($itemIndex > 0) {
 	    $navigator['first']['urlParams'] = array('view' => 'core:ShowItem',
-						     'itemId' => $layout['peerIds'][0]);
+						     'itemId' => $layout['peers'][0]['id']);
 	    $navigator['first']['item'] = $layout['peers'][0];
-
-	    if ($itemIndex - 1 != 0) {
-		$navigator['back']['urlParams'] = array('view' => 'core:ShowItem',
-							'itemId' => $layout['peerIds'][$itemIndex-1]);
-		$navigator['back']['item'] = $layout['peers'][$itemIndex-1];
-	    }
 	}
 
-	if ($itemIndex < $layout['peerCount']-1) {
-	    if ($itemIndex + 1 != $layout['peerCount'] - 1) {
-		$navigator['next']['urlParams'] = array('view' => 'core:ShowItem',
-							'itemId' => $layout['peerIds'][$itemIndex+1]);
-		$navigator['next']['item'] = $layout['peers'][$itemIndex + 1];
-	    }
-	    
-	    $navigator['last']['urlParams'] = array('view' => 'core:ShowItem',
-						    'itemId' => $layout['peerIds'][$layout['peerCount']-1]);
-	    $navigator['last']['item'] = $layout['peers'][count($layout['peers'])-1];
+	if ($itemIndex > 1) {
+	    $navigator['back']['urlParams'] =
+		array('view' => 'core:ShowItem',
+		      'itemId' => $layout['peers'][$itemIndex - 1]['id']);
+	    $navigator['back']['item'] = $layout['peers'][$itemIndex - 1];
+	}
+
+	if ($itemIndex < count($layout['peers']) - 2) {
+	    $navigator['next']['urlParams'] =
+		array('view' => 'core:ShowItem',
+		      'itemId' => $layout['peers'][$itemIndex + 1]['id']);
+	    $navigator['next']['item'] = $layout['peers'][$itemIndex + 1];
+	}
+
+	if ($itemIndex < count($layout['peers']) - 1) {
+	    $navigator['last']['urlParams'] =
+		array('view' => 'core:ShowItem',
+		      'itemId' => $layout['peers'][count($layout['peers']) - 1]['id']);
+	    $navigator['last']['item'] = $layout['peers'][count($layout['peers']) - 1];
 	}
 
 	/* Tell Smarty about everything we've learned */
