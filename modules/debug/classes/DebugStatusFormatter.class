@@ -34,6 +34,7 @@ class DebugStatusFormatter {
      */
     function format($codes, $trace) {
 	$template = new GalleryTemplate(dirname(__FILE__) . '/../templates');
+	$template->setTranslationBase('modules', 'debug');
 	$template->setVariable('codes', join(" ", $codes));
 	$template->setVariable('trace', $trace);
 	return $template->render('DebugStatusFormatter.tpl');
