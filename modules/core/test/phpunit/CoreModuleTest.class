@@ -105,11 +105,11 @@ class CoreModuleTest extends GalleryTestCase {
 	}
 	
 	$this->assertEquals(array(
-				  array('name' => $this->_module->translate('Edit Album'),
+				  array('name' => $this->_module->translate(array('text' => 'Edit %s', 'arg1' => 'Album')),
 					'view' => 'core:ItemEdit'),
-				  array('name' => $this->_module->translate('Delete Album'),
+				  array('name' => $this->_module->translate(array('text' => 'Delete %s', 'arg1' => 'Album')),
 					'view' => 'core:ItemDeleteSingle'),
-				  array('name' => $this->_module->translate('Move Album'),
+				  array('name' => $this->_module->translate(array('text' => 'Move %s', 'arg1' => 'Album')),
 					'view' => 'core:ItemMoveSingle'),
 				  array('name' => $this->_module->translate('Edit Permissions'),
 					'view' => 'core:ItemPermissions'),
@@ -176,7 +176,7 @@ class CoreModuleTest extends GalleryTestCase {
 					   'subView' => 'core:ItemAdd',
 					   'itemId' => $this->_parentAlbum->getId(),
 					   ));
-	$links[] = array('text' => $this->_module->translate('edit album'),
+	$links[] = array('text' => $this->_module->translate(array('text' => 'edit %s', 'arg1' => 'album')),
 			 'params' => array(
 					   'view' => 'core:ItemAdmin',
 					   'return' => 1,
@@ -195,7 +195,7 @@ class CoreModuleTest extends GalleryTestCase {
 					   'subView' => 'core:ItemPermissions',
 					   'itemId' => $this->_parentAlbum->getId(),
 					   ));
-	$links[] = array('text' => $this->_module->translate('delete album'),
+	$links[] = array('text' => $this->_module->translate(array('text' => 'delete %s', 'arg1' => 'album')),
 			 'params' => array(
 					   'view' => 'core:ItemAdmin',
 					   'return' => 1,
@@ -203,7 +203,7 @@ class CoreModuleTest extends GalleryTestCase {
 					   'itemId' => $this->_parentAlbum->getParentId(),
 					   'selectedId' => $this->_parentAlbum->getId(),
 					   ));
-	$links[] = array('text' => $this->_module->translate('move album'),
+	$links[] = array('text' => $this->_module->translate(array('text' => 'move %s', 'arg1' => 'album')),
 			 'params' => array(
 					   'view' => 'core:ItemAdmin',
 					   'subView' => 'core:ItemMove',
