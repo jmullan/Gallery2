@@ -113,6 +113,7 @@ class GalleryMovieItem_core extends GalleryDataItem {
 	    'video/quicktime',
 	    'video/mpeg',
 	    'video/x-msvideo',
+	    'video/x-ms-wmv',
 	);
 	return ($this->getWidth() != 0 && $this->getHeight() != 0
 		&& in_array($mimeType, $canBeViewedInline));
@@ -279,6 +280,7 @@ class GalleryMovieItem_core extends GalleryDataItem {
 
 	    case 'video/mpeg':
 	    case 'video/x-msvideo':
+	    case 'video/x-ms-wmv':
 		return sprintf('<script type="text/javascript">
                                   // <![CDATA[
                                   if (window.ActiveXObject) {

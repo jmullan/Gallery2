@@ -129,7 +129,8 @@ class CoreModule extends GalleryModule {
 						      array('video/x-msvideo',
 							    'video/quicktime',
 							    'video/mpeg',
-							    'video/x.ms.asf'));
+							    'video/x-ms-asf',
+							    'video/x-ms-wmv'));
 
 	GalleryCoreApi::registerFactoryImplementation('GalleryItem',
 						      'GalleryAnimationItem',
@@ -299,7 +300,8 @@ class CoreModule extends GalleryModule {
 		if ($count > 0) {
 		    $links[$item->getId()][] =
 			array('text' => $this->translate('create link'),
-			      'params' => array('view' => 'core:ItemAdmin',
+			      'params' => array('return' => 'true',
+						'view' => 'core:ItemAdmin',
 						'subView' => 'core:ItemCreateLink',
 						'itemId' => $item->getParentId(),
 						'selectedId' => $item->getId()));

@@ -192,7 +192,10 @@ class MimeHelper_simple {
 		);
 
 	    /* And some of my own additions */
-	    $extensionMap['forward']['asf'] = 'video/x.ms.asf';
+	    /* From support.microsoft.com/support/kb/articles/Q284/0/94.ASP */
+	    $extensionMap['forward']['asf'] = 'video/x-ms-asf';
+	    $extensionMap['forward']['wmv'] = 'video/x-ms-wmv';
+	    $extensionMap['forward']['wma'] = 'audio/x-ms-wma';
 	    
 	    $extensionMap['reverse'] = array_flip($extensionMap['forward']);
 

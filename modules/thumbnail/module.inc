@@ -132,8 +132,8 @@ class ThumbnailModule extends GalleryModule {
 	}
 	$itemId = array();
 	foreach (array(
-	    'G2audio.jpg' => array('audio/mpeg', 'audio/x-wav', 'audio/x-aiff', 'audio/midi', 'audio/basic'),
-	    'G2video.jpg' => array('video/mpeg', 'video/quicktime', 'video/x-msvideo', 'video/x.ms.asf')
+	    'G2audio.jpg' => array('audio/mpeg', 'audio/x-wav', 'audio/x-aiff', 'audio/midi', 'audio/basic', 'audio/x-ms-wma'),
+	    'G2video.jpg' => array('video/mpeg', 'video/quicktime', 'video/x-msvideo', 'video/x-ms-asf', 'video/x-ms-wmv')
 	    ) as $mimeImage => $mimeList) {
 	    foreach ($mimeList as $mime) {
 		if (!isset($toolkitMime[$mime])) {
