@@ -7,6 +7,9 @@
 
   {if isset($status)}
     {g->success}
+      {if isset($status.installed)}
+	{g->text text="Successfully installed module %s" arg1=$status.installed}
+      {/if}
       {if isset($status.activated)}
 	{g->text text="Successfully activated module %s" arg1=$status.activated}
       {/if}
