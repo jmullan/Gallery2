@@ -187,10 +187,10 @@ class SlideshowView extends GalleryView {
 		}
 
 		// build table of {sizeClass}=>{sources_index}
-		$sizeClassMap =
-		    array_fill(0, count($this->sizeClasses) + 1, -1);
-		$sizeClassArea =
-		    array_fill(0, count($this->sizeClasses) + 1, -1);
+		$sizeClassMap = $sizeClassArea = array();
+		for ($i = 0; $i <= count($this->sizeClasses); $i++) {
+		    $sizeClassMap[] = $sizeClassArea[] = -1;
+		}
 		for ($i = 0; $i < sizeof($images); $i++) {
 		    $image = $images[$i];
 		    if (GalleryUtilities::isA($image, 'GalleryDerivativeImage')) {
