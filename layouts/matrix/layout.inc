@@ -212,7 +212,6 @@ class MatrixLayout extends GalleryLayout {
 	    }
 	}
 
-	$start = $perPage * ($page - 1);
 	$children = array();
 
 	/* Count the total number of children */
@@ -226,6 +225,18 @@ class MatrixLayout extends GalleryLayout {
 	} else {
 	    $totalChildCount = $totalChildCount[$item->getId()];
 	}
+
+	/* Don't exceed the max pages */
+	$totalPages = ceil($totalChildCount / $perPage);
+	if ($page > $totalPages && $totalChildCount > 0) {
+	    /* Redirect to the right page */
+	    $results['redirect'] = array('view' => 'core:ShowItem',
+					 'itemId' => $item->getId(),
+					 'page' => $totalPages);
+		return array(GalleryStatus::success(), $results);
+	}
+	
+	$start = $perPage * ($page - 1);
 
 	/* Count the total number of descendents */
 	/* XXX: we could combine this with the other fetchDescendentCounts() call below */
@@ -348,7 +359,6 @@ class MatrixLayout extends GalleryLayout {
 	}
 	
 	/* Set up the navigator */
-	$totalPages = ceil($totalChildCount / $perPage);
 	$navigator = array();
 	if ($page > 1) {
 	    $navigator['first'] = array('view' => 'core:ShowItem',
