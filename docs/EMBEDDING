@@ -14,7 +14,7 @@ Examples: __ access point __                   __ G2 base dir __
           appdir/plugins/gallery2.php          appdir/lib/gallery2
           appdir/index.php?module=gallery2     gallery2
 Use these to determine the following values:
-        embedURI = Filename (and possible query parameters) for access point
+        embedURI = Filename (and any query parameters, but NO path) for access point
   relativeG2Path = Path from directory for access point to G2 base directory
 For the above examples these settings are:
         __ embedURI __               __ relativeG2Path __
@@ -29,24 +29,31 @@ The code in the access point to handle a G2 request looks something like this:
 
   require_once(dirname(__FILE__) . 'relative/path/to/gallery2/embed.php');
   $ret = GalleryEmbed::init(array(
-           'embedUri' => {value}, 'relativeG2Path' => {value}, 'loginRedirect' => {value}));
+           'embedUri' => {value}, 'relativeG2Path' => {value}, 'loginRedirect' => {value},
+           'activeUserId' => {value}));
   if ($ret->isError()) {
     // $ret->getAsHtml() has error details..
     exit;
   }
 
-  list ($ret, $g2data) = GalleryEmbed::handleRequest();
-  if ($ret->isError()) {
-    // $ret->getAsHtml() has error details..
-    exit;
-  }
-
+  $g2data = GalleryEmbed::handleRequest();
   if ($g2data['isDone']) {
     exit; // G2 has already sent output (redirect or binary data)
   }
 
   // Use $g2data['headHtml'] and $g2data['bodyHtml']
   // to display G2 content inside embedding application
+
+The 'activeUserId' value passed to init() enables session synchronization by
+making sure the active user in G2 matches the emApp user.  The value is the
+active emApp user id.  Pass in an empty string for anonymous/guest user
+(NOT the user id of the emApp's anonymous user if it has an id).
+To complete session sync add a hook/callback/event-handler for the logout
+operation in the emApp:
+  require_once(dirname(__FILE__) . 'relative/path/to/gallery2/embed.php');
+  $ret = GalleryEmbed::logout();
+This hook is not required, but it resets the G2 session at logout so a session for
+a logged-in user isn't left on the server.
 
 Next decide if you want to support cookieless browsing.  Some extra steps are
 required if G2 can't count on cookies to track its session id.  The emApp must
@@ -60,41 +67,38 @@ Here are the extra steps:
         $gallerySessionId = GallerEmbed::getSessionId();
         {store value in emApp's session}
 
-Next decide between the following approaches for session synchronization:
-A) Perform G2 login at same time as emApp login
-B) On each G2 request make sure the active user in G2 matches emApp user
-The main difference between these is with (A) a session in G2 is created for
-the user at login time, even though the user may never visit a G2 page.  With
-(B) the G2 session is created upon the first visit to G2.
+Other optional tasks:
+1) Prior to the handleRequest() call set GalleryCapabilities.
+   Check modules/core/classes/GalleryCapabilities.class for available settings;
+   also see the settings made by default in GalleryEmbed::init().
+   Example: GalleryCapabilities::set('showSidebar', false);
+2) Check for 'sidebarHtml' in content returned from handleRequest().
+   If the example GalleryCapabilities setting shown above is used then handleRequest()
+   may return 'sidebarHtml' (when a core:ShowItem page is being viewed).  You can include
+   this content in a block on the emApp sidebar.
 
-To implement (A) you'll need hooks/callbacks/event-handlers for login/logout
-operations in the emApp.  Code looks like this..
-Login:
+Next add hooks to keep users in sync between G2 and the emApp.
+The code in each case will look like this:
   require_once(dirname(__FILE__) . 'relative/path/to/gallery2/embed.php');
   $ret = GalleryEmbed::init();
-  if ($ret->isSuccess()) {
-    $ret = GalleryEmbed::login($emAppUserId);
-    if ($ret->isSuccess()) {
-      $ret = GalleryEmbed::done();
-    }
+  if ($ret->isError()) {
+    // $ret->getAsHtml() has error details..
   }
-Logout:
-  require_once(dirname(__FILE__) . 'relative/path/to/gallery2/embed.php');
-  $ret = GalleryEmbed::logout();
-For login, $emAppUserId is the id of the emApp user who has just logged in.
+  // Call GalleryEmbed as required..
+  // ..
+  $ret = GalleryEmbed::done();
+  if ($ret->isError()) {
+    // $ret->getAsHtml() has error details..
+  }
+You'll need hooks to call GalleryEmbed::createUser(), ::updateUser() and ::deleteUser()
+for user creation, updates and deletes, respectively.  There may be two create hooks
+if the emApp supports both new user registration and an admin function to create new
+users directly.
 
-To implement (B) you need to find the active emApp user id in your G2
-access point.  Pass this as a parameter to handleRequest:
-  list ($ret, $g2data) = GalleryEmbed::handleRequest($emAppActiveUserId);
-Pass in an empty string for anonymous/guest user (NOT the user id of the
-emApp's anonymous user if it has an id).
-With (B) you may also include the logout handler shown above.. it is not
-required, but it resets the G2 session at logout so a session for a
-logged-in user isn't left on the server.
+If the emApp supports user groups then add hooks to keep groups in sync.
+Process is the same as above, using GalleryEmbed::createGroup, ::updateGroup,
+::deleteGroup(), ::addUserToGroup() and ::removeUserFromGroup().  Note that G2 does
+not support nested groups.. if the emApp does then the hooks will have to expand
+the groups into the list of users and update the G2 groups accordingly.
 
-
-more to come:
---- keep users in sync (event handlers for add/update/delete user)
---- decide whether to keep groups in sync (only skip this if emApp doesn't have groups)
---- keep groups in sync (event handlers for add/rename/delete group, add/remove member)
 

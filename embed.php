@@ -49,6 +49,9 @@ class GalleryEmbed {
      *                CMS session key and session id value to be added as query parameter in urls
      *   'gallerySessionId' => (optional) To support cookieless browsing, pass in G2 session id
      *                    (when cookies not in use, CMS must track this value between requests)
+     *   'activeUserId' => (optional) external user id of active user
+     *                                (empty string for anonymous/guest user)
+     *   'activeLanguage' => (optional) language code in use for this session
      * )
      * @return object GalleryStatus a status object
      * @static
@@ -64,10 +67,19 @@ class GalleryEmbed {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
+
 	GalleryCapabilities::set('login', false);
 	if (isset($initParams['loginRedirect'])) {
 	    GalleryCapabilities::set('loginRedirect', array('href' => $initParams['loginRedirect']));
 	}
+
+	if (isset($initParams['activeUserId'])) {
+	    $ret = GalleryEmbed::checkActiveUser($initParams['activeUserId']);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
 	return GalleryStatus::success();
     }
 
@@ -103,39 +115,24 @@ class GalleryEmbed {
      * Include activeUserName parameter if integration is not calling GalleryEmbed::login()
      * at CMS login time.
      *
-     * @param string (optional) external user id of active user (empty for anonymous/guest user)
-     * @param string (optional) language code of active user
-     * @return array object GalleryStatus a status object
-     *               array ('isDone' => boolean,
-     *                      [optional: 'headHtml' => string, 'bodyHtml' => string])
+     * @return array ('isDone' => boolean,
+     *                [optional: 'headHtml' => string, 'bodyHtml' => string,
+     *                           'sidebarHtml' => string, 'layoutData' => array])
      * @static
      */
-    function handleRequest($activeUserId=null, $languageCode=null) {
-	if (isset($activeUserId)) {
-	    $ret = GalleryEmbed::_checkActiveUser($activeUserId);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	}
-
-	if (isset($languageCode)) {
-	    global $gallery;
-	    list ($languageCode) = GalleryTranslator::getSupportedLanguageCode($languageCode);
-	    $gallery->setActiveLanguageCode($languageCode);
-	}
-
-	$data = GalleryMain(true);
-	return array(GalleryStatus::success(), $data);
+    function handleRequest() {
+	return GalleryMain(true);
     }
 
     /**
-     * Ensure G2 session has same active user as CMS session.  Do not call directly.
+     * Ensure G2 session has same active user as CMS session.
+     * No need to call directly if activeUserId is passed to init().
      *
      * @param string external user id of active user (null or empty for anonymous/guest user)
      * @return object GalleryStatus a status object
      * @private
      */
-    function _checkActiveUser($activeUserId) {
+    function checkActiveUser($activeUserId) {
 	global $gallery;
 	$session =& $gallery->getSession();
 
@@ -166,9 +163,8 @@ class GalleryEmbed {
 
     /**
      * Login the specified user in the G2 session.
-     * If this method is called at CMS login time then activeUserId parameter to
-     * handleRequest() is not required (but a G2 session is created at CMS login time,
-     * even though user may not visit any G2 pages).
+     * This method is not usually needed (passing activeUserId to init() or calling
+     * checkActiveUser will login the user as needed); this method included for completeness.
      *
      * @param string external user id
      * @return object GalleryStatus a status object
