@@ -138,12 +138,34 @@ class ItemTest extends GalleryTestCase {
 	    }
 	}
 
+	/* Register a dummy toolkit */
+	GalleryFactory::registerImplementation('GalleryToolkit',
+					       'ItemTestToolkit',
+					       'ItemTestToolkit',
+					       __FILE__);
+	
+	/* Register an operation that we can perform on our mock data items */
+	$ret = GalleryToolkitHelper::registerOperation('ItemTestToolkit',
+						       array('test/file'),
+						       'thumbnail',
+						       array(array('type' => 'int')),
+						       'itemtest-description');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
     }
 
     function tearDown() {
 	global $gallery;
 
 	$ret = $gallery->deleteEntityById($this->_parentItem->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	/* Unregister dummy toolkit */
+	$ret = GalleryToolkitHelper::unregisterToolkit('ItemTestToolkit');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -300,6 +322,71 @@ class ItemTest extends GalleryTestCase {
 	$this->assert(in_array($this->_childItems[1]->getId(), $ids), 'child 1');
 	$this->assert(!in_array($this->_childItems[2]->getId(), $ids), 'child 2');
     }
+
+    function testSetThumbnailFromItem() {
+	// Attach a derivative to one item, then associated it with another
+	list ($ret, $derivative) =
+	    $this->_createDerivative($this->_childItems[0]->getId(),
+				     DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
+				     'itemtest-operation',
+				     'test/file');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryItemHelper::setThumbnailFromItem($this->_childItems[1]->getId(),
+						       $this->_childItems[0]->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $thumbTable) =
+	    GalleryDerivativeHelper::fetchThumbnailsByItemIds($this->_childItems[1]->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assert(isset($thumbTable[$this->_childItems[1]->getId()]));
+	$newDerivative = $thumbTable[$this->_childItems[1]->getId()];
+	$this->assert(GalleryUtilities::isA($newDerivative, 'GalleryDerivative'));
+	$this->assertEquals($newDerivative->getDerivativeSourceId(), $derivative->getId());
+    }
+
+    function testAddItemToAlbum() {
+	global $gallery;
+
+	list ($ret, $lockId) = $gallery->acquireReadLock($this->_childItems[0]->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	list ($ret, $newItem) = GalleryItemHelper::addItemToAlbum(__FILE__,
+								  'itemName',
+								  'title',
+								  'caption',
+								  'description',
+								  'application/unknown',
+								  $this->_childItems[0]->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = $gallery->releaseLocks($lockId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assert(GalleryUtilities::isA($newItem, 'GalleryDataItem'), 'newItem is not a GalleryDataItem');
+	$this->assertEquals($newItem->getPathComponent(), 'itemName');
+	$this->assertEquals($newItem->getTitle(), 'title');
+	$this->assertEquals($newItem->getSummary(), 'caption');
+	$this->assertEquals($newItem->getDescription(), 'description');
+	$this->assertEquals($newItem->getMimeType(), 'application/unknown');
+	$this->assertEquals($newItem->getParentId(), $this->_childItems[0]->getId());
+    }
 }
+
+// Dummy test toolkit
+class ItemTestToolkit extends GalleryToolkit { }
 
 ?>
