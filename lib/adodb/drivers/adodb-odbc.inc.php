@@ -1,6 +1,6 @@
 <?php
 /* 
-V1.99 21 April 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
+V2.20 09 July 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -25,14 +25,17 @@ class ADODB_odbc extends ADOConnection {
 	var $hasAffectedRows = true;
 	var $binmode = ODBC_BINMODE_RETURN;
 	//var $longreadlen = 8000; // default number of chars to return for a Blob/Long field
-	var $_bindInputArray = false;      
-	var $_haserrorfunctions = false;
+	var $_bindInputArray = false;	
 	var $curmode = SQL_CUR_USE_DRIVER; // See sqlext.h, SQL_CUR_DEFAULT == SQL_CUR_USE_DRIVER == 2L
 	var $_genSeqSQL = "create table %s (id integer)";
+	var $_autocommit = true;
+	var $_haserrorfunctions = true;
+	var $_has_stupid_odbc_fetch_api_change = true;
 	
 	function ADODB_odbc() 
 	{ 	
 		$this->_haserrorfunctions = (strnatcmp(PHP_VERSION,'4.0.5')>=0);
+		$this->_has_stupid_odbc_fetch_api_change = (strnatcmp(PHP_VERSION,'4.2.0')>=0);
 	}
 
 	function ErrorMsg()
@@ -113,35 +116,49 @@ class ADODB_odbc extends ADOConnection {
 		$this->_connectionID = odbc_pconnect($argDSN,$argUsername,$argPassword,$this->curmode);
 		$this->_errorMsg = $php_errormsg;
 		
-		//if ($this->_connectionID) odbc_autocommit($this->_connectionID,true);
+		if ($this->_connectionID && $this->autoRollback) @odbc_rollback($this->_connectionID);
 		return $this->_connectionID != false;
 	}
 
 	function BeginTrans()
-	{       
-        return odbc_autocommit($this->_connectionID,false);
+	{	  
+		$this->_autocommit = false;
+		return odbc_autocommit($this->_connectionID,false);
 	}
 	
-	function CommitTrans()
-	{
-        $ret = odbc_commit($this->_connectionID);
+	function CommitTrans($ok=true) 
+	{ 
+		if (!$ok) return $this->RollbackTrans();
+		$this->_autocommit = true;
+		$ret = odbc_commit($this->_connectionID);
 		odbc_autocommit($this->_connectionID,true);
 		return $ret;
 	}
 	
 	function RollbackTrans()
 	{
-        $ret = odbc_rollback($this->_connectionID);
+		$this->_autocommit = true;
+		$ret = odbc_rollback($this->_connectionID);
 		odbc_autocommit($this->_connectionID,true);
 		return $ret;
 	}
 	
-	function &MetaTables()
+	function MetaTables()
 	{
+	global $ADODB_FETCH_MODE;
+	
+		$savem = $ADODB_FETCH_MODE;
+		$ADODB_FETCH_MODE = ADODB_FETCH_NUM;
 		$qid = odbc_tables($this->_connectionID);
+		$ADODB_FETCH_MODE = $savem;
+		
 		$rs = new ADORecordSet_odbc($qid);
+		if (!$rs) return false;
+		
+		$rs->_has_stupid_odbc_fetch_api_change = $this->_has_stupid_odbc_fetch_api_change;
+		
 		//print_r($rs);
-		$arr = &$rs->GetArray();
+		$arr = $rs->GetArray();
 		$rs->Close();
 		$arr2 = array();
 		for ($i=0; $i < sizeof($arr); $i++) {
@@ -153,23 +170,23 @@ class ADODB_odbc extends ADOConnection {
 /*
 / SQL data type codes /
 #define	SQL_UNKNOWN_TYPE	0
-#define SQL_CHAR            1
-#define SQL_NUMERIC         2
-#define SQL_DECIMAL         3
-#define SQL_INTEGER         4
-#define SQL_SMALLINT        5
-#define SQL_FLOAT           6
-#define SQL_REAL            7
-#define SQL_DOUBLE          8
+#define SQL_CHAR			1
+#define SQL_NUMERIC		 2
+#define SQL_DECIMAL		 3
+#define SQL_INTEGER		 4
+#define SQL_SMALLINT		5
+#define SQL_FLOAT		   6
+#define SQL_REAL			7
+#define SQL_DOUBLE		  8
 #if (ODBCVER >= 0x0300)
-#define SQL_DATETIME        9
+#define SQL_DATETIME		9
 #endif
-#define SQL_VARCHAR        12
+#define SQL_VARCHAR		12
 
 / One-parameter shortcuts for date/time data types /
 #if (ODBCVER >= 0x0300)
-#define SQL_TYPE_DATE      91
-#define SQL_TYPE_TIME      92
+#define SQL_TYPE_DATE	  91
+#define SQL_TYPE_TIME	  92
 #define SQL_TYPE_TIMESTAMP 93
 */
 	function ODBCTypes($t)
@@ -206,8 +223,10 @@ class ADODB_odbc extends ADOConnection {
 		}
 	}
 	
-	function &MetaColumns($table)
+	function MetaColumns($table)
 	{
+	global $ADODB_FETCH_MODE;
+	
 		$table = strtoupper($table);
 		
 	/* // for some reason, cannot view only 1 table with odbc_columns -- bug?
@@ -226,9 +245,15 @@ class ADODB_odbc extends ADOConnection {
 		
 		$qid = odbc_columns($this->_connectionID,$q,$o,strtoupper($table),'%');
 	*/
+		$savem = $ADODB_FETCH_MODE;
+		$ADODB_FETCH_MODE = ADODB_FETCH_NUM;
 		$qid = odbc_columns($this->_connectionID);
 		$rs = new ADORecordSet_odbc($qid);
+		$ADODB_FETCH_MODE = $savem;
+		
 		if (!$rs) return false;
+		
+		$rs->_has_stupid_odbc_fetch_api_change = $this->_has_stupid_odbc_fetch_api_change;
 		
 		$retarr = array();
 		while (!$rs->EOF) {
@@ -317,10 +342,10 @@ class ADODB_odbc extends ADOConnection {
 		return $ret;
 	}
 
-    function _affectedrows()
-    {
-            return  odbc_num_rows($this->_queryID);
-    }
+	function _affectedrows()
+	{
+			return  odbc_num_rows($this->_queryID);
+	}
 	
 }
 	
@@ -333,11 +358,12 @@ class ADORecordSet_odbc extends ADORecordSet {
 	var $bind = false;
 	var $databaseType = "odbc";		
 	var $dataProvider = "odbc";
+	var $_has_stupid_odbc_fetch_api_change;
 	
 	function ADORecordSet_odbc($id)
 	{
 	global $ADODB_FETCH_MODE;
-	
+
 		$this->fetchMode = $ADODB_FETCH_MODE;
 		return $this->ADORecordSet($id);
 	}
@@ -359,7 +385,7 @@ class ADORecordSet_odbc extends ADORecordSet {
 	/* Use associative array to get fields array */
 	function Fields($colname)
 	{
-		if ($this->fetchMode == ADODB_FETCH_ASSOC) return $this->fields[$colname];
+		if ($this->fetchMode & ADODB_FETCH_ASSOC) return $this->fields[$colname];
 		if (!$this->bind) {
 			$this->bind = array();
 			for ($i=0; $i < $this->_numOfFields; $i++) {
@@ -377,6 +403,8 @@ class ADORecordSet_odbc extends ADORecordSet {
 	global $ADODB_COUNTRECS;
 		$this->_numOfRows = ($ADODB_COUNT_RECS) ? @odbc_num_rows($this->_queryID) : -1;
 		$this->_numOfFields = @odbc_num_fields($this->_queryID);
+		
+		$this->_has_stupid_odbc_fetch_api_change = $this->connection->_has_stupid_odbc_fetch_api_change;
 	}	
 	
 	function _seek($row)
@@ -393,7 +421,7 @@ class ADORecordSet_odbc extends ADORecordSet {
 		$this->Move($offset);
 		$this->fetchMode = $savem;
 		
-		if ($this->fetchMode == ADODB_FETCH_ASSOC) {
+		if ($this->fetchMode & ADODB_FETCH_ASSOC) {
 			$this->fields = $this->GetRowAssoc(false);
 		}
 		
@@ -413,8 +441,12 @@ class ADORecordSet_odbc extends ADORecordSet {
 		if ($this->_numOfRows != 0 && !$this->EOF) {		
 			$this->_currentRow++;
 			$row = 0;
-			if (odbc_fetch_into($this->_queryID,$row,$this->fields)) {
-				if ($this->fetchMode == ADODB_FETCH_ASSOC) {
+			if ($this->_has_stupid_odbc_fetch_api_change)
+				$rez = odbc_fetch_into($this->_queryID,$this->fields,$row);
+			else 
+				$rez = odbc_fetch_into($this->_queryID,$row,$this->fields);
+			if ($rez) {
+				if ($this->fetchMode & ADODB_FETCH_ASSOC) {
 					$this->fields = $this->GetRowAssoc(false);
 				}
 				return true;
@@ -427,11 +459,26 @@ class ADORecordSet_odbc extends ADORecordSet {
 	function _fetch()
 	{
 		$row = 0;
-		$rez = odbc_fetch_into($this->_queryID,$row,$this->fields);
-		if ($rez && $this->fetchMode == ADODB_FETCH_ASSOC) {
-			$this->fields = $this->GetRowAssoc(false);
+		/*
+		if ($this->fetchMode & ADODB_FETCH_ASSOC) {
+			$this->fields = odbc_fetch_array($this->_queryID,$row);
+			return is_array($this->fields);
+		} else {
+			return odbc_fetch_into($this->_queryID,$row,$this->fields);
+		}*/
+		
+		if ($this->_has_stupid_odbc_fetch_api_change)
+			$rez = odbc_fetch_into($this->_queryID,$this->fields,$row);
+		else 
+			$rez = odbc_fetch_into($this->_queryID,$row,$this->fields);
+		
+		if ($rez) {
+			if ($this->fetchMode & ADODB_FETCH_ASSOC) {
+				$this->fields = $this->GetRowAssoc(false);
+			}
+			return true;
 		}
-		return $rez;
+		return false;
 	}
 	
 	function _close() {

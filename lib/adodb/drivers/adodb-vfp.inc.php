@@ -1,6 +1,6 @@
 <?php
 /* 
-V1.99 21 April 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
+V2.20 09 July 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -26,10 +26,13 @@ class ADODB_vfp extends ADODB_odbc {
 	var $hasTop = 'top';		// support mssql SELECT TOP 10 * FROM TABLE
 	var $upperCase = 'upper';
 	var $_bindInputArray = false; // strangely enough, setting to true does not work reliably
-	var $sysDate = 'datetime()';
+	var $sysTimeStamp = 'datetime()';
+	var $sysDate = 'date()';
+	var $ansiOuter = true;
 	
 	function ADODB_vfp()
 	{
+		$this->ADODB_odbc();
 	}
 	
 	function BeginTrans() { return false;}
@@ -40,6 +43,7 @@ class ADODB_vfp extends ADODB_odbc {
 		if (!$nofixquotes) return  "'".str_replace("\r\n","'+chr(13)+'",str_replace("'",$this->replaceQuote,$s))."'";
 		return "'".$s."'";
 	}
+
 	
 	// TOP requires ORDER BY for VFP
 	function &SelectLimit($sql,$nrows=-1,$offset=-1, $inputarr=false,$arg3=false,$secs2cache=0)

@@ -1,6 +1,6 @@
 <?php
 /* 
-V1.99 21 April 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
+V2.20 09 July 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -19,15 +19,19 @@ if (!defined('_ADODB_ODBC_LAYER')) {
 class  ADODB_odbc_oracle extends ADODB_odbc {	
 	var $databaseType = 'odbc_oracle';
  	var $replaceQuote = "''"; // string to use to replace quotes
-    var $concat_operator='||';
+	var $concat_operator='||';
 	var $fmtDate = "'Y-m-d 00:00:00'"; 
 	var $fmtTimeStamp = "'Y-m-d h:i:sA'";
 	var $metaTablesSQL = 'select table_name from cat';
 	var $metaColumnsSQL = "select cname,coltype,width from col where tname='%s' order by colno";
+	var $sysDate = "TRUNC(SYSDATE)";
+	var $sysTimeStamp = 'SYSDATE';
+	
 	//var $_bindInputArray = false;
 	
 	function ADODB_odbc_oracle()
 	{
+		$this->ADODB_odbc();
 	}
 		
 	function &MetaTables() 
@@ -46,7 +50,7 @@ class  ADODB_odbc_oracle extends ADODB_odbc {
 		return false;
 	}
 	
-    function &MetaColumns($table) 
+	function &MetaColumns($table) 
 	{
 		if (!empty($this->metaColumnsSQL)) {
 		

@@ -1,6 +1,6 @@
 <?php
 /* 
-V1.99 21 April 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
+V2.20 09 July 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -67,7 +67,15 @@ define('ADODB_DB2',1);
 class ADODB_DB2 extends ADODB_odbc {
 	var $databaseType = "db2";	
 	var $concat_operator = 'CONCAT';
+	var $sysDate = 'CURRENT DATE';
+	var $sysTimeStamp = 'CURRENT TIMESTAMP';
+	var $ansiOuter = true;
 	//var $curmode = SQL_CUR_USE_ODBC;
+	
+	function ADODB_DB2()
+	{
+		$this->ADODB_odbc();
+	}
 
 	// returns true or false
 	// curmode is not properly supported by DB2 odbc driver according to Mark Newnham
@@ -93,6 +101,12 @@ class ADODB_DB2 extends ADODB_odbc {
 		
 		//if ($this->_connectionID) odbc_autocommit($this->_connectionID,true);
 		return $this->_connectionID != false;
+	}
+	
+	function RowLock($tables,$where)
+	{
+		if ($this->_autocommit) $this->BeginTrans();
+		return $this->GetOne("select 1 as ignore from $tables where $where for update");
 	}
 	
 	function &SelectLimit($sql,$nrows=-1,$offset=-1,$arg3=false)

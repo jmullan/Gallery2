@@ -1,6 +1,6 @@
 <?php
 /* 
-V1.99 21 April 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
+V2.20 09 July 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. See License.txt. 
@@ -22,19 +22,29 @@ class  ADODB_access extends ADODB_odbc {
 	var $fmtDate = "#Y-m-d#";
 	var $fmtTimeStamp = "#Y-m-d h:i:sA#"; // note not comma
 	var $_bindInputArray = false; // strangely enough, setting to true does not work reliably
-	var $sysDate = 'now';
+	var $sysDate = "FORMAT(NOW,'yyyy-mm-dd')";
+	var $sysTimeStamp = 'NOW';
 	
 	function ADODB_access()
 	{
+		$this->ADODB_odbc();
 	}
 	
 	function BeginTrans() { return false;}
 	
 	function &MetaTables()
 	{
+	global $ADODB_FETCH_MODE;
+	
+		$savem = $ADODB_FETCH_MODE;
+		$ADODB_FETCH_MODE = ADODB_FETCH_NUM;
 		$qid = odbc_tables($this->_connectionID);
+		$ADODB_FETCH_MODE = $savem;
 		$rs = new ADORecordSet_odbc($qid);
-		//print_r($rs);
+		if (!$rs) return false;
+		
+		$rs->_has_stupid_odbc_fetch_api_change = $this->_has_stupid_odbc_fetch_api_change;
+		
 		$arr = &$rs->GetArray();
 		
 		$arr2 = array();

@@ -1,6 +1,6 @@
 <?php
 /*
-V1.99 21 April 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
+V2.20 09 July 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -17,8 +17,9 @@ if (! defined("_ADODB_MYSQL_LAYER")) {
 
 class ADODB_mysql extends ADOConnection {
 	var $databaseType = 'mysql';
-    var $hasInsertID = true;
-    var $hasAffectedRows = true;	
+	var $dataProvider = 'mysql';
+	var $hasInsertID = true;
+	var $hasAffectedRows = true;	
 	var $metaTablesSQL = "SHOW TABLES";	
 	var $metaColumnsSQL = "SHOW COLUMNS FROM %s";
 	var $fmtTimeStamp = "'Y-m-d H:i:s'";
@@ -27,21 +28,23 @@ class ADODB_mysql extends ADOConnection {
 	var $hasGenID = true;
 	var $upperCase = 'upper';
 	var $isoDates = true; // accepts dates in ISO format
-	var $sysDate = 'NOW()';
+	var $sysDate = 'CURDATE()';
+	var $sysTimeStamp = 'NOW()';
+	var $forceNewConnect = false;
 	
 	function ADODB_mysql() 
 	{			
 	}
 	
-    function _insertid()
-    {
-            return mysql_insert_id($this->_connectionID);
-    }
-    
-    function _affectedrows()
-    {
-            return mysql_affected_rows($this->_connectionID);
-    }
+	function _insertid()
+	{
+			return mysql_insert_id($this->_connectionID);
+	}
+	
+	function _affectedrows()
+	{
+			return mysql_affected_rows($this->_connectionID);
+	}
   
  	// See http://www.mysql.com/doc/M/i/Miscellaneous_functions.html
 	// Reference on Last_Insert_ID on the recommended way to simulate sequences
@@ -81,6 +84,7 @@ class ADODB_mysql extends ADOConnection {
 	}
 
 	// returns concatenated string
+	// much easier to run "mysqld --ansi" or "mysqld --sql-mode=PIPES_AS_CONCAT" and use || operator
 	function Concat()
 	{
 		$s = "";
@@ -95,15 +99,24 @@ class ADODB_mysql extends ADOConnection {
 		}*/
 		
 		// suggestion by andrew005@mnogo.ru
-	        $s = implode(',',$arr); 
+		$s = implode(',',$arr); 
 		if (strlen($s) > 0) return "CONCAT($s)";
 		else return '';
+	}
+	
+	function OffsetDate($dayFraction,$date=false)
+	{		
+		if (!$date) $date = $this->sysDate;
+		return "from_unixtime(unix_timestamp($date)+($dayFraction)*24*3600)";
 	}
 	
 	// returns true or false
 	function _connect($argHostname, $argUsername, $argPassword, $argDatabasename)
 	{
-		$this->_connectionID = mysql_connect($argHostname,$argUsername,$argPassword);
+		if ($this->forceNewConnect && (strnatcmp(PHP_VERSION,'4.2.0')>=0))
+			$this->_connectionID = mysql_connect($argHostname,$argUsername,$argPassword,true);
+		else
+			$this->_connectionID = mysql_connect($argHostname,$argUsername,$argPassword);
 		if ($this->_connectionID === false) return false;
 		if ($argDatabasename) return $this->SelectDB($argDatabasename);
 		return true;	
@@ -114,6 +127,7 @@ class ADODB_mysql extends ADOConnection {
 	{
 		$this->_connectionID = mysql_pconnect($argHostname,$argUsername,$argPassword);
 		if ($this->_connectionID === false) return false;
+		if ($this->autoRollback) $this->RollbackTrans();
 		if ($argDatabasename) return $this->SelectDB($argDatabasename);
 		return true;	
 	}
@@ -202,7 +216,7 @@ class ADODB_mysql extends ADOConnection {
 	{
 		if (empty($this->_connectionID)) $this->_errorMsg = @mysql_error();
 		else $this->_errorMsg = @mysql_error($this->_connectionID);
-	    return $this->_errorMsg;
+		return $this->_errorMsg;
 	}
 	
 	/*	Returns: the last error number from previous database operation	*/	
@@ -294,9 +308,11 @@ class ADORecordSet_mysql extends ADORecordSet{
 		$this->_numOfFields = @mysql_num_fields($this->_queryID);
 	}
 	
-	function &FetchField($fieldOffset = -1) {
+	function &FetchField($fieldOffset = -1) 
+	{	
+	
 		if ($fieldOffset != -1) {
-			$o =  @mysql_fetch_field($this->_queryID, $fieldOffset);
+			$o = @mysql_fetch_field($this->_queryID, $fieldOffset);
 			$f = @mysql_field_flags($this->_queryID,$fieldOffset);
 			$o->max_length = @mysql_field_len($this->_queryID,$fieldOffset); // suggested by: Jim Nicholson (jnich@att.com)
 			//$o->max_length = -1; // mysql returns the max length less spaces -- so it is unrealiable
@@ -307,7 +323,7 @@ class ADORecordSet_mysql extends ADORecordSet{
 			$o->max_length = @mysql_field_len($this->_queryID); // suggested by: Jim Nicholson (jnich@att.com)
 			//$o->max_length = -1; // mysql returns the max length less spaces -- so it is unrealiable
 		}
-		
+			
 		return $o;
 	}
 
