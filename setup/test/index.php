@@ -69,7 +69,7 @@ if (!empty($HTTP_GET_VARS['runTest'])) {
     print '<br>';
     
     print '<b>Start</b><br>';
-    set_time_limit(3);
+    set_time_limit(30);
     $ret = $class->start();
     if ($ret == SUCCESS) {
 	print 'Status: Success<br>';
