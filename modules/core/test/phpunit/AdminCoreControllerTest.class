@@ -51,6 +51,7 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 			     'session.lifetime',
 			     'session.inactivityTimeout',
 			     'uploadLocalServer.dirs',
+			     'misc.markup',
 			     'misc.useShortUrls');
 	
 	/* Save the original values */
@@ -67,7 +68,8 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	
 	/* Restore the original values */
 	foreach ($this->_keys as $key) {
-	    $ret = $gallery->setModuleParameter('core', $key, $this->_save[$key]);
+	    $value = isset($this->_save[$key]) ? $this->_save[$key] : '';
+	    $ret = $gallery->setModuleParameter('core', $key, $value);
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
@@ -89,7 +91,8 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 			  'default.language' => 'x8',
 			  'session.lifetime' => 'x9',
 			  'session.inactivityTimeout' => 'x10',
-			  'misc.useShortUrls' => 'x11');
+			  'misc.markup' => 'x11',
+			  'misc.useShortUrls' => 'x12');
 
 	/* Change the defaults to something meaningless */
 	foreach ($valueMap as $key => $value) {
