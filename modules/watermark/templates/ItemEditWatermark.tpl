@@ -47,18 +47,26 @@
     watermarkUrlMap[{$watermark.id}]['url'] = '{g->url forJavascript="true" arg1="view=core:DownloadItem" arg2="itemId=`$watermark.id`"}';
     watermarkUrlMap[{$watermark.id}]['width'] = {$watermark.width};
     watermarkUrlMap[{$watermark.id}]['height'] = {$watermark.height};
+    watermarkUrlMap[{$watermark.id}]['xPercent'] = {if
+      $watermark.id==$form.watermarkId}{$form.xPercent}{else}{$watermark.xPercentage}{/if};
+    watermarkUrlMap[{$watermark.id}]['yPercent'] = {if
+      $watermark.id==$form.watermarkId}{$form.yPercent}{else}{$watermark.yPercentage}{/if};
     {/foreach}
 
     function moveToOriginalLocation() {ldelim}
-      orig = dd.elements.watermark_original;
-      floater = dd.elements.watermark_floater;
-      
-      newX = orig.x + ({$form.xPercent|default:0} / 100 * orig.w);
-      newY = orig.y + ({$form.yPercent|default:0} / 100 * orig.h);
-      floater.moveTo(newX, newY);
+      moveToLocation({$form.xPercent}, {$form.yPercent});
     {rdelim}
 
     {literal}
+    function moveToLocation(xPct, yPct) {
+      orig = dd.elements.watermark_original;
+      floater = dd.elements.watermark_floater;
+      
+      newX = orig.x + Math.round(xPct * orig.w / 100);
+      newY = orig.y + Math.round(yPct * orig.y / 100);
+      floater.moveTo(newX, newY);
+    }
+
     function calculatePercentages() {
       orig = dd.elements.watermark_original;
       floater = dd.elements.watermark_floater;
@@ -73,6 +81,7 @@
       floater.swapImage(newImage['url']);
       floater.resizeTo(Math.min(newImage['width'], (0.9 * orig.w)),
 	               Math.min(newImage['height'], (0.9 * orig.h)));
+      moveToLocation(newImage['xPercent'], newImage['yPercent']);
       verifyBounds();
     }
 

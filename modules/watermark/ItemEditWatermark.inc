@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -86,7 +86,7 @@ class ItemEditWatermark extends ItemEditPlugin {
 		foreach ($derivatives as $derivative) {
 		    $ids[] = $derivative->getId();
 		}
-		
+
 		/* Lock them all */
 		list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($ids);
 		if ($ret->isError()) {
@@ -107,13 +107,13 @@ class ItemEditWatermark extends ItemEditPlugin {
 		    if ($derivative->getDerivativeType() == DERIVATIVE_TYPE_IMAGE_PREFERRED) {
 			$preferred = $derivative;
 		    }
-		    
+
 		    $ret = $derivative->save(true);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null, null);
 		    }
 		}
-		    
+
 
 		$ret = GalleryCoreApi::releaseLocks($lockId);
 		if ($ret->isError()) {
@@ -126,7 +126,7 @@ class ItemEditWatermark extends ItemEditPlugin {
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
-		
+
 		if ($preferred->hasNoOperations()) {
 		    $ret = GalleryCoreApi::remapSourceIds($preferred->getId(), $preferred->getDerivativeSourceId());
 		    if ($ret->isError()) {
@@ -187,16 +187,16 @@ class ItemEditWatermark extends ItemEditPlugin {
 			    case DERIVATIVE_TYPE_IMAGE_PREFERRED:
 				$form['whichDerivative']['preferred'] = 1;
 				break;
-			
+
 			    case DERIVATIVE_TYPE_IMAGE_RESIZE:
 				$form['whichDerivative']['resize'] = 1;
 				break;
-			
+
 			    case DERIVATIVE_TYPE_IMAGE_THUMBNAIL:
 				$form['whichDerivative']['thumbnail'] = 1;
 				break;
 			    }
-			
+
 			    $args = preg_split('/,/', $matches[1]);
 			    $fileName = $args[0];
 			    $form['xPercent'] = $args[5];
@@ -204,6 +204,7 @@ class ItemEditWatermark extends ItemEditPlugin {
 			    foreach ($watermarks as $watermark) {
 				if ($watermark['fileName'] == $fileName) {
 				    $form['watermarkId'] = $watermark['id'];
+				    break;
 				}
 			    }
 			}
@@ -213,6 +214,8 @@ class ItemEditWatermark extends ItemEditPlugin {
 		if (!isset($form['watermarkId'])) {
 		    $watermarkIds = array_keys($watermarks);
 		    $form['watermarkId'] = $watermarkIds[0];
+		    $form['xPercent'] = $watermarks[$watermarkIds[0]]['xPercentage'];
+		    $form['yPercent'] = $watermarks[$watermarkIds[0]]['yPercentage'];
 		}
 	    }
 	}
@@ -236,7 +239,7 @@ class ItemEditWatermark extends ItemEditPlugin {
 		}
 	    }
 	}
-		 
+
 	$ItemEditWatermark = array();
 	$ItemEditWatermark['watermarks'] = $watermarks;
 	$ItemEditWatermark['item'] = $item->getMemberData();
@@ -254,7 +257,7 @@ class ItemEditWatermark extends ItemEditPlugin {
 	if (!GalleryUtilities::isA($item, 'GalleryDataItem')) {
 	    return false;
 	}
-	
+
 	list ($ret, $toolkit) =
 	    GalleryCoreApi::getToolkitByOperation($item->getMimeType(), 'composite');
 	if ($ret->isError()) {
