@@ -384,19 +384,37 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 			    );
 	
     }
+
     function testConvertHtmlToBbcode() {
+	/* Basic HTML styling with edge cases */
 	$this->assertEquals('[b]bold[/b]',
 			    ConfirmImportController::convertHtmlToBbcode('<b>bold</b>'));
-	$this->assertEquals('[img]foo.jpg[/img]',
-			    ConfirmImportController::convertHtmlToBbcode('<img src=\'foo.jpg\'>'));
 	$this->assertEquals('[i]italic[/i]',
 			    ConfirmImportController::convertHtmlToBbcode('<i>italic</i>'));
+ 
+	/* Image HTML with edge cases */
+	$this->assertEquals('[img]foo.jpg[/img]',
+			    ConfirmImportController::convertHtmlToBbcode('<img src=\'foo.jpg\'>'));
+	$this->assertEquals('[img]foo.jpg[/img]',
+			    ConfirmImportController::convertHtmlToBbcode('<img src="foo.jpg">'));
+	$this->assertEquals('[img]foo.jpg[/img]',
+			    ConfirmImportController::convertHtmlToBbcode('<img src=foo.jpg>'));
+	$this->assertEquals('[img]foo.jpg[/img]',
+			    ConfirmImportController::convertHtmlToBbcode('<img style=foo src=\'foo.jpg\'>'));
+	$this->assertEquals('[img]foo.jpg[/img]',
+			    ConfirmImportController::convertHtmlToBbcode('<img src=\'foo.jpg\' class="bar">'));
+	$this->assertEquals('[img]foo.jpg[/img]',
+			    ConfirmImportController::convertHtmlToBbcode('<img style="foo" src=\'foo.jpg\' class=\'bar\'>'));
+ 
+	/* List HTML with edge cases */
 	$this->assertEquals('[list][/list]',
 			    ConfirmImportController::convertHtmlToBbcode('<ul></ul>'));
 	$this->assertEquals('[list][*]foo[/list]',
 			    ConfirmImportController::convertHtmlToBbcode('<ul><li>foo</li></ul>'));
 	$this->assertEquals('[list][*]foo[/list]',
 			    ConfirmImportController::convertHtmlToBbcode('<ul><li>foo</ul>'));
+ 
+	/* URL HTML with edge cases */
 	$this->assertEquals('[url=http://google.com]Google[/url]',
 			    ConfirmImportController::convertHtmlToBbcode('<a href="http://google.com">Google</a>'));
 	$this->assertEquals('[url=http://google.com]Google[/url]',
@@ -409,18 +427,18 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 			    ConfirmImportController::convertHtmlToBbcode('<a href=http://google.com class=bar>Google</a>'));
 	$this->assertEquals('[url=http://google.com]Google[/url]',
 			    ConfirmImportController::convertHtmlToBbcode('<a title=foo href=http://google.com>Google</a>'));
-	
-	/*
-	 * $this->assertEquals('[img]foo.jpg[/img]',
-	 *     ConfirmImportController::convertHtmlToBbcode('<img src=foo.jpg>'));
-	 */
+ 
+ 
+	/* Malformed HTML tags should not be turned into BBCode, but we can't stop it */
+	$this->assertEquals('[i][b]interleaved[/i][/b]', 
+			    ConfirmImportController::convertHtmlToBbcode('<i><b>interleaved</i></b>'));
 
-	/* Malformed HTML tags should not be turned into BBCode
-	 * $this->assertEquals('&lt;i&gt;&lt;b&gt;foo.jpg&lt;i&gt;&lt;b&gt;',
-	 *     ConfirmImportController::convertHtmlToBbcode('<i><b>interleaved</i></b>'));
+	/*
+	 * We don't handle this correctly, yet
+         * $this->assertEquals('&lt;li&gt;foo',
+	 *     ConfirmImportController::convertHtmlToBbcode('<li>foo'));
 	 */
     }
-    
 
 }
 ?>

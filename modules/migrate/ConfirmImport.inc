@@ -650,7 +650,7 @@ class ConfirmImportController extends GalleryController {
         $item = preg_replace('/<\/ul>/i', '[/list]', $item);
         $item = preg_replace('/<li>/i', '[*]', $item);
         $item = preg_replace('/<\/li>/i', '', $item);
-        $item = preg_replace('/<img.*?src\s*=\s*(\'|")([^\1]*)?\1.*?>/is', '[img]$2[/img]', $item);
+	$item = preg_replace('/<img([^>]*)?\s*src\s*=\s*["\']{0,1}([^\s\'">]*)["\']{0,1}([^>]*)>/is', '[img]$2[/img]', $item);
 	$item = preg_replace('/<a([^>]*)?\s*href\s*=\s*["\']{0,1}([^\s\'">]*)["\']{0,1}([^>]*)>(.*)?<\/a>/is', '[url=$2]$4[/url]', $item);
         GalleryUtilities::sanitizeInputValues($item);
         return $item;
