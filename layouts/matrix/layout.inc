@@ -304,7 +304,10 @@ class MatrixLayout extends GalleryLayout {
 	     * aggregate to save us having to do them individually for each
 	     * entity later on.
 	     */
-	    $this->_studyItems(array_merge(array($item->getId()), $childIds));
+	    $ret = $this->_studyItems(array_merge(array($item->getId()), $childIds));
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
 
 	    /* Get item summaries */
 	    list ($ret, $moduleChildSummaries) = $this->_getModuleItemSummaries($childItems);

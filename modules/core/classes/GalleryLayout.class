@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -33,7 +33,7 @@
  * @subpackage Classes
  */
 class GalleryLayout {
-    
+
     /*
      * ****************************************
      *                 Members
@@ -42,7 +42,7 @@ class GalleryLayout {
 
     /**
      * The id of this layout
-     * 
+     *
      * @var string _id
      * @access private
      */
@@ -50,7 +50,7 @@ class GalleryLayout {
 
     /**
      * The name of this layout
-     * 
+     *
      * @var string _name
      * @access private
      */
@@ -58,7 +58,7 @@ class GalleryLayout {
 
     /**
      * The description of this layout
-     * 
+     *
      * @var string _description
      * @access private
      */
@@ -66,7 +66,7 @@ class GalleryLayout {
 
     /**
      * The version of this layout
-     * 
+     *
      * @var string _version
      * @access private
      */
@@ -111,7 +111,7 @@ class GalleryLayout {
      *                   display: a localized displayable text string
      *   value:       the current value for this setting
      *
-     * @param int optional itemId 
+     * @param int optional itemId
      * @return array object GalleryStatus a status code
      *               settings array
      */
@@ -149,7 +149,7 @@ class GalleryLayout {
      * Let the layout handle the incoming request.
      * Used for layout with advanced settings ( @see isAdvancedSettings ).
      * @see GalleryController::handleRequest
-     * 
+     *
      * @param array the form values
      * @param the item id or null for site wide settings
      * @return array object GalleryStatus a status code
@@ -196,9 +196,9 @@ class GalleryLayout {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	return GalleryStatus::success();
-    }    
+    }
 
     /**
      * Deactivate this layout
@@ -212,21 +212,20 @@ class GalleryLayout {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	return GalleryStatus::success();
-    }    
+    }
 
     /**
      * Load the template with data from this view.
      *
      * @param array object GalleryTemplate the template instance
-     * @param array array the form values
+     * @param object GalleryItem the item to display
      * @return array object GalleryStatus a status code
-     *               string path to the head template
-     *               string path to the body template
+     *               array ('head' => head HTML, 'body' => body html)
      */
-    function loadTemplate(&$template, &$form) {
-	return array(GalleryStatus::success(), null, null);
+    function loadTemplate(&$template, $item) {
+	return array(GalleryStatus::success(), null);
     }
 
     /**
@@ -252,7 +251,7 @@ class GalleryLayout {
 	    if (empty($status['active'])) {
 		continue;
 	    }
-	    
+
 	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
 	    if ($ret->isError()) {
 		if ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH) {
@@ -293,15 +292,15 @@ class GalleryLayout {
         if ($ret->isError()) {
             return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
         $urlGenerator = $gallery->getUrlGenerator();
-	
+
         $links = array();
         foreach ($moduleStatus as $moduleId => $status) {
             if (empty($status['active'])) {
                 continue;
 	    }
-	    
+
             list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
             if ($ret->isError()) {
 		if ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH) {
@@ -309,18 +308,18 @@ class GalleryLayout {
 		}
                 return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    
+
             /* Get all module-related links for these items */
             list ($ret, $links[$moduleId]) = $module->getSystemLinks();
             if ($ret->isError()) {
                 return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    
+
             if (empty($links[$moduleId])) {
                 unset($links[$moduleId]);
 	    }
 	}
-	
+
         return array(GalleryStatus::success(), $links);
     }
 
@@ -355,7 +354,7 @@ class GalleryLayout {
 	    if (empty($status['active'])) {
 		continue;
 	    }
-	    
+
 	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
 	    if ($ret->isError()) {
 		if ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH) {
@@ -396,7 +395,7 @@ class GalleryLayout {
 	if (!is_array($items)) {
 	    $items = array($items);
 	}
-	
+
 	/* Load the module list */
 	list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module');
 	if ($ret->isError()) {
@@ -481,20 +480,19 @@ class GalleryLayout {
      *
      * Learn whatever we think we'll need.  By performing operations on the
      * entire set of items, we potentially save time when it comes to
-     * processing each item individually. 
+     * processing each item individually.
      *
      * @param array GalleryItem ids
      * @return object GalleryStatus a status code
      * @access private
      */
     function _studyItems($itemIds) {
-	global $gallery;
-
 	/* Study all permissions */
 	$ret = GalleryCoreApi::studyPermissions($itemIds);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
+	return GalleryStatus::success();
     }
 
     /**
@@ -521,7 +519,7 @@ class GalleryLayout {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    
+
 	    $params = array_merge($params, $local);
 	}
 
@@ -532,16 +530,13 @@ class GalleryLayout {
      * Convenience method to get a layout parameter
      *
      * @param string the parameter name
-     * @param string the value
      * @param int the (optional) item id
      * @return array object GalleryStatus a status code
      *               mixed value
      */
-    function getParameter($parameterName, $parameterValue, $itemId=0) {
-	list ($ret, $value) = GalleryCoreApi::getPluginParameter('layout',
-								      $this->getId(),
-								      $parameterName,
-								      $itemId);
+    function getParameter($parameterName, $itemId=0) {
+	list ($ret, $value) = GalleryCoreApi::getPluginParameter('layout', $this->getId(),
+								 $parameterName, $itemId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -558,10 +553,8 @@ class GalleryLayout {
      * @return object GalleryStatus a status code
      */
     function setParameter($parameterName, $parameterValue, $itemId=0) {
-	$ret = GalleryCoreApi::setPluginParameter('layout',
-						       $this->getId(),
-						       $parameterName, $parameterValue,
-						       $itemId);
+	$ret = GalleryCoreApi::setPluginParameter('layout', $this->getId(),
+						  $parameterName, $parameterValue, $itemId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -595,7 +588,7 @@ class GalleryLayout {
      */
     function translate($params) {
 	global $gallery;
-	
+
 	if (!is_array($params)) {
 	    $params = array('text' => $params);
 	}
@@ -622,7 +615,7 @@ class GalleryLayout {
     function getName() {
 	return $this->_name;
     }
-    
+
     function setId($id) {
 	$this->_id = $id;
     }
@@ -630,7 +623,7 @@ class GalleryLayout {
     function getId() {
 	return $this->_id;
     }
-    
+
     function setDescription($description) {
 	$this->_description = $description;
     }
@@ -665,5 +658,4 @@ class GalleryLayout {
 	$this->_l10Domain = $l10Domain;
     }
 }
-
 ?>
