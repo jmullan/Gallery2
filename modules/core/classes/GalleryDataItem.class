@@ -333,6 +333,17 @@ class GalleryDataItem_core extends GalleryItem {
 	
 	return array(GalleryStatus::success(), $containerPath . $this->getPathComponent());
     }
+
+    /**
+     * Render this item in the given format.  For example, GalleryPhotoItem may want to render as an <img> tag
+     * in the HTML format, whereas GalleryMovieItem would use <object> or <embed> in HTML.
+     *
+     * @param string the format (eg, "HTML")
+     * @param array format specific key value pairs
+     */
+    function render($format, $params) {
+	return null;
+    }
 }
 
 include(dirname(__FILE__) . '/interfaces/GalleryDataItem.inc');

@@ -584,65 +584,36 @@ class GalleryTheme {
     function image($context, $class=null, $maxSize=null) {
  	global $gallery;
 
- 	$urlGenerator = $gallery->getUrlGenerator();
- 	$params = $context['params'];
- 	$src = $urlGenerator->generateUrl(array('view' => 'core:DownloadItem',
- 						'itemId' => $params['image']['id']));
+	$params = $context['params'];
 
-	list ($width, $height) = array($params['image']['width'], $params['image']['height']);
-
-	/* Shrink our dimensions if necessary */
-	if (isset($maxSize)) {
- 	    list ($width, $height) = GalleryUtilities::shrinkDimensionsToFit(140, $width, $height);
- 	}
- 
- 	$title = $params['item']['title'];
- 	if (empty($title)) {
- 	    $title = $params['item']['pathComponent'];
- 	}
-
-	if (isset($class)) {
-	    $classString = sprintf('class="%s"', $class);
-	} else {
-	    $classString = '';
-	}
-
-
-	/*
-	 * XXX: This is a bottleneck.  It will cause problems when people start extending the standard items
-	 * and want them to render differently.  We can't be having to rev the theme all the time just to
-	 * support these new types. Perhaps we should let the item itself decide how it should be rendered,
-	 * and provide a hint to it, like "HTML" or "XML" etc?
-	 */
-	switch($params['item']['entityType']) {
-	case 'GalleryMovieItem':
-	    /*
-	     * XXX: We need to be able to display alternate text in case this does not render in the browser.
-	     * Perhaps we can extend the {g->image} tag to accept a child element that can contain a "Can't be
-	     * viewed: [Download instead]" message?
-	     */
-	    $result = sprintf('<object %s type="%s" data="%s" width="%s" height="%s"></object>',
-			      $classString,
-			      $params['item']['mimeType'],
-			      $src,
-			      $width,
-			      $height);
-	    break;
-
-
-	case 'GalleryPhotoItem':
-	case 'GalleryDerivativeImage':
-	default:
-	    $result = sprintf('<img %s src="%s" width="%s" height="%s" alt="%s" longdesc="%s"/>',
-			      $classString,
-			      $src,
-			      $width,
-			      $height,
-			      $title,
-			      $params['item']['description']);
+	/* Ask the entity to render itself in HTML */
+	list ($ret, $item) = $gallery->loadEntitiesById($params['item']['id']);
+	if ($ret->isError()) {
+	    // XXX: is there a more graceful way to handle this?
+	    return '[Render error: missing item]';
 	}
 	
- 	return $result;
+	list ($ret, $entity) = $gallery->loadEntitiesById($params['image']['id']);
+	if ($ret->isError()) {
+	    // XXX: is there a more graceful way to handle this?
+	    return '[Render error: missing entity]';
+	}
+
+	if ($entity->getId() == $item->getId()) {
+	    $html = $item->render('HTML', array('class' => $class, 'maxSize' => $maxSize));
+	} else {
+	    $html = $entity->render('HTML', $item, 
+				    array('class' => $class, 'maxSize' => $maxSize));
+	}
+	if (empty($html)) {
+	    /*
+	     * XXX: We should let the {g->image} tag provide some kind of fallback in case the image can't
+	     * be rendered.
+	     */
+	    return '[Render error: Unable to render]';
+	}
+
+	return $html;
      }
 
     /*************************************************************

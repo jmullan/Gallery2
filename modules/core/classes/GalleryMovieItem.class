@@ -196,6 +196,32 @@ class GalleryMovieItem_core extends GalleryDataItem {
 	global $gallery;
 	return $gallery->i18n('Movie');
     }
+
+    /**
+     * @see GalleryDataItem::render
+     */
+    function render($format, $params) {
+	global $gallery;
+	
+	switch($format) {
+	case 'HTML':
+	    $urlGenerator = $gallery->getUrlGenerator();
+	    $src = $urlGenerator->generateUrl(array('view' => 'core:DownloadItem',
+						    'itemId' => $this->getId()));
+
+	    list ($width, $height) = array($this->getWidth(), $this->getHeight());
+
+	    return sprintf('<object %s type="%s" data="%s" width="%s" height="%s"></object>',
+			   $params['class'] ? 'class="' . $params['class'] . '"' : '',
+			   $this->getMimeType(),
+			   $src,
+			   $width,
+			   $height);
+	default:
+	    return null;
+	}
+    }
+    
 }
 
 include(dirname(__FILE__) . '/interfaces/GalleryMovieItem.inc');

@@ -204,6 +204,39 @@ class GalleryPhotoItem_core extends GalleryDataItem {
 	global $gallery;
 	return $gallery->i18n('Photo');
     }
+
+    /**
+     * @see GalleryDataItem::render
+     */
+    function render($format, $params) {
+ 	global $gallery;
+
+	switch($format) {
+	case 'HTML':
+	    $urlGenerator = $gallery->getUrlGenerator();
+	    $src = $urlGenerator->generateUrl(array('view' => 'core:DownloadItem',
+						    'itemId' => $this->getId()));
+
+	    list ($width, $height) = array($this->getWidth(), $this->getHeight());
+
+	    /* Shrink our dimensions if necessary */
+	    if (isset($params['maxSize'])) {
+		list ($width, $height) =
+		    GalleryUtilities::shrinkDimensionsToFit($params['maxSize'], $width, $height);
+	    }
+
+	    return sprintf('<img %s src="%s" width="%s" height="%s" alt="%s" longdesc="%s"/>',
+			   $params['class'] ? 'class="' . $params['class'] . '"' : '',
+			   $src,
+			   $width,
+			   $height,
+			   $this->getTitle() ? $this->getTitle() : $this->getPathComponent(),
+			   $item->getDescription());
+
+	default:
+	    return null;
+	}
+    }
 }
 
 include(dirname(__FILE__) . '/interfaces/GalleryPhotoItem.inc');

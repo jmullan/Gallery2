@@ -566,6 +566,18 @@ class GalleryDerivative_core extends GalleryChildEntity {
 	
 	return array(GalleryStatus::success(), $cacheFile);
     }
+
+    /**
+     * Render this item in the given format.  For example, GalleryDerivativeImage may want to render as
+     * an <img> tag in the HTML format.
+     *
+     * @param string the format (eg, "HTML")
+     * @param object GalleryDataItem the data item
+     * @param array format specific key value pairs
+     */
+    function render($format, $item, $params) {
+	return null;
+    }
 }
 
 include(dirname(__FILE__) . '/interfaces/GalleryDerivative.inc');
