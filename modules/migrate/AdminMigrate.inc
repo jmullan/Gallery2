@@ -20,8 +20,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /**
- * @version $Revision$ $Date$
- * @package Module
+ * @version $Version$ $Date$
+ * @package Migrate
+ * @subpackage AdminMigrate
  * @author Jesse Mullan <jmullan@visi.com>
  */
 class AdminMigrateView extends GalleryView {
@@ -30,9 +31,10 @@ class AdminMigrateView extends GalleryView {
      */
     function renderBody($form) {
         global $gallery;
-        /* Render the HTML body */
         $template = $this->_getTemplate();
         $template->setVariable('controller', 'migrate:Import');
+
+        /* Render the HTML body */
         list ($ret, $html) = $template->render('AdminMigrate.tpl');
         if ($ret->isError()) {
              return array($ret->wrap(__FILE__, __LINE__), null);

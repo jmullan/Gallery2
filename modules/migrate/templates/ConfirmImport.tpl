@@ -47,6 +47,21 @@
 	  {/g->row}
 	{/foreach}
       {/g->table}
+      {g->table style="admin_listing" evenodd="true"}
+	{g->row}
+	  {g->column header="true"}
+            Top level albums and albums whose parents are not
+            selected will be imported into this album:
+          {/g->column}
+        {/g->row}
+	{g->row}
+	  {g->column}
+            {$ConfirmImport.targetAlbum->_title}:
+            {$ConfirmImport.targetAlbum->_description}
+            {g->input type="hidden" name="form.destinationAlbumID"}{$ConfirmImport.destinationAlbumID}{/g->input}
+	  {/g->column}
+        {/g->row}
+      {/g->table}
     {/g->element}
   {/g->box}
 

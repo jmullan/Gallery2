@@ -19,10 +19,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 /**
+ * @version $Version$ $Date$
  * @package Migrate
  * @subpackage UserInterface
+ * @author Jesse Mullan <jmullan@visi.com>
  */
 
 class ConfirmImportController extends GalleryController {
@@ -42,7 +43,6 @@ class ConfirmImportController extends GalleryController {
 
 	$error = array();
 	$status = array();
-
 	if (isset($form['action']['import'])) {
 	    list ($ret, $uidMap) = Gallery1DataParser::getUserUids($albumsPath);
 	    if ($ret->isError()) {
@@ -98,6 +98,47 @@ class ConfirmImportController extends GalleryController {
 		    $status['userImportSuccess'][$userName] = 1;
 		}
 	    }
+	    
+            /* Import Any Selected Albums */
+	    /* First initialize the $form['sourceAlbums'] array to avoid php
+	     * warnings
+	     */
+
+            if (!isset($form['sourceAlbums'])) {
+		$form['sourceAlbums']=array();
+	    }
+	    if (!isset($form['destinationAlbumID'])) {
+		/* Get all possible destinations (where user has write
+		permission) */
+		list ($ret, $rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		$form['destinationAlbumID']=$rootId;
+	    }
+	    $destinationAlbumID = $form['destinationAlbumID'];
+	    foreach (array_keys ($form['sourceAlbums']) as $sourceAlbumName) {
+		list ($ret, $albumfields[$sourceAlbumName]) =
+			Gallery1DataParser::loadAlbumFields($albumsPath.$sourceAlbumName);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	    }
+	    $i=0;
+	    if(!isset($albumfields)){
+		$albumfields = array();
+	    }
+	    while ($albumfields && $i<count($form['sourceAlbums'])^2) {
+		$album = array_shift($albumfields);
+		if (!in_array($album['parentAlbumName'],array_keys($form['sourceAlbums']))) {
+		    list ($ret, $finishedAlbums[$album['name']])=Gallery1DataParser::importAlbum($destinationAlbumID,$album);
+		} else if (in_array($album['parentAlbumName'],array_keys($finishedAlbums))){
+		    list ($ret, $finishedAlbums[$album['name']])=Gallery1DataParser::importAlbum($finishedAlbums[$album['parentAlbumName']],$album);
+		}
+		$i++;
+	    }
+
+
 	    $redirect['view'] = 'core:SiteAdmin';
 	    $redirect['subView'] = 'migrate:ImportResults';
 	}
@@ -122,8 +163,8 @@ class ConfirmImportView extends GalleryView {
      */
     function loadTemplate(&$template, &$form) {
         global $gallery;
-
 	$albumsPath = GalleryUtilities::getRequestVariables('albumsPath');
+        $destinationAlbumID = $form['destinationAlbumID'];
 	list ($ret, $uids) = Gallery1DataParser::getUserUids($albumsPath);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
@@ -133,11 +174,16 @@ class ConfirmImportView extends GalleryView {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
-	
+	list ($ret, $targetAlbum) = $gallery->loadEntitiesById($destinationAlbumID);
+        if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
+        }
 	$ConfirmImport = array();
 	$ConfirmImport['uids'] = $uids;
 	$ConfirmImport['albums'] = $albums;
 	$ConfirmImport['albumsPath'] = $albumsPath;
+        $ConfirmImport['destinationAlbumID'] = $destinationAlbumID;
+        $ConfirmImport['targetAlbum'] = $targetAlbum;
 
         $template->setVariable('controller', 'migrate:ConfirmImport');
 	$template->setVariable('ConfirmImport', $ConfirmImport);

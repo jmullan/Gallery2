@@ -130,13 +130,17 @@ class Gallery1DataParser {
     }
 
     function getRootAlbums($path) {
+        global $gallery;
+        $platform = $gallery->getPlatform();
+	$slash = $platform->getDirectorySeparator();
+
 	list ($ret, $albumOrder) = Gallery1DataParser::loadFile($path . 'albumdb.dat');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	foreach($albumOrder as $albumName){
-	    list ($ret, $albumFields) = Gallery1DataParser::loadAlbumFields($path . $albumName . '/');
+	    list ($ret, $albumFields) = Gallery1DataParser::loadAlbumFields($path . $albumName . $slash);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__),'');
 	    }
@@ -148,7 +152,15 @@ class Gallery1DataParser {
     }
 
     function loadAlbumFields($path) {
-	list ($ret, $album) = Gallery1DataParser::loadFile($path . 'album.dat');
+        global $gallery;
+	$platform = $gallery->getPlatform();
+	$slash = $platform->getDirectorySeparator();
+	$tmp = trim($path);
+	if ($tmp[strlen($tmp)-1] != $slash) {
+	    $tmp .= $slash;
+	}
+	$path = trim($tmp);
+        list ($ret, $album) = Gallery1DataParser::loadFile($path . 'album.dat');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -205,8 +217,79 @@ class Gallery1DataParser {
 	
 	return array(GalleryStatus::success(), $fields);
     }
-}
+    function importAlbum($itemId,$album) {
+	global $gallery;
 
+	/* $itemId = GalleryUtilities::getRequestVariables('itemId'); */
+
+	/* Make sure we have permission do edit this item */
+	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'core.addAlbumItem');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	list ($ret, $item) = $gallery->loadEntitiesById($itemId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	list ($ret, $lockIds[]) = $gallery->acquireReadLock($item->getId());
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$status = array();
+	$error = array();
+
+	/*
+	 * Validate the input data.
+	 */
+	$platform = $gallery->getPlatform();
+	if (empty($album['name'])) {
+	    $error[] = 'form.error.pathComponent.missing';
+	} else if (!$platform->isLegalPathComponent($album['name'])) {
+	    $error[] = 'form.error.pathComponent.invalid';
+	}
+
+	if (empty($error)) {
+	    list ($ret, $instance) =
+		    GalleryFactory::newInstance('GalleryEntity', 'GalleryAlbumItem');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    if (!isset($instance)) {
+		return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
+			     null);
+	    }  
+	    $ret = $instance->create($itemId, $album['name']);
+	    if ($ret->isError()) {
+		if ($ret->getErrorCode() & ERROR_COLLISION) {
+		    $error[] = 'form.error.pathComponent.collision';
+		} else {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	    }
+	    $instance->setTitle($album['title']);
+	    $instance->setSummary($album['summary']);
+	    $instance->setKeywords('');
+	    $instance->setDescription($album['description']);
+	    $id = $instance->getId();
+	    $ret = $instance->save();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+	$ret = $gallery->releaseLocks($lockIds);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	if (isset($id)) {
+	    return array(GalleryStatus::success(), $id);
+	} else {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}	
+    }
+}
 /* Define these classes so that unserialize can use them */
 class AlbumDB{ }
 class Album { }

@@ -20,8 +20,10 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /**
+ * @version $Version$ $Date$
  * @package Migrate
  * @subpackage UserInterface
+ * @author Jesse Mullan <jmullan@visi.com>
  */
 
 class ChooseObjectsController extends GalleryController {

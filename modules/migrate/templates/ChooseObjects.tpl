@@ -94,7 +94,7 @@
     {/g->element}
 
     {g->element}
-      {g->select name="form.destinationAlbum"}
+      {g->select name="form.destinationAlbumID"}
         {foreach from=$ChooseObjects.g2AlbumTree item=album}
   	  <option value="{$album.data.id}">
   	  {"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"|repeat:$album.depth}`--
