@@ -204,10 +204,16 @@
 	
 	{assign var="lastPage" value=0}
 	{foreach name=jumprange from=$layout.jumprange item=page}
-	  {if ($page - $lastPage > 1)}
+	  {if ($page - $lastPage >= 2)}
 	    {g->item}
 	      {g->title}
-		...
+		{if ($page - $lastPage == 2)}
+		  {g->link arg1="view=core:ShowItem" arg2="itemId=`$layout.item.id`" arg3="page=`$page-1`"}
+		    {$page-1}
+		  {/g->link}
+		{else}
+		  ...
+		{/if}
 	      {/g->title}
 	    {/g->item}
 	  {/if}
