@@ -70,6 +70,11 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	
 	$this->_temporaryAlbumId = $this->_temporaryAlbum->getId();
 
+	list ($ret, $this->guestUserId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
 	$userName = 'phpunitfoo001';
 	/*
 	 * Go ahead and create the user instance
@@ -752,7 +757,86 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 		}
 	    }
 	}
+
 	$this->assertEquals($testPerms,$testPermsResult);	
+
+
+	/* Verify item attributes (like order weight) */
+	list ($ret, $ids) = GalleryCoreApi::fetchChildItemIds($testAlbum);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(7, count($ids), 'number of children');
+
+	$seenWeights = array();
+	foreach ($ids as $id) {
+	    list ($ret, $itemViewCount[$id]) = GalleryCoreApi::fetchItemViewCount($id);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    
+	    list ($ret, $orderWeight) = GalleryCoreApi::fetchItemOrderWeight($id);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $this->assert(!isset($seenWeights[$orderWeight]), 'Seen this weight before: ' . $orderWeight);
+	    $seenWeights[$orderWeight] = 1;
+	}
+	
+	/* Get the allegedly successfully imported items */
+	list($ret, $testItem) = GalleryCoreApi::loadEntitiesById($ids[0]);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals($testOwner->getId(),
+			    $testItem->getownerId(),
+			    'item 0');
+
+	list($ret, $testItem) = GalleryCoreApi::loadEntitiesById($ids[1]);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals($testOwner->getId(),
+			    $testItem->getownerId(),
+			    'item 1');
+
+
+	list($ret, $testItem) = GalleryCoreApi::loadEntitiesById($ids[2]);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals($testUserInstance->getId(),
+			    $testItem->getownerId(),
+			    'item 2');
+
+	list($ret, $testItem) = GalleryCoreApi::loadEntitiesById($ids[3]);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals($this->guestUserId +0,
+			    $testItem->getownerId(),
+			    'item 3');
+	list($ret, $testItem) = GalleryCoreApi::loadEntitiesById($ids[4]);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals($testOwner->getId(),
+			    $testItem->getownerId(),
+			    'item 4');
+	list($ret, $testItem) = GalleryCoreApi::loadEntitiesById($ids[5]);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals($this->guestUserId +0,
+			    $testItem->getownerId(),
+			    'item 5');
+	list($ret, $testItem) = GalleryCoreApi::loadEntitiesById($ids[6]);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals($testOwner->getId(),
+			    $testItem->getownerId(),
+			    'item 6');
     }
 
     function testImportAlbumPermissions2() {

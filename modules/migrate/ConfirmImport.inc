@@ -820,28 +820,33 @@ class ConfirmImportController extends GalleryController {
 					}
 				    }
 				}
-				/*
+				
 				$validItemUID = FALSE;
+				$itemUID = FALSE;
+				$defaultToAlbumUID = TRUE;
 				if (isset($importAlbumItem->owner)) {
-				    if (strcmp('everybody',$importAlbumItem->owner)
-					|| strcmp('nobody',$importAlbumItem->owner)) {
-					switch ($importAlbumItem->owner) {
-					case 'everybody':
-					    $newItem->setownerId($guestUserId);
-					    break;
-					case 'nobody':
-					    $newItem->setownerId($guestUserId);
-					    break;
-					}					
-				    $validItemUID = Gallery1DataParser::isValidUid($albumsPath,$importAlbumItem->owner);
-				} else {
-				    } else {
-					$validItemUID = Gallery1DataParser::isValidUid($albumsPath,$album['owner']);
+				    if (!strcmp('everybody',$importAlbumItem->owner)
+					|| !strcmp('nobody',$importAlbumItem->owner)
+					) {
+					$defaultToAlbumUID = FALSE;
+					$newItem->setownerId($guestUserId);					
+				    } else if (strcmp('logged-in',$importAlbumItem->owner)) {  
+					$validItemUID = Gallery1DataParser::isValidUid($albumsPath,$importAlbumItem->owner);
+					if ($validItemUID) {
+					    $defaultToAlbumUID = FALSE;
+					    $itemUID = $importAlbumItem->owner;
+					}
 				    }
 				}
-				if ($validItemUID) {
+				if ($defaultToAlbumUID) {
+				    $validItemUID = Gallery1DataParser::isValidUid($albumsPath,$album['owner']);
+				    if ($validItemUID) {
+					$itemUID = $album['owner'];
+				    }
+				}				
+				if ($validItemUID && $itemUID) {
 				    list($ret, $albumItemUserFields) =
-					    Gallery1DataParser::getUserFieldsByUid($albumsPath, $importAlbumItem->owner);
+					    Gallery1DataParser::getUserFieldsByUid($albumsPath, $itemUID);
 				    if ($ret->isError()) {
 					return array($ret->wrap(__FILE__, __LINE__), null);
 				    }
@@ -853,7 +858,7 @@ class ConfirmImportController extends GalleryController {
 					$newItem->setownerId($itemOwner->getId());
 				    }
 				}
-				*/
+				
 				if (isset($importAlbumItem->hidden) && $importAlbumItem->hidden) {
 				    /* delete group perm actions */
 				    $allPerms = array('core.view','core.viewSource','core.viewResizes');
