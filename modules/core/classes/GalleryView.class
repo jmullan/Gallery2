@@ -157,28 +157,30 @@ class GalleryView {
 	    }
 	}
 
-	$moduleDir = dirname(__FILE__) . '/../../../modules/' . $module . '/';
-	$fileName = $moduleDir . $class . '.inc';
-
-	$platform = $gallery->getPlatform();
-	if (!$platform->file_exists($fileName)) {
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__, $fileName), null);
-	}
-
-	/*
-	 * We bundle view and controller classes together, so we need the controller
-	 * superclass to load the view
-	 */
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryController.class');
-	$ret = GalleryUtilities::requireOnce($fileName);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
 	$viewClassName = $class . 'View';
 	if (!class_exists($viewClassName)) {
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
-					      "Class $viewClassName not defined in $viewName"), null);
+	    $moduleDir = dirname(__FILE__) . '/../../../modules/' . $module . '/';
+	    $fileName = $moduleDir . $class . '.inc';
+
+	    $platform = $gallery->getPlatform();
+	    if (!$platform->file_exists($fileName)) {
+		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__, $fileName), null);
+	    }
+
+	    /*
+	     * We bundle view and controller classes together, so we need the controller
+	     * superclass to load the view
+	     */
+	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryController.class');
+	    $ret = GalleryUtilities::requireOnce($fileName);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    if (!class_exists($viewClassName)) {
+		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+						  "Class $viewClassName not defined in $viewName"), null);
+	    }
 	}
 
 	$view = new $viewClassName();
