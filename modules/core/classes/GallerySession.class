@@ -163,7 +163,8 @@ class GallerySession {
 	$forceResendCookie = false;
 	
 	/* Verify the remote address to avoid casual session hijacking */
-	$currentRemoteIdentifier = GalleryUtilities::getRemoteHostAddress();
+	$currentRemoteIdentifier = $this->_getRemoteIdentifier();
+
 	if (!isset($this->_remoteIdentifier) || $this->_remoteIdentifier != $currentRemoteIdentifier) {
 	    /*
 	     * The session was not created from this browser address, so reset
@@ -488,7 +489,20 @@ class GallerySession {
 	$this->_sessionData = array();
 	$this->_loadedSessionData = array();
 	$this->_creationTime = time();
-	$this->_remoteIdentifier = GalleryUtilities::getRemoteHostAddress();
+	$this->_remoteIdentifier = $this->_getRemoteIdentifier();
+    }
+
+    /**
+     * Return a value that we can use to identify the client.  We can't tie it
+     * to the IP address because that changes too frequently (dialup users,
+     * users behind proxies) so we have to be creative.  Changing this algorithm
+     * will cause all existing sessions to be discarded.
+     *
+     * @return string
+     * @access private
+     */
+    function _getRemoteIdentifier() {
+	return md5($_SERVER['HTTP_USER_AGENT']);
     }
 
     /**

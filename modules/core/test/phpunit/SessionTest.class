@@ -349,7 +349,7 @@ class SessionTest extends GalleryTestCase {
 	$this->assert(count($session->getNavigation($navId[8])) == 0, '#2 navId[8] not deleted');
     }
 
-    function testSameSessionDifferentIp() {
+    function testSameSessionDifferentUserAgent() {
 
 	foreach (array('with-cookies', 'without-cookies') as $type) {
 	    if ($type == 'with-cookies') {
@@ -360,11 +360,8 @@ class SessionTest extends GalleryTestCase {
 		unset($_COOKIE[SESSION_ID_PARAMETER]);
 	    }
 	    
-	    /*
-	     * Create a test session with cookie support and a known remote IP and
-	     * put well known data in it.
-	     */
-	    $_SERVER['HTTP_X_FORWARDED_FOR'] = '1.2.3.4';
+	    /* Create a test session with cookie support put well known data in it. */
+	    $_SERVER['HTTP_USER_AGENT'] = 'TEST_USER_AGENT';
 	    $session = new GallerySession();
 	    $ret = $session->init();
 	    if ($ret->isError()) {
@@ -380,7 +377,7 @@ class SessionTest extends GalleryTestCase {
 	     * Connect to the same session from the same IP and verify that our data
 	     * is still there.
 	     */
-	    $_SERVER['HTTP_X_FORWARDED_FOR'] = '1.2.3.4';
+	    $_SERVER['HTTP_USER_AGENT'] = 'TEST_USER_AGENT';
 	    $session = new GallerySession();
 	    $ret = $session->init();
 	    if ($ret->isError()) {
@@ -397,7 +394,7 @@ class SessionTest extends GalleryTestCase {
 	     * Connect to the same session from a different IP and verify that our data
 	     * is now gone, and that we now have a different cookie id.
 	     */
-	    $_SERVER['HTTP_X_FORWARDED_FOR'] = '3.4.5.6';
+	    $_SERVER['HTTP_USER_AGENT'] = 'DIFFERENT_USER_AGENT';
 	    $session = new GallerySession();
 	    $ret = $session->init();
 	    if ($ret->isError()) {
@@ -414,7 +411,7 @@ class SessionTest extends GalleryTestCase {
 	     * Connect to the same session from the original IP and verify that our data
 	     * is still valid.
 	     */
-	    $_SERVER['HTTP_X_FORWARDED_FOR'] = '1.2.3.4';
+	    $_SERVER['HTTP_USER_AGENT'] = 'TEST_USER_AGENT';
 	    $session = new GallerySession();
 	    $ret = $session->init();
 	    if ($ret->isError()) {
