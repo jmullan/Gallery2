@@ -518,6 +518,11 @@ class GalleryChildEntityHelper_simple {
 	    $direction = '';
 	    break;
 
+	case 'originationTimestamp':
+	    $orderColumn = '[GalleryItem::originationTimestamp]';
+	    $condition = '[GalleryItem::id] = [GalleryChildEntity::id]';
+	    break;
+
 	default:
 	    list ($ret, $sort) =
 		GalleryCoreApi::newFactoryInstanceById('GallerySortInterface_1_0', $orderBy);

@@ -290,6 +290,7 @@ class AdminLayoutsView extends GalleryView {
 		'orderWeight' => $module->translate('Manual Sort Order'),
 		'title' => $module->translate('Title'),
 		'summary' => $module->translate('Summary'),
+		'originationTimestamp' => $module->translate('Origination Date'),
 		'creationTimestamp' => $module->translate('Creation Date'),
 		'modificationTimestamp' => $module->translate('Last Changed Date'),
 		'description' => $module->translate('Description'),

@@ -179,9 +179,9 @@ class CoreModule extends GalleryModule {
 						      dirname(__FILE__) . '/ItemEditLayout.inc');
 
 	GalleryCoreApi::registerFactoryImplementation('ItemEditPlugin',
-						      'ItemEditPhotoSizes',
-						      'ItemEditPhotoSizes',
-						      dirname(__FILE__) . '/ItemEditPhotoSizes.inc');
+						      'ItemEditPhoto',
+						      'ItemEditPhoto',
+						      dirname(__FILE__) . '/ItemEditPhoto.inc');
 
 	GalleryCoreApi::registerFactoryImplementation('ItemEditPlugin',
 						      'ItemEditRotateAndScalePhoto',

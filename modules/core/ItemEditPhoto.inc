@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -34,7 +34,7 @@
  * @subpackage UserInterface
  *
  */
-class ItemEditPhotoSizes extends ItemEditPlugin {
+class ItemEditPhoto extends ItemEditPlugin {
 
     /**
      * @see ItemEditPlugin::handleRequest
@@ -220,14 +220,14 @@ class ItemEditPhotoSizes extends ItemEditPlugin {
     function loadTemplate(&$template, &$form, $item, $thumbnail) {
 	global $gallery;
 
-	$ItemEditPhotoSizes = array();
+	$ItemEditPhoto = array();
 
-	list ($ret, $ItemEditPhotoSizes['isAdmin']) = GalleryCoreApi::isUserInSiteAdminGroup();
+	list ($ret, $ItemEditPhoto['isAdmin']) = GalleryCoreApi::isUserInSiteAdminGroup();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	if ($form['formName'] != 'ItemEditPhotoSizes') {
+	if ($form['formName'] != 'ItemEditPhoto') {
 	    /* First time around, reset the form */
 
 	    /* Load the resizes */
@@ -261,7 +261,7 @@ class ItemEditPhotoSizes extends ItemEditPlugin {
 		$form['thumbnail']['size'] = $size;
 	    }
 
-	    $form['formName'] = 'ItemEditPhotoSizes';
+	    $form['formName'] = 'ItemEditPhoto';
 	}
 
 	/* Tag on a few form blanks */
@@ -291,7 +291,7 @@ class ItemEditPhotoSizes extends ItemEditPlugin {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$ItemEditPhotoSizes['editSizes']['can']['createThumbnail'] = isset($toolkit);
+	$ItemEditPhoto['editSizes']['can']['createThumbnail'] = isset($toolkit);
 
 	/* Figure out what options we can provide */
 	list ($ret, $toolkit) =
@@ -299,11 +299,11 @@ class ItemEditPhotoSizes extends ItemEditPlugin {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$ItemEditPhotoSizes['editSizes']['can']['createResizes'] = isset($toolkit);
+	$ItemEditPhoto['editSizes']['can']['createResizes'] = isset($toolkit);
 
-	$template->setVariable('ItemEditPhotoSizes', $ItemEditPhotoSizes);
-	$template->setVariable('controller', 'core:ItemEditPhotoSizes');
-	return array(GalleryStatus::success(), 'modules/core/templates/ItemEditPhotoSizes.tpl');
+	$template->setVariable('ItemEditPhoto', $ItemEditPhoto);
+	$template->setVariable('controller', 'core:ItemEditPhoto');
+	return array(GalleryStatus::success(), 'modules/core/templates/ItemEditPhoto.tpl');
     }
 
     /**

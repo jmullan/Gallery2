@@ -419,6 +419,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 		    'orderWeight' => $module->translate('Manual sort order'),
 			  'title' => $module->translate('Title'),
 			'summary' => $module->translate('Summary'),
+	   'originationTimestamp' => $module->translate('Origination Date'),
 	      'creationTimestamp' => $module->translate('Creation Date'),
 	  'modificationTimestamp' => $module->translate('Last Changed Date'),
 		    'description' => $module->translate('Description'),
