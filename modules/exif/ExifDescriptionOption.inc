@@ -58,6 +58,7 @@ class ExifDescriptionOption extends ItemAddOption {
      */
     function handleRequestAfterAdd($form, &$item) {
 	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/ExifExtractor.class');
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/ExifHelper.class');
 	$itemId = $item->getId();
 
 	list ($ret, $exifData) =
@@ -80,10 +81,10 @@ class ExifDescriptionOption extends ItemAddOption {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    if ($addOption & 1) {
+	    if ($addOption & EXIF_ITEM_SUMMARY) {
 		$item->setSummary($exifDescription);
 	    }
-	    if ($addOption & 2) {
+	    if ($addOption & EXIF_ITEM_DESCRIPTION) {
 		$item->setDescription($exifDescription);
 	    }
 

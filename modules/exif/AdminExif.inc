@@ -229,7 +229,7 @@ class AdminExifController extends GalleryController {
 		$count = 0;
 		foreach ($form['summary'] as $propertyToShift) {
 		    /* Find its spot in the array and swap it with the one ahead of it */
-		    for ($i = sizeof($properties)-1; $i >= 0; $i--) {
+		    for ($i = sizeof($properties) - 1; $i >= 0; $i--) {
 			if ($properties[$i] == $propertyToShift) {
 			    if ($i < sizeof($properties) - 1) {
 				$save = $properties[$i + 1];
@@ -299,7 +299,7 @@ class AdminExifController extends GalleryController {
 		$count = 0;
 		foreach ($form['detailed'] as $propertyToShift) {
 		    /* Find its spot in the array and swap it with the one ahead of it */
-		    for ($i = sizeof($properties)-1; $i >= 0; $i--) {
+		    for ($i = sizeof($properties) - 1; $i >= 0; $i--) {
 			if ($properties[$i] == $propertyToShift) {
 			    if ($i < sizeof($properties) - 1) {
 				$save = $properties[$i + 1];
@@ -323,8 +323,8 @@ class AdminExifController extends GalleryController {
 		$error[] = 'form[error][detailed][missing]';
 	    }
 	} else if (isset($form['action']['save'])) {
-	    $addOption = (isset($form['item']['summary']) ? 1 : 0)
-		       | (isset($form['item']['description']) ? 2 : 0);
+	    $addOption = (isset($form['item']['summary']) ? EXIF_ITEM_SUMMARY : 0)
+		       | (isset($form['item']['description']) ? EXIF_ITEM_DESCRIPTION : 0);
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'exif', 'addOption', $addOption);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
@@ -381,7 +381,7 @@ class AdminExifView extends GalleryView {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    $form['item'] = array('summary' => $addOption & 1, 'description' => $addOption & 2);
+	    $form['item'] = array('summary' => $addOption & EXIF_ITEM_SUMMARY, 'description' => $addOption & EXIF_ITEM_DESCRIPTION);
 	}
 
 	$exifKeys = ExifHelper::getExifKeys();

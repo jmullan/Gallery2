@@ -43,6 +43,7 @@ class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
     function setUp() {
 	global $gallery;
 	parent::setUp();
+	GalleryCoreApi::relativeRequireOnce('modules/exif/classes/ExifHelper.class');
 
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret->isError()) {
@@ -77,7 +78,7 @@ class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
     }
 
     function testCreateDescription() {
-	$ret = GalleryCoreApi::setPluginParameter('module', 'exif', 'addOption', '2');
+	$ret = GalleryCoreApi::setPluginParameter('module', 'exif', 'addOption', EXIF_ITEM_DESCRIPTION);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

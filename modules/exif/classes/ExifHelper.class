@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -34,6 +34,16 @@ define('EXIF_SUMMARY', 1);
  * Detailed EXIF setting
  */
 define('EXIF_DETAILED', 2);
+
+/**
+ * Import EXIF description into item summary
+ */
+define('EXIF_ITEM_SUMMARY', 1);
+
+/**
+ * Import EXIF description into item description
+ */
+define('EXIF_ITEM_DESCRIPTION', 2);
 
 /**
  * A helper class for the EXIF module.
@@ -142,7 +152,7 @@ class ExifHelper {
     }
 
     /**
-     * Return the EXIF data for a specific view and file 
+     * Return the EXIF data for a specific view and file
      *
      * @param string the path to the file
      * @param int the view mode
@@ -176,7 +186,7 @@ class ExifHelper {
 
     /**
      * Return the timestamp when the picture was taken, as recorded in exif
-     * 
+     *
      * @param string the path to the file
      * @return int an unix timestamp
      */
@@ -207,7 +217,7 @@ class ExifHelper {
      * (foo, bar, d)
      *
      * the resulting value would be "4"
-     * 
+     *
      * @param array the data source
      * @param array the key path
      * @return array object GalleryStatus a status code
@@ -219,7 +229,7 @@ class ExifHelper {
 	if (!isset($source[$key])) {
 	    return null;
 	}
-	
+
 	if (empty($keyPath)) {
 	    return str_replace("\0", '', $source[$key]);
 	} else {
@@ -246,7 +256,7 @@ class ExifHelper {
     function getExifKeys() {
 	global $gallery;
 	static $data;
-	
+
 	if (empty($data)) {
 
 	    /* Must haves */
@@ -380,7 +390,7 @@ class ExifHelper {
 	    $data['SubsecTimeDigitized'] = array($gallery->i18n('Subsec Time (Digitized)'), 'SubIFD.SubsecTimeDigitized');
 	    $data['SubsecTimeOriginal'] = array($gallery->i18n('Subsec Time (Original)'), 'SubIFD.SubsecTimeOriginal');
 	    $data['TIFF/EPStandardID'] = array($gallery->i18n('TIFF/EP Standard ID'), 'IFD1.TIFF/EPStandardID');
-	    	    
+
 	    $data['TileByteCounts'] = array($gallery->i18n('Tile Byte Counts'), 'IFD1.TileByteCounts');
 	    $data['TileLength'] = array($gallery->i18n('Tile Length'), 'IFD1.TileLength');
 	    $data['TileOffsets'] = array($gallery->i18n('Tile Offsets'), 'IFD1.TileOffsets');
@@ -397,7 +407,7 @@ class ExifHelper {
 	    $data['YCbCrSubSampling'] = array($gallery->i18n('Y/Cb/Cr Sub-Sampling'), 'IFD1.YCbCrSubSampling');
 	    $data['xResolution'] = array($gallery->i18n('X Resolution'), 'IFD0.xResolution');
 	    $data['yResolution'] = array($gallery->i18n('Y Resolution'), 'IFD0.yResolution');
-	    
+
 	    $data['ExifImageHeight'] = array($gallery->i18n('Exif Image Height'), 'SubIFD.ExifImageHeight');
 	    $data['ExifImageWidth'] = array($gallery->i18n('Exif Image Width'), 'SubIFD.ExifImageWidth');
 	}
