@@ -53,7 +53,7 @@ foreach my $manifest (keys %sections) {
   print $out "# File crc32 crc32(crlf) size size(crlf) viewable\n";
   my @entries = @{$sections{$manifest}};
   foreach my $entry (@entries) {
-    my ($file, $isBinary) = split(/ /, $entry);
+    my ($file, $isBinary) = split(/\@\@/, $entry);
     next if ($file =~ /MANIFEST$/);
 
     open(my $fd, "<$file");
@@ -78,7 +78,7 @@ foreach my $manifest (keys %sections) {
     my $cksum = crc32($data);
     my $cksum_crlf = crc32($data_crlf);
     my $view = grep(m{^\Q$file\E \d$}, @viewable) ? 1 : 0;
-    print $out "$file $cksum $cksum_crlf $size $size_crlf $view\n";
+    print $out "$file\t$cksum\t$cksum_crlf\t$size\t$size_crlf\t$view\n";
   }
   close $out;
   print STDERR ".";
@@ -112,7 +112,7 @@ sub parseCvs {
       next if m{/MANIFEST$};
       my $target = "$activeDir/$1";
       die "$target not a file" if (! -f $target);
-      push(@$entries, sprintf("%s %d", $target, m/-kb/));
+      push(@$entries, sprintf("%s@@%d", $target, m/-kb/));
     } else {
       die "Can't parse: $_";
     }
