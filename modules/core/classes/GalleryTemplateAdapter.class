@@ -414,5 +414,40 @@ class GalleryTemplateAdapter {
 	    return $function($params, $content, $smarty);
 	}
     }
+
+    /**
+     * This takes an array and looks for view, subview, and controller to make
+     * a linkid
+     *
+     * @param array the items to make a link out of
+     * @return string the id of the link
+     */
+    function adminLinkId($params) {
+	$linkArray = $params['arg1'];
+	$linkId = 'gbLink_';
+	$linkId .= (!empty($linkArray['controller']))
+		? GalleryTemplateAdapter::safeCssName($linkArray['controller']) : '';
+	$linkId .= (!empty($linkArray['view']))
+		? GalleryTemplateAdapter::safeCssName($linkArray['view']) : '';
+	$linkId .= (!empty($linkArray['subView']))
+		? GalleryTemplateAdapter::safeCssName($linkArray['subView']) : '';
+	return $linkId;
+    }
+    
+    /**
+     * This removes unsafe characters from a string so they can be used as a class
+     * name or id in html and be addressed via css
+     *
+     * Purpose:  Removes characters from a string so that it can be used for an
+     * html class name or id and be addressed via css
+     *
+     * @param string the input string
+     * @return string 
+     */
+    function safeCssName($string) {
+	$string = ereg_replace("[^A-Za-z0-9_]", "_", $string);
+	$string = ereg_replace("_+", "_", $string);
+	return $string;
+    }
 }
 ?>

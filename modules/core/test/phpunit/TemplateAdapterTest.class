@@ -1,0 +1,92 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Jesse Mullan
+ */
+
+/**
+ * Required classes
+ */
+require_once(dirname(__FILE__) . '/../../classes/GalleryTemplateAdapter.class');
+
+/**
+ * Test Gallery Template Adapter functionality
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class TemplateAdapterTest extends GalleryTestCase {
+    function GalleryTemplateAdapterTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+    function setUp() {
+	global $gallery;
+	parent::setUp();
+    }
+    
+    function tearDown() {
+	global $gallery;
+	parent::tearDown();
+    }
+
+    function testAdminLinkId1() {
+	$test = array('arg1' => array());
+	$result = GalleryTemplateAdapter::adminLinkId($test);
+	$this->assertEquals('gbLink_', $result);
+    }
+    function testAdminLinkId2() {
+	$test = array('arg1' => array('view' => 'core::ItemAdmin'));
+	$result = GalleryTemplateAdapter::adminLinkId($test);
+	$this->assertEquals('gbLink_core_ItemAdmin', $result);
+    }
+    function testAdminLinkId3() {
+	$test = array('arg1' => array('view' => '.;-_monkey'));
+	$result = GalleryTemplateAdapter::adminLinkId($test);
+	$this->assertEquals('gbLink__monkey', $result);
+    }
+    function testAdminLinkId4() {
+	$test = array('arg1' => array('controller' => 'core:Monkey',
+					'view' => 'core:Pirate',
+					'subView' => 'core:Ninja'));
+	$result = GalleryTemplateAdapter::adminLinkId($test);
+	$this->assertEquals('gbLink_core_Monkeycore_Piratecore_Ninja', $result);
+    }
+    function testSafeCssName1() {
+	$string = 'core:ItemAdmin';
+	$result = GalleryTemplateAdapter::safeCssName($string);
+	$this->assertEquals('core_ItemAdmin', $result);
+    }
+    function testSafeCssName2() {
+	$string = 'core::ItemAdmin';
+	$result = GalleryTemplateAdapter::safeCssName($string);
+	$this->assertEquals('core_ItemAdmin', $result);
+    }
+    function testSafeCssName3() {
+	$string = '.;-_monkey';
+	$result = GalleryTemplateAdapter::safeCssName($string);
+	$this->assertEquals('_monkey', $result);
+    }
+}
+?>
