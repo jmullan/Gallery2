@@ -66,11 +66,11 @@ class RewriteHelperTest extends GalleryTestCase {
 	$urlGenerator = new RewriteUrlGenerator();
 	$urlGenerator->init('phpunit_test.php');
     	$urlGenerator->registerViewPrefix('test', 'core:ShowItem');
-	$platform = new RewriteHelperTestPlatform();
-	$platform->init();
+	$this->_platform = new RewriteHelperTestPlatform();
+	$this->_platform->init();
+	$gallery->setPlatform($this->_platform);
 	
 	$gallery->setUrlGenerator($urlGenerator);
-	$gallery->setPlatform($platform);
     }
     
     function tearDown() {
@@ -89,8 +89,6 @@ class RewriteHelperTest extends GalleryTestCase {
     
     function testCheckFile() {
     	global $gallery;
-    	$platform =& $gallery->getPlatform();
-    	$platform->init();
     	
     	/* Make sure we pass if it's all good to write. */
 	list ($ret, $code) = RewriteHelper::checkFile();
@@ -110,7 +108,9 @@ class RewriteHelperTest extends GalleryTestCase {
 	    $expected[$line] .= "\n";
 	}
 
-    	$platform->setPreviousContent($expected);
+    	$this->_platform->setPreviousContent($expected);
+	$gallery->setPlatform($this->_platform);
+
 	list ($ret, $code) = RewriteHelper::checkFile();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -120,8 +120,6 @@ class RewriteHelperTest extends GalleryTestCase {
     
     function testCheckFileNoPrefix() {
 	global $gallery;
-	$platform =& $gallery->getPlatform();
-	$platform->init();
 	
 	/* Dont use prefix urls */
 	$ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', 'usePrefixes', 'false');
@@ -140,11 +138,10 @@ class RewriteHelperTest extends GalleryTestCase {
     
     function testCheckBadFile() {
     	global $gallery;
-    	$platform =& $gallery->getPlatform();
-    	$platform->init();
     	
     	/* Make sure we fail if it's not writable. */
-    	$platform->setIsWriteable(false);
+    	$this->_platform->setIsWriteable(false);
+	$gallery->setPlatform($this->_platform);
 	list ($ret, $code) = RewriteHelper::checkFile();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -152,7 +149,8 @@ class RewriteHelperTest extends GalleryTestCase {
 	$this->assertEquals(REWRITE_STATUS_HTACCESS_CANT_WRITE, $code, 'cant write');
 	
 	/* Make sure we fail if it's not readable */
-    	$platform->setIsReadable(false);
+    	$this->_platform->setIsReadable(false);
+	$gallery->setPlatform($this->_platform);
 	list ($ret, $code) = RewriteHelper::checkFile();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -160,7 +158,8 @@ class RewriteHelperTest extends GalleryTestCase {
 	$this->assertEquals(REWRITE_STATUS_HTACCESS_CANT_READ, $code, 'cant read');
 	
 	/* Make sure we fail if it's there's no file */
-    	$platform->setFileExists(false);
+    	$this->_platform->setFileExists(false);
+	$gallery->setPlatform($this->_platform);
 	list ($ret, $code) = RewriteHelper::checkFile();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -170,11 +169,10 @@ class RewriteHelperTest extends GalleryTestCase {
     
     function testWriteBadFile() {
     	global $gallery;
-    	$platform =& $gallery->getPlatform();
-    	$platform->init();
     	
     	/* Make sure we fail if it's not writable. */
-    	$platform->setIsWriteable(false);
+    	$this->_platform->setIsWriteable(false);
+	$gallery->setPlatform($this->_platform);
 	list ($ret, $code) = RewriteHelper::writeFile();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -182,7 +180,8 @@ class RewriteHelperTest extends GalleryTestCase {
 	$this->assertEquals(REWRITE_STATUS_HTACCESS_CANT_WRITE, $code, 'cant write');
 	
 	/* Make sure we fail if it's not readable */
-    	$platform->setIsReadable(false);
+    	$this->_platform->setIsReadable(false);
+	$gallery->setPlatform($this->_platform);
 	list ($ret, $code) = RewriteHelper::writeFile();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -190,13 +189,14 @@ class RewriteHelperTest extends GalleryTestCase {
 	$this->assertEquals(REWRITE_STATUS_HTACCESS_CANT_READ, $code, 'cant read');
 	
 	/* Make sure we fail if it's there's no file */
-    	$platform->setFileExists(false);
+    	$this->_platform->setFileExists(false);
+	$gallery->setPlatform($this->_platform);
 	list ($ret, $code) = RewriteHelper::writeFile();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(REWRITE_STATUS_HTACCESS_MISSING, $code, 'cant read');
-	$this->assertEquals(null, $platform->_fileContent, 'file content');
+	$this->assertEquals(null, $this->_platform->_fileContent, 'file content');
     }
     
     function testGetPrefixMap() {

@@ -58,8 +58,11 @@ class SetupRewriteControllerTest extends GalleryControllerTestCase {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
-	
-	$gallery->setPlatform(new SetupRewriteControllerTestPlatform());
+
+	$this->_platform = new SetupRewriteControllerTestPlatform();
+	$content =& $this->_platform->getContent();
+	$content = null;
+	$gallery->setPlatform($this->_platform);
 	$urlGenerator->registerViewPrefix('test', 'core:ShowItem');
     }
     
@@ -79,15 +82,13 @@ class SetupRewriteControllerTest extends GalleryControllerTestCase {
     
     function testWriteFile() {
     	global $gallery;
-    	$platform =& $gallery->getPlatform();
 	GalleryUtilities::putRequestVariable('form[action][write]', 1);
-	
+
 	list ($ret, $expected) = RewriteHelper::getTemplate();
 	if ($ret->isError()) {
-	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'rewrite:SetupRewrite'),
@@ -95,13 +96,13 @@ class SetupRewriteControllerTest extends GalleryControllerTestCase {
 				  'error' => array()),
 			    $results);
 
-	$this->assertEquals($expected, $platform->_fileContent, 'file content');
+	$this->assertEquals($expected, $this->_platform->getContent(), 'file content');
     }
     
     function testWriteBadFile() {
     	global $gallery;
-    	$platform =& $gallery->getPlatform();
-    	$platform->setIsWriteable(false);
+    	$this->_platform->setIsWriteable(false);
+	$gallery->setPlatform($this->_platform);
     	
 	GalleryUtilities::putRequestVariable('form[action][write]', 1);
 	
@@ -112,7 +113,7 @@ class SetupRewriteControllerTest extends GalleryControllerTestCase {
 				  'error' => array('form[error][cantWrite]')),
 			    $results);
 
-	$this->assertEquals(null, $platform->_fileContent, 'file content');
+	$this->assertEquals(null, $this->_platform->getContent(), 'file content');
     }
 
     function testTestRedirect() {
@@ -160,7 +161,6 @@ class SetupRewriteControllerTest extends GalleryControllerTestCase {
  */ 
 class SetupRewriteControllerTestPlatform extends GalleryPlatform{
     var $_isWriteable = true;
-    var $_fileContent;
 
     function setIsWriteable($value) {
     	$this->_isWriteable = $value;
@@ -198,9 +198,18 @@ class SetupRewriteControllerTestPlatform extends GalleryPlatform{
 	return parent::file($file);
     }
 
+    function &getContent() {
+	static $content;
+	if (!isset($content)) {
+	    $content = null;
+	}
+	return $content;
+    }
+
     function fopen($file, $mode, $useIncludePath=null, $zcontext=null) {
 	if ($file == dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/.htaccess') {
-	    $this->_fileContent = '';
+	    $content =& $this->getContent();
+	    $content = '';
 	    return '.htaccess';
 	}
 	
@@ -209,7 +218,8 @@ class SetupRewriteControllerTestPlatform extends GalleryPlatform{
     
     function fwrite($handle, $string, $length=null) {
 	if ($handle == '.htaccess') {
-	    $this->_fileContent .= $string;
+	    $content =& $this->getContent();
+	    $content .= $string;
 	    return strlen($string);
 	}
 	
