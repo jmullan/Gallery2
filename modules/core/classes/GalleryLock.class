@@ -206,7 +206,9 @@ class GalleryLock {
 	    return GalleryStatus::success();
 	}
 
-	list($ret, $storage) = $gallery->getStorage();
+	$reply =& $gallery->getStorage();
+	$ret = $reply[0];
+	$storage =& $reply[1];
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

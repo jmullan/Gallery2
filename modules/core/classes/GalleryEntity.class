@@ -140,7 +140,9 @@ class GalleryEntity_core extends GalleryPersistent {
 	global $gallery;
 
 	/* Create a new instance of this entity in the persistent store */
-	list($ret, $storage) = $gallery->getStorage();
+	$reply =& $gallery->getStorage();
+	$ret = $reply[0];
+	$storage =& $reply[1];
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -185,7 +187,9 @@ class GalleryEntity_core extends GalleryPersistent {
 	    /* Change the modification date */
 	    $this->setModificationTimestamp(time());
 
-	    list($ret, $storage) = $gallery->getStorage();
+	    $reply =& $gallery->getStorage();
+	    $ret = $reply[0];
+	    $storage =& $reply[1];
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -212,7 +216,9 @@ class GalleryEntity_core extends GalleryPersistent {
 					__FILE__, __LINE__);
 	}
 
-	list($ret, $storage) = $this->getStorage();
+	$reply =& $gallery->getStorage();
+	$ret = $reply[0];
+	$storage =& $reply[1];
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -233,7 +239,9 @@ class GalleryEntity_core extends GalleryPersistent {
 					__FILE__, __LINE__);
 	}
 
-	list($ret, $storage) = $gallery->getStorage();
+	$reply =& $gallery->getStorage();
+	$ret = $reply[0];
+	$storage =& $reply[1];
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
