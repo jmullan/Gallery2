@@ -357,6 +357,7 @@ class GalleryDataCache {
 	$platform = $gallery->getPlatform();
 	if ($pathInfo['type'] == 'entity' ||
 	        $pathInfo['type'] == 'derivative-meta' ||
+	        $pathInfo['type'] == 'module-data' ||
 	        isset($pathInfo['id'])) {
 	    $cacheFile = GalleryDataCache::getCachePath($pathInfo);
 	    if ($platform->file_exists($cacheFile)) {
@@ -499,6 +500,11 @@ class GalleryDataCache {
 		    $cacheFile = sprintf('%s%s/%s', $base, $pathInfo['type'], $pathInfo['id']);
 		}
 	    }
+	    break;
+
+	case 'module-data':
+	    $cacheFile =
+		sprintf('%s%s/%s/%s', $base, 'module', $pathInfo['module'], $pathInfo['key']);
 	    break;
 	}
 
