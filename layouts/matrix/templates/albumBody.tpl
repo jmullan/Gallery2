@@ -29,8 +29,8 @@
 	    arg1=$layout.totalChildCount}
 	    {g->text one="(%d item total)"
 	    many="(%d items total)"
-	    count=$layout.totalDescendentCount.GalleryDataItem
-	    arg1=$layout.totalDescendentCount.GalleryDataItem}
+	    count=$layout.totalDescendentCount
+	    arg1=$layout.totalDescendentCount}
 	  {/g->title}
 	{/g->item}
 	
@@ -106,8 +106,8 @@
 			  arg1=$child.childCount}
 			  {g->text one="(%d item total)"
 			  many="(%d items total)"
-			  count=$child.descendentCount.GalleryDataItem
-			  arg1=$child.descendentCount.GalleryDataItem}
+			  count=$child.descendentCount
+			  arg1=$child.descendentCount}
 			{/g->title}
 		      {/g->item}
 

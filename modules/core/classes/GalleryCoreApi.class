@@ -1141,6 +1141,24 @@ class GalleryCoreApi {
     }
 
     /**
+     * Fetch the breakdown of descendents for a given item.  Note: this call is more expensive than
+     * GalleryCoreApi::fetchDescendentCounts(), so use that version where possible.
+     *
+     * @param int the item id
+     * @return array object GalleryStatus a status code
+     *               array(id => array('GalleryAlbumItem' => ##,
+     *                                 'GalleryDataItem' => ##),
+     *                     id => array('GalleryAlbumItem' => ##,
+     *                                 'GalleryDataItem' => ##))
+     * @static
+     */
+    function fetchItemizedDescendentCounts($itemIds) {
+	GalleryCoreApi::apiMethodUsed('fetchItemizedDescendentCounts', 'GalleryItemHelper_advanced');
+	require_once(dirname(__FILE__) . '/helpers/GalleryItemHelper_advanced.class');
+	return GalleryItemHelper_advanced::fetchItemizedDescendentCounts($itemIds);
+    }
+
+    /**
      * Return the number of of items that match the given type and have the
      * given permission (defaults to 'core.view')
      *
@@ -1925,7 +1943,7 @@ class GalleryCoreApi {
 	$GLOBALS['GalleryCoreApi'][$name]++;
     }
 
-    function apiMethodRoundup() {
+    function getUnusedButLoadedApiMethods() {
 	global $gallery;
 
 	$platform = $gallery->getPlatform();

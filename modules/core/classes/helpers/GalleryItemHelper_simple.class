@@ -146,12 +146,12 @@ class GalleryItemHelper_simple {
     }
 
     /**
-     * Fetch the breakdown of descendents for a given item
+     * Fetch the number of descendents for a given item
      *
      * @param int the item id
      * @return array object GalleryStatus a status code
-     *               array('GalleryAlbumItem' => ##,
-     *                     'GalleryDataItem' => ##)
+     *               array(id => ##, id => ##)
+     * @static
      */
     function fetchDescendentCounts($itemIds) {
 	global $gallery;
@@ -176,13 +176,10 @@ class GalleryItemHelper_simple {
 	$query = sprintf('
         SELECT
           [GalleryItemAttributesMap=1::itemId],
-          COUNT(DISTINCT([GalleryAlbumItem::id])),
-          COUNT(DISTINCT([GalleryDataItem::id]))
+          COUNT(DISTINCT([GalleryItemAttributesMap=2::itemId]))
         FROM
           [GalleryItemAttributesMap=1],
-          [GalleryItemAttributesMap=2]
-            LEFT JOIN [GalleryAlbumItem] ON [GalleryItemAttributesMap=2::itemId] = [GalleryAlbumItem::id]
-            LEFT JOIN [GalleryDataItem] ON [GalleryItemAttributesMap=2::itemId] = [GalleryDataItem::id],
+          [GalleryItemAttributesMap=2],
           [GalleryUserGroupMap],
           [GalleryPermissionMap]
         WHERE
@@ -216,8 +213,7 @@ class GalleryItemHelper_simple {
 
 	$counts = array();
 	while ($result = $searchResults->nextResult()) {
-	    $counts[$result[0]] = array('GalleryAlbumItem' => $result[1],
-					'GalleryDataItem' => $result[2]);
+	    $counts[$result[0]] = $result[1];
 	}
 	
 	return array(GalleryStatus::success(), $counts);

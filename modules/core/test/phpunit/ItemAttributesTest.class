@@ -227,6 +227,44 @@ class ItemAttributesTest extends GalleryTestCase {
 			    'item parent sequence');
     }
 
+    function testFetchItemizedDescendentCounts() {
+	list($ret, $album) = $this->_createRandomAlbum($this->_childItems[1]->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	for ($i = 0; $i < 3; $i++) {
+	    list($ret, $item[$i]) = $this->_createRandomDataItem($album->getId());
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+
+	/* Drop perms for one item and one album */
+	$ret = GalleryCoreApi::removeItemPermissions($item[0]->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::removeItemPermissions($this->_childItems[0]->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Verify our counts */
+	list ($ret, $counts) =
+	    GalleryCoreApi::fetchItemizedDescendentCounts(array($this->_parentItem->getId(),
+								  $album->getId()));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(array($this->_parentItem->getId() => array('GalleryAlbumItem' => 3,
+								       'GalleryDataItem' => 2),
+				  $album->getId() => array('GalleryAlbumItem' => 0,
+							   'GalleryDataItem' => 2)),
+			    $counts);
+    }
+
     function testFetchDescendentCounts() {
 	list($ret, $album) = $this->_createRandomAlbum($this->_childItems[1]->getId());
 	if ($ret->isError()) {
@@ -253,15 +291,13 @@ class ItemAttributesTest extends GalleryTestCase {
 	/* Verify our counts */
 	list ($ret, $counts) =
 	    GalleryCoreApi::fetchDescendentCounts(array($this->_parentItem->getId(),
-								  $album->getId()));
+							$album->getId()));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->assertEquals(array($this->_parentItem->getId() => array('GalleryAlbumItem' => 3,
-								       'GalleryDataItem' => 2),
-				  $album->getId() => array('GalleryAlbumItem' => 0,
-							   'GalleryDataItem' => 2)),
+	$this->assertEquals(array($this->_parentItem->getId() => 5,
+				  $album->getId() => 2),
 			    $counts);
     }
 }

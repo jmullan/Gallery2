@@ -243,5 +243,88 @@ class GalleryItemHelper_advanced {
 	}
 	return array(GalleryStatus::success(), $data);
     }
+
+
+    /**
+     * Fetch the breakdown of descendents for a given item.  Note: this call is more expensive than
+     * GalleryCoreApi::fetchDescendentCounts(), so use that version where possible.
+     *
+     * @param int the item id
+     * @return array object GalleryStatus a status code
+     *               array(id => array('GalleryAlbumItem' => ##,
+     *                                 'GalleryDataItem' => ##),
+     *                     id => array('GalleryAlbumItem' => ##,
+     *                                 'GalleryDataItem' => ##))
+     * @static
+     */
+    function fetchItemizedDescendentCounts($itemIds) {
+	global $gallery;
+
+	list ($ret, $permissionBits) = GalleryCoreApi::convertPermissionIdsToBits(array('core.view'));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$storage = $gallery->getStorage();
+	$markers = GalleryUtilities::makeMarkers($itemIds);
+
+	list ($ret, $concat) =
+	    $storage->getFunctionSql('CONCAT',
+				     array('[GalleryItemAttributesMap=1::parentSequence]', 
+					   '[GalleryItemAttributesMap=1::itemId]',
+					   '\'%\''));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
+	$query = sprintf('
+        SELECT
+          [GalleryItemAttributesMap=1::itemId],
+          COUNT(DISTINCT([GalleryAlbumItem::id])),
+          COUNT(DISTINCT([GalleryDataItem::id]))
+        FROM
+          [GalleryItemAttributesMap=1],
+          [GalleryItemAttributesMap=2]
+            LEFT JOIN [GalleryAlbumItem] ON [GalleryItemAttributesMap=2::itemId] = [GalleryAlbumItem::id]
+            LEFT JOIN [GalleryDataItem] ON [GalleryItemAttributesMap=2::itemId] = [GalleryDataItem::id],
+          [GalleryUserGroupMap],
+          [GalleryPermissionMap]
+        WHERE
+          [GalleryItemAttributesMap=1::itemId] IN (%s)
+          AND
+          [GalleryItemAttributesMap=2::parentSequence] LIKE %s
+          AND
+          [GalleryItemAttributesMap=2::itemId] = [GalleryPermissionMap::itemId]
+          AND
+          ([GalleryPermissionMap::userId] = ?
+           OR
+           ([GalleryUserGroupMap::userId] = ?
+            AND
+            [GalleryPermissionMap::groupId] = [GalleryUserGroupMap::groupId]))
+          AND
+          [GalleryPermissionMap::permission] & ? > ?
+          GROUP BY
+          [GalleryItemAttributesMap=1::itemId]
+        ', $markers, $concat);
+
+	$data = $itemIds;
+	$data[] = $gallery->getActiveUserId();
+	$data[] = $gallery->getActiveUserId();
+	$data[] = $storage->convertIntToBits($permissionBits);
+	$data[] = $storage->convertIntToBits(0);
+
+	list ($ret, $searchResults) = $gallery->search($query, $data);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$counts = array();
+	while ($result = $searchResults->nextResult()) {
+	    $counts[$result[0]] = array('GalleryAlbumItem' => $result[1],
+					'GalleryDataItem' => $result[2]);
+	}
+	
+	return array(GalleryStatus::success(), $counts);
+    }
 }
 ?>

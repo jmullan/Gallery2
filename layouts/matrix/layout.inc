@@ -204,8 +204,7 @@ class MatrixLayout extends GalleryLayout {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	if (!isset($totalDescendentCount[$item->getId()])) {
-	    $totalDescendentCount = array('GalleryAlbumItem' => 0,
-					  'GalleryDataItem' => 0);
+	    $totalDescendentCount = 0;
 	} else {
 	    $totalDescendentCount = $totalDescendentCount[$item->getId()];
 	}
@@ -274,10 +273,7 @@ class MatrixLayout extends GalleryLayout {
 		if (!empty($descendentCounts[$childId])) {
 		    $childTable[$childId]['descendentCount'] = $descendentCounts[$childId];
 		} else {
-		    $childTable[$childId]['descendentCount'] =
-			array('GalleryAlbumItem' => 0,
-			      'GalleryDataItem' => 0);
-		    
+		    $childTable[$childId]['descendentCount'] = 0;
 		}
 	    }
 
