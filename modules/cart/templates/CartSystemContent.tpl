@@ -11,7 +11,7 @@
 
   <ul>
     <li>
-    {g->text one="You have %d item in your cart" many="You have %s items in your cart"
+    {g->text one="You have %d item in your cart" many="You have %d items in your cart"
 	     count=$CartSystemContent.count arg1=$CartSystemContent.count}
     </li>
   {foreach from=$CartSystemContent.links item=link}
