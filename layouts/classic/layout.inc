@@ -44,8 +44,9 @@ class ClassicLayout extends MatrixLayout {
 
 	$this->setId('classic');
 	$this->setName('Classic');
-	$this->setDescription($gallery->i18n('Columns for thumbnails, item info and links to subalbums'));
-	$this->setVersion('0.5');
+	$this->setDescription(
+	    $gallery->i18n('Columns for thumbnails, item info and links to subalbums'));
+	$this->setVersion('0.5.1');
 	$this->setL10Domain('layouts_classic');
 	$this->setRequiredLayoutApi(array(0, 8));
 	$this->setRequiredCoreApi(array(3, 2));
@@ -64,7 +65,7 @@ class ClassicLayout extends MatrixLayout {
 	$params = array_merge(
 	    array('rows' => 10, 'columns' => 1, 'showImageOwner' => 0, 'showAlbumOwner' => 1,
 		  'albumFrame' => '', 'itemFrame' => '', 'photoFrame' => '', 'showSubalbums' => 1,
-		  'subalbumDepth' => 0),
+		  'subalbumDepth' => 0, 'showMicroThumbs' => 0),
 	    $params);
 
 	$settings = array();
@@ -95,6 +96,10 @@ class ClassicLayout extends MatrixLayout {
 			    'name' => $gallery->i18n('Show album owners'),
 			    'type' => 'checkbox',
 			    'value' => $params['showAlbumOwner']);
+	$settings[] = array('key' => 'showMicroThumbs',
+			    'name' => $gallery->i18n('Show micro navigation thumbnails'),
+			    'type' => 'checkbox',
+			    'value' => $params['showMicroThumbs']);
 
 	/* ImageFrame settings, if available */
 	list ($ret, $imageframe) = GalleryCoreApi::newFactoryInstance('ImageFrameInterface_1_1');
@@ -161,7 +166,7 @@ class ClassicLayout extends MatrixLayout {
 
 	if ($properties['showSubalbums']) {
 	    list ($ret, $tree) = GalleryCoreApi::fetchAlbumTree($item->getId(),
-			$properties['subalbumDepth'] > 0 ? $properties['subalbumDepth'] + 1 : null);
+		$properties['subalbumDepth'] > 0 ? $properties['subalbumDepth'] + 1 : null);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
