@@ -29,7 +29,7 @@
 /**
  * Load required classes
  */
-require_once(dirname(__FILE__) . '/../../classes/WatermarkHelper.class');
+GalleryCoreApi::relativeRequireOnce('modules/watermark/classes/WatermarkHelper.class');
 
 /**
  * WatermarkSiteAdmin controller tests
@@ -46,7 +46,9 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 
     function setUp() {
 	parent::setUp();
-	$this->_randomName = 'phpunit_' . rand() . '.jpg';
+	$rand = rand();
+	$this->_randomName = 'phpunit_' . $rand . '.jpg';
+	$this->_expectedName = 'phpunit_' . $rand . '.dat';
 
 	// Get the list of watermarks before, then after delete any that we created
 	list ($ret, $this->_beforeWatermarks) = WatermarkHelper::fetchWatermarks();
@@ -107,7 +109,7 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->assert(isset($map[$this->_randomName]), 'Watermark is missing');
+	$this->assert(isset($map[$this->_expectedName]), 'Watermark is missing');
     }
 
     function testAddDuplicate() {
@@ -133,8 +135,8 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->assert(isset($map[$this->_randomName]), 'Watermark is missing');
-	$this->assert(isset($map['_' . $this->_randomName]), 'Watermark 2 is missing');
+	$this->assert(isset($map[$this->_expectedName]), 'Watermark is missing');
+	$this->assert(isset($map['_' . $this->_expectedName]), 'Watermark 2 is missing');
     }
 
     function testAddWrongMimeType() {
@@ -158,7 +160,7 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($map[$this->_randomName]);
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($map[$this->_expectedName]);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -188,7 +190,7 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 	// Delete it
 	GalleryUtilities::removeFormVariables('form');
 	GalleryUtilities::putRequestVariable('form[action][delete]', '1');
-	GalleryUtilities::putRequestVariable('form[delete][itemId]', $map[$this->_randomName]);
+	GalleryUtilities::putRequestVariable('form[delete][itemId]', $map[$this->_expectedName]);
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
@@ -198,10 +200,48 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 			    $results, 'Delete');
 
 	// Verify that it's gone
-	$ret = $this->_verifyMissing($map[$this->_randomName]);
+	$ret = $this->_verifyMissing($map[$this->_expectedName]);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+    }
+
+    function testAddMaliciousFile() {
+	$rand = rand();
+	$randomName = 'phpunit_' . $rand . '.php';
+	$expectedName = 'phpunit_' . $rand . '.dat';
+	
+	GalleryUtilities::putRequestVariable('form[action][add]', '1');
+	GalleryUtilities::putRequestVariable('form[name][1]', $randomName);
+	GalleryUtilities::putRequestVariable('form[type][1]', 'some/type');
+	GalleryUtilities::putRequestVariable('form[tmp_name][1]', __FILE__);
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'watermark:WatermarkSiteAdmin'),
+				  'status' => array('add' => 1),
+				  'error' => array()),
+			    $results, 'Add');
+
+	list ($ret, $map) = $this->_fetchWatermarkMap();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(isset($map[$expectedName]), 'Watermark is missing');
+
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($map[$expectedName]);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('application/unknown', $item->getMimeType(), 'Watermark mime type incorrect');
+
+	list ($ret, $path) = $item->fetchPath();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	// We're expecting the same name, but the file extension changed to .dat
+	$this->assertEquals($expectedName, basename($path));
     }
 
     function _fetchWatermarkMap() {

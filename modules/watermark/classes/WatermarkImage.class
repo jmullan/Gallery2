@@ -149,14 +149,22 @@ class WatermarkImage_core extends GalleryEntity {
 	    return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);
 	}
 
-	/* Uniquify name */
 	if (empty($targetName)) {
 	    $targetName = basename($inputFileName);
 	}
+
+	/*
+	 * Neutralize the file extension to avoid receiving an executable file
+	 * (like a .php or .pl cgi script)
+	 */
+	$targetName = GalleryUtilities::getFileBase($targetName) . '.dat';
+	
 	list ($ret, $list) = WatermarkHelper::fetchWatermarks();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
+
+	/* Uniquify name */
 	while (in_array($targetName, $list)) {
 	    $targetName = "_$targetName";
 	}
