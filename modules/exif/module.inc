@@ -86,6 +86,11 @@ class ExifModule extends GalleryModule {
 	    case '0.8.8':
 	    case '0.8.9':
 	    case '0.9.1':
+	    break;
+
+	    default:
+		return GalleryStatus::error(ERROR_BAD_PLUGIN, __FILE__, __LINE__,
+					    sprintf('Unknown module version %s', $currentVersion));
 	    }
 	}
 

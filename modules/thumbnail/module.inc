@@ -78,6 +78,11 @@ class ThumbnailModule extends GalleryModule {
 	case '0.8.6':
 	case '0.8.7':
 	case '0.8.8':
+	    break;
+
+	default:
+	    return GalleryStatus::error(ERROR_BAD_PLUGIN, __FILE__, __LINE__,
+					sprintf('Unknown module version %s', $currentVersion));
 	}
 
 	return GalleryStatus::success();

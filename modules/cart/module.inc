@@ -80,6 +80,11 @@ class CartModule extends GalleryModule /* and GalleryEventListener */ {
 	    
 	case '0.8.9':
 	case '0.8.10':
+	    break;
+
+	default:
+	    return GalleryStatus::error(ERROR_BAD_PLUGIN, __FILE__, __LINE__,
+					sprintf('Unknown module version %s', $currentVersion));
 	}
 
     

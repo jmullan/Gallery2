@@ -101,6 +101,11 @@ class RandomHighlightModule extends GalleryModule {
 	case '0.9.0':
 	case '0.9.1':
 	case '0.9.2':
+	    break;
+
+	default:
+	    return GalleryStatus::error(ERROR_BAD_PLUGIN, __FILE__, __LINE__,
+					sprintf('Unknown module version %s', $currentVersion));
 	}
 
 	return GalleryStatus::success();
