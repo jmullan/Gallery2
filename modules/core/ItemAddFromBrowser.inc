@@ -67,7 +67,7 @@ class ItemAddFromBrowser extends ItemAddPlugin {
 		    if ($mimeType == 'application/octet-stream' ||
 			    $mimeType == 'application/unknown' ||
 			    GalleryCoreApi::convertMimeToExtension($mimeType) == null) {
-			$extension = GalleryCoreApi::getFileExtension($file['name']);
+			$extension = GalleryUtilities::getFileExtension($file['name']);
 			$mimeType = GalleryCoreApi::convertExtensionToMime($extension);
 		    }
 
