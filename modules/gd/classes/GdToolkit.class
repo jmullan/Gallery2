@@ -28,8 +28,8 @@
 /**
  * Load required classes
  */
-require_once(dirname(__FILE__) . '/../../core/classes/GalleryToolkit.class');
-require_once(dirname(__FILE__) . '/GdToolkitHelper.class');
+GalleryCoreApi::relativeRequireOnce('/modules/core/classes/GalleryToolkit.class');
+GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GdToolkitHelper.class');
 
 /**
  * A Gd version of GalleryToolkit
@@ -41,6 +41,11 @@ require_once(dirname(__FILE__) . '/GdToolkitHelper.class');
  */
 class GdToolkit extends GalleryToolkit {
 
+    /**
+     * Our private GdFunctionality instance
+     * @var $_gdFunctionality
+     * @access private
+     */
     var $_gdFunctionality;
 
     /*
@@ -57,8 +62,8 @@ class GdToolkit extends GalleryToolkit {
      * @return object implementation of GdFunctionality
      */
     function &_getGdFunctionality() {
-	if (! $this->_gdFunctionality) {
-	    require_once(dirname(__FILE__) . '/GdFunctionality.class');
+	if (!isset($this->_gdFunctionality)) {
+	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GdFunctionality.class');
 	    $this->_gdFunctionality =& new GdFunctionality();
 	}
 	return $this->_gdFunctionality;
@@ -91,8 +96,7 @@ class GdToolkit extends GalleryToolkit {
 	    break;
 
 	default:
-	    return array(GalleryStatus::error(ERROR_UNIMPLEMENTED,
-					      __FILE__, __LINE__),
+	    return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__),
 			 null);
 	}
 
@@ -107,7 +111,11 @@ class GdToolkit extends GalleryToolkit {
 	
 	$gd =& $this->_getGdFunctionality();
 
-	$gallery->debug(sprintf("performOperation(%s,%s,%s,%s,%s)", $mimeType, $operationName, $sourceFilename, $destFilename, join('|', $parameters)));
+	if ($gallery->getDebug()) {
+	    $gallery->debug(sprintf("performOperation(%s,%s,%s,%s,%s)",
+				    $mimeType, $operationName, $sourceFilename,
+				    $destFilename, join('|', $parameters)));
+	}
 	
 	$outputMimeType = $mimeType;
 	list($ret, $sourceRes) = $this->_getImageResource($mimeType, $sourceFilename);
@@ -123,7 +131,9 @@ class GdToolkit extends GalleryToolkit {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    $gallery->debug("width x height: " . $width . "x" . $height);
+	    if ($gallery->getDebug()) {
+		$gallery->debug("width x height: " . $width . "x" . $height);
+	    }
 	    if ($operationName == 'thumbnail') {
 		/* Don't enlarge images for a thumbnail */
 		if ($width <= $parameters[0] && $height <= $parameters[0]) {
@@ -142,15 +152,16 @@ class GdToolkit extends GalleryToolkit {
 		$destWidth = round($width * $parameters[0] / $height);
 	    }
 	    list ($ret, $destRes) = $this->_resizeImageResource($sourceRes,
-						    $destWidth,
-						    $destHeight);
+								$destWidth,
+								$destHeight);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    break;
 	    
 	case 'resize':
-	    /* $parameters[0]: target width
+	    /*
+	     * $parameters[0]: target width
 	     * $parameters[1]: target height
 	     */
 	    list ($ret, $destRes) = $this->_resizeImageResource($sourceRes,
@@ -162,7 +173,8 @@ class GdToolkit extends GalleryToolkit {
 	    break;
 
 	case 'rotate':
-	    /* PHP >= 4.3.0
+	    /*
+	     * PHP >= 4.3.0
 	     * $parameters[0]: rotation degrees
 	     */
 	    $degrees = 0 - $parameters[0];
@@ -173,7 +185,8 @@ class GdToolkit extends GalleryToolkit {
 	    break;
 
 	case 'crop':
-	    /* $parameters[0]: left edge
+	    /*
+	     * $parameters[0]: left edge
 	     * $parameters[1]: top edge
 	     * $parameters[2]: width
 	     * $parameters[3]: height
@@ -183,7 +196,7 @@ class GdToolkit extends GalleryToolkit {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    $ret = $gd->imageCopy($destRes, $sourceRes,
-		       0, 0,    // dst x,y
+		       0, 0,			          // dst x,y
 		       $parameters[0], $parameters[1],    // src x,y
 		       $parameters[2], $parameters[3]
 		       );
@@ -198,7 +211,8 @@ class GdToolkit extends GalleryToolkit {
 	    break;
 
 	case 'composite':
-	    /* $parameters[0]: overlay path
+	    /*
+	     * $parameters[0]: overlay path
 	     * $parameters[1]: overlay mime type
 	     * $parameters[2]: overlay width
 	     * $parameters[3]: overlay height
@@ -384,6 +398,7 @@ class GdToolkit extends GalleryToolkit {
      * @param string the path to the file to read
      * @return array object GalleryStatus a status code
      *	       resource the GD resource
+     * @access private
      */
     function _getImageResource($mimeType, $filename) {
 	$gd =& $this->_getGdFunctionality();
@@ -423,6 +438,7 @@ class GdToolkit extends GalleryToolkit {
      * @param string the mime-type of the image
      * @param string the path to the file to read
      * @return object GalleryStatus a status code
+     * @access private
      */
     function _saveImageResourceToFile($res, $filename, $mimeType) {
 	$gd =& $this->_getGdFunctionality();
@@ -465,6 +481,7 @@ class GdToolkit extends GalleryToolkit {
      * @param int the destination height
      * @return array object GalleryStatus
      *	       resource the destination GD-resource
+     * @access private
      */
     function _resizeImageResource($sourceRes, $destWidth, $destHeight) {
 	global $gallery;
@@ -501,6 +518,7 @@ class GdToolkit extends GalleryToolkit {
 
     /**
      * @see GalleryGraphics::getImageDimensions()
+     * @access private
      */
     function _getImageDimensions($mimeType, $filename) {
 	global $gallery;
@@ -530,6 +548,7 @@ class GdToolkit extends GalleryToolkit {
      * @return array object GalleryStatus
      *	       int width
      *	       int height
+     * @access private
      */
     function _getImageDimensionsForResource($res) {
 	$gd =& $this->_getGdFunctionality();
@@ -555,6 +574,7 @@ class GdToolkit extends GalleryToolkit {
      * if "resample" is not available.
      * 
      * @return object GalleryStatus
+     * @access private
      */
     function _imageCopyResampled($dstRes, $srcRes, $dstX, $dstY, $srcX, $srcY, $dstW, $dstH, $srcW, $srcH) {
 	$gd =& $this->_getGdFunctionality();

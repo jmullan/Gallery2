@@ -28,7 +28,7 @@
 /**
  * Required classes
  */
-require_once(dirname(__FILE__) . '/classes/GdToolkitHelper.class');
+GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/GdToolkitHelper.class');
 
 /**
  * @package Gd

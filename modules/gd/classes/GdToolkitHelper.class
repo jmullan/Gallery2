@@ -235,8 +235,8 @@ class GdToolkitHelper {
      */
     function getGdFunctionality() {
 	static $gdFunctionality;
-	if (! $gdFunctionality) {
-	    require_once(dirname(__FILE__) . '/GdFunctionality.class');
+	if (!isset($gdFunctionality)) {
+	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GdFunctionality.class'));
 	    $gdFunctionality =& new GdFunctionality();
 	}
 	return $gdFunctionality;
