@@ -420,9 +420,11 @@ class GalleryLayout {
 	    }
 	}
 
-	$ret = $this->_studyItems($childIds);
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	if (!empty($childIds)) {
+	    $ret = $this->_studyItems($childIds);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
 	}
 
 	// -------------------------------------------------------------------------------------
