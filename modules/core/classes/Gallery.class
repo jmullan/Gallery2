@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -29,7 +29,7 @@
  * Global storage container and utility class for Gallery
  *
  * This is a container for global information required for gallery
- * operation, such as configuration, session, user, etc.  
+ * operation, such as configuration, session, user, etc.
  *
  * @package GalleryCore
  * @subpackage Classes
@@ -54,7 +54,7 @@ class Gallery {
      * Storage for all configuration variables, set in config.php.
      * The values contained here can't be modified.  Well, they
      * can be modified but they can't be saved so it's not a good
-     * idea.  
+     * idea.
      *
      * @var array $_config
      * @access private
@@ -63,24 +63,24 @@ class Gallery {
 
     /**
      * The current debugging mode.  One of 'buffered', 'logged', 'immediate' or false
-     * 
+     *
      * @var string $_debug
      * @access private
      */
     var $_debug;
-    
+
     /**
      * Where to send debug output (when the debugging mode is set to 'logged')
-     * 
+     *
      * @var bool $_debugLogFile
      * @access private
      */
     var $_debugLogFile;
-    
+
     /**
      * A place to temporarily store debug output when the debugging mode is set
      * to 'buffered'
-     * 
+     *
      * @var bool $_debugBuffer
      * @access private
      */
@@ -95,15 +95,15 @@ class Gallery {
     var $_platform;
 
     /**
-     * The current profiling mode.  
-     * 
+     * The current profiling mode.
+     *
      * @var string $_profile
      * @access private
      */
     var $_profile;
-    
+
     /**
-     * Storage for all session variables.  
+     * Storage for all session variables.
      *
      * @var object GallerySession $_session
      * @access private
@@ -171,7 +171,7 @@ class Gallery {
      */
     function Gallery() {
 	$this->_activeUser = null;
-	    
+
 	/* Set up a shutdown function to release any hanging locks. */
 	register_shutdown_function(array(&$this, '_shutdown'));
     }
@@ -193,32 +193,33 @@ class Gallery {
      * Set the id of the active user
      *
      * The active user is the user who is logged on in this session.
-     * 
+     *
      * @param object GalleryUser the current user
      * @access public
      */
     function setActiveUser($user) {
 	$this->_activeUser = $user;
 
-	$session =& $this->getSession();
-
 	// It's possible for the session not to exist during bootstrap time
-	$activeUserId = $session->get('core.id.activeUser');
-	if ($activeUserId != $user->getId()) {
-	    $session->put('core.id.activeUser', $user->getId());
-	    $language = $user->getLanguage();
-	    if (!empty($language)) {
-		$session->put('core.language', $language);
+	$session =& $this->getSession();
+	if (isset($session)) {
+	    $activeUserId = $session->get('core.id.activeUser');
+	    if ($activeUserId != $user->getId()) {
+		$session->put('core.id.activeUser', $user->getId());
+		$language = $user->getLanguage();
+		if (!empty($language)) {
+		    $session->put('core.language', $language);
+		}
 	    }
 	}
     }
-    
+
     /**
      * Get the Id of the active user
      *
-     * The active user is the user who is logged on in this 
+     * The active user is the user who is logged on in this
      * session.
-     * 
+     *
      * @access public
      * @return int the id of the current User.
      */
@@ -272,7 +273,7 @@ class Gallery {
      *
      * Return a reference to the unique Gallery session object.  Any changes
      * made to this object will be saved in the session.
-     * 
+     *
      * @access public
      * @return object GalleryStatus a status code
      */
@@ -294,7 +295,7 @@ class Gallery {
      *
      * Return a reference to the unique Gallery session object.  Any changes
      * made to this object will be saved in the session.
-     * 
+     *
      * @access public
      * @return object GallerySession a session instance
      */
@@ -317,7 +318,7 @@ class Gallery {
      * Get the Gallery platform object.
      *
      * Return a copy of the unique Gallery platform object.
-     * 
+     *
      * @access public
      * @return object GalleryPlatform the Gallery platform object
      */
@@ -341,7 +342,7 @@ class Gallery {
 		$this->debug(sprintf('Lock id %d was left hanging!', $lockId));
 	    }
 	}
-		 
+
 	/* Release all locks and ignore any errors */
 	GalleryCoreApi::releaseAllLocks(false);
 
@@ -434,9 +435,12 @@ class Gallery {
 	    /* Load the translator class */
 	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryTranslator.class');
 
-	    list ($ret, $language) = $this->getActiveLanguageCode($dontUseDatabase);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+	    $language = null;
+	    if (!$dontUseDatabase) {
+		list ($ret, $language) = $this->getActiveLanguageCode();
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
 	    }
 
 	    $this->_translator = new GalleryTranslator();
@@ -452,15 +456,14 @@ class Gallery {
     /**
      * Get the active language code.
      *
-     * @param boolean true if we should not use the database
      * @return array object GalleryStatus a status code
      *               string language code
      */
-    function getActiveLanguageCode($dontUseDatabase=false) {
+    function getActiveLanguageCode() {
 	$session =& $this->getSession();
 	$language = $session->get('core.language');
 
-	if (empty($language) && !$dontUseDatabase) {
+	if (empty($language)) {
 	    list ($ret, $language) =
 		GalleryCoreApi::getPluginParameter('module', 'core', 'default.language');
 	    if ($ret->isError()) {
@@ -487,7 +490,7 @@ class Gallery {
      * Guarantee that we have at least this many more seconds to work
      *
      * After this function completes, we will be guaranteed to have at least
-     * this much more time to work. 
+     * this much more time to work.
      *
      * @param int a time interval in seconds, must be greater than 0
      */
@@ -495,7 +498,7 @@ class Gallery {
 	if ($limit <= 0) {
 	    $limit = 30;
 	}
-	
+
 	$now = time();
 	if (empty($this->_timeLimit) || ($this->_timeLimit - $now < $limit)) {
 	    $this->debug("[$now] can't guarantee $limit -- extending!");
@@ -644,7 +647,7 @@ class Gallery {
 		$buf = ob_get_contents();
 		ob_end_clean();
 	    }
-	    
+
 	    $this->debug($buf);
 	}
     }

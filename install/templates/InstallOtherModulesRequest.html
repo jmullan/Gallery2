@@ -46,7 +46,7 @@
 	  <?php $isInstalled = $templateData['moduleInstalled'][$id]; ?>
 	  <tr<?php if ($counter % 2 == 0) print ' style="background:#eee;"' ?>>
             <td>
-              <input type=checkbox name="module[<?php print $id ?>]"
+              <input type=checkbox id="module[<?php print $id ?>]" name="module[<?php print $id ?>]"
                 <?php if ($module->isRecommendedDuringInstall() || $isInstalled): ?>
                   checked="checked"
                 <?php endif; ?>
@@ -57,7 +57,9 @@
             </td>
             <td class="modules">
 	      <?php if ($isInstalled): ?> <span class="disabled"> <?php endif; ?>
-	      <?php print $module->getName() ?>
+	      <label for="module[<?php print $id ?>]">
+		<?php print $module->getName() ?>
+	      </label>
 	      <?php if ($isInstalled): ?> </span> <?php endif; ?>
             </td>
             <td>

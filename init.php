@@ -106,12 +106,14 @@ function GalleryInitFirstPass($params=array()) {
     $gallery->setConfig('data.smarty.templates_c', $dataBase . 'smarty' . $slash . 'templates_c' . $slash);
 
     /* Initialize our session */
-    if (isset($params['gallerySessionId'])) {
-	GalleryUtilities::putRequestVariable(SESSION_ID_PARAMETER, $params['gallerySessionId']);
-    }
-    $ret = $gallery->initSession();
-    if ($ret->isError()) {
-	return $ret->wrap(__FILE__, __LINE__);
+    if (!isset($params['noDatabase'])) {
+	if (isset($params['gallerySessionId'])) {
+	    GalleryUtilities::putRequestVariable(SESSION_ID_PARAMETER, $params['gallerySessionId']);
+	}
+	$ret = $gallery->initSession();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
     }
 
     /* Initialize our translator */
@@ -120,11 +122,9 @@ function GalleryInitFirstPass($params=array()) {
 	list ($language) = GalleryTranslator::getSupportedLanguageCode($params['activeLanguage']);
 	$gallery->setActiveLanguageCode($language);
     }
-    if (!isset($params['noDatabase'])) {
-	$ret = $gallery->initTranslator();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
+    $ret = $gallery->initTranslator(isset($params['noDatabase']));
+    if ($ret->isError()) {
+	return $ret->wrap(__FILE__, __LINE__);
     }
     
     return GalleryStatus::success();
