@@ -36,7 +36,7 @@
     </h3>
 
     <p class="giDescription">
-      {g->text text="There's two diffrent modes URL Rewrite works in. Either you use the prefix method which will put a prefix before all URLs (ie /v/ by default for viewing items), or you may disable the prefix. Once activated, you can change the prefixes as desiered."}
+      {g->text text="There's two diffrent modes URL Rewrite works in. Either you use the prefix method which will put a prefix before all URLs (ie /v/ by default for viewing items), or you may disable the prefix. Once activated, you can change the prefixes as desired."}
     </p>
     
     <table class="gbDataTable">
