@@ -59,6 +59,31 @@ Admin user "<?php print $_SESSION['uname']?>" updated successfully.
         <input name="passB" type="password" value="<?php print isset($_SESSION['passB']) ? $_SESSION['passB'] : '' ?>" />
       </td>
     </tr>
+    <tr>
+       <td colspan="2">&nbsp;</td>
+    </tr>
+    <tr>
+      <td style="font-style: italic;">
+        <?php print _('Debug mode') ?>
+      </td>
+      <td>
+        <select name="debug">
+	<?php
+	$debug = 'false';
+	if (isset($_SESSION['debug'])) {
+	    $debug = $_SESSION['debug'];
+	}
+	$debugTypes = array ("false"      => _("Off (Recommended)"),
+			     "'buffered'" => _("On")
+			     );
+	foreach ($debugTypes as $key => $val) {
+	    $selected = ($debug === $key) ? ' selected' : '';
+	    echo "<option value=\"$key\"$selected>$val</option>\n";
+	}
+        ?>
+	</select>
+      </td>
+    </tr>
   </table>
 </form>
 

@@ -201,7 +201,8 @@ if ($step == 1) {
     if (isset($_GET['action']) && $_GET['action'] === 'create') {
 	$status[$step] = false;
     }
-    if (isset($_POST['uname']) && isset($_POST['passA']) && isset($_POST['passB'])) {
+    if (isset($_POST['uname']) && isset($_POST['passA']) && isset($_POST['passB']) && isset($_POST['debug'])) {
+	$_SESSION['debug'] = $_POST['debug'];
 	if (empty($_POST['uname'])) {
 	    array_push($errorMsg, _('Error: you must enter a username!'));
 	} else {
@@ -317,7 +318,7 @@ if (0 == count($navtext) || $numDone < 1) {
 } else {
     $percentage = round((100 * ($numDone) / (count($status) - 1)) / 5) * 5;
 }
-
+print $_SESSION['debug'];
 printNavBar();
 
 // this can be cleaned up
@@ -456,7 +457,7 @@ function writeConfigFile() {
 	    $configText .= "\$storeConfig['columnPrefix'] = '{$_SESSION['db']['columnPrefix']}';\n";
 	    $configText .= "\$gallery->setConfig('storage.config', \$storeConfig);\n\n";
 	    $configText .= "// [debug] Debugging settings (intended for developers)\n";
-	    $configText .= "\$gallery->setDebug(false);\n\n";
+	    $configText .= "\$gallery->setDebug({$_SESSION['debug']});\n\n";
 	    $g = @fopen('text/configFooter.inc', 'rt');
 	    $configText .= fread($g, filesize('text/configHeader.inc'));
 	    fclose($g);
