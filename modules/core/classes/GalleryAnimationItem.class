@@ -129,6 +129,9 @@ class GalleryAnimationItem_core extends GalleryDataItem {
 	$this->setWidth(0);
 	$this->setHeight(0);
 
+	/* We're linkable */
+	$this->setIsLinkable(true);
+
 	/* Detect our dimensions, if possible */
 	$ret = $this->rescan();
 	if ($ret->isError()) {
@@ -306,13 +309,6 @@ class GalleryAnimationItem_core extends GalleryDataItem {
 	default:
 	    return null;
 	}
-    }
-
-    /**
-     * @see GalleryEntity::isLinkable
-     */
-    function isLinkable() {
-	return true;
     }
 }
 

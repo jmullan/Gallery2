@@ -206,7 +206,7 @@ class ItemDeleteControllerTest extends GalleryControllerTestCase {
 				  'error' => array()),
 			    $results);
 
-	/* make usre they're really missing */
+	/* make sure they're really missing */
 	foreach ($items as $item) {
 	    $ret = $this->_verifyMissing($item->getId());
 	    if ($ret->isError()) {

@@ -81,7 +81,7 @@ class ItemCreateLinkController extends GalleryController {
 				     null);
 		    }
 		    
-		    if (!$selectedItem->isLinkable()) {
+		    if (!$selectedItem->getIsLinkable()) {
 			return array(GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__),
 				     null);
 		    }
@@ -155,6 +155,22 @@ class ItemCreateLinkController extends GalleryController {
 		$redirect['subView'] = 'core:ItemCreateLink';
 		$redirect['itemId'] = $itemId;
 	    }
+	} else if (isset($form['action']['next'])) {
+	    $page = GalleryUtilities::getRequestVariables('page');
+	    list($ret, $peerIds) =
+		GalleryCoreApi::fetchLinkableChildItemIdsWithPermission($itemId, 'core.view');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    $numPages = ceil(sizeof($peerIds) / $form['numPerPage']);
+	    
+	    $results['delegate']['itemId'] = $itemId;
+	    $results['delegate']['page'] = min($page + 1, $numPages);
+	} else if (isset($form['action']['previous'])) {
+	    $page = GalleryUtilities::getRequestVariables('page');
+	    $results['delegate']['itemId'] = $itemId;
+	    $results['delegate']['page'] = max($page - 1, 1);
 	}
 
 	if (!empty($redirect)) {
@@ -185,8 +201,7 @@ class ItemCreateLinkView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	global $gallery;
 
-	list ($itemId, $selectedId) = GalleryUtilities::getRequestVariables('itemId', 'selectedId');
-
+	list ($itemId, $selectedId, $page) = GalleryUtilities::getRequestVariables('itemId', 'selectedId', 'page');
         if ($form['formName'] != 'ItemCreateLink') {
             /* First time around, load the form with item data */
             if ($selectedId) {
@@ -194,6 +209,7 @@ class ItemCreateLinkView extends GalleryView {
             }
             $form['destination'] = '';
 	    $form['formName'] = 'ItemCreateLink';
+	    $form['numPerPage'] = 15;
         }
 
 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
@@ -203,42 +219,87 @@ class ItemCreateLinkView extends GalleryView {
 	
 	/* Get all peers that we can link */
 	list ($ret, $peerIds) =
-	    GalleryCoreApi::fetchChildItemIdsWithPermission($item->getId(), 'core.view');
+	    GalleryCoreApi::fetchLinkableChildItemIdsWithPermission($item->getId(), 'core.view');
         if ($ret->isError()) {
             return array($ret->wrap(__FILE__, __LINE__), null);
         }
 
-	/* Load all the peers */
-	list ($ret, $peerItems) = GalleryCoreApi::loadEntitiesById($peerIds);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	/* Build our peers table (linkable items only) */
 	$peers = array();
-	foreach ($peerItems as $peerItem) {
-	    if ($peerItem->isLinkable()) {
+	$peerTypes = array();
+	$peerDescendentCounts = array();
+	$numPages = 1;
+	$selectedIds = array();
+	if (!empty($peerIds)) {
+	    $numPages = ceil(sizeof($peerIds) / $form['numPerPage']);
+	    if (empty($page)) {
+		/* determine which page we're on */
+		$page = 1;
+		for ($i = 0; $i < sizeof($peerIds); $i++) {
+		    if ($peerIds[$i] == $selectedId) {
+			$page = ceil(($i + 1) / $form['numPerPage']);
+		    }
+		}
+	    }
+
+	    $start = $form['numPerPage'] * ($page - 1);
+	    $peerIds = array_slice($peerIds, $start, $form['numPerPage']);
+	    if (isset($form['selectedIds'])) {
+		$selectedIds = $form['selectedIds'];
+		foreach ($peerIds as $peerId) {
+		    if (isset($selectedIds[$peerId])) {
+			unset($selectedIds[$peerId]);
+		    }
+		}
+	    }
+	    
+	    /* Load all the peers */
+	    list ($ret, $peerItems) = GalleryCoreApi::loadEntitiesById($peerIds);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    /* get peer thumbnails */
+	    list ($ret, $thumbnails) = GalleryCoreApi::fetchThumbnailsByItemIds($peerIds);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    /* Build our peers table */
+	    $peers = array();
+	    foreach ($peerItems as $peerItem) {
 		$peers[$peerItem->getId()] = $peerItem->getMemberData();
 		$peers[$peerItem->getId()]['selected'] =
 		    isset($form['selectedIds'][$peerItem->getId()]);
+		
+		/* While we're at it, attach the thumbnails */
+		if (isset($thumbnails[$peerItem->getId()])) {
+		    $thumbnail = $thumbnails[$peerItem->getId()];
+		    list ($ret, $thumbnail) =
+			GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($thumbnail->getId());
+		    $peers[$peerItem->getId()]['thumbnail'] = $thumbnail->getMemberData();
+		}
+	    }
+
+	    /* Find all the possible locations where this item can be linked. */
+	    list ($ret, $ids) = GalleryCoreApi::fetchAllItemIds('GalleryAlbumItem', 'core.addDataItem');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    /* Load all the album entities */
+	    list ($ret, $albums) = GalleryCoreApi::loadEntitiesById($ids);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
 
-	/* Find all the possible locations where this item can be linked. */
-	list ($ret, $ids) = GalleryCoreApi::fetchAllItemIds('GalleryAlbumItem', 'core.addDataItem');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	/* Load all the album entities */
-	list ($ret, $albums) = GalleryCoreApi::loadEntitiesById($ids);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
 	$ItemCreateLink = array();
-	$ItemCreateLink['albumTree'] = GalleryUtilities::createAlbumTree($albums);
 	$ItemCreateLink['peers'] = $peers;
+	$ItemCreateLink['albumTree'] = GalleryUtilities::createAlbumTree($albums);
+	$ItemCreateLink['page'] = $page;
+	$ItemCreateLink['numPages'] = $numPages;
+	$ItemCreateLink['numPerPage'] = $form['numPerPage'];
+	$ItemCreateLink['selectedIds'] = array_keys($selectedIds);
 
 	$template->setVariable('ItemCreateLink', $ItemCreateLink);
         $template->setVariable('controller', 'core:ItemCreateLink');

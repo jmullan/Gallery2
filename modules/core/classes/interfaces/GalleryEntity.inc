@@ -62,6 +62,11 @@ class GalleryEntity extends GalleryEntity_core {
             'type' => STORAGE_TYPE_INTEGER
         );
     
+        $meta['members']['isLinkable'] = array(
+            'class' => 'GalleryEntity',
+            'type' => STORAGE_TYPE_BOOLEAN
+        );
+    
         $meta['members']['linkId'] = array(
             'class' => 'GalleryEntity',
             'type' => STORAGE_TYPE_INTEGER
@@ -103,6 +108,12 @@ class GalleryEntity extends GalleryEntity_core {
  	    $data['creationTimestamp'] = null;
  	} else {
 	    $data['creationTimestamp'] = $this->_creationTimestamp;
+	}
+	
+	if (!isset($this->_isLinkable)) {
+ 	    $data['isLinkable'] = null;
+ 	} else {
+	    $data['isLinkable'] = $this->_isLinkable;
 	}
 	
 	if (!isset($this->_linkId)) {
@@ -233,6 +244,52 @@ class GalleryEntity extends GalleryEntity_core {
       
             $this->_creationTimestamp = $value;
             $this->setModifiedFlag('creationTimestamp', MEMBER_MODIFIED);
+        }
+    }
+  
+    /**
+     * Get the value of isLinkable
+     *
+     * @return BOOLEAN the value
+     */
+    function getisLinkable() {
+ 	
+
+        if (!isset($this->_isLinkable)) {
+            return null;
+        }
+
+        return $this->_isLinkable;
+    }
+
+    /**
+     * Set the value of isLinkable
+     *
+     * @param BOOLEAN the value
+     */
+    function setisLinkable($value) {
+
+        /* 
+         * Convert unset values to null, to avoid generating warnings.
+         */
+	$a = isset($value) ? $value : null;
+	$b = isset($this->_isLinkable) ? $this->_isLinkable : null;
+
+    
+        /* Type case the incoming value to be a boolean */
+        if ($value != null) {
+            $value = (bool)$value;
+        }
+      
+        /* 
+         * Only take action if the value actually changes, but take care not to 
+         * generate warnings for unset values.
+         */
+    
+        if ($a != $b) {
+      
+            $this->_isLinkable = $value;
+            $this->setModifiedFlag('isLinkable', MEMBER_MODIFIED);
         }
     }
   

@@ -125,6 +125,9 @@ class GalleryPhotoItem_core extends GalleryDataItem {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
+	/* We're linkable */
+	$this->setIsLinkable(true);
+
 	/* Default to empty dimensions */
 	$this->setWidth(0);
 	$this->setHeight(0);
@@ -219,13 +222,6 @@ class GalleryPhotoItem_core extends GalleryDataItem {
 	default:
 	    return null;
 	}
-    }
-
-    /**
-     * @see GalleryEntity::isLinkable
-     */
-    function isLinkable() {
-	return true;
     }
 }
 

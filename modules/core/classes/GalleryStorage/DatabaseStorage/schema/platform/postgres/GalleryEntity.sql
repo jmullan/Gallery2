@@ -16,6 +16,12 @@
     NOT NULL
   
       ,
+    DB_COLUMN_PREFIXisLinkable
+      SMALLINT
+    
+    NOT NULL
+  
+      ,
     DB_COLUMN_PREFIXlinkId
       INTEGER
     
@@ -52,6 +58,11 @@
     CREATE INDEX Entity_creationTimestamp 
     ON DB_TABLE_PREFIXEntity
     (DB_COLUMN_PREFIXcreationTimestamp);
+
+  
+    CREATE INDEX Entity_isLinkable 
+    ON DB_TABLE_PREFIXEntity
+    (DB_COLUMN_PREFIXisLinkable);
 
   
     CREATE INDEX Entity_modificationTimestamp 

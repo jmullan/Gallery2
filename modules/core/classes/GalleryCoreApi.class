@@ -1223,6 +1223,25 @@ class GalleryCoreApi {
     }
     
     /**
+     * Return the ids of all the child items of the given item that have the
+     * matching permission and are linkable entities.  Useful for, example, for
+     * finding all the children where we (the active user) has the 'core.changePermissions'
+     * permission bit set.  This allows us to cascade permission updates.
+     *
+     * @access public
+     * @param array item ids
+     * @param int permission id
+     * @return array object GalleryStatus a status code
+     *               int a count
+     * @static
+     */
+    function fetchLinkableChildItemIdsWithPermission($itemId, $permissionId) {
+	GalleryCoreApi::apiMethodUsed('fetchLinkableChildItemIdsWithPermission', 'GalleryItemHelper_medium');
+	require_once(dirname(__FILE__) . '/helpers/GalleryItemHelper_medium.class');
+	return GalleryItemHelper_medium::fetchLinkableChildItemIdsWithPermission($itemId, $permissionId);
+    }
+    
+    /**
      * Return the ids of all items that match the given type and have the
      * given permission (defaults to 'core.view')
      *

@@ -80,6 +80,19 @@ class GalleryEntity_core extends GalleryPersistent {
     var $_creationTimestamp;
 
     /**
+     * Does this entity type support linking?  Subclasses should override this method and
+     * return true if they support linking
+     *
+     * @g2 <member>
+     * @g2   <member-name>isLinkable</member-name>
+     * @g2   <member-type>BOOLEAN</member-type>
+     * @g2   <indexed/>
+     * @g2   <required/>
+     * @g2 </member>
+     */
+    var $_isLinkable;
+    
+    /**
      * The id of the target entity this entity is linked to
      *
      * @g2 <member>
@@ -174,6 +187,9 @@ class GalleryEntity_core extends GalleryPersistent {
 	/* Set the object type */
 	$this->setEntityType($this->getClassName());
 
+	/* By default, entities are not linkable */
+	$this->setIsLinkable(false);
+	
 	return GalleryStatus::success();
     }
     
@@ -192,10 +208,6 @@ class GalleryEntity_core extends GalleryPersistent {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
 
-	if (!$this->isLinkable()) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-
 	/* Follow our usual creation process (same as create() above) */
 	$storage = $gallery->getStorage();
 	$ret = $storage->newEntity($this);
@@ -210,6 +222,7 @@ class GalleryEntity_core extends GalleryPersistent {
 	$this->setEntityType($this->getClassName());
 
 	/* But attach to the linked entity */
+	$this->setIsLinkable(true);
 	$this->setLinkId($entity->getId());
 	$this->setLinkedEntity($entity);
 
@@ -381,16 +394,6 @@ class GalleryEntity_core extends GalleryPersistent {
      */
     function itemTypeName() {
 	assert(false);
-    }
-
-    /**
-     * Does this entity type support linking?  Subclasses should override this method and
-     * return true if they support linking
-     *
-     * @return true if yes
-     */
-    function isLinkable() {
-	return false;
     }
 
     /**

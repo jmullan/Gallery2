@@ -272,7 +272,7 @@ class ItemMoveView extends GalleryView {
 			unset($selectedIds[$peerId]);
 		    }
 		}
-	    }	    
+	    }
 
 	    /* Load all the peers */
 	    list ($ret, $peerItems) = GalleryCoreApi::loadEntitiesById($peerIds);

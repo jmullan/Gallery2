@@ -131,11 +131,12 @@ class GalleryTestCase extends TestCase {
      * Create a random album
      *
      * @param int the id of the parent album
+     * @param array fields to plug into the new instance (field => value, field => value)
      * @return array object GalleryStatus a status code
      *               object GalleryAlbumItem
      * @access private
      */
-    function _createRandomAlbum($parentId) {
+    function _createRandomAlbum($parentId, $fields=array()) {
 	global $gallery;
 
 	if (empty($parentId)) {
@@ -165,6 +166,10 @@ class GalleryTestCase extends TestCase {
 	$album->setTitle('This is my title');
 	$album->setDescription('This is a description');
 	$album->setSummary('This is a summary');
+	foreach ($fields as $field => $value) {
+	    $func = "set$field";
+	    $album->$func($value);
+	}
 
 	/* Save it */
 	$ret = $album->save();

@@ -570,7 +570,7 @@ class CoreModule extends GalleryModule {
 					    'itemId' => $item->getId()));
 	    }
 
-	    if ($item->isLinkable()) {
+	    if ($item->getIsLinkable()) {
 		if ($isAlbum) {
 		    list ($ret, $count) = GalleryCoreApi::fetchItemIdCount('GalleryAlbumItem', 'core.addAlbumItem');
 		    if ($ret->isError()) {

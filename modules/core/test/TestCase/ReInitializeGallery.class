@@ -30,6 +30,11 @@ class ReInitializeGalleryTestCase extends TestCase {
     }
 
     function testStart() {
+	global $gallery;
+
+	/* Log in as the admin user */
+	$gallery->setActiveUserId(5);
+	
 	return GalleryStatus::success();
     }
 }

@@ -42,63 +42,20 @@ class ItemCreateLinkControllerTest extends GalleryControllerTestCase {
 	
 	parent::setUp();
 
-	for ($i = 0; $i < 2; $i++) {
-	    list ($ret, $this->_albums[$i]) = $this->_createRandomAlbum($this->_getRootId());
-	    if ($ret->isError()) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-
-	    $albumId = $this->_albums[$i]->getId();
-	    $userId = $gallery->getActiveUserId();
-	    switch ($i) {
-	    case 0:
-		/* Can add data items */
-		$ret = GalleryCoreApi::removeItemPermissions($albumId);
-		if ($ret->isError()) {
-		    print $ret->getAsHtml();
-		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-		}
-		
-		$ret = GalleryCoreApi::addUserPermission($albumId, $userId, 'core.addDataItem');
-		if ($ret->isError()) {
-		    print $ret->getAsHtml();
-		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-		}
-		break;
-
-	    case 1:
-		/* Can't do squat */
-		$ret = GalleryCoreApi::removeItemPermissions($albumId);
-		if ($ret->isError()) {
-		    print $ret->getAsHtml();
-		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-		}
-		break;
-	    }
-
-	    /* Create data items in each album */
-	    for ($j = 0; $j < 2; $j++) {
-		list ($ret, $this->_items[$i][$j]) =
-		    $this->_createRandomDataItem($this->_albums[$i]->getId(), 'image/jpeg', array(),
-						 dirname(__FILE__) . '/../../test/data/test1.gif');
-		if ($ret->isError()) {
-		    print $ret->getAsHtml();
-		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-		}
-	    }
+	/* Create a container album for all our test items */
+	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-
     }
 
     function tearDown() {
 	global $gallery;
 
-	for ($i = 0; $i < sizeof($this->_albums); $i++) {
-	    $ret = GalleryCoreApi::deleteEntityById($this->_albums[$i]->getId());
-	    if ($ret->isError()) {
-		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
+	$ret = GalleryCoreApi::deleteEntityById($this->_album->getId());
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	    
 	parent::tearDown();
@@ -108,30 +65,74 @@ class ItemCreateLinkControllerTest extends GalleryControllerTestCase {
      * Test linking an item
      */
     function testLinkItemSuccessful() {
+	list ($ret, $childAlbum) = $this->_createRandomAlbum($this->_album->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $childItem) = $this->_createRandomDataItem($childAlbum->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
 	global $gallery;
-	GalleryUtilities::putRequestVariable('itemId', $this->_albums[1]->getId());
+	GalleryUtilities::putRequestVariable('itemId', $childAlbum->getId());
 	GalleryUtilities::putRequestVariable('form[selectedIds]',
-					     array($this->_items[1][0]->getId() => 1));
+					     array($childItem->getId() => 1));
 	GalleryUtilities::putRequestVariable('form[action][link]', 1);
-	GalleryUtilities::putRequestVariable('form[destination]', $this->_albums[0]->getId());
+	GalleryUtilities::putRequestVariable('form[destination]', $this->_album->getId());
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
 						      'subView' => 'core:ItemCreateLink',
-						      'itemId' => $this->_albums[1]->getId()),
+						      'itemId' => $childAlbum->getId()),
 				  'status' => array('linked' => array('count' => 1)),
 				  'error' => array()),
 			    $results);
     }
 
     /**
+     * Test linking an album (this should fail)
+     */
+    function testLinkAlbumSuccessful() {
+	list ($ret, $childAlbum) = $this->_createRandomAlbum($this->_album->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $grandChildAlbum) = $this->_createRandomAlbum($childAlbum->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	global $gallery;
+	GalleryUtilities::putRequestVariable('itemId', $childAlbum->getId());
+	GalleryUtilities::putRequestVariable('form[selectedIds]',
+					     array($grandChildAlbum->getId() => 1));
+	GalleryUtilities::putRequestVariable('form[action][link]', 1);
+	GalleryUtilities::putRequestVariable('form[destination]', $this->_album->getId());
+
+	$results = $this->handleRequest(ERROR_PERMISSION_DENIED);
+    }
+
+    /**
      * Test linking an item to a bogus destination
      */
     function testLinkItemIntoBogusDestination() {
+	list ($ret, $childAlbum) = $this->_createRandomAlbum($this->_album->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $childItem) = $this->_createRandomDataItem($childAlbum->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
 	global $gallery;
-	GalleryUtilities::putRequestVariable('itemId', $this->_albums[0]->getId());
+	GalleryUtilities::putRequestVariable('itemId', $childAlbum->getId());
 	GalleryUtilities::putRequestVariable('form[selectedIds]',
-					     array($this->_items[0][0]->getId() => 1));
+					     array($childItem->getId() => 1));
 	GalleryUtilities::putRequestVariable('form[action][link]', 1);
 
 	$results = $this->handleRequest();
@@ -146,14 +147,97 @@ class ItemCreateLinkControllerTest extends GalleryControllerTestCase {
      * Test moving an item into a container where we have no add permissions
      */
     function testLinkItemIntoAlbumWithNoAddPermissions() {
+	list ($ret, $childAlbum) = $this->_createRandomAlbum($this->_album->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $childItem) = $this->_createRandomDataItem($childAlbum->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Remove add permission in the destination */
+	$ret = GalleryCoreApi::removeItemPermissions($this->_album->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
 	global $gallery;
-	GalleryUtilities::putRequestVariable('itemId', $this->_albums[0]->getId());
+	GalleryUtilities::putRequestVariable('itemId', $childAlbum->getId());
 	GalleryUtilities::putRequestVariable('form[selectedIds]',
-					     array($this->_items[0][0]->getId() => 1));
+					     array($childItem->getId() => 1));
 	GalleryUtilities::putRequestVariable('form[action][link]', 1);
-	GalleryUtilities::putRequestVariable('form[destination]', $this->_albums[1]->getId());
+	GalleryUtilities::putRequestVariable('form[destination]', $this->_album->getId());
 
 	$results = $this->handleRequest(ERROR_PERMISSION_DENIED);
+    }
+
+    function testCreateLinkNextPageOutOfRange() {
+	global $gallery;
+
+	/* create random items */
+	$items = array();
+	for ($i = 0; $i < 5; $i++) {
+	    list($ret, $items[$i]) = $this->_createRandomDataItem($this->_album->getId());
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+
+	$selectedIds = array();
+	foreach ($items as $item) {
+	    $selectedIds[$item->getId()] = 1;
+	}
+	
+	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
+	GalleryUtilities::putRequestVariable('form[selectedIds]', $selectedIds);
+	GalleryUtilities::putRequestVariable('form[numPerPage]', 3);
+	GalleryUtilities::putRequestVariable('page', 3);	
+	GalleryUtilities::putRequestVariable('form[action][next]', 1);
+	
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemCreateLink',
+						      'itemId' => $this->_album->getId(),
+						      'page' => 2),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
+    }
+
+    function testCreateLinkPreviousPageOutOfRange() {
+	global $gallery;
+
+	/* create random items */
+	$items = array();
+	for ($i = 0; $i < 5; $i++) {
+	    list($ret, $items[$i]) = $this->_createRandomDataItem($this->_album->getId());
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+
+	$selectedIds = array();
+	foreach ($items as $item) {
+	    $selectedIds[$item->getId()] = 1;
+	}
+	
+	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
+	GalleryUtilities::putRequestVariable('form[selectedIds]', $selectedIds);
+	GalleryUtilities::putRequestVariable('page', -1);	
+	GalleryUtilities::putRequestVariable('form[action][previous]', 1);
+	
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemCreateLink',
+						      'itemId' => $this->_album->getId(),
+						      'page' => 1),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
     }
 }
 ?>

@@ -16,6 +16,12 @@
     NOT NULL
   
       ,
+    DB_COLUMN_PREFIXisLinkable
+      int(1)
+    
+    NOT NULL
+  
+      ,
     DB_COLUMN_PREFIXlinkId
       int(11)
     
@@ -48,6 +54,10 @@
       ,
     
     INDEX (DB_COLUMN_PREFIXcreationTimestamp)
+    
+      ,
+    
+    INDEX (DB_COLUMN_PREFIXisLinkable)
     
       ,
     

@@ -62,18 +62,33 @@ class GalleryUnknownItem_core extends GalleryDataItem {
      */
 
     /**
+     * Create a new GalleryUnknownItem from an image file
+     *
+     * @param int the id of the parent GalleryItem
+     * @param string the path to the source image
+     * @param string the mime type
+     * @param string the desired name of the new item
+     * @return object GalleryStatus a status code
+     */
+    function create($parentId, $inputFileName, $mimeType, $targetName=null) {
+	/* Create our data item */
+	$ret = parent::create($parentId, $inputFileName, $mimeType, $targetName);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* We're linkable */
+	$this->setIsLinkable(true);
+	
+	return GalleryStatus::success();
+    }
+
+    /**
      * @see GalleryItem::itemTypeName
      */
     function itemTypeName() {
 	global $gallery;
 	return array($gallery->i18n('Unknown'), $gallery->i18n('unknown'));
-    }
-
-    /**
-     * @see GalleryEntity::isLinkable
-     */
-    function isLinkable() {
-	return true;
     }
 }
 

@@ -36,16 +36,46 @@
       
     <div class="giDescription">
       {g->text text="Choose the items you want to link"}
+      {if ($ItemCreateLink.numPages > 1) }
+      {g->text text="(page %d of %d)"
+	       arg1=$ItemCreateLink.page
+	       arg2=$ItemCreateLink.numPages}
+      {/if}
     </div>
-
-    {foreach from=$ItemCreateLink.peers item=peer}
-    {assign var="peerItemId" value=$peer.id}
-    <input type="checkbox" name="{g->formVar var="form[selectedIds][$peerItemId]"}"
-    {if $peer.selected}checked="checked"{/if}
-    />
-    {$peer.title|default:$peer.pathComponent}
-    <br />
+    
+    <table>
+      {foreach from=$ItemCreateLink.peers item=peer}
+      {assign var="peerItemId" value=$peer.id}
+      <tr>
+        <td width="60">
+          {if isset($peer.thumbnail)}
+          <div class="giThumbImage">
+	    <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$peer.id`"}">
+	      {g->image item=$peer image=$peer.thumbnail maxSize=50}
+	    </a>
+          </div>		    
+          {else}
+          &nbsp;
+          {/if} 
+        </td>
+        <td> 
+          <input type="checkbox" name="{g->formVar var="form[selectedIds][$peerItemId]"}"
+          {if $peer.selected}checked="checked"{/if}
+          />
+        </td> 
+        <td> 
+          {$peer.title|default:$peer.pathComponent}
+        </td>
+      </tr>
     {/foreach}
+    </table>
+
+    {if ($ItemCreateLink.page > 1)}
+    <input type="submit" name="{g->formVar var="form[action][previous]"}" value="{g->text text="Previous Page"}"/>
+    {/if}
+    {if ($ItemCreateLink.page < $ItemCreateLink.numPages)}
+    <input type="submit" name="{g->formVar var="form[action][next]"}" value="{g->text text="Next Page"}"/>
+    {/if}
   </div>
 
   <div class="gbAdmin">
@@ -73,11 +103,14 @@
     {/if}
   </div>
     
-  <div class="gbBottomFlag">
-    <div class="giActionSelect">
-      <input type="submit" name="{g->formVar var="form[action][link]"}" value="{g->text text="Link"}"/>
-      <input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
-    </div>
+  <div class="gbButtons">
+    <input type="hidden" name="{g->formVar var="page"}" value="{$ItemCreateLink.page}"/>
+    <input type="hidden" name="{g->formVar var="form[numPerPage]"}" value="{$ItemCreateLink.numPerPage}"/>
+    {foreach from=$ItemCreateLink.selectedIds item=selectedId}
+    <input type="hidden" name="{g->formVar var="form[selectedIds][$selectedId]"}" value="on"/>
+    {/foreach}
+    <input type="submit" name="{g->formVar var="form[action][link]"}" value="{g->text text="Link"}"/>
+    <input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
   </div>
   {else}
   <div class="gbAdmin">
