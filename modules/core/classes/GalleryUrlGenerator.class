@@ -96,24 +96,13 @@ class GalleryUrlGenerator {
      * @return string the current URL
      */
     function getCurrentUrl() {
-	global $gallery;
-	
 	if (!empty($_SERVER['REQUEST_URI'])) {
 	    $path = $_SERVER['REQUEST_URI'];
 	} else if (!empty($_SERVER['SCRIPT_NAME'])) {
 	    $path = $_SERVER['SCRIPT_NAME'];
 	}
 
-	if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') {
-	    $protocol = 'https';
-	} else {
-	    $protocol = 'http';
-	}
-
-	return sprintf('%s://%s%s',
-		       $protocol,
-		       $this->getCurrentDomain(),
-		       $path);
+	return $this->makeUrl($path);
     }
 
     /**
@@ -126,6 +115,34 @@ class GalleryUrlGenerator {
 	} else {
 	    return $_SERVER['HTTP_HOST'];
 	}
+    }
+
+    /**
+     * Add given path to current protocol/server/port to create full url
+     * @param string the url path; leading slash will be added if missing
+     * @return string the url
+     */
+    function makeUrl($path) {
+	static $defaultPort;
+	if (!isset($defaultPort)) {
+	    $defaultPort = array('http' => 80, 'https' => 443);
+	}
+
+	$protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? 'https' : 'http';
+	$port = $_SERVER['SERVER_PORT'];
+	if ($port == $defaultPort[$protocol]) {
+	    $port = '';
+	} else if (!empty($port)) {
+	    $port = ':' . $port;
+	}
+	if (empty($path)) {
+	    $path = '/';
+	} else if ($path{0} != '/') {
+	    $path = '/' . $path;
+	}
+
+	return sprintf('%s://%s%s%s',
+		       $protocol, $this->getCurrentDomain(), $port, $path);
     }
 
     /**

@@ -129,6 +129,22 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$this->assertEquals('http_x_forwarded_server', $this->_urlGenerator->getCurrentDomain());
     }
 
+    function testMakeUrl() {
+	$this->assertEquals('http://example.com/test/path.php',
+			    $this->_urlGenerator->makeUrl('/test/path.php'), 'with slash');
+	$this->assertEquals('http://example.com/test/test.jpg',
+			    $this->_urlGenerator->makeUrl('test/test.jpg'), 'no slash');
+	$this->assertEquals('http://example.com/',
+			    $this->_urlGenerator->makeUrl(''), 'empty');
+	$_SERVER['SERVER_PORT'] = 8080;
+	$this->assertEquals('http://example.com:8080/test.php?fun=yes',
+			    $this->_urlGenerator->makeUrl('/test.php?fun=yes'), 'other port');
+	$_SERVER['SERVER_PORT'] = 443;
+	$_SERVER['HTTPS'] = 'on';
+	$this->assertEquals('https://example.com/test/go.php?a=one&amp;b=two',
+			    $this->_urlGenerator->makeUrl('test/go.php?a=one&amp;b=two'), 'https');
+    }
+
     function testBaseFileWithQMark() {
 	global $gallery;
 	$urlGenerator = new GalleryUrlGenerator('phpunit_test.php?test=on');
