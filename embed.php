@@ -558,5 +558,95 @@ class GalleryEmbed {
 
 	return array(GalleryStatus::success(), '');
     }
+
+    /**
+     * Parse html (headHtml) for css links, javascript and page title
+     *
+     * @param string headHtml
+     * @return array(title, css, javascript)
+     * @static
+     */
+    function parseHead($headhtml) {	
+ 	$title = '';
+  	$css = array();
+  	$javascript = array();
+  
+	/* only 1 title allowed */
+        if (preg_match("|<title(?:\s[^>]*)?>(.*)</title>|Usi", $headhtml, $regs)) {
+	    $title = $regs[1];
+	}
+  	
+	/* more than one script section allowed?, dunno */ 
+	if(preg_match_all("|<script(?:\s[^>]*)?>(.*)</script>|Usi", $headhtml, $regs, PREG_PATTERN_ORDER)) {
+	    foreach ($regs[1] as $script) {
+      		$javascript[] = $script;
+            }
+        }
+  
+	/* more than one style allowed */ 
+	if(preg_match_all("/<(style|link)(?:\s[^>]*)?>.*<\/\\1>/Usi", $headhtml, $regs, PREG_PATTERN_ORDER)) {
+	    foreach ($regs[0] as $style) {
+        	$css[] = $style;
+    	    }
+  	}
+  
+	return array($title, $css, $javascript);
+    }
+    
+    /**
+     * Get HTML for an image block
+     *
+     * @param array ('blocks' => string, 'show' => string, (optional)'heading' => int,
+     *                (optional)'itemId' => int)
+     * 'blocks' is a pipe (|) separated list, of one or more possible blocks which are:
+     * randomImage|recentImage|viewedImage|randomAlbum|recentAlbum|viewedAlbum|specificItem
+     * 'show' is a pipe (|) separated list of one or more possible choices which are:
+     * title|date|views|owner or just 'none'
+     * If you choose 'blocks' = 'specificItem', you got the specify 'itemId' too.
+     * example: GalleryEmbed::getImageBlock(array('blocks' => 'randomImage', 
+     		'show' => 'title|date'));
+     * @return array object GalleryStatus
+     *               string html content
+     * @static
+     */
+    function getImageBlock($params) { 
+	global $gallery;
+  
+	$moduleId = 'imageblock';
+
+	/* Load the module list */
+	list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module');
+	if (!$ret->isSuccess()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if (isset($moduleStatus[$moduleId]) && !empty($moduleStatus[$moduleId]['active'])) {
+	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
+	    if (!$ret->isSuccess()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+    	    }
+
+	    /* Load the G2 templating engine */
+            GalleryCoreApi::requireOnce(dirname(__FILE__) . '/modules/core/classes/GalleryTemplate.class');
+            $template = new GalleryTemplate(dirname(__FILE__));
+            $template->setVariable('l10Domain', 'module_' . $moduleId);
+
+	    // generate the imageblock
+	    list ($ret, $tpl) = $module->_loadImageBlocks($template, $params);
+	    if (!$ret->isSuccess()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    // render and get the imageblock html
+	    list ($ret, $blockHtml) = $template->fetch(dirname(__FILE__) . '/' . $tpl);
+	    if (!$ret->isSuccess()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+      	    return array($ret->wrap(__FILE__, __LINE__), $blockHtml);
+	}
+	return array(GalleryStatus::success(), null);
+    } 
+
 }
 ?>
