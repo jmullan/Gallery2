@@ -19,24 +19,17 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-/*
-        colors:
-        x-light-blue: rgb(236,242,248)
-        light-blue: rgb(209,224,238)
-
-*/
-
 /*      re-define       */
 
 body {
-	font-family: Verdana, Arial, sans-serif;
+	font-family: "Lucida Grande", Verdana, Arial, sans-serif;
 	font-size: 62.5%;
 	color: #333;
 	background-color: #eee;
 	text-align: center;
 }
 
-h1, h2, h3, h4 {
+h1, h2, h3, h4, h5, h6 {
 	font-family: "Gill Sans", Verdana, Arial, sans-serif;
         margin: 0;
         padding: 0;
@@ -44,7 +37,16 @@ h1, h2, h3, h4 {
 
 p {
         font-size: 1.1em;
-        line-height: 1.3em;
+        line-height: 1.4em;
+        margin: 1.0em 0;
+}
+
+td {
+	font-size: small;
+}
+
+tt {
+        font-family: "Courier New", Courier, Monaco, monospaced;
 }
 
 a {
@@ -56,14 +58,6 @@ a:link, a:visited {
 }
 a:hover {
 	color: #fd6704;
-}
-
-td {
-	font-size: small;
-}
-
-tt {
-	font-family: courier-new, courier, monospace;
 }
 
 /*      layout  */
@@ -102,6 +96,7 @@ tt {
 #header img { margin-left: 18px; }
 
 #navbar {
+	font-family: Verdana, "Lucida Grande", Arial, sans-serif;
         width: 160px;
         float: left;
 	clear: both;
@@ -120,9 +115,9 @@ tt {
 }
 
 #navbar h2 {
-        font-size: 1.3em;
-        margin-left: 24px;
-        margin-bottom: 8px;
+        font-size: 1.4em;
+        margin-left: 20px;
+        margin-bottom: 0.5em;
 }
 
 #navbar ol {
@@ -131,24 +126,26 @@ tt {
         padding: 0 0 0 16px;
 }
 
+#navbar ul {
+        list-style-type: none;
+        margin: 16px 0 0 0;
+        padding: 0 0 0 16px;
+}
+
 #navbar li {
         display: block;
         border-bottom: 1px solid rgb(236,242,248);
-        margin: 0 0 0 -6px;
+        margin: 0 0 0 4px;
         padding: 8px 0px;
 }
 
-#navbar p {
-        margin: 20px 0 0 10px;
-        padding: 0;
-}
-
-#navbar .help {
-        background: #fff; 
-        color: red; 
+#navbar .helpBox {
+        font-weight: bold;
+        color: #eee; 
+        background: #ae0000; 
+        border: 1px solid #ae0000;
+        margin: 0 4px 0 0;
         padding: 2px 4px; 
-        border: 1px solid red; 
-        font-weight:bold;
 }
 
 #main {
@@ -158,7 +155,7 @@ tt {
         padding-right: 24px;
 }
 
-#main h1 { font-size: 1.3em; }
+#main h1 { font-size: 1.4em; }
 #main h2 { font-size: 1.2em; margin: 0 0 0.8em 0; }
 #main h3 { font-size: 1.2em; }
 
@@ -176,8 +173,6 @@ tt {
         margin-top: 0;
         padding: 8px 24px;
 }
-
-/*#box h2 { font-size: 1.2em; }*/
 
 /*      classes */
 
@@ -197,7 +192,10 @@ tt {
 }
 
 .success {
+        font-size: 1.2em;
+	font-weight: 900;
         color: #00ae00;
+        margin-right: -0.15em;
 }
 
 .go {
@@ -228,10 +226,9 @@ tt {
         margin-left: 3.0em;
  }
 
-
 .statusTable {
         width: 100%;
-        margin: 0;
+        margin: 0 0 0 -6px;
 }
 
 .statusTable h4 {
@@ -275,8 +272,9 @@ tt {
 }
 
 .nav_num {
-	color: #999;
- 	padding: 2px;
+	color: #555;
+	font-weight: 800;
+	margin: 0 6px 0 0;
 }
 
 .nav_arrow {
