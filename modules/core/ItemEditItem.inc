@@ -177,7 +177,7 @@ class ItemEditItemView extends GalleryView {
 
 	list ($ret, $rootAlbumId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	$can = array();
