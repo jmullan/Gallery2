@@ -820,8 +820,8 @@ class ConfirmImportController extends GalleryController {
 						if ($ret->isError() && ($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
 						    $commenterId = $guestUserId;
 						}
+						$commenterId = $commentG2User->getId();
 					    }
-					    $commenterId = $commentG2User->getId();
 					} else {
 					    $commenterId = $guestUserId;
 					}
@@ -865,7 +865,7 @@ class ConfirmImportController extends GalleryController {
 				//}
 				$status['addFromLocalServer'][] = array('fileName' => $filename,
 									'id' => $newItem->getId());
-				if ($albumNeedsThumbnail || $importAlbumItem->highlight == 1) {
+				if (FALSE && ($albumNeedsThumbnail || $importAlbumItem->highlight == 1)) {
 				    $toolkit = NULL;
 				    
 				    list ($ret, $toolkit, $outputMimeType) =
@@ -875,12 +875,8 @@ class ConfirmImportController extends GalleryController {
 				    }
 				    
 				    if (isset($toolkit)) {
-					$item->save();
-					$newItem->save();
-					#list ($ret, $success) = GalleryCoreApi::setThumbnailFromItem($item->getId(), $newItem->getId());
-					if (FALSE && $ret->isError()) {
-					    print '<h1>' . $item->getId() . ':' . $newItem->getId();
-					    print '<h2>' . $album['name'] . '</h2>';
+					list ($ret, $success) = GalleryCoreApi::setThumbnailFromItem($item->getId(), $newItem->getId());
+					if ($ret->isError()) {
 					    return array($ret->wrap(__FILE__, __LINE__), null);
 					}
 					$albumNeedsThumbnail = FALSE;
