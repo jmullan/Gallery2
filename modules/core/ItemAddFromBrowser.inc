@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -43,7 +43,7 @@ class ItemAddFromBrowser extends ItemAddPlugin {
 	$status = array();
 	$error = array();
 	if (isset($form['action']['addFromBrowser'])) {
-	    
+
 	    /* Upload any new files */
 	    for ($i = 1; $i <= $form['uploadBoxCount']; $i++) {
 		$newItem = null;
@@ -55,7 +55,7 @@ class ItemAddFromBrowser extends ItemAddPlugin {
 				  'tmp_name' => $form['tmp_name'][$i],
 				  'size' => $form['size'][$i],
 				  'caption' => $form['caption'][$i]);
-		    
+
 		    /* Get the mime type from the upload info. */
 		    $mimeType = $file['type'];
 
@@ -90,7 +90,7 @@ class ItemAddFromBrowser extends ItemAddPlugin {
 			$error = array_merge($error, $optionErrors);
 			$warnings = array_merge($warnings, $optionWarnings);
 		    }
-		    
+
 		    $status['addedFiles'][] = array('fileName' => $file['name'],
 						    'id' => $newItem->getId(),
 						    'warnings' => $warnings);
@@ -107,32 +107,34 @@ class ItemAddFromBrowser extends ItemAddPlugin {
     function loadTemplate(&$template, &$form, $item) {
 	global $gallery;
 
-	$fileUploadsBool = (bool) ini_get('file_uploads');
-	$postMaxSize = ini_get('post_max_size');
-	if (preg_match("/(\d+)M/", $postMaxSize, $matches)) {
-	    $postMaxSize = $matches[1] * 1024 * 1024;
+	$fileUploadsBool = GalleryUtilities::getPhpIniBool('file_uploads');
+	$totalUploadSize = ini_get('post_max_size');
+	if (preg_match("/(\d+)M/", $totalUploadSize, $matches)) {
+	    $totalUploadSize = $matches[1] * 1024 * 1024;
 	}
-	
-	$uploadMaxSize = ini_get('upload_max_filesize');
-	if (preg_match("/(\d+)M/", $uploadMaxSize, $matches)) {
-	    $uploadMaxSize = $matches[1] * 1024 * 1024;
+
+	$maxFileSize = ini_get('upload_max_filesize');
+	if (preg_match("/(\d+)M/", $maxFileSize, $matches)) {
+	    $maxFileSize = $matches[1] * 1024 * 1024;
 	}
-	$uploadMaxSize = min($postMaxSize, $uploadMaxSize);
+
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
-	
-	if ($uploadMaxSize >= 1024 * 1024) {
-	    $uploadMaxSize = $module->translate(array('one' => '%d megabyte',
-						      'many' => '%d megabytes',
-						      'count' => (int)($uploadMaxSize / (1024 * 1024)),
-						      'arg1' => (int)($uploadMaxSize / (1024 * 1024))));
-	} else if ($uploadMaxSize >= 1024) {
-	    $uploadMaxSize = $module->translate(array('one' => '%d kilobytes',
-						      'many' => '%d kilobytes',
-						      'count' => (int)($uploadMaxSize / (1024)),
-						      'arg1' => (int)($uploadMaxSize / (1024))));
+
+	foreach (array('totalUploadSize', 'maxFileSize') as $key) {
+	    if ($$key >= 1024 * 1024) {
+		$$key = $module->translate(array('one' => '%d megabyte',
+						 'many' => '%d megabytes',
+						 'count' => (int)($$key / (1024 * 1024)),
+						 'arg1' => (int)($$key / (1024 * 1024))));
+	    } else if ($$key >= 1024) {
+		$$key = $module->translate(array('one' => '%d kilobytes',
+						 'many' => '%d kilobytes',
+						 'count' => (int)($$key / (1024)),
+						 'arg1' => (int)($$key / (1024))));
+	    }
 	}
 
 	if ($form['formName'] != 'ItemAddFromBrowser') {
@@ -142,7 +144,8 @@ class ItemAddFromBrowser extends ItemAddPlugin {
 	}
 
 	$ItemAddFromBrowser = array();
-	$ItemAddFromBrowser['uploadMaxSize'] = $uploadMaxSize;
+	$ItemAddFromBrowser['totalUploadSize'] = $totalUploadSize;
+	$ItemAddFromBrowser['maxFileSize'] = $maxFileSize;
 	$ItemAddFromBrowser['uploadsPermitted'] = $fileUploadsBool;
 	$template->setVariable('ItemAddFromBrowser', $ItemAddFromBrowser);
 
@@ -154,7 +157,7 @@ class ItemAddFromBrowser extends ItemAddPlugin {
 	    $ItemAdmin['enctype'] = 'multipart/form-data';
 	    $template->setVariable('ItemAdmin', $ItemAdmin);
 	}
-	
+
 	return array(GalleryStatus::success(),
 		     'modules/core/templates/ItemAddFromBrowser.tpl',
 		     'modules_core');

@@ -16,7 +16,7 @@
   </p>
 
   <p class="giDescription">
-    {g->text text="<b>Note:</b> You can upload up to %s at one time.  If you want to upload more than that, you must upload the files separately, or use an upload format" arg1=$ItemAddFromBrowser.uploadMaxSize}
+    {g->text text="<b>Note:</b> You can upload up to %s at one time.  No individual file may be larger than %s.  If you want to upload more than that, you must upload the files separately, use a different upload format, or ask your system administrator to allow larger uploads." arg1=$ItemAddFromBrowser.totalUploadSize arg2=$ItemAddFromBrowser.maxFileSize}
   </p>
   {section name="uploadBoxes" loop=$form.uploadBoxCount}
   {assign var=iteration value=$smarty.section.uploadBoxes.iteration}
