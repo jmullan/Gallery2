@@ -1,3 +1,11 @@
+{if empty($SlideShow.itemList)}
+ {g->main}{g->pagebox}{g->element}
+  {g->text text="This album has no photos to show in a slideshow."}
+  {g->link arg1="view=core:ShowItem" arg2="itemId=`$SlideShow.item.id`"}
+   {g->text text="Back to Album View"}
+  {/g->link}
+ {/g->element}{/g->pagebox}{/g->main}
+{else}
 {foreach from=$SlideShow.itemList key=i item=it}
 <div style="visibility:hidden;position:absolute">
 {foreach from=$it.sources key=j item=source}
@@ -223,3 +231,4 @@ function tools_onoff() {
   document.images.slide.src =
     document.getElementById('item_{$SlideShow.start}_'+item_map[{$SlideShow.start}][iSize]).href;
 </script>
+{/if}
