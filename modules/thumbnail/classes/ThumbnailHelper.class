@@ -400,14 +400,22 @@ class ThumbnailHelper {
 	}
 	$derivative = array_shift($derivative);
 
+	if (GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
+	    list ($ret, $success) = GalleryCoreApi::guaranteeAlbumHasThumbnail($item->getId());
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    return GalleryStatus::success();
+	}
+
+	/* Make sure operations just contains thumbnail|{size} */
+	$operations = preg_replace('/^(?:.*;)?(thumbnail\|\d+)(?:;.*)?$/', '${1}',
+				   $derivative->getDerivativeOperations());
+
 	list ($ret, $source) = GalleryCoreApi::fetchPreferredSource($item);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
-	// Make sure operations just contains thumbnail|{size}
-	$operations = preg_replace('/^(?:.*;)?(thumbnail\|\d+)(?:;.*)?$/', '${1}',
-				   $derivative->getDerivativeOperations());
 
 	list ($ret, $operations, $outputMimeType) =
 	    GalleryCoreApi::makeSupportedViewableOperationSequence(
@@ -417,7 +425,7 @@ class ThumbnailHelper {
 	}
 
 	if (empty($operations)) {
-	    // Operations not supported.. remove the thumbnail
+	    /* Operations not supported.. remove the thumbnail */
 	    $ret = GalleryCoreApi::deleteEntityById($derivative->getId());
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
