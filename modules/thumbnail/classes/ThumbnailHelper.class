@@ -1,0 +1,119 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package Thumbnail
+ * @author Alan Harder <alan.harder@sun.com>
+ */
+
+/**
+ * A helper class for the Thumbnail module.
+ *
+ * @package Thumbnail
+ * @subpackage Classes
+ */
+class ThumbnailHelper {
+
+    /**
+     * Return a map of itemId => fileName
+     *
+     * You can specify how many items to list, and where the windows is in
+     * the list of all items.
+     *
+     * @param int [optional] the number of items desired
+     * @param int [optional] the start of the range
+     * @param string [optional] a substring to match
+     * @return array object GalleryStatus a status code
+     *               array of itemId=>fileName
+     * @static
+     */
+    function fetchThumbnails($count=null, $offset=null, $substring=null) {
+	global $gallery;
+
+	$data = array();
+	$query = '
+	SELECT
+	  [ThumbnailImage::id],
+	  [ThumbnailImage::fileName]
+	FROM
+	  [ThumbnailImage]
+	';
+
+	if (!empty($substring)) {
+	    $query .= '
+	WHERE
+	  [ThumbnailImage::fileName] LIKE ?
+	    ';
+	    $data[] = "%$substring%";
+	}
+
+	$query .= '
+	ORDER BY
+	  [ThumbnailImage::fileName] ASC
+	';
+
+	list ($ret, $searchResults) =
+	    $gallery->search($query, $data,
+			     array('limit' => array('count' => $count,
+						    'offset' => $offset)));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$items = array();
+	while ($result = $searchResults->nextResult()) {
+	    $items[$result[0]] = $result[1];
+	}
+
+	return array(GalleryStatus::success(), $items);
+    }
+
+    /**
+     * Get supported mime types
+     *
+     * @return array object GalleryStatus a status code
+     *               array of mimeType=>itemId
+     * @static
+     */
+    function fetchMimeTypeMap() {
+	global $gallery;
+	$query = '
+	SELECT
+	  [ThumbnailImage::id],
+	  [ThumbnailImage::itemMimeTypes]
+	FROM
+	  [ThumbnailImage]
+	';
+	list ($ret, $searchResults) = $gallery->search($query, array(), array());
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$data = array();
+	while ($result = $searchResults->nextResult()) {
+	    foreach (explode('|', $result[1]) as $mimeType) {
+		$data[$mimeType] = $result[0];
+	    }
+	}
+	return array(GalleryStatus::success(), $data);
+    }
+}
+?>
