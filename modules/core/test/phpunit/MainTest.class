@@ -40,24 +40,30 @@ class MainTest extends GalleryTestCase {
     }
 
     function setUp() {
-	global $gallery;
 	parent::setUp();
 
-	GalleryUtilities::putRequestVariable('view', 'maintest:FooView');
-	$_SERVER['REQUEST_URI'] = '/gallery2/phpunit_test.php?g2_view=maintest:FooView';
-	$_SERVER['HTTP_HOST'] = 'example.com';
-	$_SERVER['SERVER_PORT'] = 80;
-	$this->_urlGenerator = new GalleryUrlGenerator();
-	$this->_urlGenerator->init('phpunit_test.php');
-	$gallery->setUrlGenerator($this->_urlGenerator);
-
-	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryPluginHelper_medium.class');
-	GalleryPluginHelper_medium::setPluginInstance('module', 'maintest', new MainTestModule());
+	$this->_saveSession = $GLOBALS['gallery']->_session;
 
 	if (!defined('G2_EMBED')) {
 	    define('G2_EMBED', 1);
 	}
 	GalleryCoreApi::relativeRequireOnce('main.php');
+
+	GalleryUtilities::putRequestVariable('view', 'maintest:FooView');
+	$_SERVER['REQUEST_URI'] = '/gallery2/phpunit_test.php';
+	$_SERVER['HTTP_HOST'] = 'example.com';
+	$_SERVER['SERVER_PORT'] = 80;
+	$this->_urlGenerator = new GalleryUrlGenerator();
+	$this->_urlGenerator->init('phpunit_test.php');
+	$GLOBALS['gallery']->setUrlGenerator($this->_urlGenerator);
+	$GLOBALS['gallery']->_session = new GallerySession();
+    }
+
+    function tearDown() {
+	global $gallery;
+	$gallery->_session = $this->_saveSession;
+
+	parent::tearDown();
     }
 
     function testEmbedOnly() {
@@ -68,12 +74,4 @@ class MainTest extends GalleryTestCase {
 	$this->assertEquals(GALLERY_ERROR | ERROR_PERMISSION_DENIED, $ret->getErrorCode());
     }
 }
-
-class MainTestModule {
-    function isActive() {
-	return array(GalleryStatus::success(), true);
-    }
-}
-
-class FooViewView extends GalleryView { }
 ?>
