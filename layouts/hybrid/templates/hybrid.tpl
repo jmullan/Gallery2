@@ -15,7 +15,7 @@
 </div>
 
 <div id="imageview" class="gcBackground2">
-  <div id="imagearea" onclick="image_vis(0)"><div id="imagediv"></div></div>
+  <div id="imagearea"><div id="imagediv" onclick="image_vis(0)"></div></div>
   <div id="textdiv" class="gcBackground1 gcBorder2">
     <div id="tools_left">
       <img id="text_on" src="{$layout.layoutUrl}/images/up.png"

@@ -399,15 +399,18 @@ function popup_menu(event,i,ii) {
                         ');this.blur();return false">item details</a><br/>' : '';
   if (obj) links += obj.innerHTML;
   ui_sethtml('popup_links', links);
-  // IE: window.event,x/y,offsetX/Y,srcElement  Gecko: event,layerX/Y,target.x/y
-  if (app_is_ie) event = window.event;
+  if (!event) event = window.event;
   var pw = pop.offsetWidth, ph = pop.offsetHeight,
-      iw = event.target ? event.target.width : event.srcElement.width,
-      ix = event.target ? event.target.x : (event.x - event.offsetX + app_body.scrollLeft - 2),
-      iy = event.target ? event.target.y : (event.y - event.offsetY + app_body.scrollTop - 2),
-      my = app_wh + (app_is_ie ? app_body.scrollTop : window.scrollY) - ph;
+      iw = event.target ? event.target.width : event.srcElement.width, //Gecko+Opera : IE
+      ix = (event.target && event.target.x) ? event.target.x //Gecko
+	 : event.pageX ? (event.pageX - event.offsetX) //Opera
+	 : (event.x - event.offsetX + app_body.scrollLeft - 2), //IE
+      iy = (event.target && event.target.y) ? event.target.y //Gecko
+	 : event.pageY ? (event.pageY - event.offsetY) //Opera
+	 : (event.y - event.offsetY + app_body.scrollTop - 2), //IE
+      sy = (typeof(window.scrollY)=='number' ? window.scrollY : app_body.scrollTop); //Gecko:other
   pop.style.left = (ix + iw - pw) + 'px';
-  pop.style.top = min(iy, my) + 'px';
+  pop.style.top = min(iy, app_wh + sy - ph) + 'px';
   pop.style.visibility = 'visible';
 }
 function popup_info(i) {
