@@ -114,6 +114,20 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 			    $results);
     }
 
+    function testMissingInputs() {
+	GalleryUtilities::putRequestVariable('form[action][login]', 1);
+	GalleryUtilities::putRequestVariable('form[username]', '');
+	GalleryUtilities::putRequestVariable('form[password]', '');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core:UserAdmin',
+						      'subView' => 'core:UserLogin'),
+				  'status' => array(),
+				  'error' => array('form[error][username][missing]',
+						   'form[error][password][missing]')),
+			    $results);
+    }
+
     function testCancel() {
 	GalleryUtilities::putRequestVariable('form[action][cancel]', 1);
 

@@ -46,7 +46,14 @@ class UserLoginController extends GalleryController {
 	$error = array();
 	if (isset($form['action']['login'])) {
 
-	    if (!empty($form['password']) && !empty($form['username'])) {
+	    if (empty($form['username'])) {
+		$error[] = 'form[error][username][missing]';
+	    }
+	    if (empty($form['password'])) {
+		$error[] = 'form[error][password][missing]';
+	    }
+
+	    if (empty($error)) {
 		list ($ret, $user) = GalleryCoreApi::fetchUserByUsername($form['username']);
 		if ($ret->isError() && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
