@@ -95,7 +95,8 @@ class Php41CompatibilityTest extends CodeAuditTestCase {
 		    if (!isset($this->_exceptions[$keyword]) ||
 			!isset($this->_exceptions[$keyword][basename($fileName)])) {
 			$this->assert(false,
-				      sprintf('%s contains illegal keyword <b>%s</b> on line <b>%d</b>',
+				      sprintf('%s contains illegal keyword <b>%s</b> ' .
+					      'on line <b>%d</b>',
 					      basename($fileName), $keyword, $i+1));
 		    }
 		}
