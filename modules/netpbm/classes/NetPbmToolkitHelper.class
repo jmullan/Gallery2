@@ -66,8 +66,7 @@ class NetPbmToolkitHelper {
 	    }
 	}
 
-	list ($ret, $tests, $mimeTypes) =
-	    NetPbmToolkitHelper::testBinaries($netPbmPath, $paths);
+	list ($ret, $tests, $mimeTypes) = NetPbmToolkitHelper::testBinaries($netPbmPath, $paths);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -127,15 +126,17 @@ class NetPbmToolkitHelper {
     /**
      * Test if the given path has a working set of NetPbm binaries.
      *
-     * This is done by trying to run 'identify' on a sample image.
+     * This is done by calling all the binaries with the --version flag and
+     * making sure they run properly.
      *
      * @param string path to the NetPbm we are testing
      * @return array object GalleryStatus general status of tests
      *	       array ('name' => string: the name of the binary,
      *		      'success' => boolean: test successfull?
-     *		      'message' => string: the error message, in case of 
-     *				   IMAGEMAGIC_TEST_ERROR
+     *		      'message' => string: the error message
      *		     )
+     *         array hash map of mime types
+     *
      * @static
      */
     function testBinaries($netPbmPath, $paths) {
@@ -151,6 +152,7 @@ class NetPbmToolkitHelper {
 		|| ! $platform->is_dir($netPbmPath) ) {
 		return array(GalleryStatus::error(ERROR_BAD_PATH,
 						  __FILE__, __LINE__),
+			     null,
 			     null);
 	    }
 	}
@@ -158,7 +160,7 @@ class NetPbmToolkitHelper {
 	/* We need to translate some strings */
 	list($ret, $module) = $gallery->loadModule('netpbm');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	$binaries['giftopnm'] = array('image/gif');
@@ -191,8 +193,12 @@ class NetPbmToolkitHelper {
 			     'results' => $results);
 	}
 
-	$mimeTypes = array_flip($mimeTypes);
-
+	$tmp = array();
+	foreach (array_flip($mimeTypes) as $key => $value) {
+	    $tmp[] = $value;
+	}
+	$mimeTypes = $tmp;
+	
 	return array(GalleryStatus::success(), $tests, $mimeTypes);
     }
 }
