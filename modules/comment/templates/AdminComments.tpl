@@ -4,7 +4,9 @@
       
 	<tr>
 	  <td colspan="2" align="center">
-	    {galleryBiggerFont}{galleryText text="Comments Settings"}{/galleryBiggerFont}
+	    {galleryBiggerFontSize}
+	    {galleryText text="Comments Settings"}
+	    {/galleryBiggerFontSize}
 	  </td>
 	</tr>
 	

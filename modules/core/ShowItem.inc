@@ -33,9 +33,9 @@ class ShowItemView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$this->_initTemplate(dirname(__FILE__) . '/templates');
-	$this->_setTemplateVariable('item', $item->getMemberData());
-	$html = $this->_renderTemplate('core', 'ShowItemHead.tpl');
+	$template = $this->getTemplate();
+	$template->setVariable('item', $item->getMemberData());
+	$html = $template->render('ShowItemHead.tpl');
 	return array(GalleryStatus::success(), $html);
     }
 
@@ -82,6 +82,10 @@ class ShowItemView extends GalleryView {
 					      __FILE__, __LINE__), null);
 	}
 	$layout = new $layoutClassName();
+	$ret = $layout->init($layoutName);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 
 	/* Render and retrieve the body */
 	$urlParams['view'] = 'core:ShowItem';

@@ -22,18 +22,87 @@
 
 class GalleryTheme {
 
+    
+    /*
+     * ****************************************
+     *                 Members
+     * ****************************************
+     */
+
+    /**
+     * The template instance
+     *
+     * @var object GalleryTemplate $_template
+     * @access private
+     */
+    var $_template;
+
+    /*
+     * ****************************************
+     *                 Methods
+     * ****************************************
+     */
+
+    /**
+     * Initialize this instance to use the theme specified.
+     *
+     * @param themeName the name of a theme in the themes directory.
+     * @return object GalleryStatus a status code
+     */
+    function init($themeName) {
+	global $gallery;
+
+	/* If we don't have a theme name then use the default theme. */
+	if (empty($themeName)) {
+	    list ($ret, $themeName) =
+		$gallery->getModuleParameter('core', 'default.theme');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	$themeDir = $gallery->getConfig('code.gallery.themes') . $themeName . '/';
+	$templateDir = $themeDir . 'templates/';
+	$platform = $gallery->getPlatform();
+	if (!$platform->file_exists($templateDir)) {
+	    $gallery->debug("Missing theme template dir: $templateDir");
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	}
+
+	$themeData['dir'] = $themeDir;
+	$themeData['url'] = GalleryUtilities::convertPathToRelativeUrl($themeDir);
+	$this->_template = new GalleryTemplate('themes', $themeName, $templateDir);
+	$this->_template->setVariable('theme', $themeData);
+
+	return GalleryStatus::success();
+    }
+    
+    /**
+     * Get the configured GalleryTemplate instance
+     *
+     * @return object GalleryTemplate a template instance
+     */
+    function &getTemplate() {
+	return $this->_template;
+    }
+
     /**
      * Return a themed <input> tag
      *
      * @param array key => value attributes
      * @return HTML content
      */
-    function input($params, $content) {
-	if ($content) {
-	    $params['value'] = $content;
+    function input($params, $content=null) {
+	$params['value'] = $content;
+
+	/* Translate the form variable name */
+	$params['name'] = GALLERY_FORM_VARIABLE_PREFIX . $params['name'];
+
+	if (empty($params['type'])) {
+	    $params['type'] = 'text';
 	}
 
-	return $this->_createFormTag('input', $params);
+	return $this->_renderTemplate('input', $params);
     }
 
     /**
@@ -44,9 +113,7 @@ class GalleryTheme {
      * @return HTML content
      */
     function select($params, $content) {
-	return $this->_createFormTag('select', $params) .
-	    $content .
-	    '</select>';
+	return $this->_renderTemplate('select', $params, $content);
     }
     
     /**
@@ -57,9 +124,7 @@ class GalleryTheme {
      * @return HTML content
      */
     function textarea($params, $content) {
-	return $this->_createFormTag('textarea', $params) .
-	    $content .
-	    '</textarea>';
+	return $this->_renderTemplate('textarea', $params, $content);
     }
 
     /**
@@ -69,7 +134,7 @@ class GalleryTheme {
      * @return HTML content
      */
     function style($params) {
-	return "";
+	return $this->_renderTemplate('style', $params);
     }
 
     /**
@@ -79,8 +144,8 @@ class GalleryTheme {
      * @param string content to go inside the block
      * @return HTML content
      */
-    function smallestFont($params, $content) {
-	return "<font size=\"-3\">$content</font>";
+    function smallestFontSize($params, $content) {
+	return $this->_renderTemplate('smallestFontSize', $params, $content);
     }
 
     /**
@@ -90,8 +155,8 @@ class GalleryTheme {
      * @param string content to go inside the block
      * @return HTML content
      */
-    function smallerFont($params, $content) {
-	return "<font size=\"-2\">$content</font>";
+    function smallerFontSize($params, $content) {
+	return $this->_renderTemplate('smallerFontSize', $params, $content);
     }
 
     /**
@@ -101,8 +166,8 @@ class GalleryTheme {
      * @param string content to go inside the block
      * @return HTML content
      */
-    function smallFont($params, $content) {
-	return "<font size=\"-1\">$content</font>";
+    function smallFontSize($params, $content) {
+	return $this->_renderTemplate('smallFontSize', $params, $content);
     }
 
     /**
@@ -112,8 +177,8 @@ class GalleryTheme {
      * @param string content to go inside the block
      * @return HTML content
      */
-    function bigFont($params, $content) {
-	return "<font size=\"+1\">$content</font>";
+    function bigFontSize($params, $content) {
+	return $this->_renderTemplate('bigFontSize', $params, $content);
     }
 
     /**
@@ -123,8 +188,8 @@ class GalleryTheme {
      * @param string content to go inside the block
      * @return HTML content
      */
-    function biggerFont($params, $content) {
-	return "<font size=\"+2\">$content</font>";
+    function biggerFontSize($params, $content) {
+	return $this->_renderTemplate('biggerFontSize', $params, $content);
     }
 
     /**
@@ -134,8 +199,8 @@ class GalleryTheme {
      * @param string content to go inside the block
      * @return HTML content
      */
-    function biggestFont($params, $content) {
-	return "<font size=\"+3\">$content</font>";
+    function biggestFontSize($params, $content) {
+	return $this->_renderTemplate('biggestFontSize', $params, $content);
     }
 
     /**
@@ -146,7 +211,7 @@ class GalleryTheme {
      * @return HTML content
      */
     function successFontColor($params, $content) {
-	return "<font color=\"green\">$content</font>";
+	return $this->_renderTemplate('successFontColor', $params, $content);
     }
 
     /**
@@ -157,7 +222,7 @@ class GalleryTheme {
      * @return HTML content
      */
     function warningFontColor($params, $content) {
-	return "<font color=\"orange\">$content</font>";
+	return $this->_renderTemplate('warningFontColor', $params, $content);
     }
 
     /**
@@ -168,29 +233,7 @@ class GalleryTheme {
      * @return HTML content
      */
     function errorFontColor($params, $content) {
-	return "<font color=\"red\">$content</font>";
-    }
-
-    /**
-     * Return the given content inside a highlight box
-     *
-     * @param array key => value attributes
-     * @param string content to go inside the block
-     * @return HTML content
-     */
-    function highlight1($params, $content) {
-	return $content;
-    }
-
-    /**
-     * Return the given content inside a highlight box
-     *
-     * @param array key => value attributes
-     * @param string content to go inside the block
-     * @return HTML content
-     */
-    function highlight2($params, $content) {
-	return $content;
+	return $this->_renderTemplate('errorFontColor', $params, $content);
     }
 
     /**
@@ -201,7 +244,7 @@ class GalleryTheme {
      * @return HTML content
      */
     function thinFrame($params, $content) {
-	return $content;
+	return $this->_renderTemplate('thinFrame', $params, $content);
     }
 
     /**
@@ -212,7 +255,7 @@ class GalleryTheme {
      * @return HTML content
      */
     function lightFrame($params, $content) {
-	return $content;
+	return $this->_renderTemplate('lightFrame', $params, $content);
     }
 
     /**
@@ -223,7 +266,7 @@ class GalleryTheme {
      * @return HTML content
      */
     function heavyFrame($params, $content) {
-	return $content;
+	return $this->_renderTemplate('heavyFrame', $params, $content);
     }
 
     /**
@@ -234,60 +277,20 @@ class GalleryTheme {
      * @return HTML content
      */
     function threeDFrame($params, $content) {
-	return $content;
+	return $this->_renderTemplate('threeDFrame', $params, $content);
     }
 
     /**
-     * Create a tag for use inside a form.
+     * Render the given template
      *
-     * Put all attributes into the tag as key => value pairs
-     * Prefix the tag's name attribute with our form variable prefix
-     * Force the style of the tag to be "gallery"
-     *
-     * @param string the type of tag (eg, "input", "select")
-     * @param array key => value attributes
-     * @return HTML content
-     * @access private
+     * @param templateName the template file name
+     * @param params array template data
+     * @param content string template data
      */
-    function _createFormTag($tag, $params) {
-	global $gallery;
-	
-	/* Translate the form variable name */
-	if (!empty($params['name'])) {
-	    $params['name'] = GALLERY_FORM_VARIABLE_PREFIX . $params['name'];
-	}
-
-	/* Force the style class */
-	if ($tag == 'input' && !empty($params['type'])) {
-	    $params['class'] = 'gallery-' . $params['type'];
-	} else {
-	    $params['class'] = 'gallery';
-	}
-
-	/* Build our tag */
-	$result = "<$tag";
-	foreach ($params as $key => $value) {
-
-	    /*
-	     * For checkboxes and radio buttons, any non-empty value
-	     * means that it's selected.
-	     */
-	    if ($key == 'value' &&
-		    ($params['type'] == 'checkbox' ||
-		     $params['type'] == 'radio')) {
-
-		if (!empty($value)) {
-		    $result .= ' CHECKED';
-		}
-		continue;
-	    }
-	    
-	    $value = trim($value);
-	    $result .= " $key=\"$value\"";
-	}
-	$result .= ">";
-
-	return $result;
+    function _renderTemplate($templateName, $params, $content=null) {
+	$template = $this->getTemplate();
+	$template->setVariable('params', $params);
+	$template->setVariable('content', $content);
+	return $template->render($templateName . '.tpl');
     }
-    
 }

@@ -3,16 +3,16 @@
 
     <tr>
       <td colspan="2" align="center">
-	{galleryBiggerFont}
+	{galleryBiggerFontSize}
 	{galleryText text="User Management"}
-	{/galleryBiggerFont}
+	{/galleryBiggerFontSize}
 	<br>
-	{galleryBigFont}
+	{galleryBigFontSize}
 	{galleryText one="There is %d user in the system." 
 	             many="There are %d total users in the system." 
 	             count=$totalUserCount
 	             arg1=$totalUserCount}
-	{/galleryBigFont}
+	{/galleryBigFontSize}
       </td>
     </tr>
 

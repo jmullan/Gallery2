@@ -194,12 +194,12 @@ class AdminEditUserView extends GalleryView {
 	}
 
 	/* Render the HTML body */
-	$this->_initTemplate(dirname(__FILE__) . '/templates');
-	$this->_setTemplateVariable('form', $form);
-	$this->_setTemplateVariable('isAnonymous', $isAnonymous);
-	$this->_setTemplateVariable('languageList', $languageList);
-	$this->_setTemplateVariable('controller', 'core:AdminEditUser');
-	$html = $this->_renderTemplate('core', 'AdminEditUser.tpl');
+	$template = $this->getTemplate();
+	$template->setVariable('form', $form);
+	$template->setVariable('isAnonymous', $isAnonymous);
+	$template->setVariable('languageList', $languageList);
+	$template->setVariable('controller', 'core:AdminEditUser');
+	$html = $template->render('AdminEditUser.tpl');
 
 	return array(GalleryStatus::success(), $html);
     }

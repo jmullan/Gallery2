@@ -135,13 +135,13 @@ class AdminDeleteUserView extends GalleryView {
 	$isSelf = ($userid == $gallery->getActiveUserId());
 
 	/* Render the HTML body */
-	$this->_initTemplate(dirname(__FILE__) . '/templates');
-	$this->_setTemplateVariable('userid', $userid);
-	$this->_setTemplateVariable('username', $user->getUserName());
-	$this->_setTemplateVariable('isSelf', $isSelf);
-	$this->_setTemplateVariable('isAnonymous', $isAnonymous);
-	$this->_setTemplateVariable('controller', 'core:AdminDeleteUser');
-	$html = $this->_renderTemplate('core', 'AdminDeleteUser.tpl');
+	$template = $this->getTemplate();
+	$template->setVariable('userid', $userid);
+	$template->setVariable('username', $user->getUserName());
+	$template->setVariable('isSelf', $isSelf);
+	$template->setVariable('isAnonymous', $isAnonymous);
+	$template->setVariable('controller', 'core:AdminDeleteUser');
+	$html = $template->render('AdminDeleteUser.tpl');
 
 	return array(GalleryStatus::success(), $html);
     }

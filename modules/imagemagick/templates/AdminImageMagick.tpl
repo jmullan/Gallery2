@@ -10,7 +10,9 @@
 
 	<tr>
 	  <td colspan="2" align="center">
-	    {galleryBiggerFont} {galleryText text="ImageMagick Settings"} {/galleryBiggerFont}
+	    {galleryBiggerFontSize}
+	    {galleryText text="ImageMagick Settings"}
+	    {/galleryBiggerFontSize}
 	  </td>
 	</tr>
 
@@ -22,7 +24,9 @@
 
 	<tr>
 	  <td colspan="2">
-	    {galleryBigFont} {galleryText text="Defaults"} {/galleryBigFont}
+	    {galleryBigFontSize}
+	    {galleryText text="Defaults"}
+	    {/galleryBigFontSize}
 	  </td>
 	</tr>
 
@@ -82,7 +86,9 @@
 	<table width="50%" cellpadding="0" cellspacing="0" border="1">
 	    <tr>
 	      <td colspan="2" align="center">
-		{galleryBigFont} {galleryText text="ImageMagick binary test results"} {/galleryBigFont}
+		{galleryBigFontSize}
+		{galleryText text="ImageMagick binary test results"}
+		{/galleryBigFontSize}
 	      </td>
 	    </tr>
 	    <tr>

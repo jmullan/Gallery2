@@ -36,9 +36,9 @@ class AdminEditUserConfirmationView extends GalleryView {
 	$username = GalleryUtilities::getRequestVariables('username');
 
 	/* Render the HTML body */
-	$this->_initTemplate(dirname(__FILE__) . '/templates');
-	$this->_setTemplateVariable('username', $username);
-	$html = $this->_renderTemplate('core', 'AdminEditUserConfirmation.tpl');
+	$template = $this->getTemplate();
+	$template->setVariable('username', $username);
+	$html = $template->render('AdminEditUserConfirmation.tpl');
 
 	return array(GalleryStatus::success(), $html);
     }

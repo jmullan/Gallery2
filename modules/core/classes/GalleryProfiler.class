@@ -88,7 +88,7 @@ class GalleryProfiler {
 	if (!$gallery->isProfiling()) {
 	    return;
 	}
-	    
+
 	/* Delegate to the singleton */
 	if (empty($this) || get_class($this) != 'galleryprofiler') {
 	    $galleryProfiler =& GalleryProfiler::_singleton();
@@ -103,7 +103,9 @@ class GalleryProfiler {
 	    $this->_profile = array();
 	}
 	
-	$this->_profile[$key][] = array('start', $start);
+	$this->_profile[] = array('type' => 'start',
+				  'marker' => $key,
+				  'eventTime' => $start);
     }
 
     /**
@@ -117,14 +119,16 @@ class GalleryProfiler {
 	if (!$gallery->isProfiling()) {
 	    return;
 	}
-	    
+
 	/* Delegate to the singleton */
 	if (empty($this) || get_class($this) != 'galleryprofiler') {
 	    $galleryProfiler =& GalleryProfiler::_singleton();
 	    return $galleryProfiler->stop($key);
 	}
 
-	$this->_profile[$key][] = array('stop', microtime());
+	$this->_profile[] = array('type' => 'stop',
+				  'marker' => $key,
+				  'eventTime' => microtime());
     }
 
     /**
@@ -146,64 +150,111 @@ class GalleryProfiler {
 	    return $galleryProfiler->getProfile();
 	}
 
-	$results = array();
-	foreach ($this->_profile as $key => $dataSet) {
-	    $error = null;
-	    $count = sizeof($dataSet);
-	    if ($count % 2 != 0) {
-		$error = 'Unmatched start/stop ($count)';
-	    } else {
-		$count /= 2;
-		$total = 0;
-		$max = null;
-		$min = null;
-		for ($i = 0; $i < $count; $i += 2) {
-		    if ($dataSet[$i][0] == 'start' && $dataSet[$i+1][0] == 'stop') {
-			list ($startMicro, $startSecs) = explode(' ', $dataSet[$i][1]);
-			list ($stopMicro, $stopSecs) = explode(' ', $dataSet[$i+1][1]);
-			$elapsed = ($stopSecs - $startSecs) + ($stopMicro - $startMicro);
-			$total += $elapsed;
-			if ($max === null || $elapsed > $max) {
-			    $max = $elapsed;
-			}
-			if ($min === null || $elapsed < $min) {
-			    $min = $elapsed;
-			}
-		    } else {
-			$error = 'Unmatched start/stop';
-			break;
-		    }
+	/* The entries may not be in time order.  Sort them now. */
+	usort($this->_profile, array('GalleryProfiler', 'sortByEventTime'));
+
+	/*
+	 * Traverse the event stack and calculate how much time we spend in
+	 * each function that we're profiling.  Track also how much time we
+	 * spend in sub functions and calculate the "internal" and "external"
+	 * time for each function.
+	 */
+	$eventStack = array();
+	$carryoverStack = array();
+	$collated = array();
+	$error = null;
+
+	foreach ($this->_profile as $entry) {
+	    if ($entry['type'] == 'start') {
+		array_push($eventStack, $entry);
+		array_push($carryoverStack, array('elapsed' => 0.0,
+						  'markers' => array()));
+	    }
+
+	    if ($entry['type'] == 'stop') {
+		$stop = $entry;
+		$start = array_pop($eventStack);
+		$carryover = array_pop($carryoverStack);
+
+		if ($start == null) {
+		    $error = "Stack underflow! ($stop[marker])";
+		    break;
 		}
 
-		if (!empty($error)) {
-		    $results[] = array('name' => $key,
-				       'error' => $error);
-		} else {
-		    $precision = 5;
-		    $results[] = array('name' => $key,
-				       'count' => $count,
-				       'total' => round($total, $precision),
-				       'max' => round($max, $precision),
-				       'min' => round($min, $precision),
-				       'average' => round($total / $count, $precision));
+		if ($start['marker'] != $stop['marker']) {
+		    $error = "Stack mismatch! ($start[marker] != $stop[marker])";
+		    break;
+		}
+		
+		if ($start['type'] != 'start') {
+		    $error = "Stack mismatch! ($start[marker]: $start[type] != start)";
+		    break;
+		}
+		
+		list ($startMicro, $startSecs) = explode(' ', $start['eventTime']);
+		list ($stopMicro, $stopSecs) = explode(' ', $stop['eventTime']);
+		$elapsed = ($stopSecs - $startSecs) + ($stopMicro - $startMicro);
+
+		$collated[$start['marker']][] = array('internal' => $elapsed - $carryover['elapsed'],
+						      'external' => $carryover);
+
+		// Increment parent's carryover
+		if (sizeof($carryoverStack) > 0) {
+		    $top = array_pop($carryoverStack);
+		    $top['elapsed'] += $elapsed;
+		    $top['markers'][] = array('elapsed' => $elapsed,
+					      'marker' => $start['marker']);
+		    array_push($carryoverStack, $top);
 		}
 	    }
 	}
 
-	usort($results, array('GalleryProfiler', 'sortByTotal'));
+	if (empty($error) && sizeof($eventStack) > 0) {
+	    $error = 'Elements left on the stack: ' . sizeof($eventStack);
+	}
+
+	if ($error) {
+	    $results[] = array('name' => 'GalleryProfiler',
+			       'error' => $error);
+	} else {
+	    $precision = 5;
+
+	    /*
+	     * Go through our collated data and build a report for each
+	     * individual marker.
+	     */
+	    foreach ($collated as $marker => $calls) {
+		$internal['total'] = 0.0;
+		$internal['max'] = 0.0;
+		$external['total'] = 0.0;
+		$external['max'] = 0.0;
+		$external['calls'] = array();
+		foreach ($calls as $call) {
+		    $internal['total'] += $call['internal'];
+		    $internal['max'] = max($internal['max'], $call['internal']);
+		    $external['total'] += $call['external']['elapsed'];
+		    $external['max'] = max($external['max'], $call['external']['elapsed']);
+		    $external['calls'] = array_merge($external['calls'], $call['external']['markers']);
+		}
+		$internal['average'] = ($internal['total'] / sizeof($calls));
+		$external['average'] = ($external['total'] / sizeof($calls));
+		
+		foreach (array('average', 'total', 'max') as $key) {
+		    $internal[$key] = round($internal[$key], $precision);
+		    $external[$key] = round($external[$key], $precision);
+		}
+		
+		$results[] = array('name' => $marker,
+				   'count' => sizeof($calls),
+				   'total' => $internal['total'] + $external['total'],
+				   'internal' => $internal,
+				   'external' => $external);
+	    }
+	}
+			     
+	usort($results, array('GalleryProfiler', 'sortByInternalTotal'));
 
 	return $results;
-    }
-
-    /**
-     * Sort profile entries by their averages
-     *
-     * @param array('average' => ###)
-     * @param array('average' => ###)
-     * @return bool
-     */
-    function sortByAverage($cmpA, $cmpB) {
-	return ($cmpA['average'] <= $cmpB['average']);
     }
 
     /**
@@ -211,10 +262,49 @@ class GalleryProfiler {
      *
      * @param array('total' => ###)
      * @param array('total' => ###)
-     * @return bool
+     * @return -1, 0, or 1
      */
-    function sortByTotal($cmpA, $cmpB) {
-	return ($cmpA['total'] <= $cmpB['total']);
+    function sortByInternalTotal($cmpA, $cmpB) {
+	if ($cmpA['internal']['total'] == $cmpB['internal']['total']) {
+	    return 0;
+	}
+
+	if ($cmpA['internal']['total'] > $cmpB['internal']['total']) {
+	    return -1;
+	} else {
+	    return 1;
+	}
+    }
+
+    /**
+     * Sort profile entries by their event times
+     *
+     * @param cmpA array('eventTime' => "0.### ####")
+     * @param cmpB array('eventTime' => "0.### ####")
+     * @return -1, 0, or 1
+     */
+    function sortByEventTime($cmpA, $cmpB) {
+
+	$cmpA = explode(' ', $cmpA['eventTime']);
+	$cmpB = explode(' ', $cmpB['eventTime']);
+
+	if ($cmpA[1] < $cmpB[1]) {
+	    return -1;
+	}
+
+	if ($cmpA[1] > $cmpB[1]) {
+	    return 1;
+	}
+
+	if ($cmpA[0] < $cmpB[0]) {
+	    return -1;
+	}
+	
+	if ($cmpA[0] > $cmpB[0]) {
+	    return 1;
+	}
+
+	return 0;
     }
 }
 ?>

@@ -14,16 +14,16 @@
       {if $thumbnail.height} height="{$thumbnail.height}" {/if}
       >
       {else}
-      {galleryBigFont}
+      {galleryBigFontSize}
       {galleryText text="There is no thumbnail for this item"}
-      {/galleryBigFont}
+      {/galleryBigFontSize}
       {/if}
 
       <br>
 
-      {galleryBiggerFont}
+      {galleryBiggerFontSize}
       {galleryText text="Delete this comment?"}
-      {/galleryBiggerFont}
+      {/galleryBiggerFontSize}
 
       <br>
 

@@ -4,9 +4,9 @@
     <table border="0" cellspacing="0" cellpadding="0">
 	<tr>
 	  <td align="center">
-	    {galleryBiggerFont}
+	    {galleryBiggerFontSize}
 	    {galleryText text="Item Permissions"}
-	    {/galleryBiggerFont}
+	    {/galleryBiggerFontSize}
 	  </td>
 	</tr>
 
@@ -24,9 +24,9 @@
 
 	<tr>
 	  <td>
-	    {galleryBigFont}
+	    {galleryBigFontSize}
 	    {galleryText text="Owner"}
-	    {/galleryBigFont}
+	    {/galleryBigFontSize}
 	  </td>
 	</tr>
 
@@ -85,9 +85,9 @@
 
 	<tr>
 	  <td>
-	    {galleryBigFont}
+	    {galleryBigFontSize}
 	    {galleryText text="Group Permissions"}
-	    {/galleryBigFont}
+	    {/galleryBigFontSize}
 	  </td>
 	</tr>
 
@@ -185,9 +185,9 @@
 
 	<tr>
 	  <td>
-	    {galleryBigFont}
+	    {galleryBigFontSize}
 	    {galleryText text="User Permissions"}
-	    {/galleryBigFont}
+	    {/galleryBigFontSize}
 	  </td>
 	</tr>
 

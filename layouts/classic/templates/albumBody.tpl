@@ -91,12 +91,12 @@
 
 		{if !empty($child.childCount)}
 		<br>
-		{gallerySmallerFont}
+		{gallerySmallerFontSize}
 		{galleryText one="This album contains %d item"
                              many="This album contains %d items"
                              count=$child.childCount
                              arg1=$child.childCount}
-		{/gallerySmallerFont}
+		{/gallerySmallerFontSize}
 		{else}
 		&nbsp
 		{/if}

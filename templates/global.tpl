@@ -1,14 +1,14 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
   <head>
-    {if !empty($master.error)}
-    <title>{galleryText text="Error"}</title>
-    {else}
-    {$master.view.head}
-    {/if}
+      {if !empty($master.error)}
+      <title>{galleryText text="Error"}</title>
+      {else}
+      {$master.view.head}
+      {/if}
   </head>
   <body>
-	
+    
     {if !empty($master.error)}
     {$master.error}
     {else}
@@ -37,51 +37,72 @@
     <center>
       <table border="1">
 	  <tr>
-	    <td colspan="6">
-	      {galleryBigFont}
+	    <td colspan="8">
+	      {galleryBigFontSize}
 	      {galleryText text="Profiling"}
-	      {/galleryBigFont}
+	      {/galleryBigFontSize}
 	    </td>
 	  </tr>
 
 	  <tr>
-	    <th> {galleryText text="Function"}
-	    <th> {galleryText text="Average"}
-	    <th> {galleryText text="Max"}
-	    <th> {galleryText text="Min"}
+	    <th rowspan=2> {galleryText text="Function"}
+	    <th colspan=2> {galleryText text="Combined"}
+	    <th colspan=3> {galleryText text="Internal"}
+	    <th colspan=3> {galleryText text="External"}
+	  </tr>
+	  <tr>
+	    <th> {galleryText text="Calls"}
 	    <th> {galleryText text="Total"}
-	    <th> {galleryText text="Count"}
+	    <th> &lt;{galleryText text="Total"}&gt;
+	    <th> {galleryText text="Max"}
+	    <th> {galleryText text="Average"}
+	    <th> {galleryText text="Total"}
+	    <th> {galleryText text="Max"}
+	    <th> {galleryText text="Average"}
 	  </tr>
 
-	{foreach from=$master.profile item=profileEntry}
-	  <tr>
-	    <td>
-	      {$profileEntry.name}
-	    </td>
-	    {if (isset($profileEntry.error))} 
-	    <td colspan="3">
-	      {$profileEntry.error}
-	    </td>
-            {else}
-	    <td>
-	      {$profileEntry.average}
-	    </td>
-	    <td>
-	      {$profileEntry.max}
-	    </td>
-	    <td>
-	      {$profileEntry.min}
-	    </td>
-	    <td>
-	      {$profileEntry.total}
-	    </td>
-	    <td>
-	      {$profileEntry.count}
-	    </td>
-            {/if}
-          </tr>
-        {/foreach}
-      </table>
+      {foreach from=$master.profile item=profileEntry}
+      <tr>
+	<td>
+	  {$profileEntry.name}
+	</td>
+      {if (isset($profileEntry.error))} 
+      <td colspan="7">
+	{galleryText text="Error:"} {$profileEntry.error}
+      </td>
+      {else}
+      <td>
+	{$profileEntry.count}
+      </td>
+      <td>
+	{$profileEntry.total}
+      </td>
+      <td>
+	{$profileEntry.internal.total}
+      </td>
+      <td>
+	{$profileEntry.internal.max}
+      </td>
+      <td>
+	{$profileEntry.internal.average}
+      </td>
+      <td>
+	{$profileEntry.external.total}
+	<!-- External call report for {$profileEntry.name} -->
+	{foreach from=$profileEntry.external.calls item=call}
+	<!-- Call: {$call.elapsed} {$call.marker} -->
+	{/foreach}
+      </td>
+      <td>
+	{$profileEntry.external.max}
+      </td>
+      <td>
+	{$profileEntry.external.average}
+      </td>
+      {/if}
+    </tr>
+      {/foreach}
+    </table>
     </center>
     {/if}
 
@@ -91,7 +112,7 @@
 
     <a href="http://gallery.sourceforge.net">
       [{galleryText text="Powered by Gallery %s"
-                    arg1=$gallery.version}]
+      arg1=$gallery.version}]
     </a>
     
   </body>

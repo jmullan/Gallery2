@@ -41,9 +41,9 @@ class ShowCommentsView extends GalleryView {
 	}
 	
 	/* Render the HTML head */
-	$this->_initTemplate(dirname(__FILE__) . '/templates');
-	$this->_setTemplateVariable('item', $item->getMemberData());
-	$html = $this->_renderTemplate('comment', 'ShowCommentsHead.tpl');
+	$template = $this->getTemplate();
+	$template->setVariable('item', $item->getMemberData());
+	$html = $template->render('ShowCommentsHead.tpl');
 	
 	return array(GalleryStatus::success(), $html);
     }
@@ -99,10 +99,10 @@ class ShowCommentsView extends GalleryView {
 	}
 
 	/* Render the HTML body */
-	$this->_initTemplate(dirname(__FILE__) . '/templates');
+	$template = $this->getTemplate();
 
 	if (!empty($thumbnail)) {
-	    $this->_setTemplateVariable('thumbnail', $thumbnail->getMemberData());
+	    $template->setVariable('thumbnail', $thumbnail->getMemberData());
 	}
 	
 	$return = GalleryUtilities::getFormVariables('return.');
@@ -128,11 +128,11 @@ class ShowCommentsView extends GalleryView {
 	    }
 	}
 
-	$this->_setTemplateVariable('comments', $commentData);
-	$this->_setTemplateVariable('can', $can);
-	$this->_setTemplateVariable('return', $return);
-	$this->_setTemplateVariable('item', $item->getMemberData());
-	$html = $this->_renderTemplate('comment', 'ShowComments.tpl');
+	$template->setVariable('comments', $commentData);
+	$template->setVariable('can', $can);
+	$template->setVariable('return', $return);
+	$template->setVariable('item', $item->getMemberData());
+	$html = $template->render('ShowComments.tpl');
 	
 	return array(GalleryStatus::success(), $html);
     }

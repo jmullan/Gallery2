@@ -171,11 +171,11 @@ class AdminCreateUserView extends GalleryView {
 	}
 
 	/* Render the HTML body */
-	$this->_initTemplate(dirname(__FILE__) . '/templates');
-	$this->_setTemplateVariable('form', $form);
-	$this->_setTemplateVariable('languageList', $languageList);
-	$this->_setTemplateVariable('controller', 'core:AdminCreateUser');
-	$html = $this->_renderTemplate('core', 'AdminCreateUser.tpl');
+	$template = $this->getTemplate();
+	$template->setVariable('form', $form);
+	$template->setVariable('languageList', $languageList);
+	$template->setVariable('controller', 'core:AdminCreateUser');
+	$html = $template->render('AdminCreateUser.tpl');
 
 	return array(GalleryStatus::success(), $html);
     }

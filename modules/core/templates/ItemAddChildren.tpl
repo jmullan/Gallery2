@@ -5,9 +5,9 @@
 	<tr>
 	  <td>
 	    <center>
-	      {galleryBiggerFont}
+	      {galleryBiggerFontSize}
 	      {galleryText text="Add Items to this Album"}
-	      {/galleryBiggerFont}
+	      {/galleryBiggerFontSize}
 	    </center>
 	    <br>
 	    {galleryText text="Gallery can handle files of any format.  However, it can only create automatic resizes and thumbnails for certain types of files."}
@@ -22,9 +22,9 @@
 
 	<tr>
 	  <td>
-	  {galleryBigFont}
+	  {galleryBigFontSize}
 	  {galleryText text="Add Files From Your Computer"}
-	  {/galleryBigFont}
+	  {/galleryBigFontSize}
 	  <br>
 	  {galleryText one="Upload a file directly from your computer."
 	               many="Upload up to %d files directly from your computer."
@@ -90,9 +90,9 @@
 
 	<tr>
 	  <td>
-	  {galleryBigFont}
+	  {galleryBigFontSize}
 	  {galleryText text="Add From Your Server"}
-	  {/galleryBigFont}
+	  {/galleryBigFontSize}
 	  <br>
 	  {galleryText text="Not implemented yet"}
 	  </td>
@@ -106,9 +106,9 @@
 
 	<tr>
 	  <td>
-	  {galleryBigFont}
+	  {galleryBigFontSize}
 	  {galleryText text="Add From a Website"}
-	  {/galleryBigFont}
+	  {/galleryBigFontSize}
 	  <br>
 	  {galleryText text="Not implemented yet"}
 	  </td>

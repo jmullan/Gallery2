@@ -201,10 +201,10 @@ class AdminModulesView extends GalleryView {
 	}
 
 	/* Render the HTML body */
-	$this->_initTemplate(dirname(__FILE__) . '/templates');
-	$this->_setTemplateVariable('modules', $modules);
-	$this->_setTemplateVariable('controller', 'core:AdminModules');
-	$html = $this->_renderTemplate('core', 'AdminModules.tpl');
+	$template = $this->getTemplate();
+	$template->setVariable('modules', $modules);
+	$template->setVariable('controller', 'core:AdminModules');
+	$html = $template->render('AdminModules.tpl');
 	
 	return array(GalleryStatus::success(), $html);
     }

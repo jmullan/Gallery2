@@ -4,9 +4,9 @@
 
     <tr>
       <td align="center" colspan="2"}
-	{galleryBigFont}
+	{galleryBigFontSize}
 	{galleryText text="Create a new user"}
-	{/galleryBigFont}
+	{/galleryBigFontSize}
       </td>
     </tr>
 

@@ -147,14 +147,6 @@ class Gallery {
     var $_session;
 
     /**
-     * A pointer to the Smarty template engine
-     *
-     * @var object Smarty $_smarty
-     * @access private
-     */
-    var $_smarty;
-    
-    /**
      * The backend persistent store for the Gallery class
      *
      * @var object GalleryStorage $_storage
@@ -849,6 +841,8 @@ class Gallery {
      *               object GalleryStorage a storage instance
      */
     function getUninitializedStorage() {
+	GalleryProfiler::start('Gallery::getUninitializedStorage');
+	
 	$type = $this->getConfig('storage.type');
 	$config = $this->getConfig('storage.config');
 	
@@ -862,6 +856,7 @@ class Gallery {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	GalleryProfiler::stop('Gallery::getUninitializedStorage');
 	return array(GalleryStatus::success(), $storage);
     }
     
@@ -909,66 +904,6 @@ class Gallery {
      */
     function &getTemplateAdapter() {
 	return $this->_templateAdapter;
-    }
-
-    /**
-     * Return a properly configured instance of Smarty
-     *
-     * Create and configure one, if it does not exist.
-     *
-     * @param string optional compile directory
-     * @return array object GalleryStatus a status code
-     *               object Smarty
-     */
-    function getSmarty() {
-
-	GalleryProfiler::start('Gallery::getSmarty');
-	if (empty($this->_smarty)) {
-	    /*
-	     * Load and configure Smarty.
-	     */
-	    require_once($this->_config['code.smarty.base'] . 'Smarty.class.php');
-
-	    if ($this->isProfiling()) {
-		require_once(dirname(__FILE__) . '/GalleryProfilingSmarty.class');
-		$this->_smarty = new GalleryProfilingSmarty();
-	    } else {
-		$this->_smarty = new Smarty();
-	    }
-
-	    /* Compiled templates go here */
-	    $this->_smarty->compile_dir = $this->getConfig('data.smarty.templates_c');
-	    
-	    /*
-	     * Disable use of subdirs so that we avoid conflicts with
-	     * open_basedir and safe_mode
-	     */
-	    $this->_smarty->use_sub_dirs = false;
-	    $this->_smarty->short_template_c_names = true;
-
-	    if ($this->getDebug()) {
-		$this->_smarty->debugging = true;
-	    }
-
-	    /* Set up core Smarty hooks */
-	    foreach (array('Url', 'Text', 'Date', 'Style',
-			   ) as $method) {
-		$this->_smarty->register_function('gallery' . $method, 'galleryTemplateCallback');
-	    }
-	    
-	    foreach (array('ThinFrame', 'LightFrame', 'HeavyFrame', 'ThreeDFrame',
-			   'SmallestFont', 'SmallerFont', 'SmallFont',
-			   'BigFont', 'BiggerFont', 'BiggestFont',
-			   'SuccessFontColor', 'WarningFontColor', 'ErrorFontColor',
-			   'Highlight1', 'Highlight2',
-			   'Form', 'Input', 'Select', 'TextArea') as $method) {
-		$this->_smarty->register_block('gallery' . $method, 'galleryTemplateCallback');
-	    }
-	}
-
-	GalleryProfiler::stop('Gallery::getSmarty');
-	
-	return array(GalleryStatus::success(), $this->_smarty);
     }
 
     /**

@@ -36,9 +36,9 @@ class AdminEditGroupConfirmationView extends GalleryView {
 	$groupName = GalleryUtilities::getRequestVariables('groupName');
 
 	/* Render the HTML body */
-	$this->_initTemplate(dirname(__FILE__) . '/templates');
-	$this->_setTemplateVariable('groupName', $groupName);
-	$html = $this->_renderTemplate('core', 'AdminEditGroupConfirmation.tpl');
+	$template = $this->getTemplate();
+	$template->setVariable('groupName', $groupName);
+	$html = $template->render('AdminEditGroupConfirmation.tpl');
 
 	return array(GalleryStatus::success(), $html);
     }

@@ -3,17 +3,17 @@
 
 	<tr>
 	  <td colspan="2" align="center">
-	    {galleryBiggerFont}
+	    {galleryBiggerFontSize}
 	    {galleryText text="Gallery Settings"}
-	    {/galleryBiggerFont}
+	    {/galleryBiggerFontSize}
 	  </td>
 	</tr>
 
 	<tr>
 	  <td colspan="2">
-	    {galleryBigFont}
+	    {galleryBigFontSize}
 	    {galleryText text="Defaults"}
-	    {/galleryBigFont}
+	    {/galleryBigFontSize}
 	    <br>
 	    {galleryText text="These are default values.  They can be overridden in each album."}
 	  </td>
@@ -63,9 +63,9 @@
 
 	<tr>
 	  <td colspan="2">
-	    {galleryBigFont}
+	    {galleryBigFontSize}
 	    {galleryText text="Language settings"}
-	    {/galleryBigFont}
+	    {/galleryBigFontSize}
 	    <br>
 	    {galleryText text="Select language defaults for Gallery. Individual users can override this setting in their personal preferences."}
 	  </td>
@@ -90,9 +90,9 @@
 
 	<tr>
 	  <td colspan="2">
-	    {galleryBigFont}
+	    {galleryBigFontSize}
 	    {galleryText text="Filesystem Permissions"}
-	    {/galleryBigFont}
+	    {/galleryBigFontSize}
 	    <br>
 	    {galleryText text="Here you can specify the default permissions for files and directories that Gallery creates. This doesn't apply to files/directories that Gallery has already created."}
 	  </td>
@@ -128,9 +128,9 @@
 
 	<tr>
 	  <td colspan="2">
-	    {galleryBigFont}
+	    {galleryBigFontSize}
 	    {galleryText text="Graphics Toolkit"}
-	    {/galleryBigFont}
+	    {/galleryBigFontSize}
 	    <br>
 	    {galleryText text="Choose a graphics toolkit to use.  You can only choose from the list of currently active toolkits."}
 	  </td>
@@ -168,9 +168,9 @@
 
 	<tr>
 	  <td colspan="2">
-	    {galleryBigFont}
+	    {galleryBigFontSize}
 	    {galleryText text="Session Settings"}
-	    {/galleryBigFont}
+	    {/galleryBigFontSize}
 	    <br>
 	    {galleryText text="Specify the lifetime of the session here."}
 	  </td>

@@ -65,6 +65,8 @@ class CoreModule extends GalleryModule {
 	require_once($classDir . 'GalleryProfiler.class');
 	require_once($classDir . 'GallerySession.class');
 	require_once($classDir . 'GalleryStatus.class');
+	require_once($classDir . 'GalleryTemplate.class');
+	require_once($classDir . 'GalleryTemplateModule.class');
 	require_once($classDir . 'GalleryTemplateAdapter.class');
 	require_once($classDir . 'GalleryTheme.class');
 	require_once($classDir . 'GalleryUserGroupMap.class');
@@ -179,6 +181,11 @@ class CoreModule extends GalleryModule {
     function init() {
 	global $gallery;
 
+	$ret = parent::init();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
 	$classDir = dirname(__FILE__) . '/classes/';
 	
 	/* Register all core permissions */
@@ -230,7 +237,7 @@ class CoreModule extends GalleryModule {
 						 $this->translate('[core] Delete item'),
 						 true);
 	
-	return parent::init();
+	return GalleryStatus::success();
     }
 
     /**

@@ -122,13 +122,13 @@ class AdminDeleteGroupView extends GalleryView {
 	$isAllAdmins = ($group->getGroupType() == GROUP_SITE_ADMINS);
 	
 	/* Render the HTML body */
-	$this->_initTemplate(dirname(__FILE__) . '/templates');
-	$this->_setTemplateVariable('groupId', $groupId);
-	$this->_setTemplateVariable('groupName', $group->getGroupName());
-	$this->_setTemplateVariable('isAllUsers', $isAllUsers);
-	$this->_setTemplateVariable('isAllAdmins', $isAllAdmins);
-	$this->_setTemplateVariable('controller', 'core:AdminDeleteGroup');
-	$html = $this->_renderTemplate('core', 'AdminDeleteGroup.tpl');
+	$template = $this->getTemplate();
+	$template->setVariable('groupId', $groupId);
+	$template->setVariable('groupName', $group->getGroupName());
+	$template->setVariable('isAllUsers', $isAllUsers);
+	$template->setVariable('isAllAdmins', $isAllAdmins);
+	$template->setVariable('controller', 'core:AdminDeleteGroup');
+	$html = $template->render('AdminDeleteGroup.tpl');
 
 	return array(GalleryStatus::success(), $html);
     }

@@ -5,9 +5,9 @@
       {if $thumbnail.height} height="{$thumbnail.height}" {/if}
       >
       {else}
-      {galleryBigFont}
+      {galleryBigFontSize}
       {galleryText text="There is no thumbnail for this item"}
-      {/galleryBigFont}
+      {/galleryBigFontSize}
       {/if}
       <br>
       <a href="{galleryUrl view="core:ShowItem" itemId=$item.id}">
@@ -19,9 +19,9 @@
 	                   itemId=$item.id
 	                   return_view="comment:ShowComments"
 	                   return_itemId=$item.id}">
-	{galleryBigFont}
+	{galleryBigFontSize}
 	[{galleryText text="Add a comment"}]
-	{/galleryBigFont}
+	{/galleryBigFontSize}
       </a>
       {/if}
     </center>
@@ -35,9 +35,9 @@
 	  <td width="100%">
 	    {galleryLightFrame width="100%"}
 	    {galleryHighlight1}
-	    {galleryBigFont}
+	    {galleryBigFontSize}
 	    {$comment.commenter.userName}
-	    {/galleryBigFont}
+	    {/galleryBigFontSize}
 	    {if !empty($comment.host)}
 	    {if $can.all || $can.viewIps}
 	    ({$comment.host})

@@ -29,18 +29,47 @@ class GalleryLayout {
      */
 
     /**
-     * The Smarty instance
+     * The template instance
      *
-     * @var int $_smarty
+     * @var object GalleryTemplate $_template
      * @access private
      */
-    var $_smarty;
+    var $_template;
 
     /*
      * ****************************************
      *                 Methods
      * ****************************************
      */
+
+    /**
+     * Initialize this instance to use the layout specified.
+     *
+     * @param layoutName the name of a layout in the layouts directory.
+     * @return object GalleryStatus a status code
+     */
+    function init($layoutName) {
+	global $gallery;
+	
+	$templateDir = $gallery->getConfig('code.gallery.layouts') . $layoutName . '/templates/';
+	$platform = $gallery->getPlatform();
+	if (!$platform->file_exists($templateDir)) {
+	    $gallery->debug("Missing theme template dir: $templateDir");
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	}
+	
+	$this->_template = new GalleryTemplate('layouts', $layoutName, $templateDir);
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Get the configured GalleryTemplate instance
+     *
+     * @return object GalleryTemplate a template instance
+     */
+    function &getTemplate() {
+	return $this->_template;
+    }
 
     /**
      * Render the item
@@ -55,52 +84,6 @@ class GalleryLayout {
     function render($item, $urlParams) {
 	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__),
 		     null);
-    }
-
-    /**
-     * Initialize the template
-     *
-     * @param string parent directory of the "templates" dir
-     * @return object GalleryStatus a status code
-     */
-    function _initTemplate($templateDir) {
-	global $gallery;
-	
-	list ($ret, $this->_smarty) = $gallery->getSmarty();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	$this->_smarty->template_dir = $templateDir;
-    }
-
-    /**
-     * Assign a template key/value pair
-     *
-     * @param string the key
-     * @param mixed the value
-     */
-    function _setTemplateVariable($key, $value) {
-	$this->_smarty->assign($key, $value);
-    }
-
-    /**
-     * Render the properly localized template
-     *
-     * @param string the template name
-     * @return string the HTML content
-     */
-    function _renderTemplate($layoutName, $templateName) {
-	global $gallery;
-
-	/* Set the translation base in the template adapter */
-	$templateAdapter =& $gallery->getTemplateAdapter();
-	$templateAdapter->setTranslationBase(
-	    'layouts_' . $layoutName,
-	    $gallery->getConfig('code.gallery.layouts') . $layoutName);
-
-	/* Render the template */
-	return $this->_smarty->fetch($templateName);
     }
 
     /**

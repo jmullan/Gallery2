@@ -246,11 +246,11 @@ class ItemAddChildrenView extends GalleryView {
 	}
 
 	/* Render the HTML body */
-	$this->_initTemplate(dirname(__FILE__) . '/templates');
-	$this->_setTemplateVariable('form', $form);
-	$this->_setTemplateVariable('item', $item->getMemberData());
-	$this->_setTemplateVariable('controller', 'core:ItemAddChildren');
-	$html = $this->_renderTemplate('core', 'ItemAddChildren.tpl');
+	$template = $this->getTemplate();
+	$template->setVariable('form', $form);
+	$template->setVariable('item', $item->getMemberData());
+	$template->setVariable('controller', 'core:ItemAddChildren');
+	$html = $template->render('ItemAddChildren.tpl');
 
 	return array(GalleryStatus::success(), $html);
     }

@@ -36,9 +36,9 @@ class AdminDeleteUserConfirmationView extends GalleryView {
 	$username = GalleryUtilities::getRequestVariables('username');
 
 	/* Render the HTML body */
-	$this->_initTemplate(dirname(__FILE__) . '/templates');
-	$this->_setTemplateVariable('username', $username);
-	$html = $this->_renderTemplate('core', 'AdminDeleteUserConfirmation.tpl');
+	$template = $this->getTemplate();
+	$template->setVariable('username', $username);
+	$html = $template->render('AdminDeleteUserConfirmation.tpl');
 
 	return array(GalleryStatus::success(), $html);
     }

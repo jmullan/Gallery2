@@ -36,9 +36,9 @@ class AdminCreateGroupConfirmationView extends GalleryView {
 	$groupName = GalleryUtilities::getRequestVariables('groupName');
 
 	/* Render the HTML body */
-	$this->_initTemplate(dirname(__FILE__) . '/templates');
-	$this->_setTemplateVariable('groupName', $groupName);
-	$html = $this->_renderTemplate('core', 'AdminCreateGroupConfirmation.tpl');
+	$template = $this->getTemplate();
+	$template->setVariable('groupName', $groupName);
+	$html = $template->render('AdminCreateGroupConfirmation.tpl');
 
 	return array(GalleryStatus::success(), $html);
     }

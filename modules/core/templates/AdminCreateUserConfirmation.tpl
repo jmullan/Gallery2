@@ -1,10 +1,10 @@
 
 <center>
 {gallerySuccessFontColor}
-{galleryBiggerFont}
+{galleryBiggerFontSize}
 {galleryText text="User '%s' has been created successfully."
              arg1=$username}
-{/galleryBiggerFont}
+{/galleryBiggerFontSize}
 {/gallerySuccessFontColor}
 
 <br>

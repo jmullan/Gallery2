@@ -1,10 +1,10 @@
 
 <center>
 {gallerySuccessFontColor}
-{galleryBiggerFont}
+{galleryBiggerFontSize}
 {galleryText text="Group '%s' has been successfully deleted."
              arg1=$groupName}
-{/galleryBiggerFont}
+{/galleryBiggerFontSize}
 {/gallerySuccessFontColor}
 
 <br>

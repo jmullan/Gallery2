@@ -10,10 +10,9 @@
     <table border="0" cellspacing="4" cellpadding="0">
       <tr>
 	<td colspan="2" align="center">
-	  {galleryBiggerFont}
+	  {galleryBiggerFontSize}
 	  {galleryText text="Gallery Login"}
-	  {/galleryBiggerFont}
-	</a>
+	  {/galleryBiggerFontSize}
 	</td>
       </tr>
 

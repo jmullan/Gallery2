@@ -134,12 +134,12 @@ class ItemDeleteView extends GalleryView {
 	}
 	
 	/* Render the HTML body */
-	$this->_initTemplate(dirname(__FILE__) . '/templates');
-	$this->_setTemplateVariable('form', $form);
-	$this->_setTemplateVariable('item', $item->getMemberData());
-	$this->_setTemplateVariable('childCount', $childCount);
-	$this->_setTemplateVariable('controller', 'core:ItemDelete');
-	$html = $this->_renderTemplate('core', 'ItemDelete.tpl');
+	$template = $this->getTemplate();
+	$template->setVariable('form', $form);
+	$template->setVariable('item', $item->getMemberData());
+	$template->setVariable('childCount', $childCount);
+	$template->setVariable('controller', 'core:ItemDelete');
+	$html = $template->render('ItemDelete.tpl');
 
 	return array(GalleryStatus::success(), $html);
     }

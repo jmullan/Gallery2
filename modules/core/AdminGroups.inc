@@ -231,11 +231,11 @@ class AdminGroupsView extends GalleryView {
 	}
 
 	/* Render the HTML body */
-	$this->_initTemplate(dirname(__FILE__) . '/templates');
-	$this->_setTemplateVariable('form', $form);
-	$this->_setTemplateVariable('totalGroupCount', $totalGroupCount);
-	$this->_setTemplateVariable('controller', 'core:AdminGroups');
-	$html = $this->_renderTemplate('core', 'AdminGroups.tpl');
+	$template = $this->getTemplate();
+	$template->setVariable('form', $form);
+	$template->setVariable('totalGroupCount', $totalGroupCount);
+	$template->setVariable('controller', 'core:AdminGroups');
+	$html = $template->render('AdminGroups.tpl');
 
 	return array(GalleryStatus::success(), $html);
     }

@@ -164,12 +164,12 @@ class ItemAddAlbumView extends GalleryView {
 	$parents[] = $item->getMemberData();
 	
 	/* Render the HTML body */
-	$this->_initTemplate(dirname(__FILE__) . '/templates');
-	$this->_setTemplateVariable('form', $form);
-	$this->_setTemplateVariable('item', $item->getMemberData());
-	$this->_setTemplateVariable('parents', $parents);
-	$this->_setTemplateVariable('controller', 'core:ItemAddAlbum');
-	$html = $this->_renderTemplate('core', 'ItemAddAlbum.tpl');
+	$template = $this->getTemplate();
+	$template->setVariable('form', $form);
+	$template->setVariable('item', $item->getMemberData());
+	$template->setVariable('parents', $parents);
+	$template->setVariable('controller', 'core:ItemAddAlbum');
+	$html = $template->render('ItemAddAlbum.tpl');
 
 	return array(GalleryStatus::success(), $html);
     }

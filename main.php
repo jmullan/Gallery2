@@ -154,19 +154,8 @@ function GalleryMain($startTime) {
 	    }
 	} 
 
-	/* Specify our translation module */
-	$templateAdapter =& $gallery->getTemplateAdapter();
-	$templateAdapter->setTranslationBase(
-	    'modules_core',
-	    $gallery->getConfig('code.gallery.modules') . 'core');
-	
-	/* Display the global output */
-	list ($ret, $smarty) = $gallery->getSmarty();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	$smarty->template_dir = dirname(__FILE__) . '/templates';
+	$template = new GalleryTemplate('modules', 'core',
+            $gallery->getConfig('code.gallery.base') . 'templates/');
 
 	if ($gallery->isProfiling()) {
 	    GalleryProfiler::stop('GalleryMain');
@@ -175,9 +164,9 @@ function GalleryMain($startTime) {
 
 	$galleryData['version'] = '2';
 
-	$smarty->assign('master', $master);
-	$smarty->assign('gallery', $galleryData);
-	$smarty->display('global.tpl');
+	$template->setVariable('master', $master);
+	$template->setVariable('gallery', $galleryData);
+	print $template->render('global.tpl');
     }
 
     return GalleryStatus::success();

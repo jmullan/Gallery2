@@ -30,7 +30,9 @@
       <table border="0" cellspacing="0" cellpadding="5">
 	  <tr>
 	    <td align="center" colspan="2">
-	      {galleryBigFont}{galleryText text="Edit comment"}{/galleryBigFont}
+	      {galleryBigFontSize}
+	      {galleryText text="Edit comment"}
+	      {/galleryBigFontSize}
 	    </td>
 	  </tr>
 	  <tr>

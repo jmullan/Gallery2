@@ -5,7 +5,9 @@
     <table border="0" cellspacing="0" cellpadding="5">
 	<tr>
 	  <td align="center">
-	    {galleryBigFont}{galleryText text="Do you really want to delete this item?"}{/galleryBigFont}
+	    {galleryBigFontSize}
+	    {galleryText text="Do you really want to delete this item?"}
+	    {/galleryBigFontSize}
 	  </td>
 	</tr>
 

@@ -3,14 +3,14 @@
     {if sizeof($comments) < $totalComments }
     <tr>
       <td align="center">
-	{galleryBigFont}
+	{galleryBigFontSize}
 	{galleryText text="Recent comments"}
-	{/galleryBigFont}
-	{gallerySmallFont}
+	{/galleryBigFontSize}
+	{gallerySmallFontSize}
 	<a href="{galleryUrl view="comment:ShowComments" itemId=$item.id}">
 	  {galleryText text="(view all %d comments)" arg1=$totalComments}
 	</a>
-	{/gallerySmallFont}
+	{/gallerySmallFontSize}
       </td>
     </tr>
     {/if}
@@ -19,9 +19,9 @@
       <td width="100%">
 	{galleryLightFrame width="100%"}
 	{galleryHighlight1}
-	{galleryBigFont}
+	{galleryBigFontSize}
 	{$comment.commenter.userName}
-	{/galleryBigFont}
+	{/galleryBigFontSize}
 	<br>
 	{galleryDate timestamp=$comment.date format="%e-%b-%Y %H:%M"}
 	{/galleryHighlight1}

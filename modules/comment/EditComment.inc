@@ -134,9 +134,9 @@ class EditCommentView extends GalleryView {
 	}
 
 	/* Render the HTML head */
-	$this->_initTemplate(dirname(__FILE__) . '/templates');
-	$this->_setTemplateVariable('item', $item->getMemberData());
-	$html = $this->_renderTemplate('comment', 'EditCommentHead.tpl');
+	$template = $this->getTemplate();
+	$template->setVariable('item', $item->getMemberData());
+	$html = $template->render('EditCommentHead.tpl');
 	return array(GalleryStatus::success(), $html);
     }
     
@@ -193,21 +193,21 @@ class EditCommentView extends GalleryView {
 	}
 	
 	/* Render the HTML body */
-	$this->_initTemplate(dirname(__FILE__) . '/templates');
+	$template = $this->getTemplate();
 	
 	if (!empty($thumbnailTable)) {
 	    $thumbnail = $thumbnailTable[$item->getId()];
-	    $this->_setTemplateVariable('thumbnail', $thumbnail->getMemberData());
+	    $template->setVariable('thumbnail', $thumbnail->getMemberData());
 	}
 	
 	$return = GalleryUtilities::getFormVariables('return.');
 
-	$this->_setTemplateVariable('return', $return);
-	$this->_setTemplateVariable('item', $item->getMemberData());
-	$this->_setTemplateVariable('comment', $comment->getMemberData());
-	$this->_setTemplateVariable('form', $form);
-	$this->_setTemplateVariable('controller', 'comment:EditComment');
-	$html = $this->_renderTemplate('comment', 'EditComment.tpl');
+	$template->setVariable('return', $return);
+	$template->setVariable('item', $item->getMemberData());
+	$template->setVariable('comment', $comment->getMemberData());
+	$template->setVariable('form', $form);
+	$template->setVariable('controller', 'comment:EditComment');
+	$html = $template->render('EditComment.tpl');
 	
 	return array(GalleryStatus::success(), $html);
     }

@@ -195,11 +195,11 @@ class AdminUsersView extends GalleryView {
 	}
 
 	/* Render the HTML body */
-	$this->_initTemplate(dirname(__FILE__) . '/templates');
-	$this->_setTemplateVariable('form', $form);
-	$this->_setTemplateVariable('totalUserCount', $totalUserCount);
-	$this->_setTemplateVariable('controller', 'core:AdminUsers');
-	$html = $this->_renderTemplate('core', 'AdminUsers.tpl');
+	$template = $this->getTemplate();
+	$template->setVariable('form', $form);
+	$template->setVariable('totalUserCount', $totalUserCount);
+	$template->setVariable('controller', 'core:AdminUsers');
+	$html = $template->render('AdminUsers.tpl');
 
 	return array(GalleryStatus::success(), $html);
     }

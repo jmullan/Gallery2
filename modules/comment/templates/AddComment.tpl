@@ -15,33 +15,35 @@
       {else}
       <i>{galleryText text="No thumbnail"}</i>
       {/if}
-    <br>
-    <b>
-      {if empty($item.title)}
-      {$item.pathComponent}
-      {else}
-      {$item.title}
-      {/if}
-    </b>
-    <br>
-    <table border="0" cellspacing="0" cellpadding="5">
-      <tr>
-	<td align="center">
-	  {galleryBigFont}{galleryText text="Add a comment for this item"}{/galleryBigFont}
-	</td>
-      </tr>
-      <tr>
-	<td>
-	  {galleryTextArea rows="15" cols="60" name="form.comment"}{/galleryTextArea}
-	</td>
-      </tr>
+      <br>
+      <b>
+	{if empty($item.title)}
+	{$item.pathComponent}
+	{else}
+	{$item.title}
+	{/if}
+      </b>
+      <br>
+      <table border="0" cellspacing="0" cellpadding="5">
+	  <tr>
+	    <td align="center">
+	      {galleryBigFontSize}
+	      {galleryText text="Add a comment for this item"}
+	      {/galleryBigFontSize}
+	    </td>
+	  </tr>
+	  <tr>
+	    <td>
+	      {galleryTextArea rows="15" cols="60" name="form.comment"}{/galleryTextArea}
+	    </td>
+	  </tr>
 
-      <tr>
-	<td align="center">
-	  {galleryInput type="submit" name="form.action.add"}{galleryText text="Save"}{/galleryInput}
-	  {galleryInput type="submit" name="form.action.cancel"}{galleryText text="Cancel"}{/galleryInput}
-	</td>
-      </tr>
-    </table>
-  </center>
-  {/galleryForm}
+	  <tr>
+	    <td align="center">
+	      {galleryInput type="submit" name="form.action.add"}{galleryText text="Save"}{/galleryInput}
+	      {galleryInput type="submit" name="form.action.cancel"}{galleryText text="Cancel"}{/galleryInput}
+	    </td>
+	  </tr>
+      </table>
+    </center>
+    {/galleryForm}

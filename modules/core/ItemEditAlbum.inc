@@ -290,15 +290,15 @@ class ItemEditAlbumView extends GalleryView {
 	}
 
 	/* Render the HTML body */
-	$this->_initTemplate(dirname(__FILE__) . '/templates');
-	$this->_setTemplateVariable('form', $form);
-	$this->_setTemplateVariable('item', $item->getMemberData());
-	$this->_setTemplateVariable('layoutList', $layoutList);
-	$this->_setTemplateVariable('themeList', $themeList);
-	$this->_setTemplateVariable('orderByList', $orderByList);
-	$this->_setTemplateVariable('orderDirectionList', $orderDirectionList);
-	$this->_setTemplateVariable('controller', 'core:ItemEditAlbum');
-	$html = $this->_renderTemplate('core', 'ItemEditAlbum.tpl');
+	$template = $this->getTemplate();
+	$template->setVariable('form', $form);
+	$template->setVariable('item', $item->getMemberData());
+	$template->setVariable('layoutList', $layoutList);
+	$template->setVariable('themeList', $themeList);
+	$template->setVariable('orderByList', $orderByList);
+	$template->setVariable('orderDirectionList', $orderDirectionList);
+	$template->setVariable('controller', 'core:ItemEditAlbum');
+	$html = $template->render('ItemEditAlbum.tpl');
 
 	return array(GalleryStatus::success(), $html);
     }

@@ -36,9 +36,9 @@ class AdminDeleteGroupConfirmationView extends GalleryView {
 	$groupName = GalleryUtilities::getRequestVariables('groupName');
 
 	/* Render the HTML body */
-	$this->_initTemplate(dirname(__FILE__) . '/templates');
-	$this->_setTemplateVariable('groupName', $groupName);
-	$html = $this->_renderTemplate('core', 'AdminDeleteGroupConfirmation.tpl');
+	$template = $this->getTemplate();
+	$template->setVariable('groupName', $groupName);
+	$html = $template->render('AdminDeleteGroupConfirmation.tpl');
 
 	return array(GalleryStatus::success(), $html);
     }

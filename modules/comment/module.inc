@@ -29,7 +29,7 @@
  * @package Comments
  * @author Bharat Mediratta <bharat@menalto.com>
  */
-class CommentModule extends GalleryModule {
+class CommentModule extends GalleryTemplateModule {
 
     function CommentModule() {
 	$this->setName('comment');
@@ -42,6 +42,11 @@ class CommentModule extends GalleryModule {
      */
     function init() {
 	global $gallery;
+
+	$ret = parent::init();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 	
 	$classDir = dirname(__FILE__) . '/classes/';
 	require_once($classDir . 'GalleryCommentHelper.class');
@@ -75,8 +80,8 @@ class CommentModule extends GalleryModule {
 						 $this->translate('[comment] View commenter\'s IP address'),
 						 false);
 
-	
-	return parent::init();
+
+	return GalleryStatus::success();
     }
 
     /**
@@ -263,8 +268,6 @@ class CommentModule extends GalleryModule {
 	    $totalComments = $counts[$item->getId()];
 
 	    /* Render the comments */
-	    $this->_initTemplate(dirname(__FILE__) . '/templates');
-
 	    $users = array();
 	    $commentData = array();
 	    foreach ($comments as $comment) {
@@ -286,10 +289,11 @@ class CommentModule extends GalleryModule {
 	    }
 
 	    /* Render the comments */
-	    $this->_setTemplateVariable('comments', $commentData);
-	    $this->_setTemplateVariable('item', $item->getMemberData());
-	    $this->_setTemplateVariable('totalComments', $totalComments);
-	    $html = $this->_renderTemplate('comment', 'ItemDetails.tpl');
+	    $template = $this->getTemplate();
+	    $template->setVariable('comments', $commentData);
+	    $template->setVariable('item', $item->getMemberData());
+	    $template->setVariable('totalComments', $totalComments);
+	    $html = $template->render('ItemDetails.tpl');
 	}
 
 	return array(GalleryStatus::success(), $html);

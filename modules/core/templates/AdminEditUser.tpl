@@ -5,9 +5,9 @@
 
     <tr>
       <td align="center" colspan="2">
-	{galleryBigFont}
+	{galleryBigFontSize}
 	{galleryText text="Edit a user"}
-	{/galleryBigFont}
+	{/galleryBigFontSize}
       </td>
     </tr>
 

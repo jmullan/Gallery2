@@ -4,9 +4,9 @@
     <table border="0" cellspacing="0" cellpadding="0">
 	<tr>
 	  <td align="center">
-	    {galleryBiggerFont}
+	    {galleryBiggerFontSize}
 	    {galleryText text="Edit Image"}
-	    {/galleryBiggerFont}
+	    {/galleryBiggerFontSize}
 	  </td>
 	</tr>
 
@@ -24,9 +24,9 @@
 
 	<tr>
 	  <td>
-	    {galleryBigFont}
+	    {galleryBigFontSize}
 	    {galleryText text="Rotate"}
-	    {/galleryBigFont}
+	    {/galleryBigFontSize}
 	  </td>
 	</tr>
 
@@ -58,9 +58,9 @@
 
 	<tr>
 	  <td>
-	    {galleryBigFont}
+	    {galleryBigFontSize}
 	    {galleryText text="Scale"}
-	    {/galleryBigFont}
+	    {/galleryBigFontSize}
 	  </td>
 	</tr>
 
@@ -109,9 +109,9 @@
 	{if empty($hasPreferredSource)}
 	<tr>
 	  <td>
-	    {galleryBigFont}
+	    {galleryBigFontSize}
 	    {galleryText text="Preserve Original"}
-	    {/galleryBigFont}
+	    {/galleryBigFontSize}
 	  </td>
 	</tr>
 
@@ -125,9 +125,9 @@
         {else}
 	<tr>
 	  <td>
-	    {galleryBigFont}
+	    {galleryBigFontSize}
 	    {galleryText text="Modified Image"}
-	    {/galleryBigFont}
+	    {/galleryBigFontSize}
 	  </td>
 	</tr>
 

@@ -5,9 +5,9 @@
 	<tr>
 	  <td>
 	    <center>
-	      {galleryBiggerFont}
+	      {galleryBiggerFontSize}
 	      {galleryText text="Album Settings"}
-	      {/galleryBiggerFont}
+	      {/galleryBiggerFontSize}
 	    </center>
 	  </td>
 	</tr>
@@ -20,9 +20,9 @@
 
 	<tr>
 	  <td>
-	  {galleryBigFont}
+	  {galleryBigFontSize}
 	  {galleryText text="Sort order"}
-	  {/galleryBigFont}
+	  {/galleryBigFontSize}
 	  <br>
 	  {galleryText text="How the items in this album are sorted.  New items that are added will be placed in the album according to the order you specify here."}
 	  <br>
@@ -43,9 +43,9 @@
 
 	<tr>	
 	  <td>
-	    {galleryBigFont}
+	    {galleryBigFontSize}
 	    {galleryText text="Layout"}
-	    {/galleryBigFont}
+	    {/galleryBigFontSize}
 	    <br>
 	    {galleryText text="The way that items will be arranged on the page when viewing this album."}
 	    <br>
@@ -63,9 +63,9 @@
 
 	<tr>	
 	  <td>
-	    {galleryBigFont}
+	    {galleryBigFontSize}
 	    {galleryText text="Theme"}
-	    {/galleryBigFont}
+	    {/galleryBigFontSize}
 	    <br>
 	    {galleryText text="The colors and images that will be used when viewing this album."}
 	    <br>
@@ -83,9 +83,9 @@
 
 	<tr>
 	  <td>
-	    {galleryBigFont}
+	    {galleryBigFontSize}
 	    {galleryText text="Thumbnails"}
-	    {/galleryBigFont}
+	    {/galleryBigFontSize}
 	  </td>
 	</tr>
 
@@ -130,9 +130,9 @@
 
 	<tr>
 	  <td>
-	    {galleryBigFont}
+	    {galleryBigFontSize}
 	    {galleryText text="Resized Images"}
-	    {/galleryBigFont}
+	    {/galleryBigFontSize}
 	  </td>
 	</tr>
 

@@ -5,9 +5,9 @@
 
     <tr>
       <td colspan="2" align="center">
-	{galleryBiggerFont}
+	{galleryBiggerFontSize}
 	{galleryText text="Add/Remove Group's Users"}
-	{/galleryBiggerFont}
+	{/galleryBiggerFontSize}
       </td>
     </tr>
 
@@ -17,10 +17,10 @@
 	<table width="100%" border="0">
 	  <tr>
 	    <td colspan="2" align="center">
-	      {galleryBigFont}
+	      {galleryBigFontSize}
 	      {galleryText text="Editing Group '%s'"
 	                   arg1=$form.groupName}
-	      {/galleryBigFont}
+	      {/galleryBigFontSize}
 	    </td>
 	  </tr>
 	      

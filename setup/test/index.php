@@ -151,16 +151,12 @@ function GalleryTestHarness() {
     }
 
     /* Get the Smarty instance. */
-    list ($ret, $smarty) = $gallery->getSmarty();
-    if ($ret->isError()) {
-	return $ret->wrap(__FILE__, __LINE__);
-    }
-
-    $smarty->template_dir = dirname(__FILE__) . '/templates';
-    $smarty->assign('tests', $tests);
-    $smarty->assign('results', $results);
-    $smarty->assign('rollup', $rollup);
-    $smarty->display('index.tpl');
+    $template = new GalleryTemplate(null, null, 
+				    dirname(__FILE__) . '/templates');
+    $template->setVariable('tests', $tests);
+    $template->setVariable('results', $results);
+    $template->setVariable('rollup', $rollup);
+    print $template->render('index.tpl');
 
     return GalleryStatus::success();
 }

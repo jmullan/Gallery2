@@ -1,0 +1,151 @@
+<?php
+/*
+ * $RCSfile
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+/**
+ * This is Gallery's templating class.  It hides the details of the
+ * implementation (eg, Smarty) and provides a unified means of handling
+ * internationalization.
+ */
+class GalleryTemplate {
+    
+    /*
+     * ****************************************
+     *                 Members
+     * ****************************************
+     */
+
+    /**
+     * The Smarty instance
+     *
+     * @var int $_smarty
+     * @access private
+     */
+    var $_smarty;
+
+    /*
+     * ****************************************
+     *                 Methods
+     * ****************************************
+     */
+
+    /**
+     * Constructor
+     *
+     * @param componentType the type of component we're using (module, layout, theme, etc)
+     */
+    function GalleryTemplate($componentType, $componentName, $templateDir) {
+	global $gallery;
+
+	/* Set the translation base in the template adapter */
+	if ($componentType != null) {
+	    $this->_templateAdapter =& $gallery->getTemplateAdapter();
+	    $this->_templateAdapter->setTranslationBase(
+                $componentType . '_' . $componentName,
+	        $gallery->getConfig('code.gallery.' . $componentType) . $componentName);
+	}
+
+	$this->_smarty = GalleryTemplate::_getSmarty();
+	$this->_smarty->template_dir = $templateDir;
+    }
+
+    /**
+     * Assign a template key/value pair
+     *
+     * @param string the key
+     * @param mixed the value
+     */
+    function setVariable($key, $value) {
+	$this->_smarty->assign($key, $value);
+    }
+
+    /**
+     * Render the properly localized template
+     *
+     * @param the component name (name of a layout, theme, module, etc)
+     * @param string the template name
+     * @return string the HTML content
+     */
+    function render($templateName) {
+	return $this->_smarty->fetch($templateName);
+    }
+
+    /**
+     * Return a properly configured instance of Smarty
+     *
+     * Create and configure one, if it does not exist.
+     *
+     * @return array object GalleryStatus a status code
+     *               object Smarty
+     */
+    function _getSmarty() {
+	global $gallery;
+	static $_smarty;
+
+	GalleryProfiler::start('Gallery::getSmarty');
+	if (empty($_smarty)) {
+	    /*
+	     * Load and configure Smarty.
+	     */
+	    require_once($gallery->getConfig('code.smarty.base') . 'Smarty.class.php');
+
+	    if ($gallery->isProfiling()) {
+		require_once(dirname(__FILE__) . '/GalleryProfilingSmarty.class');
+		$_smarty = new GalleryProfilingSmarty();
+	    } else {
+		$_smarty = new Smarty();
+	    }
+
+	    /* Compiled templates go here */
+	    $_smarty->compile_dir = $gallery->getConfig('data.smarty.templates_c');
+	    
+	    /*
+	     * Disable use of subdirs so that we avoid conflicts with
+	     * open_basedir and safe_mode
+	     */
+	    $_smarty->use_sub_dirs = false;
+	    $_smarty->short_template_c_names = true;
+
+	    if ($gallery->getDebug()) {
+		$_smarty->debugging = true;
+	    }
+
+	    /* Set up core Smarty hooks */
+	    foreach (array('Url', 'Text', 'Date', 'Style',
+			   ) as $method) {
+		$_smarty->register_function('gallery' . $method, 'galleryTemplateCallback');
+	    }
+
+	    foreach (array('ThinFrame', 'LightFrame', 'HeavyFrame', 'ThreeDFrame',
+			   'SmallestFontSize', 'SmallerFontSize', 'SmallFontSize',
+			   'BigFontSize', 'BiggerFontSize', 'BiggestFontSize',
+			   'SuccessFontColor', 'WarningFontColor', 'ErrorFontColor',
+			   'Highlight1', 'Highlight2',
+			   'Form', 'Input', 'Select', 'TextArea') as $method) {
+		$_smarty->register_block('gallery' . $method, 'galleryTemplateCallback');
+	    }
+	}
+
+	GalleryProfiler::stop('Gallery::getSmarty');
+
+	return $_smarty;
+    }
+}

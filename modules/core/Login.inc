@@ -77,8 +77,8 @@ class LoginView extends GalleryView {
     function renderHead() {
 	global $gallery;
 
-	$this->_initTemplate(dirname(__FILE__) . '/templates');
-	$html = $this->_renderTemplate('core', 'LoginHead.tpl');
+	$template = $this->getTemplate();
+	$html = $template->render('LoginHead.tpl');
 	return array(GalleryStatus::success(), $html);
     }
 
@@ -105,11 +105,11 @@ class LoginView extends GalleryView {
 	    $form['return'] = $return;
 	}
 
-	$this->_initTemplate(dirname(__FILE__) . '/templates');
-	$this->_setTemplateVariable('form', $form);
-	$this->_setTemplateVariable('return', $return);
-	$this->_setTemplateVariable('controller', 'core:Login');
-	$html = $this->_renderTemplate('core', 'Login.tpl');
+	$template = $this->getTemplate();
+	$template->setVariable('form', $form);
+	$template->setVariable('return', $return);
+	$template->setVariable('controller', 'core:Login');
+	$html = $template->render('Login.tpl');
 
 	return array(GalleryStatus::success(), $html);
     }

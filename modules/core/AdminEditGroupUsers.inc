@@ -197,13 +197,13 @@ class AdminEditGroupUsersView extends GalleryView {
 	$form['list']['users'] = $users;
 
 	/* Render the HTML body */
-	$this->_initTemplate(dirname(__FILE__) . '/templates');
-	$this->_setTemplateVariable('form', $form);
-	$this->_setTemplateVariable('userCount', $userCount);
-	$this->_setTemplateVariable('userAdded', $userAdded);
-	$this->_setTemplateVariable('userRemoved', $userRemoved);
-	$this->_setTemplateVariable('controller', 'core:AdminEditGroupUsers');
-	$html = $this->_renderTemplate('core', 'AdminEditGroupUsers.tpl');
+	$template = $this->getTemplate();
+	$template->setVariable('form', $form);
+	$template->setVariable('userCount', $userCount);
+	$template->setVariable('userAdded', $userAdded);
+	$template->setVariable('userRemoved', $userRemoved);
+	$template->setVariable('controller', 'core:AdminEditGroupUsers');
+	$html = $template->render('AdminEditGroupUsers.tpl');
 
 	return array(GalleryStatus::success(), $html);
     }

@@ -324,12 +324,12 @@ class ItemEditImageView extends GalleryView {
 	}
 							     
 	/* Render the HTML body */
-	$this->_initTemplate(dirname(__FILE__) . '/templates');
-	$this->_setTemplateVariable('hasPreferredSource', $hasPreferredSource);
-	$this->_setTemplateVariable('form', $form);
-	$this->_setTemplateVariable('item', $item->getMemberData());
-	$this->_setTemplateVariable('controller', 'core:ItemEditImage');
-	$html = $this->_renderTemplate('core', 'ItemEditImage.tpl');
+	$template = $this->getTemplate();
+	$template->setVariable('hasPreferredSource', $hasPreferredSource);
+	$template->setVariable('form', $form);
+	$template->setVariable('item', $item->getMemberData());
+	$template->setVariable('controller', 'core:ItemEditImage');
+	$html = $template->render('ItemEditImage.tpl');
 
 	return array(GalleryStatus::success(), $html);
     }

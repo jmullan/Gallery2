@@ -43,6 +43,11 @@ class NetPbmModule extends GalleryModule {
     function init() {
 	global $gallery;
 	
+	$ret = parent::init();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
 	$classDir = dirname(__FILE__) . '/classes/';
 
 	/* Register our graphics class with the factory */
@@ -51,7 +56,7 @@ class NetPbmModule extends GalleryModule {
 					       'NetPBM',
 					       $classDir . 'NetPbmGraphics.class');
 
-	return parent::init();
+	return GalleryStatus::success();
     }
 
     /**

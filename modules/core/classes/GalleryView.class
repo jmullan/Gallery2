@@ -39,18 +39,40 @@ class GalleryView {
      */
 
     /**
-     * The Smarty instance
+     * The template instance
      *
-     * @var int $_smarty
+     * @var object GalleryTemplate $_template
      * @access private
      */
-    var $_smarty;
+    var $_template;
 
     /*
      * ****************************************
      *                 Methods
      * ****************************************
      */
+
+    function init($moduleName, $templateDir) {
+	global $gallery;
+	
+	$platform = $gallery->getPlatform();
+	if (!$platform->file_exists($templateDir)) {
+	    $gallery->debug("Missing view template dir: $templateDir");
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	}
+	
+	$this->_template = new GalleryTemplate('modules', $moduleName, $templateDir);
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Get the configured GalleryTemplate instance
+     *
+     * @return object GalleryTemplate a template instance
+     */
+    function &getTemplate() {
+	return $this->_template;
+    }
 
     /**
      * Is this an immediate or a buffered view?
@@ -121,8 +143,8 @@ class GalleryView {
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
 	}
 
-	$fileName = $gallery->getConfig('code.gallery.modules') .
-	    $module . '/' . $class . '.inc';
+	$moduleDir = $gallery->getConfig('code.gallery.modules') . $module . '/';
+	$fileName = $moduleDir . $class . '.inc';
 
 	$ret = GalleryUtilities::requireOnce($fileName);
 	if ($ret->isError()) {
@@ -134,8 +156,14 @@ class GalleryView {
 	    $gallery->debug("Class $viewClassName not defined in $viewName");
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
 	}
+
+	$view = new $viewClassName();
+	$ret = $view->init($module, $moduleDir . 'templates/');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 	
-	return array(GalleryStatus::success(), new $viewClassName);
+	return array(GalleryStatus::success(), $view);
     }
 
     /**
@@ -183,62 +211,6 @@ class GalleryView {
     }
 
     /**
-     * Return the name of the module this GalleryView is associated with.
-     *
-     * This is necessary to make sure that the view is localized properly.
-     *
-     * @return string the module name
-     */
-    function getModuleName() {
-	return null;
-    }
-
-    /**
-     * Initialize the template
-     *
-     * @param string parent directory of the "templates" dir
-     * @return object GalleryStatus a status code
-     */
-    function _initTemplate($templateDir) {
-	global $gallery;
-	
-	list ($ret, $this->_smarty) = $gallery->getSmarty();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	$this->_smarty->template_dir = $templateDir;
-    }
-
-    /**
-     * Assign a template key/value pair
-     *
-     * @param string the key
-     * @param mixed the value
-     */
-    function _setTemplateVariable($key, $value) {
-	$this->_smarty->assign($key, $value);
-    }
-
-    /**
-     * Render the properly localized template
-     *
-     * @param string the template name
-     * @return string the HTML content
-     */
-    function _renderTemplate($moduleName, $templateName) {
-	global $gallery;
-
-	/* Set the translation base in the template adapter */
-	$templateAdapter =& $gallery->getTemplateAdapter();
-	$templateAdapter->setTranslationBase('modules_' . $moduleName,
-	    $gallery->getConfig('code.gallery.modules') . $moduleName);
-
-	/* Render the template */
-	return $this->_smarty->fetch($templateName);
-    }
-
-    /**
      * Activate the appropriate theme for this GalleryView
      *
      * @param object GalleryItem an item (or empty, for the default theme)
@@ -264,29 +236,16 @@ class GalleryView {
 	    }
 	}
 
-	/*
-	 * Either way, at this point if we don't have a theme then use the
-	 * default theme.
-	 */
-	if (empty($themeName)) {
-	    list ($ret, $themeName) =
-		$gallery->getModuleParameter('core', 'default.theme');
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-	}
-
-	/* Load the theme class */
-	require_once($gallery->getConfig('code.gallery.themes') .
-		     $themeName . '/theme.inc');
-	$themeClassName = $themeName . 'Theme';
-	if (!class_exists($themeClassName)) {
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	/* Load and initialize the theme */
+	$theme = new GalleryTheme();
+	$ret = $theme->init($themeName);
+	if ($ret->isError()) {
+	    return $ret;
 	}
 
 	/* Set it */
 	$templateAdapter =& $gallery->getTemplateAdapter();
-	$templateAdapter->setTheme(new $themeClassName());
+	$templateAdapter->setTheme($theme);
 
 	return GalleryStatus::success();
     }

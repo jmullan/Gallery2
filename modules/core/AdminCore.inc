@@ -217,19 +217,19 @@ class AdminCoreView extends GalleryView {
 	}
 
 	/* Render the HTML body */
-	$this->_initTemplate(dirname(__FILE__) . '/templates');
-	$this->_setTemplateVariable('form', $form);
-	$this->_setTemplateVariable('layoutList', $layoutList);
-	$this->_setTemplateVariable('themeList', $themeList);
-	$this->_setTemplateVariable('languageList', $languageList);
-	$this->_setTemplateVariable('orderByList', $orderByList);
-	$this->_setTemplateVariable('orderDirectionList', $orderDirectionList);
-	$this->_setTemplateVariable('permissionsDirectoryList', $permissionsDirectoryList);
-	$this->_setTemplateVariable('permissionsFileList', $permissionsFileList);
-	$this->_setTemplateVariable('sessionTimeList', $sessionTimeList);
-	$this->_setTemplateVariable('graphicsTypeList' , $graphicsTypeList);
-	$this->_setTemplateVariable('controller', 'core:AdminCore');
-	$html = $this->_renderTemplate('core', 'AdminCore.tpl');
+	$template = $this->getTemplate();
+	$template->setVariable('form', $form);
+	$template->setVariable('layoutList', $layoutList);
+	$template->setVariable('themeList', $themeList);
+	$template->setVariable('languageList', $languageList);
+	$template->setVariable('orderByList', $orderByList);
+	$template->setVariable('orderDirectionList', $orderDirectionList);
+	$template->setVariable('permissionsDirectoryList', $permissionsDirectoryList);
+	$template->setVariable('permissionsFileList', $permissionsFileList);
+	$template->setVariable('sessionTimeList', $sessionTimeList);
+	$template->setVariable('graphicsTypeList' , $graphicsTypeList);
+	$template->setVariable('controller', 'core:AdminCore');
+	$html = $template->render('AdminCore.tpl');
 
 	return array(GalleryStatus::success(), $html);
     }

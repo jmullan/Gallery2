@@ -156,12 +156,12 @@ class ItemEditGeneralView extends GalleryView {
 	}
 
 	/* Render the HTML body */
-	$this->_initTemplate(dirname(__FILE__) . '/templates');
-	$this->_setTemplateVariable('form', $form);
-	$this->_setTemplateVariable('item', $item->getMemberData());
-	$this->_setTemplateVariable('parents', $parents);
-	$this->_setTemplateVariable('controller', 'core:ItemEditGeneral');
-	$html = $this->_renderTemplate('core', 'ItemEditGeneral.tpl');
+	$template = $this->getTemplate();
+	$template->setVariable('form', $form);
+	$template->setVariable('item', $item->getMemberData());
+	$template->setVariable('parents', $parents);
+	$template->setVariable('controller', 'core:ItemEditGeneral');
+	$html = $template->render('ItemEditGeneral.tpl');
 
 	return array(GalleryStatus::success(), $html);
     }

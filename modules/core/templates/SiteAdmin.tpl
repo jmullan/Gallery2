@@ -2,9 +2,9 @@
 	<tr>
 	  <td align="center">
 	    <a href="{galleryUrl view='core:SiteAdmin'}">
-	      {galleryBiggestFont}
+	      {galleryBiggestFontSize}
 	      {galleryText text="Gallery Site Administration"}
-	      {/galleryBiggestFont}
+	      {/galleryBiggestFontSize}
 	    </a>
 	    <br>
 	    <a href="{galleryUrl}">

@@ -137,10 +137,10 @@ class AdminEditGroupView extends GalleryView {
 	}
 
 	/* Render the HTML body */
-	$this->_initTemplate(dirname(__FILE__) . '/templates');
-	$this->_setTemplateVariable('form', $form);
-	$this->_setTemplateVariable('controller', 'core:AdminEditGroup');
-	$html = $this->_renderTemplate('core', 'AdminEditGroup.tpl');
+	$template = $this->getTemplate();
+	$template->setVariable('form', $form);
+	$template->setVariable('controller', 'core:AdminEditGroup');
+	$html = $template->render('AdminEditGroup.tpl');
 
 	return array(GalleryStatus::success(), $html);
     }

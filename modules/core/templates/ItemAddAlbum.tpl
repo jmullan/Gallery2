@@ -5,9 +5,9 @@
 	<tr>
 	  <td>
 	    <center>
-	      {galleryBiggerFont}
+	      {galleryBiggerFontSize}
 	      {galleryText text="Add an Album"}
-	      {/galleryBiggerFont}
+	      {/galleryBiggerFontSize}
 	    </center>
 	    <br>
 	    {galleryText text="You can create a new album inside this one."}
@@ -22,9 +22,9 @@
 
 	<tr>
 	  <td>
-	    {galleryBigFont}
+	    {galleryBigFontSize}
 	    {galleryText text="Name"}
-	    {/galleryBigFont}
+	    {/galleryBigFontSize}
 	  </td>
 	</tr>
 
@@ -77,9 +77,9 @@
 
 	<tr>
 	  <td>
-	    {galleryBigFont}
+	    {galleryBigFontSize}
 	    {galleryText text="Title"}
-	    {/galleryBigFont}
+	    {/galleryBigFontSize}
 	  </td>
 	</tr>
 
@@ -103,9 +103,9 @@
 
 	<tr>
 	  <td>
-	    {galleryBigFont}
+	    {galleryBigFontSize}
 	    {galleryText text="Summary"}
-	    {/galleryBigFont}
+	    {/galleryBigFontSize}
 	  </td>
 	</tr>
 
@@ -129,9 +129,9 @@
 
 	<tr>
 	  <td>
-	    {galleryBigFont}
+	    {galleryBigFontSize}
 	    {galleryText text="Keywords"}
-	    {/galleryBigFont}
+	    {/galleryBigFontSize}
 	  </td>
 	</tr>
 
@@ -155,9 +155,9 @@
 
 	<tr>
 	  <td>
-	    {galleryBigFont}
+	    {galleryBigFontSize}
 	    {galleryText text="Description"}
-	    {/galleryBigFont}
+	    {/galleryBigFontSize}
 	  </td>
 	</tr>
 

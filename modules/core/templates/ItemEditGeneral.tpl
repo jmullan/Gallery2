@@ -4,9 +4,9 @@
     <table border="0" cellspacing="0" cellpadding="0">
 	<tr>
 	  <td align="center">
-	    {galleryBiggerFont}
+	    {galleryBiggerFontSize}
 	    {galleryText text="General Item Properties"}
-	    {/galleryBiggerFont}
+	    {/galleryBiggerFontSize}
 	  </td>
 	</tr>
 
@@ -18,9 +18,9 @@
 
 	<tr>
 	  <td>
-	    {galleryBigFont}
+	    {galleryBigFontSize}
 	    {galleryText text="Name"}
-	    {/galleryBigFont}
+	    {/galleryBigFontSize}
 	  </td>
 	</tr>
 
@@ -73,9 +73,9 @@
 
 	<tr>
 	  <td>
-	    {galleryBigFont}
+	    {galleryBigFontSize}
 	    {galleryText text="Title"}
-	    {/galleryBigFont}
+	    {/galleryBigFontSize}
 	  </td>
 	</tr>
 
@@ -99,9 +99,9 @@
 
 	<tr>
 	  <td>
-	    {galleryBigFont}
+	    {galleryBigFontSize}
 	    {galleryText text="Summary"}
-	    {/galleryBigFont}
+	    {/galleryBigFontSize}
 	  </td>
 	</tr>
 
@@ -125,9 +125,9 @@
 
 	<tr>
 	  <td>
-	    {galleryBigFont}
+	    {galleryBigFontSize}
 	    {galleryText text="Keywords"}
-	    {/galleryBigFont}
+	    {/galleryBigFontSize}
 	  </td>
 	</tr>
 
@@ -151,9 +151,9 @@
 
 	<tr>
 	  <td>
-	    {galleryBigFont}
+	    {galleryBigFontSize}
 	    {galleryText text="Description"}
-	    {/galleryBigFont}
+	    {/galleryBigFontSize}
 	  </td>
 	</tr>
 

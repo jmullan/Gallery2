@@ -92,8 +92,8 @@ class AddCommentView extends GalleryView {
 	}
 
 	/* Render the HTML head */
-	$this->_initTemplate(dirname(__FILE__) . '/templates');
-	$html = $this->_renderTemplate('comment', 'AddCommentHead.tpl');
+	$template = $this->getTemplate();
+	$html = $template->render('AddCommentHead.tpl');
 	return array(GalleryStatus::success(), $html);
     }
     
@@ -127,19 +127,19 @@ class AddCommentView extends GalleryView {
 	}
 
 	/* Render the HTML body */
-	$this->_initTemplate(dirname(__FILE__) . '/templates');
+	$template = $this->getTemplate();
 	
 	if (!empty($thumbnailTable)) {
 	    $thumbnail = $thumbnailTable[$item->getId()];
-	    $this->_setTemplateVariable('thumbnail', $thumbnail->getMemberData());
+	    $template->setVariable('thumbnail', $thumbnail->getMemberData());
 	}
 	
 	$return = GalleryUtilities::getFormVariables('return.');
 
-	$this->_setTemplateVariable('return', $return);
-	$this->_setTemplateVariable('item', $item->getMemberData());
-	$this->_setTemplateVariable('controller', 'comment:AddComment');
-	$html = $this->_renderTemplate('comment', 'AddComment.tpl');
+	$template->setVariable('return', $return);
+	$template->setVariable('item', $item->getMemberData());
+	$template->setVariable('controller', 'comment:AddComment');
+	$html = $template->render('AddComment.tpl');
 	
 	return array(GalleryStatus::success(), $html);
     }

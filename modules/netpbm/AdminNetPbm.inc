@@ -162,14 +162,14 @@ class AdminNetPbmView extends GalleryView {
 	}
 
 	/* Render the HTML body */
-	$this->_initTemplate(dirname(__FILE__) . '/templates');
-	$this->_setTemplateVariable('form', $form);
-	$this->_setTemplateVariable('return', $return);
-	$this->_setTemplateVariable('tests', $tests);
-	$this->_setTemplateVariable('pnmToJpegList', $pnmToJpegList);
-	$this->_setTemplateVariable('jpegQualityList', $jpegQualityList);
-	$this->_setTemplateVariable('controller', 'netpbm:AdminNetPbm');
-	$html = $this->_renderTemplate('netpbm', 'AdminNetPbm.tpl');
+	$template = $this->getTemplate();
+	$template->setVariable('form', $form);
+	$template->setVariable('return', $return);
+	$template->setVariable('tests', $tests);
+	$template->setVariable('pnmToJpegList', $pnmToJpegList);
+	$template->setVariable('jpegQualityList', $jpegQualityList);
+	$template->setVariable('controller', 'netpbm:AdminNetPbm');
+	$html = $template->render('AdminNetPbm.tpl');
 
 	return array(GalleryStatus::success(), $html);
     }

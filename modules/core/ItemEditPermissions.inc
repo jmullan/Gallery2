@@ -379,16 +379,16 @@ class ItemEditPermissionsView extends GalleryView {
 	}
 	
 	/* Render the HTML body */
-	$this->_initTemplate(dirname(__FILE__) . '/templates');
-	$this->_setTemplateVariable('form', $form);
-	$this->_setTemplateVariable('item', $item->getMemberData());
-	$this->_setTemplateVariable('owner', $owner->getMemberData());
-	$this->_setTemplateVariable('canChangeOwner', $canChangeOwner);
-	$this->_setTemplateVariable('userPermissions', $userPermissions);
-	$this->_setTemplateVariable('groupPermissions', $groupPermissions);
-	$this->_setTemplateVariable('allPermissions', $allPermissions);
-	$this->_setTemplateVariable('controller', 'core:ItemEditPermissions');
-	$html = $this->_renderTemplate('core', 'ItemEditPermissions.tpl');
+	$template = $this->getTemplate();
+	$template->setVariable('form', $form);
+	$template->setVariable('item', $item->getMemberData());
+	$template->setVariable('owner', $owner->getMemberData());
+	$template->setVariable('canChangeOwner', $canChangeOwner);
+	$template->setVariable('userPermissions', $userPermissions);
+	$template->setVariable('groupPermissions', $groupPermissions);
+	$template->setVariable('allPermissions', $allPermissions);
+	$template->setVariable('controller', 'core:ItemEditPermissions');
+	$html = $template->render('ItemEditPermissions.tpl');
 
 	return array(GalleryStatus::success(), $html);
     }

@@ -2,34 +2,34 @@
   <table width="1" border="0" cellspacing="0" cellpadding="0">
     <tr>
       <td rowspan="2" colspan="2" width="1" height="1">
-	<table cellspacing="0" cellpadding="{$borderWidth}">
+	<table cellspacing="0" cellpadding="{$params.borderWidth}">
 	  <tr>
-	    <td width="{$width}" height="{$height}">
+	    <td width="{$params.width}" height="{$params.height}">
 	      {$content}
 	    </td>
 	  </tr>
 	</table>
       </td>
-      <td width="5" height="{$borderWidth}" valign="bottom">
-	<img src="{$imagesUrl}/topRight.gif" width="5" height="1">
+      <td width="5" height="{$params.borderWidth}" valign="bottom">
+	<img src="{$theme.url}/images/topRight.gif" width="5" height="1">
       </td>
     </tr>
 
     <tr>
-      <td width="5" height="{$height}">
-	<img src="{$imagesUrl}/centerRight.gif" width="5" height="{$height}">
+      <td width="5" height="{$params.height}">
+	<img src="{$theme.url}/images/centerRight.gif" width="5" height="{$params.height}">
       </td>
     </tr>
 
     <tr>
       <td width="5" height="3">
-	<img src="{$imagesUrl}/bottomLeft.gif" width="5" height="3">
+	<img src="{$theme.url}/images/bottomLeft.gif" width="5" height="3">
       </td>
       <td width="{$width}" height="3">
-	<img src="{$imagesUrl}/bottomCenter.gif" width="{$width}" height="3">
+	<img src="{$theme.url}/images/bottomCenter.gif" width="{$params.width}" height="3">
       </td>
       <td>
-	<img src="{$imagesUrl}/bottomRight.gif" width="5" height="3">
+	<img src="{$theme.url}/images/bottomRight.gif" width="5" height="3">
       </td>
     </tr>
   </table>

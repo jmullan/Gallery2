@@ -33,9 +33,9 @@ class ClassicLayout extends GalleryLayout {
 	$properties = array('rows' => 3,
 			    'columns' => 3);
 
-	$this->_initTemplate(dirname(__FILE__) . '/templates');
-	$this->_setTemplateVariable('properties', $properties);
-	$this->_setTemplateVariable('item', $item->getMemberData());
+	$template =& $this->getTemplate();
+	$template->setVariable('properties', $properties);
+	$template->setVariable('item', $item->getMemberData());
 	
 	if ($item->canContainChildren()) {
 	    list ($ret, $html) = $this->_renderAlbum($item, $urlParams, $properties);
@@ -226,20 +226,21 @@ class ClassicLayout extends GalleryLayout {
 	}
 
 	/* Tell Smarty about everything we've learned */
-	$this->_setTemplateVariable('moduleItemLinks', $moduleItemLinks);
-	$this->_setTemplateVariable('moduleSystemLinks', $moduleSystemLinks);
-	$this->_setTemplateVariable('moduleItemDetails', $moduleItemDetails);
-	$this->_setTemplateVariable('navigator', $navigator);
-	$this->_setTemplateVariable('children', $children);
-	$this->_setTemplateVariable('pageNumber', $pageNumber);
-	$this->_setTemplateVariable('totalPageCount', $totalPages);
-	$this->_setTemplateVariable('totalChildCount', $totalChildCount);
-	$this->_setTemplateVariable('layoutUrl',
-            GalleryUtilities::convertPathToRelativeUrl(dirname(__FILE__)));
-	$this->_setTemplateVariable('parents', $parents);
+	$template =& $this->getTemplate();
+	$template->setVariable('moduleItemLinks', $moduleItemLinks);
+	$template->setVariable('moduleSystemLinks', $moduleSystemLinks);
+	$template->setVariable('moduleItemDetails', $moduleItemDetails);
+	$template->setVariable('navigator', $navigator);
+	$template->setVariable('children', $children);
+	$template->setVariable('pageNumber', $pageNumber);
+	$template->setVariable('totalPageCount', $totalPages);
+	$template->setVariable('totalChildCount', $totalChildCount);
+	$template->setVariable('layoutUrl',
+			       GalleryUtilities::convertPathToRelativeUrl(dirname(__FILE__)));
+	$template->setVariable('parents', $parents);
 	
 	/* Parse the body template and send it back */
-	$html = $this->_renderTemplate('classic', 'albumBody.tpl');
+	$html = $template->render('albumBody.tpl');
 	return array(GalleryStatus::success(), $html);
     }
 
@@ -428,21 +429,22 @@ class ClassicLayout extends GalleryLayout {
 	}
 
 	/* Tell Smarty about everything we've learned */
-	$this->_setTemplateVariable('navigator', $navigator);
-	$this->_setTemplateVariable('moduleItemLinks', $moduleItemLinks);
-	$this->_setTemplateVariable('moduleSystemLinks', $moduleSystemLinks);
-	$this->_setTemplateVariable('moduleItemDetails', $moduleItemDetails);
-	$this->_setTemplateVariable('layoutUrl',
-	    GalleryUtilities::convertPathToRelativeUrl(dirname(__FILE__)));
-	$this->_setTemplateVariable('parents', $parents);
-	$this->_setTemplateVariable('item', $item->getMemberData());
-	$this->_setTemplateVariable('itemIndex', $itemIndex+1);
-	$this->_setTemplateVariable('imageViews', $imageViews);
-	$this->_setTemplateVariable('imageViewsIndex', $imageViewsIndex);
-	$this->_setTemplateVariable('totalPeerCount', $totalPeerCount);
+	$template =& $this->getTemplate();
+	$template->setVariable('navigator', $navigator);
+	$template->setVariable('moduleItemLinks', $moduleItemLinks);
+	$template->setVariable('moduleSystemLinks', $moduleSystemLinks);
+	$template->setVariable('moduleItemDetails', $moduleItemDetails);
+	$template->setVariable('layoutUrl',
+			       $template->setVariable(dirname(__FILE__)));
+	$template->setVariable('parents', $parents);
+	$template->setVariable('item', $item->getMemberData());
+	$template->setVariable('itemIndex', $itemIndex+1);
+	$template->setVariable('imageViews', $imageViews);
+	$template->setVariable('imageViewsIndex', $imageViewsIndex);
+	$template->setVariable('totalPeerCount', $totalPeerCount);
 	
 	/* Parse the header and body and send them back */
-	$html = $this->_renderTemplate('classic', 'singleBody.tpl');
+	$html = $template->render('singleBody.tpl');
 	return array(GalleryStatus::success(), $html);
     }
 }

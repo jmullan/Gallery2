@@ -44,6 +44,11 @@ class ImageMagickModule extends GalleryModule {
     function init() {
 	global $gallery;
 	
+	$ret = parent::init();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
 	$classDir = dirname(__FILE__) . '/classes/';
 
 	/* Register our graphics class with the factory */
@@ -52,7 +57,7 @@ class ImageMagickModule extends GalleryModule {
 					       'ImageMagick',
 					       $classDir . 'ImageMagickGraphics.class');
 
-	return parent::init();
+	return GalleryStatus::success();
     }
 
     /**

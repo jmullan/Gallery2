@@ -1,9 +1,9 @@
     <table border="0" cellspacing="0" cellpadding="4" width="100%" height="100%">
 	<tr>
 	  <td colspan="2" align="center">
-	    {galleryBiggestFont}
+	    {galleryBiggestFontSize}
 	    {galleryText text="Gallery Item Administration"}
-	    {/galleryBiggestFont}
+	    {/galleryBiggestFontSize}
 	  </td>
 	</tr>
 	
@@ -11,11 +11,11 @@
 	  <td valign="top" width="200" height="100%">
 	    {galleryLightFrame}
 	    <center>
-	      {galleryBigFont}
+	      {galleryBigFontSize}
 	      <nobr>
 		{galleryText text="Editing this item"}
 	      </nobr>
-	      {/galleryBigFont}
+	      {/galleryBigFontSize}
 	      <br>
 	      <a href="{galleryUrl view="core:ShowItem" itemId=$item.id}">
 		{if !empty($thumbnail)} 
@@ -35,9 +35,9 @@
 	    <br>
 	    
 	    <nobr>
-	      {galleryBigFont}
+	      {galleryBigFontSize}
 	      {galleryText text="Available Settings"}
-	      {/galleryBigFont}
+	      {/galleryBigFontSize}
 	    </nobr>
 	    
 	    <table border="0" cellspacing="0" cellpadding="0">
