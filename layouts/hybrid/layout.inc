@@ -118,6 +118,7 @@ class HybridLayout extends GalleryLayout {
 	$layout['count'] = count($itemList);
 	$layout['imageWidths'] = implode(',',$imageWidths);
 	$layout['imageHeights'] = implode(',',$imageHeights);
+	$layout['imageCount'] = count($imageWidths);
 
 	$urlGenerator = $gallery->getUrlGenerator();
 	$cookiePath = preg_replace('|^[^/]*//[^/]*/|', '/', $urlGenerator->getCurrentUrlDir());
