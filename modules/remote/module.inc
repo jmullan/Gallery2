@@ -32,9 +32,9 @@ class RemoteModule extends GalleryModule {
 	$this->setId('remote');
 	$this->setName('Remote');
 	$this->setDescription($gallery->i18n('Implementation for the remote control protocol'));
-	$this->setVersion('0.8.2');
+	$this->setVersion('0.8.3');
 	$this->setGroup('import', $this->translate('Import'));
-	$this->setCallbacks('performFactoryRegistrations');
+	$this->setCallbacks('performFactoryRegistrations|getSiteAdminViews');
 	$this->setRequiredCoreApi(array(1, 0));
 	$this->setRequiredModuleApi(array(0, 8));
     }
@@ -43,13 +43,13 @@ class RemoteModule extends GalleryModule {
      * @see GalleryModule::performFactoryRegistrations
      */
     function performFactoryRegistrations() {
-	$classDir = dirname(__FILE__) . '/classes/';
-
-	/* Register our item add plugins */
-	GalleryCoreApi::registerFactoryImplementation('ItemAddPlugin',
-						      'ItemAddGalleryRemote',
-						      'ItemAddGalleryRemote',
-						      dirname(__FILE__) . '/ItemAddGalleryRemote.inc');
+	list ($ret, $showItemAdd) = $this->getParameter('showItemAdd');
+	if ($ret->isSuccess() && $showItemAdd) {
+	    /* Register our item add plugin */
+	    GalleryCoreApi::registerFactoryImplementation(
+		'ItemAddPlugin', 'ItemAddGalleryRemote', 'ItemAddGalleryRemote',
+		dirname(__FILE__) . '/ItemAddGalleryRemote.inc');
+	}
     }
 
     /**
@@ -65,6 +65,35 @@ class RemoteModule extends GalleryModule {
     function autoConfigure() {
 	/* We don't require any special configuration */
 	return array(GalleryStatus::success(), true);
+    }
+
+    /**
+     * @see GalleryModule::upgrade()
+     */
+    function upgrade($currentVersion) {
+	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'remote');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	foreach (array('showItemAdd' => 1) as $key => $value) {
+	    if (!isset($params[$key])) {
+		$ret = $this->setParameter($key, $value);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+	}
+ 
+	return GalleryStatus::success();
+    }
+
+    /**
+     * @see GalleryModule::getSiteAdminViews()
+     */
+    function getSiteAdminViews() {
+	return array(GalleryStatus::success(),
+		     array(array('name' => $this->translate('Remote'),
+				 'view' => 'remote:RemoteSiteAdmin')));
     }
 }
 ?>
