@@ -46,7 +46,7 @@ class UnixPlatform extends GalleryPlatform {
 		$command .= ' | ';
 	    }
 	    
-	    foreach ($cmdAndArgs as $args) {
+	    foreach ($cmdAndArgs as $arg) {
 		if ($arg == '>') {
 		    $command .= '>';
 		} else {
@@ -108,7 +108,7 @@ class UnixPlatform extends GalleryPlatform {
 	    }
 	}
 
-	return ($status == $expected);
+	return array($status == $expected, $results);
     }
     
     /**
