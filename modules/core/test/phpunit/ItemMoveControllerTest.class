@@ -174,9 +174,66 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	$this->assertEquals(array($this->_getRootId(), $this->_album[0]->getId()),
 			    $parentSequence);
+
+
+	/* Verify that the album now has a thumbnail */
+	$this->assert('implement me');
+    }
+
+    /**
+     * Test moving an item into a peer.  This is to find a regression in the parent sequence code.
+     */
+    function testMoveItemIntoPeer() {
+	global $gallery;
+
+	list ($ret, $peer) = $this->_createRandomAlbum($this->_album[0]->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	GalleryUtilities::putRequestVariable('itemId', $this->_album[0]->getId());
+	GalleryUtilities::putRequestVariable('form[selectedIds]', array($this->_album[1]->getId() => 1));
+	GalleryUtilities::putRequestVariable('form[action][move]', 1);
+	GalleryUtilities::putRequestVariable('form[destination]', $peer->getId());
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemMove',
+						      'itemId' => $this->_album[0]->getId()),
+				  'status' => array('moved' => array('count' => 1)),
+				  'error' => array()),
+			    $results);
+
+	/* Verify parent sequences */
+	list ($ret, $parentSequence) = GalleryCoreApi::fetchParentSequence($this->_album[1]->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array($this->_getRootId(),
+				  $this->_album[0]->getId(),
+				  $peer->getId()),
+			    $parentSequence,
+			    'album 1 is inside peer');
+
+	list ($ret, $parentSequence) = GalleryCoreApi::fetchParentSequence($peer->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array($this->_getRootId(), $this->_album[0]->getId()),
+			    $parentSequence, 'peer is under the root');
+
+	list ($ret, $parentSequence) = GalleryCoreApi::fetchParentSequence($this->_album[0]->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array($this->_getRootId()), $parentSequence, 'album 0 is under the root');
+
+
+	/* Verify that the album now has a thumbnail */
+	$this->assert('implement me');
     }
 
     /**

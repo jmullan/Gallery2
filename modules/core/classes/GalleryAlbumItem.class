@@ -340,7 +340,12 @@ class GalleryAlbumItem_core extends GalleryItem {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
+	$oldChildParentSequence = array_merge($oldParentSequence, array($this->getId()));
 
+	/*
+	 * Perform the move.  Note that *after* the move, my parent id is going to be different so the
+	 * getParentId() calls are going to return $newParentId
+	 */
 	$ret = parent::move($newParentId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -352,9 +357,16 @@ class GalleryAlbumItem_core extends GalleryItem {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	$newParentSequence[] = $this->getParentId();
+	$newChildParentSequence = array_merge($newParentSequence, array($this->getId()));
 
-	/* Convert this item and all of its children to the new sequence */
-	$ret = GalleryCoreApi::updateParentSequence($oldParentSequence, $newParentSequence);
+	/* Convert my parent sequence */
+	$ret = GalleryCoreApi::setParentSequence($this->getId(), $newParentSequence);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Convert my children's parent sequences */
+	$ret = GalleryCoreApi::updateParentSequence($oldChildParentSequence, $newChildParentSequence);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
