@@ -83,7 +83,8 @@ class AdminEditGroupUsersControllerTest extends GalleryControllerTestCase {
 
 	GalleryUtilities::putRequestVariable('groupId', $this->_group->getId());
 	GalleryUtilities::putRequestVariable('form[action][remove]', 1);
-	GalleryUtilities::putRequestVariable(sprintf('form[userIds][%s]', $this->_user->getId()), 1);
+	GalleryUtilities::putRequestVariable(
+	    sprintf('form[userIds][%s]', $this->_user->getId()), 1);
 
 	$results = $this->handleRequest();
 
@@ -115,7 +116,8 @@ class AdminEditGroupUsersControllerTest extends GalleryControllerTestCase {
 
 	GalleryUtilities::putRequestVariable('groupId', $this->_group->getId());
 	GalleryUtilities::putRequestVariable('form[action][remove]', 1);
-	GalleryUtilities::putRequestVariable(sprintf('form[userIds][%s]', $this->_user->getId()), 1);
+	GalleryUtilities::putRequestVariable(
+	    sprintf('form[userIds][%s]', $this->_user->getId()), 1);
 	GalleryUtilities::putRequestVariable(sprintf('form[userIds][%s]', $newUser->getId()), 1);
 
 	$results = $this->handleRequest();
@@ -136,8 +138,8 @@ class AdminEditGroupUsersControllerTest extends GalleryControllerTestCase {
 
     function testCantRemoveSelfFromSiteAdmins() {
 	global $gallery;
-
-	list ($ret, $adminGroupId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
+	list ($ret, $adminGroupId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), false);
 	}
@@ -153,7 +155,8 @@ class AdminEditGroupUsersControllerTest extends GalleryControllerTestCase {
 
 	GalleryUtilities::putRequestVariable('groupId', $adminGroupId);
 	GalleryUtilities::putRequestVariable('form[action][remove]', 1);
-	GalleryUtilities::putRequestVariable(sprintf('form[userIds][%s]', $this->_user->getId()), 1);
+	GalleryUtilities::putRequestVariable(
+	    sprintf('form[userIds][%s]', $this->_user->getId()), 1);
 
 	$results = $this->handleRequest();
 
@@ -163,7 +166,8 @@ class AdminEditGroupUsersControllerTest extends GalleryControllerTestCase {
 				  'error' => array('form[error][list][cantRemoveSelf]')),
 			    $results);
 
-	list ($ret, $inGroup) = GalleryCoreApi::isUserInGroup($this->_user->getId(), $adminGroupId);
+	list ($ret, $inGroup) =
+	    GalleryCoreApi::isUserInGroup($this->_user->getId(), $adminGroupId);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
