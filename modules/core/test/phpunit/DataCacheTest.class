@@ -156,12 +156,12 @@ class DataCacheTest extends GalleryTestCase {
 
 	list ($ret, $modulePluginStatus) = GalleryCoreApi::fetchPluginStatus('module');
 	if ($ret->isError()) {
-	    return $this->failWithStatus(__FILE__, __LINE__);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $layoutPluginStatus) = GalleryCoreApi::fetchPluginStatus('layout');
 	if ($ret->isError()) {
-	    return $this->failWithStatus(__FILE__, __LINE__);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$gallery->setConfig('data.gallery.cache', '/');
