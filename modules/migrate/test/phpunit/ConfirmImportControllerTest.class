@@ -56,7 +56,10 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
     }
 
     function testImportUserSuccessful() {
-        GalleryUtilities::putRequestVariable('albumsPath', dirname(__FILE__) . '/../data/albums/');
+	global $gallery;
+	$platform = $gallery->getPlatform();
+	$slash = $platform->getDirectorySeparator();
+        GalleryUtilities::putRequestVariable('albumsPath', dirname(__FILE__) . $slash . '..' . $slash . 'data' . $slash . 'albums' . $slash);
         GalleryUtilities::putRequestVariable('form[migrateUser][1057837154_228147420]', 1);
         GalleryUtilities::putRequestVariable('form[action][import]', 1);
 
@@ -66,7 +69,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 				  'status' => array('userImportSuccess' => array('phpunit_foobar' => 1),
 						    'userImportFailure' => array(),
                                                     'albumImportFailure' => array(),
-                                                    'albumImportSuccess' => array()),
+                                                    'albumImportSuccess' => array([0] => 'album01', [1] => 1)),
 				  'error' => array()),
 			    $results);
 
@@ -78,7 +81,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
     }
 
     function testImportUserFailure() {
-        GalleryUtilities::putRequestVariable('albumsPath', dirname(__FILE__) . '/../data/albums/');
+        GalleryUtilities::putRequestVariable('albumsPath', dirname(__FILE__) . $slash . '..' . $slash . 'data' . $slash . 'albums' . $slash);
         GalleryUtilities::putRequestVariable('form[migrateUser][1054014347_1233740678]', 1);
         GalleryUtilities::putRequestVariable('form[action][import]', 1);
 
@@ -92,6 +95,45 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 				  'error' => array()),
 			    $results);
     }
+
+    function testImportAlbumSuccessful() {
+        GalleryUtilities::putRequestVariable('albumsPath', dirname(__FILE__) . $slash . '..' . $slash . 'data' . $slash . 'albums' . $slash);
+        GalleryUtilities::putRequestVariable('g2_form[sourceAlbums][album03]', 1);
+        GalleryUtilities::putRequestVariable('form[action][import]', 1);
+
+        $results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'migrate:ImportResults'),
+				  'status' => array('userImportSuccess' => array(),
+						    'userImportFailure' => array(),
+                                                    'albumImportFailure' => array(),
+                                                    'albumImportSuccess' => array('album01',1)),
+				  'error' => array()),
+			    $results);
+
+	/* Verify the user exists */
+	list ($ret, $user) = GalleryUserHelper::fetchUserByUsername('phpunit_foobar');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    function testImportAlbumFailure() {
+        GalleryUtilities::putRequestVariable('albumsPath', dirname(__FILE__) . $slash . '..' . $slash . 'data' . $slash . 'albums' . $slash);
+        GalleryUtilities::putRequestVariable('form[migrateUser][1054014347_1233740678]', 1);
+        GalleryUtilities::putRequestVariable('form[action][import]', 1);
+
+        $results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'migrate:ImportResults'),
+				  'status' => array('userImportFailure' => array('admin' => 1),
+						    'userImportSuccess' => array(),
+						    'albumImportFailure' => array(),
+						    'albumImportSuccess' => array()),
+				  'error' => array()),
+			    $results);
+    }
+
     /**
      * Example of testing for an error
      *
