@@ -11,10 +11,11 @@
   <div id="gsHeader">
     {include file="gallery:layouts/matrix/templates/banner.tpl"}      
   </div>
-  
-{include file="gallery:layouts/matrix/templates/sidebar.tpl"}      
-{include file="gallery:layouts/matrix/templates/pathbar.tpl"}
 
+{include file="gallery:layouts/matrix/templates/pathbar.tpl"}  
+{include file="gallery:layouts/matrix/templates/sidebar.tpl"}      
+
+  <div id="gsContents">
   <div id="gsAlbumContents">
 	<div class="gbTopFlag">
 	  <div class="gbTitleBanner">
@@ -102,4 +103,5 @@
 	{/if}
 
 	{include file="gallery:layouts/matrix/templates/itemNavigator.tpl"}
+</div>
 </div>

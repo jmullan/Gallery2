@@ -7,13 +7,14 @@
 <div id="gsHeader">
   {include file="gallery:layouts/matrix/templates/banner.tpl"}      
 </div>
-
-{include file="gallery:layouts/matrix/templates/sidebar.tpl"}
 {include file="gallery:layouts/matrix/templates/pathbar.tpl"}
+
+<div id="gsContents">
+{include file="gallery:layouts/matrix/templates/sidebar.tpl"}
 
 <div id="gsAlbumContents">
   {include file="gallery:layouts/matrix/templates/itemNavigator.tpl"}
-  <div class="gbTopFlag">
+<div class="gbTopFlag">
     <div class="gbTitleBanner">
       <h1 class="giTitle">
 	{$layout.item.title|markup}
@@ -75,6 +76,7 @@
       {/if}
     </div>
 
+<div class="gbTitleBanner">
     <h2 class="giTitle">
       {if $child.canContainChildren}
       {g->text text="Album: %s" arg1=$child.title|default:$child.pathComponent}
@@ -123,6 +125,7 @@
       </li>
       {/if}
     </ul>
+</div>
   </div>
 
   {counter}
@@ -171,4 +174,5 @@
       </ul>
     </div>
   </div>
+</div>
 </div>

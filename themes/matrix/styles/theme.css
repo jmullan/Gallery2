@@ -1,5 +1,7 @@
 /*
-	matrix.css - core Gallery 2 css
+	Matrix
+	Gallery 2
+	theme.css
 	by Ross A. Reyman, Jon Huang and Chad Kiefer
 
 */
@@ -34,10 +36,11 @@ body {
         declare section styles                   
 */
 
-#gsHeader { border-bottom: 1px solid #ddd; }
+#gsHeader { 
+
+}
 
 #gsFooter {
-	border-top: 1px solid #ddd;
 	font-size: 0.9em;
 	color: #bbb;
 	clear: both;
@@ -45,11 +48,18 @@ body {
 }
 
 #gsSidebar {
+        border-top: 1px solid #ccc;
+	border-right: 1px solid #ccc;
 	background-color: #fff;
-	border-left: 1px solid #ddd;
 }
 
+#gsContents {
+
+}
+
+
 #gsAlbumContents {
+        border-top: 1px solid #ccc;
 }
 
 #gsComments {
@@ -147,12 +157,6 @@ body {
 
 .gbMenu { 
 	border-bottom: 1px solid #ddd;
-	padding: 0 0 8px 0;
-}
-
-.gbMenu .giTitle {
-        margin: 0;
-        padding: 0;
 }
 
 /*	icons for admin menu	*/
@@ -176,46 +180,40 @@ body {
 .gbMenu li.layouts:before { content: url('../images/icon_layouts.jpg'); }
 .gbMenu li.debug:before { content: url('../images/icon_debug.jpg'); }
 
-
-
-/*      #gsHeader       */
-
-/*      The title banner is the light grey 'search' at the very top */
-#gsHeader .gbTitleBanner {
-	border-top: 1px solid #ddd;
-	border-bottom: 1px solid #ddd;
-}
-
 /*      Text inside the title bar */
-#gsHeader .gbTitleBanner .giTitle {
-	color: #ccc;
-	font-weight: bold;
+
+.giTitle {
 	font-size: 1.1em;
+	font-weight: bold;
+	margin: 0;
+	padding: 0;
+	
 }
 
 /*      horizontal history links - 'trail of breadcrumbs' */
-#gsHeader .gbBreadCrumb { }
+.gbBreadCrumb { }
 
 /*      horizontal link divider */
 #gsHeader .gbBreadCrumb span + span:before { content: '\00BB \ '; }
+.gbBreadCrumb li + li:before { content: '\00BB \ '; }
+
 
 /*      #gsAlbumContents        */
 
 #gsAlbumContents .gbTopFlag,
 #gsAdminContents .gbTopFlag  {
 	background-color: #eee;
-	border: 1px solid #fff;
-	display: block;
-	padding: 6px;
+	padding: 8px 0;
 }
 
-#gsAlbumContents .gbTitleBanner {
-	border: 0;
+.gbTitleBanner {
+        margin: 0 0 0 8px;
 }
 
 #gsAlbumContents .gbItemAlbum {
+        width: 100%;
 	background-color: #eee;
-	border: 5px solid #fff;
+	padding: 8px 0;
 }
 
 #gsAlbumContents .gbItemImage, 
@@ -336,11 +334,6 @@ body {
 
 /*      Global / Defaults */
 
-.giTitle { 
-	font-weight: bold;
-	font-size: 1.1em;
-}
-
 .giMarkupBar input {
         font-size: 1.1em;
         margin: 0;
@@ -349,7 +342,8 @@ body {
 
 .giDescription {
 	font-size: 1em;
-	width: 100%;
+        margin: 2px 0px;
+        padding: 0;
 }
 .giDescription span { display: block; }
 
@@ -371,7 +365,7 @@ span.giCount { }
 .giThumbImage, .giThumbMovie, .giThumbOther {
         border: 0px;
 	float: left;
-	margin: 0 16px 8px 0;
+	margin: 0 8px 8px 8px;
 }
 
 .giThumbImage img { border: 0; }
@@ -429,6 +423,7 @@ span.giCount { }
 /*      .gbTopFlag   */
 
 .gbTopFlag .giTitle {
+        color: #000;
 	font-weight: bold;
 	font-size: 1.2em; 
 }
@@ -449,7 +444,7 @@ span.giCount { }
 
 .gbBottomFlag .giHorizontalLinks {
 	font-size: 0.9em;
-	padding: 8px;
+	padding: 4px;
 }
 
 /*      .gbDataEntry */

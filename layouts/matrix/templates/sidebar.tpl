@@ -7,9 +7,9 @@
 <div id="gsSidebar">
   {* Module links *}
   <div class="gbMenu">
-    <div class="giTitle">
+    <h3 class="giTitle">
       {g->text text="Greetings, %s!" arg1=$layout.user.fullName|default:$layout.user.userName}
-    </div>
+    </h3>
 
     <ul>
       {foreach from=$layout.moduleSystemLinks item=module}
@@ -25,9 +25,9 @@
   {* Album actions, if there are any *}
   {if (isset($layout.moduleItemLinks[$layout.item.id]))}
   <div class="gbMenu">
-    <div class="giTitle">
+    <h3 class="giTitle">
       {g->text text="Actions"}
-    </div>
+    </h3>
 
     <ul>
       {foreach from=$layout.moduleItemLinks[$layout.item.id] item=link}
@@ -42,8 +42,8 @@
   {* List of peer items *}
   {if $layout.show.peerSidebarBox}
   <div class="gbMenu">
-    <p><span class="giTitle">{$layout.parent.title|default:$layout.parent.pathComponent}</span><br />
-    <span class="giDescription">{g->text one="(%d item)" many="(%d items)" count=$layout.totalPeerCount arg1=$layout.totalPeerCount}</span></p>
+    <h3 class="giTitle"> {$layout.parent.title|default:$layout.parent.pathComponent}</h3>
+    <p class="giDescription">{g->text one="(%d item)" many="(%d items)" count=$layout.totalPeerCount arg1=$layout.totalPeerCount}</p>
 
     <ul>
       {assign var="lastIndex" value=0}
