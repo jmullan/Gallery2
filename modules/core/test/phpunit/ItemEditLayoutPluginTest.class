@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -65,7 +65,8 @@ class ItemEditLayoutPluginTest extends ItemEditPluginTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$gallery->_platform = new ItemEditLayoutTestPlatform();
+	$this->_savePlatform = $gallery->getPlatform();
+	$gallery->setPlatform(new ItemEditLayoutTestPlatform());
 
 	$this->_preferred = null;
 
@@ -75,6 +76,7 @@ class ItemEditLayoutPluginTest extends ItemEditPluginTestCase {
 
     function tearDown() {
 	global $gallery;
+	$gallery->setPlatform($this->_savePlatform);
 
 	$ret = GalleryCoreApi::deleteEntityById($this->_album->getId());
 	if ($ret->isError()) {
@@ -85,8 +87,6 @@ class ItemEditLayoutPluginTest extends ItemEditPluginTestCase {
     }
 
     function testUndo() {
-	global $gallery;
-
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('form[action][undo]', 1);
 
@@ -158,8 +158,6 @@ class ItemEditLayoutControllerTestLayout {
      * @see GalleryLayout::getSettings()
      */
     function getSettings($itemId=0) {
-	global $gallery;
-
 	$settings = array();
 	$settings[] = array('key' => 'rows',
 			    'name' => 'Rows per album page',
@@ -182,7 +180,7 @@ class ItemEditLayoutControllerTestLayout {
 	if (empty($settings['rows']) || !is_numeric($settings['rows'])) {
 	    $error['rows'] = $this->translate('You must enter a number greater than 0');
 	}
-	
+
 	if (empty($settings['columns']) || !is_numeric($settings['columns'])) {
 	    $error['columns'] = $this->translate('You must enter a number greater than 0');
 	}
@@ -244,8 +242,6 @@ class ItemEditLayoutControllerTestLayout {
 class ItemEditLayoutTestPlatform {
 
     function opendir($path) {
-	global $gallery;
-
 	if ($path == dirname(__FILE__) . '/../../../../layouts/') {
 	    return 'TEST_VALID_RESOURCE';
 	} else {
@@ -276,7 +272,7 @@ class ItemEditLayoutTestPlatform {
 	if (preg_match("|\blocks\b|", $filename)) {
 	    return fopen($filename, $modes);
 	}
-	
+
 	print "Unexpected fopen($filename, $modes)";
 	return null;
     }
@@ -301,8 +297,6 @@ class ItemEditLayoutTestPlatform {
     }
 
     function file_exists($path) {
-	global $gallery;
-	
 	$base = dirname(__FILE__) . '/../../../../layouts/';
 	switch($path) {
 	case $base . 'ItemEditLayoutController/layout.inc':
@@ -314,8 +308,6 @@ class ItemEditLayoutTestPlatform {
     }
 
     function is_dir($path) {
-	global $gallery;
-	
 	$base = dirname(__FILE__) . '/../../../../layouts/';
 	switch($path) {
 	case $base . 'ItemEditLayoutControllerTest':

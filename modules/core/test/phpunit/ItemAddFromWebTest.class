@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -61,11 +61,13 @@ class ItemAddFromWebTest extends ItemAddPluginTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$gallery->_platform = new ItemAddFromWebTestPlatform($this);
+	$this->_savePlatform = $gallery->getPlatform();
+	$gallery->setPlatform(new ItemAddFromWebTestPlatform($this));
     }
 
     function tearDown() {
 	global $gallery;
+	$gallery->setPlatform($this->_savePlatform);
 
 	$ret = GalleryCoreApi::releaseLocks($this->_lockIds);
 	if ($ret->isError()) {
@@ -119,7 +121,7 @@ class ItemAddFromWebTest extends ItemAddPluginTestCase {
 	list ($form, $item) = $option->getData();
 	$this->assert(isset($form['webPageUrls']['http://www.test.com/test1.gif']));
 	$this->assertEquals('test1.gif', $item->getPathComponent());
-    }    
+    }
 }
 
 /**
@@ -229,7 +231,7 @@ class ItemAddFromWebTestPlatform  {
 	case 'test2.jpg':
 	case 'test3.jpg':
 	    return $component;
-	    
+
 	case 'apo\'strophe.jpg':
 	    return 'apo_strophe.jpg';
 
@@ -304,11 +306,11 @@ class ItemAddFromWebTestPlatform  {
 	if (preg_match("|\blocks\b|", $filename)) {
 	    return unlink($filename);
 	}
-	
+
 	print "Attempted to unlink bogus file: $filename";
 	return 0;
     }
-    
+
     function fflush($handle) {
 	switch($handle) {
 	case 'test-resource-1':
@@ -384,7 +386,7 @@ class ItemAddFromWebTestPlatform  {
 	if (preg_match("|\blocks\b|", $filename)) {
 	    return fopen($filename, $modes);
 	}
-	
+
 	print "Unexpected fopen($filename, $modes)";
 	return null;
     }
