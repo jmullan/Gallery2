@@ -316,6 +316,15 @@ class GalleryDataCache {
 		$buf = '';
 		while (!feof($fd)) {
 		    $buf .= $platform->fread($fd, 4096);
+		    if ($buf[0] == '<') {
+			/*
+			 * This is an old style cache entry; should be deleted,
+			 * but when we load G2 the first time that we see an old
+			 * style cache we may have a problem with these, so just
+			 * ignore it for now.
+			 */
+			return $null;
+		    }
 		}
 		$platform->fclose($fd);
 
