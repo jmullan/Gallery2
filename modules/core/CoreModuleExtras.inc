@@ -86,7 +86,7 @@ class CoreModuleExtras {
 			       'default.layout' => 'matrix',
 			       'default.theme' => 'matrix',
 			       'default.language' => GalleryTranslator::getLanguageCodeFromRequest(),
-			       'language.selector' => 'guest',
+			       'language.selector' => 'none',
 			       'session.lifetime' => 25 * 365 * 86400, /* 25 years */
 			       'session.inactivityTimeout' => 14 * 86400, /* two weeks */
 			       'misc.markup' => 'bbcode',
