@@ -1,0 +1,50 @@
+<?php
+
+class CreateNestedAlbumItemTestCase extends TestCase {
+
+    function getDescription() {
+	return "Create several nested album items";
+    }
+
+    function testStart() {
+	$rootAlbum = new AlbumItem();
+
+	print("Creating new root album item\n");
+	$ret = $rootAlbum->createRoot("nestedRoot");
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
+	$ret = $rootAlbum->save();
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
+	global $gallery;
+	$ret = $gallery->lockWorld();
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
+	$parent =& $rootAlbum;
+	for ($i = 0; $i < 5; $i++) {
+	    $nested[$i] = new AlbumItem();
+	    $ret = $nested[$i]->create($parent, "nested_$i");
+	    if ($ret->isError()) {
+		return $ret;
+	    }
+	    
+	    $ret = $nested[$i]->save();
+	    if ($ret->isError()) {
+		return $ret;
+	    }
+
+	    $parent =& $nested[$i];
+	}
+
+	return GalleryStatus::success();
+    }
+}
+
+?>
+</pre>
