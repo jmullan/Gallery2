@@ -20,6 +20,11 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+if (!file_exists(dirname(__FILE__) . '/config.php')) {
+    header("Location: install/");
+    return;
+}
+
 /* Go! */
 $ret = GalleryMain();
 
@@ -70,10 +75,6 @@ function GalleryMain() {
      * Get the global gallery object.  We can't just declare "global $gallery"
      * at the top of this function because the variable isn't defined until we
      * call GalleryInitFirstPass()
-     */
-
-    /**
-     * The all mighty global Gallery object
      *
      * @global Gallery $gallery
      */
