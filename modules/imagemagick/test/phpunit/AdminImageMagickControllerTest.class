@@ -269,5 +269,13 @@ class AdminImageMagickControllerTestPlatform {
     function realpath($file) {
 	return $this->_platform->realpath($file);
     }
+
+    function chdir($path) {
+        return true;
+    }
+
+    function getcwd() {
+        return '/tmp';
+    }
 }
 ?>
