@@ -57,7 +57,7 @@ class GalleryLayout extends GalleryPlugin {
      * @return boolean true for advanced settings, false for simple
      */
     function isAdvancedSettings() {
-	return false;  // Default to simple
+	return false;  /* Default to simple */
     }
 
     /**
@@ -240,8 +240,10 @@ class GalleryLayout extends GalleryPlugin {
 	global $gallery;
 	$urlGenerator =& $gallery->getUrlGenerator();
 
-	// -------------------------------------------------------------------------------------
-	// Initialize..
+	/*
+	 * --------------------------------------------------------------------------------------
+	 * Initialize..
+	 */
 	$load = $layout = $childItems = $childData = array();
 	foreach ($dataToLoad as $key) {
 	    $load[$key] = true;
@@ -269,8 +271,10 @@ class GalleryLayout extends GalleryPlugin {
 	    }
 	}
 
-	// -------------------------------------------------------------------------------------
-	// Load additional required entities..
+	/*
+	 * --------------------------------------------------------------------------------------
+	 * Load additional required entities..
+	 */
 	$ids = array();
 	if (isset($load['owner'])) {
 	    $ids[$item->getOwnerId()] = true;
@@ -325,7 +329,8 @@ class GalleryLayout extends GalleryPlugin {
 		$peerLast = count($peerIds) - 1;
 		$peerNeighborStart = max($peerItemIndex - (int)($peerWindowSize/2), 0);
 		$peerNeighborEnd = min($peerItemIndex + (int)($peerWindowSize/2), $peerLast);
-		// If the window is pinned to one end, expand it to the entire windowSize
+		/* If the window is pinned to one end, expand it to the entire
+		 * windowSize */
 		if ($peerNeighborStart == 0) {
 		    $peerNeighborEnd = min($peerLast, $peerWindowSize-1);
 		} else if ($peerNeighborEnd == $peerLast) {
@@ -358,8 +363,10 @@ class GalleryLayout extends GalleryPlugin {
 	    }
 	}
 
-	// -------------------------------------------------------------------------------------
-	// Always load 'item', 'user', 'children' and 'show'
+	/*
+	 * --------------------------------------------------------------------------------------
+	 * Always load 'item', 'user', 'children' and 'show'
+	 */
 	$layout['item'] = $item->getMemberData();
 	$user = $gallery->getActiveUser();
 	$layout['user'] = $user->getMemberData();
@@ -373,8 +380,10 @@ class GalleryLayout extends GalleryPlugin {
 				'sidebarPeers' => isset($load['peers']),
 				'pathbar' => GalleryCapabilities::can('showPathbar'));
 
-	// -------------------------------------------------------------------------------------
-	// 'owner'
+	/*
+	 * --------------------------------------------------------------------------------------
+	 * 'owner'
+	 */
 	if (isset($load['owner'])) {
 	    $layout['owner'] = $entities[$item->getOwnerId()]->getMemberData();
 	    foreach ($childOwnerIds as $id) {
@@ -384,8 +393,10 @@ class GalleryLayout extends GalleryPlugin {
 	    }
 	}
 
-	// -------------------------------------------------------------------------------------
-	// 'viewCount'
+	/*
+	 * --------------------------------------------------------------------------------------
+	 * 'viewCount'
+	 */
 	if (isset($load['viewCount'])) {
 	    list ($ret, $viewCount) = GalleryCoreApi::fetchItemViewCounts($allItemIds);
 	    if ($ret->isError()) {
@@ -395,8 +406,10 @@ class GalleryLayout extends GalleryPlugin {
 	    $childData[] = 'viewCount';
 	}
 
-	// -------------------------------------------------------------------------------------
-	// 'childCount'
+	/*
+	 * --------------------------------------------------------------------------------------
+	 * 'childCount'
+	 */
 	if (isset($load['childCount'])) {
 	    list ($ret, $childCount) = GalleryCoreApi::fetchChildCounts($allAlbumIds);
 	    if ($ret->isError()) {
@@ -411,8 +424,10 @@ class GalleryLayout extends GalleryPlugin {
 	    $childData[] = 'childCount';
 	}
 
-	// -------------------------------------------------------------------------------------
-	// 'descendentCount'
+	/*
+	 * --------------------------------------------------------------------------------------
+	 * 'descendentCount'
+	 */
 	if (isset($load['descendentCount'])) {
 	    list ($ret, $descendentCount) = GalleryCoreApi::fetchDescendentCounts($allAlbumIds);
 	    if ($ret->isError()) {
@@ -428,8 +443,10 @@ class GalleryLayout extends GalleryPlugin {
 	    $childData[] = 'descendentCount';
 	}
 
-	// -------------------------------------------------------------------------------------
-	// 'parents'
+	/*
+	 * --------------------------------------------------------------------------------------
+	 * 'parents'
+	 */
 	if (isset($load['parents'])) {
 	    $layout['parents'] = array();
 	    foreach ($parentSequence as $id) {
@@ -445,8 +462,10 @@ class GalleryLayout extends GalleryPlugin {
 		$layout['parents'][count($layout['parents']) - 1];
 	}
 
-	// -------------------------------------------------------------------------------------
-	// 'peers'
+	/*
+	 * --------------------------------------------------------------------------------------
+	 * 'peers'
+	 */
 	if (isset($load['peers'])) {
 	    $layout['peers'] = array();
 	    $layout['peerIds'] = $peerIds;
@@ -459,9 +478,11 @@ class GalleryLayout extends GalleryPlugin {
 	    }
 	}
 
-	// -------------------------------------------------------------------------------------
-	// 'systemLinks', 'systemContent', 'itemLinks', 'itemSummaries', 'itemDetailFiles'
-	// Load links and content from all active modules
+	/*
+	 * --------------------------------------------------------------------------------------
+	 * 'systemLinks', 'systemContent', 'itemLinks', 'itemSummaries', 'itemDetailFiles'
+	 * Load links and content from all active modules
+	 */
 	if (isset($load['systemLinks']) || isset($load['systemContent'])
 		|| isset($load['itemLinks']) || isset($load['itemSummaries'])
 		|| isset($load['itemDetailFiles'])) {
@@ -510,7 +531,7 @@ class GalleryLayout extends GalleryPlugin {
 		}
 
 		if (!$required) {
-		    // This module doesn't have anything we need.  Don't bother with it
+		    /* This module doesn't have anything we need.  Don't bother with it */
 		    continue;
 		}
 
@@ -527,7 +548,7 @@ class GalleryLayout extends GalleryPlugin {
 		    if ($ret->isError()) {
 			return $ret->wrap(__FILE__, __LINE__);
 		    }
-		    // Add url/moduleId keys..
+		    /* Add url/moduleId keys.. */
 		    foreach ($links as $link) {
 			$link['url'] = $urlGenerator->generateUrl($link['params']);
 			$link['moduleId'] = $moduleId;
@@ -550,7 +571,7 @@ class GalleryLayout extends GalleryPlugin {
 		    if ($ret->isError()) {
 			return $ret->wrap(__FILE__, __LINE__);
 		    }
-		    // Add url/moduleId keys..
+		    /* Add url/moduleId keys.. */
 		    foreach ($links as $id => $list) {
 			foreach ($list as $link) {
 			    $link['url'] = $urlGenerator->generateUrl($link['params']);
@@ -590,8 +611,10 @@ class GalleryLayout extends GalleryPlugin {
 	    }
 	}
 
-	// -------------------------------------------------------------------------------------
-	// 'thumbnails'
+	/*
+	 * --------------------------------------------------------------------------------------
+	 * 'thumbnails'
+	 */
 	if (isset($load['thumbnails']) && !empty($childIds)) {
 	    list ($ret, $thumbnail) = GalleryCoreApi::fetchThumbnailsByItemIds($childIds);
 	    if ($ret->isError()) {
@@ -610,8 +633,10 @@ class GalleryLayout extends GalleryPlugin {
 	    $childData[] = 'thumbnail';
 	}
 
-	// -------------------------------------------------------------------------------------
-	// Populate data in children list..
+	/*
+	 * --------------------------------------------------------------------------------------
+	 * Populate data in children list..
+	 */
 	if (!empty($childData)) {
 	    foreach (array_keys($layout['children']) as $i) {
 		$id = $layout['children'][$i]['id'];
@@ -623,7 +648,7 @@ class GalleryLayout extends GalleryPlugin {
 	    }
 	}
 
-	// -------------------------------------------------------------------------------------
+	/* -------------------------------------------------------------------------------------- */
 	$template->setVariable('layout', $layout);
 
 	return GalleryStatus::success();
