@@ -135,9 +135,8 @@ class GdFunctionality {
      *	       array the output of gd_info
      */
     function gd_info() {
-	if (! function_exists('gd_info')) {
-	    return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__),
-			 null);
+	if (!function_exists('gd_info')) {
+	    return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__), null);
 	}
 	$info = @gd_info();
 	return array(GalleryStatus::success(), $info);
@@ -165,10 +164,9 @@ class GdFunctionality {
      */
     function imageCreate($width, $height) {
 	$res = @imageCreate($width, $height);
-	if (! $res) {
+	if (!$res) {
 	    return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION,
-					      __FILE__, __LINE__),
-			 null);
+					      __FILE__, __LINE__), null);
 	}
 	return array(GalleryStatus::success(), $res);
     }
@@ -191,14 +189,13 @@ class GdFunctionality {
      *	       res GD-resource
      */
     function imageCreateTruecolor($width, $height) {
-	if (! function_exists('imageCreateTruecolor')) {
-	    return GalleryStatus::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION,
-					__FILE__, __LINE__);
+	if (!function_exists('imageCreateTruecolor')) {
+	    return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION,
+					      __FILE__, __LINE__), null);
 	}
 	$res = @imageCreateTruecolor($width, $height);
-	if (! $res) {
-	    return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__),
-			 null);
+	if (!$res) {
+	    return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__), null);
 	}
 	return array(GalleryStatus::success(), $res);
     }
@@ -211,9 +208,9 @@ class GdFunctionality {
     function isValidFile($filename) {
 	global $gallery;
 	$platform = $gallery->getPlatform();
-	if (! $platform->file_exists($filename)
-	      || ! $platform->is_file($filename)
-	      || ! $platform->is_readable($filename)) {
+	if (!$platform->file_exists($filename)
+	      || !$platform->is_file($filename)
+	      || !$platform->is_readable($filename)) {
 	    return false;
 	}
 	return true;
@@ -226,15 +223,13 @@ class GdFunctionality {
      *	       resource GD resource
      */
     function checkResource($res, $filename, $file, $line) {
-	if (! $res) {
-	    if (! $this->isValidFile($filename)) {
-		return array(GalleryStatus::error(ERROR_ERROR_TOOLKIT_FAILURE | PLATFORM_FAILURE,
-						  $file, $line),
-			     null);
+	if (!$res) {
+	    if (!$this->isValidFile($filename)) {
+		return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE | ERROR_PLATFORM_FAILURE,
+						  $file, $line), null);
 	    }
 	    return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_FILE_TYPE,
-					      $file, $line),
-			 null);
+					      $file, $line), null);
 	}
 	return array(GalleryStatus::success(), $res);
     }
@@ -250,9 +245,9 @@ class GdFunctionality {
      *	       res GD-resource
      */
     function imageCreateFromGif($filename) {
-	if (! function_exists('imageCreateFromGif')) {
-	    return GalleryStatus::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION,
-					__FILE__, __LINE__);
+	if (!function_exists('imageCreateFromGif')) {
+	    return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION,
+					      __FILE__, __LINE__), null);
 	}
 	$res = @imageCreateFromGif($filename);
 	return $this->checkResource($res, $filename, __FILE__, __LINE__);
@@ -269,7 +264,6 @@ class GdFunctionality {
      *	       res GD-resource
      */
     function imageCreateFromJpeg($filename) {
-	global $gallery;
 	$res = @imageCreateFromJpeg($filename);
 	return $this->checkResource($res, $filename, __FILE__, __LINE__);
     }
@@ -344,7 +338,7 @@ class GdFunctionality {
      * @return object GalleryStatus
      */
     function imageGif($res, $filename) {
-	if (! function_exists('imageGif')) {
+	if (!function_exists('imageGif')) {
 	    return GalleryStatus::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION,
 					__FILE__, __LINE__);
 	}
@@ -366,7 +360,7 @@ class GdFunctionality {
      * @return object GalleryStatus
      */
     function imageJpeg($res, $filename, $quality) {
-	if (! function_exists('imageJpeg')) {
+	if (!function_exists('imageJpeg')) {
 	    return GalleryStatus::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION,
 					__FILE__, __LINE__);
 	}
@@ -388,7 +382,7 @@ class GdFunctionality {
      * @return object GalleryStatus
      */
     function imagePng($res, $filename) {
-	if (! function_exists('imagePng')) {
+	if (!function_exists('imagePng')) {
 	    return GalleryStatus::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION,
 					__FILE__, __LINE__);
 	}
@@ -410,7 +404,7 @@ class GdFunctionality {
      * @return object GalleryStatus
      */
     function imageWbmp($res, $filename) {
-	if (! function_exists('imageWbmp')) {
+	if (!function_exists('imageWbmp')) {
 	    return GalleryStatus::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION,
 					__FILE__, __LINE__);
 	}
@@ -431,7 +425,7 @@ class GdFunctionality {
      * @return object GalleryStatus
      */
     function imageXbm($res, $filename) {
-	if (! function_exists('imageXbm')) {
+	if (!function_exists('imageXbm')) {
 	    return GalleryStatus::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION,
 					__FILE__, __LINE__);
 	}
@@ -452,8 +446,9 @@ class GdFunctionality {
      *
      * @return object GalleryStatus
      */
-    function imageCopyResampled($dstRes, $srcRes, $dstX, $dstY, $srcX, $srcY, $dstW, $dstH, $srcW, $srcH) {
-	if (! function_exists('imageCopyResampled')) {
+    function imageCopyResampled(
+	    $dstRes, $srcRes, $dstX, $dstY, $srcX, $srcY, $dstW, $dstH, $srcW, $srcH) {
+	if (!function_exists('imageCopyResampled')) {
 	    return GalleryStatus::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION,
 					__FILE__, __LINE__);
 	}
@@ -544,18 +539,15 @@ class GdFunctionality {
      *	       resource new gd resource
      */
     function imageRotate($srcRes, $angle, $bgdColor) {
-	if (! function_exists('imageRotate')) {
+	if (!function_exists('imageRotate')) {
 	    return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION,
-					      __FILE__, __LINE__),
-			 null);
+					      __FILE__, __LINE__), null);
 	}
 	$res = @imageRotate($srcRes, $angle, $bgdColor);
 	if ($res) {
-	    return array(GalleryStatus::success(),
-			 $res);
+	    return array(GalleryStatus::success(), $res);
 	} else {
-	    return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__),
-			 null);
+	    return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__), null);
 	}
     }
 }
