@@ -181,18 +181,18 @@ class CoreModuleExtras {
 	     * underscore so that we have our own separate namespace.
 	     */
 	    $storage =& $gallery->getStorage();
-	    $query = "
+	    $query = '
                   UPDATE
                     [GalleryPluginParameterMap]
                   SET
-                    [GalleryPluginParameterMap::parameterName] = ?
+                    [::parameterName] = ?
                   WHERE
                     [GalleryPluginParameterMap::parameterName] = ?
                     AND
                     [GalleryPluginParameterMap::pluginType] = 'module'
                     AND
                     [GalleryPluginParameterMap::itemId] = 0
-                ";
+                ';
 	    $ret = $storage->execute($query, array('_version', 'version'));
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
