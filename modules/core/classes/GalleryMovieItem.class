@@ -210,13 +210,116 @@ class GalleryMovieItem_core extends GalleryDataItem {
 						    'itemId' => $this->getId()));
 
 	    list ($width, $height) = array($this->getWidth(), $this->getHeight());
+	    switch($this->getMimeType()) {
+	    case 'application/x-shockwave-flash':
+		return sprintf('<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" 
+                                        codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=5,0,30,0"
+                                  %s
+                                  width="%d"
+                                  height="%d">
+                                  <param name="movie" value="%s" />
+                                  <param name="quality" value="high" />
+                                  <param name="salign" value="TL" />
+                                  <embed src="%s"
+                            	         quality="high"
+                            	         pluginspage="http://www.macromedia.com/shockwave/download/index.cgi?P1_Prod_Version=ShockwaveFlash"
+                            	         type="%s"
+                            	         width="%d"
+                            	         height="%d"
+                            	         salign="TL">
+                                  </embed>
+                                </object>',
+			       $params['class'] ? 'class="' . $params['class'] . '"' : '',
+			       $width,
+			       $height,
+			       $src,
+			       $src,
+			       $this->getMimeType(),
+			       $width,
+			       $height);
 
-	    return sprintf('<object %s type="%s" data="%s" width="%s" height="%s"></object>',
-			   $params['class'] ? 'class="' . $params['class'] . '"' : '',
-			   $this->getMimeType(),
-			   $src,
-			   $width,
-			   $height);
+	    case 'application/x-director':
+		return sprintf('<object classid="clsid:166B1BCA-3F9C-11CF-8075-444553540000" 
+                                        codebase="http://download.macromedia.com/pub/shockwave/cabs/director/sw.cab#version=8,0,0,0"
+                                        %s
+                                        width="%d"
+                                        height="%d"
+                                        name="%s"
+                                        id="sw">
+                                  <param name="src" value="%s" />
+                                  <param name="swRemote" value="swTarget=false swVolume=false swRestart=false swPausePlay=false swFastForward=false swContextMenu=true swSend=false" />
+                                  <param name="sw3" value="2" />
+                                  <param name="swStretchStyle" value="none" />
+                                  <param name="bgColor" value="#000000" />
+                                  <embed src="%s" 
+                                         bgcolor="#000000"
+                                         width="%d"
+                                         height="%d" 
+                            	         swremote="swSaveEnabled=\'false\' 
+                            	                   swVolume=\'false\' 
+                            	                   swRestart=\'false\' 
+                            	                   swPausePlay=\'false\' 
+                            	                   swFastForward=\'false\' 
+                            	                   swContextMenu=\'true\'" 
+                            	         swstretchstyle="none" 
+                            	         sw3="2" 
+                            	         type="%s" 
+                            	         pluginspage="http://www.macromedia.com/shockwave/download/">
+                                  </embed>
+                                </object>',
+			       $params['class'] ? 'class="' . $params['class'] . '"' : '',
+			       $width,
+			       $height,
+			       $this->getPathComponent(),
+			       $src,
+			       $src,
+			       $width,
+			       $height,
+			       $this->getMimeType());
+		
+	    case 'video/quicktime':
+		return sprintf('<object %s type="%s" data="%s" width="%s" height="%s"></object>',
+			       $params['class'] ? 'class="' . $params['class'] . '"' : '',
+			       $this->getMimeType(),
+			       $src,
+			       $width,
+			       $height);
+
+	    case 'video/x-msvideo':
+		return sprintf('<object id="WindowsMediaPlayer"
+                                        %s
+                                        width="%s"
+                                        height="%s"
+                                        classid="CLSID:05589FA1-C356-11CE-BF01-00AA0055595A">
+                                  <param name="ShowDisplay" value="0">
+                                  <param name="ShowControls" value="1">
+                                  <param name="AutoStart" value="1">
+                                  <param name="AutoRewind" value="-1">
+                                  <param name="Volume" value="-5000">
+                                  <param name="FileName" value="%s">
+
+                                  <object id="video"
+                                          %s
+                                          data="%s"
+                                          type="%s"
+                                          width="%s"
+                                          height="%s">
+                                  </object>
+                                </object>',
+			       $params['class'] ? 'class="' . $params['class'] . '"' : '',
+			       $width,
+			       $height+30,
+			       $src,
+			       $params['class'] ? 'class="' . $params['class'] . '"' : '',
+			       $src,
+			       'video/avi', // $this->getMimeType(),
+			       $width,
+			       $height);
+		
+	    default:
+		return sprintf('[Render for %s not implemented  yet]', $this->getMimeType());
+		
+	    }
 	default:
 	    return null;
 	}
