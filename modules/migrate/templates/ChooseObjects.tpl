@@ -19,7 +19,7 @@
   </div>
   {/if}
 
-  <div class="gbAdmin"}
+  <div class="gbAdmin">
     <div class="giTitle">
       {g->text text="Import Users"}
     </div>

@@ -59,7 +59,7 @@
   </div>
   {/if}
 
-  <div class="gbAdmin"}
+  <div class="gbAdmin">
     <div class="giTitle">
       <div class="giSuccess">
 	{if ($ImportResults.counts.albumImportSuccess)}
@@ -85,7 +85,7 @@
   </div>
 
   {if sizeof($ImportResults.status.albumImportFailure) > 0}
-  <div class="gbAdmin"}
+  <div class="gbAdmin">
     <div class="giTitle">
       <div class="giError">
 	{if ($ImportResults.counts.albumImportFailure)}
@@ -107,7 +107,7 @@
   </div>
   {/if}
 
-  <div class="gbAdmin"}
+  <div class="gbAdmin">
     <a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=migrate:SelectGallery"}">
       {g->text text="Import more data"}
     </a>
