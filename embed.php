@@ -726,7 +726,8 @@ class GalleryEmbed {
 	    $template->setVariable('l10Domain', 'module_' . $moduleId);
 
 	    // generate the imageblock
-	    list ($ret, $tpl) = $module->_loadImageBlocks($template, $params);
+	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/modules/imageblock/classes/ImageBlockHelper.class');
+	    list ($ret, $tpl) = ImageBlockHelper::loadImageBlocks($template, $params);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
