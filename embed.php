@@ -750,5 +750,61 @@ class GalleryEmbed {
 	}
 	return array(GalleryStatus::success(), $blockHtml);
     }
+
+    /**
+     * Add an externalId<->entityId map entry for existing G2/emApp users/groups
+     *
+     * @param integer/string the user/group id in the embedded application
+     * @param integer the entityId of the user/group in G2
+     * @param string either 'GalleryUser' for a user mapping, 'GalleryGroup' for a group mapping
+     * @return object GalleryStatus
+     * example: GalleryEmbed::addExternalIdMapEntry($uid, $g2user->getId(), 'GalleryUser');
+     * @static
+     */
+    function addExternalIdMapEntry($externalId, $entityId, $entityType) {
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/ExternalIdMap.class');
+	$ret = ExternalIdMap::addMapEntry(array('externalId' => $externalId,
+						'entityType' => $entityType, 'entityId' => $entityId));
+	if ($ret->isError()) {
+	  return $ret->wrap(__FILE__, __LINE__);
+	}
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Get the complete externalId<->entityId map (for users and groups),
+     * the return array is organized by externalId or by entityId
+     *
+     * @param string 'externalId' or 'entityId', array is organized by this key
+     * @return array object GalleryStatus
+     *               array(externalId|entityId => array(externalId => int/string,
+     *                                                  entityId => int, entityType => string))
+     * @static
+     */
+    function getExternalIdMap($key) {
+        global $gallery;
+        /* Input validation */ 
+        if ($key != 'externalId' && $key != 'entityId') {
+	  return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+        }
+
+        $query = 'SELECT [ExternalIdMap::entityId], [ExternalIdMap::externalId], [ExternalIdMap::entityType]
+		FROM [ExternalIdMap]';
+	list ($ret, $results) = $gallery->search($query, array());
+	if ($ret->isError()) {
+	  return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$map = array();
+	while ($result = $results->nextResult()) {
+	  $entry = array('externalId' => $result[1], 'entityId' => $result[0], 'entityType' => $result[2]);
+	  if ($key == 'externalId') {
+	    $map[$result[1]] = $entry;
+	  } elseif ($key == 'entityId') {
+	    $map[$result[0]] = $entry;
+	  }
+	}
+	return array(GalleryStatus::success(), $map);
+    }
 }
 ?>
