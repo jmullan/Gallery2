@@ -40,6 +40,18 @@ class ConfirmImportController extends GalleryController {
         global $gallery;
 	$platform = $gallery->getPlatform();
 	$slash = $platform->getDirectorySeparator();
+
+
+	list ($ret, $moduleStatusList) = GalleryCoreApi::fetchPluginStatus('module');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	if (!empty($moduleStatusList['comment']['active'])) {
+	    $importComments = TRUE;
+	} else {
+	    $importComments = FALSE;
+	}
+
 	/* owner => core.all,comment.all
 	 *
 	 * canRead => core.view,core.viewResizes
@@ -59,15 +71,19 @@ class ConfirmImportController extends GalleryController {
 							  'core.viewResizes'
 							  ),
 				       'canViewFullImages' => array('core.viewSource'),
-				       'canViewComments' => array('comment.view',
-								  'comment.search'),
-				       'canAddComments' => array('comment.add'),
 				       'canChangeText' => array('core.edit'),
 				       'canAddTo' => array('core.addDataItem'),
 				       'canWrite' => array('core.edit'),
 				       'canDeleteFrom' => array('core.delete'),
 				       'canCreateSubAlbum' => array('core.addAlbumItem')
 				       );
+	if ($importComments) {
+	    $permissionTranslation['canAddComments'] = array('comment.add');
+	    $permissionTranslation['canViewComments'] = array('comment.view', 'comment.search');
+	} else {
+	    $permissionTranslation['canAddComments'] = array();
+	    $permissionTranslation['canViewComments'] = array();
+	}
 	/* Get GroupIds for "everybody" and "all users" */
 	list ($ret, $everybodyGroupId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.everybodyGroup');
 	if ($ret->isError()) {
@@ -86,16 +102,6 @@ class ConfirmImportController extends GalleryController {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	
-	list ($ret, $moduleStatusList) = GalleryCoreApi::fetchPluginStatus('module');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	if (!empty($moduleStatusList['comment']['active'])) {
-	    $importComments = TRUE;
-	} else {
-	    $importComments = FALSE;
-	}
-
 	
         /* Verify that active user is an admin */
         $ret = GalleryCoreApi::assertUserIsSiteAdministrator();
@@ -443,13 +449,15 @@ class ConfirmImportController extends GalleryController {
 				    if ($ret->isError()) {
 					return array($ret->wrap(__FILE__, __LINE__), null);
 				    }
-				    $ret = GalleryCoreApi::addGroupPermission($newAlbumInstance->getId(),
-									      $adminUsersGroupId,
-									      'comment.all',
-									      FALSE
-									      );
-				    if ($ret->isError()) {
-					return array($ret->wrap(__FILE__, __LINE__), null);
+				    if ($importComments) {
+					$ret = GalleryCoreApi::addGroupPermission($newAlbumInstance->getId(),
+										  $adminUsersGroupId,
+										  'comment.all',
+										  FALSE
+										  );
+					if ($ret->isError()) {
+					    return array($ret->wrap(__FILE__, __LINE__), null);
+					}
 				    }
 				}
 				
@@ -476,14 +484,16 @@ class ConfirmImportController extends GalleryController {
 				    if ($ret->isError()) {
 					return array($ret->wrap(__FILE__, __LINE__), null);
 				    }
-				    $ret = GalleryCoreApi::addUserPermission($newAlbumInstance->getId(),
-									     $owner->getId(),
-									     'comment.all',
-									     true
-									     );
-				    if ($ret->isError()) {
-					return array($ret->wrap(__FILE__, __LINE__), null);
-				    }				    
+				    if ($importComments) {
+					$ret = GalleryCoreApi::addUserPermission($newAlbumInstance->getId(),
+										 $owner->getId(),
+										 'comment.all',
+										 true
+										 );
+					if ($ret->isError()) {
+					    return array($ret->wrap(__FILE__, __LINE__), null);
+					}
+				    }
 				}
 				
 				if (isset($album['perms'])) {

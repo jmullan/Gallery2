@@ -102,6 +102,15 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	list ($ret, $moduleStatusList) = GalleryCoreApi::fetchPluginStatus('module');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	if (!empty($moduleStatusList['comment']['active'])) {
+	    $this->testComments = TRUE;
+	} else {
+	    $this->testComments = FALSE;
+	}
     }
 
     function tearDown() {
@@ -323,7 +332,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 				  $testOwner->getId(),                   // owner
 				  1056015077,                            // album creation
 				  1056015077,                            // clicks counted since
-				  18,                                    // count of clicks
+				  19,                                    // count of clicks
 				  array(array(                           // thumb and resized sizing preferences
 					      'order' => 0,
 					      'derivativeType' => 1,
@@ -436,23 +445,24 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 				  $itemViewCount[$testItem->getId()]     // count of clicks
 				  )
 			    );
-	list ($ret, $comments) =
-		GalleryCommentHelper::fetchComments($ids[1], 2, ORDER_ASCENDING);
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	if ($this->testComments) {
+	    list ($ret, $comments) =
+		    GalleryCommentHelper::fetchComments($ids[1], 2, ORDER_ASCENDING);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $this->assertEquals(array('209.98.212.219',
+				      'foo',
+				      'This is a terrific picture!  Hooray!',
+				      1088916185
+				      ),
+				array($comments[0]->_host,
+				      $comments[0]->_subject,
+				      $comments[0]->_comment,
+				      $comments[0]->_date
+				      )
+				);
 	}
-	$this->assertEquals(array('209.98.212.219',
-				  'foo',
-				  'This is a terrific picture!  Hooray!',
-				  1088916185
-				  ),
-			    array($comments[0]->_host,
-				  $comments[0]->_subject,
-				  $comments[0]->_comment,
-				  $comments[0]->_date
-				  )
-			    );
-	
 	/*
 	 * [comments] => Array (
 	 *     [0] => comment Object (
@@ -590,15 +600,16 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 			    );
 	$testPerms = array();
 	$testPermsResult = array();
+	
 	$testPerms['admin'] = array('core.all' => true,
-				    'comment.all' => true
+				    'comment.all' => true && $this->testComments
 				    );
 	$testPerms['phpunitfoo001'] = array('core.view' => true,
 					    'core.viewResizes' => true,
 					    'core.viewSource' => true,
-					    'comment.view' => true,
-					    'comment.search' => true,
-					    'comment.add' => true,
+					    'comment.view' => true && $this->testComments,
+					    'comment.search' => true && $this->testComments,
+					    'comment.add' => true && $this->testComments,
 					    'core.edit' => true,
 					    'core.addDataItem' => true,
 					    'core.edit' => true,
@@ -679,14 +690,14 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	$testPerms = array();
 	$testPermsResult = array();
 	$testPerms['admin'] = array('core.all' => true,
-				    'comment.all' => true
+				    'comment.all' => true && $this->testComments
 				    );
 	$testPerms['phpunitfoo001'] = array('core.view' => true,
 					    'core.viewResizes' => true,
 					    'core.viewSource' => false,
-					    'comment.view' => false,
-					    'comment.search' => false,
-					    'comment.add' => false,
+					    'comment.view' => false && $this->testComments,
+					    'comment.search' => false && $this->testComments,
+					    'comment.add' => false && $this->testComments,
 					    'core.edit' => false,
 					    'core.addDataItem' => false,
 					    'core.edit' => false,
@@ -791,14 +802,14 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	    $testPerms = array();
 	    $testPermsResult = array();
 	    $testPerms['admin'] = array('core.all' => true,
-					'comment.all' => true
+					'comment.all' => true && $this->testComments
 					);
 	    $testPerms['phpunitfoo001'] = array('core.view' => false,
 						'core.viewResizes' => false,
 						'core.viewSource' => false,
-						'comment.view' => false,
-						'comment.search' => false,
-						'comment.add' => false,
+						'comment.view' => false && $this->testComments,
+						'comment.search' => false && $this->testComments,
+						'comment.add' => false && $this->testComments,
 						'core.edit' => false,
 						'core.addDataItem' => false,
 						'core.edit' => false,
@@ -937,14 +948,14 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	    $testPerms = array();
 	    $testPermsResult = array();
 	    $testPerms['admin'] = array('core.all' => true,
-					'comment.all' => true
+					'comment.all' => true && $this->testComments
 					);
 	    $testPerms['phpunitfoo001'] = array('core.view' => false,
 						'core.viewResizes' => false,
 						'core.viewSource' => false,
-						'comment.view' => false,
-						'comment.search' => false,
-						'comment.add' => false,
+						'comment.view' => false && $this->testComments,
+						'comment.search' => false && $this->testComments,
+						'comment.add' => false && $this->testComments,
 						'core.edit' => false,
 						'core.addDataItem' => false,
 						'core.edit' => false,
@@ -1079,14 +1090,14 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	    $testPerms = array();
 	    $testPermsResult = array();
 	    $testPerms['admin'] = array('core.all' => true,
-					'comment.all' => true
+					'comment.all' => true && $this->testComments
 					);
 	    $testPerms['phpunitfoo001'] = array('core.view' => false,
 						'core.viewResizes' => false,
 						'core.viewSource' => false,
-						'comment.view' => false,
-						'comment.search' => false,
-						'comment.add' => false,
+						'comment.view' => false && $this->testComments,
+						'comment.search' => false && $this->testComments,
+						'comment.add' => false && $this->testComments,
 						'core.edit' => false,
 						'core.addDataItem' => false,
 						'core.edit' => false,
