@@ -211,6 +211,30 @@ class DataCacheTest extends GalleryTestCase {
 	GalleryDataCache::getFromDisk(array('type' => 'entity', 'itemId' => 1));
 	GalleryDataCache::getFromDisk(array('type' => 'module', 'id' => 'core', 'itemId' => 1));
     }
+
+    function testCachePermission() {
+	global $gallery;
+	
+	GalleryDataCache::cachePermissions(array('1', '2'), 'test.TestPermission');
+	$this->assert(GalleryDataCache::hasPermission('1', 'test.TestPermission'),
+			'1 should have permission test.TestPermission');
+	$this->assert(GalleryDataCache::hasPermission('2', 'test.TestPermission'),
+			'2 should have permission test.TestPermission');
+	$this->assert(! GalleryDataCache::hasPermission('3', 'test.TestPermission'),
+			'3 shouldn\'t have permission test.TestPermission');
+	$this->assert(! GalleryDataCache::hasPermission('1', 'test.OtherPermission'),
+			'1 shouldn\'t have permission test.OtherPermission');
+	
+	GalleryDataCache::cachePermissions(array('3'), 'test.OtherPermission');
+	$this->assert(GalleryDataCache::hasPermission('1', 'test.TestPermission'),
+			'1 should still have permission test.TestPermission');
+	$this->assert(! GalleryDataCache::hasPermission('1', 'test.OtherPermission'),
+			'1 still shouldn\'t have permission test.OtherPermission');
+	$this->assert(GalleryDataCache::hasPermission('3', 'test.OtherPermission'),
+			'3 should now have permission test.OtherPermission');
+	$this->assert(! GalleryDataCache::hasPermission('3', 'test.TestPermission'),
+			'3 shouldn\'t have permission test.TestPermission');
+    }
 }
 
 class DataCacheTestPlatform_testGetFromDisk {
