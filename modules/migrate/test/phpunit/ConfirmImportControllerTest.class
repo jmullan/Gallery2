@@ -30,19 +30,77 @@
  * ConfirmImport controller tests
  */
 class ConfirmImportControllerTest extends GalleryControllerTestCase {
-
+    var $temporaryAlbumID;
+    var $phpunitMigrateLockIds;
+    
     function ConfirmImportControllerTest($methodName) {
         $this->GalleryControllerTestCase($methodName, 'migrate:ConfirmImport');
     }
 
     function setUp() {
         global $gallery;
-        parent::setUp();
+
+	/* get id of root album */
+	list ($ret, $rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
+	if ($ret->isError()) {
+	    print "<p><b>ERROR getting root id</b></p>";
+	    print $ret->getAsHtml();
+	}
+	/* Try to root album */
+	list ($ret, $rootObject) = $gallery->loadEntitiesById($rootId);
+	if ($ret->isError()) {
+	    print "<p><b>ERROR loading root album</b></p>";
+	    print $ret->getAsHtml();	    
+	}
+
+	/* create a new album instance - we need this to actually create an
+	 * album
+	 */
+ 	list ($ret, $newAlbumInstance) = GalleryFactory::newInstance('GalleryEntity', 'GalleryAlbumItem');
+	if ($ret->isError()) {
+	    print "<p><b>ERROR creating new album instance</b></p>";
+	    print $ret->getAsHtml();
+	}
+	
+		
+	/* Get a lock on the root album */
+	list ($ret, $phpunitMigrateLockIds[]) = $gallery->acquireReadLock($rootObject->getId());
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
+	/* create an album.  Minimize (but not eliminate) collisions by
+	 * appending a timestamp
+	 */
+	$ret = $newAlbumInstance->create($rootId, 'php_unit_migrate');
+	if ($ret->isError()) {
+	    if ($ret->getErrorCode() & ERROR_COLLISION) {
+		print "<p><b>ERROR collision $tempAlbumName</b></p>";
+		print $ret->getAsHtml();
+	    } else {
+		print "<p><b>ERROR creating album $tempAlbumName</b> in $rootId</p><pre>";
+		print_r($ret);
+		print "</pre>";
+		print $ret->getAsHtml();		
+	    }
+	}
+	$ret = $newAlbumInstance->save();
+	if ($ret->isError()) {
+	    print "<p><b>ERROR saving test album</b></p>";
+	    print $ret->getAsHtml();
+	}
+	$this->temporaryAlbumID = $newAlbumInstance->getId();
+
+	$ret = $gallery->releaseLocks($phpunitMigrateLockIds);
+	if ($ret->isError()) {
+	    print "<p><b>ERROR releasing locks</b></p>";
+	    print $ret->getAsHtml();
+	}
+	parent::setUp();
     }
 
     function tearDown() {
         global $gallery;
-
 	/* Clean up our test user */
 	list ($ret, $user) = GalleryUserHelper::fetchUserByUsername('phpunit_foobar');
 	if ($ret->isSuccess()) {
@@ -51,7 +109,13 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
+	/* Clean up our test album */
 	
+	$ret = $gallery->deleteEntityById($this->temporaryAlbumID);
+	if ($ret->isError()) {
+	    print "<p><b>ERROR deleting" . $this->temporaryAlbumID . "</b></p>";
+	    print $ret->getAsHtml();
+	}
         parent::tearDown();
     }
 
@@ -88,7 +152,6 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
         GalleryUtilities::putRequestVariable('albumsPath', dirname(__FILE__) . $slash . '..' . $slash . 'data' . $slash . 'albums' . $slash);
         GalleryUtilities::putRequestVariable('form[migrateUser][1054014347_1233740678]', 1);
         GalleryUtilities::putRequestVariable('form[action][import]', 1);
-
         $results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'migrate:ImportResults'),
@@ -108,7 +171,8 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
         GalleryUtilities::putRequestVariable('albumsPath', dirname(__FILE__) . $slash . '..' . $slash . 'data' . $slash . 'albums' . $slash);
         GalleryUtilities::putRequestVariable('form[sourceAlbums][album03]', 1);
         GalleryUtilities::putRequestVariable('form[action][import]', 1);
-
+	GalleryUtilities::putRequestVariable('form[destinationAlbumID]',$this->temporaryAlbumID);
+	
         $results = $this->handleRequest();
 	$this->assertEquals(array('album03'),
 			    array_keys($results['status']['albumImportSuccess'])
@@ -130,25 +194,5 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 			    $results['status']['albumImportFailure']
 			    );
     }
-
-    /**
-     * Example of testing for an error
-     *
-    function testReorderItemsWithoutPermissions() {
-	global $gallery;
-
-	$ret = GalleryPermissionMap::removeItemPermissions($this->_parentAlbum->getId());
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	GalleryUtilities::putRequestVariable('itemId', $this->_parentAlbum->getId());
-	GalleryUtilities::putRequestVariable('form[selectedId]', $this->_child[3]->getId());
-	GalleryUtilities::putRequestVariable('form[afterId]', $this->_child[0]->getId());
-	GalleryUtilities::putRequestVariable('form[action][reorder]', 1);
-
-	$results = $this->handleRequest(ERROR_PERMISSION_DENIED);
-    }
-    */
 }
 ?>
