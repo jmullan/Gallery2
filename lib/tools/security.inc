@@ -87,7 +87,7 @@ function passwordIsCorrect() {
 function savePasswordCookie() {
     global $gallery;
 
-    $path = preg_replace('|/setup.*|', '/setup', $_SERVER['PHP_SELF']); 
+    $path = preg_replace('|/lib/tools.*|', '/lib/tools', $_SERVER['PHP_SELF']); 
     header(sprintf('Set-Cookie: %s=%s; path=%s',
 		   'g2Setup',
 		   md5($gallery->getConfig('setup.password')),
