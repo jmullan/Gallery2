@@ -13,6 +13,18 @@
     </div>
   </div>
 
+{*
+ * successful configure should return to modules view.
+ * this block only needed until that bug is fixed.
+ *}
+  {if !empty($status)}
+  <div id="gsStatus">
+    {if isset($status.configured)}
+      <div class="giStatus"> {g->text text="Settings saved successfully"} </div>
+    {/if}
+  </div>
+  {/if}
+
   <div class="gbAdmin">
     <div class="giDescription">
       {g->text text="This module creates a target album for uploaded images.  All users who perform an upload are automatically added to a group with upload access to this album.  The album and group will be created using the information below."}
