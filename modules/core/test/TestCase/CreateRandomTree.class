@@ -103,7 +103,10 @@ class CreateRandomTreeTestCase extends TestCase {
 		return GalleryStatus::success();
 	    }
 
-	    /* Create a thumbnail */
+	    /* Set the image as the photo's source */
+	    $photo[$i]->setSourceId($image[$i]->getId());
+	    
+	    /* Create a derivative image for the thumbnail */
 	    $thumbnail[$i] = new ImageContainer();
 	    $ret = $thumbnail[$i]->createDerivative($photo[$i]->getId());
 	    if ($ret->isError()) {
@@ -114,6 +117,10 @@ class CreateRandomTreeTestCase extends TestCase {
 	    if ($ret->isError()) {
 		return $ret;
 	    }
+
+	    /* Set the image as the photo's thumbnail */
+	    $photo[$i]->setThumbnailId($thumbnail[$i]->getId());
+	    
 	    $this->_itemCount++;
 	    if ($this->_itemCount >= $this->_maxItems) {
 		return GalleryStatus::success();
@@ -135,6 +142,11 @@ class CreateRandomTreeTestCase extends TestCase {
 		if ($ret->isError()) {
 		    return $ret;
 		}
+
+		/* Add this image to the photo's resize id list */
+		$resizeIds =& $photo[$i]->getResizeIds();
+		$resizeIds->push($resize[$i][$j]->getId());
+		
 		$this->_itemCount++;
 		if ($this->_itemCount >= $this->_maxItems) {
 		    return GalleryStatus::success();
