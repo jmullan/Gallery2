@@ -162,7 +162,8 @@ class ItemCreateResizesControllerTest extends GalleryControllerTestCase {
 	if (!empty($resizeTable[$this->_item->getId()])) {
 	    $this->assertEquals(3, sizeof($resizeTable[$this->_item->getId()]));
 	    for ($i = 0; $i < 3; $i++) {
-		$this->assertEquals('scale|' . 100 * ($i+1), $resizeTable[$this->_item->getId()][$i]->getDerivativeOperations());
+		$this->assertEquals('scale|' . 100 * ($i+1),
+				    $resizeTable[$this->_item->getId()][$i]->getDerivativeOperations());
 	    }
 	}
     }
