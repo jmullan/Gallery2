@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -39,10 +39,11 @@ class ItemReorderControllerTest extends GalleryControllerTestCase {
 
     function setUp() {
 	global $gallery;
-	
+
 	parent::setUp();
 
-	list ($ret, $this->_parentAlbum) = $this->_createRandomAlbum($this->_getRootId());
+	list ($ret, $this->_parentAlbum) = $this->_createRandomAlbum($this->_getRootId(),
+								     array('orderBy' => 'orderWeight'));
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -54,7 +55,7 @@ class ItemReorderControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	for ($i = 0; $i < 5; $i++) {
 	    list ($ret, $this->_child[$i]) = $this->_createRandomDataItem($this->_parentAlbum->getId());
 	    if ($ret->isError()) {
@@ -77,7 +78,7 @@ class ItemReorderControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	parent::tearDown();
     }
 
@@ -171,7 +172,7 @@ class ItemReorderControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	$this->assertEquals(array($this->_child[0]->getId(),
 				  $this->_child[3]->getId(),
 				  $this->_child[1]->getId(),
@@ -204,7 +205,7 @@ class ItemReorderControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	$this->assertEquals(array($this->_child[1]->getId(),
 				  $this->_child[2]->getId(),
 				  $this->_child[3]->getId(),
@@ -212,7 +213,7 @@ class ItemReorderControllerTest extends GalleryControllerTestCase {
 				  $this->_child[0]->getId()),
 			    $childIds);
     }
-    
+
     /**
      * Test moving an item
      */
@@ -223,7 +224,7 @@ class ItemReorderControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	GalleryUtilities::putRequestVariable('itemId', $this->_parentAlbum->getId());
 	GalleryUtilities::putRequestVariable('form[selectedId]', $this->_child[3]->getId());
 	GalleryUtilities::putRequestVariable('form[afterId]', $this->_child[0]->getId());

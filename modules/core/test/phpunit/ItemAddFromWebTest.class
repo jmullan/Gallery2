@@ -51,7 +51,8 @@ class ItemAddFromWebTest extends ItemAddPluginTestCase {
 
 	parent::setUp();
 
-	list ($ret, $this->_rootAlbum) = $this->_createRandomAlbum($this->_getRootId());
+	list ($ret, $this->_rootAlbum) = $this->_createRandomAlbum($this->_getRootId(),
+								   array('orderBy' => 'orderWeight'));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

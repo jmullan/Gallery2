@@ -41,7 +41,8 @@ class RearrangeItemsControllerTest extends GalleryControllerTestCase {
 	parent::setUp();
 
 	// Create a test album with 4 child items (1 with no permission) and 1 subalbum..
-	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
+	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId(),
+							       array('orderBy' => 'orderWeight'));
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
