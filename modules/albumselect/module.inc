@@ -119,45 +119,40 @@ class AlbumSelectModule extends GalleryModule {
 	}
 
 	/* If it's the anonymous user, try to load it from the cache */
-	if ($gallery->getActiveUserId() == $anonymousUserId) {
-	    $cachePathInfo = array('type' => 'module-data',
-				   'module' => 'albumselect',
-				   'key' => 'loadSystemContent_guest');
-	    list ($treeList, $titles) = GalleryDataCache::getFromDisk($cachePathInfo);
-	}
+	$cachePathInfo = array('type' => 'module-data',
+			       'module' => 'albumselect',
+			       'itemId' => $gallery->getActiveUserId());
+	list ($treeList, $titles) = GalleryDataCache::getFromDisk($cachePathInfo);
 
 	if (!isset($titles) || !isset($treeList)) {
-	list ($ret, $tree) = GalleryCoreApi::fetchAlbumTree();
-	if ($ret->isError()) {
-	    if ($ret->getErrorCode() & ERROR_PERMISSION_DENIED) {
-		$tree = null;
-	    } else {
+	    list ($ret, $tree) = GalleryCoreApi::fetchAlbumTree();
+	    if ($ret->isError()) {
+		if ($ret->getErrorCode() & ERROR_PERMISSION_DENIED) {
+		    $tree = null;
+		} else {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	    }
+	    if (empty($tree)) {
+		return array(GalleryStatus::success(), null);
+	    }
+
+	    list ($ret, $items) =
+		GalleryCoreApi::loadEntitiesById(GalleryUtilities::arrayKeysRecursive($tree));
+	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	}
-	if (empty($tree)) {
-	    return array(GalleryStatus::success(), null);
-	}
-
-	list ($ret, $items) =
-	    GalleryCoreApi::loadEntitiesById(GalleryUtilities::arrayKeysRecursive($tree));
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
 	    foreach ($items as $item) {
 		$titles[$item->getId()] =
 		    $item->getTitle() ? $item->getTitle() : $item->getPathComponent();
-	}
-
-	$treeList = array();
-	    $sorter = $params['sort'] ? new AlbumSelectTreeSorter($titles) : null;
-	$this->_parseTree($tree, $treeList, $sorter);
-
-	    /* If it's the anonymous user, try to save it to the */
-	    $dataToCache = array($treeList, $titles);
-	    if ($gallery->getActiveUserId() == $anonymousUserId) {
-		GalleryDataCache::putToDisk($cachePathInfo, $dataToCache);
 	    }
+
+	    $treeList = array();
+	    $sorter = $params['sort'] ? new AlbumSelectTreeSorter($titles) : null;
+	    $this->_parseTree($tree, $treeList, $sorter);
+
+	    $dataToCache = array($treeList, $titles);
+	    GalleryDataCache::putToDisk($cachePathInfo, $dataToCache);
 	}
 
 	$template->setVariable('AlbumSelectSystemContent',
@@ -176,9 +171,7 @@ class AlbumSelectModule extends GalleryModule {
      */
     function handleEvent($event) {
 	if ($event->getEventName() == 'Gallery::ViewableTreeChange') {
-	    $cachePathInfo = array('type' => 'module-data',
-				   'module' => 'albumselect',
-				   'key' => 'loadSystemContent_guest');
+	    $cachePathInfo = array('type' => 'module-data', 'module' => 'albumselect');
 	    GalleryDataCache::removeFromDisk($cachePathInfo);
 	}
 

@@ -503,8 +503,14 @@ class GalleryDataCache {
 	    break;
 
 	case 'module-data':
-	    $cacheFile =
-		sprintf('%s%s/%s/%s', $base, 'module', $pathInfo['module'], $pathInfo['key']);
+	    if (isset($pathInfo['itemId'])) {
+		list ($first, $second) = GalleryDataCache::getCacheTuple($pathInfo['itemId']);
+		$cacheFile = sprintf('%s%s/%s/%s/%s/%s.dat',
+				     $base, 'module', $pathInfo['module'],
+				     $first, $second, $pathInfo['itemId']);
+	    } else {
+		$cacheFile = sprintf('%s%s/%s/', $base, 'module', $pathInfo['module']);
+	    }
 	    break;
 	}
 

@@ -121,6 +121,13 @@ class DataCacheTest extends GalleryTestCase {
 
 	$this->assertEquals('/data/cache/derivative/1/2/123-fast.inc',
             GalleryDataCache::getCachePath(array('type' => 'fast-download', 'itemId' => 123)));
+
+	$this->assertEquals('/data/cache/module/foo/1/2/123.dat',
+            GalleryDataCache::getCachePath(
+		array('type' => 'module-data', 'module' => 'foo', 'itemId' => 123)));
+
+	$this->assertEquals('/data/cache/module/foo/',
+            GalleryDataCache::getCachePath(array('type' => 'module-data', 'module' => 'foo')));
     }
 
     function testPutToDisk() {
