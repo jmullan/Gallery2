@@ -27,6 +27,7 @@
  */
 /**
  * @package @@package@@
+ * @subpackage ClassInterfaces
  * @version $Revision$ $Date$
  * @author Bharat Mediratta &lt;bharat@menalto.com&gt;
  */
