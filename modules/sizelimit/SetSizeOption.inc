@@ -41,71 +41,71 @@ class SetSizeOption extends ItemAddOption {
      * @see ItemAddOption::isAppropriate
      */
     function isAppropriate() {
-        return array(GalleryStatus::success(), true);
+	return array(GalleryStatus::success(), true);
     }
 
     /**
      * @see ItemAddOption::handleRequestAfterAdd
      */
     function handleRequestAfterAdd($form, $items) {
-        $errors = array();
+	$errors = array();
 	$warnings = array();
 	for ($i = 0; $i < count($items); $i++) {
 	    $warnings[$i] = array();
 	    /* we should come here only if we are adding a photo, not sub-album */
-            $albumId = $items[$i]->getParentId();
-      
-            list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'sizelimit');
-            if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
-            }
-            list ($ret, $param) = GalleryCoreApi::fetchAllPluginParameters(
-		'module', 'sizelimit', $albumId);
-            if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
-            }
-            $preserveOriginal = isset($param['keepOriginal']) && $param['keepOriginal'];
+	    $albumId = $items[$i]->getParentId();
 
-            if (isset($param['height']) && $param['width'] > 0) {
+	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'sizelimit');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+	    list ($ret, $param) = GalleryCoreApi::fetchAllPluginParameters(
+		'module', 'sizelimit', $albumId);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+	    $preserveOriginal = isset($param['keepOriginal']) && $param['keepOriginal'];
+
+	    if (isset($param['height']) && $param['width'] > 0) {
 		$args = array($param['width'], $param['height']);
 		if (!$preserveOriginal) {
-		    $ret = SizeLimitHelper::applyLimits($items[$i], 'resize', $args);
-            	} else {
-                    $ret = SizeLimitHelper::buildDerivativeWithLimits($items[$i], 'resize', $args);            
-            	}
-            	if ($ret->isError()) {
-                    if ($ret->getErrorCode() & ERROR_UNSUPPORTED_FILE_TYPE) {
-                    	$warnings[$i][] = $module->translate(
-                    	    array('text' => 'WARNING: Cannot resize mime type %s',
+		    $ret = SizeLimitHelper::applyLimits($items[$i], 'scale', $args);
+		} else {
+		    $ret = SizeLimitHelper::buildDerivativeWithLimits($items[$i], 'scale', $args);
+		}
+		if ($ret->isError()) {
+		    if ($ret->getErrorCode() & ERROR_UNSUPPORTED_FILE_TYPE) {
+			$warnings[$i][] = $module->translate(
+			    array('text' => 'WARNING: Cannot resize mime type %s',
 				  'arg1' => $items[$i]->getMimeType()));
-                    } else {
-                    	return array($ret->wrap(__FILE__, __LINE__), null, null);
-                    }
-            	}
-            }
+		    } else {
+			return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    }
+		}
+	    }
 
 	    if (isset($param['size']) && $param['size'] > 0) {
-            	$args = array($param['size']);
-            	if (($items[$i]->getSize() >> 10) > $param['size']) {
-                    if (!$preserveOriginal) { 
-                    	$ret = SizeLimitHelper::applyLimits($items[$i], 'compress', $args);
-                    } else {
-                    	$ret = SizeLimitHelper::buildDerivativeWithLimits($items[$i], 'compress', 
-                    							  $args);           
-                    }
-                    if ($ret->isError()) {
-                    	if ($ret->getErrorCode() & ERROR_UNSUPPORTED_FILE_TYPE) {
-                            $warnings[$i][] = $module->translate(
-                            	array('text' => 'WARNING: Cannot compress mime type %s',
-                            	      'arg1' => $items[$i]->getMimeType()));
-                    	} else {
-                            return array($ret->wrap(__FILE__, __LINE__), null, null);
-                    	}
-                    }
-            	}
-            }
-        }
-	return array(GalleryStatus::success(), $errors, $warnings);	
+		$args = array($param['size']);
+		if (($items[$i]->getSize() >> 10) > $param['size']) {
+		    if (!$preserveOriginal) {
+			$ret = SizeLimitHelper::applyLimits($items[$i], 'compress', $args);
+		    } else {
+			$ret = SizeLimitHelper::buildDerivativeWithLimits($items[$i], 'compress',
+									  $args);
+		    }
+		    if ($ret->isError()) {
+			if ($ret->getErrorCode() & ERROR_UNSUPPORTED_FILE_TYPE) {
+			    $warnings[$i][] = $module->translate(
+				array('text' => 'WARNING: Cannot compress mime type %s',
+				      'arg1' => $items[$i]->getMimeType()));
+			} else {
+			    return array($ret->wrap(__FILE__, __LINE__), null, null);
+			}
+		    }
+		}
+	    }
+	}
+	return array(GalleryStatus::success(), $errors, $warnings);
     }
 }
 ?>

@@ -36,673 +36,673 @@ GalleryCoreApi::relativeRequireOnce('lib/tools/phpunit/ItemAddOptionTestCase.cla
 class SetSizeOptionTest extends ItemAddOptionTestCase {
 
     function SetSizeOptionTest($methodName) {
-        $this->ItemAddOptionTestCase($methodName, 'sizelimit', 'SetSizeOption');
+	$this->ItemAddOptionTestCase($methodName, 'sizelimit', 'SetSizeOption');
     }
 
     function setUp() {
-        global $gallery;
-        
-        parent::setUp();
+	global $gallery;
 
-        /* create custom platform to return dummy filesize, imagesize, etc. */
-        $gallery->setPlatform(new SetSizeOptionTestPlatform($gallery->getPlatform()));
+	parent::setUp();
 
-        /* Register dummy toolkit and operations */
-        $ret = GalleryCoreApi::registerFactoryImplementation(
-            'GalleryToolkit', 'SetSizeOptionTestToolkit', 'SetSizeOptionTestToolkit',
-            'modules/sizelimit/test/phpunit/SetSizeOptionTest.class', 'sizelimitTest', null);
+	/* create custom platform to return dummy filesize, imagesize, etc. */
+	$gallery->setPlatform(new SetSizeOptionTestPlatform($gallery->getPlatform()));
+
+	/* Register dummy toolkit and operations */
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'GalleryToolkit', 'SetSizeOptionTestToolkit', 'SetSizeOptionTestToolkit',
+	    'modules/sizelimit/test/phpunit/SetSizeOptionTest.class', 'sizelimitTest', null);
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markFactoryModuleForCleanup('sizelimitTest');
-            
-        /* applying size limits uses 'compress' */
-        $ret = GalleryCoreApi::registerToolkitOperation('SetSizeOptionTestToolkit',
-            array('image/known'), 'compress',
-            array(array('type' => 'int', 'description' => 'size')), 'desc');
-        if ($ret->isError()) {
-            print $ret->getAsHtml();
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-        }
 
-        /* applying dimension limits uses 'resize' */
-        $ret = GalleryCoreApi::registerToolkitOperation('SetSizeOptionTestToolkit',
-            array('image/known'), 'resize',
-            array(array('type' => 'int', 'description' => 'width'),
-            array('type' => 'int', 'description' => 'height')), 'desc');
-        if ($ret->isError()) {
-            print $ret->getAsHtml();
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-        }
+	/* applying size limits uses 'compress' */
+	$ret = GalleryCoreApi::registerToolkitOperation('SetSizeOptionTestToolkit',
+	    array('image/known'), 'compress',
+	    array(array('type' => 'int', 'description' => 'size')), 'desc');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 
-        /* we will return dimensions to whoever asks */
-        $ret = GalleryCoreApi::registerToolkitProperty('SetSizeOptionTestToolkit',
-            array('image/known'), 'dimensions', 'int,int', 'desc');
-        if ($ret->isError()) {
-            print $ret->getAsHtml();
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-        }
-        
-        list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
-        if ($ret->isError()) {
-            print $ret->getAsHtml();
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-        }
-        $this->_markForCleanup($this->_album);
-        
-        $this->_items = array();
-        /* Sample photo image file that can be resized/compressed */
-        list ($ret, $this->_items[0]) = 
-            $this->_createRandomDataItem($this->_album->getId(), 'image/known',
-            				 array('summary' => 'original summary 0',
-            				 'description' => 'original description 0'));
-        if ($ret->isError()) {
-            print $ret->getAsHtml();
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-        }
-        
-        $this->_itemsUnknown = array();
-        /* Not all file types can be resized/compressed. Here is an example of such item */
-        list ($ret, $this->_itemsUnknown[0]) = 
-            $this->_createRandomDataItem($this->_album->getId(), 
+	/* applying dimension limits uses 'scale' */
+	$ret = GalleryCoreApi::registerToolkitOperation('SetSizeOptionTestToolkit',
+	    array('image/known'), 'scale',
+	    array(array('type' => 'int', 'description' => 'width'),
+	    array('type' => 'int', 'description' => 'height')), 'desc');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* we will return dimensions to whoever asks */
+	$ret = GalleryCoreApi::registerToolkitProperty('SetSizeOptionTestToolkit',
+	    array('image/known'), 'dimensions', 'int,int', 'desc');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markForCleanup($this->_album);
+
+	$this->_items = array();
+	/* Sample photo image file that can be resized/compressed */
+	list ($ret, $this->_items[0]) =
+	    $this->_createRandomDataItem($this->_album->getId(), 'image/known',
+					 array('summary' => 'original summary 0',
+					 'description' => 'original description 0'));
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->_itemsUnknown = array();
+	/* Not all file types can be resized/compressed. Here is an example of such item */
+	list ($ret, $this->_itemsUnknown[0]) =
+	    $this->_createRandomDataItem($this->_album->getId(),
 					 'image/unknown',
-					 array('summary' => 'plagiarized summary', 
+					 array('summary' => 'plagiarized summary',
 					       'description' => 'plagiarized description'));
-        if ($ret->isError()) {
-            print $ret->getAsHtml();
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-        }
-        
-        $this->_noWarnings = array(array());
-        $this->_noErrors = array();
-        $this->_expectWarnings = array(array('WARNING: Cannot resize mime type image/unknown',
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->_noWarnings = array(array());
+	$this->_noErrors = array();
+	$this->_expectWarnings = array(array('WARNING: Cannot resize mime type image/unknown',
 					     'WARNING: Cannot compress mime type image/unknown'));
-        $this->_expectResize = array('resize');
-        $this->_expectCompress = array('compress');          
+	$this->_expectResize = array('scale');
+	$this->_expectCompress = array('compress');
     }
-    
+
     function tearDown() {
-        global $gallery;
-        
-        $ret = GalleryCoreApi::unregisterToolkit('SetSizeOptionTestToolkit');
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
-        }
-        parent::tearDown();
+	global $gallery;
+
+	$ret = GalleryCoreApi::unregisterToolkit('SetSizeOptionTestToolkit');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	parent::tearDown();
     }
-    
+
     function testAppropriate() {
-        list ($ret, $appropriate) = $this->_option->isAppropriate($this->_album, null);
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
-        }
-        $this->assert($appropriate, 'appropriate');
+	list ($ret, $appropriate) = $this->_option->isAppropriate($this->_album, null);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$this->assert($appropriate, 'appropriate');
     }
-    
+
     /* change dimensions, don't keep original */
     function testChangeDimNoOriginal() {
-        global $gallery;
-        $platform = $gallery->getPlatform();
-        
-        foreach (array('width' => 768, 'height' => 1024, 'keepOriginal' => 0) as $key => $value) {
-            $ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit', 
-                $key, $value, $this->_album->getId());
-            if ($ret->isError()) {
-                return array($ret->wrap(__FILE__, __LINE__), null);
-            }
-        }
-        list ($errors, $warnings) = $this->_handleRequestAfterAdd(array(), $this->_items);
-        $this->assertEquals($this->_noErrors, $errors);
-        $this->assertEquals($this->_noWarnings, $warnings);
+	global $gallery;
+	$platform = $gallery->getPlatform();
 
-        list ($ret, $this->_items[0]) = $this->_items[0]->refresh();
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null, null);
-        }
-	
-        $this->assertEquals(768, $this->_items[0]->getWidth(), 'Width');
-        $this->assertEquals(1024, $this->_items[0]->getHeight(), 'Height');
-        $operation = GalleryUtilities::getRequestVariables('operation');
-        $this->assertEquals($this->_expectResize, $operation, 'operation');
-        $this->assertEquals(2, $this->_items[0]->getSerialNumber(), 'Serial Number');
-        $platform->clearstatcache();
-        $ret = $this->_items[0]->rescan();
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null, null);
-        }
+	foreach (array('width' => 768, 'height' => 1024, 'keepOriginal' => 0) as $key => $value) {
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit',
+		$key, $value, $this->_album->getId());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+	list ($errors, $warnings) = $this->_handleRequestAfterAdd(array(), $this->_items);
+	$this->assertEquals($this->_noErrors, $errors);
+	$this->assertEquals($this->_noWarnings, $warnings);
+
+	list ($ret, $this->_items[0]) = $this->_items[0]->refresh();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+
+	$this->assertEquals(768, $this->_items[0]->getWidth(), 'Width');
+	$this->assertEquals(1024, $this->_items[0]->getHeight(), 'Height');
+	$operation = GalleryUtilities::getRequestVariables('operation');
+	$this->assertEquals($this->_expectResize, $operation, 'operation');
+	$this->assertEquals(2, $this->_items[0]->getSerialNumber(), 'Serial Number');
+	$platform->clearstatcache();
+	$ret = $this->_items[0]->rescan();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
     }
 
     /* change dimensions on multiple items, don't keep originals */
     function testMultipleChangeDimNoOriginal() {
-        global $gallery;
+	global $gallery;
 	$platform = $gallery->getPlatform();
-        foreach (array('width' => 768, 'height' => 1024, 'keepOriginal' => 0) as $key => $value) {
-            $ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit', $key, $value, 
-            					      $this->_album->getId());
-            if ($ret->isError()) {
-                return array($ret->wrap(__FILE__, __LINE__), null);
-            }
-        }
-        
-        $totalTestItems = 3;
-        for ($j = 1; $j < $totalTestItems; $j++) {
-            list ($ret, $this->_items[$j]) = 
-                $this->_createRandomDataItem($this->_album->getId(), 'image/known',
-            				     array('summary' => "original summary $j",
-            				     'description' => "original description $j"));
-            if ($ret->isError()) {
-            	return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-            }
-            
-            $this->_noWarnings[] = $this->_noWarnings[$j-1];
-            $this->_expectResize[] = $this->_expectResize[$j-1];
-        }
-        
-        list ($errors, $warnings) = $this->_handleRequestAfterAdd(array(), $this->_items);
-        $this->assertEquals($this->_noErrors, $errors);
-        $this->assertEquals($this->_noWarnings, $warnings);
-	
+	foreach (array('width' => 768, 'height' => 1024, 'keepOriginal' => 0) as $key => $value) {
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit', $key, $value,
+						      $this->_album->getId());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+
+	$totalTestItems = 3;
+	for ($j = 1; $j < $totalTestItems; $j++) {
+	    list ($ret, $this->_items[$j]) =
+		$this->_createRandomDataItem($this->_album->getId(), 'image/known',
+					     array('summary' => "original summary $j",
+					     'description' => "original description $j"));
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+
+	    $this->_noWarnings[] = $this->_noWarnings[$j-1];
+	    $this->_expectResize[] = $this->_expectResize[$j-1];
+	}
+
+	list ($errors, $warnings) = $this->_handleRequestAfterAdd(array(), $this->_items);
+	$this->assertEquals($this->_noErrors, $errors);
+	$this->assertEquals($this->_noWarnings, $warnings);
+
 	for ($j = 0; $j < $totalTestItems; $j++) {
-            list ($ret, $this->_items[$j]) = $this->_items[$j]->refresh();
-            if ($ret->isError()) {
-            	return array($ret->wrap(__FILE__, __LINE__), null, null);
-            }
+	    list ($ret, $this->_items[$j]) = $this->_items[$j]->refresh();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
 	    $this->assertEquals(768, $this->_items[$j]->getWidth(), "Width $j");
-            $this->assertEquals(1024, $this->_items[$j]->getHeight(), "Height $j");
-            $this->assertEquals(2, $this->_items[$j]->getSerialNumber(), "Serial Number $j");
-            $platform->clearstatcache();
-            $ret = $this->_items[$j]->rescan();
-            if ($ret->isError()) {
-            	return array($ret->wrap(__FILE__, __LINE__), null, null);
-            }
-        }
-        $operation = GalleryUtilities::getRequestVariables('operation');
+	    $this->assertEquals(1024, $this->_items[$j]->getHeight(), "Height $j");
+	    $this->assertEquals(2, $this->_items[$j]->getSerialNumber(), "Serial Number $j");
+	    $platform->clearstatcache();
+	    $ret = $this->_items[$j]->rescan();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+	}
+	$operation = GalleryUtilities::getRequestVariables('operation');
 	$this->assertEquals($this->_expectResize, $operation, 'operation');
     }
-    
+
     /* change dimensions, keep original */
     function testChangeDimKeepOriginal() {
-        global $gallery;
-        
-        foreach (array('width' => 768, 'height' => 1024, 'keepOriginal' => 1) as $key => $value) {
-            $ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit', 
-                $key, $value, $this->_album->getId());
-            if ($ret->isError()) {
-                return array($ret->wrap(__FILE__, __LINE__), null);
-            }
-        }
-        list ($errors, $warnings) = $this->_handleRequestAfterAdd(array(), $this->_items);
-        $this->assertEquals($this->_noErrors, $errors);
-        $this->assertEquals($this->_noWarnings, $warnings);
-        
-        /* Check to see if we have a preferred source */
-        list ($ret, $resized) =
-            GalleryCoreApi::fetchPreferredSource($this->_items[0]);
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
-        }
-        if (!GalleryUtilities::isExactlyA($resized, 'GalleryDerivativeImage')) {
-            return (GalleryStatus::error(GALLERY_ERROR, __FILE__, __LINE__, get_class($resized)));
-        }
-        $ret = $resized->rebuildCache();
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
-        }
-        $this->assertEquals(768, $resized->getWidth(), 'Width');
-        $this->assertEquals(1024, $resized->getHeight(), 'Height');
-        $operation = GalleryUtilities::getRequestVariables('operation');
-        $this->assertEquals($this->_expectResize, $operation, 'operation');
+	global $gallery;
+
+	foreach (array('width' => 768, 'height' => 1024, 'keepOriginal' => 1) as $key => $value) {
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit',
+		$key, $value, $this->_album->getId());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+	list ($errors, $warnings) = $this->_handleRequestAfterAdd(array(), $this->_items);
+	$this->assertEquals($this->_noErrors, $errors);
+	$this->assertEquals($this->_noWarnings, $warnings);
+
+	/* Check to see if we have a preferred source */
+	list ($ret, $resized) =
+	    GalleryCoreApi::fetchPreferredSource($this->_items[0]);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	if (!GalleryUtilities::isExactlyA($resized, 'GalleryDerivativeImage')) {
+	    return (GalleryStatus::error(GALLERY_ERROR, __FILE__, __LINE__, get_class($resized)));
+	}
+	$ret = $resized->rebuildCache();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$this->assertEquals(768, $resized->getWidth(), 'Width');
+	$this->assertEquals(1024, $resized->getHeight(), 'Height');
+	$operation = GalleryUtilities::getRequestVariables('operation');
+	$this->assertEquals($this->_expectResize, $operation, 'operation');
     }
 
     /* change dimensions on multiple items, keep originals */
     function testMultipleChangeDimKeepOriginal() {
-        global $gallery;
-        
-        foreach (array('width' => 768, 'height' => 1024, 'keepOriginal' => 1) as $key => $value) {
-            $ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit', 
-                $key, $value, $this->_album->getId());
-            if ($ret->isError()) {
-                return array($ret->wrap(__FILE__, __LINE__), null);
-            }
-        }
-        
-        $totalTestItems = 3;
-        for ($j = 1; $j < $totalTestItems; $j++) {
-            list ($ret, $this->_items[$j]) = 
-                $this->_createRandomDataItem($this->_album->getId(), 'image/known',
-            				     array('summary' => "original summary $j",
-            				     'description' => "original description $j"));
-            if ($ret->isError()) {
-            	return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-            }
-            
-            $this->_noWarnings[] = $this->_noWarnings[$j-1];
-            $this->_expectResize[] = $this->_expectResize[$j-1];
-        }
-        
-        list ($errors, $warnings) = $this->_handleRequestAfterAdd(array(), $this->_items);
-        $this->assertEquals($this->_noErrors, $errors);
-        $this->assertEquals($this->_noWarnings, $warnings);
+	global $gallery;
+
+	foreach (array('width' => 768, 'height' => 1024, 'keepOriginal' => 1) as $key => $value) {
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit',
+		$key, $value, $this->_album->getId());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+
+	$totalTestItems = 3;
+	for ($j = 1; $j < $totalTestItems; $j++) {
+	    list ($ret, $this->_items[$j]) =
+		$this->_createRandomDataItem($this->_album->getId(), 'image/known',
+					     array('summary' => "original summary $j",
+					     'description' => "original description $j"));
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+
+	    $this->_noWarnings[] = $this->_noWarnings[$j-1];
+	    $this->_expectResize[] = $this->_expectResize[$j-1];
+	}
+
+	list ($errors, $warnings) = $this->_handleRequestAfterAdd(array(), $this->_items);
+	$this->assertEquals($this->_noErrors, $errors);
+	$this->assertEquals($this->_noWarnings, $warnings);
 
 
-        for ($j = 0; $j < $totalTestItems; $j++) {        
-            /* Check to see if we have a preferred source */
-            list ($ret, $resized) =
-            	GalleryCoreApi::fetchPreferredSource($this->_items[$j]);
-            if ($ret->isError()) {
-            	return array($ret->wrap(__FILE__, __LINE__), null);
-            }
-            if (!GalleryUtilities::isExactlyA($resized, 'GalleryDerivativeImage')) {
-            	return (GalleryStatus::error(GALLERY_ERROR, __FILE__, __LINE__, 
-            				     get_class($resized)));
-            }
+	for ($j = 0; $j < $totalTestItems; $j++) {
+	    /* Check to see if we have a preferred source */
+	    list ($ret, $resized) =
+		GalleryCoreApi::fetchPreferredSource($this->_items[$j]);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    if (!GalleryUtilities::isExactlyA($resized, 'GalleryDerivativeImage')) {
+		return (GalleryStatus::error(GALLERY_ERROR, __FILE__, __LINE__,
+					     get_class($resized)));
+	    }
 	    $ret = $resized->rebuildCache();
-            if ($ret->isError()) {
-            	return array($ret->wrap(__FILE__, __LINE__), null);
-            }
-            $this->assertEquals(768, $resized->getWidth(), 'Width');
-            $this->assertEquals(1024, $resized->getHeight(), 'Height');
-        }
-        $operation = GalleryUtilities::getRequestVariables('operation');
-        $this->assertEquals($this->_expectResize, $operation, 'operation');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $this->assertEquals(768, $resized->getWidth(), 'Width');
+	    $this->assertEquals(1024, $resized->getHeight(), 'Height');
+	}
+	$operation = GalleryUtilities::getRequestVariables('operation');
+	$this->assertEquals($this->_expectResize, $operation, 'operation');
     }
-    
+
     /* change size, don't keep original */
     function testChangeSizeNoOriginal() {
-        global $gallery;
-        $platform = $gallery->getPlatform();
-        
-        foreach (array('size' => 1000, 'keepOriginal' => 0) as $key => $value) {
-            $ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit', 
-                $key, $value, $this->_album->getId());
-            if ($ret->isError()) {
-                return array($ret->wrap(__FILE__, __LINE__), null);
-            }
-        }
-        list ($errors, $warnings) = $this->_handleRequestAfterAdd(array(), $this->_items);
-        $this->assertEquals($this->_noErrors, $errors);
-        $this->assertEquals($this->_noWarnings, $warnings);
-        $platform->clearstatcache();
+	global $gallery;
+	$platform = $gallery->getPlatform();
 
-        list ($ret, $this->_items[0]) = $this->_items[0]->refresh();
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null, null);
-        }
-	
-        /* check item size (in KB) */
-        $this->assertEquals(1000, $this->_items[0]->getSize(), 'Size');
-        $operation = GalleryUtilities::getRequestVariables('operation');
-        $this->assertEquals($this->_expectCompress, $operation, 'operation');
-        list ($ret, $preferred) =
-            GalleryCoreApi::fetchPreferredSource($this->_items[0]);
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
-        }
-        $this->assertEquals($this->_items[0], $preferred, 'No preferred');
+	foreach (array('size' => 1000, 'keepOriginal' => 0) as $key => $value) {
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit',
+		$key, $value, $this->_album->getId());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+	list ($errors, $warnings) = $this->_handleRequestAfterAdd(array(), $this->_items);
+	$this->assertEquals($this->_noErrors, $errors);
+	$this->assertEquals($this->_noWarnings, $warnings);
+	$platform->clearstatcache();
+
+	list ($ret, $this->_items[0]) = $this->_items[0]->refresh();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+
+	/* check item size (in KB) */
+	$this->assertEquals(1000, $this->_items[0]->getSize(), 'Size');
+	$operation = GalleryUtilities::getRequestVariables('operation');
+	$this->assertEquals($this->_expectCompress, $operation, 'operation');
+	list ($ret, $preferred) =
+	    GalleryCoreApi::fetchPreferredSource($this->_items[0]);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$this->assertEquals($this->_items[0], $preferred, 'No preferred');
     }
 
     /* change size on multiple items, don't keep originals */
     function testMultipleChangeSizeNoOriginal() {
-        global $gallery;
-        $platform = $gallery->getPlatform();
-        
-        foreach (array('size' => 1000, 'keepOriginal' => 0) as $key => $value) {
-            $ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit', 
-                $key, $value, $this->_album->getId());
-            if ($ret->isError()) {
-                return array($ret->wrap(__FILE__, __LINE__), null);
-            }
-        }
+	global $gallery;
+	$platform = $gallery->getPlatform();
 
-        $totalTestItems = 3;
-        for ($j = 1; $j < $totalTestItems; $j++) {
-            list ($ret, $this->_items[$j]) = 
-                $this->_createRandomDataItem($this->_album->getId(), 'image/known',
-            				     array('summary' => "original summary $j",
-            				     'description' => "original description $j"));
-            if ($ret->isError()) {
-            	return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-            }
-            
-            $this->_noWarnings[] = $this->_noWarnings[$j-1];
-            $this->_expectCompress[] = $this->_expectCompress[$j-1];
-        }
-        
-        list ($errors, $warnings) = $this->_handleRequestAfterAdd(array(), $this->_items);
-        $this->assertEquals($this->_noErrors, $errors);
-        $this->assertEquals($this->_noWarnings, $warnings);
-        
-        for ($j = 0; $j < $totalTestItems; $j++) {
-            $platform->clearstatcache();
+	foreach (array('size' => 1000, 'keepOriginal' => 0) as $key => $value) {
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit',
+		$key, $value, $this->_album->getId());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
 
-            list ($ret, $this->_items[$j]) = $this->_items[$j]->refresh();
-            if ($ret->isError()) {
-            	return array($ret->wrap(__FILE__, __LINE__), null, null);
-            }
-	
-            /* check item size (in KB) */
-            $this->assertEquals(1000, $this->_items[$j]->getSize(), 'Size');
-            list ($ret, $preferred) =
-            	GalleryCoreApi::fetchPreferredSource($this->_items[$j]);
-            if ($ret->isError()) {
-            	return array($ret->wrap(__FILE__, __LINE__), null);
-            }
-            $this->assertEquals($this->_items[$j], $preferred, 'No preferred');
-        }
-        $operation = GalleryUtilities::getRequestVariables('operation');
-        $this->assertEquals($this->_expectCompress, $operation, 'operation');
+	$totalTestItems = 3;
+	for ($j = 1; $j < $totalTestItems; $j++) {
+	    list ($ret, $this->_items[$j]) =
+		$this->_createRandomDataItem($this->_album->getId(), 'image/known',
+					     array('summary' => "original summary $j",
+					     'description' => "original description $j"));
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+
+	    $this->_noWarnings[] = $this->_noWarnings[$j-1];
+	    $this->_expectCompress[] = $this->_expectCompress[$j-1];
+	}
+
+	list ($errors, $warnings) = $this->_handleRequestAfterAdd(array(), $this->_items);
+	$this->assertEquals($this->_noErrors, $errors);
+	$this->assertEquals($this->_noWarnings, $warnings);
+
+	for ($j = 0; $j < $totalTestItems; $j++) {
+	    $platform->clearstatcache();
+
+	    list ($ret, $this->_items[$j]) = $this->_items[$j]->refresh();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+
+	    /* check item size (in KB) */
+	    $this->assertEquals(1000, $this->_items[$j]->getSize(), 'Size');
+	    list ($ret, $preferred) =
+		GalleryCoreApi::fetchPreferredSource($this->_items[$j]);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $this->assertEquals($this->_items[$j], $preferred, 'No preferred');
+	}
+	$operation = GalleryUtilities::getRequestVariables('operation');
+	$this->assertEquals($this->_expectCompress, $operation, 'operation');
     }
-    
+
     /* change size, keep original */
     function testChangeSizeKeepOriginal() {
-        foreach (array('size' => 1000, 'keepOriginal' => 1) as $key => $value) {
-            $ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit', 
-                $key, $value, $this->_album->getId());
-            if ($ret->isError()) {
-                return array($ret->wrap(__FILE__, __LINE__), null);
-            }
-        }
-        list ($errors, $warnings) = $this->_handleRequestAfterAdd(array(), $this->_items);
-        $this->assertEquals($this->_noErrors, $errors);
-        $this->assertEquals($this->_noWarnings, $warnings);
-        
-        /* Check to see if we have a preferred source */
-        list ($ret, $resized) =
-            GalleryCoreApi::fetchPreferredSource($this->_items[0]);
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
-        }
-        if (!GalleryUtilities::isExactlyA($resized, 'GalleryDerivativeImage')) {
-            return (GalleryStatus::error(GALLERY_ERROR, __FILE__, __LINE__, get_class($resized)));
-        }
-        $ret = $resized->rebuildCache();
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
-        }
+	foreach (array('size' => 1000, 'keepOriginal' => 1) as $key => $value) {
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit',
+		$key, $value, $this->_album->getId());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+	list ($errors, $warnings) = $this->_handleRequestAfterAdd(array(), $this->_items);
+	$this->assertEquals($this->_noErrors, $errors);
+	$this->assertEquals($this->_noWarnings, $warnings);
 
-        /* check derivative size */
-        $this->assertEquals(1000, $resized->getDerivativeSize(), 'Size');
-        $operation = GalleryUtilities::getRequestVariables('operation');
-        $this->assertEquals($this->_expectCompress, $operation, 'operation');
+	/* Check to see if we have a preferred source */
+	list ($ret, $resized) =
+	    GalleryCoreApi::fetchPreferredSource($this->_items[0]);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	if (!GalleryUtilities::isExactlyA($resized, 'GalleryDerivativeImage')) {
+	    return (GalleryStatus::error(GALLERY_ERROR, __FILE__, __LINE__, get_class($resized)));
+	}
+	$ret = $resized->rebuildCache();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* check derivative size */
+	$this->assertEquals(1000, $resized->getDerivativeSize(), 'Size');
+	$operation = GalleryUtilities::getRequestVariables('operation');
+	$this->assertEquals($this->_expectCompress, $operation, 'operation');
     }
-    
+
     /* change size on multiple items, keep originals */
     function testMultipleChangeSizeKeepOriginal() {
-        foreach (array('size' => 1000, 'keepOriginal' => 1) as $key => $value) {
-            $ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit', 
-                $key, $value, $this->_album->getId());
-            if ($ret->isError()) {
-                return array($ret->wrap(__FILE__, __LINE__), null);
-            }
-        }
-        
-        $totalTestItems = 3;
-        for ($j = 1; $j < $totalTestItems; $j++) {
-            list ($ret, $this->_items[$j]) = 
-                $this->_createRandomDataItem($this->_album->getId(), 'image/known',
-            				     array('summary' => "original summary $j",
-            				     'description' => "original description $j"));
-            if ($ret->isError()) {
-            	return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-            }
-            
-            $this->_noWarnings[] = $this->_noWarnings[$j-1];
-            $this->_expectCompress[] = $this->_expectCompress[$j-1];
-        }
-                
-        list ($errors, $warnings) = $this->_handleRequestAfterAdd(array(), $this->_items);
-        $this->assertEquals($this->_noErrors, $errors);
-        $this->assertEquals($this->_noWarnings, $warnings);
-        
-        for ($j = 0; $j < $totalTestItems; $j++) {
-            /* Check to see if we have a preferred source */
-            list ($ret, $resized) =
-            	GalleryCoreApi::fetchPreferredSource($this->_items[$j]);
-            if ($ret->isError()) {
-            	return array($ret->wrap(__FILE__, __LINE__), null);
-            }
-            if (!GalleryUtilities::isExactlyA($resized, 'GalleryDerivativeImage')) {
-            	return (GalleryStatus::error(GALLERY_ERROR, __FILE__, __LINE__, 
-            				     get_class($resized)));
-            }
-            $ret = $resized->rebuildCache();
-            if ($ret->isError()) {
-            	return array($ret->wrap(__FILE__, __LINE__), null);
-            }
-
-            /* check derivative size */
-            $this->assertEquals(1000, $resized->getDerivativeSize(), 'Size');
+	foreach (array('size' => 1000, 'keepOriginal' => 1) as $key => $value) {
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit',
+		$key, $value, $this->_album->getId());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
 	}
-        $operation = GalleryUtilities::getRequestVariables('operation');
-        $this->assertEquals($this->_expectCompress, $operation, 'operation');
+
+	$totalTestItems = 3;
+	for ($j = 1; $j < $totalTestItems; $j++) {
+	    list ($ret, $this->_items[$j]) =
+		$this->_createRandomDataItem($this->_album->getId(), 'image/known',
+					     array('summary' => "original summary $j",
+					     'description' => "original description $j"));
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+
+	    $this->_noWarnings[] = $this->_noWarnings[$j-1];
+	    $this->_expectCompress[] = $this->_expectCompress[$j-1];
+	}
+
+	list ($errors, $warnings) = $this->_handleRequestAfterAdd(array(), $this->_items);
+	$this->assertEquals($this->_noErrors, $errors);
+	$this->assertEquals($this->_noWarnings, $warnings);
+
+	for ($j = 0; $j < $totalTestItems; $j++) {
+	    /* Check to see if we have a preferred source */
+	    list ($ret, $resized) =
+		GalleryCoreApi::fetchPreferredSource($this->_items[$j]);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    if (!GalleryUtilities::isExactlyA($resized, 'GalleryDerivativeImage')) {
+		return (GalleryStatus::error(GALLERY_ERROR, __FILE__, __LINE__,
+					     get_class($resized)));
+	    }
+	    $ret = $resized->rebuildCache();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    /* check derivative size */
+	    $this->assertEquals(1000, $resized->getDerivativeSize(), 'Size');
+	}
+	$operation = GalleryUtilities::getRequestVariables('operation');
+	$this->assertEquals($this->_expectCompress, $operation, 'operation');
     }
-    
+
     /* change dimensions AND size, keep original */
     function testChangeBothKeepOriginal() {
-        global $gallery;
-        $platform = $gallery->getPlatform();
-        $this->_expectResizeCompress = array_merge($this->_expectResize, $this->_expectCompress);
-        foreach (array('width' => 768, 'height' => 1024, 'size' => 1000, 'keepOriginal' => 1) 
-            as $key => $value) {
-            $ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit', 
-                $key, $value, $this->_album->getId());
-            if ($ret->isError()) {
-                return array($ret->wrap(__FILE__, __LINE__), null);
-            }
-        }
-        list ($errors, $warnings) = $this->_handleRequestAfterAdd(array(), $this->_items);
-        $this->assertEquals($this->_noErrors, $errors);
-        $this->assertEquals($this->_noWarnings, $warnings);
-        
-        /* Check to see if we have a preferred source */
-        list ($ret, $resized) = GalleryCoreApi::fetchPreferredSource($this->_items[0]);
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
-        }
-        if (!GalleryUtilities::isExactlyA($resized, 'GalleryDerivativeImage')) {
-            return (GalleryStatus::error(GALLERY_ERROR, __FILE__, __LINE__, get_class($resized)));
-        }
-        $ret = $resized->rebuildCache();
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
-        }
-        $this->assertEquals('resize|768,1024;compress|1000', $resized->getDerivativeOperations(), 'Operations');
-        $this->assertEquals(768, $resized->getWidth(), 'Width');
-        $this->assertEquals(1024, $resized->getHeight(), 'Height');
-        $this->assertEquals(1000, $resized->getDerivativeSize(), 'Size');
-        $operation = GalleryUtilities::getRequestVariables('operation');
-        $this->assertEquals($this->_expectResizeCompress, $operation, 'operation');
-    }    
+	global $gallery;
+	$platform = $gallery->getPlatform();
+	$this->_expectResizeCompress = array_merge($this->_expectResize, $this->_expectCompress);
+	foreach (array('width' => 768, 'height' => 1024, 'size' => 1000, 'keepOriginal' => 1)
+	    as $key => $value) {
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit',
+		$key, $value, $this->_album->getId());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+	list ($errors, $warnings) = $this->_handleRequestAfterAdd(array(), $this->_items);
+	$this->assertEquals($this->_noErrors, $errors);
+	$this->assertEquals($this->_noWarnings, $warnings);
+
+	/* Check to see if we have a preferred source */
+	list ($ret, $resized) = GalleryCoreApi::fetchPreferredSource($this->_items[0]);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	if (!GalleryUtilities::isExactlyA($resized, 'GalleryDerivativeImage')) {
+	    return (GalleryStatus::error(GALLERY_ERROR, __FILE__, __LINE__, get_class($resized)));
+	}
+	$ret = $resized->rebuildCache();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$this->assertEquals('scale|768,1024;compress|1000', $resized->getDerivativeOperations(), 'Operations');
+	$this->assertEquals(768, $resized->getWidth(), 'Width');
+	$this->assertEquals(1024, $resized->getHeight(), 'Height');
+	$this->assertEquals(1000, $resized->getDerivativeSize(), 'Size');
+	$operation = GalleryUtilities::getRequestVariables('operation');
+	$this->assertEquals($this->_expectResizeCompress, $operation, 'operation');
+    }
 
     /* change dimensions AND size on multiple items, keep originals */
     function testMultipleChangeBothKeepOriginal() {
-        global $gallery;
-        $platform = $gallery->getPlatform();
-        $this->_expectResizeCompress = array_merge($this->_expectResize, $this->_expectCompress);
-        foreach (array('width' => 768, 'height' => 1024, 'size' => 1000, 'keepOriginal' => 1) 
-            as $key => $value) {
-            $ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit', 
-                $key, $value, $this->_album->getId());
-            if ($ret->isError()) {
-                return array($ret->wrap(__FILE__, __LINE__), null);
-            }   
-        }
-        
-        $totalTestItems = 3;
-        for ($j = 1; $j < $totalTestItems; $j++) {
-            list ($ret, $this->_items[$j]) = 
-                $this->_createRandomDataItem($this->_album->getId(), 'image/known',
-            				     array('summary' => "original summary $j",
-            				     'description' => "original description $j"));
-            if ($ret->isError()) {
-            	return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-            }
-            
-            $this->_noWarnings[] = $this->_noWarnings[$j-1];
-            $this->_expectResizeCompress[] = $this->_expectResizeCompress[($j*2)-2];
-            $this->_expectResizeCompress[] = $this->_expectResizeCompress[($j*2)-1];
-        }
-        
-        list ($errors, $warnings) = $this->_handleRequestAfterAdd(array(), $this->_items);
-        $this->assertEquals($this->_noErrors, $errors);
-        $this->assertEquals($this->_noWarnings, $warnings);
-        
-        for ($j = 0; $j < $totalTestItems; $j++) {
-            /* Check to see if we have a preferred source */
-            list ($ret, $resized) = GalleryCoreApi::fetchPreferredSource($this->_items[$j]);
-            if ($ret->isError()) {
-            	return array($ret->wrap(__FILE__, __LINE__), null);
-            }
-            if (!GalleryUtilities::isExactlyA($resized, 'GalleryDerivativeImage')) {
-            	return (GalleryStatus::error(GALLERY_ERROR, __FILE__, __LINE__, 
-            				     get_class($resized)));
-            }
-            $ret = $resized->rebuildCache();
-            if ($ret->isError()) {
-            	return array($ret->wrap(__FILE__, __LINE__), null);
-            }
-            $this->assertEquals('resize|768,1024;compress|1000', 
-            			$resized->getDerivativeOperations(), 
-            			'Operations');
-            $this->assertEquals(768, $resized->getWidth(), 'Width');
-            $this->assertEquals(1024, $resized->getHeight(), 'Height');
-            $this->assertEquals(1000, $resized->getDerivativeSize(), 'Size');
-        }
-        $operation = GalleryUtilities::getRequestVariables('operation');
-        $this->assertEquals($this->_expectResizeCompress, $operation, 'operation');
-    }    
-    
+	global $gallery;
+	$platform = $gallery->getPlatform();
+	$this->_expectResizeCompress = array_merge($this->_expectResize, $this->_expectCompress);
+	foreach (array('width' => 768, 'height' => 1024, 'size' => 1000, 'keepOriginal' => 1)
+	    as $key => $value) {
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit',
+		$key, $value, $this->_album->getId());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+
+	$totalTestItems = 3;
+	for ($j = 1; $j < $totalTestItems; $j++) {
+	    list ($ret, $this->_items[$j]) =
+		$this->_createRandomDataItem($this->_album->getId(), 'image/known',
+					     array('summary' => "original summary $j",
+					     'description' => "original description $j"));
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+
+	    $this->_noWarnings[] = $this->_noWarnings[$j-1];
+	    $this->_expectResizeCompress[] = $this->_expectResizeCompress[($j*2)-2];
+	    $this->_expectResizeCompress[] = $this->_expectResizeCompress[($j*2)-1];
+	}
+
+	list ($errors, $warnings) = $this->_handleRequestAfterAdd(array(), $this->_items);
+	$this->assertEquals($this->_noErrors, $errors);
+	$this->assertEquals($this->_noWarnings, $warnings);
+
+	for ($j = 0; $j < $totalTestItems; $j++) {
+	    /* Check to see if we have a preferred source */
+	    list ($ret, $resized) = GalleryCoreApi::fetchPreferredSource($this->_items[$j]);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    if (!GalleryUtilities::isExactlyA($resized, 'GalleryDerivativeImage')) {
+		return (GalleryStatus::error(GALLERY_ERROR, __FILE__, __LINE__,
+					     get_class($resized)));
+	    }
+	    $ret = $resized->rebuildCache();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $this->assertEquals('scale|768,1024;compress|1000',
+				$resized->getDerivativeOperations(),
+				'Operations');
+	    $this->assertEquals(768, $resized->getWidth(), 'Width');
+	    $this->assertEquals(1024, $resized->getHeight(), 'Height');
+	    $this->assertEquals(1000, $resized->getDerivativeSize(), 'Size');
+	}
+	$operation = GalleryUtilities::getRequestVariables('operation');
+	$this->assertEquals($this->_expectResizeCompress, $operation, 'operation');
+    }
+
     /* change dimensions, don't keep original */
     function testChangeBothNoOriginal() {
-        global $gallery;
-        $platform = $gallery->getPlatform();
-        $this->_expectResizeCompress = array_merge($this->_expectResize, $this->_expectCompress);
-        foreach (array('width' => 768, 'height' => 1024, 'size' => 1000, 'keepOriginal' => 0) 
-                as $key => $value) {
-            $ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit', 
-                $key, $value, $this->_album->getId());
-            if ($ret->isError()) {
-                return array($ret->wrap(__FILE__, __LINE__), null);
-            }
-        }
-        list ($errors, $warnings) = $this->_handleRequestAfterAdd(array(), $this->_items);
-        $this->assertEquals($this->_noErrors, $errors);
-        $this->assertEquals($this->_noWarnings, $warnings);
+	global $gallery;
+	$platform = $gallery->getPlatform();
+	$this->_expectResizeCompress = array_merge($this->_expectResize, $this->_expectCompress);
+	foreach (array('width' => 768, 'height' => 1024, 'size' => 1000, 'keepOriginal' => 0)
+		as $key => $value) {
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit',
+		$key, $value, $this->_album->getId());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+	list ($errors, $warnings) = $this->_handleRequestAfterAdd(array(), $this->_items);
+	$this->assertEquals($this->_noErrors, $errors);
+	$this->assertEquals($this->_noWarnings, $warnings);
 
-        list ($ret, $this->_items[0]) = $this->_items[0]->refresh();
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null, null);
-        }
-	
-        $this->assertEquals(768, $this->_items[0]->getWidth(), 'Width');
-        $this->assertEquals(1024, $this->_items[0]->getHeight(), 'Height');
-        $operation = GalleryUtilities::getRequestVariables('operation');
-        $this->assertEquals($this->_expectResizeCompress, $operation, 'operation');
-        $platform->clearstatcache();
-        $ret = $this->_items[0]->rescan();
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null, null);
-        }
-        $this->assertEquals(1000, $this->_items[0]->getSize(), 'Size');
+	list ($ret, $this->_items[0]) = $this->_items[0]->refresh();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+
+	$this->assertEquals(768, $this->_items[0]->getWidth(), 'Width');
+	$this->assertEquals(1024, $this->_items[0]->getHeight(), 'Height');
+	$operation = GalleryUtilities::getRequestVariables('operation');
+	$this->assertEquals($this->_expectResizeCompress, $operation, 'operation');
+	$platform->clearstatcache();
+	$ret = $this->_items[0]->rescan();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+	$this->assertEquals(1000, $this->_items[0]->getSize(), 'Size');
     }
 
     /* change dimensions on multiple items, don't keep originals */
     function testMultipleChangeBothNoOriginal() {
-        global $gallery;
-        $platform = $gallery->getPlatform();
-        $this->_expectResizeCompress = array_merge($this->_expectResize, $this->_expectCompress);
-        foreach (array('width' => 768, 'height' => 1024, 'size' => 1000, 'keepOriginal' => 0) 
-                as $key => $value) {
-            $ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit', 
-                $key, $value, $this->_album->getId());
-            if ($ret->isError()) {
-                return array($ret->wrap(__FILE__, __LINE__), null);
-            }
-        }  
-        
-        $totalTestItems = 3;
-        for ($j = 1; $j < $totalTestItems; $j++) {
-	    list ($ret, $this->_items[$j]) = 
-                $this->_createRandomDataItem($this->_album->getId(), 'image/known',
-            				     array('summary' => "original summary $j",
-            				           'description' => "original description $j"));
-            if ($ret->isError()) {
-            	return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-            }
-            
-            $this->_noWarnings[] = $this->_noWarnings[$j-1];
-            $this->_expectResizeCompress[] = $this->_expectResizeCompress[($j*2)-2];
-            $this->_expectResizeCompress[] = $this->_expectResizeCompress[($j*2)-1];
-        }        
+	global $gallery;
+	$platform = $gallery->getPlatform();
+	$this->_expectResizeCompress = array_merge($this->_expectResize, $this->_expectCompress);
+	foreach (array('width' => 768, 'height' => 1024, 'size' => 1000, 'keepOriginal' => 0)
+		as $key => $value) {
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit',
+		$key, $value, $this->_album->getId());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
 
-        list ($errors, $warnings) = $this->_handleRequestAfterAdd(array(), $this->_items);
-        $this->assertEquals($this->_noErrors, $errors);
-        $this->assertEquals($this->_noWarnings, $warnings);
-        
+	$totalTestItems = 3;
+	for ($j = 1; $j < $totalTestItems; $j++) {
+	    list ($ret, $this->_items[$j]) =
+		$this->_createRandomDataItem($this->_album->getId(), 'image/known',
+					     array('summary' => "original summary $j",
+						   'description' => "original description $j"));
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+
+	    $this->_noWarnings[] = $this->_noWarnings[$j-1];
+	    $this->_expectResizeCompress[] = $this->_expectResizeCompress[($j*2)-2];
+	    $this->_expectResizeCompress[] = $this->_expectResizeCompress[($j*2)-1];
+	}
+
+	list ($errors, $warnings) = $this->_handleRequestAfterAdd(array(), $this->_items);
+	$this->assertEquals($this->_noErrors, $errors);
+	$this->assertEquals($this->_noWarnings, $warnings);
+
 	for ($j = 0; $j < $totalTestItems; $j++) {
 	    list ($ret, $item) = $this->_items[$j]->refresh();
-            if ($ret->isError()) {
-            	return array($ret->wrap(__FILE__, __LINE__), null, null);
-            }
-            $this->assertEquals(768, $item->getWidth(), 'Width');
-            $this->assertEquals(1024, $item->getHeight(), 'Height');
-            $platform->clearstatcache();
-            $ret = $item->rescan();
-            if ($ret->isError()) {
-                return array($ret->wrap(__FILE__, __LINE__), null, null);
-            }
-            $this->assertEquals(1000, $item->getSize(), 'Size');
-        }
-        $operation = GalleryUtilities::getRequestVariables('operation');
-        $this->assertEquals($this->_expectResizeCompress, $operation, 'operation');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+	    $this->assertEquals(768, $item->getWidth(), 'Width');
+	    $this->assertEquals(1024, $item->getHeight(), 'Height');
+	    $platform->clearstatcache();
+	    $ret = $item->rescan();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+	    $this->assertEquals(1000, $item->getSize(), 'Size');
+	}
+	$operation = GalleryUtilities::getRequestVariables('operation');
+	$this->assertEquals($this->_expectResizeCompress, $operation, 'operation');
     }
-    
+
     /* try to change size and dimensions for unsupported file format */
     function testUnknownFormat() {
-        foreach (array('width' => 768, 'height' => 1024, 'size' => 1000, 'keepOriginal' => 0) 
-            as $key => $value) {
-            $ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit', 
-                $key, $value, $this->_album->getId());
-            if ($ret->isError()) {
-                return array($ret->wrap(__FILE__, __LINE__), null, null);
-            }
-        }
-        list ($errors, $warnings) = $this->_handleRequestAfterAdd(array(), $this->_itemsUnknown);
-        $this->assertEquals($this->_noErrors, $errors);
-        $this->assertEquals($this->_expectWarnings, $warnings);        
+	foreach (array('width' => 768, 'height' => 1024, 'size' => 1000, 'keepOriginal' => 0)
+	    as $key => $value) {
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit',
+		$key, $value, $this->_album->getId());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+	}
+	list ($errors, $warnings) = $this->_handleRequestAfterAdd(array(), $this->_itemsUnknown);
+	$this->assertEquals($this->_noErrors, $errors);
+	$this->assertEquals($this->_expectWarnings, $warnings);
     }
-    
+
     /* try to change size and dimensions for unsupported file format on multiple files */
     function testMultipleUnknownFormat() {
-        foreach (array('width' => 768, 'height' => 1024, 'size' => 1000, 'keepOriginal' => 0) 
-            as $key => $value) {
-            $ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit', 
-                $key, $value, $this->_album->getId());
-            if ($ret->isError()) {
-                return array($ret->wrap(__FILE__, __LINE__), null, null);
-            }
-        }
-        
-        $totalTestItems = 3;
-        for ($j = 1; $j < $totalTestItems; $j++) {                
-            list ($ret, $this->_itemsUnknown[$j]) = 
-                $this->_createRandomDataItem($this->_album->getId(), 
-            				     'image/unknown',
-            				     array('summary' => "plagiarized summary $j", 
-            				           'description' => "plagiarized description $j"));
-            if ($ret->isError()) {
-            	return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-            }
-            
-            $this->_expectWarnings[] = array('WARNING: Cannot resize mime type image/unknown',
-            				     'WARNING: Cannot compress mime type image/unknown');
-        }
-        
-        list ($errors, $warnings) = $this->_handleRequestAfterAdd(array(), $this->_itemsUnknown);
-        $this->assertEquals($this->_noErrors, $errors);
-        $this->assertEquals($this->_expectWarnings, $warnings);       
-    }    
+	foreach (array('width' => 768, 'height' => 1024, 'size' => 1000, 'keepOriginal' => 0)
+	    as $key => $value) {
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit',
+		$key, $value, $this->_album->getId());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+	}
+
+	$totalTestItems = 3;
+	for ($j = 1; $j < $totalTestItems; $j++) {
+	    list ($ret, $this->_itemsUnknown[$j]) =
+		$this->_createRandomDataItem($this->_album->getId(),
+					     'image/unknown',
+					     array('summary' => "plagiarized summary $j",
+						   'description' => "plagiarized description $j"));
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+
+	    $this->_expectWarnings[] = array('WARNING: Cannot resize mime type image/unknown',
+					     'WARNING: Cannot compress mime type image/unknown');
+	}
+
+	list ($errors, $warnings) = $this->_handleRequestAfterAdd(array(), $this->_itemsUnknown);
+	$this->assertEquals($this->_noErrors, $errors);
+	$this->assertEquals($this->_expectWarnings, $warnings);
+    }
 }
 
 /**
@@ -714,19 +714,19 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
 class SetSizeOptionTestPlatform extends GalleryPlatform {
 
     function SetSizeOptionTestPlatform($originalPlatform) {
-        $this->_savedPlatform = $originalPlatform;
+	$this->_savedPlatform = $originalPlatform;
 	GalleryUtilities::putRequestVariable('resizePerformed', false);
 	GalleryUtilities::putRequestVariable('compressPerformed', false);
     }
 
-    function filesize($file) {        
+    function filesize($file) {
 	$size = GalleryUtilities::getRequestVariables('size_' . $file);
 	if ($size) {
 	    return $size;
 	}
 	return 26031966;
     }
-    
+
     function getimagesize($file) {
 	$imagesize = GalleryUtilities::getRequestVariables('imagesize_' . $file);
 	if ($imagesize) {
@@ -734,26 +734,26 @@ class SetSizeOptionTestPlatform extends GalleryPlatform {
 	}
 	return array(1728, 2304);
     }
-    
+
     function file_exists($filename) {
 	$compressPerformed = GalleryUtilities::getRequestVariables('compressPerformed');
 	$resizePerformed = GalleryUtilities::getRequestVariables('resizePerformed');
 
-        /* if we created a derivative make-believe that the file exists */
-        if ($resizePerformed || $compressPerformed) {
-            return true;
-        } else {
-            return $this->_savedPlatform->file_exists($filename);
-        }
+	/* if we created a derivative make-believe that the file exists */
+	if ($resizePerformed || $compressPerformed) {
+	    return true;
+	} else {
+	    return $this->_savedPlatform->file_exists($filename);
+	}
     }
 
     function unlink($filename) {
-        /* if it is a derivative - we didn't really create it */
-        if ($this->_savedPlatform->file_exists($filename)) {
-            return $this->_savedPlatform->unlink($filename);
-        } else {
-            return true;
-        }
+	/* if it is a derivative - we didn't really create it */
+	if ($this->_savedPlatform->file_exists($filename)) {
+	    return $this->_savedPlatform->unlink($filename);
+	} else {
+	    return true;
+	}
     }
 }
 
@@ -762,57 +762,57 @@ class SetSizeOptionTestPlatform extends GalleryPlatform {
  * @package SizeLimit
  * @subpackage PHPUnit
  */
-class SetSizeOptionTestToolkit extends GalleryToolkit {    
+class SetSizeOptionTestToolkit extends GalleryToolkit {
     /**
      * @see GalleryToolkit::performOperation()
      */
     function performOperation($mimeType, $operationName, $sourceFilename,
-                  $destFilename, $parameters, $context=array()) {
-        /* Here we are pretending that conversion happened by setting the flag */
-        switch($operationName) {
-        case 'compress':
+		  $destFilename, $parameters, $context=array()) {
+	/* Here we are pretending that conversion happened by setting the flag */
+	switch($operationName) {
+	case 'compress':
 	    GalleryUtilities::putRequestVariable('compressPerformed', true);
 	    GalleryUtilities::putRequestVariable('size_' . $destFilename, 1000);
 	    break;
-            
-        case 'resize':
+
+	case 'scale':
 	    GalleryUtilities::putRequestVariable('resizePerformed', true);
 	    GalleryUtilities::putRequestVariable('imagesize_' . $destFilename, array(768, 1024));
 	    break;
 
 	default:
 	    return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
-        }
-        
-        $operations = array();
-        $operationRequest = GalleryUtilities::getRequestVariables('operation');
-        if (!empty($operationRequest)) {
-              $operations = $operationRequest;
+	}
+
+	$operations = array();
+	$operationRequest = GalleryUtilities::getRequestVariables('operation');
+	if (!empty($operationRequest)) {
+	      $operations = $operationRequest;
 	}
 	$operations[] = $operationName;
-        GalleryUtilities::putRequestVariable('operation', $operations);
+	GalleryUtilities::putRequestVariable('operation', $operations);
 
-        return array(GalleryStatus::success(), $mimeType, $context);
+	return array(GalleryStatus::success(), $mimeType, $context);
     }
 
     /**
      * @see GalleryToolkit::getProperty()
      */
     function getProperty($mimeType, $propertyName, $file) {
-        global $gallery;
+	global $gallery;
 
-        /* Our 'mime type' has to support dimensions */
-        switch($propertyName) {
-        case 'dimensions':
-            $platform = $gallery->getPlatform();
-            $results = $platform->getimagesize($file);
-            break;
-        
-        default:
-            return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
-        }
-        
-        return array(GalleryStatus::success(), $results);
+	/* Our 'mime type' has to support dimensions */
+	switch($propertyName) {
+	case 'dimensions':
+	    $platform = $gallery->getPlatform();
+	    $results = $platform->getimagesize($file);
+	    break;
+
+	default:
+	    return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
+	}
+
+	return array(GalleryStatus::success(), $results);
     }
 }
 
