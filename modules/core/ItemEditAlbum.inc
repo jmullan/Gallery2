@@ -427,6 +427,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 			'summary' => $module->translate('Summary'),
 	   'originationTimestamp' => $module->translate('Origination Date'),
 	      'creationTimestamp' => $module->translate('Creation Date'),
+	'creationTimestampAlbumsFirst' => $module->translate('Creation Date, Albums First'),
 	  'modificationTimestamp' => $module->translate('Last Changed Date'),
 		    'description' => $module->translate('Description'),
 		       'keywords' => $module->translate('Keywords'),
@@ -436,7 +437,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	foreach ($implIds as $sortId => $className) {
 	    list ($ret, $sort) =
 		GalleryCoreApi::newFactoryInstance('GallerySortInterface_1_0', $className);

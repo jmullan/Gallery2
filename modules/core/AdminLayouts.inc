@@ -226,9 +226,9 @@ class AdminLayoutsView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-        list ($ret, $coreModule) = GalleryCoreApi::loadPlugin('module', 'core');
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
+	list ($ret, $coreModule) = GalleryCoreApi::loadPlugin('module', 'core');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	list ($layoutId, $mode) = GalleryUtilities::getRequestVariables('layoutId', 'mode');
@@ -292,8 +292,8 @@ class AdminLayoutsView extends GalleryView {
 	    }
 
 	    $newAlbumsUseDefaultsList = array(
-                'false' => $module->translate('Inherit these settings from parent album'),
-                'true' => $module->translate('Use these settings')
+		'false' => $module->translate('Inherit these settings from parent album'),
+		'true' => $module->translate('Use these settings')
 	    );
 
 	    /* Set up our sort order selection list */
@@ -303,6 +303,7 @@ class AdminLayoutsView extends GalleryView {
 		'summary' => $module->translate('Summary'),
 		'originationTimestamp' => $module->translate('Origination Date'),
 		'creationTimestamp' => $module->translate('Creation Date'),
+		'creationTimestampAlbumsFirst' => $module->translate('Creation Date, Albums First'),
 		'modificationTimestamp' => $module->translate('Last Changed Date'),
 		'description' => $module->translate('Description'),
 		'keywords' => $module->translate('Keywords'),
@@ -314,7 +315,7 @@ class AdminLayoutsView extends GalleryView {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    
+
 	    foreach ($implIds as $sortId => $className) {
 		list ($ret, $sort) =
 		    GalleryCoreApi::newFactoryInstance('GallerySortInterface_1_0', $className);
