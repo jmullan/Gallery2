@@ -36,7 +36,7 @@ Admin user "<?php print $_SESSION['uname']?>" updated successfully.
   <?php print _("Every Gallery will have at least one administrator user who has full access to view/modify everything. Please choose a username and password for your main administrator account. You can add additional users later.") ?>
 </p>
 
-<form name="admin_form" method="POST" action="<?php print $PHP_SELF . '?step=4&action=create' ?>">
+<form name="admin_form" method="POST" action="<?php print $_SERVER['PHP_SELF'] . '?step=4&action=create' ?>">
   <table class="adminForm">
     <tr>
       <td>

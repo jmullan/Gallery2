@@ -37,7 +37,7 @@ Storage directory set successfully:</h2>
 
 <p> <?php print _("The directory also needs to be writable to by Gallery. For help with permissions, see <b>FutureLinkToSomewhere</b>?.") ?> </p>
 
-<form name="storage_form" method="POST" action="<?php print $PHP_SELF . '?step=5&action=create' ?>">
+<form name="storage_form" method="POST" action="<?php print $_SERVER['PHP_SELF'] . '?step=5&action=create' ?>">
 <table border="0">
 <tr>
 <td style="text-align: left;"><?php print _('Directory path:') ?></td>

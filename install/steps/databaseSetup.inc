@@ -35,7 +35,7 @@ Database set up successfully!</h2>
 
 <p> <?php print _("Please choose a username and password for your administrator account. You can change the name and password later, as well as add additional administrator users.") ?> </p>
 
-<form name="database_form" method="POST" action="<?php print $PHP_SELF . '?step=6&action=create' ?>">
+<form name="database_form" method="POST" action="<?php print $_SERVER['PHP_SELF'] . '?step=6&action=create' ?>">
 <table border="0">
 <tr>
 <td style="text-align: left;"><?php print _('Database type:') ?></td>
