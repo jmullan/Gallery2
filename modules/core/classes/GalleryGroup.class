@@ -45,6 +45,7 @@ class GalleryGroup extends GalleryNucleus {
      * @gallery persistent
      * @gallery flag STORAGE_TYPE_STRING
      * @gallery flag STORAGE_MODIFIER_SMALL
+     * @gallery flag STORAGE_MODIFIER_INDEXED
      *
      * @var string $_name
      * @access private
@@ -173,7 +174,7 @@ class GalleryGroup extends GalleryNucleus {
         $meta['members']['name'] = array(
             'class' => 'GalleryGroup',
             'type' => STORAGE_TYPE_STRING |
-                      STORAGE_MODIFIER_SMALL);
+                      STORAGE_MODIFIER_INDEXED | STORAGE_MODIFIER_SMALL);
         $meta['version'] = array('major' => 1, 'minor' => 0);
     
         return $meta;
