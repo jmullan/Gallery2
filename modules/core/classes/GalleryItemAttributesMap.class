@@ -177,7 +177,7 @@ class GalleryItemAttributesMap_core {
 
 	$data = array();
 	while ($result = $searchResults->nextResult()) {
-	    $data[$result[0]] = $result[1];
+	    $data[$result[0]] = (int)$result[1];
 	}
 
 	return array(GalleryStatus::success(), $data);
