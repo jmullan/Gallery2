@@ -47,6 +47,18 @@ class InitializeGalleryTestCase extends TestCase {
 	/* We changed the global gallery -- update our pointer */
 	$gallery =& $GLOBALS['gallery'];
 
+	/*
+	 * We'll need a translator to load up the core module for the
+	 * GalleryPlugin::setGroup() method to work.
+	 */
+	$translator =& $gallery->getTranslator();
+	if (empty($translator)) {
+	    $ret = $gallery->initTranslator(true /* dontUseDatabase */ );
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
 	/* Reinstall the core */
 	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core', true);
 	if ($ret->isError()) {
