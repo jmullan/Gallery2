@@ -92,7 +92,8 @@ class AddToCartControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('itemId', $item->getId());
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'cart:ViewCart'),
+	$this->assertEquals(array('redirect' => array('view' => 'core:Navigation',
+						      'subView' => 'cart:ViewCart'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
@@ -122,7 +123,8 @@ class AddToCartControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'cart:ViewCart'),
+	$this->assertEquals(array('redirect' => array('view' => 'core:Navigation',
+						      'subView' => 'cart:ViewCart'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
@@ -157,7 +159,8 @@ class AddToCartControllerTest extends GalleryControllerTestCase {
 	/* Perform the request and verify that we succeeded */
 	GalleryUtilities::putRequestVariable('itemId', $item->getId());
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'cart:ViewCart'),
+	$this->assertEquals(array('redirect' => array('view' => 'core:Navigation',
+						      'subView' => 'cart:ViewCart'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
@@ -190,7 +193,8 @@ class AddToCartControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'cart:ViewCart'),
+	$this->assertEquals(array('redirect' => array('view' => 'core:Navigation',
+						      'subView' => 'cart:ViewCart'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
