@@ -861,6 +861,10 @@ class GalleryUtilities {
      * @access private
      */
     function createAlbumTree($albums) {
+	if (empty($albums)) {
+	    return array();
+	}
+	
 	/* Index the albums by id */
 	$map = array();
 	foreach ($albums as $album) {

@@ -284,27 +284,29 @@ class CoreModule extends GalleryModule {
 					    'itemId' => $item->getId()));
 	    }
 
-	    if ($item->getIsLinkable()) {
-		if ($isAlbum) {
-		    list ($ret, $count) = GalleryCoreApi::fetchItemIdCount('GalleryAlbumItem', 'core.addAlbumItem');
-		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+	    if (isset($permissions['core.viewSource'])) {
+		if ($item->getIsLinkable()) {
+		    if ($isAlbum) {
+			list ($ret, $count) = GalleryCoreApi::fetchItemIdCount('GalleryAlbumItem', 'core.addAlbumItem');
+			if ($ret->isError()) {
+			    return array($ret->wrap(__FILE__, __LINE__), null);
+			}
+		    } else {
+			list ($ret, $count) = GalleryCoreApi::fetchItemIdCount('GalleryAlbumItem', 'core.addDataItem');
+			if ($ret->isError()) {
+			    return array($ret->wrap(__FILE__, __LINE__), null);
+			}
 		    }
-		} else {
-		    list ($ret, $count) = GalleryCoreApi::fetchItemIdCount('GalleryAlbumItem', 'core.addDataItem');
-		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-		    }
-		}
 
-		if ($count > 0) {
-		    $links[$item->getId()][] =
-			array('text' => $this->translate('create link'),
-			      'params' => array('return' => 'true',
-						'view' => 'core:ItemAdmin',
-						'subView' => 'core:ItemCreateLink',
-						'itemId' => $item->getParentId(),
-						'selectedId' => $item->getId()));
+		    if ($count > 0) {
+			$links[$item->getId()][] =
+			    array('text' => $this->translate('create link'),
+				  'params' => array('return' => 'true',
+						    'view' => 'core:ItemAdmin',
+						    'subView' => 'core:ItemCreateLink',
+						    'itemId' => $item->getParentId(),
+						    'selectedId' => $item->getId()));
+		    }
 		}
 	    }
 

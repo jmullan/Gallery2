@@ -230,10 +230,10 @@ class ItemCreateLinkView extends GalleryView {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	/* Get all peers that we can link */
 	list ($ret, $peerIds) =
-	    GalleryCoreApi::fetchLinkableChildItemIdsWithPermission($item->getId(), 'core.view');
+	    GalleryCoreApi::fetchLinkableChildItemIdsWithPermission($item->getId(), 'core.viewSource');
         if ($ret->isError()) {
             return array($ret->wrap(__FILE__, __LINE__), null);
         }
@@ -243,6 +243,7 @@ class ItemCreateLinkView extends GalleryView {
 	$peerDescendentCounts = array();
 	$numPages = 1;
 	$selectedIds = array();
+	$albums = array();
 	if (!empty($peerIds)) {
 	    $numPages = ceil(sizeof($peerIds) / $form['numPerPage']);
 	    if (empty($page)) {
