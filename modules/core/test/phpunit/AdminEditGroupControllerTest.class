@@ -69,6 +69,7 @@ class AdminEditGroupControllerTest extends GalleryControllerTestCase {
 	}
 	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
 	$this->assertEquals('core:AdminEditGroup', GalleryUtilities::getRequestVariables('subView'));
+	$this->assertEquals($group->getGroupName(), GalleryUtilities::getRequestVariables('form.groupName'));
 
 	$this->_deleteGroup($group);
     }
