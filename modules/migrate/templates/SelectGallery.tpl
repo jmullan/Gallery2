@@ -49,9 +49,10 @@
 	{g->text text="Recent paths:"}
 	{g->listing}
 	  {foreach from=$SelectGallery.recentPaths key=path item=count}
+            {capture name="escapedPath"}{$path|replace:"\\":"\\\\"}{/capture}
 	    {g->item}
 	      {g->title}
-		{g->link javascript="selectPath('$path')"}
+		{g->link javascript="selectPath('`$smarty.capture.escapedPath`')"}
 		  {$path}
 		{/g->link}
 	      {/g->title}

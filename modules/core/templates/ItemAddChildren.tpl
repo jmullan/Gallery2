@@ -192,9 +192,10 @@
 		{/if}
 		{g->listing}
 		  {foreach from=$ItemAddChildren.localServerDirList item=dir}
+		    {capture name="escapedDir"}{$dir|replace:"\\":"\\\\"}{/capture}
 		    {g->item}
 		      {g->title}
-			{g->link javascript="selectPath('$dir')"}
+			{g->link javascript="selectPath('`$smarty.capture.escapedDir`')"}
 			  {$dir}
 			{/g->link}
 		      {/g->title}
@@ -205,9 +206,10 @@
 		  {g->text text="Recent Directories"}
 		  {g->listing}
 		    {foreach from=$ItemAddChildren.recentPaths item=dir}
+		      {capture name="escapedDir"}{$dir|replace:"\\":"\\\\"}{/capture}
 		      {g->item}
 			{g->title}
-			  {g->link javascript="selectPath('$dir')"}
+			  {g->link javascript="selectPath('`$smarty.capture.escapedDir`')"}
 			    {$dir}
 			  {/g->link}
 			{/g->title}
