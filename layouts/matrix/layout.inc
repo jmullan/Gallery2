@@ -336,10 +336,6 @@ class MatrixLayout extends GalleryLayout {
 	    $jumprange[] = $totalPages;
 	}
 
-	$show = array();
-	$show['peerSidebarBox'] = ($layout['peerCount'] > 0);
-
-	$layout['show'] = $show;
 	$layout['columnSize'] = $properties['columns'];
 	$layout['currentPage'] = $page;
 	$layout['totalPageCount'] = $totalPages;
@@ -487,7 +483,7 @@ class MatrixLayout extends GalleryLayout {
 	    $navigator['next'] = array('view' => 'core:ShowItem',
 				       'itemId' => $layout['peers'][$itemIndex+1]['id']);
 	    $navigator['last'] = array('view' => 'core:ShowItem',
-				       'itemId' => $layout['peers'][$layout['peerCount']-1]['id']);
+				       'itemId' => $layout['peers'][count($layout['peers'])-1]['id']);
 	}
 
 	/* Load the EXIF data */
@@ -517,10 +513,6 @@ class MatrixLayout extends GalleryLayout {
 	    $layout['sourceImageViewIndex'] = $sourceImageViewIndex;
 	}
 
-	$show = array();
-	$show['peerSidebarBox'] = 1;
-
-	$layout['show'] = $show;
 	$layout['baseUrl'] = GalleryUtilities::convertPathToUrl(dirname(__FILE__));
 	$layout['imageViews'] = $imageViews;
 	$layout['sourceImage'] = $sourceImage;

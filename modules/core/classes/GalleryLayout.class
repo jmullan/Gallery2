@@ -365,6 +365,7 @@ class GalleryLayout {
      *   item      item data
      *   user      active user data
      *   children  array of child item data
+     *   show      flags for standard sidebar
      * Available keys to include in $dataToLoad parameter:
      *   owner = item owner data
      *      ^if childIds non-empty also fill ownerMap with array of ownerId => owner data
@@ -440,7 +441,7 @@ class GalleryLayout {
 	    }
 	}
 	if (isset($load['peers'])) {
-	    $peerIds = array();
+	    $peerIds = $peers = array();
 	    if ($item->getParentId() != null) {
 		list ($ret, $parent) = GalleryCoreApi::loadEntitiesById($item->getParentId());
 		if ($ret->isError()) {
@@ -491,7 +492,7 @@ class GalleryLayout {
 	}
 
 	// -------------------------------------------------------------------------------------
-	// Always load 'item', 'user' and 'children'
+	// Always load 'item', 'user', 'children' and 'show'
 	$layout['item'] = $item->getMemberData();
 	$user = $gallery->getActiveUser();
 	$layout['user'] = $user->getMemberData();
@@ -499,6 +500,10 @@ class GalleryLayout {
 	foreach ($childItems as $child) {
 	    $layout['children'][] = $child->getMemberData();
 	}
+	$layout['show'] = array('sidebar' => GalleryCapabilities::can('showSidebar'),
+				'sidebarGreeting' => GalleryCapabilities::can('showSidebarGreeting'),
+				'sidebarActions' => true,
+				'sidebarPeers' => isset($load['peers']));
 
 	// -------------------------------------------------------------------------------------
 	// 'owner'
@@ -575,6 +580,9 @@ class GalleryLayout {
 		$peer = $entities[$id]->getMemberData();
 		$peer['peerIndex'] = $i + 1;
 		$layout['peers'][] = $peer;
+	    }
+	    if (empty($peers)) {
+		$layout['show']['sidebarPeers'] = false;
 	    }
 	}
 

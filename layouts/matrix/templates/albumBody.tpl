@@ -13,7 +13,7 @@
 {include file="gallery:layouts/matrix/templates/pathbar.tpl"}
 
 <div id="gsContents">
-  {include file="gallery:layouts/matrix/templates/sidebar.tpl"}
+  {include file="gallery:templates/sidebar.tpl"}
 
   <div id="gsAlbumContents">
     
