@@ -1785,11 +1785,12 @@ class GalleryCoreApi {
      *
      * @param string the name of the event (eg "GalleryEntity::save")
      * @param object a GalleryEventListener instance
+     * @param boolean (optional) if true, disable event listener during unit tests
      * @static
      */
-    function registerEventListener($eventName, &$listener) {
+    function registerEventListener($eventName, &$listener, $disableForUnitTests=false) {
 	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/helpers/GalleryEventHelper_simple.class');
-	return GalleryEventHelper_simple::registerEventListener($eventName, $listener);
+	return GalleryEventHelper_simple::registerEventListener($eventName, $listener, $disableForUnitTests);
     }
 
     /**

@@ -59,6 +59,39 @@ class EntityCounterEventListener {
     }
 }
 
+/* For event listeners only active for the duration of one test */
+class TestEventListener {
+
+    function TestEventListener() {
+	$this->_eventListeners = array();
+    }
+
+    function reset() {
+	foreach (array_keys($this->_eventListeners) as $eventName) {
+	    $this->_eventListeners[$eventName] = array();
+	}
+    }
+
+    function registerEventListener($eventName, &$listener) {
+	if (!isset($this->_eventListeners[$eventName])) {
+	    GalleryCoreApi::registerEventListener($eventName, $this);
+	    $this->_eventListeners[$eventName] = array();
+	}
+	$this->_eventListeners[$eventName][] =& $listener;
+    }
+
+    function handleEvent($event) {
+	$list = $this->_eventListeners[$event->getEventName()];
+	for ($i = 0; $i < count($list); $i++) {
+	    $ret = $list[$i]->handleEvent($event);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+	return GalleryStatus::success();
+    }
+}
+
 /**
  * Gallery specific version of PHPUnit's TestCase class.  
  * @package Gallery
@@ -79,9 +112,22 @@ class GalleryTestCase extends TestCase {
 	return $_counter;
     }
 
+    function &getTestEventListener() {
+	static $_eventListener;
+	if (!isset($_eventListener)) {
+	    $_eventListener = new TestEventListener();
+	}
+	return $_eventListener;
+    }
+
+    function _registerTestEventListener($eventName, &$listener) {
+	$eventListener =& $this->getTestEventListener();
+	$eventListener->registerEventListener($eventName, $listener);
+    }
+
     function failWithStatus($ret) {
 	global $gallery;
-	
+
 	// Fail with as much debug info as we can muster.
 	$this->assert(false, $ret->getAsHtml() . $gallery->getDebugBuffer());
     }
@@ -196,6 +242,9 @@ class GalleryTestCase extends TestCase {
 
 	$session =& $gallery->getSession();
 	$this->assertEquals($this->_saveSID, $session->getId(), 'Session ID changed by test');
+
+	$eventListener =& $this->getTestEventListener();
+	$eventListener->reset();
     }
 
     function _getRootId() {

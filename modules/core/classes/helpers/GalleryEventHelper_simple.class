@@ -63,9 +63,14 @@ class GalleryEventHelper_simple {
      *
      * @param string the name of the event (eg "GalleryEntity::save")
      * @param object GalleryEventListener instance
+     * @param boolean (optional) if true, disable event listener during unit tests
      * @static
      */
-    function registerEventListener($eventName, &$listener) {
+    function registerEventListener($eventName, &$listener, $disableForUnitTests=false) {
+	if ($disableForUnitTests && class_exists('GalleryTestCase')) {
+	    return;
+	}
+
 	$eventListeners =& GalleryEventHelper_simple::_getEventListeners();
 	if (empty($eventListeners[$eventName])) {
 	    $eventListeners[$eventName] = array();
@@ -99,10 +104,10 @@ class GalleryEventHelper_simple {
 		    $module->registerEventListeners();
 		}
 	    }
-	    
+
 	    $allListenersRegistered = true;
 	}
-	
+
 	$eventListeners =& GalleryEventHelper_simple::_getEventListeners();
 
 	if (!empty($eventListeners[$event->getEventName()])) {
