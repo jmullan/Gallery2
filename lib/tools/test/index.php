@@ -2,6 +2,9 @@
 include('../security.inc');
 require_once('../../../init.php');
 require_once('TestCase.class');
+require_once('TestCase/ActivateModule.class');
+require_once('TestCase/InstallModule.class');
+require_once('TestCase/DeactivateModule.class');
 $tests = array();
 
 $ret = main();
@@ -67,6 +70,18 @@ function GalleryTestHarness() {
 
     foreach ($moduleIds as $moduleId) {
 	$testDir = $modulesDir . $moduleId . '/test/TestCase';
+
+	/* Add our implicit tests */
+	foreach (array('ActivateModule', 'DeactivateModule', 'InstallModule') as $implicitTestName) {
+	    $className = $implicitTestName . 'TestCase';
+	    $testCase = new $className($moduleId);
+	    $test = array('moduleId' => $moduleId,
+			  'testName' => $implicitTestName,
+			  'class' => $testCase,
+			  'description' => $testCase->getDescription());
+	    $tests[$moduleId][$implicitTestName] = $test;
+	}
+
 	$files = array();
 	if ($platform->file_exists($testDir) &&
 		$platform->is_dir($testDir) &&
@@ -93,6 +108,7 @@ function GalleryTestHarness() {
 						       'title' => shorten($iter));
 		}
 		$tests[$moduleId][$testName] = $test;
+		$display[$moduleId][$testName] = $test;
 	    }
 	}
     }
@@ -100,9 +116,9 @@ function GalleryTestHarness() {
     /*
      * Alphabetize the module names and test names
      */
-    ksort($tests);
-    foreach ($tests as $moduleId => $testArray) {
-	ksort($tests[$moduleId]);
+    ksort($display);
+    foreach ($display as $moduleId => $testArray) {
+	ksort($display[$moduleId]);
     }
 
     /* Suppress preliminary debug output */
@@ -152,7 +168,7 @@ function GalleryTestHarness() {
     /* Get the Smarty instance. */
     require_once(dirname(__FILE__) . '/../../../modules/core/classes/GalleryTemplate.class');
     $template = new GalleryTemplate(dirname(__FILE__) . '/templates');
-    $template->setVariable('tests', $tests);
+    $template->setVariable('tests', $display);
     $template->setVariable('results', $results);
     $template->setVariable('rollup', $rollup);
     list($ret, $html) = $template->fetch('index.tpl');
