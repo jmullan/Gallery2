@@ -465,14 +465,40 @@ class GalleryItem extends FileSystemNucleus {
      * Let the parent do its work, then add any initialization specific to this
      * class.
      *
+     * @param object GalleryNucleus the parent of this object
+     * @param int the id of the parent object
      * @return object GalleryStatus a status code
      */
-    function create() {
+    function create(&$parent) {
+	global $gallery;
+
+	if (isset($parent)) {
+	    if (!$gallery->isLocked($parent->getId())) {
+		return GalleryStatus::error(ERROR_LOCK_REQUIRED,
+					    __FILE__, __LINE__);
+	    }
+
+	    if (!$parent->canContainChildren()) {
+		return GalleryStatus::error(ERROR_ILLEGAL_CHILD,
+					    __FILE__, __LINE__);
+	    }
+	}
+	
 	$ret = parent::create();
 	if ($ret->isError()) {
 	    return $ret;
 	}
-	
+
+	/*
+	 * If a parent was specified, add this child to the end of the parent's
+	 * child list, and set our parent id appropriately.
+	 */
+	if (isset($parent)) {
+	    $childIds =& $parent->getChildIds();
+	    $childIds->push($this->getId());
+	    $this->setParentId($parent->getId());
+	}
+
 	/* Initialize the viewedSince timestamp */
 	$this->setViewedSinceTimestamp(time());
 
