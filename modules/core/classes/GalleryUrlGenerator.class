@@ -327,7 +327,7 @@ class GalleryUrlGenerator {
 
 	$args = array();
 	foreach ($params as $key => $value) {
-	    $args[] = GALLERY_FORM_VARIABLE_PREFIX . $key . '=' . $value;
+	    $args[] = GalleryUtilities::prefixFormVariable($key) . '=' . $value;
 	}
 
 	return '?' . join('&amp;', $args);
@@ -355,7 +355,8 @@ class GalleryUrlGenerator {
 		$url .= '&';
 	    }
 	    
-	    $url .= sprintf('%s=%s', urlencode(GALLERY_FORM_VARIABLE_PREFIX . $key), urlencode($value));
+	    $url .= sprintf('%s=%s', urlencode(GalleryUtilities::prefixFormVariable($key)),
+				     urlencode($value));
 	}
 
 	return $url;

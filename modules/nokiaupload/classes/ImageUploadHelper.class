@@ -126,7 +126,7 @@ class ImageUploadHelper {
 	/* Prepare our results. */
 	$status['success'] = NOKIAUPLOAD_ERR_NOERR;
 	$status['rsurl'] = $rsurl;
-	$status['sessionidparam'] = GALLERY_FORM_VARIABLE_PREFIX . $session->getKey();
+	$status['sessionidparam'] = GalleryUtilities::prefixFormVariable($session->getKey());
 	$status['sessionid'] = $session->getId();
 
 	/* Send also RS Capabilites if available. */

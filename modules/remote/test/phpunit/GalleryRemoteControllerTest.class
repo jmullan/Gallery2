@@ -242,7 +242,7 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[set_albumName]', $this->_rootAlbum->getId());
 	GalleryUtilities::putRequestVariable('form[caption]', 'this is a caption');
 	
-        $_FILES[GALLERY_FORM_VARIABLE_PREFIX . 'userfile'] =
+        $_FILES[GalleryUtilities::prefixFormVariable('userfile')] =
 	    array('name' => 'testfile.txt',
 		  'type' => 'text/plain',
 		  'tmp_name' => __FILE__,

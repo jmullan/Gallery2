@@ -109,7 +109,7 @@ class UtilitiesTest extends GalleryTestCase {
 
     function testGetFormVariables2() {
 	/* Test windows and unix style tmp names */
-	$_FILES[GALLERY_FORM_VARIABLE_PREFIX . 'utilitiestest'] =
+	$_FILES[GalleryUtilities::prefixFormVariable('utilitiestest')] =
 		array('name' => array('1' => 'DSCF0001.JPG', 'DSCF0002.GIF', null, null),
 		      'type' => array('1' => 'image/pjpeg', 'image/gif', null, null),
 		      'tmp_name' => array('1' => 'c:\apache\tmp\php195.tmp', '/tmp/php195.tmp', null, null),
@@ -129,7 +129,7 @@ class UtilitiesTest extends GalleryTestCase {
      * putRequestVariable -- make sure that the new value overwrites the old.
      */
     function testGetFormVariables3() {
-	$_POST[GALLERY_FORM_VARIABLE_PREFIX . 'utilitiestest']['list']['filter'] = 'x';
+	$_POST[GalleryUtilities::prefixFormVariable('utilitiestest')]['list']['filter'] = 'x';
 	GalleryUtilities::putRequestVariable('utilitiestest[list][filter]', 'y');
 
 	$this->assertEquals(array('list' => array('filter' => 'y')),
@@ -137,7 +137,7 @@ class UtilitiesTest extends GalleryTestCase {
     }
 
     function testGetFormVariables4() {
-	$_POST[GALLERY_FORM_VARIABLE_PREFIX . 'utilitiestest']['entities'] = '<b> bold </b> <script> foo </script>';
+	$_POST[GalleryUtilities::prefixFormVariable('utilitiestest')]['entities'] = '<b> bold </b> <script> foo </script>';
 
 	$this->assertEquals(array('entities' => '&lt;b&gt; bold &lt;/b&gt; &lt;script&gt; foo &lt;/script&gt;'),
 			    GalleryUtilities::getFormVariables('utilitiestest'));
@@ -365,7 +365,7 @@ class UtilitiesTest extends GalleryTestCase {
 	global $gallery;
 	$platform = $gallery->getPlatform();
 
-        $_FILES[GALLERY_FORM_VARIABLE_PREFIX . 'userfile'] =
+        $_FILES[GalleryUtilities::prefixFormVariable('userfile')] =
 	    array('name' => 'testfile.txt',
 		  'type' => 'text/plain',
 		  'tmp_name' => __FILE__,
