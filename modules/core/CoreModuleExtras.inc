@@ -189,7 +189,7 @@ class CoreModuleExtras {
                   WHERE
                     [GalleryPluginParameterMap::parameterName] = ?
                     AND
-                    [GalleryPluginParameterMap::pluginType] = 'module'
+                    [GalleryPluginParameterMap::pluginType] = \'module\'
                     AND
                     [GalleryPluginParameterMap::itemId] = 0
                 ';
