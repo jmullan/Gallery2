@@ -111,6 +111,9 @@ class FfmpegModule extends GalleryModule {
 	if (GalleryUtilities::isA($platform, 'WinNtPlatform')) {
 	    foreach (explode(';', getenv('PATH')) as $path) {
 		$path = trim($path);
+		if (empty($path)) {
+		    continue;
+		}
 		if ($path{strlen($path)-1} != $slash) {
 		    $path .= $slash;
 		}
@@ -122,6 +125,9 @@ class FfmpegModule extends GalleryModule {
 	} else if (GalleryUtilities::isA($platform, 'UnixPlatform')){
 	    foreach (explode(':', getenv('PATH')) as $path) {
 		$path = trim($path);
+		if (empty($path)) {
+		    continue;
+		}
 		if ($path{strlen($path)-1} != $slash) {
 		    $path .= $slash;
 		}
