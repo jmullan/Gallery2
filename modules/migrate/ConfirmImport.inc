@@ -200,6 +200,7 @@ class ConfirmImportController extends GalleryController {
 	    $totalUsersToImport = count($form['migrateUser']);
 	    $numberOfUsersImported = 0;
 	    foreach (array_keys($form['migrateUser']) as $uid) {
+		$gallery->guaranteeTimeLimit(30);
 		/* convert from uid to username */
 		list ($ret, $fields) =
 		    Gallery1DataParser::getUserFieldsByUid($albumsPath, $uid);
@@ -341,6 +342,7 @@ class ConfirmImportController extends GalleryController {
 	     */
 	    $numberOfItemsImported = 0;
 	    while ($albumfields && $i < count($form['sourceAlbums'])^2 && !connection_aborted()) {
+		$gallery->guaranteeTimeLimit(30);
 		$album = array_shift($albumfields);
 
 		/*
@@ -764,6 +766,7 @@ class ConfirmImportController extends GalleryController {
 			$albumNeedsThumbnail = empty($thumbnailTable) ? true : false;
 
 			foreach($photos as $j => $importAlbumItem) {
+			    $gallery->guaranteeTimeLimit(30);
 			    if (isset($importAlbumItem->isAlbumName) && $importAlbumItem->isAlbumName) {
 				if ($importAlbumItem->highlight == 1) {
 				    $albumHighlight[$newAlbumInstanceId]=$importAlbumItem->isAlbumName;
@@ -1195,6 +1198,7 @@ class ConfirmImportController extends GalleryController {
 	    $results['delegate']['view'] = 'core:SiteAdmin';
 	    $results['delegate']['subView'] = 'migrate:ConfirmImport';
 	}
+
 	return array(GalleryStatus::success(), $results);
     }
 
@@ -1303,7 +1307,8 @@ class ConfirmImportView extends GalleryView {
 	    if (!in_array($urlDecoded[$sourceAlbumName],array_keys($albums))) {
 		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
 	    }
-	    list ($ret, $albumfields[$sourceAlbumName]) = Gallery1DataParser::loadAlbumFields($albumsPath.$urlDecoded[$sourceAlbumName]);
+	    list ($ret, $albumfields[$sourceAlbumName])
+		    = Gallery1DataParser::loadAlbumFields($albumsPath.$urlDecoded[$sourceAlbumName]);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -1328,7 +1333,9 @@ class ConfirmImportView extends GalleryView {
 	    } else {
 		$existingAlbums[$encodedName] = $existingAlbumId;
 	    }
-	    $titles[$encodedName] = $album['title'];
+	    $titles[$encodedName] = Gallery1DataParser::convertString($album['title'],
+								      $form['sourceEncoding']);
+
 	    if (!$platform->isLegalPathComponent($album['name'])){
 		$illegalAlbumNames[$encodedName] = $platform->legalizePathComponent($album['name']);
 	    } else {
