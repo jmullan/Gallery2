@@ -19,75 +19,209 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+/*      re-define       */
+
+body {
+	font-family: Verdana, Arial, sans-serif;
+	font-size: 62.5%;
+	color: #444;
+	background-color: #ddd;
+	/*background-image: url('../images/background.png');
+	background-repeat: repeat;*/
+	text-align: center;
+}
+
+h1, h2, h3, h4 {
+        margin: 0;
+        padding: 0;
+}
+
+p { font-size: 1.1em; }
+
 a {
 	text-decoration: none;
 }
 a:link, a:visited {
+        font-weight: bold;
 	color: #ae0000;
 }
 a:hover {
 	color: #fd6704;
 }
 
-body {
-	background-image: url('../images/background.png');
-	background-repeat: repeat;
-}
-
-p, td, div {
-	font-family: Verdana;
+td {
 	font-size: small;
-	text-align: center;
 }
 
 tt {
-	font-family: courier-new, courier;
+	font-family: courier-new, courier, monospace;
 }
+
+/*      layout  */
+
+#box {
+	width: 720px;
+        text-align: left;
+	border: 1px solid #999;
+	background-color: #fff;
+        margin: 0 auto;
+        margin-top: 0;
+}
+
+#box:after {
+	content: "."; 
+	display: block; 
+	height: 0; 
+	clear: both; 
+	visibility: hidden;
+}
+
+/* Hides from IE-mac \*/
+* html #box { height: 1%; }
+/* End hide from IE-mac */
+
+#header {
+        border-bottom: 1px solid #ddd;
+}
+
+#header img { margin-left: 18px; }
+
+#navbar {
+        width: 160px;
+        float: left;
+	background-color: #eee;
+        border-right: 1px solid #ddd;
+        border-bottom: 1px solid #ddd;
+        padding: 16px 0;
+}
+
+#navbar h2 {
+        font-size: 1.3em;
+        margin-left: 24px;
+        margin-bottom: 8px;
+}
+
+#navbar ol {
+        list-style-type: none;
+        margin: 0;
+        padding: 0 0 0 16px;
+}
+
+#navbar li {
+        display: block;
+        border-bottom: 1px solid #ddd;
+        margin: 0 0 0 -6px;
+        padding: 8px 0px;
+}
+
+#main {
+        width: 518px;
+        float: left;
+        padding: 16px;
+        padding-right: 24px;
+}
+
+#main h1 { font-size: 1.3em; }
+
+#main h3 { font-size: 1.2em; }
+
+#bottom {
+        clear: both;
+        border-top: 1px solid #ddd;
+        padding: 8px 24px;
+}
+
+#footer {
+	width: 672px;
+        font-size: 0.9em;
+        text-align: left;
+        margin: 0 auto;
+        margin-top: 0;
+        padding: 8px 24px;
+}
+
+/*      classes */
 
 .bold {
 	font-weight: bold;
-	font-size: large;
+	font-size: 1.4em;
 }
 
 .error {
-	color: #ae0000;
+        font-weight: bold;
+        color: #ae0000;
+        margin: 0;
+        margin-bottom: 16px; }
+
+.success { color: #00ae00; }
+
+.go {
+	font-weight: bold;
+	font-size: 1.2em;
+        background-color: #eee;
+        border: 1px solid #ddd;
+        margin: 8px 0 8px -4px;
+        padding: 4px;
 }
 
-.success {
-	font-weight: bold;
-	color: #00ae00;
+.go:after {
+	content: "."; 
+	display: block; 
+	height: 0; 
+	clear: both; 
+	visibility: hidden;
 }
+
+/* Hides from IE-mac \*/
+* html .go { height: 1%; }
+/* End hide from IE-mac */
+
+.goToNext { float: left; }
+
+.goToNextL { float: left; }
+
+
+.statusTable {
+        width: 100%;
+        margin: 0;
+}
+
+.statusTable h4 {
+        font-size: 0.9em;
+}
+
+.statusLine { font-size: 0.8em; }
 
 .small {
 	font-size: 69%;
 }
 
-#box {
-	width: 75%;
-	border: 1px solid #000000;
-	align: center;
-	background-color: #ffffff;
-	padding: 5px;
-	padding-bottom: 20px;
-	margin-top: 50px;
+.adminForm {
+}
+
+.adminForm tr td {
+        font-weight: bold;
+        text-align: right;
+        padding-right: 8px;
+}
+
+.adminForm input {
+        font-size: 0.9em;
+        background-color: #eee;
+        border: 1px solid #ddd;
+        padding: 2px 4px;
 }
 
 .navitem {
 	margin: 0;
 	padding: 0;
-#	border-bottom: 1px solid #ffffff;
-	float: left;
 	margin-top: 5px;
 	margin-bottom: 5px;
 }
 
 .nav_num {
-	background-color: #fd6704;
-	border-bottom: 1px solid #fd6704;
-	margin: 0px;
-	padding: 2px;
-	font-weight: bold;
-	font-size: x-small;
+	color: #999;
+ 	padding: 2px;
 }
 
 .nav_arrow {
@@ -99,8 +233,6 @@ tt {
 }
 
 .nav_text {
-	border-bottom: 1px solid #fd6704;
 	margin: 0px;
 	padding: 2px;
-	font-size: x-small;
 }

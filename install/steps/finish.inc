@@ -20,14 +20,17 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 ?>
+
+<h1>Finish</h1>
+
 <p>
 <?php print _("Congratulations! Your Gallery2<span style=\"color:ae0000; font-style: italic;\">Alpha</span> has successfully installed! See... that wasn't so hard, was it? Now it's time to configure your gallery and upload some photos!") ?>
 </p>
 
-<p class="bold">
+<h2>
 <?php print _("Now get me to my photos!") ?>
-</p>
+</h2>
 
-<p>
-<span class="bold" style="background-color: #d8d8d8; border: 1px solid #000000; padding: 3px;"><a href="../main.php"><?php print _('Go to Gallery2') ?></a></span>
-</p>
+<div class="go">
+<span class="goToNext"><a href="../main.php"><?php print _('Go to Gallery2') ?></a></span>
+</div>

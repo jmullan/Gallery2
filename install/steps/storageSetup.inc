@@ -27,9 +27,11 @@
 <?php } ?>
 
 <?php if ($status[$step]) { ?>
-<p class="success">
-Storage directory set successfully:</p>
+<h2 class="success">
+Storage directory set successfully:</h2>
 <?php } ?>
+
+<h1>Storage Setup</h1>
 
 <p> <?php print _("Gallery needs to store data in a directory on your server. It will use this directory to store your images as well as other important data. For security, we suggest that you place this directory <b>outside</b> the path to your webserver, so that it cannot be accessed directly via the web. This is necessary if you wish to have your images accessible only via Gallery<b>*</b>. If you access your site via FTP, you might not have this option.") ?> </p>
 
@@ -45,15 +47,15 @@ Storage directory set successfully:</p>
 </form>
 
 <?php if ($status[$step]) { ?>
-<p>
-<span class="bold" style="background-color: #d8d8d8; border: 1px solid #000000; padding: 3px;"><a href="javascript:document.storage_form.submit()"><?php print _('Change') ?></a></span>
-<span class="bold" style="background-color: #d8d8d8; border: 1px solid #000000; padding: 3px;"><a href="index.php?step=6"><?php print _('Go to Step 6&rarr;') ?></a></span>
+<div class="go">
+<span class="goToNext"><a href="javascript:document.storage_form.submit()"><?php print _('Change') ?></a></span>
+<span class="goToNext"><a href="index.php?step=6"><?php print _('Go to Step 6&raquo;') ?></a></span>
 </p>
 <?php } else { ?>
-<p>
-<span class="bold" style="background-color: #d8d8d8; border: 1px solid #000000; padding: 3px;"><a href="javascript:document.storage_form.submit()"><?php print _('Update') ?></a></span>
-</p>
+<div class="go">
+<span class="goToNext"><a href="javascript:document.storage_form.submit()"><?php print _('Update') ?></a></span>
+</div>
 <?php } ?>
  
-<p style="text-align: left;"><b>*</b> This is sometimes known as an <b>image firewall</b>.</p>
+<p style="text-align: left;"><strong>*</strong> This is sometimes known as an <b>image firewall</b>.</p>
 

@@ -20,6 +20,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 ?>
-<p>
-<span class="bold" style="background-color: #d8d8d8; border: 1px solid #000000; padding: 3px;"><a href="index.php?step=4"><?php print _('Go to Step 4&rarr;') ?></a></span>
-</p>
+<h1>System Checks</h1>
+<div class="go">
+  <span class="goToNextL">
+    <a href="index.php?step=4"><?php print _('Go to Step 4&raquo;') ?></a>
+  </span>
+</div>

@@ -27,37 +27,59 @@
 <?php } ?>
 
 <?php if ($status[$step]) { ?>
-<p class="success">
+<h2 class="success">
 Admin user "<?php print $_SESSION['uname']?>" updated successfully.
-</p>
+</h2>
 <?php } ?>
-
-<p> <?php print _("Every Gallery will have at least one administrator user who has full access to view/modify everything. Please choose a username and password for your main administrator account. You can add additional users later.") ?> </p>
+<h1>Admin User Setup</h1>
+<p>
+  <?php print _("Every Gallery will have at least one administrator user who has full access to view/modify everything. Please choose a username and password for your main administrator account. You can add additional users later.") ?>
+</p>
 
 <form name="admin_form" method="POST" action="<?php print $PHP_SELF . '?step=4&action=create' ?>">
-<table border="0">
-<tr>
-<td style="text-align: left;"><?php print _('Admin username:') ?></td>
-<td><input name="uname" type="text" value="<?php print isset($_SESSION['uname']) ? $_SESSION['uname'] : _('admin') ?>" /></td>
-</tr>
-<tr>
-<td style="text-align: left;"><?php print _('Password:') ?></td>
-<td><input name="passA" type="password" value="<?php print isset($_SESSION['pass']) ? $_SESSION['pass'] : '' ?>" /></td>
-</tr>
-<tr>
-<td style="text-align: left;"><?php print _('(type again)') ?></td>
-<td><input name="passB" type="password" value="<?php print isset($_SESSION['pass']) ? $_SESSION['pass'] : '' ?>" /></td>
-</tr>
-</table>
+  <table class="adminForm">
+    <tr>
+      <td>
+        <?php print _('Admin username') ?>
+      </td>
+      <td>
+        <input name="uname" type="text" value="<?php print isset($_SESSION['uname']) ? $_SESSION['uname'] : _('admin') ?>" />
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <?php print _('Password') ?>
+      </td>
+      <td>
+        <input name="passA" type="password" value="<?php print isset($_SESSION['pass']) ? $_SESSION['pass'] : '' ?>" />
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <?php print _('(type again)') ?>
+      </td>
+      <td>
+        <input name="passB" type="password" value="<?php print isset($_SESSION['pass']) ? $_SESSION['pass'] : '' ?>" />
+      </td>
+    </tr>
+  </table>
 </form>
 
 <?php if ($status[$step]) { ?>
-<p>
-<span class="bold" style="background-color: #d8d8d8; border: 1px solid #000000; padding: 3px;"><a href="javascript:document.admin_form.submit();"><?php print _('Change') ?></a></span>
-<span class="bold" style="background-color: #d8d8d8; border: 1px solid #000000; padding: 3px;"><a href="index.php?step=5"><?php print _('Go to Step 5&rarr;') ?></a></span>
-</p>
+<div class="go">
+  <span class="goToNext">
+    <a href="javascript:document.admin_form.submit();">
+      <?php print _('Change') ?>
+    </a>
+  </span>
+  <span class="goToNext">
+    <a href="index.php?step=5">
+      <?php print _('Go to Step 5&rarr;') ?>
+    </a>
+  </span>
+</div>
 <?php } else { ?>
-<p>
-<span class="bold" style="background-color: #d8d8d8; border: 1px solid #000000; padding: 3px;"><a href="javascript:document.admin_form.submit();"><?php print _('Create') ?></a></span>
-</p>
+<div class="go">
+<span class="goToNextL"><a href="javascript:document.admin_form.submit();"><?php print _('Create') ?></a></span>
+</div>
 <?php } ?>

@@ -27,9 +27,11 @@
 <?php } ?>
 
 <?php if ($status[$step]) { ?>
-<p class="success">
-Database set up successfully!</p>
+<h2 class="success">
+Database set up successfully!</h2>
 <?php } ?>
+
+<h1>Database Setup</h1>
 
 <p> <?php print _("Please choose a username and password for your administrator account. You can change the name and password later, as well as add additional administrator users.") ?> </p>
 
@@ -81,12 +83,12 @@ foreach ($dbtypes as $key => $val) {
 </form>
 
 <?php if ($status[$step]) { ?>
-<p>
-<span class="bold" style="background-color: #d8d8d8; border: 1px solid #000000; padding: 3px;"><a href="javascript:document.database_form.submit()"><?php print _('Update') ?></a></span>
-<span class="bold" style="background-color: #d8d8d8; border: 1px solid #000000; padding: 3px;"><a href="index.php?step=7"><?php print _('Go to Step 7&rarr;') ?></a></span>
+<div class="go">
+<span class="goToNext"><a href="javascript:document.database_form.submit()"><?php print _('Update') ?></a></span>
+<span class="goToNext"><a href="index.php?step=7"><?php print _('Go to Step 7&raquo;') ?></a></span>
 </p>
 <?php } else { ?>
 <p>
-<span class="bold" style="background-color: #d8d8d8; border: 1px solid #000000; padding: 3px;"><a href="javascript:document.database_form.submit()"><?php print _('Update') ?></a></span>
+<span class="goToNext"><a href="javascript:document.database_form.submit()"><?php print _('Update') ?></a></span>
 </p>
 <?php } ?>

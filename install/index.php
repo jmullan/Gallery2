@@ -350,26 +350,26 @@ function printNavBar() {
 	global $status;
 	
 	// XXX need to modify for RTL
-	$navbar .= "<center><div style=\"text-align: center; align: center; width: 85%; padding-bottom: 20px;\">\n";
+	$navbar .= "<ol>\n";
 	foreach (array_keys($navtext) as $step) {
 		if ($step != 0) {
-			$navbar .= "<div class=\"nav_arrow\">&rarr;</div>\n";
+			$navbar .= "\n";
 		}
-		$navbar .= "<div class=\"navitem\">\n";
+		$navbar .= "<li class=\"navitem\">\n";
 		if ($step == 0) {
-			$num = '&nbsp;&nbsp;';
+			$num = '&nbsp;';
 		} else {
 			$num = $step;
 		}
-		$navbar .= "<span class=\"nav_num\">$num</span><span class=\"nav_text\">";
+		$navbar .= "<span class=\"nav_num\">$num</span>&nbsp;<span class=\"nav_text\">";
 		if ($step == 0 || $status[$step-1]) {
 			$navbar .= "<a href=\"index.php?step=$step\">$navtext[$step]</a>";
 		} else {
 			$navbar .= $navtext[$step];
 		}
-		$navbar .= "</span></div>\n";
+		$navbar .= "</span></li>\n";
 	}
-	$navbar .= "</div>\n";
+	$navbar .= "</ol>\n";
 }
 
 function CheckFileDirective() {
