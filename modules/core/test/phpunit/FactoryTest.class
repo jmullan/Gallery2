@@ -98,6 +98,31 @@ class FactoryTest extends GalleryTestCase {
     }
 
     /**
+     * Register an implementation, create new instance given only class type
+     */
+    function testNewInstanceNoClass() {
+	list ($ret, $instance) = GalleryFactory::newInstance('FactoryTest');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	$this->assert(is_object($instance));
+    }
+
+    /**
+     * Register an implementation, try to create new instance but expect an
+     * empty instance
+     */
+    function testMissingInstanceNoClass() {
+	list ($ret, $instance) = GalleryFactory::newInstance('MISSING CLASS TYPE');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	$this->assert(!isset($instance));
+    }
+
+    /**
      * Register an implementation, create instance by hint
      */
     function testNewInstanceByHint() {

@@ -101,12 +101,22 @@ class GalleryFactory {
      * @param string the class name (eg. 'NetPbmGraphics')
      * @static
      */
-    function newInstance($classType, $className) {
+    function newInstance($classType, $className=null) {
 	global $gallery;
 
+	$registry =& GalleryFactory::_getFactoryData();
+	if (!isset($className)) {
+	    if (empty($registry['implementations'][$classType])) {
+		if ($gallery->getDebug()) {
+		    $gallery->debug("Unimplemented: $classType");
+		}
+		return array(GalleryStatus::success(), null);
+	    }
+	    $classNames = array_keys($registry['implementations'][$classType]);
+	    $className = $classNames[0];
+	}
 	$className = strtolower($className);
 	if (!class_exists($className)) {
-	    $registry =& GalleryFactory::_getFactoryData();
 	    if (empty($registry['implementations'][$classType][$className])) {
 		if ($gallery->getDebug()) {
 		    $gallery->debug("Unimplemented: $classType, $className");
