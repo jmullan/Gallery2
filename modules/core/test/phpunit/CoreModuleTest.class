@@ -61,20 +61,22 @@ class CoreModuleTest extends GalleryTestCase {
     }
 
     function testGetSiteAdminViews() {
+	global $gallery;
+	$t = $gallery->getConfig('function.exists.dgettext');
+	
 	list ($ret, $content) = $this->_module->getSiteAdminViews();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
 	$this->assertEquals($content,
 			    array(
-				  array('name' => 'Allgemein',
+				  array('name' => $t ? 'Allgemein' : 'General',
 					'view' => 'core:AdminCore'),
-				  array('name' => 'Benutzer',
+				  array('name' => $t ? 'Benutzer' : 'Users',
 					'view' => 'core:AdminUsers'),
-				  array('name' => 'Gruppen',
+				  array('name' => $t ? 'Gruppen' : 'Groups',
 					'view' => 'core:AdminGroups'),
-				  array('name' => 'Module',
+				  array('name' => $t ? 'Modules' : 'Modules',
 					'view' => 'core:AdminModules')
 				  )
 			    );
@@ -82,6 +84,7 @@ class CoreModuleTest extends GalleryTestCase {
 
     function testGetItemAdminViews() {
 	global $gallery;
+	$t = $gallery->getConfig('function.exists.dgettext');
 
 	list ($ret, $rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
 	if ($ret->isError()) {
@@ -100,15 +103,15 @@ class CoreModuleTest extends GalleryTestCase {
 	
 	$this->assertEquals($content,
 			    array(
-				  array('name' => 'Allgemeine Einstellungen',
+				  array('name' => $t ? 'Allgemeine Einstellungen' : 'General Settings',
 					'view' => 'core:ItemEditGeneral'),
-				  array('name' => 'Albumeinstellungen',
+				  array('name' => $t ? 'Albumeinstellungen' : 'Album Settings',
 					'view' => 'core:ItemEditAlbum'),
-				  array('name' => 'Make Highlight',
+				  array('name' => $t ? 'Make Highlight' : 'Make Highlight',
 					'view' => 'core:ItemMakeHighlight'),
-				  array('name' => 'Berechtigungen',
+				  array('name' => $t ? 'Berechtigungen': 'Permissions',
 					'view' => 'core:ItemEditPermissions'),
-				  array('name' => 'Elemente hinzuf&uuml;gen',
+				  array('name' => $t ? 'Elemente hinzuf&uuml;gen' : 'Add Items',
 					'view' => 'core:ItemAddChildren')
 				  )
 			    );
@@ -124,16 +127,19 @@ class CoreModuleTest extends GalleryTestCase {
     }
 
     function testGetSystemLinks() {
+	global $gallery;
+	$t = $gallery->getConfig('function.exists.dgettext');
+	
 	list ($ret, $content) = $this->_module->getSystemLinks(array('x' => 'y'));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	
 	$this->assertEquals($content, array(
-					    array('text' => 'site admin',
+					    array('text' => $t ? 'site admin' : 'site admin',
 						  'params' => array('view' => 'core:SiteAdmin',
 								    'return.x' => 'y')),
-					    array('text' => 'abmelden',
+					    array('text' => $t ? 'abmelden' : 'logout',
 						  'params' => array('controller' => 'core:Logout',
 								    'return.x' => 'y'))
 					    ));
@@ -150,6 +156,7 @@ class CoreModuleTest extends GalleryTestCase {
 
     function testGetItemLinks() {
 	global $gallery;
+	$t = $gallery->getConfig('function.exists.dgettext');
 
 	list ($ret, $rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
 	if ($ret->isError()) {
@@ -169,14 +176,14 @@ class CoreModuleTest extends GalleryTestCase {
 	$this->assertEquals($content,
 			    array(
 				  $rootId => array(
-						   array('text' => 'Album anpassen',
+						   array('text' => $t ? 'Album anpassen' : 'edit album',
 							 'params' => array(
 									   'view' => 'core:ItemAdmin',
 									   'itemId' => $rootId,
 									   'return.x' => 'y'
 									   )
 							 ),
-						   array('text' => 'Element hinzuf&uuml;gen',
+						   array('text' => $t ? 'Element hinzuf&uuml;gen' : 'add item',
 							 'params' => array(
 									   'view' => 'core:ItemAdmin',
 									   'subView' => 'core:ItemAddChildren',
@@ -184,7 +191,7 @@ class CoreModuleTest extends GalleryTestCase {
 									   'return.x' => 'y'
 									   )
 							 ),
-						   array('text' => 'Album hinzuf&uuml;gen',
+						   array('text' => $t ? 'Album hinzuf&uuml;gen' : 'add album',
 							 'params' => array(
 									   'view' => 'core:ItemAdmin',
 									   'subView' => 'core:ItemAddAlbum',
@@ -192,7 +199,7 @@ class CoreModuleTest extends GalleryTestCase {
 									   'return.x' => 'y'
 									   )
 							 ),
-						   array('text' => 'Berechtigungen',
+						   array('text' => $t ? 'Berechtigungen' : 'permissions',
 							 'params' => array(
 									   'view' => 'core:ItemAdmin',
 									   'subView' => 'core:ItemEditPermissions',
@@ -200,7 +207,7 @@ class CoreModuleTest extends GalleryTestCase {
 									   'return.x' => 'y'
 									   )
 							 ),
-						   array('text' => 'move item',
+						   array('text' => $t ? 'move item' : 'move item',
 							 'params' => array(
 									   'view' => 'core:ItemAdmin',
 									   'subView' => 'core:ItemMove',
