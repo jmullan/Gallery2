@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -30,7 +30,7 @@
  */
 function GalleryInitFirstPass($params=array()) {
     global $gallery;
-    
+
     ini_set('magic_quotes_runtime', 0);
     ini_set('magic_quotes_sybase', 0);
 
@@ -59,12 +59,9 @@ function GalleryInitFirstPass($params=array()) {
 	$gallery->setPlatform(new UnixPlatform());
     }
 
-    /* Load our local configuration */
-    include(dirname(__FILE__) . '/config.php');
-
     $platform = $gallery->getPlatform();
     $slash = $platform->getDirectorySeparator();
-    
+
     if (isset($params['debug'])) {
 	$gallery->setDebug($params['debug']);
     }
@@ -84,7 +81,7 @@ function GalleryInitFirstPass($params=array()) {
     $gallery->setConfig('data.gallery.tmp', $dataBase . 'tmp' . $slash);
     $gallery->setConfig('data.smarty.base', $dataBase . 'smarty' . $slash);
     $gallery->setConfig('data.smarty.templates_c',
-        $dataBase . 'smarty' . $slash . 'templates_c' . $slash);
+	$dataBase . 'smarty' . $slash . 'templates_c' . $slash);
 
     /* Configure our url Generator */
     if (!isset($params['noDatabase'])) {
@@ -125,7 +122,7 @@ function GalleryInitFirstPass($params=array()) {
     if ($ret->isError()) {
 	return $ret->wrap(__FILE__, __LINE__);
     }
-    
+
     return GalleryStatus::success();
 }
 
@@ -166,9 +163,9 @@ function GalleryInitSecondPass() {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
     }
-    
+
     $gallery->setActiveUser($activeUser);
-    
+
     return GalleryStatus::success();
 }
 ?>
