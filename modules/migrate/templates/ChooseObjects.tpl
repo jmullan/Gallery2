@@ -71,6 +71,10 @@
     {/g->description}
 
     {g->element style="emphasized"}
+      Note: album migration is not yet implemented!
+    {/g->element}
+
+    {g->element style="emphasized"}
       {g->text text="Source:"}
     {/g->element}
 
