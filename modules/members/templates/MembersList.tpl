@@ -16,7 +16,7 @@
 <div id="gsContents">
     {include file="gallery:`$Navigation.sidebar`" l10Domain=$Navigation.l10Domain}	
         
-    <div id="gsAlbumContents">
+    <div id="gsOtherContents">
     
       <div class="gbTopFlag">
           <h1 class="giTitle">
