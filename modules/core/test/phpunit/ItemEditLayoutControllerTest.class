@@ -65,6 +65,9 @@ class ItemEditLayoutControllerTest extends GalleryControllerTestCase {
 
         $this->_savePlatform = $gallery->getPlatform();
 	$gallery->_platform = new AdminLayoutsTestPlatform();
+
+	// Reset test layout
+	ItemEditLayoutControllerTestLayout::reset();
     }
 
     function tearDown() {
@@ -114,7 +117,8 @@ class ItemEditLayoutControllerTest extends GalleryControllerTestCase {
 			    $results);
 
 	// Verify
-	$this->assertEquals(array('rows' => 3, 'columns' => 4),
+	$this->assertEquals(array('setParameter(rows, 3)',
+				  'setParameter(columns, 4)'),
 			    ItemEditLayoutControllerTestLayout::getMap());
     }
 
@@ -137,6 +141,28 @@ class ItemEditLayoutControllerTest extends GalleryControllerTestCase {
 
 	$errorMessage = GalleryUtilities::getRequestVariables('form.errorMessage');
 	$this->assertEquals('You must enter a number greater than 0', $errorMessage['rows']);
+    }
+
+    function testSaveWithGlobal() {
+	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
+	GalleryUtilities::putRequestVariable('form.key.rows', 3);
+	GalleryUtilities::putRequestVariable('form.key.columns', 4);
+	GalleryUtilities::putRequestVariable('form.useGlobal.columns', 'on');
+	GalleryUtilities::putRequestVariable('form.action.save', 1);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemEditLayout',
+						      'itemId' => $this->_album->getId()),
+				  'status' => array('saved' => 1),
+				  'error' => array()),
+			    $results);
+
+	// Verify
+	$this->assertEquals(array('setParameter(rows, 3)',
+				  sprintf('removeItemParameter(columns, %d)', $this->_album->getId())),
+			    ItemEditLayoutControllerTestLayout::getMap());
     }
 }
 
@@ -183,9 +209,15 @@ class ItemEditLayoutControllerTestLayout {
 	return $text;
     }
 
+    function removeItemParameter($key, $itemId) {
+	$map =& $this->getMap();
+	$map[] = "removeItemParameter($key, $itemId)";
+	return GalleryStatus::success();
+    }
+
     function setParameter($key, $value) {
 	$map =& $this->getMap();
-	$map[$key] = $value;
+	$map[] = "setParameter($key, $value)";
 	return GalleryStatus::success();
     }
 
@@ -199,6 +231,11 @@ class ItemEditLayoutControllerTestLayout {
 
     function init() {
 	return GalleryStatus::success();
+    }
+
+    function reset() {
+	$map =& ItemEditLayoutControllerTestLayout::getMap();
+	$map = array();
     }
 
     function getName() {

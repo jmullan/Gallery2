@@ -65,19 +65,30 @@ class ItemEditLayoutController extends GalleryController {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    
-	    /* Get all the possible settings */
-	    list ($ret, $settings) = $layout->getSettings($itemId);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
 	    /* Validate the settings */
 	    $validationErrors = $layout->validateSettings($form['key']);
 	    if (empty($validationErrors)) {
-		/* Save any settings that have changed */
+		/* Get the item settings */
+		list ($ret, $settings) = $layout->getSettings($itemId);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		/*
+		 * Any settings that are marked as "use global" should be removed from this item.  Others
+		 * should be updated in the database.  Note that we set the parameter even if it is the same
+		 * as the original setting value, since we want to make sure that the value is stored per
+		 * item, and the original setting value could have been from the global space.
+		 */
 		foreach ($settings as $setting) {
-		    if ($setting['key'] != $form['key'][$setting['key']]) {
-			$ret = $layout->setParameter($setting['key'], $form['key'][$setting['key']], $itemId);
+		    $key = $setting['key'];
+		    if (!empty($form['useGlobal'][$key])) {
+			$ret = $layout->removeItemParameter($key, $itemId);
+			if ($ret->isError()) {
+			    return array($ret->wrap(__FILE__, __LINE__), null);
+			}
+		    } else {
+			$ret = $layout->setParameter($key, $form['key'][$key], $itemId);
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
@@ -149,20 +160,49 @@ class ItemEditLayoutView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
+	/* Get the per-item settings (global + item) */
 	list ($ret, $settings) = $layout->getSettings($item->getId());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
+	/* Fetch the global-only params */
+	list ($ret, $globalParams) =
+	    GalleryPluginParameterMap::fetchAllParameters('layout', $layout->getId());
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Fetch the item-only params */
+	list ($ret, $itemParams) =
+	    GalleryPluginParameterMap::fetchAllParameters('layout', $layout->getId(), $itemId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	if ($form['formName'] != 'ItemEditLayout') {
 	    $form['formName'] = 'ItemEditLayout';
 	    foreach ($settings as $setting) {
-		$form['key'][$setting['key']] = $setting['values'][0];
+		$key = $setting['key'];
+		$form['key'][$key] = $setting['value'];
+
+		/* If the key doesn't exist in the item params then it's a global setting */
+		$form['useGlobal'][$key] = isset($itemParams[$key]) ? 0 : 1;
+	    }
+	} else {
+	    /* Make sure all checkbox values are defined */
+	    foreach ($settings as $setting) {
+		$key = $setting['key'];
+		if (!isset($form['useGlobal'][$key])) {
+		    $form['useGlobal'][$key] = 0;
+		}
 	    }
 	}
 
 	$ItemEditLayout = array();
 	$ItemEditLayout['settings'] = $settings;
+	$ItemEditLayout['globalParams'] = $globalParams;
+	$ItemEditLayout['itemParams'] = $itemParams;
 	$ItemEditLayout['layout']['name'] = $layout->getName();
 	$ItemEditLayout['layout']['l10Domain'] = $layout->getL10Domain();
 	

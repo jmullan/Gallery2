@@ -55,7 +55,7 @@ class MatrixLayout extends GalleryLayout {
     /**
      * @see GalleryLayout::getSettings()
      */
-    function getSettings($itemId=0) {
+    function getSettings($itemId=null) {
 	global $gallery;
 
 	list ($ret, $params) = $this->fetchParameters($itemId);
@@ -70,18 +70,18 @@ class MatrixLayout extends GalleryLayout {
 	if (!isset($params['columns'])) {
 	    $params['columns'] = 3;
 	}
-
+	
 	$settings = array();
 	$settings[] = array('key' => 'rows',
 			    'name' => $gallery->i18n('Rows per album page'),
 			    'type' => 'text-field',
 			    'type-params' => array('size' => 2),
-			    'values' => array($params['rows']));
+			    'value' => $params['rows']);
 	$settings[] = array('key' => 'columns',
 			    'name' => $gallery->i18n('Columns per album page'),
 			    'type' => 'text-field',
 			    'type-params' => array('size' => 2),
-			    'values' => array($params['columns']));
+			    'value' => $params['columns']);
 	return array(GalleryStatus::success(), $settings);
     }
 

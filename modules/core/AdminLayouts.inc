@@ -251,7 +251,7 @@ class AdminLayoutsView extends GalleryView {
 	    switch ($mode) {
 	    case 'editLayout':
 		foreach ($AdminLayouts['settings'] as $setting) {
-		    $form['key'][$setting['key']] = $setting['values'][0];
+		    $form['key'][$setting['key']] = $setting['value'];
 		}
 	    }
 	}

@@ -106,7 +106,7 @@ class GalleryLayout {
      *                array of:
      *                   key:     a unique identifier within this set of choices
      *                   display: a localized displayable text string
-     *   values:      the current value(s) for this choice
+     *   value:       the current value for this setting
      *
      * @param int optional itemId 
      * @return array object GalleryStatus a status code
@@ -457,6 +457,22 @@ class GalleryLayout {
 						       $this->getId(),
 						       $parameterName, $parameterValue,
 						       $itemId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Remove a layout parameter for a specific item
+     *
+     * @param string the parameter name
+     * @param int the item id
+     * @return object GalleryStatus a status code
+     */
+    function removeItemParameter($parameterName, $itemId) {
+	$ret = GalleryPluginParameterMap::removeParameter('layout', $this->getId(), $parameterName, $itemId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
