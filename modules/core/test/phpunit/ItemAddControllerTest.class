@@ -204,6 +204,13 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('an error', 'an error'), $results['error'], 'error');
 	$this->assertEquals(2, count($results['status']['addedFiles']), 'added 2 items');
 	$addedFiles = $results['status']['addedFiles'];
+
+	/* 
+	 * Sort the added files list by filename because we can't guarantee 
+	 * the file order across platforms.
+	 */
+	usort($addedFiles, 'sortAddedFiles');
+
 	$this->assertEquals(array('bar.ext', 'foo.ext'),
 			    array($addedFiles[0]['fileName'], $addedFiles[1]['fileName']), 'files');
 	$this->assertEquals(array('a warning'), $addedFiles[0]['warnings'], 'warning 1');
@@ -215,7 +222,7 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 	}
 	$this->assert(!in_array($item->getId(), $childIds), 'archive item has been deleted');
 
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($childIds[1]);
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($addedFiles[1]['id']);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -333,5 +340,9 @@ class ItemAddControllerTestToolkit extends GalleryToolkit {
 
 	return array(GalleryStatus::success(), $mimeType, $context);
     }
+}
+
+function sortAddedFiles($a, $b) {
+    return strcmp($a['fileName'], $b['fileName']);
 }
 ?>
