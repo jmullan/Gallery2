@@ -355,8 +355,8 @@ class GalleryDerivativeHelper_advanced {
 
 	$data = array();
 	while ($result = $searchResults->nextResult()) {
-	    $data[] = array('order' => $result[0],
-			    'derivativeType' => $result[1],
+	    $data[] = array('order' => (int)$result[0],
+			    'derivativeType' => (int)$result[1],
 			    'derivativeOperations' => $result[2]);
 	}
 	return array(GalleryStatus::success(), $data);
