@@ -33,10 +33,11 @@ class InstallOtherModulesStep extends InstallStep {
 	    $templateData['stackTrace'] = $ret->getAsHtml();
 	}
 
-	// We want to avoid using the cache
+	/* We want to avoid using the cache */
 	GalleryDataCache::setFileCachingEnabled(false);
 	$groupedModules = array();
 	$groupLabel = array();
+	$moduleInstalledStatus = array();
 
 	if (empty($templateData['errors'])) {
 	    list ($ret, $moduleList) = GalleryCoreApi::fetchPluginStatus('module', true);
@@ -56,17 +57,8 @@ class InstallOtherModulesStep extends InstallStep {
 
 	    ksort($modules);
 	    foreach (array_keys($modules) as $moduleId) {
+		$moduleInstalled[$moduleId] = !empty($moduleList[$moduleId]['version']);
 		$module =& $modules[$moduleId];
-		list ($ret, $isActive) = $module->isActive();
-		if ($ret->isSuccess()) {
-		    if ($isActive) {
-			unset($modules[$moduleId]);
-			continue;
-		    }
-		} else {
-		    continue;
-		}
-
 		if (isset($_REQUEST['activate']) && isset($_REQUEST['module'][$moduleId])) {
 		    $ret = $module->installOrUpgrade();
 		    if ($ret->isError()) {
@@ -74,6 +66,7 @@ class InstallOtherModulesStep extends InstallStep {
 				_(sprintf('Unable to install the %s module', $module->getName()));
 			continue;
 		    }
+		    $moduleInstalled[$moduleId] = true;
 		
 		    list ($ret, $success) = $module->autoConfigure();
 		    if ($ret->isError()) {
@@ -120,16 +113,18 @@ class InstallOtherModulesStep extends InstallStep {
 	    }
 	    $templateData['bodyFile'] = 'InstallOtherModulesSuccess.html';
 	} else {
-	    $templateData['isComplete'] = $this->isComplete();
 	    $templateData['groupedModules'] =& $groupedModules;
 	    $templateData['groupLabel'] = $groupLabel;
 	    $templateData['bodyFile'] = 'InstallOtherModulesRequest.html';
+	    $templateData['moduleInstalled'] = $moduleInstalled;
 	}
-	$this->setComplete(true);
+
+	/* This step is never truly complete */
+	$this->setComplete(false);
     }
 
     function isRedoable() {
-	return true;
+	return false;
     }
 
     function isOptional() {

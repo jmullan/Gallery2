@@ -68,6 +68,12 @@ class StorageSetupStep extends InstallStep {
 	} else {
 	    $templateData['bodyFile'] = 'StorageSetupRequest.html';
 	}
+
+	if (strtolower(PHP_OS) == 'winnt') {
+	    $templateData['OS'] = 'winnt';
+	} else {
+	    $templateData['OS'] = 'unix';
+	}
     }
 
     function populateDataDirectory($dataBase) {
