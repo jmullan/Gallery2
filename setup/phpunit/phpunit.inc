@@ -593,7 +593,7 @@ class PrettyTestResult extends TestResult {
   /* Specialize TestResult to produce text/html report */
   function PrettyTestResult() {
     $this->TestResult();  // call superclass constructor
-	echo "<h2>Tests</h2>";
+	echo "<h2>Test Results</h2>";
 	
 	echo "<TABLE CELLSPACING=\"1\" CELLPADDING=\"1\" BORDER=\"0\" WIDTH=\"90%\" ALIGN=\"CENTER\" class=\"details\">";
 	echo "<TR><TH>Class</TH><TH>Function</TH><TH>Success?</TH></TR>";
