@@ -41,6 +41,8 @@ class UserPreferencesControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 	parent::setUp();
 
+    $session =& $gallery->getSession();
+    $this->_currentLanguage = $session->get('core.language');
 	list ($ret, $this->_user) = $this->_createUser();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -51,6 +53,8 @@ class UserPreferencesControllerTest extends GalleryControllerTestCase {
 
     function tearDown() {
 	global $gallery;
+        $session =& $gallery->getSession();
+        $session->put('core.language', $this->_currentLanguage);    
 	$this->_deleteUser($this->_user);
 	parent::tearDown();
     }
@@ -81,9 +85,8 @@ class UserPreferencesControllerTest extends GalleryControllerTestCase {
     }
 
     function testEditAll() {
-        global $gallery;
+	global $gallery;
         $session =& $gallery->getSession();
-        $currentLanguage = $session->get('core.language');
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[fullName]', 'full name');
 	GalleryUtilities::putRequestVariable('form[email]', 'email@test.me');
@@ -107,7 +110,6 @@ class UserPreferencesControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals($this->_user->getEmail(), 'email@test.me');
 	$this->assertEquals($this->_user->getLanguage(), 'language');
     $this->assertEquals('language', $session->get('core.language'), 'Language');
-    $session->put('core.language', $currentLanguage);    
     }
 
     function testEditRequiredOnly() {
