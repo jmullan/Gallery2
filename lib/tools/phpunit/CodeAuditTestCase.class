@@ -38,6 +38,8 @@ class CodeAuditTestCase extends GalleryTestCase {
 
     function CodeAuditTestCase($methodName) {
 	$this->GalleryTestCase($methodName);
+	$this->_shouldHalt = false;
+	$this->_baseDir = realpath(dirname(__FILE__) . '/../../..');
     }
 
     function testCodeAudit() {
@@ -48,9 +50,17 @@ class CodeAuditTestCase extends GalleryTestCase {
 	if ($platform->file_exists($this->_baseDir . '/CVS/Entries')) {
 	    $this->_scanDir($this->_baseDir);
 	}
+
+	if ($this->_shouldHalt) {
+	    $this->assert(false, 'Halted prematurely');
+	}
     }
 
     function _scanDir($dirPath) {
+	if ($this->_shouldHalt) {
+	    return;
+	}
+	
 	global $gallery;
 	$platform = $gallery->getPlatform();
 
@@ -87,7 +97,7 @@ class CodeAuditTestCase extends GalleryTestCase {
 			// deleted files have a negative version number
 			if ($matches[2] != '-') {
 			    $fileName = $matches[1];
-			    if (preg_match('/\.(class|inc|php)/', $fileName)) {
+			    if (preg_match('/\.(class|inc|php|tpl)/', $fileName)) {
 				$this->_scanFile(sprintf("%s/%s", $dirPath, $fileName));
 			    }
 			}
@@ -103,17 +113,43 @@ class CodeAuditTestCase extends GalleryTestCase {
     function _scanFile($fileName) {
 	global $gallery;
 
-	$gallery->guaranteeTimeLimit(30);
-	$platform = $gallery->getPlatform();
-	$fd = $platform->fopen($fileName, 'r');
-	$buf = $platform->fread($fd, $platform->filesize($fileName));
-	$this->checkFile($fileName, $buf);
+	if ($this->_shouldHalt) {
+	    return;
+	}
+
+	if ($this->shouldCheckFile($fileName)) {
+	    $gallery->guaranteeTimeLimit(30);
+	    $platform = $gallery->getPlatform();
+	    $fd = $platform->fopen($fileName, 'r');
+	    $buf = $platform->fread($fd, $platform->filesize($fileName));
+	    $this->checkFile($fileName, $buf);
+	}
     }
 
     /**
-     * Overload this method in subclasses
+     * Subclasses can call this to stop scanning.
+     */
+    function halt() {
+	$this->_shouldHalt = true;
+    }
+
+    /**
+     * Overload this method in subclasses to audit the file
+     * @access protected
      */
     function checkFile($fileName, $buffer) {
+    }
+
+    /**
+     * Overload this method in subclasses.  If this method
+     * returns true, we'll call checkFile() on it
+     *
+     * @return true if we should check this file
+     * @access protected
+     */
+    function shouldCheckFile($fileName) {
+	/* By default all files are checked */
+	return true;
     }
 }
 

@@ -40,7 +40,6 @@ class Php41CompatibilityTest extends CodeAuditTestCase {
 
 	include(dirname(__FILE__) . '/Php41IllegalFunctions.inc');
 	$this->_illegalRegexp = $illegalFunctionsRegexp;
-	$this->_baseDir = realpath(dirname(__FILE__) . '/../../../../');
 
 	$this->_exceptions['is_a']['GalleryUtilities.class'] = 1;
 	$this->_exceptions['html_entity_decode']['GalleryUtilities.class'] = 1;
@@ -52,18 +51,29 @@ class Php41CompatibilityTest extends CodeAuditTestCase {
 	$this->_exceptions['gd_info']['TestGdFunctionality.class'] = 1;
     }
 
-    function checkFile($fileName, $buffer) {
+    /**
+     * @see CodeAuditTestCase::shouldCheckFile()
+     */
+    function shouldCheckFile($fileName) {
 	/* Skip files we don't care about */
 	if ($fileName == 'Php41IllegalFunctions.inc' ||
-	        preg_match('/Test.class$/', $fileName)) {
-	    return;
+	        substr($fileName, -10) == 'Test.class' ||
+	        substr($fileName, -4) == '.tpl') {
+	    return false;
 	}
 
+	return true;
+    }
+
+    /**
+     * @see CodeAuditTestCase::checkFile()
+     */
+    function checkFile($fileName, $buffer) {
 	/* Quick check */
 	$longCheckRequired = false;
 	if (preg_match_all($this->_illegalRegexp, $buffer, $matches)) {
 	    foreach (array_unique($matches[0]) as $keyword) {
-		// Remove trailing open paren matched by the pattern, and any spaces
+		/* Remove trailing open paren matched by the pattern, and any spaces */
 		$keyword = trim(substr($keyword, 0, -1));
 		if (!isset($this->_exceptions[$keyword][basename($fileName)])) {
 		    $longCheckRequired = true;
