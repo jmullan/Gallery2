@@ -130,9 +130,6 @@ msgstr ""
 msgid "<none>"
 msgstr "<nessuno>"
 
-msgid "AcceptPathInfo directive"
-msgstr "Direttiva AcceptPathInfo"
-
 msgid "Account Settings"
 msgstr "Configurazione Account"
 
@@ -251,6 +248,10 @@ msgstr "Ascendente"
 
 msgid "Aspect Ratio: "
 msgstr "Proporzioni Aspetto: "
+
+#, c-format
+msgid "Assign a new owner for all items of %s"
+msgstr ""
 
 #, fuzzy
 msgid "Assign caption to:"
@@ -454,6 +455,12 @@ msgid "Delete a User"
 msgstr "Elimina Un Utente"
 
 #, c-format
+msgid ""
+"Delete all items of %s and assign a new owner for all remaining non empty "
+"albums"
+msgstr ""
+
+#, c-format
 msgid "Delete user <strong>%s</strong> and..."
 msgstr ""
 
@@ -601,7 +608,8 @@ msgstr "File"
 msgid "Filesystem Permissions"
 msgstr "Permessi Filesystem"
 
-msgid "Filter:"
+#, fuzzy
+msgid "Filter"
 msgstr "Filtro:"
 
 msgid "Find Files"
@@ -698,21 +706,6 @@ msgstr ""
 "puoi disabilitare le funzioni che non vuoi utilizzare.  Per utilizzare una "
 "funzione, devi installare il modulo, configurarlo (se necessario) e "
 "attivarlo.  Se non ti interessa usare una funzione, puoi disattivarla."
-
-#, fuzzy, c-format
-msgid ""
-"Gallery has the option to use a compact URL format, however this format is "
-"not supported by default on all web servers.  It is enabled by default on "
-"Apache 1, but not on Apache 2.  If you're using Apache 2 you must use the %"
-"s.  Use this %s to find out if short URLs work for you.  If the link returns "
-"a webserver error then they don't work for you."
-msgstr ""
-"Gallery ha l'opzione di usare un formato compatto per le URL, ma questo "
-"formato non &egrave; supportato nativamente su tutti i web server.  &Egrave; "
-"attivo di default su Apache 1, ma non su Apache 2 n&eacute; IIS.  Se usi "
-"Apache 2 dovrai usare la %s.  Su IIS6 dovrai usare la %s.  Usa questo %s per "
-"vedere se le URL corte funzionano da te.  Se il link ritorna un errore del "
-"webserver, allora le URL corte non funzioneranno."
 
 msgid ""
 "Gallery uses a system of locks to prevent simultaneous changes from "
@@ -1177,10 +1170,6 @@ msgstr "Gruppo '%s' eliminato"
 msgid "Removed local upload directory successfully"
 msgstr "Directory locale di upload eliminata con successo"
 
-#, fuzzy, c-format
-msgid "Removed user '%s' from group '%s'"
-msgstr "Utente '%s' rimosso dal gruppo con successo"
-
 #, c-format
 msgid "Removed user '%s'"
 msgstr "Utente '%s' rimosso"
@@ -1399,13 +1388,6 @@ msgid "Status: Incompatible Layout (Inactive)"
 msgstr ""
 
 msgid "Status: Incompatible Module (Inactive)"
-msgstr ""
-
-#, fuzzy
-msgid "Status: Not"
-msgstr "Attivo"
-
-msgid ")"
 msgstr ""
 
 #, fuzzy
@@ -1859,9 +1841,6 @@ msgstr ""
 msgid "Type"
 msgstr "Tipo"
 
-msgid "URL Style"
-msgstr "Stile URL"
-
 msgid "URL"
 msgstr "URL"
 
@@ -1897,9 +1876,6 @@ msgstr "Usa Globali"
 
 msgid "Use Symlink"
 msgstr ""
-
-msgid "Use short URLs?"
-msgstr "Usare le URL corte?"
 
 msgid ""
 "Use the original capture date and time from file information (e.g. Exif tag):"
@@ -2169,10 +2145,10 @@ msgstr "Il tuo nome contiene caratteri non validi.  Scegline un altro."
 msgid "Your name contains invalid characters.  Please enter another."
 msgstr "Il tuo nome contiene caratteri non validi.  Inseriscine un altro."
 
+#, fuzzy, c-format
 msgid ""
 "Your webserver does not support localization.  Please instruct your system "
-"administrator to reconfigure PHP with the <a href=\"http://php.net/gettext"
-"\">gettext</a> option enabled."
+"administrator to reconfigure PHP with the %s option enabled."
 msgstr ""
 "Il tuo webserver non supporta la localizzazione.  Chiedi al tuo "
 "amministratore di riconfigurare PHP con l'opzione <a href=\"http://php.net/"
@@ -2242,9 +2218,6 @@ msgstr "aggiungi oggetti"
 msgid "add sub-album"
 msgstr "aggiungi sotto-album"
 
-msgid "add"
-msgstr "aggiungi"
-
 msgid "after"
 msgstr "dopo di"
 
@@ -2260,10 +2233,6 @@ msgstr "animazione"
 msgid "archive"
 msgstr "archivio"
 
-#, c-format
-msgid "assign a new owner for all items of %s."
-msgstr ""
-
 msgid "audio"
 msgstr "audio"
 
@@ -2272,9 +2241,6 @@ msgstr "prima di"
 
 msgid "bullet"
 msgstr "puntino"
-
-msgid "cancel"
-msgstr "annulla"
 
 #, fuzzy
 msgid "change password"
@@ -2299,12 +2265,6 @@ msgstr "disattiva"
 #, c-format
 msgid "delete %s"
 msgstr "elimina %s"
-
-#, c-format
-msgid ""
-"delete all items of %s and assign a new owner for all remaining non empty "
-"albums"
-msgstr ""
 
 #, fuzzy
 msgid "delete an item"
@@ -2338,9 +2298,6 @@ msgstr "Opzioni Amministrazione"
 msgid "edit permissions"
 msgstr "modifica permessi"
 
-msgid "edit user"
-msgstr "modifica utente"
-
 msgid "edit"
 msgstr "modifica"
 
@@ -2350,6 +2307,9 @@ msgstr "[core] Elimina oggetto"
 
 msgid "forever"
 msgstr "per sempre"
+
+msgid "gettext"
+msgstr ""
 
 #, fuzzy
 msgid "group"
@@ -2413,9 +2373,6 @@ msgstr "filmato"
 msgid "next &raquo;"
 msgstr "successivo &raquo;"
 
-msgid "no"
-msgstr "no"
-
 msgid "open_basedir documentation"
 msgstr "documentazione open_basedir"
 
@@ -2431,23 +2388,11 @@ msgstr "riordina oggetti"
 msgid "required"
 msgstr "obbligatorio"
 
-msgid "reset"
-msgstr "resetta"
-
-msgid "save"
-msgstr "salva"
-
 msgid "site admin"
 msgstr "amministratore sito"
 
 msgid "spreadsheet"
 msgstr "foglio di lavoro"
-
-msgid "test url"
-msgstr "test url"
-
-msgid "undo"
-msgstr "annulla le modifiche"
 
 #, fuzzy
 msgid "uninstall"
@@ -2472,9 +2417,6 @@ msgstr "Utenti"
 #, fuzzy
 msgid "with"
 msgstr "Larghezza"
-
-msgid "yes"
-msgstr "s&igrave;"
 
 #, fuzzy
 msgid "your account"
@@ -2558,6 +2500,12 @@ msgid_plural "It contains %d items."
 msgstr[0] "Contiene %d oggetto."
 msgstr[1] "Contiene %d oggetti."
 
+#, fuzzy, c-format
+msgid "Removed user '%s' from group '%s'"
+msgid_plural "Removed %d users from group '%s'"
+msgstr[0] "Utente '%s' rimosso dal gruppo con successo"
+msgstr[1] "Utente '%s' rimosso dal gruppo con successo"
+
 #, c-format
 msgid "Successfully added %d file."
 msgid_plural "Successfully added %d files."
@@ -2599,6 +2547,61 @@ msgid "This group contains %d user"
 msgid_plural "This group contains %d users"
 msgstr[0] "Questo gruppo contiene %d utente."
 msgstr[1] "Questo gruppo contiene %d utenti."
+
+#~ msgid "AcceptPathInfo directive"
+#~ msgstr "Direttiva AcceptPathInfo"
+
+#, fuzzy
+#~ msgid ""
+#~ "Gallery has the option to use a compact URL format, however this format "
+#~ "is not supported by default on all web servers.  It is enabled by default "
+#~ "on Apache 1, but not on Apache 2.  If you're using Apache 2 you must use "
+#~ "the %s.  Use this %s to find out if short URLs work for you.  If the link "
+#~ "returns a webserver error then they don't work for you."
+#~ msgstr ""
+#~ "Gallery ha l'opzione di usare un formato compatto per le URL, ma questo "
+#~ "formato non &egrave; supportato nativamente su tutti i web server.  "
+#~ "&Egrave; attivo di default su Apache 1, ma non su Apache 2 n&eacute; "
+#~ "IIS.  Se usi Apache 2 dovrai usare la %s.  Su IIS6 dovrai usare la %s.  "
+#~ "Usa questo %s per vedere se le URL corte funzionano da te.  Se il link "
+#~ "ritorna un errore del webserver, allora le URL corte non funzioneranno."
+
+#, fuzzy
+#~ msgid "Status: Not"
+#~ msgstr "Attivo"
+
+#~ msgid "URL Style"
+#~ msgstr "Stile URL"
+
+#~ msgid "Use short URLs?"
+#~ msgstr "Usare le URL corte?"
+
+#~ msgid "add"
+#~ msgstr "aggiungi"
+
+#~ msgid "cancel"
+#~ msgstr "annulla"
+
+#~ msgid "edit user"
+#~ msgstr "modifica utente"
+
+#~ msgid "no"
+#~ msgstr "no"
+
+#~ msgid "reset"
+#~ msgstr "resetta"
+
+#~ msgid "save"
+#~ msgstr "salva"
+
+#~ msgid "test url"
+#~ msgstr "test url"
+
+#~ msgid "undo"
+#~ msgstr "annulla le modifiche"
+
+#~ msgid "yes"
+#~ msgstr "s&igrave;"
 
 #~ msgid "Edit User Preferences"
 #~ msgstr "Modifica Preferenze Utente"

@@ -127,9 +127,6 @@ msgstr ""
 msgid "<none>"
 msgstr "<ingen>"
 
-msgid "AcceptPathInfo directive"
-msgstr "AksepterStiInformasjon direktiv"
-
 msgid "Account Settings"
 msgstr "Konto instillinger"
 
@@ -249,6 +246,10 @@ msgstr "Stigende"
 
 msgid "Aspect Ratio: "
 msgstr "St&oslash;rrelsesforhold:"
+
+#, fuzzy, c-format
+msgid "Assign a new owner for all items of %s"
+msgstr "tildel en ny eier til alle elementer av %s."
 
 msgid "Assign caption to:"
 msgstr ""
@@ -450,6 +451,14 @@ msgstr "Slett en gjenstand"
 msgid "Delete a User"
 msgstr "Slett en bruker"
 
+#, fuzzy, c-format
+msgid ""
+"Delete all items of %s and assign a new owner for all remaining non empty "
+"albums"
+msgstr ""
+"fjern alle elementer til %s og tildel en ny eier til alle album som ikke er "
+"tomme"
+
 #, c-format
 msgid "Delete user <strong>%s</strong> and..."
 msgstr "Slett bruker <strong>%s</strong> og..."
@@ -595,7 +604,8 @@ msgstr "Fil"
 msgid "Filesystem Permissions"
 msgstr "Filsystem tilganger"
 
-msgid "Filter:"
+#, fuzzy
+msgid "Filter"
 msgstr "Filter:"
 
 msgid "Find Files"
@@ -697,21 +707,6 @@ msgstr ""
 "dem. For &aring; bruke en ny funksjon m&aring; du installere, konfigurere "
 "(hvis n&oslash;dvendig) og aktivere den. Hvis du ikke vil bruke en funksjon, "
 "kan du deaktivere den."
-
-#, c-format
-msgid ""
-"Gallery has the option to use a compact URL format, however this format is "
-"not supported by default on all web servers.  It is enabled by default on "
-"Apache 1, but not on Apache 2.  If you're using Apache 2 you must use the %"
-"s.  Use this %s to find out if short URLs work for you.  If the link returns "
-"a webserver error then they don't work for you."
-msgstr ""
-"Gallery tilbyr opsjonen &aring; bruke kompakt URL format. Imidlertid er ikke "
-"dette st&oslash;ttet standard p&aring; alle webservere. Det er "
-"tilgjengeliggjort som standard i Apache 1, men ikke i Apache 2. Hvis du "
-"bruker Apache 2 m&aring; du bruke %s. Bruk denne %s for &aring; finne ut om "
-"korte URL'er fungerer for deg. Hvis koblingen gir en webserver feil, virker "
-"det ikke for deg."
 
 msgid ""
 "Gallery uses a system of locks to prevent simultaneous changes from "
@@ -1156,10 +1151,6 @@ msgid "Removed local upload directory successfully"
 msgstr "Fjernet lokal opplastingskatalog vellykket"
 
 #, c-format
-msgid "Removed user '%s' from group '%s'"
-msgstr "Fjernet bruker '%s' fra gruppen '%s'"
-
-#, c-format
 msgid "Removed user '%s'"
 msgstr "Fjernet bruker '%s'"
 
@@ -1369,13 +1360,6 @@ msgstr "Status: Modul ikke kompatibel (Passiv)"
 
 msgid "Status: Incompatible Module (Inactive)"
 msgstr "Status: Modul ikke kompatibel (Passiv)"
-
-#, fuzzy
-msgid "Status: Not"
-msgstr "Status: Aktiv"
-
-msgid ")"
-msgstr ""
 
 #, fuzzy
 msgid "Status: Not Installed"
@@ -1822,9 +1806,6 @@ msgstr ""
 msgid "Type"
 msgstr "Type"
 
-msgid "URL Style"
-msgstr "URL stil"
-
 msgid "URL"
 msgstr "URL"
 
@@ -1858,9 +1839,6 @@ msgstr "Bruk global"
 
 msgid "Use Symlink"
 msgstr "Bruk systemlink"
-
-msgid "Use short URLs?"
-msgstr "Bruke korte URL'er?"
 
 msgid ""
 "Use the original capture date and time from file information (e.g. Exif tag):"
@@ -2132,10 +2110,10 @@ msgstr "Ditt navn inneholder ugyldige tegn. Vennligst velg et annet."
 msgid "Your name contains invalid characters.  Please enter another."
 msgstr "Ditt navn inneholder ugyldige tegn. Vennligst skriv inn et annet."
 
+#, fuzzy, c-format
 msgid ""
 "Your webserver does not support localization.  Please instruct your system "
-"administrator to reconfigure PHP with the <a href=\"http://php.net/gettext"
-"\">gettext</a> option enabled."
+"administrator to reconfigure PHP with the %s option enabled."
 msgstr ""
 "Din webserver st&oslash;tter ikke lokalisering. Vennligst instruer "
 "systemansvarlig &aring; omkonfigurere PHP med <a href=\"http://php.net/"
@@ -2202,9 +2180,6 @@ msgstr "legg til elementer"
 msgid "add sub-album"
 msgstr "legg til underkatalog"
 
-msgid "add"
-msgstr "legg til"
-
 msgid "after"
 msgstr "etter"
 
@@ -2220,10 +2195,6 @@ msgstr "animasjon"
 msgid "archive"
 msgstr "arkiv"
 
-#, c-format
-msgid "assign a new owner for all items of %s."
-msgstr "tildel en ny eier til alle elementer av %s."
-
 msgid "audio"
 msgstr "lyd"
 
@@ -2232,9 +2203,6 @@ msgstr "tidligere"
 
 msgid "bullet"
 msgstr "punkt"
-
-msgid "cancel"
-msgstr "avbryt"
 
 msgid "change password"
 msgstr "endre passord"
@@ -2258,14 +2226,6 @@ msgstr "deaktiver"
 #, c-format
 msgid "delete %s"
 msgstr "fjern %s"
-
-#, c-format
-msgid ""
-"delete all items of %s and assign a new owner for all remaining non empty "
-"albums"
-msgstr ""
-"fjern alle elementer til %s og tildel en ny eier til alle album som ikke er "
-"tomme"
 
 msgid "delete an item"
 msgstr "fjerne et element"
@@ -2296,9 +2256,6 @@ msgstr "endre titler"
 msgid "edit permissions"
 msgstr "endre tilganger"
 
-msgid "edit user"
-msgstr "endre bruker"
-
 msgid "edit"
 msgstr "endre"
 
@@ -2307,6 +2264,9 @@ msgstr "for merkede elementer"
 
 msgid "forever"
 msgstr "evig"
+
+msgid "gettext"
+msgstr ""
 
 msgid "group"
 msgstr "gruppe"
@@ -2366,9 +2326,6 @@ msgstr "film"
 msgid "next &raquo;"
 msgstr "neste &raquo;"
 
-msgid "no"
-msgstr "nei"
-
 msgid "open_basedir documentation"
 msgstr "open_basedir dokumentasjon"
 
@@ -2384,23 +2341,11 @@ msgstr "ordne elementer"
 msgid "required"
 msgstr "p&aring;krevet"
 
-msgid "reset"
-msgstr "nullstille"
-
-msgid "save"
-msgstr "lagre"
-
 msgid "site admin"
 msgstr "system administrator"
 
 msgid "spreadsheet"
 msgstr "regneark"
-
-msgid "test url"
-msgstr "test url"
-
-msgid "undo"
-msgstr "angre"
 
 msgid "uninstall"
 msgstr "avinstallasjon"
@@ -2422,9 +2367,6 @@ msgstr "bruker"
 
 msgid "with"
 msgstr "bredde"
-
-msgid "yes"
-msgstr "ja"
 
 msgid "your account"
 msgstr "din konto"
@@ -2507,6 +2449,12 @@ msgid_plural "It contains %d items."
 msgstr[0] "Det inneholder %d fil"
 msgstr[1] "Det inneholder %d filer"
 
+#, fuzzy, c-format
+msgid "Removed user '%s' from group '%s'"
+msgid_plural "Removed %d users from group '%s'"
+msgstr[0] "Fjernet bruker '%s' fra gruppen '%s'"
+msgstr[1] "Fjernet bruker '%s' fra gruppen '%s'"
+
 #, c-format
 msgid "Successfully added %d file."
 msgid_plural "Successfully added %d files."
@@ -2548,3 +2496,57 @@ msgid "This group contains %d user"
 msgid_plural "This group contains %d users"
 msgstr[0] "Denne gruppen inneholder %d bruker"
 msgstr[1] "Denne gruppen inneholder %d brukere"
+
+#~ msgid "AcceptPathInfo directive"
+#~ msgstr "AksepterStiInformasjon direktiv"
+
+#~ msgid ""
+#~ "Gallery has the option to use a compact URL format, however this format "
+#~ "is not supported by default on all web servers.  It is enabled by default "
+#~ "on Apache 1, but not on Apache 2.  If you're using Apache 2 you must use "
+#~ "the %s.  Use this %s to find out if short URLs work for you.  If the link "
+#~ "returns a webserver error then they don't work for you."
+#~ msgstr ""
+#~ "Gallery tilbyr opsjonen &aring; bruke kompakt URL format. Imidlertid er "
+#~ "ikke dette st&oslash;ttet standard p&aring; alle webservere. Det er "
+#~ "tilgjengeliggjort som standard i Apache 1, men ikke i Apache 2. Hvis du "
+#~ "bruker Apache 2 m&aring; du bruke %s. Bruk denne %s for &aring; finne ut "
+#~ "om korte URL'er fungerer for deg. Hvis koblingen gir en webserver feil, "
+#~ "virker det ikke for deg."
+
+#, fuzzy
+#~ msgid "Status: Not"
+#~ msgstr "Status: Aktiv"
+
+#~ msgid "URL Style"
+#~ msgstr "URL stil"
+
+#~ msgid "Use short URLs?"
+#~ msgstr "Bruke korte URL'er?"
+
+#~ msgid "add"
+#~ msgstr "legg til"
+
+#~ msgid "cancel"
+#~ msgstr "avbryt"
+
+#~ msgid "edit user"
+#~ msgstr "endre bruker"
+
+#~ msgid "no"
+#~ msgstr "nei"
+
+#~ msgid "reset"
+#~ msgstr "nullstille"
+
+#~ msgid "save"
+#~ msgstr "lagre"
+
+#~ msgid "test url"
+#~ msgstr "test url"
+
+#~ msgid "undo"
+#~ msgstr "angre"
+
+#~ msgid "yes"
+#~ msgstr "ja"

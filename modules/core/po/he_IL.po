@@ -120,9 +120,6 @@ msgstr ""
 msgid "<none>"
 msgstr "<ללא>"
 
-msgid "AcceptPathInfo directive"
-msgstr "AcceptPathInfo directive"
-
 msgid "Account Settings"
 msgstr "הגדרות חשבון משתמש"
 
@@ -242,6 +239,10 @@ msgstr "סדר עולה"
 
 msgid "Aspect Ratio: "
 msgstr "יחס רוחב-גובה: "
+
+#, fuzzy, c-format
+msgid "Assign a new owner for all items of %s"
+msgstr "קבע בעלים חדשים עבור כל הפריטים ב %s."
 
 msgid "Assign caption to:"
 msgstr ""
@@ -441,6 +442,13 @@ msgstr "מחק פריט"
 msgid "Delete a User"
 msgstr "מחק משתמש"
 
+#, fuzzy, c-format
+msgid ""
+"Delete all items of %s and assign a new owner for all remaining non empty "
+"albums"
+msgstr ""
+"מחר את כל הפריטים ב %s וקבע בעלים חדשים עבור כל האלבומים המלאים הנותרים"
+
 #, c-format
 msgid "Delete user <strong>%s</strong> and..."
 msgstr "מחק משתמש <strong>%s</strong> ו..."
@@ -583,7 +591,8 @@ msgstr "קובץ"
 msgid "Filesystem Permissions"
 msgstr "הרשאות מערכת קבצים"
 
-msgid "Filter:"
+#, fuzzy
+msgid "Filter"
 msgstr "סינון:"
 
 msgid "Find Files"
@@ -681,19 +690,6 @@ msgstr ""
 "רוצה אותן.  על מנת להשתמש באופציה כלשהיא, אתה חייב להתקין אותה, להגדיר אותה "
 "(אם זה נדרש) ולהפעיל אותה.  אם אינך רוצה להשתמש באופציה כלשהיא, אתה יכול "
 "לבטל את ההפעלה שלה (ולהשאיר אותה מותקנת לעת הצורך)."
-
-#, c-format
-msgid ""
-"Gallery has the option to use a compact URL format, however this format is "
-"not supported by default on all web servers.  It is enabled by default on "
-"Apache 1, but not on Apache 2.  If you're using Apache 2 you must use the %"
-"s.  Use this %s to find out if short URLs work for you.  If the link returns "
-"a webserver error then they don't work for you."
-msgstr ""
-"למערכת יש אפשרות להשתמש בכתובות URL מקוצרות. עם זאת, פורמט זה לא נתמך בכל "
-"השרתים. זה נתמך כברירת מחדל באפאצ'י 1, אבל לא באפאצ'י 2, שם אתה חייב להשתמש "
-"ב %s.  השתמש ב %s זה על-מנת לגלות אם אפשרות הכתובות המקוצרות עובדת אצלך. אם "
-"קישור זה מחזיר הודעת שגיאה, אז האפשרות לא קיימת."
 
 msgid ""
 "Gallery uses a system of locks to prevent simultaneous changes from "
@@ -1138,10 +1134,6 @@ msgid "Removed local upload directory successfully"
 msgstr "סיפרית העלאה משרת מקומי הוסרה בהצלחה"
 
 #, c-format
-msgid "Removed user '%s' from group '%s'"
-msgstr "המשתמש '%s' הוסר מקבוצה '%s'"
-
-#, c-format
 msgid "Removed user '%s'"
 msgstr "משתמש '%s' הוסר"
 
@@ -1343,13 +1335,6 @@ msgstr "סטטוס: מודול לא מתאים (לא פעיל)"
 
 msgid "Status: Incompatible Module (Inactive)"
 msgstr "סטטוס: מודול לא מתאים (לא פעיל)"
-
-#, fuzzy
-msgid "Status: Not"
-msgstr "סטטוס: פעיל"
-
-msgid ")"
-msgstr ""
 
 #, fuzzy
 msgid "Status: Not Installed"
@@ -1775,9 +1760,6 @@ msgstr ""
 msgid "Type"
 msgstr "סוג"
 
-msgid "URL Style"
-msgstr "עיצוב כתובת"
-
 msgid "URL"
 msgstr "כתובת"
 
@@ -1812,9 +1794,6 @@ msgstr "השתמש בגלובלי"
 
 msgid "Use Symlink"
 msgstr ""
-
-msgid "Use short URLs?"
-msgstr "השתמש בכתובות קצרות?"
 
 msgid ""
 "Use the original capture date and time from file information (e.g. Exif tag):"
@@ -2073,10 +2052,10 @@ msgstr "השם שלך מכיל תווים לא חוקיים.  אנא בחר שם
 msgid "Your name contains invalid characters.  Please enter another."
 msgstr "השם שלך מכיל תווים לא חוקיים.  אנא בחר שם אחר."
 
+#, fuzzy, c-format
 msgid ""
 "Your webserver does not support localization.  Please instruct your system "
-"administrator to reconfigure PHP with the <a href=\"http://php.net/gettext"
-"\">gettext</a> option enabled."
+"administrator to reconfigure PHP with the %s option enabled."
 msgstr ""
 "השרת שלך לא תומך בלוקליזציה.  אנא בקש ממנהל השרת שלך להגדיר מחדש את PHP עם "
 "אפשרות <a href=\"http://php.net/gettext\">gettext</a> מופעלת."
@@ -2139,9 +2118,6 @@ msgstr "הוסף פריטים"
 msgid "add sub-album"
 msgstr "הוסף תת-אלבום"
 
-msgid "add"
-msgstr "הוסיף"
-
 msgid "after"
 msgstr "אחרי"
 
@@ -2157,10 +2133,6 @@ msgstr "אנימציה"
 msgid "archive"
 msgstr "ארכיון"
 
-#, c-format
-msgid "assign a new owner for all items of %s."
-msgstr "קבע בעלים חדשים עבור כל הפריטים ב %s."
-
 msgid "audio"
 msgstr "אודיו"
 
@@ -2169,9 +2141,6 @@ msgstr "לפני"
 
 msgid "bullet"
 msgstr "תבליט"
-
-msgid "cancel"
-msgstr "ביטול"
 
 msgid "change password"
 msgstr "שנה סיסמה"
@@ -2195,13 +2164,6 @@ msgstr "בטל פעילות"
 #, c-format
 msgid "delete %s"
 msgstr "מחיקת %s"
-
-#, c-format
-msgid ""
-"delete all items of %s and assign a new owner for all remaining non empty "
-"albums"
-msgstr ""
-"מחר את כל הפריטים ב %s וקבע בעלים חדשים עבור כל האלבומים המלאים הנותרים"
 
 msgid "delete an item"
 msgstr "מחק פריט"
@@ -2233,9 +2195,6 @@ msgstr "אפשרויות ניהול"
 msgid "edit permissions"
 msgstr "עריכת הרשאות"
 
-msgid "edit user"
-msgstr "עריכת משתמש"
-
 msgid "edit"
 msgstr "עריכה"
 
@@ -2245,6 +2204,9 @@ msgstr "[ליבה] מחק פריט"
 
 msgid "forever"
 msgstr "לתמיד"
+
+msgid "gettext"
+msgstr ""
 
 msgid "group"
 msgstr "קבוצה"
@@ -2304,9 +2266,6 @@ msgstr "סרט"
 msgid "next &raquo;"
 msgstr "הבא &raquo;"
 
-msgid "no"
-msgstr "לא"
-
 msgid "open_basedir documentation"
 msgstr "תיעוד עבור open_basedir"
 
@@ -2322,23 +2281,11 @@ msgstr "סדר פריטים מחדש"
 msgid "required"
 msgstr "נדרש"
 
-msgid "reset"
-msgstr "התחל מחדש"
-
-msgid "save"
-msgstr "שמור"
-
 msgid "site admin"
 msgstr "מנהל אתר"
 
 msgid "spreadsheet"
 msgstr "גיליון אלקטרוני"
-
-msgid "test url"
-msgstr "עמוד בדיקה"
-
-msgid "undo"
-msgstr "ביטול פעולה"
 
 msgid "uninstall"
 msgstr "הסרה"
@@ -2361,9 +2308,6 @@ msgstr "משתמש"
 #, fuzzy
 msgid "with"
 msgstr "רוחב"
-
-msgid "yes"
-msgstr "כן"
 
 msgid "your account"
 msgstr "החשבון שלך"
@@ -2446,6 +2390,12 @@ msgid_plural "It contains %d items."
 msgstr[0] "מכיל פריט %d"
 msgstr[1] "מכיל %d פריטים"
 
+#, fuzzy, c-format
+msgid "Removed user '%s' from group '%s'"
+msgid_plural "Removed %d users from group '%s'"
+msgstr[0] "המשתמש '%s' הוסר מקבוצה '%s'"
+msgstr[1] "המשתמש '%s' הוסר מקבוצה '%s'"
+
 #, c-format
 msgid "Successfully added %d file."
 msgid_plural "Successfully added %d files."
@@ -2487,6 +2437,58 @@ msgid "This group contains %d user"
 msgid_plural "This group contains %d users"
 msgstr[0] "קבוצה זו מכילה משתמש %d"
 msgstr[1] "קבוצה זו מכילה %d משתמשים"
+
+#~ msgid "AcceptPathInfo directive"
+#~ msgstr "AcceptPathInfo directive"
+
+#~ msgid ""
+#~ "Gallery has the option to use a compact URL format, however this format "
+#~ "is not supported by default on all web servers.  It is enabled by default "
+#~ "on Apache 1, but not on Apache 2.  If you're using Apache 2 you must use "
+#~ "the %s.  Use this %s to find out if short URLs work for you.  If the link "
+#~ "returns a webserver error then they don't work for you."
+#~ msgstr ""
+#~ "למערכת יש אפשרות להשתמש בכתובות URL מקוצרות. עם זאת, פורמט זה לא נתמך בכל "
+#~ "השרתים. זה נתמך כברירת מחדל באפאצ'י 1, אבל לא באפאצ'י 2, שם אתה חייב "
+#~ "להשתמש ב %s.  השתמש ב %s זה על-מנת לגלות אם אפשרות הכתובות המקוצרות עובדת "
+#~ "אצלך. אם קישור זה מחזיר הודעת שגיאה, אז האפשרות לא קיימת."
+
+#, fuzzy
+#~ msgid "Status: Not"
+#~ msgstr "סטטוס: פעיל"
+
+#~ msgid "URL Style"
+#~ msgstr "עיצוב כתובת"
+
+#~ msgid "Use short URLs?"
+#~ msgstr "השתמש בכתובות קצרות?"
+
+#~ msgid "add"
+#~ msgstr "הוסיף"
+
+#~ msgid "cancel"
+#~ msgstr "ביטול"
+
+#~ msgid "edit user"
+#~ msgstr "עריכת משתמש"
+
+#~ msgid "no"
+#~ msgstr "לא"
+
+#~ msgid "reset"
+#~ msgstr "התחל מחדש"
+
+#~ msgid "save"
+#~ msgstr "שמור"
+
+#~ msgid "test url"
+#~ msgstr "עמוד בדיקה"
+
+#~ msgid "undo"
+#~ msgstr "ביטול פעולה"
+
+#~ msgid "yes"
+#~ msgstr "כן"
 
 #~ msgid "&laquo; Parent Directory &raquo;"
 #~ msgstr "&laquo; ספריה אחת למעלה &raquo;"
