@@ -7,5 +7,5 @@
 </p>
 
 <p>
-<span class="bold" style="background-color: #d8d8d8; border: 1px solid #000000; padding: 3px;"><a href="index.php?step=1"><?php print _('Go to Step 1&rarr;') ?></a></span>
+<span class="bold" style="background-color: #d8d8d8; border: 1px solid #000000; padding: 3px;"><a href="index.php?step=1&action=new"><?php print _('Go to Step 1&rarr;') ?></a></span>
 </p>

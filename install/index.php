@@ -6,7 +6,7 @@
  * you either do not have PHP installed, or if it is installed, it is not
  * properly enabled. Please visit the following page for assistance:
  *
- * http://gallery.sourceforge.net/
+ *    http://gallery.sourceforge.net/
  *
  * ----------------------------------------------------------------------------
  *
@@ -32,6 +32,7 @@
 
 //XXX ENABLED FOR DEBUGGING
 @ini_set('display_errors', 1);
+
 session_start();
 
 if (!function_exists('_')) {
@@ -40,9 +41,15 @@ if (!function_exists('_')) {
 	}
 }
 
-if (isset($_GET['authenticate'])) {
-	$auth = $_GET['authenticate'];
-	if (isset($_SESSION['auth']) && $auth === $_SESSION['auth']) {
+if (isset($_GET['step'])) {
+	$step = $_GET['step'];
+} else {
+	$step = 0;
+}
+
+if ($step == 1 && isset($_GET['action']) && $_GET['action'] == 'authDownload') {
+	if (isset($_SESSION['auth'])) {
+		$auth = $_SESSION['auth'];
 		$auth .= "\r\n";
 		header("Content-Type: text/plain");
 		header("Content-Length: " . strlen($auth));
@@ -51,7 +58,7 @@ if (isset($_GET['authenticate'])) {
 		print $auth;
 		exit;
 	} else {
-		header("Location: index.php?step=1&auth=nomatch");
+		header("Location: index.php?step=1&auth=nosession");
 	}
 }
 
@@ -68,16 +75,7 @@ $status = array();
 foreach (array_keys($navtext) as $curr) {
 	array_push($status, false);
 }
-if (isset($_SESSION['status'])) {
-	$status = $_SESSION['status'];
-}
-
-printNavBar();
-if (isset($_GET['step'])) {
-	$step = $_GET['step'];
-} else {
-	$step = 0;
-}
+$status[0] = true;
 
 // make percentage a nice round multiple of 5
 if (0 == count($navtext) || $step < 2) {
@@ -86,27 +84,91 @@ if (0 == count($navtext) || $step < 2) {
 	$percentage = round((100 * ($step - 1) / (count($navtext) - 2)) / 5) * 5;
 }
 
-// items to include in HTTP headers
-$rand = '';
-if ($step == 1 && !isset($_GET['auth'])) {
-	for ($len=64, $rand=''; strlen($rand) < $len; $rand .= chr(!mt_rand(0,2) ? mt_rand(48,57) : (!mt_rand(0,1) ? mt_rand(65,90) : mt_rand(97,122))));
-	$rand = md5($rand);
-	$_SESSION['auth'] = $rand;
-} elseif ($step == 2) {
+$authenticated = false;
+if ($step > 1 || ($step == 1 && (!isset($_GET['error']) && ((isset($_GET['action']) && !($_GET['action'] === 'new')) || !isset($_GET['action']))))) {
+	//if ($step > 0) {
 	$authFile = dirname(__FILE__) . '/../login.txt';
 	if (!file_exists($authFile)) {
-		header("Location: index.php?step=1&auth=nofile");
+		header('Location: index.php?step=1&error=nofile');
 	} elseif (!is_readable($authFile)) {
-		header("Location: index.php?step=1&auth=noperms");
+		header('Location: index.php?step=1&error=noperms');
 	} elseif (!isset($_SESSION['auth'])) {
-		header("Location: index.php?step=1&auth=nocookie");
+		header('Location: index.php?step=1&error=nosession');
 	} else {
 		$fileAuth = trim(file_get_contents($authFile));
 		if (!($fileAuth === $_SESSION['auth'])) {
-			header("Location: index.php?step=1&auth=nomatch");
+			header('Location: index.php?step=1&error=nomatch');
+		} else {
+			$authenticated = true;
+			if (isset($_SESSION['status'])) {
+				$status = $_SESSION['status'];
+			}
+			$status[1] = true;
 		}
 	}
 }
+
+// items to include in HTTP headers
+$errorMsg = array();
+if ($step == 1) {
+	if (isset($_GET['error'])) {
+		$error = $_GET['error'];
+		// uh oh...
+		if ($error === 'nofile') {
+			array_push($errorMsg, _('<b>Error:</b> could not locate <b>login.txt</b>. Please place it in your <tt>gallery</tt> directory.'));
+			$keyGen = false;
+		} elseif ($error === 'noperms') {
+			array_push($errorMsg, _('<b>Error:</b> your <b>login.txt</b> file is not readable. Please give Gallery read permissions on the file.'));
+			$keyGen = false;
+		} elseif ($error === 'nosession') {
+			array_push($errorMsg, _('<b>Error:</b> session expired. Please download a new authentication string from below and try again.'));
+			$keyGen = true;
+		} elseif ($error === 'nomatch') {
+			array_push($errorMsg, _('<b>Error:</b> your <b>login.txt</b> key does not match correctly. Please download a new authentication string from below and try again.'));
+			$keyGen = true;
+		}
+	} elseif ($authenticated) {
+		$keyGen = false;
+	} else {
+		$keyGen = true;
+	}
+
+	if ($keyGen == true || !isset($_SESSION['auth'])) {
+		for ($len=64, $rand=''; strlen($rand) < $len;
+			 $rand .= chr(!mt_rand(0,2) ? mt_rand(48,57) : (!mt_rand(0,1) ? mt_rand(65,90) : mt_rand(97,122))));
+		$rand = md5($rand);
+		$_SESSION['auth'] = $rand;
+	} else {
+		$rand = $_SESSION['auth'];
+	}
+} elseif ($step == 4) {
+	if (isset($_GET['action']) && $_GET['action'] === 'create') {
+		$status[$step] = false;
+	}
+	if (isset($_POST['uname']) && isset($_POST['passA']) && isset($_POST['passB'])) {
+		if (empty($_POST['uname'])) {
+			array_push($errorMsg, _('Error: you must enter a username!'));
+		} else {
+			$_SESSION['uname'] = $_POST['uname'];
+		}
+		if (empty($_POST['passA']) || empty($_POST['passB'])) {
+			if (empty($_POST['passA']) && empty($_POST['passB'])) {
+				array_push($errorMsg, _('Error: you must enter a password!'));
+			} else {
+				array_push($errorMsg, _('Error: you must enter your password twice.'));
+			}
+		} elseif ($_POST['passA'] !== $_POST['passB']) {
+			array_push($errorMsg, _('Error: passwords do not match. Please enter them again.'));
+		} else {
+			$_SESSION['pass'] = $_POST['passA'];
+		}
+		if (count($errorMsg) == 0) {
+			$status[$step] = true;
+		}
+	}
+}
+
+printNavBar();
 
 // this can be cleaned up
 include(dirname(__FILE__) . '/head.inc');
@@ -143,13 +205,12 @@ function Welcome() {
 }
 
 function Authenticate($rand) {
-	global $content, $navbar, $percentage, $step, $status;
-	
+	global $content, $navbar, $percentage, $step, $status, $errorMsg, $authenticated;
+
 	$content = 'authenticate.inc';
 	include(dirname(__FILE__) . '/body.inc');
 	include(dirname(__FILE__) . '/foot.inc');
 	
-	$status[$step] = true;
 }
 
 function InstallCheck() {
@@ -158,6 +219,8 @@ function InstallCheck() {
 	$content = 'installCheck.inc';
 	include(dirname(__FILE__) . '/body.inc');
 	include(dirname(__FILE__) . '/foot.inc');
+
+	$status[$step] = true;
 }
 
 function SystemCheck() {
@@ -175,10 +238,12 @@ function SystemCheck() {
 	$content = 'systemCheck.inc';
 	include(dirname(__FILE__) . '/body.inc');
 	include(dirname(__FILE__) . '/foot.inc');
+
+	$status[$step] = true;
 }
 
 function AdminSetup() {
-	global $content, $navbar, $percentage, $step, $status;
+	global $content, $navbar, $percentage, $step, $status, $errorMsg;
 
 	$content = 'adminSetup.inc';
 	include(dirname(__FILE__) . '/body.inc');
@@ -228,9 +293,13 @@ function printNavBar() {
 		} else {
 			$num = $step;
 		}
-		
-		$navbar .= "<span class=\"nav_num\">$num</span><span class=\"nav_text\"><a href=\"index.php?step=$step\">$navtext[$step]</a></span>\n";
-		$navbar .= "</div>\n";
+		$navbar .= "<span class=\"nav_num\">$num</span><span class=\"nav_text\">";
+		if ($step == 0 || $status[$step-1]) {
+			$navbar .= "<a href=\"index.php?step=$step\">$navtext[$step]</a>";
+		} else {
+			$navbar .= $navtext[$step];
+		}
+		$navbar .= "</span></div>\n";
 	}
 	$navbar .= "</div>\n";
 }
