@@ -30,6 +30,7 @@ class EntityCounterEventListener {
 
     function EntityCounterEventListener() {
 	$this->_count = 0;
+	$this->_ids = array();
     }
     
     function handleEvent($event) {
@@ -43,11 +44,16 @@ class EntityCounterEventListener {
 	    $entity = $event->getEntity();
 	    if ($entity->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED)) {
 		$this->_count++;
+		$this->_ids[$entity->getClassName()][] = $entity->getId();
 	    }
 	    break;
 	}
 
 	return GalleryStatus::success();
+    }
+
+    function getRecentEntityId($className) {
+	return $this->_ids[$className][sizeof($this->_ids[$className])-1];
     }
 
     function setCount($count) {
@@ -99,8 +105,11 @@ class TestEventListener {
  */
 class GalleryTestCase extends TestCase {
 
+    var $_cleanup;
+
     function GalleryTestCase($methodName) {
 	$this->TestCase($methodName);
+	$this->_cleanup = array();
     }
 
     function &getEntityCounter() {
@@ -204,6 +213,15 @@ class GalleryTestCase extends TestCase {
     function tearDown() {
 	global $gallery;
 
+	/* Do our cleanup */
+	foreach ($this->_cleanup as $entity) {
+	    $ret = GalleryCoreApi::deleteEntityById($entity->getId());
+	    if ($ret->isError()) {
+		print $ret->getAsHtml();
+		return $this->failWithStatus(__FILE__, __LINE__);
+	    }
+	}
+	    
 	/* Make sure we're not hanging onto any locks */
 	$lockIds = GalleryCoreApi::getLockIds();
 	if (!empty($lockIds)) {
@@ -249,6 +267,10 @@ class GalleryTestCase extends TestCase {
 
     function _getRootId() {
 	return $this->_rootAlbumId;
+    }
+
+    function _markForCleanup($entity) {
+	$this->_cleanup[] = $entity;
     }
 
     function assert($boolean, $message=null) {
@@ -607,6 +629,8 @@ class GalleryTestCase extends TestCase {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
+
+	return GalleryStatus::success();
     }
 
     function DeepCompare($obj1, $obj2, $context=null) {
