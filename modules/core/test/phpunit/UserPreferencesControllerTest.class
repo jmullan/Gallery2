@@ -82,6 +82,8 @@ class UserPreferencesControllerTest extends GalleryControllerTestCase {
 
     function testEditAll() {
         global $gallery;
+        $session =& $gallery->getSession();
+        $currentLanguage = $session->get('core.language');
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[fullName]', 'full name');
 	GalleryUtilities::putRequestVariable('form[email]', 'email@test.me');
@@ -104,8 +106,8 @@ class UserPreferencesControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals($this->_user->getFullName(), 'full name');
 	$this->assertEquals($this->_user->getEmail(), 'email@test.me');
 	$this->assertEquals($this->_user->getLanguage(), 'language');
-    $session =& $gallery->getSession();
-    $this->assertEquals('language', $session->get('core.language'), 'Language');    
+    $this->assertEquals('language', $session->get('core.language'), 'Language');
+    $session->put('core.language', $currentLanguage);    
     }
 
     function testEditRequiredOnly() {
