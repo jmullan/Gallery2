@@ -196,7 +196,7 @@ class GalleryAlbumItem_core extends GalleryItem {
 
 	/* Delete derivative preferences */
 	$ret = GalleryDerivativePreferencesMap::removeMapEntry(
-	    array('parentId' => $this->getId()));
+	    array('itemId' => $this->getId()));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
