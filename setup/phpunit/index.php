@@ -91,7 +91,7 @@ function GalleryMain(&$testSuite, $filter) {
 			require_once($testDir . '/' . $file);
 
 			$className = $matches[1];
-			if (preg_match($filterRegexp, $className)) {
+			if (preg_match($filterRegexp, $className) || preg_match($filterRegexp, $moduleName)) {
 			    if (class_exists($className) &&
 				GalleryUtilities::isA(new $className(null), 'GalleryTestCase')) {
 
