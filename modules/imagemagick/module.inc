@@ -41,7 +41,7 @@ class ImageMagickModule extends GalleryModule {
 	$this->setId('imagemagick');
 	$this->setName('ImageMagick');
 	$this->setDescription($gallery->i18n('ImageMagick Graphics Toolkit'));
-	$this->setVersion('0.8.7');
+	$this->setVersion('0.8.8');
 	$this->setGroup('toolkits', $this->translate('Graphics Toolkits'));
 	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(3, 0));
@@ -74,8 +74,8 @@ class ImageMagickModule extends GalleryModule {
     function performFactoryRegistrations() {
 	/* Register our graphics class with the factory */
 	$ret = GalleryCoreApi::registerFactoryImplementation(
-            'GalleryToolkit', 'ImageMagickToolkit', 'ImageMagick',
-            'modules/imagemagick/classes/ImageMagickToolkit.class', 'imagemagick', null);
+	    'GalleryToolkit', 'ImageMagickToolkit', 'ImageMagick',
+	    'modules/imagemagick/classes/ImageMagickToolkit.class', 'imagemagick', null);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -146,9 +146,9 @@ class ImageMagickModule extends GalleryModule {
      */
     function deactivate() {
 	/*
-	 * Unregister all of our properties and operations.  Do this before the parent deactivates so that any
-	 * event handlers triggered by the deactivation will see the world as it will be after the
-	 * deactivation is done.
+	 * Unregister all of our properties and operations.  Do this before the parent deactivates
+	 * so that any event handlers triggered by the deactivation will see the world as it will
+	 * be after the deactivation is done.
 	 */
 	$ret = GalleryCoreApi::unregisterToolkit('ImageMagick');
 	if ($ret->isError()) {
@@ -167,10 +167,7 @@ class ImageMagickModule extends GalleryModule {
      * @see GalleryModule::needsConfiguration
      */
     function needsConfiguration() {
-	/*
-	 * This module requires all fields to be filled out before it can be
-	 * activated.
-	 */
+	/* This module requires all fields to be filled out before it can be activated. */
 	foreach (array('path', 'jpegQuality') as $key) {
 	    list ($ret, $value) = $this->getParameter($key);
 	    if ($ret->isError()) {

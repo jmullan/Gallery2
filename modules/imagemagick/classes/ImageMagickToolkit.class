@@ -62,7 +62,7 @@ class ImageMagickToolkit extends GalleryToolkit {
 	    break;
 
 	case 'page-count':
-	    list ($ret, $count) = $this->_getPageCount($sourceFilename);
+	    list ($ret, $count) = $this->_getPageCount($sourceFilename, $mimeType);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -209,49 +209,49 @@ class ImageMagickToolkit extends GalleryToolkit {
 
 	    switch ($compositeAlignmentType) {
 	    case 'top-left': /* Top - Left */
-	        $compositeAlignX = 0;
-	        $compositeAlignY = 0;
-	        break;
+		$compositeAlignX = 0;
+		$compositeAlignY = 0;
+		break;
 
 	    case 'top': /* Top */
-	        $compositeAlignX = 50;
-	        $compositeAlignY = 0;
-	        break;
+		$compositeAlignX = 50;
+		$compositeAlignY = 0;
+		break;
 
 	    case 'top-right': /* Top - Right */
-	        $compositeAlignX = 100;
-	        $compositeAlignY = 0;
-	        break;
+		$compositeAlignX = 100;
+		$compositeAlignY = 0;
+		break;
 
 	    case 'left': /* Left */
-	        $compositeAlignX = 0;
-	        $compositeAlignY = 50;
-	        break;
+		$compositeAlignX = 0;
+		$compositeAlignY = 50;
+		break;
 
 	    case 'center': /* Center */
-	        $compositeAlignX = 50;
-	        $compositeAlignY = 50;
-	        break;
+		$compositeAlignX = 50;
+		$compositeAlignY = 50;
+		break;
 
 	    case 'right': /* Right */
-	        $compositeAlignX = 100;
-	        $compositeAlignY = 50;
-	        break;
+		$compositeAlignX = 100;
+		$compositeAlignY = 50;
+		break;
 
 	    case 'bottom-left': /* Bottom - Left */
-	        $compositeAlignX = 0;
-	        $compositeAlignY = 100;
-	        break;
+		$compositeAlignX = 0;
+		$compositeAlignY = 100;
+		break;
 
 	    case 'bottom': /* Bottom */
-	        $compositeAlignX = 50;
-	        $compositeAlignY = 100;
-	        break;
+		$compositeAlignX = 50;
+		$compositeAlignY = 100;
+		break;
 
 	    case 'bottom-right': /* Bottom Right */
-	        $compositeAlignX = 100;
-	        $compositeAlignY = 100;
-	        break;
+		$compositeAlignX = 100;
+		$compositeAlignY = 100;
+		break;
 
 	    case 'manual': /* Manual placement */
 		/* Use the alignments we received */
@@ -399,7 +399,7 @@ class ImageMagickToolkit extends GalleryToolkit {
     /**
      * Call 'identify' and count the pages
      */
-    function _getPageCount($filename) {
+    function _getPageCount($filename, $mimeType) {
 	global $gallery;
 	$platform = $gallery->getPlatform();
 
@@ -410,17 +410,34 @@ class ImageMagickToolkit extends GalleryToolkit {
 
 	$oldCwd = $platform->getcwd();
 	$platform->chdir($gallery->getConfig('data.gallery.tmp'));
-	list ($success, $output) = $platform->exec(array(array_merge($cmd, array($filename))));
+
+	if ($mimeType == 'application/photoshop') {
+	    /* Identify only shows the number of photoshop layers in verbose output */
+	    list ($success, $output) =
+		$platform->exec(array(array_merge($cmd, array('-verbose', $filename))));
+	} else {
+	    list ($success, $output) = $platform->exec(array(array_merge($cmd, array($filename))));
+	}
+
 	$platform->chdir($oldCwd);
 	if (!$success) {
 	    return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__), null);
 	}
 
 	$count = 0;
-	$match = '/' . preg_quote(basename($filename)) . '[[ =]/';
-	foreach ($output as $line) {
-	    if (preg_match($match, $line)) {
-		$count++;
+	if ($mimeType == 'application/photoshop') {
+	    foreach ($output as $line) {
+		if (preg_match('/^\s*Scene: \d+ of (\d+)/', $line, $matches)) {
+		    $count = $matches[1];
+		    break;
+		}
+	    }
+	} else {
+	    $match = '/' . preg_quote(basename($filename)) . '[[ =]/';
+	    foreach ($output as $line) {
+		if (preg_match($match, $line)) {
+		    $count++;
+		}
 	    }
 	}
 
@@ -435,8 +452,8 @@ class ImageMagickToolkit extends GalleryToolkit {
      * @param string the path to a destination file
      * @return object GalleryStatus a status code
      */
-    function _transformImage($mimeType, $cmd, $args, $sourceFilename, $destFilename, $outputMimeType,
-			     $jpegQuality=null) {
+    function _transformImage($mimeType, $cmd, $args, $sourceFilename, $destFilename,
+			     $outputMimeType, $jpegQuality=null) {
 	global $gallery;
 
 	/* Get a temp file name and figure out our convert-from-pnm command */
@@ -495,9 +512,11 @@ class ImageMagickToolkit extends GalleryToolkit {
 	case 'image/tiff':
 	case 'application/pdf':
 	case 'application/postscript':
-	    /* TIFF can be multi-scened, PDF can be multi-paged;
-	     * make sure ImageMagick grabs the first scene/page,
-	     * unless a specific one is requested */
+	case 'application/photoshop':
+	    /*
+	     * PDF/postscript can be multi-paged, TIFF multi-scened, PSD multi-layered;
+	     * Grab the first page/scene/layer unless a specific one is requested
+	     */
 	    $page = 0;
 	    if (isset($args['page'])) {
 		$page = $args['page'] - 1;
@@ -508,8 +527,8 @@ class ImageMagickToolkit extends GalleryToolkit {
 	}
 
 	/*
-	 * Prepare our command.  If one of the arguments is %s, then put the source file path there,
-	 * else put it at the end.
+	 * Prepare our command.  If one of the arguments is %s, then put the source file path
+	 * there, else put it at the end.
 	 */
 	if (!empty($args)) {
 	    $command = array_merge($command, $args);

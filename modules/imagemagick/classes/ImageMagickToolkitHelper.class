@@ -135,9 +135,9 @@ class ImageMagickToolkitHelper {
 
 	/* Select Page */
 	$multiPageMimeTypes = array_intersect(
-		array('image/tiff', 'application/pdf', 'application/postscript'),
-		$mimeTypes
-	);
+		array('image/tiff', 'application/pdf',
+		      'application/postscript', 'application/photoshop'),
+		$mimeTypes);
 	if (!empty($multiPageMimeTypes)) {
 	    $operations['select-page'] = array(
 		'params' => array(array('type' => 'int',
@@ -261,6 +261,8 @@ class ImageMagickToolkitHelper {
 			 'expected' => '(PDF.*(Pseudo|Direct)Class|PseudoClass.*PDF)');
 	$tests[] = array('mime' => array('application/postscript'), 'file' => 'test.eps',
 			 'expected' => '(PS.*(Pseudo|Direct)Class|PseudoClass.*PS)');
+	$tests[] = array('mime' => array('application/photoshop'), 'file' => 'test.psd',
+			 'expected' => '(PSD.*(Pseudo|Direct)Class|PseudoClass.*PSD)');
 
 	$oldPwd = $platform->getcwd();
 	$platform->chdir($gallery->getConfig('data.gallery.tmp'));
