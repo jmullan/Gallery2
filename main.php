@@ -348,7 +348,12 @@ function _GalleryMain_setupMain(&$main, $urlGenerator=null, $version=null) {
     $translator =& $gallery->getTranslator();
     $main['isRightToLeft'] = $translator->isRightToLeft();
 
-    $main['gallery']['version'] = isset($version) ? $version : '2';
+    if (!isset($version)) {
+	GalleryCoreApi::relativeRequireOnce('modules/core/module.inc');
+	$installedVersions = CoreModule::getInstalledVersions();
+	$version = $installedVersions['gallery'];
+    }
+    $main['gallery']['version'] = $version;
 
     return isset($error) ? $error : GalleryStatus::success();
 }
@@ -415,15 +420,41 @@ function _GalleryMain_errorHandler($error, $g2Data=null, $initOk=true) {
 	$errorCode = $error->getErrorCode();
 
 	if ($errorCode & ERROR_OBSOLETE_DATA) {
-	    $main['errorObsoleteData'] = true;
+	    $main['obsoleteData'] = true;
 	}
 	if ($errorCode & (ERROR_PERMISSION_DENIED | ERROR_BAD_PARAMETER)) {
 	    $main['securityViolation'] = true;
+	}
+	if ($errorCode & ERROR_STORAGE_FAILURE) {
+	    $main['storageFailure'] = true;
+	}
+
+	if ($isAdmin) {
+	    $main['phpversion'] = phpversion();
+	    $main['php_uname'] = php_uname();
+	    $main['php_sapi_name'] = php_sapi_name();
+	    $main['webserver'] = isset($_SERVER['SERVER_SOFTWARE']) ? $_SERVER['SERVER_SOFTWARE'] : '';
+	    $main['browser'] = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
+	    if ($gallery->isStorageInitialized()) {
+		$storage =& $gallery->getStorage();
+		$main['db_type'] = $storage->_impl->getAdoDbType();
+		$main['db_version'] = @$storage->_impl->getVersion();
+
+		list ($ret, $list) = GalleryCoreApi::getToolkitOperationMimeTypes('thumbnail');
+		if ($ret->isSuccess()) {
+		    $toolkitList = array();
+		    foreach ($list as $tmp) {
+			$toolkitList = array_merge($toolkitList, $tmp);
+		    }
+		    $main['toolkits'] = implode(' ', array_unique($toolkitList));
+		}
+	    }
 	}
     }
 
     $template->setVariable('main', $main);
     $template->setVariable('l10Domain', 'modules_core');
+    GalleryUtilities::putRequestVariable('view', 'error');
 
     $ret = $template->display($templatePath);
     if ($ret->isError()) {
