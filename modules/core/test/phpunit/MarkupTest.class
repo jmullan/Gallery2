@@ -119,6 +119,11 @@ class MarkupTest extends GalleryTestCase {
 	$this->assertEquals('<img src="http://example.com/foo.gif" alt="">', $results);
     }
 
+    function testJavascriptInImage() {
+	$results = $this->_bbcode->parse('[img]javascript:alert()[/img]');
+	$this->assertEquals('[img]javascript:alert()[/img]', $results);
+    }
+
     function testUrl1() {
 	$results = $this->_bbcode->parse('[url]http://example.com/a.html[/url]');
 	$this->assertEquals('<a href="http://example.com/a.html">http://example.com/a.html</a>', $results);

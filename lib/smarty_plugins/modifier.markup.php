@@ -154,6 +154,10 @@ class GalleryBbcodeMarkupParser {
     }
 
     function image($tagName, $attrs, $elementContents, $funcParam, $openClose) {
+	if (!preg_match('/^(http|ftp|mailto|https):/', $elementContents)) {
+	    return sprintf('[img]%s[/img]', $elementContents);
+	}
+	
 	if ($openClose == 'all') {
 	    return sprintf('<img src="%s" alt="">', htmlspecialchars($elementContents));
 	} else {
