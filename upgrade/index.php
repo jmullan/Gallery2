@@ -40,6 +40,7 @@
 @ini_set('magic_quotes_runtime', 0);
 
 require_once(dirname(__FILE__) . '/UpgradeStep.class');
+require_once(dirname(__FILE__) . '/StatusTemplate.class');
 
 /*
  * if gettext isn't enabled, subvert the _() text translation function
@@ -154,12 +155,11 @@ if ($currentStep->processRequest()) {
     /* Round percentage to the nearest 5 */
     $templateData['errors'] = array();
     $currentStep->loadTemplateData($templateData);
-    $stepsComplete = $stepNumber - ($currentStep->isComplete() ? 0 : 1);
-    $templateData['percentComplete'] = (int)((100 * ($stepsComplete / (sizeof($steps)-1))) / 5) * 5;
-
+    
     /* Fetch our page into a variable */
     ob_start();
-    include(dirname(__FILE__) . '/templates/MainPage.html');
+    $template = new StatusTemplate();
+    $template->renderHeaderBodyAndFooter($templateData);
     $html = ob_get_contents();
     ob_end_clean();
 

@@ -184,9 +184,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[set][summary]', 'blank');
 	GalleryUtilities::putRequestVariable('form[set][description]', 'blank');
 
-	ob_start();
 	$results = $this->handleRequest();
-	ob_end_clean();
 	$this->assertEquals(array('userImportSuccess' => array('phpunit_foobar' => 1),
 				  'userImportFailure' => array(),
 				  'albumImportFailure' => array(),
@@ -216,9 +214,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[set][summary]', 'blank');
 	GalleryUtilities::putRequestVariable('form[set][description]', 'blank');
 
-	ob_start();
 	$results = $this->handleRequest();
-	ob_end_clean();
 	$this->assertEquals(array('userImportSuccess' => array('phpunitfoo002' => 1),
 				  'userImportFailure' => array(),
 				  'albumImportFailure' => array(),
@@ -249,9 +245,8 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[set][title]', 'caption');
 	GalleryUtilities::putRequestVariable('form[set][summary]', 'blank');
 	GalleryUtilities::putRequestVariable('form[set][description]', 'blank');
-	ob_start();
+
 	$results = $this->handleRequest();
-	ob_end_clean();
 	$this->assertEquals(array('userImportFailure' => array('admin' => 1),
 				  'userImportSuccess' => array(),
 				  'albumImportFailure' => array(),
@@ -271,9 +266,8 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
     function testCancelImport() {
 	global $gallery;
 	GalleryUtilities::putRequestVariable('form[action][cancel]', 1);
-	ob_start();
+
 	$results = $this->handleRequest();
-	ob_end_clean();
 	$this->assertEquals(array('userImportFailure' => array(),
 				  'userImportSuccess' => array(),
 				  'albumImportFailure' => array(),
@@ -302,9 +296,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[set][summary]', 'blank');
 	GalleryUtilities::putRequestVariable('form[set][description]', 'filename');
 
-	ob_start();
 	$results = $this->handleRequest();
-	ob_end_clean();
 	$this->assertEquals(array('album03', 'album02'),
 			    array_keys($results['status']['albumImportSuccess']));
 	$this->assertEquals(array('view' => 'core:SiteAdmin',
@@ -655,9 +647,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[set][summary]', 'caption');
 	GalleryUtilities::putRequestVariable('form[set][description]', 'blank');
 
-	ob_start();
 	$results = $this->handleRequest();
-	ob_end_clean();
 
 	$this->assertEquals(array('album04'),
 			    array_keys($results['status']['albumImportSuccess']));
@@ -725,9 +715,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[customfield][description]', 'Long Description');
 	GalleryUtilities::putRequestVariable('form[set][defaultDescription]', 1);
 
-	ob_start();
 	$results = $this->handleRequest();
-	ob_end_clean();
 
 	$this->assertEquals(array('album03'),
 			    array_keys($results['status']['albumImportSuccess']));
@@ -854,9 +842,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[set][summary]', 'blank');
 	GalleryUtilities::putRequestVariable('form[set][description]', 'blank');
 
-	ob_start();
 	$results = $this->handleRequest();
-	ob_end_clean();
 
 	$this->assertEquals(array('album05'),
 			    array_keys($results['status']['albumImportSuccess']));
@@ -1028,9 +1014,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[set][summary]', 'blank');
 	GalleryUtilities::putRequestVariable('form[set][description]', 'blank');
 
-	ob_start();
 	$results = $this->handleRequest();
-	ob_end_clean();
 
 	$this->assertEquals(array('album01'),
 			    array_keys($results['status']['albumImportSuccess']));
@@ -1130,9 +1114,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	    GalleryUtilities::putRequestVariable('form[set][summary]', 'blank');
 	    GalleryUtilities::putRequestVariable('form[set][description]', 'blank');
 
-	    ob_start();
 	    $results = $this->handleRequest();
-	    ob_end_clean();
 
 	    $this->assertEquals(array('no_NO'),
 				array_keys($results['status']['albumImportSuccess']));
@@ -1277,9 +1259,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	    GalleryUtilities::putRequestVariable('form[set][summary]', 'blank');
 	    GalleryUtilities::putRequestVariable('form[set][description]', 'blank');
 
-	    ob_start();
 	    $results = $this->handleRequest();
-	    ob_end_clean();
 
 	    $this->assertEquals(array('fr_FR'),
 				array_keys($results['status']['albumImportSuccess']));
@@ -1426,9 +1406,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	    GalleryUtilities::putRequestVariable('form[set][summary]', 'blank');
 	    GalleryUtilities::putRequestVariable('form[set][description]', 'blank');
 
-	    ob_start();
 	    $results = $this->handleRequest();
-	    ob_end_clean();
 
 	    $this->assertEquals(array('KOI-8'),
 				array_keys($results['status']['albumImportSuccess']));

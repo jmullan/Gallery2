@@ -100,15 +100,17 @@ class GalleryUserHelper_medium {
      * Return the total number of users
      *
      * @param string an optional substring to match against the username
+     * @return array object GalleryStatus a status code
+     *               int number of users
      * @static
      */
-   
     function fetchUserCount($substring=null, $groupId=null) {
 	global $gallery;
 	if (empty($groupId)) {
-	    list($ret, $groupId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.everybodyGroup');
+	    list($ret, $groupId) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'id.everybodyGroup');
 	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
 	$data = array();
@@ -251,11 +253,12 @@ class GalleryUserHelper_medium {
 	 * Get all the permissions the user has on the items, 
 	 * need delete permission to delete an item
 	 */
-	list ($ret, $userItemPermissions) = GalleryCoreApi::fetchPermissionsForItems($itemIds, $user->getId());
+	list ($ret, $userItemPermissions) =
+	    GalleryCoreApi::fetchPermissionsForItems($itemIds, $user->getId());
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	/* First sort out the items that we can delete (permissions) */
 	$itemIdsWithPermission = array();
 	foreach ($itemIds as $itemId) {
@@ -265,7 +268,7 @@ class GalleryUserHelper_medium {
 	    $itemIdsWithPermission[] = $itemId;
 	}
 	$itemIds = $itemIdsWithPermission;
-	
+
 	if (empty($itemIds)) {
 	    return GalleryStatus::success();
 	}
@@ -307,7 +310,8 @@ class GalleryUserHelper_medium {
 	     * If we want to use it from user space (i.e. let users remove delete their
 	     * accounts) we need to fix this.
 	     */
-	    list ($ret, $descendentCounts) = GalleryCoreApi::fetchDescendentCounts($modifiedAlbumIds);
+	    list ($ret, $descendentCounts) =
+		GalleryCoreApi::fetchDescendentCounts($modifiedAlbumIds);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }

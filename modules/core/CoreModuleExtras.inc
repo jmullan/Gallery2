@@ -41,8 +41,9 @@ class CoreModuleExtras {
      * @param string the current installed version
      * @static
      */
-    function upgrade($module, $currentVersion) {
+    function upgrade($module, $currentVersion, $statusMonitor) {
 	global $gallery;
+	$storage =& $gallery->getStorage();
 
 	/*
 	 * We store our version outside of the database so that we can upgrade
@@ -167,7 +168,8 @@ class CoreModuleExtras {
 		}
 	    }
 
-	    foreach (array('_createAllUsersGroup',
+	    foreach (array('_createAccessListCompacterLock',
+			   '_createAllUsersGroup',
 			   '_createSiteAdminsGroup',
 			   '_createEverybodyGroup',
 			   '_createAnonymousUser',
@@ -179,7 +181,7 @@ class CoreModuleExtras {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
-        
+
 	    GalleryCoreApi::requireOnce(
 		dirname(__FILE__) . '/classes/helpers/GalleryMimeTypeHelper_simple.class');
 	    $ret = GalleryMimeTypeHelper_simple::initializeMimeTypes();
@@ -195,19 +197,18 @@ class CoreModuleExtras {
 	     * Update our framework module parameters to have a leading
 	     * underscore so that we have our own separate namespace.
 	     */
-	    $storage =& $gallery->getStorage();
 	    $query = '
-		  UPDATE
-		    [GalleryPluginParameterMap]
-		  SET
-		    [::parameterName] = ?
-		  WHERE
-		    [GalleryPluginParameterMap::parameterName] = ?
-		    AND
-		    [GalleryPluginParameterMap::pluginType] = \'module\'
-		    AND
-		    [GalleryPluginParameterMap::itemId] = 0
-		';
+	    UPDATE
+	       GalleryPluginParameterMap]
+	    SET
+	       [::parameterName] = ?
+	    WHERE
+	       [GalleryPluginParameterMap::parameterName] = ?
+	       AND
+	       [GalleryPluginParameterMap::pluginType] = \'module\'
+	       AND
+	       [GalleryPluginParameterMap::itemId] = 0
+	    ';
 	    $ret = $storage->execute($query, array('_version', 'version'));
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
@@ -231,13 +232,12 @@ class CoreModuleExtras {
 	     * Copy the information from viewedSinceTimestamp to originationTimestamp
 	     * as both default to time()
 	     */
-	    $storage =& $gallery->getStorage();
 	    $query = '
-		  UPDATE
-		    [GalleryItem]
-		  SET
-		    [::originationTimestamp] = [::viewedSinceTimestamp]
-		';
+	    UPDATE
+	      [GalleryItem]
+	    SET
+	      [::originationTimestamp] = [::viewedSinceTimestamp]
+	    ';
 	    $ret = $storage->execute($query, array());
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
@@ -252,8 +252,6 @@ class CoreModuleExtras {
 
 	case '0.8.8':
 	case '0.8.9':
-	    $storage =& $gallery->getStorage();
-
 	    /*
 	     * Set all factory implementation weights to 5.  We'll re-register
 	     * all core implementations with a weight of 4 so that they get
@@ -314,18 +312,12 @@ class CoreModuleExtras {
 
 	case '0.8.15':
 	    /* Removed GalleryItemPropertiesMap.. drop the table */
-	    $storage =& $gallery->getStorage();
-	    $query = '
-	    DROP TABLE [GalleryItemPropertiesMap]
-	    ';
+	    $query = 'DROP TABLE [GalleryItemPropertiesMap]';
 	    $ret = $storage->execute($query);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-	    $query = '
-	    DELETE FROM [Schema]
-	    WHERE [Schema::name] = \'ItemPropertiesMap\'
-	    ';
+	    $query = "DELETE FROM [Schema] WHERE [Schema::name] = 'ItemPropertiesMap'";
 	    $ret = $storage->execute($query);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
@@ -348,14 +340,264 @@ class CoreModuleExtras {
 
 	case '0.9.2':
 	    /* Changed the data cache format */
-        
+
 	case '0.9.3':
 	    /* CSS refactor across entire app */
 
-	case '0.9.4': 
+	case '0.9.4':
 	    GalleryCoreApi::requireOnce(
 		dirname(__FILE__) . '/classes/helpers/GalleryMimeTypeHelper_simple.class');
 	    $ret = GalleryMimeTypeHelper_simple::initializeMimeTypes();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	case '0.9.5':
+	    $ret = CoreModuleExtras::_createAccessListCompacterLock($module);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    /*
+	     * Choose an item that has permission rows.  Find all other items with the same
+	     * exact permissions.  Create a new ACL, assign all those items to the ACL, delete
+	     * those rows from the permissions table.  Repeat.
+	     */
+	    $totalRowsQuery = '
+            SELECT
+              COUNT(DISTINCT [GalleryPermissionMap::itemId])
+            FROM
+              [GalleryPermissionMap]
+            ';
+	    
+	    $findItemIdQuery = '
+            SELECT
+              [GalleryPermissionMap::itemId], COUNT(*) AS C
+            FROM
+              [GalleryPermissionMap]
+            GROUP BY
+              [GalleryPermissionMap::itemId]
+            ORDER BY
+              C DESC
+            LIMIT 1
+            ';
+
+	    $permissionRowCountQuery = '
+            SELECT
+              COUNT(*)
+            FROM
+              [GalleryPermissionMap]
+            WHERE
+              [GalleryPermissionMap::itemId] = ?
+            ';
+
+    	    $createAclQuery = '
+            INSERT INTO
+              [GalleryAccessMap] ([::accessListId], [::userId], [::groupId], [::permission])
+            SELECT
+              ?, [GalleryPermissionMap::userId],
+              [GalleryPermissionMap::groupId], [GalleryPermissionMap::permission]
+            FROM
+              [GalleryPermissionMap]
+            WHERE
+              [GalleryPermissionMap::itemId] = ?
+            ';
+
+	    $findPossibleDupesQuery = '
+            SELECT
+              [GalleryPermissionMap=2::itemId], COUNT(*)
+            FROM
+              [GalleryPermissionMap=1], [GalleryPermissionMap=2]
+            WHERE
+              [GalleryPermissionMap=1::itemId] = ?
+              AND
+              [GalleryPermissionMap=1::userId] = [GalleryPermissionMap=2::userId]
+              AND
+              [GalleryPermissionMap=1::groupId] = [GalleryPermissionMap=2::groupId]
+              AND
+              [GalleryPermissionMap=1::permission] = [GalleryPermissionMap=2::permission]
+            GROUP BY
+              [GalleryPermissionMap=2::itemId]
+            HAVING
+              COUNT(*) = ?
+            ';
+
+	    $refineDupesQuery = '
+            SELECT
+              [GalleryPermissionMap::itemId], COUNT(*)
+            FROM
+              [GalleryPermissionMap]
+            WHERE
+              [GalleryPermissionMap::itemId] IN (%s)
+            GROUP BY
+              [GalleryPermissionMap::itemId]
+            HAVING
+              COUNT(*) = ?
+            ';
+
+	    $assignAclQuery = '
+            INSERT INTO
+              [GalleryAccessSubscriberMap] ([::itemId], [::accessListId])
+            SELECT DISTINCT
+              [GalleryPermissionMap::itemId], ?
+            FROM
+              [GalleryPermissionMap]
+            WHERE
+              [GalleryPermissionMap::itemId] IN (%s)
+            ';
+
+	    $deleteOldPermsQuery = '
+            DELETE FROM
+              [GalleryPermissionMap]
+            WHERE
+              [GalleryPermissionMap::itemId] IN (%s)
+            ';
+
+	    /* Determine how many items we are going to process for our status message */
+	    list ($ret, $results) = $storage->search($totalRowsQuery);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    if ($results->resultCount() == 0) {
+		break;
+	    }
+	    $result = $results->nextResult();
+	    $totalPermissionItems = $result[0];
+
+	    $itemsProcessed = 0;
+	    if ($totalPermissionItems > 0) {
+		$ret = $statusMonitor->renderStatusMessage(
+		    $module->translate('Upgrading permissions'),
+		    null,
+		    $itemsProcessed / $totalPermissionItems);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+	    
+	    while ($totalPermissionItems > 0 && true) {
+		$gallery->guaranteeTimeLimit(60);
+
+		/* Find the next item in the permissions table */
+		list ($ret, $results) = $storage->search($findItemIdQuery);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+		if ($results->resultCount() == 0) {
+		    break;
+		}
+		$result = $results->nextResult();
+		list ($targetItemId, $permissionRowCount) = array((int)$result[0], (int)$result[1]);
+
+		/* Create a new ACL */
+		list ($ret, $newAclId) = $storage->getUniqueId();
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+
+		$ret = $storage->execute($createAclQuery, array($newAclId, $targetItemId));
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+
+		/*
+		 * Find all items that share the same permissions as the target.  I haven't
+		 * figured out a good way to do aggregation without using temporary tables,
+		 * which I'd like to avoid for portability.  So, figure out how many rows
+		 * have at least as many matching permissions as our target item.  These
+		 * are potentially dupes.  We'll refine them later on.
+		 */
+		list ($ret, $results) = $gallery->search(
+		    $findPossibleDupesQuery, array($targetItemId, $permissionRowCount));
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+		$possibleDupeIds = array();
+		while ($result = $results->nextResult()) {
+		    $possibleDupeIds[] = (int)$result[0];
+		}
+
+		/*
+		 * Process these queries in chunks since we may have thousands of items with the
+		 * same permissions and we don't want to give the database a heart attack.
+		 */
+		$chunkSize = 200;
+		while (!empty($possibleDupeIds)) {
+		    $chunk = array_splice($possibleDupeIds, 0, $chunkSize);
+		    $count = count($chunk);
+
+		    /*
+		     * Refine our dupes by eliminating ones that don't have exactly the same
+		     * number of permission rows as our target.  Our target item is included
+		     * in the dupes, so this will always return at least 1 row.
+		     */
+		    $markers = GalleryUtilities::makeMarkers($count);
+		    $query = sprintf($refineDupesQuery, $markers);
+		    list ($ret, $results) = $gallery->search(
+			$query, array_merge($chunk, array($permissionRowCount)));
+		    $possibleDupeIds = array();
+
+		    $dupeIds = array();
+		    while ($result = $results->nextResult()) {
+			$dupeIds[] = (int)$result[0];
+		    }
+
+		    if (empty($dupeIds)) {
+			/* No actual dupes?  Try the next chunk */
+			continue;
+		    }
+
+		    $count = count($dupeIds);
+		    $markers = GalleryUtilities::makeMarkers($count);
+
+		    /* Set all the dupe items in this chunk to use the new ACL */
+		    $query = sprintf($assignAclQuery, $markers);
+		    $ret = $storage->execute($query, array_merge(array($newAclId), $dupeIds));
+		    if ($ret->isError()) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
+
+		    /* Remove all the permission rows for the migrated items */
+		    $query = sprintf($deleteOldPermsQuery, $markers);
+		    $ret = $storage->execute($query, $dupeIds);
+		    if ($ret->isError()) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
+
+		    $itemsProcessed += $count;
+
+		    $ret = $statusMonitor->renderStatusMessage(
+			$module->translate(array(
+                            'text' => 'Upgrading permissions (%d items complete, %d remaining)',
+			    'arg1' => $itemsProcessed,
+			    'arg2' => $totalPermissionItems - $itemsProcessed)),
+			'',
+			$itemsProcessed / $totalPermissionItems);
+		    if ($ret->isError()) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
+		}
+	    }
+
+	    if ($totalPermissionItems > 0) {
+		$ret = $statusMonitor->renderStatusMessage(
+		    $module->translate('Deleting old permission tables'),
+		    '',
+		    $itemsProcessed / $totalPermissionItems);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+		
+	    /* Removed GalleryPermisisonsMap.  Drop the table */
+	    $query = 'DROP TABLE [GalleryPermissionMap]';
+	    $ret = $storage->execute($query);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    $query = "DELETE FROM [Schema] WHERE [Schema::name] = 'PermissionMap'";
+	    $ret = $storage->execute($query);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -652,7 +894,7 @@ class CoreModuleExtras {
 	}
 	$title = GalleryUtilities::utf8ToUnicodeEntities($module->translate('Gallery'));
 	$description = GalleryUtilities::utf8ToUnicodeEntities(
-		       $module->translate('This is the top of your Gallery'));
+	    $module->translate('This is the main page of your Gallery'));
 	$album->setTitle($title);
 	$album->setDescription($description);
 
@@ -678,14 +920,44 @@ class CoreModuleExtras {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	$ret = GalleryCoreApi::addGroupPermission($album->getId(),
-							$groupId,
-							'core.all');
+	$ret = GalleryCoreApi::addGroupPermission($album->getId(), $groupId, 'core.all');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$ret = $module->setParameter('id.rootAlbum', $album->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Create the access list compactor lock entity
+     *
+     * @param object GalleryModule the core module
+     * @return object GalleryStatus a status code
+     * @static
+     */
+    function _createAccessListCompacterLock($module) {
+	global $gallery;
+
+	/* Do we already have a root? */
+	list ($ret, $compacterLockId) = $module->getParameter('id.accessListCompacterLock');
+	if ($compacterLockId) {
+	    return GalleryStatus::success();
+	}
+
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryEntity.class');
+	$lock = new GalleryEntity();
+	$lock->create();
+	$ret = $lock->save();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$ret = $module->setParameter('id.accessListCompacterLock', $lock->getId());
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

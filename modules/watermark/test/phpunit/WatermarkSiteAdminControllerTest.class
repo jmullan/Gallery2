@@ -169,8 +169,12 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->assertEquals('image/jpeg', $map[$this->_expectedName]->getMimeType(),
-			    'Watermark mime type incorrect');
+	if (GalleryUtilities::isA($map[$this->_expectedName], 'WatermarkImage')) {
+	    $this->assertEquals('image/jpeg', $map[$this->_expectedName]->getMimeType(),
+				'Watermark mime type incorrect');
+	} else {
+	    $this->assert(false, 'Expected object is not a watermark!');
+	}
     }
 
     function testDelete() {
@@ -196,23 +200,28 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	// Delete it
-	GalleryUtilities::removeFormVariables('form');
-	GalleryUtilities::putRequestVariable('form[action][delete]', '1');
-	GalleryUtilities::putRequestVariable('form[delete][itemId]',
-					     $map[$this->_expectedName]->getId());
+	if (GalleryUtilities::isA($map[$this->_expectedName], 'WatermarkImage')) {
+	    // Delete it
+	    GalleryUtilities::removeFormVariables('form');
+	    GalleryUtilities::putRequestVariable('form[action][delete]', '1');
+	    GalleryUtilities::putRequestVariable('form[delete][itemId]',
+						 $map[$this->_expectedName]->getId());
 
-	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'watermark:WatermarkSiteAdmin'),
-				  'status' => array('delete' => 1),
-				  'error' => array()),
-			    $results, 'Delete');
+	    $results = $this->handleRequest();
+	    $this->assertEquals(array('redirect' => array(
+					  'view' => 'core:SiteAdmin',
+					  'subView' => 'watermark:WatermarkSiteAdmin'),
+				      'status' => array('delete' => 1),
+				      'error' => array()),
+				$results, 'Delete');
 
-	// Verify that it's gone
-	$ret = $this->_verifyMissing($map[$this->_expectedName]->getId());
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    // Verify that it's gone
+	    $ret = $this->_verifyMissing($map[$this->_expectedName]->getId());
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	} else {
+	    $this->assert(false, 'Expected object is not a watermark!');
 	}
     }
 
@@ -253,25 +262,29 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	// Try to delete it
-	GalleryUtilities::removeFormVariables('form');
-	GalleryUtilities::putRequestVariable('form[action][delete]', '1');
-	GalleryUtilities::putRequestVariable('form[delete][itemId]',
-					     $watermark->getId());
+	if (GalleryUtilities::isA($watermark, 'WatermarkImage')) {
+	    // Try to delete it
+	    GalleryUtilities::removeFormVariables('form');
+	    GalleryUtilities::putRequestVariable('form[action][delete]', '1');
+	    GalleryUtilities::putRequestVariable('form[delete][itemId]',
+						 $watermark->getId());
 
-	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'watermark:ConfirmDelete',
-						      'itemId' => $watermark->getId(),
-						      'fromAdmin' => 1),
-				  'status' => array(),
-				  'error' => array()),
-			    $results, 'Confirm Delete');
+	    $results = $this->handleRequest();
+	    $this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+							  'subView' => 'watermark:ConfirmDelete',
+							  'itemId' => $watermark->getId(),
+							  'fromAdmin' => 1),
+				      'status' => array(),
+				      'error' => array()),
+				$results, 'Confirm Delete');
 
-	// Verify that it's NOT gone
-	$ret = $this->_verifyEntity($watermark);
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    // Verify that it's NOT gone
+	    $ret = $this->_verifyEntity($watermark);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	} else {
+	    $this->assert(false, 'Expected object is not a watermark!');
 	}
     }
 
@@ -282,7 +295,7 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 	$results = $this->handleRequest(ERROR_PERMISSION_DENIED);
 
 	GalleryUtilities::putRequestVariable('form[action][delete]', 1);
-	GalleryUtilities::putRequestVariable('form[delete][itemId]', 123456789); // invalid and illegal
+	GalleryUtilities::putRequestVariable('form[delete][itemId]', 123456789); // invalid & illegal
 
 	$results = $this->handleRequest(ERROR_PERMISSION_DENIED);
     }
@@ -300,9 +313,10 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 	$results = $this->handleRequest();
 	$counter =& GalleryTestCase::getEntityCounter();
 	$expectedId = $counter->getRecentEntityId('WatermarkImage');
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'watermark:WatermarkSiteAdminEdit',
-						      'itemId' => $expectedId),
+	$this->assertEquals(array('redirect' => array(
+				      'view' => 'core:SiteAdmin',
+				      'subView' => 'watermark:WatermarkSiteAdminEdit',
+				      'itemId' => $expectedId),
 				  'status' => array('add' => 1),
 				  'error' => array()),
 			    $results, 'Add');
@@ -313,16 +327,20 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 	}
 	$this->assert(isset($map[$expectedName]), 'Watermark is missing');
 
-	$this->assertEquals('application/unknown', $map[$expectedName]->getMimeType(),
-			    'Watermark mime type incorrect');
-
-	list ($ret, $path) = $map[$expectedName]->fetchPath();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	if (GalleryUtilities::isA($map[$expectedName], 'WatermarkImage')) {
+	    $this->assertEquals('application/unknown', $map[$expectedName]->getMimeType(),
+				'Watermark mime type incorrect');
+	    
+	    list ($ret, $path) = $map[$expectedName]->fetchPath();
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    
+	    // We're expecting the same name, but the . changed to _ in the file extension
+	    $this->assertEquals($expectedName, basename($path));
+	} else {
+	    $this->assert(false, 'Object is not a watermark');
 	}
-
-	// We're expecting the same name, but the . changed to _ in the file extension
-	$this->assertEquals($expectedName, basename($path));
     }
 
     function _fetchWatermarkMapByFilename() {

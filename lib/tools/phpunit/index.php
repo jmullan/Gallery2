@@ -188,4 +188,18 @@ print $gallery->getDebugBuffer();
 print "</pre>";
 */
 include(dirname(__FILE__) . '/index.tpl');
+
+/* Compact any ACLs that were created during this test run */
+$ret = GalleryCoreApi::compactAccessLists();
+if ($ret->isError()) {
+    $ret = $ret->wrap(__FILE__, __LINE__);
+    print $ret->getAsHtml();
+    return;
+}
+
+$storage =& $gallery->getStorage();
+$ret = $storage->commitTransaction();
+if ($ret->isError()) {
+    return $ret->wrap(__FILE__, __LINE__);
+}
 ?>

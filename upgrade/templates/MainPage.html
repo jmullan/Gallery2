@@ -1,3 +1,4 @@
+<?php if (isset($templateData['MainPage']['showHeader'])): ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
   <head>
@@ -54,8 +55,57 @@
 	  <li><span class="helpBox">X</span><a href="index.php?startOver=1"><?php print _('Start Over'); ?></a></li>
 	</ul>
       </div>
-
       <div id="main">
+<?php endif; ?>
+<?php if (isset($templateData['MainPage']['showStatusBlock'])): ?>
+<script type="text/javascript">
+  // <![CDATA[
+  function updateStatus(title, description, percentComplete) {
+    document.getElementById('MainPageStatus_title').innerHTML = title;
+    document.getElementById('MainPageStatus_description').innerHTML = description;
+
+    var progressMade = Math.round(percentComplete * 100);
+    var progressToGo = document.getElementById('MainPageStatus_progressToGo');
+
+    if (progressMade == 100) {
+      progressToGo.style.display = 'none';
+    } else {
+      progressToGo.style.display = 'inline-block';
+      progressToGo.style.width = (100 - progressMade) + "%";
+    }
+
+    document.getElementById('MainPageStatus_progressMade').style.width = progressMade + "%"
+  }
+  // ]]>
+</script>
+
+<div id="MainPageStatus_statusBlock">
+  <p>
+    <h3> <span id="MainPageStatus_title">&nbsp;</span> </h3>
+  </p>
+
+  <p>
+    <h4> <span id="MainPageStatus_description">&nbsp;</span> </h4>
+  </p>
+
+  <table width="100%" cellspacing="0" cellpadding="0">
+    <tr>
+      <td id="MainPageStatus_progressMade" class="progressMade" style="width:0%">&nbsp;</td>
+      <td id="MainPageStatus_progressToGo" class="progressToGo" style="width:100%; border-left: none')">&nbsp;</td>
+    </tr>
+  </table>
+</div>
+<?php endif; ?>
+
+<?php if (isset($templateData['MainPage']['hideStatusBlock'])): ?>
+<script type="text/javascript">document.getElementById("MainPageStatus_statusBlock").style.display="none"</script>
+<?php endif; ?>
+
+<?php if (isset($templateData['MainPage']['showStatus'])): ?>
+<script type="text/javascript">updateStatus(<?php printf('"%s", "%s", %0.3F', $templateData['MainPage']['status']['title'], $templateData['MainPage']['status']['description'], $templateData['MainPage']['status']['percentComplete']); ?>)</script>
+<?php endif; ?>
+
+<?php if (isset($templateData['MainPage']['showBodyAndFooter'])): ?>
 	<?php if (!empty($templateData['errors'])): ?>
 	<h2 class="error">
 	  <?php foreach ($templateData['errors'] as $error): ?>
@@ -73,6 +123,7 @@
 	<?php endif; ?>
 
 	<?php include(dirname(__FILE__) . '/' . $templateData['bodyFile']); ?>
+
 	<?php if ($currentStep->isComplete() && !$currentStep->isLastStep()): ?>
 	<div class="go">
 	  <?php $nextStep = $stepNumber + 1 ?>
@@ -126,3 +177,4 @@
     </div>
   </body>
 </html>
+<?php endif; ?>

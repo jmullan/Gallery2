@@ -422,52 +422,40 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	global $gallery;
 	$storage =& $gallery->getStorage();
 
-	list ($ret, $permissionBits) = GalleryCoreApi::convertPermissionIdsToBits('core.view');
+	list ($ret, $aclIds) =
+	    GalleryCoreApi::fetchAccessListIds('core.view', $gallery->getActiveUserId());
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
+	if (empty($aclIds)) {
+	    return GalleryStatus::success();
+	}
+	$aclMarkers = GalleryUtilities::makeMarkers(count($aclIds));
 
-	list ($ret, $groupIds) = GalleryCoreApi::fetchGroupsForUser($userId);
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-	$groupIds = array_keys($groupIds);
-	$groupIdMarkers = GalleryUtilities::makeMarkers($groupIds);
-	list ($ret, $andPermission) = $storage->getFunctionSql('BITAND',
-						array('[GalleryPermissionMap::permission]', '?'));
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	$query = '
+	$query = sprintf('
 	INSERT INTO
 	  [ImageBlockCacheMap]
 	SELECT DISTINCT
 	  ?, ?, [GalleryEntity::creationTimestamp], [GalleryEntity::id]
 	FROM
-	  [GalleryEntity], [GalleryPermissionMap], [GalleryChildEntity], [GalleryDerivative]
+	  [GalleryEntity], [GalleryAccessSubscriberMap], [GalleryChildEntity], [GalleryDerivative]
 	WHERE
 	  [GalleryEntity::entityType] = ?
 	  AND
-	  ([GalleryPermissionMap::userId] = ?
-	   OR
-	   [GalleryPermissionMap::groupId] IN (' . $groupIdMarkers . '))
-	  AND
-	' . $andPermission . ' > ?
-	  AND
-	  [GalleryPermissionMap::itemId] = [GalleryEntity::id]
+	  [GalleryAccessSubscriberMap::itemId] = [GalleryEntity::id]
+          AND
+          [GalleryAccessSubscriberMap::accessListId] IN (%s)
 	  AND
 	  [GalleryChildEntity::parentId] = [GalleryEntity::id]
 	  AND
 	  [GalleryDerivative::id] = [GalleryChildEntity::id]
 	  AND
-	  [GalleryDerivative::derivativeType] = ' . DERIVATIVE_TYPE_IMAGE_THUMBNAIL . '
-	';
+	  [GalleryDerivative::derivativeType] = ?
+	', $aclMarkers);
 
-	$data = array((int)$userId, 1, 'GalleryPhotoItem', (int)$userId);
-	array_splice($data, sizeof($data), 0, $groupIds);
-	$data[] = $storage->convertIntToBits($permissionBits);
-	$data[] = $storage->convertIntToBits(0);
+	$data = array((int)$userId, 1, 'GalleryPhotoItem');
+	$data = array_merge($data, $aclIds);
+	$data[] = DERIVATIVE_TYPE_IMAGE_THUMBNAIL;
 
 	$ret = $storage->execute($query, $data);
 	if ($ret->isError()) {

@@ -73,6 +73,8 @@ class StorageTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
+	$this->assert(is_int($id1), 'Id1 is not an int');
+	$this->assert(is_int($id2), 'Id2 is not an int');
 	$this->assert($id2 > $id1);
     }
 }

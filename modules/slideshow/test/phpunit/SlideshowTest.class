@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -83,8 +83,9 @@ class SlideshowTest extends GalleryTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$ret = GalleryPermissionMap::removeMapEntry(
-	    array('itemId' => $album->getId(), 'groupId' => $allUsersGroupId));
+
+	$ret = GalleryCoreApi::removeGroupPermission(
+	    $album->getId(), $allUsersGroupId, 'core.viewAll');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -147,9 +148,21 @@ class SlideshowTest extends GalleryTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	$ret = GalleryCoreApi::addGroupPermission(
+	    $photoDatum['id'], $allUsersGroupId, 'core.viewAll');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 	$photoData[] = $photoDatum;
 	list ($ret, $photoDatum) = $this->_addPhoto($subalbum->getId(),
 	    $imagePaths[3], $imageSizes[3], 12, $photoSizes[3]);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::addGroupPermission(
+	    $photoDatum['id'], $allUsersGroupId, 'core.viewSource');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -333,6 +346,7 @@ class SlideshowTest extends GalleryTestCase {
 	    "$test: Generate slideshow data<br>");
 	$this->assertEquals(count($expectedResults) - 1, count($slideData),
 	    "$test: Slideshow data size");
+
 	$slideIds = array();
 	foreach ($slideData as $slide) {
 	    foreach (array('id', 'sources.0.id', 'sources.0.serialNumber',
@@ -355,7 +369,7 @@ class SlideshowTest extends GalleryTestCase {
 		foreach ($expectedResults[$slide['id']][0] as $i => $id) {
 		    $this->assertEquals($id, $slide['sources'][$i]['id'],
 			"$test: Slide id " . $slide['id'] . " source $i id"
-			. '<br>' . $this->_dump($this->_photoData));
+			. '<br><pre>' . $this->_dump($this->_photoData)) . '</pre>';
 		}
 		foreach ($expectedResults[$slide['id']][1] as $i => $index) {
 		    $this->assertEquals($index, $slide['sizeClassMap'][$i],
@@ -405,7 +419,7 @@ class SlideshowTest extends GalleryTestCase {
      * T = 150
      * R = 300
      * R2 = 600
-     * 
+     *
      * Our test photos and derivatives:
      * 0 62x75                                   T=62x75
      * 1 200x178            R=300x267            T=150x133
@@ -413,7 +427,7 @@ class SlideshowTest extends GalleryTestCase {
      * 3 366x292  P=292x366                      T=120x150
      * 4 38x50    P=50x38   R=300x228            T=38x50
      * 5 62x75    P=75x62   R=300x248 R2=600x496 T=75x62
-     * 6 200x178  
+     * 6 200x178
      * 7 120x54             R=300x135
      * 8 366x292  P=292x366
      * 9 38x50    P=50x38   R=300x228
@@ -444,6 +458,7 @@ class SlideshowTest extends GalleryTestCase {
 	    $this->assert(false, "Set viewResizes permission");
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+
 	$ret = $this->_runTest('viewResize', array(
 	    $pd[0]['id'] => array(array($pd[0]['T']),
 				  array(0,0,0,0,0,0)),

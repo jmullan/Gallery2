@@ -87,10 +87,8 @@ class GalleryChildEntityHelper_simple {
 	}
 
 	if ($item->getCanContainChildren()) {
-	    list ($ret, $ids) =
-		GalleryChildEntityHelper_simple::_fetchChildItemIds($item, null, null,
-								    'GalleryItem', $permissionId,
-								    true);
+	    list ($ret, $ids) = GalleryChildEntityHelper_simple::_fetchChildItemIds(
+		$item, null, null, 'GalleryItem', $permissionId, true);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -116,8 +114,8 @@ class GalleryChildEntityHelper_simple {
      * @static
      */
     function fetchChildItemIds($item, $offset=null, $count=null) {
-	list ($ret, $ids) =
-	    GalleryChildEntityHelper_simple::_fetchChildItemIds($item, $offset, $count, 'GalleryItem');
+	list ($ret, $ids) = GalleryChildEntityHelper_simple::_fetchChildItemIds(
+	    $item, $offset, $count, 'GalleryItem');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -139,8 +137,8 @@ class GalleryChildEntityHelper_simple {
      * @static
      */
     function fetchChildDataItemIds($item, $offset=null, $count=null) {
-	list ($ret, $ids) =
-	    GalleryChildEntityHelper_simple::_fetchChildItemIds($item, $offset, $count, 'GalleryDataItem');
+	list ($ret, $ids) = GalleryChildEntityHelper_simple::_fetchChildItemIds(
+	    $item, $offset, $count, 'GalleryDataItem');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -162,8 +160,8 @@ class GalleryChildEntityHelper_simple {
      * @static
      */
     function fetchChildAlbumItemIds($item, $offset=null, $count=null) {
-	list ($ret, $ids) =
-	    GalleryChildEntityHelper_simple::_fetchChildItemIds($item, $offset, $count, 'GalleryAlbumItem');
+	list ($ret, $ids) = GalleryChildEntityHelper_simple::_fetchChildItemIds(
+	    $item, $offset, $count, 'GalleryAlbumItem');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -185,8 +183,8 @@ class GalleryChildEntityHelper_simple {
      * @static
      */
     function fetchChildItemIdsIgnorePermissions($item, $offset=null, $count=null) {
-	list ($ret, $ids) =
-	    GalleryChildEntityHelper_simple::_fetchChildItemIds($item, $offset, $count, 'GalleryItem', null);
+	list ($ret, $ids) = GalleryChildEntityHelper_simple::_fetchChildItemIds(
+	    $item, $offset, $count, 'GalleryItem', null);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -213,11 +211,17 @@ class GalleryChildEntityHelper_simple {
 	$classes = array('[GalleryChildEntity]', "[$class]");
 
 	if ($requiredPermission) {
-	    list ($ret, $permissionBits) = GalleryCoreApi::convertPermissionIdsToBits($requiredPermission);
+	    list ($ret, $aclIds) =
+		GalleryCoreApi::fetchAccessListIds($requiredPermission, $gallery->getActiveUserId());
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    $classes[] = '[GalleryPermissionMap]';
+	    $aclMarkers = GalleryUtilities::makeMarkers(count($aclIds));
+	    $classes[] = '[GalleryAccessSubscriberMap]';
+
+	    if (empty($aclIds)) {
+		return array(GalleryStatus::success(), array());
+	    }
 	}
 
 	if ($linkableOnly) {
@@ -257,11 +261,9 @@ class GalleryChildEntityHelper_simple {
 	if (!empty($orderBy)) {
 	    /* Postgres requires the order by column to be in the select list.. */
 	    $orderClause = 'ORDER BY ' . $orderBy;
-	    $groupExtra = ', ' . $orderColumn;
 	    $selectExtra = ', ' . $orderColumn;
 	} else {
 	    $orderClause = '';
-	    $groupExtra = '';
 	    $selectExtra = '';
 	}
 
@@ -289,46 +291,23 @@ class GalleryChildEntityHelper_simple {
 	}
 
 	if ($requiredPermission) {
-	    list ($ret, $groupIds) = GalleryCoreApi::fetchGroupsForUser($gallery->getActiveUserId());
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-	    $groupIds = array_keys($groupIds);
-	    $groupIdMarkers = GalleryUtilities::makeMarkers($groupIds);
-	    list ($ret, $andPermission) = $storage->getFunctionSql('BITAND',
-						    array('[GalleryPermissionMap::permission]', '?'));
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
 	    if ($linkableOnly) {
 		$query .= ' AND [GalleryEntity::isLinkable] = 1 ';
 	    }
 
 	    $query .= '
 	     AND
-	     ([GalleryPermissionMap::userId] = ?
-	      OR
-	     [GalleryPermissionMap::groupId] IN (' . $groupIdMarkers . '))
-	     AND
-	    ' . $andPermission . ' = ?
-	     AND
-	     [GalleryPermissionMap::itemId] = [GalleryChildEntity::id]
+	     [GalleryAccessSubscriberMap::itemId] = [GalleryChildEntity::id]
+             AND
+             [GalleryAccessSubscriberMap::accessListId] IN (' . $aclMarkers . ')
 	    ';
 	}
 
-	$query .= $extraWhere . '
-	GROUP BY
-	  [GalleryChildEntity::id] ' . $groupExtra . '
-	' . $orderClause;
+	$query .= $extraWhere . ' ' . $orderClause;
 
 	$data[] = $item->getId();
 	if ($requiredPermission) {
-	    $data[] = $gallery->getActiveUserId();
-	    array_splice($data, count($data), 0, $groupIds);
-	    $data[] = $storage->convertIntToBits($permissionBits);
-	    $data[] = $storage->convertIntToBits($permissionBits);
+	    $data = array_merge($data, $aclIds);
 	}
 	for ($i = 0; $i < $extraIds; $i++) {
 	    /* add the data for $orderWhere's extra ?'s */

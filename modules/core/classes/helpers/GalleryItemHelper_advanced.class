@@ -251,68 +251,56 @@ class GalleryItemHelper_advanced {
     function fetchItemizedDescendentCounts($itemIds) {
 	global $gallery;
 
-	list ($ret, $permissionBits) = GalleryCoreApi::convertPermissionIdsToBits(array('core.view'));
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
 	$storage =& $gallery->getStorage();
-	$markers = GalleryUtilities::makeMarkers($itemIds);
+	$itemIdMarkers = GalleryUtilities::makeMarkers($itemIds);
 
-	list ($ret, $concat) =
-	    $storage->getFunctionSql('CONCAT',
-				     array('[GalleryItemAttributesMap=1::parentSequence]',
-					   '[GalleryItemAttributesMap=1::itemId]',
-					   '\'%\''));
+	list ($ret, $concat) = $storage->getFunctionSql(
+	    'CONCAT',
+	    array('[GalleryItemAttributesMap=1::parentSequence]',
+		  '[GalleryItemAttributesMap=1::itemId]',
+		  '\'%\''));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	list ($ret, $groupIds) = GalleryCoreApi::fetchGroupsForUser($gallery->getActiveUserId());
+	list ($ret, $aclIds) =
+	    GalleryCoreApi::fetchAccessListIds('core.view', $gallery->getActiveUserId());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$groupIds = array_keys($groupIds);
-	$groupIdMarkers = GalleryUtilities::makeMarkers($groupIds);
-	list ($ret, $andPermission) = $storage->getFunctionSql('BITAND',
-						array('[GalleryPermissionMap::permission]', '?'));
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	if (empty($aclIds)) {
+	    return array(GalleryStatus::success(), array());
 	}
+	
+	$accessListMarkers = GalleryUtilities::makeMarkers(count($aclIds));
 
 	$query = sprintf('
         SELECT
           [GalleryItemAttributesMap=1::itemId],
-          COUNT(DISTINCT [GalleryAlbumItem::id]),
-          COUNT(DISTINCT [GalleryDataItem::id])
+          COUNT([GalleryAlbumItem::id]),
+          COUNT([GalleryDataItem::id])
         FROM
           [GalleryItemAttributesMap=1],
           [GalleryItemAttributesMap=2]
-            LEFT JOIN [GalleryAlbumItem] ON [GalleryItemAttributesMap=2::itemId] = [GalleryAlbumItem::id]
-            LEFT JOIN [GalleryDataItem] ON [GalleryItemAttributesMap=2::itemId] = [GalleryDataItem::id],
-          [GalleryPermissionMap]
+            LEFT JOIN [GalleryAlbumItem]
+              ON [GalleryItemAttributesMap=2::itemId] = [GalleryAlbumItem::id]
+            LEFT JOIN [GalleryDataItem]
+              ON [GalleryItemAttributesMap=2::itemId] = [GalleryDataItem::id],
+          [GalleryAccessSubscriberMap]
         WHERE
           [GalleryItemAttributesMap=1::itemId] IN (%s)
           AND
           [GalleryItemAttributesMap=2::parentSequence] LIKE %s
           AND
-          [GalleryItemAttributesMap=2::itemId] = [GalleryPermissionMap::itemId]
+          [GalleryItemAttributesMap=2::itemId] = [GalleryAccessSubscriberMap::itemId]
           AND
-          ([GalleryPermissionMap::userId] = ?
-           OR
-           [GalleryPermissionMap::groupId] IN (' . $groupIdMarkers . '))
-          AND
-        ' . $andPermission . ' > ?
-          GROUP BY
+          [GalleryAccessSubscriberMap::accessListId] IN (%s)
+        GROUP BY
           [GalleryItemAttributesMap=1::itemId]
-        ', $markers, $concat);
+        ', $itemIdMarkers, $concat, $accessListMarkers);
 
-	$data = $itemIds;
-	$data[] = $gallery->getActiveUserId();
-	array_splice($data, sizeof($data), 0, $groupIds);
-	$data[] = $storage->convertIntToBits($permissionBits);
-	$data[] = $storage->convertIntToBits(0);
+	$data = array_merge($itemIds, $aclIds);
 
 	list ($ret, $searchResults) = $gallery->search($query, $data);
 	if ($ret->isError()) {
@@ -554,13 +542,15 @@ class GalleryItemHelper_advanced {
 	}
 
 	/* Get all permissions newOwner has on the items directly or indirectly */
-	list ($ret, $newUserPermissions) = GalleryCoreApi::fetchPermissionsForItems($itemIds, $newOwner->getId());
+	list ($ret, $newUserPermissions) =
+	    GalleryCoreApi::fetchPermissionsForItems($itemIds, $newOwner->getId());
 	if ($ret->isError()) {
 	    GalleryCoreApi::releaseLocks($lockIds);
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	/* Get all permissions oldOwner has directly or indirectly on the item */
-	list ($ret, $oldUserPermissions) = GalleryCoreApi::fetchPermissionsForItems($itemIds, $oldOwner->getId());
+	list ($ret, $oldUserPermissions) =
+	    GalleryCoreApi::fetchPermissionsForItems($itemIds, $oldOwner->getId());
 	if ($ret->isError()) {
 	    GalleryCoreApi::releaseLocks($lockIds);
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -640,6 +630,7 @@ class GalleryItemHelper_advanced {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
+
 	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.view');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -647,55 +638,31 @@ class GalleryItemHelper_advanced {
 	$parentSequence[] = $itemId;
 	$parentSequence = implode('/', $parentSequence);
 
-	list ($ret, $permissionBits) = GalleryCoreApi::convertPermissionIdsToBits(array('core.view'));
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
+	list ($ret, $aclIds) =
+	    GalleryCoreApi::fetchAccessListIds('core.view', $gallery->getActiveUserId());
+	$aclMarkers = GalleryUtilities::makeMarkers(count($aclIds));
 
-	list ($ret, $groupIds) = GalleryCoreApi::fetchGroupsForUser($gallery->getActiveUserId());
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	$groupIds = array_keys($groupIds);
-	$groupIdMarkers = GalleryUtilities::makeMarkers($groupIds);
-	list ($ret, $andPermission) = $storage->getFunctionSql('BITAND',
-						array('[GalleryPermissionMap::permission]', '?'));
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	$query = sprintf('SELECT
+	$query = sprintf('
+        SELECT
 	  [GalleryAlbumItem::id],
 	  [GalleryItemAttributesMap::parentSequence],
 	  [GalleryItemAttributesMap::orderWeight]
 	FROM
-	  [GalleryAlbumItem], [GalleryItemAttributesMap], [GalleryPermissionMap]
+	  [GalleryAlbumItem], [GalleryItemAttributesMap], [GalleryAccessSubscriberMap]
 	WHERE
 	  [GalleryAlbumItem::id] = [GalleryItemAttributesMap::itemId]
 	  AND
 	  [GalleryItemAttributesMap::parentSequence] LIKE \'%s/%%\'
 	  AND
-	  [GalleryAlbumItem::id] = [GalleryPermissionMap::itemId]
-	  AND
-	  ([GalleryPermissionMap::userId] = ?
-	   OR
-	   [GalleryPermissionMap::groupId] IN (%s))
-	  AND
-	  %s > ?
-	GROUP BY
-	  [GalleryAlbumItem::id],
-	  [GalleryItemAttributesMap::parentSequence],
-	  [GalleryItemAttributesMap::orderWeight]
+	  [GalleryAlbumItem::id] = [GalleryAccessSubscriberMap::itemId]
+          AND
+          [GalleryAccessSubscriberMap::accessListId] IN (%s)
 	ORDER BY
 	  [GalleryItemAttributesMap::parentSequence],
 	  [GalleryItemAttributesMap::orderWeight]
-	', $parentSequence, $groupIdMarkers, $andPermission);
+	', $parentSequence, $aclMarkers);
 
-	$data = array($gallery->getActiveUserId());
-	array_splice($data, count($data), 0, $groupIds);
-	$data[] = $storage->convertIntToBits($permissionBits);
-	$data[] = $storage->convertIntToBits(0);
+	$data = $aclIds;
 
 	list ($ret, $searchResults) = $gallery->search($query, $data);
 	if ($ret->isError()) {

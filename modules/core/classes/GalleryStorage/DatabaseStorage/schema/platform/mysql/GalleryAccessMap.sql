@@ -3,8 +3,8 @@
     -- why it looks so ugly.  Editing it by hand would be a bad idea.
     --
 
-    CREATE TABLE DB_TABLE_PREFIXPermissionMap (
-  DB_COLUMN_PREFIXitemId
+    CREATE TABLE DB_TABLE_PREFIXAccessMap (
+  DB_COLUMN_PREFIXaccessListId
       int(11)
     
     NOT NULL
@@ -25,7 +25,15 @@
   
     , 
   
-    INDEX (DB_COLUMN_PREFIXitemId)
+      PRIMARY KEY (DB_COLUMN_PREFIXaccessListId
+        ,
+      DB_COLUMN_PREFIXuserId
+        ,
+      DB_COLUMN_PREFIXgroupId)
+    
+    , 
+  
+    INDEX (DB_COLUMN_PREFIXaccessListId)
     
       ,
     
@@ -35,6 +43,10 @@
     
     INDEX (DB_COLUMN_PREFIXgroupId)
     
+      ,
+    
+    INDEX (DB_COLUMN_PREFIXpermission)
+    
 
     ) TYPE=DB_TABLE_TYPE;
 
@@ -43,7 +55,7 @@
       DB_COLUMN_PREFIXmajor,
       DB_COLUMN_PREFIXminor
       ) VALUES (
-      'PermissionMap',
+      'AccessMap',
       1,
       0
       );

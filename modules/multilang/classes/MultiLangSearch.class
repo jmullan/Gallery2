@@ -107,24 +107,17 @@ class MultiLangSearch extends GallerySearchInterface_1_0 {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	list ($ret, $bits) = GalleryCoreApi::convertPermissionIdsToBits('core.view');
+	list ($ret, $aclIds) =
+	    GalleryCoreApi::fetchAccessListIds('core.view', $gallery->getActiveUserId());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-
-	list ($ret, $groupIds) = GalleryCoreApi::fetchGroupsForUser($gallery->getActiveUserId());
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	if (empty($aclIds)) {
+	    return array(GalleryStatus::success(),
+			 array('start' => 0, 'end' => '0',
+			       'count' => 0, 'results' => array()));
 	}
-
-	$storage =& $gallery->getStorage();
-	$groupIds = array_keys($groupIds);
-	$groupIdMarkers = GalleryUtilities::makeMarkers($groupIds);
-	list ($ret, $andPermission) = $storage->getFunctionSql('BITAND',
-						array('[GalleryPermissionMap::permission]', '?'));
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
+	$aclMarkers = GalleryUtilities::makeMarkers(count($aclIds));
 
 	$searchClause = array();
 	if (isset($options['title'])) {
@@ -138,57 +131,46 @@ class MultiLangSearch extends GallerySearchInterface_1_0 {
 	}
 	$searchString = implode(' OR ', $searchClause);
 
-	$countQuery = '
+	$countQuery = sprintf('
 	SELECT
-	  COUNT(DISTINCT [MultiLangItemMap::itemId])
+	  COUNT([MultiLangItemMap::itemId])
 	FROM
-	  [MultiLangItemMap], [GalleryPermissionMap]
+	  [MultiLangItemMap], [GalleryAccessSubscriberMap]
 	WHERE
-	  [MultiLangItemMap::itemId] = [GalleryPermissionMap::itemId]
+	  [MultiLangItemMap::itemId] = [GalleryAccessSubscriberMap::itemId]
+          AND
+          [GalleryAccessSubscriberMap::accessListId] IN (%s)
 	  AND
 	  [MultiLangItemMap::language] = ?
 	  AND
-	  ([GalleryPermissionMap::userId] = ?
-	   OR
-	   [GalleryPermissionMap::groupId] IN (' . $groupIdMarkers . '))
-	  AND
 	  (' . $searchString . ')
-	  AND
-	' . $andPermission . ' = ?';
+        ', $aclMarkers);
 
-	$query = '
-	SELECT DISTINCT
+	$query = sprintf('
+	SELECT
 	  [MultiLangItemMap::itemId],
 	  [MultiLangItemMap::title],
 	  [MultiLangItemMap::summary],
 	  [MultiLangItemMap::description]
 	FROM
-	  [MultiLangItemMap], [GalleryPermissionMap]
+	  [MultiLangItemMap], [GalleryAccessSubscriberMap]
 	WHERE
-	  [MultiLangItemMap::itemId] = [GalleryPermissionMap::itemId]
+	  [MultiLangItemMap::itemId] = [GalleryAccessSubscriberMap::itemId]
+          AND
+          [GalleryAccessSubscriberMap::accessListId] IN (%s)
 	  AND
 	  [MultiLangItemMap::language] = ?
 	  AND
-	  ([GalleryPermissionMap::userId] = ?
-	   OR
-	   [GalleryPermissionMap::groupId] IN (' . $groupIdMarkers . '))
-	  AND
 	  (' . $searchString . ')
-	  AND
-	' . $andPermission . ' = ?
 	ORDER BY
 	  [MultiLangItemMap::itemId] DESC
-	';
+	', $aclMarkers);
 
-	$data = array();
+	$data = $aclIds;
 	$data[] = $languageCode;
-	$data[] = $gallery->getActiveUserId();
-	array_splice($data, sizeof($data), 0, $groupIds);
 	foreach ($searchClause as $tmp) {
 	    $data[] = '%' . $criteria . '%';
 	}
-	$data[] = $storage->convertIntToBits($bits);
-	$data[] = $storage->convertIntToBits($bits);
 
 	/* Find the total */
 	list ($ret, $results) = $gallery->search($countQuery, $data);
@@ -198,9 +180,8 @@ class MultiLangSearch extends GallerySearchInterface_1_0 {
 	$result = $results->nextResult();
 	$numRows = (int)$result[0];
 
-	list ($ret, $results) = $gallery->search($query, $data,
-						 array('limit' => array('offset' => $offset,
-									'count' => $count)));
+	list ($ret, $results) = $gallery->search(
+	    $query, $data, array('limit' => array('offset' => $offset, 'count' => $count)));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

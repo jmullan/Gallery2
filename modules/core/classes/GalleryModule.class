@@ -108,7 +108,7 @@ class GalleryModule extends GalleryPlugin {
      *
      * @return object GalleryStatus a status code
      */
-    function installOrUpgrade($bootstrap=false) {
+    function installOrUpgrade($bootstrap=false, $statusMonitor=null) {
 	global $gallery;
 
 	if ($bootstrap) {
@@ -134,7 +134,7 @@ class GalleryModule extends GalleryPlugin {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
-	    $ret = $this->upgrade($installedVersion);
+	    $ret = $this->upgrade($installedVersion, $statusMonitor);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }

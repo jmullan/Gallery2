@@ -94,7 +94,7 @@ class ImageBlockTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	/* Add permission so album/item can appear in dailyImage,monthlyAlbum,etc */
+	/* Add permission so album/item can appear in dailyImage, monthlyAlbum, etc. */
 	list ($ret, $everybodyGroupId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.everybodyGroup');
 	if ($ret->isError()) {
@@ -102,7 +102,7 @@ class ImageBlockTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = GalleryCoreApi::addGroupPermission(
-			       $album->getId(), $everybodyGroupId, 'core.view', true);
+	    $album->getId(), $everybodyGroupId, 'core.view', true);
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -157,10 +157,10 @@ class ImageBlockTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-    list ($ret, $mimeType) = GalleryCoreApi::getMimeType($imagePath);
-    if ($ret->isError()) {
-        return array($ret->wrap(__FILE__, __LINE__), null);
-    }
+	list ($ret, $mimeType) = GalleryCoreApi::getMimeType($imagePath);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 	$ret = $photo->create($parentId, $imagePath, $mimeType,
 			      'testitem_' . time() . substr($imagePath, -4));
 	if ($ret->isError()) {
@@ -451,10 +451,13 @@ class ImageBlockTest extends GalleryTestCase {
 	/* Ensure periodic blocks only pick from publically visible items */
 	global $gallery;
 
-	$ret = GalleryCoreApi::removeGroupPermission(
-	    $this->_album->getId(), $this->_everybodyGroupId, 'core.view', true);
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	list ($ret, $groupIds) = GalleryCoreApi::fetchGroupsForUser($gallery->getActiveUserId());
+	foreach (array_keys($groupIds) as $groupId) {
+	    $ret = GalleryCoreApi::removeGroupPermission(
+		$this->_album->getId(), $groupId, 'core.view', true);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
 	}
 
 	list ($ret, $external) = GalleryView::loadView('imageblock:External');

@@ -58,7 +58,7 @@ class ConfirmDeleteControllerTest extends GalleryControllerTestCase {
 	$this->_saveUser = $gallery->getActiveUser();
 	$gallery->setActiveUser($this->_user);
 
-	// Create a watermark (it'll be created as our active user)
+	/* Create a watermark (it'll be created as our active user) */
 	$watermark = new WatermarkImage();
 	$ret = $watermark->create(__FILE__, 'test/file', 'phpunit_' . rand() . '.gif');
 	if ($ret->isError()) {
@@ -80,14 +80,15 @@ class ConfirmDeleteControllerTest extends GalleryControllerTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus(__FILE__, __LINE__);
 	}
-	$ret = GalleryCoreApi::addUserPermission($watermark->getId(), $this->_user->getId(), 'core.all');
+	$ret = GalleryCoreApi::addUserPermission(
+	    $watermark->getId(), $this->_user->getId(), 'core.all');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus(__FILE__, __LINE__);
 	}
 	$this->_watermark = $watermark;
 
-	// Create watermarked item
+	/* Create watermarked item */
 	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_getRootId());
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
@@ -96,7 +97,8 @@ class ConfirmDeleteControllerTest extends GalleryControllerTestCase {
 	$this->_markForCleanup($this->_item);
 	list ($ret, $this->_derivative) = $this->_createDerivative(
 	    $this->_item, $this->_item->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL, '', 'test/file',
-	    array('postfilterOperations' => 'composite|watermark/' . $watermark->getFileName() . ',...'));
+	    array('postfilterOperations' =>
+		      'composite|watermark/' . $watermark->getFileName() . ',...'));
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus(__FILE__, __LINE__);

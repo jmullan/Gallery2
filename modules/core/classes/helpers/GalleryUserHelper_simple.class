@@ -60,12 +60,10 @@ class GalleryUserHelper_simple {
 	}
 
 	if (!$hasPermission) {
-	    return GalleryStatus::error(ERROR_PERMISSION_DENIED,
-					__FILE__, __LINE__,
-					sprintf('user id: %s doesn\'t have permission: %s for item id: %s',
-						$gallery->getActiveUserId(),
-						$permission,
-						$itemId));
+	    return GalleryStatus::error(
+		ERROR_PERMISSION_DENIED, __FILE__, __LINE__,
+		sprintf('user id: %s doesn\'t have permission: %s for item id: %s',
+			$gallery->getActiveUserId(), $permission, $itemId));
 	}
 
 	return GalleryStatus::success();
@@ -86,50 +84,36 @@ class GalleryUserHelper_simple {
 	    return array(GalleryStatus::success(), true);
 	}
 
-	list ($ret, $groupIds) = GalleryCoreApi::fetchGroupsForUser($gallery->getActiveUserId());
+	list ($ret, $aclIds) =
+	    GalleryCoreApi::fetchAccessListIds($permission, $gallery->getActiveUserId());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-
-	$storage =& $gallery->getStorage();
-	$groupIds = array_keys($groupIds);
-	$groupIdMarkers = GalleryUtilities::makeMarkers($groupIds);
-	list ($ret, $andPermission) = $storage->getFunctionSql('BITAND',
-						array('[GalleryPermissionMap::permission]', '?'));
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	if (empty($aclIds)) {
+	    return array(GalleryStatus::success(), false);
 	}
+	$aclMarkers = GalleryUtilities::makeMarkers(count($aclIds));
 
-	$query = '
+	/*
+	 * TODO: We could get and cache the accessListId here, and then do a
+	 * hash lookup to see if it's in our valid aclid list.
+	 */
+	$query = sprintf('
         SELECT
-          COUNT([GalleryPermissionMap::itemId])
+          [GalleryAccessSubscriberMap::itemId]
         FROM
-          [GalleryPermissionMap]
+          [GalleryAccessSubscriberMap]
         WHERE
-          [GalleryPermissionMap::itemId] = ?
+          [GalleryAccessSubscriberMap::itemId] = ?
           AND
-          ([GalleryPermissionMap::userId] = ?
-           OR
-           [GalleryPermissionMap::groupId] IN (' . $groupIdMarkers . '))
-          AND
-        ' . $andPermission . ' = ?
-        GROUP BY
-          [GalleryPermissionMap::itemId]
-        ';
+          [GalleryAccessSubscriberMap::accessListId] IN (%s)
+        ', $aclMarkers);
 
-	list ($ret, $bits) = GalleryCoreApi::convertPermissionIdsToBits($permission);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
+	$data = array($itemId);
+	$data = array_merge($data, $aclIds);
 
-	$data = array();
-	$data[] = $itemId;
-	$data[] = $gallery->getActiveUserId();
-	array_splice($data, sizeof($data), 0, $groupIds);
-	$data[] = $storage->convertIntToBits($bits);
-	$data[] = $storage->convertIntToBits($bits);
-
-	list($ret, $searchResults) = $gallery->search($query, $data);
+	list($ret, $searchResults) =
+	    $gallery->search($query, $data, array('limit' => array('count' => 1)));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

@@ -25,7 +25,7 @@ class UpgradeCoreModuleStep extends UpgradeStep {
 	return _('Upgrade Core');
     }
 
-    function loadTemplateData(&$templateData) {
+    function processRequest() {
 	global $gallery;
 	if (!$gallery->getDebug()) {
 	    $gallery->setDebug('buffered');
@@ -60,12 +60,16 @@ class UpgradeCoreModuleStep extends UpgradeStep {
 	$templateData['coreVersion'] = $core->getVersion();
 	$templateData['storeConfig'] = $gallery->getConfig('storage.config');
 
+	$template = new StatusTemplate();
+	$template->renderHeader();
+	$template->renderStatusBlock();
+
 	if (isset($_POST['confirm'])) {
 	    /*
 	     * Do the upgrade in bootstrap mode so that we avoid going to the
 	     * database for anything that's not vital.
 	     */
-	    $ret = $core->installOrUpgrade(true);
+	    $ret = $core->installOrUpgrade(true, $template);
 	    if ($ret->isSuccess()) {
 		list ($ret,  $ignored) = $core->activate();
 		if ($ret->isSuccess()) {
@@ -90,6 +94,9 @@ class UpgradeCoreModuleStep extends UpgradeStep {
 		$this->setComplete(true);
 	    }
 	}
+
+	$template->hideStatusBlock();
+	$template->renderBodyAndFooter($templateData);
     }
 }
 ?>

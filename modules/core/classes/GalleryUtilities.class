@@ -436,17 +436,18 @@ class GalleryUtilities {
      * @access private
      * @static
      */
-    function makeMarkers($count) {
-
+    function makeMarkers($count, $markerFragment='?') {
 	if (is_array($count)) {
 	    $count = sizeof($count);
 	}
 
-	$markers = array();
-	for ($i = 0; $i < $count; $i++) {
-	    $markers[$i] = '?';
+	$markers = '';
+	if ($count > 1) {
+	    $markers = str_repeat($markerFragment . ',', $count-1);
 	}
-	return join(', ', $markers);
+	$markers .= $markerFragment;
+	
+	return $markers;
     }
 
     /**

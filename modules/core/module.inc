@@ -38,7 +38,7 @@ class CoreModule extends GalleryModule {
 	$this->setId('core');
 	$this->setName('Core');
 	$this->setGalleryVersion('2.0-beta-1+');
-	$this->setVersion('0.9.5'); /* Update CoreModuleExtras::upgrade also! */
+	$this->setVersion('0.9.6'); /* Update CoreModuleExtras::upgrade also! */
 	$this->setDescription($gallery->i18n('Gallery 2 Core Module'));
 	$this->setGroup('gallery', $this->translate('Gallery'));
 	$this->setCallbacks('registerEventListeners|' .
@@ -508,9 +508,9 @@ class CoreModule extends GalleryModule {
      * We pushed all this code into its own file since we need it very rarely so it doesn't
      * make sense to load it every single time.
      */
-    function upgrade($currentVersion) {
+    function upgrade($currentVersion, $statusMonitor) {
 	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/CoreModuleExtras.inc');
-	$ret = CoreModuleExtras::upgrade($this, $currentVersion);
+	$ret = CoreModuleExtras::upgrade($this, $currentVersion, $statusMonitor);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

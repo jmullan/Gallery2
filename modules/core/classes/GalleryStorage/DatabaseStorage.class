@@ -708,7 +708,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 
 	/* Get the id of the next object from our sequence */
 	$this->_traceStart();
-	$id = $this->_db->GenId($this->_tablePrefix . DATABASE_SEQUENCE_ID);
+	$id = (int)$this->_db->GenId($this->_tablePrefix . DATABASE_SEQUENCE_ID);
 	$this->_traceStop();
 
 	if (isset($setGenID)) {
@@ -1316,7 +1316,6 @@ class DatabaseStorage /* implements GalleryStorage */ {
      * @return object GalleryStatus a status code
      */
     function updateMapEntry($mapName, $match, $change) {
-
 	$ret = $this->_guaranteeTransaction();
 	if ($ret->isError()) {
 	    return $ret;

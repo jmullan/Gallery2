@@ -34,6 +34,78 @@
 class GalleryPermissionHelper_simple {
 
     /**
+     * Fetch all the access list ids that grant the given permission to the
+     * given user (either directly or via a group).
+     *
+     * @param string the permission (eg, 'core.view')
+     * @param int the user id
+     * @return array object GalleryStatus a status code
+     *               array int access list ids
+     */
+    function fetchAccessListIds($permission, $userId) {
+	global $gallery;
+
+	$cacheKey = "GalleryPermissionHelper::fetchAccessListIds($permission, $userId)";
+	if (!GalleryDataCache::containsKey($cacheKey)) {
+	    list ($ret, $groupIds) = GalleryCoreApi::fetchGroupsForUser($gallery->getActiveUserId());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $groupIds = array_keys($groupIds);
+	    $groupIdMarkers = GalleryUtilities::makeMarkers($groupIds);
+
+	    list ($ret, $bits) = GalleryCoreApi::convertPermissionIdsToBits($permission);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    $query = sprintf('
+            SELECT DISTINCT
+              [GalleryAccessMap::accessListId]
+            FROM
+              [GalleryAccessMap]
+            WHERE
+              ([GalleryAccessMap::userId] = ?
+              OR
+              [GalleryAccessMap::groupId] IN (%s))
+              AND
+              [GalleryAccessMap::permission] & ? = ?
+            ', $groupIdMarkers);
+
+	    $storage =& $gallery->getStorage();
+
+	    $data = array($userId);
+	    $data = array_merge($data, $groupIds);
+	    $data[] = $storage->convertIntToBits($bits);
+	    $data[] = $storage->convertIntToBits($bits);
+
+	    list ($ret, $results) = $gallery->search($query, $data);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    $aclIds = array();
+	    while ($result = $results->nextResult()) {
+		$aclIds[] = (int)$result[0];
+	    }
+	    GalleryDataCache::put($cacheKey, $aclIds);
+	} else {
+	    $aclIds = GalleryDataCache::get($cacheKey);
+	}
+
+	return array(GalleryStatus::success(), $aclIds);
+    }
+
+    /**
+     * Clear all cached access list ids
+     * @static
+     * @private
+     */
+    function _clearCachedAccessListIds() {
+	GalleryDataCache::removeByPattern("GalleryPermissionHelper::fetchAccessListIds");
+    }
+
+    /**
      * Return the permission bits for a set of permission ids
      *
      * @return array object GalleryStatus a status code

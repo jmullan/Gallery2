@@ -62,21 +62,23 @@ class GalleryPermissionHelper_medium {
 	
 	$groupIds = array_keys($groupIds);
 	$groupIdMarkers = GalleryUtilities::makeMarkers($groupIds);
-	
+
 	$query = '
         SELECT
-          [GalleryPermissionMap::itemId],
-          BIT_OR([GalleryPermissionMap::permission])
+            [GalleryAccessSubscriberMap::itemId],
+            BIT_OR([GalleryAccessMap::permission])
         FROM
-          [GalleryPermissionMap]
+            [GalleryAccessMap], [GalleryAccessSubscriberMap]
         WHERE
-          [GalleryPermissionMap::itemId] IN (' . $itemIdMarkers . ')
-          AND
-          ([GalleryPermissionMap::userId] = ?
-	    OR
-           [GalleryPermissionMap::groupId] IN (' . $groupIdMarkers . '))
+            [GalleryAccessSubscriberMap::itemId] IN (' . $itemIdMarkers . ')
+            AND
+            [GalleryAccessSubscriberMap::accessListId] = [GalleryAccessMap::accessListId]
+            AND
+            ([GalleryAccessMap::userId] = ?
+            OR
+            [GalleryAccessMap::groupId] IN (' . $groupIdMarkers . '))
         GROUP BY
-          [GalleryPermissionMap::itemId]
+            [GalleryAccessSubscriberMap::itemId]
         ';
 	
 	$data = $itemIds;
@@ -103,8 +105,8 @@ class GalleryPermissionHelper_medium {
 	    }
 
 	    foreach ($permissions as $permission) {
-		// $result[0] = itemId
-		// $permission['id'] = the permission name for that bit
+		/* $result[0] = itemId */
+		/* $permission['id'] = the permission name for that bit */
 		$permTable[$result[0]][$permission['id']] = 1;
 		GalleryDataCache::cachePermissions($result[0], $permission['id']);
 	    }
@@ -248,7 +250,8 @@ class GalleryPermissionHelper_medium {
 	if (GalleryDataCache::containsKey($cacheKey)) {
 	    $permissions = GalleryDataCache::get($cacheKey);
 	} else {
-	    list ($ret, $permissionsTable) = GalleryCoreApi::fetchPermissionsForItems(array($itemId));
+	    list ($ret, $permissionsTable) =
+		GalleryCoreApi::fetchPermissionsForItems(array($itemId));
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }

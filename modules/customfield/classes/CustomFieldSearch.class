@@ -53,9 +53,10 @@ class CustomFieldSearch extends GallerySearchInterface_1_0 {
 
 	$info = array('name' => $module->translate('Custom Fields'),
 		      'description' => $module->translate('Custom Fields Module'),
-		      'options' => array('customfield' =>
-				array('description' => $module->translate('Search custom fields'),
-				'enabled' => 1)));
+		      'options' => array(
+			  'customfield' => array(
+			      'description' => $module->translate('Search custom fields'),
+			      'enabled' => 1)));
 	return array(GalleryStatus::success(), $info);
     }
 
@@ -65,68 +66,50 @@ class CustomFieldSearch extends GallerySearchInterface_1_0 {
     function search($options, $criteria, $offset=0, $count=-1) {
 	global $gallery;
 
-	list ($ret, $bits) = GalleryCoreApi::convertPermissionIdsToBits('core.view');
+	list ($ret, $aclIds) =
+	    GalleryCoreApi::fetchAccessListIds('core.view', $gallery->getActiveUserId());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-
-	list ($ret, $groupIds) = GalleryCoreApi::fetchGroupsForUser($gallery->getActiveUserId());
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	if (empty($aclIds)) {
+	    return array(GalleryStatus::success(),
+			 array('start' => 0, 'end' => '0',
+			       'count' => 0, 'results' => array()));
 	}
+	$aclMarkers = GalleryUtilities::makeMarkers(count($aclIds));
 
-	$storage =& $gallery->getStorage();
-	$groupIds = array_keys($groupIds);
-	$groupIdMarkers = GalleryUtilities::makeMarkers($groupIds);
-	list ($ret, $andPermission) = $storage->getFunctionSql('BITAND',
-						array('[GalleryPermissionMap::permission]', '?'));
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	$countQuery = '
+	$countQuery = sprintf('
 	SELECT
-	  COUNT(DISTINCT [CustomFieldMap::itemId])
+	  COUNT([CustomFieldMap::itemId])
 	FROM
-	  [CustomFieldMap], [GalleryPermissionMap]
+	  [CustomFieldMap], [GalleryAccessSubscriberMap]
 	WHERE
-	  [CustomFieldMap::itemId] = [GalleryPermissionMap::itemId]
-	  AND
-	  ([GalleryPermissionMap::userId] = ?
-	   OR
-	   [GalleryPermissionMap::groupId] IN (' . $groupIdMarkers . '))
+	  [CustomFieldMap::itemId] =  [GalleryAccessSubscriberMap::itemId] 
+          AND
+          [GalleryAccessSubscriberMap::accessListId] IN (%s)
 	  AND
 	  [CustomFieldMap::value] LIKE ?
-	  AND
-	' . $andPermission . ' = ?';
+        ', $aclMarkers);
 
-	$query = '
-	SELECT DISTINCT
+	$query = sprintf('
+	SELECT
 	  [CustomFieldMap::itemId],
 	  [CustomFieldMap::field],
 	  [CustomFieldMap::value]
 	FROM
-	  [CustomFieldMap], [GalleryPermissionMap]
+	  [CustomFieldMap], [GalleryAccessSubscriberMap]
 	WHERE
-	  [CustomFieldMap::itemId] = [GalleryPermissionMap::itemId]
-	  AND
-	  ([GalleryPermissionMap::userId] = ?
-	   OR
-	   [GalleryPermissionMap::groupId] IN (' . $groupIdMarkers . '))
+	  [CustomFieldMap::itemId] = [GalleryAccessSubscriberMap::itemId]
+          AND
+          [GalleryAccessSubscriberMap::accessListId] IN (%s)
 	  AND
 	  [CustomFieldMap::value] LIKE ?
-	  AND
-	' . $andPermission . ' = ?
 	ORDER BY
 	  [CustomFieldMap::itemId] DESC
-	';
+	', $aclMarkers);
 
-	$data = array();
-	$data[] = $gallery->getActiveUserId();
-	array_splice($data, sizeof($data), 0, $groupIds);
+	$data = $aclIds;
 	$data[] = '%' . $criteria . '%';
-	$data[] = $storage->convertIntToBits($bits);
-	$data[] = $storage->convertIntToBits($bits);
 
 	/* Find the total */
 	list ($ret, $results) = $gallery->search($countQuery, $data);
@@ -136,9 +119,8 @@ class CustomFieldSearch extends GallerySearchInterface_1_0 {
 	$result = $results->nextResult();
 	$numRows = (int)$result[0];
 
-	list ($ret, $results) = $gallery->search($query, $data,
-						 array('limit' => array('offset' => $offset,
-									'count' => $count)));
+	list ($ret, $results) = $gallery->search(
+	    $query, $data, array('limit' => array('offset' => $offset, 'count' => $count)));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

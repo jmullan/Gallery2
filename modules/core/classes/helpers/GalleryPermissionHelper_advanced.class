@@ -25,6 +25,11 @@
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
+GalleryCoreApi::relativeRequireOnce(
+    'modules/core/classes/helpers/GalleryPermissionHelper_simple.class');
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryAccessMap.class');
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryAccessSubscriberMap.class');
+
 /**
  * The central registry for all permissions in the system
  *
@@ -36,14 +41,16 @@ class GalleryPermissionHelper_advanced {
     /**
      * Add the given itemid, userid, permission mapping
      *
-     * @param int the id of the GalleryGroup
-     * @param array userid => permission
+     * @param int the id of the GalleryItem
+     * @param int the id of the GalleryUser
+     * @param string the permission id
+     * @param whether or not this call applies to child items
      * @return object GalleryStatus a status code
      * @static
      */
     function addUserPermission($itemId, $userId, $permission, $applyToChildren=false) {
-	$ret = GalleryPermissionHelper_advanced::_addPermission(
-            $itemId, $userId, 0, $permission, $applyToChildren);
+	$ret = GalleryPermissionHelper_advanced::_changePermission(
+	    'add', $itemId, $userId, 0, $permission, $applyToChildren);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -59,16 +66,18 @@ class GalleryPermissionHelper_advanced {
     }
 
     /**
-     * Add the given itemid, userid, permission mapping
+     * Add the given itemid, groupid, permission mapping
      *
+     * @param int the id of the GalleryItem
      * @param int the id of the GalleryGroup
-     * @param array userid => permission
+     * @param string the permission id
+     * @param whether or not this call applies to child items
      * @return object GalleryStatus a status code
      * @static
      */
     function addGroupPermission($itemId, $groupId, $permission, $applyToChildren=false) {
-	$ret = GalleryPermissionHelper_advanced::_addPermission(
-            $itemId, 0, $groupId, $permission, $applyToChildren);
+	$ret = GalleryPermissionHelper_advanced::_changePermission(
+	    'add', $itemId, 0, $groupId, $permission, $applyToChildren);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -115,113 +124,18 @@ class GalleryPermissionHelper_advanced {
     }
 
     /**
-     * Add the given itemId, userId, groupId, permission mapping
+     * Remove the given itemid, userid, permission mapping
      *
      * @param int the id of the GalleryItem
      * @param int the id of the GalleryUser
-     * @param int the userid of the GalleryGroup
-     * @param int the permission id
-     * @return object GalleryStatus a status code
-     * @access private
-     * @static
-     */
-    function _addPermission($itemId, $userId, $groupId, $permission, $applyToChildren) {
-	global $gallery;
-	if (empty($itemId) || !isset($userId) || !isset($groupId) || empty($permission)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-
-	/* Convert the permission to its bits */
-	list($ret, $addBits) = GalleryCoreApi::convertPermissionIdsToBits($permission);
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	/* Figure out what the current bits are */
-	list ($ret, $currentBits) = GalleryPermissionHelper_advanced::_fetchPermissionBitsForItem(
-            $itemId, $userId, $groupId);
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	/* Figure out if we had any bits to begin with */
-	if (isset($currentBits)) {
-	    $needToAddEntry = 0;
-	} else {
-	    $needToAddEntry = 1;
-	    $currentBits = 0;
-	}
-
-	$newBits = $currentBits | $addBits;
-
-	require_once(dirname(__FILE__) . '/../GalleryPermissionMap.class');
-	if ($newBits != $currentBits) {
-	    if ($needToAddEntry) {
-		/* Add a new entry in our map to reflect this change. */
-		$ret = GalleryPermissionMap::addMapEntry(array('itemId' => $itemId,
-							       'userId' => $userId,
-							       'groupId' => $groupId,
-							       'permission' => $newBits));
-	    } else {
-		/* Update the current entry in our map to reflect this change. */
-		$ret = GalleryPermissionMap::updateMapEntry(array('itemId' => $itemId,
-								  'userId' => $userId,
-								  'groupId' => $groupId),
-							    array('permission' => $newBits));
-	    }
-
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-
-	    $event = GalleryCoreApi::newEvent('Gallery::AddPermission');
-	    $event->setData(array('userId' => $userId,
-				  'groupId' => $groupId,
-				  'itemId' => $itemId,
-				  'oldBits' => $currentBits,
-				  'addBits' => $addBits,
-				  'newBits' => $newBits));
-	    list ($ret) = GalleryCoreApi::postEvent($event);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-	}
-
-	/*
-	 * Apply to all my children, if necessary.
-	 */
-	if ($applyToChildren) {
-	    $gallery->guaranteeTimeLimit(5);
-	    list ($ret, $childIds) =
-		GalleryCoreApi::fetchChildItemIdsWithPermission($itemId, 'core.changePermissions');
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-	    foreach ($childIds as $childId) {
-		$ret = GalleryPermissionHelper_advanced::_addPermission($childId,
-									$userId,
-									$groupId,
-									$permission,
-									$applyToChildren);
-		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
-	    }
-	}
-
-	return GalleryStatus::success();
-    }
-
-    /**
-     * Remove the given itemid, userid, permission mapping
-     *
-     * @param int the id of the GalleryGroup
+     * @param string the permission id
+     * @param whether or not this call applies to child items
      * @return object GalleryStatus a status code
      * @static
      */
     function removeUserPermission($itemId, $userId, $permission, $applyToChildren=false) {
-	$ret = GalleryPermissionHelper_advanced::_removePermission(
-            $itemId, $userId, 0, $permission, $applyToChildren);
+	$ret = GalleryPermissionHelper_advanced::_changePermission(
+	    'remove', $itemId, $userId, 0, $permission, $applyToChildren);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -239,13 +153,16 @@ class GalleryPermissionHelper_advanced {
     /**
      * Remove the given itemid, userid, permission mapping
      *
+     * @param int the id of the GalleryItem
      * @param int the id of the GalleryGroup
+     * @param string the permission id
+     * @param whether or not this call applies to child items
      * @return object GalleryStatus a status code
      * @static
      */
     function removeGroupPermission($itemId, $groupId, $permission, $applyToChildren=false) {
-	$ret = GalleryPermissionHelper_advanced::_removePermission(
-            $itemId, 0, $groupId, $permission, $applyToChildren);
+	$ret = GalleryPermissionHelper_advanced::_changePermission(
+	    'remove', $itemId, 0, $groupId, $permission, $applyToChildren);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -259,110 +176,227 @@ class GalleryPermissionHelper_advanced {
     }
 
     /**
-     * Remove the given itemId, userId, groupId, permission mapping
+     * Make the appropriate permission change.
      *
+     * @param string the type of change ('add' or 'remove')
      * @param int the id of the GalleryItem
      * @param int the id of the GalleryUser
-     * @param int the userid of the GalleryGroup
+     * @param int the id of the GalleryGroup
      * @param int the permission id
+     * @param whether or not this call applies to child items
      * @return object GalleryStatus a status code
      * @access private
      * @static
      */
-    function _removePermission($itemId, $userId, $groupId, $permission, $applyToChildren) {
+    function _changePermission($changeType, $itemId, $userId, $groupId,
+			       $permission, $applyToChildren) {
 	global $gallery;
-	if (empty($itemId) || !isset($userId) || !isset($groupId) || empty($permission)) {
+	if (empty($itemId) || !isset($userId) || !isset($groupId) || empty($permission) ||
+	    ($changeType != 'add') && ($changeType != 'remove')) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	}
+	$storage =& $gallery->getStorage();
+
+	list ($ret, $lockId) =
+	    GalleryPermissionHelper_advanced::_getAccessListCompacterLock('read');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* Convert the permission to its bits */
-	list($ret, $removeBits) = GalleryCoreApi::convertPermissionIdsToBits($permission);
+	list($ret, $deltaBits) = GalleryCoreApi::convertPermissionIdsToBits($permission);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	/* Figure out what the current bits are */
-	list ($ret, $currentBits)  = GalleryPermissionHelper_advanced::_fetchPermissionBitsForItem(
-            $itemId, $userId, $groupId);
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	if (!isset($currentBits)) {
-	    if ($gallery->getDebug()) {
-		$gallery->debug("Tried to remove a non-existant permission!");
-	    }
-	    return GalleryStatus::success();
-
-	    /*
-	     * If we fail with an error here, then applyToChildren permission
-	     * deletes will fail because we don't know if the permission exists
-	     * before we try to remove it.
-	     *
-	     * return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
-	     */
-	}
-
-	$newBits = $currentBits & ~$removeBits;
-
-	require_once(dirname(__FILE__) . '/../GalleryPermissionMap.class');
-	if ($newBits != $currentBits) {
-	    if ($newBits == 0) {
-		/* Remove the map entry; there are no bits left! */
-		$ret = GalleryPermissionMap::removeMapEntry(array('itemId' => $itemId,
-								  'userId' => $userId,
-								  'groupId' => $groupId));
-	    } else {
-		/* Update the current entry in our map to reflect this change. */
-		$ret = GalleryPermissionMap::updateMapEntry(array('itemId' => $itemId,
-								  'userId' => $userId,
-								  'groupId' => $groupId),
-							    array('permission' => $newBits));
-	    }
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-
-	    $event = GalleryCoreApi::newEvent('Gallery::RemovePermission');
-	    $event->setData(array('userId' => $userId,
-				  'groupId' => $groupId,
-				  'itemId' => $itemId,
-				  'oldBits' => $currentBits,
-				  'removeBits' => $removeBits,
-				  'newBits' => $newBits));
-	    list ($ret) = GalleryCoreApi::postEvent($event);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
 	}
 
 	/*
-	 * Apply to all my children, if necessary.
+	 * We can always change the given item, whether or not it has core.changePermission but
+	 * we can only propagate the change downwards to items that have core.changePermission.
 	 */
+	$data = array();
 	if ($applyToChildren) {
-	    $gallery->guaranteeTimeLimit(5);
-	    list ($ret, $childIds) =
-		GalleryCoreApi::fetchChildItemIdsWithPermission($itemId, 'core.changePermissions');
+	    list ($ret, $parentSequence) = GalleryCoreApi::fetchParentSequence($itemId);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-	    foreach ($childIds as $childId) {
-		$ret = GalleryPermissionHelper_advanced::_removePermission($childId,
-							       $userId,
-							       $groupId,
-							       $permission,
-							       $applyToChildren);
+	    $parentSequence[] = $itemId;
+	    $parentSequence = join('/', $parentSequence);
+
+	    list ($ret, $aclIds) = GalleryCoreApi::fetchAccessListIds(
+		'core.changePermissions', $gallery->getActiveUserId());
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    $aclMarkers = GalleryUtilities::makeMarkers(count($aclIds));
+
+	    $query = sprintf('
+            SELECT
+              [GalleryAccessSubscriberMap::accessListId],
+              [GalleryItemAttributesMap::itemId]
+            FROM
+              [GalleryItemAttributesMap],
+              [GalleryAccessSubscriberMap]
+            WHERE
+              [GalleryItemAttributesMap::itemId] = [GalleryAccessSubscriberMap::itemId]
+              AND
+              ([GalleryItemAttributesMap::itemId] = ?
+               OR
+               ([GalleryItemAttributesMap::parentSequence] LIKE ?
+                AND
+                [GalleryAccessSubscriberMap::accessListId] IN (%s)))
+            ', $aclMarkers);
+	    $data[] = $itemId;
+	    $data[] = "$parentSequence/%";
+	    $data = array_merge($data, $aclIds);
+	} else {
+	    $query = '
+            SELECT
+              [GalleryAccessSubscriberMap::accessListId],
+              [GalleryAccessSubscriberMap::itemId]
+            FROM
+              [GalleryAccessSubscriberMap]
+            WHERE
+              [GalleryAccessSubscriberMap::itemId] = ?
+            ';
+	    $data[] = $itemId;
+	}
+
+	list ($ret, $searchResults) = $gallery->search($query, $data);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/*
+	 * Now we're getting back a series of acl id => item id pairs from the database, each of
+	 * which we need to convert.  When we see an acl id we haven't seen before, create a new
+	 * ACL for it with our permission change applied, and put that item id in a queue to
+	 * be moved to that new acl
+	 */
+	$oldToNewAclMapping = array();
+	$itemsToBeRemapped = array();
+	
+	while ($result = $searchResults->nextResult()) {
+	    list ($oldAclId, $targetItemId) = array((int)$result[0], (int)$result[1]);
+	    if (!isset($oldToNewAclMapping[$oldAclId])) {
+		/* Figure out what the current bits are */
+		list ($ret, $currentBits) =
+		    GalleryPermissionHelper_advanced::_fetchPermissionBitsForItem(
+			$targetItemId, $userId, $groupId);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+
+		$newAclId = null;
+		if ($changeType == 'add') {
+		    if (($currentBits | $deltaBits) == $currentBits) {
+			/* The item's acl already has the bits we want to add */
+		    } else {
+			/* Clone the acl */
+			list($ret, $newAclId) =
+			    GalleryPermissionHelper_advanced::_copyAccessList($oldAclId);
+			if ($ret->isError()) {
+			    return $ret->wrap(__FILE__, __LINE__);
+			}
+
+			$newBits = $currentBits | $deltaBits;
+			if (empty($currentBits)) {
+			    /* Add a new entry in our map to reflect this change. */
+			    $ret = GalleryAccessMap::addMapEntry(
+				array('accessListId' => $newAclId,
+				      'userId' => $userId,
+				      'groupId' => $groupId,
+				      'permission' => $newBits));
+			} else {
+			    /* Update the current entry in our map to reflect this change. */
+			    $ret = GalleryAccessMap::updateMapEntry(
+				array('accessListId' => $newAclId,
+				      'userId' => $userId,
+				      'groupId' => $groupId),
+				array('permission' => $newBits));
+			}
+			if ($ret->isError()) {
+			    return $ret->wrap(__FILE__, __LINE__);
+			}
+		    }
+		} else {
+		    $newBits = $currentBits & ~$deltaBits;
+		    if (!$currentBits) {
+			if ($gallery->getDebug()) {
+			    $gallery->debug("Tried to remove a non-existant permission!");
+			}
+		    } else if ($currentBits == $newBits) {
+			/* The item's acl doesn't have the bits we want to remove */
+		    } else {
+			/* Clone the acl */
+			list($ret, $newAclId) =
+			    GalleryPermissionHelper_advanced::_copyAccessList($oldAclId);
+			if ($ret->isError()) {
+			    return $ret->wrap(__FILE__, __LINE__);
+			}
+
+			if ($newBits == 0) {
+			    /* Remove the map entry; there are no bits left! */
+			    $ret = GalleryAccessMap::removeMapEntry(
+				array('accessListId' => $newAclId,
+				      'userId' => $userId,
+				      'groupId' => $groupId));
+			} else {
+			    /* Update the current entry in our map to reflect this change. */
+			    $ret = GalleryAccessMap::updateMapEntry(
+				array('accessListId' => $newAclId,
+				      'userId' => $userId,
+				      'groupId' => $groupId),
+				array('permission' => $newBits));
+			}
+			if ($ret->isError()) {
+			    return $ret->wrap(__FILE__, __LINE__);
+			}
+		    }
+		}
+
+		$oldToNewAclMapping[$oldAclId] = $newAclId;
+	    }
+
+	    if ($newAclId) {
+		$itemsToBeRemapped[$oldAclId][] = $targetItemId;
+
+		if (count($itemsToBeRemapped[$oldAclId]) >= 200) {
+		    $ret = GalleryAccessSubscriberMap::updateMapEntry(
+			array('itemId' => $itemsToBeRemapped[$oldAclId]),
+			array('accessListId' => $newAclId));
+		    if ($ret->isError()) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
+		    $itemsToBeRemapped[$oldAclId] = array();
+		}
+	    }
+	}
+
+	foreach (array_keys($itemsToBeRemapped) as $oldAclId) {
+	    if ($oldToNewAclMapping[$oldAclId] && !empty($itemsToBeRemapped[$oldAclId])) {
+		$ret = GalleryAccessSubscriberMap::updateMapEntry(
+		    array('itemId' => $itemsToBeRemapped[$oldAclId]),
+		    array('accessListId' => $oldToNewAclMapping[$oldAclId]));
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
 	}
 
+	GalleryPermissionHelper_simple::_clearCachedAccessListIds();
+	    
+	$ret = GalleryCoreApi::releaseLocks($lockId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
 	return GalleryStatus::success();
     }
 
     /**
-     * Remove all permissions for the given itemid
+     * Remove all permissions for the given itemid.  We do this by setting its access list id to
+     * zero, which corresponds to no acl.  We leave the row around in the map, though so that we
+     * don't have to worry about whether it exists or not.
      *
      * @param mixed item id or array of ids
      * @return object GalleryStatus a status code
@@ -374,14 +408,13 @@ class GalleryPermissionHelper_advanced {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
 
-	/*
-	 * Remove all relationships for this item from our map.
-	 */
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/../GalleryPermissionMap.class');
-	$ret = GalleryPermissionMap::removeMapEntry(array('itemId' => $itemId));
+	$ret = GalleryAccessSubscriberMap::updateMapEntry(
+	    array('itemId' => $itemId),
+	    array('accessListId' => 0));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
+
 	return GalleryStatus::success();
     }
 
@@ -405,15 +438,18 @@ class GalleryPermissionHelper_advanced {
 
 	$query = '
         SELECT
-          [GalleryPermissionMap::userId],
-          [GalleryPermissionMap::groupId],
-          [GalleryPermissionMap::permission]
+            [GalleryAccessMap::userId],
+            [GalleryAccessMap::groupId],
+            [GalleryAccessMap::permission]
         FROM
-          [GalleryPermissionMap]
+            [GalleryAccessMap],
+            [GalleryAccessSubscriberMap]
         WHERE
-          [GalleryPermissionMap::itemId] = ?
+            [GalleryAccessSubscriberMap::itemId] = ?
+            AND
+            [GalleryAccessSubscriberMap::accessListId] = [GalleryAccessMap::accessListId]
         ORDER BY
-          [GalleryPermissionMap::permission] ASC
+            [GalleryAccessMap::permission] ASC
         ';
 
 	list($ret, $searchResults) = $gallery->search($query, array($itemId));
@@ -462,15 +498,18 @@ class GalleryPermissionHelper_advanced {
 
 	$query = '
         SELECT
-          [GalleryPermissionMap::permission]
+            [GalleryAccessMap::permission]
         FROM
-          [GalleryPermissionMap]
+            [GalleryAccessMap],
+            [GalleryAccessSubscriberMap]
         WHERE
-          [GalleryPermissionMap::itemId] = ?
-          AND
-          [GalleryPermissionMap::userId] = ?
-          AND
-          [GalleryPermissionMap::groupId] = ?
+            [GalleryAccessSubscriberMap::itemId] = ?
+            AND
+            [GalleryAccessSubscriberMap::accessListId] = [GalleryAccessMap::accessListId]
+            AND
+            [GalleryAccessMap::userId] = ?
+            AND
+            [GalleryAccessMap::groupId] = ?
         ';
 
 	list($ret, $searchResults) =
@@ -489,6 +528,96 @@ class GalleryPermissionHelper_advanced {
     }
 
     /**
+     * Look up an item's access list.
+     *
+     * @private
+     * @param int the id of the source item
+     * @return array object GalleryStatus a status code,
+     *               int accessListId the associated item's list
+     * @static
+     */
+    function _lookupAccessListId($itemId) {
+	global $gallery;
+
+	if(empty($itemId)) {
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	}
+
+	$query = '
+	SELECT
+	    [GalleryAccessSubscriberMap::accessListId]
+	FROM
+	    [GalleryAccessSubscriberMap]
+	WHERE
+	    [GalleryAccessSubscriberMap::itemId] = ?
+	';
+
+	$data = array($itemId);
+
+	list($ret, $searchResults) =
+	    $gallery->search($query, $data, array('limit' => array('count' => 1)));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$result = $searchResults->nextResult();
+
+	return array(GalleryStatus::success(), empty($result) ? null : $result[0]);
+    }
+
+    /**
+     * Create a duplicate access list.
+     *
+     * @param int the id of the source access list
+     * @return array object GalleryStatus a status code,
+     *               int AccessListId the new access list's id
+     * @static
+     * @private
+     */
+    function _copyAccessList($oldAccessListId) {
+	global $gallery;
+
+	$storage =& $gallery->getStorage();
+	list($ret, $newAccessListId) = $storage->getUniqueId();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if (!empty($oldAccessListId)) {
+	    $query = '
+            SELECT
+                [GalleryAccessMap::userId],
+                [GalleryAccessMap::groupId],
+                [GalleryAccessMap::permission]
+            FROM
+                [GalleryAccessMap]
+            WHERE
+                [GalleryAccessMap::accessListId] = ?
+            ';
+	    $data = array($oldAccessListId);
+
+	    list($ret, $searchResults) = $gallery->search($query, $data);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    /* TODO: consider replacing this with an INSERT INTO..SELECT FROM */
+	    while ($result = $searchResults->nextResult()) {
+		$permission = $storage->convertBitsToInt($result[2]);
+		$ret = GalleryAccessMap::addMapEntry(array('userId' => (int)$result[0],
+							   'groupId' => (int)$result[1],
+							   'permission' => $permission,
+							   'accessListId' => (int)$newAccessListId));
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	    }
+	}
+
+	return array(GalleryStatus::success(), $newAccessListId);
+    }
+
+    /**
      * Copy a set of permissions from one id to another
      *
      * @param int the id of the target item
@@ -496,42 +625,49 @@ class GalleryPermissionHelper_advanced {
      * @return object GalleryStatus a status code
      * @static
      */
-    function copyPermissions($itemId, $fromId) {
+    function copyPermissions($toId, $fromId) {
 	global $gallery;
 
-	if (empty($itemId) || empty($fromId)) {
+	if (empty($toId) || empty($fromId)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
 
-	$query = '
-        SELECT
-          [GalleryPermissionMap::userId],
-          [GalleryPermissionMap::groupId],
-          [GalleryPermissionMap::permission]
-        FROM
-          [GalleryPermissionMap]
-        WHERE
-          [GalleryPermissionMap::itemId] = ?
-        ';
-
-	list($ret, $searchResults) = $gallery->search($query, array($fromId));
+	list ($ret, $lockId) =
+	    GalleryPermissionHelper_advanced::_getAccessListCompacterLock('read');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	$storage =& $gallery->getStorage();
+	$query = '
+	SELECT
+            [GalleryAccessSubscriberMap::itemId],
+            [GalleryAccessSubscriberMap::accessListId]
+        FROM
+            [GalleryAccessSubscriberMap]
+        WHERE
+            [GalleryAccessSubscriberMap::itemId] IN (?, ?)
+        ';
+	$data = array($toId, $fromId);
 
-	$data = array();
-	require_once(dirname(__FILE__) . '/../GalleryPermissionMap.class');
+	list($ret, $searchResults) = $gallery->search($query, $data);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$map = array();
 	while ($result = $searchResults->nextResult()) {
-	    $permission = $storage->convertBitsToInt($result[2]);
-	    $ret = GalleryPermissionMap::addMapEntry(array('userId' => (int)$result[0],
-							   'groupId' => (int)$result[1],
-							   'permission' => $permission,
-							   'itemId' => (int)$itemId));
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
+	    $map[$result[0]] = (int)$result[1];
+	}
+
+	$ret = GalleryAccessSubscriberMap::updateMapEntry(
+	    array('itemId' => $toId), array('accessListId' => $map[$fromId]));
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$ret = GalleryCoreApi::releaseLocks($lockId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	return GalleryStatus::success();
@@ -562,30 +698,31 @@ class GalleryPermissionHelper_advanced {
 
 	if (!empty($userIds)) {
 	    foreach ($userIds as $userId) {
-		$ands[] = '[GalleryPermissionMap::userId] = ?';
+		$ands[] = '[GalleryAccessMap::userId] = ?';
 	    }
 	}
 
 	if (!empty($groupIds)) {
 	    foreach ($groupIds as $groupId) {
-		$ands[] = '[GalleryPermissionMap::groupId] = ?';
+		$ands[] = '[GalleryAccessMap::groupId] = ?';
 	    }
 	}
 
 	$storage =& $gallery->getStorage();
 	list ($ret, $andPermission) = $storage->getFunctionSql('BITAND',
-						array('[GalleryPermissionMap::permission]', '?'));
+						array('[GalleryAccessMap::permission]', '?'));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$query = '
 	SELECT
-          [GalleryPermissionMap::itemId]
+          [GalleryAccessSubscriberMap::itemId]
         FROM
-          [GalleryPermissionMap]
+          [GalleryAccessMap], [GalleryAccessSubscriberMap]
         WHERE
-          [GalleryPermissionMap::itemId] = ?
+          [GalleryAccessSubscriberMap::itemId] = ?
+	  AND [GalleryAccessMap::accessListId] = [GalleryAccessSubscriberMap::accessListId]
           AND (' . join(' OR ', $ands) . ')
           AND (' . $andPermission . ' = ?)
         ';
@@ -615,7 +752,8 @@ class GalleryPermissionHelper_advanced {
      * @return object GalleryStatus a status code
      * @static
      */
-    function registerPermission($module, $permissionId, $description, $flags=0, $composites=array()) {
+    function registerPermission($module, $permissionId, $description,
+	                        $flags=0, $composites=array()) {
 	global $gallery;
 
 	if (empty($module) || empty($permissionId) || empty($description)) {
@@ -866,18 +1004,18 @@ class GalleryPermissionHelper_advanced {
 
 	$storage =& $gallery->getStorage();
 	list ($ret, $andNotPermission) = $storage->getFunctionSql('BITAND',
-	    array('[GalleryPermissionMap::permission]', '?'));
+	    array('[GalleryAccessMap::permission]', '?'));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$query = '
         UPDATE
-          [GalleryPermissionMap]
+          [GalleryAccessMap]
         SET
 	  [::permission] = ' . $andNotPermission . '
         WHERE
-           [GalleryPermissionMap::permission] != ?
+           [GalleryAccessMap::permission] != ?
         ';
 	$data = array();
 	$data[] = $storage->convertIntToBits(0x7FFFFFFF - $removeBits);
@@ -887,6 +1025,182 @@ class GalleryPermissionHelper_advanced {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Acquire a read or write lock on our access list compacter semaphore.  While we
+     * have this read lock, the access list can't be compacted.  While we have a write
+     * lock, we're in the process of compacting so nobody else should be touching the
+     * access map.
+     *
+     * @param string 'read' or 'write'
+     * @return array object GalleryStatus a status code
+     *         int lock id
+     * @private
+     * @static
+     */
+    function _getAccessListCompacterLock($type) {
+	list ($ret, $semaphoreId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.accessListCompacterLock');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	switch ($type) {
+	case 'read':
+	    if (GalleryCoreApi::isReadLocked($semaphoreId)) {
+		$lockId = null;
+	    } else {
+		list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($semaphoreId);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	    }
+	    break;
+
+	case 'write':
+	    if (GalleryCoreApi::isReadLocked($semaphoreId)) {
+		$lockId = null;
+	    } else {
+		list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($semaphoreId);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	    }
+	    break;
+
+	default:
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	}
+
+	return array(GalleryStatus::success(), $lockId);
+    }
+
+    /**
+     * Compact the access list map, if we deem that it's a good time to do so.
+     *
+     * @return object GalleryStatus a status code
+     */
+    function maybeCompactAccessLists() {
+	/* We use a high tech genetic algorithm to make our decision */
+	if (rand(1, 100) <= 50) {
+	    $ret = GalleryCoreApi::compactAccessLists();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Compact the access map.  Remove any duplicate access maps and remap any subscribers from
+     * the duplicates to the one remaining version.
+     *
+     * @return object GalleryStatus a status code
+     */
+    function compactAccessLists() {
+	global $gallery;
+
+	list ($ret, $lockId) =
+	    GalleryPermissionHelper_advanced::_getAccessListCompacterLock('write');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Load the entire access list into memory */
+	$query = '
+        SELECT
+          [GalleryAccessMap::accessListId],
+          [GalleryAccessMap::userId],
+          [GalleryAccessMap::groupId],
+          [GalleryAccessMap::permission]
+        FROM
+          [GalleryAccessMap]
+        ORDER BY
+          [GalleryAccessMap::userId] ASC,
+          [GalleryAccessMap::groupId] ASC,
+          [GalleryAccessMap::accessListId] DESC
+        ';
+	list ($ret, $searchResults) = $gallery->search($query);
+	if ($ret->isError()) {
+	    GalleryCoreApi::releaseLocks($lockId);
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$aclIdToKey = array();
+	$gallery->guaranteeTimeLimit(60);
+	while ($result = $searchResults->nextResult()) {
+	    $aclId = $result[0];
+	    $key = sprintf("%s|%s|%s,", $result[1], $result[2], $result[3]);
+	    if (!isset($aclIdToKey[$aclId])) {
+		$aclIdToKey[$aclId] = '';
+	    }
+	    $aclIdToKey[$aclId] .= $key;
+	}
+
+	$keyToAclId = array();
+	foreach ($aclIdToKey as $key => $value) {
+	    $keyToAclId[$value][] = $key;
+	}
+
+	/* We've now got buckets of duplicate acls.  Start compacting. */
+	foreach ($keyToAclId as $key => $aclIds) {
+	    $gallery->guaranteeTimeLimit(20);
+	    if (count($aclIds) == 1) {
+		continue;
+	    }
+
+	    $master = array_shift($aclIds);
+	    $ret = GalleryAccessSubscriberMap::updateMapEntry(
+		array('accessListId' => $aclIds), array('accessListId' => $master));
+	    if ($ret->isError()) {
+		GalleryCoreApi::releaseLocks($lockId);
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    $ret = GalleryAccessMap::removeMapEntry(array('accessListId' => $aclIds));
+	    if ($ret->isError()) {
+		GalleryCoreApi::releaseLocks($lockId);
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	/* Eliminate any unused acls */
+	$query = '
+        SELECT DISTINCT
+          [GalleryAccessMap::accessListId]
+        FROM
+          [GalleryAccessMap] LEFT JOIN [GalleryAccessSubscriberMap] ON
+             [GalleryAccessMap::accessListId] = [GalleryAccessSubscriberMap::accessListId]
+        WHERE
+          [GalleryAccessSubscriberMap::accessListId] IS NULL
+        ';
+	list($ret, $searchResults) = $gallery->search($query);
+	if ($ret->isError()) {
+	    GalleryCoreApi::releaseLocks($lockId);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$unusedAclIds = array();
+	while ($result = $searchResults->nextResult()) {
+	    $unusedAclIds[] = $result[0];
+	}
+
+	if (!empty($unusedAclIds)) {
+	    $ret = GalleryAccessMap::removeMapEntry(array('accessListId' => $unusedAclIds));
+	    if ($ret->isError()) {
+		GalleryCoreApi::releaseLocks($lockId);
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+
+	$ret = GalleryCoreApi::releaseLocks($lockId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	GalleryPermissionHelper_simple::_clearCachedAccessListIds();
 
 	return GalleryStatus::success();
     }

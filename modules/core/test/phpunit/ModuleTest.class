@@ -191,15 +191,17 @@ class ModuleTest extends GalleryTestCase {
 
 	$query = '
 	SELECT
-	  BIT_OR([GalleryPermissionMap::permission])
+	  BIT_OR([GalleryAccessMap::permission])
 	FROM
-	  [GalleryPermissionMap]
+	  [GalleryAccessMap],[GalleryAccessSubscriberMap]
 	WHERE
-	  [GalleryPermissionMap::itemId] = ?
+	  [GalleryAccessSubscriberMap::itemId] = ?
+AND
+[GalleryAccessSubscriberMap::accessListId] = [GalleryAccessMap::accessListId]
 	  AND
-	  ([GalleryPermissionMap::userId] = ?
+	  ([GalleryAccessMap::userId] = ?
 	    OR
-	   [GalleryPermissionMap::groupId] IN (' . $groupIdMarkers . '))
+	   [GalleryAccessMap::groupId] IN (' . $groupIdMarkers . '))
 	';
 
 	$data = array($itemId, $userId);

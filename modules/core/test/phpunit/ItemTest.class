@@ -661,7 +661,7 @@ class ItemTest extends GalleryTestCase {
 	/* Verify indirect permissions */
 	foreach (array('core.edit', 'core.view') as $permission) {
 	    $this->assert(isset($groupPermissions[$group2->getId()][$permission]),
-			  "indirect permissions changed");
+			  'indirect permissions changed');
 	}
 	$this->assert(count($groupPermissions[$group2->getId()]) == 2,
 		      'too few/many indirect group permissions');
@@ -719,7 +719,8 @@ class ItemTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $success) = GalleryCoreApi::setThumbnailFromItem($album[1]->getId(), $album[2]->getId());
+	list ($ret, $success) =
+	    GalleryCoreApi::setThumbnailFromItem($album[1]->getId(), $album[2]->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -737,7 +738,8 @@ class ItemTest extends GalleryTestCase {
 	}
 
 	/* Make sure that child(1) has a thumbnail matching child(0)'s preference */
-	list ($ret, $preferences) = GalleryCoreApi::fetchDerivativePreferencesForItem($album[0]->getId());
+	list ($ret, $preferences) =
+	    GalleryCoreApi::fetchDerivativePreferencesForItem($album[0]->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -754,7 +756,8 @@ class ItemTest extends GalleryTestCase {
 			    $thumbnailPreference['derivativeOperations']);
 
 	/* Make sure that child(0) has a thumbnail matching parentItem's preference */
-	list ($ret, $preferences) = GalleryCoreApi::fetchDerivativePreferencesForItem($this->_album->getId());
+	list ($ret, $preferences) =
+	    GalleryCoreApi::fetchDerivativePreferencesForItem($this->_album->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -883,7 +886,8 @@ class ItemTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->assert(GalleryUtilities::isA($newItem, 'GalleryDataItem'), 'newItem is not a GalleryDataItem');
+	$this->assert(GalleryUtilities::isA($newItem, 'GalleryDataItem'),
+		      'newItem is not a GalleryDataItem');
 	$this->assertEquals('itemName', $newItem->getPathComponent());
 	$this->assertEquals('title', $newItem->getTitle());
 	$this->assertEquals('caption', $newItem->getSummary());
@@ -1001,14 +1005,16 @@ class ItemTest extends GalleryTestCase {
 
 	$derivative = $derivativeTable[$newItem->getId()][0];
 	$this->assertEquals(DERIVATIVE_TYPE_IMAGE_THUMBNAIL, $derivative->getDerivativeType());
-	$this->assertEquals('convert-to-image/jpeg;thumbnail|101', $derivative->getDerivativeOperations());
+	$this->assertEquals('convert-to-image/jpeg;thumbnail|101',
+			    $derivative->getDerivativeOperations());
     }
 
     function testFetchItemIdCount() {
 	global $gallery;
 
 	/* Switch to the anonymous user id so that this returns false */
-	list ($ret, $anonymousUserId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	list ($ret, $anonymousUserId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -1118,7 +1124,7 @@ class ItemTest extends GalleryTestCase {
 	$this->assertEquals($truePath, $linkPath, "Link doesn't point to the original (link)");
 
 	$this->assertEquals($linkedItem[0]->getId(), $thumb->getDerivativeSourceId(),
-			    "Bad thumbnail source (deleted item was " . $item->getId() . ")");
+			    'Bad thumbnail source (deleted item was ' . $item->getId() . ')');
     }
 
     function testMove() {

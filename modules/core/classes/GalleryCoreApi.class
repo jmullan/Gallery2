@@ -54,7 +54,7 @@ class GalleryCoreApi {
      * @return array major number, minor number
      */
     function getApiVersion() {
-	return array(5, 0);
+	return array(5, 1);
     }
 
     /**
@@ -372,6 +372,41 @@ class GalleryCoreApi {
     }
 
     /**
+     * Fetch all the access list ids that grant the given permission to the
+     * given user (either directly or via a group).
+     *
+     * @param string the permission (eg, 'core.view')
+     * @param int the user id
+     * @return array object GalleryStatus a status code
+     *               array int access list ids
+     */
+    function fetchAccessListIds($permission, $userId) {
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryPermissionHelper_simple.class');
+	return GalleryPermissionHelper_simple::fetchAccessListIds($permission, $userId);
+    }
+
+    /**
+     * Compact the access list map, if we deem that it's a good time to do so.
+     *
+     * @return object GalleryStatus a status code
+     */
+    function maybeCompactAccessLists() {
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryPermissionHelper_advanced.class');
+	return GalleryPermissionHelper_advanced::maybeCompactAccessLists();
+    }
+
+    /**
+     * Compact the access map.  Remove any duplicate access maps and remap any subscribers from
+     * the duplicates to the one remaining version.
+     *
+     * @return object GalleryStatus a status code
+     */
+    function compactAccessLists() {
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryPermissionHelper_advanced.class');
+	return GalleryPermissionHelper_advanced::compactAccessLists();
+    }
+
+    /**
      * Assert that the given user has one of the specific permissions for the
      * target item
      *
@@ -419,6 +454,8 @@ class GalleryCoreApi {
      * Return the total number of users
      *
      * @param string an optional substring to match against the username
+     * @return array object GalleryStatus a status code
+     *               int number of users
      * @static
      */
     function fetchUserCount($substring=null, $groupId=null) {

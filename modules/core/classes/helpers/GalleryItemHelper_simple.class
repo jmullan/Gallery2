@@ -37,7 +37,7 @@ class GalleryItemHelper_simple {
     /**
      * Return the correct layoutId for this item.  Data items don't have layouts, so
      * we try to get it from the parent album.  Failing that, we get it from the
-     * site wide defaults. 
+     * site wide defaults.
      *
      * @param object GalleryItem instance
      * @return array object GalleryStatus a status code
@@ -87,11 +87,9 @@ class GalleryItemHelper_simple {
      */
     function fetchChildCounts($itemIds) {
 	global $gallery;
-	$storage =& $gallery->getStorage();
 
 	if (empty($itemIds)) {
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
-			 null);
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
 	}
 
 	$counts = $missing = array();
@@ -107,68 +105,51 @@ class GalleryItemHelper_simple {
 	if (empty($missing)) {
 	    return array(GalleryStatus::success(), $counts);
 	}
+	$parentIdMarkers = GalleryUtilities::makeMarkers(count($missing));
 
-	list ($ret, $permissionBits) = GalleryCoreApi::convertPermissionIdsToBits('core.view');
+	list ($ret, $aclIds) =
+	    GalleryCoreApi::fetchAccessListIds('core.view', $gallery->getActiveUserId());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+	if (!empty($aclIds)) {
+	    $aclMarkers = GalleryUtilities::makeMarkers(count($aclIds));
 
-	$markers = GalleryUtilities::makeMarkers(count($missing));
+	    $query = sprintf('
+            SELECT
+              [GalleryChildEntity::parentId],
+              COUNT([GalleryChildEntity::id])
+            FROM
+              [GalleryChildEntity], [GalleryAccessSubscriberMap]
+            WHERE
+              [GalleryChildEntity::parentId] IN (%s)
+              AND
+              [GalleryAccessSubscriberMap::itemId] = [GalleryChildEntity::id]
+              AND
+              [GalleryAccessSubscriberMap::accessListId] IN (%s)
+            GROUP BY
+              [GalleryChildEntity::parentId]
+            ', $parentIdMarkers, $aclMarkers);
 
-	list ($ret, $groupIds) = GalleryCoreApi::fetchGroupsForUser($gallery->getActiveUserId());
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
+	    $data = array_merge($missing, $aclIds);
 
-	$groupIds = array_keys($groupIds);
-	$groupIdMarkers = GalleryUtilities::makeMarkers($groupIds);
-	list ($ret, $andPermission) = $storage->getFunctionSql('BITAND',
-						array('[GalleryPermissionMap::permission]', '?'));
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
+	    list ($ret, $searchResults) = $gallery->search($query, $data);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
 
-	$query = '
-        SELECT
-          [GalleryChildEntity::parentId], COUNT(DISTINCT [GalleryChildEntity::id])
-        FROM
-          [GalleryChildEntity], [GalleryPermissionMap]
-        WHERE
-          [GalleryChildEntity::parentId] IN (' . $markers . ')
-          AND
-          [GalleryPermissionMap::itemId] = [GalleryChildEntity::id]
-          AND
-          ([GalleryPermissionMap::userId] = ?
-           OR
-           [GalleryPermissionMap::groupId] IN (' . $groupIdMarkers . '))
-          AND
-        ' . $andPermission . ' > ?
-        GROUP BY
-          [GalleryChildEntity::parentId]
-        ';
-	$data = $missing;
-	$data[] = $gallery->getActiveUserId();
-	array_splice($data, sizeof($data), 0, $groupIds);
-	$data[] = $storage->convertIntToBits($permissionBits);
-	$data[] = $storage->convertIntToBits(0);
-
-	list ($ret, $searchResults) = $gallery->search($query, $data);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	while ($result = $searchResults->nextResult()) {
-	    $counts[$result[0]] = $result[1];
-	    GalleryDataCache::put('GalleryItemHelper::fetchChildCounts(' . $result[0] . ')',
-				  $result[1]);
+	    while ($result = $searchResults->nextResult()) {
+		$counts[$result[0]] = $result[1];
+		GalleryDataCache::put("GalleryItemHelper::fetchChildCounts($result[0])", $result[1]);
+	    }
 	}
 
 	return array(GalleryStatus::success(), $counts);
     }
 
     /**
-     * Get any descendent counts that we can from the cache, and then failing that recalculate them using
-     * fetchUncachedDescendentCounts and cache the new values
+     * Get any descendent counts that we can from the cache, and then failing that
+     * recalculate them using fetchUncachedDescendentCounts and cache the new values
      *
      *
      * @param int the item ids
@@ -180,7 +161,7 @@ class GalleryItemHelper_simple {
 	global $gallery;
 	$activeUserId = $gallery->getActiveUserId();
 
-	require_once(dirname(__FILE__) . '/../GalleryDescendentCountsMap.class');
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryDescendentCountsMap.class');
 	$query = sprintf('
          SELECT
            [GalleryDescendentCountsMap::itemId], [GalleryDescendentCountsMap::descendentCount]
@@ -191,7 +172,6 @@ class GalleryItemHelper_simple {
            AND
            [GalleryDescendentCountsMap::itemId] IN (%s)
         ', GalleryUtilities::makeMarkers(sizeof($itemIds)));
-	$storage =& $gallery->getStorage();
 
 	$data = array();
 	$data[] = $activeUserId;
@@ -216,7 +196,8 @@ class GalleryItemHelper_simple {
 	}
 
 	if (!empty($remaining)) {
-	    list ($ret, $results) = GalleryItemHelper_simple::fetchUncachedDescendentCounts($remaining);
+	    list ($ret, $results) =
+		GalleryItemHelper_simple::fetchUncachedDescendentCounts($remaining);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -231,7 +212,10 @@ class GalleryItemHelper_simple {
 		}
 	    }
 
-	    /* Merge the results together.  Array_merge() renumbers numerical indices so we can't use it */
+	    /*
+	     * Merge the results together.
+	     * Array_merge() renumbers numerical indices so we can't use it
+	     */
 	    foreach ($results as $key => $value) {
 		$counts[$key] = $value;
 	    }
@@ -251,32 +235,25 @@ class GalleryItemHelper_simple {
     function fetchUncachedDescendentCounts($itemIds) {
 	global $gallery;
 
-	list ($ret, $permissionBits) = GalleryCoreApi::convertPermissionIdsToBits(array('core.view'));
+	list ($ret, $aclIds) =
+	    GalleryCoreApi::fetchAccessListIds('core.view', $gallery->getActiveUserId());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	list ($ret, $groupIds) = GalleryCoreApi::fetchGroupsForUser($gallery->getActiveUserId());
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	if (empty($aclIds)) {
+	    return array(GalleryStatus::success(), array());
 	}
-
-	$groupIds = array_keys($groupIds);
-	$groupIdMarkers = GalleryUtilities::makeMarkers(sizeof($groupIds));
+	
+	$aclMarkers = GalleryUtilities::makeMarkers(count($aclIds));
+	$itemMarkers = GalleryUtilities::makeMarkers(count($itemIds));
 
 	$storage =& $gallery->getStorage();
-	$markers = GalleryUtilities::makeMarkers(sizeof($itemIds));
-	list ($ret, $andPermission) = $storage->getFunctionSql('BITAND',
-						array('[GalleryPermissionMap::permission]', '?'));
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	list ($ret, $concat) =
-	    $storage->getFunctionSql('CONCAT',
-				     array('[GalleryItemAttributesMap=1::parentSequence]',
-					   '[GalleryItemAttributesMap=1::itemId]',
-					   '\'/%\''));
+	list ($ret, $concat) = $storage->getFunctionSql(
+	    'CONCAT',
+	    array('[GalleryItemAttributesMap=1::parentSequence]',
+		  '[GalleryItemAttributesMap=1::itemId]',
+		  '\'/%\''));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -284,33 +261,24 @@ class GalleryItemHelper_simple {
 	$query = sprintf('
         SELECT
           [GalleryItemAttributesMap=1::itemId],
-          COUNT(DISTINCT [GalleryItemAttributesMap=2::itemId])
+          COUNT([GalleryItemAttributesMap=2::itemId])
         FROM
           [GalleryItemAttributesMap=1],
           [GalleryItemAttributesMap=2],
-          [GalleryPermissionMap]
+          [GalleryAccessSubscriberMap]
         WHERE
           [GalleryItemAttributesMap=1::itemId] IN (%s)
           AND
           [GalleryItemAttributesMap=2::parentSequence] LIKE %s
           AND
-          [GalleryItemAttributesMap=2::itemId] = [GalleryPermissionMap::itemId]
+          [GalleryItemAttributesMap=2::itemId] = [GalleryAccessSubscriberMap::itemId]
           AND
-          ([GalleryPermissionMap::userId] = ?
-           OR
-           [GalleryPermissionMap::groupId] IN (' . $groupIdMarkers . '))
-          AND
-        ' . $andPermission . ' > ?
-          GROUP BY
+          [GalleryAccessSubscriberMap::accessListId] IN (%s)
+        GROUP BY
           [GalleryItemAttributesMap=1::itemId]
-        ', $markers, $concat);
+        ', $itemMarkers, $concat, $aclMarkers);
 
-	$data = $itemIds;
-	$data[] = $gallery->getActiveUserId();
-	array_splice($data, sizeof($data), 0, $groupIds);
-	$data[] = $storage->convertIntToBits($permissionBits);
-	$data[] = $storage->convertIntToBits(0);
-
+	$data = array_merge($itemIds, $aclIds);
 	list ($ret, $searchResults) = $gallery->search($query, $data);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -338,70 +306,54 @@ class GalleryItemHelper_simple {
 	global $gallery;
 
 	if (empty($itemType)) {
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
-			 null);
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
 	}
 
 	$cacheKey = "GalleryItemHelper::fetchItemIdCount($itemType, $permission)";
 	if (GalleryDataCache::containsKey($cacheKey)) {
 	    $count = GalleryDataCache::get($cacheKey);
 	} else {
-	    list ($ret, $permissionBits) =
-		GalleryCoreApi::convertPermissionIdsToBits(array($permission));
+	    list ($ret, $aclIds) =
+		GalleryCoreApi::fetchAccessListIds($permission, $gallery->getActiveUserId());
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
+	    if (!empty($aclIds)) {
+		$aclMarkers = GalleryUtilities::makeMarkers(count($aclIds));
 
-	    list ($ret, $groupIds) = GalleryCoreApi::fetchGroupsForUser($gallery->getActiveUserId());
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		$query = sprintf('
+                SELECT
+                  COUNT([GalleryItem::id])
+                FROM
+                  [GalleryEntity], [GalleryItem], [GalleryAccessSubscriberMap]
+                WHERE
+                  [GalleryEntity::entityType] = ?
+                  AND
+                  [GalleryItem::id] = [GalleryEntity::id]
+                  AND
+                  [GalleryAccessSubscriberMap::itemId] = [GalleryEntity::id]
+                  AND
+                  [GalleryAccessSubscriberMap::accessListId] IN (%s)
+                ', $aclMarkers);
+		$data = array($itemType);
+		$data = array_merge($data, $aclIds);
+
+		list ($ret, $searchResults) = $gallery->search($query, $data);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		if ($searchResults->resultCount() != 1) {
+		    return array(GalleryStatus::error(
+				     ERROR_STORAGE_FAILURE, __FILE__, __LINE__), null);
+		}
+
+		$result = $searchResults->nextResult();
+		$count = (int)$result[0];
+	    } else {
+		$count = 0;
 	    }
-
-	    $storage =& $gallery->getStorage();
-	    $groupIds = array_keys($groupIds);
-	    $groupIdMarkers = GalleryUtilities::makeMarkers($groupIds);
-	    list ($ret, $andPermission) = $storage->getFunctionSql('BITAND',
-					      array('[GalleryPermissionMap::permission]', '?'));
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-	    $query = '
-            SELECT
-              COUNT(DISTINCT [GalleryItem::id])
-            FROM
-              [GalleryEntity], [GalleryItem], [GalleryPermissionMap]
-            WHERE
-              [GalleryEntity::entityType] = ?
-              AND
-              [GalleryItem::id] = [GalleryEntity::id]
-              AND
-              [GalleryPermissionMap::itemId] = [GalleryEntity::id]
-              AND
-              ([GalleryPermissionMap::userId] = ?
-               OR
-               [GalleryPermissionMap::groupId] IN (' . $groupIdMarkers . '))
-              AND
-            ' . $andPermission . ' = ?';
-	    $data = array();
-	    $data[] = $itemType;
-	    $data[] = $gallery->getActiveUserId();
-	    array_splice($data, sizeof($data), 0, $groupIds);
-	    $data[] = $storage->convertIntToBits($permissionBits);
-	    $data[] = $storage->convertIntToBits($permissionBits);
-
-	    list ($ret, $searchResults) = $gallery->search($query, $data);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-	    if ($searchResults->resultCount() != 1) {
-		return array(GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__), null);
-	    }
-
-	    $result = $searchResults->nextResult();
-	    $count = (int)$result[0];
-
+		
 	    GalleryDataCache::put($cacheKey, $count);
 	}
 

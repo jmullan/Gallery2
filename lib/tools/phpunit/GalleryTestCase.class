@@ -157,7 +157,7 @@ class GalleryTestCase extends TestCase {
     function failWithStatus($ret) {
 	global $gallery;
 
-	// Fail with as much debug info as we can muster.
+	/* Fail with as much debug info as we can muster. */
 	$this->assert(false, $ret->getAsHtml() . $gallery->getDebugBuffer());
     }
 
@@ -612,7 +612,7 @@ class GalleryTestCase extends TestCase {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	} else {
-	    // We failed to delete!
+	    /* We failed to delete! */
 	    return GalleryStatus::error(ERROR_UNKNOWN, __FILE__, __LINE__);
 	}
 

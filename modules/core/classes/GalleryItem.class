@@ -345,14 +345,9 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	/* Remove all my properties, permissions, view counts */
-	$ret1 = GalleryCoreApi::removeItemPermissions($this->getId());
-	$ret2 = GalleryCoreApi::removeItemAttributes($this->getId());
-
-	if ($ret1->isError()) {
-	    return $ret1->wrap(__FILE__, __LINE__);
-	}
-	if ($ret2->isError()) {
+	/* Remove all my attributes */
+	$ret = GalleryCoreApi::removeItemAttributes($this->getId());
+	if ($ret->isError()) {
 	    return $ret2->wrap(__FILE__, __LINE__);
 	}
 

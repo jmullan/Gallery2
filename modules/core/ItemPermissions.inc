@@ -205,10 +205,8 @@ class ItemPermissionsController extends GalleryController {
 		    }
 
 		    if (!$hasIt) {
-			$ret = GalleryCoreApi::addGroupPermission($itemId,
-									$group->getId(),
-									$permission,
-									$applyToChildren);
+			$ret = GalleryCoreApi::addGroupPermission(
+			    $itemId, $group->getId(), $permission, $applyToChildren);
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
@@ -277,6 +275,17 @@ class ItemPermissionsController extends GalleryController {
 		    $redirect['itemId'] = $itemId;
 		    $status['changedOwner'] = 1;
 		}
+	    }
+	}
+
+	if (empty($error)) {
+	    /*
+	     * Try compacting.  Ignore lock timeouts here; if we failed this time we'll try
+	     * again next time.
+	     */
+	    $ret = GalleryCoreApi::maybeCompactAccessLists();
+	    if ($ret->isError() && !($ret->getErrorCode() & ERROR_LOCK_TIMEOUT)) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
 

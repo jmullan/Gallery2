@@ -49,43 +49,28 @@ class WatermarkHelper {
     function fetchWatermarks($count=null, $offset=null, $substring=null) {
 	global $gallery;
 
-	list ($ret, $permissionBits) =
-	    GalleryCoreApi::convertPermissionIdsToBits(array('core.viewSource'));
+	list ($ret, $aclIds) =
+	    GalleryCoreApi::fetchAccessListIds('core.viewSource', $gallery->getActiveUserId());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-
-	list ($ret, $groupIds) = GalleryCoreApi::fetchGroupsForUser($gallery->getActiveUserId());
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	if (empty($aclIds)) {
+	    return array(GalleryStatus::success(), 0);
 	}
-
-	$storage =& $gallery->getStorage();
-	$groupIds = array_keys($groupIds);
-	$groupIdMarkers = GalleryUtilities::makeMarkers($groupIds);
-	list ($ret, $andPermission) =
-	    $storage->getFunctionSql('BITAND', array('[GalleryPermissionMap::permission]', '?'));
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
+	$aclMarkers = GalleryUtilities::makeMarkers($aclIds);
 
 	$data = array();
-	$query = '
+	$query = sprintf('
 	SELECT
 	  [WatermarkImage::id]
 	FROM
-	  [WatermarkImage], [GalleryPermissionMap]
+	  [WatermarkImage], [GalleryAccessSubscriberMap]
 	WHERE
-          [GalleryPermissionMap::itemId] = [WatermarkImage::id]
+          [GalleryAccessSubscriberMap::itemId] = [WatermarkImage::id]
           AND
-          ([GalleryPermissionMap::userId] = ?
-           OR
-           [GalleryPermissionMap::groupId] IN (' . $groupIdMarkers . '))
-          AND ' . $andPermission . ' = ?';
-	$data[] = $gallery->getActiveUserId();
-	array_splice($data, sizeof($data), 0, $groupIds);
-	$data[] = $storage->convertIntToBits($permissionBits);
-	$data[] = $storage->convertIntToBits($permissionBits);
+          [GalleryAccessSubscriberMap::accessListId] IN (%s)
+        ', $aclMarkers);
+	$data = $aclIds;
 
 	if (!empty($substring)) {
 	    $query .= '
@@ -100,21 +85,19 @@ class WatermarkHelper {
 	  [WatermarkImage::fileName] ASC
 	';
 
-	list ($ret, $searchResults) =
-	    $gallery->search($query, $data,
-			     array('limit' => array('count' => $count,
-						    'offset' => $offset)));
+	list ($ret, $searchResults) = $gallery->search(
+	    $query, $data, array('limit' => array('count' => $count, 'offset' => $offset)));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	// Get all ids
+	/* Get all ids */
 	$ids = array();
 	while ($result = $searchResults->nextResult()) {
 	    $ids[] = $result[0];
 	}
 
-	// Convert them to entities
+	/* Convert them to entities */
 	$watermarks = array();
 	if (!empty($ids)) {
 	    list ($ret, $entities) = GalleryCoreApi::loadEntitiesById($ids);
@@ -122,7 +105,7 @@ class WatermarkHelper {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    // Build an id => watermark map
+	    /* Build an id => watermark map */
 	    foreach ($entities as $entity) {
 		$watermarks[$entity->getId()] = $entity;
 	    }
@@ -176,8 +159,8 @@ class WatermarkHelper {
 	global $gallery;
 
 	$query = '
-	SELECT
-	  DISTINCT [GalleryChildEntity::parentId]
+	SELECT DISTINCT
+          [GalleryChildEntity::parentId]
 	FROM
 	  [GalleryChildEntity], [GalleryDerivative]
 	WHERE
@@ -186,8 +169,8 @@ class WatermarkHelper {
 	  [GalleryDerivative::postFilterOperations] LIKE ?
 	';
 
-	list ($ret, $searchResults) = $gallery->search($query, array(
-	    '%composite|watermark/' . $watermark->getFileName() . ',%'));
+	list ($ret, $searchResults) = $gallery->search(
+	    $query, array('%composite|watermark/' . $watermark->getFileName() . ',%'));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -215,8 +198,9 @@ class WatermarkHelper {
 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
 	if ($ret->isError()) {
 	    if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
-		// Remap it as permission denied so that we avoid object id fishing
-		return array(GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__), null);
+		/* Remap it as permission denied so that we avoid object id fishing */
+		return array(GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__),
+			     null);
 	    } else {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -230,7 +214,7 @@ class WatermarkHelper {
 	    return array(GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__), null);
 	}
 
-	// Check if this watermark is used anywhere..
+	/* Check if this watermark is used anywhere.. */
 	list ($ret, $watermarkedItemIds) = WatermarkHelper::fetchWatermarkedItemIds($item);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -239,13 +223,13 @@ class WatermarkHelper {
 	    if (!$forceDelete) {
 		return array(GalleryStatus::success(), false);
 	    }
-	    // Remove watermark from those items..
+	    /* Remove watermark from those items.. */
 	    list ($ret, $watermarkedItems) = GalleryCoreApi::loadEntitiesById($watermarkedItemIds);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    foreach ($watermarkedItems as $watermarkedItem) {
-		// Un-watermark this item..
+		/* Un-watermark this item.. */
 		$ret = WatermarkHelper::watermarkItem($item, $watermarkedItem, 0, 0,
 					array(DERIVATIVE_TYPE_IMAGE_PREFERRED => false,
 					      DERIVATIVE_TYPE_IMAGE_RESIZE => false,
@@ -276,7 +260,8 @@ class WatermarkHelper {
      * @static
      */
     function watermarkItem($watermark, $item, $xPercent, $yPercent, $whichDerivatives) {
-	list ($ret, $derivativeTable) = GalleryCoreApi::fetchDerivativesByItemIds(array($item->getId()));
+	list ($ret, $derivativeTable) =
+	    GalleryCoreApi::fetchDerivativesByItemIds(array($item->getId()));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -302,8 +287,8 @@ class WatermarkHelper {
 
 	/* If they want to modify the original, and we don't have one -- create a preferred */
 	if ($whichDerivatives[DERIVATIVE_TYPE_IMAGE_PREFERRED] && !$hasPreferred) {
-	    list ($ret, $preferred) =
-		GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative', $item->getEntityType());
+	    list ($ret, $preferred) = GalleryCoreApi::newFactoryInstanceByHint(
+		'GalleryDerivative', $item->getEntityType());
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -359,15 +344,14 @@ class WatermarkHelper {
 				      $watermark->getHeight(),
 				      number_format($xPercent, 3, '.', ''),
 				      number_format($yPercent, 3, '.', ''));
-		    list ($ret, $newPostFilters) =
-			GalleryCoreApi::mergeDerivativeOperations($derivative->getPostFilterOperations(), $filter);
+		    list ($ret, $newPostFilters) = GalleryCoreApi::mergeDerivativeOperations(
+			$derivative->getPostFilterOperations(), $filter);
 		    if ($ret->isError()) {
 			return $ret->wrap(__FILE__, __LINE__);
 		    }
 		} else if (in_array($derivative->getId(), $remove)) {
-		    $newPostFilters =
-			GalleryCoreApi::removeDerivativeOperation('composite',
-								  $derivative->getPostFilterOperations());
+		    $newPostFilters = GalleryCoreApi::removeDerivativeOperation(
+			'composite', $derivative->getPostFilterOperations());
 		}
 		$derivative->setPostFilterOperations($newPostFilters);
 
@@ -394,7 +378,8 @@ class WatermarkHelper {
 	    }
 
 	    if ($preferred->hasNoOperations()) {
-		$ret = GalleryCoreApi::remapSourceIds($preferred->getId(), $preferred->getDerivativeSourceId());
+		$ret = GalleryCoreApi::remapSourceIds(
+		    $preferred->getId(), $preferred->getDerivativeSourceId());
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
@@ -453,7 +438,7 @@ class WatermarkHelper {
 	    }
 
 	    if (empty($error)) {
-		// Clip our percentages
+		/* Clip our percentages */
 		$form['xPercentage'] = empty($form['xPercentage']) ? 0 : $form['xPercentage'];
 		$form['yPercentage'] = empty($form['yPercentage']) ? 0 : $form['yPercentage'];
 		$form['xPercentage'] = max(0, $form['xPercentage']);

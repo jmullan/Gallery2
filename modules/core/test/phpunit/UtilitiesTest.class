@@ -216,10 +216,14 @@ class UtilitiesTest extends GalleryTestCase {
     }
 
     function testMakeMarkers() {
-	$this->assertEquals('?, ?, ?, ?, ?',
+	$this->assertEquals('?,?,?,?,?',
 			    GalleryUtilities::makeMarkers(5));
-	$this->assertEquals('?, ?, ?, ?, ?',
+	$this->assertEquals('?,?,?,?,?',
 			    GalleryUtilities::makeMarkers(array(1, 2, 'foo', 4, 'baz')));
+	$this->assertEquals('(?,?),(?,?),(?,?)',
+			    GalleryUtilities::makeMarkers(3, '(?,?)'));
+	$this->assertEquals('(?,?),(?,?),(?,?)',
+			    GalleryUtilities::makeMarkers(array('x', 'y', 'z'), '(?,?)'));
     }
 
     function testConvertPathToUrl() {

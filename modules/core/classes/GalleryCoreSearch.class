@@ -51,14 +51,18 @@ class GalleryCoreSearch extends GallerySearchInterface_1_0 {
 
 	$info = array('name' => $module->translate('Gallery Core'),
 		      'description' => $module->translate('Gallery Core Module'),
-		      'options' => array('descriptions' => array('description' => $module->translate('Search descriptions'),
-								 'enabled' => 1),
-					 'keywords' => array('description' => $module->translate('Search keywords'),
-							     'enabled' => 1),
-					 'summaries' => array('description' => $module->translate('Search summaries'),
-							      'enabled' => 1),
-					 'titles' => array('description' => $module->translate('Search titles'),
-							   'enabled' => 1)));
+		      'options' => array(
+			  'descriptions' => array(
+			      'description' => $module->translate('Search descriptions'),
+			      'enabled' => 1),
+			  'keywords' => array(
+			      'description' => $module->translate('Search keywords'),
+			      'enabled' => 1),
+			  'summaries' => array(
+			      'description' => $module->translate('Search summaries'),
+			      'enabled' => 1),
+			  'titles' => array('description' => $module->translate('Search titles'),
+					    'enabled' => 1)));
 	    return array(GalleryStatus::success(), $info);
     }
 
@@ -93,74 +97,58 @@ class GalleryCoreSearch extends GallerySearchInterface_1_0 {
 	    }
 	}
 
-	list ($ret, $groupIds) = GalleryCoreApi::fetchGroupsForUser($gallery->getActiveUserId());
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
 	$storage =& $gallery->getStorage();
-	$groupIds = array_keys($groupIds);
-	$groupIdMarkers = GalleryUtilities::makeMarkers($groupIds);
-	list ($ret, $andPermission) = $storage->getFunctionSql('BITAND',
-						array('[GalleryPermissionMap::permission]', '?'));
+	
+	list ($ret, $aclIds) = GalleryCoreApi::fetchAccessListIds(
+	    'core.view', $gallery->getActiveUserId());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+	if (empty($aclIds)) {
+	    return array(GalleryStatus::success(),
+			 array('start' => 0, 'end' => '0',
+			       'count' => 0, 'results' => array()));
+	}
+	$aclMarkers = GalleryUtilities::makeMarkers(count($aclIds));
 
-	$countQuery = '
+	$countQuery = sprintf('
         SELECT
-          COUNT(DISTINCT [GalleryItem::id])
+          COUNT([GalleryItem::id])
         FROM
-          [GalleryItem], [GalleryPermissionMap]
+          [GalleryItem], [GalleryAccessSubscriberMap]
         WHERE
           (' . join(' OR ', $whereList) . ')
           AND
-          [GalleryItem::id] = [GalleryPermissionMap::itemId]
+          [GalleryItem::id] = [GalleryAccessSubscriberMap::itemId]
           AND
-          ([GalleryPermissionMap::userId] = ?
-           OR
-           [GalleryPermissionMap::groupId] IN (' . $groupIdMarkers . '))
-          AND
-        ' . $andPermission . ' = ?';
+          [GalleryAccessSubscriberMap::accessListId] IN (%s)
+        ', $aclMarkers);
 
-	$query = '
-        SELECT DISTINCT
+	$query = sprintf('
+        SELECT
           [GalleryItem::id],
           [GalleryUser::fullName],
           [GalleryUser::userName],
           [GalleryEntity::modificationTimestamp], ' .
 	    join(', ', $selectList) . '
         FROM
-          [GalleryItem], [GalleryPermissionMap], [GalleryEntity], [GalleryUser]
+          [GalleryItem], [GalleryAccessSubscriberMap], [GalleryEntity], [GalleryUser]
         WHERE
           (' . join(' OR ', $whereList) . ')
           AND
-          [GalleryItem::id] = [GalleryPermissionMap::itemId]
+          [GalleryItem::id] = [GalleryAccessSubscriberMap::itemId]
           AND
           [GalleryItem::id] = [GalleryEntity::id]
           AND
           [GalleryUser::id] = [GalleryItem::ownerId]
           AND
-          ([GalleryPermissionMap::userId] = ?
-           OR
-           [GalleryPermissionMap::groupId] IN (' . $groupIdMarkers . '))
-          AND
-        ' . $andPermission . ' = ?
+          [GalleryAccessSubscriberMap::accessListId] IN (%s)
         ORDER BY
           [GalleryEntity::modificationTimestamp] DESC, [GalleryItem::id] DESC
-        ';
-
-	list ($ret, $viewPermission) =
-	    GalleryCoreApi::convertPermissionIdsToBits('core.view');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
+        ', $aclMarkers);
 
 	$data = $whereData;
-	$data[] = $gallery->getActiveUserId();
-	array_splice($data, sizeof($data), 0, $groupIds);
-	$data[] = $storage->convertIntToBits($viewPermission);
-	$data[] = $storage->convertIntToBits($viewPermission);
+	$data = array_merge($data, $aclIds);
 
 	/* Find the total */
 	list ($ret, $results) = $gallery->search($countQuery, $data);
@@ -171,15 +159,11 @@ class GalleryCoreSearch extends GallerySearchInterface_1_0 {
 	$numRows = (int)$result[0];
 
 	/* Get the results that we're interested in */
-	list ($ret, $results) =
-	    $gallery->search($query,
-			     $data,
-			     array('limit' => array('offset' => $offset,
-						    'count' => $count)));
+	list ($ret, $results) = $gallery->search(
+	    $query, $data, array('limit' => array('offset' => $offset, 'count' => $count)));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret->isError()) {
@@ -205,16 +189,14 @@ class GalleryCoreSearch extends GallerySearchInterface_1_0 {
 		     * Remember that our field columns start at column index 4
 		     * (id, date, full name, username are columns 0-3)
 		     */
-		    $fields[] = array('key' => $fieldText,
-				      'value' => $result[$selectMap[$columnName]+4]);
+		    $fields[] = array(
+			'key' => $fieldText, 'value' => $result[$selectMap[$columnName]+4]);
 		}
 	    }
 
 	    $fields[] = array('key' => $text['owner'],
 			      'value' => !empty($result[1]) ? $result[1] : $result[2]);
-
-	    $searchResults[] = array('itemId' => (int)$result[0],
-				     'fields' => $fields);
+	    $searchResults[] = array('itemId' => (int)$result[0], 'fields' => $fields);
 	}
 
 	$data = array('start' => $numRows == 0 ? 0 : $offset+1,

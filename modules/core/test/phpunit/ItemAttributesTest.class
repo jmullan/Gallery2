@@ -42,15 +42,15 @@ class ItemAttributesTest extends GalleryTestCase {
 
 	parent::setUp();
 
-	list ($ret, $this->_parentItem) = $this->_createRandomAlbum($this->_getRootId(),
-								    array('orderBy' => 'id',
-									  'orderDirection' => ORDER_ASCENDING));
+	list ($ret, $this->_parentItem) = $this->_createRandomAlbum(
+	    $this->_getRootId(), array('orderBy' => 'id', 'orderDirection' => ORDER_ASCENDING));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	for ($i = 0; $i < 3; $i++) {
-	    list ($ret, $this->_childItems[$i]) = $this->_createRandomAlbum($this->_parentItem->getId());
+	    list ($ret, $this->_childItems[$i]) =
+		$this->_createRandomAlbum($this->_parentItem->getId());
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
@@ -196,7 +196,8 @@ class ItemAttributesTest extends GalleryTestCase {
 
 	$count = sizeof($this->_childItems);
 	for ($i = 0; $i < $count; $i++) {
-	    list ($ret, $weight) = GalleryCoreApi::fetchItemOrderWeight($this->_childItems[$i]->getId());
+	    list ($ret, $weight) =
+		GalleryCoreApi::fetchItemOrderWeight($this->_childItems[$i]->getId());
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
@@ -295,9 +296,8 @@ class ItemAttributesTest extends GalleryTestCase {
 	}
 
 	/* Verify our counts */
-	list ($ret, $counts) =
-	    GalleryCoreApi::fetchDescendentCounts(array($this->_parentItem->getId(),
-							$album->getId()));
+	list ($ret, $counts) = GalleryCoreApi::fetchDescendentCounts(
+	    array($this->_parentItem->getId(), $album->getId()));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
