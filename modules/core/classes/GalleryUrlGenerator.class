@@ -526,11 +526,10 @@ class GalleryUrlGenerator {
 	$url = $this->getCurrentUrl();
 	if ($pos = strpos($url, '?')) {
 	    /* We'll add the query params later */
-	    $url = substr($url, 0, $pos);
+	    $url = substr($url, 0, $pos + 1);
 	}
 	$urlVariables = GalleryUtilities::getUrlVariablesFiltered(
 			array('return', 'returnName', 'navId', 'fromNavId'));
-	$url .= '?';
 	$args = array();
 	foreach ($urlVariables as $key => $value) {
 	    $args[] = $key . '=' . $value;
@@ -631,7 +630,7 @@ class GalleryUrlGenerator {
 		}
 	    }
 	    $params['returnName'] = $viewDescription;
-	    $params['return'] = urlencode($this->getNavigationReturnUrl());
+	    $params['return'] = urlencode(str_replace('&amp;', '&', $this->getNavigationReturnUrl()));
 	    $params['navId'] = $this->_navId;
 	}
 	if ((empty($currentView) || $currentView == $targetView || ! empty($params['controller']))

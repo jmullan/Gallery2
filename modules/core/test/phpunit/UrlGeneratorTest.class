@@ -146,6 +146,34 @@ class UrlGeneratorTest extends GalleryTestCase {
 			    'relative embedded, no trailing slash');
     }
 
+    function testGenerateReturnUrl() {
+	$_SERVER['REQUEST_URI'] = '/gallery2/phpunit_test.php?' .
+	    GalleryUtilities::prefixFormVariable('view') . '=foo&' .
+	    GalleryUtilities::prefixFormVariable('a') . '=123';
+	$_GET[GalleryUtilities::prefixFormVariable('view')] = 'foo';
+	$_GET[GalleryUtilities::prefixFormVariable('a')] = '123';
+
+	$params['a'] = 456;
+	$params['view'] = 'bar';
+	$params['return'] = 1;
+	$actual = $this->_urlGenerator->generateUrl($params, false);
+
+	$params['return'] = urlencode($this->_urlGenerator->getCurrentUrl());
+	$params['returnName'] = '';
+	$params['navId'] = '';
+	foreach ($params as $key => $value) {
+	    $values[] = GalleryUtilities::prefixFormVariable($key) . '=' . htmlentities($value);
+	}
+	$url = $this->_urlGenerator->getCurrentUrl();
+	$expected = 'http://example.com/gallery2/phpunit_test.php?' . implode('&amp;', $values);
+	/*
+	 * Note: encoded 'return' url should separate request variables with '%26'
+	 * and not '%26amp%3D' because sending this back to G2 would yield &amp;amp;
+	 */
+
+	$this->assertEquals($expected, $actual);
+    }
+
     function testGenerateUrlWithEmbeddedSessionId() {
 	global $gallery;
 
