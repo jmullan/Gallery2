@@ -185,6 +185,10 @@ class DownloadItemView extends GalleryView {
 	    $platform->fclose($fd);
 	}
 
+	flush();
+	// Hopefully at this point the file has been sent to the browser; now we can connect
+	// to the database for administrative tasks without slowing down the request.
+
 	/* Increment the view count */
 	if ($data['derivativeType'] != DERIVATIVE_TYPE_IMAGE_THUMBNAIL) {
 	    $ret = GalleryCoreApi::incrementItemViewCount($data['parentId']);
