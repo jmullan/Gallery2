@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -134,8 +134,8 @@ class GalleryCoreApi {
     function unregisterFactoryImplementation($classType, $className) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryFactoryHelper_medium.class');
 	return GalleryFactoryHelper_medium::unregisterImplementation($classType, $className);
-    }    
-    
+    }
+
     /**
      * Load and initialize the given plugin
      *
@@ -194,7 +194,7 @@ class GalleryCoreApi {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryPluginHelper_medium.class');
 	return GalleryPluginHelper_medium::removeParametersForItemId($itemId);
     }
-    
+
     /**
      * Get the status of all plugins of a given type
      *
@@ -276,7 +276,7 @@ class GalleryCoreApi {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryPluginHelper_medium.class');
 	return GalleryPluginHelper_medium::removeParameter($pluginType, $pluginId, $parameterName, $itemId);
     }
-    
+
     /**
      * Remove all parameters for this plugin
      *
@@ -289,7 +289,7 @@ class GalleryCoreApi {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryPluginHelper_medium.class');
 	return GalleryPluginHelper_medium::removeAllParameters($pluginType, $pluginId);
     }
-	
+
     /**
      * Set a module parameter
      *
@@ -305,7 +305,7 @@ class GalleryCoreApi {
 	return GalleryPluginHelper_medium::setParameter($pluginType, $pluginId,
 							$parameterName, $parameterValue, $itemId);
     }
-	
+
     /**
      * Assert that the given user has one of the specific permissions for the
      * target item
@@ -330,7 +330,7 @@ class GalleryCoreApi {
     function hasItemPermission($itemId, $permission) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryUserHelper_simple.class');
 	return GalleryUserHelper_simple::hasItemPermission($itemId, $permission);
-    }    
+    }
 
     /**
      * Return a map of userNames => userids
@@ -340,7 +340,7 @@ class GalleryCoreApi {
      *
      * @param int [optional] the number of usernames desired
      * @param int [optional] the start of the range
-     * @param string [optional] a substring to match 
+     * @param string [optional] a substring to match
      * @return array object GalleryStatus a status code
      *               array (username, username, ...)
      * @static
@@ -349,7 +349,7 @@ class GalleryCoreApi {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryUserHelper_medium.class');
 	return GalleryUserHelper_medium::fetchUsernames($count, $offset, $substring);
     }
-    
+
     /**
      * Return the total number of users
      *
@@ -360,7 +360,7 @@ class GalleryCoreApi {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryUserHelper_medium.class');
 	return GalleryUserHelper_medium::fetchUserCount($substring, $groupId);
     }
-    
+
     /**
      * Lookup a user by username
      *
@@ -373,7 +373,7 @@ class GalleryCoreApi {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryUserHelper_medium.class');
 	return GalleryUserHelper_medium::fetchUserByUserName($userName);
     }
-    
+
     /**
      * Assert that the active user is a site administrator
      *
@@ -387,7 +387,7 @@ class GalleryCoreApi {
     }
 
     /**
-     * Delete all non-album items of a user. Then delete all remaining 
+     * Delete all non-album items of a user. Then delete all remaining
      * albums that are empty.
      * This function can only be called with activeUser = Site Admin
      *
@@ -408,7 +408,7 @@ class GalleryCoreApi {
      *
      * @param int [optional] the number of groupnames desired
      * @param int [optional] the start of the range
-     * @param string [optional] a substring to match 
+     * @param string [optional] a substring to match
      * @return array object GalleryStatus a status code
      *               array (groupname, groupname, ...)
      * @static
@@ -431,7 +431,7 @@ class GalleryCoreApi {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryGroupHelper_simple.class');
 	return GalleryGroupHelper_simple::fetchGroupCount($substring);
     }
-    
+
     /**
      * Lookup a group by name
      *
@@ -444,7 +444,7 @@ class GalleryCoreApi {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryGroupHelper_simple.class');
 	return GalleryGroupHelper_simple::fetchGroupByGroupName($groupName);
     }
-    
+
 
     /**
      * Return the permission bits for a set of permission ids
@@ -523,7 +523,7 @@ class GalleryCoreApi {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryPermissionHelper_advanced.class');
 	return GalleryPermissionHelper_advanced::addUserPermission($itemId, $userId, $permission, $applyToChildren);
     }
-    
+
     /**
      * Add the given itemid, userid, permission mapping
      *
@@ -549,7 +549,7 @@ class GalleryCoreApi {
 	return GalleryPermissionHelper_advanced::removeUserPermission($itemId, $userId,
 								      $permission, $applyToChildren);
     }
-    
+
     /**
      * Remove the given itemid, userid, permission mapping
      *
@@ -574,7 +574,7 @@ class GalleryCoreApi {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryPermissionHelper_advanced.class');
 	return GalleryPermissionHelper_advanced::removeItemPermissions($itemId);
     }
-    
+
     /**
      * Return a list of permissions for the given item id
      *
@@ -590,7 +590,7 @@ class GalleryCoreApi {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryPermissionHelper_advanced.class');
 	return GalleryPermissionHelper_advanced::fetchAllPermissionsForItem($itemId, $compress);
     }
-    
+
     /**
      * Copy a set of permissions from one id to another
      *
@@ -636,7 +636,7 @@ class GalleryCoreApi {
 	return GalleryPermissionHelper_advanced::registerPermission($module, $permissionId,
 								    $description, $flags, $composites);
     }
-    
+
     /**
      * Get all the permission ids that match the specified flags
      * This will return any permissions that contain *all* the bits from flags.
@@ -675,12 +675,12 @@ class GalleryCoreApi {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryPermissionHelper_advanced.class');
 	return GalleryPermissionHelper_advanced::unregisterModulePermissions($moduleId);
     }
-    
+
     /**
      * Rebuild the cache if its not current
      *
      * If the cache is expired, it will be automatically rebuilt
-     * 
+     *
      * @access public
      * @return array object GalleryStatus a status code,
      *               object GalleryDerivative the up-to-date derivative
@@ -703,7 +703,7 @@ class GalleryCoreApi {
     function rebuildDerivativeCache($derivativeId) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryDerivativeHelper_advanced.class');
 	return GalleryDerivativeHelper_advanced::rebuildCache($derivativeId);
-    }    
+    }
 
     /**
      * Expire all derivatives that depend on the source ids specified
@@ -750,7 +750,7 @@ class GalleryCoreApi {
      * Convenience function to fetch the thumbnail for an item id
      *
      * @param array GalleryItem ids
-     * @return array object GalleryStatus a status code 
+     * @return array object GalleryStatus a status code
      *               array(GalleryItem id => GalleryDerivativeImage, ...)
      * @static
      */
@@ -763,7 +763,7 @@ class GalleryCoreApi {
      * Convenience function to fetch the preferred for an item id
      *
      * @param array GalleryItem ids
-     * @return array object GalleryStatus a status code 
+     * @return array object GalleryStatus a status code
      *               array(GalleryItem id => GalleryDerivativeImage, ...)
      * @static
      */
@@ -776,7 +776,7 @@ class GalleryCoreApi {
      * Convenience function to fetch the resizes for an item id
      *
      * @param array GalleryItem ids
-     * @return array object GalleryStatus a status code 
+     * @return array object GalleryStatus a status code
      *               array(GalleryItem id => array(GalleryDerivativeImage, ...)
      *                     ...)
      * @static
@@ -795,7 +795,7 @@ class GalleryCoreApi {
      * scale|250;rotate|90          rotate|-90             scale|250
      * scale|250;rotate|90          rotate|90              scale|250;rotate|180
      * scale|250;rotate|90          thumbnail|125          thumbnail|125;rotate|180
-     *   
+     *
      * @param string the first set of operations
      * @param string the second set of operations
      * @param boolean true if the second set should be added at the beginning of the first set, if it
@@ -819,14 +819,14 @@ class GalleryCoreApi {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryDerivativeHelper_advanced.class');
 	return GalleryDerivativeHelper_advanced::removeOperation($operation, $operationSet);
     }
-    
+
     /**
      * Load the derivative images that have the specified source id(s) with
      * the type(s) specified
      *
      * @param array GalleryItem ids
      * @param array derivative types (eg, 'DERIVATIVE_TYPE_IMAGE_THUMBNAIL')
-     * @return array object GalleryStatus a status code 
+     * @return array object GalleryStatus a status code
      *               array(GalleryItem id => GalleryDerivativeImage, ...)
      * @static
      */
@@ -839,7 +839,7 @@ class GalleryCoreApi {
      * Convenience function to fetch all derivatives for a given item id
      *
      * @param array GalleryItem ids
-     * @return array object GalleryStatus a status code 
+     * @return array object GalleryStatus a status code
      *               array(GalleryItem id => GalleryDerivativeImage, ...)
      * @static
      */
@@ -950,7 +950,7 @@ class GalleryCoreApi {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryToolkitHelper_medium.class');
 	return GalleryToolkitHelper_medium::estimateDerivativeDimensions($derivative, $source);
     }
-    
+
     /**
      * Update the view count for this item id
      * @param int the item id
@@ -972,7 +972,7 @@ class GalleryCoreApi {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryItemAttributesHelper_advanced.class');
 	return GalleryItemAttributesHelper_advanced::createItemAttributes($itemId, $parentSequence);
     }
-    
+
     /**
      * Remove the attributes for the given item
      * @param int the item id
@@ -982,7 +982,7 @@ class GalleryCoreApi {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryItemAttributesHelper_advanced.class');
 	return GalleryItemAttributesHelper_advanced::removeItemAttributes($itemId);
     }
-    
+
     /**
      * Update the view count for this item id
      * @param int the item id
@@ -993,7 +993,7 @@ class GalleryCoreApi {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryItemAttributesHelper_advanced.class');
 	return GalleryItemAttributesHelper_advanced::setViewCount($itemId, $count);
     }
-    
+
     /**
      * Get the view counts for many item ids
      * @param int the item id
@@ -1003,7 +1003,7 @@ class GalleryCoreApi {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryItemAttributesHelper_advanced.class');
 	return GalleryItemAttributesHelper_advanced::fetchViewCount($itemId);
     }
-    
+
     /**
      * Get the view counts for many item ids
      * @param int the item id
@@ -1013,7 +1013,7 @@ class GalleryCoreApi {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryItemAttributesHelper_medium.class');
 	return GalleryItemAttributesHelper_medium::fetchViewCounts($itemIds);
     }
-    
+
     /**
      * Set the order weight for an item id
      * @param int the item id
@@ -1024,7 +1024,7 @@ class GalleryCoreApi {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryItemAttributesHelper_advanced.class');
 	return GalleryItemAttributesHelper_advanced::setOrderWeight($itemId, $orderWeight);
     }
-    
+
     /**
      * Get the order weight for a given item id
      * @param int the item id
@@ -1035,7 +1035,7 @@ class GalleryCoreApi {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryItemAttributesHelper_medium.class');
 	return GalleryItemAttributesHelper_medium::fetchOrderWeight($itemId);
     }
-    
+
     /**
      * Get the order weight for a given item id
      * @param int the item id
@@ -1046,7 +1046,7 @@ class GalleryCoreApi {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryItemAttributesHelper_medium.class');
 	return GalleryItemAttributesHelper_medium::fetchOrderWeights($itemIds);
     }
-    
+
     /**
      * Rebalance the order weights associated with this item's children.
      * When this method is complete, the child item ids should still have the
@@ -1061,7 +1061,7 @@ class GalleryCoreApi {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryItemAttributesHelper_advanced.class');
 	return GalleryItemAttributesHelper_advanced::rebalanceChildOrderWeights($parentItemId, $spacing);
     }
-    
+
     /**
      * Fetch the highest or lowest weight of all children
      * @param int the parent item id
@@ -1073,7 +1073,7 @@ class GalleryCoreApi {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryItemAttributesHelper_advanced.class');
 	return GalleryItemAttributesHelper_advanced::fetchExtremeChildWeight($itemId, $direction);
     }
-    
+
     /**
      * Fetch the weight of the next peer in line (higher or lower, as specified)
      *
@@ -1086,7 +1086,7 @@ class GalleryCoreApi {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryItemAttributesHelper_advanced.class');
 	return GalleryItemAttributesHelper_advanced::fetchNextWeight($itemId, $direction);
     }
-    
+
     /**
      * Set the parent id sequence for an item id
      *
@@ -1099,7 +1099,7 @@ class GalleryCoreApi {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryItemAttributesHelper_advanced.class');
 	return GalleryItemAttributesHelper_advanced::setParentSequence($itemId, $parentSequence);
     }
-    
+
     /**
      * Update all items containing the source parent sequence to the new parent sequence
      *
@@ -1112,7 +1112,7 @@ class GalleryCoreApi {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryItemAttributesHelper_advanced.class');
 	return GalleryItemAttributesHelper_advanced::updateParentSequence($oldParentSequence, $newParentSequence);
     }
-    
+
     /**
      * Get the parent sequence for this item id
      * @param int the item id
@@ -1124,7 +1124,7 @@ class GalleryCoreApi {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryItemAttributesHelper_medium.class');
 	return GalleryItemAttributesHelper_medium::fetchParentSequence($itemId);
     }
-    
+
     /**
      * Return the correct layout for this item
      *
@@ -1215,7 +1215,7 @@ class GalleryCoreApi {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryChildEntityHelper_simple.class');
 	return GalleryChildEntityHelper_simple::fetchChildItemIdsWithPermission($itemId, $permissionId);
     }
-    
+
     /**
      * Return the ids of all the child items of the given item that have the
      * matching permission and are linkable entities.  Useful for, example, for
@@ -1233,7 +1233,7 @@ class GalleryCoreApi {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryChildEntityHelper_simple.class');
 	return GalleryChildEntityHelper_simple::fetchLinkableChildItemIdsWithPermission($itemId, $permissionId);
     }
-    
+
     /**
      * Return the ids of all items that match the given type and have the
      * given permission (defaults to 'core.view')
@@ -1279,7 +1279,7 @@ class GalleryCoreApi {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryItemHelper_medium.class');
 	return GalleryItemHelper_medium::newItemByMimeType($mimeType);
     }
-    
+
     /**
      * Create a new album.
      *
@@ -1298,7 +1298,7 @@ class GalleryCoreApi {
 	return GalleryItemHelper_advanced::createAlbum($parentAlbumId, $name, $title, $summary,
 							$description, $keywords);
     }
-    
+
     /**
      * Add a new data item to an album from a data file.
      *
@@ -1309,7 +1309,7 @@ class GalleryCoreApi {
      * @param string the description of the new item
      * @param string the mime type of the new item
      * @param int the id of the target album
-     * @param boolean (optional) a boolean true if we should symlink instead 
+     * @param boolean (optional) a boolean true if we should symlink instead
      *        of copy (default is false).
      * @return array object GalleryStatus a status code
      *               object GalleryDataItem a new item
@@ -1321,9 +1321,9 @@ class GalleryCoreApi {
 	return GalleryItemHelper_medium::addItemToAlbum($fileName, $itemName, $title, $summary,
 							$description, $mimeType, $albumId, $symlink);
     }
-    
+
     /**
-     * Add an existing data item to an album 
+     * Add an existing data item to an album
      *
      * @param object GalleryItem the source item
      * @param int the id of the target album
@@ -1335,7 +1335,7 @@ class GalleryCoreApi {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryItemHelper_medium.class');
 	return GalleryItemHelper_medium::addExistingItemToAlbum($item, $albumId, $isNew);
     }
-    
+
     /**
      * Set the thumbnail for an album from an item, according to the thumbnail
      * preferences for the album.
@@ -1364,7 +1364,19 @@ class GalleryCoreApi {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryItemHelper_advanced.class');
 	return GalleryItemHelper_advanced::guaranteeAlbumHasThumbnail($itemId);
     }
-    
+
+    /**
+     * Fetch album tree visible to current user,
+     * optionally starting from a given album and to a given depth.
+     *
+     * @return array object GalleryStatus a status code
+     *               array (albumId => array(albumId => array, ..), ..)
+     */
+    function fetchAlbumTree($itemId=null, $depth=null) {
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryItemHelper_advanced.class');
+	return GalleryItemHelper_advanced::fetchAlbumTree($itemId, $depth);
+    }
+
     /**
      * Remove the specific item/key pair
      *
@@ -1454,7 +1466,7 @@ class GalleryCoreApi {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryItemHelper_advanced.class');
 	return GalleryItemHelper_advanced::remapOwnerId($oldUserId, $newUserId);
     }
- 
+
     /**
      * Is the active user in the admin group?
      *
@@ -1478,7 +1490,7 @@ class GalleryCoreApi {
     function isUserInGroup($userId, $groupId) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryUserGroupHelper_simple.class');
 	return GalleryUserGroupHelper_simple::isUserInGroup($userId, $groupId);
-    }    
+    }
 
     /**
      * Add the specified user to the specified group.
@@ -1564,7 +1576,7 @@ class GalleryCoreApi {
     function fetchGroupsForUser($userId, $count=null, $offset=null) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryUserGroupHelper_medium.class');
 	return GalleryUserGroupHelper_medium::fetchGroupsForUser($userId, $count, $offset);
-    }	
+    }
 
     /**
      * Given a complete logical path, return the item id that it refers to.
@@ -1578,7 +1590,7 @@ class GalleryCoreApi {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryFileSystemEntityHelper_simple.class');
 	return GalleryFileSystemEntityHelper_simple::fetchItemIdByPath($path);
     }
-    
+
     /**
      * Typically, we create a FileSystemEntity with a specific path.  This
      * allows us to check for name collisions at this point.
@@ -1609,7 +1621,7 @@ class GalleryCoreApi {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryFileSystemEntityHelper_medium.class');
 	return GalleryFileSystemEntityHelper_medium::getLegalPathComponent($pathComponent, $parentId);
     }
-    
+
     /**
      * Returns the id of the child filesystem entity that matches the given
      * path component.
@@ -1629,7 +1641,7 @@ class GalleryCoreApi {
     }
 
     /**
-     * Register the operations that a toolkit is able to perform on a 
+     * Register the operations that a toolkit is able to perform on a
      * certain mime type
      *
      * This should be called by a module that provides a toolkit to
@@ -1692,7 +1704,7 @@ class GalleryCoreApi {
 	return GalleryToolkitHelper_medium::registerProperty($toolkitId, $mimeTypes,
 							     $propertyName, $type, $description);
     }
-    
+
     /**
      * Unregister a toolkit's operations and properties.  If we have any
      * remaining operations or properties that are no longer implemented by any
@@ -1706,7 +1718,7 @@ class GalleryCoreApi {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryToolkitHelper_medium.class');
 	return GalleryToolkitHelper_medium::unregisterToolkit($toolkitId);
     }
-    
+
     /**
      * Get all valid operations on a certain mime type
      *
@@ -1739,7 +1751,7 @@ class GalleryCoreApi {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryToolkitHelper_medium.class');
 	return GalleryToolkitHelper_medium::getOperationMimeTypes($operationName);
     }
-    
+
     /**
      * Get all valid properties of a certain mime type
      *
@@ -1756,7 +1768,7 @@ class GalleryCoreApi {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryToolkitHelper_medium.class');
 	return GalleryToolkitHelper_medium::getProperties($mimeType);
     }
-    
+
     /**
      * Get a toolkit that can perform the given operation
      *
@@ -1772,7 +1784,7 @@ class GalleryCoreApi {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryToolkitHelper_simple.class');
 	return GalleryToolkitHelper_simple::getToolkitByOperation($mimeType, $operationName);
     }
-    
+
     /**
      * Verify that a given mime-type/operation-sequence combination is
      * supported by our existing toolkits by walking the sequence and making
@@ -2019,17 +2031,17 @@ class GalleryCoreApi {
     }
 
     /**
-     * Delete the entity with the given id 
+     * Delete the entity with the given id
      *
      * @param int the id of a GalleryEntity to delete
-     * @return object GalleryStatus a status code 
+     * @return object GalleryStatus a status code
      * @static
      */
     function deleteEntityById($id) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryEntityHelper_medium.class');
 	return GalleryEntityHelper_medium::deleteEntityById($id);
     }
-    
+
     /**
      * Fetch the ids of the entities linked to the target entity
      *
@@ -2092,7 +2104,7 @@ class GalleryCoreApi {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryChildEntityHelper_simple.class');
 	return GalleryChildEntityHelper_simple::fetchChildDataItemIds($item, $offset, $count);
     }
-    
+
     /**
      * Same as fetchChildItemIds, except that we ignore permissions
      *
@@ -2114,7 +2126,7 @@ class GalleryCoreApi {
      * Load all the ancestors of this item
      *
      * @param object GalleryItem an item
-     * @return array object GalleryStatus a status code 
+     * @return array object GalleryStatus a status code
      *               array (array(memberName => memberValue))
      * @static
      */
@@ -2127,7 +2139,7 @@ class GalleryCoreApi {
      * Convert a file extension to a mime type
      *
      * @param string a file extension
-     * @return string a mime type 
+     * @return string a mime type
      * @static
      */
     function convertExtensionToMime($extension) {
@@ -2222,7 +2234,7 @@ class GalleryCoreApi {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/WebHelper_simple.class');
 	return WebHelper_simple::postToWebPage($url, $postDataArray, $extraHeaders);
     }
-    
+
     /**
      * Require a file, but only once.  Surprisingly, tracking what's been
      * already loaded in a static variable is actually 10x+ faster than just
