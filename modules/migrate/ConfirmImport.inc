@@ -192,13 +192,40 @@ class ConfirmImportController extends GalleryController {
 		$targetAlbumID = FALSE;
 		$newAlbumInstanceId = FALSE;
 		if (!in_array($album['parentAlbumName'],array_keys($form['sourceAlbums']))) {
-		    $targetAlbumID= $destinationAlbumID;
+		    $targetAlbumID = $destinationAlbumID;
 		} else if (in_array($album['parentAlbumName'],array_keys($finishedAlbums))){
 		    /* if the album's parent has already been imported, import
 		     * it into the parent
 		     */
 		    $targetAlbumID = $finishedAlbums[$album['parentAlbumName']];
 		}
+
+		list($ret, $parent) = $gallery->loadEntitiesById($targetAlbumID);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+
+		list($ret, $parentPath) = $parent->fetchPath();
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+		
+		$desiredname = $album['name'];
+		$k = 0;
+		$invalidName = TRUE;
+		while($invalidName) {
+		    list ($ret, $existingAlbumId) = GalleryFileSystemEntityHelper::fetchItemIdByPath($desiredname);
+		    if ($ret->isError()) {
+			if (!$ret->getErrorCode() & ERROR_MISSING_OBJECT) {
+			    return array($ret->wrap(__FILE__, __LINE__), null);
+			} else {
+			    $invalidName = FALSE;
+			}
+		    } else {
+			$desiredname = $album['name'] . '_' . $k++;
+		    }
+		}
+		
 		if ($targetAlbumID) {
 		    // list ($ret, $importedAlbumID)=ConfirmImportController::importAlbum($targetAlbumID,$album);
 		    /* crappy procedural code ;) */
@@ -224,9 +251,9 @@ class ConfirmImportController extends GalleryController {
 		     * local filesystem
 		     */
 		    $platform = $gallery->getPlatform();
-		    if (empty($album['name'])) {
+		    if (empty($desiredname)) {
 			$error[] = 'form[error][pathComponent][missing]';
-		    } else if (!$platform->isLegalPathComponent($album['name'])) {
+		    } else if (!$platform->isLegalPathComponent($desiredname)) {
 			$error[] = 'form[error][pathComponent][invalid]';
 		    }
 		    /* If everything is good so far, we create a new instance to be our new
@@ -243,7 +270,7 @@ class ConfirmImportController extends GalleryController {
 					 null);
 			}  
 			/* this is where the album is actually created */	    
-			$ret = $newAlbumInstance->create($targetAlbumID, $album['name']);
+			$ret = $newAlbumInstance->create($targetAlbumID, $desiredname);
 			if ($ret->isError()) {
 			    if ($ret->getErrorCode() & ERROR_COLLISION) {
 				$error[] = 'form[error][pathComponent][collision]';
