@@ -139,7 +139,7 @@ class GalleryEmbed {
 	$session =& $gallery->getSession();
 
 	$idInSession = $session->get('embed.id.externalUser');
-	if ($idInSession == $activeUserId) {
+	if ($idInSession === $activeUserId) {
 	    return GalleryStatus::success();
 	}
 
