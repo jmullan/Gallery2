@@ -280,9 +280,9 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 				  NULL,                                  // keywords
 				  '[b]No description[/b]',               // description
 				  $testOwner->getId(),                   // owner
-				  1081143716,                            // album creation
+				  1082443513,                            // album creation
 				  1056015077,                            // clicks counted since
-				  7,                                     // count of clicks
+				  8,                                     // count of clicks
 				  array(array(                           // thumb and resized sizing preferences
 					      'order' => 0,
 					      'derivativeType' => 1,
@@ -379,7 +379,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 				  $testOwner->getId(),                   // owner
 				  1056015116,                            // album creation
 				  1056015077,                            // clicks counted since
-				  1                                      // count of clicks
+				  2                                      // count of clicks
 				  )
 			    );
 	
@@ -401,7 +401,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 			    ConfirmImportController::convertHtmlToBbcode('<br/>'));
 	$this->assertEquals("\n",
 			    ConfirmImportController::convertHtmlToBbcode('<br />'));
- 
+
 	/* Image HTML with edge cases */
 	$this->assertEquals('[img]foo.jpg[/img]',
 			    ConfirmImportController::convertHtmlToBbcode('<img src=\'foo.jpg\'>'));
