@@ -178,12 +178,26 @@ class ItemAddController extends GalleryController {
 	}
 	$platform->closedir($dh);
 
+	/*
+	 * If archive title matches the filename or base filename then name new items
+	 * with the same strategy; otherwise just use the archive title.
+	 */
+	$archiveTitle = $title = $archiveItem->getTitle();
+	$archiveName = $archiveItem->getPathComponent();
+	list ($archiveBase) = GalleryUtilities::getFileNameComponents($archiveName);
+
 	$addedFiles = array();
 	foreach ($list as $file) {
 	    $extension = GalleryUtilities::getFileExtension($file);
 	    $mimeType = GalleryCoreApi::convertExtensionToMime($extension);
+	    $filename = basename($file);
+	    if ($archiveTitle == $archiveName) {
+		$title = $filename;
+	    } else if ($archiveTitle == $archiveBase) {
+		list ($title) = GalleryUtilities::getFileNameComponents($filename);
+	    }
 	    list ($ret, $newItem) = GalleryCoreApi::addItemToAlbum(
-		$file, basename($file), $archiveItem->getTitle(), $archiveItem->getSummary(),
+		$file, $filename, $title, $archiveItem->getSummary(),
 		$archiveItem->getDescription(), $mimeType, $archiveItem->getParentId());
 	    if ($ret->isError()) {
 		@$platform->recursiveRmdir($tmpDir);
@@ -234,14 +248,16 @@ class ItemAddView extends GalleryView {
 	}
 
 	/* Get all the add plugins */
-	list ($ret, $allPluginIds) = GalleryCoreApi::getAllFactoryImplementationIds('ItemAddPlugin');
+	list ($ret, $allPluginIds) =
+	    GalleryCoreApi::getAllFactoryImplementationIds('ItemAddPlugin');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$pluginInstances = array();
 	foreach (array_keys($allPluginIds) as $pluginId) {
-	    list ($ret, $plugin) = GalleryCoreApi::newFactoryInstanceById('ItemAddPlugin', $pluginId);
+	    list ($ret, $plugin) =
+		GalleryCoreApi::newFactoryInstanceById('ItemAddPlugin', $pluginId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -416,14 +432,16 @@ class ItemAddOption {
      */
     function getAllAddOptions() {
 	/* Get all the option plugins */
-	list ($ret, $allOptionIds) = GalleryCoreApi::getAllFactoryImplementationIds('ItemAddOption');
+	list ($ret, $allOptionIds) =
+	    GalleryCoreApi::getAllFactoryImplementationIds('ItemAddOption');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$optionInstances = array();
 	foreach (array_keys($allOptionIds) as $optionId) {
-	    list ($ret, $option) = GalleryCoreApi::newFactoryInstanceById('ItemAddOption', $optionId);
+	    list ($ret, $option) =
+		GalleryCoreApi::newFactoryInstanceById('ItemAddOption', $optionId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
