@@ -18,7 +18,7 @@ var image_height = new Array({$layout.imageHeights});
 var view = {$layout.viewIndex|default:-1};
 var path = '{$layout.cookiePath}';
 </script>
-<script type="text/javascript" src="{$layout.layoutUrl}/templates/tile.js"></script>
+<script type="text/javascript" src="{$layout.layoutUrl}/tile.js"></script>
 <style type="text/css">
 div.emptyTile {ldelim}
   width: {$layout.params.cellWidth}px;

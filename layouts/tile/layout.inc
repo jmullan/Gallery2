@@ -161,7 +161,7 @@ class TileLayout extends GalleryLayout {
 	if (!$noHead) {
 	    $template->head('layouts/tile/templates/header.tpl');
 	    $template->style('templates/layout.css');
-	    $template->style('layouts/tile/templates/tile.css');
+	    $template->style('layouts/tile/layout.css');
 	}
 	return array(GalleryStatus::success(),
 		     array('body' => 'layouts/tile/templates/tile.tpl'));
