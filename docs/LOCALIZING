@@ -15,15 +15,14 @@ CONTENTS
 1. OVERVIEW
 -----------
 
-Gallery is internationalized.  This means that instead of containing
-language specific text messages, it tracks text in a special way such
-that this text can be translated into other languages and a version of
-the text can be displayed as appropriate for the viewer.
+Gallery is internationalized.  Instead of containing language specific
+text messages, it tracks text in a special way so that it can be
+extracted and translated into other languages.  Users will see a
+version of the text that has been converted into their own language.
 
-In order for the viewer to see Gallery's text in their own language,
-somebody must first create a version of all the text messages that
-Gallery is going to display in that specific language.  This process
-is called "localization".
+In order for the users to see a localized version of Gallery's text,
+somebody must first translate the text messages that Gallery is going
+to display.  This process is called "localization".
 
 This document is a little sketchy at the moment, but I'll try to
 outline in broad strokes how you can create and maintain localization
@@ -38,9 +37,9 @@ in this process.
 
 In order to really do this effectively, you need to have a few tools
 installed on your machine.  I've only tested this process on a FreeBSD
-box, but my guess is that you won't have too much difficulty on Linux
-or Solaris.  You may have difficulties following along on Windows, but
-it should be possible.
+box, but my guess is that you won't have too much difficulty on Linux,
+Solaris, or other Unix variants.  You may have difficulties following
+along on Windows, but it should be possible.
 
   - gettext
     http://www.gnu.org/software/gettext/
@@ -66,15 +65,14 @@ stands for "portable object").  Here's one way to find them:
 	./modules/comment/po
 	./modules/netpbm/po
 
-** Ignore the "lib/tools/po" directory.
+	** Ignore the "lib/tools/po" directory.
 
 These directories contain translation source files.  You're going to
-create a new file in this directory with an appropriate language code,
-and then fill that file with translated text.  The first thing to do
-is to identify the correct language code.  If the one that you want to
-work on already exists, then skip to the next section ("Maintaining a
-Localization").  Otherwise, you need to assemble a code from the
-following two tables:
+create new files with an appropriate language code, and then fill them
+with translated text.  The first thing to do is to identify the
+correct language code.  If the one that you want to work on already
+exists, then skip to the next section ("Maintaining a Localization").
+Otherwise, you need to assemble a code from the following two tables:
 
 Language codes:
 	http://www.gnu.org/manual/gettext/html_mono/gettext.html#SEC221
@@ -120,27 +118,25 @@ Then, look at the lines just below the Gallery license:
 	msgid ""
 	msgstr ""
 
-The fuzzy keyword tells you that the translation of the block
-is incomplete. But now that you've completed the required
-administrational entries, remove this line to allow the
-translation to compile later on:
-
-	#, fuzzy
+The fuzzy keyword tells you that the translation of the block is
+incomplete. But once that you update the administration entries, you
+can remove the "#, fuzzy" line to allow the translation to compile
+later on.
 
 Next, you'll see a series of blocks like this:
 
-	#, c-format		(this is optional)
+	#, c-format		(<-- you'll only see this on some lines)
 	msgid "a message in english, with %d or %s tags in it"
 	msgstr ""
 
 You need to put the translation for the English message into the 
 msgstr block, between the quotes, for example:
 
-	#, c-format		(this is optional)
+	#, c-format
 	msgid "a message in english, with %d or %s tags in it"
 	msgstr "eine Anzeige auf englisch, mit %d oder %s etikettiert in ihr"
 
-		(ok, that's German not Greek, but you get the idea)
+    (ok, that's German not Greek, but you get the idea)
 
 Do that for every message.  Note that you must limit yourself to using
 characters from the character set that you specify!  So if you're using
