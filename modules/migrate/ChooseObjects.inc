@@ -183,6 +183,10 @@ class ChooseObjectsView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
+	foreach($albumList as $albumName => $album) {
+	    $albumList[$albumName]['urlencodedname'] = urlencode($album['name']);
+	}
+	
 	list($ret, $hierarchy) = Gallery1DataParser::getAlbumHierarchy($albumsPath);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);

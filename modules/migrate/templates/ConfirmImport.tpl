@@ -37,15 +37,14 @@
 	    {g->text text="Album Notes"}
 	  {/g->column}
 	{/g->row}
-
 	{foreach from=$form.sourceAlbums item=albumName}
 	  {g->row}
 	    {g->column width="25%"}
-	      {$albumName}
+	      {$ConfirmImport.urlDecoded.$albumName}
 	      {g->input type="hidden" name="form[sourceAlbums][$albumName]"}1{/g->input}
 	    {/g->column}
 	    {g->column}
-	      {$ConfirmImport.albums.$albumName.title}
+	      {$ConfirmImport.titles.$albumName}
 	    {/g->column}
 	    {g->column}
 	      <p>

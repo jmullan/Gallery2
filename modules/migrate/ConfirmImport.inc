@@ -63,6 +63,11 @@ class ConfirmImportController extends GalleryController {
 	if (isset($form['action']['import'])) {
 	    /* get list of userids in advance */
 	    require_once(dirname(__FILE__) . '/classes/Gallery1DataParser.class');
+	    list($ret, $albumList) = Gallery1DataParser::getAlbumList($albumsPath);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+
 	    list ($ret, $uidMap) = Gallery1DataParser::getUserUids($albumsPath);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
@@ -172,6 +177,10 @@ class ConfirmImportController extends GalleryController {
 		/* attempt to load the metadata from the selected album into a
 		 * local cache for later manipulation
 		 */
+		$sourceAlbumName = urldecode($sourceAlbumName);
+		if (!in_array($sourceAlbumName,array_keys($albumList))) {
+		    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);    
+		}
 		list ($ret, $albumfields[$sourceAlbumName]) =
 			Gallery1DataParser::loadAlbumFields($albumsPath.$sourceAlbumName);
 		if ($ret->isError()) {
@@ -199,7 +208,7 @@ class ConfirmImportController extends GalleryController {
 		 */
 		$targetAlbumID = FALSE;
 		$newAlbumInstanceId = FALSE;
-		if (!in_array($album['parentAlbumName'],array_keys($form['sourceAlbums']))) {
+		if (!in_array(urlencode($album['parentAlbumName']),array_keys($form['sourceAlbums']))) {
 		    $targetAlbumID = $destinationAlbumID;
 		} else if (in_array($album['parentAlbumName'],array_keys($finishedAlbums))){
 		    /* if the album's parent has already been imported, import
@@ -648,6 +657,8 @@ class ConfirmImportView extends GalleryView {
 	$illegalAlbumNames = array();
 	$existingAlbums = array();
 	$albumsValidOwner = array();
+	$urlDecoded = array();
+	$titles = array();
 	if (!isset($form['sourceAlbums'])) {
 	    $form['sourceAlbums']=array();
 	}
@@ -665,9 +676,12 @@ class ConfirmImportView extends GalleryView {
         if ($ret->isError()) {
             return array($ret->wrap(__FILE__, __LINE__), null);
         }
-
 	foreach ($form['sourceAlbums'] as $sourceAlbumName) {
-	    list ($ret, $albumfields[$sourceAlbumName]) = Gallery1DataParser::loadAlbumFields($albumsPath.$sourceAlbumName);
+	    $urlDecoded[$sourceAlbumName] = urldecode($sourceAlbumName);
+	    if (!in_array($urlDecoded[$sourceAlbumName],array_keys($albums))) {
+		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);    
+	    }
+	    list ($ret, $albumfields[$sourceAlbumName]) = Gallery1DataParser::loadAlbumFields($albumsPath.$urlDecoded[$sourceAlbumName]);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -679,6 +693,7 @@ class ConfirmImportView extends GalleryView {
 	while ($albumfields) {
 	    $existingAlbumId = FALSE;
 	    $album = array_shift($albumfields);
+	    $encodedName = urlencode($album['name']);
 	    if (!in_array($album['parentAlbumName'],$form['sourceAlbums'])) {
 		list ($ret, $existingAlbumId) =
 			GalleryCoreApi::fetchItemIdByPath($album['name']);
@@ -687,14 +702,15 @@ class ConfirmImportView extends GalleryView {
 		if (!$ret->getErrorCode() & ERROR_MISSING_OBJECT) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-		$existingAlbums[$album['name']] = FALSE;
+		$existingAlbums[$encodedName] = FALSE;
 	    } else {
-		$existingAlbums[$album['name']] = $existingAlbumId;
+		$existingAlbums[$encodedName] = $existingAlbumId;
 	    }
+	    $titles[$encodedName] = $album['title'];
 	    if (!$platform->isLegalPathComponent($album['name'])){
-		$illegalAlbumNames[$album['name']] = $platform->legalizePathComponent($album['name']);
+		$illegalAlbumNames[$encodedName] = $platform->legalizePathComponent($album['name']);
 	    } else {
-		$illegalAlbumNames[$album['name']] = FALSE;
+		$illegalAlbumNames[$encodedName] = FALSE;
 	    }
 	    $validUid = Gallery1DataParser::isValidUid($albumsPath,$album['owner']);
 	    if ($validUid){
@@ -708,12 +724,12 @@ class ConfirmImportView extends GalleryView {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		if ($owner) {
-		    $albumValidOwner[$album['name']] = TRUE;
+		    $albumValidOwner[$encodedName] = TRUE;
 		} else {
-		    $albumValidOwner[$album['name']] = FALSE;
+		    $albumValidOwner[$encodedName] = FALSE;
 		}
 	    } else {
-		$albumValidOwner[$album['name']] = FALSE;
+		$albumValidOwner[$encodedName] = FALSE;
 	    }
 	    $i++;
 	}
@@ -726,6 +742,8 @@ class ConfirmImportView extends GalleryView {
         $ConfirmImport['destinationAlbumID'] = $destinationAlbumID;
 	$ConfirmImport['albumValidOwner'] = $albumValidOwner;
         $ConfirmImport['targetAlbum'] = $targetAlbum;
+	$ConfirmImport['urlDecoded'] = $urlDecoded;
+	$ConfirmImport['titles'] = $titles;
         $template->setVariable('controller', 'migrate:ConfirmImport');
 	$template->setVariable('ConfirmImport', $ConfirmImport);
 	return array(GalleryStatus::success(),
