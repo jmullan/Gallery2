@@ -46,16 +46,18 @@ class SlideshowView extends GalleryView {
 	    }
 	}
 
-	list ($ret, $itemlist, $start) =
+	list ($ret, $itemList, $start) =
 	    $this->buildSlideshow($item, $startid);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$template->setVariable('item', $item->getMemberData());
-	$template->setVariable('itemlist', $itemlist);
-	$template->setVariable('count', count($itemlist));
-	$template->setVariable('start', $start);
+	$SlideShow = array();
+	$SlideShow['item'] = $item->getMemberData();
+	$SlideShow['itemList'] = $itemList;
+	$SlideShow['count'] = count($itemList);
+	$SlideShow['start'] = $start;
+	$template->setVariable('SlideShow', $SlideShow);
 	return array(GalleryStatus::success(),
 	       array('head' => 'modules/slideshow/templates/Header.tpl',
 	             'body' => 'modules/slideshow/templates/Slideshow.tpl'));
@@ -64,13 +66,13 @@ class SlideshowView extends GalleryView {
     /**
      * Build data set to be used by template to render slideshow
      */
-    function buildSlideshow($item, $startid=null, $deep=false) {
+    function buildSlideshow($item, $startid = null) {
 	global $gallery;
 	list ($ret, $childIds) = $item->fetchChildIds();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$itemlist = array();
+	$itemList = array();
 	$childItems = array();
 	if (!empty($childIds)) {
 	    $ret = GalleryItemHelper::studyPermissions($childIds);
@@ -92,20 +94,18 @@ class SlideshowView extends GalleryView {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
-	$ug = $gallery->getUrlGenerator();
+	$urlGenerator = $gallery->getUrlGenerator();
 	if (empty($startid)) {
 	    $start = 0;
 	}
 	foreach ($childItems as $child) {
 
 	    $childId = $child->getId();
-	    if (!isset($start) && $childId==$startid) {
-		$start = count($itemlist);
+	    if (!isset($start) && $childId == $startid) {
+		$start = count($itemList);
 	    }
 
-	    if ($child->getCanContainChildren()) {
-		// placeholder for recursive call to buildSlideshow()
-	    } else {
+	    if (!$child->getCanContainChildren()) {
 
 		list ($ret, $permissions) =
 		    GalleryItemHelper::getPermissions($childId);
@@ -113,23 +113,20 @@ class SlideshowView extends GalleryView {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-		unset($image);
+		$image = null;
 		if (isset($permissions['core.viewResizes']) &&
 			isset($resizedImg[$childId])) {
 		    // Just get the first resized size
 		    $image = current($resizedImg[$childId]);
 		    //XXX cache refresh?
-		}
-		else if (isset($permissions['core.viewSource'])) {
+		} else if (isset($permissions['core.viewSource'])) {
 		    // Full size; check for preferred copy
 		    if (isset($preferredFullImg[$childId])) {
 			$image = $preferredFullImg[$childId];
-		    }
-		    else if ($child->canBeViewedInline()) {
+		    } else if ($child->canBeViewedInline()) {
 			$image = $child;
 		    }
-		}
-		else {
+		} else {
 		    // Thumbnail as fallback
 		    list ($ret, $thumb) =
 			GalleryDerivativeHelper::fetchThumbnailsByItemIds(
@@ -143,13 +140,13 @@ class SlideshowView extends GalleryView {
 		}
 
 		if (isset($image)) {
-		    $itemlist[] = array(
+		    $itemList[] = array(
 			'id' => $childId,
-			'src' => $ug->generateUrl(array(
+			'src' => $urlGenerator->generateUrl(array(
 				  'view' => 'core:DownloadItem',
 				  'itemId' => $image->getId(),
 				  'serialNumber' => $image->getSerialNumber())),
-			'href' => $ug->generateUrl(array(
+			'href' => $urlGenerator->generateUrl(array(
 				  'view' => 'core:ShowItem',
 				  'itemId' => $childId))
 			);
@@ -157,7 +154,7 @@ class SlideshowView extends GalleryView {
 	    }
 	}
 	return array(GalleryStatus::success(),
-		     $itemlist, isset($start)?$start:0);
+		     $itemList, isset($start) ? $start : 0);
     }
 }
 ?>

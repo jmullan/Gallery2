@@ -40,7 +40,9 @@ class SlideshowModule extends GalleryModule {
      */
     function init() {
 	$ret = parent::init();
-	if ($ret->isError()) { return $ret->wrap(__FILE__, __LINE__); }
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 	return GalleryStatus::success();
     }
 
@@ -66,8 +68,6 @@ class SlideshowModule extends GalleryModule {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), false);
 	    }
-
-	    /* XXX: Register permissions here */
 	}
 
 	return array(GalleryStatus::success(), $installed);

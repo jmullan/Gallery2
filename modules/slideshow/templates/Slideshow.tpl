@@ -1,14 +1,14 @@
-{foreach from=$itemlist key=i item=it}
+{foreach from=$SlideShow.itemList key=i item=it}
 <a id="item_{$i}" href="{$it.src}"></a>
 <a id="href_{$i}" href="{$it.href}"></a>
 {/foreach}
 <script language="JavaScript">
 var index;
-var next = {$start};
-var count = {$count};
+var next = {$SlideShow.start};
+var count = {$SlideShow.count};
 var images = new Array;
 var item_ids = new Array;
-{foreach from=$itemlist key=i item=it}
+{foreach from=$SlideShow.itemList key=i item=it}
 item_ids[{$i}] = '{$it.id}';
 {/foreach}
 var timer;
@@ -55,7 +55,7 @@ function wait_for_current_photo() {
     {g->item}
       {g->title}
         {g->link id="stop" arg1="view=core:ShowItem"
-                           arg2="itemId=`$itemlist.$start.id`"}
+                 arg2="itemId=$SlideShow.itemList[$SlideShow.start].id"}
           {g->text text="Stop"}
         {/g->link}
       {/g->title}
@@ -65,8 +65,8 @@ function wait_for_current_photo() {
     {g->box style="canvas"}
       {g->itemview}
         {g->media}
-          <img name="slide"
-               src="{$itemlist.$start.src}" onLoad="slide_view_start()">
+          <img name="slide" onLoad="slide_view_start()"
+               src="{$SlideShow.itemList[$SlideShow.start].src}">
         {/g->media}
       {/g->itemview}
     {/g->box}
