@@ -67,8 +67,8 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	/* Prepare the query */
 	$select[] = '[ImageBlockCacheMap::itemId]';
 	$select[] = '[ImageBlockCacheMap::itemTimestamp]';
-	$from[] = '[ImageBlockCacheMap]';
-	$join = '[ImageBlockDisabledMap] ON [ImageBlockCacheMap::itemId]=[ImageBlockDisabledMap::itemId]';
+	$from[] = '[ImageBlockCacheMap] LEFT JOIN [ImageBlockDisabledMap] ON ' .
+	    '[ImageBlockCacheMap::itemId]=[ImageBlockDisabledMap::itemId]';
 	$where[] = '[ImageBlockCacheMap::userId] = ?';
 	$where[] = '[ImageBlockCacheMap::itemType] = ?';
 	$where[] = '[ImageBlockDisabledMap::itemId] IS NULL';
@@ -98,7 +98,6 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	/* Build the query */
 	$query = 'SELECT ' . implode(', ', $select) .
 		 ' FROM ' . implode(', ', $from) .
-		 ' LEFT JOIN ' . $join .
 		 ' WHERE ' . implode(' AND ', $where) .
 		 ' ORDER BY ' . $orderBy;
 
