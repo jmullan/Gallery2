@@ -1,0 +1,112 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryTemplate.class');
+
+/**
+ * Test Template functionality
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ *
+ */
+class TemplateAudit extends CodeAuditTestCase {
+
+    function TemplateAudit($methodName) {
+	$this->CodeAuditTestCase($methodName);
+
+
+	$this->_revisionPattern = ' \* \$Revision(:.+)?\$';
+	$lines[] = '\{\*';
+	$lines[] = $this->_revisionPattern;
+	$lines[] = ' \* If you want to customize this file, do not edit it directly since future upgrades';
+	$lines[] = ' \* may overwrite it.  Instead, copy it into a new directory called "local" and edit that';
+	$lines[] = ' \* version.  Gallery will look for that file first and use it if it exists.';
+	$lines[] = ' \*}';
+
+	$this->_revisionPlaceHolder = ' * REVISION PLACEHOLDER';
+	$this->_headerPattern = join("\n", $lines);
+	$this->_headerLines = $lines;
+	$this->_expectedHeaderLines = $lines;
+	array_splice($this->_expectedHeaderLines, 1, 1, $this->_revisionPlaceHolder);
+
+	/* Get rid of backslashes so that we can perform string compares later */
+	for ($i = 0; $i < sizeof($this->_expectedHeaderLines); $i++) {
+	    $this->_expectedHeaderLines[$i] = stripslashes($this->_expectedHeaderLines[$i]);
+	}
+    }
+
+    /**
+     * @see CodeAuditTestCase::shouldCheckFile()
+     */
+    function shouldCheckFile($fileName) {
+	if (substr($fileName, -4) == '.tpl') {
+	    return true;
+	}
+
+	return false;
+    }
+
+    /**
+     * @see CodeAuditTestCase::checkFile()
+     */
+    function checkFile($fileName, $buffer) {
+
+	if (preg_match('/^' . $this->_headerPattern . '/', $buffer)) {
+	    return;
+	} else {
+	    /* Grab the expected number of lines and compare them */
+	    $actual = explode("\n", $buffer, sizeof($this->_expectedHeaderLines)+1);
+	    array_splice($actual, sizeof($this->_expectedHeaderLines), 1);
+
+	    /* Get rid of the revision line, since we can't compare that */
+	    for ($i = 0; $i < sizeof($actual); $i++) {
+		if (strstr($actual[$i], 'Revision')) {
+		    list ($revision) = array_splice($actual, $i, 1, $this->_revisionPlaceHolder);
+		    break;
+		}
+	    }
+
+	    $truncatedFileName =
+		substr($fileName, strlen(dirname(dirname(dirname(dirname($fileName))))));
+
+	    if (empty($revision)) {
+		$this->assert(false, sprintf('[%s] Missing revision line', $truncatedFileName));
+	    } else if (!preg_match('/^' . $this->_revisionPattern . '/', $revision)) {
+		$this->assert(false, sprintf('[%s] Invalid revision line: [%s]<br/>Expected pattern: [%s]',
+					     $truncatedFileName,
+					     $revision, $this->_revisionPattern));
+	    }
+
+	    $this->assertEquals($this->_expectedHeaderLines, $actual,
+				sprintf('[%s] Malformed template header', $truncatedFileName));
+	    $this->halt();
+	}
+    }
+}
+?>

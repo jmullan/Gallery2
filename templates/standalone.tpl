@@ -1,10 +1,10 @@
 {*
- * $Revision$ $Date$
- * If you want to customize this file, do not edit it directly.
- * Instead, copy it to standalone.tpl.local and edit that version instead.
- * Gallery will look for that file first and use it if it exists
- * and when you upgrade, your changes will not get overwritten.
- *
+ * $Revision$
+ * If you want to customize this file, do not edit it directly since future upgrades
+ * may overwrite it.  Instead, copy it into a new directory called "local" and edit that
+ * version.  Gallery will look for that file first and use it if it exists.
+ *}
+{*
  * This file is for views that wish to present the entire <html> block
  * instead of just providing <head> and <body> data.  Anything that is
  * displayed using this template will take over the entire page,

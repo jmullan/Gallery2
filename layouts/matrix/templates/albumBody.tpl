@@ -1,16 +1,15 @@
 {*
- * $Revision$ $Date$
- * If you want to customize this file, do not edit it directly.
- * Instead, copy it to albumBody.tpl.local and edit that version instead.
- * Gallery will look for that file first and use it if it exists
- * and when you upgrade, your changes will not get overwritten.
- *
- * To Do:
- * 1. Figure out how to get Gallery homepage to display album items that span full width of browser window.
- * 2. Reconsider albums in a single td... 
- *
+ * $Revision$
+ * If you want to customize this file, do not edit it directly since future upgrades
+ * may overwrite it.  Instead, copy it into a new directory called "local" and edit that
+ * version.  Gallery will look for that file first and use it if it exists.
  *}
-
+{*
+ * To Do:
+ * 1. Figure out how to get Gallery homepage to display album items that
+ *    span full width of browser window.
+ * 2. Reconsider albums in a single td. 
+ *}
 {include file="gallery:layouts/matrix/templates/pathbar.tpl"}
 
 <div id="gsContents">

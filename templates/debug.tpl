@@ -1,11 +1,10 @@
 {*
- * $Revision$ $Date$
- * If you want to customize this file, do not edit it directly.
- * Instead, copy it to debug.tpl.local and edit that version instead.
- * Gallery will look for that file first and use it if it exists
- * and when you upgrade, your changes will not get overwritten.
- *
- * This XHTML snippet is included from other pages that display G2
+ * $Revision$
+ * If you want to customize this file, do not edit it directly since future upgrades
+ * may overwrite it.  Instead, copy it into a new directory called "local" and edit that
+ * version.  Gallery will look for that file first and use it if it exists.
+ *}
+{* This XHTML snippet is included from other pages that display G2
  * debug output.
  *
  * You shouldn't have to modify this page unless you're a G2 developer.
