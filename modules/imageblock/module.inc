@@ -111,23 +111,29 @@ class ImageBlockModule extends GalleryModule {
      * @see GalleryModule::loadSystemContent
      */
     function loadSystemContent(&$template) {
-	global $gallery;
+	return $this->_loadImageBlocks($template);
+    }
 	
+    function _loadImageBlocks(&$template, $params = array()) {
+	global $gallery;
+
 	require_once(dirname(__FILE__) . '/classes/ImageBlockHelper.class');
 
-	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'imageblock');
+	list ($ret, $moduleParams) = GalleryCoreApi::fetchAllPluginParameters('module', 'imageblock');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+	$params = array_merge($moduleParams, $params);
 	$param = array();
 	foreach (explode('|', $params['blocks']) as $key) {
 	    $param[$key] = 1;
 	}
+	$heading = isset($params['heading']) ? 0 : 1;
 
 	$blocks = array();
 	if (isset($param['randomImage'])) {
 	    $ret = $this->_addBlock($blocks,
-				    $gallery->i18n('Random Image'),
+				    $heading ? $gallery->i18n('Random Image') : '',
 				    'GalleryPhotoItem', IMAGE_BLOCK_RANDOM);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
@@ -135,7 +141,7 @@ class ImageBlockModule extends GalleryModule {
 	}
 	if (isset($param['recentImage'])) {
 	    $ret = $this->_addBlock($blocks,
-				    $gallery->i18n('Newest Image'),
+				    $heading ? $gallery->i18n('Newest Image') : '',
 				    'GalleryPhotoItem', IMAGE_BLOCK_RECENT);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
@@ -143,7 +149,7 @@ class ImageBlockModule extends GalleryModule {
 	}
 	if (isset($param['viewedImage'])) {
 	    $ret = $this->_addBlock($blocks,
-				    $gallery->i18n('Most Viewed Image'),
+				    $heading ? $gallery->i18n('Most Viewed Image') : '',
 				    'GalleryPhotoItem', IMAGE_BLOCK_VIEWED);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
@@ -151,7 +157,7 @@ class ImageBlockModule extends GalleryModule {
 	}
 	if (isset($param['randomAlbum'])) {
 	    $ret = $this->_addBlock($blocks,
-				    $gallery->i18n('Random Album'),
+				    $heading ? $gallery->i18n('Random Album') : '',
 				    'GalleryAlbumItem', IMAGE_BLOCK_RANDOM);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
@@ -159,7 +165,7 @@ class ImageBlockModule extends GalleryModule {
 	}
 	if (isset($param['recentAlbum'])) {
 	    $ret = $this->_addBlock($blocks,
-				    $gallery->i18n('Newest Album'),
+				    $heading ? $gallery->i18n('Newest Album') : '',
 				    'GalleryAlbumItem', IMAGE_BLOCK_RECENT);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
@@ -167,7 +173,7 @@ class ImageBlockModule extends GalleryModule {
 	}
 	if (isset($param['viewedAlbum'])) {
 	    $ret = $this->_addBlock($blocks,
-				    $gallery->i18n('Most Viewed Album'),
+				    $heading ? $gallery->i18n('Most Viewed Album') : '',
 				    'GalleryAlbumItem', IMAGE_BLOCK_VIEWED);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);

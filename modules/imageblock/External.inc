@@ -44,7 +44,15 @@ class ExternalView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	list ($ret, $tpl) = $module->loadSystemContent($template);
+	$params = array('heading' => 'off');
+	foreach (array('blocks', 'show') as $key) {
+	    $tmp = GalleryUtilities::getRequestVariables($key);
+	    if (!empty($tmp)) {
+		$params[$key] = $tmp;
+	    }
+	}
+
+	list ($ret, $tpl) = $module->_loadImageBlocks($template, $params);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
