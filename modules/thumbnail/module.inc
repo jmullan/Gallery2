@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -40,12 +40,11 @@ class ThumbnailModule extends GalleryModule {
 	$this->setId('thumbnail');
 	$this->setName($gallery->i18n('Thumbnail Manager'));
 	$this->setDescription($gallery->i18n('Set default thumbnails for non-image items'));
-	$this->setVersion('0.8.2');
+	$this->setVersion('0.8.3');
 	$this->setGroup('display', $this->translate('Display'));
 	$this->setCallbacks('performFactoryRegistrations|getSiteAdminViews');
 	$this->setRequiredCoreApi(array(0, 8));
 	$this->setRequiredModuleApi(array(0, 8));
-	
     }
 
     /**
@@ -53,16 +52,46 @@ class ThumbnailModule extends GalleryModule {
      */
     function performFactoryRegistrations() {
 	$classDir = dirname(__FILE__) . '/classes/';
-	
-	/* Register our entity */
+
 	GalleryCoreApi::registerFactoryImplementation('GalleryEntity',
 						      'ThumbnailImage', 'ThumbnailImage',
 						      $classDir . 'ThumbnailImage.class');
 
-	/* Register our graphics class with the factory */
 	GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
 						      'ThumbnailToolkit', 'Thumbnail',
 						      $classDir . 'ThumbnailToolkit.class');
+
+	GalleryCoreApi::registerFactoryImplementation('ItemEditItemOption',
+			'CustomThumbnailOption', 'CustomThumbnailOption',
+			dirname(__FILE__) . '/CustomThumbnailOption.inc');
+    }
+
+    /**
+     * @see GalleryModule::upgrade()
+     */
+    function upgrade($currentVersion) {
+	global $gallery;
+
+	switch ($currentVersion) {
+	case '0.8.1':
+	case '0.8.2':
+	    /*
+	     * Assign parent to existing ThumbnailImage entities
+	     */
+	    list ($ret, $rootId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    $storage =& $gallery->getStorage();
+	    $query = 'INSERT INTO [GalleryChildEntity] SELECT [ThumbnailImage::id], '
+		   . $rootId . ' FROM [ThumbnailImage]';
+	    $ret = $storage->execute($query);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	return GalleryStatus::success();
     }
 
     /**
@@ -86,7 +115,7 @@ class ThumbnailModule extends GalleryModule {
     function activate() {
 	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/ThumbnailHelper.class');
 	global $gallery;
-	
+
 	/* Register toolkit operation for any mime type settings already in the database */
 	list ($ret, $mimeTypeMap) = ThumbnailHelper::fetchMimeTypeMap();
 	if ($ret->isError()) {
@@ -115,7 +144,7 @@ class ThumbnailModule extends GalleryModule {
 	    foreach ($mimeList as $mime) {
 		if (!isset($toolkitMime[$mime])) {
 		    if (!isset($itemId[$mimeImage])) {
-			list ($ret, $itemId[$mimeImage]) = ThumbnailHelper::addItem($mime,
+			list ($ret, $itemId[$mimeImage]) = ThumbnailHelper::addItem($mime, null,
 			    $mimeImage, dirname(__FILE__) . '/images/' . $mimeImage, 'image/jpeg',
 			    array('width' => 400, 'height' => 352),
 			    new ThumbnailImage());
@@ -159,7 +188,7 @@ class ThumbnailModule extends GalleryModule {
 
 	return array(GalleryStatus::success(), $redirect);
     }
-	
+
     /**
      * @see GalleryModule::getSiteAdminViews()
      */

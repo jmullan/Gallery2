@@ -56,7 +56,7 @@ class ThumbnailToolkitTest extends GalleryTestCase {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $id) = ThumbnailHelper::addItem('test/fakemime', 'unittest.jpg',
+	list ($ret, $id) = ThumbnailHelper::addItem('test/fakemime', null, 'unittest.jpg',
 	    dirname(__FILE__) . '/../../images/G2video.jpg', 'image/jpeg');
 	if ($ret->isError() || !isset($id)) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));

@@ -1,0 +1,194 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package Thumbnail
+ * @subpackage PHPUnit
+ * @author Alan Harder <alan.harder@sun.com>
+ */
+
+/**
+ * Load required classes
+ */
+GalleryCoreApi::relativeRequireOnce('lib/tools/phpunit/ItemEditOptionTestCase.class');
+GalleryCoreApi::requireOnce(dirname(__FILE__) . '/../../classes/ThumbnailHelper.class');
+
+/**
+ * CustomThumbnailOption tests
+ * Also tests ThumbnailHelper::fetchThumbnail
+ * @package Thumbnail
+ * @subpackage PHPUnit
+ */
+class CustomThumbnailOptionTest extends ItemEditOptionTestCase {
+
+    function CustomThumbnailOptionTest($methodName) {
+	$this->ItemEditOptionTestCase(
+	    $methodName, 'thumbnail', 'ItemEditItem', 'CustomThumbnailOption');
+    }
+
+    function setUp() {
+	parent::setUp();
+
+	GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
+	    'CustomThumbnailOptionTestToolkit', 'CustomThumbnailOptionTestToolkit', __FILE__);
+
+	$ret = GalleryCoreApi::registerToolkitOperation('CustomThumbnailOptionTestToolkit',
+		array('image/test'), 'thumbnail',
+		array(array('type' => 'int', 'description' => 'foo')), 'test-description');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_getRootId(),
+	    'text/test', array(), __FILE__, 'GalleryUnknownItem');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markForCleanup($this->_item);
+
+	list ($ret, $this->_image) = $this->_createRandomDataItem($this->_getRootId(),
+	    'image/test', array(), __FILE__, 'GalleryPhotoItem');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markForCleanup($this->_image);
+
+	list ($ret, $this->_derivative) =
+	    $this->_createDerivative($this->_image, $this->_image->getId(),
+				     DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 'thumbnail|200');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    function testAddBadMime() {
+	$form = array('name' => array(1 => 'test.gif'),
+		      'type' => array(1 => 'image/gif'),
+		      'tmp_name' => array(1 =>
+			    dirname(__FILE__) . '/../../../core/test/data/test1.gif'));
+
+	$error = $this->handleRequestAfterEdit($form, $this->_item);
+	$this->assertEquals(array('form[CustomThumbnailOption][error][imageMime]'), $error);
+    }
+
+    function testAddDeleteThumbnail() {
+	// Add custom thumbnail..
+	$form = array('name' => array(1 => 'test.jpg'),
+		      'type' => array(1 => 'image/jpeg'),
+		      'tmp_name' => array(1 =>
+			    dirname(__FILE__) . '/../../../core/test/data/test1.jpg'));
+
+	$error = $this->handleRequestAfterEdit($form, $this->_item);
+	$this->assertEquals(array(), $error);
+
+	list ($ret, $thumbnailImage) = ThumbnailHelper::fetchThumbnail($this->_item->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(isset($thumbnailImage), 'thumbnailImage');
+
+	list ($ret, $thumbnails) =
+	    GalleryCoreApi::fetchThumbnailsByItemIds(array($this->_item->getId()));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array($this->_item->getId()), array_keys($thumbnails), 'derivative');
+	$thumbnail = array_shift($thumbnails);
+	$this->assertEquals($thumbnailImage->getId(), $thumbnail->getDerivativeSourceId(), 'source');
+
+	// Remove custom thumbnail..
+	$form = array('CustomThumbnailOption' => array('delete' => '1'));
+	$error = $this->handleRequestAfterEdit($form, $this->_item);
+	$this->assertEquals(array(), $error);
+
+	list ($ret, $thumbnailImage) = ThumbnailHelper::fetchThumbnail($this->_item->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(!isset($thumbnailImage), 'removed thumbnailImage');
+
+	list ($ret, $thumbnails) =
+	    GalleryCoreApi::fetchThumbnailsByItemIds(array($this->_item->getId()));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array(), $thumbnails, 'removed derivative');
+    }
+
+    function testChangeRestoreThumbnail() {
+	// Add custom thumbnail..
+	$form = array('name' => array(1 => 'test.jpg'),
+		      'type' => array(1 => 'image/jpeg'),
+		      'tmp_name' => array(1 =>
+			    dirname(__FILE__) . '/../../../core/test/data/test1.jpg'));
+
+	$error = $this->handleRequestAfterEdit($form, $this->_image);
+	$this->assertEquals(array(), $error);
+
+	list ($ret, $thumbnailImage) = ThumbnailHelper::fetchThumbnail($this->_image->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(isset($thumbnailImage), 'thumbnailImage');
+
+	list ($ret, $thumbnails) =
+	    GalleryCoreApi::fetchThumbnailsByItemIds(array($this->_image->getId()));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array($this->_image->getId()), array_keys($thumbnails), 'derivative');
+	$thumbnail = array_shift($thumbnails);
+	$this->assertEquals($thumbnailImage->getId(), $thumbnail->getDerivativeSourceId(), 'source');
+
+	// Remove custom thumbnail..
+	$form = array('CustomThumbnailOption' => array('delete' => '1'));
+	$error = $this->handleRequestAfterEdit($form, $this->_image);
+	$this->assertEquals(array(), $error);
+
+	list ($ret, $thumbnailImage) = ThumbnailHelper::fetchThumbnail($this->_image->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(!isset($thumbnailImage), 'removed thumbnailImage');
+
+	list ($ret, $thumbnails) =
+	    GalleryCoreApi::fetchThumbnailsByItemIds(array($this->_image->getId()));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array($this->_image->getId()), array_keys($thumbnails), 'got derivative');
+//	$thumbnail = array_shift($thumbnails);
+//	$this->assertEquals($this->_image->getId(), $thumbnail->getDerivativeSourceId(), 'got source');
+    }
+}
+
+/**
+ * Dummy test toolkit
+ * @package Thumbnail
+ * @subpackage PHPUnit
+ */
+class CustomThumbnailOptionTestToolkit extends GalleryToolkit { }
+?>

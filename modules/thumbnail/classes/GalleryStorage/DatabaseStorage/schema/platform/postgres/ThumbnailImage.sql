@@ -65,7 +65,7 @@
       ) VALUES (
       'ThumbnailImage',
       1,
-      0
+      1
       );
 
   

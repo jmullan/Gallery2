@@ -28,23 +28,23 @@
 /**
  * Load the parent class
  */
-require_once(dirname(__FILE__) . '/../../core/classes/GalleryEntity.class');
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryChildEntity.class');
 
 /**
  * Representation of an image used for thumbnails of non-image items.
  *
  * @g2 <class-name>ThumbnailImage</class-name>
- * @g2 <parent-class-name>GalleryEntity</parent-class-name>
+ * @g2 <parent-class-name>GalleryChildEntity</parent-class-name>
  * @g2 <schema>
  * @g2   <schema-major>1</schema-major>
- * @g2   <schema-minor>0</schema-minor>
+ * @g2   <schema-minor>1</schema-minor>
  * @g2 </schema>
  * @g2 <requires-id/>
  *
  * @package Thumbnail
  * @subpackage Classes
  */
-class ThumbnailImage_core extends GalleryEntity {
+class ThumbnailImage_core extends GalleryChildEntity {
 
     /*
      * ****************************************
@@ -166,7 +166,7 @@ class ThumbnailImage_core extends GalleryEntity {
      * @return object GalleryStatus a status code
      */
     function create($inputFileName, $mimeType, $targetName=null) {
-	require_once(dirname(__FILE__) . '/ThumbnailHelper.class');
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/ThumbnailHelper.class');
 	global $gallery;
 	$platform = $gallery->getPlatform();
 
@@ -182,7 +182,7 @@ class ThumbnailImage_core extends GalleryEntity {
 	if (empty($targetName)) {
 	    $targetName = basename($inputFileName);
 	}
-	list ($ret, $list) = ThumbnailHelper::fetchThumbnails();
+	list ($ret, $list) = ThumbnailHelper::fetchThumbnails(true);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -190,7 +190,13 @@ class ThumbnailImage_core extends GalleryEntity {
 	    $targetName = "_$targetName";
 	}
 
-	$ret = parent::create();
+	// Default parent is root album:
+	list ($ret, $rootId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$ret = parent::create($rootId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
