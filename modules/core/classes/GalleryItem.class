@@ -221,8 +221,7 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	global $gallery;
 
 	if (!isset($path) || !isset($parentId)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
-					__FILE__, __LINE__);
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
 
 	list($ret, $parent) = GalleryCoreApi::loadEntitiesById($parentId);
@@ -231,8 +230,7 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	}
 
 	if (!$parent->getCanContainChildren()) {
-	    return GalleryStatus::error(ERROR_ILLEGAL_CHILD,
-					__FILE__, __LINE__);
+	    return GalleryStatus::error(ERROR_ILLEGAL_CHILD, __FILE__, __LINE__);
 	}
 
 	$ret = parent::create($parentId, $path);
