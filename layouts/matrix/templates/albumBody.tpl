@@ -155,9 +155,9 @@
 	  {g->title}
 	    {g->text text="&laquo; album actions &raquo;"}
 	  {/g->title}
-	  {g->url}
+	  {g->value}
 	    &nbsp;
-	  {/g->url}
+	  {/g->value}
 	{/g->actionitem}
 	{foreach from=$layout.moduleItemLinks.$id item=link}
 	  {g->actionitem}
@@ -177,6 +177,7 @@
 	  {g->text text="Page"}
 	{/g->title}
 	
+	{assign var="lastPage" value=0}
 	{foreach name=jumprange from=$layout.jumprange item=page}
 	  {if ($page - $lastPage > 1)}
 	    {g->item}

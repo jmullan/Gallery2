@@ -124,9 +124,9 @@
 	    {g->title}
 	      {g->text text="&laquo; actions &raquo;"}
 	    {/g->title}
-	    {g->url}
+	    {g->value}
 	      &nbsp;
-	    {/g->url}
+	    {/g->value}
 	  {/g->actionitem}
 
 	  {foreach from=$layout.moduleItemLinks.$id item=link}

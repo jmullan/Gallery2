@@ -30,6 +30,7 @@
       {/g->subtitle}
 
       {g->listing}
+	{assign var="lastIndex" value=0}
 	{foreach from=$layout.peers item=peer}
 	  {assign var="title" value=$peer.peer.title|default:$peer.peer.pathComponent}
 	  {if ($peer.index - $lastIndex > 1)}

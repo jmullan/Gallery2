@@ -5,7 +5,7 @@
     {/g->title}
   {/g->banner}
 
-  {if ($form.action.preview)}
+  {if isset($form.action.preview)}
     {g->box style="admin"}
       {g->title}
 	{g->text text="Comment Preview"}

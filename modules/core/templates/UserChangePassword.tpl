@@ -6,11 +6,11 @@
   {/g->banner}
 
   {if isset($status)}
-    {g->status}
+    {g->success}
       {if isset($status.changedPassword)}
 	{g->text text="Password changed successfully"}
       {/if}
-    {/g->status}
+    {/g->success}
   {/if}
 
   {g->box}
