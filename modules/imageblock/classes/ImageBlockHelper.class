@@ -464,7 +464,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	  [GalleryDerivative::derivativeType] = ' . DERIVATIVE_TYPE_IMAGE_THUMBNAIL . '
 	';
 
-	$data = array($userId, 1, 'GalleryPhotoItem', $userId);
+	$data = array((int)$userId, 1, 'GalleryPhotoItem', (int)$userId);
 	array_splice($data, sizeof($data), 0, $groupIds);
 	$data[] = $storage->convertIntToBits($permissionBits);
 	$data[] = $storage->convertIntToBits(0);
