@@ -116,6 +116,72 @@ class GalleryTemplateAdapter {
 	return GALLERY_FORM_VARIABLE_PREFIX . $params['name'];
     }
 
+    /**
+     * Set the active theme
+     *
+     * @param object GalleryTheme
+     */ 
+    function setTheme($theme) {
+	$this->_theme = $theme;
+    }
+
+    /**
+     * Get the active theme
+     *
+     * @return object GalleryTheme
+     */ 
+    function getTheme() {
+	return $this->_theme;
+    }
+
+    /**
+     * Specify the translation base for this template
+     *
+     * @param componentType the type of component we're using (module, layout, theme, etc)
+     * @param componentName the name of the component (core, comment, classic, etc)
+     */
+    function setTranslationBase($componentType, $componentName) {
+	global $gallery;
+	$this->_translationDomain = $componentType . '_' . $componentName;
+	$this->_translationBasePath =
+	    $gallery->getConfig('code.gallery.' . $componentType) .
+	    $componentName;
+    }
+
+    /**
+     * Return an array of the theme methods that operate on a block of text.
+     *
+     * @static
+     * @staticvar array $_blockMethods a list of methods
+     */
+    function getBlockMethods() {
+	static $_blockMethods = array(
+				      /* Form methods */
+				      'input',
+				      'form',
+				      'select',
+				      'textArea',
+
+				      /* Style methods */
+				      'bigFontSize',
+				      'biggerFontSize',
+				      'biggestFontSize',
+				      'errorFontColor',
+				      'heavyFrame',
+				      'highlight1',
+				      'highlight2',
+				      'lightFrame',
+				      'smallFontSize',
+				      'smallerFontSize',
+				      'smallestFontSize',
+				      'successFontColor',
+				      'thinFrame',
+				      'threeDFrame',
+				      'warningFontColor'
+				      );
+	return $_blockMethods;
+    }
+
     /* ================================================== */
     /* BEGIN DELEGATION METHODS */
 
@@ -299,67 +365,6 @@ class GalleryTemplateAdapter {
 
     /* END DELEGATION METHODS */
     /* ================================================== */
-    
-    /**
-     * Return an array of the theme methods that operate on a block of text.
-     *
-     * @static
-     * @staticvar array $_blockMethods a list of methods
-     */
-    function getBlockMethods() {
-	static $_blockMethods = array('bigFontSize',
-				      'biggerFontSize',
-				      'biggestFontSize',
-				      'errorFontColor',
-				      'form',
-				      'heavyFrame',
-				      'highlight1',
-				      'highlight2',
-				      'input',
-				      'lightFrame',
-				      'select',
-				      'smallFontSize',
-				      'smallerFontSize',
-				      'smallestFontSize',
-				      'successFontColor',
-				      'textArea',
-				      'thinFrame',
-				      'threeDFrame',
-				      'warningFontColor');
-	return $_blockMethods;
-    }
-
-    /**
-     * Set the active theme
-     *
-     * @param object GalleryTheme
-     */ 
-    function setTheme($theme) {
-	$this->_theme = $theme;
-    }
-
-    /**
-     * Get the active theme
-     *
-     * @return object GalleryTheme
-     */ 
-    function getTheme() {
-	return $this->_theme;
-    }
-
-    /**
-     * Specify the translation base for this template
-     *
-     * @param componentType the type of component we're using (module, layout, theme, etc)
-     * @param componentName the name of the component (core, comment, classic, etc)
-     */
-    function setTranslationBase($componentType, $componentName) {
-	global $gallery;
-	$this->_translationDomain = $componentType . '_' . $componentName;
-	$this->_translationBasePath =
-	    $gallery->getConfig('code.gallery.' . $componentType) .
-	    $componentName;
-    }
 }
 
 ?>
