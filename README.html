@@ -1,0 +1,296 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta name="generator" content=
+"HTML Tidy for Linux/x86 (vers 1st March 2004), see www.w3.org" />
+<meta http-equiv="Content-Type" content=
+"text/html; charset=us-ascii" />
+<title>Gallery 2 alpha readme</title>
+</head>
+<body>
+<h1>Welcome to the Gallery 2.alpha readme</h1>
+<h2>Introduction</h2>
+<p>Welcome to Gallery 2.0. Currently this is in a pre-alpha state.
+We are still working on the overall framework, and we are taking
+the time to<br />
+really do it right. Once the team is satisfied that it's good and
+solid, We will start to add all the various application features
+and your RFEs (Requests for Enhancements).</p>
+<p>Gallery 2 Alpha is not yet released software, so there are some
+things that you should be aware of if you decide to use it:<br />
+The user documentation is never really up-to-date, so many things
+change between each alpha version that we will likely miss
+documenting all of them (and changes to some existing features
+aren't documented, either). We will try to provide release notes
+for major alpha release.<br /></p>
+<p>Gallery 2 (G2) has been redesigned from the ground up and G2 is
+database driven! An incredible amount of time and effort has gone
+into designing the program and the database. That said, there are
+great chances that the database schema will change during the alpha
+release cycle.<br />
+So let's say: THE DATABASE STRCUTURE WILL CHANGE DURING THIS ALPHA
+CYCLE. okay?</p>
+<p>The latest version of the code can be <a href=
+"http://sourceforge.net/projects/gallery/" target="_blank">found at
+SourceForge.</a> We highly recommend using CVS for alpha and beta
+releases.<br /></p>
+<h2>Forums, Bugs, Features, etc..</h2>
+<p>We are releasing the alpha version knowing that there are bugs
+(big and small) that we don't know about. This release is not
+designed for production environments at this time. It will probably
+break something, somewhere - when it does there are a few great
+places to go for help.</p>
+<p>PLEASE <a href=
+"http://sourceforge.net/tracker/?group_id=7130&amp;atid=107130">REPORT
+BUGS</a> if you find then. Finding bugs now will save a will save
+us tons of grief later on.</p>
+<p>We have <a href=
+"http://gallery.menalto.com/modules.php?op=modload&amp;name=PNphpBB2&amp;file=index"
+target="_blank">Forums</a>, <a href=
+"http://sourceforge.net/tracker/?group_id=7130&amp;atid=107130"
+target="_blank">Bug tracking</a> tools, and an <a href=
+"irc://irc.freenode.net/#gallery">IRC</a> channel.</p>
+<p><br />
+A good place to start is the <a href="http://gallery.menalto.com"
+target="_blank">main Gallery page</a> and look for the Support
+section. From there you can find a link to <a href=
+"http://gallery.menalto.com/modules.php?op=modload&amp;name=PNphpBB2&amp;file=index"
+target="_blank">Discussion Forums</a> and information about
+submitting <a href=
+"http://gallery.menalto.com/modules.php?op=modload&amp;name=phpWiki&amp;file=index&amp;pagename=Feature%20Requests%20and%20Bug%20Reports"
+target="_blank">Feature Requests and Bug Reports</a>. You can find
+many of us on IRC at #gallery on irc.freenode.net.<a href=
+"irc://irc.freenode.net/#gallery">Click here</a> for Gallery IRC
+(may not work in all browsers)</p>
+<p>Before submitting a request via the Tracker please read:
+<a href="http://gallery.menalto.com/modules.php?op=modload&amp;name=phpWiki&amp;file=index&amp;pagename=Tracker%20Practices"
+target="_blank">Tracker Practices on sourceforge.</a></p>
+<p>&#160;</p>
+<h2>Known Issues / Bugs</h2>
+<p>Upgrade Path. We will offer an upgrade path as we get closer to
+beta. The Migration tool is incomplete.<br />
+Migrations seem to abort after 5 minutes<br />
+Performance is not where we want it to be -- and we will greatly
+improve this. Features and reliability before performance before
+release.<br /></p>
+<h2>Installing Gallery 2 Alpha</h2>
+<p>You should be able to install and play with a new G2 by
+following<br />
+these instructions:</p>
+<p><strong>1. Get the latest version of Gallery 2<br /></strong>
+<strong>Option A:</strong> <a href=
+"http://sourceforge.net/projects/gallery/" target="_blank">Get the
+latest Gallery</a> 2.alpha.x code as a tarball or .zip file from
+sourceforge.net<br />
+(We will provide separate language packs for download before we
+release a full production version of G2.)<br />
+or<br />
+<strong>Option B: (recommended for alpha):</strong>Download G2 code
+via CVS.<br />
+Here are <a href=
+"http://gallery.menalto.com/modules.php?op=modload%20;name=phpWiki&amp;file=index&amp;pagename=DownloadingGalleryUsingCVS"
+target="_blank">instructions on using CVS to obtain G2
+code</a><br />
+You will get more value out of using CVS during alpha and beta
+releases of G2.</p>
+<p><strong>2. Create a directory for gallery to store album and
+other data.</strong><br />
+This must be writeable by the web server, but SHOULD NOT be in the
+web root for security reasons. It is strongly-recommended that you
+DO NOT put this album and data directory in the web root.</p>
+<p><strong>3. Create a database.</strong><br />
+Right now we support PostgreSQL and MySQL. MySQL is used in over
+80% of installations of Gallery.<br />
+We require you to create the database your self.<br />
+MySQL is readily available from <a href=
+"http://dev.mysql.com/downloads/" target=
+"_blank">MySQL.com.</a><br />
+PostgreSQL is readily available from many <a href=
+"http://www.postgresql.org/mirrors-ftp.html" target=
+"_blank">PostgreSQL locations</a></p>
+<p>MySQL Instructions:</p>
+<pre>
+     mysqladmin -uroot create gallery2 
+     mysql gallery2 -uroot -e"GRANT ALL ON gallery2.* TO \ 
+     <strong>username</strong>@localhost IDENTIFIED BY <strong>'password'</strong>"
+</pre>
+<p>Choose your own <strong>username</strong> and
+<strong>password</strong>.</p>
+<p>(Note: if mysql denies you access, try adding "-p"<br />
+right before the "-e ")</p>
+<p>Postgres Instructions:</p>
+<pre>
+    createdb gallery2
+</pre>
+<p>(see the postgres documentation to set permissions or use a tool
+such as webmin or phpPgAdmin to set them)</p>
+<p><strong>4. Install Graphics Software: NetPBM or
+ImageMagick</strong><br />
+You can get ImageMagick <a href=
+"http://www.imagemagick.org/www/download.html?" target=
+"_blank">here</a>. <a href="http://www.imagemagick.org/" target=
+"_blank">ImageMagick homepage</a>.<br />
+You can get NetPBM <a href=
+"http://sourceforge.net/projects/netpbm/" target="_blank">here</a>.
+<a href="http://netpbm.sourceforge.net/" target="_blank">NetPBM
+homepage.</a><br />
+We recommend you use the stable versions that are offered.<br />
+If you install these in default, or standard, locations then G2
+will auto-detect them during G2 installation.</p>
+<p>----------------------INSTALLER TOOL WILL REPLACE STEPS 5a &amp;
+5b BELOW ------------------------------</p>
+<p>The installer tool requires cookies be enabled. The installer
+tool is not complete so please continue with steps 4 then 5.</p>
+<p><strong>5a.Set-up and Edit Config.php</strong><br />
+Copy gallery2/setup/config.php-dist to gallery2/config.php and edit
+it. There are instructions in the file. It should be pretty self
+explanatory. We recommend setting your debug mode to 'buffered' so
+that you can see what's happening in alpha. You can set this to
+false, 'buffered' or 'immediate' at any time.</p>
+<p><strong>5b. Initial Setup</strong><br />
+If you use a debug mode then you need to turn off pop-up blocking
+software.<br />
+Browse to: http://your.server/gallery2/setup/setup.php<br />
+and follow its instructions. It should walk you through the process
+of creating a new data directory and a new database. If it fails,
+you might want to look through the code.<br />
+It's entirely in setup/setup.php</p>
+<p>----------------------INSTALLER TOOL WILL REPLACE STEPS 5a &amp;
+5b ABOVE ------------------------------</p>
+<p><strong>6.Admin Setup<br /></strong> Browse to the top level:
+http://your.server/gallery/main.php</p>
+<p>Click the [Login] link and enter "admin" as the username and
+your setup password (the one you entered in config.php) as the
+password. This should log you in.<br />
+You'll get a [site admin] link at the top. Click that to go to the
+Gallery Site Administrator.<br />
+You can go to it by hand at:
+http://your.server/gallery/main.php?g2_view=core:SiteAdmin</p>
+<p><strong>7. Module Setup<br /></strong> We auto-install most of
+the modules for you.In order for Gallery to really work properly,
+you need to make sure that you have configured support for all the
+various modules that come with G2. We try to automatically install
+and configure most of the modules, so you should check for ones
+that are <strong>not</strong> marked "deactivate". If they're
+already active, you don't need to do anything.<br />
+<br />
+<strong>7a</strong>. Go to the [Modules] link. Check to see if
+[deactivate] is listed for NetPBM or ImageMagick. If so, the G2
+installation had auto-detected and configured Gallery to use one of
+those programs and you should not have to do anything.</p>
+<p>Click the [install]' link next<br />
+to NetPBM (or ImageMagick). Then click the [configure] link.<br />
+Enter the path to your NetPBM (or ImageMagick) binaries and<br />
+save it. Repeat until all test results are positive. Successfully
+installed modules will be marked "deactivate".</p>
+<p><strong>7b.</strong> Go to the 'modules' tab. Click the
+[activate] link next to<br />
+NetPBM (or ImageMagick).</p>
+<p><strong>7c</strong>. Go to the 'modules' tab. Click
+the['install] link and then<br />
+[activate] links next to 'comment'.</p>
+<p><strong>8. Populate Gallery with image</strong></p>
+<p>Go back to the top level of the Gallery. Go to the [Browse
+Gallery] link to go to: http://your.server/gallery/main.php<br />
+You can populate Gallery in a couple different ways<br />
+<strong>a.</strong>You can use a test harness to to create albums
+and populate with images or<br />
+<strong>b.</strong> You can add items to the album or<br />
+<strong>c.</strong> You can migrate an existing Gallery 1.x album
+to G2 (the Migration feature is currently incomplete)</p>
+<p><strong>8a. Test Harness</strong><br />
+Use the test harness to create a whole bunch of albums and photos(
+this is a nice way to see what a fully populated gallery is going
+to look like).<br />
+Browse to the test harness:
+http://your.server/gallery/setup/test/index.php<br />
+Scroll down to the CORE section.<br />
+Click the 50, 500, 1K or 10K link next to 'CreateRandomTree'. This
+will create a relatively boring tree of albums and photos for
+you.<br />
+Click the 50, 500, 1K or 10K link next to 'CreateRandomUser'. This
+will create a relatively boring user base for you.<br />
+Go to the main interface: http://your.server/gallery/main.php and
+browse around.</p>
+<p><strong>8b. Add Items / Add Albums<br /></strong> Select [add
+items] from the drop-down box and follow instructions to add an
+item or items.<br />
+Select {add album] from the drop-down box and follow instructions
+to add an album to your Gallery.</p>
+<p><strong>8c. Migrate existing Gallery 1.x album<br /></strong>
+This item is currently incomplete.</p>
+<p><strong>9. Navigate around and test</strong>!<br />
+Browse back to http://your.server/gallery/main.php<br />
+You should be able to see your tree and wander around it.</p>
+<p>Browse to
+http://your.server/gallery/main.php?g2_view=core:SiteAdmin<br />
+You will see the Site Admin framework. User and group management
+are functionally complete now. Try creating and editing users and
+groups, and try adding and removing users from groups.</p>
+<p>Browse to http://your.server/gallery/setup/phpunit<br />
+You should see the unit test framework run through all of its
+tests. They should all succeed. Note that some of them don't clean
+up after themselves fully!</p>
+<h2> </h2>
+<h2>Updating your Gallery 2 Installation</h2>
+<p><strong>--------------The Installer will do an upgrade so this
+section will change once installer is
+done.-----------------------------------</strong></p>
+<p>There is more than one way to update your gallery2 installation.
+Most of the time you should reinstall the hard way (by hand).</p>
+<p><strong>Option 1. The easy way:</strong></p>
+<p>1. Get the latest G2 code. Using CVS:</p>
+<pre>
+      cvs update -Pd
+</pre>
+<p>2. Reinitialize G2<br />
+A fast way to do this is to go to the test harness:
+http://your.server/gallery/setup/test/index.php</p>
+<p>and run the "ReInitializeGallery" test case which does a whole
+lot of stuff and should clean and reset your Gallery, however
+be<br />
+warned: that test case was written to help do development and it
+has hardcoded configuration settings (like the locations of<br />
+the ImageMagick binaries, etc). <strong>WARNING:</strong>
+ReInitializeGallery may have unwanted side-effects. Some paths are
+hard coded and you may or may not get a successful
+reinitialization.</p>
+<p><strong>Option 2. Doing it by hand:</strong></p>
+<p>1. Get the latest G2 code. Using CVS:</p>
+<pre>
+      cvs update -Pd
+</pre>
+<p>2. Wipe out your existing data tree and database. You may not
+have to do this after every single update, but we do make
+structural<br />
+changes so DON'T expect things to continue working. We reserve the
+right to change the data structures until we release a production
+version.</p>
+<p>(unix) rm -r /path/to/gallerydata/*<br />
+(win) delete all the data in the folder that contains the gallery
+data</p>
+<p>3. Drop and recreate the gallery2 database.</p>
+<p>MySQL:<br />
+mysqladmin -uroot drop gallery2<br />
+mysqladmin -uroot create gallery2<br />
+<br />
+Postgres:<br />
+dropdb gallery2<br />
+createdb gallery2</p>
+<p>4. It may be necessary to redo your config.php.<br />
+Copy gallery/setup/config.php-dist to gallery/config.php and edit
+it again.</p>
+<p>5. Browse to gallery/setup/setup.php and follow its
+instructions.</p>
+<p>6. Browse to the top level and log in as "admin" again.<br />
+http://your.server/gallery/main.php</p>
+<p>7. Install and activate your modules again.</p>
+<p>8. Browse to gallery/setup/phpunit and you'll see the unit
+test<br />
+framework run through all of its tests. They should all
+succeed.<br />
+Note that some of them don't clean up after themselves
+fully!<br /></p>
+</body>
+</html>
