@@ -1,0 +1,254 @@
+<?php
+/*
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2002 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+/*
+ * ****************************************
+ *           Status code bitflags
+ * ****************************************
+ */
+
+/**
+ * The operation was a success
+ *
+ * @constant SUCCESS
+ */
+define("SUCCESS", 0x00000000);
+
+/**
+ * The operation had errors
+ *
+ * @constant ERROR
+ */
+define("ERROR", 0x00000001);
+
+/**
+ * A name collision happened in the filesystem as a result of this operation.
+ * A common cause for this is attempting to use an existing filename when
+ * moving an item from one location to another.
+ *
+ * @constant ERROR_NAME_COLLISION
+ */
+define("ERROR_NAME_COLLISION", 0x00000002);
+
+/**
+ * The object you're trying to access is no longer available.  Perhaps it was
+ * deleted.  You shouldn't get this when an object has simply moved.
+ *
+ * @constant ERROR_MISSING_OBJECT
+ */
+define("ERROR_MISSING_OBJECT", 0x00000004);
+
+/**
+ * The lock you're trying to acquire is currently in use and was not released
+ * within the timeout period you specified.
+ *
+ * @constant ERROR_LOCK_IN_USE
+ */
+define("ERROR_LOCK_IN_USE", 0x00000008);
+
+/**
+ * One of the parameters passed to this function is bad.
+ *
+ * @constant ERROR_BAD_PARAMETER
+ */
+define("ERROR_BAD_PARAMETER", 0x00000010);
+
+/**
+ * Missing a value necessary to continue
+ *
+ * @constant ERROR_MISSING_VALUE
+ */
+define("ERROR_MISSING_VALUE", 0x00000020);
+
+/**
+ * An unspecified database error occurred
+ *
+ * @constant ERROR_DATABASE_FAILURE
+ */
+define("ERROR_DATABASE_FAILURE", 0x00000040);
+
+/**
+ * A database operation was attempted before connecting to the database
+ *
+ * @constant ERROR_DATABASE_NOT_CONNECTED
+ */
+define("ERROR_DATABASE_NOT_CONNECTED", 0x00000080);
+
+/**
+ * You attempted to modify an object using an in-memory version that
+ * is out of date with the version that's in the database
+ *
+ * @constant ERROR_OBSOLETE_DATA
+ */
+define("ERROR_OBSOLETE_DATA", 0x00000100);
+
+/**
+ * You attempted an operation which requires a lock.
+ *
+ * @constant ERROR_LOCK_REQUIRED
+ */
+define("ERROR_LOCK_REQUIRED", 0x00000200);
+
+/**
+ * You attempted an operation which had a bad path component
+ *
+ * @constant ERROR_BAD_PATH
+ */
+define("ERROR_BAD_PATH", 0x00000400);
+
+/**
+ * Global storage container and utility class for Gallery
+ *
+ * This is a container for global information required for gallery
+ * operation, such as configuration, session, user, etc.  
+ *
+ * @version $Id$
+ * @package GalleryCore
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+class GalleryStatus {
+
+    /*
+     * ****************************************
+     *                 Members
+     * ****************************************
+     */
+
+    /**
+     * The actual error code
+     *
+     * @var string $_errorCode
+     */
+    var $_errorCode;
+
+    /**
+     * The file name where the error occurred
+     *
+     * @var string $_fileName
+     */
+    var $_fileName;
+
+    /**
+     * The line number where the error occurred
+     *
+     * @var string $_lineNumber
+     */
+    var $_lineNumber;
+
+    /*
+     * ****************************************
+     *                 Methods
+     * ****************************************
+     */
+
+    function GalleryStatus($errorCode, $fileName=null, $lineNumber=null) {
+	$this->_errorCode = $errorCode;
+	$this->_fileName = $fileName;
+	$this->_lineNumber = $lineNumber;
+    }
+
+    /**
+     * Return an error status
+     *
+     * @return object GalleryStatus an error status
+     */
+    function error($errorCode, $fileName, $lineNumber) {
+	return new GalleryStatus(ERROR | $errorCode, $fileName, $lineNumber);
+    }
+
+    /**
+     * Return a success status
+     *
+     * @return object GalleryStatus a successful status
+     */
+    function success() {
+	return new GalleryStatus(SUCCESS);
+    }
+
+    /**
+     * Return the filename the error was found in.
+     *
+     * @return string 
+     */
+    function getFileName() {
+	return $this->_fileName;
+    }
+
+    /**
+     * Return the line number the error was found at.
+     *
+     * @return int 
+     */
+    function getLineNumber() {
+	return $this->_lineNumber;
+    }
+
+    /**
+     * Return the actual error code
+     *
+     * @return int 
+     */
+    function getErrorCode() {
+	return $this->_errorCode;
+    }
+
+    /**
+     * Is this an error?
+     *
+     * @return boolean  
+     */
+    function isError() {
+	return $this->_errorCode & ERROR;
+    }
+
+    /**
+     * Is this a success?
+     *
+     * @return boolean  
+     */
+    function isSuccess() {
+	return $this->_errorCode == SUCCESS;
+    }
+
+    /**
+     * Get the string representation(s) of an error.
+     *
+     * An error is a set of bitflags, so we return an array of strings.
+     * @param int the error code
+     * @return array string names of the errors
+     */
+    function getAsString() {
+
+	$codes = array();
+	foreach (get_defined_constants() as $constantName => $constantValue) {
+	    if (strpos($constantName, 'ERROR_') === 0) {
+		if ($this->_errorCode & $constantValue) {
+		    $codes[] = $constantName;
+		}
+	    }
+	}
+
+	$buf = 'Error (' . join(', ', $codes) . ')' .
+		 ' in ' . basename($this->_fileName) .
+		 ' at line ' . $this->_lineNumber;
+	return $buf;
+    }
+}
+?>

@@ -233,7 +233,8 @@ class Gallery {
      */
     function setRootAlbumItemId($id) {
 	if (empty($id)) {
-	    return ERROR | ERROR_BAD_PARAMETER;
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
+					__FILE__, __LINE__);
 	}
 
 	$this->_rootAlbumItemId = $id;
@@ -427,16 +428,17 @@ class Gallery {
      * @access public
      * @param array the GalleryNucleus' to be locked 
      * @param integer how long to wait for the lock before giving up
-     * @return int a status code
+     * @return object GalleryStatus a status code
      */
     function lockLocal($ids, $timeout=10) {
 	assert('is_array($ids)');
-	
+
 	/*
 	 * If we already have a lock, fail.
 	 */
 	if (!empty($this->_lock)) {
-	    return ERROR | ERROR_ILLEGAL_LOCK;
+	    return GalleryStatus::error(ERROR_ILLEGAL_LOCK,
+					__FILE__, __LINE__);
 	}
 
 	/*
@@ -444,8 +446,6 @@ class Gallery {
 	 */
 	$this->_lock = new GalleryLock();
 	return $this->_lock->lock($ids, $timeout);
-
-	return SUCCESS;
     }
 
     /**
@@ -462,7 +462,7 @@ class Gallery {
      * 
      * @access public
      * @param integer how long to wait for the lock before giving up
-     * @return int a status code
+     * @return object GalleryStatus a status code
      */
     function lockWorld($timeout=10) {
 	return $this->lockLocal(array(), $timeout);
@@ -487,6 +487,19 @@ class Gallery {
     function isLocked($id) {
 	assert('!empty($id)');
 
+	if (empty($this->_lock)) {
+	    return false;
+	}
+
+	return $this->_lock->isLocked($id);
+    }
+
+    /**
+     * Have we acquired a world lock?
+     *
+     * @return bool true if the world is locked
+     */
+    function isWorldLocked() {
 	if (empty($this->_lock)) {
 	    return false;
 	}

@@ -27,7 +27,7 @@ print '<th bgcolor=#9999CC> Name';
 print '<th bgcolor=#9999CC> Description';
 print '</tr>';
 
-asort($testTable);
+ksort($testTable);
 $evenOdd = 0;
 foreach ($testTable as $name => $class) {
     print '<tr>';
@@ -71,22 +71,20 @@ if (!empty($HTTP_GET_VARS['runTest'])) {
     print '<b>Start</b><br>';
     set_time_limit(30);
     $ret = $class->start();
-    if ($ret == SUCCESS) {
+    if ($ret->isSuccess()) {
 	print 'Status: Success<br>';
     } else {
-	$codes = join(", ", $gallery->getErrorAsStrings($ret));
-	print "Status: Error ($codes)<br>";
+	print 'Status: ' . $ret->getAsString();
     }
 
     print '<br>';
     
     print '<b>Cleanup</b><br>';
     $ret = $class->cleanup();
-    if ($ret == SUCCESS) {
+    if ($ret->isSuccess()) {
 	print 'Status: Success<br>';
     } else {
-	$codes = join(", ", $gallery->getErrorAsStrings($ret));
-	print "Status: Error ($codes)<br>";
+	print 'Status: ' . $ret->getAsString();
     }
 
     print '<hr>';

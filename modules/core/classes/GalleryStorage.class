@@ -179,7 +179,7 @@ class GalleryStorage {
      * @access public
      * @param string the id of the stored GalleryNucleus
      * @param object GalleryNucleus the object we're loading into
-     * @return int a status code
+     * @return object GalleryStatus a status code
      */
     function loadNucleus($id, &$nucleus) {
     }
@@ -189,7 +189,7 @@ class GalleryStorage {
      *
      * @access public
      * @param object GalleryNucleus the GalleryNucleus to save
-     * @return int a status code
+     * @return object GalleryStatus a status code
      */
     function saveNucleus($nucleus) {
     }
@@ -199,7 +199,7 @@ class GalleryStorage {
      *
      * @access public
      * @param object GalleryNucleus the GalleryNucleus to delete
-     * @return int a status code
+     * @return object GalleryStatus a status code
      */
     function deleteNucleus($nucleus) {
     }
@@ -223,7 +223,7 @@ class GalleryStorage {
      * @access public
      * @param array ids to lock (empty array means lock the world)
      * @param int timeout before giving up on the lock
-     * @return int a status code
+     * @return object GalleryStatus a status code
      */
     function acquireLock($ids=array(), $timeout) {
     }
@@ -232,7 +232,7 @@ class GalleryStorage {
      * Release all locks.
      *
      * @access public
-     * @return int a status code
+     * @return object GalleryStatus a status code
      */
     function releaseLock() {
     }

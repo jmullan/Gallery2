@@ -30,6 +30,7 @@ class TestCase {
     }
 
     function testCleanup() {
+	return GalleryStatus::success();
     }
 
     function traceStart() {
@@ -45,11 +46,9 @@ class TestCase {
 	}
     }
 
-    function error($code) {
+    function error($status) {
 	global $gallery;
-	$codes = join(", ", $gallery->getErrorAsStrings($code));
-	print "Error ($codes)\n";
-
+	print 'Error: ' . $status->getAsString();
     }
 
     function dump($ret, $item) {

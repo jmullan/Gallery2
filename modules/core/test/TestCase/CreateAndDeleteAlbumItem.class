@@ -1,0 +1,43 @@
+<?php
+
+class CreateAndDeleteAlbumItemTestCase extends TestCase {
+
+    var $_item;
+
+    function getDescription() {
+	return "BROKEN! Create a new AlbumItem and then delete it";
+    }
+
+    function testStart() {
+	$this->_item = new AlbumItem();
+
+	print("Creating new album item\n");
+	$ret = $this->_item->createRoot("createAndDelete");
+	$this->dump($ret, $this->_item);
+	
+	if ($ret->isError()) {
+	    $this->error($ret);
+	    $this->_item = null;
+	    return $ret;
+	}
+	
+	print("SAVE\n");
+	$ret = $this->_item->save();
+	$this->dump($ret, $this->_item);
+	if ($ret->isError()) {
+	    $this->error($ret);
+	    return $ret;
+	}
+
+	print("DELETE\n");
+	$ret = $this->_item->delete();
+	$this->dump($ret, $this->_item);
+	if ($ret->isError()) {
+	    $this->error($ret);
+	    return $ret;
+	}
+    }
+}
+
+?>
+</pre>

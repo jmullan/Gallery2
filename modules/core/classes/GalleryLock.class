@@ -81,7 +81,7 @@ class GalleryLock {
 	$storage = $gallery->getStorage();
 
 	list($ret, $this->_lockId) = $storage->acquireLock($ids, $timeout);
-	if ($ret & ERROR) {
+	if ($ret->isError()) {
 	    return $ret;
 	}
 
@@ -94,7 +94,7 @@ class GalleryLock {
 
 	register_shutdown_function(array($this, 'unlock'));
 
-	return SUCCESS;
+	return GalleryStatus::success();
     }
 
     /**
@@ -115,6 +115,23 @@ class GalleryLock {
 	}
 
 	return in_array($id, $this->_lockList);
+    }
+
+    /**
+     * Have we acquired a world lock?
+     *
+     * @return bool true if the world is locked
+     */
+    function isWorldLocked() {
+	if (!$this->_isLockAcquired) {
+	    return false;
+	}
+
+	if ($this->_isWorldLock) {
+	    return true;
+	}
+
+	return false;
     }
 
     /**

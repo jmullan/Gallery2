@@ -5,7 +5,7 @@ class CreateAlbumItemTestCase extends TestCase {
     var $_item;
 
     function getDescription() {
-	return "Create a new AlbumItem and modify it";
+	return "Create a new AlbumItem, save it, modify it, save it again";
     }
 
     function testStart() {
@@ -14,8 +14,8 @@ class CreateAlbumItemTestCase extends TestCase {
 	print("Creating new album item\n");
 	$ret = $this->_item->createRoot("test");
 	$this->dump($ret, $this->_item);
-	
-	if ($ret & ERROR) {
+
+	if ($ret->isError()) {
 	    $this->error($ret);
 	    $this->_item = null;
 	    return $ret;
@@ -24,14 +24,14 @@ class CreateAlbumItemTestCase extends TestCase {
 	print("SAVE\n");
 	$ret = $this->_item->save();
 	$this->dump($ret, $this->_item);
-	if ($ret & ERROR) {
+	if ($ret->isError()) {
 	    $this->error($ret);
 	    return $ret;
 	}
 
 	global $gallery;
 	$gallery->lockLocal(array($this->_item->getId()));
-	
+
 	$this->_item->setRows(3);
 	$childIds =& $this->_item->getChildIds();
 	$childIds->push(3);
@@ -39,7 +39,7 @@ class CreateAlbumItemTestCase extends TestCase {
 	print("SECOND SAVE\n");
 	$ret = $this->_item->save();
 	$this->dump($ret, $this->_item);
-	if ($ret & ERROR) {
+	if ($ret->isError()) {
 	    $this->error($ret);
 	    return $ret;
 	}
@@ -50,10 +50,12 @@ class CreateAlbumItemTestCase extends TestCase {
 	print("THIRD SAVE\n");
 	$ret = $this->_item->save();
 	$this->dump($ret, $this->_item);
-	if ($ret & ERROR) {
+	if ($ret->isError()) {
 	    $this->error($ret);
 	    return $ret;
 	}
+
+	return GalleryStatus::success();
     }
 }
 

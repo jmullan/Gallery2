@@ -463,16 +463,18 @@ class GalleryItem extends GalleryNucleus {
      * Let the parent do its work, then add any initialization specific to this
      * class.
      *
-     * @return int a status code
+     * @return object GalleryStatus a status code
      */
     function create() {
 	$ret = parent::create();
-	if ($ret != SUCCESS) {
+	if ($ret->isError()) {
 	    return $ret;
 	}
 	
 	/* Initialize the viewedSince timestamp */
 	$this->setViewedSinceTimestamp(time());
+
+	return GalleryStatus::success();
     }
     
     /**
@@ -482,10 +484,55 @@ class GalleryItem extends GalleryNucleus {
      * GalleryNucleus.
      *
      * @access public
-     * @return int a status code
+     * @return object GalleryStatus a status code
      */
     function save() {
 	return parent::save();
+    }
+
+    /**
+     * Delete this GalleryNucleus
+     *
+     * Delete all of its children also, if it has any
+     *
+     * @access public
+     * @return object GalleryStatus a status code
+     */
+    function delete() {
+	$ret = parent::delete();
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
+	if ($this->canContainChildren()) {
+	    $childIds =& $this->getChildIds();
+	    $size = $childIds->sizeof();
+	    for ($i = 0; $i < $size; $i++) {
+		$child = new GalleryNucleus();
+		$ret = $child->load($childIds->get($i));
+		if ($ret->isError()) {
+		    return $ret;
+		}
+
+		/*
+		 * Unset the child's parent, so that it doesn't try to remove
+		 * itself from this GalleryNucleus as part of its delete().
+		 * Then delete the child.
+		 */
+		$child->setParentId(null);
+		$ret = $child->delete();
+		if ($ret->isError()) {
+		    return $ret;
+		}
+	    }
+
+	    /*
+	     * Get rid of our child list
+	     */
+	    $childIds->empty();
+	}
+
+	return GalleryStatus::success();
     }
 
     /* BEGIN: Accessor Block.  DO NOT MODIFY! */
