@@ -26,7 +26,7 @@ class CreateConfigFileStep extends InstallStep {
     }
 
     function loadTemplateData(&$templateData) {
-	global $gallery;
+	global $galleryStub;
 	
 	$configFilePath = dirname(__FILE__) . '/../../config.php';
 	if (file_exists($configFilePath) && !is_writable($configFilePath)) {
@@ -37,16 +37,16 @@ class CreateConfigFileStep extends InstallStep {
 		$templateData['error'] = 'Unable to create <b>config.php</b> in your <tt>gallery</tt> directory. Make sure that Gallery has write permissions for that directory, or please create a <b>config.php</b> file there and make sure Gallery can write to it.';
 		$this->setInError(true);
 	    } else {
-		$newStoreConfig = $gallery->getConfig('storage.config');
+		$newStoreConfig = $galleryStub->getConfig('storage.config');
 		$in = @fopen(dirname(__FILE__) . '/../config.php-sample', 'r');
 		while ($line = fgets($in, 2000)) {
 		    if (trim($line) == '$gallery->setConfig(\'setup.password\', \'\');') {
-			$tmp = addslashes($gallery->getConfig('setup.password'));
+			$tmp = addslashes($galleryStub->getConfig('setup.password'));
 			$line = sprintf("\$gallery->setConfig('setup.password', '%s');\n", $tmp);
 		    }
 
 		    if (trim($line) == '$gallery->setConfig(\'data.gallery.base\', \'\');') {
-			$tmp = addslashes($gallery->getConfig('data.gallery.base'));
+			$tmp = addslashes($galleryStub->getConfig('data.gallery.base'));
 			$line = sprintf("\$gallery->setConfig('data.gallery.base', '%s');\n", $tmp);
 		    }
 

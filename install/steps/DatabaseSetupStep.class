@@ -25,15 +25,11 @@ class DatabaseSetupStep extends InstallStep {
 	return _('Database Setup');
     }
 
-    function loadGalleryObject(&$gallery) {
-	$gallery->setConfig('storage.config', $this->_config);
-    }
-
     function loadTemplateData(&$templateData) {
-	global $gallery;
+	global $galleryStub;
 
 	if (empty($this->_config)) {
-	    $this->_config = $gallery->getConfig('storage.config');
+	    $this->_config = $galleryStub->getConfig('storage.config');
 	    if (empty($this->_config)) {
 		$this->_config = array();
 		$this->_config['type'] = 'mysql';
@@ -133,6 +129,7 @@ class DatabaseSetupStep extends InstallStep {
 	}
 
 	if ($this->isComplete()) {
+	    $galleryStub->setConfig('storage.config', $this->_config);
 	    $templateData['bodyFile'] = 'DatabaseSetupSuccess.html';
 	} else {
 	    foreach (array('type', 'hostname', 'username',

@@ -25,14 +25,11 @@ class StorageSetupStep extends InstallStep {
 	return _('Storage Setup');
     }
 
-    function loadGalleryObject(&$gallery) {
-	$gallery->setConfig('data.gallery.base', $this->_dir);
-    }
-
     function loadTemplateData(&$templateData) {
-	global $gallery;
+	global $galleryStub;
+	
 	if (empty($this->_dir)) {
-	    $this->_dir = $gallery->getConfig('data.gallery.base');
+	    $this->_dir = $galleryStub->getConfig('data.gallery.base');
 	    if (empty($this->_dir)) {
 		$this->_dir =
 		    dirname(dirname(dirname(__FILE__))) . DIRECTORY_SEPARATOR . 'g2data';
@@ -66,6 +63,7 @@ class StorageSetupStep extends InstallStep {
 	}
 
 	if ($this->isComplete()) {
+	    $galleryStub->setConfig('data.gallery.base', $this->_dir);
 	    $templateData['bodyFile'] = 'StorageSetupSuccess.html';
 	} else {
 	    $templateData['bodyFile'] = 'StorageSetupRequest.html';

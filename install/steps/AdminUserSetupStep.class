@@ -27,16 +27,12 @@ class AdminUserSetupStep extends InstallStep {
 	return _('Admin User Setup');
     }
 
-    function loadGalleryObject(&$gallery) {
-	$gallery->setConfig('setup.password', $this->_password);
-    }
-
     function loadTemplateData(&$templateData) {
-	global $gallery;
+	global $galleryStub;
 	
 	if (!isset($this->_hasBeenLoadedBefore)) {
 	    $this->_hasBeenLoadedBefore = 1;
-	    $this->_password = $gallery->getConfig('setup.password');
+	    $this->_password = $galleryStub->getConfig('setup.password');
 	    $templateData['passwordA'] = $this->_password;
 	    $templateData['passwordB'] = $this->_password;
 	}
@@ -57,6 +53,7 @@ class AdminUserSetupStep extends InstallStep {
 	}
 
 	if ($this->isComplete()) {
+	    $galleryStub->setConfig('setup.password', $this->_password);
 	    $templateData['bodyFile'] = 'AdminUserSetupSuccess.html';
 	} else {
 	    $templateData['bodyFile'] = 'AdminUserSetupRequest.html';

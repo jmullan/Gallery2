@@ -33,114 +33,8 @@
 /* Show all errors. */
 @ini_set('display_errors', 1);
 
-class GalleryStub {
-    var $_hash;
-    var $_debug;
-    function setConfig($key, $value) {
-	$this->_hash[$key] = $value;
-    }
-    
-    function getConfig($key) {
-	if (isset($this->_hash[$key])) {
-	    return $this->_hash[$key];
-	}
-	return null;
-    }
-    
-    function setDebug($value) {
-	$this->_debug = $value;
-    }
-
-    function getDebug() {
-	return $this->_debug;
-    }
-    
-    function setDebugLogFile() { }
-    function setProfile() { }
-}
-
-$gallery = new GalleryStub();
-
-// load in config.php if there
-$configFile = dirname(__FILE__) . '/../config.php';
-if (is_file($configFile) && is_readable($configFile)) {
-    ob_start();
-    @include($configFile);
-    ob_end_clean();
-}
-
-class InstallStep {
-    var $_stepNumber;
-    var $_isComplete;
-    var $_isInError;
-    var $_isLastStep;
-
-    function isComplete() {
-	return $this->_isComplete;
-    }
-
-    function setComplete($complete) {
-	$this->_isComplete = $complete;
-    }
-
-    function canBeVisited() {
-	return true;
-    }
-
-    function setInError($inError) {
-	$this->_isInError = $inError;
-    }
-
-    function isInError() {
-	return $this->_isInError;
-    }
-
-    function stepName() {
-	return _('Unknown');
-    }
-
-    function setStepNumber($stepNumber) {
-	$this->_stepNumber = $stepNumber;
-    }
-    
-    function getStepNumber() {
-	return $this->_stepNumber;
-    }
-
-    function processRequest() {
-	return true; // true means continue rendering the page
-    }
-
-    function loadTemplateData(&$templateData) {
-	return null;
-    }
-
-    function getActions() {
-	return array();
-    }
-
-    function setIsLastStep($lastStep) {
-	$this->_isLastStep = $lastStep;
-    }
-
-    function isLastStep() {
-	return $this->_isLastStep;
-    }
-
-    function loadGalleryObject(&$gallery) {
-    }
-
-    function sanitize($string) {
-	if (get_magic_quotes_gpc()) {
-	    $string = stripslashes($string);
-	}
-	return $string;
-    }
-
-    function isRelevant() {
-	return true;
-    }
-}
+require_once(dirname(__FILE__) . '/GalleryStub.class');
+require_once(dirname(__FILE__) . '/InstallStep.class');
 
 /*
  * if gettext isn't enabled, subvert the _() text translation function
@@ -152,6 +46,7 @@ if (!function_exists('_')) {
     }
 }
 
+/* Our install steps, in order */
 $stepOrder[] = 'Welcome';
 $stepOrder[] = 'Authenticate';
 $stepOrder[] = 'SystemChecks';
@@ -174,9 +69,24 @@ session_start();
 // If we don't have our steps in our session, initialize them now.
 if (!isset($_GET['startOver']) && !empty($_SESSION['steps'])) {
     $steps = unserialize($_SESSION['steps']);
+    $galleryStub =& $_SESSION['galleryStub'];
 }
 
 if (empty($steps) || !is_array($steps)) {
+    /* Load our existing config.php, which requires $gallery to be valid */
+    $configFile = dirname(__FILE__) . '/../config.php';
+    if (is_file($configFile) && is_readable($configFile)) {
+	$gallery = new GalleryStub();
+	ob_start();
+	@include($configFile);
+	ob_end_clean();
+    }
+
+    /* Get rid of $gallery so that we can call init.php later on and get a real $gallery */
+    $galleryStub = $gallery;
+    $_SESSION['galleryStub'] = $galleryStub;
+    unset($gallery);
+    
     $steps = array();
     for ($i = 0; $i < sizeof($stepOrder); $i++) {
 	$className = $stepOrder[$i] . 'Step';
@@ -190,6 +100,7 @@ if (empty($steps) || !is_array($steps)) {
 	}
     }
 
+    /* Don't do this in the loop, since not all steps are relevant */
     $steps[sizeof($steps)-1]->setIsLastStep(true);
 }
 
@@ -199,11 +110,9 @@ if (isset($_GET['step'])) {
     $stepNumber = 0;
 }
 
-// Make sure all steps up to the current one are ok and load our gallery object
+/* Make sure all steps up to the current one are ok */
 for ($i = 0; $i < $stepNumber; $i++) {
-    if ($steps[$i]->isComplete()) {
-	$steps[$i]->loadGalleryObject($gallery);
-    } else {
+    if (!$steps[$i]->isComplete()) {
 	$stepNumber = $i;
 	break;
     }
