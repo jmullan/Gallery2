@@ -89,12 +89,9 @@ class ItemAddAlbumController extends GalleryController {
 		}
 
 		/* Figure out where to redirect upon success */
-		print "NOT REDIRECTING";
-		/*
 		$redirectParams['view'] = 'core:ItemAdmin';
 		$redirectParams['subView'] = 'core:ItemAddAlbum';
 		$redirectParams['itemId'] = $itemId;
-		*/
 	    }
 	}
 
