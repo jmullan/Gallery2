@@ -9,6 +9,14 @@
     
     NOT NULL
   
+      ,
+    DB_COLUMN_PREFIXwidth
+      INTEGER
+    
+      ,
+    DB_COLUMN_PREFIXheight
+      INTEGER
+    
     );
 
   

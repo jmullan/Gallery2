@@ -55,12 +55,140 @@ class GalleryMovieItem_core extends GalleryDataItem {
      * ****************************************
      */
 
+    /**
+     * The width this image.
+     *
+     * @g2 <member>
+     * @g2   <member-name>width</member-name>
+     * @g2   <member-type>INTEGER</member-type>
+     * @g2 </member>
+     *
+     * @var int $_width
+     * @access private
+     */
+    var $_width;
+
+    /**
+     * The height this image.
+     *
+     * @g2 <member>
+     * @g2   <member-name>height</member-name>
+     * @g2   <member-type>INTEGER</member-type>
+     * @g2 </member>
+     *
+     * @var int $_height
+     * @access private
+     */
+    var $_height;
+
     /*
      * ****************************************
      *                 Methods
      * ****************************************
      */
 
+    /**
+     * @see GalleryDataItem::canBeViewedInline()
+     */
+    function canBeViewedInline() {
+	return true;
+    }
+    
+    /**
+     * Create a new GalleryMovieItem from a video file
+     *
+     * @param int the id of the parent GalleryItem
+     * @param string the path to the source video
+     * @param string the mime type
+     * @param string the desired name of the new item
+     * @return object GalleryStatus a status code
+     */
+    function create($parentId, $videoFileName, $mimeType, $targetName=null) {
+	global $gallery;
+
+	$platform = $gallery->getPlatform();
+
+	/* Validate the input filename */
+	if (empty($videoFileName)) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	}
+
+	if (!$platform->file_exists($videoFileName)) {
+	    return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);
+	}
+
+	list ($ret, $toolkit) = GalleryToolkitHelper::getToolkitByProperty($mimeType, 'dimensions');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	if (isset($toolkit)) {
+	    list ($ret, $dimensions) = $toolkit->getProperty($mimeType, 'dimensions', $videoFileName);
+	    if ($ret->isError()) {
+
+		/*
+		 * If we can't get the dimensions, it's probably a bad video.
+		 * Or our graphics code is broken.  Hard to tell which at this point.
+		 */
+		$ret->addErrorCode(ERROR_BAD_DATA_TYPE);
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	} else {
+	    $dimensions = array(0, 0);
+	}
+
+	/* Create our data item */
+	$ret = parent::create($parentId, $videoFileName, $mimeType, $targetName);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$this->setWidth($dimensions[0]);
+	$this->setHeight($dimensions[1]);
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * @see GalleryDataItem::rescan()
+     */
+    function rescan() {
+	global $gallery;
+	
+	$ret = parent::rescan();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	list ($ret, $path) = $this->fetchPath();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	list ($ret, $toolkit) = GalleryToolkitHelper::getToolkitByProperty($mimeType, 'dimensions');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	if (isset($toolkit)) {
+	    list ($ret, $dimensions) = $toolkit->getProperty($mimeType, 'dimensions', $path);
+	    if ($ret->isError()) {
+
+		/*
+		 * If we can't get the dimensions, it's probably a bad image.
+		 * Or our graphics code is broken.  Hard to tell which at this point.
+		 */
+		$ret->addErrorCode(ERROR_BAD_DATA_TYPE);
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    $this->setWidth($dimensions[0]);
+	    $this->setHeight($dimensions[1]);
+	}
+
+	return GalleryStatus::success();
+    }
+    
     /**
      * @see GalleryItem::itemTypeName
      */

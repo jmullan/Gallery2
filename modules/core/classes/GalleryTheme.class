@@ -607,13 +607,41 @@ class GalleryTheme {
 	    $classString = '';
 	}
 
- 	$result = sprintf('<img border="0" %s src="%s" width="%s" height="%s" alt="%s" longdesc="%s"/>',
-			  $classString,
- 			  $src,
- 			  $width,
- 			  $height,
- 			  $title,
- 			  $params['item']['description']);
+
+	/*
+	 * XXX: This is a bottleneck.  It will cause problems when people start extending the standard items
+	 * and want them to render differently.  We can't be having to rev the theme all the time just to
+	 * support these new types. Perhaps we should let the item itself decide how it should be rendered,
+	 * and provide a hint to it, like "HTML" or "XML" etc?
+	 */
+	switch($params['item']['entityType']) {
+	case 'GalleryMovieItem':
+	    /*
+	     * XXX: We need to be able to display alternate text in case this does not render in the browser.
+	     * Perhaps we can extend the {g->image} tag to accept a child element that can contain a "Can't be
+	     * viewed: [Download instead]" message?
+	     */
+	    $result = sprintf('<object %s type="%s" data="%s" width="%s" height="%s"></object>',
+			      $classString,
+			      $params['item']['mimeType'],
+			      $src,
+			      $width,
+			      $height);
+	    break;
+
+
+	case 'GalleryPhotoItem':
+	case 'GalleryDerivativeImage':
+	default:
+	    $result = sprintf('<img %s src="%s" width="%s" height="%s" alt="%s" longdesc="%s"/>',
+			      $classString,
+			      $src,
+			      $width,
+			      $height,
+			      $title,
+			      $params['item']['description']);
+	}
+	
  	return $result;
      }
 

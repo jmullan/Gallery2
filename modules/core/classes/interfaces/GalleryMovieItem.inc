@@ -44,6 +44,52 @@ class GalleryMovieItem extends GalleryMovieItem_core {
   
 
   
+    /**
+     * Return meta information about the members of this class
+     *
+     * @return array member => array(type, class)
+     */
+    function getPersistentMemberInfo() {
+        $meta = parent::getPersistentMemberInfo();
+    
+        $meta['members']['width'] = array(
+            'class' => 'GalleryMovieItem',
+            'type' => STORAGE_TYPE_INTEGER
+        );
+    
+        $meta['members']['height'] = array(
+            'class' => 'GalleryMovieItem',
+            'type' => STORAGE_TYPE_INTEGER
+        );
+    
+        return $meta;
+    }
+
+    /**
+     * Get the data from this persistent object as an associative array
+     *
+     * @return array memberName => memberValue
+     */
+    function getMemberData() {
+        $data = parent::getMemberData();
+        GalleryProfiler::start('modules.core.classes.GalleryPersistent::getMemberData');
+    
+        if (!isset($this->_width)) {
+            $data['width'] = null;
+        } else {
+            $data['width'] = $this->_width;
+        }
+    
+        if (!isset($this->_height)) {
+            $data['height'] = null;
+        } else {
+            $data['height'] = $this->_height;
+        }
+    
+        GalleryProfiler::stop('modules.core.classes.GalleryPersistent::getMemberData');
+        return $data;
+    }
+  
 
     /**
      * Return the name of this class with the proper mix of uppercase and
@@ -56,5 +102,87 @@ class GalleryMovieItem extends GalleryMovieItem_core {
     }
 
     
+    /**
+     * Get the value of width
+     *
+     * @return INTEGER the value
+     */
+    function getwidth() {
+        if (!isset($this->_width)) {
+            return null;
+        }
+        return $this->_width;
+    }
+
+    /**
+     * Set the value of width
+     *
+     * @param INTEGER the value
+     */
+    function setwidth($value) {
+
+        /* 
+         * Convert unset values to null, to avoid generating warnings.
+         */
+	$a = isset($value) ? $value : null;
+	$b = isset($this->_width) ? $this->_width : null;
+
+    
+        /* Type case the incoming value to be an integer */
+        if ($value != null) {
+            $value = (int)$value;
+        }
+      
+        /* 
+         * Only take action if the value actually changes, but take care not to 
+         * generate warnings for unset values.
+         */
+        if ($a != $b) {
+            $this->_width = $value;
+            $this->setModifiedFlag('width', MEMBER_MODIFIED);
+        }
+    }
+  
+    /**
+     * Get the value of height
+     *
+     * @return INTEGER the value
+     */
+    function getheight() {
+        if (!isset($this->_height)) {
+            return null;
+        }
+        return $this->_height;
+    }
+
+    /**
+     * Set the value of height
+     *
+     * @param INTEGER the value
+     */
+    function setheight($value) {
+
+        /* 
+         * Convert unset values to null, to avoid generating warnings.
+         */
+	$a = isset($value) ? $value : null;
+	$b = isset($this->_height) ? $this->_height : null;
+
+    
+        /* Type case the incoming value to be an integer */
+        if ($value != null) {
+            $value = (int)$value;
+        }
+      
+        /* 
+         * Only take action if the value actually changes, but take care not to 
+         * generate warnings for unset values.
+         */
+        if ($a != $b) {
+            $this->_height = $value;
+            $this->setModifiedFlag('height', MEMBER_MODIFIED);
+        }
+    }
+  
 }
 ?>
