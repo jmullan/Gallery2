@@ -264,16 +264,29 @@ class GalleryEntity_core extends GalleryPersistent {
 
 	    $storage =& $gallery->getStorage();
 
+	    $changedEntityType = ($this->getModifiedFlag('entityType') != MEMBER_UNMODIFIED);
+	    
+
 	    $ret = $storage->saveEntity($this);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
 	    /* Update our caches */
-	    GalleryDataCache::put(sprintf('GalleryEntityHelper::loadEntitiesById(%s)', $this->getId()),
-				  $this);
-	    GalleryDataCache::putToDisk(array('type' => 'entity', 'itemId' => $this->getId()),
-					$this, array($this->getClassFile()));
+	    if ($changedEntityType) {
+		/*
+		 * We changed the entity type which probably means that the entity class doesn't
+		 * line up with its embedded entityType.  Clear this from our cache so that the
+		 * next load actually gets the clean, correct version.
+		 */
+		GalleryDataCache::remove(sprintf('GalleryEntityHelper::loadEntitiesById(%s)', $this->getId()));
+		GalleryDataCache::removeFromDisk(array('type' => 'entity', 'itemId' => $this->getId()));
+	    } else {
+		GalleryDataCache::put(sprintf('GalleryEntityHelper::loadEntitiesById(%s)', $this->getId()),
+				      $this);
+		GalleryDataCache::putToDisk(array('type' => 'entity', 'itemId' => $this->getId()),
+					    $this, array($this->getClassFile()));
+	    }
 	}
 	
 	return GalleryStatus::success();
