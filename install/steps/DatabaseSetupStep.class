@@ -45,6 +45,23 @@ class DatabaseSetupStep extends InstallStep {
 		$this->_config['columnPrefix'] = 'g_';
 	    }
 	}
+        
+	switch ($this->_config['type']) {
+            case 'mysql':
+            case 'mysqlt':
+            	if (!function_exists('mysql_connection')) {
+                    $templateData['error']['phpDbMissing'] =
+                        'You must have the MySQL PHP module installed';
+                }
+                break;
+            case 'postgres7':
+            case 'postgres':
+            	if (!function_exists('pgsql_connect')) {
+                    $templateData['error']['phpDbMissing'] =
+                        'You must have the PostgreSQL PHP module installed';
+                }
+                break;
+        }
 
 	if (!empty($_POST['action']) && $_POST['action'] == 'save') {
 	    foreach (array('type', 'hostname', 'username',

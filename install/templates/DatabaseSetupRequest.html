@@ -3,8 +3,8 @@
     <p> <?php print _('Please select your database type and enter your database authentication information.  The installer will not create the database for you, so you must create one yourself and enter the database name here.  If you are installing Gallery into a database that already has tables in it, the table and column prefixes will keep Gallery data from conflicting with what you already have.') ?> </p>
 
     <form name="database_form" method="post">
-      <table>
-	<tr>
+      <table> 
+        <tr>
 	  <td style="text-align: left;">
 	    <?php print _('Database type:') ?>
 	  </td>
@@ -21,6 +21,13 @@
 	    </select>
 	  </td>
 	</tr>
+      <?php if (!empty($templateData['error']['phpDbMissing'])): ?>
+        <tr>
+          <td colspan="2" class="error">
+            <?php print $templateData['error']['phpDbMissing']; ?>
+          </td>
+        </tr>
+      <?php endif; ?>
 
 	<tr>
 	  <td style="text-align: left;"><?php print _('DB Hostname:') ?></td>
