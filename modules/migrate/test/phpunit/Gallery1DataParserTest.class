@@ -38,6 +38,7 @@ class Gallery1DataParserTest extends GalleryControllerTestCase {
         $this->GalleryTestCase($methodName);
     }
 
+
     function setUp() {
 	global $gallery;
 	$platform = $gallery->getPlatform();
@@ -90,7 +91,7 @@ class Gallery1DataParserTest extends GalleryControllerTestCase {
 					 'canDeleteFrom'=>array('1082614545_1013204231'=>1)
 					 ),
 			  'parentAlbumName'=>'.root',
-			  'clicks'=>27,
+			  'clicks'=>28,
 			  'clicks_date'=>1056014708,
 			  'display_clicks'=>'yes',
 			  'public_comments'=>'yes',
@@ -155,9 +156,14 @@ class Gallery1DataParserTest extends GalleryControllerTestCase {
         if ($ret->isError()) {
             return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
-        $this->assertEquals(array('monkey!',
+        $this->assertEquals(array(
+				  'monkey!',
 				  'album01',
-				  'album03'), $rootAlbums);
+				  'album03',
+				  'no_NO',
+				  'KOI-8',
+				  'fr_FR'),
+			    $rootAlbums);
     }
 
     function testGetParentAlbumList() {
@@ -170,7 +176,10 @@ class Gallery1DataParserTest extends GalleryControllerTestCase {
 				  'album02' => 'album03',
 				  'album03' => '.root',
 				  'album04' => 'album03',
-				  'album05' => 'album03'
+				  'album05' => 'album03',
+				  'no_NO' => '.root',
+				  'KOI-8' => '.root',
+				  'fr_FR' => '.root'
 				  ),
 			    $parentAlbumList);
     }
@@ -185,8 +194,10 @@ class Gallery1DataParserTest extends GalleryControllerTestCase {
 				  'album02',
 				  'album03',
 				  'album04',
-				  'album05'
-				  ),
+				  'album05',
+				  'no_NO',
+				  'KOI-8',
+				  'fr_FR'),
 			    array_keys($albumList));
     }
 
@@ -200,7 +211,10 @@ class Gallery1DataParserTest extends GalleryControllerTestCase {
 				  'album03' => array('album02' => array(),
 						     'album04' => array(),
 						     'album05' => array()
-						     )
+						     ),
+				  'no_NO' => array(),
+				  'KOI-8' => array(),
+				  'fr_FR' => array()
 				  ),
 			    $albumList);
     }
@@ -316,6 +330,13 @@ class Gallery1DataParserTest extends GalleryControllerTestCase {
     function testIsInvalidUid2() {
 	$valid = Gallery1DataParser::isValidUid($this->_albumsDir, 'monkey');
 	$this->assertEquals($valid,FALSE);
+    }
+    function testConvertiso8859_1ToUTF8() {
+	$inputString = chr(128);
+	$targetString = chr(194). chr(128);
+	$sourceEncoding = 'ISO-8859-1';
+	$outputString = Gallery1DataParser::convertString($inputString,$sourceEncoding);
+	$this->assertEquals($targetString,$outputString);
     }
 }
 ?>

@@ -112,6 +112,10 @@ class ConfirmImportController extends GalleryController {
 			);
 	$finishedAlbums = array();
 	$albumPosition = array();
+	if (!isset($form['sourceEncoding'])) {
+	    $form['sourceEncoding']='UTF-8';
+	}
+	$sourceEncoding = $form['sourceEncoding'];
 
 	/* The other option is "cancel", I believe */
 	if (isset($form['action']['cancel'])) {
@@ -146,7 +150,7 @@ class ConfirmImportController extends GalleryController {
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-		$userName = $fields['username'];
+		$userName = Gallery1DataParser::convertString($fields['username'],$sourceEncoding);;
 		/*
 		 * Go ahead and create the user instance
 		 */
@@ -165,7 +169,7 @@ class ConfirmImportController extends GalleryController {
 		 * This is where the user is actually created, everything
 		 * before this was simply building the framework.
 		 */
-		$ret = $user->create($fields['username']);
+		$ret = $user->create($userName);
 		/* Was there an error? */
 		if ($ret->isError()) {
 		    /* ERROR_COLLISION is when you try to create something that
@@ -186,7 +190,7 @@ class ConfirmImportController extends GalleryController {
 		     */
 		    $user->setEmail($fields['email']);
 		    $user->setHashedPassword($fields['password']);
-		    $user->setFullName($fields['fullname']);
+		    $user->setFullName(Gallery1DataParser::convertString($fields['fullname'],$sourceEncoding));
 
 		    /*
 		     * Here's some stuff to add
@@ -363,14 +367,15 @@ class ConfirmImportController extends GalleryController {
 				/* load up the album with metadata from the old
 				 * album */
 				if (isset($album['title'])) {
-				    $newAlbumInstance->setTitle($this->convertHtmlToBbcode($album['title']));
+				    $newAlbumInstance->setTitle(								
+					$this->convertHtmlToBbcode($album['title'],$sourceEncoding));
 				}
 				if (isset($album['summary'])) {
-				    $newAlbumInstance->setSummary($this->convertHtmlToBbcode($album['summary']));
+				    $newAlbumInstance->setSummary($this->convertHtmlToBbcode($album['summary'],$sourceEncoding));
 				}
 				$newAlbumInstance->setKeywords('');
 				if (isset($album['description'])) {
-				    $newAlbumInstance->setDescription($this->convertHtmlToBbcode($album['description']));
+				    $newAlbumInstance->setDescription($this->convertHtmlToBbcode($album['description'],$sourceEncoding));
 				}
 				// $newAlbumInstance->settheme
 				if (isset($album['last_mod_time']) && $album['last_mod_time']) {
@@ -395,7 +400,7 @@ class ConfirmImportController extends GalleryController {
 					if ($ret->isError()) {
 					    return array($ret->wrap(__FILE__, __LINE__), null);
 					}
-					list($ret, $owner) = GalleryCoreApi::fetchUserByUsername($albumUserFields['username']);
+					list($ret, $owner) = GalleryCoreApi::fetchUserByUsername(Gallery1DataParser::convertString($albumUserFields['username'],$sourceEncoding));
 					if ($ret->isError()) {
 					    if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
 						$owner = $gallery->getActiveUser();
@@ -443,7 +448,7 @@ class ConfirmImportController extends GalleryController {
 				    if ($ret->isError()) {
 					return array($ret->wrap(__FILE__, __LINE__), null);
 				    }
-				    list($ret, $owner) = GalleryCoreApi::fetchUserByUsername($albumUserFields['username']);
+				    list($ret, $owner) = GalleryCoreApi::fetchUserByUsername(Gallery1DataParser::convertString($albumUserFields['username'],$sourceEncoding));
 				    if ($ret->isError()) {
 					if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
 					    $owner = $gallery->getActiveUser();
@@ -510,7 +515,7 @@ class ConfirmImportController extends GalleryController {
 							    return array($ret->wrap(__FILE__, __LINE__), null);
 							}
 							$permUsername = $permsUserFields['username'];
-							list($ret, $permUser) = GalleryCoreApi::fetchUserByUsername($permUsername);
+							list($ret, $permUser) = GalleryCoreApi::fetchUserByUsername(Gallery1DataParser::convertString($permUsername,$sourceEncoding));
 							if ($ret->isError() && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
 							    return array($ret->wrap(__FILE__, __LINE__), null);
 							}
@@ -658,23 +663,26 @@ class ConfirmImportController extends GalleryController {
 				    return array($ret->wrap(__FILE__, __LINE__), null);
 				}
 				$caption = $importAlbumItem->caption;
-				$convertedCaption = $this->convertHtmlToBbcode($caption);
+
+				$convertedCaption = $this->convertHtmlToBbcode($caption,$sourceEncoding);
 				if (strlen($convertedCaption) > 128) {
 				    $newItem->setTitle(substr($convertedCaption,0,125) . '...');
 				    if (isset($importAlbumItem->extraFields['description']) && $importAlbumItem->extraFields['description'] != '') {
-					$newItem->setDescription($convertedCaption . "\n" . $this->convertHtmlToBbcode($importAlbumItem->extraFields['description']));
+					$newItem->setDescription($convertedCaption
+								 . "\n"
+								 . $this->convertHtmlToBbcode($importAlbumItem->extraFields['description'],$sourceEncoding));
 				    } else {
 					$newItem->setDescription($convertedCaption);
 				    }
 				} else {
 				    $newItem->setTitle($convertedCaption);
 				    if (isset($importAlbumItem->extraFields['description']) && $importAlbumItem->extraFields['description'] != '') {
-					$newItem->setDescription($this->convertHtmlToBbcode($importAlbumItem->extraFields['description']));
+					$newItem->setDescription($this->convertHtmlToBbcode($importAlbumItem->extraFields['description'],$sourceEncoding));
 				    }
 				}
 				
 				$newItem->setSummary('');
-				$newItem->setKeywords($importAlbumItem->keywords);
+				$newItem->setKeywords(Gallery1DataParser::convertString($importAlbumItem->keywords,$sourceEncoding));
 				
 				
 				/* $instance->setownerId */
@@ -841,7 +849,7 @@ class ConfirmImportController extends GalleryController {
 					} else {
 					    $comment->setSubject('');
 					}
-					$comment->setComment(ConfirmImportController::convertHtmlToBbcode($importComment->commentText));
+					$comment->setComment(ConfirmImportController::convertHtmlToBbcode($importComment->commentText,$sourceEncoding));
 					$comment->setDate($importComment->datePosted);
 					
 					$ret = $comment->save();
@@ -936,11 +944,8 @@ class ConfirmImportController extends GalleryController {
      * @param string $item item to convert
      * @return string
      */
-    function convertHtmlToBbcode($item) {
-#	list ($ret,$item) = Gallery1DataParser::convertString($item,'ISO-8859-1','UTF-8');
-#	if ($ret->isError()) {
-#	    return array($ret->wrap(__FILE__, __LINE__), null);
-#	}
+    function convertHtmlToBbcode($item, $sourceEncoding='UTF-8') {
+	$item = Gallery1DataParser::convertString($item,$sourceEncoding);
 	$item = preg_replace('/<br\s*[\/]?>/i', "\n", $item);    
 	$item = preg_replace('/<strong>/i', '[b]', $item);
 	$item = preg_replace('/<\/strong>/i', '[/b]', $item);
@@ -983,6 +988,9 @@ class ConfirmImportView extends GalleryView {
 	$titles = array();
 	if (!isset($form['sourceAlbums'])) {
 	    $form['sourceAlbums']=array();
+	}
+	if (!isset($form['sourceEncoding'])) {
+	    $form['sourceEncoding']='ISO-8859-1';
 	}
 	$albumsPath = GalleryUtilities::getRequestVariables('albumsPath');
         $destinationAlbumID = $form['destinationAlbumID'];

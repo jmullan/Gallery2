@@ -375,7 +375,27 @@ class Gallery1DataParser {
 	}
 	return array(GalleryStatus::success(), $fields);
     }
-
+    /**
+     * Convert user data from one character set into UTF-8
+     *
+     * @param string data to convert
+     * @return string converted data
+     *
+     */
+    
+    function convertString($string,$sourceEncoding) {
+	if (!strcmp($sourceEncoding,'UTF-8')) {
+	    return $string;
+	}
+	if (function_exists('iconv')) {
+	    $string = iconv($sourceEncoding, 'UTF-8', $string);
+	} else if (function_exists('mb_convert_encoding')) {
+	    $string = mb_convert_encoding($string, $sourceEncoding, 'UTF-8');
+	} else if (function_exists('recode_string')) {
+	    $string = recode_string($sourceEncoding . '..UTF-8', $string);
+	}
+	return $string;
+    }    
 }
 
 

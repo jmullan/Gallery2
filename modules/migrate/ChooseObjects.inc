@@ -88,6 +88,22 @@ class ChooseObjectsView extends GalleryView {
     function loadTemplate(&$template, &$form) {
         global $gallery;
 
+	$availableEncodings = array('UTF-8',
+				    'BIG5',
+				    'CP1250',
+				    'CP1251',
+				    'EUC-JP',
+				    'EUC-KR',
+				    'GB2312',
+				    'ISO-8859-1',
+				    'ISO-8859-2',
+				    'ISO-8859-9',
+				    'ISO-8859-13',
+				    'KOI8-R',
+				    'KOI8-U',
+				    'windows-1251',
+				    'windows-1257');
+	
 	$platform = $gallery->getPlatform();
 	$slash = $platform->getDirectorySeparator();
 
@@ -164,6 +180,7 @@ class ChooseObjectsView extends GalleryView {
 	$ChooseObjects['existingUsers'] = $existingUsers;
 	$ChooseObjects['g1AlbumTree'] = $g1AlbumTree;
 	$ChooseObjects['g2AlbumTree'] = $g2AlbumTree;
+	$ChooseObjects['availableEncodings'] = $availableEncodings;
 
 	$template->setVariable('ChooseObjects', $ChooseObjects);
         $template->setVariable('controller', 'migrate:ChooseObjects');

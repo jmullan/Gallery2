@@ -84,7 +84,6 @@
     <div class="giDescription">
       {g->text text="Top level albums and albums whose parents are not selected will be imported into this album:"}
     </div>
-
     <div class="giInfo">
       <span>
 	{g->text text="Title: %s" arg1=$ConfirmImport.targetAlbum.title}
@@ -95,6 +94,15 @@
     </div>
     <input type="hidden" name="{g->formVar var="form[destinationAlbumID]"}" value="{$ConfirmImport.destinationAlbumID}"/>
   </div>
+  <div class="giDescription">
+      {g->text text="Your Gallery 1 will be converted from this character encoding into UTF-8:"}
+  </div>
+  <div class="giInfo">
+    <span>
+      {g->text text="Encoding: %s" arg1=$form.sourceEncoding}
+    </span>
+  </div>
+  <input type="hidden" name="{g->formVar var="form[form.sourceEncoding]"}" value="{$form.sourceEncoding}"/>
 
   <div class="gbButtons">
     <input type="hidden" name="{g->formVar var="albumsPath"}" value="{$ConfirmImport.albumsPath}"/>

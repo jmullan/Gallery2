@@ -154,6 +154,18 @@
         {/foreach}
       </select>
     </div>
+
+    <div class="gbDataEntry">
+      <div class="giTitle">
+        {g->text text="Character Encoding of Source Text:"}
+      </div>
+
+      <select name="{g->formVar var="form[sourceEncoding]"}">
+        {foreach from=$ChooseObjects.availableEncodings item=encoding}
+	  <option value="{$encoding}">{$encoding}</option>
+        {/foreach}
+      </select>
+    </div>
   </div>
 
   <div class="gbButtons">
