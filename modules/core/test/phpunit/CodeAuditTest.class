@@ -85,9 +85,31 @@ class CodeAuditTest extends CodeAuditTestCase {
      * @see CodeAuditTestCase::shouldCheckFile()
      */
     function shouldCheckFile($fileName) {
-	if (substr($fileName, -4) == '.tpl' || basename($fileName) == 'GNUmakefile.inc') {
+	$base1 = basename($fileName);
+
+	if (substr($fileName, -4) == '.tpl' ||  $base1 == 'GNUmakefile.inc') {
 	    return false;
 	}
+
+	$dir1 = dirname($fileName);
+	$base2 = basename($dir1);
+	$dir2 = dirname($dir1);
+	$base3 = basename($dir2);
+
+	/* Skip generated interfaces files */
+	if ($base3 == 'classes' && $base2 == 'interfaces') {
+	    return false;
+	}
+
+	$dir3 = dirname($dir2);
+	$base4 = basename($dir3);
+
+	/* Skip known embedded 3rd party libs */
+	if ($base4 == 'lib' && $base3 == 'exifer' ||
+		$base3 == 'lib' && $base2 == 'exifer') {
+	    return false;
+	}
+
 	return true;
     }
 
@@ -98,6 +120,7 @@ class CodeAuditTest extends CodeAuditTestCase {
 	$fileName = substr($fileName, strlen($this->_baseDir) + 1);
 	$lines = split("(\r\n|\n)", $buffer);
 	$checkSuperglobals = !preg_match('{/test/phpunit|^install/|^upgrade/}', $fileName);
+	$longLineCount = 0;
 	for ($i = 0; $i < count($lines); $i++) {
 
 	    /* Check that Session and UrlGenerator are always accessed by-reference */
@@ -147,6 +170,7 @@ class CodeAuditTest extends CodeAuditTestCase {
 	    $line = str_replace("\t", '        ', $lines[$i]);
 	    if (strlen($line) > 100) {
 		$this->_longLineCount++;
+		$longLineCount++;
 	    }
 	}
 
@@ -159,6 +183,11 @@ class CodeAuditTest extends CodeAuditTestCase {
 		&& !preg_match($this->_phpEndFile, $buffer)) {
 	    $this->_errorCount++;
 	    $this->assert(false, $fileName . ' does not end with ?&gt;');
+	}
+
+	if ($longLineCount > 0) {
+	    /* debug */
+	    /* printf("%s: %d<br/>", $fileName, $longLineCount); */
 	}
 
  	if ($this->_errorCount > 10) {
@@ -174,11 +203,11 @@ class CodeAuditTest extends CodeAuditTestCase {
 
 	/* Check result of longLineCount */
 	if (!$this->_shouldHalt) {
-	    if ($this->_longLineCount > 2466) {
+	    if ($this->_longLineCount > 2084) {
 		$this->assert(false, 'Found too many lines longer than 100 characters (' .
 			      $this->_longLineCount . ')');
 	    }
-	    if ($this->_longLineCount < 2300) {
+	    if ($this->_longLineCount < 1984) {
 		$this->assert(false, 'Yay!  We are down to ' . $this->_longLineCount .
 			      ' lines longer than 100 characters; update the failure' .
 			      ' thresholds in this unit test.');
