@@ -177,9 +177,9 @@ class SessionTest extends GalleryTestCase {
 	
 	$session =& $gallery->getSession();
 
-	/* Store 5 status messages */
+	/* Store 10 status messages */
 	$status = array('x' => 'y', 'a' => 'b');
-	for ($i = 0; $i < 5; $i++) {
+	for ($i = 0; $i < 10; $i++) {
 	    $statusId[$i] = $session->putStatus(array('i' => $i));
 	}
 
@@ -190,14 +190,19 @@ class SessionTest extends GalleryTestCase {
 	}
 	GalleryDataCache::reset();
 
-	/* Verify that they're all still there */
-	for ($i = 0; $i < 5; $i++) {
-	    $this->assertEquals(array('i' => $i), $session->getStatus($statusId[$i], false),
-				"Pass 1, status $i: $statusId[$i] should be here");
+	/* Verify that only the last 5 are there */
+	for ($i = 0; $i < sizeof($statusId); $i++) {
+	    if ($i < sizeof($statusId) - 5) {
+		$this->assertEquals(null, $session->getStatus($statusId[$i], false),
+				    "Pass 1, status $i: $statusId[$i] should not be here");
+	    } else {
+		$this->assertEquals(array('i' => $i), $session->getStatus($statusId[$i], false),
+				    "Pass 1, status $i: $statusId[$i] should be here");
+	    }
 	}
 
 	/* Store 2 more */
-	for ($i = 5; $i < 7; $i++) {
+	for ($i = 10; $i < 12; $i++) {
 	    $statusId[$i] = $session->putStatus(array('i' => $i));
 	}
 	/* Save and reset */
@@ -207,16 +212,20 @@ class SessionTest extends GalleryTestCase {
 	}
 	GalleryDataCache::reset();
 
-	/* Verify that the first two got expired, but the new 2 are there */
-	for ($i = 0; $i < 2; $i++) {
-	    $this->assertEquals(null, $session->getStatus($statusId[$i]),
-				"Pass 2, status $i: $statusId[$i] should be gone.");
+	/* Verify that only the last 5 are there */
+	for ($i = 0; $i < sizeof($statusId); $i++) {
+	    if ($i < sizeof($statusId) - 5) {
+		$this->assertEquals(null, $session->getStatus($statusId[$i], false),
+				    "Pass 1, status $i: $statusId[$i] should not be here");
+	    } else {
+		$this->assertEquals(array('i' => $i), $session->getStatus($statusId[$i], false),
+				    "Pass 1, status $i: $statusId[$i] should be here");
+	    }
 	}
 
-	/* Let getStatus() get rid of the status messages now */
-	for ($i = 2; $i < 7; $i++) {
-	    $this->assertEquals(array('i' => $i), $session->getStatus($statusId[$i]),
-				"Pass 2, status $i: $statusId[$i] should be here");
+	/* Remove all our status messages by getting them one more time */
+	for ($i = 0; $i < sizeof($statusId); $i++) {
+	    $session->getStatus($statusId[$i]);
 	}
     }
 }

@@ -484,7 +484,12 @@ class GallerySession_core {
      */
     function putStatus($statusData) {
 	$tod = gettimeofday();
-	$statusId = substr(md5($tod['usec'] + rand(1,1000)), 0, 8);
+	/*
+	 * Prefix the status id with a character so that it doesn't wind up being
+	 * entirely numeric because PHP will renumber numeric keys in associative
+	 * arrays when you run it through functions like array_splice()
+	 */
+	$statusId = 'x' . substr(md5($tod['usec'] + rand(1, 1000)), 0, 8);
 
 	$status =& $this->get('core.status');
 	if (!isset($status)) {
