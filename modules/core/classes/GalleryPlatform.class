@@ -294,12 +294,10 @@ class GalleryPlatform {
 	    
 	    if ($this->is_dir($path)) {
 		$ret = $this->recursiveRmdir($path);
-		if ($ret == false) {
-		    return $ret;
-		}
+	    } else {
+		$ret = $this->unlink($path);
 	    }
-
-	    $ret = $this->unlink($path);
+	    
 	    if ($ret == false) {
 		return $ret;
 	    }
