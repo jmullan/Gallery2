@@ -29,7 +29,7 @@
   {if $data.hVT}<td class="LLT"></td>{else}<td class="LL"{if $data.hVT or $data.hVB}
    style="height:expression((document.getElementById('{$objectId}').height-{$data.hVT+$data.hVB})+'px')"
    {/if}><div class="V">&nbsp;</div></td>{/if}
-  <td rowspan="{$data.rowspan}" colspan="{$data.colspan}"
+  <td rowspan="{$data.rowspan}" colspan="{$data.colspan}" class="IMG"
   >{$content|replace:"%ID%":$objectId|replace:"%CLASS%":"ImageFrame_image"}</td>
   {if $data.hVT}<td class="RRT"></td>{else}<td class="RR"{if $data.hVT or $data.hVB}
    style="height:expression((document.getElementById('{$objectId}').height-{$data.hVT+$data.hVB})+'px')"
