@@ -38,7 +38,7 @@ class RandomHighlightModule extends GalleryModule {
 	$this->setId('randomhighlight');
 	$this->setName('Random Highlight');
 	$this->setDescription($gallery->i18n('Periodically change the album highlight'));
-	$this->setVersion('0.8.2');
+	$this->setVersion('0.8.3');
 	$this->setGroup('display', $this->translate('Display'));
 	$this->setCallbacks('performFactoryRegistrations|getSiteAdminViews');
 	$this->setRequiredCoreApi(array(0, 8));
@@ -53,9 +53,10 @@ class RandomHighlightModule extends GalleryModule {
 	GalleryCoreApi::registerFactoryImplementation('GalleryEntity',
 	    'RandomHighlightDerivativeImage', 'RandomHighlightDerivativeImage',
 	    dirname(__FILE__) . '/classes/RandomHighlightDerivativeImage.class');
-	GalleryCoreApi::registerFactoryImplementation('ItemEditPlugin',
-	    'ItemEditRandomHighlight', 'ItemEditRandomHighlight',
-	    dirname(__FILE__) . '/ItemEditRandomHighlight.inc');
+
+	GalleryCoreApi::registerFactoryImplementation('ItemEditAlbumOption',
+	    'RandomHighlightOption', 'RandomHighlightOption',
+	    dirname(__FILE__) . '/RandomHighlightOption.inc');
     }
 
     /**
@@ -63,7 +64,7 @@ class RandomHighlightModule extends GalleryModule {
      */
     function upgrade($currentVersion) {
 	if (!isset($currentVersion)) {
-	    $ret = $this->setParameter('duration', 10 * 60 * 60); /* 10 minutes */
+	    $ret = $this->setParameter('duration', 7200); /* 2 hours */
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }

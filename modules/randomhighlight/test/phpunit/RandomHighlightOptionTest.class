@@ -26,15 +26,18 @@
  * @author Alan Harder <alan.harder@sun.com>
  */
 
+GalleryCoreApi::relativeRequireOnce('lib/tools/phpunit/ItemEditOptionTestCase.class');
+
 /**
- * ItemEditRandomHighlight controller tests
+ * RandomHighlightOption tests
  * @package RandomHighlight
  * @subpackage PHPUnit
  */
-class RandomHighlightItemEditPluginTest extends ItemEditPluginTestCase {
+class RandomHighlightOptionTest extends ItemEditOptionTestCase {
 
-    function RandomHighlightItemEditPluginTest($methodName) {
-	$this->ItemEditPluginTestCase($methodName, 'randomhighlight', 'ItemEditRandomHighlight');
+    function RandomHighlightOptionTest($methodName) {
+	$this->ItemEditOptionTestCase(
+	    $methodName, 'randomhighlight', 'ItemEditAlbum', 'RandomHighlightOption');
     }
 
     function setUp() {
@@ -45,6 +48,8 @@ class RandomHighlightItemEditPluginTest extends ItemEditPluginTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	$this->_markForCleanup($this->_album);
+
 	list ($ret, $item) = $this->_createRandomDataItem(
 	    $this->_album->getId(), 'image/test', array(), __FILE__, 'GalleryPhotoItem');
 	if ($ret->isError()) {
@@ -65,24 +70,17 @@ class RandomHighlightItemEditPluginTest extends ItemEditPluginTestCase {
 	}
     }
 
-    function tearDown() {
-	$ret = GalleryCoreApi::deleteEntityById($this->_album->getId());
+    function testRandomHighlight() {
+	list ($ret, $appropriate) = $this->_option->isAppropriate($this->_album, $this->_highlight);
 	if ($ret->isError()) {
-	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	parent::tearDown();
-    }
+	$this->assert($appropriate, 'appropriate');
 
-    function testRandomHighlight() {
+	$form['RandomHighlightOption']['isRandomHighlight'] = 1;
 
-	GalleryUtilities::putRequestVariable('form[isRandomHighlight]', 1);
-	GalleryUtilities::putRequestVariable('form[action][save]', 1);
-
-	$preferred = null;
-	$results = $this->handleRequest($this->_album, $preferred);
-	$this->assertEquals(array(array(), $this->_translate('Changes saved successfully')),
-			    $results);
+	$error = $this->handleRequestAfterEdit($form, $this->_album);
+	$this->assertEquals(array(), $error, 'turn on');
 
 	list ($ret, $highlight) = $this->_highlight->refresh();
 	if ($ret->isError()) {
@@ -96,11 +94,8 @@ class RandomHighlightItemEditPluginTest extends ItemEditPluginTestCase {
 	}
 	$this->assert($count > 0, 'item count');
 
-	GalleryUtilities::removeRequestVariable('form[isRandomHighlight]');
-
-	$results = $this->handleRequest($this->_album, $preferred);
-	$this->assertEquals(array(array(), $this->_translate('Changes saved successfully')),
-			    $results);
+	$error = $this->handleRequestAfterEdit(array(), $this->_album);
+	$this->assertEquals(array(), $error, 'turn off');
 
 	list ($ret, $highlight) = $this->_highlight->refresh();
 	if ($ret->isError()) {

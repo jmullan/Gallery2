@@ -1,0 +1,101 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package Gallery
+ * @subpackage PHPUnit
+ * @author Alan Harder <alan.harder@sun.com>
+ */
+
+/**
+ * Plugins need to have these classes loaded
+ */
+require_once(dirname(__FILE__) . '/../../../modules/core/classes/GalleryView.class');
+require_once(dirname(__FILE__) . '/../../../modules/core/classes/GalleryController.class');
+require_once(dirname(__FILE__) . '/../../../modules/core/ItemEdit.inc');
+
+/**
+ * An ItemEditOption specific version of GalleryTestCase
+ * @package Gallery
+ * @subpackage PHPUnit
+ */
+class ItemEditOptionTestCase extends GalleryTestCase {
+
+    /**
+     * The option instance
+     * @access protected
+     */
+    var $_option;
+
+    function ItemEditOptionTestCase($methodName, $moduleName, $editPlugin, $optionName) {
+	$this->GalleryTestCase($methodName);
+
+	list ($ret, $this->_option) =
+	    GalleryCoreApi::newFactoryInstanceById($editPlugin . 'Option', $optionName);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $this->_module) = GalleryCoreApi::loadPlugin('module', $moduleName);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    function setUp() {
+	parent::setUp();
+    }
+
+    function tearDown() {
+	parent::tearDown();
+    }
+
+    function handleRequestAfterEdit($form, &$item, $errorCode=null) {
+	list ($ret, $thumbnails) = GalleryCoreApi::fetchThumbnailsByItemIds(array($item->getId()));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$thumbnail = empty($thumbnails) ? null : array_shift($thumbnails);
+
+	list ($ret, $error) = $this->_option->handleRequestAfterEdit($form, $item, $thumbnail);
+	if (isset($errorCode)) {
+	    if (($ret->getErrorCode() & $errorCode) != $errorCode) {
+		$this->assert(false,
+			      sprintf('Expected error code (%s) but received (%s)',
+				      join(' | ', GalleryStatus::getErrorCodeConstants($errorCode)),
+				      join(' | ', GalleryStatus::getErrorCodeConstants($ret->getErrorCode()))));
+	    }
+	} else if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	} else {
+	    /* Check to make sure we got back everything we want */
+	    $this->assert(isset($error) && is_array($error), 'option error results missing');
+	}
+
+	return $error;
+    }
+
+    function _translate($message) {
+	return $this->_module->translate($message);
+    }
+}
+?>

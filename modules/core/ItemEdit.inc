@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -60,10 +60,19 @@ class ItemEditController extends GalleryController {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
-	$preferred = null;
-	if (!empty($preferredTable[$item->getId()])) {
-	    $preferred = $preferredTable[$item->getId()];
+	$preferred = empty($preferredTable) ? null : array_shift($preferredTable);
+
+	/* Load the thumbnail */
+	list ($ret, $thumbnails) = GalleryCoreApi::fetchThumbnailsByItemIds(array($item->getId()));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$thumbnail = empty($thumbnails) ? null : array_shift($thumbnails);
+
+	/* Get all the edit options */
+	list ($ret, $optionInstances) = ItemEditOption::getAllOptions($editPlugin, $item, $thumbnail);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$status = array();
@@ -82,6 +91,15 @@ class ItemEditController extends GalleryController {
 	list ($ret, $error, $statusMessage) = $plugin->handleRequest($form, $item, $preferred);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Now let each option process its data */
+	foreach ($optionInstances as $option) {
+	    list ($ret, $optionErrors) = $option->handleRequestAfterEdit($form, $item, $preferred);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $error = array_merge($error, $optionErrors);
 	}
 
 	if (empty($error)) {
@@ -133,8 +151,7 @@ class ItemEditView extends GalleryView {
 	}
 
 	/* Load the thumbnail */
-	list ($ret, $thumbnails) =
-	    GalleryCoreApi::fetchThumbnailsByItemIds(array($item->getId()));
+	list ($ret, $thumbnails) = GalleryCoreApi::fetchThumbnailsByItemIds(array($item->getId()));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -156,7 +173,7 @@ class ItemEditView extends GalleryView {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    
+
 	    if ($plugin->isSupported($item, $thumbnail)) {
 		$pluginInstances[$pluginId] = $plugin;
 	    }
@@ -204,10 +221,28 @@ class ItemEditView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	/* Let the plugin load its template data */
 	list ($ret, $ItemEdit['pluginFile']) =
 	    $pluginInstances[$editPlugin]->loadTemplate($template, $form, $item, $thumbnail);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Get all the edit options */
+	list ($ret, $optionInstances) = ItemEditOption::getAllOptions($editPlugin, $item, $thumbnail);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Now let all options load their template data */
+	$ItemEdit['options'] = array();
+	foreach ($optionInstances as $option) {
+	    list ($ret, $entry['file'], $entry['l10Domain']) =
+		$option->loadTemplate($template, $form, $item, $thumbnail);
+	    $ItemEdit['options'][] = $entry;
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
 	}
 
 	$template->setVariable('ItemEdit', $ItemEdit);
@@ -245,7 +280,7 @@ class ItemEditView extends GalleryView {
  * @subpackage UserInterface
  */
 class ItemEditPlugin {
-    /** 
+    /**
      * Does this plugin support the given item type?
      *
      * @param the item
@@ -276,8 +311,8 @@ class ItemEditPlugin {
      * @see GalleryController::handleRequest
      *
      * @param array the form values
-     * @param the item 
-     * @param the item's preferred derivative, if there is one 
+     * @param the item
+     * @param the item's preferred derivative, if there is one
      * @return array object GalleryStatus a status code
      *               array error messages
      *               string status message
@@ -294,6 +329,91 @@ class ItemEditPlugin {
      */
     function getTitle() {
 	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
+    }
+}
+
+/**
+ * Interface for options to the ItemEdit view and controller.
+ * Options allow us to provide extra UI in the views and extra
+ * processing in the controller so that we can add new functionality
+ * to various ItemEditPlugins
+ *
+ * @package GalleryCore
+ * @subpackage UserInterface
+ */
+class ItemEditOption {
+
+    /**
+     * Return all the available option plugins
+     *
+     * @param string name of ItemEditPlugin
+     * @param object GalleryItem item
+     * @param object GalleryDerivative thumbnail
+     * @return array object GalleryStatus a status code
+     *               array object ItemEditOption instances
+     * @static
+     */
+    function getAllOptions($editPlugin, $item, $thumbnail) {
+	$classType = $editPlugin . 'Option';
+	$allOptionIds = GalleryCoreApi::getAllFactoryImplementationIds($classType);
+	$optionInstances = array();
+	foreach (array_keys($allOptionIds) as $optionId) {
+	    list ($ret, $option) = GalleryCoreApi::newFactoryInstanceById($classType, $optionId);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    list ($ret, $isAppropriate) = $option->isAppropriate($item, $thumbnail);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    if ($isAppropriate) {
+		$optionInstances[$optionId] = $option;
+	    }
+	}
+
+	return array(GalleryStatus::success(), $optionInstances);
+    }
+
+    /**
+     * Load the template with data from this plugin
+     * @see GalleryView::loadTemplate
+     *
+     * @param object GalleryTemplate the template instance
+     * @param array the form values
+     * @param the item
+     * @return array object GalleryStatus a status code
+     *               string the path to a template file to include
+     *               string localization domain for the template file
+     */
+    function loadTemplate(&$template, &$form, $item, $thumbnail) {
+	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null, null);
+    }
+
+    /**
+     * Let the plugin handle the incoming request.  We expect the $item to be locked.
+     * @see GalleryController::handleRequest
+     *
+     * @param array the form values
+     * @param reference to the item
+     * @return array object GalleryStatus a status code
+     *               array error messages
+     */
+    function handleRequestAfterEdit($form, &$item, &$preferred) {
+	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
+    }
+
+    /**
+     * Is this option appropriate at this time?
+     *
+     * @param object GalleryItem item
+     * @param object GalleryDerivative thumbnail
+     * @return array object GalleryStatus a status code
+     *               boolean true or false
+     */
+    function isAppropriate($item, $thumbnail) {
+	return array(GalleryStatus::success(), false);
     }
 }
 ?>
