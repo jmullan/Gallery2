@@ -123,7 +123,7 @@ class GalleryUrlGenerator {
 	    $path = $_SERVER['REQUEST_URI'];
 	} else if (!empty($_SERVER['SCRIPT_NAME'])) {
 	    $path = $_SERVER['SCRIPT_NAME'];
-	    if (!empty($_SERVER['PATH_INFO'])) {
+	    if (!empty($_SERVER['PATH_INFO']) && $_SERVER['PATH_INFO'] != $path) {
 		$path .= $_SERVER['PATH_INFO'];
 	    }
 	}
