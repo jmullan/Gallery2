@@ -106,7 +106,7 @@ function GalleryInitFirstPass() {
 			$dataBase . 'smarty' . $slash . 'templates_c' . $slash);
 
     /* Check for the existance of various functions that we care about */
-    foreach (array('dgettext', 'dngettext', 'is_a')
+    foreach (array('dgettext', 'dngettext', 'is_a', 'bind_textdomain_codeset')
 	     as $functionName) {
 	$key = 'function.exists.' . $functionName;
 	$gallery->setConfig($key, function_exists($functionName) ? 1 : 0);
