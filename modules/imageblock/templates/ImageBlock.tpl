@@ -28,7 +28,7 @@
 	<ul class="giInfo">
 	  {if isset($ImageBlockSystemContent.show.date)}
 	  <li>
-	    {g->text text="Date:"} {g->date timestamp=$block.item.creationTimestamp format="%D"}
+	    {g->text text="Date:"} {g->date timestamp=$block.item.originationTimestamp format="%D"}
 	  </li>
 	  {/if}
 

@@ -47,26 +47,67 @@
           {g->text text="Most Viewed Image"}
         </label>
       </li>
-    
+
       <li>
         <input id="randomAlbum" type="checkbox" name="{g->formVar var="form[randomAlbum]"}" {if $form.randomAlbum}checked="checked"{/if}/>
         <label for="randomAlbum">
           {g->text text="Random Album"}
         </label>
       </li>
-    
-    
+
       <li>
         <input id="recentAlbum" type="checkbox" name="{g->formVar var="form[recentAlbum]"}" {if $form.recentAlbum}checked="checked"{/if}/>
         <label for="recentAlbum">
           {g->text text="Newest Album"}
         </label>
       </li>
-    
+
       <li>
         <input id="viewedAlbum" type="checkbox" name="{g->formVar var="form[viewedAlbum]"}" {if $form.viewedAlbum}checked="checked"{/if}/>
         <label for="viewedAlbum">
           {g->text text="Most Viewed Album"}
+        </label>
+      </li>
+
+      <li>
+        <input id="dailyImage" type="checkbox" name="{g->formVar var="form[dailyImage]"}" {if $form.dailyImage}checked="checked"{/if}/>
+        <label for="dailyImage">
+          {g->text text="Picture of the Day"}
+        </label>
+      </li>
+
+      <li>
+        <input id="weeklyImage" type="checkbox" name="{g->formVar var="form[weeklyImage]"}" {if $form.weeklyImage}checked="checked"{/if}/>
+        <label for="weeklyImage">
+          {g->text text="Picture of the Week"}
+        </label>
+      </li>
+
+      <li>
+        <input id="monthlyImage" type="checkbox" name="{g->formVar var="form[monthlyImage]"}" {if $form.monthlyImage}checked="checked"{/if}/>
+        <label for="monthlyImage">
+          {g->text text="Picture of the Month"}
+        </label>
+      </li>
+
+      <li>
+        <input id="dailyAlbum" type="checkbox" name="{g->formVar var="form[dailyAlbum]"}" {if $form.dailyAlbum}checked="checked"{/if}/>
+        <label for="dailyAlbum">
+          {g->text text="Album of the Day"}
+        </label>
+      </li>
+
+      <li>
+        <input id="weeklyAlbum" type="checkbox" name="{g->formVar var="form[weeklyAlbum]"}" {if $form.weeklyAlbum}checked="checked"{/if}/>
+        <label for="weeklyAlbum">
+          {g->text text="Album of the Week"}
+        </label>
+      </li>
+
+      <li>
+        <input id="monthlyAlbum" type="checkbox" name="{g->formVar var="form[monthlyAlbum]"}" {if $form.monthlyAlbum}checked="checked"{/if}/>
+        <label for="monthlyAlbum">
+          {g->text text="Album of the Month"}
         </label>
       </li>
     </ul>
@@ -81,21 +122,21 @@
           {g->text text="Title"}
         </label>
       </li>
-    
+
       <li>
         <input id="date" type="checkbox" name="{g->formVar var="form[date]"}" {if $form.date}checked="checked"{/if}/>
         <label for="date">
           {g->text text="Date"}
         </label>
       </li>
-    
+
       <li>
         <input id="views" type="checkbox" name="{g->formVar var="form[views]"}" {if $form.views}checked="checked"{/if}/>
         <label for="views">
           {g->text text="View Count"}
         </label>
       </li>
-    
+
       <li>
         <input id="owner" type="checkbox" name="{g->formVar var="form[owner]"}" {if $form.owner}checked="checked"{/if}/>
         <label for="owner">
@@ -123,7 +164,7 @@
       &lt;?php @readfile('{g->url arg1="view=imageblock:External" arg2="blocks=randomImage" arg3="show=title"}'); ?&gt;
     </p>
     <p class="giDescription">
-      {g->text text="g2_blocks is a pipe(|) separate list chosen from: randomImage, recentImage, viewedImage, randomAlbum, recentAlbum, viewedAlbum.  g2_show is a pipe(|) separated list chosen from: title, date, views, owner; the value can also be: none.  If either parameter is omitted the site default defined above is used.  Add the parameter g2_heading=on to show the image block heading.  Add the parameter g2_itemId=[id] to limit the item selection to the subtree of the gallery under the album with the given [id].  To create an image block for a particular item pass g2_blocks=specificItem and g2_itemId=[id] of the item to display."}
+      {g->text text="g2_blocks is a pipe(|) separate list chosen from: randomImage, recentImage, viewedImage, randomAlbum, recentAlbum, viewedAlbum, dailyImage, weeklyImage, monthlyImage, dailyAlbum, weeklyAlbum, monthlyAlbum.  g2_show is a pipe(|) separated list chosen from: title, date, views, owner; the value can also be: none.  If either parameter is omitted the site default defined above is used.  Add the parameter g2_heading=on to show the image block heading.  Add the parameter g2_itemId=[id] to limit the item selection to the subtree of the gallery under the album with the given [id].  To create an image block for a particular item pass g2_blocks=specificItem and g2_itemId=[id] of the item to display."}
     </p>
   </div>
 </div>

@@ -45,7 +45,9 @@ class ImageBlockSiteAdminController extends GalleryController {
 	if (isset($form['action']['save'])) {
 	    $param = array();
 	    foreach (array('randomImage', 'recentImage', 'viewedImage',
-			   'randomAlbum', 'recentAlbum', 'viewedAlbum')
+			   'randomAlbum', 'recentAlbum', 'viewedAlbum',
+			   'dailyImage', 'weeklyImage', 'monthlyImage',
+			   'dailyAlbum', 'weeklyAlbum', 'monthlyAlbum')
 			as $key) {
 		if (isset($form[$key]) && $form[$key]) {
 		    $param[] = $key;
@@ -92,6 +94,8 @@ class ImageBlockSiteAdminView extends GalleryView {
 	    $form['formName'] = 'ImageBlockSiteAdmin';
 	    foreach (array('randomImage', 'recentImage', 'viewedImage',
 			   'randomAlbum', 'recentAlbum', 'viewedAlbum',
+			   'dailyImage', 'weeklyImage', 'monthlyImage',
+			   'dailyAlbum', 'weeklyAlbum', 'monthlyAlbum',
 			   'title', 'date', 'views', 'owner') as $tmp) {
 		$form[$tmp] = 0;
 	    }

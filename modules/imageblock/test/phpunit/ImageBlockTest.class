@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -54,7 +54,7 @@ class ImageBlockTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markFactoryModuleForCleanup('imageblockTest');
-	
+
 	$ret = GalleryCoreApi::registerToolkitOperation('ImageBlockToolkit',
 	    array('image/gif'), 'testoperation',
 	    array(array('type' => 'int', 'description' => 'size')), 'desc');
@@ -69,6 +69,7 @@ class ImageBlockTest extends GalleryTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	$this->_markForCleanup($album);
 
 	list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($album->getId());
 	if ($ret->isError()) {
@@ -92,6 +93,20 @@ class ImageBlockTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
+	/* Add permission so album/item can appear in dailyImage,monthlyAlbum,etc */
+	list ($ret, $everybodyGroupId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.everybodyGroup');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::addGroupPermission(
+			       $album->getId(), $everybodyGroupId, 'core.view', true);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'imageblock');
 	if ($ret->isError() || !isset($module)) {
 	    print $ret->getAsHtml();
@@ -108,12 +123,30 @@ class ImageBlockTest extends GalleryTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	$params = array();
+	foreach (array('dailyImage', 'weeklyImage', 'monthlyImage',
+		       'dailyAlbum', 'weeklyAlbum', 'monthlyAlbum') as $key) {
+	    list ($ret, $value) = $module->getParameter($key);
+	    if ($ret->isError()) {
+		print $ret->getAsHtml();
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    if (isset($value)) {
+		$params[$key] = $value;
+		$ret = GalleryCoreApi::removePluginParameter('module', 'imageblock', $key);
+		if ($ret->isError()) {
+		    print $ret->getAsHtml();
+		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		}
+	    }
+	}
 
 	$this->_album = $album;
 	$this->_photo = $photo;
 	$this->_module = $module;
 	$this->_view = $view;
 	$this->_blocks = $blocks;
+	$this->_params = $params;
     }
 
     function _addPhoto($parentId, $imagePath) {
@@ -190,15 +223,27 @@ class ImageBlockTest extends GalleryTestCase {
      */
     function tearDown() {
 	global $gallery;
-	$ret = GalleryCoreApi::deleteEntityById($this->_album->getId());
-	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
 	$ret = $this->_module->setParameter('blocks', $this->_blocks);
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	foreach (array('dailyImage', 'weeklyImage', 'monthlyImage',
+		       'dailyAlbum', 'weeklyAlbum', 'monthlyAlbum') as $key) {
+	    if (isset($this->_params[$key])) {
+		$ret = GalleryCoreApi::setPluginParameter(
+		       'module', 'imageblock', $key, $this->_params[$key]);
+		if ($ret->isError()) {
+		    print $ret->getAsHtml();
+		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		}
+	    } else {
+		$ret = GalleryCoreApi::removePluginParameter('module', 'imageblock', $key);
+		if ($ret->isError()) {
+		    print $ret->getAsHtml();
+		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		}
+	    }
 	}
 	/* Unregister dummy toolkit */
 	$ret = GalleryCoreApi::unregisterToolkit('ImageBlockToolkit');
@@ -210,11 +255,11 @@ class ImageBlockTest extends GalleryTestCase {
 
     function assertBlock($block) {
 	$this->assert(isset($block['id']), 'Missing id');
-	$this->assert(isset($block['creationTimestamp']), 'Missing creationTimestamp');
 	$this->assert(isset($block['viewCount']), 'Missing viewCount');
 	$this->assert(isset($block['title']), 'Missing title');
 	$this->assert(isset($block['item']), 'Missing item');
 	$this->assert(isset($block['thumb']), 'Missing thumb');
+	return $block['id'];
     }
 
     function testImageBlock() {
@@ -224,7 +269,7 @@ class ImageBlockTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$template = new DummyGalleryTemplate();
+	$template = new ImageBlockDummyGalleryTemplate();
 	list ($ret, $tpl) = $this->_module->loadSystemContent($template);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -238,7 +283,7 @@ class ImageBlockTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$template = new DummyGalleryTemplate();
+	$template = new ImageBlockDummyGalleryTemplate();
 	list ($ret, $tpl) = $this->_module->loadSystemContent($template);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -254,7 +299,7 @@ class ImageBlockTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$template = new DummyGalleryTemplate();
+	$template = new ImageBlockDummyGalleryTemplate();
 	list ($ret, $tpl) = $this->_module->loadSystemContent($template);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -285,7 +330,7 @@ class ImageBlockTest extends GalleryTestCase {
 	GalleryUtilities::putRequestVariable('blocks', 'randomImage');
 	GalleryUtilities::putRequestVariable('show', 'none');
 
-	$template = new DummyGalleryTemplate();
+	$template = new ImageBlockDummyGalleryTemplate();
 	list ($ret, $tpl) = $external->loadTemplate($template, $form);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -299,7 +344,7 @@ class ImageBlockTest extends GalleryTestCase {
 	GalleryUtilities::putRequestVariable('show', 'title');
 	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
 
-	$template = new DummyGalleryTemplate();
+	$template = new ImageBlockDummyGalleryTemplate();
 	list ($ret, $tpl) = $external->loadTemplate($template, $form);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -315,7 +360,7 @@ class ImageBlockTest extends GalleryTestCase {
 	GalleryUtilities::putRequestVariable('show', 'title|views');
 	GalleryUtilities::putRequestVariable('itemId', $this->_photo->getId());
 
-	$template = new DummyGalleryTemplate();
+	$template = new ImageBlockDummyGalleryTemplate();
 	list ($ret, $tpl) = $external->loadTemplate($template, $form);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -326,12 +371,71 @@ class ImageBlockTest extends GalleryTestCase {
 	$this->assertEquals($this->_photo->getId(),
 	    $template->data['ImageBlockSystemContent']['blocks'][0]['id'], 'Photo id');
     }
+
+    function testPeriodicBlocks() {
+	$ret = $this->_module->setParameter('blocks', 'dailyImage');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$template = new ImageBlockDummyGalleryTemplate();
+	list ($ret, $tpl) = $this->_module->loadSystemContent($template);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(count($tpl) > 0, 'A template should have been returned');
+	$this->assertEquals(1, count($template->data['ImageBlockSystemContent']['blocks']), 'One block');
+	$itemId = $this->assertBlock($template->data['ImageBlockSystemContent']['blocks'][0]);
+
+	/* Next call should return same id */
+	$template = new ImageBlockDummyGalleryTemplate();
+	list ($ret, $tpl) = $this->_module->loadSystemContent($template);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(count($tpl) > 0, 'A template should have been returned');
+	$this->assertEquals(1, count($template->data['ImageBlockSystemContent']['blocks']), 'One block');
+	$nextItemId = $this->assertBlock($template->data['ImageBlockSystemContent']['blocks'][0]);
+	$this->assertEquals($itemId, $nextItemId, 'keep same id');
+
+	/* Set invalid id in property to force picking new id */
+	$now = localtime();
+	$ret = $this->_module->setParameter('monthlyAlbum', '-1|' . $now[4]);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = $this->_module->setParameter('blocks', 'monthlyAlbum');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$template = new ImageBlockDummyGalleryTemplate();
+	list ($ret, $tpl) = $this->_module->loadSystemContent($template);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(count($tpl) > 0, 'A template should have been returned');
+	$this->assertEquals(1, count($template->data['ImageBlockSystemContent']['blocks']), 'One block');
+	$itemId = $this->assertBlock($template->data['ImageBlockSystemContent']['blocks'][0]);
+	$this->assert($itemId > 0, 'valid id');
+
+	/* Next call should return same id */
+	$template = new ImageBlockDummyGalleryTemplate();
+	list ($ret, $tpl) = $this->_module->loadSystemContent($template);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(count($tpl) > 0, 'A template should have been returned');
+	$this->assertEquals(1, count($template->data['ImageBlockSystemContent']['blocks']), 'One block');
+	$nextItemId = $this->assertBlock($template->data['ImageBlockSystemContent']['blocks'][0]);
+	$this->assertEquals($itemId, $nextItemId, 'keep same album id');
+    }
 }
 
 /**
  * Required classes
  */
-require_once(dirname(__FILE__) . '/../../../core/classes/GalleryToolkit.class');
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryToolkit.class');
 
 /**
  * Test toolkit
@@ -358,7 +462,7 @@ class ImageBlockToolkit extends GalleryToolkit {
  * @package ImageBlock
  * @subpackage PHPUnit
  */
-class DummyGalleryTemplate {
+class ImageBlockDummyGalleryTemplate {
     var $data = array();
     function setVariable($key, $value) {
 	$this->data[$key] = $value;

@@ -26,21 +26,6 @@
  */
 
 /**
- * Random item
- */
-define('IMAGE_BLOCK_RANDOM', 1);
-
-/**
- * Most recent item
- */
-define('IMAGE_BLOCK_RECENT', 2);
-
-/**
- * Most viewed item
- */
-define('IMAGE_BLOCK_VIEWED', 3);
-
-/**
  * A helper class for the Image Block module.
  *
  * @package ImageBlock
@@ -49,30 +34,213 @@ define('IMAGE_BLOCK_VIEWED', 3);
 class ImageBlockHelper /* extends GalleryEventListener */ {
 
     /**
+     * Load image block data into template.
+     *
+     * @param object GalleryTemplate template
+     * @param array (optional) image block parameters (to override module settings)
+     * @return array GalleryStatus a status code
+     *               string template file or null
+     */
+    function loadImageBlocks(&$template, $params = array('heading' => 1)) {
+	global $gallery;
+	list ($ret, $moduleParams) = GalleryCoreApi::fetchAllPluginParameters('module', 'imageblock');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$params = array_merge($moduleParams, $params);
+	$heading = isset($params['heading']);
+	$parentId = isset($params['itemId']) ? $params['itemId'] : null;
+
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'imageblock');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$headings = array('randomImage' => $gallery->i18n('Random Image'),
+			  'recentImage' => $gallery->i18n('Newest Image'),
+			  'viewedImage' => $gallery->i18n('Most Viewed Image'),
+			  'randomAlbum' => $gallery->i18n('Random Album'),
+			  'recentAlbum' => $gallery->i18n('Newest Album'),
+			  'viewedAlbum' => $gallery->i18n('Most Viewed Album'),
+			  'dailyImage' => $gallery->i18n('Picture of the Day'),
+			  'weeklyImage' => $gallery->i18n('Picture of the Week'),
+			  'monthlyImage' => $gallery->i18n('Picture of the Month'),
+			  'dailyAlbum' => $gallery->i18n('Album of the Day'),
+			  'weeklyAlbum' => $gallery->i18n('Album of the Week'),
+			  'monthlyAlbum' => $gallery->i18n('Album of the Month'));
+
+	$blocks = array();
+	foreach (explode('|', $params['blocks']) as $block) {
+	    if (!preg_match('{^(.*?)([A-Z].*)$}', $block, $matches)) {
+		continue;
+	    }
+	    list ($tmp, $order, $itemType) = $matches;
+	    $ret = ImageBlockHelper::_addBlock($blocks,
+		   ($heading && isset($headings[$block])) ? $module->translate($headings[$block]) : '',
+		   $itemType, $order, $parentId);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+
+	$show = array();
+	foreach (explode('|', $params['show']) as $key) {
+	    $show[$key] = 1;
+	}
+	$ImageBlockSystemContent['show'] = $show;
+
+	$tpl = null;
+	if (!empty($blocks)) {
+	    $ImageBlockSystemContent['blocks'] = $blocks;
+	    $template->setVariable('ImageBlockSystemContent', $ImageBlockSystemContent);
+	    $tpl = 'modules/imageblock/templates/ImageBlock.tpl';
+	}
+	return array(GalleryStatus::success(), $tpl);
+    }
+
+    /** @static @private */
+    function _addBlock(&$blocks, $title, $itemType, $order, $parentId=null) {
+	$userId = null;
+	switch ($order) {
+	case 'specific':
+	    if (!isset($parentId)) {
+		return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    }
+	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($parentId);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    break;
+
+	case 'daily':
+	case 'weekly':
+	case 'monthly':
+	    $key = $order . $itemType;
+	    $now = localtime();
+	    switch ($order) {
+	    case 'daily':
+		$now = $now[7]; /* tm_yday */
+		break;
+
+	    case 'weekly':
+		/* Week number; Sunday as first day of week */
+		$now = ((int)(($now[7] - $now[6] + ($now[7] < $now[6] ? 7 : 0)) / 7)) % 52;
+		break;
+
+	    case 'monthly':
+		$now = $now[4];
+		break;
+	    }
+	    list ($ret, $tmp) = GalleryCoreApi::getPluginParameter('module', 'imageblock', $key);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    if (!empty($tmp)) {
+		list ($itemId, $then) = explode('|', $tmp);
+		if ($now != $then) {
+		    $itemId = null;
+		}
+	    }
+	    if (isset($itemId)) {
+		list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+		if ($ret->isSuccess()) {
+		    break;
+		} else if (!($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		    /* Just pick a new item if this one is missing */
+		}
+	    }
+	    /* Set random selection for anonymous user */
+	    $order = 'random';
+	    list ($ret, $userId) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    /* Fall through to pick new item */
+
+	default:
+	    list ($ret, $data) = ImageBlockHelper::fetchViewableData($itemType, $order, $parentId);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	if (isset($item)) {
+	    $ret = GalleryCoreApi::assertHasItemPermission($item->getId(), 'core.view');
+	    if ($ret->isError()) {
+		/* Ignore permission error.. just don't add a block */
+		return GalleryStatus::success();
+	    }
+	    $id = $item->getId();
+	    $data = array('id' => $id);
+	    list ($ret, $data['viewCount']) = GalleryCoreApi::fetchItemViewCount($item->getId());
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	} else if (isset($data)) {
+	    $id = $data['id'];
+	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($id);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    if (isset($key)) {
+		/* Record the id and time for selected item */
+		$ret = GalleryCoreApi::setPluginParameter(
+		       'module', 'imageblock', $key, $id . '|' . $now);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+	}
+
+	if (isset($data)) {
+	    list ($ret, $thumbnail) = GalleryCoreApi::fetchThumbnailsByItemIds(array($id));
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    list ($ret, $owner) = GalleryCoreApi::loadEntitiesById($item->getOwnerId());
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    $data['title'] = $title;
+	    $data['item'] = $item->getMemberData();
+	    $data['owner'] = $owner->getMemberData();
+	    if (isset($thumbnail[$id])) {
+		$data['thumb'] = $thumbnail[$id]->getMemberData();
+		$blocks[] = $data;
+	    }
+	}
+	return GalleryStatus::success();
+    }
+
+    /**
      * Fetch item data for use in image block
      *
      * @param string the item type
-     * @param int the order type (use defined constant from above)
+     * @param string the order type (random, recent, viewed, daily, weekly, monthly)
      * @param int limit item selection to descendents of this item (optional)
+     * @param int user id for permissions check (optional; defaults to current user)
      * @return array GalleryStatus a status code
-     *               mixed containing id, creationTimestamp, viewCount of
-     *                     item or null if none found
+     *               array containing id, viewCount of item or null if none found
      * @static
      */
-    function fetchViewableData($itemType, $order, $parentId=null) {
+    function fetchViewableData($itemType, $order, $parentId=null, $userId=null) {
 	global $gallery;
 	$storage =& $gallery->getStorage();
-	$typeMap = array('GalleryPhotoItem' => 1, 'GalleryAlbumItem' => 2);
+	$typeMap = array('Image' => 1, 'Album' => 2);
+	if (!isset($userId)) {
+	    $userId = $gallery->getActiveUserId();
+	}
 
 	/* Prepare the query */
 	$select[] = '[ImageBlockCacheMap::itemId]';
-	$select[] = '[ImageBlockCacheMap::itemTimestamp]';
 	$from[] = '[ImageBlockCacheMap] LEFT JOIN [ImageBlockDisabledMap] ON ' .
 	    '[ImageBlockCacheMap::itemId]=[ImageBlockDisabledMap::itemId]';
 	$where[] = '[ImageBlockCacheMap::userId] = ?';
 	$where[] = '[ImageBlockCacheMap::itemType] = ?';
 	$where[] = '[ImageBlockDisabledMap::itemId] IS NULL';
-	$data[] = $gallery->getActiveUserId();
+	$data[] = $userId;
 	$data[] = $typeMap[$itemType];
 
 	list ($ret, $orderBy) = ImageBlockHelper::_buildOrderBy($order);
@@ -80,7 +248,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	if ($order == IMAGE_BLOCK_VIEWED || isset($parentId)) {
+	if ($order == 'viewed' || isset($parentId)) {
 	    $select[] = '[GalleryItemAttributesMap::viewCount]';
 	    $from[] = '[GalleryItemAttributesMap]';
 	    $where[] = '[ImageBlockCacheMap::itemId] = [GalleryItemAttributesMap::itemId]';
@@ -111,25 +279,21 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	list ($ret, $result) = ImageBlockHelper::_runQuery($query, $data);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	list ($ret, $isCached) = ImageBlockHelper::_isCached($gallery->getActiveUserId());
+	list ($ret, $isCached) = ImageBlockHelper::_isCached($userId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	if (!$isCached) {
-	    $ret = ImageBlockHelper::cacheViewableTree();
+	    $ret = ImageBlockHelper::cacheViewableTree($userId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    list ($ret, $result) = ImageBlockHelper::_runQuery($query, $data);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
+	}
+
+	list ($ret, $result) = ImageBlockHelper::_runQuery($query, $data);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	if (isset($result) && !isset($result['viewCount'])) {
@@ -145,7 +309,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
     /**
      * Build the 'ORDER BY' section of the fetchViewableData query
      *
-     * @param int the order type (use defined constant from above)
+     * @param string the order type (random, recent, viewed)
      * @return array GalleryStatus a status code
      *               string containing SQL ORDER BY statement
      * @static
@@ -155,17 +319,17 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	$orderBy = null;
 
 	switch ($order) {
-	case IMAGE_BLOCK_RANDOM:
+	case 'random':
 	    $storage =& $gallery->getStorage();
 	    list ($ret, $orderBy) = $storage->getFunctionSql('RAND', array());
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    break;
-	case IMAGE_BLOCK_RECENT:
+	case 'recent':
 	    $orderBy = '[ImageBlockCacheMap::itemTimestamp] DESC';
 	    break;
-	case IMAGE_BLOCK_VIEWED:
+	case 'viewed':
 	    $orderBy = '[GalleryItemAttributesMap::viewCount] DESC';
 	    break;
 	default:
@@ -183,10 +347,9 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	}
 	$result = null;
 	if ($rec = $searchResults->nextResult()) {
-	    $result = array('id' => (int)$rec[0],
-			    'creationTimestamp' => (int)$rec[1]);
-	    if (isset($rec[2])) {
-		$result['viewCount'] = (int)$rec[2];
+	    $result = array('id' => (int)$rec[0]);
+	    if (isset($rec[1])) {
+		$result['viewCount'] = (int)$rec[1];
 	    }
 	}
 	return array(GalleryStatus::success(), $result);
@@ -206,12 +369,13 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
     }
 
     /**
-     * Cache viewable data for current user
+     * Cache viewable data for user
      *
+     * @param int user id
      * @return object GalleryStatus a status code
      * @static
      */
-    function cacheViewableTree() {
+    function cacheViewableTree($userId) {
 	global $gallery;
 	$storage =& $gallery->getStorage();
 
@@ -220,7 +384,6 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	$userId = $gallery->getActiveUserId();
 	list ($ret, $groupIds) = GalleryCoreApi::fetchGroupsForUser($userId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -393,7 +556,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	     */
 	    list ($ret, $sequence) = GalleryCoreApi::fetchParentSequence($parentAlbum->getId());
 	    if ($ret->isError() && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
 	    /* Prevent issues with empty implode(), below */
@@ -447,7 +610,8 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
      * Get the disabled flag on all album items.
      *
      * @param object GalleryAlbumItem AlbumItem which contains the flag to be retrieved
-     * @return bool Flag on all album items
+     * @return array object GalleryStatus a status code
+     *               bool Flag on all album items
      * @static
      */
     function getDisabledFlag($itemId) {

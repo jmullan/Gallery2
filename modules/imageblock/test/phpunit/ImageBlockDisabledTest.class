@@ -4,24 +4,24 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /**
  * @version $Revision$ $Date$
- * @package ImageBlock 
+ * @package ImageBlock
  * @subpackage PHPUnit
  * @author Jay Rossiter <cryptographite@users.sf.net>
  */
@@ -46,14 +46,14 @@ class ImageBlockDisabledTest extends GalleryTestCase {
 
 	/* Register a dummy toolkit and operation */
 	$ret = GalleryCoreApi::registerFactoryImplementation(
-            'GalleryToolkit', 'ImageBlockToolkit', 'ImageBlockToolkit',
-            'modules/imageblock/test/phpunit/ImageBlockDisabledTest.class', 'imageblockTest', null);
+	    'GalleryToolkit', 'ImageBlockToolkit', 'ImageBlockToolkit',
+	    'modules/imageblock/test/phpunit/ImageBlockDisabledTest.class', 'imageblockTest', null);
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markFactoryModuleForCleanup('imageblockTest');
-	
+
 	$ret = GalleryCoreApi::registerToolkitOperation('ImageBlockToolkit',
 	    array('image/gif'), 'testoperation',
 	    array(array('type' => 'int', 'description' => 'size')), 'desc');
@@ -63,10 +63,10 @@ class ImageBlockDisabledTest extends GalleryTestCase {
 	}
 
 	list ($ret, $this->_module) = GalleryCoreApi::loadPlugin('module', 'imageblock');
-        if ($ret->isError() || !isset($this->_module)) {
-            print $ret->getAsHtml();
+	if ($ret->isError() || !isset($this->_module)) {
+	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}   
+	}
 
 	list ($ret, $this->_topAlbum, $this->_topItems) =
 	    $this->_createSubAlbumWithItems($this->_getRootId());
@@ -78,16 +78,16 @@ class ImageBlockDisabledTest extends GalleryTestCase {
 	list ($ret, $this->_subAlbum, $this->_subItems) =
 	    $this->_createSubAlbumWithItems($this->_topAlbum->getId());
 	if ($ret->isError()) {
-            print $ret->getAsHtml();
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-        }   
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 
-        /* Set the ImageBlockDisabled flag */
+	/* Set the ImageBlockDisabled flag */
 	$ret = ImageBlockHelper::setDisabledFlag($this->_topAlbum, true, true);
-        if ($ret->isError()) {
-            print $ret->getAsHtml();
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-        }
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 
 	list ($ret, $this->_blocks) = $this->_module->getParameter('blocks');
 	if ($ret->isError()) {
@@ -124,24 +124,24 @@ class ImageBlockDisabledTest extends GalleryTestCase {
 	}
 
 	$ret = GalleryCoreApi::removePluginParameter($this->_module->getPluginType(),
-                                                     $this->_module->getId(), 'itemId');
-        if ($ret->isError()) {
-            print $ret->getAsHtml();
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-        }
+						     $this->_module->getId(), 'itemId');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 
 	$ret = GalleryCoreApi::deleteEntityById($this->_topAlbum->getId());
-        if ($ret->isError()) {
+	if ($ret->isError()) {
 	    print $ret->getAsHtml();
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-        }
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 
-        /* Unset the ImageBlockDisabled flag */
+	/* Unset the ImageBlockDisabled flag */
 	$ret = ImageBlockHelper::setDisabledFlag($this->_topAlbum, true, false);
-        if ($ret->isError()) {
-            print $ret->getAsHtml();
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-        }
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 
 	/* Unregister dummy toolkit */
 	$ret = GalleryCoreApi::unregisterToolkit('ImageBlockToolkit');
@@ -258,7 +258,6 @@ class ImageBlockDisabledTest extends GalleryTestCase {
 
     function assertBlock($block) {
 	$this->assert(isset($block['id']), 'Missing id');
-	$this->assert(isset($block['creationTimestamp']), 'Missing creationTimestamp');
 	$this->assert(isset($block['viewCount']), 'Missing viewCount');
 	$this->assert(isset($block['title']), 'Missing title');
 	$this->assert(isset($block['item']), 'Missing item');
@@ -266,7 +265,7 @@ class ImageBlockDisabledTest extends GalleryTestCase {
     }
 
     function testImageBlockDisabledNoItemsReturned() {
-	$template = new DummyGalleryTemplate();
+	$template = new ImageBlockDisabledDummyGalleryTemplate();
 	list ($ret, $tpl) = $this->_module->loadSystemContent($template);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -282,15 +281,25 @@ class ImageBlockDisabledTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-        $template = new DummyGalleryTemplate();
+	$template = new ImageBlockDisabledDummyGalleryTemplate();
 	list ($ret, $tpl) = $this->_module->loadSystemContent($template);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}   
+	}
 	$this->assert(count($tpl) > 0, 'A template should have been returned');
 	$this->assert(1 == count($template->data['ImageBlockSystemContent']['blocks']), 'One block');
 	$this->assertBlock($template->data['ImageBlockSystemContent']['blocks'][0]);
     }
+}
 
+/**
+ * @package ImageBlock
+ * @subpackage PHPUnit
+ */
+class ImageBlockDisabledDummyGalleryTemplate {
+    var $data = array();
+    function setVariable($key, $value) {
+	$this->data[$key] = $value;
+    }
 }
 ?>

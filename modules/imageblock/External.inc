@@ -26,6 +26,8 @@
  */
 
 /**
+ * Render image block for use in external pages.
+ *
  * @package ImageBlock
  * @subpackage UserInterface
  */
@@ -35,6 +37,7 @@ class ExternalView extends GalleryView {
      * @see GalleryView::loadTemplate()
      */
     function loadTemplate(&$template, &$form) {
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/ImageBlockHelper.class');
 	global $gallery;
 	$SlideShow = array();
 	$startId = null;
@@ -42,11 +45,6 @@ class ExternalView extends GalleryView {
 	/* Force UrlGenerator to not add session id into urls.. */
 	$session =& $gallery->getSession();
 	$session->_isUsingCookies = true;
-
-	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'imageblock');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
 
 	$params = array();
 	foreach (array('blocks', 'show', 'heading', 'itemId') as $key) {
@@ -56,7 +54,7 @@ class ExternalView extends GalleryView {
 	    }
 	}
 
-	list ($ret, $tpl) = $module->_loadImageBlocks($template, $params);
+	list ($ret, $tpl) = ImageBlockHelper::loadImageBlocks($template, $params);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -54,6 +54,7 @@ class ImageBlockHandlerTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	$this->_markForCleanup($this->_handlerAlbum);
 
 	$ret = ImageBlockDisabledMap::addMapEntry(array('itemId' => $this->_handlerAlbum->getId()));
 	if ($ret->isError()) {
@@ -68,18 +69,6 @@ class ImageBlockHandlerTest extends GalleryTestCase {
     	$ret = ImageBlockDisabledMap::removeMapEntry(array('itemId' => $this->_handlerAlbum->getId()));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	$ret = GalleryCoreApi::deleteEntityById($this->_handlerAlbum->getId());
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	if (!empty($this->_moveAlbum)) {
-	    $ret = GalleryCoreApi::deleteEntityById($this->_moveAlbum->getId());
-	    if ($ret->isError()) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
 	}
 
 	parent::tearDown();
@@ -113,48 +102,51 @@ class ImageBlockHandlerTest extends GalleryTestCase {
 
 
     function testImageBlockDisabledMapHandlerItemMove() {
-	list ($ret, $this->_moveItem) = $this->_createRandomDataItem($this->_moveAlbum->getId());
+	list ($ret, $moveAlbum) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $this->_moveAlbum) = $this->_createRandomAlbum($this->_getRootId());
+	list ($ret, $this->_moveItem) = $this->_createRandomDataItem($moveAlbum->getId());
 	if ($ret->isError()) {
+	    $this->_markForCleanup($moveAlbum);
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-
 	$moveItemId = $this->_moveItem->getId();
 
 	list($ret, $disabledFlag) = ImageBlockHelper::getDisabledFlag($moveItemId);
 	if ($ret->isError()) {
+	    $this->_markForCleanup($moveAlbum);
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assert( !$disabledFlag, 'Item incorrectly marked as disabled');
+	$this->assert(!$disabledFlag, 'Item incorrectly marked as disabled');
 
 	/* Lock target, self, and source albums */
-	list ($ret, $lockIds[]) = GalleryCoreApi::acquireWriteLock(array($this->_handlerAlbum->getId(),
-		$this->_moveAlbum->getId(), $this->_getRootId()));
+	list ($ret, $lockIds[]) = GalleryCoreApi::acquireWriteLock(
+	    array($this->_handlerAlbum->getId(), $moveAlbum->getId(), $this->_getRootId()));
 	if ($ret->isError()) {
+	    $this->_markForCleanup($moveAlbum);
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* Move from root to handlerAlbum */
-	$ret = $this->_moveAlbum->move($this->_handlerAlbum->getId());
+	$ret = $moveAlbum->move($this->_handlerAlbum->getId());
+	if ($ret->isError()) {
+	    $this->_markForCleanup($moveAlbum);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = $moveAlbum->save();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$ret = $this->_moveAlbum->save();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));;
-	}
-
 	$ret = GalleryCoreApi::releaseLocks($lockIds);
 	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));;
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list($ret, $disabledFlag) = ImageBlockHelper::getDisabledFlag($this->_moveAlbum->getId());
+	list($ret, $disabledFlag) = ImageBlockHelper::getDisabledFlag($moveAlbum->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
