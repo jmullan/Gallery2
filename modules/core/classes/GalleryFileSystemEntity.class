@@ -159,15 +159,6 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
 
 	list ($ret, $pathComponent) =
 	    GalleryCoreApi::getLegalPathComponent($entity->getPathComponent(), $parentId);
-	$ret = parent::create($parentId);
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	$ret = parent::createLink($entity, $parentId);
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
 
 	/* Set our path component */
 	$this->setPathComponent($pathComponent);
