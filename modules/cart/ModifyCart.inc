@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -30,10 +30,10 @@
 /**
  * Required classes
  */
-require_once(dirname(__FILE__) . '/classes/CartHelper.class');
+GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/CartHelper.class');
 
 /**
- * This controller will handle the addition of a comment to an item
+ * This controller will handle the changing of item quantities in a cart
  *
  * @package Cart
  * @subpackage UserInterface
@@ -45,8 +45,6 @@ class ModifyCartController extends GalleryController {
      * @see GalleryController::handleRequest()
      */
     function handleRequest($form) {
-	global $gallery;
-
 	list ($ret, $cartItemIds) = CartHelper::fetchCartItemCounts();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -68,7 +66,7 @@ class ModifyCartController extends GalleryController {
 			}
 		    }
 		}
-	    
+
 		/* Delete whatever needs deleting */
 		if (isset($form['delete'])) {
 		    foreach ($form['delete'] as $itemId => $junk) {
@@ -97,7 +95,8 @@ class ModifyCartController extends GalleryController {
 		/* Expect it to be one of our plugins */
 		require_once(dirname(__FILE__) . '/classes/CartPluginInterface_1_0.class');
 		list ($ret, $cartPlugin) =
-		    GalleryCoreApi::newFactoryInstanceById('CartPluginInterface_1_0', $form['pluginId']);
+		    GalleryCoreApi::newFactoryInstanceById('CartPluginInterface_1_0',
+							   $form['pluginId']);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}

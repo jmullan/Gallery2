@@ -45,6 +45,10 @@ class ViewCartView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	global $gallery;
 
+	list ($ret, $itemList) = CartHelper::loadCartItems();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 	list ($ret, $cartItemIds) = CartHelper::fetchCartItemCounts();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -97,7 +101,8 @@ class ViewCartView extends GalleryView {
 	     * to only send it the ones of the appropriate types.
 	     */
 	    $plugins[$id]['supportedItemTypes'] = $instances[$id]->getSupportedItemTypes();
-	    list ($ret, $plugins[$id]['actionDisplayName']) = $instances[$id]->getActionDisplayName();
+	    list ($ret, $plugins[$id]['actionDisplayName']) =
+		$instances[$id]->getActionDisplayName();
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -107,11 +112,6 @@ class ViewCartView extends GalleryView {
 	$thumbnails = array();
 	$itemTypeNames = array();
 	if (!empty($cartItemIds)) {
-	    /* Fetch items */
-	    list ($ret, $itemList) = GalleryCoreApi::loadEntitiesById(array_keys($cartItemIds));
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
 	    foreach ($itemList as $item) {
 		$items[$item->getId()] = $item->getMemberData();
 
@@ -176,12 +176,12 @@ class ViewCartView extends GalleryView {
      * @see GalleryView::getViewDescription()
      */
     function getViewDescription() {
-	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'cart');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
-	return array(GalleryStatus::success(), $core->translate('view cart'));
+	return array(GalleryStatus::success(), $module->translate('view cart'));
     }
 }
 ?>

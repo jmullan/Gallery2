@@ -26,7 +26,7 @@
  */
 
 /**
- * The implementation of the core-module
+ * The implementation of the cart module
  *
  * @package Cart
  */
@@ -38,18 +38,48 @@ class CartModule extends GalleryModule /* and GalleryEventListener */ {
 	$this->setId('cart');
 	$this->setName('Cart');
 	$this->setDescription($gallery->i18n('Shopping Cart Module'));
-	$this->setVersion('0.8.8');
+	$this->setVersion('0.8.9');
 	$this->setGroup('commerce', $this->translate('Commerce'));
-	$this->setCallbacks('getItemLinks|loadSystemContent|registerEventListeners');
+	$this->setCallbacks('getItemLinks|loadSystemContent');
 	$this->setRequiredCoreApi(array(4, 0));
 	$this->setRequiredModuleApi(array(0, 9));
     }
 
     /**
-     * @see GalleryModule::registerEventListeners()
+     * @see GalleryModule::upgrade()
      */
-    function registerEventListeners() {
-	GalleryCoreApi::registerEventListener('GalleryEntity::delete', new CartModule());
+    function upgrade($currentVersion) {
+	global $gallery;
+
+	switch ($currentVersion) {
+	case '0.8':
+	case '0.8.1':
+	case '0.8.2':
+	case '0.8.3':
+	case '0.8.4':
+	case '0.8.5':
+	case '0.8.6':
+	case '0.8.7':
+	case '0.8.8':
+	    $storage =& $gallery->getStorage();
+	    $query = '
+	    DROP TABLE [CartMap]
+	    ';
+	    $ret = $storage->execute($query);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    $query = '
+	    DELETE FROM [Schema]
+	    WHERE [Schema::name] = \'CartMap\'
+	    ';
+	    $ret = $storage->execute($query);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	return GalleryStatus::success();
     }
 
     /**
@@ -71,8 +101,6 @@ class CartModule extends GalleryModule /* and GalleryEventListener */ {
      * @see GalleryModule::getItemLinks()
      */
     function getItemLinks($items) {
-	global $gallery;
-
 	$links = array();
 	foreach ($items as $item) {
 	    $itemTypeNames = $item->itemTypeName();
@@ -91,7 +119,6 @@ class CartModule extends GalleryModule /* and GalleryEventListener */ {
      * @see GalleryModule::loadSystemContent
      */
     function loadSystemContent(&$template) {
-	global $gallery;
 	$content = array();
 
 	$view = GalleryUtilities::getRequestVariables('view');
@@ -118,29 +145,8 @@ class CartModule extends GalleryModule /* and GalleryEventListener */ {
 	}
 
 	$template->setVariable('CartSystemContent', $CartSystemContent);
-
-	$content = array();
-	$content['cart'] = 'modules/cart/templates/CartSystemContent.tpl';
-
+	$content = array('cart' => 'modules/cart/templates/CartSystemContent.tpl');
 	return array(GalleryStatus::success(), $content);
-    }
-
-    /**
-     * Event handler for GalleryEntity::delete event.
-     * Remove deleted item from all carts.
-     *
-     * @see GalleryEventListener::handleEvent
-     */
-    function handleEvent($event) {
-	$entity = $event->getEntity();
-	if (GalleryUtilities::isA($entity, 'GalleryDataItem')) {
-	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/CartHelper.class');
-	    $ret = CartHelper::removeIdFromAllCarts($entity->getId());
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	}
-	return array(GalleryStatus::success(), null);
     }
 }
 ?>

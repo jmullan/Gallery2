@@ -27,11 +27,6 @@
  */
 
 /**
- * Required classes.
- */
-GalleryCoreApi::requireOnce(dirname(__FILE__) . '/CartMap.class');
-
-/**
  * A helper class for Carts
  *
  * Utility functions useful in managing Carts
@@ -45,40 +40,15 @@ class CartHelper {
      * Return the ids of the items in the cart
      *
      * @return array object GalleryStatus a status code
-     *               array (itemId => count, itemId => count)
+     *               array (itemId => count, itemId => count, ..)
      * @static
      */
     function fetchCartItemCounts() {
 	global $gallery;
-
 	$session =& $gallery->getSession();
-	$storage =& $gallery->getStorage();
 
-	$query = '
-        SELECT
-          [CartMap::itemIds]
-        FROM
-          [CartMap]
-        WHERE
-          [CartMap::sessionId] = ?
-        ';
-	$data = array();
-	$data[] = $session->getSessionId();
-
-	list ($ret, $searchResults) =
-	    $gallery->search($query, $data, array('limit' => array('count' => 1)));
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	if ($searchResults->resultCount() == 1) {
-	    $result = $searchResults->nextResult();
-	    $cartItemIds = unserialize($result[0]);
-	    if (!is_array($cartItemIds)) {
-		$gallery->debug('Fixing broken cart data');
-		$cartItemIds = array();
-	    }
-	} else {
+	$cartItemIds = $session->get('cart.itemIds');
+	if (empty($cartItemIds) || !is_array($cartItemIds)) {
 	    $cartItemIds = array();
 	}
 
@@ -93,10 +63,6 @@ class CartHelper {
      * @static
      */
     function addItemsToCart($ids) {
-	global $gallery;
-
-	$session =& $gallery->getSession();
-
 	list ($ret, $cartItemIds) = CartHelper::fetchCartItemCounts();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -119,9 +85,9 @@ class CartHelper {
     }
 
     /**
-     * Add the item ids to the user's cart
+     * Store cart contents
      *
-     * @param array int item ids
+     * @param array (itemId => count, itemId => count, ..)
      * @return object GalleryStatus a status code
      * @static
      */
@@ -129,60 +95,52 @@ class CartHelper {
 	global $gallery;
 	$session =& $gallery->getSession();
 
-	list ($ret, $originalCartItemIds) = CartHelper::fetchCartItemCounts();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
 	if (empty($cartItemIds)) {
-	    if (!empty($originalCartItemIds)) {
-		$ret = CartMap::removeMapEntry(array('sessionId' => $session->getSessionId()));
-	    }
+	    $session->remove('cart.itemIds');
 	} else {
-	    if (empty($originalCartItemIds)) {
-		$ret = CartMap::addMapEntry(array('sessionId' => $session->getSessionId(),
-						  'itemIds' => serialize($cartItemIds)));
-	    } else {
-		$ret = CartMap::updateMapEntry(array('sessionId' => $session->getSessionId()),
-					       array('itemIds' => serialize($cartItemIds)));
-	    }
-	}
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    $session->put('cart.itemIds', $cartItemIds);
 	}
 
 	return GalleryStatus::success();
     }
 
     /**
-     * Remove item id from all carts (unfortunately by loading every cart..)
+     * Load entities for all cart items.
+     * Remove any invalid ids from cart.
      *
-     * @param int item id
-     * @return object GalleryStatus a status code
+     * @return array object GalleryStatus a status code
+     *               array of items
+     * @static
      */
-    function removeIdFromAllCarts($itemId) {
-	global $gallery;
-	$storage =& $gallery->getStorage();
-
-	$query = 'SELECT [CartMap::sessionId], [CartMap::itemIds] FROM [CartMap]';
-	list ($ret, $searchResults) = $gallery->search($query);
+    function loadCartItems() {
+	list ($ret, $cartItemIds) = CartHelper::fetchCartItemCounts();
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-
-	while ($result = $searchResults->nextResult()) {
-	    $cartItemIds = unserialize($result[1]);
-	    if (is_array($cartItemIds) && isset($cartItemIds[$itemId])) {
-		unset($cartItemIds[$itemId]);
-		$ret = CartMap::updateMapEntry(array('sessionId' => $result[0]),
-					       array('itemIds' => serialize($cartItemIds)));
-		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
+	$changed = false;
+	$items = array();
+	foreach (array_keys($cartItemIds) as $itemId) {
+	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+	    if ($ret->isError()) {
+		if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
+		    /* Item deleted from the gallery; remove if from the cart */
+		    unset($cartItemIds[$itemId]);
+		    $changed = true;
+		    continue;
+		} else {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
+	    }
+	    $items[] = $item;
+	}
+	if ($changed) {
+	    $ret = CartHelper::setCartItemCounts($cartItemIds);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
 
-	return GalleryStatus::success();
+	return array(GalleryStatus::success(), $items);
     }
 }
 ?>
