@@ -306,7 +306,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 				  $testOwner->getId(),                   // owner
 				  1056015077,                            // album creation
 				  1056015077,                            // clicks counted since
-				  16,                                    // count of clicks
+				  17,                                    // count of clicks
 				  array(array(                           // thumb and resized sizing preferences
 					      'order' => 0,
 					      'derivativeType' => 1,
@@ -419,6 +419,23 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 				  $itemViewCount[$testItem->getId()]     // count of clicks
 				  )
 			    );
+	list ($ret, $comments) =
+		GalleryCommentHelper::fetchComments($ids[1], 2, ORDER_ASCENDING);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array('209.98.212.219',
+				  'foo',
+				  'This is a terrific picture!  Hooray!',
+				  1088916185
+				  ),
+			    array($comments[0]->_host,
+				  $comments[0]->_subject,
+				  $comments[0]->_comment,
+				  $comments[0]->_date
+				  )
+			    );
+	
 	/*
 	 * [comments] => Array (
 	 *     [0] => comment Object (

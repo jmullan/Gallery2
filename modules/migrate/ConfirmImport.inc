@@ -203,6 +203,7 @@ class ConfirmImportController extends GalleryController {
 		    }
 		    /* Set a positive note for later.  Hooray! */
 		    $status['userImportSuccess'][$userName] = 1;
+		    $user = null;
 		}
 		$uid = null;
 	    }
