@@ -202,15 +202,27 @@ class GalleryPlatform {
     }
 
     /**
-     * Delete a file or directory
+     * Delete a file
      *
-     * @param string file/dir name
+     * @param string file name
      * @return bool true on success, false on failure
      * @access public
      */
     function unlink($filename) {
 	$filename = $this->importPath($filename);
 	return unlink($filename);
+    }
+
+    /**
+     * Delete a directory
+     *
+     * @param string directory name
+     * @return bool true on success, false on failure
+     * @access public
+     */
+    function rmdir($filename) {
+	$filename = $this->importPath($filename);
+	return rmdir($filename);
     }
 
     /**
