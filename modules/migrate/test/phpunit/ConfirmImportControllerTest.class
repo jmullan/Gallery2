@@ -150,6 +150,13 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
+	list ($ret, $user) = GalleryCoreApi::fetchUserByUsername('phpunitfoo002');
+	if ($ret->isSuccess()) {
+	    $ret = GalleryCoreApi::deleteEntityById($user->getId());
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
 
 	/* Clean up our test album */
 	$ret = GalleryCoreApi::deleteEntityById($this->_temporaryAlbumId);
@@ -197,6 +204,39 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+    }
+    function testImportMissingUserFullname() {
+	global $gallery;
+	$platform = $gallery->getPlatform();
+	$slash = $platform->getDirectorySeparator();
+	GalleryUtilities::putRequestVariable('albumsPath', dirname(__FILE__) . $slash . '..' . $slash . 'data' . $slash . 'albums' . $slash);
+	GalleryUtilities::putRequestVariable('form[migrateUser][1111214688_22997786]', 1);
+	GalleryUtilities::putRequestVariable('form[action][import]', 1);
+	GalleryUtilities::putRequestVariable('form[set][title]', 'caption');
+	GalleryUtilities::putRequestVariable('form[set][summary]', 'blank');
+	GalleryUtilities::putRequestVariable('form[set][description]', 'blank');
+
+	ob_start();
+	$results = $this->handleRequest();
+	ob_end_clean();
+	$this->assertEquals(array('userImportSuccess' => array('phpunitfoo002' => 1),
+				  'userImportFailure' => array(),
+				  'albumImportFailure' => array(),
+				  'albumImportSuccess' => array(),
+				  'urlRedirect' => false
+				  ),
+			    $results['status']);
+	$this->assertEquals(array(),
+			    $results['error']);
+	$this->assertEquals(array('view' => 'core:SiteAdmin',
+				  'subView' => 'migrate:ImportResults'),
+			    $results['redirect']);
+	/* Verify the user exists */
+	list ($ret, $user) = GalleryCoreApi::fetchUserByUsername('phpunitfoo002');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('phpunitfoo002', $user->getFullName());
     }
 
     function testImportUserFailure() {
@@ -893,7 +933,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	    }
 	}
 
-	$this->assertEquals($testPerms, $testPermsResult);
+	$this->assertEquals($testPerms, $testPermsResult, 'testPerms');
 
 
 	/* Verify item attributes (like order weight) */
