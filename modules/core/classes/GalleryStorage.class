@@ -125,6 +125,14 @@ class GalleryStorage {
     var $_debug;
 
     /**
+     * Trace timing information
+     *
+     * @var boolean $_traceTiming
+     * @access private
+     */
+    var $_traceTiming;
+
+    /**
      * Constructor
      *
      */
@@ -132,6 +140,7 @@ class GalleryStorage {
 	/* Initialize our Gallery map and class info caches */
 	$this->_entityInfoCache = array();
 	$this->_mapInfoCache = array();
+	$this->_traceTiming = array();
     }
 
     /**
@@ -499,8 +508,10 @@ class GalleryStorage {
      */
     function _traceStart() {
 	global $gallery;
+
 	if ($gallery->getDebug()) {
 	    ob_start();
+	    $this->_traceTiming[] = microtime();
 	}
     }
 
@@ -513,10 +524,15 @@ class GalleryStorage {
     function _traceStop() {
 	global $gallery;
 	if ($gallery->getDebug()) {
+	    list ($startMicro, $startSecs) = explode(' ', array_pop($this->_traceTiming));
+	    list ($stopMicro, $stopSecs) = explode(' ', microtime());
+	    $elapsed = ($stopSecs - $startSecs) + ($stopMicro - $startMicro);
+	    
 	    $buf = ob_get_contents();
 	    ob_end_clean();
 
 	    $gallery->debug($buf);
+	    $gallery->debug("Elapsed: $elapsed");
 	}
     }
 }
