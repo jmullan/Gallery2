@@ -163,6 +163,7 @@ class GalleryTheme {
 	$urlGenerator = $gallery->getUrlGenerator();
 	$baseUrl = $urlGenerator->generateUrl();
 	$result = '<form method="' . $method . '" action="' . $baseUrl . '"';
+	$result .= ' accept-charset="UTF-8"';
 	if (!empty($enctype)) {
 	    $result .= ' enctype="' . $enctype . '"';
 	}
