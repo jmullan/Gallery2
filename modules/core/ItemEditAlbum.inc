@@ -417,7 +417,11 @@ class ItemEditAlbumView extends GalleryView {
 	$orderDirectionList[ORDER_DESCENDING] = $module->translate("Descending");
 
 	/* Set up our layout selection list */
-	$layoutList = GalleryLayout::getLayoutList();
+	list ($ret, $layoutStatusList) = GalleryPluginMap::getPluginStatus('layout');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+	$layoutList = array_keys($layoutStatusList);
 	$layoutList = array_merge(array('' => $module->translate('&laquo; default layout &raquo;')),
 				  $layoutList);
 
