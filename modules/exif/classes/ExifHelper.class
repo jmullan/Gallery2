@@ -128,7 +128,13 @@ class ExifHelper {
 
 	$exifKeys = ExifHelper::getExifKeys();
 	$rawExifData = read_exif_data_raw($path, false);
-	$gallery->debug(str_replace("\0", '', print_r($rawExifData, 1)));
+	if ($gallery->getDebug()) {
+	    ob_start();
+	    print_r($rawExifData);
+	    $buf = ob_get_contents();
+	    ob_end_clean();
+	    $gallery->debug(str_replace("\0", '', $buf));
+	}
 
 	$results = array();
 	list ($ret, $properties) = ExifPropertiesMap::getProperties($viewMode);
