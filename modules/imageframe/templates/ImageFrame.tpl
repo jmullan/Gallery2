@@ -40,7 +40,7 @@
   {if $data.hVT}
     <tr>
     <td class="LL"{if $data.hVT or $data.hVB}
-     style="height:expression((document.images.IFimg{$IF_count}.height-{$data.hVT+$data.hVB})+'px')
+     style="height:expression((document.images.IFimg{$IF_count}.height-{$data.hVT+$data.hVB})+'px')"
     {/if}><div class="V"></div></td>
     <td class="RR"{if $data.hVT or $data.hVB}
      style="height:expression((document.images.IFimg{$IF_count}.height-{$data.hVT+$data.hVB})+'px')"

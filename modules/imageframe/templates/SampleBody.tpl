@@ -4,7 +4,7 @@
 <div class="gbMenu">
   {foreach from=$ImageFrameSample.list key=frame item=name}
     <div style="float:left;margin:6px">
-    {$name}<br>
+    {$name}<br/>
     {if isset($ImageFrameSample.item)}
       {include file=$ImageFrameSample.frame.template
        ImageFrame_data=$ImageFrameSample.frame.data ImageFrame_frame=$frame
