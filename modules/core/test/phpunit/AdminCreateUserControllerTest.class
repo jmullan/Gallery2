@@ -1,0 +1,178 @@
+<?php
+/*
+ * $RCSfile
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * AdminCreateUser controller tests
+ */
+class AdminCreateUserControllerTest extends GalleryTestCase {
+
+    function AdminCreateUserControllerTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    function setUp() {
+	global $gallery;
+
+	parent::setUp();
+
+	/* Clear out any form vars */
+	GalleryUtilities::removeFormVariables('form.');
+
+	list ($ret, $this->_controller) = GalleryController::loadController("core:AdminCreateUser");
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    function tearDown() {
+	/* Clear out any form vars */
+	GalleryUtilities::removeFormVariables('form.');
+
+	parent::tearDown();
+    }
+
+    function testCancel() {
+	GalleryUtilities::putRequestVariable('form.action.cancel', 1);
+	list ($ret, $results) = $this->_controller->handleRequest();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
+    }
+
+    function testCreateUser() {
+	$userName = 'user-'.rand();
+	GalleryUtilities::putRequestVariable('form.action.create', 1);
+	GalleryUtilities::putRequestVariable('form.userName', $userName);
+	GalleryUtilities::putRequestVariable('form.fullName', 'full name');
+	GalleryUtilities::putRequestVariable('form.email', 'email');
+	GalleryUtilities::putRequestVariable('form.language', 'language');
+	GalleryUtilities::putRequestVariable('form.password1', 'password');
+	GalleryUtilities::putRequestVariable('form.password2', 'password');
+	
+	list ($ret, $results) = $this->_controller->handleRequest();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertRedirect(array('view' => 'core:SiteAdmin',
+				    'subView' => 'core:AdminCreateUserConfirmation',
+				    'userName' => $userName),
+			      $results,
+			      'Failed to create user');
+
+	$this->_deleteUser($userName);
+    }
+    
+    function testMissingInputs() {
+	GalleryUtilities::putRequestVariable('form.action.create', 1);
+
+	/* Create one user */
+	list ($ret, $results) = $this->_controller->handleRequest();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
+	$this->assertEquals('core:AdminCreateUser', GalleryUtilities::getRequestVariables('subView'));
+	$this->assert(GalleryUtilities::hasRequestVariable('form.error.userName.missing'));
+	$this->assert(GalleryUtilities::hasRequestVariable('form.error.email.missing'));
+	$this->assert(GalleryUtilities::hasRequestVariable('form.error.password1.missing'));
+	$this->assert(GalleryUtilities::hasRequestVariable('form.error.password2.missing'));
+    }
+
+    function testPasswordMismatch() {
+	$userName = 'user-' . rand();
+
+	/* Create one user */
+	GalleryUtilities::putRequestVariable('form.action.create', 1);
+	GalleryUtilities::putRequestVariable('form.userName', $userName);
+	GalleryUtilities::putRequestVariable('form.fullName', 'full name');
+	GalleryUtilities::putRequestVariable('form.email', 'email');
+	GalleryUtilities::putRequestVariable('form.language', 'language');
+	GalleryUtilities::putRequestVariable('form.password1', 'passwordRight');
+	GalleryUtilities::putRequestVariable('form.password2', 'passwordWrong');
+	
+	list ($ret, $results) = $this->_controller->handleRequest();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
+	$this->assertEquals('core:AdminCreateUser', GalleryUtilities::getRequestVariables('subView'));
+	$this->assert(GalleryUtilities::hasRequestVariable('form.error.password.mismatch'),
+		      "missing password mismatch");
+    }
+
+    function testCreateDuplicateUser() {
+	$userName = 'user-' . rand();
+
+	/* Create one user */
+	GalleryUtilities::putRequestVariable('form.action.create', 1);
+	GalleryUtilities::putRequestVariable('form.userName', $userName);
+	GalleryUtilities::putRequestVariable('form.fullName', 'full name');
+	GalleryUtilities::putRequestVariable('form.email', 'email');
+	GalleryUtilities::putRequestVariable('form.language', 'language');
+	GalleryUtilities::putRequestVariable('form.password1', 'password');
+	GalleryUtilities::putRequestVariable('form.password2', 'password');
+	
+	list ($ret, $results) = $this->_controller->handleRequest();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertRedirect(array('view' => 'core:SiteAdmin',
+				    'subView' => 'core:AdminCreateUserConfirmation',
+				    'userName' => $userName),
+			      $results);
+
+
+	/* Create a second user with the same name */
+	list ($ret, $results) = $this->_controller->handleRequest();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
+	$this->assertEquals('core:AdminCreateUser', GalleryUtilities::getRequestVariables('subView'));
+	$this->assert(GalleryUtilities::hasRequestVariable('form.error.userName.exists'));
+	
+	$this->_deleteUser($userName);
+    }
+
+    function _deleteUser($userName) {
+	global $gallery;
+	
+	list ($ret, $user) = GalleryUserHelper::fetchUserByUserName($userName);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = $gallery->deleteEntityById($user->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+}
+?>
