@@ -269,6 +269,48 @@ class PermissionTest extends GalleryTestCase {
     }
     
     /**
+     * Test getting permissions for a non activeUser
+     * This covers:
+     *
+     *     GalleryCoreApi::addUserPermission
+     *     GalleryCoreApi::fetchPermissionsForItems
+     */
+    function testFetchPermissionsForItems() {
+	global $gallery;
+
+	/* Create a user that we can delete */
+	list ($ret, $user) = $this->_createRandomUser();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markForCleanup($user);
+
+	$ret = GalleryCoreApi::removeItemPermissions($this->_albums[1]->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	/* Add user permission to the 2nd item */
+	$ret = GalleryCoreApi::addUserPermission($this->_albums[1]->getId(),
+						       $user->getId(),
+						       'core.edit',
+						       false);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Fetch and compare */
+	list ($ret, $perms) =
+	    GalleryCoreApi::fetchPermissionsForItems(array($this->_albums[1]->getId()), $user->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(isset($perms[$this->_albums[1]->getId()]['core.edit']), 'Permission not fetched');
+	$this->assert(count($perms[$this->_albums[1]->getId()]) == 1, 'returned too many permissions');
+	$this->assert(count($perms) == 1, 'returned too many items and permissions');
+	/* the teardown cleanup code will delete the test user */	
+    }
+	
+    /**
      * Test copying permissions from one item to another
      * This covers:
      *

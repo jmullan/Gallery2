@@ -496,5 +496,120 @@ class GalleryItemHelper_advanced {
 
 	return array(GalleryStatus::success(), $album);
     }
+    
+    /**
+     * Transfer the ownership of all items by oldUser to newUser
+     *
+     * @param int the id of the old owner
+     * @param int the id of the new owner
+     * @return object GalleryStatus a status code
+     * @static
+     */
+    function remapOwnerId($oldUserId, $newUserId) {
+	global $gallery;
+
+	if (empty($oldUserId) || empty($newUserId)) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	}
+	
+	/* First check if new User is a valid gallery user! */
+	list ($ret, $newOwner) = GalleryCoreApi::loadEntitiesById($newUserId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	if ($newUserId == $oldUserId) { /* Well, why not :) */
+	    return GalleryStatus::success();
+	}
+	
+	/* We need the user object later on anyway */
+	list ($ret, $oldOwner) = GalleryCoreApi::loadEntitiesById($oldUserId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+		
+	/* Get all items by oldUser */	
+	list ($ret, $itemIds) = GalleryCoreApi::fetchAllItemIdsByOwnerId($oldUserId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	if (empty($itemIds)) {
+	    return GalleryStatus::success();
+	}
+	
+	/* got to remapOwnerId for some items */
+	/* acquire write lock for all items */
+	list ($ret, $lockIds) = GalleryCoreApi::acquireWriteLock($itemIds);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	/* load all items */
+	list ($ret, $items) = GalleryCoreApi::loadEntitiesById($itemIds);
+	if ($ret->isError()) {
+	    GalleryCoreApi::releaseLocks($lockIds);
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	/* Get all permissions newOwner has on the items directly or indirectly */
+	list ($ret, $newUserPermissions) = GalleryCoreApi::fetchPermissionsForItems($itemIds, $newOwner->getId());
+	if ($ret->isError()) {
+	    GalleryCoreApi::releaseLocks($lockIds);
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	/* Get all permissions oldOwner has directly or indirectly on the item */
+	list ($ret, $oldUserPermissions) = GalleryCoreApi::fetchPermissionsForItems($itemIds, $oldOwner->getId());
+	if ($ret->isError()) {
+	    GalleryCoreApi::releaseLocks($lockIds);
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	/* 
+	 * Foreach item: 
+	 *   1 add permissions to newOwner directly that he didn't already have
+	 *   2 update the item: $item->setownerId($newOwnerId) 
+	 *   3 $item->save
+	 */
+	foreach ($items as $item) {
+	    /* find all permissions we have to add */
+	    $newPermissions = array();
+	    foreach (array_keys($oldUserPermissions[$item->getId()]) as $permission) {
+		if(!isset($newUserPermissions[$item->getId()][$permission])) {
+		    $newPermissions[] = $permission;
+		}
+	    }
+	    /*
+	     * Add the new permissions to the item/newOwner map
+	     * (2 db queries: search current directly granted permissions, update)
+	     */
+	    if (!empty($newPermissions)) {
+	        /*
+	         * addUserPermission checks the existing vs. new permissions for us
+	         * and updates/creates the direct user permissions
+	         */
+		$ret = GalleryCoreApi::addUserPermission($item->getId(),
+					$newOwner->getId(), $newPermissions, false);
+		if ($ret->isError()) {
+	   	    GalleryCoreApi::releaseLocks($lockIds);
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+	    /* Update the ownerId of the item and save it (1 db query) */
+	    $item->setownerId($newOwner->getid());
+	    $ret = $item->save();
+	    if ($ret->isError()) {
+		GalleryCoreApi::releaseLocks($lockIds);
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+	
+	/* Release all locks at once */
+	$ret = GalleryCoreApi::releaseLocks($lockIds);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	return GalleryStatus::success();
+    }
 }
 ?>

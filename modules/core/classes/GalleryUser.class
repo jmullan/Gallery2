@@ -240,20 +240,68 @@ class GalleryUser_core extends GalleryEntity {
     /**
      * Delete this GalleryUser
      *
-     * Do some bookkeeping, like removing the user from all groups.
+     * Do some bookkeeping, like removing the user from all groups,
+	 * remapping his items to a site admin user and removing all 
+	 * of his permissions
      *
      * @access public
      * @return object GalleryStatus a status code
      */
     function delete() {
 	global $gallery;
-
-	$ret = parent::delete();
+	
+	/*
+	 * First assign all items of this user to another owner
+	 * You should call remapOwner() before calling $user->delete()
+	 * but we call it here again, for 100% data integrity.
+	 * If remapOwner() has been called before, as it is the case with
+	 * the AdminDeleteUser controller, this 2nd call to remapOwner()
+	 * does exactly nothing.
+	 */
+	/* Check if activeUser is Site Admin, if not, get any of the Site Admins */
+	list($ret, $isAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
+	if ($isAdmin) { 
+	    $newOwnerId = $gallery->getActiveUserId();		
+	} else { /* Get any of the Site Admins */
+	    list ($ret, $siteAdminGroupId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    list ($ret, $adminUser) = GalleryCoreApi::fetchUsersForGroup($siteAdminGroupId, 1, 0);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    if (empty($adminUser)) {
+		return GalleryStatus::error(ERROR_UNKNOWN, __FILE__, __LINE__);
+	    }
+	    $adminUser = array_keys($adminUser);
+	    $newOwnerId = $adminUser[0];	
+	}
+	
+	/* Now remap the owner of all of his items */
+	$ret = GalleryCoreApi::remapOwnerId($this->getId(), $newOwnerId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	/* Delete all of his permissions from the permissions map table */
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryPermissionMap.class');
+	$ret = GalleryPermissionMap::removeMapEntry(array('userId' => $this->getId()));
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	/* And remove him from all groups he was a member of */
 	$ret = GalleryCoreApi::removeUserFromAllGroups($this->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	/* And finally delete the user from the database */
+	$ret = parent::delete();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

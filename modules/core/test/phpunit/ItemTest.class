@@ -435,6 +435,232 @@ class ItemTest extends GalleryTestCase {
 	/* Make sure there's no duplication */
 	$this->assertEquals(sizeof($ids), sizeof(array_flip(array_flip($ids))));
     }
+	
+    /*
+     * Create a user, add some items, test the function 
+     * fetchAllItemIdsByOwnerId() and verify
+     */
+    function testFetchAllItemIdsByOwnerId() {
+	global $gallery;
+	
+	/* Create a user that we can delete */
+	list ($ret, $user) = $this->_createRandomUser();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markForCleanup($user);
+	
+	/* Without permissions, the user can't add items */
+	$ret = GalleryCoreApi::addUserPermission($this->_album->getId(), $user->getId(),
+								   array('core.addDataItem','core.addAlbumItem'), false);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	$this->_activeUserBackup = $gallery->getActiveUser();
+	$gallery->setActiveUser($user);
+	
+	list ($ret, $album) = $this->_createRandomAlbum($this->_album->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	/* Add some items */
+	$items = array();
+	for ($i = 0; $i < 3; $i++) {
+	    list ($ret, $items[]) = $this->_createRandomAlbum($album->getId());
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    list ($ret, $items[]) = $this->_createRandomDataItem($album->getId());
+	    if ($ret->isError()) {
+	    	return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+	
+	/* Restore the activeUser, should be a Site Admin */
+	$gallery->setActiveUser($this->_activeUserBackup);
+	
+	list ($ret, $ids) = GalleryCoreApi::fetchAllItemIdsByOwnerId($user->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	GalleryDataCache::reset();
+
+	/* Verification */
+	$this->assert(in_array($album->getId(), $ids), 'parent album not returned');
+	$itemCount = 1;
+	foreach($items as $item) {
+	    $this->assert(in_array($item->getId(), $ids), 'child '.$item->getId() .' not returned');
+	    $itemCount++;
+	}
+	$this->assert(count($ids) == $itemCount, 'returned '.count($ids).' instead of '.$itemCount.' items');
+	
+	/* The teardown cleanup code deletes all item that are marked for deletion */
+    }
+	
+    /*
+     * Create test user1, test group1, add user1 to group1, create an item as user1,
+     * create test user2 and group2, assign user2 to group2, grant to user1, group1,
+     * user2 and group2 some permissions on the item, call remapOwnerId($user1Id, $user2Id)
+     * and verify the new owner and (new) permissions
+     */
+    function testRemapOwnerId() {
+	global $gallery;
+	
+	/* Create test user 1, the oldOwner */
+	list ($ret, $oldUser) = $this->_createRandomUser();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markForCleanup($oldUser);
+	/* Create test user 2, the newOwner */
+	list ($ret, $newUser) = $this->_createRandomUser();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markForCleanup($newUser);
+	/* Create Group 1 for user 1 for indirect permissions */
+	list ($ret, $group1) = $this->_createRandomGroup();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markForCleanup($group1);
+	$ret = GalleryCoreApi::addUserToGroup($oldUser->getId(), $group1->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	/* Create Group 2 for user2 for indirect permissions */
+	list ($ret, $group2) = $this->_createRandomGroup();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markForCleanup($group2);
+	$ret = GalleryCoreApi::addUserToGroup($newUser->getId(), $group2->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	/* Without permissions, the user can't add items */
+	$ret = GalleryCoreApi::addUserPermission($this->_album->getId(), $oldUser->getId(),
+						array('core.addDataItem'), false);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	$this->_activeUserBackup = $gallery->getActiveUser();
+	$gallery->setActiveUser($oldUser);
+	
+	/* Add a test item with the old user as the owner */
+	list ($ret, $album) = $this->_createRandomAlbum($this->_album->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	/* Restore the activeUser, should be a Site Admin */
+	$gallery->setActiveUser($this->_activeUserBackup);
+	
+	/* Reset all permissions for this item */
+	$ret = GalleryCoreApi::removeItemPermissions($album->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $checkPermissions) = GalleryCoreApi::fetchAllPermissionsForItem($album->getId(), false);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(count($checkPermissions) == 0, 'could not reset item permissions');
+	
+	/* Add indirect permissions to oldOwner by a group membership */
+	$ret = GalleryCoreApi::addGroupPermission($album->getId(),
+					$group1->getId(), array('comment.edit', 'comment.view'), false);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	/* Add direct permissions to oldOwner */
+	$ret = GalleryCoreApi::addUserPermission($album->getId(), $oldUser->getId(),
+						array('core.addDataItem', 'core.delete'), false);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	/* Add indirect permissions to newOwner by a group membership */
+	$ret = GalleryCoreApi::addGroupPermission($album->getId(),
+					$group2->getId(), array('core.edit', 'comment.view'), false);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	/* Add direct permissions to newOwner */
+	$ret = GalleryCoreApi::addUserPermission($album->getId(), $newUser->getId(),
+								   array('core.addDataItem', 'core.addAlbumItem'), false);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	/* Execute the call */
+	$ret = GalleryCoreApi::remapOwnerId($oldUser->getId(), $newUser->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	GalleryDataCache::reset();
+
+	/* Verify the owner Id has changed */
+	list ($ret, $album) = $album->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert($album->getOwnerId() == $newUser->getId(), 'ownerId was not changed');
+	/* Verifiy the old owner owns zero items */	
+	list ($ret, $itemIds) = GalleryCoreApi::fetchAllItemIdsByOwnerId($oldUser->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(count($itemIds) == 0, 'old owner still owns some items');
+	/* Verifiy the new owner owns exactly 1 item */	
+	list ($ret, $itemIds) = GalleryCoreApi::fetchAllItemIdsByOwnerId($newUser->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(count($itemIds) == 1, 'new owner owns not exactly 1 item');
+	/* Verify the permissions are direct / indirect */
+	list ($ret, $permissions) = GalleryCoreApi::fetchAllPermissionsForItem($album->getId(), false);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$groupPermissions = array();
+	$userPermissions = array();
+	foreach ($permissions as $perm) {
+	    if ($perm['userId']>0) {
+		$userPermissions[$perm['userId']][$perm['permission']]=TRUE;
+	    } else {
+		$groupPermissions[$perm['groupId']][$perm['permission']]=TRUE;
+	    }
+	}
+	/* Verify the new user has the right permissions */
+	/* Verifiy direct permissions */
+	foreach (array('comment.edit',  'core.addDataItem',
+		       'core.delete', 'core.addAlbumItem') as $permission) {
+	    $this->assert(isset($userPermissions[$newUser->getId()][$permission]), "direct permission '$permission' not granted");
+	}
+	$this->assert(count($userPermissions[$newUser->getId()]) == 4, 'too few/many direct permissions');
+	/* Verifiy indirect permissions */
+	foreach (array('core.edit', 'comment.view') as $permission) {
+	    $this->assert(isset($groupPermissions[$group2->getId()][$permission]), "indirect permissions changed");
+	}
+	$this->assert(count($groupPermissions[$group2->getId()]) == 2, 'too few/many indirect group permissions');
+	/* Verify the old user's permissions have not been changed */
+	/* Verifiy direct permissions */
+	foreach (array('core.addDataItem', 'core.delete') as $permission) {
+	    $this->assert(isset($userPermissions[$oldUser->getId()][$permission]), "direct permission '$permission' of old owner changed");
+	}
+	$this->assert(count($userPermissions[$oldUser->getId()]) == 2, 'changed direct permissions of old owner');
+	/* Verifiy indirect permissions */
+	foreach (array('comment.edit', 'comment.view') as $permission) {
+	    $this->assert(isset($groupPermissions[$group1->getId()][$permission]), "indirect permission '$permission' of old owner changed");
+	}
+	$this->assert(count($groupPermissions[$group1->getId()]) == 2, 'changed indirect permissions of old owner');
+	
+	/* All test items/users/groups will be deleted in the teardown function */
+    }
 
     function testSetThumbnailFromItem() {
 	/* Create album tree */

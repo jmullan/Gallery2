@@ -390,6 +390,20 @@ class GalleryCoreApi {
     }
 
     /**
+     * Delete all non-album items of a user. Then delete all remaining 
+     * albums that are empty.
+     * This function can only be called with activeUser = Site Admin
+     *
+     * @param int the id of the user
+     * @return array object GalleryStatus a status code
+     * @static
+     */
+    function deleteUserItems($userId) {
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/helpers/GalleryUserHelper_medium.class');
+	return GalleryUserHelper_medium::deleteUserItems($userId);
+    }
+
+    /**
      * Return a map of groupNames => groupids
      *
      * You can specify how many groupnames to list, and where the windows is in
@@ -465,13 +479,14 @@ class GalleryCoreApi {
      * Return a list of permissions for the given items
      *
      * @param array int GalleryItem ids
+     * @param int [optional] id of the user whose permissions we search for
      * @return array object GalleryStatus a status code
      *               array (id => array(array(permission.id => 1, ...), ...)
      * @static
      */
-    function fetchPermissionsForItems($itemIds) {
+    function fetchPermissionsForItems($itemIds, $userId = null) {
 	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/helpers/GalleryPermissionHelper_medium.class');
-	return GalleryPermissionHelper_medium::fetchPermissionsForItems($itemIds);
+	return GalleryPermissionHelper_medium::fetchPermissionsForItems($itemIds, $userId);
     }
 
     /**
@@ -1238,6 +1253,21 @@ class GalleryCoreApi {
     }
 
     /**
+     * Return the ids of all items which are owned by the given userid
+     * This function does NOT obey permissions!
+     *
+     * @access public
+     * @param int the id of the owner of the items
+     * @return array object GalleryStatus a status code
+     *               array(id, id, id, ...)
+     * @static
+     */
+    function fetchAllItemIdsByOwnerId($ownerId) {
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/helpers/GalleryItemHelper_medium.class');
+	return GalleryItemHelper_medium::fetchAllItemIdsByOwnerId($ownerId);
+    }
+
+    /**
      * Return the appropriate GalleryItem instance for the mime type provided.
      *
      * Use the GalleryFactory to try to find an exact match to the mime type.
@@ -1412,7 +1442,20 @@ class GalleryCoreApi {
 	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/helpers/GalleryItemHelper_advanced.class');
 	return GalleryItemHelper_advanced::fetchAllProperties($itemId);
     }
-        
+
+    /**
+     * Transfer the ownership of all items by oldUser to newUser
+     *
+     * @param int the user id of the old owner
+     * @param int the user id of the new owner
+     * @return object GalleryStatus a status code
+     * @static
+     */
+    function remapOwnerId($oldUserId, $newUserId) {
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/helpers/GalleryItemHelper_advanced.class');
+	return GalleryItemHelper_advanced::remapOwnerId($oldUserId, $newUserId);
+    }
+ 
     /**
      * Is the active user in the admin group?
      *

@@ -273,6 +273,47 @@ class GalleryItemHelper_medium {
     }
 
     /**
+     * Return the ids of all items which are owned by the given user id
+     * This function does NOT obey permissions!
+     *
+     * @access public
+     * @param int the user id of the owner of the items
+     * @return array object GalleryStatus a status code
+     *               array(id, id, id, ...)
+     * @static
+     */
+    function fetchAllItemIdsByOwnerId($ownerId) {
+	global $gallery;
+
+	if (empty($ownerId)) {
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
+			 null);
+	}
+	
+	$storage =& $gallery->getStorage();
+	
+	/* Search the item table for all items with owner = $ownerId */
+	$query = '
+    SELECT DISTINCT
+      [GalleryItem::id]
+    FROM
+      [GalleryItem]
+    WHERE
+      [GalleryItem::ownerId] = ?
+	';
+	list ($ret, $queryResults) = $gallery->search($query, array($ownerId));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$itemIds = array();
+	while ($result = $queryResults->nextResult()) {
+	    $itemIds[] = $result[0];
+	}
+
+	return array(GalleryStatus::success(), $itemIds);
+    }
+
+    /**
      * Return the appropriate GalleryItem instance for the mime type provided.
      *
      * Use the GalleryFactory to try to find an exact match to the mime type.
