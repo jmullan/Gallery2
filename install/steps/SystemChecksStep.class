@@ -223,8 +223,8 @@ class SystemChecksStep extends InstallStep {
     }
 
     function CheckFileDirective() {
-	if (strstr(__FILE__, 'steps/SystemChecksStep.class') ||
-	    strstr(__FILE__, 'steps\\SystemChecksStep.class')) {
+	if (strstr(__FILE__, 'install/steps/SystemChecksStep.class') ||
+	    strstr(__FILE__, '\\install\\steps\\SystemChecksStep.class')) {
 	    return true;
 	} else {
 	    return false;
