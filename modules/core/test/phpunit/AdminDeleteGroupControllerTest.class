@@ -97,6 +97,29 @@ class AdminDeleteGroupControllerTest extends GalleryControllerTestCase {
     }
 
     /**
+     * Try to delete the everybody group (this will fail but with no error message since the
+     * view should never allow this)
+     */
+    function testDeleteEverybodyGroup() {
+	global $gallery;
+
+	list ($ret, $groupId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.everybodyGroup');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	GalleryUtilities::putRequestVariable('groupId', $groupId);
+	GalleryUtilities::putRequestVariable('form[action][delete]', 1);
+	
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminDeleteGroup'),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
+    }
+    
+    /**
      * Try to delete the site admin group (this will fail but with no error message since the
      * view should never allow this)
      */

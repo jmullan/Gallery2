@@ -225,6 +225,11 @@ class AdminGroupsView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	
+	list ($ret, $everybodyGroupId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.everybodyGroup');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
 	list ($ret, $adminGroupId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -234,6 +239,9 @@ class AdminGroupsView extends GalleryView {
 	foreach ($groupNames as $groupId => $groupName) {
 	    $form['list']['groupNames'][$groupId]['groupName'] = $groupName;
 	    if ($groupId == $allUserGroupId) {
+		$form['list']['groupNames'][$groupId]['can']['delete'] = false;
+		$form['list']['groupNames'][$groupId]['can']['editUsers'] = false;
+	    } else if ($groupId == $everybodyGroupId) {
 		$form['list']['groupNames'][$groupId]['can']['delete'] = false;
 		$form['list']['groupNames'][$groupId]['can']['editUsers'] = false;
 	    } else if ($groupId == $adminGroupId) {

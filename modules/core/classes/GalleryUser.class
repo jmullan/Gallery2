@@ -220,16 +220,17 @@ class GalleryUser_core extends GalleryEntity {
 
 	if ($newlyCreated) {
 
-	    list($ret, $allUserGroupId) =
-		GalleryCoreApi::getPluginParameter('module', 'core', 'id.allUserGroup');
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
+	    /* Add her to the various groups */
+	    foreach (array('id.allUserGroup', 'id.everybodyGroup') as $groupKey) {
+		list($ret, $groupId) = GalleryCoreApi::getPluginParameter('module', 'core', $groupKey);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
 	
-	    /* Add her to the all user group */
-	    $ret = GalleryCoreApi::addUserToGroup($this->getId(), $allUserGroupId);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+		$ret = GalleryCoreApi::addUserToGroup($this->getId(), $groupId);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
 	    }
 	}
 

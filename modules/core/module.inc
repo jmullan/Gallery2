@@ -487,6 +487,7 @@ class CoreModule extends GalleryModule {
 
 		foreach (array('_createAllUsersGroup',
 			       '_createSiteAdminsGroup',
+			       '_createEverybodyGroup',
 			       '_createAnonymousUser',
 			       '_createAdminUser',
 			       '_createRootAlbumItem') as $func) {
@@ -924,6 +925,51 @@ class CoreModule extends GalleryModule {
     }
 
     /**
+     * Create the Site Admins group
+     *
+     * @return object GalleryStatus a status code
+     */
+    function _createEverybodyGroup() {
+	global $gallery;
+
+	list ($ret, $id) = $this->getModuleParameter('id.everybodyGroup');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	if (!empty($id)) {
+	    return GalleryStatus::success();
+	}
+    
+	list ($ret, $group) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryGroup');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+					     
+	if (!isset($group)) {
+	    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
+	}  
+    
+	$groupName = GalleryUtilities::utf8ToUnicodeEntities($this->translate('Everybody'));
+	$ret = $group->create($groupName, GROUP_EVERYBODY);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	$ret = $group->save();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$ret = $this->setModuleParameter('id.everybodyGroup', $group->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	return GalleryStatus::success();
+    }
+
+    /**
      * Create the initial Anonymous User
      *
      * @return object GalleryStatus a status code
@@ -962,6 +1008,14 @@ class CoreModule extends GalleryModule {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
+
+	/* Remove the anonymous user from the "all users" group */
+	list ($ret, $allUserGroupId) = $this->getModuleParameter('id.allUserGroup');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	GalleryCoreApi::removeUserFromGroup($user->getId(), $allUserGroupId);
 
 	$ret = $this->setModuleParameter('id.anonymousUser', $user->getId());
 	if ($ret->isError()) {
@@ -1070,15 +1124,13 @@ class CoreModule extends GalleryModule {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	/* Give all users some permissions */
-	list ($ret, $groupId) = $this->getModuleParameter('id.allUserGroup');
+	/* Give everybody some permissions */
+	list ($ret, $groupId) = $this->getModuleParameter('id.everybodyGroup');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	$ret = GalleryCoreApi::addGroupPermission($album->getId(),
-							$groupId,
-							'core.viewAll');
+	$ret = GalleryCoreApi::addGroupPermission($album->getId(), $groupId, 'core.viewAll');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

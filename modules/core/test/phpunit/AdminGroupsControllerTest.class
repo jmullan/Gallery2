@@ -211,6 +211,28 @@ class AdminGroupsControllerTest extends GalleryControllerTestCase {
 			    $results);
     }
 
+    function testDeleteEverybodyGroupFromText() {
+	global $gallery;
+	list ($ret, $id) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.everybodyGroup');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	list ($ret, $group) = GalleryCoreApi::loadEntitiesById($id);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
+	GalleryUtilities::putRequestVariable('form[action][deleteFromText]', 1);
+	GalleryUtilities::putRequestVariable('form[text][groupName]', $group->getGroupName());
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminGroups'),
+				  'status' => array(),
+				  'error' => array('form[error][text][cantDeleteGroup]')),
+			    $results);
+    }
 
     function testEditUsersFromText() {
 	/* Normal */

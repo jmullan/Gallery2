@@ -65,7 +65,7 @@ class SlideshowTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	list ($ret, $allUsersGroupId) =
-	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.allUserGroup');
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.everybodyGroup');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
