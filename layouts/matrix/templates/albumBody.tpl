@@ -78,13 +78,26 @@
         <td class="{if $child.canContainChildren}gbItemAlbum{else}gbItemImage{/if}" 
             style="width: 10%">
           <div class="giThumbImage">
-            <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$child.id`"}">
+	    {capture name="link"}<a href="{g->url arg1="view=core:ShowItem"
+						  arg2="itemId=`$child.id`"}">{/capture}
+	    {if $child.canContainChildren}
+	      {assign var=frameType value="albumFrame"}
+	    {else}
+	      {assign var=frameType value="itemFrame"}
+	    {/if}
+	    {if isset($layout.frame.$frameType) && isset($child.thumbnail)}
+	      {include file=$layout.frame.template ImageFrame_data=$layout.frame.data
+		       ImageFrame_frame=$layout.frame.$frameType item=$child image=$child.thumbnail
+		       ImageFrame_pre=$smarty.capture.link ImageFrame_post="</a>"}
+	    {else}
+	      {$smarty.capture.link}
               {if isset($child.thumbnail)}
               {g->image item=$child image=$child.thumbnail}
               {else}
               {g->text text="no thumbnail"}
               {/if}
-            </a>
+	      </a>
+	    {/if}
 
             {if !empty($layout.moduleItemLinks[$child.id])}
             <select onchange="javascript:if (this.value) location.href=this.value" class="giActionSelect">

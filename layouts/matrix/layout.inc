@@ -62,23 +62,11 @@ class MatrixLayout extends GalleryLayout {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+	$params = array_merge(
+	    array('rows' => 3, 'columns' => 3, 'showImageOwner' => 0, 'showAlbumOwner' => 1,
+		  'albumFrame' => '', 'itemFrame' => '', 'photoFrame' => ''),
+	    $params);
 
-	if (!isset($params['rows'])) {
-	    $params['rows'] = 3;
-	}
-	
-	if (!isset($params['columns'])) {
-	    $params['columns'] = 3;
-	}
-
-	if (!isset($params['showImageOwner'])) {
-	    $params['showImageOwner'] = 0;
-	}
-	
-	if (!isset($params['showAlbumOwner'])) {
-	    $params['showAlbumOwner'] = 1;
-	}
-	
 	$settings = array();
 	$settings[] = array('key' => 'rows',
 			    'name' => $gallery->i18n('Rows per album page'),
@@ -98,7 +86,40 @@ class MatrixLayout extends GalleryLayout {
 			    'name' => $gallery->i18n('Show album owners'),
 			    'type' => 'checkbox',
 			    'value' => $params['showAlbumOwner']);
-			    
+
+	/* ImageFrame settings, if available */
+	list ($ret, $imageframe) = GalleryCoreApi::newFactoryInstance('ImageFrameInterface_1_0');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	if (isset($imageframe)) {
+	    list ($ret, $list) = $imageframe->getImageFrameList();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    list ($ret, $sampleUrl) = $imageframe->getSampleUrl($itemId);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $sample = ' (<a href="' . $sampleUrl . '">' .  $gallery->i18n('View Samples') . '</a>)';
+  	 
+	    $settings[] = array('key' => 'albumFrame',
+				'name' => $gallery->i18n('Album Frame') . $sample,
+				'type' => 'single-select',
+				'choices' => $list,
+				'value' => $params['albumFrame']);
+	    $settings[] = array('key' => 'itemFrame',
+				'name' => $gallery->i18n('Item Frame') . $sample,
+				'type' => 'single-select',
+				'choices' => $list,
+				'value' => $params['itemFrame']);
+	    $settings[] = array('key' => 'photoFrame',
+				'name' => $gallery->i18n('Photo Frame') . $sample,
+				'type' => 'single-select',
+				'choices' => $list,
+				'value' => $params['photoFrame']);
+	}
+
 	return array(GalleryStatus::success(), $settings);
     }
 
@@ -126,19 +147,15 @@ class MatrixLayout extends GalleryLayout {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-
-	if (!isset($params['rows'])) {
-	    $params['rows'] = 3;
-	}
-	
-	if (!isset($params['columns'])) {
-	    $params['columns'] = 3;
-	}
+	$params = array_merge(array('rows' => 3, 'columns' => 3), $params);
 
 	if ($item->getCanContainChildren()) {
 	    list ($ret, $bodyFile) = $this->_loadAlbumTemplate($template, $item, $params);
 	} else {
 	    list ($ret, $bodyFile) = $this->_loadSingleTemplate($template, $item, $params);
+	}
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$layout =& $template->getVariableByReference('layout');
@@ -148,8 +165,25 @@ class MatrixLayout extends GalleryLayout {
 	}
 	$layout['layoutUrl'] = GalleryUtilities::convertPathToUrl(dirname(__FILE__));
 
+	/* Prepare image frames, if available */
+	list ($ret, $imageframe) = GalleryCoreApi::newFactoryInstance('ImageFrameInterface_1_0');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$frame = array();
+	foreach (($item->getCanContainChildren() ? array('albumFrame', 'itemFrame')
+						: array('photoFrame')) as $key) {
+	    if (!empty($params[$key])) {
+		$frame[$key] = $params[$key];
+	    }
+	}
+	if (!empty($frame) && isset($imageframe)) {
+	    list ($ret, $frame['template'], $frame['style'], $frame['data']) =
+		$imageframe->getImageFrameData($frame);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $layout['frame'] = $frame;
 	}
 
 	if (is_array($bodyFile)) {
@@ -159,7 +193,6 @@ class MatrixLayout extends GalleryLayout {
 			 array('head' => 'layouts/matrix/templates/head.tpl',
 			       'body' => $bodyFile));
 	}
-
     }
 
     /**
@@ -302,7 +335,7 @@ class MatrixLayout extends GalleryLayout {
 		}
 	    }
 
-            /* Create a table of child id -> child data */
+	    /* Create a table of child id -> child data */
 	    $childTable = array();
 	    foreach ($childItems as $child) {
 		$childId = $child->getId();
@@ -639,15 +672,15 @@ class MatrixLayout extends GalleryLayout {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-        $navigator = array();
-        if ($itemIndex > 0) {
-            $navigator['first'] = array('view' => 'core:ShowItem', 'itemId' => $peerIds[0]);
-            $navigator['back'] = array('view' => 'core:ShowItem', 'itemId' => $peerIds[$itemIndex-1]);
+	$navigator = array();
+	if ($itemIndex > 0) {
+	    $navigator['first'] = array('view' => 'core:ShowItem', 'itemId' => $peerIds[0]);
+	    $navigator['back'] = array('view' => 'core:ShowItem', 'itemId' => $peerIds[$itemIndex-1]);
 	}
 	
-        if ($itemIndex < $totalPeerCount-1) {
-            $navigator['next'] = array('view' => 'core:ShowItem', 'itemId' => $peerIds[$itemIndex+1]);
-            $navigator['last'] = array('view' => 'core:ShowItem', 'itemId' => $peerIds[sizeof($peerIds)-1]);
+	if ($itemIndex < $totalPeerCount-1) {
+	    $navigator['next'] = array('view' => 'core:ShowItem', 'itemId' => $peerIds[$itemIndex+1]);
+	    $navigator['last'] = array('view' => 'core:ShowItem', 'itemId' => $peerIds[sizeof($peerIds)-1]);
 	}
 
 	/* Load the parents */

@@ -99,12 +99,17 @@
       {/capture}
 
       {if ($layout.can.viewInline.$currentIndex)}
-      {g->image item=$layout.item image=$image fallback=$smarty.capture.fallback}
+	{if isset($layout.frame)}
+	  {include file=$layout.frame.template ImageFrame_data=$layout.frame.data
+		   ImageFrame_frame=$layout.frame.photoFrame item=$layout.item image=$image}
+	{else}
+	  {g->image item=$layout.item image=$image fallback=$smarty.capture.fallback}
+	{/if}
       {else}
-      {$smarty.capture.fallback}
+	{$smarty.capture.fallback}
       {/if}
       {else}
-      {g->text text="There is nothing to view for this item."}
+	{g->text text="There is nothing to view for this item."}
       {/if}
     </div>
 
