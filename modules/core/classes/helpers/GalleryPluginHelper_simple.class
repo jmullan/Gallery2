@@ -60,6 +60,10 @@ class GalleryPluginHelper_simple {
 		$pluginSuperClass = 'GalleryLayout';
 		$pluginClass = $pluginId . 'Layout';
 		break;
+
+	    default:
+		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+						  "pluginType = $pluginType"), null);
 	    }
 
 	    if (!class_exists($pluginClass)) {
@@ -310,7 +314,7 @@ class GalleryPluginHelper_simple {
 			    } else {
 				$frameworkParams[] = 'requiredLayoutApi';
 			    }
-			    
+
 			    foreach ($frameworkParams as $paramName) {
 				list ($ret, $plugins[$pluginId][$paramName]) =
 				    GalleryPluginHelper_simple::getParameter($pluginType, $pluginId, '_' . $paramName);
