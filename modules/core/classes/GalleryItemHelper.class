@@ -120,5 +120,30 @@ class GalleryItemHelper {
 
 	return array($where, $data);
     }
+
+    /**
+     * Assert that the given user has one of the specific permissions for the
+     * target item
+     *
+     * @return array object GalleryStatus a status code
+     *               boolean true if yes
+     */
+    function getPermissions($itemId, $userId) {
+
+	list ($ret, $groupIds) = GalleryUserGroupMap::fetchGroupsForUser($userId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	list ($ret, $permissions) =
+	    GalleryPermissionMap::fetchPermissionsForItem($itemId,
+							  array($userId),
+							  $groupIds);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	return array(GalleryStatus::success(), $permissions);
+    }
 }
 ?>

@@ -283,7 +283,7 @@ class CoreModule extends GalleryModule {
 	 * not to display the "[edit item]" link.
 	 */
 	$adminPermissions = GalleryPermissionMap::getItemAdminPermissions();
-	
+
 	/*
 	 * If we're a site admin, then we always have edit permission.  Else,
 	 * figure out what groups we're in and use that to make the determination.
@@ -295,29 +295,34 @@ class CoreModule extends GalleryModule {
 	}
 
 	$links = array();
+	$showEditLink = false;
+	$showAddItemLink = false;
+	$showAddAlbumLink = false;
 	foreach ($items as $item) {
-	    if ($isSiteAdmin) {
+	    list ($ret, $itemPermissions) =
+		GalleryItemHelper::getPermissions($item->getId(),
+						  $gallery->getActiveUserId());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	
+	    if ($isSiteAdmin || array_intersect(array('core.all'), $itemPermissions)) {
 		$showEditLink = true;
 		$showAddItemLink = $item->canContainChildren();
+		$showAddAlbumLink = $item->canContainChildren();
 	    } else {
-		list ($ret, $showEditLink) =
-		    GalleryUserHelper::hasItemPermission($item->getId(),
-							 $gallery->getActiveUserId(),
-							 $adminPermissions);
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		if (array_intersect($adminPermissions, $itemPermissions)) {
+		    $showEditLink = true;
 		}
 
 		if ($item->canContainChildren()) {
-		    list ($ret, $showAddItemLink) =
-			GalleryUserHelper::hasItemPermission($item->getId(),
-							     $gallery->getActiveUserId(),
-							     array('core.all', 'core.addItem'));
-		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+		    if (array_intersect(array('core.addItem'), $itemPermissions)) {
+			$showAddItemLink = true;
 		    }
-		} else {
-		    $showAddItemLink = false;
+		    
+		    if (array_intersect(array('core.addAlbum'), $itemPermissions)) {
+			$showAddAlbumLink = true;
+		    }
 		}
 	    }
 
@@ -334,6 +339,15 @@ class CoreModule extends GalleryModule {
 		    array('text' => $this->translate('add item'),
 			  'params' => array_merge(array('view' => 'core:ItemAdmin',
 							'subView' => 'core:ItemAddChildren',
+							'itemId' => $item->getId()),
+						  $params));
+	    }
+
+	    if ($showAddAlbumLink) {
+		$links[$item->getId()][] =
+		    array('text' => $this->translate('add album'),
+			  'params' => array_merge(array('view' => 'core:ItemAdmin',
+							'subView' => 'core:ItemAddAlbum',
 							'itemId' => $item->getId()),
 						  $params));
 	    }
@@ -406,8 +420,8 @@ class CoreModule extends GalleryModule {
 
 	$views = array();
 	list ($ret, $permissions) =
-	    GalleryUserHelper::getItemPermissions($item->getId(),
-						  $gallery->getActiveUserId());
+	    GalleryItemHelper::getPermissions($item->getId(),
+					      $gallery->getActiveUserId());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -418,7 +432,8 @@ class CoreModule extends GalleryModule {
 	}
 
 	if (array_intersect(array('core.all', 'core.change'), $permissions)) {
-	    if ($item->canContainChildren()) {
+	    if (is_subclass_of($item, 'GalleryAlbumItem') ||
+		    get_class($item) == strtolower('GalleryAlbumItem')) {
 	        $views[] = array('name' => $this->translate('Album Settings'),
 				 'view' => 'core:ItemEditAlbum');
 	    }
@@ -440,6 +455,13 @@ class CoreModule extends GalleryModule {
 	    if ($item->canContainChildren()) {
 	        $views[] = array('name' => $this->translate('Add Items'),
 				 'view' => 'core:ItemAddChildren');
+	    }
+	}
+	
+	if (array_intersect(array('core.all', 'core.addAlbumItem'), $permissions)) {
+	    if ($item->canContainChildren()) {
+	        $views[] = array('name' => $this->translate('Add Album'),
+				 'view' => 'core:ItemAddAlbum');
 	    }
 	}
 	

@@ -48,6 +48,17 @@ class ItemAddChildrenController extends GalleryController {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+
+	/*
+	 * See if the album has a thumbnail.  If not, we'll create one during
+	 * this upload.
+	 */
+	list ($ret, $thumbnailTable) =
+	    GalleryDerivativeHelper::fetchThumbnailsByItemIds($item->getId());
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$albumNeedsThumbnail = empty($thumbnailTable) ? true : false;
 	
 	if (isset($form['action']['addFromComputer'])) {
 
@@ -82,10 +93,10 @@ class ItemAddChildrenController extends GalleryController {
 		    }
 
 		    $ret = $newItem->create($item->getId(),
-					     $file['tmp_name'],
-					     $gallery->getActiveUserId(),
-					     $mimeType,
-					     GalleryUtilities::getFileBase($file['name']));
+					    $file['tmp_name'],
+					    $gallery->getActiveUserId(),
+					    $mimeType,
+					    GalleryUtilities::getFileBase($file['name']));
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
@@ -137,6 +148,34 @@ class ItemAddChildrenController extends GalleryController {
 			    $ret = $derivative->save();
 			    if ($ret->isError()) {
 				return array($ret->wrap(__FILE__, __LINE__), null);
+			    }
+
+			    /*
+			     * Create a thumbnail for the album, if necessary.
+			     * XXX: this needs to be refactored 
+			     */
+			    if ($albumNeedsThumbnail) {
+				list ($ret, $derivative) = 
+				    GalleryFactory::newInstance('GalleryEntity', 'GalleryDerivativeImage');
+				if ($ret->isError()) {
+				    return array($ret->wrap(__FILE__, __LINE__), null);
+				}
+
+				$ret = $derivative->create($item->getId(), $preference['derivativeType']);
+				if ($ret->isError()) {
+				    return array($ret->wrap(__FILE__, __LINE__), null);
+				}
+
+				$derivative->setDerivativeMimeType($newItem->getMimeType());
+				$derivative->setDerivativeSourceId($newItem->getId());
+				$derivative->setDerivativeCommands($preference['derivativeCommands']);
+			
+				$ret = $derivative->save();
+				if ($ret->isError()) {
+				    return array($ret->wrap(__FILE__, __LINE__), null);
+				}
+				
+				$albumNeedsThumbnail = false;
 			    }
 			}
 		    }

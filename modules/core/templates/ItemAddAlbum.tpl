@@ -1,12 +1,16 @@
-    {galleryForm controller="$controller"}
-    {galleryInput type="hidden" name="formName"}ItemEditGeneral{/galleryInput}
+    {galleryForm controller="$controller" enctype="multipart/form-data"}
+    {galleryInput type="hidden" name="formName"}ItemAddAlbum{/galleryInput}
     {galleryInput type="hidden" name="itemId"}{$item.id}{/galleryInput}
     <table border="0" cellspacing="0" cellpadding="0">
 	<tr>
-	  <td align="center">
-	    {galleryBiggerFont}
-	    {galleryText text="General Item Properties"}
-	    {/galleryBiggerFont}
+	  <td>
+	    <center>
+	      {galleryBiggerFont}
+	      {galleryText text="Add an Album"}
+	      {/galleryBiggerFont}
+	    </center>
+	    <br>
+	    {galleryText text="You can create a new album inside this one."}
 	  </td>
 	</tr>
 
@@ -177,8 +181,7 @@
 
 	<tr>
 	  <td>
-	    {galleryInput type="submit" name="form.action.save"}{galleryText text="Save"}{/galleryInput}
-	    {galleryInput type="submit" name="form.action.undo"}{galleryText text="Undo"}{/galleryInput}
+	    {galleryInput type="submit" name="form.action.create"}{galleryText text="Create"}{/galleryInput}
 	  </td>
 	</tr>
 

@@ -1,5 +1,5 @@
     {galleryForm controller="$controller" enctype="multipart/form-data"}
-    {galleryInput type="hidden" name="formName"}ItemEditAlbum{/galleryInput}
+    {galleryInput type="hidden" name="formName"}ItemAddChildren{/galleryInput}
     {galleryInput type="hidden" name="itemId"}{$item.id}{/galleryInput}
     <table border="0" cellspacing="0" cellpadding="0">
 	<tr>

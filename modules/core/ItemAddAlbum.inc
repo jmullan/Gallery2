@@ -18,7 +18,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-class ItemEditGeneralController extends GalleryController {
+class ItemAddAlbumController extends GalleryController {
 
     /**
      * @see GalleryController::handleRequest
@@ -32,12 +32,23 @@ class ItemEditGeneralController extends GalleryController {
 	/* Make sure we have permission do edit this item */
 	$ret = GalleryUserHelper::assertHasItemPermission($itemId,
 							  $gallery->getActiveUserId(),
-							  array('core.all', 'core.changeText'));
+							  array('core.all', 'core.addAlbum'));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	if (isset($form['action']['save'])) {
+	list ($ret, $item) = $gallery->loadEntitiesById($itemId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	list ($ret, $lockIds[]) = $gallery->acquireReadLock($item->getId());
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
+	if (isset($form['action']['create'])) {
+	    $error = false;
 
 	    /*
 	     * Validate the input data.
@@ -46,50 +57,50 @@ class ItemEditGeneralController extends GalleryController {
 	    
 	    if (!$platform->isLegalPathComponent($form['pathComponent'])) {
 		GalleryUtilities::putRequestVariable('form.error.pathComponent.invalid', 1);
-	    } else {
-		list ($ret, $lockId) = $gallery->acquireWriteLock($itemId);
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-	    
-		list ($ret, $item) = $gallery->loadEntitiesById($itemId);
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
+		$error = true;
+	    }
 
-		/*
-		 * It's possible to get a collision when we rename, so try that
-		 * first.  If there's no collision then make the rest of the changes.
-		 */
-		$ret = $item->rename($form['pathComponent']);
-		if ($ret->isError() && !($ret->getErrorCode() & ERROR_COLLISION)) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
+	    list ($ret, $instance) =
+		GalleryFactory::newInstance('GalleryEntity', 'GalleryAlbumItem');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
 
-		if ($ret->isError() && $ret->getErrorCode() & ERROR_COLLISION) {
+	    $ret = $instance->create($itemId,
+				     $form['pathComponent'],
+				     $gallery->getActiveUserId());
+	    if ($ret->isError()) {
+		if ($ret->getErrorCode() & ERROR_COLLISION) {
 		    GalleryUtilities::putRequestVariable('form.error.pathComponent.collision', 1);
+		    $error = true;
 		} else {
-		    $item->setTitle($form['title']);
-		    $item->setSummary($form['summary']);
-		    $item->setKeywords($form['keywords']);
-		    $item->setDescription($form['description']);
-
-		    $ret = $item->save();
-		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-		    }
-
-		    /* Figure out where to redirect upon success */
-		    $redirectParams['view'] = 'core:ItemAdmin';
-		    $redirectParams['subView'] = 'core:ItemEditGeneral';
-		    $redirectParams['itemId'] = $itemId;
-		}
-
-		$ret = $gallery->releaseLocks($lockId);
-		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 	    }
+
+	    if (!$error) {
+		$instance->setTitle($form['title']);
+		$instance->setSummary($form['summary']);
+		$instance->setKeywords($form['keywords']);
+		$instance->setDescription($form['description']);
+		$ret = $instance->save();
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		/* Figure out where to redirect upon success */
+		print "NOT REDIRECTING";
+		/*
+		$redirectParams['view'] = 'core:ItemAdmin';
+		$redirectParams['subView'] = 'core:ItemAddAlbum';
+		$redirectParams['itemId'] = $itemId;
+		*/
+	    }
+	}
+
+	$ret = $gallery->releaseLocks($lockIds);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	if (!empty($redirectParams)) {
@@ -98,7 +109,7 @@ class ItemEditGeneralController extends GalleryController {
 	} else {
 	    if (empty($results['view'])) {
 		$results['view'] = 'core:ItemAdmin';
-		GalleryUtilities::putRequestVariable('subView', 'core:ItemEditGeneral');
+		GalleryUtilities::putRequestVariable('subView', 'core:ItemAddAlbum');
 	    }
 	}
 
@@ -106,7 +117,7 @@ class ItemEditGeneralController extends GalleryController {
     }
 }
 
-class ItemEditGeneralView extends GalleryView {
+class ItemAddAlbumView extends GalleryView {
 
     /**
      * @see GalleryView::renderBody
@@ -121,7 +132,7 @@ class ItemEditGeneralView extends GalleryView {
 	/* Make sure we have permission do edit this item */
 	$ret = GalleryUserHelper::assertHasItemPermission($itemId,
 							  $gallery->getActiveUserId(),
-							  array('core.all', 'core.changeText'));
+							  array('core.all', 'core.addAlbum'));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -131,20 +142,18 @@ class ItemEditGeneralView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	if ($formName == 'ItemEditGeneral' && empty($form['action']['undo'])) {
-	    /* Complain if we have any invalid data */
-	    $platform = $gallery->getPlatform();
+	if ($formName == 'ItemAddAlbum') {
 
-	    if (!$platform->isLegalPathComponent($form['pathComponent'])) {
-		$form['error']['pathComponent']['invalid'] = 1;
-	    }
+	    /* Complain if we have any invalid data */
+
 	} else {
 	    /* First time around, load the form with item data */
-	    $form['title'] = $item->getTitle();
-	    $form['summary'] = $item->getSummary();
-	    $form['keywords'] = $item->getKeywords();
-	    $form['description'] = $item->getDescription();
-	    $form['pathComponent'] = $item->getPathComponent();
+	    $form = array();
+	    $form['pathComponent'] = '';
+	    $form['title'] = '';
+	    $form['summary'] = '';
+	    $form['keywords'] = '';
+	    $form['description'] = '';
 	}
 
 	/* Load the parents */
@@ -152,14 +161,16 @@ class ItemEditGeneralView extends GalleryView {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-
+	/* Including myself */
+	$parents[] = $item->getMemberData();
+	
 	/* Render the HTML body */
 	$this->_initTemplate(dirname(__FILE__) . '/templates');
 	$this->_setTemplateVariable('form', $form);
 	$this->_setTemplateVariable('item', $item->getMemberData());
 	$this->_setTemplateVariable('parents', $parents);
-	$this->_setTemplateVariable('controller', 'core:ItemEditGeneral');
-	$html = $this->_renderTemplate('core', 'ItemEditGeneral.tpl');
+	$this->_setTemplateVariable('controller', 'core:ItemAddAlbum');
+	$html = $this->_renderTemplate('core', 'ItemAddAlbum.tpl');
 
 	return array(GalleryStatus::success(), $html);
     }
