@@ -107,6 +107,7 @@ class ThumbnailModule extends GalleryModule {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$itemId = array();
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/ThumbnailImage.class');
 	foreach (array(
 	    'G2audio.jpg' => array('audio/mpeg', 'audio/x-wav', 'audio/x-aiff', 'audio/midi', 'audio/basic', 'audio/x-ms-wma'),
 	    'G2video.jpg' => array('video/mpeg', 'video/quicktime', 'video/x-msvideo', 'video/x-ms-asf', 'video/x-ms-wmv')
@@ -114,12 +115,10 @@ class ThumbnailModule extends GalleryModule {
 	    foreach ($mimeList as $mime) {
 		if (!isset($toolkitMime[$mime])) {
 		    if (!isset($itemId[$mimeImage])) {
-			GalleryCoreApi::registerFactoryImplementation(
-			    'GalleryEntity', 'ThumbnailImage', 'ThumbnailImage',
-			    dirname(__FILE__) . '/classes/ThumbnailImage.class');
 			list ($ret, $itemId[$mimeImage]) = ThumbnailHelper::addItem($mime,
 			    $mimeImage, dirname(__FILE__) . '/images/' . $mimeImage, 'image/jpeg',
-			    array('width' => 400, 'height' => 352));
+			    array('width' => 400, 'height' => 352),
+			    new ThumbnailImage());
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}

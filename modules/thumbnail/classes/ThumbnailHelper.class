@@ -163,11 +163,13 @@ class ThumbnailHelper {
      * @param string path to image file
      * @param string mime type of image file
      * @param array known width and height of image (used if toolkit is unable to get size)
+     * @param object ThumbnailImage (optional -- if you don't provide it we'll
+     *                               get one from the Factory)
      * @return array object GalleryStatus a status code
      *               id of newly created object
      * @static
      */
-    function addItem($mimeType, $filename, $tmpfile, $fileMimeType, $knownSize=array()) {
+    function addItem($mimeType, $filename, $tmpfile, $fileMimeType, $knownSize=array(), $item=null) {
 	global $gallery;
 	/*
 	 * If we don't get useful data from the form or its a type we don't
@@ -183,12 +185,14 @@ class ThumbnailHelper {
 	    return array(GalleryStatus::error(ERROR_UNSUPPORTED_FILE_TYPE, __FILE__, __LINE__), null);
 	}
 
-	list ($ret, $item) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'ThumbnailImage');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
 	if (!isset($item)) {
-	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
+	    list ($ret, $item) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'ThumbnailImage');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    if (!isset($item)) {
+		return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
+	    }
 	}
 
 	$ret = $item->create($tmpfile, $fileMimeType, $filename);
