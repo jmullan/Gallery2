@@ -165,10 +165,10 @@ class GalleryViewCountMap_core {
 	    $count = 0;
 	} else {
 	    $result = $searchResults->nextResult();
-	    $count = $result[0];
+	    $count = (int)$result[0];
 	}
 	
-	return array(GalleryStatus::success(), $result[0]);
+	return array(GalleryStatus::success(), $count);
     }
 }
 
