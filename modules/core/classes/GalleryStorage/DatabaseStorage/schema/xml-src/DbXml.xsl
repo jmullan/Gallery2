@@ -133,6 +133,14 @@
       </xsl:if>
     </xsl:for-each>
 
+    <xsl:for-each select="index">
+      <index>
+        <xsl:for-each select="member-name">
+          <column-name><xsl:value-of select="."/></column-name>
+        </xsl:for-each>
+      </index>
+    </xsl:for-each>
+
   </xsl:template>
 
 </xsl:stylesheet>

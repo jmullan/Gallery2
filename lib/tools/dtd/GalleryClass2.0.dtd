@@ -1,9 +1,10 @@
 <!ELEMENT class ( class-name, parent-class-name?, schema, requires-id?, (map | member+)? ) >
 
 <!ELEMENT schema ( schema-name, schema-major, schema-minor ) >
-<!ELEMENT map ( member+, key? ) >
+<!ELEMENT map ( member+, key?, index* ) >
 <!ELEMENT member ( member-name, member-type, member-size?, id?, (indexed | unique)?, required?, primary?, linked? ) >
 <!ELEMENT key ( member-name+ ) >
+<!ELEMENT index ( member-name+ ) >
 
 <!ELEMENT class-name ( #PCDATA ) >
 <!ELEMENT parent-class-name ( #PCDATA ) >

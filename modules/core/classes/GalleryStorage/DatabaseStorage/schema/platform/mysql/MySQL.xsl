@@ -251,6 +251,9 @@
           </xsl:if>
         </xsl:if>
       </xsl:for-each>
+    <xsl:if test="position()!=last()">
+      ,
+    </xsl:if>
     </xsl:for-each>
   </xsl:template>
 
