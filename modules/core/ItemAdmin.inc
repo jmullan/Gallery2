@@ -143,11 +143,13 @@ class ItemAdminView extends GalleryView {
 	$ItemAdmin['itemType'] = $itemType;
 	$ItemAdmin['thumbnail'] = $thumbnailData;
 	$ItemAdmin['subViewChoices'] = $subViewChoices;
+	$ItemAdmin['viewL10Domain'] = $subView->getL10Domain();
 
 	$template->setVariable('ItemAdmin', $ItemAdmin);
 	if (!$template->hasVariable('enctype')) {
 	    $template->setVariable('enctype', 'application/x-www-form-urlencoded');
 	}
+
 	return array(GalleryStatus::success(),
 		     'modules/core/templates/ItemAdminHead.tpl',
 		     'modules/core/templates/ItemAdmin.tpl');
