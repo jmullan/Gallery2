@@ -126,6 +126,7 @@ class ItemAddChildrenController extends GalleryController {
 	} else if (isset($form['action']['addFromLocalServer'])) {
 	    /* Delegate back to the same view */
 	    $dir = $form['localServerPath'];
+	    
 	    foreach ($form['localServerFiles'] as $fileKey => $unused) {
 		$basename = base64_decode($fileKey);
 		$filename = $dir . '/' . $basename;
@@ -146,11 +147,13 @@ class ItemAddChildrenController extends GalleryController {
 		
 		if ($albumNeedsThumbnail) {
 		    $ret = GalleryItemHelper::setThumbnailFromItem($item->getId(), $newItem->getId());
-		    if ($ret->isError()) {
+		    if ($ret->isSuccess()) {
+			$albumNeedsThumbnail = false;
+		    } else if ($ret->getErrorCode() & ERROR_UNSUPPORTED_OPERATION) {
+			// Ok, we couldn't make a thumbnail out of that one.
+		    } else {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
-		    $albumNeedsThumbnail = false;
-
 		}
 
 		$status['addFromLocalServer'][] = array('fileName' => $basename,
