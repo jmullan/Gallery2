@@ -206,9 +206,12 @@ class ChooseObjectsView extends GalleryView {
      * @access private
      */
     function _createG1DepthTree(&$albumList, $albumName, $hierarchy, $depth=0) {
+	global $gallery;
+	
 	$data = array();
 	$data[] = array('depth' => $depth, 'data' => $albumList[$albumName]);
 	foreach ($hierarchy as $childAlbumName => $subHierarchy) {
+	    $gallery->guaranteeTimeLimit(30);
 	    $data = array_merge($data, $this->_createG1DepthTree($albumList,
 								 $childAlbumName, $subHierarchy,
 								 $depth + 1));
