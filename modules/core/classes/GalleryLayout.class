@@ -128,6 +128,61 @@ class GalleryLayout {
     }
 
     /**
+     * Activate this layout
+     *
+     * @return object GalleryStatus a status code
+     */
+    function activate() {
+	global $gallery;
+
+	/* Set the default value for all settings that don't have values */
+	list ($ret, $settings) = $this->getSettings();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	list ($ret, $currentParameters) = GalleryPluginParameterMap::fetchAllParameters('layout', $this->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/*
+	 * Settings will have the correct value for all parameters, so if it's not in the map
+	 * yet we should store it now.
+	 */
+	foreach ($settings as $setting) {
+	    if (!isset($currentParameters[$setting['key']])) {
+		$ret = $this->setParameter($setting['key'], $setting['value']);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+	}
+
+	$ret = GalleryPluginMap::activate('layout', $this->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	return GalleryStatus::success();
+    }    
+
+    /**
+     * Deactivate this layout
+     *
+     * @return object GalleryStatus a status code
+     */
+    function deactivate() {
+	global $gallery;
+	$ret = GalleryPluginMap::deactivate('layout', $this->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	return GalleryStatus::success();
+    }    
+
+    /**
      * Load the template with data from this view.
      *
      * @param array object GalleryTemplate the template instance
@@ -442,6 +497,27 @@ class GalleryLayout {
 	}
 
 	return array(GalleryStatus::success(), $params);
+    }
+
+    /**
+     * Convenience method to get a layout parameter
+     *
+     * @param string the parameter name
+     * @param string the value
+     * @param int the (optional) item id
+     * @return array object GalleryStatus a status code
+     *               mixed value
+     */
+    function getParameter($parameterName, $parameterValue, $itemId=0) {
+	list ($ret, $value) = GalleryPluginParameterMap::getParameter('layout',
+								      $this->getId(),
+								      $parameterName,
+								      $itemId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	return array(GalleryStatus::success(), $value);
     }
 
     /**

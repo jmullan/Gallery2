@@ -75,7 +75,7 @@ class AdminLayoutsController extends GalleryController {
 	if (isset($form['action']['activate'])) {
 	    /* Only activate if we're not already active! */
 	    if (empty($layoutStatus['active'])) {
-		$ret = GalleryPluginMap::activate('layout', $layoutId);
+		$ret = $layout->activate();
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -98,7 +98,7 @@ class AdminLayoutsController extends GalleryController {
 
 	    /* Only deactivate if we're not already deactive! */
 	    if (!empty($layoutStatus['active'])) {
-		$ret = GalleryPluginMap::deactivate('layout', $layoutId);
+		$ret = $layout->deactivate();
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}

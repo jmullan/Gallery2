@@ -173,7 +173,7 @@ class AdminLayoutsControllerTest extends GalleryControllerTestCase {
     }
 }
 
-class TestLayoutId1Layout {
+class TestLayoutId1Layout extends GalleryLayout {
 
     /**
      * @see GalleryLayout::getSettings()
@@ -186,12 +186,12 @@ class TestLayoutId1Layout {
 			    'name' => 'Rows per album page',
 			    'type' => 'text-field',
 			    'type-params' => array('size' => 2),
-			    'values' => array(4));
+			    'value' => 4);
 	$settings[] = array('key' => 'columns',
 			    'name' => 'Columns per album page',
 			    'type' => 'text-field',
 			    'type-params' => array('size' => 2),
-			    'values' => array(3));
+			    'value' => 99);
 	return array(GalleryStatus::success(), $settings);
     }
 
@@ -205,20 +205,17 @@ class TestLayoutId1Layout {
 	return $error;
     }
 
+    /**
+     * @see GalleryLayout::init
+     */
     function init() {
+	$this->setId('testLayoutId1');
+	$this->setName('Test Layout 1');
 	return GalleryStatus::success();
-    }
-
-    function getName() {
-	return 'Test Layout 1';
     }
 }
 
-class TestLayoutId2Layout {
-
-    function init() {
-	return GalleryStatus::success();
-    }
+class TestLayoutId2Layout extends GalleryLayout {
 
     function &getMap() {
 	static $map;
@@ -235,6 +232,15 @@ class TestLayoutId2Layout {
     }
 
     /**
+     * @see GalleryLayout::init
+     */
+    function init() {
+	$this->setId('testLayoutId2');
+	$this->setName('Test Layout 2');
+	return GalleryStatus::success();
+    }
+    
+    /**
      * @see GalleryLayout::getSettings()
      */
     function getSettings($itemId=0) {
@@ -245,12 +251,12 @@ class TestLayoutId2Layout {
 			    'name' => 'Rows per album page',
 			    'type' => 'text-field',
 			    'type-params' => array('size' => 2),
-			    'values' => array(4));
+			    'value' => 4);
 	$settings[] = array('key' => 'columns',
 			    'name' => 'Columns per album page',
 			    'type' => 'text-field',
 			    'type-params' => array('size' => 2),
-			    'values' => array(3));
+			    'value' => 3);
 	return array(GalleryStatus::success(), $settings);
     }
 
@@ -259,10 +265,6 @@ class TestLayoutId2Layout {
      */
     function validateSettings($settings) {
 	return array();
-    }
-
-    function getName() {
-	return 'Test Layout 2';
     }
 }
 

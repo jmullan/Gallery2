@@ -202,7 +202,6 @@ class ItemEditLayoutView extends GalleryView {
 	$ItemEditLayout = array();
 	$ItemEditLayout['settings'] = $settings;
 	$ItemEditLayout['globalParams'] = $globalParams;
-	$ItemEditLayout['itemParams'] = $itemParams;
 	$ItemEditLayout['layout']['name'] = $layout->getName();
 	$ItemEditLayout['layout']['l10Domain'] = $layout->getL10Domain();
 	
