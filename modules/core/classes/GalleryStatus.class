@@ -239,6 +239,11 @@ class GalleryStatus {
      */
 
     /**
+     * The stack trace, if possible.
+     */
+    var $_stack;
+
+    /**
      * The actual error code
      *
      * @var string $_errorCode
@@ -280,7 +285,11 @@ class GalleryStatus {
      * @return object GalleryStatus an error status
      */
     function error($errorCode, $fileName, $lineNumber) {
-	return new GalleryStatus(ERROR | $errorCode, $fileName, $lineNumber);
+	$status = new GalleryStatus(ERROR | $errorCode, $fileName, $lineNumber);
+	if (function_exists('debug_backtrace')) {
+	    $status->setStackTrace(debug_backtrace());
+	}
+	return $status;
     }
 
     /**
@@ -299,6 +308,15 @@ class GalleryStatus {
 	    $success = new GalleryStatus(SUCCESS);
 	}
 	return $success;
+    }
+
+    /**
+     * Set the stack trace
+     *
+     * @param array (array, array)
+     */
+    function setStackTrace($trace) {
+	$this->_stackTrace = $trace;
     }
 
     /**
@@ -410,7 +428,7 @@ class GalleryStatus {
 	$codes = array();
 
 	/* get_defined_constants() arrived in 4.1? */
-	if (function_exists("get_defined_constants")) {
+	if (function_exists('get_defined_constants')) {
 	    foreach (get_defined_constants() as $constantName => $constantValue) {
 		if (strpos($constantName, 'ERROR_') === 0) {
 		    if ($this->_errorCode & $constantValue) {
@@ -426,12 +444,26 @@ class GalleryStatus {
 	$results[] = 'Error (' . join(', ', $codes) . ')';
 
 	$base = $gallery->getConfig('code.gallery.base');
-	for ($i = 0; $i < count($this->_fileName); $i++) {
-	    $results[] = 'in ' .
+
+	if (empty($this->_stackTrace)) {
+	    for ($i = 0; $i < count($this->_fileName); $i++) {
+		$results[] = 'in ' .
 		    str_replace($base, '', $this->_fileName[$i])  .
 		    ' at line ' .
 		    $this->_lineNumber[$i];
-	}
+	    }
+	} else {
+	    foreach ($this->_stackTrace as $traceEntry) {
+		$buf = 'in ' . str_replace($base, '', $traceEntry['file']);
+		if (isset($traceEntry['class']) && isset($traceEntry['function'])) {
+		    $buf .= " ($traceEntry[class]::$traceEntry[function]) ";
+		} else if (isset($traceEntry['class'])) {
+		    $buf .= " ($traceEntry[function]) ";
+		}
+		$buf .= " at line $traceEntry[line]";
+		$results[] = $buf;
+	    }
+	}  
 
 	return $results;
     }
