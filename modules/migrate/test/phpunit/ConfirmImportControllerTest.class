@@ -469,7 +469,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals(array("\xc2\xa1Time to migrate!",              // title
+	$this->assertEquals(array("\xc2\xa1" . 'Time to migrate!', // title
 				  NULL,                                  // summary
 				  'stump grinder chipper shredder',      // keywords
 				  'chipper',                             // description
@@ -728,7 +728,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals('\xc2\xa1Time to migrate!', $item->getTitle(), 'title');
+	$this->assertEquals("\xc2\xa1" . 'Time to migrate!', $item->getTitle(), 'title');
 	$this->assertEquals('This is actually not a chipper, but a stump grinder.',
 			    $item->getSummary(), 'summary');
 	$this->assertEquals('This is actually not a chipper, but a stump grinder.',
