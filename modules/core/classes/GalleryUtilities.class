@@ -259,6 +259,7 @@ class GalleryUtilities {
 	$key = GALLERY_FORM_VARIABLE_PREFIX . $key;
 
 	/* Simulate the damage caused by magic_quotes */
+	GalleryUtilities::unsanitizeInputValues($key);
 	GalleryUtilities::unsanitizeInputValues($value);
 
 	$keyPath = preg_split('/[\[\]]/', $key, -1, PREG_SPLIT_NO_EMPTY);
@@ -775,7 +776,14 @@ class GalleryUtilities {
     function sanitizeInputValues(&$value) {
 	if (is_array($value)) {
 	    foreach (array_keys($value) as $key) {
-		GalleryUtilities::sanitizeInputValues($value[$key]);
+		$newKey = $key;
+		GalleryUtilities::sanitizeInputValues($newKey);
+		if ($key != $newKey) {
+		    $value[$newKey] =& $value[$key];
+		    unset($value[$key]);
+		}
+
+		GalleryUtilities::sanitizeInputValues($value[$newKey]);
 	    } 
 	} else {
 	    /* Sanitize dangerous html entities */

@@ -103,11 +103,19 @@ class UtilitiesTest extends GalleryTestCase {
     }
     
     function testGetFormVariables() {
-	GalleryUtilities::putRequestVariable('utilitiestest[a]', 'b');
-	GalleryUtilities::putRequestVariable('utilitiestest[c]', 'd');
+	GalleryUtilities::putRequestVariable('utilitiestest[outer1][inner1]', '1');
+	GalleryUtilities::putRequestVariable('utilitiestest[outer1][inner\'2][a]', '2');
+	GalleryUtilities::putRequestVariable('utilitiestest[outer1][inner\'2][b]', '3\'3');
+	GalleryUtilities::putRequestVariable('utilitiestest[outer1][inner3][a]', '4');
+	GalleryUtilities::putRequestVariable('utilitiestest[outer1][inner3][b]', '5\'5');
+	GalleryUtilities::putRequestVariable('utilitiestest[outer2]', '6');
 
-	$this->assertEquals(array('a' => 'b',
-				  'c' => 'd'),
+	$this->assertEquals(array('outer1' => array('inner1' => '1',
+						    'inner&#039;2' => array('a' => '2',
+									'b' => '3&#039;3'),
+						    'inner3' => array('a' => '4',
+								      'b' => '5&#039;5')),
+				  'outer2' => '6'),
 			    GalleryUtilities::getFormVariables('utilitiestest'));
     }
 
