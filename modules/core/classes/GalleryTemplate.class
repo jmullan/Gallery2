@@ -171,6 +171,11 @@ class GalleryTemplate {
 
 	    /* Compiled templates go here */
 	    $smarty->compile_dir = $gallery->getConfig('data.smarty.templates_c');
+
+	    /* We have our own plugins */
+	    $platform = $gallery->getPlatform();
+	    $slash = $platform->getDirectorySeparator();
+	    $smarty->plugins_dir[] = $gallery->getConfig('code.gallery.lib') . 'smarty_plugins';
 	    
 	    if ($gallery->getDebug()) {
 		$smarty->debugging = true;
