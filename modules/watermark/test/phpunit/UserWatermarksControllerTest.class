@@ -126,8 +126,6 @@ class UserWatermarksControllerTest extends GalleryControllerTestCase {
     }
 
     function testDeleteWatermark() {
-	global $gallery;
-
 	/* Create a watermark (it'll be created as our active user) */
 	$watermark = new WatermarkImage();
 	$ret = $watermark->create(__FILE__, 'test/file', 'phpunit_' . rand() . '.gif');
@@ -153,6 +151,51 @@ class UserWatermarksControllerTest extends GalleryControllerTestCase {
 	$ret = $this->_verifyMissing($watermark->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus(__FILE__, __LINE__);
+	}
+    }
+
+    function testDeleteWatermarkInUse() {
+	/* Create a watermark (it'll be created as our active user) */
+	$watermark = new WatermarkImage();
+	$ret = $watermark->create(__FILE__, 'test/file', 'phpunit_' . rand() . '.gif');
+	if ($ret->isError()) {
+	    return $this->failWithStatus(__FILE__, __LINE__);
+	}
+
+	$ret = $watermark->save();
+	if ($ret->isError()) {
+	    return $this->failWithStatus(__FILE__, __LINE__);
+	}
+
+	// Use this watermark
+	list ($ret, $item) = $this->_createRandomDataItem($this->_getRootId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markForCleanup($item);
+	list ($ret, $derivative) = $this->_createDerivative(
+	    $item, $item->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL, '', 'test/file',
+	    array('postfilterOperations' => 'composite|watermark/' . $watermark->getFileName() . ',...'));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	// Try to delete it
+	GalleryUtilities::putRequestVariable('form[action][delete]', 1);
+	GalleryUtilities::putRequestVariable('form[delete][itemId]', $watermark->getId());
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:UserAdmin',
+						      'subView' => 'watermark:ConfirmDelete',
+						      'itemId' => $watermark->getId()),
+				  'status' => array(),
+				  'error' => array()),
+			    $results, 'Confirm Delete');
+
+	// Verify that it's NOT gone
+	$ret = $this->_verifyEntity($watermark);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }
 

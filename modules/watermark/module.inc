@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -36,17 +36,16 @@ class WatermarkModule extends GalleryModule {
 
     function WatermarkModule() {
 	global $gallery;
-	
+
 	$this->setId('watermark');
 	$this->setName('Watermark');
 	$this->setDescription($gallery->i18n('Watermark your images'));
-	$this->setVersion('0.8.2');
+	$this->setVersion('0.8.3');
 	$this->setGroup('display', $this->translate('Display'));
 	$this->setCallbacks('performFactoryRegistrations|registerEventListeners|' .
 			    'getSiteAdminViews|getUserAdminViews');
 	$this->setRequiredCoreApi(array(0, 8));
 	$this->setRequiredModuleApi(array(0, 8));
-	
     }
 
     /**
@@ -70,7 +69,7 @@ class WatermarkModule extends GalleryModule {
 						      'WatermarkOption',
 						      'WatermarkOption',
 						      dirname(__FILE__) . '/WatermarkOption.inc');
-	
+
 	return GalleryStatus::success();
     }
 
@@ -80,7 +79,7 @@ class WatermarkModule extends GalleryModule {
     function registerEventListeners() {
 	GalleryCoreApi::registerEventListener('GalleryEntity::delete', new WatermarkModule());
     }
-    
+
     /**
      * @see GalleryModule::isRecommendedDuringInstall
      */
@@ -110,7 +109,7 @@ class WatermarkModule extends GalleryModule {
      */
     function getUserAdminViews($user) {
 	global $gallery;
-	
+
 	list ($ret, $anonymousUserId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -144,7 +143,7 @@ class WatermarkModule extends GalleryModule {
 		}
 
 		foreach ($watermarkIds as $id) {
-		    $ret = GalleryCoreApi::deleteEntityById($id);
+		    list ($ret) = WatermarkHelper::deleteWatermarkImageById($id, true);
 		    if ($ret->isError()) {
 			return $ret->wrap(__FILE__, __LINE__);
 		    }

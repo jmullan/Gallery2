@@ -148,11 +148,10 @@ class WatermarkHelper {
 	FROM
 	  [WatermarkImage]
 	WHERE
-          [WatermarkImage::ownerId] = ?
+	  [WatermarkImage::ownerId] = ?
 	';
-	$data = array($ownerId);
 
-	list ($ret, $searchResults) = $gallery->search($query, $data);
+	list ($ret, $searchResults) = $gallery->search($query, array($ownerId));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -166,6 +165,106 @@ class WatermarkHelper {
     }
 
     /**
+     * Find items watermarked with the given watermark image.
+     *
+     * @param object WatermarkImage the watermark
+     * @return array object GalleryStatus a status code
+     *               array (itemId => array of derivative ids, ..)
+     * @static
+     */
+    function fetchWatermarkedItemIds($watermark) {
+	global $gallery;
+
+	$query = '
+	SELECT
+	  DISTINCT [GalleryChildEntity::parentId]
+	FROM
+	  [GalleryChildEntity], [GalleryDerivative]
+	WHERE
+	  [GalleryChildEntity::id] = [GalleryDerivative::id]
+	AND
+	  [GalleryDerivative::postFilterOperations] LIKE ?
+	';
+
+	list ($ret, $searchResults) = $gallery->search($query, array(
+	    '%composite|watermark/' . $watermark->getFileName() . ',%'));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$ids = array();
+	while ($result = $searchResults->nextResult()) {
+	    $ids[] = $result[0];
+	}
+
+	return array(GalleryStatus::success(), $ids);
+    }
+
+    /**
+     * Delete a watermark image.
+     *
+     * @param int id of watermark image
+     * @param boolean (optional) if true, delete even if watermark is used (and remove those uses)
+     * @return array object GalleryStatus a status object
+     *               boolean true if deleted
+     * @static
+     */
+    function deleteWatermarkImageById($itemId, $forceDelete=false) {
+	global $gallery;
+
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+	if ($ret->isError()) {
+	    if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
+		// Remap it as permission denied so that we avoid object id fishing
+		return array(GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__), null);
+	    } else {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+	list ($ret, $isAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	if (! (GalleryUtilities::isA($item, 'WatermarkImage') &&
+		($isAdmin || $item->getOwnerId() == $gallery->getActiveUserId()) )) {
+	    return array(GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__), null);
+	}
+
+	// Check if this watermark is used anywhere..
+	list ($ret, $watermarkedItemIds) = WatermarkHelper::fetchWatermarkedItemIds($item);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	if (!empty($watermarkedItemIds)) {
+	    if (!$forceDelete) {
+		return array(GalleryStatus::success(), false);
+	    }
+	    // Remove watermark from those items..
+	    list ($ret, $watermarkedItems) = GalleryCoreApi::loadEntitiesById($watermarkedItemIds);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    foreach ($watermarkedItems as $watermarkedItem) {
+		// Un-watermark this item..
+		$ret = WatermarkHelper::watermarkItem($item, $watermarkedItem, 0, 0,
+					array(DERIVATIVE_TYPE_IMAGE_PREFERRED => false,
+					      DERIVATIVE_TYPE_IMAGE_RESIZE => false,
+					      DERIVATIVE_TYPE_IMAGE_THUMBNAIL => false));
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	    }
+	}
+
+	$ret = GalleryCoreApi::deleteEntityById($itemId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	return array(GalleryStatus::success(), true);
+    }
+
+    /**
      * Apply the given watermark to the given item.  Expect the item to be locked already.
      *
      * @param object WatermarkImage the watermark
@@ -174,6 +273,7 @@ class WatermarkHelper {
      * @param string the y overlay location (in percentage)
      * @param array an array of DERIVATIVE_TYPE_IMAGE_XXX => true/false
      * @return object GalleryStatus a status code
+     * @static
      */
     function watermarkItem($watermark, $item, $xPercent, $yPercent, $whichDerivatives) {
 	list ($ret, $derivativeTable) = GalleryCoreApi::fetchDerivativesByItemIds(array($item->getId()));

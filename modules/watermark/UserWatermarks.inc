@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -78,7 +78,7 @@ class UserWatermarksController extends GalleryController {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-		
+
 	    $ret = GalleryCoreApi::addGroupPermission($item->getId(), $id, 'core.all');
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
@@ -97,32 +97,25 @@ class UserWatermarksController extends GalleryController {
 	    $error[] = 'form[error][missingFile]';
 	    $results['delegate']['view'] = 'core:UserAdmin';
 	    $results['delegate']['subView'] = 'watermark:UserWatermarks';
-	} else if (isset($form['action']['delete']) &&
-		   isset($form['delete']['itemId'])) {
+	} else if (isset($form['action']['delete']) && isset($form['delete']['itemId'])) {
+	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/WatermarkHelper.class');
 
-	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($form['delete']['itemId']);
-	    if ($ret->isError()) {
-		if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
-		    // Remap it as permission denied so that we avoid object id fishing
-		    return array(GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__), null);
-		} else {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-	    }
-
-	    if (!GalleryUtilities::isA($item, 'WatermarkImage') ||
-		    $item->getOwnerId() != $gallery->getActiveUserId()) {
-		return array(GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__), null);
-	    }
-	    
-	    $ret = GalleryCoreApi::deleteEntityById($form['delete']['itemId']);
+	    list ($ret, $wasDeleted) =
+		WatermarkHelper::deleteWatermarkImageById($form['delete']['itemId']);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    
-	    $status['delete'] = 1;
-	    $results['redirect']['view'] = 'core:UserAdmin';
-	    $results['redirect']['subView'] = 'watermark:UserWatermarks';
+
+	    if ($wasDeleted) {
+		$status['delete'] = 1;
+		$results['redirect']['view'] = 'core:UserAdmin';
+		$results['redirect']['subView'] = 'watermark:UserWatermarks';
+	    } else {
+		// Watermark is in use.. redirect to confirm page:
+		$results['redirect']['view'] = 'core:UserAdmin';
+		$results['redirect']['subView'] = 'watermark:ConfirmDelete';
+		$results['redirect']['itemId'] = $form['delete']['itemId'];
+	    }
 	}
 
 	$results['status'] = $status;
@@ -164,7 +157,7 @@ class UserWatermarksView extends GalleryView {
 		unset($watermarks[$id]);
 		continue;
 	    }
-	    
+
 	    $watermarks[$id] = $watermark->getMemberData();
 	}
 
@@ -174,7 +167,7 @@ class UserWatermarksView extends GalleryView {
 		$form['watermarkId'] = array_shift(array_keys($watermarks));
 	    }
 	}
-	
+
 	/* Set the form's encoding type since we're uploading binary files */
 	if ($template->hasVariable('UserAdmin')) {
 	    $UserAdmin =& $template->getVariableByReference('UserAdmin');
