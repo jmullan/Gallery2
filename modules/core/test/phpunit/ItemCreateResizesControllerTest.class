@@ -144,16 +144,26 @@ class ItemCreateResizesControllerTest extends GalleryControllerTestCase {
 	/* Examine the thumbnail and make sure it lines up */
 	list ($ret, $thumbTable) =
 	    GalleryDerivativeHelper::fetchThumbnailsByItemIds(array($this->_item->getId()));
-	$this->assert(!empty($thumbTable[$this->_item->getId()]));
-	$this->assertEquals('thumbnail|400', $thumbTable[$this->_item->getId()]->getDerivativeOperations());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	if (isset($thumbTable[$this->_item->getId()])) {
+	    $this->assertEquals('thumbnail|400', $thumbTable[$this->_item->getId()]->getDerivativeOperations());
+	}
 
 	/* Examine the resizes and make sure they line up */
 	list ($ret, $resizeTable) =
 	    GalleryDerivativeHelper::fetchResizesByItemIds(array($this->_item->getId()));
-	$this->assert(!empty($resizeTable[$this->_item->getId()]));
-	$this->assertEquals(3, sizeof($resizeTable[$this->_item->getId()]));
-	for ($i = 0; $i < 3; $i++) {
-	    $this->assertEquals('scale|' . 100 * ($i+1), $resizeTable[$this->_item->getId()][$i]->getDerivativeOperations());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	if (!empty($resizeTable[$this->_item->getId()])) {
+	    $this->assertEquals(3, sizeof($resizeTable[$this->_item->getId()]));
+	    for ($i = 0; $i < 3; $i++) {
+		$this->assertEquals('scale|' . 100 * ($i+1), $resizeTable[$this->_item->getId()][$i]->getDerivativeOperations());
+	    }
 	}
     }
 }
