@@ -282,8 +282,12 @@ class GalleryTemplateAdapter {
         } else {
             $parent =& $this->stackPeek();
             if (isset($parent['input'])) {
-               array_push($parent['input'], $tagData);
+                array_push($parent['input'], $tagData);
             } else if (isset($parent['element'])) {
+                /* Verify all element attributes */
+		if (!isset($tagData['params']['style'])) {
+		    $tagData['params']['style'] = null;
+		}
                 array_push($parent['element'], $tagData);
             } else if (isset($parent['content'])) {
 	        /* Content is passed back inline */
@@ -323,8 +327,12 @@ class GalleryTemplateAdapter {
         } else {
             $parent =& $this->stackPeek();
             if (isset($parent['form'])) {
-               array_push($parent['form'], $tagData);
+                array_push($parent['form'], $tagData);
             } else if (isset($parent['element'])) {
+                /* Verify all element attributes */
+		if (!isset($tagData['params']['style'])) {
+		    $tagData['params']['style'] = null;
+		}
                 array_push($parent['element'], $tagData);
             } else if (isset($parent['content'])) {
 	        /* Content is passed back inline */
@@ -364,8 +372,12 @@ class GalleryTemplateAdapter {
         } else {
             $parent =& $this->stackPeek();
             if (isset($parent['select'])) {
-               array_push($parent['select'], $tagData);
+                array_push($parent['select'], $tagData);
             } else if (isset($parent['element'])) {
+                /* Verify all element attributes */
+		if (!isset($tagData['params']['style'])) {
+		    $tagData['params']['style'] = null;
+		}
                 array_push($parent['element'], $tagData);
             } else if (isset($parent['content'])) {
 	        /* Content is passed back inline */
@@ -405,8 +417,12 @@ class GalleryTemplateAdapter {
         } else {
             $parent =& $this->stackPeek();
             if (isset($parent['textarea'])) {
-               array_push($parent['textarea'], $tagData);
+                array_push($parent['textarea'], $tagData);
             } else if (isset($parent['element'])) {
+                /* Verify all element attributes */
+		if (!isset($tagData['params']['style'])) {
+		    $tagData['params']['style'] = null;
+		}
                 array_push($parent['element'], $tagData);
             } else if (isset($parent['content'])) {
 	        /* Content is passed back inline */
@@ -446,8 +462,12 @@ class GalleryTemplateAdapter {
         } else {
             $parent =& $this->stackPeek();
             if (isset($parent['link'])) {
-               array_push($parent['link'], $tagData);
+                array_push($parent['link'], $tagData);
             } else if (isset($parent['element'])) {
+                /* Verify all element attributes */
+		if (!isset($tagData['params']['style'])) {
+		    $tagData['params']['style'] = null;
+		}
                 array_push($parent['element'], $tagData);
             } else if (isset($parent['content'])) {
 	        /* Content is passed back inline */
@@ -487,8 +507,12 @@ class GalleryTemplateAdapter {
         } else {
             $parent =& $this->stackPeek();
             if (isset($parent['success'])) {
-               array_push($parent['success'], $tagData);
+                array_push($parent['success'], $tagData);
             } else if (isset($parent['element'])) {
+                /* Verify all element attributes */
+		if (!isset($tagData['params']['style'])) {
+		    $tagData['params']['style'] = null;
+		}
                 array_push($parent['element'], $tagData);
             } else if (isset($parent['content'])) {
 	        /* Content is passed back inline */
@@ -528,8 +552,12 @@ class GalleryTemplateAdapter {
         } else {
             $parent =& $this->stackPeek();
             if (isset($parent['warning'])) {
-               array_push($parent['warning'], $tagData);
+                array_push($parent['warning'], $tagData);
             } else if (isset($parent['element'])) {
+                /* Verify all element attributes */
+		if (!isset($tagData['params']['style'])) {
+		    $tagData['params']['style'] = null;
+		}
                 array_push($parent['element'], $tagData);
             } else if (isset($parent['content'])) {
 	        /* Content is passed back inline */
@@ -569,8 +597,12 @@ class GalleryTemplateAdapter {
         } else {
             $parent =& $this->stackPeek();
             if (isset($parent['error'])) {
-               array_push($parent['error'], $tagData);
+                array_push($parent['error'], $tagData);
             } else if (isset($parent['element'])) {
+                /* Verify all element attributes */
+		if (!isset($tagData['params']['style'])) {
+		    $tagData['params']['style'] = null;
+		}
                 array_push($parent['element'], $tagData);
             } else if (isset($parent['content'])) {
 	        /* Content is passed back inline */
@@ -620,8 +652,12 @@ class GalleryTemplateAdapter {
         } else {
             $parent =& $this->stackPeek();
             if (isset($parent['listing'])) {
-               array_push($parent['listing'], $tagData);
+                array_push($parent['listing'], $tagData);
             } else if (isset($parent['element'])) {
+                /* Verify all element attributes */
+		if (!isset($tagData['params']['style'])) {
+		    $tagData['params']['style'] = null;
+		}
                 array_push($parent['element'], $tagData);
             } else if (isset($parent['content'])) {
 	        /* Content is passed back inline */
@@ -661,8 +697,12 @@ class GalleryTemplateAdapter {
         } else {
             $parent =& $this->stackPeek();
             if (isset($parent['breadcrumb'])) {
-               array_push($parent['breadcrumb'], $tagData);
+                array_push($parent['breadcrumb'], $tagData);
             } else if (isset($parent['element'])) {
+                /* Verify all element attributes */
+		if (!isset($tagData['params']['style'])) {
+		    $tagData['params']['style'] = null;
+		}
                 array_push($parent['element'], $tagData);
             } else if (isset($parent['content'])) {
 	        /* Content is passed back inline */
@@ -718,8 +758,12 @@ class GalleryTemplateAdapter {
         } else {
             $parent =& $this->stackPeek();
             if (isset($parent['linkset'])) {
-               array_push($parent['linkset'], $tagData);
+                array_push($parent['linkset'], $tagData);
             } else if (isset($parent['element'])) {
+                /* Verify all element attributes */
+		if (!isset($tagData['params']['style'])) {
+		    $tagData['params']['style'] = null;
+		}
                 array_push($parent['element'], $tagData);
             } else if (isset($parent['content'])) {
 	        /* Content is passed back inline */
@@ -775,8 +819,12 @@ class GalleryTemplateAdapter {
         } else {
             $parent =& $this->stackPeek();
             if (isset($parent['actionset'])) {
-               array_push($parent['actionset'], $tagData);
+                array_push($parent['actionset'], $tagData);
             } else if (isset($parent['element'])) {
+                /* Verify all element attributes */
+		if (!isset($tagData['params']['style'])) {
+		    $tagData['params']['style'] = null;
+		}
                 array_push($parent['element'], $tagData);
             } else if (isset($parent['content'])) {
 	        /* Content is passed back inline */
@@ -816,8 +864,12 @@ class GalleryTemplateAdapter {
         } else {
             $parent =& $this->stackPeek();
             if (isset($parent['infoset'])) {
-               array_push($parent['infoset'], $tagData);
+                array_push($parent['infoset'], $tagData);
             } else if (isset($parent['element'])) {
+                /* Verify all element attributes */
+		if (!isset($tagData['params']['style'])) {
+		    $tagData['params']['style'] = null;
+		}
                 array_push($parent['element'], $tagData);
             } else if (isset($parent['content'])) {
 	        /* Content is passed back inline */
@@ -857,8 +909,12 @@ class GalleryTemplateAdapter {
         } else {
             $parent =& $this->stackPeek();
             if (isset($parent['tabset'])) {
-               array_push($parent['tabset'], $tagData);
+                array_push($parent['tabset'], $tagData);
             } else if (isset($parent['element'])) {
+                /* Verify all element attributes */
+		if (!isset($tagData['params']['style'])) {
+		    $tagData['params']['style'] = null;
+		}
                 array_push($parent['element'], $tagData);
             } else if (isset($parent['content'])) {
 	        /* Content is passed back inline */
@@ -906,8 +962,12 @@ class GalleryTemplateAdapter {
         } else {
             $parent =& $this->stackPeek();
             if (isset($parent['table'])) {
-               array_push($parent['table'], $tagData);
+                array_push($parent['table'], $tagData);
             } else if (isset($parent['element'])) {
+                /* Verify all element attributes */
+		if (!isset($tagData['params']['style'])) {
+		    $tagData['params']['style'] = null;
+		}
                 array_push($parent['element'], $tagData);
             } else if (isset($parent['content'])) {
 	        /* Content is passed back inline */
@@ -955,8 +1015,12 @@ class GalleryTemplateAdapter {
         } else {
             $parent =& $this->stackPeek();
             if (isset($parent['row'])) {
-               array_push($parent['row'], $tagData);
+                array_push($parent['row'], $tagData);
             } else if (isset($parent['element'])) {
+                /* Verify all element attributes */
+		if (!isset($tagData['params']['style'])) {
+		    $tagData['params']['style'] = null;
+		}
                 array_push($parent['element'], $tagData);
             } else if (isset($parent['content'])) {
 	        /* Content is passed back inline */
@@ -1015,7 +1079,7 @@ class GalleryTemplateAdapter {
         } else {
             $parent =& $this->stackPeek();
             if (isset($parent['column'])) {
-               array_push($parent['column'], $tagData);
+                array_push($parent['column'], $tagData);
             } else {
                $smarty->trigger_error(sprintf('Illegal use of tag %s inside tag %s', 'column', $parent['_name']));
                return;
@@ -1055,7 +1119,7 @@ class GalleryTemplateAdapter {
         } else {
             $parent =& $this->stackPeek();
             if (isset($parent['element'])) {
-               array_push($parent['element'], $tagData);
+                array_push($parent['element'], $tagData);
             } else {
                $smarty->trigger_error(sprintf('Illegal use of tag %s inside tag %s', 'element', $parent['_name']));
                return;
@@ -1090,7 +1154,7 @@ class GalleryTemplateAdapter {
         } else {
             $parent =& $this->stackPeek();
             if (isset($parent['title'])) {
-               array_push($parent['title'], $tagData);
+                array_push($parent['title'], $tagData);
             } else {
                $smarty->trigger_error(sprintf('Illegal use of tag %s inside tag %s', 'title', $parent['_name']));
                return;
@@ -1125,7 +1189,7 @@ class GalleryTemplateAdapter {
         } else {
             $parent =& $this->stackPeek();
             if (isset($parent['subtitle'])) {
-               array_push($parent['subtitle'], $tagData);
+                array_push($parent['subtitle'], $tagData);
             } else {
                $smarty->trigger_error(sprintf('Illegal use of tag %s inside tag %s', 'subtitle', $parent['_name']));
                return;
@@ -1160,7 +1224,7 @@ class GalleryTemplateAdapter {
         } else {
             $parent =& $this->stackPeek();
             if (isset($parent['description'])) {
-               array_push($parent['description'], $tagData);
+                array_push($parent['description'], $tagData);
             } else {
                $smarty->trigger_error(sprintf('Illegal use of tag %s inside tag %s', 'description', $parent['_name']));
                return;
@@ -1195,7 +1259,7 @@ class GalleryTemplateAdapter {
         } else {
             $parent =& $this->stackPeek();
             if (isset($parent['footer'])) {
-               array_push($parent['footer'], $tagData);
+                array_push($parent['footer'], $tagData);
             } else {
                $smarty->trigger_error(sprintf('Illegal use of tag %s inside tag %s', 'footer', $parent['_name']));
                return;
@@ -1230,7 +1294,7 @@ class GalleryTemplateAdapter {
         } else {
             $parent =& $this->stackPeek();
             if (isset($parent['media'])) {
-               array_push($parent['media'], $tagData);
+                array_push($parent['media'], $tagData);
             } else {
                $smarty->trigger_error(sprintf('Illegal use of tag %s inside tag %s', 'media', $parent['_name']));
                return;
@@ -1266,7 +1330,7 @@ class GalleryTemplateAdapter {
         } else {
             $parent =& $this->stackPeek();
             if (isset($parent['value'])) {
-               array_push($parent['value'], $tagData);
+                array_push($parent['value'], $tagData);
             } else {
                $smarty->trigger_error(sprintf('Illegal use of tag %s inside tag %s', 'value', $parent['_name']));
                return;
@@ -1324,8 +1388,12 @@ class GalleryTemplateAdapter {
         } else {
             $parent =& $this->stackPeek();
             if (isset($parent['main'])) {
-               array_push($parent['main'], $tagData);
+                array_push($parent['main'], $tagData);
             } else if (isset($parent['element'])) {
+                /* Verify all element attributes */
+		if (!isset($tagData['params']['style'])) {
+		    $tagData['params']['style'] = null;
+		}
                 array_push($parent['element'], $tagData);
             } else if (isset($parent['content'])) {
 	        /* Content is passed back inline */
@@ -1373,8 +1441,12 @@ class GalleryTemplateAdapter {
         } else {
             $parent =& $this->stackPeek();
             if (isset($parent['sidebar'])) {
-               array_push($parent['sidebar'], $tagData);
+                array_push($parent['sidebar'], $tagData);
             } else if (isset($parent['element'])) {
+                /* Verify all element attributes */
+		if (!isset($tagData['params']['style'])) {
+		    $tagData['params']['style'] = null;
+		}
                 array_push($parent['element'], $tagData);
             } else if (isset($parent['content'])) {
 	        /* Content is passed back inline */
@@ -1471,8 +1543,12 @@ class GalleryTemplateAdapter {
         } else {
             $parent =& $this->stackPeek();
             if (isset($parent['itemthumbnail'])) {
-               array_push($parent['itemthumbnail'], $tagData);
+                array_push($parent['itemthumbnail'], $tagData);
             } else if (isset($parent['element'])) {
+                /* Verify all element attributes */
+		if (!isset($tagData['params']['style'])) {
+		    $tagData['params']['style'] = null;
+		}
                 array_push($parent['element'], $tagData);
             } else if (isset($parent['content'])) {
 	        /* Content is passed back inline */
@@ -1558,8 +1634,12 @@ class GalleryTemplateAdapter {
         } else {
             $parent =& $this->stackPeek();
             if (isset($parent['itemview'])) {
-               array_push($parent['itemview'], $tagData);
+                array_push($parent['itemview'], $tagData);
             } else if (isset($parent['element'])) {
+                /* Verify all element attributes */
+		if (!isset($tagData['params']['style'])) {
+		    $tagData['params']['style'] = null;
+		}
                 array_push($parent['element'], $tagData);
             } else if (isset($parent['content'])) {
 	        /* Content is passed back inline */
@@ -1621,8 +1701,12 @@ class GalleryTemplateAdapter {
         } else {
             $parent =& $this->stackPeek();
             if (isset($parent['tabbedbox'])) {
-               array_push($parent['tabbedbox'], $tagData);
+                array_push($parent['tabbedbox'], $tagData);
             } else if (isset($parent['element'])) {
+                /* Verify all element attributes */
+		if (!isset($tagData['params']['style'])) {
+		    $tagData['params']['style'] = null;
+		}
                 array_push($parent['element'], $tagData);
             } else if (isset($parent['content'])) {
 	        /* Content is passed back inline */
@@ -1711,8 +1795,12 @@ class GalleryTemplateAdapter {
         } else {
             $parent =& $this->stackPeek();
             if (isset($parent['box'])) {
-               array_push($parent['box'], $tagData);
+                array_push($parent['box'], $tagData);
             } else if (isset($parent['element'])) {
+                /* Verify all element attributes */
+		if (!isset($tagData['params']['style'])) {
+		    $tagData['params']['style'] = null;
+		}
                 array_push($parent['element'], $tagData);
             } else if (isset($parent['content'])) {
 	        /* Content is passed back inline */
@@ -1757,8 +1845,12 @@ class GalleryTemplateAdapter {
         } else {
             $parent =& $this->stackPeek();
             if (isset($parent['pagebox'])) {
-               array_push($parent['pagebox'], $tagData);
+                array_push($parent['pagebox'], $tagData);
             } else if (isset($parent['element'])) {
+                /* Verify all element attributes */
+		if (!isset($tagData['params']['style'])) {
+		    $tagData['params']['style'] = null;
+		}
                 array_push($parent['element'], $tagData);
             } else if (isset($parent['content'])) {
 	        /* Content is passed back inline */
@@ -1820,8 +1912,12 @@ class GalleryTemplateAdapter {
         } else {
             $parent =& $this->stackPeek();
             if (isset($parent['banner'])) {
-               array_push($parent['banner'], $tagData);
+                array_push($parent['banner'], $tagData);
             } else if (isset($parent['element'])) {
+                /* Verify all element attributes */
+		if (!isset($tagData['params']['style'])) {
+		    $tagData['params']['style'] = null;
+		}
                 array_push($parent['element'], $tagData);
             } else if (isset($parent['content'])) {
 	        /* Content is passed back inline */
@@ -1885,8 +1981,12 @@ class GalleryTemplateAdapter {
         } else {
             $parent =& $this->stackPeek();
             if (isset($parent['item'])) {
-               array_push($parent['item'], $tagData);
+                array_push($parent['item'], $tagData);
             } else if (isset($parent['element'])) {
+                /* Verify all element attributes */
+		if (!isset($tagData['params']['style'])) {
+		    $tagData['params']['style'] = null;
+		}
                 array_push($parent['element'], $tagData);
             } else if (isset($parent['content'])) {
 	        /* Content is passed back inline */
@@ -1945,8 +2045,12 @@ class GalleryTemplateAdapter {
         } else {
             $parent =& $this->stackPeek();
             if (isset($parent['actionitem'])) {
-               array_push($parent['actionitem'], $tagData);
+                array_push($parent['actionitem'], $tagData);
             } else if (isset($parent['element'])) {
+                /* Verify all element attributes */
+		if (!isset($tagData['params']['style'])) {
+		    $tagData['params']['style'] = null;
+		}
                 array_push($parent['element'], $tagData);
             } else if (isset($parent['content'])) {
 	        /* Content is passed back inline */
