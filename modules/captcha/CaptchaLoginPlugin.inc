@@ -104,7 +104,7 @@ class CaptchaLoginPlugin extends UserLoginPlugin {
 			 'modules_captcha');
 	} else {
 	    /* They haven't failed enough to require the captcha yet */
-	    return array(GalleryStatus::success(), '', '');
+	    return array(GalleryStatus::success(), null, null);
 	}
     }
 }
