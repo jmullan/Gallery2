@@ -50,17 +50,19 @@ class ShowItemErrorView extends GalleryView {
 
 	switch ($problem) {
 	case 'missingLayout':
-	    $layoutId = $item->getLayout();
-	    if (empty($layoutId)) {
-		list ($ret, $layoutId) =
-		    GalleryCoreApi::getPluginParameter('module', 'core', 'default.layout');
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
+	    list ($ret, $layoutId) = GalleryCoreApi::fetchLayoutId($item);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    if (GalleryUtilities::isA($item, 'GalleryDataItem')) {
+		$targetId = $item->getParentId();
+	    } else {
+		$targetId = $item->getId();
 	    }
 
 	    $template->setVariable('ShowItemError',
-				   array('itemId' => $item->getId(),
+				   array('itemId' => $targetId,
 					 'layoutId' => $layoutId));
 	    return array(GalleryStatus::success(),
 			 array('body' => 'modules/core/templates/ShowItemError.tpl'));
@@ -71,89 +73,6 @@ class ShowItemErrorView extends GalleryView {
 	     * throw up a security violation page.
 	     */
 	    return array(GalleryStatus::success(), array());
-	}
-    }
-
-    /**
-     * @see GalleryView::getViewDescription()
-     */
-    function getViewDescription() {
-	global $gallery;
-
-	list ($ret, $item) = $this->_getItem();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	$typeName = $item->itemTypeName(true);
-	return array(GalleryStatus::success(), $typeName[1]);
-    }
-
-    /**
-     * @see GalleryView::rewriteQueryString
-     */
-    function rewriteQueryString($params) {
-	global $gallery;
-
-	/* We know who we are */
-	unset($params['view']);
-
-	/* Transform the id into a path */
-	$buf = '';
-	if (isset($params['itemId'])) {
-	    list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($params['itemId']);
-	    if ($ret->isSuccess()) {
-		list ($ret, $path) = $entity->fetchLogicalPath();
-		if ($ret->isSuccess()) {
-		    $buf .= $path;
-		    unset($params['itemId']);
-		}
-	    }
-
-	    if (!GalleryUtilities::isA($entity, 'GalleryAlbumItem')) {
-		$buf .= '.html';
-	    }
-	}
-
-	/* Add in anything else as a standard query element */
-	if (!empty($params)) {
-	    $buf .= GalleryUrlGenerator::buildQueryString($params);
-	}
-
-	return $buf;
-    }
-
-    /**
-     * @see GalleryView::parseQueryString()
-     */
-    function parseQueryString($queryString) {
-
-	/* Treat the input as a path and get the right item id out */
-	$itemId = null;
-	if (substr($queryString, -5, 5) == '.html') {
-	    $queryString = substr($queryString, 0, strlen($queryString) - 5);
-	    $queryString .= '/';
-	}
-	$origQueryString = $queryString;
-	while ($itemId == null && !empty($queryString)) {
-	    list ($ret, $itemId) = GalleryCoreApi::fetchItemIdByPath(urldecode($queryString));
-	    if ($ret->isError() && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-	    if ($ret->isSuccess()) {
-		break;
-	    } else {
-		/* Object is missing -- try trimming the query string */
-		$queryString = preg_replace('|/[^/]*$|', '', $queryString);
-	    }
-	}
-
-	GalleryUtilities::putRequestVariable('itemId', $itemId);
-	if ($origQueryString == $queryString) {
-	    return array(GalleryStatus::success(), null);
-	} else {
-	    return array(GalleryStatus::success(), $queryString);
 	}
     }
 }
