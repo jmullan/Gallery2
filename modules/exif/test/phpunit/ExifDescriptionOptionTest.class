@@ -1,0 +1,115 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package Exif
+ * @subpackage PHPUnit
+ * @author Alan Harder <alan.harder@sun.com>
+ */
+
+GalleryCoreApi::relativeRequireOnce('lib/tools/phpunit/ItemAddOptionTestCase.class');
+//GalleryCoreApi::relativeRequireOnce('modules/exif/ExifDescriptionOption.inc');
+
+/**
+ * ExifDescriptionOption tests
+ * @package Exif
+ * @subpackage PHPUnit
+ */
+class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
+
+    function ExifDescriptionOptionTest($methodName) {
+	$this->ItemAddOptionTestCase($methodName, 'exif', 'ExifDescriptionOption');
+    }
+
+    function setUp() {
+	global $gallery;
+	parent::setUp();
+
+	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markForCleanup($this->_album);
+
+	list ($ret, $this->_save) = GalleryCoreApi::getPluginParameter('module', 'exif', 'addOption');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_album->getId(), 'image/jpeg',
+	    array('summary' => 'original summary', 'description' => 'original description'),
+	    dirname(__FILE__) . '/../data/descr.jpg');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    function tearDown() {
+	$ret = GalleryCoreApi::setPluginParameter('module', 'exif', 'addOption', $this->_save);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	parent::tearDown();
+    }
+
+    function testCreateDescription() {
+	$ret = GalleryCoreApi::setPluginParameter('module', 'exif', 'addOption', '2');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$error = $this->handleRequestAfterAdd(array(), $this->_item);
+	$this->assertEquals(array(), $error);
+
+	list ($ret, $item) = $this->_item->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals('exif description', $item->getDescription(), 'description');
+	$this->assertEquals('original summary', $item->getSummary(), 'summary');
+    }
+
+    function testCreateWithCheckDisabled() {
+	$ret = GalleryCoreApi::setPluginParameter('module', 'exif', 'addOption', '0');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$error = $this->handleRequestAfterAdd(array(), $this->_item);
+	$this->assertEquals(array(), $error);
+
+	list ($ret, $item) = $this->_item->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals('original description', $item->getDescription(), 'description');
+	$this->assertEquals('original summary', $item->getSummary(), 'summary');
+    }
+}
+?>

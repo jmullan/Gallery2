@@ -12,7 +12,6 @@
 	{g->text text="EXIF Settings"}
       </h2>
     </div>
-    
   </div>
 
   {if !empty($status)}
@@ -89,6 +88,11 @@
 	       many="Moved %d properties down in the Detailed view"
 	       count=$status.movedDown.detailed
 	       arg1=$status.movedDown.detailed}
+    </div>
+    {/if}
+    {if isset($status.saved)}
+    <div class="giStatus">
+      {g->text text="Settings saved successfully"}
     </div>
     {/if}
   </div>
@@ -188,5 +192,28 @@
 
     <input type="submit" name="{g->formVar var="form[action][resetSummary]"}" value="{g->text text="Restore Summary Defaults"}"/>
     <input type="submit" name="{g->formVar var="form[action][resetDetailed]"}" value="{g->text text="Restore Detailed Defaults"}"/>
+  </div>
+
+  <div class="gbAdmin">
+    <h3 class="giTitle">
+      {g->text text="Item Upload"}
+    </h3>
+    <p class="giDescription">
+      {g->text text="When photos are added to Gallery check for EXIF Image Description and apply to:"}
+    </p>
+    <p class="giDescription">
+      <input type="checkbox" id="itemSummary" name="{g->formVar var="form[item][summary]"}"
+	     {if $form.item.summary}checked="checked"{/if}/>
+      <label for="itemSummary">
+	{g->text text="Summary"}
+      </label>
+      <br/>
+      <input type="checkbox" id="itemDescription" name="{g->formVar var="form[item][description]"}"
+	     {if $form.item.description}checked="checked"{/if}/>
+      <label for="itemDescription">
+	{g->text text="Description"}
+      </label>
+    </p>
+    <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}"/>
   </div>
 </div>

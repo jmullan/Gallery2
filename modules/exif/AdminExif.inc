@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -30,8 +30,8 @@
 /**
  * Required classes
  */
-require_once(dirname(__FILE__) . '/classes/ExifHelper.class');
-require_once(dirname(__FILE__) . '/classes/ExifPropertiesMap.class');
+GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/ExifHelper.class');
+GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/ExifPropertiesMap.class');
 
 /**
  * This controller will handle the setting of Exif module options
@@ -40,7 +40,7 @@ require_once(dirname(__FILE__) . '/classes/ExifPropertiesMap.class');
  * @subpackage UserInterface
  */
 class AdminExifController extends GalleryController {
-    
+
     /**
      * @see GalleryController::handleRequest
      */
@@ -74,7 +74,7 @@ class AdminExifController extends GalleryController {
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-		
+
 		$status['added']['summary'] = $count;
 		$redirect['view'] = 'core:SiteAdmin';
 		$redirect['subView'] = 'exif:AdminExif';
@@ -322,6 +322,16 @@ class AdminExifController extends GalleryController {
 	    } else {
 		$error[] = 'form[error][detailed][missing]';
 	    }
+	} else if (isset($form['action']['save'])) {
+	    $addOption = (isset($form['item']['summary']) ? 1 : 0)
+		       | (isset($form['item']['description']) ? 2 : 0);
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'exif', 'addOption', $addOption);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $status['saved'] = 1;
+	    $redirect['view'] = 'core:SiteAdmin';
+	    $redirect['subView'] = 'exif:AdminExif';
 	}
 
 	if (!empty($redirect)) {
@@ -352,20 +362,26 @@ class AdminExifView extends GalleryView {
 	global $gallery;
 
 	$mode = GalleryUtilities::getRequestVariables('mode');
-	
+
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	    
-	if ($form['formName'] != 'AdminExif') {
-	    /* Load up our form data */
-	    $form['formName'] = 'AdminExif';
 	}
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'exif');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if ($form['formName'] != 'AdminExif') {
+	    /* Load up our form data */
+	    $form['formName'] = 'AdminExif';
+
+	    list ($ret, $addOption) = $module->getParameter('addOption');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $form['item'] = array('summary' => $addOption & 1, 'description' => $addOption & 2);
 	}
 
 	$exifKeys = ExifHelper::getExifKeys();
@@ -380,7 +396,7 @@ class AdminExifView extends GalleryView {
 	foreach ($tmp as $property) {
 	    $summaryList[$property] = $module->translate($exifKeys[$property][0]);
 	}
-	
+
 	/* Prepare the detailed list */
 	$detailedList = array();
 	list ($ret, $tmp) = ExifPropertiesMap::getProperties(EXIF_DETAILED);
@@ -390,7 +406,7 @@ class AdminExifView extends GalleryView {
 	foreach ($tmp as $property) {
 	    $detailedList[$property] = $module->translate($exifKeys[$property][0]);
 	}
-	
+
 	/* Anything not summary and detailed is available */
 	$availableList = array();
 	foreach ($exifKeys as $key => $data) {
@@ -407,7 +423,7 @@ class AdminExifView extends GalleryView {
 	$AdminExif['availableList'] = $availableList;
 	$AdminExif['summaryList'] = $summaryList;
 	$AdminExif['detailedList'] = $detailedList;
-	
+
 	$template->setVariable('controller', 'exif:AdminExif');
 	$template->setVariable('AdminExif', $AdminExif);
 

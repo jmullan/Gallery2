@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -41,8 +41,8 @@ class AdminExifControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 	parent::setUp();
 
-	require_once(dirname(__FILE__) . '/../../classes/ExifHelper.class');
-	require_once(dirname(__FILE__) . '/../../classes/ExifPropertiesMap.class');
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/../../classes/ExifHelper.class');
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/../../classes/ExifPropertiesMap.class');
 	list ($ret, $this->_save['summary']) = ExifPropertiesMap::getProperties(EXIF_SUMMARY);
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
@@ -50,6 +50,13 @@ class AdminExifControllerTest extends GalleryControllerTestCase {
 	}
 
 	list ($ret, $this->_save['detailed']) = ExifPropertiesMap::getProperties(EXIF_DETAILED);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $this->_save['addOption']) =
+	    GalleryCoreApi::getPluginParameter('module', 'exif', 'addOption');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -79,6 +86,13 @@ class AdminExifControllerTest extends GalleryControllerTestCase {
 	}
 
 	$ret = ExifPropertiesMap::setProperties(EXIF_DETAILED, $this->_save['detailed']);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::setPluginParameter('module', 'exif',
+						  'addOption', $this->_save['addOption']);
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -163,7 +177,7 @@ class AdminExifControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals('ISO', $properties[7]);
 	$this->assertEquals('DateTime', $properties[10]);
     }
-    
+
     function testMoveUpSummaryMissing() {
 	GalleryUtilities::putRequestVariable('form[action][moveUpSummary]', 1);
 
@@ -198,7 +212,7 @@ class AdminExifControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals('ISO', $properties[9]);
 	$this->assert('DateTime', $properties[11]);
     }
-    
+
     function testMoveDownSummaryMissing() {
 	GalleryUtilities::putRequestVariable('form[action][moveDownSummary]', 1);
 
@@ -216,7 +230,7 @@ class AdminExifControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	GalleryUtilities::putRequestVariable('form[action][resetSummary]', 1);
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
@@ -314,7 +328,7 @@ class AdminExifControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals('ISO', $properties[7]);
 	$this->assertEquals('SubjectDistance', $properties[25]);
     }
-    
+
     function testMoveUpDetailedMissing() {
 	GalleryUtilities::putRequestVariable('form[action][moveUpDetailed]', 1);
 
@@ -349,7 +363,7 @@ class AdminExifControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals('ISO', $properties[9]);
 	$this->assertEquals('SubjectDistance', $properties[26]);
     }
-    
+
     function testMoveDownDetailedMissing() {
 	GalleryUtilities::putRequestVariable('form[action][moveDownDetailed]', 1);
 
@@ -367,7 +381,7 @@ class AdminExifControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	GalleryUtilities::putRequestVariable('form[action][resetDetailed]', 1);
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
@@ -387,6 +401,25 @@ class AdminExifControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals('Make', $properties[0]);
 	$this->assertEquals('ISO', $properties[8]);
 	$this->assertEquals('SubjectDistance', $properties[26]);
+    }
+
+    function testSaveAddOption() {
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[item][description]', 1);
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'exif:AdminExif'),
+				  'status' => array('saved' => 1),
+				  'error' => array()),
+			    $results);
+
+	list ($ret, $addOption) = GalleryCoreApi::getPluginParameter('module', 'exif', 'addOption');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals('2', $addOption);
     }
 }
 ?>
