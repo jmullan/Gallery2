@@ -163,8 +163,8 @@ class AdminLayoutsControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'core:AdminLayouts'),
 				  'status' => array(),
-				  'error' => array('form.error.key.rows.invalid',
-						   'form.error.key.columns.invalid')),
+				  'error' => array('form[error][key][rows][invalid]',
+						   'form[error][key][columns][invalid]')),
 			    $results);
 
 	$map =& TestLayoutId2Layout::getMap();

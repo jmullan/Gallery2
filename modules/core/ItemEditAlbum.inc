@@ -67,15 +67,15 @@ class ItemEditAlbumController extends GalleryController {
 	} else if (isset($form['action']['save'])) {
 	    /* Validate the input data. */
 	    if (!is_numeric($form['thumbnail']['size']) || $form['thumbnail']['size'] < 1) {
-		$error[] = 'form.error.thumbnail.size.invalid';
+		$error[] = 'form[error][thumbnail][size][invalid]';
 	    }
 
 	    for ($i = 0; $i < sizeof($form['resizes']); $i++) {
 		if (!empty($form['resizes'][$i]['active'])) {
 		    if (empty($form['resizes'][$i]['size'])) {
-			$error[] = 'form.error.resizes.' . $i . '.size.missing';
+			$error[] = 'form[error][resizes][' . $i . '][size][missing]';
 		    } else if (!is_numeric($form['resizes'][$i]['size'])) {
-			$error[] = 'form.error.resizes.' . $i . '.size.invalid';
+			$error[] = 'form[error][resizes][' . $i . '][size][invalid]';
 		    }
 		}
 	    }

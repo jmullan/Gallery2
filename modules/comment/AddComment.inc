@@ -56,11 +56,11 @@ class AddCommentController extends GalleryController {
 	if (isset($form['action']['add'])) {
 	    
 	    if (empty($form['subject'])) {
-		$error[] = 'form.error.subject.missing';
+		$error[] = 'form[error][subject][missing]';
 	    }
 
 	    if (empty($form['comment'])) {
-		$error[] = 'form.error.comment.missing';
+		$error[] = 'form[error][comment][missing]';
 	    }
 	    
 	    if (empty($error)) {
@@ -102,11 +102,11 @@ class AddCommentController extends GalleryController {
 	    }
 	} else if (isset($form['action']['preview'])) {
 	    if (empty($form['subject'])) {
-		$error[] = 'form.error.subject.missing';
+		$error[] = 'form[error][subject][missing]';
 	    }
 
 	    if (empty($form['comment'])) {
-		$error[] = 'form.error.comment.missing';
+		$error[] = 'form[error][comment][missing]';
 	    }
 
 	    /* Fall through back to the current view */

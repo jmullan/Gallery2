@@ -43,7 +43,7 @@ class SelectGalleryController extends GalleryController {
 
 	if (isset($form['action']['select'])) {
 	    if (empty($form['albumsPath'])) {
-		$error[] = 'form.error.albumsPath.missing';
+		$error[] = 'form[error][albumsPath][missing]';
 	    } else {
 		$platform = $gallery->getPlatform();
 		$slash = $platform->getDirectorySeparator();
@@ -54,7 +54,7 @@ class SelectGalleryController extends GalleryController {
 		$form['albumsPath'] = trim($tmp);
 	    
 		if (!Gallery1DataParser::isValidAlbumsPath($form['albumsPath'])) {
-		    $error[] = 'form.error.albumsPath.invalid';
+		    $error[] = 'form[error][albumsPath][invalid]';
 		}
 	    }
 	}

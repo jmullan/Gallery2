@@ -142,7 +142,7 @@ class AdminFfmpegControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'ffmpeg:AdminFfmpeg'),
 				  'status' => array(),
-				  'error' => array('form.error.path.testError')),
+				  'error' => array('form[error][path][testError]')),
 				  $results);
     }
 
@@ -158,7 +158,7 @@ class AdminFfmpegControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'ffmpeg:AdminFfmpeg'),
 				  'status' => array(),
-				  'error' => array('form.error.path.badPath')),
+				  'error' => array('form[error][path][badPath]')),
 			    $results);
     }
     
@@ -174,7 +174,7 @@ class AdminFfmpegControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'ffmpeg:AdminFfmpeg'),
 				  'status' => array(),
-				  'error' => array('form.error.path.notExecutable')),
+				  'error' => array('form[error][path][notExecutable]')),
 			    $results);
     }
     
@@ -190,7 +190,7 @@ class AdminFfmpegControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'ffmpeg:AdminFfmpeg'),
 				  'status' => array(),
-				  'error' => array('form.error.path.missing')),
+				  'error' => array('form[error][path][missing]')),
 			    $results);
     }
 }

@@ -65,7 +65,7 @@ class AdminUsersController extends GalleryController {
 	if (isset($form['action']['filterClear'])) {
 
 	    /* Clear the filter */
-	    GalleryUtilities::putRequestVariable('form.list.filter', null);
+	    GalleryUtilities::putRequestVariable('form[list][filter]', null);
 	    
 	} else if (isset($form['action']['create'])) {
 
@@ -76,9 +76,9 @@ class AdminUsersController extends GalleryController {
 	} else if (isset($form['action']['editFromText'])) {
 
 	    if (empty($form['text']['userName'])) {
-		$error[] = 'form.error.text.noUserSpecified';
+		$error[] = 'form[error][text][noUserSpecified]';
 	    } else if ($user == null) {
-		$error[] = 'form.error.text.noSuchUser';
+		$error[] = 'form[error][text][noSuchUser]';
 	    } else {
 		/* Show the "delete user" view */
 		$redirect['view'] = 'core:SiteAdmin';
@@ -89,9 +89,9 @@ class AdminUsersController extends GalleryController {
 	} else if (isset($form['action']['deleteFromText'])) {
 
 	    if (empty($form['text']['userName'])) {
-		$error[] = 'form.error.text.noUserSpecified';
+		$error[] = 'form[error][text][noUserSpecified]';
 	    } else if ($user == null) {
-		$error[] = 'form.error.text.noSuchUser';
+		$error[] = 'form[error][text][noSuchUser]';
 	    } else {
 
 		/*
@@ -105,11 +105,11 @@ class AdminUsersController extends GalleryController {
 		}
 
 		if ($user->getId() == $anonymousUserId) {
-		    $error[] = 'form.error.text.cantDeleteAnonymous';
+		    $error[] = 'form[error][text][cantDeleteAnonymous]';
 		}
 
 		if ($user->getId() == $gallery->getActiveUserId()) {
-		    $error[] = 'form.error.text.cantDeleteSelf';
+		    $error[] = 'form[error][text][cantDeleteSelf]';
 		}
 	    }
 

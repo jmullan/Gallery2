@@ -73,15 +73,15 @@ class UserChangePasswordController extends GalleryController {
 	     * Validate our data before we continue.
 	     */
 	    if (empty($form['password1'])) {
-		$error[] = 'form.error.password1.missing';
+		$error[] = 'form[error][password1][missing]';
 	    }
 	    
 	    if (empty($form['password2'])) {
-		$error[] = 'form.error.password2.missing';
+		$error[] = 'form[error][password2][missing]';
 	    }
 
 	    if (!$error && $form['password1'] != $form['password2']) {
-		$error[] = 'form.error.password2.mismatch';
+		$error[] = 'form[error][password2][mismatch]';
 	    }
 
 	    /*

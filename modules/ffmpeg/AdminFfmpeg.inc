@@ -52,7 +52,7 @@ class AdminFfmpegController extends GalleryController {
 	if (isset($form['action']['save']) || isset($form['action']['test'])) {
 
 	    if (empty($form['path'])) {
-		$error[] = 'form.error.path.missing';
+		$error[] = 'form[error][path][missing]';
 	    } else {
 
 		/* Verify the path */
@@ -71,7 +71,7 @@ class AdminFfmpegController extends GalleryController {
 			$path = $form['path'] . 'ffmpeg';
 
 			if (!$platform->file_exists($path)) {
-			    $error[] = 'form.error.path.badPath';
+			    $error[] = 'form[error][path][badPath]';
 			} else {
 			    /* Got a match */
 			    $form['path'] = $path;
@@ -81,7 +81,7 @@ class AdminFfmpegController extends GalleryController {
 
 		    if (empty($error)) {
 			if ($platform->is_file($form['path']) && !$platform->is_executable($form['path'])) {
-			    $error[] = 'form.error.path.notExecutable';
+			    $error[] = 'form[error][path][notExecutable]';
 			}
 		    }
 		}
@@ -91,7 +91,7 @@ class AdminFfmpegController extends GalleryController {
 			FfmpegToolkitHelper::testBinary($form['path']);
 		    if ($ret->isError()) {
 			if ($ret->getErrorCode() & ERROR_BAD_PATH) {
-			    $error[] = 'form.error.path.badPath';
+			    $error[] = 'form[error][path][badPath]';
 			} else {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
@@ -105,7 +105,7 @@ class AdminFfmpegController extends GalleryController {
 			}
 			
 			if ($failCount > 0) {
-			    $error[] = 'form.error.path.testError';
+			    $error[] = 'form[error][path][testError]';
 			}
 		    }
 		}

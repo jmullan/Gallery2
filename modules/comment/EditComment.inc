@@ -65,30 +65,30 @@ class EditCommentController extends GalleryController {
 
 	    /* Verify the input parameters */
 	    if (empty($form['commenterName'])) {
-		$error[] = 'form.error.commenterName.missing';
+		$error[] = 'form[error][commenterName][missing]';
 	    } else {
 		list ($ret, $commenter) = GalleryUserHelper::fetchUserByUsername($form['commenterName']);
 		if ($ret->isError()) {
-		    $error[] = 'form.error.commenterName.invalid';
+		    $error[] = 'form[error][commenterName][invalid]';
 		}
 	    }
 
 	    $longDate = null;
 	    if (empty($form['date'])) {
-		$error[] = 'form.error.date.missing';
+		$error[] = 'form[error][date][missing]';
 	    } else {
 		$longDate = strtotime($form['date']);
 		if ($longDate == -1) {
-		    $error[] = 'form.error.invalidDate';
+		    $error[] = 'form[error][invalidDate]';
 		}
 	    }
 
 	    if (empty($form['subject'])) {
-		$error[] = 'form.error.subject.missing';
+		$error[] = 'form[error][subject][missing]';
 	    }
 
 	    if (empty($form['comment'])) {
-		$error[] = 'form.error.comment.missing';
+		$error[] = 'form[error][comment][missing]';
 	    }
 
 	    if (empty($error)) {

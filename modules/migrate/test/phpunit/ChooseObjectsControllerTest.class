@@ -53,7 +53,7 @@ class ChooseObjectsControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'migrate:ChooseObjects'),
 				  'status' => array(),
-				  'error' => array('form.error.nothingSelected')),
+				  'error' => array('form[error][nothingSelected]')),
 			    $results);
     }
 

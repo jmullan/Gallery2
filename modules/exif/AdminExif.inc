@@ -82,13 +82,13 @@ class AdminExifController extends GalleryController {
 
 	    $platform = $gallery->getPlatform();
 	    if (empty($path)) {
-		$error[] = 'form.error.uploadLocalServer.newDir.missing';
+		$error[] = 'form[error][uploadLocalServer][newDir][missing]';
 	    } else if ($platform->isRestrictedByOpenBasedir($path)) {
-		$error[] = 'form.error.uploadLocalServer.newDir.restrictedByOpenBasedir';
+		$error[] = 'form[error][uploadLocalServer][newDir][restrictedByOpenBasedir]';
 	    } else if (!$platform->is_readable($path)) {
-		$error[] = 'form.error.uploadLocalServer.newDir.notReadable';
+		$error[] = 'form[error][uploadLocalServer][newDir][notReadable]';
 	    } else if (!$platform->is_dir($path)) {
-		$error[] = 'form.error.uploadLocalServer.newDir.notADirectory';
+		$error[] = 'form[error][uploadLocalServer][newDir][notADirectory]';
 	    } 
 
 	    if (empty($error)) {
@@ -133,7 +133,7 @@ class AdminExifController extends GalleryController {
 		$redirect['view'] = 'core:SiteAdmin';
 		$redirect['subView'] = 'core:AdminExif';
 	    } else {
-		$error[] = 'form.error.uploadLocalServer.selectedDir.missing';
+		$error[] = 'form[error][uploadLocalServer][selectedDir][missing]';
 	    }
 	}
 

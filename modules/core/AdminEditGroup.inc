@@ -73,7 +73,7 @@ class AdminEditGroupController extends GalleryController {
 	} else if (isset($form['action']['save'])) {
 
 	    if (empty($form['groupName'])) {
-		$error[] = 'form.error.groupName.missing';
+		$error[] = 'form[error][groupName][missing]';
 	    }
 
 	    if (empty($error)) {

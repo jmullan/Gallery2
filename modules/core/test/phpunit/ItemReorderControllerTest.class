@@ -244,7 +244,7 @@ class ItemReorderControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
 						      'subView' => 'core:ItemReorder'),
 				  'status' => array(),
-				  'error' => array('form.error.selectedId.missing')),
+				  'error' => array('form[error][selectedId][missing]')),
 			    $results);
     }
 
@@ -262,7 +262,7 @@ class ItemReorderControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
 						      'subView' => 'core:ItemReorder'),
 				  'status' => array(),
-				  'error' => array('form.error.targetId.missing')),
+				  'error' => array('form[error][targetId][missing]')),
 			    $results);
     }
 

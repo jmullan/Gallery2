@@ -56,7 +56,7 @@ class SelectGalleryControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'migrate:SelectGallery'),
 				  'status' => array(),
-				  'error' => array('form.error.albumsPath.invalid')),
+				  'error' => array('form[error][albumsPath][invalid]')),
 			    $results);
     }
 
@@ -92,7 +92,7 @@ class SelectGalleryControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'migrate:SelectGallery'),
 				  'status' => array(),
-				  'error' => array('form.error.albumsPath.missing')),
+				  'error' => array('form[error][albumsPath][missing]')),
 			    $results);
     }
 }

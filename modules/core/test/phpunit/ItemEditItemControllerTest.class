@@ -131,7 +131,7 @@ class ItemEditItemControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
 						      'subView' => 'core:ItemEditItem'),
 				  'status' => array(),
-				  'error' => array('form.error.pathComponent.invalid')),
+				  'error' => array('form[error][pathComponent][invalid]')),
 			    $results);
     }
 
@@ -142,14 +142,14 @@ class ItemEditItemControllerTest extends GalleryControllerTestCase {
 	$newPathComponent = $this->_item[0]->getPathComponent() . rand();
 	GalleryUtilities::putRequestVariable('itemId', $this->_item[0]->getId());
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
-	GalleryUtilities::removeRequestVariable('form.pathComponent');
+	GalleryUtilities::removeRequestVariable('form[pathComponent]');
 
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
 						      'subView' => 'core:ItemEditItem'),
 				  'status' => array(),
-				  'error' => array('form.error.pathComponent.missing')),
+				  'error' => array('form[error][pathComponent][missing]')),
 			    $results);
     }
 
@@ -168,7 +168,7 @@ class ItemEditItemControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
 						      'subView' => 'core:ItemEditItem'),
 				  'status' => array(),
-				  'error' => array('form.error.pathComponent.collision')),
+				  'error' => array('form[error][pathComponent][collision]')),
 			    $results);
     }
 
@@ -222,7 +222,7 @@ class ItemEditItemControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
 						      'subView' => 'core:ItemEditItem'),
 				  'status' => array(),
-				  'error' => array('form.error.pathComponent.collision')),
+				  'error' => array('form[error][pathComponent][collision]')),
 			    $results);
     }
 

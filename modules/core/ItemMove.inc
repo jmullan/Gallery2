@@ -64,7 +64,7 @@ class ItemMoveController extends GalleryController {
 		$canAddItem = isset($permissions['core.addDataItem']);
 		$canAddAlbum = isset($permissions['core.addAlbumItem']);
 		if (!$canAddAlbum && !$canAddItem) {
-		    $error[] = 'form.error.destination.permission';
+		    $error[] = 'form[error][destination][permission]';
 		}
 
 		/* Load the destination item */
@@ -84,7 +84,7 @@ class ItemMoveController extends GalleryController {
 		}
 		$newParentAncestorIds[] = $newParentId;
 	    } else {
-		$error[] = 'form.error.destination.empty';
+		$error[] = 'form[error][destination][empty]';
 	    }
 	    
 	    if (empty($error) && !empty($form['selectedIds'])) {
@@ -108,7 +108,7 @@ class ItemMoveController extends GalleryController {
 
 		    foreach ($newParentAncestorIds as $newParentAncestorId) {
 			if ($selectedId == $newParentAncestorId) {
-			    $error[] = 'form.error.source.' . $selectedId . '.selfMove';
+			    $error[] = 'form[error][source][' . $selectedId . '][selfMove]';
 			    continue 2; // Skip out of the foreach($selectedItem) also
 			}
 		    }
@@ -121,14 +121,14 @@ class ItemMoveController extends GalleryController {
 
 		    /* Can we delete this item from here? */
 		    if (! isset($permissions['core.delete'])) {
-			$error[] = 'form.error.source.' . $selectedId . '.permission.delete';
+			$error[] = 'form[error][source][' . $selectedId . '][permission][delete]';
 		    }
 		    
 		    /* Check if the destination allows this source to be added */
 		    if ($selectedItem->getCanContainChildren() && ! $canAddAlbum) {
-			$error[] = 'form.error.source.' . $selectedId . '.permission.addAlbumItem';
+			$error[] = 'form[error][source][' . $selectedId . '][permission][addAlbumItem]';
 		    } elseif (! $selectedItem->getCanContainChildren() && ! $canAddItem) {
-			$error[] = 'form.error.source.' . $selectedId . '.permission.addDataItem';
+			$error[] = 'form[error][source][' . $selectedId . '][permission][addDataItem]';
 		    }
 		}
 		$oldParentIds = array_values(array_unique($oldParentIds));

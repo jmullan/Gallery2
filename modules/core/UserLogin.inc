@@ -61,7 +61,7 @@ class UserLoginController extends GalleryController {
 		    $redirect['subView'] = 'core:UserPreferences';
 		    $status['loggedin'] = 1;
 		} else {
-		    $error[] = 'form.error.invalidPassword';
+		    $error[] = 'form[error][invalidPassword]';
 		}
 	    }
 

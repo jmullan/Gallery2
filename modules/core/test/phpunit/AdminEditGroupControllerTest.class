@@ -107,7 +107,7 @@ class AdminEditGroupControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'core:AdminEditGroup'),
 				  'status' => array(),
-				  'error' => array('form.error.groupName.missing')),
+				  'error' => array('form[error][groupName][missing]')),
 			    $results);
 	$this->_deleteGroup($group);
     }

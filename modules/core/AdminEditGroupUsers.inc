@@ -90,13 +90,13 @@ class AdminEditGroupUsersController extends GalleryController {
 
 		/* Add the user to the group */
 		if (empty($form['text']['userName'])) {
-		    $error[] = 'form.error.text.userName.missing';
+		    $error[] = 'form[error][text][userName][missing]';
 		} else {
 		    list ($ret, $user) =
 			GalleryUserHelper::fetchUserByUsername($form['text']['userName']);
 
 		    if ($ret->isError() && ($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
-			$error[] = 'form.error.text.userName.invalid';
+			$error[] = 'form[error][text][userName][invalid]';
 		    } else if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    } else {

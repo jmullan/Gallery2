@@ -58,7 +58,7 @@ class ItemCreateResizesController extends GalleryController {
 
 	    /* Validate the input data. */
 	    if (!is_numeric($form['thumbnail']['size'])) {
-		$error[] = 'form.error.thumbnail.size.missing';
+		$error[] = 'form[error][thumbnail][size][missing]';
 	    }
 
 	    for ($i = 0; $i < sizeof($form['resizes']); $i++) {
@@ -67,9 +67,9 @@ class ItemCreateResizesController extends GalleryController {
 		}
 
 		if (empty($form['resizes'][$i]['size'])) {
-		    $error[] = sprintf('form.error.resizes.%d.size.missing', $i);
+		    $error[] = sprintf('form[error][resizes][%d][size][missing]', $i);
 		} else if (!is_numeric($form['resizes'][$i]['size']) || $form['resizes'][$i]['size'] <= 0) {
-		    $error[] = sprintf('form.error.resizes.%d.size.invalid', $i);
+		    $error[] = sprintf('form[error][resizes][%d][size][invalid]', $i);
 		}
 	    }
 	    

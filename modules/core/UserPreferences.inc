@@ -79,7 +79,7 @@ class UserPreferencesController extends GalleryController {
 
 	    /* email required for non-anonymous */
 	    if (empty($form['email'])) {
-		$error[] = 'form.error.email.missing';
+		$error[] = 'form[error][email][missing]';
 	    }
 
 	    /*

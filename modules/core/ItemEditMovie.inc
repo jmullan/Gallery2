@@ -61,13 +61,13 @@ class ItemEditMovieController extends GalleryController {
 	if (isset($form['action']['save'])) {
 
 	    if (isset($form['width']) && $form['width'] < 0) {
-		$error[] = 'form.error.width.invalid';
+		$error[] = 'form[error][width][invalid]';
 	    } else {
 		$form['width'] = (int)$form['width'];
 	    }
 
 	    if (isset($form['height']) && $form['height'] < 0) {
-		$error[] = 'form.error.height.invalid';
+		$error[] = 'form[error][height][invalid]';
 	    } else {
 		$form['height'] = (int)$form['height'];
 	    }

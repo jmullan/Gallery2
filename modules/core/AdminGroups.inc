@@ -65,7 +65,7 @@ class AdminGroupsController extends GalleryController {
 	if (isset($form['action']['filterClear'])) {
 
 	    /* Clear the filter */
-	    GalleryUtilities::putRequestVariable('form.list.filter', null);
+	    GalleryUtilities::putRequestVariable('form[list][filter]', null);
 	    
 	} else if (isset($form['action']['create'])) {
 
@@ -76,9 +76,9 @@ class AdminGroupsController extends GalleryController {
 	} else if (isset($form['action']['editFromText'])) {
 
 	    if (empty($form['text']['groupName'])) {
-		$error[] = 'form.error.text.noGroupSpecified';
+		$error[] = 'form[error][text][noGroupSpecified]';
 	    } else if ($group == null) {
-		$error[] = 'form.error.text.noSuchGroup';
+		$error[] = 'form[error][text][noSuchGroup]';
 	    } else {
 		/* Show the "edit group" view */
 		$redirect['view'] = 'core:SiteAdmin';
@@ -89,9 +89,9 @@ class AdminGroupsController extends GalleryController {
 	} else if (isset($form['action']['deleteFromText'])) {
 
 	    if (empty($form['text']['groupName'])) {
-		$error[] = 'form.error.text.noGroupSpecified';
+		$error[] = 'form[error][text][noGroupSpecified]';
 	    } else if ($group == null) {
-		$error[] = 'form.error.text.noSuchGroup';
+		$error[] = 'form[error][text][noSuchGroup]';
 	    } else {
 
 		/*
@@ -100,7 +100,7 @@ class AdminGroupsController extends GalleryController {
 		 * in case we can't delete.
 		 */
 		if ($group->getGroupType() != GROUP_NORMAL) {
-		    $error[] = 'form.error.text.cantDeleteGroup';
+		    $error[] = 'form[error][text][cantDeleteGroup]';
 		}
 	    }
 
@@ -114,9 +114,9 @@ class AdminGroupsController extends GalleryController {
 	} else if (isset($form['action']['addRemoveUsersFromText'])) {
 
 	    if (empty($form['text']['groupName'])) {
-		$error[] = 'form.error.text.noGroupSpecified';
+		$error[] = 'form[error][text][noGroupSpecified]';
 	    } else if ($group == null) {
-		$error[] = 'form.error.text.noSuchGroup';
+		$error[] = 'form[error][text][noSuchGroup]';
 	    } else {
 		/*
 		 * In theory we should never get to this point unless we're
@@ -124,7 +124,7 @@ class AdminGroupsController extends GalleryController {
 		 * in case we can't delete.
 		 */
 		if ($group->getGroupType() == GROUP_ALL_USERS) {
-		    $error[] = 'form.error.text.cantEditGroupUsers';
+		    $error[] = 'form[error][text][cantEditGroupUsers]';
 		}
 	    }
 

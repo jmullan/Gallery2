@@ -136,7 +136,7 @@ class AdminLayoutsController extends GalleryController {
 		$status['savedLayout'] = $layout->getName();
 	    } else {
 		foreach ($validationErrors as $validationKey => $validationMessage) {
-		    $error[] = sprintf('form.error.key.%s.invalid', $validationKey);
+		    $error[] = sprintf('form[error][key][%s][invalid]', $validationKey);
 		    $errorMessage[$validationKey] = $validationMessage;
 		}
 		GalleryUtilities::putRequestVariable('form.errorMessage', $errorMessage);

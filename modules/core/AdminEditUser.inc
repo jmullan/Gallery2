@@ -89,7 +89,7 @@ class AdminEditUserController extends GalleryController {
 
 	    /* username is required and might conflict */
 	    if (empty($form['userName'])) {
-		$error[] = 'form.error.userName.missing';
+		$error[] = 'form[error][userName][missing]';
 	    }
 
 	    if (!empty($form['userName'])) {
@@ -99,7 +99,7 @@ class AdminEditUserController extends GalleryController {
 		}
 
 		if (!empty($tmpUser) && $tmpUser->getId() != $userId) {
-		    $error[] = 'form.error.userName.duplicate';
+		    $error[] = 'form[error][userName][duplicate]';
 		}
 	    }
 	    
@@ -110,11 +110,11 @@ class AdminEditUserController extends GalleryController {
 	    if (!$isAnonymous) {
 		/* email required for non-anonymous */
 		if (empty($form['email'])) {
-		    $error[] = 'form.error.email.missing';
+		    $error[] = 'form[error][email][missing]';
 		}
 
 		if ($form['password1'] != $form['password2']) {
-		    $error[] = 'form.error.password2.mismatch';
+		    $error[] = 'form[error][password2][mismatch]';
 		}
 	    }
 

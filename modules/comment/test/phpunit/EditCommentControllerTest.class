@@ -141,10 +141,10 @@ class EditCommentControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
 						      'subView' => 'comment:EditComment'),
 				  'status' => array(),
-				  'error' => array('form.error.commenterName.missing',
-						   'form.error.date.missing',
-						   'form.error.subject.missing',
-						   'form.error.comment.missing')),
+				  'error' => array('form[error][commenterName][missing]',
+						   'form[error][date][missing]',
+						   'form[error][subject][missing]',
+						   'form[error][comment][missing]')),
 			    $results);
     }
     
@@ -162,7 +162,7 @@ class EditCommentControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
 						      'subView' => 'comment:EditComment'),
 				  'status' => array(),
-				  'error' => array('form.error.commenterName.invalid')),
+				  'error' => array('form[error][commenterName][invalid]')),
 			    $results);
     }
     
@@ -180,7 +180,7 @@ class EditCommentControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
 						      'subView' => 'comment:EditComment'),
 				  'status' => array(),
-				  'error' => array('form.error.invalidDate')),
+				  'error' => array('form[error][invalidDate]')),
 			    $results);
     }
 

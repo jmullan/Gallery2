@@ -106,7 +106,7 @@ class ItemAddAlbumControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
 						      'subView' => 'core:ItemAddAlbum'),
 				  'status' => array(),
-				  'error' => array('form.error.pathComponent.collision')),
+				  'error' => array('form[error][pathComponent][collision]')),
 			    $results);
     }
     
@@ -127,7 +127,7 @@ class ItemAddAlbumControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
 						      'subView' => 'core:ItemAddAlbum'),
 				  'status' => array(),
-				  'error' => array('form.error.pathComponent.missing')),
+				  'error' => array('form[error][pathComponent][missing]')),
 			    $results);
     }
     
@@ -148,7 +148,7 @@ class ItemAddAlbumControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
 						      'subView' => 'core:ItemAddAlbum'),
 				  'status' => array(),
-				  'error' => array('form.error.pathComponent.invalid')),
+				  'error' => array('form[error][pathComponent][invalid]')),
 			    $results);
     }
 

@@ -174,7 +174,7 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
 						      'subView' => 'core:ItemMove'),
 				  'status' => array(),
-				  'error' => array('form.error.destination.empty')),
+				  'error' => array('form[error][destination][empty]')),
 			    $results);
     }
 
@@ -192,9 +192,9 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
 						      'subView' => 'core:ItemMove'),
 				  'status' => array(),
-				  'error' => array('form.error.source.' .
+				  'error' => array('form[error][source][' .
 						   $this->_album[1]->getId() .
-						   '.selfMove')),
+						   '][selfMove]')),
 			    $results);
     }
 
@@ -212,7 +212,7 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
 						      'subView' => 'core:ItemMove'),
 				  'status' => array(),
-				  'error' => array('form.error.destination.permission')),
+				  'error' => array('form[error][destination][permission]')),
 			    $results);
     }
 
@@ -230,9 +230,9 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
 						      'subView' => 'core:ItemMove'),
 				  'status' => array(),
-				  'error' => array('form.error.source.' .
+				  'error' => array('form[error][source][' .
 						   $this->_album[4]->getId() . 
-						   '.permission.delete')),
+						   '][permission][delete]')),
 			    $results);
     }
 
@@ -250,9 +250,9 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
 						      'subView' => 'core:ItemMove'),
 				  'status' => array(),
-				  'error' => array('form.error.source.' .
+				  'error' => array('form[error][source][' .
 						   $this->_album[3]->getId() .
-						   '.permission.addAlbumItem')),
+						   '][permission][addAlbumItem]')),
 			    $results);
     }
 
@@ -270,9 +270,9 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
 						      'subView' => 'core:ItemMove'),
 				  'status' => array(),
-				  'error' => array('form.error.source.' .
+				  'error' => array('form[error][source][' .
 						   $this->_item->getId() .
-						   '.permission.addDataItem')),
+						   '][permission][addDataItem]')),
 			    $results);
     }
 }

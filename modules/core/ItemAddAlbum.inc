@@ -69,9 +69,9 @@ class ItemAddAlbumController extends GalleryController {
 	    $platform = $gallery->getPlatform();
 
 	    if (empty($form['pathComponent'])) {
-		$error[] = 'form.error.pathComponent.missing';
+		$error[] = 'form[error][pathComponent][missing]';
 	    } else if (!$platform->isLegalPathComponent($form['pathComponent'])) {
-		$error[] = 'form.error.pathComponent.invalid';
+		$error[] = 'form[error][pathComponent][invalid]';
 	    }
 
 	    if (empty($error)) {
@@ -89,7 +89,7 @@ class ItemAddAlbumController extends GalleryController {
 		$ret = $instance->create($itemId, $form['pathComponent']);
 		if ($ret->isError()) {
 		    if ($ret->getErrorCode() & ERROR_COLLISION) {
-			$error[] = 'form.error.pathComponent.collision';
+			$error[] = 'form[error][pathComponent][collision]';
 		    } else {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }

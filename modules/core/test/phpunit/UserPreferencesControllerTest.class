@@ -128,7 +128,7 @@ class UserPreferencesControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('delegate' => array('view' => 'core:UserAdmin',
 						      'subView' => 'core:UserPreferences'),
 				  'status' => array(),
-				  'error' => array('form.error.email.missing')),
+				  'error' => array('form[error][email][missing]')),
 			    $results);
     }
 }

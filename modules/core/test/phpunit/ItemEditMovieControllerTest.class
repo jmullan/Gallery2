@@ -133,8 +133,8 @@ class ItemEditMovieControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
 						      'subView' => 'core:ItemEditMovie'),
 				  'status' => array(),
-				  'error' => array('form.error.width.invalid',
-						   'form.error.height.invalid')),
+				  'error' => array('form[error][width][invalid]',
+						   'form[error][height][invalid]')),
 			    $results);
     }
 }

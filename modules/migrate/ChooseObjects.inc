@@ -45,7 +45,7 @@ class ChooseObjectsController extends GalleryController {
 	/* Make sure the user selected *something* to migrate */
 	if (isset($form['action']['import'])) {
 	    if (empty($form['migrateUser']) && empty($form['sourceAlbums'])) {
-		$error[] = 'form.error.nothingSelected';
+		$error[] = 'form[error][nothingSelected]';
 	    }
 
 	    if ($error) {

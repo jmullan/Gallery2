@@ -41,7 +41,7 @@ class AdminGroupsControllerTest extends GalleryControllerTestCase {
 	
 	$results = $this->handleRequest();
 
-	$this->assertEquals('', GalleryUtilities::getRequestVariables('form.list.filter'));
+	$this->assertEquals('', GalleryUtilities::getRequestVariables('form[list][filter]'));
     }
     
     function testCreate() {
@@ -83,7 +83,7 @@ class AdminGroupsControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'core:AdminGroups'),
 				  'status' => array(),
-				  'error' => array('form.error.text.noGroupSpecified')),
+				  'error' => array('form[error][text][noGroupSpecified]')),
 			    $results);
 
 	/* Invalid group name */
@@ -94,7 +94,7 @@ class AdminGroupsControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'core:AdminGroups'),
 				  'status' => array(),
-				  'error' => array('form.error.text.noSuchGroup')),
+				  'error' => array('form[error][text][noSuchGroup]')),
 			    $results);
     }
 
@@ -125,7 +125,7 @@ class AdminGroupsControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'core:AdminGroups'),
 				  'status' => array(),
-				  'error' => array('form.error.text.noGroupSpecified')),
+				  'error' => array('form[error][text][noGroupSpecified]')),
 			    $results);
 
 	/* Invalid group name */
@@ -136,7 +136,7 @@ class AdminGroupsControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'core:AdminGroups'),
 				  'status' => array(),
-				  'error' => array('form.error.text.noSuchGroup')),
+				  'error' => array('form[error][text][noSuchGroup]')),
 			    $results);
     }
 
@@ -159,7 +159,7 @@ class AdminGroupsControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'core:AdminGroups'),
 				  'status' => array(),
-				  'error' => array('form.error.text.cantDeleteGroup')),
+				  'error' => array('form[error][text][cantDeleteGroup]')),
 			    $results);
     }
 
@@ -182,7 +182,7 @@ class AdminGroupsControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'core:AdminGroups'),
 				  'status' => array(),
-				  'error' => array('form.error.text.cantDeleteGroup')),
+				  'error' => array('form[error][text][cantDeleteGroup]')),
 			    $results);
     }
 
@@ -205,7 +205,7 @@ class AdminGroupsControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'core:AdminGroups'),
 				  'status' => array(),
-				  'error' => array('form.error.text.cantEditGroupUsers')),
+				  'error' => array('form[error][text][cantEditGroupUsers]')),
 			    $results);
     }
 
@@ -237,7 +237,7 @@ class AdminGroupsControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'core:AdminGroups'),
 				  'status' => array(),
-				  'error' => array('form.error.text.noGroupSpecified')),
+				  'error' => array('form[error][text][noGroupSpecified]')),
 			    $results);
 
 	/* Invalid group name */
@@ -248,7 +248,7 @@ class AdminGroupsControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'core:AdminGroups'),
 				  'status' => array(),
-				  'error' => array('form.error.text.noSuchGroup')),
+				  'error' => array('form[error][text][noSuchGroup]')),
 			    $results);
     }
 

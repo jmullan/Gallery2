@@ -58,11 +58,11 @@ class ItemReorderController extends GalleryController {
 
 	    /* Verify that we've got what we need */
 	    if (empty($form['selectedId'])) {
-		$error[] = 'form.error.selectedId.missing';
+		$error[] = 'form[error][selectedId][missing]';
 	    }
 
 	    if (empty($form['targetId'])) {
-		$error[] = 'form.error.targetId.missing';
+		$error[] = 'form[error][targetId][missing]';
 	    }
 
 	    $before = 0;

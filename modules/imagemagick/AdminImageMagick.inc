@@ -52,7 +52,7 @@ class AdminImageMagickController extends GalleryController {
 	if (isset($form['action']['save'])) {
 
 	    if (empty($form['path'])) {
-		$error[] = 'form.error.path.missing';
+		$error[] = 'form[error][path][missing]';
 	    } else {
 		/* Set the path.  Guarantee that it's got a trailing slash. */
 		$platform = $gallery->getPlatform();
@@ -67,7 +67,7 @@ class AdminImageMagickController extends GalleryController {
 		list ($ret, $testResults) = ImageMagickToolkitHelper::testBinaries($form['path']);
 		if ($ret->isError()) {
 		    if ($ret->getErrorCode() & ERROR_BAD_PATH) {
-			$error[] = 'form.error.path.badPath';
+			$error[] = 'form[error][path][badPath]';
 		    } else {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
@@ -81,7 +81,7 @@ class AdminImageMagickController extends GalleryController {
 		    }
 
 		    if ($failCount > 0) {
-			$error[] = 'form.error.path.testError';
+			$error[] = 'form[error][path][testError]';
 		    }
 		}
 	    }

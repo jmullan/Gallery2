@@ -132,7 +132,7 @@ class AdminEditUserControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'core:AdminEditUser'),
 				  'status' => array(),
-				  'error' => array('form.error.userName.duplicate')),
+				  'error' => array('form[error][userName][duplicate]')),
 			    $results);
     }
 
@@ -150,9 +150,9 @@ class AdminEditUserControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'core:AdminEditUser'),
 				  'status' => array(),
-				  'error' => array('form.error.userName.missing',
-						   'form.error.email.missing',
-						   'form.error.password2.mismatch')),
+				  'error' => array('form[error][userName][missing]',
+						   'form[error][email][missing]',
+						   'form[error][password2][mismatch]')),
 			    $results);
     }
 }

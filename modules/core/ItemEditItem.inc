@@ -78,9 +78,9 @@ class ItemEditItemController extends GalleryController {
 	    $platform = $gallery->getPlatform();
 	    if (!$isRootAlbum) {
 		if (empty($form['pathComponent'])) {
-		    $error[] = 'form.error.pathComponent.missing';
+		    $error[] = 'form[error][pathComponent][missing]';
 		} else if (!$platform->isLegalPathComponent($form['pathComponent'])) {
-		    $error[] = 'form.error.pathComponent.invalid';
+		    $error[] = 'form[error][pathComponent][invalid]';
 		}
 	    }
 	    
@@ -104,7 +104,7 @@ class ItemEditItemController extends GalleryController {
 		}
 
 		if ($ret->isError() && $ret->getErrorCode() & ERROR_COLLISION) {
-		    $error[] = 'form.error.pathComponent.collision';
+		    $error[] = 'form[error][pathComponent][collision]';
 		} else {
 		    $item->setTitle($form['title']);
 		    $item->setSummary($form['summary']);

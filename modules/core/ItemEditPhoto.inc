@@ -77,9 +77,9 @@ class ItemEditPhotoController extends GalleryController {
 	case 'editPhoto':
 	    if (isset($form['action']['scale'])) {
 		if (empty($form['scale']['size'])) {
-		    $error[] = 'form.error.scale.size.missing';
+		    $error[] = 'form[error][scale][size][missing]';
 		} else if (!is_numeric($form['scale']['size']) || $form['scale']['size'] < 1) {
-		    $error[] = 'form.error.scale.size.invalid';
+		    $error[] = 'form[error][scale][size][invalid]';
 		} else {
 		    $operation = 'scale';
 		    $args = array($form['scale']['size']);
@@ -316,9 +316,9 @@ class ItemEditPhotoController extends GalleryController {
 
 		/* Validate the input data. */
 		if (empty($form['thumbnail']['size'])) {
-		    $error[] = 'form.error.thumbnail.size.missing';
+		    $error[] = 'form[error][thumbnail][size][missing]';
 		} else if (!is_numeric($form['thumbnail']['size'])) {
-		    $error[] = 'form.error.thumbnail.size.invalid';
+		    $error[] = 'form[error][thumbnail][size][invalid]';
 		}
 
 
@@ -328,9 +328,9 @@ class ItemEditPhotoController extends GalleryController {
 		    }
 
 		    if (empty($form['resizes'][$i]['size'])) {
-			$error[] = sprintf('form.error.resizes.%d.size.missing', $i);
+			$error[] = sprintf('form[error][resizes][%d][size][missing]', $i);
 		    } else if (!is_numeric($form['resizes'][$i]['size']) || $form['resizes'][$i]['size'] <= 0) {
-			$error[] = sprintf('form.error.resizes.%d.size.invalid', $i);
+			$error[] = sprintf('form[error][resizes][%d][size][invalid]', $i);
 		    }
 		}
 	    
@@ -603,22 +603,6 @@ class ItemEditPhotoView extends GalleryView {
 	    case 'editPhoto':
 		$form['scale']['size'] = '';
 		$form['preserveOriginal'] = 1;
-
-		/* Figure out what options we can provide */
-		list ($ret, $toolkit) =
-		    GalleryToolkitHelper::getToolkitByOperation($item->getMimeType(), 'rotate');
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-		$ItemEditPhoto['editPhoto']['can']['rotate'] = isset($toolkit);
-		
-		/* Figure out what options we can provide */
-		list ($ret, $toolkit) =
-		    GalleryToolkitHelper::getToolkitByOperation($item->getMimeType(), 'scale');
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-		$ItemEditPhoto['editPhoto']['can']['scale'] = isset($toolkit);
 		break;
 
 	    case 'editSizes':
@@ -660,22 +644,6 @@ class ItemEditPhotoView extends GalleryView {
 		    $form['thumbnail']['size'] = $size;
 		}
 
-		/* Figure out what options we can provide */
-		list ($ret, $toolkit) =
-		    GalleryToolkitHelper::getToolkitByOperation($item->getMimeType(), 'thumbnail');
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-		$ItemEditPhoto['editSizes']['can']['createThumbnail'] = isset($toolkit);
-		
-		/* Figure out what options we can provide */
-		list ($ret, $toolkit) =
-		    GalleryToolkitHelper::getToolkitByOperation($item->getMimeType(), 'scale');
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-		$ItemEditPhoto['editSizes']['can']['createResizes'] = isset($toolkit);
-		
 		break;
 	    }
 	    
@@ -695,6 +663,22 @@ class ItemEditPhotoView extends GalleryView {
 	    } else {
 		$ItemEditPhoto['editPhoto']['hasPreferredSource'] = true;
 	    }
+
+	    /* Figure out what options we can provide */
+	    list ($ret, $toolkit) =
+		GalleryToolkitHelper::getToolkitByOperation($item->getMimeType(), 'rotate');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $ItemEditPhoto['editPhoto']['can']['rotate'] = isset($toolkit);
+		
+	    /* Figure out what options we can provide */
+	    list ($ret, $toolkit) =
+		GalleryToolkitHelper::getToolkitByOperation($item->getMimeType(), 'scale');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $ItemEditPhoto['editPhoto']['can']['scale'] = isset($toolkit);
 	    break;
 		
 	case 'editSizes':
@@ -719,6 +703,21 @@ class ItemEditPhotoView extends GalleryView {
 		}
 	    }
 
+	    /* Figure out what options we can provide */
+	    list ($ret, $toolkit) =
+		GalleryToolkitHelper::getToolkitByOperation($item->getMimeType(), 'thumbnail');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $ItemEditPhoto['editSizes']['can']['createThumbnail'] = isset($toolkit);
+		
+	    /* Figure out what options we can provide */
+	    list ($ret, $toolkit) =
+		GalleryToolkitHelper::getToolkitByOperation($item->getMimeType(), 'scale');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $ItemEditPhoto['editSizes']['can']['createResizes'] = isset($toolkit);
 	    break;
 
 	case 'editThumbnail':
@@ -916,7 +915,7 @@ class ItemEditPhotoView extends GalleryView {
 		$ItemEditPhoto['editThumbnail']['cropRatioHeight'] = $aspectRatioList[$selectedAspect]['height'];
 	    } 
 	}
-							     
+
 	$template->setVariable('ItemEditPhoto', $ItemEditPhoto);
 	$template->setVariable('controller', 'core:ItemEditPhoto');
 	return array(GalleryStatus::success(),

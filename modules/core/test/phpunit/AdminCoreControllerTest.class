@@ -152,7 +152,7 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'core:AdminCore'),
 				  'status' => array(),
-				  'error' => array('form.error.uploadLocalServer.newDir.missing')),
+				  'error' => array('form[error][uploadLocalServer][newDir][missing]')),
 				  $results);
     }
     
@@ -165,7 +165,7 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'core:AdminCore'),
 				  'status' => array(),
-				  'error' => array('form.error.uploadLocalServer.newDir.notADirectory')),
+				  'error' => array('form[error][uploadLocalServer][newDir][notADirectory]')),
 				  $results);
     }
     
@@ -202,7 +202,7 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'core:AdminCore'),
 				  'status' => array(),
-				  'error' => array('form.error.uploadLocalServer.selectedDir.missing')),
+				  'error' => array('form[error][uploadLocalServer][selectedDir][missing]')),
 			    $results);
     }
     

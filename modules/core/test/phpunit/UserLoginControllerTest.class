@@ -86,7 +86,7 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('delegate' => array('view' => 'core:UserAdmin',
 						      'subView' => 'core:UserLogin'),
 				  'status' => array(),
-				  'error' => array('form.error.invalidPassword')),
+				  'error' => array('form[error][invalidPassword]')),
 			    $results);
     }
 
@@ -99,7 +99,7 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('delegate' => array('view' => 'core:UserAdmin',
 						      'subView' => 'core:UserLogin'),
 				  'status' => array(),
-				  'error' => array('form.error.invalidPassword')),
+				  'error' => array('form[error][invalidPassword]')),
 			    $results);
     }
 

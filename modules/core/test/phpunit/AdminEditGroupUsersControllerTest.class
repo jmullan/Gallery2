@@ -124,7 +124,7 @@ class AdminEditGroupUsersControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'core:AdminEditGroupUsers'),
 				  'status' => array(),
-				  'error' => array('form.error.text.userName.invalid')),
+				  'error' => array('form[error][text][userName][invalid]')),
 			    $results);
     }
 
@@ -138,7 +138,7 @@ class AdminEditGroupUsersControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'core:AdminEditGroupUsers'),
 				  'status' => array(),
-				  'error' => array('form.error.text.userName.missing')),
+				  'error' => array('form[error][text][userName][missing]')),
 			    $results);
     }
     

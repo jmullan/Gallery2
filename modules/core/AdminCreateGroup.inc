@@ -79,7 +79,7 @@ class AdminCreateGroupController extends GalleryController {
 		    }
 
 		    // Set our error status and fall back to the view.
-		    $error[] = 'form.error.groupName.exists';
+		    $error[] = 'form[error][groupName][exists]';
 		} else {
 		    $ret = $group->save();
 		    if ($ret->isError()) {
@@ -93,7 +93,7 @@ class AdminCreateGroupController extends GalleryController {
 		}
 	    } else {
 		// Set our error status and fall back to the view.
-		$error[] = 'form.error.groupName.missing';
+		$error[] = 'form[error][groupName][missing]';
 	    }
 	}
 

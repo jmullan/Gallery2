@@ -147,10 +147,10 @@ class ItemEditAlbumControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
 						      'subView' => 'core:ItemEditAlbum'),
 				  'status' => array(),
-				  'error' => array('form.error.thumbnail.size.invalid',
-						   'form.error.resizes.0.size.invalid',
-						   'form.error.resizes.1.size.invalid',
-						   'form.error.resizes.2.size.invalid')),
+				  'error' => array('form[error][thumbnail][size][invalid]',
+						   'form[error][resizes][0][size][invalid]',
+						   'form[error][resizes][1][size][invalid]',
+						   'form[error][resizes][2][size][invalid]')),
 			    $results);
     }
 
@@ -169,9 +169,9 @@ class ItemEditAlbumControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
 						      'subView' => 'core:ItemEditAlbum'),
 				  'status' => array(),
-				  'error' => array('form.error.resizes.0.size.missing',
-						   'form.error.resizes.1.size.missing',
-						   'form.error.resizes.2.size.missing')),
+				  'error' => array('form[error][resizes][0][size][missing]',
+						   'form[error][resizes][1][size][missing]',
+						   'form[error][resizes][2][size][missing]')),
 			    $results);
     }
     

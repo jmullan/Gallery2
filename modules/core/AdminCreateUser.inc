@@ -83,7 +83,7 @@ class AdminCreateUserController extends GalleryController {
 		    }
 
 		    // Set our error status and fall back to the view.
-		    $error[] = 'form.error.userName.exists';
+		    $error[] = 'form[error][userName][exists]';
 		} else {
 		    $user->setEmail($form['email']);
 		    $user->setFullName($form['fullName']);
@@ -103,14 +103,14 @@ class AdminCreateUserController extends GalleryController {
 	    } else {
 		foreach (array('userName', 'email', 'password1', 'password2') as $key) {
 		    if (empty($form[$key])) {
-			$error[] = 'form.error.' . $key . '.missing';
+			$error[] = 'form[error][' . $key . '][missing]';
 		    }
 		}
 
 		if (!empty($form['password1']) &&
 		        !empty($form['password2']) &&
 		        $form['password1'] != $form['password2']) {
-		    $error[] = 'form.error.password2.mismatch';
+		    $error[] = 'form[error][password2][mismatch]';
 		}
 	    }
 	}

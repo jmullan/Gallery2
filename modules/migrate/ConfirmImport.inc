@@ -225,9 +225,9 @@ class ConfirmImportController extends GalleryController {
 		     */
 		    $platform = $gallery->getPlatform();
 		    if (empty($album['name'])) {
-			$error[] = 'form.error.pathComponent.missing';
+			$error[] = 'form[error][pathComponent][missing]';
 		    } else if (!$platform->isLegalPathComponent($album['name'])) {
-			$error[] = 'form.error.pathComponent.invalid';
+			$error[] = 'form[error][pathComponent][invalid]';
 		    }
 		    /* If everything is good so far, we create a new instance to be our new
 		     * album
@@ -246,7 +246,7 @@ class ConfirmImportController extends GalleryController {
 			$ret = $newAlbumInstance->create($targetAlbumID, $album['name']);
 			if ($ret->isError()) {
 			    if ($ret->getErrorCode() & ERROR_COLLISION) {
-				$error[] = 'form.error.pathComponent.collision';
+				$error[] = 'form[error][pathComponent][collision]';
 				return array($ret->wrap(__FILE__, __LINE__), null);
 			    }
 			}

@@ -123,7 +123,7 @@ class AdminNetPbmControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'netpbm:AdminNetPbm'),
 				  'status' => array(),
-				  'error' => array('form.error.path.testError')),
+				  'error' => array('form[error][path][testError]')),
 				  $results);
     }
 
@@ -141,7 +141,7 @@ class AdminNetPbmControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'netpbm:AdminNetPbm'),
 				  'status' => array(),
-				  'error' => array('form.error.path.badPath')),
+				  'error' => array('form[error][path][badPath]')),
 			    $results);
     }
     
@@ -159,7 +159,7 @@ class AdminNetPbmControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'netpbm:AdminNetPbm'),
 				  'status' => array(),
-				  'error' => array('form.error.path.missing')),
+				  'error' => array('form[error][path][missing]')),
 			    $results);
     }
 }

@@ -102,10 +102,10 @@ class ItemEditLayoutController extends GalleryController {
 		$status['saved'] = 1;
 	    } else {
 		foreach ($validationErrors as $validationKey => $validationMessage) {
-		    $error[] = sprintf('form.error.key.%s.invalid', $validationKey);
+		    $error[] = sprintf('form[error][key][%s][invalid]', $validationKey);
 		    $errorMessage[$validationKey] = $validationMessage;
 		}
-		GalleryUtilities::putRequestVariable('form.errorMessage', $errorMessage);
+		GalleryUtilities::putRequestVariable('form[errorMessage]', $errorMessage);
 	    }
 	} else if (isset($form['action']['undo'])) {
 	    /* Redirect upon success */

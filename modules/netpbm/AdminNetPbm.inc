@@ -52,7 +52,7 @@ class AdminNetPbmController extends GalleryController {
 	if (isset($form['action']['save'])) {
 
 	    if (empty($form['path'])) {
-		$error[] = 'form.error.path.missing';
+		$error[] = 'form[error][path][missing]';
 	    } else {
 		
 		/* Set the path.  Guarantee that it's got a trailing slash. */
@@ -69,7 +69,7 @@ class AdminNetPbmController extends GalleryController {
 		    NetPbmToolkitHelper::testBinaries($form['path'], array('pnmtojpeg' => $form['pnmtojpeg']));
 		if ($ret->isError()) {
 		    if ($ret->getErrorCode() & ERROR_BAD_PATH) {
-			$error[] = 'form.error.path.badPath';
+			$error[] = 'form[error][path][badPath]';
 		    } else {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
@@ -83,7 +83,7 @@ class AdminNetPbmController extends GalleryController {
 		    }
 
 		    if ($failCount == sizeof($testResults)) {
-			$error[] = 'form.error.path.testError';
+			$error[] = 'form[error][path][testError]';
 		    }
 		}
 	    }

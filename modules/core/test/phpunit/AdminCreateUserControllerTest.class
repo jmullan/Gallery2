@@ -74,10 +74,10 @@ class AdminCreateUserControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'core:AdminCreateUser'),
 				  'status' => array(),
-				  'error' => array('form.error.userName.missing',
-						   'form.error.email.missing',
-						   'form.error.password1.missing',
-						   'form.error.password2.missing')),
+				  'error' => array('form[error][userName][missing]',
+						   'form[error][email][missing]',
+						   'form[error][password1][missing]',
+						   'form[error][password2][missing]')),
 			    $results);
     }
 
@@ -98,7 +98,7 @@ class AdminCreateUserControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'core:AdminCreateUser'),
 				  'status' => array(),
-				  'error' => array('form.error.password2.mismatch')),
+				  'error' => array('form[error][password2][mismatch]')),
 			    $results);
     }
 
@@ -128,7 +128,7 @@ class AdminCreateUserControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'core:AdminCreateUser'),
 				  'status' => array(),
-				  'error' => array('form.error.userName.exists')),
+				  'error' => array('form[error][userName][exists]')),
 			    $results);
 	
 	$this->_deleteUser($userName);
