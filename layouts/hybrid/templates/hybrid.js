@@ -3,9 +3,10 @@ var app_ww, app_wh, app_wx, app_wy; // Window width/height, position
 var app_agent = navigator.userAgent.toLowerCase(); // Client sniff..
 var app_version = parseInt(navigator.appVersion);
 var app_is_ie = app_agent.indexOf('msie')>=0 && app_agent.indexOf('opera')<0;
+var app_is_safari = app_agent.indexOf('safari')>=0;
 function app_getwinsize() {
  var obj = document.getElementById('album').offsetParent;
- if (obj && obj.offsetWidth > 0 && obj.offsetHeight > 0) {
+ if (obj && obj.tagName != 'BODY') {
   app_ww = obj.offsetWidth; app_wh = obj.offsetHeight;
   app_wx = obj.offsetLeft;  app_wy = obj.offsetTop;
  } else {
@@ -19,10 +20,7 @@ function app_getwinsize() {
 }
 function app_init() {
  app_getwinsize();
- //Get sidebar width and position minimize button:
  sidebar_wd = document.getElementById('sidebar').offsetWidth;
- var obj = document.getElementById('sidebar_min');
- obj.style.left = (sidebar_wd-obj.offsetWidth-1)+'px';
  //Get titlebar height and size album content:
  album_div = document.getElementById('album_content');
  album_setsize(1);
@@ -35,12 +33,23 @@ function app_init() {
  text_ht = document.getElementById('text').offsetHeight;
  image_div = document.getElementById('image');
  image_setsize();
- document.onresize = app_onresize;
+ var attr = document.createAttribute('onresize');
+ attr.value = 'app_onresize()';
+ document.body.attributes.setNamedItem(attr);
  document.onkeypress = app_onkeypress;
- //For IE:
-   document.onkeydown = app_onkeydown;
-   if (document.all) document.getElementById('toolbar').style.bottom = '-1px';
-   if (document.all) document.getElementById('text').style.bottom = '-1px';
+ if (app_is_ie) { //For IE:
+  document.body.onresize = app_onresize;
+  document.onkeydown = app_onkeydown;
+  document.getElementById('album').style.height = '100%';
+  album_div.style.width = '100%';
+ }
+ if (app_is_safari) { //For Safari:
+  document.onresize = app_onresize;
+  document.getElementById('album_tools').style.width = '38px';
+  document.getElementById('tools_left').style.width = '38px';
+  document.getElementById('tools_right').style.width = '76px';
+  document.getElementById('tools_right').style.paddingRight = '8px';
+ }
  app_getcookie();
 }
 function app_onload() {
@@ -48,8 +57,7 @@ function app_onload() {
 }
 function app_onresize() {
  app_getwinsize();
- album_setsize();
- image_setsize();
+ if (app_is_ie) { album_setsize(); image_setsize(); }
  if (image_on) image_fit();
 }
 function app_setcookie() {
@@ -90,9 +98,15 @@ function app_getcookie() {
  }
 }
 function app_onkeypress(event) {
- if (document.all) event = window.event; //For IE
+ if (app_is_ie) event = window.event; //For IE
  var keyCode = event.keyCode ? event.keyCode : event.which; //For Moz
  if (event.ctrlKey || event.altKey || event.shiftKey || event.metaKey) return;
+ if (app_is_safari) switch (keyCode) { //For Safari
+  case 63232: keyCode=38; break;  case 63273: keyCode=36; break;
+  case 63233: keyCode=40; break;  case 63275: keyCode=35; break;
+  case 63234: keyCode=37; break;  case 63276: keyCode=33; break;
+  case 63235: keyCode=39; break;  case 63277: keyCode=34; break;
+ }
  if (keyCode==32) slide_onoff();
  else if (keyCode==27) { if (popup_on) popup_vis(0);
                          else if (image_on) image_vis(0); }
@@ -117,12 +131,12 @@ function app_onkeypress(event) {
  }
 }
 function app_onkeydown() {
- if (document.all && window.event.keyCode >= 33 && window.event.keyCode <= 40)
- { app_onkeypress(); window.event.returnValue = false; }
+ if (window.event.keyCode >= 33 && window.event.keyCode <= 40)
+ { app_onkeypress(window.event); window.event.returnValue = false; }
 }
 //Class album :: div album(album_titlebar(album_tools),album_content)
 var album_title_minht, album_title_maxht; // Min/max height of title bar
-var album_title_borderht=1; // Height of titlebar border
+var album_title_borderht=app_is_ie?0:1; // Height of titlebar border
 var album_div; // album_content div
 var album_detailson=1; // Details are visible
 var album_itemlinkson=1; // Item links are visible
@@ -130,9 +144,15 @@ function album_gettitleht() {
  return album_detailson ? album_title_maxht : album_title_minht;
 }
 function album_setsize(x) {
- if (!x || x==1) document.getElementById('album').style.width =
-                  (app_ww - sidebar_getwidth()) + 'px';
- if (!x || x==2) album_div.style.height = (app_wh - album_gettitleht()) + 'px';
+ if (!x || x==1) {
+  document.getElementById('album').style.left = sidebar_getwidth() + 'px';
+  if (app_is_ie) document.getElementById('album').style.width =
+   (app_ww-sidebar_getwidth()) + 'px';
+ }
+ if (!x || x==2) {
+  album_div.style.top = album_gettitleht() + 'px';
+  if (app_is_ie) album_div.style.height = (app_wh-album_gettitleht()) + 'px';
+ }
 }
 function album_detailsonoff() {
  album_detailson = album_detailson?0:1;
@@ -157,6 +177,7 @@ var sidebar_wd; // Sidebar width (when visible)
 function sidebar_getwidth() { return sidebar_on?sidebar_wd:0; }
 function sidebar_onoff() {
  document.sidebar_max.className = sidebar_on?'on':'off';
+ document.sidebar_min.className = sidebar_on?'off':'on';
  ui_vis('sidebar', (sidebar_on = sidebar_on?0:1), 1);
  album_setsize(1);
 }
@@ -168,7 +189,8 @@ var image_cache = new Image; // For precaching an image
 var image_iscached = new Array(data_count); // Track precached images
 var image_div; // Image div
 function image_setsize() {
- image_div.style.height = (app_wh - toolbar_getheight()) + 'px';
+ image_div.style.bottom = toolbar_getheight() + 'px';
+ if (app_is_ie) image_div.style.height = (app_wh-toolbar_getheight())+'px';
 }
 function image_vis(on) {
  if (!on && slide_on) slide_onoff();
@@ -242,7 +264,7 @@ function image_next() {
 function image_prev() {
  var i = slide_previndex(); if (i >= 0) image_show(i);
 }
-//Class toolbar :: div toolbar(tools_left,title,tools_right) :: img textspace
+//Class toolbar :: div toolbar(tools_left,title,tools_right)
 var toolbar_ht; // Height of toolbar/title
 function toolbar_getheight() { return toolbar_ht + (text_on?text_ht:0); }
 function toolbar_vis(on) {
@@ -267,7 +289,8 @@ function text_onoff() {
  if ((text_on = text_on?0:1) && data_count>0) text_fill();
  document.text_on.className = text_on?'off':'on';
  document.text_off.className = text_on?'on':'off';
- document.textspace.height = text_on?text_ht:0;
+ document.getElementById('toolbar').style.paddingBottom =
+  (text_on?text_ht:0)+'px';
  image_setsize();
  if (image_on) {
   ui_vis('text', text_on, 1);
@@ -367,7 +390,7 @@ function popup_info(i) {
 function popup_vis(on) {
  ui_vis('popup', popup_on=on);
  ui_vis('popup_titlebar', on);
- if (!document.all)
+ if (!app_is_ie)
   document.getElementById('popup').scrolling = on?'auto':'off'; //For firefox
 }
 function popup_menu(event,i,ii) {
@@ -380,12 +403,12 @@ function popup_menu(event,i,ii) {
  if (obj) links += obj.innerHTML;
  ui_sethtml('popup_links', links);
  // IE: window.event,offsetX/Y,srcElement  Moz: event,layerX/Y,target
- if (document.all) event = window.event;
+ if (app_is_ie) event = window.event;
  var pw = pop.offsetWidth, ph = pop.offsetHeight;
  var iw = event.target ? event.target.width : event.srcElement.width;
  var ix = event.offsetX ? event.offsetX : (event.layerX-event.target.x);
  var iy = event.offsetY ? event.offsetY : (event.layerY-event.target.y);
- if (document.all) { ix+=2; iy+=2; } //IE, but not Safari
+ if (app_is_ie) { ix+=2; iy+=2; } //IE, but not Safari
  var px = event.clientX - ix + iw - pw - app_wx;
  var py = min(event.clientY - iy, app_wh - ph) - app_wy;
  pop.style.left = px+'px';

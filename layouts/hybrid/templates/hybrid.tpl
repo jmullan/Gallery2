@@ -1,6 +1,7 @@
 <div id="album"
 ><div id="album_titlebar"
-><div id="album_tools"><img name="sidebar_max" src="{$layout.layoutUrl}/images/right.png" width="18" height="18" class="off" onclick="sidebar_onoff()" alt="Show sidebar" title="Show sidebar"
+><div id="album_tools"><img name="sidebar_min" src="{$layout.layoutUrl}/images/left.png" width="18" height="18" class="on" onclick="sidebar_onoff()" alt="Hide sidebar" title="Hide sidebar"
+><img name="sidebar_max" src="{$layout.layoutUrl}/images/right.png" width="18" height="18" class="off" onclick="sidebar_onoff()" alt="Show sidebar" title="Show sidebar"
 ><img name="slide__fwd" src="{$layout.layoutUrl}/images/fwd.png" width="18" height="18" class="on" onclick="slide_onoff()" alt="Start Slideshow" title="Start Slideshow"
 ><img name="slide__rev" src="{$layout.layoutUrl}/images/rev.png" width="18" height="18" class="off" onclick="slide_onoff()" alt="Start Slideshow" title="Start Slideshow"
 ><img name="slide__rand" src="{$layout.layoutUrl}/images/rand.png" width="18" height="18" class="off" onclick="slide_onoff()" alt="Start Slideshow" title="Start Slideshow"
@@ -62,9 +63,7 @@
 {if ($layout.count is odd)}<td></td><td></td></tr>{/if}
 </table></div></div
 
-><div id="sidebar"
-><div id="sidebar_min"
-><img src="{$layout.layoutUrl}/images/left.png" width="18" height="18" onclick="sidebar_onoff()" alt="Hide sidebar" title="Hide sidebar"></div>
+><div id="sidebar">
 {g->sidebar side="right"}
   {* Module links *}
   {g->box style="sidebar"}
@@ -188,8 +187,7 @@
 ><img name="prev_img" src="{$layout.layoutUrl}/images/prev.png" width="18" height="18" class="on" onclick="image_prev()" alt="Previous Image" title="Previous Image"
 ><img name="next_off" src="{$layout.layoutUrl}/images/next-off.png" width="18" height="18" class="off" alt="No Next Image" title="No Next Image"
 ><img name="next_img" src="{$layout.layoutUrl}/images/next.png" width="18" height="18" class="on" onclick="image_next()" alt="Next Image" title="Next Image"
-></div><div id="title"></div
-><img name="textspace" width="0" height="0" src="" alt=""></div
+></div><div id="title"></div></div
 
 ><div id="text" style="visibility:hidden"></div
 
