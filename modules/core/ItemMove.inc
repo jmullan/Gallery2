@@ -136,11 +136,21 @@ class ItemMoveController extends GalleryController {
 		$oldParentIds = array_values(array_unique($oldParentIds));
 	    }
 	    if (! $problem && !empty($selectedIds) && !empty($newParentId)) {
+
+		/* Read lock myself and the new parent id */
+		$lockIds = array();
+		list ($ret, $lockIds[]) = $gallery->acquireReadLock($newParentId, $itemId);
+		if ($ret->isError()) {
+		    return $ret;
+		}
+
+		/* Write locok all the items we're moving */
 		list ($ret, $lockIds[]) = $gallery->acquireWriteLock($selectedIds);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-		/* Assume we have no problems, so do the moves */
+		
+		/* If we have no problems, do the moves */
 		foreach ($selectedItems as $selectedItem) {
 		    $ret = $selectedItem->move($newParentId);
 		    if ($ret->isError()) {
