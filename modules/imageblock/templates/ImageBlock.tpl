@@ -12,7 +12,10 @@
 	  </h3>
 	{/if}
 
-	<a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$block.id`"}">
+	<a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$block.id`"}" {strip}
+	   {if isset($ImageBlockSystemContent.linkTarget)}
+	     target="{$ImageBlockSystemContent.linkTarget}"
+	   {/if}{/strip}>
 	  {g->image item=$block.item image=$block.thumb class="giThumbImage" maxSize=140}
 	</a>
 

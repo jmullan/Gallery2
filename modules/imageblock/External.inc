@@ -47,7 +47,7 @@ class ExternalView extends GalleryView {
 	$session->_isUsingCookies = true;
 
 	$params = array();
-	foreach (array('blocks', 'show', 'heading', 'itemId') as $key) {
+	foreach (array('blocks', 'show', 'heading', 'itemId', 'linkTarget') as $key) {
 	    $tmp = GalleryUtilities::getRequestVariables($key);
 	    if (!empty($tmp)) {
 		$params[$key] = $tmp;

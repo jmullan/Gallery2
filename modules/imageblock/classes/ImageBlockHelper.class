@@ -87,6 +87,9 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	    $show[$key] = 1;
 	}
 	$ImageBlockSystemContent['show'] = $show;
+	if (isset($params['linkTarget'])) {
+	    $ImageBlockSystemContent['linkTarget'] = $params['linkTarget'];
+	}
 
 	$tpl = null;
 	if (!empty($blocks)) {
