@@ -301,6 +301,7 @@ class Gallery {
      * @param object GalleryPlatform the Gallery platform object
      */
     function setPlatform(&$platform) {
+	unset($this->_platform);
 	$this->_platform =& $platform;
     }
 
@@ -364,6 +365,7 @@ class Gallery {
      * @param object GalleryUrlGenerator
      */
     function setUrlGenerator(&$urlGenerator) {
+	unset($this->_urlGenerator);
 	$this->_urlGenerator =& $urlGenerator;
     }
 
