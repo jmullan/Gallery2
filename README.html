@@ -166,25 +166,27 @@
 
     <h2><a name="what_is_gallery">What is Gallery?</a></h2>
     <p>
-      Gallery is a web based software product that lets you manage your photos
-      on your own website.  You must have your own website with PHP support in
-      order to install and use it.  With Gallery you can easily create and
-      maintain albums of photos via an intuitive interface.  Photo management
-      includes automatic thumbnail creation, image resizing, rotation, ordering,
-      captioning, searching and more.  Albums can have read, write and caption
-      permissions per individual authenticated user for an additional level of
-      privacy.  Give accounts to your friends and family and let them upload and
+      Gallery is a web based software product that lets you manage
+      your photos on your own website.  You must have your own website
+      with PHP support in order to install and use it.  With Gallery
+      you can easily create and maintain albums of photos via an
+      intuitive interface.  Photo management includes automatic
+      thumbnail creation, image resizing, rotation, ordering,
+      captioning, searching and more.  Albums and photos scan have
+      read, write, caption and other permissions per individual
+      authenticated user for an additional level of privacy.  Give
+      accounts to your friends and family and let them upload and
       manage their own photos on your website!
     </p>
 
     <h2><a name="what_is_g2">What is G2 Beta?</a></h2>
     <p>
-      A Beta version or Beta release is the second official release
-      of a product.  A Beta release can sometimes be unstable, contains
-      both known and unknown bugs, and be missing some intended
-      features.  We release it early so that you can see what is
-      coming and give us feedback that will help us improve the final
-      release.
+      A Beta version or Beta release is the second official round of
+      releases of a product.  A Beta release can sometimes be
+      unstable, contains both known and unknown bugs.  Generally,
+      almost all of the features of the final product will be present.
+      We release it early so that you can see what is coming and give
+      us feedback that will help us improve the final release.
     </p>
 
     <h2><a name="Beta_requirements">G2 Beta requirements</a></h2>
@@ -214,20 +216,18 @@
       next to your production version of Gallery 1.x in a hidden
       directory.  You could install it on a development server.  We
       want you to try it, test it, break it, and tell us all about it.
-      Get your friends and colleagues to poke around.  However, please
-      be prepared to delete your G2 Beta installation and all of the
-      data at any time and start over from scratch.  You can use the
-      migration module to import a few of your G1 albums into G2 for
-      test purposes (this shouldn&rsquo;t affect your G1 installation at
-      all).
+      Get your friends and colleagues to poke around.  You can use the
+      migration module to import some or all of your G1 albums into G2
+      for test purposes (this shouldn&rsquo;t affect your G1
+      installation at all).
     </p>
 
     <h2><a name="when_not_to_use">When not to use G2 Beta</a></h2>
     <p>
       Do not use it as the main repository for your data.  Do not use
       it for a production web site.  Although we provide an upgrade
-      path we will not provide the same level of support for G2 that
-      we provide for G1 until we get to release candidates.  We know
+      path <b>we will not provide the same level of support for G2 that
+      we provide for G1</b> until we get to release candidates.  We know
       that G2 is much better than G1, and it may be tempting to just
       replace your G1 with it.  But we're still making plenty of
       changes and mistakes happen so if you use it in production, be
@@ -265,6 +265,16 @@
        onclick="toggle('beta1-list', 'beta1-toggle')"> - </span>
     </h3>
     <ol id="beta1-list">
+      <li>
+	<b> Rewrite </b> - New module for creating compact, search
+	engine friendly urls.
+      </li>
+
+      <li>
+	<b> Locking </b> - New database locking system that allows
+	Gallery to run properly on NFS filesystems.
+      </li>
+
       <li>
 	<b> Shutterfly </b> - New module for printing photos with Shutterfly.com.
       </li>
@@ -380,7 +390,7 @@
 	    Added support for search and image block.
 	  </li>
 	  <li>
-	    Xaraya integration in CVS.
+	    Xaraya, PHP-Nuke, Tikipro and Drupal integrations <a href="http://cvs.sourceforge.net/viewcvs.py/gallery/integration/gallery2/">available in CVS</a>.
 	  </li>
 	</ul>
       </li>
@@ -936,7 +946,7 @@
 	<b> Admin User Setup </b> - You are prompted for an
 	administrator username and password. In this beta release the
 	default Admin username is set to <strong>admin</strong> and
-	cannot be changed during the install process(though you can
+	cannot be changed during the install process (though you can
 	change it to something else later on). Type in a password and
 	type it again to validate it. Then click &rsquo;Create&rsquo; to create
 	the admin user for this installation of Gallery 2.
@@ -968,16 +978,16 @@
 	modules that provide useful functionality.  Choose which ones
 	you want to use.  You can always go to the <a
 	href="main.php?g2_view=core:SiteAdmin" target="_guided">Site
-	Admin</a> page later on to install, activate or deactivate other
-	modules, so it&rsquo;s ok to experiment here.
+	Admin</a> page later on to install, activate, deactivate or
+	uninstall modules, so it&rsquo;s ok to experiment here.
       </li>
       <li>
 	<b> Check Security </b> - G2 walks you through the process of
 	locking down your new <b>config.php</b>.
       </li>
       <li>
-	<b> Finished! </b> - Congratulations! Your Gallery 2 Beta has
-	successfully installed!
+	<b> Finished! </b> - Congratulations! You have successfully
+	installed Gallery 2 Beta!
       </li>
     </ol>
 
@@ -1055,7 +1065,7 @@
 
 	  <li>
 	    You can <a
-	    href="main.php?g2_view=core:SiteAdmin&amp;g2_subView=core:AdminLayouts"
+	    href="main.php?g2_view=core:SiteAdmin&amp;g2_subView=core:AdminLayouts&g2_mode=config"
 	    target="_guided">activate different layouts</a> and then
 	    experiment with layouts and themes.  You can use different
 	    layouts and themes on each album!
@@ -1168,104 +1178,51 @@
     </p>
 
     <h2><a name="known_issues">Known Issues / Bugs</a></h2>
+
     <ol>
       <li>
-	<b>G1 -> G2 Migration</b> -
-	<ul>
-	  <li>
-	    Migration seems to abort after 5 minutes so if you do a
-	    large import and it suddenly stops without giving you any
-	    feedback. You might want to import in small chunks of
-	    albums for now.
-	  </li>
-	</ul>
+	<b>Layouts/Themes</b> - The current layout and theme
+	architecture is going to change sometime during the beta
+	cycle.  We are still considering several different approaches
+	to make creating new themes, layouts and modules easier.
       </li>
       <li>
-	<b>Performance</b> - This beta release is much faster than
-	the previous alphas.  There are still some tweaks that we have
+	<b>Performance</b> - This beta release is much faster than the
+	previous alphas.  There are still some tweaks that we have
 	planned that will make it even faster.  We&rsquo;ve still
 	focused on features and reliability before performance, and
-	will be continually optimizing during the Beta cycle.
+	will be continually optimizing during the Beta cycle.  One
+	issue that we are well aware of is that G2 places a heavy load
+	on the webserver and database because of our image firewall.
+	We have a solution for this and will implement it during the
+	beta cycle.
       </li>
     </ol>
 
     <h2><a name="updating">Updating your Gallery 2 Installation</a></h2>
     <p>
-      The proper way to upgrade is to <a href="#get_latest_code">get
-      the latest code</a> and overwrite your existing copy with it.
-      If you see weird errors, then it&rsquo;s time to delete your
-      database.  Starting with Alpha-4, you should be able to upgrade
-      to future versions of Gallery 2.  However, we're still working
-      the kinks out of the upgrade process so <b>we reserve the right
-      to screw up horribly</b> between now and the final release.
+      Updating is quick and easy and should not lose any of your data.
     </p>
 
-    <div class="instructions">
-      <h3>MySQL</h3>
-      <code>
-	mysqladmin -uroot drop gallery2
-      </code>
-    </div>
+    <ol>
+      <li>
+	<a href="#get_latest_code">Get the latest code</a> and
+	unpack it over your existing copy of G2.
+      </li>
 
-    <div class="instructions">
-      <h3>PostgreSQL</h3>
-      <code>
-	dropdb gallery2
-      </code>
-    </div>
+      <li>
+	Browse to <a href="upgrade/">the upgrader</a> and follow the
+	instructions there.  Make a backup of your data when it tells
+	you to!  Should you lose your data due to a bug in the
+	upgrader, the first thing we're going to tell you to do is to
+	restore from your backups!  (Then we'll probably ask you to
+	help us reproduce the bug.)
+      </li>
 
-    <ul class="note">
-      <li> These commands assumes the database is called <strong>gallery2</strong> </li>
-    </ul>
-
-    <p>
-      Make sure you delete the contents of your <tt>g2data</tt> directory (but
-      leave the directory itself around).  On Unix, you may need to be
-      root or use <tt><a
-      href="http://www.courtesan.com/sudo/man/sudo.html"
-      target="_blank">sudo</a></tt> to delete these files.
-    </p>
-
-    <div class="instructions">
-      <h3> Unix </h3>
-      <code>
-	/bin/rm -rf /path/to/g2data/*
-      </code>
-    </div>
-
-    <div class="instructions">
-      <h3> Windows </h3>
-      <code>
-	cd c:\ <br/>
-	rd /s /q g2data <br/>
-	mkdir g2data <br/>
-      </code>
-    </div>
-
-    <p>
-      Now, go back and recreate the database. Finally, <a href="#installing">perform a complete reinstall</a>.
-      Yes, we know that doing all of this sucks, and when we get to
-      beta we&rsquo;ll have an upgrade path so that you can just update the
-      code and it will Do the Right Thing.
-    </p>
-
-    <p>
-      We sneaky developer types have a back-door that lets us do
-      reinstalls much faster.  You can play with this too, but we ask
-      that if something weird is going on, you verify that any bugs
-      you&rsquo;re seeing happen when you do the install by hand, so that we
-      know they&rsquo;re not caused by our little back-door shenanigans.
-    </p>
-
-    <p>
-      The back door is to go to the <a href="lib/tools/test/" target="_guided">old test
-      harness</a> and run the ReInitializeGallery test.  This will
-      <b>immediately</b> nuke your entire G2 from orbit (it&rsquo;s the only
-      way to be sure) and start all over again.  Be careful, we warned
-      you.  <i>Note</i> - the ReInitializeGallery test may insert some
-      strange default paths into your G2 since they&rsquo;re useful to our
-      developers.  You can delete them.
-    </p>
+      <li>
+	Enjoy your new version of G2.
+      </li>
+    </ol>
 
     <h2><a name="advanced_topics">Advanced Topics</a></h2>
     <p>
