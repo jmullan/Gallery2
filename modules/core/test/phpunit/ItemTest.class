@@ -955,6 +955,14 @@ class ItemTest extends GalleryTestCase {
 	    }
 	}
 
+	/* Create a thumbnail */
+	list ($ret, $thumb) = $this->_createDerivative($linkedItem[0], $item->getId(),
+						       DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
+						       'itemtest-operation', 'test/image');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
 	/* All links should point to the original */
 	list ($ret, $truePath) = $item->fetchPath();
 	if ($ret->isError()) {
@@ -986,6 +994,10 @@ class ItemTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	list ($ret, $thumb) = $thumb->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 
 	list ($ret, $truePath) = $linkedItem[0]->fetchPath();
 	if ($ret->isError()) {
@@ -999,6 +1011,9 @@ class ItemTest extends GalleryTestCase {
 	}
 
 	$this->assertEquals($truePath, $linkPath, "Link doesn't point to the original (link)");
+
+	$this->assertEquals($linkedItem[0]->getId(), $thumb->getDerivativeSourceId(),
+			    "Bad thumbnail source (deleted item was " . $item->getId() . ")");
     }
 
     function testMove() {
