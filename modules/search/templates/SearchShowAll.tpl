@@ -89,11 +89,6 @@
                  arg2=$SearchShowAll.results.end}
         {/if}
 
-        {if ($SearchShowAll.results.count > $SearchShowAll.results.end)}
-        {assign var="moduleId" value=$SearchShowAll.moduleId}
-        <input type="submit" name="{g->formVar var="form[action][showAll][$SearchShowAll][moduleId]"}" value="{g->text text="Show all %d" arg1=$SearchShowAll.results.count}"/>
-        {/if}
-
         {if ($SearchShowAll.results.count > 0)}
         {if ($form.page > 1)}
         <input type="submit" name="{g->formVar var="form[action][previousPage]"}" value="{g->text text="&laquo; Back"}"/>
