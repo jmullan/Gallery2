@@ -4,7 +4,6 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * Metamorphose applet Copyright (C) 2000 Rüdiger Appel
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
