@@ -175,10 +175,12 @@ class PlatformTest extends GalleryTestCase {
     }
     
     function testGetDirectorySeparator() {
-	$this->assertEquals($this->_platform->getDirectorySeparator(), '/');
+	$file = __FILE__;
+	$realSeparator = $file[strlen(dirname(__FILE__))];
+	$this->assertEquals($this->_platform->getDirectorySeparator(), $realSeparator);
     }
     
-    function testisRestrictedByOpenBaseDir() {
+    function testIsRestrictedByOpenBaseDir() {
 	$this->assert(!$this->_platform->isRestrictedByOpenBaseDir(__FILE__));
     }
 }
