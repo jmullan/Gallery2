@@ -658,15 +658,16 @@ class ConfirmImportController extends GalleryController {
 				    return array($ret->wrap(__FILE__, __LINE__), null);
 				}
 				$caption = $importAlbumItem->caption;
-				if (strlen($caption) > 128) {
-				    $newItem->setTitle(substr($this->convertHtmlToBbcode($caption),0,125) . '...');
+				$convertedCaption = $this->convertHtmlToBbcode($caption);
+				if (strlen($convertedCaption) > 128) {
+				    $newItem->setTitle(substr($convertedCaption,0,125) . '...');
 				    if (isset($importAlbumItem->extraFields['description']) && $importAlbumItem->extraFields['description'] != '') {
-					$newItem->setDescription($this->convertHtmlToBbcode($caption) . "\n" . $this->convertHtmlToBbcode($importAlbumItem->extraFields['description']));
+					$newItem->setDescription($convertedCaption . "\n" . $this->convertHtmlToBbcode($importAlbumItem->extraFields['description']));
 				    } else {
-					$newItem->setDescription($this->convertHtmlToBbcode($caption));
+					$newItem->setDescription($convertedCaption);
 				    }
 				} else {
-				    $newItem->setTitle($this->convertHtmlToBbcode($caption));
+				    $newItem->setTitle($convertedCaption);
 				    if (isset($importAlbumItem->extraFields['description']) && $importAlbumItem->extraFields['description'] != '') {
 					$newItem->setDescription($this->convertHtmlToBbcode($importAlbumItem->extraFields['description']));
 				    }
