@@ -54,25 +54,31 @@ $gallery->setConfig('data.gallery.base', '');
 
 /*
  * Gallery can store its data in multiple different back ends.  Currently we
- * support only MySQL.  Enter the hostname where your database lives, and the
- * username and password you use to connect to it.
+ * support only MySQL and PostgreSQL.  Enter the hostname where your
+ * database lives, and the username and password you use to connect to it.
  *
- * You must specify the name of a database that you have created yourself.
- * Gallery will not create the database for you, because it's very difficult
- * to do that in a reliable, database-neutral fashion.  The user that you
- * use should have the following permissions:
+ * You must specify the name of a database that already exists.  Gallery will 
+ * not create the database for you, because it's very difficult to do that in
+ * a reliable, database-neutral fashion.  The user that you use should have 
+ * the following permissions:
  *
  *    SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER
  *
- * If you want Gallery to coexist in a database with tables from other
- * applications, you can specify a prefix to prepend to all table and column
- * names.  By default these prefixes are as shown below.  If you modify these
- * after Gallery has created its various tables, it will stop working.
+ * You must specify a table and column prefix.  This is a few characters that
+ * is prepended to any table or column name to avoid conflicting with reserved
+ * words in the database or other tables you have in the same database.  In 
+ * fact, it's fine to let Gallery uses the same database as other applications
+ * (including other instances of Gallery itself); the prefix is enough
+ * to distinguish Gallery's tables from other applications.
+ *
+ * We provide some reasonable default prefixes below.  If you modify these
+ * after Gallery has created its various tables, it will stop working until
+ * you modify it back.
  *
  * The possible database types are:
  *  mysql        Standard MySQL
  *  mysqlt       MySQL with transactions (3.23.34a and newer)
- *  postgres     PostgreSQL 6.x
+ *  postgres     PostgreSQL 6.x (not rigorously tested)
  *  postgres7    PostgreSQL 7.x
  */
 $storeConfig['type'] = 'mysql';
@@ -88,7 +94,8 @@ $gallery->setConfig('storage.type', 'database');
 /*
  * Put Gallery into debug mode.  Useful for tracking down problems with the
  * application.  Not a good idea to leave it this way, though.  Possible debug
- * choices are: 'buffered', 'logged', 'immediate' or false.
+ * choices are: 'buffered', 'logged', 'immediate' or false.  Don't forget to
+ * use the quotes for any value but false!
  *
  * If you choose 'immediate', you'll see debugging information as soon as
  * Gallery generates it.  This can be useful at times, but it'll screw up some
@@ -102,6 +109,11 @@ $gallery->setConfig('storage.type', 'database');
  *    $gallery->setDebugLogFile('/path/to/writeable/file');
  * and all debug output will get printed into that file.  You'll get all the
  * debug output and the application will work normally.
+ *
+ * For best debugging output use this line:
+ *
+ * $gallery->setDebug('buffered');
+ *
  */
 $gallery->setDebug(false);
 

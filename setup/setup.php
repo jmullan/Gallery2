@@ -100,6 +100,18 @@ if (!empty($dirStatus)) {
 }
 
 /*
+ * Verify database settings
+ */
+$storeConfig = $gallery->getConfig('storage.config');
+if (empty($storeConfig['tablePrefix'])) {
+    error('missingPrefix', array('type' => 'table'));
+    return;
+} else if (empty($storeConfig['columnPrefix'])) {
+    error('missingPrefix', array('type' => 'column'));
+    return;
+}
+
+/*
  * Make sure we can connect to the storage subsystem.
  */
 $ret = $gallery->initStorage();
