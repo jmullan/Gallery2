@@ -147,21 +147,27 @@ class GalleryUser extends GalleryNucleus {
     /**
      * Add this user to the group id specified.
      *
-     * @param int a group id
+     * @param object GalleryGroup the group instance
      */
-    function addToGroup($groupId) {
+    function addToGroup(&$group) {
 	$groups =& $this->getGroups();
-	$groups->set($groupId, 1);
+	$groups->set($group->getId(), 1);
+
+	$users =& $group->getUsers();
+	$users->set($this->getId(), 1);
     }
 
     /**
      * Add this user to the group id specified.
      *
-     * @param int a group id
+     * @param object GalleryGroup the group instance
      */
-    function removeFromGroup($groupId) {
+    function removeFromGroup($group) {
 	$groups =& $this->getGroups();
-	$groups->remove($groupId);
+	$groups->remove($group->getId());
+
+	$users =& $group->getUsers();
+	$users->remove($this->getId());
     }
 
     /* BEGIN: Accessor Block.  DO NOT MODIFY! */

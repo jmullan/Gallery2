@@ -83,21 +83,30 @@ class GalleryGroup extends GalleryNucleus {
     /**
      * Add the user to this group
      *
-     * @param int a user id
+     * @param object GalleryUser the user instance
      */
-    function addUser($userId) {
+    function addUser(&$user) {
+	assert('isset($user)');
 	$users =& $this->getUsers();
-	$users->set($userId, 1);
+	$users->set($user->getId(), 1);
+
+	$groups =& $user->getGroups();
+	$groups->set($this->getId(), 1);
     }
 
     /**
      * Remove the user from this group
      *
-     * @param int a user id
+     * @param object GalleryUser the user instance
      */
-    function removeUser($userId) {
+    function removeUser(&$user) {
+	assert('isset($user)');
+	
 	$users =& $this->getUsers();
 	$users->remove($userId);
+
+	$groups =& $user->getGroups();
+	$groups->remove($this->getId());
     }
 
     /* BEGIN: Accessor Block.  DO NOT MODIFY! */
