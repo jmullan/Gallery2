@@ -233,8 +233,9 @@ class ImageMagickModule extends GalleryModule {
 	
 	/* Tack on other likely paths, based on our OS */
 	if (GalleryUtilities::isA($platform, 'WinNtPlatform')) {
-	    $paths[] = 'C:\Program Files\ImageMagick';
-	    $paths[] = 'C:\apps\ImageMagick';
+	    $paths[] = 'C:\Program Files\ImageMagick\\';
+	    $paths[] = 'C:\apps\ImageMagick\\';
+	    $paths[] = 'C:\ImageMagick\\';
 	} else if (GalleryUtilities::isA($platform, 'UnixPlatform')){
 	    $paths[] = '/usr/bin/';
 	    $paths[] = '/usr/local/bin/';
@@ -250,7 +251,8 @@ class ImageMagickModule extends GalleryModule {
 	foreach ($paths as $path) {
 	    list ($ret, $testResults) = ImageMagickToolkitHelper::testBinaries($path);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), false);
+		/* This path failed.  Continue with the next one */
+		continue;
 	    }
 	    
 	    $failCount = 0;
