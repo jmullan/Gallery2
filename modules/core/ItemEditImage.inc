@@ -114,7 +114,8 @@ class ItemEditImageController extends GalleryController {
 		$pieces = split(' ', $command);
 		switch (array_shift($pieces)) {
 		case 'rotate':
-		    $ret = $graphics->rotateImage($sourcePath, $sourcePath, $pieces[0]);
+		    $ret = $graphics->rotateImage($item->getMimeType(),
+						  $sourcePath, $sourcePath, $pieces[0]);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
@@ -122,7 +123,8 @@ class ItemEditImageController extends GalleryController {
 		    break;
 
 		case 'scale':
-		    $ret = $graphics->scaleImage($sourcePath, $sourcePath, $pieces[0]);
+		    $ret = $graphics->scaleImage($item->getMimeType(),
+						 $sourcePath, $sourcePath, $pieces[0]);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
