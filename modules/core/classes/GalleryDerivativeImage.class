@@ -173,7 +173,7 @@ class GalleryDerivativeImage_core extends GalleryDerivative {
 
 	$ret = parent::rebuildCache();
 	if ($ret->isError()) {
-	    if ($ret->getErrorCode() & ERROR_TOOLKIT_FAILURE) {
+	    if ($ret->getErrorCode() & (ERROR_TOOLKIT_FAILURE | ERROR_UNIMPLEMENTED)) {
 		/*
 		 * Something went wrong with the toolkit -- use our "busted" image instead.
 		 */
