@@ -90,16 +90,21 @@ class GalleryUrlGenerator {
      * @static
      */
     function getCurrentUrl() {
-	if (!empty($_SERVER['REQUEST_URI'])) {
-	    $path = $_SERVER['REQUEST_URI'];
-	} else if (!empty($_SERVER['SCRIPT_NAME'])) {
-	    $path = $_SERVER['SCRIPT_NAME'];
-	    if (!empty($_SERVER['PATH_INFO']) && $_SERVER['PATH_INFO'] != $path) {
-		$path .= $_SERVER['PATH_INFO'];
+	static $currentUrl;
+	if (!isset($currentUrl)) {
+	    if (!empty($_SERVER['REQUEST_URI'])) {
+		$path = $_SERVER['REQUEST_URI'];
+	    } else if (!empty($_SERVER['SCRIPT_NAME'])) {
+		$path = $_SERVER['SCRIPT_NAME'];
+		if (!empty($_SERVER['PATH_INFO']) && $_SERVER['PATH_INFO'] != $path) {
+		    $path .= $_SERVER['PATH_INFO'];
+		}
 	    }
+	    
+	    $currentUrl = GalleryUrlGenerator::makeUrl($path);
 	}
-
-	return GalleryUrlGenerator::makeUrl($path);
+	
+	return $currentUrl;
     }
 
     /**
@@ -195,12 +200,6 @@ class GalleryUrlGenerator {
 	return preg_replace('{^.*?://(.*?)/(main.php|(install|upgrade|lib/tools)/).*$}', '$1', $url);
     }
 
-    /*
-     * ****************************************
-     *                 Methods
-     * ****************************************
-     */
-
     /**
      * Initializer.  Configure the url generator with all the data it needs.
      *
@@ -257,6 +256,11 @@ class GalleryUrlGenerator {
      * @return string the current URL directory
      */
     function getCurrentUrlDir($forceG2Base=false) {
+ 	static $currentUrlDir;
+ 	if (isset($currentUrlDir[$forceG2Base])) {
+ 	    return $currentUrlDir[$forceG2Base];
+ 	}
+	
 	$url = $this->getCurrentUrl();
 
 	/*
@@ -288,6 +292,7 @@ class GalleryUrlGenerator {
 	    $url .= $relativePath;
 	}
 
+	$currentUrlDir[$forceG2Base] = $url;
 	return $url;
     }
 
