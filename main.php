@@ -330,6 +330,10 @@ function GalleryMain() {
 	    }
 	}
 
+	if ($gallery->isProfiling('sql')) {
+	    $storage =& $gallery->getStorage();
+	    $main['profile'] = $storage->getProfilingHtml();
+	}
 
 	list ($ret, $markup) = GalleryCoreApi::getPluginParameter('module', 'core', 'misc.markup');
 	if ($ret->isError()) {

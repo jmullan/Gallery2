@@ -56,6 +56,7 @@ class GalleryStub {
     }
     
     function setDebugLogFile() { }
+    function setProfile() { }
 }
 
 $gallery = new GalleryStub();

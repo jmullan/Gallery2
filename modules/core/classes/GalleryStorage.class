@@ -371,6 +371,15 @@ class GalleryStorage {
     }
 
     /**
+     * Return storage profiling information in HTML format
+     *
+     * @return string HTML
+     */
+    function getProfilingHtml() {
+	return '';
+    }
+
+    /**
      * Describe all the members of a entity
      *
      * @param string a class name
@@ -461,7 +470,6 @@ class GalleryStorage {
 
 	if ($gallery->getDebug()) {
 	    ob_start();
-	    $this->_traceTiming[] = microtime();
 	}
     }
 
@@ -474,17 +482,8 @@ class GalleryStorage {
     function _traceStop() {
 	global $gallery;
 	if ($gallery->getDebug()) {
-	    list ($startMicro, $startSecs) = explode(' ', array_pop($this->_traceTiming));
-	    list ($stopMicro, $stopSecs) = explode(' ', microtime());
-	    $elapsed = ($stopSecs - $startSecs) + ($stopMicro - $startMicro);
-	    
 	    $buf = ob_get_contents();
 	    ob_end_clean();
-
-	    if ($gallery->getDebug()) {
-		$gallery->debug($buf);
-		$gallery->debug("Elapsed: $elapsed");
-	    }
 	}
     }
 }

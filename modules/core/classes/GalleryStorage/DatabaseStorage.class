@@ -215,7 +215,7 @@ class DatabaseStorage extends GalleryStorage {
 	}
 
 	$this->_traceStart();
-	$db = ADONewConnection($this->getAdoDbType());
+	$db =& ADONewConnection($this->getAdoDbType());
 	$this->_traceStop();
 	if (empty($db)) {
 	    return array(GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__), null);
@@ -245,6 +245,11 @@ class DatabaseStorage extends GalleryStorage {
 	    return array(GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__), null);
 	}
 
+	if ($gallery->isProfiling('sql')) {
+	    $this->_traceStart();
+	    $db->LogSQL();
+	    $this->_traceStop();
+	}
 
 	return array(GalleryStatus::success(), $db);
     }
@@ -820,7 +825,7 @@ class DatabaseStorage extends GalleryStorage {
 		'WHERE ' . $lockIdCol . '=? AND ' . $requestCol . '=1';
 	$data = array($lockId);
 	$this->_traceStart();
-	$recordSet = $db->execute($query, $data);
+	$recordSet = $db->Execute($query, $data);
 	$this->_traceStop();
 	if (!$recordSet) {
 	    $this->_releaseLockById($lockId);
@@ -936,7 +941,7 @@ class DatabaseStorage extends GalleryStorage {
 			     $lockTable, $lockIdCol, $writeEntityIdCol, $freshUntilCol);
 	    $data = array($lockId, $entityId, $freshUntil);
 	    $this->_traceStart();
-	    $recordSet = $db->execute($query, $data);
+	    $recordSet = $db->Execute($query, $data);
 	    $this->_traceStop();
 	    if (!$recordSet) {
 		$this->_releaseLockById($lockId);
@@ -950,7 +955,7 @@ class DatabaseStorage extends GalleryStorage {
 		'WHERE ' . $lockIdCol . '=? AND ' . $requestCol . '=1';
 	$data = array($lockId);
 	$this->_traceStart();
-	$recordSet = $db->execute($query, $data);
+	$recordSet = $db->Execute($query, $data);
 	$this->_traceStop();
 	if (!$recordSet) {
 	    $this->_releaseLockById($lockId);
@@ -1067,7 +1072,7 @@ class DatabaseStorage extends GalleryStorage {
 		'WHERE ' . $lockIdCol . ' IN (' . $markers . ')';
 	$data = $lockIds;
 	$this->_traceStart();
-	$recordSet = $db->execute($query, $data);
+	$recordSet = $db->Execute($query, $data);
 	$this->_traceStop();
 	if ($recordSet) {
 	    return GalleryStatus::success();
@@ -1098,7 +1103,7 @@ class DatabaseStorage extends GalleryStorage {
 	$query = $this->_translateQuery($query);
 
 	/* Run it with the right limits and return the results */
-	$GLOBALS['ADODB_FETCH_MODE'] = ADODB_FETCH_BOTH;
+	$GLOBALS['ADODB_FETCH_MODE'] = ADODB_FETCH_NUM;
 
 	if (isset($optional['limit']) && sizeof($optional['limit'])) {
 	    if (empty($optional['limit']['count'])) {
@@ -1210,7 +1215,7 @@ class DatabaseStorage extends GalleryStorage {
 	$this->_traceStart();
 	$recordSet = $this->_db->Execute($query, $data);
 	$this->_traceStop();
-	if (!$recordSet) {
+	if ($recordSet === false) {
 	    return GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
 	}
 
@@ -1697,7 +1702,19 @@ class DatabaseStorage extends GalleryStorage {
     function getSqlReplacements() {
 	return array();
     }
-	
+
+    /**
+     * Return storage profiling information in HTML format
+     *
+     * @return string HTML
+     */
+    function getProfilingHtml() {
+	 $perf =& NewPerfMonitor($this->_db);
+	 $buf = $perf->SuspiciousSQL();    
+	 $buf .= $perf->ExpensiveSQL();
+	 return $buf;
+    }
+
     /**
      * Identify the type of entity associated with the id provided
      *

@@ -9,11 +9,21 @@
       {g->text text="Gallery Debug Output"} 
   </div>
 
+  {if isset($main.debug)}
   <span>
       <pre>
       {$main.debug}
       </pre>
   </span>
+  {/if}
 
+  {if isset($main.profile)}
+  <span>
+    {$main.profile}
+  </span>
+  {/if}
+
+  {if isset($main.debug)}
   {debug output=""}
+  {/if}
 </div>

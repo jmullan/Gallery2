@@ -47,7 +47,7 @@
       </div>
     </div>
 
-    {if isset($main.debug)}
+    {if isset($main.debug) || isset($main.profile)}
     <div id="gpDebug">
       {include file="gallery:templates/debug.tpl"}
     </div>
