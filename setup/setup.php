@@ -148,7 +148,10 @@ function error($messageName, $messageData=null) {
     $message['output'] = ob_get_contents();
     ob_end_clean();
 
-    $message['debug'] = $gallery->getDebugBuffer();
+    if (!empty($gallery)) {
+	$message['debug'] = $gallery->getDebugBuffer();
+    }
+    
     if (!empty($HTTP_POST_VARS['g2_password'])) {
 	$message['password'] = $HTTP_POST_VARS['g2_password'];
     }
@@ -231,7 +234,7 @@ function CheckDirectories() {
 	return array('not-writeable', 'data.gallery.base', $dataBase);
     }
 
-    $testfile = $dataBase . '/setup' . rand(1, 1000000);
+    $testfile = $dataBase . '/setup' . rand(1, 10000);
     if ($fd = $platform->fopen($testfile, "w")) {
 	fclose($fd);
 	$platform->unlink($testfile);
