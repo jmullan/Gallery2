@@ -412,21 +412,20 @@ class GalleryStatus {
     }
 
     /**
-     * Internal function turn error code and stack trace into text
-     *
-     * @return string
-     * @access private
+     * Break down an error code into a list of constants
+     * @return array of strings
      */
-    function _getAsArray() {
-	global $gallery;
-	
-	$codes = array();
+    function getErrorCodeConstants($errorCode) {
 
+	if ($errorCode == 0) {
+	    return array('GALLERY_SUCCESS');
+	}
+	
 	/* get_defined_constants() arrived in 4.1? */
 	if (function_exists('get_defined_constants')) {
 	    foreach (get_defined_constants() as $constantName => $constantValue) {
 		if (strpos($constantName, 'ERROR_') === 0) {
-		    if ($this->_errorCode & $constantValue) {
+		    if ($errorCode & $constantValue) {
 			$codes[] = $constantName;
 		    }
 		}
@@ -435,6 +434,19 @@ class GalleryStatus {
 	    $codes[] = 'UnknownErrorName';
 	}
 
+	return $codes;
+    }
+
+    /**
+     * Internal function turn error code and stack trace into text
+     *
+     * @return string
+     * @access private
+     */
+    function _getAsArray() {
+	global $gallery;
+	
+	$codes = $this->getErrorCodeConstants($this->_errorCode);
 	$trace = array();
 	$base = $gallery->getConfig('code.gallery.base');
 	if (empty($this->_stackTrace)) {
