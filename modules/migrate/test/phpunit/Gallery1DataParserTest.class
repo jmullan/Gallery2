@@ -154,8 +154,7 @@ class Gallery1DataParserTest extends GalleryControllerTestCase {
         if ($ret->isError()) {
             return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
-        $this->assertEquals(array('Kjøtt',
-				  'monkey!',
+        $this->assertEquals(array('monkey!',
 				  'album01',
 				  'album03'), $rootAlbums);
     }
@@ -165,8 +164,7 @@ class Gallery1DataParserTest extends GalleryControllerTestCase {
         if ($ret->isError()) {
             return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
-        $this->assertEquals(array('Kjøtt' => '.root',
-				  'monkey!' => '.root',
+        $this->assertEquals(array('monkey!' => '.root',
 				  'album01' => '.root',
 				  'album02' => 'album03',
 				  'album03' => '.root'),
@@ -178,7 +176,7 @@ class Gallery1DataParserTest extends GalleryControllerTestCase {
         if ($ret->isError()) {
             return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
-        $this->assertEquals(array('Kjøtt','monkey!','album01', 'album02', 'album03'), array_keys($albumList));
+        $this->assertEquals(array('monkey!','album01', 'album02', 'album03'), array_keys($albumList));
     }
 
     function testGetAlbumHierarchy() {
@@ -186,8 +184,7 @@ class Gallery1DataParserTest extends GalleryControllerTestCase {
         if ($ret->isError()) {
             return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
-        $this->assertEquals(array('Kjøtt' => array(),
-				  'monkey!' => array(),
+        $this->assertEquals(array('monkey!' => array(),
 				  'album01' => array(),
 				  'album03' => array('album02' => array())
 				  ),
