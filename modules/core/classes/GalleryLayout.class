@@ -226,21 +226,17 @@ class GalleryLayout {
     /**
      * Call getItemDetails on every active module
      *
-     * @param mixed object GalleryItem a target item, or array of object GalleryItem
+     * @param object GalleryItem a target item
      * @param array key => value parameters provided by the
      *              parent view -- the module can augment or override these.
      * @return array object GalleryStatus a status code
      *               array ('itemId' => array('moduleName' => html, ...))
      */
-    function _getModuleItemDetails($items, $urlParams) {
+    function _getModuleItemDetails($item, $urlParams) {
 	global $gallery;
 
 	GalleryProfiler::start('GalleryLayout::_getModuleItemDetails');
 
-	if (!is_array($items)) {
-	    $items = array($items);
-	}
-	
 	/* Load the module list */
 	list ($ret, $moduleStatus) = $gallery->getModuleStatus();
 	if ($ret->isError()) {
@@ -258,15 +254,14 @@ class GalleryLayout {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    list ($ret, $moduleDetails) =
-		$module->getItemDetails($items, $urlParams);
+	    list ($ret, $itemDetails[$moduleName]) =
+		$module->getItemDetails($item, $urlParams);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    /* Refactor into: array[itemId][moduleName][links] */
-	    foreach ($moduleDetails as $itemId => $html) {
-		$itemDetails[$itemId][$moduleName] = $html;
+	    if (empty($itemDetails[$moduleName])) {
+		unset($itemDetails[$moduleName]);
 	    }
 	}
 

@@ -90,6 +90,19 @@ class ClassicTheme extends GalleryTheme {
     }
 
     /**
+     * @see GalleryTheme::thinFrame
+     */
+    function thinFrame($params, $content) {
+	if (!empty($params['width'])) {
+	    $width = "width=\"$params[width]\"";
+	} else {
+	    $width = "";
+	}
+
+	return "<table border=\"1\" cellspacing=\"0\" $width><tr><td>$content</td></tr></table>";
+    }
+
+    /**
      * @see GalleryTheme::lightFrame
      */
     function lightFrame($params, $content) {
@@ -99,7 +112,7 @@ class ClassicTheme extends GalleryTheme {
 	    $width = "";
 	}
 
-	return "<table border=\"1\" $width><tr><td>$content</td></tr></table>";
+	return "<table border=\"2\" cellspacing=\"1\" $width><tr><td>$content</td></tr></table>";
     }
 
     /**

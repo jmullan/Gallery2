@@ -39,21 +39,35 @@ class GalleryCommentHelper {
     /**
      * Return the comments associated with the given item ids
      *
-     * @param array int GalleryItem ids
-     * @return array (item id => array (GalleryComment, ...), ...)
+     * @param array int GalleryItem id
+     * @return array (object GalleryStatus a status code,
+     *                array (item id => array (GalleryComment, ...), ...)
      * @access private
      */
-    function fetchComments($itemIds) {
-
+    function fetchComments($itemId, $count=null, $orderDirection=ORDER_ASCENDING) {
 	global $gallery;
 
-	$markers = GalleryUtilities::makeMarkers(sizeof($itemIds));
-	list($ret, $searchResults) =
-	    $gallery->search(array('select' => '[GalleryComment::id]',
-				   'where' => ('[GalleryChildEntity::parentId] IN (' .
-					       $markers . ')'),
-				   'order-by' => '[GalleryComment::date] ASC'),
-			     $itemIds);
+	switch($orderDirection) {
+	case ORDER_ASCENDING:
+	    $direction = 'ASC';
+	    break;
+
+	case ORDER_DESCENDING:
+	    $direction = 'DESC';
+	    break;
+
+	default:
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
+			 null);
+	}
+
+	$params['select'] ='[GalleryComment::id]';
+	$params['where'] = '[GalleryChildEntity::parentId] = ?';
+	if (!empty($count)) {
+	    $params['limit'] = array('count' => $count);
+	}
+	$params['order-by'] = '[GalleryComment::date] ' . $direction;
+	list($ret, $searchResults) = $gallery->search($params, array($itemId));
 
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -68,14 +82,9 @@ class GalleryCommentHelper {
 	/* Load all the comments at once */
 	$comments = array();
 	if (!empty($allIds)) {
-	    list ($ret, $allComments) = $gallery->loadEntitiesById($allIds);
+	    list ($ret, $comments) = $gallery->loadEntitiesById($allIds);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    
-	    /* Now create a map by item id */
-	    foreach ($allComments as $comment) {
-		$comments[$comment->getParentId()][] = $comment;
 	    }
 	}
 

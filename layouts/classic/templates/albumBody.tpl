@@ -91,16 +91,12 @@
 
     <!-- Module Item Details for the active item -->
     {if !empty($moduleItemDetails)}
-    {foreach from=$moduleItemDetails key=itemId item=moduleDetails}
-    {if $itemId == $item.id}
-    {foreach from=$moduleDetails key=moduleName item=detail}
+    {foreach from=$moduleItemDetails key=moduleName item=detail}
     <tr>
       <td width="100%">
 	{$detail}
       </td>
     </tr>
-    {/foreach}
-    {/if}
     {/foreach}
     {/if}
 

@@ -198,37 +198,41 @@ class CommentModule extends GalleryModule {
      * @return array object GalleryStatus a status code
      *               array (itemId => string HTML content)
      */
-    function getItemDetails($items, $returnUrlParams) {
+    function getItemDetails($item, $returnUrlParams) {
 	global $gallery;
-
-	if (!is_array($items)) {
-	    $items = array($items);
-	}
 
 	/* XXX: Permission check "can the user add a comment to this item?" */
 	$gallery->debug("XXX: Comment.getItemDetails should be checking perms");
 
-	$ids = array();
-	foreach ($items as $item) {
-	    $ids[] = $item->getId();
-	}
+	/* XXX: parameterize this */
+	$viewMax = 3;
 
-	list ($ret, $comments) = GalleryCommentHelper::fetchComments($ids);
+	list ($ret, $comments) =
+	    GalleryCommentHelper::fetchComments($item->getId(), $viewMax, ORDER_DESCENDING);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	/* Render the comments */
-	list ($ret, $smarty) = $gallery->getSmarty();
+	list ($ret, $counts) =
+	    GalleryCommentHelper::fetchCommentCounts(array($item->getId()));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$smarty->template_dir = dirname(__FILE__) . '/templates';
 
-	$users = array();
-	$results = array();
-	foreach ($comments as $itemId => $commentList) {
-	    foreach ($commentList as $comment) {
+	$results = null;
+	if (!empty($counts[$item->getId()])) {
+	    $totalComments = $counts[$item->getId()];
+
+	    /* Render the comments */
+	    list ($ret, $smarty) = $gallery->getSmarty();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $smarty->template_dir = dirname(__FILE__) . '/templates';
+
+	    $users = array();
+	    $commentData = array();
+	    foreach ($comments as $comment) {
 		/* Extract the member data */
 		$memberData = $comment->getMemberData();
 
@@ -243,12 +247,14 @@ class CommentModule extends GalleryModule {
 		    $users[$commenterId] = $user->getMemberData();
 		}
 		$memberData['commenter'] = $users[$commenterId];
-		$data[] = $memberData;
+		$commentData[] = $memberData;
 	    }
 
 	    /* Render the comments */
-	    $smarty->assign('comments', $data);
-	    $results[$itemId] = $smarty->fetch('ShowComments.tpl');
+	    $smarty->assign('comments', $commentData);
+	    $smarty->assign('itemId', $item->getId());
+	    $smarty->assign('totalComments', $totalComments);
+	    $results = $smarty->fetch('ItemDetails.tpl');
 	}
 
 	return array(GalleryStatus::success(), $results);

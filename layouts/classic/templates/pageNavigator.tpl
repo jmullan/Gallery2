@@ -1,3 +1,4 @@
+  {galleryThinFrame width="100%"}
   <table border="0" width="100%" cellspacing="0%" cellpadding="0%">
     <tr>
       <td width="27">
@@ -66,3 +67,4 @@
       </td>
     </tr>
   </table>
+  {/galleryThinFrame}
