@@ -126,7 +126,7 @@ class CreateConfigFileStep extends InstallStep {
 	    if (preg_match('{^/\*>-*<\*/$}', $line)) {
 		fwrite($out, "case '" . $galleryId . "': ?>\n");
 		$this->_writeSingleConfig($out, $baseDir);
-		fwrite($out, "\n<?php\nbreak;\n${line}default: ?>\n");
+		fwrite($out, "<?php\nbreak;\n${line}default: ?>\n");
 		foreach ($currentConfig as $tmp) {
 		    fwrite($out, $tmp);
 		}
