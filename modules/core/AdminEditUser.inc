@@ -228,7 +228,7 @@ class AdminEditUserView extends GalleryView {
 	/* Render the HTML body */
 	$template = $this->_getTemplate();
 	$template->setVariable('form', $form);
-	$template->setVariable('user', $user);
+	$template->setVariable('user', $user->getMemberData());
 	$template->setVariable('show', $show);
 	if ($show['language']) {
 	    $template->setVariable('languageList', $languageList);
