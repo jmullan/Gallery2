@@ -22,6 +22,12 @@
       
       {g->description}
 	{g->text text="Choose the items you want to move"}
+	{if ($ItemMove.numPages > 1) }
+	  {g->text text="(page %d of %d)"
+	           arg1=$ItemMove.page
+	           arg2=$ItemMove.numPages}
+        {/if}
+
       {/g->description}
       
       {g->element}
@@ -157,7 +163,11 @@
       {g->element}
 	{g->select name="form[destination]" onChange="javascript:checkPermissions(this.form)"}
           {foreach from=$ItemMove.albumTree item=album}
-  	    <option value="{$album.data.id}">
+  	    <option value="{$album.data.id}"
+	    {if ($album.data.id == $form.destination) }
+	      selected="selected"
+	    {/if}
+	    >
   	    {"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"|repeat:$album.depth}`--
   	    {$album.data.title|default:$album.data.pathComponent}
   	    </option>
@@ -180,8 +190,20 @@
     
     {g->box style="admin"}
       {g->element}
+	{g->input type="hidden" name="page"}{$ItemMove.page}{/g->input}
+	{g->input type="hidden" name="form[numPerPage]"}{$ItemMove.numPerPage}{/g->input}
+	{foreach from=$ItemMove.selectedIds item=selectedId}
+	  {g->input type="hidden" name="form[selectedIds][$selectedId]"}on{/g->input}
+	{/foreach}
 	{g->input type="submit" name="form[action][move]"}{g->text text="Move"}{/g->input}
 	{g->input type="submit" name="form[action][cancel]"}{g->text text="Cancel"}{/g->input}
+	{if ($ItemMove.page > 1)}
+	  {g->input type="submit" name="form[action][previous]"}{g->text text="Previous Page"}{/g->input}
+	{/if}
+	{if ($ItemMove.page < $ItemMove.numPages)}
+	  {g->input type="submit" name="form[action][next]"}{g->text text="Next Page"}{/g->input}
+	{/if}
+
       {/g->element}
     {/g->box}
   {else}

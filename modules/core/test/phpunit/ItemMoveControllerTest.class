@@ -173,6 +173,85 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
     }
 
     /**
+     * Test changing pages with to an invalid page number
+     */
+    function testMoveNextPageOutOfRange() {
+	global $gallery;
+
+	/* create random items */
+	$items = array();
+	for ($i = 0; $i < 5; $i++) {
+	    if (($i % 2) == 0) {
+		list($ret, $items[$i]) = $this->_createRandomAlbum($this->_album[1]->getId());
+	    } else {
+		list($ret, $items[$i]) = $this->_createRandomDataItem($this->_album[1]->getId());
+	    }
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+
+	$selectedIds = array();
+	foreach ($items as $item) {
+	    $selectedIds[$item->getId()] = 1;
+	}
+	
+	GalleryUtilities::putRequestVariable('itemId', $this->_album[1]->getId());
+	GalleryUtilities::putRequestVariable('form[selectedIds]', $selectedIds);
+	GalleryUtilities::putRequestVariable('form[numPerPage]', 3);
+	GalleryUtilities::putRequestVariable('page', 3);	
+	GalleryUtilities::putRequestVariable('form[action][next]', 1);
+	
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemMove',
+						      'itemId' => $this->_album[1]->getId(),
+						      'page' => 2),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
+    }
+
+    function testMovePreviousPageOutOfRange() {
+	global $gallery;
+
+	/* create random items */
+	$items = array();
+	for ($i = 0; $i < 5; $i++) {
+	    if (($i % 2) == 0) {
+		list($ret, $items[$i]) = $this->_createRandomAlbum($this->_album[1]->getId());
+	    } else {
+		list($ret, $items[$i]) = $this->_createRandomDataItem($this->_album[1]->getId());
+	    }
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+
+	$selectedIds = array();
+	foreach ($items as $item) {
+	    $selectedIds[$item->getId()] = 1;
+	}
+	
+	GalleryUtilities::putRequestVariable('itemId', $this->_album[1]->getId());
+	GalleryUtilities::putRequestVariable('form[selectedIds]', $selectedIds);
+	GalleryUtilities::putRequestVariable('page', -1);	
+	GalleryUtilities::putRequestVariable('form[action][previous]', 1);
+	
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemMove',
+						      'itemId' => $this->_album[1]->getId(),
+						      'page' => 1),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
+    }
+
+    
+    /**
      * Test moving an item to a bogus destination
      */
     function testMoveItemIntoBogusDestination() {

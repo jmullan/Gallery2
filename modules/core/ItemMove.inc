@@ -174,6 +174,22 @@ class ItemMoveController extends GalleryController {
 		$redirect['subView'] = 'core:ItemMove';
 		$redirect['itemId'] = $itemId;
 	    }
+	} else if (isset($form['action']['next'])) {
+	    $page = GalleryUtilities::getRequestVariables('page');
+	    list($ret, $peerIds) =
+		    GalleryCoreApi::fetchChildItemIdsWithPermission($itemId, 'core.delete');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    $numPages = ceil(sizeof($peerIds) / $form['numPerPage']);
+	    
+	    $results['delegate']['itemId'] = $itemId;
+	    $results['delegate']['page'] = min($page + 1, $numPages);
+	} else if (isset($form['action']['previous'])) {
+	    $page = GalleryUtilities::getRequestVariables('page');
+	    $results['delegate']['itemId'] = $itemId;
+	    $results['delegate']['page'] = max($page - 1, 1);
 	}
 
 	if (!empty($redirect)) {
@@ -205,8 +221,7 @@ class ItemMoveView extends GalleryView {
 	global $gallery;
 
 	/* itemId is the album where we want to move items from */
-	list ($itemId, $selectedId) = GalleryUtilities::getRequestVariables('itemId', 'selectedId');
-
+	list ($itemId, $selectedId, $page) = GalleryUtilities::getRequestVariables('itemId', 'selectedId', 'page');
         if ($form['formName'] != 'ItemMove') {
             /* First time around, load the form with item data */
             if ($selectedId) {
@@ -214,6 +229,7 @@ class ItemMoveView extends GalleryView {
             }
             $form['destination'] = '';
 	    $form['formName'] = 'ItemMove';
+	    $form['numPerPage'] = 30;
         }
 
         list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
@@ -234,6 +250,29 @@ class ItemMoveView extends GalleryView {
 	$peerDescendentCounts = array();
 	$albumTree = array();
 	if (!empty($peerIds)) {
+	    $numPages = ceil(sizeof($peerIds) / $form['numPerPage']);
+	    if (empty($page)) {
+		/* determine which page we're on */
+		$page = 1;
+		for ($i = 0; $i < sizeof($peerIds); $i++) {
+		    if ($peerIds[$i] == $selectedId) {
+			$page = ceil(($i + 1) / $form['numPerPage']);
+		    }
+		}
+	    }
+
+	    $start = $form['numPerPage'] * ($page - 1);
+	    $peerIds = array_slice($peerIds, $start, $form['numPerPage']);
+	    $selectedIds = array();
+	    if (isset($form['selectedIds'])) {
+		$selectedIds = $form['selectedIds'];
+		foreach ($peerIds as $peerId) {
+		    if (isset($selectedIds[$peerId])) {
+			unset($selectedIds[$peerId]);
+		    }
+		}
+	    }	    
+
 	    /* Load all the peers */
 	    list ($ret, $peerItems) = GalleryCoreApi::loadEntitiesById($peerIds);
 	    if ($ret->isError()) {
@@ -300,6 +339,11 @@ class ItemMoveView extends GalleryView {
         $ItemMove['peerTypes'] = $peerTypes;
 	$ItemMove['peerDescendentCounts'] = $peerDescendentCounts;
         $ItemMove['albumTree'] = $albumTree;
+	$ItemMove['page'] = $page;
+	$ItemMove['numPages'] = $numPages;
+	$ItemMove['numPerPage'] = $form['numPerPage'];
+	$ItemMove['selectedIds'] = array_keys($selectedIds);
+
         $template->setVariable('ItemMove', $ItemMove);
         $template->setVariable('controller', 'core:ItemMove');
 
