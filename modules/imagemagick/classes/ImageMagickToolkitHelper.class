@@ -256,17 +256,16 @@ class ImageMagickToolkitHelper {
 		}
 	    
 		if (!$success) {
-		    $testArray[] = array('name' => 'identify',
-					 'success' => false,
-					 'message' => array_merge(array($module->translate('Problem executing binary:')),
-								  $results)
-					 );
-		} elseif (! ereg('(GIF.*PseudoClass|PseudoClass.*GIF)', join(',', $results))) {
+		    $testArray[] =
+			array('name' => 'identify',
+			      'success' => false,
+			      'message' => array_merge(array($module->translate('Problem executing binary:')),
+						       $results));
+		} elseif (!ereg('(GIF.*PseudoClass|PseudoClass.*GIF)', join(',', $results))) {
 		    $testArray[] = array('name' => 'identify',
 					 'success' => false,
 					 'message' => array_merge(array($module->translate('Binary output:')),
-								  $results)
-					 );
+								  $results));
 		} else {
 		    $testArray[] = array('name' => 'identify',
 					 'success' => true);
@@ -301,11 +300,11 @@ class ImageMagickToolkitHelper {
 		}
 
 		if (!$success) {
-		    $testArray[] = array('name' => 'convert',
-					 'success' => false,
-					 'message' => array_merge(array($module->translate('Problem executing binary:')),
-								  $results)
-					);
+		    $testArray[] =
+			array('name' => 'convert',
+			      'success' => false,
+			      'message' => array_merge(array($module->translate('Problem executing binary:')),
+						       $results));
 		} elseif (join('', $results) != '') {
 		    /*
 		     * 'convert' normaly doesn't say anything: if it does,
@@ -314,8 +313,7 @@ class ImageMagickToolkitHelper {
 		    $testArray[] = array('name' => 'convert',
 					 'success' => false,
 					 'message' => array_merge(array($module->translate('Binary output:')),
-								  $results)
-					 );
+								  $results));
 		} else {
 		    $testArray[] = array('name' => 'convert',
 					 'success' => true);
@@ -333,7 +331,7 @@ class ImageMagickToolkitHelper {
 		}
                 $command = array($imageMagickPath . 'composite',
                                  '-geometry', '+0+0',
-                                 $dataPath . 'test.png',
+                                 $dataPath . 'test.jpg',
                                  $dataPath . 'test.gif',
                                  $tmpFilename
                                 );

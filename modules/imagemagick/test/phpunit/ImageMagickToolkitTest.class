@@ -584,7 +584,7 @@ class ImageMagickToolkitTestPlatform {
 	case '/validPath/composite':
 	    if ($cmd[0][1] == '-geometry' &&
 		    $cmd[0][2] == '+0+0' &&
-		    realpath($cmd[0][3]) == realpath(dirname(__FILE__) . '/../data/test.png') &&
+		    realpath($cmd[0][3]) == realpath(dirname(__FILE__) . '/../data/test.jpg') &&
 		    realpath($cmd[0][4]) == realpath(dirname(__FILE__) . '/../data/test.gif') &&
    		    $cmd[0][5] == 'TEMPFILE') {
 		return array(1, array());
