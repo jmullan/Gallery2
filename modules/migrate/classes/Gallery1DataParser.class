@@ -277,22 +277,30 @@ class Gallery1DataParser {
      */
     function getUserUids($path) {
         global $gallery;
-        $platform = $gallery->getPlatform();
-	$slash = $platform->getDirectorySeparator();
-
-	list ($ret, $userDB) = Gallery1DataParser::loadFile($path . '.users' . $slash . 'userdb.dat');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	static $uids;
+	if (!isset($uids)) {
+	    $uids = array();
 	}
-	$uids = array();
-	foreach ($userDB->userMap as $username => $uid) {
-	    if (Gallery1DataParser::isValidUid($path,$uid)
-		&& !Gallery1DataParser::isValidUid($path,$username)
-		&& !eregi('nobody|everybody|loggedin', $username)) {
-		$uids[$uid] = $username;
+	if (isset($uids[$path])) {
+	    return array(GalleryStatus::success(), $uids[$path]);
+	} else {
+	    $platform = $gallery->getPlatform();
+	    $slash = $platform->getDirectorySeparator();
+	    
+	    list ($ret, $userDB) = Gallery1DataParser::loadFile($path . '.users' . $slash . 'userdb.dat');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }	    
+	    $uids[$path] = array();
+	    foreach ($userDB->userMap as $username => $uid) {
+		if (Gallery1DataParser::isValidUid($path,$uid)
+		    && !Gallery1DataParser::isValidUid($path,$username)
+		    && !eregi('nobody|everybody|loggedin', $username)) {
+		    $uids[$path][$uid] = $username;
+		}
 	    }
+	    return array(GalleryStatus::success(), $uids[$path]);
 	}
-	return array(GalleryStatus::success(), $uids);
     }
     
     /**
@@ -317,14 +325,28 @@ class Gallery1DataParser {
      */
     function isValidUid($path, $uid) {
 	global $gallery;
-	$platform = $gallery->getPlatform();
-	$slash = $platform->getDirectorySeparator();
-	if (Gallery1DataParser::isValidUidString($uid)) {
-	    list ($ret, $fields) = Gallery1DataParser::getUserFieldsByUid($path, $uid);
-	    if ($ret->isSuccess()) {
-		return TRUE;
+	static $memoized;
+	
+	if (!isset($memoized)) {
+	    $memoized = array();
+	}
+	if (!isset($memoized[$path])) {
+	    $memoized[$path] = array();
+	}
+	if (isset($memoized[$path][$uid])) {
+	    return $memoized[$path][$uid];
+	} else {
+	    $platform = $gallery->getPlatform();
+	    $slash = $platform->getDirectorySeparator();
+	    if (Gallery1DataParser::isValidUidString($uid)) {
+		list ($ret, $fields) = Gallery1DataParser::getUserFieldsByUid($path, $uid);
+		if ($ret->isSuccess()) {
+		    $memoized[$path][$uid] = TRUE;
+		    return TRUE;
+		}
 	    }
 	}
+	$memoized[$path][$uid] = FALSE;
 	return FALSE;
     }
 
@@ -338,21 +360,34 @@ class Gallery1DataParser {
      */
     function getUserFieldsByUid($path, $uid) {
         global $gallery;
-        $platform = $gallery->getPlatform();
-	$slash = $platform->getDirectorySeparator();
+	static $fields;
 
-	$fields = array();
-	if (Gallery1DataParser::isValidUidString($uid)) {
-	    list ($ret, $user) = Gallery1DataParser::loadFile($path . '.users' . $slash . $uid);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    foreach ($user as $key => $value){
-		$fields[$key] = $value;
-	    }
+	if (!isset($fields)) {
+	    $fields = array();
 	}
-	return array(GalleryStatus::success(), $fields);
+	if (!isset($fields[$path])) {
+	    $fields[$path] = array();
+	}
+	
+	if (isset($fields[$path][$uid])) {
+	    return array(GalleryStatus::success(), $fields[$path][$uid]);
+	} else {	
+	    $platform = $gallery->getPlatform();
+	    $slash = $platform->getDirectorySeparator();
+	    $fields[$path][$uid] = array();
+	    if (Gallery1DataParser::isValidUidString($uid)) {
+		list ($ret, $user) = Gallery1DataParser::loadFile($path . '.users' . $slash . $uid);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		foreach ($user as $key => $value){
+		    $fields[$path][$uid][$key] = $value;
+		}
+	    }
+	    return array(GalleryStatus::success(), $fields[$path][$uid]);
+	}
     }
+
     /**
      * Load user metadata given a path and username
      *
