@@ -1,0 +1,443 @@
+<?php
+/*
+ * $RCSfile
+ *
+ * Gallery - a web based photo permission viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * Test Permission functionality
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ *
+ */
+class PermissionTest extends GalleryTestCase {
+    /**
+     * Our internal albums
+     *
+     * @var array 
+     * @access private
+     */
+    var $_albums;
+
+    function PermissionTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    /*
+     * Create a random album
+     *
+     * @param int the id of the parent album
+     * @return array object GalleryStatus a status code
+     *               object GalleryAlbumItem
+     * @access private
+     */
+    function _createRandomAlbum($parentId) {
+	global $gallery;
+	
+	list ($ret, $album) = GalleryFactory::newInstance('GalleryEntity', 'GalleryAlbumItem');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	if (!isset($album)) {
+	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
+	}
+
+	if (isset($parentId)) {
+	    list ($ret, $lockIds[]) = $gallery->acquireReadLock($parentId);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    
+	    $ret = $album->create($parentId, 'albumtest' . rand(), $gallery->getActiveUserId());
+	} else {
+	    $ret = $album->createRoot('albumtest' . rand(), $gallery->getActiveUserId());
+	}
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Change some settings */
+	$album->setTitle('This is my title');
+	$album->setDescription('This is a description');
+
+	/* Save it */
+	$ret = $album->save();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Leggo of our locks */
+	if (isset($lockIds)) {
+	    $ret = $gallery->releaseLocks($lockIds);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+
+	return array(GalleryStatus::success(), $album);
+    }
+    
+    /**
+     * Create some nested albums that only have core.canChangePermissions that
+     * we can use for testing.
+     */
+    function setUp() {
+	global $gallery;
+	
+	parent::setUp();
+
+	/* Create some items that we can assign permissions to */
+	$parentId = null;
+	for ($i = 0; $i < 3; $i++) {
+	    list ($ret, $this->_albums[$i]) = $this->_createRandomAlbum($parentId);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+
+	    /* Remove all permissions from it */
+	    $ret = GalleryPermissionMap::removeItemPermissions($this->_albums[$i]->getId());
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+
+	    /*
+	     * Add core.changePermissions to all the items so that we can
+	     * propagate changes.
+	     */
+	    $ret = GalleryPermissionMap::addUserPermission($this->_albums[$i]->getId(),
+							   $gallery->getActiveUserId(),
+							   'core.changePermissions',
+							   false);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+
+	    $parentId = $this->_albums[$i]->getId();
+	}
+
+    }
+
+    /**
+     * Get rid of our test albums
+     */
+    function tearDown() {
+	global $gallery;
+
+	/* Delete our items */
+	$ret = $gallery->deleteEntityById($this->_albums[0]->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	parent::tearDown();
+    }
+
+    /**
+     * Add some user and group permissions and test retrieving them.
+     * This covers:
+     *       GalleryPermissionMap::addUserPermission
+     *       GalleryPermissionMap::addGroupPermission
+     *       GalleryPermissionMap::fetchAllPermissionsForItem
+     */
+    function testAddUserAndGroupPermission() {
+	global $gallery;
+
+	$userId = $gallery->getActiveUserId();
+
+	list ($ret, $groupIds) =
+	    GalleryUserGroupMap::fetchGroupsForUser($userId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$groupIds = array_keys($groupIds);
+	$groupId = $groupIds[0];
+
+	/* Add user permission to just this item */
+	$ret = GalleryPermissionMap::addUserPermission($this->_albums[0]->getId(),
+						       $userId,
+						       'core.changeProperties',
+						       false);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Add group permission to just this item */
+	$ret = GalleryPermissionMap::addGroupPermission($this->_albums[0]->getId(),
+							$groupId,
+							'core.changeText',
+							false);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+
+	/* Add user permission to this item and its children */
+	$ret = GalleryPermissionMap::addUserPermission($this->_albums[0]->getId(),
+						       $userId,
+						       'core.viewAll',
+						       true);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Add group permission to this item and its children */
+	$ret = GalleryPermissionMap::addGroupPermission($this->_albums[0]->getId(),
+							$groupId,
+							'core.delete',
+							true);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Retrieve permissions and compare */
+	for ($i = 0; $i < sizeof($this->_albums); $i++) {
+	    list ($ret, $uncompressedPerms) = 
+		GalleryPermissionMap::fetchAllPermissionsForItem($this->_albums[$i]->getId(), false);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+
+	    list ($ret, $compressedPerms) = 
+		GalleryPermissionMap::fetchAllPermissionsForItem($this->_albums[$i]->getId(), true);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    
+	    if ($i == 0) {
+		/* The top album has more permissions than the children */
+		$expectedUncompressed =
+		    array(array('userId' => 0,
+				'groupId' => $groupId,
+				'permission' => 'core.changeText'),
+			  array('userId' => 0,
+				'groupId' => $groupId,
+				'permission' => 'core.delete'),
+			  array('userId' => $userId,
+				'groupId' => 0,
+				'permission' => 'core.view'),
+			  array('userId' => $userId,
+				'groupId' => 0,
+				'permission' => 'core.viewResizes'),
+			  array('userId' => $userId,
+				'groupId' => 0,
+				'permission' => 'core.viewSource'),
+			  array('userId' => $userId,
+				'groupId' => 0,
+				'permission' => 'core.viewAll'),
+			  array('userId' => $userId,
+				'groupId' => 0,
+				'permission' => 'core.changeProperties'),
+			  array('userId' => $userId,
+				'groupId' => 0,
+				'permission' => 'core.changePermissions'));
+		$expectedCompressed = 
+		    array(array('userId' => 0,
+				'groupId' => $groupId,
+				'permission' => 'core.changeText'),
+			  array('userId' => 0,
+				'groupId' => $groupId,
+				'permission' => 'core.delete'),
+			  array('userId' => $userId,
+				'groupId' => 0,
+				'permission' => 'core.viewAll'),
+			  array('userId' => $userId,
+				'groupId' => 0,
+				'permission' => 'core.changeProperties'),
+			  array('userId' => $userId,
+				'groupId' => 0,
+				'permission' => 'core.changePermissions'));
+	    } else {
+		/*
+		 * The lower albums have less permissions since some weren't
+		 * passed down
+		 */
+		$expectedUncompressed =
+		    array(array('userId' => 0,
+				'groupId' => $groupId,
+				'permission' => 'core.delete'),
+			  array('userId' => $userId,
+				'groupId' => 0,
+				'permission' => 'core.view'),
+			  array('userId' => $userId,
+				'groupId' => 0,
+				'permission' => 'core.viewResizes'),
+			  array('userId' => $userId,
+				'groupId' => 0,
+				'permission' => 'core.viewSource'),
+			  array('userId' => $userId,
+				'groupId' => 0,
+				'permission' => 'core.viewAll'),
+			  array('userId' => $userId,
+				'groupId' => 0,
+				'permission' => 'core.changePermissions'));
+		$expectedCompressed =
+		    array(array('userId' => 0,
+				'groupId' => $groupId,
+				'permission' => 'core.delete'),
+			  array('userId' => $userId,
+				'groupId' => 0,
+				'permission' => 'core.viewAll'),
+			  array('userId' => $userId,
+				'groupId' => 0,
+				'permission' => 'core.changePermissions'));
+	    }
+	    $this->assertEquals($expectedCompressed, $compressedPerms, "Album $i");
+	    $this->assertEquals($expectedUncompressed, $uncompressedPerms, "Album $i");
+	}
+    }
+
+    /**
+     * Test copying permissions from one item to another
+     * This covers:
+     *
+     *     GalleryPermissionMap::addUserPermission
+     *     GalleryPermissionMap::fetchPermissionsForItems
+     */
+    function testCopyPermissions() {
+	global $gallery;
+
+	$userId = $gallery->getActiveUserId();
+	
+	/* Add user permission to the 2nd item */
+	$ret = GalleryPermissionMap::addUserPermission($this->_albums[1]->getId(),
+						       $userId,
+						       'core.viewAll',
+						       false);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Copy permissions to the root item */
+	$ret = GalleryPermissionMap::copyPermissions($this->_albums[0]->getId(),
+						     $this->_albums[1]->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Fetch and compare */
+	list ($ret, $perms) =
+	    GalleryPermissionMap::fetchPermissionsForItems(array($this->_albums[0]->getId(),
+								 $this->_albums[1]->getId()),
+							   $userId);
+	$this->assertEquals($perms[$this->_albums[0]->getId()],
+			    $perms[$this->_albums[1]->getId()]);
+    }
+    
+    /**
+     * Test copying permissions from one item to another
+     * This covers:
+     *
+     *     GalleryPermissionMap::addUserPermission
+     *     GalleryPermissionMap::addGroupPermission
+     *     GalleryPermissionMap::hasPermission
+     */
+    function testHasPermission() {
+	global $gallery;
+
+	$userId = $gallery->getActiveUserId();
+
+	list ($ret, $groupIds) =
+	    GalleryUserGroupMap::fetchGroupsForUser($userId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$groupIds = array_keys($groupIds);
+	$groupId = $groupIds[0];
+	
+	/* Add user permission to the 2nd item */
+	$ret = GalleryPermissionMap::addUserPermission($this->_albums[0]->getId(),
+						       $userId,
+						       'core.viewAll',
+						       false);
+	$ret = GalleryPermissionMap::addGroupPermission($this->_albums[0]->getId(),
+							$groupId,
+							'core.delete',
+							false);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* User has component of composite permission */
+	list ($ret, $hasPermission) =
+	    GalleryPermissionMap::hasPermission($this->_albums[0]->getId(),
+						array($userId),
+						array(),
+						'core.view');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals($hasPermission, true, 'user has component of composite');
+	
+	/* User has composite permission */
+	list ($ret, $hasPermission) =
+	    GalleryPermissionMap::hasPermission($this->_albums[0]->getId(),
+						array($userId),
+						array(),
+						'core.viewAll');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals($hasPermission, true, 'user has composite');
+	
+	/* User does not have permission */
+	list ($ret, $hasPermission) =
+	    GalleryPermissionMap::hasPermission($this->_albums[0]->getId(),
+						array($userId),
+						array(),
+						'core.changeText');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals($hasPermission, false, 'user does not have perm');
+
+	/* Group has composite permission */
+	list ($ret, $hasPermission) =
+	    GalleryPermissionMap::hasPermission($this->_albums[0]->getId(),
+						array(),
+						array($groupId),
+						'core.delete');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals($hasPermission, true, 'group has perm');
+	
+	/* Group has composite permission */
+	list ($ret, $hasPermission) =
+	    GalleryPermissionMap::hasPermission($this->_albums[0]->getId(),
+						array(),
+						array($groupId),
+						'core.changeText');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals($hasPermission, false, 'group does not have perm');
+    }
+}
+
+?>
