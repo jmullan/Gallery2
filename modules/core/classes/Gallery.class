@@ -203,6 +203,7 @@ class Gallery {
      */
     function Gallery() {
 	$this->reset();
+	$this->_modules = array();
 	$this->_locks = array();
 	$this->_boundDomains = array();
 	    
@@ -216,7 +217,6 @@ class Gallery {
      * This should only be called by test cases.
      */
     function reset() {
-	$this->_modules = array();
 	$this->_templateAdapter = null;
 	$this->_eventListeners = array();
 	GalleryDataCache::reset();
