@@ -80,6 +80,7 @@ class SquareThumbToolkit extends GalleryToolkit {
 	    list ($width, $height) = $dimensions;
 	}
 
+	$outputWasGenerated = false;
 	$subContext = array('width' => $width, 'height' => $height);
 	if ($width != $height) {
 	    /* Crop to square */
@@ -118,6 +119,7 @@ class SquareThumbToolkit extends GalleryToolkit {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    $sourceFilename = $cropFilename;
+	    $outputWasGenerated = true;
 	}
 	if ($width > $parameters[0] && $height > $parameters[0]) {
 	    /*
@@ -147,9 +149,20 @@ class SquareThumbToolkit extends GalleryToolkit {
 		}
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
+	    $outputWasGenerated = true;
 	}
 	if (isset($tmpFilename)) {
 	    @$platform->unlink($tmpFilename);
+	}
+
+	if (!$outputWasGenerated) {
+	    /*
+	     * The image was square to begin with, and smaller than the scale size.  This means that we should
+	     * simply reuse the original.
+	     */
+	    if (!$platform->copy($sourceFilename, $destFilename)) {
+		return array(GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__));
+	    }
 	}
 
 	$context['width'] = $subContext['width'];
