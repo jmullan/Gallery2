@@ -204,6 +204,7 @@ class TestCase extends Assert /* implements Test */ {
   var $fClassName;
   var $fResult;
   var $fExceptions = array();
+  var $fTiming;
 
   function TestCase($name) {
     $this->fName = $name;
@@ -311,6 +312,12 @@ class TestCase extends Assert /* implements Test */ {
       return false;
   }
 
+  function elapsed() {
+      list ($startMicro, $startSecs) = explode(' ', $this->fTiming['start']);
+      list ($stopMicro, $stopSecs) = explode(' ', $this->fTiming['stop']);
+      return ($stopSecs - $startSecs) + ($stopMicro - $startMicro);
+  }
+
   function getExceptions() {
     return $this->fExceptions;
   }
@@ -320,9 +327,11 @@ class TestCase extends Assert /* implements Test */ {
   }
 
   function runBare() {
+    $this->fTiming['start'] = microtime();
     $this->setUp();
     $this->runTest();
     $this->tearDown();
+    $this->fTiming['stop'] = microtime();
   }
 }
 
@@ -596,7 +605,7 @@ class PrettyTestResult extends TestResult {
 	echo "<h2>Test Results</h2>";
 	
 	echo "<TABLE CELLSPACING=\"1\" CELLPADDING=\"1\" BORDER=\"0\" WIDTH=\"90%\" ALIGN=\"CENTER\" class=\"details\">";
-	echo "<TR><TH>Class</TH><TH>Function</TH><TH>Success?</TH></TR>";
+	echo "<TR><TH>Class</TH><TH>Function</TH><TH>Success?</TH><TH>Time</TH></TR>";
   }
   
   function report() {
@@ -636,7 +645,9 @@ class PrettyTestResult extends TestResult {
     $outcome = $test->failed()
        ? " class=\"Failure\">FAIL"
        : " class=\"Pass\">OK";
-    printf("<TD$outcome</TD></TR>");
+
+    $elapsed = $test->elapsed();
+    printf("<TD$outcome</TD><TD>$elapsed</TD></TR>");
     flush();
   }
 }
