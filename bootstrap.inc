@@ -24,7 +24,16 @@
 require_once(dirname(__FILE__) . '/modules/core/classes/Gallery.class');
 require_once(dirname(__FILE__) . '/modules/core/classes/GalleryDataCache.class');
 require_once(dirname(__FILE__) . '/modules/core/classes/GalleryUtilities.class');
-$GLOBALS['gallery'] = new Gallery();
+
+/*
+ * Set up our Gallery global.  It's important to use a reference here because
+ * the constructor registers a shutdown function and ties it to the instance in
+ * the constructor.  This global should be the only one that Gallery requires.
+ * Everything else should be inside it so that we do not pollute the namespace
+ * (especially important when we're embedded inside another application).
+ */
+$GLOBALS['gallery'] =& new Gallery(); 
 $gallery =& $GLOBALS['gallery'];
+
 include_once(dirname(__FILE__) . '/config.php');
 ?>
