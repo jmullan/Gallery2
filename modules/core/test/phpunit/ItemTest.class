@@ -174,6 +174,55 @@ class ItemTest extends GalleryTestCase {
 	$this->assert(GalleryUtilities::isExactlyA($instance, 'GalleryUnknownItem'));
     }
 
+    function testCanBeViewedInlineImages() {
+	/* This list should be mime types accepted by browsers in the <img> tag */
+	$mimeTypesInline = array(
+	    'image/jpeg' => true,
+	    'image/pjpeg' => true,
+	    'image/png' => true,
+	    'image/gif' => true,
+	    'image/vnd.wap.wbmp' => true,
+	    'image/tiff' => false,
+	    'image/bmp' => false,  // only IE accepts this one
+	    'image/otherUnknown' => false,
+	);
+	foreach ($mimeTypesInline as $mimeType => $canBeViewedInline) {
+	    list ($ret, $instance) = GalleryCoreApi::newItemByMimeType($mimeType);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $this->assert(GalleryUtilities::isExactlyA($instance, 'GalleryPhotoItem'));
+	    $instance->setMimeType($mimeType);
+	    $this->assertEquals($canBeViewedInline, $instance->canBeViewedInline(), $mimeType);
+	}
+
+    }
+
+    function testCanBeViewedInlineOthers() {
+	$mimeMap = GalleryCoreApi::getMimeTypeMap();
+	$testMimeTypes = array();
+	foreach (array_keys($mimeMap) as $mimeType) {
+	    if (! preg_match('#^image/#', $mimeType)) {
+		$testMimeTypes[] = $mimeType;
+	    }
+	}
+	foreach ($testMimeTypes as $mimeType) {
+	    list ($ret, $instance) = GalleryCoreApi::newItemByMimeType($mimeType);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $instance->setMimeType($mimeType);
+	    if (GalleryUtilities::isExactlyA($instance, 'GalleryMovieItem')) {
+		$instance->setWidth(100);
+		$instance->setHeight(100);
+	    }
+	    /* We need to be able to render what we can view inline */
+	    $html = $instance->render('HTML', array('fallback' => 'ERROR', 'class' => 'test'));
+	    $inlineOk = ($html != 'ERROR' && $html != null);
+	    $this->assertEquals($inlineOk, $instance->canBeViewedInline(), $mimeType);
+	}
+    }
+
     function testGetChildCounts() {
 	global $gallery;
 

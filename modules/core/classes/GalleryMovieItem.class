@@ -107,7 +107,15 @@ class GalleryMovieItem_core extends GalleryDataItem {
      * @see GalleryDataItem::canBeViewedInline()
      */
     function canBeViewedInline() {
-	return ($this->getWidth() != 0 && $this->getHeight() != 0);
+	$mimeType = $this->getMimeType();
+	/* The mimeTypes listed here should provide a render() output */
+	$canBeViewedInline = array(
+	    'video/quicktime',
+	    'video/mpeg',
+	    'video/x-msvideo',
+	);
+	return ($this->getWidth() != 0 && $this->getHeight() != 0
+		&& in_array($mimeType, $canBeViewedInline));
     }
     
     /**
