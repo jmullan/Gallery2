@@ -242,7 +242,7 @@ class GalleryItemAttributesMap_core {
     function rebalanceChildOrderWeights($parentItemId, $spacing=1000) {
 	global $gallery;
 
-	list ($ret, $ids) = GalleryChildEntityHelper::fetchChildIds($parentItemId);
+	list ($ret, $ids) = GalleryChildEntityHelper::fetchOrderedChildIds($parentItemId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
