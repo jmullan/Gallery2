@@ -68,10 +68,11 @@ function GalleryInitFirstPass($params=array()) {
 	$gallery->setPlatform(new UnixPlatform());
     }
 
-    /* Configure our url Generator for standalone mode. */
+    /* Configure our url Generator */
     $urlGenerator = new GalleryUrlGenerator(
 			isset($params['embedUri']) ? $params['embedUri'] : 'main.php',
-			isset($params['relativeG2Path']) ? $params['relativeG2Path'] : null );
+			isset($params['relativeG2Path']) ? $params['relativeG2Path'] : null,
+			isset($params['embedSessionString'] ? $params['embedSessionString'] : null );
     $urlGenerator->registerViewPrefix('view', 'core:ShowItem');
     $urlGenerator->registerViewPrefix('download', 'core:DownloadItem');
 
@@ -104,6 +105,9 @@ function GalleryInitFirstPass($params=array()) {
     $gallery->setConfig('data.smarty.templates_c', $dataBase . 'smarty' . $slash . 'templates_c' . $slash);
 
     /* Initialize our session */
+    if (isset($params['SID'])) {
+	GalleryUtilities::putRequestVariable(SESSION_ID_PARAMETER, $params['SID']);
+    }
     $ret = $gallery->initSession();
     if ($ret->isError()) {
 	return $ret->wrap(__FILE__, __LINE__);

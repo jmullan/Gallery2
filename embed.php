@@ -36,18 +36,27 @@ class GalleryEmbed {
      * @param string URI to access G2 via CMS application (example: index.php?module=gallery2)
      * @param string relative path from CMS (dir with embedUri) to G2 base dir
      * @param string URL for redirect to CMS login view (example: /cms/index.php)
-     * @return object GalleryStatus a status object
+     * @param string (optional) To support cookieless browsing, pass in key=value for CMS
+                      session key and session id value to be added as query parameter in urls
+     * @param string (optional) To support cookieless browsing, pass in G2 session id (when
+     *                cookies not in use, CMS must track this value between requests)
+     * @return array object GalleryStatus a status object
+     *               string G2 session id
      * @static
      */
-    function init($embedUri, $relativeG2Path, $loginRedirect) {
+    function init($embedUri, $relativeG2Path, $loginRedirect,
+		  $embedSessionString=null, $g2SessionId=null) {
 	$ret = GalleryInitFirstPass(
-			  array('embedUri' => $embedUri, 'relativeG2Path' => $relativeG2Path));
+			  array('embedUri' => $embedUri, 'relativeG2Path' => $relativeG2Path,
+				'SID' => $g2SessionId, 'embedSessionString' => $embedSessionString));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	GalleryCapabilities::set('login', false);
 	GalleryCapabilities::set('loginRedirect', array('href' => $loginRedirect));
-	return GalleryStatus::success();
+	global $gallery;
+	$session =& $gallery->getSession();
+	return array(GalleryStatus::success(), $session->getId());
     }
 
     /**

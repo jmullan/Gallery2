@@ -63,6 +63,24 @@ class GalleryUrlGenerator {
      */
     var $_relativeG2Path;
 
+    /**
+     * The session key for the CMS application in which G2 is embedded.
+     * Should only be nonempty when cookieless browsing is supported by CMS.
+     *
+     * @var string $_embedSessionString
+     * @private
+     */
+    var $_embedSessionKey;
+
+    /**
+     * The session id value for the CMS application in which G2 is embedded.
+     * Should only be nonempty when cookieless browsing is supported by CMS.
+     *
+     * @var string $_embedSessionString
+     * @private
+     */
+    var $_embedSessionId;
+
     /*
      * ****************************************
      *                 Methods
@@ -73,10 +91,17 @@ class GalleryUrlGenerator {
      * Constructor
      *
      * @param string the base URL
+     * @param string (optional) when embedded, relative path between G2 request urls and G2 basedir
+     * @param string (optional) when embedded in CMS app that supports cookieless browsing,
+     *                          key=value string for CMS session key and id
      */
-    function GalleryUrlGenerator($baseFile, $relativeG2Path=null) {
+    function GalleryUrlGenerator($baseFile, $relativeG2Path=null, $embedSessionString=null) {
 	$this->_baseFile = $baseFile;
 	$this->_relativeG2Path = $relativeG2Path;
+	if (!empty($embedSessionString)) {
+	    list ($this->_embedSessionKey, $this->_embedSessionId) =
+		explode('=', $embedSessionString, 2);
+	}
     }
 
     /**
@@ -294,7 +319,7 @@ class GalleryUrlGenerator {
     /**
      * Return a valid Gallery URL.
      *
-     * @param array key/value pairs to be embedded in the URL
+     * @param array key/value pairs to be included in the URL
      * @param boolean (optional) set to true/false to force the session id to be in/not in
      *                the url; by default it is include when cookies are not in use
      */
@@ -304,7 +329,11 @@ class GalleryUrlGenerator {
 	$session =& $gallery->getSession();
 	if ( (!isset($forceSessionId) && !($session->isUsingCookies())) ||
 		(isset($forceSessionId) && $forceSessionId === true)) {
-	    $params[$session->getKey()] = $session->getId();
+	    if (!empty($this->_embedSessionId)) {
+		$params[$this->_embedSessionKey] = $this->_embedSessionId;
+	    } else {
+		$params[$session->getKey()] = $session->getId();
+	    }
 	}
 
 	/* If the url specifies a full href, then let's use that */
@@ -332,8 +361,13 @@ class GalleryUrlGenerator {
 	     * but not have the session id in the url yet.  Detect that case and add the url here.
 	     */
 	    if (!($session->isUsingCookies())) {
-		$sessionKey = $session->getKey();
-		$sessionId = $session->getId();
+		if (!empty($this->_embedSessionId)) {
+		    $sessionKey = $this->_embedSessionKey;
+		    $sessionId = $this->_embedSessionId;
+		} else {
+		    $sessionKey = $session->getKey();
+		    $sessionId = $session->getId();
+		}
 		if (empty($_SERVER['QUERY_STRING']) || strpos($_SERVER['QUERY_STRING'], $sessionKey) === false) {
 		    $params['return'] .= $this->buildQueryString(array($sessionKey => $sessionId));
 		}
