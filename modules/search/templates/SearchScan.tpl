@@ -124,7 +124,9 @@
             <td>
       	<a href="{g->url arg1="view=core:ShowItem" arg2="itemId=$itemId"}">
       	  {if isset($SearchScan.thumbnails.$itemId)}
-      	  {g->image item=$SearchScan.items.$itemId image=$SearchScan.thumbnails.$itemId}
+	  <div class="gbItemImage">
+      	    {g->image item=$SearchScan.items.$itemId image=$SearchScan.thumbnails.$itemId}
+	  </div>
       	  {else}
       	  {g->text text="No thumbnail"}
       	  {/if}
