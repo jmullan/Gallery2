@@ -317,7 +317,7 @@ class TestGdFunctionality {
 	return GalleryStatus::success();
     }
 
-    function imageJpeg($res, $filename) {
+    function imageJpeg($res, $filename, $quality) {
 	if (! $this->functionExists('imageJpeg')) {
 	    return GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
 					'Environment: ' . $this->getEnvironmentName());

@@ -359,11 +359,11 @@ class GdFunctionality {
      *
      * @return object GalleryStatus
      */
-    function imageJpeg($res, $filename) {
+    function imageJpeg($res, $filename, $quality) {
 	if (! function_exists('imageJpeg')) {
 	    return GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__);
 	}
-	$result = @imageJpeg($res, $filename);
+	$result = @imageJpeg($res, $filename, $quality);
 	if ($result) {
 	    return GalleryStatus::success();
 	} else {
