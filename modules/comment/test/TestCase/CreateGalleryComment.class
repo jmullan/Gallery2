@@ -8,8 +8,7 @@ class CreateGalleryCommentTestCase extends TestCase {
 
     function testStart() {
 	global $gallery;
-
-	$rootId = $gallery->getConfigValue('core.ids.rootAlbum');
+	$rootId = $gallery->getRootAlbumId();
 
 	/* Lock the parent id */
 	$ret = $gallery->lockLocal($rootId);
@@ -18,7 +17,7 @@ class CreateGalleryCommentTestCase extends TestCase {
 	    return $ret;
 	}
 
-	list($ret, $root) = GalleryNucleus::load($rootId);
+	list($ret, $root) = $gallery->loadNucleusById($rootId);
 	if ($ret->isError()) {
 	    return $ret;
 	}
@@ -51,7 +50,7 @@ class CreateGalleryCommentTestCase extends TestCase {
 	$comment->setEmailAddress('bozo@slashdot.org');
 	$comment->setHostname('www.slashdot.org');
 	$comment->setName('Cmdr Taco');
-	$ret = GalleryNucleus::saveMany(array(&$root, &$comment));
+	$ret = $gallery->saveMany(array(&$root, &$comment));
 	if ($ret->isError()) {
 	    return $ret;
 	}

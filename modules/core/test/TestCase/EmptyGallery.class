@@ -15,31 +15,21 @@ class EmptyGalleryTestCase extends TestCase {
 
 	$platform = $gallery->getPlatform();
 
-	$albumsDir = $gallery->getConfigValue('core.directory.albums');
-	$tempDir = $gallery->getConfigValue('core.directory.temp');
+	foreach (array($gallery->getConfig('core.directory.albums'),
+		       $gallery->getConfig('core.directory.temp'),
+		       $gallery->getConfig('core.directory.cache')) as $dir) {
 
-	if ($platform->file_exists($albumsDir)) {
-	    $ret = $platform->recursiveRmdir($albumsDir);
-	    if (!$ret) {
-		return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);
+	    if ($platform->file_exists($dir)) {
+		$ret = $platform->recursiveRmdir($dir);
+		if (!$ret) {
+		    return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);
+		}
 	    }
-	}
-
-	if ($platform->file_exists($tempDir)) {
-	    $ret = $platform->recursiveRmdir($tempDir);
+	
+	    $ret = $platform->mkdir($dir);
 	    if (!$ret) {
-		return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);
+		return GalleryStatus::error(ERROR_UNKNOWN, __FILE__, __LINE__);
 	    }
-	}
-	
-	$ret = $platform->mkdir($albumsDir);
-	if (!$ret) {
-	    return GalleryStatus::error(ERROR_UNKNOWN, __FILE__, __LINE__);
-	}
-	
-	$ret = $platform->mkdir($tempDir);
-	if (!$ret) {
-	    return GalleryStatus::error(ERROR_UNKNOWN, __FILE__, __LINE__);
 	}
 
 	return GalleryStatus::success();

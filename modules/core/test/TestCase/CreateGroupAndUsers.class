@@ -35,7 +35,7 @@ class CreateGroupAndUsersTestCase extends TestCase {
 	$user2->setEmail('User2@gallery.com');
 	$user2->setIsAdmin(false);
 
-	$ret = GalleryNucleus::saveMany(array(&$group, &$user1, &$user2));
+	$ret = $gallery->saveMany(array(&$group, &$user1, &$user2));
 	if ($ret->isError()) {
 	    return $ret;
 	}
@@ -51,14 +51,14 @@ class CreateGroupAndUsersTestCase extends TestCase {
 	$group->addUser($user1);
 	$group->addUser($user2);
 
-	$ret = GalleryNucleus::saveMany(array(&$group, &$user1, &$user2));
+	$ret = $gallery->saveMany(array(&$group, &$user1, &$user2));
 	if ($ret->isError()) {
 	    return $ret;
 	}
 
 	$user1->removeFromGroup($group);
 
-	$ret = GalleryNucleus::saveMany(array(&$group, &$user1, &$user2));
+	$ret = $gallery->saveMany(array(&$group, &$user1, &$user2));
 	if ($ret->isError()) {
 	    return $ret;
 	}
