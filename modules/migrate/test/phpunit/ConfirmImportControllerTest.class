@@ -600,12 +600,13 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	$thumbnail = $thumbTable[$ids[0]];
 	$this->assert(GalleryUtilities::isA($thumbnail, 'GalleryDerivative'));
 
-	list ($ret, $isCurrent) = $thumbnail->isCacheCurrent();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	if (isset($thumbnail)) {
+	    list ($ret, $isCurrent) = $thumbnail->isCacheCurrent();
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $this->assert($isCurrent, 'Cache is not current!');
 	}
-
-	$this->assert($isCurrent, 'Cache is not current!');
     }
     
     
