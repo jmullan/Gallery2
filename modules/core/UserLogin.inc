@@ -54,8 +54,7 @@ class UserLoginController extends GalleryController {
 		}
 
 		if ($user != null && $user->isCorrectPassword($form['password'])) {
-		    $session =& $gallery->getSession();
-		    $session->put('core.id.activeUser', $user->getId());
+		    $gallery->setActiveUserId($user->getId());
 
 		    $redirect['view'] = 'core:UserAdmin';
 		    $redirect['subView'] = 'core:UserPreferences';

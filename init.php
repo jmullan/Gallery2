@@ -152,8 +152,6 @@ function GalleryInitSecondPass() {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
-	$session->put('core.id.activeUser', $activeUserId);
     }
     $gallery->setActiveUserId($activeUserId);
 

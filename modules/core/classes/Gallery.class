@@ -231,9 +231,17 @@ class Gallery {
      * @access public
      */
     function setActiveUserId($id) {
+	global $gallery;
+	
 	assert('!empty($id)');
 	$this->_activeUserId = (int)$id;
 	$this->_activeUser = null;
+
+	$session =& $gallery->getSession();
+	if (isset($session)) {
+	    // It's possible for the session not to exist during bootstrap time
+	    $session->put('core.id.activeUser', $id);
+	}
     }
 
     /**
