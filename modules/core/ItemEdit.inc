@@ -178,7 +178,8 @@ class ItemEditView extends GalleryView {
 	
 	$pluginInstances = array();
 	foreach (array_keys($allPluginIds) as $pluginId) {
-	    list ($ret, $plugin) = GalleryCoreApi::newFactoryInstanceById('ItemEditPlugin', $pluginId);
+	    list ($ret, $plugin) =
+		GalleryCoreApi::newFactoryInstanceById('ItemEditPlugin', $pluginId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
