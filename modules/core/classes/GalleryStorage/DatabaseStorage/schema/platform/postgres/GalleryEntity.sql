@@ -47,6 +47,14 @@
     
     NOT NULL
   
+      ,
+    DB_COLUMN_PREFIXonLoadHandlers
+      VARCHAR(
+      
+          128
+        
+      )
+    
     );
 
   
@@ -81,7 +89,7 @@
       ) VALUES (
       'Entity',
       1,
-      0
+      1
       );
 
   

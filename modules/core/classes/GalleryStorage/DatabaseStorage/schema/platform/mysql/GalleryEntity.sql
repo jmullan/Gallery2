@@ -47,6 +47,14 @@
     
     NOT NULL
   
+      ,
+    DB_COLUMN_PREFIXonLoadHandlers
+      varchar(
+      
+          128
+        
+      )
+    
     , 
   
       PRIMARY KEY (DB_COLUMN_PREFIXid)
@@ -77,7 +85,7 @@
       ) VALUES (
       'Entity',
       1,
-      0
+      1
       );
 
   
