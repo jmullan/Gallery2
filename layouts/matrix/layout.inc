@@ -164,6 +164,7 @@ class MatrixLayout extends GalleryLayout {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+	$imageFrameInitialized = false;
 	if (isset($imageframe)) {
 	    $layout['useImageframes'] = 1;
 	    $frameIds = array();
@@ -190,8 +191,11 @@ class MatrixLayout extends GalleryLayout {
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
+		$imageFrameInitialized = true;
 	    }
-	} else {
+	}
+
+	if (!$imageFrameInitialized) {
 	    $smarty =& $template->_getSmarty();
 	    $smarty->register_block('imageframe', array('GalleryTemplateAdapter', 'nullBlock'));
 	    $smarty->register_function('imageframe_style', array('GalleryTemplateAdapter', 'nullFunction'));
