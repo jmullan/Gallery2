@@ -218,6 +218,85 @@ class GalleryLayout extends GalleryPlugin {
     }
 
     /**
+     * Remove this layout from all albums.
+     *
+     * @return object GalleryStatus a status code
+     */
+    function uninstall() {
+	global $gallery;
+
+	list ($ret, $searchResults) = $gallery->search(
+	    'SELECT [GalleryAlbumItem::id] FROM [GalleryAlbumItem] WHERE ' .
+	    '[GalleryAlbumItem::layout] = ?', array($this->getId()));
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	for ($ids = array(); $result = $searchResults->nextResult();) {
+	    $ids[] = $result[0];
+	}
+	if (!empty($ids)) {
+	    /* Reset albums to default layout */
+	    list ($ret, $defaultLayout) =
+	        GalleryCoreApi::getPluginParameter('module', 'core', 'default.layout');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($ids);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    list ($ret, $albums) = GalleryCoreApi::loadEntitiesById($ids);
+	    if ($ret->isError()) {
+		GalleryCoreApi::releaseLocks($lockId);
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    foreach ($albums as $album) {
+		$album->setLayout($defaultLayout);
+		$album->save();
+		if ($ret->isError()) {
+		    GalleryCoreApi::releaseLocks($lockId);
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+	    $ret = GalleryCoreApi::releaseLocks($lockId);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	/* Remove this plugin */
+	$ret = parent::uninstall();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * @see GalleryPlugin::deactivate
+     */
+    function deactivate() {
+	list ($ret, $defaultLayout) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'default.layout');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	if ($defaultLayout == $this->getId()) {
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+					      'Can\'t deactivate default layout'), null);
+	}
+
+	list ($ret, $redirect) = parent::deactivate();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	return array(GalleryStatus::success(), $redirect);
+    }
+
+    /**
      * Load the template with data from this view.
      *
      * @param array object GalleryTemplate the template instance

@@ -108,15 +108,6 @@ class ShowItemView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	/* Update the view count for non-data items, like Albums */
-	if (GalleryUtilities::isA($item, 'GalleryItem') &&
-		!GalleryUtilities::isA($item, 'GalleryDataItem')) {
-	    $ret = GalleryCoreApi::incrementItemViewCount($item->getId());
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	}
-
 	list ($ret, $layoutId) = GalleryCoreApi::fetchLayoutId($item);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -134,40 +125,46 @@ class ShowItemView extends GalleryView {
 	    }
 	}
 
-	if ($validLayout) {
-	    /* Let the layout load the template and get its body file */
-	    list ($ret, $results) = $layout->loadTemplate($template, $item);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-	    if (isset($results['redirect'])) {
-		return array(GalleryStatus::success(), $results);
-	    } else if (isset($results['html'])) {
-		return array(GalleryStatus::success(), $results);
-	    } else {
-		$ShowItem = array();
-		$ShowItem['item'] = $item->getMemberData();
-		$ShowItem['layoutL10Domain'] = $layout->getL10Domain();
-		if (isset($results['body'])) {
-		    $ShowItem['layoutBodyFile'] = $results['body'];
-		}
-		$template->setVariable('ShowItem', $ShowItem);
-
-		/* Provide a title if the layout doesn't */
-		$head = $template->getVariable('head');
-		if (empty($head['tpl']) && empty($head['title'])) {
-		    $template->head('modules/core/templates/ShowItemHead.tpl');
-		}
-
-		return array(GalleryStatus::success(),
-			     array('body' => 'modules/core/templates/ShowItem.tpl'));
-	    }
-	} else {
+	if (!$validLayout) {
 	    return array(GalleryStatus::success(),
 			 array('redirect' => array('view' => 'core:ShowItemError',
 						   'problem' => 'missingLayout',
 						   'itemId' => $item->getId())));
+	}
+
+	/* Let the layout load the template and get its body file */
+	list ($ret, $results) = $layout->loadTemplate($template, $item);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Update the view count for non-data items, like Albums */
+	if (GalleryUtilities::isA($item, 'GalleryItem') &&
+		!GalleryUtilities::isA($item, 'GalleryDataItem')) {
+	    $ret = GalleryCoreApi::incrementItemViewCount($item->getId());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+
+	if (isset($results['redirect']) || isset($results['html'])) {
+	    return array(GalleryStatus::success(), $results);
+	} else {
+	    $ShowItem = array('item' => $item->getMemberData(),
+			      'layoutL10Domain' => $layout->getL10Domain());
+	    if (isset($results['body'])) {
+		$ShowItem['layoutBodyFile'] = $results['body'];
+	    }
+	    $template->setVariable('ShowItem', $ShowItem);
+
+	    /* Provide a title if the layout doesn't */
+	    $head = $template->getVariable('head');
+	    if (empty($head['tpl']) && empty($head['title'])) {
+		$template->head('modules/core/templates/ShowItemHead.tpl');
+	    }
+
+	    return array(GalleryStatus::success(),
+			 array('body' => 'modules/core/templates/ShowItem.tpl'));
 	}
     }
 
