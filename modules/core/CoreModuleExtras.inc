@@ -290,7 +290,7 @@ class CoreModuleExtras {
 	     */
 	    list ($ret, $layouts) = GalleryCoreApi::fetchPluginStatus('layout');
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
 	    foreach ($layouts as $layoutId => $layoutStatus) {
@@ -298,17 +298,17 @@ class CoreModuleExtras {
 		    list($ret, $layout) = GalleryCoreApi::loadPlugin('layout', $layoutId);
 		    if ($ret->isError() &&
 			!($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return $ret->wrap(__FILE__, __LINE__);
 		    }
 
 		    $ret = $layout->installOrUpgrade();
 		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return $ret->wrap(__FILE__, __LINE__);
 		    }
 
 		    list ($ret, $ignored) = $layout->activate();
 		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return $ret->wrap(__FILE__, __LINE__);
 		    }
 		}
 	    }
