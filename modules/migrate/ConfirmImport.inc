@@ -814,13 +814,15 @@ class ConfirmImportController extends GalleryController {
 						    return array($ret->wrap(__FILE__, __LINE__), null);
 						}
 						list($ret, $commentG2User) = GalleryCoreApi::fetchUserByUsername($commentG1User['username']);
-						if ($ret->isError() && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
-						    return array($ret->wrap(__FILE__, __LINE__), null);
+						if ($ret->isError()) {
+						    if (!($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
+							return array($ret->wrap(__FILE__, __LINE__), null);
+						    } else {
+							$commenterId = $guestUserId;
+						    }
+						} else {
+						    $commenterId = $commentG2User->getId();
 						}
-						if ($ret->isError() && ($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
-						    $commenterId = $guestUserId;
-						}
-						$commenterId = $commentG2User->getId();
 					    }
 					} else {
 					    $commenterId = $guestUserId;
@@ -865,7 +867,7 @@ class ConfirmImportController extends GalleryController {
 				//}
 				$status['addFromLocalServer'][] = array('fileName' => $filename,
 									'id' => $newItem->getId());
-				if (FALSE && ($albumNeedsThumbnail || $importAlbumItem->highlight == 1)) {
+				if (($albumNeedsThumbnail || $importAlbumItem->highlight == 1)) {
 				    $toolkit = NULL;
 				    
 				    list ($ret, $toolkit, $outputMimeType) =
