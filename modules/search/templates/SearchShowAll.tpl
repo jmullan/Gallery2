@@ -1,4 +1,4 @@
-{g->form action_controller=$SearchShowAll.controller}
+{g->form arg1="controller=`$SearchShowAll.controller`"}
   {g->input type="hidden" name="form[formName]"}SearchShowAll{/g->input}
   {g->input type="hidden" name="form[moduleId]"}{$form.moduleId}{/g->input}
   {g->input type="hidden" name="form[page]"}{$form.page}{/g->input}
@@ -113,7 +113,7 @@
 		  {assign var=itemId value=$result.itemId} 
 		  {g->row}
 		    {g->column}
-		      {g->link url_view="core:ShowItem" url_itemId=$itemId}
+		      {g->link arg1="view=core:ShowItem" arg2="itemId=$itemId"}
 			{g->image item=$SearchShowAll.items.$itemId image=$SearchShowAll.thumbnails.$itemId}
 		      {/g->link}
 		    {/g->column}

@@ -43,11 +43,11 @@
 	  {g->column}
 	    {if (!empty($module.action))}
 	      {if (empty($module.action.controller)) }
-		{g->link url_return="true" url_view='core:SiteAdmin' url_subView=$module.action.view}
+		{g->link arg1="return=true" arg2="view=core:SiteAdmin" arg3="subView=`$module.action.view`"}
 		  {$module.action.text}
 		{/g->link}
 	      {else}
-		{g->link url_controller=$module.action.controller url_moduleId=$module.action.moduleId url_action=$module.action.action}
+		{g->link arg1="controller=`$module.action.controller`" arg2="moduleId=`$module.action.moduleId`" arg3="action=`$module.action.action`"}
 		  {$module.action.text}
 		{/g->link}
 	      {/if}

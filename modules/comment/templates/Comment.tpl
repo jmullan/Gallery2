@@ -9,7 +9,7 @@
 	{if $can.edit}
 	  {g->item}
 	    {g->title}
-	      {g->link url_return="true" url_view="core:ItemAdmin" url_subView="comment:EditComment" url_itemId=$item.id url_commentId=$comment.id}
+	      {g->link arg1="return=true" arg2="view=core:ItemAdmin" arg3="subView=comment:EditComment" arg4="itemId=`$item.id`" arg5="commentId=`$comment.id`"}
 		{g->text text="edit"}
 	      {/g->link}
 	    {/g->title}
@@ -18,7 +18,7 @@
 	{if $can.delete}
 	  {g->item}
 	    {g->title}
-	      {g->link url_return="true" url_view="core:ItemAdmin" url_subView="comment:DeleteComment" url_itemId=$item.id url_commentId=$comment.id}
+	      {g->link arg1="return=true" arg2="view=core:ItemAdmin" arg3="subView=comment:DeleteComment" arg4="itemId=`$item.id`" arg5="commentId=`$comment.id`"}
 		{g->text text="delete"}
 	      {/g->link}
 	    {/g->title}

@@ -29,7 +29,7 @@
 	  {if ($AdminLayouts.mode == 'config')}
 	    {g->text text="All Layouts"}
 	  {else}
-	    {g->link url_view="core:SiteAdmin" url_subView="core:AdminLayouts" url_mode="config"}
+	    {g->link arg1="view=core:SiteAdmin" arg2="subView=core:AdminLayouts" arg3="mode=config"}
 	      {g->text text="All Layouts"}
 	    {/g->link}
 	  {/if}
@@ -43,7 +43,7 @@
 	      {if ($AdminLayouts.mode == 'editLayout') && ($AdminLayouts.layoutId == $layoutId)}
 		{g->text text=$layout.name l10Domain=$layout.l10Domain}
 	      {else}
-		{g->link url_view="core:SiteAdmin" url_subView="core:AdminLayouts" url_mode="editLayout" url_layoutId=$layoutId}
+		{g->link arg1="view=core:SiteAdmin" arg2="subView=core:AdminLayouts" arg3="mode=editLayout" arg4="layoutId=$layoutId"}
 		  {g->text text=$layout.name l10Domain=$layout.l10Domain}
 		{/g->link}
 	      {/if}
@@ -88,7 +88,7 @@
 		    {if (isset($layout.actions.activate))}
 		      {g->item}
 			{g->title}
-			  {g->link url_controller='core:AdminLayouts' url_form_action_activate=1 url_layoutId=$layoutId}
+			  {g->link arg1="controller=core:AdminLayouts" arg2="form[action][activate]=1" arg3="layoutId=$layoutId"}
 			    {g->text text="activate"}
 			  {/g->link}
 			{/g->title}
@@ -97,7 +97,7 @@
 		    {if (isset($layout.actions.deactivate))}
 		      {g->item}
 			{g->title}
-			  {g->link url_controller='core:AdminLayouts' url_form_action_deactivate=1 url_layoutId=$layoutId}
+			  {g->link arg1="controller=core:AdminLayouts" arg2="form[action][deactivate]=1" arg3="layoutId=$layoutId"}
 			    {g->text text="deactivate"}
 			  {/g->link}
 			{/g->title}

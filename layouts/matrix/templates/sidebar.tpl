@@ -50,7 +50,7 @@
 	  {else}
 	    {g->item}
 	      {g->title}
-		{g->link url_view="core:ShowItem" url_itemId=$peer.peer.id}
+		{g->link arg1="view=core:ShowItem" arg2="itemId=`$peer.peer.id`"}
 		  {g->text text="%d. %s" arg1=$peer.index arg2=$title|truncate:14}
 		{/g->link}
 	      {/g->title}

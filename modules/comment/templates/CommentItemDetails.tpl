@@ -4,7 +4,7 @@
       {g->text text="Recent comments"}
 
       {if sizeof($CommentItemDetails.comments) < $CommentItemDetails.totalComments }
-	{g->link url_view="core:ItemAdmin" url_subView="comment:ShowComments" url_itemId=$CommentItemDetails.item.id}
+	{g->link arg1="view=core:ItemAdmin" arg2="subView=comment:ShowComments" arg3="itemId=`$CommentItemDetails.item.id`"}
 	  {g->text text="(view all %d comments)" arg1=$CommentItemDetails.totalComments}
 	{/g->link}
       {/if}

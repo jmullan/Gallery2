@@ -200,16 +200,20 @@ class GalleryTheme {
 	$params['action'] = $urlGenerator->generateUrl();
 	$params['accept-charset'] = 'UTF-8';
 
+	/* Search for args and add them to the params */
+	$i = 1;
+	$actionParams = array();
+	while (isset($params['arg' . $i])) {
+	    list ($key, $value) = explode('=', $params['arg' . $i]);
+	    $actionParams[$key] = $value;
+	    unset($params['arg' . $i]);
+	    $i++;
+	}
+
 	/* Prepare the tag */
 	$results = '<form';
-	$actionParams = array();
 	foreach ($params as $caseSensitiveKey => $value) {
 
-	    if (!strncmp($caseSensitiveKey, 'action_', 7)) {
-		$actionParams[substr($caseSensitiveKey, 7)] = $value;
-		continue;
-	    }
-	    
 	    /* Force the key to lower case */
 	    $key = strtolower($caseSensitiveKey);
 	    switch($key) {
@@ -487,10 +491,19 @@ class GalleryTheme {
 
 	/* All the user to pass in bulk params */
 	if (isset($params['params'])) {
-	    foreach ($params['params'] as $key => $value) {
-		$params['url_' . $key] = $value;
-	    }
+	    $hrefParams = $params['params'];
 	    unset($params['params']);
+	} else {
+	    $hrefParams = array();
+	}
+
+	/* Search for args and add them to the params */
+	$i = 1;
+	while (isset($params['arg' . $i])) {
+	    list ($key, $value) = explode('=', $params['arg' . $i]);
+	    $hrefParams[$key] = $value;
+	    unset($params['arg' . $i]);
+	    $i++;
 	}
 	
 	/* Translate the form variable name */
@@ -500,15 +513,8 @@ class GalleryTheme {
 
 	/* Prepare the tag */
 	$results = '<a';
-	$hrefParams = array();
 	$javascript = null;
 	foreach ($params as $origKey => $value) {
-
-	    if (!strncmp($origKey, 'url_', 4)) {
-		$hrefParams[substr($origKey, 4)] = $value;
-		continue;
-	    }
-	    
 	    /* Force the key to lower case */
 	    $key = strtolower($origKey);
 	    

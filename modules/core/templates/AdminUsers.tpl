@@ -83,11 +83,11 @@
 		  {g->input type="hidden" name="form[list][maxPages]"}{$form.list.maxPages}{/g->input}
 		  
 		  {if ($form.list.page > 1)}
-		    {g->link url_view="core:SiteAdmin" url_subView="core:AdminUsers" url_form_list_page=1}
+		    {g->link arg1="view=core:SiteAdmin" arg2="subView=core:AdminUsers" arg3="form[list][page]=1"}
 		      {g->text text="&laquo; first"}
 		    {/g->link}
 		    &nbsp;
-		    {g->link url_view="core:SiteAdmin" url_subView="core:AdminUsers" url_form_list_page=$form.list.backPage}
+		    {g->link arg1="view=core:SiteAdmin" arg2="subView=core:AdminUsers" arg3="form[list][page]=`$form.list.backPage`"}
 		      {g->text text="&laquo; back"}
 		    {/g->link}
 		  {/if}
@@ -101,11 +101,11 @@
 
 		{g->column align="right" header="true" width="33%"}
 		  {if ($form.list.page < $form.list.maxPages)}
-		    {g->link url_view="core:SiteAdmin" url_subView="core:AdminUsers" url_form_list_page=$form.list.nextPage}
+		    {g->link arg1="view=core:SiteAdmin" arg2="subView=core:AdminUsers" arg3="form[list][page]=`$form.list.nextPage`"}
 		      {g->text text="next &raquo;"}
 		    {/g->link}
 		    &nbsp;
-		    {g->link url_view="core:SiteAdmin" url_subView="core:AdminUsers" url_form_list_page=$form.list.maxPages}
+		    {g->link arg1="view=core:SiteAdmin" arg2="subView=core:AdminUsers" arg3="form[list][page]=`$form.list.maxPages`"}
 		      {g->text text="last &raquo;"}
 		    {/g->link}
 		  {/if}
@@ -134,7 +134,7 @@
 	    {g->linkset}
 	      {g->item}
 		{g->title}
-		  {g->link url_view="core:SiteAdmin" url_subView="core:AdminEditUser" url_userId=$userId}
+		  {g->link arg1="view=core:SiteAdmin" arg2="subView=core:AdminEditUser" arg3="userId=$userId"}
 		    {g->text text="edit"}
 		  {/g->link}
 		{/g->title}
@@ -143,7 +143,7 @@
 	      {if ($user.can.delete)}
 		{g->item}
 		  {g->title}
-		    {g->link url_view="core:SiteAdmin" url_subView="core:AdminDeleteUser" url_userId=$userId}
+		    {g->link arg1="view=core:SiteAdmin" arg2="subView=core:AdminDeleteUser" arg3="userId=$userId"}
 		      {g->text text="delete"}
 		    {/g->link}
 		  {/g->title}

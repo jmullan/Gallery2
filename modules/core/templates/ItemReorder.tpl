@@ -9,7 +9,7 @@
     {g->box style="admin"}
       {g->description}
 	{g->text text="This album has an automatic sort order specified, so you cannot change the order of items manually.  You must remove the automatic sort order to continue."}
-	{g->link url_view="core:ItemAdmin" url_subView="core:ItemEditAlbum" url_itemId=$ItemAdmin.item.id}
+	{g->link arg1="view=core:ItemAdmin" arg2="subView=core:ItemEditAlbum" arg3="itemId=`$ItemAdmin.item.id`"}
 	  {g->text text="[change]"}
 	{/g->link}
       {/g->description}

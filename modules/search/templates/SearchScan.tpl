@@ -1,4 +1,4 @@
-{g->form action_controller=$SearchScan.controller}
+{g->form arg1="controller=`$SearchScan.controller`"}
   {g->input type="hidden" name="form[formName]"}SearchScan{/g->input}
 
   {g->main}
@@ -92,7 +92,7 @@
 		  {assign var=itemId value=$result.itemId} 
 		  {g->row}
 		    {g->column}
-		      {g->link url_view="core:ShowItem" url_itemId=$itemId}
+		      {g->link arg1="view=core:ShowItem" arg2="itemId=$itemId"}
 			{g->image item=$SearchScan.items.$itemId image=$SearchScan.thumbnails.$itemId}
 		      {/g->link}
 		    {/g->column}

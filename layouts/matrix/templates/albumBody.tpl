@@ -65,13 +65,13 @@
 		      {$child.description|truncate:512}
 		    {/g->description}
 		    {g->media}
-		      {g->link url_view="core:ShowItem" url_itemId=$child.id}
+		      {g->link arg1="view=core:ShowItem" arg2="itemId=`$child.id`"}
 			{if isset($child.thumbnail)}
 			  {g->image item=$child image=$child.thumbnail}
 			{else}
 			  {g->text text="no thumbnail"}
 			{/if}
-		      {/g->link url_view="core:ShowItem" url_itemId=$child.id}
+		      {/g->link arg1="view=core:ShowItem" arg2="itemId=`$child.id`"}
 		    {/g->media}
 		    {g->infoset}
 		      {g->item}
@@ -210,7 +210,7 @@
 	  {else}
 	    {g->item}
 	      {g->title}
-		{g->link url_view="core:ShowItem" url_itemId=$layout.item.id url_page=$page}
+		{g->link arg1="view=core:ShowItem" arg2="itemId=`$layout.item.id`" arg3="page=$page"}
 		  {$page}
 		{/g->link}
 	      {/g->title}

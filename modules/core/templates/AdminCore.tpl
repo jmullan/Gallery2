@@ -153,7 +153,9 @@
 	    {$dir}
 	  {/g->column}
 	  {g->column}
-	    {g->link url_controller="core:AdminCore" url_form_action_removeUploadLocalServerDir=1 url_form_uploadLocalServer_selectedDir=$dir}
+	    {g->link arg1="controller=core:AdminCore"
+                     arg2="form[action][removeUploadLocalServerDir]=1"
+	             arg3="form[uploadLocalServer][selectedDir]=$dir"}
 	      {g->text text="remove"}
 	    {/g->link}
 	  {/g->column}
@@ -252,7 +254,7 @@
 	{/g->link}
       {/capture}
       {capture name="shortUrlTestLink"}
-	{g->link url_view="core:ShowItem" url_itemId=$AdminCore.shortUrlTestItemId url_forceShortUrls=true}
+	{g->link arg1="view=core:ShowItem" arg2="itemId=`$AdminCore.shortUrlTestItemId`" arg3="forceShortUrls=true"}
 	  {g->text text="test url"}
 	{/g->link}
       {/capture}

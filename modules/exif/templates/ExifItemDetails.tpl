@@ -10,7 +10,7 @@
 	  {if ($ExifItemDetails.mode == 'summary')}
 	    {g->text text="summary"}
 	  {else}
-	    {g->link url_return="true" url_controller="exif:SwitchDetailMode" url_mode="summary"}
+	    {g->link arg1="return=true" arg2="controller=exif:SwitchDetailMode" arg3="mode=summary"}
 	      {g->text text="summary"}
 	    {/g->link}
 	  {/if}
@@ -21,7 +21,7 @@
 	  {if ($ExifItemDetails.mode == 'detailed')}
 	    {g->text text="details"}
 	  {else}
-	    {g->link url_return="true" url_controller="exif:SwitchDetailMode" url_mode="detailed"}
+	    {g->link arg1="return=true" arg2="controller=exif:SwitchDetailMode" arg3="mode=detailed"}
 	      {g->text text="details"}
 	    {/g->link}
 	  {/if}

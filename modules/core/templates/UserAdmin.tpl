@@ -1,4 +1,4 @@
-{g->form action_controller="$controller"}
+{g->form arg1="controller=$controller"}
   {g->input type="hidden" name="form[formName]"}{$form.formName}{/g->input}
 
   {g->main}
@@ -34,7 +34,7 @@
 	    {else}
 	      {g->item}
 		{g->title}
-		  {g->link url_view='core:UserAdmin' url_subView=$choice.view}
+		  {g->link arg1="view=core:UserAdmin" arg2="subView=`$choice.view`"}
 		    {$choice.name}
 		  {/g->link}
 		{/g->title}

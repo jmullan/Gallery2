@@ -1,4 +1,4 @@
-{g->form action_controller="$controller" enctype=$enctype}
+{g->form arg1="controller=$controller" enctype=$enctype}
   {g->input type="hidden" name="form[formName]"}{$form.formName}{/g->input}
   {g->input type="hidden" name="itemId"}{$ItemAdmin.item.id}{/g->input}
   
@@ -7,7 +7,7 @@
       {foreach from=$ItemAdmin.parents item=parent}
 	{g->item}
 	  {g->title}
-	    {g->link url_view='core:ShowItem' url_itemId=$parent.id}
+	    {g->link arg1="view=core:ShowItem" arg2="itemId=$parent.id"}
 	      {$parent.title|default:$parent.pathComponent}
 	    {/g->link}
 	  {/g->title}
@@ -15,7 +15,7 @@
       {/foreach}
       {g->item}
 	{g->title}
-	  {g->link url_view='core:ShowItem' url_itemId=$ItemAdmin.item.id}
+	  {g->link arg1="view=core:ShowItem" arg2="itemId=`$ItemAdmin.item.id`"}
 	    {$ItemAdmin.item.title|default:$ItemAdmin.item.pathComponent}
 	  {/g->link}
 	{/g->title}
@@ -62,14 +62,14 @@
 	  {if ($ItemAdmin.itemType == 'item')}
 	    {g->item}
 	      {g->title}
-		{g->link url_view='core:ShowItem' url_itemId=$ItemAdmin.item.id}
+		{g->link arg1="view=core:ShowItem" arg2="itemId=`$ItemAdmin.item.id`"}
 		  {g->text text="Back to Item View"}
 		{/g->link}
 	      {/g->title}
 	    {/g->item}
 	    {g->item}
 	      {g->title}
-		{g->link url_view='core:ShowItem' url_itemId=$ItemAdmin.parent.id}
+		{g->link arg1="view=core:ShowItem" arg2="itemId=`$ItemAdmin.parent.id`"}
 		  {g->text text="Back to Album View"}
 		{/g->link}
 	      {/g->title}
@@ -77,7 +77,7 @@
 	  {else}
 	    {g->item}
 	      {g->title}
-		{g->link url_view='core:ShowItem' url_itemId=$ItemAdmin.item.id}
+		{g->link arg1="view=core:ShowItem" arg2="itemId=`$ItemAdmin.item.id`"}
 		  {g->text text="Back to Album View"}
 		{/g->link}
 	      {/g->title}

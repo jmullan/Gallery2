@@ -25,7 +25,7 @@
 
   {g->box style="admin"}
     {g->element}
-      {g->link url_view="core:ItemAdmin" url_subView="core:ItemAddChildren" url_itemId=$ItemAdmin.item.id}
+      {g->link arg1="view=core:ItemAdmin" arg2="subView=core:ItemAddChildren" arg3="itemId=`$ItemAdmin.item.id`"}
 	{g->text text="Add more files"}
       {/g->link}
     {/g->element}

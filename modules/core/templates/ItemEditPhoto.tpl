@@ -36,7 +36,7 @@
       {else}
 	{g->item}
 	  {g->title}
-	    {g->link url_view="core:ItemAdmin" url_subView="core:ItemEditPhoto" url_itemId=$ItemAdmin.item.id url_mode="editPhoto"}
+	    {g->link arg1="view=core:ItemAdmin" arg2="subView=core:ItemEditPhoto" arg3="itemId=`$ItemAdmin.item.id`" arg4="mode=editPhoto"}
 	      {g->text text="Rotate/Scale"}
 	    {/g->link}
 	  {/g->title}
@@ -52,7 +52,7 @@
       {else}
 	{g->item}
 	  {g->title}
-	    {g->link url_view="core:ItemAdmin" url_subView="core:ItemEditPhoto" url_itemId=$ItemAdmin.item.id url_mode="editSizes"}
+	    {g->link arg1="view=core:ItemAdmin" arg2="subView=core:ItemEditPhoto" arg3="itemId=`$ItemAdmin.item.id`" arg4="mode=editSizes"}
 	      {g->text text="Sizes"}
 	    {/g->link}
 	  {/g->title}
@@ -69,7 +69,7 @@
 	{else}
 	  {g->item}
 	    {g->title}
-	      {g->link url_view="core:ItemAdmin" url_subView="core:ItemEditPhoto" url_itemId=$ItemAdmin.item.id url_mode="editThumbnail"}
+	      {g->link arg1="view=core:ItemAdmin" arg2="subView=core:ItemEditPhoto" arg3="itemId=`$ItemAdmin.item.id`" arg4="mode=editThumbnail"}
 		{g->text text="Thumbnail"}
 	      {/g->link}
 	    {/g->title}
@@ -107,7 +107,7 @@
 	  {g->element style="emphasized"}
 	    {g->text text="There are no graphics toolkits enabled that support this type of photo, so we cannot rotate it."}
 	    {if $ItemEditPhoto.isAdmin} 
-	      {g->link url_view="core:SiteAdmin" url_subView="core:AdminModules"}
+	      {g->link arg1="view=core:SiteAdmin" arg2="subView=core:AdminModules"}
 		{g->text text="site admin"}
 	      {/g->link}
 	    {/if}
@@ -136,7 +136,7 @@
 	  {g->element style="emphasized"}
 	    {g->text text="There are no graphics toolkits enabled that support this type of photo, so we cannot scale it."}
 	    {if $ItemEditPhoto.isAdmin} 
-	      {g->link url_view="core:SiteAdmin" url_subView="core:AdminModules"}
+	      {g->link arg1="view=core:SiteAdmin" arg2="subView=core:AdminModules"}
 		{g->text text="site admin"}
 	      {/g->link}
 	    {/if}
@@ -207,7 +207,7 @@
 	  {g->element style="emphasized"}
 	    {g->text text="There are no graphics toolkits enabled that support this type of photo, so we cannot create or modify a thumbnail."}
 	    {if $ItemEditPhoto.isAdmin} 
-	      {g->link url_view="core:SiteAdmin" url_subView="core:AdminModules"}
+	      {g->link arg1="view=core:SiteAdmin" arg2="subView=core:AdminModules"}
 		{g->text text="site admin"}
 	      {/g->link}
 	    {/if}
@@ -261,7 +261,7 @@
 	  {g->element style="emphasized"}
 	    {g->text text="There are no graphics toolkits enabled that support this type of photo, so we cannot create or modify resized versions."}
 	    {if $ItemEditPhoto.isAdmin} 
-	      {g->link url_view="core:SiteAdmin" url_subView="core:AdminModules"}
+	      {g->link arg1="view=core:SiteAdmin" arg2="subView=core:AdminModules"}
 		{g->text text="site admin"}
 	      {/g->link}
 	    {/if}
@@ -375,7 +375,7 @@
 	  {g->element style="emphasized"}
 	    {g->text text="There are no graphics toolkits enabled that support this type of photo, so we cannot crop the thumbnail."}
 	    {if $ItemEditPhoto.isAdmin} 
-	      {g->link url_view="core:SiteAdmin" url_subView="core:AdminModules"}
+	      {g->link arg1="view=core:SiteAdmin" arg2="subView=core:AdminModules"}
 		{g->text text="site admin"}
 	      {/g->link}
 	    {/if}

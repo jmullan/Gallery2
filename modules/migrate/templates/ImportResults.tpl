@@ -100,7 +100,7 @@
 
   {g->box style="admin"}
     {g->element}
-      {g->link url_view="core:SiteAdmin" url_subView="migrate:SelectGallery"}
+      {g->link arg1="view=core:SiteAdmin" arg2="subView=migrate:SelectGallery"}
 	{g->text text="Import more data"}
       {/g->link}
     {/g->element}

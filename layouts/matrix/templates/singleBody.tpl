@@ -71,7 +71,7 @@
 		{/if}
 	      {/capture}
 	      {if sizeof($layout.imageViews) > 1}
-		{g->link url_view="core:ShowItem" url_itemId=$layout.item.id url_imageViewsIndex=$layout.sourceImageViewIndex}
+		{g->link arg1="view=core:ShowItem" arg2="itemId=`$layout.item.id`" arg3="imageViewsIndex=`$layout.sourceImageViewIndex`"}
 		  {$smarty.capture.fullSize}
 		{/g->link}
 	      {else}
@@ -101,7 +101,7 @@
 	  {/g->description}
 	  {g->media}
 	    {capture name="fallback"}
-	      {g->link url_view="core:DownloadItem" url_itemId=$image.id}
+	      {g->link arg1="view=core:DownloadItem" arg2="itemId=`$image.id`"}
 		{g->text text="Download this item"} 
 	      {/g->link}
 	    {/capture}
