@@ -52,6 +52,13 @@ class ItemEditDataItemControllerTest extends GalleryControllerTestCase {
 	    }
 	}
 
+	for ($i = 0; $i < 2; $i++) {
+	    list ($ret, $this->_album[$i]) = $this->_createRandomAlbum($rootId);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -62,6 +69,10 @@ class ItemEditDataItemControllerTest extends GalleryControllerTestCase {
 
 	foreach ($this->_item as $item) {
 	    $gallery->deleteEntityById($item->getId());
+	}
+
+	foreach ($this->_album as $album) {
+	    $gallery->deleteEntityById($album->getId());
 	}
 	
 	parent::tearDown();
@@ -135,11 +146,28 @@ class ItemEditDataItemControllerTest extends GalleryControllerTestCase {
 	$this->assert(GalleryUtilities::hasRequestVariable('form.error.pathComponent.missing'));
     }
 
-    function testPathCollision() {
+    function testPathCollisionItem() {
 	/* Use invalid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_item[0]->getId());
 	GalleryUtilities::putRequestVariable('form.action.save', 1);
 	GalleryUtilities::putRequestVariable('form.pathComponent', $this->_item[1]->getPathComponent());
+	GalleryUtilities::putRequestVariable('form.title', 'new title');
+	GalleryUtilities::putRequestVariable('form.summary', 'new summary');
+	GalleryUtilities::putRequestVariable('form.keywords', 'new keywords');
+	GalleryUtilities::putRequestVariable('form.description', 'new description');
+
+	/* Perform the request and verify that we failed */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('view' => 'core:ItemAdmin'), $results);
+	$this->assertEquals('core:ItemEditDataItem', GalleryUtilities::getRequestVariables('subView'));
+	$this->assert(GalleryUtilities::hasRequestVariable('form.error.pathComponent.collision'));
+    }
+
+    function testPathCollisionAlbum() {
+	/* Use invalid inputs */
+	GalleryUtilities::putRequestVariable('itemId', $this->_album[0]->getId());
+	GalleryUtilities::putRequestVariable('form.action.save', 1);
+	GalleryUtilities::putRequestVariable('form.pathComponent', $this->_album[1]->getPathComponent());
 	GalleryUtilities::putRequestVariable('form.title', 'new title');
 	GalleryUtilities::putRequestVariable('form.summary', 'new summary');
 	GalleryUtilities::putRequestVariable('form.keywords', 'new keywords');

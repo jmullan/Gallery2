@@ -686,7 +686,7 @@ class CoreModule extends GalleryModule {
 
 	if (isset($permissions['core.changeText'])) {
 	        $views[] = array('name' => $this->translate('General Settings'),
-				 'view' => 'core:ItemEditDataItem');
+				 'view' => 'core:ItemEditItem');
 	}
 
 	if (isset($permissions['core.changeProperties'])) {

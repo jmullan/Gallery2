@@ -34,7 +34,7 @@
  * @subpackage UserInterface
  *
  */
-class ItemEditDataItemController extends GalleryController {
+class ItemEditItemController extends GalleryController {
 
     /**
      * @see GalleryController::handleRequest
@@ -54,7 +54,7 @@ class ItemEditDataItemController extends GalleryController {
 
 	    /* Redirect back to the same view to reset the form */
 	    $redirectParams['view'] = 'core:ItemAdmin';
-	    $redirectParams['subView'] = 'core:ItemEditDataItem';
+	    $redirectParams['subView'] = 'core:ItemEditItem';
 	    $redirectParams['itemId'] = $itemId;
 	    
 	} else if (isset($form['action']['save'])) {
@@ -101,7 +101,7 @@ class ItemEditDataItemController extends GalleryController {
 
 		    /* Figure out where to redirect upon success */
 		    $redirectParams['view'] = 'core:ItemAdmin';
-		    $redirectParams['subView'] = 'core:ItemEditDataItem';
+		    $redirectParams['subView'] = 'core:ItemEditItem';
 		    $redirectParams['itemId'] = $itemId;
 		}
 
@@ -118,7 +118,7 @@ class ItemEditDataItemController extends GalleryController {
 	} else {
 	    if (empty($results['view'])) {
 		$results['view'] = 'core:ItemAdmin';
-		GalleryUtilities::putRequestVariable('subView', 'core:ItemEditDataItem');
+		GalleryUtilities::putRequestVariable('subView', 'core:ItemEditItem');
 	    }
 	}
 
@@ -132,7 +132,7 @@ class ItemEditDataItemController extends GalleryController {
  * @package GalleryCore
  * @subpackage UserInterface
  */
-class ItemEditDataItemView extends GalleryView {
+class ItemEditItemView extends GalleryView {
 
     /**
      * @see GalleryView::renderBody
@@ -153,7 +153,7 @@ class ItemEditDataItemView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	if ($form['formName'] != 'ItemEditDataItem') {
+	if ($form['formName'] != 'ItemEditItem') {
 	    /* First time around, load the form with item data */
 	    $form['title'] = $item->getTitle();
 	    $form['summary'] = $item->getSummary();
@@ -171,10 +171,10 @@ class ItemEditDataItemView extends GalleryView {
 	/* Render the HTML body */
 	$template = $this->_getTemplate();
 	$template->setVariable('form', $form);
-	$template->setVariable('itemId', $itemId);
+	$template->setVariable('item', $item->getMemberData());
 	$template->setVariable('parents', $parents);
-	$template->setVariable('controller', 'core:ItemEditDataItem');
-	$html = $template->render('ItemEditDataItem.tpl');
+	$template->setVariable('controller', 'core:ItemEditItem');
+	$html = $template->render('ItemEditItem.tpl');
 
 	return array(GalleryStatus::success(), $html);
     }

@@ -280,21 +280,27 @@ class GalleryAlbumItem_core extends GalleryItem {
 
 	/*
 	 * Set the new path in the database.  If that succeeds then we should
-	 * be ok in general.
+	 * be ok in general.  Jump through hoops to make sure that we release
+	 * our locks at the end.
 	 */
+	$error = null;
 	$ret = parent::rename($newname);
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    $error = $ret->wrap(__FILE__, __LINE__);
 	}
 
-	/* Check to see if the desired path exists. */
-	$newPath = dirname($currentPath) . '/' . $newname;
-	if ($platform->file_exists($newPath)) {
-	    return GalleryStatus::error(ERROR_COLLISION, __FILE__, __LINE__);
+	if (!isset($error)) {
+	    /* Check to see if the desired path exists. */
+	    $newPath = dirname($currentPath) . '/' . $newname;
+	    if ($platform->file_exists($newPath)) {
+		$error = GalleryStatus::error(ERROR_COLLISION, __FILE__, __LINE__);
+	    }
 	}
 
-	if (!$platform->rename($currentPath, $newPath)) {
-	    return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);
+	if (!isset($error)) {
+	    if (!$platform->rename($currentPath, $newPath)) {
+		$error = GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);
+	    }
 	}
 
 	/* Release locks */
@@ -303,6 +309,10 @@ class GalleryAlbumItem_core extends GalleryItem {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 				   
+	if (isset($error)) {
+	    return $error;
+	}
+
 	return GalleryStatus::success();
     }
 }
