@@ -63,7 +63,7 @@ class WebCamSiteAdminControllerTest extends GalleryControllerTestCase {
     }
 
     function testWebCamSiteAdminControllerUndo() {
-	GalleryUtilities::putRequestVariable('form[action][undo]', '1');
+	GalleryUtilities::putRequestVariable('form[action][reset]', '1');
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
