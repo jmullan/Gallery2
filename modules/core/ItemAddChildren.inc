@@ -149,7 +149,8 @@ class ItemAddChildrenController extends GalleryController {
 		}
 		
 		if ($albumNeedsThumbnail) {
-		    list ($ret, $albumNeedsThumbnail) = GalleryItemHelper::setThumbnailFromItem($item->getId(), $newItem->getId());
+		    list ($ret, $albumNeedsThumbnail) =
+			GalleryItemHelper::setThumbnailFromItem($item->getId(), $newItem->getId());
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
