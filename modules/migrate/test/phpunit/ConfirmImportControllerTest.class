@@ -326,9 +326,9 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	
 	
 	$this->assertEquals(array('Test Album Three',                    // title
-				  NULL,                                  // summary
+				  '[b]No description[/b]',               // summary
 				  NULL,                                  // keywords
-				  '[b]No description[/b]',               // description
+				  NULL,                                  // description
 				  $testOwner->getId(),                   // owner
 				  1056015077,                            // album creation
 				  1056015077,                            // clicks counted since
@@ -766,10 +766,10 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	    
-	    $this->assertEquals(array('Help with the migration module',                    // title
-				      NULL,                                  // summary
+	    $this->assertEquals(array('Help with the migration module',      // title
+				      'Test',                                // summary
 				      NULL,                                  // keywords
-				      'Test',               // description
+				      NULL,                                  // description
 				      1090162985,                            // album creation
 				      1090162985,                            // clicks counted since
 				      ),
@@ -913,9 +913,9 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	    $this->assertEquals(array('G1 to G2 Callery',                    // title
-				      'Some summary',                        // summary
+				      NULL,                                  // summary
 				      NULL,                                  // keywords
-				      '',                                    // description
+				      'Some summary',                        // description
 				      1084222662,                            // album creation
 				      1084222662                             // clicks counted since
 				      ),
