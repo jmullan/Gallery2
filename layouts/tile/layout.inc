@@ -37,7 +37,7 @@ class TileLayout extends GalleryLayout {
     /**
      * Constructor
      */
-    function init() {
+    function TileLayout() {
 	global $gallery;
 
 	$this->setId('tile');
