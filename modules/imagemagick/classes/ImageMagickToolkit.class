@@ -267,10 +267,10 @@ class ImageMagickToolkit extends GalleryToolkit {
 	    $compositeAlignY = (int)($compositeAlignY / 100 * $height);
 
 	    // Clip to our bounding box
-	    $compositeAlignX = max(0, $compositeAlignX);
 	    $compositeAlignX = min($compositeAlignX, $width - $compositeWidth);
-	    $compositeAlignY = max(0, $compositeAlignY);
+	    $compositeAlignX = max(0, $compositeAlignX);
 	    $compositeAlignY = min($compositeAlignY, $height - $compositeHeight);
+	    $compositeAlignY = max(0, $compositeAlignY);
 
 	    $dataDir = $gallery->getConfig('data.gallery.base');
 	    $transform = array('-geometry', '+' . $compositeAlignX . '+' . $compositeAlignY,
