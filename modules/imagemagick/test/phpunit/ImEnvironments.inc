@@ -287,7 +287,7 @@ test-multiscene.tif[1] TIFF 100x75 DirectClass 45kb 0.000u 0:01',
 		'test.bmp' => 'test.bmp BMP 50x50 PseudoClass 15c 504 0.000u 0:01',
 		'SIZED.gif' => '%filename% GIF %width%x%height% %width%x%height%+0+0 PseudoClass 8c 232 0.000u 0:01',
 		'test.gif' => 'test.gif GIF 50x50 50x50+0+0 PseudoClass 8c 232 0.000u 0:01',
-		'test.jpg' => 'test.jpg JPEG 50x50 DirectClass 763 0.000u 0:01',
+		'test.jpg' => 'test.jpg JPEG 88x40 PseudoClass 256c 986 0.010u 0:01',
 		'test.jp2' => 'test.jp2 JP2 50x50 DirectClass 1kb 0.020u 0:01',
 		'test.pdf' => 'test.pdf[0] PDF 612x792 612x792+0+0 PseudoClass 256c 947kb 0.060u 0:01
 test.pdf[1] PDF 612x792 612x792+0+0 PseudoClass 256c 947kb 0.030u 0:01',
