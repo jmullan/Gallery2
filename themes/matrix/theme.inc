@@ -273,6 +273,7 @@ class MatrixTheme extends GalleryTheme {
 	case 'canvas':
 	case 'admin_listing':
 	case 'admin_widgets':
+	case 'listing':
 	    $table_class = 'table_' . $context['params']['style'];
 	    break;
 
@@ -482,6 +483,7 @@ class MatrixTheme extends GalleryTheme {
 	case 'admin':
 	case 'debug':
 	case 'comment':
+	case 'exif':
 	    $class = 'box_' . $context['params']['style'];
 	    break;
 

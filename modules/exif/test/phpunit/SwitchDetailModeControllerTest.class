@@ -1,0 +1,108 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package Exif
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * SwitchDetailMode controller tests
+ */
+class SwitchDetailModeControllerTest extends GalleryControllerTestCase {
+
+    function SwitchDetailModeControllerTest($methodName) {
+	$this->GalleryControllerTestCase($methodName, 'exif:SwitchDetailMode');
+    }
+
+    function setUp() {
+	global $gallery;
+	parent::setUp();
+    }
+
+    function tearDown() {
+	global $gallery;
+	parent::tearDown();
+    }
+
+    function testSwitchToSimple() {
+	global $gallery;
+	GalleryUtilities::putRequestVariable('mode', 'simple');
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('return' => 1,
+				  'redirect' => array('view' => 'core:ShowItem'),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
+
+	/* Verify that we're in the right mode now */
+	$session =& $gallery->getSession();
+	if (!$session->exists('exif.module.loadItemDetails.mode')) {
+	    $this->fail('Missing session value');
+	}
+	$this->assertEquals('simple', $session->get('exif.module.loadItemDetails.mode'));
+    }
+
+    function testSwitchToAdvanced() {
+	global $gallery;
+	GalleryUtilities::putRequestVariable('mode', 'advanced');
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('return' => 1,
+				  'redirect' => array('view' => 'core:ShowItem'),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
+
+	/* Verify that we're in the right mode now */
+	$session =& $gallery->getSession();
+	if (!$session->exists('exif.module.loadItemDetails.mode')) {
+	    $this->fail('Missing session value');
+	}
+	$this->assertEquals('advanced', $session->get('exif.module.loadItemDetails.mode'));
+    }
+    
+    function testSwitchToBogus() {
+	global $gallery;
+	GalleryUtilities::putRequestVariable('mode', 'BoGuS');
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('return' => 1,
+				  'redirect' => array('view' => 'core:ShowItem'),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
+
+	/* Verify that we're in the right mode now */
+	$session =& $gallery->getSession();
+	if (!$session->exists('exif.module.loadItemDetails.mode')) {
+	    $this->fail('Missing session value');
+	}
+	$this->assertEquals('simple', $session->get('exif.module.loadItemDetails.mode'));
+    }
+}
+?>

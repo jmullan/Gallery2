@@ -1,0 +1,92 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package Exif
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * Test Exif Helper functionality
+ *
+ * @package Exif
+ * @subpackage PHPUnit
+ *
+ */
+class ExifHelperTest extends GalleryTestCase {
+
+    function ExifHelperTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    /**
+     *
+     */
+    function setUp() {
+	parent::setUp();
+    }
+
+    /**
+     *
+     */
+    function tearDown() {
+	parent::tearDown();
+    }
+
+    function testGetExifData() {
+	list ($ret, $exifData) =
+	    ExifHelper::getExifData(dirname(__FILE__) . '/../data/CanonS30.small.jpg', EXIF_SIMPLE);
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/*
+	 * What we get back depends on what options we've set for our mode, which will vary
+	 * depending on the current settings of the database.  Even if we request a specific field,
+	 * we still may not get it back if its not in the image.  Doh.  Let's do a quick and dirty
+	 * test for now and just check for 'Make' and 'Model' to make sure that we got something.
+	 */
+	$verifiedCount = 0;
+	for ($i = 0; $i < sizeof($exifData); $i++) {
+	    if ($exifData[$i]['title'] == 'Make') {
+		$this->assertEquals('Canon', $exifData[$i]['value']);
+		$verifiedCount++;
+	    }
+	    if ($exifData[$i]['title'] == 'Model') {
+		$this->assertEquals('Canon PowerShot S30', $exifData[$i]['value']);
+		$verifiedCount++;
+	    }
+	}
+
+	$this->assertEquals(2, $verifiedCount);
+    }
+
+    function testGetExifKeys() {
+	/* There are a bajillion keys.  Do a quick sanity check */
+	$exifKeys = ExifHelper::getExifKeys();
+	$this->assertEquals(234, sizeof($exifKeys));
+	$this->assert(isset($exifKeys['IFD0.ImageType']));
+    }
+}
+
+?>
