@@ -93,7 +93,8 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 
 	/* Change the defaults to something meaningless */
 	foreach ($valueMap as $key => $value) {
-	    GalleryUtilities::putRequestVariable('form[' . $key . ']', $value);
+	    list ($outer, $inner) = split('\.', $key);
+	    GalleryUtilities::putRequestVariable('form[' . $outer . '][' . $inner . ']', $value);
 	    GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	}
 
