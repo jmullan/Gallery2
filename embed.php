@@ -414,9 +414,17 @@ class GalleryEmbed {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	$ret = GalleryCoreApi::addUserToGroup($user->getId(), $group->getId());
+	/* First check if the user is not already a member of the group */
+	list($ret, $memberShips) = GalleryCoreApi::fetchGroupsForUser($user->getId());
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	/* Only add user to group if not already done so */
+	if (!isset($memberShips[$group->getId()])) {
+	    $ret = GalleryCoreApi::addUserToGroup($user->getId(), $group->getId());
+	    if ($ret->isError()) {
+	    	return $ret->wrap(__FILE__, __LINE__);
+	    }
 	}
 	return GalleryStatus::success();
     }
