@@ -79,6 +79,15 @@ class GalleryStorage {
 	case 'mysqlt':
 	    GalleryCoreApi::requireOnce($base . 'DatabaseStorage/MySqlDatabaseStorage.class');
 	    $this->_impl = new MySqlDatabaseStorage($config);
+	    break;
+
+	case 'oci8':
+	case 'oci805':
+	case 'oci8po':
+	case 'oracle':
+	    GalleryCoreApi::requireOnce($base . 'DatabaseStorage/OracleDatabaseStorage.class');
+	    $this->_impl = new OracleDatabaseStorage($config);
+	    break;
 	}
 
 	$this->_isInitialized = false;
