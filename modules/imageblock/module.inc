@@ -203,14 +203,20 @@ class ImageBlockModule extends GalleryModule {
 	    }
 	    list ($ret, $owner) = GalleryCoreApi::loadEntitiesById($item->getOwnerId());
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
 	    $data['title'] = $title;
 	    $data['item'] = $item->getMemberData();
 	    $data['owner'] = $owner->getMemberData();
 	    if (isset($thumbnail[$id])) {
-		$data['thumb'] = $thumbnail[$id]->getMemberData();
+		// Rebuild derivative if needed..
+		list ($ret, $thumb) =
+		    GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($thumbnail[$id]->getId());
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+		$data['thumb'] = $thumb->getMemberData();
 		$blocks[] = $data;
 	    }
 	}
