@@ -1,0 +1,135 @@
+<?php
+/*
+ * $RCSfile
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * Test Utilities functionality
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ *
+ */
+class UtilitiesTest extends GalleryTestCase {
+
+    function UtilitiesTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    function testGetFileNameComponents() {
+	list ($base, $extension) = GalleryUtilities::getFileNameComponents('base.extension');
+	$this->assertEquals($base, 'base');
+	$this->assertEquals($extension, 'extension');
+    }
+
+    function testGetFileExtension() {
+	$this->assertEquals(GalleryUtilities::getFileExtension('base.extension'),
+			    'extension');
+    }
+    
+    function testGetFileBase() {
+	$this->assertEquals(GalleryUtilities::getFileBase('base.extension'),
+			    'base');
+    }
+    
+    function testGetMimeType() {
+	$this->assertEquals(GalleryUtilities::getMimeType('file.jpg'),
+			    'image/jpeg');
+    }
+    
+    function testGetFormVariables() {
+	GalleryUtilities::putRequestVariable('test_a', 'b');
+	GalleryUtilities::putRequestVariable('test_c', 'd');
+	
+	$this->assertEquals(GalleryUtilities::getFormVariables('test'),
+			    array('a' => 'b',
+				  'c' => 'd'));
+    }
+    
+    function testGetRequestVariables() {
+	GalleryUtilities::putRequestVariable('test_x', 'blah');
+	$this->assertEquals(GalleryUtilities::getRequestVariables('test.x'),
+			    'blah');
+    }
+
+    function testSanitizeInputValue() {
+	$rawInput = '<ScRiPt foo=bar>blah</SCRIPT> test test <IFRAME> <b> foo </b> </IFRAME>';
+	$this->assertEquals(GalleryUtilities::sanitizeInputValue($rawInput),
+			    'blah test test  <b> foo </b> ');
+	
+    }
+    
+    function testConvertExtensionToMime() {
+	$this->assertEquals(GalleryUtilities::convertExtensionToMime('jpg'),
+			    'image/jpeg');
+    }
+    
+    function testMakeMarkers() {
+	$this->assertEquals(GalleryUtilities::makeMarkers(5),
+			    '?, ?, ?, ?, ?');
+	$this->assertEquals(GalleryUtilities::makeMarkers(array(1, 2, 'foo', 4, 'baz')),
+			    '?, ?, ?, ?, ?');
+    }
+    
+    function testConvertPathToRelativeUrl() {
+	global $gallery;
+	
+	$gallery->setConfig('url.gallery.base', '');
+	$gallery->setUrlGenerator(new GalleryUrlGenerator($gallery->getConfig('url.gallery.base')));
+	
+	$this->assertEquals(GalleryUtilities::convertPathToRelativeUrl(__FILE__),
+			    'modules/core/test/phpunit/UtilitiesTest.class');
+    }
+    
+    function testRequireOnce() {
+	$ret = GalleryUtilities::requireOnce('bogus file name');
+	$this->assert($ret->getErrorCode() & ERROR_BAD_PATH);
+			    
+	$ret = GalleryUtilities::requireOnce(__FILE__);
+	$this->assert($ret->isSuccess());
+    }
+    
+    function testShrinkDimensionsToFit() {
+	$results = GalleryUtilities::shrinkDimensionsToFit(341, 1024, 768);
+	$this->assertEquals($results, array(341, 255));
+	
+	$results = GalleryUtilities::shrinkDimensionsToFit(5000, 1024, 768);
+	$this->assertEquals($results, array(1024, 768));
+    }
+    
+    function testScaleDimensionsToFit() {
+	$results = GalleryUtilities::scaleDimensionsToFit(921, 1024, 768);
+	$this->assertEquals($results, array(921, 690));
+    }
+    
+    function testIsA() {
+	$this->assert(GalleryUtilities::isA(new UtilitiesTest("x"), 'GalleryTestCase'));
+	$this->assert(GalleryUtilities::isA(new UtilitiesTest("x"), 'UtilitiesTest'));
+	$this->assert(!GalleryUtilities::isA(new UtilitiesTest("x"), 'GalleryEntity'));
+    }
+}
+
+?>
