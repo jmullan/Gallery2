@@ -17,9 +17,9 @@
 	{foreach from=$ItemAdd.plugins item=plugin} 
 	{if $plugin.isSelected}
 	<li class="giSelectedTab"> 
-		<span>
+	  <span>
 	  {$plugin.title}
-	  	</span>
+	  </span>
 	</li>
         {else}
         <li>
