@@ -28,7 +28,7 @@
  * $Id$
  */
 
-if (php_sapi_name() != 'cli') {
+if (!empty($_SERVER['SERVER_NAME'])) {
     print "You must run this from the command line\n";
     exit(1);
 }
