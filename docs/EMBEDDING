@@ -8,20 +8,22 @@ In this document "embedding application" is shortened to emApp.
 Next you need an entry point in the emApp for all G2 requests, (similar to
 main.php in G2 standalone).  This may be a module or plugin if the application
 supports these, or a plain php file.  Determine the URI/path for your access
-point and the G2 base directory.
-Examples: appdir/gallery2.php                  appdir/gallery2
+point and the G2 base directory, relative to your webserver document root.
+Examples: __ access point __                   __ G2 base dir __
+          appdir/gallery2.php                  appdir/gallery2
           appdir/plugins/gallery2.php          appdir/lib/gallery2
           appdir/index.php?module=gallery2     gallery2
 Use these to determine the following values:
         embedURI = Filename (and possible query parameters) for access point
   relativeG2Path = Path from directory for access point to G2 base directory
 For the above examples these settings are:
+        __ embedURI __               __ relativeG2Path __
         gallery2.php                 gallery2
         gallery2.php                 lib/gallery2
         index.php?module=gallery2    ../gallery2
 You'll also need a URI for a login page or main page of the app; G2 will
 redirect here for access attempts without proper permissions.
-Examples:  /   /appdir/login.php
+Examples:  /  or  /appdir/login.php
 
 The code in the access point to handle a G2 request looks something like this:
 
@@ -51,7 +53,7 @@ required if G2 can't count on cookies to track its session id.  The emApp must
 be able to provide a key=value string for its own session key and id, and have
 an available API to store additional data in the session.
 Here are the extra steps:
-1) In the GalleryEmbed::init() call the input array must also contain:
+1) The input array for the GalleryEmbed::init() call must also contain:
         'embedSessionString' => {key=value}, 'gallerySessionId' => {value}
    (omit gallerySessionId when the value is not yet known)
 2) After the init() call:
@@ -63,7 +65,7 @@ A) Perform G2 login at same time as emApp login
 B) On each G2 request make sure the active user in G2 matches emApp user
 The main difference between these is with (A) a session in G2 is created for
 the user at login time, even though the user may never visit a G2 page.  With
-(B) the session is created upon the first visit to G2.
+(B) the G2 session is created upon the first visit to G2.
 
 To implement (A) you'll need hooks/callbacks/event-handlers for login/logout
 operations in the emApp.  Code looks like this..
@@ -71,7 +73,7 @@ Login:
   require_once(dirname(__FILE__) . 'relative/path/to/gallery2/embed.php');
   $ret = GalleryEmbed::init();
   if ($ret->isSuccess()) {
-    $ret = GalleryEmbed::login($userName);
+    $ret = GalleryEmbed::login($emAppUserId);
     if ($ret->isSuccess()) {
       $ret = GalleryEmbed::done();
     }
@@ -79,15 +81,16 @@ Login:
 Logout:
   require_once(dirname(__FILE__) . 'relative/path/to/gallery2/embed.php');
   $ret = GalleryEmbed::logout();
-For login, $userName is the emApp user who has just logged in.
+For login, $emAppUserId is the id of the emApp user who has just logged in.
 
-To implement (B) you need to find the active emApp user in your G2 access
-point.  Pass this as a parameter to handleRequest:
-  list ($ret, $g2data) = GalleryEmbed::handleRequest($activeUserName);
-Pass in an empty string for anonymous/guest user.
+To implement (B) you need to find the active emApp user id in your G2
+access point.  Pass this as a parameter to handleRequest:
+  list ($ret, $g2data) = GalleryEmbed::handleRequest($emAppActiveUserId);
+Pass in an empty string for anonymous/guest user (NOT the user id of the
+emApp's anonymous user if it has an id).
 With (B) you may also include the logout handler shown above.. it is not
-required, but it resets the session at logout so a session for a logged-in
-user isn't left on the server.
+required, but it resets the G2 session at logout so a session for a
+logged-in user isn't left on the server.
 
 
 more to come:

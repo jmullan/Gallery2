@@ -103,22 +103,21 @@ class GalleryEmbed {
      * Include activeUserName parameter if integration is not calling GalleryEmbed::login()
      * at CMS login time.
      *
-     * @param string (optional) username of active user (empty string for anonymous/guest user)
+     * @param string (optional) external user id of active user (empty for anonymous/guest user)
      * @param string (optional) language code of active user
      * @return array object GalleryStatus a status object
      *               array ('isDone' => boolean,
      *                      [optional: 'headHtml' => string, 'bodyHtml' => string])
      * @static
      */
-    function handleRequest($activeUserName=null, $languageCode=null) {
-	if (isset($activeUserName)) {
-	    $ret = GalleryEmbed::_checkActiveUser($activeUserName);
+    function handleRequest($activeUserId=null, $languageCode=null) {
+	if (isset($activeUserId)) {
+	    $ret = GalleryEmbed::_checkActiveUser($activeUserId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
 
-	// set language
 	if (isset($languageCode)) {
 	    global $gallery;
 	    list ($languageCode) = GalleryTranslator::getSupportedLanguageCode($languageCode);
@@ -132,68 +131,58 @@ class GalleryEmbed {
     /**
      * Ensure G2 session has same active user as CMS session.  Do not call directly.
      *
-     * @param string username of active user (null or empty for anonymous/guest user)
+     * @param string external user id of active user (null or empty for anonymous/guest user)
      * @return object GalleryStatus a status object
      * @private
      */
-    function _checkActiveUser($activeUserName) {
+    function _checkActiveUser($activeUserId) {
 	global $gallery;
 	$session =& $gallery->getSession();
 
-	list ($ret, $anonymousUserId) =
-	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-	$g2UserName = null;
-	$g2UserId = $session->get('core.id.activeUser');
-	if (!empty($g2UserId) && $g2UserId == $anonymousUserId) {
-	    $g2UserId = null; // Empty for anonymous/guest
-	}
-	if (!empty($g2UserId)) {
-	    list ($ret, $user) = GalleryCoreApi::loadEntitiesById($g2UserId);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-	    $g2UserName = $user->getUserName();
+	$idInSession = $session->get('embed.id.externalUser');
+	if ($idInSession == $activeUserId) {
+	    return GalleryStatus::success();
 	}
 
-	if ( (empty($activeUserName) && empty($g2UserName)) || ($activeUserName == $g2UserName) ) {
-	    // All is ok..
-	} else if (empty($activeUserName)) {
+	if (empty($activeUserId)) {
 	    // Logout..
 	    $ret = $session->reset();
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
+	    $session->put('embed.id.externalUser', '');
 	} else {
 	    // Set G2 active user..
-	    list ($ret, $user) = GalleryCoreApi::fetchUserByUserName($activeUserName);
+	    list ($ret, $user) = GalleryCoreApi::loadEntityByExternalId($activeUserId, 'GalleryUser');
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    $session->put('core.id.activeUser', $user->getId());
+	    $session->put('embed.id.externalUser', $activeUserId);
 	}
+
 	return GalleryStatus::success();
     }
 
     /**
      * Login the specified user in the G2 session.
-     * If this method is called at CMS login time then activeUserName parameter to
+     * If this method is called at CMS login time then activeUserId parameter to
      * handleRequest() is not required (but a G2 session is created at CMS login time,
      * even though user may not visit any G2 pages).
      *
-     * @param string username
+     * @param string external user id
      * @return object GalleryStatus a status object
      * @static
      */
-    function login($userName) {
+    function login($extUserId) {
 	global $gallery;
-	list ($ret, $user) = GalleryCoreApi::fetchUserByUserName($userName);
+	list ($ret, $user) = GalleryCoreApi::loadEntityByExternalId($extUserId, 'GalleryUser');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	$gallery->setActiveUser($user);
+	$session =& $gallery->getSession();
+	$session->put('embed.id.externalUser', $extUserId);
 	return GalleryStatus::success();
     }
 
@@ -223,7 +212,7 @@ class GalleryEmbed {
 	    }
 	    $ret = $session->save();
 	    if ($ret->isError()) {
-	        return $ret->wrap(__FILE__, __LINE__);
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 	return GalleryStatus::success();
@@ -244,17 +233,17 @@ class GalleryEmbed {
     /**
      * Create a G2 user.
      *
-     * @param string username
-     * @param array (optional) additional data
-     *              ['email' => string, 'fullname' => string,
+     * @param string external user id
+     * @param array user data (username required; others optional)
+     *              ['username' => string, 'email' => string, 'fullname' => string,
      *               'language' => string, 'password' => string,
      *               'hashedpassword' => string, 'hashmethod' => string,
      *               'creationtimestamp' => integer]
      * @return object GalleryStatus a status object
      * @static
      */
-    function createUser($userName, $args=array()) {
-	if (empty($userName)) {
+    function createUser($extUserId, $args) {
+	if (empty($extUserId) || empty($args['username'])) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
 	list ($ret, $user) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryUser');
@@ -265,12 +254,18 @@ class GalleryEmbed {
 	    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
 	}
 
-	$ret = $user->create($userName);
+	$ret = $user->create($args['username']);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	GalleryEmbed::_setUserData($user, $args);
+	GalleryEmbed::_setUserData($user, $args, true);
 	$ret = $user->save(); 
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/modules/core/classes/ExternalIdMap.class');
+	$ret = ExternalIdMap::addMapEntry(array('externalId' => $extUserId,
+			      'entityType' => 'GalleryUser', 'entityId' => $user->getId()));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -280,7 +275,7 @@ class GalleryEmbed {
     /**
      * Update a G2 user.
      *
-     * @param string username
+     * @param string external user id
      * @param array user data
      *              ['username' => string, 'email' => string, 'fullname' => string,
      *               'language' => string, 'password' => string,
@@ -289,8 +284,8 @@ class GalleryEmbed {
      * @return object GalleryStatus a status object
      * @static
      */
-    function updateUser($userName, $args) {
-	list ($ret, $user) = GalleryCoreApi::fetchUserByUserName($userName);
+    function updateUser($extUserId, $args) {
+	list ($ret, $user) = GalleryCoreApi::loadEntityByExternalId($extUserId, 'GalleryUser');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -299,7 +294,7 @@ class GalleryEmbed {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	GalleryEmbed::_setUserData($user, $args, true);
+	GalleryEmbed::_setUserData($user, $args);
 	$ret = $user->save(); 
 	if ($ret->isError()) {
 	    GalleryCoreApi::releaseLocks($lockId);
@@ -319,13 +314,13 @@ class GalleryEmbed {
      * @param array additional user data
      * @private
      */
-    function _setUserData(&$user, $args, $update = false) {
+    function _setUserData(&$user, $args, $create = false) {
 	if (!empty($args['password'])) {
 	    $user->changePassword($args['password']);
 	} elseif (isset($args['hashmethod']) && $args['hashmethod'] == 'md5'
 		&& !empty($args['hashedpassword'])) {
 	    $user->setHashedPassword($args['hashedpassword']);
-	} elseif (!$update) {
+	} elseif ($create) {
 	    // Create a random password..
 	    $user->changePassword('G' . rand(100000,999999) . '2');
 	}
@@ -351,16 +346,22 @@ class GalleryEmbed {
     /**
      * Delete a G2 user.
      *
-     * @param string username
+     * @param string external user id
      * @return object GalleryStatus a status object
      * @static
      */
-    function deleteUser($userName) {
-	list ($ret, $user) = GalleryCoreApi::fetchUserByUserName($userName);
+    function deleteUser($extUserId) {
+	list ($ret, $user) = GalleryCoreApi::loadEntityByExternalId($extUserId, 'GalleryUser');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	$ret = GalleryCoreApi::deleteEntityById($user->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/modules/core/classes/ExternalIdMap.class');
+	$ret = ExternalIdMap::removeMapEntry(
+			      array('externalId' => $extUserId, 'entityType' => 'GalleryUser'));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -370,12 +371,13 @@ class GalleryEmbed {
     /**
      * Create a G2 group.
      *
+     * @param string external group id
      * @param string group name
      * @return object GalleryStatus a status object
      * @static
      */
-    function createGroup($groupName) {
-	if (empty($groupName)) {
+    function createGroup($extGroupId, $groupName) {
+	if (empty($extGroupId) || empty($groupName)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
 	list ($ret, $group) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryGroup');
@@ -394,18 +396,24 @@ class GalleryEmbed {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/modules/core/classes/ExternalIdMap.class');
+	$ret = ExternalIdMap::addMapEntry(array('externalId' => $extUserId,
+			      'entityType' => 'GalleryGroup', 'entityId' => $group->getId()));
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 	return GalleryStatus::success();
     }
 
     /**
      * Delete a G2 group.
      *
-     * @param string group name
+     * @param string external group id
      * @return object GalleryStatus a status object
      * @static
      */
-    function deleteGroup($groupName) {
-	list ($ret, $group) = GalleryCoreApi::fetchGroupByGroupName($groupName);
+    function deleteGroup($extGroupId) {
+	list ($ret, $group) = GalleryCoreApi::loadEntityByExternalId($extGroupId, 'GalleryGroup');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -413,20 +421,26 @@ class GalleryEmbed {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/modules/core/classes/ExternalIdMap.class');
+	$ret = ExternalIdMap::removeMapEntry(
+			      array('externalId' => $extGroupId, 'entityType' => 'GalleryGroup'));
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 	return GalleryStatus::success();
     }
 	
-	/**
+    /**
      * Update a G2 Group.
      *
-     * @param string groupname
+     * @param string external group id
      * @param array group data
      *              ['groupname' => string]
      * @return object GalleryStatus a status object
      * @static
      */
-    function updateGroup($groupName, $args) {
-	list ($ret, $group) = GalleryCoreApi::fetchGroupByGroupName($groupName);;
+    function updateGroup($extGroupId, $args) {
+	list ($ret, $group) = GalleryCoreApi::loadEntityByExternalId($extGroupId, 'GalleryGroup');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -436,7 +450,7 @@ class GalleryEmbed {
 	}
 
 	if (isset($args['groupname'])) {
-	    $group->setgroupName($args['groupname']);
+	    $group->setGroupName($args['groupname']);
 	}
 	$ret = $group->save(); 
 	if ($ret->isError()) {
@@ -453,27 +467,27 @@ class GalleryEmbed {
     /**
      * Add a user to a G2 group.
      *
-     * @param string username
-     * @param string group name
+     * @param string external user id
+     * @param string external group id
      * @return object GalleryStatus a status object
      * @static
      */
-    function addUserToGroup($userName, $groupName) {
-	list ($ret, $user) = GalleryCoreApi::fetchUserByUserName($userName);
+    function addUserToGroup($extUserId, $extGroupId) {
+	list ($ret, $user) = GalleryCoreApi::loadEntityByExternalId($extUserId, 'GalleryUser');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	list ($ret, $group) = GalleryCoreApi::fetchGroupByGroupName($groupName);
+	list ($ret, $group) = GalleryCoreApi::loadEntityByExternalId($extGroupId, 'GalleryGroup');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	/* First check if the user is not already a member of the group */
-	list($ret, $memberShips) = GalleryCoreApi::fetchGroupsForUser($user->getId());
+	list($ret, $membership) = GalleryCoreApi::fetchGroupsForUser($user->getId());
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	/* Only add user to group if not already done so */
-	if (!isset($memberShips[$group->getId()])) {
+	if (!isset($membership[$group->getId()])) {
 	    $ret = GalleryCoreApi::addUserToGroup($user->getId(), $group->getId());
 	    if ($ret->isError()) {
 	    	return $ret->wrap(__FILE__, __LINE__);
@@ -485,17 +499,17 @@ class GalleryEmbed {
     /**
      * Remove a user from a G2 group.
      *
-     * @param string username
-     * @param string group name
+     * @param string external user id
+     * @param string external group id
      * @return object GalleryStatus a status object
      * @static
      */
-    function removeUserFromGroup($userName, $groupName) {
-	list ($ret, $user) = GalleryCoreApi::fetchUserByUserName($userName);
+    function removeUserFromGroup($extUserId, $extGroupId) {
+	list ($ret, $user) = GalleryCoreApi::loadEntityByExternalId($extUserId, 'GalleryUser');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	list ($ret, $group) = GalleryCoreApi::fetchGroupByGroupName($groupName);
+	list ($ret, $group) = GalleryCoreApi::loadEntityByExternalId($extGroupId, 'GalleryGroup');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
