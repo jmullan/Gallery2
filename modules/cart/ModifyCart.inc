@@ -152,7 +152,8 @@ class ModifyCartController extends GalleryController {
 
 	/* Prepare our results */
 	if (!isset($results['redirect'])) {
-	    $results['redirect']['view'] = 'cart:ViewCart';
+	    $results['redirect']['view'] = 'core:Navigation';
+	    $results['redirect']['subView'] = 'cart:ViewCart';
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;

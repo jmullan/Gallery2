@@ -69,7 +69,8 @@ class AddToCartController extends GalleryController {
 	}
 
 	/* Prepare our results */
-	$results['redirect']['view'] = 'cart:ViewCart';
+	$results['redirect']['view'] = 'core:Navigation';
+	$results['redirect']['subView'] = 'cart:ViewCart';
 	$results['status'] = array();
 	$results['error'] = array();
 

@@ -140,7 +140,8 @@ class CartModule extends GalleryModule {
      */
     function getSystemLinks() {
 	$links[] = array('text' => $this->translate('View Cart'),
-			 'params' => array('view' => 'cart:ViewCart'));
+			 'params' => array('view' => 'core:Navigation',
+					   'subView' => 'cart:ViewCart'));
 	return array(GalleryStatus::success(), $links);
     }
 
