@@ -232,7 +232,7 @@ class AdminModulesView extends GalleryView {
 	    $entry['l10Domain'] = 'modules_' . $moduleId;
 	    $entry['action'] = array();
 	    if (empty($status['active'])) {
-		list ($ret, $version) = $module->getModuleParameter('version');
+		list ($ret, $version) = $module->getModuleParameter('_version');
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}

@@ -43,37 +43,37 @@
 	  </tr>
 	  <?php $counter = 0; ?>
           <?php foreach ($modules as $id => $module): ?>
-	  <?php $isCurrent = $templateData['moduleIsCurrent'][$id]; ?>
+	  <?php $isUpgradeable = $templateData['moduleIsUpgradeable'][$id]; ?>
 	  <tr<?php if ($counter % 2 == 0) print ' style="background:#eee;"' ?>>
             <td>
               <input type=checkbox name="module[<?php print $id ?>]"
-                <?php if (!$isCurrent): ?>
+                <?php if ($isUpgradeable): ?>
                   checked="checked"
                 <?php endif; ?>
-	        <?php if ($isCurrent): ?>
+	        <?php if (!$isUpgradeable): ?>
 	          disabled="disabled"
 	        <?php endif; ?>
               />
             </td>
             <td class="modules">
-	      <?php if ($isCurrent): ?> <span class="disabled"> <?php endif; ?>
+	      <?php if (!$isUpgradeable): ?> <span class="disabled"> <?php endif; ?>
 	      <?php print $module->getName() ?>
-	      <?php if ($isCurrent): ?> </span> <?php endif; ?>
+	      <?php if (!$isUpgradeable): ?> </span> <?php endif; ?>
             </td>
             <td>
-	      <?php if ($isCurrent): ?> <span class="disabled"> <?php endif; ?>
+	      <?php if (!$isUpgradeable): ?> <span class="disabled"> <?php endif; ?>
 	      <?php print $templateData['currentVersion'][$id]; ?>
-	      <?php if ($isCurrent): ?> </span> <?php endif; ?>
+	      <?php if (!$isUpgradeable): ?> </span> <?php endif; ?>
             </td>
             <td>
-	      <?php if ($isCurrent): ?> <span class="disabled"> <?php endif; ?>
+	      <?php if (!$isUpgradeable): ?> <span class="disabled"> <?php endif; ?>
 	      <?php print $module->getVersion() ?>
-	      <?php if ($isCurrent): ?> </span> <?php endif; ?>
+	      <?php if (!$isUpgradeable): ?> </span> <?php endif; ?>
             </td>
             <td>
-	      <?php if ($isCurrent): ?> <span class="disabled"> <?php endif; ?>
+	      <?php if (!$isUpgradeable): ?> <span class="disabled"> <?php endif; ?>
 	      <?php print $module->getDescription() ?>
-	      <?php if ($isCurrent): ?> </span> <?php endif; ?>
+	      <?php if (!$isUpgradeable): ?> </span> <?php endif; ?>
             </td>
           </tr>
 	  <?php $counter++; ?>

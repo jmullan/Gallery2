@@ -197,7 +197,7 @@ class GalleryModule {
 	     */
 	    $installedVersion = null;
 	} else {
-	    list ($ret, $installedVersion) = $this->getModuleParameter('version');
+	    list ($ret, $installedVersion) = $this->getModuleParameter('_version');
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -216,12 +216,12 @@ class GalleryModule {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    
-	    $ret = $this->setModuleParameter('version', $this->getVersion());
+	    $ret = $this->setModuleParameter('_version', $this->getVersion());
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
-	    $ret = $this->setModuleParameter('callbacks', $this->getCallbacks());
+	    $ret = $this->setModuleParameter('_callbacks', $this->getCallbacks());
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }

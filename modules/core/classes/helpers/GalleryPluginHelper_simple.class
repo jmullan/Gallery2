@@ -287,13 +287,13 @@ class GalleryPluginHelper_simple {
 			    $plugins[$pluginId]['available'] = 1;
 
 			    list ($ret, $plugins[$pluginId]['version']) =
-				GalleryPluginHelper_simple::getParameter($pluginType, $pluginId, 'version');
+				GalleryPluginHelper_simple::getParameter($pluginType, $pluginId, '_version');
 			    if ($ret->isError()) {
 				return array($ret->wrap(__FILE__, __LINE__), null);
 			    }
 
 			    list ($ret, $plugins[$pluginId]['callbacks']) =
-				GalleryPluginHelper_simple::getParameter($pluginType, $pluginId, 'callbacks');
+				GalleryPluginHelper_simple::getParameter($pluginType, $pluginId, '_callbacks');
 			    if ($ret->isError()) {
 				return array($ret->wrap(__FILE__, __LINE__), null);
 			    }

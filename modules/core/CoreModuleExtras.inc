@@ -60,112 +60,142 @@ class CoreModuleExtras {
 	    list ($ret, $paramValue) = $module->getModuleParameter('permissions.directory');
 	    if (isset($paramValue)) {
 		$currentVersion = '0.8';
+	    } else {
+		$currentVersion = '0';
 	    }
 	}
 
-	if (isset($currentVersion)) {
-	    list ($ret, $param) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
-	}
-	if (!isset($param)) {
-	    $param = array();
-	}
-
-	/* Make sure all our module parameters are set (initial install or upgrade) */
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/GalleryTranslator.class');
-	foreach (array('permissions.directory' => '0755',
-		       'permissions.file' => '0644',
-		       'uploadLocalServer.dirs' => '',
-		       'exec.expectedStatus' => '0',
-		       'default.orderBy' => 'orderWeight',
-		       'default.orderDirection' => '1',
-		       'default.layout' => 'matrix',
-		       'default.theme' => 'matrix',
-		       'default.language' => GalleryTranslator::getLanguageCodeFromRequest(),
-		       'language.selector' => 'none',
-		       'session.lifetime' => 25 * 365 * 86400, /* 25 years */
-		       'session.inactivityTimeout' => 14 * 86400, /* two weeks */
-		       'misc.markup' => 'bbcode',
-		       'misc.useShortUrls' => 'false',
-		       'misc.login' => 'both',
-		       ) as $key => $value) {
-	    if (!isset($param[$key])) {
-		$ret = $module->setModuleParameter($key, $value);
-		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
-	    }
-	}
-
-	if (!isset($currentVersion)) {
-	    /* This is an initial install */
-	    /*
-	     * We're going to need a translator in order to run the install
-	     * functions below.  At this point in the install process, we
-	     * probably don't have one!  Try to get one, and if that fails,
-	     * then create one.
-	     */
-	    $translator =& $gallery->getTranslator();
-	    if (empty($translator)) {
-		$ret = $gallery->initTranslator();
-		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
-	    }
-
-	    /* Activate the Matrix layout */
-	    list ($ret, $layout) = GalleryCoreApi::loadPlugin('layout', 'matrix');
+	/*
+	 * We may need a translator in order to run the install functions below.
+	 * At this point in the install process, we probably don't have one!
+	 * Try to get one, and if that fails, then create one.
+	 */
+	$translator =& $gallery->getTranslator();
+	if (empty($translator)) {
+	    $ret = $gallery->initTranslator();
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
+	}
 
-	    $ret = $layout->activate();
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
+	while ($currentVersion != $module->getVersion()) {
+	    switch ($currentVersion) {
+	    case '0':
+		/*
+		 * Initial install.  Make sure all our module parameters are set
+		 * (initial install or upgrade)
+		 */
+		GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/GalleryTranslator.class');
+		foreach (array('permissions.directory' => '0755',
+			       'permissions.file' => '0644',
+			       'uploadLocalServer.dirs' => '',
+			       'exec.expectedStatus' => '0',
+			       'default.orderBy' => 'orderWeight',
+			       'default.orderDirection' => '1',
+			       'default.layout' => 'matrix',
+			       'default.theme' => 'matrix',
+			       'default.language' => GalleryTranslator::getLanguageCodeFromRequest(),
+			       'language.selector' => 'none',
+			       'session.lifetime' => 25 * 365 * 86400, /* 25 years */
+			       'session.inactivityTimeout' => 14 * 86400, /* two weeks */
+			       'misc.markup' => 'bbcode',
+			       'misc.useShortUrls' => 'false',
+			       'misc.login' => 'both',
+			       ) as $key => $value) {
+		    if (!isset($param[$key])) {
+			$ret = $module->setModuleParameter($key, $value);
+			if ($ret->isError()) {
+			    return $ret->wrap(__FILE__, __LINE__);
+			}
+		    }
+		}
 
-	    /*
-	     * Register our permissions.  Since we're storing internationalized
-	     * strings in the database, we have to give our internationalized
-	     * string extractor a clue that these strings get translated.  So
-	     * put a line like this translate('key') in for each description so
-	     * that our extractor can find it.
-	     */
-	    $permissions[] = array('all', $gallery->i18n('All access'),
-				   GALLERY_PERMISSION_ALL_ACCESS, array());
-	    $permissions[] = array('view', $gallery->i18n('[core] View item'), 0, array());
-	    $permissions[] = array('viewResizes', $gallery->i18n('[core] View resized version(s)'), 0, array());
-	    $permissions[] = array('viewSource', $gallery->i18n('[core] View original version'), 0, array());
-	    $permissions[] = array('viewAll', $gallery->i18n('[core] View all versions'),
-				   GALLERY_PERMISSION_COMPOSITE,
-				   array('core.view', 'core.viewResizes', 'core.viewSource'));
-	    $permissions[] = array('addAlbumItem', $gallery->i18n('[core] Add sub-album'),
-				   GALLERY_PERMISSION_ITEM_ADMIN, array());
-	    $permissions[] = array('addDataItem', $gallery->i18n('[core] Add sub-item'),
-				   GALLERY_PERMISSION_ITEM_ADMIN, array());
-	    $permissions[] = array('edit', $gallery->i18n('[core] Edit item'),
-				   GALLERY_PERMISSION_ITEM_ADMIN, array());
-	    $permissions[] = array('changePermissions', $gallery->i18n('[core] Change item permissions'),
-				   GALLERY_PERMISSION_ITEM_ADMIN, array());
-	    $permissions[] = array('delete', $gallery->i18n('[core] Delete item'),
-				   GALLERY_PERMISSION_ITEM_ADMIN, array());
-	    foreach ($permissions as $p) {
-		$ret = GalleryCoreApi::registerPermission($module->getId(), 'core.' . $p[0], $p[1], $p[2], $p[3]);
+		/* Activate the Matrix layout */
+		list ($ret, $layout) = GalleryCoreApi::loadPlugin('layout', 'matrix');
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
-	    }
 
-	    foreach (array('_createAllUsersGroup',
-			   '_createSiteAdminsGroup',
-			   '_createEverybodyGroup',
-			   '_createAnonymousUser',
-			   '_createAdminUser',
-			   '_createRootAlbumItem') as $func) {
-
-		$ret = CoreModuleExtras::$func($module);
+		$ret = $layout->activate();
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
+
+		/*
+		 * Register our permissions.  Since we're storing internationalized
+		 * strings in the database, we have to give our internationalized
+		 * string extractor a clue that these strings get translated.  So
+		 * put a line like this translate('key') in for each description so
+		 * that our extractor can find it.
+		 */
+		$permissions[] = array('all', $gallery->i18n('All access'),
+				       GALLERY_PERMISSION_ALL_ACCESS, array());
+		$permissions[] = array('view', $gallery->i18n('[core] View item'), 0, array());
+		$permissions[] = array('viewResizes', $gallery->i18n('[core] View resized version(s)'), 0, array());
+		$permissions[] = array('viewSource', $gallery->i18n('[core] View original version'), 0, array());
+		$permissions[] = array('viewAll', $gallery->i18n('[core] View all versions'),
+				       GALLERY_PERMISSION_COMPOSITE,
+				       array('core.view', 'core.viewResizes', 'core.viewSource'));
+		$permissions[] = array('addAlbumItem', $gallery->i18n('[core] Add sub-album'),
+				       GALLERY_PERMISSION_ITEM_ADMIN, array());
+		$permissions[] = array('addDataItem', $gallery->i18n('[core] Add sub-item'),
+				       GALLERY_PERMISSION_ITEM_ADMIN, array());
+		$permissions[] = array('edit', $gallery->i18n('[core] Edit item'),
+				       GALLERY_PERMISSION_ITEM_ADMIN, array());
+		$permissions[] = array('changePermissions', $gallery->i18n('[core] Change item permissions'),
+				       GALLERY_PERMISSION_ITEM_ADMIN, array());
+		$permissions[] = array('delete', $gallery->i18n('[core] Delete item'),
+				       GALLERY_PERMISSION_ITEM_ADMIN, array());
+		foreach ($permissions as $p) {
+		    $ret = GalleryCoreApi::registerPermission($module->getId(), 'core.' . $p[0], $p[1], $p[2], $p[3]);
+		    if ($ret->isError()) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
+		}
+
+		foreach (array('_createAllUsersGroup',
+			       '_createSiteAdminsGroup',
+			       '_createEverybodyGroup',
+			       '_createAnonymousUser',
+			       '_createAdminUser',
+			       '_createRootAlbumItem') as $func) {
+
+		    $ret = call_user_func(array('CoreModuleExtras', $func), $module);
+		    if ($ret->isError()) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
+		}
+		$currentVersion = '0.8.2';
+		break;
+
+	    case '0.8.2':
+		/*
+		 * Update our framework module parameters to have a leading
+		 * underscore so that we have our own separate namespace.
+		 */
+		$storage =& $gallery->getStorage();
+		$query = "
+                  UPDATE
+                    [GalleryPluginParameterMap]
+                  SET
+                    [GalleryPluginParameterMap::parameterName] = ?
+                  WHERE
+                    [GalleryPluginParameterMap::parameterName] = ?
+                    AND
+                    [GalleryPluginParameterMap::pluginType] = 'module'
+                    AND
+                    [GalleryPluginParameterMap::itemId] = 0
+                ";
+		$ret = $storage->execute($query, array('_version', 'version'));
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+		
+		$ret = $storage->execute($query, array('_callbacks', 'callbacks'));
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+		$currentVersion = '0.8.3';
 	    }
 	}
 

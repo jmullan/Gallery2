@@ -51,22 +51,23 @@ class UpgradeOtherModulesStep extends UpgradeStep {
 	    ksort($modules);
 	    foreach (array_keys($modules) as $moduleId) {
 		$module =& $modules[$moduleId];
-		$moduleIsCurrent[$moduleId] =
+		$moduleIsUpgradeable[$moduleId] =
+		    !empty($moduleList[$moduleId]['active']) &&
 		    !empty($moduleList[$moduleId]['version']) &&
-		    $moduleList[$moduleId]['version'] == $module->getVersion();
+		    $moduleList[$moduleId]['version'] != $module->getVersion();
 		$currentVersion[$moduleId] = $moduleList[$moduleId]['version'];
 		
 		if (isset($_REQUEST['upgrade']) &&
 		      isset($_REQUEST['module'][$moduleId]) &&
 		      $moduleList[$moduleId]['active'] &&
-		      !$moduleIsCurrent[$moduleId]) {
+		      $moduleIsUpgradeable[$moduleId]) {
 		    $ret = $module->installOrUpgrade();
 		    if ($ret->isError()) {
 			$templateData['errors'][] =
 				_(sprintf('Unable to upgrade the %s module', $module->getName()));
 			continue;
 		    }
-		    $moduleIsCurrent[$moduleId] = true;
+		    $moduleIsUpgradeable[$moduleId] = false;
 		    $templateData['upgraded'][$moduleId] = $module->getName();
 		}
 
@@ -93,7 +94,7 @@ class UpgradeOtherModulesStep extends UpgradeStep {
 	    $templateData['groupedModules'] =& $groupedModules;
 	    $templateData['groupLabel'] = $groupLabel;
 	    $templateData['bodyFile'] = 'UpgradeOtherModulesRequest.html';
-	    $templateData['moduleIsCurrent'] = $moduleIsCurrent;
+	    $templateData['moduleIsUpgradeable'] = $moduleIsUpgradeable;
 	    $templateData['currentVersion'] = $currentVersion;
 	}
 
