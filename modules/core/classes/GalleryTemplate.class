@@ -89,7 +89,6 @@ class GalleryTemplate {
 	$this->_compiledTemplateDir = $gallery->getConfig('data.smarty.templates_c') .
 	    '%%' . sprintf("%u", crc32($templateDir));
 	$this->_smarty = GalleryTemplate::_getSmarty();
-	$this->setVariable('head', array('tpl' => array()));
     }
 
     /**
@@ -314,6 +313,8 @@ class GalleryTemplate {
 					     'resourceGetTimestamp',
 					     'resourceGetSecure',
 					     'resourceGetTrusted'));
+
+	    $smarty->assign('head', array('tpl' => array()));
 	}
 
 	return $smarty;

@@ -78,7 +78,7 @@ function GalleryMain($returnHtml=false) {
  */
 function _GalleryMain($returnHtml=false) {
     global $gallery;
-    
+
     $main = array();
 
     /* Let our url generator process the query string and redirect if suggested */
@@ -150,18 +150,18 @@ function _GalleryMain($returnHtml=false) {
 	    /* make a copy of $main for the immediate status view */
 	    $mainForImmediate = $main;
 	    $ret = _GalleryMain_setupMain(
-                $mainForImmediate, $urlGenerator, $installedVersions['gallery']);
+		$mainForImmediate, $urlGenerator, $installedVersions['gallery']);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    
+
 	    GalleryCoreApi::relativeRequireOnce(
-                'modules/core/classes/GalleryImmediateStatusView.class');
+		'modules/core/classes/GalleryImmediateStatusView.class');
 	    $galleryImmediateStatusView = new GalleryImmediateStatusView();
 	    $galleryImmediateStatusView->setMain($mainForImmediate);
 	    $controller->setImmediateStatusView($galleryImmediateStatusView);
 	}
-	
+
 	/* Let the controller handle the input */
 	list ($ret, $results) = $controller->handleRequest($form);
 	if ($ret->isError()) {
@@ -252,12 +252,12 @@ function _GalleryMain($returnHtml=false) {
 	    }
 	}
     }
-    
+
     /* Load and run the appropriate view */
     if (empty($viewName)) {
 	$viewName = 'core:ShowItem';
     }
-    
+
     if (!isset($view)) {
 	list ($ret, $view) = GalleryView::loadView($viewName);
 	if ($ret->isError()) {
@@ -449,11 +449,11 @@ function _GalleryMain_errorHandler($error, $g2Data=null, $initOk=true) {
 
     list ($ret, $isAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
     $isAdmin = $ret->isSuccess() && $isAdmin;
+    $template->head('templates/errorHead.tpl', 'modules_core');
     $main = array('isAdmin' => $isAdmin,
 		  'error' => array('stackTrace' => $error->getAsHtml($isAdmin)),
 		  'viewBodyFile' => 'templates/errorBody.tpl',
 		  'viewL10Domain' => 'modules_core');
-    $template->head('templates/errorHead.tpl', 'modules_core');
     _GalleryMain_setupMain($main);
 
     if (isset($g2Data['redirectUrl'])) {
