@@ -203,6 +203,7 @@ class Gallery {
      */
     function Gallery() {
 	$this->reset();
+	$this->_locks = array();
 	$this->_boundDomains = array();
 	    
 	/* Set up a shutdown function to release any hanging locks. */
@@ -212,12 +213,10 @@ class Gallery {
     /**
      * Reset persistent information
      *
-     * This should only be called if we remove and re-install the
-     * GalleryStorage instance.
+     * This should only be called by test cases.
      */
     function reset() {
 	$this->_modules = array();
-	$this->_locks = array();
 	$this->_templateAdapter = null;
 	$this->_eventListeners = array();
 	GalleryDataCache::reset();
@@ -625,7 +624,7 @@ class Gallery {
     }
 
     /**
-     * Return true if the given id is read locked
+     * Return true if the given id is read locked or write locked.
      *
      * @access public
      * @param int an entity id
@@ -635,7 +634,7 @@ class Gallery {
 	foreach (array_keys($this->_locks) as $lockId) {
 	    $lock =& $this->_locks[$lockId];
 
-	    if ($lock->getLockType() != LOCK_READ) {
+	    if ($lock->getLockType() != LOCK_READ && $lock->getLockType() != LOCK_WRITE) {
 		continue;
 	    }
 
