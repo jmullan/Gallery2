@@ -14,7 +14,7 @@
     {/g->subtitle}
 
     {g->element}
-      {g->input type="text" name="form.groupName"}{$form.groupName}{/g->input}
+      {g->input type="text" name="form[groupName]"}{$form.groupName}{/g->input}
       {g->input type="hidden" name="groupId"}{$AdminEditGroup.group.id}{/g->input}
     {/g->element}
 
@@ -25,9 +25,9 @@
     {/if}
 
     {g->element}
-      {g->input type="submit" name="form.action.save"}{g->text text="Save"}{/g->input}
-      {g->input type="submit" name="form.action.undo"}{g->text text="Undo"}{/g->input}
-      {g->input type="submit" name="form.action.cancel"}{g->text text="Cancel"}{/g->input}
+      {g->input type="submit" name="form[action][save]"}{g->text text="Save"}{/g->input}
+      {g->input type="submit" name="form[action][undo]"}{g->text text="Undo"}{/g->input}
+      {g->input type="submit" name="form[action][cancel]"}{g->text text="Cancel"}{/g->input}
     {/g->element}
   {/g->box}
 {/g->pagebox}

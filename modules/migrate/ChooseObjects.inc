@@ -59,7 +59,7 @@ class ChooseObjectsController extends GalleryController {
 	    $results['delegate']['view'] = 'core:SiteAdmin';
 	    $results['delegate']['subView'] = 'migrate:ConfirmImport';
 	}
-	
+
 	$results['status'] = $status;
 	$results['error'] = $error;
 

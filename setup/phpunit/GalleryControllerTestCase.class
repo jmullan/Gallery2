@@ -55,7 +55,7 @@ class GalleryControllerTestCase extends GalleryTestCase {
 
     function handleRequest($errorCode=null) {
 	/* Get our form variables */
-	$form = GalleryUtilities::getFormVariables('form.');
+	$form = GalleryUtilities::getFormVariables('form');
 
 	list ($ret, $results) = $this->_controller->handleRequest($form);
 	if ($errorCode != null) {

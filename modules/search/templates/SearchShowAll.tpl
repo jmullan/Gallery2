@@ -1,7 +1,7 @@
 {g->form action_controller=$SearchShowAll.controller}
-  {g->input type="hidden" name="form.formName"}SearchShowAll{/g->input}
-  {g->input type="hidden" name="form.moduleId"}{$form.moduleId}{/g->input}
-  {g->input type="hidden" name="form.page"}{$form.page}{/g->input}
+  {g->input type="hidden" name="form[formName]"}SearchShowAll{/g->input}
+  {g->input type="hidden" name="form[moduleId]"}{$form.moduleId}{/g->input}
+  {g->input type="hidden" name="form[page]"}{$form.page}{/g->input}
 
   {g->main}
     {g->breadcrumb}
@@ -25,7 +25,7 @@
 	{/g->title}
 
 	{g->element}
-	  {g->input type="text" size="50" name="form.searchCriteria"}{$form.searchCriteria}{/g->input}
+	  {g->input type="text" size="50" name="form[searchCriteria]"}{$form.searchCriteria}{/g->input}
 	{/g->element}
 
 	{if isset($form.error.searchCriteria.missing)}
@@ -35,7 +35,7 @@
 	{/if}
 
 	{g->element}
-	  {g->input type="submit" name="form.action.search"}
+	  {g->input type="submit" name="form[action][search]"}
 	    {g->text text="Search"}
 	  {/g->input}
 	{/g->element}
@@ -71,7 +71,7 @@
 	    {g->box}
 	      {g->title}
 		{g->text text="Searching %s only" arg1=$SearchShowAll.moduleInfo.name}
-		{g->input type="submit" name="form.action.scan"}
+		{g->input type="submit" name="form[action][scan]"}
 		  {g->text text="Search all modules"}
 		{/g->input}
 		{$SearchShowAll.moduleInfo.name}
@@ -82,13 +82,13 @@
 		{/if}
 		{if ($SearchShowAll.results.count > $SearchShowAll.results.end)}
 		  {assign var="moduleId" value=$SearchShowAll.moduleId}
-		  {g->input type="submit" name="form.action.showAll.$SearchShowAll.moduleId"}
+		  {g->input type="submit" name="form[action][showAll][$SearchShowAll][moduleId]"}
 		    {g->text text="Show all %d" arg1=$SearchShowAll.results.count}
 		  {/g->input}
 		{/if}
 		{if ($SearchShowAll.results.count > 0)}
 		  {if ($form.page > 1)}
-		    {g->input type="submit" name="form.action.previousPage"}
+		    {g->input type="submit" name="form[action][previousPage]"}
 		      {g->text text="&laquo; Back"}
 		    {/g->input}
 		  {/if}
@@ -101,7 +101,7 @@
 	          arg5=$SearchShowAll.maxPages}
 		{/if}
 		{if ($form.page < $SearchShowAll.maxPages)}
-		  {g->input type="submit" name="form.action.nextPage"}
+		  {g->input type="submit" name="form[action][nextPage]"}
 		    {g->text text="Next &raquo;"}
 		  {/g->input}
 		{/if}

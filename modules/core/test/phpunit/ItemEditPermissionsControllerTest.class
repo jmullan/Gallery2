@@ -86,8 +86,8 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
     function testChangeOwner() {
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_albumParent->getId());
-	GalleryUtilities::putRequestVariable('form.action.changeOwner', 1);
-	GalleryUtilities::putRequestVariable('form.owner.ownerName', $this->_user->getUserName());
+	GalleryUtilities::putRequestVariable('form[action][changeOwner]', 1);
+	GalleryUtilities::putRequestVariable('form[owner][ownerName]', $this->_user->getUserName());
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
@@ -111,7 +111,7 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
     function testChangeOwnerMissingUser() {
 	/* Use invalid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_albumParent->getId());
-	GalleryUtilities::putRequestVariable('form.action.changeOwner', 1);
+	GalleryUtilities::putRequestVariable('form[action][changeOwner]', 1);
 
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
@@ -125,8 +125,8 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
     function testChangeOwnerInvalidUser() {
 	/* Use invalid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_albumParent->getId());
-	GalleryUtilities::putRequestVariable('form.action.changeOwner', 1);
-	GalleryUtilities::putRequestVariable('form.owner.ownerName', 'bogus-user-' . rand(1,5000));
+	GalleryUtilities::putRequestVariable('form[action][changeOwner]', 1);
+	GalleryUtilities::putRequestVariable('form[owner][ownerName]', 'bogus-user-' . rand(1,5000));
 
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
@@ -140,9 +140,9 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
     function testAddGroupPermission() {
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_albumParent->getId());
-	GalleryUtilities::putRequestVariable('form.action.addGroupPermission', 1);
-	GalleryUtilities::putRequestVariable('form.group.permission', 'core.edit');
-	GalleryUtilities::putRequestVariable('form.group.groupName', $this->_group->getGroupName());
+	GalleryUtilities::putRequestVariable('form[action][addGroupPermission]', 1);
+	GalleryUtilities::putRequestVariable('form[group][permission]', 'core.edit');
+	GalleryUtilities::putRequestVariable('form[group][groupName]', $this->_group->getGroupName());
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
@@ -175,10 +175,10 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
     function testAddGroupPermissionCascade() {
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_albumParent->getId());
-	GalleryUtilities::putRequestVariable('form.action.addGroupPermission', 1);
-	GalleryUtilities::putRequestVariable('form.group.permission', 'core.edit');
-	GalleryUtilities::putRequestVariable('form.group.groupName', $this->_group->getGroupName());
-	GalleryUtilities::putRequestVariable('form.applyToSubItems', 1);
+	GalleryUtilities::putRequestVariable('form[action][addGroupPermission]', 1);
+	GalleryUtilities::putRequestVariable('form[group][permission]', 'core.edit');
+	GalleryUtilities::putRequestVariable('form[group][groupName]', $this->_group->getGroupName());
+	GalleryUtilities::putRequestVariable('form[applyToSubItems]', 1);
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
@@ -212,8 +212,8 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
     function testAddGroupPermissionInvalidGroup() {
 	/* Use invalid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_albumParent->getId());
-	GalleryUtilities::putRequestVariable('form.action.addGroupPermission', 1);
-	GalleryUtilities::putRequestVariable('form.group.permission', 'core.edit');
+	GalleryUtilities::putRequestVariable('form[action][addGroupPermission]', 1);
+	GalleryUtilities::putRequestVariable('form[group][permission]', 'core.edit');
 
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
@@ -227,9 +227,9 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
     function testAddGroupPermissionMissingGroup() {
 	/* Use invalid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_albumParent->getId());
-	GalleryUtilities::putRequestVariable('form.action.addGroupPermission', 1);
-	GalleryUtilities::putRequestVariable('form.group.permission', 'core.edit');
-	GalleryUtilities::putRequestVariable('form.group.groupName', 'bogus-name-' . rand(1,5000));
+	GalleryUtilities::putRequestVariable('form[action][addGroupPermission]', 1);
+	GalleryUtilities::putRequestVariable('form[group][permission]', 'core.edit');
+	GalleryUtilities::putRequestVariable('form[group][groupName]', 'bogus-name-' . rand(1,5000));
 
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
@@ -243,9 +243,9 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
     function testAddGroupPermissionInvalidPermission() {
 	/* Use invalid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_albumParent->getId());
-	GalleryUtilities::putRequestVariable('form.action.addGroupPermission', 1);
-	GalleryUtilities::putRequestVariable('form.group.permission', 'bogus-permission');
-	GalleryUtilities::putRequestVariable('form.group.groupName', $this->_group->getGroupName());
+	GalleryUtilities::putRequestVariable('form[action][addGroupPermission]', 1);
+	GalleryUtilities::putRequestVariable('form[group][permission]', 'bogus-permission');
+	GalleryUtilities::putRequestVariable('form[group][groupName]', $this->_group->getGroupName());
 
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
@@ -270,9 +270,9 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 	
 	/* Use invalid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_albumParent->getId());
-	GalleryUtilities::putRequestVariable('form.action.addGroupPermission', 1);
-	GalleryUtilities::putRequestVariable('form.group.permission', 'core.edit');
-	GalleryUtilities::putRequestVariable('form.group.groupName', $this->_group->getGroupName());
+	GalleryUtilities::putRequestVariable('form[action][addGroupPermission]', 1);
+	GalleryUtilities::putRequestVariable('form[group][permission]', 'core.edit');
+	GalleryUtilities::putRequestVariable('form[group][groupName]', $this->_group->getGroupName());
 
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
@@ -296,8 +296,8 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 	
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_albumParent->getId());
-	GalleryUtilities::putRequestVariable('form.action.deleteGroupPermission', array(0 => 1));
-	GalleryUtilities::putRequestVariable('form.group.delete.0', $this->_group->getId() . ',core.edit');
+	GalleryUtilities::putRequestVariable('form[action][deleteGroupPermission]', array(0 => 1));
+	GalleryUtilities::putRequestVariable('form[group][delete][0]', $this->_group->getId() . ',core.edit');
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
@@ -333,9 +333,9 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 	
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_albumParent->getId());
-	GalleryUtilities::putRequestVariable('form.action.deleteGroupPermission', array(0 => 1));
-	GalleryUtilities::putRequestVariable('form.group.delete.0', $this->_group->getId() . ',core.edit');
-	GalleryUtilities::putRequestVariable('form.applyToSubItems', 1);
+	GalleryUtilities::putRequestVariable('form[action][deleteGroupPermission]', array(0 => 1));
+	GalleryUtilities::putRequestVariable('form[group][delete][0]', $this->_group->getId() . ',core.edit');
+	GalleryUtilities::putRequestVariable('form[applyToSubItems]', 1);
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
@@ -365,9 +365,9 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
     function testAddUserPermission() {
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_albumParent->getId());
-	GalleryUtilities::putRequestVariable('form.action.addUserPermission', 1);
-	GalleryUtilities::putRequestVariable('form.user.permission', 'core.edit');
-	GalleryUtilities::putRequestVariable('form.user.userName', $this->_user->getUserName());
+	GalleryUtilities::putRequestVariable('form[action][addUserPermission]', 1);
+	GalleryUtilities::putRequestVariable('form[user][permission]', 'core.edit');
+	GalleryUtilities::putRequestVariable('form[user][userName]', $this->_user->getUserName());
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
@@ -400,10 +400,10 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
     function testAddUserPermissionCascade() {
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_albumParent->getId());
-	GalleryUtilities::putRequestVariable('form.action.addUserPermission', 1);
-	GalleryUtilities::putRequestVariable('form.user.permission', 'core.edit');
-	GalleryUtilities::putRequestVariable('form.user.userName', $this->_user->getUserName());
-	GalleryUtilities::putRequestVariable('form.applyToSubItems', 1);
+	GalleryUtilities::putRequestVariable('form[action][addUserPermission]', 1);
+	GalleryUtilities::putRequestVariable('form[user][permission]', 'core.edit');
+	GalleryUtilities::putRequestVariable('form[user][userName]', $this->_user->getUserName());
+	GalleryUtilities::putRequestVariable('form[applyToSubItems]', 1);
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
@@ -437,8 +437,8 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
     function testAddUserPermissionInvalidUser() {
 	/* Use invalid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_albumParent->getId());
-	GalleryUtilities::putRequestVariable('form.action.addUserPermission', 1);
-	GalleryUtilities::putRequestVariable('form.user.permission', 'core.edit');
+	GalleryUtilities::putRequestVariable('form[action][addUserPermission]', 1);
+	GalleryUtilities::putRequestVariable('form[user][permission]', 'core.edit');
 
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
@@ -452,9 +452,9 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
     function testAddUserPermissionMissingUser() {
 	/* Use invalid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_albumParent->getId());
-	GalleryUtilities::putRequestVariable('form.action.addUserPermission', 1);
-	GalleryUtilities::putRequestVariable('form.user.permission', 'core.edit');
-	GalleryUtilities::putRequestVariable('form.user.userName', 'bogus-name-' . rand(1,5000));
+	GalleryUtilities::putRequestVariable('form[action][addUserPermission]', 1);
+	GalleryUtilities::putRequestVariable('form[user][permission]', 'core.edit');
+	GalleryUtilities::putRequestVariable('form[user][userName]', 'bogus-name-' . rand(1,5000));
 
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
@@ -468,9 +468,9 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
     function testAddUserPermissionInvalidPermission() {
 	/* Use invalid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_albumParent->getId());
-	GalleryUtilities::putRequestVariable('form.action.addUserPermission', 1);
-	GalleryUtilities::putRequestVariable('form.user.permission', 'bogus-permission');
-	GalleryUtilities::putRequestVariable('form.user.userName', $this->_user->getUserName());
+	GalleryUtilities::putRequestVariable('form[action][addUserPermission]', 1);
+	GalleryUtilities::putRequestVariable('form[user][permission]', 'bogus-permission');
+	GalleryUtilities::putRequestVariable('form[user][userName]', $this->_user->getUserName());
 
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
@@ -495,9 +495,9 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 	
 	/* Use invalid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_albumParent->getId());
-	GalleryUtilities::putRequestVariable('form.action.addUserPermission', 1);
-	GalleryUtilities::putRequestVariable('form.user.permission', 'core.edit');
-	GalleryUtilities::putRequestVariable('form.user.userName', $this->_user->getUserName());
+	GalleryUtilities::putRequestVariable('form[action][addUserPermission]', 1);
+	GalleryUtilities::putRequestVariable('form[user][permission]', 'core.edit');
+	GalleryUtilities::putRequestVariable('form[user][userName]', $this->_user->getUserName());
 
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
@@ -521,8 +521,8 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 	
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_albumParent->getId());
-	GalleryUtilities::putRequestVariable('form.action.deleteUserPermission', array(0 => 1));
-	GalleryUtilities::putRequestVariable('form.user.delete.0', $this->_user->getId() . ',core.edit');
+	GalleryUtilities::putRequestVariable('form[action][deleteUserPermission]', array(0 => 1));
+	GalleryUtilities::putRequestVariable('form[user][delete][0]', $this->_user->getId() . ',core.edit');
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
@@ -559,9 +559,9 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 	
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_albumParent->getId());
-	GalleryUtilities::putRequestVariable('form.action.deleteUserPermission', array(0 => 1));
-	GalleryUtilities::putRequestVariable('form.user.delete.0', $this->_user->getId() . ',core.edit');
-	GalleryUtilities::putRequestVariable('form.applyToSubItems', 1);
+	GalleryUtilities::putRequestVariable('form[action][deleteUserPermission]', array(0 => 1));
+	GalleryUtilities::putRequestVariable('form[user][delete][0]', $this->_user->getId() . ',core.edit');
+	GalleryUtilities::putRequestVariable('form[applyToSubItems]', 1);
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();

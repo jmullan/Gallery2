@@ -56,7 +56,7 @@ class UserPreferencesControllerTest extends GalleryControllerTestCase {
     }
 
     function testCancel() {
-	GalleryUtilities::putRequestVariable('form.action.cancel', 1);
+	GalleryUtilities::putRequestVariable('form[action][cancel]', 1);
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('return' => 1,
@@ -69,7 +69,7 @@ class UserPreferencesControllerTest extends GalleryControllerTestCase {
     }
 
     function testUndo() {
-	GalleryUtilities::putRequestVariable('form.action.undo', 1);
+	GalleryUtilities::putRequestVariable('form[action][undo]', 1);
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('return' => 1,
@@ -81,10 +81,10 @@ class UserPreferencesControllerTest extends GalleryControllerTestCase {
     }
 
     function testEditAll() {
-	GalleryUtilities::putRequestVariable('form.action.save', 1);
-	GalleryUtilities::putRequestVariable('form.fullName', 'full name');
-	GalleryUtilities::putRequestVariable('form.email', 'email');
-	GalleryUtilities::putRequestVariable('form.language', 'language');
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[fullName]', 'full name');
+	GalleryUtilities::putRequestVariable('form[email]', 'email');
+	GalleryUtilities::putRequestVariable('form[language]', 'language');
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('return' => 1,
@@ -106,9 +106,9 @@ class UserPreferencesControllerTest extends GalleryControllerTestCase {
     }
 
     function testEditRequiredOnly() {
-	GalleryUtilities::putRequestVariable('form.action.save', 1);
-	GalleryUtilities::putRequestVariable('form.fullName', 'full name');
-	GalleryUtilities::putRequestVariable('form.email', 'email');
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[fullName]', 'full name');
+	GalleryUtilities::putRequestVariable('form[email]', 'email');
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('return' => 1,
@@ -120,9 +120,9 @@ class UserPreferencesControllerTest extends GalleryControllerTestCase {
     }
 
     function testEditMissingEmail() {
-	GalleryUtilities::putRequestVariable('form.action.save', 1);
-	GalleryUtilities::putRequestVariable('form.fullName', 'full name');
-	// GalleryUtilities::putRequestVariable('form.email', 'email');
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[fullName]', 'full name');
+	// GalleryUtilities::putRequestVariable('form[email]', 'email');
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'core:UserAdmin',

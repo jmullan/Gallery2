@@ -91,15 +91,15 @@
 	{if $ItemEditPhoto.editPhoto.can.rotate}
 	  {g->element}
 	    {g->input type="hidden" name="mode"}editPhoto{/g->input}
-	    {g->input type="submit" name="form.action.rotate.counterClockwise"}
+	    {g->input type="submit" name="form[action][rotate][counterClockwise]"}
 	      {g->text text="CC 90&deg;"}
 	    {/g->input}
 	    &nbsp;
-	    {g->input type="submit" name="form.action.rotate.flip"}
+	    {g->input type="submit" name="form[action][rotate][flip]"}
 	      {g->text text="180&deg;"}
 	    {/g->input}
 	    &nbsp;
-	    {g->input type="submit" name="form.action.rotate.clockwise"}
+	    {g->input type="submit" name="form[action][rotate][clockwise]"}
 	      {g->text text="C 90&deg;"}
 	    {/g->input}
 	  {/g->element}
@@ -127,8 +127,8 @@
 
 	{if $ItemEditPhoto.editPhoto.can.scale}
 	  {g->element}
-	    {g->input type="text" size="6" name="form.scale.size"}{$form.scale.size}{/g->input}
-	    {g->input type="submit" name="form.action.scale"}
+	    {g->input type="text" size="6" name="form[scale][size]"}{$form.scale.size}{/g->input}
+	    {g->input type="submit" name="form[action][scale]"}
 	      {g->text text="Scale"}
 	    {/g->input}
 	  {/g->element}
@@ -168,7 +168,7 @@
 	    {/g->description}
 
 	    {g->element}
-	      {g->input type="checkbox" name="form.preserveOriginal"}{$form.preserveOriginal}{/g->input} {g->text text="Preserve Original Photo"}
+	      {g->input type="checkbox" name="form[preserveOriginal]"}{$form.preserveOriginal}{/g->input} {g->text text="Preserve Original Photo"}
 	    {/g->element}
 	  {else}
 	    {g->title}
@@ -180,7 +180,7 @@
 	    {/g->description}
 
 	    {g->element}
-	      {g->input type="submit" name="form.action.revertToOriginal"}
+	      {g->input type="submit" name="form[action][revertToOriginal]"}
 		{g->text text="Restore original"}
 	      {/g->input}
 	    {/g->element}
@@ -201,7 +201,7 @@
 
 	{if $ItemEditPhoto.editSizes.can.createThumbnail}
 	  {g->element}
-	    {g->input type=text size=6 name="form.thumbnail.size"}{$form.thumbnail.size}{/g->input}
+	    {g->input type=text size=6 name="form[thumbnail][size]"}{$form.thumbnail.size}{/g->input}
 	  {/g->element}
 	{else}
 	  {g->element style="emphasized"}
@@ -240,8 +240,8 @@
 	  {counter start=0 assign=index}
 	  {foreach from=$form.resizes item=resize}
 	    {g->element}
-	      {g->input type="checkbox" name="form.resizes.$index.active"}{$form.resizes.$index.active}{/g->input}
-	      {g->input type="text" size="6" name="form.resizes.$index.size"}{$form.resizes.$index.size}{/g->input}
+	      {g->input type="checkbox" name="form[resizes][$index][active]"}{$form.resizes.$index.active}{/g->input}
+	      {g->input type="text" size="6" name="form[resizes][$index][size]"}{$form.resizes.$index.size}{/g->input}
 	    {/g->element}
 
 	    {if !empty($form.error.resizes.$index.size.missing)}
@@ -273,8 +273,8 @@
       {g->box}
 	{g->element}
 	  {g->input type="hidden" name="mode"}editSizes{/g->input}
-	  {g->input type="submit" name="form.action.save"}{g->text text="Save"}{/g->input}
-	  {g->input type="submit" name="form.action.undo"}{g->text text="Undo"}{/g->input}
+	  {g->input type="submit" name="form[action][save]"}{g->text text="Save"}{/g->input}
+	  {g->input type="submit" name="form[action][undo]"}{g->text text="Undo"}{/g->input}
 	{/g->element}
       {/g->box}
     {/if}
@@ -363,11 +363,11 @@
 
 	  {g->element}
 	    {g->input type="hidden" name="mode"}editThumbnail{/g->input}
-	    {g->input id="crop_x" type="hidden" name="form.crop.x"}{/g->input}
-	    {g->input id="crop_y" type="hidden" name="form.crop.y"}{/g->input}
-	    {g->input id="crop_width" type="hidden" name="form.crop.width"}{/g->input}
-	    {g->input id="crop_height" type="hidden" name="form.crop.height"}{/g->input}
-	    {g->input type="submit" name="form.action.crop" onClick="javascript:setCropFields(); submit()"}
+	    {g->input id="crop_x" type="hidden" name="form[crop][x]"}{/g->input}
+	    {g->input id="crop_y" type="hidden" name="form[crop][y]"}{/g->input}
+	    {g->input id="crop_width" type="hidden" name="form[crop][width]"}{/g->input}
+	    {g->input id="crop_height" type="hidden" name="form[crop][height]"}{/g->input}
+	    {g->input type="submit" name="form[action][crop]" onClick="javascript:setCropFields(); submit()"}
 	      {g->text text="Crop"}
 	    {/g->input}
 	  {/g->element}

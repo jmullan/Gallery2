@@ -52,13 +52,13 @@
 	  // we haven't selected something that we can't handle.  If we have, then remove
 	  // the selection and alert the user.
 	  function checkPermissions(form, quiet) {ldelim}
-	      destinationId = form.elements['{g->elementName name="form.destination"}'].value;
+	      destinationId = form.elements['{g->elementName name="form[destination]"}'].value;
 	      if (permission['addDataItem'][destinationId] && permission['addAlbumItem'][destinationId]) {ldelim}
 		  {foreach from=$ItemMove.peerTypes.album key=id item=unused}
-		  form.elements['{g->elementName name="form.selectedIds.$id"}'].disabled = 0;
+		  form.elements['{g->elementName name="form[selectedIds][$id]"}'].disabled = 0;
 		  {/foreach}
 		  {foreach from=$ItemMove.peerTypes.data key=id item=unused}
-		  form.elements['{g->elementName name="form.selectedIds.$id"}'].disabled = 0;
+		  form.elements['{g->elementName name="form[selectedIds][$id]"}'].disabled = 0;
 		  {/foreach}
 		  return;
 	      {rdelim}
@@ -66,28 +66,28 @@
 	      changed = 0;
 	      if (permission['addDataItem'][destinationId]) {ldelim}
 		  {foreach from=$ItemMove.peerTypes.album key=id item=unused}
-		  if (form.elements['{g->elementName name="form.selectedIds.$id"}'].checked) {ldelim}
-		      form.elements['{g->elementName name="form.selectedIds.$id"}'].checked = 0;
+		  if (form.elements['{g->elementName name="form[selectedIds][$id]"}'].checked) {ldelim}
+		      form.elements['{g->elementName name="form[selectedIds][$id]"}'].checked = 0;
 		      changed = 1;
 		  {rdelim}
-		  form.elements['{g->elementName name="form.selectedIds.$id"}'].disabled = 1;
+		  form.elements['{g->elementName name="form[selectedIds][$id]"}'].disabled = 1;
 		  {/foreach}
 		  {foreach from=$ItemMove.peerTypes.data key=id item=unused}
-		  form.elements['{g->elementName name="form.selectedIds.$id"}'].disabled = 0;
+		  form.elements['{g->elementName name="form[selectedIds][$id]"}'].disabled = 0;
 		  {/foreach}
 		  if (changed && !quiet) {ldelim}
 		      alert("{g->text text="The destination you chose does not accept sub-albums, so all sub-albums have been deselected."}");
 		  {rdelim}
 	      {rdelim} else {ldelim}
 		  {foreach from=$ItemMove.peerTypes.data key=id item=unused}
-		  if (form.elements['{g->elementName name="form.selectedIds.$id"}'].checked) {ldelim}
-		      form.elements['{g->elementName name="form.selectedIds.$id"}'].checked = 0;
+		  if (form.elements['{g->elementName name="form[selectedIds][$id]"}'].checked) {ldelim}
+		      form.elements['{g->elementName name="form[selectedIds][$id]"}'].checked = 0;
 		      changed = 1;
 		  {rdelim}
-		  form.elements['{g->elementName name="form.selectedIds.$id"}'].disabled = 1;
+		  form.elements['{g->elementName name="form[selectedIds][$id]"}'].disabled = 1;
 		  {/foreach}
 		  {foreach from=$ItemMove.peerTypes.album key=id item=unused}
-		  form.elements['{g->elementName name="form.selectedIds.$id"}'].disabled = 0;
+		  form.elements['{g->elementName name="form[selectedIds][$id]"}'].disabled = 0;
 		  {/foreach}
 		  if (changed && !quiet) {ldelim}
 		      alert("{g->text text="The destination you chose only accepts sub-albums, so all non-albums have been deselected."}");
@@ -100,7 +100,7 @@
       {foreach from=$ItemMove.peers item=peer}
 	{assign var="peerItemId" value=$peer.id}
 	{g->element}
-  	  {g->input type="checkbox" name="form.selectedIds.$peerItemId"}{$peer.selected}{/g->input}
+  	  {g->input type="checkbox" name="form[selectedIds][$peerItemId]"}{$peer.selected}{/g->input}
   	  {$peer.title|default:$peer.pathComponent}
   	  {if isset($ItemMove.peerTypes.data.$peerItemId)}
   	    {g->text text="(data)"}
@@ -146,7 +146,7 @@
       {/g->description}
       
       {g->element}
-	{g->select name="form.destination" onChange="javascript:checkPermissions(this.form)"}
+	{g->select name="form[destination]" onChange="javascript:checkPermissions(this.form)"}
           {foreach from=$ItemMove.albumTree item=album}
   	    <option value="{$album.data.id}">
   	    {"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"|repeat:$album.depth}`--
@@ -171,8 +171,8 @@
     
     {g->box style="admin"}
       {g->element}
-	{g->input type="submit" name="form.action.move"}{g->text text="Move"}{/g->input}
-	{g->input type="submit" name="form.action.cancel"}{g->text text="Cancel"}{/g->input}
+	{g->input type="submit" name="form[action][move]"}{g->text text="Move"}{/g->input}
+	{g->input type="submit" name="form[action][cancel]"}{g->text text="Cancel"}{/g->input}
       {/g->element}
     {/g->box}
   {else}

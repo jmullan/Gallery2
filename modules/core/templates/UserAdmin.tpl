@@ -1,5 +1,5 @@
 {g->form action_controller="$controller"}
-  {g->input type="hidden" name="form.formName"}{$form.formName}{/g->input}
+  {g->input type="hidden" name="form[formName]"}{$form.formName}{/g->input}
 
   {g->main}
     {g->breadcrumb}

@@ -11,7 +11,7 @@
     {/g->description}
     
     {g->element}
-      {g->input type="submit" name="form.action.makeHighlight"}{g->text text="Yes, highlight this item!"}{/g->input}
+      {g->input type="submit" name="form[action][makeHighlight]"}{g->text text="Yes, highlight this item!"}{/g->input}
     {/g->element}
   {/g->box}
 {/g->pagebox}

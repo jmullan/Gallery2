@@ -93,8 +93,8 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 
 	/* Change the defaults to something meaningless */
 	foreach ($valueMap as $key => $value) {
-	    GalleryUtilities::putRequestVariable('form.' . $key, $value);
-	    GalleryUtilities::putRequestVariable('form.action.save', 1);
+	    GalleryUtilities::putRequestVariable('form[' . $key . ']', $value);
+	    GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	}
 
 	/* Perform the request and verify that we succeeded */
@@ -120,8 +120,8 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 
     function testAddUploadLocalServerDir() {
 	global $gallery;
-	GalleryUtilities::putRequestVariable('form.uploadLocalServer.newDir', dirname(__FILE__));
-	GalleryUtilities::putRequestVariable('form.action.addUploadLocalServerDir', 1);
+	GalleryUtilities::putRequestVariable('form[uploadLocalServer][newDir]', dirname(__FILE__));
+	GalleryUtilities::putRequestVariable('form[action][addUploadLocalServerDir]', 1);
 
 	$ret = $gallery->setModuleParameter('core', 'uploadLocalServer.dirs', 'a,b,c');
 	if ($ret->isError()) {
@@ -143,8 +143,8 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
     }
 
     function testAddUploadLocalServerDirMissing() {
-	GalleryUtilities::putRequestVariable('form.uploadLocalServer.newDir', '');
-	GalleryUtilities::putRequestVariable('form.action.addUploadLocalServerDir', 1);
+	GalleryUtilities::putRequestVariable('form[uploadLocalServer][newDir]', '');
+	GalleryUtilities::putRequestVariable('form[action][addUploadLocalServerDir]', 1);
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
@@ -156,8 +156,8 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
     }
     
     function testAddUploadLocalServerDirBogus() {
-	GalleryUtilities::putRequestVariable('form.uploadLocalServer.newDir', __FILE__);
-	GalleryUtilities::putRequestVariable('form.action.addUploadLocalServerDir', 1);
+	GalleryUtilities::putRequestVariable('form[uploadLocalServer][newDir]', __FILE__);
+	GalleryUtilities::putRequestVariable('form[action][addUploadLocalServerDir]', 1);
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
@@ -170,8 +170,8 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
     
     function testRemoveUploadLocalServerDir() {
 	global $gallery;
-	GalleryUtilities::putRequestVariable('form.uploadLocalServer.selectedDir', 'foo');
-	GalleryUtilities::putRequestVariable('form.action.removeUploadLocalServerDir', 1);
+	GalleryUtilities::putRequestVariable('form[uploadLocalServer][selectedDir]', 'foo');
+	GalleryUtilities::putRequestVariable('form[action][removeUploadLocalServerDir]', 1);
 
 	$ret = $gallery->setModuleParameter('core', 'uploadLocalServer.dirs', 'a,foo,b,c');
 	if ($ret->isError()) {
@@ -193,8 +193,8 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
     }
 
     function testRemoveUploadLocalServerDirMissing() {
-	GalleryUtilities::putRequestVariable('form.uploadLocalServer.selectedDir', '');
-	GalleryUtilities::putRequestVariable('form.action.removeUploadLocalServerDir', 1);
+	GalleryUtilities::putRequestVariable('form[uploadLocalServer][selectedDir]', '');
+	GalleryUtilities::putRequestVariable('form[action][removeUploadLocalServerDir]', 1);
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();

@@ -23,7 +23,7 @@
     {/g->description}
 
     {g->element}
-      {g->input type=text size=6 name="form.thumbnail.size"}{$form.thumbnail.size}{/g->input}
+      {g->input type=text size=6 name="form[thumbnail][size]"}{$form.thumbnail.size}{/g->input}
     {/g->element}
   {/g->box}
 
@@ -51,8 +51,8 @@
     {counter start=0 assign=index}
     {foreach from=$form.resizes item=resize}
       {g->element}
-	{g->input type="checkbox" name="form.resizes.$index.active"}{$form.resizes.$index.active}{/g->input}
-	{g->input type="text" size="6" name="form.resizes.$index.size"}{$form.resizes.$index.size}{/g->input}
+	{g->input type="checkbox" name="form[resizes][$index][active]"}{$form.resizes.$index.active}{/g->input}
+	{g->input type="text" size="6" name="form[resizes][$index][size]"}{$form.resizes.$index.size}{/g->input}
       {/g->element}
 
       {if !empty($form.error.resizes.$index.size.missing)}
@@ -72,8 +72,8 @@
 
   {g->box}
     {g->element}
-      {g->input type="submit" name="form.action.save"}{g->text text="Save"}{/g->input}
-      {g->input type="submit" name="form.action.undo"}{g->text text="Undo"}{/g->input}
+      {g->input type="submit" name="form[action][save]"}{g->text text="Save"}{/g->input}
+      {g->input type="submit" name="form[action][undo]"}{g->text text="Undo"}{/g->input}
     {/g->element}
   {/g->box}
 {/g->pagebox}

@@ -36,7 +36,7 @@ class AdminCreateUserControllerTest extends GalleryControllerTestCase {
     }
     
     function testCancel() {
-	GalleryUtilities::putRequestVariable('form.action.cancel', 1);
+	GalleryUtilities::putRequestVariable('form[action][cancel]', 1);
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'core:AdminUsers'),
@@ -47,13 +47,13 @@ class AdminCreateUserControllerTest extends GalleryControllerTestCase {
 
     function testCreateUser() {
 	$userName = 'user-'.rand();
-	GalleryUtilities::putRequestVariable('form.action.create', 1);
-	GalleryUtilities::putRequestVariable('form.userName', $userName);
-	GalleryUtilities::putRequestVariable('form.fullName', 'full name');
-	GalleryUtilities::putRequestVariable('form.email', 'email');
-	GalleryUtilities::putRequestVariable('form.language', 'language');
-	GalleryUtilities::putRequestVariable('form.password1', 'password');
-	GalleryUtilities::putRequestVariable('form.password2', 'password');
+	GalleryUtilities::putRequestVariable('form[action][create]', 1);
+	GalleryUtilities::putRequestVariable('form[userName]', $userName);
+	GalleryUtilities::putRequestVariable('form[fullName]', 'full name');
+	GalleryUtilities::putRequestVariable('form[email]', 'email');
+	GalleryUtilities::putRequestVariable('form[language]', 'language');
+	GalleryUtilities::putRequestVariable('form[password1]', 'password');
+	GalleryUtilities::putRequestVariable('form[password2]', 'password');
 	
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
@@ -67,7 +67,7 @@ class AdminCreateUserControllerTest extends GalleryControllerTestCase {
     }
     
     function testMissingInputs() {
-	GalleryUtilities::putRequestVariable('form.action.create', 1);
+	GalleryUtilities::putRequestVariable('form[action][create]', 1);
 
 	/* Create one user */
 	$results = $this->handleRequest();
@@ -85,13 +85,13 @@ class AdminCreateUserControllerTest extends GalleryControllerTestCase {
 	$userName = 'user-' . rand();
 
 	/* Create one user */
-	GalleryUtilities::putRequestVariable('form.action.create', 1);
-	GalleryUtilities::putRequestVariable('form.userName', $userName);
-	GalleryUtilities::putRequestVariable('form.fullName', 'full name');
-	GalleryUtilities::putRequestVariable('form.email', 'email');
-	GalleryUtilities::putRequestVariable('form.language', 'language');
-	GalleryUtilities::putRequestVariable('form.password1', 'passwordRight');
-	GalleryUtilities::putRequestVariable('form.password2', 'passwordWrong');
+	GalleryUtilities::putRequestVariable('form[action][create]', 1);
+	GalleryUtilities::putRequestVariable('form[userName]', $userName);
+	GalleryUtilities::putRequestVariable('form[fullName]', 'full name');
+	GalleryUtilities::putRequestVariable('form[email]', 'email');
+	GalleryUtilities::putRequestVariable('form[language]', 'language');
+	GalleryUtilities::putRequestVariable('form[password1]', 'passwordRight');
+	GalleryUtilities::putRequestVariable('form[password2]', 'passwordWrong');
 	
 	$results = $this->handleRequest();
 
@@ -106,13 +106,13 @@ class AdminCreateUserControllerTest extends GalleryControllerTestCase {
 	$userName = 'user-' . rand();
 
 	/* Create one user */
-	GalleryUtilities::putRequestVariable('form.action.create', 1);
-	GalleryUtilities::putRequestVariable('form.userName', $userName);
-	GalleryUtilities::putRequestVariable('form.fullName', 'full name');
-	GalleryUtilities::putRequestVariable('form.email', 'email');
-	GalleryUtilities::putRequestVariable('form.language', 'language');
-	GalleryUtilities::putRequestVariable('form.password1', 'password');
-	GalleryUtilities::putRequestVariable('form.password2', 'password');
+	GalleryUtilities::putRequestVariable('form[action][create]', 1);
+	GalleryUtilities::putRequestVariable('form[userName]', $userName);
+	GalleryUtilities::putRequestVariable('form[fullName]', 'full name');
+	GalleryUtilities::putRequestVariable('form[email]', 'email');
+	GalleryUtilities::putRequestVariable('form[language]', 'language');
+	GalleryUtilities::putRequestVariable('form[password1]', 'password');
+	GalleryUtilities::putRequestVariable('form[password2]', 'password');
 	
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',

@@ -42,7 +42,7 @@ class AdminEditGroupControllerTest extends GalleryControllerTestCase {
 	}
 
 	GalleryUtilities::putRequestVariable('groupId', $group->getId());
-	GalleryUtilities::putRequestVariable('form.action.cancel', 1);
+	GalleryUtilities::putRequestVariable('form[action][cancel]', 1);
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
@@ -60,7 +60,7 @@ class AdminEditGroupControllerTest extends GalleryControllerTestCase {
 	}
 
 	GalleryUtilities::putRequestVariable('groupId', $group->getId());
-	GalleryUtilities::putRequestVariable('form.action.undo', 1);
+	GalleryUtilities::putRequestVariable('form[action][undo]', 1);
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
@@ -81,8 +81,8 @@ class AdminEditGroupControllerTest extends GalleryControllerTestCase {
 
 	$newGroupName = 'newname-'.rand();
 	GalleryUtilities::putRequestVariable('groupId', $group->getId());
-	GalleryUtilities::putRequestVariable('form.action.save', 1);
-	GalleryUtilities::putRequestVariable('form.groupName', $newGroupName);
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[groupName]', $newGroupName);
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
@@ -100,8 +100,8 @@ class AdminEditGroupControllerTest extends GalleryControllerTestCase {
 	}
 
 	GalleryUtilities::putRequestVariable('groupId', $group->getId());
-	GalleryUtilities::putRequestVariable('form.action.save', 1);
-	GalleryUtilities::putRequestVariable('form.groupName', '');
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[groupName]', '');
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',

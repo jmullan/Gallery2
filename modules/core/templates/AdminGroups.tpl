@@ -34,7 +34,7 @@
     {/g->title}
 
     {g->element}
-      {g->input type="text" name="form.text.groupName" size="20"}{$form.text.groupName}{/g->input}
+      {g->input type="text" name="form[text][groupName]" size="20"}{$form.text.groupName}{/g->input}
     {/g->element}
 
     {if isset($form.error.text.noSuchGroup)}
@@ -62,9 +62,9 @@
     {/if}
 
     {g->element}
-      {g->input type="submit" name="form.action.editFromText"}{g->text text="Edit"}{/g->input}
-      {g->input type="submit" name="form.action.deleteFromText"}{g->text text="Delete"}{/g->input}
-      {g->input type="submit" name="form.action.addRemoveUsersFromText"}{g->text text="Add/Remove Users"}{/g->input}
+      {g->input type="submit" name="form[action][editFromText]"}{g->text text="Edit"}{/g->input}
+      {g->input type="submit" name="form[action][deleteFromText]"}{g->text text="Delete"}{/g->input}
+      {g->input type="submit" name="form[action][addRemoveUsersFromText]"}{g->text text="Add/Remove Users"}{/g->input}
     {/g->element}
   {/g->box}
 
@@ -80,8 +80,8 @@
 	    {g->table style="admin_listing"}
 	      {g->row}
 		{g->column align="left" header="true" width="33%"}
-		  {g->input type="hidden" name="form.list.page"}{$form.list.page}{/g->input}
-		  {g->input type="hidden" name="form.list.maxPages"}{$form.list.maxPages}{/g->input}
+		  {g->input type="hidden" name="form[list][page]"}{$form.list.page}{/g->input}
+		  {g->input type="hidden" name="form[list][maxPages]"}{$form.list.maxPages}{/g->input}
 		  
 		  {if ($form.list.page > 1)}
 		    {g->link url_view="core:SiteAdmin" url_subView="core:AdminGroups" url_form_list_page=1}
@@ -169,9 +169,9 @@
 
     {if !empty($form.list.filter) || ($form.list.maxPages > 1)}
       {g->element}
-	{g->input type="text" name="form.list.filter"}{$form.list.filter}{/g->input}
-	{g->input type="submit" name="form.action.filterBySubstring"}{g->text text="Filter:"}{/g->input}
-	{g->input type="submit" name="form.action.filterClear"}{g->text text="Clear"}{/g->input}
+	{g->input type="text" name="form[list][filter]"}{$form.list.filter}{/g->input}
+	{g->input type="submit" name="form[action][filterBySubstring]"}{g->text text="Filter:"}{/g->input}
+	{g->input type="submit" name="form[action][filterClear]"}{g->text text="Clear"}{/g->input}
       {/g->element}
     {/if}
       
@@ -190,7 +190,7 @@
       {g->text text="Create Group"}
     {/g->title}
     {g->element}
-      {g->input type="submit" name="form.action.create"}{g->text text="Create"}{/g->input}
+      {g->input type="submit" name="form[action][create]"}{g->text text="Create"}{/g->input}
     {/g->element}
   {/g->box}
 {/g->pagebox}

@@ -26,16 +26,16 @@
 	{/g->title}
 
 	{g->element}
-	  {g->select name="form.selectedId"}
+	  {g->select name="form[selectedId]"}
 	    {foreach from=$ItemReorder.peers item=peer}
 	      <option value="{$peer.id}"> {$peer.title|default:$peer.pathComponent}
 	    {/foreach}
 	  {/g->select}
-	  {g->select name="form.placement"}
+	  {g->select name="form[placement]"}
 	    <option value="before"> {g->text text="before"}
 	    <option value="after"> {g->text text="after"}
 	  {/g->select}
-	  {g->select name="form.targetId"}
+	  {g->select name="form[targetId]"}
 	    {foreach from=$ItemReorder.peers item=peer}
 	      <option value="{$peer.id}"> {$peer.title|default:$peer.pathComponent}
 	    {/foreach}
@@ -46,8 +46,8 @@
 
     {g->box}
       {g->element}
-	{g->input type="submit" name="form.action.reorder"}{g->text text="Reorder"}{/g->input}
-	{g->input type="submit" name="form.action.cancel"}{g->text text="Cancel"}{/g->input}
+	{g->input type="submit" name="form[action][reorder]"}{g->text text="Reorder"}{/g->input}
+	{g->input type="submit" name="form[action][cancel]"}{g->text text="Cancel"}{/g->input}
       {/g->element}
     {/g->box}
   {/if}

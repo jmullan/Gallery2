@@ -73,8 +73,8 @@ class ItemDeleteControllerTest extends GalleryControllerTestCase {
 	
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $album->getParentId());
-	GalleryUtilities::putRequestVariable('form.selectedIds', array($album->getId() => 1));
-	GalleryUtilities::putRequestVariable('form.action.delete', 1);
+	GalleryUtilities::putRequestVariable('form[selectedIds]', array($album->getId() => 1));
+	GalleryUtilities::putRequestVariable('form[action][delete]', 1);
 	
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
@@ -117,8 +117,8 @@ class ItemDeleteControllerTest extends GalleryControllerTestCase {
 	}
 	
 	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
-	GalleryUtilities::putRequestVariable('form.selectedIds', $selectedIds);
-	GalleryUtilities::putRequestVariable('form.action.delete', 1);
+	GalleryUtilities::putRequestVariable('form[selectedIds]', $selectedIds);
+	GalleryUtilities::putRequestVariable('form[action][delete]', 1);
 	
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
@@ -172,8 +172,8 @@ class ItemDeleteControllerTest extends GalleryControllerTestCase {
 	}
 	
 	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
-	GalleryUtilities::putRequestVariable('form.selectedIds', $selectedIds);
-	GalleryUtilities::putRequestVariable('form.action.delete', 1);
+	GalleryUtilities::putRequestVariable('form[selectedIds]', $selectedIds);
+	GalleryUtilities::putRequestVariable('form[action][delete]', 1);
 	
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest(ERROR_PERMISSION_DENIED);	
@@ -188,8 +188,8 @@ class ItemDeleteControllerTest extends GalleryControllerTestCase {
 	
 	/* Use invalid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_getRootId());
-	GalleryUtilities::putRequestVariable('form.selectedIds', array($this->_getRootId() => 1));
-	GalleryUtilities::putRequestVariable('form.action.delete', 1);
+	GalleryUtilities::putRequestVariable('form[selectedIds]', array($this->_getRootId() => 1));
+	GalleryUtilities::putRequestVariable('form[action][delete]', 1);
 	
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest(ERROR_BAD_PARAMETER);
@@ -203,8 +203,8 @@ class ItemDeleteControllerTest extends GalleryControllerTestCase {
     function testDeleteBogusItem() {
 	/* Use invalid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_getRootId());
-	GalleryUtilities::putRequestVariable('form.selectedIds', array(5000+rand() => 1));
-	GalleryUtilities::putRequestVariable('form.action.delete', 1);
+	GalleryUtilities::putRequestVariable('form[selectedIds]', array(5000+rand() => 1));
+	GalleryUtilities::putRequestVariable('form[action][delete]', 1);
 	
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest(ERROR_PERMISSION_DENIED);

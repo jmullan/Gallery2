@@ -28,7 +28,7 @@
 	{g->text text="Full name"}
       {/g->title}
       {g->element}
-	{g->input type="text" name="form.fullName"}{$form.fullName}{/g->input}
+	{g->input type="text" name="form[fullName]"}{$form.fullName}{/g->input}
       {/g->element}
     {/g->box}
 
@@ -40,7 +40,7 @@
 	{g->text text="required"}
       {/g->subtitle}
       {g->element}
-	{g->input type="text" name="form.email"}{$form.email}{/g->input}
+	{g->input type="text" name="form[email]"}{$form.email}{/g->input}
       {/g->element}
     {/g->box}
 
@@ -55,16 +55,16 @@
 	{g->text text="Language"}
       {/g->title}
       {g->element}
-	{g->select name="form.language"}
+	{g->select name="form[language]"}
 	  {html_options options=$UserPreferences.languageList selected=$form.language}
 	{/g->select}
       {/g->element}
     {/g->box}
 
     {g->element}
-      {g->input type="submit" name="form.action.save"}{g->text text="Save"}{/g->input}
-      {g->input type="submit" name="form.action.undo"}{g->text text="Undo"}{/g->input}
-      {g->input type="submit" name="form.action.cancel"}{g->text text="Cancel"}{/g->input}
+      {g->input type="submit" name="form[action][save]"}{g->text text="Save"}{/g->input}
+      {g->input type="submit" name="form[action][undo]"}{g->text text="Undo"}{/g->input}
+      {g->input type="submit" name="form[action][cancel]"}{g->text text="Cancel"}{/g->input}
     {/g->element}
   {/g->box}
 {/g->pagebox}

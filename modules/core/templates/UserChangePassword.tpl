@@ -27,7 +27,7 @@
       {g->text text="required"}
     {/g->subtitle}
     {g->element}
-      {g->input type="password" name="form.password1"}{/g->input}
+      {g->input type="password" name="form[password1]"}{/g->input}
     {/g->element}
     {if isset($form.error.password1.missing)}
       {g->error}
@@ -44,7 +44,7 @@
       {g->text text="required"}
     {/g->subtitle}
     {g->element}
-      {g->input type="password" name="form.password2"}{/g->input}
+      {g->input type="password" name="form[password2]"}{/g->input}
     {/g->element}
 
     {if isset($form.error.password2.missing)}
@@ -62,8 +62,8 @@
 
   {g->box}
     {g->element}
-      {g->input type="submit" name="form.action.save"}{g->text text="Change"}{/g->input}
-      {g->input type="submit" name="form.action.cancel"}{g->text text="Cancel"}{/g->input}
+      {g->input type="submit" name="form[action][save]"}{g->text text="Change"}{/g->input}
+      {g->input type="submit" name="form[action][cancel]"}{g->text text="Cancel"}{/g->input}
     {/g->element}
   {/g->box}
 {/g->pagebox}

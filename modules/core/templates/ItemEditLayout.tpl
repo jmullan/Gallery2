@@ -47,14 +47,14 @@
 	    {/g->column}
 	    {g->column}
 	      {if ($setting.type == 'text-field')}
-		{g->input type="text" size="6" name="form.key.$settingKey" onKeyPress="javascript:changeSetting('$settingKey')"}{$form.key.$settingKey}{/g->input}
+		{g->input type="text" size="6" name="form[key][$settingKey]" onKeyPress="javascript:changeSetting('$settingKey')"}{$form.key.$settingKey}{/g->input}
 	      {/if}
 	    {/g->column}
 	    {g->column}
 	      &nbsp;
 	    {/g->column}
 	    {g->column}
-	      {g->input type="checkbox" name="form.useGlobal.$settingKey" onChange="javascript:toggleGlobal('$settingKey')"}{$form.useGlobal.$settingKey}{/g->input}
+	      {g->input type="checkbox" name="form[useGlobal][$settingKey]" onChange="javascript:toggleGlobal('$settingKey')"}{$form.useGlobal.$settingKey}{/g->input}
 	    {/g->column}
 	  {/g->row}
 	  {if isset($form.error.key.$settingKey.invalid)}
@@ -86,8 +86,8 @@
         {/foreach}
 
         function toggleGlobal(key) {ldelim}
-	  inputWidget = '{g->elementName name="form.key."}' + key;
-	  toggleWidget = '{g->elementName name="form.useGlobal."}' + key;
+	  inputWidget = '{g->elementName name="form[key]["}' + key + ']';
+	  toggleWidget = '{g->elementName name="form[useGlobal]["}' + key + ']';
 	  if (document.forms[0].elements[toggleWidget].checked) {ldelim}
 	    savedValues[key] = document.forms[0].elements[inputWidget].value;
             isSaved[key] = true;
@@ -100,13 +100,13 @@
         {rdelim}
 
         function changeSetting(key) {ldelim}
-	  toggleWidget = '{g->elementName name="form.useGlobal."}' + key;
+	  toggleWidget = '{g->elementName name="form[useGlobal]["}' + key + ']';
           document.forms[0].elements[toggleWidget].checked = false;
         {rdelim}
       </script>
 
-      {g->input type="submit" name="form.action.save"}{g->text text="Save"}{/g->input}
-      {g->input type="submit" name="form.action.undo"}{g->text text="Undo"}{/g->input}
+      {g->input type="submit" name="form[action][save]"}{g->text text="Save"}{/g->input}
+      {g->input type="submit" name="form[action][undo]"}{g->text text="Undo"}{/g->input}
     {/g->element}
   {/g->box}
 {/g->pagebox}

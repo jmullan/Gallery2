@@ -31,7 +31,7 @@
       {foreach from=$ItemDelete.peers item=peer}
 	{assign var="peerItemId" value=$peer.id}
 	{g->element}
-  	  {g->input type="checkbox" name="form.selectedIds.$peerItemId"}{$peer.selected}{/g->input}
+  	  {g->input type="checkbox" name="form[selectedIds][$peerItemId]"}{$peer.selected}{/g->input}
   	  {$peer.title|default:$peer.pathComponent}
   	  {if isset($ItemDelete.peerTypes.data.$peerItemId)}
   	    {g->text text="(data)"}
@@ -46,8 +46,8 @@
 
     {g->box style="admin"}
       {g->element}
-	{g->input type="submit" name="form.action.delete"}{g->text text="Delete"}{/g->input}
-	{g->input type="submit" name="form.action.cancel"}{g->text text="Cancel"}{/g->input}
+	{g->input type="submit" name="form[action][delete]"}{g->text text="Delete"}{/g->input}
+	{g->input type="submit" name="form[action][cancel]"}{g->text text="Cancel"}{/g->input}
       {/g->element}
     {/g->box}
   {else}

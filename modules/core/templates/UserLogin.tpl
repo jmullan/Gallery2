@@ -11,7 +11,7 @@
 	{g->text text="User name"}
       {/g->title}
       {g->element}
-	{g->input type="text" name="form.username"}{$form.username}{/g->input}
+	{g->input type="text" name="form[username]"}{$form.username}{/g->input}
       {/g->element}
     {/g->box}
 
@@ -27,7 +27,7 @@
       {/g->title}
 
       {g->element}
-	{g->input type="password" name="form.password"}{/g->input}
+	{g->input type="password" name="form[password]"}{/g->input}
       {/g->element}
     {/g->box}
 
@@ -44,8 +44,8 @@
     {/if}
 
     {g->footer}
-      {g->input type="submit" name="form.action.login"}{g->text text="Login"}{/g->input}
-      {g->input type="submit" name="form.action.cancel"}{g->text text="Cancel"}{/g->input}
+      {g->input type="submit" name="form[action][login]"}{g->text text="Login"}{/g->input}
+      {g->input type="submit" name="form[action][cancel]"}{g->text text="Cancel"}{/g->input}
     {/g->footer}
   {/g->box}
 {/g->pagebox}

@@ -130,12 +130,12 @@ class ItemCreateResizesControllerTest extends GalleryControllerTestCase {
 
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
-	GalleryUtilities::putRequestVariable('form.action.save', 1);
-	GalleryUtilities::putRequestVariable('form.thumbnail.size', 400);
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[thumbnail][size]', 400);
 
 	for ($i = 0; $i < 3; $i++) {
-	    GalleryUtilities::putRequestVariable('form.resizes.' . $i . '.active', 1);
-	    GalleryUtilities::putRequestVariable('form.resizes.' . $i . '.size', 100 * ($i+1));
+	    GalleryUtilities::putRequestVariable('form[resizes][' . $i . '][active]', 1);
+	    GalleryUtilities::putRequestVariable('form[resizes][' . $i . '][size]', 100 * ($i+1));
 	}
 	    
 	/* Perform the request and verify that we succeeded */

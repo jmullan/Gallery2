@@ -47,7 +47,7 @@ class ChooseObjectsControllerTest extends GalleryControllerTestCase {
 
     function testImportNothingSelected() {
         GalleryUtilities::putRequestVariable('albumsPath', dirname(__FILE__) . '/../data/albums/');
-        GalleryUtilities::putRequestVariable('form.action.import', 1);
+        GalleryUtilities::putRequestVariable('form[action][import]', 1);
 
         $results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
@@ -59,8 +59,8 @@ class ChooseObjectsControllerTest extends GalleryControllerTestCase {
 
     function testImportValidSelections1() {
         GalleryUtilities::putRequestVariable('albumsPath', dirname(__FILE__) . '/../data/albums/');
-        GalleryUtilities::putRequestVariable('form.migrateUser.12345:6789', 1);
-        GalleryUtilities::putRequestVariable('form.action.import', 1);
+        GalleryUtilities::putRequestVariable('form[migrateUser][12345:6789]', 1);
+        GalleryUtilities::putRequestVariable('form[action][import]', 1);
 
         $results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
@@ -72,8 +72,8 @@ class ChooseObjectsControllerTest extends GalleryControllerTestCase {
 
     function testImportValidSelections2() {
         GalleryUtilities::putRequestVariable('albumsPath', dirname(__FILE__) . '/../data/albums/');
-        GalleryUtilities::putRequestVariable('form.sourceAlbums.0', 'album01');
-        GalleryUtilities::putRequestVariable('form.action.import', 1);
+        GalleryUtilities::putRequestVariable('form[sourceAlbums][0]', 'album01');
+        GalleryUtilities::putRequestVariable('form[action][import]', 1);
 
         $results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',

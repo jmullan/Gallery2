@@ -70,8 +70,8 @@ class AdminFfmpegControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 
 	/* Use valid inputs */
-	GalleryUtilities::putRequestVariable('form.action.save', 1);
-	GalleryUtilities::putRequestVariable('form.path', '/validPath/ffmpeg');
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[path]', '/validPath/ffmpeg');
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
@@ -94,8 +94,8 @@ class AdminFfmpegControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 
 	/* Use valid inputs */
-	GalleryUtilities::putRequestVariable('form.action.save', 1);
-	GalleryUtilities::putRequestVariable('form.path', '/incompletePath/');
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[path]', '/incompletePath/');
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
@@ -118,7 +118,7 @@ class AdminFfmpegControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 
 	/* Use valid inputs */
-	GalleryUtilities::putRequestVariable('form.action.cancel', 1);
+	GalleryUtilities::putRequestVariable('form[action][cancel]', 1);
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
@@ -134,8 +134,8 @@ class AdminFfmpegControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 
 	/* Use valid inputs */
-	GalleryUtilities::putRequestVariable('form.action.save', 1);
-	GalleryUtilities::putRequestVariable('form.path', '/validPathBadBinary/ffmpeg');
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[path]', '/validPathBadBinary/ffmpeg');
 
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
@@ -150,8 +150,8 @@ class AdminFfmpegControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 
 	/* Use valid inputs */
-	GalleryUtilities::putRequestVariable('form.action.save', 1);
-	GalleryUtilities::putRequestVariable('form.path', '/invalidPath/ffmpeg');
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[path]', '/invalidPath/ffmpeg');
 
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
@@ -166,8 +166,8 @@ class AdminFfmpegControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 
 	/* Use valid inputs */
-	GalleryUtilities::putRequestVariable('form.action.save', 1);
-	GalleryUtilities::putRequestVariable('form.path', '/notExecutablePath/ffmpeg');
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[path]', '/notExecutablePath/ffmpeg');
 
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
@@ -182,8 +182,8 @@ class AdminFfmpegControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 
 	/* Use valid inputs */
-	GalleryUtilities::putRequestVariable('form.action.save', 1);
-	GalleryUtilities::putRequestVariable('form.path', '');
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[path]', '');
 
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();

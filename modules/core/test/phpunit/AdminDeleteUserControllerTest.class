@@ -36,7 +36,7 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
     }
 
     function testCancel() {
-	GalleryUtilities::putRequestVariable('form.action.cancel', 1);
+	GalleryUtilities::putRequestVariable('form[action][cancel]', 1);
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'core:AdminUsers'),
@@ -57,7 +57,7 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	}
 
 	GalleryUtilities::putRequestVariable('userId', $user->getId());
-	GalleryUtilities::putRequestVariable('form.action.delete', 1);
+	GalleryUtilities::putRequestVariable('form[action][delete]', 1);
 	
 	$results = $this->handleRequest();
 	
@@ -79,7 +79,7 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 
 	GalleryUtilities::putRequestVariable('userId', $gallery->getActiveUserId());
-	GalleryUtilities::putRequestVariable('form.action.delete', 1);
+	GalleryUtilities::putRequestVariable('form[action][delete]', 1);
 	
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
@@ -102,7 +102,7 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	}
 
 	GalleryUtilities::putRequestVariable('userId', $anonymousUserId);
-	GalleryUtilities::putRequestVariable('form.action.delete', 1);
+	GalleryUtilities::putRequestVariable('form[action][delete]', 1);
 	
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',

@@ -64,9 +64,9 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
     }
 
     function testLogin() {
-	GalleryUtilities::putRequestVariable('form.action.login', 1);
-	GalleryUtilities::putRequestVariable('form.username', $this->_user->getUserName());
-	GalleryUtilities::putRequestVariable('form.password', 'password'); // from _createRandomUser
+	GalleryUtilities::putRequestVariable('form[action][login]', 1);
+	GalleryUtilities::putRequestVariable('form[username]', $this->_user->getUserName());
+	GalleryUtilities::putRequestVariable('form[password]', 'password'); // from _createRandomUser
 	
 	$results = $this->handleRequest();
 	$this->assertEquals(array('return' => 1,
@@ -78,9 +78,9 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
     }
 
     function testLoginInvalidUser() {
-	GalleryUtilities::putRequestVariable('form.action.login', 1);
-	GalleryUtilities::putRequestVariable('form.username', 'some-bogus-user');
-	GalleryUtilities::putRequestVariable('form.password', 'password'); // from _createRandomUser
+	GalleryUtilities::putRequestVariable('form[action][login]', 1);
+	GalleryUtilities::putRequestVariable('form[username]', 'some-bogus-user');
+	GalleryUtilities::putRequestVariable('form[password]', 'password'); // from _createRandomUser
 	
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'core:UserAdmin',
@@ -91,9 +91,9 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
     }
 
     function testLoginValidUserInvalidPassword() {
-	GalleryUtilities::putRequestVariable('form.action.login', 1);
-	GalleryUtilities::putRequestVariable('form.username', $this->_user->getUserName());
-	GalleryUtilities::putRequestVariable('form.password', 'wrong password');
+	GalleryUtilities::putRequestVariable('form[action][login]', 1);
+	GalleryUtilities::putRequestVariable('form[username]', $this->_user->getUserName());
+	GalleryUtilities::putRequestVariable('form[password]', 'wrong password');
 	
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'core:UserAdmin',
@@ -104,7 +104,7 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
     }
 
     function testCancel() {
-	GalleryUtilities::putRequestVariable('form.action.cancel', 1);
+	GalleryUtilities::putRequestVariable('form[action][cancel]', 1);
 	
 	$results = $this->handleRequest();
 	$this->assertEquals(array('return' => 1,

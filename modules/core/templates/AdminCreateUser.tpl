@@ -15,7 +15,7 @@
       {/g->subtitle}
 
       {g->element}
-	{g->input size="32" type="text" name="form.userName"}{$form.userName}{/g->input}
+	{g->input size="32" type="text" name="form[userName]"}{$form.userName}{/g->input}
       {/g->element}
     {/g->box}
 
@@ -36,7 +36,7 @@
 	{g->text text="Full Name"}
       {/g->title}
       {g->element}
-	{g->input size="32" type="text" name="form.fullName"}{$form.fullName}{/g->input}
+	{g->input size="32" type="text" name="form[fullName]"}{$form.fullName}{/g->input}
       {/g->element}
     {/g->box}
 
@@ -49,7 +49,7 @@
       {/g->subtitle}
 
       {g->element}
-	  {g->input size="32" type="text" name="form.email"}{$form.email}{/g->input}
+	  {g->input size="32" type="text" name="form[email]"}{$form.email}{/g->input}
       {/g->element}
     {/g->box}
 	  
@@ -64,7 +64,7 @@
 	{g->text text="Language"}
       {/g->title}
       {g->element}
-	{g->select name="form.language"}
+	{g->select name="form[language]"}
 	  {html_options options=$AdminCreateUser.languageList selected=$form.language}
 	{/g->select}
       {/g->element}
@@ -78,7 +78,7 @@
 	{g->text text="required"}
       {/g->subtitle}
       {g->element}
-	  {g->input size="32" type="password" name="form.password1"}{/g->input}
+	  {g->input size="32" type="password" name="form[password1]"}{/g->input}
       {/g->element}
     {/g->box}
 
@@ -96,7 +96,7 @@
 	{g->text text="required"}
       {/g->subtitle}
       {g->element}
-	  {g->input size="32" type="password" name="form.password2"}{/g->input}
+	  {g->input size="32" type="password" name="form[password2]"}{/g->input}
       {/g->element}
     {/g->box}
 
@@ -114,8 +114,8 @@
 
     {g->box}
       {g->element}
-	{g->input type="submit" name="form.action.create"}{g->text text="Create User"}{/g->input}
-	{g->input type="submit" name="form.action.cancel"}{g->text text="Cancel"}{/g->input}
+	{g->input type="submit" name="form[action][create]"}{g->text text="Create User"}{/g->input}
+	{g->input type="submit" name="form[action][cancel]"}{g->text text="Cancel"}{/g->input}
       {/g->element}
     {/g->box}
   {/g->box}

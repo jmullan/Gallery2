@@ -129,93 +129,61 @@ class GalleryUtilities {
     /**
      * Return all request variables that match the prefix
      *
-     * @param string a prefix
+     * @param string a key
      * @return array key value pairs
      * @static
      */
-    function getFormVariables($prefix) {
-	global $gallery;
+    function getFormVariables($key) {
 	global $HTTP_POST_VARS;
 	global $HTTP_POST_FILES;
 	global $HTTP_GET_VARS;
-	
-	/*
-	 * Convert dots to underscores.  Some versions of PHP seem to do
-	 * this when processing POST data, so we force the issue here so
-	 * that we get consistent behaviour across all versions.
-	 */
-	$prefix = strtr(GALLERY_FORM_VARIABLE_PREFIX . $prefix, '.', '_');
-	$values = array();
-	
-	/*
-	 * Find all matching GET and POST variables
-	 */
-	foreach (array_keys($HTTP_POST_VARS) as $key) {
-	    if (preg_match("/^${prefix}_?(.*)/", $key, $matches)) {
-		$formKey = $matches[1];
-		$values[$formKey] = $HTTP_POST_VARS[$key];
-	    }
+
+	$key = GALLERY_FORM_VARIABLE_PREFIX . $key;
+	$form = array();
+	if (isset($HTTP_POST_VARS[$key])) {
+	    $form = $HTTP_POST_VARS[$key];
 	}
-
-	foreach (array_keys($HTTP_GET_VARS) as $key) {
-	    if (preg_match("/^${prefix}_?(.*)/", $key, $matches)) {
-		$formKey = $matches[1];
-		$values[$formKey] = $HTTP_GET_VARS[$key];
-	    }
-	}
-
-	foreach (array_keys($HTTP_POST_FILES) as $key) {
-	    if (preg_match("/^${prefix}_?(.*)/", $key, $matches)) {
-		$formKey = $matches[1];
-		$values[$formKey] = $HTTP_POST_FILES[$key];
-
-		/*
-		 * Later on during our sanitization process we're going to call
-		 * stripslashes on our file name.  But it may legitimately have
-		 * backslashes in it (eg c:\apache\foo.jpg), so make sure those
-		 * are escaped at this time.  There's gotta be a better way to
-		 * handle this.
-		 */
-		if (get_magic_quotes_gpc()) {
-		    $values[$formKey]['tmp_name'] = addslashes($values[$formKey]['tmp_name']);
+	
+	if (isset($HTTP_POST_FILES[$key])) {
+	    /*
+	     * Later on during our sanitization process we're going to call
+	     * stripslashes on our file name.  But it may legitimately have
+	     * backslashes in it (eg c:\apache\foo.jpg), so make sure those
+	     * are escaped at this time.  There's gotta be a better way to
+	     * handle this.
+	     */
+	    $postForm = $HTTP_POST_FILES[$key];
+	    if (get_magic_quotes_gpc()) {
+		if (isset($postForm['tmp_name'])) {
+		    GalleryUtilities::recursiveAddSlashes($postForm['tmp_name']);
 		}
 	    }
+	    $form = array_merge_recursive($form, $postForm);
+	}
+	
+	if (isset($HTTP_GET_VARS[$key])) {
+	    $form = array_merge_recursive($form, $HTTP_GET_VARS[$key]);
 	}
 
 	/* Perform any necessary transformations on our values */
-	GalleryUtilities::sanitizeInputValues($values);
-	
-	/*
-	 * Now split out any keys that contain a field separator (_) into
-	 * subarrays.  Eg, convert:
-	 *  array('name_first' => 'john'
-	 *        'name_last' => 'doe'
-	 *        'action_create' => 1)
-	 *
-	 * to:
-	 *  array('name' => array('first' => 'john'
-	 *                        'last'  => 'doe'),
-	 *        'action' => array('create' => 1))
-	 */
-	$form = array();
-	foreach ($values as $key => $value) {
-	    $base =& $form;
-	    $components = split('_', $key);
-	    for ($i = 0; $i < sizeof($components) - 1; $i++) {
-		$base =& $base[$components[$i]];
-	    }
-	    
-	    if (is_array($value)) {
-		/* XXX: this only handles arrays 1 level deep */
-		foreach ($value as $subKey => $subValue) {
-		    $base[$components[sizeof($components)-1]][$subKey] = $subValue;
-		}
-	    } else {
-		$base[$components[sizeof($components)-1]] = $value;
-	    }
-	}
+	GalleryUtilities::sanitizeInputValues($form);
 
 	return $form;
+    }
+
+    /**
+     * Call addslashes on an entire array tree
+     *
+     * @param mixed an array or string
+     */
+    function recursiveAddSlashes(&$object) {
+	if (is_array($object)) {
+	    foreach (array_keys($object) as $key) {
+		GalleryUtilities::recursiveAddSlashes($object[$key]);
+	    }
+	} else {
+	    addslashes($object);
+	}
     }
 
     /**
@@ -224,40 +192,16 @@ class GalleryUtilities {
      * @param string a prefix
      * @static
      */
-    function removeFormVariables($prefix) {
-	global $gallery;
+    function removeFormVariables($key) {
 	global $HTTP_POST_VARS;
 	global $HTTP_POST_FILES;
 	global $HTTP_GET_VARS;
 	
-	/*
-	 * Convert dots to underscores.  Some versions of PHP seem to do
-	 * this when processing POST data, so we force the issue here so
-	 * that we get consistent behaviour across all versions.
-	 */
-	$prefix = strtr(GALLERY_FORM_VARIABLE_PREFIX . $prefix, '.', '_');
-	$values = array();
-	
-	/*
-	 * Find all matching GET and POST variables
-	 */
-	foreach (array_keys($HTTP_POST_VARS) as $key) {
-	    if (preg_match("/^${prefix}_?(.*)/", $key, $matches)) {
-		unset($HTTP_POST_VARS[$key]);
-	    }
-	}
-
-	foreach (array_keys($HTTP_GET_VARS) as $key) {
-	    if (preg_match("/^${prefix}_?(.*)/", $key, $matches)) {
-		unset($HTTP_GET_VARS[$key]);
-	    }
-	}
-
-	foreach (array_keys($HTTP_POST_FILES) as $key) {
-	    if (preg_match("/^${prefix}_?(.*)/", $key, $matches)) {
-		unset($HTTP_POST_FILES[$key]);
-	    }
-	}
+	/* Remove all matching GET and POST variables */
+	$key = GALLERY_FORM_VARIABLE_PREFIX . $key;
+	unset($HTTP_POST_VARS[$key]);
+	unset($HTTP_POST_FILES[$key]);
+	unset($HTTP_GET_VARS[$key]);
     }
     
 
@@ -275,7 +219,7 @@ class GalleryUtilities {
 
 	$values = array();
 	foreach (func_get_args() as $argName) {
-	    $values[] = GalleryUtilities::_getRequestVariable($argName);
+	    $values[] = GalleryUtilities::_getRequestVariable(GALLERY_FORM_VARIABLE_PREFIX . $argName);
 	}
 
 	/* Sanitize the input */
@@ -298,16 +242,34 @@ class GalleryUtilities {
     function putRequestVariable($key, $value) {
 	global $HTTP_GET_VARS;
 
-	/*
-	 * Convert dots to underscores.  Some versions of PHP seem to do
-	 * this when processing POST data, so we force the issue here so
-	 * that we get consistent behaviour across all versions.
-	 */
-	$key = strtr(GALLERY_FORM_VARIABLE_PREFIX . $key, '.', '_');
+	$key = GALLERY_FORM_VARIABLE_PREFIX . $key;
 
 	/* Simulate the damage caused by magic_quotes */
 	GalleryUtilities::unsanitizeInputValues($value);
-	$HTTP_GET_VARS[$key] = $value;
+
+	$keyPath = preg_split('/[\[\]]/', $key, -1, PREG_SPLIT_NO_EMPTY);
+	GalleryUtilities::_internalPutRequestVariable($keyPath, $value, $HTTP_GET_VARS);
+    }
+
+    /**
+     * Take a path in the form of ('foo', 'bar', 'baz') and a destination array
+     * and put the value into it like this:
+     *
+     *   $destination['foo']['bar']['baz'] = $value;
+     *
+     * @param array the key path
+     * @param mixed the value
+     * @param array the destination
+     * @access private
+     * @static
+     */
+    function _internalPutRequestVariable($keyPath, $value, &$destination) {
+	$key = array_shift($keyPath);
+	if (empty($keyPath)) {
+	    $destination[$key] = $value;
+	} else {
+	    GalleryUtilities::_internalPutRequestVariable($keyPath, $value, $destination[$key]);
+	}
     }
 
     /**
@@ -318,7 +280,10 @@ class GalleryUtilities {
      * @static
      */
     function hasRequestVariable($key) {
-	$value = GalleryUtilities::_getRequestVariable($key);
+	global $HTTP_GET_VARS;
+	global $HTTP_POST_VARS;
+	
+	$value = GalleryUtilities::_getRequestVariable(GALLERY_FORM_VARIABLE_PREFIX . $key);
 	return !empty($value);
     }
 
@@ -332,15 +297,33 @@ class GalleryUtilities {
     function removeRequestVariable($key) {
 	global $HTTP_POST_VARS;
 	global $HTTP_GET_VARS;
-	
-	/*
-	 * Convert dots to underscores.  Some versions of PHP seem to do
-	 * this when processing POST data, so we force the issue here so
-	 * that we get consistent behaviour across all versions.
-	 */
-	$key = strtr(GALLERY_FORM_VARIABLE_PREFIX . $key, '.', '_');
-	unset($HTTP_POST_VARS[$key]);
-	unset($HTTP_GET_VARS[$key]);
+
+	$key = GALLERY_FORM_VARIABLE_PREFIX . $key;
+	$keyPath = preg_split('/[\[\]]/', $key, -1, PREG_SPLIT_NO_EMPTY);
+	GalleryUtilities::_internalRemoveRequestVariable($keyPath, $HTTP_GET_VARS);
+	GalleryUtilities::_internalRemoveRequestVariable($keyPath, $HTTP_POST_VARS);
+    }
+
+    /**
+     * Take a path in the form of ('foo', 'bar', 'baz') and a source array
+     * and remove the value from it like this:
+     *
+     *   unset($source['foo']['bar']['baz']);
+     *
+     * @param array the key path
+     * @param array the source
+     * @access private
+     * @static
+     */
+    function _internalRemoveRequestVariable($keyPath, &$array) {
+	$key = array_shift($keyPath);
+	if (empty($keyPath)) {
+	    unset($array[$key]);
+	} else {
+	    if (isset($array[$key])) {
+		GalleryUtilities::_internalRemoveRequestVariable($keyPath, $array[$key]);
+	    }
+	}
     }
     
     /**
@@ -852,25 +835,41 @@ class GalleryUtilities {
      * @return string a single value
      * @static
      */
-    function _getRequestVariable($argName) {
+    function _getRequestVariable($key) {
 	global $HTTP_POST_VARS;
 	global $HTTP_GET_VARS;
-
-	/*
-	 * Convert dots to underscores.  Some versions of PHP seem to do
-	 * this when processing POST data, so we force the issue here so
-	 * that we get consistent behaviour across all versions.
-	 */
-	$argName = strtr(GALLERY_FORM_VARIABLE_PREFIX . $argName, '.', '_');
 	
-	if (!empty($HTTP_GET_VARS[$argName])) {
-	    $value = $HTTP_GET_VARS[$argName];
-	} else if (!empty($HTTP_POST_VARS[$argName])) {
-	    $value = $HTTP_POST_VARS[$argName];
-	} else {
-	    $value = null;
+	$keyPath = preg_split('/[\[\]]/', $key, -1, PREG_SPLIT_NO_EMPTY);
+	$result = GalleryUtilities::_internalGetRequestVariable($keyPath, $HTTP_GET_VARS);
+	if (isset($result)) {
+	    return $result;
 	}
-	return $value;
+	return GalleryUtilities::_internalGetRequestVariable($keyPath, $HTTP_POST_VARS);
+    }
+
+    /**
+     * Take a path in the form of ('foo', 'bar', 'baz') and a source array
+     * and get the value from it like this:
+     *
+     *   return $source['foo']['bar']['baz'];
+     *
+     * @param array the key path
+     * @param array the source
+     * @return the value or null if it does not exist
+     * @access private
+     * @static
+     */
+    function _internalGetRequestVariable($keyPath, &$array) {
+	$key = array_shift($keyPath);
+	if (empty($keyPath)) {
+	    if (isset($array[$key])) {
+		return $array[$key];
+	    } else {
+		return null;
+	    }
+	} else {
+	    return GalleryUtilities::_internalGetRequestVariable($keyPath, $array[$key]);
+	}
     }
 
     /**

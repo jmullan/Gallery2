@@ -148,9 +148,9 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
     function testMoveItem() {
 	global $gallery;
 	GalleryUtilities::putRequestVariable('itemId', $this->_album[1]->getId());
-	GalleryUtilities::putRequestVariable('form.selectedIds', array($this->_album[2]->getId() => 1));
-	GalleryUtilities::putRequestVariable('form.action.move', 1);
-	GalleryUtilities::putRequestVariable('form.destination', $this->_album[0]->getId());
+	GalleryUtilities::putRequestVariable('form[selectedIds]', array($this->_album[2]->getId() => 1));
+	GalleryUtilities::putRequestVariable('form[action][move]', 1);
+	GalleryUtilities::putRequestVariable('form[destination]', $this->_album[0]->getId());
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
@@ -167,8 +167,8 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
     function testMoveItemIntoBogusDestination() {
 	global $gallery;
 	GalleryUtilities::putRequestVariable('itemId', $this->_album[2]->getId());
-	GalleryUtilities::putRequestVariable('form.selectedIds', array($this->_album[2]->getId() => 1));
-	GalleryUtilities::putRequestVariable('form.action.move', 1);
+	GalleryUtilities::putRequestVariable('form[selectedIds]', array($this->_album[2]->getId() => 1));
+	GalleryUtilities::putRequestVariable('form[action][move]', 1);
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
@@ -184,9 +184,9 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
     function testMoveItemIntoSelf() {
 	global $gallery;
 	GalleryUtilities::putRequestVariable('itemId', $this->_album[0]->getId());
-	GalleryUtilities::putRequestVariable('form.selectedIds', array($this->_album[1]->getId() => 1));
-	GalleryUtilities::putRequestVariable('form.action.move', 1);
-	GalleryUtilities::putRequestVariable('form.destination', $this->_album[1]->getId());
+	GalleryUtilities::putRequestVariable('form[selectedIds]', array($this->_album[1]->getId() => 1));
+	GalleryUtilities::putRequestVariable('form[action][move]', 1);
+	GalleryUtilities::putRequestVariable('form[destination]', $this->_album[1]->getId());
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
@@ -204,9 +204,9 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
     function testMoveItemIntoAlbumWithNoAddPermissions() {
 	global $gallery;
 	GalleryUtilities::putRequestVariable('itemId', $this->_album[3]->getId());
-	GalleryUtilities::putRequestVariable('form.selectedIds', array($this->_album[4]->getId() => 1));
-	GalleryUtilities::putRequestVariable('form.action.move', 1);
-	GalleryUtilities::putRequestVariable('form.destination', $this->_album[2]->getId());
+	GalleryUtilities::putRequestVariable('form[selectedIds]', array($this->_album[4]->getId() => 1));
+	GalleryUtilities::putRequestVariable('form[action][move]', 1);
+	GalleryUtilities::putRequestVariable('form[destination]', $this->_album[2]->getId());
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
@@ -222,9 +222,9 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
     function testMoveItemWithNoDeletePermissions() {
 	global $gallery;
 	GalleryUtilities::putRequestVariable('itemId', $this->_album[3]->getId());
-	GalleryUtilities::putRequestVariable('form.selectedIds', array($this->_album[4]->getId() => 1));
-	GalleryUtilities::putRequestVariable('form.action.move', 1);
-	GalleryUtilities::putRequestVariable('form.destination', $this->_album[0]->getId());
+	GalleryUtilities::putRequestVariable('form[selectedIds]', array($this->_album[4]->getId() => 1));
+	GalleryUtilities::putRequestVariable('form[action][move]', 1);
+	GalleryUtilities::putRequestVariable('form[destination]', $this->_album[0]->getId());
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
@@ -242,9 +242,9 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
     function testMoveAlbumIntoDestinationWithNoAddAlbumPermissions() {
 	global $gallery;
 	GalleryUtilities::putRequestVariable('itemId', $this->_album[2]->getId());
-	GalleryUtilities::putRequestVariable('form.selectedIds', array($this->_album[3]->getId() => 1));
-	GalleryUtilities::putRequestVariable('form.action.move', 1);
-	GalleryUtilities::putRequestVariable('form.destination', $this->_album[1]->getId());
+	GalleryUtilities::putRequestVariable('form[selectedIds]', array($this->_album[3]->getId() => 1));
+	GalleryUtilities::putRequestVariable('form[action][move]', 1);
+	GalleryUtilities::putRequestVariable('form[destination]', $this->_album[1]->getId());
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
@@ -262,9 +262,9 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
     function testMoveDataItemIntoDestinationWithNoAddDataItemPermissions() {
 	global $gallery;
 	GalleryUtilities::putRequestVariable('itemId', $this->_album[3]->getId());
-	GalleryUtilities::putRequestVariable('form.selectedIds', array($this->_item->getId() => 1));
-	GalleryUtilities::putRequestVariable('form.action.move', 1);
-	GalleryUtilities::putRequestVariable('form.destination', $this->_album[0]->getId());
+	GalleryUtilities::putRequestVariable('form[selectedIds]', array($this->_item->getId() => 1));
+	GalleryUtilities::putRequestVariable('form[action][move]', 1);
+	GalleryUtilities::putRequestVariable('form[destination]', $this->_album[0]->getId());
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',

@@ -82,7 +82,7 @@ class ItemEditItemControllerTest extends GalleryControllerTestCase {
 
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_item[0]->getId());
-	GalleryUtilities::putRequestVariable('form.action.undo', 1);
+	GalleryUtilities::putRequestVariable('form[action][undo]', 1);
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
@@ -100,12 +100,12 @@ class ItemEditItemControllerTest extends GalleryControllerTestCase {
 	/* Use valid inputs */
 	$newPathComponent = $this->_item[0]->getPathComponent() . rand();
 	GalleryUtilities::putRequestVariable('itemId', $this->_item[0]->getId());
-	GalleryUtilities::putRequestVariable('form.action.save', 1);
-	GalleryUtilities::putRequestVariable('form.pathComponent', $newPathComponent);
-	GalleryUtilities::putRequestVariable('form.title', 'new title');
-	GalleryUtilities::putRequestVariable('form.summary', 'new summary');
-	GalleryUtilities::putRequestVariable('form.keywords', 'new keywords');
-	GalleryUtilities::putRequestVariable('form.description', 'new description');
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[pathComponent]', $newPathComponent);
+	GalleryUtilities::putRequestVariable('form[title]', 'new title');
+	GalleryUtilities::putRequestVariable('form[summary]', 'new summary');
+	GalleryUtilities::putRequestVariable('form[keywords]', 'new keywords');
+	GalleryUtilities::putRequestVariable('form[description]', 'new description');
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
@@ -123,8 +123,8 @@ class ItemEditItemControllerTest extends GalleryControllerTestCase {
 	/* Use valid inputs */
 	$newPathComponent = $this->_item[0]->getPathComponent() . rand();
 	GalleryUtilities::putRequestVariable('itemId', $this->_item[0]->getId());
-	GalleryUtilities::putRequestVariable('form.action.save', 1);
-	GalleryUtilities::putRequestVariable('form.pathComponent', '#$%W$%W?$%W%/');
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[pathComponent]', '#$%W$%W?$%W%/');
 
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
@@ -141,7 +141,7 @@ class ItemEditItemControllerTest extends GalleryControllerTestCase {
 	/* Use valid inputs */
 	$newPathComponent = $this->_item[0]->getPathComponent() . rand();
 	GalleryUtilities::putRequestVariable('itemId', $this->_item[0]->getId());
-	GalleryUtilities::putRequestVariable('form.action.save', 1);
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::removeRequestVariable('form.pathComponent');
 
 	/* Perform the request and verify that we failed */
@@ -156,12 +156,12 @@ class ItemEditItemControllerTest extends GalleryControllerTestCase {
     function testPathCollisionItem() {
 	/* Use invalid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_item[0]->getId());
-	GalleryUtilities::putRequestVariable('form.action.save', 1);
-	GalleryUtilities::putRequestVariable('form.pathComponent', $this->_item[1]->getPathComponent());
-	GalleryUtilities::putRequestVariable('form.title', 'new title');
-	GalleryUtilities::putRequestVariable('form.summary', 'new summary');
-	GalleryUtilities::putRequestVariable('form.keywords', 'new keywords');
-	GalleryUtilities::putRequestVariable('form.description', 'new description');
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[pathComponent]', $this->_item[1]->getPathComponent());
+	GalleryUtilities::putRequestVariable('form[title]', 'new title');
+	GalleryUtilities::putRequestVariable('form[summary]', 'new summary');
+	GalleryUtilities::putRequestVariable('form[keywords]', 'new keywords');
+	GalleryUtilities::putRequestVariable('form[description]', 'new description');
 
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
@@ -182,12 +182,12 @@ class ItemEditItemControllerTest extends GalleryControllerTestCase {
 	
 	/* Use invalid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $rootAlbum->getId());
-	GalleryUtilities::putRequestVariable('form.action.save', 1);
-	GalleryUtilities::putRequestVariable('form.pathComponent', 'floort');
-	GalleryUtilities::putRequestVariable('form.title', $rootAlbum->getTitle());
-	GalleryUtilities::putRequestVariable('form.summary', $rootAlbum->getSummary());
-	GalleryUtilities::putRequestVariable('form.keywords', $rootAlbum->getKeywords());
-	GalleryUtilities::putRequestVariable('form.description', $rootAlbum->getDescription());
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[pathComponent]', 'floort');
+	GalleryUtilities::putRequestVariable('form[title]', $rootAlbum->getTitle());
+	GalleryUtilities::putRequestVariable('form[summary]', $rootAlbum->getSummary());
+	GalleryUtilities::putRequestVariable('form[keywords]', $rootAlbum->getKeywords());
+	GalleryUtilities::putRequestVariable('form[description]', $rootAlbum->getDescription());
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
@@ -210,12 +210,12 @@ class ItemEditItemControllerTest extends GalleryControllerTestCase {
     function testPathCollisionAlbum() {
 	/* Use invalid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_album[0]->getId());
-	GalleryUtilities::putRequestVariable('form.action.save', 1);
-	GalleryUtilities::putRequestVariable('form.pathComponent', $this->_album[1]->getPathComponent());
-	GalleryUtilities::putRequestVariable('form.title', 'new title');
-	GalleryUtilities::putRequestVariable('form.summary', 'new summary');
-	GalleryUtilities::putRequestVariable('form.keywords', 'new keywords');
-	GalleryUtilities::putRequestVariable('form.description', 'new description');
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[pathComponent]', $this->_album[1]->getPathComponent());
+	GalleryUtilities::putRequestVariable('form[title]', 'new title');
+	GalleryUtilities::putRequestVariable('form[summary]', 'new summary');
+	GalleryUtilities::putRequestVariable('form[keywords]', 'new keywords');
+	GalleryUtilities::putRequestVariable('form[description]', 'new description');
 
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
@@ -229,7 +229,7 @@ class ItemEditItemControllerTest extends GalleryControllerTestCase {
     function testInvalidItem() {
 	/* Use invalid inputs */
 	GalleryUtilities::putRequestVariable('itemId', '1234' . rand(1, 99999));
-	GalleryUtilities::putRequestVariable('form.action.save', 1);
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest(ERROR_PERMISSION_DENIED);

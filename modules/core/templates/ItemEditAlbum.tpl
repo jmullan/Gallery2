@@ -24,10 +24,10 @@
       {g->text text="This sets the default sort order for the album.  This applies to all new items."}
     {/g->description}
     {g->element}
-      {g->select name="form.orderBy"}
+      {g->select name="form[orderBy]"}
 	{html_options options=$ItemEditAlbum.orderByList selected=$form.orderBy}
       {/g->select}
-      {g->select name="form.orderDirection"}
+      {g->select name="form[orderDirection]"}
 	{html_options options=$ItemEditAlbum.orderDirectionList selected=$form.orderDirection}
       {/g->select}
     {/g->element}
@@ -41,7 +41,7 @@
       {g->text text="Choose a layout for this album. (The way the album is arranged on the page.)"}
     {/g->description}
     {g->element}
-      {g->select name="form.layout"}
+      {g->select name="form[layout]"}
 	{html_options options=$ItemEditAlbum.layoutList selected=$form.layout}
       {/g->select}
     {/g->element}
@@ -55,7 +55,7 @@
       {g->text text="Choose a theme for this album.  (The look and feel of this album)"}
     {/g->description}
     {g->element}
-      {g->select name="form.theme"}
+      {g->select name="form[theme]"}
 	{html_options options=$ItemEditAlbum.themeList selected=$form.theme}
       {/g->select}
     {/g->element}
@@ -69,7 +69,7 @@
       {g->text text=" Every item requires a thumbnail. Set the default value in pixels here."}
     {/g->description}
     {g->element}
-      {g->input type=text size=6 name="form.thumbnail.size"}{$form.thumbnail.size}{/g->input}
+      {g->input type=text size=6 name="form[thumbnail][size]"}{$form.thumbnail.size}{/g->input}
     {/g->element}
     
     {if !empty($form.error.thumbnail.size.invalid)}
@@ -100,10 +100,10 @@
 	{foreach from=$form.resizes item=resize}
 	  {g->row}
 	    {g->column align="center"}
-	      {g->input type="checkbox" name="form.resizes.$index.active"}{$form.resizes.$index.active}{/g->input}
+	      {g->input type="checkbox" name="form[resizes][$index][active]"}{$form.resizes.$index.active}{/g->input}
 	    {/g->column}
 	    {g->column}
-	      {g->input type="text" size="6" name="form.resizes.$index.size"}{$form.resizes.$index.size}{/g->input}
+	      {g->input type="text" size="6" name="form[resizes][$index][size]"}{$form.resizes.$index.size}{/g->input}
 	    {/g->column}
 	  {/g->row}
 
@@ -140,19 +140,19 @@
       {g->text text="The thumbnail and resized image settings are for all new items. To apply these settings to all the items in your album, check the appropriate box."}
     {/g->description}
     {g->element}
-      {g->input type="checkbox" name="form.recreateThumbnails"}{$form.recreateThumbnails}{/g->input}
+      {g->input type="checkbox" name="form[recreateThumbnails]"}{$form.recreateThumbnails}{/g->input}
       {g->text text="Recreate thumbnails"}
     {/g->element}
     {g->element}
-      {g->input type="checkbox" name="form.recreateResizes"}{$form.recreateResizes}{/g->input}
+      {g->input type="checkbox" name="form[recreateResizes]"}{$form.recreateResizes}{/g->input}
       {g->text text="Recreate resized images"}
     {/g->element}
   {/g->box}
 
   {g->box style="admin"}
     {g->element}
-      {g->input type="submit" name="form.action.save"}{g->text text="Save"}{/g->input}
-      {g->input type="submit" name="form.action.undo"}{g->text text="Undo"}{/g->input}
+      {g->input type="submit" name="form[action][save]"}{g->text text="Save"}{/g->input}
+      {g->input type="submit" name="form[action][undo]"}{g->text text="Undo"}{/g->input}
     {/g->element}
   {/g->box}
 {/g->pagebox}

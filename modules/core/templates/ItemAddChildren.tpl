@@ -69,7 +69,7 @@
             form = document.forms[0];
             state = form.elements['{g->elementName name="selectionToggle"}'].checked;
   	    {foreach from=$form.localServerFiles item=file}
-            form.elements['{g->elementName name="form.localServerFiles.`$file.fileKey`"}'].checked = state;
+            form.elements['{g->elementName name="form[localServerFiles][$file.fileKey]"}'].checked = state;
   	    {/foreach}
           {rdelim}
 	</script>
@@ -78,7 +78,7 @@
       {if ($ItemAddChildren.mode == 'fromLocalServer')}
 	<script type="text/javascript" language="javascript">
           function selectPath(path) {ldelim}
-            document.forms[0].elements['{g->elementName name="form.localServerPath"}'].value = path;
+            document.forms[0].elements['{g->elementName name="form[localServerPath]"}'].value = path;
           {rdelim}
 	</script>
       {/if}
@@ -91,7 +91,7 @@
 	    count=$form.uploadBoxCount
 	    arg1=$form.uploadBoxCount}
 	    {g->text text="Enter the full path to the file and an optional caption in the boxes below."}
-	    {g->input type="hidden" name="form.uploadBoxCount"}{$form.uploadBoxCount}{/g->input}
+	    {g->input type="hidden" name="form[uploadBoxCount]"}{$form.uploadBoxCount}{/g->input}
 	  {/g->description}
 
 	  {g->element}
@@ -102,7 +102,7 @@
 		  {g->text text="File"}
 		{/g->title}
 		{g->element}
-		  {g->input name=form.fileUpload.$iteration type="file" size="60"}{/g->input}
+		  {g->input name="form[$iteration]" type="file" size="60"}{/g->input}
 		{/g->element}
 	      {/g->box}
 
@@ -111,14 +111,14 @@
 		  {g->text text="Caption"}
 		{/g->title}
 		{g->element}
-		  {g->textarea rows="2" cols="60" name=form.fileUpload.$iteration.caption}{/g->textarea}
+		  {g->textarea rows="2" cols="60" name="form[caption][$iteration]"}{/g->textarea}
 		{/g->element}
 	      {/g->box}
 	    {/section}
 	  {/g->element}
 
 	  {g->element}
-	    {g->input type="submit" name="form.action.addFromBrowser"}{g->text text="Add Items"}{/g->input}
+	    {g->input type="submit" name="form[action][addFromBrowser]"}{g->text text="Add Items"}{/g->input}
 	  {/g->element}
 	{/g->box}
       {/if}
@@ -142,7 +142,7 @@
 	    {if empty($form.localServerFiles)}
 	      {g->element}
 		{g->text text="Server Path"}
-		{g->input type=text size=80 name="form.localServerPath"}{$form.localServerPath}{/g->input}
+		{g->input type=text size=80 name="form[localServerPath]"}{$form.localServerPath}{/g->input}
 	      {/g->element}
 
 	      {if isset($form.error.localServerPath.missing)}
@@ -181,7 +181,7 @@
 		    {/g->item}
 		  {/foreach}
 		{/g->listing}
-		{g->input type="submit" name="form.action.findFilesFromLocalServer"}{g->text text="Find Files"}{/g->input}
+		{g->input type="submit" name="form[action][findFilesFromLocalServer]"}{g->text text="Find Files"}{/g->input}
 	      {/g->element}
 	    {else} {* {if empty($form.localServerFiles)} *}
 	      {g->element style="emphasized"}
@@ -189,7 +189,7 @@
 		{g->link url_view="core:ItemAdmin" url_subView="core:ItemAddChildren" url_itemId=$ItemAdmin.item.id url_form_localServerPath=$form.localServerPath url_form_formName="ItemAddChildren"}
 		  {g->text text="change"}
 		{/g->link}
-		{g->input type="hidden" name="form.localServerPath"}{$form.localServerPath}{/g->input}
+		{g->input type="hidden" name="form[localServerPath]"}{$form.localServerPath}{/g->input}
 	      {/g->element}
 	      {g->element}
 		{g->text one="%d file found" many="%d files found" count=$ItemAddChildren.localServerFileCount arg1=$ItemAddChildren.localServerFileCount}
@@ -214,7 +214,7 @@
 		{foreach from=$form.localServerFiles item=file}
 		  {g->row}
 		    {g->column}
-		      {g->input type="checkbox" name="form.localServerFiles.`$file.fileKey`"}{/g->input}
+		      {g->input type="checkbox" name="form[localServerFiles][`$file.fileKey`]"}{/g->input}
 		    {/g->column}
 		    {g->column}
 		      {$file.fileName}
@@ -228,7 +228,7 @@
 		  {/g->row}
 		{/foreach}
 	      {/g->table}
-	      {g->input type="submit" name="form.action.addFromLocalServer"}{g->text text="Add Files"}{/g->input}
+	      {g->input type="submit" name="form[action][addFromLocalServer]"}{g->text text="Add Files"}{/g->input}
 	    {/if} {* {if !empty($form.localServerFiles)} *}
 	  {/if} {* {if empty($ItemAddChildren.localServerDirList)} *}
 	{/g->box}

@@ -131,7 +131,7 @@
 		  {/g->column}
 		  {g->column}
 		    {if ($setting.type == 'text-field')}
-		      {g->input type="text" size="6" name="form_key_$settingKey"}{$form.key.$settingKey}{/g->input}
+		      {g->input type="text" size="6" name="form[key][$settingKey]"}{$form.key.$settingKey}{/g->input}
 		    {/if}
 		  {/g->column}
 		{/g->row}
@@ -157,8 +157,8 @@
 	  {g->element}
 	    {g->input type="hidden" name="layoutId"}{$AdminLayouts.layoutId}{/g->input}
 	    {g->input type="hidden" name="mode"}editLayout{/g->input}
-	    {g->input type="submit" name="form.action.saveLayout"}{g->text text="Save"}{/g->input}
-	    {g->input type="submit" name="form.action.undoLayout"}{g->text text="Undo"}{/g->input}
+	    {g->input type="submit" name="form[action][saveLayout]"}{g->text text="Save"}{/g->input}
+	    {g->input type="submit" name="form[action][undoLayout]"}{g->text text="Undo"}{/g->input}
 	  {/g->element}
 	{/g->box}
       {/if}

@@ -25,7 +25,7 @@
 	{/g->column}
 
 	{g->column}
-	  {g->input type="text" name="form.path"}{$form.path}{/g->input}
+	  {g->input type="text" name="form[path]"}{$form.path}{/g->input}
 	{/g->column}
       {/g->row}
 	
@@ -65,7 +65,7 @@
 	{/g->column}
 
 	{g->column}
-	  {g->select name="form.jpegQuality"}
+	  {g->select name="form[jpegQuality]"}
 	    {html_options values=$AdminImageMagick.jpegQualityList selected=$form.jpegQuality output=$AdminImageMagick.jpegQualityList}
 	  {/g->select}
 	{/g->column}
@@ -75,9 +75,9 @@
 
   {g->box style="admin"}
     {g->element}
-      {g->input type="submit" name="form.action.save"}{g->text text="Save Settings"}{/g->input}
-      {g->input type="submit" name="form.action.test"}{g->text text="Test Settings"}{/g->input}
-      {g->input type="submit" name="form.action.cancel"}{g->text text="Cancel"}{/g->input}
+      {g->input type="submit" name="form[action][save]"}{g->text text="Save Settings"}{/g->input}
+      {g->input type="submit" name="form[action][test]"}{g->text text="Test Settings"}{/g->input}
+      {g->input type="submit" name="form[action][cancel]"}{g->text text="Cancel"}{/g->input}
     {/g->element}
   {/g->box}
 

@@ -16,8 +16,8 @@
 
     {g->element}
       {g->input type="hidden" name="commentId"}{$DeleteComment.comment.id}{/g->input}
-      {g->input type="submit" name="form.action.delete"}{g->text text="Delete"}{/g->input}
-      {g->input type="submit" name="form.action.cancel"}{g->text text="Cancel"}{/g->input}
+      {g->input type="submit" name="form[action][delete]"}{g->text text="Delete"}{/g->input}
+      {g->input type="submit" name="form[action][cancel]"}{g->text text="Cancel"}{/g->input}
     {/g->element}
   {/g->box}
 

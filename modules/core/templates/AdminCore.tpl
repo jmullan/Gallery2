@@ -35,10 +35,10 @@
 	{/g->column}
 
 	{g->column}
-	  {g->select name="form.default.orderBy"}
+	  {g->select name="form[default][orderBy]"}
 	    {html_options options=$AdminCore.orderByList selected=$form.default.orderBy}
 	  {/g->select}
-	  {g->select name="form.default.orderDirection"}
+	  {g->select name="form[default][orderDirection]"}
 	    {html_options options=$AdminCore.orderDirectionList selected=$form.default.orderDirection}
 	  {/g->select}
 	{/g->column}
@@ -50,7 +50,7 @@
 	{/g->column}
 
 	{g->column}
-	  {g->select name="form.default.layout"}
+	  {g->select name="form[default][layout]"}
 	    {html_options options=$AdminCore.layoutList selected=$form.default.layout}
 	  {/g->select}
 	{/g->column}
@@ -62,7 +62,7 @@
 	{/g->column}
 
 	{g->column}
-	  {g->select name="form.default.theme"}
+	  {g->select name="form[default][theme]"}
 	    {html_options options=$AdminCore.themeList selected=$form.default.theme}
 	  {/g->select}
 	{/g->column}
@@ -85,7 +85,7 @@
 	{/g->column}
 	
 	{g->column}
-	  {g->select name="form.default.language"}
+	  {g->select name="form[default][language]"}
 	    {html_options options=$AdminCore.languageList selected=$form.default.language}
 	  {/g->select}
 	{/g->column}
@@ -108,7 +108,7 @@
 	{/g->column}
 	
 	{g->column}
-	  {g->select name="form.permissions.directory"}
+	  {g->select name="form[permissions][directory]"}
 	    {html_options values=$AdminCore.permissionsDirectoryList selected=$form.permissions.directory output=$AdminCore.permissionsDirectoryList}
 	  {/g->select}
 	{/g->column}
@@ -120,7 +120,7 @@
 	{/g->column}
 	
 	{g->column}
-	  {g->select name="form.permissions.file"}
+	  {g->select name="form[permissions][file]"}
 	    {html_options values=$AdminCore.permissionsFileList selected=$form.permissions.file output=$AdminCore.permissionsFileList}
 	  {/g->select}
 	{/g->column}
@@ -162,11 +162,11 @@
 
       {g->row}
 	{g->column}
-	  {g->input type="text" size="40" name="form.uploadLocalServer.newDir"}{$form.uploadLocalServer.newDir}{/g->input}
+	  {g->input type="text" size="40" name="form[uploadLocalServer][newDir]"}{$form.uploadLocalServer.newDir}{/g->input}
 	{/g->column}
 
 	{g->column}
-	  {g->input type="submit" name="form.action.addUploadLocalServerDir"}
+	  {g->input type="submit" name="form[action][addUploadLocalServerDir]"}
 	    {g->text text="add"}
 	  {/g->input}
 	{/g->column}
@@ -220,7 +220,7 @@
 	{/g->column}
 	
 	{g->column}
-	  {g->select name="form.session.lifetime"}
+	  {g->select name="form[session][lifetime]"}
 	    {html_options options=$AdminCore.sessionTimeList selected=$form.session.lifetime}
 	  {/g->select}
 	{/g->column}
@@ -232,7 +232,7 @@
 	{/g->column}
 	
 	{g->column}
-	  {g->select name="form.session.inactivityTimeout"}
+	  {g->select name="form[session][inactivityTimeout]"}
 	    {html_options options=$AdminCore.sessionTimeList selected=$form.session.inactivityTimeout}
 	  {/g->select}
 	{/g->column}
@@ -266,7 +266,7 @@
 	{/g->column}
 	
 	{g->column}
-	  {g->select name="form.misc.useShortUrls"}
+	  {g->select name="form[misc][useShortUrls]"}
 	    {html_options options=$AdminCore.useShortUrlsList selected=$form.misc.useShortUrls}
 	  {/g->select}
 	{/g->column}
@@ -277,10 +277,10 @@
 
   {g->box style="admin"}
     {g->element}
-      {g->input type="submit" name="form.action.save"}
+      {g->input type="submit" name="form[action][save]"}
 	{g->text text="save"}
       {/g->input}
-      {g->input type="submit" name="form.action.reset"}
+      {g->input type="submit" name="form[action][reset]"}
 	{g->text text="reset"}
       {/g->input}
     {/g->element}

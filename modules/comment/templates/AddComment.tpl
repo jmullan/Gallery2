@@ -41,7 +41,7 @@
       {/g->subtitle}
 
       {g->element}
-	{g->input type="text" size="60" name="form.subject"}{$form.subject}{/g->input}
+	{g->input type="text" size="60" name="form[subject]"}{$form.subject}{/g->input}
       {/g->element}
     {/g->box}
 
@@ -59,7 +59,7 @@
 	{g->text text="required"}
       {/g->subtitle}
       {g->element}
-	{g->textarea rows="15" cols="60" name="form.comment"}{$form.comment}{/g->textarea}
+	{g->textarea rows="15" cols="60" name="form[comment]"}{$form.comment}{/g->textarea}
       {/g->element}
     {/g->box}
 
@@ -71,8 +71,8 @@
   {/g->box}
 
   {g->element}
-    {g->input type="submit" name="form.action.preview"}{g->text text="preview"}{/g->input}
-    {g->input type="submit" name="form.action.add"}{g->text text="save"}{/g->input}
-    {g->input type="submit" name="form.action.cancel"}{g->text text="cancel"}{/g->input}
+    {g->input type="submit" name="form[action][preview]"}{g->text text="preview"}{/g->input}
+    {g->input type="submit" name="form[action][add]"}{g->text text="save"}{/g->input}
+    {g->input type="submit" name="form[action][cancel]"}{g->text text="cancel"}{/g->input}
   {/g->element}
 {/g->pagebox}

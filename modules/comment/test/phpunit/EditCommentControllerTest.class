@@ -96,12 +96,12 @@ class EditCommentControllerTest extends GalleryControllerTestCase {
     function testEditComment() {
 	GalleryUtilities::putRequestVariable('itemId', $this->_item[0]->getId());
 	GalleryUtilities::putRequestVariable('commentId', $this->_comment[0]->getId());
-	GalleryUtilities::putRequestVariable('form.action.save', 1);
-	GalleryUtilities::putRequestVariable('form.host', 'hosty.host.host');
-	GalleryUtilities::putRequestVariable('form.subject', 'This is a new subject');
-	GalleryUtilities::putRequestVariable('form.comment', 'This is a new comment');
-	GalleryUtilities::putRequestVariable('form.commenterName', $this->_anonymousUser->getUserName());
-	GalleryUtilities::putRequestVariable('form.date', '6-Jun-2003 12:01:02');
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[host]', 'hosty.host.host');
+	GalleryUtilities::putRequestVariable('form[subject]', 'This is a new subject');
+	GalleryUtilities::putRequestVariable('form[comment]', 'This is a new comment');
+	GalleryUtilities::putRequestVariable('form[commenterName]', $this->_anonymousUser->getUserName());
+	GalleryUtilities::putRequestVariable('form[date]', '6-Jun-2003 12:01:02');
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('return' => 1,
@@ -130,12 +130,12 @@ class EditCommentControllerTest extends GalleryControllerTestCase {
     function testMissingFields() {
 	GalleryUtilities::putRequestVariable('itemId', $this->_item[0]->getId());
 	GalleryUtilities::putRequestVariable('commentId', $this->_comment[0]->getId());
-	GalleryUtilities::putRequestVariable('form.action.save', 1);
-	GalleryUtilities::putRequestVariable('form.host', '');
-	GalleryUtilities::putRequestVariable('form.subject', '');
-	GalleryUtilities::putRequestVariable('form.comment', '');
-	GalleryUtilities::putRequestVariable('form.commenterName', '');
-	GalleryUtilities::putRequestVariable('form.date', '');
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[host]', '');
+	GalleryUtilities::putRequestVariable('form[subject]', '');
+	GalleryUtilities::putRequestVariable('form[comment]', '');
+	GalleryUtilities::putRequestVariable('form[commenterName]', '');
+	GalleryUtilities::putRequestVariable('form[date]', '');
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
@@ -151,12 +151,12 @@ class EditCommentControllerTest extends GalleryControllerTestCase {
     function testInvalidCommenterName() {
 	GalleryUtilities::putRequestVariable('itemId', $this->_item[0]->getId());
 	GalleryUtilities::putRequestVariable('commentId', $this->_comment[0]->getId());
-	GalleryUtilities::putRequestVariable('form.action.save', 1);
-	GalleryUtilities::putRequestVariable('form.host', 'hosty.host.host');
-	GalleryUtilities::putRequestVariable('form.subject', 'This is a new subject');
-	GalleryUtilities::putRequestVariable('form.comment', 'This is a new comment');
-	GalleryUtilities::putRequestVariable('form.commenterName', 'some-illegal-user-name');
-	GalleryUtilities::putRequestVariable('form.date', '6-Jun-2003 12:01:02');
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[host]', 'hosty.host.host');
+	GalleryUtilities::putRequestVariable('form[subject]', 'This is a new subject');
+	GalleryUtilities::putRequestVariable('form[comment]', 'This is a new comment');
+	GalleryUtilities::putRequestVariable('form[commenterName]', 'some-illegal-user-name');
+	GalleryUtilities::putRequestVariable('form[date]', '6-Jun-2003 12:01:02');
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
@@ -169,12 +169,12 @@ class EditCommentControllerTest extends GalleryControllerTestCase {
     function testInvalidDate() {
 	GalleryUtilities::putRequestVariable('itemId', $this->_item[0]->getId());
 	GalleryUtilities::putRequestVariable('commentId', $this->_comment[0]->getId());
-	GalleryUtilities::putRequestVariable('form.action.save', 1);
-	GalleryUtilities::putRequestVariable('form.host', 'hosty.host.host');
-	GalleryUtilities::putRequestVariable('form.subject', 'This is a new subject');
-	GalleryUtilities::putRequestVariable('form.comment', 'This is a new comment');
-	GalleryUtilities::putRequestVariable('form.commenterName', $this->_anonymousUser->getUserName());
-	GalleryUtilities::putRequestVariable('form.date', 'bogo-date');
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[host]', 'hosty.host.host');
+	GalleryUtilities::putRequestVariable('form[subject]', 'This is a new subject');
+	GalleryUtilities::putRequestVariable('form[comment]', 'This is a new comment');
+	GalleryUtilities::putRequestVariable('form[commenterName]', $this->_anonymousUser->getUserName());
+	GalleryUtilities::putRequestVariable('form[date]', 'bogo-date');
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
@@ -190,7 +190,7 @@ class EditCommentControllerTest extends GalleryControllerTestCase {
     function testMaliciousEditComment1() {
 	GalleryUtilities::putRequestVariable('itemId', $this->_item[0]->getId());
 	GalleryUtilities::putRequestVariable('commentId', 123123123);
-	GalleryUtilities::putRequestVariable('form.action.save', 1);
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 
 	$results = $this->handleRequest(ERROR_MISSING_OBJECT);
     }
@@ -201,7 +201,7 @@ class EditCommentControllerTest extends GalleryControllerTestCase {
     function testMaliciousEditComment2() {
 	GalleryUtilities::putRequestVariable('itemId', $this->_item[0]->getId());
 	GalleryUtilities::putRequestVariable('commentId', $this->_comment[1]->getId());
-	GalleryUtilities::putRequestVariable('form.action.save', 1);
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 
 	$results = $this->handleRequest(ERROR_BAD_PARAMETER);
     }
@@ -209,12 +209,12 @@ class EditCommentControllerTest extends GalleryControllerTestCase {
     function testCancelEdit() {
 	GalleryUtilities::putRequestVariable('itemId', $this->_item[0]->getId());
 	GalleryUtilities::putRequestVariable('commentId', $this->_comment[0]->getId());
-	GalleryUtilities::putRequestVariable('form.action.cancel', 1);
-	GalleryUtilities::putRequestVariable('form.host', 'hosty.host.host');
-	GalleryUtilities::putRequestVariable('form.subject', 'This is a new subject');
-	GalleryUtilities::putRequestVariable('form.comment', 'This is a new comment');
-	GalleryUtilities::putRequestVariable('form.commenterName', $this->_anonymousUser->getUserName());
-	GalleryUtilities::putRequestVariable('form.date', '6-Jun-2003 12:01:02');
+	GalleryUtilities::putRequestVariable('form[action][cancel]', 1);
+	GalleryUtilities::putRequestVariable('form[host]', 'hosty.host.host');
+	GalleryUtilities::putRequestVariable('form[subject]', 'This is a new subject');
+	GalleryUtilities::putRequestVariable('form[comment]', 'This is a new comment');
+	GalleryUtilities::putRequestVariable('form[commenterName]', $this->_anonymousUser->getUserName());
+	GalleryUtilities::putRequestVariable('form[date]', '6-Jun-2003 12:01:02');
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('return' => 1,

@@ -17,8 +17,8 @@
 
     {g->element}
       {g->input type="hidden" name="groupId"}{$AdminDeleteGroup.group.id}{/g->input}
-      {g->input type="submit" name="form.action.delete"}{g->text text="Delete"}{/g->input}
-      {g->input type="submit" name="form.action.cancel"}{g->text text="Cancel"}{/g->input}
+      {g->input type="submit" name="form[action][delete]"}{g->text text="Delete"}{/g->input}
+      {g->input type="submit" name="form[action][cancel]"}{g->text text="Cancel"}{/g->input}
     {/g->element}
   {/g->box}
 {/g->pagebox}

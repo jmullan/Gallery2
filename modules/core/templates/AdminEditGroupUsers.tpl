@@ -33,10 +33,10 @@
       {/g->title}
 
       {g->element}
-	{g->select name="form.list.userId" size=1}
+	{g->select name="form[list][userId]" size=1}
 	  {html_options options=$form.list.users}
 	{/g->select}
-	{g->input type="submit" name="form.action.remove"}
+	{g->input type="submit" name="form[action][remove]"}
 	  {g->text text="Remove"}
 	{/g->input}
       {/g->element}
@@ -55,8 +55,8 @@
     {/g->title}
 
     {g->element}
-      {g->input type="text" name="form.text.userName"}{$form.text.userName}{/g->input}
-      {g->input type="submit" name="form.action.add"}
+      {g->input type="text" name="form[text][userName]"}{$form.text.userName}{/g->input}
+      {g->input type="submit" name="form[action][add]"}
 	{g->text text="Add"}
       {/g->input}
     {/g->element}
@@ -77,7 +77,7 @@
   {g->box style="admin"}
     {g->element}
       {g->input type="hidden" name="groupId"}{$AdminEditGroupUsers.group.id}{/g->input}
-      {g->input type="submit" name="form.action.done"}{g->text text="Done"}{/g->input}
+      {g->input type="submit" name="form[action][done]"}{g->text text="Done"}{/g->input}
     {/g->element}
   {/g->box}
 {/g->pagebox}

@@ -25,7 +25,7 @@
 	{/g->column}
 	
 	{g->column}
-	  {g->input type="text" size="40" name="form.path"}{$form.path}{/g->input}
+	  {g->input type="text" size="40" name="form[path]"}{$form.path}{/g->input}
 	{/g->column}
       {/g->row}
       
@@ -65,7 +65,7 @@
 	{/g->column}
 
 	{g->column}
-	  {g->select name="form.pnmtojpeg"}
+	  {g->select name="form[pnmtojpeg]"}
 	    {html_options values=$AdminNetPbm.pnmToJpegList selected=$form.pnmtojpeg output=$AdminNetPbm.pnmToJpegList}
 	  {/g->select}
 	{/g->column}
@@ -77,7 +77,7 @@
 	{/g->column}
 
 	{g->column}
-	  {g->select name="form.jpegQuality"}
+	  {g->select name="form[jpegQuality]"}
 	    {html_options values=$AdminNetPbm.jpegQualityList selected=$form.jpegQuality output=$AdminNetPbm.jpegQualityList}
 	  {/g->select}
 	{/g->column}
@@ -87,9 +87,9 @@
 
   {g->box style="admin"}
     {g->element}
-      {g->input type="submit" name="form.action.save"}{g->text text="Save Settings"}{/g->input}
-      {g->input type="submit" name="form.action.test"}{g->text text="Test Settings"}{/g->input}
-      {g->input type="submit" name="form.action.cancel"}{g->text text="Cancel"}{/g->input}
+      {g->input type="submit" name="form[action][save]"}{g->text text="Save Settings"}{/g->input}
+      {g->input type="submit" name="form[action][test]"}{g->text text="Test Settings"}{/g->input}
+      {g->input type="submit" name="form[action][cancel]"}{g->text text="Cancel"}{/g->input}
     {/g->element}
   {/g->box}
 

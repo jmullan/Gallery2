@@ -25,7 +25,7 @@
 	  {/foreach}
 	  {$ItemAdmin.item.pathComponent}/
 	{/strip}
-	{g->input type="text" size="10" name="form.pathComponent"}{$form.pathComponent}{/g->input}
+	{g->input type="text" size="10" name="form[pathComponent]"}{$form.pathComponent}{/g->input}
       {/g->element}
     {/g->box}
 
@@ -57,7 +57,7 @@
       {/g->description}
 
       {g->element}
-	{g->input type="text" size="40" name="form.title"}{$form.title}{/g->input}
+	{g->input type="text" size="40" name="form[title]"}{$form.title}{/g->input}
       {/g->element}
     {/g->box}
 
@@ -71,7 +71,7 @@
       {/g->description}
 
       {g->element}
-	{g->input type=text size=40 name="form.summary"}{$form.summary}{/g->input}
+	{g->input type=text size=40 name="form[summary]"}{$form.summary}{/g->input}
       {/g->element}
     {/g->box}
 
@@ -85,7 +85,7 @@
       {/g->description}
 
       {g->element}
-	{g->textarea rows=2 cols=60 name="form.keywords"}{$form.keywords}{/g->textarea}
+	{g->textarea rows=2 cols=60 name="form[keywords]"}{$form.keywords}{/g->textarea}
       {/g->element}
     {/g->box}
 
@@ -99,13 +99,13 @@
       {/g->description}
 
       {g->element}
-	{g->textarea rows=4 cols=60 name="form.description"}{$form.description}{/g->textarea}
+	{g->textarea rows=4 cols=60 name="form[description]"}{$form.description}{/g->textarea}
       {/g->element}
     {/g->box}
 
     {g->box}
       {g->element}
-	{g->input type="submit" name="form.action.create"}{g->text text="Create"}{/g->input}
+	{g->input type="submit" name="form[action][create]"}{g->text text="Create"}{/g->input}
       {/g->element}
     {/g->box}
   {/g->box}

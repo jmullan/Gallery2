@@ -13,7 +13,7 @@
      {g->element}
        {foreach from=$form.migrateUser key=uid item=junk}
 	 {$ConfirmImport.uids.$uid} &nbsp;
-	 {g->input type="hidden" name="form.migrateUser.$uid"}1{/g->input}
+	 {g->input type="hidden" name="form[migrateUser][$uid]"}1{/g->input}
        {/foreach}
      {/g->element}
     {/if}
@@ -42,7 +42,7 @@
 	  {g->row}
 	    {g->column width="25%"}
 	      {$albumName}
-	      {g->input type="hidden" name="form.sourceAlbums.$albumName"}1{/g->input}
+	      {g->input type="hidden" name="form[sourceAlbums][$albumName]"}1{/g->input}
 	    {/g->column}
 	    {g->column}
 	      {$ConfirmImport.albums.$albumName.title}
@@ -66,7 +66,7 @@
 	  {g->column}
             {$ConfirmImport.targetAlbum->_title}:
             {$ConfirmImport.targetAlbum->_description}
-            {g->input type="hidden" name="form.destinationAlbumID"}{$ConfirmImport.destinationAlbumID}{/g->input}
+            {g->input type="hidden" name="form[destinationAlbumID]"}{$ConfirmImport.destinationAlbumID}{/g->input}
 	  {/g->column}
         {/g->row}
       {/g->table}
@@ -76,8 +76,8 @@
   {g->box style="admin"}
     {g->element}
       {g->input type="hidden" name="albumsPath"}{$ConfirmImport.albumsPath}{/g->input}
-      {g->input type="submit" name="form.action.import"}{g->text text="Import"}{/g->input}
-      {g->input type="submit" name="form.action.cancel"}{g->text text="Cancel"}{/g->input}
+      {g->input type="submit" name="form[action][import]"}{g->text text="Import"}{/g->input}
+      {g->input type="submit" name="form[action][cancel]"}{g->text text="Cancel"}{/g->input}
     {/g->element}
   {/g->box}
 {/g->pagebox}

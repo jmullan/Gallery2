@@ -66,7 +66,7 @@ class AdminEditGroupUsersControllerTest extends GalleryControllerTestCase {
 	}
 
 	GalleryUtilities::putRequestVariable('groupId', $group->getId());
-	GalleryUtilities::putRequestVariable('form.action.done', 1);
+	GalleryUtilities::putRequestVariable('form[action][done]', 1);
 
 
 	$results = $this->handleRequest();
@@ -86,8 +86,8 @@ class AdminEditGroupUsersControllerTest extends GalleryControllerTestCase {
 	}
 
 	GalleryUtilities::putRequestVariable('groupId', $this->_group->getId());
-	GalleryUtilities::putRequestVariable('form.action.remove', 1);
-	GalleryUtilities::putRequestVariable('form.list.userId', $this->_user->getId());
+	GalleryUtilities::putRequestVariable('form[action][remove]', 1);
+	GalleryUtilities::putRequestVariable('form[list][userId]', $this->_user->getId());
 
 	$results = $this->handleRequest();
 
@@ -101,8 +101,8 @@ class AdminEditGroupUsersControllerTest extends GalleryControllerTestCase {
 
     function testAddUser() {
 	GalleryUtilities::putRequestVariable('groupId', $this->_group->getId());
-	GalleryUtilities::putRequestVariable('form.action.add', 1);
-	GalleryUtilities::putRequestVariable('form.text.userName', $this->_user->getUserName());
+	GalleryUtilities::putRequestVariable('form[action][add]', 1);
+	GalleryUtilities::putRequestVariable('form[text][userName]', $this->_user->getUserName());
 
 	$results = $this->handleRequest();
 
@@ -116,8 +116,8 @@ class AdminEditGroupUsersControllerTest extends GalleryControllerTestCase {
     
     function testAddBogusUser() {
 	GalleryUtilities::putRequestVariable('groupId', $this->_group->getId());
-	GalleryUtilities::putRequestVariable('form.action.add', 1);
-	GalleryUtilities::putRequestVariable('form.text.userName', 'bogus-user-'.rand());
+	GalleryUtilities::putRequestVariable('form[action][add]', 1);
+	GalleryUtilities::putRequestVariable('form[text][userName]', 'bogus-user-'.rand());
 
 	$results = $this->handleRequest();
 
@@ -130,8 +130,8 @@ class AdminEditGroupUsersControllerTest extends GalleryControllerTestCase {
 
     function testAddMissingUser() {
 	GalleryUtilities::putRequestVariable('groupId', $this->_group->getId());
-	GalleryUtilities::putRequestVariable('form.action.add', 1);
-	GalleryUtilities::putRequestVariable('form.text.userName', '');
+	GalleryUtilities::putRequestVariable('form[action][add]', 1);
+	GalleryUtilities::putRequestVariable('form[text][userName]', '');
 
 	$results = $this->handleRequest();
 

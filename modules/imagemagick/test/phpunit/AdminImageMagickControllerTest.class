@@ -83,10 +83,10 @@ class AdminImageMagickControllerTest extends GalleryControllerTestCase {
 	$slash = $platform->getDirectorySeparator();
 
 	/* Use valid inputs */
-	GalleryUtilities::putRequestVariable('form.action.save', 1);
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 
-	GalleryUtilities::putRequestVariable('form.path', "${slash}validPath${slash}");
-	GalleryUtilities::putRequestVariable('form.jpegQuality', '12');
+	GalleryUtilities::putRequestVariable('form[path]', "${slash}validPath${slash}");
+	GalleryUtilities::putRequestVariable('form[jpegQuality]', '12');
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
@@ -108,7 +108,7 @@ class AdminImageMagickControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 
 	/* Use valid inputs */
-	GalleryUtilities::putRequestVariable('form.action.cancel', 1);
+	GalleryUtilities::putRequestVariable('form[action][cancel]', 1);
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
@@ -127,9 +127,9 @@ class AdminImageMagickControllerTest extends GalleryControllerTestCase {
 	$slash = $platform->getDirectorySeparator();
 
 	/* Use valid inputs */
-	GalleryUtilities::putRequestVariable('form.action.save', 1);
-	GalleryUtilities::putRequestVariable('form.path', "${slash}validPathBadBinaries${slash}");
-	GalleryUtilities::putRequestVariable('form.jpegQuality', '12');
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[path]', "${slash}validPathBadBinaries${slash}");
+	GalleryUtilities::putRequestVariable('form[jpegQuality]', '12');
 
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
@@ -147,9 +147,9 @@ class AdminImageMagickControllerTest extends GalleryControllerTestCase {
 	$slash = $platform->getDirectorySeparator();
 	
 	/* Use valid inputs */
-	GalleryUtilities::putRequestVariable('form.action.save', 1);
-	GalleryUtilities::putRequestVariable('form.path', "${slash}invalidPath${slash}");
-	GalleryUtilities::putRequestVariable('form.jpegQuality', '12');
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[path]', "${slash}invalidPath${slash}");
+	GalleryUtilities::putRequestVariable('form[jpegQuality]', '12');
 
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
@@ -167,9 +167,9 @@ class AdminImageMagickControllerTest extends GalleryControllerTestCase {
 	$slash = $platform->getDirectorySeparator();
 	
 	/* Use valid inputs */
-	GalleryUtilities::putRequestVariable('form.action.save', 1);
-	GalleryUtilities::putRequestVariable('form.path', '');
-	GalleryUtilities::putRequestVariable('form.jpegQuality', '12');
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[path]', '');
+	GalleryUtilities::putRequestVariable('form[jpegQuality]', '12');
 
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();

@@ -20,7 +20,7 @@
 	  {g->text text="Width"}
 	{/g->column}
 	{g->column}
-	  {g->input type="text" size="5" name="form.width"}
+	  {g->input type="text" size="5" name="form[width]"}
 	    {$form.width}
 	  {/g->input}
         {/g->column}
@@ -41,7 +41,7 @@
 	  {g->text text="Height"}
 	{/g->column}
 	{g->column}
-	  {g->input type="text" size="5" name="form.height"}
+	  {g->input type="text" size="5" name="form[height]"}
 	    {$form.height}
 	  {/g->input}
         {/g->column}
@@ -60,7 +60,7 @@
     {/g->table}
 	  
     {g->element}
-      {g->input type="submit" name="form.action.save"}
+      {g->input type="submit" name="form[action][save]"}
 	{g->text text="Save"}
       {/g->input}
     {/g->element}

@@ -1,5 +1,5 @@
 {g->form action_controller="$controller" enctype=$enctype}
-  {g->input type="hidden" name="form.formName"}{$form.formName}{/g->input}
+  {g->input type="hidden" name="form[formName]"}{$form.formName}{/g->input}
   {g->input type="hidden" name="itemId"}{$ItemAdmin.item.id}{/g->input}
   
   {g->main}

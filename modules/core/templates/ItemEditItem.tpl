@@ -35,7 +35,7 @@
 	      {/if}
 	    {/foreach}
 	  {/strip}
-	  {g->input type=text size=40 name="form.pathComponent"}{$form.pathComponent}{/g->input}
+	  {g->input type=text size=40 name="form[pathComponent]"}{$form.pathComponent}{/g->input}
 	{/g->element}
       {/g->box}
 
@@ -66,7 +66,7 @@
 	{g->text text="The title of this item."}
       {/g->description}
       {g->element}
-	{g->input type="text" size="40" name="form.title"}{$form.title}{/g->input}
+	{g->input type="text" size="40" name="form[title]"}{$form.title}{/g->input}
       {/g->element}
     {/g->box}
 
@@ -78,7 +78,7 @@
 	{g->text text="The summary of this item."}
       {/g->description}
       {g->element}
-	{g->input type="text" size="40" name="form.summary"}{$form.summary}{/g->input}
+	{g->input type="text" size="40" name="form[summary]"}{$form.summary}{/g->input}
       {/g->element}
     {/g->box}
 
@@ -90,7 +90,7 @@
 	{g->text text="Keywords are not visible, but are searchable."}
       {/g->description}
       {g->element}
-	{g->textarea rows="2" cols="60" name="form.keywords"}{$form.keywords}{/g->textarea}
+	{g->textarea rows="2" cols="60" name="form[keywords]"}{$form.keywords}{/g->textarea}
       {/g->element}
     {/g->box}
 
@@ -102,14 +102,14 @@
 	{g->text text="This is the long description of the item."}
       {/g->description}
       {g->element}
-	{g->textarea rows="4" cols="60" name="form.description"}{$form.description}{/g->textarea}
+	{g->textarea rows="4" cols="60" name="form[description]"}{$form.description}{/g->textarea}
       {/g->element}
     {/g->box}
 
     {g->box}
       {g->element}
-	{g->input type="submit" name="form.action.save"}{g->text text="Save"}{/g->input}
-	{g->input type="submit" name="form.action.undo"}{g->text text="Undo"}{/g->input}
+	{g->input type="submit" name="form[action][save]"}{g->text text="Save"}{/g->input}
+	{g->input type="submit" name="form[action][undo]"}{g->text text="Undo"}{/g->input}
       {/g->element}
     {/g->box}
   {/g->box}

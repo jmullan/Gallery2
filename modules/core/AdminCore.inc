@@ -67,9 +67,8 @@ class AdminCoreController extends GalleryController {
 			   'session.lifetime',
 			   'session.inactivityTimeout',
 			   'misc.useShortUrls') as $key) {
-		list ($a, $b) = split('\.', $key);
-		if (isset($form[$a][$b])) {
-		    $ret = $gallery->setModuleParameter('core', $key, $form[$a][$b]);
+		if (isset($form[$key])) {
+		    $ret = $gallery->setModuleParameter('core', $key, $form[$key]);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }

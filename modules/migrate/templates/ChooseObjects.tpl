@@ -34,7 +34,7 @@
 	{foreach key=uid item=username from=$ChooseObjects.newUsers}
 	  {g->row}
 	    {g->column width="10%"}
-              {g->input type="checkbox" name=form.migrateUser.$uid}{$form.migrateUser.$uid}{/g->input}
+              {g->input type="checkbox" name="form[migrateUser][$uid]"}{$form.migrateUser.$uid}{/g->input}
 	    {/g->column}
 	    {g->column}
               {$username}
@@ -79,7 +79,7 @@
     {/g->element}
 
     {g->element}
-      {g->select multiple="true" size="10" name="form.sourceAlbums[]"}
+      {g->select multiple="true" size="10" name="form[sourceAlbums][]"}
         {foreach from=$ChooseObjects.g1AlbumTree item=album}
   	  <option value="{$album.data.name}">
   	  {"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"|repeat:$album.depth}`--
@@ -94,7 +94,7 @@
     {/g->element}
 
     {g->element}
-      {g->select name="form.destinationAlbumID"}
+      {g->select name="form[destinationAlbumID]"}
         {foreach from=$ChooseObjects.g2AlbumTree item=album}
   	  <option value="{$album.data.id}">
   	  {"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"|repeat:$album.depth}`--
@@ -108,7 +108,7 @@
   {g->box style="admin"}
     {g->element}
       {g->input type="hidden" name="albumsPath"}{$ChooseObjects.albumsPath}{/g->input}
-      {g->input type="submit" name="form.action.import"}
+      {g->input type="submit" name="form[action][import]"}
 	{g->text text="Import"}
       {/g->input}
     {/g->element}

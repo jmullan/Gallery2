@@ -63,12 +63,12 @@ class ItemAddAlbumControllerTest extends GalleryControllerTestCase {
 	/* Use valid inputs */
 	$name = 'testalbum-'.rand();
 	GalleryUtilities::putRequestVariable('itemId', $this->_parentAlbum->getId());
-	GalleryUtilities::putRequestVariable('form.action.create', 1);
-	GalleryUtilities::putRequestVariable('form.pathComponent', $name);
-	GalleryUtilities::putRequestVariable('form.title', 'title');
-	GalleryUtilities::putRequestVariable('form.summary', 'summary');
-	GalleryUtilities::putRequestVariable('form.keywords', 'keywords');
-	GalleryUtilities::putRequestVariable('form.description', 'description');
+	GalleryUtilities::putRequestVariable('form[action][create]', 1);
+	GalleryUtilities::putRequestVariable('form[pathComponent]', $name);
+	GalleryUtilities::putRequestVariable('form[title]', 'title');
+	GalleryUtilities::putRequestVariable('form[summary]', 'summary');
+	GalleryUtilities::putRequestVariable('form[keywords]', 'keywords');
+	GalleryUtilities::putRequestVariable('form[description]', 'description');
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
@@ -92,14 +92,14 @@ class ItemAddAlbumControllerTest extends GalleryControllerTestCase {
 	/* Use valid inputs */
 	$name = 'testalbum-'.rand();
 	GalleryUtilities::putRequestVariable('itemId', $this->_parentAlbum->getId());
-	GalleryUtilities::putRequestVariable('form.action.create', 1);
-	GalleryUtilities::putRequestVariable('form.title', 'title');
-	GalleryUtilities::putRequestVariable('form.summary', 'summary');
-	GalleryUtilities::putRequestVariable('form.keywords', 'keywords');
-	GalleryUtilities::putRequestVariable('form.description', 'description');
+	GalleryUtilities::putRequestVariable('form[action][create]', 1);
+	GalleryUtilities::putRequestVariable('form[title]', 'title');
+	GalleryUtilities::putRequestVariable('form[summary]', 'summary');
+	GalleryUtilities::putRequestVariable('form[keywords]', 'keywords');
+	GalleryUtilities::putRequestVariable('form[description]', 'description');
 
 	/* Then re-use the path component that we know will conflict */
-	GalleryUtilities::putRequestVariable('form.pathComponent', $subAlbum->getPathComponent());
+	GalleryUtilities::putRequestVariable('form[pathComponent]', $subAlbum->getPathComponent());
 
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
@@ -115,12 +115,12 @@ class ItemAddAlbumControllerTest extends GalleryControllerTestCase {
 
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_parentAlbum->getId());
-	GalleryUtilities::putRequestVariable('form.action.create', 1);
-	GalleryUtilities::putRequestVariable('form.pathComponent', '');
-	GalleryUtilities::putRequestVariable('form.title', 'title');
-	GalleryUtilities::putRequestVariable('form.summary', 'summary');
-	GalleryUtilities::putRequestVariable('form.keywords', 'keywords');
-	GalleryUtilities::putRequestVariable('form.description', 'description');
+	GalleryUtilities::putRequestVariable('form[action][create]', 1);
+	GalleryUtilities::putRequestVariable('form[pathComponent]', '');
+	GalleryUtilities::putRequestVariable('form[title]', 'title');
+	GalleryUtilities::putRequestVariable('form[summary]', 'summary');
+	GalleryUtilities::putRequestVariable('form[keywords]', 'keywords');
+	GalleryUtilities::putRequestVariable('form[description]', 'description');
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
@@ -136,12 +136,12 @@ class ItemAddAlbumControllerTest extends GalleryControllerTestCase {
 
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_parentAlbum->getId());
-	GalleryUtilities::putRequestVariable('form.action.create', 1);
-	GalleryUtilities::putRequestVariable('form.pathComponent', 'Invalid!/\Chars');
-	GalleryUtilities::putRequestVariable('form.title', 'title');
-	GalleryUtilities::putRequestVariable('form.summary', 'summary');
-	GalleryUtilities::putRequestVariable('form.keywords', 'keywords');
-	GalleryUtilities::putRequestVariable('form.description', 'description');
+	GalleryUtilities::putRequestVariable('form[action][create]', 1);
+	GalleryUtilities::putRequestVariable('form[pathComponent]', 'Invalid!/\Chars');
+	GalleryUtilities::putRequestVariable('form[title]', 'title');
+	GalleryUtilities::putRequestVariable('form[summary]', 'summary');
+	GalleryUtilities::putRequestVariable('form[keywords]', 'keywords');
+	GalleryUtilities::putRequestVariable('form[description]', 'description');
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();

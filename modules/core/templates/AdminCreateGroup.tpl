@@ -15,7 +15,7 @@
     {/g->subtitle}
 
     {g->element}
-      {g->input type="text" name="form.groupName"}{$form.groupName}{/g->input}
+      {g->input type="text" name="form[groupName]"}{$form.groupName}{/g->input}
     {/g->element}
 
     {if isset($form.error.groupName.missing)}
@@ -33,8 +33,8 @@
 
   {g->box}
     {g->element}
-      {g->input type="submit" name="form.action.create"}{g->text text="Create Group"}{/g->input}
-      {g->input type="submit" name="form.action.cancel"}{g->text text="Cancel"}{/g->input}
+      {g->input type="submit" name="form[action][create]"}{g->text text="Create Group"}{/g->input}
+      {g->input type="submit" name="form[action][cancel]"}{g->text text="Cancel"}{/g->input}
     {/g->element}
   {/g->box}
 {/g->pagebox}

@@ -140,7 +140,7 @@ function GalleryMain($startTime) {
 	}
 
 	/* Get our form and return variables */
-	$form = GalleryUtilities::getFormVariables('form.');
+	$form = GalleryUtilities::getFormVariables('form');
 
 	/* Let the controller handle the input */
 	list ($ret, $results) = $controller->handleRequest($form);

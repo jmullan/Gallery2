@@ -102,7 +102,7 @@ class ItemMakeHighlightControllerTest extends GalleryControllerTestCase {
     function testMakeHighlightItem() {
 	global $gallery;
 	GalleryUtilities::putRequestVariable('itemId', $this->_item[0]->getId());
-	GalleryUtilities::putRequestVariable('form.action.makeHighlight', 1);
+	GalleryUtilities::putRequestVariable('form[action][makeHighlight]', 1);
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('return' => true,

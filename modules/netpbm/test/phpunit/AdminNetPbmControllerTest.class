@@ -70,10 +70,10 @@ class AdminNetPbmControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 
 	/* Use valid inputs */
-	GalleryUtilities::putRequestVariable('form.action.save', 1);
-	GalleryUtilities::putRequestVariable('form.path', '/validPath/');
-	GalleryUtilities::putRequestVariable('form.pnmtojpeg', 'ppmtojpeg');
-	GalleryUtilities::putRequestVariable('form.jpegQuality', '12');
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[path]', '/validPath/');
+	GalleryUtilities::putRequestVariable('form[pnmtojpeg]', 'ppmtojpeg');
+	GalleryUtilities::putRequestVariable('form[jpegQuality]', '12');
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
@@ -97,7 +97,7 @@ class AdminNetPbmControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 
 	/* Use valid inputs */
-	GalleryUtilities::putRequestVariable('form.action.cancel', 1);
+	GalleryUtilities::putRequestVariable('form[action][cancel]', 1);
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
@@ -113,10 +113,10 @@ class AdminNetPbmControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 
 	/* Use valid inputs */
-	GalleryUtilities::putRequestVariable('form.action.save', 1);
-	GalleryUtilities::putRequestVariable('form.path', '/validPathBadBinaries/');
-	GalleryUtilities::putRequestVariable('form.pnmtojpeg', 'ppmtojpeg');
-	GalleryUtilities::putRequestVariable('form.jpegQuality', '12');
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[path]', '/validPathBadBinaries/');
+	GalleryUtilities::putRequestVariable('form[pnmtojpeg]', 'ppmtojpeg');
+	GalleryUtilities::putRequestVariable('form[jpegQuality]', '12');
 
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
@@ -131,10 +131,10 @@ class AdminNetPbmControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 
 	/* Use valid inputs */
-	GalleryUtilities::putRequestVariable('form.action.save', 1);
-	GalleryUtilities::putRequestVariable('form.path', '/invalidPath/');
-	GalleryUtilities::putRequestVariable('form.pnmtojpeg', 'ppmtojpeg');
-	GalleryUtilities::putRequestVariable('form.jpegQuality', '12');
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[path]', '/invalidPath/');
+	GalleryUtilities::putRequestVariable('form[pnmtojpeg]', 'ppmtojpeg');
+	GalleryUtilities::putRequestVariable('form[jpegQuality]', '12');
 
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
@@ -149,10 +149,10 @@ class AdminNetPbmControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 
 	/* Use valid inputs */
-	GalleryUtilities::putRequestVariable('form.action.save', 1);
-	GalleryUtilities::putRequestVariable('form.path', '');
-	GalleryUtilities::putRequestVariable('form.pnmtojpeg', 'ppmtojpeg');
-	GalleryUtilities::putRequestVariable('form.jpegQuality', '12');
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[path]', '');
+	GalleryUtilities::putRequestVariable('form[pnmtojpeg]', 'ppmtojpeg');
+	GalleryUtilities::putRequestVariable('form[jpegQuality]', '12');
 
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();

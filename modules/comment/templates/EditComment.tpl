@@ -18,7 +18,7 @@
 	{* got to put this in a body tag somewhere *}
 	{g->input type="hidden" name="commentId"}{$EditComment.comment.id}{/g->input}
 
-	{g->input type="text" name="form.commenterName"}{$form.commenterName}{/g->input}
+	{g->input type="text" name="form[commenterName]"}{$form.commenterName}{/g->input}
       {/g->element}
     {/g->box}
 
@@ -39,7 +39,7 @@
 	{g->text text="Host: "}
       {/g->title}
       {g->element}
-	{g->input type="text" name="form.host"}{$form.host}{/g->input}
+	{g->input type="text" name="form[host]"}{$form.host}{/g->input}
       {/g->element}
     {/g->box}
 
@@ -52,7 +52,7 @@
       {/g->subtitle}
 
       {g->element}
-	{g->input type="text" name="form.date"}{$form.date}{/g->input}
+	{g->input type="text" name="form[date]"}{$form.date}{/g->input}
       {/g->element}
     {/g->box}
 
@@ -77,7 +77,7 @@
       {/g->subtitle}
 
       {g->element}
-	{g->input type="text" size="60" name="form.subject"}{$form.subject}{/g->input}
+	{g->input type="text" size="60" name="form[subject]"}{$form.subject}{/g->input}
       {/g->element}
     {/g->box}
 
@@ -95,7 +95,7 @@
 	{g->text text="required"}
       {/g->subtitle}
       {g->element}
-	{g->textarea rows="15" cols="60" name="form.comment"}{$form.comment}{/g->textarea}
+	{g->textarea rows="15" cols="60" name="form[comment]"}{$form.comment}{/g->textarea}
       {/g->element}
     {/g->box}
 
@@ -108,8 +108,8 @@
 
   {g->box}
     {g->element}
-      {g->input type="submit" name="form.action.save"}{g->text text="Save"}{/g->input}
-      {g->input type="submit" name="form.action.cancel"}{g->text text="Cancel"}{/g->input}
+      {g->input type="submit" name="form[action][save]"}{g->text text="Save"}{/g->input}
+      {g->input type="submit" name="form[action][cancel]"}{g->text text="Cancel"}{/g->input}
     {/g->element}
   {/g->box}
 {/g->pagebox}

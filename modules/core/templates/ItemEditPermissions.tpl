@@ -37,8 +37,8 @@
 	{/g->title}
 
 	{g->element}
-	  {g->input type="text" name="form.owner.ownerName"}{$form.owner.ownerName}{/g->input}
-	  {g->input type="submit" name="form.action.changeOwner"}
+	  {g->input type="text" name="form[owner][ownerName]"}{$form.owner.ownerName}{/g->input}
+	  {g->input type="submit" name="form[action][changeOwner]"}
 	    {g->text text="Change"}
 	  {/g->input}
 	{/g->element}
@@ -69,7 +69,7 @@
       {/g->description}
       
       {g->element}
-	{g->input type="checkbox" name="form.applyToSubItems"}{/g->input}
+	{g->input type="checkbox" name="form[applyToSubItems]"}{/g->input}
 	{g->text text="Apply to sub-items"}
       {/g->element}
     {/g->box}
@@ -108,7 +108,7 @@
 
 	      {g->column}
 		{if ! empty($entry.deleteList)}
-		  {g->select name="form.group.delete.$index" size="1"}
+		  {g->select name="form[group][delete][$index]" size="1"}
 		    {foreach from=$entry.deleteList item=deleteEntry}
 		      <option value="{$entry.group.id},{$deleteEntry.id}">{$deleteEntry.description}</option>
 		    {/foreach}
@@ -117,7 +117,7 @@
 		  &nbsp;
 		{/if}
 		{if ! empty($entry.deleteList)}
-		  {g->input type="submit" name="form.action.deleteGroupPermission.$index"}
+		  {g->input type="submit" name="form[action][deleteGroupPermission][$index]"}
 		    {g->text text="Remove"}
 		  {/g->input}
 		{else}
@@ -137,15 +137,15 @@
     {/g->title}
     
     {g->element}
-      {g->input type="text" name="form.group.groupName"}
+      {g->input type="text" name="form[group][groupName]"}
 	{$form.group.groupName}
       {/g->input}
 	    
-      {g->select name="form.group.permission" size="1"}
+      {g->select name="form[group][permission]" size="1"}
 	{html_options options=$ItemEditPermissions.allPermissions selected=$form.group.permission}
       {/g->select}
 
-      {g->input type="submit" name="form.action.addGroupPermission"}
+      {g->input type="submit" name="form[action][addGroupPermission]"}
 	{g->text text="Add Permission"}
       {/g->input}
     {/g->element}
@@ -209,7 +209,7 @@
 
 	      {g->column}
 		{if ! empty($entry.deleteList) }
-		  {g->select name="form.user.delete.$index" size="1"}
+		  {g->select name="form[user][delete][$index]" size="1"}
 		    {foreach from=$entry.deleteList item=deleteEntry}
 		      <option value="{$entry.user.id},{$deleteEntry.id}">{$deleteEntry.description}</option>
 		    {/foreach}
@@ -218,7 +218,7 @@
 		  &nbsp;
 		{/if}
 		{if ! empty($entry.deleteList) }
-		  {g->input type="submit" name="form.action.deleteUserPermission.$index"}
+		  {g->input type="submit" name="form[action][deleteUserPermission][$index]"}
 		    {g->text text="Remove"}
 		  {/g->input}
 		{else}
@@ -238,15 +238,15 @@
     {/g->title}
 
     {g->element}
-      {g->input type="text" name="form.user.userName"}
+      {g->input type="text" name="form[user][userName]"}
 	{$form.user.userName}
       {/g->input}
 
-      {g->select name="form.user.permission" size="1"}
+      {g->select name="form[user][permission]" size="1"}
 	{html_options options=$ItemEditPermissions.allPermissions selected=$form.user.permission}
       {/g->select}
       
-      {g->input type="submit" name="form.action.addUserPermission"}
+      {g->input type="submit" name="form[action][addUserPermission]"}
 	{g->text text="Add Permission"}
       {/g->input}
     {/g->element}

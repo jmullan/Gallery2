@@ -78,8 +78,15 @@ class ItemAddChildrenController extends GalleryController {
 	    
 	    /* Upload any new files */
 	    for ($i = 1; $i <= $form['uploadBoxCount']; $i++) {
-		$file = $form['fileUpload'][$i];
-		if (!empty($file['tmp_name']) && !empty($file['size'])) {
+		$newItem = null;
+		
+		if (!empty($form['tmp_name'][$i]) && !empty($form['size'][$i])) {
+		    $file = array('name' => $form['name'][$i],
+				  'type' => $form['type'][$i],
+				  'tmp_name' => $form['tmp_name'][$i],
+				  'error' => $form['error'][$i],
+				  'size' => $form['size'][$i],
+				  'caption' => $form['caption'][$i]);
 		    
 		    /* Get the mime type from the upload info. */
 		    $mimeType = $file['type'];
@@ -110,7 +117,7 @@ class ItemAddChildrenController extends GalleryController {
 							'id' => $newItem->getId());
 		}
 
-		if ($albumNeedsThumbnail) {
+		if (isset($newItem) && $albumNeedsThumbnail) {
 		    list ($ret, $success) =
 			GalleryItemHelper::setThumbnailFromItem($item->getId(), $newItem->getId());
 		    if ($ret->isError()) {
@@ -130,9 +137,9 @@ class ItemAddChildrenController extends GalleryController {
 	} else if (isset($form['action']['addFromLocalServer'])) {
 	    /* Delegate back to the same view */
 	    $dir = $form['localServerPath'];
-	    
+
 	    foreach ($form['localServerFiles'] as $fileKey => $unused) {
-		$filename = base64_decode($fileKey);
+		$filename = $fileKey;
 		$filepath = $dir . '/' . $filename;
 
 		list ($base, $extension) = GalleryUtilities::getFileNameComponents($filename);
@@ -181,7 +188,6 @@ class ItemAddChildrenController extends GalleryController {
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;
-	
 
 	return array(GalleryStatus::success(), $results);
     }
@@ -298,7 +304,7 @@ class ItemAddChildrenView extends GalleryView {
 				      'fileName' => $fileName,
 				      'stat' => $platform->stat($filePath),
 				      'itemType' => $mimeTypeItemMap[$mimeType]->itemTypeName(),
-				      'fileKey' => base64_encode($fileName));
+				      'fileKey' => $fileName);
 			}
 		    }
 		    $platform->closedir($handle);

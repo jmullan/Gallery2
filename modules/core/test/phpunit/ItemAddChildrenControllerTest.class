@@ -63,7 +63,7 @@ class ItemAddChildrenControllerTest extends GalleryControllerTestCase {
 
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_rootAlbum->getId());
-	GalleryUtilities::putRequestVariable('form.action.addFromBrowser', 1);
+	GalleryUtilities::putRequestVariable('form[action][addFromBrowser]', 1);
 
 	$platform = $gallery->getPlatform();
 	$baseDir = dirname(__FILE__) . '/../data/';
@@ -77,16 +77,15 @@ class ItemAddChildrenControllerTest extends GalleryControllerTestCase {
 		$fullPath = addslashes($fullPath);
 	    }
 	    
-	    GalleryUtilities::putRequestVariable('form.fileUpload.' . $i,
-		array('name' => $file,
-		      'type' => GalleryUtilities::getMimeType($fullPath),
-		      'tmp_name' => $fullPath,
-		      'size' => $platform->filesize($fullPath)));
-	    GalleryUtilities::putRequestVariable('form.fileUpload.' . $i . '.name', $file);
-	    GalleryUtilities::putRequestVariable('form.fileUpload.' . $i . '.caption',
-						 'this is a caption for ' . $file);
+	    GalleryUtilities::putRequestVariable('form[name][' . $i . ']', $file);
+	    GalleryUtilities::putRequestVariable('form[type][' . $i . ']',
+						 GalleryUtilities::getMimeType($fullPath));
+	    GalleryUtilities::putRequestVariable('form[tmp_name][' . $i . ']', $fullPath);
+	    GalleryUtilities::putRequestVariable('form[size][' . $i . ']', $platform->filesize($fullPath));
+	    GalleryUtilities::putRequestVariable('form[error][' . $i . ']', 0);
+	    GalleryUtilities::putRequestVariable('form[caption][' . $i . ']', 'this is a caption for ' . $file);
 	}
-	GalleryUtilities::putRequestVariable('form.uploadBoxCount', $i);
+	GalleryUtilities::putRequestVariable('form[uploadBoxCount]', $i);
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
@@ -131,15 +130,15 @@ class ItemAddChildrenControllerTest extends GalleryControllerTestCase {
 
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_rootAlbum->getId());
-	GalleryUtilities::putRequestVariable('form.action.addFromLocalServer', 1);
+	GalleryUtilities::putRequestVariable('form[action][addFromLocalServer]', 1);
 
 	$platform = $gallery->getPlatform();
 	$baseDir = dirname(__FILE__) . '/../data/';
 	$fileKeys = array();
-	GalleryUtilities::putRequestVariable('form.localServerPath', $baseDir);
+	GalleryUtilities::putRequestVariable('form[localServerPath]', $baseDir);
 	$files = array('test1.gif', 'test1.jpg', 'test2.gif', 'test3.gif');
 	foreach ($files as $fileName) {
-	    GalleryUtilities::putRequestVariable('form.localServerFiles.' . base64_encode($fileName), 1);
+	    GalleryUtilities::putRequestVariable('form[localServerFiles][' . $fileName . ']', 1);
 	}
 
 	/* Perform the request and verify that we succeeded */

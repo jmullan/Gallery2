@@ -64,9 +64,9 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
-	GalleryUtilities::putRequestVariable('form.action.add', 1);
-	GalleryUtilities::putRequestVariable('form.subject', 'this is a subject');
-	GalleryUtilities::putRequestVariable('form.comment', 'this is a comment');
+	GalleryUtilities::putRequestVariable('form[action][add]', 1);
+	GalleryUtilities::putRequestVariable('form[subject]', 'this is a subject');
+	GalleryUtilities::putRequestVariable('form[comment]', 'this is a comment');
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
@@ -101,9 +101,9 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
-	GalleryUtilities::putRequestVariable('form.action.preview', 1);
-	GalleryUtilities::putRequestVariable('form.comment', 'this is a comment');
-	GalleryUtilities::putRequestVariable('form.subject', 'this is a subject');
+	GalleryUtilities::putRequestVariable('form[action][preview]', 1);
+	GalleryUtilities::putRequestVariable('form[comment]', 'this is a comment');
+	GalleryUtilities::putRequestVariable('form[subject]', 'this is a subject');
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
@@ -119,9 +119,9 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
-	GalleryUtilities::putRequestVariable('form.action.add', 1);
-	GalleryUtilities::putRequestVariable('form.comment', '');
-	GalleryUtilities::putRequestVariable('form.subject', '');
+	GalleryUtilities::putRequestVariable('form[action][add]', 1);
+	GalleryUtilities::putRequestVariable('form[comment]', '');
+	GalleryUtilities::putRequestVariable('form[subject]', '');
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
@@ -145,9 +145,9 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
-	GalleryUtilities::putRequestVariable('form.action.add', 1);
-	GalleryUtilities::putRequestVariable('form.comment', '');
-	GalleryUtilities::putRequestVariable('form.subject', '');
+	GalleryUtilities::putRequestVariable('form[action][add]', 1);
+	GalleryUtilities::putRequestVariable('form[comment]', '');
+	GalleryUtilities::putRequestVariable('form[subject]', '');
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
@@ -172,10 +172,10 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
-	GalleryUtilities::putRequestVariable('form.action.add', 1);
-	GalleryUtilities::putRequestVariable('form.subject', 'this is a subject with <javascript>' .
+	GalleryUtilities::putRequestVariable('form[action][add]', 1);
+	GalleryUtilities::putRequestVariable('form[subject]', 'this is a subject with <javascript>' .
 					     'evilness</javascript> in it.');
-	GalleryUtilities::putRequestVariable('form.comment', 'this is a comment with <javascript>' .
+	GalleryUtilities::putRequestVariable('form[comment]', 'this is a comment with <javascript>' .
 					     'evilness</javascript> in it.');
 
 	/* Perform the request and verify that we succeeded */
@@ -195,7 +195,10 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 	}
 
 	$this->assertEquals(1, sizeof($comments));
-	$this->assert(GalleryUtilities::isA($comments[0], 'GalleryComment'));
+	if (!GalleryUtilities::isA($comments[0], 'GalleryComment')) {
+	    return $this->fail('result is not a GalleryComment!');
+	}
+
 	$this->assertEquals('this is a comment with &lt;javascript&gt;evilness&lt;/javascript&gt; in it.',
 			    $comments[0]->getComment());
 	$this->assertEquals('this is a subject with &lt;javascript&gt;evilness&lt;/javascript&gt; in it.',
@@ -208,8 +211,8 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
     function testCancelComment() {
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
-	GalleryUtilities::putRequestVariable('form.action.cancel', 1);
-	GalleryUtilities::putRequestVariable('form.comment', 'this is a comment');
+	GalleryUtilities::putRequestVariable('form[action][cancel]', 1);
+	GalleryUtilities::putRequestVariable('form[comment]', 'this is a comment');
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();

@@ -72,7 +72,7 @@ class AdminLayoutsControllerTest extends GalleryControllerTestCase {
 
     function testActivate() {
 	GalleryUtilities::putRequestVariable('layoutId', 'testLayoutId1');
-	GalleryUtilities::putRequestVariable('form.action.activate', 1);
+	GalleryUtilities::putRequestVariable('form[action][activate]', 1);
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
@@ -99,7 +99,7 @@ class AdminLayoutsControllerTest extends GalleryControllerTestCase {
 	}
 
 	GalleryUtilities::putRequestVariable('layoutId', 'testLayoutId1');
-	GalleryUtilities::putRequestVariable('form.action.deactivate', 1);
+	GalleryUtilities::putRequestVariable('form[action][deactivate]', 1);
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
@@ -120,9 +120,9 @@ class AdminLayoutsControllerTest extends GalleryControllerTestCase {
 
     function testSaveLayout() {
 	GalleryUtilities::putRequestVariable('layoutId', 'testLayoutId2');
-	GalleryUtilities::putRequestVariable('form.key.rows', '2');
-	GalleryUtilities::putRequestVariable('form.key.columns', '4');
-	GalleryUtilities::putRequestVariable('form.action.saveLayout', 1);
+	GalleryUtilities::putRequestVariable('form[key][rows]', '2');
+	GalleryUtilities::putRequestVariable('form[key][columns]', '4');
+	GalleryUtilities::putRequestVariable('form[action][saveLayout]', 1);
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
@@ -137,9 +137,9 @@ class AdminLayoutsControllerTest extends GalleryControllerTestCase {
 
     function testUndoLayout() {
 	GalleryUtilities::putRequestVariable('layoutId', 'testLayoutId2');
-	GalleryUtilities::putRequestVariable('form.key.rows', '2');
-	GalleryUtilities::putRequestVariable('form.key.columns', '4');
-	GalleryUtilities::putRequestVariable('form.action.undoLayout', 1);
+	GalleryUtilities::putRequestVariable('form[key][rows]', '2');
+	GalleryUtilities::putRequestVariable('form[key][columns]', '4');
+	GalleryUtilities::putRequestVariable('form[action][undoLayout]', 1);
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
@@ -154,9 +154,9 @@ class AdminLayoutsControllerTest extends GalleryControllerTestCase {
 
     function testSaveLayoutWithValidationErrors() {
 	GalleryUtilities::putRequestVariable('layoutId', 'testLayoutId1');
-	GalleryUtilities::putRequestVariable('form.key.rows', '2');
-	GalleryUtilities::putRequestVariable('form.key.columns', '4');
-	GalleryUtilities::putRequestVariable('form.action.saveLayout', 1);
+	GalleryUtilities::putRequestVariable('form[key][rows]', '2');
+	GalleryUtilities::putRequestVariable('form[key][columns]', '4');
+	GalleryUtilities::putRequestVariable('form[action][saveLayout]', 1);
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();

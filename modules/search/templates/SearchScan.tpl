@@ -1,5 +1,5 @@
 {g->form action_controller=$SearchScan.controller}
-  {g->input type="hidden" name="form.formName"}SearchScan{/g->input}
+  {g->input type="hidden" name="form[formName]"}SearchScan{/g->input}
 
   {g->main}
     {g->breadcrumb}
@@ -23,7 +23,7 @@
 	{/g->title}
 
 	{g->element}
-	  {g->input type="text" size="50" name="form.searchCriteria"}{$form.searchCriteria}{/g->input}
+	  {g->input type="text" size="50" name="form[searchCriteria]"}{$form.searchCriteria}{/g->input}
 	{/g->element}
 
 	{if isset($form.error.searchCriteria.missing)}
@@ -33,7 +33,7 @@
 	{/if}
 
 	{g->element}
-	  {g->input type="submit" name="form.action.search"}
+	  {g->input type="submit" name="form[action][search]"}
 	    {g->text text="Search"}
 	  {/g->input}
 	{/g->element}
@@ -80,7 +80,7 @@
 		{/if}
 		{if ($results.count > $results.end)}
 		  {assign var="moduleId" value=$moduleId}
-		  {g->input type="submit" name="form.action.showAll.$moduleId"}
+		  {g->input type="submit" name="form[action][showAll][$moduleId]"}
 		    {g->text text="Show all %d" arg1=$results.count}
 		  {/g->input}
 		{/if}

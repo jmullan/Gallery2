@@ -89,7 +89,7 @@ class ItemEditLayoutControllerTest extends GalleryControllerTestCase {
 
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
-	GalleryUtilities::putRequestVariable('form.action.undo', 1);
+	GalleryUtilities::putRequestVariable('form[action][undo]', 1);
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
@@ -103,9 +103,9 @@ class ItemEditLayoutControllerTest extends GalleryControllerTestCase {
 
     function testSave() {
 	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
-	GalleryUtilities::putRequestVariable('form.key.rows', 3);
-	GalleryUtilities::putRequestVariable('form.key.columns', 4);
-	GalleryUtilities::putRequestVariable('form.action.save', 1);
+	GalleryUtilities::putRequestVariable('form[key][rows]', 3);
+	GalleryUtilities::putRequestVariable('form[key][columns]', 4);
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
@@ -124,9 +124,9 @@ class ItemEditLayoutControllerTest extends GalleryControllerTestCase {
 
     function testInvalidSave() {
 	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
-	GalleryUtilities::putRequestVariable('form.key.rows', '3x');
-	GalleryUtilities::putRequestVariable('form.key.columns', 4);
-	GalleryUtilities::putRequestVariable('form.action.save', 1);
+	GalleryUtilities::putRequestVariable('form[key][rows]', '3x');
+	GalleryUtilities::putRequestVariable('form[key][columns]', 4);
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
@@ -145,10 +145,10 @@ class ItemEditLayoutControllerTest extends GalleryControllerTestCase {
 
     function testSaveWithGlobal() {
 	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
-	GalleryUtilities::putRequestVariable('form.key.rows', 3);
-	GalleryUtilities::putRequestVariable('form.key.columns', 4);
-	GalleryUtilities::putRequestVariable('form.useGlobal.columns', 'on');
-	GalleryUtilities::putRequestVariable('form.action.save', 1);
+	GalleryUtilities::putRequestVariable('form[key][rows]', 3);
+	GalleryUtilities::putRequestVariable('form[key][columns]', 4);
+	GalleryUtilities::putRequestVariable('form[useGlobal][columns]', 'on');
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();

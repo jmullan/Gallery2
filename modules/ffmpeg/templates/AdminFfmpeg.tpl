@@ -25,7 +25,7 @@
 	{/g->column}
 	
 	{g->column}
-	  {g->input type="text" size="40" name="form.path"}{$form.path}{/g->input}
+	  {g->input type="text" size="40" name="form[path]"}{$form.path}{/g->input}
 	{/g->column}
       {/g->row}
       
@@ -74,9 +74,9 @@
 
   {g->box style="admin"}
     {g->element}
-      {g->input type="submit" name="form.action.save"}{g->text text="Save Settings"}{/g->input}
-      {g->input type="submit" name="form.action.test"}{g->text text="Test Settings"}{/g->input}
-      {g->input type="submit" name="form.action.cancel"}{g->text text="Cancel"}{/g->input}
+      {g->input type="submit" name="form[action][save]"}{g->text text="Save Settings"}{/g->input}
+      {g->input type="submit" name="form[action][test]"}{g->text text="Test Settings"}{/g->input}
+      {g->input type="submit" name="form[action][cancel]"}{g->text text="Cancel"}{/g->input}
     {/g->element}
   {/g->box}
 
