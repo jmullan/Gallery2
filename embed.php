@@ -536,7 +536,7 @@ class GalleryEmbed {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	foreach ($ids as $id => $className) {
 	    list ($ret, $searchInstances[$id]) =
 		GalleryCoreApi::newFactoryInstance('GallerySearchInterface_1_0', $className);
@@ -694,8 +694,9 @@ class GalleryEmbed {
      *                (optional)'itemId' => int)
      * 'blocks' is a pipe (|) separated list, of one or more possible blocks which are:
      * randomImage|recentImage|viewedImage|randomAlbum|recentAlbum|viewedAlbum|specificItem
+     * dailyImage|weeklyImage|monthlyImage|dailyAlbum|weeklyAlbum|monthlyAlbum
      * 'show' is a pipe (|) separated list of one or more possible choices which are:
-     * title|date|views|owner or just 'none'
+     * title|date|views|owner|heading|fullSize or just 'none'
      * If you choose 'blocks' = 'specificItem', you got the specify 'itemId' too.
      * example: GalleryEmbed::getImageBlock(array('blocks' => 'randomImage',
      *                                            'show' => 'title|date'));
@@ -715,18 +716,13 @@ class GalleryEmbed {
 	}
 
 	if (isset($moduleStatus[$moduleId]) && !empty($moduleStatus[$moduleId]['active'])) {
-	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
 	    /* Load the G2 templating engine */
-	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/modules/core/classes/GalleryTemplate.class');
+	    GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryTemplate.class');
 	    $template = new GalleryTemplate(dirname(__FILE__));
 	    $template->setVariable('l10Domain', 'module_' . $moduleId);
 
 	    // generate the imageblock
-	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/modules/imageblock/classes/ImageBlockHelper.class');
+	    GalleryCoreApi::relativeRequireOnce('modules/imageblock/classes/ImageBlockHelper.class');
 	    list ($ret, $tpl) = ImageBlockHelper::loadImageBlocks($template, $params);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
