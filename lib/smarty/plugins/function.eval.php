@@ -17,29 +17,29 @@
  * @param array
  * @param Smarty
  */
-function smarty_function_eval($params, &$this)
+function smarty_function_eval($params, &$smarty)
 {
-    extract($params);
 
-    if (!isset($var)) {
-        $this->trigger_error("eval: missing 'var' parameter");
+    if (!isset($params['var'])) {
+        $smarty->trigger_error("eval: missing 'var' parameter");
         return;
     }
-	if($var == '') {
+
+	if($params['var'] == '') {
 		return;
 	}
 
-	$this->_compile_template("evaluated template", $var, $source);
-	
+	$smarty->_compile_source('evaluated template', $params['var'], $_var_compiled);
+
     ob_start();
-	eval('?>' . $source);
-	$contents = ob_get_contents();
+	$smarty->smarty_eval('?>' . $_var_compiled);
+	$_contents = ob_get_contents();
     ob_end_clean();
 
     if (!empty($assign)) {
-    	$this->assign($assign, $contents);
+    	$smarty->assign($assign, $_contents);
     } else {
-		return $contents;
+		return $_contents;
     }
 }
 

@@ -13,7 +13,7 @@
 
 // $dir
  
-function smarty_core_create_dir_structure($params, &$this)
+function smarty_core_create_dir_structure($params, &$smarty)
 {
     if (!file_exists($params['dir'])) {
         $_open_basedir_ini = ini_get('open_basedir');
@@ -38,12 +38,12 @@ function smarty_core_create_dir_structure($params, &$this)
                 if (isset($_root_dir[3])) array_shift($_dir_parts);
 
             } else {
-                $_new_dir = str_replace('\\','/', getcwd()).'/';
+                $_new_dir = str_replace('\\', '/', getcwd()).'/';
 
             }
             
             if($_use_open_basedir = !empty($_open_basedir_ini)) {
-                $_open_basedirs = explode(';', str_replace('\\','/', $_open_basedir_ini));
+                $_open_basedirs = explode(';', str_replace('\\', '/', $_open_basedir_ini));
             }
 
         }
@@ -56,7 +56,7 @@ function smarty_core_create_dir_structure($params, &$this)
                 // do not attempt to test or make directories outside of open_basedir
                 $_make_new_dir = false;
                 foreach ($_open_basedirs as $_open_basedir) {
-                    if (substr($_new_dir.'/', 0, strlen($_open_basedir)) == $_open_basedir) {
+                    if (substr($_new_dir . '/', 0, strlen($_open_basedir)) == $_open_basedir) {
                         $_make_new_dir = true;
                         break;
                     }
@@ -65,8 +65,8 @@ function smarty_core_create_dir_structure($params, &$this)
                 $_make_new_dir = true;                    
             }
 
-            if ($_make_new_dir && !file_exists($_new_dir) && !@mkdir($_new_dir, $this->_dir_perms)) {
-                $this->trigger_error("problem creating directory '" . $_new_dir . "'");
+            if ($_make_new_dir && !file_exists($_new_dir) && !@mkdir($_new_dir, $smarty->_dir_perms)) {
+                $smarty->trigger_error("problem creating directory '" . $_new_dir . "'");
                 return false;
             }
             $_new_dir .= '/';

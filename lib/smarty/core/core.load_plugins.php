@@ -13,12 +13,12 @@
 
 // $plugins 
  
-function smarty_core_load_plugins($params, &$this)
+function smarty_core_load_plugins($params, &$smarty)
 {
 
     foreach ($params['plugins'] as $_plugin_info) {
         list($_type, $_name, $_tpl_file, $_tpl_line, $_delayed_loading) = $_plugin_info;
-        $_plugin = &$this->_plugins[$_type][$_name];
+        $_plugin = &$smarty->_plugins[$_type][$_name];
 
         /*
          * We do not load plugin more than once for each instance of Smarty.
@@ -32,12 +32,13 @@ function smarty_core_load_plugins($params, &$this)
          */
         if (isset($_plugin)) {
             if (empty($_plugin[3])) {
-                if (!$this->_plugin_implementation_exists($_plugin[0])) {
-                    $this->_trigger_fatal_error("[plugin] $_type '$_name' is not implemented", $_tpl_file, $_tpl_line, __FILE__, __LINE__);
+                if (!$smarty->_plugin_implementation_exists($_plugin[0])) {
+                    $smarty->_trigger_fatal_error("[plugin] $_type '$_name' is not implemented", $_tpl_file, $_tpl_line, __FILE__, __LINE__);
                 } else {
                     $_plugin[1] = $_tpl_file;
                     $_plugin[2] = $_tpl_line;
                     $_plugin[3] = true;
+                    $_plugin[4] = true; /* cacheable */
                 }
             }
             continue;
@@ -48,12 +49,12 @@ function smarty_core_load_plugins($params, &$this)
              */
             $_plugin_func = 'insert_' . $_name;
             if (function_exists($_plugin_func)) {
-                $_plugin = array($_plugin_func, $_tpl_file, $_tpl_line, true);
+                $_plugin = array($_plugin_func, $_tpl_file, $_tpl_line, true, false);
                 continue;
             }
         }
 
-        $_plugin_file = $this->_get_plugin_filepath($_type, $_name);
+        $_plugin_file = $smarty->_get_plugin_filepath($_type, $_name);
 
         if (! $_found = ($_plugin_file != false)) {
             $_message = "could not load plugin file '$_type.$_name.php'\n";
@@ -68,8 +69,8 @@ function smarty_core_load_plugins($params, &$this)
             include_once $_plugin_file;
 
             $_plugin_func = 'smarty_' . $_type . '_' . $_name;
-            if (!$this->_plugin_implementation_exists($_plugin_func)) {
-                $this->_trigger_fatal_error("[plugin] function $_plugin_func() not found in $_plugin_file", $_tpl_file, $_tpl_line, __FILE__, __LINE__);
+            if (!$smarty->_plugin_implementation_exists($_plugin_func)) {
+                $smarty->_trigger_fatal_error("[plugin] function $_plugin_func() not found in $_plugin_file", $_tpl_file, $_tpl_line, __FILE__, __LINE__);
                 continue;
             }
         }
@@ -92,7 +93,7 @@ function smarty_core_load_plugins($params, &$this)
                  * directly, we only allow those specified in the security
                  * context.
                  */
-                if ($this->security && !in_array($_name, $this->security_settings['MODIFIER_FUNCS'])) {
+                if ($smarty->security && !in_array($_name, $smarty->security_settings['MODIFIER_FUNCS'])) {
                     $_message = "(secure mode) modifier '$_name' is not allowed";
                 } else {
                     if (!function_exists($_name)) {
@@ -111,10 +112,10 @@ function smarty_core_load_plugins($params, &$this)
         }
 
         if ($_found) {
-            $this->_plugins[$_type][$_name] = array($_plugin_func, $_tpl_file, $_tpl_line, true);
+            $smarty->_plugins[$_type][$_name] = array($_plugin_func, $_tpl_file, $_tpl_line, true, true);
         } else {
             // output error
-            $this->_trigger_fatal_error('[plugin] ' . $_message, $_tpl_file, $_tpl_line, __FILE__, __LINE__);
+            $smarty->_trigger_fatal_error('[plugin] ' . $_message, $_tpl_file, $_tpl_line, __FILE__, __LINE__);
         }
     }
 }

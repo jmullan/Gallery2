@@ -21,7 +21,7 @@
  *         - basedir = base directory for absolute paths, default
  *                     is environment variable DOCUMENT_ROOT
  *
- * Examples: {image file="images/masthead.gif"}
+ * Examples: {html_image file="images/masthead.gif"}
  * Output:   <img src="images/masthead.gif" border=0 width=400 height=23>
  * @link http://smarty.php.net/manual/en/language.function.html.image.php {html_image}
  *      (Smarty online manual)
@@ -47,7 +47,7 @@ function smarty_function_html_image($params, &$smarty)
     $prefix = '';
     $suffix = '';
     $basedir = isset($GLOBALS['HTTP_SERVER_VARS']['DOCUMENT_ROOT'])
-        ? $GLOBALS['HTTP_SERVER_VARS']['DOCUMENT_ROOT'] : '/';
+        ? $GLOBALS['HTTP_SERVER_VARS']['DOCUMENT_ROOT'] : '';
     if(strstr($GLOBALS['HTTP_SERVER_VARS']['HTTP_USER_AGENT'], 'Mac')) {
         $dpi_default = 72;
     } else {
@@ -61,6 +61,7 @@ function smarty_function_html_image($params, &$smarty)
             case 'height':
             case 'width':
             case 'dpi':
+            case 'basedir':
                 $$_key = $_val;
                 break;
 
@@ -93,7 +94,7 @@ function smarty_function_html_image($params, &$smarty)
         return;
     }
 
-    if(substr($file,0,1) == DIRECTORY_SEPARATOR) {
+    if (substr($file,0,1) == '/') {
         $_image_path = $basedir . $file;
     } else {
         $_image_path = $file;
@@ -112,8 +113,9 @@ function smarty_function_html_image($params, &$smarty)
                 return;
             }
         }
-		$_params = array('resource_type' => 'file', 'resource_name' => $_image_path);
-        if(!$smarty->security && !$this->_execute_core_function('is_secure', $_params)) {
+        $_params = array('resource_type' => 'file', 'resource_name' => $_image_path);
+        require_once(SMARTY_DIR . 'core' . DIRECTORY_SEPARATOR . 'core.is_secure.php');
+        if(!$smarty->security && !smarty_core_is_secure($_params, $smarty)) {
             $smarty->trigger_error("html_image: (secure) '$_image_path' not in secure directory", E_USER_NOTICE);
             return;
         }

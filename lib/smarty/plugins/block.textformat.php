@@ -27,7 +27,7 @@
  * @param Smarty clever simulation of a method
  * @return string string $content re-formatted
  */
-function smarty_block_textformat($params, $content, &$this)
+function smarty_block_textformat($params, $content, &$smarty)
 {
 	$style = null;
 	$indent = 0;
@@ -50,7 +50,8 @@ function smarty_block_textformat($params, $content, &$this)
 	
 	// split into paragraphs	
 	$paragraphs = preg_split('![\r\n][\r\n]!',$content);
-	
+	$output = '';
+
 	foreach($paragraphs as $paragraph) {
 		if($paragraph == '') {
 			continue;
@@ -71,7 +72,7 @@ function smarty_block_textformat($params, $content, &$this)
 	}
 				
 	if($assign != null) {
-		$this->assign($assign,$output);
+		$smarty->assign($assign,$output);
 	} else {
 		return $output;
 	}
