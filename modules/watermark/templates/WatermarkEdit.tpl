@@ -151,10 +151,17 @@
    name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
 </div>
 
-<script type="text/javascript">
+<script type="text/javascript">{literal}
 // <![CDATA[
 SET_DHTML("background"+NO_DRAG, "floater");
-moveToOriginalLocation();
-verifyBounds();
+function watermarkInit() {
+  moveToOriginalLocation();
+  verifyBounds();
+}
+if (window.attachEvent) { /* IE */
+  window.attachEvent("onload", watermarkInit);
+} else {
+  watermarkInit();
+}
 // ]]>
-</script>
+{/literal}</script>
