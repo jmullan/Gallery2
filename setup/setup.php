@@ -215,7 +215,7 @@ function CheckDirectories() {
 
     $testfile = $dataBase . '/setup' . rand(1, 10000);
     if ($fd = $platform->fopen($testfile, 'w')) {
-	fclose($fd);
+	$platform->fclose($fd);
 	$platform->unlink($testfile);
     } else {
 	return array('cant-write-into', 'data.gallery.base', $dataBase);

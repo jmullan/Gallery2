@@ -1467,8 +1467,8 @@ class DatabaseStorage extends GalleryStorage {
 	
 	if ($fd = $platform->fopen($fileName, 'r')) {
 	    $buffer = null;
-	    while (!feof($fd)) {
-		$buffer .= fgets($fd, 4096);
+	    while (!$platform->feof($fd)) {
+		$buffer .= $platform->fgets($fd, 4096);
 	    }
 		
 	    foreach (split(';', $buffer) as $query) {

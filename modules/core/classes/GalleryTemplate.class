@@ -192,7 +192,7 @@ class GalleryTemplate {
 					    "Unable to mkdir($dir)");
 	    }
 	    if ($fd = $platform->fopen($templateVersionFile, 'w')) {
-		fclose($fd);
+		$platform->fclose($fd);
 	    } else {
 	        return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
 					    sprintf('Unable to write to %s', $templateVersionFile));
