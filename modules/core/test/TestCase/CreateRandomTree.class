@@ -41,6 +41,8 @@ class CreateRandomTreeTestCase extends TestCase {
     var $_percentItemHasValue = 0;
 
     var $_numCommentsChoices = array(1, 2, 3);
+
+    var $_commitEvery = 1000;
     // End configurable values.
 
 
@@ -242,6 +244,9 @@ class CreateRandomTreeTestCase extends TestCase {
 			$this->_randomWords(rand(50, 100)), // description
 			GalleryCoreApi::getMimeType($imageFile),
 			$album->getId());
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
 
 	    /* custom fields */
 	    $values = array();
@@ -279,6 +284,18 @@ class CreateRandomTreeTestCase extends TestCase {
 		$comment->setComment($this->_randomWords(rand(10,100)));
 		$comment->setDate(time());
 		$ret = $comment->save();
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+
+	    if ($this->_itemCount % $this->_commitEvery == 0) {
+		$storage =& $gallery->getStorage();
+		$ret = $storage->commitTransaction();
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+		$ret = $storage->beginTransaction();
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
