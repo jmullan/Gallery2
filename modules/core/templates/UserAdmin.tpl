@@ -21,43 +21,47 @@
     {/if}
   </ul>
 
-  <div id="gsAdminSidebar">
-    <div class="gbMenu">
-      <h2 class="giTitle">
-        {g->text text="User Options"}
-      </h2>
-
-      <ul>
-        {foreach from=$UserAdmin.subViewChoices item=choice}
-        {if ($UserAdmin.subViewName == $choice.view)}
-        <li class="giSelected">
-          {$choice.name}
-        </li>
-        {else}
-        <li>
-          <a href="{g->url arg1="view=core:UserAdmin" arg2="subView=`$choice.view`"}">
+  <div id="gsContents">
+    <div id="gsAdminSidebar">
+      <div class="gbMenu">
+        <h2 class="giTitle">
+          {g->text text="User Options"}
+        </h2>
+  
+        <ul>
+          {foreach from=$UserAdmin.subViewChoices item=choice}
+          {if ($UserAdmin.subViewName == $choice.view)}
+          <li class="giSelected">
             {$choice.name}
-          </a>
-        </li> 
-        {/if}
-        {/foreach}
-      </ul>
+          </li>
+          {else}
+          <li>
+            <a href="{g->url arg1="view=core:UserAdmin" arg2="subView=`$choice.view`"}">
+              {$choice.name}
+            </a>
+          </li> 
+          {/if}
+          {/foreach}
+        </ul>
+      </div>
+      
+      <div class="gbMenu">
+        <h2 class="giTitle">
+          {g->text text="Navigation"}
+        </h2>
+  
+        <ul>
+          <li>
+            <a href="{g->url}">
+              {g->text text="Browse Gallery"}
+            </a>
+          </li>
+        </ul>
+      </div>
     </div>
-    
-    <div class="gbMenu">
-      <h2 class="giTitle">
-        {g->text text="Navigation"}
-      </h2>
-
-      <ul>
-        <li>
-          <a href="{g->url}">
-            {g->text text="Browse Gallery"}
-          </a>
-        </li>
-      </ul>
-    </div>
-  </div>
 
   {include file="gallery:`$UserAdmin.viewBodyFile`" l10Domain=$UserAdmin.viewL10Domain}
+
+  </div>
+
 </form>
