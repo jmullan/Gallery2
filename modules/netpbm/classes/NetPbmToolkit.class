@@ -106,7 +106,8 @@ class NetPbmToolkit extends GalleryToolkit {
 		break;
 
 	    default:
-		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
+		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+						  "Bad rotation argument: $parameters[0]"),
 			     null);
 	    }
 	    
@@ -120,8 +121,8 @@ class NetPbmToolkit extends GalleryToolkit {
 	    break;
 	    
 	default:
-	    return array(GalleryStatus::error(ERROR_UNIMPLEMENTED,
-					      __FILE__, __LINE__),
+	    return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__,
+					      "Unknown operation: $operationName"),
 			 null);
 	}
 
