@@ -386,13 +386,15 @@ class GalleryStatus {
 	list ($codes, $trace) = $this->_getAsArray();
 
 	/*
-	 * It's possible that we're having this problem at a very low level so we may not want to try to use
-	 * the factory if things have gone catastrophically wrong.  Use the $storage object as our acid test.
-	 * If we have one then we're ok to continue
+	 * It's possible that we're having this problem at a very low level so
+	 * we may not want to try to use the factory if things have gone
+	 * catastrophically wrong.  Use the $storage and $translator objects as
+	 * our acid test.  If we have one them we're ok to continue
 	 */
-	global $gallery;
+	global $gallery;	
 	$storage =& $gallery->getStorage();
-	if (isset($storage)) {
+	$translator = $gallery->getTranslator();
+	if (isset($storage) && isset($translator)) {
 	    list ($ret, $formatter) =
 		GalleryCoreApi::newFactoryInstanceByHint('GalleryStatusFormatter', 'text/html');
 	    if ($ret->isError() || !isset($formatter)) {
