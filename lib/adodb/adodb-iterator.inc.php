@@ -16,7 +16,7 @@
 		}
  */
  
-class ADODB_Iterator implements Iterator {
+abstract class ADODB_Iterator implements Iterator {
 
     private $rs;
 
@@ -28,7 +28,7 @@ class ADODB_Iterator implements Iterator {
 	{
         $this->rs->MoveFirst();
     }
-    function hasMore() 
+    function valid() 
 	{
         return !$this->rs->EOF;
     }
