@@ -38,9 +38,11 @@ function slide_view_start() {
 }
 function goto_next_photo() {
   index = (index+1)%count;
+  if (bCanBlend) apply_filter();
   document.images.slide.src = document.getElementById('item_'+index).href;
   linkStop.href = document.getElementById('href_'+index).href;
   if (bShowText) show_text();
+  if (bCanBlend) document.images.slide.filters[0].Play();
 }
 function show_text() {
   spanTitle.innerHTML = document.getElementById('title_'+index).innerHTML;
@@ -75,6 +77,12 @@ function back_one() {
     }
   }
 }
+function apply_filter() {
+  f = filters[document.getElementById('filter').selectedIndex];
+  while (f == 'RANDOM') f = filters[Math.floor(Math.random()*filters.length)];
+  document.images.slide.style.filter = f;
+  document.images.slide.filters[0].Apply();
+}
 {/literal}
 </script>
 {g->main}
@@ -94,6 +102,16 @@ function back_one() {
         {g->link onClick="text_onoff();return false"}
           <span id="moreInfo">{g->text text="Show More Info"}</span>
         {/g->link}
+        <script language="JavaScript" type="text/JavaScript">{literal}
+          if (bCanBlend) {
+            document.write('&nbsp; {/literal}{g->text
+                           text="fade: "}{literal}<select id="filter">');
+            for (i = 0; i < filterNames.length; i++) {
+              document.write('<option>'+filterNames[i]);
+            }
+            document.write('<'+'/select>'); // in 2 pieces for valid HTML4.01
+          }
+        {/literal}</script>
       {/g->title}
     {/g->item}
   {/g->breadcrumb}
