@@ -79,9 +79,7 @@ class GalleryToolkitHelper_simple {
 
 	    $toolkit = null;
 	    $outputMimeType = null;
-	    if ($searchResults->resultCount() > 0) {
-		$result = $searchResults->nextResult();
-
+	    while ($result = $searchResults->nextResult()) {
 		$toolkitId = $result[0];
 		$outputMimeType = empty($result[1]) ? $mimeType : $result[1];
 
@@ -89,6 +87,10 @@ class GalleryToolkitHelper_simple {
 		    GalleryCoreApi::newFactoryInstanceById('GalleryToolkit', $toolkitId);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		if (isset($toolkit)) {
+		    break;
 		}
 	    }
 	    GalleryDataCache::put($cacheKey, array($toolkit, $outputMimeType));
