@@ -214,10 +214,13 @@ class Gallery {
 	$session =& $this->getSession();
 	if (isset($session)) {
 	    // It's possible for the session not to exist during bootstrap time
-	    $session->put('core.id.activeUser', $user->getId());
+	    $activeUserId = $session->get('core.id.activeUser');
+	    if ($activeUserId != $user->getId()) {
+		$session->put('core.id.activeUser', $user->getId());
+	    }
 	}
     }
-
+    
     /**
      * Get the Id of the active user
      *
