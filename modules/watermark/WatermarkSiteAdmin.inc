@@ -98,8 +98,8 @@ class WatermarkSiteAdminController extends GalleryController {
 	    $results['redirect']['itemId'] = $item->getId();
 	} else if (isset($form['action']['add'])) {
 	    $status['add_error'] = 1;
-	    $results['delegate']['view'] = 'core:SiteAdmin';
-	    $results['delegate']['subView'] = 'watermark:WatermarkSiteAdmin';
+	    $results['redirect']['view'] = 'core:SiteAdmin';
+	    $results['redirect']['subView'] = 'watermark:WatermarkSiteAdmin';
 	} else if (isset($form['action']['delete']) && isset($form['delete']['itemId'])) {
 	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/WatermarkHelper.class');
 
