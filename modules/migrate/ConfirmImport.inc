@@ -446,10 +446,7 @@ class ConfirmImportController extends GalleryController {
 				    list($ret, $owner) = GalleryCoreApi::fetchUserByUsername($albumUserFields['username']);
 				    if ($ret->isError()) {
 					if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
-					    list ($ret, $owner) = $gallery->getActiveUser();
-					    if ($ret->isError()) {
-						return array($ret->wrap(__FILE__, __LINE__), null);
-					    }
+					    $owner = $gallery->getActiveUser();
 					} else {
 					    return array($ret->wrap(__FILE__, __LINE__), null);
 					}

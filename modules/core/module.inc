@@ -1087,7 +1087,7 @@ class CoreModule extends GalleryModule {
 	 * The rest of the bootstrap code won't work so well unless we're
 	 * logged in, so log in as the admin user now.
 	 */
-	$gallery->setActiveUserId($user->getId());
+	$gallery->setActiveUser($user);
 
 	return GalleryStatus::success();
     }

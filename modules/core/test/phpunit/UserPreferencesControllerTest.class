@@ -46,14 +46,14 @@ class UserPreferencesControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->_saveUserId = $gallery->getActiveUserId();
-	$gallery->setActiveUserId($this->_user->getId());
+	$this->_saveUser = $gallery->getActiveUser();
+	$gallery->setActiveUser($this->_user);
     }
 
     function tearDown() {
 	global $gallery;
 	$this->_deleteUser($this->_user);
-	$gallery->setActiveUserId($this->_saveUserId);
+	$gallery->setActiveUser($this->_saveUser);
 	parent::tearDown();
     }
 

@@ -153,7 +153,13 @@ function GalleryInitSecondPass() {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
     }
-    $gallery->setActiveUserId($activeUserId);
+
+    list ($ret, $activeUser) = GalleryCoreApi::loadEntitiesById($activeUserId);
+    if ($ret->isError()) {
+	return $ret->wrap(__FILE__, __LINE__);
+    }
+    
+    $gallery->setActiveUser($activeUser);
 
     /* Initialize our translator */
     $ret = $gallery->initTranslator();

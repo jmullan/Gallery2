@@ -451,10 +451,7 @@ class MatrixLayout extends GalleryLayout {
 	}
 
 	/* Get the active user */
-	list ($ret, $user) = $gallery->getActiveUser();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
+	$user = $gallery->getActiveUser();
 
 	/* Get all the owners */
 	$ownerIds = array($item->getOwnerId() => 1);
@@ -689,10 +686,7 @@ class MatrixLayout extends GalleryLayout {
 	}
 
 	/* Get the active user */
-	list ($ret, $user) = $gallery->getActiveUser();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
+	$user = $gallery->getActiveUser();
 
 	/* Get the owner */
 	list ($ret, $owner) = GalleryCoreApi::loadEntitiesById($item->getOwnerId());

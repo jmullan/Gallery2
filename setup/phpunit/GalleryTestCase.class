@@ -81,7 +81,7 @@ class GalleryTestCase extends TestCase {
 	}
 
 	/* Save our user id */
-	$this->_saveUserId = $gallery->getActiveUserId();
+	$this->_saveUser = $gallery->getActiveUser();
 
 	$gallery->clearDebugBuffer();
     }
@@ -106,7 +106,7 @@ class GalleryTestCase extends TestCase {
 	list ($_GET, $_POST, $_FILES, $_SERVER, $_ENV) = $this->_saveVars;
 
 	/* Restore user id */
-	$gallery->setActiveUserId($this->_saveUserId);
+	$gallery->setActiveUser($this->_saveUser);
 	
 	parent::tearDown();
     }

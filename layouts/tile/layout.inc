@@ -176,10 +176,7 @@ class TileLayout extends GalleryLayout {
 	usort($moduleItemLinks, array($this, '_sortItemLinks'));
 
 	/* Get the active user */
-	list ($ret, $user) = $gallery->getActiveUser();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
+	$user = $gallery->getActiveUser();
 
 	$layout['moduleSystemLinks'] = $moduleSystemLinks;
 	$layout['moduleItemLinks'] = $moduleItemLinks;

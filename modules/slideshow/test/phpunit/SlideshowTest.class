@@ -171,8 +171,13 @@ class SlideshowTest extends GalleryTestCase {
 	$this->_photoData = $photoData;
 	$this->_view = $view;
 	$this->_allUsersGroupId = $allUsersGroupId;
-	$this->_adminId = $gallery->getActiveUserId();
-	$this->_guestId = $guestId;
+	$this->_admin = $gallery->getActiveUser();
+
+	list ($ret, $this->_guest) = GalleryCoreApi::loadEntitiesById($guestId);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
     }
 
     function _addPhoto($parentId, $imagePath, $imageSize, $index, $sizes) {
@@ -301,7 +306,7 @@ class SlideshowTest extends GalleryTestCase {
 
     function _runTest($test, $expectedResults, $startId=null, $itemList=null) {
 	global $gallery;
-	$gallery->setActiveUserId($this->_guestId);
+	$gallery->setActiveUser($this->_guest);
 	$recursive = ($test == 'recursive');
 	list ($ret, $slideData, $start) = $this->_view->buildSlideshow(
 	    isset($itemList) ? $itemList : $this->_album, $startId, $recursive);
@@ -357,7 +362,7 @@ class SlideshowTest extends GalleryTestCase {
 	$this->assertEquals(count($expectedResults) - 1,
 	    count(array_intersect(array_keys($expectedResults), $slideIds)),
 	    "$test: Slideshow doesn't contain correct set of photo ids");
-	$gallery->setActiveUserId($this->_adminId);
+	$gallery->setActiveUser($this->_admin);
 
 	return GalleryStatus::success();
     }

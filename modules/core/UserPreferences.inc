@@ -159,10 +159,7 @@ class UserPreferencesView extends GalleryView {
 	    return array(GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__), null);
 	}
 
-	list ($ret, $user) = $gallery->getActiveUser();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
+	$user = $gallery->getActiveUser();
 	
 	/* Load the form with user data the first time around. */
 	if ($form['formName'] != 'UserPreferences') {

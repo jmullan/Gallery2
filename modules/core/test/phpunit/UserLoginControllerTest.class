@@ -48,7 +48,7 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->_saveUserId = $gallery->getActiveUserId();
+	$this->_saveUser = $gallery->getActiveUser();
     }
 
     function tearDown() {
@@ -59,7 +59,7 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$gallery->setActiveUserId($this->_saveUserId);
+	$gallery->setActiveUser($this->_saveUser);
 	
 	parent::tearDown();
     }

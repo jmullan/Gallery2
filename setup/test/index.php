@@ -64,11 +64,6 @@ function GalleryTestHarness() {
     global $gallery;
     global $tests;
 
-    /*
-     * Pretend to be the admin
-     */
-    $gallery->setActiveUserId(5);
-
     $modulesDir = dirname(__FILE__) . '/../../modules/';
     $platform = $gallery->getPlatform();
 

@@ -54,7 +54,7 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->_saveUserId = $gallery->getActiveUserId();
+	$this->_saveUser = $gallery->getActiveUser();
 	$this->_code = GalleryRemoteConstants::getStatusCodes();
 	$this->_version = GalleryRemoteConstants::getVersionCodes();
     }
@@ -72,7 +72,7 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	
-	$gallery->setActiveUserId($this->_saveUserId);
+	$gallery->setActiveUser($this->_saveUser);
 	
 	parent::tearDown();
     }
@@ -112,7 +112,7 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals($this->_code['PASSWORD_WRONG'], (int)$response->getProperty('status'));
 	$this->assert($response->hasProperty('status_text'));
 
-	$this->assertEquals($this->_saveUserId, $gallery->getActiveUserId());
+	$this->assertEquals($this->_saveUser->getId(), $gallery->getActiveUserId());
     }
 
     function testLoginValidUserInvalidPassword() {
@@ -130,7 +130,7 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals($this->_code['PASSWORD_WRONG'], (int)$response->getProperty('status'));
 	$this->assert($response->hasProperty('status_text'));
 
-	$this->assertEquals($this->_saveUserId, $gallery->getActiveUserId());
+	$this->assertEquals($this->_saveUser->getId(), $gallery->getActiveUserId());
     }
 
     function testLoginGuestUser() {

@@ -158,10 +158,7 @@ class AddCommentView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	
-	list ($ret, $user) = $gallery->getActiveUser();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
+	$user = $gallery->getActiveUser();
 
 	if ($form['formName'] != 'AddComment') {
 	    $form['formName'] = 'AddComment';

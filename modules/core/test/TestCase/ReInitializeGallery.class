@@ -33,7 +33,12 @@ class ReInitializeGalleryTestCase extends TestCase {
 	global $gallery;
 
 	/* Log in as the admin user */
-	$gallery->setActiveUserId(5);
+	list ($ret, $adminUser) = GalleryCoreApi::loadEntitiesById(5);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	$gallery->setActiveUser($adminUser);
 	
 	return GalleryStatus::success();
     }

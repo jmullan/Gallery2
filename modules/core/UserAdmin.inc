@@ -42,11 +42,7 @@ class UserAdminView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	global $gallery;
 
-	$userId = $gallery->getActiveUserId();
-	list ($ret, $user) = $gallery->getActiveUser();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
+	$user = $gallery->getActiveUser();
 	    
 	/* Load the module list */
 	list ($ret, $moduleStatus) = GalleryCoreApi::getPluginStatus('module');
@@ -79,7 +75,7 @@ class UserAdminView extends GalleryView {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$show['userInPathbar'] = ($userId != $anonymousUserId);
+	$show['userInPathbar'] = ($user->getId() != $anonymousUserId);
 
 	/* If we have a specific sub view, load it now */
 	$subViewName = GalleryUtilities::getRequestVariables('subView');

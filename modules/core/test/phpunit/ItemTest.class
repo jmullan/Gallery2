@@ -619,9 +619,15 @@ class ItemTest extends GalleryTestCase {
 	/* Switch to the anonymous user id so that this returns false */
         list ($ret, $anonymousUserId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
         if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$gallery->setActiveUserId($anonymousUserId);
+
+	list ($ret, $anonymousUser) = GalleryCoreApi::loadEntitiesById($anonymousUserId);
+        if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	$gallery->setActiveUser($anonymousUser);
 	
 	list ($ret, $count) =
 	    GalleryCoreApi::fetchItemIdCount('GalleryAlbumItem', 'core.changePermissions');

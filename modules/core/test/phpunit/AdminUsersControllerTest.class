@@ -170,10 +170,7 @@ class AdminUsersControllerTest extends GalleryControllerTestCase {
     function testDeleteSelf() {
 	global $gallery;
 	
-	list ($ret, $self) = $gallery->getActiveUser();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$self = $gallery->getActiveUser();
 	
 	GalleryUtilities::putRequestVariable('form[action][deleteFromText]', 1);
 	GalleryUtilities::putRequestVariable('form[text][userName]', $self->getUserName());

@@ -43,14 +43,6 @@ class Gallery {
      */
 
     /**
-     * The id of the active user
-     *
-     * @var int $_activeUserId
-     * @access private
-     */
-    var $_activeUserId;
-
-    /**
      * The active GalleryUser instance
      *
      * @var object GalleryUser $_activeUser
@@ -179,7 +171,7 @@ class Gallery {
      */
     function Gallery() {
 	$this->reset();
-	$this->_activeUserId = null;
+	$this->_activeUser = null;
 	    
 	/* Set up a shutdown function to release any hanging locks. */
 	register_shutdown_function(array(&$this, '_shutdown'));
@@ -209,6 +201,24 @@ class Gallery {
     }
 
     /**
+     * Set the id of the active user
+     *
+     * The active user is the user who is logged on in this session.
+     * 
+     * @param object GalleryUser the current user
+     * @access public
+     */
+    function setActiveUser($user) {
+	$this->_activeUser = $user;
+
+	$session =& $this->getSession();
+	if (isset($session)) {
+	    // It's possible for the session not to exist during bootstrap time
+	    $session->put('core.id.activeUser', $user->getId());
+	}
+    }
+
+    /**
      * Get the Id of the active user
      *
      * The active user is the user who is logged on in this 
@@ -218,30 +228,7 @@ class Gallery {
      * @return int the id of the current User.
      */
     function getActiveUserId() {
-	return $this->_activeUserId;
-    }
-
-    /**
-     * Set the id of the active user
-     *
-     * The active user is the user who is logged on in this 
-     * session.
-     * 
-     * @param int the id of the current User.
-     * @access public
-     */
-    function setActiveUserId($id) {
-	global $gallery;
-	
-	assert('!empty($id)');
-	$this->_activeUserId = (int)$id;
-	$this->_activeUser = null;
-
-	$session =& $gallery->getSession();
-	if (isset($session)) {
-	    // It's possible for the session not to exist during bootstrap time
-	    $session->put('core.id.activeUser', $id);
-	}
+	return $this->_activeUser->getId();
     }
 
     /**
@@ -254,16 +241,7 @@ class Gallery {
      *               object GalleryUser the active user
      */
     function getActiveUser() {
-	if (empty($this->_activeUser)) {
-	    list ($ret, $user) = GalleryCoreApi::loadEntitiesById($this->getActiveUserId());
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-	    $this->_activeUser = $user;
-	}
-
-	return array(GalleryStatus::success(), $this->_activeUser);
+	return $this->_activeUser;
     }
 
     /**
@@ -523,10 +501,7 @@ class Gallery {
 	    $language = null;
 	    $activeUserId = $this->getActiveUserId();
 	    if (!empty($activeUserId)) {
-		list ($ret, $activeUser) = $this->getActiveUser();
-		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
+		$activeUser = $this->getActiveUser();
 		$language = $activeUser->getLanguage();
 	    }
 

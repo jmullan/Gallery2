@@ -157,11 +157,7 @@ class CommentSearchTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $this->_user) = $gallery->getActiveUser();
-	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$this->_user = $gallery->getActiveUser();
     }
 
     /**

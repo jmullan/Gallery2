@@ -115,8 +115,9 @@ class GalleryRemoteController extends GalleryController {
 	    $password = isset($form['password']) ? $form['password'] : '';
 	    if ($user != null && $user->isCorrectPassword($password)) {
 		// login successful
-		$gallery->setActiveUserId($user->getId());
-		$response->setProperty('server_version', sprintf('%d.%d', $grVersionCodes['MAJ'], $grVersionCodes['MIN']));
+		$gallery->setActiveUser($user);
+		$response->setProperty('server_version',
+				       sprintf('%d.%d', $grVersionCodes['MAJ'], $grVersionCodes['MIN']));
 		$response->setProperty('status', $grStatusCodes['SUCCESS']);
 		$response->setProperty('status_text', 'Login successful.');
 		return GalleryStatus::success();
@@ -129,11 +130,16 @@ class GalleryRemoteController extends GalleryController {
 	} else {
 	    // They're logged in as the guest account
 	    list ($ret, $anonymousUserId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
-	    if ($ret->isError() && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
+	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
-	    $gallery->setActiveUserId($anonymousUserId);
+	    list ($ret, $anonymousUser) = GalleryCoreApi::loadEntitiesById($anonymousUserId);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    $gallery->setActiveUser($anonymousUser);
 
 	    $response->setProperty('debug_anonymous_login', true);
 	    $response->setProperty('server_version', sprintf('%d.%d', $grVersionCodes['MAJ'], $grVersionCodes['MIN']));
