@@ -54,6 +54,9 @@ class CodeAuditTest extends CodeAuditTestCase {
 		  'GET' => array(
 				   'modules/core/classes/GalleryUtilities.class' => 1
 				 ),
+		  'SERVER' => array(
+				   'modules/core/classes/GalleryUtilities.class' => 1
+				 ),
 		  );
 	
 	$this->_longLineCount = 0;
@@ -95,7 +98,7 @@ class CodeAuditTest extends CodeAuditTestCase {
 	     * get remote exploits.
 	     */
 	    if ($checkSuperglobals && preg_match_all(
-		    '/\$_(REQUEST|POST|GET|SESSION|FILES)/', $lines[$i], $matches)) {
+		    '/\$_(REQUEST|POST|GET|SESSION|FILES|SERVER)/', $lines[$i], $matches)) {
 		foreach (array_unique($matches[1]) as $item) {
 		    if (isset($this->_exception['superglobals'][$item][$fileName])) {
 			continue;

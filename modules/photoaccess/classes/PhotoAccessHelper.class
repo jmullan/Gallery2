@@ -167,9 +167,9 @@ class PhotoAccessHelper {
 	    $gallery->debug('Post data:');
 	    $gallery->debug_r($postData, true);
 	}
-	list ($body, $response, $headers) =
-	    GalleryCoreApi::postToWebPage($cartUrl, $postData,
-					  array('User-Agent' => $_SERVER['HTTP_USER_AGENT']));
+	list ($body, $response, $headers) = GalleryCoreApi::postToWebPage(
+            $cartUrl, $postData,
+            array('User-Agent' => GalleryUtilities::getServerVar('HTTP_USER_AGENT')));
 
 	/* Expect a response of the form:
 	 *

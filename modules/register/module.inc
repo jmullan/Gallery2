@@ -56,7 +56,7 @@ class RegisterModule extends GalleryModule {
 			   'emailadmins' => 1,
 			   'subject' => $this->translate('Account activation'),
 			   'adminsubject' => $this->translate('New user registration'),
-			   'from' => 'webmaster@' . $_SERVER['SERVER_NAME'])
+			   'from' => 'webmaster@' . GalleryUtilities::getServerVar('SERVER_NAME'))
 			 as $key => $value) {
 		$ret = $this->setParameter($key, $value);
 		if ($ret->isError()) {

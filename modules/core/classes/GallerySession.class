@@ -523,8 +523,9 @@ class GallerySession {
      * @access private
      */
     function _getRemoteIdentifier() {
+	$httpUserAgent = GalleryUtilities::getServerVar('HTTP_USER_AGENT');
 	return array(GalleryUtilities::getRemoteHostAddress(),
-		     isset($_SERVER['HTTP_USER_AGENT']) ? md5($_SERVER['HTTP_USER_AGENT']) : null);
+		     isset($httpUserAgent) ? md5($httpUserAgent) : null);
     }
 
     /**

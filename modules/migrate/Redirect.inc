@@ -106,8 +106,8 @@ class RedirectController extends GalleryController {
 	}
 
 	/* Redirect browser */
-	$results = array(
-	    'redirect' => array('href' => GalleryUrlGenerator::makeUrl($_SERVER['SCRIPT_NAME']),
+	$scriptName = GalleryUtilities::getServerVar('SCRIPT_NAME');
+	$results = array('redirect' => array('href' => GalleryUrlGenerator::makeUrl($scriptName),
 				'view' => $view),
 	    'status' => array(), 'error' => array());
 	if (isset($id)) {

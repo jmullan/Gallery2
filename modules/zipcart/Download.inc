@@ -54,7 +54,8 @@ class DownloadView extends GalleryView {
 
 	if ($platform->is_readable($file)) {
 	    $size = $platform->filesize($file);
-	    $sendMultipart = (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE ') === false);
+	    $sendMultipart =
+		(strpos(GalleryUtilities::getServerVar('HTTP_USER_AGENT'), 'MSIE ') === false);
 	    if ($sendMultipart) {
 		// Send multipart reply: zip + html-to-reload
 		header('Content-Type: multipart/mixed; boundary=G2ZipCart');

@@ -1378,5 +1378,20 @@ class GalleryUtilities {
 
 	return null;
     }
+
+    /**
+     * Return a sanitized version of the given variable from the _SERVER superglobal.
+     * @param string the key in the _SERVER superglobal
+     * @return string the value
+     */
+    function getServerVar($key) {
+	if (!isset($_SERVER[$key])) {
+	    return null;
+	}
+
+	$value = $_SERVER[$key];
+	GalleryUtilities::sanitizeInputValues($value);
+	return $value;
+    }
 }
 ?>

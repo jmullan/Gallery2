@@ -833,6 +833,21 @@ class UtilitiesTest extends GalleryTestCase {
 			    GalleryUtilities::_phpUtf8Substring($utf8, 0, 4),
 			    'php version');
     }
+
+    function testGetServerVar() {
+	/* Normal */
+	$_SERVER['foo'] = 'foo';
+	$this->assertEquals('foo', GalleryUtilities::getServerVar('foo'));
+
+	/* Missing */
+	unset($_SERVER['foo']);
+	$this->assertEquals(null, GalleryUtilities::getServerVar('foo'));
+
+	/* Malicious value */
+	$_SERVER['foo'] = '<script>bar</script>';
+	$this->assertEquals('&lt;script&gt;bar&lt;/script&gt;',
+			    GalleryUtilities::getServerVar('foo'));
+    }
 }
 
 /**

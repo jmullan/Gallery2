@@ -348,8 +348,9 @@ class GalleryTranslator {
      */
     function getLanguageCodeFromRequest() {
 	/* Take the first thing the browser accepts that we can use */
-	if (!empty($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
-	    foreach (explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE'])
+	$httpAcceptLanguage = GalleryUtilities::getServerVar('HTTP_ACCEPT_LANGUAGE');
+	if (!empty($httpAcceptLanguage)) {
+	    foreach (explode(',', $httpAcceptLanguage)
 		     as $code) {
 
 		list ($languageCode) = GalleryTranslator::getSupportedLanguageCode($code, false);

@@ -479,10 +479,8 @@ function _GalleryMain_errorHandler($error, $g2Data=null, $initOk=true) {
 	    $main['error']['phpversion'] = phpversion();
 	    $main['error']['php_uname'] = php_uname();
 	    $main['error']['php_sapi_name'] = php_sapi_name();
-	    $main['error']['webserver'] =
-		isset($_SERVER['SERVER_SOFTWARE']) ? $_SERVER['SERVER_SOFTWARE'] : '';
-	    $main['error']['browser'] =
-		isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
+	    $main['error']['webserver'] = GalleryUtilities::getServerVar('SERVER_SOFTWARE');
+	    $main['error']['browser'] = GalleryUtilities::getServerVar('HTTP_USER_AGENT');
 	    if ($gallery->isStorageInitialized()) {
 		$storage =& $gallery->getStorage();
 		$main['error']['dbType'] = $storage->_impl->getAdoDbType();

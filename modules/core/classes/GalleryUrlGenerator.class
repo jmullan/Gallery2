@@ -89,10 +89,11 @@ class GalleryUrlGenerator {
      * @static
      */
     function getCurrentDomain() {
-	if (isset($_SERVER['HTTP_X_FORWARDED_SERVER'])) {
-	    return $_SERVER['HTTP_X_FORWARDED_SERVER'];
+	$httpXForwardedServer = GalleryUtilities::getServerVar('HTTP_X_FORWARDED_SERVER');
+	if ($httpXForwardedServer) {
+	    return $httpXForwardedServer;
 	} else {
-	    return $_SERVER['HTTP_HOST'];
+	    return GalleryUtilities::getServerVar('HTTP_HOST');
 	}
     }
 
@@ -108,7 +109,7 @@ class GalleryUrlGenerator {
 	    $defaultPort = array('http' => 80, 'https' => 443);
 	}
 
-	$protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? 'https' : 'http';
+	$protocol = (GalleryUtilities::getServerVar('HTTPS') == 'on') ? 'https' : 'http';
 	$domain = GalleryUrlGenerator::getCurrentDomain();
 	if (empty($path)) {
 	    $path = '/';
@@ -236,12 +237,12 @@ class GalleryUrlGenerator {
      */
     function getCurrentUrl() {
 	if (!isset($this->_currentUrl)) {
-	    if (!empty($_SERVER['REQUEST_URI'])) {
-		$path = $_SERVER['REQUEST_URI'];
-	    } else if (!empty($_SERVER['SCRIPT_NAME'])) {
-		$path = $_SERVER['SCRIPT_NAME'];
-		if (!empty($_SERVER['PATH_INFO']) && $_SERVER['PATH_INFO'] != $path) {
-		    $path .= $_SERVER['PATH_INFO'];
+	    if ($tmp = GalleryUtilities::getServerVar('REQUEST_URI')) {
+		$path = GalleryUtilities::htmlEntityDecode($tmp);
+	    } else if ($tmp = GalleryUtilities::getServerVar('SCRIPT_NAME')) {
+		$path = $tmp;
+		if (($tmp = GalleryUtilities::getServerVar('PATH_INFO')) != $path) {
+		    $path .= $tmp;
 		}
 	    }
 
