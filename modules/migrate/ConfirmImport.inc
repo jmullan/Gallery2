@@ -506,11 +506,12 @@ class ConfirmImportController extends GalleryController {
 				$newItem->setcreationTimestamp($importAlbumItem->uploadDate);
 			    }
 			    $newItem->setviewedSinceTimestamp($album['clicks_date']);
-			    $ret = GalleryCoreApi::setItemViewCount($newItem->getId(), $importAlbumItem->clicks);
-			    if ($ret->isError()) {
-				return array($ret->wrap(__FILE__, __LINE__), null);
+			    if (isset($importAlbumItem->clicks) && $importAlbumItem->clicks > 0) {
+				$ret = GalleryCoreApi::setItemViewCount($newItem->getId(), $importAlbumItem->clicks);
+				if ($ret->isError()) {
+				    return array($ret->wrap(__FILE__, __LINE__), null);
+				}
 			    }
-
 			    if ($albumNeedsThumbnail || $importAlbumItem->highlight == 1) {
 				list ($ret, $success) =
 					GalleryCoreApi::setThumbnailFromItem($item->getId(), $newItem->getId());
