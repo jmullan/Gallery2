@@ -48,7 +48,7 @@ Admin user "<?php print $_SESSION['uname']?>" updated successfully.
         <?php print _('Password') ?>
       </td>
       <td>
-        <input name="passA" type="password" value="<?php print isset($_SESSION['pass']) ? $_SESSION['pass'] : '' ?>" />
+        <input name="passA" type="password" value="<?php print isset($_SESSION['passA']) ? $_SESSION['passA'] : '' ?>" />
       </td>
     </tr>
     <tr>
@@ -56,11 +56,13 @@ Admin user "<?php print $_SESSION['uname']?>" updated successfully.
         <?php print _('(type again)') ?>
       </td>
       <td>
-        <input name="passB" type="password" value="<?php print isset($_SESSION['pass']) ? $_SESSION['pass'] : '' ?>" />
+        <input name="passB" type="password" value="<?php print isset($_SESSION['passB']) ? $_SESSION['passB'] : '' ?>" />
       </td>
     </tr>
   </table>
 </form>
+
+<p><span class="error">*</span> <?php print _("For the Alpha version, the default username ('admin') cannot be modified in the installer. You can change the name later on via the user administration page in your Gallery.") ?></p>
 
 <?php if ($status[$step]) { ?>
 <div class="go">
@@ -75,8 +77,6 @@ Admin user "<?php print $_SESSION['uname']?>" updated successfully.
     </a>
   </span>
 </div>
-
-<p><span class="error">*</span> <?php print _("For the Alpha version, the default username ('admin') cannot be modified in the installer. You can change the name later on via the user administration page in your Gallery.") ?></p>
 
 <?php } else { ?>
 <div class="go">

@@ -24,7 +24,7 @@
 
 if ($status[$step]) { ?>
 <h2 class="success">
-Database set up successfully!
+Database set up successfully.
 </h2>
 <?php } ?>
 

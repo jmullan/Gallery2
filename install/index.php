@@ -61,13 +61,20 @@ $navtext = array (_('Welcome'),
 		  _('Database Setup'),
 		  _('Finish'));
 $status = array();
+$visited = array();
 foreach (array_keys($navtext) as $curr) {
     array_push($status, false);
+    array_push($visited, false);
 }
 if (isset($_SESSION['status'])) {
     $status = $_SESSION['status'];
 }
+if (isset($_SESSION['visited'])) {
+    $visited = $_SESSION['visited'];
+}
 $status[0] = true;
+$visited[0] = true;
+$visited[$step] = true;
 
 // authentication key download
 if ($step == 1 && isset($_GET['action']) && $_GET['action'] == 'authDownload') {
@@ -141,11 +148,15 @@ if ($step == 1) {
     } else {
 	$rand = $_SESSION['auth'];
     }
+} elseif ($step == 2) {
+    $status[$step] = true;
+} elseif ($step == 3) {
+    $status[$step] = true;
 } elseif ($step == 4) {
     if (isset($_GET['action']) && $_GET['action'] === 'create') {
 	$status[$step] = false;
     }
-    //if (isset($_POST['uname']) && isset($_POST['passA']) && isset($_POST['passB'])) {
+    if (isset($_POST['uname']) && isset($_POST['passA']) && isset($_POST['passB'])) {
 	if (empty($_POST['uname'])) {
 	    array_push($errorMsg, _('Error: you must enter a username!'));
 	} else {
@@ -156,16 +167,19 @@ if ($step == 1) {
 		array_push($errorMsg, _('Error: you must enter a password!'));
 	    } else {
 		array_push($errorMsg, _('Error: you must enter your password twice.'));
+		$_SESSION['passA'] = $_POST['passA'];
+		$_SESSION['passB'] = $_POST['passB'];
 	    }
 	} elseif ($_POST['passA'] !== $_POST['passB']) {
 	    array_push($errorMsg, _('Error: passwords do not match. Please enter them again.'));
 	} else {
-	    $_SESSION['pass'] = $_POST['passA'];
+	    $_SESSION['passA'] = $_POST['passA'];
+	    $_SESSION['passB'] = $_POST['passB'];
 	}
 	if (count($errorMsg) == 0) {
 	    $status[$step] = true;
 	}
-	//    }
+    }
 } elseif ($step == 5) {
     if (isset($_GET['action']) && $_GET['action'] === 'create') {
 	$status[$step] = false;
@@ -267,14 +281,12 @@ if ($step < 1) {
 }
 
 $_SESSION['status'] = $status;
+$_SESSION['visited'] = $visited;
 
 function Welcome() {
     global $content, $navbar, $percentage, $step, $status, $errorMsg;
 	
-    $content = 'welcome.inc';
-
-    $status[$step] = true;
-    
+    $content = 'welcome.inc';    
     include(dirname(__FILE__) . '/body.inc');
     include(dirname(__FILE__) . '/foot.inc');
 }
@@ -291,9 +303,6 @@ function InstallCheck() {
     global $content, $navbar, $percentage, $step, $status, $errorMsg;
 	
     $content = 'installCheck.inc';
-
-    $status[$step] = true;
-    
     include(dirname(__FILE__) . '/body.inc');
     include(dirname(__FILE__) . '/foot.inc');
 }
@@ -312,8 +321,6 @@ function SystemCheck() {
 
     $content = 'systemCheck.inc';
 
-    $status[$step] = true;
-    
     include(dirname(__FILE__) . '/body.inc');
     include(dirname(__FILE__) . '/foot.inc');
 }
@@ -379,7 +386,9 @@ function writeConfigFile() {
 	    $g = @fopen('text/configHeader.inc', 'rt');
 	    $configText .= fread($g, filesize('text/configHeader.inc'));
 	    fclose($g);
-	    $configText .= "/* [data.gallery.base] Path to Gallery data storage directory\n";	    
+	    $configText .= "// [setup.password] Initial password for the 'admin' user\n";
+	    $configText .= "\$gallery->setConfig('setup.password', '{$_SESSION['passA']}');\n\n";
+	    $configText .= "// [data.gallery.base] Path to Gallery data storage directory\n";	    
 	    $configText .= "\$gallery->setConfig('data.gallery.base', '{$_SESSION['dir']}');\n\n";
 	    $configText .= "// [storage.type] Data storage mechanism (currently 'database' only) \n";
 	    $configText .= "\$gallery->setConfig('storage.type', 'database');\n\n";
@@ -409,9 +418,7 @@ function writeConfigFile() {
 
 function printNavBar() {
 	
-    global $navbar;
-    global $navtext;
-    global $status;
+    global $navbar, $navtext, $status, $visited;
 	
     // XXX need to modify for RTL
     $navbar .= "<ol>\n";
@@ -426,12 +433,20 @@ function printNavBar() {
 	    $num = $step;
 	}
 	$navbar .= "<span class=\"nav_num\">$num</span>&nbsp;<span class=\"nav_text\">";
-	if ($step < 1 || $status[$step-1]) {
+	if ($step < 1 || $status[$step-1] || $visited[$step]) {
 	    $navbar .= "<a href=\"index.php?step=$step\">$navtext[$step]</a>";
 	} else {
 	    $navbar .= $navtext[$step];
 	}
-	$navbar .= "</span></li>\n";
+	$navbar .= '</span>';
+	if ($step > 0) {
+	    if ($status[$step]) {
+		$navbar .= " <span class=\"success\">&#10003;</span>";
+	    } elseif ($visited[$step]) {
+		$navbar .= " <span class=\"error\">&#10007;</span>";
+	    }
+	}
+	$navbar .= "</li>\n";
     }
     $navbar .= "</ol>\n";
 }
