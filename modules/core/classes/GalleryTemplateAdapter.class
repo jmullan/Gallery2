@@ -355,5 +355,31 @@ class GalleryTemplateAdapter {
 				 'height' => isset($params['height']) ? $params['height'] : null,
 				 'callCount' => ++$this->_callCount['dimensions'])));
     }
+
+    /**
+     * A smarty function callback that does nothing, useful for when
+     * the imageframe module isn't active.
+     *
+     * @param array data in key/value pairs
+     * @param object Smarty
+     */
+    function nullFunction($params, &$smarty) {
+	return '';
+    }
+
+    /**
+     * A smarty block callback that does nothing, useful for when
+     * the imageframe module isn't active.
+     *
+     * @param array data in key/value pairs
+     * @param string content inside the block
+     * @param object Smarty
+     * @param bool true if we should re-evaluate the contents of the block
+     */
+    function nullBlock($params, $content, &$smarty, &$repeat) {
+	if (isset($content)) {
+	    return $content;
+	}
+    }
 }
 ?>

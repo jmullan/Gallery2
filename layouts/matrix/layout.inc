@@ -193,8 +193,8 @@ class MatrixLayout extends GalleryLayout {
 	    }
 	} else {
 	    $smarty =& $template->_getSmarty();
-	    $smarty->register_block('imageframe', array($this, 'emptySmartyBlock'));
-	    $smarty->register_function('imageframe_style', array($this, 'emptySmartyFunction'));
+	    $smarty->register_block('imageframe', array('GalleryTemplateAdapter', 'nullBlock'));
+	    $smarty->register_function('imageframe_style', array('GalleryTemplateAdapter', 'nullFunction'));
 	}
 
 	if (is_array($bodyFile)) {
@@ -203,40 +203,6 @@ class MatrixLayout extends GalleryLayout {
 	    return array(GalleryStatus::success(),
 			 array('head' => 'layouts/matrix/templates/head.tpl',
 			       'body' => $bodyFile));
-	}
-    }
-
-    /**
-     * A smarty function callback that does nothing, useful for when
-     * the imageframe module isn't active.
-     *
-     * TODO: Don't cut/paste this into other layouts, instead refactor this into
-     * the core somewhere so that we can reuse the idea any time we have this
-     * kind of broken dependency issue.
-     *
-     * @param array data in key/value pairs
-     * @param object Smarty
-     */
-    function emptySmartyFunction($params, &$smarty) {
-	return '';
-    }
-
-    /**
-     * A smarty block callback that does nothing, useful for when
-     * the imageframe module isn't active.
-     *
-     * TODO: Don't cut/paste this into other layouts, instead refactor this into
-     * the core somewhere so that we can reuse the idea any time we have this
-     * kind of broken dependency issue.
-     *
-     * @param array data in key/value pairs
-     * @param string content inside the block
-     * @param object Smarty
-     * @param bool true if we should re-evaluate the contents of the block
-     */
-    function emptySmartyBlock($params, $content, &$smarty, &$repeat) {
-	if (isset($content)) {
-	    return $content;
 	}
     }
 

@@ -164,6 +164,10 @@ class HybridLayout extends GalleryLayout {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 	    }
+	} else {
+	    $smarty =& $template->_getSmarty();
+	    $smarty->register_block('imageframe', array('GalleryTemplateAdapter', 'nullBlock'));
+	    $smarty->register_function('imageframe_style', array('GalleryTemplateAdapter', 'nullFunction'));
 	}
 
 	return array(GalleryStatus::success(),
