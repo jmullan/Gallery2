@@ -109,7 +109,7 @@ class SliderLayout extends GalleryLayout {
 
 	/* Init view with specific image */
 	if (isset($viewItemId)) {
-	    foreach ($itemList as $tmp) {
+	    foreach ($layout['children'] as $tmp) {
 		if ($tmp['id'] == $viewItemId) {
 		    if (isset($tmp['imageIndex'])) {
 			$layout['viewIndex'] = $tmp['imageIndex'];
