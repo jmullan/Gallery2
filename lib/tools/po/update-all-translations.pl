@@ -13,7 +13,7 @@ use Symbol;
 
 my %OPTS;
 $OPTS{'MAKE_BINARY'} = 0;
-my $MAKE = `(which gmake || which make) 2>/dev/null`;
+chomp(my $MAKE = `(which gmake || which make) 2>/dev/null`);
 die "Missing make" unless $MAKE;
 
 GetOptions('make-binary!' => \$OPTS{'MAKE_BINARY'});
@@ -31,7 +31,7 @@ foreach my $poDir (keys(%PO_DIRS)) {
 
   print STDERR "BUILDING IN >> $poDir <<\n";
   chdir $poDir;
-  system("$MAKE -k install clean 2>&1") and die;
+  system("$MAKE install clean 2>&1") and die;
 }
 
 if ($OPTS{'MAKE_BINARY'}) {
