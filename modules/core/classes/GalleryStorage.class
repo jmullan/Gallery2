@@ -405,8 +405,8 @@ class GalleryStorage {
 	$classes = array();
 
 	preg_match_all($regexp, $query, $matches, PREG_PATTERN_ORDER);
-	foreach ($matches as $match) {
-	    $classes['[' . $match . ']']++;
+	foreach ($matches[1] as $match) {
+	    $classes['[' . $match . ']'] = 1;
 	}
 	return array(GalleryStatus::success(),
 		     array_keys($classes));
