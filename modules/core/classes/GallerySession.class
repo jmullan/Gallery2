@@ -203,7 +203,7 @@ class GallerySession_core {
 	 * with this in it from being visible to JavaScript, which mitigates
 	 * XSS attacks.
 	 */
-	$cookie .= '; HttpOnly';
+	$cookie .= '; HttpOnly=1';
 	
 	header($cookie);
 	
