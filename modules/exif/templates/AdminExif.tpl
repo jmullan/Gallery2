@@ -188,4 +188,4 @@
     <input type="submit" name="{g->formVar var="form[action][resetSummary]"}" value="{g->text text="Restore Summary Defaults"}" class="button"/>
     <input type="submit" name="{g->formVar var="form[action][resetDetailed]"}" value="{g->text text="Restore Detailed Defaults"}" class="button"/>
   </div>
-</div> class="button"
+</div>
