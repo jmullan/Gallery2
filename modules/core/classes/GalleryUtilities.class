@@ -242,7 +242,15 @@ class GalleryUtilities {
      */
     function putRequestVariable($key, $value) {
 	global $HTTP_GET_VARS;
-	$HTTP_GET_VARS[GALLERY_FORM_VARIABLE_PREFIX . $key] = $value;
+
+	/*
+	 * Convert dots to underscores.  Some versions of PHP seem to do
+	 * this when processing POST data, so we force the issue here so
+	 * that we get consistent behaviour across all versions.
+	 */
+	$key = strtr(GALLERY_FORM_VARIABLE_PREFIX . $key, '.', '_');
+	
+	$HTTP_GET_VARS[$key] = $value;
     }
 
     function convertTagToMime($tag) {
