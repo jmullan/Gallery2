@@ -180,7 +180,12 @@ class CoreModule extends GalleryModule {
 					       'GalleryMovieItem',
 					       'GalleryMovieItem',
 					       $classDir . 'GalleryMovieItem.class',
-					       array('video/*'));
+					       array('video/x-msvideo',
+						     'video/quicktime',
+						     'video/mpeg',
+						     'video/x.ms.asf',
+						     'application/x-director',
+						     'application/x-shockwave-flash'));
 
 	GalleryFactory::registerImplementation('GalleryItem',
 					       'GalleryUnknownItem',
