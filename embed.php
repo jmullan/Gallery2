@@ -50,8 +50,7 @@ class GalleryEmbed {
      *                    (when cookies not in use, CMS must track this value between requests)
      * )
      * @param boolean (optional) if false, call GalleryInitSecondPass too
-     * @return array object GalleryStatus a status object
-     *               string G2 session id
+     * @return object GalleryStatus a status object
      * @static
      */
     function init($initParams, $g2Request=false) {
