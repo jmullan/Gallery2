@@ -64,7 +64,7 @@ class AdminCoreController extends GalleryController {
 			   'default.language',
 			   'session.lifetime',
 			   'session.inactivityTimeout') as $key) {
-		list ($a, $b) = split('.', $key);
+		list ($a, $b) = split('\.', $key);
 		if (isset($form[$a][$b])) {
 		    $ret = $gallery->setModuleParameter('core', $key, $form[$a][$b]);
 		    if ($ret->isError()) {
