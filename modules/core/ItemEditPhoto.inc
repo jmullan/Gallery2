@@ -47,10 +47,8 @@ class ItemEditPhoto extends ItemEditPlugin {
 
 	if (isset($form['action']['save'])) {
 
-	    /* Validate the input data. */
-	    if (empty($form['thumbnail']['size'])) {
-		$error[] = 'form[error][thumbnail][size][missing]';
-	    } else if (!is_numeric($form['thumbnail']['size'])) {
+	    /* Validate the input data */
+	    if (!is_numeric($form['thumbnail']['size']) && !empty($form['thumbnail']['size'])) {
 		$error[] = 'form[error][thumbnail][size][invalid]';
 	    }
 
@@ -59,7 +57,8 @@ class ItemEditPhoto extends ItemEditPlugin {
 		    continue;
 		}
 
-		if (empty($form['resizes'][$i]['width']) || empty($form['resizes'][$i]['height'])) {
+		if (empty($form['resizes'][$i]['width']) || 
+		    empty($form['resizes'][$i]['height'])) {
 		    $error[] = sprintf('form[error][resizes][%d][size][missing]', $i);
 		} else if (!is_numeric($form['resizes'][$i]['width'])
 			   || !is_numeric($form['resizes'][$i]['height'])
@@ -77,15 +76,19 @@ class ItemEditPhoto extends ItemEditPlugin {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
 
-		if (isset($thumbTable[$item->getId()])) {
+		if (isset($thumbTable[$item->getId()]) && 
+		    !empty($form['thumbnail']['size']) && 
+		    $form['thumbnail']['size'] > 0) {
 		    /* Change the thumbnail */
 		    $thumbnail = $thumbTable[$item->getId()];
 		    $thumbnail->setDerivativeOperations(
-			preg_replace('/((^|;)thumbnail\|)\d+/', '${1}' . $form['thumbnail']['size'],
+			preg_replace('/((^|;)thumbnail\|)\d+/', '${1}' . 
+				     $form['thumbnail']['size'],
 				     $thumbnail->getDerivativeOperations()));
 
 		    if ($thumbnail->isModified()) {
-			list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($thumbnail->getId());
+			list ($ret, $lockId) = 
+			    GalleryCoreApi::acquireWriteLock($thumbnail->getId());
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null, null);
 			}
@@ -99,7 +102,9 @@ class ItemEditPhoto extends ItemEditPlugin {
 			    return array($ret->wrap(__FILE__, __LINE__), null, null);
 			}
 		    }
-		} else {
+		} else if (!isset($thumbTable[$item->getId()]) && 
+			   !empty($form['thumbnail']['size']) && 
+			   $form['thumbnail']['size'] > 0) {
 		    list ($ret, $source) = GalleryCoreApi::fetchPreferredSource($item);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null, null);
@@ -111,10 +116,10 @@ class ItemEditPhoto extends ItemEditPlugin {
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null, null);
 		    }
-
 		    if (isset($toolkit)) {
-			list ($ret, $thumbnail) =
-			    GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative', $source->getEntityType());
+			list ($ret, $thumbnail) = 
+			    GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative', 
+								     $source->getEntityType());
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null, null);
 			}
@@ -131,13 +136,21 @@ class ItemEditPhoto extends ItemEditPlugin {
 
 			$thumbnail->setMimeType($outputMimeType);
 			$thumbnail->setDerivativeSourceId($source->getId());
-			$thumbnail->setDerivativeOperations('thumbnail|' . $form['thumbnail']['size']);
-
+			$thumbnail->setDerivativeOperations('thumbnail|' . 
+							    $form['thumbnail']['size']);
+		
 			$ret = $thumbnail->save();
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null, null);
 			}
 		    }
+		} else if (isset($thumbTable[$item->getId()]) && 
+			   empty($form['thumbnail']['size'])) {
+                    /* Delete the thumbnail */
+		    $ret = GalleryCoreApi::deleteEntityById($thumbTable[$item->getId()]->getId());
+                    if ($ret->isError()) {
+                	return array($ret->wrap(__FILE__, __LINE__), null, null);
+                    }		    
 		}
 
 		/* Get and delete all current resizes */
@@ -178,7 +191,8 @@ class ItemEditPhoto extends ItemEditPlugin {
 			}
 
 			list ($ret, $derivative) =
-			    GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative', $source->getEntityType());
+			    GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative', 
+								     $source->getEntityType());
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null, null);
 			}
@@ -263,6 +277,8 @@ class ItemEditPhoto extends ItemEditPlugin {
 		    $size = $matches[1];
 		}
 		$form['thumbnail']['size'] = $size;
+	    } else {
+		$form['thumbnail']['size'] = null;
 	    }
 
 	    $form['formName'] = 'ItemEditPhoto';

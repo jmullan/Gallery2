@@ -80,6 +80,16 @@ class ItemEditPhotoPluginTest extends ItemEditPluginTestCase {
 	}
 
 	$ret = GalleryCoreApi::registerToolkitOperation('ItemEditPhotoPluginTestToolkit',
+                array('test/file'), 'thumbnail',
+                array(array('type' => 'int', 'description' => 'test'),
+                      array('type' => 'int', 'description' => 'test')),
+                'test-description', '');
+        if ($ret->isError()) {
+            print $ret->getAsHtml();
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+
+	$ret = GalleryCoreApi::registerToolkitOperation('ItemEditPhotoPluginTestToolkit',
 		array('test/file'), 'resize',
 		array(array('type' => 'int', 'description' => 'test'),
 		      array('type' => 'int', 'description' => 'test')),
@@ -184,25 +194,156 @@ class ItemEditPhotoPluginTest extends ItemEditPluginTestCase {
     }
 
     function testEditResizesMissing() {
+        global $gallery;
+
+        /* Use valid inputs */
+        GalleryUtilities::putRequestVariable('form[action][save]', 1);
+        GalleryUtilities::putRequestVariable('form[thumbnail][size]', null);
+
+        for ($i = 0; $i < 3; $i++) {
+            GalleryUtilities::putRequestVariable('form[resizes][' . $i . '][active]', 1);
+        }
+
+        /* Perform the request and verify that we failed */
+        $results = $this->handleRequest($this->_item, $this->_preferred);
+        $this->assertEquals(array(array('form[error][resizes][0][size][missing]',
+                                        'form[error][resizes][1][size][missing]',
+                                        'form[error][resizes][2][size][missing]'),
+                                  null),
+                            $results);
+    }
+
+
+    function testEditThumbnailSizeAndCreate() {
 	global $gallery;
+
+        /* Verify we have a thumbnail */
+        list ($ret, $thumbTable) =
+            GalleryCoreApi::fetchThumbnailsByItemIds(array($this->_item->getId()));
+        if ($ret->isError()) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+
+        $this->assert(isset($thumbTable[$this->_item->getId()]), 'We should have a thumbnail(1)');
+
+        /* Delete the Thumbnail */
+        $ret = GalleryCoreApi::deleteEntityById($thumbTable[$this->_item->getId()]->getId());
+        if ($ret->isError()) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+
+        /* Verify we have no thumbnail */
+        list ($ret, $thumbTable) =
+            GalleryCoreApi::fetchThumbnailsByItemIds(array($this->_item->getId()));
+        if ($ret->isError()) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+        $this->assert(!isset($thumbTable[$this->_item->getId()]), 'We should not have a thumbnail');
+	
+        /* Use valid inputs */
+        GalleryUtilities::putRequestVariable('form[action][save]', 1);
+        GalleryUtilities::putRequestVariable('form[thumbnail][size]', 200);
+
+        for ($i = 0; $i < 3; $i++) {
+            GalleryUtilities::putRequestVariable('form[resizes][' . $i . '][active]', 0);
+        }
+        /* Perform the request and verify that we succeeded */
+        $results = $this->handleRequest($this->_item, $this->_preferred);
+        $this->assertEquals(array(array(), $this->_translate('Changes saved successfully')),
+                            $results);
+
+
+        /* Verify we have a thumbnail */
+        list ($ret, $thumbTable) =
+            GalleryCoreApi::fetchThumbnailsByItemIds(array($this->_item->getId()));
+        if ($ret->isError()) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+
+        $this->assert(isset($thumbTable[$this->_item->getId()]), 'We should have a thumbnail(2)');
+
+        /* Examine the thumbnail and make sure it lines up */
+        list ($ret, $thumbTable) =
+            GalleryCoreApi::fetchThumbnailsByItemIds(array($this->_item->getId()));
+        if ($ret->isError()) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+
+        if (isset($thumbTable[$this->_item->getId()])) {
+            $this->assertEquals('thumbnail|200', $thumbTable[$this->_item->getId()]->getDerivativeOperations());
+        }
+
+    }
+
+    function testEditThumbnailSizeNull() {
+	global $gallery;
+
+	/* Verify we have a thumbnail */
+        list ($ret, $thumbTable) =
+            GalleryCoreApi::fetchThumbnailsByItemIds(array($this->_item->getId()));
+        if ($ret->isError()) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+
+	$this->assert(isset($thumbTable[$this->_item->getId()]), 'We should have a thumbnail');	
 
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[thumbnail][size]', null);
 
 	for ($i = 0; $i < 3; $i++) {
-	    GalleryUtilities::putRequestVariable('form[resizes][' . $i . '][active]', 1);
+	    GalleryUtilities::putRequestVariable('form[resizes][' . $i . '][active]', 0);
 	}
+	/* Perform the request and verify that we succeeded */
+        $results = $this->handleRequest($this->_item, $this->_preferred);
+        $this->assertEquals(array(array(), $this->_translate('Changes saved successfully')),
+                            $results);
 
-	/* Perform the request and verify that we failed */
-	$results = $this->handleRequest($this->_item, $this->_preferred);
-	$this->assertEquals(array(array('form[error][thumbnail][size][missing]',
-					'form[error][resizes][0][size][missing]',
-					'form[error][resizes][1][size][missing]',
-					'form[error][resizes][2][size][missing]'),
-				  null),
-			    $results);
+        /* Verify we have no more thumbnail */
+        list ($ret, $thumbTable) =
+            GalleryCoreApi::fetchThumbnailsByItemIds(array($this->_item->getId()));
+        if ($ret->isError()) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+
+        $this->assert(!isset($thumbTable[$this->_item->getId()]), 'We should not have a thumbnail');
     }
+
+    function testEditResizeIsZero() {
+        global $gallery;
+
+        /* Verify we have a thumbnail */
+        list ($ret, $thumbTable) =
+            GalleryCoreApi::fetchThumbnailsByItemIds(array($this->_item->getId()));
+        if ($ret->isError()) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+
+        $this->assert(isset($thumbTable[$this->_item->getId()]), 'We should have a thumbnail');
+
+        /* Use valid inputs */
+        GalleryUtilities::putRequestVariable('form[action][save]', 1);
+        GalleryUtilities::putRequestVariable('form[thumbnail][size]', 0);
+
+        for ($i = 0; $i < 3; $i++) {
+            GalleryUtilities::putRequestVariable('form[resizes][' . $i . '][active]', 0);
+        }
+        /* Perform the request and verify that we succeeded */
+        $results = $this->handleRequest($this->_item, $this->_preferred);
+        $this->assertEquals(array(array(), $this->_translate('Changes saved successfully')),
+                            $results);
+
+        /* Verify we have no more thumbnail */
+        list ($ret, $thumbTable) =
+            GalleryCoreApi::fetchThumbnailsByItemIds(array($this->_item->getId()));
+        if ($ret->isError()) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+
+        $this->assert(!isset($thumbTable[$this->_item->getId()]), 'We should not have a thumbnail');
+
+    }
+
 
     function testEditResizesInvalid() {
 	global $gallery;

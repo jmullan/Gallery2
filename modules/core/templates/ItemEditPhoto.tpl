@@ -10,7 +10,7 @@
   </h2>
   
   <p class="giDescription">
-    {g->text text="Set the size of the thumbnail.  The largest side of the thumbnail will be no larger than this value."}
+    {g->text text="Set the size of the thumbnail.  The largest side of the thumbnail will be no larger than this value. Leave this field blank if you don't want a thumbnail."}
   </p>
   
   {if $ItemEditPhoto.editSizes.can.createThumbnail}
