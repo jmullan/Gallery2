@@ -176,6 +176,12 @@ class UtilitiesTest extends GalleryTestCase {
 	$this->assertEquals('jpg', GalleryUtilities::convertMimeToExtension('image/jpeg'));
 	$this->assertEquals('avi', GalleryUtilities::convertMimeToExtension('video/x-msvideo'));
     }
+
+    function testGetMimeTypeMap() {
+	$mimeMap = GalleryUtilities::getMimeTypeMap();
+	$this->assertEquals(array('jpe', 'jpeg', 'jpg'), $mimeMap['image/jpeg']);
+	$this->assertEquals(array('avi'), $mimeMap['video/x-msvideo']);
+    }
     
     function testMakeMarkers() {
 	$this->assertEquals('?, ?, ?, ?, ?',
