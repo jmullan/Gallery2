@@ -554,18 +554,19 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	global $gallery;
 
 	GalleryProfiler::start('modules.core.classes.GalleryItem::fetchParents');
-	
-	$parents = array();
-	$parentId = $this->getParentId();
-	while (!empty($parentId)) {
 
-	    list ($ret, $parent) = $gallery->loadEntitiesById($parentId);
+	list ($ret, $parentIds) = GalleryChildEntityHelper::fetchParentIds($this->getId());
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if (!empty($parentIds)) {
+	    list ($ret, $parents) = $gallery->loadEntitiesById($parentIds);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-
-	    array_unshift($parents, $parent->getMemberData());
-	    $parentId = $parent->getParentId();
+	} else {
+	    $parents = array();
 	}
 
 	GalleryProfiler::stop('modules.core.classes.GalleryItem::fetchParents');

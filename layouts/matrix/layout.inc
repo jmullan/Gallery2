@@ -350,6 +350,9 @@ class MatrixLayout extends GalleryLayout {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+	for ($i = 0; $i < sizeof($parents); $i++) {
+	    $parents[$i] = $parents[$i]->getMemberData();
+	}
 
 	/* Get item links and flatten out the modules */
 	$moduleItemLinks = array();
@@ -591,6 +594,9 @@ class MatrixLayout extends GalleryLayout {
 	list ($ret, $parents) = $item->fetchParents();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	for ($i = 0; $i < sizeof($parents); $i++) {
+	    $parents[$i] = $parents[$i]->getMemberData();
 	}
 
 	/* Get item links and flatten out the modules */

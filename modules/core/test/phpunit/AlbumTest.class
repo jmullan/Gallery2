@@ -39,10 +39,31 @@ class AlbumTest extends GalleryTestCase {
 	$this->GalleryTestCase($methodName);
     }
 
+    function setUp() {
+	parent::setUp();
+	
+	list ($ret, $this->_parentAlbum) = $this->_createRandomAlbum($this->_getRootId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    function tearDown() {
+	global $gallery;
+
+	$ret = $gallery->deleteEntityById($this->_parentAlbum->getId());
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	parent::tearDown();
+    }
+
     function testLoadRootAlbum() {
 	global $gallery;
 
-	list ($ret, $rootAlbum) = $gallery->loadEntitiesById($this->_getRootId());
+	list ($ret, $rootAlbum) = $gallery->loadEntitiesById($this->_parentAlbum->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -55,7 +76,7 @@ class AlbumTest extends GalleryTestCase {
     function testCreateAndDeleteAlbum() {
 	global $gallery;
 
-	list ($ret, $album) = $this->_createRandomAlbum($this->_getRootId());
+	list ($ret, $album) = $this->_createRandomAlbum($this->_parentAlbum->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -76,7 +97,7 @@ class AlbumTest extends GalleryTestCase {
     function testCreateRenameAndDeleteAlbum() {
 	global $gallery;
 
-	list ($ret, $album) = $this->_createRandomAlbum($this->_getRootId());
+	list ($ret, $album) = $this->_createRandomAlbum($this->_parentAlbum->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -134,7 +155,7 @@ class AlbumTest extends GalleryTestCase {
 
 	$lockIds = array();
 	$iterations = 5;
-	$parentId = $this->_getRootId();
+	$parentId = $this->_parentAlbum->getId();
 	for ($i = 0; $i < $iterations; $i++) {
 	    $gallery->guaranteeTimeLimit(5);
 
@@ -169,7 +190,7 @@ class AlbumTest extends GalleryTestCase {
 
 	$lockIds = array();
 
-	list ($ret, $album0) = $this->_createRandomAlbum($this->_getRootId());
+	list ($ret, $album0) = $this->_createRandomAlbum($this->_parentAlbum->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -180,7 +201,7 @@ class AlbumTest extends GalleryTestCase {
 	}
 
 	/* Read lock the root, write lock the two new albums */
-	list ($ret, $lockIds[]) = $gallery->acquireReadLock(array($this->_getRootId()));
+	list ($ret, $lockIds[]) = $gallery->acquireReadLock(array($this->_parentAlbum->getId()));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -201,13 +222,13 @@ class AlbumTest extends GalleryTestCase {
 	}
 
 	/* Move the album */
-	$ret = $album1->move($this->_getRootId());
+	$ret = $album1->move($this->_parentAlbum->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* Save it */
-	$ret = $album1->save($this->_getRootId());
+	$ret = $album1->save();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -236,14 +257,9 @@ class AlbumTest extends GalleryTestCase {
     function testFetchParents() {
 	global $gallery;
 
-	list ($ret, $nested[0]) = $gallery->loadEntitiesById($this->_getRootId());
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
 	$iterations = 5;
-	$parentId = $nested[0]->getId();
-	for ($i = 1; $i <= $iterations; $i++) {
+	$parentId = $this->_parentAlbum->getId();
+	for ($i = 0; $i < $iterations; $i++) {
 	    $gallery->guaranteeTimeLimit(5);
 
 	    list ($ret, $nested[$i]) = $this->_createRandomAlbum($parentId);
@@ -255,27 +271,24 @@ class AlbumTest extends GalleryTestCase {
 	}
 
 	/* Now we've created our nested tree.  Fetch it all back again */
-	list ($ret, $actual) = $nested[$iterations]->fetchParents();
+	list ($ret, $actual) = $nested[$iterations-1]->fetchParents();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	/*
-	 * fetchParents returns member data, so convert our expected values to
-	 * memberdata also.  Leave off the last element, since fetchParents()
-	 * is expected to return the parents but not the item itself.
-	 */
-	for ($i = 0; $i < $iterations; $i++) {
-	    $expected[] = $nested[$i]->getMemberData();
+	list ($ret, $expected[0]) = $gallery->loadEntitiesById($this->_getRootId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+	list ($ret, $expected[1]) = $gallery->loadEntitiesById($this->_parentAlbum->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	for ($i = 0; $i < sizeof($nested)-1; $i++) {
+	    $expected[] = $nested[$i];
+	}
+
 	$this->assertEquals($expected, $actual);
-
-	/* Then clean it all up */
-	$ret = $this->_deleteAndVerifyEntity($nested[1]->getId());
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
     }
 
     /**
@@ -285,7 +298,7 @@ class AlbumTest extends GalleryTestCase {
     function testFetchChildren() {
 	global $gallery;
 
-	list ($ret, $parent) = $this->_createRandomAlbum($this->_getRootId());
+	list ($ret, $parent) = $this->_createRandomAlbum($this->_parentAlbum->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -303,12 +316,6 @@ class AlbumTest extends GalleryTestCase {
 	}
 
 	$this->assertEquals(array($child), $actual);
-
-	/* Then clean it all up */
-	$ret = $this->_deleteAndVerifyEntity($parent->getId());
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
     }
 }
 
