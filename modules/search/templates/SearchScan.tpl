@@ -59,7 +59,7 @@
     	
     	  <div class="gbDataEntry">
     	    <input type="text" size="50" name="{g->formVar var="form[searchCriteria]"}" value="{$form.searchCriteria}" onfocus="this.style.background='#fff';" onblur="this.style.background='#eee';"/>
-    	    <input type="submit" name="{g->formVar var="form[action][search]"}" value="{g->text text="Search"}" class="button"/>
+    	    <input type="submit" name="{g->formVar var="form[action][search]"}" value="{g->text text="Search"}"/>
     
     	    {if isset($form.error.searchCriteria.missing)}
     	    <p class="giError">
@@ -103,7 +103,7 @@
 
     	    {if ($results.count > $results.end)}
     	    {assign var="moduleId" value=$moduleId} &nbsp; 
-    	    <input type="submit" name="{g->formVar var="form[action][showAll][$moduleId]"}" value="{g->text text="Show all %d" arg1=$results.count}" class="button"/>
+    	    <input type="submit" name="{g->formVar var="form[action][showAll][$moduleId]"}" value="{g->text text="Show all %d" arg1=$results.count}"/>
     	    {/if}
     	    </p>
     	  </div>
@@ -153,7 +153,7 @@
         <div class="gbBottomFlag">
           <div class="gbButtons">
             {if $resultCount>0 && $SearchScan.slideshowAvailable}
-            <input type="submit" name="{g->formVar var="form[action][slideshow]"}" value="{g->text text="View these results in a slideshow"}" class="button"/>
+            <input type="submit" name="{g->formVar var="form[action][slideshow]"}" value="{g->text text="View these results in a slideshow"}"/>
             {/if}
           </div>
         </div>

@@ -67,10 +67,10 @@
     </table>
 
     {if ($ItemCreateLink.page > 1)}
-    <input type="submit" name="{g->formVar var="form[action][previous]"}" value="{g->text text="Previous Page"}" class="button"/>
+    <input type="submit" name="{g->formVar var="form[action][previous]"}" value="{g->text text="Previous Page"}"/>
     {/if}
     {if ($ItemCreateLink.page < $ItemCreateLink.numPages)}
-    <input type="submit" name="{g->formVar var="form[action][next]"}" value="{g->text text="Next Page"}" class="button"/>
+    <input type="submit" name="{g->formVar var="form[action][next]"}" value="{g->text text="Next Page"}"/>
     {/if}
   </div>
 
@@ -105,8 +105,8 @@
     {foreach from=$ItemCreateLink.selectedIds item=selectedId}
     <input type="hidden" name="{g->formVar var="form[selectedIds][$selectedId]"}" value="on"/>
     {/foreach}
-    <input type="submit" name="{g->formVar var="form[action][link]"}" value="{g->text text="Link"}" class="button"/>
-    <input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}" class="button"/>
+    <input type="submit" name="{g->formVar var="form[action][link]"}" value="{g->text text="Link"}"/>
+    <input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
   </div>
   {else}
   <div class="gbAdmin">

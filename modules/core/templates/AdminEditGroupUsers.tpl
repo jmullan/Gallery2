@@ -47,7 +47,7 @@
 	{html_options options=$form.list.users}
     </select>
 
-    <input type="submit" name="{g->formVar var="form[action][remove]"}" value="{g->text text="Remove"}" class="button"/>
+    <input type="submit" name="{g->formVar var="form[action][remove]"}" value="{g->text text="Remove"}"/>
 
     {if isset($form.error.list.noUserSelected)}
     <div class="giError">
@@ -63,7 +63,7 @@
     </h2>
 
     <input type="text" name="{g->formVar var="form[text][userName]"}" value="{$form.text.userName}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
-    <input type="submit" name="{g->formVar var="form[action][add]"}" value="{g->text text="Add"}" class="button"/>
+    <input type="submit" name="{g->formVar var="form[action][add]"}" value="{g->text text="Add"}"/>
 
     {if isset($form.error.text.userName.missing)}
     <div class="giError">
@@ -80,8 +80,8 @@
 
   <div class="gbBottomFlag">
     <div class="gbButtons">
-      <input type="hidden" name="{g->formVar var="groupId"}" value="{$AdminEditGroupUsers.group.id}" class="button"/>
-      <input type="submit" name="{g->formVar var="form[action][done]"}" value="{g->text text="Done"}" class="button"/>
+      <input type="hidden" name="{g->formVar var="groupId"}" value="{$AdminEditGroupUsers.group.id}"/>
+      <input type="submit" name="{g->formVar var="form[action][done]"}" value="{g->text text="Done"}"/>
     </div>
   </div>
 </div>

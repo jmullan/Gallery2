@@ -114,7 +114,7 @@
     </div>
 
     <div class="gbButtons">
-      <input type="submit" name="{g->formVar var="form[action][create]"}" value="{g->text text="Create"}" class="button"/>
+      <input type="submit" name="{g->formVar var="form[action][create]"}" value="{g->text text="Create"}"/>
     </div>
   </div>
 </div>

@@ -129,8 +129,8 @@
   </div>
 
   <div class="gbButtons">
-    <input type="submit" name="{g->formVar var="form[action][preview]"}" value="{g->text text="Preview"}" class="button"/>
-    <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}" class="button"/>
-    <input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}" class="button"/>
+    <input type="submit" name="{g->formVar var="form[action][preview]"}" value="{g->text text="Preview"}"/>
+    <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}"/>
+    <input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
   </div>
 </div>

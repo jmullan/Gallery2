@@ -19,7 +19,7 @@
       {g->text text="You can make this item the thumbnail for its parent album."}
     </p>
     
-    <input type="submit" name="{g->formVar var="form[action][makeHighlight]"}" value="{g->text text="Yes, highlight this item!"}" class="button"/>
+    <input type="submit" name="{g->formVar var="form[action][makeHighlight]"}" value="{g->text text="Yes, highlight this item!"}"/>
   </div>
 </div>
 

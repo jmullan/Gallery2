@@ -109,21 +109,21 @@
 
     <br/>
 
-    <input type="button" name="{g->formVar var="form[action][checkall]"}" onclick="javascript:setCheck(1)" value="{g->text text="Check All"}" class="button"/>
-    <input type="button" name="{g->formVar var="form[action][checknone]"}" onclick="javascript:setCheck(0)" value="{g->text text="Check None"}" class="button"/>
-    <input type="button" name="{g->formVar var="form[action][invert]"}" onclick="javascript:invertCheck()" value="{g->text text="Invert"}" class="button"/>
+    <input type="button" name="{g->formVar var="form[action][checkall]"}" onclick="javascript:setCheck(1)" value="{g->text text="Check All"}"/>
+    <input type="button" name="{g->formVar var="form[action][checknone]"}" onclick="javascript:setCheck(0)" value="{g->text text="Check None"}"/>
+    <input type="button" name="{g->formVar var="form[action][invert]"}" onclick="javascript:invertCheck()" value="{g->text text="Invert"}"/>
     {if ($ItemDelete.page > 1)}
-    <input type="submit" name="{g->formVar var="form[action][previous]"}" value="{g->text text="Previous Page"}" class="button"/>
+    <input type="submit" name="{g->formVar var="form[action][previous]"}" value="{g->text text="Previous Page"}"/>
     {/if}
     {if ($ItemDelete.page < $ItemDelete.numPages)}
-    <input type="submit" name="{g->formVar var="form[action][next]"}" value="{g->text text="Next Page"}" class="button"/>
+    <input type="submit" name="{g->formVar var="form[action][next]"}" value="{g->text text="Next Page"}"/>
     {/if}
 
   </div>
 
   <div class="gbButtons">
-    <input type="submit" name="{g->formVar var="form[action][delete]"}" value="{g->text text="Delete"}" class="button"/>
-    <input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}" class="button"/>
+    <input type="submit" name="{g->formVar var="form[action][delete]"}" value="{g->text text="Delete"}"/>
+    <input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
   </div>
   {else}
   <div class="gbAdmin">

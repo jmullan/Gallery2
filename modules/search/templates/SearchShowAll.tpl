@@ -65,7 +65,7 @@
     	      {g->text text="You must enter some text to search for!"}
     	    </h4>
     	    {/if}
-    	    <input type="submit" name="{g->formVar var="form[action][search]"}" value="{g->text text="Search"}" class="button"/>
+    	    <input type="submit" name="{g->formVar var="form[action][search]"}" value="{g->text text="Search"}"/>
           </div>
               
           {foreach from=$SearchShowAll.moduleInfo.options key=optionId item=optionInfo}
@@ -88,7 +88,7 @@
               
         <div class="giTitle">
           <p>
-          <input type="submit" name="{g->formVar var="form[action][scan]"}" value="{g->text text="Search all modules"}" class="button"/>
+          <input type="submit" name="{g->formVar var="form[action][scan]"}" value="{g->text text="Search all modules"}"/>
           </p>
           <p>
           {$SearchShowAll.moduleInfo.name}
@@ -101,10 +101,10 @@
         	  arg5=$SearchShowAll.maxPages}
         	{/if}
             {if ($form.page > 1)}
-          <input type="submit" name="{g->formVar var="form[action][previousPage]"}" value="{g->text text="&laquo; Back"}" class="button"/>
+          <input type="submit" name="{g->formVar var="form[action][previousPage]"}" value="{g->text text="&laquo; Back"}"/>
             {/if}
             {if ($form.page < $SearchShowAll.maxPages)}
-          <input type="submit" name="{g->formVar var="form[action][nextPage]"}" value="{g->text text="Next &raquo;"}" class="button"/>
+          <input type="submit" name="{g->formVar var="form[action][nextPage]"}" value="{g->text text="Next &raquo;"}"/>
             {/if}
           </p>
         </div>

@@ -82,8 +82,8 @@
   </div>
 
   <div class="gbButtons">
-    <input type="submit" name="{g->formVar var="form[action][preview]"}" value="{g->text text="preview"}" class="button"/>
-    <input type="submit" name="{g->formVar var="form[action][add]"}" value="{g->text text="save"}" class="button"/>
-    <input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="cancel"}" class="button"/>
+    <input type="submit" name="{g->formVar var="form[action][preview]"}" value="{g->text text="preview"}"/>
+    <input type="submit" name="{g->formVar var="form[action][add]"}" value="{g->text text="save"}"/>
+    <input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="cancel"}"/>
   </div>
 </div>

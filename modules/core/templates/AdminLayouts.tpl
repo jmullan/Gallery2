@@ -180,8 +180,8 @@
       <div class="gbButtons">
 	<input type="hidden" name="{g->formVar var="layoutId"}" value="{$AdminLayouts.layoutId}"/>
 	<input type="hidden" name="{g->formVar var="mode"}" value="editLayout"/>
-	<input type="submit" name="{g->formVar var="form[action][saveLayout]"}" value="{g->text text="Save"}" class="button"/>
-	<input type="submit" name="{g->formVar var="form[action][undoLayout]"}" value="{g->text text="Undo"}" class="button"/>
+	<input type="submit" name="{g->formVar var="form[action][saveLayout]"}" value="{g->text text="Save"}"/>
+	<input type="submit" name="{g->formVar var="form[action][undoLayout]"}" value="{g->text text="Undo"}"/>
       </div>
     </div>
     {/if}

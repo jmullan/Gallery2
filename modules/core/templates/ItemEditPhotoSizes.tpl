@@ -83,7 +83,7 @@
 
 <div class="gbAdmin">
   <input type="hidden" name="{g->formVar var="mode"}" value="editSizes"/>
-  <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}" class="button"/>
-  <input type="submit" name="{g->formVar var="form[action][undo]"}" value="{g->text text="Undo"}" class="button"/>
+  <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}"/>
+  <input type="submit" name="{g->formVar var="form[action][undo]"}" value="{g->text text="Undo"}"/>
 </div>
 

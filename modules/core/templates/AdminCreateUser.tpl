@@ -118,8 +118,8 @@
 
     <div class="gbBottomFlag">
       <div class="giActionSelect">
-	<input type="submit" name="{g->formVar var="form[action][create]"}" value="{g->text text="Create User"}" class="button"/>
-	<input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}" class="button"/>
+	<input type="submit" name="{g->formVar var="form[action][create]"}" value="{g->text text="Create User"}"/>
+	<input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
       </div>
     </div>
   </div>

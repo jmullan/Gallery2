@@ -101,7 +101,7 @@
     {/foreach}
   </ul>
   {/if}
-  <input type="submit" name="{g->formVar var="form[action][findFilesFromLocalServer]"}" value="{g->text text="Find Files"}" class="button"/>
+  <input type="submit" name="{g->formVar var="form[action][findFilesFromLocalServer]"}" value="{g->text text="Find Files"}"/>
 
   {else} {* {if empty($form.localServerFiles)} *}
   <strong>
@@ -192,7 +192,7 @@
 
   <div class="gbBottomFlag">
     <div class="gbButtons">
-      <input type="submit" name="{g->formVar var="form[action][addFromLocalServer]"}" value="{g->text text="Add Files"}" class="button"/>
+      <input type="submit" name="{g->formVar var="form[action][addFromLocalServer]"}" value="{g->text text="Add Files"}"/>
     </div>
   </div>
   {/if} {* {if !empty($form.localServerFiles)} *}

@@ -41,13 +41,13 @@
     </p>
     <ul class="gbAdminList">
       <li>
-        <input id="itemType" type="checkbox" name="{g->formVar var="form[itemType]"}" {if $form.itemType}checked="checked"{/if} class="button"/>
+        <input id="itemType" type="checkbox" name="{g->formVar var="form[itemType]"}" {if $form.itemType}checked="checked"{/if}/>
         <label for="itemType">
           {g->text text="Use applet to display wide images"}
         </label>
       </li>
       <li>
-        <input id="itemLink" type="checkbox" name="{g->formVar var="form[itemLink]"}" {if $form.itemLink}checked="checked"{/if} class="button"/>
+        <input id="itemLink" type="checkbox" name="{g->formVar var="form[itemLink]"}" {if $form.itemLink}checked="checked"{/if}/>
         <label for="itemLink">
           {g->text text="Add \"view panorama\" option in item actions for wide images"}
         </label>
@@ -66,8 +66,8 @@
   </div>
 
   <div class="gbButtons">
-    <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}" class="button"/>
-    <input type="submit" name="{g->formVar var="form[action][undo]"}" value="{g->text text="Undo"}" class="button"/>
+    <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}"/>
+    <input type="submit" name="{g->formVar var="form[action][undo]"}" value="{g->text text="Undo"}"/>
   </div>
 
   {if ($form.count > 0)}
@@ -76,7 +76,7 @@
       {g->text text="This gallery contains items activated for panorama view.  These must be reset to standard items before this module can be deactivated.  You can reset all items here.  Warning: there is no undo."}
     </div>
 
-    <input type="submit" name="{g->formVar var="form[action][reset]"}" value="{g->text text="Reset all items"}" class="button"/>
+    <input type="submit" name="{g->formVar var="form[action][reset]"}" value="{g->text text="Reset all items"}"/>
   </div>
   {/if}
 </div>

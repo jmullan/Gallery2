@@ -69,7 +69,7 @@
     </ul>
     {/if}
   
-    <input type="submit" name="{g->formVar var="form[action][findFilesFromWebPage]"}" value="{g->text text="Find Files"}" class="button"/>
+    <input type="submit" name="{g->formVar var="form[action][findFilesFromWebPage]"}" value="{g->text text="Find Files"}"/>
     {else} {* {if empty($form.webPageUrls)} *}
     <strong>
       {g->text text="URL: %s" arg1=$form.webPage}

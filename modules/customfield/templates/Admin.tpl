@@ -137,8 +137,8 @@ function pickfield(s) {
 </div>
 
 <div class="gbButtons">
-  <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}" class="button"/>
-  <input type="submit" name="{g->formVar var="form[action][reset]"}" value="{g->text text="Reset"}" class="button"/>
+  <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}"/>
+  <input type="submit" name="{g->formVar var="form[action][reset]"}" value="{g->text text="Reset"}"/>
 </div>
 
 <div class="gbAdmin">
@@ -159,7 +159,7 @@ function pickfield(s) {
     <td>
       <p>
 	<input type="text" name="{g->formVar var="form[`$set.key`][newField]"}" size="20"/>
-	<input type="submit" name="{g->formVar var="form[action][add][`$set.key`]"}" value="{g->text text="Add"}" class="button"/>
+	<input type="submit" name="{g->formVar var="form[action][add][`$set.key`]"}" value="{g->text text="Add"}"/>
       </p>
       <table style="border-spacing:1px; border-top:1px dashed #ddd"><tr>
 	<th> {g->text text="Field:"} </th>
@@ -184,7 +184,7 @@ function pickfield(s) {
 	  </select>
 	  {if !empty($form.fields[$set.key])}
 	    <input type="submit" name="{g->formVar var="form[action][go][`$set.key`]"}"
-		   value="{g->text text="Go"}" class="button" onclick="return warn(this)"/>
+		   value="{g->text text="Go"}" onclick="return warn(this)"/>
 	  {/if}
 	</th>
       </tr></table>
@@ -223,6 +223,6 @@ function pickfield(s) {
 </div>
 
 <div class="gbButtons">
-  <input type="submit" name="{g->formVar var="form[action][picklist]"}" value="{g->text text="Save"}" class="button"/>
-  <input type="submit" name="{g->formVar var="form[action][reset]"}" value="{g->text text="Reset"}" class="button"/>
+  <input type="submit" name="{g->formVar var="form[action][picklist]"}" value="{g->text text="Save"}"/>
+  <input type="submit" name="{g->formVar var="form[action][reset]"}" value="{g->text text="Reset"}"/>
 </div>

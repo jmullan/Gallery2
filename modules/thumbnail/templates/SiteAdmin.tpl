@@ -138,7 +138,7 @@
 
   <div class="gbBottomFlag">
     <div class="gbButtons">
-      <input type="submit" name="{g->formVar var="form[action][add]"}" value="{g->text text="Save"}" class="button"/>
+      <input type="submit" name="{g->formVar var="form[action][add]"}" value="{g->text text="Save"}"/>
     </div>
   </div>
 </div>

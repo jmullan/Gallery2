@@ -121,9 +121,9 @@
 	      
     <div class="gbBottomFlag">
       <div class="giActionSelect">
-	<input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="edit user"}" class="button"/>
-	<input type="submit" name="{g->formVar var="form[action][undo]"}" value="{g->text text="undo"}" class="button"/>
-	<input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="cancel"}" class="button"/>
+	<input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="edit user"}"/>
+	<input type="submit" name="{g->formVar var="form[action][undo]"}" value="{g->text text="undo"}"/>
+	<input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="cancel"}"/>
       </div>
     </div>
   </div>

@@ -201,7 +201,7 @@
 	</td>
 
 	<td>
-	  <input type="submit" name="{g->formVar var="form[action][addUploadLocalServerDir]"}" value="{g->text text="add"}" class="button"/>
+	  <input type="submit" name="{g->formVar var="form[action][addUploadLocalServerDir]"}" value="{g->text text="add"}"/>
 	</td>
       </tr>
     </table>
@@ -339,8 +339,8 @@
 
   <div class="gbBottomFlag">
     <div class="gbButtons">
-      <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="save"}" class="button"/>
-      <input type="submit" name="{g->formVar var="form[action][reset]"}" value="{g->text text="reset"}" class="button"/>
+      <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="save"}"/>
+      <input type="submit" name="{g->formVar var="form[action][reset]"}" value="{g->text text="reset"}"/>
     </div>
   </div>
 </div>

@@ -49,7 +49,7 @@
 
       <input type="text" name="{g->formVar var="form[owner][ownerName]"}" value="{$form.owner.ownerName}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
       <input type="hidden" name="{g->formVar var="form[serialNumber]"}" value="{$form.serialNumber}"/>
-      <input type="submit" name="{g->formVar var="form[action][changeOwner]"}" value="{g->text text="Change"}" class="button"/>
+      <input type="submit" name="{g->formVar var="form[action][changeOwner]"}" value="{g->text text="Change"}"/>
 
       {if !empty($form.error.owner.missingUser)}
       <div class="giError">
@@ -123,7 +123,7 @@
 	  {/if}
 
 	  {if ! empty($entry.deleteList)}
-	  <input type="submit" name="{g->formVar var="form[action][deleteGroupPermission][$index]"}" value="{g->text text="Remove"}" class="button"/>
+	  <input type="submit" name="{g->formVar var="form[action][deleteGroupPermission][$index]"}" value="{g->text text="Remove"}"/>
 	  {else}
 	  &nbsp;
 	  {/if}
@@ -145,7 +145,7 @@
 	{html_options options=$ItemPermissions.allPermissions selected=$form.group.permission}
     </select>
 
-    <input type="submit" name="{g->formVar var="form[action][addGroupPermission]"}" value="{g->text text="Add Permission"}" class="button"/>
+    <input type="submit" name="{g->formVar var="form[action][addGroupPermission]"}" value="{g->text text="Add Permission"}"/>
 
     {if !empty($form.error.group.invalidPermission)}
     <div class="giError">
@@ -214,7 +214,7 @@
 	  &nbsp;
 	  {/if}
 	  {if ! empty($entry.deleteList) }
-	  <input type="submit" name="{g->formVar var="form[action][deleteUserPermission][$index]"}" value="{g->text text="Remove"}" class="button"/>
+	  <input type="submit" name="{g->formVar var="form[action][deleteUserPermission][$index]"}" value="{g->text text="Remove"}"/>
 	  {else}
 	  &nbsp;
 	  {/if}
@@ -236,7 +236,7 @@
 	{html_options options=$ItemPermissions.allPermissions selected=$form.user.permission}
     </select>
       
-    <input type="submit" name="{g->formVar var="form[action][addUserPermission]"}" value="{g->text text="Add Permission"}" class="button"/>
+    <input type="submit" name="{g->formVar var="form[action][addUserPermission]"}" value="{g->text text="Add Permission"}"/>
 
     {if !empty($form.error.user.invalidPermission)}
     <div class="giError">

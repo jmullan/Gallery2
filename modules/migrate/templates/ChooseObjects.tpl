@@ -170,6 +170,6 @@
 
   <div class="gbButtons">
     <input type="hidden" name="{g->formVar var="albumsPath"}" value="{$ChooseObjects.albumsPath}"/>
-    <input type="submit" name="{g->formVar var="form[action][import]"}" value="{g->text text="Import"}" class="button"/>
+    <input type="submit" name="{g->formVar var="form[action][import]"}" value="{g->text text="Import"}"/>
   </div>
 </div>
