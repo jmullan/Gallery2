@@ -137,6 +137,7 @@ table.gbDataTable th {
 
 
 ul.gbTabBar {
+    margin: 0.8em 0 0;
     font-size: 0.9em;
     font-weight: bold;
     padding: 6px;
@@ -147,6 +148,12 @@ ul.gbTabBar li {
     display: inline;
     padding: 6px 0 5px 8px;
     background: url('../matrix/images/tab_left.jpg') no-repeat left top;
+}
+* html ul.gbTabBar li {  /* IE adds li+span padding instead of overlapping */
+    padding: 0 0 0 8px;
+}
+* html ul.gbTabBar li.giSelected {
+    padding-bottom: 0;
 }
 
 ul.gbTabBar span {
