@@ -268,15 +268,27 @@ class MatrixLayout extends GalleryLayout {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    /* Get the "grandchild" counts */
-	    list ($ret, $childCounts) = GalleryCoreApi::fetchChildCounts($childIds);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+	    $childAlbumIds = array();
+	    foreach ($childItems as $child) {
+		if ($child->getCanContainChildren()) {
+		    $childAlbumIds[] = $child->getId();
+		}
 	    }
 
-	    list ($ret, $descendentCounts) = GalleryCoreApi::fetchDescendentCounts($childIds);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+	    if (empty($childAlbumIds)) {
+		$childCounts = array();
+		$descendentCounts = array();
+	    } else {
+		/* Get the "grandchild" counts */
+		list ($ret, $childCounts) = GalleryCoreApi::fetchChildCounts($childAlbumIds);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		
+		list ($ret, $descendentCounts) = GalleryCoreApi::fetchDescendentCounts($childAlbumIds);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
 	    }
 
             /* Create a table of child id -> child data */
