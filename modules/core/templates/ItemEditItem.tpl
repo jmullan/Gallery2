@@ -108,6 +108,7 @@
 
     {g->box}
       {g->element}
+	{g->input type="hidden" name="form[serialNumber]"}{$form.serialNumber}{/g->input}
 	{g->input type="submit" name="form[action][save]"}{g->text text="Save"}{/g->input}
 	{g->input type="submit" name="form[action][undo]"}{g->text text="Undo"}{/g->input}
       {/g->element}

@@ -69,7 +69,7 @@ class ItemEditItemController extends GalleryController {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-		    
+
 	    $isRootAlbum = $item->getId() == $rootAlbumId;
 
 	    /*
@@ -110,9 +110,12 @@ class ItemEditItemController extends GalleryController {
 		    $item->setSummary($form['summary']);
 		    $item->setKeywords($form['keywords']);
 		    $item->setDescription($form['description']);
+		    $item->setSerialNumber($form['serialNumber']);
+	    
 
 		    $ret = $item->save();
 		    if ($ret->isError()) {
+			$gallery->releaseLocks($lockId);
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 
@@ -178,6 +181,7 @@ class ItemEditItemView extends GalleryView {
 	    $form['keywords'] = $item->getKeywords();
 	    $form['description'] = $item->getDescription();
 	    $form['pathComponent'] = $item->getPathComponent();
+	    $form['serialNumber'] = $item->getSerialNumber();
 	    $form['formName'] = 'ItemEditItem';
 	}
 

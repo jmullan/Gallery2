@@ -98,7 +98,7 @@ class ItemEditItemControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 
 	/* Use valid inputs */
-	$newPathComponent = $this->_item[0]->getPathComponent() . rand();
+  	$newPathComponent = $this->_item[0]->getPathComponent() . rand();
 	GalleryUtilities::putRequestVariable('itemId', $this->_item[0]->getId());
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[pathComponent]', $newPathComponent);
@@ -106,7 +106,8 @@ class ItemEditItemControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[summary]', 'new summary');
 	GalleryUtilities::putRequestVariable('form[keywords]', 'new keywords');
 	GalleryUtilities::putRequestVariable('form[description]', 'new description');
-
+	GalleryUtilities::putRequestVariable('form[serialNumber]', $this->_item[0]->getSerialNumber());
+	
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
@@ -188,6 +189,7 @@ class ItemEditItemControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[summary]', $rootAlbum->getSummary());
 	GalleryUtilities::putRequestVariable('form[keywords]', $rootAlbum->getKeywords());
 	GalleryUtilities::putRequestVariable('form[description]', $rootAlbum->getDescription());
+	GalleryUtilities::putRequestVariable('form[serialNumber]', $rootAlbum->getSerialNumber());
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
@@ -233,6 +235,22 @@ class ItemEditItemControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest(ERROR_PERMISSION_DENIED);
+    }
+
+    function testInvalidSerialNumber() {
+	global $gallery;
+	
+	/* Use an invalid Serial */
+	GalleryUtilities::putRequestVariable('itemId', $this->_item[0]->getId());
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[pathComponent]', $this->_item[0]->getPathComponent());
+	GalleryUtilities::putRequestVariable('form[title]', 'new title');
+	GalleryUtilities::putRequestVariable('form[summary]', 'new summary');
+	GalleryUtilities::putRequestVariable('form[keywords]', 'new keywords');
+	GalleryUtilities::putRequestVariable('form[description]', 'new description');
+	GalleryUtilities::putRequestVariable('form[serialNumber]', -1);
+
+	$results = $this->handleRequest(ERROR_OBSOLETE_DATA);
     }
 
 }
