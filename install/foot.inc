@@ -20,5 +20,15 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 ?>
+      <tr>
+        <td <?php echo ($percentage != 0 && $percentage != 100) ? 'colspan="2"' : '';?> ><span class="statusLine"><?php print _('Install ') . $percentage ._('% complete')?></span></td>
+      </tr>
+    </table>
+  </div>  
+</div>
+<div id="footer">
+&copy;<?php echo date('Y') ?> Gallery :: <a target="_blank" href="http://gallery.sourceforge.net/">gallery.sourceforge.net</a> :: <strong>YOUR PHOTOS</strong> ON <strong>YOUR WEBSITE</strong>
+</div>
+
 </body>
 </html>

@@ -20,11 +20,16 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 ?>
+<?php if (count($errorMsg) > 0) { ?>
+<p class="error">
+<?php print implode("<br />\n", $errorMsg); ?>
+</p>
+<?php } ?>
 
 <h1>Finish</h1>
 
 <p>
-<?php print _("Congratulations! Your Gallery2<span style=\"color:ae0000; font-style: italic;\">Alpha</span> has successfully installed! See... that wasn't so hard, was it? Now it's time to configure your gallery and upload some photos!") ?>
+<?php print _("Congratulations! Your Gallery 2 <span style=\"color:ae0000; font-style: italic;\">Alpha</span> has successfully installed! See... that wasn't so hard, was it? Now it's time to upload some photos!") ?>
 </p>
 
 <h2>
@@ -32,5 +37,5 @@
 </h2>
 
 <div class="go">
-<span class="goToNext"><a href="../main.php"><?php print _('Go to Gallery2') ?></a></span>
+<span class="goToNext"><a href="../main.php"><?php print _('Go to my Gallery!') ?></a></span>
 </div>

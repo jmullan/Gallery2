@@ -28,7 +28,8 @@
 
 <?php if ($status[$step]) { ?>
 <h2 class="success">
-Storage directory set successfully:</h2>
+Storage directory set successfully.
+</h2>
 <?php } ?>
 
 <h1>Storage Setup</h1>
@@ -50,7 +51,7 @@ Storage directory set successfully:</h2>
 <div class="go">
 <span class="goToNext"><a href="javascript:document.storage_form.submit()"><?php print _('Change') ?></a></span>
 <span class="goToNext"><a href="index.php?step=6"><?php print _('Go to Step 6&raquo;') ?></a></span>
-</p>
+</div>
 <?php } else { ?>
 <div class="go">
 <span class="goToNext"><a href="javascript:document.storage_form.submit()"><?php print _('Update') ?></a></span>

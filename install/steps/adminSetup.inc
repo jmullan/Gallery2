@@ -40,10 +40,10 @@ Admin user "<?php print $_SESSION['uname']?>" updated successfully.
   <table class="adminForm">
     <tr>
       <td>
-        <?php print _('Admin username') ?>
+        <?php print _('Admin username') ?><span class="error">*</span>
       </td>
       <td>
-        <input name="uname" type="text" value="<?php print isset($_SESSION['uname']) ? $_SESSION['uname'] : _('admin') ?>" />
+        <input disabled name="uname" type="text" value="<?php print isset($_SESSION['uname']) ? $_SESSION['uname'] : _('admin') ?>" />
       </td>
     </tr>
     <tr>
@@ -78,6 +78,9 @@ Admin user "<?php print $_SESSION['uname']?>" updated successfully.
     </a>
   </span>
 </div>
+
+<p><span class="error">*</span> <?php print _("For the Alpha version, the default username ('admin') cannot be modified in the installer. You can change the name later on via the user administration page in your Gallery.") ?></p>
+
 <?php } else { ?>
 <div class="go">
 <span class="goToNextL"><a href="javascript:document.admin_form.submit();"><?php print _('Create') ?></a></span>

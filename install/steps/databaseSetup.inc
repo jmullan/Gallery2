@@ -40,11 +40,11 @@ Database set up successfully!</h2>
 <tr>
 <td style="text-align: left;"><?php print _('Database type:') ?></td>
 <td style="text-align: left;">
-<select name="dbtype">
+<select name="type">
 <?php
 $db = 'mysqlt';
-if (isset($_SESSION['db'])) {
-	$db = $_SESSION['db']['dbtype'];
+if (isset($_SESSION['db']['type'])) {
+	$db = $_SESSION['db']['type'];
 }
 $dbtypes = array ('mysqlt' => _("MySQL (v3.23.34a and newer)"),
 				  'mysql'  => _("MySQL (older than v3.23.34a)"),
@@ -61,23 +61,27 @@ foreach ($dbtypes as $key => $val) {
 </tr>
 <tr>
 <td style="text-align: left;"><?php print _('DB Hostname:') ?></td>
-<td style="text-align: left;"><input name="host" type="text" value="<?php isset($_SESSION['db']['host']) ? $_SESSION['db']['host'] : 'localhost'; ?>" /></td>
+<td style="text-align: left;"><input name="hostname" type="text" value="<?php print isset($_SESSION['db']['hostname']) ? $_SESSION['db']['hostname'] : 'localhost'; ?>" /></td>
 </tr>
 <tr>
 <td style="text-align: left;"><?php print _('DB Username:') ?></td>
-<td style="text-align: left;"><input name="uname" type="text" value="<?php isset($_SESSION['db']['uname']) ? $_SESSION['db']['uname'] : ''; ?>" /></td>
+<td style="text-align: left;"><input name="username" type="text" value="<?php print isset($_SESSION['db']['username']) ? $_SESSION['db']['username'] : 'root'; ?>" /></td>
 </tr>
 <tr>
 <td style="text-align: left;"><?php print _('DB Password:') ?></td>
-<td style="text-align: left;"><input name="pass" type="password" value="<?php isset($_SESSION['db']['pass']) ? $_SESSION['db']['pass'] : ''; ?>" /></td>
+<td style="text-align: left;"><input name="password" type="password" value="<?php print isset($_SESSION['db']['password']) ? $_SESSION['db']['password'] : ''; ?>" /></td>
+</tr>
+<tr>
+<td style="text-align: left;"><?php print _('DB Name:') ?></td>
+<td style="text-align: left;"><input name="database" type="text" value="<?php print isset($_SESSION['db']['database']) ? $_SESSION['db']['database'] : 'gallery'; ?>" /></td>
 </tr>
 <tr>
 <td style="text-align: left;"><?php print _('Table Prefix:') ?></td>
-<td style="text-align: left;"><input name="tPrefix" type="text" value="<?php isset($_SESSION['db']['tPrefix']) ? $_SESSION['db']['tPrefix'] : 'g2_'; ?>" /></td>
+<td style="text-align: left;"><input name="tablePrefix" type="text" value="<?php print isset($_SESSION['db']['tablePrefix']) ? $_SESSION['db']['tablePrefix'] : 'g2_'; ?>" /></td>
 </tr>
 <tr>
 <td style="text-align: left;"><?php print _('Column Prefix:') ?></td>
-<td style="text-align: left;"><input name="cPrefix" type="text" value="<?php isset($_SESSION['db']['cPrefix']) ? $_SESSION['db']['cPrefix'] : 'g_'; ?>" /></td>
+<td style="text-align: left;"><input name="columnPrefix" type="text" value="<?php print isset($_SESSION['db']['columnPrefix']) ? $_SESSION['db']['columnPrefix'] : 'g_'; ?>" /></td>
 </tr>
 </table>
 </form>
@@ -86,9 +90,9 @@ foreach ($dbtypes as $key => $val) {
 <div class="go">
 <span class="goToNext"><a href="javascript:document.database_form.submit()"><?php print _('Update') ?></a></span>
 <span class="goToNext"><a href="index.php?step=7"><?php print _('Go to Step 7&raquo;') ?></a></span>
-</p>
+</div>
 <?php } else { ?>
-<p>
+<div class="go">
 <span class="goToNext"><a href="javascript:document.database_form.submit()"><?php print _('Update') ?></a></span>
-</p>
+</div>
 <?php } ?>
