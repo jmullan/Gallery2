@@ -73,7 +73,11 @@ class AlbumTest extends GalleryTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-
+	/* Unregister toolkit */
+	$ret = GalleryCoreApi::unregisterToolkit('AlbumTestToolkit');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 	parent::tearDown();
     }
 
