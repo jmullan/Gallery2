@@ -96,7 +96,7 @@ class CoreModule extends GalleryModule {
 	GalleryFactory::registerImplementation('GalleryPlatform',
 					       'WinNtPlatform',
 					       'WinNT',
-					       $classDir . 'GalleryPlatform/UnixPlatform.class',
+					       $classDir . 'GalleryPlatform/WinNtPlatform.class',
 					       array('winnt'));
 
 	/* Register our entity implementations */
