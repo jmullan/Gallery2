@@ -70,11 +70,28 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+
+	$rawDesiredName = 'php_unit_migrate';
+	$desiredName = $rawDesiredName;
+	$k = 0;
+	$invalidName = TRUE;
+	while($invalidName) {
+	    list ($ret, $existingAlbumId) = GalleryCoreApi::fetchItemIdByPath($desiredName);
+	    if ($ret->isError()) {
+		if (!$ret->getErrorCode() & ERROR_MISSING_OBJECT) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		} else {
+		    $invalidName = FALSE;
+		}
+	    } else {
+		$desiredName = $rawDesiredName . '_' . $k++;
+	    }
+	}
 	
 	/* create an album.  Minimize (but not eliminate) collisions by
 	 * appending a timestamp
 	 */
-	$ret = $newAlbumInstance->create($rootId, 'php_unit_migrate');
+	$ret = $newAlbumInstance->create($rootId, $desiredName);
 	if ($ret->isError()) {
 	    if ($ret->getErrorCode() & ERROR_COLLISION) {
 		print "<p><b>ERROR collision $tempAlbumName</b></p>";
@@ -187,7 +204,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
         GalleryUtilities::putRequestVariable('form[sourceAlbums][album03]', 1);
         GalleryUtilities::putRequestVariable('form[action][import]', 1);
 	GalleryUtilities::putRequestVariable('form[destinationAlbumID]',$this->temporaryAlbumID);
-	
+
         $results = $this->handleRequest();
 	$this->assertEquals(array('album03'),
 			    array_keys($results['status']['albumImportSuccess'])
