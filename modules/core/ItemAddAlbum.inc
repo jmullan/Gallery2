@@ -108,7 +108,8 @@ class ItemAddAlbumController extends GalleryController {
 
 		/* Figure out where to redirect upon success */
 		$redirect['view'] = 'core:ItemAdmin';
-		$redirect['subView'] = 'core:ItemEditAlbum';
+		$redirect['subView'] = 'core:ItemEdit';
+		$redirect['editPlugin'] = 'ItemEditAlbum';
 		$redirect['itemId'] = $instance->getId();
 		$status['createdAlbum'] = 1;
 	    }
