@@ -186,7 +186,7 @@
       </div>
 
       <input type="checkbox" name="{g->formVar var="form[generateThumbnails]"}"{if $form.generateThumbnails} checked="checked"{/if}/>
-      {g->text text="Generate thumbnails during migration.  If this is not checked, thumbnails will be generated when they are first needed.  If you generate them now, your migration process will be slower."}
+      {g->text text="Normally Gallery will generate thumbnails the first time you look at them, then save them for subsequent views.  If you check this box, we'll create the thumbnails at migration time.  Migration will take longer but the first time you view an album will go much faster."}
     </div>
 
   </div>
