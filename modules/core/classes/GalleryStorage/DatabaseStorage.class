@@ -401,7 +401,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	/*
 	 * Get our member info for this class
 	 */
-	list ($ret, $memberInfo) = $this->_describeEntityMembers(get_class($entity));
+	list ($ret, $memberInfo) = $this->_describeEntityMembers($entity->getEntityType());
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
