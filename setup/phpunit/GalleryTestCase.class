@@ -74,23 +74,10 @@ class GalleryTestCase extends TestCase {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
+	/* Save our user id */
+	$this->_saveUserId = $gallery->getActiveUserId();
+
 	$gallery->clearDebugBuffer();
-    }
-
-    function _getRootId() {
-	return $this->_rootAlbumId;
-    }
-
-    function assert($boolean, $message=null) {
-	global $gallery;
-	$message = $gallery->getDebugBuffer() . $message;
-	parent::assert($boolean, $message);
-    }
-
-    function assertEquals($expected, $actual, $message=null) {
-	global $gallery;
-	$message = $gallery->getDebugBuffer() . $message;
-	parent::assertEquals($expected, $actual, $message);
     }
 
     function tearDown() {
@@ -114,8 +101,27 @@ class GalleryTestCase extends TestCase {
 
 	/* Restore form vars */
 	list ($HTTP_GET_VARS, $HTTP_POST_VARS, $HTTP_POST_FILES) = $this->_saveRequestVars;
+
+	/* Restore user id */
+	$gallery->setActiveUserId($this->_saveUserId);
 	
 	parent::tearDown();
+    }
+
+    function _getRootId() {
+	return $this->_rootAlbumId;
+    }
+
+    function assert($boolean, $message=null) {
+	global $gallery;
+	$message = $gallery->getDebugBuffer() . $message;
+	parent::assert($boolean, $message);
+    }
+
+    function assertEquals($expected, $actual, $message=null) {
+	global $gallery;
+	$message = $gallery->getDebugBuffer() . $message;
+	parent::assertEquals($expected, $actual, $message);
     }
 
     /*
