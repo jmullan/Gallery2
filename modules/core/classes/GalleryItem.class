@@ -56,7 +56,7 @@ class GalleryItem extends FileSystemNucleus {
     var $_childIds;
 
     /**
-     * An ordered list of 0+ CommentContainer ids.
+     * An ordered list of 0+ GalleryComment ids.
      *
      * @gallery persistent
      * @gallery flag STORAGE_TYPE_LIST
@@ -771,6 +771,7 @@ class GalleryItem extends FileSystemNucleus {
      */
     function setOwnerId($value) {
         assert('isset($value)');
+        $value = (int)$value;
         $this->_ownerId = $value;
         $this->setModifiedFlag('ownerId', MEMBER_MODIFIED);
     }
@@ -810,6 +811,7 @@ class GalleryItem extends FileSystemNucleus {
      */
     function setThumbnailId($value) {
         assert('isset($value)');
+        $value = (int)$value;
         $this->_thumbnailId = $value;
         $this->setModifiedFlag('thumbnailId', MEMBER_MODIFIED);
     }
@@ -832,6 +834,7 @@ class GalleryItem extends FileSystemNucleus {
      */
     function setTitle($value) {
         assert('isset($value)');
+        $value = (int)$value;
         $this->_title = $value;
         $this->setModifiedFlag('title', MEMBER_MODIFIED);
     }
@@ -854,6 +857,7 @@ class GalleryItem extends FileSystemNucleus {
      */
     function setViewCount($value) {
         assert('isset($value)');
+        $value = (int)$value;
         $this->_viewCount = $value;
         $this->setModifiedFlag('viewCount', MEMBER_MODIFIED);
     }
@@ -876,6 +880,7 @@ class GalleryItem extends FileSystemNucleus {
      */
     function setViewedSinceTimestamp($value) {
         assert('isset($value)');
+        $value = (int)$value;
         $this->_viewedSinceTimestamp = $value;
         $this->setModifiedFlag('viewedSinceTimestamp', MEMBER_MODIFIED);
     }
