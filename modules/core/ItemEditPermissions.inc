@@ -95,17 +95,17 @@ class ItemEditPermissionsController extends GalleryController {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
+	    /* Figure out where to redirect upon success */
+	    $redirectParams['view'] = 'core:ItemAdmin';
+	    $redirectParams['subView'] = 'core:ItemEditPermissions';
+	    $redirectParams['itemId'] = $itemId;
+	    $redirectParams['form.user.permission'] = $permissionId;
+
 	    /* Stuff the values back into the form for easy re-adding */
 	    list ($ret, $user) = $gallery->loadEntitiesById($userId);
 	    if ($ret->isSuccess()) {
 		$redirectParams['form.user.userName'] = $user->getUserName();
 	    }
-	    $redirectParams['form.user.permission'] = $permissionId;
-	
-	    /* Figure out where to redirect upon success */
-	    $redirectParams['view'] = 'core:ItemAdmin';
-	    $redirectParams['subView'] = 'core:ItemEditPermissions';
-	    $redirectParams['itemId'] = $itemId;
 	} else if (isset($form['action']['addUserPermission'])) {
 
 	    /* Handle create user permission actions */
@@ -199,8 +199,8 @@ class ItemEditPermissionsController extends GalleryController {
 		    /* Don't add the permission if it already exists */
 		    list ($ret, $hasIt) =
 			GalleryPermissionMap::hasPermission($itemId,
-							    array($group->getId()),
 							    null,
+							    array($group->getId()),
 							    array($permission));
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
