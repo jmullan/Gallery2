@@ -75,8 +75,8 @@ if (!isset($_GET['startOver']) && !empty($_SESSION['steps'])) {
 if (empty($steps) || !is_array($steps)) {
     /* Load our existing config.php, which requires $gallery to be valid */
     $configFile = dirname(__FILE__) . '/../config.php';
+    $gallery = new GalleryStub();
     if (is_file($configFile) && is_readable($configFile)) {
-	$gallery = new GalleryStub();
 	ob_start();
 	@include($configFile);
 	ob_end_clean();

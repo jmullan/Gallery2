@@ -27,7 +27,7 @@ class GalleryStub {
     }
     
     function getConfig($key) {
-	return $this->_hash[$key];
+	return isset($this->_hash[$key]) ? $this->_hash[$key] : '';
     }
     
     function setDebug() { }
