@@ -26,7 +26,6 @@
  * @author Felix Rabinovich <felix@rabinovich.org>
  */
 
-require_once(dirname(__FILE__) . '/../../module.inc');
 /**
  * SizeLimitOption tests
  * @package SizeLimit
@@ -62,6 +61,8 @@ class EventHandlerTest extends GalleryTestCase {
         if ($ret->isError()) {
             return $ret->wrap(__FILE__, __LINE__);
         }
+
+	require_once(dirname(__FILE__) . '/../../module.inc');
         list($ret, $data) = SizeLimitModule::handleEvent($event);
         if ($ret->isError()) {
             return $ret->wrap(__FILE__, __LINE__);
