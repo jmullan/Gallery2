@@ -41,7 +41,6 @@ class ConfirmImportController extends GalleryController {
 	$platform = $gallery->getPlatform();
 	$slash = $platform->getDirectorySeparator();
 
-
 	list ($ret, $moduleStatusList) = GalleryCoreApi::fetchPluginStatus('module');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -390,14 +389,20 @@ class ConfirmImportController extends GalleryController {
 				/* load up the album with metadata from the old
 				 * album */
 				if (isset($album['title'])) {
-				    $newAlbumInstance->setTitle($this->convertHtmlToBbcode($album['title'],$sourceEncoding));
+				    $newAlbumInstance->setTitle(
+                                        GalleryUtilities::entityTruncate(
+					    $this->convertHtmlToBbcode($album['title'], $sourceEncoding)),
+					        128);
 				}
 				if (isset($album['summary'])) {
-				    $newAlbumInstance->setDescription($this->convertHtmlToBbcode($album['summary'],$sourceEncoding));
+				    $newAlbumInstance->setDescription($this->convertHtmlToBbcode($album['summary'], $sourceEncoding));
 				}
 				$newAlbumInstance->setKeywords('');
 				if (isset($album['description'])) {
-				    $newAlbumInstance->setSummary($this->convertHtmlToBbcode($album['description'],$sourceEncoding));
+				    $newAlbumInstance->setSummary(
+				        GalleryUtilities::entityTruncate(
+			                    $this->convertHtmlToBbcode($album['description'], $sourceEncoding),
+						255));
 				}
 				// $newAlbumInstance->settheme
 				if (isset($album['last_mod_time']) && $album['last_mod_time']) {
@@ -895,7 +900,7 @@ class ConfirmImportController extends GalleryController {
 					if ($ret->isError()) {
 					    return array($ret->wrap(__FILE__, __LINE__), null);
 					}
-
+					
 					if (!isset($comment)) {
 					return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
 						     null);
