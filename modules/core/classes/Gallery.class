@@ -204,7 +204,6 @@ class Gallery {
     function Gallery() {
 	$this->reset();
 	$this->_boundDomains = array();
-	$this->_eventListeners = array();
 	    
 	/* Set up a shutdown function to release any hanging locks. */
 	register_shutdown_function(array(&$this, '_shutdown'));
@@ -220,6 +219,8 @@ class Gallery {
 	$this->_modules = array();
 	$this->_locks = array();
 	$this->_templateAdapter = null;
+	$this->_eventListeners = array();
+	GalleryDataCache::reset();
     }
 
     /**
@@ -1341,12 +1342,12 @@ class Gallery {
      * @param string the name of the event (eg "GalleryEntity::save")
      * @param object a GalleryEventListener instance
      */
-    function registerEventListener($eventName, $listener) {
+    function registerEventListener($eventName, &$listener) {
 	if (empty($this->_eventListeners[$eventName])) {
 	    $this->_eventListeners[$eventName] = array();
 	}
 
-	$this->_eventListeners[$eventName][] = $listener;
+	$this->_eventListeners[$eventName][] =& $listener;
     }
 
     /**
@@ -1358,8 +1359,9 @@ class Gallery {
      */
     function postEvent($event) {
 	if (!empty($this->_eventListeners[$event->getEventName()])) {
-	    foreach ($this->_eventListeners[$event->getEventName()] as $listener) {
-		$ret = $listener->handleEvent( $event);
+	    $listeners = $this->_eventListeners[$event->getEventName()];
+	    for ($i = 0; $i < sizeof($listeners); $i++) {
+		$ret = $listeners[$i]->handleEvent($event);
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
