@@ -104,9 +104,9 @@ class CodeAuditTest extends CodeAuditTestCase {
 			  $this->_longLineCount . ')');
 	}
 	if ($this->_longLineCount < 2500) {
-	    $this->_assert(false, 'Yay!  We are down to ' . $this->_longLineCount .
-			   ' lines longer than 100 characters; update the failure' .
-			   ' thresholds in this unit test.');
+	    $this->assert(false, 'Yay!  We are down to ' . $this->_longLineCount .
+			  ' lines longer than 100 characters; update the failure' .
+			  ' thresholds in this unit test.');
 	}
     }
 }
