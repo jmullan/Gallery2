@@ -89,12 +89,14 @@ class PhotoAccessHelper {
 	    }
 
 	    $entry['id'] = $sourceId;
-	    $entry['imageUrl'] = $urlGenerator->generateUrl(array('view' => 'core:DownloadItem',
-								  'itemId' => $sourceId));
+	    $entry['imageUrl'] = $urlGenerator->generateUrl(
+		array('view' => 'core:DownloadItem', 'itemId' => $sourceId),
+		true);
 
 	    if (isset($thumbnails[$itemId])) {
-		$entry['thumbUrl'] = $urlGenerator->generateUrl(array('view' => 'core:DownloadItem',
-								      'itemId' => $thumbnails[$itemId]->getId()));
+		$entry['thumbUrl'] = $urlGenerator->generateUrl(
+		    array('view' => 'core:DownloadItem', 'itemId' => $thumbnails[$itemId]->getId()),
+		    true);
 	    } else {
 		$entry['thumbUrl'] = '';
 	    }
