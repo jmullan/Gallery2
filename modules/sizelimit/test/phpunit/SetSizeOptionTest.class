@@ -33,9 +33,9 @@ GalleryCoreApi::relativeRequireOnce('lib/tools/phpunit/ItemAddOptionTestCase.cla
  * @package SizeLimit
  * @subpackage PHPUnit
  */
-class AddPhotoOptionTest extends ItemAddOptionTestCase {
+class SetSizeOptionTest extends ItemAddOptionTestCase {
 
-    function AddPhotoOptionTest($methodName) {
+    function SetSizeOptionTest($methodName) {
         $this->ItemAddOptionTestCase($methodName, 'sizelimit', 'SetSizeOption');
     }
 
@@ -45,12 +45,12 @@ class AddPhotoOptionTest extends ItemAddOptionTestCase {
         parent::setUp();
 
         /* create custom platform to return dummy filesize, imagesize, etc. */
-        $gallery->setPlatform(new AddPhotoOptionTestPlatform($gallery->getPlatform()));
-        
+        $gallery->setPlatform(new SetSizeOptionTestPlatform($gallery->getPlatform()));
+
         /* Register dummy toolkit and operations */
         $ret = GalleryCoreApi::registerFactoryImplementation(
-            'GalleryToolkit', 'AddPhotoOptionTestToolkit', 'AddPhotoOptionTestToolkit',
-            'modules/sizelimit/test/phpunit/AddPhotoOptionTest.class', 'sizelimitTest', null);
+            'GalleryToolkit', 'SetSizeOptionTestToolkit', 'SetSizeOptionTestToolkit',
+            'modules/sizelimit/test/phpunit/SetSizeOptionTest.class', 'sizelimitTest', null);
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -58,7 +58,7 @@ class AddPhotoOptionTest extends ItemAddOptionTestCase {
 	$this->_markFactoryModuleForCleanup('sizelimitTest');
             
         /* applying size limits uses 'compress' */
-        $ret = GalleryCoreApi::registerToolkitOperation('AddPhotoOptionTestToolkit',
+        $ret = GalleryCoreApi::registerToolkitOperation('SetSizeOptionTestToolkit',
             array('image/known'), 'compress',
             array(array('type' => 'int', 'description' => 'size')), 'desc');
         if ($ret->isError()) {
@@ -67,7 +67,7 @@ class AddPhotoOptionTest extends ItemAddOptionTestCase {
         }
 
         /* applying dimension limits uses 'resize' */
-        $ret = GalleryCoreApi::registerToolkitOperation('AddPhotoOptionTestToolkit',
+        $ret = GalleryCoreApi::registerToolkitOperation('SetSizeOptionTestToolkit',
             array('image/known'), 'resize',
             array(array('type' => 'int', 'description' => 'width'),
             array('type' => 'int', 'description' => 'height')), 'desc');
@@ -77,7 +77,7 @@ class AddPhotoOptionTest extends ItemAddOptionTestCase {
         }
 
         /* we will return dimensions to whoever asks */
-        $ret = GalleryCoreApi::registerToolkitProperty('AddPhotoOptionTestToolkit',
+        $ret = GalleryCoreApi::registerToolkitProperty('SetSizeOptionTestToolkit',
             array('image/known'), 'dimensions', 'int,int', 'desc');
         if ($ret->isError()) {
             print $ret->getAsHtml();
@@ -112,7 +112,7 @@ class AddPhotoOptionTest extends ItemAddOptionTestCase {
     function tearDown() {
         global $gallery;
         
-        $ret = GalleryCoreApi::unregisterToolkit('AddPhotoOptionTestToolkit');
+        $ret = GalleryCoreApi::unregisterToolkit('SetSizeOptionTestToolkit');
         if ($ret->isError()) {
             return array($ret->wrap(__FILE__, __LINE__), null);
         }
@@ -322,9 +322,9 @@ class AddPhotoOptionTest extends ItemAddOptionTestCase {
  * @package ImageMagick
  * @subpackage PHPUnit
  */
-class AddPhotoOptionTestPlatform extends GalleryPlatform {
+class SetSizeOptionTestPlatform extends GalleryPlatform {
 
-    function AddPhotoOptionTestPlatform($originalPlatform) {
+    function SetSizeOptionTestPlatform($originalPlatform) {
         $this->_savedPlatform = $originalPlatform;
 	GalleryUtilities::putRequestVariable('resizePerformed', false);
 	GalleryUtilities::putRequestVariable('compressPerformed', false);
@@ -367,7 +367,7 @@ class AddPhotoOptionTestPlatform extends GalleryPlatform {
  * @package SizeLimit
  * @subpackage PHPUnit
  */
-class AddPhotoOptionTestToolkit extends GalleryToolkit {    
+class SetSizeOptionTestToolkit extends GalleryToolkit {    
     /**
      * @see GalleryToolkit::performOperation()
      */
