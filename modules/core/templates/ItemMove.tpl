@@ -110,6 +110,19 @@
       	{rdelim}
           {rdelim}
       {rdelim}
+
+      function setCheck(val) {ldelim}
+        var frm = document.forms[0];
+        {foreach from=$ItemMove.peers item=peer}
+          frm.elements['g2_form[selectedIds][{$peer.id}]'].checked = val;
+        {/foreach}
+      {rdelim}
+      function invertCheck(val) {ldelim}
+        var frm = document.forms[0];
+        {foreach from=$ItemMove.peers item=peer}
+          frm.elements['g2_form[selectedIds][{$peer.id}]'].checked = !frm.elements['g2_form[selectedIds][{$peer.id}]'].checked;
+        {/foreach}
+      {rdelim}
       //]]>
     </script>
 
@@ -177,6 +190,9 @@
       {/foreach}
     </table>
 
+    <input type="button" name="{g->formVar var="form[action][checkall]"}" onclick="javascript:setCheck(1)" value="{g->text text="Check All"}"/>
+    <input type="button" name="{g->formVar var="form[action][checknone]"}" onclick="javascript:setCheck(0)" value="{g->text text="Check None"}"/>
+    <input type="button" name="{g->formVar var="form[action][invert]"}" onclick="javascript:invertCheck()" value="{g->text text="Invert"}"/>
     {if ($ItemMove.page > 1)}
     <input type="submit" name="{g->formVar var="form[action][previous]"}" value="{g->text text="Previous Page"}"/>
     {/if}
