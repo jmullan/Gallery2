@@ -7,6 +7,9 @@
 <title>{$layout.title|markup}</title>
 <link rel="stylesheet" type="text/css" href="{$layout.layoutUrl}/templates/hybrid.css" />
 {g->style}
+{if isset($layout.frame)}
+ {include file=$layout.frame.style ImageFrame_data=$layout.frame.data}
+{/if}
 <script type="text/javascript">
 {if $layout.imageCount==1}
 var data_iw = new Array(1); data_iw[0] = {$layout.imageWidths};

@@ -80,6 +80,11 @@ class HybridLayout extends GalleryLayout {
 	    }
 	}
 
+	list ($ret, $params) = $this->fetchParameters($item->getId());
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	$layout = array();
 	$layout['title'] = $item->getTitle();
 	if (empty($layout['title'])) {
@@ -215,6 +220,28 @@ class HybridLayout extends GalleryLayout {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	/* Prepare image frames, if available */
+	list ($ret, $imageframe) =
+	    GalleryCoreApi::newFactoryInstance('ImageFrameInterface_1_0');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$list = array();
+	foreach (array('albumFrame', 'imageFrame') as $key) {
+	    if (isset($params[$key])) {
+		$list[] = $params[$key];
+	    }
+	}
+	if (!empty($list) && isset($imageframe)) {
+	    $frame = array();
+	    list ($ret, $frame['template'], $frame['style'], $frame['data']) =
+		$imageframe->getImageFrameData($list);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $layout['frame'] = $frame;
+	}
+
 	$layout['user'] = $user->getMemberData();
 	$layout['moduleSystemLinks'] = $moduleSystemLinks;
 	$layout['moduleSystemContentFiles'] = $moduleSystemContentFiles;
@@ -226,6 +253,7 @@ class HybridLayout extends GalleryLayout {
 //	$layout['totalDescendentCount'] = $totalDescendentCount;
 	$layout['layoutUrl'] = GalleryUtilities::convertPathToUrl(dirname(__FILE__));
 	$layout['parents'] = $parents;
+	$layout['params'] = $params;
 
 	$template->setVariable('layout', $layout);
 	return array(GalleryStatus::success(),
@@ -371,6 +399,57 @@ class HybridLayout extends GalleryLayout {
 
     function _sortItemLinks($a, $b) {
 	return strcmp($a['text'], $b['text']);
+    }
+
+    /**
+     * @see GalleryLayout::getSettings()
+     */
+    function getSettings($itemId=null) {
+	global $gallery;
+	$settings = array();
+
+	list ($ret, $params) = $this->fetchParameters($itemId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Image frame settings, if available */
+	list ($ret, $imageframe) =
+	    GalleryCoreApi::newFactoryInstance('ImageFrameInterface_1_0');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	if (isset($imageframe)) {
+	    list ($ret, $list) = $imageframe->getImageFrameList();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    list ($ret, $sampleUrl) = $imageframe->getSampleUrl($itemId);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $sample = ' (<a href="' . $sampleUrl . '">' .  $gallery->i18n('View Samples') . '</a>)';
+
+	    if (!isset($params['albumFrame'])) {
+		$params['albumFrame'] = '';
+	    }
+	    if (!isset($params['imageFrame'])) {
+		$params['imageFrame'] = '';
+	    }
+
+	    $settings[] = array('key' => 'albumFrame',
+				'name' => $gallery->i18n('Album Frame') . $sample,
+				'type' => 'single-select',
+				'choices' => $list,
+				'value' => $params['albumFrame']);
+	    $settings[] = array('key' => 'imageFrame',
+				'name' => $gallery->i18n('Image Frame') . $sample,
+				'type' => 'single-select',
+				'choices' => $list,
+				'value' => $params['imageFrame']);
+	}
+
+	return array(GalleryStatus::success(), $settings);
     }
 }
 

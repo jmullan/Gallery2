@@ -44,17 +44,31 @@
     {/if}
     <a id="info_{$it.imageIndex}" href="{g->url arg1="view=core:ShowItem"
         arg2="itemId=`$it.id`" arg3="detail=1"}"></a>
-    <a href="" onclick="image_show({$it.imageIndex});return false">
-    {if isset($it.thumb)}
-      {g->image item=$it.data image=$it.thumb class=thumb}
-    {else} {g->text text="no thumbnail"} {/if}
-    </a>
+    {capture name="link"}<a href="" onclick="image_show({$it.imageIndex});return false">{/capture}
+    {if isset($it.thumb) && isset($layout.frame) && isset($layout.params.imageFrame)}
+      {include file=$layout.frame.template ImageFrame_data=$layout.frame.data
+       ImageFrame_frame=$layout.params.imageFrame item=$it.data image=$it.thumb
+       ImageFrame_pre=$smarty.capture.link ImageFrame_post="</a>"}
+    {else}
+      {$smarty.capture.link}
+      {if isset($it.thumb)}
+        {g->image item=$it.data image=$it.thumb class=thumb}
+      {else} {g->text text="no thumbnail"} {/if}
+      </a>
+    {/if}
   {elseif ($it.isContainer)}
-    <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$it.id`"}">
-    {if isset($it.thumb)}
-      {g->image item=$it.data image=$it.thumb class=thumb}
-    {else} {g->text text="no thumbnail"} {/if}
-    </a>
+    {capture name="link"}<a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$it.id`"}">{/capture}
+    {if isset($it.thumb) && isset($layout.frame) && isset($layout.params.albumFrame)}
+      {include file=$layout.frame.template ImageFrame_data=$layout.frame.data
+       ImageFrame_frame=$layout.params.albumFrame item=$it.data image=$it.thumb
+       ImageFrame_pre=$smarty.capture.link ImageFrame_post="</a>"}
+    {else}
+      {$smarty.capture.link}
+      {if isset($it.thumb)}
+        {g->image item=$it.data image=$it.thumb class=thumb}
+      {else} {g->text text="no thumbnail"} {/if}
+      </a>
+    {/if}
   {else}
     <a href="{g->url arg1="view=core:DownloadItem" arg2="itemId=`$it.id`"}">
     {if isset($it.thumb)}
