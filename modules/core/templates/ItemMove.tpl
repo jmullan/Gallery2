@@ -197,7 +197,7 @@
     <select name="{g->formVar var="form[destination]"}" onchange="javascript:checkPermissions(this.form)">
       {foreach from=$ItemMove.albumTree item=album}
       <option value="{$album.data.id}" {if ($album.data.id == $form.destination)}selected="selected"{/if}>
-	{"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"|repeat:$album.depth}`--
+	{"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"|repeat:$album.depth}--
 	{$album.data.title|default:$album.data.pathComponent}
       </option>
       {/foreach}

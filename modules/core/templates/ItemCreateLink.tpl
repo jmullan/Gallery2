@@ -86,7 +86,7 @@
     <select name="{g->formVar var="form[destination]"}">
       {foreach from=$ItemCreateLink.albumTree item=album}
       <option value="{$album.data.id}">
-	{"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"|repeat:$album.depth}`--
+	{"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"|repeat:$album.depth}--
 	{$album.data.title|default:$album.data.pathComponent}
       </option>
       {/foreach}
