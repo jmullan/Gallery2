@@ -31,77 +31,79 @@
       </div>
     </div>
   </div>
-
-  <div id="gsAdminSidebar">
-    {if !$ItemAdmin.isRootAlbum}
-    <div class="gbMenu">
-      {if empty($ItemAdmin.thumbnail)}
-      <span>
-        {g->text text="No Thumbnail"}
-      </span>
-      {else}
-      {g->image item=$ItemAdmin.item image=$ItemAdmin.thumbnail maxSize=130}
-      {/if}
-
-      <div class="giTitle">
-        {$ItemAdmin.item.title|markup}
-      </div>
-    </div>
-    {/if}
-
-    <div class="gbMenu">
-      <div class="giTitle">
-        {g->text text="Options"}
-      </div>
-      
-      <ul>
-        {foreach from=$ItemAdmin.subViewChoices key=choiceName item=choiceParams}
-        <li>
-          <a href="{g->url params=$choiceParams}">
-            {$choiceName}
-          </a>
-        </li>
-        {/foreach}
-      </ul>
-    </div>
-    
-    <div class="gbMenu">
-      <div class="giTitle">
-        {g->text text="Navigation"}
-      </div>
-      
-      <ul>
-        {if ($ItemAdmin.isSiteAdmin)}
-        <li>
-          <a href="{g->url arg1="view=core:SiteAdmin"}">
-            {g->text text="Site Admin"}
-          </a>
-        </li>
-        {/if}
-
-        {if ($ItemAdmin.itemType == 'item')}
-        <li>
-          <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$ItemAdmin.item.id`"}">
-            {g->text text="Back to Item View"}
-          </a>
-        </li>
-        <li>
-          <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$ItemAdmin.parent.id`"}">
-            {g->text text="Back to Album View"}
-          </a>
-        </li>
-
+  
+  <div id="gsContents">
+    <div id="gsAdminSidebar">
+      {if !$ItemAdmin.isRootAlbum}
+      <div class="gbMenu">
+        {if empty($ItemAdmin.thumbnail)}
+        <span>
+          {g->text text="No Thumbnail"}
+        </span>
         {else}
-        <li>
-          <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$ItemAdmin.item.id`"}">
-            {g->text text="Back to Album View"}
-          </a>
-        </li>
+        {g->image item=$ItemAdmin.item image=$ItemAdmin.thumbnail maxSize=130}
         {/if}
-
-      </ul>
+  
+        <div class="giTitle">
+          {$ItemAdmin.item.title|markup}
+        </div>
+      </div>
+      {/if}
+  
+      <div class="gbMenu">
+        <div class="giTitle">
+          {g->text text="Options"}
+        </div>
+        
+        <ul>
+          {foreach from=$ItemAdmin.subViewChoices key=choiceName item=choiceParams}
+          <li>
+            <a href="{g->url params=$choiceParams}">
+              {$choiceName}
+            </a>
+          </li>
+          {/foreach}
+        </ul>
+      </div>
+      
+      <div class="gbMenu">
+        <div class="giTitle">
+          {g->text text="Navigation"}
+        </div>
+        
+        <ul>
+          {if ($ItemAdmin.isSiteAdmin)}
+          <li>
+            <a href="{g->url arg1="view=core:SiteAdmin"}">
+              {g->text text="Site Admin"}
+            </a>
+          </li>
+          {/if}
+  
+          {if ($ItemAdmin.itemType == 'item')}
+          <li>
+            <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$ItemAdmin.item.id`"}">
+              {g->text text="Back to Item View"}
+            </a>
+          </li>
+          <li>
+            <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$ItemAdmin.parent.id`"}">
+              {g->text text="Back to Album View"}
+            </a>
+          </li>
+  
+          {else}
+          <li>
+            <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$ItemAdmin.item.id`"}">
+              {g->text text="Back to Album View"}
+            </a>
+          </li>
+          {/if}
+  
+        </ul>
+      </div>
     </div>
-  </div>
 
   {include file="gallery:`$ItemAdmin.viewBodyFile`" l10Domain=$ItemAdmin.viewL10Domain}
 </form>
+  </div>
