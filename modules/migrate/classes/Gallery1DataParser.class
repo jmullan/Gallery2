@@ -250,7 +250,6 @@ class Gallery1DataParser {
 	} else if (!$platform->isLegalPathComponent($album['name'])) {
 	    $error[] = 'form.error.pathComponent.invalid';
 	}
-
 	if (empty($error)) {
 	    list ($ret, $instance) =
 		    GalleryFactory::newInstance('GalleryEntity', 'GalleryAlbumItem');
@@ -269,6 +268,7 @@ class Gallery1DataParser {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 	    }
+
 	    $instance->setTitle($album['title']);
 	    $instance->setSummary($album['summary']);
 	    $instance->setKeywords('');
