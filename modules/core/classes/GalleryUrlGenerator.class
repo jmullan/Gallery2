@@ -25,7 +25,11 @@
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
-GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryUtilities.class');
+/*
+ * Don't use GalleryCoreApi::requireOnce here.. lib/tools/security.inc includes
+ * config.php before GalleryCoreApi is loaded; multisite config.php includes this class.
+ */
+require_once(dirname(__FILE__) . '/GalleryUtilities.class');
 
 /**
  * Url Generator
