@@ -129,8 +129,7 @@ class GalleryView {
      * Load the theme with the given name
      *
      * @param string a theme name
-     * @return array object GalleryStatus a status code
-     *               object GalleryTheme a theme
+     * @return object GalleryStatus a status code
      */
     function _activateTheme($themeName) {
 	global $gallery;
@@ -167,9 +166,14 @@ class GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	if (empty($layoutName)) {
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER,
+					      __FILE__, __LINE__), null);
+	}
+
 	require_once($gallery->getConfig('code.gallery.layouts') .
 		     $layoutName . '/layout.inc');
-	$layoutClassName = $layout . 'Layout';
+	$layoutClassName = $layoutName . 'Layout';
 	if (!class_exists($layoutClassName)) {
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER,
 					      __FILE__, __LINE__), null);

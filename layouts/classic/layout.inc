@@ -163,7 +163,8 @@ class ClassicLayout extends GalleryLayout {
 	$smarty->assign('pageNumber', $pageNumber);
 	$smarty->assign('totalPageCount', $totalPages);
 	$smarty->assign('totalChildCount', $totalChildCount);
-	$smarty->assign('layoutUrl', GalleryUtilities::convertPathToRelativeUrl(__FILE__));
+	$smarty->assign('layoutUrl',
+			GalleryUtilities::convertPathToRelativeUrl(dirname(__FILE__)));
 	$smarty->assign('parents', $parents);
 
 	/* Parse the body template and send it back */

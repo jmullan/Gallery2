@@ -43,25 +43,19 @@ class ShowItemView extends GalleryView {
 	    }
 	}
 
-	list ($ret, $theme) = $this->_loadTheme($themeName);
+	$ret = $this->_activateTheme($themeName);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	
-	list ($ret, $style) = $theme->getStyleUrl();
-	if ($ret->isError()) {
-	    return $ret;
-	}
-
 	/* Render the HTML head */
 	list ($ret, $smarty) = $gallery->getSmarty();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$smarty->assign('item', $item->getMemberData());
-	$smarty->assign('style', $style);
 	$smarty->template_dir = dirname(__FILE__) . '/templates';
-	$html = $smarty->fetch('head.tpl');
+	$html = $smarty->fetch('ShowItemHead.tpl');
 
 	return array(GalleryStatus::success(), $html);
     }
@@ -87,7 +81,7 @@ class ShowItemView extends GalleryView {
 	$layoutName = $item->getLayout();
 	if (empty($layoutName)) {
 	    list ($ret, $layoutName) =
-		$gallery->getModuleParameter('core', 'default.layouts');
+		$gallery->getModuleParameter('core', 'default.layout');
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
