@@ -202,7 +202,13 @@ class ToolkitTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals(array(new TestToolkit(), new TestToolkit2()), $toolkits);
+
+	/* Order is non-deterministic (varies by db) */
+	$this->assert((GalleryUtilities::isA($toolkits[0], 'TestToolkit') &&
+		       GalleryUtilities::isA($toolkits[1], 'TestToolkit2')) ||
+		      (GalleryUtilities::isA($toolkits[0], 'TestToolkit2') &&
+		       GalleryUtilities::isA($toolkits[1], 'TestToolkit')),
+		      'toolkit mismatch');
 
 	/* Unregister */
 	$ret = GalleryCoreApi::unregisterToolkit('TestToolkit2');
