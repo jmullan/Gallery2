@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -50,27 +50,27 @@ class TestGdFunctionality {
 
     function TestGdFunctionality() {
     }
-    
+
     /**
      * Set the environment we want to simulate
      * -> 1. PHP 4.1.0, GD 1.8.2 not bundled (4.1.0|1.6.2|0)
      *    2. PHP 4.2.0, GD 1.8.2 not bundled
      * -> 3. PHP 4.3.1, GD 2.0 bundled       (4.3.1|2.0|1)
-     *    4. PHP 4.3.9, GD 1.6.2 not bundled 
+     *    4. PHP 4.3.9, GD 1.6.2 not bundled
      * -> 5. PHP 4.3.9RC1, GD 2.0.28 bundled (4.3.9RC1|2.0.28|1)
      *    6. PHP 5.0.1, GD 2.0.28 bundled
      */
     function setEnvironment($environment) {
 	$this->_gdEnvironment = $environment;
     }
-    
+
     function getEnvironmentName() {
 	return $this->_gdEnvironment['name'];
     }
 
     /**
      * Return the name of a new resource
-     * 
+     *
      * From a filename like '200x300.gif' set the sizes x=200 y=300
      *
      */
@@ -172,7 +172,25 @@ class TestGdFunctionality {
 	unset($this->_outputFiles[$filename]);
 	return true;
     }
-    
+
+    function filesize($filename) {
+	switch ($filename) {
+	case 'compressMe.jpg':
+	    return 250 << 10;
+	case '/valid/compressed.jpg':
+	    switch ($this->_counter--) {
+	    case 2:
+		return 200 << 10;
+	    case 1:
+		return 100 << 10;
+	    case 0:
+		return 150 << 10;
+	    }
+	}
+	print "filesize $filename<br/>\n";
+	return 0;
+    }
+
     function functionExists($fct) {
 	$fct = strtolower($fct);
 	if (isset($this->_gdEnvironment['functions'][$fct])) {
@@ -180,11 +198,11 @@ class TestGdFunctionality {
 	}
 	return false;
     }
-    
+
     function imageTypes() {
 	return $this->_gdEnvironment['imageTypes'];
     }
-    
+
     function gd_info() {
 	if (! $this->functionExists('gd_info')) {
 	    return array(GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
@@ -195,11 +213,11 @@ class TestGdFunctionality {
 	}
 	return array(GalleryStatus::success(), $this->_gdEnvironment['gd_info']);
     }
-    
+
     function getImageSize($filename) {
 	return array(0, 0);
     }
-    
+
     function imageCreate($width, $height) {
 	if (! $this->functionExists('imageCreate')) {
 	    return GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
@@ -224,7 +242,7 @@ class TestGdFunctionality {
 	return array(GalleryStatus::success(), $res);
     }
 
-    function imageCreateFromGif($filename) {   
+    function imageCreateFromGif($filename) {
 	if (! $this->functionExists('imageCreateFromGif')) {
 	    return array(GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
 					      'Environment: ' . $this->getEnvironmentName()),
@@ -234,7 +252,7 @@ class TestGdFunctionality {
 	return array(GalleryStatus::success(), $res);
     }
 
-    function imageCreateFromJpeg($filename) {   
+    function imageCreateFromJpeg($filename) {
 	if (! $this->functionExists('imageCreateFromJpeg')) {
 	    return array(GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
 					      'Environment: ' . $this->getEnvironmentName()),
@@ -244,7 +262,7 @@ class TestGdFunctionality {
 	return array(GalleryStatus::success(), $res);
     }
 
-    function imageCreateFromPng($filename) {   
+    function imageCreateFromPng($filename) {
 	if (! $this->functionExists('imageCreateFromPng')) {
 	    return array(GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
 					      'Environment: ' . $this->getEnvironmentName()),
@@ -264,7 +282,7 @@ class TestGdFunctionality {
 	return array(GalleryStatus::success(), $res);
     }
 
-    function imageCreateFromXbm($filename) {   
+    function imageCreateFromXbm($filename) {
 	if (! $this->functionExists('imageCreateFromXbm')) {
 	    return array(GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
 					      'Environment: ' . $this->getEnvironmentName()),
@@ -274,7 +292,7 @@ class TestGdFunctionality {
 	return array(GalleryStatus::success(), $res);
     }
 
-    function imageCreateFromXpm($filename) {   
+    function imageCreateFromXpm($filename) {
 	if (! $this->functionExists('imageCreateFromXpm')) {
 	    return array(GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
 					      'Environment: ' . $this->getEnvironmentName()),
@@ -415,7 +433,7 @@ class TestGdFunctionality {
 	if (! $this->isValidResource($srcRes) || ! $this->isValidResource($dstRes)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
-	
+
 	$this->setResourceData($dstRes, 'other', array('copy' => array($this->getResourceData($srcRes, 'filename'), $dstX, $dstY, $srcX, $srcY, $srcW, $srcH)));
 	return GalleryStatus::success();
     }
@@ -467,5 +485,4 @@ class TestGdFunctionality {
 	return array(GalleryStatus::success(), $res);
     }
 }
-
 ?>

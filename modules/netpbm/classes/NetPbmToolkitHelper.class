@@ -139,6 +139,16 @@ class NetPbmToolkitHelper {
 	$operations['composite']['description'] = $gallery->i18n('Overlay source image with a second one');
 	$operations['composite']['mimeTypes'] = $mimeTypes;
 
+	/* Compress */
+	$qualityMimeTypes = array_intersect(array('image/jpeg', 'image/pjpeg'), $mimeTypes);
+	if (!empty($qualityMimeTypes)) {
+	    $operations['compress'] = array(
+		'params' => array(array('type' => 'int',
+					 'description' => $gallery->i18n('target size in kb'))),
+		'description' => $gallery->i18n('Reduce image quality to reach target file size'),
+		'mimeTypes' => $qualityMimeTypes);
+	}
+
 	/*
 	 * -------------------- Properties --------------------
 	 */

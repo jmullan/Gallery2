@@ -93,7 +93,8 @@ class NetPbmToolkit extends GalleryToolkit {
 	}
 
 	/* Use context look-ahead to see if we can queue up parameters to use later.. */
-	$queueIt = isset($context['next.toolkit']) && $context['next.toolkit'] == $this;
+	$queueIt = isset($context['next.toolkit']) && $context['next.toolkit'] == $this
+	    && $operationName != 'compress' && $context['next.operation'] != 'compress';
 
 	if (!isset($width) &&
 		($queueIt || in_array($operationName, array('thumbnail', 'crop')))) {
@@ -187,69 +188,69 @@ class NetPbmToolkit extends GalleryToolkit {
 	    $tmpDir = $gallery->getConfig('data.gallery.tmp');
 	    $tmpOverlay = $platform->tempnam($tmpDir, 'npbm_');
 	    if (empty($tmpOverlay)) {
-	        /* This can happen if the $tmpDir path is bad */
-	        return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__,
-	                                          "Could not create tmp file in '$tmpDir'"),
-	                     null, null);
+		/* This can happen if the $tmpDir path is bad */
+		return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__,
+						  "Could not create tmp file in '$tmpDir'"),
+			     null, null);
 	    }
 	    $context['netpbm.tmp'][] = $tmpOverlay;
 
 	    $tmpAlpha = $platform->tempnam($tmpDir, 'npbm_');
 	    if (empty($tmpAlpha)) {
-	        /* This can happen if the $tmpDir path is bad */
-	        return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__,
-	                                          "Could not create tmp file in '$tmpDir'"),
-	                     null, null);
+		/* This can happen if the $tmpDir path is bad */
+		return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__,
+						  "Could not create tmp file in '$tmpDir'"),
+			     null, null);
 	    }
 	    $context['netpbm.tmp'][] = $tmpAlpha;
 
 	    switch ($compositeOverlayMimeType) {
 	    case 'image/png':
-	        $useAlpha = 1;
-	        $getOverlayCmd = array($this->_pnmCmd('pngtopnm'),
-	                               $compositeOverlayPath,
-	                               '>',
-	                               $tmpOverlay);
-	        $getAlphaCmd   = array($this->_pnmCmd('pngtopnm'),
-	                               '-alpha',
-	                               $compositeOverlayPath,
-	                               '>',
-	                               $tmpAlpha);
-	        break;
+		$useAlpha = 1;
+		$getOverlayCmd = array($this->_pnmCmd('pngtopnm'),
+				       $compositeOverlayPath,
+				       '>',
+				       $tmpOverlay);
+		$getAlphaCmd   = array($this->_pnmCmd('pngtopnm'),
+				       '-alpha',
+				       $compositeOverlayPath,
+				       '>',
+				       $tmpAlpha);
+		break;
 
 	    case 'image/jpeg':
 	    case 'image/pjpeg':
-	        $useAlpha = 0;
-	        $getOverlayCmd = array($this->_pnmCmd('jpegtopnm'),
-	                               $compositeOverlayPath,
-	                               '>',
-	                               $tmpOverlay);
-	        break;
+		$useAlpha = 0;
+		$getOverlayCmd = array($this->_pnmCmd('jpegtopnm'),
+				       $compositeOverlayPath,
+				       '>',
+				       $tmpOverlay);
+		break;
 
 	    case 'image/gif':
-	        $useAlpha = 1;
-	        $getOverlayCmd = array($this->_pnmCmd('giftopnm'),
-	                               '-alphaout=' . $tmpAlpha,
-	                               $compositeOverlayPath,
-	                               '>',
-	                               $tmpOverlay);
-	        break;
+		$useAlpha = 1;
+		$getOverlayCmd = array($this->_pnmCmd('giftopnm'),
+				       '-alphaout=' . $tmpAlpha,
+				       $compositeOverlayPath,
+				       '>',
+				       $tmpOverlay);
+		break;
 
 	    case 'image/tiff':
-	        /*
+		/*
 		 * This is only because my decomposed alpha was "all black", and made it seem like it
 		 * wasn't doing anything
 		 */
-	        $useAlpha = 0;
-	        $getOverlayCmd = array($this->_pnmCmd('tifftopnm'),
-	                               '-alphaout=' . $tmpAlpha,
-	                               $compositeOverlayPath,
-	                               '>',
-	                               $tmpOverlay);
-	        break;
+		$useAlpha = 0;
+		$getOverlayCmd = array($this->_pnmCmd('tifftopnm'),
+				       '-alphaout=' . $tmpAlpha,
+				       $compositeOverlayPath,
+				       '>',
+				       $tmpOverlay);
+		break;
 	    default:
 		$this->_deleteTempFiles($context);
-	        return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__,
+		return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__,
 				    "mimeType not handled: $compositeOverlayMimeType"), null, null);
 	    }
 
@@ -261,8 +262,8 @@ class NetPbmToolkit extends GalleryToolkit {
 				    "Could not get/convert/extract overlay"), null, null);
 	    }
 	    if (isset($getAlphaCmd)) {
-	        list($ret, $output) = $platform->exec(array($getAlphaCmd));
-	        if (!$ret) {
+		list($ret, $output) = $platform->exec(array($getAlphaCmd));
+		if (!$ret) {
 		    $this->_deleteTempFiles($context);
 		    return array(GalleryStatus::error(ERROR_UNKNOWN, __FILE__, __LINE__,
 					"Could not get/convert/extract alpha"), null, null);
@@ -272,49 +273,49 @@ class NetPbmToolkit extends GalleryToolkit {
 
 	    switch ($compositeAlignmentType) {
 	    case 'top-left': // Top - Left
-	        $pnmcomp[] = '-align=left';
-	        $pnmcomp[] = '-valign=top';
-	        break;
+		$pnmcomp[] = '-align=left';
+		$pnmcomp[] = '-valign=top';
+		break;
 
 	    case 'top': // Top
-	        $pnmcomp[] = '-align=center';
-	        $pnmcomp[] = '-valign=top';
-	        break;
+		$pnmcomp[] = '-align=center';
+		$pnmcomp[] = '-valign=top';
+		break;
 
 	    case 'top-right': // Top - Right
-	        $pnmcomp[] = '-align=right';
-	        $pnmcomp[] = '-valign=top';
-	        break;
+		$pnmcomp[] = '-align=right';
+		$pnmcomp[] = '-valign=top';
+		break;
 
 	    case 'left': // Left
-	        $pnmcomp[] = '-align=left';
-	        $pnmcomp[] = '-valign=middle';
-	        break;
+		$pnmcomp[] = '-align=left';
+		$pnmcomp[] = '-valign=middle';
+		break;
 
 	    case 'center': // Center
-	        $pnmcomp[] = '-align=center';
-	        $pnmcomp[] = '-valign=middle';
-	        break;
+		$pnmcomp[] = '-align=center';
+		$pnmcomp[] = '-valign=middle';
+		break;
 
 	    case 'right': // Right
-	        $pnmcomp[] = '-align=right';
-	        $pnmcomp[] = '-valign=middle';
-	        break;
+		$pnmcomp[] = '-align=right';
+		$pnmcomp[] = '-valign=middle';
+		break;
 
 	    case 'bottom-left': // Bottom - Left
-	        $pnmcomp[] = '-align=left';
-	        $pnmcomp[] = '-valign=bottom';
-	        break;
+		$pnmcomp[] = '-align=left';
+		$pnmcomp[] = '-valign=bottom';
+		break;
 
 	    case 'bottom': // Bottom
-	        $pnmcomp[] = '-align=center';
-	        $pnmcomp[] = '-valign=bottom';
-	        break;
+		$pnmcomp[] = '-align=center';
+		$pnmcomp[] = '-valign=bottom';
+		break;
 
 	    case 'bottom-right': // Bottom Right
-	        $pnmcomp[] = '-align=right';
-	        $pnmcomp[] = '-valign=bottom';
-	        break;
+		$pnmcomp[] = '-align=right';
+		$pnmcomp[] = '-valign=bottom';
+		break;
 
 	    case 'manual':
 		// Use the alignments we received
@@ -336,8 +337,8 @@ class NetPbmToolkit extends GalleryToolkit {
 		$compositeAlignY = min($compositeAlignY, $height - $compositeHeight);
 		$compositeAlignY = max(0, $compositeAlignY);
 
-	        $pnmcomp[] = '-xoff=' . $compositeAlignX;
-	        $pnmcomp[] = '-yoff=' . $compositeAlignY;
+		$pnmcomp[] = '-xoff=' . $compositeAlignX;
+		$pnmcomp[] = '-yoff=' . $compositeAlignY;
 		break;
 
 	    default:
@@ -347,13 +348,46 @@ class NetPbmToolkit extends GalleryToolkit {
 	    }
 
 	    if ($useAlpha) {
-	        $pnmcomp[] = '-alpha=' . $tmpAlpha;
+		$pnmcomp[] = '-alpha=' . $tmpAlpha;
 	    }
 
 	    $pnmcomp[] = $tmpOverlay;
 	    $transform[] = $pnmcomp;
 
 	    break; // case composite
+
+	case 'compress':
+	    $targetSize = $parameters[0];
+	    $fileSize = $platform->filesize($sourceFilename) >> 10; //Size in KB
+	    if ($fileSize <= $targetSize) {
+		break;
+	    }
+	    /* Use module quality parameter as initial guess */
+	    list ($ret, $quality) =
+		GalleryCoreApi::getPluginParameter('module', 'netpbm', 'jpegQuality');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+	    $maxQuality = 100;
+	    $minQuality = 5;
+	    do {
+		$ret = $this->_transformImage($mimeType, array(), $sourceFilename,
+					      $destFilename, $outputMimeType, $quality);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		}
+		clearstatcache();
+		$fileSize = $platform->filesize($destFilename) >> 10;
+		if ($fileSize >= $targetSize) {
+		    $maxQuality = $quality;
+		}
+		if ($fileSize <= $targetSize) {
+		    $minQuality = $quality;
+		}
+		$quality = round(($minQuality + $maxQuality) / 2);
+	    } while ($maxQuality - $minQuality > 2
+		   && abs(($fileSize - $targetSize) / $targetSize) > 0.02);
+	    return array(GalleryStatus::success(), $outputMimeType, $context);
 
 	default:
 	    $this->_deleteTempFiles($context);
@@ -366,25 +400,28 @@ class NetPbmToolkit extends GalleryToolkit {
 	    $context['height'] = $height;
 	}
 
+	if (($queueIt || empty($transform)) && $sourceFilename != $destFilename) {
+	    if (!$platform->copy($sourceFilename, $destFilename)) {
+		$this->_deleteTempFiles($context);
+		return array(GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__),
+			     null, null);
+	    }
+	}
+
 	/* Use context look-ahead to see if we can queue up these parameters
 	 * to include in a later operation..
 	 */
 	if ($queueIt) {
 	    $context['netpbm.transform'] = $transform;
 	    $context['netpbm.mime'] = $mimeType;
-
-	    if ($sourceFilename != $destFilename) {
-		if (!$platform->copy($sourceFilename, $destFilename)) {
-		    $this->_deleteTempFiles($context);
-		    return array(GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__),
-				 null, null);
-		}
-	    }
 	    return array(GalleryStatus::success(), $outputMimeType, $context);
 	}
 
-	$ret = $this->_transformImage($mimeType, $transform, $sourceFilename,
-				      $destFilename, $outputMimeType);
+	if (!empty($transform)) {
+	    $ret = $this->_transformImage($mimeType, $transform, $sourceFilename,
+					  $destFilename, $outputMimeType);
+	}
+
 	/*
 	 * We still need to delete the temporary overlay/alphamask for compositing
 	 * before, possibly, returning an error
@@ -463,7 +500,8 @@ class NetPbmToolkit extends GalleryToolkit {
      * @param string the output mime type
      * @return object GalleryStatus a status code
      */
-    function _transformImage($mimeType, $command, $sourceFilename, $destFilename, $outputMimeType) {
+    function _transformImage($mimeType, $command, $sourceFilename, $destFilename, $outputMimeType,
+			     $jpegQuality=null) {
 	global $gallery;
 	$platform = $gallery->getPlatform();
 
@@ -481,7 +519,8 @@ class NetPbmToolkit extends GalleryToolkit {
 	    return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);
 	}
 
-	list($ret, $convertFromPnmCmd) = $this->_convertFromPnmCmd($outputMimeType, $tmpFilename);
+	list($ret, $convertFromPnmCmd) =
+	    $this->_convertFromPnmCmd($outputMimeType, $tmpFilename, $jpegQuality);
 	if ($ret->isError()) {
 	    @$platform->unlink($tmpFilename);
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -502,16 +541,16 @@ class NetPbmToolkit extends GalleryToolkit {
 	    list ($ret, $jheadPath) = GalleryCoreApi::getPluginParameter('module', 'netpbm', 'jheadPath');
 	    if ($ret->isError()) {
 		@$platform->unlink($tmpFilename);
-	        return $ret->wrap(__FILE__, __LINE__);
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
 	    if (!empty($jheadPath)) {
-	        $cmd = array($jheadPath . 'jhead', '-te', $sourceFilename, $tmpFilename);
-	        list ($success, $stdout, $stderr) = $this->_exec(array($cmd));
-	        if (!$success) {
+		$cmd = array($jheadPath . 'jhead', '-te', $sourceFilename, $tmpFilename);
+		list ($success, $stdout, $stderr) = $this->_exec(array($cmd));
+		if (!$success) {
 		    @$platform->unlink($tmpFilename);
-	            return GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE, __LINE);
-	        }
+		    return GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE, __LINE);
+		}
 	    }
 	}
 
@@ -576,7 +615,7 @@ class NetPbmToolkit extends GalleryToolkit {
      * @return array object GalleryStatus a status code,
      *               array 1 or more string commands
      */
-    function _convertFromPnmCmd($mimeType, $filename) {
+    function _convertFromPnmCmd($mimeType, $filename, $jpegQuality=null) {
 	global $gallery;
 
 	list ($ret, $pnmtojpeg) =
@@ -585,10 +624,12 @@ class NetPbmToolkit extends GalleryToolkit {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	list ($ret, $jpegQuality) =
-	    GalleryCoreApi::getPluginParameter('module', 'netpbm', 'jpegQuality');
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	if (!isset($jpegQuality)) {
+	    list ($ret, $jpegQuality) =
+		GalleryCoreApi::getPluginParameter('module', 'netpbm', 'jpegQuality');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
 	}
 
 	switch($mimeType) {

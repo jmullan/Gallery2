@@ -93,6 +93,18 @@ class GdFunctionality {
     }
 
     /**
+     * The filesize method from GalleryPlatform, which we also need to be able
+     * to overwrite in our testcases
+     *
+     * @return int
+     */
+    function filesize($file) {
+	global $gallery;
+	$platform = $gallery->getPlatform();
+	return $platform->filesize($file);
+    }
+
+    /**
      * Just check if a function exists or not.
      *
      * This is here so we can substitute the function-checker routine in our

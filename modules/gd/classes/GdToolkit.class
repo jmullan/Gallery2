@@ -158,18 +158,10 @@ class GdToolkit extends GalleryToolkit {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
-	    if ($operationName == 'thumbnail') {
-		/* Don't enlarge images for a thumbnail */
-		if ($width <= $parameters[0] && $height <= $targetHeight) {
-		    /* Just copy the source to the destination */
-		    if ($sourceFilename != $destFilename) {
-			if (!$gd->copy($sourceFilename, $destFilename)) {
-			    return array(GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__),
-					 null, null);
-			}
-		    }
-		    return array(GalleryStatus::success(), $mimeType, $context);
-		}
+	    /* Don't enlarge images for a thumbnail */
+	    if ($operationName == 'thumbnail' &&
+		    $width <= $parameters[0] && $height <= $targetHeight) {
+		break;
 	    }
 
 	    list ($destWidth, $destHeight) = GalleryUtilities::scaleDimensionsToFit(
@@ -357,7 +349,7 @@ class GdToolkit extends GalleryToolkit {
 	    }
 
 	    $destRes = $sourceRes;
-	    /* Don't use imageCopyMerge here, as it will loose alpha-transparency */
+	    /* Don't use imageCopyMerge here, as it will lose alpha-transparency */
 	    $ret = $gd->imageCopy($destRes, $overlayRes,
 				       $compositeAlignX, $compositeAlignY,
 				       0, 0,
@@ -368,15 +360,59 @@ class GdToolkit extends GalleryToolkit {
 	    }
 	    break;
 
+	case 'compress':
+	    $targetSize = $parameters[0];
+	    $fileSize = $gd->filesize($sourceFilename) >> 10; //Size in KB
+	    if ($fileSize <= $targetSize) {
+		break;
+	    }
+	    /* Use module quality parameter as initial guess */
+	    list ($ret, $quality) =
+		GalleryCoreApi::getPluginParameter('module', 'gd', 'jpegQuality');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+	    $maxQuality = 100;
+	    $minQuality = 5;
+	    do {
+		$ret = $this->_saveImageResourceToFile($sourceRes, $destFilename, $outputMimeType,
+						       $quality);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		}
+		clearstatcache();
+		$fileSize = $gd->filesize($destFilename) >> 10;
+		if ($fileSize >= $targetSize) {
+		    $maxQuality = $quality;
+		}
+		if ($fileSize <= $targetSize) {
+		    $minQuality = $quality;
+		}
+		$quality = round(($minQuality + $maxQuality) / 2);
+	    } while ($maxQuality - $minQuality > 2
+		   && abs(($fileSize - $targetSize) / $targetSize) > 0.02);
+	    return array(GalleryStatus::success(), $outputMimeType, $context);
+
 	default:
 	    return array(GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
 					      "$operationName $mimeType"), null, null);
 	}
 
-	$ret = $this->_saveImageResourceToFile($destRes, $destFilename, $outputMimeType);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	if (isset($destRes)) {
+	    $ret = $this->_saveImageResourceToFile($destRes, $destFilename, $outputMimeType);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+	} else {
+	    /* Just copy the source to the destination */
+	    if ($sourceFilename != $destFilename) {
+		if (!$gd->copy($sourceFilename, $destFilename)) {
+		    return array(GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__),
+				 null, null);
+		}
+	    }
 	}
+
 	return array(GalleryStatus::success(), $outputMimeType, $context);
     }
 
@@ -477,17 +513,19 @@ class GdToolkit extends GalleryToolkit {
      * @return object GalleryStatus a status code
      * @access private
      */
-    function _saveImageResourceToFile($res, $filename, $mimeType) {
+    function _saveImageResourceToFile($res, $filename, $mimeType, $jpegQuality=null) {
 	$gd =& $this->_getGdFunctionality();
 	switch ($mimeType) {
 	case 'image/gif':
 	    $ret = $gd->imageGif($res, $filename);
 	    break;
 	case 'image/jpeg':
-	    list ($ret, $jpegQuality) =
+	    if (!isset($jpegQuality)) {
+		list ($ret, $jpegQuality) =
 		    GalleryCoreApi::getPluginParameter('module', 'gd', 'jpegQuality');
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
 	    }
 	    $ret = $gd->imageJpeg($res, $filename, $jpegQuality);
 	    break;

@@ -148,6 +148,16 @@ class GdToolkitHelper {
 	    $operations['composite']['mimeTypes'] = $mimeTypes;
 	}
 
+	/* Compress */
+	$qualityMimeTypes = array_intersect(array('image/jpeg'), $mimeTypes);
+	if (!empty($qualityMimeTypes)) {
+	    $operations['compress'] = array(
+		'params' => array(array('type' => 'int',
+					 'description' => $gallery->i18n('target size in kb'))),
+		'description' => $gallery->i18n('Reduce image quality to reach target file size'),
+		'mimeTypes' => $qualityMimeTypes);
+	}
+
 	/*
 	 * -------------------- Properties --------------------
 	 */
@@ -181,6 +191,7 @@ class GdToolkitHelper {
 	    return true;
 	    break;
 	case 'convert-to-image/jpeg':
+	case 'compress':
 	    return $gd->functionExists('imageJpeg');
 	    break;
 	case 'rotate':

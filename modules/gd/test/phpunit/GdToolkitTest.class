@@ -55,9 +55,6 @@ class GdToolkitTest extends GalleryTestCase {
 	$this->_gdEnvironments = $gdEnvironments;
     }
 
-    /**
-     *
-     */
     function setUp() {
 	global $gallery;
 
@@ -90,9 +87,6 @@ class GdToolkitTest extends GalleryTestCase {
 	$this->_gdFunctionality =& new TestGdFunctionality();
     }
 
-    /**
-     *
-     */
     function tearDown() {
 	global $gallery;
 
@@ -229,6 +223,21 @@ class GdToolkitTest extends GalleryTestCase {
 		    if ($ret->isError()) {
 			return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 		    }
+		}
+
+		if (GdToolkitHelper::isOperationSupported('compress', $gd)) {
+		    $this->_gdFunctionality->_counter = 2;
+		    list ($ret, $mimeType) =
+			$this->_toolkit->performOperation($mimeType, 'compress',
+							  'compressMe.jpg',
+							  '/valid/compressed.jpg',
+							  array(150));
+		    if ($ret->isError()) {
+			return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		    }
+		    $this->assertEquals($this->_gdFunctionality->getOutputFileData('/valid/compressed.jpg'),
+					array('x' => '0', 'y' => '0', 'mimeType' => 'image/jpeg'),
+					'compress');
 		}
 	    }
 	}
@@ -490,6 +499,17 @@ class GdToolkitTest extends GalleryTestCase {
 			),
 		    'description' => 'Overlay source image with a second one',
 		    'mimeTypes' => $environment['mimeTypes'],
+		    );
+	    }
+	    $qualityMimeTypes = array_intersect(array('image/jpeg'), $environment['mimeTypes']);
+	    if (!empty($qualityMimeTypes)) {
+		$expectedOperations['compress'] = array(
+		    'params' => array(
+			array('type' => 'int',
+			      'description' => 'target size in kb'),
+			),
+		    'description' => 'Reduce image quality to reach target file size',
+		    'mimeTypes' => $qualityMimeTypes,
 		    );
 	    }
 
