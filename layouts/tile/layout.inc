@@ -43,15 +43,13 @@ class TileLayout extends GalleryLayout {
 	$this->setId('tile');
 	$this->setName('Tile');
 	$this->setDescription($gallery->i18n('Tile view of background image and image thumbnails; subalbums/other items not shown'));
-	$this->setVersion('0.9.1');
+	$this->setVersion('0.9.2');
 	$this->setL10Domain('layouts_tile');
 	$this->setRequiredLayoutApi(array(0, 8));
 	$this->setRequiredCoreApi(array(5, 0));
-
-	return GalleryStatus::success();
     }
 
-    function loadTemplate(&$template, $item) {
+    function loadTemplate(&$template, $item, $noHead=false) {
 	global $gallery;
 	$renderId = GalleryUtilities::getRequestVariables('renderId');
 
@@ -136,8 +134,6 @@ class TileLayout extends GalleryLayout {
 	    $itemMap[$child['id']] = $child;
 	}
 
-	$layout['show']['parents'] = true;
-	$layout['show']['systemLinks'] = true;
 	$layout['itemMap'] = $itemMap;
 	$layout['imageWidths'] = implode(',', $imageWidths);
 	$layout['imageHeights'] = implode(',', $imageHeights);
@@ -155,15 +151,18 @@ class TileLayout extends GalleryLayout {
 		    if (isset($tmp['imageIndex'])) {
 			$layout['viewIndex'] = $tmp['imageIndex'];
 			/* Set cookie to popup image just once */
-			$cook = 'G2_tile_' . $item->getId();
-			setcookie($cook, 'I', 0, $cookiePath);
+			setcookie('G2_tile_view', '1', 0, $cookiePath);
 		    }
 		    break;
 		}
 	    }
 	}
 
-	$template->head('layouts/tile/templates/header.tpl');
+	if (!$noHead) {
+	    $template->head('layouts/tile/templates/header.tpl');
+	    $template->style('templates/layout.css');
+	    $template->style('layouts/tile/templates/tile.css');
+	}
 	return array(GalleryStatus::success(),
 		     array('body' => 'layouts/tile/templates/tile.tpl'));
     }
@@ -209,7 +208,7 @@ class TileLayout extends GalleryLayout {
 		$children[$i]['thumbnail'] = $thumbnails[$childId]->getMemberData();
 	    }
 
-	    if (!(GalleryUtilities::isA($child, 'GalleryDataItem') && $child->canBeViewedInline())) {
+	    if (!GalleryUtilities::isA($child, 'GalleryDataItem') || !$child->canBeViewedInline()) {
 		continue;
 	    }
 
@@ -220,7 +219,7 @@ class TileLayout extends GalleryLayout {
 
 	    $images = array();
 	    if (isset($permissions['core.viewSource'])) {
-		// Full size; check for preferred copy
+		/* Full size; check for preferred copy */
 		if (isset($preferredFullImages[$childId])) {
 		    $images[] = $preferredFullImages[$childId];
 		} else {
@@ -239,7 +238,7 @@ class TileLayout extends GalleryLayout {
 	    if (!empty($images)) {
 		$image = $images[0];
 
-		// Rebuild derivative if needed so width/height known..
+		/* Rebuild derivative if needed so width/height known */
 		if (GalleryUtilities::isA($image, 'GalleryDerivativeImage')
 			&& !($image->getWidth() && $image->getHeight())) {
 		    list ($ret, $image) = GalleryCoreApi::rebuildDerivativeCache($image->getId());
@@ -252,11 +251,11 @@ class TileLayout extends GalleryLayout {
 		$children[$i]['imageIndex'] = count($imageWidths);
 		if (GalleryUtilities::isExactlyA($child, 'GalleryPhotoItem')
 			&& $image['width'] > 0 && $image['height'] > 0) {
-		    // Display in <img>
+		    /* Display in <img> */
 		    $imageWidths[] = $image['width'];
 		    $imageHeights[] = $image['height'];
 		} else {
-		    // Item must render itself
+		    /* Item must render itself */
 		    $children[$i]['renderItem'] = 1;
 		    $imageWidths[] = $imageHeights[] = -1;
 		}
@@ -278,16 +277,16 @@ class TileLayout extends GalleryLayout {
      */
     function loadSettingsTemplate(&$template, &$form, $itemId=null) {
 	if (!isset($itemId)) {
-	    // Site admin settings..
+	    /* Site admin settings */
 	    return array(GalleryStatus::success(), null);
 	}
 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	list ($ret, $tmp) = $this->loadTemplate($template, $item);
+	list ($ret, $tmp) = $this->loadTemplate($template, $item, true);
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	return array(GalleryStatus::success(), 'layouts/tile/templates/edit.tpl');
     }
@@ -297,29 +296,27 @@ class TileLayout extends GalleryLayout {
      */
     function handleSettingsRequest($form, $itemId=null) {
 	if (!isset($itemId)) {
-	    /* Site admin settings.. */
-	    return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__),
-			 null, null);
+	    /* Site admin settings */
+	    return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null, null);
 	}
 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	$status = null;
 	$error = array();
-	if (isset($form['action']['undo'])) {
-	    /* Take no action and we'll be redirected back to the same page which will reset the form */
-	} else if (isset($form['action']['save'])) {
+	if (isset($form['action']['save'])) {
 	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    foreach (array('backgroundId', 'rows', 'cols', 'cellWidth', 'cellHeight') as $key) {
 		if (isset($form[$key])) {
-		    $ret = GalleryCoreApi::setPluginParameter('layout', 'tile', $key, $form[$key], $item->getId());
+		    $ret = GalleryCoreApi::setPluginParameter('layout', 'tile', $key, $form[$key],
+							      $item->getId());
 		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return array($ret->wrap(__FILE__, __LINE__), null, null);
 		    }
 		}
 	    }
@@ -333,12 +330,13 @@ class TileLayout extends GalleryLayout {
 		    }
 		}
 	    }
-	    $ret = GalleryCoreApi::setPluginParameter('layout', 'tile', 'map', implode(';', $map), $item->getId());
+	    $ret = GalleryCoreApi::setPluginParameter('layout', 'tile', 'map', implode(';', $map),
+						      $item->getId());
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    $status = $module->translate('Successfully saved layout settings');
-	}
+	} /* else $form['action']['undo'] */
 
 	return array(GalleryStatus::success(), $error, $status);
     }

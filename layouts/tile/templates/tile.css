@@ -1,36 +1,31 @@
-#gsAlbumContents img { border:none }
-div#image {
-  position:absolute; left:0; top:0; width:100%; height:100%;
-  background-color:#eee;
-}
-div#image img { margin:2px }
-div#title { margin:2px }
-table#tile { border-spacing:0 }
-table#tile td { text-align:center; padding:0; border:2px solid white }
-div.empty { opacity:0.35; -moz-opacity:0.35; filter:alpha(opacity=35); background-color:black }
 
-div#gsSidebar {
-    float: left;
-    width: 180px;
-    margin-right: 6px;
+table#tile td {
+    text-align:center;
+    padding:0;
+    border: 1px solid #fff;
 }
-.gbMenu {
-    margin: 12px 0 0 6px;
-    padding: 0 0 12px 0;
+
+table#tile img {
+    display: block;
 }
-.gbMenu + .gbMenu {
-    margin-top: 0;
-    padding-top: 9px;
+
+div.emptyTile {
+    opacity: 0.35;
+    -moz-opacity: 0.35;
+    filter: alpha(opacity=35);
+    background-color: #333;
 }
-.gbMenu ul, .gbMenu ol {
-    margin: 0;
-    padding: 0;
+
+div#image {
+    display: none;
+    position: absolute;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    overflow: auto;
+    text-align: center;
 }
-.gbMenu li {
-    padding: 4px 0 0 0;
-}
-.gbMenu h3 {
-    margin: 0;
-    padding: 6px 0 8px 0;
+
+div#image img {
+    margin: auto;
 }
 
