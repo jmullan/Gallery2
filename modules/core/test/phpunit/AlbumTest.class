@@ -119,7 +119,8 @@ class AlbumTest extends GalleryTestCase {
 	}
 
 	if (!GalleryUtilities::isA($rootAlbum, 'GalleryAlbumItem')) {
-	    return $this->failWithStatus(GalleryStatus::error(ERROR_DELETED_OBJECT, __FILE__, __LINE__));
+	    return $this->failWithStatus(
+		GalleryStatus::error(ERROR_DELETED_OBJECT, __FILE__, __LINE__));
 	}
     }
 
@@ -250,7 +251,8 @@ class AlbumTest extends GalleryTestCase {
 	}
 
 	/* Verify parents before moving */
-	$this->assertEquals($this->_parentAlbum->getId(), $album[0]->getParentId(), '(before) album 0');
+	$this->assertEquals($this->_parentAlbum->getId(), $album[0]->getParentId(),
+			    '(before) album 0');
 	$this->assertEquals($album[0]->getId(), $album[1]->getParentId(), '(before) album 1');
 	$this->assertEquals($album[1]->getId(), $album[2]->getParentId(), '(before) album 2');
 
@@ -279,7 +281,8 @@ class AlbumTest extends GalleryTestCase {
 			    '(before) sequence 2');
 
 	/* Read lock the root, write lock the two new albums */
-	list ($ret, $lockIds[]) = GalleryCoreApi::acquireReadLock(array($this->_parentAlbum->getId()));
+	list ($ret, $lockIds[]) =
+	    GalleryCoreApi::acquireReadLock(array($this->_parentAlbum->getId()));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -323,8 +326,10 @@ class AlbumTest extends GalleryTestCase {
 	    }
 	}
 
-	$this->assertEquals($this->_parentAlbum->getId(), $album[0]->getParentId(), '(after) album 0');
-	$this->assertEquals($this->_parentAlbum->getId(), $album[1]->getParentId(), '(after) album 1');
+	$this->assertEquals($this->_parentAlbum->getId(), $album[0]->getParentId(),
+			    '(after) album 0');
+	$this->assertEquals($this->_parentAlbum->getId(), $album[1]->getParentId(),
+			    '(after) album 1');
 	$this->assertEquals($album[1]->getId(), $album[2]->getParentId(), '(after) album 2');
 
 	for ($i = 0; $i < 3; $i++) {
@@ -418,7 +423,8 @@ class AlbumTest extends GalleryTestCase {
 
     function testGuaranteeAlbumHasThumbnail1() {
 	/* Album has no thumbnail, no children */
-	list ($ret, $success) = GalleryCoreApi::guaranteeAlbumHasThumbnail($this->_parentAlbum->getId());
+	list ($ret, $success) =
+	    GalleryCoreApi::guaranteeAlbumHasThumbnail($this->_parentAlbum->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -429,12 +435,14 @@ class AlbumTest extends GalleryTestCase {
 
     function testGuaranteeAlbumHasThumbnail2() {
 	/* Album has no thumbnail, 1 child */
-	list ($ret, $child) = $this->_createRandomDataItem($this->_parentAlbum->getId(), 'test/file');
+	list ($ret, $child) =
+	    $this->_createRandomDataItem($this->_parentAlbum->getId(), 'test/file');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $success) = GalleryCoreApi::guaranteeAlbumHasThumbnail($this->_parentAlbum->getId());
+	list ($ret, $success) =
+	    GalleryCoreApi::guaranteeAlbumHasThumbnail($this->_parentAlbum->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -442,7 +450,8 @@ class AlbumTest extends GalleryTestCase {
 	/* Result: success */
 	$this->assertEquals(true, $success);
 
-	list ($ret, $thumbTable) = GalleryCoreApi::fetchThumbnailsByItemIds(array($this->_parentAlbum->getId()));
+	list ($ret, $thumbTable) =
+	    GalleryCoreApi::fetchThumbnailsByItemIds(array($this->_parentAlbum->getId()));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -495,7 +504,8 @@ class AlbumTest extends GalleryTestCase {
 	$this->assertEquals(true, $success, 'guarantee');
 
 	/* Reload the thumbnail and examine it */
-	list ($ret, $thumbTable) = GalleryCoreApi::fetchThumbnailsByItemIds(array($subAlbum->getId()));
+	list ($ret, $thumbTable) =
+	    GalleryCoreApi::fetchThumbnailsByItemIds(array($subAlbum->getId()));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -578,8 +588,8 @@ class AlbumTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $lockIds[]) =
-	    GalleryCoreApi::acquireReadLock(array($this->_getRootId(), $this->_parentAlbum->getId()));
+	list ($ret, $lockIds[]) = GalleryCoreApi::acquireReadLock(
+	    array($this->_getRootId(), $this->_parentAlbum->getId()));
 
 	list ($ret, $lockIds[]) =
 	    GalleryCoreApi::acquireWriteLock(array($innerAlbum->getId(), $outerAlbum->getId()));
@@ -635,11 +645,9 @@ class AlbumTest extends GalleryTestCase {
 	global $gallery;
 
 	/* Create an album with one group of settings */
-	list ($ret, $album) = $this->_createRandomAlbum($this->_parentAlbum->getId(),
-							array('layout' => 'a',
-							      'orderby' => 'b',
-							      'orderdirection' => 'c',
-							      'theme' => 'd'));
+	list ($ret, $album) = $this->_createRandomAlbum(
+	    $this->_parentAlbum->getId(),
+	    array('layout' => 'a', 'orderby' => 'b', 'orderdirection' => 'c', 'theme' => 'd'));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -669,7 +677,8 @@ class AlbumTest extends GalleryTestCase {
 	$this->assertEquals('d', $child1->getTheme());
 
 	/* Now switch to using the defaults */
-	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'default.newAlbumsUseDefaults', 'true');
+	$ret = GalleryCoreApi::setPluginParameter(
+	    'module', 'core', 'default.newAlbumsUseDefaults', 'true');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -731,10 +740,28 @@ class AlbumTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$fullTree = array($album[0]->getId() => array($album[2]->getId() => array($album[4]->getId() => array(), $album[6]->getId() => array($album[7]->getId() => array()))), $album[1]->getId() => array($album[3]->getId() => array()));
-	$subTree = array($album[2]->getId() => array($album[4]->getId() => array(), $album[6]->getId() => array($album[7]->getId() => array())));
-	$depthTree = array($album[0]->getId() => array($album[2]->getId() => array()), $album[1]->getId() => array($album[3]->getId() => array()));
-	$allIds = array($album[0]->getId(), $album[2]->getId(), $album[4]->getId(), $album[6]->getId(), $album[7]->getId(), $album[1]->getId(), $album[3]->getId());
+	$fullTree = array($album[0]->getId() => array(
+			      $album[2]->getId() => array(
+				  $album[4]->getId() => array(),
+				  $album[6]->getId() => array(
+				      $album[7]->getId() => array()))),
+			  $album[1]->getId() => array(
+			      $album[3]->getId() => array()));
+	$subTree = array($album[2]->getId() => array(
+			     $album[4]->getId() => array(),
+			     $album[6]->getId() => array(
+				 $album[7]->getId() => array())));
+	$depthTree = array($album[0]->getId() => array(
+			       $album[2]->getId() => array()),
+			   $album[1]->getId() => array(
+			       $album[3]->getId() => array()));
+	$allIds = array($album[0]->getId(),
+			$album[2]->getId(),
+			$album[4]->getId(),
+			$album[6]->getId(),
+			$album[7]->getId(),
+			$album[1]->getId(),
+			$album[3]->getId());
 
 	list ($ret, $tree) = GalleryCoreApi::fetchAlbumTree($this->_parentAlbum->getId());
 	if ($ret->isError()) {
@@ -762,14 +789,64 @@ class AlbumTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(array(), $tree[$this->_parentAlbum->getId()], 'test album');
-	$this->assertEquals(array_keys($tree), GalleryUtilities::arrayKeysRecursive($tree), 'depth one');
+	$this->assertEquals(array_keys($tree),
+			    GalleryUtilities::arrayKeysRecursive($tree), 'depth one');
+    }
+
+    function testFetchAlbumTreeNoPermissions() {
+	global $gallery;
+	
+	list ($ret, $user) = $this->_createRandomUser();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markForCleanup($user);
+
+	/* Delete all acls for this user */
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryAccessMap.class');
+	$ret = GalleryAccessMap::removeMapEntry(array('userId' => $user->getId()));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	GalleryDataCache::reset();
+
+	/*
+	 * Remove user from all groups so that they're not implicitly part of a group that has
+	 * some permissions.
+	 */
+	$ret = GalleryCoreApi::removeUserFromAllGroups($user->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Put user in some random group that has no permissions */
+	list ($ret, $group) = $this->_createRandomGroup();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markForCleanup($group);
+
+	$ret = GalleryCoreApi::addUserToGroup($user->getId(), $group->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$gallery->setActiveUser($user);
+
+	/* Verify that the album tree is empty */
+	list ($ret, $tree) = GalleryCoreApi::fetchAlbumTree($this->_getRootId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(array(), $tree);
     }
 }
 
 /**
  * Required by our test toolkit
  */
-require_once(dirname(__FILE__) . '/../../classes/GalleryToolkit.class');
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryToolkit.class');
 
 /**
  * Dummy test toolkit

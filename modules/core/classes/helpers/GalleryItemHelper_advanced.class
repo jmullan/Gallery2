@@ -617,6 +617,13 @@ class GalleryItemHelper_advanced {
 	global $gallery;
 	$storage =& $gallery->getStorage();
 
+	list ($ret, $aclIds) =
+	    GalleryCoreApi::fetchAccessListIds('core.view', $gallery->getActiveUserId());
+	if (empty($aclIds)) {
+	    return array(GalleryStatus::success(), array());
+	}
+	$aclMarkers = GalleryUtilities::makeMarkers(count($aclIds));
+	
 	$parentSequence = array();
 	if (isset($itemId)) {
 	    list ($ret, $parentSequence) = GalleryCoreApi::fetchParentSequence($itemId);
@@ -637,10 +644,6 @@ class GalleryItemHelper_advanced {
 	}
 	$parentSequence[] = $itemId;
 	$parentSequence = implode('/', $parentSequence);
-
-	list ($ret, $aclIds) =
-	    GalleryCoreApi::fetchAccessListIds('core.view', $gallery->getActiveUserId());
-	$aclMarkers = GalleryUtilities::makeMarkers(count($aclIds));
 
 	$query = sprintf('
         SELECT
