@@ -149,20 +149,23 @@ class ItemAddController extends GalleryController {
     function _extractAndAddFiles($archiveItem, $toolkit) {
 	global $gallery;
 	$platform = $gallery->getPlatform();
-	$base = $platform->tempnam($gallery->getConfig('data.gallery.tmp'), 'tmp_');
-	$tmpDir = $base . '.dir';
-	if (!$platform->mkdir($tmpDir)) {
-	    return array(GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__), null);
-	}
 
 	list ($ret, $file) = $archiveItem->fetchPath();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	$base = $platform->tempnam($gallery->getConfig('data.gallery.tmp'), 'tmp_');
+	$tmpDir = $base . '.dir';
+	if (!$platform->mkdir($tmpDir)) {
+	    return array(GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__), null);
+	}
+
 	list ($ret) = $toolkit->performOperation($archiveItem->getMimeType(), 'extract',
 						 $file, $tmpDir, array());
 	if ($ret->isError()) {
+	    @$platform->recursiveRmdir($tmpDir);
+	    @$platform->unlink($base);
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -183,6 +186,8 @@ class ItemAddController extends GalleryController {
 		$file, basename($file), $archiveItem->getTitle(), $archiveItem->getSummary(),
 		$archiveItem->getDescription(), $mimeType, $archiveItem->getParentId());
 	    if ($ret->isError()) {
+		@$platform->recursiveRmdir($tmpDir);
+		@$platform->unlink($base);
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    $addedFiles[] = array('fileName' => basename($file), 'id' => $newItem->getId(),
