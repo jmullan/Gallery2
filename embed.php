@@ -221,7 +221,6 @@ class GalleryEmbed {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	return GalleryStatus::success();
     }
 
@@ -237,15 +236,9 @@ class GalleryEmbed {
      * @static
      */
     function updateUser($userName, $args) {
-	if (empty($userName)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
 	list ($ret, $user) = GalleryCoreApi::fetchUserByUserName($userName);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
-	}
-	if (!isset($user)) {
-	    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
 	}
 	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($user->getId());
 	if ($ret->isError()) {
@@ -262,7 +255,6 @@ class GalleryEmbed {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	return GalleryStatus::success();
     }
 
@@ -306,21 +298,111 @@ class GalleryEmbed {
      * @static
      */
     function deleteUser($userName) {
-	if (empty($userName)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
 	list ($ret, $user) = GalleryCoreApi::fetchUserByUserName($userName);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
-	}
-	if (!isset($user)) {
-	    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
 	}
 	$ret = GalleryCoreApi::deleteEntityById($user->getId());
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
+	return GalleryStatus::success();
+    }
 
+    /**
+     * Create a G2 group.
+     *
+     * @param string group name
+     * @return object GalleryStatus a status object
+     * @static
+     */
+    function createGroup($groupName) {
+	if (empty($groupName)) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	}
+	list ($ret, $group) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryGroup');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	if (!isset($group)) {
+	    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
+	}
+
+	$ret = $group->create($groupName);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$ret = $group->save(); 
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Delete a G2 group.
+     *
+     * @param string group name
+     * @return object GalleryStatus a status object
+     * @static
+     */
+    function deleteGroup($groupName) {
+	list ($ret, $group) = GalleryCoreApi::fetchGroupByGroupName($groupName);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$ret = GalleryCoreApi::deleteEntityById($group->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Add a user to a G2 group.
+     *
+     * @param string username
+     * @param string group name
+     * @return object GalleryStatus a status object
+     * @static
+     */
+    function addUserToGroup($userName, $groupName) {
+	list ($ret, $user) = GalleryCoreApi::fetchUserByUserName($userName);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	list ($ret, $group) = GalleryCoreApi::fetchGroupByGroupName($groupName);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$ret = GalleryCoreApi::addUserToGroup($user->getId(), $group->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Remove a user from a G2 group.
+     *
+     * @param string username
+     * @param string group name
+     * @return object GalleryStatus a status object
+     * @static
+     */
+    function removeUserFromGroup($userName, $groupName) {
+	list ($ret, $user) = GalleryCoreApi::fetchUserByUserName($userName);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	list ($ret, $group) = GalleryCoreApi::fetchGroupByGroupName($groupName);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$ret = GalleryCoreApi::removeUserFromGroup($user->getId(), $group->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 	return GalleryStatus::success();
     }
 }
