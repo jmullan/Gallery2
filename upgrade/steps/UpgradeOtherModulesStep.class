@@ -58,11 +58,10 @@ class UpgradeOtherModulesStep extends UpgradeStep {
 
 	if (empty($templateData['errors'])) {
 	    foreach (array_keys($moduleList) as $moduleId) {
-		list ($ret, $modulePlugin) = GalleryCoreApi::loadPlugin('module', $moduleId);
-		if (empty($modulePlugin) || $ret->isError()) {
+		list ($ret, $modules[$moduleId]) = GalleryCoreApi::loadPlugin('module', $moduleId, true);
+		if ($ret->isError()) {
 		    $templateData['errors'][] = _(sprintf('Unable to load the %s module', $moduleId));
-		} else {
-			$modules[$moduleId] = $modulePlugin;
+		    $templateData['stackTrace'] = $ret->getAsHtml();
 		}
 	    }
 
@@ -70,14 +69,12 @@ class UpgradeOtherModulesStep extends UpgradeStep {
 	    foreach (array_keys($modules) as $moduleId) {
 		$module =& $modules[$moduleId];
 		$moduleIsUpgradeable[$moduleId] =
-		    !empty($moduleList[$moduleId]['active']) &&
 		    !empty($moduleList[$moduleId]['version']) &&
 		    $moduleList[$moduleId]['version'] != $module->getVersion();
 		$currentVersion[$moduleId] = $moduleList[$moduleId]['version'];
 
 		if (isset($_REQUEST['upgrade']) &&
 		      isset($_REQUEST['module'][$moduleId]) &&
-		      $moduleList[$moduleId]['active'] &&
 		      $moduleIsUpgradeable[$moduleId]) {
 		    $ret = $module->installOrUpgrade();
 		    if ($ret->isError()) {
