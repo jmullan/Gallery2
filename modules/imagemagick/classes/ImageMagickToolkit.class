@@ -158,101 +158,85 @@ class ImageMagickToolkit extends GalleryToolkit {
 	    $compositeOverlayMimeType = $parameters[1];
 	    $compositeWidth = $parameters[2];
 	    $compositeHeight = $parameters[3];
-	    $compositeAlignX = $parameters[4];
-	    $compositeAlignY = $parameters[5];
-	    $compositeAlignmentType = $parameters[6];
+	    $compositeAlignmentType = $parameters[4];
+	    $compositeAlignX = $parameters[5];
+	    $compositeAlignY = $parameters[6];
 
 	    list ($ret, $sourceWidth, $sourceHeight) = $this->_getImageDimensions($mimeType, $sourceFilename);
 	    if ($ret->isError()) {
 	        return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    switch ($compositeAlignmentType) {   // Alignment is the third parameter
-	    case 1: // Top - Left
+	    switch ($compositeAlignmentType) {
+	    case 'top-left': // Top - Left
 	        $compositeAlignX = 0;
 	        $compositeAlignY = 0;
 	        break;
 
-	    case 2: // Top
-	        $compositeAlignX = ($sourceWidth - $compositeWidth) / 2;
+	    case 'top': // Top
+	        $compositeAlignX = 50;
 	        $compositeAlignY = 0;
 	        break;
 		
-	    case 3: // Top - Right
-	        $compositeAlignX = ($sourceWidth - $compositeWidth);
+	    case 'top-right': // Top - Right
+	        $compositeAlignX = 100;
 	        $compositeAlignY = 0;
 	        break;
 		
-	    case 4: // Left
+	    case 'left': // Left
 	        $compositeAlignX = 0;
-	        $compositeAlignY = ($sourceHeight - $compositeHeight) / 2;
+	        $compositeAlignY = 50;
 	        break;
 		
-	    case 5: // Center
-	        $compositeAlignX = ($sourceWidth  - $compositeWidth)  / 2;
-	        $compositeAlignY = ($sourceHeight - $compositeHeight) / 2;
+	    case 'center': // Center
+	        $compositeAlignX = 50;
+	        $compositeAlignY = 50;
 	        break;
 		
-	    case 6: // Right
-	        $compositeAlignX = ($sourceWidth  - $compositeWidth);
-	        $compositeAlignY = ($sourceHeight - $compositeHeight) / 2;
+	    case 'right': // Right
+	        $compositeAlignX = 100;
+	        $compositeAlignY = 50;
 	        break;
 		
-	    case 7: // Bottom - Left
+	    case 'bottom-left': // Bottom - Left
 	        $compositeAlignX = 0;
-	        $compositeAlignY = ($sourceHeight - $compositeHeight);
+	        $compositeAlignY = 100;
 	        break;
 		
-	    case 8: // Bottom
-	        $compositeAlignX = ($sourceWidth  - $compositeWidth) / 2;
-	        $compositeAlignY = ($sourceHeight - $compositeHeight);
+	    case 'bottom': // Bottom
+	        $compositeAlignX = 50;
+	        $compositeAlignY = 100;
 	        break;
 		
-	    case 9: // Bottom Right
-	        $compositeAlignX = ($sourceWidth  - $compositeWidth);
-	        $compositeAlignY = ($sourceHeight - $compositeHeight);
+	    case 'bottom-right': // Bottom Right
+	        $compositeAlignX = 100;
+	        $compositeAlignY = 100;
 	        break;
 		
-	    default: // Other
-	        // Check for percents
-	        if (ereg('([0-9]+)(\%?)', $compositeAlignX, $regs)) {
-	            if ($regs[2] == '%') {
-	                $compositeAlignX = round($regs[1] / 100 * ($sourceWidth - $compositeWidth));
-	            } else {
-	                $compositeAlignX = $regs[1];
-	            }
-	        } else {
-	            $compositeAlignX = 0;
-	        }
-		
-	        if (ereg('([0-9]+)(\%?)', $compositeAlignY, $regs)) {
-	            if ($regs[2] == '%') {
-	                $compositeAlignY = round($regs[1] / 100 * ($sourceHeight - $compositeHeight));
-	            } else {
-	                $compositeAlignY = $regs[1];
-	            }
-	        } else {
-	            $compositeAlignY = 0;
-	        }
+	    case 'manual': // Manual placement
+		// Use the alignments we received
+		break;
 
-	        if ($compositeAlignX < 1) { // clip left side
-	            $compositeAlignX = 0;
-	        } else if ($compositeAlignX > ($sourceWidth - $compositeWidth)) { // clip right side
-	            $compositeAlignX = ($sourceWidth - $compositeWidth);
-	        }
-		
-	        if ($compositeAlignY < 1) { // clip top
-	            $compositeAlignY = 0;
-	        } else if ($compositeAlignY > ($sourceHeight - $compositeHeight)) { // clip bottom
-	            $compositeAlignY = ($sourceHeight - $compositeHeight);
-	        }
-	        break;
+	    default:
+		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+						  "Unknown composite alignment type: $compositeAlignmentType"),
+			     null);
 	    }
 
+	    // Convert from percentages to pixels
+	    $compositeAlignX = (int)($compositeAlignX / 100 * $sourceWidth);
+	    $compositeAlignY = (int)($compositeAlignY / 100 * $sourceHeight);
+
+	    // Clip to our bounding box
+	    $compositeAlignX = max(0, $compositeAlignX);
+	    $compositeAlignX = min($compositeAlignX, $sourceWidth - $compositeWidth);
+	    $compositeAlignY = max(0, $compositeAlignY);
+	    $compositeAlignY = min($compositeAlignY, $sourceHeight - $compositeHeight);
+
+	    $dataDir = $gallery->getConfig('data.gallery.base');
 	    $transform = array('-geometry', '+' . $compositeAlignX . '+' . $compositeAlignY,
-			       $compositeOverlayPath);
+			       $dataDir . $compositeOverlayPath);
 	    break;
-	    
 	default:
 	    return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
 	}

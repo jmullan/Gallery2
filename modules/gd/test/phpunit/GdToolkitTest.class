@@ -189,8 +189,8 @@ class GdToolkitTest extends GalleryTestCase {
 							  array('50x50.ext', // image
 								$mimeType, // mimeType
 								50, 50, // image width, height
-								0, 0, // image alignment x, y
-								3));    // alignment type
+								'top-right', // alignment type
+								0, 0)); // image alignment x, y
 		    if ($ret->isError()) {
 			return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 		    }
@@ -200,13 +200,13 @@ class GdToolkitTest extends GalleryTestCase {
 		     */
 		    list ($ret, $mimeType) =
 			$this->_toolkit->performOperation($mimeType, 'composite',
-							  '300x300.png', // composite (200x200)
+							  '300x300.png', // composite
 							  '/valid/composited.ext', // composited
 							  array('50x50.ext', // image
 								$mimeType, // mimeType
 								50, 50, // image width, height
-								151, 151, // image alignment x, y
-								0));    // alignment type
+								'manual', // alignment type
+								99, 99)); // image alignment x, y
 		    if ($ret->isError()) {
 			return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 		    }
@@ -454,14 +454,14 @@ class GdToolkitTest extends GalleryTestCase {
 			      'description' => 'overlay width'),
 			array('type' => 'int',
 			      'description' => 'overlay height'),
+			array('type' => 'string',
+			      'description' => 'alignment type'),
 			array('type' => 'int',
-			      'description' => 'alignment location x'),
+			      'description' => 'alignment x %'),
 			array('type' => 'int',
-			      'description' => 'alignment location y'),
-			array('type' => 'int',
-			      'description' => 'alignment type')
+			      'description' => 'alignment y %'),
 			),
-		    'description' => 'Composite the image',
+		    'description' => 'Overlay source image with a second one',
 		    'mimeTypes' => $environment['mimeTypes'],
 		    );
 	    }

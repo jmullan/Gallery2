@@ -114,13 +114,13 @@ class ImageMagickToolkitHelper {
 						     'description' => $gallery->i18n('overlay width'));
 	$operations['composite']['params'][] = array('type' => 'int',
 						     'description' => $gallery->i18n('overlay height'));
-	$operations['composite']['params'][] = array('type' => 'int',
-						     'description' => $gallery->i18n('alignment location x'));
-	$operations['composite']['params'][] = array('type' => 'int',
-						     'description' => $gallery->i18n('alignment location y'));
-	$operations['composite']['params'][] = array('type' => 'int',
+	$operations['composite']['params'][] = array('type' => 'string',
 						     'description' => $gallery->i18n('alignment type'));
-	$operations['composite']['description'] = $gallery->i18n('Composite the image'); 
+	$operations['composite']['params'][] = array('type' => 'int',
+						     'description' => $gallery->i18n('alignment x %'));
+	$operations['composite']['params'][] = array('type' => 'int',
+						     'description' => $gallery->i18n('alignment y %'));
+	$operations['composite']['description'] = $gallery->i18n('Overlay source image with a second one');
 	$operations['composite']['mimeTypes'] = $mimeTypes;
 
 	/*

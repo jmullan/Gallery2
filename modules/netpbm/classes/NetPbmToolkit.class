@@ -152,14 +152,14 @@ class NetPbmToolkit extends GalleryToolkit {
 	    break;
 	    
 	case 'composite':
-	    $compositeOverlayPath = $parameters[0];
+	    $compositeOverlayPath = $gallery->getConfig('data.gallery.base') . $parameters[0];
 	    $compositeOverlayMimeType = $parameters[1];
 	    $compositeWidth = $parameters[2];
 	    $compositeHeight = $parameters[3];
-	    $compositeAlignX = $parameters[4];
-	    $compositeAlignY = $parameters[5];
-	    $compositeAlignmentType = $parameters[6];
-	    
+	    $compositeAlignmentType = $parameters[4];
+	    $compositeAlignX = $parameters[5];
+	    $compositeAlignY = $parameters[6];
+
 	    // Create temporary files, composite may need to be decomposed into rgb & alpha images
 	    $tmpDir = $gallery->getConfig('data.gallery.tmp');
 	    $tmpOverlay = $platform->tempnam($tmpDir, 'npbm_');
@@ -243,88 +243,84 @@ class NetPbmToolkit extends GalleryToolkit {
 	    }
 	    $transform[] = $this->_pnmCmd('pnmcomp');
 
-	    switch ($compositeAlignmentType) { // Alignment is the third parameter
-	    case 1: // Top - Left
+	    switch ($compositeAlignmentType) {
+	    case 'top-left': // Top - Left
 	        $transform[] = '-align=left';
 	        $transform[] = '-valign=top';
 	        break;
-	    case 2: // Top
+
+	    case 'top': // Top
 	        $transform[] = '-align=center';
 	        $transform[] = '-valign=top';
 	        break;
-	    case 3: // Top - Right
+
+	    case 'top-right': // Top - Right
 	        $transform[] = '-align=right';
 	        $transform[] = '-valign=top';
 	        break;
-	    case 4: // Left
+
+	    case 'left': // Left
 	        $transform[] = '-align=left';
 	        $transform[] = '-valign=middle';
 	        break;
-	    case 5: // Center
+
+	    case 'center': // Center
 	        $transform[] = '-align=center';
 	        $transform[] = '-valign=middle';
 	        break;
-	    case 6: // Right
+
+	    case 'right': // Right
 	        $transform[] = '-align=right';
 	        $transform[] = '-valign=middle';
 	        break;
-	    case 7: // Bottom - Left
+
+	    case 'bottom-left': // Bottom - Left
 	        $transform[] = '-align=left';
 	        $transform[] = '-valign=bottom';
 	        break;
-	    case 8: // Bottom
+
+	    case 'bottom': // Bottom
 	        $transform[] = '-align=center';
 	        $transform[] = '-valign=bottom';
 	        break;
-	    case 9: // Bottom Right
+
+	    case 'bottom-right': // Bottom Right
 	        $transform[] = '-align=right';
 	        $transform[] = '-valign=bottom';
 	        break;
-	    default: // Other
+
+	    case 'manual':
+		// Use the alignments we received
 		list ($ret, $sourceWidth, $sourceHeight) = $this->_getImageDimensions($mimeType, $sourceFilename);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-	        // Check for percents
-	        if (ereg('([0-9]+)(\%?)', $compositeAlignX, $regs)) {
-	            if ($regs[2] == '%') {
-	                $compositeAlignX = round($regs[1] / 100 * ($sourceWidth - $compositeWidth));
-	            } else {
-	                $compositeAlignX = $regs[1];
-	            }
-	        } else {
-	            $compositeAlignX = 0;
-	        }
-	        if (ereg('([0-9]+)(\%?)', $compositeAlignY, $regs)) {
-	            if ($regs[2] == '%') {
-	                $compositeAlignY = round($regs[1] / 100 * ($sourceHeight - $compositeHeight));
-	            } else {
-	                $compositeAlignY = $regs[1];
-	            }
-	        } else {
-	            $compositeAlignY = 0;
-	        }
-
-	        if ($compositeAlignX < 1) { // clip left side
-	            $compositeAlignX = 0;
-	        } else if ($compositeAlignX > ($sourceWidth - $compositeWidth)) { // clip right side
-	            $compositeAlignX = ($sourceWidth - $compositeWidth);
-	        }
-	        if ($compositeAlignY < 1) { // clip top
-	            $compositeAlignY = 0;
-	        } else if ($compositeAlignY > ($sourceHeight - $compositeHeight)) { // clip bottom
-	            $compositeAlignY = ($sourceHeight - $compositeHeight);
-	        }
+		// Convert from percentages to pixels
+		$compositeAlignX = (int)($compositeAlignX / 100 * $sourceWidth);
+		$compositeAlignY = (int)($compositeAlignY / 100 * $sourceHeight);
+		
+		// Clip to our bounding box
+		$compositeAlignX = max(0, $compositeAlignX);
+		$compositeAlignX = min($compositeAlignX, $sourceWidth - $compositeWidth);
+		$compositeAlignY = max(0, $compositeAlignY);
+		$compositeAlignY = min($compositeAlignY, $sourceHeight - $compositeHeight);
 
 	        $transform[] = '-xoff=' . $compositeAlignX;
 	        $transform[] = '-yoff=' . $compositeAlignY;
-	    } // end switch-alignment
+		break;
+
+	    default:
+		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+					      "Unknown composite alignment type: $compositeAlignmentType"),
+			 null);
+		
+	    }
 
 	    if ($useAlpha) {
 	        $transform[] = '-alpha=' . $tmpAlpha;
 	    }
-	    $transform[] = '>';
+
 	    $transform[] = $tmpOverlay;
 
 	    break; // case composite

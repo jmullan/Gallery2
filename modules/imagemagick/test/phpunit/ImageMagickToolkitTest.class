@@ -29,8 +29,8 @@
 /**
  * Required classes
  */
-require_once(dirname(__FILE__) . '/../../classes/ImageMagickToolkitHelper.class');
-require_once(dirname(__FILE__) . '/../../classes/ImageMagickToolkit.class');
+GalleryCoreApi::relativeRequireOnce('modules/imagemagick/classes/ImageMagickToolkitHelper.class');
+GalleryCoreApi::relativeRequireOnce('modules/imagemagick/classes/ImageMagickToolkit.class');
 
 /**
  * Test ImageMagickToolkit functionality
@@ -236,37 +236,38 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 	    }
 
 	    // Test a basic composite operation (top right corner)
+	    $dataDir = $gallery->getConfig('data.gallery.base');
 	    $ret = $this->_testOperation('image/png', 'composite',
-					  'test.png',   // composite
-					  'output.png', // composited
-					  array('image.gif', // image
-						'image/gif', // mimeType
-						50, 50, // image width, height
-						0, 0,   // image alignment x, y
-						3),     // alignment type
-					  array('image' => 'image.gif',
-						'width' => '50',
-						'height' => '50',
-						'x' => '0',
-						'y' => '0'));
+					 'test.png',   // composite
+					 'output.png', // composited
+					 array('image.gif', // image
+					       'image/gif', // mimeType
+					       5, 5, // image width, height
+					       'top-right', // alignment type
+					       0, 0),  // image alignment x, y (overridden by 'top-right')
+					 array('image' => $dataDir . 'image.gif',
+					       'width' => '50',
+					       'height' => '50',
+					       'x' => '45',
+					       'y' => '0'));
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 
 	    // Test another composite with out of range params that should get corrected
 	    $ret = $this->_testOperation('image/png', 'composite',
-					  'test.png',   // composite
-					  'output.png', // composited
-					  array('image.gif', // image
-						'image/gif', // mimeType
-						50, 50, // image width, height
-						151, 151,   // image alignment x, y
-						3),     // alignment type
-					  array('image' => 'image.gif',
-						'width' => '50',
-						'height' => '50',
-						'x' => '0',
-						'y' => '0'));
+					 'test.png',   // composite
+					 'output.png', // composited
+					 array('image.gif', // image
+					       'image/gif', // mimeType
+					       50, 50, // image width, height
+					       'manual', // alignment type
+					       151, 151), // image alignment x, y
+					 array('image' => $dataDir . 'image.gif',
+					       'width' => '50',
+					       'height' => '50',
+					       'x' => '0',
+					       'y' => '0'));
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
@@ -482,17 +483,16 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 					'type' => 'int',
 					'description' => 'overlay height'),
 				array(
-					'type' => 'int',
-					'description' => 'alignment location x'),
+					'type' => 'string',
+				        'description' => 'alignment type'),
 				array(
 					'type' => 'int',
-					'description' => 'alignment location y'),
+					'description' => 'alignment x %'),
 				array(
 					'type' => 'int',
-					'description' => 'alignment type'
-				)
+					'description' => 'alignment y %'),
 			),
-			'description' => 'Composite the image',
+			'description' => 'Overlay source image with a second one',
 			'mimeTypes' => $environment['mimeTypes'],
 		),
 	    ), $results['operations']);
