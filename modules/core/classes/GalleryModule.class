@@ -101,7 +101,10 @@ class GalleryModule {
     }
 
     /**
-     * Do any initialization required for this module to run.
+     * Do any initialization required for this module to run.  The init method
+     * is called on every active module on every request.  You should not do
+     * anything heavy in this method if you can avoid it.  Typically you would
+     * register any GalleryFactory implementations at this time.
      *
      * @return object GalleryStatus a status code
      */
@@ -110,7 +113,13 @@ class GalleryModule {
     }
 
     /**
-     * Perform any install/upgrade tasks at this point.
+     * Perform any install/upgrade tasks required at this point.  This method
+     * is called if the module version in the module.inc does not match the
+     * version number in the database.  If this method completes successfully,
+     * it should have set its version number in the database appropriately so
+     * that it will not be called again.  Typically a module will call upon the
+     * storage system to load any new tables or alter existing ones, upgrade
+     * any module parameters, and register any new permissions.
      *
      * @return object GalleryStatus a status code
      */
@@ -193,8 +202,9 @@ class GalleryModule {
     }
     
     /**
-     * Get the name of the GalleryView containing the various site administration
-     * views for this module
+     * Get the name of the GalleryView containing the various site
+     * administration views for this module.  Note that the text value is
+     * localized since it will be displayed directly to the user.
      *
      * @return array object GalleryStatus a status code
      *               array( array('name' => name, 'view' => view), ...)
@@ -204,8 +214,11 @@ class GalleryModule {
     }
 
     /**
-     * Get the name of the GalleryView containing the various item administration
-     * views for this module
+     * Get the name of the GalleryView containing the various item
+     * administration views for this module.  The module should check
+     * permissions and item type to determine which views are applicable for
+     * the authenticated user.  As with getSiteAdminViews(), the view title
+     * text must be localized.
      *
      * @param object GalleryItem an item
      * @return array object GalleryStatus a status code
@@ -216,9 +229,10 @@ class GalleryModule {
     }
 
     /**
-     * Get the name of the GalleryView containing the administration
-     * view specifically for configuring this module.  It may be one that is
-     * also listed in getSiteAdminViews()
+     * Get the name of the GalleryView containing the administration view
+     * specifically for configuring this module.  It may be one that is also
+     * listed in getSiteAdminViews().  As with getSiteAdminViews(), the view
+     * title text must be localized.
      *
      * @param the type of view requested
      * @return array object GalleryStatus a status code
@@ -229,7 +243,11 @@ class GalleryModule {
     }
 
     /**
-     * Return 0 or more system-specific links to an arbitrary module view.
+     * Return 0 or more system-specific links to an arbitrary module view.  Get
+     * the name of the GalleryView containing the administration view
+     * specifically for configuring this module.  It may be one that is also
+     * listed in getSiteAdminViews().  As with getSiteAdminViews(), the view
+     * title text must be localized.
      *
      * @param array key => value parameters provided by the
      *              parent view -- the module can augment or override these.
@@ -243,7 +261,11 @@ class GalleryModule {
     }
 
     /**
-     * Return module-specific content that will be embedded directly by the view
+     * Return system level content.  This is similar to system links, but it's
+     * actually HTML content and not a link to a view.  It must be localized
+     * since it will be displayed directly to the user.  This is useful for
+     * things like the search module that want to embed a search box on every
+     * page.
      *
      * @param mixed object GalleryItem a target item
      * @param array key => value parameters provided by the
@@ -257,6 +279,8 @@ class GalleryModule {
 
     /**
      * Return 0 or more item-specific links to an arbitrary module view.
+     * These are links to item specific module views.  For example, the
+     * comments module uses this to link to the "add comments" view.
      *
      * @param mixed object GalleryItem a target item, or array of object GalleryItem
      * @param array key => value parameters provided by the
@@ -284,7 +308,10 @@ class GalleryModule {
     }
 
     /**
-     * Return module-specific details content about the item
+     * Return module-specific details content about the item This is localized
+     * content specific to a given item.  You can use this to return in-depth
+     * item content.  In theory it should be more detailed than the item
+     * summaries.
      *
      * @param mixed object GalleryItem a target item
      * @param array key => value parameters provided by the
