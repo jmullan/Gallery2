@@ -70,8 +70,20 @@ class SlideshowView extends GalleryView {
     /**
      * Build data set to be used by template to render slideshow
      */
-    function buildSlideshow($item, $startId = null) {
+    function buildSlideshow($item, $startId = null, $recursive = false) {
 	global $gallery;
+	if (!isset($this->init)) {
+	    $this->sizeClasses = array(array(320,240),         // 0: <320x240
+		array(640,480),  array(800,600),  // 1:--640x480  2:--800x600
+		array(1024,768), array(1280,1024) // 3:--1024x768 4:--1280x1024
+	    );                                    // 5: >1280x1024
+	    list ($ret, $this->exifExtractor) =
+		GalleryCoreApi::newFactoryInstance('ExifInterface_1_0');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $this->init = 1;
+	}
 	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($item);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -103,24 +115,15 @@ class SlideshowView extends GalleryView {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    // If an Exif extractor is available try to get capture dates..
-	    list ($ret, $exifExtractor) =
-		GalleryCoreApi::newFactoryInstance('ExifInterface_1_0');
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
 	    $exif = array();
-	    if (isset($exifExtractor)) {
-		list ($ret, $exif) = $exifExtractor->getMetaData($childIds);
+	    if (isset($this->exifExtractor)) {
+		list ($ret, $exif) =
+		    $this->exifExtractor->getMetaData($childIds);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 	    }
 	}
-	// Classify each derivative in a size class..
-	$sizeClasses = array(array(320,240),   // 0: < 320x240
-	    array(640,480),  array(800,600),   // 1: --640x480  2: --800x600
-	    array(1024,768), array(1280,1024)  // 3: --1024x768 4: --1280x1024
-	);                                     // 5: > 1280x1024
 	if (!isset($startId)) {
 	    $start = 0;
 	}
@@ -131,7 +134,18 @@ class SlideshowView extends GalleryView {
 		$start = count($itemList);
 	    }
 
-	    if (!$child->getCanContainChildren()) {
+	    if ($child->getCanContainChildren()) {
+
+		if ($recursive) {
+		    list ($ret, $sublist) =
+			$this->buildSlideshow($child, null, $recursive);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		    $itemList = array_merge($itemList, $sublist);
+		}
+
+	    } else {
 
 		list ($ret, $permissions) =
 		    GalleryCoreApi::getPermissions($childId);
@@ -159,8 +173,10 @@ class SlideshowView extends GalleryView {
 		}
 
 		// build table of {sizeClass}=>{sources_index}
-		$sizeClassMap = array_fill(0, count($sizeClasses) + 1, -1);
-		$sizeClassArea = array_fill(0, count($sizeClasses) + 1, -1);
+		$sizeClassMap =
+		    array_fill(0, count($this->sizeClasses) + 1, -1);
+		$sizeClassArea =
+		    array_fill(0, count($this->sizeClasses) + 1, -1);
 		foreach ($images as $i => $image) {
 		    // Rebuild derivatives if needed so width/height known..
 		    if (is_a($image, 'GalleryDerivativeImage')) {
@@ -176,10 +192,10 @@ class SlideshowView extends GalleryView {
 			continue; // Should not happen
 		    }
 		    $area = $image['width'] * $image['height'];
-		    for ($j = count($sizeClasses); $j >= 0; $j--) {
-			if ($j < count($sizeClasses) &&
-				($image['width'] > $sizeClasses[$j][0] ||
-				 $image['height'] > $sizeClasses[$j][1])) {
+		    for ($j = count($this->sizeClasses); $j >= 0; $j--) {
+			if ($j < count($this->sizeClasses) &&
+			      ($image['width'] > $this->sizeClasses[$j][0] ||
+			       $image['height'] > $this->sizeClasses[$j][1])) {
 			    break;
 			}
 			if ($area > $sizeClassArea[$j]) {
@@ -188,7 +204,7 @@ class SlideshowView extends GalleryView {
 			}
 		    }
 		}
-		for ($j = 0, $i = count($sizeClasses); $i >= 0; $i--) {
+		for ($j = 0, $i = count($this->sizeClasses); $i >= 0; $i--) {
 		    if ($sizeClassMap[$i] < 0) {
 			$sizeClassMap[$i] = $j;
 		    } else {

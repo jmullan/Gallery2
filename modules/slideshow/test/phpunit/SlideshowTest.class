@@ -107,7 +107,39 @@ class SlideshowTest extends GalleryTestCase {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	    $photoData[] = $photoDatum;
+	    if ($i == 7) {
+		list ($ret, $subalbum) =
+		    $this->_createRandomAlbum($album->getId());
+		if ($ret->isError()) {
+		    print $ret->getAsHtml();
+		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		}
+	    }
 	}
+	$ret = GalleryCoreApi::releaseLocks($lockId);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($subalbum->getId());
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $photoDatum) = $this->_addPhoto($subalbum->getId(),
+	    $imagePaths[2], $imageSizes[2], 11, $photoSizes[1]);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$photoData[] = $photoDatum;
+	list ($ret, $photoDatum) = $this->_addPhoto($subalbum->getId(),
+	    $imagePaths[3], $imageSizes[3], 12, $photoSizes[3]);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$photoData[] = $photoDatum;
 	$ret = GalleryCoreApi::releaseLocks($lockId);
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
@@ -133,6 +165,7 @@ class SlideshowTest extends GalleryTestCase {
 	}
 
 	$this->_album = $album;
+	$this->_subalbum = $subalbum;
 	$this->_photoData = $photoData;
 	$this->_view = $view;
 	$this->_allUsersGroupId = $allUsersGroupId;
@@ -264,9 +297,10 @@ class SlideshowTest extends GalleryTestCase {
     function _runTest($test, $expectedResults, $startId=null) {
 	global $gallery;
 	$gallery->setActiveUserId($this->_guestId);
+	$recursive = ($test == 'recursive');
 	list ($ret, $slideData, $start) = isset($startId)
-	    ? $this->_view->buildSlideshow($this->_album, $startId)
-	    : $this->_view->buildSlideshow($this->_album);
+	    ? $this->_view->buildSlideshow($this->_album, $startId, $recursive)
+	    : $this->_view->buildSlideshow($this->_album, null, $recursive);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -446,6 +480,37 @@ class SlideshowTest extends GalleryTestCase {
 				  array(0,1,1,1,1,1)),
 	    'idsWithExif' => array($pd[4]['id'], $pd[9]['id'])),
 	  $pd[7]['id']);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	// recursive test
+	$ret = $this->_runTest('recursive', array(
+	    $pd[0]['id'] => array(array($pd[0]['id'], $pd[0]['T']),
+				  array(0,0,0,0,0,0)),
+	    $pd[1]['id'] => array(array($pd[1]['id'], $pd[1]['R'], $pd[1]['T']),
+				  array(0,1,1,1,1,1)),
+	    $pd[2]['id'] => array(array($pd[2]['id'], $pd[2]['R'], $pd[2]['R2'],
+				  $pd[2]['T']), array(1,2,2,2,2,2)),
+	    $pd[3]['id'] => array(array($pd[3]['P'], $pd[3]['T']),
+				  array(1,0,0,0,0,0)),
+	    $pd[4]['id'] => array(array($pd[4]['P'], $pd[4]['R'], $pd[4]['T']),
+				  array(0,1,1,1,1,1)),
+	    $pd[5]['id'] => array(array($pd[5]['P'], $pd[5]['R'], $pd[5]['R2'],
+				  $pd[5]['T']), array(0,1,2,2,2,2)),
+	    $pd[6]['id'] => array(array($pd[6]['id']),
+				  array(0,0,0,0,0,0)),
+	    $pd[7]['id'] => array(array($pd[7]['id'], $pd[7]['R']),
+				  array(1,1,1,1,1,1)),
+	    $pd[10]['id'] => array(array($pd[10]['id'], $pd[10]['R'], $pd[10]['T']),
+				   array(1,1,1,1,1,1)),
+	    $pd[11]['id'] => array(array($pd[11]['P'], $pd[11]['T']),
+				   array(1,0,0,0,0,0)),
+	    $pd[8]['id'] => array(array($pd[8]['P']),
+				  array(0,0,0,0,0,0)),
+	    $pd[9]['id'] => array(array($pd[9]['P'], $pd[9]['R']),
+				  array(0,1,1,1,1,1)),
+	    'idsWithExif' => array($pd[4]['id'], $pd[9]['id'])));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
