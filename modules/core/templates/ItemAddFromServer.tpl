@@ -74,8 +74,9 @@
     {if $ItemAdd.isAdmin} 
     <a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=core:AdminCore"}">
       {g->text text="site admin"}
-    </a>
+    </a> 
     {/if}
+    <br />
   </div>
   {else}
 
