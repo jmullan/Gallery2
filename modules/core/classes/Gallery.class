@@ -565,8 +565,8 @@ class Gallery {
 	if (empty($this->_timeLimit) || ($this->_timeLimit - $now < $limit)) {
 	    $this->debug("[$now] can't guarantee $limit -- extending!");
 
-	    // Make sure that we have at least a minimum of 30 seconds
-	    $this->_timeLimit = max($now + $limit, 30);
+	    // Make sure that we extend at least a minimum of 30 seconds
+	    $this->_timeLimit = $now + max($limit, 30);
 	    set_time_limit($this->_timeLimit - $now);
 
 	    /*
