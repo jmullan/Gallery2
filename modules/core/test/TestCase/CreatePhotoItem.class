@@ -27,7 +27,7 @@ class CreatePhotoItemTestCase extends TestCase {
 	
 	/* Put an ImageContainer in our PhotoItem */
 	$image = new ImageContainer();
-	$imagePath = dirname(dirname(__FILE__)) . '/data/test1.jpg';
+	$imagePath = dirname(dirname(__FILE__)) . '/data/test1.gif';
 	$ret = $image->createFromFile($photo->getId(), $imagePath);
 	if ($ret->isError()) {
 	    return $ret;
