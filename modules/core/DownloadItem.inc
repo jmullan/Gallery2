@@ -49,6 +49,20 @@ class DownloadItemView extends GalleryView {
     function renderImmediate() {
 	global $gallery;
 
+	/*
+	 * If the browser passes us a request with an 'If-Modified-Since' header, then its already got a
+	 * cached copy of this file.  And since our links always include a serial number, and any change
+	 * triggers a serial number change, this means that its cache is always up to date.  We don't even
+	 * need to check the modification date.  
+	 */
+	if (function_exists('getallheaders')) {
+	    $headers = GetAllHeaders();
+	    if (isset($headers['If-Modified-Since'])) {
+		header('HTTP/1.x 304 Not Modified');
+		return;
+	    }
+	}
+	
 	/* Figure out which item we're talking about */
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
 	if (empty($itemId)) {
@@ -114,7 +128,12 @@ class DownloadItemView extends GalleryView {
 	    header('Content-length: ' . $size);
 	}
 	header('Content-type: ' . $mimeType);
-	readfile($path);
+
+	$platform = $gallery->getPlatform();
+	$stats = $platform->stat($path);
+	header('Last-Modified: ' . strftime('%a, %e %b %G %R %Z', $stats[9]));
+	
+	$platform->readfile($path);
 
 	return GalleryStatus::success();
     }
@@ -136,6 +155,7 @@ class DownloadItemView extends GalleryView {
 	list ($ret, $entity) = $gallery->loadEntitiesById($itemId);
 	if ($ret->isSuccess()) {
 	    $buf .= '-' . $entity->getSerialNumber();
+	    unset($params['serialNumber']);
 
 	    if (GalleryUtilities::isA($entity, 'GalleryDataItem')) {
 		$mimeType = $entity->getMimeType();
