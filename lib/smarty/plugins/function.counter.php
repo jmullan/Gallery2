@@ -20,11 +20,7 @@
  */
 function smarty_function_counter($params, &$smarty)
 {
-    static $count = array();
-    static $skipval = array();
-    static $dir = array();
-    static $name = "default";
-    static $printval = array();
+    static $counters = array();
 
     extract($params);
 
@@ -36,45 +32,56 @@ function smarty_function_counter($params, &$smarty)
 		}
 	}
 
-    $dontIncrement = false;
-    if (isset($start)) {
-        $count[$name] = $start;
-	$dontIncrement = true;
-    } else if (!isset($count[$name]))
-        $count[$name]=1;
+    if (!isset($counters[$name])) {
+        $counters[$name] = array(
+            'start'=>1,
+            'skip'=>1,
+            'assign'=>null,
+            'direction'=>'up'
+            );
+    }
+    $counter =& $counters[$name];
 
-    if (!isset($print))
-        $printval[$name]=true;
-    else
-        $printval[$name]=$print;
-    
+
+    if (isset($start))
+        $counter['start'] = $start;
+    else if (!isset($counter['start']))
+        $counter['start'] = 1;
+
+    if (!isset($counter['count']))
+        $counter['count'] = $counter['start'];
+
     if (!empty($assign)) {
-        if (!isset($print)) $printval[$name] = false;
-        $smarty->assign_by_ref($assign, $count[$name]);
+        $counter['assign'] = $assign;
     }
 
-    if ($printval[$name]) {
-        $retval = $count[$name];
+    if (!empty($counter['assign'])) {
+        $smarty->assign($counter['assign'], $counter['count']);
+    }
+    
+    if (!isset($print))
+        $print = empty($counter['assign']);
+    else
+        $print = (bool)$print;
+
+    if (isset($skip)) {
+        $counter['skip'] = $skip;
+    }
+    
+    if ($print) {
+        $retval = $counter['count'];
 	} else {
 		$retval = null;
 	}
 
-    if (isset($skip))
-        $skipval[$name] = $skip;
-    else if (empty($skipval[$name]))
-        $skipval[$name] = 1;
-    
-    if (isset($direction))
-        $dir[$name] = $direction;
-    else if (!isset($dir[$name]))
-        $dir[$name] = "up";
-
-    if (!$dontIncrement) {
-	if ($dir[$name] == "down")
-	    $count[$name] -= $skipval[$name];
-	else
-	    $count[$name] += $skipval[$name];
+    if (isset($direction)) {
+        $counter['direction'] = $direction;
     }
+
+    if ($counter['direction'] == "down")
+        $counter['count'] -= $counter['skip'];
+    else
+        $counter['count'] += $counter['skip'];
 	
 	return $retval;
 	
