@@ -64,35 +64,6 @@ class GalleryItemPropertiesMap_core {
      */
     
     /**
-     * Add a key/value mapping for the given item id
-     *
-     * @param int the id of the GalleryItem
-     * @param string the key 
-     * @param string the value
-     * @return object GalleryStatus a status code
-     * @static
-     */
-    function addProperty($itemId, $key, $value) {
-	global $gallery;
-	
-	if (empty($itemId) || empty($key) || empty($value)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
-					__FILE__, __LINE__);
-	}
-
-	/*
-	 * Add a new entry in our groups table to represent this
-	 * relationship.
-	 */
-	$ret = GalleryItemPropertiesMap::addMapEntry(
-            array('itemId' => $itemId, 'key' => $key, 'value' => $value));
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-	return GalleryStatus::success();
-    }
-
-    /**
      * Remove the specific item/key pair
      *
      * @param int the id of the GalleryItem
@@ -127,7 +98,7 @@ class GalleryItemPropertiesMap_core {
      * @return object GalleryStatus a status code
      * @static
      */
-    function updateProperty($itemId, $key, $value) {
+    function setProperty($itemId, $key, $value) {
 	global $gallery;
 	if (empty($itemId) || empty($key) || empty($value)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
@@ -182,7 +153,7 @@ class GalleryItemPropertiesMap_core {
      * Return a list of all the property keys for this item
      *
      * @return array object GalleryStatus a status code
-     *               array group ids
+     *               array property keys
      * @static
      */
     function fetchPropertyKeys($itemId) {
@@ -195,11 +166,11 @@ class GalleryItemPropertiesMap_core {
 
 	$query = '
         SELECT
-          [GalleryItemPropertyMap::key]
+          [GalleryItemPropertiesMap::key]
         FROM
-          [GalleryItemPropertyMap]
+          [GalleryItemPropertiesMap]
         WHERE
-          [GalleryItemPropertyMap::itemId] = ?
+          [GalleryItemPropertiesMap::itemId] = ?
         ';
 
 	list ($ret, $searchResults) = $gallery->search($query, array($itemId));
@@ -227,33 +198,36 @@ class GalleryItemPropertiesMap_core {
 	global $gallery;
 
 	if (empty($itemId) || empty($key)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
-					__FILE__, __LINE__);
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER,
+					      __FILE__, __LINE__),
+			 null);
 	}
 
 	$query = '
         SELECT
-          [GalleryItemPropertyMap::value]
+          [GalleryItemPropertiesMap::value]
         FROM
-          [GalleryItemPropertyMap]
+          [GalleryItemPropertiesMap]
         WHERE
-          [GalleryItemPropertyMap::itemId] = ?
+          [GalleryItemPropertiesMap::itemId] = ?
           AND
-          [GalleryItemPropertyMap::key] = ?
+          [GalleryItemPropertiesMap::key] = ?
         ';
 
 	list ($ret, $searchResults) =
 	    $gallery->search($query, array($itemId, $key));
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	if ($searchResults->resultCount() == 0) {
-	    return null;
+	    $result = null;
 	}
 
 	$result = $searchResults->nextResult();
-	return array($ret, $result[0]);
+	$result = $result[0];
+	
+	return array(GalleryStatus::success(), $result);
     }
 
     /**
@@ -264,7 +238,7 @@ class GalleryItemPropertiesMap_core {
      *               array key => value pairs
      * @static
      */
-    function fetchAllProperties($itemId, $key) {
+    function fetchAllProperties($itemId) {
 	global $gallery;
 
 	if (empty($itemId)) {
@@ -274,12 +248,12 @@ class GalleryItemPropertiesMap_core {
 
 	$query = '
         SELECT
-          [GalleryItemPropertyMap::key],
-          [GalleryItemPropertyMap::value]
+          [GalleryItemPropertiesMap::key],
+          [GalleryItemPropertiesMap::value]
         FROM
-          [GalleryItemPropertyMap]
+          [GalleryItemPropertiesMap]
         WHERE
-          [GalleryItemPropertyMap::itemId] = ?
+          [GalleryItemPropertiesMap::itemId] = ?
         ';
 
 	list ($ret, $searchResults) = $gallery->search($query, array($itemId));
