@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -34,29 +34,30 @@ class CreateConfigFileStep extends InstallStep {
     function loadTemplateData(&$templateData) {
 	global $galleryStub;
 
-	$configFilePath = dirname(__FILE__) . '/../../config.php';
+	$baseDir = dirname(dirname(dirname(__FILE__)));
+	$configFilePath = $baseDir . '/config.php';
 	if (file_exists($configFilePath) && !is_writable($configFilePath)) {
 	    /* The file exists but we can't write to it */
-	    $templateData['error'] = _('Unable to write to the <b>config.php</b> configuration file in your <tt>gallery2</tt> directory.  Please change its permissions.  If you\'re on Unix you can do <i>chmod 666 config.php</i> to fix this.');
+	    $templateData['error'] = sprintf(_('Unable to write to the <b>config.php</b> configuration file in your <tt>%s</tt> directory.  Please change its permissions.  If you\'re on Unix you can do <i>chmod 666 config.php</i> to fix this.'), basename($baseDir));
 	    $this->setInError(true);
 	    $templateData['bodyFile'] = 'CreateConfigFileInstructions.html';
-	    $templateData['galleryDir'] = basename(dirname(dirname(dirname(__FILE__))));
+	    $templateData['galleryDir'] = basename($baseDir);
 	} else {
 	    if (!$out = @fopen($configFilePath, 'w')) {
 		/* Give the user instructions */
 		$templateData['bodyFile'] = 'CreateConfigFileInstructions.html';
-		$templateData['galleryDir'] = basename(dirname(dirname(dirname(__FILE__))));
+		$templateData['galleryDir'] = basename($baseDir);
 
 		if (!$this->_firstTime) {
 		    if (!file_exists($configFilePath)) {
 			$templateData['error'] =
 			    sprintf(_('The <b>config.php</b> file does not exist in your %s directory'),
-				    dirname(dirname(dirname(__FILE__))));
+				    $baseDir);
 		    }
 		}
 	    } else {
 		$newStoreConfig = $galleryStub->getConfig('storage.config');
-		$in = @fopen(dirname(__FILE__) . '/../config.php-template', 'r');
+		$in = @fopen($baseDir . '/install/config.php-template', 'r');
 		while ($line = fgets($in, 2000)) {
 		    if (trim($line) == '$gallery->setConfig(\'setup.password\', \'\');') {
 			$tmp = addslashes($galleryStub->getConfig('setup.password'));
