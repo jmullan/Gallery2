@@ -390,19 +390,21 @@ class CoreModule extends GalleryModule {
 			     'params' => array('view' => 'core:SiteAdmin'));
 	}
 
-	if ($gallery->getActiveUserId() == $anonymousUserId) {
-	    $links[] = array('text' => $this->translate('Login'),
-			     'params' => array('return' => 'true',
-					       'view' => 'core:UserAdmin',
-					       'subView' => 'core:UserLogin'));
-	} else {
-	    $links[] = array('text' => $this->translate('Your Account'),
-			     'params' => array('return' => 'true',
-					       'view' => 'core:UserAdmin',
-					       'subView' => 'core:UserPreferences'));
-	    $links[] = array('text' => $this->translate('Logout'),
-			     'params' => array('return' => 'true',
-					       'controller' => 'core:Logout'));
+	if (GalleryCapabilities::can('login')) {
+	    if ($gallery->getActiveUserId() == $anonymousUserId) {
+		$links[] = array('text' => $this->translate('Login'),
+				 'params' => array('return' => 'true',
+						   'view' => 'core:UserAdmin',
+						   'subView' => 'core:UserLogin'));
+	    } else {
+		$links[] = array('text' => $this->translate('Your Account'),
+				 'params' => array('return' => 'true',
+						   'view' => 'core:UserAdmin',
+						   'subView' => 'core:UserPreferences'));
+		$links[] = array('text' => $this->translate('Logout'),
+				 'params' => array('return' => 'true',
+						   'controller' => 'core:Logout'));
+	    }
 	}
 
         return array(GalleryStatus::success(), $links);

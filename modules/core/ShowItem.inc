@@ -87,9 +87,8 @@ class ShowItemView extends GalleryView {
 		}
 		if ($gallery->getActiveUserId() == $anonymousId) {
 		    /* Redirect to login view */
-		    return array(GalleryStatus::success(), array('redirect' =>
-			array('view' => 'core:UserAdmin', 'subView' => 'core:UserLogin',
-			      'return' => true)));
+		    return array(GalleryStatus::success(),
+				 array('redirect' => GalleryCapabilities::get('loginRedirect')));
 		}
 		/* Try to redirect to root */
 		list ($ret2, $rootId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
@@ -98,9 +97,8 @@ class ShowItemView extends GalleryView {
 		}
 		if ($item->getId() == $rootId) {
 		    /* No permission on root album; redirect to login view */
-		    return array(GalleryStatus::success(), array('redirect' =>
-			array('view' => 'core:UserAdmin', 'subView' => 'core:UserLogin',
-			      'return' => true)));
+		    return array(GalleryStatus::success(),
+				 array('redirect' => GalleryCapabilities::get('loginRedirect')));
 		}
 		return array(GalleryStatus::success(), array('redirect' =>
 		    array('view' => 'core:ShowItem', 'itemId' => $rootId)));

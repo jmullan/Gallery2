@@ -46,6 +46,7 @@ function GalleryInitFirstPass($params=array()) {
     GalleryCoreApi::requireOnce($classDir . 'GalleryDataCache.class');
     GalleryCoreApi::requireOnce($classDir . 'GalleryUrlGenerator.class');
     GalleryCoreApi::requireOnce($classDir . 'GalleryUtilities.class');
+    GalleryCoreApi::requireOnce($classDir . 'GalleryCapabilities.class');
     GalleryCoreApi::requireOnce($classDir . 'GalleryView.class');
     GalleryCoreApi::requireOnce($classDir . 'GalleryModule.class');
     

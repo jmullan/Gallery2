@@ -35,15 +35,18 @@ class GalleryEmbed {
      *
      * @param string URI to access G2 via CMS application (example: index.php?module=gallery2)
      * @param string relative path from CMS (dir with embedUri) to G2 base dir
+     * @param string URL for redirect to CMS login view (example: /cms/index.php)
      * @return object GalleryStatus a status object
      * @static
      */
-    function init($embedUri, $relativeG2Path) {
+    function init($embedUri, $relativeG2Path, $loginRedirect) {
 	$ret = GalleryInitFirstPass(
 			  array('embedUri' => $embedUri, 'relativeG2Path' => $relativeG2Path));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
+	GalleryCapabilities::set('login', false);
+	GalleryCapabilities::set('loginRedirect', array('href' => $loginRedirect));
 	return GalleryStatus::success();
     }
 
