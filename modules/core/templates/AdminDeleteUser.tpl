@@ -17,7 +17,7 @@
     {if isset($AdminDeleteUser.numberOfItems) && $AdminDeleteUser.numberOfItems > 0}
     <h2 class="giTitle">
       {g->text text="User %s is the owner of %s items." arg1=$AdminDeleteUser.user.userName 
-	  		arg2=$AdminDeleteUser.numberOfItems}
+	       arg2=$AdminDeleteUser.numberOfItems}
     </h2>
     <p class="giDescription">
       {g->text text="Delete user <strong>%s</strong> and..." arg1=$AdminDeleteUser.user.userName}
@@ -31,7 +31,12 @@
       <br/>
       {g->text text="New owner (leaving blank means one of the Site Admins):"}
       <br/>
-      <input class="giFormUsername" type="text" name="{g->formVar var="form[text][newOwner]"}" size="20" value="{$form.text.newOwner}"/><br/>
+      <input id="username" class="giFormUsername" type="text" name="{g->formVar var="form[text][newOwner]"}" size="20" value="{$form.text.newOwner}"/>
+      {g->autoComplete element="username"}
+      {g->url forJavascript="true" arg1="view=core:SimpleCallback" arg2="command=lookupUsername" arg3="prefix=__VALUE__"}
+      {/g->autoComplete}
+
+      <br/>
       {if isset($form.error.text.noSuchUser)}
       <div class="giError">
         {g->text text="User '%s' does not exist! Cannot assign items to a nonexistent user."
