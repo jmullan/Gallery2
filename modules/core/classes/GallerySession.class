@@ -169,7 +169,6 @@ class GallerySession {
 	     * The session was not created from this browser address, so reset
 	     * our data to prevent hijacking.
 	     */
-	    printf("<pre>hijack! %s</pre>", print_r(array($this->_remoteIdentifier, $currentRemoteIdentifier), 1));
 	    $this->_remoteIdentifier = $currentRemoteIdentifier;
 	    $this->_emptySessionData();
 	    $this->_sessionId = md5(microtime() . rand(1, 32767));
