@@ -118,34 +118,29 @@
       {/if}
 
       {g->box}
-	{foreach from=$layout.moduleItemLinks item=itemLinks key=loopId}
-	  {if ($loopId == $layout.item.id)}
-	    {g->actionset}
-	      {g->actionitem}
-		{g->title}
-		  {g->text text="&laquo; edit item &raquo;"}
-		{/g->title}
-		{g->url}
-		  &nbsp;
-		{/g->url}
-	      {/g->actionitem}
+	{assign var="id" value=$layout.item.id}
+	{g->actionset}
+	  {g->actionitem}
+	    {g->title}
+	      {g->text text="&laquo; actions &raquo;"}
+	    {/g->title}
+	    {g->url}
+	      &nbsp;
+	    {/g->url}
+	  {/g->actionitem}
 
-	      {foreach from=$itemLinks item=module}
-		{foreach from=$module item=link}
-		  {g->actionitem}
-		    {g->title}
-		      {$link.text}
-		    {/g->title}
-
-		    {g->value}
-		      {$link.url}
-		    {/g->value}
-		  {/g->actionitem}
-		{/foreach}
-	      {/foreach}
-	    {/g->actionset}
-	  {/if}
-	{/foreach}
+	  {foreach from=$layout.moduleItemLinks.$id item=link}
+	    {g->actionitem}
+	      {g->title}
+		{$link.text}
+	      {/g->title}
+	      
+	      {g->value}
+		{$link.url}
+	      {/g->value}
+	    {/g->actionitem}
+	  {/foreach}
+	{/g->actionset}
       {/g->box}
 
       {g->banner}

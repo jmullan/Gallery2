@@ -103,9 +103,9 @@
 		      {g->actionitem}
 			{g->title}
 			  {if $child.canContainChildren} 
-			    {g->text text="&laquo; manage album &raquo;"}
+			    {g->text text="&laquo; album actions &raquo;"}
 			  {else}
-			    {g->text text="&laquo; edit item &raquo;"}
+			    {g->text text="&laquo; item actions &raquo;"}
 			  {/if}
 			{/g->title}
 			{g->value}
@@ -113,18 +113,16 @@
 			{/g->value}
 		      {/g->actionitem}
 		      {assign var="childId" value=$child.id}
-		      {foreach from=$layout.moduleItemLinks.$childId key=module item=links}
-			{foreach from=$links item=link}
-			  {g->actionitem}
-			    {g->title}
-			      {$link.text}
-			    {/g->title}
-			    
-			    {g->value}
-			      {$link.url}
-			    {/g->value}
-			  {/g->actionitem}
-			{/foreach}
+		      {foreach from=$layout.moduleItemLinks.$childId item=link}
+			{g->actionitem}
+			  {g->title}
+			    {$link.text}
+			  {/g->title}
+			  
+			  {g->value}
+			    {$link.url}
+			  {/g->value}
+			{/g->actionitem}
 		      {/foreach}
 		    {/g->actionset}
 		  {/g->itemthumbnail}
@@ -155,24 +153,22 @@
       {g->actionset}
 	{g->actionitem}
 	  {g->title}
-	    {g->text text="&laquo; manage album &raquo;"}
+	    {g->text text="&laquo; album actions &raquo;"}
 	  {/g->title}
 	  {g->url}
 	    &nbsp;
 	  {/g->url}
 	{/g->actionitem}
-	{foreach from=$layout.moduleItemLinks.$id key=module item=links}
-	  {foreach from=$links item=link}
-	    {g->actionitem}
-	      {g->title}
-		{$link.text}
-	      {/g->title}
-	      
-	      {g->value}
-		{$link.url}
-	      {/g->value}
-	    {/g->actionitem}
-	  {/foreach}
+	{foreach from=$layout.moduleItemLinks.$id item=link}
+	  {g->actionitem}
+	    {g->title}
+	      {$link.text}
+	    {/g->title}
+	    
+	    {g->value}
+	      {$link.url}
+	    {/g->value}
+	  {/g->actionitem}
 	{/foreach}
       {/g->actionset}
 

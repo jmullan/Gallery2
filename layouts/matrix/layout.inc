@@ -244,12 +244,18 @@ class MatrixLayout extends GalleryLayout {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	/* Get item links */
-	list ($ret, $moduleItemLinks) =
+	/* Get item links and flatten out the modules */
+	list ($ret, $tmp) =
 	    $this->_getModuleItemLinks(array_merge(array($item), $childItems));
-
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	foreach ($tmp as $tmpItem => $moduleLinks) {
+	    $moduleItemLinks[$tmpItem] = array();
+	    foreach ($moduleLinks as $module => $links) {
+		$moduleItemLinks[$tmpItem] = array_merge($moduleItemLinks[$tmpItem], $links);
+	    }
+	    usort($moduleItemLinks[$tmpItem], array($this, '_sortItemLinks'));
 	}
 
 	/* Get system links */
@@ -477,10 +483,17 @@ class MatrixLayout extends GalleryLayout {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	/* Get item links */
-	list ($ret, $moduleItemLinks) = $this->_getModuleItemLinks($item);
+	/* Get item links and flatten out the modules */
+	list ($ret, $tmp) = $this->_getModuleItemLinks($item);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	foreach ($tmp as $tmpItem => $moduleLinks) {
+	    $moduleItemLinks[$tmpItem] = array();
+	    foreach ($moduleLinks as $module => $links) {
+		$moduleItemLinks[$tmpItem] = array_merge($moduleItemLinks[$tmpItem], $links);
+	    }
+	    usort($moduleItemLinks[$tmpItem], array($this, '_sortItemLinks'));
 	}
 
 	/* Get system links */
@@ -626,6 +639,10 @@ class MatrixLayout extends GalleryLayout {
  	}
 
 	return array(GalleryStatus::success(), $peers, $peerIds, $totalPeerCount, $itemIndex);
+    }
+
+    function _sortItemLinks($a, $b) {
+	return strcmp($a['text'], $b['text']);
     }
 }
 ?>
