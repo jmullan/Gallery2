@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -25,7 +25,7 @@
  * @author Alan Harder <alan.harder@sun.com>
  */
 
-/** 
+/**
  * This implements gallery layout combining thumb-view, image-view
  * and slideshow into a single dynamic page.
  *
@@ -45,8 +45,6 @@ class HybridLayout extends GalleryLayout {
 	$this->setDescription($gallery->i18n('Combined album/image/slideshow dynamic view'));
 	$this->setVersion('0.8');
 	$this->setL10Domain('layouts_hybrid');
-
-	return GalleryStatus::success();
     }
 
     function loadTemplate(&$template, $item) {
@@ -212,8 +210,9 @@ class HybridLayout extends GalleryLayout {
 //		}
 //	    }
 	}
-	$i = 0;
+	$i = -1;
 	foreach ($childItems as $child) {
+	    $i++;
 	    $childId = $child->getId();
 	    if (isset($thumbnails[$childId])) {
 		if (!($thumbnails[$childId]->getWidth() && $thumbnails[$childId]->getHeight())) {
@@ -278,7 +277,6 @@ class HybridLayout extends GalleryLayout {
 		    $imageWidths[] = $imageHeights[] = -1;
 		}
 	    }
-	    $i++;
 	}
 	return array(GalleryStatus::success(), $imageWidths, $imageHeights);
     }
