@@ -211,11 +211,6 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	$ret = $this->beginTransaction();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
 	return GalleryStatus::success();
     }
 
@@ -1816,7 +1811,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	    return GalleryStatus::error(ERROR_STORAGE_CONNECTION, __FILE__, __LINE__);
 	}
 
-	if ($this->_isTransactional) {
+	if ($this->_isTransactional && $this->_db->transCnt > 0) {
 	    $this->_traceStart();
 	    $ok = $this->_db->CommitTrans();
 	    $this->_traceStop();
@@ -1854,7 +1849,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	    return GalleryStatus::error(ERROR_STORAGE_CONNECTION, __FILE__, __LINE__);
 	}
 
-	if ($this->_isTransactional) {
+	if ($this->_isTransactional && $this->_db->transCnt > 0) {
 	    $this->_traceStart();
 	    $ok = $this->_db->RollbackTrans();
 	    $this->_traceStop();
