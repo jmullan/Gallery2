@@ -305,11 +305,13 @@ class ThumbnailImage_core extends GalleryEntity {
 		    GalleryUtilities::shrinkDimensionsToFit($params['maxSize'], $width, $height);
 	    }
 
-	    return sprintf('<img %s src="%s" width="%s" height="%s" alt="%s"/>',
+	    $sizeStr = ($width > 0 && $height > 0)
+		? sprintf(' width="%s" height="%s"', $width, $height) : '';
+
+	    return sprintf('<img %s src="%s"%s alt="%s"/>',
 			   $params['class'] ? 'class="' . $params['class'] . '"' : '',
 			   $src,
-			   $width,
-			   $height,
+			   $sizeStr,
 			   $this->getFileName());
 
         default:
