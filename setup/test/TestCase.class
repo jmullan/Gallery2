@@ -61,6 +61,23 @@ class TestCase {
     function getDebugOutput() {
 	return $this->_debugOutput;
     }
+
+    function startTiming($iterations) {
+	$this->_startTime = time();
+	$this->_iterations = $iterations;
+    }
+
+    function stopTiming() {
+	$this->_stopTime = time();
+    }
+
+    function timingReport() {
+	$elapsed = $this->_stopTime - $this->_startTime;
+	$persec = $this->_iterations/$elapsed;
+	print "Iterations: $this->_iterations\n";
+	print "Elapsed: $elapsed\n";
+	print "PerSec: $persec\n";
+    }
 }
 
 ?>
