@@ -400,8 +400,7 @@ class TestSuite /* implements Test */ {
 
             //print "skipping $method<br>";
           } else {
-	    if (!isset($this->fFilter) || preg_match("/{$this->fFilter}/i", "$classname.$method")
-		|| preg_match("/{$this->fFilter}/i", $modulename)) {
+	    if (!isset($this->fFilter) || preg_match("/{$this->fFilter}/i", "$modulename.$classname.$method")) {
 	      $test->setModuleName($this->fModuleName);
 	      $this->addTest($test);
 	    }
