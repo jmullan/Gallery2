@@ -21,21 +21,39 @@
  */
 
 class CreateConfigFileStep extends InstallStep {
+    var $_firstTime;
+
+    function CreateConfigFileStep() {
+	$this->_firstTime = true;
+    }
+
     function stepName() {
 	return _('Create Config File');
     }
 
     function loadTemplateData(&$templateData) {
 	global $galleryStub;
-	
+
 	$configFilePath = dirname(__FILE__) . '/../../config.php';
 	if (file_exists($configFilePath) && !is_writable($configFilePath)) {
-	    $templateData['error'] = _('Unable to write to the <b>config.php</b> configuration file in your <tt>gallery</tt> directory.  Please change its permissions.');
+	    /* The file exists but we can't write to it */
+	    $templateData['error'] = _('Unable to write to the <b>config.php</b> configuration file in your <tt>gallery2</tt> directory.  Please change its permissions.  If you\'re on Unix you can do <i>chmod 666 config.php</i> to fix this.');
 	    $this->setInError(true);
+	    $templateData['bodyFile'] = 'CreateConfigFileInstructions.html';
+	    $templateData['galleryDir'] = basename(dirname(dirname(dirname(__FILE__))));
 	} else {
 	    if (!$out = @fopen($configFilePath, 'w')) {
-		$templateData['error'] = 'Unable to create <b>config.php</b> in your <tt>gallery</tt> directory. Make sure that Gallery has write permissions for that directory, or please create a <b>config.php</b> file there and make sure Gallery can write to it.';
-		$this->setInError(true);
+		/* Give the user instructions */
+		$templateData['bodyFile'] = 'CreateConfigFileInstructions.html';
+		$templateData['galleryDir'] = basename(dirname(dirname(dirname(__FILE__))));
+
+		if (!$this->_firstTime) {
+		    if (!file_exists($configFilePath)) {
+			$templateData['error'] =
+			    sprintf(_('The <b>config.php</b> file does not exist in your %s directory'),
+				    dirname(dirname(dirname(__FILE__))));
+		    }
+		}
 	    } else {
 		$newStoreConfig = $galleryStub->getConfig('storage.config');
 		$in = @fopen(dirname(__FILE__) . '/../config.php-template', 'r');
@@ -63,14 +81,10 @@ class CreateConfigFileStep extends InstallStep {
 		fclose($in);
 		fclose($out);
 		$this->setComplete(true);
+		$templateData['bodyFile'] = 'CreateConfigFileSuccess.html';
 	    }
 	}
-	
-	if ($this->isComplete()) {
-	    $templateData['bodyFile'] = 'CreateConfigFileSuccess.html';
-	} else {
-	    $templateData['bodyFile'] = 'CreateConfigFileFailed.html';
-	}
+	$this->_firstTime = false;
     }
 }
 ?>
