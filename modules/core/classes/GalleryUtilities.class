@@ -574,11 +574,16 @@ class GalleryUtilities {
 	    return '';
 	}
 	if (strlen($string) > $length) {
-	    $length -= strlen($etc);
+	    $length = max(0,$length - strlen($etc));
+	    $newString = GalleryUtilities::entitySubstr($string, 0, $length);
 	    if (!$breakWords) {
-		$string = preg_replace('/\s+?(\S+)?$/', '', substr($string, 0, $length+1));
+	        $testString = substr($string, 0, strlen($newString)+1);
+		if (preg_match('|\s+\S+$|',$testString)) {
+		    $string = preg_replace('/\s+\S+$/', '', $newString);
+		    return $string . $etc;
+		}		
 	    }
-	    return GalleryUtilities::entitySubstr($string, 0, $length) . $etc;
+	    return $newString . $etc;
 	} else {
 	    return $string;
 	}
@@ -614,10 +619,12 @@ class GalleryUtilities {
 	    
 	    $cookedStart = ($start < 0) ? $charArrayLength + $start : $start;
 	    $cookedLength = ($length < 0) ? $charArrayLength - $cookedStart + $length : $length;
-	    $cookedEnd = min($cookedStart + $cookedLength,$charArrayLength);
+	    $cookedEnd = min($cookedStart + $cookedLength,$charArrayLength);	    
 	    for ($i=$cookedStart; $i<$cookedEnd; $i++) {
 		if (0 > $length || strlen($cookedText . $charArray[$i]) <= $length) {
 		    $cookedText .= $charArray[$i];
+		} else {
+		    $i = $cookedEnd;
 		}
 	    }
 	    return $cookedText;

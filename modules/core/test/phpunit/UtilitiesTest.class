@@ -362,23 +362,23 @@ class UtilitiesTest extends GalleryTestCase {
     }
 
     function testEntityTruncate() {
-	$this->assertEquals('abcdef'   ,GalleryUtilities::entityTruncate('abcdef', 6));
-	$this->assertEquals(''         ,GalleryUtilities::entityTruncate('abcdef', 0));
-	$this->assertEquals('&am...'   ,GalleryUtilities::entityTruncate('&amp;bcdef', 6));
-	$this->assertEquals('&amp;b...',GalleryUtilities::entityTruncate('&amp;bcdef', 9));
-	$this->assertEquals('abc...',GalleryUtilities::entityTruncate('abc&amp;', 6));
+	$this->assertEquals('abcdef'   ,GalleryUtilities::entityTruncate('abcdef', 6),1);
+	$this->assertEquals(''         ,GalleryUtilities::entityTruncate('abcdef', 0),2);
+	$this->assertEquals('...'   ,GalleryUtilities::entityTruncate('&amp;bcdef', 6),3);
+	$this->assertEquals('&amp;b...',GalleryUtilities::entityTruncate('&amp;bcdef', 9),4);
+	$this->assertEquals('abc...',GalleryUtilities::entityTruncate('abc&amp;', 6),5);
     }
     function testEntitySubstr() {
-	$this->assertEquals('abcdef',GalleryUtilities::entitySubstr('abcdef', 0));
-	$this->assertEquals(   'def',GalleryUtilities::entitySubstr('abcdef', 3));
-	$this->assertEquals(      '',GalleryUtilities::entitySubstr('abcdef', 6));
-	$this->assertEquals(   FALSE,GalleryUtilities::entitySubstr('abcdef', 7));
-	$this->assertEquals('abcdef',GalleryUtilities::entitySubstr('abcdef',-6));
-	$this->assertEquals(    'ef',GalleryUtilities::entitySubstr('abcdef',-2));
-	$this->assertEquals('',      GalleryUtilities::entitySubstr('abcdef', 0,-6));
-	$this->assertEquals('a',     GalleryUtilities::entitySubstr('abcdef', 0,-5));
-	$this->assertEquals('abcde', GalleryUtilities::entitySubstr('abcdef', 0,-1));
-	$this->assertEquals('',      GalleryUtilities::entitySubstr('abcdef', 0, 0));
+	$this->assertEquals('abcdef',GalleryUtilities::entitySubstr('abcdef', 0),1);
+	$this->assertEquals(   'def',GalleryUtilities::entitySubstr('abcdef', 3),2);
+	$this->assertEquals(      '',GalleryUtilities::entitySubstr('abcdef', 6),3);
+	$this->assertEquals(   FALSE,GalleryUtilities::entitySubstr('abcdef', 7),4);
+	$this->assertEquals('abcdef',GalleryUtilities::entitySubstr('abcdef',-6),5);
+	$this->assertEquals(    'ef',GalleryUtilities::entitySubstr('abcdef',-2),6);
+	$this->assertEquals('',      GalleryUtilities::entitySubstr('abcdef', 0,-6),7);
+	$this->assertEquals('a',     GalleryUtilities::entitySubstr('abcdef', 0,-5),8);
+	$this->assertEquals('abcde', GalleryUtilities::entitySubstr('abcdef', 0,-1),9);
+	$this->assertEquals('',      GalleryUtilities::entitySubstr('abcdef', 0, 0),10);
 	$this->assertEquals( 'bcde' ,GalleryUtilities::entitySubstr('abcdef',-5,-1),'-5,-1');
 	$this->assertEquals(  'cde' ,GalleryUtilities::entitySubstr('abcdef',-4,-1),'-4,-1');
 	$this->assertEquals(   'de' ,GalleryUtilities::entitySubstr('abcdef',-3,-1),'-3,-1');
