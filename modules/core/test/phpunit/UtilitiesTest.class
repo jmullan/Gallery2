@@ -225,8 +225,10 @@ class UtilitiesTest extends GalleryTestCase {
 	$results = GalleryUtilities::shrinkDimensionsToFit(5000, 1024, 768);
 	$this->assertEquals(array(1024, 768), $results);
 
-	$results = GalleryUtilities::shrinkDimensionsToFit(150, 150, 200);
+	// make sure ints are returned even if size param is a string
+	$results = GalleryUtilities::shrinkDimensionsToFit("150", 150, 200);
 	$this->assertEquals(array(112, 150), $results);
+	$this->assertEquals(150, $results[1]);
     }
     
     function testScaleDimensionsToFit() {

@@ -521,10 +521,10 @@ class GalleryUtilities {
 
 	if ($width > $height) {
 	    $height = (int)($target * ($height / $width));
-	    $width = $target;
+	    $width = (int)$target;
 	} else {
 	    $width = (int)($target * ($width / $height));
-	    $height = $target;
+	    $height = (int)$target;
 	}
 	
 	return array($width, $height);
