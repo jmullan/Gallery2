@@ -551,18 +551,19 @@ class ConfirmImportController extends GalleryController {
 					$newItem->setownerId($owner->getId());
 				    }
 				}
-				
-				/* delete group perm actions
-				$allPerms = array('core.view','core.viewSource','core.viewResizes');
-				foreach ($allPerms as $perm) {
-				    $ret = GalleryCoreApi::removeGroupPermission($newItem->getId(), $groupId, $permissionId, FALSE);
-				    if ($ret->isError()) {
-					return array($ret->wrap(__FILE__, __LINE__), null);
+				if (isset($importAlbumItem->hidden) && $importAlbumItem->hidden) {
+				    /* delete group perm actions
+				    $allPerms = array('core.view','core.viewSource','core.viewResizes');
+				    foreach ($allPerms as $perm) {
+					$ret = GalleryCoreApi::removeGroupPermission($newItem->getId(), 'All Users', $permissionId, FALSE);
+					if ($ret->isError()) {
+					    return array($ret->wrap(__FILE__, __LINE__), null);
+					}
 				    }
+				    */
 				}
-				*/
+				
 				$ret = $newItem->save();
-
 				if ($ret->isError()) {
 				    return array($ret->wrap(__FILE__, __LINE__), null);
 				}
@@ -642,20 +643,21 @@ class ConfirmImportController extends GalleryController {
 	
 	return array(GalleryStatus::success(), $results);
     }
-        $item = preg_replace('/<br\s*[\/]?>/i', "\n", $item);
 
-        $item = preg_replace('/<strong>/i', '[b]', $item);
     /**
-        $item = preg_replace('/<\/strong>/i', '[/b]', $item);
+     * 
      * Converts HTML to BBCode
-        $item = preg_replace('/<em>/i', '[i]', $item);
-     *
-        $item = preg_replace('/<\/em>/i', '[/i]', $item);
+     * 
      * @param string $item item to convert
      * @return string
      */
     function convertHtmlToBbcode($item) {
-        $item = preg_replace('/<b>/i', '[b]', $item);
+	$item = preg_replace('/<br\s*[\/]?>/i', "\n", $item);    
+	$item = preg_replace('/<strong>/i', '[b]', $item);
+	$item = preg_replace('/<\/strong>/i', '[/b]', $item);
+	$item = preg_replace('/<em>/i', '[i]', $item);
+	$item = preg_replace('/<\/em>/i', '[/i]', $item);
+	$item = preg_replace('/<b>/i', '[b]', $item);
         $item = preg_replace('/<\/b>/i', '[/b]', $item);
         $item = preg_replace('/<i>/i', '[i]', $item);
         $item = preg_replace('/<\/i>/i', '[/i]', $item);
