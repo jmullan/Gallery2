@@ -7,19 +7,20 @@
 {literal}
 <script type="text/javascript">
   function updateStatus(title, description, percentComplete) {
-
     document.getElementById('ImmediateStatus_title').innerHTML = title;
     document.getElementById('ImmediateStatus_description').innerHTML = description;
-	
+
     var progressMade = Math.round(percentComplete * 100);
-    document.getElementById('ImmediateStatus_progressMade').style.width = progressMade + "%"
-    document.getElementById('ImmediateStatus_progressToGo').style.width = (100 - progressMade) + "%";
+    var progressToGo = document.getElementById('ImmediateStatus_progressToGo');
 
     if (progressMade == 100) {
-      document.getElementById('ImmediateStatus_progressToGo').style.display = 'none';
+      progressToGo.style.display = 'none';
     } else {
-      document.getElementById('ImmediateStatus_progressToGo').style.display = 'inline';
+      progressToGo.style.display = 'inline-block';
+      progressToGo.style.width = (100 - progressMade) + "%";
     }
+
+    document.getElementById('ImmediateStatus_progressMade').style.width = progressMade + "%"
   }
 </script>
 {/literal}
