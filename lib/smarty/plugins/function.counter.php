@@ -1,12 +1,22 @@
 <?php
-
-/*
+/**
  * Smarty plugin
- * -------------------------------------------------------------
- * Type:     function
- * Name:     counter
+ * @package Smarty
+ * @subpackage plugins
+ */
+
+
+/**
+ * Smarty {counter} function plugin
+ *
+ * Type:     function<br>
+ * Name:     counter<br>
  * Purpose:  print out a counter value
- * -------------------------------------------------------------
+ * @link http://smarty.php.net/manual/en/language.function.counter.php {counter}
+ *       (Smarty online manual)
+ * @param array parameters
+ * @param Smarty
+ * @return string|null
  */
 function smarty_function_counter($params, &$smarty)
 {
@@ -15,7 +25,6 @@ function smarty_function_counter($params, &$smarty)
     static $dir = array();
     static $name = "default";
     static $printval = array();
-    static $assign = "";
 
     extract($params);
 
@@ -27,9 +36,11 @@ function smarty_function_counter($params, &$smarty)
 		}
 	}
 
-    if (isset($start))
+    $dontIncrement = false;
+    if (isset($start)) {
         $count[$name] = $start;
-    else if (!isset($count[$name]))
+	$dontIncrement = true;
+    } else if (!isset($count[$name]))
         $count[$name]=1;
 
     if (!isset($print))
@@ -38,8 +49,8 @@ function smarty_function_counter($params, &$smarty)
         $printval[$name]=$print;
     
     if (!empty($assign)) {
-        $printval[$name] = false;
-        $smarty->assign($assign, $count[$name]);
+        if (!isset($print)) $printval[$name] = false;
+        $smarty->assign_by_ref($assign, $count[$name]);
     }
 
     if ($printval[$name]) {
@@ -58,10 +69,12 @@ function smarty_function_counter($params, &$smarty)
     else if (!isset($dir[$name]))
         $dir[$name] = "up";
 
-    if ($dir[$name] == "down")
-        $count[$name] -= $skipval[$name];
-    else
-        $count[$name] += $skipval[$name];
+    if (!$dontIncrement) {
+	if ($dir[$name] == "down")
+	    $count[$name] -= $skipval[$name];
+	else
+	    $count[$name] += $skipval[$name];
+    }
 	
 	return $retval;
 	

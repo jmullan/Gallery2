@@ -1,19 +1,31 @@
 <?php
-
-/*
+/**
  * Smarty plugin
- * -------------------------------------------------------------
- * Type:     block function
- * Name:     textformat
+ * @package Smarty
+ * @subpackage plugins
+ */
+
+/**
+ * Smarty {textformat}{/textformat} block plugin
+ *
+ * Type:     block function<br>
+ * Name:     textformat<br>
  * Purpose:  format text a certain way with preset styles
- *           or custom wrap/indent settings
+ *           or custom wrap/indent settings<br>
+ * @link http://smarty.php.net/manual/en/language.function.textformat.php {textformat}
+ *       (Smarty online manual)
+ * @param array
+ * <pre>
  * Params:   style: string (email)
  *           indent: integer (0)
  *           wrap: integer (80)
  *           wrap_char string ("\n")
  *           indent_char: string (" ")
  *           wrap_boundary: boolean (true)
- * -------------------------------------------------------------
+ * </pre>
+ * @param string contents of the block
+ * @param Smarty clever simulation of a method
+ * @return string string $content re-formatted
  */
 function smarty_block_textformat($params, $content, &$this)
 {
@@ -61,9 +73,8 @@ function smarty_block_textformat($params, $content, &$this)
 	if($assign != null) {
 		$this->assign($assign,$output);
 	} else {
-		echo $output;
+		return $output;
 	}
-	//echo $content;
 }
 
 /* vim: set expandtab: */

@@ -1,18 +1,30 @@
 <?php
+/**
+ * Smarty plugin
+ * @package Smarty
+ * @subpackage plugins
+ */
+
 
 /*
- * Smarty plugin
- * -------------------------------------------------------------
- * Type:     function
- * Name:     html_options
- * Input:      name       (optional) - string default "select"
- *             values     (required if no options supplied) - array
- *             options    (required if no values supplied) - associative array
- *             selected   (optional) - string default not set
- *             output     (required if not options supplied) - array
+ * Smarty {html_options} function plugin
+ *
+ * Type:     function<br>
+ * Name:     html_options<br>
+ * Input:<br>
+ *           - name       (optional) - string default "select"
+ *           - values     (required if no options supplied) - array
+ *           - options    (required if no values supplied) - associative array
+ *           - selected   (optional) - string default not set
+ *           - output     (required if not options supplied) - array
  * Purpose:  Prints the list of <option> tags generated from
  *           the passed parameters
- * -------------------------------------------------------------
+ * @link http://smarty.php.net/manual/en/language.function.html.options.php {html_image}
+ *      (Smarty online manual)
+ * @param array
+ * @param Smarty
+ * @return string
+ * @uses smarty_function_escape_special_chars()
  */
 function smarty_function_html_options($params, &$smarty)
 {
@@ -26,27 +38,31 @@ function smarty_function_html_options($params, &$smarty)
 
    $extra = '';
   
-   foreach($params as $_key => $_val) {	
-      switch($_key) {
-      case 'name':
-	 $$_key = (string)$_val;
-	 break;
+	foreach($params as $_key => $_val) {	
+		switch($_key) {
+			case 'name':
+			$$_key = (string)$_val;
+			break;
 
-      case 'options':
-	 $$_key = (array)$_val;
-	 break;
+		case 'options':
+			$$_key = (array)$_val;
+			break;
 
-      case 'selected':
-      case 'values':
-      case 'output':
-	 $$_key = array_values((array)$_val);      
-	 break;
+		case 'selected':
+		case 'values':
+		case 'output':
+			$$_key = array_values((array)$_val);      
+			break;
 
-      default:
-	 $extra .= ' '.$_key.'="'.smarty_function_escape_special_chars($_val).'"';
-	 break;					
-      }
-   }
+		default:
+			if(!is_array($_val)) {
+				$extra .= ' '.$_key.'="'.smarty_function_escape_special_chars($_val).'"';
+			} else {
+				$smarty->trigger_error("html_options: extra attribute '$_key' cannot be an array", E_USER_NOTICE);
+			}
+			break;					
+		}
+	}
 
    if (!isset($options) && !isset($values))
       return ''; /* raise error here? */

@@ -27,15 +27,21 @@
  * Lincoln, NE 68510
  *
  * The latest version of Config_File can be obtained from:
- * http://www.phpinsider.com
+ * http://smarty.php.net/
  *
- * @link http://www.phpinsider.com
+ * @link http://smarty.php.net/
  * @version 2.5.0
  * @copyright Copyright: 2001,2002 ispi of Lincoln, Inc.
  * @author Andrei Zmievski <andrei@php.net>
  * @access public
+ * @package Smarty
  */
 
+/* $Id$ */
+/**
+ * Config file reading class
+ * @package Smarty
+ */
 class Config_File {
 	/**#@+
      * Options
@@ -67,7 +73,6 @@ class Config_File {
 	/** @access private */
 	var $_config_path	= "";
 	var $_config_data	= array();
-	var $_separator		= "";
     /**#@-*/
 
 	/**
@@ -77,11 +82,6 @@ class Config_File {
 	 */
 	function Config_File($config_path = NULL)
 	{
-		if (substr(PHP_OS, 0, 3) == "WIN" || substr(PHP_OS, 0, 4) == "OS/2")
-			$this->_separator = "\\";
-		else
-			$this->_separator = "/";
-
 		if (isset($config_path))
 			$this->set_path($config_path);
 	}
@@ -99,8 +99,11 @@ class Config_File {
 				$this->_trigger_error_msg("Bad config file path '$config_path'");
 				return;
 			}
+			if(substr($config_path, -1) != DIRECTORY_SEPARATOR) {
+				$config_path .= DIRECTORY_SEPARATOR;
+			}
 
-			$this->_config_path = $config_path . $this->_separator;
+			$this->_config_path = $config_path;
 		}
 	}
 

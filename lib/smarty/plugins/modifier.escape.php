@@ -1,12 +1,22 @@
 <?php
-
-/*
+/**
  * Smarty plugin
- * ------------------------------------------------------------
- * Type:     modifier
- * Name:     escape
+ * @package Smarty
+ * @subpackage plugins
+ */
+
+
+/**
+ * Smarty escape modifier plugin
+ *
+ * Type:     modifier<br>
+ * Name:     escape<br>
  * Purpose:  Escape the string according to escapement type
- * ------------------------------------------------------------
+ * @link http://smarty.php.net/manual/en/language.modifier.escape.php
+ *          escape (Smarty online manual)
+ * @param string
+ * @param html|htmlall|url|quotes|hex|hexentity|javascript
+ * @return string
  */
 function smarty_modifier_escape($string, $esc_type = 'html')
 {
@@ -41,7 +51,7 @@ function smarty_modifier_escape($string, $esc_type = 'html')
 
         case 'javascript':
             // escape quotes and backslashes and newlines
-            return str_replace(array('\\','\'',"\r","\n"), array("\\\\", "\\'",'\r','\r'), $string);
+            return str_replace(array('\\','\'',"\r","\n"), array("\\\\", "\\'",'\r','\n'), $string);
 
         default:
             return $string;
