@@ -40,7 +40,8 @@
  * @param boolean
  * @return string
  */
-function smarty_modifier_entitytruncate($string, $length = 80, $etc = '...', $breakWords = false) {
-    return GalleryUtilities::entityTruncate($string, $length, $etc, $breakWords);
+function smarty_modifier_entitytruncate($string, $length = 80, $etc = '...', $breakWords = false, $countRawLength = FALSE) {
+    $countRawLength = TRUE;
+    return GalleryUtilities::entityTruncate($string, $length, $etc, $breakWords, $countRawLength);
 }
 ?>

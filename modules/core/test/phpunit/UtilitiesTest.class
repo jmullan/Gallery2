@@ -364,9 +364,11 @@ class UtilitiesTest extends GalleryTestCase {
     function testEntityTruncate() {
 	$this->assertEquals('abcdef'   ,GalleryUtilities::entityTruncate('abcdef', 6),1);
 	$this->assertEquals(''         ,GalleryUtilities::entityTruncate('abcdef', 0),2);
-	$this->assertEquals('...'   ,GalleryUtilities::entityTruncate('&amp;bcdef', 6),3);
-	$this->assertEquals('&amp;b...',GalleryUtilities::entityTruncate('&amp;bcdef', 9),4);
-	$this->assertEquals('abc...',GalleryUtilities::entityTruncate('abc&amp;', 6),5);
+	$this->assertEquals('&amp;bc...',GalleryUtilities::entityTruncate('&amp;bcdef', 6),3);
+	$this->assertEquals('&amp;bcdef'  ,GalleryUtilities::entityTruncate('&amp;bcdef', 9, ''),4);
+	$this->assertEquals('&amp;bc...'   ,GalleryUtilities::entityTruncate('&amp;bcdef', 6, '...', TRUE),5);
+	$this->assertEquals('&amp;bcdef',GalleryUtilities::entityTruncate('&amp;bcdef', 9, '...', FALSE),6);
+	$this->assertEquals('abc...',GalleryUtilities::entityTruncate('abc&amp;', 6),7);
     }
     function testEntitySubstr() {
 	$this->assertEquals('abcdef',GalleryUtilities::entitySubstr('abcdef', 0),1);

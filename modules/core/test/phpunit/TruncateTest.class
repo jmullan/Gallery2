@@ -74,19 +74,19 @@ class TruncateTest extends GalleryTestCase {
     function testTruncate5() {
 	$string = '&amp; respect html entities entities';
 	$result = smarty_modifier_entitytruncate($string, 5, '', true);
-	$this->assertEquals('&amp;', $result);
+	$this->assertEquals('&amp; res', $result);
     }
     
     function testTruncate6() {
 	$string = 'respect &amp; &amp;';
 	$result = smarty_modifier_entitytruncate($string, 9, '', true);
-	$this->assertEquals('respect ', $result);
+	$this->assertEquals('respect &amp;', $result);
     }
     
     function testTruncate7() {
 	$string = 'monkey&amp;foo&#1234;bar';
 	$result = smarty_modifier_entitytruncate($string, 10, '', true);
-	$this->assertEquals('monkey', $result);
+	$this->assertEquals('monkey&amp;foo', $result);
     }
     
     function testTruncate8() {
@@ -98,25 +98,25 @@ class TruncateTest extends GalleryTestCase {
     function testTruncate9() {
 	$string = 'monkey&amp;foo&#1234;bar';
 	$result = smarty_modifier_entitytruncate($string, 11, '', true);
-	$this->assertEquals('monkey&amp;', $result);
+	$this->assertEquals('monkey&amp;foo&#1234;', $result);
     }
     
     function testTruncate10() {
 	$string = '&#1040;&#1088;&#1093;&#1072;&#1085;&#1075;&#1077;&#1083;&#1100;&#1089;&#1082;&#1086;&#1077; 09.03.2004';
 	$result = smarty_modifier_entitytruncate($string, 11, '', true);
-	$this->assertEquals('&#1040;', $result);
+	$this->assertEquals('&#1040;&#1088;&#1093;&#1072;&#1085;&#1075;&#1077;&#1083;&#1100;&#1089;&#1082;', $result);
     }
     
     function testTruncate11() {
 	$string = '&#1040;&#1088;&#1093;&#1072;&#1085;&#1075;&#1077;&#1083;&#1100;&#1089;&#1082;&#1086;&#1077; 09.03.2004';
 	$result = smarty_modifier_entitytruncate($string, 6, '...', false);
-	$this->assertEquals('...', $result);
+	$this->assertEquals('&#1040;&#1088;&#1093;...', $result);
     }
     
     function testTruncate12() {
 	$string = '&#1040;&#1088;&#1093;&#1072;&#1085;&#1075;&#1077;&#1083;&#1100;&#1089;&#1082;&#1086;&#1077; 09.03.2004';
 	$result = smarty_modifier_entitytruncate($string, 14);
-	$this->assertEquals('&#1040;...', $result);
+	$this->assertEquals('&#1040;&#1088;&#1093;&#1072;&#1085;&#1075;&#1077;&#1083;&#1100;&#1089;&#1082;...', $result);
     }
 }
 ?>

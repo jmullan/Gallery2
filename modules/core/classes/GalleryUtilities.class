@@ -569,21 +569,25 @@ class GalleryUtilities {
      *
      */
     
-    function entityTruncate($string, $length = 80, $etc = '...', $breakWords = false) {
+    function entityTruncate($string, $length = 80, $etc = '...', $breakWords = false, $countRawLength=FALSE) {
 	if ($length == 0) {
 	    return '';
 	}
-	if (strlen($string) > $length) {
+	$originalLength = strlen($string);
+	if ($originalLength > $length) {
 	    $length = max(0,$length - strlen($etc));
-	    $newString = GalleryUtilities::entitySubstr($string, 0, $length);
+	    $newString = GalleryUtilities::entitySubstr($string, 0, $length, $countRawLength=FALSE);
 	    if (!$breakWords) {
 	        $testString = substr($string, 0, strlen($newString)+1);
 		if (preg_match('|\s+\S+$|',$testString)) {
-		    $string = preg_replace('/\s+\S+$/', '', $newString);
-		    return $string . $etc;
+		    $newString = preg_replace('/\s+\S+$/', '', $newString);
 		}		
 	    }
-	    return $newString . $etc;
+	    if (strlen($newString) == $originalLength) {
+		return $newString;
+	    } else {
+		return $newString . $etc;
+	    }
 	} else {
 	    return $string;
 	}
@@ -598,7 +602,7 @@ class GalleryUtilities {
      * @return string
      */
 
-    function entitySubstr($string, $start, $length="") {
+    function entitySubstr($string, $start, $length="", $countRawLength=TRUE) {
 	$stringLength = strlen($string);
 	if ($stringLength < $start) {
 	    return FALSE;
@@ -621,7 +625,7 @@ class GalleryUtilities {
 	    $cookedLength = ($length < 0) ? $charArrayLength - $cookedStart + $length : $length;
 	    $cookedEnd = min($cookedStart + $cookedLength,$charArrayLength);	    
 	    for ($i=$cookedStart; $i<$cookedEnd; $i++) {
-		if (0 > $length || strlen($cookedText . $charArray[$i]) <= $length) {
+		if (0 > $length || !$countRawLength || strlen($cookedText . $charArray[$i]) <= $length) {
 		    $cookedText .= $charArray[$i];
 		} else {
 		    $i = $cookedEnd;
