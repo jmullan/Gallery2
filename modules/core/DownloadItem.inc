@@ -145,7 +145,9 @@ class DownloadItemView extends GalleryView {
 
 		list ($ret, $sourceEntity) = $gallery->loadEntitiesById($entity->getDerivativeSourceId());
 		if ($ret->isSuccess()) {
-		    $pseudoFileName = $sourceEntity->getPathComponent();
+		    if (GalleryUtilities::isA($sourceEntity, 'GalleryDataItem')) {
+			$pseudoFileName = $sourceEntity->getPathComponent();
+		    }
 		}
 	    }
 
