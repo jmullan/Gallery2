@@ -1,0 +1,190 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package NetPbm
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * AdminNetPbm controller tests
+ */
+class AdminNetPbmControllerTest extends GalleryControllerTestCase {
+
+    function AdminNetPbmControllerTest($methodName) {
+	$this->GalleryControllerTestCase($methodName, 'netpbm:AdminNetPbm');
+    }
+
+    function setUp() {
+	global $gallery;
+	parent::setUp();
+
+	foreach (array('path', 'jpegQuality', 'pnmtojpeg') as $param) {
+	    list ($ret, $this->_saveParameters[$param]) = $gallery->getModuleParameter('netpbm', $param);
+	    if ($ret->isError()) {
+		print $ret->getAsHtml();
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+
+	$this->_platform = $gallery->getPlatform();
+	$gallery->_platform = new AdminNetPbmControllerTestPlatform();
+    }
+
+    function tearDown() {
+	global $gallery;
+	parent::tearDown();
+
+	$gallery->_platform = $this->_platform;
+	
+	foreach (array('path', 'jpegQuality', 'pnmtojpeg') as $param) {
+	    $ret = $gallery->setModuleParameter('netpbm', $param, $this->_saveParameters[$param]);
+	    if ($ret->isError()) {
+		print $ret->getAsHtml();
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+    }
+
+    function testSaveGoodPath() {
+	global $gallery;
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('form.action.save', 1);
+	GalleryUtilities::putRequestVariable('form.path', '/validPath/');
+	GalleryUtilities::putRequestVariable('form.pnmtojpeg', 'ppmtojpeg');
+	GalleryUtilities::putRequestVariable('form.jpegQuality', '12');
+	GalleryUtilities::putRequestVariable('return.view', 'target');
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertRedirect(array('view' => 'target'), $results);
+
+	/* Verify the settings went in properly */
+	$this->assertEquals(array(GalleryStatus::success(), '/validPath/'),
+			    $gallery->getModuleParameter('netpbm', 'path'));
+	$this->assertEquals(array(GalleryStatus::success(), '12'),
+			    $gallery->getModuleParameter('netpbm', 'jpegQuality'));
+	$this->assertEquals(array(GalleryStatus::success(), 'ppmtojpeg'),
+			    $gallery->getModuleParameter('netpbm', 'pnmtojpeg'));
+    }
+
+    function testCancel() {
+	global $gallery;
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('form.action.cancel', 1);
+	GalleryUtilities::putRequestVariable('return.view', 'target');
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertRedirect(array('view' => 'target'), $results);
+    }
+    
+    function testSaveTestErrorPath() {
+	global $gallery;
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('form.action.save', 1);
+	GalleryUtilities::putRequestVariable('form.path', '/validPathBadBinaries/');
+	GalleryUtilities::putRequestVariable('form.pnmtojpeg', 'ppmtojpeg');
+	GalleryUtilities::putRequestVariable('form.jpegQuality', '12');
+	GalleryUtilities::putRequestVariable('return.view', 'target');
+
+	/* Perform the request and verify that we failed */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
+	$this->assertEquals('netpbm:AdminNetPbm', GalleryUtilities::getRequestVariables('subView'));
+	$this->assert(GalleryUtilities::hasRequestVariable('form.error.path.testError'),
+		      'testError error missing');
+    }
+
+    function testSaveBadPath() {
+	global $gallery;
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('form.action.save', 1);
+	GalleryUtilities::putRequestVariable('form.path', '/invalidPath/');
+	GalleryUtilities::putRequestVariable('form.pnmtojpeg', 'ppmtojpeg');
+	GalleryUtilities::putRequestVariable('form.jpegQuality', '12');
+	GalleryUtilities::putRequestVariable('return.view', 'target');
+
+	/* Perform the request and verify that we failed */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
+	$this->assertEquals('netpbm:AdminNetPbm', GalleryUtilities::getRequestVariables('subView'));
+	$this->assert(GalleryUtilities::hasRequestVariable('form.error.path.badPath'), 'badPath error missing');
+    }
+}
+
+class AdminNetPbmControllerTestPlatform {
+    function getDirectorySeparator() {
+	return '/';
+    }
+
+    function file_exists($path) {
+	switch ($path) {
+	case '/validPath/':
+	case '/validPathBadBinaries/':
+	    return true;
+	}
+	
+	return false;
+    }
+
+    function is_dir($dir) {
+	switch ($dir) {
+	case '/validPath/':
+	case '/validPathBadBinaries/':
+	    return true;
+	}
+	
+	return false;
+    }
+
+    function unlink($args) {
+	// do nothing
+    }
+
+    function isRestrictedByOpenBaseDir($path) {
+	return false;
+    }
+
+    function exec($args) {
+	switch ($args[0][0]) {
+	case '/validPath/giftopnm':
+	case '/validPath/ppmtogif':
+	case '/validPath/jpegtopnm':
+	case '/validPath/ppmtojpeg':
+	case '/validPath/pngtopnm':
+	case '/validPath/pnmtopng':
+	case '/validPath/tifftopnm':
+	case '/validPath/pnmtotiff':
+	    return array(1, array());
+
+	default:
+	    return array(0, null);
+	}
+    }
+}
+?>

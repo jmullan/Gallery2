@@ -1,0 +1,391 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package NetPbm
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+require_once(dirname(__FILE__) . '/../../classes/NetPbmToolkitHelper.class');
+require_once(dirname(__FILE__) . '/../../classes/NetPbmToolkit.class');
+
+/**
+ * Test NetPbmToolkit functionality
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ *
+ */
+class NetPbmToolkitTest extends GalleryTestCase {
+
+    function NetPbmToolkitTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    /**
+     * 
+     */
+    function setUp() {
+	global $gallery;
+
+	parent::setUp();
+	
+	/* Save the platform */
+	$this->_savePlatform = $gallery->getPlatform();
+	$gallery->_platform = new NetPbmToolkitTestPlatform();
+	$ret = $gallery->_platform->init();
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Get a toolkit to work with */
+	$this->_toolkit = new NetPbmToolkit();
+    }
+
+    /**
+     *
+     */
+    function tearDown() {
+	global $gallery;
+	
+	/* Restore the platform */
+	$gallery->_platform = $this->_savePlatform;
+
+	parent::tearDown();
+    }
+
+    function testPerformOperations() {
+	list ($ret, $mimeType) =
+	    $this->_toolkit->performOperation('image/gif', 'thumbnail',
+					      'testPerformOperations1.gif',
+					      'testPerformOperations2.gif',
+					      array(100, 100));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $mimeType) =
+	    $this->_toolkit->performOperation('image/jpeg', 'thumbnail',
+					      'testPerformOperations4.jpg',
+					      'testPerformOperations5.jpg',
+					      array(100, 100));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $mimeType) =
+	    $this->_toolkit->performOperation('image/jpeg', 'thumbnail',
+					      'testPerformOperations4.jpg',
+					      'testPerformOperations5.jpg',
+					      array(100, 100));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $mimeType) =
+	    $this->_toolkit->performOperation('image/tiff', 'rotate',
+					      'testPerformOperations6.tiff',
+					      'testPerformOperations7.tiff',
+					      array(90));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $mimeType) =
+	    $this->_toolkit->performOperation('image/png', 'crop',
+					      'testPerformOperations8.png',
+					      'testPerformOperations9.png',
+					      array(1, 2, 3, 4));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $mimeType) =
+	    $this->_toolkit->performOperation('image/png', 'BOGUS',
+					      'BOGUS',
+					      'BOGUS',
+					      array('BOGUS'));
+	$this->assert($ret->getErrorCode() & ERROR_UNIMPLEMENTED);
+    }
+
+    function testGetProperties() {
+	list ($ret, $results) =
+	    $this->_toolkit->getProperty('image/gif', 'dimensions', 'testGetProperties1.gif');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array(10, 20), $results);
+
+	list ($ret, $results) =
+	    $this->_toolkit->getProperty('image/gif', 'dimensions', 'testGetProperties2.gif');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array(30, 40), $results);
+
+	list ($ret, $results) =
+	    $this->_toolkit->getProperty('image/gif', 'BOGUS', 'BOGUS');
+	$this->assert($ret->getErrorCode() & ERROR_UNIMPLEMENTED);
+    }
+
+    function testMergeOperations() {
+	list ($success, $operation, $args) =
+	    $this->_toolkit->mergeOperations('image/gif', 'crop', array(1, 2), 'crop', array(3, 4));
+	$this->assert($success);
+	$this->assertEquals('crop', $operation);
+	$this->assertEquals(array(3, 4), $args);
+
+	list ($success, $operation, $args) =
+	    $this->_toolkit->mergeOperations('image/gif', 'resize', array(1, 2), 'resize', array(3, 4));
+	$this->assert($success);
+	$this->assertEquals('resize', $operation);
+	$this->assertEquals(array(3, 4), $args);
+
+	list ($success, $operation, $args) =
+	    $this->_toolkit->mergeOperations('image/gif', 'rotate', array(90), 'rotate', array(90));
+	$this->assert($success);
+	$this->assertEquals('rotate', $operation);
+	$this->assertEquals(array(180), $args);
+
+	list ($success, $operation, $args) =
+	    $this->_toolkit->mergeOperations('image/gif', 'rotate', array(270), 'rotate', array(180));
+	$this->assert($success);
+	$this->assertEquals('rotate', $operation);
+	$this->assertEquals(array(90), $args);
+
+	list ($success, $operation, $args) =
+	    $this->_toolkit->mergeOperations('image/gif', 'rotate', array(90), 'rotate', array(-180));
+	$this->assert($success);
+	$this->assertEquals('rotate', $operation);
+	$this->assertEquals(array(-90), $args);
+
+	list ($success, $operation, $args) =
+	    $this->_toolkit->mergeOperations('image/gif', 'rotate', array(90), 'rotate', array(180));
+	$this->assert($success);
+	$this->assertEquals('rotate', $operation);
+	$this->assertEquals(array(-90), $args);
+
+	list ($success, $operation, $args) =
+	    $this->_toolkit->mergeOperations('image/gif', 'rotate', array(270), 'rotate', array(90));
+	$this->assert($success);
+	$this->assertEquals(null, $operation);
+	$this->assertEquals(null, $args);
+
+	list ($success, $operation, $args) =
+	    $this->_toolkit->mergeOperations('image/gif', 'crop', array(1, 2), 'thumbnail', array(3, 4));
+	$this->assert(!$success);
+    }
+
+    function testGetOperationsAndProperties() {
+	list ($ret, $results) = NetPbmToolkitHelper::getOperationsAndProperties();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array('scale' => array('params' =>
+						   array(array('type' => 'int',
+							       'description' => 'target size')),
+						   'description' => 'Scale the image to the target size',
+						   'mimeTypes' => array('image/gif',
+									'image/jpeg',
+									'image/pjpeg',
+									'image/png',
+									'image/tiff')
+						   ),
+				  'thumbnail' => array('params' =>
+						       array(array('type' => 'int',
+								   'description' => 'target size')),
+						       'description' => 'Scale the image to the target size',
+						       'mimeTypes' => array('image/gif',
+									    'image/jpeg',
+									    'image/pjpeg',
+									    'image/png',
+									    'image/tiff')),
+				  'resize' => array('params' =>
+						    array(array('type' => 'int',
+								'description' => 'target width'),
+							  array('type' => 'int',
+								'description' => 'target height')),
+						    'description' => 'Resize the image to the target dimensions',
+						    'mimeTypes' => array('image/gif',
+									 'image/jpeg',
+									 'image/pjpeg',
+									 'image/png',
+									 'image/tiff')),
+				  'rotate' => array('params' =>
+						    array(array('type' => 'int',
+								'description' => 'rotation degrees')),
+						    'description' => 'Rotate the image',
+						    'mimeTypes' => array('image/gif',
+									 'image/jpeg',
+									 'image/pjpeg',
+									 'image/png',
+									 'image/tiff')),
+				  'crop' => array('params' =>
+						  array(array('type' => 'int',
+							      'description' => 'left edge'),
+							array('type' => 'int',
+							      'description' => 'top edge'),
+							array('type' => 'int',
+							      'description' => 'width'),
+							array('type' => 'int',
+							      'description' => 'height')),
+						  'description' => 'Crop the image',
+						  'mimeTypes' => array('image/gif',
+								       'image/jpeg',
+								       'image/pjpeg',
+								       'image/png',
+								       'image/tiff'))),
+			    $results['operations']);
+	$this->assertEquals(array('dimensions' => array('type' => 'int,int',
+							'description' => 'Get the width and height of the image',
+							'mimeTypes' => array('image/gif',
+									     'image/jpeg',
+									     'image/pjpeg',
+									     'image/png',
+									     'image/tiff'))),
+			    $results['properties']);
+    }
+
+    function testBinaries() {
+	list ($ret, $results, $mimeTypes) =
+	    NetPbmToolkitHelper::testBinaries('/validPath/', array('pnmtojpeg' => 'ppmtojpeg'));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(array(array('name' => 'giftopnm', 'success' => 1, 'results' => array()),
+				  array('name' => 'ppmtogif', 'success' => 1, 'results' => array()),
+				  array('name' => 'jpegtopnm', 'success' => 1, 'results' => array()),
+				  array('name' => 'ppmtojpeg', 'success' => 1, 'results' => array()),
+				  array('name' => 'pngtopnm', 'success' => 1, 'results' => array()),
+				  array('name' => 'pnmtopng', 'success' => 1, 'results' => array()),
+				  array('name' => 'tifftopnm', 'success' => 1, 'results' => array()),
+				  array('name' => 'pnmtotiff', 'success' => 1, 'results' => array())),
+			    $results);
+	
+	$this->assertEquals(array('image/gif',
+				  'image/jpeg',
+				  'image/pjpeg',
+				  'image/png',
+				  'image/tiff'),
+			    $mimeTypes);
+    }
+}
+
+class NetPbmToolkitTestPlatform {
+
+    function init() {
+	global $gallery;
+	list ($ret, $this->_netPbmPath) = $gallery->getModuleParameter('netpbm', 'path');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	return GalleryStatus::success();
+    }
+
+    function exec($cmd) {
+	global $gallery;
+
+	if (serialize($cmd) ==
+	    serialize(array(array($this->_netPbmPath . 'giftopnm', '--quiet', 'testGetProperties2.gif'),
+			    array($this->_netPbmPath . 'pnmfile', '--allimages')))) {
+
+	    return array(1, array('stdin:  Image 0:        PGM raw, 30 by 40  maxval 255'));
+	}
+
+	switch($cmd[0][0]) {
+	case '/validPath/giftopnm':
+	case '/validPath/ppmtogif':
+	case '/validPath/jpegtopnm':
+	case '/validPath/ppmtojpeg':
+	case '/validPath/pngtopnm':
+	case '/validPath/pnmtopng':
+	case '/validPath/tifftopnm':
+	case '/validPath/pnmtotiff':
+	case $this->_netPbmPath . 'giftopnm':
+	case $this->_netPbmPath . 'ppmtogif':
+	case $this->_netPbmPath . 'jpegtopnm':
+	case $this->_netPbmPath . 'ppmtojpeg':
+	case $this->_netPbmPath . 'pnmtojpeg':
+	case $this->_netPbmPath . 'pngtopnm':
+	case $this->_netPbmPath . 'pnmtopng':
+	case $this->_netPbmPath . 'tifftopnm':
+	case $this->_netPbmPath . 'pnmtotiff':
+	    return array(1, array());
+	}
+	
+	return array(0, 'unprepared for exec()');
+    }
+
+    function rename($oldName, $newName) {
+	return 1;
+    }
+
+    function isRestrictedByOpenBasedir($path) {
+	switch($path) {
+	case $this->_netPbmPath:
+	case '/validPath/':
+	    return false;
+	}
+    }
+
+    function file_exists($path) {
+	switch($path) {
+	case $this->_netPbmPath:
+	case '/validPath/':
+	    return true;
+	}
+    }
+    
+    function is_dir($path) {
+	global $gallery;
+	list ($ret, $netPbmPath) = $gallery->getModuleParameter('netpbm', 'path');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	switch($path) {
+	case $this->_netPbmPath:
+	case '/validPath/':
+	    return true;
+	}
+
+	return false;
+    }
+
+    function unlink($path) {
+	// we don't create any files, so no need to unlink any
+    }
+
+    function getimagesize($path) {
+	switch($path) {
+	case 'testGetProperties1.gif':
+	    return array(10, 20);
+	    break;
+	}
+	return false;
+    }
+}
+
+?>
