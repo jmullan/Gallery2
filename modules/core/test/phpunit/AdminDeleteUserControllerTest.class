@@ -27,12 +27,12 @@
  */
 
 /**
- * AdminDeleteGroup controller tests
+ * AdminDeleteUser controller tests
  */
-class AdminDeleteGroupControllerTest extends GalleryControllerTestCase {
+class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 
-    function AdminDeleteGroupControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'core:AdminDeleteGroup');
+    function AdminDeleteUserControllerTest($methodName) {
+	$this->GalleryControllerTestCase($methodName, 'core:AdminDeleteUser');
     }
 
     function testCancel() {
@@ -42,108 +42,105 @@ class AdminDeleteGroupControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
-	$this->assertEquals('core:AdminGroups', GalleryUtilities::getRequestVariables('subView'));
+	$this->assertEquals('core:AdminUsers', GalleryUtilities::getRequestVariables('subView'));
     }
 
     /**
-     * Create and delete a group
+     * Create and delete a user
      */
-    function testDeleteGroup() {
+    function testDeleteUser() {
 
-	/* Create a group that we can delete */
-	list ($ret, $group) = $this->_createGroup();
+	/* Create a user that we can delete */
+	list ($ret, $user) = $this->_createUser();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	GalleryUtilities::putRequestVariable('form.action.delete', 1);
-	GalleryUtilities::putRequestVariable('form.groupId', $group->getId());
+	GalleryUtilities::putRequestVariable('form.userId', $user->getId());
 	
 	list ($ret, $results) = $this->_controller->handleRequest();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	
 	$this->assertRedirect(array('view' => 'core:SiteAdmin',
-				    'subView' => 'core:AdminGroups',
-				    'form.status.deletedGroup' => $group->getGroupName()),
+				    'subView' => 'core:AdminUsers',
+				    'form.status.deletedUser' => $user->getUserName()),
 			      $results,
 			      'Failed to create user');
 
 	/* Clean up */
-	$this->_deleteGroup($group);
+	$this->_deleteUser($user);
     }
 
     /**
-     * Try to delete the all users group (this will fail)
+     * Try to delete the active user (this will fail)
      */
-    function testDeleteAllUsersGroup() {
+    function testDeleteActiveUser() {
 	global $gallery;
 
-	list ($ret, $groupId) = $gallery->getModuleParameter('core', 'id.allUserGroup');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	
 	GalleryUtilities::putRequestVariable('form.action.delete', 1);
-	GalleryUtilities::putRequestVariable('form.groupId', $groupId);
+	GalleryUtilities::putRequestVariable('form.userId', $gallery->getActiveUserId());
 	
 	list ($ret, $results) = $this->_controller->handleRequest();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
-	$this->assertEquals('core:AdminDeleteGroup', GalleryUtilities::getRequestVariables('subView'));
+	$this->assertEquals('core:AdminDeleteUser', GalleryUtilities::getRequestVariables('subView'));
     }
 
     /**
-     * Try to delete the site admin group (this will fail)
+     * Try to delete the anonymous user (this will fail)
      */
-    function testDeleteSiteAdminsGroup() {
+    function testDeleteAnonymousUser() {
 	global $gallery;
 
-	list ($ret, $groupId) = $gallery->getModuleParameter('core', 'id.adminGroup');
+	list ($ret, $anonymousUserId) =
+	    $gallery->getModuleParameter('core', 'id.anonymousUser');
 	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	GalleryUtilities::putRequestVariable('form.action.delete', 1);
-	GalleryUtilities::putRequestVariable('form.groupId', $groupId);
+	GalleryUtilities::putRequestVariable('form.userId', $anonymousUserId);
 	
 	list ($ret, $results) = $this->_controller->handleRequest();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
-	$this->assertEquals('core:AdminDeleteGroup', GalleryUtilities::getRequestVariables('subView'));
+	$this->assertEquals('core:AdminDeleteUser', GalleryUtilities::getRequestVariables('subView'));
     }
 
-    function _createGroup() {
+    function _createUser() {
 	global $gallery;
 	
-	list ($ret, $group) = GalleryFactory::newInstance('GalleryEntity', 'GalleryGroup');
+	list ($ret, $user) = GalleryFactory::newInstance('GalleryEntity', 'GalleryUser');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	
-	if (!isset($group)) {
+	if (!isset($user)) {
 	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
 			 null);
 	}
 	
-	$ret = $group->create('testgroup-'.rand());
+	$ret = $user->create('testuser-'.rand());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$ret = $group->save();
+	$ret = $user->save();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	return array(GalleryStatus::success(), $group);
+	return array(GalleryStatus::success(), $user);
     }
 
-    function _deleteGroup($group) {
+    function _deleteUser($user) {
 	global $gallery;
-	$ret = $gallery->deleteEntityById($group->getId());
+	$ret = $gallery->deleteEntityById($user->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

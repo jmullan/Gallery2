@@ -49,7 +49,6 @@ class AdminDeleteUserController extends GalleryController {
 
 	$results = array();
 	$redirectParams = array();
-	$userid = GalleryUtilities::getRequestVariables('userid');
 	$form = GalleryUtilities::getFormVariables('form.');
 	
 	if (isset($form['action']['cancel'])) {
@@ -64,40 +63,33 @@ class AdminDeleteUserController extends GalleryController {
 	     * Check to see if we're trying to delete the anonymous user, or
 	     * ourself (can't do either of those).
 	     */
-	    list ($ret, $user) = $gallery->loadEntitiesById($userid);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
 	    list ($ret, $anonymousUserId) =
 		$gallery->getModuleParameter('core', 'id.anonymousUser');
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    $isAnonymous = ($userid == $anonymousUserId);
-	    $isSelf = ($userid == $gallery->getActiveUserId());
 
-	    if (!$isAnonymous && !$isSelf) {
+	    /*
+	     * In theory we should never get to this point unless we're
+	     * operating on a valid user, so don't bother sending errors back
+	     * in case we can't delete.
+	     */
+	    if ($form['userId'] != $anonymousUserId && $form['userId'] != $gallery->getActiveUserId()) {
+		list ($ret, $user) = $gallery->loadEntitiesById($form['userId']);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		
 		/* Delete the user */
-		list ($ret, $lockId) = $gallery->acquireWriteLock($userid);
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-
-		$ret = $user->delete();
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-
-		$ret = $gallery->releaseLocks($lockId);
+		$ret = $gallery->deleteEntityById($user->getId());
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
 		/* Request a redirect to the confirmation screen */
 		$redirectParams['view'] = 'core:SiteAdmin';
-		$redirectParams['subView'] = 'core:AdminDeleteUserConfirmation';
-		$redirectParams['username'] = $user->getUsername();
+		$redirectParams['subView'] = 'core:AdminUsers';
+		$redirectParams['form.status.deletedUser'] = $user->getUsername();
 	    }
 	}
 
@@ -134,32 +126,22 @@ class AdminDeleteUserView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	    
-	$userid = GalleryUtilities::getRequestVariables('userid');
+	$formName = GalleryUtilities::getRequestVariables('formName');
+	$form = GalleryUtilities::getFormVariables('form.');
+	if ($formName != 'AdminDeleteUser') {
+	    $form['userId'] = GalleryUtilities::getRequestVariables('userId');
+	}
 
-	/*
-	 * Check to see if we're trying to delete the anonymous user, or
-	 * ourself (can't do either of those).
-	 */
-	list ($ret, $user) = $gallery->loadEntitiesById($userid);
+	list ($ret, $user) = $gallery->loadEntitiesById($form['userId']);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+	$form['userName'] = $user->getUserName();
 
-	list ($ret, $anonymousUserId) =
-	    $gallery->getModuleParameter('core', 'id.anonymousUser');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	
-	$isAnonymous = ($userid == $anonymousUserId);
-	$isSelf = ($userid == $gallery->getActiveUserId());
 
 	/* Render the HTML body */
 	$template = $this->_getTemplate();
-	$template->setVariable('userid', $userid);
-	$template->setVariable('username', $user->getUserName());
-	$template->setVariable('isSelf', $isSelf);
-	$template->setVariable('isAnonymous', $isAnonymous);
+	$template->setVariable('form', $form);
 	$template->setVariable('controller', 'core:AdminDeleteUser');
 	$html = $template->render('AdminDeleteUser.tpl');
 

@@ -102,7 +102,7 @@ class AdminUsersController extends GalleryController {
 	    } else {
 		/* Show the "delete user" view */
 		$results['view'] = 'core:SiteAdmin';
-		GalleryUtilities::putRequestVariable('userid', $user->getId());
+		GalleryUtilities::putRequestVariable('userId', $user->getId());
 		GalleryUtilities::putRequestVariable('subView', 'core:AdminEditUser');
 	    }
 	    
@@ -111,7 +111,7 @@ class AdminUsersController extends GalleryController {
 	    /* Show the "edit user" view */
 	    $results['view'] = 'core:SiteAdmin';
 	    GalleryUtilities::putRequestVariable('subView', 'core:AdminEditUser');
-	    GalleryUtilities::putRequestVariable('userid', $form['list']['userid']);
+	    GalleryUtilities::putRequestVariable('userId', $form['list']['userid']);
 	    
 	} else if (isset($form['action']['deleteFromText'])) {
 
@@ -121,16 +121,27 @@ class AdminUsersController extends GalleryController {
 		/* Show the "delete user" view */
 		$results['view'] = 'core:SiteAdmin';
 		GalleryUtilities::putRequestVariable('subView', 'core:AdminDeleteUser');
-		GalleryUtilities::putRequestVariable('userid', $user->getId());
+		GalleryUtilities::putRequestVariable('userId', $user->getId());
 	    }
 		
 	} else if (isset($form['action']['deleteFromList'])) {
 
-	    /* Show the "delete user" view */
-	    $results['view'] = 'core:SiteAdmin';
-	    GalleryUtilities::putRequestVariable('userid', $form['list']['userid']);
-	    GalleryUtilities::putRequestVariable('subView', 'core:AdminDeleteUser');
-	    
+	    list ($ret, $anonymousUserId) =
+		$gallery->getModuleParameter('core', 'id.anonymousUser');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    if ($form['list']['userId'] == $gallery->getActiveUserId()) {
+		GalleryUtilities::putRequestVariable('form.error.list.cantDeleteActiveUser', 1);
+	    } else if ($form['list']['userId'] == $anonymousUserId) {
+		GalleryUtilities::putRequestVariable('form.error.list.cantDeleteActiveUser', 1);
+	    } else {
+		/* Show the "delete user" view */
+		$results['view'] = 'core:SiteAdmin';
+		GalleryUtilities::putRequestVariable('subView', 'core:AdminDeleteUser');
+		GalleryUtilities::putRequestVariable('userId', $form['list']['userId']);
+	    }
 	}
 
 	if (empty($results['view'])) {

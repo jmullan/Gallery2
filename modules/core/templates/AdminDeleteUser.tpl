@@ -1,5 +1,6 @@
   {gallery->form controller="$controller"}
-  {gallery->input type="hidden" name="userid"}{$userid}{/gallery->input}
+  {gallery->input type="hidden" name="formName"}AdminDeleteUser{/gallery->input}
+  {gallery->input type="hidden" name="form.userId"}{$form.userId}{/gallery->input}
   <table width="100%" border="0" cellspacing="3" cellpadding="3">
 
     <tr>
@@ -10,40 +11,16 @@
       </td>
     </tr>
 
-    {if !$isSelf && !$isAnonymous}
     <tr>
       <td align="center">
 	{gallery->text text="Do you really want to delete user '%s'?"
-	             arg1=$username}
+	             arg1=$form.userName}
       </td>
     </tr>
-    {/if}
 
-    {if $isSelf}
-    <tr>
-      <td align="center">
-	{gallery->errorFontColor}
-	{gallery->text text="You cannot delete yourself!"}
-	{/gallery->errorFontColor}
-      </td>
-    </tr>
-    {/if}
-      
-    {if $isAnonymous}
-    <tr>
-      <td align="center">
-	{gallery->errorFontColor}
-	{gallery->text text="You cannot delete the anonymous user!"}
-	{/gallery->errorFontColor}
-      </td>
-    </tr>
-    {/if}
-      
     <tr>
       <td align="center" colspan="2">
-	{if !$isSelf && !$isAnonymous}
 	{gallery->input type="submit" name="form.action.delete"}{gallery->text text="Delete"}{/gallery->input}
-	{/if}
 	{gallery->input type="submit" name="form.action.cancel"}{gallery->text text="Cancel"}{/gallery->input}
       </td>
     </tr>

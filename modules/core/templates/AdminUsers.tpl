@@ -16,6 +16,40 @@
       </td>
     </tr>
 
+    {if isset($form.status)}
+    <tr>
+      <td colspan="2" align="center">
+	{gallery->lightFrame}
+	<table width="100%" border="0">
+	    <!-- {if isset($form.status.deletedUser)} -->
+	    <tr>
+	      <td>
+		{gallery->text text="Removed user '%s'" arg1=$form.status.deletedUser}
+	      </td>
+	    </tr>
+	    <!-- {/if} -->
+
+	    <!-- {if isset($form.status.createdUser)} -->
+	    <tr>
+	      <td>
+		{gallery->text text="Created user '%s'" arg1=$form.status.createdUser}
+	      </td>
+	    </tr>
+	    <!-- {/if} -->
+
+	    <!-- {if isset($form.status.modifiedUser)} -->
+	    <tr>
+	      <td>
+		{gallery->text text="Modified user '%s'" arg1=$form.status.modifiedUser}
+	      </td>
+	    </tr>
+	    <!-- {/if} -->
+	</table>
+	{/gallery->lightFrame}
+      </td>
+    </tr>
+    {/if}
+
     <tr>
       <td valign="top">
 	{gallery->lightFrame}
@@ -71,7 +105,7 @@
 
 	  <tr>
 	    <td align="center">
-	      {gallery->select name="form.list.userid" size=$form.list.pageSize}
+	      {gallery->select name="form.list.userId" size=$form.list.pageSize}
 	      {html_options options=$form.list.usernames}
 	      {/gallery->select}
 	      {if (!empty($form.list.filter))}
@@ -91,6 +125,16 @@
 	      {gallery->input type="hidden" name="form.list.maxPages"}{$form.list.maxPages}{/gallery->input}
 	    </td>
 	  </tr>
+
+	  {if isset($form.error.list.cantDeleteActiveUser)}
+	  <tr>
+	    <td align="center">
+	      {gallery->errorFontColor}
+	      {gallery->text text="You cannot delete yourself!"}
+	      {/gallery->errorFontColor}
+	    </td>
+	  </tr>
+	  {/if}
 
 	  <tr>
 	    <td align="center">

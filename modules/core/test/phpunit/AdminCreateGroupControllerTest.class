@@ -32,11 +32,7 @@
 class AdminCreateGroupControllerTest extends GalleryControllerTestCase {
 
     function AdminCreateGroupControllerTest($methodName) {
-	$this->GalleryTestCase($methodName);
-    }
-
-    function getControllerName() {
-	return "core:AdminCreateGroup";
+	$this->GalleryControllerTestCase($methodName, 'core:AdminCreateGroup');
     }
 
     function testCancel() {
