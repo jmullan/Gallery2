@@ -26,6 +26,13 @@
  */
 
 /**
+ * The current protocol version of the template data.  Whenever the template
+ * library changes, bump this number to trigger a complete rebuild of all
+ * compiled templates.
+ */
+define("TEMPLATE_DATA_VERSION", 1);
+
+/**
  * This is Gallery's templating class.  It hides the details of the
  * implementation (eg, Smarty) and provides a unified means of handling
  * internationalization.
@@ -168,26 +175,55 @@ class GalleryTemplate {
      *
      * @return array object GalleryStatus a status code
      */
-    function _initCompiledTemplateDir () {
+    function _initCompiledTemplateDir() {
 	global $gallery;
 
 	/* Make a unique subdirectory for compiled templates for this templates dir */
         $dir = $this->_compiledTemplateDir;
 	$platform = $gallery->getPlatform();
 	if ($platform->file_exists($dir) && !$platform->is_dir($dir)) {
-	    return GalleryStatus::error(ERROR_PLATFORM_FAILURE,
-					__FILE__, __LINE__);
+	    return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__);
 	}
+
 	if (!$platform->file_exists($dir)) {
 	    if (!$platform->mkdir($dir)) {
-	        return GalleryStatus::error(ERROR_PLATFORM_FAILURE,
-	                                    __FILE__, __LINE__);
+	        return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
+					    "Unable to mkdir($dir)");
+	    }
+	    if ($fd = $platform->fopen("$dir/_tpl_version", "w")) {
+		fwrite($fd, TEMPLATE_DATA_VERSION . '\n');
+		fclose($fd);
+	    } else {
+	        return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
+					    "Unable to write to $dir/_tpl_version");
+	    }
+	} else {
+	    if (!$platform->is_writeable($dir)) {
+		return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__);
+	    }
+
+	    $rebuild = false;
+	    if (!$platform->file_exists("$dir/_tpl_version")) {
+		$rebuild = true;
+	    } else if ($fd = $platform->fopen("$dir/_tpl_version", "r")) {
+		$currentVersion = rtrim(fgets($fd));
+		if ($currentVersion != TEMPLATE_DATA_VERSION) {
+		    $gallery->debug(sprintf("Template version mismatch (old: %d, new: %d)",
+					    $currentVersion, TEMPLATE_DATA_VERSION));
+		    $rebuild = true;
+		}
+	    }
+
+	    if ($rebuild) {
+		/* Get rid of the current dir and start again. */
+		if (!$platform->recursiveRmDir($dir)) {
+		    return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
+						"Unable to remove dir $dir");
+		}
+		$this->_initCompiledTemplateDir();
 	    }
 	}
-	if (!$platform->is_writeable($dir)) {
-	    return GalleryStatus::error(ERROR_PLATFORM_FAILURE,
-					__FILE__, __LINE__);
-	}
+	
 	return GalleryStatus::success();
     }
 
