@@ -105,6 +105,10 @@ msgstr "グループに属するユーザの追加/削除"
 msgid "Add/Remove Users"
 msgstr "ユーザの追加/削除"
 
+#, fuzzy, c-format
+msgid "Added user '%s' to group"
+msgstr "ユーザ '%s' をグループに追加しました。"
+
 msgid "Album Settings"
 msgstr "アルバム設定"
 
@@ -196,6 +200,14 @@ msgstr "ユーザー新規作成"
 
 msgid "Create"
 msgstr "作成"
+
+#, fuzzy, c-format
+msgid "Created group '%s'"
+msgstr "グループ作成"
+
+#, fuzzy, c-format
+msgid "Created user '%s'"
+msgstr "ユーザー作成"
 
 msgid "Creation Date"
 msgstr "作成日"
@@ -418,18 +430,6 @@ msgstr "グループ '%s'は既に存在しています"
 msgid "Group '%s' does not exist."
 msgstr "グループ '%s'は存在しません。"
 
-#, c-format
-msgid "Group '%s' has been created successfully."
-msgstr "グループ '%s'の作成に成功しました。"
-
-#, c-format
-msgid "Group '%s' has been modified successfully."
-msgstr "グループ '%s'の変更に成功しました。"
-
-#, c-format
-msgid "Group '%s' has been successfully deleted."
-msgstr "グループ '%s'の削除に成功しました。"
-
 msgid "Group Management"
 msgstr "グループ管理"
 
@@ -550,6 +550,14 @@ msgstr "最大"
 msgid "Modified Image"
 msgstr "画像を変更しました"
 
+#, fuzzy, c-format
+msgid "Modified group '%s'"
+msgstr "グループ '%s'を編集中"
+
+#, fuzzy, c-format
+msgid "Modified user '%s'"
+msgstr "画像を変更しました"
+
 msgid "Module Name"
 msgstr "モジュール名"
 
@@ -582,13 +590,6 @@ msgstr "選択された宛先がありません"
 
 msgid "Not implemented yet"
 msgstr "まだ実装されていません"
-
-msgid ""
-"Note: This is the site administrator group.  Any users you add to this group "
-"will have site-wide administrative privileges"
-msgstr ""
-"注意: これはサイト管理者グループです。このグループに追加されたグループはすべ"
-"て、サイト全体にわたる管理者特権を有します。"
 
 msgid "Or you can create a new group here."
 msgstr "あるいは、ここから新しいグループを作成できます。"
@@ -636,14 +637,23 @@ msgstr "サムネイルを再生成"
 msgid "Remove"
 msgstr "削除"
 
+#, fuzzy, c-format
+msgid "Removed group '%s'"
+msgstr "グループに属するユーザの追加/削除"
+
+#, fuzzy, c-format
+msgid "Removed user '%s' from group"
+msgstr "ユーザ '%s' をグループから削除しました。"
+
+#, fuzzy, c-format
+msgid "Removed user '%s'"
+msgstr "ユーザの追加/削除"
+
 msgid "Reset"
 msgstr "リセット"
 
 msgid "Resized Images"
 msgstr "リサイズされた画像"
-
-msgid "Return to Group Administration"
-msgstr "グループ管理に戻る"
 
 msgid "Return to User Administration"
 msgstr "ユーザ管理に戻る"
@@ -696,14 +706,6 @@ msgstr "ソート順"
 
 msgid "Specify the lifetime of the session here."
 msgstr "セッションの持続時間を指定してください。"
-
-#, c-format
-msgid "Successfully added user '%s' to group."
-msgstr "ユーザ '%s' をグループに追加しました。"
-
-#, c-format
-msgid "Successfully removed user '%s' from group."
-msgstr "ユーザ '%s' をグループから削除しました。"
 
 msgid "Summary"
 msgstr "概要"
@@ -777,23 +779,6 @@ msgstr "テーマ"
 msgid "These are default values.  They can be overridden in each album."
 msgstr "これはデフォルト値です。それぞれのアルバムで別の値に設定できます。"
 
-msgid ""
-"This group contains all Gallery site administrators.  Any users you add to "
-"this group will have Gallery administrative privileges."
-msgstr ""
-"このグループはすべてのGalleryサイト管理者を含みます。このグループに追加したど"
-"んなユーザーもGallery管理特権を持ちます。"
-
-msgid ""
-"This group contains all Gallery users.  You cannot add or remove users from "
-"it."
-msgstr ""
-"このグループはすべてのGalleryユーザを含みます。このグループに対し、ユーザを追"
-"加したり、削除することはできません。"
-
-msgid "This is the anonymous user."
-msgstr "これは anonymous(匿名)ユーザです。"
-
 msgid "This is the top of your Gallery"
 msgstr "これはあなたのGalleryのトップです"
 
@@ -837,16 +822,8 @@ msgid "User '%s' does not exist."
 msgstr "ユーザー '%s'は存在していません。"
 
 #, c-format
-msgid "User '%s' has been created successfully."
-msgstr "ユーザー '%s'の作成に成功しました。"
-
-#, c-format
 msgid "User '%s' has been modified successfully."
 msgstr "ユーザー '%s'の変更に成功しました。"
-
-#, c-format
-msgid "User '%s' has been successfully deleted."
-msgstr "ユーザー '%s'の削除に成功しました。"
 
 msgid "User Management"
 msgstr "ユーザー管理"
@@ -925,11 +902,17 @@ msgstr "このアルバムのなかに新しいアルバムを作成できます
 msgid "You can only rotate the image in 90 degree increments."
 msgstr "90度回転しかできません。"
 
-msgid "You cannot delete the 'all admins' group!"
-msgstr "'all admins'グループを削除することはできません。"
-
-msgid "You cannot delete the 'all users' group!"
+#, fuzzy
+msgid "You cannot add or delete users from this group"
 msgstr "'all users'グループを削除することはできません。"
+
+#, fuzzy
+msgid "You cannot delete the All Users group"
+msgstr "'all users'グループを削除することはできません。"
+
+#, fuzzy
+msgid "You cannot delete the Site Admins group"
+msgstr "'all admins'グループを削除することはできません。"
 
 msgid "You cannot delete the anonymous user!"
 msgstr "anonymous(匿名)ユーザーを削除することはできません。"
@@ -987,6 +970,10 @@ msgstr "グループを選択しなくてはなりません"
 
 msgid "You must select a user to remove."
 msgstr "削除するユーザーを選択しなくてはなりません。"
+
+#, fuzzy
+msgid "You must select a user"
+msgstr "グループを選択しなくてはなりません"
 
 msgid "Your login information is incorrect.  Please try again."
 msgstr "ログイン情報が間違っています。もう一度試してください。"
@@ -1148,6 +1135,48 @@ msgid_plural "Upload up to %d files directly from your computer."
 msgstr[0] "あなたのコンピュータから直接ファイルをアップロードしてください。"
 msgstr[1] ""
 "あなたのコンピュータから%dファイルまでを直接アップロードしてください。"
+
+#~ msgid "Group '%s' has been created successfully."
+#~ msgstr "グループ '%s'の作成に成功しました。"
+
+#~ msgid "Group '%s' has been modified successfully."
+#~ msgstr "グループ '%s'の変更に成功しました。"
+
+#~ msgid "Group '%s' has been successfully deleted."
+#~ msgstr "グループ '%s'の削除に成功しました。"
+
+#~ msgid ""
+#~ "Note: This is the site administrator group.  Any users you add to this "
+#~ "group will have site-wide administrative privileges"
+#~ msgstr ""
+#~ "注意: これはサイト管理者グループです。このグループに追加されたグループはす"
+#~ "べて、サイト全体にわたる管理者特権を有します。"
+
+#~ msgid "Return to Group Administration"
+#~ msgstr "グループ管理に戻る"
+
+#~ msgid ""
+#~ "This group contains all Gallery site administrators.  Any users you add "
+#~ "to this group will have Gallery administrative privileges."
+#~ msgstr ""
+#~ "このグループはすべてのGalleryサイト管理者を含みます。このグループに追加し"
+#~ "たどんなユーザーもGallery管理特権を持ちます。"
+
+#~ msgid ""
+#~ "This group contains all Gallery users.  You cannot add or remove users "
+#~ "from it."
+#~ msgstr ""
+#~ "このグループはすべてのGalleryユーザを含みます。このグループに対し、ユーザ"
+#~ "を追加したり、削除することはできません。"
+
+#~ msgid "This is the anonymous user."
+#~ msgstr "これは anonymous(匿名)ユーザです。"
+
+#~ msgid "User '%s' has been created successfully."
+#~ msgstr "ユーザー '%s'の作成に成功しました。"
+
+#~ msgid "User '%s' has been successfully deleted."
+#~ msgstr "ユーザー '%s'の削除に成功しました。"
 
 #~ msgid "Item"
 #~ msgstr "アイテム"

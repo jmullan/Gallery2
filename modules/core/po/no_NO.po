@@ -25,7 +25,7 @@ msgstr ""
 "Last-Translator: Christian Mohn <ch-moh@online.no>\n"
 "Language-Team: Norwegian <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=iso-8859-1\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
 #, c-format
@@ -110,6 +110,10 @@ msgstr "Legg til/Fjerne Gruppe"
 
 msgid "Add/Remove Users"
 msgstr "Legg til/Fjerne Brukere"
+
+#, fuzzy, c-format
+msgid "Added user '%s' to group"
+msgstr "Opprettelse av ny bruker vellykket "
 
 #, fuzzy
 msgid "Album Settings"
@@ -201,6 +205,14 @@ msgstr "Opprette ny bruker"
 
 msgid "Create"
 msgstr "Opprette"
+
+#, fuzzy, c-format
+msgid "Created group '%s'"
+msgstr "Opprett Gruppe"
+
+#, fuzzy, c-format
+msgid "Created user '%s'"
+msgstr "Opprett Bruker"
 
 msgid "Creation Date"
 msgstr ""
@@ -414,18 +426,6 @@ msgstr ""
 msgid "Group '%s' does not exist."
 msgstr ""
 
-#, c-format
-msgid "Group '%s' has been created successfully."
-msgstr ""
-
-#, c-format
-msgid "Group '%s' has been modified successfully."
-msgstr ""
-
-#, c-format
-msgid "Group '%s' has been successfully deleted."
-msgstr ""
-
 msgid "Group Management"
 msgstr "Gruppe Vedlikehold"
 
@@ -544,6 +544,14 @@ msgstr "Maks"
 msgid "Modified Image"
 msgstr "Editere en bruker"
 
+#, fuzzy, c-format
+msgid "Modified group '%s'"
+msgstr "Editerer Gruppe "
+
+#, fuzzy, c-format
+msgid "Modified user '%s'"
+msgstr "Editere en bruker"
+
 msgid "Module Name"
 msgstr "Modul Navn"
 
@@ -577,13 +585,6 @@ msgstr ""
 
 msgid "Not implemented yet"
 msgstr ""
-
-msgid ""
-"Note: This is the site administrator group.  Any users you add to this group "
-"will have site-wide administrative privileges"
-msgstr ""
-"Notis: Dette er SITE administrator gruppen. Alle brukere som legges til "
-"denne gruppen vil a SITE-WIDE administrative rettigheter"
 
 msgid "Or you can create a new group here."
 msgstr "Eller du kan lage en ny gruppe her."
@@ -633,14 +634,23 @@ msgstr ""
 msgid "Remove"
 msgstr "Fjerne"
 
+#, fuzzy, c-format
+msgid "Removed group '%s'"
+msgstr "Fjerne"
+
+#, fuzzy, c-format
+msgid "Removed user '%s' from group"
+msgstr "Sletting av bruker vellykket "
+
+#, fuzzy, c-format
+msgid "Removed user '%s'"
+msgstr "Fjerne"
+
 msgid "Reset"
 msgstr "Nulstille"
 
 msgid "Resized Images"
 msgstr ""
-
-msgid "Return to Group Administration"
-msgstr "Returnere til Gruppe Administrasjon"
 
 msgid "Return to User Administration"
 msgstr "Returnere til Bruker Administrasjon"
@@ -691,14 +701,6 @@ msgstr "Album sorteringsrekkef&oslash;lge:"
 
 msgid "Specify the lifetime of the session here."
 msgstr "Spesifiser levetiden til sesjonen her."
-
-#, fuzzy, c-format
-msgid "Successfully added user '%s' to group."
-msgstr "Opprettelse av ny bruker vellykket "
-
-#, fuzzy, c-format
-msgid "Successfully removed user '%s' from group."
-msgstr "Sletting av bruker vellykket "
 
 msgid "Summary"
 msgstr ""
@@ -778,23 +780,6 @@ msgid "These are default values.  They can be overridden in each album."
 msgstr ""
 "Dette er standard verdier. Disse kan bli overstyrt i hvert enkelt album"
 
-msgid ""
-"This group contains all Gallery site administrators.  Any users you add to "
-"this group will have Gallery administrative privileges."
-msgstr ""
-"Denne gruppen inneholder alle Gallery SITE administratorer. Alle brukere du "
-"legger til denne gruppen, vil ha administrator rettigheter i Gallery"
-
-msgid ""
-"This group contains all Gallery users.  You cannot add or remove users from "
-"it."
-msgstr ""
-"Denne gruppen inneholder alle Gallery brukere. Du kan ikke legge til eller "
-"slette brukere fraden."
-
-msgid "This is the anonymous user."
-msgstr "Dette er den anonyme brukeren."
-
 #, fuzzy
 msgid "This is the top of your Gallery"
 msgstr "Dette er den anonyme brukeren."
@@ -833,15 +818,7 @@ msgid "User '%s' does not exist."
 msgstr ""
 
 #, c-format
-msgid "User '%s' has been created successfully."
-msgstr ""
-
-#, c-format
 msgid "User '%s' has been modified successfully."
-msgstr ""
-
-#, c-format
-msgid "User '%s' has been successfully deleted."
 msgstr ""
 
 msgid "User Management"
@@ -921,11 +898,15 @@ msgid "You can only rotate the image in 90 degree increments."
 msgstr ""
 
 #, fuzzy
-msgid "You cannot delete the 'all admins' group!"
+msgid "You cannot add or delete users from this group"
 msgstr "Du kan ikke slette den anonyme brukeren!"
 
 #, fuzzy
-msgid "You cannot delete the 'all users' group!"
+msgid "You cannot delete the All Users group"
+msgstr "Du kan ikke slette den anonyme brukeren!"
+
+#, fuzzy
+msgid "You cannot delete the Site Admins group"
 msgstr "Du kan ikke slette den anonyme brukeren!"
 
 msgid "You cannot delete the anonymous user!"
@@ -991,6 +972,10 @@ msgstr "Du m&aring; velge en gruuppe"
 
 msgid "You must select a user to remove."
 msgstr "Du m&aring; velge en bruker som skal fjernes."
+
+#, fuzzy
+msgid "You must select a user"
+msgstr "Du m&aring; velge en gruuppe"
 
 msgid "Your login information is incorrect.  Please try again."
 msgstr "P&aring;loggingsinformasjonen er feil. Vennligst pr&oslash;v igjen"
@@ -1168,6 +1153,33 @@ msgid_plural "Upload up to %d files directly from your computer."
 msgstr[0] ""
 msgstr[1] ""
 
+#~ msgid ""
+#~ "Note: This is the site administrator group.  Any users you add to this "
+#~ "group will have site-wide administrative privileges"
+#~ msgstr ""
+#~ "Notis: Dette er SITE administrator gruppen. Alle brukere som legges til "
+#~ "denne gruppen vil a SITE-WIDE administrative rettigheter"
+
+#~ msgid "Return to Group Administration"
+#~ msgstr "Returnere til Gruppe Administrasjon"
+
+#~ msgid ""
+#~ "This group contains all Gallery site administrators.  Any users you add "
+#~ "to this group will have Gallery administrative privileges."
+#~ msgstr ""
+#~ "Denne gruppen inneholder alle Gallery SITE administratorer. Alle brukere "
+#~ "du legger til denne gruppen, vil ha administrator rettigheter i Gallery"
+
+#~ msgid ""
+#~ "This group contains all Gallery users.  You cannot add or remove users "
+#~ "from it."
+#~ msgstr ""
+#~ "Denne gruppen inneholder alle Gallery brukere. Du kan ikke legge til "
+#~ "eller slette brukere fraden."
+
+#~ msgid "This is the anonymous user."
+#~ msgstr "Dette er den anonyme brukeren."
+
 #, fuzzy
 #~ msgid "core.delete"
 #~ msgstr "Slette"
@@ -1197,10 +1209,6 @@ msgstr[1] ""
 
 #~ msgid "Toolkit"
 #~ msgstr "Verkt&oslash;y"
-
-#, fuzzy
-#~ msgid "Remove %s"
-#~ msgstr "Fjerne"
 
 #~ msgid "Count"
 #~ msgstr "Antall"

@@ -28,7 +28,7 @@ msgstr ""
 "Last-Translator: Kees van den Broek <kvdb@NOSPAMkvdb.net>\n"
 "Language-Team: Dutch <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=ISO-8859-1\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
@@ -108,6 +108,10 @@ msgstr "Gebruikers toevoegen/verwijderen"
 
 msgid "Add/Remove Users"
 msgstr "Gebruikers toevoegen/verwijderen"
+
+#, fuzzy, c-format
+msgid "Added user '%s' to group"
+msgstr "Gebruiker '%s' is toegevoegd aan de groep."
 
 msgid "Album Settings"
 msgstr "Album instellingen"
@@ -195,6 +199,14 @@ msgstr "Maak een nieuwe gebruiker"
 
 msgid "Create"
 msgstr "Maken"
+
+#, fuzzy, c-format
+msgid "Created group '%s'"
+msgstr "Maak groep"
+
+#, fuzzy, c-format
+msgid "Created user '%s'"
+msgstr "Maak gebruiker"
 
 msgid "Creation Date"
 msgstr "Creatie datum"
@@ -399,18 +411,6 @@ msgstr "Groep '%s' bestaat reeds"
 msgid "Group '%s' does not exist."
 msgstr "Groep '%s' bestaat niet."
 
-#, c-format
-msgid "Group '%s' has been created successfully."
-msgstr "Groep '%s' is aangemaakt."
-
-#, c-format
-msgid "Group '%s' has been modified successfully."
-msgstr "Groep '%s' is gewijzigd."
-
-#, c-format
-msgid "Group '%s' has been successfully deleted."
-msgstr "Groep '%s' is verwijderd."
-
 msgid "Group Management"
 msgstr "Groepsbeheer"
 
@@ -532,6 +532,14 @@ msgstr "Max"
 msgid "Modified Image"
 msgstr "Bewerkte afbeelding"
 
+#, fuzzy, c-format
+msgid "Modified group '%s'"
+msgstr "Bewerken groep '%s'"
+
+#, fuzzy, c-format
+msgid "Modified user '%s'"
+msgstr "Bewerkte afbeelding"
+
 msgid "Module Name"
 msgstr "Module naam"
 
@@ -564,15 +572,7 @@ msgid "No destination chosen"
 msgstr ""
 
 msgid "Not implemented yet"
-msgstr "Nog niet geïmplementeerd"
-
-msgid ""
-"Note: This is the site administrator group.  Any users you add to this group "
-"will have site-wide administrative privileges"
 msgstr ""
-"Opmerking: Deze groep bevat alle Gallery site administrators. Elke gebruiker "
-"die je aan deze groep toevoegt krijgt Gallery administratieve rechten over "
-"het hele systeem"
 
 msgid "Or you can create a new group here."
 msgstr "Of maak hier een nieuwe groep."
@@ -609,15 +609,27 @@ msgid "Profiling"
 msgstr ""
 
 msgid "Recreate resized images"
-msgstr "Hercreeër geschaalde afbeeldingen"
+msgstr ""
 
 msgid "Recreate thumbnails and resizes"
-msgstr "Hercreeër voorbeeld en geschaalden"
+msgstr ""
 
 msgid "Recreate thumbnails"
-msgstr "Hercreeër voorbeelden"
+msgstr ""
 
 msgid "Remove"
+msgstr "Verwijderen"
+
+#, fuzzy, c-format
+msgid "Removed group '%s'"
+msgstr "Verwijderen"
+
+#, fuzzy, c-format
+msgid "Removed user '%s' from group"
+msgstr "Gebruiker '%s' is verwijderd van de groep."
+
+#, fuzzy, c-format
+msgid "Removed user '%s'"
 msgstr "Verwijderen"
 
 msgid "Reset"
@@ -625,9 +637,6 @@ msgstr "Reset"
 
 msgid "Resized Images"
 msgstr "Geschaalde afbeeldingen"
-
-msgid "Return to Group Administration"
-msgstr "Terug naar groepsadministratie"
 
 msgid "Return to User Administration"
 msgstr "Terug naar gebruikersadministratie"
@@ -676,14 +685,6 @@ msgstr "Sorteer volgorde"
 
 msgid "Specify the lifetime of the session here."
 msgstr "Geef de levensduur van een sessie hier op"
-
-#, c-format
-msgid "Successfully added user '%s' to group."
-msgstr "Gebruiker '%s' is toegevoegd aan de groep."
-
-#, c-format
-msgid "Successfully removed user '%s' from group."
-msgstr "Gebruiker '%s' is verwijderd van de groep."
 
 msgid "Summary"
 msgstr "Samenvatting"
@@ -756,22 +757,6 @@ msgid "These are default values.  They can be overridden in each album."
 msgstr ""
 "Dit zijn standaard waarden.  Ze kunnen in elk album apart gewijzigt worden."
 
-msgid ""
-"This group contains all Gallery site administrators.  Any users you add to "
-"this group will have Gallery administrative privileges."
-msgstr ""
-"Deze groep bevat alle Gallery site administrators. Elke gebruiker die je aan "
-"deze groep toevoegt krijgt Gallery administratieve rechten"
-
-msgid ""
-"This group contains all Gallery users.  You cannot add or remove users from "
-"it."
-msgstr ""
-"Deze groep bevat alle Gallery gebruikers. Je kunt deze groep niet verwijderen"
-
-msgid "This is the anonymous user."
-msgstr "Dit is de annonieme gebruiker."
-
 msgid "This is the top of your Gallery"
 msgstr "Dit is het begin van uw Gallery"
 
@@ -809,16 +794,8 @@ msgid "User '%s' does not exist."
 msgstr "Gebruiker '%s' bestaat niet."
 
 #, c-format
-msgid "User '%s' has been created successfully."
-msgstr "Gebruiker '%s' is aangemaakt."
-
-#, c-format
 msgid "User '%s' has been modified successfully."
 msgstr "Gebruiker '%s' is gewijzigd."
-
-#, c-format
-msgid "User '%s' has been successfully deleted."
-msgstr "Gebruiker '%s' is verwijderd."
 
 msgid "User Management"
 msgstr "Gebruikersonderhoud"
@@ -890,11 +867,17 @@ msgstr "U kan nieuwe albums in dit album maken."
 msgid "You can only rotate the image in 90 degree increments."
 msgstr "U kan deze afbeelding alleen in 90 graden stappen roteren."
 
-msgid "You cannot delete the 'all admins' group!"
-msgstr "U mag de 'all admins' groep niet verwijderen!"
-
-msgid "You cannot delete the 'all users' group!"
+#, fuzzy
+msgid "You cannot add or delete users from this group"
 msgstr "U mag de 'all users' groep niet verwijderen!"
+
+#, fuzzy
+msgid "You cannot delete the All Users group"
+msgstr "U mag de 'all users' groep niet verwijderen!"
+
+#, fuzzy
+msgid "You cannot delete the Site Admins group"
+msgstr "U mag de 'all admins' groep niet verwijderen!"
 
 msgid "You cannot delete the anonymous user!"
 msgstr "U mag de annonieme gebruiker niet verwijderen!"
@@ -954,6 +937,10 @@ msgstr "U moet een groep selecteren"
 
 msgid "You must select a user to remove."
 msgstr "U moet een gebruiker selecteren om te verwijderen."
+
+#, fuzzy
+msgid "You must select a user"
+msgstr "U moet een groep selecteren"
 
 msgid "Your login information is incorrect.  Please try again."
 msgstr "Uw login informatie is onjuist.  Probeer opnieuw. "
@@ -1119,6 +1106,49 @@ msgid_plural "Upload up to %d files directly from your computer."
 msgstr[0] "Upload een bestand rechstreeks vanuit uw computer."
 msgstr[1] ""
 
+#~ msgid "Group '%s' has been created successfully."
+#~ msgstr "Groep '%s' is aangemaakt."
+
+#~ msgid "Group '%s' has been modified successfully."
+#~ msgstr "Groep '%s' is gewijzigd."
+
+#~ msgid "Group '%s' has been successfully deleted."
+#~ msgstr "Groep '%s' is verwijderd."
+
+#~ msgid ""
+#~ "Note: This is the site administrator group.  Any users you add to this "
+#~ "group will have site-wide administrative privileges"
+#~ msgstr ""
+#~ "Opmerking: Deze groep bevat alle Gallery site administrators. Elke "
+#~ "gebruiker die je aan deze groep toevoegt krijgt Gallery administratieve "
+#~ "rechten over het hele systeem"
+
+#~ msgid "Return to Group Administration"
+#~ msgstr "Terug naar groepsadministratie"
+
+#~ msgid ""
+#~ "This group contains all Gallery site administrators.  Any users you add "
+#~ "to this group will have Gallery administrative privileges."
+#~ msgstr ""
+#~ "Deze groep bevat alle Gallery site administrators. Elke gebruiker die je "
+#~ "aan deze groep toevoegt krijgt Gallery administratieve rechten"
+
+#~ msgid ""
+#~ "This group contains all Gallery users.  You cannot add or remove users "
+#~ "from it."
+#~ msgstr ""
+#~ "Deze groep bevat alle Gallery gebruikers. Je kunt deze groep niet "
+#~ "verwijderen"
+
+#~ msgid "This is the anonymous user."
+#~ msgstr "Dit is de annonieme gebruiker."
+
+#~ msgid "User '%s' has been created successfully."
+#~ msgstr "Gebruiker '%s' is aangemaakt."
+
+#~ msgid "User '%s' has been successfully deleted."
+#~ msgstr "Gebruiker '%s' is verwijderd."
+
 #, fuzzy
 #~ msgid "Item"
 #~ msgstr "Items toevoegen"
@@ -1157,10 +1187,6 @@ msgstr[1] ""
 
 #~ msgid "Toolkit"
 #~ msgstr "Toolkit"
-
-#, fuzzy
-#~ msgid "Remove %s"
-#~ msgstr "Verwijderen"
 
 #~ msgid "Count"
 #~ msgstr "Tellen"
