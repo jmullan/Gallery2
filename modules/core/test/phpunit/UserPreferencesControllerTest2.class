@@ -45,11 +45,26 @@ class UserPreferencesControllerTest2 extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+
+	list ($ret, $this->_adminGroupId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::addUserToGroup($this->_user->getId(), $this->_adminGroupId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->_saveUser = $gallery->getActiveUser();
+	$gallery->setActiveUser($this->_user);
     }
 
     function tearDown() {
 	global $gallery;
 	$this->_deleteUser($this->_user);
+	$gallery->setActiveUser($this->_saveUser);
 	parent::tearDown();
     }
 
