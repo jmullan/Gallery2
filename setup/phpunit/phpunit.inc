@@ -662,7 +662,7 @@ class PrettyTestResult extends TestResult {
 	$newFilter[$failure->getClassName() . '.' . $failure->getTestName()] = 1;
     }
     printf('<input type="button" onClick="javascript:reRun(\'%s\');" value="Re-run broken tests">',
-	   '(' . join('|', array_keys($newFilter)) . ')');
+	   '(' . join('|', array_keys($newFilter)) . ')$');
     
     echo "<h2>Failure Details</h2>";
     print("\n<ol>\n");
