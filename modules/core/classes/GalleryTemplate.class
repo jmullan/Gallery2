@@ -237,14 +237,8 @@ class GalleryTemplate {
 	     * Load and configure Smarty.
 	     */
 	    require_once(dirname(__FILE__) . '/../../../lib/smarty/Smarty.class.php');
-
-	    if ($gallery->isProfiling()) {
-		require_once(dirname(__FILE__) . '/GalleryProfilingSmarty.class');
-		$smarty = new GalleryProfilingSmarty();
-	    } else {
-		require_once(dirname(__FILE__) . '/GallerySmarty.class');
-		$smarty = new GallerySmarty();
-	    }
+	    require_once(dirname(__FILE__) . '/GallerySmarty.class');
+	    $smarty = new GallerySmarty();
 
 	    /* Compiled templates go here */
 	    $smarty->compile_dir = $gallery->getConfig('data.smarty.templates_c');
