@@ -180,22 +180,29 @@ class ItemReorderView extends GalleryView {
 	/* itemId is the album where we want to move items from */
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
 
-        if ($form['formName'] == 'ItemReorder') {
+	if ($form['formName'] == 'ItemReorder') {
 	    /* No validation at the moment */
-        } else {
-            /* First time around, load the form with item data */
+	} else {
+	    /* First time around, load the form with item data */
 	    $form['formName'] = 'ItemReorder';
-        }
+	}
 
-        list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
-        }
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 
 	$show = array();
 	$ItemReorder = array();
 	$orderBy = $item->getOrderBy();
-	if (!empty($orderBy)) {
+	if (empty($orderBy)) {
+	    list ($ret, $orderBy) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'default.orderBy');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+	if ($orderBy != 'orderWeight') {
 	    $show['automaticOrderMessage'] = 1;
 	} else {
 

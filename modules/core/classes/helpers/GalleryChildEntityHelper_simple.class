@@ -406,7 +406,7 @@ class GalleryChildEntityHelper_simple {
      * @access private
      * @static
      */
-    function _getOrderInfo($item) {
+    function _getOrderInfo(&$item) {
 	/*
 	 * Don't simply plug getOrderBy into the SQL clause, or we could open
 	 * the door for SQL injection.
@@ -415,32 +415,57 @@ class GalleryChildEntityHelper_simple {
 	 * so that we can allow modules to introduce their own custom sort
 	 * orders.
 	 */
-	switch ($item->getOrderBy()) {
+	$orderBy = $item->getOrderBy();
+	$orderDirection = $item->getOrderDirection();
+	if (empty($orderBy)) {
+	    list ($ret, $orderBy) =
+	        GalleryCoreApi::getPluginParameter('module', 'core', 'default.orderBy');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    list ($ret, $orderDirection) =
+	        GalleryCoreApi::getPluginParameter('module', 'core', 'default.orderDirection');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+
+	switch ($orderDirection) {
+	case ORDER_DESCENDING:
+	    $direction = 'DESC';
+	    break;
+
+	case ORDER_ASCENDING:
+	default:
+	    $direction = '';
+	}
+
+	switch ($orderBy) {
 	case 'title':
 	    $orderColumn = '[GalleryItem::title]';
 	    $condition = '[GalleryItem::id] = [GalleryChildEntity::id]';
 	    break;
-	    
+
 	case 'summary':
 	    $orderColumn = '[GalleryItem::summary]';
 	    $condition = '[GalleryItem::id] = [GalleryChildEntity::id]';
 	    break;
-	    
+
 	case 'creationTimestamp':
 	    $orderColumn = '[GalleryEntity::creationTimestamp]';
 	    $condition = '[GalleryEntity::id] = [GalleryChildEntity::id]';
 	    break;
-	    
+
 	case 'modificationTimestamp':
 	    $orderColumn = '[GalleryEntity::modificationTimestamp]';
 	    $condition = '[GalleryEntity::id] = [GalleryChildEntity::id]';
 	    break;
-	    
+
 	case 'description':
 	    $orderColumn = '[GalleryItem::description]';
 	    $condition = '[GalleryItem::id] = [GalleryChildEntity::id]';
 	    break;
-	    
+
 	case 'keywords':
 	    $orderColumn = '[GalleryItem::keywords]';
 	    $condition = '[GalleryItem::id] = [GalleryChildEntity::id]';
@@ -450,19 +475,11 @@ class GalleryChildEntityHelper_simple {
 	    $orderColumn = '[GalleryItemAttributesMap::viewCount]';
 	    $condition = '[GalleryItemAttributesMap::itemId] = [GalleryChildEntity::id]';
 	    break;
-	    
+
+	case 'orderWeight':
 	default:
 	    $orderColumn = '[GalleryItemAttributesMap::orderWeight]';
 	    $condition = '[GalleryItemAttributesMap::itemId] = [GalleryChildEntity::id]';
-	}
-
-	switch ($item->getOrderDirection()) {
-	case ORDER_DESCENDING:
-	    $direction = 'DESC';
-	    break;
-
-	case ORDER_ASCENDING:
-	default:
 	    $direction = '';
 	}
 

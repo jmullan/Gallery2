@@ -69,6 +69,48 @@ class GalleryAlbumItem_core extends GalleryItem {
      */
     var $_layout;
 
+    /**
+     * The theme to use for this item
+     *
+     * @g2 <member>
+     * @g2   <member-name>theme</member-name>
+     * @g2   <member-type>STRING</member-type>
+     * @g2   <member-size>SMALL</member-size>
+     * @g2 </member>
+     *
+     * @var string $_theme
+     * @access private
+     */
+    var $_theme;
+
+    /**
+     * Specify the name of the field that we're using to order children
+     *
+     * @g2 <member>
+     * @g2   <member-name>orderBy</member-name>
+     * @g2   <member-type>STRING</member-type>
+     * @g2   <member-size>MEDIUM</member-size>
+     * @g2 </member>
+     *
+     * @var int $_orderBy
+     * @access private
+     */
+    var $_orderBy;
+
+    /**
+     * Specify the order direction that we're applying to the orderBy field
+     *
+     * @g2 <member>
+     * @g2   <member-name>orderDirection</member-name>
+     * @g2   <member-type>STRING</member-type>
+     * @g2   <member-size>SMALL</member-size>
+     * @g2 </member>
+     *
+     * @var int $_orderDirection
+     * @access private
+     */
+    var $_orderDirection;
+
     /*
      * ****************************************
      *                 Methods
@@ -119,6 +161,9 @@ class GalleryAlbumItem_core extends GalleryItem {
 
 	/* Copy some of the parents properties */
 	$this->setLayout($parent->getLayout());
+	$this->setTheme($parent->getTheme());
+	$this->setOrderBy($parent->getOrderBy());
+	$this->setOrderDirection($parent->getOrderDirection());
 
 	$ret = $this->_createDir($parentPath . $albumName);
 	if ($ret->isError()) {
@@ -171,12 +216,11 @@ class GalleryAlbumItem_core extends GalleryItem {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	/* Use the default layout */
-	list($ret, $layout) = GalleryCoreApi::getPluginParameter('module', 'core', 'default.layout');
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-	$this->setLayout($layout);
+	/* Use site default layout, theme, sort order */
+	$this->setLayout('');
+	$this->setTheme('');
+	$this->setOrderBy('');
+	$this->setOrderDirection(ORDER_ASCENDING);
 
 	return GalleryStatus::success();
     }

@@ -15,6 +15,24 @@
        32 
       )
     
+      ,
+    DB_COLUMN_PREFIXtheme
+      VARCHAR2(
+       32 
+      )
+    
+      ,
+    DB_COLUMN_PREFIXorderBy
+      VARCHAR2(
+       128 
+      )
+    
+      ,
+    DB_COLUMN_PREFIXorderDirection
+      VARCHAR2(
+       32 
+      )
+    
     );
 
   

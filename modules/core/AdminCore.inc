@@ -133,7 +133,7 @@ class AdminCoreController extends GalleryController {
 			   'session.inactivityTimeout',
 			   'misc.useShortUrls',
 			   'misc.markup') as $key) {
-		list ($outer, $inner) = split('\.', $key);
+		list ($outer, $inner) = explode('.', $key);
 		if (isset($form[$outer][$inner])) {
 		    $ret = GalleryCoreApi::setPluginParameter('module', 'core', $key, $form[$outer][$inner]);
 		    if ($ret->isError()) {
@@ -200,7 +200,7 @@ class AdminCoreView extends GalleryView {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-		list ($outer, $inner) = split('\.', $key);
+		list ($outer, $inner) = explode('.', $key);
 		$form[$outer][$inner] = $value;
 	    }
 	    $form['formName'] = 'AdminCore';
@@ -225,20 +225,20 @@ class AdminCoreView extends GalleryView {
 	}
 
 	/* Set up our sort order selection list */
-	$orderByList = array();
-	$orderByList[''] = $module->translate('&laquo; No Sort Order &raquo;');
-	$orderByList['title'] = $module->translate('Title');
-	$orderByList['summary'] = $module->translate('Summary');
-	$orderByList['creationTimestamp'] = $module->translate('Creation Date');
-	$orderByList['modificationTimestamp'] = $module->translate('Last Changed Date');
-	$orderByList['description'] = $module->translate('Description');
-	$orderByList['keywords'] = $module->translate('Keywords');
-	$orderByList['viewCount'] = $module->translate('View Count');
+	$orderByList = array(
+		    'orderWeight' => $module->translate('Manual Sort Order'),
+		          'title' => $module->translate('Title'),
+		        'summary' => $module->translate('Summary'),
+	      'creationTimestamp' => $module->translate('Creation Date'),
+	  'modificationTimestamp' => $module->translate('Last Changed Date'),
+		    'description' => $module->translate('Description'),
+		       'keywords' => $module->translate('Keywords'),
+		      'viewCount' => $module->translate('View Count'));
 	
 	/* Set up our sort direction selection list */
-	$orderDirectionList = array();
-	$orderDirectionList[ORDER_ASCENDING] = $module->translate('Ascending');
-	$orderDirectionList[ORDER_DESCENDING] = $module->translate('Descending');
+	$orderDirectionList = array(
+	     ORDER_ASCENDING => $module->translate('Ascending'),
+	    ORDER_DESCENDING => $module->translate('Descending'));
 
 	$platform = $gallery->getPlatform();
 

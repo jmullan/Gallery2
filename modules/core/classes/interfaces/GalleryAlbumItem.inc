@@ -57,6 +57,21 @@ class GalleryAlbumItem extends GalleryAlbumItem_core {
 	    'type' => STORAGE_TYPE_STRING
 	);
     
+	$meta['members']['theme'] = array(
+	    'class' => 'GalleryAlbumItem',
+	    'type' => STORAGE_TYPE_STRING
+	);
+    
+	$meta['members']['orderBy'] = array(
+	    'class' => 'GalleryAlbumItem',
+	    'type' => STORAGE_TYPE_STRING
+	);
+    
+	$meta['members']['orderDirection'] = array(
+	    'class' => 'GalleryAlbumItem',
+	    'type' => STORAGE_TYPE_STRING
+	);
+    
 	return $meta;
     }
 
@@ -72,6 +87,24 @@ class GalleryAlbumItem extends GalleryAlbumItem_core {
  	    $data['layout'] = null;
  	} else {
 	    $data['layout'] = $this->_layout;
+	}
+	
+	if (!isset($this->_theme)) {
+ 	    $data['theme'] = null;
+ 	} else {
+	    $data['theme'] = $this->_theme;
+	}
+	
+	if (!isset($this->_orderBy)) {
+ 	    $data['orderBy'] = null;
+ 	} else {
+	    $data['orderBy'] = $this->_orderBy;
+	}
+	
+	if (!isset($this->_orderDirection)) {
+ 	    $data['orderDirection'] = null;
+ 	} else {
+	    $data['orderDirection'] = $this->_orderDirection;
 	}
 	
 	return $data;
@@ -137,6 +170,126 @@ class GalleryAlbumItem extends GalleryAlbumItem_core {
       
 	    $this->setModifiedFlag('layout', $value);
 	    $this->_layout = $value;
+	}
+    }
+  
+    /**
+     * Get the value of theme
+     *
+     * @return STRING the value
+     */
+    function gettheme() {
+ 	
+
+	if (!isset($this->_theme)) {
+	    return null;
+	}
+
+	return $this->_theme;
+    }
+
+    /**
+     * Set the value of theme
+     *
+     * @param STRING the value
+     */
+    function settheme($value) {
+    
+	/* 
+	 * Convert unset values to null, to avoid generating warnings.
+	 */
+	$a = isset($value) ? $value : null;
+	$b = isset($this->_theme) ? $this->_theme : null;
+
+	/* 
+	 * Only take action if the value actually changes, but take care not to 
+	 * generate warnings for unset values.
+	 */
+    
+	if ($a != $b) {
+      
+	    $this->setModifiedFlag('theme', $value);
+	    $this->_theme = $value;
+	}
+    }
+  
+    /**
+     * Get the value of orderBy
+     *
+     * @return STRING the value
+     */
+    function getorderBy() {
+ 	
+
+	if (!isset($this->_orderBy)) {
+	    return null;
+	}
+
+	return $this->_orderBy;
+    }
+
+    /**
+     * Set the value of orderBy
+     *
+     * @param STRING the value
+     */
+    function setorderBy($value) {
+    
+	/* 
+	 * Convert unset values to null, to avoid generating warnings.
+	 */
+	$a = isset($value) ? $value : null;
+	$b = isset($this->_orderBy) ? $this->_orderBy : null;
+
+	/* 
+	 * Only take action if the value actually changes, but take care not to 
+	 * generate warnings for unset values.
+	 */
+    
+	if ($a != $b) {
+      
+	    $this->setModifiedFlag('orderBy', $value);
+	    $this->_orderBy = $value;
+	}
+    }
+  
+    /**
+     * Get the value of orderDirection
+     *
+     * @return STRING the value
+     */
+    function getorderDirection() {
+ 	
+
+	if (!isset($this->_orderDirection)) {
+	    return null;
+	}
+
+	return $this->_orderDirection;
+    }
+
+    /**
+     * Set the value of orderDirection
+     *
+     * @param STRING the value
+     */
+    function setorderDirection($value) {
+    
+	/* 
+	 * Convert unset values to null, to avoid generating warnings.
+	 */
+	$a = isset($value) ? $value : null;
+	$b = isset($this->_orderDirection) ? $this->_orderDirection : null;
+
+	/* 
+	 * Only take action if the value actually changes, but take care not to 
+	 * generate warnings for unset values.
+	 */
+    
+	if ($a != $b) {
+      
+	    $this->setModifiedFlag('orderDirection', $value);
+	    $this->_orderDirection = $value;
 	}
     }
   

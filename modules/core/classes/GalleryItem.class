@@ -103,32 +103,6 @@ class GalleryItem_core extends GalleryFileSystemEntity {
     var $_keywords;
 
     /**
-     * Specify the name of the field that we're using to order children
-     *
-     * @g2 <member>
-     * @g2   <member-name>orderBy</member-name>
-     * @g2   <member-type>STRING</member-type>
-     * @g2 </member>
-     *
-     * @var int $_orderBy
-     * @access private
-     */
-    var $_orderBy;
-
-    /**
-     * Specify the order direction that we're applying to the orderBy field.
-     *
-     * @g2 <member>
-     * @g2   <member-name>orderDirection</member-name>
-     * @g2   <member-type>STRING</member-type>
-     * @g2 </member>
-     *
-     * @var int $_orderDirection
-     * @access private
-     */
-    var $_orderDirection;
-
-    /**
      * The id of the User who owns this item
      *
      * @g2 <member>
@@ -157,20 +131,6 @@ class GalleryItem_core extends GalleryFileSystemEntity {
      * @access private
      */
     var $_summary;
-
-    /**
-     * The theme to use for this item
-     *
-     * @g2 <member>
-     * @g2   <member-name>theme</member-name>
-     * @g2   <member-type>STRING</member-type>
-     * @g2   <member-size>SMALL</member-size>
-     * @g2 </member>
-     *
-     * @var string $_theme
-     * @access private
-     */
-    var $_theme;
 
     /**
      * The (short) title of this item
@@ -245,10 +205,6 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	/* Initialize the viewedSince timestamp */
 	$this->setViewedSinceTimestamp(time());
 
-	/* Adopt the parent's ordering scheme */
-	$this->setOrderBy($parent->getOrderBy());
-	$this->setOrderDirection($parent->getOrderDirection());
-
 	/* By default, items can't contain children */
 	$this->setCanContainChildren(false);
 
@@ -278,22 +234,8 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	/* Initialize the viewedSince timestamp */
 	$this->setViewedSinceTimestamp(time());
 
-	/* Pick up the default order */
-	list ($ret, $orderBy) =
-	    GalleryCoreApi::getPluginParameter('module', 'core', 'default.orderBy');
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	list ($ret, $orderDirection) =
-	    GalleryCoreApi::getPluginParameter('module', 'core', 'default.orderDirection');
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
+	/* No parent for root */
 	$this->setParentId(0);
-	$this->setOrderBy($orderBy);
-	$this->setOrderDirection($orderDirection);
 
 	return GalleryStatus::success();
     }
@@ -323,10 +265,6 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 
 	/* Initialize the viewedSince timestamp */
 	$this->setViewedSinceTimestamp(time());
-
-	/* Adopt the parent's ordering scheme */
-	$this->setOrderBy($parent->getOrderBy());
-	$this->setOrderDirection($parent->getOrderDirection());
 
 	/* By default, items can't contain children */
 	$this->setCanContainChildren(false);

@@ -313,7 +313,9 @@ class ItemEditAlbum extends ItemEditPlugin {
 		$item->setLayout($form['layout']);
 		$item->setTheme($form['theme']);
 		$item->setOrderBy($form['orderBy']);
-		$item->setOrderDirection($form['orderDirection']);
+		if (isset($form['orderDirection'])) {
+		    $item->setOrderDirection($form['orderDirection']);
+		}
 		$item->setSerialNumber($form['serialNumber']);
 
 		list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($item->getId());
@@ -417,40 +419,38 @@ class ItemEditAlbum extends ItemEditPlugin {
 	$platform = $gallery->getPlatform();
 
 	/* Set up our sort order selection list */
-	$orderByList = array();
-	$orderByList[''] = $module->translate('&laquo; no sort order &raquo;');
-	$orderByList['title'] = $module->translate('Title');
-	$orderByList['summary'] = $module->translate('Summary');
-	$orderByList['creationTimestamp'] = $module->translate('Creation Date');
-	$orderByList['modificationTimestamp'] = $module->translate('Last Changed Date');
-	$orderByList['description'] = $module->translate('Description');
-	$orderByList['keywords'] = $module->translate('Keywords');
-	$orderByList['viewCount'] = $module->translate('View Count');
+	$orderByList = array(  '' => $module->translate('&laquo; default sort order &raquo;'),
+		    'orderWeight' => $module->translate('Manual sort order'),
+			  'title' => $module->translate('Title'),
+			'summary' => $module->translate('Summary'),
+	      'creationTimestamp' => $module->translate('Creation Date'),
+	  'modificationTimestamp' => $module->translate('Last Changed Date'),
+		    'description' => $module->translate('Description'),
+		       'keywords' => $module->translate('Keywords'),
+		      'viewCount' => $module->translate('View Count'));
 
 	/* Set up our sort direction selection list */
-	$orderDirectionList = array();
-	$orderDirectionList[ORDER_ASCENDING] = $module->translate("Ascending");
-	$orderDirectionList[ORDER_DESCENDING] = $module->translate("Descending");
+	$orderDirectionList = array(
+	     ORDER_ASCENDING => $module->translate('Ascending'),
+	    ORDER_DESCENDING => $module->translate('Descending'));
 
 	/* Set up our layout selection list */
 	list ($ret, $layoutStatusList) = GalleryCoreApi::fetchPluginStatus('layout');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$layoutList = array();
+	$layoutList = array('' => $module->translate('&laquo; default layout &raquo;'));
 	foreach ($layoutStatusList as $layoutId => $layoutStatus) {
 	    if (empty($layoutStatus['active'])) {
 		continue;
 	    }
-	    
+
 	    list ($ret, $layout) = GalleryCoreApi::loadPlugin('layout', $layoutId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    $layoutList[$layoutId] = $layout->getName();
 	}
-	$layoutList = array_merge(array('' => $module->translate('&laquo; default layout &raquo;')),
-				  $layoutList);
 
 	$themeList = GalleryTheme::getThemeList();
 	$themeList = array_merge(array('' => $module->translate('&laquo; default theme &raquo;')),

@@ -81,7 +81,7 @@ class CoreModuleExtras {
 			       'permissions.file' => '0644',
 			       'uploadLocalServer.dirs' => '',
 			       'exec.expectedStatus' => '0',
-			       'default.orderBy' => '',
+			       'default.orderBy' => 'orderWeight',
 			       'default.orderDirection' => '1',
 			       'default.layout' => 'matrix',
 			       'default.theme' => 'matrix',

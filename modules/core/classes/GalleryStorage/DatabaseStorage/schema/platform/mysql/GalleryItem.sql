@@ -28,22 +28,6 @@
       )
     
       ,
-    DB_COLUMN_PREFIXorderBy
-      varchar(
-      
-          128
-        
-      )
-    
-      ,
-    DB_COLUMN_PREFIXorderDirection
-      varchar(
-      
-          128
-        
-      )
-    
-      ,
     DB_COLUMN_PREFIXownerId
       int(11)
     
@@ -54,14 +38,6 @@
       varchar(
       
           255
-        
-      )
-    
-      ,
-    DB_COLUMN_PREFIXtheme
-      varchar(
-      
-          32
         
       )
     

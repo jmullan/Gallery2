@@ -49,12 +49,21 @@
 	  {g->text text="Default sort order"}
 	</td>
 	<td>
-	  <select name="{g->formVar var="form[default][orderBy]"}">
+	  <select name="{g->formVar var="form[default][orderBy]"}" onChange="pickOrder()">
 	      {html_options options=$AdminCore.orderByList selected=$form.default.orderBy}
 	  </select>
 	  <select name="{g->formVar var="form[default][orderDirection]"}">
 	      {html_options options=$AdminCore.orderDirectionList selected=$form.default.orderDirection}
 	  </select>
+	  <script type="text/javascript">
+	    function pickOrder() {ldelim}
+	      var list = '{g->formVar var="form[default][orderBy]"}';
+	      var index = document.forms[0].elements[list].selectedIndex;
+	      list = '{g->formVar var="form[default][orderDirection]"}';
+	      document.forms[0].elements[list].disabled = (index == 0) ?1:0;
+	    {rdelim}
+	    pickOrder();
+	  </script>
 	</td>
       </tr>
 

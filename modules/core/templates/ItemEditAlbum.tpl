@@ -9,16 +9,24 @@
     {g->text text="Sort order"}
   </h2>
   <p class="giDescription">
-    {g->text text="This sets the default sort order for the album.  This applies to all new items."}
+    {g->text text="This sets the sort order for the album.  This applies to all current items, and any newly added items."}
   </p>
 
-  <select name="{g->formVar var="form[orderBy]"}">
+  <select name="{g->formVar var="form[orderBy]"}" onChange="pickOrder()">
       {html_options options=$ItemEditAlbum.orderByList selected=$form.orderBy}
   </select>
-
   <select name="{g->formVar var="form[orderDirection]"}">
       {html_options options=$ItemEditAlbum.orderDirectionList selected=$form.orderDirection}
   </select>
+  <script type="text/javascript">
+    function pickOrder() {ldelim}
+      var list = '{g->formVar var="form[orderBy]"}';
+      var index = document.forms[0].elements[list].selectedIndex;
+      list = '{g->formVar var="form[orderDirection]"}';
+      document.forms[0].elements[list].disabled = (index <= 1) ?1:0;
+    {rdelim}
+    pickOrder();
+  </script>
 </div>
 
 <div class="gbAdmin">
@@ -26,7 +34,7 @@
     {g->text text="Layout"}
   </h2>
   <p class="giDescription">
-    {g->text text="Choose a layout for this album. (The way the album is arranged on the page.)"}
+    {g->text text="Choose a layout for this album. (The way the album is arranged on the page)"}
   </p>
 
   <select name="{g->formVar var="form[layout]"}">
@@ -52,7 +60,7 @@
     {g->text text="Thumbnails"}
   </h2>
   <p class="giDescription">
-    {g->text text=" Every item requires a thumbnail. Set the default value in pixels here."}
+    {g->text text=" Every item requires a thumbnail. Set the default size in pixels here."}
   </p>
   
   <input type="text" size="6" name="{g->formVar var="form[thumbnail][size]"}" value="{$form.thumbnail.size}"/>
