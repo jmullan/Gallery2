@@ -380,11 +380,17 @@ class GalleryAlbumItem_core extends GalleryItem {
     }
 
     /**
-     * @see GalleryItem::itemTypeName
+     * @see GalleryEntity::itemTypeName
      */
-    function itemTypeName() {
+    function itemTypeName($localized = true) {
 	global $gallery;
-	return array($gallery->i18n('Album'), $gallery->i18n('album'));
+	if ($localized) {
+	    list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
+	    if (! $ret->isError()) {
+		return array($core->translate('Album'), $core->translate('album'));
+	    }
+	}
+	return array('Album', 'album');
     }
 }
 

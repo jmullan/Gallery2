@@ -185,11 +185,17 @@ class GalleryPhotoItem_core extends GalleryDataItem {
     }
 
     /**
-     * @see GalleryItem::itemTypeName
+     * @see GalleryEntity::itemTypeName
      */
-    function itemTypeName() {
+    function itemTypeName($localized = true) {
 	global $gallery;
-	return array($gallery->i18n('Photo'), $gallery->i18n('photo'));
+	if ($localized) {
+	    list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
+	    if (! $ret->isError()) {
+		return array($core->translate('Photo'), $core->translate('photo'));
+	    }
+	}
+	return array('Photo', 'photo');
     }
 
     /**

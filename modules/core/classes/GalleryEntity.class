@@ -110,7 +110,7 @@ class GalleryEntity_core extends GalleryPersistent {
      * @var int $_linkedEntity
      * @access private
      */
-    var $_linkedEntity;
+    var $_linkedEntity = null;
 
     /**
      * Date and time this item was last modified, in seconds since the epoch.
@@ -411,15 +411,15 @@ class GalleryEntity_core extends GalleryPersistent {
     }
 
     /**
-     *
-     * Return the internationalized (but NOT localized) display name of this item type
-     * in two forms, one that can be used by itself ("Photo") and one that can be
-     * used in context ("photo"). Subclasses must override this to provide their
-     * own names.
-     *
-     * @return string the type name
+     * Return the name of this type of item.
+     * 
+     * Subclasses must override this to provide their own type names.
+     * 
+     * @param boolean if the name is to be translated using the current language
+     * @return array string to be used by itself ("Photo")
+     *               string to be used in context ("photo")
      */
-    function itemTypeName() {
+    function itemTypeName($localized = true) {
 	assert(false);
     }
 
@@ -467,6 +467,7 @@ class GalleryEntity_core extends GalleryPersistent {
 
 	return GalleryStatus::success();
     }
+
 }
 
 include(dirname(__FILE__) . '/interfaces/GalleryEntity.inc');

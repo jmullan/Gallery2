@@ -189,11 +189,17 @@ class GalleryAnimationItem_core extends GalleryDataItem {
     }
     
     /**
-     * @see GalleryItem::itemTypeName
+     * @see GalleryEntity::itemTypeName
      */
-    function itemTypeName() {
+    function itemTypeName($localized = true) {
 	global $gallery;
-	return array($gallery->i18n('Animation'), $gallery->i18n('animation'));
+	if ($localized) {
+	    list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
+	    if (! $ret->isError()) {
+		return array($core->translate('Animation'), $core->translate('animation'));
+	    }
+	}
+	return array('Animation', 'animation');
     }
 
     /**

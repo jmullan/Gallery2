@@ -208,11 +208,17 @@ class GalleryMovieItem_core extends GalleryDataItem {
     }
     
     /**
-     * @see GalleryItem::itemTypeName
+     * @see GalleryEntity::itemTypeName
      */
-    function itemTypeName() {
+    function itemTypeName($localized = true) {
 	global $gallery;
-	return array($gallery->i18n('Movie'), $gallery->i18n('movie'));
+	if ($localized) {
+	    list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
+	    if (! $ret->isError()) {
+		return array($core->translate('Movie'), $core->translate('movie'));
+	    }
+	}
+	return array('Movie', 'movie');
     }
 
     /**

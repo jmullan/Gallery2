@@ -157,6 +157,19 @@ class GalleryGroup_core extends GalleryEntity {
 	return GalleryStatus::success();
     }
 
+    /**
+     * @see GalleryEntity::itemTypeName
+     */
+    function itemTypeName($localized = true) {
+	global $gallery;
+	if ($localized) {
+	    list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
+	    if (! $ret->isError()) {
+		return array($core->translate('Group'), $core->translate('group'));
+	    }
+	}
+	return array('Group', 'group');
+    }
 }
 
 include(dirname(__FILE__) . '/interfaces/GalleryGroup.inc');
