@@ -60,10 +60,10 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$params['b'] = 'bBbB';
 	$params['c'] = serialize(array(1, 2, 3));
 	$actual = $this->_urlGenerator->generateUrl($params);
-	
-	$values = array('g2_a=' . htmlentities($params['a']),
-			'g2_b=' . htmlentities($params['b']),
-			'g2_c=' . htmlentities($params['c']));
+
+	foreach ($params as $key => $value) {
+	    $values[] = GalleryUtilities::prefixFormVariable($key) . '=' . htmlentities($value);
+	}
 
 	// If we're not using cookies, expect there to be an additional value
 	$session =& $gallery->getSession();
@@ -106,10 +106,10 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$params['b'] = 'bBbB';
 	$params['c'] = serialize(array(1, 2, 3));
 	$actual = $this->_urlGenerator->generateUrl($params, true);
-	
-	$values = array('g2_a=' . htmlentities($params['a']),
-			'g2_b=' . htmlentities($params['b']),
-			'g2_c=' . htmlentities($params['c']));
+
+	foreach ($params as $key => $value) {
+	    $values[] = GalleryUtilities::prefixFormVariable($key) . '=' . htmlentities($value);
+	}
 
 	// No matter what, expect the session id
 	$session =& $gallery->getSession();
@@ -127,9 +127,9 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$params['c'] = serialize(array(1, 2, 3));
 	$actual = $this->_urlGenerator->generateUrl($params, false);
 
-	$values = array('g2_a=' . htmlentities($params['a']),
-			'g2_b=' . htmlentities($params['b']),
-			'g2_c=' . htmlentities($params['c']));
+	foreach ($params as $key => $value) {
+	    $values[] = GalleryUtilities::prefixFormVariable($key) . '=' . htmlentities($value);
+	}
 
 	// No matter what, expect no session id
 	$expected = 'http://example.com/gallery2/phpunit_test.php?' . join('&amp;', $values);
@@ -193,9 +193,9 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$params['c'] = serialize(array(1, 2, 3));
 	$actual = $urlGenerator->generateUrl($params);
 
-	$values = array('g2_a=' . htmlentities($params['a']),
-			'g2_b=' . htmlentities($params['b']),
-			'g2_c=' . htmlentities($params['c']));
+	foreach ($params as $key => $value) {
+	    $values[] = GalleryUtilities::prefixFormVariable($key) . '=' . htmlentities($value);
+	}
 
 	// If we're not using cookies, expect there to be an additional value
 	$session =& $gallery->getSession();
@@ -206,6 +206,70 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$expected = 'http://example.com/gallery2/phpunit_test.php?test=on&amp;' . join('&amp;', $values);
 
 	$this->assertEquals($expected, $actual);
+    }
+
+    function testShortUrls() {
+	global $gallery;
+	$session =& $gallery->getSession();
+
+	// Setup..
+	list ($ret, $testAlbum) = $this->_createRandomAlbum($this->_getRootId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $saveParam) = GalleryCoreApi::getPluginParameter('module', 'core', 'misc.useShortUrls');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'misc.useShortUrls', 'false');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	// Test url..
+	$params = array('view' => 'core:ShowItem', 'itemId' => $testAlbum->getId());
+	foreach ($params as $key => $value) {
+	    $values[] = GalleryUtilities::prefixFormVariable($key) . '=' . htmlentities($value);
+	}
+	if (!$session->isUsingCookies()) {
+	    $values[] = GalleryUtilities::prefixFormVariable($session->getKey()) .
+		'=' . $session->getId();
+	}
+	$long = 'http://example.com/gallery2/phpunit_test.php?' . join('&amp;', $values);
+	$short = 'http://example.com/gallery2/phpunit_test.php/test/' . $testAlbum->getPathComponent() . '/';
+
+	// View prefix for short urls..
+	$this->_urlGenerator->registerViewPrefix('test', 'core:ShowItem');
+
+	// Long url..
+	$this->assertEquals($long, $this->_urlGenerator->generateUrl($params), 'long url');
+
+	// Force short url..
+	$params['forceShortUrls'] = 'true';
+	$this->assertEquals($short, $this->_urlGenerator->generateUrl($params), 'force short url');
+
+	// Short url..
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'misc.useShortUrls', 'true');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	unset($params['forceShortUrls']);
+	$this->assertEquals($short, $this->_urlGenerator->generateUrl($params), 'short url');
+
+	// IIS.. no REQUEST_URI; has SCRIPT_NAME and PATH_INFO..
+	unset($_SERVER['REQUEST_URI']);
+	$_SERVER['SCRIPT_NAME'] = '/gallery2/phpunit_test.php';
+	$this->assertEquals($short, $this->_urlGenerator->generateUrl($params), 'iis short url');
+
+	// Cleanup..
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'misc.useShortUrls', $saveParam);
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::deleteEntityById($testAlbum->getId());
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
     }
 }
 ?>
