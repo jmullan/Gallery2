@@ -241,47 +241,6 @@ class GalleryPluginHelper_medium {
     }
 
     /**
-     * Remove a parameter for this plugin
-     *
-     * @param string the type of the plugin
-     * @param string the id of the plugin
-     * @param string the name of the parameter
-     * @param mixed the value to be matched
-     * @return object GalleryStatus a status code
-     * @static
-     */
-    function removeParameterByValue($pluginType, $pluginId, $parameterName, $parameterValue) {
-	global $gallery;
-
-	if (empty($pluginType) || empty($pluginId) || empty($parameterName) || !isset($parameterValue)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-
-	$query = 'DELETE
-		  FROM
-			[PluginParameterMap]
-		  WHERE
-			[PluginParameterMap::pluginType] = ? AND
-			[PluginParameterMap::pluginId] = ? AND
-			[PluginParameterMap::parameterName] = ? AND
-			[PluginParameterMap::parameterValue] = ?';
-
-	$values = array($pluginType, $pluginId, $parameterName, $parameterValue);
-	list($ret, $data) = $gallery->search($query, $values);
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	/* Invalidate the entire cache for this plugin, because we can't invalidate by value */
-	$cacheKey = "GalleryPluginHelper::fetchAllParameters\($pluginType, $pluginId, .*\)";
-	GalleryDataCache::removeByPattern($cacheKey);
-	GalleryDataCache::removeFromDisk(array('type' => $pluginType,
-					       'id' => $pluginId));
-
-	return GalleryStatus::success();
-    }
-
-    /**
      * Remove all parameters for this plugin
      *
      * @param string the type of the plugin
