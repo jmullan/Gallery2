@@ -38,5 +38,91 @@ class GalleryPhotoItem extends GalleryPhotoItem_core {
   
 
   
+    /**
+     * Return meta information about the members of this class
+     *
+     * @return array member => array(type, class)
+     */
+    function getPersistentMemberInfo() {
+        $meta = parent::getPersistentMemberInfo();
+    
+        $meta['members']['width'] = array(
+            'class' => 'GalleryPhotoItem',
+            'type' => STORAGE_TYPE_INTEGER
+        );
+    
+        $meta['members']['height'] = array(
+            'class' => 'GalleryPhotoItem',
+            'type' => STORAGE_TYPE_INTEGER
+        );
+    
+        return $meta;
+    }
+
+    /**
+     * Get the data from this persistent object as an associative array
+     *
+     * @return array memberName => memberValue
+     */
+    function getMemberData() {
+        $data = parent::getMemberData();
+    
+        $data['width'] = $this->_width;
+    
+        $data['height'] = $this->_height;
+    
+        return $data;
+    }
+  
+    /**
+     * Get the value of width
+     *
+     * @return INTEGER the value
+     */
+    function getwidth() {
+        if (!isset($this->_width)) {
+            return null;
+        }
+        return $this->_width;
+    }
+
+    /**
+     * Set the value of width
+     *
+     * @param INTEGER the value
+     */
+    function setwidth($value) {
+    
+        $value = (int)$value;
+      
+        $this->_width = $value;
+        $this->setModifiedFlag('width', MEMBER_MODIFIED);
+    }
+  
+    /**
+     * Get the value of height
+     *
+     * @return INTEGER the value
+     */
+    function getheight() {
+        if (!isset($this->_height)) {
+            return null;
+        }
+        return $this->_height;
+    }
+
+    /**
+     * Set the value of height
+     *
+     * @param INTEGER the value
+     */
+    function setheight($value) {
+    
+        $value = (int)$value;
+      
+        $this->_height = $value;
+        $this->setModifiedFlag('height', MEMBER_MODIFIED);
+    }
+  
 }
 ?>

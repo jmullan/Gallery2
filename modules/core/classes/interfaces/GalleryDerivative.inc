@@ -61,6 +61,11 @@ class GalleryDerivative extends GalleryDerivative_core {
             'type' => STORAGE_TYPE_INTEGER
         );
     
+        $meta['members']['derivativeFileExtension'] = array(
+            'class' => 'GalleryDerivative',
+            'type' => STORAGE_TYPE_STRING
+        );
+    
         return $meta;
     }
 
@@ -77,6 +82,8 @@ class GalleryDerivative extends GalleryDerivative_core {
         $data['derivativeCommands'] = $this->_derivativeCommands;
     
         $data['derivativeSize'] = $this->_derivativeSize;
+    
+        $data['derivativeFileExtension'] = $this->_derivativeFileExtension;
     
         return $data;
     }
@@ -152,6 +159,29 @@ class GalleryDerivative extends GalleryDerivative_core {
       
         $this->_derivativeSize = $value;
         $this->setModifiedFlag('derivativeSize', MEMBER_MODIFIED);
+    }
+  
+    /**
+     * Get the value of derivativeFileExtension
+     *
+     * @return STRING the value
+     */
+    function getderivativeFileExtension() {
+        if (!isset($this->_derivativeFileExtension)) {
+            return null;
+        }
+        return $this->_derivativeFileExtension;
+    }
+
+    /**
+     * Set the value of derivativeFileExtension
+     *
+     * @param STRING the value
+     */
+    function setderivativeFileExtension($value) {
+    
+        $this->_derivativeFileExtension = $value;
+        $this->setModifiedFlag('derivativeFileExtension', MEMBER_MODIFIED);
     }
   
 }

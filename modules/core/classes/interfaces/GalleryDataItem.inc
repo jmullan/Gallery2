@@ -38,5 +38,57 @@ class GalleryDataItem extends GalleryDataItem_core {
   
 
   
+    /**
+     * Return meta information about the members of this class
+     *
+     * @return array member => array(type, class)
+     */
+    function getPersistentMemberInfo() {
+        $meta = parent::getPersistentMemberInfo();
+    
+        $meta['members']['fileExtension'] = array(
+            'class' => 'GalleryDataItem',
+            'type' => STORAGE_TYPE_STRING
+        );
+    
+        return $meta;
+    }
+
+    /**
+     * Get the data from this persistent object as an associative array
+     *
+     * @return array memberName => memberValue
+     */
+    function getMemberData() {
+        $data = parent::getMemberData();
+    
+        $data['fileExtension'] = $this->_fileExtension;
+    
+        return $data;
+    }
+  
+    /**
+     * Get the value of fileExtension
+     *
+     * @return STRING the value
+     */
+    function getfileExtension() {
+        if (!isset($this->_fileExtension)) {
+            return null;
+        }
+        return $this->_fileExtension;
+    }
+
+    /**
+     * Set the value of fileExtension
+     *
+     * @param STRING the value
+     */
+    function setfileExtension($value) {
+    
+        $this->_fileExtension = $value;
+        $this->setModifiedFlag('fileExtension', MEMBER_MODIFIED);
+    }
+  
 }
 ?>
