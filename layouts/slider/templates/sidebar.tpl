@@ -4,70 +4,61 @@
  * Gallery will look for that file first and use it if it exists
  * and when you upgrade, your changes will not get overwritten.
  *}
-<div id="gsSidebar">
+<div class="sidebit">
   {* Module links *}
   <div class="gbMenu">
     <h3 class="giTitle">
       {g->text text="Greetings, %s!" arg1=$layout.user.fullName|default:$layout.user.userName}
     </h3>
-
     <ul>
       {foreach from=$layout.moduleSystemLinks item=module}
       {foreach from=$module item=link}
       <li>
-	<a href="{g->url params=$link.params}">{$link.text}</a>
+        <a href="{g->url params=$link.params}">{$link.text}</a>
       </li>
       {/foreach}
       {/foreach}
     </ul>
   </div>
 
-  {* Search form, if module's activated *}
-  {if isset($layout.moduleSystemContentFiles.search)}
-	{include file="gallery:modules/search/templates/SearchSystemContent.tpl"} 
+  {* Breadcrumb *}
+  {if (count($layout.parents)>0)}
+    <div class="gbMenu">
+      <div class="giTitle"> {g->text text="Navigation"} </div>
+      <ul>
+        {foreach from=$layout.parents item=parent}
+          <li>
+            &raquo;
+            <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$parent.id`"}">
+              {$parent.title|default:$parent.pathComponent|markup}
+            </a>
+          </li>
+        {/foreach}
+      </ul>
+    </div>
   {/if}
 
   {* Album actions, if there are any *}
-  {if (isset($layout.moduleItemLinks[$layout.item.id]))}
+  {if !empty($layout.moduleItemLinks)}
   <div class="gbMenu">
-    <select onchange="javascript:if (this.value) location.href=this.value" class="giActionSelect">
-      <option label="&laquo; actions &raquo;" value="">&laquo; actions &raquo;</option>
-      {foreach from=$layout.moduleItemLinks[$layout.item.id] item=link}
-      <option label="{$link.text}" value="{$link.url}">{$link.text}</option>
-      {/foreach}
-    </select>
-  </div>
-  {/if}
-
-  {* List of peer items *}
-  {if $layout.show.peerSidebarBox}
-  <div class="gbMenu">
-    <h3 class="giTitle"> {$layout.parent.title|default:$layout.parent.pathComponent}</h3>
-    <p class="giDescription">{g->text one="(%d item)" many="(%d items)" count=$layout.totalPeerCount arg1=$layout.totalPeerCount}</p>
-
+    <h3 class="giTitle">
+      {g->text text="Actions"}
+    </h3>
     <ul>
-      {assign var="lastIndex" value=0}
-      {foreach from=$layout.peers item=peer}
-      {assign var="title" value=$peer.peer.title|default:$peer.peer.pathComponent|markup}
-      {if ($peer.index - $lastIndex > 1)}
-      <li>...</li>
-      {/if}
-
-      {if ($peer.peer.id == $layout.item.id)}
-      <li class="giSelected">{g->text text="%d. %s" arg1=$peer.index arg2=$title|entitytruncate:14}</li>
-      {else}
-      <li><a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$peer.peer.id`"}">{g->text text="%d. %s" arg1=$peer.index arg2=$title|entitytruncate:14}</a></li>
-      {/if}
-      {assign var="lastIndex" value=$peer.index}
+      {foreach from=$layout.moduleItemLinks item=link}
+      <li>
+        <a href="{$link.url}">{$link.text}</a>
+      </li>
       {/foreach}
     </ul>
   </div>
   {/if}
-
+</div>
+<div class="sidebit">
   {* Extra modules system content *}
   {foreach from=$layout.moduleSystemContentFiles key=moduleId item=moduleFile}
-  {if ($moduleId != 'core' && $moduleId != 'search')}
-  {include file="gallery:$moduleFile" l10Domain="modules_$moduleId"}
+  {if ($moduleId != 'core')}
+    {include file="gallery:$moduleFile" l10Domain="modules_$moduleId"}
   {/if}
   {/foreach}
 </div>
