@@ -108,8 +108,8 @@ class GalleryDataItem_core extends GalleryItem {
      * @access public
      * @param int the id of the parent GalleryItem
      * @param string the path to a data file to be contained
-     * @param int the owner of the new item
-     * @param string the desired name of the new item
+     * @param string the mime type of the new item
+     * @param string (optional) the desired name of the new item
      * @return object GalleryStatus a status code
      */
     function create($parentId, $inputFileName, $mimeType, $targetName=null) {
