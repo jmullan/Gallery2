@@ -16,7 +16,11 @@
 	  <?php for ($i = 0; $i < sizeof($steps); $i++): ?>
 	  <li class="navitem">
 	    <span class="nav_num">
-	      <?php if ($i > 0): ?> 
+	      <?php if ($steps[$i]->isComplete()): ?>
+	      <span class="success">&radic;</span>
+	      <?php elseif ($steps[$i]->isInError()): ?>
+	      <span class="error">&#10007;</span>
+	      <?php else: ?>
 	      <?php print $i?>
 	      <?php endif; ?>
 	    </span>
@@ -30,15 +34,6 @@
 	      </a>
 	      <?php endif; ?>
 	    </span>
-
-	    <?php if ($steps[$i]->isComplete()): ?>
-	    <span class="success">&radic;</span>
-	    <?php endif; ?>
-
-	    <?php if ($steps[$i]->isInError()): ?>
-	    <span class="error">&#10007;</span>
-	    <?php endif; ?>
-
 	  </li>
 	  <?php endfor; ?>
 	</ol>
