@@ -26,6 +26,8 @@
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
+GalleryCoreApi::relativeRequireOnce('modules/core/UserLogin.inc');
+
 /**
  * UserLogin controller tests
  *
@@ -50,6 +52,13 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 
 	$this->_saveUser = $gallery->getActiveUser();
 	$this->_saveSession = $gallery->_session;
+
+	/* Disable all plugins by default. */
+	$this->_controller->setPluginInstances(array());
+
+	/* Set up a mock session so that we don't accidentally log out the PHPUnit session */
+	$this->_mockSession = new UserLoginControllerTestSession();
+	$gallery->_session =& $this->_mockSession;
     }
 
     function tearDown() {
@@ -74,9 +83,6 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 	/* from _createRandomUser: */
 	GalleryUtilities::putRequestVariable('form[password]', 'password');
 
-	$mockSession = new UserLoginControllerTestSession();
-	$gallery->_session =& $mockSession;
-
 	$results = $this->handleRequest();
 	/* May get a redirect url (like from useralbum module) or return */
 	$this->assert(isset($results['return']) || isset($results['redirect']), 'result');
@@ -84,7 +90,8 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array(), $results['error'], 'error');
 
 	$this->assertEquals($this->_user->getId(), $gallery->getActiveUserId());
-	$this->assert($mockSession->regenerateWasCalled(), '$session->regenerate() was not called');
+	$this->assert($this->_mockSession->regenerateWasCalled(),
+		      '$session->regenerate() was not called');
     }
 
     function testLoginInvalidUser() {
@@ -136,6 +143,150 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
+    }
+
+    /**
+     * Bogus user/password, and an error from the plugin.  Plugin set to halt on failure
+     * so we shouldn't even try to log in which means we won't see the incorrect password
+     * error.
+     */
+    function testPlugins1() {
+	GalleryUtilities::putRequestVariable('form[action][login]', 1);
+	GalleryUtilities::putRequestVariable('form[username]', 'bogus-user');
+	GalleryUtilities::putRequestVariable('form[password]', 'wrong-password');
+
+	$plugin = new UserLoginControllerTestPlugin();
+	$plugin->setErrors(array('form[error][UserLoginControllerTestPlugin][anError]'));
+	$plugin->setContinue(false);
+	$this->_controller->setPluginInstances(array($plugin));
+	
+	$results = $this->handleRequest();
+	$this->assertEquals(
+	    array('delegate' => array('view' => 'core:UserAdmin', 'subView' => 'core:UserLogin'),
+		  'status' => array(),
+		  'error' => array('form[error][UserLoginControllerTestPlugin][anError]')),
+	    $results);
+    }
+
+    /**
+     * Valid user, invalid password, 2 plugins with an error from the first plugin, but
+     * the first plugin allows the flow to continue.  We should see the error from both plugins,
+     * but not the invalid password.
+     */
+    function testPlugins2() {
+	GalleryUtilities::putRequestVariable('form[action][login]', 1);
+	GalleryUtilities::putRequestVariable('form[username]', $this->_user->getUserName());
+	GalleryUtilities::putRequestVariable('form[password]', 'totally-wrong-password');
+
+	$plugin1 = new UserLoginControllerTestPlugin();
+	$plugin1->setErrors(array('form[error][UserLoginControllerTestPlugin1][anError]'));
+	$plugin1->setContinue(true);
+
+	$plugin2 = new UserLoginControllerTestPlugin();
+	$plugin2->setErrors(array('form[error][UserLoginControllerTestPlugin2][anError]'));
+	$plugin2->setContinue(false);
+	$this->_controller->setPluginInstances(array($plugin1, $plugin2));
+	
+	$results = $this->handleRequest();
+	$this->assertEquals(
+	    array('delegate' => array('view' => 'core:UserAdmin', 'subView' => 'core:UserLogin'),
+		  'status' => array(),
+		  'error' => array('form[error][UserLoginControllerTestPlugin1][anError]',
+				   'form[error][UserLoginControllerTestPlugin2][anError]')),
+	    $results);
+    }
+
+    /**
+     * Valid user, invalid password, 2 plugins with an error from the first plugin, and
+     * the first plugin stops the flow from continuing.  We should see the error from only the
+     * first plugin, and not the invalid password error.
+     */
+    function testPlugins3() {
+	GalleryUtilities::putRequestVariable('form[action][login]', 1);
+	GalleryUtilities::putRequestVariable('form[username]', $this->_user->getUserName());
+	GalleryUtilities::putRequestVariable('form[password]', 'totally-wrong-password');
+
+	$plugin1 = new UserLoginControllerTestPlugin();
+	$plugin1->setErrors(array('form[error][UserLoginControllerTestPlugin1][anError]'));
+	$plugin1->setContinue(false);
+
+	$plugin2 = new UserLoginControllerTestPlugin();
+	$plugin2->setErrors(array('form[error][UserLoginControllerTestPlugin2][anError]'));
+	$plugin2->setContinue(false);
+	$this->_controller->setPluginInstances(array($plugin1, $plugin2));
+	
+	$results = $this->handleRequest();
+	$this->assertEquals(
+	    array('delegate' => array('view' => 'core:UserAdmin', 'subView' => 'core:UserLogin'),
+		  'status' => array(),
+		  'error' => array('form[error][UserLoginControllerTestPlugin1][anError]')),
+	    $results);
+    }
+
+    /**
+     * Correct password, but an error from the plugin
+     */
+    function testPlugins4() {
+	GalleryUtilities::putRequestVariable('form[action][login]', 1);
+	GalleryUtilities::putRequestVariable('form[username]', $this->_user->getUserName());
+	/* from _createRandomUser: */
+	GalleryUtilities::putRequestVariable('form[password]', 'password');
+
+	$plugin = new UserLoginControllerTestPlugin();
+	$plugin->setErrors(array('form[error][UserLoginControllerTestPlugin][anError]'));
+	$plugin->setContinue(true);
+	$this->_controller->setPluginInstances(array($plugin));
+
+	$results = $this->handleRequest();
+	$this->assertEquals(
+	    array('delegate' => array('view' => 'core:UserAdmin', 'subView' => 'core:UserLogin'),
+		  'status' => array(),
+		  'error' => array('form[error][UserLoginControllerTestPlugin][anError]')),
+	    $results);
+    }
+
+    /**
+     * Correct password, no error from the plugin
+     */
+    function testPlugins5() {
+	global $gallery;
+	
+	GalleryUtilities::putRequestVariable('form[action][login]', 1);
+	GalleryUtilities::putRequestVariable('form[username]', $this->_user->getUserName());
+	/* from _createRandomUser: */
+	GalleryUtilities::putRequestVariable('form[password]', 'password');
+
+	$plugin = new UserLoginControllerTestPlugin();
+	$plugin->setErrors(array());
+	$plugin->setContinue(true);
+	$this->_controller->setPluginInstances(array($plugin));
+
+	$results = $this->handleRequest();
+	/* May get a redirect url (like from useralbum module) or return */
+	$this->assert(isset($results['return']) || isset($results['redirect']), 'result');
+	$this->assertEquals(array(), $results['status'], 'status');
+	$this->assertEquals(array(), $results['error'], 'error');
+
+	$this->assertEquals($this->_user->getId(), $gallery->getActiveUserId());
+	$this->assert($this->_mockSession->regenerateWasCalled(),
+		      '$session->regenerate() was not called');
+    }
+}
+
+/**
+ * Mock UserLoginPlugin
+ */
+class UserLoginControllerTestPlugin extends UserLoginPlugin {
+    function setContinue($continue) {
+	$this->_continue = $continue;
+    }
+    
+    function setErrors($errors) {
+	$this->_errors = $errors;
+    }
+
+    function handleRequestBeforeLogin(&$form) {
+	return array(GalleryStatus::success(), $this->_errors, $this->_continue);
     }
 }
 

@@ -37,6 +37,26 @@
 class UserLoginController extends GalleryController {
 
     /**
+     * UserLoginPlugin instances to use when handling this request.  Only used by
+     * test code.
+     *
+     * @var array (pluginId => object UserLoginPlugin) $_plugins
+     * @private
+     */
+    var $_pluginInstances;
+
+    /**
+     * Tests can use this method to hardwire a specific set of plugin instances to use.
+     * This avoids situations where some of the option instances will do unpredictable
+     * things and derail the tests.
+     *
+     * @param array (pluginId => UserLoginPlugin, ...)
+     */
+    function setPluginInstances($pluginInstances) {
+	$this->_pluginInstances = $pluginInstances;
+    }
+
+    /**
      * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
@@ -45,12 +65,47 @@ class UserLoginController extends GalleryController {
 	$results = array();
 	$error = array();
 	if (isset($form['action']['login'])) {
-
 	    if (empty($form['username'])) {
 		$error[] = 'form[error][username][missing]';
 	    }
+
 	    if (empty($form['password'])) {
 		$error[] = 'form[error][password][missing]';
+	    }
+
+	    if (empty($error)) {
+		if (isset($this->_pluginInstances)) {
+		    $pluginInstances = $this->_pluginInstances;
+		} else {
+		    /* Get all the login plugins */
+		    list ($ret, $pluginInstances) =
+			GalleryCoreApi::getAllFactoryImplementationIds('UserLoginPlugin');
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+
+		    foreach (array_keys($pluginInstances) as $pluginId) {
+			list ($ret, $pluginInstances[$pluginId]) =
+			    GalleryCoreApi::newFactoryInstanceById('UserLoginPlugin', $pluginId);
+			if ($ret->isError()) {
+			    return array($ret->wrap(__FILE__, __LINE__), null);
+			}
+		    }
+		}
+		    
+		/* Let each plugin do its verification */
+		foreach ($pluginInstances as $pluginId => $plugin) {
+		    list ($ret, $pluginErrors, $continue) = $plugin->handleRequestBeforeLogin($form);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+
+		    $error = array_merge($error, $pluginErrors);
+
+		    if (!$continue) {
+			break;
+		    }
+		}
 	    }
 
 	    if (empty($error)) {
@@ -127,9 +182,62 @@ class UserLoginView extends GalleryView {
 	    $form['formName'] = 'UserLogin';
 	}
 
+	$UserLogin = array();
+
+	/* Get all the login plugins */
+	list ($ret, $allPluginIds) =
+	    GalleryCoreApi::getAllFactoryImplementationIds('UserLoginPlugin');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Let each plugin load its template data */
+	$UserLogin['plugins'] = array();
+	foreach (array_keys($allPluginIds) as $pluginId) {
+	    list ($ret, $plugin) =
+		GalleryCoreApi::newFactoryInstanceById('UserLoginPlugin', $pluginId);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    list ($ret, $data['file'], $data['l10Domain']) = $plugin->loadTemplate($template, $form);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    $UserLogin['plugins'][] = $data;
+	}
+
+	$template->setVariable('UserLogin', $UserLogin);
 	$template->setVariable('controller', 'core:UserLogin');
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/core/templates/UserLogin.tpl'));
+    }
+}
+
+class UserLoginPlugin {
+    /**
+     * Perform any special actions on the login request before we actually
+     * try to log in.
+     *
+     * @param array the form values
+     * @return array object GalleryStatus a status code
+     *               boolean true/false should we continue trying to log in?
+     *               array of error keys
+     */
+    function handleRequestBeforeLogin(&$form) {
+	return array(GalleryStatus::success(), true);
+    }
+
+    /**
+     * @param object GalleryTemplate the template instance
+     * @param array the form values
+     * @return array object GalleryStatus a status code
+     *               string the path to a template file to include
+     *               string localization domain for the template file
+     */
+    function loadTemplate(&$template, &$form) {
+	return array(GalleryStatus::success(), null);
     }
 }
 ?>

@@ -40,6 +40,11 @@
   {/if}
 </div>
 
+{* Include our extra ItemAddOptions *}
+{foreach from=$UserLogin.plugins item=plugin}
+  {include file="gallery:`$plugin.file`" l10Domain=$plugin.l10Domain}
+{/foreach}
+
 <div class="gbBlock gcBackground1">
   <input type="submit" class="inputTypeSubmit"
    name="{g->formVar var="form[action][login]"}" value="{g->text text="Login"}"/>
