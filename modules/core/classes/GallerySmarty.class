@@ -27,8 +27,11 @@
 
 /**
  * We extend the original Smarty class
+ * (if G2 is embedded in a CMS also using smarty it may be defined already)
  */
-GalleryCoreApi::relativeRequireOnce('lib/smarty/Smarty.class.php');
+if (!class_exists('Smarty')) {
+    GalleryCoreApi::relativeRequireOnce('lib/smarty/Smarty.class.php');
+}
 
 /**
  * A wrapper around Smarty that uses Gallery's error handling
