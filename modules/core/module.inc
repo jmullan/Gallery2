@@ -278,6 +278,7 @@ class CoreModule extends GalleryModule {
 		
 		foreach (array('permissions.directory' => '0755',
 			       'permissions.file' => '0644',
+			       'upload.localServer.dirs' => '',
 			       'exec.expectedStatus' => '0',
 			       'default.orderBy' => 'id',
 			       'default.orderDirection' => '1',
