@@ -49,16 +49,16 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 
 	$path = 'modules/core/test/phpunit/ItemAddControllerTest.class';
 	$ret = GalleryCoreApi::registerFactoryImplementation(
-	    'ItemAddPlugin', 'ItemAddControllerTestPluginSuccess', 'ItemAddControllerTestPluginSuccess',
-	    $path, 'coreTest', null);
+	    'ItemAddPlugin', 'ItemAddControllerTestPluginSuccess',
+	    'ItemAddControllerTestPluginSuccess', $path, 'coreTest', null);
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$ret = GalleryCoreApi::registerFactoryImplementation(
-	    'ItemAddPlugin', 'ItemAddControllerTestPluginContinue', 'ItemAddControllerTestPluginContinue',
-	    $path, 'coreTest', null);
+	    'ItemAddPlugin', 'ItemAddControllerTestPluginContinue',
+	    'ItemAddControllerTestPluginContinue', $path, 'coreTest', null);
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
