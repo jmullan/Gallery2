@@ -52,32 +52,44 @@ class DatabaseSetupStep extends InstallStep {
 		$this->_config[$key] = $this->sanitize($_POST[$key]);
 	    }
 
-	    // Load up ADOdb
-	    require_once(dirname(__FILE__) . '/../../lib/adodb/adodb.inc.php');
-
-	    $this->_captureStart();
-	    $db =& ADONewConnection($this->_config['type']);
-	    $db->debug = true;
-	    $this->_captureEnd();
-	    
-	    if (empty($db)) {
-		$templateData['errors'][] = _('Unable to create a database connection of type %s',
-					      $this->_config['type']);
+	    if (empty($this->_config['columnPrefix'])) {
+		$templateData['error']['columnPrefix'] =
+		    sprintf(_('You must specify a column prefix (we recommend %s)'), 'g_');
 	    }
 
-	    if (empty($templateData['errors'])) {
+	    if (empty($this->_config['tablePrefix'])) {
+		$templateData['error']['tablePrefix'] =
+		    sprintf(_('You must specify a table prefix (we recommend %s)'), 'g2_');
+	    }
+
+	    if (empty($templateData['errors']) && empty($templateData['error'])) {
+		// Load up ADOdb
+		require_once(dirname(__FILE__) . '/../../lib/adodb/adodb.inc.php');
+
 		$this->_captureStart();
-		$result = $db->NConnect($this->_config['hostname'],
-					$this->_config['username'],
-					$this->_config['password'],
-					$this->_config['database']);
+		$db =& ADONewConnection($this->_config['type']);
+		$db->debug = true;
 		$this->_captureEnd();
-		if ($result === false) {
-		    $templateData['errors'][] = _('Unable to connect to database with the information provided.');
+	    
+		if (empty($db)) {
+		    $templateData['errors'][] = _('Unable to create a database connection of type %s',
+						  $this->_config['type']);
+		}
+
+		if (empty($templateData['errors'])) {
+		    $this->_captureStart();
+		    $result = $db->NConnect($this->_config['hostname'],
+					    $this->_config['username'],
+					    $this->_config['password'],
+					    $this->_config['database']);
+		    $this->_captureEnd();
+		    if ($result === false) {
+			$templateData['errors'][] = _('Unable to connect to database with the information provided.');
+		    }
 		}
 	    }
 
-	    if (empty($templateData['errors'])) {
+	    if (empty($templateData['errors']) && empty($templateData['error'])) {
 		$this->_captureStart();
 		$result = $db->MetaTables();
 		$this->_captureEnd();
@@ -97,7 +109,7 @@ class DatabaseSetupStep extends InstallStep {
 
 	    $templateData['databaseErrors'] = $this->_getCaptured();
 
-	    if (empty($templateData['errors']) &&
+	    if (empty($templateData['errors']) && empty($templateData['error']) &&
 		(empty($confirmRequired) || !empty($_POST['confirmReuseTables']))) {
 		$this->setComplete(true);
 	    }
@@ -134,6 +146,10 @@ class DatabaseSetupStep extends InstallStep {
     }
 
     function _getCaptured() {
+	if (empty($this->_debugContents)) {
+	    return "";
+	} 
+
 	$contents = $this->_debugContents;
 	unset($this->_debugContents);
 	return $contents;
