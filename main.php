@@ -400,9 +400,22 @@ function _GalleryMain($returnHtml=false) {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    return array(GalleryStatus::success(),
-			 array('isDone' => false, 'headHtml' => $headHtml, 'bodyHtml' => $bodyHtml,
-'templateData' => $template->hasVariable('layout') ? $template->getVariable('layout') : array()));
+	    $data = array('isDone' => false, 'headHtml' => $headHtml, 'bodyHtml' => $bodyHtml);
+
+	    if ($template->hasVariable('layout')) {
+		$layout =& $template->getVariableByReference('layout');
+		if (isset($layout['show']['sidebar']) && $layout['show']['sidebar'] === false) {
+		    // Render sidebar and return as separate block of content if
+		    // embedding app requested no sidebar in G2 content..
+		    $layout['show']['sidebar'] = true;
+		    list ($ret, $data['sidebarHtml']) =
+			$template->fetch('gallery:templates/sidebar.tpl');
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		}
+	    }
+	    return array(GalleryStatus::success(), $data);
 	}
     }
 
