@@ -97,6 +97,7 @@
 	{g->text text="Owner: %s" arg1=$layout.owners[$child.ownerId].fullName|default:$owner.userName}
       </span>
 
+      {if ($child.childCount > 0) }
       <span>
 	{g->text one="Size: %d item"
 	many="Size: %d items"
@@ -107,6 +108,7 @@
 	count=$child.descendentCount
 	arg1=$child.descendentCount}
       </span>
+      {/if}
 
       <span>
 	{g->text one="Viewed: %d time"
