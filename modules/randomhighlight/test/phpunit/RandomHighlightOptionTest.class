@@ -49,22 +49,8 @@ class RandomHighlightOptionTest extends ItemEditOptionTestCase {
 	}
 	$this->_markForCleanup($this->_album);
 
-	list ($ret, $item) = $this->_createRandomDataItem(
+	list ($ret, $this->_item) = $this->_createRandomDataItem(
 	    $this->_album->getId(), 'image/test', array(), __FILE__, 'GalleryPhotoItem');
-	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	list ($ret, $thumb) = $this->_createDerivative(
-	    $item, $item->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
-	    'thumbnail|100', 'image/test');
-	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	list ($ret, $this->_highlight) = $this->_createDerivative(
-	    $this->_album, $thumb->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
-	    'thumbnail|100', 'image/test');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -121,6 +107,21 @@ class RandomHighlightOptionTest extends ItemEditOptionTestCase {
     }
 
     function testRandomHighlight() {
+	list ($ret, $thumb) = $this->_createDerivative(
+	    $this->_item, $this->_item->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
+	    'thumbnail|100', 'image/test');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $this->_highlight) = $this->_createDerivative(
+	    $this->_album, $thumb->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
+	    'thumbnail|100', 'image/test');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
 	list ($ret, $appropriate) = $this->_option->isAppropriate($this->_album, $this->_highlight);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -149,6 +150,12 @@ class RandomHighlightOptionTest extends ItemEditOptionTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(null, $highlight->getOnLoadHandlers(), 'off');
+    }
+
+    function testRandomHighlightNoThumbnail() {
+	$form['RandomHighlightOption']['isRandomHighlight'] = 1;
+	$result = $this->_handleRequestAfterEdit($form, $this->_album);
+	$this->assertEquals(array(array(), array()), $result, 'turn on');
     }
 }
 

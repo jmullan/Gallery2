@@ -45,11 +45,15 @@ class RandomHighlightOption extends ItemEditOption {
      * @see ItemEditOption::loadTemplate
      */
     function loadTemplate(&$template, &$form, $item, $thumbnail) {
-	$form['RandomHighlightOption']['isRandomHighlight'] =
-	    $thumbnail->hasOnLoadHandler('RandomHighlight');
-	return array(GalleryStatus::success(),
-		     'modules/randomhighlight/templates/RandomHighlightOption.tpl',
-		     'modules_randomhighlight');
+	if (isset($thumbnail)) {
+	    $form['RandomHighlightOption']['isRandomHighlight'] =
+		$thumbnail->hasOnLoadHandler('RandomHighlight');
+	    return array(GalleryStatus::success(),
+			 'modules/randomhighlight/templates/RandomHighlightOption.tpl',
+			 'modules_randomhighlight');
+	} else {
+	    return array(GalleryStatus::success(), null, null);
+	}
     }
 
     /**
@@ -64,7 +68,8 @@ class RandomHighlightOption extends ItemEditOption {
 	$isRandomHighlight = isset($form['RandomHighlightOption']['isRandomHighlight'])
 			     && $form['RandomHighlightOption']['isRandomHighlight'];
 
-	if ($isRandomHighlight != $thumbnail->hasOnLoadHandler('RandomHighlight')) {
+	if (isset($thumbnail) &&
+	        $isRandomHighlight != $thumbnail->hasOnLoadHandler('RandomHighlight')) {
 	    list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($thumbnail->getId());
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
