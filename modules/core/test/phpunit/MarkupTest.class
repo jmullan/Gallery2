@@ -168,5 +168,10 @@ class MarkupTest extends GalleryTestCase {
 	$results = $this->_bbcode->parse('[url=https://example.com/secure.html]Elemente hinzufügen[/url] Seitenverhältnis');
 	$this->assertEquals('<a href="https://example.com/secure.html">Elemente hinzufügen</a> Seitenverhältnis', $results);
     }
+
+    function testNonBbcodeMarkers() {
+	$results = $this->_bbcode->parse('[url=http://foo] [go] [/url]');
+	$this->assertEquals('<a href="http://foo"> [go] </a>', $results);
+    }
 }
 ?>

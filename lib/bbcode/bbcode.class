@@ -202,7 +202,12 @@ class BBCode {
 						case 'callback_replace':
 						case 'usecontent?':
 							// pass over to processing function
-						        $nta = call_user_func($this->codes[$tag_contents]['proc_func'], $tag_contents, null, null, $this->codes[$tag_name]['proc_func_param'], 'close');
+						        if (isset($this->codes[$tag_name]['proc_func_param'])) {
+							    $proc_func_param = $this->codes[$tag_name]['proc_func_param'];
+						        } else {
+							    $proc_func_param = null;
+						        }
+					                $nta = call_user_func($this->codes[$tag_contents]['proc_func'], $tag_contents, null, null, $proc_func_param, 'close');
 							// error?
 							if ($nta === false) {
 								$saved_newtext .= '[';
