@@ -335,7 +335,8 @@ class GalleryChildEntityHelper_simple {
 	}
 
 	if (!empty($extraJoin)) {
-	    $from = array_merge($classes, $extraJoin);
+	    /* $extraJoin isn't an array, so array() it */
+	    $from = array_merge($classes, array($extraJoin));
 	} else {
 	    $from = $classes;
 	}
