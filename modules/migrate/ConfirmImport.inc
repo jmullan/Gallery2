@@ -859,7 +859,7 @@ class ConfirmImportController extends GalleryController {
 									'id' => $newItem->getId());
 				if ($albumNeedsThumbnail || $importAlbumItem->highlight == 1) {
 				    $toolkit = NULL;
-
+				    
 				    list ($ret, $toolkit, $outputMimeType) =
 					    GalleryCoreApi::getToolkitByOperation($newItem->getMimeType(), 'thumbnail');
 				    if ($ret->isError()) {
@@ -867,15 +867,17 @@ class ConfirmImportController extends GalleryController {
 				    }
 				    
 				    if (isset($toolkit)) {
-					list ($ret, $success) =
-					    GalleryCoreApi::setThumbnailFromItem($item->getId(), $newItem->getId());
-					if ($ret->isError()) {
+					$item->save();
+					$newItem->save();
+					#list ($ret, $success) = GalleryCoreApi::setThumbnailFromItem($item->getId(), $newItem->getId());
+					if (FALSE && $ret->isError()) {
+					    print '<h1>' . $item->getId() . ':' . $newItem->getId();
+					    print '<h2>' . $album['name'] . '</h2>';
 					    return array($ret->wrap(__FILE__, __LINE__), null);
 					}
+					$albumNeedsThumbnail = FALSE;
 				    }
-				    $albumNeedsThumbnail = FALSE;
 				}
-				
 			    }
 			}
 		    }		    		    
@@ -935,6 +937,10 @@ class ConfirmImportController extends GalleryController {
      * @return string
      */
     function convertHtmlToBbcode($item) {
+#	list ($ret,$item) = Gallery1DataParser::convertString($item,'ISO-8859-1','UTF-8');
+#	if ($ret->isError()) {
+#	    return array($ret->wrap(__FILE__, __LINE__), null);
+#	}
 	$item = preg_replace('/<br\s*[\/]?>/i', "\n", $item);    
 	$item = preg_replace('/<strong>/i', '[b]', $item);
 	$item = preg_replace('/<\/strong>/i', '[/b]', $item);
