@@ -43,13 +43,12 @@ class SliderLayout extends GalleryLayout {
 
 	$this->setId('slider');
 	$this->setName('Slider');
-	$this->setDescription($gallery->i18n('Image viewer/slideshow; subalbums/other items not shown'));
-	$this->setVersion('0.9.1');
+	$this->setDescription(
+	    $gallery->i18n('Image viewer/slideshow; subalbums/other items not shown'));
+	$this->setVersion('0.10.0');
 	$this->setL10Domain('layouts_slider');
 	$this->setRequiredLayoutApi(array(0, 8));
 	$this->setRequiredCoreApi(array(5, 0));
-
-	return GalleryStatus::success();
     }
 
     function loadTemplate(&$template, $item) {
@@ -92,7 +91,7 @@ class SliderLayout extends GalleryLayout {
 	}
 	$layout =& $template->getVariableByReference('layout');
 
-	list ($ret, $imageWidths, $imageHeights, $maxTW, $maxTH) =
+	list ($ret, $imageWidths, $imageHeights) =
 	    $this->_buildItemList($childIds, $layout['children']);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -100,10 +99,8 @@ class SliderLayout extends GalleryLayout {
 
 	$layout['show']['parents'] = true;
 	$layout['show']['systemLinks'] = true;
-	$layout['imageWidths'] = implode(',',$imageWidths);
-	$layout['imageHeights'] = implode(',',$imageHeights);
-	$layout['maxThumbWidth'] = $maxTW;
-	$layout['maxThumbHeight'] = $maxTH;
+	$layout['imageWidths'] = implode(',', $imageWidths);
+	$layout['imageHeights'] = implode(',', $imageHeights);
 	$layout['imageCount'] = count($imageWidths);
 	$layout['show']['sidebarActions'] = false;
 
@@ -111,6 +108,7 @@ class SliderLayout extends GalleryLayout {
 	$cookiePath = preg_replace('|^[^/]*//[^/]*/|', '/', $urlGenerator->getCurrentUrlDir());
 	$layout['cookiePath'] = $cookiePath;
 	$layout['layoutUrl'] = $urlGenerator->generateUrl(array('href' => 'layouts/slider'), false);
+	$layout['hybridUrl'] = $urlGenerator->generateUrl(array('href' => 'layouts/hybrid'), false);
 
 	/* Init view with specific image */
 	if (isset($viewItemId)) {
@@ -118,12 +116,6 @@ class SliderLayout extends GalleryLayout {
 		if ($tmp['id'] == $viewItemId) {
 		    if (isset($tmp['imageIndex'])) {
 			$layout['viewIndex'] = $tmp['imageIndex'];
-			/* Set cookie to popup image just once */
-			$cook = 'G2_slider_' . $item->getId();
-			setcookie($cook, '-2' .
-			    (GalleryUtilities::getCookieVar($cook) ? 
-				    strstr(GalleryUtilities::getCookieVar($cook), ';') : ';'),
-			    0, $cookiePath);
 		    }
 		    break;
 		}
@@ -131,36 +123,37 @@ class SliderLayout extends GalleryLayout {
 	}
 
 	$template->head('layouts/slider/templates/header.tpl');
+	$template->style('templates/layout.css');
+	$template->style('layouts/slider/templates/slider.css');
 	return array(GalleryStatus::success(),
 		     array('body' => 'layouts/slider/templates/slider.tpl'));
     }
 
     function _buildItemList($childIds, &$children) {
 	$imageWidths = $imageHeights = $childItems = array();
-	$maxTW = $maxTH = 0;
 	if (!empty($childIds)) {
 	    $ret = GalleryCoreApi::studyPermissions($childIds);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null, null, null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    list ($ret, $childItems) = GalleryCoreApi::loadEntitiesById($childIds);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null, null, null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    list ($ret, $preferredFullImages) =
 		GalleryCoreApi::fetchPreferredsByItemIds($childIds);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null, null, null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    list ($ret, $resizedImages) =
 		GalleryCoreApi::fetchResizesByItemIds($childIds);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null, null, null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    list ($ret, $thumbnails) =
 		GalleryCoreApi::fetchThumbnailsByItemIds($childIds);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null, null, null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	}
 	$i = 0;
@@ -171,30 +164,24 @@ class SliderLayout extends GalleryLayout {
 		    list ($ret, $thumbnails[$childId]) =
 			GalleryCoreApi::rebuildDerivativeCache($thumbnails[$childId]->getId());
 		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null, null, null, null);
+			return array($ret->wrap(__FILE__, __LINE__), null, null);
 		    }
 		}
 		$children[$i]['thumbnail'] = $thumbnails[$childId]->getMemberData();
-		if ($thumbnails[$childId]->getWidth() > $maxTW) {
-		    $maxTW = $thumbnails[$childId]->getWidth();
-		}
-		if ($thumbnails[$childId]->getHeight() > $maxTH) {
-		    $maxTH = $thumbnails[$childId]->getHeight();
-		}
 	    }
 
-	    if (!(GalleryUtilities::isA($child, 'GalleryDataItem') && $child->canBeViewedInline())) {
+	    if (!GalleryUtilities::isA($child, 'GalleryDataItem') || !$child->canBeViewedInline()) {
 		continue;
 	    }
 
 	    list ($ret, $permissions) = GalleryCoreApi::getPermissions($childId);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null, null, null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 
 	    $images = array();
 	    if (isset($permissions['core.viewSource'])) {
-		// Full size; check for preferred copy
+		/* Full size; check for preferred copy */
 		if (isset($preferredFullImages[$childId])) {
 		    $images[] = $preferredFullImages[$childId];
 		} else {
@@ -213,12 +200,12 @@ class SliderLayout extends GalleryLayout {
 	    if (!empty($images)) {
 		$image = $images[0];
 
-		// Rebuild derivative if needed so width/height known..
+		/* Rebuild derivative if needed so width/height known */
 		if (GalleryUtilities::isA($image, 'GalleryDerivativeImage')
 			&& !($image->getWidth() && $image->getHeight())) {
 		    list ($ret, $image) = GalleryCoreApi::rebuildDerivativeCache($image->getId());
 		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null, null, null, null);
+			return array($ret->wrap(__FILE__, __LINE__), null, null);
 		    }
 		}
 		$image = $image->getMemberData();
@@ -226,18 +213,18 @@ class SliderLayout extends GalleryLayout {
 		$children[$i]['imageIndex'] = count($imageWidths);
 		if (GalleryUtilities::isExactlyA($child, 'GalleryPhotoItem') &&
 			    $image['width'] > 0 && $image['height'] > 0) {
-		    // Display in <img>
+		    /* Display in <img> */
 		    $imageWidths[] = $image['width'];
 		    $imageHeights[] = $image['height'];
 		} else {
-		    // Item must render itself
+		    /* Item must render itself */
 		    $children[$i]['renderItem'] = 1;
 		    $imageWidths[] = $imageHeights[] = -1;
 		}
 	    }
 	    $i++;
 	}
-	return array(GalleryStatus::success(), $imageWidths, $imageHeights, $maxTW, $maxTH);
+	return array(GalleryStatus::success(), $imageWidths, $imageHeights);
     }
 }
 ?>
