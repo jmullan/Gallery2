@@ -663,7 +663,7 @@ class GalleryUtilities {
     function isA($instance, $className) {
 	global $gallery;
 
-	if ($gallery->getConfig('function.exists.is_a')) {
+	if (function_exists('is_a')) {
 	    return is_a($instance, $className);
 	} else {
 	    return (is_subclass_of($instance, $className) ||

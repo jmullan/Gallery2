@@ -195,7 +195,7 @@ class GalleryTranslator {
 	list ($supportedLanguages, $defaultCountry) = GalleryTranslator::getLanguageData();
 
 	/* If we're using gettext, try to bind to a language */
-	if ($gallery->getConfig('function.exists.dgettext')) {
+	if (function_exists('dgettext')) {
 	    
 	    /* Set the appropriate charset in our HTTP header */
 	    $this->_activeCharset = $supportedLanguages[$language][$country]['charset'];
@@ -308,7 +308,7 @@ class GalleryTranslator {
 			 null);
 	}
 
-	if ($gallery->getConfig('function.exists.dgettext')) {
+	if (function_exists('dgettext')) {
 	    if (isset($domain) && !isset($this->_boundDomains[$domain])) {
 		list ($componentType, $componentName) = split('_', $domain);
 		$basePath = sprintf('%s/%s/%s/locale',
@@ -320,7 +320,7 @@ class GalleryTranslator {
 		}
 		bindtextdomain($domain, $basePath);
 		textdomain($domain);
-		if ($gallery->getConfig('function.exists.bind_textdomain_codeset')) {
+		if (function_exists('bind_textdomain_codeset')) {
 		    bind_textdomain_codeset($domain, $this->_activeCharset);
 		} 
 		$this->_boundDomains[$domain] = $basePath;
@@ -333,7 +333,7 @@ class GalleryTranslator {
 	     * gracefully degrade to using dgettext().
 	     */
 	    if (isset($data['one'])) {
-		if ($gallery->getConfig('function.exists.dngettext')) {
+		if (function_exists('dngettext')) {
 		    /*
 		     * XXX: sometimes this call takes forever.  I have no idea
 		     * why.  Do you?

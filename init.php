@@ -84,13 +84,6 @@ function GalleryInitFirstPass() {
     $gallery->setConfig('data.smarty.base', $dataBase . 'smarty' . $slash);
     $gallery->setConfig('data.smarty.templates_c', $dataBase . 'smarty' . $slash . 'templates_c' . $slash);
 
-    /* Check for the existance of various functions that we care about */
-    foreach (array('dgettext', 'dngettext', 'is_a', 'bind_textdomain_codeset')
-	     as $functionName) {
-	$key = 'function.exists.' . $functionName;
-	$gallery->setConfig($key, function_exists($functionName) ? 1 : 0);
-    }
-
     return GalleryStatus::success();
 }
 

@@ -65,7 +65,7 @@ class TranslatorTest extends GalleryTestCase {
 	$HTTP_SERVER_VARS['HTTP_ACCEPT_LANGUAGE'] = 'de';
 	$translator = new GalleryTranslator();
 	$translator->init();
-	if ($gallery->getConfig('function.exists.dgettext')) {
+	if (function_exists('dgettext')) {
 	    $this->assertEquals('de_DE', getenv('LANG'), 'null init, valid language');
 	} else {
 	    // If we don't have gettext, who knows what the LANG will be set to!
@@ -76,7 +76,7 @@ class TranslatorTest extends GalleryTestCase {
 	$HTTP_SERVER_VARS['HTTP_ACCEPT_LANGUAGE'] = 'pt_BR';
 	$translator = new GalleryTranslator();
 	$translator->init();
-	if ($gallery->getConfig('function.exists.dgettext')) {
+	if (function_exists('dgettext')) {
 	    $this->assertEquals('pt_BR', getenv('LANG'), 'null init, valid language/country');
 	} else {
 	    // If we don't have gettext, who knows what the LANG will be set to!
@@ -86,7 +86,7 @@ class TranslatorTest extends GalleryTestCase {
 	/* Init with a real language code */
 	$translator = new GalleryTranslator();
 	$translator->init('no_NO');
-	if ($gallery->getConfig('function.exists.dgettext')) {
+	if (function_exists('dgettext')) {
 	    $this->assertEquals('no_NO', getenv('LANG'), 'valid init');
 	} else {
 	    // If we don't have gettext, who knows what the LANG will be set to!
@@ -108,7 +108,7 @@ class TranslatorTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	if ($gallery->getConfig('function.exists.dgettext')) {
+	if (function_exists('dgettext')) {
 	    $this->assertEquals('Descripci&oacute;n', $results);
 	} else {
 	    $this->assertEquals('Description', $results);
@@ -124,7 +124,7 @@ class TranslatorTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	if ($gallery->getConfig('function.exists.dngettext')) {
+	if (function_exists('dngettext')) {
 	    $this->assertEquals('1 usuario coincide con su filtro', $results);
 	} else {
 	    $this->assertEquals('1 user matches your filter', $results);
@@ -140,7 +140,7 @@ class TranslatorTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	if ($gallery->getConfig('function.exists.dngettext')) {
+	if (function_exists('dngettext')) {
 	    $this->assertEquals('2 usuarios coinciden con su filtro', $results);
 	} else {
 	    $this->assertEquals('2 users match your filter', $results);
