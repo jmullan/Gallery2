@@ -729,34 +729,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	    return array(GalleryStatus::error(ERROR_STORAGE_CONNECTION, __FILE__, __LINE__), null);
 	}
 
-	/* Change '[Class::member]' to 'table.column' or 'alias.column' */
-	while (ereg('\[([[:alnum:]=]*)::([[:alnum:]]*)\]', $statement, $regs)) {
-	    $class = $regs[1];
-	    $member = $regs[2];
-	    list ($table, $alias) = $this->_translateTableName($class);
-
-	    $column = $this->_translateColumnName($member);
-	    if ($alias == null) {
-		$statement = str_replace("[${class}::${member}]", "$table.$column", $statement);
-	    } else {
-		$statement = str_replace("[${class}::${member}]", "$alias.$column", $statement);
-	    }
-	}
-
-	/* Change '[Class]' to 'table' */
-	while (ereg('\[([[:alnum:]=]*)\]', $statement, $regs)) {
-	    $class = $regs[1];
-	    list ($table, $alias) = $this->_translateTableName($class);
-	    if ($alias == null) {
-		$statement = str_replace("[${class}]", "$table", $statement);
-	    } else {
-		list ($ret, $as) = $this->getFunctionSql('AS', array());
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-		$statement = str_replace("[${class}]", "$table $as $alias", $statement);
-	    }
-	}
+	$statement = $this->_translateQuery($statement);
 
 	$this->_traceStart();
 	$recordSet = $this->_db->Execute($statement, $data);
@@ -1414,7 +1387,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
      */
     function _translateQuery($query) {
 	/* Change '[Class::member]' to 'table.column' or 'alias.column' */
-	while (ereg('\[([[:alnum:]=]*)::([[:alnum:]]*)\]', $query, $regs)) {
+	while (ereg('\[([[:alnum:]_=]*)::([[:alnum:]_]*)\]', $query, $regs)) {
 	    $class = $regs[1];
 	    $member = $regs[2];
 	    list ($table, $alias) = $this->_translateTableName($class);
@@ -1428,7 +1401,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	}
 
 	/* Change '[Class]' to 'table' */
-	while (ereg('\[([[:alnum:]=]*)\]', $query, $regs)) {
+	while (ereg('\[([[:alnum:]_=]*)\]', $query, $regs)) {
 	    $class = $regs[1];
 	    list ($table, $alias) = $this->_translateTableName($class);
 	    if ($alias == null) {
