@@ -60,7 +60,7 @@
     <h3> {g->text text="Actions"} </h3>
     <ul>
     {foreach from=$layout.itemLinks item=link}
-      <li id="{adminlinkid arg1=$link.params}">
+      <li id="{g->adminlinkid arg1=$link.params}">
 	<a href="{$link.url}">{$link.text}</a>
       </li>
     {/foreach}
