@@ -126,8 +126,8 @@ class ExifHelperTest extends GalleryTestCase {
     function testGetExifKeys() {
 	/* There are a bajillion keys.  Do a quick sanity check */
 	$exifKeys = ExifHelper::getExifKeys();
-	$this->assertEquals(226, sizeof($exifKeys));
-	$this->assert(isset($exifKeys['IFD0.ImageType']));
+	$this->assertEquals(147, sizeof($exifKeys));
+	$this->assert(isset($exifKeys['ImageType']));
     }
 }
 

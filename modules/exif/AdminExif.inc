@@ -129,7 +129,7 @@ class AdminExifController extends GalleryController {
 		$redirect['view'] = 'core:SiteAdmin';
 		$redirect['subView'] = 'exif:AdminExif';
 	    } else {
-		$error[] = 'form[error][available][missing]';
+		$error[] = 'form[error][summary][missing]';
 	    }
 
 	} else if (isset($form['action']['resetSummary'])) {
@@ -166,7 +166,7 @@ class AdminExifController extends GalleryController {
 		$redirect['view'] = 'core:SiteAdmin';
 		$redirect['subView'] = 'exif:AdminExif';
 	    } else {
-		$error[] = 'form[error][available][missing]';
+		$error[] = 'form[error][detailed][missing]';
 	    }
 	} else if (isset($form['action']['resetDetailed'])) {
 	    $ret = ExifHelper::setDefaultProperties(EXIF_DETAILED);
@@ -176,6 +176,146 @@ class AdminExifController extends GalleryController {
 	    $status['restored']['detailed'] = 1;
 	    $redirect['view'] = 'core:SiteAdmin';
 	    $redirect['subView'] = 'exif:AdminExif';
+	} else if (isset($form['action']['moveUpSummary'])) {
+	    list ($ret, $properties) = ExifPropertiesMap::getProperties(EXIF_SUMMARY);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    if (isset($form['summary'])) {
+
+		/* Iterate through each property that we want to shift */
+		$count = 0;
+		foreach ($form['summary'] as $propertyToShift) {
+		    /* Find its spot in the array and swap it with the one ahead of it */
+		    for ($i = 0; $i < sizeof($properties); $i++) {
+			if ($properties[$i] == $propertyToShift) {
+			    if ($i > 0) {
+				$save = $properties[$i - 1];
+				$properties[$i - 1] = $properties[$i];
+				$properties[$i] = $save;
+				$count++;
+			    }
+			}
+		    }
+		}
+
+		$ret = ExifPropertiesMap::setProperties(EXIF_SUMMARY, $properties);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		$status['movedUp']['summary'] = $count;
+		$redirect['view'] = 'core:SiteAdmin';
+		$redirect['subView'] = 'exif:AdminExif';
+	    } else {
+		$error[] = 'form[error][summary][missing]';
+	    }
+	} else if (isset($form['action']['moveDownSummary'])) {
+	    list ($ret, $properties) = ExifPropertiesMap::getProperties(EXIF_SUMMARY);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    if (isset($form['summary'])) {
+
+		/* Iterate through each property that we want to shift */
+		$count = 0;
+		foreach ($form['summary'] as $propertyToShift) {
+		    /* Find its spot in the array and swap it with the one ahead of it */
+		    for ($i = sizeof($properties)-1; $i >= 0; $i--) {
+			if ($properties[$i] == $propertyToShift) {
+			    if ($i < sizeof($properties) - 1) {
+				$save = $properties[$i + 1];
+				$properties[$i + 1] = $properties[$i];
+				$properties[$i] = $save;
+				$count++;
+			    }
+			}
+		    }
+		}
+
+		$ret = ExifPropertiesMap::setProperties(EXIF_SUMMARY, $properties);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		$status['movedDown']['summary'] = $count;
+		$redirect['view'] = 'core:SiteAdmin';
+		$redirect['subView'] = 'exif:AdminExif';
+	    } else {
+		$error[] = 'form[error][summary][missing]';
+	    }
+	} else if (isset($form['action']['moveUpDetailed'])) {
+	    list ($ret, $properties) = ExifPropertiesMap::getProperties(EXIF_DETAILED);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    if (isset($form['detailed'])) {
+
+		/* Iterate through each property that we want to shift */
+		$count = 0;
+		foreach ($form['detailed'] as $propertyToShift) {
+		    /* Find its spot in the array and swap it with the one ahead of it */
+		    for ($i = 0; $i < sizeof($properties); $i++) {
+			if ($properties[$i] == $propertyToShift) {
+			    if ($i > 0) {
+				$save = $properties[$i - 1];
+				$properties[$i - 1] = $properties[$i];
+				$properties[$i] = $save;
+				$count++;
+			    }
+			}
+		    }
+		}
+
+		$ret = ExifPropertiesMap::setProperties(EXIF_DETAILED, $properties);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		$status['movedUp']['detailed'] = $count;
+		$redirect['view'] = 'core:SiteAdmin';
+		$redirect['subView'] = 'exif:AdminExif';
+	    } else {
+		$error[] = 'form[error][detailed][missing]';
+	    }
+	} else if (isset($form['action']['moveDownDetailed'])) {
+	    list ($ret, $properties) = ExifPropertiesMap::getProperties(EXIF_DETAILED);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    if (isset($form['detailed'])) {
+
+		/* Iterate through each property that we want to shift */
+		$count = 0;
+		foreach ($form['detailed'] as $propertyToShift) {
+		    /* Find its spot in the array and swap it with the one ahead of it */
+		    for ($i = sizeof($properties)-1; $i >= 0; $i--) {
+			if ($properties[$i] == $propertyToShift) {
+			    if ($i < sizeof($properties) - 1) {
+				$save = $properties[$i + 1];
+				$properties[$i + 1] = $properties[$i];
+				$properties[$i] = $save;
+				$count++;
+			    }
+			}
+		    }
+		}
+
+		$ret = ExifPropertiesMap::setProperties(EXIF_DETAILED, $properties);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		$status['movedDown']['detailed'] = $count;
+		$redirect['view'] = 'core:SiteAdmin';
+		$redirect['subView'] = 'exif:AdminExif';
+	    } else {
+		$error[] = 'form[error][detailed][missing]';
+	    }
 	}
 
 	if (!empty($redirect)) {
@@ -232,13 +372,7 @@ class AdminExifView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	foreach ($tmp as $property) {
-	    $summaryList[$module->translate($exifKeys[$property][2])][$property] =
-		$module->translate($exifKeys[$property][1]);
-	    $visibleKeys[$property] = isset($visibleKeys[$property]) ? $visibleKeys[$property]+1 : 1;
-	}
-
-	foreach (array_keys($summaryList) as $section) {
-	    asort($summaryList[$section]);
+	    $summaryList[$property] = $module->translate($exifKeys[$property][0]);
 	}
 	
 	/* Prepare the detailed list */
@@ -248,28 +382,20 @@ class AdminExifView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	foreach ($tmp as $property) {
-	    $detailedList[$module->translate($exifKeys[$property][2])][$property] =
-		$module->translate($exifKeys[$property][1]);
-	    $visibleKeys[$property] = isset($visibleKeys[$property]) ? $visibleKeys[$property]+1 : 1;
+	    $detailedList[$property] = $module->translate($exifKeys[$property][0]);
 	}
-
-	foreach (array_keys($detailedList) as $section) {
-	    asort($detailedList[$section]);
-	}
-
+	
 	/* Anything not summary and detailed is available */
 	$availableList = array();
 	foreach ($exifKeys as $key => $data) {
-	    if (isset($visibleKeys[$key]) && $visibleKeys[$key] == 2) {
+	    if (isset($summaryList[$key]) && isset($detailedList)) {
 		continue;
 	    }
 
-	    $availableList[$module->translate($data[2])][$key] = $module->translate($data[1]);
+	    $availableList[$key] = $module->translate($data[0]);
 	}
 
-	foreach (array_keys($availableList) as $section) {
-	    asort($availableList[$section]);
-	}
+	asort($availableList);
 
 	$AdminExif = array();
 	$AdminExif['availableList'] = $availableList;
