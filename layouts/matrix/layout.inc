@@ -287,9 +287,13 @@ class MatrixLayout extends GalleryLayout {
 	}
 
 	/* Get the view counts */
-	list ($ret, $viewCounts) = GalleryItemAttributesMap::fetchViewCounts($childIds);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	if (empty($childIds)) {
+	    $viewCounts = array();
+	} else {
+	    list ($ret, $viewCounts) = GalleryItemAttributesMap::fetchViewCounts($childIds);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
 	}
 	
 	/* Set up the navigator */
