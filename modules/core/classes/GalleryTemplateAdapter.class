@@ -123,28 +123,36 @@ class GalleryTemplateAdapter {
      * @see GalleryTheme::form()
      */
     function form($params, $content) {
-	return $this->_theme->form($params, $content);
+	if (isset($content)) {
+	    return $this->_theme->form($params, $content);
+	}
     }
 
     /**
      * @see GalleryTheme::input()
      */
     function input($params, $content) {
-	return $this->_theme->input($params, $content);
+	if (isset($content)) {
+	    return $this->_theme->input($params, $content);
+	}
     }
 
     /**
      * @see GalleryTheme::select()
      */
     function select($params, $content) {
-	return $this->_theme->select($params, $content);
+	if (isset($content)) {
+	    return $this->_theme->select($params, $content);
+	}
     }
     
     /**
      * @see GalleryTheme::textarea()
      */
     function textarea($params, $content) {
-	return $this->_theme->textarea($params, $content);
+	if (isset($content)) {
+	    return $this->_theme->textarea($params, $content);
+	}
     }
 
     /**
@@ -158,105 +166,135 @@ class GalleryTemplateAdapter {
      * @see GalleryTheme::smallestFontSize()
      */
     function smallestFontSize($params, $content) {
-	return $this->_theme->smallestFontSize($params, $content);
+	if (isset($content)) {
+	    return $this->_theme->smallestFontSize($params, $content);
+	}
     }
 
     /**
      * @see GalleryTheme::smallerFontSize()
      */
     function smallerFontSize($params, $content) {
-	return $this->_theme->smallerFontSize($params, $content);
+	if (isset($content)) {
+	    return $this->_theme->smallerFontSize($params, $content);
+	}
     }
 
     /**
      * @see GalleryTheme::smallFontSize()
      */
     function smallFontSize($params, $content) {
-	return $this->_theme->smallFontSize($params, $content);
+	if (isset($content)) {
+	    return $this->_theme->smallFontSize($params, $content);
+	}
     }
 
     /**
      * @see GalleryTheme::bigFontSize()
      */
     function bigFontSize($params, $content) {
-	return $this->_theme->bigFontSize($params, $content);
+	if (isset($content)) {
+	    return $this->_theme->bigFontSize($params, $content);
+	}
     }
 
     /**
      * @see GalleryTheme::biggerFontSize()
      */
     function biggerFontSize($params, $content) {
-	return $this->_theme->biggerFontSize($params, $content);
+	if (isset($content)) {
+	    return $this->_theme->biggerFontSize($params, $content);
+	}
     }
 
     /**
      * @see GalleryTheme::biggestFontSize()
      */
     function biggestFontSize($params, $content) {
-	return $this->_theme->biggestFontSize($params, $content);
+	if (isset($content)) {
+	    return $this->_theme->biggestFontSize($params, $content);
+	}
     }
 
     /**
      * @see GalleryTheme::successFontColor()
      */
     function successFontColor($params, $content) {
-	return $this->_theme->successFontColor($params, $content);
+	if (isset($content)) {
+	    return $this->_theme->successFontColor($params, $content);
+	}
     }
 
     /**
      * @see GalleryTheme::warningFontColor()
      */
     function warningFontColor($params, $content) {
-	return $this->_theme->warningFontColor($params, $content);
+	if (isset($content)) {
+	    return $this->_theme->warningFontColor($params, $content);
+	}
     }
 
     /**
      * @see GalleryTheme::errorFontColor()
      */
     function errorFontColor($params, $content) {
-	return $this->_theme->errorFontColor($params, $content);
+	if (isset($content)) {
+	    return $this->_theme->errorFontColor($params, $content);
+	}
     }
 
     /**
      * @see GalleryTheme::highlight1()
      */
     function highlight1($params, $content) {
-	return $this->_theme->highlight1($params, $content);
+	if (isset($content)) {
+	    return $this->_theme->highlight1($params, $content);
+	}
     }
     
     /**
      * @see GalleryTheme::highlight2()
      */
     function highlight2($params, $content) {
-	return $this->_theme->highlight2($params, $content);
+	if (isset($content)) {
+	    return $this->_theme->highlight2($params, $content);
+	}
     }
     
     /**
      * @see GalleryTheme::thinFrame()
      */
     function thinFrame($params, $content) {
-	return $this->_theme->thinFrame($params, $content);
+	if (isset($content)) {
+	    return $this->_theme->thinFrame($params, $content);
+	}
     }
 
     /**
      * @see GalleryTheme::lightFrame()
      */
     function lightFrame($params, $content) {
-	return $this->_theme->lightFrame($params, $content);
+	if (isset($content)) {
+	    return $this->_theme->lightFrame($params, $content);
+	}
     }
 
     /**
      * @see GalleryTheme::heavyFrame()
      */
     function heavyFrame($params, $content) {
-	return $this->_theme->heavyFrame($params, $content);
+	if (isset($content)) {
+	    return $this->_theme->heavyFrame($params, $content);
+	}
     }
 
     /**
      * @see GalleryTheme::threeDFrame()
      */
     function threeDFrame($params, $content) {
-	return $this->_theme->threeDFrame($params, $content);
+	if (isset($content)) {
+	    return $this->_theme->threeDFrame($params, $content);
+	}
     }
 
     /* END DELEGATION METHODS */
