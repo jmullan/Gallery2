@@ -163,8 +163,8 @@ class GalleryDataItem extends GalleryDataItem_core {
     
 	if ($a != $b) {
       
+	    $this->setModifiedFlag('mimeType', $value);
 	    $this->_mimeType = $value;
-	    $this->setModifiedFlag('mimeType', MEMBER_MODIFIED);
 	}
     }
   
@@ -213,8 +213,8 @@ class GalleryDataItem extends GalleryDataItem_core {
     
 	if ($a !== $b) {
       
+	    $this->setModifiedFlag('size', $value);
 	    $this->_size = $value;
-	    $this->setModifiedFlag('size', MEMBER_MODIFIED);
 	}
     }
   

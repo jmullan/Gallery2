@@ -151,8 +151,8 @@ class GalleryGroup extends GalleryGroup_core {
     
 	if ($a !== $b) {
       
+	    $this->setModifiedFlag('groupType', $value);
 	    $this->_groupType = $value;
-	    $this->setModifiedFlag('groupType', MEMBER_MODIFIED);
 	}
     }
   
@@ -191,8 +191,8 @@ class GalleryGroup extends GalleryGroup_core {
     
 	if ($a != $b) {
       
+	    $this->setModifiedFlag('groupName', $value);
 	    $this->_groupName = $value;
-	    $this->setModifiedFlag('groupName', MEMBER_MODIFIED);
 	}
     }
   

@@ -295,8 +295,8 @@ class <xsl:value-of select="class-name"/> extends <xsl:value-of select="class-na
 	if ($a != $b) {
       </xsl:otherwise>
     </xsl:choose>
+	    $this->setModifiedFlag('<xsl:value-of select="member-name"/>', $value);
 	    $this->_<xsl:value-of select="member-name"/> = $value;
-	    $this->setModifiedFlag('<xsl:value-of select="member-name"/>', MEMBER_MODIFIED);
 	}
     }
   </xsl:template>

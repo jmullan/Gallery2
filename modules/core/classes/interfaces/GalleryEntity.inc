@@ -206,8 +206,8 @@ class GalleryEntity extends GalleryEntity_core {
     
 	if ($a !== $b) {
       
+	    $this->setModifiedFlag('id', $value);
 	    $this->_id = $value;
-	    $this->setModifiedFlag('id', MEMBER_MODIFIED);
 	}
     }
   
@@ -251,8 +251,8 @@ class GalleryEntity extends GalleryEntity_core {
     
 	if ($a !== $b) {
       
+	    $this->setModifiedFlag('creationTimestamp', $value);
 	    $this->_creationTimestamp = $value;
-	    $this->setModifiedFlag('creationTimestamp', MEMBER_MODIFIED);
 	}
     }
   
@@ -294,8 +294,8 @@ class GalleryEntity extends GalleryEntity_core {
     
 	if ($a !== $b) {
       
+	    $this->setModifiedFlag('isLinkable', $value);
 	    $this->_isLinkable = $value;
-	    $this->setModifiedFlag('isLinkable', MEMBER_MODIFIED);
 	}
     }
   
@@ -339,8 +339,8 @@ class GalleryEntity extends GalleryEntity_core {
     
 	if ($a !== $b) {
       
+	    $this->setModifiedFlag('linkId', $value);
 	    $this->_linkId = $value;
-	    $this->setModifiedFlag('linkId', MEMBER_MODIFIED);
 	}
     }
   
@@ -384,8 +384,8 @@ class GalleryEntity extends GalleryEntity_core {
     
 	if ($a !== $b) {
       
+	    $this->setModifiedFlag('modificationTimestamp', $value);
 	    $this->_modificationTimestamp = $value;
-	    $this->setModifiedFlag('modificationTimestamp', MEMBER_MODIFIED);
 	}
     }
   
@@ -429,8 +429,8 @@ class GalleryEntity extends GalleryEntity_core {
     
 	if ($a !== $b) {
       
+	    $this->setModifiedFlag('serialNumber', $value);
 	    $this->_serialNumber = $value;
-	    $this->setModifiedFlag('serialNumber', MEMBER_MODIFIED);
 	}
     }
   
@@ -469,8 +469,8 @@ class GalleryEntity extends GalleryEntity_core {
     
 	if ($a != $b) {
       
+	    $this->setModifiedFlag('entityType', $value);
 	    $this->_entityType = $value;
-	    $this->setModifiedFlag('entityType', MEMBER_MODIFIED);
 	}
     }
   

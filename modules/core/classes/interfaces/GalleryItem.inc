@@ -237,8 +237,8 @@ class GalleryItem extends GalleryItem_core {
     
 	if ($a !== $b) {
       
+	    $this->setModifiedFlag('canContainChildren', $value);
 	    $this->_canContainChildren = $value;
-	    $this->setModifiedFlag('canContainChildren', MEMBER_MODIFIED);
 	}
     }
   
@@ -277,8 +277,8 @@ class GalleryItem extends GalleryItem_core {
     
 	if ($a != $b) {
       
+	    $this->setModifiedFlag('description', $value);
 	    $this->_description = $value;
-	    $this->setModifiedFlag('description', MEMBER_MODIFIED);
 	}
     }
   
@@ -317,8 +317,8 @@ class GalleryItem extends GalleryItem_core {
     
 	if ($a != $b) {
       
+	    $this->setModifiedFlag('keywords', $value);
 	    $this->_keywords = $value;
-	    $this->setModifiedFlag('keywords', MEMBER_MODIFIED);
 	}
     }
   
@@ -357,8 +357,8 @@ class GalleryItem extends GalleryItem_core {
     
 	if ($a != $b) {
       
+	    $this->setModifiedFlag('orderBy', $value);
 	    $this->_orderBy = $value;
-	    $this->setModifiedFlag('orderBy', MEMBER_MODIFIED);
 	}
     }
   
@@ -397,8 +397,8 @@ class GalleryItem extends GalleryItem_core {
     
 	if ($a != $b) {
       
+	    $this->setModifiedFlag('orderDirection', $value);
 	    $this->_orderDirection = $value;
-	    $this->setModifiedFlag('orderDirection', MEMBER_MODIFIED);
 	}
     }
   
@@ -442,8 +442,8 @@ class GalleryItem extends GalleryItem_core {
     
 	if ($a !== $b) {
       
+	    $this->setModifiedFlag('ownerId', $value);
 	    $this->_ownerId = $value;
-	    $this->setModifiedFlag('ownerId', MEMBER_MODIFIED);
 	}
     }
   
@@ -482,8 +482,8 @@ class GalleryItem extends GalleryItem_core {
     
 	if ($a != $b) {
       
+	    $this->setModifiedFlag('summary', $value);
 	    $this->_summary = $value;
-	    $this->setModifiedFlag('summary', MEMBER_MODIFIED);
 	}
     }
   
@@ -522,8 +522,8 @@ class GalleryItem extends GalleryItem_core {
     
 	if ($a != $b) {
       
+	    $this->setModifiedFlag('theme', $value);
 	    $this->_theme = $value;
-	    $this->setModifiedFlag('theme', MEMBER_MODIFIED);
 	}
     }
   
@@ -562,8 +562,8 @@ class GalleryItem extends GalleryItem_core {
     
 	if ($a != $b) {
       
+	    $this->setModifiedFlag('title', $value);
 	    $this->_title = $value;
-	    $this->setModifiedFlag('title', MEMBER_MODIFIED);
 	}
     }
   
@@ -607,8 +607,8 @@ class GalleryItem extends GalleryItem_core {
     
 	if ($a !== $b) {
       
+	    $this->setModifiedFlag('viewedSinceTimestamp', $value);
 	    $this->_viewedSinceTimestamp = $value;
-	    $this->setModifiedFlag('viewedSinceTimestamp', MEMBER_MODIFIED);
 	}
     }
   

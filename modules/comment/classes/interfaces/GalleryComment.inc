@@ -184,8 +184,8 @@ class GalleryComment extends GalleryComment_core {
     
 	if ($a !== $b) {
       
+	    $this->setModifiedFlag('commenterId', $value);
 	    $this->_commenterId = $value;
-	    $this->setModifiedFlag('commenterId', MEMBER_MODIFIED);
 	}
     }
   
@@ -224,8 +224,8 @@ class GalleryComment extends GalleryComment_core {
     
 	if ($a != $b) {
       
+	    $this->setModifiedFlag('host', $value);
 	    $this->_host = $value;
-	    $this->setModifiedFlag('host', MEMBER_MODIFIED);
 	}
     }
   
@@ -264,8 +264,8 @@ class GalleryComment extends GalleryComment_core {
     
 	if ($a != $b) {
       
+	    $this->setModifiedFlag('subject', $value);
 	    $this->_subject = $value;
-	    $this->setModifiedFlag('subject', MEMBER_MODIFIED);
 	}
     }
   
@@ -304,8 +304,8 @@ class GalleryComment extends GalleryComment_core {
     
 	if ($a != $b) {
       
+	    $this->setModifiedFlag('comment', $value);
 	    $this->_comment = $value;
-	    $this->setModifiedFlag('comment', MEMBER_MODIFIED);
 	}
     }
   
@@ -349,8 +349,8 @@ class GalleryComment extends GalleryComment_core {
     
 	if ($a !== $b) {
       
+	    $this->setModifiedFlag('date', $value);
 	    $this->_date = $value;
-	    $this->setModifiedFlag('date', MEMBER_MODIFIED);
 	}
     }
   

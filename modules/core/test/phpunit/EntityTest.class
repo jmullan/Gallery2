@@ -115,6 +115,18 @@ class EntityTest extends GalleryTestCase {
 	$this->_entity->setModificationTimestamp($newValue);
 	$this->assert(!$this->_entity->isModified(), 'is not modified');
     }
+
+    function testSetBackToOldValue() {
+	// Ensure modified flag is cleared if we change an attribute and then
+	// change it back to its original value..
+
+	$oldValue = $this->_entity->getModificationTimestamp();
+	$this->_entity->setModificationTimestamp(10);
+	$this->assert($this->_entity->isModified(), 'is modified');
+
+	$this->_entity->setModificationTimestamp($oldValue);
+	$this->assert(!$this->_entity->isModified(), 'is not modified');
+    }
 }
 
 /**

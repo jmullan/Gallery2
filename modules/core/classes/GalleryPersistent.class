@@ -70,6 +70,7 @@ class GalleryPersistent {
 	$this->_persistentStatus = new stdClass();
 	$this->_persistentStatus->flags = 0;
 	$this->_persistentStatus->modified = array();
+	$this->_persistentStatus->originalValue = array();
     }
 
     /**
@@ -104,14 +105,19 @@ class GalleryPersistent {
      * Set the modified flag for a member
      *
      * @param string the name of the member
-     * @param boolean the modification state (default true)
+     * @param mixed the new field value
      */
-    function setModifiedFlag($name, $state=MEMBER_MODIFIED) {
-	if (empty($this->_persistentStatus->modified[$name])) {
-	    $this->_persistentStatus->modified[$name] = MEMBER_UNMODIFIED;
+    function setModifiedFlag($name, $newValue) {
+	if (!isset($this->_persistentStatus->originalValue[$name])) {
+	    $method = 'get' . $name;
+	    $this->_persistentStatus->originalValue[$name] = $this->$method();
 	}
-	
-	$this->_persistentStatus->modified[$name] |= $state;
+
+	if ($this->_persistentStatus->originalValue[$name] == $newValue) {
+	    unset($this->_persistentStatus->modified[$name]);
+	} else {
+	    $this->_persistentStatus->modified[$name] = MEMBER_MODIFIED;
+	}
     }
 
     /**
@@ -139,6 +145,7 @@ class GalleryPersistent {
      */
     function clearModifiedFlags() {
 	$this->_persistentStatus->modified = array();
+	$this->_persistentStatus->originalValue = array();
     }
     
     /**

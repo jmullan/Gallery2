@@ -512,7 +512,7 @@ class ItemTest extends GalleryTestCase {
 
 	$this->assert(!isset($thumbTable[$this->_album->getId()]));
     }
-    
+
     function testAddItemToAlbum() {
 	global $gallery;
 
@@ -831,6 +831,13 @@ class ItemTest extends GalleryTestCase {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	$ret = GalleryCoreApi::addDerivativePreference(3, $this->_album->getId(),
+						       DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
+						       'thumbnail|25');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	list ($ret, $photo) = GalleryCoreApi::newItemByMimeType('image/jpeg');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -871,6 +878,24 @@ class ItemTest extends GalleryTestCase {
 	    $this->assertEquals(1, sizeof($resizes), 'There should only be one resize');
 	    $this->assertEquals('scale|50', $resizes[0]->getDerivativeOperations(), 'The resize operation should be scale|50');
 	}
+
+	// Now verify the photo has been made the highlight of the album..
+	list ($ret, $thumbTable) =
+	    GalleryCoreApi::fetchThumbnailsByItemIds(array($this->_album->getId(), $photo->getId()));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(2, count($thumbTable), 'album has highlight, photo has thumbnail');
+	$this->assertEquals($thumbTable[$photo->getId()]->getId(),
+	    $thumbTable[$this->_album->getId()]->getDerivativeSourceId(), 'highlight id');
+
+	// Make sure setting the same highlight doesn't throw an error..
+	list ($ret, $success) =
+	    GalleryCoreApi::setThumbnailFromItem($this->_album->getId(), $photo->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert($success, 'should be able to set highlight');
     }
 }
 

@@ -179,8 +179,8 @@ class GalleryUser extends GalleryUser_core {
     
 	if ($a != $b) {
       
+	    $this->setModifiedFlag('userName', $value);
 	    $this->_userName = $value;
-	    $this->setModifiedFlag('userName', MEMBER_MODIFIED);
 	}
     }
   
@@ -219,8 +219,8 @@ class GalleryUser extends GalleryUser_core {
     
 	if ($a != $b) {
       
+	    $this->setModifiedFlag('fullName', $value);
 	    $this->_fullName = $value;
-	    $this->setModifiedFlag('fullName', MEMBER_MODIFIED);
 	}
     }
   
@@ -259,8 +259,8 @@ class GalleryUser extends GalleryUser_core {
     
 	if ($a != $b) {
       
+	    $this->setModifiedFlag('hashedPassword', $value);
 	    $this->_hashedPassword = $value;
-	    $this->setModifiedFlag('hashedPassword', MEMBER_MODIFIED);
 	}
     }
   
@@ -299,8 +299,8 @@ class GalleryUser extends GalleryUser_core {
     
 	if ($a != $b) {
       
+	    $this->setModifiedFlag('email', $value);
 	    $this->_email = $value;
-	    $this->setModifiedFlag('email', MEMBER_MODIFIED);
 	}
     }
   
@@ -339,8 +339,8 @@ class GalleryUser extends GalleryUser_core {
     
 	if ($a != $b) {
       
+	    $this->setModifiedFlag('language', $value);
 	    $this->_language = $value;
-	    $this->setModifiedFlag('language', MEMBER_MODIFIED);
 	}
     }
   

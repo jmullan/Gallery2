@@ -190,8 +190,8 @@ class ThumbnailImage extends ThumbnailImage_core {
     
 	if ($a != $b) {
       
+	    $this->setModifiedFlag('fileName', $value);
 	    $this->_fileName = $value;
-	    $this->setModifiedFlag('fileName', MEMBER_MODIFIED);
 	}
     }
   
@@ -230,8 +230,8 @@ class ThumbnailImage extends ThumbnailImage_core {
     
 	if ($a != $b) {
       
+	    $this->setModifiedFlag('mimeType', $value);
 	    $this->_mimeType = $value;
-	    $this->setModifiedFlag('mimeType', MEMBER_MODIFIED);
 	}
     }
   
@@ -275,8 +275,8 @@ class ThumbnailImage extends ThumbnailImage_core {
     
 	if ($a !== $b) {
       
+	    $this->setModifiedFlag('size', $value);
 	    $this->_size = $value;
-	    $this->setModifiedFlag('size', MEMBER_MODIFIED);
 	}
     }
   
@@ -320,8 +320,8 @@ class ThumbnailImage extends ThumbnailImage_core {
     
 	if ($a !== $b) {
       
+	    $this->setModifiedFlag('width', $value);
 	    $this->_width = $value;
-	    $this->setModifiedFlag('width', MEMBER_MODIFIED);
 	}
     }
   
@@ -365,8 +365,8 @@ class ThumbnailImage extends ThumbnailImage_core {
     
 	if ($a !== $b) {
       
+	    $this->setModifiedFlag('height', $value);
 	    $this->_height = $value;
-	    $this->setModifiedFlag('height', MEMBER_MODIFIED);
 	}
     }
   
@@ -405,8 +405,8 @@ class ThumbnailImage extends ThumbnailImage_core {
     
 	if ($a != $b) {
       
+	    $this->setModifiedFlag('itemMimeTypes', $value);
 	    $this->_itemMimeTypes = $value;
-	    $this->setModifiedFlag('itemMimeTypes', MEMBER_MODIFIED);
 	}
     }
   

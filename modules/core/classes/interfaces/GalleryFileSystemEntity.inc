@@ -135,8 +135,8 @@ class GalleryFileSystemEntity extends GalleryFileSystemEntity_core {
     
 	if ($a != $b) {
       
+	    $this->setModifiedFlag('pathComponent', $value);
 	    $this->_pathComponent = $value;
-	    $this->setModifiedFlag('pathComponent', MEMBER_MODIFIED);
 	}
     }
   

@@ -168,8 +168,8 @@ class GalleryAnimationItem extends GalleryAnimationItem_core {
     
 	if ($a !== $b) {
       
+	    $this->setModifiedFlag('width', $value);
 	    $this->_width = $value;
-	    $this->setModifiedFlag('width', MEMBER_MODIFIED);
 	}
     }
   
@@ -218,8 +218,8 @@ class GalleryAnimationItem extends GalleryAnimationItem_core {
     
 	if ($a !== $b) {
       
+	    $this->setModifiedFlag('height', $value);
 	    $this->_height = $value;
-	    $this->setModifiedFlag('height', MEMBER_MODIFIED);
 	}
     }
   

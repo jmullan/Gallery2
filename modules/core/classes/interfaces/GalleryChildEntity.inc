@@ -140,8 +140,8 @@ class GalleryChildEntity extends GalleryChildEntity_core {
     
 	if ($a !== $b) {
       
+	    $this->setModifiedFlag('parentId', $value);
 	    $this->_parentId = $value;
-	    $this->setModifiedFlag('parentId', MEMBER_MODIFIED);
 	}
     }
   

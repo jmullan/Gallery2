@@ -185,8 +185,8 @@ class GalleryMovieItem extends GalleryMovieItem_core {
     
 	if ($a !== $b) {
       
+	    $this->setModifiedFlag('width', $value);
 	    $this->_width = $value;
-	    $this->setModifiedFlag('width', MEMBER_MODIFIED);
 	}
     }
   
@@ -235,8 +235,8 @@ class GalleryMovieItem extends GalleryMovieItem_core {
     
 	if ($a !== $b) {
       
+	    $this->setModifiedFlag('height', $value);
 	    $this->_height = $value;
-	    $this->setModifiedFlag('height', MEMBER_MODIFIED);
 	}
     }
   
@@ -285,8 +285,8 @@ class GalleryMovieItem extends GalleryMovieItem_core {
     
 	if ($a !== $b) {
       
+	    $this->setModifiedFlag('duration', $value);
 	    $this->_duration = $value;
-	    $this->setModifiedFlag('duration', MEMBER_MODIFIED);
 	}
     }
   

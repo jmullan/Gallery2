@@ -135,8 +135,8 @@ class GalleryAlbumItem extends GalleryAlbumItem_core {
     
 	if ($a != $b) {
       
+	    $this->setModifiedFlag('layout', $value);
 	    $this->_layout = $value;
-	    $this->setModifiedFlag('layout', MEMBER_MODIFIED);
 	}
     }
   

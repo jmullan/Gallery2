@@ -195,8 +195,8 @@ class GalleryDerivative extends GalleryDerivative_core {
     
 	if ($a !== $b) {
       
+	    $this->setModifiedFlag('derivativeSourceId', $value);
 	    $this->_derivativeSourceId = $value;
-	    $this->setModifiedFlag('derivativeSourceId', MEMBER_MODIFIED);
 	}
     }
   
@@ -235,8 +235,8 @@ class GalleryDerivative extends GalleryDerivative_core {
     
 	if ($a != $b) {
       
+	    $this->setModifiedFlag('derivativeOperations', $value);
 	    $this->_derivativeOperations = $value;
-	    $this->setModifiedFlag('derivativeOperations', MEMBER_MODIFIED);
 	}
     }
   
@@ -280,8 +280,8 @@ class GalleryDerivative extends GalleryDerivative_core {
     
 	if ($a !== $b) {
       
+	    $this->setModifiedFlag('derivativeOrder', $value);
 	    $this->_derivativeOrder = $value;
-	    $this->setModifiedFlag('derivativeOrder', MEMBER_MODIFIED);
 	}
     }
   
@@ -325,8 +325,8 @@ class GalleryDerivative extends GalleryDerivative_core {
     
 	if ($a !== $b) {
       
+	    $this->setModifiedFlag('derivativeSize', $value);
 	    $this->_derivativeSize = $value;
-	    $this->setModifiedFlag('derivativeSize', MEMBER_MODIFIED);
 	}
     }
   
@@ -370,8 +370,8 @@ class GalleryDerivative extends GalleryDerivative_core {
     
 	if ($a !== $b) {
       
+	    $this->setModifiedFlag('derivativeType', $value);
 	    $this->_derivativeType = $value;
-	    $this->setModifiedFlag('derivativeType', MEMBER_MODIFIED);
 	}
     }
   
@@ -410,8 +410,8 @@ class GalleryDerivative extends GalleryDerivative_core {
     
 	if ($a != $b) {
       
+	    $this->setModifiedFlag('mimeType', $value);
 	    $this->_mimeType = $value;
-	    $this->setModifiedFlag('mimeType', MEMBER_MODIFIED);
 	}
     }
   
