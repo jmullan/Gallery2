@@ -692,7 +692,7 @@ class GalleryItem extends FileSystemNucleus {
 	}
 
 	/*
-	 * My parent's delete might have changed caused a change to the
+	 * My ancestor's delete might have changed caused a change to the
 	 * canonical cache of this instance, so reload myself from the cache
 	 * just to be sure.
 	 */
@@ -755,6 +755,25 @@ class GalleryItem extends FileSystemNucleus {
 	    }
 	}
 
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Remove the container with the given id from this object
+     *
+     * @param int the id of a container that (might) be in this object
+     */
+    function removeDataContainer($containerId) {
+
+	/*
+	 * Parents of GalleryItem can't own DataContainers so the buck stops
+	 * here.
+	 */
+
+	if ($this->getThumbnailId() == $containerId) {
+	    $this->setThumbnailId(0);
+	}
+	
 	return GalleryStatus::success();
     }
 
