@@ -84,7 +84,7 @@ class Gallery1DataParserTest extends GalleryControllerTestCase {
                                   'cached_photo_count' => 2,
                                   'photos_separate' => 1,
                                   'name' => 'album01',
-                                  'owner' => '1054014347:1233740678',
+                                  'owner' => '1054014347u1233740678',
                                   'last_mod_time' => 1056015246), $albumFields);
     }
 
@@ -139,9 +139,9 @@ class Gallery1DataParserTest extends GalleryControllerTestCase {
         if ($ret->isError()) {
             return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
-        $this->assertEquals(array('1054014347:1233740678' => 'admin',
-                                  '1057837115:2072132305' => 'monkey',
-                                  '1057837154:228147420' => 'phpunit_foobar'),
+        $this->assertEquals(array('1054014347u1233740678' => 'admin',
+                                  '1057837115u2072132305' => 'monkey',
+                                  '1057837154u228147420' => 'phpunit_foobar'),
 			    $uids);
     }
     
@@ -158,7 +158,7 @@ class Gallery1DataParserTest extends GalleryControllerTestCase {
                                   'email' => 'jmullan@visi.com',
                                   'isAdmin' => '',
                                   'canCreateAlbums' => '1',
-                                  'uid' => '1057837115:2072132305'),
+                                  'uid' => '1057837115u2072132305'),
 			    $fields);
     }
 }
