@@ -317,8 +317,8 @@ class GalleryItemHelper_medium {
 		/* Special case to make sure that we don't upsample photos */
 		if (GalleryUtilities::isA($item, 'GalleryPhotoItem')) {
 		    $maxDimension = max($item->getWidth(), $item->getHeight());
-		    if (preg_match('/resize\|(\d+)/', $operations, $matches)) {
-			if ($matches[1] <= $maxDimension) {
+		    if (preg_match('/^scale\|(\d+)/', $operations, $matches)) {
+			if ($matches[1] >= $maxDimension) {
 			    continue;
 			}
 		    }

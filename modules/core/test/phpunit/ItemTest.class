@@ -806,14 +806,14 @@ class ItemTest extends GalleryTestCase {
 
 	$ret = GalleryCoreApi::addDerivativePreference(1, $this->_childItems[0]->getId(),
 						       DERIVATIVE_TYPE_IMAGE_RESIZE,
-						       'resize|50');
+						       'scale|50');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	
 	$ret = GalleryCoreApi::addDerivativePreference(2, $this->_childItems[0]->getId(),
 						       DERIVATIVE_TYPE_IMAGE_RESIZE,
-						       'resize|100');
+						       'scale|100');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -836,6 +836,11 @@ class ItemTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
+	$ret = $photo->save();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
 	$ret = GalleryCoreApi::releaseLocks($lockId);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -851,7 +856,7 @@ class ItemTest extends GalleryTestCase {
 	if (isset($resizes[$photo->getId()])) {
 	    $resizes = $resizes[$photo->getId()];
 	    $this->assertEquals(1, sizeof($resizes), 'There should only be one resize');
-	    $this->assertEquals('resize|100', $resizes[0]->getDerivativeOperations(), 'The resize operation should be resize|100');
+	    $this->assertEquals('scale|50', $resizes[0]->getDerivativeOperations(), 'The resize operation should be scale|50');
 	}
     }
 }
