@@ -221,7 +221,6 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[sourceEncoding]','ISO-8859-1');
 	GalleryUtilities::putRequestVariable('form[action][import]', 1);
 	GalleryUtilities::putRequestVariable('form[destinationAlbumID]',$this->_temporaryAlbumId);
-	GalleryUtilities::putRequestVariable('form[urlRedirect]', 1);
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('album03', 'album02'),
@@ -233,7 +232,6 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array(), $results['status']['userImportFailure']);
 	$this->assertEquals(array(), $results['status']['userImportSuccess']);
 	$this->assertEquals(array(), $results['status']['albumImportFailure']);
-	$this->assertEquals(true, $results['status']['urlRedirect']);
 	$testAlbumId = $results['status']['albumImportSuccess']['album03'];
 
 	/* Get the allegedly successfully imported album */
@@ -554,26 +552,59 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	 *     )
 	 * )
 	 */
+    }
+    
+    function testG1MigrateMap() {
+	global $gallery;
+	$platform = $gallery->getPlatform();
+	$slash = $platform->getDirectorySeparator();
+	GalleryUtilities::putRequestVariable('albumsPath', dirname(__FILE__) . $slash . '..' . $slash . 'data' . $slash . 'albums' . $slash);
+	GalleryUtilities::putRequestVariable('form[sourceAlbums][album03]', 1);
+	GalleryUtilities::putRequestVariable('form[sourceEncoding]','ISO-8859-1');
+	GalleryUtilities::putRequestVariable('form[action][import]', 1);
+	GalleryUtilities::putRequestVariable('form[destinationAlbumID]',$this->_temporaryAlbumId);
+	GalleryUtilities::putRequestVariable('form[urlRedirect]', 1);
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('album03'),
+			    array_keys($results['status']['albumImportSuccess']));
+	$this->assertEquals(array('view' => 'core:SiteAdmin',
+				  'subView' => 'migrate:ImportResults'),
+			    $results['redirect']);
+	$this->assertEquals(array(), $results['error']);
+	$this->assertEquals(true, $results['status']['urlRedirect']);
+
+	$testAlbumId = $results['status']['albumImportSuccess']['album03'];
+	list($ret, $testAlbum) = GalleryCoreApi::loadEntitiesById($testAlbumId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $ids) = GalleryCoreApi::fetchChildItemIds($testAlbum);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(3, count($ids), 'number of children');
 
 	/* Verify G1->G2 mappings, then delete the data */
 	list ($ret, $itemId) = G1MigrateHelper::fetchMapping('album03');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals($testAlbum->getId(), $itemId, 'G1->G2 mapping for testAlbum');
+	$this->assertEquals($testAlbumId, $itemId, 'G1->G2 mapping for testAlbum');
 	list ($ret, $itemId) = G1MigrateHelper::fetchMapping('album03', 'chipper');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals($chipperId, $itemId, 'G1->G2 mapping for testItem');
+	$this->assertEquals($ids[0], $itemId, 'G1->G2 mapping for testItem');
 
+	$ids[] = $testAlbumId;
 	require_once(dirname(__FILE__) . '/../../classes/G1MigrateMap.class');
-	$ret = G1MigrateMap::removeMapEntry(array('g1album' => array('album03', 'album02')));
+	$ret = G1MigrateMap::removeMapEntry(array('itemId' => $ids));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }
-    
+
     /* $album['perms']
      *
      * Album Perms
