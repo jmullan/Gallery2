@@ -234,12 +234,9 @@ class ItemEditImageController extends GalleryController {
 	    }
 	    
 	    /* Figure out where to redirect upon success */
-	    print "NOT REDIRECTING!";
-	    /*
 	    $redirectParams['view'] = 'core:ItemAdmin';
 	    $redirectParams['subView'] = 'core:ItemEditImage';
 	    $redirectParams['itemId'] = $itemId;
-	    */
 	}
 
 	/* Check to see if we need to remap any derivative source ids */
