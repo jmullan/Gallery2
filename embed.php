@@ -20,6 +20,13 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /**
+ * Access point for external application in which Gallery is embedded.
+ * Three interaction modes:
+ *  1) Single GalleryEmbed::handleRequest() call
+ *  2) Single GalleryEmbed::logout() call
+ *  3) GalleryEmbed::init() followed by other GalleryEmbed/G2 calls,
+ *     end with GalleryEmbed::done() <-- REQUIRED
+ *
  * @package GalleryMain
  * @version $Revision$ $Date$
  * @author Alan Harder <alan.harder@sun.com>
@@ -31,32 +38,57 @@ require(dirname(__FILE__) . '/main.php');
 class GalleryEmbed {
 
     /**
-     * Initialize Gallery; must be called before other GalleryEmbed methods can be used.
+     * Initialize Gallery; must be called before most GalleryEmbed methods can be used.
      *
-     * @param string URI to access G2 via CMS application (example: index.php?module=gallery2)
-     * @param string relative path from CMS (dir with embedUri) to G2 base dir
-     * @param string URI for redirect to CMS login view (example: /cms/index.php)
-     * @param string (optional) To support cookieless browsing, pass in key=value for CMS
-                      session key and session id value to be added as query parameter in urls
-     * @param string (optional) To support cookieless browsing, pass in G2 session id (when
-     *                cookies not in use, CMS must track this value between requests)
+     * @param array (
+     *   'embedUri' => URI to access G2 via CMS application (example: index.php?module=gallery2)
+     *   'relativeG2Path' => relative path from CMS (dir with embedUri) to G2 base dir
+     *   'loginRedirect' => URI for redirect to CMS login view (example: /cms/index.php)
+     *   'embedSessionString' => (optional) To support cookieless browsing, pass in key=value for
+     *                CMS session key and session id value to be added as query parameter in urls
+     *   'gallerySessionId' => (optional) To support cookieless browsing, pass in G2 session id
+     *                    (when cookies not in use, CMS must track this value between requests)
+     * )
+     * @param boolean (optional) if true, call GalleryInitSecondPass too
      * @return array object GalleryStatus a status object
      *               string G2 session id
      * @static
      */
-    function init($embedUri, $relativeG2Path, $loginRedirect,
-		  $embedSessionString=null, $g2SessionId=null) {
-	$ret = GalleryInitFirstPass(
-			  array('embedUri' => $embedUri, 'relativeG2Path' => $relativeG2Path,
-				'SID' => $g2SessionId, 'embedSessionString' => $embedSessionString));
+    function init($initParams, $initSecondPass=true) {
+	$ret = GalleryInitFirstPass($initParams);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
+	if ($initSecondPass) {
+	    $ret = GalleryInitSecondPass();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
 	GalleryCapabilities::set('login', false);
-	GalleryCapabilities::set('loginRedirect', array('href' => $loginRedirect));
+	GalleryCapabilities::set('loginRedirect', array('href' => $initParams['loginRedirect']));
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Complete the G2 transaction.
+     *
+     * @return object GalleryStatus a status object
+     * @static
+     */
+    function done() {
 	global $gallery;
 	$session =& $gallery->getSession();
-	return array(GalleryStatus::success(), $session->getId());
+	$ret = $session->save();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$storage =& $gallery->getStorage();
+	$ret = $storage->commitTransaction();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	return GalleryStatus::success();
     }
 
     /**
@@ -68,26 +100,34 @@ class GalleryEmbed {
      * Include activeUserName parameter if integration is not calling GalleryEmbed::login()
      * at CMS login time.
      *
+     * @param array see GalleryEmbed::init() for info on init values
      * @param string (optional) username of active user (empty string for anonymous/guest user)
-     * @return array ('isDone' => boolean,
-     *                [optional: 'headHtml' => string, 'bodyHtml' => string])
+     * @return array object GalleryStatus a status object
+     *               array ('isDone' => boolean,
+     *                      [optional: 'headHtml' => string, 'bodyHtml' => string])
      * @static
      */
-    function handleRequest($activeUserName=null) {
+    function handleRequest($initParams, $activeUserName=null) {
+	$ret = GalleryEmbed::init($initParams, false);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 	if (isset($activeUserName)) {
 	    $ret = GalleryEmbed::_checkActiveUser($activeUserName);
 	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
 
-	return GalleryMain(true);
+	$data = GalleryMain(true);
+	return array(GalleryStatus::success(), $data);
     }
 
     /**
-     * Ensure G2 session has same active user as CMS session.
+     * Ensure G2 session has same active user as CMS session.  Do not call directly.
+     *
      * @param string username of active user (null or empty for anonymous/guest user)
-     * @return object GalleryStatus a status code
+     * @return object GalleryStatus a status object
      * @private
      */
     function _checkActiveUser($activeUserName) {
@@ -148,17 +188,11 @@ class GalleryEmbed {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	$gallery->setActiveUser($user);
-	$session =& $gallery->getSession();
-	$ret = $session->save();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
 	return GalleryStatus::success();
     }
 
     /**
-     * Reset the G2 session.
-     * This is the only GalleryEmbed method that should be called without a prior init().
+     * Reset the G2 session.  Do not call init() before this method.
      *
      * @return object GalleryStatus a status object
      * @static
@@ -187,6 +221,18 @@ class GalleryEmbed {
 	    }
 	}
 	return GalleryStatus::success();
+    }
+
+    /**
+     * Retrieve G2 session id.  This method can be called after init() or handleRequest().
+     *
+     * @return string session id
+     * @static
+     */
+    function getSessionId() {
+	global $gallery;
+	$session =& $gallery->getSession();
+	return $session->getId();
     }
 
     /**

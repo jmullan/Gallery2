@@ -105,8 +105,8 @@ function GalleryInitFirstPass($params=array()) {
     $gallery->setConfig('data.smarty.templates_c', $dataBase . 'smarty' . $slash . 'templates_c' . $slash);
 
     /* Initialize our session */
-    if (isset($params['SID'])) {
-	GalleryUtilities::putRequestVariable(SESSION_ID_PARAMETER, $params['SID']);
+    if (isset($params['gallerySessionId'])) {
+	GalleryUtilities::putRequestVariable(SESSION_ID_PARAMETER, $params['gallerySessionId']);
     }
     $ret = $gallery->initSession();
     if ($ret->isError()) {
