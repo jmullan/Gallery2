@@ -499,9 +499,8 @@ class Gallery {
 	    $this->_translator = new GalleryTranslator();
 
 	    $language = null;
-	    $activeUserId = $this->getActiveUserId();
-	    if (!empty($activeUserId)) {
-		$activeUser = $this->getActiveUser();
+	    $activeUser = $this->getActiveUser();
+	    if (!empty($activeUser)) {
 		$language = $activeUser->getLanguage();
 	    }
 
