@@ -58,8 +58,9 @@ class GalleryUrlGenerator {
      *
      * @param string the base URL
      */
-    function GalleryUrlGenerator($baseUrl) {
+    function GalleryUrlGenerator($baseUrl, $baseFile) {
 	$this->_baseUrl = $baseUrl;
+	$this->_baseFile = $baseFile;
     }
 
     /**
@@ -75,12 +76,21 @@ class GalleryUrlGenerator {
 	}
 	    
 	foreach ($params as $key => $value) {
+	    if ($key == 'href') {
+		continue;
+	    }
+	    
 	    $args[] = GALLERY_FORM_VARIABLE_PREFIX . "$key=" . urlencode($value);
 	}
-	    
-	$url = $this->_baseUrl;
+
+	if (isset($params['href'])) {
+	    $url = $this->_baseUrl . $params['href'];
+	} else {
+	    $url = $this->_baseUrl . $this->_baseFile;
+	}
+
 	if (isset($args)) {
-	    $url .= '?' . join('&', $args);
+	    $url .= '?' . join('&amp;', $args);
 	}
 	    
 	return $url;

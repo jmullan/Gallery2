@@ -109,7 +109,7 @@ function GalleryMain($startTime) {
     $gallery->setConfig('url.gallery.base', '');
 
     /* Configure out url Generator for standalone mode. */
-    $urlGenerator = new GalleryUrlGenerator($gallery->getConfig('url.gallery.base') .
+    $urlGenerator = new GalleryUrlGenerator($gallery->getConfig('url.gallery.base'),
 					    'main.php');
     $gallery->setUrlGenerator($urlGenerator);
 
