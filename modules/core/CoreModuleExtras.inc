@@ -324,11 +324,17 @@ class CoreModuleExtras {
 	case '0.8.15':
 	    /* Removed GalleryItemPropertiesMap.. drop the table */
 	    $storage =& $gallery->getStorage();
-
 	    $query = '
 	    DROP TABLE [GalleryItemPropertiesMap]
 	    ';
-
+	    $ret = $storage->execute($query);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    $query = '
+	    DELETE FROM [Schema]
+	    WHERE [Schema::name] = \'ItemPropertiesMap\'
+	    ';
 	    $ret = $storage->execute($query);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
