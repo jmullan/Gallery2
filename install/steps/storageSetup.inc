@@ -20,22 +20,42 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 ?>
+<?php if (count($errorMsg) > 0) { ?>
+<p class="error">
+<?php print implode("<br />\n", $errorMsg); ?>
+</p>
+<?php } ?>
+
+<?php if ($status[$step]) { ?>
+<p class="success">
+Storage directory set successfully:<br />
+<i><tt><?php print $_SESSION['dir']?></tt></i>
+</p>
+<?php } ?>
+
 <p> <?php print _("Gallery needs to store data in a directory on your server. It will use this directory to store your images as well as other important data. For security, we suggest that you place this directory <b>outside</b> the path to your webserver, so that it cannot be accessed directly via the web. This is necessary if you wish to have your images accessible only via Gallery<b>*</b>. If you access your site via FTP, you might not have this option.") ?> </p>
 
-<p> <?php print _("The directory also needs to be writable to by Gallery. For help with permissions, see <b>LinkToSomewhere</b>?.") ?> </p>
+<p> <?php print _("The directory also needs to be writable to by Gallery. For help with permissions, see <b>FutureLinkToSomewhere</b>?.") ?> </p>
 
-<form>
+<form name="storage_form" method="POST" action="<?php print $PHP_SELF . '?step=5&action=create' ?>">
 <table border="0">
 <tr>
 <td style="text-align: left;"><?php print _('Directory path:') ?></td>
-<td><input type="text" size="50" value="<?php print dirname(dirname(dirname(__FILE__))) . '/g2data' ?>" /></td>
+<td><input name="dir" type="text" size="50" value="<?php print isset($_SESSION['dir']) ? $_SESSION['dir'] : dirname(dirname(dirname(__FILE__))) . '/g2data' ?>" /></td>
 </tr>
 </table>
 </form>
 
+<?php if ($status[$step]) { ?>
 <p>
+<span class="bold" style="background-color: #d8d8d8; border: 1px solid #000000; padding: 3px;"><a href="javascript:document.storage_form.submit()"><?php print _('Change') ?></a></span>
 <span class="bold" style="background-color: #d8d8d8; border: 1px solid #000000; padding: 3px;"><a href="index.php?step=6"><?php print _('Go to Step 6&rarr;') ?></a></span>
 </p>
-
+<?php } else { ?>
+<p>
+<span class="bold" style="background-color: #d8d8d8; border: 1px solid #000000; padding: 3px;"><a href="javascript:document.storage_form.submit()"><?php print _('Update') ?></a></span>
+</p>
+<?php } ?>
+ 
 <p style="text-align: left;"><b>*</b> This is sometimes known as an <b>image firewall</b>.</p>
 

@@ -47,21 +47,8 @@ if (isset($_GET['step'])) {
 	$step = 0;
 }
 
-if ($step == 1 && isset($_GET['action']) && $_GET['action'] == 'authDownload') {
-	if (isset($_SESSION['auth'])) {
-		$auth = $_SESSION['auth'];
-		$auth .= "\r\n";
-		header("Content-Type: text/plain");
-		header("Content-Length: " . strlen($auth));
-		header("Content-Description: Download login.txt to your computer.");
-		header("Content-Disposition: attachment; filename=login.txt");
-		print $auth;
-		exit;
-	} else {
-		header("Location: index.php?step=1&auth=nosession");
-	}
-}
-
+// steps and status: each step's status is true if it's been completed (though
+// authentication is re-checked at every step)
 $navbar = '';
 $navtext = array (_('Welcome'),
 				  _('Authenticate'),
@@ -84,6 +71,23 @@ if (0 == count($navtext) || $step < 2) {
 	$percentage = round((100 * ($step - 1) / (count($navtext) - 2)) / 5) * 5;
 }
 
+// authentication key download
+if ($step == 1 && isset($_GET['action']) && $_GET['action'] == 'authDownload') {
+	if (isset($_SESSION['auth'])) {
+		$auth = $_SESSION['auth'];
+		$auth .= "\r\n";
+		header("Content-Type: text/plain");
+		header("Content-Length: " . strlen($auth));
+		header("Content-Description: Download login.txt to your computer.");
+		header("Content-Disposition: attachment; filename=login.txt");
+		print $auth;
+		exit;
+	} else {
+		header("Location: index.php?step=1&auth=nosession");
+	}
+}
+
+// authenticate
 $authenticated = false;
 if ($step > 1 || ($step == 1 && (!isset($_GET['error']) && ((isset($_GET['action']) && !($_GET['action'] === 'new')) || !isset($_GET['action']))))) {
 	//if ($step > 0) {
@@ -108,7 +112,8 @@ if ($step > 1 || ($step == 1 && (!isset($_GET['error']) && ((isset($_GET['action
 	}
 }
 
-// items to include in HTTP headers
+// pre-header functionality
+// XXX split this into unique functions
 $errorMsg = array();
 if ($step == 1) {
 	if (isset($_GET['error'])) {
@@ -161,6 +166,33 @@ if ($step == 1) {
 			array_push($errorMsg, _('Error: passwords do not match. Please enter them again.'));
 		} else {
 			$_SESSION['pass'] = $_POST['passA'];
+		}
+		if (count($errorMsg) == 0) {
+			$status[$step] = true;
+		}
+	}
+} elseif ($step == 5) {
+	if (isset($_GET['action']) && $_GET['action'] === 'create') {
+		$status[$step] = false;
+	}
+	if (isset($_POST['dir'])) {
+		$dir = $_POST['dir'];
+		$_SESSION['dir'] = $dir;
+		if (empty($dir)) {
+			array_push($errorMsg, _('Error: you must specify a data directory'));
+		} else {
+			if (!is_dir($dir)) {
+				//$tmp = umask(0022);
+				//umask($tmp);
+				// XXX implement auto-create on request
+				array_push($errorMsg, _('Error: the directory you specified does not exist. Please create it.'));
+			} else {
+				if (!is_readable($dir)) {
+					array_push($errorMsg, _("Error: Gallery cannot access the directory you specified. Please change its permissions."));
+				} elseif (!is_writeable($dir) || !is_executable($dir)) {
+					array_push($errorMsg, _("Error: Gallery cannot write to the directory you specified. Please change its permissions."));
+				}
+			}
 		}
 		if (count($errorMsg) == 0) {
 			$status[$step] = true;
@@ -251,7 +283,7 @@ function AdminSetup() {
 }
 
 function StorageSetup() {
-	global $content, $navbar, $percentage, $step, $status;
+	global $content, $navbar, $percentage, $step, $status, $errorMsg;
 
 	$content = 'storageSetup.inc';
 	include(dirname(__FILE__) . '/body.inc');
