@@ -11,11 +11,12 @@
   {* Generate indexes of items that we know, which will correspond to checkbox ids, below *}
   {strip}
   var knownTypeCheckboxIds = new Array(
+  {assign var="first" value="1"}
   {foreach name=fileIndex from=$form.localServerFiles item=file}
     {if ( ($file.type == 'file' ||
 	   ($file.type == 'directory' && $file.fileName != '..' && $file.fileName != 'CVS')
 	  ) && empty($file.unknown))}
-      {if !$smarty.foreach.fileIndex.first},{/if}
+      {if !$first},{else}{assign var="first" value="0"}{/if}
       "{$smarty.foreach.fileIndex.iteration}"
     {/if}
   {/foreach}
@@ -23,9 +24,9 @@
   {/strip}
 
   {literal}
-  function toggleSelections() {   
+  function toggleSelections() {
     for (i = 0; i < knownTypeCheckboxIds.length; i++) {
-      var cb = document.getElementById('cb_' + knownTypeCheckboxIds[i]);	
+      var cb = document.getElementById('cb_' + knownTypeCheckboxIds[i]);
       cb.checked = !cb.checked;
   {/literal}
       {if $ItemAddFromServer.showSymlink}toggleSymlinkEnabled(knownTypeCheckboxIds[i]);{/if}
@@ -36,8 +37,8 @@
   function toggleSymlinkEnabled(a) {
     var cbSymlink = document.getElementById('symlink_' + a );
     var cbSelected = document.getElementById('cb_' + a );
-    if (cbSymlink) { 
-      cbSymlink.disabled = !cbSelected.checked; 
+    if (cbSymlink) {
+      cbSymlink.disabled = !cbSelected.checked;
     }
   }
 
@@ -47,11 +48,11 @@
       var cb = document.getElementById('cb_' + knownTypeCheckboxIds[i]);
       var cbSymlink = document.getElementById('symlink_' + knownTypeCheckboxIds[i]);
       if (cb.checked == true) {
-        if (symState == false) {
-          cbSymlink.checked = false;
-        } else {
-          cbSymlink.checked = true;
-        }
+	if (symState == false) {
+	  cbSymlink.checked = false;
+	} else {
+	  cbSymlink.checked = true;
+	}
       }
     }
   }
@@ -72,10 +73,10 @@
   {if empty($ItemAddFromServer.localServerDirList)}
   <div class="giWarning">
     {g->text text="For security purposes, you can't use this feature until the Gallery Site Administrator configures a set of legal upload directories."}
-    {if $ItemAdd.isAdmin} 
+    {if $ItemAdd.isAdmin}
       <a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=core:AdminCore"}">
 	{g->text text="site admin"}
-      </a> 
+      </a>
     {/if}
   </div>
   {else}
@@ -85,7 +86,7 @@
 
     <input type="text" size="80"
      name="{g->formVar var="form[localServerPath]"}" value="{$form.localServerPath}"/>
-  
+
     {if isset($form.error.pathComponent.missing)}
     <div class="giError">
       {g->text text="You must enter a directory."}
@@ -109,22 +110,22 @@
 
     <br/>
     {g->text text="Legal Directories"}
-    
+
     {if $ItemAdd.isAdmin}
     <a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=core:AdminCore"}">
       {g->text text="modify"}
     </a>
     {/if}
-  
+
     <ul style="list-style-type: none; margin-bottom: 1em">
       {foreach from=$ItemAddFromServer.localServerDirList item=dir}
 	{capture name="escapedDir"}{$dir|replace:"\\":"\\\\"}{/capture}
-	<li> 
+	<li>
 	  <a href="javascript:selectPath('{$smarty.capture.escapedDir}')"> {$dir} </a>
 	</li>
       {/foreach}
     </ul>
-  
+
     {if !empty($ItemAddFromServer.recentPaths)}
       {g->text text="Recent Directories"}
 
@@ -172,7 +173,7 @@
       <th> {g->text text="Type"} </th>
       <th> {g->text text="Size"} </th>
       {if $ItemAddFromServer.showSymlink}
-        <th> {g->text text="Use Symlink"} </th>
+	<th> {g->text text="Use Symlink"} </th>
       {/if}
     </tr>
     {foreach name=fileIndex from=$form.localServerFiles item=file}
@@ -244,11 +245,11 @@
       </th>
       <th colspan="{if $ItemAddFromServer.showSymlink}2{else}3{/if}">
 	  {g->text text="(Un)check all known types"}
-      </th>     
+      </th>
       {if $ItemAddFromServer.showSymlink}
       <th>
 	{g->text text="(Un)check symlinks"}<br/>{g->text text="for selected items"}
-      </th>     
+      </th>
       <th style="text-align: center">
 	<input type="checkbox" name="selectionToggle"
 	 onClick="javascript:invertSymlinkSelection()"/>
@@ -298,7 +299,7 @@
     {include file="gallery:`$option.file`" l10Domain=$option.l10Domain}
   {/foreach}
 {/if}
-  
+
 <div class="gbBlock gcBackground1">
   {$smarty.capture.submitLinks}
 </div>
