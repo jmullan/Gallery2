@@ -32,39 +32,44 @@
  */
 function smarty_modifier_markup($text, $overrideMarkupType=null) {
     global $gallery;
-    static $parser;
-    
-    if (!isset($parser)) {
-	list ($ret, $markupType) = GalleryCoreApi::getPluginParameter('module', 'core', 'misc.markup');
-	if ($ret->isError()) {
-	    /* This code is used by the UI -- we can't return an error.  Choose something safe */
-	    $markup = 'stripBbcodeAndHtml';
+    static $defaultMarkupType;
+    static $parsers;
+
+    if (isset($overrideMarkupType)) {
+	$markupType = $overrideMarkupType;
+    } else {
+	if (!isset($defaultMarkupType)) {
+	    list ($ret, $defaultMarkupType) = GalleryCoreApi::getPluginParameter('module', 'core', 'misc.markup');
+	    if ($ret->isError()) {
+		/* This code is used by the UI -- we can't return an error.  Choose something safe */
+		$defaultMarkupType = 'stripBbcodeAndHtml';
+	    }
 	}
 
-	if (isset($overrideMarkupType)) {
-	    $markupType = $overrideMarkupType;
-	}
+	$markupType = $defaultMarkupType;
+    }
 
+    if (!isset($parsers[$markupType])) {
 	switch($markupType) {
 	case 'stripBbcodeAndHtml':
-	    $parser = new GalleryStripBbcodeAndHtmlParser();
+	    $parsers[$markupType] = new GalleryStripBbcodeAndHtmlParser();
 	    break;
 	    
 	case 'bbcode':
-	    $parser = new GalleryBbcodeMarkupParser();
+	    $parsers[$markupType] = new GalleryBbcodeMarkupParser();
 	    break;
 
 	case 'none':
-	    $parser = new GalleryNoMarkupParser();
+	    $parsers[$markupType] = new GalleryNoMarkupParser();
 	    break;
 
 	case 'html':
-	    $parser = new GalleryHtmlMarkupParser();
+	    $parsers[$markupType] = new GalleryHtmlMarkupParser();
 	    break;
 	}
     }
-
-    return $parser->parse($text);
+    
+    return $parsers[$markupType]->parse($text);
 }
 
 class GalleryBbcodeMarkupParser {
