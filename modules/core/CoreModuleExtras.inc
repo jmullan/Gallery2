@@ -360,6 +360,7 @@ class CoreModuleExtras {
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
+        break;
 
 	default:
 	    return GalleryStatus::error(ERROR_BAD_PLUGIN, __FILE__, __LINE__,
