@@ -21,7 +21,7 @@
  */
 /**
  * @version $Revision$ $Date$
- * @package remote
+ * @package Remote
  * @author Pierre-Luc Paour <paour@users.sourceforge.net>
  */
 
