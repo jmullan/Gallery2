@@ -119,11 +119,6 @@ class ConfirmImportController extends GalleryController {
 			'albumImportSuccess'=>array(),
 			'urlRedirect' => isset($form['urlRedirect'])
 			);
-	if (isset($form['generateThumbnails']) && $form['generateThumbnails']) {
-	    $generateThumbnails=TRUE;
-	} else {
-	    $generateThumbnails=FALSE;
-	}
 	$finishedAlbums = array();
 	$albumPosition = array();
 	if (!isset($form['sourceEncoding'])) {
@@ -137,6 +132,8 @@ class ConfirmImportController extends GalleryController {
 	    $redirect['subView'] = 'migrate:SelectGallery';
 	}
 	if (isset($form['action']['import'])) {
+	    $itemsCreated = array();
+	    
 	    /* get list of userids in advance */
 	    require_once(dirname(__FILE__) . '/classes/Gallery1DataParser.class');
 	    list($ret, $albumList) = Gallery1DataParser::getAlbumList($albumsPath);
@@ -440,6 +437,8 @@ class ConfirmImportController extends GalleryController {
 				if ($ret->isError()) {
 				    return array($ret->wrap(__FILE__, __LINE__), null);
 				}
+
+				$itemsCreated[] = $newAlbumInstance->getId();
 				
 				// Set order weight
 				if (isset($albumPosition[$album['name']])) {
@@ -638,7 +637,6 @@ class ConfirmImportController extends GalleryController {
 				} else {
 				    return array($ret->wrap(__FILE__, __LINE__), null);
 				}	
-				
 			    }
 			}
 			/* we can let the parent album (and anything else that we might
@@ -705,6 +703,7 @@ class ConfirmImportController extends GalleryController {
 				if ($ret->isError()) {
 				    return array($ret->wrap(__FILE__, __LINE__), null);
 				}
+				$itemsCreated[] = $newItem->getId();
 
 				if (isset($form['urlRedirect'])) {
 				    $ret = $this->createG1ToG2Mapping($newItem->getId(),
@@ -771,7 +770,7 @@ class ConfirmImportController extends GalleryController {
 				    if ($ret->isError()) {
 					return array($ret->wrap(__FILE__, __LINE__), null);
 				    }
-				    
+
 				    if (!empty($thumbnails)) {
 					$thumbnail = $thumbnails[$newItem->getId()];
 					
@@ -818,15 +817,10 @@ class ConfirmImportController extends GalleryController {
 					 * Changing the crop size causes our derivative dimensions to change,
 					 * which affects all our dependent derivatives also.
 					 */
-					$ret = GalleryCoreApi::invalidateDerivativeDimensionsBySourceIds(array($thumbnail->getId()));
+					$ret = GalleryCoreApi::invalidateDerivativeDimensionsBySourceIds(
+					    array($thumbnail->getId()));
 					if ($ret->isError()) {
 					    return array($ret->wrap(__FILE__, __LINE__), null);
-					}
-					if ($generateThumbnails) {
-					    $ret = GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($thumbnail->getID);
-					    if ($ret->isError()) {
-						return array($ret->wrap(__FILE__, __LINE__), null);
-					    }
 					}
 				    }
 				}
@@ -1000,10 +994,34 @@ class ConfirmImportController extends GalleryController {
 		    }
 		}
 	    }
+
+	    if (!empty($form['generateThumbnails'])) {
+		/*
+		 * Get the thumbnails for all of the items we created, in 20 item
+		 * increments so that we don't consume too much memory.
+		 *
+		 * Note: this destroys the $itemsCreated array!
+		 */
+		while (!empty($itemsCreated)) {
+		    $chunk = array_splice($itemsCreated, 0, 20);
+		    list ($ret, $thumbTable) = GalleryCoreApi::fetchThumbnailsByItemIds($chunk);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+
+		    foreach ($thumbTable as $thumbnail) {
+			list ($ret, $newThumbnail, $wasRebuilt) =
+			    GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($thumbnail->getId());
+			if ($ret->isError()) {
+			    return array($ret->wrap(__FILE__, __LINE__), null);
+			}
+		    }
+		}
+
+	    }
 	    
 	    $redirect['view'] = 'core:SiteAdmin';
 	    $redirect['subView'] = 'migrate:ImportResults';
-	    
 	}
 	if (isset($importLockIds)) {
 	    $ret = GalleryCoreApi::releaseLocks($importLockIds);

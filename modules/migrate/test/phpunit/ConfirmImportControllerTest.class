@@ -557,6 +557,58 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	 * )
 	 */
     }
+
+    function testImportAlbumAndGenerateThumbnails() {
+	global $gallery;
+	$platform = $gallery->getPlatform();
+	$slash = $platform->getDirectorySeparator();
+	GalleryUtilities::putRequestVariable('albumsPath', dirname(__FILE__) . $slash . '..' . $slash . 'data' . $slash . 'albums' . $slash);
+	GalleryUtilities::putRequestVariable('form[sourceAlbums][album04]', 1);
+	GalleryUtilities::putRequestVariable('form[sourceEncoding]','ISO-8859-1');
+	GalleryUtilities::putRequestVariable('form[action][import]', 1);
+	GalleryUtilities::putRequestVariable('form[destinationAlbumID]',$this->_temporaryAlbumId);
+	GalleryUtilities::putRequestVariable('form[generateThumbnails]', 1);
+
+	$results = $this->handleRequest();
+
+	$this->assertEquals(array('album04'),
+			    array_keys($results['status']['albumImportSuccess']));
+	$this->assertEquals(array('view' => 'core:SiteAdmin',
+				  'subView' => 'migrate:ImportResults'),
+			    $results['redirect']);
+	$this->assertEquals(array(), $results['error']);
+	$this->assertEquals(array(), $results['status']['userImportFailure']);
+	$this->assertEquals(array(), $results['status']['userImportSuccess']);
+	$this->assertEquals(array(), $results['status']['albumImportFailure']);
+	$testAlbumId = $results['status']['albumImportSuccess']['album04'];
+	list($ret, $testAlbum) = GalleryCoreApi::loadEntitiesById($testAlbumId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $ids) = GalleryCoreApi::fetchChildItemIds($testAlbum);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(1, count($ids), 'number of children');
+
+	list ($ret, $thumbTable) = GalleryCoreApi::fetchThumbnailsByItemIds($ids);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(1, sizeof($thumbTable[$ids[0]]));
+
+	$thumbnail = $thumbTable[$ids[0]];
+	$this->assert(GalleryUtilities::isA($thumbnail, 'GalleryDerivative'));
+
+	list ($ret, $isCurrent) = $thumbnail->isCacheCurrent();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assert($isCurrent, 'Cache is not current!');
+    }
+    
     
     function testG1MigrateMap() {
 	global $gallery;
