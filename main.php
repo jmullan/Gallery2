@@ -18,7 +18,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-$ret = GalleryMain();
+$ret = GalleryMain(microtime());
 if ($ret->isError()) {
     $ret = $ret->wrap(__FILE__, __LINE__);
     print $ret->getAsHtml();
@@ -31,11 +31,7 @@ if ($ret->isError()) {
     return;
 }
 
-function GalleryMain() {
-    /* Prepare a spot to hold all our data for the global template */
-    $master = array();
-    list($master['profile']['start_usecs'],
-	 $master['profile']['start_secs']) = explode(" ", microtime());
+function GalleryMain($startTime) {
 
     /* Initialize Gallery */
     require_once(dirname(__FILE__) . '/init.php');
@@ -50,6 +46,10 @@ function GalleryMain() {
      * call GalleryInit()
      */
     $gallery =& $GLOBALS['gallery'];
+    GalleryProfiler::start('GalleryMain', $startTime);
+    GalleryProfiler::start('GalleryInit', $startTime);
+    GalleryProfiler::stop('GalleryInit');
+    
 
     /*
      * Specify the base URL to the Gallery.  In standalone mode this will be the
@@ -141,28 +141,22 @@ function GalleryMain() {
 	    $showGlobal = false;
 	}
     } else {
+	GalleryProfiler::start('GalleryView::renderHeadAndBody');
 	list ($ret, $master['view']) = $view->renderHeadAndBody();
 	if ($ret->isError()) {
 	    $master['error'] = $ret->getAsHtml();
 	}
+	GalleryProfiler::stop('GalleryView::renderHeadAndBody');
     }
 
     if ($showGlobal) {
-	/* If we're debugging, gather up our debug and profiling info */
-	if ($gallery->getDebug()) {
-	    list($master['profile']['stop_usecs'],
-		 $master['profile']['stop_secs']) = explode(" ", microtime());
-    
-	    $master['profile']['elapsed'] =
-		($master['profile']['stop_secs'] - $master['profile']['start_secs']) +
-		($master['profile']['stop_usecs'] - $master['profile']['start_usecs']);
 
+	/* If we're debugging, gather up our debug info also */
+	if ($gallery->getDebug()) {
 	    if ($gallery->getDebug() == 'buffered') {
 		$master['debug'] = $gallery->getDebugBuffer();
 	    }
-	} else {
-	    unset($master['profile']);
-	}
+	} 
 
 	/* Specify our translation module */
 	$templateAdapter =& $gallery->getTemplateAdapter();
@@ -177,6 +171,12 @@ function GalleryMain() {
 	}
 
 	$smarty->template_dir = dirname(__FILE__) . '/templates';
+
+	if ($gallery->isProfiling()) {
+	    GalleryProfiler::stop('GalleryMain');
+	    $master['profile'] = GalleryProfiler::getProfile();
+	}
+
 	$smarty->assign('master', $master);
 	$smarty->display('global.tpl');
     }

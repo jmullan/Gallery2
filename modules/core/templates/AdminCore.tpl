@@ -155,8 +155,8 @@
 
     <tr>
       <td colspan="2" align="center">
-	{galleryInput type="submit" name="submit"}{galleryText text="Save Changes"}{/galleryInput}
-	{galleryInput type="submit" name="reset"}{galleryText text="Reset"}{/galleryInput}
+	{galleryInput type="submit" name="actionSave"}{galleryText text="Save Changes"}{/galleryInput}
+	{galleryInput type="submit" name="actionReset"}{galleryText text="Reset"}{/galleryInput}
       </td>
     </tr>
 

@@ -38,6 +38,9 @@ define('ORDER_ASCENDING', 1);
  */
 define('ORDER_DESCENDING', 2);
 
+/* Load the parent class */
+require_once(dirname(__FILE__) . '/GalleryFileSystemEntity.class');
+
 /**
  * Abstract base class for all objects in the Gallery
  * composite tree
@@ -574,6 +577,8 @@ class GalleryItem_core extends GalleryFileSystemEntity {
     function fetchParents() {
 	global $gallery;
 
+	GalleryProfiler::start('GalleryItem::fetchParents');
+	
 	$parents = array();
 	$parentId = $this->getParentId();
 	while (!empty($parentId)) {
@@ -587,6 +592,8 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	    $parentId = $parent->getParentId();
 	}
 
+	GalleryProfiler::stop('GalleryItem::fetchParents');
+	
 	return array(GalleryStatus::success(), $parents);
     }
 

@@ -69,9 +69,11 @@ class <xsl:value-of select="class-name"/> extends <xsl:value-of select="class-na
      */
     function getMemberData() {
         $data = parent::getMemberData();
+        GalleryProfiler::start('GalleryPersistent::getMemberData');
     <xsl:for-each select="member">
         $data['<xsl:value-of select="member-name"/>'] = $this->_<xsl:value-of select="member-name"/>;
     </xsl:for-each>
+        GalleryProfiler::stop('GalleryPersistent::getMemberData');
         return $data;
     }
   </xsl:if>

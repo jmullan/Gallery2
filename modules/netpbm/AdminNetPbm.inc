@@ -149,6 +149,7 @@ class AdminNetPbmView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	GalleryProfiler::start('AdminNetPbmView::renderBody().test-binaries');
 	$tests = array();
 	if (!empty($path)) {
 	    foreach (array('jpegtopnm',
@@ -170,6 +171,7 @@ class AdminNetPbmView extends GalleryView {
 				 'results' => $results);
 	    }
 	}
+	GalleryProfiler::stop('AdminNetPbmView::renderBody().test-binaries');
 
 	/* Specify our translation module */
 	$ret = $this->_setTranslationModule('netpbm');

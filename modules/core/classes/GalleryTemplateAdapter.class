@@ -88,32 +88,24 @@ class GalleryTemplateAdapter {
      */
     function form($params, $content) {
 
-	/*
-	 * This function gets called twice.  Once at the beginning of the block
-	 * (without any content) and once at the end.  For simplicity we'll just
-	 * ignore the beginning call and print out everything at the end.
-	 */
-	$result = "";
-	if ($content) {
-	    if (empty($params['method'])) {
-		$method = 'POST';
-	    } else {
-		$method = $params['method'];
-		unset($params['method']);
-	    }
-
-	    $result .= '<form method="' . $method . '" action="main.php">';
-	    $result .= "\n";
-	    foreach ($params as $key => $value) {
-		$result .= '<input type="hidden" ' .
-		    'name="' . GALLERY_FORM_VARIABLE_PREFIX . $key . '" ' .
-		    'value="' . $value . '">';
-		$result .= "\n";
-	    }
-	    $result .= $content;
-	    $result .= "\n";
-	    $result .= '</form>';
+	if (empty($params['method'])) {
+	    $method = 'POST';
+	} else {
+	    $method = $params['method'];
+	    unset($params['method']);
 	}
+
+	$result = '<form method="' . $method . '" action="main.php">';
+	$result .= "\n";
+	foreach ($params as $key => $value) {
+	    $result .= '<input type="hidden" ' .
+		'name="' . GALLERY_FORM_VARIABLE_PREFIX . $key . '" ' .
+		'value="' . $value . '">';
+	    $result .= "\n";
+	}
+	$result .= $content;
+	$result .= "\n";
+	$result .= '</form>';
 
 	return $result;
     }
@@ -132,7 +124,7 @@ class GalleryTemplateAdapter {
 	$reply = $gallery->getTranslator();
 	if ($reply[0]->isError()) {
 	    $gallery->debug($ret->getAsHtml());
-	    return "Translation error";
+	    return 'Translation error';
 	} else {
 	    $translator =& $reply[1];
 	}
@@ -145,7 +137,7 @@ class GalleryTemplateAdapter {
 
 	if ($ret->isError()) {
 	    $gallery->debug($ret->getAsHtml());
-	    return "Translation error";
+	    return 'Translation error';
 	} else {
 	    return $content;
 	}

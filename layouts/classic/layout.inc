@@ -24,6 +24,7 @@ class ClassicLayout extends GalleryLayout {
      * @see GalleryLayout::render
      */
     function render($item, $urlParams) {
+	GalleryProfiler::start('GalleryLayout::render');
 
 	/* Look up my properties */
 	//list ($ret, $properties) =
@@ -38,10 +39,13 @@ class ClassicLayout extends GalleryLayout {
 	}
 	
 	if ($item->canContainChildren()) {
-	    return $this->_renderAlbum($item, $urlParams, $properties);
+	    $result = $this->_renderAlbum($item, $urlParams, $properties);
 	} else {
-	    return $this->_renderSingle($item, $urlParams, $properties);
+	    $result = $this->_renderSingle($item, $urlParams, $properties);
 	}
+	
+	GalleryProfiler::stop('GalleryLayout::render');
+	return $result;
     }
 
     /**
@@ -122,12 +126,12 @@ class ClassicLayout extends GalleryLayout {
 
 	    /* Load the thumbnails */
 	    list ($ret, $imageTable) =
-		GalleryDerivative::loadDerivatives($childIds,
-						   DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
+		GalleryDerivativeHelper::loadDerivatives($childIds,
+							 DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    
+	
 	    /* put it all together */
 	    $i = 0;
 	    foreach ($childIds as $id) {
@@ -138,7 +142,7 @@ class ClassicLayout extends GalleryLayout {
 		$i++;
 	    }
 	}
-
+	
 	/* Set up the navigator */
 	$totalPages = ceil($totalChildCount / $perPage);
 	$navigator = array();
@@ -191,10 +195,10 @@ class ClassicLayout extends GalleryLayout {
 			GalleryUtilities::convertPathToRelativeUrl(dirname(__FILE__)));
 	$smarty->assign('parents', $parents);
 
+    
 	/* Parse the body template and send it back */
 	$smarty->template_dir = dirname(__FILE__) . '/templates';
-	return array(GalleryStatus::success(),
-		     $smarty->fetch('albumBody.tpl'));
+	return array(GalleryStatus::success(), $smarty->fetch('albumBody.tpl'));
     }
 
 
@@ -237,8 +241,8 @@ class ClassicLayout extends GalleryLayout {
 
 	    /* Load the resizes */
 	    list ($ret, $imageTable) =
-		GalleryDerivative::loadDerivatives($item->getId(),
-						   DERIVATIVE_TYPE_IMAGE_RESIZE);
+		GalleryDerivativeHelper::loadDerivatives($item->getId(),
+							 DERIVATIVE_TYPE_IMAGE_RESIZE);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -322,8 +326,7 @@ class ClassicLayout extends GalleryLayout {
 	
 	/* Parse the header and body and send them back */
 	$smarty->template_dir = dirname(__FILE__) . '/templates';
-	return array(GalleryStatus::success(),
-		     $smarty->fetch('singleBody.tpl'));
+	return array(GalleryStatus::success(), $smarty->fetch('singleBody.tpl'));
     }
 
 }

@@ -133,6 +133,7 @@ class GalleryModuleMap_core {
      */
     function fetchModuleList() {
 	global $gallery;
+	GalleryProfiler::start('GalleryModuleMap::fetchModuleList');
 	
 	list ($ret, $searchResults) = 
 	    $gallery->search(array('select' => ('[GalleryModuleMap::moduleName],'.
@@ -146,6 +147,8 @@ class GalleryModuleMap_core {
 	while ($result = $searchResults->nextResult()) {
 	    $data[$result[0]] = array('active' => $result[1]);
 	}
+	
+	GalleryProfiler::stop('GalleryModuleMap::fetchModuleList');
 	return array($ret, $data);
     }
 }

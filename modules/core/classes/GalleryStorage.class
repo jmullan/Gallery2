@@ -99,6 +99,14 @@ class GalleryStorage {
     var $_entityInfoCache;
 
     /**
+     * A cache of classes that we've created in order to figure out their type
+     *
+     * @var array $_classTypeCache
+     * @access private
+     */
+    var $_classTypeCache;
+
+    /**
      * A cache of member info that we've discovered about various maps
      *
      * @var array $_mapInfoCache
@@ -399,13 +407,18 @@ class GalleryStorage {
     function _getClassType($className) {
 	global $gallery;
 
-	$array = $gallery->lookupRegistry('GalleryEntity.' . $className);
-	if (!empty($array)) {
-	    require_once($array[0]);
+	if (!isset($this->_classTypeCache[$className])) {
+	    if (!class_exists($className)) {
+		$array = $gallery->lookupRegistry('GalleryEntity.' . $className);
+		if (!empty($array)) {
+		    require_once($array[0]);
+		}
+	    }
+
+	    $this->_classTypeCache[$className] = new $className;
 	}
 
-	$instance = new $className;
-	if (method_exists($instance, 'getPersistentMemberInfo')) {
+	if (method_exists($this->_classTypeCache[$className], 'getPersistentMemberInfo')) {
 	    return 'entity';
 	} else {
 	    return 'map';

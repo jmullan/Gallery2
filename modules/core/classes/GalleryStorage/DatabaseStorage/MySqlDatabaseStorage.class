@@ -19,6 +19,11 @@
  */
 
 /**
+ * Name of the lock we'll use to get lock clearance
+ */
+define('MYSQL_CLEARANCE_LOCK', 'gallery_clearance');
+
+/**
  * MySQL extension of the DatabaseStorage class.
  *
  * This object implements the hooks for saving and restoring objects in a
@@ -38,5 +43,40 @@ class MySqlDatabaseStorage extends DatabaseStorage {
     function getType() {
 	return 'mysql';
     }
+
+    /**
+     * @see DatabaseStorage::_getLockClearance()
+     */
+    
+    /*
+     * This function takes advantage of MySQL's GET_LOCK() function
+     * to make acquiring the clearance lock go a lot faster.  However,
+     * it's very easy to leave this custom lock dangling around, so I'm
+     * not going to use it for now.
+     *
+    function _getLockClearance($cutoffTime) {
+
+	$timeout = $cutoffTime - time();
+
+	$this->_traceStart();
+	$recordSet = $this->_db->Execute('SELECT GET_LOCK(?, ?)',
+					 array(MYSQL_CLEARANCE_LOCK, $timeout));
+	$this->_traceStop();
+
+	if (!$recordSet || $recordSet->RecordCount() == 0) {
+	    return array(GalleryStatus::error(ERROR_STORAGE_FAILURE,
+					      __FILE__, __LINE__),
+			 null);
+	}
+
+	if ($recordSet->FetchField(0) == 1) {
+	    return array(GalleryStatus::success(), null);
+	} else {
+	    return array(GalleryStatus::error(ERROR_LOCK_TIMEOUT,
+					      __FILE__, __LINE__),
+			 null);
+	}
+    }
+    */
 }
 ?>

@@ -85,15 +85,19 @@ class GalleryView {
      *               array ('head' => head HTML, 'body' => body html)
      */
     function renderHeadAndBody() {
+	GalleryProfiler::start('GalleryView::renderHead');
 	list ($ret, $head) = $this->renderHead();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+	GalleryProfiler::stop('GalleryView::renderHead');
 	
+	GalleryProfiler::start('GalleryView::renderBody');
 	list ($ret, $body) = $this->renderBody();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+	GalleryProfiler::stop('GalleryView::renderBody');
 
 	return array(GalleryStatus::success(),
 		     array('head' => $head,

@@ -19,7 +19,7 @@ class CreateAdminUserTestCase extends TestCase {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	$user->setPassword('admin');
+	$user->changePassword('admin');
 	$user->setFullName('Admin');
 	
 	$ret = $user->save();

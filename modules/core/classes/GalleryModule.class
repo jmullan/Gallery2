@@ -72,8 +72,8 @@ class GalleryModule {
 	/* Get the translator.  Jump through hoops to get it as a reference */
 	$reply = $gallery->getTranslator();
 	if ($reply[0]->isError()) {
-	    $gallery->debug($ret->getAsHtml());
-	    return "Translation error";
+	    $gallery->debug($reply[0]->getAsHtml());
+	    return 'Translation error';
 	} else {
 	    $translator =& $reply[1];
 	}
@@ -84,7 +84,7 @@ class GalleryModule {
 
 	if ($ret->isError()) {
 	    $gallery->debug($ret->getAsHtml());
-	    return "Translation error";
+	    return 'Translation error';
 	} else {
 	    return $content;
 	}

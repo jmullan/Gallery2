@@ -43,36 +43,24 @@ class CoreModule extends GalleryModule {
 	$classDir = dirname(__FILE__) . '/classes/';
 
 	/* Load all the core Gallery classes */
-	require_once($classDir . 'GalleryUtilities.class');
-	require_once($classDir . 'GalleryStatus.class');
-	require_once($classDir . 'GalleryPersistent.class');
-	require_once($classDir . 'GalleryEntity.class');
-	require_once($classDir . 'GalleryChildEntity.class');
-	require_once($classDir . 'GalleryFileSystemEntity.class');
-	require_once($classDir . 'GalleryTranslator.class');
 	require_once($classDir . 'Gallery.class');
-	require_once($classDir . 'GalleryStorage.class');
-	require_once($classDir . 'GalleryStorageFactory.class');
+	require_once($classDir . 'GalleryController.class');
+	require_once($classDir . 'GalleryDerivativeHelper.class');
 	require_once($classDir . 'GalleryItemPropertiesMap.class');
-	require_once($classDir . 'GalleryUserGroupMap.class');
-	require_once($classDir . 'GalleryPermissionMap.class');
-	require_once($classDir . 'GalleryViewCountMap.class');
+	require_once($classDir . 'GalleryLayout.class');
+	require_once($classDir . 'GalleryLock.class');
 	require_once($classDir . 'GalleryModuleMap.class');
 	require_once($classDir . 'GalleryModuleParameterMap.class');
-	require_once($classDir . 'GalleryPlatform.class');
-	require_once($classDir . 'GalleryPlatformFactory.class');
-	require_once($classDir . 'GallerySearchResults.class');
+	require_once($classDir . 'GalleryPermissionMap.class');
+	require_once($classDir . 'GalleryProfiler.class');
+	require_once($classDir . 'GalleryStatus.class');
 	require_once($classDir . 'GalleryTemplateAdapter.class');
-	require_once($classDir . 'GalleryView.class');
-	require_once($classDir . 'GalleryController.class');
-	require_once($classDir . 'GalleryLayout.class');
 	require_once($classDir . 'GalleryTheme.class');
-	require_once($classDir . 'GalleryDerivative.class');
-	require_once($classDir . 'GalleryGraphics.class');
-	require_once($classDir . 'GalleryGraphicsFactory.class');
-	require_once($classDir . 'GalleryLock.class');
-	require_once($classDir . 'GalleryItem.class');
-	require_once($classDir . 'GalleryDataItem.class');
+	require_once($classDir . 'GalleryUserGroupMap.class');
+	require_once($classDir . 'GalleryUserHelper.class');
+	require_once($classDir . 'GalleryUtilities.class');
+	require_once($classDir . 'GalleryView.class');
+	require_once($classDir . 'GalleryViewCountMap.class');
 
 	/*
 	 * Set up our Gallery global.  It's important to use a reference here because
@@ -113,6 +101,8 @@ class CoreModule extends GalleryModule {
 			      $classDir . 'GalleryUser.class');
 	$gallery->addRegistry('GalleryEntity.GalleryGroup',
 			      $classDir . 'GalleryGroup.class');
+	$gallery->addRegistry('GalleryEntity.GalleryDerivative',
+			      $classDir . 'GalleryDerivative.class');
 	$gallery->addRegistry('GalleryEntity.GalleryDerivativeImage',
 			      $classDir . 'GalleryDerivativeImage.class');
 	$gallery->addRegistry('GalleryEntity.GalleryMovieItem',

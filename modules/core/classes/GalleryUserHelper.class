@@ -1,0 +1,104 @@
+<?php
+/*
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2002 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+/**
+ * A helper class for GalleryUsers
+ *
+ * Utility functions useful in managing GalleryUsers
+ *
+ * @version $Id$
+ * @package GalleryCore
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+class GalleryUserHelper {
+	
+    /*
+     * ****************************************
+     *                 Methods
+     * ****************************************
+     */
+
+    /**
+     * Return a map of userNames => userids
+     *
+     * You can specify how many usernames to list, and where the windows is in
+     * the list of all users.
+     *
+     * @param int [optional] the number of usernames desired
+     * @param int [optional] the start of the range
+     * @param string [optional] a substring to match 
+     * @return array object GalleryStatus a status code
+     *               array (username, username, ...)
+     */
+    function fetchUsernames($count=null, $offset=null, $substring=null) {
+	global $gallery;
+
+	$params['select'] = '[GalleryUser::userName]';
+	$params['limit'] = array('count' => $count, 'offset' => $offset);
+	$params['order-by'] = '[GalleryUser::userName] ASC';
+
+	$data = array();
+	if (!empty($substring)) {
+	    $params['where'] = '[GalleryUser::userName] LIKE ?';
+	    $data[] = "%$substring%";
+	}
+	
+	list ($ret, $searchResults) = $gallery->search($params, $data);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$usernames = array();
+	while ($result = $searchResults->nextResult()) {
+	    $usernames[] = $result[0];
+	}
+
+	return array(GalleryStatus::success(), $usernames);
+    }
+
+    /**
+     * Return a map of userNames => userids
+     *
+     * You can specify how many usernames to list, and where the windows is in
+     * the list of all users.
+     *
+     * @param string the substring to match
+     */
+    function fetchUserCount($substring=null) {
+	global $gallery;
+
+	$data = array();
+	$params['select'] = 'COUNT([GalleryUser::username])';
+	if (!empty($substring)) {
+	    $params['where'] = '[GalleryUser::username] LIKE ?';
+	    $data[] = "%$substring%";
+	}
+	list ($ret, $searchResults) = $gallery->search($params, $data);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$usernames = array();
+	$result = $searchResults->nextResult();
+	return array(GalleryStatus::success(), $result[0]);
+    }
+}
+?>

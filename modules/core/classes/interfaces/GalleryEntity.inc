@@ -86,6 +86,7 @@ class GalleryEntity extends GalleryEntity_core {
      */
     function getMemberData() {
         $data = parent::getMemberData();
+        GalleryProfiler::start('GalleryPersistent::getMemberData');
     
         $data['id'] = $this->_id;
     
@@ -99,6 +100,7 @@ class GalleryEntity extends GalleryEntity_core {
     
         $data['entityType'] = $this->_entityType;
     
+        GalleryProfiler::stop('GalleryPersistent::getMemberData');
         return $data;
     }
   

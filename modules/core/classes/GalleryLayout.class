@@ -43,11 +43,14 @@ class GalleryLayout {
      */
     function _setTranslationLayout($layoutName) {
 	global $gallery;
+	GalleryProfiler::start('GalleryLayout::_setTranslationLayout');
 	
 	$templateAdapter =& $gallery->getTemplateAdapter();
 	$templateAdapter->setTranslationBase(
 	    'layouts_' . $layoutName,
 	    $gallery->getConfig('code.gallery.layouts') . $layoutName);
+
+	GalleryProfiler::stop('GalleryLayout::_setTranslationLayout');
 	return GalleryStatus::success();
     }
 
@@ -65,6 +68,8 @@ class GalleryLayout {
      */
     function _getModuleItemLinks($items, $urlParams) {
 	global $gallery;
+
+	GalleryProfiler::start('GalleryLayout::_getModuleItemLinks');
 
 	if (!is_array($items)) {
 	    $items = array($items);
@@ -108,6 +113,8 @@ class GalleryLayout {
 	    }
 	}
 
+	GalleryProfiler::stop('GalleryLayout::_getModuleItemLinks');
+
 	return array(GalleryStatus::success(), $itemLinks);
     }
 
@@ -122,6 +129,8 @@ class GalleryLayout {
      */
     function _getModuleItemSummaries($items, $urlParams) {
 	global $gallery;
+
+	GalleryProfiler::start('GalleryLayout::_getModuleItemSummaries');
 
 	if (!is_array($items)) {
 	    $items = array($items);
@@ -155,6 +164,8 @@ class GalleryLayout {
 		$itemSummaries[$itemId][$moduleName] = $html;
 	    }
 	}
+
+	GalleryProfiler::stop('GalleryLayout::_getModuleItemSummaries');
 
 	return array(GalleryStatus::success(), $itemSummaries);
     }

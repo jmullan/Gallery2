@@ -30,7 +30,7 @@
       )
     
       ,
-    COLUMN_PREFIXpassword
+    COLUMN_PREFIXhashedPassword
       varchar(
       
           32

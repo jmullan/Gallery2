@@ -56,7 +56,7 @@ class GalleryUser extends GalleryUser_core {
             'type' => STORAGE_TYPE_STRING
         );
     
-        $meta['members']['password'] = array(
+        $meta['members']['hashedPassword'] = array(
             'class' => 'GalleryUser',
             'type' => STORAGE_TYPE_STRING
         );
@@ -81,17 +81,19 @@ class GalleryUser extends GalleryUser_core {
      */
     function getMemberData() {
         $data = parent::getMemberData();
+        GalleryProfiler::start('GalleryPersistent::getMemberData');
     
         $data['userName'] = $this->_userName;
     
         $data['fullname'] = $this->_fullname;
     
-        $data['password'] = $this->_password;
+        $data['hashedPassword'] = $this->_hashedPassword;
     
         $data['email'] = $this->_email;
     
         $data['language'] = $this->_language;
     
+        GalleryProfiler::stop('GalleryPersistent::getMemberData');
         return $data;
     }
   
@@ -142,26 +144,26 @@ class GalleryUser extends GalleryUser_core {
     }
   
     /**
-     * Get the value of password
+     * Get the value of hashedPassword
      *
      * @return STRING the value
      */
-    function getpassword() {
-        if (!isset($this->_password)) {
+    function gethashedPassword() {
+        if (!isset($this->_hashedPassword)) {
             return null;
         }
-        return $this->_password;
+        return $this->_hashedPassword;
     }
 
     /**
-     * Set the value of password
+     * Set the value of hashedPassword
      *
      * @param STRING the value
      */
-    function setpassword($value) {
+    function sethashedPassword($value) {
     
-        $this->_password = $value;
-        $this->setModifiedFlag('password', MEMBER_MODIFIED);
+        $this->_hashedPassword = $value;
+        $this->setModifiedFlag('hashedPassword', MEMBER_MODIFIED);
     }
   
     /**

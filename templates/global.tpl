@@ -31,15 +31,58 @@
     </table>
     {/if}
 
-    {if !empty($master.profile)}
     <!-- Profiling output -->
-    <table border="1" width="100%">
-	<tr>
-	  <td>
-	    {galleryText text="%s seconds elapsed" arg1=$master.profile.elapsed}
-	  </td>
-	</tr>
-    </table>
+    {if !empty($master.profile)}
+    <br>
+    <center>
+      <table border="1">
+	  <tr>
+	    <td colspan="6">
+	      {galleryBigFont}
+	      {galleryText text="Profiling"}
+	      {/galleryBigFont}
+	    </td>
+	  </tr>
+
+	  <tr>
+	    <th> {galleryText text="Function"}
+	    <th> {galleryText text="Average"}
+	    <th> {galleryText text="Max"}
+	    <th> {galleryText text="Min"}
+	    <th> {galleryText text="Total"}
+	    <th> {galleryText text="Count"}
+	  </tr>
+
+	{foreach from=$master.profile item=profileEntry}
+	  <tr>
+	    <td>
+	      {$profileEntry.name}
+	    </td>
+	    {if (isset($profileEntry.error))} 
+	    <td colspan="3">
+	      {$profileEntry.error}
+	    </td>
+            {else}
+	    <td>
+	      {$profileEntry.average}
+	    </td>
+	    <td>
+	      {$profileEntry.max}
+	    </td>
+	    <td>
+	      {$profileEntry.min}
+	    </td>
+	    <td>
+	      {$profileEntry.total}
+	    </td>
+	    <td>
+	      {$profileEntry.count}
+	    </td>
+            {/if}
+          </tr>
+        {/foreach}
+      </table>
+    </center>
     {/if}
 
     <a href="http://validator.w3.org/check/referer">validate this page</a>

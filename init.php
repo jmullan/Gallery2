@@ -90,6 +90,7 @@ function GalleryInit() {
      */
 
     /* Load the module list */
+    GalleryProfiler::start('GalleryInit.load-modules');
     list ($ret, $moduleStatus) = $gallery->getModuleStatus();
     if ($ret->isError()) {
 	return $ret->wrap(__FILE__, __LINE__);
@@ -105,6 +106,7 @@ function GalleryInit() {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
     }
+    GalleryProfiler::stop('GalleryInit.load-modules');
 
     /*
      * Fake being the admin user for now.  When we get in gear, we'll pull
@@ -154,7 +156,7 @@ function galleryTemplateCallback($params, $content) {
 	    return;
 	}
     }
-    
+
     $templateAdapter = $gallery->getTemplateAdapter();
     $function = $params['__function'];
     unset($params['__function']);

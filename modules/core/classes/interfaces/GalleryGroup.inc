@@ -66,11 +66,13 @@ class GalleryGroup extends GalleryGroup_core {
      */
     function getMemberData() {
         $data = parent::getMemberData();
+        GalleryProfiler::start('GalleryPersistent::getMemberData');
     
         $data['groupType'] = $this->_groupType;
     
         $data['groupName'] = $this->_groupName;
     
+        GalleryProfiler::stop('GalleryPersistent::getMemberData');
         return $data;
     }
   

@@ -66,11 +66,13 @@ class GalleryPhotoItem extends GalleryPhotoItem_core {
      */
     function getMemberData() {
         $data = parent::getMemberData();
+        GalleryProfiler::start('GalleryPersistent::getMemberData');
     
         $data['width'] = $this->_width;
     
         $data['height'] = $this->_height;
     
+        GalleryProfiler::stop('GalleryPersistent::getMemberData');
         return $data;
     }
   

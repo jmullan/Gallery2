@@ -1,0 +1,117 @@
+<?php
+/*
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2002 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+/**
+ * Thumbnail image type
+ *
+ * @constant DERIVATIVE_TYPE_IMAGE_THUMBNAIL
+ */
+define("DERIVATIVE_TYPE_IMAGE_THUMBNAIL", 1);
+
+/**
+ * Resized image type
+ *
+ * @constant DERIVATIVE_TYPE_IMAGE_RESIZE
+ */
+define("DERIVATIVE_TYPE_IMAGE_RESIZE", 2);
+
+/**
+ * A helper class for GalleryDerivatives
+ *
+ * Utility functions useful in managing GalleryDerivatives
+ *
+ * @version $Id$
+ * @package GalleryCore
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+class GalleryDerivativeHelper {
+
+    /*
+     * ****************************************
+     *                 Methods
+     * ****************************************
+     */
+
+    /**
+     * Load the derivative images for the ids/types specified
+     *
+     * Meant to be called statically
+     *
+     * @param array GalleryItem ids
+     * @param string entity type (eg, 'GalleryDerivativeImage')
+     * @return array object GalleryStatus a status code 
+     *               array(GalleryItem id => GalleryDerivativeImage, ...)
+     */
+    function loadDerivatives($ids, $types) {
+	global $gallery;
+	
+	GalleryProfiler::start('GalleryDerivativeHelper::loadDerivatives');
+	
+	if (!is_array($ids)) {
+	    $ids = array($ids);
+	}
+
+	if (!is_array($types)) {
+	    $types = array($types);
+	}
+	    
+	/* Look up the ids of all their thumbnail images */
+	$idMarkers = GalleryUtilities::makeMarkers(sizeof($ids));
+	$typeMarkers = GalleryUtilities::makeMarkers(sizeof($types));
+	$data = array_merge($types,
+			    $ids);
+	list ($ret, $searchResults) = $gallery->search(
+            array('select' => ('[GalleryDerivative::id], ' .
+			       '[GalleryChildEntity::parentId]'),
+		  'where' => ('[GalleryDerivative::derivativeType] IN (' .
+			      $typeMarkers . ') AND ' .
+			      '[GalleryChildEntity::parentId] IN (' .
+			      $idMarkers . ')')),
+            $data);
+	    
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$derivativeTable = array();
+	if ($searchResults->resultCount() > 0) {
+	    $derivativeIds = array();
+	    while ($result = $searchResults->nextResult()) {
+		$derivativeIds[] = $result[0];
+	    }
+		
+	    /* Load all the derivative images */
+	    list ($ret, $derivativeEntities) = $gallery->loadEntitiesById($derivativeIds);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+		
+	    /* Create a table of child id -> image data */
+	    foreach ($derivativeEntities as $derivative) {
+		$derivativeTable[$derivative->getParentId()][] = $derivative->getMemberData();
+	    }
+	}
+
+	GalleryProfiler::stop('GalleryDerivativeHelper::loadDerivatives');
+	
+	return array(GalleryStatus::success(), $derivativeTable);
+    }
+}
+?>

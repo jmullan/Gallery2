@@ -124,10 +124,18 @@ class Gallery {
     /**
      * The current debugging mode.  One of 'buffered', 'logged', 'immediate' or false
      * 
-     * @var bool $_debug
+     * @var string $_debug
      * @access private
      */
     var $_debug;
+    
+    /**
+     * The current profiling mode.
+     * 
+     * @var bool $_profile
+     * @access private
+     */
+    var $_profile;
     
     /**
      * Where to send debug output (when the debugging mode is set to 'logged')
@@ -241,6 +249,8 @@ class Gallery {
 			 null);
 	}
 
+	GalleryProfiler::start('Gallery::loadEntitiesById');
+
 	/* Get a reference to our storage object */
 	$reply =& $this->getStorage();
 	$ret = $reply[0];
@@ -255,6 +265,8 @@ class Gallery {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	GalleryProfiler::stop('Gallery::loadEntitiesById');
+	
 	return array(GalleryStatus::success(), $entities);
     }
 
@@ -315,6 +327,8 @@ class Gallery {
      * @see GalleryStorage::search()
      */
     function search($query, $data=array()) {
+	GalleryProfiler::start('Gallery::search');
+	
 	$reply =& $this->getStorage();
 	$ret = $reply[0];
 	$storage =& $reply[1];
@@ -322,7 +336,9 @@ class Gallery {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	return $storage->search($query, $data);
+	$results = $storage->search($query, $data);
+	GalleryProfiler::stop('Gallery::search');
+	return $results;
     }
 
     /**
@@ -394,6 +410,9 @@ class Gallery {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    
+	    /* Load the factory class */
+	    require_once(dirname(__FILE__) . '/GalleryGraphicsFactory.class');
+
 	    list($ret, $this->_graphics) =
 		GalleryGraphicsFactory::newInstance($type);
 	    if ($ret->isError()) {
@@ -451,6 +470,10 @@ class Gallery {
      */
     function getPlatform() {
 	if (empty($this->_platform)) {
+
+	    /* Load the factory class */
+	    require_once(dirname(__FILE__) . '/GalleryPlatformFactory.class');
+
 	    list($ret, $platform) = GalleryPlatformFactory::newInstance('unix');
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
@@ -472,6 +495,8 @@ class Gallery {
      */
     function acquireReadLock($ids, $timeout=10) {
 
+	GalleryProfiler::start('Gallery::acquireReadLock');
+
 	$reply =& $this->getStorage();
 	$ret = $reply[0];
 	$storage =& $reply[1];
@@ -487,6 +512,9 @@ class Gallery {
 
 	$lockId = $lock->getId();
 	$this->_locks[$lockId] = $lock;
+
+	GalleryProfiler::stop('Gallery::acquireReadLock');
+
 	return array($ret->wrap(__FILE__, __LINE__), $lockId);
     }
 
@@ -713,6 +741,9 @@ class Gallery {
 	$type = $this->getConfig('storage.type');
 	$config = $this->getConfig('storage.config');
 	
+	/* Load the factory class */
+	require_once(dirname(__FILE__) . '/GalleryStorageFactory.class');
+
 	return GalleryStorageFactory::newInstance($type, $config);
     }
     
@@ -724,6 +755,8 @@ class Gallery {
      *               object GalleryStorage a storage instance
      */
     function &getStorage() {
+	GalleryProfiler::start('Gallery::getStorage');
+	
 	if (empty($this->_storage)) {
 	    list($ret, $storage) = $this->getUninitializedStorage();
 	    if ($ret->isError()) {
@@ -737,6 +770,8 @@ class Gallery {
 
 	    $this->_storage = $storage;
 	}
+
+	GalleryProfiler::stop('Gallery::getStorage');
 	return array(GalleryStatus::success(), &$this->_storage);
     }
 
@@ -768,12 +803,20 @@ class Gallery {
      *               object Smarty
      */
     function getSmarty() {
+
+	GalleryProfiler::start('Gallery::getSmarty');
 	if (empty($this->_smarty)) {
 	    /*
 	     * Load and configure Smarty.
 	     */
 	    require_once($this->_config['code.smarty.base'] . 'Smarty.class.php');
-	    $this->_smarty = new Smarty;
+
+	    if ($this->isProfiling()) {
+		require_once(dirname(__FILE__) . '/GalleryProfilingSmarty.class');
+		$this->_smarty = new GalleryProfilingSmarty();
+	    } else {
+		$this->_smarty = new Smarty();
+	    }
 	    $this->_smarty->template_dir = $this->_config['config.smarty.templates'];
 
 	    /* These are module params */
@@ -798,6 +841,8 @@ class Gallery {
 	    }
 	}
 
+	GalleryProfiler::stop('Gallery::getSmarty');
+	
 	return array(GalleryStatus::success(), $this->_smarty);
     }
 
@@ -808,6 +853,7 @@ class Gallery {
      *                      array string module names
      */
     function getModuleStatus() {
+	GalleryProfiler::start('Gallery::getModuleStatus');
 
 	if (!isset($this->_modules['_status'])) {
 	    list ($ret, $modules) = GalleryModuleMap::fetchModuleList();
@@ -850,6 +896,8 @@ class Gallery {
 	    $this->_modules['_status'] = $modules;
 	}
 
+	GalleryProfiler::stop('Gallery::getModuleStatus');
+	
 	return array(GalleryStatus::success(),
 		     $this->_modules['_status']);
     }
@@ -875,50 +923,51 @@ class Gallery {
      *               object GalleryModule the module
      */
     function loadModule($moduleName) {
+	GalleryProfiler::start('Gallery::loadModule');
 
-	if (isset($this->_modules[$moduleName]['instance'])) {
-	    return array(GalleryStatus::success(),
-			 $this->_modules[$moduleName]['instance']);
+	if (!isset($this->_modules[$moduleName]['instance'])) {
+
+	    /* Figure out where the module lives */
+	    $galleryBase = $this->getConfig('code.gallery.modules');
+	    $moduleFile = $galleryBase . $moduleName . '/module.inc';
+
+	    list ($ret, $platform) = $this->getPlatform();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    if (!$platform->file_exists($moduleFile)) {
+		$this->debug('Missing file: ' . $moduleFile);
+		return array(GalleryStatus::error(ERROR_BAD_MODULE,
+						  __FILE__, __LINE__),
+			     null);
+	    }
+
+	    /* Load it */
+	    require_once($moduleFile);
+
+	    /* Try to instantiate it */
+	    $moduleClass = $moduleName . 'Module';
+	    if (!class_exists($moduleClass)) {
+		return array(GalleryStatus::error(ERROR_BAD_MODULE,
+						  __FILE__, __LINE__),
+			     null);
+	    }
+	    $module = new $moduleClass();
+
+	    /* Initialize it */
+	    $ret = $module->init();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    /* Store it in our table */
+	    $this->_modules[$moduleName]['instance'] = $module;
 	}
 
-	/* Figure out where the module lives */
-	$galleryBase = $this->getConfig('code.gallery.modules');
-	$moduleFile = $galleryBase . $moduleName . '/module.inc';
-
-	list ($ret, $platform) = $this->getPlatform();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	if (!$platform->file_exists($moduleFile)) {
-	    $this->debug('Missing file: ' . $moduleFile);
-	    return array(GalleryStatus::error(ERROR_BAD_MODULE,
-					      __FILE__, __LINE__),
-			 null);
-	}
-
-	/* Load it */
-	require_once($moduleFile);
-
-	/* Try to instantiate it */
-	$moduleClass = $moduleName . 'Module';
-	if (!class_exists($moduleClass)) {
-	    return array(GalleryStatus::error(ERROR_BAD_MODULE,
-					      __FILE__, __LINE__),
-			 null);
-	}
-	$module = new $moduleClass();
-
-	/* Initialize it */
-	$ret = $module->init();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	/* Store it in our table */
-	$this->_modules[$moduleName]['instance'] = $module;
-
-	return array(GalleryStatus::success(), $module);
+	GalleryProfiler::stop('Gallery::loadModule');
+	return array(GalleryStatus::success(),
+		     $this->_modules[$moduleName]['instance']);
     }
 
     /**
@@ -1059,6 +1108,10 @@ class Gallery {
      */
     function &getTranslator() {
 	if (empty($this->_translator)) {
+
+	    /* Load the translator class */
+	    require_once(dirname(__FILE__) . '/GalleryTranslator.class');
+	    
 	    $this->_translator = new GalleryTranslator();
 
 	    list ($ret, $activeUser) = $this->getActiveUser();
@@ -1157,6 +1210,24 @@ class Gallery {
 	    $this->debug("[$now] can't guarantee $limit -- extending!");
 	    $this->setTimeLimit($limit);
 	}
+    }
+
+    /**
+     * Change the profiling state
+     *
+     * @param bool
+     */
+    function setProfile($profile=null) {
+	$this->_profile = $profile ? true : false;
+    }
+
+    /**
+     * Get the profiling state
+     *
+     * @return bool
+     */
+    function isProfiling() {
+	return $this->_profile;
     }
 
     /**

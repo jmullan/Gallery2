@@ -111,6 +111,7 @@ class GalleryItem extends GalleryItem_core {
      */
     function getMemberData() {
         $data = parent::getMemberData();
+        GalleryProfiler::start('GalleryPersistent::getMemberData');
     
         $data['description'] = $this->_description;
     
@@ -134,6 +135,7 @@ class GalleryItem extends GalleryItem_core {
     
         $data['viewedSinceTimestamp'] = $this->_viewedSinceTimestamp;
     
+        GalleryProfiler::stop('GalleryPersistent::getMemberData');
         return $data;
     }
   

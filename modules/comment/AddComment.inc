@@ -114,8 +114,8 @@ class AddCommentView extends GalleryView {
 
 	/* Get its thumbnail */
 	list ($ret, $thumbnailTable) = 
-	    GalleryDerivative::loadDerivatives($item->getId(),
-					       DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
+	    GalleryDerivativeHelper::loadDerivatives($item->getId(),
+						     DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

@@ -66,11 +66,13 @@ class GalleryAlbumItem extends GalleryAlbumItem_core {
      */
     function getMemberData() {
         $data = parent::getMemberData();
+        GalleryProfiler::start('GalleryPersistent::getMemberData');
     
         $data['childIntermediateResize'] = $this->_childIntermediateResize;
     
         $data['childThumbSize'] = $this->_childThumbSize;
     
+        GalleryProfiler::stop('GalleryPersistent::getMemberData');
         return $data;
     }
   
