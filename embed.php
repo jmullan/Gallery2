@@ -654,28 +654,28 @@ class GalleryEmbed {
      * @static
      */
     function parseHead($headhtml) {
- 	$title = '';
-  	$css = array();
-  	$javascript = array();
+	$title = '';
+	$css = array();
+	$javascript = array();
 
 	/* only 1 title allowed */
-        if (preg_match("|<title(?:\s[^>]*)?>(.*)</title>|Usi", $headhtml, $regs)) {
+	if (preg_match("|<title(?:\s[^>]*)?>(.*)</title>|Usi", $headhtml, $regs)) {
 	    $title = $regs[1];
 	}
 
 	/* more than one script section allowed?, dunno */
 	if(preg_match_all("|<script(?:\s[^>]*)?>(.*)</script>|Usi", $headhtml, $regs, PREG_PATTERN_ORDER)) {
 	    foreach ($regs[1] as $script) {
-      		$javascript[] = $script;
-            }
-        }
+		$javascript[] = $script;
+	    }
+	}
 
 	/* more than one style allowed */
 	if(preg_match_all("/<(style|link)(?:\s[^>]*)?>.*<\/\\1>/Usi", $headhtml, $regs, PREG_PATTERN_ORDER)) {
 	    foreach ($regs[0] as $style) {
-        	$css[] = $style;
-    	    }
-  	}
+		$css[] = $style;
+	    }
+	}
 
 	return array($title, $css, $javascript);
     }
@@ -691,48 +691,46 @@ class GalleryEmbed {
      * title|date|views|owner or just 'none'
      * If you choose 'blocks' = 'specificItem', you got the specify 'itemId' too.
      * example: GalleryEmbed::getImageBlock(array('blocks' => 'randomImage',
-     		'show' => 'title|date'));
+     *                                            'show' => 'title|date'));
      * @return array object GalleryStatus
      *               string html content
      * @static
      */
     function getImageBlock($params) {
 	global $gallery;
-
 	$moduleId = 'imageblock';
+	$blockHtml = null;
 
 	/* Load the module list */
 	list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module');
-	if (!$ret->isSuccess()) {
+	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	if (isset($moduleStatus[$moduleId]) && !empty($moduleStatus[$moduleId]['active'])) {
 	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
-	    if (!$ret->isSuccess()) {
+	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
-    	    }
+	    }
 
 	    /* Load the G2 templating engine */
-            GalleryCoreApi::requireOnce(dirname(__FILE__) . '/modules/core/classes/GalleryTemplate.class');
-            $template = new GalleryTemplate(dirname(__FILE__));
-            $template->setVariable('l10Domain', 'module_' . $moduleId);
+	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/modules/core/classes/GalleryTemplate.class');
+	    $template = new GalleryTemplate(dirname(__FILE__));
+	    $template->setVariable('l10Domain', 'module_' . $moduleId);
 
 	    // generate the imageblock
 	    list ($ret, $tpl) = $module->_loadImageBlocks($template, $params);
-	    if (!$ret->isSuccess()) {
+	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    // render and get the imageblock html
 	    list ($ret, $blockHtml) = $template->fetch(dirname(__FILE__) . '/' . $tpl);
-	    if (!$ret->isSuccess()) {
+	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-
-      	    return array($ret->wrap(__FILE__, __LINE__), $blockHtml);
 	}
-	return array(GalleryStatus::success(), null);
+	return array(GalleryStatus::success(), $blockHtml);
     }
 }
 ?>
