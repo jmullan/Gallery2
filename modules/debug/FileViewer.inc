@@ -41,37 +41,25 @@ class FileViewerView extends GalleryView {
 
 	list ($file, $line) = GalleryUtilities::getRequestVariables('file', 'line');
 
-	list ($ret, $modules) = GalleryCoreApi::fetchPluginStatus('module');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
 	/* Make sure the file is on the approved list */
-	$moduleDir = dirname(__FILE__) . '/../';
+	$base = dirname(__FILE__) . '/../../';
 	$platform = $gallery->getPlatform();
-	$approved = false;
+	$approved = $legal = false;
 	$approvedChecksum = 0;
-	$legal = false;
-	foreach ($modules as $moduleId => $moduleStatus) {
-	    if (empty($moduleStatus['active'])) {
-		continue;
-	    }
 
-	    $approvedListFile = $moduleDir . $moduleId . '/debug/viewableFiles.txt';
-	    if ($platform->file_exists($approvedListFile)) { 
-		foreach ($platform->file($approvedListFile) as $approvedFile) {
-		    list ($approvedChecksum, $octets, $approvedFile) = split(' ', $approvedFile);
-		    $approvedFile = trim($approvedFile);
-		    if ($approvedFile == $file) {
-			$approved = true;
-			break 2;
-		    }
+	$approvedListFile = $base . '/lib/MANIFEST.txt';
+	if ($platform->file_exists($approvedListFile)) { 
+	    foreach ($platform->file($approvedListFile) as $fileInfo) {
+		list ($approvedFile, $approvedChecksum, $octets, $viewable) = split(' ', $fileInfo);
+		$approvedFile = trim($approvedFile);
+		if ($approvedFile == $file) {
+		    $approved = ($viewable > 0);
+		    break;
 		}
 	    }
 	}
 
 	if ($approved) {
-	    $base = dirname(__FILE__) . '/../../';
 	    $lines = $platform->file($base . '/' . $file);
 	    $actualChecksum = sprintf("%u", crc32(join("", $lines)));
 	    if ($approvedChecksum == $actualChecksum) {
