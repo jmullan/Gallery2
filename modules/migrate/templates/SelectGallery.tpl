@@ -77,7 +77,6 @@
       {/foreach}
     </ul>
     {/if}
-
     <input type="submit" name="{g->formVar var="form[action][select]"}" value="{g->text text="Select"}"/>
   </div>
 

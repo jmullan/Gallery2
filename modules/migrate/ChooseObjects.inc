@@ -88,6 +88,8 @@ class ChooseObjectsView extends GalleryView {
     function loadTemplate(&$template, &$form) {
         global $gallery;
 
+	$defaultLanguage = GalleryTranslator::getLanguageCodeFromRequest();
+       
 	$availableEncodings = array('af_ZA Afrikaans (ISO-8859-1)' => 'ISO-8859-1',
 				    'bg_BG &#x0411;&#x044a;&#x043b;&#x0433;&#x0430;&#x0440;&#x0441;&#x043a;&#x0438; (CP1251)' => 'CP1251',
 				    'ca_ES Catal&#xe0; (ISO-8859-1)' => 'ISO-8859-1',
@@ -152,7 +154,12 @@ class ChooseObjectsView extends GalleryView {
 				    'windows-1257' => 'CP1257',
 				    'Latin-1' => 'ISO-8859-1'
 				    );
-	
+	$possibleEncodingMatch = '';
+	foreach ($availableEncodings as $encodingName => $encoding) {
+	    if (strpos($encodingName, $defaultLanguage)!==false) {
+		$possibleEncodingMatch = $encodingName;
+	    }
+	}
 	$platform = $gallery->getPlatform();
 	$slash = $platform->getDirectorySeparator();
 
@@ -231,7 +238,7 @@ class ChooseObjectsView extends GalleryView {
 	$ChooseObjects['g1AlbumTree'] = $g1AlbumTree;
 	$ChooseObjects['g2AlbumTree'] = $g2AlbumTree;
 	$ChooseObjects['availableEncodings'] = $availableEncodings;
-
+	$ChooseObjects['possibleEncodingMatch'] = $possibleEncodingMatch;
 	$template->setVariable('ChooseObjects', $ChooseObjects);
         $template->setVariable('controller', 'migrate:ChooseObjects');
 	
