@@ -27,8 +27,8 @@
  * @author Alan Harder <alan.harder@sun.com>
  */
 
-require_once(dirname(__FILE__) . '/classes/CustomFieldMap.class');
-require_once(dirname(__FILE__) . '/classes/CustomFieldHelper.class');
+GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/CustomFieldMap.class');
+GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/CustomFieldHelper.class');
 
 /**
  * This controller handles moving between admin modes in the Item Edit plugin,

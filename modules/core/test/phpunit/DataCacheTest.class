@@ -31,7 +31,6 @@
  *
  * @package GalleryCore
  * @subpackage PHPUnit
- *
  */
 class DataCacheTest extends GalleryTestCase {
 
@@ -237,12 +236,24 @@ class DataCacheTest extends GalleryTestCase {
     }
 }
 
+/**
+ * Mock platform
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
 class DataCacheTestPlatform_testGetFromDisk {
     function file_exists($path) {
 	return false;
     }
 }
 
+/**
+ * Mock platform
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
 class DataCacheTestPlatform {
 
     function DataCacheTestPlatform() {

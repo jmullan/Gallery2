@@ -25,7 +25,7 @@
  * @author Alan Harder <alan.harder@sun.com>
  */
 
-require_once(dirname(__FILE__) . '/classes/CustomFieldHelper.class');
+GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/CustomFieldHelper.class');
 
 /**
  * @package CustomField

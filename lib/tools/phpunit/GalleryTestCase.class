@@ -26,6 +26,14 @@
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
+/**
+ * Event listener that tracks how many entities were created and destroyed
+ * during the test.  We can use this to track to see if a test is leaking
+ * entities (ie, not doing proper cleanup).
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
 class EntityCounterEventListener {
 
     function EntityCounterEventListener() {
@@ -65,7 +73,15 @@ class EntityCounterEventListener {
     }
 }
 
-/* For event listeners only active for the duration of one test */
+/**
+ * Event listener wrapper for unit tests.  By default, event listeners
+ * are disabled for unit tests, but you can use
+ * GalleryTestCase::_registerTestEventListener() to register one with
+ * this listener, which will do dispatching for you.
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
 class TestEventListener {
 
     function TestEventListener() {

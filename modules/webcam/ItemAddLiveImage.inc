@@ -19,12 +19,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 /**
  * @version $Revision$ $Date$
  * @package WebCam
- * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>
+ */
+
+/**
+ * @package WebCam
+ * @subpackage UserInterface
  */
 class ItemAddLiveImage extends ItemAddPlugin {
 
