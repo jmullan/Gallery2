@@ -164,6 +164,7 @@ class ImageMagickToolkitHelper {
 	$tests[] = array('mime' => array('image/png'), 'file' => 'test.png', 'expected' => 'PNG.*DirectClass');
 	$tests[] = array('mime' => array('image/tiff'), 'file' => 'test.tif', 'expected' => 'TIFF.*(Pseudo|Direct)Class');
 	$tests[] = array('mime' => array('image/svg+xml'), 'file' => 'test.svg', 'expected' => 'SVG.*DirectClass');
+	$tests[] = array('mime' => array('image/bmp'), 'file' => 'test.bmp', 'expected' => 'BMP.*PseudoClass');
 	
 	$platform = $gallery->getPlatform();
 	$slash = $platform->getDirectorySeparator();

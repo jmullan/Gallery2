@@ -143,6 +143,15 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
+	list ($ret, $mimeType) =
+	    $this->_toolkit->performOperation('image/bmp', 'rotate',
+					      'testPerformOperationsA.bmp',
+					      'testPerformOperationsB.bmp',
+					      array(180));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
 	// Test a basic composite operation (top right corner)
         list ($ret, $mimeType) =
             $this->_toolkit->performOperation('image/png', 'composite',
@@ -282,7 +291,8 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 				  'image/pjpeg',
 				  'image/png',
 				  'image/tiff',
-				  'image/svg+xml'),
+				  'image/svg+xml',
+				  'image/bmp'),
 			    $results);
     }
 
@@ -318,7 +328,8 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 									'image/pjpeg',
 									'image/png',
 									'image/tiff',
-									'image/svg+xml')
+									'image/svg+xml',
+									'image/bmp')
 						   ),
 				  'thumbnail' => array('params' =>
 						       array(array('type' => 'int',
@@ -329,7 +340,8 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 									    'image/pjpeg',
 									    'image/png',
 									    'image/tiff',
-									    'image/svg+xml')),
+									    'image/svg+xml',
+									    'image/bmp')),
 				  'resize' => array('params' =>
 						    array(array('type' => 'int',
 								'description' => 'target width'),
@@ -341,7 +353,8 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 									 'image/pjpeg',
 									 'image/png',
 									 'image/tiff',
-									 'image/svg+xml')),
+									 'image/svg+xml',
+									 'image/bmp')),
 				  'rotate' => array('params' =>
 						    array(array('type' => 'int',
 								'description' => 'rotation degrees')),
@@ -351,7 +364,8 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 									 'image/pjpeg',
 									 'image/png',
 									 'image/tiff',
-									 'image/svg+xml')),
+									 'image/svg+xml',
+									 'image/bmp')),
 				  'crop' => array('params' =>
 						  array(array('type' => 'int',
 							      'description' => 'left edge'),
@@ -367,7 +381,8 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 								       'image/pjpeg',
 								       'image/png',
 								       'image/tiff',
-								       'image/svg+xml')),
+								       'image/svg+xml',
+								       'image/bmp')),
 				  'composite' => array('params' =>
 						       array(array('type' => 'string',
 								   'description' => 'overlay path'),
@@ -389,7 +404,8 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 									     'image/pjpeg',
 									     'image/png',
 									     'image/tiff',
-									     'image/svg+xml'))),
+									     'image/svg+xml',
+									     'image/bmp'))),
 			    $results['operations']);
 	$this->assertEquals(array('dimensions' => array('type' => 'int,int',
 							'description' => 'Get the width and height of the image',
@@ -398,7 +414,8 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 									     'image/pjpeg',
 									     'image/png',
 									     'image/tiff',
-									     'image/svg+xml'))),
+									     'image/svg+xml',
+									     'image/bmp'))),
 			    $results['properties']);
     }
 
@@ -462,6 +479,10 @@ class ImageMagickToolkitTestPlatform {
 		    
 		case 'test.svg':
 		    $lines[] = 'test.svg SVG 595x841+0+0 DirectClass 16-bit 7.8kb 0.008u 0:01';
+		    break;
+
+		case 'test.bmp':
+		    $lines[] = 'test.bmp BMP 50x50+0+0 PseudoClass 15c 8-bit 504.0 0.000u 0:01';
 		    break;
 
 		case 'testPerformOperations1.gif':
@@ -552,6 +573,10 @@ class ImageMagickToolkitTestPlatform {
 		       $cmd[0][4] == '3x4+1+2' &&
 		       $cmd[0][5] == 'testPerformOperations8.png') {
 		return array(1, array());
+	    } else if ($cmd[0][1] == '-rotate' &&
+		       $cmd[0][2] == '180' &&
+		       $cmd[0][3] == 'testPerformOperationsA.bmp') {
+		return array(1, array());
 	    }
 	    break;
 	    
@@ -594,6 +619,7 @@ class ImageMagickToolkitTestPlatform {
 	case 'testPerformOperations7.tiff':
 	case 'testPerformOperations9.png':
 	case 'testPerformOperations11.png':
+	case 'testPerformOperationsB.bmp':
 	    return true;
 
 	default:
