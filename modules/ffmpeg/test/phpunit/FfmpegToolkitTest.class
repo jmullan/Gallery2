@@ -139,6 +139,19 @@ class FfmpegToolkitTest extends GalleryTestCase {
 	
 	$this->assertEquals($expectedMimeTypes, $mimeTypes);
     }
+
+    function testPerformOperation() {
+	list ($ret, $results) =
+	    $this->_toolkit->performOperation('video/avi',
+					      'convert-to-image/jpeg',
+					      'testPerformOperation1.avi',
+					      'testPerformOperation2.avi',
+					      array());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals($results, 'image/jpeg');
+    }
 }
 
 class FfmpegToolkitTestPlatform {
@@ -180,7 +193,23 @@ class FfmpegToolkitTestPlatform {
 	    $results[] = 'Motion estimation methods: zero(fastest) full(slowest) log phods epzs(default) x1';
 	    
 	    return array(1, $results);
+
+	case serialize(array(array($this->_ffmpegPath, '-i', 'testPerformOperation1.avi',
+				   '-f', 'singlejpeg', '-t', '0.001', '-y', 'TEMPFILE'))):
+	    $results[] = 'Input #0, avi, from \'testPerformOperation1.avi\':';
+	    $results[] = '  Duration: 00:00:04.0, bitrate: 329 kb/s';
+	    $results[] = '  Stream #0.0: Video: mjpeg, 160x120, 15.00 fps';
+	    $results[] = '  Stream #0.1: Audio: pcm_u8, 8000 Hz, mono, 64 kb/s';
+	    $results[] = 'Output #0, singlejpeg, to \'TEMPFILE\':';
+	    $results[] = '  Stream #0.0: Video: mjpeg, 160x120, 15.00 fps, q=2-31, 200 kb/s';
+	    $results[] = 'Stream mapping:';
+	    $results[] = '  Stream #0.0 -> #0.0';
+	    $results[] = 'Press [q] to stop encoding';
+	    $results[] = 'frame=    1 q=0.0 size=       2kB time=0.1 bitrate= 232.4kbits/s    ';	    
+	    return array(1, $results);
 	}
+
+	printf("<pre>%s</pre>", print_r($cmd, 1));
 	
 	return array(0, 'unprepared for exec()');
     }
@@ -233,6 +262,10 @@ class FfmpegToolkitTestPlatform {
 
     function unlink($path) {
 	// we don't create any files, so no need to unlink any
+    }
+
+    function tempnam($dir, $prefix) {
+	return 'TEMPFILE';
     }
 }
 

@@ -85,6 +85,8 @@ class FfmpegToolkit extends GalleryToolkit {
 			      $destFilename, $parameters) {
 	global $gallery;
 
+	$platform = $gallery->getPlatform();
+
 	$tmpDir = $gallery->getConfig('data.gallery.tmp');
 	$tmpFilename = $platform->tempnam($tmpDir, 'fmpg_');
 	if (empty($tmpFilename)) {
