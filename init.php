@@ -32,6 +32,7 @@ function GalleryInitFirstPass($params=array()) {
     ini_set('magic_quotes_runtime', 0);
 
     /* Specify that when an assertion fails, we terminate right away. */
+    assert_options(ASSERT_WARNING, 1);
     assert_options(ASSERT_BAIL, 1);
 
     /* Figure out the Gallery base directory here, from our filename. */
