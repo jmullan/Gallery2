@@ -115,6 +115,7 @@ function askForPassword() {
 
 function redirectBackToSelf() {
     require_once(dirname(__FILE__) . '/../../modules/core/classes/GalleryUrlGenerator.class');
-    header('Location: ' . GalleryUrlGenerator::getCurrentUrl());
+    $urlGenerator = new GalleryUrlGenerator();
+    header('Location: ' . $urlGenerator->getCurrentUrl());
 }
 ?>
