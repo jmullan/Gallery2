@@ -201,7 +201,9 @@ class SquareThumbModule extends GalleryModule {
 	 * so make sure that we don't handle *that* event and get into an infinite loop!
 	 */
 	$data = $event->getData();
-	if ($event->getEventName() == 'Gallery::DeactivatePlugin' && $data['pluginId'] != 'squarethumb') {
+	if ($event->getEventName() == 'Gallery::DeactivatePlugin' &&
+	    $data['pluginId'] != 'squarethumb' &&
+	    $data['pluginType'] == 'module') {
 
 	    list ($ret, $isActive) = $this->isActive();
 	    if ($ret->isError()) {
