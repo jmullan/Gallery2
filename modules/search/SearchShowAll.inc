@@ -75,7 +75,7 @@ class SearchShowAllView extends GalleryView {
 	global $gallery;
 
 	// XXX: Parameterize this
-	$pageSize = 2;
+	$pageSize = 10;
 
 	$return = GalleryUtilities::getFormVariables('return.');
 	
