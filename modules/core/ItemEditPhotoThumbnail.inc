@@ -78,7 +78,8 @@ class ItemEditPhotoThumbnail extends ItemEditPlugin {
 								      $cropX,
 								      $cropY,
 								      $cropWidth,
-								      $cropHeight));
+								      $cropHeight),
+							      true);
 		
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);

@@ -156,7 +156,7 @@ class ItemEditPhotoThumbnailPluginTest extends ItemEditPluginTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->assertEquals('rotate|180;crop|50,50,200,200', $thumbnail->getDerivativeOperations());
+	$this->assertEquals('crop|50,50,200,200;rotate|180', $thumbnail->getDerivativeOperations());
     }
 
 }

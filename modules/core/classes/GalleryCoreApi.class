@@ -810,7 +810,7 @@ class GalleryCoreApi {
      * For example:
      *
      * OPERATION SET 1              OPERATION SET 2        RESULT
-     * crop|1,2,3,4;rotate|90       crop|2,3,4,5           crop|2,3,4,5,rotate|90
+     * crop|1,2,3,4;rotate|90       crop|2,3,4,5           crop|2,3,4,5;rotate|90
      * scale|250;rotate|90          rotate|-90             scale|250
      * scale|250;rotate|90          rotate|90              scale|250;rotate|180
      * scale|250;rotate|90          thumbnail|125          thumbnail|125;rotate|180
@@ -826,7 +826,7 @@ class GalleryCoreApi {
     function mergeDerivativeOperations($operationSet1, $operationSet2, $highPriority=false) {
 	GalleryCoreApi::apiMethodUsed('mergeOperation', 'GalleryDerivativeHelper_advanced');
 	require_once(dirname(__FILE__) . '/helpers/GalleryDerivativeHelper_advanced.class');
-	return GalleryDerivativeHelper_advanced::mergeOperations($operationSet1, $operationSet2);
+	return GalleryDerivativeHelper_advanced::mergeOperations($operationSet1, $operationSet2, $highPriority);
     }
     
     /**
