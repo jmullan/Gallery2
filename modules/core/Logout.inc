@@ -42,6 +42,13 @@ class LogoutController extends GalleryController {
     function handleRequest() {
 	global $gallery;
 
+	$event = GalleryCoreApi::newEvent('Gallery::Logout');
+	$event->setEntity($gallery->getActiveUser());
+	$ret = GalleryCoreApi::postEvent($event);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+		    
 	$session =& $gallery->getSession();
 	$ret = $session->reset();
 	if ($ret->isError()) {

@@ -59,6 +59,13 @@ class UserLoginController extends GalleryController {
 		    $redirect['view'] = 'core:UserAdmin';
 		    $redirect['subView'] = 'core:UserPreferences';
 		    $status['loggedin'] = 1;
+
+		    $event = GalleryCoreApi::newEvent('Gallery::Login');
+		    $event->setEntity($user);
+		    $ret = GalleryCoreApi::postEvent($event);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
 		} else {
 		    $error[] = 'form[error][invalidPassword]';
 		}
