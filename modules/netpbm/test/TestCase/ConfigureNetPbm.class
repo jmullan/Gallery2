@@ -15,17 +15,20 @@ class ConfigureNetPbmTestCase extends TestCase {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	$settings['path'] = '/usr/local/bin/';
-	$settings['jpegQuality'] = '75';
-	$settings['pnmtojpeg'] = 'pnmtojpeg';
-	$settings['version'] = $module->getVersion();
+	$ret = $module->init();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	$ret = $module->install();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 
-	foreach ($settings as $key => $value) {
-	    $ret = $gallery->setModuleParameter($module->getName(),
-						$key, $value);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
+	/* Hardcode a path we know will work (on Bharat's dev box) */
+	$ret = $module->setModuleParameter('path', '/usr/local/bin');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$ret = $gallery->setModuleParameter('core', 'graphics.type', 'netpbm');
