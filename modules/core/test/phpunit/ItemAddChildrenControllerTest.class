@@ -38,6 +38,8 @@ class ItemAddChildrenControllerTest extends GalleryControllerTestCase {
     function setUp() {
 	global $gallery;
 
+	parent::setUp();
+
 	list ($ret, $rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -55,8 +57,6 @@ class ItemAddChildrenControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-
-	parent::setUp();
     }
 
     function tearDown() {
@@ -81,13 +81,19 @@ class ItemAddChildrenControllerTest extends GalleryControllerTestCase {
 	foreach ($files as $file) {
 	    $i++;
 	    $fullPath = $baseDir . $file;
+
+	    if (get_magic_quotes_gpc()) {
+		$fullPath = addslashes($fullPath);
+	    }
+	    
 	    GalleryUtilities::putRequestVariable('form.fileUpload.' . $i,
 		array('name' => $file,
 		      'type' => GalleryUtilities::getMimeType($fullPath),
 		      'tmp_name' => $fullPath,
 		      'size' => $platform->filesize($fullPath)));
 	    GalleryUtilities::putRequestVariable('form.fileUpload.' . $i . '.name', $file);
-	    GalleryUtilities::putRequestVariable('form.fileUpload.' . $i . '.caption', 'this is a caption for ' . $file);
+	    GalleryUtilities::putRequestVariable('form.fileUpload.' . $i . '.caption',
+						 'this is a caption for ' . $file);
 	}
 	GalleryUtilities::putRequestVariable('form.uploadBoxCount', $i);
 
