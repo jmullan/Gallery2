@@ -28,7 +28,7 @@
 /**
  * Load the parent class
  */
-require_once(dirname(__FILE__) . '/../../core/classes/GalleryPhotoItem.class');
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryPhotoItem.class');
 
 /**
  * An extension of GalleryPhotoItem to periodically refresh the image from an external source
@@ -70,12 +70,12 @@ class GalleryLiveImage_core extends GalleryPhotoItem {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    $loop[$id] = true;
-	    list ($ret, $this) = $this->refresh();
+	    list ($ret, $item) = $this->refresh();
 	    if ($ret->isError()) {
 		GalleryCoreApi::releaseLocks($lockId);
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-	    if (time() - $this->getModificationTimestamp() > $duration) {
+	    if ($this->getSerialNumber() == $item->getSerialNumber()) {
 		$old = true;
 	    }
 	}
@@ -111,6 +111,7 @@ class GalleryLiveImage_core extends GalleryPhotoItem {
 		    GalleryCoreApi::releaseLocks($lockId);
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
+		$this->setOriginationTimestamp(time());
 		$ret = $this->save();
 		if ($ret->isError()) {
 		    GalleryCoreApi::releaseLocks($lockId);
