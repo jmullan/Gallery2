@@ -42,16 +42,16 @@ class UserAndGroupTest extends GalleryTestCase {
     function _createRandomUser() {
 	list ($ret, $user) = GalleryFactory::newInstance('GalleryEntity', 'GalleryUser');
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	if (!isset($user)) {
-	    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
+	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
 	}  
 
 	$ret = $user->create('testuser-' . rand());
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$user->setFullName('User 1');
@@ -60,7 +60,7 @@ class UserAndGroupTest extends GalleryTestCase {
 
 	$ret = $user->save();
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	return array(GalleryStatus::success(), $user);
@@ -69,23 +69,23 @@ class UserAndGroupTest extends GalleryTestCase {
     function _createRandomGroup() {
 	list ($ret, $group) = GalleryFactory::newInstance('GalleryEntity', 'GalleryGroup');
 	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return array($this->failWithStatus($ret->wrap(__FILE__, __LINE__)), null);
 	}
 
 	if (!isset($group)) {
-	    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
+	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
 	}
 	
 	$ret = $group->create('testgroup-' . rand());
 	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return array($this->failWithStatus($ret->wrap(__FILE__, __LINE__)), null);
 	}
 
 	$group->setGroupName('Test Group ' . rand());
 
 	$ret = $group->save();
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	
 	return array(GalleryStatus::success(), $group);
