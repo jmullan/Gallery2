@@ -40,6 +40,7 @@
   </h2>
 
   <script type="text/javascript">
+    // <![CDATA[
     watermarkUrlMap = new Array;
     {foreach from=$ItemEditWatermark.watermarks item=watermark}
     watermarkUrlMap[{$watermark.id}] = new Array;
@@ -105,6 +106,7 @@
       }
     }
     {/literal}
+    // ]]>
   </script>
 
   <select name="{g->formVar var="form[watermarkId]"}" onchange="chooseWatermark(this.value)">
@@ -125,7 +127,7 @@
 	  item=$ItemEditWatermark.item
           image=$ItemEditWatermark.derivative|default:$ItemEditWatermark.item
 	  maxSize=400}
-    <img name="watermark_floater" src="{g->url arg1="view=core:DownloadItem" arg2="itemId=`$form.watermarkId`"}" width="{$ItemEditWatermark.watermarks[form.watermarkId].width}" height="{$ItemEditWatermark.watermarks[form.watermarkId].height}"/>
+    <img name="watermark_floater" src="{g->url arg1="view=core:DownloadItem" arg2="itemId=`$form.watermarkId`"}" width="{$ItemEditWatermark.watermarks[$form.watermarkId].width}" height="{$ItemEditWatermark.watermarks[$form.watermarkId].height}" alt="{g->text text="watermark"}"/>
   </div>
   {/strip}
 </div>
