@@ -113,9 +113,17 @@ function askForPassword() {
 }
 
 function redirectBackToSelf() {
-    $url = $_SERVER['PHP_SELF'];
-    if (isset($_SERVER['QUERY_STRING'])) {
-	$url .= '?' . $_SERVER['QUERY_STRING'];
+    $defaultPort = array('http' => 80, 'https' => 443);
+    $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? 'https' : 'http';
+    $domain = !empty($_SERVER['HTTP_X_FORWARDED_SERVER'])
+		? $_SERVER['HTTP_X_FORWARDED_SERVER'] : $_SERVER['HTTP_HOST'];
+    $port = $_SERVER['SERVER_PORT'];
+    if ($port == $defaultPort[$protocol] || strpos($domain, ':') !== false) {
+	$port = '';
+    } else if (!empty($port)) {
+	$port = ':' . $port;
     }
-    header(sprintf('Location: %s', $url));
+    $query = !empty($_SERVER['QUERY_STRING']) ? ('?' . $_SERVER['QUERY_STRING']) : '';
+    header(sprintf('Location: %s://%s%s%s', $protocol, $domain, $port, $_SERVER['PHP_SELF'], $query));
 }
+?>
