@@ -81,6 +81,9 @@ class GalleryTranslator {
 	$this->_supportedLanguages['de']['DE']['charset'] = 'ISO-8859-1';
 	$this->_defaultCountry['de'] = 'DE';
 	
+	$this->_supportedLanguages['el']['GR']['description'] = 'Greek';
+	$this->_supportedLanguages['el']['GR']['charset'] = 'ISO-8859-7';
+    
 	$this->_supportedLanguages['en']['US']['description'] = 'English (US)';
 	$this->_supportedLanguages['en']['US']['charset'] = 'ISO-8859-1';
     
@@ -126,8 +129,6 @@ class GalleryTranslator {
      *
      * @param string the language code hint (eg. 'en_US' or 'zh_CN')
      * @return object GalleryStatus a status code
-     * @todo Also respect the core.default.language setting, not only try
-     *       to get the language the browser supports.
      */
     function init($languageCode=null) {
 	global $gallery;
@@ -139,7 +140,7 @@ class GalleryTranslator {
 
 	/* Split the language code into language/country */
 	list ($language, $country) = split('_', $languageCode);
-	
+
 	/* If we're using gettext, try to bind to a language */
 	if ($gallery->getConfig('function.exists.dgettext')) {
 	    
