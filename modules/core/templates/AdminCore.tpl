@@ -7,9 +7,9 @@
 <div id="gsAdminContents">
   <div class="gbTopFlag">
     <div class="gbTitle">
-      <div class="giTitle">
+      <h2 class="giTitle">
 	{g->text text="General Settings"}
-      </div>
+      </h2>
     </div>
 
   </div>
@@ -35,13 +35,13 @@
   {/if}
 
   <div class="gbAdmin">
-    <div class="giTitle">
+    <h3 class="giTitle">
       {g->text text="Defaults"}
-    </div>
+    </h3>
 
-    <div class="giDescription">
+    <p class="giDescription">
       {g->text text="These are default values.  They can be overridden in each album."}
-    </div>
+    </p>
 
     <table class="gbDataTable">
       <tr>
@@ -85,13 +85,13 @@
   </div>
 
   <div class="gbAdmin">
-    <div class="giTitle">
-      {g->text text="Language settings"}
-    </div>
+    <h3 class="giTitle">
+      {g->text text="Language Settings"}
+    </h3>
 
-    <div class="giDescription">
+    <p class="giDescription">
       {g->text text="Select language defaults for Gallery. Individual users can override this setting in their personal preferences."}
-    </div>
+    </p>
 
     {if $AdminCore.translationsSupported}
     <table class="gbDataTable">
@@ -115,13 +115,13 @@
   </div>
 
   <div class="gbAdmin">
-    <div class="giTitle">
+    <h3 class="giTitle">
       {g->text text="Filesystem Permissions"}
-    </div>
+    </h3>
 
-    <div class="giDescription">
+    <p class="giDescription">
       {g->text text="Specify the default permissions for files and directories that Gallery creates. This doesn't apply to files/directories that Gallery has already created."}
-    </div>
+    </p>
 
     <table class="gbDataTable">
       <tr>
@@ -151,13 +151,13 @@
   </div>
 
   <div class="gbAdmin">
-    <div class="giTitle">
+    <h3 class="giTitle">
       {g->text text="Local Server Upload Paths"}
-    </div>
+    </h3>
 
-    <div class="giDescription">
+    <p class="giDescription">
       {g->text text="Specify the legal directories on the local server where a user can store files and then upload them into Gallery using the <i>Upload from Local Server</i> feature.  The paths you enter here and all the files and directories under those paths will be available to any Gallery user who has upload privileges, so you should limit this to directories that won't contain sensitive data (eg. /tmp or /usr/ftp/incoming)"}
-    </div>
+    </p>
 
     <table class="gbDataTable">
       <tr>
@@ -226,13 +226,13 @@
   </div>
 
   <div class="gbAdmin">
-    <div class="giTitle">
+    <h3 class="giTitle">
       {g->text text="Session Settings"}
-    </div>
+    </h3>
     
-    <div class="giDescription">
+    <p class="giDescription">
       {g->text text="Specify the lifetime of the session here."}
-    </div>
+    </p>
 
     <table class="gbDataTable">
       <tr>
@@ -262,11 +262,11 @@
   </div>
 
   <div class="gbAdmin">
-    <div class="giTitle">
+    <h3 class="giTitle">
       {g->text text="URL Style"}
-    </div>
+    </h3>
     
-    <div class="giDescription">
+    <p class="giDescription">
       {capture name="acceptPathInfoLink"}
       <a href="http://httpd.apache.org/docs-2.0/mod/core.html#acceptpathinfo">
 	{g->text text="AcceptPathInfo Directive."}
@@ -278,7 +278,7 @@
       </a>
       {/capture}
       {g->text text="Gallery has the option to use a compact URL format, however this format is not supported by default on all web servers.  It is enabled by default on Apache 1, but not on Apache 2.  If you're using Apache 2 and you want this feature, you must use the %s  Use this %s to find out if short URLs work for you.  If the link returns a webserver error then they don't work for you." arg1=$smarty.capture.acceptPathInfoLink arg2=$smarty.capture.shortUrlTestLink}
-    </div>
+    </p>
 
     <table class="gbDataTable">
       <tr>
@@ -296,13 +296,13 @@
   </div>
 
   <div class="gbAdmin">
-    <div class="giTitle">
+    <h3 class="giTitle">
       {g->text text="Embedded Markup"}
-    </div>
+    </h3>
     
-    <div class="giDescription">
+    <p class="giDescription">
       {g->text text="What kind of markup should we allow in user-entered fields?  For security reasons we do not recommend that you allow raw HTML.  BBCode is a special kind of markup that is secure and allows for simple text formatting like bold, italics, lists, images and urls."}
-    </div>
+    </p>
 
     <table class="gbDataTable">
       <tr>

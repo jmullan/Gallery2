@@ -7,9 +7,9 @@
 <div id="gsAdminContents">
   <div class="gbTopFlag">
     <div class="gbTitle">
-      <div class="giTitle">
+      <h2 class="giTitle">
         {g->text text="Thumbnail Manager"}
-      </div>
+      </h2>
     </div>
   </div>
 
@@ -51,9 +51,9 @@
 
   {if !empty($form.list)}
   <div class="gbAdmin">
-    <div class="giDescription">
+    <p class="giDescription">
       {g->text text="The thumbnail images shown below will be used for new items added to Gallery with the listed mime types."}
-    </div>
+    </p>
 
     <table class="gbDataTable">
       <tr>
@@ -103,8 +103,8 @@
   {/if}
 
   <div class="gbAdmin">
-    <div class="giTitle">{g->text text="New Setting"}</div>
-    <div class="giDescription" style="margin-bottom:10px">{g->text text="Images do not need to be thumbnail size; they will be resized as needed."}</div>
+    <h3 class="giTitle">{g->text text="New Setting"}</h3>
+    <p class="giDescription" style="margin-bottom:10px">{g->text text="Images do not need to be thumbnail size; they will be resized as needed."}</p>
 
     {g->text text="Default thumbnail for mime type:"}
     <input type="text" name="{g->formVar var="form[mimeType]"}" size="30" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/><br/>

@@ -22,7 +22,7 @@
   <div id="gsContents">
     <div id="gsAdminSidebar">
       <div class="gbMenu">
-        <div class="giTitle"> {g->text text="Admin Options"} </div>
+        <h2 class="giTitle"> {g->text text="Admin Options"} </h2>
   
         <!-- TODO: Figure out how to get icons in here in a modular way -->
         <ul>
@@ -41,7 +41,7 @@
       </div>
   
       <div class="gbMenu">
-          <div class="giTitle"> {g->text text="Navigation"} </div>
+          <h2 class="giTitle"> {g->text text="Navigation"} </h2>
           
           <ul>
             <li> 

@@ -1,10 +1,10 @@
 <div id="gsAdminContents">
   <div class="gbTopFlag">
     <div class="gbTitle">
-      <div class="giTitle">
+      <h2 class="giTitle">
 	{g->text text="Members Settings"}
       </div>
-    </div>
+    </h2>
   </div>
 
   <div class="gbAdmin">

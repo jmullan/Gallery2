@@ -97,7 +97,7 @@ class MembersModule extends GalleryModule {
      */
     function getSiteAdminViews() {
 	return array(GalleryStatus::success(),
-		     array(array('name' => $this->translate('Members'),
+		     array(array('name' => $this->translate('Members Settings'),
 				 'view' => 'members:AdminMembers')));
     }
 

@@ -345,7 +345,7 @@ class CommentModule extends GalleryModule {
 	global $gallery;
 
 	return array(GalleryStatus::success(),
-		     array(array('name' => $this->translate('Comments'),
+		     array(array('name' => $this->translate('Comments Settings'),
 				 'view' => 'comment:AdminComments')));
     }
 

@@ -7,28 +7,31 @@
 <div id="gsAdminContents">
   <div class="gbTopFlag">
     <div class="gbTitle">
-      <div class="giTitle">
-	{g->text text="Gallery 1 to Gallery 2 Data Migration"}
-      </div>
+      <h2 class="giTitle">
+	{g->text text="Import from Gallery 1"}
+      </h2>
 
-      <div class="giDescription">
-	<i>
+      <p class="giDescription">
+      This operation takes data (images, albums, users, etc.) from <strong>Gallery 1</strong> and brings it into <strong>Gallery 2</strong>.
+      </p>
+      <p class="giDescription">      
+	<em>
 	  {g->text text="This module is unfinished.  It should not harm your Gallery 1 data, but use it at your own risk."}
-	</i>
-      </div>
+	</em>
+      </p>
     </div>
 
   </div>
 
   <div class="gbAdmin">
-    <div class="giDescription">
+    <p class="giDescription">
       {g->text text="This process will copy data from an existing Gallery 1 installation.  It won't modify your Gallery 1 data in any way.  You must enter the path to your Gallery 1 <i>albums</i> directory.  If you enter the wrong path, we'll let you know so it's safe to experiment.  Example: <i>/path/to/albums</i>"}
-    </div>
+    </p>
 
     <div class="gbDataEntry">
-      <div class="giTitle">
-	{g->text text="Path:"}
-      </div>
+      <h3 class="giTitle">
+	{g->text text="Path"}
+      </h3>
 
       <input type="text" size="60" name="{g->formVar var="form[albumsPath]"}" value="{$form.albumsPath}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
 
@@ -52,9 +55,9 @@
       {rdelim}
     </script>
 
-    <br />
-
-    {g->text text="Recent paths:"}
+    <h4 class="giTitle">
+      {g->text text="Recently Used Paths"}
+    </h4>
     <ul>
       {foreach from=$SelectGallery.recentPaths key=path item=count}
       {capture name="escapedPath"}{$path|replace:"\\":"\\\\"}{/capture}

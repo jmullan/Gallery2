@@ -7,9 +7,9 @@
 <div id="gsAdminContents">
   <div class="gbTopFlag">
     <div class="gbTitle">
-      <div class="giTitle">
+      <h2 class="giTitle">
 	{g->text text="ImageMagick Settings"}
-      </div>
+      </h2>
     </div>
     
   </div>
@@ -30,9 +30,9 @@
     </div>
 
     <div class="gbDataEntry">
-      <div class="giTitle">
+      <h3 class="giTitle">
 	{g->text text="ImageMagick Path"}
-      </div>
+      </h3>
 
       <input type="text" name="{g->formVar var="form[path]"}" value="{$form.path}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
 	
@@ -56,9 +56,9 @@
     </div>
 
     <div class="gbDataEntry">
-      <div class="giTitle">
+      <h3 class="giTitle">
 	{g->text text="JPEG Quality"}
-      </div>
+      </h3>
 
       <select name="{g->formVar var="form[jpegQuality]"}">
 	  {html_options values=$AdminImageMagick.jpegQualityList selected=$form.jpegQuality output=$AdminImageMagick.jpegQualityList}
@@ -74,9 +74,9 @@
 
   {if !empty($AdminImageMagick.tests)}
   <div class="gbAdmin">
-    <div class="giTitle">
+    <h3 class="giTitle">
       {g->text text="ImageMagick binary test results"}
-    </div>
+    </h3>
     
     <table class="gbDataTable">
       <tr>

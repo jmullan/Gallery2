@@ -7,9 +7,9 @@
 <div id="gsAdminContents">
   <div class="gbTopFlag">
     <div class="gbTitle">
-      <div class="giTitle">
+      <h2 class="giTitle">
 	{g->text text="EXIF Settings"}
-      </div>
+      </h2>
     </div>
     
   </div>
@@ -94,18 +94,18 @@
   {/if}
 
   <div class="gbAdmin">
-    <div class="giDescription">
+    <p class="giDescription">
       {g->text text="Gallery can display the EXIF data that is embedded in photos taken by most digital cameras."}
-    </div>
+    </p>
   </div>
 
   <div class="gbAdmin">
-    <div class="giTitle">
+    <h3 class="giTitle">
       {g->text text="Summary and Detailed EXIF displays"}
-    </div>
-    <div class="giDescription">
+    </h3>
+    <p class="giDescription">
       {g->text text="There can be a great deal of EXIF information stored in photos from modern digital cameras.  We display that data in two different views, summary and detailed.  You can choose which properties are displayed in each view."}
-    </div>
+    </p>
 
     <table class="gbDataTable">
       <tr>
@@ -178,12 +178,12 @@
   </div>
 
   <div class="gbAdmin">
-    <div class="giTitle">
+    <h3 class="giTitle">
       {g->text text="Reset to Defaults"}
-    </div>
-    <div class="giDescription">
+    </h3>
+    <p class="giDescription">
       {g->text text="Restore the original values for the Summary and Detailed views.  Use with caution, there is no undo!"}
-    </div>
+    </p>
 
     <input type="submit" name="{g->formVar var="form[action][resetSummary]"}" value="{g->text text="Restore Summary Defaults"}" class="button"/>
     <input type="submit" name="{g->formVar var="form[action][resetDetailed]"}" value="{g->text text="Restore Detailed Defaults"}" class="button"/>

@@ -126,7 +126,7 @@ class SearchModule extends GalleryModule {
 	global $gallery;
 
 	return array(GalleryStatus::success(),
-		     array(array('name' => $this->translate('Search'),
+		     array(array('name' => $this->translate('Search Settings'),
 				 'view' => 'search:AdminSearch')));
     }
 

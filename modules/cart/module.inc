@@ -149,7 +149,7 @@ class CartModule extends GalleryModule {
      */
     function getSiteAdminViews() {
 	return array(GalleryStatus::success(),
-		     array(array('name' => $this->translate('Cart'),
+		     array(array('name' => $this->translate('Cart Settings'),
 				 'view' => 'cart:AdminCart')));
     }
 

@@ -7,9 +7,9 @@
 <div id="gsAdminContents">
   <div class="gbTopFlag">
     <div class="gbTitle">
-      <div class="giTitle">
+      <h2 class="giTitle">
 	{g->text text="Group Management"}
-      </div>
+      </h2>
     </div>
     
   </div>
@@ -40,9 +40,9 @@
   </div>
 
   <div class="gbAdmin">
-    <div class="giTitle">
+    <h3 class="giTitle">
       {g->text text="Edit Group"}
-    </div>
+    </h3>
 
     <input type="text" name="{g->formVar var="form[text][groupName]"}" size="20" value="{$form.text.groupName}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
     <input type="submit" name="{g->formVar var="form[action][editFromText]"}" value="{g->text text="Edit"}" class="button"/>
@@ -76,9 +76,9 @@
   </div>
 
   <div class="gbAdmin">
-    <div class="giTitle">
+    <h3 class="giTitle">
       {g->text text="Edit Group (by list)"}
-    </div>
+    </h3>
 
     <table class="gbDataTable">
       {if ($form.list.maxPages > 1)}

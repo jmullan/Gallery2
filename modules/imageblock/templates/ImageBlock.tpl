@@ -7,45 +7,45 @@
     {foreach from=$ImageBlockSystemContent.blocks item=block}
       <div class="gbMenu" style="width:144px">
 	{if !empty($block.title)}
-	  <div class="giTitle">
+	  <h3 class="giTitle">
 	    {g->text text=$block.title}
-	  </div>
+	  </h3>
 	{/if}
 
 	<a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$block.id`"}">
 	  {g->image item=$block.item image=$block.thumb class="giThumbImage" maxSize=140}
-	</a><p style="clear:both" />
+	</a>
 
 	{if isset($ImageBlockSystemContent.show.title) && isset($block.item.title)}
-	<span class="giDescription">
+	<h4 class="giDescription">
 	  {$block.item.title|markup}
-	</span>
+	</h4>
 	{/if}
 
 	{if isset($ImageBlockSystemContent.show.date) ||
 	    isset($ImageBlockSystemContent.show.views) ||
 	    isset($ImageBlockSystemContent.show.owner)}
-	<div class="giInfo">
+	<ul class="giInfo">
 	  {if isset($ImageBlockSystemContent.show.date)}
-	  <span>
+	  <li>
 	    {g->text text="Date:"} {g->date timestamp=$block.item.creationTimestamp format="%D"}
-	  </span><br/>
+	  </li>
 	  {/if}
 
 	  {if isset($ImageBlockSystemContent.show.views)}
-	  <span>
+	  <li>
 	    {g->text one="Viewed: %d time" 
 	             many="Viewed: %d times"
 	             count=$block.viewCount arg1=$block.viewCount}
-	  </span><br/>
+	  </li>
 	  {/if}
 
 	  {if isset($ImageBlockSystemContent.show.owner)}
-	  <span>
+	  <li>
 	    {g->text text="Owner: %s" arg1=$block.owner.fullName|default:$block.owner.userName}
-	  </span><br/>
+	  </li>
 	  {/if}
-	</div>
+	</ul>
 	{/if}
       </div>
     {/foreach}

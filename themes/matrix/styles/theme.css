@@ -66,6 +66,14 @@ form, div {
 
 h1, h2, h3, h4, h5, h6 { font-family: "Gill Sans", Verdana, Arial, Helvetica, sans-serif; }
 
+ul, li {
+        list-style-type: none;
+        margin: 0;
+        padding: 1px 0;
+}
+
+li label { vertical-align: super; }
+
 a {
         font-weight: bold;
         text-decoration: none;
@@ -75,6 +83,8 @@ a:link {}
 a:visited {}
 a:hover { color: #fd6704; }
 a:active {}
+
+
 
 /*	GALLERY
 	Category 1: Gallery		
@@ -157,9 +167,10 @@ a:active {}
 	background: #eee;
 }
 
-table.gbDataTable th { 
+table.gbDataTable th {
+        text-align: left; 
         background: #e7e7e7; 
-        padding: 10px;
+        padding: 4px;
 }
 
 .gbEven { background-color: #fff; }
@@ -494,13 +505,17 @@ td.gbItemAlbum { background-color: #eee; }
 	padding: 8px 14px;
 }
 
+.gbAdmin:last-child {
+	border-bottom: 1px none #bbb;        
+}
+
 .gbButtons { background-color: #eee; }
 
 /*      for tabular data */
 #gsAdminContents .gbDataTable {
 	border-width: 0;
 	font-size: 1.0em;
-	margin: 4px;
+	margin: 4px 0 4px -4px;
 }
 
 
@@ -545,7 +560,8 @@ td.gbItemAlbum { background-color: #eee; }
 .giDescription {
 	display: block;
 	font-size: 1.1em;
-	margin: 2px 0;
+	line-height: 1.4em;
+	margin: 4px 0;
 	padding: 0 8px 0 0;
 }
 
@@ -686,10 +702,13 @@ discused the options of generating a table-based border (ie_test) and alistapart
 	padding-bottom: 0;
 }
 
+.gbAdmin p.giDescription {
+        width: 500px;
+}
+
 /*   Search page and form styles   */
 
 #SearchSystemContent { font-size: 1.1em; }
-
 
 .button {
     margin: 0 3px 0 0;

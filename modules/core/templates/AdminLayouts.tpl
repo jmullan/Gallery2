@@ -7,9 +7,9 @@
 <div id="gsAdminContents">
   <div class="gbTopFlag">
     <div class="gbTitle">
-      <div class="giTitle">
+      <h2 class="giTitle">
 	{g->text text="Gallery Layouts"}
-      </div>
+      </h2>
     </div>
   </div>
 
@@ -67,9 +67,9 @@
 
     {if ($AdminLayouts.mode == 'config')}
 
-      <h2 class="giTitle">
+      <h3 class="giTitle">
 	{g->text text="Layout Configuration"}
-      </h2>
+      </h3>
 
       <p class="giDescription">
 	{g->text text="Gallery has layouts that can change the way that you navigate around your albums.  You can download and install new layouts, or you can disable layouts if you don't want to use them.  By default, new layouts are disabled.  They must be enabled before you can use them."}

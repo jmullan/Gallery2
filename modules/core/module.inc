@@ -702,15 +702,15 @@ class CoreModule extends GalleryModule {
      */
     function getSiteAdminViews() {
 	return array(GalleryStatus::success(),
-		     array(array('name' => $this->translate('General'),
+		     array(array('name' => $this->translate('General Settings'),
 				 'view' => 'core:AdminCore'),
-			   array('name' => $this->translate('Users'),
+			   array('name' => $this->translate('User Management'),
 				 'view' => 'core:AdminUsers'),
-			   array('name' => $this->translate('Groups'),
+			   array('name' => $this->translate('Group Management'),
 				 'view' => 'core:AdminGroups'),
-			   array('name' => $this->translate('Modules'),
+			   array('name' => $this->translate('Gallery Modules'),
 				 'view' => 'core:AdminModules'),
-			   array('name' => $this->translate('Layouts'),
+			   array('name' => $this->translate('Gallery Layouts'),
 				 'view' => 'core:AdminLayouts')
 			   ),
 		     );

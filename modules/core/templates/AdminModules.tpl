@@ -7,9 +7,9 @@
 <div id="gsAdminContents">
   <div class="gbTopFlag">
     <div class="gbTitle">
-      <div class="giTitle">
+      <h2 class="giTitle">
 	{g->text text="Gallery Modules"}
-      </div>
+      </h2>
     </div>
 
   </div>
@@ -31,11 +31,11 @@
   {/if}
 
   <div class="gbAdmin">
-    <div class="giDescription">
+    <p class="giDescription">
       {g->text text="Gallery features come as separate modules.  You can download and install modules to add more features to your Gallery, or you can disable features if you don't want to use them.  In order to use a feature, you must install, configure (if necessary) and activate it.  If you don't wish to use a feature, you can deactivate it."}
-    </div>
+    </p>
 
-    <table>
+    <table class="gbDataTable">
       <tr>
 	<th> {g->text text="Module Name"} </th>
 	<th> {g->text text="Version"} </th>

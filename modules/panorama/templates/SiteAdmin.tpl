@@ -7,9 +7,9 @@
 <div id="gsAdminContents">
   <div class="gbTopFlag">
     <div class="gbTitle">
-      <div class="giTitle">
+      <h2 class="giTitle">
 	{g->text text="Panorama Settings"}
-      </div>
+      </h2>
     </div>
       
   </div>
@@ -37,31 +37,33 @@
   {/if}
 
   <div class="gbAdmin">
-    <div class="giDescription">
+    <p class="giDescription">
       {g->text text="The panorama viewer can be activated in two ways: the first allows album administrators to select individual images for panorama display (Panorama section in \"edit photo\"), overriding the normal display of the entire image.  The second method retains the normal image display but gives users an option in the \"item actions\" to view the image in the panorama viewer."}
-    </div>
+    </p>
+    <ul>
+      <li>
+        <input id="itemType" type="checkbox" name="{g->formVar var="form[itemType]"}" {if $form.itemType}checked="checked"{/if} class="button"/>
+        <label for="itemType">
+          {g->text text="Use applet to display wide images"}
+        </label>
+      </li>
+      <li>
+        <input id="itemLink" type="checkbox" name="{g->formVar var="form[itemLink]"}" {if $form.itemLink}checked="checked"{/if} class="button"/>
+        <label for="itemLink">
+          {g->text text="Add \"view panorama\" option in item actions for wide images"}
+        </label>
+      </li>
+      <li>
+        {g->text text="Width of panorama viewer: "}
+        <input type="text" size="6" name="{g->formVar var="form[width]"}" value="{$form.width}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';" />
 
-    <input id="itemType" type="checkbox" name="{g->formVar var="form[itemType]"}" {if $form.itemType}checked="checked"{/if} class="button"/>
-    <label for="itemType">
-      {g->text text="Use applet to display wide images"}
-    </label>
-    <br/>
-
-    <input id="itemLink" type="checkbox" name="{g->formVar var="form[itemLink]"}" {if $form.itemLink}checked="checked"{/if} class="button"/>
-    <label for="itemLink">
-      {g->text text="Add \"view panorama\" option in item actions for wide images"}
-    </label>
-    <br/>
-
-    {g->text text="Width of panorama viewer: "}
-    <input type="text" size="6" name="{g->formVar var="form[width]"}" value="{$form.width}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
-    <br/>
-
-    {if isset($form.error.width)}
-    <div class="giError">
-      {g->text text="Invalid width value"}
-    </div>
-    {/if}
+        {if isset($form.error.width)}
+        <div class="giError">
+          {g->text text="Invalid width value"}
+    
+        {/if}
+      </li>
+    </ul>
   </div>
 
   <div class="gbButtons">
