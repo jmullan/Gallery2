@@ -346,5 +346,270 @@ class GalleryItemHelper {
 
 	return array(GalleryStatus::success(), $instance);
     }
+
+    /**
+     * Add a new data item to an album from a data file.
+     *
+     * @param string the path to the file on the local disk
+     * @param string the name of the new item
+     * @param string the title of the new item
+     * @param string the caption of the new item
+     * @param string the description of the new item
+     * @param string the mime type of the new item
+     * @param int the id of the target album
+     * @return array object GalleryStatus a status code
+     *               object GalleryDataItem a new item
+     */
+    function addItemToAlbum($fileName, $itemName, $title, $caption,
+			    $description, $mimeType, $albumId) {
+	global $gallery;
+
+	$platform = $gallery->getPlatform();
+
+	/*
+	 * Assume that we've got a working mime type, go ahead and
+	 * get an appropriate GalleryDataItem from the GalleryFactory.
+	 */
+	list ($ret, $newItem) = GalleryItemHelper::newItemByMimeType($mimeType);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$ret = $newItem->create($albumId, $fileName, $mimeType, $itemName);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$newItem->setTitle($title);
+	$newItem->setSummary(substr($caption, 0, 255));
+	$newItem->setDescription($description);
+
+	$ret = $newItem->save();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/*
+	 * Now create thumbnails and resizes according to the
+	 * wishes of the parent album.
+	 */
+	list ($ret, $preferences) = GalleryDerivativePreferencesMap::fetchPreferencesForItem($albumId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	foreach ($preferences as $preference) {
+	    /*
+	     * Validate the stored preferences to make sure that
+	     * they're supported by an active toolkit.
+	     */
+	    list ($ret, $isSupported, $outputMimeType) =
+		GalleryToolkitHelper::isSupportedOperationSequence($mimeType, $preference['derivativeOperations']);
+
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    /* Not supported?  Try the next preference */
+	    if (!$isSupported) {
+		continue;
+	    }
+
+	    list ($ret, $derivative) = GalleryFactory::newInstance('GalleryEntity', 'GalleryDerivativeImage');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    if (!isset($derivative)) {
+		return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
+			     null);
+	    }
+
+	    $ret = $derivative->create($newItem->getId(), $preference['derivativeType']);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    $derivative->setDerivativeMimeType($outputMimeType);
+	    $derivative->setDerivativeSourceId($newItem->getId());
+	    $derivative->setDerivativeOperations($preference['derivativeOperations']);
+			
+	    $ret = $derivative->save();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	}
+
+	return array(GalleryStatus::success(), $newItem);
+    }
+
+
+    /**
+     * Set the thumbnail for an album from an item, according to the thumbnail
+     * preferences for the album.
+     *
+     * @param int the album id
+     * @param int the item id
+     * @return object GalleryStatus a status code
+     */
+    function setThumbnailFromItem($itemId, $fromItemId) {
+	global $gallery;
+
+	/* Load the current album thumbnail. */ 
+	list ($ret, $thumbnailTable) =
+	    GalleryDerivativeHelper::fetchThumbnailsByItemIds(array($itemId, $fromItemId));
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/*
+	 * Find the right source id to create our thumbnail from.  Search for
+	 * it in this order:
+	 * 1. The fromItem's preferred derivative's source id
+	 * 2. The fromItem's thumbnail's source id
+	 * 3. The fromItem data itself
+	 * 4. no thumbnail
+	 */
+	$source = null;
+	$sourceMimeType = null;
+	
+	/* 1. The fromItem's preferred derivative's source id */
+	list ($ret, $derivatives) = GalleryDerivativeHelper::fetchPreferredsByItemIds(array($fromItemId));
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	if (!empty($derivatives[$fromItemId])) {
+	    $source = $derivatives[$fromItemId];
+	    $sourceMimeType = $source->getDerivativeMimeType();
+	}
+
+	/* 2. The item's thumbnail's source id */
+	if (!$sourceMimeType) {
+	    if (!empty($thumbnailTable[$fromItemId])) {
+		$source = $thumbnailTable[$fromItemId];
+		$sourceMimeType = $source->getDerivativeMimeType();
+	    }
+	}
+
+	/* 3. The item data itself */
+	if (!$sourceMimeType) {
+	    list ($ret, $fromItem) = $gallery->loadEntitiesById($fromItemId);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    
+	    if (GalleryUtilities::isA($fromItem, 'GalleryDataItem')) {
+		$source = $fromItem;
+		$sourceMimeType = $fromItem->getMimeType();
+	    }
+	}
+
+	/*
+	 * If at this point $source is undefined then we have no source
+	 * thumbnail and that means that we're done.
+	 */
+	if (isset($source)) {
+	    list ($ret, $lockIds[]) = $gallery->acquireReadLock($source->getId());
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    /* Reuse the existing derivative, if one exists */
+	    if (isset($thumbnailTable[$itemId])) {
+		$derivative = $thumbnailTable[$itemId];
+	    
+		/* Modify existing thumbnail */
+		list ($ret, $lockIds[]) = $gallery->acquireWriteLock($derivative->getId());
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+
+		list ($ret, $derivative) = $derivative->refresh();
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    } else {
+		/* Create a new one */
+		list ($ret, $derivative) = GalleryFactory::newInstance('GalleryEntity', 'GalleryDerivativeImage');
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+
+		if (!isset($derivative)) {
+		    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
+		}  
+
+		$ret = $derivative->create($itemId, DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    
+		/*
+		 * Get the derivativeOperations to generate a thumbnail for the
+		 * item.
+		 *
+		 * XXX: this will only work with albums!  We need to check the
+		 * parent's preferences if we're creating a new thumbnail for
+		 * an item.
+		 */
+		list ($ret, $preferences) = GalleryDerivativePreferencesMap::fetchPreferencesForItem($itemId);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+		
+		foreach ($preferences as $preference) {
+		    if ($preference['derivativeType'] == DERIVATIVE_TYPE_IMAGE_THUMBNAIL) {
+			$derivativeOperations = $preference['derivativeOperations'];
+			break;
+		    }
+		}
+		if (empty($derivativeOperations)) {
+		    return GalleryStatus::error(ERROR_MISSING_VALUE, __FILE__, __LINE__);
+		}
+
+		/*
+		 * Validate the stored preferences to make sure that
+		 * they're supported by an active toolkit.
+		 */
+		list ($ret, $isSupported, $outputMimeType) =
+		    GalleryToolkitHelper::isSupportedOperationSequence($sourceMimeType,
+								       $derivativeOperations);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+
+		if ($isSupported == false) {
+		    if (isset($lockIds)) {
+			$ret = $gallery->releaseLocks($lockIds);
+			if ($ret->isError()) {
+			    return $ret->wrap(__FILE__, __LINE__);
+			}
+		    }
+		
+		    return GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__);
+		}
+		
+		$derivative->setDerivativeOperations($derivativeOperations);
+		$derivative->setDerivativeMimeType($outputMimeType);
+	    }
+		
+	    $derivative->setDerivativeSourceId($source->getId());
+	    
+	    $ret = $derivative->save();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    if (isset($lockIds)) {
+		$ret = $gallery->releaseLocks($lockIds);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+	}
+
+	return GalleryStatus::success();
+    }
 }
 ?>

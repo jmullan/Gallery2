@@ -232,11 +232,6 @@ class ItemEditImageController extends GalleryController {
 		    }
 		}
 
-		$ret = GalleryDerivativeHelper::expireDerivativeTreeBySourceIds(array($preferred->getId()));
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-
 		/*
 		 * Perform a final check -- if the new derivative is exactly
 		 * the same as the original then delete it.

@@ -173,8 +173,7 @@ class GalleryDerivativeImage_core extends GalleryDerivative {
 
 	/* Update our dimensions */
 	$mimeType = $this->getDerivativeMimeType();
-	list ($ret, $toolkit) =
-	    GalleryToolkitHelper::getToolkitByProperty($mimeType, 'dimensions');
+	list ($ret, $toolkit) = GalleryToolkitHelper::getToolkitByProperty($mimeType, 'dimensions');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -186,8 +185,7 @@ class GalleryDerivativeImage_core extends GalleryDerivative {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
-	    list ($ret, $dimensions) =
-		$toolkit->getProperty($mimeType, 'dimensions', $destPath);
+	    list ($ret, $dimensions) = $toolkit->getProperty($mimeType, 'dimensions', $destPath);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }

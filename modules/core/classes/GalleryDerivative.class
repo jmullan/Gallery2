@@ -197,6 +197,41 @@ class GalleryDerivative_core extends GalleryChildEntity {
     }
 
     /**
+     * @see GalleryEntity::save()
+     */
+    function save($expire=true) {
+	if ($this->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED)) {
+	    $newItem = true;
+	} else {
+	    $newItem = false;
+	}
+
+	/* Save myself */
+	$ret = parent::save();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	if (!$newItem) {
+	    /* Expire myself */
+	    if ($expire) {
+		$ret = $this->expireCache();
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+	    
+	    /* Expire anything that depends on me */
+	    $ret = GalleryDerivativeHelper::expireDerivativeTreeBySourceIds(array($this->getId()));
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
      * Merge a new operation into this derivative's operation list
      *
      * @see GalleryToolkit::mergeOperation()

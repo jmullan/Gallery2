@@ -389,12 +389,12 @@ class GalleryDerivativeHelper {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	list ($ret, $current) = $derivative->isCacheCurrent();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	if (!$current) {
 	    $ret = GalleryDerivativeHelper::rebuildCache($derivativeId);
 	    if ($ret->isError()) {
@@ -465,7 +465,7 @@ class GalleryDerivativeHelper {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	$ret = $derivative->save();
+	$ret = $derivative->save(false);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
