@@ -1,7 +1,7 @@
 {g->pagebox}
   {g->banner}
     {g->title}
-      {g->text text="General Item Properties"}
+      {g->text text="General Settings"}
     {/g->title}
   {/g->banner}
 
