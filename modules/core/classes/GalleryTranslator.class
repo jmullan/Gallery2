@@ -93,6 +93,15 @@ class GalleryTranslator {
     }
 
     /**
+     * Can we make plural translations?
+     *
+     * @return boolean
+     */
+    function canTranslatePlural() {
+	return function_exists('dngettext');
+    }
+
+    /**
      * Return our language data
      *
      * @return array array['language code']['country code'] = array('description', 'charset code')

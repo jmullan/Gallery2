@@ -29,6 +29,8 @@
 /**
  * Test Translator functionality
  *
+ * Note: This file contains UTF-8 characters!
+ *
  * @package GalleryCore
  * @subpackage PHPUnit
  *
@@ -101,11 +103,10 @@ class TranslatorTest extends GalleryTestCase {
 	}
     }
 
-    function testTranslate() {
+    function testTranslateSingular() {
 	global $gallery;
 
 	$domain = 'modules_core';
-
 	$translator = new GalleryTranslator();
 	$translator->init('es_AR');
 
@@ -115,13 +116,21 @@ class TranslatorTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	if (function_exists('dgettext')) {
+	if ($translator->canTranslate()) {
 	    $this->assertEquals('Descripci&oacute;n', $results);
 	} else {
 	    $this->assertEquals('Description', $results);
 	}
+    }
 
-	/* Plural text data */
+    function testTranslatePlural() {
+	global $gallery;
+
+	$domain = 'modules_core';
+	$translator = new GalleryTranslator();
+	$translator->init('es_AR');
+
+	/* Plural text data, count=1 */
 	list ($ret, $results) =
 	    $translator->translateDomain($domain,
 					 array('one' => '%d user matches your filter',
@@ -131,13 +140,13 @@ class TranslatorTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	if (function_exists('dngettext')) {
+	if ($translator->canTranslate()) {
 	    $this->assertEquals('1 usuario coincide con su filtro', $results);
 	} else {
-	    $this->assertEquals('1 usuario coincide con su filtro', $results);
+	    $this->assertEquals('1 user matches your filter', $results);
 	}
 	
-	/* Plural text data */
+	/* Plural text data, count=2 (plural) */
 	list ($ret, $results) =
 	    $translator->translateDomain($domain,
 					 array('one' => '%d user matches your filter',
@@ -147,10 +156,14 @@ class TranslatorTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	if (function_exists('dngettext')) {
-	    $this->assertEquals('2 usuarios coinciden con su filtro', $results);
+	if ($translator->canTranslate()) {
+	    if ($translator->canTranslatePlural()) {
+		$this->assertEquals('2 usuarios coinciden con su filtro', $results);
+	    } else {
+		$this->assertEquals('2 usuario coincide con su filtro', $results);
+	    }
 	} else {
-	    $this->assertEquals('2 usuario coincide con su filtro', $results);
+	    $this->assertEquals('2 users match your filter', $results);
 	}
     }
 
@@ -168,7 +181,7 @@ class TranslatorTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	if (function_exists('dgettext')) {
+	if ($translator->canTranslate()) {
 	    $this->assertEquals('Álbum', $results);
 	} else {
 	    $this->assertEquals('Album', $results);
