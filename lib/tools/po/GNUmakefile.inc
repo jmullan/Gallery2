@@ -65,6 +65,7 @@ install: *.po
 				else \
 					echo "  ... FAILED"; \
 					echo; \
+                                        exit 1; \
 				fi \
 			fi; \
 		else \
