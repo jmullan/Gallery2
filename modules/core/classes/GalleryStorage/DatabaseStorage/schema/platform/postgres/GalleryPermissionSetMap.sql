@@ -11,8 +11,8 @@
         
       )
     
-    NOT NULL
-  
+      NOT NULL
+    
       ,
     DB_COLUMN_PREFIXpermission
       VARCHAR(
@@ -21,8 +21,8 @@
         
       )
     
-    NOT NULL
-  
+      NOT NULL
+    
       ,
     DB_COLUMN_PREFIXdescription
       VARCHAR(
@@ -35,14 +35,14 @@
     DB_COLUMN_PREFIXbits
       BIT(32)
     
-    NOT NULL
-  
+      NOT NULL
+    
       ,
     DB_COLUMN_PREFIXflags
       INTEGER
     
-    NOT NULL
-  
+      NOT NULL
+    
     );
 
   

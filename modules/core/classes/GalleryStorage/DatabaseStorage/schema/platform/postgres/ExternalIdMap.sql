@@ -11,8 +11,8 @@
         
       )
     
-    NOT NULL
-  
+      NOT NULL
+    
       ,
     DB_COLUMN_PREFIXentityType
       VARCHAR(
@@ -21,14 +21,14 @@
         
       )
     
-    NOT NULL
-  
+      NOT NULL
+    
       ,
     DB_COLUMN_PREFIXentityId
       INTEGER
     
-    NOT NULL
-  
+      NOT NULL
+    
     );
 
   

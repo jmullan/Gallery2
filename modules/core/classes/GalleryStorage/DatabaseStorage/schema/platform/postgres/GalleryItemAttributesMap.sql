@@ -7,8 +7,8 @@
   DB_COLUMN_PREFIXitemId
       INTEGER
     
-    NOT NULL
-  
+      NOT NULL
+    
       ,
     DB_COLUMN_PREFIXviewCount
       INTEGER
@@ -25,8 +25,8 @@
         
       )
     
-    NOT NULL
-  
+      NOT NULL
+    
     );
 
   

@@ -7,14 +7,14 @@
   DB_COLUMN_PREFIXid
       INTEGER
     
-    NOT NULL
-  
+      NOT NULL
+    
       ,
     DB_COLUMN_PREFIXcanContainChildren
       SMALLINT
     
-    NOT NULL
-  
+      NOT NULL
+    
       ,
     DB_COLUMN_PREFIXdescription
       TEXT
@@ -31,8 +31,8 @@
     DB_COLUMN_PREFIXownerId
       INTEGER
     
-    NOT NULL
-  
+      NOT NULL
+    
       ,
     DB_COLUMN_PREFIXsummary
       VARCHAR(
@@ -53,14 +53,14 @@
     DB_COLUMN_PREFIXviewedSinceTimestamp
       INTEGER
     
-    NOT NULL
-  
+      NOT NULL
+    
       ,
     DB_COLUMN_PREFIXoriginationTimestamp
       INTEGER
     
-    NOT NULL
-  
+      NOT NULL
+    
     );
 
   

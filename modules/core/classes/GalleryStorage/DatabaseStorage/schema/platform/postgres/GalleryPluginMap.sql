@@ -11,8 +11,8 @@
         
       )
     
-    NOT NULL
-  
+      NOT NULL
+    
       ,
     DB_COLUMN_PREFIXpluginId
       VARCHAR(
@@ -21,14 +21,14 @@
         
       )
     
-    NOT NULL
-  
+      NOT NULL
+    
       ,
     DB_COLUMN_PREFIXactive
       SMALLINT
     
-    NOT NULL
-  
+      NOT NULL
+    
     );
 
   

@@ -11,8 +11,8 @@
         
       )
     
-    NOT NULL
-  
+      NOT NULL
+    
       ,
     DB_COLUMN_PREFIXtype
       VARCHAR(
@@ -21,8 +21,8 @@
         
       )
     
-    NOT NULL
-  
+      NOT NULL
+    
       ,
     DB_COLUMN_PREFIXdescription
       VARCHAR(
@@ -31,8 +31,8 @@
         
       )
     
-    NOT NULL
-  
+      NOT NULL
+    
     );
 
   

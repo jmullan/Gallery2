@@ -11,8 +11,8 @@
         
       )
     
-    NOT NULL
-  
+      NOT NULL
+    
       ,
     DB_COLUMN_PREFIXparametersCrc
       VARCHAR(
@@ -21,8 +21,8 @@
         
       )
     
-    NOT NULL
-  
+      NOT NULL
+    
       ,
     DB_COLUMN_PREFIXoutputMimeType
       VARCHAR(

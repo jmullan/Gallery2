@@ -11,8 +11,8 @@
         
       )
     
-    NOT NULL
-  
+      NOT NULL
+    
       ,
     DB_COLUMN_PREFIXpluginId
       VARCHAR(
@@ -21,14 +21,14 @@
         
       )
     
-    NOT NULL
-  
+      NOT NULL
+    
       ,
     DB_COLUMN_PREFIXitemId
       INTEGER
     
-    NOT NULL
-  
+      NOT NULL
+    
       ,
     DB_COLUMN_PREFIXparameterName
       VARCHAR(
@@ -37,8 +37,8 @@
         
       )
     
-    NOT NULL
-  
+      NOT NULL
+    
       ,
     DB_COLUMN_PREFIXparameterValue
       VARCHAR(
@@ -47,8 +47,8 @@
         
       )
     
-    NOT NULL
-  
+      NOT NULL
+    
     );
 
   

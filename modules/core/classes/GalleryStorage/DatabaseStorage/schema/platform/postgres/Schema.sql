@@ -11,20 +11,20 @@
         
       )
     
-    NOT NULL
-  
+      NOT NULL
+    
       ,
     DB_COLUMN_PREFIXmajor
       INTEGER
     
-    NOT NULL
-  
+      NOT NULL
+    
       ,
     DB_COLUMN_PREFIXminor
       INTEGER
     
-    NOT NULL
-  
+      NOT NULL
+    
     );
 
   

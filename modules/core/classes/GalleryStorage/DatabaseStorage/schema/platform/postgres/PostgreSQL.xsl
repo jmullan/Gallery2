@@ -22,7 +22,7 @@
 
     CREATE TABLE <xsl:value-of select="$tablePrefix"/><xsl:value-of select="table-name"/> (
   <xsl:for-each select="column">
-    <xsl:call-template name="column"/>
+    <xsl:call-template name="columnNameAndType"/>
     <xsl:if test="position()!=last()">
       ,
     </xsl:if>
@@ -63,27 +63,32 @@
 
   <!-- CHANGE -->
   <xsl:template match="change">
-
-    <xsl:if test="count(add) or count(remove) or count(alter)">
+    <xsl:if test="count(add) or count(remove)">
       ALTER TABLE <xsl:value-of select="$tablePrefix"/><xsl:value-of select="table-name"/>
-
     <xsl:if test="count(add)">
       <xsl:apply-templates select="add"/>
     </xsl:if>
-
-    <xsl:if test="count(add) and (count(remove) or count(alter))">
+    <xsl:if test="count(add) and count(remove)">
       , 
     </xsl:if>
-    
     <xsl:if test="count(remove)">
       <xsl:apply-templates select="remove"/>
-      <xsl:if test="count(alter)">,</xsl:if>
-    </xsl:if>
-    
-    <xsl:if test="count(alter)">
-      <xsl:apply-templates select="alter"/>
     </xsl:if>
       ;
+    </xsl:if>
+
+    <xsl:if test="count(add)">
+      <xsl:for-each select="column">
+        <xsl:if test="not-null">
+          ALTER TABLE <xsl:value-of select="$tablePrefix"/><xsl:value-of select="../../table-name"/>
+          ALTER <xsl:call-template name="columnName"/> SET NOT NULL
+          ;
+        </xsl:if>
+      </xsl:for-each>
+    </xsl:if>
+
+    <xsl:if test="count(alter)">
+      <xsl:apply-templates select="alter"/> 
     </xsl:if>
 
     UPDATE <xsl:value-of select="$tablePrefix"/>Schema 
@@ -99,7 +104,7 @@
   <xsl:template match="add">
     
     <xsl:for-each select="column">
-      ADD COLUMN <xsl:call-template name="column"/>
+      ADD COLUMN <xsl:call-template name="columnName"/><xsl:call-template name="columnTypeWithoutNotNull"/>
     <xsl:if test="position()!=last()">
       ,
     </xsl:if>
@@ -157,16 +162,52 @@
   <!-- Change/alter -->
   <xsl:template match="alter">
     <xsl:for-each select="column">
-      MODIFY COLUMN <xsl:call-template name="column"/>
-    <xsl:if test="position()!=last()">
-      ,
-    </xsl:if>
+      ALTER TABLE <xsl:value-of select="$tablePrefix"/><xsl:value-of select="../../table-name"/>
+      ADD COLUMN <xsl:call-template name="tempColumnName"/><xsl:call-template name="columnTypeWithoutNotNull"/>
+      ;
+
+      UPDATE <xsl:value-of select="$tablePrefix"/><xsl:value-of select="../../table-name"/> SET
+      <xsl:call-template name="tempColumnName"/> = CAST(<xsl:call-template name="columnName"/> AS <xsl:call-template name="columnTypeWithoutNotNull"/>)
+      ;
+
+      ALTER TABLE <xsl:value-of select="$tablePrefix"/><xsl:value-of select="../../table-name"/>
+      DROP <xsl:call-template name="columnName"/>
+      ;
+
+      ALTER TABLE <xsl:value-of select="$tablePrefix"/><xsl:value-of select="../../table-name"/>
+      RENAME <xsl:call-template name="tempColumnName"/> to <xsl:call-template name="columnName"/>
+      ;
+
+      <xsl:if test="not-null">
+        ALTER TABLE <xsl:value-of select="$tablePrefix"/><xsl:value-of select="../../table-name"/>
+        ALTER <xsl:call-template name="columnName"/> SET NOT NULL
+        ;
+      </xsl:if>
     </xsl:for-each>
   </xsl:template>
 
   <!-- General purpose column definition -->
-  <xsl:template name="column">
+  <xsl:template name="columnNameAndType">
+    <xsl:call-template name="columnName"/>
+    <xsl:call-template name="columnType"/>
+  </xsl:template>
+
+  <xsl:template name="tempColumnName">
+    <xsl:value-of select="$columnPrefix"/><xsl:value-of select="column-name"/>Temp
+  </xsl:template>
+
+  <xsl:template name="columnName">
     <xsl:value-of select="$columnPrefix"/><xsl:value-of select="column-name"/> 
+  </xsl:template>
+
+  <xsl:template name="columnType">
+    <xsl:call-template name="columnTypeWithoutNotNull"/>
+    <xsl:if test="not-null">
+      NOT NULL
+    </xsl:if>
+  </xsl:template>
+
+  <xsl:template name="columnTypeWithoutNotNull">
   <xsl:choose>
     <xsl:when test="column-type='INTEGER'">
       INTEGER
@@ -202,9 +243,6 @@
       UNKNOWN COLUMN TYPE: <xsl:value-of select="column-type"/>
     </xsl:otherwise>
   </xsl:choose>
-  <xsl:if test="not-null">
-    NOT NULL
-  </xsl:if>
   </xsl:template>
 
   <!-- General purpose key definition -->

@@ -7,20 +7,20 @@
   DB_COLUMN_PREFIXid
       INTEGER
     
-    NOT NULL
-  
+      NOT NULL
+    
       ,
     DB_COLUMN_PREFIXcreationTimestamp
       INTEGER
     
-    NOT NULL
-  
+      NOT NULL
+    
       ,
     DB_COLUMN_PREFIXisLinkable
       SMALLINT
     
-    NOT NULL
-  
+      NOT NULL
+    
       ,
     DB_COLUMN_PREFIXlinkId
       INTEGER
@@ -29,14 +29,14 @@
     DB_COLUMN_PREFIXmodificationTimestamp
       INTEGER
     
-    NOT NULL
-  
+      NOT NULL
+    
       ,
     DB_COLUMN_PREFIXserialNumber
       INTEGER
     
-    NOT NULL
-  
+      NOT NULL
+    
       ,
     DB_COLUMN_PREFIXentityType
       VARCHAR(
@@ -45,8 +45,8 @@
         
       )
     
-    NOT NULL
-  
+      NOT NULL
+    
       ,
     DB_COLUMN_PREFIXonLoadHandlers
       VARCHAR(

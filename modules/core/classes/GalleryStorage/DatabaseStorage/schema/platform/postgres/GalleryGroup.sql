@@ -7,14 +7,14 @@
   DB_COLUMN_PREFIXid
       INTEGER
     
-    NOT NULL
-  
+      NOT NULL
+    
       ,
     DB_COLUMN_PREFIXgroupType
       INTEGER
     
-    NOT NULL
-  
+      NOT NULL
+    
       ,
     DB_COLUMN_PREFIXgroupName
       VARCHAR(

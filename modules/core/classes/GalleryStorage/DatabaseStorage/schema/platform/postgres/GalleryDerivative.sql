@@ -7,14 +7,14 @@
   DB_COLUMN_PREFIXid
       INTEGER
     
-    NOT NULL
-  
+      NOT NULL
+    
       ,
     DB_COLUMN_PREFIXderivativeSourceId
       INTEGER
     
-    NOT NULL
-  
+      NOT NULL
+    
       ,
     DB_COLUMN_PREFIXderivativeOperations
       VARCHAR(
@@ -27,8 +27,8 @@
     DB_COLUMN_PREFIXderivativeOrder
       INTEGER
     
-    NOT NULL
-  
+      NOT NULL
+    
       ,
     DB_COLUMN_PREFIXderivativeSize
       INTEGER
@@ -37,8 +37,8 @@
     DB_COLUMN_PREFIXderivativeType
       INTEGER
     
-    NOT NULL
-  
+      NOT NULL
+    
       ,
     DB_COLUMN_PREFIXmimeType
       VARCHAR(
@@ -47,8 +47,8 @@
         
       )
     
-    NOT NULL
-  
+      NOT NULL
+    
       ,
     DB_COLUMN_PREFIXpostFilterOperations
       VARCHAR(

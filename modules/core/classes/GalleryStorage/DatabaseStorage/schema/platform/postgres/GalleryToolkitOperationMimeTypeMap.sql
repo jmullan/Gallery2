@@ -11,8 +11,8 @@
         
       )
     
-    NOT NULL
-  
+      NOT NULL
+    
       ,
     DB_COLUMN_PREFIXtoolkitId
       VARCHAR(
@@ -21,8 +21,8 @@
         
       )
     
-    NOT NULL
-  
+      NOT NULL
+    
       ,
     DB_COLUMN_PREFIXmimeType
       VARCHAR(
@@ -31,14 +31,14 @@
         
       )
     
-    NOT NULL
-  
+      NOT NULL
+    
       ,
     DB_COLUMN_PREFIXpriority
       INTEGER
     
-    NOT NULL
-  
+      NOT NULL
+    
     );
 
   

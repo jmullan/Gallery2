@@ -7,20 +7,20 @@
   DB_COLUMN_PREFIXuserId
       INTEGER
     
-    NOT NULL
-  
+      NOT NULL
+    
       ,
     DB_COLUMN_PREFIXitemId
       INTEGER
     
-    NOT NULL
-  
+      NOT NULL
+    
       ,
     DB_COLUMN_PREFIXdescendentCount
       INTEGER
     
-    NOT NULL
-  
+      NOT NULL
+    
     );
 
   
