@@ -15,7 +15,7 @@
   
       ,
     DB_COLUMN_PREFIXitemIds
-      TEXT
+      LONG
     
     );
 

@@ -35,7 +35,7 @@
     
       ,
     DB_COLUMN_PREFIXcomment
-      TEXT
+      LONG
     
       ,
     DB_COLUMN_PREFIXdate
