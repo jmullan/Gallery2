@@ -539,7 +539,7 @@ class GalleryUtilities {
 
 	$mimeType = strtolower($mimeType);
 	if (empty($extensionMap['reverse'][$mimeType])) {
-	    return '';
+	    return null;
 	} else {
 	    return $extensionMap['reverse'][$mimeType];
 	}
