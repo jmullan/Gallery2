@@ -30,10 +30,13 @@
           <td>
             <ul class="giInfo">
               <li>
-                {capture name=modificationTimestamp}
-                {g->date timestamp=$layout.item.modificationTimestamp}
-                {/capture}
-                {g->text text="Date: %s" arg1=$smarty.capture.modificationTimestamp}
+                {if !empty($layout.useCaptureDate) && isset($layout.captureTimestamp)}
+                {capture name=captureTimestamp}{g->date timestamp=$layout.captureTimestamp}{/capture}
+                {g->text text="Date: %s" arg1=$smarty.capture.captureTimestamp}
+                {else}
+                {capture name=creationTimestamp}{g->date timestamp=$layout.item.creationTimestamp}{/capture}
+                {g->text text="Date: %s" arg1=$smarty.capture.creationTimestamp}
+                {/if}
               </li>
         
               {if sizeof($layout.imageViews) > 1}

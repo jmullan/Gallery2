@@ -125,11 +125,14 @@
           </p>
 
           <ul class="giInfo">
-            {capture name=modificationTimestamp}
-            {g->date timestamp=$child.modificationTimestamp}
-            {/capture}
             <li>
-              {g->text text="Date: %s" arg1=$smarty.capture.modificationTimestamp}
+              {if !empty($layout.useCaptureDate) && isset($child.captureTimestamp)}
+              {capture name=captureTimestamp}{g->date timestamp=$child.captureTimestamp}{/capture}
+              {g->text text="Date: %s" arg1=$smarty.capture.captureTimestamp}
+              {else}
+              {capture name=creationTimestamp}{g->date timestamp=$child.creationTimestamp}{/capture}
+              {g->text text="Date: %s" arg1=$smarty.capture.creationTimestamp}
+              {/if}
             </li>
             
             {if ($child.canContainChildren && $layout.showAlbumOwner) || (!$child.canContainChildren && $layout.showImageOwner)}
