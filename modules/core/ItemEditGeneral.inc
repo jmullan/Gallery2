@@ -70,6 +70,7 @@ class ItemEditGeneralController extends GalleryController {
 		    GalleryUtilities::putRequestVariable('form.error.pathComponent.collision', 1);
 		} else {
 		    $item->setTitle($form['title']);
+		    $item->setSummary($form['summary']);
 		    $item->setKeywords($form['keywords']);
 		    $item->setDescription($form['description']);
 
@@ -140,6 +141,7 @@ class ItemEditGeneralView extends GalleryView {
 	} else {
 	    /* First time around, load the form with item data */
 	    $form['title'] = $item->getTitle();
+	    $form['summary'] = $item->getSummary();
 	    $form['keywords'] = $item->getKeywords();
 	    $form['description'] = $item->getDescription();
 	    $form['pathComponent'] = $item->getPathComponent();
@@ -148,7 +150,7 @@ class ItemEditGeneralView extends GalleryView {
 	/* Render the HTML body */
 	$this->_initTemplate(dirname(__FILE__) . '/templates');
 	$this->_setTemplateVariable('form', $form);
-	$this->_setTemplateVariable('item', $item);
+	$this->_setTemplateVariable('item', $item->getMemberData());
 	$this->_setTemplateVariable('controller', 'core:ItemEditGeneral');
 	$html = $this->_renderTemplate('core', 'ItemEditGeneral.tpl');
 

@@ -19,32 +19,6 @@
 	<tr>
 	  <td>
 	    {galleryBigFont}
-	    {galleryText text="Title"}
-	    {/galleryBigFont}
-	  </td>
-	</tr>
-
-	<tr>
-	  <td>
-	    {galleryText text="The title can be any character string, and should not contain any HTML"}
-	  </td>
-	</tr>
-
-	<tr>
-	  <td>
-	    {galleryInput type=text size=40 name="form.title"}{$form.title}{/galleryInput}
-	  </td>
-	</tr>
-
-	<tr>
-	  <td>
-	    &nbsp;
-	  </td>
-	</tr>
-
-	<tr>
-	  <td>
-	    {galleryBigFont}
 	    {galleryText text="Name"}
 	    {/galleryBigFont}
 	  </td>
@@ -52,7 +26,7 @@
 
 	<tr>
 	  <td>
-	    {galleryText text="The name must be unique in this album.  <b>Note:</b> You can only use alphanumeric characters, underscore (_) and hyphen (-) in your names."}
+	    {galleryText text="The name represents the location of this item on your hard drive.  It is not visible anywhere, except possibly in the URL.  It must be unique in this album.  <b>Note:</b> You can only use alphanumeric characters, underscore (_) and hyphen (-) in your names."}
 	  </td>
 	</tr>
 
@@ -81,6 +55,58 @@
 	  </td>
 	</tr>
         {/if}
+
+	<tr>
+	  <td>
+	    &nbsp;
+	  </td>
+	</tr>
+
+	<tr>
+	  <td>
+	    {galleryBigFont}
+	    {galleryText text="Title"}
+	    {/galleryBigFont}
+	  </td>
+	</tr>
+
+	<tr>
+	  <td>
+	    {galleryText text="The title can be any character string, and should not contain any HTML"}
+	  </td>
+	</tr>
+
+	<tr>
+	  <td>
+	    {galleryInput type=text size=40 name="form.title"}{$form.title}{/galleryInput}
+	  </td>
+	</tr>
+
+	<tr>
+	  <td>
+	    &nbsp;
+	  </td>
+	</tr>
+
+	<tr>
+	  <td>
+	    {galleryBigFont}
+	    {galleryText text="Summary"}
+	    {/galleryBigFont}
+	  </td>
+	</tr>
+
+	<tr>
+	  <td>
+	    {galleryText text="The summary can be any character string, and should not contain any HTML"}
+	  </td>
+	</tr>
+
+	<tr>
+	  <td>
+	    {galleryInput type=text size=40 name="form.summary"}{$form.summary}{/galleryInput}
+	  </td>
+	</tr>
 
 	<tr>
 	  <td>
