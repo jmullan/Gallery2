@@ -24,6 +24,7 @@
   <div id="header">
     <img src="images/g2Logo_install_head.png" />
   </div>
+  <div id="help"><a target="_blank" href="../README.html">Installer Help File</a></div>
   <div id="navbar">
     <h2>Install Steps</h2>
     <?php echo $navbar; ?>
