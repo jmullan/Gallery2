@@ -18,7 +18,7 @@
     <div class="gbTopFlag">
       <div class="gbTitleBanner">
         <h1 class="gbTitle">
-  	  {g->text text="User Profile for %s" arg1=$MembersProfile.user.userName}
+  	  {g->text text="Member Profile for %s" arg1=$MembersProfile.user.userName}
         </h1>
       </div>
     </div>
