@@ -238,7 +238,7 @@ class ItemAddFromWeb extends ItemAddPlugin {
 				list ($ret, $mimeTypeItemMap[$mimeType]['instance']) =
 				    GalleryCoreApi::newItemByMimeType($mimeType);
 				if ($ret->isError()) {
-				    return array($ret->wrap(__FILE__, __LINE__), null);
+				    return array($ret->wrap(__FILE__, __LINE__), null, null);
 				}
 				$mimeTypeItemMap[$mimeType]['names'] =
 				    $mimeTypeItemMap[$mimeType]['instance']->itemTypeName();
@@ -281,7 +281,9 @@ class ItemAddFromWeb extends ItemAddPlugin {
 	$ItemAddFromWeb['recentPaths'] = array_keys($recentPaths);
 
 	$template->setVariable('ItemAddFromWeb', $ItemAddFromWeb);
-	return array(GalleryStatus::success(), 'modules/core/templates/ItemAddFromWeb.tpl');
+	return array(GalleryStatus::success(),
+		     'modules/core/templates/ItemAddFromWeb.tpl',
+		     'modules_core');
     }
 
     /**

@@ -4,8 +4,8 @@
  * Gallery will look for that file first and use it if it exists
  * and when you upgrade, your changes will not get overwritten.
  *}
-<div class="gsContents">
-  {if $ItemAddFromBrowser.uploadsPermitted}
+{if $ItemAddFromBrowser.uploadsPermitted}
+<div class="gbAdmin">
   <p class="giDescription">
     {g->text one="Upload a file directly from your computer."
     many="Upload up to %d files directly from your computer."
@@ -32,18 +32,24 @@
     <textarea rows="2" cols="60" name="{g->formVar var="form[caption][$iteration]"}"></textarea>
   </div>
   {/section}
-
-  <div class="gbBottomFlag">
-    <div class="gbButtons">
-      <input type="submit" name="{g->formVar var="form[action][addFromBrowser]"}" 
-      value="{g->text text="Add Items"}"/>
-    </div>
-  </div>
-  {else}
-  <div class="gbAdmin">
-    <div class="giError">
-      {g->text text="Your webserver is configured to disallow file uploads from your web browser at this time.  Please contact your system administrator for assistance."}  
-    </div>
-  </div>
-  {/if}
 </div>
+
+{* Include our extra ItemAddOptions *}
+{foreach from=$ItemAdd.options item=option}
+  {include file="gallery:`$option.file`" l10Domain=$option.l10Domain}
+{/foreach}
+
+<div class="gbBottomFlag">
+  <div class="gbButtons">
+    <input type="submit" name="{g->formVar var="form[action][addFromBrowser]"}" 
+    value="{g->text text="Add Items"}"/>
+  </div>
+</div>
+{else}
+<div class="gbAdmin">
+  <div class="giError">
+    {g->text text="Your webserver is configured to disallow file uploads from your web browser at this time.  Please contact your system administrator for assistance."}  
+  </div>
+</div>
+{/if}
+

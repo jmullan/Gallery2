@@ -107,7 +107,7 @@ class ItemAddFromBrowser extends ItemAddPlugin {
 	$uploadMaxSize = min($postMaxSize, $uploadMaxSize);
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 	
 	if ($uploadMaxSize >= 1024 * 1024) {
@@ -142,7 +142,9 @@ class ItemAddFromBrowser extends ItemAddPlugin {
 	    $template->setVariable('ItemAdmin', $ItemAdmin);
 	}
 	
-	return array(GalleryStatus::success(), 'modules/core/templates/ItemAddFromBrowser.tpl');
+	return array(GalleryStatus::success(),
+		     'modules/core/templates/ItemAddFromBrowser.tpl',
+		     'modules_core');
     }
 
     /**

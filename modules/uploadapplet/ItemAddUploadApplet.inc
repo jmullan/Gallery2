@@ -35,7 +35,7 @@ class ItemAddUploadApplet extends ItemAddPlugin {
 	
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'uploadapplet');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	if ($form['formName'] != 'ItemAddUploadApplet') {
@@ -65,7 +65,8 @@ class ItemAddUploadApplet extends ItemAddPlugin {
 	
 	$template->setVariable('ItemAddUploadApplet', $ItemAddUploadApplet);
 	return array(GalleryStatus::success(),
-		     'modules/uploadapplet/templates/ItemAddUploadApplet.tpl');
+		     'modules/uploadapplet/templates/ItemAddUploadApplet.tpl',
+		     'modules_uploadapplet');
     }
 
     /**

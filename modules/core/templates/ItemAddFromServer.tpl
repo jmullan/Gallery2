@@ -4,32 +4,31 @@
  * Gallery will look for that file first and use it if it exists
  * and when you upgrade, your changes will not get overwritten.
  *}
-<div class="gsContents">
-<div class="gbAdmin">
-  {if !empty($form.localServerFiles)}
-  <script type="text/javascript">
-    function toggleSelections() {ldelim}
-    form = document.forms[0];
-    state = form.elements['selectionToggle'].checked;
-    {foreach from=$form.localServerFiles item=file}
-    {if ($file.type == 'file' && !$file.unknown)}
-    form.elements['{g->formVar var="form[localServerFiles][`$file.fileKey`]"}'].checked = state;
-    {/if}
-    {/foreach}
-    {rdelim}
-  </script>
+{if !empty($form.localServerFiles)}
+<script type="text/javascript">
+  function toggleSelections() {ldelim}
+  form = document.forms[0];
+  state = form.elements['selectionToggle'].checked;
+  {foreach from=$form.localServerFiles item=file}
+  {if ($file.type == 'file' && !$file.unknown)}
+  form.elements['{g->formVar var="form[localServerFiles][`$file.fileKey`]"}'].checked = state;
   {/if}
+  {/foreach}
+  {rdelim}
+</script>
+{/if}
 
-  <script type="text/javascript">
-    function selectPath(path) {ldelim}
-    document.forms[0].elements['{g->formVar var="form[localServerPath]"}'].value = path;
-    {rdelim}
-  </script>
+<script type="text/javascript">
+  function selectPath(path) {ldelim}
+  document.forms[0].elements['{g->formVar var="form[localServerPath]"}'].value = path;
+  {rdelim}
+</script>
 
+<div class="gbAdmin">
   <p class="giDescription">
     {g->text text="Transfer files that are already on your server into your Gallery.  The files must already have been uploaded to your server some other way (like FTP) and must be placed in a directory where they are accessibly by anyelement on the server.  If you're on Unix this means that the files and the directory the files are in should have modes of at least 755."}
   </p>
-
+  
   {if empty($ItemAddFromServer.localServerDirList)}
   <div class="giWarning">
     {g->text text="For security purposes, you can't use this feature until the Gallery Site Administrator configures a set of legal upload directories."}
@@ -40,42 +39,42 @@
     {/if}
   </div>
   {else}
-  {if empty($form.localServerFiles)}
 
+  {if empty($form.localServerFiles)}
   <div class="gbDataEntry">
     <h3 class="giTitle">
       {g->text text="Server Path"}
     </h3>
-
+  
     <input type="text" size="80" name="{g->formVar var="form[localServerPath]"}" value="{$form.localServerPath}"/>
-
+  
     {if isset($form.error.localServerPath.missing)}
     <div class="giError">
       {g->text text="You must enter a directory."}
     </div>
     {/if}
-
+  
     {if isset($form.error.localServerPath.invalid)}
     <div class="giError">
       {g->text text="The directory you entered is invalid.  Make sure that the directory is readable by all users."}
     </div>
     {/if}
-
+  
     {if isset($form.error.localServerPath.illegal)}
     <div class="giError">
       {g->text text="The directory you entered is illegal.  It must be a sub directory of one of the directories listed below."}
     </div>
     {/if}
   </div>
-
-  {g->text text="Legal Directories"}
   
+  {g->text text="Legal Directories"}
+    
   {if $ItemAdd.isAdmin}
   <a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=core:AdminCore"}">
     {g->text text="modify"}
   </a>
   {/if}
-
+  
   <ul class="gbAdminList">
     {foreach from=$ItemAddFromServer.localServerDirList item=dir}
     {capture name="escapedDir"}{$dir|replace:"\\":"\\\\"}{/capture}
@@ -86,10 +85,10 @@
     </li>
     {/foreach}
   </ul>
-
+  
   {if !empty($ItemAddFromServer.recentPaths)}
   {g->text text="Recent Directories"}
-
+  
   <ul class="gbAdminList">
     {foreach from=$ItemAddFromServer.recentPaths item=dir}
       {capture name="escapedDir"}{$dir|replace:"\\":"\\\\"}{/capture}
@@ -101,8 +100,10 @@
     {/foreach}
   </ul>
   {/if}
-  <input type="submit" name="{g->formVar var="form[action][findFilesFromLocalServer]"}" value="{g->text text="Find Files"}"/>
 
+  {capture name="bottomFlagHtml"}
+    <input type="submit" name="{g->formVar var="form[action][findFilesFromLocalServer]"}" value="{g->text text="Find Files"}"/>
+  {/capture}
   {else} {* {if empty($form.localServerFiles)} *}
   <strong>
     {capture name="path"}
@@ -122,11 +123,12 @@
   <a href="{g->url arg1="view=core:ItemAdmin" arg2="subView=core:ItemAdd" arg3="itemId=`$ItemAdmin.item.id`" arg4="form[localServerPath]=`$form.localServerPath`" arg5="form[formName]=ItemAddFromServer" arg6="addPlugin=ItemAddFromServer"}">
     {g->text text="[start over]"}
   </a>
-
-  <input type="hidden" name="{g->formVar var="form[localServerPath]"}" value="{$form.localServerPath}"/>
-
+  
+  <input type="hidden" name="{g->formVar var="form[localServerPath]"}" 
+	 value="{$form.localServerPath}"/>
+  
   <br />
-
+  
   <table class="gbDataTable" width="100%">
     <tr>
       <th>
@@ -145,7 +147,7 @@
 	{g->text text="Size"}
       </th>
     </tr>
-
+  
     {foreach from=$form.localServerFiles item=file}
     {assign var=key value=$file.fileKey|urlencode}
     <tr class="{cycle values="gbEven,gbOdd"}">
@@ -189,13 +191,25 @@
     </tr>
     {/foreach}
   </table>
-
-  <div class="gbBottomFlag">
-    <div class="gbButtons">
-      <input type="submit" name="{g->formVar var="form[action][addFromLocalServer]"}" value="{g->text text="Add Files"}"/>
-    </div>
-  </div>
+  {capture name="bottomFlagHtml"}
+    <input type="submit" name="{g->formVar var="form[action][addFromLocalServer]"}" value="{g->text text="Add Files"}"/>
+  {/capture}
+  {assign var="showOptions" value="true"}
   {/if} {* {if !empty($form.localServerFiles)} *}
   {/if} {* {if empty($ItemAddFromServer.localServerDirList)} *}
 </div>
+
+{if isset($showOptions)}
+  {* Include our extra ItemAddOptions *}
+  {foreach from=$ItemAdd.options item=option}
+    {include file="gallery:`$option.file`" l10Domain=$option.l10Domain}
+  {/foreach}
+{/if}
+  
+<div class="gbBottomFlag">
+  <div class="gbButtons">
+    {$smarty.capture.bottomFlagHtml}
+  </div>
 </div>
+
+  

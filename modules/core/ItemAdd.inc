@@ -79,6 +79,18 @@ class ItemAddController extends GalleryController {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	list ($ret, $optionInstances) = ItemAddOption::getAllAddOptions();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	foreach ($optionInstances as $option) {
+	    $ret = $option->handleRequestAfterAdd($form, $item);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+
 	if (empty($error) && isset($status['addedFiles'])) {
 	    $results['redirect'] = array('view' => 'core:ItemAdmin',
 					 'subView' => 'core:ItemAddConfirmation',
@@ -139,6 +151,12 @@ class ItemAddView extends GalleryView {
 	    $pluginInstances[$pluginId] = $plugin;
 	}
 
+	/* Get all the add options */
+	list ($ret, $optionInstances) = ItemAddOption::getAllAddOptions();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	/*
 	 * If the plugin is empty get it from the session.  If it's empty there,
 	 * default to the first plugin we find.  Either way, save the user's
@@ -172,9 +190,22 @@ class ItemAddView extends GalleryView {
 	$ItemAdd['plugins'] = $plugins;
 	$ItemAdd['isAdmin'] = $isAdmin;
 
-	list ($ret, $ItemAdd['pluginFile']) = $pluginInstances[$addPlugin]->loadTemplate($template, $form, $item);
+	/* Let the plugin load its template data */
+	list ($ret, $ItemAdd['pluginFile'], $ItemAdd['pluginL10Domain']) =
+	    $pluginInstances[$addPlugin]->loadTemplate($template, $form, $item);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Now let all options load their template data */
+	$ItemAdd['options'] = array();
+	foreach ($optionInstances as $option) {
+	    list ($ret, $entry['file'], $entry['l10Domain']) =
+		$option->loadTemplate($template, $form, $item);
+	    $ItemAdd['options'][] = $entry;
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
 	}
 
 	$template->setVariable('ItemAdd', $ItemAdd);
@@ -185,7 +216,8 @@ class ItemAddView extends GalleryView {
 
 
 /**
- * Interface for plugins to th ItemAdd view and controller
+ * Interface for plugins to the ItemAdd view and controller
+ * Plugins provide alternate ways to add items into Gallery.
  *
  * @package GalleryCore
  * @subpackage UserInterface
@@ -203,7 +235,7 @@ class ItemAddPlugin {
      *               string the path to a template file to include
      */
     function loadTemplate(&$template, &$form, $item) {
-	return GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
+	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
     }
 
     /**
@@ -228,6 +260,86 @@ class ItemAddPlugin {
      */
     function getTitle() {
 	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
+    }
+}
+
+/**
+ * Interface for options to the ItemAdd view and controller.
+ * Options allow us to provide extra UI in the views and extra
+ * processing in the controller so that we can add new functionality
+ * like watermarking, quotas, etc to every ItemAddPlugin 
+ *
+ * @package GalleryCore
+ * @subpackage UserInterface
+ */
+class ItemAddOption {
+
+    /**
+     * Return all the available option plugins
+     *
+     * @return array object GalleryStatus a status code
+     *               array object ItemAddOption instances
+     * @static
+     */
+    function getAllAddOptions() {
+	/* Get all the option plugins */
+	$allOptionIds = GalleryCoreApi::getAllFactoryImplementationIds('ItemAddOption');
+	$optionInstances = array();
+	foreach (array_keys($allOptionIds) as $optionId) {
+	    list ($ret, $option) = GalleryCoreApi::newFactoryInstanceById('ItemAddOption', $optionId);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    list ($ret, $isAppropriate) = $option->isAppropriate();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    
+	    if ($isAppropriate) {
+		$optionInstances[$optionId] = $option;
+	    }
+	}
+
+	return array(GalleryStatus::success(), $optionInstances);
+    }
+
+    /**
+     * Load the template with data from this plugin
+     * @see GalleryView::loadTemplate
+     *
+     * @param object GalleryTemplate the template instance
+     * @param array the form values
+     * @param the item
+     * @return array object GalleryStatus a status code
+     *               string the path to a template file to include
+     *               string localization domain for the template file
+     */
+    function loadTemplate(&$template, &$form, $item) {
+	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null, null);
+    }
+
+    /**
+     * Let the plugin handle the incoming request.  We expect the $item to be locked.
+     * @see GalleryController::handleRequest
+     *
+     * @param array the form values
+     * @param reference to the item
+     * @return array object GalleryStatus a status code
+     *               array error messages
+     */
+    function handleRequestAfterAdd($form, &$item) {
+	return GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
+    }
+
+    /**
+     * Is this option appropriate at this time?
+     *
+     * @return array object GalleryStatus a status code
+     *               boolean true or false
+     */
+    function isAppropriate() {
+	return array(GalleryStatus::success(), false);
     }
 }
 ?>

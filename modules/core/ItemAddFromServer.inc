@@ -100,7 +100,7 @@ class ItemAddFromServer extends ItemAddPlugin {
 	list ($ret, $localServerDirs) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'uploadLocalServer.dirs');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 	if (empty($localServerDirs)) {
 	    $localServerDirList = array();
@@ -110,7 +110,7 @@ class ItemAddFromServer extends ItemAddPlugin {
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	/* Look up the platform type */
@@ -178,7 +178,7 @@ class ItemAddFromServer extends ItemAddPlugin {
 				    list ($ret, $mimeTypeItemMap[$mimeType]['instance']) =
 					GalleryCoreApi::newItemByMimeType($mimeType);
 				    if ($ret->isError()) {
-					return array($ret->wrap(__FILE__, __LINE__), null);
+					return array($ret->wrap(__FILE__, __LINE__), null, null);
 				    }
 				    
 				    $mimeTypeItemMap[$mimeType]['names'] =
@@ -204,7 +204,7 @@ class ItemAddFromServer extends ItemAddPlugin {
 			list ($ret, $mimeTypeItemMap[$mimeType]['instance']) =
 			    GalleryCoreApi::newItemByMimeType($mimeType);
 			if ($ret->isError()) {
-			    return array($ret->wrap(__FILE__, __LINE__), null);
+			    return array($ret->wrap(__FILE__, __LINE__), null, null);
 			}
 			$mimeTypeItemMap[$mimeType]['names'] =
 			    $mimeTypeItemMap[$mimeType]['instance']->itemTypeName();
@@ -262,7 +262,9 @@ class ItemAddFromServer extends ItemAddPlugin {
 	}
 
 	$template->setVariable('ItemAddFromServer', $ItemAddFromServer);
-	return array(GalleryStatus::success(), 'modules/core/templates/ItemAddFromServer.tpl');
+	return array(GalleryStatus::success(),
+		     'modules/core/templates/ItemAddFromServer.tpl',
+		     'modules_core');
     }
 
     /**
