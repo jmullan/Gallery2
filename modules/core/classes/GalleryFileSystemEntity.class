@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -107,7 +107,7 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	$ret = parent::create($parentId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -176,7 +176,8 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
     function rename($newPathComponent) {
 	global $gallery;
 
-	list ($ret, $rootAlbumId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
+	list ($ret, $rootAlbumId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 	if ($this->getId() == $rootAlbumId) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
@@ -193,7 +194,7 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
 	}
 
 	$this->setPathComponent($newPathComponent);
-	
+
 	return GalleryStatus::success();
     }
 
@@ -216,7 +217,8 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
 	}
 
 	/* Make sure the old parent and the new parent are read locked */
-	if (!(GalleryCoreApi::isReadLocked($newParentId) && GalleryCoreApi::isReadLocked($this->getParentId()))) {
+	if (!(GalleryCoreApi::isReadLocked($newParentId)
+		&& GalleryCoreApi::isReadLocked($this->getParentId()))) {
 	    return GalleryStatus::error(ERROR_LOCK_REQUIRED, __FILE__, __LINE__,
 					sprintf("One parent id (%d or %d) is not read locked",
 						$newParentId,
@@ -228,7 +230,7 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	if (!$newParent->getCanContainChildren()) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
@@ -259,11 +261,12 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
 	    $newPath = $newParentPath . '/' . $newPathComponent;
 	    $platform = $gallery->getPlatform();
 	    if (!$platform->rename($currentPath, $newPath)) {
-		return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);
+		return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__,
+					    "rename $currentPath to $newPath");
 	    }
 	}
 
-	// Our path component may have changed when it got "legalized"
+	/* Our path component may have changed when it got "legalized" */
 	$this->setPathComponent($newPathComponent);
 
 	return GalleryStatus::success();
@@ -317,7 +320,7 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    
+
 	    if (isset($parent)) {
 		list ($ret, $path) = $parent->fetchContainerPath();
 		if ($ret->isError()) {
@@ -400,9 +403,9 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
 	 * root path component is empty) so we'll have two slashes, unless we remove one of them.
 	 */
 	$logicalPath = substr($logicalPath, 1);
-	
+
 	/*
-	 * Logical path is slash (/) delimited.  Convert that to the platform's actual 
+	 * Logical path is slash (/) delimited.  Convert that to the platform's actual
 	 * directory separator.
 	 */
 	$platform = $gallery->getPlatform();
