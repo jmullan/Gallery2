@@ -270,7 +270,8 @@ class GalleryPermissionHelper_advanced {
 	 * Now we're getting back a series of acl id => item id pairs from the database, each of
 	 * which we need to convert.  When we see an acl id we haven't seen before, create a new
 	 * ACL for it with our permission change applied, and put that item id in a queue to
-	 * be moved to that new acl
+	 * be moved to that new acl.  We could probably do this more efficiently with subselects
+	 * (can't use them until we raise the MySQL bar to 4.x) or temporary tables.
 	 */
 	$oldToNewAclMapping = array();
 	$itemsToBeRemapped = array();
@@ -286,7 +287,7 @@ class GalleryPermissionHelper_advanced {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 
-		$newAclId = null;
+		$newAclId = 0;
 		if ($changeType == 'add') {
 		    if (($currentBits | $deltaBits) == $currentBits) {
 			/* The item's acl already has the bits we want to add */
