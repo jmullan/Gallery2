@@ -46,7 +46,7 @@
 	  <li> <span>{$group.0.groupLabel}</span>
 	    <ul>
 	      {foreach from=$group item=choice}
-		<li id="gbLink_{$choice.controller|default:''|safecssname}{$choice.view|default:''|safecssname}{$choice.subView|default:''|safecssname}">
+		<li class="gbAdminLink" id="gbLink_{$choice.controller|default:''|safecssname}{$choice.view|default:''|safecssname}{$choice.subView|default:''|safecssname}">
 		{if ($SiteAdmin.subViewName == $choice.view)}
 		  {$choice.name}
 		{else}

@@ -48,7 +48,7 @@
 	<h2> {g->text text="User Options"} </h2>
 	<ul>
 	  {foreach from=$UserAdmin.subViewChoices item=choice}
-	    <li id="gbLink_{$choice.controller|default:''|safecssname}{$choice.view|default:''|safecssname}{$choice.subView|default:''|safecssname}">
+	    <li class="gbAdminLink" id="gbLink_{$choice.controller|default:''|safecssname}{$choice.view|default:''|safecssname}{$choice.subView|default:''|safecssname}">
 	    {if ($UserAdmin.subViewName == $choice.view)}
 	      {$choice.name}
 	    {else}
