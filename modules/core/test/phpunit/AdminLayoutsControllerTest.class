@@ -323,12 +323,14 @@ class AdminLayoutsTestPlatform {
 
     function is_dir($path) {
 	global $gallery;
-	
+
 	$base = realpath(dirname(__FILE__) . '/../../../../layouts');
-	switch(realpath($path)) {
-	case $base . '/testLayoutId1':
-	case $base . '/testLayoutId2':
-	case $base . '/anotherTestLayoutId':
+	$path = realpath($path);
+	
+	switch($path) {
+	case realpath($base . '/testLayoutId1'):
+	case realpath($base . '/testLayoutId2'):
+	case realpath($base . '/anotherTestLayoutId'):
 	    return 1;
 
 	default:
