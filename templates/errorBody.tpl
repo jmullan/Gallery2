@@ -62,10 +62,10 @@
     <div class="gbAdmin">
       <h3>
 	{g->text text="Error Detail"}
-	<span id="trace-toggle" class="toggle"
-	      onclick="toggle('trace', 'trace-toggle')"> {if $main.isAdmin}-{else}+{/if} </span>
+	<span id="trace-toggle" class="giShowHideSwitch"
+	      onclick="BlockToggle('giStackTrace', 'trace-toggle')"> {if $main.isAdmin}-{else}+{/if} </span>
       </h3>
-      <div id="trace"{if !$main.isAdmin} style="display:none"{/if}>
+      <div id="giStackTrace"{if !$main.isAdmin} style="display:none"{/if}>
 	{$main.error.stackTrace}
       </div>
     </div>

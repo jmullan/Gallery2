@@ -7,32 +7,4 @@
 <title>
   {g->text text="Error"}
 </title>
-{literal}
-<style type="text/css">
-  <!--
-  .toggle {
-    padding-left: .3em;
-    padding-right: 0.3em;
-    border: solid black 1px;
-    background: #eee;
-  }
-  #trace {
-    padding-top: 8px;
-  }
-  //-->
-</style>
-<script type="text/javascript">
-  <!--
-  function toggle(objId, togId) {
-    var o = document.getElementById(objId), t = document.getElementById(togId);
-    if (o.style.display == 'none') {
-      o.style.display = 'block';
-      t.innerHTML = '-';
-    } else {
-      o.style.display = 'none';
-      t.innerHTML = '+';
-    }
-  }
-  //-->
-</script>
-{/literal}
+<script type="text/javascript" src="{g->url href="lib/javascript/BlockToggle.js"}"></script>
