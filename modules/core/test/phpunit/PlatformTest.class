@@ -95,7 +95,11 @@ class PlatformTest extends GalleryTestCase {
     }
     
     function testIsExecutable() {
-	$this->assert(!$this->_platform->is_executable($this->_sourceFile));
+	if (GalleryUtilities::isA($this->_platform, 'WinNtPlatform')) {
+	    $this->assert($this->_platform->is_executable($this->_sourceFile));
+	} else {
+	    $this->assert(!$this->_platform->is_executable($this->_sourceFile));
+	}
     }
     
     function testFilesize() {
