@@ -1,0 +1,587 @@
+<?php
+/*
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2002 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+/**
+ * Global storage container and utility class for Gallery
+ *
+ * This is a container for global information required for gallery
+ * operation, such as configuration, session, user, etc.  
+ *
+ * @version $Id$
+ * @package GalleryCore
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+class Gallery {
+
+    /*
+     * ****************************************
+     *                 Members
+     * ****************************************
+     */
+
+    /**
+     * The id of the root AlbumItem in the Gallery
+     *
+     * @var	string
+     */
+    var $_rootAlbumItemId;
+
+    /**
+     * The id of the active user
+     *
+     * @var	int
+     */
+    var $_activeUserId;
+
+    /**
+     * Storage for all configuration variables, set in config.php.
+     * The values contained here can't be modified.  Well, they
+     * can be modified but they can't be saved so it's not a good
+     * idea.  
+     *
+     * @var	object	GalleryMap	$_config;
+     */
+    var $_config;
+
+    /**
+     * An instance of the user database class
+     *
+     * @var	object	UserDatabase	$_userDatabase;
+     */
+    var $_userDatabase;
+
+    /**
+     * The current GalleryImageToolkit
+     *
+     * @var object	GalleryImageToolkit	$_imageToolkit;
+     */
+    var $_imageToolkit;
+
+    /**
+     * Storage for all session variables.  Contains an instance
+     * of the GalleryMap class.
+     *
+     * @var	object	GalleryMap	 $_session;
+     */
+    var $_session;
+
+    /**
+     * The backend persistent store for the Gallery class
+     *
+     * @access private
+     * @var	object	GalleryStorage	 $_storage;
+     */
+    var $_storage;
+
+    /**
+     * Our lock object
+     *
+     * @access private
+     * @var	object	GalleryLock	$_lock;
+     */
+    var $_lock;
+
+    /**
+     * An associative array mapping GalleryItem ids to unique GalleryItem
+     * instances.
+     *
+     * @access private
+     * @var array $_nucleusCache;
+     */
+    var $_nucleusCache;
+    
+    /**
+     * An instance of the GalleryPlatform class
+     *
+     * @access private
+     * @var object GalleryPlatform $_platform;
+     */
+    var $_platform;
+
+    /**
+     * The current debugging mode.  One of 'buffered', 'logged', 'immediate' or false
+     * 
+     * @var bool $_debug
+     */
+    var $_debug;
+    
+    /**
+     * Where to send debug output (when the debugging mode is set to 'logged')
+     * 
+     * @var bool $_debugLogFile
+     */
+    var $_debugLogFile;
+    
+    /**
+     * A place to temporarily store debug output when the debugging mode is set
+     * to 'buffered'
+     * 
+     * @var bool $_debugBuffer
+     */
+    var $_debugBuffer;
+    
+    /*
+     * ****************************************
+     *                 Methods
+     * ****************************************
+     */
+
+    /**
+     * Return the id of the GalleryItem associated with the path provided
+     *
+     * Return the id associated with the given path. Example path:
+     * "/birthdays/fred" .. this is the "fred" item in the "birthdays"
+     * item.  It doesn't really matter what types of items these are, as
+     * long as the path is legitimate.
+     *
+     * @access public
+     * @param string the path to a GalleryItem
+     * @return int the id of the GalleryItem (or null)
+     */
+    function getIdByPath($path) {
+	return $this->_storage->getIdByPath($path);
+    }
+
+    /**
+     * Get the cached GalleryNucleus for the id provided
+     *
+     * Return a cached copy of the GalleryNucleus associated with this id.
+     *
+     * @access public
+     * @param int the id of the GalleryNucleus
+     */
+    function getCachedNucleus($id) {
+	assert('!empty($id)');
+	assert('!empty($this->_nucleusCache[$id])');
+	
+	return $this->_nucleusCache[$id];
+    }
+    
+    /**
+     * Add the GalleryNucleus to the cache.
+     *
+     * @access public
+     * @param object GalleryNucleus the GalleryNucleus to cache
+     */
+    function addToCache($nucleus) {
+	assert('!empty($nucleus)');
+	
+	$id = $nucleus->getId();
+	assert('!empty($id)');
+	
+	$this->_nucleusCache[$id] =& $nucleus;
+
+    }
+
+    /**
+     * Search this item to see if it contains the search string.
+     *
+     * If this item has sub-items, search them also.
+     *
+     * @access public
+     * @param string the search criteria
+     * @return array a list of of GalleryItem ids
+     */
+    function search($criteria) {
+	// XXX: should this method live in Gallery or in GalleryItem?
+	// If we're aiming for speed, then we'd really like to do one search
+	// across the entire GalleryItem database.  But, that won't let us
+	// restrict the search to just one branch of the tree.  For now let's
+	// leave it here and then perhaps later we can introduce the concept of
+	// a "narrower" search
+    }
+
+    /**
+     * Return the id of the root GalleryItem
+     *
+     * The root GalleryItem should be an AlbumItem
+     *
+     * @access public
+     * @return int the id of the root album
+     */
+    function getRootAlbumItemId() {
+	return $this->_rootAlbumItemId;
+    }
+
+    /**
+     * Set the id of the root GalleryItem
+     *
+     * The root GalleryItem should be an AlbumItem.
+     *
+     * @access public
+     * @param int the id of the GalleryItem
+     */
+    function setRootAlbumItemId($id) {
+	if (empty($id)) {
+	    return ERROR | ERROR_BAD_PARAMETER;
+	}
+
+	$this->_rootAlbumItemId = $id;
+    }
+
+    /**
+     * Get the Id of the active user
+     *
+     * The active user is the user who is logged on in this 
+     * session.
+     * 
+     * @access public
+     * @return int the id of the current User.
+     */
+    function getActiveUserId() {
+	return $this->_activeUserId;
+    }
+
+    /**
+     * Set the id of the active user
+     *
+     * The active user is the user who is logged on in this 
+     * session.
+     * 
+     * @param int the id of the current User.
+     * @access public
+     */
+    function setActiveUserId($id) {
+	assert('!empty($id)');
+	$this->_activeUserId = $id;
+    }
+    
+    /**
+     * Get the user database 
+     *
+     * Return a reference to the instance of the active
+     * GalleryUserDatabase class.
+     * 
+     * @access public
+     * @return object GalleryUserDatabase the active user database
+     */
+    function &getUserDatabase() {
+	return $this->_userDatabase;
+    }
+
+    /**
+     * Set the user database 
+     *
+     * Assign a reference to the instance of the active
+     * GalleryUserDatabase class.
+     * 
+     * @param object GalleryUserDatabase the active user database
+     * @access public
+     */
+    function setUserDatabase(&$userDatabase) {
+	assert('!empty($userDatabase)');
+	$this->_userDatabase =& $userDatabase;
+    }
+
+    /**
+     * Get the image toolkit
+     *
+     * Return a reference to the instance of the active
+     * GalleryImageToolkit class.
+     * 
+     * @access public
+     * @return object GalleryImageToolkit the active image toolkit
+     */
+    function &getImageToolkit() {
+	return $this->_imageToolkit;
+    }
+
+    /**
+     * Set the image toolkit
+     *
+     * Assign a reference to the instance of the active
+     * GalleryImageToolkit class.
+     * 
+     * @param object GalleryImageToolkit the active image toolkit
+     * @access public
+     */
+    function setImageToolkit(&$imageToolkit) {
+	assert('!empty($imageToolkit)');
+	$this->_imageToolkit =& $imageToolkit;
+    }
+
+    /**
+     * Get a copy of the Gallery configuration settings
+     *
+     * Return a copy of the GalleryMap config instance.  Do not
+     * change the copy, as the changes will be lost.  The value of
+     * this config object is generated in config.php
+     * 
+     * @access public
+     * @return object GalleryMap the Gallery config map
+     */
+    function getConfig() {
+	return $this->_config;
+    }
+
+    /**
+     * Set a copy of the Gallery configuration settings
+     *
+     * Assign a reference to a GalleryMap config instance.
+     * 
+     * @param object GalleryMap the Gallery config map
+     * @access public
+     */
+    function setConfig(&$config) {
+	assert('!empty($config)');
+	$this->_config =& $config;
+    }
+
+    /**
+     * Get a value from the Gallery configuration settings
+     *
+     * This is a convenience method to get a Gallery configuration value.
+     * It's equivalent to $gallery->getConfig()->getValue($key)
+     * 
+     * @access public
+     * @return object GalleryMap the Gallery config map
+     */
+    function getConfigValue($key) {
+	assert('!empty($key)');
+	return $this->_config->getValue($key);
+    }
+
+    /**
+     * Get the Gallery session object.
+     *
+     * Return a reference to the unique Gallery session object
+     * (implemented as an instance of the GalleryMap class).  Any
+     * changes made to this object will be saved in the session.
+     * 
+     * @access public
+     * @return object GalleryMap the Gallery session map
+     */
+    function &getSession() {
+	return $this->_session;
+    }
+
+    /**
+     * Get the Gallery session object.
+     *
+     * Assign a reference to the unique Gallery session object
+     * (implemented as an instance of the GalleryMap class).
+     * 
+     * @param object GalleryMap the Gallery session map
+     * @access public
+     */
+    function &setSession($session) {
+	assert('!empty($session)');
+	$this->_session =& $session;
+    }
+
+    /**
+     * Get the Gallery platform object.
+     *
+     * Return a copy of the unique Gallery platform object.
+     * 
+     * @access public
+     * @return object GalleryMap the Gallery platform map
+     */
+    function getPlatform() {
+	return $this->_platform;
+    }
+
+    /**
+     * Get the Gallery platform object.
+     *
+     * Assign a reference to the unique Gallery platform object
+     * (implemented as an instance of the GalleryMap class).
+     * 
+     * @param object GalleryMap the Gallery platform map
+     * @access public
+     */
+    function &setPlatform($platform) {
+	assert('isset($platform)');
+	$this->_platform =& $platform;
+    }
+
+    /**
+     * Lock the given GalleryNucleus instances.
+     *
+     * Use the active locking mechanism to lock the given GalleryNucleus instances.
+     * 
+     * Use register_shutdown_function() to register the unlock() method so
+     * that we can be sure that we won't accidentally leave the instances
+     * locked.
+     * 
+     * @access public
+     * @param array the GalleryNucleus' to be locked 
+     * @param integer how long to wait for the lock before giving up
+     * @return int a status code
+     */
+    function lockLocal($ids, $timeout=10) {
+	assert('is_array($ids)');
+	
+	/*
+	 * If we already have a lock, fail.
+	 */
+	if (!empty($this->_lock)) {
+	    return ERROR | ERROR_ILLEGAL_LOCK;
+	}
+
+	/*
+	 * Make and acquire a new lock.
+	 */
+	$this->_lock = new GalleryLock();
+	return $this->_lock->lock($ids, $timeout);
+
+	return SUCCESS;
+    }
+
+    /**
+     * Lock the entire Gallery
+     *
+     * Use the active locking mechanism to lock the entire Gallery.  Then,
+     * traverse the tree and refresh any objects that we have in memory.  The
+     * result of this call is that the entire tree is in sync with the
+     * persistent store, and until unlock is called, no one else can
+     * change it.
+     *
+     * Use register_shutdown_function() to register the unlock() method so
+     * that we can be sure that we won't accidentally leave the world locked.
+     * 
+     * @access public
+     * @param integer how long to wait for the lock before giving up
+     * @return int a status code
+     */
+    function lockWorld($timeout=10) {
+	return $this->lockLocal(array(), $timeout);
+    }
+
+    /**
+     * Release the lock
+     *
+     * @access public
+     */
+    function unlock() {
+	assert('!empty($this->_lock)');
+	$this->_lock->unlock();
+    }
+
+    /**
+     * Is the GalleryNucleus locked?
+     *
+     * @param int the id of a GalleryNucleus
+     * @access public
+     */
+    function isLocked($id) {
+	assert('!empty($id)');
+
+	if (empty($this->_lock)) {
+	    return false;
+	}
+
+	return $this->_lock->isLocked($id);
+    }
+
+    /**
+     * Return a reference to the implementation of the GalleryStorage class
+     *
+     * @access public
+     */
+    function &getStorage() {
+	return $this->_storage;
+    }
+
+    /**
+     * Set a new GalleryStorage instance.
+     *
+     * Accept a new instance of GalleryStorage and use it for all further
+     * storage requests.
+     *
+     * @access public
+     */
+    function &setStorage(&$storage) {
+	$this->_storage =& $storage;
+    }
+
+    /**
+     * Change the debugging state
+     *
+     * @param mixed one of 'buffered', 'logged', 'immediate' or false
+     */
+    function setDebug($debug) {
+	$this->_debug = $debug;
+    }
+
+    /**
+     * Set the location of debugging output
+     *
+     * @param string a filename
+     */
+    function setDebugLogFile($debugLogFile) {
+	$this->_debugLogFile = $debugLogFile;
+    }
+
+    /**
+     * Get the debug state
+     *
+     * @return mixed the debug state
+     */
+    function getDebug() {
+	return $this->_debug;
+    }
+
+    /**
+     * Output a debug message
+     *
+     * @param string a message
+     */
+    function debug($msg) {
+	if (empty($msg)) {
+	    return;
+	}
+	
+	if (!empty($this->_debug)) {
+	    if (!strcmp($this->_debug, 'buffered')) {
+		$this->_debugBuffer .= "$msg\n";
+	    } else if (!strcmp($this->_debug, 'logged')) {
+		if ($fd = fopen($this->_debugLogFile, 'a')) {
+		    $date = date('Y-m-d H:i:s');
+		    fwrite($fd, '$date [' . session_id() . '] $msg\n');
+		    fclose($fd);
+		}
+	    } else if (!strcmp($this->_debug, 'immediate')) {
+		print $msg;
+	    }
+	}
+    }
+
+    /**
+     * Get the string representation(s) of an error.
+     *
+     * An error is a set of bitflags, so we return an array of strings.
+     * @param int the error code
+     * @return array string names of the errors
+     */
+    function getErrorAsStrings($errorCode) {
+	$codes = array();
+	foreach (get_defined_constants() as $constantName => $constantValue) {
+	    if (strpos($constantName, 'ERROR_') === 0) {
+		if ($errorCode & $constantValue) {
+		    $codes[] = $constantName;
+		}
+	    }
+	}
+
+	return $codes;
+    }
+}
+?>

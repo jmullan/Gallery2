@@ -1,0 +1,286 @@
+<?php
+/*
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2002 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+/**
+ * A framework for doing platform specific tasks.
+ * 
+ * This is an abstract class that implements many basic tasks that are
+ * different from platform to platform.  One common issue is working with
+ * filesystem paths which are different between Unix and Win32.  This package
+ * allows Gallery to use a platform neutral path system internally and allow
+ * those paths to be translated into a platform specific version transparently.
+ *
+ * @version $Id$
+ * @package GalleryCore
+ * @abstract
+ * @access public
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+class GalleryPlatform {
+
+    /**
+     * Copy a file 
+     *
+     * @param string the source file
+     * @param string the destination file
+     * @return bool TRUE if the copy succeeded, FALSE otherwise.
+     * @access public
+     */
+    function copy($source, $dest) {
+	$source = $this->importPath($source);
+	$dest = $this->importPath($dest);
+	
+	$umask = umask(0133);
+	$results = copy($source, $dest);
+	umask($umask);
+    }
+
+    /**
+     * Return the system-wide temporary directory
+     *
+     * @return string a directory path
+     * @access public
+     */
+    function tempdir() {
+	return export_filename(getenv("TEMP"));
+    }
+
+    /**
+     * Does the given file exist?
+     *
+     * @param string full filesystem path to a file
+     * @return bool TRUE if the file exists, FALSE otherwise
+     * @access public
+     */
+    function file_exists($filename) {
+	$filename = $this->importPath($filename);
+	return file_exists($filename);
+    }
+
+    /**
+     * Is the given path a symbolic link?
+     *
+     * @param string a filesystem path
+     * @return bool TRUE if the file is a link, FALSE otherwise
+     * @access public
+     */
+    function is_link($filename) {
+	$filename = $this->importPath($filename);
+	return is_link($filename);
+    }
+
+    /**
+     * Is the given path a directory?
+     *
+     * @param string a filesystem path
+     * @return bool TRUE if the path is a directory, FALSE otherwise
+     * @access public
+     */
+    function is_dir($filename) {
+	$filename = $this->importPath($filename);
+	return is_dir($filename);
+    }
+
+    /**
+     * Is the given path a normal file?
+     *
+     * @param string a filesystem path 
+     * @return bool TRUE if the path is a file, FALSE otherwise
+     * @access public
+     */
+    function is_file($filename) {
+	$filename = $this->importPath($filename);
+	return is_file($filename);
+    }
+
+    /**
+     * Is the given path an executable file?
+     *
+     * @param string a filesystem path 
+     * @return bool TRUE if the path is an executable file, FALSE otherwise
+     * @access public
+     */
+    function is_executable($filename) {
+	$filename = $this->importPath($filename);
+	return is_executable($filename);
+    }
+
+    /**
+     * How large is the given file?
+     *
+     * @param string full filesystem path to a file
+     * @return int the size in bytes
+     * @access public
+     */
+    function filesize($filename) {
+	$filename = $this->importPath($filename);
+	return filesize($filename);
+    }
+
+    /**
+     * Open a file or URL
+     *
+     * @param string a file path or URL
+     * @param string a file mode
+     * @param int if this is set to 1, search the include path also
+     * @return resource a file descriptor
+     * @access public
+     */
+    function fopen($filename, $mode, $use_include_path=0) {
+	$path = $this->importPath($filename);
+	return fopen($filename, $mode, $use_include_path);
+    }
+
+    /**
+     * Open a file or URL
+     *
+     * @param string a file path
+     * @return resource a directory descriptor
+     * @access public
+     */
+    function opendir($path) {
+	$path = $this->importPath($path);
+	return opendir($path);
+    }
+
+    /**
+     * Rename a file/dir
+     *
+     * As a side bonus, create a backup of the original file.
+     *
+     * @param string original file/dir name
+     * @param string new file/dir name
+     * @return bool true on success, false on failure
+     * @access public
+     */
+    function rename($oldname, $newname) {
+	$oldname = $this->importPath($oldname);
+	$newname = $this->importPath($newname);
+
+	/*
+	 * We can use raw functions from this point on because the paths have
+	 * already been imported.
+	 */
+	if (file_exists("$newname.bak")) {
+	    unlink("$newname.bak");
+	}
+	if (file_exists("$newname")) {
+	    return rename($newname, "$newname.bak") &&
+		    rename($oldname, $newname);
+	} else {
+	    return rename($oldname, $newname);
+	}
+    }
+
+    /**
+     * Get information about a file
+     *
+     * @param string file/dir name
+     * @return array the statistics of the file
+     * @access public
+     */
+    function stat($filename) {
+	$filename = $this->importPath($filename);
+	return stat($filename);
+    }
+
+    /**
+     * Delete a file or directory
+     *
+     * @param string file/dir name
+     * @return bool true on success, false on failure
+     * @access public
+     */
+    function unlink($filename) {
+	$filename = $this->importPath($filename);
+	return unlink($filename);
+    }
+
+    /**
+     * Create a new directory
+     *
+     * @param string a filesystem path
+     * @param int permissions of the newly created directory
+     * @return bool true on success, false on failure
+     * @access public
+     */
+    function mkdir($path, $perms) {
+	$path = $this->importPath($path);
+	$umask = umask(0);
+	$results = mkdir($path, $perms);
+	umask($umask);
+	return $results;
+    }
+    
+    /**
+     * Convert a path from neutral format into platform specific format.
+     *
+     * @param string neutral path
+     * @return string platform specific path
+     * @access public
+     */
+    function importPath($path) {
+	/* This must be implemented in a platform specific way */
+	assert(false);
+    }
+
+    /**
+     * Convert a path from specific format into neutral format.
+     *
+     * @param string platform specific path
+     * @return string neutral path
+     * @access public
+     */
+    function exportPath($path) {
+	/* This must be implemented in a platform specific way */
+	assert(false);
+    }
+
+    /**
+     * Convert a path from neutral format to an executable format
+     *
+     * @param string neutral path
+     * @return string platform specific path
+     * @access public
+     */
+    function executablePath($path) {
+	/* This must be implemented in a platform specific way */
+	assert(false);
+    }
+
+    /**
+     * Execute a command and record the results and status.
+     *
+     * If the optional debugfile parameter is specified, dump the STDERR
+     * results from executing this command out to the file.  (Unix only)
+     *
+     * @param string the command to excute
+     * @param array the location to put output from the command 
+     * @param int the location to put the status code from the command
+     * @param string optional file to record STDERR output
+     * @return bool TRUE if the copy succeeded, FALSE otherwise.
+     * @access public
+     */
+    function exec($cmd, &$results, &$status, $debugfile="") {
+	/* This must be implemented in a platform specific way */
+	assert(false);
+    }
+}
+?>

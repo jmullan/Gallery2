@@ -1,0 +1,817 @@
+<?php
+/*
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2002 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+
+/**
+ * Base class for all objects in the Gallery composite tree
+ *
+ * Container for all functionality and data common objects that 
+ * Gallery can deal with.  Each GalleryItem has the capacity
+ * to own other GalleryItems in a parent-child relationship.
+ * That capacity can be enabled or disabled by subclasses of
+ * GalleryItem.
+ *
+ * @gallery metainfo 1.0
+ *
+ * @version $Id$
+ * @package GalleryCore
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+class GalleryItem extends GalleryNucleus {
+
+    /*
+     * ****************************************
+     *                 Members
+     * ****************************************
+     */
+
+    /**
+     * An ordered list of 0+ GalleryItem children contained by this item
+     *
+     * @gallery persistent
+     * @gallery flag STORAGE_TYPE_LIST
+     * @gallery flag STORAGE_TYPE_INTEGER
+     *
+     * @var object GalleryList $_childIds
+     */
+    var $_childIds;
+
+    /**
+     * An ordered list of 0+ CommentContainer ids.
+     *
+     * @gallery persistent
+     * @gallery flag STORAGE_TYPE_LIST
+     * @gallery flag STORAGE_TYPE_INTEGER
+     *
+     * @var object GalleryList $_commentIds
+     */
+    var $_commentIds;
+
+    /**
+     * The (long) description of this item
+     *
+     * @gallery persistent
+     * @gallery flag STORAGE_TYPE_TEXT
+     *
+     * @var int $_description;
+     */
+    var $_description;
+
+    /**
+     * Is HTML allowed in this item's title and description?
+     *
+     * @gallery persistent
+     * @gallery flag STORAGE_TYPE_BOOLEAN
+     *
+     * @var int $_isHtmlAllowed;
+     */
+    var $_isHtmlAllowed;
+	     
+    /**
+     * A set of keywords that describe this item
+     *
+     * @gallery persistent
+     * @gallery flag STORAGE_TYPE_STRING
+     * @gallery flag STORAGE_MODIFIER_LARGE
+     *
+     * @var int $_keywords;
+     */
+    var $_keywords;
+
+    /**
+     * The id of the User who owns this item
+     *
+     * @gallery persistent
+     * @gallery flag STORAGE_TYPE_INTEGER
+     * @gallery flag STORAGE_MODIFIER_REQUIRED
+     *
+     * @var int $_ownerId
+     */
+    var $_ownerId;
+
+    /**
+     * Properties of this GalleryItem
+     *
+     * This area is reserved for extensions to Gallery.  Any string data can be
+     * stored in this table.
+     *
+     * @gallery persistent
+     * @gallery flag STORAGE_TYPE_MAP
+     * @gallery flag STORAGE_TYPE_TEXT
+     *
+     * @var object GalleryMap $_properties
+     */
+    var $_properties;
+
+    /**
+     * The id of the ImageContainer containing this GalleryItem's thumbnail
+     *
+     * @gallery persistent
+     * @gallery flag STORAGE_TYPE_INTEGER
+     *
+     * @var int $_thumbnailId
+     */
+    var $_thumbnailId;
+
+    /**
+     * The (short) title of this item
+     *
+     * @gallery persistent
+     * @gallery flag STORAGE_TYPE_TIMESTAMP
+     * @gallery flag STORAGE_MODIFIER_REQUIRED
+     *
+     * @var int $_title;
+     */
+    var $_title;
+
+    /**
+     * How many times this item has been viewed
+     *
+     * @gallery persistent
+     * @gallery flag STORAGE_TYPE_INTEGER
+     * @gallery flag
+     *
+     * @var int $_viewCount;
+     */
+    var $_viewCount;
+
+    /**
+     * Date and time marking the beginning of the view count
+     *
+     * @gallery persistent
+     * @gallery flag STORAGE_TYPE_TIMESTAMP
+     * @gallery flag STORAGE_MODIFIER_REQUIRED
+     *
+     * @var int $_viewedSinceTimestamp;
+     */
+    var $_viewedSinceTimestamp;
+ 
+    /**
+     * A GalleryMap of usernames mapped to allowed permissions
+     *
+     * @gallery persistent
+     * @gallery flag STORAGE_TYPE_MAP
+     * @gallery flag STORAGE_TYPE_STRING
+     * @gallery flag STORAGE_MODIFIER_MEDIUM
+     *
+     * @var object GalleryMap $_allowedPermissions;
+     * @private
+     */
+    var $_allowedPermissions;
+    
+    /**
+     * A GalleryMap of usernames mapped to denied permissions
+     *
+     * @gallery persistent
+     * @gallery flag STORAGE_TYPE_MAP
+     * @gallery flag STORAGE_TYPE_STRING
+     * @gallery flag STORAGE_MODIFIER_MEDIUM
+     *
+     * @var object GalleryMap $_deniedPermissions;
+     * @private
+     */
+    var $_deniedPermissions;
+
+    /*
+     * ****************************************
+     *                 Methods
+     * ****************************************
+     */
+
+    /**
+     * Constructor
+     *
+     * Initialize this instance and then load it from the persistent
+     * store.
+     *
+     * @access public
+     */
+    function GalleryItem() {
+	$this->GalleryNucleus();
+    }
+
+    /**
+     * Get the list of supported file types
+     *
+     * Get the list of supported file types that this GalleryItem can
+     * support.
+     *
+     * @access public
+     * @return array lowercase file tags tags (eg "jpg", "gif")
+     */
+    function getSupportedFiletypes() {
+	// The base GalleryItem does not support any types specifically
+	return array();
+    }
+		
+    /**
+     * Is this file type supported?
+     *
+     * Is this file type supported?
+     * 
+     * @access public
+     * @param string a file tag (eg "jpg", "Jpg", "JPG", "JPEG")
+     * @return boolean true if the tag given is supported 
+     */
+    function isSupportedFiletype($tag) {
+	// The base GalleryItem does not support any types specifically
+	return false;
+    }
+		
+    /**
+     * Can this item contain other items?
+     *
+     * By default, GalleryItems cannot contain other items.  However
+     * Subclasses may wish to override this method to allow
+     * containment.
+     *
+     * @access public
+     * @return boolean true if the item can contain children
+     */
+    function canContainChildren() {
+	return false;
+    }
+
+    /**
+     * How many children does this item directly contain?
+     * 
+     * This is the number of items visible to the active user.  Internally this
+     * calls getChildIds() to figure out how many are around (and caches
+     * the result for the duration of this in-memory version)
+     *
+     * @see getChildItemIds()
+     * @access public
+     * @return int the number of children
+     */
+    function getLocalChildCount() {
+	// Must track which children have their own permission
+	// set so that we can optimize this count process.  Otherwise
+	// we'll have to check each child individually
+
+	// XXX: The child counting code is tricky if we want to obscure the
+	// fact that hidden items even exist at all.  It will be very slow if
+	// we have to calculate the visibility of every item.  Calculating once
+	// and maintaining deltas seems very error prone.  Let's put this whole
+	// issue off for now.
+	assert('false');
+    }
+
+    /**
+     * How many children does this item and all of its sub-items
+     * contain, including itself?
+     *
+     * If this item can't contain children, the answer is 0, else
+     * it's the number of immediate children and all their
+     * children, etc, etc.
+     *
+     * @access public
+     * @return int the number of children
+     */
+    function getTotalChildCount() {
+	// Must track which children have their own permission
+	// set so that we can optimize this count process.  Otherwise
+	// we'll have to check each child individually
+
+	// See comment in getLocalChildCount();
+    	assert('false');
+    }
+
+    /**
+     * Adjust the child count
+     *
+     * Change the cached count of the number of total children below this item.
+     *
+     * @see getTotalChildCount()
+     * @access public
+     * @param int a delta value
+     */
+    function adjustTotalChildCount() {
+	// See comment in getLocalChildCount();
+    	assert('false');
+    }
+
+    /**
+     * Does the user have the given permission?
+     *
+     * This calculation is made taking into account the appropriate
+     * attributes for this user from all of its parents.
+     *
+     * @access public
+     * @param string user id
+     * @param string permission name
+     * @return boolean true if the given user id has the given permission for this item
+     */
+    function hasPermission($id, $perm) {
+
+	/* Check for an explicit deny.  Deny supercedes allow. */
+	$denied = $this->_deniedPermissions->getValue($id);
+	if ($denied && ($denied & $perm)) {
+	    return false;
+	}
+
+	/* Check for an explicit allow */
+	$allowed = $this->_allowedPermissions->getValue($id);
+	if ($allowed && ($allowed & $perm)) {
+	    return true;
+	}
+
+	/* Defer to the parent */
+	$parent =& $this->getParent();
+	if ($parent) {
+	    return $parent->hasPermission($id, $perm);
+	}
+
+	/* No clear answer, so the default is deny */
+	return false;
+    }
+
+    /**
+     * Allow the specified permission for the specified user
+     *
+     * Adjust the user's permissions for this item to set the permission
+     * provided.  
+     *
+     * @access public
+     * @param string the id of the user
+     * @param int the specific permission
+     */
+    function allowPermission($id, $perm) {
+
+	/*
+	 * Clear the permissions for this id.
+	 */
+	$this->removePermission($id, $perm);
+
+	/* Grant the permission */
+	$allowed = $this->_allowedPermissions->getValue($id);
+	if (!($allowed && ($allowed & $perm))) {
+	    $allowed = ($allowed | $perm);
+	    $this->_allowedPermissions->setValue($id, $allowed);
+	}
+    }
+
+    /**
+     * Deny the specified permission for the specified user
+     *
+     * Adjust the user's permissions for this item to set the permission
+     * provided.  
+     *
+     * @access public
+     * @param string the id of the user
+     * @param int the specific permission
+     */
+    function denyPermission($id, $perm) {
+
+	/*
+	 * Clear the permission for this id.
+	 */
+	$this->removePermission($id, $perm);
+
+	/* Grant the permission */
+	$denied = $this->_deniedPermissions->getValue($id);
+	if (!($denied && ($denied & $perm))) {
+	    $denied = ($denied | $perm);
+	    $this->_deniedPermissions->setValue($id, $denied);
+	}
+
+    }
+
+    /**
+     * Remove the specified permission for the specified user
+     *
+     * Adjust the user's permissions for this item to remove the permission
+     * provided.  This basically delegates the permission check for the user/item
+     * to the parent.
+     *
+     * @access public
+     * @param string the id of the user
+     * @param int the specific permission
+     */
+    function removePermission($id, $perm) {
+
+	/* If the user was allowed this permission, un-allow them */
+	$allowed = $this->_allowedPermissions->getValue($id);
+	if ($allowed && ($allowed & $perm)) {
+	    $allowed = ($allowed ^ $perm);
+	    $this->_allowedPermissions->setValue($id, $allowed);
+	}
+
+	/* If the user was denied this permission, un-deny them */
+	$denied = $this->_deniedPermissions->getValue($id);
+	if ($denied && ($denied & $perm)) {
+	    $denied = ($denied ^ $perm);
+	    $this->_deniedPermissions->setValue($id, $denied);
+	}
+    }
+
+    /**
+     * Return all permissions.
+     *
+     * Return an associative array of permissions for this item.  The results
+     * are a merged set of permissions including the parent's permissions and
+     * the ones specific to this particular item.  
+     *
+     * @access public
+     * @return array two associative arrays, the allowed and denied permission set
+     */
+    function getAllPermissions() {
+	$parent =& $this->getParent();
+	if ($parent) {
+	    list($allowed, $denied) = $parent->getAllPermissions();
+	} else {
+	    $allowed = array();
+	    $denied = array();
+	}
+
+	$tmp = $this->_deniedPermissions->toArray();
+	foreach ($tmp as $id => $perm) {
+	    /* Remove allows from the denied list, add them to allowed list */
+	    $denied[$id] &= ~$perm;
+	    $allowed[$id] |= $perm; 
+	}
+
+	$tmp = $this->_allowedPermissions->toArray();
+	foreach ($tmp as $id => $perm) {
+	    /* Remove denys from the allowed list, add them to deny list */
+	    $allowed[$id] &= ~$perm; 
+	    $denied[$id] |= $perm;
+	}
+
+	return array($allowed, $denied);
+    }
+    
+    /**
+     * Create a new instance of this GalleryNucleus in the persistent store
+     *
+     * Let the parent do its work, then add any initialization specific to this
+     * class.
+     *
+     * @return int a status code
+     */
+    function create() {
+	$ret = parent::create();
+	if ($ret != SUCCESS) {
+	    return $ret;
+	}
+	
+	/* Initialize the viewedSince timestamp */
+	$this->setViewedSinceTimestamp(time());
+    }
+    
+    /**
+     * Save the changes to this GalleryItem
+     *
+     * Do any special work for this GalleryItem before deferring to
+     * GalleryNucleus.
+     *
+     * @access public
+     * @return int a status code
+     */
+    function save() {
+	return parent::save();
+    }
+
+    /* BEGIN: Accessor Block.  DO NOT MODIFY! */
+    
+    /**
+     * Return the meta class information about this class
+     *
+     * @return array member => array(type, class)
+     */
+    function getMetaInfo() {
+        $meta = parent::getMetaInfo();
+        $meta['members']['isHtmlAllowed'] = array(
+            'class' => 'GalleryItem',
+            'type' => STORAGE_TYPE_BOOLEAN);
+        $meta['members']['description'] = array(
+            'class' => 'GalleryItem',
+            'type' => STORAGE_TYPE_TEXT);
+        $meta['members']['childIds'] = array(
+            'class' => 'GalleryItem',
+            'type' => STORAGE_TYPE_LIST |
+                      STORAGE_TYPE_INTEGER);
+        $meta['members']['title'] = array(
+            'class' => 'GalleryItem',
+            'type' => STORAGE_TYPE_TIMESTAMP |
+                      STORAGE_MODIFIER_REQUIRED);
+        $meta['members']['commentIds'] = array(
+            'class' => 'GalleryItem',
+            'type' => STORAGE_TYPE_LIST |
+                      STORAGE_TYPE_INTEGER);
+        $meta['members']['viewCount'] = array(
+            'class' => 'GalleryItem',
+            'type' => STORAGE_TYPE_INTEGER);
+        $meta['members']['deniedPermissions'] = array(
+            'class' => 'GalleryItem',
+            'type' => STORAGE_TYPE_MAP |
+                      STORAGE_MODIFIER_MEDIUM | STORAGE_TYPE_STRING);
+        $meta['members']['thumbnailId'] = array(
+            'class' => 'GalleryItem',
+            'type' => STORAGE_TYPE_INTEGER);
+        $meta['members']['allowedPermissions'] = array(
+            'class' => 'GalleryItem',
+            'type' => STORAGE_TYPE_MAP |
+                      STORAGE_MODIFIER_MEDIUM | STORAGE_TYPE_STRING);
+        $meta['members']['viewedSinceTimestamp'] = array(
+            'class' => 'GalleryItem',
+            'type' => STORAGE_TYPE_TIMESTAMP |
+                      STORAGE_MODIFIER_REQUIRED);
+        $meta['members']['keywords'] = array(
+            'class' => 'GalleryItem',
+            'type' => STORAGE_TYPE_STRING |
+                      STORAGE_MODIFIER_LARGE);
+        $meta['members']['properties'] = array(
+            'class' => 'GalleryItem',
+            'type' => STORAGE_TYPE_MAP |
+                      STORAGE_TYPE_TEXT);
+        $meta['members']['ownerId'] = array(
+            'class' => 'GalleryItem',
+            'type' => STORAGE_TYPE_INTEGER |
+                      STORAGE_MODIFIER_REQUIRED);
+        $meta['version'] = array('major' => 1, 'minor' => 0);
+    
+        return $meta;
+    }
+    
+    /**
+     * Get a reference to the allowedPermissions object
+     * 
+     * @access public
+     * @return object GalleryMap the allowedPermissions instance
+     */
+    function &getAllowedPermissions() {
+        if (!($this->getLoadedFlag('allowedPermissions'))) {
+            global $gallery;
+            $storage = $gallery->getStorage();
+            $this->_allowedPermissions = new GalleryMap();
+            $this->_allowedPermissions->setParentInfo($this, 'allowedPermissions');
+            $storage->loadMember($this, 'allowedPermissions', $this->_allowedPermissions);
+        }
+        return $this->_allowedPermissions;
+    }
+    
+    /**
+     * Get a reference to the childIds object
+     * 
+     * @access public
+     * @return object GalleryList the childIds instance
+     */
+    function &getChildIds() {
+        if (!($this->getLoadedFlag('childIds'))) {
+            global $gallery;
+            $storage = $gallery->getStorage();
+            $this->_childIds = new GalleryList();
+            $this->_childIds->setParentInfo($this, 'childIds');
+            $storage->loadMember($this, 'childIds', $this->_childIds);
+        }
+        return $this->_childIds;
+    }
+    
+    /**
+     * Get a reference to the commentIds object
+     * 
+     * @access public
+     * @return object GalleryList the commentIds instance
+     */
+    function &getCommentIds() {
+        if (!($this->getLoadedFlag('commentIds'))) {
+            global $gallery;
+            $storage = $gallery->getStorage();
+            $this->_commentIds = new GalleryList();
+            $this->_commentIds->setParentInfo($this, 'commentIds');
+            $storage->loadMember($this, 'commentIds', $this->_commentIds);
+        }
+        return $this->_commentIds;
+    }
+    
+    /**
+     * Get a reference to the deniedPermissions object
+     * 
+     * @access public
+     * @return object GalleryMap the deniedPermissions instance
+     */
+    function &getDeniedPermissions() {
+        if (!($this->getLoadedFlag('deniedPermissions'))) {
+            global $gallery;
+            $storage = $gallery->getStorage();
+            $this->_deniedPermissions = new GalleryMap();
+            $this->_deniedPermissions->setParentInfo($this, 'deniedPermissions');
+            $storage->loadMember($this, 'deniedPermissions', $this->_deniedPermissions);
+        }
+        return $this->_deniedPermissions;
+    }
+    
+    /**
+     * Set the value of description
+     * 
+     * @param string the new value for description
+     * @access public
+     */
+    function setDescription($value) {
+        assert('isset($value)');
+        $this->_description = $value;
+        $this->setModifiedFlag('description', MEMBER_MODIFIED);
+    }
+    
+    /**
+     * Get the value of description
+     * 
+     * @access public
+     * @return string the current value of description
+     */
+    function getDescription() {
+        return $this->_description;
+    }
+    
+    /**
+     * Set the value of isHtmlAllowed
+     * 
+     * @param bool the new value for isHtmlAllowed
+     * @access public
+     */
+    function setIsHtmlAllowed($value) {
+        assert('isset($value)');
+        $this->_isHtmlAllowed = $value;
+        $this->setModifiedFlag('isHtmlAllowed', MEMBER_MODIFIED);
+    }
+    
+    /**
+     * Get the value of isHtmlAllowed
+     * 
+     * @access public
+     * @return bool the current value of isHtmlAllowed
+     */
+    function getIsHtmlAllowed() {
+        return $this->_isHtmlAllowed;
+    }
+    
+    /**
+     * Set the value of keywords
+     * 
+     * @param string the new value for keywords
+     * @access public
+     */
+    function setKeywords($value) {
+        assert('isset($value)');
+        $this->_keywords = $value;
+        $this->setModifiedFlag('keywords', MEMBER_MODIFIED);
+    }
+    
+    /**
+     * Get the value of keywords
+     * 
+     * @access public
+     * @return string the current value of keywords
+     */
+    function getKeywords() {
+        return $this->_keywords;
+    }
+    
+    /**
+     * Set the value of ownerId
+     * 
+     * @param int the new value for ownerId
+     * @access public
+     */
+    function setOwnerId($value) {
+        assert('isset($value)');
+        $this->_ownerId = $value;
+        $this->setModifiedFlag('ownerId', MEMBER_MODIFIED);
+    }
+    
+    /**
+     * Get the value of ownerId
+     * 
+     * @access public
+     * @return int the current value of ownerId
+     */
+    function getOwnerId() {
+        return $this->_ownerId;
+    }
+    
+    /**
+     * Get a reference to the properties object
+     * 
+     * @access public
+     * @return object GalleryMap the properties instance
+     */
+    function &getProperties() {
+        if (!($this->getLoadedFlag('properties'))) {
+            global $gallery;
+            $storage = $gallery->getStorage();
+            $this->_properties = new GalleryMap();
+            $this->_properties->setParentInfo($this, 'properties');
+            $storage->loadMember($this, 'properties', $this->_properties);
+        }
+        return $this->_properties;
+    }
+    
+    /**
+     * Set the value of thumbnailId
+     * 
+     * @param int the new value for thumbnailId
+     * @access public
+     */
+    function setThumbnailId($value) {
+        assert('isset($value)');
+        $this->_thumbnailId = $value;
+        $this->setModifiedFlag('thumbnailId', MEMBER_MODIFIED);
+    }
+    
+    /**
+     * Get the value of thumbnailId
+     * 
+     * @access public
+     * @return int the current value of thumbnailId
+     */
+    function getThumbnailId() {
+        return $this->_thumbnailId;
+    }
+    
+    /**
+     * Set the value of title
+     * 
+     * @param int the new value for title
+     * @access public
+     */
+    function setTitle($value) {
+        assert('isset($value)');
+        $this->_title = $value;
+        $this->setModifiedFlag('title', MEMBER_MODIFIED);
+    }
+    
+    /**
+     * Get the value of title
+     * 
+     * @access public
+     * @return int the current value of title
+     */
+    function getTitle() {
+        return $this->_title;
+    }
+    
+    /**
+     * Set the value of viewCount
+     * 
+     * @param int the new value for viewCount
+     * @access public
+     */
+    function setViewCount($value) {
+        assert('isset($value)');
+        $this->_viewCount = $value;
+        $this->setModifiedFlag('viewCount', MEMBER_MODIFIED);
+    }
+    
+    /**
+     * Get the value of viewCount
+     * 
+     * @access public
+     * @return int the current value of viewCount
+     */
+    function getViewCount() {
+        return $this->_viewCount;
+    }
+    
+    /**
+     * Set the value of viewedSinceTimestamp
+     * 
+     * @param int the new value for viewedSinceTimestamp
+     * @access public
+     */
+    function setViewedSinceTimestamp($value) {
+        assert('isset($value)');
+        $this->_viewedSinceTimestamp = $value;
+        $this->setModifiedFlag('viewedSinceTimestamp', MEMBER_MODIFIED);
+    }
+    
+    /**
+     * Get the value of viewedSinceTimestamp
+     * 
+     * @access public
+     * @return int the current value of viewedSinceTimestamp
+     */
+    function getViewedSinceTimestamp() {
+        return $this->_viewedSinceTimestamp;
+    }
+    
+    
+    /* END: Accessor Block.  DO NOT MODIFY! */
+}
+?>

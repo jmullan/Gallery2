@@ -1,0 +1,197 @@
+<?php
+/*
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2002 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+/**
+ * Representation of a single user
+ * 
+ * This class is the container for information about Gallery     
+ * users.  Each instance of User contains a unique user id. It   
+ * must be implemented by a class that has a persistent store for
+ * the relevant user data.
+ * 
+ * @version $Id$
+ * @package GalleryCore
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+class GalleryUser extends GalleryNucleus {
+	
+    /*
+     * ****************************************
+     *                 Members
+     * ****************************************
+     */
+
+    /**
+     * The User's username
+     *
+     * @var	string
+     */
+    var $_username;
+
+    /**
+     * The User's full name
+     *
+     * @var	string
+     */
+    var $_fullname;
+
+    /**
+     * The User's password in a hashed form.
+     *
+     * @var	string
+     */
+    var $_password;
+
+    /**
+     * The User's email address.
+     *
+     * @var	string
+     */
+    var $_email;
+
+    /**
+     * Is the user a Gallery admininstrator?
+     *
+     * @var	boolean
+     */
+    var $_isAdmin;
+
+    /*
+     * ****************************************
+     *                 Methods
+     * ****************************************
+     */
+
+    /**
+     * Constructor
+     *
+     * Create a new blank instance, and register any members that need to
+     * persist in our storage.
+     *
+     * @access public
+     * @param string the id of an object to be loaded
+     */
+    function GalleryUser() {
+	$this->GalleryNucleus();
+    }
+
+    /**
+     * Set the user's password
+     *
+     * Set the user's password
+     *
+     * @param string the new password (in plain text)
+     */
+    function setPassword($password) {
+    }
+
+    /**
+     * Is the password provided correct?
+     *
+     * @param string a password
+     * @return boolean true if the password is correct
+     */
+    function isCorrectPassword($password) {
+    }
+
+    /**
+     * Get the User's id
+     *
+     * @return string the id
+     */
+    function getId() {
+    }
+
+    /**
+     * Set the User's username
+     *
+     * @param string the new username
+     */
+    function setUsername($username) {
+    }
+
+    /**
+     * Get the User's username
+     *
+     * @return string the username
+     */
+    function getUsername() {
+    }
+
+    /**
+     * Set the User's email address
+     *
+     * @param string the new email address
+     */
+    function setEmailAddress($email) {
+    }
+
+    /**
+     * Get the User's email address
+     *
+     * @return string the user's email address
+     */
+    function getEmailAddress() {
+    }
+
+    /**
+     * Set the User's full name
+     *
+     * @param string the new full name
+     */
+    function setFullName($fullname) {
+    }
+
+    /**
+     * Get the User's full name
+     *
+     * @return string the user's full name
+     */
+    function getFullName() {
+    }
+
+    /**
+     * Is this User a Gallery administrator?
+     *
+     * @return boolean true if the user is an administrator
+     */
+    function isAdmin() {
+    }
+
+    /**
+     * Specify that this user is (is not) a Gallery administrator
+     *
+     * @param bool true for adminstrator, false if not
+     */
+    function setIsAdmin($yesOrNo) {
+    }
+
+    /**
+     * Is this User a pseudo user?
+     *
+     * @return boolean true if the user is a pseudo user
+     */
+    function isPseudo() {
+    }
+
+}
+
+?>

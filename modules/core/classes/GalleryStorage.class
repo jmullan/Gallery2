@@ -1,0 +1,258 @@
+<?php
+/*
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2002 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+/**
+ * Storage constants.
+ */
+
+/**
+ * Integer type
+ *
+ * @constant STORAGE_TYPE_INTEGER
+ */
+define("STORAGE_TYPE_INTEGER", 0x00000001);
+
+/**
+ * String type
+ *
+ * @constant STORAGE_TYPE_STRING
+ */
+define("STORAGE_TYPE_STRING", 0x00000002);
+
+/**
+ * List type
+ *
+ * @constant STORAGE_TYPE_LIST
+ */
+define("STORAGE_TYPE_LIST", 0x00000004);
+
+/**
+ * Map type
+ *
+ * @constant STORAGE_TYPE_MAP
+ */
+define("STORAGE_TYPE_MAP", 0x00000008);
+
+/**
+ * Text type
+ *
+ * @constant STORAGE_TYPE_TEXT
+ */
+define("STORAGE_TYPE_TEXT", 0x00000010);
+
+/**
+ * Text type
+ *
+ * @constant STORAGE_TYPE_BOOLEAN
+ */
+define("STORAGE_TYPE_BOOLEAN", 0x00000020);
+
+/**
+ * Timestamp type
+ *
+ * @constant STORAGE_TYPE_TIMESTAMP
+ */
+define("STORAGE_TYPE_TIMESTAMP", 0x00000040);
+
+/**
+ * ID modifier
+ *
+ * @constant STORAGE_MODIFIER_ID
+ */
+define("STORAGE_MODIFIER_ID", 0x00010000);
+
+/**
+ * This is a required field
+ *
+ * @constant STORAGE_MODIFIER_REQUIRED
+ */
+define("STORAGE_MODIFIER_REQUIRED", 0x00020000);
+
+/**
+ * This is a small field
+ *
+ * @constant STORAGE_MODIFIER_SMALL
+ */
+define("STORAGE_MODIFIER_SMALL", 0x00040000);
+
+/**
+ * This is a medium sized field
+ *
+ * @constant STORAGE_MODIFIER_MEDIUM
+ */
+define("STORAGE_MODIFIER_MEDIUM", 0x00080000);
+
+/**
+ * This is a large field
+ *
+ * @constant STORAGE_MODIFIER_LARGE
+ */
+define("STORAGE_MODIFIER_LARGE", 0x00100000);
+
+/**
+ * Newly created flag
+ *
+ * @constant STORAGE_FLAG_NEWLY_CREATED
+ */
+define("STORAGE_FLAG_NEWLY_CREATED", 0x00000001);
+
+/**
+ * Interface to the storage mechanism
+ *
+ * This object provides the hooks for saving and restoring objects in the persistent store.
+ *
+ * @version $Id$
+ * @package GalleryCore
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @abstract
+ */
+class GalleryStorage {
+
+    /**
+     * A GalleryClassMetaInfo instance
+     *
+     * @var object GalleryClassMetaInfo $_metaInfo
+     */
+    var $_metaInfo;
+
+    /**
+     * Constructor
+     *
+     * Initialize our Gallery class meta information map
+     */
+    function GalleryStorage() {
+	$this->_metaInfo = new GalleryClassMetaInfo();
+    }
+
+    /**
+     * Return the id of the GalleryItem associated with the path provided
+     *
+     * Return the id associated with the given path. Example path: 
+     * "/birthdays/fred" .. this is the "fred" item in the "birthdays" 
+     * item.  It doesn't really matter what types of items these are, as 
+     * long as the path is legitimate.
+     *
+     * This method must be implemented by subclasses of Gallery.
+     *
+     * @access public
+     * @abstract
+     * @param string the path to a GalleryItem
+     * @return string the id of the GalleryItem
+     */
+    function getIdByPath($path) {
+    }
+
+    /**
+     * Load a new GalleryNucleus from storage
+     *
+     * @access public
+     * @param string the id of the stored GalleryNucleus
+     * @param object GalleryNucleus the object we're loading into
+     * @return int a status code
+     */
+    function loadNucleus($id, &$nucleus) {
+    }
+
+    /**
+     * Save the changes to the GalleryNucleus.  
+     *
+     * @access public
+     * @param object GalleryNucleus the GalleryNucleus to save
+     * @return int a status code
+     */
+    function saveNucleus($nucleus) {
+    }
+
+    /**
+     * Delete the GalleryNucleus.
+     *
+     * @access public
+     * @param object GalleryNucleus the GalleryNucleus to delete
+     * @return int a status code
+     */
+    function deleteNucleus($nucleus) {
+    }
+
+    /**
+     * Create a new GalleryNucleus 
+     *
+     * @access public
+     * @param object GalleryNucleus a hint of the type of GalleryNucleus we're creating
+     * @return object GalleryNucleus a GalleryNucleus or null if the hint is bogus.
+     */
+    function newNucleus($nucleus) {
+    }
+
+    /**
+     * Lock a set of GalleryNucleus' (or the world)
+     *
+     * For right now, let's treat every lock as a world lock.  At some point in
+     * the future we can optimize this to actually hold row locks for efficiency.
+     *
+     * @access public
+     * @param array ids to lock (empty array means lock the world)
+     * @param int timeout before giving up on the lock
+     * @return int a status code
+     */
+    function acquireLock($ids=array(), $timeout) {
+    }
+
+    /**
+     * Release all locks.
+     *
+     * @access public
+     * @return int a status code
+     */
+    function releaseLock() {
+    }
+    
+    /**
+     * Start tracing
+     *
+     * This method is for use by GalleryStorage subclasses only.  If Gallery is
+     * in debug, this method will begin storing all output and routing it into
+     * Gallery's debug system
+     *
+     * @access protected
+     */
+    function _traceStart() {
+	global $gallery;
+	if ($gallery->getDebug()) {
+	    ob_start();
+	}
+    }
+
+    /**
+     * Stop tracing
+     *
+     * This method is for use by GalleryStorage subclasses only.  If Gallery is
+     * in debug, this will method will stop tracing.
+     */
+    function _traceStop() {
+	global $gallery;
+	if ($gallery->getDebug()) {
+	    $buf = ob_get_contents();
+	    ob_end_clean();
+	    
+	    $gallery->debug($buf);
+	}
+    }
+}
+?>

@@ -1,0 +1,1032 @@
+<?php
+/*
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2002 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+/*
+ * Require the ADOdb libraries
+ */
+require_once(dirname(__FILE__) . '/adodb/adodb.inc.php');
+require_once(dirname(__FILE__) . '/ErrorHandler.inc');
+
+$ADODB_FETCH_MODE = ADODB_FETCH_ASSOC;
+
+/**
+ * Name of the sequence we'll use for GalleryNucleus ids
+ */
+define('DATABASE_ID_SEQUENCE', 'idSequence');
+
+/**
+ * Name of the sequence we'll use for lock ids
+ */
+define('DATABASE_LOCK_SEQUENCE', 'lockSequence');
+
+/**
+ * Prefix to append to table names
+ */
+define('DATABASE_TABLE_PREFIX', 'gallery_');
+
+/**
+ * Database connection states
+ */
+define('DATABASE_STATUS_NOT_CONNECTED', 0);
+define('DATABASE_STATUS_PARTIALLY_CONNECTED', 1);
+define('DATABASE_STATUS_FULLY_CONNECTED', 2);
+
+/**
+ * Lock semaphores
+ */
+define('SEMAPHORE_WORLD_LOCK_REQUESTED', 1);
+define('SEMAPHORE_WORLD_LOCK_ACQUIRED', 2);
+
+/**
+ * Database implementation of the GalleryStorage interface.
+ *
+ * This object implements the hooks for saving and restoring objects in a
+ * relational database.
+ *
+ * @version $Id$
+ * @package GalleryStorage
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+class DatabaseStorage extends GalleryStorage {
+
+    /**
+     * Internal pointer to ADOdb database object
+     *
+     * @var object ADOdb $_db
+     */
+    var $_db;
+
+    /**
+     * The type of database we're connecting to (eg 'mysql', 'postgres')
+     *
+     * @var string $_type
+     */
+    var $_type;
+    
+    /**
+     * Name of the database user
+     * 
+     * @var string $_username
+     */
+    var $_username;
+    
+    /**
+     * Password for the database user
+     * 
+     * @var string $_password
+     */
+    var $_password;
+    
+    /**
+     * Name of the database to use
+     * 
+     * @var string $_database
+     */
+    var $_database;
+
+    /**
+     * Host the database runs on
+     * 
+     * @var string $_hostname
+     */
+    var $_hostname;
+
+    /**
+     * A DatabaseSchema instance, used to check and update the schema
+     * 
+     * @var object DatabaseSchema an instance of the DatabaseSchema class
+     * @access private
+     */
+    var $_hostname;
+
+    /**
+     * Status of the database connection
+     * 
+     * @var int status
+     * @access private
+     */
+    var $_connectionStatus;
+
+    /**
+     * Constructor.
+     */
+    function DatabaseStorage() {
+	$this->GalleryStorage();
+	$this->_connectionStatus = DATABASE_STATUS_NOT_CONNECTED;
+    }
+
+    /**
+     * Specify the type of database using ADOdb names (eg 'mysql', 'postgres')
+     *
+     * @param string the database type
+     */
+    function setType($type) {
+	$this->_type = $type;
+    }
+
+    /**
+     * Specify the name of the user with which to connect to the database 
+     *
+     * @param string username
+     */
+    function setUsername($username) {
+	$this->_username = $username;
+    }
+
+    /**
+     * Specify the database user's password
+     *
+     * @param string password (in clear text)
+     */
+    function setPassword($password) {
+	$this->_password = $password;
+    }
+
+    /**
+     * Specify the name of the logical database
+     *
+     * @param string the name of the logical database
+     */
+    function setDatabase($database) {
+	$this->_database = $database;
+    }
+
+    /**
+     * Host the database runs on 
+     *
+     * @param string a hostname
+     */
+    function setHostname($hostname) {
+	$this->_hostname = $hostname;
+    }
+
+    /**
+     * Connect to the database
+     *
+     * @return int a status code
+     */
+    function connect() {
+	if (empty($this->_type) ||
+	        empty($this->_username) ||
+	        empty($this->_password) ||
+	        empty($this->_hostname)) {
+	    return ERROR | ERROR_MISSING_VALUE;
+	}
+
+	$this->_traceStart();
+	$this->_db = ADONewConnection($this->_type);
+	if (empty($this->_db)) {
+	    return ERROR;
+	}
+
+	/*
+	 * Turn on debugging in the database connection if Gallery is in debug
+	 * mode
+	 */
+	global $gallery;
+	if ($gallery->getDebug()) {
+	    $this->_db->debug = true;
+	}
+
+	if (empty($this->_database)) {
+	    $ret = $this->_db->PConnect($this->_hostname,
+					$this->_username,
+					$this->_password);
+	    $this->_connectionStatus = DATABASE_STATUS_PARTIALLY_CONNECTED;
+	} else {
+	    $ret = $this->_db->PConnect($this->_hostname,
+					$this->_username,
+					$this->_password,
+					$this->_database);
+	    $this->_connectionStatus = DATABASE_STATUS_FULLY_CONNECTED;
+	}
+	$this->_traceStop();
+
+	if (!$ret) {
+	    $this->_connectionStatus = DATABASE_STATUS_NOT_CONNECTED;
+	    $this->_db = null;
+	    return ERROR | ERROR_DATABASE_FAILURE;
+	}
+
+	return SUCCESS;
+    }
+
+    /**
+     * Return the id of the GalleryItem associated with the path provided
+     *
+     * Return the id associated with the given path. Example path: 
+     * "/birthdays/fred" .. this is the "fred" item in the "birthdays" 
+     * item.  It doesn't really matter what types of items these are, as 
+     * long as the path is legitimate.
+     *
+     * This method must be implemented by subclasses of Gallery.
+     *
+     * @access public
+     * @abstract
+     * @param string the path to a GalleryItem
+     * @return string the id of the GalleryItem
+     */
+    function getIdByPath($path) {
+	if ($this->_connectionStatus != DATABASE_STATUS_FULLY_CONNECTED) {
+	    return ERROR | ERROR_DATABASE_NOT_CONNECTED;
+	}
+    }
+
+    /**
+     * Load a new GalleryNucleus from storage
+     *
+     * @access public
+     * @param string the id of the stored GalleryNucleus
+     * @param object GalleryNucleus the object we're loading into
+     * @return int a status code
+     */
+    function loadNucleus($id, &$nucleus) {
+	if ($this->_connectionStatus != DATABASE_STATUS_FULLY_CONNECTED) {
+	    return ERROR | ERROR_DATABASE_NOT_CONNECTED;
+	}
+
+	/*
+	 * Figure out what kind of nucleus this is
+	 */
+	list($ret, $targetType) = $this->_identifyNucleus($id);
+	if ($ret & ERROR) {
+	    return $ret;
+	}
+
+	/*
+	 * Get our persistent and meta info for this class
+	 */
+	$metaInfo = $this->_metaInfo->describeClass($targetType);
+
+	$tables = array();
+	$data = array();
+	foreach ($metaInfo['members'] as $columnName => $columnInfo) {
+
+	    $type = $columnInfo['type'];
+	    if ($type & STORAGE_TYPE_LIST || $type & STORAGE_TYPE_MAP) {
+		/*
+		 * Don't load subtypes.  They are their own objects and are
+		 * loaded separately.
+		 */
+		continue;
+	    }
+	    
+	    $class = strtolower($columnInfo['class']);
+	    $tableName = DATABASE_TABLE_PREFIX . $class;
+
+	    /* Keep track of the entire set of tables we're selecting from */
+	    if (empty($tables[$tableName])) {
+		$tables[$tableName] = 1;
+		$where[] = "$tableName.id=?";
+		$data[] = $id;
+	    }
+	    $columns[$tableName . '.' . $columnName] = 1;
+	}
+
+	$query = 'SELECT ';
+	$query .= join(', ', array_keys($columns));
+	$query .= ' FROM ';
+	$query .= join(', ', array_keys($tables));
+	$query .= ' WHERE ';
+	$query .= join(' AND ', $where);
+
+	$recordSet = $this->_db->Execute($query, $data);
+	if ($recordSet) {
+	    $prototype = new $targetType;
+	    foreach ($recordSet->fields as $memberName => $value) {
+		if (isset($value)) {
+		    $func = 'set' . ucfirst($memberName);
+		    $prototype->$func($value);
+		}
+	    }
+	    $recordSet->Close();
+
+	    $prototype->clearModifiedFlags();
+	    $nucleus = $prototype;
+	    return SUCCESS;
+	} else {
+	    return array(ERROR | ERROR_DATABASE_FAILURE, null);
+	}
+    }
+
+    /**
+     * Load a class member from the database
+     *
+     * This is used for class members that are objects, like GalleryMap and
+     * GalleryList instances.
+     *
+     * @param object GalleryNucleus the containing GalleryNucleus
+     * @param string the name of the member
+     * @return int a status code
+     */
+    function loadMember(&$nucleus, $memberName, &$object) {
+
+	$metaInfo = $this->_metaInfo->describeClass($nucleus->getObjectType());
+	$type = $metaInfo['members'][$memberName]['type'];
+	if ($type & STORAGE_TYPE_MAP) {
+	    return $this->_loadMap($nucleus, $memberName, $object);
+	} else {
+	    return ERROR;
+	}
+    }
+
+    /**
+     * Load a GalleryMap from the database
+     *
+     * @param object GalleryNucleus the containing GalleryNucleus
+     * @param string the name of the member
+     * @access private
+     * @return int a status code
+     */
+    function _loadMap(&$nucleus, $memberName, &$map) {
+
+	$this->_traceStart();
+	
+	/* Figure out which table we're reading from */
+	$tableName = DATABASE_TABLE_PREFIX .
+		$nucleus->getObjectType() . '_' .
+		$memberName;
+
+	/* Clear out the map */
+	$map->reset();
+
+	/* Set up and execute our query */
+	$query = 'SELECT `key`, `value` from ' . $tableName .
+		' WHERE id=?';
+	$data = array($nucleus->getId());
+	$recordSet = $this->_db->Execute($query, $data);
+	if (!$recordSet) {
+	    $this->_traceStop();
+	    return ERROR | ERROR_DATABASE_FAILURE;
+	}
+
+	/* Push all our data into the map */
+	while (!$recordSet->EOF) {
+	    $map->setValue($recordSet->fields['key'], $recordSet->fields['value']);
+	    $recordSet->MoveNext();
+	}
+
+	$map->clearModifiedFlags();
+	$nucleus->setLoadedFlag($memberName, true);
+
+	$this->_traceStop();
+	return SUCCESS;
+    }
+
+    /**
+     * Save the changes to the GalleryNucleus.  
+     *
+     * @access public
+     * @param object GalleryNucleus the GalleryNucleus to save
+     * @return int a status code
+     */
+    function saveNucleus(&$nucleus) {
+	if ($this->_connectionStatus != DATABASE_STATUS_FULLY_CONNECTED) {
+	    return ERROR | ERROR_DATABASE_NOT_CONNECTED;
+	}
+
+	$this->_traceStart();
+	
+	/*
+	 * Update the serial number, but remember the original one
+	 */
+	$originalSerialNumber = $nucleus->getSerialNumber();
+	$nucleus->setSerialNumber($originalSerialNumber + 1);
+
+	/*
+	 * Get our persistent and meta info for this class
+	 */
+	$metaInfo = $this->_metaInfo->describeClass(get_class($nucleus));
+	$persistentInfo = $nucleus->getPersistentInfo();
+	$idColumn = null;
+
+	/*
+	 * Locate changed fields.
+	 */
+	foreach ($metaInfo['members'] as $name => $info) {
+	    /* Locate the id column */
+	    $type = $metaInfo['members'][$name]['type'];
+	    if ($type & STORAGE_MODIFIER_ID) {
+		$func = 'get' . ucfirst($name);
+		$value = $nucleus->$func();
+		$idColumn = array('name' => $name, 'value' => $value);
+	    }
+
+	    /* Skip compound types, we'll handle them separately */
+	    if ($type & (STORAGE_TYPE_MAP | STORAGE_TYPE_LIST)) {
+		continue;
+	    }
+	    
+	    /* If the member is modified, record the new value in our table */
+	    if ($nucleus->getModifiedFlag($name) & MEMBER_MODIFIED) {
+		$func = 'get' . ucfirst($name);
+		$value = $nucleus->$func();
+		$dataTable[$info['class']][$name] = $value;
+	    }
+	    
+	    /*
+	     * If we haven't set up a table for this class, do so now.
+	     * Otherwise we don't have a complete list of tables that we
+	     * need to insert into in order for this class to be completely
+	     * serialized.
+	     */
+	    if (!isset($dataTable[$info['class']])) {
+		$dataTable[$info['class']] = array();
+	    }
+	}
+
+	if ($nucleus->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED)) {
+
+	    /*
+	     * Iterate through the data table and make up an INSERT statement
+	     * for each table that requires one. 
+	     */
+	    foreach ($dataTable as $table => $changes) {
+
+		/* Make sure that the id column is set for each table */
+		if (empty($changes[$idColumn['name']])) {
+		    $changes[$idColumn['name']] = $idColumn['value'];
+		}
+
+		$table = DATABASE_TABLE_PREFIX . strtolower($table);
+		$query = "INSERT INTO $table (";
+		$query .= join(',', array_keys($changes));
+		$query .= ') VALUES (';
+		for ($i = 0; $i < sizeof($changes); $i++) {
+		    if ($i > 0) {
+			$query .= ', ';
+		    }
+		    $query .= '?';
+		}
+		$query .= ')';
+		$data = array_values($changes);
+
+		$recordSet = $this->_db->Execute($query, $data);
+		if (!$recordSet) {
+		    $this->_traceStop();
+		    return ERROR | ERROR_DATABASE_FAILURE;
+		}
+	    }
+	} else {
+
+	    /*
+	     * Iterate through the data table and make an UPDATE statement
+	     * for each table that requires one.  Make sure that we do the
+	     * GalleryNucleus table first, as that's the one that has the
+	     * serial number in it and we use the serial number to make sure
+	     * that we're not hitting a concurrency issue.
+	     */
+	    $queryList = array();
+	    foreach ($dataTable as $table => $changes) {
+		$changeList = array();
+		$data = array();
+		
+		foreach ($changes as $key => $value) {
+		    $changeList[] = " `$key` = ?";
+		    $data[] = $value;
+		}
+
+		if (sizeof($changeList)) {
+		    $tableName = DATABASE_TABLE_PREFIX . strtolower($table);
+		    $query = "UPDATE $tableName SET";
+		    $query .= join(',', $changeList);
+		    $query .= " WHERE `$idColumn[name]`=?";
+		    $data[] = $idColumn['value'];
+
+		    if (!strcasecmp($table, "GalleryNucleus")) {
+			$query .= " AND `serialNumber`=?";
+			$data[] = $originalSerialNumber;
+		    }
+
+		    if (!strcasecmp($table, "GalleryNucleus")) {
+			array_unshift($queryList, array($query, $data));
+		    } else {
+			array_push($queryList, array($query, $data));
+		    }
+		}
+	    }
+
+	    foreach ($queryList as $queryAndData) {
+		list ($query, $data) = $queryAndData;
+		$recordSet = $this->_db->Execute($query, $data);
+
+		if (!$recordSet) {
+		    $this->_traceStop();
+		    return ERROR | ERROR_DATABASE_FAILURE;
+		} else {
+		    $affectedRows = $this->_db->Affected_Rows();
+		    if ($affectedRows == 0) {
+			$this->_traceStop();
+			return ERROR | ERROR_OBSOLETE_DATA;
+		    } else if ($affectedRows > 1) {
+			/*
+			 * Holy shit, we just updated more than one row!  What do
+			 * we do now?
+			 */
+			$this->_traceStop();
+			return ERROR | ERROR_DATABASE_FAILURE;
+		    }
+		}
+	    }
+	}
+	
+	/*
+	 * Save sub-objects as necessary
+	 */
+	foreach ($metaInfo['members'] as $name => $info) {
+	    if ($metaInfo['members'][$name]['type'] & STORAGE_TYPE_MAP) {
+		$func = 'get' . ucfirst($name);
+		if ($nucleus->getLoadedFlag($name)) {
+		    $map =& $nucleus->$func();
+		    $ret = $this->_saveMap($nucleus, $name, $map);
+		    if ($ret & ERROR) {
+			return $ret;
+		    }
+		}
+	    }
+	}
+
+	$nucleus->clearPersistentFlag(STORAGE_FLAG_NEWLY_CREATED);
+	$nucleus->clearModifiedFlags();
+
+	$this->_traceStop();
+	
+	return SUCCESS;
+    }
+
+    /**
+     * Save a GalleryMap
+     *
+     * @access public
+     * @param object GalleryNucleus the containing GalleryNucleus
+     * @param string the member name of the map
+     * @param object GalleryMap the map object
+     * @return int a status code
+     */
+    function _saveMap($nucleus, $memberName, &$map) {
+	if ($this->_connectionStatus != DATABASE_STATUS_FULLY_CONNECTED) {
+	    return ERROR | ERROR_DATABASE_NOT_CONNECTED;
+	}
+
+	/* Figure out which table we're reading from */
+	$tableName = DATABASE_TABLE_PREFIX .
+		$nucleus->getObjectType() . '_' .
+		$memberName;
+	
+	$deleteKeys = array();
+	$modifyKeys = array();
+	$createKeys = array();
+
+	$persistentInfo = $map->getPersistentInfo();
+	foreach ($persistentInfo->modified as $name => $flag) {
+	    if ($flag & MEMBER_REMOVED) {
+		if (!($flag & MEMBER_CREATED)) {
+		    $deleteMarkers[] = '?';
+		    $deleteKeys[] = $name;
+		}
+	    } else if ($flag & MEMBER_CREATED) {
+		$createKeys[] = $name;
+	    } else {
+		$modifyKeys[] = $name;
+	    }
+	}
+
+	$id = $nucleus->getId();
+
+	if ($deleteKeys) {
+	    $query = 'DELETE FROM ' . $tableName .
+		    ' WHERE id = ? ' .
+		    ' AND `key` in (' . join(', ', $deleteMarkers) . ')';
+
+	    $data = $deleteKeys;
+	    array_unshift($data, $id);
+	    
+	    $recordSet = $this->_db->Execute($query, $data);
+	    if (!$recordSet) {
+		return ERROR | ERROR_DATABASE_FAILURE;
+	    }
+	}
+
+	if ($createKeys) {
+	    foreach ($createKeys as $key) {
+		$query = 'INSERT INTO ' . $tableName .
+			' (`id`, `key`, `value`)' .
+			' VALUES (?, ?, ?) ';
+		$data = array($id,
+			      $key,
+			      $map->getValue($key));
+
+		$recordSet = $this->_db->Execute($query, $data);
+		if (!$recordSet) {
+		    return ERROR | ERROR_DATABASE_FAILURE;
+		}
+	    }
+	}
+
+	if ($modifyKeys) {
+	    foreach ($modifyKeys as $key) {
+		$query = 'UPDATE ' . $tableName .
+			' SET value=? ' .
+			' WHERE id=? AND `key`=?';
+		$data = array($map->getValue($key), $id, $key);
+		$recordSet = $this->_db->Execute($query, $data);
+		if (!$recordSet) {
+		    return ERROR | ERROR_DATABASE_FAILURE;
+		}
+	    }
+	}
+
+	/*
+	 * Clear out our modification flags.
+	 */
+	$map->clearModifiedFlags();
+    }
+
+    /**
+     * Delete the GalleryNucleus.
+     *
+     * @access public
+     * @param object GalleryNucleus the GalleryNucleus to delete
+     * @return int a status code
+     */
+    function deleteNucleus(&$nucleus) {
+	if ($this->_connectionStatus != DATABASE_STATUS_FULLY_CONNECTED) {
+	    return ERROR | ERROR_DATABASE_NOT_CONNECTED;
+	}
+
+	// XXX: implement this
+	return SUCCESS;
+    }
+
+    /**
+     * Create a new GalleryNucleus 
+     *
+     * @access public
+     * @param object GalleryNucleus the GalleryNucleus to put the data in
+     * @return int a status code
+     */
+    function newNucleus(&$nucleus) {
+	if ($this->_connectionStatus != DATABASE_STATUS_FULLY_CONNECTED) {
+	    return ERROR | ERROR_DATABASE_NOT_CONNECTED;
+	}
+
+	/*
+	 * Get the id of the next nucleus from our sequence.
+	 */
+	$this->_traceStart();
+	$id = $this->_db->GenId(DATABASE_ID_SEQUENCE);
+	$this->_traceStop();
+
+	$nucleus->setId($id);
+	$nucleus->setSerialNumber(0);
+	$nucleus->setPersistentFlag(STORAGE_FLAG_NEWLY_CREATED);
+	
+	return SUCCESS;
+    }
+
+    /**
+     * Lock a set of GalleryNucleus' (or the world)
+     *
+     * For right now, let's treat every lock as a world lock.  At some point in
+     * the future we can optimize this to actually hold row locks for efficiency.
+     *
+     * @access public
+     * @param array ids to lock (empty array means lock the world)
+     * @param int timeout before giving up on the lock
+     * @return array int a status code, int a lock id
+     */
+    function acquireLock($ids=array(), $timeout) {
+	if ($this->_connectionStatus != DATABASE_STATUS_FULLY_CONNECTED) {
+	    return ERROR | ERROR_DATABASE_NOT_CONNECTED;
+	}
+
+	/* Remember when we started trying to acquire this lock */
+	$startTime = time();
+
+	$this->_traceStart();
+	$lockTable = DATABASE_TABLE_PREFIX . 'lock';
+	$lockSemaphoreTable = DATABASE_TABLE_PREFIX . 'lock_semaphore';
+
+	/* Make sure there are no pending world locks. */
+	while (true) {
+	    if ((time() - $startTime) > $timeout) {
+		$this->_traceStop();
+		return array(ERROR | ERROR_LOCK_IN_USE, null);
+	    }
+	    
+	    /* See if there are any pending world locks */
+	    $query = 'SELECT * FROM ' . $lockSemaphoreTable .
+		    ' WHERE semaphore=?';
+	    $data = array(SEMAPHORE_WORLD_LOCK_REQUESTED);
+	    $recordSet = $this->_db->Execute($query, $data);
+	    if (!$recordSet) {
+		$this->_traceStop();
+		return array(ERROR | ERROR_DATABASE_FAILURE, null);
+	    }
+
+	    if ($recordSet->RecordCount() > 0) {
+		sleep(1);
+	    } else {
+		break;
+	    }
+	}
+
+	 /* Get our lock id */
+	$lockId = $this->_db->GenId(DATABASE_LOCK_SEQUENCE);
+
+	if (sizeof($ids) == 0) {
+	    /*
+	     * This is a world lock.  First get the "world lock requested"
+	     * semaphore to prevent any new local locks from being created.
+	     * Then get the "world lock acquired" lock (which is currently a
+	     * semaphore also).
+	     *
+	     * Technically I don't think the "world lock acquired" semaphore is
+	     * entirely necessary, since the "world lock requested" semaphore
+	     * pretty much covers it.  But, it might be useful in the future
+	     */
+	    $query = 'INSERT INTO ' . $lockSemaphoreTable .
+		    '(semaphore, lockId) VALUES (?, ?)';
+
+	    /* Insert our semaphore */
+	    while (true) {
+		/*
+		 * If we've exceeded our time limit, abort.
+		 */
+		if ((time() - $startTime) > $timeout) {
+		    $this->_traceStop();
+		    $this->releaseLock($lockId);
+		    return array(ERROR | ERROR_LOCK_IN_USE, null);
+		}
+		$data = array(SEMAPHORE_WORLD_LOCK_REQUESTED, $lockId);
+		$recordSet = $this->_db->Execute($query, $data);
+
+		if (!$recordSet) {
+		    /* We can't lock this record .. wait then retry */
+		    sleep(1);
+		} else {
+		    /* We got our semaphore */
+		    break;
+		}
+	    }
+
+	    /* Wait for local locks to go away */
+	    $query = 'SELECT COUNT(*) FROM ' . $lockTable;
+	    while (true) {
+		/*
+		 * If we've exceeded our time limit, abort.
+		 */
+		if ((time() - $startTime) > $timeout) {
+		    $this->_traceStop();
+		    $this->releaseLock($lockId);
+		    return array(ERROR | ERROR_LOCK_IN_USE, null);
+		}
+
+		$count = $this->_db->GetOne($query);
+		if ($count === false) {
+		    $this->_traceStop();
+		    $this->releaseLock($lockId);
+		    return array(ERROR | ERROR_DATABASE_FAILURE, null);
+		}
+
+		/*
+		 * No locks left?  Great, we're done with this step.
+		 */
+		if ($count == 0) {
+		    break;
+		} else {
+		    sleep(1);
+		}
+	    }
+
+	    /* Acquire our lock */
+	    $query = 'INSERT INTO ' . $lockSemaphoreTable .
+		    '(semaphore, lockId) VALUES (?, ?)';
+	    while (true) {
+		/*
+		 * If we've exceeded our time limit, abort.
+		 */
+		if ((time() - $startTime) > $timeout) {
+		    $this->_traceStop();
+		    $this->releaseLock($lockId);
+		    return array(ERROR | ERROR_LOCK_IN_USE, null);
+		}
+		$data = array(SEMAPHORE_WORLD_LOCK_ACQUIRED, $lockId);
+		$recordSet = $this->_db->Execute($query, $data);
+		    
+		if (!$recordSet) {
+		    /* We can't lock this record .. wait then retry */
+		    sleep(1);
+		} else {
+		    /* We got our lock */
+		    break;
+		}
+	    }
+	} else {
+	    /*
+	     * This is a local lock.  Acquire all our locks.  If we fail to get
+	     * one, release all of them and let the user know.
+	     */
+	    $i = 0;
+	    $query = 'INSERT INTO ' . $lockTable . '(id, lockId) VALUES (?, ?)';
+	    while (true) {
+		$id = $ids[$i];
+
+		/*
+		 * If we've exceeded our time limit, abort.
+		 */
+		if ((time() - $startTime) > $timeout) {
+		    $this->_traceStop();
+		    $this->releaseLock($lockId);
+		    return array(ERROR | ERROR_LOCK_IN_USE, null);
+		}
+		    
+		$data = array($id, $lockId);
+		$recordSet = $this->_db->Execute($query, $data);
+		    
+		if (!$recordSet || $recordSet->RecordCount() != 1) {
+		    /* We can't lock this record .. wait then retry */
+		    sleep(1);
+		}
+
+		$i++;
+
+		/* If we've locked them all, we're done */
+		if ($i == sizeof($ids)) {
+		    break;
+		}
+	    }
+	}
+
+	$this->_traceStop();
+	return array(SUCCESS, $lockId);
+    }
+
+    /**
+     * Release all locks.
+     *
+     * @access public
+     * @return int a status code
+     */
+    function releaseLock($lockId, $isWorldLock) {
+	if ($this->_connectionStatus != DATABASE_STATUS_FULLY_CONNECTED) {
+	    return ERROR | ERROR_DATABASE_NOT_CONNECTED;
+	}
+
+	$this->_traceStart();
+
+	if ($isWorldLock) {
+	    $lockTable = DATABASE_TABLE_PREFIX . 'lock_semaphore';
+	} else {
+	    $lockTable = DATABASE_TABLE_PREFIX . 'lock';
+	}
+
+	$query = 'DELETE FROM ' . $lockTable . ' WHERE lockId=?';
+	$data = array($lockId);
+
+	$recordSet = $this->_db->Execute($query, $data);
+	$this->_traceStop();
+	
+	if (!$recordSet) {
+	    return ERROR | ERROR_DATABASE_FAILURE;
+	}
+
+	return SUCCESS;
+    }
+
+    /**
+     * Initialize the DatabaseSchema instance
+     *
+     * @access private
+     */
+    function _initDatabaseSchema() {
+	if (empty($this->_databaseSchema)) {
+	    require_once(dirname(__FILE__) . '/DatabaseSchema.class');
+	    $this->_databaseSchema = new DatabaseSchema($this->_db, $this->_type);
+	}
+    }
+
+    /**
+     * Create a new schema.
+     *
+     * @param string the name of the database to create
+     * @return int a status code
+     */
+    function createSchema() {
+	if ($this->_connectionStatus != DATABASE_STATUS_FULLY_CONNECTED) {
+	    return ERROR | ERROR_DATABASE_NOT_CONNECTED;
+	}
+
+	$this->_initDatabaseSchema();
+	$this->_traceStart();
+	$ret = $this->_databaseSchema->createSchema();
+	$this->_traceStop();
+
+	return $ret;
+    }
+
+    /**
+     * Bring the database schema up to date
+     *
+     * @return int a status code
+     */
+    function updateSchema() {
+	if ($this->_connectionStatus != DATABASE_STATUS_FULLY_CONNECTED) {
+	    return ERROR | ERROR_DATABASE_NOT_CONNECTED;
+	}
+
+	$this->_initDatabaseSchema();
+	$this->_traceStart();
+	$ret = $this->_databaseSchema->updateSchema();
+	$this->_traceStop();
+
+	return $ret;
+    }
+
+    /**
+     * Create the database.
+     *
+     * Note that the database connection must not be attached to a specific
+     * database for this to work.
+     *
+     * @param string the name of the database
+     * @return int a status code
+     */
+    function createDatabase($databaseName) {
+	if ($this->_connectionStatus != DATABASE_STATUS_PARTIALLY_CONNECTED) {
+	    return ERROR | ERROR_DATABASE_NOT_CONNECTED;
+	}
+
+	$this->_initDatabaseSchema();
+	$this->_traceStart();
+	$ret = $this->_databaseSchema->createDatabase($databaseName);
+	$this->_traceStop();
+
+	return $ret;
+    }
+
+    /**
+     * Drop a database.
+     *
+     * Use this very carefully!
+     *
+     * Note that the database connection must not be attached to a specific
+     * database for this to work.
+     *
+     * @param string the name of the database
+     * @return int a status code
+     */
+    function dropDatabase($databaseName) {
+	if ($this->_connectionStatus != DATABASE_STATUS_PARTIALLY_CONNECTED) {
+	    return ERROR | ERROR_DATABASE_NOT_CONNECTED;
+	}
+
+	$this->_initDatabaseSchema();
+	$this->_traceStart();
+	$ret = $this->_databaseSchema->dropDatabase($databaseName);
+	$this->_traceStop();
+
+	return $ret;
+    }
+	
+    /**
+     * Identify the type of nucleus associated with the id provided
+     *
+     * @param int a nucleus id
+     * @return array a status code and a string class name
+     */
+    function _identifyNucleus($id) {
+	assert('!empty($id)');
+
+	$table = DATABASE_TABLE_PREFIX  . 'gallerynucleus';
+	$query = "SELECT $table.objectType FROM $table where id=?";
+	$data = array($id);
+	$recordSet = $this->_db->Execute($query, $data);
+
+	if ($recordSet) {
+	    $type = $recordSet->fields['objectType'];
+	    $recordSet->Close();
+	    return array(SUCCESS, $type);
+	} else {
+	    return array(ERROR | ERROR_DATABASE_FAILURE, null);
+	}
+    }
+}
+?>

@@ -1,0 +1,66 @@
+<?php
+
+class TestCase {
+    var $_debugOutput = array();
+
+    function useDefaultDatabase() {
+	return true;
+    }
+
+    function getDescription() {
+    }
+
+    function start() {
+	$this->traceStart();
+	$ret = $this->testStart();
+	$this->traceStop();
+
+	return $ret;
+    }
+
+    function testStart() {
+    }
+
+    function cleanup() {
+	$this->traceStart();
+	$ret = $this->testCleanup();
+	$this->traceStop();
+	
+	return $ret;
+    }
+
+    function testCleanup() {
+    }
+
+    function traceStart() {
+	ob_start();
+    }
+
+    function traceStop() {
+	$buf = ob_get_contents();
+	ob_end_clean();
+
+	foreach (split("\r", $buf) as $line) {
+	    $this->_debugOutput[] = $line;
+	}
+    }
+
+    function error($code) {
+	global $gallery;
+	$codes = join(", ", $gallery->getErrorAsStrings($code));
+	print "Error ($codes)\n";
+
+    }
+
+    function dump($ret, $item) {
+	print "STATUS: $ret\n";
+	print "ITEM:\n";
+	print_r($item);
+    }
+
+    function getDebugOutput() {
+	return $this->_debugOutput;
+    }
+}
+
+?>

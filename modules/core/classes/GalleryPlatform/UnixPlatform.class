@@ -1,0 +1,95 @@
+<?php
+/*
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2002 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+/**
+ * An Unix version of the GalleryPlatform class
+ * 
+ * @version $Id$
+ * @package GalleryCore
+ * @access public
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+class UnixPlatform extends GalleryPlatform {
+
+    /**
+     * Convert a path from neutral format into platform specific format.
+     *
+     * @param string neutral path
+     * @return string platform specific path
+     * @access public
+     */
+    function importPath($path) {
+
+	/* The Unix format is the same as the neutral format */
+	return $path;
+    }
+
+    /**
+     * Convert a path from specific format into neutral format.
+     *
+     * @param string platform specific path
+     * @return string neutral path
+     * @access public
+     */
+    function exportPath($path) {
+
+	/* The Unix format is the same as the neutral format */
+	return $path;
+    }
+
+    /**
+     * Convert a path from neutral format to an executable format
+     *
+     * @param string neutral path
+     * @return string platform specific path
+     * @access public
+     */
+    function executablePath($path) {
+
+	/* The Unix format is the same as the neutral format */
+	return $path;
+    }
+
+    /**
+     * Execute a command and record the results and status.
+     *
+     * If the optional debugfile parameter is specified, dump the STDERR
+     * results from executing this command out to the file.  (Unix only)
+     *
+     * @param string the command to excute
+     * @param array the location to put output from the command 
+     * @param int the location to put the status code from the command
+     * @param string optional file to record STDERR output
+     * @return bool TRUE if the copy succeeded, FALSE otherwise.
+     * @access public
+     */
+    function exec($cmd, &$results, &$status, $debugFile='') {
+
+	/* Import it for completeness sake */
+	$debugFile = $this->importPath($debugFile);
+	
+	if (!empty($debugFile)) {
+		$cmd = "($cmd) 2>$debugfile";
+	}
+	
+	return exec($cmd, $results, $status);
+    }
+}
+?>
