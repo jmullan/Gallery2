@@ -1,10 +1,16 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
-  <head>
+  {if isset($main.viewMainFile)}
+      {include file=$main.viewMainFile l10Domain=$main.viewL10Domain}
+      {if isset($main.debug)}
+	{include file="templates/debug.tpl"}
+      {/if}
+  {else}
+    <head>
       {include file=$main.viewHeadFile l10Domain=$main.viewL10Domain}
-  </head>
-  <body{if isset($main.onLoad)} onload="{$main.onLoad}"{/if
-       }{if isset($main.onUnload)} onunload="{$main.onUnload}"{/if}>
+    </head>
+    <body{if isset($main.onLoad)} onload="{$main.onLoad}"{/if
+         }{if isset($main.onUnload)} onunload="{$main.onUnload}"{/if}>
       {include file=$main.viewBodyFile l10Domain=$main.viewL10Domain}
 
       <br />
@@ -23,5 +29,6 @@
       {if isset($main.debug)}
 	{include file="templates/debug.tpl"}
       {/if}
-  </body>
+    </body>
+  {/if}
 </html>

@@ -276,6 +276,9 @@ function GalleryMain() {
 			$main['redirectUrl'] = $redirectUrl;
 		    }
 		} else {
+		    if (isset($results['main'])) {
+			$main['viewMainFile'] = $results['main'];
+		    }
 		    if (isset($results['onLoad'])) {
 			$main['onLoad'] = $results['onLoad'];
 		    }

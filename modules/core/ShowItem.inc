@@ -106,7 +106,9 @@ class ShowItemView extends GalleryView {
 	    $ShowItem = array();
 	    $ShowItem['item'] = $item->getMemberData();
 	    $ShowItem['layoutL10Domain'] = $layout->getL10Domain();
-	    $ShowItem['layoutBodyFile'] = $results['body'];
+	    if (isset($results['body'])) {
+		$ShowItem['layoutBodyFile'] = $results['body'];
+	    }
 	    if (isset($results['head'])) {
 		$ShowItem['layoutHeadFile'] = $results['head'];
 	    }
@@ -114,6 +116,9 @@ class ShowItemView extends GalleryView {
 
 	    $tpl = array('head' => 'modules/core/templates/ShowItemHead.tpl',
 			 'body' => 'modules/core/templates/ShowItem.tpl');
+	    if (isset($results['main'])) {
+		$tpl['main'] = $results['main'];
+	    }
 	    if (isset($results['onLoad'])) {
 		$tpl['onLoad'] = $results['onLoad'];
 	    }
