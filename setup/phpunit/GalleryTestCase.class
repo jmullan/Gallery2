@@ -287,7 +287,7 @@ class GalleryTestCase extends TestCase {
 	return array(GalleryStatus::success(), $linkedItem);
     }
     
-    function _createRandomUser() {
+    function _createRandomUser($userTag=null) {
 	list ($ret, $user) = GalleryFactory::newInstance('GalleryEntity', 'GalleryUser');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -295,16 +295,20 @@ class GalleryTestCase extends TestCase {
 
 	if (!isset($user)) {
 	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
-	}  
+	}
 
-	$ret = $user->create('testuser-' . rand());
+	if (!isset($userTag)) {
+	    $userTag = rand();
+	}
+
+	$ret = $user->create('testuser-' . $userTag);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$user->setFullName('User 1');
+	$user->setFullName('User ' . $userTag);
 	$user->changePassword('password');
-	$user->setEmail('user1@gallery.com');
+	$user->setEmail('user-' . $userTag . '@example.com');
 
 	$ret = $user->save();
 	if ($ret->isError()) {
@@ -314,22 +318,24 @@ class GalleryTestCase extends TestCase {
 	return array(GalleryStatus::success(), $user);
     }
 
-    function _createRandomGroup() {
+    function _createRandomGroup($groupTag=null) {
 	list ($ret, $group) = GalleryFactory::newInstance('GalleryEntity', 'GalleryGroup');
 	if ($ret->isError()) {
-	    return array($this->failWithStatus($ret->wrap(__FILE__, __LINE__)), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	if (!isset($group)) {
 	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
 	}
-	
-	$ret = $group->create('testgroup-' . rand());
-	if ($ret->isError()) {
-	    return array($this->failWithStatus($ret->wrap(__FILE__, __LINE__)), null);
-	}
 
-	$group->setGroupName('Test Group ' . rand());
+	if (!isset($groupTag)) {
+	    $groupTag = rand();
+	}
+	
+	$ret = $group->create('Test Group ' . $groupTag);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 
 	$ret = $group->save();
 	if ($ret->isError()) {
@@ -445,7 +451,7 @@ class GalleryTestCase extends TestCase {
 	global $gallery;
 	$ret = $gallery->deleteEntityById($user->getId());
 	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
     }
 }
