@@ -23,18 +23,20 @@
     {/g->breadcrumb}
 
     {g->sidebar}
-      {g->box style="sidebar"}
-	{g->element}
-	  {if empty($ItemAdmin.thumbnail)}
-	    {g->text text="No Thumbnail"}
-	  {else}
-	    {g->image item=$ItemAdmin.item image=$ItemAdmin.thumbnail}
-	  {/if}
-	{/g->element}
-	{g->footer}
-	  {$ItemAdmin.item.title|markup}
-	{/g->footer}
-      {/g->box}
+      {if !$ItemAdmin.isRootAlbum}
+	{g->box style="sidebar"}
+	  {g->element}
+	    {if empty($ItemAdmin.thumbnail)}
+	      {g->text text="No Thumbnail"}
+	    {else}
+	      {g->image item=$ItemAdmin.item image=$ItemAdmin.thumbnail}
+	    {/if}
+	  {/g->element}
+	  {g->footer}
+	    {$ItemAdmin.item.title|markup}
+	  {/g->footer}
+	{/g->box}
+      {/if}
 
       {g->box style="sidebar"}
 	{g->title}

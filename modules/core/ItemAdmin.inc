@@ -163,11 +163,17 @@ class ItemAdminView extends GalleryView {
 	    $ItemAdmin = array();
 	}
 
+	list ($ret, $rootAlbumId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+
 	$ItemAdmin['viewBodyFile'] = $results['body'];
 	$ItemAdmin['item'] = $item->getMemberData();
 	$ItemAdmin['parents'] = $parents;
 	$ItemAdmin['parent'] = 	empty($parents) ? null : $parents[sizeof($parents) - 1];
 	$ItemAdmin['itemType'] = $itemType;
+	$ItemAdmin['isRootAlbum'] = $item->getId() == $rootAlbumId;
 	$ItemAdmin['thumbnail'] = $thumbnailData;
 	$ItemAdmin['subViewChoices'] = $subViewChoices;
 	$ItemAdmin['viewL10Domain'] = $subView->getL10Domain();
