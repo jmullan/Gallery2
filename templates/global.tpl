@@ -3,7 +3,8 @@
   <head>
       {include file=$main.viewHeadFile l10Domain=$main.viewL10Domain}
   </head>
-  <body>
+  <body{if isset($main.onLoad)} onload="{$main.onLoad}"{/if
+       }{if isset($main.onUnload)} onunload="{$main.onUnload}"{/if}>
       {include file=$main.viewBodyFile l10Domain=$main.viewL10Domain}
 
       <br />

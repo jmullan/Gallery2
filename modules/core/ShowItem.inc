@@ -111,10 +111,16 @@ class ShowItemView extends GalleryView {
 		$ShowItem['layoutHeadFile'] = $results['head'];
 	    }
 	    $template->setVariable('ShowItem', $ShowItem);
-	    
-	    return array(GalleryStatus::success(),
-			 array('head' => 'modules/core/templates/ShowItemHead.tpl',
-			       'body' => 'modules/core/templates/ShowItem.tpl'));
+
+	    $tpl = array('head' => 'modules/core/templates/ShowItemHead.tpl',
+			 'body' => 'modules/core/templates/ShowItem.tpl');
+	    if (isset($results['onLoad'])) {
+		$tpl['onLoad'] = $results['onLoad'];
+	    }
+	    if (isset($results['onUnload'])) {
+		$tpl['onUnload'] = $results['onUnload'];
+	    }
+	    return array(GalleryStatus::success(), $tpl);
 	}
     }
 

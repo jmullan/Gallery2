@@ -276,6 +276,13 @@ function GalleryMain() {
 			$main['redirectUrl'] = $redirectUrl;
 		    }
 		} else {
+		    if (isset($results['onLoad'])) {
+			$main['onLoad'] = $results['onLoad'];
+		    }
+		    if (isset($results['onUnload'])) {
+			$main['onUnload'] = $results['onUnload'];
+		    }
+		    
 		    if (isset($results['head'])) {
 			$main['viewHeadFile'] = $results['head'];
 		    } else {
