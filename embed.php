@@ -687,12 +687,18 @@ class GalleryEmbed {
 	}
 
 	/* more than one style allowed */
-	if(preg_match_all("/<(style|link)(?:\s[^>]*)?>.*<\/\\1>/Usi",
+	if(preg_match_all("|<style(?:\s[^>]*)?>.*</style>|Usi",
 			  $headhtml, $regs, PREG_PATTERN_ORDER)) {
 	    foreach ($regs[0] as $style) {
 		$css[] = $style;
 	    }
 	}
+	if(preg_match_all("|<link .*/>|Usi",     
+                          $headhtml, $regs, PREG_PATTERN_ORDER)) {
+            foreach ($regs[0] as $style) {
+                $css[] = $style;
+            }
+        }
 
 	return array($title, $css, $javascript);
     }
