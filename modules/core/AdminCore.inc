@@ -176,7 +176,7 @@ class AdminCoreView extends GalleryView {
 					 'arg1' => $days));
 	}
 	foreach (array(1, 2, 3) as $weeks) {
-	    $sessionTimeList[$days * 7 * 86400] =
+	    $sessionTimeList[$weeks * 7 * 86400] =
 		$module->translate(array('one' => '%d week',
 					 'many' => '%d weeks',
 					 'count' => $weeks,
