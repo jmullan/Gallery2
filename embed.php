@@ -104,18 +104,27 @@ class GalleryEmbed {
      * at CMS login time.
      *
      * @param string (optional) username of active user (empty string for anonymous/guest user)
+     * @param string (optional) language code of active user
      * @return array object GalleryStatus a status object
      *               array ('isDone' => boolean,
      *                      [optional: 'headHtml' => string, 'bodyHtml' => string])
      * @static
      */
-    function handleRequest($activeUserName=null) {
+    function handleRequest($activeUserName=null, $languageCode=null) {
 	if (isset($activeUserName)) {
 	    $ret = GalleryEmbed::_checkActiveUser($activeUserName);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
+
+        // set language
+        if (isset($languageCode)) {
+            global $gallery;
+            $session =& $gallery->getSession();
+            list ($languageCode) = GalleryTranslator::getSupportedLanguageCode($languageCode);
+            $session->put('core.language', $languageCode);
+        }
 
 	$data = GalleryMain(true);
 	return array(GalleryStatus::success(), $data);
@@ -240,7 +249,8 @@ class GalleryEmbed {
      * @param array (optional) additional data
      *              ['email' => string, 'fullname' => string,
      *               'language' => string, 'password' => string,
-     *               'hashedpassword' => string, 'hashmethod' => string]
+     *               'hashedpassword' => string, 'hashmethod' => string,
+     *               'creationtimestamp' => integer]
      * @return object GalleryStatus a status object
      * @static
      */
@@ -275,7 +285,8 @@ class GalleryEmbed {
      * @param array user data
      *              ['username' => string, 'email' => string, 'fullname' => string,
      *               'language' => string, 'password' => string,
-     *               'hashedpassword' => string, 'hashmethod' => string]
+     *               'hashedpassword' => string, 'hashmethod' => string,
+     *               'creationtimestamp' => integer]
      * @return object GalleryStatus a status object
      * @static
      */
@@ -289,7 +300,7 @@ class GalleryEmbed {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	GalleryEmbed::_setUserData($user, $args);
+	GalleryEmbed::_setUserData($user, $args, true);
 	$ret = $user->save(); 
 	if ($ret->isError()) {
 	    GalleryCoreApi::releaseLocks($lockId);
@@ -309,13 +320,13 @@ class GalleryEmbed {
      * @param array additional user data
      * @private
      */
-    function _setUserData(&$user, $args) {
+    function _setUserData(&$user, $args, $update = false) {
 	if (!empty($args['password'])) {
 	    $user->changePassword($args['password']);
 	} elseif (isset($args['hashmethod']) && $args['hashmethod'] == 'md5'
 		&& !empty($args['hashedpassword'])) {
 	    $user->setHashedPassword($args['hashedpassword']);
-	} else {
+	} elseif (!$update) {
 	    // Create a random password..
 	    $user->changePassword('G' . rand(100000,999999) . '2');
 	}
@@ -333,6 +344,9 @@ class GalleryEmbed {
 	    list ($languageCode) = GalleryTranslator::getSupportedLanguageCode($args['language']);
 	    $user->setLanguage($languageCode);
 	}
+        if (isset($args['creationtimestamp'])) {
+            $user->setcreationTimestamp($args['creationtimestamp']);
+        }
     }
 
     /**
