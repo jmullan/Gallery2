@@ -69,7 +69,7 @@ class InitializeGalleryTestCase extends TestCase {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    
-	    if ($module->canBeAutoInstalled()) {
+	    if ($module->isRecommendedDuringInstall()) {
 		$ret = $module->install();
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
