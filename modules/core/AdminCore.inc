@@ -149,9 +149,6 @@ class AdminCoreView extends GalleryView {
 
 	foreach ($supportedLanguages as $language => $countryList) {
 	    foreach ($countryList as $country => $languageData) {
-		if ($country == "_defaultCountry") {
-		    continue;
-		}
 		$languageList[$language . '_' . $country] =
 		    $languageData['description'];
 	    }
@@ -189,25 +186,6 @@ class AdminCoreView extends GalleryView {
 	}
 	$sessionTimeList[25 * 365 * 86400] = $module->translate('forever');
 	
-	/* Set up our theme selection list */
-	$themeList = array();
-	$themeDir = $gallery->getConfig('code.gallery.themes');
-	if ($dir = $platform->opendir($themeDir)) {
-	    while (($subdir = readdir($dir)) !== false) {
-		if ($subdir{0} == '.' || $subdir == 'CVS') {
-		    continue;
-		}
-
-		if ($platform->is_dir("$themeDir$subdir")) {
-		    $file = "$themeDir$subdir/templates";
-		    if ($platform->file_exists($file)) {
-			$themeList[] = $subdir;
-		    }
-		}
-	    }
-	    closedir($dir);
-	}
-
 	/* Set up our permission selection lists */
 	$permissionsDirectoryList = array('700', '750', '755', '770', '775', '777');
 	$permissionsFileList = array('600', '640', '644', '660', '664', '666');
@@ -224,7 +202,7 @@ class AdminCoreView extends GalleryView {
 	$template = $this->getTemplate();
 	$template->setVariable('form', $form);
 	$template->setVariable('layoutList', $layoutList);
-	$template->setVariable('themeList', $themeList);
+	$template->setVariable('themeList', GalleryTheme::getThemes());
 	$template->setVariable('languageList', $languageList);
 	$template->setVariable('orderByList', $orderByList);
 	$template->setVariable('orderDirectionList', $orderDirectionList);

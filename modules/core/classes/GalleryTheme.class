@@ -44,6 +44,36 @@ class GalleryTheme {
      */
 
     /**
+     * Get an array of available theme-names
+     *
+     * @static
+     * @return array string name of the themes
+     */
+     function getThemes() {
+	global $gallery;
+
+	$platform = $gallery->getPlatform();
+	$themeList = array();
+	$themeDir = $gallery->getConfig('code.gallery.themes');
+	if ($dir = $platform->opendir($themeDir)) {
+	    while (($subdir = readdir($dir)) !== false) {
+		if ($subdir{0} == '.' || $subdir == 'CVS') {
+		    continue;
+		}
+
+		if ($platform->is_dir("$themeDir$subdir")) {
+		    $file = "$themeDir$subdir/templates";
+		    if ($platform->file_exists($file)) {
+			$themeList[] = $subdir;
+		    }
+		}
+	    }
+	    closedir($dir);
+	}
+	return $themeList;
+    }
+
+    /**
      * Initialize this instance to use the theme specified.
      *
      * @param themeName the name of a theme in the themes directory.

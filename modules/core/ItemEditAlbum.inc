@@ -266,31 +266,12 @@ class ItemEditAlbumView extends GalleryView {
 	    closedir($dir);
 	}
 	
-	/* Set up our theme selection list */
-	$themeList = array();
-	$themeDir = $gallery->getConfig('code.gallery.themes');
-	if ($dir = $platform->opendir($themeDir)) {
-	    while (($subdir = readdir($dir)) !== false) {
-		if ($subdir{0} == '.' || $subdir == 'CVS') {
-		    continue;
-		}
-
-		if ($platform->is_dir("$themeDir$subdir")) {
-		    $file = "$themeDir$subdir/templates";
-		    if ($platform->file_exists($file)) {
-			$themeList[] = $subdir;
-		    }
-		}
-	    }
-	    closedir($dir);
-	}
-
 	/* Render the HTML body */
 	$template = $this->getTemplate();
 	$template->setVariable('form', $form);
 	$template->setVariable('item', $item->getMemberData());
 	$template->setVariable('layoutList', $layoutList);
-	$template->setVariable('themeList', $themeList);
+	$template->setVariable('themeList', GalleryTheme::getThemes());
 	$template->setVariable('orderByList', $orderByList);
 	$template->setVariable('orderDirectionList', $orderDirectionList);
 	$template->setVariable('controller', 'core:ItemEditAlbum');
