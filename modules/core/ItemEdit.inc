@@ -139,7 +139,11 @@ class ItemEditView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	if (!empty($thumbnails)) {
-	    $thumbnail = $thumbnails[$item->getId()];
+	    list ($ret, $thumbnail) =
+		GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($thumbnails[$item->getId()]->getId());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
 	} else {
 	    $thumbnail = null;
 	}
