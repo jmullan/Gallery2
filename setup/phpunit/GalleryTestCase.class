@@ -286,7 +286,7 @@ class GalleryTestCase extends TestCase {
 	return array(GalleryStatus::success(), $group);
     }
     
-    function _createDerivative($parentId, $type, $operations='test-operation|100') {
+    function _createDerivative($parentId, $type, $operations='test-operation|100', $mimeType='') {
 	global $gallery;
 
 	list ($ret, $derivative) = 
@@ -301,7 +301,7 @@ class GalleryTestCase extends TestCase {
 	}
 
 	/* Set bogus values */
-	$derivative->setDerivativeMimeType('');
+	$derivative->setDerivativeMimeType($mimeType);
 	$derivative->setDerivativeSourceId($parentId);
 	$derivative->setDerivativeOperations($operations);
 			
