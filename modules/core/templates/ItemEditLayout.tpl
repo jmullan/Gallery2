@@ -13,6 +13,7 @@
 
   {include file="gallery:`$ItemEditLayout.customTemplate`"
 	   l10Domain=$ItemEditLayout.layout.l10Domain}
+  </div>
 
 {else}
   {if !empty($ItemEditLayout.settings)}
