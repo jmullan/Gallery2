@@ -67,7 +67,7 @@
       {include file="gallery:modules/core/templates/MarkupBar.tpl" 
                viewL10domain="modules_core" 
 	       element="title"
-	       firstMarkupBar="true"}
+	       firstMarkupBar=true}
       <input type="text" id="title" size="40" name="{g->formVar var="form[title]"}" value="{$form.title}"/>
     </div>
 

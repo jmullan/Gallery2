@@ -49,7 +49,7 @@
       {include file="gallery:modules/core/templates/MarkupBar.tpl" 
 	       viewL10domain="modules_core" 
 	       element="subject"
-	       firstMarkupBar="true"}
+	       firstMarkupBar=true}
       <input type="text" size="60" id="subject" name="{g->formVar var="form[subject]"}" value="{$form.subject}" onfocus="this.style.background='#fff';this.style.color='#333';" onblur="this.style.background='#eee';this.style.color='#333';"/>
       <script type="text/javascript">document.forms[0]['{g->formVar var="form[subject]"}'].focus();</script>
 

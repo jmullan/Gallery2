@@ -5,7 +5,7 @@
  * version.  Gallery will look for that file first and use it if it exists.
  *}
 {if $main.markupType == 'bbcode'}
-{if isset($firstMarkupBar)}
+{if !empty($firstMarkupBar)}
 <script type="text/javascript">
   function openOrCloseTextElement(elementId, bbCodeElement, button, buttonLabel) {ldelim}
     element = document.getElementById(elementId);
