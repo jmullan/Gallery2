@@ -497,7 +497,7 @@ class CoreModule extends GalleryModule {
 
 	    if ($isAlbum && isset($permissions['core.addDataItem'])) {
 		$links[$item->getId()][] =
-		    array('text' => $this->translate('add item'),
+		    array('text' => $this->translate('add items'),
 			  'params' => array('view' => 'core:ItemAdmin',
 					    'subView' => 'core:ItemAddChildren',
 					    'itemId' => $item->getId()));
