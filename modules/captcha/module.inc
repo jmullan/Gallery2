@@ -39,7 +39,7 @@ class CaptchaModule extends GalleryModule {
 	$this->setId('captcha');
 	$this->setName('Captcha');
 	$this->setDescription($gallery->i18n('Captcha'));
-	$this->setVersion('0.9.0');
+	$this->setVersion('0.9.1');
 	$this->setGroup('gallery', $this->translate('Gallery'));
 	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(5, 1));
@@ -51,8 +51,8 @@ class CaptchaModule extends GalleryModule {
      */
     function performFactoryRegistrations() {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
-	    'UserLoginPlugin', 'CaptchaLoginPlugin', 'CaptchaLoginPlugin',
-	    'modules/captcha/CaptchaLoginPlugin.inc', 'captcha', null);
+	    'ValidationPlugin', 'CaptchaValidationPlugin', 'CaptchaValidationPlugin',
+	    'modules/captcha/CaptchaValidationPlugin.inc', 'captcha', null);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -66,6 +66,26 @@ class CaptchaModule extends GalleryModule {
     function isRecommendedDuringInstall() {
 	return true;
     } 
+
+    /**
+     * @see GalleryModule::upgrade()
+     */
+    function upgrade($currentVersion) {
+
+	switch ($currentVersion) {
+
+	case '':
+	case '0.9.0':
+	    /* Captcha changed from LoginPlugin to ValidationPlugin to add registration support */
+	    break;
+
+	default:
+	    return GalleryStatus::error(ERROR_BAD_PLUGIN, __FILE__, __LINE__,
+					sprintf('Unknown module version %s', $currentVersion));
+	}
+
+        return GalleryStatus::success();
+    }
 
     /**
      * @see GalleryModule::autoConfigure()

@@ -19,16 +19,30 @@
 {/if}  
 
 <div class="gbBlock">
-  <h3> {g->text text="Failed Attempts"} </h3>
+  <h3> {g->text text="High Security - Always On"} </h3>
   <p class="giDescription">
-    {g->text text="Users are not required to pass the Captcha test unless they have failed to log in at least this many times.  After that, they have to enter the Captcha value to log in."}
+    {g->text text="Modules such as User Registration will always require the Captcha value to be entered before proceeding."}
+  </p>
+</div>
+
+<div class="gbBlock">
+  <h3> {g->text text="Medium Security - Failed Attempts"} </h3>
+  <p class="giDescription">
+    {g->text text="Users are not required to pass the Captcha test unless they have failed validation or user input at least this
+many times.  After that, they have to enter the Captcha value to log in, or perform certain other secured actions."}
   </p>
 
   {g->text text="Failed attempts:"}
-
   <select name="{g->formVar var="form[failedAttemptThreshold]"}">
     {html_options values=$CaptchaSiteAdmin.failedAttemptThresholdList selected=$form.failedAttemptThreshold output=$CaptchaSiteAdmin.failedAttemptThresholdList}
   </select>
+</div>
+
+<div class="gbBlock">
+  <h3> {g->text text="Low Security - Always Off"} </h3>
+  <p class="giDescription">
+    {g->text text="Most modules rely solely on the user being authenticated by Gallery and require no special Captcha interaction."}
+  </p>
 </div>
 
 <div class="gbBlock gcBackground1">

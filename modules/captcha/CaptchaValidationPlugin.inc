@@ -28,17 +28,17 @@
  */
 
 /**
- * Implement UserLoginPlugin to present the HTML for the captcha image
+ * Implement ValidationPlugin to present the HTML for the captcha image
  * and an input box for the user to type in the correct value.
  *
  * @package Captcha
  */
-class CaptchaLoginPlugin extends UserLoginPlugin {
+class CaptchaValidationPlugin extends ValidationPlugin {
 
     /**
-     * @see UserLoginPlugin::handleRequestBeforeLogin
+     * @see ValidationPlugin::performValidation
      */
-    function handleRequestBeforeLogin(&$form) {
+    function performValidation(&$form) {
 	global $gallery;
 
 	$session =& $gallery->getSession();
@@ -46,12 +46,12 @@ class CaptchaLoginPlugin extends UserLoginPlugin {
 
 	$error = array();
 	$success = false;
-	if (isset($form['CaptchaLoginPlugin']['word']) &&
-	        empty($form['CaptchaLoginPlugin']['word'])) {
-	    $error[] = 'form[error][CaptchaLoginPlugin][missing]';
-	} else if (isset($form['CaptchaLoginPlugin']['word']) &&
-		   $form['CaptchaLoginPlugin']['word'] != $code) {
-	    $error[] = 'form[error][CaptchaLoginPlugin][invalid]';
+	if (isset($form['CaptchaValidationPlugin']['word']) &&
+	        empty($form['CaptchaValidationPlugin']['word'])) {
+	    $error[] = 'form[error][CaptchaValidationPlugin][missing]';
+	} else if (isset($form['CaptchaValidationPlugin']['word']) &&
+		   $form['CaptchaValidationPlugin']['word'] != $code) {
+	    $error[] = 'form[error][CaptchaValidationPlugin][invalid]';
 	} else {
 	    $success = true;
 	}
@@ -60,35 +60,58 @@ class CaptchaLoginPlugin extends UserLoginPlugin {
     }
 
     /**
-     * @see UserLoginPlugin::loadTemplate
+     * @see ValidationPlugin::loadTemplate
      */
-    function loadTemplate(&$template, &$form) {
+    function loadTemplate(&$template, &$form, $securityLevel) {
 	global $gallery;
-
-	/*
-	 * Use the module's failedAttemptThreshold parameter to match against the
-	 * captcha.failedAttempts stored in the session to figure out whether or not we need to
-	 * show the captcha.
-	 */
-	list ($ret, $failedAttemptThreshold) =
-	    GalleryCoreApi::getPluginParameter('module', 'captcha', 'failedAttemptThreshold');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
-	}
 
 	$session =& $gallery->getSession();
 
-	$failedAttempts = $session->get('captcha.failedAttempts');
-	if (!isset($failedAttempts)) {
-	    $failedAttempts = 0;
+	$useCaptcha = false;
+
+	switch (strtoupper($securityLevel)) {
+	case 'HIGH':
+		/* always require captcha to be enabled */
+		$useCaptcha = true;
+		break;
+	case 'MEDIUM':
+		/*
+		 * Use the module's failedAttemptThreshold parameter to match against the
+		 * captcha.failedAttempts stored in the session to figure out whether or not we need to
+		 * show the captcha.
+		 */
+		list ($ret, $failedAttemptThreshold) =
+		    GalleryCoreApi::getPluginParameter('module', 'captcha', 'failedAttemptThreshold');
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		}
+		
+		$failedAttempts = $session->get('captcha.failedAttempts');
+		
+		if (!isset($failedAttempts)) {
+		    $failedAttempts = 0;
+		}
+
+		if (isset($form['error'])) {
+		    $failedAttempts++;
+		    $session->put('captcha.failedAttempts', $failedAttempts);
+		}
+
+
+		if ($failedAttempts > $failedAttemptThreshold) {
+			$useCaptcha = true;
+		}
+		break;
+	case 'LOW':
+		/* Captcha does nothing for the LOW method */
+		break;
+	default:
+		/* Bad Parameter */
+		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), 
+			     null, null);
 	}
 
-	if (isset($form['error'])) {
-	    $failedAttempts++;
-	    $session->put('captcha.failedAttempts', $failedAttempts);
-	}
-
-	if ($failedAttempts > $failedAttemptThreshold) {
+	if ($useCaptcha) {
 	    /* Generate a new code */
 	    list($usec, $sec) = explode(' ', microtime());
 	    srand((float) $sec + ((float) $usec * 100000));
@@ -100,7 +123,7 @@ class CaptchaLoginPlugin extends UserLoginPlugin {
 	    $session->put('captcha.key', $code);
 
 	    return array(GalleryStatus::success(),
-			 'modules/captcha/templates/CaptchaLoginPlugin.tpl',
+			 'modules/captcha/templates/CaptchaValidationPlugin.tpl',
 			 'modules_captcha');
 	} else {
 	    /* They haven't failed enough to require the captcha yet */

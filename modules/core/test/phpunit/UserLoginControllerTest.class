@@ -26,7 +26,10 @@
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
-GalleryCoreApi::relativeRequireOnce('modules/core/UserLogin.inc');
+/**
+ * require necessary classes
+ */
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryValidationPlugin.class');
 
 /**
  * UserLogin controller tests
@@ -274,9 +277,9 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 }
 
 /**
- * Mock UserLoginPlugin
+ * Mock ValidationPlugin
  */
-class UserLoginControllerTestPlugin extends UserLoginPlugin {
+class UserLoginControllerTestPlugin extends ValidationPlugin {
     function setContinue($continue) {
 	$this->_continue = $continue;
     }
@@ -285,7 +288,7 @@ class UserLoginControllerTestPlugin extends UserLoginPlugin {
 	$this->_errors = $errors;
     }
 
-    function handleRequestBeforeLogin(&$form) {
+    function performValidation(&$form) {
 	return array(GalleryStatus::success(), $this->_errors, $this->_continue);
     }
 }

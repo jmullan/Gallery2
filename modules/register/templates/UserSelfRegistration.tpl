@@ -58,13 +58,6 @@
   </div>
   {/if}
 
-    {if false} {* added by S.E., 17.06.04 *}
-      <h4> {g->text text="Language"} </h4>
-      <select name="g->formVar var="form[language]"}">
-	{html_options options=$AdminCreateUser.languageList selected=$form.language}
-      </select>
-    {/if}
-
   <h4>
     {g->text text="Password"}
     <span class="giSubtitle"> {g->text text="(required)"} </span>
@@ -96,6 +89,11 @@
   </div>
   {/if}
 </div>
+
+{* Include our extra ItemAddOptions *}
+{foreach from=$UserSelfRegistration.plugins item=plugin}
+  {include file="gallery:`$plugin.file`" l10Domain=$plugin.l10Domain}
+{/foreach}
 
 <div class="gbBlock gcBackground1">
   <input type="submit" class="inputTypeSubmit"

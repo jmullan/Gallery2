@@ -28,6 +28,11 @@
  */
 
 /**
+ * require necessary classes
+ */
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryValidationPlugin.class');
+ 
+/**
  * This controller will handle the selfcreation of an user
  *
  * @package SelfRegistration
@@ -42,22 +47,7 @@ class UserSelfRegistrationController extends GalleryController {
     function handleRequest($form) {
 	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/GalleryPendingUserHelper.class');
 	global $gallery;
-	// TODO: store Timestamp with registrations and flush old GalleryPendingUsers; make lifespan configurable
-	/*
-	 * the following is taken from core/AdminCreateUser.inc
-	 * basically the same work is done there, but we do not act as SiteAdmin and 
-	 * we do not wish to create a "real" user but a "pending" user
-	 * 
-	 * replace: 
-	 * ['view'] = 'core:SiteAdmin';  ->  ['view'] = 'core:UserAdmin';
-	 * ['subView'] = 'core:AdminUsers';  ->  ['subView'] = 'core:UserAdmin';
-	 * GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryUser');  ->  GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryPendingUser');
-	 * $status['createdUser']  ->  $status['registeredUser']
-	 * //['delegate']['view'] = 'core:SiteAdmin'; ->  ['delegate']['view'] = 'core:UserAdmin';
-	 * ['delegate']['subView'] = 'core:AdminCreateUser';  ->  ['delegate']['subView'] = 'register:UserSelfRegistration';
-	 *
-	 */
-	// $redirect = array();
+
 	$results = array();
 	$status = array();
 	$error = array();
@@ -82,19 +72,53 @@ class UserSelfRegistrationController extends GalleryController {
 		$error[] = 'form[error][password2][mismatch]';
 	    }
 
-	    /*
-	    * If all the right fields are in place then go ahead and
-	    * create the user.
-	    */
-	    if (empty($error)) {
+	    if (isset($this->_pluginInstances)) {
+		$pluginInstances = $this->_pluginInstances;
+	    } else {
+		/* Get all the login plugins */
+		list ($ret, $pluginInstances) =
+		    GalleryCoreApi::getAllFactoryImplementationIds('ValidationPlugin');
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
 
-		list ($ret, $user) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryPendingUser');
+		foreach (array_keys($pluginInstances) as $pluginId) {
+		    list ($ret, $pluginInstances[$pluginId]) =
+			GalleryCoreApi::newFactoryInstanceById('ValidationPlugin', $pluginId);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		}
+	    }
+		
+	    /* Let each plugin do its verification */
+	    foreach ($pluginInstances as $pluginId => $plugin) {
+		list ($ret, $pluginErrors, $continue) = $plugin->performValidation($form);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		$error = array_merge($error, $pluginErrors);
+
+		if (!$continue) {
+		    break;
+		}
+	    }
+
+	    /*
+	     * If all the right fields are in place then go ahead and
+	     * create the user.
+	     */	    
+	    if (empty($error)) {
+		list ($ret, $user) = 
+		    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryPendingUser');
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
 		if (!isset($user)) {
-		    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
+		    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
+				 null);
 		}
 
 		$ret = $user->create($form['userName']);
@@ -103,12 +127,11 @@ class UserSelfRegistrationController extends GalleryController {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 
-		    // Set our error status and fall back to the view.
+		    /* Set our error status and fall back to the view */
 		    $error[] = 'form[error][userName][exists]';
 		} else {
 		    $user->setEmail($form['email']);
 		    $user->setFullName($form['fullName']);
-		    //$user->setLanguage($form['language']);
 		    $user->changePassword($form['password1']);
 
 		    $ret = $user->save();
@@ -139,7 +162,7 @@ class UserSelfRegistrationController extends GalleryController {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
 			$status['activatedUser'] = $form['userName'];
-		    } else { // confirmation == 'admin'
+		    } else { /* confirmation == 'admin' */
 			$status['registeredUserNoEmail'] = $form['userName'];
 		    }
 
@@ -168,6 +191,18 @@ class UserSelfRegistrationController extends GalleryController {
 
 	return array(GalleryStatus::success(), $results);
     }
+    
+    /**
+     * Tests can use this method to hardwire a specific set of plugin instances to use.
+     * This avoids situations where some of the option instances will do unpredictable
+     * things and derail the tests.
+     *
+     * @param array (pluginId => ValidationPlugin, ...)
+     */
+    function setPluginInstances($pluginInstances) {
+	$this->_pluginInstances = $pluginInstances;
+    }
+
 }
 
 /**
@@ -183,46 +218,45 @@ class UserSelfRegistrationView extends GalleryView {
      */
     function loadTemplate(&$template, &$form) {
 	global $gallery;
-	/*
-	 * the following is taken from core/AdminCreateUser.inc
-	 * basically the same work is done there, but we do not act as SiteAdmin and 
-	 * we do not wish to create a "real" user but a "pending" user
-	 * 
-	 * replace: 
-	 * ('controller', 'core:AdminCreateUser')  ->  ('controller', 'register:UserSelfRegistration')
-	 *  'modules/core/templates/AdminCreateUser.tpl'  ->   'modules/register/templates/UserSelfRegistration.tpl'
-	 */
 
-	if ($form['formName'] != 'AdminCreateUser') {
+	if ($form['formName'] != 'UserSelfRegistration') {
 	    /* First time around, set our defaults here. */
 	    $form['userName'] = '';
 	    $form['email'] = '';
 	    $form['fullName'] = '';
-	    $form['language'] = '';
-	    $form['formName'] = 'AdminCreateUser';
+	    $form['formName'] = 'UserSelfRegistration';
 	}
 
-	/* Set up our language selection list */
-	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'register');
+	$UserSelfRegistration = array();
+
+	/* Get all the login plugins */
+	list ($ret, $allPluginIds) =
+	    GalleryCoreApi::getAllFactoryImplementationIds('ValidationPlugin');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$languageList = array();
-	$languageList[''] = $module->translate('<none>');
 
-	$translator =& $gallery->getTranslator();
-	$supportedLanguages = $translator->getSupportedLanguages();
-	foreach ($supportedLanguages as $language => $countryList) {
-	    foreach ($countryList as $country => $languageData) {
-		$languageList[$language . '_' . $country] =
-		    $languageData['description'];
+	/* Let each plugin load its template data */
+	$UserSelfRegistration['plugins'] = array();
+	foreach (array_keys($allPluginIds) as $pluginId) {
+	    list ($ret, $plugin) =
+		GalleryCoreApi::newFactoryInstanceById('ValidationPlugin', $pluginId);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    list ($ret, $data['file'], $data['l10Domain']) =
+		$plugin->loadTemplate($template, $form, 'HIGH');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    if (isset($data['file'])) {
+		$UserSelfRegistration['plugins'][] = $data;
 	    }
 	}
 
-	$AdminCreateUser = array();
-	$AdminCreateUser['languageList'] = $languageList;
-
-	$template->setVariable('AdminCreateUser', $AdminCreateUser);
+	$template->setVariable('UserSelfRegistration', $UserSelfRegistration);
 	$template->setVariable('controller', 'register:UserSelfRegistration');
 
 	return array(GalleryStatus::success(),

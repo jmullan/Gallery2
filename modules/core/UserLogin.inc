@@ -28,19 +28,25 @@
  */
 
 /**
+ * require necessary classes
+ */
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryValidationPlugin.class');
+ 
+/**
  * This controller will handle an user logging in to Gallery
  *
  * @package GalleryCore
  * @subpackage UserInterface
  *
  */
+ 
 class UserLoginController extends GalleryController {
 
     /**
-     * UserLoginPlugin instances to use when handling this request.  Only used by
+     * ValidationPlugin instances to use when handling this request.  Only used by
      * test code.
      *
-     * @var array (pluginId => object UserLoginPlugin) $_plugins
+     * @var array (pluginId => object ValidationPlugin) $_plugins
      * @private
      */
     var $_pluginInstances;
@@ -50,7 +56,7 @@ class UserLoginController extends GalleryController {
      * This avoids situations where some of the option instances will do unpredictable
      * things and derail the tests.
      *
-     * @param array (pluginId => UserLoginPlugin, ...)
+     * @param array (pluginId => ValidationPlugin, ...)
      */
     function setPluginInstances($pluginInstances) {
 	$this->_pluginInstances = $pluginInstances;
@@ -79,14 +85,14 @@ class UserLoginController extends GalleryController {
 		} else {
 		    /* Get all the login plugins */
 		    list ($ret, $pluginInstances) =
-			GalleryCoreApi::getAllFactoryImplementationIds('UserLoginPlugin');
+			GalleryCoreApi::getAllFactoryImplementationIds('ValidationPlugin');
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 
 		    foreach (array_keys($pluginInstances) as $pluginId) {
 			list ($ret, $pluginInstances[$pluginId]) =
-			    GalleryCoreApi::newFactoryInstanceById('UserLoginPlugin', $pluginId);
+			    GalleryCoreApi::newFactoryInstanceById('ValidationPlugin', $pluginId);
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
@@ -95,7 +101,7 @@ class UserLoginController extends GalleryController {
 		    
 		/* Let each plugin do its verification */
 		foreach ($pluginInstances as $pluginId => $plugin) {
-		    list ($ret, $pluginErrors, $continue) = $plugin->handleRequestBeforeLogin($form);
+		    list ($ret, $pluginErrors, $continue) = $plugin->performValidation($form);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
@@ -186,7 +192,7 @@ class UserLoginView extends GalleryView {
 
 	/* Get all the login plugins */
 	list ($ret, $allPluginIds) =
-	    GalleryCoreApi::getAllFactoryImplementationIds('UserLoginPlugin');
+	    GalleryCoreApi::getAllFactoryImplementationIds('ValidationPlugin');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -195,13 +201,13 @@ class UserLoginView extends GalleryView {
 	$UserLogin['plugins'] = array();
 	foreach (array_keys($allPluginIds) as $pluginId) {
 	    list ($ret, $plugin) =
-		GalleryCoreApi::newFactoryInstanceById('UserLoginPlugin', $pluginId);
+		GalleryCoreApi::newFactoryInstanceById('ValidationPlugin', $pluginId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    list ($ret, $data['file'], $data['l10Domain']) =
-		$plugin->loadTemplate($template, $form);
+		$plugin->loadTemplate($template, $form, 'MEDIUM');
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -215,32 +221,6 @@ class UserLoginView extends GalleryView {
 	$template->setVariable('controller', 'core:UserLogin');
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/core/templates/UserLogin.tpl'));
-    }
-}
-
-class UserLoginPlugin {
-    /**
-     * Perform any special actions on the login request before we actually
-     * try to log in.
-     *
-     * @param array the form values
-     * @return array object GalleryStatus a status code
-     *               boolean true/false should we continue trying to log in?
-     *               array of error keys
-     */
-    function handleRequestBeforeLogin(&$form) {
-	return array(GalleryStatus::success(), true);
-    }
-
-    /**
-     * @param object GalleryTemplate the template instance
-     * @param array the form values
-     * @return array object GalleryStatus a status code
-     *               string the path to a template file to include
-     *               string localization domain for the template file
-     */
-    function loadTemplate(&$template, &$form) {
-	return array(GalleryStatus::success(), null);
     }
 }
 ?>
