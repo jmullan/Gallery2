@@ -602,18 +602,20 @@ class ImageUploadHelper {
     }
 
     /**
-     * Write the contents of $_POST and $_GET to debug log.
+     * Write the contents of _POST and _GET to debug log.
      *
      * @param string optional message
      * @static
      */
     function logRequest($message='') {
 	global $gallery;
-	$gallery->debug("##### $message ### " . strftime('%Y-%m-%d %T') . ' #####');
-	$gallery->debug('POST is: ');
-	$gallery->debug_r($_POST);
-	$gallery->debug('GET is: ');
-	$gallery->debug_r($_GET);
+	if ($gallery->getDebug()) {
+	    $gallery->debug("##### $message ### " . strftime('%Y-%m-%d %T') . ' #####');
+	    $gallery->debug('POST is: ');
+	    $gallery->debug_r($_POST);
+	    $gallery->debug('GET is: ');
+	    $gallery->debug_r($_GET);
+	}
     }
 }
 ?>

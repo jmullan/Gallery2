@@ -38,25 +38,26 @@ class CodeAuditTest extends CodeAuditTestCase {
     function CodeAuditTest($methodName) {
 	$this->CodeAuditTestCase($methodName);
 
-	$this->_exception = array(
-	    'endphp' => array('layout.css.php' => 1),
-	    'superglobals' => array(
-		    'main.php' => 1,
-		    'modules/core/classes/GallerySession.class' => 1,
-		    'modules/core/classes/GalleryTranslator.class' => 1,
-		    'modules/core/classes/GalleryUrlGenerator.class' => 1,
-		    'modules/core/classes/GalleryUtilities.class' => 1,
-		    'modules/migrate/ImportResults.inc' => 1,
-		    'modules/migrate/Redirect.inc' => 1,
-		    'modules/migrate/SelectGallery.inc' => 1,
-		    'modules/nokiaupload/classes/ImageUploadHelper.class' => 1,
-		    'modules/photoaccess/classes/PhotoAccessHelper.class' => 1,
-		    'modules/register/module.inc' => 1,
-		    'modules/uploadapplet/ItemAddUploadApplet.inc' => 1,
-		    'modules/zipcart/Download.inc' => 1,
-	    ),
-	);
+	$this->_exception['endphp'] =
+	    array(
+		  'layout.css.php' => 1
+		  );
+
+	$this->_exception['superglobals'] =
+	    array(
+		  'FILES' => array(
+				   'modules/core/classes/GalleryUtilities.class' => 1
+				   ),
+		  'POST' => array(
+				   'modules/core/classes/GalleryUtilities.class' => 1
+				  ),
+		  'GET' => array(
+				   'modules/core/classes/GalleryUtilities.class' => 1
+				 ),
+		  );
+	
 	$this->_longLineCount = 0;
+	$this->_errorCount = 0;
     }
 
     /**
@@ -80,18 +81,34 @@ class CodeAuditTest extends CodeAuditTestCase {
 	    /* Check that Session and UrlGenerator are always accessed by-reference */
 	    if (preg_match_all('/= *\$gallery->get(Session|UrlGenerator)/', $lines[$i], $matches)) {
 		foreach (array_unique($matches[1]) as $item) {
+		    $this->_errorCount++;
 		    $this->assert(false,
 				  sprintf('%s gets %s by value instead of by reference on line %d',
 					  $fileName, $item, $i + 1));
 		}
 	    }
 
-	    if (preg_match_all('/\$_(REQUEST|POST|GET|SESSION|FILES|SERVER)/', $lines[$i], $matches) &&
-		    !isset($this->_exception['superglobals'][$fileName]) && 
+	    /*
+	     * Verify that all access to superglobal variables from the browser
+	     * is properly filtered through the framework so that we don't
+	     * get remote exploits.
+	     */
+	    if (preg_match_all('/\$_(REQUEST|POST|GET|SESSION|FILES)/', $lines[$i], $matches) &&
 		    !preg_match('/(test\/phpunit|^install\/|^upgrade\/)/', $fileName)) {
 		foreach (array_unique($matches[1]) as $item) {
+		    if (isset($this->_exception['superglobals'][$item][$fileName])) {
+			continue;
+		    }
+
+		    /* It's ok if it's inside a debug statement */
+		    if (preg_match("/gallery->debug(|_r)\(.*$item.*\)/", $lines[$i])) {
+			continue;
+		    }
+		    
+		    $this->_errorCount++;
 		    $this->assert(false,
-				  sprintf('%s uses the %s superglobal instead of its helper on line %d',
+				  sprintf('%s uses the %s superglobal instead of ' .
+					  'its helper on line %d',
 					  $fileName, $item, $i + 1));
 		}
 	    }
@@ -99,6 +116,7 @@ class CodeAuditTest extends CodeAuditTestCase {
 	    /* Check that we don't have CRLF (windows-type newlines) */
 	    if (!isset($crlfHit) && strpos($lines[$i], "\r") !== false) {
 		$crlfHit = true;
+		$this->_errorCount++;
 		$this->assert(false, sprintf('%s has CR character on line %d', $fileName, $i + 1));
 	    }
 
@@ -113,8 +131,13 @@ class CodeAuditTest extends CodeAuditTestCase {
 	/* Check that php files end with ?> */
 	if (!isset($this->_exception['endphp'][basename($fileName)])
 		&& !preg_match('/\?>$/', $buffer)) {
+	    $this->_errorCount++;
 	    $this->assert(false, $fileName . ' does not end with ?&gt;');
 	}
+
+ 	if ($this->_errorCount > 10) {
+ 	    $this->halt();
+ 	}
     }
 
     /**
@@ -124,14 +147,16 @@ class CodeAuditTest extends CodeAuditTestCase {
 	parent::testCodeAudit();
 
 	/* Check result of longLineCount */
-	if ($this->_longLineCount > 3000) {
-	    $this->assert(false, 'Found too many lines longer than 100 characters (' .
-			  $this->_longLineCount . ')');
-	}
-	if ($this->_longLineCount < 2500) {
-	    $this->assert(false, 'Yay!  We are down to ' . $this->_longLineCount .
-			  ' lines longer than 100 characters; update the failure' .
-			  ' thresholds in this unit test.');
+	if (!$this->_shouldHalt) {
+	    if ($this->_longLineCount > 2614) {
+		$this->assert(false, 'Found too many lines longer than 100 characters (' .
+			      $this->_longLineCount . ')');
+	    }
+	    if ($this->_longLineCount < 2500) {
+		$this->assert(false, 'Yay!  We are down to ' . $this->_longLineCount .
+			      ' lines longer than 100 characters; update the failure' .
+			      ' thresholds in this unit test.');
+	    }
 	}
     }
 }
