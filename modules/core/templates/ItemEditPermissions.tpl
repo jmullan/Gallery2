@@ -43,7 +43,7 @@
 	  </td>
 	</tr>
 
-	<!-- {if $canChangeOwner} -->
+	<!-- {if $can.changeOwner} -->
 	<tr>
 	  <td>
 	    {gallery->text text="Change album owner to:"}
@@ -83,6 +83,7 @@
 	  </td>
 	</tr>
 
+	<!-- {if $can.applyToSubItems} -->
 	<tr>
 	  <td>
 	    {gallery->bigFontSize}
@@ -109,6 +110,7 @@
 	    &nbsp;
 	  </td>
 	</tr>
+	<!-- {/if} {* can.applyToSubItems *} -->
 
 	<tr>
 	  <td>

@@ -229,6 +229,11 @@ class ItemEditPermissionsController extends GalleryController {
 	    if (empty($form['owner']['ownerName'])) {
 		GalleryUtilities::putRequestVariable('form.error.owner.missingUser', 1);
 	    } else {
+		$ret = GalleryUserHelper::assertSiteAdministrator();
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		
 		/* Validate the user */
 		list ($ret, $user) =
 		    GalleryUserHelper::fetchUserByUserName($form['owner']['ownerName']);
@@ -437,18 +442,16 @@ class ItemEditPermissionsView extends GalleryView {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	if ($isAdmin) {
-	    $canChangeOwner = true;
-	} else {
-	    $canChangeOwner = false;
-	}
-	
+	/* Figure out what we can display on the form */
+	$can['changeOwner'] = $isAdmin;
+	$can['applyToSubItems'] = $item->getCanContainChildren();
+
 	/* Render the HTML body */
 	$template = $this->_getTemplate();
 	$template->setVariable('form', $form);
 	$template->setVariable('item', $item->getMemberData());
 	$template->setVariable('owner', $owner->getMemberData());
-	$template->setVariable('canChangeOwner', $canChangeOwner);
+	$template->setVariable('can', $can);
 	$template->setVariable('userPermissions', $userPermissions);
 	$template->setVariable('groupPermissions', $groupPermissions);
 	$template->setVariable('allPermissions', $allPermissions);
