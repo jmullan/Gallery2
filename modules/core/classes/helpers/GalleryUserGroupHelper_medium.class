@@ -62,6 +62,7 @@ class GalleryUserGroupHelper_medium {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
+	GalleryDataCache::remove("GalleryUserGroupHelper::isUserInGroup($userId,$groupId)");
 
 	$event = GalleryCoreApi::newEvent('Gallery::ViewableTreeChange');
 	$event->setEntity(array('userId' => $userId, 'itemId' => null));
@@ -92,6 +93,7 @@ class GalleryUserGroupHelper_medium {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
+	GalleryDataCache::remove("GalleryUserGroupHelper::isUserInGroup($userId,$groupId)");
 
 	$event = GalleryCoreApi::newEvent('Gallery::ViewableTreeChange');
 	$event->setEntity(array('userId' => $userId, 'itemId' => null));
