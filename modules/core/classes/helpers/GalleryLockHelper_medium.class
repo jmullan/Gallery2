@@ -50,20 +50,16 @@ class GalleryLockHelper_medium {
      * @static
      */
     function acquireReadLock($ids, $timeout=10) {
-	global $gallery;
+	if (!is_array($ids)) {
+	    $ids = array($ids);
+	}
 	
-	$storage = $gallery->getStorage();
-	list ($ret, $lock) = $storage->acquireReadLock($ids, $timeout);
+	list ($ret, $lockId) = GalleryLockHelper_medium::_acquireLock($ids, $timeout, LOCK_READ);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$lockId = $lock->getId();
-
-	$locks =& GalleryLockHelper_simple::_getLocks();
-	$locks[$lockId] = $lock;
-	
-	return array($ret->wrap(__FILE__, __LINE__), $lockId);
+	return array(GalleryStatus::success(), $lockId);
     }
 
     /**
@@ -165,13 +161,7 @@ class GalleryLockHelper_medium {
 	$locks =& GalleryLockHelper_simple::_getLocks();
 	foreach (array_keys($locks) as $lockId) {
 	    $lock =& $locks[$lockId];
-
-	    if ($lock->getLockType() != LOCK_READ && $lock->getLockType() != LOCK_WRITE) {
-		continue;
-	    }
-
-	    $ids = $lock->getEntityIds();
-	    if (in_array($id, $ids)) {
+	    if (in_array($id, $lock['ids'])) {
 		return true;
 	    }
 	}
@@ -190,18 +180,15 @@ class GalleryLockHelper_medium {
      * @static
      */
     function acquireWriteLock($ids, $timeout=10) {
-	global $gallery;
+	if (!is_array($ids)) {
+	    $ids = array($ids);
+	}
 
-	$storage = $gallery->getStorage();
-	list ($ret, $lock) = $storage->acquireWriteLock($ids, $timeout);
+	list ($ret, $lockId) = GalleryLockHelper_medium::_acquireLock($ids, $timeout, LOCK_WRITE);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$lockId = $lock->getId();
-
-	$locks =& GalleryLockHelper_simple::_getLocks();
-	$locks[$lockId] = $lock;
 	return array(GalleryStatus::success(), $lockId);
     }
 
@@ -215,15 +202,10 @@ class GalleryLockHelper_medium {
      */
     function isWriteLocked($id) {
 	$locks =& GalleryLockHelper_simple::_getLocks();
+
 	foreach (array_keys($locks) as $lockId) {
 	    $lock =& $locks[$lockId];
-
-	    if ($lock->getLockType() != LOCK_WRITE) {
-		continue;
-	    }
-
-	    $ids = $lock->getEntityIds();
-	    if (in_array($id, $ids)) {
+	    if ($lock['type'] == LOCK_WRITE && in_array($id, $lock['ids'])) {
 		return true;
 	    }
 	}
@@ -259,15 +241,15 @@ class GalleryLockHelper_medium {
 	}
 
 	/* Now release all locks */
+	$platform = $gallery->getPlatform();
 	foreach ($lockIds as $lockId) {
 	    if (empty($lockId)) {
 		continue;
 	    }
 	    
 	    $gallery->guaranteeTimeLimit(5);
-	    $ret = $locks[$lockId]->release();
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+	    foreach ($locks[$lockId]['fds'] as $fd) {
+		$platform->fclose($fd);
 	    }
 	    unset($locks[$lockId]);
 	}
@@ -278,37 +260,24 @@ class GalleryLockHelper_medium {
     /**
      * Let go of all of our locks.
      *
-     * @param string halt after the first failure?  default: yes
      * @return object GalleryStatus a status code
      * @access private
      * @static
      */
-    function releaseAllLocks($haltOnFailure=true) {
+    function releaseAllLocks() {
 	global $gallery;
 
 	$locks =& GalleryLockHelper_simple::_getLocks();
-	
-	$errorRet = null;
-	foreach ($locks as $lockId => $lock) {
+	$platform = $gallery->getPlatform();
+	foreach (array_keys($locks) as $lockId) {
 	    $gallery->guaranteeTimeLimit(5);
-	    if ($lock->isLocked()) {
-		$ret = $lock->release();
-		if ($ret->isError()) {
-		    $errorRet = $ret->wrap(__FILE__, __LINE__);
-		    if ($haltOnFailure) {
-			return $ret->wrap(__FILE__, __LINE__);
-		    }
-		} else {
-		    unset($locks[$lockId]);
-		}
+	    foreach ($locks[$lockId]['fds'] as $fd) {
+		$platform->fclose($fd);
 	    }
+	    unset($locks[$lockId]);
 	}
 
-	if (!empty($errorRet)) {
-	    return $errorRet;
-	} else {
-	    return GalleryStatus::success();
-	}
+	return GalleryStatus::success();
     }
 
     /**
@@ -321,22 +290,125 @@ class GalleryLockHelper_medium {
     function refreshLocks($freshUntil) {
 	global $gallery;
 
-	/* Get all active lock ids */
 	$locks =& GalleryLockHelper_simple::_getLocks();
-	$lockIds = array();
-	foreach ($locks as $lock) {
-	    $lockIds = array_merge($lockIds, $lock->getAllIds());
-	}
-	$lockIds = array_unique($lockIds);
 
-	if (!empty($lockIds)) {
-	    $storage = $gallery->getStorage();
-	    $ret = $storage->refreshLocks($lockIds, $freshUntil);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+	// Flush one byte to each lock file to update its timestamp
+	$platform = $gallery->getPlatform();
+	foreach ($locks as $lockId => $lock) {
+	    foreach ($lock['fds'] as $fd) {
+		$count = $platform->fwrite($fd, '.');
+		if ($count == 0) {
+		    return GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
+		}
+		$platform->fflush($fd);
+	    }
+	}
+    }
+
+    /**
+     * Delete the lock file for a given id.
+     *
+     * WARNING: use this only when the entity goes away -- it's possible to delete a lock file out from
+     * underneath a process that still has it acquired!
+     */
+    function deleteLockFile($id) {
+	global $gallery;
+
+	$lockFile = GalleryLockHelper_medium::_getLockFile($id);
+	$platform = $gallery->getPlatform();
+	@$platform->unlink($lockFile);
+    }
+
+    /**
+     * Return the lock file for a given entity id
+     *
+     * @param int the input id
+     * @return string the complete path to the lock file
+     */
+    function _getLockFile($id) {
+	global $gallery;
+	
+	$locksDir = $gallery->getConfig('data.gallery.locks');
+	$tmp = "$id";
+	if ($id < 100) {
+	    $first = '0';
+	    $second = $tmp[0];
+	} else {
+	    $first = $tmp[0];
+	    $second = $tmp[1];
+	}
+	
+	return "$locksDir$first/$second/$id";
+    }
+
+    /**
+     * Read Lock one or more objects
+     *
+     * @access public
+     * @param array ids to lock
+     * @param integer how long to wait for the lock before giving up
+     * @param the type of lock (LOCK_READ, LOCK_WRITE)
+     * @return array object GalleryStatus a status code
+     *               int the lock id
+     * @access private
+     * @static
+     */
+    function _acquireLock($ids, $timeout, $lockType) {
+	global $gallery;
+
+	$locks =& GalleryLockHelper_simple::_getLocks();
+	$cutoffTime = time() + $timeout;
+
+	$platform = $gallery->getPlatform();
+
+	// Get a file handle for all the files first
+	$notLocked = array();
+	foreach ($ids as $id) {
+	    $lockFile = GalleryLockHelper_medium::_getLockFile($id);
+	    $fd = $platform->fopen($lockFile, 'wb+');
+	    if ($fd) {
+		$notLocked[] =& $fd;
+	    } else {
+		foreach ($open as $fd) {
+		    $platform->fclose($fd);
+		}
+		return array(GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__), null);
 	    }
 	}
 
-	return GalleryStatus::success();
+	// Move them from notLocked -> locked as we acquire the lock
+	$locked = array();
+	$wouldBlock = null;
+	while (!empty($notLocked)) {
+	    $tmp = $notLocked;
+	    $notLocked = array();
+	    foreach ($tmp as $fd) {
+		$flockType = ($lockType == LOCK_READ) ? LOCK_SH : LOCK_EX;
+		if (flock($fd, $flockType | LOCK_NB, $wouldBlock)) {
+		    $locked[] = $fd;
+		} else {
+		    // Remember that it's not locked and keep going
+		    $notLocked[] = $fd;
+		}
+	    }
+
+	    if (!empty($notLocked)) {
+		if (time() > $cutoffTime) {
+		    foreach (array_merge($locked, $notLocked) as $fd) {
+			$platform->fclose($fd);
+		    }
+		    return array(GalleryStatus::error(ERROR_LOCK_TIMEOUT, __FILE__, __LINE__), null);
+		}
+
+		// Wait a second and try any unacquired locks again
+		sleep(1);
+	    }
+	}
+
+	$lockId = md5(microtime());
+	$locks[$lockId] = array('type' => $lockType,
+				'ids' => $ids,
+				'fds' => $locked);
+	return array(GalleryStatus::success(), $lockId);
     }
 }

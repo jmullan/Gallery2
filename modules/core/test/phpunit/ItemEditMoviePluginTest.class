@@ -222,6 +222,29 @@ class ItemEditMoviePluginTestPlatform {
     function getDirectorySeparator() {
 	return $this->_platform->getDirectorySeparator();
     }
+
+    function fopen($filename, $modes) {
+	// Pass lock requests
+	if (preg_match("|/locks/|", $filename)) {
+	    return fopen($filename, $modes);
+	}
+	
+	print "Unexpected fopen($filename, $modes)";
+	return null;
+    }
+
+    function realpath($file) {
+	return realpath($file);
+    }
+    
+    function flock($handle, $operation, &$wouldblock) {
+	// Pass lock requests
+	return flock($handle, $operation, $wouldblock);
+    }
+
+    function fclose($handle) {
+	return fclose($handle);
+    }
 }
 
 ?>

@@ -484,6 +484,7 @@ class GalleryStorage {
 	if ($gallery->getDebug()) {
 	    $buf = ob_get_contents();
 	    ob_end_clean();
+	    $gallery->debug($buf);
 	}
     }
 }

@@ -21,30 +21,6 @@ class InitializeGalleryTestCase extends TestCase {
 	global $gallery;
 
 	/*
-	 * Make sure that all the required paths exist.
-	 */
-	$platform = $gallery->getPlatform();
-
-	foreach (array('data.gallery.albums',
-		       'data.gallery.cache',
-		       'data.gallery.tmp',
-		       'data.smarty.base',
-		       'data.smarty.templates_c') as $key) {
-	    $dir = $gallery->getConfig($key);
-
-	    if (empty($dir)) {
-		return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);
-	    }
-
-	    if (!$platform->file_exists($dir)) {
-		$ret = $platform->mkdir($dir);
-		if (!$ret) {
-		    return GalleryStatus::error(ERROR_UNKNOWN, __FILE__, __LINE__);
-		}
-	    }
-	}
-
-	/*
 	 * Load and initialize the core module.  Normally this is done at the
 	 * very beginning of all of our operations, so doing this now is going
 	 * to cause all kinds of weirdness.  This is a test case, so it's ok to
@@ -55,6 +31,12 @@ class InitializeGalleryTestCase extends TestCase {
 
 	/* Get rid of the data cache */
 	GalleryDataCache::reset(true);
+
+	/* Get rid of event listeners, else they can screw up our reinstall process */
+	$listeners =& GalleryEventHelper_simple::_getEventListeners();
+	foreach (array_keys($listeners) as $eventName) {
+	    unset($listeners[$eventName]);
+	}
 
 	/* Commit any outstanding transactions */
 	$ret = $gallery->commitTransaction();

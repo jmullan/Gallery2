@@ -82,15 +82,15 @@ class CoreModuleTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(array(
-				  array('name' => $this->_module->translate('General'),
+				  array('name' => $this->_module->translate('General Settings'),
 					'view' => 'core:AdminCore'),
-				  array('name' => $this->_module->translate('Users'),
+				  array('name' => $this->_module->translate('User Management'),
 					'view' => 'core:AdminUsers'),
-				  array('name' => $this->_module->translate('Groups'),
+				  array('name' => $this->_module->translate('Group Management'),
 					'view' => 'core:AdminGroups'),
-				  array('name' => $this->_module->translate('Modules'),
+				  array('name' => $this->_module->translate('Gallery Modules'),
 					'view' => 'core:AdminModules'),
-				  array('name' => $this->_module->translate('Layouts'),
+				  array('name' => $this->_module->translate('Gallery Layouts'),
 					'view' => 'core:AdminLayouts'),
 				  ),
 			    $content);
@@ -139,9 +139,9 @@ class CoreModuleTest extends GalleryTestCase {
 	}
 	
         $this->assertEquals(array(
-                                  array('text' => $this->_module->translate('Site admin'),
+                                  array('text' => $this->_module->translate('Site Admin'),
                                         'params' => array('view' => 'core:SiteAdmin')),
-                                  array('text' => $this->_module->translate('Your account'),
+                                  array('text' => $this->_module->translate('Your Account'),
                                         'params' => array('return' => 'true',
 							  'view' => 'core:UserAdmin',
                                                           'subView' => 'core:UserPreferences')),

@@ -456,28 +456,18 @@ class GalleryDerivative_core extends GalleryChildEntity {
 	/* Derivatives live in the cache directory */
 	$cacheDir = $gallery->getConfig('data.gallery.cache');
 
-	$firstDigitOfId = substr($this->getId(), 0, 1);
-	$cacheDir = $cacheDir . $firstDigitOfId . '/';
-	
-	/* Make sure that the cache dir exists, create it if necessary */
-	$platform = $gallery->getPlatform();
-	
-	if ($platform->file_exists($cacheDir)) {
-	    if (!$platform->is_dir($cacheDir)) {
-		return array(GalleryStatus::error(ERROR_BAD_PATH,
-						  __FILE__, __LINE__),
-			     null);
-	    }
+	if ($this->getId() < 100) {
+	    $firstDigitOfId = '0';
+	    $secondDigitOfId = substr($this->getId(), 0, 1);
 	} else {
-	    if (!$platform->mkdir($cacheDir)) {
-		return array(GalleryStatus::error(ERROR_BAD_PATH,
-						  __FILE__, __LINE__),
-			     null);
-	    }
+	    $firstDigitOfId = substr($this->getId(), 0, 1);
+	    $secondDigitOfId = substr($this->getId(), 1, 1);
 	}
-
-	/* Our file is our id -- it will be unique */
-	$cacheFile = $cacheDir . $this->getId();
+	$cacheFile = sprintf("%s/%s/%s/%s",
+			     $gallery->getConfig('data.gallery.cache'),
+			     $firstDigitOfId,
+			     $secondDigitOfId,
+			     $this->getId());
 	
 	return array(GalleryStatus::success(), $cacheFile);
     }

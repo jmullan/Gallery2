@@ -315,15 +315,23 @@ class ItemAddFromWebTestPlatform  {
 	return (empty($this->_readBuffer[$handle]));
     }
 
+    function flock($handle, $operation, &$wouldblock) {
+	// Pass lock requests
+	return flock($handle, $operation, $wouldblock);
+    }
+
     function fclose($handle) {
-	switch($handle) {
-	case 'test-resource-1':
+	if ($handle == 'test-resource-1') {
 	    unset($this->_readBuffer[$handle]);
 	    return true;
-
-	default:
-	    return false;
 	}
+
+	// Pass locks
+	if (is_resource($handle)) {
+	    return fclose($handle);
+	}
+
+	return false;
     }
 
     function is_uploaded_file($filename) {
@@ -335,7 +343,12 @@ class ItemAddFromWebTestPlatform  {
 	    return $filename;
 	}
 
-	print "Unexpected fopen($file, $modes)";
+	// Pass lock requests
+	if (preg_match("|/locks/|", $filename)) {
+	    return fopen($filename, $modes);
+	}
+	
+	print "Unexpected fopen($filename, $modes)";
 	return null;
     }
 }

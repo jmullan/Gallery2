@@ -305,6 +305,24 @@ class GalleryPlatform {
     }
 
     /**
+     * flock -- Portable advisory file locking
+     *
+     * @param resource a file handle
+     * @param operation (LOCK_SH, LOCK_EX, LOCK_UN) [ | LOCK_NB]
+     * @param bool set to true if the operation would have blocked
+     * @return true or false
+     * @access public
+     */
+    function flock($handle, $operation, &$wouldblock) {
+	global $gallery;
+	if ($gallery->getDebug()) {
+	    $gallery->debug("flock($handle, $operation, $wouldblock)");
+	}
+
+	return flock($handle, $operation, $wouldblock);
+    }
+
+    /**
      * Open a file or URL
      *
      * @param string a file path
@@ -455,15 +473,10 @@ class GalleryPlatform {
 	    return false;
 	}
 
-	while (($filename = readdir($fd)) != false) {
-	    if (!strcmp($filename, ".")) {
+	while (($filename = $this->readdir($fd)) !== false) {
+	    if (!strcmp($filename, '.') || !strcmp($filename, '..')) {
 		continue;
 	    }
-
-	    if (!strcmp($filename, "..")) {
-		continue;
-	    }
-
 	    $path = "$dirname/$filename";
 	    
 	    if ($this->is_dir($path)) {
@@ -473,7 +486,7 @@ class GalleryPlatform {
 	    }
 	    
 	    if ($ret == false) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return false;
 	    }
 	}
 	closedir($fd);

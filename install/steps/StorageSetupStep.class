@@ -75,6 +75,7 @@ class StorageSetupStep extends InstallStep {
 	/* Create the sub directories, if necessary */
 	foreach (array('albums',
 		       'cache',
+		       'locks',
 		       'tmp',
 		       'smarty',
 		       'smarty/templates_c') as $key) {
@@ -85,13 +86,26 @@ class StorageSetupStep extends InstallStep {
 	    }
 
 	    if (!file_exists($dir)) {
-		if (!mkdir($dir)) {
+		if (!mkdir($dir, 0755)) {
 		    return false;
 		}
 	    }
 
 	    if (!is_writeable($dir)) {
 		return false;
+	    }
+
+	    if ($key == 'cache' || $key == 'locks') {
+		for ($i = 0; $i <= 9; $i++) {
+		    if (!mkdir("$dir/$i", 0755)) {
+			return false;
+		    }
+		    for ($j = 0; $j <= 9; $j++) {
+			if (!mkdir("$dir/$i/$j", 0755)) {
+			    return false;
+			}
+		    }
+		}
 	    }
 	}
 	return true;

@@ -2373,17 +2373,16 @@ class GalleryCoreApi {
     /**
      * Let go of all of our locks.
      *
-     * @param string halt after the first failure?  default: yes
      * @return object GalleryStatus a status code
      * @static
      */
-    function releaseAllLocks($haltOnFailure=true) {
+    function releaseAllLocks() {
 	static $loaded;
 	if (!isset($loaded)) {
 	    $loaded = true;
 	    require_once(dirname(__FILE__) . '/helpers/GalleryLockHelper_medium.class');
 	}
-	return GalleryLockHelper_medium::releaseAllLocks($haltOnFailure);
+	return GalleryLockHelper_medium::releaseAllLocks();
     }
 
     /**
