@@ -41,30 +41,32 @@ class DatabaseSetupStep extends InstallStep {
 		$this->_config['columnPrefix'] = 'g_';
 	    }
 	}
-        
-	switch ($this->_config['type']) {
-            case 'mysql':
-            case 'mysqlt':
-            	if (!function_exists('mysql_connect')) {
-                    $templateData['error']['phpDbMissing'] =
-                        'You must have the MySQL PHP module installed';
-                }
-                break;
-            case 'postgres7':
-            case 'postgres':
-            	if (!function_exists('pg_connect')) {
-                    $templateData['error']['phpDbMissing'] =
-                        'You must have the PostgreSQL PHP module installed';
-                }
-                break;
-        }
 
 	if (!empty($_POST['action']) && $_POST['action'] == 'save') {
 	    foreach (array('type', 'hostname', 'username',
 			   'password', 'database', 'tablePrefix', 'columnPrefix') as $key) {
 		$this->_config[$key] = $this->sanitize($_POST[$key]);
 	    }
+	}
 
+	switch ($this->_config['type']) {
+	    case 'mysql':
+	    case 'mysqlt':
+		if (!function_exists('mysql_connect')) {
+		    $templateData['error']['phpDbMissing'] =
+			'You must have the MySQL PHP module installed';
+		}
+		break;
+	    case 'postgres7':
+	    case 'postgres':
+		if (!function_exists('pg_connect')) {
+		    $templateData['error']['phpDbMissing'] =
+			'You must have the PostgreSQL PHP module installed';
+		}
+		break;
+        }
+
+	if (!empty($_POST['action']) && $_POST['action'] == 'save') {
 	    if (empty($this->_config['columnPrefix'])) {
 		$templateData['error']['columnPrefix'] =
 		    sprintf(_('You must specify a column prefix (we recommend %s)'), 'g_');
@@ -83,7 +85,7 @@ class DatabaseSetupStep extends InstallStep {
 		$db =& ADONewConnection($this->_config['type']);
 		$db->debug = true;
 		$this->_captureEnd();
-	    
+
 		if (empty($db)) {
 		    $templateData['errors'][] = _('Unable to create a database connection of type %s',
 						  $this->_config['type']);
@@ -144,7 +146,7 @@ class DatabaseSetupStep extends InstallStep {
 		     as $key => $value) {
 		$templateData['dbList'][$key] = $value;
 	    }
-	    $templatData['dbSelected'][$this->_config['type']] = 1;
+	    $templateData['dbSelected'][$this->_config['type']] = 1;
 
 	    $templateData['bodyFile'] = 'DatabaseSetupRequest.html';
 	}
