@@ -50,7 +50,7 @@
       </div>
       {/if}
 
-      {if isset($status) || empty($ViewCart.items)}
+      {if !empty($status) || empty($ViewCart.items)}
       <div id="gsStatus">
         {if isset($status.cartModified)}
         <div class="giStatus">

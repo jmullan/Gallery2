@@ -13,7 +13,7 @@
     </div>
   </div>
 
-  {if isset($status)}
+  {if !empty($status)}
   <div id="gsStatus">
     <div class="giStatus">
       {if isset($status.activated)}

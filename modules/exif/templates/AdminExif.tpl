@@ -14,7 +14,7 @@
     
   </div>
 
-  {if isset($status)}
+  {if !empty($status)}
   <div id="gsStatus">
     {if isset($status.added.summary)}
     <div class="giStatus">

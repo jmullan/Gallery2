@@ -16,7 +16,7 @@
   <input type="hidden" name="{g->formVar var="editPlugin"}" value="{$ItemEdit.editPlugin}"/>
   <input type="hidden" name="{g->formVar var="form[serialNumber]"}" value="{$form.serialNumber}"/>
 
-  {if isset($status)}
+  {if !empty($status)}
   <div id="gsStatus">
     <div class="giStatus">
       {if isset($status.editMessage)}
