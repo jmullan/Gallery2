@@ -1,6 +1,6 @@
- _                    _ _          _   _             
-| |    ___   ___ __ _| (_)______ _| |_(_) ___  _ __  
-| |   / _ \ / __/ _` | | |_  / _` | __| |/ _ \| '_ \ 
+ _                    _ _          _   _
+| |    ___   ___ __ _| (_)______ _| |_(_) ___  _ __
+| |   / _ \ / __/ _` | | |_  / _` | __| |/ _ \| '_ \
 | |__| (_) | (_| (_| | | |/ / (_| | |_| | (_) | | | |
 |_____\___/ \___\__,_|_|_/___\__,_|\__|_|\___/|_| |_|
 
@@ -86,7 +86,7 @@ Country codes:
 	(or http://www.iso.ch/iso/en/prods-services/iso3166ma/02iso-3166-code-lists/list-en1.html)
 
 Your code should be of the format xx_XX (eg, "en_US" for English/United States,
-or "el_GR" for Greek/Greece).  
+or "el_GR" for Greek/Greece).
 
 Once you've chosen the code, you need to create a new .po file for
 your code.  Let's assume that you chose "el_GR".  For each po directory,
@@ -107,7 +107,7 @@ the file, but you'll need to customize these values:
 
 	"Project-Id-Version: xxx \n"
 		-> Copy the project id from another .po file in the same directory
-	
+
 	"Last-Translator: \n"
 		-> Put your name and email here in the format:
 			"FirstName LastName <email@address>"
@@ -121,7 +121,7 @@ the file, but you'll need to customize these values:
 		   it allows us to render multiple languages on the
 		   same page which is nice for sites in one language
 		   that have user comments, etc in other languages.
-		
+
 	"Content-Transfer-Encoding: 8bit\n"
 		-> Replace the encoding as appropriate
 
@@ -142,7 +142,7 @@ Next, you'll see a series of blocks like this:
 	msgid "a message in english, with %d or %s tags in it"
 	msgstr ""
 
-You need to put the translation for the English message into the 
+You need to put the translation for the English message into the
 msgstr block, between the quotes, for example:
 
 	#, c-format
@@ -181,18 +181,19 @@ lot of output because it will compile all the .po files in the
 directory, so read the output carefully to see the relevant stuff from
 your new .po file.  Repeat this for every directory where you tweaked
 a .po file.  Finally, you need to edit
-modules/core/classes/GalleryTranslator.class and in the constructor,
-add lines like this:
+modules/core/classes/GalleryTranslator.class and in function
+getLanguageData(), add lines like this (if not already present):
 
-	$this->_supportedLanguages['el']['GR']['description'] = 'Greek';
-	$this->_supportedLanguages['el']['GR']['charset'] = 'UTF-8';
+	$supportedLanguages['el']['GR']['description'] = 'Greek';
+	$supportedLanguages['el']['GR']['charset'] = 'UTF-8';
 
  	   (but put in the appropriate charset if you didn't use UTF-8)
 
 Now, log onto G2 and in the User preferences (you may need to edit the
 user via the Site Administrator) you should see Greek appear in the
 dropdown, and if you select it and log on as that user you'll see your
-translated messages.
+translated messages.  In Site Admin / General you can also activate a
+language selector in the sidebar.
 
 4. SUBMITTING YOUR LOCALIZATION
 -------------------------------
@@ -253,7 +254,7 @@ The translation files get cached by PHP (which is why it's so fast)
 so you may not see change until you restart your web server.  That's
 annoying, but I haven't figured a good workaround for it yet.
 
-Test your changes (see the "Creating a New Localization") section for 
+Test your changes (see the "Creating a New Localization") section for
 testing info, and submit the new files to us.
 
 
@@ -268,7 +269,7 @@ places to go:
 	http://gallery.sourceforge.net/lists.php
 
    2.  The Gallery IRC channel
-		
+
         #gallery on irc.freenode.net
 
    3.  The Gallery 2 development forum:
