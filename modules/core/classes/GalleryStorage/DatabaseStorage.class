@@ -1210,7 +1210,7 @@ class DatabaseStorage extends GalleryStorage {
 	}
 
 	$query = 'UPDATE ' . $tableName . ' ';
-	$query .= 'SET ' . join(' AND ', $set) . ' ';
+	$query .= 'SET ' . join(', ', $set) . ' ';
 	$data = array_merge($data, $setdata);
 	
 	$query .= 'WHERE '  . join(' AND ', $where);
