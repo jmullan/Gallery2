@@ -68,8 +68,8 @@ class WebCamModule extends GalleryModule {
 	    /* Changed from GalleryLiveImage entity type to onLoadHandler */
 	    $storage =& $gallery->getStorage();
 	    $query = 'UPDATE [GalleryEntity]
-		SET [GalleryEntity::entityType] = \'GalleryPhotoItem\',
-		    [GalleryEntity::onLoadHandlers] = \'|WebCam|\'
+		SET [::entityType] = \'GalleryPhotoItem\',
+		    [::onLoadHandlers] = \'|WebCam|\'
 		WHERE [GalleryEntity::entityType] = \'GalleryLiveImage\'
 		  AND [GalleryEntity::onLoadHandlers] IS NULL';
 	    $ret = $storage->execute($query);
@@ -82,8 +82,8 @@ class WebCamModule extends GalleryModule {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    $query = 'UPDATE [GalleryEntity]
-		SET [GalleryEntity::entityType] = \'GalleryPhotoItem\',
-		    [GalleryEntity::onLoadHandlers] = ' . $handlers . '
+		SET [::entityType] = \'GalleryPhotoItem\',
+		    [::onLoadHandlers] = ' . $handlers . '
 		WHERE [GalleryEntity::entityType] = \'GalleryLiveImage\'
 		  AND [GalleryEntity::onLoadHandlers] IS NOT NULL';
 	    $ret = $storage->execute($query);

@@ -75,8 +75,8 @@ class RandomHighlightModule extends GalleryModule {
 	    /* Changed from RandomHighlightDerivativeImage entity type to onLoadHandler */
 	    $storage =& $gallery->getStorage();
 	    $query = 'UPDATE [GalleryEntity]
-		SET [GalleryEntity::entityType] = \'GalleryDerivativeImage\',
-		    [GalleryEntity::onLoadHandlers] = \'|RandomHighlight|\'
+		SET [::entityType] = \'GalleryDerivativeImage\',
+		    [::onLoadHandlers] = \'|RandomHighlight|\'
 		WHERE [GalleryEntity::entityType] = \'RandomHighlightDerivativeImage\'
 		  AND [GalleryEntity::onLoadHandlers] IS NULL';
 	    $ret = $storage->execute($query);
@@ -89,8 +89,8 @@ class RandomHighlightModule extends GalleryModule {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    $query = 'UPDATE [GalleryEntity]
-		SET [GalleryEntity::entityType] = \'GalleryDerivativeImage\',
-		    [GalleryEntity::onLoadHandlers] = ' . $handlers . '
+		SET [::entityType] = \'GalleryDerivativeImage\',
+		    [::onLoadHandlers] = ' . $handlers . '
 		WHERE [GalleryEntity::entityType] = \'RandomHighlightDerivativeImage\'
 		  AND [GalleryEntity::onLoadHandlers] IS NOT NULL';
 	    $ret = $storage->execute($query);
