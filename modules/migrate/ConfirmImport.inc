@@ -348,10 +348,20 @@ class ConfirmImportController extends GalleryController {
 				$newAlbumInstance->setSummary($this->convertHtmlToBbcode($album['summary']));
 				$newAlbumInstance->setKeywords('');
 				$newAlbumInstance->setDescription($this->convertHtmlToBbcode($album['description']));
+				// $newAlbumInstance->settheme
+				$newAlbumInstance->setcreationTimestamp($album['last_mod_time']);
+				$newAlbumInstance->setviewedSinceTimestamp($album['clicks_date']);
+				/* Save the new album */	    
+				$ret = $newAlbumInstance->save();
+				if ($ret->isError()) {
+				    return array($ret->wrap(__FILE__, __LINE__), null);
+				}
+
+
 				
 				// $newAlbumInstance->setorderBy
 				// $newAlbumInstance->setorderDirection
-				// print_r($album);
+
 				$ret = GalleryCoreApi::removeItemPermissions($newAlbumInstance->getId());
 				if ($ret->isError()) {
 				    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -379,7 +389,6 @@ class ConfirmImportController extends GalleryController {
 				    foreach($album['perms'] as $tmpperm => $tmpusers) {
 					foreach($permissionTranslation[$tmpperm] as $tmpTranslatedPerm) {
 					    foreach(array_keys($tmpusers) as $tmpuser) {
-						// print "<p>$desiredname : $tmpuser : $tmpperm  : $tmpTranslatedPerm</p>";
 						switch ($tmpuser) {
 						case 'everybody':
 						    if ($allUsersGroupId) {
@@ -406,7 +415,9 @@ class ConfirmImportController extends GalleryController {
 						    }
 						    break;
 						case 'Nobody':
-						    break;						    
+						    break;
+						case 'admin':
+						    break;
 						default:		    
 						    $validPermUID = Gallery1DataParser::isValidUid($albumsPath,$tmpuser);
 						    if ($validPermUID) {
@@ -471,15 +482,6 @@ class ConfirmImportController extends GalleryController {
 				}
 
 				
-				// $newAlbumInstance->settheme
-				$newAlbumInstance->setcreationTimestamp($album['last_mod_time']);
-				$newAlbumInstance->setviewedSinceTimestamp($album['clicks_date']);
-				/* Save the new album */	    
-				$ret = $newAlbumInstance->save();
-				if ($ret->isError()) {
-				    return array($ret->wrap(__FILE__, __LINE__), null);
-				}
-
 				/* Click counts must be set after the item is first saved */
 				$ret = GalleryCoreApi::setItemViewCount($newAlbumInstanceId, $album['clicks']);
 				if ($ret->isError()) {
@@ -687,97 +689,7 @@ class ConfirmImportController extends GalleryController {
 				    }
 				}
 								    
-
-				$ret = GalleryCoreApi::removeItemPermissions($newItem->getId());
-				if ($ret->isError()) {
-				    return array($ret->wrap(__FILE__, __LINE__), null);
-				}
-				if ($adminUsersGroupId) {
-				    $ret = GalleryCoreApi::addGroupPermission($newItem->getId(),
-									      $adminUsersGroupId,
-									      'core.all',
-									      FALSE
-									      );
-				    if ($ret->isError()) {
-					return array($ret->wrap(__FILE__, __LINE__), null);
-				    }
-				    $ret = GalleryCoreApi::addGroupPermission($newItem->getId(),
-									      $adminUsersGroupId,
-									      'comment.all',
-									      FALSE
-									      );
-				    if ($ret->isError()) {
-					return array($ret->wrap(__FILE__, __LINE__), null);
-				    }
-				}
-				if (isset($album['perms'])) {
-				    foreach($album['perms'] as $tmpperm => $tmpusers) {
-					foreach($permissionTranslation[$tmpperm] as $tmpTranslatedPerm) {
-					    foreach(array_keys($tmpusers) as $tmpuser) {
-						switch ($tmpuser) {
-						case 'everybody':
-						    list ($ret, $allUsersGroupId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.allUserGroup');
-						    if ($ret->isError()) {
-							return array($ret->wrap(__FILE__, __LINE__), null);
-						    }
-						    if ($allUsersGroupId) {
-							$ret = GalleryCoreApi::addGroupPermission($newItem->getId(),
-												     $allUsersGroupId,
-												     $tmpTranslatedPerm,
-												     FALSE
-												     );
-							if ($ret->isError()) {
-							    return array($ret->wrap(__FILE__, __LINE__), null);
-							}
-						    }
-						    break;
-						case 'Logged In':
-						    list ($ret, $everybodyGroupId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.everybodyGroup');
-						    if ($ret->isError()) {
-							return array($ret->wrap(__FILE__, __LINE__), null);
-						    }
-						    if ($everybodyGroupId) {
-							$ret = GalleryCoreApi::addGroupPermission($newItem->getId(),
-												     $everybodyGroupId,
-												     $tmpTranslatedPerm,
-												     FALSE
-												     );
-							if ($ret->isError()) {
-							    return array($ret->wrap(__FILE__, __LINE__), null);
-							}
-						    }
-						    break;
-						case 'Nobody':
-						    break;
-						default:		    
-						    $validPermUID = Gallery1DataParser::isValidUid($albumsPath,$tmpuser);
-						    if ($validPermUID) {
-							list($ret, $permsUserFields) = Gallery1DataParser::getUserFieldsByUid($albumsPath, $tmpuser);
-							if ($ret->isError()) {
-							    return array($ret->wrap(__FILE__, __LINE__), null);
-							}
-							$permUsername = $permsUserFields['username'];
-							list($ret, $permUser) = GalleryCoreApi::fetchUserByUsername($permUsername);
-							if ($ret->isError() && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
-							    return array($ret->wrap(__FILE__, __LINE__), null);
-							}
-							if ($permUser) {
-							    $ret = GalleryCoreApi::addUserPermission($newItem->getId(),
-												     $permUser->getId(),
-												     $tmpTranslatedPerm,
-												     FALSE
-												 );
-							    if ($ret->isError()) {
-								return array($ret->wrap(__FILE__, __LINE__), null);
-							    }
-							}
-						    }
-						}
-					    }
-					}
-				    }
-				}
-
+				/*
 				$validUID = Gallery1DataParser::isValidUid($albumsPath,$album['owner']);
 				if ($validUID) {
 				    list($ret, $albumUserFields) = Gallery1DataParser::getUserFieldsByUid($albumsPath, $album['owner']);
@@ -792,6 +704,7 @@ class ConfirmImportController extends GalleryController {
 					$newItem->setownerId($owner->getId());
 				    }
 				}
+				*/
 				if (isset($importAlbumItem->hidden) && $importAlbumItem->hidden) {
 				    /* delete group perm actions */
 				    $allPerms = array('core.view','core.viewSource','core.viewResizes');
