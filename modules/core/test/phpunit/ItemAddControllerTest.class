@@ -1,0 +1,165 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * ItemAdd controller tests
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class ItemAddControllerTest extends GalleryControllerTestCase {
+
+    function ItemAddControllerTest($methodName) {
+	$this->GalleryControllerTestCase($methodName, 'core:ItemAdd');
+    }
+
+    function setUp() {
+	global $gallery;
+
+	parent::setUp();
+
+	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	GalleryCoreApi::registerFactoryImplementation('ItemAddPlugin',
+						      'ItemAddControllerTestPluginSuccess',
+						      'ItemAddControllerTestPluginSuccess',
+						      __FILE__);
+
+	GalleryCoreApi::registerFactoryImplementation('ItemAddPlugin',
+						      'ItemAddControllerTestPluginContinue',
+						      'ItemAddControllerTestPluginContinue',
+						      __FILE__);
+
+	GalleryCoreApi::registerFactoryImplementation('ItemAddPlugin',
+						      'ItemAddControllerTestPluginFail',
+						      'ItemAddControllerTestPluginFail',
+						      __FILE__);
+    }
+
+    function tearDown() {
+	global $gallery;
+
+	$ret = GalleryCoreApi::deleteEntityById($this->_album->getId());
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	GalleryCoreApi::unregisterFactoryImplementation('ItemAddPlugin', 'ItemAddControllerTestPluginSuccess');
+	GalleryCoreApi::unregisterFactoryImplementation('ItemAddPlugin', 'ItemAddControllerTestPluginFail');
+	
+	parent::tearDown();
+    }
+
+    function testHandleRequestContinueAdding() {
+	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
+	GalleryUtilities::putRequestVariable('addPlugin', 'ItemAddControllerTestPluginContinue');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemAdd',
+						      'addPlugin' => 'ItemAddControllerTestPluginContinue'),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
+    }
+
+    function testHandleRequestDoneAdding() {
+	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
+	GalleryUtilities::putRequestVariable('addPlugin', 'ItemAddControllerTestPluginSuccess');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemAddConfirmation',
+						      'itemId' => $this->_album->getId()),
+				  'status' => array('addedFiles' => array(array('fileName' => 'foo', 'id' => 1))),
+				  'error' => array()),
+			    $results);
+    }
+
+    function testHandleRequestWithErrors() {
+	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
+	GalleryUtilities::putRequestVariable('addPlugin', 'ItemAddControllerTestPluginFail');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemAdd',
+						      'addPlugin' => 'ItemAddControllerTestPluginFail'),
+				  'status' => array(),
+				  'error' => array('failed')),
+			    $results);
+    }
+}
+
+/**
+ * ItemAddPlugin that doesn't fail, nor complete
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class ItemAddControllerTestPluginContinue {
+    function handleRequest($form, &$item) {
+	if (!GalleryUtilities::isExactlyA($item, 'GalleryAlbumItem')) {
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null, null);
+	}
+	
+	return array(GalleryStatus::success(), array(), array());
+    }
+}
+
+/**
+ * ItemAddPlugin that always completes 
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class ItemAddControllerTestPluginSuccess {
+    function handleRequest($form, &$item) {
+	if (!GalleryUtilities::isExactlyA($item, 'GalleryAlbumItem')) {
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null, null);
+	}
+	
+	return array(GalleryStatus::success(),
+		     array(),
+		     array('addedFiles' => array(array('fileName' => 'foo', 'id' => 1))));
+    }
+}
+
+/**
+ * ItemAddPlugin that always fails
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class ItemAddControllerTestPluginFail {
+    function handleRequest($form, &$item) {
+	if (!GalleryUtilities::isExactlyA($item, 'GalleryAlbumItem')) {
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null, null);
+	}
+	return array(GalleryStatus::success(), array('failed'), array());
+    }
+}
+?>

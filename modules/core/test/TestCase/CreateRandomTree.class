@@ -1,0 +1,210 @@
+<?php
+
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage TestCase
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * @package GalleryCore
+ * @subpackage TestCase
+ */
+class CreateRandomTreeTestCase extends TestCase {
+
+    var $_maxItems;
+    var $_itemCount = 0;
+    var $_imagePath;
+
+
+    function getIterations() {
+	return array(1, 5, 50, 500, 1000, 10000, 100000);
+    }
+
+    function getDescription() {
+	return 'Create a random album tree containing X items';
+    }
+
+    function testStart($iterations) {
+	global $gallery;
+
+	list ($ret, $rootId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	$lockIds = array();
+
+	foreach (array('test1.jpg',
+		       'test1.gif',
+		       'test2.gif',
+		       'test3.gif',
+		       'test4.gif') as $imageName) {
+	    $this->_imagePath[] = dirname(dirname(__FILE__)) . '/data/' . $imageName;
+	}
+	$this->_maxItems = $iterations;
+
+	list($ret, $lockIds[]) = GalleryCoreApi::acquireReadLock($rootId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	while ($this->_itemCount < $this->_maxItems) {
+	    $ret = $this->_createRandomAlbum($rootId, $lockIds);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	/* Release our locks */
+	$ret = GalleryCoreApi::releaseLocks($lockIds);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+
+    function _randomName() {
+	return "foo_" . $this->_itemCount . "_" . rand(1000,5000);
+    }
+
+    function _createRandomAlbum($parentId, &$lockIds) {
+	global $gallery;
+
+	if ($gallery->getDebug()) {
+	    $gallery->debug("<h3> Create random album </h3>");
+	}
+	$gallery->guaranteeTimeLimit(10);
+	
+	if ($this->_itemCount >= $this->_maxItems) {
+	    return GalleryStatus::success();
+	}
+
+	/* Create a random album */
+	list ($ret, $album) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryAlbumItem');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	if (!isset($album)) {
+	    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
+	}  
+	
+	$ret = $album->create($parentId, $this->_randomName());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$album->setTitle($this->_randomWords(rand(2, 4)));
+	$album->setSummary($this->_randomWords(rand(4, 20)));
+	$album->setDescription($this->_randomWords(rand(20, 50)));
+
+	/* Save the album */
+	$ret = $album->save();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Create some derivative preferences */
+	$ret = GalleryCoreApi::removeDerivativePreferencesForItem($album->getId());
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+	
+	$ret = GalleryCoreApi::addDerivativePreference(0, $album->getId(),
+						       DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
+						       'thumbnail|' . rand(200,300));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+	
+	for ($i = 0; $i < rand(2, 4); $i++) {
+	    $ret = GalleryCoreApi::addDerivativePreference(0, $album->getId(),
+							   DERIVATIVE_TYPE_IMAGE_RESIZE,
+							   'scale|' . rand(300,700));
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+	}
+
+	/* Read lock it */
+	list($ret, $lockIds[]) = GalleryCoreApi::acquireReadLock($album->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Create 1-50 random items inside it */
+	$rand1 = rand(1, 50);
+	if ($gallery->getDebug()) {
+	    $gallery->debug("<h3> Create $rand1 items </h3>");
+	}
+	
+	for ($i = 0; $i < $rand1; $i++) {
+	    $this->_itemCount++;
+	    if ($gallery->getDebug()) {
+		$gallery->debug("<h4>$this->_itemCount, $this->_maxItems</h4>");
+	    }
+	    
+	    $gallery->guaranteeTimeLimit(10);
+
+	    $imageFile = $this->_imagePath[rand(0, sizeof($this->_imagePath)-1)];
+	    list ($ret, $item) = GalleryCoreApi::addItemToAlbum($imageFile,
+								$this->_randomName(),
+								$this->_randomWords(rand(2, 4)), // title
+								$this->_randomWords(rand(4, 20)), // summary
+								$this->_randomWords(rand(50, 100)), // description
+								GalleryUtilities::getMimeType($imageFile),
+								$album->getId());
+
+	    /* 1-3 random comments */
+	    $rand3 = rand(1, 3);
+	    for ($j = 0; $j < $rand3; $j++) {
+		list ($ret, $comment) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryComment');
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+		
+		if (!isset($comment)) {
+		    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
+		}
+		
+		$comment->create($item->getId());
+		$comment->setCommenterId($gallery->getActiveUserId());
+		$comment->setHost('127.0.0.1');
+		$comment->setComment($this->_randomWords(rand(10,100)));
+		$comment->setDate(time());
+		$ret = $comment->save();
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+
+	    if ($this->_itemCount >= $this->_maxItems) {
+		break;
+	    }
+	}
+
+	/* 1-in-3 chance of having sub-albums */
+	if (rand(1, 3) == 1) {
+
+	    /* Create 1-3 sub-albums */
+	    $rand4 = rand(1, 3);
+	    if ($gallery->getDebug()) {
+		$gallery->debug("<h3> Create $rand4 sub-albums </h3>");
+	    }
+	    for ($i = 0; $i < $rand4; $i++) {
+		$ret = $this->_createRandomAlbum($album->getId(), $lockIds);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+	    
+	}
+
+	return GalleryStatus::success();
+    }
+}
+
+?>
+

@@ -1,0 +1,35 @@
+<?php
+
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage TestCase
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * @package GalleryCore
+ * @subpackage TestCase
+ */
+class ResetGalleryTestCase extends TestCase {
+
+    function getDescription() {
+	return 'Reset Gallery to the point right after setup.php';
+    }
+
+    function getDependencies() {
+	global $gallery;
+	
+	$dependencies = array(array('moduleId' => 'core', 'testName' => 'EmptyGallery'),
+			      array('moduleId' => 'core', 'testName' => 'CleanStore'),
+			      );
+
+	return $dependencies;
+    }
+
+    function testStart() {
+	return GalleryStatus::success();
+    }
+}
+
+?>

@@ -1,0 +1,165 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * A factory for creating all different kinds of objects
+ *
+ * @package GalleryCore
+ * @subpackage Helpers
+ * @abstract
+ */
+class GalleryFactoryHelper_simple {
+
+    /**
+     * Get the static factory registry
+     *
+     * @return array
+     * @access private
+     * @staticvar array $registry The only factory registry we will need
+     * @static
+     */
+    function &_getFactoryData() {
+	static $registry = array();
+	return $registry;
+    }
+
+    /**
+     * Register a new implementation with the factory
+     *
+     * @param string the class type (eg. 'GalleryGraphics')
+     * @param string the class name (eg. 'NetPbmGraphics')
+     * @param string an id (eg. 'NetPBM')
+     * @param string the file name (eg. '.../classes/NetPbmGraphics.class')
+     * @param array optional hints that can be used to locate this
+     *              implementation (eg. array('image/jpeg', 'image/gif'))
+     * @static
+     */
+    function registerImplementation($classType, $className, $id, $fileName, $hints=array()) {
+	$registry =& GalleryFactoryHelper_simple::_getFactoryData();
+	$className = strtolower($className);
+	$registry['implementations'][$classType][$className] = $fileName;
+	$registry['ids'][$classType][$id] = $className;
+	foreach ($hints as $hint) {
+	    $registry['hints'][$classType][strtolower($hint)][$className] = 1;
+	}
+    }
+
+    /**
+     * Create a new instance of the given type based on the hint(s) provided
+     *
+     * @param string the class type (eg. 'GalleryGraphics')
+     * @param array of hints to try (in order) or string, a single hint (eg. 'image/jpeg')
+     * @return array object GalleryStatus a status code,
+     *               object an instance
+     * @static
+     */
+    function newInstanceByHint($classType, $hints) {
+	$registry =& GalleryFactoryHelper_simple::_getFactoryData();
+	if (!is_array($hints)) {
+	    $hints = array($hints);
+	}
+	$hints[] = '*';
+
+	foreach ($hints as $hint) {
+	    $hint = strtolower($hint);
+	    if (!empty($registry['hints'][$classType][$hint])) {
+		$classNames = array_keys($registry['hints'][$classType][$hint]);
+		break;
+	    }
+	}
+	if (!isset($classNames)) {
+	    return array(GalleryStatus::success(), null);
+	}
+
+	/* Right now we just use the first available hint */
+	$className = $classNames[0];
+	list ($ret, $instance) = GalleryFactoryHelper_simple::newInstance($classType, $className);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	return array(GalleryStatus::success(), $instance);
+    }
+
+    /**
+     * Create a new instance of the given type
+     *
+     * @param string the class type (eg. 'GalleryGraphics')
+     * @param string the class name (eg. 'NetPbmGraphics')
+     * @static
+     */
+    function newInstance($classType, $className=null) {
+	global $gallery;
+
+	$registry =& GalleryFactoryHelper_simple::_getFactoryData();
+	if (!isset($className)) {
+	    if (empty($registry['implementations'][$classType])) {
+		if ($gallery->getDebug()) {
+		    $gallery->debug("Unimplemented: $classType");
+		}
+		return array(GalleryStatus::success(), null);
+	    }
+	    $classNames = array_keys($registry['implementations'][$classType]);
+	    $className = $classNames[0];
+	}
+	$className = strtolower($className);
+	if (!class_exists($className)) {
+	    if (empty($registry['implementations'][$classType][$className])) {
+		if ($gallery->getDebug()) {
+		    $gallery->debug("Unimplemented: $classType, $className");
+		}
+		return array(GalleryStatus::success(), null);
+	    }
+	    
+	    $fileName = $registry['implementations'][$classType][$className];
+
+	    /*
+	     * Make sure the file exists, unless of course we're actually
+	     * loading the platform class.
+	     */
+	    if ($classType != 'GalleryPlatform') {
+		$platform = $gallery->getPlatform();
+		if (!$platform->file_exists($fileName)) {
+		    return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__),
+				 null);
+		    
+		}
+	    }
+	    
+	    require_once($fileName);
+
+	    if (!class_exists($className)) {
+		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+						  "Missing class: $className"),
+			     null);
+	    }
+	}
+
+	return array(GalleryStatus::success(), new $className);
+    }
+}
+?>

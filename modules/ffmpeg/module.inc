@@ -1,0 +1,301 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package Ffmpeg
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * Ffmpeg Graphics Module
+ *
+ * This module provides the Ffmpeg graphics toolkit for Gallery
+ *
+ * @package Ffmpeg
+ */
+class FfmpegModule extends GalleryModule {
+
+    function FfmpegModule() {
+	global $gallery;
+	
+	$this->setId('ffmpeg');
+	$this->setName($gallery->i18n('Ffmpeg'));
+	$this->setDescription($gallery->i18n('A toolkit for processing movies'));
+	$this->setVersion('0.8');
+    }
+
+    /**
+     * @see GalleryModule::init()
+     */
+    function init() {
+	global $gallery;
+	
+	$ret = parent::init();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	$classDir = dirname(__FILE__) . '/classes/';
+
+	/* Register our graphics class with the factory */
+	GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
+						      'FfmpegToolkit',
+						      'Ffmpeg',
+						      $classDir . 'FfmpegToolkit.class');
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * @see GalleryModule::install()
+     */
+    function install() {
+	list ($ret, $version) = $this->getModuleParameter('version');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), false);
+	}
+
+	$installed = false;
+	if ($version != $this->getVersion()) {
+	    if (empty($version)) {
+		/*
+		 * This is an initial install. Make sure that we have some
+		 * reasonable defaults.
+		 */
+		foreach (array('path' => '') as $key => $value) {
+		    $ret = $this->setModuleParameter($key, $value);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), false);
+		    }
+		}
+		$installed = true;
+	    }
+		
+	    $ret = $this->setModuleParameter('version', $this->getVersion());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), false);
+	    }
+	}
+	
+	return array(GalleryStatus::success(), $installed);
+    }
+
+    /**
+     * @see GalleryModule::canBeAutoInstalled
+     */
+    function canBeAutoInstalled() {
+	return true;
+    }
+	
+    /**
+     * @see GalleryModule::autoConfigure
+     */
+    function autoConfigure() {
+	/* We don't require any special configuration */
+	global $gallery;
+	
+	list ($ret, $needsConfiguration) = $this->needsConfiguration();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), false);
+	}
+
+	if (!$needsConfiguration) {
+	    return array(GalleryStatus::success(), true);
+	}
+
+	/* Try a bunch of likely seeming paths to see if any of them work. */
+	$platform = $gallery->getPlatform();
+	$slash = $platform->getDirectorySeparator();
+
+	/*
+	 * Start with system paths.  Tack on a trailing slash if necessary,
+	 * then tack on other likely paths, based on our OS.
+	 */
+	$paths = array();
+	if (GalleryUtilities::isA($platform, 'WinNtPlatform')) {
+	    foreach (explode(';', getenv('PATH')) as $path) {
+		$path = trim($path);
+		if ($path{strlen($path)-1} != $slash) {
+		    $path .= $slash;
+		}
+		$paths[] = $path . 'ffmpeg.exe';
+	    }
+	    
+	    $paths[] = 'C:\apps\ffmpeg\ffmpeg.exe';
+	    $paths[] = 'C:\ffmpeg\ffmpeg.exe';
+	} else if (GalleryUtilities::isA($platform, 'UnixPlatform')){
+	    foreach (explode(':', getenv('PATH')) as $path) {
+		$path = trim($path);
+		if ($path{strlen($path)-1} != $slash) {
+		    $path .= $slash;
+		}
+		$paths[] = $path . 'ffmpeg';
+	    }
+	    
+	    $paths[] = '/usr/bin/ffmpeg';
+	    $paths[] = '/usr/local/bin/ffmpeg';
+	    $paths[] = '/bin/ffmpeg';
+	} else {
+	    return array(GalleryStatus::success(), false);
+	}
+
+	/* Load any classes we require */
+	require_once(dirname(__FILE__) . '/classes/FfmpegToolkitHelper.class');
+
+	/* Now try each path in turn to see which ones work */
+	foreach ($paths as $path) {
+	    list ($ret, $testResults) = FfmpegToolkitHelper::testBinary($path);
+	    if ($ret->isError()) {
+		/* Something went wrong with this path -- try the next path */
+		continue;
+	    }
+	    
+	    $failCount = 0;
+	    foreach ($testResults as $testResult) {
+		/* At least one test should work, else this path is not a valid one */
+		if (!$testResult['success']) {
+		    $failCount++;
+		}
+	    }
+			
+	    if ($failCount == 0) {
+		/* We have a winner */
+		$ret = GalleryCoreApi::setPluginParameter('module', 'ffmpeg', 'path', $path);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), false);
+		}
+
+		return array(GalleryStatus::success(), true);
+	    }
+	}
+
+	return array(GalleryStatus::success(), false);
+    }
+	
+    /**
+     * @see GalleryModule::activate()
+     */
+    function activate() {
+	global $gallery;
+	
+	$ret = parent::activate();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Load any classes we require */
+	require_once(dirname(__FILE__) . '/classes/FfmpegToolkitHelper.class');
+
+	/* Find out what operations and properties we have available to us */
+	list ($ret, $results) =
+	    FfmpegToolkitHelper::getOperationsAndProperties();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	foreach ($results['operations'] as $operation => $info) {
+	    $ret = GalleryCoreApi::registerToolkitOperation('Ffmpeg',
+							   $info['mimeTypes'],
+							   $operation,
+							   $info['params'],
+							   $info['description'],
+							   $info['outputMimeType']);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	foreach ($results['properties'] as $property => $info) {
+	    $ret = GalleryCoreApi::registerToolkitProperty('Ffmpeg',
+							  $info['mimeTypes'],
+							  $property,
+							  $info['type'],
+							  $info['description']);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+	
+	return GalleryStatus::success();
+    }
+	
+    /**
+     * @see GalleryModule::deactivate()
+     */
+    function deactivate() {
+	global $gallery;
+
+	list ($ret, $redirect) = parent::deactivate();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Unregister all of our properties and operations */
+	$ret = GalleryCoreApi::unregisterToolkit('Ffmpeg');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return array(GalleryStatus::success(), $redirect);
+    }
+	
+    /**
+     * @see GalleryModule::needsConfiguration()
+     */
+    function needsConfiguration() {
+	global $gallery;
+
+	/*
+	 * This module requires all fields to be filled out before it can be
+	 * activated. 
+	 */
+	foreach (array('path') as $key) {
+	    list ($ret, $value) = $this->getModuleParameter($key);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    if (empty($value)) {
+		return array(GalleryStatus::success(), true);
+	    }
+	}
+
+	return array(GalleryStatus::success(), false);
+    }
+    
+    /**
+     * @see GalleryModule::getSiteAdminViews()
+     */
+    function getSiteAdminViews() {
+	return array(GalleryStatus::success(),
+		     array(array('name' => $this->translate('Ffmpeg'),
+				 'view' => 'ffmpeg:AdminFfmpeg')));
+    }
+
+    /**
+     * @see GalleryModule::getConfigurationView()
+     */
+    function getConfigurationView() {
+	return array(GalleryStatus::success(), 'ffmpeg:AdminFfmpeg');
+    }
+}
+?>

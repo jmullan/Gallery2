@@ -1,0 +1,432 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * Module meta-info container
+ *
+ * This is a container for information about a given module.
+ *
+ * @package GalleryCore
+ * @subpackage Classes
+ */
+class GalleryModule {
+
+    /*
+     * ****************************************
+     *                 Members
+     * ****************************************
+     */
+
+    /**
+     * The id of this module
+     * 
+     * @var string _name
+     * @access private
+     */
+    var $_id;
+
+    /**
+     * The name of this module
+     * 
+     * @var string _name
+     * @access private
+     */
+    var $_name;
+
+    /**
+     * The description of this module
+     * 
+     * @var string _description
+     * @access private
+     */
+    var $_description;
+
+    /**
+     * The version of this module
+     * 
+     * @var string _version
+     * @access private
+     */
+    var $_version;
+
+    /*
+     * ****************************************
+     *                 Methods
+     * ****************************************
+     */
+
+    /**
+     * Localize the given content
+     *
+     * @see Gallery::translate()
+     *
+     * @param mixed a single string, or an array of parameters
+     * @return string the localized value
+     */
+    function translate($params) {
+	global $gallery;
+	
+	if (!is_array($params)) {
+	    $params = array('text' => $params);
+	}
+
+	$translator =& $gallery->getTranslator();
+	list ($ret, $content) =
+	    $translator->translateDomain('modules_' . $this->getId(), $params);
+	if ($ret->isError()) {
+	    if ($gallery->getDebug()) {
+		$gallery->debug($ret->getAsHtml());
+	    }
+	    return 'Translation error';
+	} else {
+	    return $content;
+	}
+    }
+
+    /**
+     * Do any initialization required for this module to run.  The init method
+     * is called on every active module on every request.  You should not do
+     * anything heavy in this method if you can avoid it.  Typically you would
+     * register any GalleryFactory implementations at this time.
+     *
+     * @return object GalleryStatus a status code
+     */
+    function init() {
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Perform any install/upgrade tasks required at this point.  This method
+     * is called if the module version in the module.inc does not match the
+     * version number in the database.  If this method completes successfully,
+     * it should have set its version number in the database appropriately so
+     * that it will not be called again.  Typically a module will call upon the
+     * storage system to load any new tables or alter existing ones, upgrade
+     * any module parameters, and register any new permissions.
+     *
+     * @return object GalleryStatus a status code
+     */
+    function install() {
+	return array(GalleryStatus::success(), false);
+    }
+
+    /**
+     * Activate this module
+     *
+     * @return object GalleryStatus a status code
+     */
+    function activate() {
+	global $gallery;
+
+	/*
+	 * Make sure that we don't need configuration before we allow
+	 * activation.
+	 */
+	list ($ret, $needs) = $this->needsConfiguration();
+        if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	if ($needs) {
+	    return GalleryStatus::error(ERROR_CONFIGURATION_REQUIRED, __FILE__, __LINE__);
+	} else {
+	    $ret = GalleryCoreApi::activatePlugin('module', $this->getId());
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    return GalleryStatus::success();
+	}
+    }
+
+    /**
+     * Deactivate this module
+     *
+     * @return array object GalleryStatus a status code
+     *               array redirect info for error page (empty for success)
+     */
+    function deactivate() {
+	$ret = GalleryCoreApi::deactivatePlugin('module', $this->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return array(GalleryStatus::success(), array());
+    }
+
+    /**
+     * Is this module active?
+     *
+     * @return array object GalleryStatus a status code
+     *               boolean true if active
+     */
+    function isActive() {
+	global $gallery;
+
+	list($ret, $moduleStatus) = GalleryCoreApi::getPluginStatus('module');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if (empty($moduleStatus[$this->getId()])) {
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+					      sprintf("No such module: %s", $this->getId())),
+			 null);
+	}
+
+	return array(GalleryStatus::success(),
+		     empty($moduleStatus[$this->getId()]['active']) ? false : true);
+    }
+
+    /**
+     * Does this module require configuration before it can be activated?
+     *
+     * @return array object GalleryStatus a status code
+     *               boolean
+     */
+    function needsConfiguration() {
+	global $gallery;
+	
+	return array(GalleryStatus::success(), false);
+    }
+
+    /**
+     * Can this module be installed automatically if possible?  Default is false
+     * which is a security measure.  Only activate modules that by default do not
+     * expose any sensitive data.  For example, the debug module shouldn't be auto
+     * installed cause it can show filesystem paths.  
+     *
+     */
+    function canBeAutoInstalled() {
+	return false;
+    }
+    
+    /**
+     * Allow this module to autoconfigure itself.  It should only autoconfigure if it is
+     * marked as needing configuration (see GalleryModule::needsConfiguration) and it should
+     * do its best to choose a reasonable configuration.  Return true upon success,
+     * even if nothing has to be done to get a successful configuration.  This method
+     * should accept all the module's defaults wherever possible.
+     *
+     * @return array object GalleryStatus a status code
+     *               boolean
+     */
+    function autoConfigure() {
+	/* By default we can't auto configure */
+	return array(GalleryStatus::success(), false);
+    }
+    
+    /**
+     * Get the name of the GalleryView containing the various site
+     * administration views for this module.  Note that the text value is
+     * localized since it will be displayed directly to the user.
+     *
+     * @return array object GalleryStatus a status code
+     *               array( array('name' => name, 'view' => view), ...)
+     */
+    function getSiteAdminViews() {
+	return array(GalleryStatus::success(), array());
+    }
+
+    /**
+     * Get the list of GalleryViews containing the various item
+     * administration views for this module.  The module should check
+     * permissions and item type to determine which views are applicable for
+     * the authenticated user.  As with getSiteAdminViews(), the view title
+     * text must be localized.
+     *
+     * @param object GalleryItem an item
+     * @return array object GalleryStatus a status code
+     *               array( array('name' => name, 'view' => view), ...)
+     */
+    function getItemAdminViews($item) {
+	return array(GalleryStatus::success(), array());
+    }
+
+    /**
+     * Get the list of GalleryViews containing the various user administration
+     * views for this module.  The module should check permissions and item
+     * type to determine which views are applicable for the authenticated user.
+     * As with getSiteAdminViews(), the view title text must be localized.
+     *
+     * @param object GalleryUser a user
+     * @return array object GalleryStatus a status code
+     *               array( array('name' => name, 'view' => view), ...)
+     */
+    function getUserAdminViews($user) {
+	return array(GalleryStatus::success(), array());
+    }
+
+    /**
+     * Get the name of the GalleryView containing the administration view
+     * specifically for configuring this module.  It may be one that is also
+     * listed in getSiteAdminViews().  As with getSiteAdminViews(), the view
+     * title text must be localized.
+     *
+     * @param the type of view requested
+     * @return array object GalleryStatus a status code
+     *               string view name
+     */
+    function getConfigurationView() {
+	return array(GalleryStatus::success(), null);
+    }
+
+    /**
+     * Return 0 or more system-specific links to an arbitrary module view.  Get
+     * the name of the GalleryView containing the administration view
+     * specifically for configuring this module.  It may be one that is also
+     * listed in getSiteAdminViews().  As with getSiteAdminViews(), the view
+     * title text must be localized.
+     *
+     * @return array object GalleryStatus a status code
+     *               array(array('text' => 'localized text',
+     *                           'params' => array(key => value, key => value))
+     *                     ...)
+     */
+    function getSystemLinks() {
+	return array(GalleryStatus::success(), array());
+    }
+    
+    /**
+     * Return system level content.  This is similar to system links, but it's
+     * actually HTML content and not a link to a view.  It must be localized
+     * since it will be displayed directly to the user.  This is useful for
+     * things like the search module that want to embed a search box on every
+     * page.
+     *
+     * @param object GalleryTemplate a template
+     * @return array object GalleryStatus a status code
+     *               string template file path
+     */
+    function loadSystemContent(&$template) {
+	return array(GalleryStatus::success(), null);
+    }
+
+    /**
+     * Return 0 or more item-specific links to an arbitrary module view.
+     * These are links to item specific module views.  For example, the
+     * comments module uses this to link to the "add comments" view.
+     *
+     * @param array object GalleryItem 
+     * @return array object GalleryStatus a status code
+     *               array(itemId => array(array('text' => 'localized text',
+     *                                           'params' => array(key => value, key => value))
+     *                                     ...))
+     */
+    function getItemLinks($items) {
+	return array(GalleryStatus::success(), array());
+    }
+
+    /**
+     * Return module-specific summary content about the item
+     *
+     * @param array object GalleryItem 
+     * @return array object GalleryStatus a status code
+     *               string HTML content
+     */
+    function getItemSummaries($items) {
+	return array(GalleryStatus::success(), array());
+    }
+
+    /**
+     * Return module-specific details content about the item This is localized
+     * content specific to a given item.  You can use this to return in-depth
+     * item content.  In theory it should be more detailed than the item
+     * summaries.
+     *
+     * @param object GalleryTemplate a template
+     * @param object GalleryItem 
+     * @return array object GalleryStatus a status code
+     *               string path to template file to include 
+     */
+    function loadItemDetails(&$template, $item) {
+	return array(GalleryStatus::success(), null);
+    }
+
+    /**
+     * @see Gallery::getModuleParameter()
+     */
+    function getModuleParameter($parameterName) {
+	global $gallery;
+	list ($ret, $value) =
+	    GalleryCoreApi::getPluginParameter('module', $this->getId(), $parameterName);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	return array(GalleryStatus::success(), $value);
+    }
+    
+    /**
+     * @see Gallery::setModuleParameter()
+     */
+    function setModuleParameter($parameterName, $parameterValue) {
+	global $gallery;
+	$ret = GalleryCoreApi::setPluginParameter('module', $this->getId(),
+					    $parameterName, $parameterValue);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /* Getters and setters below */
+
+    function setId($id) {
+	$this->_id = $id;
+    }
+
+    function getId() {
+	return $this->_id;
+    }
+    
+    function setName($name) {
+	$this->_name = $name;
+    }
+
+    function getName() {
+	return $this->_name;
+    }
+    
+    function setDescription($description) {
+	$this->_description = $description;
+    }
+
+    function getDescription() {
+	return $this->_description;
+    }
+
+    function setVersion($version) {
+	$this->_version = $version;
+    }
+
+    function getVersion() {
+	return $this->_version;
+    }
+}
+?>

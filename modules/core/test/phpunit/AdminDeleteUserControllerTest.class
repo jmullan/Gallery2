@@ -1,0 +1,149 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * AdminDeleteUser controller tests
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
+
+    function AdminDeleteUserControllerTest($methodName) {
+	$this->GalleryControllerTestCase($methodName, 'core:AdminDeleteUser');
+    }
+
+    function testCancel() {
+	GalleryUtilities::putRequestVariable('form[action][cancel]', 1);
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminUsers'),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
+    }
+
+    /**
+     * Create and delete a user
+     */
+    function testDeleteUser() {
+
+	/* Create a user that we can delete */
+	list ($ret, $user) = $this->_createUser();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	GalleryUtilities::putRequestVariable('userId', $user->getId());
+	GalleryUtilities::putRequestVariable('form[action][delete]', 1);
+	
+	$results = $this->handleRequest();
+	
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminUsers'),
+				  'status' => array('deletedUser' => $user->getUserName()),
+				  'error' => array()),
+			    $results,
+			    'Failed to create user');
+
+	/* Clean up */
+	$this->_deleteUser($user);
+    }
+
+    /**
+     * Try to delete the active user (this will fail silently)
+     */
+    function testDeleteActiveUser() {
+	global $gallery;
+
+	GalleryUtilities::putRequestVariable('userId', $gallery->getActiveUserId());
+	GalleryUtilities::putRequestVariable('form[action][delete]', 1);
+	
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminDeleteUser'),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
+    }
+
+    /**
+     * Try to delete the anonymous user (this will fail silently)
+     */
+    function testDeleteAnonymousUser() {
+	global $gallery;
+
+	list ($ret, $anonymousUserId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	GalleryUtilities::putRequestVariable('userId', $anonymousUserId);
+	GalleryUtilities::putRequestVariable('form[action][delete]', 1);
+	
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminDeleteUser'),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
+    }
+
+    function _createUser() {
+	global $gallery;
+	
+	list ($ret, $user) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryUser');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
+	if (!isset($user)) {
+	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
+			 null);
+	}
+	
+	$ret = $user->create('testuser-'.rand());
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$ret = $user->save();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	return array(GalleryStatus::success(), $user);
+    }
+
+    function _deleteUser($user) {
+	global $gallery;
+	$ret = GalleryCoreApi::deleteEntityById($user->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+}
+?>

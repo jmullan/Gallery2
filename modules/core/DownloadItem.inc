@@ -1,0 +1,250 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage UserInterface
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * Provides downloading of binary items
+ *
+ * @package GalleryCore
+ * @subpackage UserInterface
+ *
+ */
+class DownloadItemView extends GalleryView {
+
+    /**
+     * @see GalleryView::isImmediate
+     */
+    function isImmediate() {
+	return true;
+    }
+
+    /**
+     * @see GalleryView::renderImmediate
+     */
+    function renderImmediate($status, $error) {
+	global $gallery;
+
+	/*
+	 * If the browser passes us a request with an 'If-Modified-Since' header, then its already got a
+	 * cached copy of this file.  And since our links always include a serial number, and any change
+	 * triggers a serial number change, this means that its cache is always up to date.  We don't even
+	 * need to check the modification date.  
+	 */
+	if (function_exists('getallheaders')) {
+	    $headers = GetAllHeaders();
+	    if (isset($headers['If-Modified-Since'])) {
+		header('HTTP/1.x 304 Not Modified');
+		return GalleryStatus::success();
+	    }
+	}
+	
+	/* Figure out which item we're talking about */
+	$itemId = GalleryUtilities::getRequestVariables('itemId');
+	if (empty($itemId)) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	}
+
+	/* Load the item */
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+        /* Figure out the filename */
+        list ($ret, $pseudoFileName) = $this->getPseudoFileName($item);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Figure out what permission we need to view this item */
+	if (GalleryUtilities::isA($item, 'GalleryDerivative')) {
+	    switch($item->getDerivativeType()) {
+	    case DERIVATIVE_TYPE_IMAGE_THUMBNAIL:
+		$requiredPermission = 'core.view';
+		break;
+		
+	    case DERIVATIVE_TYPE_IMAGE_RESIZE:
+		$requiredPermission = 'core.viewResizes';
+		break;
+
+	    case DERIVATIVE_TYPE_IMAGE_PREFERRED:
+		$requiredPermission = 'core.viewSource';
+		break;
+	    }
+	    $itemForPermission = $item->getParentId();
+	} else {
+	    $requiredPermission = 'core.viewSource';
+	    $itemForPermission = $item->getId();
+	}
+
+	/* Make sure we have it */
+	$ret = GalleryCoreApi::assertHasItemPermission($itemForPermission, $requiredPermission);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Get the path to the file */
+	list ($ret, $path) = $item->fetchPath();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Rebuild derivative cache, if necessary */
+	if (GalleryUtilities::isA($item, 'GalleryDerivative')) {
+	    list ($ret, $item) = GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($item->getId());
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    $size = $item->getDerivativeSize();
+	} else {
+	    $size = $item->getSize();
+	}
+	$mimeType = $item->getMimeType();
+	header('Content-type: ' . $mimeType);
+	
+	header('Content-Disposition: inline; filename="' . $pseudoFileName . '"');
+	
+	if ($size > 0) {
+	    header('Content-length: ' . $size);
+	}
+
+	$platform = $gallery->getPlatform();
+	$stats = $platform->stat($path);
+	header('Last-Modified: ' . gmstrftime('%a, %e %b %G %R %Z', $stats[9]));
+
+	// Don't use readfile() because it buffers the entire file in memory
+	if ($fd = $platform->fopen($path, 'rb')) {
+	    while (true) {
+		$data = $platform->fread($fd, 65536);
+		if (strlen($data) == 0) {
+		    break;
+		}
+		print $data;
+		$gallery->guaranteeTimeLimit(30);
+	    }
+	    $platform->fclose($fd);
+	}
+	return GalleryStatus::success();
+    }
+
+    /**
+     * @see GalleryView::rewriteQueryString
+     */
+    function rewriteQueryString($params) {
+	global $gallery;
+	
+	/* We know who we are */
+	unset($params['view']);
+
+	$itemId = $params['itemId'];
+	unset($params['itemId']);
+	
+	$buf = '/' . $itemId;
+	
+	list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($itemId);
+	if ($ret->isError()) {
+	    return null;
+	}
+	
+	$buf .= '-' . $entity->getSerialNumber();
+	unset($params['serialNumber']);
+
+	list ($ret, $pseudoFileName) = $this->getPseudoFileName($entity);
+	if ($ret->isError()) {
+	    return null;
+	}
+	$buf .= '/' . $pseudoFileName;
+	
+	if (strpos($pseudoFileName, '.') === false) {
+	    $extension = GalleryUtilities::convertMimeToExtension($entity->getMimeType());
+	    if (!empty($extension)) {
+		$buf .= '.' . $extension;
+	    }
+	}
+	
+	/* Add in anything else as a standard query element */
+	if (!empty($params)) {
+	    $urlGenerator = $gallery->getUrlGenerator();
+	    $buf .= $urlGenerator->buildQueryString($params);
+	}
+
+	return $buf;
+    }
+
+    /**
+     * @see GalleryView::parseQueryString()
+     */
+    function parseQueryString($queryString) {
+
+	/*
+	 * Expect the path to be in the format /<itemid>-<serial>.<extension>
+	 * We only care about the item id
+	 */
+	$queryString = preg_match('|/(\d+)-|', $queryString, $regs);
+	GalleryUtilities::putRequestVariable('itemId', $regs[1]);
+	return array(GalleryStatus::success(), null);
+    }
+    
+    /**
+     * Return an approximate filename of the given GalleryEntity, or "unknown" if we can't figure it out
+     *
+     * @param object entity a GalleryEntity
+     * @return string pseudoFileName a filename
+     */
+    function getPseudoFileName($entity) {
+    
+        /*
+	 * If our GalleryEntity is a GalleryFileSystemEntity, then we've got a path component so we're cool.
+	 * If it's a derivative, then get the pseudo filename of its derivative source and use that instead.
+	 * If it's neither, then return 'unknown' for now.
+         */
+       	if (GalleryUtilities::isA($entity, 'GalleryFileSystemEntity')) {
+	    $pseudoFileName = $entity->getPathComponent();
+        } else if (GalleryUtilities::isA($entity, 'GalleryDerivative')) {
+	    list ($ret, $sourceEntity) = GalleryCoreApi::loadEntitiesById($entity->getParentId());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    if (GalleryUtilities::isA($sourceEntity, 'GalleryFileSystemEntity')) {
+		$pseudoFileName = $sourceEntity->getPathComponent();
+	    } else {
+		list ($ret, $pseudoFileName) = $this->getPseudoFileName($sourceEntity);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	    }
+        } else {
+	    return array(GalleryStatus::success(), 'unknown');
+	}
+	
+	return array(GalleryStatus::success(), $pseudoFileName);
+    }
+}
+?>

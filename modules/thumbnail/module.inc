@@ -1,0 +1,210 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package Thumbnail
+ * @author Alan Harder <alan.harder@sun.com>
+ */
+
+/**
+ * Thumbnail defaults
+ *
+ * This module provides default thumbnails for non-image mime types.
+ *
+ * @package Thumbnail
+ */
+class ThumbnailModule extends GalleryModule {
+
+    function ThumbnailModule() {
+	global $gallery;
+
+	$this->setId('thumbnail');
+	$this->setName($gallery->i18n('Thumbnail Manager'));
+	$this->setDescription($gallery->i18n('Set default thumbnails for non-image items'));
+	$this->setVersion('0.8');
+    }
+
+    /**
+     * @see GalleryModule::init()
+     */
+    function init() {
+	global $gallery;
+	
+	$ret = parent::init();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	$classDir = dirname(__FILE__) . '/classes/';
+
+	/* Register our entity */
+	GalleryCoreApi::registerFactoryImplementation('GalleryEntity',
+						      'ThumbnailImage', 'ThumbnailImage',
+						      $classDir . 'ThumbnailImage.class');
+
+	/* Register our graphics class with the factory */
+	GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
+						      'ThumbnailToolkit', 'Thumbnail',
+						      $classDir . 'ThumbnailToolkit.class');
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * @see GalleryModule::install()
+     */
+    function install() {
+	global $gallery;
+
+	list ($ret, $version) = $this->getModuleParameter('version');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), false);
+	}
+
+	$installed = false;
+	if ($version != $this->getVersion()) {
+
+	    /* The store requires configuration. */
+	    $storage = $gallery->getStorage();
+	    $ret = $storage->configureStore('thumbnail');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), false);
+	    }
+
+	    if (empty($version)) {
+		$installed = true;
+	    }
+	    $ret = $this->setModuleParameter('version', $this->getVersion());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), false);
+	    }
+	}
+
+	return array(GalleryStatus::success(), $installed);
+    }
+
+    /**
+     * @see GalleryModule::canBeAutoInstalled
+     */
+    function canBeAutoInstalled() {
+	return true;
+    }
+
+    /**
+     * @see GalleryModule::autoConfigure
+     */
+    function autoConfigure() {
+	/* We don't require any special configuration */
+	return array(GalleryStatus::success(), true);
+    }
+
+    /**
+     * @see GalleryModule::activate()
+     */
+    function activate() {
+	require_once(dirname(__FILE__) . '/classes/ThumbnailHelper.class');
+	global $gallery;
+	
+	/* Register toolkit operation for any mime type settings already in the database */
+	list ($ret, $mimeTypeMap) = ThumbnailHelper::fetchMimeTypeMap();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	if (!empty($mimeTypeMap)) {
+	    $ret = GalleryCoreApi::registerToolkitOperation('Thumbnail',
+				   array_keys($mimeTypeMap), 'convert-to-image/jpeg', array(),
+				   $gallery->i18n('Convert to a JPEG'), 'image/jpeg', 8);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	/* Set some defaults if not already supported */
+	list ($ret, $toolkitMime) = ThumbnailHelper::fetchToolkitSupport();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$itemId = array();
+	foreach (array(
+	    'G2audio.jpg' => array('audio/mpeg', 'audio/x-wav', 'audio/x-aiff', 'audio/midi', 'audio/basic'),
+	    'G2video.jpg' => array('video/mpeg', 'video/quicktime', 'video/x-msvideo', 'video/x.ms.asf')
+	    ) as $mimeImage => $mimeList) {
+	    foreach ($mimeList as $mime) {
+		if (!isset($toolkitMime[$mime])) {
+		    if (!isset($itemId[$mimeImage])) {
+			GalleryCoreApi::registerFactoryImplementation(
+			    'GalleryEntity', 'ThumbnailImage', 'ThumbnailImage',
+			    dirname(__FILE__) . '/classes/ThumbnailImage.class');
+			list ($ret, $itemId[$mimeImage]) = ThumbnailHelper::addItem($mime,
+			    $mimeImage, dirname(__FILE__) . '/images/' . $mimeImage, 'image/jpeg',
+			    array('width' => 400, 'height' => 352));
+			if ($ret->isError()) {
+			    return $ret->wrap(__FILE__, __LINE__);
+			}
+		    } else {
+			$ret = ThumbnailHelper::updateItem($itemId[$mimeImage], $mime);
+			if ($ret->isError()) {
+			    return $ret->wrap(__FILE__, __LINE__);
+			}
+		    }
+		}
+	    }
+	}
+
+	$ret = parent::activate();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * @see GalleryModule::deactivate()
+     */
+    function deactivate() {
+	global $gallery;
+
+	list ($ret, $redirect) = parent::deactivate();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Unregister all of our properties and operations */
+	$ret = GalleryCoreApi::unregisterToolkit('Thumbnail');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return array(GalleryStatus::success(), $redirect);
+    }
+	
+    /**
+     * @see GalleryModule::getSiteAdminViews()
+     */
+    function getSiteAdminViews() {
+	return array(GalleryStatus::success(),
+		     array(array('name' => $this->translate('Thumbnail Manager'),
+				 'view' => 'thumbnail:ThumbnailSiteAdmin')));
+    }
+}
+?>

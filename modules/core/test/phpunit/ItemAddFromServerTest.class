@@ -1,0 +1,165 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * ItemAddFromServer plugin test
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class ItemAddFromServerTest extends ItemAddPluginTestCase {
+
+    function ItemAddFromServerTest($methodName) {
+	$this->ItemAddPluginTestCase($methodName, 'core', 'ItemAddFromServer');
+    }
+
+    function setUp() {
+	global $gallery;
+
+	parent::setUp();
+
+	list ($ret, $this->_rootAlbum) = $this->_createRandomAlbum($this->_getRootId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $this->_lockIds) = GalleryCoreApi::acquireReadLock($this->_rootAlbum->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->_savePlatform = $gallery->getPlatform();
+	$gallery->_platform = new ItemAddFromServerTestPlatform($this->_savePlatform);
+    }
+
+    function tearDown() {
+	global $gallery;
+
+	$ret = GalleryCoreApi::releaseLocks($this->_lockIds);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::deleteEntityById($this->_rootAlbum->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$gallery->_platform = $this->_savePlatform;
+	
+	parent::tearDown();
+    }
+
+    function testAddChildrenFromLocalServer() {
+	global $gallery;
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('form[action][addFromLocalServer]', 1);
+
+	$platform = $gallery->getPlatform();
+	$baseDir = dirname(__FILE__) . '/../data/';
+	$fileKeys = array();
+	GalleryUtilities::putRequestVariable('form[localServerPath]', $baseDir);
+	$files = array('test1.gif', 'test1.jpg', 'test2.gif', 'test3.gif', 'apo\'strophe.jpg');
+	foreach ($files as $fileName) {
+	    GalleryUtilities::putRequestVariable('form[localServerFiles][' . $fileName . ']', 1);
+	}
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest($this->_rootAlbum);
+	$this->assertEquals(array(), $results[0]);
+
+	/* We don't know the ids, but we can verify everything else */
+	$i = 0;
+	foreach ($files as $file) {
+	    GalleryUtilities::sanitizeInputValues($file);
+	    $this->assertEquals($file, $results[1]['addedFiles'][$i]['fileName']);
+	    $this->assert(isset($results[1]['addedFiles'][$i]['id']));
+	    $i++;
+	}
+
+	/* Verify item attributes (like order weight) */
+	list ($ret, $ids) = GalleryCoreApi::fetchChildItemIds($this->_rootAlbum);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$seenWeights = array();
+	foreach ($ids as $id) {
+	    list ($ret, $viewCount) = GalleryCoreApi::fetchItemViewCount($id);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $this->assertEquals(0, $viewCount);
+	    
+	    list ($ret, $orderWeight) = GalleryCoreApi::fetchItemOrderWeight($id);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $this->assert(!isset($seenWeights[$orderWeight]), 'Seen this weight before');
+	    $seenWeights[$orderWeight] = 1;
+	}
+    }
+}
+
+/**
+ * Test platform
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class ItemAddFromServerTestPlatform extends GalleryPlatform {
+    function ItemAddFromServerTestPlatform($delegate) {
+	$this->_delegate = $delegate;
+    }
+
+    function file_exists($path) {
+	switch ($path) {
+	case dirname(__FILE__) . '/../data/apo\'strophe.jpg':
+	    /* The windows path is a little weird -- but we can live with it */ 
+ 
+	case dirname(__FILE__) . '/../data/\\apo\'strophe.jpg':
+	    return true;
+
+	default:
+	    return $this->_delegate->file_exists($path);
+	}
+    }
+
+    function copy($source, $dest) {
+	switch ($source) {
+	case dirname(__FILE__) . '/../data/\\apo\'strophe.jpg':
+	    /* The windows path is a little weird -- but we can live with it */ 
+ 
+	case dirname(__FILE__) . '/../data/apo\'strophe.jpg':
+	    $source = dirname(__FILE__) . '/../data/test1.jpg';
+	    break;
+	}
+	return $this->_delegate->copy($source, $dest);
+    }
+}
+?>

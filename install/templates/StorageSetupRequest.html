@@ -1,0 +1,55 @@
+    <h1>Storage Setup</h1>
+
+    <p>
+      <?php print _("Gallery needs to store data in a directory on your server. It will use this directory to store your images as well as other important data. For security, we suggest that you place this directory <b>outside</b> the path to your webserver (document root), so that it cannot be accessed directly via the web. This is necessary if you wish to have your images accessible only via Gallery<b>*</b>. Note that the default path provided below is inside the webserver area. Update with a secure location, such as a path under your user home directory, if possible. If you access your site via FTP, you might not have this option.") ?>
+    </p>
+
+    <p>
+      <?php print _("The directory also needs to be writable by Gallery. For help with permissions, see <b>FutureLinkToSomewhere</b>?.") ?>
+    </p>
+
+    <form name="storage_form" method="post">
+      <table>
+	<tr>
+	  <td style="text-align: left;">
+	    <?php print _('Directory path:') ?>
+	  </td>
+
+	  <td>
+	    <input name="dir" type="text" size="50" value="<?php print $templateData['dir'] ?>"/>
+	    <input type="hidden" name="action" value="save" />
+	  </td>
+	</tr>
+
+	<?php if (isset($templateData['error'])): ?>
+	<tr>
+	  <td colspan="2" class="error">
+	    <?php if (isset($templateData['error']['missing_value'])): ?>
+	    <?php print _('You must enter a directory'); ?>
+	    <?php endif; ?>
+	    <?php if (isset($templateData['error']['missing_dir'])): ?>
+	    <?php print _('The directory you entered does not exist'); ?>
+	    <?php endif; ?>
+	    <?php if (isset($templateData['error']['inaccessible_dir'])): ?>
+	    <?php print _('The directory you entered is not accessible'); ?>
+	    <?php endif; ?>
+	    <?php if (isset($templateData['error']['readonly_dir'])): ?>
+	    <?php print _('The directory you entered is read only'); ?>
+	    <?php endif; ?>
+	  </td>
+	</tr>
+	<?php endif; ?>
+      </table>
+    </form>
+
+    <p style="text-align: left;">
+      <strong>*</strong> This is sometimes known as an <b>image firewall</b>.
+    </p>
+
+    <div class="go">
+      <span class="goToNext">
+	<a href="javascript:document.storage_form.submit()"><?php print _('Save') ?></a>
+      </span>
+    </div>
+    
+

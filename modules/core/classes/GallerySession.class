@@ -1,0 +1,551 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @package GalleryCore
+ * @version $Revision$ $Date$
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * Storage container for session related data
+ *
+ * @g2 <class-name>GallerySession</class-name>
+ * @g2 <schema>
+ * @g2   <schema-major>1</schema-major>
+ * @g2   <schema-minor>0</schema-minor>
+ * @g2 </schema>
+ *
+ * @package GalleryCore
+ * @subpackage Classes
+ */
+class GallerySession_core {
+
+    /*
+     * ****************************************
+     *                 Members
+     * ****************************************
+     */
+
+    /**
+     * @g2 <map>
+     * @g2   <member>
+     * @g2     <member-name>sessionId</member-name>
+     * @g2     <member-type>STRING</member-type>
+     * @g2     <member-size>MEDIUM</member-size>
+     * @g2     <indexed/>
+     * @g2     <required/>
+     * @g2   </member>
+     * @g2   <member>
+     * @g2     <member-name>userId</member-name>
+     * @g2     <member-type>INTEGER</member-type>
+     * @g2   </member>
+     * @g2   <member>
+     * @g2     <member-name>chunk</member-name>
+     * @g2     <member-type>INTEGER</member-type>
+     * @g2   </member>
+     * @g2   <member>
+     * @g2     <member-name>creationTime</member-name>
+     * @g2     <member-type>INTEGER</member-type>
+     * @g2     <indexed/>
+     * @g2   </member>
+     * @g2   <member>
+     * @g2     <member-name>lastModificationTime</member-name>
+     * @g2     <member-type>INTEGER</member-type>
+     * @g2     <indexed/>
+     * @g2   </member>
+     * @g2   <member>
+     * @g2     <member-name>sessionData</member-name>
+     * @g2     <member-type>TEXT</member-type>
+     * @g2   </member>
+     * @g2 </map>
+     */
+
+    /**
+     * The time this session was created
+     *
+     * @var string $_creationTime
+     * @access private
+     */
+    var $_creationTime;
+
+    /**
+     * The ID of this session 
+     *
+     * @var string $_sessionId
+     * @access private
+     */
+    var $_sessionId;
+
+    /**
+     * The COOKIE, GET or POST parameter containing the session id
+     *
+     * @var string $_sessionIdParameter
+     * @access private
+     */
+    var $_sessionIdParameter;
+
+    /**
+     * Is it ok to rely on cookies for this session?
+     *
+     * @var bool $_isUsingCookies
+     * @access private
+     */
+    var $_isUsingCookies;
+
+    /**
+     * Is this a new session?
+     *
+     * @var bool $_isNewSession
+     * @access private
+     */
+    var $_isNewSession;
+
+    /**
+     * Has the session data been modified?
+     *
+     * @var bool $_isSessionDataModified
+     * @access private
+     */
+    var $_isSessionDataModified;
+
+    /**
+     * The session data
+     *
+     * @var array $_sessionData
+     * @access private
+     */
+    var $_sessionData;
+
+    /**
+     * The number of chunks used to store this session 
+     *
+     * @var array $_totalChunkCount
+     * @access private
+     */
+    var $_totalChunkCount;
+
+    /*
+     * ****************************************
+     *                 Methods
+     * ****************************************
+     */
+
+    /**
+     * Either create a new session, or attach to an existing one.
+     *
+     * return object GalleryStatus a status code
+     */
+    function init() {
+	global $gallery;
+
+	// Inactivity timeout for user sessions
+	list ($ret, $this->_sessionIdParameter) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'session.idParameter');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Check to see if we have an existing session. */
+	$this->_sessionId = null;
+	if (!empty($_COOKIE[$this->_sessionIdParameter])) {
+
+	    /*
+	     * If we get the id parameter as a cookie, then it also means that
+	     * cookies are functioning.
+	     */
+	    $this->_sessionId = $_COOKIE[$this->_sessionIdParameter];
+	    $this->_isUsingCookies = true;
+
+	    // Allow the URL to override the cookie, in rare occasions
+	    $sessionId = GalleryUtilities::getRequestVariables($this->_sessionIdParameter);
+	    if (!empty($sessionId)) {
+		$this->_sessionId = $sessionId;
+	    }
+	} else {
+	    $this->_isUsingCookies = false;
+	    $this->_sessionId =
+		GalleryUtilities::getRequestVariables($this->_sessionIdParameter);
+	} 
+
+	/* If we don't have a session id at this point, create one. */
+	if (empty($this->_sessionId)) {
+	    $this->_sessionId = md5(microtime() . rand(1, 32767));
+	}
+
+	/* Load session state */
+	$ret = $this->_loadSessionData();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/*
+	 * Send back a cookie.
+	 *
+	 * TODO: Need to be able to decide for certain that the browser isn't
+	 * accepting cookies so that we can stop sending them.  We can do this
+	 * by recording how many times we've sent a cookie, and how many times
+	 * that we've received one back in return.  Leave that for later.
+	 */
+	$cookie = 'Set-Cookie: ' . $this->_sessionIdParameter . '=' . $this->_sessionId;
+
+	list ($ret, $sessionLifetime) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'session.lifetime');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	if ($sessionLifetime > 0) {
+	    $expirationDate = gmstrftime("%a, %d-%b-%Y %T GMT", time() + $sessionLifetime);
+	    $cookie .= '; expires=' . $expirationDate;
+	}
+
+	$urlGenerator = $gallery->getUrlGenerator();
+	$urlComponents = parse_url($urlGenerator->getCurrentUrlDir());
+	$cookie  .= '; path=' . $urlComponents['path'];
+
+	/*
+	 * Tag on the HttpOnly modifier.  IE 6.0 SP1 will prevent any cookies
+	 * with this in it from being visible to JavaScript, which mitigates
+	 * XSS attacks.
+	 */
+	$cookie .= '; HttpOnly=1';
+
+	/*
+	 * Init may be called multiple times (from unit tests) but don't send the headers more
+	 * than once.
+	 */
+	if (!headers_sent()) {
+	    header($cookie);
+	}
+	
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Save any session changes to the store
+     *
+     * @return object GalleryStatus a status code
+     */
+    function save() {
+	global $gallery;
+
+	/* Only bother saving if we've been modified at all */
+	if ($this->_isSessionDataModified) {
+	    $chunkSize = 63 * 1024;
+	    $sessionData = serialize($this->_sessionData);
+
+	    /* Split it into chunks (make the array 1-based for convenience later on) */
+	    $i = 0;
+	    $chunks = array();
+	    while (strlen($sessionData) > $i * $chunkSize) {
+		$chunks[$i+1] = substr($sessionData, $i * $chunkSize, $chunkSize);
+		$i++;
+	    }
+
+	    $now = time();
+	    for ($i = 1; $i <= max(sizeof($chunks), $this->_totalChunkCount); $i++) {
+		if ($i > sizeof($chunks)) {
+		    /* Expired chunk */
+		    $ret = $this->removeMapEntry(array('sessionId' => $this->_sessionId,
+						       'chunk' => $i));
+		} else if ($this->_isNewSession || $i > $this->_totalChunkCount) {
+		    /* This is a new chunk */
+		    $dataSet = array();
+		    $dataSet['lastModificationTime'] = $now;
+		    $dataSet['userId'] = $gallery->getActiveUserId();
+		    $dataSet['sessionId'] = $this->_sessionId;
+		    $dataSet['creationTime'] = $this->_creationTime;
+		    $dataSet['chunk'] = $i;
+		    $dataSet['sessionData'] = $chunks[$i];
+		    $ret = $this->addMapEntry($dataSet);
+		} else {
+		    /* Update existing chunk */
+		    $dataSet = array();
+		    $dataSet['lastModificationTime'] = $now;
+		    $dataSet['sessionData'] = $chunks[$i];
+		    $ret = $this->updateMapEntry(array('sessionId' => $this->_sessionId,
+						       'chunk' => $i),
+						 $dataSet);
+		}
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+	}
+
+	/*
+	 * Perform garbage collection 1% of the time.
+	 */
+	if (rand(1, 100) == 1) {
+	    $ret = $this->_expireSessions();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Clean and reinitialize a session
+     *
+     * @return object GalleryStatus a status code
+     */
+    function reset() {
+	$ret = $this->removeMapEntry(array('sessionId' => $this->_sessionId));
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$ret = $this->init();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Get rid of any sessions that have not been accessed within our
+     * inactivity timeout or have exceeded the max lifetime.
+     *
+     * @return object GalleryStatus a status code.
+     * @access private
+     */
+    function _expireSessions() {
+	global $gallery;
+	
+	list ($ret, $sessionInactivityTimeout) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'session.inactivityTimeout');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	list ($ret, $lifetime) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'session.lifetime');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$storage =& $gallery->getStorage();
+	list ($ret, $timestamp) = $storage->getFunctionSql('UNIX_TIMESTAMP', array('NOW()'));
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	if ($sessionInactivityTimeout > 0) {
+	    $statement = sprintf('
+                DELETE FROM
+                  [GallerySession]
+                WHERE
+                  (%s - [GallerySession::creationTime]) > ?
+                  OR
+                  (%s - [GallerySession::lastModificationTime]) > ?
+                ', $timestamp, $timestamp);
+		
+	    /* Delete any sessions that are expired */
+	    /* TODO: get away from using execute() here */
+	    $ret = $storage->execute($statement, array($lifetime, $sessionInactivityTimeout));
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Return the session id parameter and the session id
+     *
+     * @return array string, string
+     */
+    function getSessionDescriptor() {
+	return array($this->_sessionIdParameter, $this->_sessionId);
+    }
+
+    /**
+     * Is this transaction known to be using cookies?
+     *
+     * @return bool true if yes
+     */
+    function isUsingCookies() {
+	return $this->_isUsingCookies;
+    }
+    
+    /**
+     * Get a value from the session data
+     *
+     * @param string the key
+     * @return string the value or null if it doesn't exist
+     */
+    function get($key) {
+	if (isset($this->_sessionData[$key])) {
+	    return $this->_sessionData[$key];
+	}
+
+	return null;
+    }
+
+    /**
+     * Store a value in the session
+     *
+     * @param string the key
+     * @param string the value
+     */
+    function put($key, $value) {
+	$this->_sessionData[$key] = $value;
+	$this->_isSessionDataModified = true;
+    }
+
+    /**
+     * Remove a value from the session
+     *
+     * @param string the key
+     */
+    function remove($key) {
+	unset($this->_sessionData[$key]);
+	$this->_isSessionDataModified = true;
+    }
+
+    /**
+     * Check to see if a value exists in the session
+     *
+     * @param string the key
+     */
+    function exists($key) {
+	return isset($this->_sessionData[$key]);
+    }
+
+    /**
+     * Load the session data
+     *
+     * @returns object GalleryStatus a status code
+     * @access private
+     */
+    function _loadSessionData() {
+	global $gallery;
+
+	$query = '
+        SELECT
+          [GallerySession::chunk], [GallerySession::sessionData], [GallerySession::creationTime]
+        FROM
+          [GallerySession]
+        WHERE
+          [GallerySession::sessionId] = ?
+        ORDER BY
+          [GallerySession::chunk] ASC
+        ';
+	list ($ret, $searchResults) = $gallery->search($query, array($this->_sessionId));
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* We shouldn't have more than one result */
+	if ($searchResults->resultCount() == 0) {
+	    $this->_sessionData = array();
+	    $this->_isSessionDataModified = true;
+	    $this->_isNewSession = true;
+	    $this->_totalChunkCount = 1;
+	    $this->_creationTime = time();
+	} else {
+	    $serializedSessionData = '';
+	    $this->_totalChunkCount = 0;
+	    while ($result = $searchResults->nextResult()) {
+		$serializedSessionData .= $result[1];
+
+		if ($this->_totalChunkCount == 0) {
+		    $this->_creationTime = $result[2];
+		}
+		$this->_totalChunkCount++;
+	    }
+	    $this->_sessionData = unserialize($serializedSessionData);
+	    $this->_isSessionDataModified = false;
+	    $this->_isNewSession = false;
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Store a status message
+     *
+     * @param array status data
+     * @return string the status id
+     */
+    function putStatus($statusData) {
+	$tod = gettimeofday();
+	/*
+	 * Prefix the status id with a character so that it doesn't wind up being
+	 * entirely numeric because PHP will renumber numeric keys in associative
+	 * arrays when you run it through functions like array_splice()
+	 */
+	$statusId = 'x' . substr(md5($tod['usec'] + rand(1, 1000)), 0, 8);
+
+	$status =& $this->get('core.status');
+	if (!isset($status)) {
+	    $status = array();
+	}
+
+	$status[$statusId] = $statusData;
+
+	/* Prune extra status messages */
+	$maxStatusMessages = 5;
+	if (sizeof($status) > $maxStatusMessages) {
+	    $status = array_splice($status, -$maxStatusMessages);
+	}
+	$this->put('core.status', $status);
+
+	return $statusId;
+    }
+
+    /**
+     * Get a status message
+     *
+     * @param string the status id
+     * @return array the status message
+     */
+    function getStatus($statusId, $remove=true) {
+	$status = $this->get('core.status');
+	$statusData = null;
+	if (isset($status) && isset($status[$statusId])) {
+	    $statusData = $status[$statusId];
+	    if ($remove) {
+		unset($status[$statusId]);
+		$this->put('core.status', $status);
+	    }
+	}
+	
+	return $statusData;
+    }
+
+    /**
+     * Return the session id
+     *
+     * @return string the session id 
+     */
+    function getSessionId() {
+	return $this->_sessionId;
+    }
+}
+
+include(dirname(__FILE__) . '/interfaces/GallerySession.inc');
+?>

@@ -1,0 +1,142 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+class DatabaseSetupStep extends InstallStep {
+    function stepName() {
+	return _('Database Setup');
+    }
+
+    function loadGalleryObject(&$gallery) {
+	$gallery->setConfig('storage.config', $this->_config);
+    }
+
+    function loadTemplateData(&$templateData) {
+	global $gallery;
+
+	if (empty($this->_config)) {
+	    $this->_config = $gallery->getConfig('storage.config');
+	    if (empty($this->_config)) {
+		$this->_config = array();
+		$this->_config['type'] = 'mysql';
+		$this->_config['hostname'] = 'localhost';
+		$this->_config['username'] = 'root';
+		$this->_config['password'] = '';
+		$this->_config['database'] = 'gallery2';
+		$this->_config['tablePrefix'] = 'g2_';
+		$this->_config['columnPrefix'] = 'g_';
+	    }
+	}
+
+	if (!empty($_POST['action']) && $_POST['action'] == 'save') {
+	    foreach (array('type', 'hostname', 'username',
+			   'password', 'database', 'tablePrefix', 'columnPrefix') as $key) {
+		$this->_config[$key] = $this->sanitize($_POST[$key]);
+	    }
+
+	    // Load up ADOdb
+	    require_once(dirname(__FILE__) . '/../../lib/adodb/adodb.inc.php');
+
+	    $this->_captureStart();
+	    $db =& ADONewConnection($this->_config['type']);
+	    $db->debug = true;
+	    $this->_captureEnd();
+	    
+	    if (empty($db)) {
+		$templateData['errors'][] = _('Unable to create a database connection of type %s',
+					      $this->_config['type']);
+	    }
+
+	    if (empty($templateData['errors'])) {
+		$this->_captureStart();
+		$result = $db->NConnect($this->_config['hostname'],
+					$this->_config['username'],
+					$this->_config['password'],
+					$this->_config['database']);
+		$this->_captureEnd();
+		if ($result === false) {
+		    $templateData['errors'][] = _('Unable to connect to database with the information provided.');
+		}
+	    }
+
+	    if (empty($templateData['errors'])) {
+		$this->_captureStart();
+		$result = $db->MetaTables();
+		$this->_captureEnd();
+		if ($result === false) {
+		    $templateData['errors'][] = _('The database you specified does not exist.  Please create it.');
+		}
+
+		if (empty($_POST['confirmReuseTables'])) {
+		    if (in_array($this->_config['tablePrefix'] . 'Schema', $result) ||
+			in_array($this->_config['tablePrefix'] . 'schema', $result)) {
+			$templateData['warnings'][] = _('Gallery tables already exist in this database!  If you want to use the existing tables, you must confirm that below.  Otherwise, you must specify a new database, or a different table prefix in order to continue.');
+			$templateData['showConfirm'] = 1;
+			$confirmRequired = 1;
+		    }
+		}
+	    }
+
+	    $templateData['databaseErrors'] = $this->_getCaptured();
+
+	    if (empty($templateData['errors']) &&
+		(empty($confirmRequired) || !empty($_POST['confirmReuseTables']))) {
+		$this->setComplete(true);
+	    }
+	}
+
+	if ($this->isComplete()) {
+	    $templateData['bodyFile'] = 'templates/DatabaseSetupSuccess.html';
+	} else {
+	    foreach (array('type', 'hostname', 'username',
+			   'password', 'database', 'tablePrefix', 'columnPrefix') as $key) {
+		$templateData['config'] = $this->_config;
+	    }
+	    
+	    foreach (array('mysql'  => _('MySQL (all versions)'),
+			   'mysqlt' => _('MySQL with Transactions (v3.23.34a and newer)'),
+			   'postgres7' => _('PostgreSQL v7.x'),
+			   'postgres' => _('PostgreSQL v6.x (not well tested)'))
+		     as $key => $value) {
+		$templateData['dbList'][$key] = $value;
+	    }
+	    $templatData['dbSelected'][$this->_config['type']] = 1;
+
+	    $templateData['bodyFile'] = 'templates/DatabaseSetupRequest.html';
+	}
+    }
+
+    function _captureStart() {
+	ob_start();
+    }
+
+    function _captureEnd() {
+	$this->_debugContents .= ob_get_contents();
+	ob_end_clean();
+    }
+
+    function _getCaptured() {
+	$contents = $this->_debugContents;
+	unset($this->_debugContents);
+	return $contents;
+    }
+}
+?>

@@ -1,0 +1,41 @@
+<?php
+
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage TestCase
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * @package GalleryCore
+ * @subpackage TestCase
+ */
+class CleanStoreTestCase extends TestCase {
+
+    function getDescription() {
+	global $gallery;
+	$config = $gallery->getConfig('storage.config');
+	return "Reset the G2 database called '$config[database]'.";
+    }
+
+    function testStart() {
+	global $gallery;
+
+	$storage = $gallery->getStorage();
+	$ret = $storage->cleanStore();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/*
+	 * Reset the Gallery instance.  This will basically make Gallery
+	 * unusable until InitializeGallery is called.
+	 */
+	$gallery->reset();
+	
+	return GalleryStatus::success();
+    }
+}
+
+?>

@@ -1,0 +1,238 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * Test Session functionality
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class SessionTest extends GalleryTestCase {
+
+    function SessionTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    function testGetAndPut() {
+	global $gallery;
+	$key = 'test-key';
+	$value = 'test-value';
+	
+	$session =& $gallery->getSession();
+	$session->put($key, $value);
+
+	$ret = $session->save();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	GalleryDataCache::reset();
+
+	$this->assertEquals($value, $session->get($key));
+    }
+
+    function testRemove() {
+	global $gallery;
+	$key = 'test-key';
+	$value = 'test-value';
+
+	/* Store the key */
+	$session =& $gallery->getSession();
+	$session->put($key, $value);
+	$ret = $session->save();
+
+	/* Save and reset */
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	GalleryDataCache::reset();
+
+	/* Make sure it's still there */
+	$new = $session->get($key);
+	$this->assertEquals($value, $new);
+
+	/* Remove the key */
+	$session->remove($key);
+
+	/* Save and reset */
+	$ret = $session->save();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	GalleryDataCache::reset();
+
+	/* Make sure it's gone */
+	$exists = $session->exists($key);
+	$this->assert(!$exists, "key $key should not exist!");
+    }
+
+    function testStatus() {
+	global $gallery;
+	
+	$session =& $gallery->getSession();
+
+	/* Store a status and get its id */
+	$status = array('x' => 'y', 'a' => 'b');
+	$statusId = $session->putStatus($status);
+
+	/* Save and reset */
+	$ret = $session->save();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	GalleryDataCache::reset();
+
+	/* Get the status back and compare */
+	$this->assertEquals($status, $session->getStatus($statusId));
+
+	/* Get the status back again and verify that its gone */
+	$this->assertEquals(null, $session->getStatus($statusId));
+    }
+
+    /**
+     * Save a whole lot of session data, enough that it won't fit into a single column so that
+     * we can test to make sure that it gets chunked.
+     */
+    function testSavingChunkedSessionData() {
+	global $gallery;
+	
+	$data = str_repeat('x', 128 * 1024); // 128KB
+
+	$session =& $gallery->getSession();
+
+	/* Store a huge value, save, reset, re-init and verify */
+	$session->put('SessionTest', $data);
+	$ret = $session->save();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	GalleryDataCache::reset();
+	$session->init();
+	$this->assertEquals($data, $session->get('SessionTest'));
+
+	/* Store a second huge value, save, reset, re-init and verify */
+	$session->put('SessionTest2', $data);
+	$ret = $session->save();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	GalleryDataCache::reset();
+	$session->init();
+	$this->assertEquals($data, $session->get('SessionTest'));
+	$this->assertEquals($data, $session->get('SessionTest2'));
+
+	/* Remove the first huge value, save, reload and verify */
+	$session->remove('SessionTest');
+	$ret = $session->save();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	GalleryDataCache::reset();
+	$session->init();
+	$this->assertEquals(null, $session->get('SessionTest'));
+	$this->assertEquals($data, $session->get('SessionTest2'));
+
+	/* Remove the second huge value, save, reload and verify */
+	$session->remove('SessionTest2');
+	$ret = $session->save();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	GalleryDataCache::reset();
+	$session->init();
+	$this->assertEquals(null, $session->get('SessionTest'));
+	$this->assertEquals(null, $session->get('SessionTest2'));
+    }
+
+    /**
+     * Try storing a lot of session messages and make sure that the old ones get expired.
+     */
+    function testExpiringStatusMessages() {
+	global $gallery;
+	
+	$session =& $gallery->getSession();
+
+	/* Store 10 status messages */
+	$status = array('x' => 'y', 'a' => 'b');
+	for ($i = 0; $i < 10; $i++) {
+	    $statusId[$i] = $session->putStatus(array('i' => $i));
+	}
+
+	/* Save and reset */
+	$ret = $session->save();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	GalleryDataCache::reset();
+
+	/* Verify that only the last 5 are there */
+	for ($i = 0; $i < sizeof($statusId); $i++) {
+	    if ($i < sizeof($statusId) - 5) {
+		$this->assertEquals(null, $session->getStatus($statusId[$i], false),
+				    "Pass 1, status $i: $statusId[$i] should not be here");
+	    } else {
+		$this->assertEquals(array('i' => $i), $session->getStatus($statusId[$i], false),
+				    "Pass 1, status $i: $statusId[$i] should be here");
+	    }
+	}
+
+	/* Store 2 more */
+	for ($i = 10; $i < 12; $i++) {
+	    $statusId[$i] = $session->putStatus(array('i' => $i));
+	}
+	/* Save and reset */
+	$ret = $session->save();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	GalleryDataCache::reset();
+
+	/* Verify that only the last 5 are there */
+	for ($i = 0; $i < sizeof($statusId); $i++) {
+	    if ($i < sizeof($statusId) - 5) {
+		$this->assertEquals(null, $session->getStatus($statusId[$i], false),
+				    "Pass 1, status $i: $statusId[$i] should not be here");
+	    } else {
+		$this->assertEquals(array('i' => $i), $session->getStatus($statusId[$i], false),
+				    "Pass 1, status $i: $statusId[$i] should be here");
+	    }
+	}
+
+	/* Remove all our status messages by getting them one more time */
+	for ($i = 0; $i < sizeof($statusId); $i++) {
+	    $session->getStatus($statusId[$i]);
+	}
+    }
+
+    function testExpireSessions() {
+	/* Make sure the SQL runs */ 
+	GallerySession::_expireSessions();
+    }
+}
+
+?>

@@ -1,0 +1,490 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * Interface to the storage mechanism
+ *
+ * This object provides the hooks for saving and restoring objects in the persistent store.
+ *
+ * @package GalleryCore
+ * @subpackage Classes
+ * @abstract
+ */
+class GalleryStorage {
+
+    /**
+     * A cache of member info that we've discovered about various classes
+     *
+     * @var array $_entityInfoCache
+     * @access private
+     */
+    var $_entityInfoCache;
+
+    /**
+     * A cache of classes that we've created in order to figure out their type
+     *
+     * @var array $_classTypeCache
+     * @access private
+     */
+    var $_classTypeCache;
+
+    /**
+     * A cache of member info that we've discovered about various maps
+     *
+     * @var array $_mapInfoCache
+     * @access private
+     */
+    var $_mapInfoCache;
+
+    /**
+     * The debugging flag
+     *
+     * @var boolean $_debug
+     * @access private
+     */
+    var $_debug;
+
+    /**
+     * Trace timing information
+     *
+     * @var boolean $_traceTiming
+     * @access private
+     */
+    var $_traceTiming;
+
+    /**
+     * Constructor
+     *
+     */
+    function GalleryStorage() {
+	/* Initialize our Gallery map and class info caches */
+	$this->_entityInfoCache = array();
+	$this->_mapInfoCache = array();
+	$this->_traceTiming = array();
+    }
+
+    /**
+     * Do any initialization that is required by this storage type
+     *
+     * @return object GallerySatus a status code
+     */
+    function init() {
+	return GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
+    }
+
+    /**
+     * Turn debugging on or off.
+     */
+    function setDebug($bool) {
+	$this->_debug = (bool)$bool;
+    }
+
+    /**
+     * Get the debug state
+     */
+    function getDebug() {
+	return $this->_debug;
+    }
+
+    /**
+     * Load the GalleryEntities with the ids specified
+     *
+     * @param mixed the ids of the GalleryEntities to load
+     * @return array object GalleryStatus a status code,
+     *               mixed one GalleryEntity or an array of GalleryEntities
+     */
+    function loadEntities($ids) {
+	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
+    }
+
+    /**
+     * Save the changes to the GalleryEntity.  
+     *
+     * @access public
+     * @param object GalleryEntity the GalleryEntity to save
+     * @return object GalleryStatus a status code
+     */
+    function saveEntity($object) {
+	return GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
+    }
+
+    /**
+     * Delete the GalleryEntity.
+     *
+     * @access public
+     * @param object GalleryEntity the GalleryEntity to delete
+     * @return object GalleryStatus a status code
+     */
+    function deleteEntity($object) {
+	return GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
+    }
+
+    /**
+     * Create a new GalleryEntity 
+     *
+     * @access public
+     * @param object GalleryEntity the GalleryEntity to put the data in
+     * @return object GalleryStatus a status code
+     */
+    function newEntity(&$object) {
+	return GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
+    }
+
+    /**
+     * Refresh a GalleryEntity
+     *
+     * Refresh a GalleryEntity from the database, if it has changed.
+     *
+     * @access public
+     * @param object GalleryEntity the object to refresh
+     * @return array object GalleryStatus a status code,
+     *               object GalleryEntity the fresh entity
+     */
+    function refreshEntity($object) {
+	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__),
+		     null);
+    }
+
+    /**
+     * Acquire read locks on the given items
+     *
+     * @access public
+     * @param int timeout before giving up on the lock
+     * @return array object GalleryStatus a status code
+     *               object a GalleryLock instance
+     */
+    function acquireReadLock($ids, $timeout) {
+	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__),
+		     null);
+    }
+
+    /**
+     * Acquire write locks on the given items
+     *
+     * @access public
+     * @param int timeout before giving up on the lock
+     * @return array object GalleryStatus a status code
+     *               object a GalleryLock instance
+     */
+    function acquireWriteLock($ids, $timeout) {
+	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__),
+		     null);
+    }
+
+    /**
+     * Release a lock
+     *
+     * @param object a GalleryLock instance
+     */
+    function releaseLock($lock) {
+	return GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
+    }
+
+    /**
+     * Search the persistent store for the target values matching the given
+     * criteria
+     *
+     * @access public
+     * @param array the search query
+     * @param array any explicit data values required by the query
+     * @param array optional arguments (eg, limits)
+     * @return array object GalleryStatus a status code,
+     *               array the result values
+     */
+    function search($query, $data=array(), $optional=array()) {
+	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__),
+		     null);
+    }
+    
+    /**
+     * Execute a database statement
+     *
+     * @access public
+     * @param array the SQL statement
+     * @param array any explicit data values required by the query
+     * @return object GalleryStatus a status code,
+     */
+    function execute($statement, $data=array()) {
+	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__),
+		     null);
+    }
+    
+    /**
+     * Add a new entry to a map
+     *
+     * @param object the map we're working on
+     * @param array an associative array of data about the entry
+     * @return object GalleryStatus a status code
+     */
+    function addMapEntry($map, $entry) {
+	return GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
+    }
+
+    /**
+     * Remove an entry from a map
+     *
+     * @param object the map we're working on
+     * @param array an associative array of data about the entry
+     * @return object GalleryStatus a status code
+     */
+    function removeMapEntry($map, $entry) {
+	return GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
+    }
+
+    /**
+     * Update an entry in this map
+     *
+     * @param array the entry to match
+     * @param array the values to change
+     * @return object GalleryStatus a status code
+     */
+    function updateMapEntry($map, $match, $change) {
+	return GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
+    }
+
+    /**
+     * Configure the persistent store for this strategy, for the given module.
+     *
+     * @return object GalleryStatus a status code
+     */
+    function configureStore($moduleId) {
+	return GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
+    }
+    
+    /**
+     * Clean out and reset the persistent store for this strategy.
+     *
+     * @return object GalleryStatus a status code
+     */
+    function cleanStore() {
+	return GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
+    }
+
+    /**
+     * Begin a new transaction, if the storage layer supports them.
+     *
+     * @return object GalleryStatus a status code
+     */
+    function beginTransaction() {
+	return GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
+    }
+
+    /**
+     * Commit our transaction, if the storage layer supports them.
+     *
+     * @return object GalleryStatus a status code
+     */
+    function commitTransaction() {
+	return GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
+    }
+    
+    /**
+     * Roll back our transaction, if the storage layer supports them.
+     *
+     * @return object GalleryStatus a status code
+     */
+    function rollbackTransaction() {
+	return GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
+    }
+
+    /**
+     * Convert an integer into something that the database will accept into a
+     * bit column
+     *
+     * @param integer integer value
+     * @param mixed bit value 
+     */
+    function convertIntToBits($intVal) {
+	return $intVal;
+    }
+
+    /**
+     * Convert an integer into something that the database will accept into a
+     * bit column
+     *
+     * @param integer integer value
+     * @param mixed bit value 
+     */
+    function convertBitsToInt($bitsVal) {
+	return $bitsVal;
+    }
+
+    /**
+     * Return a customized function for this database platform
+     *
+     * @param string the function name
+     * @param array mixed the function arguments
+     * @return array GalleryStatus a status code
+     *               string the function SQL
+     */
+    function getFunctionSql($functionName, $args) {
+	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
+    }
+
+    /**
+     * Extracts the class names from a given query
+     *
+     * Query should be something like
+     * '[GalleryItem::id] = ? AND [GalleryPhotoItem::id] = ?'
+     *
+     * Results would be:
+     * array('[GalleryItem]', 'GalleryPhotoItem')
+     *
+     * @param string query
+     * @return array GalleryStatus a return status,
+     *               array strings table names
+     */
+    function extractClasses($query) {
+    	$regexp = '/\[([^:]*)::[^\]]*\]/';
+	$classes = array();
+
+	preg_match_all($regexp, $query, $matches, PREG_PATTERN_ORDER);
+	foreach ($matches[1] as $match) {
+	    $classes['[' . $match . ']'] = 1;
+	}
+	return array(GalleryStatus::success(),
+		     array_keys($classes));
+    }
+
+    /**
+     * Return storage profiling information in HTML format
+     *
+     * @return string HTML
+     */
+    function getProfilingHtml() {
+	return '';
+    }
+
+    /**
+     * Describe all the members of a entity
+     *
+     * @param string a class name
+     * @access protected
+     * @return array object GalleryStatus a status code
+     *               member => info associative array
+     */
+    function _describeEntityMembers($entityName) {
+	global $gallery;
+
+	if (empty($this->_entityInfoCache[$entityName])) {
+	    list ($ret, $entity) = GalleryCoreApi::newFactoryInstance('GalleryEntity', $entityName);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    if (!isset($entity)) {
+		return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
+	    }
+	    $this->_entityInfoCache[$entityName] = $entity->getPersistentMemberInfo();
+	}
+
+	return array(GalleryStatus::success(),
+		     $this->_entityInfoCache[$entityName]);
+    }
+
+    /**
+     * Describe all the members of a map
+     *
+     * @param string a class name
+     * @return array member name => member type
+     * @access protected
+     */
+    function _describeMapMembers($mapName) {
+
+	if (empty($this->_mapInfoCache[$mapName])) {
+	    eval("\$info = $mapName::getMapInfo();");
+	    $this->_mapInfoCache[$mapName] = $info;
+	}
+
+	return $this->_mapInfoCache[$mapName];
+    }
+
+    /**
+     * Identify this class as an entity or a map
+     *
+     * @param string the name of a class
+     * @return array object GalleryStatus a status code
+     *               string 'entity' or 'map'
+     * @access protected
+     */
+    function _getClassType($className) {
+	global $gallery;
+
+	if (!isset($this->_classTypeCache[$className])) {
+	    list ($ret, $instance) =
+		GalleryCoreApi::newFactoryInstance('GalleryEntity', $className);
+	    
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    if (!isset($instance)) {
+		return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
+	    }
+	    
+	    $this->_classTypeCache[$className] = $instance ;
+	}
+
+	if (method_exists($this->_classTypeCache[$className], 'getPersistentMemberInfo')) {
+	    $type = 'entity';
+	} else {
+	    $type = 'map';
+	}
+	return array(GalleryStatus::success(), $type);
+    }
+    
+    /**
+     * Start tracing
+     *
+     * This method is for use by GalleryStorage subclasses only.  If Gallery is
+     * in debug, this method will begin storing all output and routing it into
+     * Gallery's debug system
+     *
+     * @access protected
+     */
+    function _traceStart() {
+	global $gallery;
+
+	if ($gallery->getDebug()) {
+	    ob_start();
+	}
+    }
+
+    /**
+     * Stop tracing
+     *
+     * This method is for use by GalleryStorage subclasses only.  If Gallery is
+     * in debug, this will method will stop tracing.
+     */
+    function _traceStop() {
+	global $gallery;
+	if ($gallery->getDebug()) {
+	    $buf = ob_get_contents();
+	    ob_end_clean();
+	}
+    }
+}
+?>

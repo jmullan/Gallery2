@@ -1,0 +1,60 @@
+<?php
+
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage TestCase
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * @package GalleryCore
+ * @subpackage TestCase
+ */
+class EmptyGalleryTestCase extends TestCase {
+
+    function getDescription() {
+	return "Clean out all the Gallery filesystem data.";
+    }
+
+    function testStart() {
+	global $gallery;
+
+	$platform = $gallery->getPlatform();
+
+	$dirs = array();
+	foreach (array('data.gallery.albums',
+		       'data.gallery.cache',
+		       'data.gallery.tmp',
+		       'data.smarty.base',
+		       'data.smarty.templates_c')
+		 as $param) {
+	    $dir = $gallery->getConfig($param);
+	    if (!empty($dir)) {
+		$dirs[] = $dir;
+	    }
+	}
+
+	foreach ($dirs as $dir) {
+
+	    if (empty($dir)) {
+		return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);
+	    }
+
+	    if ($platform->file_exists($dir)) {
+		$ret = $platform->recursiveRmdir($dir);
+		if (!$ret) {
+		    return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);
+		}
+	    }
+
+	    $ret = $platform->mkdir($dir);
+	    if (!$ret) {
+		return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);
+	    }
+	}
+
+	return GalleryStatus::success();
+    }
+}
+?>

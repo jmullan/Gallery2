@@ -1,0 +1,226 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * Utility class for caching data
+ *
+ * Very useful in the case where retrieving or building data sets is expensive,
+ * and the data doesn't change during the lifetime of the request.  This class
+ * serves as a hash table where any data class can store and retrieve cached
+ * data.
+ *
+ * @package GalleryCore
+ * @subpackage Classes
+ */
+class GalleryDataCache {
+
+    /**
+     * Get the static cache
+     *
+     * @return array the cache
+     * @staticvar cache the singleton cache
+     * @static
+     * @access private
+     */
+    function &_getCache() {
+	static $cache;
+	if (!isset($cache)) {
+	    $cache['maxKeys'] = 300;
+	    $cache['timestamps'] = array();
+	    $cache['keys'] = array();
+	    $cache['protected'] = array();
+	}
+	return $cache;
+    }
+
+    /**
+     * Store data in the cache
+     *
+     * You must provide a unique key.  Existing keys are overwritten.
+     *
+     * @param string the key
+     * @param mixed the data
+     * @param boolean should this key survive a reset call?
+     * @static
+     */
+    function put($key, $data, $protected=false) {
+	$cache =& GalleryDataCache::_getCache();
+	$cache['keys'][$key] = $data;
+	if ($protected) {
+	    $cache['protected'][$key] = 1;
+	} else {
+	    $cache['timestamps'][$key] = time() + microtime();
+	}
+
+	GalleryDataCache::_performMaintenance();
+    }
+
+    /**
+     * Remove data from the cache
+     *
+     * @param string the key
+     * @param mixed the data
+     * @static
+     */
+    function remove($key) {
+	$cache =& GalleryDataCache::_getCache();
+	unset($cache['timestamps'][$key]);
+	unset($cache['keys'][$key]);
+	unset($cache['protected'][$key]);
+    }
+
+    /**
+     * Remove data from the cache
+     *
+     * @param string the key
+     * @param mixed the data
+     * @static
+     */
+    function removeByPattern($pattern) {
+	$cache =& GalleryDataCache::_getCache();
+	foreach (preg_grep("/$pattern/", array_keys($cache['keys'])) as $key) {
+	    unset($cache['timestamps'][$key]);
+	    unset($cache['keys'][$key]);
+	    unset($cache['protected'][$key]);
+	}
+    }
+
+    /**
+     * Store a reference to the data in the cache
+     *
+     * You must provide a unique key.  Existing keys are overwritten.
+     *
+     * @param string the key
+     * @param mixed the data
+     * @param boolean should this key survive a reset call?
+     * @static
+     */
+    function putByReference($key, &$data, $protected=false) {
+	$cache =& GalleryDataCache::_getCache();
+	$cache['keys'][$key] =& $data;
+	if ($protected) {
+	    $cache['protected'][$key] = 1;
+	} else {
+	    print "Setting timestamp for $key<br>";
+	    $cache['timestamps'][$key] = time() + microtime();
+	}
+
+	GalleryDataCache::_performMaintenance();
+    }
+
+    /**
+     * Perform some pruning of our cache to prevent it from growing too large when we're doing
+     * exceptionally long operations like adding many items in one request.
+     *
+     * @access private
+     * @static
+     */
+    function _performMaintenance() {
+	static $count;
+
+	if (!isset($count)) {
+	    $count = 0;
+	}
+
+	if ($count++ % 150 == 0) {
+	    $cache =& GalleryDataCache::_getCache();
+	    if (sizeof($cache['timestamps']) > $cache['maxKeys']) {
+		$timestamps = $cache['timestamps'];
+		asort($timestamps);
+		$numToExpire = sizeof($timestamps) - $cache['maxKeys'];
+		foreach ($timestamps as $key => $timestamp) {
+		    unset($cache['keys'][$key]);
+		    unset($cache['timestamps'][$key]);
+		    if ($numToExpire-- == 0) {
+			break;
+		    }
+		}
+	    }
+	}
+    }
+
+    /**
+     * Retrieve data from the cache
+     *
+     * @param string the key
+     * @return mixed the cached data
+     * @static
+     */
+    function get($key) {
+	$cache =& GalleryDataCache::_getCache();
+	if (!isset($cache['protected'][$key])) {
+	    $cache['timestamps'][$key] = time() + microtime();
+	}
+	return $cache['keys'][$key];
+    }
+
+    /**
+     * Does the cache contain the key specified?
+     *
+     * @param string the function/method name
+     * @return boolean true if the cache contains the key given
+     * @static
+     */
+    function containsKey($key) {
+	$cache =& GalleryDataCache::_getCache();
+	return isset($cache['keys'][$key]);
+    }
+
+    /**
+     * Return all the keys in the cache
+     *
+     * @return array string keys
+     * @static
+     */
+    function getAllKeys() {
+	$cache =& GalleryDataCache::_getCache();
+	return array_keys($cache['keys']);
+    }
+
+    /**
+     * Empty the cache of all but protected entries
+     *
+     * @param boolean purge protected also?
+     * @static
+     */
+    function reset($purgeProtected=false) {
+	$cache =& GalleryDataCache::_getCache();
+
+	if ($purgeProtected) {
+	    $cache['timestamps'] = array();
+	    $cache['keys'] = array();
+	} else {
+	    foreach (array_keys($cache['keys']) as $key) {
+		if (!isset($cache['protected'][$key])) {
+		    unset($cache['timestamps'][$key]);
+		    unset($cache['keys'][$key]);
+		}
+	    }
+	}
+    }
+}
+?>

@@ -1,0 +1,418 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+/**
+ * @version $Revision$ $Date$
+ * @package Exif
+ * @subpackage UserInterface
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * Required classes
+ */
+require_once(dirname(__FILE__) . '/classes/ExifHelper.class');
+require_once(dirname(__FILE__) . '/classes/ExifPropertiesMap.class');
+
+/**
+ * This controller will handle the setting of Exif module options
+ *
+ * @package Exif
+ * @subpackage UserInterface
+ */
+class AdminExifController extends GalleryController {
+    
+    /**
+     * @see GalleryController::handleRequest
+     */
+    function handleRequest($form) {
+	global $gallery;
+
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$error = array();
+	$status = array();
+	if (isset($form['action']['availableToSummary'])) {
+	    list ($ret, $properties) = ExifPropertiesMap::getProperties(EXIF_SUMMARY);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    if (isset($form['available'])) {
+		$count = 0;
+		foreach ($form['available'] as $property) {
+		    if (!in_array($property, $properties)) {
+			$properties[] = $property;
+			$count++;
+		    }
+		    sort($properties);
+		}
+
+		$ret = ExifPropertiesMap::setProperties(EXIF_SUMMARY, $properties);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		
+		$status['added']['summary'] = $count;
+		$redirect['view'] = 'core:SiteAdmin';
+		$redirect['subView'] = 'exif:AdminExif';
+	    } else {
+		$error[] = 'form[error][available][missing]';
+	    }
+
+	} else if (isset($form['action']['availableToDetailed'])) {
+	    list ($ret, $properties) = ExifPropertiesMap::getProperties(EXIF_DETAILED);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    if (isset($form['available'])) {
+		$count = 0;
+		foreach ($form['available'] as $property) {
+		    if (!in_array($property, $properties)) {
+			$properties[] = $property;
+			$count++;
+		    }
+		    sort($properties);
+		}
+
+		$ret = ExifPropertiesMap::setProperties(EXIF_DETAILED, $properties);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		$status['added']['detailed'] = $count;
+		$redirect['view'] = 'core:SiteAdmin';
+		$redirect['subView'] = 'exif:AdminExif';
+	    } else {
+		$error[] = 'form[error][available][missing]';
+	    }
+	} else if (isset($form['action']['removeFromSummary'])) {
+	    list ($ret, $properties) = ExifPropertiesMap::getProperties(EXIF_SUMMARY);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    if (isset($form['summary'])) {
+		$count = 0;
+		$newProperties = array();
+		for ($i = 0; $i < sizeof($properties); $i++) {
+		    if (!in_array($properties[$i], $form['summary'])) {
+			$newProperties[] = $properties[$i];
+		    } else {
+			$count++;
+		    }
+		}
+
+		$ret = ExifPropertiesMap::setProperties(EXIF_SUMMARY, $newProperties);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		$status['removed']['summary'] = $count;
+		$redirect['view'] = 'core:SiteAdmin';
+		$redirect['subView'] = 'exif:AdminExif';
+	    } else {
+		$error[] = 'form[error][summary][missing]';
+	    }
+
+	} else if (isset($form['action']['resetSummary'])) {
+	    $ret = ExifHelper::setDefaultProperties(EXIF_SUMMARY);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $status['restored']['summary'] = 1;
+	    $redirect['view'] = 'core:SiteAdmin';
+	    $redirect['subView'] = 'exif:AdminExif';
+	} else if (isset($form['action']['removeFromDetailed'])) {
+	    list ($ret, $properties) = ExifPropertiesMap::getProperties(EXIF_DETAILED);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    if (isset($form['detailed'])) {
+		$count = 0;
+		$newProperties = array();
+		for ($i = 0; $i < sizeof($properties); $i++) {
+		    if (!in_array($properties[$i], $form['detailed'])) {
+			$newProperties[] = $properties[$i];
+		    } else {
+			$count++;
+		    }
+		}
+
+		$ret = ExifPropertiesMap::setProperties(EXIF_DETAILED, $newProperties);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		$status['removed']['detailed'] = $count;
+		$redirect['view'] = 'core:SiteAdmin';
+		$redirect['subView'] = 'exif:AdminExif';
+	    } else {
+		$error[] = 'form[error][detailed][missing]';
+	    }
+	} else if (isset($form['action']['resetDetailed'])) {
+	    $ret = ExifHelper::setDefaultProperties(EXIF_DETAILED);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $status['restored']['detailed'] = 1;
+	    $redirect['view'] = 'core:SiteAdmin';
+	    $redirect['subView'] = 'exif:AdminExif';
+	} else if (isset($form['action']['moveUpSummary'])) {
+	    list ($ret, $properties) = ExifPropertiesMap::getProperties(EXIF_SUMMARY);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    if (isset($form['summary'])) {
+
+		/* Iterate through each property that we want to shift */
+		$count = 0;
+		foreach ($form['summary'] as $propertyToShift) {
+		    /* Find its spot in the array and swap it with the one ahead of it */
+		    for ($i = 0; $i < sizeof($properties); $i++) {
+			if ($properties[$i] == $propertyToShift) {
+			    if ($i > 0) {
+				$save = $properties[$i - 1];
+				$properties[$i - 1] = $properties[$i];
+				$properties[$i] = $save;
+				$count++;
+			    }
+			}
+		    }
+		}
+
+		$ret = ExifPropertiesMap::setProperties(EXIF_SUMMARY, $properties);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		$status['movedUp']['summary'] = $count;
+		$redirect['view'] = 'core:SiteAdmin';
+		$redirect['subView'] = 'exif:AdminExif';
+	    } else {
+		$error[] = 'form[error][summary][missing]';
+	    }
+	} else if (isset($form['action']['moveDownSummary'])) {
+	    list ($ret, $properties) = ExifPropertiesMap::getProperties(EXIF_SUMMARY);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    if (isset($form['summary'])) {
+
+		/* Iterate through each property that we want to shift */
+		$count = 0;
+		foreach ($form['summary'] as $propertyToShift) {
+		    /* Find its spot in the array and swap it with the one ahead of it */
+		    for ($i = sizeof($properties)-1; $i >= 0; $i--) {
+			if ($properties[$i] == $propertyToShift) {
+			    if ($i < sizeof($properties) - 1) {
+				$save = $properties[$i + 1];
+				$properties[$i + 1] = $properties[$i];
+				$properties[$i] = $save;
+				$count++;
+			    }
+			}
+		    }
+		}
+
+		$ret = ExifPropertiesMap::setProperties(EXIF_SUMMARY, $properties);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		$status['movedDown']['summary'] = $count;
+		$redirect['view'] = 'core:SiteAdmin';
+		$redirect['subView'] = 'exif:AdminExif';
+	    } else {
+		$error[] = 'form[error][summary][missing]';
+	    }
+	} else if (isset($form['action']['moveUpDetailed'])) {
+	    list ($ret, $properties) = ExifPropertiesMap::getProperties(EXIF_DETAILED);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    if (isset($form['detailed'])) {
+
+		/* Iterate through each property that we want to shift */
+		$count = 0;
+		foreach ($form['detailed'] as $propertyToShift) {
+		    /* Find its spot in the array and swap it with the one ahead of it */
+		    for ($i = 0; $i < sizeof($properties); $i++) {
+			if ($properties[$i] == $propertyToShift) {
+			    if ($i > 0) {
+				$save = $properties[$i - 1];
+				$properties[$i - 1] = $properties[$i];
+				$properties[$i] = $save;
+				$count++;
+			    }
+			}
+		    }
+		}
+
+		$ret = ExifPropertiesMap::setProperties(EXIF_DETAILED, $properties);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		$status['movedUp']['detailed'] = $count;
+		$redirect['view'] = 'core:SiteAdmin';
+		$redirect['subView'] = 'exif:AdminExif';
+	    } else {
+		$error[] = 'form[error][detailed][missing]';
+	    }
+	} else if (isset($form['action']['moveDownDetailed'])) {
+	    list ($ret, $properties) = ExifPropertiesMap::getProperties(EXIF_DETAILED);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    if (isset($form['detailed'])) {
+
+		/* Iterate through each property that we want to shift */
+		$count = 0;
+		foreach ($form['detailed'] as $propertyToShift) {
+		    /* Find its spot in the array and swap it with the one ahead of it */
+		    for ($i = sizeof($properties)-1; $i >= 0; $i--) {
+			if ($properties[$i] == $propertyToShift) {
+			    if ($i < sizeof($properties) - 1) {
+				$save = $properties[$i + 1];
+				$properties[$i + 1] = $properties[$i];
+				$properties[$i] = $save;
+				$count++;
+			    }
+			}
+		    }
+		}
+
+		$ret = ExifPropertiesMap::setProperties(EXIF_DETAILED, $properties);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		$status['movedDown']['detailed'] = $count;
+		$redirect['view'] = 'core:SiteAdmin';
+		$redirect['subView'] = 'exif:AdminExif';
+	    } else {
+		$error[] = 'form[error][detailed][missing]';
+	    }
+	}
+
+	if (!empty($redirect)) {
+	    $results['redirect'] = $redirect;
+	} else {
+	    $results['delegate']['view'] = 'core:SiteAdmin';
+	    $results['delegate']['subView'] = 'exif:AdminExif';
+	}
+	$results['status'] = $status;
+	$results['error'] = $error;
+
+	return array(GalleryStatus::success(), $results);
+    }
+}
+
+/**
+ * This view will prompt for general Gallery settings
+ *
+ * @package GalleryCore
+ * @subpackage UserInterface
+ */
+class AdminExifView extends GalleryView {
+
+    /**
+     * @see GalleryView::loadTemplate
+     */
+    function loadTemplate(&$template, &$form) {
+	global $gallery;
+
+	$mode = GalleryUtilities::getRequestVariables('mode');
+	
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	    
+	if ($form['formName'] != 'AdminExif') {
+	    /* Load up our form data */
+	    $form['formName'] = 'AdminExif';
+	}
+
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'exif');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$exifKeys = ExifHelper::getExifKeys();
+	$visibleKeys = array();
+
+	/* Prepare the summary list */
+	$summaryList = array();
+	list ($ret, $tmp) = ExifPropertiesMap::getProperties(EXIF_SUMMARY);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	foreach ($tmp as $property) {
+	    $summaryList[$property] = $module->translate($exifKeys[$property][0]);
+	}
+	
+	/* Prepare the detailed list */
+	$detailedList = array();
+	list ($ret, $tmp) = ExifPropertiesMap::getProperties(EXIF_DETAILED);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	foreach ($tmp as $property) {
+	    $detailedList[$property] = $module->translate($exifKeys[$property][0]);
+	}
+	
+	/* Anything not summary and detailed is available */
+	$availableList = array();
+	foreach ($exifKeys as $key => $data) {
+	    if (isset($summaryList[$key]) && isset($detailedList[$key])) {
+		continue;
+	    }
+
+	    $availableList[$key] = $module->translate($data[0]);
+	}
+
+	asort($availableList);
+
+	$AdminExif = array();
+	$AdminExif['availableList'] = $availableList;
+	$AdminExif['summaryList'] = $summaryList;
+	$AdminExif['detailedList'] = $detailedList;
+	
+	$template->setVariable('controller', 'exif:AdminExif');
+	$template->setVariable('AdminExif', $AdminExif);
+
+	return array(GalleryStatus::success(),
+		     array('body' => 'modules/exif/templates/AdminExif.tpl'));
+    }
+}
+?>

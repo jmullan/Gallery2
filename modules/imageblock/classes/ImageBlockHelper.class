@@ -1,0 +1,224 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package ImageBlock
+ * @author Alan Harder <alan.harder@sun.com>
+ */
+
+/**
+ * Random item
+ */
+define('IMAGE_BLOCK_RANDOM', 1);
+
+/**
+ * Most recent item
+ */
+define('IMAGE_BLOCK_RECENT', 2);
+
+/**
+ * Most viewed item
+ */
+define('IMAGE_BLOCK_VIEWED', 3);
+
+/**
+ * A helper class for the Image Block module.
+ *
+ * @package ImageBlock
+ * @subpackage Classes
+ */
+class ImageBlockHelper {
+
+    /**
+     * Fetch item data for use in image block
+     *
+     * @param string the item type
+     * @param int the order type (use defined constant from above)
+     * @return array GalleryStatus a status code
+     *               mixed containing id, creationTimestamp, viewCount of
+     *                     item or null if none found
+     * @static
+     */
+    function fetchViewableData($itemType, $order) {
+	global $gallery;
+	$storage = $gallery->getStorage();
+	$typeMap = array('GalleryPhotoItem' => 1, 'GalleryAlbumItem' => 2);
+
+	/* Prepare the query */
+	$select = '[ImageBlockCacheMap::itemId], [ImageBlockCacheMap::itemTimestamp]';
+	$from = '[ImageBlockCacheMap]';
+	$where ='[ImageBlockCacheMap::userId] = ?  AND [ImageBlockCacheMap::itemType] = ?';
+	switch ($order) {
+	case IMAGE_BLOCK_RANDOM:
+	    list ($ret, $orderBy) = $storage->getFunctionSql('RAND', array());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    break;
+	case IMAGE_BLOCK_RECENT:
+	    $orderBy = '[ImageBlockCacheMap::itemTimestamp] DESC';
+	    break;
+	case IMAGE_BLOCK_VIEWED:
+	    $select .= ', [GalleryItemAttributesMap::viewCount]';
+	    $from .= ', [GalleryItemAttributesMap]';
+	    $where .= ' AND [ImageBlockCacheMap::itemId] = [GalleryItemAttributesMap::itemId]';
+	    $orderBy = '[GalleryItemAttributesMap::viewCount] DESC';
+	    break;
+	default:
+	    return array(GalleryStatus::ERROR_UNIMPLEMENTED(__FILE__, __LINE__), null);
+	}
+
+	$query = "SELECT $select FROM $from WHERE $where ORDER BY $orderBy LIMIT 1";
+	$data[] = $gallery->getActiveUserId();
+	$data[] = $typeMap[$itemType];
+	$result = null;
+
+	while (true) {
+	    list ($ret, $searchResults) = $gallery->search($query, $data, array());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    if ($rec = $searchResults->nextResult()) {
+		$result = array('id' => (int)$rec[0],
+				'creationTimestamp' => (int)$rec[1]);
+		if ($order == IMAGE_BLOCK_VIEWED) {
+		    $result['viewCount'] = (int)$rec[2];
+		}
+		break;
+	    }
+	    if (isset($cached)) {
+		break;
+	    }
+	    $ret = ImageBlockHelper::cacheViewableTree();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $cached = true;
+	}
+
+	if (isset($result) && !isset($result['viewCount'])) {
+	    list ($ret, $result['viewCount']) = GalleryCoreApi::fetchItemViewCount($result['id']);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+
+	return array(GalleryStatus::success(), $result);
+    }
+
+    /**
+     * Cache viewable data for current user
+     *
+     * @return object GalleryStatus a status code
+     * @static
+     */
+    function cacheViewableTree() {
+	global $gallery;
+	$storage = $gallery->getStorage();
+
+	list ($ret, $permissionBits) = GalleryCoreApi::convertPermissionIdsToBits('core.view');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$userId = $gallery->getActiveUserId();
+	list ($ret, $groupIds) = GalleryCoreApi::fetchGroupsForUser($userId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$groupIds = array_keys($groupIds);
+	$groupIdMarkers = GalleryUtilities::makeMarkers($groupIds);
+	
+	$query = '
+	INSERT INTO
+	  [ImageBlockCacheMap]
+	SELECT
+	  ?, ?, [GalleryEntity::creationTimestamp], [GalleryEntity::id]
+	FROM
+	  [GalleryEntity], [GalleryPermissionMap], [GalleryChildEntity], [GalleryDerivative]
+	WHERE
+	  [GalleryEntity::entityType] = ?
+	  AND
+	  ([GalleryPermissionMap::userId] = ?
+	   OR
+	   [GalleryPermissionMap::groupId] IN (' . $groupIdMarkers . '))
+	  AND
+	  [GalleryPermissionMap::permission] & ? > ?
+	  AND
+	  [GalleryPermissionMap::itemId] = [GalleryEntity::id]
+	  AND
+	  [GalleryChildEntity::parentId] = [GalleryEntity::id]
+	  AND
+	  [GalleryDerivative::id] = [GalleryChildEntity::id]
+	  AND
+	  [GalleryDerivative::derivativeType] = ' . DERIVATIVE_TYPE_IMAGE_THUMBNAIL . '
+	';
+
+	$data = array($userId, 1, 'GalleryPhotoItem', $userId);
+	array_splice($data, sizeof($data), 0, $groupIds);
+	$data[] = $storage->convertIntToBits($permissionBits);
+	$data[] = $storage->convertIntToBits(0);
+
+	$ret = $storage->execute($query, $data);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$data[1] = 2;
+	$data[2] = 'GalleryAlbumItem';
+	$ret = $storage->execute($query, $data);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Event handler for Gallery::ViewableTreeChange event
+     * Invalidate image block cache for specified user, or entire cache if no user
+     *
+     * @param object GalleryEvent the event
+     * @return object GalleryStatus a status code
+     */
+    function handleEvent($event) {
+	require_once(dirname(__FILE__) . '/ImageBlockCacheMap.class');
+	if ($event->getEventName() == 'Gallery::ViewableTreeChange') {
+	    $param = $event->getEntity();
+	    if (isset($param['userId'])) {
+		$ret = ImageBlockCacheMap::removeMapEntry(array('userId' => $param['userId']));
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    } else {
+		global $gallery;
+		$storage = $gallery->getStorage();
+		$ret = $storage->execute('DELETE FROM [ImageBlockCacheMap]', array());
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+	}
+	return GalleryStatus::success();
+    }
+}
+?>
