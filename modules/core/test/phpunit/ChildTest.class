@@ -43,7 +43,8 @@ class ChildTest extends GalleryTestCase {
 	parent::setUp();
 
 	/* Create a little tree of mixed items/entities */
-	list ($ret, $this->_root) = $this->_createRandomAlbum($this->_getRootId());
+	list ($ret, $this->_root) = $this->_createRandomAlbum($this->_getRootId(),
+							      array('orderBy' => 'orderWeight'));
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));

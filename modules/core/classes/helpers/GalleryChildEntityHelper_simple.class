@@ -35,6 +35,142 @@
 class GalleryChildEntityHelper_simple {
 
     /**
+     * Return the ids of all the child items of the given item that have the
+     * matching permission.  Useful for, example, for finding all the children
+     * where we (the active user) has the 'core.changePermissions' permission
+     * bit set.  This allows us to cascade permission updates.
+     *
+     * @access public
+     * @param array item ids
+     * @param int permission id
+     * @return array object GalleryStatus a status code
+     *               int a count
+     * @static
+     */
+    function fetchChildItemIdsWithPermission($itemId, $permissionId) {
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
+	if ($item->getCanContainChildren()) {
+	    list ($ret, $ids) =
+		GalleryChildEntityHelper_simple::_fetchChildItemIds($item, null, null,
+								    'GalleryItem', $permissionId);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	} else {
+	    $ids = array();
+	}
+
+	return array(GalleryStatus::success(), $ids);
+    }
+
+    /**
+     * Return the ids of all the child items of the given item that have the
+     * matching permission and are linkable entities.  Useful for, example, for
+     * finding all the children where we (the active user) has the 'core.changePermissions'
+     * permission bit set.  This allows us to cascade permission updates.
+     *
+     * @access public
+     * @param array item ids
+     * @param int permission id
+     * @return array object GalleryStatus a status code
+     *               int a count
+     * @static
+     */
+    function fetchLinkableChildItemIdsWithPermission($itemId, $permissionId) {
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
+	if ($item->getCanContainChildren()) {
+	    list ($ret, $ids) =
+		GalleryChildEntityHelper_simple::_fetchChildItemIds($item, null, null,
+								    'GalleryItem', $permissionId,
+								    true);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	} else {
+	    $ids = array();
+	}
+
+	return array(GalleryStatus::success(), $ids);
+	
+	global $gallery;
+
+	if (empty($itemId) || empty($permissionId)) {
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
+			 null);
+	}
+
+	$storage =& $gallery->getStorage();
+	list ($ret, $permissionBits) = GalleryCoreApi::convertPermissionIdsToBits($permissionId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	list ($ret, $groupIds) = GalleryCoreApi::fetchGroupsForUser($gallery->getActiveUserId());
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$groupIds = array_keys($groupIds);
+	$groupIdMarkers = GalleryUtilities::makeMarkers($groupIds);
+	list ($ret, $andPermission) = $storage->getFunctionSql('BITAND',
+						array('[GalleryPermissionMap::permission]', '?'));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$query = '
+        SELECT DISTINCT
+          [GalleryChildEntity::id]
+        FROM
+          [GalleryEntity], [GalleryChildEntity], [GalleryPermissionMap]
+        WHERE
+          [GalleryChildEntity::parentId] = ?
+          AND
+          [GalleryPermissionMap::itemId] = [GalleryChildEntity::id]
+          AND
+          [GalleryEntity::id] = [GalleryChildEntity::id]
+          AND
+          [GalleryEntity::isLinkable] = 1
+          AND
+          ([GalleryPermissionMap::userId] = ?
+           OR
+           [GalleryPermissionMap::groupId] IN (' . $groupIdMarkers . '))
+          AND
+        ' . $andPermission . ' = ?
+        GROUP BY
+          [GalleryChildEntity::id]
+        ';
+	$data = array();
+	$data[] = $itemId;
+	$data[] = $gallery->getActiveUserId();
+	array_splice($data, sizeof($data), 0, $groupIds);
+	$data[] = $storage->convertIntToBits($permissionBits);
+	$data[] = $storage->convertIntToBits($permissionBits);
+
+	list ($ret, $searchResults) = $gallery->search($query, $data);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$data = array();
+	while ($result = $searchResults->nextResult()) {
+	    $data[] = $result[0];
+	}
+
+	GalleryDataCache::cachePermissions($data, $permissionId);
+
+	return array(GalleryStatus::success(), $data);
+    }
+    
+    /**
      * Return the ids of the children of this entity, in the order specified
      * by the orderBy field and the direction specified by the orderDirection
      * field, that are visible to the given user.
@@ -49,8 +185,8 @@ class GalleryChildEntityHelper_simple {
      * @static
      */
     function fetchChildItemIds($item, $offset=null, $count=null) {
-	list ($ret, $ids) = GalleryChildEntityHelper_simple::_fetchChildItemIds(
-						     $item, $offset, $count, 'GalleryItem');
+	list ($ret, $ids) =
+	    GalleryChildEntityHelper_simple::_fetchChildItemIds($item, $offset, $count, 'GalleryItem');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -72,8 +208,8 @@ class GalleryChildEntityHelper_simple {
      * @static
      */
     function fetchChildDataItemIds($item, $offset=null, $count=null) {
-	list ($ret, $ids) = GalleryChildEntityHelper_simple::_fetchChildItemIds(
-						     $item, $offset, $count, 'GalleryDataItem');
+	list ($ret, $ids) =
+	    GalleryChildEntityHelper_simple::_fetchChildItemIds($item, $offset, $count, 'GalleryDataItem');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -95,8 +231,8 @@ class GalleryChildEntityHelper_simple {
      * @static
      */
     function fetchChildItemIdsIgnorePermissions($item, $offset=null, $count=null) {
-	list ($ret, $ids) = GalleryChildEntityHelper_simple::_fetchChildItemIds(
-						     $item, $offset, $count, 'GalleryItem', false);
+	list ($ret, $ids) =
+	    GalleryChildEntityHelper_simple::_fetchChildItemIds($item, $offset, $count, 'GalleryItem', null);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -104,10 +240,14 @@ class GalleryChildEntityHelper_simple {
     }
 
     /**
-     * Helper function for getting child ids.
+     * Helper function for getting child ids.  This method has gotten a little
+     * bit out of control, but it's got reasonably good unit tests so it's ripe
+     * for a refactor.
+     *
      * @access private
      */
-    function _fetchChildItemIds($item, $offset=null, $count=null, $class, $checkPermission=true) {
+    function _fetchChildItemIds($item, $offset=null, $count=null, $class,
+				$requiredPermission='core.view', $linkableOnly=false) {
 	global $gallery;
 	$storage =& $gallery->getStorage();
 
@@ -118,12 +258,16 @@ class GalleryChildEntityHelper_simple {
 	/* List of classes that we will need */
 	$classes = array('[GalleryChildEntity]', "[$class]");
 
-	if ($checkPermission) {
-	    list ($ret, $permissionBits) = GalleryCoreApi::convertPermissionIdsToBits('core.view');
+	if ($requiredPermission) {
+	    list ($ret, $permissionBits) = GalleryCoreApi::convertPermissionIdsToBits($requiredPermission);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    $classes[] = '[GalleryPermissionMap]';
+	}
+
+	if ($linkableOnly) {
+	    $classes[] = '[GalleryEntity]';
 	}
 
 	list ($ret, $orderBy, $orderColumn, $extraWhere) =
@@ -166,7 +310,13 @@ class GalleryChildEntityHelper_simple {
 	  [GalleryChildEntity::id] = [' . $class . '::id]
 	';
 
-	if ($checkPermission) {
+	if ($linkableOnly) {
+	    $query .= '
+            AND [GalleryChildEntity::id] = [GalleryEntity::id]
+            ';
+	}
+
+	if ($requiredPermission) {
 	    list ($ret, $groupIds) = GalleryCoreApi::fetchGroupsForUser($gallery->getActiveUserId());
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
@@ -180,13 +330,19 @@ class GalleryChildEntityHelper_simple {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
+	    if ($linkableOnly) {
+		$query .= '
+                AND [GalleryEntity::isLinkable] = 1
+                ';
+	    }
+
 	    $query .= '
 	     AND
 	     ([GalleryPermissionMap::userId] = ?
 	      OR
 	     [GalleryPermissionMap::groupId] IN (' . $groupIdMarkers . '))
 	     AND
-	    ' . $andPermission . ' > ?
+	    ' . $andPermission . ' = ?
 	     AND
 	     [GalleryPermissionMap::itemId] = [GalleryChildEntity::id]
 	    ';
@@ -198,11 +354,11 @@ class GalleryChildEntityHelper_simple {
 	' . $orderClause;
 
 	$data[] = $item->getId();
-	if ($checkPermission) {
+	if ($requiredPermission) {
 	    $data[] = $gallery->getActiveUserId();
 	    array_splice($data, count($data), 0, $groupIds);
 	    $data[] = $storage->convertIntToBits($permissionBits);
-	    $data[] = $storage->convertIntToBits(0);
+	    $data[] = $storage->convertIntToBits($permissionBits);
 	}
 	for ($i = 0; $i < $extraIds; $i++) {
 	    /* add the data for $orderWhere's extra ?'s */

@@ -301,7 +301,7 @@ class ItemTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->assertEquals(array($child[2]->getId()), $itemIds);
+	$this->assertEquals(array($child[2]->getId()), $itemIds, 'match all bits failed');
     }
 
     function testFetchLinkableChildItemIdsWithPermission() {
