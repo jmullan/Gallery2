@@ -204,9 +204,26 @@ class Gallery {
 			 null);
 	}
 
-	list ($ret, $lockId) = $this->acquireWriteLock($id);
+	$lockIds = array();
+
+	list ($ret, $lockIds[]) = $this->acquireReadLockParents($id);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	if ($lockIds[0] == null) {
+	    /*
+	     * No lock was acquired - only in the case where I have no parents
+	     */
+	    unset($lockIds[0]);
+	}
+
+	/* Don't write lock it if it's already locked somewhere else */
+	if (!$this->isWriteLocked($id)) {
+	    list ($ret, $lockIds[]) = $this->acquireWriteLock($id);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
 	}
 	
 	list ($ret, $entity) = $this->loadEntityById($id);
@@ -219,7 +236,7 @@ class Gallery {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	
-	$ret = $this->releaseLocks($lockId);
+	$ret = $this->releaseLocks($lockIds);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -360,6 +377,7 @@ class Gallery {
      *               int the lock id
      */
     function acquireReadLock($ids, $timeout=10) {
+
 	list ($ret, $storage) = $this->getStorage();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -390,81 +408,67 @@ class Gallery {
     function acquireReadLockParents($id, $timeout=10) {
 	global $gallery;
 
-	$lock = null;
-	$current = $id;
-	while (true) {
-	    list ($ret, $searchResults) = 
-		$gallery->search(array('select' => '[GalleryChildEntity::parentId]',
-				       'where' => ('[GalleryChildEntity::id] = ? ')),
-				 array($current));
-	    if ($ret->isError()) {
-		if (isset($lock)) {
-		    $lock->release();
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-	    }
-
-	    if ($searchResults->resultCount() == 0) {
-		/* This should never happen! */
-		return array(GalleryStatus::error(ERROR_MISSING_OBJECT,
-						  __FILE__, __LINE__));
-	    }
-
-	    /* Extract the parent id */
-	    while ($result = $searchResults->nextResult()) {
-		$current = $result[0];
-	    }
-
-	    if ($current == null) {
-
-		/* No parent -- we're at the root */
-		if ($lock == null) {
-		    $lock = new GalleryLock();
-		}
-		break;
-	    }
-
-	    /* Lock the parent */
-	    list ($ret, $newLock) = $this->acquireReadLock($current, $timeout);
-	    if ($ret->isError()) {
-		if (isset($lock)) {
-		    $lock->release();
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
-	    }
-
-	    /* Merge the locks together. */
-	    if (isset($lock)) {
-		$ret = $lock->merge($newLock);
-		if ($ret->isError()) {
-		    $lock->release();
-		    $newLock->release();
-		}
-	    } else {
-		$lock = $newLock;
-	    }
-	    
-	    /* Then lock all ancestors of the parent */
-	    list ($ret, $newLock) = $this->acquireReadLockParents($current, $timeout);
-	    if ($ret->isError()) {
-		if (isset($lock)) {
-		    $lock->release();
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
-	    }
-
-	    /* Merge the locks together. */
-	    $ret = $lock->merge($newLock);
-	    if ($ret->isError()) {
-		$lock->release();
-		$newLock->release();
-	    }
+	list ($ret, $storage) = $gallery->getStorage();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$lockId = $lock->getId();
-	$this->_locks[$lockId] = $lock;
+	/* Get the parent entity id */
+	list ($ret, $searchResults) = 
+	    $gallery->search(array('select' => '[GalleryChildEntity::parentId]',
+				   'where' => ('[GalleryChildEntity::id] = ? ')),
+			     array($id));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
+	if ($searchResults->resultCount() == 0) {
+	    /* This should never happen! */
+	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT,
+					      __FILE__, __LINE__));
+	}
+	
+	/* Extract the parent id */
+	while ($result = $searchResults->nextResult()) {
+	    $parentId = $result[0];
+	}
+	
+	if ($parentId == null) {
+	    
+	    /* No parent -- we're at the root */
+	    return array(GalleryStatus::success(), null);
+	}
+	
+	/* Don't both read locking if we already have a read or write lock. */
+	if (!($this->isWriteLocked($parentId) || $this->isReadLocked($parentId))) {
+	    
+	    /* Read lock the parent */
+	    list ($ret, $lock1) = $this->acquireReadLock($parentId, $timeout);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+	
+	/* Then lock all ancestors of the parent */
+	list ($ret, $lock2) = $this->acquireReadLockParents($parentId, $timeout);
+	if ($ret->isError()) {
+	    $this->releaseLocks($lock1);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 
-	$this->FOO = 1;
+	/* Merge the locks down to a single lock. */
+	if (empty($lock1) && empty($lock2)) {
+	    $lockId = null;
+	} else if (empty($lock1) && !empty($lock2)) {
+	    $lockId = $lock2;
+	} else if (!empty($lock1) && empty($lock2)) {
+	    $lockId = $lock1;
+	} else {
+	    $this->_locks[$lock1]->merge($this->_locks[$lock2]);
+	    unset($this->_locks[$lock2]);
+	    $lockId = $lock1;
+	}
+
 	return array(GalleryStatus::success(), $lockId);
     }
 
@@ -502,6 +506,7 @@ class Gallery {
      *               int the lock id
      */
     function acquireWriteLock($ids, $timeout=10) {
+
 	list ($ret, $storage) = $this->getStorage();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -551,6 +556,7 @@ class Gallery {
      * @return object GalleryStatus a status code
      */
     function releaseLocks($lockIds) {
+
 	if (!is_array($lockIds)) {
 	    $lockIds = array($lockIds);
 	}
