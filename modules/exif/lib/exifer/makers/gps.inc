@@ -200,7 +200,12 @@ function parseGPS($block,&$result,$offset,$seek, $globalOffset) {
 				//offsets are from TIFF header which is 12 bytes from the start of the file
 				$v = fseek($seek,$globalOffset+hexdec($value));  
 				if($v==0) {
+				    $fstat = fstat($seek);
+				    if ($bytesofdata <= $fstat['size']) {
 					$data = fread($seek, $bytesofdata);
+				    } else {
+					$data = '';
+				    }
 				} else if($v==-1) {
 					$result['Errors'] = $result['Errors']++;
 				}
