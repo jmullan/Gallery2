@@ -282,7 +282,7 @@ class MatrixLayout extends GalleryLayout {
 	foreach ($childIds as $childId) {
 	    $ownerIds[$childTable[$childId]['ownerId']] = 1;
 	}
-	list ($ret, $tmp) = $gallery->loadEntitiesById(array_flip($ownerIds));
+	list ($ret, $tmp) = $gallery->loadEntitiesById(array_keys($ownerIds));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
