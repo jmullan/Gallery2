@@ -150,7 +150,7 @@ class GalleryEntity_core extends GalleryPersistent {
 	$this->setCreationTimestamp(time());
 
 	/* Set the object type */
-	$this->setEntityType(get_class($this));
+	$this->setEntityType($this->getClassName());
 
 	return GalleryStatus::success();
     }
