@@ -70,7 +70,7 @@
   {else} {* {if empty($form.webPageUrls)} *}
     {g->element style="emphasized"}
       {g->text text="URL: %s" arg1=$form.webPage}
-      {g->link arg1="view=core:ItemAdmin" arg2="subView=core:ItemAddFromWeb" arg3="itemId=`$ItemAdmin.item.id`" arg4="form[webPage]=`$form.webPage`" arg5="form[formName]=ItemAddFromWeb"}
+      {g->link arg1="view=core:ItemAdmin" arg2="subView=core:ItemAdd" arg3="itemId=`$ItemAdmin.item.id`" arg4="form[webPage]=`$form.webPage`" arg5="form[formName]=ItemAddFromWeb" arg6="addPlugin=ItemAddFromWeb"}
 	{g->text text="change"}
       {/g->link}
       {g->input type="hidden" name="form[webPage]"}{$form.webPage}{/g->input}
