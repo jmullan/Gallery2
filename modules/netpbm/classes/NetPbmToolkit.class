@@ -160,8 +160,8 @@ class NetPbmToolkit extends GalleryToolkit {
 		return array(true, null, null);
 	    }
 
-	    if (abs($rotation) >= 180) {
-		$rotation = 360 - abs($rotation);
+	    if (abs($rotation) > 180) {
+		$rotation = $rotation - 360;
 	    }
 	    return array(true, $operation2, array($rotation));
 
