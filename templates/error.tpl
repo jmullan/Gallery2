@@ -15,11 +15,11 @@
       {$main.error}
 
       {if isset($main.debug)}
-	{include file="debug.tpl"}
+	{include file="gallery:templates/debug.tpl"}
       {/if}
 
       {if isset($main.profile)}
-	{include file="profile.tpl"}
+	{include file="gallery:templates/profile.tpl"}
       {/if}
   </body>
 </html>

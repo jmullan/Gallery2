@@ -20,11 +20,7 @@
       <font size="-1"><i>{$main.redirectUrl}</i></font>
 
       {if isset($main.debug)}
-	{include file="debug.tpl"}
-      {/if}
-
-      {if isset($main.profile)}
-	{include file="profile.tpl"}
+	{include file="gallery:templates/debug.tpl"}
       {/if}
   </body>
 </html>

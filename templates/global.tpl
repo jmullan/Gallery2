@@ -5,15 +5,17 @@
  * and when you upgrade, your changes will not get overwritten.
  *}
 {if isset($main.viewMainFile)}
-{include file=$main.viewMainFile l10Domain=$main.viewL10Domain}
+{include file="gallery:`$main.viewMainFile`" l10Domain=$main.viewL10Domain}
   {if isset($main.debug)}
-    <div id="gpDebug">{include file="templates/debug.tpl"}</div>
+    <div id="gpDebug">
+      {include file="gallery:templates/debug.tpl"}
+    </div>
   {/if}
 {else}
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
     <head>
-      {include file=$main.viewHeadFile l10Domain=$main.viewL10Domain}
+      {include file="gallery:`$main.viewHeadFile`" l10Domain=$main.viewL10Domain}
     </head>
     <body
     {if isset($main.onLoad)}
@@ -24,7 +26,7 @@
     {/if}>
 
     <div id="gallery">
-      {include file=$main.viewBodyFile l10Domain=$main.viewL10Domain}
+      {include file="gallery:`$main.viewBodyFile`" l10Domain=$main.viewL10Domain}
 
       <div id="gsFooter">
 	<a href="http://validator.w3.org/check/referer"><img style="border: 0px"
@@ -42,7 +44,7 @@
 
     {if isset($main.debug)}
     <div id="gpDebug">
-      {include file="templates/debug.tpl"}
+      {include file="gallery:templates/debug.tpl"}
     </div>
     {/if}
   </body>

@@ -38,7 +38,7 @@ class DebugStatusFormatter {
      */
     function format($codes, $trace, $message=null) {
 	require_once(dirname(__FILE__) . '/../../core/classes/GalleryTemplate.class');
-	$template = new GalleryTemplate(dirname(__FILE__));
+	$template = new GalleryTemplate(dirname(__FILE__) . '/..');
 	$template->setVariable('l10Domain', 'modules_debug');
 	$template->setVariable('codes', join(" ", $codes));
 	$template->setVariable('message', htmlentities($message));
