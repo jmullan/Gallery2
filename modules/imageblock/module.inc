@@ -48,6 +48,8 @@ class ImageBlockModule extends GalleryModule {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
+	require_once(dirname(__FILE__) . '/classes/ImageBlockHelper.class');
+	GalleryCoreApi::registerEventListener('Gallery::ViewableTreeChange', new ImageBlockHelper());
 	return GalleryStatus::success();
     }
 
@@ -67,6 +69,13 @@ class ImageBlockModule extends GalleryModule {
 	    if (empty($version)) {
 		/* Initial install */
 		$installed = true;
+	    }
+
+	    /* The store requires configuration. */
+	    $storage = $gallery->getStorage();
+	    $ret = $storage->configureStore('imageblock');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), false);
 	    }
 
 	    foreach (array( 'version' => $this->getVersion(),
@@ -116,7 +125,6 @@ class ImageBlockModule extends GalleryModule {
 	
     function _loadImageBlocks(&$template, $params = array('heading' => 1)) {
 	global $gallery;
-
 	require_once(dirname(__FILE__) . '/classes/ImageBlockHelper.class');
 
 	list ($ret, $moduleParams) = GalleryCoreApi::fetchAllPluginParameters('module', 'imageblock');

@@ -61,12 +61,12 @@ class ImageBlockHelper {
     function fetchViewableData($itemType, $order) {
 	global $gallery;
 	$storage = $gallery->getStorage();
+	$typeMap = array('GalleryPhotoItem' => 1, 'GalleryAlbumItem' => 2);
 
-	list ($ret, $permissionBits) = GalleryCoreApi::convertPermissionIdsToBits('core.view');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
+	/* Prepare the query */
+	$select = '[ImageBlockCacheMap::itemId], [ImageBlockCacheMap::itemTimestamp]';
+	$from = '[ImageBlockCacheMap]';
+	$where ='[ImageBlockCacheMap::userId] = ?  AND [ImageBlockCacheMap::itemType] = ?';
 	switch ($order) {
 	case IMAGE_BLOCK_RANDOM:
 	    list ($ret, $orderBy) = $storage->getFunctionSql('RAND', array());
@@ -75,71 +75,149 @@ class ImageBlockHelper {
 	    }
 	    break;
 	case IMAGE_BLOCK_RECENT:
-	    $orderBy = '[GalleryEntity::creationTimestamp] DESC';
+	    $orderBy = '[ImageBlockCacheMap::itemTimestamp] DESC';
 	    break;
 	case IMAGE_BLOCK_VIEWED:
+	    $select .= ', [GalleryItemAttributesMap::viewCount]';
+	    $from .= ', [GalleryItemAttributesMap]';
+	    $where .= ' AND [ImageBlockCacheMap::itemId] = [GalleryItemAttributesMap::itemId]';
 	    $orderBy = '[GalleryItemAttributesMap::viewCount] DESC';
 	    break;
 	default:
 	    return array(GalleryStatus::ERROR_UNIMPLEMENTED(__FILE__, __LINE__), null);
 	}
 
-	list ($ret, $groupIds) = GalleryCoreApi::fetchGroupsForUser($gallery->getActiveUserId());
+	$query = "SELECT $select FROM $from WHERE $where ORDER BY $orderBy LIMIT 1";
+	$data[] = $gallery->getActiveUserId();
+	$data[] = $typeMap[$itemType];
+	$result = null;
+
+	while (true) {
+	    list ($ret, $searchResults) = $gallery->search($query, $data, array());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    if ($rec = $searchResults->nextResult()) {
+		$result = array('id' => (int)$rec[0],
+				'creationTimestamp' => (int)$rec[1]);
+		if ($order == IMAGE_BLOCK_VIEWED) {
+		    $result['viewCount'] = (int)$rec[2];
+		}
+		break;
+	    }
+	    if (isset($cached)) {
+		break;
+	    }
+	    $ret = ImageBlockHelper::cacheViewableTree();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $cached = true;
+	}
+
+	if (isset($result) && !isset($result['viewCount'])) {
+	    list ($ret, $result['viewCount']) = GalleryCoreApi::fetchItemViewCount($result['id']);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+
+	return array(GalleryStatus::success(), $result);
+    }
+
+    /**
+     * Cache viewable data for current user
+     *
+     * @return object GalleryStatus a status code
+     * @static
+     */
+    function cacheViewableTree() {
+	global $gallery;
+	$storage = $gallery->getStorage();
+
+	list ($ret, $permissionBits) = GalleryCoreApi::convertPermissionIdsToBits('core.view');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	$userId = $gallery->getActiveUserId();
+	list ($ret, $groupIds) = GalleryCoreApi::fetchGroupsForUser($userId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 	$groupIds = array_keys($groupIds);
 	$groupIdMarkers = GalleryUtilities::makeMarkers($groupIds);
 	
-	/* Prepare the query */
 	$query = '
+	INSERT INTO
+	  [ImageBlockCacheMap]
 	SELECT
-	  [GalleryEntity::id], [GalleryEntity::creationTimestamp], [GalleryItemAttributesMap::viewCount]
+	  ?, ?, [GalleryEntity::creationTimestamp], [GalleryEntity::id]
 	FROM
-	  [GalleryEntity], [GalleryPermissionMap], [GalleryItemAttributesMap], [GalleryChildEntity], [GalleryDerivative]
+	  [GalleryEntity], [GalleryPermissionMap], [GalleryChildEntity], [GalleryDerivative]
 	WHERE
+	  [GalleryEntity::entityType] = ?
+	  AND
 	  ([GalleryPermissionMap::userId] = ?
 	   OR
 	   [GalleryPermissionMap::groupId] IN (' . $groupIdMarkers . '))
 	  AND
-	  [GalleryPermissionMap::permission] & ? > ?
+	  [GalleryPermissionMap::permission] & ? > 0
 	  AND
 	  [GalleryPermissionMap::itemId] = [GalleryEntity::id]
-	  AND
-	  [GalleryEntity::entityType] = ?
-	  AND
-	  [GalleryItemAttributesMap::itemId] = [GalleryEntity::id]
 	  AND
 	  [GalleryChildEntity::parentId] = [GalleryEntity::id]
 	  AND
 	  [GalleryDerivative::id] = [GalleryChildEntity::id]
 	  AND
-	  [GalleryDerivative::derivativeType] = ' .
-	    DERIVATIVE_TYPE_IMAGE_THUMBNAIL . '
-	GROUP BY
-	  [GalleryEntity::id], [GalleryEntity::creationTimestamp], [GalleryItemAttributesMap::viewCount]
-	ORDER BY ' .  $orderBy . ' LIMIT 1';
+	  [GalleryDerivative::derivativeType] = ' . DERIVATIVE_TYPE_IMAGE_THUMBNAIL . '
+	';
 
-	$data[] = $gallery->getActiveUserId();
+	$data = array($userId, 1, 'GalleryPhotoItem', $userId);
 	array_splice($data, sizeof($data), 0, $groupIds);
 	$data[] = $storage->convertIntToBits($permissionBits);
-	$data[] = $storage->convertIntToBits(0);
-	$data[] = $itemType;
 
-	list ($ret, $searchResults) = $gallery->search($query, $data, array());
+	$ret = $storage->execute($query, $data);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$data = null;
-	while ($result = $searchResults->nextResult()) {
-	     $data = array('id' => (int)$result[0],
-			   'creationTimestamp' => (int)$result[1],
-			   'viewCount' => (int)$result[2]);
+	$data[1] = 2;
+	$data[2] = 'GalleryAlbumItem';
+	$ret = $storage->execute($query, $data);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	return array(GalleryStatus::success(), $data);
+
+	return GalleryStatus::success();
     }
 
+    /**
+     * Event handler for Gallery::ViewableTreeChange event
+     * Invalidate image block cache for specified user, or entire cache if no user
+     *
+     * @param object GalleryEvent the event
+     * @return object GalleryStatus a status code
+     */
+    function handleEvent($event) {
+	require_once(dirname(__FILE__) . '/ImageBlockCacheMap.class');
+	if ($event->getEventName() == 'Gallery::ViewableTreeChange') {
+	    $param = $event->getEntity();
+	    if (isset($param['userId'])) {
+		$ret = ImageBlockCacheMap::removeMapEntry(array('userId' => $param['userId']));
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    } else {
+		global $gallery;
+		$storage = $gallery->getStorage();
+		$ret = $storage->execute('DELETE FROM [ImageBlockCacheMap]', array());
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+	}
+	return GalleryStatus::success();
+    }
 }
 ?>
