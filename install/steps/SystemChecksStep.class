@@ -175,29 +175,32 @@ class SystemChecksStep extends InstallStep {
 
 	// Check all files against MANIFEST
 	$title = _('Gallery file integrity');
-	if (SystemChecksStep::CheckFileDirective()) {
-	    $warnings = SystemChecksStep::CheckManifest();
+	if (!SystemChecksStep::CheckFileDirective()) {
+	    $templateData['check'][] =
+		array('title' => $title,
+		      'warning' => true,
+		      'notice' => _('Test skipped due to other errors.'));
 	} else {
-	    $warnings = array('skipped' => 1);
-	}
-	if (empty($warnings)) {
-	    $templateData['check'][] = array('title' => $title, 'success' => true);
-	} else {
-	    $notice = isset($warnings['manifest']) ?
-			    _('Manifest missing or inaccessible.') . '<br/>' : '';
-	    if (isset($warnings['skipped'])) {
-		$notice .= _('Test skipped due to other errors.') . '<br/>';
+	    $isCvsInstall = file_exists(dirname(__FILE__) . '/CVS');
+	    $manifest = SystemChecksStep::CheckManifest();
+	    if (!isset($manifest)) {
+		$templateData['check'][] =
+		    array('title' => $title,
+			  'warning' => true,
+			  'notice' => _('Manifest missing or inaccessible.'));
+	    } else if (empty($manifest['missing']) && empty($manifest['modified'])) {
+		$templateData['check'][] = array('title' => $title, 'success' => true);
+	    } else {
+		ob_start();
+		include(dirname(__FILE__) . '/../templates/ManifestSystemCheck.html');
+		$notice = ob_get_contents();
+		ob_end_clean();
+
+		$templateData['check'][] =
+		    array('title' => $title,
+			  'warning' => true,
+			  'notice' => $notice);
 	    }
-	    if (!empty($warnings['missing'])) {
-		$notice .= _('Missing files:') .
-			   '<ul>' . join('<br/>', $warnings['missing']) . '</ul>';
-	    }
-	    if (!empty($warnings['corrupt'])) {
-		$notice .= _('Corrupt or modified files:') .
-			   '<ul>' . join('<br/>', $warnings['corrupt']) . '</ul>';
-	    }
-	    $templateData['check'][] = array('title' => $title, 'warning' => true,
-					     'notice' => $notice);
 	}
 
 	$templateData['suggestedHtaccess'] = join("\n", $suggestedHtaccess);
@@ -217,12 +220,15 @@ class SystemChecksStep extends InstallStep {
 
     function CheckManifest() {
 	$base = realpath(dirname(__FILE__) . '/../..') . '/';
+	
 	require_once($base . 'modules/core/classes/GalleryUtilities.class');
 	$manifest = GalleryUtilities::readManifest();
 	if (empty($manifest)) {
-	    return array('manifest' => 1);
+	    return null;
 	}
-	$warnings = array();
+
+	$missing = array();
+	$modified = array();
 	foreach ($manifest as $file => $info) {
 	    if ($file == 'MANIFEST') {
 		continue;
@@ -230,7 +236,7 @@ class SystemChecksStep extends InstallStep {
 	    
 	    $path = $base . $file;
 	    if (!file_exists($path)) {
-		$warnings['missing'][] = $this->_abbreviateInSpan($file, 60);
+		$missing[] = $file;
 	    } else {
 		/*
 		 * Use size comparison instead of checksum for speed.  We have
@@ -239,16 +245,17 @@ class SystemChecksStep extends InstallStep {
 		 */
 		$actualSize = filesize($path);
 		if ($actualSize != $info['size'] && $actualSize != $info['size_crlf']) {
-		    # This can be useful debug info
+		    /* This can be useful debug info */
 		    if (false) {
 			printf("%s (expected: %s/%s, actual: %s)<br/>", $file,
 			       $info['size'], $info['size_crlf'], $actualSize);
 		    }
-		    $warnings['corrupt'][] = $this->_abbreviateInSpan($file, 60);
+		    $modified[] = $file;
 		}
 	    }
 	}
-	return $warnings;
+
+	return array('missing' => $missing, 'modified' => $modified);
     }
 
     function _abbreviateInSpan($str, $len) {
