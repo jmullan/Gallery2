@@ -86,34 +86,34 @@ class CoreModule extends GalleryModule {
 	$gallery->addRegistry('GalleryPermissionMap',
 			      array('id' => 'core.all',
 				    'description' => 'Full',
-				    'admin' => true),
+				    'itemAdmin' => true),
 			      array('id' => 'core.view',
 				    'description' => 'View',
-				    'admin' => false),
+				    'itemAdmin' => false),
 			      array('id' => 'core.viewResizes',
 				    'description' => 'View Resizes',
-				    'admin' => false),
+				    'itemAdmin' => false),
 			      array('id' => 'core.viewSource',
 				    'description' => 'View Original',
-				    'admin' => false),
+				    'itemAdmin' => false),
 			      array('id' => 'core.viewAll',
 				    'description' => 'View All',
-				    'admin' => false),
+				    'itemAdmin' => false),
 			      array('id' => 'core.insert',
 				    'description' => 'Insert',
-				    'admin' => true),
+				    'itemAdmin' => true),
 			      array('id' => 'core.change',
 				    'description' => 'Change',
-				    'admin' => true),
+				    'itemAdmin' => true),
 			      array('id' => 'core.move',
 				    'description' => 'Move',
-				    'admin' => true),
+				    'itemAdmin' => true),
 			      array('id' => 'core.changeText',
 				    'description' => 'Change Text',
-				    'admin' => true),
+				    'itemAdmin' => true),
 			      array('id' => 'core.delete',
 				    'description' => 'Delete',
-				    'admin' => true));
+				    'itemAdmin' => true));
 
 	$this->_gallery =& $gallery;
 
@@ -242,7 +242,7 @@ class CoreModule extends GalleryModule {
 	$adminPermissions = array();
 	$permissions = $gallery->lookupRegistry('GalleryPermissionMap');
 	foreach ($permissions as $permission) {
-	    if (!empty($permission['admin'])) {
+	    if (!empty($permission['itemAdmin'])) {
 		$adminPermissions[] = $permission['id'];
 	    }
 	}

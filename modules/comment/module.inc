@@ -49,16 +49,16 @@ class CommentModule extends GalleryModule {
 	$gallery->addRegistry('GalleryPermissionMap',
 			      array('id' => 'comment.add',
 				    'description' => 'Add comment',
-				    'admin' => false),
+				    'itemAdmin' => false),
 			      array('id' => 'comment.edit',
 				    'description' => 'Edit comment',
-				    'admin' => false),
+				    'itemAdmin' => false),
 			      array('id' => 'comment.delete',
 				    'description' => 'Delete comment',
-				    'admin' => false),
+				    'itemAdmin' => false),
 			      array('id' => 'comment.viewIp',
 				    'description' => 'View IP',
-				    'admin' => false));
+				    'itemAdmin' => false));
 			      
 	return parent::init();
     }
