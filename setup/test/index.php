@@ -3,6 +3,7 @@ include('../security.inc');
 require_once('../../init.php');
 require_once('TestCase.class');
 require_once('TestCase/ActivateModule.class');
+require_once('TestCase/InstallModule.class');
 require_once('TestCase/DeactivateModule.class');
 $tests = array();
 
@@ -79,7 +80,7 @@ function GalleryTestHarness() {
 	$testDir = $modulesDir . $moduleId . '/test/TestCase';
 
 	/* Add our implicit tests */
-	foreach (array('ActivateModule', 'DeactivateModule') as $implicitTestName) {
+	foreach (array('ActivateModule', 'DeactivateModule', 'InstallModule') as $implicitTestName) {
 	    $className = $implicitTestName . 'TestCase';
 	    $testCase = new $className($moduleId);
 	    $test = array('moduleId' => $moduleId,
