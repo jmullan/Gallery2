@@ -68,7 +68,7 @@ class ItemAddChildrenControllerTest extends GalleryControllerTestCase {
 
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_rootAlbum->getId());
-	GalleryUtilities::putRequestVariable('form.action.addFromComputer', 1);
+	GalleryUtilities::putRequestVariable('form.action.addFromBrowser', 1);
 
 	$platform = $gallery->getPlatform();
 	$baseDir = dirname(__FILE__) . '/../data/';

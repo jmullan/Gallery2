@@ -71,7 +71,7 @@ class ItemAddChildrenController extends GalleryController {
 	}
 	$albumNeedsThumbnail = empty($thumbnailTable) ? true : false;
 	
-	if (isset($form['action']['addFromComputer'])) {
+	if (isset($form['action']['addFromBrowser'])) {
 
 	    /* Upload any new files */
 	    for ($i = 1; $i <= $form['uploadBoxCount']; $i++) {
@@ -173,6 +173,7 @@ class ItemAddChildrenView extends GalleryView {
 	    $form = array();
 
 	    $form['uploadBoxCount'] = 4;
+	    $form['path'] = '';
 	}
 
 	$session =& $gallery->getSession();
@@ -187,13 +188,16 @@ class ItemAddChildrenView extends GalleryView {
 		$mode = 'fromBrowser';
 	    }
 	}
-
 	$session->put('core.view.ItemAddChildren.mode', $mode);
+
+	/* Look up the platform type */
+	$platform = get_class($gallery->getPlatform());
 
 	/* Render the HTML body */
 	$template = $this->_getTemplate();
 	$template->setVariable('form', $form);
 	$template->setVariable('mode', $mode);
+	$template->setVariable('platform', $platform);
 	$template->setVariable('item', $item->getMemberData());
 	$template->setVariable('controller', 'core:ItemAddChildren');
 	$html = $template->render('ItemAddChildren.tpl');

@@ -113,7 +113,7 @@
 		    &nbsp;
 		  </td>
 		  <td>
-		    {gallery->input type="submit" name="form.action.addFromComputer"}{gallery->text text="Add Items"}{/gallery->input}
+		    {gallery->input type="submit" name="form.action.addFromBrowser"}{gallery->text text="Add Items"}{/gallery->input}
 		  </td>
 		</tr>
 	    </table>
@@ -124,9 +124,54 @@
 	<!-- {if $mode == 'fromLocalServer'} -->
 	<tr>
 	  <td>
-	  {gallery->text text="Not implemented yet"}
+	  {gallery->text text="Transfer files that are already on your server into your Gallery.  The files must already have been uploaded to your server some other way (like FTP) and must be placed in a directory where they are accessibly by anybody on the server.  If you're on Unix this means that the files and the directory the files are in should have modes of at least 755."}
 	  </td>
 	</tr>
+
+	<tr>
+	  <td>
+	    &nbsp;
+	  </td>
+	</tr>
+
+	<tr>
+	  <td>
+	    {gallery->bigFontSize}
+	    {gallery->text text="Server Path"}
+	    {/gallery->bigFontSize}
+	  </td>
+	</tr>
+
+	<tr>
+	  <td>
+	    {gallery->input type=text size=80 name="form.path"}{$form.path}{/gallery->input}
+	    {if $platform == 'unixplatform'}
+	    <br>
+	    {gallery->text text="Example: /var/www/htdocs/upload"}
+	    <br>
+	    {gallery->text text="Example: /tmp/images"}
+	    {/if}
+	    {if $platform == 'winntplatform'}
+	    <br>
+	    {gallery->text text="Example: c:\\windows\\temp\\images"}
+	    <br>
+	    {gallery->text text="Example: c:\\ftp"}
+	    {/if}
+	  </td>
+	</tr>
+
+	<tr>
+	  <td>
+	    &nbsp;
+	  </td>
+	</tr>
+
+	<tr>
+	  <td>
+	    {gallery->input type="submit" name="form.action.addFromLocalServer"}{gallery->text text="Find Files"}{/gallery->input}
+	  </td>
+	</tr>
+
 	<!-- {/if} -->
 
 	<!-- {if $mode == 'fromWebPage'} -->
