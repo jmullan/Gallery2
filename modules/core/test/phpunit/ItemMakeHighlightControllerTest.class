@@ -85,7 +85,7 @@ class ItemMakeHighlightControllerTest extends GalleryControllerTestCase {
 
     function tearDown() {
 	global $gallery;
-	
+
 	$ret = $gallery->deleteEntityById($this->_album->getId());
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
