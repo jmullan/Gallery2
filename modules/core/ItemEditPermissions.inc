@@ -44,8 +44,11 @@ class ItemEditPermissionsController extends GalleryController {
 	}
 
 	if (isset($form['action']['deleteGroupPermission'])) {
+	    /* Figure out which one we're working with */
+	    $index = array_pop(array_keys($form['action']['deleteGroupPermission']));
+	    
 	    /* Handle delete group perm actions */
-	    list ($groupId, $permissionId) = split(',', $form['group']['delete']);
+	    list ($groupId, $permissionId) = split(',', $form['group']['delete'][$index]);
 	    $ret = GalleryPermissionMap::removeGroupPermission($itemId,
 							       $groupId,
 							       $permissionId,
@@ -66,8 +69,11 @@ class ItemEditPermissionsController extends GalleryController {
 	    $redirectParams['subView'] = 'core:ItemEditPermissions';
 	    $redirectParams['itemId'] = $itemId;
 	} else if (isset($form['action']['deleteUserPermission'])) {
+	    /* Figure out which one we're working with */
+	    $index = array_pop(array_keys($form['action']['deleteUserPermission']));
+	    
 	    /* Handle delete group perm actions */
-	    list ($userId, $permissionId) = split(',', $form['user']['delete']);
+	    list ($userId, $permissionId) = split(',', $form['user']['delete'][$index]);
 	    $ret = GalleryPermissionMap::removeUserPermission($itemId,
 							      $userId,
 							      $permissionId,
@@ -166,24 +172,12 @@ class ItemEditPermissionsController extends GalleryController {
 		}
 
 		if (!empty($permission) && !empty($group)) {
-		    /* Don't add the permission if it already exists */
-		    list ($ret, $hasIt) =
-			GalleryPermissionMap::hasPermission($itemId,
-							    null,
-							    array($group->getId()),
-							    array($permission));
+		    $ret = GalleryPermissionMap::addGroupPermission($itemId,
+								    $group->getId(),
+								    $permission,
+								    $applyToChildren);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
-		    }
-
-		    if (!$hasIt) {
-			$ret = GalleryPermissionMap::addGroupPermission($itemId,
-									$group->getId(),
-									$permission,
-									$applyToChildren);
-			if ($ret->isError()) {
-			    return array($ret->wrap(__FILE__, __LINE__), null);
-			}
 		    }
 
 		    /* Figure out where to redirect upon success */

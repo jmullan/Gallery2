@@ -286,9 +286,9 @@ class CoreModule extends GalleryModule {
 		 * extractor can find it.
 		 */
 		/* Register all core permissions */
-		// translate('[core] All access')
+		// translate('All access')
 		$ret = GalleryPermissionSetMap::registerPermission($this->getName(),
-								   'core.all', '[core] All access',
+								   'core.all', 'All access',
 								   GALLERY_PERMISSION_ALL_ACCESS);
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);

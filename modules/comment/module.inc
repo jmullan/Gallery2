@@ -26,7 +26,7 @@
  * This module provides support for adding comments to items
  *
  * @version $Revision$ $Date$
- * @package Comments
+ * @package Comment
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 class CommentModule extends GalleryTemplateModule {

@@ -125,10 +125,12 @@
 		<tr>
 		  <th> {galleryText text="User name"}
 		  <th> {galleryText text="Permission"}
-		  <th> {galleryText text="Action"}
+		  <th colspan="2"> {galleryText text="Action"}
 		</tr>
 
-		<!-- {foreach from=$groupPermissions item=entry} -->
+		<!-- {section name=group loop=$groupPermissions} -->
+		<!-- {assign var="entry" value=$groupPermissions[group]} -->
+		<!-- {assign var="index" value=$smarty.section.group.iteration}} -->
 		<tr>
 		  <td align="left">
 		    {$entry.group.groupName}
@@ -138,22 +140,28 @@
 		  </td>
 		  <td align="left">
 		    {if ! empty($entry.deleteList) }
-		    {gallerySelect name="form.group.delete" size="1"}
+		    {gallerySelect name="form.group.delete.$index" size="1"}
 		    {foreach from=$entry.deleteList item=deleteEntry}
 		    <option value="{$entry.group.id},{$deleteEntry.id}"> 
-		      {galleryText text="Remove %s" arg1=$deleteEntry.description}
+		      {$deleteEntry.description}
 		    </option>
 		    {/foreach}
 		    {/gallerySelect}
-		    {galleryInput type="submit" name="form.action.deleteGroupPermission"}
-		    {galleryText text="Go"}
+		    {else}
+		    &nbsp;
+		    {/if}
+		  </td>
+		  <td>
+		    {if ! empty($entry.deleteList) }
+		    {galleryInput type="submit" name="form.action.deleteGroupPermission.$index"}
+		    {galleryText text="Remove"}
 		    {/galleryInput}
 		    {else}
 		    &nbsp;
 		    {/if}
 		  </td>
 		</tr>
-		<!-- {/foreach} -->
+		<!-- {/section} -->
 	    </table>
 	  </td>
 	</tr>
@@ -228,10 +236,12 @@
 		<tr>
 		  <th> {galleryText text="User name"}
 		  <th> {galleryText text="Permission"}
-		  <th> {galleryText text="Action"}
+		  <th colspan="2"> {galleryText text="Action"}
 		</tr>
 
-		<!-- {foreach from=$userPermissions item=entry} -->
+		<!-- {section name=user loop=$userPermissions} -->
+		<!-- {assign var="entry" value=$userPermissions[user]} -->
+		<!-- {assign var="index" value=$smarty.section.user.iteration}} -->
 		<tr>
 		  <td align="left">
 		    {$entry.user.userName}
@@ -241,22 +251,28 @@
 		  </td>
 		  <td align="left">
 		    {if ! empty($entry.deleteList) }
-		    {gallerySelect name="form.user.delete" size="1"}
+		    {gallerySelect name="form.user.delete.$index" size="1"}
 		    {foreach from=$entry.deleteList item=deleteEntry}
 		    <option value="{$entry.user.id},{$deleteEntry.id}"> 
-		      {galleryText text="Remove %s" arg1=$deleteEntry.description}
+		      {$deleteEntry.description}
 		    </option>
 		    {/foreach}
 		    {/gallerySelect}
-		    {galleryInput type="submit" name="form.action.deleteUserPermission"}
-		    {galleryText text="Go"}
+		    {else}
+		    &nbsp;
+		    {/if}
+		  </td>
+		  <td>
+		    {if ! empty($entry.deleteList) }
+		    {galleryInput type="submit" name="form.action.deleteUserPermission.$index"}
+		    {galleryText text="Remove"}
 		    {/galleryInput}
 		    {else}
 		    &nbsp;
 		    {/if}
 		  </td>
 		</tr>
-		<!-- {/foreach} -->
+		<!-- {/section} -->
 	    </table>
 	  </td>
 	</tr>
