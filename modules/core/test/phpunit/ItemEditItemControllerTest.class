@@ -172,13 +172,15 @@ class ItemEditItemControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[summary]', 'new summary');
 	GalleryUtilities::putRequestVariable('form[keywords]', 'new keywords');
 	GalleryUtilities::putRequestVariable('form[description]', 'new description');
+	GalleryUtilities::putRequestVariable('form[serialNumber]', $this->_item[0]->getSerialNumber());
 
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemEditItem'),
-				  'status' => array(),
-				  'error' => array('form[error][pathComponent][collision]')),
+	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemEditItem',
+						      'itemId' => $this->_item[0]->getId()),
+				  'status' => array('saved' => 1),
+				  'error' => array()),
 			    $results);
 
 	/* Make sure the object is still in the original path */
@@ -191,10 +193,16 @@ class ItemEditItemControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals($originalPath, $newPath);
 
-	/* Make sure that the file wasn't moved */
-	$this->assert($platform->file_exists($originalPath));
+	list ($ret, $comparePath) =  $this->_item[1]->fetchPath();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	$this->assertEquals($comparePath . '_001', $newPath);
+
+	/* Make sure that the file was moved */
+	$this->assert($platform->file_exists($newPath));
     }
 
     function testRenameRoot() {

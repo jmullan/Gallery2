@@ -222,7 +222,7 @@ class Gallery {
      */
     function loadEntitiesById($ids) {
 	GalleryProfiler::start('modules.core.classes.Gallery::loadEntitiesById');
-	
+
 	$this->guaranteeTimeLimit(5);
 	    
 	if (empty($ids)) {

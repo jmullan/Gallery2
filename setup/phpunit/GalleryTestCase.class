@@ -404,7 +404,7 @@ class GalleryTestCase extends TestCase {
 	global $gallery;
 	
 	GalleryDataCache::reset();
-	
+
 	/* Load it back from the storage */
 	list ($ret, $newEntity) = $gallery->loadEntitiesById($entity->getId());
 	if ($ret->isError()) {

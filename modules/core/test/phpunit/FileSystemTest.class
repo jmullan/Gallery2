@@ -51,11 +51,13 @@ class FileSystemTest extends GalleryTestCase {
 
 	    list ($ret, $this->_albums[$i]) = $this->_createRandomAlbum($parentId);
 	    if ($ret->isError()) {
+		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 
 	    $parentId = $this->_albums[$i]->getId();
 	}
+
     }
 
     function tearDown() {
@@ -100,21 +102,24 @@ class FileSystemTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
-	$entity1 = new GalleryFileSystemEntity();
-	$ret = $entity1->create($this->_albums[0]->getId(), 'valid_path');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
 
-	$ret = $entity1->save();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	for ($i = 0; $i < 3; $i++) {
+	    $entity[$i] = new GalleryFileSystemEntity();
+	    $ret = $entity[$i]->create($this->_albums[0]->getId(), 'valid_path.jpg');
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
 
-	$entity2 = new GalleryFileSystemEntity();
-	$ret = $entity2->create($this->_albums[0]->getId(), 'valid_path');
-	$this->assert($ret->getErrorCode() & ERROR_COLLISION, 'Missing collision error!');
+	    $ret = $entity[$i]->save();
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+
+	    if ($i > 0) {
+		$this->assertEquals(sprintf('valid_path_%03d.jpg', $i),
+				    $entity[$i]->getPathComponent());
+	    }
+	}
 
 	$ret = $gallery->releaseLocks($lockId);
 	if ($ret->isError()) {

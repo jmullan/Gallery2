@@ -194,19 +194,17 @@ class GalleryAlbumItem_core extends GalleryItem {
 	
 	$platform = $gallery->getPlatform();
 
-	list($ret, $perm) =
-	    $gallery->getModuleParameter('core', 'permissions.directory');
+	list($ret, $perm) = $gallery->getModuleParameter('core', 'permissions.directory');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	
 	if ($platform->file_exists($albumDir)) {
-	    return GalleryStatus::error(ERROR_COLLISION,
-					__FILE__, __LINE__);
+	    return GalleryStatus::error(ERROR_COLLISION, __FILE__, __LINE__);
 	}
+	
 	if (!$platform->mkdir($albumDir, $perm)) {
-	    return GalleryStatus::error(ERROR_COLLISION,
-					__FILE__, __LINE__);
+	    return GalleryStatus::error(ERROR_COLLISION, __FILE__, __LINE__);
 	}
 
 	return GalleryStatus::success();

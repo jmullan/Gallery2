@@ -150,32 +150,20 @@ class GalleryDataItem_core extends GalleryItem {
 	    $baseName = $targetName;
 	}
 
-	/* Legalize the base name */
-	$baseName = $platform->legalizePathComponent($baseName);
+	/* Set the mime type before we call the parent so that it can use this info if necessary */
+	$this->setMimeType($mimeType);
 
-	/* Extract the file base and extension */
-	list ($fileBase, $extension) = GalleryUtilities::getFileNameComponents($baseName);
-	if (empty($extension)) {
-	    $extension = GalleryUtilities::convertMimeToExtension($mimeType);
+	$ret = parent::create($parentId, $baseName);
+	if ($ret->isError()) {
+	    $platform->unlink($newFileName);
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
-	/* Don't be intimidated by the first 100 collisions */
-	$retry = 0;
-	while (true) {
-	    $baseName = sprintf('%s%s%s%s',
-				$fileBase,
-				$retry > 0 ? sprintf('_%03d', $retry) : '',
-				empty($extension) ? '' : '.',
-				$extension);
-	    $newFileName = sprintf('%s%s', $parentPath, $baseName);
-	    if (!$platform->file_exists($newFileName)) {
-		break;
-	    }
 
-	    if (++$retry > 100) {
-		return GalleryStatus::error(ERROR_COLLISION, __FILE__, __LINE__);
-	    }
-	}
+	/*
+	 * Grab the new name from the path component, since GalleryFileSystemEntity
+	 * may adapt the newName to avoid conflicts
+	 */
+	$newFileName = $parentPath . '/' . $this->getPathComponent();
 
 	/*
 	 * XXX: Race condition here!  It's possible for two threads to be
@@ -188,14 +176,7 @@ class GalleryDataItem_core extends GalleryItem {
 	    return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__);
 	}
 
-	$ret = parent::create($parentId, $baseName);
-	if ($ret->isError()) {
-	    $platform->unlink($newFileName);
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	/* Set my mime type and file size */
-	$this->setMimeType($mimeType);
+	/* Set my file size */
 	$this->setSize($platform->filesize($newFileName));
 
 	return GalleryStatus::success();
@@ -307,8 +288,6 @@ class GalleryDataItem_core extends GalleryItem {
 
 	$platform = $gallery->getPlatform();
 
-	/* Make sure our base file name is legal */
-	$newName = $platform->legalizePathComponent($newName);
 
 	/*
 	 * Get the current path before we let the superclass do the rename
@@ -331,6 +310,13 @@ class GalleryDataItem_core extends GalleryItem {
 
 	/* Only rename the filesystem entity if we're not a link */
 	if (!$this->isLinked()) {
+
+	    /*
+	     * Grab the new name from the path component, since GalleryFileSystemEntity
+	     * may adapt the newName to avoid conflicts
+	     */
+	    $newName = $this->getPathComponent();
+	
 	    if (!isset($error)) {
 		$newPath = dirname($currentPath) . '/' . $newName;
 
