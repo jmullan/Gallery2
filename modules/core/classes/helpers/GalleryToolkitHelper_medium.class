@@ -575,5 +575,31 @@ class GalleryToolkitHelper_medium {
 
 	return array(GalleryStatus::success(), $isSupported, $mimeType);
     }
+
+    /**
+     * Estimate the dimensions of a GalleryDerivativeImage from its operations and its source.
+     * TODO:  This method knows too much about a small set of operations.  We should move it into
+     *        the toolkits themselves.
+     *
+     * @param object GalleryDerivativeImage the derivative
+     * @param object GalleryDerivativeEntity the source (probably a GalleryPhotoItem or GalleryMovieItem)
+     * @static
+     */
+    function estimateDerivativeDimensions(&$derivative, $source) {
+	if (method_exists($source, 'getwidth') && method_exists($source, 'getheight')) {
+	    $width = $source->getWidth();
+	    $height = $source->getHeight();
+	    $operations = $derivative->getDerivativeOperations();
+	    if (preg_match('/(?:thumbnail|scale)\|(\d+)$/', $operations, $matches)) {
+		$target = $matches[1];
+		if (!empty($target)) {
+		    list ($width, $height) =
+			GalleryUtilities::shrinkDimensionsToFit($matches[1], $width, $height);
+		    $derivative->setWidth($width);
+		    $derivative->setHeight($height);
+		}
+	    }
+	}
+    }
 }
 ?>

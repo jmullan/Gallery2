@@ -935,6 +935,21 @@ class GalleryCoreApi {
 	require_once(dirname(__FILE__) . '/helpers/GalleryDerivativeHelper_advanced.class');
 	return GalleryDerivativeHelper_advanced::removePreferencesForItem($itemId);
     }
+
+    /**
+     * Estimate the dimensions of a GalleryDerivativeImage from its operations and its source.
+     * TODO:  This method knows too much about a small set of operations.  We should move it into
+     *        the toolkits themselves.
+     *
+     * @param object GalleryDerivativeImage the derivative
+     * @param object GalleryDerivativeEntity the source (probably a GalleryPhotoItem or GalleryMovieItem)
+     * @static
+     */
+    function estimateDerivativeDimensions(&$derivative, $source) {
+	GalleryCoreApi::apiMethodUsed('estimateDerivativeDimensions', 'GalleryToolkitHelper_medium');
+	require_once(dirname(__FILE__) . '/helpers/GalleryToolkitHelper_medium.class');
+	return GalleryToolkitHelper_medium::estimateDerivativeDimensions($derivative, $source);
+    }
     
     /**
      * Update the view count for this item id

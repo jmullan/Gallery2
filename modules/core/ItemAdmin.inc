@@ -58,16 +58,6 @@ class ItemAdminView extends GalleryView {
 	    $thumbnailData = null;
 	} else {
 	    $thumbnail = $thumbnailTable[$itemId];
-
-	    /*
-	     * Rebuild the cache if it's not current, so that we can make sure
-	     * that we've got the appropriate thumbnail dimensions
-	     */
-	    list ($ret, $thumbnail) = GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($thumbnail->getId());
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
 	    $thumbnailData = $thumbnail->getMemberData();
 	}
 

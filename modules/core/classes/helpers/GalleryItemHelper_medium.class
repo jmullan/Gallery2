@@ -466,7 +466,9 @@ class GalleryItemHelper_medium {
 	    $derivative->setMimeType($outputMimeType);
 	    $derivative->setDerivativeSourceId($source->getId());
 	    $derivative->setDerivativeOperations($operations);
-			
+
+	    GalleryCoreApi::estimateDerivativeDimensions($derivative, $source);
+
 	    $ret = $derivative->save();
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
@@ -702,7 +704,11 @@ class GalleryItemHelper_medium {
 
 	    if ($success && isset($derivative)) {
 		$derivative->setDerivativeSourceId($source->getId());
-	    
+
+		if (!$derivative->getWidth()) {
+		    GalleryCoreApi::estimateDerivativeDimensions($derivative, $source);
+		}
+
 		$ret = $derivative->save();
 		if ($ret->isError()) {
 		    if (!empty($lockIds)) {

@@ -119,13 +119,6 @@ class PanoramaHelper {
 		       isset($resizedImages[$id])) {
 		$max = -1;
 		foreach ($resizedImages[$id] as $resize) {
-		    // Rebuild derivatives if needed so width/height known..
-		    list ($ret, $resize) =
-			GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent(
-				$resize->getId());
-		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-		    }
 		    $size = $resize->getWidth() + $resize->getHeight();
 		    if ($size > $max) {
 			$data[$id] = $resize;

@@ -206,6 +206,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 				    return array($ret->wrap(__FILE__, __LINE__), null, null);
 				}
 				$thumbnail->expireCache();
+				GalleryCoreApi::estimateDerivativeDimensions($thumbnail, $source);
 				$ret = $thumbnail->save();
 				if ($ret->isError()) {
 				    return array($ret->wrap(__FILE__, __LINE__), null, null);
@@ -285,6 +286,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 				$derivative->setDerivativeSourceId($source->getId());
 				$derivative->setDerivativeOperations('scale|' . $form['resizes'][$i]['size']);
 
+				GalleryCoreApi::estimateDerivativeDimensions($derivative, $source);
 				$ret = $derivative->save();
 				if ($ret->isError()) {
 				    return array($ret->wrap(__FILE__, __LINE__), null, null);

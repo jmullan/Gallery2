@@ -220,12 +220,6 @@ class ImageBlockModule extends GalleryModule {
 	    $data['item'] = $item->getMemberData();
 	    $data['owner'] = $owner->getMemberData();
 	    if (isset($thumbnail[$id])) {
-		// Rebuild derivative if needed..
-		list ($ret, $thumb) =
-		    GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($thumbnail[$id]->getId());
-		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
 		$data['thumb'] = $thumb->getMemberData();
 		$blocks[] = $data;
 	    }

@@ -259,16 +259,6 @@ class TileLayout extends GalleryLayout {
 
 		if (!empty($images)) {
 		    $image = $images[0];
-
-		    // Rebuild derivative if needed so width/height known..
-		    if (GalleryUtilities::isA($image, 'GalleryDerivativeImage')) {
-			list ($ret, $image) =
-			    GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent(
-				    $image->getId());
-			if ($ret->isError()) {
-			    return array($ret->wrap(__FILE__, __LINE__), null);
-			}
-		    }
 		    $image = $image->getMemberData();
 		    $newItem['image'] = $image;
 		    $newItem['imageIndex'] = count($imageWidths);
