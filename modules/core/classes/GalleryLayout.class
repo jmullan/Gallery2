@@ -454,15 +454,15 @@ class GalleryLayout {
      * entire set of items, we potentially save time when it comes to
      * processing each item individually. 
      *
-     * @param array GalleryItems
+     * @param array GalleryItem ids
      * @return object GalleryStatus a status code
      * @access private
      */
-    function _studyItems($items) {
+    function _studyItems($itemIds) {
 	global $gallery;
 
 	/* Study all permissions */
-	$ret = GalleryItemHelper::studyPermissions($items, $gallery->getActiveUserId());
+	$ret = GalleryItemHelper::studyPermissions($items);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
