@@ -115,7 +115,7 @@ class ExifHelper {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
 
-	require_once(dirname(__FILE__) . '/ExifPropertiesMap.class');
+	GalleryCoreApi::relativeRequireOnce('modules/exif/classes/ExifPropertiesMap.class');
 	$ret = ExifPropertiesMap::setProperties($viewMode, $properties);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -133,7 +133,7 @@ class ExifHelper {
      */
     function _fetchRawExifData($path, &$rawExifData) {
 	global $gallery;
-	require_once(dirname(__FILE__) . '/../lib/exifer/exif.inc');
+	GalleryCoreApi::relativeRequireOnce('modules/exif/lib/exifer/exif.inc');
 
 	$platform = $gallery->getPlatform();
 	if (! $platform->file_exists($path)) {
@@ -165,7 +165,7 @@ class ExifHelper {
 	$exifKeys = ExifHelper::getExifKeys();
 
 	$results = array();
-	require_once(dirname(__FILE__) . '/ExifPropertiesMap.class');
+	GalleryCoreApi::relativeRequireOnce('modules/exif/classes/ExifPropertiesMap.class');
 	list ($ret, $properties) = ExifPropertiesMap::getProperties($viewMode);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -173,7 +173,8 @@ class ExifHelper {
 	foreach ($properties as $property) {
 	    $title = $exifKeys[$property][0];
 	    for ($i = 1; $i < sizeof($exifKeys[$property]); $i++) {
-		$value = ExifHelper::_getValue($rawExifData, explode('.', $exifKeys[$property][$i]));
+		$value =
+		    ExifHelper::_getValue($rawExifData, explode('.', $exifKeys[$property][$i]));
 		if (isset($value)) {
 		    $results[] = array('title' => $title, 'value' => $value);
 		    break;
@@ -192,10 +193,13 @@ class ExifHelper {
      */
     function getOriginationTimestamp($path) {
 	ExifHelper::_fetchRawExifData($path, $rawExifData);
-	foreach (array('SubIFD.DateTimeOriginal', 'IFD0.DateTime', 'SubIFD.DateTimeDigitized') as $tag) {
+	foreach (array('SubIFD.DateTimeOriginal', 'IFD0.DateTime', 'SubIFD.DateTimeDigitized')
+		 as $tag) {
 	    $value = ExifHelper::_getValue($rawExifData, explode('.', $tag));
-	    if (isset($value) && preg_match('#(\d+):(\d+):(\d+)\s+(\d+):(\d+):(\d+)#', $value, $m)) {
-		$time = mktime((int)$m[4], (int)$m[5], (int)$m[6], (int)$m[2], (int)$m[3], (int)$m[1]);
+	    if (isset($value) &&
+		    preg_match('#(\d+):(\d+):(\d+)\s+(\d+):(\d+):(\d+)#', $value, $m)) {
+		$time = mktime((int)$m[4], (int)$m[5], (int)$m[6],
+			       (int)$m[2], (int)$m[3], (int)$m[1]);
 		if ($time > 0) {
 		    return $time;
 		}
