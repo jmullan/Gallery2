@@ -167,9 +167,15 @@ class GalleryUrlGenerator {
 		 * If the query string was modified, calculate a new URL with the new query string.  We'll
 		 * pass that back up the chain and the caller can decide to redirect if it chooses.
 		 */
-		if ($newQueryString != null) {
-		    $redirectUrl = $this->getCurrentUrlDir() . $this->_baseFile .
-			'/' . $prefix . $newQueryString;
+		if (isset($newQueryString)) {
+		    $redirectUrl = $this->getCurrentUrlDir() . $this->_baseFile;
+
+		    /* Ditch the prefix if the new query string is empty */
+		    if (!empty($newQueryString)) {
+			$redirectUrl .= '/' . $prefix . $newQueryString;
+		    }
+
+		    /* Tag on the ?foo=bar standard stuff if there was any */
 		    if (!empty($standardQueryString)) {
 			$redirectUrl .= $standardQueryString[0];
 		    }
@@ -237,7 +243,7 @@ class GalleryUrlGenerator {
 		     */
 		} else {
 		    $rewritten = $view->rewriteQueryString($params);
-		    if (!empty($rewritten)) {
+		    if (isset($rewritten)) {
 			$queryString = '/' . $prefix . $rewritten;
 		    }
 		}
