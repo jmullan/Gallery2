@@ -165,19 +165,33 @@ class MatrixLayout extends GalleryLayout {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$frame = array();
-	foreach (($item->getCanContainChildren() ? array('albumFrame', 'itemFrame')
-						: array('photoFrame')) as $key) {
-	    if (!empty($params[$key])) {
-		$frame[$key] = $params[$key];
+	if (isset($imageframe)) {
+	    if ($item->getCanContainChildren()) {
+		foreach (array('albumFrame', 'itemFrame') as $key) {
+		    if (!empty($params[$key])) {
+			$frame[$key] = $params[$key];
+		    }
+		}
+	    } else {
+		list ($ret, $value) = GalleryCoreApi::getPluginParameter(
+		    'layout', $this->getId(), 'photoFrame', $item->getParentId());
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		$value = isset($value) ? $value
+		       : (isset($params['photoFrame']) ? $params['photoFrame'] : null);
+		if (!empty($value)) {
+		    $frame['photoFrame'] = $value;
+		}
 	    }
-	}
-	if (!empty($frame) && isset($imageframe)) {
-	    list ($ret, $frame['template'], $frame['style'], $frame['data']) =
-		$imageframe->getImageFrameData($frame);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+	    if (!empty($frame)) {
+		list ($ret, $frame['template'], $frame['style'], $frame['data']) =
+		    $imageframe->getImageFrameData($frame);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		$layout['frame'] = $frame;
 	    }
-	    $layout['frame'] = $frame;
 	}
 
 	if (is_array($bodyFile)) {
