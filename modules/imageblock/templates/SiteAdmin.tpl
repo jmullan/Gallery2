@@ -89,7 +89,7 @@
     </label>
   </div>
 
-  <div class="gbAdmin">
+  <div class="gbButtons">
     <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="save"}"/>
     <input type="submit" name="{g->formVar var="form[action][reset]"}" value="{g->text text="reset"}"/>
   </div>
