@@ -62,6 +62,11 @@ class GalleryEntity extends GalleryEntity_core {
             'type' => STORAGE_TYPE_INTEGER
         );
     
+        $meta['members']['linkId'] = array(
+            'class' => 'GalleryEntity',
+            'type' => STORAGE_TYPE_INTEGER
+        );
+    
         $meta['members']['modificationTimestamp'] = array(
             'class' => 'GalleryEntity',
             'type' => STORAGE_TYPE_INTEGER
@@ -89,36 +94,42 @@ class GalleryEntity extends GalleryEntity_core {
         $data = parent::getMemberData();
         GalleryProfiler::start('modules.core.classes.GalleryPersistent::getMemberData');
     
-        if (!isset($this->_id)) {
-            $data['id'] = null;
-        } else {
-            $data['id'] = $this->_id;
-        }
-    
-        if (!isset($this->_creationTimestamp)) {
-            $data['creationTimestamp'] = null;
-        } else {
-            $data['creationTimestamp'] = $this->_creationTimestamp;
-        }
-    
-        if (!isset($this->_modificationTimestamp)) {
-            $data['modificationTimestamp'] = null;
-        } else {
-            $data['modificationTimestamp'] = $this->_modificationTimestamp;
-        }
-    
-        if (!isset($this->_serialNumber)) {
-            $data['serialNumber'] = null;
-        } else {
-            $data['serialNumber'] = $this->_serialNumber;
-        }
-    
-        if (!isset($this->_entityType)) {
-            $data['entityType'] = null;
-        } else {
-            $data['entityType'] = $this->_entityType;
-        }
-    
+	if (!isset($this->_id)) {
+ 	    $data['id'] = null;
+ 	} else {
+	    $data['id'] = $this->_id;
+	}
+	
+	if (!isset($this->_creationTimestamp)) {
+ 	    $data['creationTimestamp'] = null;
+ 	} else {
+	    $data['creationTimestamp'] = $this->_creationTimestamp;
+	}
+	
+	if (!isset($this->_linkId)) {
+ 	    $data['linkId'] = null;
+ 	} else {
+	    $data['linkId'] = $this->_linkId;
+	}
+	
+	if (!isset($this->_modificationTimestamp)) {
+ 	    $data['modificationTimestamp'] = null;
+ 	} else {
+	    $data['modificationTimestamp'] = $this->_modificationTimestamp;
+	}
+	
+	if (!isset($this->_serialNumber)) {
+ 	    $data['serialNumber'] = null;
+ 	} else {
+	    $data['serialNumber'] = $this->_serialNumber;
+	}
+	
+	if (!isset($this->_entityType)) {
+ 	    $data['entityType'] = null;
+ 	} else {
+	    $data['entityType'] = $this->_entityType;
+	}
+	
         GalleryProfiler::stop('modules.core.classes.GalleryPersistent::getMemberData');
         return $data;
     }
@@ -141,9 +152,12 @@ class GalleryEntity extends GalleryEntity_core {
      * @return INTEGER the value
      */
     function getid() {
+ 	
+
         if (!isset($this->_id)) {
             return null;
         }
+
         return $this->_id;
     }
 
@@ -184,9 +198,12 @@ class GalleryEntity extends GalleryEntity_core {
      * @return INTEGER the value
      */
     function getcreationTimestamp() {
+ 	
+
         if (!isset($this->_creationTimestamp)) {
             return null;
         }
+
         return $this->_creationTimestamp;
     }
 
@@ -222,14 +239,63 @@ class GalleryEntity extends GalleryEntity_core {
     }
   
     /**
+     * Get the value of linkId
+     *
+     * @return INTEGER the value
+     */
+    function getlinkId() {
+ 	
+
+        if (!isset($this->_linkId)) {
+            return null;
+        }
+
+        return $this->_linkId;
+    }
+
+    /**
+     * Set the value of linkId
+     *
+     * @param INTEGER the value
+     */
+    function setlinkId($value) {
+
+        /* 
+         * Convert unset values to null, to avoid generating warnings.
+         */
+	$a = isset($value) ? $value : null;
+	$b = isset($this->_linkId) ? $this->_linkId : null;
+
+    
+        /* Type case the incoming value to be an integer */
+        if ($value != null) {
+            $value = (int)$value;
+        }
+      
+        /* 
+         * Only take action if the value actually changes, but take care not to 
+         * generate warnings for unset values.
+         */
+    
+        if ($a !== $b) {
+      
+            $this->_linkId = $value;
+            $this->setModifiedFlag('linkId', MEMBER_MODIFIED);
+        }
+    }
+  
+    /**
      * Get the value of modificationTimestamp
      *
      * @return INTEGER the value
      */
     function getmodificationTimestamp() {
+ 	
+
         if (!isset($this->_modificationTimestamp)) {
             return null;
         }
+
         return $this->_modificationTimestamp;
     }
 
@@ -270,9 +336,12 @@ class GalleryEntity extends GalleryEntity_core {
      * @return INTEGER the value
      */
     function getserialNumber() {
+ 	
+
         if (!isset($this->_serialNumber)) {
             return null;
         }
+
         return $this->_serialNumber;
     }
 
@@ -313,9 +382,12 @@ class GalleryEntity extends GalleryEntity_core {
      * @return STRING the value
      */
     function getentityType() {
+ 	
+
         if (!isset($this->_entityType)) {
             return null;
         }
+
         return $this->_entityType;
     }
 

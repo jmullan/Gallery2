@@ -69,12 +69,12 @@ class GalleryFileSystemEntity extends GalleryFileSystemEntity_core {
         $data = parent::getMemberData();
         GalleryProfiler::start('modules.core.classes.GalleryPersistent::getMemberData');
     
-        if (!isset($this->_pathComponent)) {
-            $data['pathComponent'] = null;
-        } else {
-            $data['pathComponent'] = $this->_pathComponent;
-        }
-    
+	if (!isset($this->_pathComponent)) {
+ 	    $data['pathComponent'] = null;
+ 	} else {
+	    $data['pathComponent'] = $this->_pathComponent;
+	}
+	
         GalleryProfiler::stop('modules.core.classes.GalleryPersistent::getMemberData');
         return $data;
     }
@@ -97,9 +97,12 @@ class GalleryFileSystemEntity extends GalleryFileSystemEntity_core {
      * @return STRING the value
      */
     function getpathComponent() {
+ 	
+
         if (!isset($this->_pathComponent)) {
             return null;
         }
+
         return $this->_pathComponent;
     }
 

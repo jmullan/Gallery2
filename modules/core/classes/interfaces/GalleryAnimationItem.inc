@@ -74,18 +74,30 @@ class GalleryAnimationItem extends GalleryAnimationItem_core {
         $data = parent::getMemberData();
         GalleryProfiler::start('modules.core.classes.GalleryPersistent::getMemberData');
     
-        if (!isset($this->_width)) {
-            $data['width'] = null;
-        } else {
-            $data['width'] = $this->_width;
-        }
-    
-        if (!isset($this->_height)) {
-            $data['height'] = null;
-        } else {
-            $data['height'] = $this->_height;
-        }
-    
+	if (isset($this->_linkedEntity)) {
+	    if (!isset($this->_linkedEntity->_width)) {
+ 	        $data['width'] = null;
+	    } else {
+		$data['width'] = $this->_linkedEntity->_width;
+	    }
+	} else if (!isset($this->_width)) {
+ 	    $data['width'] = null;
+ 	} else {
+	    $data['width'] = $this->_width;
+	}
+	
+	if (isset($this->_linkedEntity)) {
+	    if (!isset($this->_linkedEntity->_height)) {
+ 	        $data['height'] = null;
+	    } else {
+		$data['height'] = $this->_linkedEntity->_height;
+	    }
+	} else if (!isset($this->_height)) {
+ 	    $data['height'] = null;
+ 	} else {
+	    $data['height'] = $this->_height;
+	}
+	
         GalleryProfiler::stop('modules.core.classes.GalleryPersistent::getMemberData');
         return $data;
     }
@@ -108,9 +120,17 @@ class GalleryAnimationItem extends GalleryAnimationItem_core {
      * @return INTEGER the value
      */
     function getwidth() {
+ 	
+	$linkedEntity = $this->getLinkedEntity();
+	if (isset($linkedEntity)) {
+	    return $linkedEntity->getwidth();
+	}
+	
+
         if (!isset($this->_width)) {
             return null;
         }
+
         return $this->_width;
     }
 
@@ -151,9 +171,17 @@ class GalleryAnimationItem extends GalleryAnimationItem_core {
      * @return INTEGER the value
      */
     function getheight() {
+ 	
+	$linkedEntity = $this->getLinkedEntity();
+	if (isset($linkedEntity)) {
+	    return $linkedEntity->getheight();
+	}
+	
+
         if (!isset($this->_height)) {
             return null;
         }
+
         return $this->_height;
     }
 

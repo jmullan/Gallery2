@@ -89,36 +89,36 @@ class GalleryUser extends GalleryUser_core {
         $data = parent::getMemberData();
         GalleryProfiler::start('modules.core.classes.GalleryPersistent::getMemberData');
     
-        if (!isset($this->_userName)) {
-            $data['userName'] = null;
-        } else {
-            $data['userName'] = $this->_userName;
-        }
-    
-        if (!isset($this->_fullName)) {
-            $data['fullName'] = null;
-        } else {
-            $data['fullName'] = $this->_fullName;
-        }
-    
-        if (!isset($this->_hashedPassword)) {
-            $data['hashedPassword'] = null;
-        } else {
-            $data['hashedPassword'] = $this->_hashedPassword;
-        }
-    
-        if (!isset($this->_email)) {
-            $data['email'] = null;
-        } else {
-            $data['email'] = $this->_email;
-        }
-    
-        if (!isset($this->_language)) {
-            $data['language'] = null;
-        } else {
-            $data['language'] = $this->_language;
-        }
-    
+	if (!isset($this->_userName)) {
+ 	    $data['userName'] = null;
+ 	} else {
+	    $data['userName'] = $this->_userName;
+	}
+	
+	if (!isset($this->_fullName)) {
+ 	    $data['fullName'] = null;
+ 	} else {
+	    $data['fullName'] = $this->_fullName;
+	}
+	
+	if (!isset($this->_hashedPassword)) {
+ 	    $data['hashedPassword'] = null;
+ 	} else {
+	    $data['hashedPassword'] = $this->_hashedPassword;
+	}
+	
+	if (!isset($this->_email)) {
+ 	    $data['email'] = null;
+ 	} else {
+	    $data['email'] = $this->_email;
+	}
+	
+	if (!isset($this->_language)) {
+ 	    $data['language'] = null;
+ 	} else {
+	    $data['language'] = $this->_language;
+	}
+	
         GalleryProfiler::stop('modules.core.classes.GalleryPersistent::getMemberData');
         return $data;
     }
@@ -141,9 +141,12 @@ class GalleryUser extends GalleryUser_core {
      * @return STRING the value
      */
     function getuserName() {
+ 	
+
         if (!isset($this->_userName)) {
             return null;
         }
+
         return $this->_userName;
     }
 
@@ -179,9 +182,12 @@ class GalleryUser extends GalleryUser_core {
      * @return STRING the value
      */
     function getfullName() {
+ 	
+
         if (!isset($this->_fullName)) {
             return null;
         }
+
         return $this->_fullName;
     }
 
@@ -217,9 +223,12 @@ class GalleryUser extends GalleryUser_core {
      * @return STRING the value
      */
     function gethashedPassword() {
+ 	
+
         if (!isset($this->_hashedPassword)) {
             return null;
         }
+
         return $this->_hashedPassword;
     }
 
@@ -255,9 +264,12 @@ class GalleryUser extends GalleryUser_core {
      * @return STRING the value
      */
     function getemail() {
+ 	
+
         if (!isset($this->_email)) {
             return null;
         }
+
         return $this->_email;
     }
 
@@ -293,9 +305,12 @@ class GalleryUser extends GalleryUser_core {
      * @return STRING the value
      */
     function getlanguage() {
+ 	
+
         if (!isset($this->_language)) {
             return null;
         }
+
         return $this->_language;
     }
 

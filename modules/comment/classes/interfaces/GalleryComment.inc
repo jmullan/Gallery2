@@ -89,36 +89,36 @@ class GalleryComment extends GalleryComment_core {
         $data = parent::getMemberData();
         GalleryProfiler::start('modules.core.classes.GalleryPersistent::getMemberData');
     
-        if (!isset($this->_commenterId)) {
-            $data['commenterId'] = null;
-        } else {
-            $data['commenterId'] = $this->_commenterId;
-        }
-    
-        if (!isset($this->_host)) {
-            $data['host'] = null;
-        } else {
-            $data['host'] = $this->_host;
-        }
-    
-        if (!isset($this->_subject)) {
-            $data['subject'] = null;
-        } else {
-            $data['subject'] = $this->_subject;
-        }
-    
-        if (!isset($this->_comment)) {
-            $data['comment'] = null;
-        } else {
-            $data['comment'] = $this->_comment;
-        }
-    
-        if (!isset($this->_date)) {
-            $data['date'] = null;
-        } else {
-            $data['date'] = $this->_date;
-        }
-    
+	if (!isset($this->_commenterId)) {
+ 	    $data['commenterId'] = null;
+ 	} else {
+	    $data['commenterId'] = $this->_commenterId;
+	}
+	
+	if (!isset($this->_host)) {
+ 	    $data['host'] = null;
+ 	} else {
+	    $data['host'] = $this->_host;
+	}
+	
+	if (!isset($this->_subject)) {
+ 	    $data['subject'] = null;
+ 	} else {
+	    $data['subject'] = $this->_subject;
+	}
+	
+	if (!isset($this->_comment)) {
+ 	    $data['comment'] = null;
+ 	} else {
+	    $data['comment'] = $this->_comment;
+	}
+	
+	if (!isset($this->_date)) {
+ 	    $data['date'] = null;
+ 	} else {
+	    $data['date'] = $this->_date;
+	}
+	
         GalleryProfiler::stop('modules.core.classes.GalleryPersistent::getMemberData');
         return $data;
     }
@@ -141,9 +141,12 @@ class GalleryComment extends GalleryComment_core {
      * @return INTEGER the value
      */
     function getcommenterId() {
+ 	
+
         if (!isset($this->_commenterId)) {
             return null;
         }
+
         return $this->_commenterId;
     }
 
@@ -184,9 +187,12 @@ class GalleryComment extends GalleryComment_core {
      * @return STRING the value
      */
     function gethost() {
+ 	
+
         if (!isset($this->_host)) {
             return null;
         }
+
         return $this->_host;
     }
 
@@ -222,9 +228,12 @@ class GalleryComment extends GalleryComment_core {
      * @return STRING the value
      */
     function getsubject() {
+ 	
+
         if (!isset($this->_subject)) {
             return null;
         }
+
         return $this->_subject;
     }
 
@@ -260,9 +269,12 @@ class GalleryComment extends GalleryComment_core {
      * @return TEXT the value
      */
     function getcomment() {
+ 	
+
         if (!isset($this->_comment)) {
             return null;
         }
+
         return $this->_comment;
     }
 
@@ -298,9 +310,12 @@ class GalleryComment extends GalleryComment_core {
      * @return INTEGER the value
      */
     function getdate() {
+ 	
+
         if (!isset($this->_date)) {
             return null;
         }
+
         return $this->_date;
     }
 

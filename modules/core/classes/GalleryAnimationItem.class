@@ -61,6 +61,7 @@ class GalleryAnimationItem_core extends GalleryDataItem {
      * @g2 <member>
      * @g2   <member-name>width</member-name>
      * @g2   <member-type>INTEGER</member-type>
+     * @g2   <linked/>
      * @g2 </member>
      *
      * @var int $_width
@@ -74,6 +75,7 @@ class GalleryAnimationItem_core extends GalleryDataItem {
      * @g2 <member>
      * @g2   <member-name>height</member-name>
      * @g2   <member-type>INTEGER</member-type>
+     * @g2   <linked/>
      * @g2 </member>
      *
      * @var int $_height
@@ -298,14 +300,20 @@ class GalleryAnimationItem_core extends GalleryDataItem {
 			       $src,
 			       $fallback);
 	    default:
-		return sprintf('[Render for %s not implemented  yet]', $this->getMimeType());
+		return sprintf('[Render for %s not implemented yet]', $this->getMimeType());
 		
 	    }
 	default:
 	    return null;
 	}
     }
-    
+
+    /**
+     * @see GalleryEntity::isLinkable
+     */
+    function isLinkable() {
+	return true;
+    }
 }
 
 include(dirname(__FILE__) . '/interfaces/GalleryAnimationItem.inc');

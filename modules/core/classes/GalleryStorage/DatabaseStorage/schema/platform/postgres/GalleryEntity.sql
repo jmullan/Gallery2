@@ -16,6 +16,10 @@
     NOT NULL
   
       ,
+    DB_COLUMN_PREFIXlinkId
+      INTEGER
+    
+      ,
     DB_COLUMN_PREFIXmodificationTimestamp
       INTEGER
     

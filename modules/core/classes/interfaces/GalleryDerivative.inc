@@ -94,42 +94,42 @@ class GalleryDerivative extends GalleryDerivative_core {
         $data = parent::getMemberData();
         GalleryProfiler::start('modules.core.classes.GalleryPersistent::getMemberData');
     
-        if (!isset($this->_derivativeSourceId)) {
-            $data['derivativeSourceId'] = null;
-        } else {
-            $data['derivativeSourceId'] = $this->_derivativeSourceId;
-        }
-    
-        if (!isset($this->_derivativeOperations)) {
-            $data['derivativeOperations'] = null;
-        } else {
-            $data['derivativeOperations'] = $this->_derivativeOperations;
-        }
-    
-        if (!isset($this->_derivativeOrder)) {
-            $data['derivativeOrder'] = null;
-        } else {
-            $data['derivativeOrder'] = $this->_derivativeOrder;
-        }
-    
-        if (!isset($this->_derivativeSize)) {
-            $data['derivativeSize'] = null;
-        } else {
-            $data['derivativeSize'] = $this->_derivativeSize;
-        }
-    
-        if (!isset($this->_derivativeType)) {
-            $data['derivativeType'] = null;
-        } else {
-            $data['derivativeType'] = $this->_derivativeType;
-        }
-    
-        if (!isset($this->_derivativeMimeType)) {
-            $data['derivativeMimeType'] = null;
-        } else {
-            $data['derivativeMimeType'] = $this->_derivativeMimeType;
-        }
-    
+	if (!isset($this->_derivativeSourceId)) {
+ 	    $data['derivativeSourceId'] = null;
+ 	} else {
+	    $data['derivativeSourceId'] = $this->_derivativeSourceId;
+	}
+	
+	if (!isset($this->_derivativeOperations)) {
+ 	    $data['derivativeOperations'] = null;
+ 	} else {
+	    $data['derivativeOperations'] = $this->_derivativeOperations;
+	}
+	
+	if (!isset($this->_derivativeOrder)) {
+ 	    $data['derivativeOrder'] = null;
+ 	} else {
+	    $data['derivativeOrder'] = $this->_derivativeOrder;
+	}
+	
+	if (!isset($this->_derivativeSize)) {
+ 	    $data['derivativeSize'] = null;
+ 	} else {
+	    $data['derivativeSize'] = $this->_derivativeSize;
+	}
+	
+	if (!isset($this->_derivativeType)) {
+ 	    $data['derivativeType'] = null;
+ 	} else {
+	    $data['derivativeType'] = $this->_derivativeType;
+	}
+	
+	if (!isset($this->_derivativeMimeType)) {
+ 	    $data['derivativeMimeType'] = null;
+ 	} else {
+	    $data['derivativeMimeType'] = $this->_derivativeMimeType;
+	}
+	
         GalleryProfiler::stop('modules.core.classes.GalleryPersistent::getMemberData');
         return $data;
     }
@@ -152,9 +152,12 @@ class GalleryDerivative extends GalleryDerivative_core {
      * @return INTEGER the value
      */
     function getderivativeSourceId() {
+ 	
+
         if (!isset($this->_derivativeSourceId)) {
             return null;
         }
+
         return $this->_derivativeSourceId;
     }
 
@@ -195,9 +198,12 @@ class GalleryDerivative extends GalleryDerivative_core {
      * @return STRING the value
      */
     function getderivativeOperations() {
+ 	
+
         if (!isset($this->_derivativeOperations)) {
             return null;
         }
+
         return $this->_derivativeOperations;
     }
 
@@ -233,9 +239,12 @@ class GalleryDerivative extends GalleryDerivative_core {
      * @return INTEGER the value
      */
     function getderivativeOrder() {
+ 	
+
         if (!isset($this->_derivativeOrder)) {
             return null;
         }
+
         return $this->_derivativeOrder;
     }
 
@@ -276,9 +285,12 @@ class GalleryDerivative extends GalleryDerivative_core {
      * @return INTEGER the value
      */
     function getderivativeSize() {
+ 	
+
         if (!isset($this->_derivativeSize)) {
             return null;
         }
+
         return $this->_derivativeSize;
     }
 
@@ -319,9 +331,12 @@ class GalleryDerivative extends GalleryDerivative_core {
      * @return INTEGER the value
      */
     function getderivativeType() {
+ 	
+
         if (!isset($this->_derivativeType)) {
             return null;
         }
+
         return $this->_derivativeType;
     }
 
@@ -362,9 +377,12 @@ class GalleryDerivative extends GalleryDerivative_core {
      * @return STRING the value
      */
     function getderivativeMimeType() {
+ 	
+
         if (!isset($this->_derivativeMimeType)) {
             return null;
         }
+
         return $this->_derivativeMimeType;
     }
 

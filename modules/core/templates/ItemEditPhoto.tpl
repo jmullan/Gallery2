@@ -104,14 +104,20 @@
 	    {/g->input}
 	  {/g->element}
 	{else}
-	  {g->element style="emphasized"}
-	    {g->text text="There are no graphics toolkits enabled that support this type of photo, so we cannot rotate it."}
-	    {if $ItemEditPhoto.isAdmin} 
-	      {g->link arg1="view=core:SiteAdmin" arg2="subView=core:AdminModules"}
-		{g->text text="site admin"}
-	      {/g->link}
-	    {/if}
-	  {/g->element}
+	  {if $ItemEditPhoto.editPhoto.isLinked}
+	    {g->element style="emphasized"}
+	      {g->text text="This photo is a link.  You cannot rotate linked photos, you must modify the source image."}
+	    {/g->element}
+	  {else}
+	    {g->element style="emphasized"}
+	      {g->text text="There are no graphics toolkits enabled that support this type of photo, so we cannot rotate it."}
+	      {if $ItemEditPhoto.isAdmin} 
+		{g->link arg1="view=core:SiteAdmin" arg2="subView=core:AdminModules"}
+		  {g->text text="site admin"}
+		{/g->link}
+	      {/if}
+	    {/g->element}
+	  {/if}
 	{/if}
       {/g->box}
 
@@ -133,14 +139,20 @@
 	    {/g->input}
 	  {/g->element}
 	{else}
-	  {g->element style="emphasized"}
-	    {g->text text="There are no graphics toolkits enabled that support this type of photo, so we cannot scale it."}
-	    {if $ItemEditPhoto.isAdmin} 
-	      {g->link arg1="view=core:SiteAdmin" arg2="subView=core:AdminModules"}
-		{g->text text="site admin"}
-	      {/g->link}
-	    {/if}
-	  {/g->element}
+	  {if $ItemEditPhoto.editPhoto.isLinked}
+	    {g->element style="emphasized"}
+	      {g->text text="This photo is a link.  You cannot scale linked photos, you must modify the source image."}
+	    {/g->element}
+	  {else}
+	    {g->element style="emphasized"}
+	      {g->text text="There are no graphics toolkits enabled that support this type of photo, so we cannot scale it."}
+	      {if $ItemEditPhoto.isAdmin} 
+		{g->link arg1="view=core:SiteAdmin" arg2="subView=core:AdminModules"}
+		  {g->text text="site admin"}
+		{/g->link}
+	      {/if}
+	    {/g->element}
+	  {/if}
 	{/if}
 
 	{if !empty($form.error.scale.size.missing)}

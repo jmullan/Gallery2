@@ -114,66 +114,66 @@ class GalleryItem extends GalleryItem_core {
         $data = parent::getMemberData();
         GalleryProfiler::start('modules.core.classes.GalleryPersistent::getMemberData');
     
-        if (!isset($this->_canContainChildren)) {
-            $data['canContainChildren'] = null;
-        } else {
-            $data['canContainChildren'] = $this->_canContainChildren;
-        }
-    
-        if (!isset($this->_description)) {
-            $data['description'] = null;
-        } else {
-            $data['description'] = $this->_description;
-        }
-    
-        if (!isset($this->_keywords)) {
-            $data['keywords'] = null;
-        } else {
-            $data['keywords'] = $this->_keywords;
-        }
-    
-        if (!isset($this->_orderBy)) {
-            $data['orderBy'] = null;
-        } else {
-            $data['orderBy'] = $this->_orderBy;
-        }
-    
-        if (!isset($this->_orderDirection)) {
-            $data['orderDirection'] = null;
-        } else {
-            $data['orderDirection'] = $this->_orderDirection;
-        }
-    
-        if (!isset($this->_ownerId)) {
-            $data['ownerId'] = null;
-        } else {
-            $data['ownerId'] = $this->_ownerId;
-        }
-    
-        if (!isset($this->_summary)) {
-            $data['summary'] = null;
-        } else {
-            $data['summary'] = $this->_summary;
-        }
-    
-        if (!isset($this->_theme)) {
-            $data['theme'] = null;
-        } else {
-            $data['theme'] = $this->_theme;
-        }
-    
-        if (!isset($this->_title)) {
-            $data['title'] = null;
-        } else {
-            $data['title'] = $this->_title;
-        }
-    
-        if (!isset($this->_viewedSinceTimestamp)) {
-            $data['viewedSinceTimestamp'] = null;
-        } else {
-            $data['viewedSinceTimestamp'] = $this->_viewedSinceTimestamp;
-        }
-    
+	if (!isset($this->_canContainChildren)) {
+ 	    $data['canContainChildren'] = null;
+ 	} else {
+	    $data['canContainChildren'] = $this->_canContainChildren;
+	}
+	
+	if (!isset($this->_description)) {
+ 	    $data['description'] = null;
+ 	} else {
+	    $data['description'] = $this->_description;
+	}
+	
+	if (!isset($this->_keywords)) {
+ 	    $data['keywords'] = null;
+ 	} else {
+	    $data['keywords'] = $this->_keywords;
+	}
+	
+	if (!isset($this->_orderBy)) {
+ 	    $data['orderBy'] = null;
+ 	} else {
+	    $data['orderBy'] = $this->_orderBy;
+	}
+	
+	if (!isset($this->_orderDirection)) {
+ 	    $data['orderDirection'] = null;
+ 	} else {
+	    $data['orderDirection'] = $this->_orderDirection;
+	}
+	
+	if (!isset($this->_ownerId)) {
+ 	    $data['ownerId'] = null;
+ 	} else {
+	    $data['ownerId'] = $this->_ownerId;
+	}
+	
+	if (!isset($this->_summary)) {
+ 	    $data['summary'] = null;
+ 	} else {
+	    $data['summary'] = $this->_summary;
+	}
+	
+	if (!isset($this->_theme)) {
+ 	    $data['theme'] = null;
+ 	} else {
+	    $data['theme'] = $this->_theme;
+	}
+	
+	if (!isset($this->_title)) {
+ 	    $data['title'] = null;
+ 	} else {
+	    $data['title'] = $this->_title;
+	}
+	
+	if (!isset($this->_viewedSinceTimestamp)) {
+ 	    $data['viewedSinceTimestamp'] = null;
+ 	} else {
+	    $data['viewedSinceTimestamp'] = $this->_viewedSinceTimestamp;
+	}
+	
         GalleryProfiler::stop('modules.core.classes.GalleryPersistent::getMemberData');
         return $data;
     }
@@ -196,9 +196,12 @@ class GalleryItem extends GalleryItem_core {
      * @return BOOLEAN the value
      */
     function getcanContainChildren() {
+ 	
+
         if (!isset($this->_canContainChildren)) {
             return null;
         }
+
         return $this->_canContainChildren;
     }
 
@@ -239,9 +242,12 @@ class GalleryItem extends GalleryItem_core {
      * @return TEXT the value
      */
     function getdescription() {
+ 	
+
         if (!isset($this->_description)) {
             return null;
         }
+
         return $this->_description;
     }
 
@@ -277,9 +283,12 @@ class GalleryItem extends GalleryItem_core {
      * @return STRING the value
      */
     function getkeywords() {
+ 	
+
         if (!isset($this->_keywords)) {
             return null;
         }
+
         return $this->_keywords;
     }
 
@@ -315,9 +324,12 @@ class GalleryItem extends GalleryItem_core {
      * @return STRING the value
      */
     function getorderBy() {
+ 	
+
         if (!isset($this->_orderBy)) {
             return null;
         }
+
         return $this->_orderBy;
     }
 
@@ -353,9 +365,12 @@ class GalleryItem extends GalleryItem_core {
      * @return STRING the value
      */
     function getorderDirection() {
+ 	
+
         if (!isset($this->_orderDirection)) {
             return null;
         }
+
         return $this->_orderDirection;
     }
 
@@ -391,9 +406,12 @@ class GalleryItem extends GalleryItem_core {
      * @return INTEGER the value
      */
     function getownerId() {
+ 	
+
         if (!isset($this->_ownerId)) {
             return null;
         }
+
         return $this->_ownerId;
     }
 
@@ -434,9 +452,12 @@ class GalleryItem extends GalleryItem_core {
      * @return STRING the value
      */
     function getsummary() {
+ 	
+
         if (!isset($this->_summary)) {
             return null;
         }
+
         return $this->_summary;
     }
 
@@ -472,9 +493,12 @@ class GalleryItem extends GalleryItem_core {
      * @return STRING the value
      */
     function gettheme() {
+ 	
+
         if (!isset($this->_theme)) {
             return null;
         }
+
         return $this->_theme;
     }
 
@@ -510,9 +534,12 @@ class GalleryItem extends GalleryItem_core {
      * @return STRING the value
      */
     function gettitle() {
+ 	
+
         if (!isset($this->_title)) {
             return null;
         }
+
         return $this->_title;
     }
 
@@ -548,9 +575,12 @@ class GalleryItem extends GalleryItem_core {
      * @return INTEGER the value
      */
     function getviewedSinceTimestamp() {
+ 	
+
         if (!isset($this->_viewedSinceTimestamp)) {
             return null;
         }
+
         return $this->_viewedSinceTimestamp;
     }
 

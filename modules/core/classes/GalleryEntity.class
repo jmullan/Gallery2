@@ -80,6 +80,27 @@ class GalleryEntity_core extends GalleryPersistent {
     var $_creationTimestamp;
 
     /**
+     * The id of the target entity this entity is linked to
+     *
+     * @g2 <member>
+     * @g2   <member-name>linkId</member-name>
+     * @g2   <member-type>INTEGER</member-type>
+     * @g2 </member>
+     *
+     * @var int $_linkId
+     * @access private
+     */
+    var $_linkId;
+
+    /**
+     * The target entity this entity is linked to
+     *
+     * @var int $_linkedEntity
+     * @access private
+     */
+    var $_linkedEntity;
+
+    /**
      * Date and time this item was last modified, in seconds since the epoch.
      *
      * @g2 <member>
@@ -156,6 +177,45 @@ class GalleryEntity_core extends GalleryPersistent {
 	return GalleryStatus::success();
     }
     
+    /**
+     * Create a new linked version of this item into a new album
+     *
+     * @param object GalleryEntity the entity we're linking to
+     * @param int the id of the new parent
+     * @return array object GalleryStatus a status code
+     *               object GalleryItem the linked item
+     */
+    function createLink($entity) {
+	global $gallery;
+	
+	if (get_class($this) != get_class($entity)) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	}
+
+	if (!$this->isLinkable()) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	}
+
+	/* Follow our usual creation process (same as create() above) */
+	$storage = $gallery->getStorage();
+	$ret = $storage->newEntity($this);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Set the creation time on this entity */
+	$this->setCreationTimestamp(time());
+
+	/* Set the object type */
+	$this->setEntityType($this->getClassName());
+
+	/* But attach to the linked entity */
+	$this->setLinkId($entity->getId());
+	$this->setLinkedEntity($entity);
+
+	return GalleryStatus::success();
+    }
+
     /**
      * Save the changes to this GalleryEntity
      *
@@ -262,6 +322,119 @@ class GalleryEntity_core extends GalleryPersistent {
 	return $storage->deleteEntity($this);
     }
 
+    /**
+     * This is called after an entity is loaded by the GalleryStorage subsystem.
+     * Perform any actions that are required after loading the entity.
+     *
+     * @return object GalleryStatus a status code
+     */
+    function onLoad() {
+	global $gallery;
+
+	$linkId = $this->getLinkId();
+	if (isset($linkId)) {
+	    list ($ret, $this->_linkedEntity) = $gallery->loadEntitiesById($this->_linkId);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+	
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Return the linked entity
+     *
+     * @return object GalleryEntity the linked entity (or null if there's no link)
+     */
+    function getLinkedEntity() {
+	return $this->_linkedEntity;
+    }
+
+    /**
+     * Set the linked entity
+     *
+     * @access private
+     */
+    function setLinkedEntity($entity) {
+	$this->_linkedEntity = $entity;
+    }
+
+    /**
+     * This is called after an entity is saved by the GalleryStorage subsystem.
+     * Perform any actions that are required after saving the entity.
+     *
+     * @return object GalleryStatus a status code
+     */
+    function onSave() {
+	return GalleryStatus::success();
+    }
+
+    /**
+     *
+     * Return the internationalized (but NOT localized) name of this item type.
+     * Subclasses should override this to provide their own name.
+     *
+     * @return string the type name
+     */
+    function itemTypeName() {
+	assert(false);
+    }
+
+    /**
+     * Does this entity type support linking?  Subclasses should override this method and
+     * return true if they support linking
+     *
+     * @return true if yes
+     */
+    function isLinkable() {
+	return false;
+    }
+
+    /**
+     * Return true if this entity is linked to another
+     *
+     * @return true if yes
+     */
+    function isLinked() {
+	$linkedEntity = $this->getLinkedEntity();
+	return isset($linkedEntity);
+    }
+
+    /**
+     * Detach this entity from the entity it is linked to by the simple expedient
+     * of overwriting over all non-null members with the equivalent from the link target.
+     *
+     * @return object GalleryStatus a status code
+     */
+    function detachLink() {
+	if (!$this->isLinked()) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__, "Not a link!");
+	}
+
+	/* Save off the linked entity */
+	$linkedEntity = $this->getLinkedEntity();
+
+	/* Get rid of the link */
+	$this->setLinkId(null);
+	$this->setLinkedEntity(null);
+
+	/*
+	 * Then get the link member data and our member data.  If we do this *before*
+	 * getting rid of the link, then my member data will be drawn from the link.
+	 */
+	$sourceMemberData = $linkedEntity->getMemberData();
+	$myMemberData = $this->getMemberData();
+
+	foreach (array_keys($sourceMemberData) as $key) {
+	    if (!isset($myMemberData[$key])) {
+		$func = "set$key";
+		$this->$func($sourceMemberData[$key]);
+	    }
+	}
+
+	return GalleryStatus::success();
+    }
 }
 
 include(dirname(__FILE__) . '/interfaces/GalleryEntity.inc');

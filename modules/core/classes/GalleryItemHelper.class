@@ -274,51 +274,58 @@ class GalleryItemHelper {
 			 null);
 	}
 
-	list ($ret, $permissionBits) = GalleryPermissionSetMap::convertIdsToBits(array($permission));
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
+	$cacheKey = "GalleryItemHelper::fetchItemIdCount($itemType, $permission)";
+	if (GalleryDataCache::containsKey($cacheKey)) {
+	    $count = GalleryDataCache::get($cacheKey);
+	} else {
+	    list ($ret, $permissionBits) =
+		GalleryPermissionSetMap::convertIdsToBits(array($permission));
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
 
-	$storage = $gallery->getStorage();
+	    $storage = $gallery->getStorage();
+	    $query = '
+            SELECT
+              COUNT(DISTINCT([GalleryItem::id]))
+            FROM
+              [GalleryEntity], [GalleryItem], [GalleryUserGroupMap], [GalleryPermissionMap]
+            WHERE
+              [GalleryEntity::entityType] = ?
+              AND
+              [GalleryItem::id] = [GalleryEntity::id]
+              AND
+              [GalleryPermissionMap::itemId] = [GalleryEntity::id]
+              AND
+              ([GalleryPermissionMap::userId] = ?
+               OR
+               ([GalleryUserGroupMap::userId] = ?
+                AND
+                [GalleryPermissionMap::groupId] = [GalleryUserGroupMap::groupId]))
+              AND
+              [GalleryPermissionMap::permission] & ? = ?
+            ';
+	    $data = array();
+	    $data[] = $itemType;
+	    $data[] = $gallery->getActiveUserId();
+	    $data[] = $gallery->getActiveUserId();
+	    $data[] = $storage->convertIntToBits($permissionBits);
+	    $data[] = $storage->convertIntToBits($permissionBits);
+	    
+	    list ($ret, $searchResults) = $gallery->search($query, $data);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    
+	    if ($searchResults->resultCount() != 1) {
+		return array(GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__), false);
+	    }
+	    
+	    $result = $searchResults->nextResult();
+	    $count = (int)$result[0];
+	} 
 
-	$query = '
-        SELECT
-          COUNT(DISTINCT([GalleryItem::id]))
-        FROM
-          [GalleryEntity], [GalleryItem], [GalleryUserGroupMap], [GalleryPermissionMap]
-        WHERE
-          [GalleryEntity::entityType] = ?
-          AND
-          [GalleryItem::id] = [GalleryEntity::id]
-          AND
-          [GalleryPermissionMap::itemId] = [GalleryEntity::id]
-          AND
-          ([GalleryPermissionMap::userId] = ?
-           OR
-           ([GalleryUserGroupMap::userId] = ?
-            AND
-            [GalleryPermissionMap::groupId] = [GalleryUserGroupMap::groupId]))
-          AND
-          [GalleryPermissionMap::permission] & ? = ?
-        ';
-	$data = array();
-	$data[] = $itemType;
-	$data[] = $gallery->getActiveUserId();
-	$data[] = $gallery->getActiveUserId();
-	$data[] = $storage->convertIntToBits($permissionBits);
-	$data[] = $storage->convertIntToBits($permissionBits);
-
-	list ($ret, $searchResults) = $gallery->search($query, $data);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	if ($searchResults->resultCount() != 1) {
-	    return array(GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__), false);
-	}
-
-	$result = $searchResults->nextResult();
-	return array(GalleryStatus::success(), (int)$result[0]);
+	return array(GalleryStatus::success(), $count);
     }
 
     /**
@@ -454,16 +461,33 @@ class GalleryItemHelper {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	/* Set the order weight */
-	list ($ret, $maxWeight) =
-	    GalleryItemAttributesMap::fetchExtremeChildWeight($albumId, HIGHER_WEIGHT);
+	$ret = GalleryItemHelper::addExistingItemToAlbum($newItem, $albumId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$ret = GalleryItemAttributesMap::setOrderWeight($newItem->getId(), $maxWeight + 1000);
+	return array(GalleryStatus::success(), $newItem);
+    }
+
+    /**
+     * Add an existing data item to an album 
+     *
+     * @param object GalleryItem the source item
+     * @param int the id of the target album
+     * @return object GalleryStatus a status code
+     */
+    function addExistingItemToAlbum($item, $albumId) {
+	
+	/* Set the order weight */
+	list ($ret, $maxWeight) =
+	    GalleryItemAttributesMap::fetchExtremeChildWeight($albumId, HIGHER_WEIGHT);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$ret = GalleryItemAttributesMap::setOrderWeight($item->getId(), $maxWeight + 1000);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/*
@@ -472,9 +496,10 @@ class GalleryItemHelper {
 	 */
 	list ($ret, $preferences) = GalleryDerivativePreferencesMap::fetchPreferencesForItem($albumId);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
+	$mimeType = $item->getMimeType();
 	foreach ($preferences as $preference) {
 	    /*
 	     * Validate the stored preferences to make sure that
@@ -484,7 +509,7 @@ class GalleryItemHelper {
 	    list ($ret, $isSupported, $outputMimeType) =
 		GalleryToolkitHelper::isSupportedOperationSequence($mimeType, $operations);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
 	    if (!$isSupported) {
@@ -496,7 +521,7 @@ class GalleryItemHelper {
 		    list ($ret, $isSupported, $outputMimeType) =
 			GalleryToolkitHelper::isSupportedOperationSequence($mimeType, $operations);
 		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return $ret->wrap(__FILE__, __LINE__);
 		    }
 
 		    if (!$isSupported) {
@@ -511,17 +536,16 @@ class GalleryItemHelper {
 
 	    list ($ret, $derivative) = GalleryFactory::newInstance('GalleryEntity', 'GalleryDerivativeImage');
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
 	    if (!isset($derivative)) {
-		return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
-			     null);
+		return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
 	    }
 
-	    $ret = $derivative->create($newItem->getId(), $preference['derivativeType']);
+	    $ret = $derivative->create($item->getId(), $preference['derivativeType']);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
 	    /*
@@ -544,17 +568,30 @@ class GalleryItemHelper {
 	    }
 
 	    $derivative->setDerivativeMimeType($outputMimeType);
-	    $derivative->setDerivativeSourceId($newItem->getId());
+	    $derivative->setDerivativeSourceId($item->getId());
 	    $derivative->setDerivativeOperations($operations);
 			
 	    $ret = $derivative->save();
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
 	}
 
-	return array(GalleryStatus::success(), $newItem);
+	/* See if the album has a thumbnail.  If not, try to use this item as the thumbnail. */
+	list ($ret, $thumbnailTable) = GalleryDerivativeHelper::fetchThumbnailsByItemIds($albumId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if (empty($thumbnailTable)) {
+	    list ($ret, $success) = GalleryItemHelper::setThumbnailFromItem($albumId, $item->getId());
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	return GalleryStatus::success();
     }
 
 
@@ -763,6 +800,40 @@ class GalleryItemHelper {
 	}
 
 	return array(GalleryStatus::success(), $layout);
+    }
+
+    /**
+     * Fetch the ids of the entities linked to the target entity
+     *
+     * @param int the target entity id
+     * @return array object GalleryStatus a status code
+     *               array entity ids
+     */
+    function fetchEntitiesLinkedTo($targetId) {
+	global $gallery;
+	
+	$query = '
+        SELECT
+          [GalleryEntity::id]
+        FROM
+          [GalleryEntity]
+        WHERE
+          [GalleryEntity::linkId] = ?
+        ORDER BY
+          [GalleryEntity::id] ASC
+        ';
+	$storage = $gallery->getStorage();
+	list ($ret, $searchResults) = $gallery->search($query, array($targetId));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
+	$linkedIds = array();
+	while ($result = $searchResults->nextResult()) {
+	    $linkedIds[] = $result[0];
+	}
+
+	return array(GalleryStatus::success(), $linkedIds);
     }
 }
 ?>

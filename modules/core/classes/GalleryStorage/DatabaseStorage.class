@@ -403,6 +403,7 @@ class DatabaseStorage extends GalleryStorage {
 		    $entity->clearModifiedFlags();
 		    $entities[$entity->getId()] = $entity;
 		}
+		
 		$recordSet->Close();
 	    } else {
 		return array(GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__), null);
@@ -413,6 +414,14 @@ class DatabaseStorage extends GalleryStorage {
 	$result = array();
 	foreach ($ids as $id) {
 	    $result[] = $entities[$id];
+	}
+
+	/* Let each entity do its post-load procedure */
+	foreach (array_keys($result) as $key) {
+	    $ret = $result[$key]->onLoad();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
 	}
 
 	return array(GalleryStatus::success(), $result);
@@ -589,9 +598,13 @@ class DatabaseStorage extends GalleryStorage {
 		}
 	    }
 	}
-	
+
 	$entity->clearPersistentFlag(STORAGE_FLAG_NEWLY_CREATED);
 	$entity->clearModifiedFlags();
+	$ret = $entity->onSave();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 
 	return GalleryStatus::success();
     }

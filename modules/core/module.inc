@@ -431,7 +431,7 @@ class CoreModule extends GalleryModule {
 			return $ret->wrap(__FILE__, __LINE__);
 		    }
 		}
-		
+
 		foreach (array('_createAllUsersGroup',
 			       '_createSiteAdminsGroup',
 			       '_createAnonymousUser',
@@ -884,14 +884,14 @@ class CoreModule extends GalleryModule {
 
 	if (!isset($group)) {
 	    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
-	}  
-    
+	}
+
 	$groupName = GalleryUtilities::utf8ToUnicodeEntities($this->translate('All Users'));
 	$ret = $group->create($groupName, GROUP_ALL_USERS);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-    
+
 	$ret = $group->save();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);

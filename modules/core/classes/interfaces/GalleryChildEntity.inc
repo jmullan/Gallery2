@@ -69,12 +69,12 @@ class GalleryChildEntity extends GalleryChildEntity_core {
         $data = parent::getMemberData();
         GalleryProfiler::start('modules.core.classes.GalleryPersistent::getMemberData');
     
-        if (!isset($this->_parentId)) {
-            $data['parentId'] = null;
-        } else {
-            $data['parentId'] = $this->_parentId;
-        }
-    
+	if (!isset($this->_parentId)) {
+ 	    $data['parentId'] = null;
+ 	} else {
+	    $data['parentId'] = $this->_parentId;
+	}
+	
         GalleryProfiler::stop('modules.core.classes.GalleryPersistent::getMemberData');
         return $data;
     }
@@ -97,9 +97,12 @@ class GalleryChildEntity extends GalleryChildEntity_core {
      * @return INTEGER the value
      */
     function getparentId() {
+ 	
+
         if (!isset($this->_parentId)) {
             return null;
         }
+
         return $this->_parentId;
     }
 

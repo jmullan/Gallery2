@@ -466,7 +466,12 @@ class GalleryDerivative_core extends GalleryChildEntity {
 	}
 
 	/* Get the path of the source for the next operation */
-	list($ret, $sourcePath) = $source->fetchPath();
+	if ($source->isLinked()) {
+	    $linkedEntity = $source->getLinkedEntity();
+	    list($ret, $sourcePath) = $linkedEntity->fetchPath();
+	} else {
+	    list($ret, $sourcePath) = $source->fetchPath();
+	}
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

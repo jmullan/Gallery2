@@ -74,18 +74,18 @@ class GalleryGroup extends GalleryGroup_core {
         $data = parent::getMemberData();
         GalleryProfiler::start('modules.core.classes.GalleryPersistent::getMemberData');
     
-        if (!isset($this->_groupType)) {
-            $data['groupType'] = null;
-        } else {
-            $data['groupType'] = $this->_groupType;
-        }
-    
-        if (!isset($this->_groupName)) {
-            $data['groupName'] = null;
-        } else {
-            $data['groupName'] = $this->_groupName;
-        }
-    
+	if (!isset($this->_groupType)) {
+ 	    $data['groupType'] = null;
+ 	} else {
+	    $data['groupType'] = $this->_groupType;
+	}
+	
+	if (!isset($this->_groupName)) {
+ 	    $data['groupName'] = null;
+ 	} else {
+	    $data['groupName'] = $this->_groupName;
+	}
+	
         GalleryProfiler::stop('modules.core.classes.GalleryPersistent::getMemberData');
         return $data;
     }
@@ -108,9 +108,12 @@ class GalleryGroup extends GalleryGroup_core {
      * @return INTEGER the value
      */
     function getgroupType() {
+ 	
+
         if (!isset($this->_groupType)) {
             return null;
         }
+
         return $this->_groupType;
     }
 
@@ -151,9 +154,12 @@ class GalleryGroup extends GalleryGroup_core {
      * @return STRING the value
      */
     function getgroupName() {
+ 	
+
         if (!isset($this->_groupName)) {
             return null;
         }
+
         return $this->_groupName;
     }
 

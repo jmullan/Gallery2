@@ -107,7 +107,7 @@ class ItemEditItemControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[keywords]', 'new keywords');
 	GalleryUtilities::putRequestVariable('form[description]', 'new description');
 	GalleryUtilities::putRequestVariable('form[serialNumber]', $this->_item[0]->getSerialNumber());
-	
+
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',

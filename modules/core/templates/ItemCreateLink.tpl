@@ -7,6 +7,15 @@
     {/g->title}
   {/g->banner}
 
+  {if (isset($status))}
+    {g->success}
+      {g->text one="Successfully linked %d item"
+               many="Successfully linked %d items" 
+               count=$status.linked.count
+               arg1=$status.linked.count}
+    {/g->success}
+  {/if}
+
   {if !empty($ItemCreateLink.peers)}
     {g->box style="admin"}
       {g->title}
@@ -45,6 +54,12 @@
           {/foreach}
 	{/g->select}
       {/g->element}
+
+      {if !empty($form.error.destination.empty)}
+	{g->error}
+  	  {g->text text="No destination chosen"}
+	{/g->error}
+      {/if}
     {/g->box}
     
     {g->box style="admin"}

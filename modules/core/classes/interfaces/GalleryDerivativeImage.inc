@@ -74,18 +74,18 @@ class GalleryDerivativeImage extends GalleryDerivativeImage_core {
         $data = parent::getMemberData();
         GalleryProfiler::start('modules.core.classes.GalleryPersistent::getMemberData');
     
-        if (!isset($this->_width)) {
-            $data['width'] = null;
-        } else {
-            $data['width'] = $this->_width;
-        }
-    
-        if (!isset($this->_height)) {
-            $data['height'] = null;
-        } else {
-            $data['height'] = $this->_height;
-        }
-    
+	if (!isset($this->_width)) {
+ 	    $data['width'] = null;
+ 	} else {
+	    $data['width'] = $this->_width;
+	}
+	
+	if (!isset($this->_height)) {
+ 	    $data['height'] = null;
+ 	} else {
+	    $data['height'] = $this->_height;
+	}
+	
         GalleryProfiler::stop('modules.core.classes.GalleryPersistent::getMemberData');
         return $data;
     }
@@ -108,9 +108,12 @@ class GalleryDerivativeImage extends GalleryDerivativeImage_core {
      * @return INTEGER the value
      */
     function getwidth() {
+ 	
+
         if (!isset($this->_width)) {
             return null;
         }
+
         return $this->_width;
     }
 
@@ -151,9 +154,12 @@ class GalleryDerivativeImage extends GalleryDerivativeImage_core {
      * @return INTEGER the value
      */
     function getheight() {
+ 	
+
         if (!isset($this->_height)) {
             return null;
         }
+
         return $this->_height;
     }
 

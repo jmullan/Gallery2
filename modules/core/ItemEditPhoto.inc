@@ -652,33 +652,43 @@ class ItemEditPhotoView extends GalleryView {
 	
 	switch($mode) {
 	case 'editPhoto':
-	    /* Check to see if we have a preferred source */
-	    list ($ret, $results) = GalleryDerivativeHelper::fetchPreferredsByItemIds(array($item->getId()));
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-		
-	    if (empty($results)) {
-		$ItemEditPhoto['editPhoto']['hasPreferredSource'] = false;
+	    if ($item->isLinked()) {
+		/* We can't rotate or scale links */
+		$ItemEditPhoto['editPhoto']['can']['rotate'] = false;
+		$ItemEditPhoto['editPhoto']['can']['scale'] = false;
+		$ItemEditPhoto['editPhoto']['isLinked'] = true;
 	    } else {
-		$ItemEditPhoto['editPhoto']['hasPreferredSource'] = true;
-	    }
-
-	    /* Figure out what options we can provide */
-	    list ($ret, $toolkit) =
-		GalleryToolkitHelper::getToolkitByOperation($item->getMimeType(), 'rotate');
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    $ItemEditPhoto['editPhoto']['can']['rotate'] = isset($toolkit);
+		$ItemEditPhoto['editPhoto']['isLinked'] = false;
 		
-	    /* Figure out what options we can provide */
-	    list ($ret, $toolkit) =
-		GalleryToolkitHelper::getToolkitByOperation($item->getMimeType(), 'scale');
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		/* Check to see if we have a preferred source */
+		list ($ret, $results) =
+		    GalleryDerivativeHelper::fetchPreferredsByItemIds(array($item->getId()));
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		
+		if (empty($results)) {
+		    $ItemEditPhoto['editPhoto']['hasPreferredSource'] = false;
+		} else {
+		    $ItemEditPhoto['editPhoto']['hasPreferredSource'] = true;
+		}
+
+		/* Figure out what options we can provide */
+		list ($ret, $toolkit) =
+		    GalleryToolkitHelper::getToolkitByOperation($item->getMimeType(), 'rotate');
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		$ItemEditPhoto['editPhoto']['can']['rotate'] = isset($toolkit);
+		
+		/* Figure out what options we can provide */
+		list ($ret, $toolkit) =
+		    GalleryToolkitHelper::getToolkitByOperation($item->getMimeType(), 'scale');
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		$ItemEditPhoto['editPhoto']['can']['scale'] = isset($toolkit);
 	    }
-	    $ItemEditPhoto['editPhoto']['can']['scale'] = isset($toolkit);
 	    break;
 		
 	case 'editSizes':

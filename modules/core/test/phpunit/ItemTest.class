@@ -571,6 +571,71 @@ class ItemTest extends GalleryTestCase {
 
 	$this->assert($count > 0, 'Should have permission');
     }
+
+    function testDeletingLinks() {
+	global $gallery;
+	$platform = $gallery->getPlatform();
+
+	/* Create a target item */
+	list ($ret, $item) = $this->_createRandomDataItem($this->_childItems[0]->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	/* Create a couple of linked items */
+	for ($i = 0; $i < 2; $i++) {
+	    list ($ret, $linkedItem[$i]) =
+		$this->_createLinkedItem($this->_childItems[1]->getId(), $item);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+
+	/* All links should point to the original */
+	list ($ret, $truePath) = $item->fetchPath();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert($platform->file_exists($truePath), "Path [$truePath] should exist");
+
+	for ($i = 0; $i < 2; $i++) {
+	    list ($ret, $linkPath) = $linkedItem[$i]->fetchPath();
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    
+	    $this->assertEquals($truePath, $linkPath, "Link $i doesn't point to the original");
+	}
+
+	/* Delete the original, now all links should point to the first link */
+	$ret = $gallery->deleteEntityById($item->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Deleting changed our items out from under us -- adapt */
+	list ($ret, $linkedItem[0]) = $linkedItem[0]->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $linkedItem[1]) = $linkedItem[1]->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+				   
+	list ($ret, $truePath) = $linkedItem[0]->fetchPath();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert($platform->file_exists($truePath), "Path [$truePath] should exist");
+
+	list ($ret, $linkPath) = $linkedItem[1]->fetchPath();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	    
+	$this->assertEquals($truePath, $linkPath, "Link doesn't point to the original (link)");
+    }
 }
 
 // Dummy test toolkit

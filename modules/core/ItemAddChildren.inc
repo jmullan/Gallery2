@@ -61,16 +61,6 @@ class ItemAddChildrenController extends GalleryController {
 
 	$platform = $gallery->getPlatform();
 
-	/*
-	 * See if the album has a thumbnail.  If not, we'll create one during
-	 * this upload.
-	 */
-	list ($ret, $thumbnailTable) = GalleryDerivativeHelper::fetchThumbnailsByItemIds($item->getId());
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	$albumNeedsThumbnail = empty($thumbnailTable) ? true : false;
-
 	$status = array();
 	$error = array();
 	if (isset($form['action']['addFromBrowser'])) {
@@ -115,15 +105,6 @@ class ItemAddChildrenController extends GalleryController {
 		    $status['addFromBrowser'][] = array('fileName' => $file['name'],
 							'id' => $newItem->getId());
 		}
-
-		if (isset($newItem) && $albumNeedsThumbnail) {
-		    list ($ret, $success) =
-			GalleryItemHelper::setThumbnailFromItem($item->getId(), $newItem->getId());
-		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-		    }
-		    $albumNeedsThumbnail = !$success;
-		}
 	    }
 
 	    /* Figure out where to redirect upon success */
@@ -154,16 +135,6 @@ class ItemAddChildrenController extends GalleryController {
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-
-		if ($albumNeedsThumbnail) {
-		    list ($ret, $success) =
-			GalleryItemHelper::setThumbnailFromItem($item->getId(), $newItem->getId());
-		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-		    }
-		    $albumNeedsThumbnail = !$success;
-		}
-
 		$status['addFromLocalServer'][] = array('fileName' => $filename,
 							'id' => $newItem->getId());
 	    }
@@ -203,15 +174,6 @@ class ItemAddChildrenController extends GalleryController {
 		$platform->unlink($tmpFile);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-
-		if ($albumNeedsThumbnail) {
-		    list ($ret, $success) =
-			GalleryItemHelper::setThumbnailFromItem($item->getId(), $newItem->getId());
-		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-		    }
-		    $albumNeedsThumbnail = !$success;
 		}
 
 		$status['addFromWebPage'][] = array('fileName' => $url,

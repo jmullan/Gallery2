@@ -268,7 +268,7 @@ class Gallery {
 	/* Build up the results from the cache */
 	$results = array();
 	foreach ($ids as $id) {
-	    $results[] =& $cached[$id];
+	    $results[] = $cached[$id];
 	}
 	
 	GalleryProfiler::stop('modules.core.classes.Gallery::loadEntitiesById');
@@ -288,13 +288,10 @@ class Gallery {
      */
     function deleteEntityById($id) {
 	GalleryProfiler::start('modules.core.classes.Gallery::deleteEntityById');
-	
-	if (empty($id)) {
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER,
-					      __FILE__, __LINE__),
-			 null);
-	}
 
+	if (empty($id)) {
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	}
 	$lockIds = array();
 
 	/* Don't write lock it if it's already locked somewhere else */
@@ -309,21 +306,57 @@ class Gallery {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	if (GalleryUtilities::isA($entity, 'GalleryChildEntity')) {
-	    list ($ret, $newLock) = $this->acquireReadLockParents($id);
+	    list ($ret, $lockIds[]) = $this->acquireReadLockParents($id);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
+	}
 
-	    /* The new lock can be null if we have no parents */
-	    if ($newLock != null) {
-		$lockIds[] = $newLock;
+	/* If this item has links to it, make one of those links the master */
+	list ($ret, $linkedIds) = GalleryItemHelper::fetchEntitiesLinkedTo($id);
+	if ($ret->isError()) {
+	    $this->releaseLocks($lockIds);
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	if (!empty($linkedIds)) {
+	    /* Lock all of the linked items */
+	    list ($ret, $lockIds[]) = $this->acquireWriteLock($linkedIds);
+	    if ($ret->isError()) {
+		$this->releaseLocks($lockIds);
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    /* Make the first link the master, and point the rest at it */
+	    list ($ret, $linkedEntities) = $this->loadEntitiesById($linkedIds);
+
+	    $ret = $linkedEntities[0]->detachLink();
+	    if ($ret->isError()) {
+		$this->releaseLocks($lockIds);
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    $ret = $linkedEntities[0]->save();
+	    if ($ret->isError()) {
+		$this->releaseLocks($lockIds);
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    for ($i = 1; $i < sizeof($linkedEntities); $i++) {
+		$linkedEntities[$i]->setLinkId($linkedEntities[0]->getId());
+		$linkedEntities[$i]->setLinkedEntity($linkedEntities[0]);
+		$ret = $linkedEntities[$i]->save();
+		if ($ret->isError()) {
+		    $this->releaseLocks($lockIds);
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
 	    }
 	}
 
 	$ret = $entity->delete();
 	if ($ret->isError()) {
+	    $this->releaseLocks($lockIds);
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	
@@ -649,10 +682,7 @@ class Gallery {
     function acquireWriteLock($ids, $timeout=10) {
 
 	$storage = $this->getStorage();
-
-	list ($ret, $lock) =
-	    $storage->acquireWriteLock($ids, $timeout);
-
+	list ($ret, $lock) = $storage->acquireWriteLock($ids, $timeout);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -694,21 +724,27 @@ class Gallery {
      * @return object GalleryStatus a status code
      */
     function releaseLocks($lockIds) {
-
 	if (!is_array($lockIds)) {
 	    $lockIds = array($lockIds);
 	}
 
 	/* Check all parameters before starting to release locks */
 	foreach ($lockIds as $lockId) {
+	    if (empty($lockId)) {
+		continue;
+	    }
+	    
 	    if (!isset($this->_locks[$lockId])) {
-		return GalleryStatus::error(ERROR_BAD_PARAMETER,
-					    __FILE__, __LINE__);
+		return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	    }
 	}
 
 	/* Now release all locks */
 	foreach ($lockIds as $lockId) {
+	    if (empty($lockId)) {
+		continue;
+	    }
+	    
 	    $this->guaranteeTimeLimit(5);
 	    $ret = $this->_locks[$lockId]->release();
 	    if ($ret->isError()) {

@@ -60,6 +60,7 @@ class GalleryPhotoItem_core extends GalleryDataItem {
      * @g2 <member>
      * @g2   <member-name>width</member-name>
      * @g2   <member-type>INTEGER</member-type>
+     * @g2   <linked/>
      * @g2 </member>
      *
      * @var int $_width
@@ -73,6 +74,7 @@ class GalleryPhotoItem_core extends GalleryDataItem {
      * @g2 <member>
      * @g2   <member-name>height</member-name>
      * @g2   <member-type>INTEGER</member-type>
+     * @g2   <linked/>
      * @g2 </member>
      *
      * @var int $_height
@@ -109,13 +111,11 @@ class GalleryPhotoItem_core extends GalleryDataItem {
 
 	/* Validate the input filename */
 	if (empty($imageFileName)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
-					__FILE__, __LINE__);
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
 
 	if (!$platform->file_exists($imageFileName)) {
-	    return GalleryStatus::error(ERROR_BAD_PATH,
-					__FILE__, __LINE__);
+	    return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);
 	}
 
 	/* Create our data item */
@@ -222,7 +222,7 @@ class GalleryPhotoItem_core extends GalleryDataItem {
     }
 
     /**
-     * @see GalleryItem::isLinkable
+     * @see GalleryEntity::isLinkable
      */
     function isLinkable() {
 	return true;

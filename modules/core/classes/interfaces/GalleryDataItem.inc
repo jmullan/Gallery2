@@ -74,18 +74,30 @@ class GalleryDataItem extends GalleryDataItem_core {
         $data = parent::getMemberData();
         GalleryProfiler::start('modules.core.classes.GalleryPersistent::getMemberData');
     
-        if (!isset($this->_mimeType)) {
-            $data['mimeType'] = null;
-        } else {
-            $data['mimeType'] = $this->_mimeType;
-        }
-    
-        if (!isset($this->_size)) {
-            $data['size'] = null;
-        } else {
-            $data['size'] = $this->_size;
-        }
-    
+	if (isset($this->_linkedEntity)) {
+	    if (!isset($this->_linkedEntity->_mimeType)) {
+ 	        $data['mimeType'] = null;
+	    } else {
+		$data['mimeType'] = $this->_linkedEntity->_mimeType;
+	    }
+	} else if (!isset($this->_mimeType)) {
+ 	    $data['mimeType'] = null;
+ 	} else {
+	    $data['mimeType'] = $this->_mimeType;
+	}
+	
+	if (isset($this->_linkedEntity)) {
+	    if (!isset($this->_linkedEntity->_size)) {
+ 	        $data['size'] = null;
+	    } else {
+		$data['size'] = $this->_linkedEntity->_size;
+	    }
+	} else if (!isset($this->_size)) {
+ 	    $data['size'] = null;
+ 	} else {
+	    $data['size'] = $this->_size;
+	}
+	
         GalleryProfiler::stop('modules.core.classes.GalleryPersistent::getMemberData');
         return $data;
     }
@@ -108,9 +120,17 @@ class GalleryDataItem extends GalleryDataItem_core {
      * @return STRING the value
      */
     function getmimeType() {
+ 	
+	$linkedEntity = $this->getLinkedEntity();
+	if (isset($linkedEntity)) {
+	    return $linkedEntity->getmimeType();
+	}
+	
+
         if (!isset($this->_mimeType)) {
             return null;
         }
+
         return $this->_mimeType;
     }
 
@@ -146,9 +166,17 @@ class GalleryDataItem extends GalleryDataItem_core {
      * @return INTEGER the value
      */
     function getsize() {
+ 	
+	$linkedEntity = $this->getLinkedEntity();
+	if (isset($linkedEntity)) {
+	    return $linkedEntity->getsize();
+	}
+	
+
         if (!isset($this->_size)) {
             return null;
         }
+
         return $this->_size;
     }
 

@@ -77,11 +77,26 @@ class <xsl:value-of select="class-name"/> extends <xsl:value-of select="class-na
         $data = parent::getMemberData();
         GalleryProfiler::start('modules.core.classes.GalleryPersistent::getMemberData');
     <xsl:for-each select="member">
-        if (!isset($this->_<xsl:value-of select="member-name"/>)) {
-            $data['<xsl:value-of select="member-name"/>'] = null;
-        } else {
-            $data['<xsl:value-of select="member-name"/>'] = $this->_<xsl:value-of select="member-name"/>;
-        }
+ 	<xsl:if test="linked">
+	if (isset($this->_linkedEntity)) {
+	    if (!isset($this->_linkedEntity->_<xsl:value-of select="member-name"/>)) {
+ 	        $data['<xsl:value-of select="member-name"/>'] = null;
+	    } else {
+		$data['<xsl:value-of select="member-name"/>'] = $this->_linkedEntity->_<xsl:value-of select="member-name"/>;
+	    }
+	} else if (!isset($this->_<xsl:value-of select="member-name"/>)) {
+ 	    $data['<xsl:value-of select="member-name"/>'] = null;
+ 	} else {
+	    $data['<xsl:value-of select="member-name"/>'] = $this->_<xsl:value-of select="member-name"/>;
+	}
+	</xsl:if>
+ 	<xsl:if test="not(linked)">
+	if (!isset($this->_<xsl:value-of select="member-name"/>)) {
+ 	    $data['<xsl:value-of select="member-name"/>'] = null;
+ 	} else {
+	    $data['<xsl:value-of select="member-name"/>'] = $this->_<xsl:value-of select="member-name"/>;
+	}
+	</xsl:if>
     </xsl:for-each>
         GalleryProfiler::stop('modules.core.classes.GalleryPersistent::getMemberData');
         return $data;
@@ -199,9 +214,17 @@ class <xsl:value-of select="class-name"/> extends <xsl:value-of select="class-na
      * @return <xsl:value-of select="member-type"/> the value
      */
     function get<xsl:value-of select="member-name"/>() {
+ 	<xsl:if test="linked">
+	$linkedEntity = $this->getLinkedEntity();
+	if (isset($linkedEntity)) {
+	    return $linkedEntity->get<xsl:value-of select="member-name"/>();
+	}
+	</xsl:if>
+
         if (!isset($this->_<xsl:value-of select="member-name"/>)) {
             return null;
         }
+
         return $this->_<xsl:value-of select="member-name"/>;
     }
 

@@ -69,12 +69,12 @@ class GalleryAlbumItem extends GalleryAlbumItem_core {
         $data = parent::getMemberData();
         GalleryProfiler::start('modules.core.classes.GalleryPersistent::getMemberData');
     
-        if (!isset($this->_layout)) {
-            $data['layout'] = null;
-        } else {
-            $data['layout'] = $this->_layout;
-        }
-    
+	if (!isset($this->_layout)) {
+ 	    $data['layout'] = null;
+ 	} else {
+	    $data['layout'] = $this->_layout;
+	}
+	
         GalleryProfiler::stop('modules.core.classes.GalleryPersistent::getMemberData');
         return $data;
     }
@@ -97,9 +97,12 @@ class GalleryAlbumItem extends GalleryAlbumItem_core {
      * @return STRING the value
      */
     function getlayout() {
+ 	
+
         if (!isset($this->_layout)) {
             return null;
         }
+
         return $this->_layout;
     }
 

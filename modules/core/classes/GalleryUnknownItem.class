@@ -68,6 +68,13 @@ class GalleryUnknownItem_core extends GalleryDataItem {
 	global $gallery;
 	return $gallery->i18n('Unknown');
     }
+
+    /**
+     * @see GalleryEntity::isLinkable
+     */
+    function isLinkable() {
+	return true;
+    }
 }
 
 include(dirname(__FILE__) . '/interfaces/GalleryUnknownItem.inc');

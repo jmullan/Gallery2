@@ -188,7 +188,8 @@ class GalleryTestCase extends TestCase {
      *               object GalleryDataItem
      * @access private
      */
-    function _createRandomDataItem($parentId, $mimeType='application/unknown', $fields=array()) {
+    function _createRandomDataItem($parentId, $mimeType='application/unknown',
+				   $fields=array(), $inputFile=__FILE__) {
 	global $gallery;
 
 	list ($ret, $item) = GalleryItemHelper::newItemByMimeType($mimeType);
@@ -205,7 +206,6 @@ class GalleryTestCase extends TestCase {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$inputFile = __FILE__;
 	if (get_magic_quotes_gpc()) {
 	    $inputFile = addslashes($inputFile);
 	}
@@ -241,6 +241,50 @@ class GalleryTestCase extends TestCase {
 	}
 
 	return array(GalleryStatus::success(), $item);
+    }
+    
+    /*
+     * Create a random data item
+     *
+     * @param int the id of the parent album
+     * @return array object GalleryStatus a status code
+     *               object GalleryDataItem
+     * @access private
+     */
+    function _createLinkedItem($parentId, $targetItem) {
+	global $gallery;
+
+	if (!isset($targetItem)) {
+	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
+	}
+
+	list ($ret, $lockIds[]) = $gallery->acquireReadLock(array($parentId, $targetItem->getId()));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$className = get_class($targetItem);
+	$linkedItem = new $className();
+	$ret = $linkedItem->createLink($targetItem, $parentId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Save it */
+	$ret = $linkedItem->save();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Leggo of our locks */
+	if (isset($lockIds)) {
+	    $ret = $gallery->releaseLocks($lockIds);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+
+	return array(GalleryStatus::success(), $linkedItem);
     }
     
     function _createRandomUser() {

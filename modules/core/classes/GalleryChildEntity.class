@@ -95,6 +95,23 @@ class GalleryChildEntity_core extends GalleryEntity {
     }
 
     /**
+     * @see GalleryEntity::createLink()
+     */
+    function createLink($entity, $parentId) {
+	global $gallery;
+
+	$ret = parent::createLink($entity);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Set the parent id */
+	$this->setParentId($parentId);
+
+	return GalleryStatus::success();
+    }
+
+    /**
      * Move this item to a new parent
      *
      * @param int the id of the GalleryItem parent
@@ -132,7 +149,18 @@ class GalleryChildEntity_core extends GalleryEntity {
      */
     function fetchParent() {
 	global $gallery;
-	return $gallery->loadEntitiesById($this->getParentId());
+
+	$parentId = $this->getParentId();
+	if (isset($parentId)) {
+	    list ($ret, $parent) = $gallery->loadEntitiesById($this->getParentId());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	} else {
+	    $parent = null;
+	}
+
+	return array(GalleryStatus::success(), $parent);
     }
 }
 

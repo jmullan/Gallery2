@@ -61,6 +61,7 @@ class GalleryDataItem_core extends GalleryItem {
      * @g2 <member>
      * @g2   <member-name>mimeType</member-name>
      * @g2   <member-type>STRING</member-type>
+     * @g2   <linked/>
      * @g2 </member>
      *
      * @var string $_mimeType
@@ -74,6 +75,7 @@ class GalleryDataItem_core extends GalleryItem {
      * @g2 <member>
      * @g2   <member-name>size</member-name>
      * @g2   <member-type>INTEGER</member-type>
+     * @g2   <linked/>
      * @g2 </member>
      *
      * @var string $_size
@@ -116,8 +118,7 @@ class GalleryDataItem_core extends GalleryItem {
 
 	/* Validate the input file */
 	if (empty($inputFileName)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
-					__FILE__, __LINE__);
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
 
 	if (!$platform->is_uploaded_file($inputFileName) && !$platform->file_exists($inputFileName)) {
@@ -129,8 +130,7 @@ class GalleryDataItem_core extends GalleryItem {
 	 * not going to be moved around while we're adding stuff to it.
 	 */
 	if (!$gallery->isReadLocked($parentId)) {
-	    return GalleryStatus::error(ERROR_LOCK_REQUIRED,
-					__FILE__, __LINE__);
+	    return GalleryStatus::error(ERROR_LOCK_REQUIRED, __FILE__, __LINE__);
 	}
 	
 	/* Figure out the new location for this file */
@@ -143,28 +143,40 @@ class GalleryDataItem_core extends GalleryItem {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	if (empty($targetName)) {
 	    $baseName = basename($inputFileName);
 	} else {
 	    $baseName = $targetName;
 	}
 
-	/* Make sure our base file name is legal */
+	/* Legalize the base name */
 	$baseName = $platform->legalizePathComponent($baseName);
 
+	/* Extract the file base and extension */
+	list ($fileBase, $extension) = GalleryUtilities::getFileNameComponents($baseName);
+	if (empty($extension)) {
+	    $extension = GalleryUtilities::convertMimeToExtension($mimeType);
+	}
+	
 	/* Don't be intimidated by the first 100 collisions */
 	$retry = 0;
-	$newFileName = $parentPath . $baseName;
-	list ($fileBase, $extension) = GalleryUtilities::getFileNameComponents($baseName);
-	while ($platform->file_exists($newFileName)) {
+	while (true) {
+	    $baseName = sprintf('%s%s%s%s',
+				$fileBase,
+				$retry > 0 ? sprintf('_%03d', $retry) : '',
+				empty($extension) ? '' : '.',
+				$extension);
+	    $newFileName = sprintf('%s%s', $parentPath, $baseName);
+	    if (!$platform->file_exists($newFileName)) {
+		break;
+	    }
+
 	    if (++$retry > 100) {
 		return GalleryStatus::error(ERROR_COLLISION, __FILE__, __LINE__);
 	    }
-	    $baseName = sprintf('%s_%03d%s', $fileBase, $retry, empty($extension) ? '' : '.' . $extension);
-	    $newFileName = sprintf('%s%s', $parentPath, $baseName);
-	} 
-	
+	}
+
 	/*
 	 * XXX: Race condition here!  It's possible for two threads to be
 	 * adding a file with the same name to the container at the same time.
@@ -173,8 +185,7 @@ class GalleryDataItem_core extends GalleryItem {
 	 */
 	/* Copy the file to its new location */
 	if (!$platform->copy($inputFileName, $newFileName)) {
-	    return GalleryStatus::error(ERROR_PLATFORM_FAILURE,
-					__FILE__, __LINE__);
+	    return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__);
 	}
 
 	$ret = parent::create($parentId, $baseName);
@@ -191,6 +202,46 @@ class GalleryDataItem_core extends GalleryItem {
     }
 
     /**
+     * @see GalleryEntity::detachLink
+     */
+    function detachLink() {
+	global $gallery;
+	
+	/* Stash the linked entity because the super class is going to get rid of it */
+	$linkedEntity = $this->getLinkedEntity();
+	
+	$ret = parent::detachLink();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$platform = $gallery->getPlatform();
+	list ($ret, $sourcePath) = $linkedEntity->fetchPath();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	list ($ret, $parent) = $this->fetchParent();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	list ($ret, $newPathBase) = $parent->fetchContainerPath();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* This path should already be legal, unless we screwed up elsewhere */
+	$newPath = $newPathBase . $this->getPathComponent();
+
+	if (!$platform->copy($sourcePath, $newPath)) {
+	    return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
      * Delete this GalleryEntity
      *
      * @access public
@@ -199,9 +250,7 @@ class GalleryDataItem_core extends GalleryItem {
     function delete() {
 	global $gallery;
 
-	/*
-	 * XXX: Check for derivative relationships and expire as necessary.
-	 */
+	/* TODO: Check for derivative relationships and expire as necessary. */
 
 	/* Delete myself */
 	$ret = parent::delete();
@@ -209,16 +258,17 @@ class GalleryDataItem_core extends GalleryItem {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	/* Delete our source file */
-	list($ret, $path) = $this->fetchPath();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-	
-	$platform = $gallery->getPlatform();
-
-	if (!$platform->unlink($path)) {
-	    return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__, "Could not delete $path");
+	/* Delete our source file, if we're not a link */
+	if (!$this->isLinked()) {
+	    list($ret, $path) = $this->fetchPath();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    
+	    $platform = $gallery->getPlatform();
+	    if (!$platform->unlink($path)) {
+		return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__, "Could not delete $path");
+	    }
 	}
 
 	return GalleryStatus::success();
@@ -257,17 +307,17 @@ class GalleryDataItem_core extends GalleryItem {
 
 	$platform = $gallery->getPlatform();
 
+	/* Make sure our base file name is legal */
+	$newName = $platform->legalizePathComponent($newName);
+
 	/*
-	 * Get the current path
+	 * Get the current path before we let the superclass do the rename
 	 */
 	list($ret, $currentPath) = $this->fetchPath();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
-	/* Make sure our base file name is legal */
-	$newName = $platform->legalizePathComponent($newName);
-
+	    
 	/*
 	 * Set the new path in the database.  If that succeeds then we should
 	 * be ok in general.  Jump through hoops to make sure that we release
@@ -279,18 +329,21 @@ class GalleryDataItem_core extends GalleryItem {
 	    $error = $ret->wrap(__FILE__, __LINE__);
 	}
 
-	if (!isset($error)) {
-	    $newPath = dirname($currentPath) . '/' . $newName;
-	    
-	    /* Check to see if the desired path exists. */
-	    if ($platform->file_exists($newPath)) {
-		$error = GalleryStatus::error(ERROR_COLLISION, __FILE__, __LINE__);
-	    }
-	}
+	/* Only rename the filesystem entity if we're not a link */
+	if (!$this->isLinked()) {
+	    if (!isset($error)) {
+		$newPath = dirname($currentPath) . '/' . $newName;
 
-	if (!isset($error)) {
-	    if (!$platform->rename($currentPath, $newPath)) {
-		$error = GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);
+		/* Check to see if the desired path exists. */
+		if ($platform->file_exists($newPath)) {
+		    $error = GalleryStatus::error(ERROR_COLLISION, __FILE__, __LINE__);
+		}
+	    }
+
+	    if (!isset($error)) {
+		if (!$platform->rename($currentPath, $newPath)) {
+		    $error = GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);
+		}
 	    }
 	}
 
@@ -323,12 +376,18 @@ class GalleryDataItem_core extends GalleryItem {
 	 * the nearest parent who is a container (eg an AlbumItem), because a
 	 * container has a directory for the items it contains.
 	 */
-	list($ret, $containerPath) = $this->fetchContainerPath();
+	if ($this->isLinked()) {
+	    $target = $this->getLinkedEntity();
+	} else {
+	    $target = $this;
+	}
+	
+	list($ret, $containerPath) = $target->fetchContainerPath();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	
-	return array(GalleryStatus::success(), $containerPath . $this->getPathComponent());
+	return array(GalleryStatus::success(), $containerPath . $target->getPathComponent());
     }
 
     /**

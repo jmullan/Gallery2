@@ -28,6 +28,149 @@
  */
 
 /**
+ * This controller will handle linking one or more items from one album to
+ * another.
+ *
+ * @package GalleryCore
+ * @subpackage UserInterface
+ *
+ */
+class ItemCreateLinkController extends GalleryController {
+
+    /**
+     * Link the selected items into the destination album, if all the
+     * permissions are set correctly.
+     */
+    function handleRequest($form) {
+	global $gallery;
+
+	$itemId = GalleryUtilities::getRequestVariables('itemId');
+
+	$status = array();
+	$error = array();
+	if (isset($form['action']['link'])) {
+	    if (empty($form['destination'])) {
+		$error[] = 'form[error][destination][empty]';
+	    }
+
+	    if (empty($error)) {
+		$destinationId = $form['destination'];
+		$selectedIds = array_keys($form['selectedIds']);
+
+		/* Make sure we can write to the destination */
+		list ($ret, $permissions) = GalleryItemHelper::getPermissions($destinationId);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		
+		if (!isset($permissions['core.addDataItem'])) {
+		    return array(GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__),
+				 null);
+		}
+
+		/* Load the selected items */
+		list ($ret, $selectedItems) = $gallery->loadEntitiesById($selectedIds);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		
+		/* Look out for monkey business */
+		foreach ($selectedItems as $selectedItem) {
+		    if ($selectedItem->getParentId() != $itemId) {
+			return array(GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__),
+				     null);
+		    }
+		    
+		    if (!$selectedItem->isLinkable()) {
+			return array(GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__),
+				     null);
+		    }
+		}
+		
+		/*
+		 * Ok we've got linkable items and a legal destination album.
+		 * Lock everything up and start linkin'.  We need to read lock
+		 * the source ids, source hierarchy and destination hierarchy.
+		 */
+		$ids = array_merge($selectedIds, array($itemId, $destinationId));
+		list ($ret, $locks[]) = $gallery->acquireReadLock($ids);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		
+		list ($ret, $locks[]) = $gallery->acquireReadLockParents($itemId);
+		if ($ret->isError()) {
+		    $gallery->releaseLocks($locks);
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		list ($ret, $locks[]) = $gallery->acquireReadLockParents($destinationId);
+		if ($ret->isError()) {
+		    $gallery->releaseLocks($locks);
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	    
+		/* Create all our links */
+		$status['linked']['count'] = 0;
+		foreach ($selectedItems as $selectedItem) {
+
+		    $classType = get_class($selectedItem);
+		    $linkedItem = new $classType;
+
+		    /* If we're linking to an item that's already a link, then link to its source instead */
+		    if ($selectedItem->isLinked()) {
+			$linkedEntity = $selectedItem->getLinkedEntity();
+			$ret = $linkedItem->createLink($linkedEntity, $destinationId);
+		    } else {
+			$ret = $linkedItem->createLink($selectedItem, $destinationId);
+		    }
+		    if ($ret->isError()) {
+			$gallery->releaseLocks($locks);
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+
+		    $ret = $linkedItem->save();
+		    if ($ret->isError()) {
+			$gallery->releaseLocks($locks);
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+
+		    $ret = GalleryItemHelper::addExistingItemToAlbum($linkedItem, $destinationId);
+		    if ($ret->isError()) {
+			$gallery->releaseLocks($locks);
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		    
+		    $status['linked']['count']++;
+		}
+
+		/* Release the locks */
+		$ret = $gallery->releaseLocks($locks);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		/* Figure out where to redirect upon success */
+		$redirect['view'] = 'core:ItemAdmin';
+		$redirect['subView'] = 'core:ItemCreateLink';
+		$redirect['itemId'] = $itemId;
+	    }
+	}
+
+	if (!empty($redirect)) {
+	    $results['redirect'] = $redirect;
+	} else {
+	    $results['delegate']['view'] = 'core:ItemAdmin';
+	    $results['delegate']['subView'] = 'core:ItemCreateLink';
+	}
+	$results['status'] = $status;
+	$results['error'] = $error;
+
+	return array(GalleryStatus::success(), $results);
+    }
+}
+
+/**
  * This view lets you choose where you want to put the new link
  *
  * @package GalleryCore
@@ -76,7 +219,8 @@ class ItemCreateLinkView extends GalleryView {
 	foreach ($peerItems as $peerItem) {
 	    if ($peerItem->isLinkable()) {
 		$peers[$peerItem->getId()] = $peerItem->getMemberData();
-		$peers[$peerItem->getId()]['selected'] = isset($form['selectedIds'][$peerItem->getId()]);
+		$peers[$peerItem->getId()]['selected'] =
+		    isset($form['selectedIds'][$peerItem->getId()]);
 	    }
 	}
 
@@ -97,7 +241,7 @@ class ItemCreateLinkView extends GalleryView {
 	$ItemCreateLink['peers'] = $peers;
 
 	$template->setVariable('ItemCreateLink', $ItemCreateLink);
-	$template->setVariable('controller', '');
+        $template->setVariable('controller', 'core:ItemCreateLink');
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/core/templates/ItemCreateLink.tpl'));
     }
