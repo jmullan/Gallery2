@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -53,7 +53,7 @@ class GallerySession {
     var $_creationTime;
 
     /**
-     * The ID of this session 
+     * The ID of this session
      *
      * @var string $_sessionId
      * @access private
@@ -155,7 +155,7 @@ class GallerySession {
 		$this->_isUsingCookies = false;
 		$this->_sessionId = GalleryUtilities::getRequestVariables(SESSION_ID_PARAMETER);
 	    }
-	} 
+	}
 
 	/* If we don't have a session id at this point, create one. */
 	if (empty($this->_sessionId)) {
@@ -175,18 +175,18 @@ class GallerySession {
 	}
 
 	$forceResendCookie = false;
-	
+
 	/* Verify the remote address to avoid casual session hijacking */
 	$currentRemoteIdentifier = $this->_getRemoteIdentifier();
 
 	if (!isset($this->_remoteIdentifier) ||
-	        $this->_compareIdentifiers($this->_remoteIdentifier, $currentRemoteIdentifier) == 0) {
+		$this->_compareIdentifiers($this->_remoteIdentifier, $currentRemoteIdentifier) == 0) {
 	    if ($gallery->getDebug()) {
 		$gallery->debug('Session hijack detected: saved vs. current below');
 		$gallery->debug_r($this->_remoteIdentifier);
 		$gallery->debug_r($currentRemoteIdentifier);
 	    }
-	    
+
 	    /*
 	     * The session was not created from this browser address, so reset
 	     * our data to prevent hijacking.
@@ -201,9 +201,9 @@ class GallerySession {
 	    }
 	}
 
-	if (!isset($_COOKIE[SESSION_ID_PARAMETER]) || 
-	        $_COOKIE[SESSION_ID_PARAMETER] != $this->_sessionId ||
-	        $forceResendCookie) {
+	if (!isset($_COOKIE[SESSION_ID_PARAMETER]) ||
+		$_COOKIE[SESSION_ID_PARAMETER] != $this->_sessionId ||
+		$forceResendCookie) {
 	    /*
 	     * Send back a cookie.
 	     *
@@ -236,7 +236,7 @@ class GallerySession {
 	    $urlGenerator = $gallery->getUrlGenerator();
 	    $this->_cookiePath = $urlGenerator->getCookiePath();
 	    $this->_cookieDomain = $urlGenerator->getCurrentDomain();
-	    
+
 	    /* remove port number in the domain */
 	    $colon = strpos($this->_cookieDomain, ':');
 	    if ($colon) {
@@ -341,7 +341,7 @@ class GallerySession {
      */
     function _expireSessions() {
 	global $gallery;
-	
+
 	list ($ret, $sessionInactivityTimeout) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'session.inactivityTimeout');
 	if ($ret->isError()) {
@@ -369,7 +369,7 @@ class GallerySession {
 	    if ($filename == '.' || $filename == '..') {
 		continue;
 	    }
-	    
+
 	    $path = $sessionsDir . $filename;
 	    $statData = $platform->stat($path);
 	    if ($statData['mtime'] < $inactiveCutoff ||
@@ -422,7 +422,7 @@ class GallerySession {
     function isUsingCookies() {
 	return $this->_isUsingCookies;
     }
-    
+
     /**
      * Get a value from the session data
      *
@@ -519,11 +519,12 @@ class GallerySession {
      * users behind proxies) so we have to be creative.  Changing this algorithm
      * will cause all existing sessions to be discarded.
      *
-     * @return string
+     * @return array
      * @access private
      */
     function _getRemoteIdentifier() {
-	return array(GalleryUtilities::getRemoteHostAddress(), md5($_SERVER['HTTP_USER_AGENT']));
+	return array(GalleryUtilities::getRemoteHostAddress(),
+		     isset($_SERVER['HTTP_USER_AGENT']) ? md5($_SERVER['HTTP_USER_AGENT']) : null);
     }
 
     /**
@@ -532,7 +533,7 @@ class GallerySession {
      * Example input:
      *   $a = array(0, 'x', 2);
      *   $b = array(0, 'y', 2);
-     * Example output: 
+     * Example output:
      *   2
      * (indexes 0 and 2 match.  index 1 does not)
      *
@@ -600,14 +601,14 @@ class GallerySession {
 		$this->put('core.status', $status);
 	    }
 	}
-	
+
 	return $statusData;
     }
 
     /**
      * Return the session id
      *
-     * @return string the session id 
+     * @return string the session id
      */
     function getSessionId() {
 	return $this->_sessionId;
@@ -667,7 +668,7 @@ class GallerySession {
 	    while (isset($navigation[$navId]['data']['returnNavId'])
 			&& isset($navigation[$navigation[$navId]['data']['returnNavId']]['data'])) {
 		$navId = $navigation[$navId]['data']['returnNavId'];
-	        $navigationData[] = $navigation[$navId]['data'];
+		$navigationData[] = $navigation[$navId]['data'];
 	    }
 	}
 

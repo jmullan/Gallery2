@@ -637,7 +637,7 @@ class GalleryUtilities {
 
 	    if (!$breakWords) {
 		$newStringLen = strlen($newString);
-	        $testString = substr($string, 0, $newStringLen + 1);
+		$testString = substr($string, 0, $newStringLen + 1);
 		if (strlen($testString) > $newStringLen) {
 		    if (preg_match('|\s+\S+$|', $testString)) {
 			/* The string has more than one word, so delete the last word */
@@ -1041,16 +1041,16 @@ class GalleryUtilities {
      * @return string the remote host address (or null)
      */
     function getRemoteHostAddress() {
-        if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
-        } else if (isset($_SERVER['HTTP_CLIENT_IP'])) {
-            $ip = $_SERVER['HTTP_CLIENT_IP'];
-        } else if (isset($_SERVER['REMOTE_ADDR'])) {
-            $ip = $_SERVER['REMOTE_ADDR'];
-        } else {
-            return null;
-        }
-        return $ip;
+	if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+	    $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+	} else if (isset($_SERVER['HTTP_CLIENT_IP'])) {
+	    $ip = $_SERVER['HTTP_CLIENT_IP'];
+	} else if (isset($_SERVER['REMOTE_ADDR'])) {
+	    $ip = $_SERVER['REMOTE_ADDR'];
+	} else {
+	    return null;
+	}
+	return $ip;
     }
 
     /**
@@ -1146,14 +1146,14 @@ class GalleryUtilities {
      */
     function getPseudoFileName($entity) {
 
-        /*
+	/*
 	 * If our GalleryEntity is a GalleryFileSystemEntity, then we've got a path component so we're cool.
 	 * If it's a derivative, then get the pseudo filename of its derivative source and use that instead.
 	 * If it's neither, then return 'unknown' for now.
-         */
+	 */
        	if (GalleryUtilities::isA($entity, 'GalleryFileSystemEntity')) {
 	    $pseudoFileName = $entity->getPathComponent();
-        } else if (GalleryUtilities::isA($entity, 'GalleryDerivative')) {
+	} else if (GalleryUtilities::isA($entity, 'GalleryDerivative')) {
 	    list ($ret, $sourceEntity) = GalleryCoreApi::loadEntitiesById($entity->getParentId());
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
@@ -1167,7 +1167,7 @@ class GalleryUtilities {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 	    }
-        } else {
+	} else {
 	    return array(GalleryStatus::success(), 'unknown');
 	}
 
@@ -1339,6 +1339,9 @@ class GalleryUtilities {
      * @return string the crawler id, or null if it's a regular user
      */
     function identifySearchEngine() {
+	if (!isset($_SERVER['HTTP_USER_AGENT'])) {
+	    return null;
+	}
 	$userAgent = $_SERVER['HTTP_USER_AGENT'];
 	if (strstr($userAgent, 'Google')) {
 	    return 'google';
