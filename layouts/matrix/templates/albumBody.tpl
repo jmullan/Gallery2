@@ -150,27 +150,29 @@
 
     {g->banner}
       {assign var="id" value=$layout.item.id}
-      {g->actionset}
-	{g->actionitem}
-	  {g->title}
-	    {g->text text="&laquo; album actions &raquo;"}
-	  {/g->title}
-	  {g->value}
-	    &nbsp;
-	  {/g->value}
-	{/g->actionitem}
-	{foreach from=$layout.moduleItemLinks.$id item=link}
+      {if isset($layout.moduleItemLinks.$id)}
+	{g->actionset}
 	  {g->actionitem}
 	    {g->title}
-	      {$link.text}
+	      {g->text text="&laquo; album actions &raquo;"}
 	    {/g->title}
-	    
 	    {g->value}
-	      {$link.url}
+	      &nbsp;
 	    {/g->value}
 	  {/g->actionitem}
-	{/foreach}
-      {/g->actionset}
+	  {foreach from=$layout.moduleItemLinks.$id item=link}
+	    {g->actionitem}
+	      {g->title}
+		{$link.text}
+	      {/g->title}
+	      
+	      {g->value}
+		{$link.url}
+	      {/g->value}
+	    {/g->actionitem}
+	  {/foreach}
+	{/g->actionset}
+      {/if}
 
       {g->linkset}
 	{g->title}
