@@ -144,7 +144,14 @@ class AdminSelfRegistrationControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	$username = $this->_pendingUser->getUserName();
 	$this->_pendingUser = null;
+
+	list ($ret, $user) = GalleryCoreApi::fetchUserByUsername($username);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_pendingUser = $user;
     }
 
     function testAdminSelfRegistrationControllerDelete() {
