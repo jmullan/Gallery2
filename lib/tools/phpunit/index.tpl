@@ -43,7 +43,7 @@
 
       <a href="../../../main.php?g2_view=core:UserAdmin&g2_subView=core:UserLogin&g2_return=<?php echo $_SERVER['REQUEST_URI']?>">[ login ]</a>
       <form>
-	<input type="text" size=33 name="<?php echo isset($sessionKey) : $sessionKey : '' ?>">
+	<input type="text" size=33 name="<?php echo isset($sessionKey) ? $sessionKey : '' ?>">
 	  <input type="submit" value="Reload page">
       </form>
     </div>
