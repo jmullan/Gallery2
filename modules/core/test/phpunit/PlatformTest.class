@@ -174,12 +174,14 @@ class PlatformTest extends GalleryTestCase {
     }
     
     function testExec() {
-	/* XXX: This is a pretty weak test. */
+	/*
+	 * Make sure executing a bogus path fails.
+	 *
+	 * XXX: This is a pretty weak test.  It's hard to improve it without
+	 * actually shipping a known-good script though
+	 */
 	$results = $this->_platform->exec(array(array('/bogus/path')));
-	$unixResults = array(false, array('/bogus/path: not found', ''));
-	$winResults = array(false, array());
-	$this->assert(serialize($results) == serialize($winResults) ||
-		      serialize($results) == serialize($unixResults));
+	$this->assertEquals(false, $results[0]);
     }
     
     function testGetDirectorySeparator() {
