@@ -114,12 +114,13 @@ class WinNtPlatform extends GalleryPlatform {
      * @see GalleryPlatform::isRestrictedByOpenBaseDir
      */
     function isRestrictedByOpenBaseDir($path) {
-	$baseDirArray = split(';', ini_get('open_basedir'));
+	$openBasedir = ini_get('open_basedir');
 
-	if (empty($baseDirArray)) {
+	if (empty($openBasedir)) {
 	    return false;
 	}
 	
+	$baseDirArray = split(';', $openBasedir);
 	foreach ($baseDirArray as $baseDir) {
 	    if (strncasecmp($baseDir, $path, strlen($baseDir))) {
 		return false;
@@ -128,6 +129,5 @@ class WinNtPlatform extends GalleryPlatform {
 	
 	return true;
     }
-    
 }
 ?>
