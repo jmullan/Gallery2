@@ -35,6 +35,8 @@ class InstallOtherModulesStep extends InstallStep {
 
 	// We want to avoid using the cache
 	GalleryDataCache::setFileCachingEnabled(false);
+	$groupedModules = array();
+	$groupLabel = array();
 
 	if (empty($templateData['errors'])) {
 	    list ($ret, $moduleList) = GalleryCoreApi::fetchPluginStatus('module', true);
@@ -52,8 +54,6 @@ class InstallOtherModulesStep extends InstallStep {
 		}
 	    }
 
-	    $groupedModules = array();
-	    $groupLabel = array();
 	    ksort($modules);
 	    foreach (array_keys($modules) as $moduleId) {
 		$module =& $modules[$moduleId];
