@@ -230,84 +230,42 @@ class PermissionTest extends GalleryTestCase {
 	    
 	    if ($i == 0) {
 		/* The top album has more permissions than the children */
-		$expectedUncompressed =
-		    array(array('userId' => 0,
-				'groupId' => $groupId,
-				'permission' => 'core.changeText'),
-			  array('userId' => 0,
-				'groupId' => $groupId,
-				'permission' => 'core.delete'),
-			  array('userId' => $userId,
-				'groupId' => 0,
-				'permission' => 'core.view'),
-			  array('userId' => $userId,
-				'groupId' => 0,
-				'permission' => 'core.viewResizes'),
-			  array('userId' => $userId,
-				'groupId' => 0,
-				'permission' => 'core.viewSource'),
-			  array('userId' => $userId,
-				'groupId' => 0,
-				'permission' => 'core.viewAll'),
-			  array('userId' => $userId,
-				'groupId' => 0,
-				'permission' => 'core.changeProperties'),
-			  array('userId' => $userId,
-				'groupId' => 0,
-				'permission' => 'core.changePermissions'));
-		$expectedCompressed = 
-		    array(array('userId' => 0,
-				'groupId' => $groupId,
-				'permission' => 'core.changeText'),
-			  array('userId' => 0,
-				'groupId' => $groupId,
-				'permission' => 'core.delete'),
-			  array('userId' => $userId,
-				'groupId' => 0,
-				'permission' => 'core.viewAll'),
-			  array('userId' => $userId,
-				'groupId' => 0,
-				'permission' => 'core.changeProperties'),
-			  array('userId' => $userId,
-				'groupId' => 0,
-				'permission' => 'core.changePermissions'));
+		$expectedUncompressed = array();
+		$expectedUncompressed[] = array('userId' => $userId, 'groupId' => 0, 'permission' => 'core.view');
+		$expectedUncompressed[] = array('userId' => $userId, 'groupId' => 0, 'permission' => 'core.viewResizes');
+		$expectedUncompressed[] = array('userId' => $userId, 'groupId' => 0, 'permission' => 'core.viewSource');
+		$expectedUncompressed[] = array('userId' => $userId, 'groupId' => 0, 'permission' => 'core.viewAll');
+		$expectedUncompressed[] = array('userId' => $userId, 'groupId' => 0, 'permission' => 'core.changeProperties');
+		$expectedUncompressed[] = array('userId' => $userId, 'groupId' => 0, 'permission' => 'core.changePermissions');
+		$expectedUncompressed[] = array('userId' => 0, 'groupId' => $groupId, 'permission' => 'core.changeText');
+		$expectedUncompressed[] = array('userId' => 0, 'groupId' => $groupId, 'permission' => 'core.delete');
+		
+		$expectedCompressed = array();
+		$expectedCompressed[] = array('userId' => $userId, 'groupId' => 0, 'permission' => 'core.viewAll');
+		$expectedCompressed[] = array('userId' => $userId, 'groupId' => 0, 'permission' => 'core.changeProperties');
+		$expectedCompressed[] = array('userId' => $userId, 'groupId' => 0, 'permission' => 'core.changePermissions');
+		$expectedCompressed[] = array('userId' => 0, 'groupId' => $groupId, 'permission' => 'core.changeText');
+		$expectedCompressed[] = array('userId' => 0, 'groupId' => $groupId, 'permission' => 'core.delete');
 	    } else {
 		/*
 		 * The lower albums have less permissions since some weren't
 		 * passed down
 		 */
-		$expectedUncompressed =
-		    array(array('userId' => 0,
-				'groupId' => $groupId,
-				'permission' => 'core.delete'),
-			  array('userId' => $userId,
-				'groupId' => 0,
-				'permission' => 'core.view'),
-			  array('userId' => $userId,
-				'groupId' => 0,
-				'permission' => 'core.viewResizes'),
-			  array('userId' => $userId,
-				'groupId' => 0,
-				'permission' => 'core.viewSource'),
-			  array('userId' => $userId,
-				'groupId' => 0,
-				'permission' => 'core.viewAll'),
-			  array('userId' => $userId,
-				'groupId' => 0,
-				'permission' => 'core.changePermissions'));
-		$expectedCompressed =
-		    array(array('userId' => 0,
-				'groupId' => $groupId,
-				'permission' => 'core.delete'),
-			  array('userId' => $userId,
-				'groupId' => 0,
-				'permission' => 'core.viewAll'),
-			  array('userId' => $userId,
-				'groupId' => 0,
-				'permission' => 'core.changePermissions'));
+		$expectedUncompressed = array();
+		$expectedUncompressed[] = array('userId' => $userId, 'groupId' => 0, 'permission' => 'core.view');
+		$expectedUncompressed[] = array('userId' => $userId, 'groupId' => 0, 'permission' => 'core.viewResizes');
+		$expectedUncompressed[] = array('userId' => $userId, 'groupId' => 0, 'permission' => 'core.viewSource');
+		$expectedUncompressed[] = array('userId' => $userId, 'groupId' => 0, 'permission' => 'core.viewAll');
+		$expectedUncompressed[] = array('userId' => $userId, 'groupId' => 0, 'permission' => 'core.changePermissions');
+		$expectedUncompressed[] = array('userId' => 0, 'groupId' => $groupId, 'permission' => 'core.delete');
+	
+		$expectedCompressed = array();
+		$expectedCompressed[] = array('userId' => $userId, 'groupId' => 0, 'permission' => 'core.viewAll');
+		$expectedCompressed[] = array('userId' => $userId, 'groupId' => 0, 'permission' => 'core.changePermissions');
+		$expectedCompressed[] = array('userId' => 0, 'groupId' => $groupId, 'permission' => 'core.delete');
 	    }
-	    $this->assertEquals($expectedCompressed, $compressedPerms, "Album $i");
-	    $this->assertEquals($expectedUncompressed, $uncompressedPerms, "Album $i");
+	    $this->assertEquals($expectedCompressed, $compressedPerms, "Album $i (compressed)");
+	    $this->assertEquals($expectedUncompressed, $uncompressedPerms, "Album $i (uncompressed)");
 	}
     }
 
