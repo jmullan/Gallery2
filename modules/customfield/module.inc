@@ -71,6 +71,11 @@ class CustomFieldModule extends GalleryModule {
 	    'ItemEditPlugin', 'CustomFieldItemEdit', 'CustomFieldItemEdit',
 	    dirname(__FILE__) . '/CustomFieldItemEdit.inc');
 
+	/* Register interface implemenation */
+	GalleryCoreApi::registerFactoryImplementation(
+	    'CustomFieldInterface_1_0', 'CustomFieldHelper', 'CustomField',
+	    dirname(__FILE__) . '/classes/CustomFieldHelper.class');
+
 	return GalleryStatus::success();
     }
 

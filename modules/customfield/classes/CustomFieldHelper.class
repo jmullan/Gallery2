@@ -30,13 +30,15 @@
  */
 define('CUSTOM_FIELD_SESSION_KEY', 'customfield.adminMode.itemId');
 
+require_once(dirname(__FILE__) . '/CustomFieldInterface_1_0.class');
+
 /**
  * A helper class for the Custom Field module.
  *
  * @package CustomField
  * @subpackage Classes
  */
-class CustomFieldHelper {
+class CustomFieldHelper extends CustomFieldInterface_1_0 {
 
     /**
      * Load and decode module parameters
@@ -101,6 +103,36 @@ class CustomFieldHelper {
 	    }
 	}
 	return GalleryStatus::success();
+    }
+
+    /**
+     * Add new custom field in given set/container.
+     *
+     * @param string field name
+     * @param string set (common, album, photo)
+     * @param int id of container; to save album-specific settings
+     * @return array object GalleryStatus a status code
+     *               boolean true on success, false on duplicate field name
+     * @static
+     */
+    function addField($newField, $set, $containerId=0) {
+	list ($ret, $param) = CustomFieldHelper::loadParameters($containerId, false);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	foreach ($param as $list) {
+	    $idx = CustomFieldHelper::findParameter($list, $newField);
+	    if ($idx >= 0) {
+		return array(GalleryStatus::success(), false);
+	    }
+	}
+	$param[$set][] = array('field' => $newField,
+			       'summary' => false, 'detail' => true, 'choices' => array());
+	$ret = CustomFieldHelper::saveParameters(array($set => $param[$set]), $containerId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	return array(GalleryStatus::success(), true);
     }
 
     /**
@@ -300,26 +332,15 @@ class CustomFieldHelper {
 	    $status['saved'] = 1;
 	} else if (isset($form['action']['add'])) {
 	    foreach ($form['action']['add'] as $set => $tmp) {}
-	    list ($ret, $param) = CustomFieldHelper::loadParameters($containerId, false);
+	    $newField = str_replace('|', ':', str_replace('`', "&#039;", $form[$set]['newField']));
+	    list ($ret, $added) = CustomFieldHelper::addField($newField, $set, $containerId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    $newField = str_replace('|', ':', str_replace('`', "&#039;", $form[$set]['newField']));
-	    foreach ($param as $list) {
-		$idx = CustomFieldHelper::findParameter($list, $newField);
-		if ($idx >= 0) {
-		    $status['error']['duplicate'] = 1;
-		    break;
-		}
-	    }
-	    if (empty($status)) {
-		$param[$set][] = array('field' => $newField,
-				       'summary' => false, 'detail' => true, 'choices' => array());
-		$ret = CustomFieldHelper::saveParameters(array($set => $param[$set]), $containerId);
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
+	    if ($added) {
 		$status['added'] = 1;
+	    } else {
+		$status['error']['duplicate'] = 1;
 	    }
 	} else if (isset($form['action']['go'])) {
 	    foreach ($form['action']['go'] as $set => $tmp) {}
@@ -437,6 +458,38 @@ class CustomFieldHelper {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
+	return GalleryStatus::success();
+    }
+
+    /**
+     * @see CustomFieldInterface_1_0::createCustomFields()
+     */
+    function createCustomFields($fieldNames, $containerId=0) {
+	$duplicates = array();
+	foreach ($fieldNames as $fieldName) {
+	    list ($ret, $added) = CustomFieldHelper::addField($fieldName, 'common', $containerId);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    if (!$added) {
+		$duplicates[] = $fieldName;
+	    }
+	}
+	return array(GalleryStatus::success(), $duplicates);
+    }
+
+    /**
+     * @see CustomFieldInterface_1_0::setCustomFieldValues()
+     */
+    function setCustomFieldValues($itemId, $data) {
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$ret = CustomFieldHelper::saveFieldValues($item, $data);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 	return GalleryStatus::success();
     }
 }
