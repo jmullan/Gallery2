@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -45,8 +45,7 @@ class FfmpegToolkitHelper {
     function getOperationsAndProperties() {
 	global $gallery;
 
-	list ($ret, $ffmpegPath) =
-	    GalleryCoreApi::getPluginParameter('module', 'ffmpeg', 'path');
+	list ($ret, $ffmpegPath) = GalleryCoreApi::getPluginParameter('module', 'ffmpeg', 'path');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -69,7 +68,7 @@ class FfmpegToolkitHelper {
 
 	/* extract */
 	$operations['convert-to-image/jpeg']['params'] = array();
-	$operations['convert-to-image/jpeg']['description'] = $gallery->i18n('Convert to a JPEG'); 
+	$operations['convert-to-image/jpeg']['description'] = $gallery->i18n('Convert to a JPEG');
 	$operations['convert-to-image/jpeg']['mimeTypes'] = $mimeTypes;
 	$operations['convert-to-image/jpeg']['outputMimeType'] = 'image/jpeg';
 
@@ -88,14 +87,14 @@ class FfmpegToolkitHelper {
 
 	/* Dimensions */
 	$properties['dimensions']['type'] = 'int,int';
-	$properties['dimensions']['description'] = $gallery->i18n('Get the width and height of the movie'); 
+	$properties['dimensions']['description'] = $gallery->i18n('Get the width and height of the movie');
 	$properties['dimensions']['mimeTypes'] = $mimeTypes;
 
 	$properties['dimensions-and-duration']['type'] = 'int,int,float';
 	$properties['dimensions-and-duration']['description'] =
-	    $gallery->i18n('Get the width, height and duration of the movie'); 
+	    $gallery->i18n('Get the width, height and duration of the movie');
 	$properties['dimensions-and-duration']['mimeTypes'] = $mimeTypes;
-	
+
 	return array(GalleryStatus::success(), array('operations' => $operations,
 						     'properties' => $properties));
     }
@@ -108,10 +107,10 @@ class FfmpegToolkitHelper {
      *
      * @param string path to the Ffmpeg we are testing
      * @return array object GalleryStatus general status of tests
-     *	       array ('name' => string: the name of the binary,
-     *		      'success' => boolean: test successfull?
-     *		      'results' => string: the ffmpeg output
-     *		     )
+     *	       array of array ('name' => string: the name of the binary,
+     *		               'success' => boolean: test successfull?
+     *		               'results' => string: the ffmpeg output
+     *	                )
      *         array hash map of mime types
      *         boolean true if ffmpeg supports -ss time_offset
      *
@@ -119,23 +118,16 @@ class FfmpegToolkitHelper {
      */
     function testBinary($ffmpegPath) {
 	global $gallery;
-
 	$platform = $gallery->getPlatform();
+
 	/*
 	 * If the path is not restricted by open_basedir, then verify that it's
 	 * legal.  Else just hope that it's valid and use it.
 	 */
-	if (!$platform->isRestrictedByOpenBasedir($ffmpegPath)) { 
-	    if (! $platform->file_exists($ffmpegPath)
-		|| ! $platform->is_file($ffmpegPath) ) {
-		return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__), null, null);
+	if (!$platform->isRestrictedByOpenBasedir($ffmpegPath)) {
+	    if (!$platform->file_exists($ffmpegPath) || !$platform->is_file($ffmpegPath)) {
+		return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__), null, null, null);
 	    }
-	}
-
-	/* We need to translate some strings */
-	list($ret, $module) = GalleryCoreApi::loadPlugin('module', 'ffmpeg');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	/* We only care about video for now */
@@ -217,7 +209,7 @@ class FfmpegToolkitHelper {
 			    }
 			}
 		    }
-		    
+
 		    $resultLine = $results[$i++];
 		} while (!empty($resultLine));
 		$success = true;
