@@ -46,11 +46,11 @@ class ItemEditOptionTestCase extends GalleryTestCase {
      */
     var $_option;
 
-    function ItemEditOptionTestCase($methodName, $moduleName, $editPlugin, $optionName) {
+    function ItemEditOptionTestCase($methodName, $moduleName, $optionName) {
 	$this->GalleryTestCase($methodName);
 
 	list ($ret, $this->_option) =
-	    GalleryCoreApi::newFactoryInstanceById($editPlugin . 'Option', $optionName);
+	    GalleryCoreApi::newFactoryInstanceById('ItemEditOption', $optionName);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
