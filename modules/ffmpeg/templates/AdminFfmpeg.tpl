@@ -125,7 +125,9 @@
     </p>
 	
     {foreach from=$AdminFfmpeg.mimeTypes item=mimeType}
-    {$mimeType} 
+    <span>
+      {$mimeType}<br />
+    </span>
     {/foreach}
   </div>
   {/if}
