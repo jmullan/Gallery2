@@ -87,7 +87,7 @@ class ImageBlockModule extends GalleryModule {
      * @see GalleryModule::canBeAutoInstalled()
      */
     function canBeAutoInstalled() {
-	return true;
+	return false;
     }
 
     /**
