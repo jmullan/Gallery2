@@ -223,7 +223,8 @@ class AdminCoreView extends GalleryView {
 	$orderByList['modificationTimestamp'] = $module->translate('Last Changed Date');
 	$orderByList['description'] = $module->translate('Description');
 	$orderByList['keywords'] = $module->translate('Keywords');
-
+	$orderByList['viewCount'] = $module->translate('View Count');
+	
 	/* Set up our sort direction selection list */
 	$orderDirectionList = array();
 	$orderDirectionList[ORDER_ASCENDING] = $module->translate('Ascending');
