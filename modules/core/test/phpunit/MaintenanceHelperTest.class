@@ -1,0 +1,123 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2005 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+GalleryCoreApi::relativeRequireOnce('modules/core/AdminMaintenance.inc');
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryMaintenanceMap.class');
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/MaintenanceHelper_simple.class');
+
+/**
+ * Test Web functionality
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class MaintenanceHelperTest extends GalleryTestCase {
+
+    function MaintenanceHelperTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    function setUp() {
+	parent::setUp();
+
+	$path = 'modules/core/test/phpunit/MaintenanceHelperTest.class';
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'MaintenanceTask', 'MaintenanceHelperTestTask',
+	    'MaintenanceHelperTestTask', $path, 'coreTest', null);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markFactoryModuleForCleanup('coreTest');
+    }
+
+    function tearDown() {
+	$ret = GalleryMaintenanceMap::removeMapEntry(
+	    array('taskId' => 'MaintenanceHelperTestTask'));
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	parent::tearDown();
+    }
+
+    function testFetchTasks() {
+	list ($ret, $tasks) = MaintenanceHelper_simple::fetchTasks();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assert(GalleryUtilities::isA($tasks['MaintenanceHelperTestTask'],
+					    'MaintenanceHelperTestTask'));
+    }
+
+    function testAddAndFetchLastRun() {
+	/* Add a task entry */
+	$time = time() - 5;  /* Choose an arbitrary time */
+	$ret = MaintenanceHelper_simple::addRun(
+	    'MaintenanceHelperTestTask', $time, true, 'some details');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $info) = MaintenanceHelper_simple::fetchLastRun('MaintenanceHelperTestTask');
+	$this->assert($info['runId'] > 0, 'run id 1');
+	$this->assertEquals($time, $info['timestamp'], 'timestamp 1');
+	$this->assertEquals(true, $info['success'], 'success 1');
+	$this->assertEquals('some details', $info['details'], 'details 1');
+	$lastRunId = $info['runId'];
+
+	/* Add a second task entry */
+	$time = time() + 15;  /* Choose an arbitrary time */
+	$ret = MaintenanceHelper_simple::addRun(
+	    'MaintenanceHelperTestTask', $time, false, 'different details');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $info) = MaintenanceHelper_simple::fetchLastRun('MaintenanceHelperTestTask');
+	$this->assert($info['runId'] > $lastRunId, 'run id 2');
+	$this->assertEquals($time, $info['timestamp'], 'timestamp 2');
+	$this->assertEquals(false, $info['success'], 'success 2');
+	$this->assertEquals('different details', $info['details'], 'details 2');
+    }
+}
+
+class MaintenanceHelperTestTask extends MaintenanceTask {
+    function getInfo() {
+	return array('title' => 'MaintenanceHelperTestTask title',
+		     'description' => 'MaintenanceHelperTestTask description',
+		     'l10Domain' => 'modules_core');
+    }
+    
+    function run() {
+	return array(GalleryStatus::success(), false, 'fail details');
+    }
+}
+?>

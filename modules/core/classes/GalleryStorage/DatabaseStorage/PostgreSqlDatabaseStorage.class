@@ -220,5 +220,13 @@ class PostgreSqlDatabaseStorage extends DatabaseStorage {
 	}
 	return null;
     }
+
+
+    /**
+     * @see DatabaseStorage::getOptimizeStatement
+     */
+    function getOptimizeStatement() {
+	return 'VACUUM ANALYZE VERBOSE %s';
+    }
 }
 ?>

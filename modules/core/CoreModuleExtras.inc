@@ -379,7 +379,6 @@ class CoreModuleExtras {
               [GalleryPermissionMap::itemId]
             ORDER BY
               C DESC
-            LIMIT 1
             ';
 
 	    $permissionRowCountQuery = '
@@ -454,7 +453,8 @@ class CoreModuleExtras {
             ';
 
 	    /* Determine how many items we are going to process for our status message */
-	    list ($ret, $results) = $storage->search($totalRowsQuery);
+	    list ($ret, $results) =
+		$gallery->search($totalRowsQuery, array(), array('limit' => array('count' => 1)));
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -601,8 +601,11 @@ class CoreModuleExtras {
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-	    break;
 
+	case '0.9.6':
+	    /* Added GalleryMaintenance table */
+	    break;
+	     
 	default:
 	    return GalleryStatus::error(ERROR_BAD_PLUGIN, __FILE__, __LINE__,
 					sprintf('Unknown module version %s', $currentVersion));
@@ -1002,6 +1005,7 @@ class CoreModuleExtras {
 	$regs[] = array('ItemAddPlugin', 'ItemAddFromServer', 'inc', null);
 	$regs[] = array('ItemAddPlugin', 'ItemAddFromWeb', 'inc', null);
 	$regs[] = array('ItemAddOption', 'CreateThumbnailOption', 'inc', null);
+	$regs[] = array('MaintenanceTask', 'OptimizeDatabaseTask', 'inc', null);
 
 	/*
 	 * Unlike other modules, the core module doesn't get deactivated so its

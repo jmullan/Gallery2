@@ -639,5 +639,23 @@ class GalleryStorage {
 	return array(GalleryStatus::success(),
 		     array_keys($classes));
     }
+
+    /**
+     * Optimize the back end.
+     *
+     * @return object GalleryStatus a status code
+     */
+    function optimize() {
+	if (!$this->_isInitialized) {
+	    $ret = $this->_impl->init();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    } else {
+		$this->_isInitialized = true;
+	    }
+	}
+
+	return $this->_impl->optimize();
+    }
 }
 ?>

@@ -714,7 +714,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	if (isset($setGenID)) {
 	    $this->_db->hasGenID = false;
 	}
-	
+
 	return array(GalleryStatus::success(), $id);
     }
 
@@ -1915,6 +1915,44 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	list ($schemaTableName, $unused) = $this->_translateTableName('Schema');
 	$isInstalled = preg_match("/\b$schemaTableName\b/i", join(' ', $metatables));
 	return array(GalleryStatus::success(), $isInstalled);
+    }
+
+    /**
+     * Optimize the back end.
+     *
+     * @return object GalleryStatus a status code
+     */
+    function optimize() {
+	/* Load all table versions */
+	list ($ret, $tableVersions) = $this->_loadTableVersions();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$statement = $this->getOptimizeStatement();
+	if (!empty($statement)) {
+	    foreach (array_keys($tableVersions) as $tableName) {
+		$query = sprintf($statement, $this->_tablePrefix . $tableName);
+		$this->_traceStart();
+		$recordSet = $this->_db->Execute($query);
+		$this->_traceStop();
+
+		if (!$recordSet) {
+		    return GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
+		}
+	    }
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Return the database specific fragment of SQL to optimize a table.
+     *
+     * @return string a SQL statement with an embedded %s for the table name
+     */
+    function getOptimizeStatement() {
+	return null;
     }
 
     /**

@@ -161,5 +161,12 @@ class MySqlDatabaseStorage extends DatabaseStorage {
     function getVersion() {
 	return mysql_get_server_info();
     }
+
+    /**
+     * @see DatabaseStorage::getOptimizeStatement
+     */
+    function getOptimizeStatement() {
+	return 'OPTIMIZE TABLE %s';
+    }
 }
 ?>

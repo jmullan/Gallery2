@@ -1,0 +1,158 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2005 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryMaintenanceMap.class');
+
+/**
+ * AdminMaintenance controller tests
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class AdminMaintenanceControllerTest extends GalleryControllerTestCase {
+
+    function AdminMaintenanceControllerTest($methodName) {
+	$this->GalleryControllerTestCase($methodName, 'core:AdminMaintenance');
+    }
+
+    function setUp() {
+	parent::setUp();
+
+	$path = 'modules/core/test/phpunit/AdminMaintenanceControllerTest.class';
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'MaintenanceTask', 'AdminMaintenanceControllerTestTaskSuccess',
+	    'AdminMaintenanceControllerTestTaskSuccess', $path, 'coreTest', null);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'MaintenanceTask', 'AdminMaintenanceControllerTestTaskFail',
+	    'AdminMaintenanceControllerTestTaskFail', $path, 'coreTest', null);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markFactoryModuleForCleanup('coreTest');
+    }
+
+    function tearDown() {
+	parent::tearDown();
+
+	$ret = GalleryMaintenanceMap::removeMapEntry(
+	    array('taskId' => 'AdminMaintenanceControllerTestTaskFail'));
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryMaintenanceMap::removeMapEntry(
+	    array('taskId' => 'AdminMaintenanceControllerTestTaskSuccess'));
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    function testRunTaskSuccess() {
+	GalleryUtilities::putRequestVariable('form[action][runTask]', 1);
+	GalleryUtilities::putRequestVariable('taskId', 'AdminMaintenanceControllerTestTaskSuccess');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminMaintenance'),
+				  'status' => array(
+				      'run' => array(
+					  'taskId' => 'AdminMaintenanceControllerTestTaskSuccess',
+					  'success' => true)),
+				  'error' => array()),
+			    $results);
+
+	list ($ret, $info) =
+	    MaintenanceHelper_simple::fetchLastRun('AdminMaintenanceControllerTestTaskSuccess');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	$this->assert($info['runId'] > 0);
+	$this->assert($info['timestamp'] > time() - 2);  /* assert that it's recent */
+	$this->assert($info['success']);
+	$this->assertEquals('success details', $info['details']);
+    }
+
+    function testRunTaskFail() {
+	GalleryUtilities::putRequestVariable('form[action][runTask]', 1);
+	GalleryUtilities::putRequestVariable('taskId', 'AdminMaintenanceControllerTestTaskFail');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminMaintenance'),
+				  'status' => array(
+				      'run' => array(
+					  'taskId' => 'AdminMaintenanceControllerTestTaskFail',
+					  'success' => false)),
+				  'error' => array()),
+			    $results);
+
+	list ($ret, $info) =
+	    MaintenanceHelper_simple::fetchLastRun('AdminMaintenanceControllerTestTaskFail');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	$this->assert($info['runId'] > 0);
+	$this->assert($info['timestamp'] > time() - 2);  /* assert that it's recent */
+	$this->assert(!$info['success']);
+	$this->assertEquals('fail details', $info['details']);
+    }
+}
+
+class AdminMaintenanceControllerTestTaskSuccess extends MaintenanceTask {
+    function getInfo() {
+	return array('title' => 'AdminMaintenanceControllerTestTaskSuccess title',
+		     'description' => 'AdminMaintenanceControllerTestTaskSuccess description',
+		     'l10Domain' => 'modules_core');
+    }
+    
+    function run() {
+	return array(GalleryStatus::success(), true, 'success details');
+    }
+}
+
+class AdminMaintenanceControllerTestTaskFail extends MaintenanceTask {
+    function getInfo() {
+	return array('title' => 'AdminMaintenanceControllerTestTaskFail title',
+		     'description' => 'AdminMaintenanceControllerTestTaskFail description',
+		     'l10Domain' => 'modules_core');
+    }
+    
+    function run() {
+	return array(GalleryStatus::success(), false, 'fail details');
+    }
+}
+?>
