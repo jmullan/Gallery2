@@ -43,7 +43,8 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
      */
     function loadImageBlocks(&$template, $params = array('heading' => 1, 'maxSize' => 140)) {
 	global $gallery;
-	list ($ret, $moduleParams) = GalleryCoreApi::fetchAllPluginParameters('module', 'imageblock');
+	list ($ret, $moduleParams) =
+	    GalleryCoreApi::fetchAllPluginParameters('module', 'imageblock');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -80,7 +81,8 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	    }
 	    list ($tmp, $order, $itemType) = $matches;
 	    $ret = ImageBlockHelper::_addBlock($blocks,
-		   ($heading && isset($headings[$block])) ? $module->translate($headings[$block]) : '',
+		   ($heading && isset($headings[$block])) ? $module->translate($headings[$block])
+							  : '',
 		   $itemType, $order, $parentId, $fullSize);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
@@ -98,7 +100,8 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	$tpl = null;
 	if (!empty($blocks)) {
 	    /* Prepare image frames, if available */
-	    list ($ret, $imageframe) = GalleryCoreApi::newFactoryInstance('ImageFrameInterface_1_1');
+	    list ($ret, $imageframe) =
+		GalleryCoreApi::newFactoryInstance('ImageFrameInterface_1_1');
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -115,9 +118,6 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-	    } else {
-		$smarty =& $template->_getSmarty();
-		$smarty->register_block('imageframe', array('GalleryTemplateAdapter', 'nullBlock'));
 	    }
 
 	    $ImageBlockSystemContent['blocks'] = $blocks;
@@ -493,7 +493,8 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	case 'Gallery::ViewableTreeChange':
 	    /*
 	     * Invalidate image block cache for specified user, or entire cache if no user
-	     * Event sends array('userId'=>id or array of ids or null, 'itemId'=>id or array of ids or null)
+	     * Event sends array('userId'=>id or array of ids or null,
+	     *                   'itemId'=>id or array of ids or null)
 	     */
 	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/ImageBlockCacheMap.class');
 	    $param = $event->getEntity();
@@ -512,7 +513,8 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 
 	case 'GalleryEntity::delete':
 	    /*
-	     * Determines if the item being deleted is listed in the ImageBlockDisabledMap and remove it
+	     * Determine if the item being deleted is listed in
+	     * the ImageBlockDisabledMap and if so, remove it
 	     */
 	    $entity = $event->getEntity();
 
@@ -561,7 +563,8 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-	    } else if (!empty($disabledFlag) && GalleryUtilities::isA($entity, 'GalleryAlbumItem')) {
+	    } else if (!empty($disabledFlag)
+		       && GalleryUtilities::isA($entity, 'GalleryAlbumItem')) {
 		$ret = ImageBlockHelper::setDisabledFlag($entity, true, true);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -587,13 +590,14 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	$parentAlbumId = $parentAlbum->getId();
 	$childIds = array();
 
-	if ($recursive) { 
+	if ($recursive) {
 	    $select[] = '[GalleryItemAttributesMap::itemId]';
 	    $from[] = '[GalleryItemAttributesMap]';
-	    $where[] = '[GalleryItemAttributesMap::parentSequence] LIKE ? OR [GalleryItemAttributesMap::itemId] = ?';
+	    $where[] = '[GalleryItemAttributesMap::parentSequence] LIKE ?' .
+		       ' OR [GalleryItemAttributesMap::itemId] = ?';
 
-	    /* 
-	     * We don't care about ERROR_MISSING_OBJECT because it's generated if 
+	    /*
+	     * We don't care about ERROR_MISSING_OBJECT because it's generated if
 	     * the album is at the top-level
 	     */
 	    list ($ret, $sequence) = GalleryCoreApi::fetchParentSequence($parentAlbum->getId());

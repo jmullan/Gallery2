@@ -151,7 +151,6 @@ class HybridLayout extends GalleryLayout {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$imageFrameInitialized = false;
 	if (isset($imageframe)) {
 	    $frameIds = array();
 	    foreach (array('albumFrame', 'imageFrame') as $key) {
@@ -164,12 +163,7 @@ class HybridLayout extends GalleryLayout {
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-		$imageFrameInitialized = true;
 	    }
-	}
-	if (!$imageFrameInitialized) {
-	    $smarty =& $template->_getSmarty();
-	    $smarty->register_block('imageframe', array('GalleryTemplateAdapter', 'nullBlock'));
 	}
 
 	$template->head('layouts/hybrid/templates/header.tpl');
@@ -203,15 +197,6 @@ class HybridLayout extends GalleryLayout {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
-	    // If an Exif extractor is available try to get capture dates..
-//	    $exif = array();
-//	    if (isset($this->exifExtractor)) {
-//		list ($ret, $exif) =
-//		    $this->exifExtractor->getMetaData($childIds);
-//		if ($ret->isError()) {
-//		    return array($ret->wrap(__FILE__, __LINE__), null, null);
-//		}
-//	    }
 	}
 	$i = -1;
 	foreach ($childItems as $child) {
@@ -228,7 +213,8 @@ class HybridLayout extends GalleryLayout {
 		$children[$i]['thumbnail'] = $thumbnails[$childId]->getMemberData();
 	    }
 
-	    if (!(GalleryUtilities::isA($child, 'GalleryDataItem') && $child->canBeViewedInline())) {
+	    if (!(GalleryUtilities::isA($child, 'GalleryDataItem')
+		    && $child->canBeViewedInline())) {
 		continue;
 	    }
 

@@ -48,9 +48,9 @@ class ImageFrameInterface_1_1 {
 
     /**
      * Prepare imageframe system.
-     * Pass in list of ids that may be used in a view.  Include the
-     * {imageframe_head} tag in the header and then use the {imageframe} block
-     * where needed, passing the frame to render and the frame contents.  The
+     * Pass in list of ids that may be used in a view.
+     * Use {g->block type="imageframe" frame=".."} .. {/g->block} where
+     * needed, passing the frame to render and the frame contents.  The
      * image in the content must have id="%ID%" and class="%CLASS%".
      * See example in SampleHead.tpl/SampleBody.tpl.
      * This method may be called more than once in a request.

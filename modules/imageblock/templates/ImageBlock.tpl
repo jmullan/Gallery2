@@ -24,12 +24,12 @@
 	  {assign var=frameType value="itemFrame"}
 	{/if}
 	{if isset($ImageBlockSystemContent.$frameType)}
-	  {imageframe frame=$ImageBlockSystemContent.$frameType}
+	  {g->block type="imageframe" frame=$ImageBlockSystemContent.$frameType}
 	    {$smarty.capture.link}
 	    {g->image item=$block.item image=$block.thumb id="%ID%" class="%CLASS%"
 		      maxSize=$ImageBlockSystemContent.maxSize|default:null}
 	    </a>
-	  {/imageframe}
+	  {/g->block}
 	{else}
 	  {$smarty.capture.link}
 	    {g->image item=$block.item image=$block.thumb class="giThumbImage"

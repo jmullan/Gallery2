@@ -45,11 +45,11 @@
         arg2="itemId=`$it.id`" arg3="detail=1"}"></a>
     {capture name="link"}<a href="" onclick="image_show({$it.imageIndex});return false">{/capture}
     {if isset($it.thumbnail) && isset($layout.imageFrame)}
-      {imageframe frame=$layout.imageFrame}
+      {g->block type="imageframe" frame=$layout.imageFrame}
 	{$smarty.capture.link}
 	{g->image item=$it image=$it.thumbnail id="%ID%" class="%CLASS%"}
 	</a>
-      {/imageframe}
+      {/g->block}
     {else}
       {$smarty.capture.link}
       {if isset($it.thumbnail)}
@@ -60,11 +60,11 @@
   {elseif ($it.canContainChildren)}
     {capture name="link"}<a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$it.id`"}">{/capture}
     {if isset($it.thumbnail) && isset($layout.albumFrame)}
-      {imageframe frame=$layout.albumFrame}
+      {g->block type="imageframe" frame=$layout.albumFrame}
 	{$smarty.capture.link}
 	{g->image item=$it image=$it.thumbnail id="%ID%" class="%CLASS%"}
 	</a>
-      {/imageframe}
+      {/g->block}
     {else}
       {$smarty.capture.link}
       {if isset($it.thumbnail)}

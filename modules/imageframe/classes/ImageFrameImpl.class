@@ -52,7 +52,8 @@ class ImageFrameImpl extends ImageFrameInterface_1_1 {
 	$frames = array('none' => $module->translate('None'),
 			'solid' => $module->translate('Solid'));
 	$dir = dirname(__FILE__) . '/../frames';
-	if ($platform->is_dir($dir) && $platform->is_readable($dir) && $fd = $platform->opendir($dir)) {
+	if ($platform->is_dir($dir) && $platform->is_readable($dir)
+		&& $fd = $platform->opendir($dir)) {
 	    while ($file = $platform->readdir($fd)) {
 		$subdir = "$dir/$file";
 		$frameinc = "$subdir/frame.inc";
@@ -69,20 +70,21 @@ class ImageFrameImpl extends ImageFrameInterface_1_1 {
      * @see ImageFrameInterface_1_1::init()
      */
     function init(&$template, $frameIds) {
+	global $gallery;
+	$platform = $gallery->getPlatform();
 	static $simpleFrames;
 	if (!isset($simpleFrames)) {
-	    $simpleFrames = array('none' => array('type' => 'style', 'style' => 'border:none'),
-				  'solid' => array('type' => 'style',
-						   'style' => 'border:thin solid black'));
-	    $smarty =& $template->_getSmarty();
-	    $smarty->register_block('imageframe', array($this, 'renderImageFrame'));
+	    $simpleFrames = array(
+		'none' => array('type' => 'style', 'style' => 'border:none'),
+		'solid' => array('type' => 'style',
+				 'style' => 'border:thin solid black !important'));
+	    $templateAdapter =& $gallery->getTemplateAdapter();
+	    $templateAdapter->register_block('imageframe', array($this, 'renderImageFrame'));
 	    $template->setVariable('ImageFrameData', array());
 	    $template->head('modules/imageframe/templates/ImageFrameStyle.tpl');
 	}
 	$data =& $template->getVariableByReference('ImageFrameData');
 
-	global $gallery;
-	$platform = $gallery->getPlatform();
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'imageframe');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -133,13 +135,10 @@ class ImageFrameImpl extends ImageFrameInterface_1_1 {
      * Smarty callback to render an ImageFrame
      */
     function renderImageFrame($params, $content, &$smarty) {
-	if (!isset($content)) {
-	    return;
-	}
-	return $smarty->_smarty_include(
-	    array('smarty_include_tpl_file' => 'gallery:modules/imageframe/templates/ImageFrame.tpl',
-		  'smarty_include_vars' => array('frame' => $params['frame'],
-						 'content' => trim($content))));
+	return $smarty->_smarty_include(array(
+	    'smarty_include_tpl_file' => 'gallery:modules/imageframe/templates/ImageFrame.tpl',
+	    'smarty_include_vars' => array('frame' => $params['frame'],
+					   'content' => trim($content))));
     }
 
     /**

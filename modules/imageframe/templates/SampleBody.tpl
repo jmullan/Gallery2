@@ -11,7 +11,7 @@
   {foreach from=$ImageFrameSample.list key=frame item=name}
     <div style="float:left;margin:6px">
     {$name}<br/>
-    {imageframe frame=$frame}
+    {g->block type="imageframe" frame=$frame}
       {if isset($ImageFrameSample.item)}
 	{g->image item=$ImageFrameSample.item image=$ImageFrameSample.thumb
 		  maxSize=150 id="%ID%" class="%CLASS%"}
@@ -19,7 +19,7 @@
 	<img src="{g->url href="modules/imageframe/images/sample.jpg"}"
 	     width="150" height="126" id="%ID%" class="%CLASS%"/>
       {/if}
-    {/imageframe}
+    {/g->block}
     </div>
   {/foreach}
 </div>

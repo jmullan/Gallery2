@@ -76,11 +76,11 @@
 	      {assign var=frameType value="itemFrame"}
 	    {/if}
 	    {if isset($layout.$frameType) && isset($child.thumbnail)}
-	      {imageframe frame=$layout.$frameType}
+	      {g->block type="imageframe" frame=$layout.$frameType}
 		<a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$child.id`"}">
 		{g->image item=$child image=$child.thumbnail id="%ID%" class="%CLASS%"}
 		</a>
-	      {/imageframe}
+	      {/g->block}
 	    {else}
 	      <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$child.id`"}">
 	      {if isset($child.thumbnail)}

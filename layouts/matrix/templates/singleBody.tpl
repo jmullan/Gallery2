@@ -106,9 +106,9 @@
 
       {if ($layout.can.viewInline[$layout.imageViewsIndex])}
 	{if isset($layout.photoFrame)}
-	  {imageframe frame=$layout.photoFrame}
+	  {g->block type="imageframe" frame=$layout.photoFrame}
 	    {g->image item=$layout.item image=$image id="%ID%" class="%CLASS%"}
-	  {/imageframe}
+	  {/g->block}
 	{else}
 	  {g->image item=$layout.item image=$image fallback=$smarty.capture.fallback}
 	{/if}

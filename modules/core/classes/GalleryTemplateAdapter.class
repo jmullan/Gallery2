@@ -49,10 +49,18 @@ class GalleryTemplateAdapter {
     var $_callCount;
 
     /**
+     * Custom smarty blocks registered by other modules
+     *
+     * @var array _blocks
+     * @access private
+     */
+    var $_blocks;
+
+    /**
      * Constructor
      */
     function GalleryTemplateAdapter() {
-	$this->_callCount = array();
+	$this->_callCount = $this->_blocks = array();
     }
 
     /**
@@ -245,13 +253,13 @@ class GalleryTemplateAdapter {
 	/* Ask the entity to render itself in HTML */
 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($params['item']['id']);
 	if ($ret->isError()) {
-	    // XXX: is there a more graceful way to handle this?
+	    /* XXX: is there a more graceful way to handle this? */
 	    return '[Render error: missing item]';
 	}
 
 	list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($params['image']['id']);
 	if ($ret->isError()) {
-	    // XXX: is there a more graceful way to handle this?
+	    /* XXX: is there a more graceful way to handle this? */
 	    return '[Render error: missing entity]';
 	}
 
@@ -331,9 +339,10 @@ class GalleryTemplateAdapter {
 	$url = trim($content);
 	return $smarty->_smarty_include(
 	    array('smarty_include_tpl_file' => 'gallery:modules/core/templates/AutoComplete.tpl',
-		  'smarty_include_vars' => array('element' => $params['element'],
-						 'url' => $url,
-						 'callCount' => $this->_callCount['autoComplete'])));
+		  'smarty_include_vars' =>
+			array('element' => $params['element'],
+			      'url' => $url,
+			      'callCount' => $this->_callCount['autoComplete'])));
     }
 
     /**
@@ -357,28 +366,39 @@ class GalleryTemplateAdapter {
     }
 
     /**
-     * A smarty function callback that does nothing, useful for when
-     * the imageframe module isn't active.
+     * Register a new block callback.
+     * Use {g->block type="blocktype"}..{/g->block} in a template to call the block.
      *
-     * @param array data in key/value pairs
-     * @param object Smarty
+     * @param string block type
+     * @param callback function to call
      */
-    function nullFunction($params, &$smarty) {
-	return '';
+    function register_block($blockType, $callback) {
+	$this->_blocks[$blockType] = $callback;
     }
 
     /**
-     * A smarty block callback that does nothing, useful for when
-     * the imageframe module isn't active.
+     * A smarty block callback to support block functions registered by modules.
      *
      * @param array data in key/value pairs
      * @param string content inside the block
      * @param object Smarty
-     * @param bool true if we should re-evaluate the contents of the block
      */
-    function nullBlock($params, $content, &$smarty, &$repeat) {
-	if (isset($content)) {
+    function block($params, $content, &$smarty) {
+	if (!isset($content)) {
+	    return;
+	}
+	if (empty($params['type']) || empty($this->_blocks[$params['type']])) {
 	    return $content;
+	}
+	$callback = $this->_blocks[$params['type']];
+	if (is_array($callback)) {
+	    list ($object, $function) = $callback;
+	    if (!is_object($object)) {
+		$object = new $object();
+	    }
+	    return $object->$function($params, $content, $smarty);
+	} else {
+	    return $function($params, $content, $smarty);
 	}
     }
 }

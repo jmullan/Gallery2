@@ -164,9 +164,7 @@ class MatrixLayout extends GalleryLayout {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$imageFrameInitialized = false;
 	if (isset($imageframe)) {
-	    $layout['useImageframes'] = 1;
 	    $frameIds = array();
 	    if ($item->getCanContainChildren()) {
 		foreach (array('albumFrame', 'itemFrame') as $key) {
@@ -191,12 +189,7 @@ class MatrixLayout extends GalleryLayout {
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-		$imageFrameInitialized = true;
 	    }
-	}
-	if (!$imageFrameInitialized) {
-	    $smarty =& $template->_getSmarty();
-	    $smarty->register_block('imageframe', array('GalleryTemplateAdapter', 'nullBlock'));
 	}
 
 	if (is_array($bodyFile)) {
@@ -381,7 +374,8 @@ class MatrixLayout extends GalleryLayout {
 		foreach ($resizes[$item->getId()] as $resize) {
 		    /* Rebuild the derivative if we don't have its dimensions */
 		    if ($resize->getWidth() == 0 || $resize->getHeight() == 0) {
-			list ($ret, $resize) = GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($resize->getId());
+			list ($ret, $resize) =
+			    GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($resize->getId());
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
