@@ -37,8 +37,10 @@ class MatrixLayout extends GalleryLayout {
      * @see GalleryLayout::init()
      */
     function init() {
+	global $gallery;
+	
 	$this->setName('Matrix');
-	$this->setDescription($this->translate('Classic Gallery2 look and feel'));
+	$this->setDescription($gallery->i18n('Classic Gallery2 look and feel'));
 	$this->setVersion('1.0');
 	$this->setL10Domain('layouts_matrix');
 	$ret = parent::init();

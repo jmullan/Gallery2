@@ -147,56 +147,72 @@ class AdminLayoutsView extends GalleryView {
         if ($ret->isError()) {
             return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
-	
+
 	if ($form['formName'] != 'AdminLayouts') {
 	    /* We have no form variables */
 	    $form['formName'] = 'AdminLayouts';
 	}
 
+	list ($mode, $activeLayoutName) =
+	    GalleryUtilities::getRequestVariables('mode', 'activeLayoutName');
+	if (!isset($mode)) {
+	    $mode = 'config';
+	}
+	
 	/* Load the module list */
-	list ($ret, $layoutStatusList) = GalleryPluginMap::getPluginStatus('layout');
+	list ($ret, $layouts) = GalleryPluginMap::getPluginStatus('layout');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
-	/* Can't deactivate the last layout */
-	$activeCount = 0;
-	foreach ($layoutStatusList as $tmp) {
-	    $activeCount += !empty($tmp['active']);
-	}
-
-	/* Add the l10 domain for convenience */
-	$layouts = array();
-	foreach ($layoutStatusList as $layoutName => $layoutStatus) {
+	/* Transform it to include all the layout data that we want to display */
+	foreach ($layouts as $layoutName => $layoutStatus) {
 	    list ($ret, $layout) = GalleryPluginMap::loadPlugin('layout', $layoutName);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 
-	    if (empty($layoutStatus['active'])) {
-		$action = array('text' => $coreModule->translate('activate'),
-				'controller' => 'core:AdminLayouts',
-				'layoutName' => $layoutName,
-				'action' => 'activate');
-	    } else {
-		if ($activeCount > 1) {
-		    $action = array('text' => $coreModule->translate('deactivate'),
-				    'controller' => 'core:AdminLayouts',
-				    'layoutName' => $layoutName,
-				    'action' => 'deactivate');
-		} else {
-		    $action = array();
-		}
+	    $layouts[$layoutName]['name'] = $layout->getName();
+	    $layouts[$layoutName]['description'] = $layout->getDescription();
+	    $layouts[$layoutName]['version'] = $layout->getVersion();
+	    $layouts[$layoutName]['l10Domain'] = $layout->getL10Domain();
+	}
+
+	switch($mode) {
+	case 'config':
+	    /* Can't deactivate the last layout */
+	    $activeCount = 0;
+	    foreach ($layouts as $tmp) {
+		$activeCount += !empty($tmp['active']);
 	    }
 
-	    $layouts[] = array('name' => $layout->getName(),
-			       'description' => $layout->getDescription(),
-			       'version' => $layout->getVersion(),
-			       'l10Domain' => $layout->getL10Domain(),
-			       'action' => $action);
+	    foreach (array_keys($layouts) as $layoutName) {
+		if (empty($layouts[$layoutName]['active'])) {
+		    $action = array('text' => $coreModule->translate('activate'),
+				    'Controller' => 'core:AdminLayouts',
+				    'layoutName' => $layoutName,
+				    'action' => 'activate');
+		} else {
+		    if ($activeCount > 1) {
+			$action = array('text' => $coreModule->translate('deactivate'),
+					'controller' => 'core:AdminLayouts',
+					'layoutName' => $layoutName,
+					'action' => 'deactivate');
+		    } else {
+			$action = array();
+		    }
+		}
+		$layouts[$layoutName]['action'] = $action;
+	    }
+	    break;
+
+	default:
+	    break;
 	}
 
 	$AdminLayouts['layouts'] = $layouts;
+	$AdminLayouts['mode'] = $mode;
+	$AdminLayouts['activeLayoutName'] = $activeLayoutName;
 
 	/* Render the HTML body */
 	$template->setVariable('AdminLayouts', $AdminLayouts);
