@@ -27,6 +27,9 @@ class UpgradeCoreModuleStep extends UpgradeStep {
 
     function loadTemplateData(&$templateData) {
 	global $gallery;
+	if (!$gallery->getDebug()) {
+	    $gallery->setDebug('buffered');
+	}
 
 	require_once(dirname(__FILE__) . '/../../modules/core/module.inc');
 	$core = new CoreModule();

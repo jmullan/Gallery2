@@ -4,7 +4,7 @@
       function checkAll(newValue) {
          for (var i = 0; i < document.forms[0].length; i++) {
              var element = document.forms[0].elements[i];
-             if (element.type == 'checkbox' && 
+             if (element.type == 'checkbox' &&
                    element.name.substr(0,6) == 'module' &&
                    ! element.disabled) {
                  element.checked = newValue;
@@ -92,6 +92,34 @@
       <input type="hidden" name="step" value="<?php print $currentStep->getStepNumber() ?>"/>
       <input type="hidden" name="upgrade" value="1"/>
     </form>
+
+    <?php if (!empty($templateData['errors'])): ?>
+    <?php foreach ($templateData['errors'] as $error): ?>
+    <h3 class="error">
+      <?php print $error; ?>
+    </h3>
+    <?php endforeach; ?>
+    <?php endif; ?>
+
+    <?php if (!empty($templateData['stackTrace'])): ?>
+    <h2>
+      <?php print _("Stack Trace:") ?>
+    </h2>
+    <div class="stack_trace">
+      <?php print $templateData['stackTrace']; ?>
+    </div>
+    <?php endif; ?>
+
+    <?php if (!empty($templateData['debug'])): ?>
+    <h2>
+      <?php print _("Debug Output:") ?>
+    </h2>
+    <div class="debug">
+      <pre>
+      <?php print $templateData['debug']; ?>
+      </pre>
+    </div>
+    <?php endif; ?>
 
     <div class="go">
       <span class="goToNext">
