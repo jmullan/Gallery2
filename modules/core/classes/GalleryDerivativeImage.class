@@ -136,7 +136,10 @@ class GalleryDerivativeImage_core extends GalleryDerivative {
 	    
 	    $result = $searchResults->nextResult();
 	    if ($result[0] > 0) {
-		return GalleryStatus::error(ERROR_COLLISION, __FILE__, __LINE__);
+		return GalleryStatus::error(ERROR_COLLISION, __FILE__, __LINE__,
+					    sprintf('Too many thumbnails or preferreds (type: %s, count: %d)',
+						    $derivativeType,
+						    $result[0]));
 	    }
 	}
 
