@@ -15,7 +15,7 @@
   </div>
 
   <div class="gbDataEntry">
-    <input type="checkbox" name"{g->formVar var="form[CreateThumbnailOption][createThumbnail]"}" checked="checked"/>
+    <input type="checkbox" name="{g->formVar var="form[CreateThumbnailOption][createThumbnail]"}" checked="checked"/>
     {g->text text="Create thumbnails now"}
   </div>
 </div>
