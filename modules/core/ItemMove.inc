@@ -234,6 +234,8 @@ class ItemMoveView extends GalleryView {
 	$albumIds = array();
 	$peers = array();
 	$peerTypes = array();
+	$peerTypes['album'] = array();
+	$peerTypes['data'] = array();
 	$peerDescendentCounts = array();
 	$albumTree = array();
 	$numPages = 1;
@@ -280,7 +282,7 @@ class ItemMoveView extends GalleryView {
 	    }
 
 	    /* Get child counts */
-	    if (isset($peerTypes['album'])) {
+	    if (!empty($peerTypes['album'])) {
 		list ($ret, $peerDescendentCounts) = GalleryCoreApi::fetchDescendentCounts(array_keys($peerTypes['album']));
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
