@@ -411,7 +411,9 @@ class GalleryLayout extends GalleryPlugin {
 	    foreach ($parentSequence as $id) {
 		$layout['parents'][] = $entities[$id]->getMemberData();
 	    }
-	    $layout['parent'] = empty($parentSequence) ? null : $layout['parents'][0];
+ 	    $layout['parent'] = empty($parentSequence) ? null : 
+ 		$layout['parents'][count($parentSequence) - 1];
+
 	}
 
 	// -------------------------------------------------------------------------------------
