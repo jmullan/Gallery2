@@ -114,8 +114,11 @@ class CustomFieldInterfaceTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	unset($params['_version']);
-	unset($params['_callbacks']);
+	foreach ($params as $key => $value) {
+	    if ($key[0] == '_') {
+		unset($params[$key]);
+	    }
+	}
 	ksort($params);
 	$this->assertEquals(array('album' => '',
 				  'common' => 'One`0`1|Two`0`1',
@@ -134,8 +137,11 @@ class CustomFieldInterfaceTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	unset($params['_version']);
-	unset($params['_callbacks']);
+	foreach ($params as $key => $value) {
+	    if ($key[0] == '_') {
+		unset($params[$key]);
+	    }
+	}
 	ksort($params);
 	$this->assertEquals(array('album' => '',
 				  'common' => 'One`0`1|Two`0`1|Three`0`1',

@@ -34,13 +34,22 @@
 class GalleryCoreApi {
 
     /**
-     * Return the major and minor version of this API.
+     * Return the major and minor version of the Core API.
      *
-     * When we add to the API, we'll bump the minor version.  When we change or remove something from the API
-     * we'll change the major version.  When writing a module, you should verify that the major version of the
-     * API exactly matches the version you expect, and that the minor number is the same, or higher than the
-     * version you expect.  If the minor number is lower, that means that the API is older than you expect.
-     * If the major number is different it means the API has changes that may cause your module to break.
+     * When we add to the API, we'll bump the minor version.  When we change or
+     * remove something from the API we'll change the major version.
+     *
+     * When writing a module, you should verify:
+     * o The major version of the API exactly matches the version you expect
+     * o The minor number is the same, or higher than the version you expect
+     *
+     * Notes:
+     * o If the major number is lower, or it's the same and the minor number is
+     *   lower then it means that the API is older than you require.
+     * o If the major number is higher, then it means that the API is newer, but
+     *   has made a change that maybe incompatible with your module
+     * o If the major number is the same and the minor number is higher, then
+     *   the API has more features than you need but should still work for you.
      *
      * @return array major number, minor number
      */

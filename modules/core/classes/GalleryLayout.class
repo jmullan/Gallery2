@@ -79,12 +79,40 @@ class GalleryLayout {
      */
     var $_l10Domain;
 
+    /**
+     * The version of the Core API required by this layout
+     *
+     * @var array _requiredCoreApiVersion
+     * @access private
+     */
+    var $_requiredCoreApiVersion;
+
+    /**
+     * The version of the Core API required by this layout
+     *
+     * @var array _requiredLayoutApiVersion
+     * @access private
+     */
+    var $_requiredLayoutApiVersion;
+    
     /*
      * ****************************************
      *                 Methods
      * ****************************************
      */
 
+    /**
+     * Return the major and minor version of the Module API.
+     *
+     * This follows the same rules as the core API.
+     * @see GalleryCoreApi::getApiVersion()
+     *
+     * @return array major number, minor number
+     */
+    function getApiVersion() {
+	return array(0, 8);
+    }
+    
     /**
      * Return whether the layout uses simple or advanced settings.
      * To support simple settings the layout needs to implement getSettings and validateSettings.
@@ -803,22 +831,28 @@ class GalleryLayout {
 	return $this->_version;
     }
 
-    /**
-     * Get the localization domain for this layout
-     *
-     * @return string
-     */
     function getL10Domain() {
 	return $this->_l10Domain;
     }
 
-    /**
-     * Set the localization domain for this layout
-     *
-     * @param string the l10 domain
-     */
     function setL10Domain($l10Domain) {
 	$this->_l10Domain = $l10Domain;
+    }
+
+    function setRequiredCoreApiVersion($requirement) {
+	$this->_requiredCoreApiVersion = $requirement;
+    }
+
+    function getRequiredCoreApiVersion() {
+	return $this->_requiredCoreApiVersion;
+    }
+
+    function setRequiredModuleApiVersion($requirement) {
+	$this->_requiredModuleApiVersion = $requirement;
+    }
+    
+    function getRequiredModuleApiVersion() {
+	return $this->_requiredModuleApiVersion;
     }
 }
 ?>

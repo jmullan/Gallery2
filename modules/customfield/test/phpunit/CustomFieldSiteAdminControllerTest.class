@@ -151,8 +151,11 @@ class CustomFieldSiteAdminControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	unset($params['_version']);
-	unset($params['_callbacks']);
+	foreach ($params as $key => $value) {
+	    if ($key[0] == '_') {
+		unset($params[$key]);
+	    }
+	}
 	ksort($params);
 	$this->assertEquals(array('album' => 'Album Field`0`1`Three`Two`One',
 				  'common' => 'Common Field`0`1|Another:Common`0`1',
@@ -181,8 +184,11 @@ class CustomFieldSiteAdminControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	unset($params['_version']);
-	unset($params['_callbacks']);
+	foreach ($params as $key => $value) {
+	    if ($key[0] == '_') {
+		unset($params[$key]);
+	    }
+	}
 	ksort($params);
 	$this->assertEquals(array('album' => 'Album Field`1`1`Three`Two`One',
 				  'common' => 'Another:Common`0`0|Common Field`1`0',
@@ -226,8 +232,11 @@ class CustomFieldSiteAdminControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	unset($params['_version']);
-	unset($params['_callbacks']);
+	foreach ($params as $key => $value) {
+	    if ($key[0] == '_') {
+		unset($params[$key]);
+	    }
+	}
 	ksort($params);
 	$this->assertEquals(array('album' => '',
 				  'common' => 'Album Field`1`1`Three`Two`One',
@@ -250,8 +259,11 @@ class CustomFieldSiteAdminControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	unset($params['_version']);
-	unset($params['_callbacks']);
+	foreach ($params as $key => $value) {
+	    if ($key[0] == '_') {
+		unset($params[$key]);
+	    }
+	}
 	ksort($params);
 	$this->assertEquals(array('album' => '',
 				  'common' => 'Album Field`1`1',

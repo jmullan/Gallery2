@@ -473,6 +473,20 @@ class UtilitiesTest extends GalleryTestCase {
 	$isCorrect = preg_match($regexp, $date);
 	$this->assert($isCorrect, 'date-string ' . $date . ' is not RFC 2616 conformant');
     }
+
+    function testIsCompatibleWithApi() {
+	$this->assert( GalleryUtilities::isCompatibleWithApi(array(0, 8), array(0, 8)), 'same');
+	$this->assert( GalleryUtilities::isCompatibleWithApi(array(0, 8), array(0, 9)), 'minor bigger');
+	$this->assert(!GalleryUtilities::isCompatibleWithApi(array(1, 8), array(0, 8)), 'major bigger');
+	$this->assert(!GalleryUtilities::isCompatibleWithApi(array(0, 8), array(0, 7)), 'minor smaller');
+	$this->assert(!GalleryUtilities::isCompatibleWithApi(array(2, 0), array(1, 0)), 'major smaller');
+	$this->assert(!GalleryUtilities::isCompatibleWithApi(array(2, 3), array(1, 2)), 'both smaller');
+	$this->assert(!GalleryUtilities::isCompatibleWithApi(array(1, 2), array(2, 3)), 'both bigger');
+	$this->assert(!GalleryUtilities::isCompatibleWithApi(1, 2), 'input error 1');
+	$this->assert(!GalleryUtilities::isCompatibleWithApi(array(1), array(2)), 'input error 2');
+	$this->assert(!GalleryUtilities::isCompatibleWithApi(array(2), array(2)), 'input error 3');
+	$this->assert(!GalleryUtilities::isCompatibleWithApi(array('1', '2'), array('1', 2)), 'input error 4');
+    }
 }
 
 /**

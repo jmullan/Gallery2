@@ -104,12 +104,15 @@ class UserAlbumSiteAdminControllerTest extends GalleryControllerTestCase {
 
 	// Verify the information in the DB
 	list ($ret, $verifyParams) = GalleryCoreApi::fetchAllPluginParameters('module', 'useralbum');
+	foreach ($verifyParams as $key => $value) {
+	    if ($key[0] == '_') {
+		unset($verifyParams[$key]);
+	    }
+	}
 	ksort($verifyParams);
 	$this->assertEquals(array('fullSize' => '0',
 				  'targetLocation' => $this->_getRootId(),
 				  'view' => 'allusers',
-				  '_callbacks' => $verifyParams['_callbacks'], // or the callbacks
-				  '_version' => $verifyParams['_version'], // We didn't change the version
 				  ),
 			    $verifyParams, 
 			    "Verify DB Data");

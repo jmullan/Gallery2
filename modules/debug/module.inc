@@ -40,9 +40,11 @@ class DebugModule extends GalleryModule {
 	$this->setId('debug');
 	$this->setName('Debugging');
 	$this->setDescription($gallery->i18n('Debugging and Developer Tools'));
-	$this->setVersion('0.8.1');
+	$this->setVersion('0.8.3');
 	$this->setGroup('gallery', $gallery->i18n('Gallery'));
 	$this->setCallbacks('performFactoryRegistrations|getItemLinks');
+	$this->setRequiredCoreApi(array(0, 8));
+	$this->setRequiredModuleApi(array(0, 8));
     }
 
     /**

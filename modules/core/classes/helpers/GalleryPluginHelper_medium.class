@@ -387,6 +387,9 @@ class GalleryPluginHelper_medium {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
+	$cacheKey = "GalleryPluginHelper::fetchAllParameters($pluginType, $pluginId, $itemId)";
+	GalleryDataCache::remove($cacheKey);
+
 	return GalleryStatus::success();
     }
 
@@ -422,6 +425,9 @@ class GalleryPluginHelper_medium {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
+
+	$cacheKey = "GalleryPluginHelper::fetchAllParameters($pluginType, $pluginId, $itemId)";
+	GalleryDataCache::remove($cacheKey);
 
 	return GalleryStatus::success();
     }

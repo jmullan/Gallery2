@@ -37,9 +37,12 @@ class UserAlbumModule extends GalleryModule {
 	$this->setId('useralbum');
 	$this->setName('User Albums');
 	$this->setDescription($gallery->i18n('Create an album for each new user'));
-	$this->setVersion('0.8.1');
+	$this->setVersion('0.8.2');
 	$this->setGroup('gallery', $gallery->i18n('Gallery'));
 	$this->setCallbacks('getSiteAdminViews');
+	$this->setRequiredCoreApi(array(0, 8));
+	$this->setRequiredModuleApi(array(0, 8));
+	
     }
 
     /**

@@ -196,6 +196,13 @@ class CoreModuleExtras {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 		$currentVersion = '0.8.3';
+		break;
+
+	    case '0.8.3':
+		/* No work required */
+		$currentVersion = '0.8.4';
+		break;
+		
 	    }
 	}
 

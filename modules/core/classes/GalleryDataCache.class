@@ -58,6 +58,27 @@ class GalleryDataCache {
     }
 
     /**
+     * Is in-memory caching enabled?
+     * @return bool true if it's enabled
+     */
+    function &isMemoryCachingEnabled() {
+	static $enabled;
+	if (!isset($enabled)) {
+	    $enabled = true;
+	}
+	return $enabled;
+    }
+
+    /**
+     * Turn in-memory caching on or off
+     * @param bool true or false
+     */
+    function setMemoryCachingEnabled($bool) {
+	$enabled =& GalleryDataCache::isMemoryCachingEnabled();
+	$enabled = $bool;
+    }
+
+    /**
      * Store data in the cache
      *
      * You must provide a unique key.  Existing keys are overwritten.
@@ -68,6 +89,10 @@ class GalleryDataCache {
      * @static
      */
     function put($key, $data, $protected=false) {
+	if (!GalleryDataCache::isMemoryCachingEnabled()) {
+	    return;
+	}
+	
 	$cache =& GalleryDataCache::_getCache();
 	$cache['keys'][$key] = $data;
 	if ($protected) {
@@ -87,6 +112,10 @@ class GalleryDataCache {
      * @static
      */
     function remove($key) {
+	if (!GalleryDataCache::isMemoryCachingEnabled()) {
+	    return;
+	}
+	
 	$cache =& GalleryDataCache::_getCache();
 	unset($cache['timestamps'][$key]);
 	unset($cache['keys'][$key]);
@@ -101,6 +130,10 @@ class GalleryDataCache {
      * @static
      */
     function removeByPattern($pattern) {
+	if (!GalleryDataCache::isMemoryCachingEnabled()) {
+	    return;
+	}
+	
 	$cache =& GalleryDataCache::_getCache();
 	foreach (preg_grep("/$pattern/", array_keys($cache['keys'])) as $key) {
 	    unset($cache['timestamps'][$key]);
@@ -120,6 +153,10 @@ class GalleryDataCache {
      * @static
      */
     function putByReference($key, &$data, $protected=false) {
+	if (!GalleryDataCache::isMemoryCachingEnabled()) {
+	    return;
+	}
+
 	$cache =& GalleryDataCache::_getCache();
 	$cache['keys'][$key] =& $data;
 	if ($protected) {
@@ -170,6 +207,10 @@ class GalleryDataCache {
      * @static
      */
     function get($key) {
+	if (!GalleryDataCache::isMemoryCachingEnabled()) {
+	    return null;
+	}
+	
 	$cache =& GalleryDataCache::_getCache();
 	if (!isset($cache['protected'][$key])) {
 	    $cache['timestamps'][$key] = time() + microtime();
@@ -185,6 +226,10 @@ class GalleryDataCache {
      * @static
      */
     function containsKey($key) {
+	if (!GalleryDataCache::isMemoryCachingEnabled()) {
+	    return false;
+	}
+	
 	$cache =& GalleryDataCache::_getCache();
 	return isset($cache['keys'][$key]);
     }
@@ -196,6 +241,10 @@ class GalleryDataCache {
      * @static
      */
     function getAllKeys() {
+	if (!GalleryDataCache::isMemoryCachingEnabled()) {
+	    return array();
+	}
+	
 	$cache =& GalleryDataCache::_getCache();
 	return array_keys($cache['keys']);
     }
@@ -207,6 +256,10 @@ class GalleryDataCache {
      * @static
      */
     function reset($purgeProtected=false) {
+	if (!GalleryDataCache::isMemoryCachingEnabled()) {
+	    return;
+	}
+	
 	$cache =& GalleryDataCache::_getCache();
 
 	if ($purgeProtected) {

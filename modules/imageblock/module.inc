@@ -37,9 +37,12 @@ class ImageBlockModule extends GalleryModule {
 	$this->setId('imageblock');
 	$this->setName('ImageBlock');
 	$this->setDescription($gallery->i18n('Random, Most Recent or Most Viewed Photo or Album'));
-	$this->setVersion('0.8.1');
+	$this->setVersion('0.8.2');
 	$this->setGroup('blocks', $gallery->i18n('Blocks'));
 	$this->setCallbacks('registerEventListeners|getSiteAdminViews|loadSystemContent');
+	$this->setRequiredCoreApi(array(0, 8));
+	$this->setRequiredModuleApi(array(0, 8));
+	
     }
 
     /**

@@ -109,13 +109,20 @@ class GalleryFactoryHelper_medium {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
+
 	
-	unset($registry['implementations'][$classType][strtolower($className)]);
-	unset($registry['ids'][$classType][$className]);
-	foreach ($registry['ids'][$classType] as $id => $name) {
-	    if ($name == $className) {
-		unset($registry['ids'][$classType][$id]);
-		break;
+	if (isset($registry['implementations'][$classType][strtolower($className)])) {
+	    unset($registry['implementations'][$classType][strtolower($className)]);
+	}
+	if (isset($registry['ids'][$classType])) {
+	    unset($registry['ids'][$classType][$className]);
+	    foreach ($registry['ids'][$classType] as $id => $name) {
+		if ($name == $className) {
+		    if (isset($registry['ids'][$classType][$id])) {
+			unset($registry['ids'][$classType][$id]);
+		    }
+		    break;
+		}
 	    }
 	}
 	if (isset($registry['hints'][$classType])) {

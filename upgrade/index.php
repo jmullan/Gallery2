@@ -76,6 +76,7 @@ if ($ret->isError()) {
 
 /* We want to avoid using the cache */
 GalleryDataCache::setFileCachingEnabled(false);
+GalleryDataCache::setMemoryCachingEnabled(false);
 
 /* Check to see if we have a database.  If we don't, then go to the installer */
 $storage =& $gallery->getStorage();

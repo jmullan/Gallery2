@@ -1153,5 +1153,36 @@ class GalleryUtilities {
     function isValidEmailString($email) {
 	return (preg_match('/^[a-zA-Z0-9_.-]+@[a-zA-Z0-9_.-]+\.[a-zA-Z]{2,4}$/', $email) > 0);
     }
+
+    /**
+     * Verify that the API provided is compatible with the API that we require.
+     *
+     * We're only compatible if the major numbers are the same, and the required
+     * minor number is less than or equal to the provided minor number.
+     *
+     * @params array required (major, minor)
+     * @params array provided (major, minor)
+     *
+     */
+    function isCompatibleWithApi($required, $provided) {
+	if (!is_array($required) || !is_array($provided)) {
+	    return false;
+	}
+	if (count($required) != count($provided) || count($required) != 2) {
+	    return false;
+	}
+	for ($i = 0; $i < 1; $i++) {
+	    if (!is_int($required[$i]) || !is_int($provided[$i])) {
+		return false;
+	    }
+	}
+	if ($required[0] != $provided[0]) {
+	    return false;
+	}
+	if ($required[1] > $provided[1]) {
+	    return false;
+	}
+	return true;
+    }
 }
 ?>

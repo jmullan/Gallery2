@@ -195,10 +195,11 @@ class AdminModulesView extends GalleryView {
 	}
 
 	/*
-	 * It's possible that we have some out-of-date modules which haven't been
-	 * deactivated yet, since the deactivation only occurs when we try to load the
-	 * module.  Take the hack approach of trying to load all the active modules now
-	 * to force the version check, then reload the module status when we're done.
+	 * It's possible that we have some out-of-date modules which haven't
+	 * been deactivated yet, since the deactivation only occurs when we try
+	 * to load the module.  Load all the active modules now to force the
+	 * version check, then reload the module status when we're done to pick
+	 * up any changes we trigger.
 	 */
 	foreach ($moduleStatus as $moduleId => $status) {
 	    if (!empty($status['active'])) {
@@ -208,7 +209,7 @@ class AdminModulesView extends GalleryView {
 		}
 	    }
 	}
-	
+
 	/* Reload the module list, which may now be updated because of obsolete modules. */
 	list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module', true);
 	if ($ret->isError()) {
@@ -231,65 +232,73 @@ class AdminModulesView extends GalleryView {
 	    $entry['name'] = $module->getName();
 	    $entry['l10Domain'] = 'modules_' . $moduleId;
 	    $entry['action'] = array();
-	    if (empty($status['active'])) {
-		list ($ret, $version) = $module->getModuleParameter('_version');
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-		$entry['state'] = 'inactive';
+	    $coreApiCompatible =
+		GalleryUtilities::isCompatibleWithApi($module->getRequiredCoreApi(), GalleryCoreApi::getApiVersion());
+	    $moduleApiCompatible =
+		GalleryUtilities::isCompatibleWithApi($module->getRequiredModuleApi(), GalleryModule::getApiVersion());
+	    if ($coreApiCompatible && $moduleApiCompatible) {
+		if (empty($status['active'])) {
+		    $version = $status['version'];
+		    $entry['state'] = 'inactive';
 
-		/*
-		 * If the database versions doesn't match the module
-		 * version, we need to get the user to install the module.
-		 */
-		if ($version != $module->getVersion()) {
-		    if (empty($version)) {
-			$entry['action'][] = array('text' => $coreModule->translate('install'),
-						   'controller' => 'core:AdminModules',
-						   'moduleId' => $module->getId(),
-						   'action' => 'install');
-		    } else {
-			if (version_compare($version, $module->getVersion(), '<=')) {
+		    /*
+		     * If the database versions doesn't match the module
+		     * version, we need to get the user to install the module.
+		     */
+		    if ($version != $module->getVersion()) {
+			if (empty($version)) {
+			    $entry['action'][] = array('text' => $coreModule->translate('install'),
+						       'controller' => 'core:AdminModules',
+						       'moduleId' => $module->getId(),
+						       'action' => 'install');
+			    $entry['state'] = 'install';
+			} else {
 			    $entry['action'][] = array('text' => $coreModule->translate('upgrade'),
 						       'controller' => 'core:AdminModules',
 						       'moduleId' => $module->getId(),
 						       'action' => 'upgrade');
+			    $entry['state'] = 'upgrade';
 			}
-		    }
-		    $entry['state'] = 'upgrade';
-		} else {
-		    /*
-		     * The versions match, but the module can still demand
-		     * to be configured before being activated.
-		     */
-		    list ($ret, $needsConfig) = $module->needsConfiguration();
-		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-		    }
-
-		    if ($needsConfig) {
-			$configView = $module->getConfigurationView();
-			$entry['action'][] = array('text' => $coreModule->translate('configure'),
-						   'view' => $configView);
 		    } else {
-			$entry['action'][] = array('text' => $coreModule->translate('activate'),
+			/*
+			 * The versions match, but the module can still demand
+			 * to be configured before being activated.
+			 */
+			list ($ret, $needsConfig) = $module->needsConfiguration();
+			if ($ret->isError()) {
+			    return array($ret->wrap(__FILE__, __LINE__), null);
+			}
+
+			if ($needsConfig) {
+			    $configView = $module->getConfigurationView();
+			    $entry['action'][] = array('text' => $coreModule->translate('configure'),
+						       'view' => $configView);
+			} else {
+			    $entry['action'][] = array('text' => $coreModule->translate('activate'),
+						       'controller' => 'core:AdminModules',
+						       'moduleId' => $moduleId,
+						       'action' => 'activate');
+			}
+			$entry['action'][] = array('text' => $coreModule->translate('uninstall'),
 						   'controller' => 'core:AdminModules',
 						   'moduleId' => $moduleId,
-						   'action' => 'activate');
+						   'action' => 'uninstall');
 		    }
-		    $entry['action'][] = array('text' => $coreModule->translate('uninstall'),
-					       'controller' => 'core:AdminModules',
-					       'moduleId' => $moduleId,
-					       'action' => 'uninstall');
+		} else {
+		    $entry['state'] = 'active';
+		    if ($moduleId != 'core') {
+			$entry['action'][] = array('text' => $coreModule->translate('deactivate'),
+						   'controller' => 'core:AdminModules',
+						   'moduleId' => $moduleId,
+						   'action' => 'deactivate');
+		    }
 		}
 	    } else {
-		$entry['state'] = 'active';
-		if ($moduleId != 'core') {
-		    $entry['action'][] = array('text' => $coreModule->translate('deactivate'),
-					       'controller' => 'core:AdminModules',
-					       'moduleId' => $moduleId,
-					       'action' => 'deactivate');
-		}
+		$entry['state'] = 'incompatible';
+		$entry['api']['required']['module'] = join('.', $module->getRequiredModuleApi());
+		$entry['api']['required']['core'] = join('.', $module->getRequiredCoreApi());
+		$entry['api']['provided']['module'] = join('.', GalleryModule::getApiVersion());
+		$entry['api']['provided']['core'] = join('.', GalleryCoreApi::getApiVersion());
 	    }
 
 	    $entry['description'] = $module->getDescription();

@@ -63,6 +63,7 @@ class UpgradeCoreModuleStep extends UpgradeStep {
 	} else {
 	    if ($core->getVersion() != $versions['core']) {
 		$templateData['bodyFile'] = 'UpgradeCoreModuleRequest.html';
+		$this->setComplete(false);
 	    } else {
 		$templateData['bodyFile'] = 'UpgradeCoreModuleUpToDate.html';
 		$this->setComplete(true);

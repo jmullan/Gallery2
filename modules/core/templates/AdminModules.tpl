@@ -82,6 +82,9 @@
           {if $module.state == 'upgrade'}
 	  <img src="{g->url href="modules/core/data/module-upgrade.gif"}" width="13" height="13" alt="{g->text text="Status: Upgrade Required (Inactive)"}" />
 	  {/if}
+          {if $module.state == 'incompatible'}
+	  <img src="{g->url href="modules/core/data/module-incompatible.gif"}" width="13" height="13" alt="{g->text text="Status: Incompatible Module (Inactive)"}" />
+	  {/if}
         </td>
 
 	<td>
@@ -98,6 +101,22 @@
 
 	<td>
 	  {g->text text=$module.description l10Domain=$module.l10Domain}
+	  {if $module.state == 'incompatible'}
+	  <br />
+	  <span class="giError">
+	    {g->text text="Incompatible module!"}
+            {if $module.api.required.core != $module.api.provided.core}
+	      <br/>
+	      {g->text text="Core API Required: %s (available: %s)"
+                       arg1=$module.api.required.core arg2=$module.api.provided.core}
+            {/if}
+            {if $module.api.required.module != $module.api.provided.module}
+	      <br/>
+	      {g->text text="Module API Required: %s (available: %s)"
+                       arg1=$module.api.required.module arg2=$module.api.provided.module}
+            {/if}
+          </span>
+          {/if}
 	</td>
 
 	<td>

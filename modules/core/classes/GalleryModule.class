@@ -102,12 +102,40 @@ class GalleryModule {
      */
     var $_callbacks;
 
+    /**
+     * The version of the Core API required by this module
+     *
+     * @var array _requiredCoreApi
+     * @access private
+     */
+    var $_requiredCoreApi;
+
+    /**
+     * The version of the Core API required by this module
+     *
+     * @var array _requiredModuleApi
+     * @access private
+     */
+    var $_requiredModuleApi;
+
     /*
      * ****************************************
      *                 Methods
      * ****************************************
      */
 
+    /**
+     * Return the major and minor version of the Module API.
+     *
+     * This follows the same rules as the core API.
+     * @see GalleryCoreApi::getApiVersion()
+     *
+     * @return array major number, minor number
+     */
+    function getApiVersion() {
+	return array(0, 8);
+    }
+    
     /**
      * Localize the given content
      *
@@ -215,15 +243,16 @@ class GalleryModule {
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-	    
-	    $ret = $this->setModuleParameter('_version', $this->getVersion());
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
 
-	    $ret = $this->setModuleParameter('_callbacks', $this->getCallbacks());
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+	    $data = array('_version' => $this->getVersion(),
+			  '_callbacks' => $this->getCallbacks(),
+			  '_requiredCoreApi' => join(',', $this->getRequiredCoreApi()),
+			  '_requiredModuleApi' => join(',', $this->getRequiredModuleApi()));
+	    foreach ($data as $key => $value) {
+		$ret = $this->setModuleParameter($key, $value);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
 	    }
 	}
 	
@@ -520,7 +549,7 @@ class GalleryModule {
     function setModuleParameter($parameterName, $parameterValue) {
 	global $gallery;
 	$ret = GalleryCoreApi::setPluginParameter('module', $this->getId(),
-					    $parameterName, $parameterValue);
+						  $parameterName, $parameterValue);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -576,6 +605,22 @@ class GalleryModule {
 
     function setCallbacks($callbacks) {
 	$this->_callbacks = $callbacks;
+    }
+
+    function setRequiredCoreApi($requirement) {
+	$this->_requiredCoreApi = $requirement;
+    }
+
+    function getRequiredCoreApi() {
+	return $this->_requiredCoreApi;
+    }
+
+    function setRequiredModuleApi($requirement) {
+	$this->_requiredModuleApi = $requirement;
+    }
+    
+    function getRequiredModuleApi() {
+	return $this->_requiredModuleApi;
     }
 }
 ?>

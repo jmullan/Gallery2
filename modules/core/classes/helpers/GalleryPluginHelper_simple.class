@@ -108,23 +108,41 @@ class GalleryPluginHelper_simple {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    if (isset($status[$pluginId]) &&
-		isset($status[$pluginId]['active']) &&
-		isset($status[$pluginId]['version']) &&
-		$status[$pluginId]['version'] != $plugin->getVersion()) {
+	    $coreApiVersion = GalleryCoreApi::getApiVersion();
+	    $moduleApiVersion = GalleryModule::getApiVersion();
 
-		if ($pluginId != 'core') {
+	    if (isset($status[$pluginId]) && $pluginId != 'core') {
+		$s = $status[$pluginId];
+
+		if (isset($s['active']) &&
+		    isset($s['version']) &&
+		    ($s['version'] != $plugin->getVersion() ||
+		     !GalleryUtilities::isCompatibleWithApi($plugin->getRequiredCoreApi(), $coreApiVersion) ||
+		     !GalleryUtilities::isCompatibleWithApi($plugin->getRequiredModuleApi(), $moduleApiVersion))) {
+
 		    /* Try to deactivate the plugin */
 		    list ($ret, $redirectInfo) = $plugin->deactivate();
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
-		}
 
-		/*  Return a handleable error */
-		return array(GalleryStatus::error(ERROR_PLUGIN_VERSION_MISMATCH, __FILE__, __LINE__,
-		  "$pluginId db:" . $status[$pluginId]['version'] . ' code:' . $plugin->getVersion()),
-		  $plugin);
+		    /*  Return a handleable error */
+		    return array(GalleryStatus::error(ERROR_PLUGIN_VERSION_MISMATCH, __FILE__, __LINE__,
+						      sprintf('[%s] db: (v: %s core api: %s/%s, module api: %s/%s) ' .
+							      'code: (v: %s core api: %s/%s, module api: %s/%s) ',
+							      $pluginId,
+							      $s['version'],
+							      $s['requiredCoreApi'][0],
+							      $s['requiredCoreApi'][1],
+							      $s['requiredModuleApi'][0],
+							      $s['requiredModuleApi'][1],
+							      $plugin->getVersion(),
+							      $coreApiVersion[0],
+							      $coreApiVersion[1],
+							      $moduleApiVersion[0],
+							      $moduleApiVersion[1])),
+				 $plugin);
+		}
 	    }
 	}
 
@@ -286,16 +304,32 @@ class GalleryPluginHelper_simple {
 			if ($platform->file_exists($path)) {
 			    $plugins[$pluginId]['available'] = 1;
 
-			    list ($ret, $plugins[$pluginId]['version']) =
-				GalleryPluginHelper_simple::getParameter($pluginType, $pluginId, '_version');
-			    if ($ret->isError()) {
-				return array($ret->wrap(__FILE__, __LINE__), null);
+			    $frameworkParams = array('version', 'callbacks', 'requiredCoreApi');
+			    if ($pluginType == 'module') {
+				$frameworkParams[] = 'requiredModuleApi';
+			    } else {
+				$frameworkParams[] = 'requiredLayoutApi';
 			    }
+			    
+			    foreach ($frameworkParams as $paramName) {
+				list ($ret, $plugins[$pluginId][$paramName]) =
+				    GalleryPluginHelper_simple::getParameter($pluginType, $pluginId, '_' . $paramName);
+				if ($ret->isError()) {
+				    return array($ret->wrap(__FILE__, __LINE__), null);
+				}
 
-			    list ($ret, $plugins[$pluginId]['callbacks']) =
-				GalleryPluginHelper_simple::getParameter($pluginType, $pluginId, '_callbacks');
-			    if ($ret->isError()) {
-				return array($ret->wrap(__FILE__, __LINE__), null);
+				/* Separate out the major/minor version. */
+				if (!strncmp($paramName, 'required', 8)) {
+				    $tmp = split(',', $plugins[$pluginId][$paramName]);
+				    // DEBUG: remove these lines below when we
+				    // commit; make sure that we bump all module
+				    // versions instead so that the module
+				    // version reqs aren't empty
+				    if (empty($tmp) || count($tmp) < 2) {
+					$tmp = array(-1, -1);
+				    }
+				    $plugins[$pluginId][$paramName] = array((int)$tmp[0], (int)$tmp[1]);
+				}
 			    }
 			}
 		    }
