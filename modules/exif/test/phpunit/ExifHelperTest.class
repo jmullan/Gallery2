@@ -116,8 +116,15 @@ class ExifHelperTest extends GalleryTestCase {
 		$verifiedCount++;
 	    }
 	}
-
 	$this->assertEquals(2, $verifiedCount);
+
+	/* Make sure there are no duplicates in the list */
+	$seen = array();
+	for ($i = 0; $i < sizeof($exifData); $i++) {
+	    $title = $exifData[$i]['title'];
+	    $this->assert(!isset($seen[$title]), "$title is duplicated");
+	    $seen[$title] = 1;
+	}
     }
 
     /**

@@ -130,6 +130,7 @@ class ExifHelper {
 	$exifKeys = ExifHelper::getExifKeys();
 	$rawExifData = read_exif_data_raw($path, false);
 	if ($gallery->getDebug()) {
+	    // Capture old-school print_r() to support older PHP
 	    ob_start();
 	    print_r($rawExifData);
 	    $buf = ob_get_contents();
@@ -149,6 +150,7 @@ class ExifHelper {
 		$value = ExifHelper::_getValue($rawExifData, explode('.', $exifKeys[$property][$i]));
 		if (isset($value)) {
 		    $results[] = array('title' => $title, 'value' => $value);
+		    break;
 		}
 	    }
 	}
