@@ -301,6 +301,30 @@ class Gallery1DataParser {
 	
 	return array(GalleryStatus::success(), $fields);
     }
+    /**
+     * Load user metadata given a path and username
+     *
+     * @param string Path to album directory
+     * @param string Username to import
+     * @return array object GalleryStatus a status code,
+     *               array User metadata
+     */
+    function getUserFieldsByUid($path, $uid) {
+        global $gallery;
+
+	list ($ret, $user) = Gallery1DataParser::loadFile($path . '.users/' . $uid);
+        if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+        }
+
+	foreach ($user as $key => $value){
+	    $fields[$key] = $value;
+	}
+	
+	return array(GalleryStatus::success(), $fields);
+    }
+
+
 }
 /* Define these classes so that unserialize can use them */
 /**

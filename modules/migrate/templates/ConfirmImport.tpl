@@ -34,7 +34,7 @@
 	    {g->text text="Album Title"}
 	  {/g->column}
 	  {g->column header="true"}
-	    {g->text text="Album Already Exists"}
+	    {g->text text="Album Notes"}
 	  {/g->column}
 	{/g->row}
 
@@ -49,8 +49,11 @@
 	    {/g->column}
 	    {g->column}
               {if ($ConfirmImport.existingAlbums.$albumName)> 0}
-		Exists
+		<p>Album will be renamed</p>
 	      {/if}
+	      {if (!$ConfirmImport.albumValidOwner.$albumName)}
+                <p>Album's owner hasn't been imported</p>
+              {/if}
             {/g->column}
 	  {/g->row}
 	{/foreach}

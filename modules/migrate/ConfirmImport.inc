@@ -605,6 +605,7 @@ class ConfirmImportView extends GalleryView {
     function loadTemplate(&$template, &$form) {
         global $gallery;
 	$existingAlbums = array();
+	$albumsValidOwner = array();
 	if (!isset($form['sourceAlbums'])) {
 	    $form['sourceAlbums']=array();
 	}
@@ -633,7 +634,7 @@ class ConfirmImportView extends GalleryView {
 	if(!isset($albumfields)){
 	    $albumfields = array();
 	}
-	while ($albumfields && $i<count($form['sourceAlbums'])^2) {
+	while ($albumfields) {
 	    $existingAlbumId = FALSE;
 	    $album = array_shift($albumfields);
 	    if (!in_array($album['parentAlbumName'],$form['sourceAlbums'])) {
@@ -648,15 +649,30 @@ class ConfirmImportView extends GalleryView {
 	    } else {
 		$existingAlbums[$album['name']] = $existingAlbumId;
 	    }
+
+	    list($ret, $testUser) = Gallery1DataParser::getUserFieldsByUid($albumsPath, $album['owner']);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    
+	    list($ret, $owner) = GalleryUserHelper::fetchUserByUsername($testUser['username']);
+	    if ($ret->isError() && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    if ($owner) {
+		$albumValidOwner[$album['name']] = TRUE;
+	    } else {
+		$albumValidOwner[$album['name']] = FALSE;
+	    }
 	    $i++;
 	}
-
 	$ConfirmImport = array();
 	$ConfirmImport['uids'] = $uids;
 	$ConfirmImport['albums'] = $albums;
 	$ConfirmImport['albumsPath'] = $albumsPath;
 	$ConfirmImport['existingAlbums'] = $existingAlbums;
         $ConfirmImport['destinationAlbumID'] = $destinationAlbumID;
+	$ConfirmImport['albumValidOwner'] = $albumValidOwner;
         $ConfirmImport['targetAlbum'] = $targetAlbum;
         $template->setVariable('controller', 'migrate:ConfirmImport');
 	$template->setVariable('ConfirmImport', $ConfirmImport);
