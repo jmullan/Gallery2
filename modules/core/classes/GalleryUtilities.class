@@ -955,7 +955,7 @@ class GalleryUtilities {
      * @param int the redirect depth (pass in 0 or leave this empty to start)
      * @return array(body, headers, url)
      */
-    function fetchWebPage($url, $depth=0) {
+    function fetchWebPage($url, $extraHeaders=array(), $depth=0) {
 	global $gallery;
 
 	$components = parse_url($url);
@@ -977,7 +977,6 @@ class GalleryUtilities {
 	    return array(null, null, null);
 	}
 
-	/* Read the web page into a buffer */
 	$get = $components['path'];
 	if (!empty($components['query'])) {
 	    $get .= '?' . $components['query'];
@@ -989,8 +988,19 @@ class GalleryUtilities {
 	 */
 	$get = str_replace("&amp;", "&", $get);
 
-	$platform->fwrite($fd, sprintf("GET %s HTTP/1.0\nHost: %s\n\n",
-				       $get, $components['host']));
+	/* Read the web page into a buffer */
+	$extraHeaderLines = array();
+	foreach ($extraHeaders as $headerKey => $headerValue) {
+	    $extraHeaderLines[] = "$headerKey: $headerValue";
+	}
+	$platform->fwrite($fd, sprintf("GET %s HTTP/1.0\r\n" .
+				       "Host: %s\r\n" .
+				       "%s" .
+				       "\r\n",
+				       $get,
+				       $components['host'],
+				       empty($extraHeaderLines) ? '' : join("\r\n", $extraHeaderLines) . "\r\n"));
+	$platform->fflush($fd);
 	$body = '';
 	while (!$platform->feof($fd)) {
 	    $body .= $platform->fread($fd, 4096);
@@ -1046,13 +1056,91 @@ class GalleryUtilities {
 				   $redirectComponents['path'],
 				   $query);
 
-	    return GalleryUtilities::fetchWebPage($redirectUrl, $depth+1);
+	    return GalleryUtilities::fetchWebPage($redirectUrl, $extraHeaders, $depth+1);
 	}
 
 	$headers = join("\n", array_slice($lines, 0, $headersEnd)) . "\n";
 	$body = join("\n", array_slice($lines, $headersEnd + 1));
 
 	return array($body, $headers, $url);
+    }
+
+    /**
+     * Post form data to a remote url and return the headers and body of the reply
+     *
+     * @param string the url
+     * @param array the key/value post data
+     * @return array(body, headers)
+     */
+    function postToWebPage($url, $postDataArray, $extraHeaders=array()) {
+	global $gallery;
+	
+	$components = parse_url($url);
+	$port = empty($components['port']) ? 80 : $components['port'];
+	if (empty($components['path'])) {
+	    $components['path'] = '/';
+	}
+
+	$platform = $gallery->getPlatform();
+	$fd = @$platform->fsockopen($components['host'], $port, $errno, $errstr, 1);
+	if (empty($fd)) {
+	    $gallery->debug("Error $errno: '$errstr' retrieving $url");
+	    return array(null, null, null);
+	}
+
+	$post = $components['path'];
+	if (!empty($components['query'])) {
+	    $post .= '?' . $components['query'];
+	}
+
+	$postDataRaw = '';
+	foreach ($postDataArray as $key => $value) {
+	    if (!empty($postDataRaw)) {
+		$postDataRaw .= '&';
+	    }
+	    $postDataRaw .= urlencode($key) . '=' . urlencode($value);
+	}
+
+	$extraHeaderLines = array();
+	foreach ($extraHeaders as $headerKey => $headerValue) {
+	    $extraHeaderLines[] = "$headerKey: $headerValue";
+	}
+	$postRequest = sprintf("POST %s HTTP/1.0\r\n" .
+			       "Host: %s\r\n" .
+			       "%s" .
+			       "Content-Type: application/x-www-form-urlencoded\r\n" .
+			       "Content-Length: %s\r\n" .
+			       "\r\n" .
+			       "%s\r\n",
+			       $post,
+			       $components['host'],
+			       empty($extraHeaderLines) ? '' : join("\r\n", $extraHeaderLines) . "\r\n",
+			       strlen($postDataRaw),
+			       $postDataRaw);
+	$platform->fwrite($fd, $postRequest);
+	$platform->fflush($fd);
+	$body = '';
+	while (!$platform->feof($fd)) {
+	    $body .= $platform->fread($fd, 4096);
+	    flush();
+	}
+	$platform->fclose($fd);
+
+	/* Normalize line endings */
+	$body = str_replace("\r", "", $body);
+
+	/* Parse out headers and body */
+	$lines = explode("\n", $body);
+	for ($headersEnd = 0; $headersEnd < sizeof($lines); $headersEnd++) {
+	    if ($lines[$headersEnd] == '') {
+		break;
+	    }
+	}
+
+	$headers = join("\n", array_slice($lines, 0, $headersEnd)) . "\n";
+	$body = join("\n", array_slice($lines, $headersEnd + 1));
+
+	return array($body, $headers);
     }
 
     /**
