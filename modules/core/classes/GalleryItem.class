@@ -406,8 +406,8 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	    break;
 
 	default:
-	    $order = '';
-	    $condition = '';
+	    $order = '[GalleryItem::orderWeight]';
+	    $condition = '[GalleryItem::id] = [GalleryChildEntity::id]';
 	}
 
 	switch ($this->getOrderDirection()) {
@@ -453,6 +453,7 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 
 	list($orderColumn, $extraWhere) = $this->_getOrderInfo();
 	$extraIds = 0;
+
 	if (!empty($extraWhere)) {
 	    $extraIds = substr_count($extraWhere, '?');
 	    $extraWhere = 'AND ' . $extraWhere;
