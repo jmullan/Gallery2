@@ -56,6 +56,19 @@ class UtilitiesTest extends GalleryTestCase {
     function testGetMimeType() {
 	$this->assertEquals('image/jpeg', GalleryUtilities::getMimeType('file.jpg'));
     }
+
+    function testMaliciousBrowserInput1() {
+	GalleryUtilities::putRequestVariable('test_a', '<a href="javascript:alert(\'hi\')">yo</a>');
+	$this->assertEquals('<a href=":alert(\'hi\')">yo</a>', GalleryUtilities::getRequestVariables('test_a'));
+    }
+
+    function testArrayInput() {
+	GalleryUtilities::putRequestVariable('test_a', array('goodvalue' => 'foo bar',
+							     'badvalue' => '<a href="javascript:alert(\'hi\')">yo</a>'));
+	$this->assertEquals(array('goodvalue' => 'foo bar',
+				  'badvalue' => '<a href=":alert(\'hi\')">yo</a>'),
+			    GalleryUtilities::getRequestVariables('test_a'));
+    }
     
     function testGetFormVariables() {
 	GalleryUtilities::putRequestVariable('test_a', 'b');
