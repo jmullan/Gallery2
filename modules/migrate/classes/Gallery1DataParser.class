@@ -231,10 +231,25 @@ class Gallery1DataParser {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-
-	return array(GalleryStatus::success(), $photos);
+	$photoCount = count($photos);
+	return array(GalleryStatus::success(), $photoCount);
     }
 
+    /**
+     * Count the photo data from an album dir
+     *
+     * @param string Path to album directory
+     * @return array object GalleryStatus a status code,
+     *               array object Galleryphotos
+     */
+    function getPhotos($path) {
+	list ($ret, $photos) = Gallery1DataParser::loadFile($path . '/photos.dat');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	return array(GalleryStatus::success(), $photos);
+    }
+    
     /**
      * Load user uids from path
      *
@@ -293,4 +308,6 @@ class AlbumDB{ }
 class Album { }
 class Gallery_UserDB { }
 class Gallery_User { }
+class AlbumItem { }
+class Image { }
 ?>

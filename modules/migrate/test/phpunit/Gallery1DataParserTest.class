@@ -89,11 +89,11 @@ class Gallery1DataParserTest extends GalleryControllerTestCase {
     }
 
     function testGetPhotoCountFromAlbum() {
-        list ($ret, $photoList) = Gallery1DataParser::getPhotoCount($this->_albumsDir . 'album01/');
+        list ($ret, $countOfPhotos) = Gallery1DataParser::getPhotoCount($this->_albumsDir . 'album01/');
         if ($ret->isError()) {
             return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
-        $this->assertEquals(2, count($photoList));
+        $this->assertEquals(2, $countOfPhotos);
     }
 
     function testGetRootAlbums() {
