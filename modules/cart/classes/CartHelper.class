@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -29,7 +29,7 @@
 /**
  * Required classes.
  */
-require_once(dirname(__FILE__) . '/CartMap.class');
+GalleryCoreApi::requireOnce(dirname(__FILE__) . '/CartMap.class');
 
 /**
  * A helper class for Carts
@@ -53,7 +53,7 @@ class CartHelper {
 
 	$session =& $gallery->getSession();
 	$storage =& $gallery->getStorage();
-	
+
 	$query = '
         SELECT
           [CartMap::itemIds]
@@ -87,7 +87,7 @@ class CartHelper {
 
     /**
      * Add the item ids to the user's cart
-     * 
+     *
      * @param array int item ids
      * @return object GalleryStatus a status code
      * @static
@@ -96,7 +96,7 @@ class CartHelper {
 	global $gallery;
 
 	$session =& $gallery->getSession();
-	
+
 	list ($ret, $cartItemIds) = CartHelper::fetchCartItemCounts();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -114,13 +114,13 @@ class CartHelper {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	    
+
 	return GalleryStatus::success();
     }
 
     /**
      * Add the item ids to the user's cart
-     * 
+     *
      * @param array int item ids
      * @return object GalleryStatus a status code
      * @static
@@ -150,7 +150,38 @@ class CartHelper {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	    
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Remove item id from all carts (unfortunately by loading every cart..)
+     *
+     * @param int item id
+     * @return object GalleryStatus a status code
+     */
+    function removeIdFromAllCarts($itemId) {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	$query = 'SELECT [CartMap::sessionId], [CartMap::itemIds] FROM [CartMap]';
+	list ($ret, $searchResults) = $gallery->search($query);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	while ($result = $searchResults->nextResult()) {
+	    $cartItemIds = unserialize($result[1]);
+	    if (is_array($cartItemIds) && isset($cartItemIds[$itemId])) {
+		unset($cartItemIds[$itemId]);
+		$ret = CartMap::updateMapEntry(array('sessionId' => $result[0]),
+					       array('itemIds' => serialize($cartItemIds)));
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+	}
+
 	return GalleryStatus::success();
     }
 }

@@ -148,6 +148,37 @@ class CartHelperTest extends GalleryTestCase {
 
 	$this->assertEquals(array(2 => 3, 4 => 5), $newCartItemCounts);
     }
-}
 
+    function testDeleteItemWhileInCart() {
+	/* Add item and verify */
+	list ($ret, $item) = $this->_createRandomDataItem($this->_getRootId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = CartHelper::addItemsToCart(array($item->getId()));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list($ret, $cartItemCounts) = CartHelper::fetchCartItemCounts();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array(1 => 3,
+				  2 => 3,
+				  $item->getId() => 1), $cartItemCounts, 'add item');
+
+	/* Delete item and verify it was removed from cart */
+	$ret = GalleryCoreApi::deleteEntityById($item->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list($ret, $cartItemCounts) = CartHelper::fetchCartItemCounts();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array(1 => 3,
+				  2 => 3), $cartItemCounts, 'deleted item');
+    }
+}
 ?>
