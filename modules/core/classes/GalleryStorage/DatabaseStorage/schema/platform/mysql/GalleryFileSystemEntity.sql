@@ -11,8 +11,8 @@
     
     NOT NULL
   
-    ,
-  COLUMN_PREFIXpathComponent
+      ,
+    COLUMN_PREFIXpathComponent
       varchar(
       
           32
@@ -21,16 +21,13 @@
     
     , 
   
-    INDEX (
-    COLUMN_PREFIXid
-    )
+    INDEX (COLUMN_PREFIXid)
     
       ,
     
-    INDEX (
-    COLUMN_PREFIXpathComponent
-    )
+    INDEX (COLUMN_PREFIXpathComponent)
     
+
     ) TYPE=MyISAM;
 
     INSERT INTO TABLE_PREFIXSchema (

@@ -8,7 +8,13 @@ class CreatePhotoItemTestCase extends TestCase {
 
     function testStart() {
 	global $gallery;
-	$rootId = $gallery->getConfig('core.id.rootAlbum');
+
+	list ($ret, $rootId) =
+	    $gallery->getModuleParameter('core', 'id.rootAlbum');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
 	$lockIds = array();
 
 	/*

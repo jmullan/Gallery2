@@ -30,7 +30,11 @@ class ShowItemView /* extends GalleryView */ {
 	/* If we don't have an item id, default to the root */
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
 	if (empty($itemId)) {
-	    $itemId = $gallery->getConfig('core.id.rootAlbum');
+	    list ($ret, $itemId) =
+		$gallery->getModuleParameter('core', 'id.rootAlbum');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
 	}
 
 	/* Load the item */
@@ -48,11 +52,15 @@ class ShowItemView /* extends GalleryView */ {
 	/* Find the right layout for this item  */
 	$layout = $item->getLayout();
 	if (empty($layout)) {
-	    $layout = $gallery->getConfig('core.default.layout');
+	    list ($ret, $layout) =
+		$gallery->getModuleParameter('core', 'default.layout');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
 	}
 
 	/* Load the correct layout */
-	require_once($gallery->getConfig('core.directory.layouts') .
+	require_once($gallery->getConfig('code.gallery.layouts') .
 		     $layout . '/layout.inc');
 	$layoutClassName = $layout . 'Layout';
 	if (!class_exists($layoutClassName)) {
@@ -70,18 +78,25 @@ class ShowItemView /* extends GalleryView */ {
 	/* Figure out what style sheet to use and calculate its relative URL */
 	$style = $item->getStyle();
 	if (empty($style)) {
-	    $style = $gallery->getConfig('core.default.style');
+	    list ($ret, $style) =
+		$gallery->getModuleParameter('core', 'default.style');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
 	}
-	$style = $gallery->getConfig('core.directory.styles') . $style . '.css';
-	$dirbase = $gallery->getConfig('core.directory.base');
+	$style = $gallery->getConfig('code.gallery.styles') . $style . '.css';
+	$dirbase = $gallery->getConfig('code.gallery.base');
 	$style = str_replace($dirbase, '', $style);
-	$urlbase = $gallery->getConfig('core.url.base');
+	$urlbase = $gallery->getConfig('url.gallery.base');
 	if (!empty($urlbase)) {
 	    $style = $urlbase . '/' . $style;
 	}
 
 	/* Render the HTML head */
-	$smarty = $gallery->getSmarty();
+	list ($ret, $smarty) = $gallery->getSmarty();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 	$smarty->assign('item', $item->getMemberData());
 	$smarty->assign('style', $style);
 	$smarty->template_dir = dirname(__FILE__) . '/templates';

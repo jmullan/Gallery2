@@ -1,6 +1,9 @@
-TOOLDIR=../../tools
-CLASSDIR=..
-TMPDIR=tmp
+GALLERYDIR ?= ../../../..
+TOOLDIR ?= $(GALLERYDIR)/lib/tools
+CLASSDIR ?= ..
+XSLFILE ?= $(GALLERYDIR)/modules/core/classes/interfaces/ClassCode.xsl
+PACKAGE ?= GalleryCoreInterfaces
+TMPDIR ?= tmp
 
 include $(TOOLDIR)/GNUmakefile.inc
 
@@ -13,8 +16,10 @@ inc: $(TMPDIR) $(INCFILES)
 $(TMPDIR):
 	mkdir $(TMPDIR)
 
-%.inc: $(TMPDIR)/%.xml ClassCode.xsl
-	if [ -f $< ]; then $(SAXON) $< ClassCode.xsl > $@; fi
+%.inc: $(TMPDIR)/%.xml $(XSLFILE)
+	if [ -f $< ]; then $(SAXON) $< $(XSLFILE) \
+		| perl -pe 's/\@\@package\@\@/$(PACKAGE)/' \
+		> $@; fi
 
 $(TMPDIR)/%.xml: $(CLASSDIR)/%.class
 	perl $(TOOLDIR)/extractClassXml.pl \

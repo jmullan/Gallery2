@@ -1,0 +1,46 @@
+<?php
+
+class ActivateModuleTestCase extends TestCase {
+
+    function ActivateModuleTestCase($moduleName) {
+	$this->_moduleName = $moduleName;
+    }
+
+    function getDescription() {
+	global $gallery;
+	list ($ret, $moduleStatus) = $gallery->getModuleStatus();
+	if ($ret->isError()) {
+	    $status = 'error';
+	} else {
+	    if (empty($moduleStatus[$this->_moduleName]['active'])) {
+		$status = 'inactive';
+	    } else {
+		$status = 'active';
+	    }
+	}
+	return "Activate the $this->_moduleName module (currently $status)";
+    }
+
+    function testStart() {
+	global $gallery;
+
+	$moduleStatus = $gallery->getModuleStatus();
+	if ($moduleStatus[$this->_moduleName]) {
+	    $gallery->debug($this->_moduleName . ' is already activated.');
+	} else {
+	    list ($ret, $module) = $gallery->loadModule($this->_moduleName);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    $ret = $module->activate();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	return GalleryStatus::success();
+    }
+}
+
+?>

@@ -26,63 +26,72 @@ assert_options(ASSERT_BAIL, 1);
 /*
  * Figure out the Gallery base directory here, from our filename.
  */
-$gallerybase = dirname(__FILE__) . '/';
+$galleryBase = dirname(__FILE__) . '/';
 
 /*
- * Load all the core Gallery classes
+ * Load and initialize the core module
  */
-require_once($gallerybase . 'include/classes/GalleryUtilities.class');
-require_once($gallerybase . 'include/classes/GalleryStatus.class');
-require_once($gallerybase . 'include/classes/GalleryPersistent.class');
-require_once($gallerybase . 'include/classes/GalleryEntity.class');
-require_once($gallerybase . 'include/classes/GalleryChildEntity.class');
-require_once($gallerybase . 'include/classes/GalleryFileSystemEntity.class');
-require_once($gallerybase . 'include/classes/GalleryItem.class');
-require_once($gallerybase . 'include/classes/GalleryAlbumItem.class');
-require_once($gallerybase . 'include/classes/GalleryDerivative.class');
-require_once($gallerybase . 'include/classes/GalleryComment.class');
-require_once($gallerybase . 'include/classes/GalleryDataItem.class');
-require_once($gallerybase . 'include/classes/Gallery.class');
-require_once($gallerybase . 'include/classes/GalleryGraphics.class');
-require_once($gallerybase . 'include/classes/GalleryGraphicsFactory.class');
-require_once($gallerybase . 'include/classes/GalleryItemFactory.class');
-require_once($gallerybase . 'include/classes/GalleryLock.class');
-require_once($gallerybase . 'include/classes/GalleryStorage.class');
-require_once($gallerybase . 'include/classes/GalleryStorageFactory.class');
-require_once($gallerybase . 'include/classes/GalleryUser.class');
-require_once($gallerybase . 'include/classes/GalleryGroup.class');
-require_once($gallerybase . 'include/classes/GalleryDerivativeImage.class');
-require_once($gallerybase . 'include/classes/GalleryMovieItem.class');
-require_once($gallerybase . 'include/classes/GalleryPhotoItem.class');
-require_once($gallerybase . 'include/classes/GalleryUnknownItem.class');
-require_once($gallerybase . 'include/classes/GalleryPlatform.class');
-require_once($gallerybase . 'include/classes/GalleryPlatformFactory.class');
-require_once($gallerybase . 'include/classes/GallerySearchResult.class');
-require_once($gallerybase . 'include/classes/GalleryItemPropertiesMap.class');
-require_once($gallerybase . 'include/classes/GalleryUserGroupMap.class');
-require_once($gallerybase . 'include/classes/GalleryPermissionMap.class');
-require_once($gallerybase . 'include/classes/GalleryViewCountMap.class');
-
-/*
- * Set up our Gallery global.  It's important to use a reference here because
- * the constructor registers a shutdown function and ties it to the instance
- * in the constructor.  This global should be the only one that Gallery
- * requires.  Everything else should be inside it so that we do not pollute the
- * namespace (important when we're embedded inside another application).
- */
-$gallery =& new Gallery();
-$gallery->setConfig('core.directory.base', $gallerybase);
-$gallery->setConfig('core.directory.layouts', $gallerybase . 'layouts/');
-$gallery->setConfig('core.directory.styles', $gallerybase . 'styles/');
-$gallery->setConfig('core.directory.modules', $gallerybase . 'modules/');
-
-/* Configure the Platform */
-if (substr(PHP_OS, 0, 3) == 'WIN') {
-    $gallery->setConfig('platform.type', 'windows');
-} else {
-    $gallery->setConfig('platform.type', 'unix');
+require_once($galleryBase . 'modules/core/module.inc');
+$coreModule = new CoreModule();
+$ret = $coreModule->init();
+/* XXX: this is unclean; we should handle this better. */
+if ($ret->isError()) {
+    $ret = $ret->wrap(__FILE__, __LINE__);
+    print $ret->getAsHtml();
+    return;
 }
 
+/*
+ * Extract the global gallery instance from the core module.  This bends the OO
+ * model slightly, but it's a necessity to bootstrap ourselves up.
+ */
+$gallery =& $coreModule->getGallery();
+
+/*
+ * Set our global configuration values.  These are mostly (entirely?) code path
+ * locations as everything else is configurable via the application itself.
+ */
+
+/* Gallery paths */
+$gallery->setConfig('code.gallery.base', $galleryBase);
+$gallery->setConfig('code.gallery.layouts', $galleryBase . 'layouts/');
+$gallery->setConfig('code.gallery.styles', $galleryBase . 'styles/');
+$gallery->setConfig('code.gallery.modules', $galleryBase . 'modules/');
+$gallery->setConfig('code.gallery.lib', $galleryBase . 'lib/');
+$gallery->setConfig('code.gallery.setup', $galleryBase . 'setup/');
+
+/* Smarty paths */
+$gallery->setConfig('code.smarty.base', $galleryBase . 'lib/smarty/');
+$gallery->setConfig('config.smarty.templates', $galleryBase . 'templates');
+
 /* Load our local configuration */
-require_once($gallerybase . 'config.php');
+require_once(dirname(__FILE__) . '/config.php');
+
+/* Load all active modules */
+list ($ret, $moduleStatus) = $gallery->getModuleStatus();
+if ($ret->isError()) {
+    $ret = $ret->wrap(__FILE__, __LINE__);
+    print $ret->getAsHtml();
+    return;
+}
+
+foreach ($moduleStatus as $moduleName => $status) {
+    if (empty($status['active'])) {
+	continue;
+    }
+    
+    list ($ret, $module) = $gallery->loadModule($moduleName);
+    /* XXX: this is unclean; we should handle this better. */
+    if ($ret->isError()) {
+	$ret = $ret->wrap(__FILE__, __LINE__);
+	print $ret->getAsHtml();
+	return;
+    }
+}
+
+/*
+ * Fake being the admin user for now.  When we get in gear, we'll pull
+ * this information from the session.
+ */
+$gallery->setActiveUserId(4);
 ?>

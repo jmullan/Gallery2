@@ -15,7 +15,13 @@ class DeleteRandomAlbumTestCase extends TestCase {
 
 	print("Choose an album\n");
 	$lockIds = array();
-	$rootId = $gallery->getConfig('core.id.rootAlbum');
+
+	list ($ret, $rootId) =
+	    $gallery->getModuleParameter('core', 'id.rootAlbum');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
 	$userId = $gallery->getActiveUserId();
 
 	/* Load the root */

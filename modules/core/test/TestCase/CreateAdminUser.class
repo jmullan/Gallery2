@@ -17,15 +17,22 @@ class CreateAdminUserTestCase extends TestCase {
 	}
 	$user->setPassword('admin');
 	$user->setFullName('Admin');
+	$user->setLanguage('en_US');
 	
 	$ret = $user->save();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
+	list ($ret, $adminGroupId) =
+	    $gallery->getModuleParameter('core', 'id.adminGroup');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
 	/* Add her to the admin group */
 	$ret = GalleryUserGroupMap::addUserToGroup($user->getId(),
-            $gallery->getConfig('core.id.adminGroup'));
+						   $adminGroupId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

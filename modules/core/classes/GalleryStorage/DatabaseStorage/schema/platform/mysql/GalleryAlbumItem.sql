@@ -11,20 +11,19 @@
     
     NOT NULL
   
-    ,
-  COLUMN_PREFIXchildIntermediateResize
+      ,
+    COLUMN_PREFIXchildIntermediateResize
       int(11)
     
-    ,
-  COLUMN_PREFIXchildThumbSize
+      ,
+    COLUMN_PREFIXchildThumbSize
       int(11)
     
     , 
   
-    INDEX (
-    COLUMN_PREFIXid
-    )
+    INDEX (COLUMN_PREFIXid)
     
+
     ) TYPE=MyISAM;
 
     INSERT INTO TABLE_PREFIXSchema (

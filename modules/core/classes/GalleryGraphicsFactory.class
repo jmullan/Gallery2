@@ -34,18 +34,28 @@ class GalleryGraphicsFactory {
      * @param string the type of graphics object to create
      * @return a GalleryGraphics instance
      */
-    function newInstance($type, $config) {
-	switch ($type) {
-	case 'netpbm':
-	    $base = dirname(__FILE__) . '/GalleryGraphics';
-	    require_once($base . '/NetPbmGraphics.class');
-	    return array(GalleryStatus::success(), new NetPbmGraphics($config));
-	    
-	default:
-	    return array(GalleryStatus::error(ERROR_UNIMPLEMENTED,
-					      __FILE__, __LINE__),
-			 null);
+    function newInstance($identifier) {
+	global $gallery;
+
+	$implementations = $gallery->lookupRegistry('GalleryGraphicsFactory');
+	foreach ($implementations as $impl) {
+	    if ($impl['id'] == $identifier) {
+		/* Load the file */
+		require_once($impl['classFile']);
+		
+		if (class_exists($impl['className'])) {
+		    /* Return the new class */
+		    return array(GalleryStatus::success(), new $impl['className']);
+		} else {
+		    return array(GalleryStatus::error(ERROR_BAD_MODULE, __FILE__, __LINE__),
+				 null);
+		}
+	    }
 	}
+
+	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED,
+					  __FILE__, __LINE__),
+		     null);
     }
 }
 ?>

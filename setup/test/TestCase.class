@@ -1,8 +1,6 @@
 <?php
 
 class TestCase {
-    var $_debugOutput = array();
-
     function getDescription() {
     }
 
@@ -11,8 +9,6 @@ class TestCase {
     }
 
     function start($iterations) {
-	$this->traceStart();
-
 	$this->startTiming($iterations);
 	
 	if ($iterations > 1) {
@@ -27,12 +23,15 @@ class TestCase {
 	if ($iterations > 1) {
 	    $gallery->setDebug($debug);
 	}
-	    
-	$this->stopTiming();
-	$this->timingReport();
-	$this->traceStop();
 
-	return $ret->wrap(__FILE__, __LINE__);
+	$this->stopTiming();
+	$timing = $this->timingReport();
+
+	if ($ret->isError()) {
+	    return array($timing, $ret->wrap(__FILE__, __LINE__));
+	} else {
+	    return array($timing, GalleryStatus::success());
+	}
     }
 
     function getDependencies() {
@@ -45,9 +44,7 @@ class TestCase {
     function cleanup() {
 	global $gallery;
 	
-	$this->traceStart();
 	$ret = $this->testCleanup();
-	$this->traceStop();
 
 	return $ret->wrap(__FILE__, __LINE__);
     }
@@ -56,27 +53,10 @@ class TestCase {
 	return GalleryStatus::success();
     }
 
-    function traceStart() {
-	ob_start();
-    }
-
-    function traceStop() {
-	$buf = ob_get_contents();
-	ob_end_clean();
-
-	foreach (split("\r", $buf) as $line) {
-	    $this->_debugOutput[] = $line;
-	}
-    }
-
     function dump($ret, $item) {
 	print "STATUS: $ret\n";
 	print "ITEM:\n";
 	print_r($item);
-    }
-
-    function getDebugOutput() {
-	return $this->_debugOutput;
     }
 
     function startTiming($iterations) {
@@ -93,9 +73,9 @@ class TestCase {
     function timingReport() {
 	$elapsed = $this->_stopTime - $this->_startTime;
 	$persec = $this->_iterations/$elapsed;
-	print "Iterations: $this->_iterations\n";
-	print "Elapsed: $elapsed\n";
-	print "PerSec: $persec\n";
+	return array('iterations' => $this->_iterations,
+		     'elapsed' => round($elapsed, 4),
+		     'persec' => round($persec, 4));
     }
 }
 

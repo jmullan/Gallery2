@@ -11,20 +11,19 @@
     
     NOT NULL
   
-    ,
-  COLUMN_PREFIXwidth
+      ,
+    COLUMN_PREFIXwidth
       int(11)
     
-    ,
-  COLUMN_PREFIXheight
+      ,
+    COLUMN_PREFIXheight
       int(11)
     
     , 
   
-    INDEX (
-    COLUMN_PREFIXid
-    )
+    INDEX (COLUMN_PREFIXid)
     
+
     ) TYPE=MyISAM;
 
     INSERT INTO TABLE_PREFIXSchema (

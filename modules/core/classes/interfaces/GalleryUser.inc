@@ -66,6 +66,11 @@ class GalleryUser extends GalleryUser_core {
             'type' => STORAGE_TYPE_STRING
         );
     
+        $meta['members']['language'] = array(
+            'class' => 'GalleryUser',
+            'type' => STORAGE_TYPE_STRING
+        );
+    
         return $meta;
     }
 
@@ -84,6 +89,8 @@ class GalleryUser extends GalleryUser_core {
         $data['password'] = $this->_password;
     
         $data['email'] = $this->_email;
+    
+        $data['language'] = $this->_language;
     
         return $data;
     }
@@ -178,6 +185,29 @@ class GalleryUser extends GalleryUser_core {
     
         $this->_email = $value;
         $this->setModifiedFlag('email', MEMBER_MODIFIED);
+    }
+  
+    /**
+     * Get the value of language
+     *
+     * @return STRING the value
+     */
+    function getlanguage() {
+        if (!isset($this->_language)) {
+            return null;
+        }
+        return $this->_language;
+    }
+
+    /**
+     * Set the value of language
+     *
+     * @param STRING the value
+     */
+    function setlanguage($value) {
+    
+        $this->_language = $value;
+        $this->setModifiedFlag('language', MEMBER_MODIFIED);
     }
   
 }

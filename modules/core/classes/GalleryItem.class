@@ -318,8 +318,21 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	$this->setViewedSinceTimestamp(time());
 
 	/* Pick up the default order */
-	$this->setOrderBy($gallery->getConfig('core.default.orderBy'));
-	$this->setOrderDirection($gallery->getConfig('core.default.orderDirection'));
+	list ($ret, $orderBy) =
+	    $gallery->getModuleParameter('core', 'default.orderBy');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	list ($ret, $orderDirection) =
+	    $gallery->getModuleParameter('core', 'default.orderDirection');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	
+	$this->setOrderBy($orderBy);
+	$this->setOrderDirection($orderDirection);
 
 	return GalleryStatus::success();
     }
@@ -406,7 +419,7 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	$data[] = $userId;
 	$where .= ' AND';
 	$where .= ' [GalleryPermissionMap::permission] IN (?, ?)))';
-	$data = array_merge($data, array(PERMISSION_VIEW, PERMISSION_ALL));
+	$data = array_merge($data, array('core.view', 'core.all'));
 
 	list ($ret, $searchResults) = 
 	    $gallery->search(array('select' => 'COUNT(DISTINCT([GalleryChildEntity::id]))',
@@ -460,7 +473,7 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	$data[] = $userId;
 	$where .= ' AND';
 	$where .= ' [GalleryPermissionMap::permission] IN (?, ?)))';
-	$data = array_merge($data, array(PERMISSION_VIEW, PERMISSION_ALL));
+	$data = array_merge($data, array('core.view', 'core.all'));
 
 	$orderBy = ' [GalleryItem::' . $this->getOrderBy() . ']';
 	if ($this->getOrderDirection() == ORDER_ASCENDING) {
@@ -527,7 +540,7 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	$data[] = $userId;
 	$where .= ' AND';
 	$where .= ' [GalleryPermissionMap::permission] IN (?, ?)))';
-	$data = array_merge($data, array(PERMISSION_VIEW, PERMISSION_ALL));
+	$data = array_merge($data, array('core.view', 'core.all'));
 
 	$orderBy = ' [GalleryItem::' . $this->getOrderBy() . ']';
 	if ($this->getOrderDirection() == ORDER_ASCENDING) {

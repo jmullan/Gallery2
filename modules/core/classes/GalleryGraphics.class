@@ -88,55 +88,12 @@ class GalleryGraphics {
      */
     var $_supportedFileExtensions = array();
 
-    /**
-     * The expected status from executed sub-jobs
-     *
-     * @var array $_expectedStatus
-     * @access private
-     */
-    var $_expectedStatus = 0;
-
-    /**
-     * The target image quality for JPEG transforms
-     *
-     * @var array $_jpegImageQuality
-     * @access private
-     */
-    var $_jpegImageQuality = 75;
-
     /*
      * ****************************************
      *                 Methods
      * ****************************************
      */
 
-    /**
-     * Constructor
-     *
-     * @param array configuration information
-     */
-    function GalleryGraphics($config) {
-	assert('!empty($config)');
-
-	if (!empty($config['fileExtensions'])) {
-	    foreach ($config['fileExtensions'] as $extension) {
-		$this->_supportedFileExtensions[$extension] = 1;
-	    }
-	}
-
-	if (!empty($config['jpegImageQuality'])) {
-	    $this->_jpegImageQuality = $config['jpegImageQuality'];
-	}
-
-	if (!empty($config['functions'])) {
-	    $this->_supportedFunctions = $config['functions'];
-	}
-
-	if (!empty($config['expectedStatus'])) {
-	    $this->_expectedStatus = $config['expectedStatus'];
-	}
-    }
-    
     /**
      * Get the list of supported file extensions
      *
@@ -182,24 +139,6 @@ class GalleryGraphics {
      */
     function isSupportedFunction($flag) {
 	return (boolean)($this->_supportedFunctions & $flag);
-    }
-
-    /**
-     * What is the target image quality for JPEG transformations?
-     *
-     * @return int the quality level
-     */
-    function getJpegImageQuality() {
-	return $this->_jpegImageQuality;
-    }
-
-    /**
-     * What is the expected return status for sub-jobs?
-     *
-     * @return int the expected status (probably 0)
-     */
-    function getExpectedStatus() {
-	return $this->_expectedStatus;
     }
 
     /**
@@ -305,122 +244,6 @@ class GalleryGraphics {
     function isValidImage($filename) {
 	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__),
 		     null);
-    }
-
-    /**
-     * Get any image properties associated with this image
-     *
-     * Some file types have embedded data.  Eg, JPEG can have EXIF
-     * data.
-     * 
-     * @access public
-     * @param string the image file name
-     * @return array object GalleryStatus a status code
-     *               array a set of key value pairs
-     */
-    function getProperties($filename) {
-	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__),
-		     null);
-    }
-
-    /**
-     * Execute a set of commands to perform an image operation
-     *
-     * @return array object GalleryStatus a status code
-     *               array any resulting output
-     * @access private
-     */
-    function _exec($cmdArray) {
-	global $gallery;
-	list($ret, $platform) = $gallery->getPlatform();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	/* Build up a platform-correct version of the command and arguments */
-	$command = '';
-	$cmdArray = $this->_extractCommands($cmdArray);
-	foreach ($cmdArray as $cmdAndArgs) {
-	    if (strlen($command)) {
-		$command .= ' | ';
-	    }
-	    
-	    if (is_array($cmdAndArgs)) {
-		$cmd = $cmdAndArgs[0];
-		$args = array_slice($cmdAndArgs, 1);
-
-		/* Add the platform-specific version of the command */
-		$command .= $platform->executablePath($cmd);
-
-		/* And then each argument */
-		foreach ($args as $arg) {
-		    /* Escape whitespace */
-		    $arg = str_replace(' ', '\\ ', $arg);
-
-		    $command .= ' ' . $arg;
-		}
-	    }
-	}
-
-	$results = array();
-	$success = $platform->exec($command, $results);
-	if ($success) {
-	    $ret = GalleryStatus::success();
-	} else {
-	    $ret = GalleryStatus::error(ERROR_GRAPHICS_FAILURE,
-					__FILE__, __LINE__);
-	    $ret->wrap(__FILE__, __LINE__);
-	}
-
-	return array($ret, $results);
-    }
-
-    /**
-     * Extract a single array of commands from a multilevel array of commands
-     *
-     * The command array may wind up being multilevel, eg:
-     *
-     * array(
-     *   array('cmd', 'args'),
-     *   array('cmd', 'args'),
-     *   array(
-     *     array('cmd', 'args'),
-     *     array('cmd', 'args')
-     *   ),
-     * )
-     *
-     * Extract the commands as a single level array:
-     *
-     * array(
-     *   array('cmd', 'args'),
-     *   array('cmd', 'args'),
-     *   array('cmd', 'args'),
-     *   array('cmd', 'args')
-     * )
-     *
-     * While maintaining the order.
-     *
-     * @param array a multilevel set of commands
-     * @param array a single level set of commands
-     */
-    function _extractCommands($cmdArray, $level=0) {
-
-	$results = array();
-	$arrayElements = 0;
-	foreach (array_values($cmdArray) as $cmd) {
-	    if (is_array($cmd)) {
-		$results = array_merge($results, $this->_extractCommands($cmd, $level+1));
-		$arrayElements++;
-	    } else {
-		array_push($results, $cmd);
-	    }
-	}
-
-	if ($arrayElements == count($cmdArray)) {
-	    return $results;
-	} else {
-	    return array($results);
-	}
     }
 }
 ?>

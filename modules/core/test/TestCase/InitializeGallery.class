@@ -1,0 +1,69 @@
+<?php
+
+class InitializeGalleryTestCase extends TestCase {
+
+    function getDescription() {
+	return "Create a new Gallery directory structure.";
+    }
+
+    function testStart() {
+	global $gallery;
+
+	list($ret, $platform) = $gallery->getPlatform();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$retArray = array();
+	$dataBase = $gallery->getConfig('code.gallery.base') . '../gallerydata/';
+	$retArray[] = $gallery->setModuleParameter('core', 'data.gallery.base', $dataBase);
+	$retArray[] = $gallery->setModuleParameter('core', 'data.gallery.albums', $dataBase . 'albums/');
+	$retArray[] = $gallery->setModuleParameter('core', 'data.gallery.cache', $dataBase . 'cache/');
+	$retArray[] = $gallery->setModuleParameter('core', 'data.gallery.tmp', $dataBase . 'tmp/');
+
+	$dirs[] = $dataBase . 'albums/';
+	$dirs[] = $dataBase . 'cache/';
+	$dirs[] = $dataBase . 'tmp/';
+	
+	
+	$smartyBase = $dataBase . 'smarty/';
+	$retArray[] = $gallery->setModuleParameter('core', 'data.smarty.base', $smartyBase);
+	$retArray[] = $gallery->setModuleParameter('core', 'data.smarty.templates_c',
+						   $smartyBase . 'templates_c/');
+
+	$dirs[] = $smartyBase;
+	$dirs[] = $smartyBase . 'templates_c';
+
+	$retArray[] = $gallery->setModuleParameter('core', 'permissions.directory', 0755);
+	$retArray[] = $gallery->setModuleParameter('core', 'permissions.file', 0755);
+	$retArray[] = $gallery->setModuleParameter('core', 'exec.expectedStatus', 0);
+	$retArray[] = $gallery->setModuleParameter('core', 'default.orderBy', 'id');
+	$retArray[] = $gallery->setModuleParameter('core', 'default.orderDirection', 1);
+	$retArray[] = $gallery->setModuleParameter('core', 'default.layout', 'classic');
+	$retArray[] = $gallery->setModuleParameter('core', 'default.style', 'classic');
+	$retArray[] = $gallery->setModuleParameter('core', 'graphics.type', 'netpbm');
+
+	foreach ($retArray as $ret) {
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+	
+	foreach ($dirs as $dir) {
+
+	    if (empty($dir)) {
+		return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);
+	    }
+
+	    if (!$platform->file_exists($dir)) {
+		$ret = $platform->mkdir($dir);
+		if (!$ret) {
+		    return GalleryStatus::error(ERROR_UNKNOWN, __FILE__, __LINE__);
+		}
+	    }
+	}
+
+	return GalleryStatus::success();
+    }
+}
+?>

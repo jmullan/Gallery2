@@ -9,9 +9,15 @@ class CreateGalleryCommentTestCase extends TestCase {
     function testStart() {
 	global $gallery;
 
+	list ($ret, $rootAlbumId) =
+	    $gallery->getModuleParameter('core', 'id.rootAlbum');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
 	/* Create the comment */
 	$comment = new GalleryComment();
-	$ret = $comment->create($gallery->getConfig('core.id.rootAlbum'));
+	$ret = $comment->create($rootAlbumId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

@@ -9,34 +9,31 @@
   COLUMN_PREFIXitemId
       int(11)
     
-    ,
-  COLUMN_PREFIXkey
+      ,
+    COLUMN_PREFIXkey
       varchar(
       
           128
         
       )
     
-    ,
-  COLUMN_PREFIXvalue
+      ,
+    COLUMN_PREFIXvalue
       text
     
     , 
   
-    UNIQUE KEY (
-    COLUMN_PREFIXitemId
+    UNIQUE KEY (COLUMN_PREFIXitemId
         ,
-      COLUMN_PREFIXkey
-    )
+      COLUMN_PREFIXkey)
     
     , 
   
-    INDEX (
-    COLUMN_PREFIXvalue
+    INDEX (COLUMN_PREFIXvalue
           (255)
-          
-    )
+          )
     
+
     ) TYPE=MyISAM;
 
     INSERT INTO TABLE_PREFIXSchema (

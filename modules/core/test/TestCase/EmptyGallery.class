@@ -14,24 +14,40 @@ class EmptyGalleryTestCase extends TestCase {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	$smarty = $gallery->getSmarty();
-	foreach (array($gallery->getConfig('core.directory.albums'),
-		       $gallery->getConfig('core.directory.temp'),
-		       $gallery->getConfig('core.directory.cache'),
-		       $gallery->getConfig('smarty.directory.data'),
-		       $smarty->compile_dir,
-		       $smarty->cache_dir) as $dir) {
+	$dirs = array();
+	foreach (array('data.gallery.albums',
+		       'data.gallery.cache',
+		       'data.gallery.tmp',
+		       'data.smarty.base')
+		 as $param) {
+	    list ($ret, $dir) =
+		$gallery->getModuleParameter('core', $param);
+	    if ($ret->isError()) {
+		// Ignore
+	    } else {
+		if (!empty($dir)) {
+		    $dirs[] = $dir;
+		}
+	    }
+	}
+
+	$setup = $gallery->getConfig('code.gallery.setup');
+	list ($ret, $smarty) = $gallery->getSmarty($setup . 'smarty/templates_c');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	foreach ($dirs as $dir) {
+
+	    if (empty($dir)) {
+		return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);
+	    }
 
 	    if ($platform->file_exists($dir)) {
 		$ret = $platform->recursiveRmdir($dir);
 		if (!$ret) {
 		    return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);
 		}
-	    }
-	
-	    $ret = $platform->mkdir($dir);
-	    if (!$ret) {
-		return GalleryStatus::error(ERROR_UNKNOWN, __FILE__, __LINE__);
 	    }
 	}
 

@@ -17,7 +17,12 @@ class CreateNestedAlbumItemTestCase extends TestCase {
 
 	$time = time();
 	
-	$parentId = $gallery->getConfig('core.id.rootAlbum');
+	list ($ret, $parentId) =
+	    $gallery->getModuleParameter('core', 'id.rootAlbum');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
 	for ($i = 0; $i < $iterations; $i++) {
 	    $gallery->guaranteeTimeLimit(5);
 

@@ -15,8 +15,15 @@ class CreateAnonymousUserTestCase extends TestCase {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	$user->setFullName('Anonymous');
+	$user->setLanguage('es_ES');
 	
 	$ret = $user->save();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$ret = $gallery->setModuleParameter('core', 'id.anonymousUser',
+					    $user->getId());
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

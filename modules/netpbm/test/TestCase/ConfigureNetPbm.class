@@ -1,0 +1,35 @@
+<?php
+
+class ConfigureNetPbmTestCase extends TestCase {
+    var $_moduleName = 'netpbm';
+
+    function getDescription() {
+	return "Configure the $this->_moduleName module";
+    }
+
+    function testStart() {
+	global $gallery;
+
+	list ($ret, $module) = $gallery->loadModule($this->_moduleName);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$settings['path'] = '/usr/local/bin';
+	$settings['jpegQuality'] = '75';
+	$settings['pnmtojpeg'] = 'pnmtojpeg';
+	$settings['version'] = $module->getVersion();
+
+	foreach ($settings as $key => $value) {
+	    $ret = $gallery->setModuleParameter($module->getName(),
+						$key, $value);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	return GalleryStatus::success();
+    }
+}
+
+?>

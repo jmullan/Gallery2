@@ -11,66 +11,66 @@
     
     NOT NULL
   
-    ,
-  COLUMN_PREFIXdescription
+      ,
+    COLUMN_PREFIXdescription
       text
     
-    ,
-  COLUMN_PREFIXisHtmlAllowed
+      ,
+    COLUMN_PREFIXisHtmlAllowed
       int(1)
     
-    ,
-  COLUMN_PREFIXlayout
+      ,
+    COLUMN_PREFIXlayout
       varchar(
       
           32
         
       )
     
-    ,
-  COLUMN_PREFIXkeywords
+      ,
+    COLUMN_PREFIXkeywords
       varchar(
       
           255
         
       )
     
-    ,
-  COLUMN_PREFIXorderBy
+      ,
+    COLUMN_PREFIXorderBy
       varchar(
       
           128
         
       )
     
-    ,
-  COLUMN_PREFIXorderDirection
+      ,
+    COLUMN_PREFIXorderDirection
       varchar(
       
           128
         
       )
     
-    ,
-  COLUMN_PREFIXorderWeight
+      ,
+    COLUMN_PREFIXorderWeight
       int(11)
     
-    ,
-  COLUMN_PREFIXownerId
+      ,
+    COLUMN_PREFIXownerId
       int(11)
     
     NOT NULL
   
-    ,
-  COLUMN_PREFIXstyle
+      ,
+    COLUMN_PREFIXstyle
       varchar(
       
           32
         
       )
     
-    ,
-  COLUMN_PREFIXtitle
+      ,
+    COLUMN_PREFIXtitle
       varchar(
       
           255
@@ -79,38 +79,31 @@
     
     NOT NULL
   
-    ,
-  COLUMN_PREFIXviewedSinceTimestamp
+      ,
+    COLUMN_PREFIXviewedSinceTimestamp
       int(11)
     
     NOT NULL
   
     , 
   
-    INDEX (
-    COLUMN_PREFIXid
-    )
+    INDEX (COLUMN_PREFIXid)
     
       ,
     
-    INDEX (
-    COLUMN_PREFIXdescription
+    INDEX (COLUMN_PREFIXdescription
           (255)
-          
-    )
+          )
     
       ,
     
-    INDEX (
-    COLUMN_PREFIXkeywords
-    )
+    INDEX (COLUMN_PREFIXkeywords)
     
       ,
     
-    INDEX (
-    COLUMN_PREFIXtitle
-    )
+    INDEX (COLUMN_PREFIXtitle)
     
+
     ) TYPE=MyISAM;
 
     INSERT INTO TABLE_PREFIXSchema (

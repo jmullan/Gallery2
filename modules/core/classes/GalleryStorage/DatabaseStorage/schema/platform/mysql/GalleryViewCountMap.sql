@@ -9,16 +9,15 @@
   COLUMN_PREFIXitemId
       int(11)
     
-    ,
-  COLUMN_PREFIXviewCount
+      ,
+    COLUMN_PREFIXviewCount
       int(11)
     
     , 
   
-    UNIQUE KEY (
-    COLUMN_PREFIXitemId
-    )
+    UNIQUE KEY (COLUMN_PREFIXitemId)
     
+
     ) TYPE=MyISAM;
 
     INSERT INTO TABLE_PREFIXSchema (

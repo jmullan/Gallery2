@@ -11,8 +11,8 @@
     
     NOT NULL
   
-    ,
-  COLUMN_PREFIXfileExtension
+      ,
+    COLUMN_PREFIXfileExtension
       varchar(
       
           128
@@ -21,10 +21,9 @@
     
     , 
   
-    INDEX (
-    COLUMN_PREFIXid
-    )
+    INDEX (COLUMN_PREFIXid)
     
+
     ) TYPE=MyISAM;
 
     INSERT INTO TABLE_PREFIXSchema (

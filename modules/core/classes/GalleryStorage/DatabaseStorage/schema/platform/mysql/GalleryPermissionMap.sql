@@ -9,16 +9,16 @@
   COLUMN_PREFIXitemId
       int(11)
     
-    ,
-  COLUMN_PREFIXuserId
+      ,
+    COLUMN_PREFIXuserId
       int(11)
     
-    ,
-  COLUMN_PREFIXgroupId
+      ,
+    COLUMN_PREFIXgroupId
       int(11)
     
-    ,
-  COLUMN_PREFIXpermission
+      ,
+    COLUMN_PREFIXpermission
       varchar(
       
           32
@@ -27,22 +27,17 @@
     
     , 
   
-    INDEX (
-    COLUMN_PREFIXitemId
-    )
+    INDEX (COLUMN_PREFIXitemId)
     
       ,
     
-    INDEX (
-    COLUMN_PREFIXuserId
-    )
+    INDEX (COLUMN_PREFIXuserId)
     
       ,
     
-    INDEX (
-    COLUMN_PREFIXgroupId
-    )
+    INDEX (COLUMN_PREFIXgroupId)
     
+
     ) TYPE=MyISAM;
 
     INSERT INTO TABLE_PREFIXSchema (

@@ -1,6 +1,6 @@
 <?php
 
-class CreateAlbumItemTestCase extends TestCase {
+class CreateRootAlbumItemTestCase extends TestCase {
 
     function getDescription() {
 	return "Create a new AlbumItem, save it, modify it, save it again";
@@ -9,7 +9,14 @@ class CreateAlbumItemTestCase extends TestCase {
     function testStart() {
 	global $gallery;
 
-	print("Creating new album item\n");
+	/* Do we already have a root? */
+	list ($ret, $rootAlbumId) =
+	    $gallery->getModuleParameter('core', 'id.rootAlbum');
+	if ($rootAlbumId) {
+	    return GalleryStatus::error(ERROR_COLLISION, __FILE__, __LINE__);
+	}
+	
+	print("Creating new root album item\n");
 	$album = new GalleryAlbumItem();
 	$ret = $album->createRoot("test", $gallery->getActiveUserId());
 	if ($ret->isError()) {
@@ -26,9 +33,13 @@ class CreateAlbumItemTestCase extends TestCase {
 
 	print("ASSIGN PERMISSIONS\n");
 	/* Give all users some stuff */
-	$groupId = $gallery->getConfig('core.id.allUserGroup');
-	foreach (array(PERMISSION_VIEW,
-		       PERMISSION_VIEW_RESIZES) as $permission) {
+	list ($ret, $groupId) =
+	    $gallery->getModuleParameter('core', 'id.allUserGroup');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	foreach (array('core.view', 'core.viewResizes') as $permission) {
 	    $ret = GalleryPermissionMap::addGroupPermission($album->getId(),
 							    $groupId,
 							    $permission);
@@ -38,10 +49,21 @@ class CreateAlbumItemTestCase extends TestCase {
 	}
 
 	/* Grant admin users everything */
-	$groupId = $gallery->getConfig('core.id.adminGroup');
+	list ($ret, $groupId) =
+	    $gallery->getModuleParameter('core', 'id.adminGroup');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
 	$ret = GalleryPermissionMap::addGroupPermission($album->getId(),
 							$groupId,
-							PERMISSION_ALL);
+							'core.all');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$ret = $gallery->setModuleParameter('core', 'id.rootAlbum',
+					    $album->getId());
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

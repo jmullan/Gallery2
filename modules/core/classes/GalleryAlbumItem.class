@@ -131,7 +131,12 @@ class GalleryAlbumItem_core extends GalleryItem {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	$parentPath = $gallery->getConfig('core.directory.albums');
+	list ($ret, $parentPath) =
+	    $gallery->getModuleParameter('core', 'data.gallery.albums');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
 	return $this->_createDir($parentPath . '/' . $albumName);
     }
 
@@ -147,9 +152,14 @@ class GalleryAlbumItem_core extends GalleryItem {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	if (!$platform->mkdir($albumDir,
-	        $gallery->getConfig('core.permissions.directory'))) {
 
+	list($ret, $perm) =
+	    $gallery->getModuleParameter('core', 'permissions.directory');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	if (!$platform->mkdir($albumDir, $perm)) {
 	    return GalleryStatus::error(ERROR_COLLISION,
 					__FILE__, __LINE__);
 	}

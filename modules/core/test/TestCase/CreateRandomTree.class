@@ -16,7 +16,13 @@ class CreateRandomTreeTestCase extends TestCase {
 
     function testStart($iterations) {
 	global $gallery;
-	$rootId = $gallery->getConfig('core.id.rootAlbum');
+
+	list ($ret, $rootId) =
+	    $gallery->getModuleParameter('core', 'id.rootAlbum');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
 	$lockIds = array();
 
 	$this->_imagePath = dirname(dirname(__FILE__)) . '/data/test1.jpg';
@@ -137,28 +143,30 @@ class CreateRandomTreeTestCase extends TestCase {
 		}
 	    }
 
-	    /* Create 0-3 comments */
-	    $rand4 = rand(0, 3);
-	    for ($j = 0; $j < $rand4; $j++) {
-		$comment = new GalleryComment();
-		$ret = $comment->create($photo->getId());
-		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
+	    if (false) {
+		/* Create 0-3 comments */
+		$rand4 = rand(0, 3);
+		for ($j = 0; $j < $rand4; $j++) {
+		    $comment = new GalleryComment();
+		    $ret = $comment->create($photo->getId());
+		    if ($ret->isError()) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
+		    
+		    $comment->setCommenterId($gallery->getActiveUserId());
+		    $comment->setComment('This is a test of the emergency broadcas'.
+					 't system.  This is only a test.  This is'.
+					 'a test of the emergency broadcast system'.
+					 '.  This is only a test.  This is a test '.
+					 'of the emergency broadcast system.  This'.
+					 'is only a test.');
+		    $comment->setDate(time());
+		    $host = $GLOBALS['HTTP_SERVER_VARS']['REMOTE_HOST'];
+		    if (empty($host)) {
+			$host = $GLOBALS['HTTP_SERVER_VARS']['REMOTE_ADDR'];
+		    }
+		    $comment->setHost($host);
 		}
-
-		$comment->setCommenterId($gallery->getActiveUserId());
-		$comment->setComment('This is a test of the emergency broadcas'.
-				     't system.  This is only a test.  This is'.
-				     'a test of the emergency broadcast system'.
-				     '.  This is only a test.  This is a test '.
-				     'of the emergency broadcast system.  This'.
-				     'is only a test.');
-		$comment->setDate(time());
-		$host = $GLOBALS['HTTP_SERVER_VARS']['REMOTE_HOST'];
-		if (empty($host)) {
-		    $host = $GLOBALS['HTTP_SERVER_VARS']['REMOTE_ADDR'];
-		}
-		$comment->setHost($host);
 	    }
 
 	    if ($this->_photoCount >= $this->_maxItems) {

@@ -11,8 +11,8 @@
     
     NOT NULL
   
-    ,
-  COLUMN_PREFIXuserName
+      ,
+    COLUMN_PREFIXuserName
       varchar(
       
           32
@@ -21,24 +21,32 @@
     
     NOT NULL
   
-    ,
-  COLUMN_PREFIXfullname
+      ,
+    COLUMN_PREFIXfullname
       varchar(
       
           128
         
       )
     
-    ,
-  COLUMN_PREFIXpassword
+      ,
+    COLUMN_PREFIXpassword
       varchar(
       
           32
         
       )
     
-    ,
-  COLUMN_PREFIXemail
+      ,
+    COLUMN_PREFIXemail
+      varchar(
+      
+          128
+        
+      )
+    
+      ,
+    COLUMN_PREFIXlanguage
       varchar(
       
           128
@@ -47,28 +55,21 @@
     
     , 
   
-    UNIQUE KEY (
-    COLUMN_PREFIXuserName
-    )
+    UNIQUE KEY (COLUMN_PREFIXuserName)
     
       ,
     
-    UNIQUE KEY (
-    COLUMN_PREFIXemail
-    )
+    UNIQUE KEY (COLUMN_PREFIXemail)
     
     , 
   
-    INDEX (
-    COLUMN_PREFIXid
-    )
+    INDEX (COLUMN_PREFIXid)
     
       ,
     
-    INDEX (
-    COLUMN_PREFIXuserName
-    )
+    INDEX (COLUMN_PREFIXuserName)
     
+
     ) TYPE=MyISAM;
 
     INSERT INTO TABLE_PREFIXSchema (

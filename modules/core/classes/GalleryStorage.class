@@ -319,11 +319,11 @@ class GalleryStorage {
     }
     
     /**
-     * Configure the persistent store for this strategy.
+     * Configure the persistent store for this strategy, for the given module.
      *
      * @return object GalleryStatus a status code
      */
-    function configureStore() {
+    function configureStore($moduleName) {
 	return GalleryStatus::error(ERROR_UNIMPLEMENTED,
 				    __FILE__, __LINE__);
     }

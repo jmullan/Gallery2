@@ -1,0 +1,42 @@
+<?php
+
+class ConfigureCommentTestCase extends TestCase {
+    var $_moduleName = 'comment';
+
+    function getDescription() {
+	return "Configure the $this->_moduleName module";
+    }
+
+    function testStart() {
+	global $gallery;
+
+	list ($ret, $storage) = $gallery->getStorage();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$ret = $storage->configureStore($this->_moduleName);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	list ($ret, $module) = $gallery->loadModule($this->_moduleName);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$settings['version'] = $module->getVersion();
+
+	foreach ($settings as $key => $value) {
+	    $ret = $gallery->setModuleParameter($module->getName(),
+						$key, $value);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	return GalleryStatus::success();
+    }
+}
+
+?>

@@ -29,14 +29,14 @@
  *
  * @constant SUCCESS
  */
-define("SUCCESS", 0x00000000);
+define('SUCCESS', 0x00000000);
 
 /**
  * The operation had errors
  *
  * @constant ERROR
  */
-define("ERROR", 0x00000001);
+define('ERROR', 0x00000001);
 
 /**
  * A name collision happened in the filesystem or database as a result of this
@@ -45,7 +45,7 @@ define("ERROR", 0x00000001);
  *
  * @constant ERROR_COLLISION
  */
-define("ERROR_COLLISION", 0x00000002);
+define('ERROR_COLLISION', 0x00000002);
 
 /**
  * The object you're trying to access is no longer available.  Perhaps it was
@@ -53,7 +53,7 @@ define("ERROR_COLLISION", 0x00000002);
  *
  * @constant ERROR_MISSING_OBJECT
  */
-define("ERROR_MISSING_OBJECT", 0x00000004);
+define('ERROR_MISSING_OBJECT', 0x00000004);
 
 /**
  * The lock you're trying to acquire is currently in use and was not released
@@ -61,35 +61,35 @@ define("ERROR_MISSING_OBJECT", 0x00000004);
  *
  * @constant ERROR_LOCK_IN_USE
  */
-define("ERROR_LOCK_IN_USE", 0x00000008);
+define('ERROR_LOCK_IN_USE', 0x00000008);
 
 /**
  * One of the parameters passed to this function is bad.
  *
  * @constant ERROR_BAD_PARAMETER
  */
-define("ERROR_BAD_PARAMETER", 0x00000010);
+define('ERROR_BAD_PARAMETER', 0x00000010);
 
 /**
  * Missing a value necessary to continue
  *
  * @constant ERROR_MISSING_VALUE
  */
-define("ERROR_MISSING_VALUE", 0x00000020);
+define('ERROR_MISSING_VALUE', 0x00000020);
 
 /**
  * An unspecified database error occurred
  *
  * @constant ERROR_DATABASE_FAILURE
  */
-define("ERROR_DATABASE_FAILURE", 0x00000040);
+define('ERROR_DATABASE_FAILURE', 0x00000040);
 
 /**
  * A database operation was attempted with an invalid database connection
  *
  * @constant ERROR_DATABASE_CONNECTION
  */
-define("ERROR_DATABASE_CONNECTION", 0x00000080);
+define('ERROR_DATABASE_CONNECTION', 0x00000080);
 
 /**
  * You attempted to modify an object using an in-memory version that
@@ -97,105 +97,119 @@ define("ERROR_DATABASE_CONNECTION", 0x00000080);
  *
  * @constant ERROR_OBSOLETE_DATA
  */
-define("ERROR_OBSOLETE_DATA", 0x00000100);
+define('ERROR_OBSOLETE_DATA', 0x00000100);
 
 /**
  * You attempted an operation which requires a lock.
  *
  * @constant ERROR_LOCK_REQUIRED
  */
-define("ERROR_LOCK_REQUIRED", 0x00000200);
+define('ERROR_LOCK_REQUIRED', 0x00000200);
 
 /**
  * You attempted to acquire a lock illegally
  *
  * @constant ERROR_ILLEGAL_LOCK
  */
-define("ERROR_ILLEGAL_LOCK", 0x00000400);
+define('ERROR_ILLEGAL_LOCK', 0x00000400);
 
 /**
  * We tried a file operation on an unsupported file type
  *
  * @constant ERROR_UNSUPPORTED_FILE_TYPE
  */
-define("ERROR_UNSUPPORTED_FILE_TYPE", 0x00000800);
+define('ERROR_UNSUPPORTED_FILE_TYPE', 0x00000800);
 
 /**
  * You attempted an illegal operation on a deleted object
  *
  * @constant ERROR_DELETED_OBJECT
  */
-define("ERROR_DELETED_OBJECT", 0x00001000);
+define('ERROR_DELETED_OBJECT', 0x00001000);
 
 /**
  * You attempted an operation which had a bad path component
  *
  * @constant ERROR_BAD_PATH
  */
-define("ERROR_BAD_PATH", 0x00002000);
+define('ERROR_BAD_PATH', 0x00002000);
 
 /**
  * You attempted an operation which had a bad data type
  *
  * @constant ERROR_BAD_DATA_TYPE
  */
-define("ERROR_BAD_DATA_TYPE", 0x00004000);
+define('ERROR_BAD_DATA_TYPE', 0x00004000);
 
 /**
  * You attempted to add a child to a GalleryItem which can't have children
  *
  * @constant ERROR_ILLEGAL_CHILD
  */
-define("ERROR_ILLEGAL_CHILD", 0x00008000);
+define('ERROR_ILLEGAL_CHILD', 0x00008000);
 
 /**
  * An unspecified error occured while completing a graphics command.
  *
  * @constant ERROR_GRAPHICS_FAILURE
  */
-define("ERROR_GRAPHICS_FAILURE", 0x00010000);
+define('ERROR_GRAPHICS_FAILURE', 0x00010000);
 
 /**
  * We experienced a platform specific error (perhaps filesystem related)
  *
  * @constant ERROR_PLATFORM_FAILURE
  */
-define("ERROR_PLATFORM_FAILURE", 0x00020000);
+define('ERROR_PLATFORM_FAILURE', 0x00020000);
 
 /**
  * You did an operation on a derivative that is broken
  *
  * @constant ERROR_BROKEN_DERIVATIVE
  */
-define("ERROR_BROKEN_DERIVATIVE", 0x00040000);
+define('ERROR_BROKEN_DERIVATIVE', 0x00040000);
 
 /**
  * We tried an unsupported operation
  *
  * @constant ERROR_UNSUPPORTED_OPERATION
  */
-define("ERROR_UNSUPPORTED_OPERATION", 0x00080000);
+define('ERROR_UNSUPPORTED_OPERATION', 0x00080000);
 
 /**
  * We were unable to get a lock in the time allotted
  *
  * @constant ERROR_LOCK_TIMEOUT
  */
-define("ERROR_LOCK_TIMEOUT", 0x00100000);
+define('ERROR_LOCK_TIMEOUT', 0x00100000);
+
+/**
+ * Something went wrong when loading or activating a module
+ *
+ * @constant ERROR_BAD_MODULE
+ */
+define('ERROR_BAD_MODULE', 0x00200000);
+
+/**
+ * The module you tried to use requires configuration 
+ *
+ * @constant ERROR_CONFIGURATION_REQUIRED
+ */
+define('ERROR_CONFIGURATION_REQUIRED', 0x00400000);
 
 /**
  * The operation you attempted is unimplemented
  *
  * @constant ERROR_UNIMPLEMENTED
  */
-define("ERROR_UNIMPLEMENTED", 0x40000000);
+define('ERROR_UNIMPLEMENTED', 0x40000000);
 
 /**
  * An unknown error occurred
  *
  * @constant ERROR_UNKNOWN
  */
-define("ERROR_UNKNOWN", 0x80000000);
+define('ERROR_UNKNOWN', 0x80000000);
 
 /**
  * Global storage container and utility class for Gallery
@@ -382,6 +396,8 @@ class GalleryStatus {
      * @return string
      */
     function _getAsArray() {
+	global $gallery;
+	
 	$codes = array();
 
 	/* get_defined_constants() arrived in 4.1? */
@@ -399,8 +415,8 @@ class GalleryStatus {
 
 	$results = array();
 	$results[] = 'Error (' . join(', ', $codes) . ')';
-	
-	$base = dirname(dirname(dirname(__FILE__))) . '/';
+
+	$base = $gallery->getConfig('code.gallery.base');
 	for ($i = 0; $i < count($this->_fileName); $i++) {
 	    $results[] = 'in ' .
 		    str_replace($base, '', $this->_fileName[$i])  .

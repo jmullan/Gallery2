@@ -5,11 +5,11 @@
   extension-element-prefixes="saxon"
   version="1.0">
 
-  <xsl:strip-space elements="*"/>
   <xsl:output method="text"/>
   <xsl:variable name="tablePrefix">TABLE_PREFIX</xsl:variable>
   <xsl:variable name="columnPrefix">COLUMN_PREFIX</xsl:variable>
 
+  <!-- TABLE -->
   <xsl:template match="table">
     -- This file was automatically generated from an XSL template, which is
     -- why it looks so ugly.  Editting it by hand would be a bad idea.  If 
@@ -18,15 +18,35 @@
     --
 
     CREATE TABLE <xsl:value-of select="$tablePrefix"/><xsl:value-of select="table-name"/> (
-  <xsl:apply-templates select="column"/>
-  <xsl:if test="count(//table/key)">
+  <xsl:for-each select="column">
+    <xsl:call-template name="column"/>
+    <xsl:if test="position()!=last()">
+      ,
+    </xsl:if>
+  </xsl:for-each>
+
+  <xsl:if test="count(column) and (count(key) or count(index))">
     , 
   </xsl:if>
-  <xsl:apply-templates select="key"/>
-  <xsl:if test="count(//table/index)">
+
+  <xsl:for-each select="key">
+    UNIQUE KEY (<xsl:call-template name="key"/>)
+    <xsl:if test="position()!=last()">
+      ,
+    </xsl:if>
+  </xsl:for-each>
+
+  <xsl:if test="count(key) and count(index)">
     , 
   </xsl:if>
-  <xsl:apply-templates select="index" xmlns:saxon="http://icl.com/saxon"/>
+
+  <xsl:for-each select="index">
+    INDEX (<xsl:call-template name="index"/>)
+    <xsl:if test="position()!=last()">
+      ,
+    </xsl:if>
+  </xsl:for-each>
+
     ) TYPE=MyISAM;
 
     INSERT INTO <xsl:value-of select="$tablePrefix"/>Schema (
@@ -41,7 +61,115 @@
 
   </xsl:template>
 
-  <xsl:template match="column">
+  <!-- CHANGE -->
+  <xsl:template match="change">
+
+    <xsl:if test="count(add) or count(remove) or count(alter)">
+      ALTER TABLE <xsl:value-of select="$tablePrefix"/><xsl:value-of select="table-name"/>
+
+    <xsl:if test="count(add)">
+      <xsl:apply-templates select="add"/>
+    </xsl:if>
+
+    <xsl:if test="count(add) and (count(remove) or count(alter))">
+      , 
+    </xsl:if>
+    
+    <xsl:if test="count(remove)">
+      <xsl:apply-templates select="remove"/>
+      <xsl:if test="count(alter)">,</xsl:if>
+    </xsl:if>
+    
+    <xsl:if test="count(remove) and count(alter)">
+      , 
+    </xsl:if>
+    
+    <xsl:if test="count(alter)">
+      <xsl:apply-templates select="alter"/>
+    </xsl:if>
+      ;
+    </xsl:if>
+
+    UPDATE <xsl:value-of select="$tablePrefix"/>Schema 
+      SET <xsl:value-of select="$columnPrefix"/>major=<xsl:value-of select="schema-to/schema-major"/>,
+          <xsl:value-of select="$columnPrefix"/>minor=<xsl:value-of select="schema-to/schema-minor"/>
+      WHERE <xsl:value-of select="$columnPrefix"/>name='<xsl:value-of select="table-name"/>' AND
+          <xsl:value-of select="$columnPrefix"/>major=<xsl:value-of select="schema-from/schema-major"/> AND
+          <xsl:value-of select="$columnPrefix"/>minor=<xsl:value-of select="schema-from/schema-minor"/>;
+
+  </xsl:template>
+
+  <!-- Change/add -->
+  <xsl:template match="add">
+    
+    <xsl:for-each select="column">
+      ADD COLUMN <xsl:call-template name="column"/>
+    <xsl:if test="position()!=last()">
+      ,
+    </xsl:if>
+    </xsl:for-each>
+
+    <xsl:if test="count(column) and (count(key) or count(index))">,</xsl:if>
+
+    <xsl:for-each select="key">
+      ADD UNIQUE KEY (<xsl:call-template name="key"/>)
+    <xsl:if test="position()!=last()">
+      ,
+    </xsl:if>
+    </xsl:for-each>
+  
+    <xsl:if test="count(key) and count(index)">,</xsl:if>
+    
+    <xsl:for-each select="index">
+      ADD INDEX (<xsl:call-template name="index"/>)
+    <xsl:if test="position()!=last()">
+      ,
+    </xsl:if>
+    </xsl:for-each>
+  </xsl:template>
+
+  <!-- Change/remove -->
+  <xsl:template match="remove">
+    <xsl:for-each select="column">
+      DROP COLUMN COLUMN_PREFIX<xsl:value-of select="column-name"/>
+    <xsl:if test="position()!=last()">
+      ,
+    </xsl:if>
+    </xsl:for-each>
+
+    <xsl:if test="count(column) and (count(key) or count(index))">,</xsl:if>
+
+    <xsl:for-each select="index">
+      DROP INDEX COLUMN_PREFIX<xsl:value-of select="column-name"/>
+    <xsl:if test="position()!=last()">
+      ,
+    </xsl:if>
+    </xsl:for-each>
+
+    <xsl:if test="count(key) and count(index)">
+      ,
+    </xsl:if>
+    
+    <xsl:for-each select="key">
+      DROP KEY COLUMN_PREFIX<xsl:value-of select="column-name"/>
+    <xsl:if test="position()!=last()">
+      ,
+    </xsl:if>
+    </xsl:for-each>
+  </xsl:template>
+
+  <!-- Change/alter -->
+  <xsl:template match="alter">
+    <xsl:for-each select="column">
+      MODIFY COLUMN <xsl:call-template name="column"/>
+    <xsl:if test="position()!=last()">
+      ,
+    </xsl:if>
+    </xsl:for-each>
+  </xsl:template>
+
+  <!-- General purpose column definition -->
+  <xsl:template name="column">
     <xsl:value-of select="$columnPrefix"/><xsl:value-of select="column-name"/> 
   <xsl:choose>
     <xsl:when test="column-type='INTEGER'">
@@ -78,14 +206,11 @@
   <xsl:if test="not-null">
     NOT NULL
   </xsl:if>
-  <xsl:if test="position()!=last()">
-    ,
-  </xsl:if>
   </xsl:template>
 
-  <xsl:template match="key">
+  <!-- General purpose key definition -->
+  <xsl:template name="key">
     <xsl:variable name="keyColumnName" saxon:assignable="yes"/>
-    UNIQUE KEY (
     <xsl:for-each select="column-name">
       <xsl:value-of select="$columnPrefix"/><xsl:value-of select="."/>
 
@@ -102,15 +227,11 @@
         ,
       </xsl:if>
     </xsl:for-each>
-    )
-    <xsl:if test="position()!=last()">
-      ,
-    </xsl:if>
   </xsl:template>
   
-  <xsl:template match="index">
+  <!-- General purpose index definition -->
+  <xsl:template name="index">
     <xsl:variable name="indexColumnName" saxon:assignable="yes"/>
-    INDEX (
     <xsl:for-each select="column-name">
       <xsl:value-of select="$columnPrefix"/><xsl:value-of select="."/>
 
@@ -123,10 +244,6 @@
         </xsl:if>
       </xsl:for-each>
     </xsl:for-each>
-    )
-    <xsl:if test="position()!=last()">
-      ,
-    </xsl:if>
   </xsl:template>
-  
+
 </xsl:stylesheet>

@@ -9,18 +9,23 @@
   COLUMN_PREFIXlockId
       int(11)
     
-    ,
-  COLUMN_PREFIXreadEntityId
+      ,
+    COLUMN_PREFIXreadEntityId
       int(11)
     
-    ,
-  COLUMN_PREFIXwriteEntityId
+      ,
+    COLUMN_PREFIXwriteEntityId
       int(11)
     
-    ,
-  COLUMN_PREFIXrequest
+      ,
+    COLUMN_PREFIXrequest
       int(11)
     
+    , 
+  
+    INDEX (COLUMN_PREFIXlockId)
+    
+
     ) TYPE=MyISAM;
 
     INSERT INTO TABLE_PREFIXSchema (

@@ -106,6 +106,20 @@ class GalleryUser_core extends GalleryEntity {
      */
     var $_email;
 
+    /**
+     * The User's language preference
+     *
+     * @g2 <member>
+     * @g2   <member-name>language</member-name>
+     * @g2   <member-type>STRING</member-type>
+     * @g2   <member-size>MEDIUM</member-size>
+     * @g2 </member>
+     *
+     * @var string $_language
+     * @access private
+     */
+    var $_language;
+
     /*
      * ****************************************
      *                 Methods
@@ -206,9 +220,16 @@ class GalleryUser_core extends GalleryEntity {
 	}
 
 	if ($newlyCreated) {
+
+	    list($ret, $allUserGroupId) =
+		$gallery->getModuleParameter('core', 'id.allUserGroup');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	
 	    /* Add her to the all user group */
 	    $ret = GalleryUserGroupMap::addUserToGroup($this->getId(),
-                $gallery->getConfig('core.id.allUserGroup'));
+						       $allUserGroupId);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }

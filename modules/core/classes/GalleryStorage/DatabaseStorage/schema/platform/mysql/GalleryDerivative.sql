@@ -11,24 +11,24 @@
     
     NOT NULL
   
-    ,
-  COLUMN_PREFIXderivativeSourceId
+      ,
+    COLUMN_PREFIXderivativeSourceId
       int(11)
     
-    ,
-  COLUMN_PREFIXderivativeCommands
+      ,
+    COLUMN_PREFIXderivativeCommands
       varchar(
       
           255
         
       )
     
-    ,
-  COLUMN_PREFIXderivativeSize
+      ,
+    COLUMN_PREFIXderivativeSize
       int(11)
     
-    ,
-  COLUMN_PREFIXderivativeFileExtension
+      ,
+    COLUMN_PREFIXderivativeFileExtension
       varchar(
       
           128
@@ -37,10 +37,9 @@
     
     , 
   
-    INDEX (
-    COLUMN_PREFIXid
-    )
+    INDEX (COLUMN_PREFIXid)
     
+
     ) TYPE=MyISAM;
 
     INSERT INTO TABLE_PREFIXSchema (

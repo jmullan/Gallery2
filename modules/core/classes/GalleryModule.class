@@ -1,0 +1,164 @@
+<?php
+/*
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2002 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+/**
+ * Module meta-info container
+ *
+ * This is a container for information about a given module.
+ *
+ * @version $Id$
+ * @package GalleryCore
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+class GalleryModule {
+
+    /**
+     * The name of this module
+     * 
+     * @var string _name
+     * @access private
+     */
+    var $_name;
+
+    /**
+     * The description of this module
+     * 
+     * @var string _description
+     * @access private
+     */
+    var $_description;
+
+    /**
+     * The version of this module
+     * 
+     * @var string _version
+     * @access private
+     */
+    var $_version;
+
+    /**
+     * Do any initialization required for this module to run.
+     *
+     * @return object GalleryStatus a status code
+     */
+    function init() {
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Activate this module
+     *
+     * @return object GalleryStatus a status code
+     */
+    function activate() {
+	global $gallery;
+
+	/*
+	 * Make sure that we don't need configuration before we allow
+	 * activation.
+	 */
+	list ($ret, $needs) = $this->needsConfiguration();
+        if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	if ($needs) {
+	    return GalleryStatus::error(ERROR_CONFIGURATION_REQUIRED, __FILE__, __LINE__);
+	} else {
+	    $ret = GalleryModuleMap::activate($this->getName());
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    return GalleryStatus::success();
+	}
+    }
+
+    /**
+     * Deactivate this module
+     *
+     * @return object GalleryStatus a status code
+     */
+    function deactivate() {
+	return GalleryModuleMap::deactivate($this->getName());
+    }
+
+    /**
+     * Does this module require configuration?
+     *
+     * @return array object GalleryStatus a status code
+     *               boolean
+     */
+    function needsConfiguration() {
+	global $gallery;
+	
+	list ($ret, $version) = $gallery->getModuleParameter($this->getName(),
+							     'version');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* If the versions don't match, we need to configure */
+	if ($version != $this->getVersion()) {
+	    return array(GalleryStatus::success(), true);
+	} else {
+	    return array(GalleryStatus::success(), false);
+	}
+    }
+    
+    /**
+     * Get the name of the Administration view for this module
+     *
+     * @param the type of view requested
+     * @return array object GalleryStatus a status code
+     *               string a module::view pair
+     */
+    function getAdminView() {
+	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
+    }
+
+    /* Getters and setters below */
+
+    function setName($name) {
+	$this->_name = $name;
+    }
+
+    function getName() {
+	return $this->_name;
+    }
+    
+    function setDescription($description) {
+	$this->_description = $description;
+    }
+
+    function getDescription() {
+	return $this->_description;
+    }
+
+    function setVersion($version) {
+	$this->_version = $version;
+    }
+
+    function getVersion() {
+	return $this->_version;
+    }
+
+}
+?>

@@ -257,7 +257,12 @@ class GalleryDerivative_core extends GalleryChildEntity {
 	global $gallery;
 
 	/* Derivatives live in the cache directory */
-	$cacheDir = $gallery->getConfig('core.directory.cache');
+	list ($ret, $cacheDir) =
+	    $gallery->getModuleParameter('core', 'data.gallery.cache');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	$firstDigitOfId = substr($this->getId(), 0, 1);
 	$cacheDir = $cacheDir . '/' . $firstDigitOfId;
 	

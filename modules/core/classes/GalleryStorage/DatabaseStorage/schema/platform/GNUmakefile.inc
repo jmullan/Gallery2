@@ -1,4 +1,4 @@
-TOOLDIR     = ../../../../../tools
+TOOLDIR     = ../../../../../../../../lib/tools
 SRCDIR      = ../../xml-out
 XMLFILES    = $(wildcard $(SRCDIR)/*.xml)
 

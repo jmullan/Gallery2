@@ -19,12 +19,12 @@
  */
 
 /**
- * A NetPBM GalleryGraphics
+ * A NetPBM version of GalleryGraphics
  *
  * This class implements the GalleryGraphics API using NetPBM.
  *
  * @version $Id$
- * @package GalleryGraphics
+ * @package NetPbmGraphics
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 class NetPbmGraphics extends GalleryGraphics {
@@ -34,49 +34,20 @@ class NetPbmGraphics extends GalleryGraphics {
      * ****************************************
      */
 
-    /**
-     * The name of the pnmtojpeg command.  Default is 'pnmtojpeg'
-     * NetPBM replaced the 'ppmtojpeg' command with 'pnmtojpeg' at some point.
-     *
-     * @var string $_pnmToJpeg
-     * @access private
-     */
-    var $_pnmToJpeg = 'pnmtojpeg';
-
-    /**
-     * The path to the NetPBM directory.
-     *
-     * @var string $_netPbmPath;
-     * @access private
-     */
-    var $_netPbmPath;
-
-    /**
-     * Constructor
-     *
-     * @param array configuration information
-     */
-    function NetPbmGraphics($config) {
-	assert('!empty($config)');
-
-	$this->GalleryGraphics($config);
-	$this->_netPbmPath = $config['path'];
-
-	if (!empty($config['pnmtojpeg'])) {
-	    $this->_pnmToJpeg = $config['pnmtojpeg'];
-	}
+    function NetPbmGraphics() {
+	/* Configure our support */
+	$this->_supportedFunctions = (IMAGE_FUNCTION_RESIZE |
+				      IMAGE_FUNCTION_SCALE |
+				      IMAGE_FUNCTION_ROTATE |
+				      IMAGE_FUNCTION_CROP |
+				      IMAGE_FUNCTION_PROPERTIES);
+	$this->_supportedFileExtensions = array('jpg',
+						'gif',
+						'png');
     }
 
     /**
-     * Calculate the dimensions of the image file
-     *
-     * Calculate the dimensions of the image file
-     * 
-     * @access public
-     * @param string a file name
-     * @param string an optional file extension hint
-     * @return array object GalleryStatus a status code,
-     *               int the image width, int the image height
+     * @see GalleryGraphics::getImageDimensions()
      */
     function getImageDimensions($filename, $fileExtension=false) {
 
@@ -106,18 +77,7 @@ class NetPbmGraphics extends GalleryGraphics {
     }
 
     /**
-     * Resize the image to the target size specified
-     *
-     * Resize the image located at sourceFilename and write the results in      
-     * destFilename.  Resize the image to the dimensions provided, ignoring
-     * changes to the aspect ratio.
-     *	
-     * @access public
-     * @param string the source file name
-     * @param string the destination file name (it will be overwritten if it exists)
-     * @param string int the target width
-     * @param string int the target height
-     * @return object GalleryStatus a status code
+     * @see GalleryGraphics::resizeImage()
      */
     function resizeImage($sourceFilename, $destFilename, $width, $height) {
 	if (!$this->isSupportedFunction(IMAGE_FUNCTION_RESIZE)) {
@@ -134,18 +94,7 @@ class NetPbmGraphics extends GalleryGraphics {
     }
 
     /**
-     * Scale the image to the target size specified
-     *
-     * Resize the image located at sourceFilename and write the results in      
-     * destFilename.  Scale the image such that it fits within the bounding
-     * box specified by $targetSize x $targetSize, while maintaining the
-     * aspect ratio.
-     *	
-     * @access public
-     * @param string the source file name
-     * @param string the destination file name (it will be overwritten if it exists)
-     * @param string int the target size
-     * @return object GalleryStatus a status code
+     * @see GalleryGraphics::scaleImage()
      */
     function scaleImage($sourceFilename, $destFilename, $targetSize) {
 	if (!$this->isSupportedFunction(IMAGE_FUNCTION_SCALE)) {
@@ -161,16 +110,7 @@ class NetPbmGraphics extends GalleryGraphics {
     }
 		
     /**
-     * Rotate the image by the degrees specified
-     *
-     * Rotate the image located at sourceFilename and write the results in      
-     * destFilename.
-     *	
-     * @access public
-     * @param string the source file name
-     * @param string the destination file name (it will be overwritten if it exists)
-     * @param string int the degrees to be rotated (one of -90, 180, 90)
-     * @return object GalleryStatus a status code
+     * @see GalleryGraphics::rotateImage()
      */
     function rotateImage($sourceFilename, $destFilename, $degrees) {
 	if (!$this->isSupportedFunction(IMAGE_FUNCTION_ROTATE)) {
@@ -182,21 +122,7 @@ class NetPbmGraphics extends GalleryGraphics {
     }
 		
     /**
-     * Crop the image by the position and dimensions specified
-     *
-     * Crop the image located at sourceFilename and write the results in 
-     * destFilename.  The upper left corner of the subsection is
-     * at the x, y coordinate provided and the lower right is
-     * x+width, y+height.
-     *	
-     * @access public
-     * @param string the source file name
-     * @param string the destination file name (it will be overwritten if it exists)
-     * @param int x-axis origin
-     * @param int y-axis origin
-     * @param int width of crop rectangle
-     * @param int height of crop rectangle
-     * @return object GalleryStatus a status code
+     * @see GalleryGraphics::cropImage()
      */
     function cropImage($sourceFilename, $destFilename, $x, $y, $width, $height) {
 	if (!$this->isSupportedFunction(IMAGE_FUNCTION_CROP)) {
@@ -211,14 +137,7 @@ class NetPbmGraphics extends GalleryGraphics {
     }
 
     /**
-     * Is this image valid?
-     *
-     * Is this image valid?  Can it be handled by this toolkit?
-     * 
-     * @access public
-     * @param string the image file name
-     * @return array object a status code
-     *               boolean true if the filename represents an image file
+     * @see GalleryGraphics::isValidImage()
      */
     function isValidImage($filename) {
 
@@ -234,27 +153,6 @@ class NetPbmGraphics extends GalleryGraphics {
 	}
 
 	return array(GalleryStatus::success(), true);
-    }
-
-    /**
-     * Get any extended image properties associated with this image
-     *
-     * Some file types have embedded data.  Eg, JPEG can have EXIF
-     * data.
-     * 
-     * @access public
-     * @param string the image file name
-     * @return array object GalleryStatus a status code
-     *               array a set of key value pairs
-     */
-    function getProperties($filename) {
-	if (!$this->isSupportedFunction(IMAGE_FUNCTION_PROPERTIES)) {
-	    return GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION,
-					__FILE__, __LINE__);
-	}
-	
-	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__),
-		     null);
     }
 
     /**
@@ -306,6 +204,7 @@ class NetPbmGraphics extends GalleryGraphics {
 
 	$success = $platform->rename($tmpFilename, $destFilename);
 	if (!$success) {
+	    $gallery->debug("Failed renaming $tmpFilename -> $destFilename");
 	    return GalleryStatus::error(ERROR_PLATFORM_FAILURE,
 					__FILE__, __LINE__);
 	} else {
@@ -359,6 +258,19 @@ class NetPbmGraphics extends GalleryGraphics {
      *               array 1 or more string commands
      */
     function _convertFromPnmCmd($filename, $fileExtension) {
+	global $gallery;
+
+	list ($ret, $pnmtojpeg) =
+	    $gallery->getModuleParameter('netpbm', 'pnmtojpeg');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	list ($ret, $jpegQuality) =
+	    $gallery->getModuleParameter('netpbm', 'jpegQuality');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 
 	switch($fileExtension) {
 	case 'png':
@@ -369,8 +281,8 @@ class NetPbmGraphics extends GalleryGraphics {
 
 	case 'jpg':
 	case 'jpeg':
-	    $cmd = array($this->_pnmCmd($this->_pnmToJpeg),
-			 '--quality=' . $this->getJpegImageQuality(),
+	    $cmd = array($this->_pnmCmd($pnmtojpeg),
+			 '--quality=' . $jpegQuality,
 			 '>',
 			 $filename);
 	    break;
@@ -393,6 +305,16 @@ class NetPbmGraphics extends GalleryGraphics {
     }
 
     /**
+     * Execute the command.  Flatten the command array first.
+     *
+     * @see GalleryUtilities::exec
+     */
+    function _exec($cmdArray) {
+	$cmdArray = $this->_extractCommands($cmdArray);
+	return GalleryUtilities::exec($cmdArray);
+    }	
+
+    /**
      * Return the full path to the NetPBM command
      *
      * @access private
@@ -405,7 +327,62 @@ class NetPbmGraphics extends GalleryGraphics {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	return $this->_netPbmPath . '/' . $cmd;
+	list ($ret, $netPbmPath) =
+	    $gallery->getModuleParameter('netpbm', 'path');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	   
+	return $netPbmPath . '/' . $cmd;
     }
+
+    /**
+     * Extract a single array of commands from a multilevel array of commands
+     *
+     * The command array may wind up being multilevel, eg:
+     *
+     * array(
+     *   array('cmd', 'args'),
+     *   array('cmd', 'args'),
+     *   array(
+     *     array('cmd', 'args'),
+     *     array('cmd', 'args')
+     *   ),
+     * )
+     *
+     * Extract the commands as a single level array:
+     *
+     * array(
+     *   array('cmd', 'args'),
+     *   array('cmd', 'args'),
+     *   array('cmd', 'args'),
+     *   array('cmd', 'args')
+     * )
+     *
+     * While maintaining the order.
+     *
+     * @param array a multilevel set of commands
+     * @param array a single level set of commands
+     */
+    function _extractCommands($cmdArray, $level=0) {
+
+	$results = array();
+	$arrayElements = 0;
+	foreach (array_values($cmdArray) as $cmd) {
+	    if (is_array($cmd)) {
+		$results = array_merge($results, $this->_extractCommands($cmd, $level+1));
+		$arrayElements++;
+	    } else {
+		array_push($results, $cmd);
+	    }
+	}
+
+	if ($arrayElements == count($cmdArray)) {
+	    return $results;
+	} else {
+	    return array($results);
+	}
+    }
+    
 }
 ?>

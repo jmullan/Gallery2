@@ -27,9 +27,14 @@ class CreateAndDeleteUserTestCase extends TestCase {
 	$gallery->debug('See what groups the user is in');
 	$this->_dumpGroups($user->getId());
 
+	list ($ret, $groupId) =
+	    $gallery->getModuleParameter('core', 'id.adminGroup');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
 	/* Make the user an admin */
 	$gallery->debug('Add the user to the admin group');
-	$groupId = $gallery->getConfig('core.id.adminGroup');
 	$ret = GalleryUserGroupMap::addUserToGroup($user->getId(), $groupId);
 	
 	/* Check groups again */

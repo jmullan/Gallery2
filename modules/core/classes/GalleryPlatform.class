@@ -221,10 +221,14 @@ class GalleryPlatform {
 	    unlink("$newname.bak");
 	}
 	if (file_exists("$newname")) {
-	    return rename($newname, "$newname.bak") &&
-		    rename($oldname, $newname);
+	    return
+		rename($newname, "$newname.bak") &&
+		copy($oldname, $newname) &&
+		unlink($oldname);
 	} else {
-	    return rename($oldname, $newname);
+	    return
+		copy($oldname, $newname) &&
+		unlink($oldname);
 	}
     }
 
@@ -330,13 +334,9 @@ class GalleryPlatform {
      * @return bool true on success, false on failure
      * @access public
      */
-    function mkdir($path, $perms=false) {
+    function mkdir($path, $perms=0700) {
 	global $gallery;
 
-	if (empty($perms)) {
-	    $perms = $gallery->getConfig('core.permissions.directory');
-	}
-	
 	$path = $this->importPath($path);
 	$gallery->debug(sprintf("mkdir(%s, %o)", $path, $perms));
 	

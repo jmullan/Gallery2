@@ -150,7 +150,11 @@ class ClassicLayout /* extends GalleryLayout */ {
 	}
 
 	/* Tell Smarty about everything we've learned */
-	$smarty = $gallery->getSmarty();
+	list ($ret, $smarty) = $gallery->getSmarty();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
 	$smarty->assign('item', $item->getMemberData());
 	$smarty->assign('navigator', $navigator);
 	$smarty->assign('children', $children);
@@ -181,7 +185,11 @@ class ClassicLayout /* extends GalleryLayout */ {
     function _renderSingle($item, $properties) {
 	global $gallery;
 
-	$smarty = $gallery->getSmarty();
+	list ($ret, $smarty) = $gallery->getSmarty();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
 	$smarty->assign('layout', $properties);
 	$smarty->assign('item', $item->getMemberData());
 
@@ -287,10 +295,10 @@ class ClassicLayout /* extends GalleryLayout */ {
     function _getLayoutUrl($file) {
 	global $gallery;
 
-	$dirbase = $gallery->getConfig('core.directory.base');
+	$dirbase = $gallery->getConfig('code.gallery.base');
 	$relative = str_replace($dirbase, '', dirname($file));
 
-	$urlbase = $gallery->getConfig('core.url.base');
+	$urlbase = $gallery->getConfig('url.gallery.base');
 	if (!empty($urlbase)) {
 	    return $urlbase . '/' . $relative;
 	} else {

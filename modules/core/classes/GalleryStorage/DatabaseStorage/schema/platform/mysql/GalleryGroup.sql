@@ -11,12 +11,12 @@
     
     NOT NULL
   
-    ,
-  COLUMN_PREFIXgroupType
+      ,
+    COLUMN_PREFIXgroupType
       int(11)
     
-    ,
-  COLUMN_PREFIXgroupName
+      ,
+    COLUMN_PREFIXgroupName
       varchar(
       
           32
@@ -25,22 +25,17 @@
     
     , 
   
-    UNIQUE KEY (
-    COLUMN_PREFIXgroupName
-    )
+    UNIQUE KEY (COLUMN_PREFIXgroupName)
     
     , 
   
-    INDEX (
-    COLUMN_PREFIXid
-    )
+    INDEX (COLUMN_PREFIXid)
     
       ,
     
-    INDEX (
-    COLUMN_PREFIXgroupName
-    )
+    INDEX (COLUMN_PREFIXgroupName)
     
+
     ) TYPE=MyISAM;
 
     INSERT INTO TABLE_PREFIXSchema (

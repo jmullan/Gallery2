@@ -56,12 +56,30 @@ class Gallery {
     var $_config;
 
     /**
+     * A transitory registry used to share data between modules (eg, you can
+     * register an implementation in the registry so that a factory can find
+     * it).  You can only add to the registry, you can't delete.
+     *
+     * @var arrayobject GalleryRegistry $_registry
+     * @access private
+     */
+    var $_registry;
+
+    /**
      * The current GalleryGraphics
      *
      * @var object GalleryGraphics $_graphics
      * @access private
      */
     var $_graphics;
+
+    /**
+     * Information about Gallery modules
+     *
+     * @var array
+     * @access private
+     */
+    var $_modules;
 
     /**
      * Storage for all session variables.  
@@ -147,10 +165,22 @@ class Gallery {
      *
      */
     function Gallery() {
-	$this->_locks = array();
-
+	$this->reset();
+	$this->_registry = array();
+	    
 	/* Set up a shutdown function to release any hanging locks. */
 	register_shutdown_function(array(&$this, '_releaseHangingLocks'));
+    }
+
+    /**
+     * Reset persistent information
+     *
+     * This should only be called if we remove and re-install the
+     * GalleryStorage instance.
+     */
+    function reset() {
+	$this->_locks = array();
+	$this->_modules = array();
     }
 
     /**
@@ -271,9 +301,9 @@ class Gallery {
 	$ret = $reply[0];
 	$storage =& $reply[1];
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	return $storage->search($query, $data);
     }
 
@@ -319,12 +349,15 @@ class Gallery {
 	 * Create the graphics object on demand.
 	 */
 	if (empty($this->_graphics)) {
-	    $type = $this->getConfig('core.graphics.type');
-	    $config = $this->getConfig('core.graphics.config');
-	    list($ret, $this->_graphics) =
-		    GalleryGraphicsFactory::newInstance($type, $config);
+	    list($ret, $type) = $this->getModuleParameter('core', 'graphics.type');
 	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    
+	    list($ret, $this->_graphics) =
+		GalleryGraphicsFactory::newInstance($type);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
 	
@@ -637,8 +670,8 @@ class Gallery {
      *               object GalleryStorage a storage instance
      */
     function getUninitializedStorage() {
-	$type = $this->getConfig('core.storage.type');
-	$config = $this->getConfig('core.storage.config');
+	$type = $this->getConfig('storage.type');
+	$config = $this->getConfig('storage.config');
 	
 	return GalleryStorageFactory::newInstance($type, $config);
     }
@@ -672,19 +705,31 @@ class Gallery {
      *
      * Create and configure one, if it does not exist.
      *
-     * @return object Smarty
+     * @param string optional compile directory
+     * @return array object GalleryStatus a status code
+     *               object Smarty
      */
-    function getSmarty() {
+    function getSmarty($compileDir=false) {
 	if (empty($this->_smarty)) {
 	    /*
 	     * Load and configure Smarty.
 	     */
-	    require_once($this->_config['smarty.directory.base'] . 'Smarty.class.php');
+	    require_once($this->_config['code.smarty.base'] . 'Smarty.class.php');
 	    $this->_smarty = new Smarty;
-	    $this->_smarty->template_dir = $this->_config['smarty.directory.templates'];
-	    $this->_smarty->compile_dir = $this->_config['smarty.directory.templates_c'];
-	    $this->_smarty->cache_dir = $this->_config['smarty.directory.cache'];
-	    $this->_smarty->config_dir = $this->_config['smarty.directory.config'];
+	    $this->_smarty->template_dir = $this->_config['config.smarty.templates'];
+
+	    /* These are module params */
+	    if (empty($compileDir)) {
+		list ($ret, $smartyTmp) =
+		    $this->getModuleParameter('core', 'data.smarty.base');
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		$this->_smarty->compile_dir = $smartyTmp . '/templates_c';
+	    } else {
+		$this->_smarty->compile_dir = $compileDir;
+	    }
+
 	    if ($this->getDebug()) {
 		$this->_smarty->debugging = true;
 	    }
@@ -694,7 +739,252 @@ class Gallery {
 	    $this->_smarty->register_function('galleryText', 'galleryTranslator');
 	}
 
-	return $this->_smarty;
+	return array(GalleryStatus::success(), $this->_smarty);
+    }
+
+    /**
+     * Get the status of all modules
+     *
+     * @return array object GalleryStatus as status code
+     *                      array string module names
+     */
+    function getModuleStatus() {
+
+	if (!isset($this->_modules['_status'])) {
+	    list ($ret, $modules) = GalleryModuleMap::getModuleList();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    list ($ret, $platform) = $this->getPlatform();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    /* Scan modules directory for installed modules */
+	    $modulesDir = $this->getConfig('code.gallery.modules');
+	    if ($dir = $platform->opendir($modulesDir)) {
+		while ($moduleName = readdir($dir)) {
+		    if ($moduleName{0} == '.') {
+			continue;
+		    }
+
+		    $path = $modulesDir . $moduleName . '/module.inc';
+		    if ($platform->file_exists($path)) {
+			$modules[$moduleName]['installed'] = 1;
+		    }
+		}
+		closedir($dir);
+	    }
+
+	    /* Find and remove modules that are active, but not installed */
+	    foreach ($modules as $moduleName => $moduleStatus) {
+		if (!isset($moduleStatus['installed'])) {
+		    $this->debug("Module $moduleName no longer installed");
+		    unset($modules[$moduleName]);
+		}
+	    }
+
+	    $this->_modules['_status'] = $modules;
+	}
+
+	return array(GalleryStatus::success(),
+		     $this->_modules['_status']);
+    }
+
+    /**
+     * Set a module instance in the modules table.
+     *
+     * This should only be used to set the CoreModule, since it can't be loaded
+     * with the loadModule() call for chicken-and-egg reasons.
+     *
+     * @param object GalleryModule a module
+     */
+    function setModule($moduleName, $instance) {
+	$this->_modules[$moduleName]['instance'] = $instance;
+    }
+
+    /**
+     * Load and initialize the given module
+     *
+     * @param string the module name
+     * @return array object GalleryStatus a status code
+     *               object GalleryModule the module
+     */
+    function loadModule($moduleName) {
+
+	if (isset($this->_modules[$moduleName]['instance'])) {
+	    return array(GalleryStatus::success(),
+			 $this->_modules[$moduleName]['instance']);
+	}
+
+	/* Figure out where the module lives */
+	$galleryBase = $this->getConfig('code.gallery.modules');
+	$moduleFile = $galleryBase . $moduleName . '/module.inc';
+
+	list ($ret, $platform) = $this->getPlatform();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if (!$platform->file_exists($moduleFile)) {
+	    $this->debug('Missing file: ' . $moduleFile);
+	    return array(GalleryStatus::error(ERROR_BAD_MODULE,
+					      __FILE__, __LINE__),
+			 null);
+	}
+
+	/* Load it */
+	require_once($moduleFile);
+
+	/* Try to instantiate it */
+	$moduleClass = $moduleName . 'Module';
+	if (!class_exists($moduleClass)) {
+	    return array(GalleryStatus::error(ERROR_BAD_MODULE,
+					      __FILE__, __LINE__),
+			 null);
+	}
+	$module = new $moduleClass();
+
+	/* Initialize it */
+	$ret = $module->init();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Store it in our table */
+	$this->_modules[$moduleName]['instance'] = $module;
+
+	return array(GalleryStatus::success(), $module);
+    }
+
+    /**
+     * Get the list of all available modules
+     *
+     * @return array object GalleryStatus a status code
+     *               string module names
+     */
+    function getAllModuleNames() {
+	$modulesDir = $this->getConfig('code.gallery.modules');
+
+	list ($ret, $platform) = $this->getPlatform();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
+	if ($dir = $platform->opendir($modulesDir)) {
+	    while (($file = readdir($dir)) != false) {
+		$path = $modulesDir . $file;
+		if (preg_match('/^(\.|CVS)/', $file)) {
+		    continue;
+		}
+		
+		if ($platform->is_dir($path)) {
+		    $moduleNames[] = $file;
+		}
+	    }
+	    closedir($dir);
+	}
+
+	return array(GalleryStatus::success(), $moduleNames);
+    }
+
+    /**
+     * Retrieve all the parameters for a module
+     *
+     * @param string the module name
+     * @return array object GalleryStatus a status code
+     *               string a value
+     */
+    function getAllModuleParameters($moduleName) {
+	if (!isset($this->_modules[$moduleName]['parameters'])) {
+	    list ($ret, $this->_modules[$moduleName]['parameters']) =
+		GalleryModuleParameterMap::getAllParameters($moduleName);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+
+	return array(GalleryStatus::success(),
+		     $this->_modules[$moduleName]['parameters']);
+    }
+
+    /**
+     * Retrieve a module parameter
+     *
+     * @param string the module name
+     * @param string the parameter name
+     * @return array object GalleryStatus a status code
+     *               string a value
+     */
+    function getModuleParameter($moduleName, $parameterName) {
+	if (empty($moduleName) || empty($parameterName)) {
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER,
+					      __FILE__, __LINE__),
+			 null);
+	}
+	
+	/* Load all parameters for the module, if necessary */
+	list ($ret, $params) = $this->getAllModuleParameters($moduleName);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
+	/* Return the value, or null if the param doesn't exist */
+	if (!isset($params[$parameterName])) {
+	    return array(GalleryStatus::success(), null);
+	} else {
+	    return array(GalleryStatus::success(), $params[$parameterName]);
+	}
+    }
+
+    /**
+     * Set a module parameter
+     *
+     * @param string the module name
+     * @param string the parameter name
+     * @param string the value
+     * @return object GalleryStatus a status code
+     */
+    function setModuleParameter($moduleName, $parameterName, $parameterValue) {
+	if (empty($moduleName) || empty($parameterName)) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
+					__FILE__, __LINE__);
+	}
+
+	/*
+	 * Figure out if this is an insert or an update.  It's an insert if
+	 * we don't have an existing parameter by that name.  Otherwise, it's
+	 * an update.
+	 */
+	if (!isset($this->_modules[$moduleName]['parameters'])) {
+	    list ($ret, $this->_modules[$moduleName]['parameters']) =
+		GalleryModuleParameterMap::getAllParameters($moduleName);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	if (!isset($this->_modules[$moduleName]['parameters'][$parameterName])) {
+	    $ret = GalleryModuleParameterMap::addParameter($moduleName,
+							   $parameterName,
+							   $parameterValue);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	} else {
+	    $ret = GalleryModuleParameterMap::updateParameter($moduleName,
+							      $parameterName,
+							      $parameterValue);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	/* Update our local cache */
+	$this->_modules[$moduleName]['parameters'][$parameterName] = $parameterValue;
+
+	return GalleryStatus::success();
     }
 
     /**
@@ -716,6 +1006,33 @@ class Gallery {
 	    $i++;
 	}
 	return call_user_func_array('sprintf', $args);
+    }
+
+    /**
+     * Add any number of new entries to the registry
+     *
+     * @param string the key
+     * @param mixed the value, ...
+     */
+    function addRegistry($key, $value) {
+	$count = func_num_args();
+	$key = func_get_arg(0);
+	for ($i = 1; $i < $count; $i++) {
+	    $this->_registry[$key][] = func_get_arg($i);
+	}
+    }
+
+    /**
+     * Return the registry values associated with the given key
+     *
+     * @param string the key
+     * @return mixed the value
+     */
+    function lookupRegistry($key) {
+	if (empty($this->_registry[$key])) {
+	    $this->_registry[$key] = array();
+	}
+	return $this->_registry[$key];
     }
 
     /**
@@ -787,6 +1104,13 @@ class Gallery {
      */
     function getDebugBuffer() {
 	return $this->_debugBuffer;
+    }
+
+    /**
+     * Clear any buffered debug output
+     */
+    function clearDebugBuffer() {
+	$this->_debugBuffer = '';
     }
 
     /**

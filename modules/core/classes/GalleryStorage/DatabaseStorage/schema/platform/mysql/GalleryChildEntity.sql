@@ -11,16 +11,15 @@
     
     NOT NULL
   
-    ,
-  COLUMN_PREFIXparentId
+      ,
+    COLUMN_PREFIXparentId
       int(11)
     
     , 
   
-    INDEX (
-    COLUMN_PREFIXid
-    )
+    INDEX (COLUMN_PREFIXid)
     
+
     ) TYPE=MyISAM;
 
     INSERT INTO TABLE_PREFIXSchema (

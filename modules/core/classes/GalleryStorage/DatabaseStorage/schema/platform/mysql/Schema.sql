@@ -13,14 +13,15 @@
         
       )
     
-    ,
-  COLUMN_PREFIXmajor
+      ,
+    COLUMN_PREFIXmajor
       int(11)
     
-    ,
-  COLUMN_PREFIXminor
+      ,
+    COLUMN_PREFIXminor
       int(11)
     
+
     ) TYPE=MyISAM;
 
     INSERT INTO TABLE_PREFIXSchema (

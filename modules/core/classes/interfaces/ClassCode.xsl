@@ -36,7 +36,7 @@
  * file, then you should edit the XSL template.
  *
  * @version $Id$
- * @package GalleryCoreInterfaces
+ * @package @@package@@
  * @author Bharat Mediratta &lt;bharat@menalto.com&gt;
  */
 

@@ -36,7 +36,8 @@ if (!empty($controllerName)) {
     if (sizeof($regs) == 3) {
 	$module = $regs[1];
 	$class = $regs[2];
-	require_once($gallery->getConfig('core.directory.modules') .
+
+	require_once($gallery->getConfig('code.gallery.modules') .
 		     $module . '/' . $class . '.inc');
 	$controllerClassName = $class . 'Controller';
 	$controller = new $controllerClassName;
@@ -49,6 +50,7 @@ if (!empty($controllerName)) {
 	 * eventually push this out into its own view
 	 */
 	if ($ret->isError()) {
+	    $ret = $ret->wrap(__FILE__, __LINE__);
 	    print $ret->getAsHtml();
 	    return;
 	}
@@ -96,9 +98,9 @@ function galleryTranslator($params, &$smarty) {
  * embedded, we need to put in the relative path from the outer app to the
  * Gallery directory (eg for PostNuke it might be 'modules/gallery')
  */
-$gallery->setConfig('core.url.base', '');
+$gallery->setConfig('url.gallery.base', '');
 
-require_once($gallery->getConfig('core.directory.modules') .
+require_once($gallery->getConfig('code.gallery.modules') .
 	     $module . '/' . $class . '.inc');
 $viewClassName = $class . 'View';
 $view = new $viewClassName();
@@ -140,7 +142,13 @@ if ($showGlobal) {
     }
 
     /* Display the global output */
-    $smarty = $gallery->getSmarty();
+    list ($ret, $smarty) = $gallery->getSmarty();
+    if ($ret->isError()) {
+	$ret = $ret->wrap(__FILE__, __LINE__);
+	print $ret->getAsHtml();
+	return;
+    }
+
     $smarty->template_dir = dirname(__FILE__) . '/templates';
     $smarty->assign('master', $master);
     $smarty->display('global.tpl');

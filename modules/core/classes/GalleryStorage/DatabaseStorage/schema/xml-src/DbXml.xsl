@@ -5,7 +5,7 @@
   <xsl:output 
     method="xml" 
     indent="yes"
-    doctype-system="../../../../tools/dtd/DatabaseDefinition2.0.dtd"/>
+    doctype-system="../../../../../../../lib/tools/dtd/DatabaseTableDefinition2.0.dtd"/>
 
   <xsl:template match="class">
     <table>

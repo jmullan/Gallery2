@@ -4,7 +4,7 @@ class RemoveStoreTestCase extends TestCase {
 
     function getDescription() {
 	global $gallery;
-	$config = $gallery->getConfig('core.storage.config');
+	$config = $gallery->getConfig('storage.config');
 	return "Drop the G2 database called '$config[database]'";
     }
 
@@ -16,7 +16,15 @@ class RemoveStoreTestCase extends TestCase {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	
-	return $storage->removeStore();
+	$ret = $storage->removeStore();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Reset the Gallery instance */
+	$gallery->reset();
+
+	return GalleryStatus::success();
     }
 }
 

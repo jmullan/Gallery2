@@ -1,113 +1,131 @@
-<head>
-<style type="text/css">
-<!--
-body {font-family: helvetica, arial, geneva, sans-serif; font-size: 10pt}
-th {font-family: helvetica, arial, geneva, sans-serif; font-size: 10pt; font-weight: bold; background-color: #D3DCE3}
-td {font-family: helvetica, arial, geneva, sans-serif; font-size: 10pt}
-form {font-family: helvetica, arial, geneva, sans-serif; font-size: 10pt}
-h1 {font-family: helvetica, arial, geneva, sans-serif; font-size: 16pt; font-weight: bold}
-A:link {font-family: helvetica, arial, geneva, sans-serif; font-size: 10pt; text-decoration: none; color: #0000ff}
-A:visited {font-family: helvetica, arial, geneva, sans-serif; font-size: 10pt; text-decoration: none; color: #0000ff}
-A:hover {font-family: helvetica, arial, geneva, sans-serif; font-size: 10pt; text-decoration: underline; color: #FF0000}
-A:link.nav {font-family: helvetica, arial, geneva, sans-serif; color: #000000}
-A:visited.nav {font-family: helvetica, arial, geneva, sans-serif; color: #000000}
-A:hover.nav {font-family: helvetica, arial, geneva, sans-serif; color: #FF0000}
-.nav {font-family: helvetica, arial, geneva, sans-serif; color: #000000}
-//-->
-</style>
-</head>
 <?php
-require('../../init.php');
-require('TestCase.class');
+require_once('../../init.php');
+require_once('TestCase.class');
+require_once('TestCase/ActivateModule.class');
+require_once('TestCase/DeactivateModule.class');
 
-$testDir = 'TestCase';
-if ($dir = opendir($testDir)) {
-    while (($file = readdir($dir)) != false) {
-	if (preg_match('/.class$/', $file)) {
-	    $files[] = $file;
-	    require_once($testDir . '/' . $file);
-	}
-    }
-    closedir($dir);
+$modulesDir = $gallery->getConfig('code.gallery.modules');
+$tests = array();
 
-    foreach ($files as $file) {
-	$name = str_replace('.class', '', $file);
-	$className = $name . 'TestCase';
-	$class = new $className();
-	$testTable[$name] = $class;
-    }
-} else {
-    print "Unable to open test dir";
+list ($ret, $platform) = $gallery->getPlatform();
+if ($ret->isError()) {
+    $ret = $ret->wrap(__FILE__, __LINE__);
+    print $ret->getAsHtml();
+    return;
 }
 
-print '<center>';
-print '<h1> <a href=index.php>Test Harness</a> </h1>';
-print '<table border=1 cellspacing=0 cellpadding=5>';
-print '<tr>';
-print '<th bgcolor=#9999CC> Name';
-print '<th bgcolor=#9999CC> Timing';
-print '<th bgcolor=#9999CC> Description';
-print '</tr>';
+/*
+ * Load the test cases for every module (active or not).
+ */
+list ($ret, $moduleNames) = $gallery->getAllModuleNames();
+if ($ret->isError()) {
+    $ret = $ret->wrap(__FILE__, __LINE__);
+    print $ret->getAsHtml();
+    return;
+}
 
-ksort($testTable);
-$evenOdd = 0;
-foreach ($testTable as $name => $class) {
-    print '<tr>';
-    if ($evenOdd++ % 2) {
-	$bgColor = '#EEEEEE';
-    } else {
-	$bgColor = '#CCCCCC';
+foreach ($moduleNames as $moduleName) {
+    $testDir = $modulesDir . $moduleName . '/test/TestCase';
+
+    /* Add our implicit tests */
+    foreach (array('ActivateModule', 'DeactivateModule') as $implicitTestName) {
+	$className = $implicitTestName . 'TestCase';
+	$testCase = new $className($moduleName);
+	$test = array('moduleName' => $moduleName,
+		      'testName' => $implicitTestName,
+		      'class' => $testCase,
+		      'description' => $testCase->getDescription());
+	$tests[$moduleName][$implicitTestName] = $test;
     }
-    print '<td bgColor=' . $bgColor . '>';
-    print '<a href=index.php?testName=' . $name . '>';
-    print $name;
-    print '</a>';
-    print '</td>';
-    print '<td bgColor=' . $bgColor . '>';
-    $iters = $class->getIterations();
-    if (empty($iters)) {
-	print '&nbsp;';
-    } else {
-	foreach($iters as $iter) {
-	    print '<a href=index.php?testName=' . $name . "&iterations=$iter>";
-	    print "[" . shorten($iter) . "]";
-	    print '</a>';
+
+    $files = array();
+    if ($platform->is_dir($testDir) && $dir = $platform->opendir($testDir)) {
+	while (($file = readdir($dir)) != false) {
+	    if (preg_match('/.class$/', $file)) {
+		$files[] = $file;
+		require_once($testDir . '/' . $file);
+	    }
+	}
+	closedir($dir);
+
+	/* Add our explicit tests */
+	foreach ($files as $file) {
+	    $testName = str_replace('.class', '', $file);
+	    $className = $testName . 'TestCase';
+	    $testCase = new $className();
+	    $test = array('moduleName' => $moduleName,
+			  'testName' => $testName,
+			  'class' => $testCase,
+			  'description' => $testCase->getDescription());
+	    foreach ($testCase->getIterations() as $iter) {
+		$test['iterations'][$iter] = array('count' => $iter,
+						   'title' => shorten($iter));
+	    }
+	    $tests[$moduleName][$testName] = $test;
 	}
     }
-    print '</td>';
-    print '<td bgColor=' . $bgColor . '>';
-    print $class->getDescription();
-    print '</td>';
-    print '</tr>';
 }
- 
-print '</table>';
-print '</center>';
 
-print '<br>';
-print '<hr>';
+/*
+ * Alphabetize the module names and test names
+ */
+ksort($tests);
+foreach ($tests as $moduleName => $testArray) {
+    ksort($tests[$moduleName]);
+}
 
-if (!empty($HTTP_GET_VARS['testName'])) {
-    ob_start();
+/* Suppress preliminary debug output */
+if (0) {
+    print "<pre>";
+    print_r($gallery->getDebugBuffer());
+    print "</pre>";
+}
+$gallery->clearDebugBuffer();
+
+$results = array();
+if (!empty($HTTP_GET_VARS['testName']) &&
+    !empty($HTTP_GET_VARS['moduleName'])) {
+    
+    $testName = $HTTP_GET_VARS['testName'];
+    $moduleName = $HTTP_GET_VARS['moduleName'];
+    
     $iterations = 1;
     if (!empty($HTTP_GET_VARS['iterations'])) {
 	$iterations = $HTTP_GET_VARS['iterations'];
     }
-    
-    $ret = runTest($HTTP_GET_VARS['testName'], $iterations);
-    $buf = ob_get_contents();
-    ob_end_clean();
 
-    if ($ret->isError()) {
-	print 'Overall Status: ' . $ret->getAsHtml() . '<br>';
-    } else {
-	print 'Overall Status: Success<br>';
-    }
-
-    print '<hr>';
-
-    print $buf;
+    $results = $results + runTest($moduleName, $testName, $iterations);
 }
+
+$rollup = array();
+if (sizeof($results) > 1) {
+    $rollup['elapsed'] = 0.0;
+    foreach ($results as $result) {
+	if (!empty($result['error']) && empty($rollup['error'])) {
+	    $rollup['error'] = $result['error'];
+	}
+	$rollup['elapsed'] += $result['timing']['elapsed'];
+    }
+}
+
+/*
+ * Get a Smarty instance and specify a local directory in the setup directory as the
+ * compile target.  This allows us to use Smarty before the core module has
+ * been configured.
+ */
+$setup = $gallery->getConfig('code.gallery.setup');
+list ($ret, $smarty) = $gallery->getSmarty($setup . 'smarty/templates_c');
+if ($ret->isError()) {
+    $ret = $ret->wrap(__FILE__, __LINE__);
+    print $ret->getAsHtml();
+    return;
+}
+
+$smarty->template_dir = dirname(__FILE__) . '/templates';
+$smarty->assign('tests', $tests);
+$smarty->assign('results', $results);
+$smarty->assign('rollup', $rollup);
+$smarty->display('index.tpl');
 
 function shorten($number) {
     $number = str_replace("000000", "M", $number);
@@ -117,54 +135,53 @@ function shorten($number) {
     return $number;
 }
 
-function runTest($testName, $iterations) {
-    global $testTable;
+function runTest($moduleName, $testName, $iterations) {
     global $gallery;
-    
-    $class = $testTable[$testName];
+    global $tests;
 
+    $results = array();
+    $class = $tests[$moduleName][$testName]['class'];
+
+    /* Satisfy all dependencies first */
     $dependencies = $class->getDependencies();
-    foreach ($dependencies as $test) {
-	$ret = runTest($test, $iterations);
-	if ($ret->isError()) {
-	    return $ret;
-	}
+    foreach ($dependencies as $dependency) {
+	$results = array_merge($results,
+			       runTest($dependency['moduleName'],
+				       $dependency['testName'],
+				       $iterations));
     }
 
-    print '<b>Test: ' . $testName . '</b>';
-    print '<br>';
+    /* Run the test */
+    ob_start();
 
-    print '<b>Start</b><br>';
     $gallery->setTimeLimit(30);
-    $ret1 = $class->start($iterations);
-    if ($ret1->isSuccess()) {
-	print 'Status: Success<br>';
-    } else {
-	print 'Status: ' . $ret1->getAsHtml();
-    }
-
-    print '<br>';
-    
-    print '<b>Cleanup</b><br>';
+    list ($timing, $ret1) = $class->start($iterations);
     $ret2 = $class->cleanup();
-    if ($ret2->isSuccess()) {
-	print 'Status: Success<br>';
+
+    $result = array();
+    $result['moduleName'] = $moduleName;
+    $result['testName'] = $testName;
+    $result['iterations'] = $iterations;
+    $result['timing'] = $timing;
+    $result['debug'] = $gallery->getDebugBuffer();
+    $gallery->clearDebugBuffer();
+    
+    $result['output'] = ob_get_contents();
+    ob_end_clean();
+
+    if ($ret1->isError() || $ret2->isError()) {
+	if ($ret1->isError()) {
+	    $ret1 = $ret1->wrap(__FILE__, __LINE__);
+	    $result['error'] = $ret1->getAsHtml();
+	} else {
+	    $ret2 = $ret2->wrap(__FILE__, __LINE__);
+	    $result['error'] = $ret2->getAsHtml();
+	}
     } else {
-	print 'Status: ' . $ret2->getAsHtml();
+	$result['error'] = null;
     }
+    $results[] = $result;
 
-    print '<hr>';
-    print '<b>Debug Output</b>';
-    print '<pre>';
-    foreach ($class->getDebugOutput() as $line) {
-	print $line;
-    }
-    print '</pre>';
-
-    if ($ret1->isError()) {
-	return $ret1;
-    }
-
-    return $ret2;
+    return $results;
 }
 ?>

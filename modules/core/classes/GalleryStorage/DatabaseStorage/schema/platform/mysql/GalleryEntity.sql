@@ -11,32 +11,32 @@
     
     NOT NULL
   
-    ,
-  COLUMN_PREFIXcreationTimestamp
+      ,
+    COLUMN_PREFIXcreationTimestamp
       datetime
     
     NOT NULL
   
-    ,
-  COLUMN_PREFIXdataVersion
+      ,
+    COLUMN_PREFIXdataVersion
       int(11)
     
     NOT NULL
   
-    ,
-  COLUMN_PREFIXmodificationTimestamp
+      ,
+    COLUMN_PREFIXmodificationTimestamp
       datetime
     
     NOT NULL
   
-    ,
-  COLUMN_PREFIXserialNumber
+      ,
+    COLUMN_PREFIXserialNumber
       int(11)
     
     NOT NULL
   
-    ,
-  COLUMN_PREFIXentityType
+      ,
+    COLUMN_PREFIXentityType
       varchar(
       
           32
@@ -47,10 +47,9 @@
   
     , 
   
-    INDEX (
-    COLUMN_PREFIXid
-    )
+    INDEX (COLUMN_PREFIXid)
     
+
     ) TYPE=MyISAM;
 
     INSERT INTO TABLE_PREFIXSchema (

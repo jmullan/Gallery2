@@ -1,7 +1,10 @@
-TOOLDIR     = ../../../../tools
-CLASSDIR    = ../../..
-TMPDIR      = tmp
-OUTDIR      = ../xml-out
+GALLERYDIR ?= ../../../../../../..
+TOOLDIR ?= $(GALLERYDIR)/lib/tools
+CLASSDIR ?= ../../../..
+XSLFILE ?= $(GALLERYDIR)/modules/core/classes/GalleryStorage/DatabaseStorage/schema/xml-src/DbXml.xsl
+TMPDIR ?= tmp
+EXTRAXML ?= $(wildcard *.xml)
+OUTDIR ?= ../xml-out
 
 include $(TOOLDIR)/GNUmakefile.inc
 
@@ -9,7 +12,9 @@ CLASSFILES  = $(wildcard $(CLASSDIR)/*.class)
 XMLFILES = $(patsubst $(CLASSDIR)/%.class,$(OUTDIR)/%.xml,$(CLASSFILES))
 
 xml: $(TMPDIR) $(OUTDIR) $(XMLFILES)
-	cp *.xml $(OUTDIR)
+ifneq ($(EXTRAXML),)
+	cp $(EXTRAXML) $(OUTDIR)
+endif
 
 $(TMPDIR):
 	mkdir $(TMPDIR)
@@ -17,9 +22,9 @@ $(TMPDIR):
 $(OUTDIR):
 	mkdir $(OUTDIR)
 
-$(OUTDIR)/%.xml: $(TMPDIR)/%.xml DbXml.xsl
+$(OUTDIR)/%.xml: $(TMPDIR)/%.xml $(XSLFILE)
 	if [ -f $< ]; then \
-		$(SAXON) $< DbXml.xsl > $@; \
+		$(SAXON) $< $(XSLFILE) > $@; \
 		$(VALIDATOR) $@; \
 	fi
 

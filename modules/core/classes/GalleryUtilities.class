@@ -309,5 +309,57 @@ class GalleryUtilities {
 	}
 	return join(', ', $markers);
     }
+
+    /**
+     * Execute a set of commands to perform an image operation
+     *
+     * @return array object GalleryStatus a status code
+     *               array any resulting output
+     * @access private
+     */
+    function exec($cmdArray) {
+	global $gallery;
+	list($ret, $platform) = $gallery->getPlatform();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Build up a platform-correct version of the command and arguments */
+	$command = '';
+	foreach ($cmdArray as $cmdAndArgs) {
+	    if (strlen($command)) {
+		$command .= ' | ';
+	    }
+	    
+	    if (is_array($cmdAndArgs)) {
+		$cmd = $cmdAndArgs[0];
+		$args = array_slice($cmdAndArgs, 1);
+
+		/* Add the platform-specific version of the command */
+		$command .= $platform->executablePath($cmd);
+
+		/* And then each argument */
+		foreach ($args as $arg) {
+		    /* Escape whitespace */
+		    $arg = str_replace(' ', '\\ ', $arg);
+
+		    $command .= ' ' . $arg;
+		}
+	    }
+	}
+
+	$results = array();
+	$success = $platform->exec($command, $results);
+	if ($success) {
+	    $ret = GalleryStatus::success();
+	} else {
+	    $ret = GalleryStatus::error(ERROR_GRAPHICS_FAILURE,
+					__FILE__, __LINE__);
+	    $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return array($ret, $results);
+    }
+    
 }
 ?>

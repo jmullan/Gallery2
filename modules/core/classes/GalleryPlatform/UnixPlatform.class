@@ -80,14 +80,25 @@ class UnixPlatform extends GalleryPlatform {
 
 	/* If we're in debug mode, redirect STDERR to a file */
 	if ($gallery->getDebug()) {
-	    $tempDir = $gallery->getConfig('core.directory.temp');
-	    $debugFile = tempnam($tempDir, 'g2dbg');
-	    $cmd = "($cmd) 2>$debugFile";
+	    list ($ret, $tmpDir) =
+		$gallery->getModuleParameter('core', 'data.gallery.temp');
+	    if ($ret->isError()) {
+		$gallery->debug('Unable to look up core::data.gallery.temp param');
+	    } else {
+		$debugFile = tempnam($tmpDir, 'g2dbg');
+		$cmd = "($cmd) 2>$debugFile";
+	    }
 	}
 
 	$gallery->debug("Executing: $cmd");
 	exec($cmd, $results, $status);
-	$expected = $gallery->getConfig('core.expectedStatus');
+
+	list ($ret, $expected) =
+	    $gallery->getModuleParameter('core', 'exec.expectedStatus');
+	if ($ret->isError()) {
+	    $gallery->debug('Unable to look up core::exec.expectedStatus param');
+	    $expected = 0;
+	}
 
 	/* Read any debug output and dump it out */
 	if ($gallery->getDebug()) {
