@@ -265,6 +265,8 @@ class DatabaseStorage extends GalleryStorage {
      *               mixed one GalleryEntity or an array of GalleryEntities
      */
     function loadEntities($ids) {
+	global $gallery;
+	
 	if ($this->_connectionStatus != DATABASE_STATUS_CONNECTED) {
 	    return array(GalleryStatus::error(ERROR_DATABASE_CONNECTION,
 					      __FILE__, __LINE__),
@@ -287,6 +289,12 @@ class DatabaseStorage extends GalleryStorage {
 	/* Separate the ids by type */
 	$classNames = array();
 	for ($i = 0; $i < sizeof($ids); $i++) {
+	    if (empty($types[$i])) {
+		$gallery->debug("Missing object for id $ids[$i]");
+		return array(GalleryStatus::error(ERROR_MISSING_OBJECT,
+						  __FILE__, __LINE__),
+			     null);
+	    }
 	    $classNames[$types[$i]][] = $ids[$i];
 	}
 
@@ -303,7 +311,7 @@ class DatabaseStorage extends GalleryStorage {
 	    $where = array();
 	    $types = array();
 	    $callbacks = array();
-	    $markers = $this->_makeMarkers(sizeof($targetIds));
+	    $markers = GalleryUtilities::makeMarkers(sizeof($targetIds));
 	    foreach ($memberInfo['members'] as $columnName => $columnInfo) {
 		$tableName = $this->_prefixTableName($columnInfo['class']);
 		$types[] = $columnInfo['type'];
@@ -476,7 +484,7 @@ class DatabaseStorage extends GalleryStorage {
 
 		$columns = array_keys($columnChanges);
 		$data = array_values($columnChanges);
-		$markers = $this->_makeMarkers(sizeof($columnChanges));
+		$markers = GalleryUtilities::makeMarkers(sizeof($columnChanges));
 		$query = 'INSERT INTO ' . $tableName . ' (';
 		$query .= join(', ', $columns);
 		$query .= ') VALUES (' . $markers . ')';
@@ -734,7 +742,7 @@ class DatabaseStorage extends GalleryStorage {
 	     * locked.
 	     */
 	    $writeEntityIdCol = $this->_prefixColumnName('writeEntityId');
-	    $markers = $this->_makeMarkers(sizeof($entityIds));
+	    $markers = GalleryUtilities::makeMarkers(sizeof($entityIds));
 	    $query = 'SELECT COUNT(*) FROM ' . $lockTable . ' ' .
 		    'WHERE ' . $writeEntityIdCol . ' IN (' . $markers . ') ';
 	    $data = $entityIds;
@@ -853,7 +861,7 @@ class DatabaseStorage extends GalleryStorage {
 	     */
 	    $readEntityIdCol = $this->_prefixColumnName('readEntityId');
 	    $writeEntityIdCol = $this->_prefixColumnName('writeEntityId');
-	    $markers = $this->_makeMarkers(sizeof($entityIds));
+	    $markers = GalleryUtilities::makeMarkers(sizeof($entityIds));
 	    $query = 'SELECT COUNT(*) FROM ' . $lockTable . ' ' .
 		    'WHERE ' . $readEntityIdCol . ' IN (' . $markers . ') ' .
 		    'OR ' . $writeEntityIdCol . ' IN (' . $markers . ')';
@@ -966,7 +974,7 @@ class DatabaseStorage extends GalleryStorage {
 	$lockTable = $this->_prefixTableName("Lock");
 
 	$lockIdCol = $this->_prefixColumnName('lockId');
-	$markers = $this->_makeMarkers(sizeof($lockIds));
+	$markers = GalleryUtilities::makeMarkers(sizeof($lockIds));
 	$query = 'DELETE FROM ' . $lockTable . ' ' .
 		'WHERE ' . $lockIdCol . ' IN (' . $markers . ')';
 	$data = $lockIds;
@@ -1149,7 +1157,7 @@ class DatabaseStorage extends GalleryStorage {
 	    $data[] = $value;
 	}
 
-	$markers = $this->_makeMarkers(sizeof($columns));
+	$markers = GalleryUtilities::makeMarkers(sizeof($columns));
 	$query = 'INSERT INTO ' . $tableName . ' (';
 	$query .= join(', ', $columns);
 	$query .= ') VALUES (' . $markers . ')';
@@ -1346,7 +1354,6 @@ class DatabaseStorage extends GalleryStorage {
 	 */
 	foreach ($sqlFiles as $fileName) {
 	    $fileName = $sqlDir . '/' . $fileName;
-	    print "> $fileName<br>";
 	    
 	    if ($fd = $platform->fopen($fileName, "r")) {
 		$buffer = null;
@@ -1458,7 +1465,7 @@ class DatabaseStorage extends GalleryStorage {
 	    $idCol = $this->_prefixColumnName('id');
 	    $entityTypeCol = $this->_prefixColumnName('entityType');
 	    $table = $this->_prefixTableName('GalleryEntity');
-	    $markers = $this->_makeMarkers(sizeof($checkIds));
+	    $markers = GalleryUtilities::makeMarkers(sizeof($checkIds));
 	    $query = 'SELECT ' . $idCol . ', ' . $entityTypeCol .
 		    ' FROM ' . $table .
 		    ' WHERE ' . $idCol . ' IN (' . $markers . ')';
@@ -1527,20 +1534,6 @@ class DatabaseStorage extends GalleryStorage {
      */
     function _hasCapability($capabilityName) {
 	return !empty($this->_capabilities[$capabilityName]);
-    }
-
-    /**
-     * Return a string of ? markers
-     *
-     * @param int the number of markers to return
-     * @access private
-     */
-    function _makeMarkers($count) {
-	$markers = array();
-	for ($i = 0; $i < $count; $i++) {
-	    $markers[$i] = '?';
-	}
-	return join(', ', $markers);
     }
 
     /**
