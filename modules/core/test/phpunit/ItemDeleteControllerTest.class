@@ -1,0 +1,123 @@
+<?php
+/*
+ * $RCSfile
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * ItemDelete controller tests
+ */
+class ItemDeleteControllerTest extends GalleryControllerTestCase {
+
+    function ItemDeleteControllerTest($methodName) {
+	$this->GalleryControllerTestCase($methodName, 'core:ItemDelete');
+    }
+
+    function setUp() {
+	global $gallery;
+
+	parent::setUp();
+	
+	list ($ret, $this->_rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    function tearDown() {
+	global $gallery;
+	
+	parent::tearDown();
+    }
+
+    /**
+     * Create a random album and verify that we can delete it.
+     */
+    function testDeleteItem() {
+	global $gallery;
+
+
+	/* Create a random album */
+	list ($ret, $album) = $this->_createRandomAlbum($this->_rootId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('itemId', $album->getId());
+	GalleryUtilities::putRequestVariable('form.action.delete', 1);
+
+	/* Perform the request and verify that we succeeded */
+	list ($ret, $results) = $this->_controller->handleRequest();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertRedirect(array('view' => 'core:ItemAdmin',
+				    'itemId' => $album->getParentId()),
+			      $results);
+
+	/* Make sure the album is actually gone */
+	$this->_verifyMissing($album->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    /**
+     * Test deleting the root album We should get a bad parameter error
+     */
+    function testDeleteRootAlbum() {
+	global $gallery;
+
+	/* Use invalid inputs */
+	GalleryUtilities::putRequestVariable('itemId', $this->_rootId);
+	GalleryUtilities::putRequestVariable('form.action.delete', 1);
+
+	/* Perform the request and verify that we failed */
+	list ($ret, $results) = $this->_controller->handleRequest();
+	if (!($ret->getErrorCode() & ERROR_BAD_PARAMETER)) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    /**
+     * Test deleting a random item that doesn't exist.  We should get a
+     * permission denied (since the permission check happens before we even
+     * verify that it's a valid item to prevent information leakage)
+     */
+    function testDeleteBogusItem() {
+	/* Use invalid inputs */
+	GalleryUtilities::putRequestVariable('itemId', 5000+rand());
+	GalleryUtilities::putRequestVariable('form.action.delete', 1);
+
+	/* Perform the request and verify that we failed */
+	list ($ret, $results) = $this->_controller->handleRequest();
+	if (!($ret->getErrorCode() & ERROR_PERMISSION_DENIED)) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+    
+}
+?>

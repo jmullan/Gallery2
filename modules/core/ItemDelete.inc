@@ -67,9 +67,7 @@ class ItemDeleteController extends GalleryController {
 	}
 	if ($item->getId() == $rootId) {
 	    $gallery->debug("Can't delete the root album");
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER,
-					      __FILE__, __LINE__),
-			 null);
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
 	}
 	
 	if (isset($form['action']['delete'])) {
