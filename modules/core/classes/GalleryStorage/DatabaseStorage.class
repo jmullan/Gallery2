@@ -897,9 +897,34 @@ class DatabaseStorage extends GalleryStorage {
 					__FILE__, __LINE__);
 	}
 
-	// XXX: implement this
-	return GalleryStatus::error(ERROR_UNIMPLEMENTED,
-				    __FILE__, __LINE__);
+	$this->_traceStart();
+	
+	/*
+	 * Get our persistent and meta info for this class
+	 */
+	$metaInfo = $this->_metaInfo->describeClass($nucleus->getObjectType());
+	$idCol = $this->prefixColumnName('id');
+
+	$tables = array();
+	foreach ($metaInfo['members'] as $columnName => $columnInfo) {
+	    $class = strtolower($columnInfo['class']);
+	    $tables[DATABASE_TABLE_PREFIX . $class] = 1;
+	}
+
+	foreach ($tables as $tableName => $junk) {
+	    $query = 'DELETE FROM ' . $tableName .
+		    ' WHERE ' . $idCol . '=?';
+	    $data = array($nucleus->getId());
+	    $recordSet = $this->_db->Execute($query, $data);
+	    if (!$recordSet) {
+		$this->_traceStop();
+		return GalleryStatus::error(ERROR_DATABASE_FAILURE,
+					    __FILE__, __LINE__);
+	    }
+	}
+	    
+	$this->_traceStop();
+	return GalleryStatus::success();
     }
 
     /**
