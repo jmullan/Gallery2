@@ -81,7 +81,9 @@ class GalleryCommentSearch extends GallerySearchInterface_1_0 {
             AND
             [GalleryPermissionMap::groupId] = [GalleryUserGroupMap::groupId]))
           AND
-          [GalleryComment::comment] LIKE ?
+          ([GalleryComment::subject] LIKE ?
+           OR
+           [GalleryComment::comment] LIKE ?)
           AND
 	  [GalleryPermissionMap::permission] & ? = ?
         ';
@@ -89,6 +91,7 @@ class GalleryCommentSearch extends GallerySearchInterface_1_0 {
 	static $query = '
 	SELECT
 	  DISTINCT([GalleryChildEntity::id]),
+          [GalleryComment::subject],
           [GalleryComment::comment],
           [GalleryComment::date],
           [GalleryUser::fullName],
@@ -109,7 +112,9 @@ class GalleryCommentSearch extends GallerySearchInterface_1_0 {
             AND
             [GalleryPermissionMap::groupId] = [GalleryUserGroupMap::groupId]))
           AND
-          [GalleryComment::comment] LIKE ?
+          ([GalleryComment::subject] LIKE ?
+           OR
+           [GalleryComment::comment] LIKE ?)
           AND
 	  [GalleryPermissionMap::permission] & ? = ?
 	ORDER BY
@@ -120,6 +125,7 @@ class GalleryCommentSearch extends GallerySearchInterface_1_0 {
 	$data = array();
 	$data[] = $gallery->getActiveUserId();
 	$data[] = $gallery->getActiveUserId();
+	$data[] = '%' . $criteria . '%';
 	$data[] = '%' . $criteria . '%';
 	$data[] = $storage->convertIntToBits($commentBits);
 	$data[] = $storage->convertIntToBits($commentBits);
@@ -144,20 +150,22 @@ class GalleryCommentSearch extends GallerySearchInterface_1_0 {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	$text['subject'] = $module->translate('Subject');
 	$text['comment'] = $module->translate('Comment');
 	$text['commenter'] = $module->translate('Commenter');
 
 	$searchResults = array();
 	while ($result = $results->nextResult()) {
 	    $fields = array();
-	    $fields[] = array('key' => $text['comment'], 'value' => $result[1]);
+	    $fields[] = array('key' => $text['subject'], 'value' => $result[1]);
+	    $fields[] = array('key' => $text['comment'], 'value' => $result[2]);
 	    
-	    if (!empty($result[5])) {
-		$fields[] = array('key' => $text['commenter'], 'value' => $result[3]);
-	    } else {
+	    if (!empty($result[6])) {
 		$fields[] = array('key' => $text['commenter'], 'value' => $result[4]);
+	    } else {
+		$fields[] = array('key' => $text['commenter'], 'value' => $result[5]);
 	    }
-	    $searchResults[] = array('itemId' => (int)$result[5],
+	    $searchResults[] = array('itemId' => (int)$result[6],
 				     'fields' => $fields);
 	}
 
