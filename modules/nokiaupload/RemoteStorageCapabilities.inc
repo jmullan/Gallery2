@@ -49,8 +49,8 @@ class RemoteStorageCapabilitiesView extends GalleryView {
      * @see GalleryView::renderImmediate()
      */
     function renderImmediate($status, $error) {
-	LogFile::mark('RemoteStorageCapabilitiesView');
-	LogFile::writeRequest();
+	global $gallery;
+	ImageUploadHelper::logRequest('RemoteStorageCapabilitiesView');
 
 	$capabilities = ImageUploadHelper::getRSCapabilities();
 
@@ -66,7 +66,7 @@ class RemoteStorageCapabilitiesView extends GalleryView {
 	    $reply = NOKIAUPLOAD_ERR_NOERR . "\r\n" . implode('', $capabilities);
 	}
 
-	LogFile::write("sending:\n$reply");
+	$gallery->debug("Sending:\n$reply");
 
 	header('Content-Length: ' . strlen($reply));
 	print $reply;

@@ -39,8 +39,7 @@ class LoginController extends GalleryController {
      * @see GalleryController::handleRequest()
      */
     function handleRequest($form) {
-	LogFile::mark('LoginController');
-	LogFile::writeRequest();
+	ImageUploadHelper::logRequest('LoginController');
 
 	$results['delegate'] = array('view' => 'nokiaupload:Login');
 	$results['status'] = ImageUploadHelper::doLogin();
@@ -72,8 +71,9 @@ class LoginView extends GalleryView {
      * @see GalleryView::renderImmediate()
      */
     function renderImmediate($status, $error) {
-	LogFile::mark('LoginView');
-	LogFile::write('$status = ' . print_r($status, true));
+	global $gallery;
+	$gallery->debug("##### LoginView #####\n\$status = ");
+	$gallery->debug_r($status);
 
 	$reply = array($status['success'] . "\r\n");
 	$reply[] = 'Version=' . NOKIAUPLOAD_PROTOCOLVERSION . "\r\n";
@@ -98,7 +98,7 @@ class LoginView extends GalleryView {
 	}
 
 	$reply = implode('', $reply);
-	LogFile::write("Sending:\n$reply");
+	$gallery->debug("Sending:\n$reply");
 
 	header('Content-Length: ' . strlen($reply));
 	print $reply;

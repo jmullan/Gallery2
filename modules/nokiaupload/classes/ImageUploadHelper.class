@@ -42,11 +42,6 @@ define('NOKIAUPLOAD_ERR_TOOBIG', '3');  // Too large image.
 /* Directory Listing (section 5.6) */
 define('NOKIAUPLOAD_ERR_DIRLIST', '2');
 
-/*
- * Load required class
- */
-GalleryCoreApi::requireOnce(dirname(__FILE__) . '/LogFile.class');
-
 /**
  * @version $Revision$ $Date$
  * @package NokiaUpload
@@ -68,8 +63,7 @@ class ImageUploadHelper {
      */
     function doLogin() {
 	global $gallery;
-
-	LogFile::mark('LoginHelper');
+	$gallery->debug('### LoginHelper ###');
 
 	/* The default status. */
 	$status = array();
@@ -80,16 +74,16 @@ class ImageUploadHelper {
 
 	list ($ret, $user) = GalleryCoreApi::fetchUserByUsername($username);
 	if ($ret->isError()) {
-	    LogFile::error("Couldn't fetch user by user name.\n" . $ret->getAsText());
+	    $gallery->debug("ERROR: Couldn't fetch user by user name.\n" . $ret->getAsText());
 	    return $status;
 	}
 
 	if (empty($user) || !$user->isCorrectPassword($password)) {
-	    LogFile::write("Couldn't authenticate user $username.");
+	    $gallery->debug("Couldn't authenticate user $username.");
 	    $status['success'] = NOKIAUPLOAD_ERR_AUTH;
 	    return $status;
 	}
-	LogFile::write('Username and password correct.');
+	$gallery->debug('Username and password correct.');
 
 	$gallery->setActiveUser($user);
 
@@ -100,25 +94,25 @@ class ImageUploadHelper {
 	list($ret, $groupId) = 
 	    GalleryCoreApi::getPluginParameter('module', 'nokiaupload', 'id.mobileGroup');
 	if ($ret->isError()) {
-	    LogFile::error("Couldn't get Mobile Group's id.\n" . $ret->getAsText());
+	    $gallery->debug("ERROR: Couldn't get Mobile Group id.\n" . $ret->getAsText());
 	    return $status;
 	}
 
 	list($ret, $isMember) = GalleryCoreApi::isUserInGroup($user->getId(), $groupId);
 	if ($ret->isError()) {
-	    LogFile::error("Call to GalleryCoreApi::isUserInGroup failed.\n" . $ret->getAsText());
+	    $gallery->debug("ERROR: GalleryCoreApi::isUserInGroup failed.\n" . $ret->getAsText());
 	    return $status;
 	}
 
 	if (!$isMember) {
 	    $ret = GalleryCoreApi::addUserToGroup($user->getId(), $groupId);
 	    if ($ret->isError()) {
-		LogFile::error("Couldn't add user to mobile group.\n" . $ret->getAsText());
+		$gallery->debug("ERROR: Couldn't add user to mobile group.\n" . $ret->getAsText());
 		return $status;
 	    }
-	    LogFile::write("User $username added to mobile group.");
+	    $gallery->debug("User $username added to mobile group.");
 	} else {
-	    LogFile::write("User $username is already a member of mobile group.");
+	    $gallery->debug("User $username is already a member of mobile group.");
 	}
 
 	/* Generate URL for Remote Storage Capabilities query. */
@@ -155,9 +149,8 @@ class ImageUploadHelper {
      */
     function getRSCapabilities() {
 	global $gallery;
-
-	LogFile::mark('RemoteStorageCapabilitiesHelper');
-	LogFile::write('Active userId is ' . $gallery->getActiveUserId());
+	$gallery->debug('### RemoteStorageCapabilitiesHelper ###');
+	$gallery->debug('Active userId is ' . $gallery->getActiveUserId());
 
 	/* Generate URLs for all supported API calls. Specification requires URLs to end in '&'. */
 	$urlGen = $gallery->getUrlGenerator();
@@ -193,7 +186,8 @@ class ImageUploadHelper {
      * @return array ('success', 'id')
      */
     function createNewDirectory() {
-	LogFile::mark('NewDirectoryHelper');
+	global $gallery;
+	$gallery->debug('### NewDirectoryHelper ###');
 
 	// Mandatory: DirName   Optional: DirDesc, Pid
 	list ($albumNameOriginal, $description, $parentId) =
@@ -204,26 +198,26 @@ class ImageUploadHelper {
 
 	/* If the client didn't give the parent id we need to use our own upload album. */
 	if (empty($parentId)) {
-	    LogFile::write("Parent album id not given by client. Trying our own upload album.");
+	    $gallery->debug("Parent album id not given by client. Trying our own upload album.");
 	    list($ret, $parentId) = 
 		GalleryCoreApi::getPluginParameter('module', 'nokiaupload', 'id.uploadAlbum');
 	    if ($ret->isError()) {
-		LogFile::error("Couldn't get id.uploadAlbum parameter.\n" . $ret->getAsText());
+		$gallery->debug("ERROR: Couldn't get id.uploadAlbum parameter.\n" . $ret->getAsText());
 		return $status;
 	    }
 	}
-	LogFile::write("Using parent id $parentId");
+	$gallery->debug("Using parent id $parentId");
 
 	/* Make sure we have right permissions. */
 	$ret = GalleryCoreApi::assertHasItemPermission($parentId, 'core.addAlbumItem');
 	if ($ret->isError()) {
-	    LogFile::error("No permission to add subalbum to album with id $parentId.");
+	    $gallery->debug("ERROR: No permission to add subalbum to album with id $parentId.");
 	    return $status;
 	}
 
 	list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($parentId);
 	if ($ret->isError()) {
-	    LogFile::error('GalleryCoreApi::acquireReadLock failed.');
+	    $gallery->debug('ERROR: GalleryCoreApi::acquireReadLock failed.');
 	    return $status;
 	}
 
@@ -232,7 +226,7 @@ class ImageUploadHelper {
 	$platform = $gallery->getPlatform();
 	$albumName = $albumNameOriginal;
 	if (empty($albumName)) {
-	    LogFile::error('Album name missing.');
+	    $gallery->debug('ERROR: Album name missing.');
 	    return $status;
 	} else if (!$platform->isLegalPathComponent($albumName)) {
 	    $albumName = $platform->legalizePathComponent($albumName);
@@ -242,16 +236,16 @@ class ImageUploadHelper {
 	list ($ret, $instance) =
 	    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryAlbumItem');
 	if ($ret->isError() || !isset($instance)) {
-	    LogFile::error("GalleryCoreApi::newFactoryInstance failed.\n" . $ret->getAsText());
+	    $gallery->debug("ERROR: GalleryCoreApi::newFactoryInstance failed.\n" . $ret->getAsText());
 	    return $status;
 	}
 
 	$ret = $instance->create($parentId, $albumName);
 	if ($ret->isError()) {
 	    if ($ret->getErrorCode() & ERROR_COLLISION) {
-		LogFile::error("Album named $albumName already exists.");
+		$gallery->debug("ERROR: Album named $albumName already exists.");
 	    }
-	    LogFile::error("Couldn't create album $albumName.");
+	    $gallery->debug("ERROR: Couldn't create album $albumName.\n" . $ret->getAsText());
 	    return $status;
 	}
 
@@ -261,7 +255,7 @@ class ImageUploadHelper {
 	}
 	$ret = $instance->save();
 	if ($ret->isError()) {
-	    LogFile::error("Couldn't save album.\n" . $ret->getAsText());
+	    $gallery->debug("ERROR: Couldn't save album.\n" . $ret->getAsText());
 	    return $status;
 	}
 
@@ -270,7 +264,7 @@ class ImageUploadHelper {
 						 'core.all',
 						 false);
 	if ($ret->isError()) {
-	    LogFile::error('GalleryCoreApi::addUserPermission failed, but album was created.');
+	    $gallery->debug('ERROR: GalleryCoreApi::addUserPermission failed, but album was created.');
 	}
 
 	/* We don't allow other (mobile) users to add anything to our personal album.
@@ -286,14 +280,14 @@ class ImageUploadHelper {
 
 	$ret = GalleryCoreApi::releaseLocks($lockId);
 	if ($ret->isError()) {
-	    LogFile::error('GalleryCoreApi::releaseLocks failed, but album was created.');
+	    $gallery->debug('ERROR: GalleryCoreApi::releaseLocks failed, but album was created.');
 	}
 
 	/* Album has been created succesfully. */
 	$status['success'] = NOKIAUPLOAD_ERR_NOERR;
 	$status['id'] = $instance->getId();
 
-	LogFile::write("Created album $albumName (id " . $status['id'] . ").");
+	$gallery->debug("Created album $albumName (id " . $status['id'] . ").");
 
 	return $status;
     }
@@ -307,7 +301,8 @@ class ImageUploadHelper {
      * @return array ('success', 'spaceleft')
      */
     function doUpload() {
-	LogFile::mark('UploadHelper');
+	global $gallery;
+	$gallery->debug('### UploadHelper ###');
 
 	/* Default status. Changes only if everything works out. */
 	$status = array('success' => NOKIAUPLOAD_ERR_UNKNOWN);
@@ -324,12 +319,12 @@ class ImageUploadHelper {
 	//$device, $keywords = getRequestVariablesNoPrefix('Source', 'Keyword')
 
 	if (empty($file) || empty($itemName) || empty($mimeType) || empty($albumId)) {
-	    LogFile::error('Missing required parameter.');
+	    $gallery->debug('ERROR: Missing required parameter.');
 	    return $status;
 	}
 
 	if ($file['size'] == 0 || $file['tmp_name'] == 'none') {
-	    LogFile::error('File is too big.');
+	    $gallery->debug('ERROR: File is too big.');
 	    $status['success'] = NOKIAUPLOAD_ERR_TOOBIG;
 	    return $status;
 	}
@@ -356,7 +351,7 @@ class ImageUploadHelper {
 							     'core.all',
 							     false);
 		    if ($ret->isError()) {
-			LogFile::error('CoreApi::addUserPermission failed, but item was added.');
+			$gallery->debug('ERROR: CoreApi::addUserPermission failed, but item was added.');
 		    }
 
 		    GalleryCoreApi::releaseLocks($lockId);
@@ -366,7 +361,7 @@ class ImageUploadHelper {
 
 	/* If there was an error at some point write that to log. */
 	if ($ret->isError()) {
-	    LogFile::error("Someting went wrong while trying to add new item.\n" 
+	    $gallery->debug("ERROR: Someting went wrong while trying to add new item.\n" 
 			   . $ret->getAsText());
 	}
 
@@ -390,8 +385,8 @@ class ImageUploadHelper {
      */
     function getDirectoryListing() {
 	global $gallery;
-	LogFile::mark('DirectoryListingHelper');
-	LogFile::write('Active userId is ' . $gallery->getActiveUserId());
+	$gallery->debug('### DirectoryListingHelper ###');
+	$gallery->debug('Active userId is ' . $gallery->getActiveUserId());
 
 	/* Change the status to no error only if everything succeeds. */
 	$status['success'] = NOKIAUPLOAD_ERR_DIRLIST;
@@ -400,14 +395,14 @@ class ImageUploadHelper {
 	list($ret, $albumIds) = GalleryCoreApi::fetchAllItemIds('GalleryAlbumItem', 
 								'core.addDataItem');
 	if ($ret->isError() || count($albumIds) < 1) {
-	    LogFile::error("No albums with addDataItem permission.\n" . $ret->getAsText());
+	    $gallery->debug("ERROR: No albums with addDataItem permission.\n" . $ret->getAsText());
 	    return $status;
 	}
 
 	/* Load albums and get their names. */
 	list($ret, $albums) = GalleryCoreApi::loadEntitiesById($albumIds);
 	if ($ret->isError()) {
-	    LogFile::error('GalleryCoreApi::loadEntitiesById failed.' . $ret->getAsText());
+	    $gallery->debug("ERROR: GalleryCoreApi::loadEntitiesById failed.\n" . $ret->getAsText());
 	    return $status;
 	}
 	foreach ($albums as $album) {
@@ -603,6 +598,21 @@ class ImageUploadHelper {
 	}
 
 	return GalleryStatus::success();
+    }
+
+    /**
+     * Write the contents of $_POST and $_GET to debug log.
+     *
+     * @param string optional message
+     * @static
+     */
+    function logRequest($message='') {
+	global $gallery;
+	$gallery->debug("##### $message ### " . strftime('%Y-%m-%d %T') . ' #####');
+	$gallery->debug('POST is: ');
+	$gallery->debug_r($_POST);
+	$gallery->debug('GET is: ');
+	$gallery->debug_r($_GET);
     }
 }
 ?>

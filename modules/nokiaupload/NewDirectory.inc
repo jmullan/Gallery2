@@ -39,8 +39,7 @@ class NewDirectoryController extends GalleryController {
      * @see GalleryController::handleRequest()
      */
     function handleRequest($form) {
-	LogFile::mark('CreateAlbumController');
-	LogFile::writeRequest();
+	ImageUploadHelper::logRequest('CreateAlbumController');
 
 	$results['delegate'] = array('view' => 'nokiaupload:NewDirectory');
 	$results['status'] = ImageUploadHelper::createNewDirectory();
@@ -72,8 +71,9 @@ class NewDirectoryView extends GalleryView {
      * @see GalleryView::renderImmediate()
      */
     function renderImmediate($status, $error) {
-	LogFile::mark('NewDirectoryView');
-	LogFile::write('$status = ' . print_r($status, true));
+	global $gallery;
+	$gallery->debug("##### NewDirectoryView #####\n\$status = ");
+	$gallery->debug_r($status);
 
 	if ($status['success'] == NOKIAUPLOAD_ERR_NOERR && !isset($status['id'])) {
 	    $status['success'] = NOKIAUPLOAD_ERR_UNKNOWN;
@@ -92,10 +92,10 @@ class NewDirectoryView extends GalleryView {
 	    }
 	}
 
-	LogFile::write("sending:\n$reply");
+	$gallery->debug("Sending:\n$reply");
 
 	header('Content-Length: '.strlen($reply));
-	echo $reply;
+	print $reply;
 
 	return GalleryStatus::success();
     }

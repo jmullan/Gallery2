@@ -39,8 +39,7 @@ class DirectoryListingController extends GalleryController {
      * @see GalleryController::handleRequest()
      */
     function handleRequest($form) {
-	LogFile::mark('DirectoryListingController');
-	LogFile::writeRequest();
+	ImageUploadHelper::logRequest('DirectoryListingController');
 
 	$results['delegate'] = array('view' => 'nokiaupload:DirectoryListing');
 	$results['status'] = ImageUploadHelper::getDirectoryListing();
@@ -72,8 +71,9 @@ class DirectoryListingView extends GalleryView {
      * @see GalleryView::renderImmediate()
      */
     function renderImmediate($status, $error) {
-	LogFile::mark('DirectoryListingView');
-	LogFile::write('$status = ' . print_r($status, true));
+	global $gallery;
+	$gallery->debug("##### DirectoryListingView #####\n\$status = ");
+	$gallery->debug_r($status);
 
 	if ($status['success'] == NOKIAUPLOAD_ERR_NOERR && !isset($status['albums'])) {
 		$status['success'] = NOKIAUPLOAD_ERR_UNKNOWN;
@@ -100,7 +100,7 @@ class DirectoryListingView extends GalleryView {
 	}
 
 	$reply = implode('', $reply);
-	LogFile::write("Sending:\n$reply");
+	$gallery->debug("Sending:\n$reply");
 
 	header('Content-Length: ' . strlen($reply));
 	print $reply;

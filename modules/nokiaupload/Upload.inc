@@ -39,8 +39,7 @@ class UploadController extends GalleryController {
      * @see GalleryController::handleRequest()
      */
     function handleRequest($form) {
-	LogFile::mark('UploadController');
-	LogFile::writeRequest();
+	ImageUploadHelper::logRequest('UploadController');
 
 	$results['delegate'] = array('view' => 'nokiaupload:Upload');
 	$results['status'] = ImageUploadHelper::doUpload();
@@ -72,8 +71,9 @@ class UploadView extends GalleryView {
      * @see GalleryView::renderImmediate()
      */
     function renderImmediate($status, $error) {
-	LogFile::mark('UploadView');
-	LogFile::write('$status = ' . print_r($status, true));
+	global $gallery;
+	$gallery->debug("##### UploadView #####\n\$status = ");
+	$gallery->debug_r($status);
 
 	$reply = $status['success'] . "\r\n";
 
@@ -88,7 +88,7 @@ class UploadView extends GalleryView {
 	    }
 	}
 
-	LogFile::write("sending:\n$reply");
+	$gallery->debug("Sending:\n$reply");
 
 	header('Content-Length: ' . strlen($reply));
 	print $reply;
