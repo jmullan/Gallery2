@@ -163,6 +163,8 @@ print "</pre>";
     the <i>g2_GALLERYSID</i> part and paste it into this text box then
     click the Reload Page button.  That will transfer your session from
     the page where you logged in over to this page.
+    <br>
+    <a href="../../main.php?g2_view=core:Login&g2_return.view=core:ShowItem">[ login ]</a>
     <form>
       <input type="text" size=33 name="<?php echo $sessionKey?>">
       <input type="submit" value="Reload page">
