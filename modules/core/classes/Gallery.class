@@ -183,15 +183,127 @@ class Gallery {
      * @access public
      * @param object GalleryNucleus the GalleryNucleus to cache
      */
-    function addToCache($nucleus) {
+    function addNucleusToCache($nucleus) {
 	assert('!empty($nucleus)');
 	
 	$id = $nucleus->getId();
 	assert('!empty($id)');
 	$this->_nucleusCache[$id] = $nucleus;
-
     }
 
+    /**
+     * Remove a nucleus from the cache
+     *
+     * @access public
+     * @param object GalleryNucleus the GalleryNucleus to remove
+     */
+    function removeNucleusFromCache($nucleus) {
+	assert('!empty($nucleus)');
+	
+	$id = $nucleus->getId();
+	assert('!empty($id)');
+	$this->_nucleusCache[$id] = null;
+    }
+
+    /**
+     * Load the GalleryNucleus with the id specified
+     *
+     * Try to get this value from the cache.  If it's not in the cache, then
+     * get it from the persistent store 
+     *
+     * @param int the id of this object, or null to create a new one
+     * @return array object GalleryStatus a status code, object GalleryNucleus
+     */
+    function loadNucleusById($id) {
+	if (empty($id)) {
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER,
+					      __FILE__, __LINE__),
+			 null);
+	}
+
+	/* See if we already have a cached instance, use it if so */
+	if (!empty($this->_nucleusCache[$id])) {
+	    return array(GalleryStatus::success(),
+			 $this->_nucleusCache[$id]);
+	}
+
+	return $this->loadNucleusByIdNoCache($id);
+    }
+
+    /**
+     * Return the appropriate object directly from the persistent store
+     *
+     * Bypass the cache to read the object directly from the persistent store.
+     * Save the object in the cache after loading.
+     *
+     * @param int the id of this object, or null to create a new one
+     * @return array object GalleryStatus a status code, object GalleryNucleus
+     */
+    function loadNucleusByIdNoCache($id) {
+	if (empty($id)) {
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER,
+					      __FILE__, __LINE__),
+			 null);
+	}
+	
+	/* Load the nucleus from our persistent store */
+	list($ret, $nucleus) = $this->_storage->loadNucleus($id);
+	if ($ret->isError()) {
+	    return array($ret, null);
+	}
+
+	/* Update the cache */
+	$this->_nucleusCache[$id] = $nucleus;
+	return array(GalleryStatus::success(), $nucleus);
+    }
+
+    /**
+     * Delete a GalleryNucleus from the persistent store
+     *
+     * @param int the id of the nucleus
+     * @return object GalleryStatus a status code
+     */
+    function deleteNucleusById($id) {
+	if (empty($id)) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
+					__FILE__, __LINE__);
+	}
+
+	list ($ret, $nucleus) = $this->_storage->loadNucleus($id);
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
+	$ret = $nucleus->delete();
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
+	$this->_nucleusCache[$id] = null;
+	
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Save changes to many GalleryNucleus' at once
+     *
+     * @access public
+     * @param array 1 or more GalleryNucleus objects
+     * @return object GalleryStatus a status code
+     */
+    function saveMany($nuclei=array()) {
+
+	/* Can't use foreach because these are references */
+	for ($i = 0; $i < sizeof($nuclei); $i++) {
+	    $ret = $nuclei[$i]->save();
+	    if ($ret->isError()) {
+		return $ret;
+	    }
+	}
+
+	return GalleryStatus::success();
+    }
+    
     /**
      * Search this item to see if it contains the search string.
      *
@@ -209,7 +321,7 @@ class Gallery {
 	// restrict the search to just one branch of the tree.  For now let's
 	// leave it here and then perhaps later we can introduce the concept of
 	// a "narrower" search
-	print "DO SOME SEARCHING HERE!";
+	print "<H1>DO SOME SEARCHING HERE!</H1>";
 	return array(GalleryStatus::success(), array());
     }
 
@@ -221,7 +333,7 @@ class Gallery {
      * @access public
      * @return int the id of the root album
      */
-    function getRootAlbumItemId() {
+    function getRootAlbumId() {
 	return $this->_rootAlbumItemId;
     }
 
@@ -233,7 +345,7 @@ class Gallery {
      * @access public
      * @param int the id of the GalleryItem
      */
-    function setRootAlbumItemId($id) {
+    function setRootAlbumId($id) {
 	if (empty($id)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
 					__FILE__, __LINE__);
@@ -270,31 +382,6 @@ class Gallery {
     }
 
     /**
-     * Get the user database 
-     *
-     * Return the active GalleryUserDatabase class.
-     * 
-     * @access public
-     * @return object GalleryUserDatabase the active user database
-     */
-    function getUserDatabase() {
-	return $this->_userDatabase;
-    }
-
-    /**
-     * Set the user database 
-     *
-     * Assign the active GalleryUserDatabase class.
-     * 
-     * @param object GalleryUserDatabase the active user database
-     * @access public
-     */
-    function setUserDatabase($userDatabase) {
-	assert('!empty($userDatabase)');
-	$this->_userDatabase = $userDatabase;
-    }
-
-    /**
      * Get the image toolkit
      *
      * Return a the active GalleryImageToolkit
@@ -320,44 +407,26 @@ class Gallery {
     }
 
     /**
-     * Get a copy of the Gallery configuration settings
+     * Store a value in the Gallery config table
      *
-     * Return a copy of the GalleryMap config instance.  Do not
-     * change the copy, as the changes will be lost.  The value of
-     * this config object is generated in config.php
-     * 
-     * @access public
-     * @return object GalleryMap the Gallery config map
-     */
-    function getConfig() {
-	return $this->_config;
-    }
-
-    /**
-     * Set a copy of the Gallery configuration settings
-     *
-     * Assign the GalleryMap config instance.
-     * 
-     * @param object GalleryMap the Gallery config map
+     * @param string the key name
+     * @param mixed the value
      * @access public
      */
-    function setConfig($config) {
-	assert('!empty($config)');
-	$this->_config = $config;
+    function setConfig($key, $value) {
+	assert('!empty($key)');
+	$this->_config[$key] = $value;
     }
 
     /**
      * Get a value from the Gallery configuration settings
      *
-     * This is a convenience method to get a Gallery configuration value.
-     * It's equivalent to $gallery->getConfig()->get($key)
-     * 
      * @access public
-     * @return object GalleryMap the Gallery config map
+     * @return mixed an arbitrary value
      */
-    function getConfigValue($key) {
+    function getConfig($key) {
 	assert('!empty($key)');
-	return $this->_config->get($key);
+	return $this->_config[$key];
     }
 
     /**
