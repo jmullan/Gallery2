@@ -255,7 +255,7 @@ class GalleryTranslator {
 	}
 
 	if ($gallery->getConfig('function.exists.dgettext')) {
-	    if (!isset($this->_boundDomains[$domain])) {
+	    if (isset($domain) && !isset($this->_boundDomains[$domain])) {
 		$basePath .= '/locale';
 		$gallery->debug("Binding text domain: $domain -> $basePath");
 		$result = bindtextdomain($domain, $basePath);
