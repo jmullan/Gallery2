@@ -263,7 +263,7 @@ class Gallery1DataParser {
 	}
 	$uids = array();
 	foreach ($userDB->userMap as $username => $uid) {
-	    if (!isValidUid($username))
+	    if (!Gallery1DataParser::isValidUid($username)
 		&& !eregi('nobody|everybody|loggedin', $username)
 		&& isValidUid($uid)) {
 		$uids[$uid] = $username;
@@ -319,7 +319,7 @@ class Gallery1DataParser {
     function getUserFieldsByUid($path, $uid) {
         global $gallery;
 	$fields = array();
-	if (isValidUid($uid)) {
+	if (Gallery1DataParser::isValidUid($uid)) {
 	    list ($ret, $user) = Gallery1DataParser::loadFile($path . '.users/' . $uid);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
