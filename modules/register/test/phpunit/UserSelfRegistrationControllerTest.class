@@ -44,6 +44,7 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
     
     function setUp() {
 	global $gallery;
+	parent::setUp();
 
 	/* store settings */
 	$this->_params = array();
@@ -72,7 +73,6 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
 //    	/* become guest */
 //    	$gallery->setActiveUserId( $guestId );
 //    	
-	parent::setUp();
     }
 
     function tearDown() {
@@ -351,5 +351,21 @@ class RegisterDummyPlatform {
     function stat($filename) {
 	return $this->_platform->stat($filename);
     }
+
+    function mkdir($path) {
+	return $this->_platform->mkdir($path);
+    }
+
+    function fopen($filename, $mode, $use_include_path=0) {
+	return $this->_platform->fopen($filename, $mode, $use_include_path);
+    }
+
+    function recursiveRmdir($dirname) {
+	return $this->_platform->recursiveRmdir($dirname);
+    }
+
+    function fclose($handle) {
+	return $this->_platform->fclose($handle);
+    }    
 }
 ?>
