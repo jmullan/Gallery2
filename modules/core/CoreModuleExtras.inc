@@ -57,7 +57,7 @@ class CoreModuleExtras {
 	     * TODO: Get rid of this when we get to the final release.  It's
 	     * only useful in the alpha -> beta transition.
 	     */
-	    list ($ret, $paramValue) = $module->getModuleParameter('permissions.directory');
+	    list ($ret, $paramValue) = $module->getParameter('permissions.directory');
 	    if (isset($paramValue)) {
 		$currentVersion = '0.8';
 	    } else {
@@ -103,7 +103,7 @@ class CoreModuleExtras {
 			       'misc.login' => 'both',
 			       ) as $key => $value) {
 		    if (!isset($param[$key])) {
-			$ret = $module->setModuleParameter($key, $value);
+			$ret = $module->setParameter($key, $value);
 			if ($ret->isError()) {
 			    return $ret->wrap(__FILE__, __LINE__);
 			}
@@ -243,7 +243,7 @@ class CoreModuleExtras {
     function _createAllUsersGroup($module) {
 	global $gallery;
 
-	list ($ret, $id) = $module->getModuleParameter('id.allUserGroup');
+	list ($ret, $id) = $module->getParameter('id.allUserGroup');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -272,7 +272,7 @@ class CoreModuleExtras {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	$ret = $module->setModuleParameter('id.allUserGroup', $group->getId());
+	$ret = $module->setParameter('id.allUserGroup', $group->getId());
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -289,7 +289,7 @@ class CoreModuleExtras {
     function _createSiteAdminsGroup($module) {
 	global $gallery;
 
-	list ($ret, $id) = $module->getModuleParameter('id.adminGroup');
+	list ($ret, $id) = $module->getParameter('id.adminGroup');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -318,7 +318,7 @@ class CoreModuleExtras {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	$ret = $module->setModuleParameter('id.adminGroup', $group->getId());
+	$ret = $module->setParameter('id.adminGroup', $group->getId());
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -335,7 +335,7 @@ class CoreModuleExtras {
     function _createEverybodyGroup($module) {
 	global $gallery;
 
-	list ($ret, $id) = $module->getModuleParameter('id.everybodyGroup');
+	list ($ret, $id) = $module->getParameter('id.everybodyGroup');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -364,7 +364,7 @@ class CoreModuleExtras {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	$ret = $module->setModuleParameter('id.everybodyGroup', $group->getId());
+	$ret = $module->setParameter('id.everybodyGroup', $group->getId());
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -381,7 +381,7 @@ class CoreModuleExtras {
     function _createAnonymousUser($module) {
 	global $gallery;
 
-	list ($ret, $id) = $module->getModuleParameter('id.anonymousUser');
+	list ($ret, $id) = $module->getParameter('id.anonymousUser');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -414,14 +414,14 @@ class CoreModuleExtras {
 	}
 
 	/* Remove the anonymous user from the "all users" group */
-	list ($ret, $allUserGroupId) = $module->getModuleParameter('id.allUserGroup');
+	list ($ret, $allUserGroupId) = $module->getParameter('id.allUserGroup');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	GalleryCoreApi::removeUserFromGroup($user->getId(), $allUserGroupId);
 
-	$ret = $module->setModuleParameter('id.anonymousUser', $user->getId());
+	$ret = $module->setParameter('id.anonymousUser', $user->getId());
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -439,7 +439,7 @@ class CoreModuleExtras {
 	global $gallery;
 
 	/* Don't create if there is already a user in the admin group */
-	list ($ret, $adminGroupId) = $module->getModuleParameter('id.adminGroup');
+	list ($ret, $adminGroupId) = $module->getParameter('id.adminGroup');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -502,7 +502,7 @@ class CoreModuleExtras {
 	global $gallery;
 
 	/* Do we already have a root? */
-	list ($ret, $rootAlbumId) = $module->getModuleParameter('id.rootAlbum');
+	list ($ret, $rootAlbumId) = $module->getParameter('id.rootAlbum');
 	if ($rootAlbumId) {
 	    return GalleryStatus::success();
 	}
@@ -531,7 +531,7 @@ class CoreModuleExtras {
 	}
 
 	/* Give everybody some permissions */
-	list ($ret, $groupId) = $module->getModuleParameter('id.everybodyGroup');
+	list ($ret, $groupId) = $module->getParameter('id.everybodyGroup');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -542,7 +542,7 @@ class CoreModuleExtras {
 	}
 
 	/* Grant admin users everything */
-	list ($ret, $groupId) = $module->getModuleParameter('id.adminGroup');
+	list ($ret, $groupId) = $module->getParameter('id.adminGroup');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -554,7 +554,7 @@ class CoreModuleExtras {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	$ret = $module->setModuleParameter('id.rootAlbum', $album->getId());
+	$ret = $module->setParameter('id.rootAlbum', $album->getId());
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

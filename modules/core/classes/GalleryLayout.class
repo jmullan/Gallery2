@@ -25,6 +25,8 @@
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
+GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryPlugin.class');
+
 /**
  * This interface provides functionality to user-interfaces have a
  * customizable layout. A layout should implement this class.
@@ -32,74 +34,7 @@
  * @package GalleryCore
  * @subpackage Classes
  */
-class GalleryLayout {
-
-    /*
-     * ****************************************
-     *                 Members
-     * ****************************************
-     */
-
-    /**
-     * The id of this layout
-     *
-     * @var string _id
-     * @access private
-     */
-    var $_id;
-
-    /**
-     * The name of this layout
-     *
-     * @var string _name
-     * @access private
-     */
-    var $_name;
-
-    /**
-     * The description of this layout
-     *
-     * @var string _description
-     * @access private
-     */
-    var $_description;
-
-    /**
-     * The version of this layout
-     *
-     * @var string _version
-     * @access private
-     */
-    var $_version;
-
-    /**
-     * The localization domain for this layout
-     *
-     * @access private
-     */
-    var $_l10Domain;
-
-    /**
-     * The version of the Core API required by this layout
-     *
-     * @var array _requiredCoreApiVersion
-     * @access private
-     */
-    var $_requiredCoreApiVersion;
-
-    /**
-     * The version of the Core API required by this layout
-     *
-     * @var array _requiredLayoutApiVersion
-     * @access private
-     */
-    var $_requiredLayoutApiVersion;
-    
-    /*
-     * ****************************************
-     *                 Methods
-     * ****************************************
-     */
+class GalleryLayout extends GalleryPlugin {
 
     /**
      * Return the major and minor version of the Module API.
@@ -229,22 +164,6 @@ class GalleryLayout {
     }
 
     /**
-     * Deactivate this layout
-     *
-     * @return object GalleryStatus a status code
-     */
-    function deactivate() {
-	global $gallery;
-
-	$ret = GalleryCoreApi::deactivatePlugin('layout', $this->getId());
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	return GalleryStatus::success();
-    }
-
-    /**
      * Load the template with data from this view.
      *
      * @param array object GalleryTemplate the template instance
@@ -274,117 +193,6 @@ class GalleryLayout {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	return GalleryStatus::success();
-    }
-
-    /**
-     * Fetch all layout specific parameters for the given item.  The results will contain
-     * a mixture of global parameters and item specific parameters, where the item specific
-     * ones override the global ones.
-     *
-     * @param int optional itemId
-     * @return array object GalleryStatus a status code
-     *               array parameters in key => value form
-     */
-    function fetchParameters($itemId=null) {
-	/* Fetch global params */
-	list ($ret, $params) =
-	    GalleryCoreApi::fetchAllPluginParameters('layout', $this->getId(), null);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	/* Then fetch item params (if applicable) */
-	if (isset($itemId)) {
-	    list ($ret, $local) =
-		GalleryCoreApi::fetchAllPluginParameters('layout', $this->getId(), $itemId);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-	    $params = array_merge($params, $local);
-	}
-
-	return array(GalleryStatus::success(), $params);
-    }
-
-    /**
-     * Convenience method to get a layout parameter
-     *
-     * @param string the parameter name
-     * @param int the (optional) item id
-     * @return array object GalleryStatus a status code
-     *               mixed value
-     */
-    function getParameter($parameterName, $itemId=0) {
-	list ($ret, $value) = GalleryCoreApi::getPluginParameter('layout', $this->getId(),
-								 $parameterName, $itemId);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	return array(GalleryStatus::success(), $value);
-    }
-
-    /**
-     * Convenience method to set a layout parameter
-     *
-     * @param string the parameter name
-     * @param string the value
-     * @param int the (optional) item id
-     * @return object GalleryStatus a status code
-     */
-    function setParameter($parameterName, $parameterValue, $itemId=0) {
-	$ret = GalleryCoreApi::setPluginParameter('layout', $this->getId(),
-						  $parameterName, $parameterValue, $itemId);
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	return GalleryStatus::success();
-    }
-
-    /**
-     * Remove a layout parameter for a specific item
-     *
-     * @param string the parameter name
-     * @param int the item id
-     * @return object GalleryStatus a status code
-     */
-    function removeItemParameter($parameterName, $itemId) {
-	$ret = GalleryCoreApi::removePluginParameter('layout', $this->getId(), $parameterName, $itemId);
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	return GalleryStatus::success();
-    }
-
-    /**
-     * Localize the given content
-     *
-     * @see Gallery::translate()
-     *
-     * @param mixed a single string, or an array of parameters
-     * @return string the localized value
-     */
-    function translate($params) {
-	global $gallery;
-
-	if (!is_array($params)) {
-	    $params = array('text' => $params);
-	}
-
-	$translator =& $gallery->getTranslator();
-	list ($ret, $content) =
-	    $translator->translateDomain('layouts_' . $this->getId(), $params);
-	if ($ret->isError()) {
-	    if ($gallery->getDebug()) {
-		$gallery->debug($ret->getAsHtml());
-	    }
-	    return 'Translation error';
-	} else {
-	    return $content;
-	}
     }
 
     /**
@@ -797,62 +605,11 @@ class GalleryLayout {
 	return strcmp($a['text'], $b['text']);
     }
 
-    /* Getters and setters below */
-
-    function setName($name) {
-	$this->_name = $name;
-    }
-
-    function getName() {
-	return $this->_name;
-    }
-
-    function setId($id) {
-	$this->_id = $id;
-    }
-
-    function getId() {
-	return $this->_id;
-    }
-
-    function setDescription($description) {
-	$this->_description = $description;
-    }
-
-    function getDescription() {
-	return $this->_description;
-    }
-
-    function setVersion($version) {
-	$this->_version = $version;
-    }
-
-    function getVersion() {
-	return $this->_version;
-    }
-
-    function getL10Domain() {
-	return $this->_l10Domain;
-    }
-
-    function setL10Domain($l10Domain) {
-	$this->_l10Domain = $l10Domain;
-    }
-
-    function setRequiredCoreApiVersion($requirement) {
-	$this->_requiredCoreApiVersion = $requirement;
-    }
-
-    function getRequiredCoreApiVersion() {
-	return $this->_requiredCoreApiVersion;
-    }
-
-    function setRequiredModuleApiVersion($requirement) {
-	$this->_requiredModuleApiVersion = $requirement;
-    }
-    
-    function getRequiredModuleApiVersion() {
-	return $this->_requiredModuleApiVersion;
+    /**
+     * @see GalleryPlugin::getPluginType()
+     */
+    function getPluginType() {
+	return 'layout';
     }
 }
 ?>

@@ -25,6 +25,8 @@
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
+GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryPlugin.class');
+
 /**
  * Module meta-info container
  *
@@ -33,45 +35,13 @@
  * @package GalleryCore
  * @subpackage Classes
  */
-class GalleryModule {
+class GalleryModule extends GalleryPlugin {
 
     /*
      * ****************************************
      *                 Members
      * ****************************************
      */
-
-    /**
-     * The id of this module
-     *
-     * @var string _name
-     * @access private
-     */
-    var $_id;
-
-    /**
-     * The name of this module
-     *
-     * @var string _name
-     * @access private
-     */
-    var $_name;
-
-    /**
-     * The description of this module
-     *
-     * @var string _description
-     * @access private
-     */
-    var $_description;
-
-    /**
-     * The version of this module
-     *
-     * @var string _version
-     * @access private
-     */
-    var $_version;
 
     /**
      * The module group (optional)
@@ -102,22 +72,6 @@ class GalleryModule {
      */
     var $_callbacks;
 
-    /**
-     * The version of the Core API required by this module
-     *
-     * @var array _requiredCoreApi
-     * @access private
-     */
-    var $_requiredCoreApi;
-
-    /**
-     * The version of the Core API required by this module
-     *
-     * @var array _requiredModuleApi
-     * @access private
-     */
-    var $_requiredModuleApi;
-
     /*
      * ****************************************
      *                 Methods
@@ -136,34 +90,6 @@ class GalleryModule {
 	return array(0, 8);
     }
     
-    /**
-     * Localize the given content
-     *
-     * @see Gallery::translate()
-     *
-     * @param mixed a single string, or an array of parameters
-     * @return string the localized value
-     */
-    function translate($params) {
-	global $gallery;
-
-	if (!is_array($params)) {
-	    $params = array('text' => $params);
-	}
-
-	$translator =& $gallery->getTranslator();
-	list ($ret, $content) =
-	    $translator->translateDomain('modules_' . $this->getId(), $params);
-	if ($ret->isError()) {
-	    if ($gallery->getDebug()) {
-		$gallery->debug($ret->getAsHtml());
-	    }
-	    return 'Translation error';
-	} else {
-	    return $content;
-	}
-    }
-
     /**
      * Register any event listeners that this module requires.  Each module will get a chance to
      * register its event listeners before any events are posted.
@@ -225,7 +151,7 @@ class GalleryModule {
 	     */
 	    $installedVersion = null;
 	} else {
-	    list ($ret, $installedVersion) = $this->getModuleParameter('_version');
+	    list ($ret, $installedVersion) = $this->getParameter('_version');
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -249,7 +175,7 @@ class GalleryModule {
 			  '_requiredCoreApi' => join(',', $this->getRequiredCoreApi()),
 			  '_requiredModuleApi' => join(',', $this->getRequiredModuleApi()));
 	    foreach ($data as $key => $value) {
-		$ret = $this->setModuleParameter($key, $value);
+		$ret = $this->setParameter($key, $value);
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
@@ -318,45 +244,6 @@ class GalleryModule {
 
 	    return array(GalleryStatus::success(), array());
 	}
-    }
-
-    /**
-     * Deactivate this module
-     *
-     * @return array object GalleryStatus a status code
-     *               array redirect info for error page (empty for success)
-     */
-    function deactivate() {
-	$ret = GalleryCoreApi::deactivatePlugin('module', $this->getId());
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	return array(GalleryStatus::success(), array());
-    }
-
-    /**
-     * Is this module active?
-     *
-     * @return array object GalleryStatus a status code
-     *               boolean true if active
-     */
-    function isActive() {
-	global $gallery;
-
-	list($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	if (empty($moduleStatus[$this->getId()])) {
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
-					      sprintf("No such module: %s", $this->getId())),
-			 null);
-	}
-
-	return array(GalleryStatus::success(),
-		     empty($moduleStatus[$this->getId()]['active']) ? false : true);
     }
 
     /**
@@ -483,7 +370,6 @@ class GalleryModule {
      * @return array object GalleryStatus a status code
      *               array ('name' => the template file path, ...)
      */
-
     function loadSystemContent(&$template) {
 	return array(GalleryStatus::success(), null);
     }
@@ -529,67 +415,7 @@ class GalleryModule {
 	return array(GalleryStatus::success(), null);
     }
 
-    /**
-     * @see Gallery::getModuleParameter()
-     */
-    function getModuleParameter($parameterName) {
-	global $gallery;
-	list ($ret, $value) =
-	    GalleryCoreApi::getPluginParameter('module', $this->getId(), $parameterName);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	return array(GalleryStatus::success(), $value);
-    }
-
-    /**
-     * @see Gallery::setModuleParameter()
-     */
-    function setModuleParameter($parameterName, $parameterValue) {
-	global $gallery;
-	$ret = GalleryCoreApi::setPluginParameter('module', $this->getId(),
-						  $parameterName, $parameterValue);
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	return GalleryStatus::success();
-    }
-
     /* Getters and setters below */
-
-    function setId($id) {
-	$this->_id = $id;
-    }
-
-    function getId() {
-	return $this->_id;
-    }
-
-    function setName($name) {
-	$this->_name = $name;
-    }
-
-    function getName() {
-	return $this->_name;
-    }
-
-    function setDescription($description) {
-	$this->_description = $description;
-    }
-
-    function getDescription() {
-	return $this->_description;
-    }
-
-    function setVersion($version) {
-	$this->_version = $version;
-    }
-
-    function getVersion() {
-	return $this->_version;
-    }
 
     function setGroup($group, $groupLabel) {
 	$this->_group = array('group' => $group, 'groupLabel' => $groupLabel);
@@ -607,20 +433,11 @@ class GalleryModule {
 	$this->_callbacks = $callbacks;
     }
 
-    function setRequiredCoreApi($requirement) {
-	$this->_requiredCoreApi = $requirement;
-    }
-
-    function getRequiredCoreApi() {
-	return $this->_requiredCoreApi;
-    }
-
-    function setRequiredModuleApi($requirement) {
-	$this->_requiredModuleApi = $requirement;
-    }
-    
-    function getRequiredModuleApi() {
-	return $this->_requiredModuleApi;
+    /**
+     * @see GalleryPlugin::getPluginType()
+     */
+    function getPluginType() {
+	return 'module';
     }
 }
 ?>

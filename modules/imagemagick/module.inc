@@ -72,7 +72,7 @@ class ImageMagickModule extends GalleryModule {
 	    foreach (array('path' => '',
 			   'jpegQuality' => '75')
 		     as $key => $value) {
-		$ret = $this->setModuleParameter($key, $value);
+		$ret = $this->setParameter($key, $value);
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
@@ -177,7 +177,7 @@ class ImageMagickModule extends GalleryModule {
 	 * activated. 
 	 */
 	foreach (array('path', 'jpegQuality') as $key) {
-	    list ($ret, $value) = $this->getModuleParameter($key);
+	    list ($ret, $value) = $this->getParameter($key);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }

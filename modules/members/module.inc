@@ -61,7 +61,7 @@ class MembersModule extends GalleryModule {
 	    
 	    foreach (array('canViewMembersModule' => $viewSelectedGroupId,
 			   'canViewEmailAddress' => 0) as $key => $value) {
-		$ret = $this->setModuleParameter($key, $value);
+		$ret = $this->setParameter($key, $value);
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}

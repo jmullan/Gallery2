@@ -168,14 +168,14 @@ class CoreModuleTest extends GalleryTestCase {
     }
 
     function testLoadSystemContent() {
-	list ($ret, $save) = $this->_module->getModuleParameter('language.selector');
+	list ($ret, $save) = $this->_module->getParameter('language.selector');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* Without a language selector */
 	$template = new CoreModuleMockTemplate();
-	$ret = $this->_module->setModuleParameter('language.selector', 'none');
+	$ret = $this->_module->setParameter('language.selector', 'none');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -187,7 +187,7 @@ class CoreModuleTest extends GalleryTestCase {
 
 	/* With a language selector */
 	$template = new CoreModuleMockTemplate();
-	$ret = $this->_module->setModuleParameter('language.selector', 'all');
+	$ret = $this->_module->setParameter('language.selector', 'all');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -197,7 +197,7 @@ class CoreModuleTest extends GalleryTestCase {
 	}
 	$this->assert(!empty($content['languageSelector']));
 
-	$ret = $this->_module->setModuleParameter('language.selector', $save);
+	$ret = $this->_module->setParameter('language.selector', $save);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -288,12 +288,12 @@ class CoreModuleTest extends GalleryTestCase {
 	$key = 'test-key';
 	$value = rand();
 
-	$ret = $this->_module->setModuleParameter($key, $value);
+	$ret = $this->_module->setParameter($key, $value);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	
-	list ($ret, $newValue) = $this->_module->getModuleParameter($key);
+	list ($ret, $newValue) = $this->_module->getParameter($key);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

@@ -95,11 +95,11 @@ class ThumbPageModule extends GalleryModule {
 	    return array(GalleryStatus::success(), array('view' => 'core:SiteAdmin',
 							 'subView' => 'thumbpage:CantActivate'));
 	} else {
-	    $ret = $this->setModuleParameter('pageTypes', implode('|', $page));
+	    $ret = $this->setParameter('pageTypes', implode('|', $page));
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    $ret = $this->setModuleParameter('movieTypes', implode('|', $movie));
+	    $ret = $this->setParameter('movieTypes', implode('|', $movie));
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }

@@ -65,7 +65,7 @@ class UserAlbumModule extends GalleryModule {
 	    }
 	    foreach (array('view' => 'everybody', 'fullSize' => '1', 'targetLocation' => $rootId)
 		     as $key => $value) {
-		$ret = $this->setModuleParameter($key, $value);
+		$ret = $this->setParameter($key, $value);
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);   
 		}

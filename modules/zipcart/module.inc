@@ -69,7 +69,7 @@ class ZipCartModule extends GalleryModule {
      * @see GalleryModule::needsConfiguration
      */
     function needsConfiguration() {
-	list ($ret, $value) = $this->getModuleParameter('path');
+	list ($ret, $value) = $this->getParameter('path');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -133,7 +133,7 @@ class ZipCartModule extends GalleryModule {
 	foreach ($paths as $path) {
 	    if ($platform->is_executable($path)) {
 		/* We have a winner */
-		$ret = $this->setModuleParameter('path', $path);
+		$ret = $this->setParameter('path', $path);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), false);
 		}

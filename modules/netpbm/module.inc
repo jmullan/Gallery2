@@ -71,7 +71,7 @@ class NetPbmModule extends GalleryModule {
 			   'jpegQuality' => '75',
 			   'pnmtojpeg' => 'pnmtojpeg')
 		     as $key => $value) {
-		$ret = $this->setModuleParameter($key, $value);
+		$ret = $this->setParameter($key, $value);
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
@@ -322,7 +322,7 @@ class NetPbmModule extends GalleryModule {
 	 * activated. 
 	 */
 	foreach (array('path', 'jpegQuality', 'pnmtojpeg') as $key) {
-	    list ($ret, $value) = $this->getModuleParameter($key);
+	    list ($ret, $value) = $this->getParameter($key);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }

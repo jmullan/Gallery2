@@ -74,7 +74,7 @@ class RegisterModule extends GalleryModule {
 			   'adminsubject' => $this->translate('New user registration'),
 			   'from' => 'webmaster@' . $_SERVER['SERVER_NAME'])
 			 as $key => $value) {
-		$ret = $this->setModuleParameter($key, $value);
+		$ret = $this->setParameter($key, $value);
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}

@@ -67,7 +67,7 @@ class FfmpegModule extends GalleryModule {
     function upgrade($currentVersion) {
 	if (!isset($currentVersion)) {
 	    /* Initial install. */
-	    $ret = $this->setModuleParameter('path', '');
+	    $ret = $this->setParameter('path', '');
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -251,7 +251,7 @@ class FfmpegModule extends GalleryModule {
 	 * activated. 
 	 */
 	foreach (array('path') as $key) {
-	    list ($ret, $value) = $this->getModuleParameter($key);
+	    list ($ret, $value) = $this->getParameter($key);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }

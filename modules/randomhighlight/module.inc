@@ -63,7 +63,7 @@ class RandomHighlightModule extends GalleryModule {
      */
     function upgrade($currentVersion) {
 	if (!isset($currentVersion)) {
-	    $ret = $this->setModuleParameter('duration', 10 * 60 * 60); /* 10 minutes */
+	    $ret = $this->setParameter('duration', 10 * 60 * 60); /* 10 minutes */
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }

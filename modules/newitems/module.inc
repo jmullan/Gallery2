@@ -66,7 +66,7 @@ class NewItemsModule extends GalleryModule {
 	    foreach (array('days.new' => '7',
 			   'days.updated' => '7' )
 		     as $key => $value) {
-		$ret = $this->setModuleParameter($key, $value);
+		$ret = $this->setParameter($key, $value);
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}

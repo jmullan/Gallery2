@@ -518,7 +518,7 @@ class CoreModule extends GalleryModule {
 	$views = array();
 
 	if (GalleryCapabilities::can('login')) {
-	    list ($ret, $anonymousUserId) = $this->getModuleParameter('id.anonymousUser');
+	    list ($ret, $anonymousUserId) = $this->getParameter('id.anonymousUser');
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }

@@ -67,7 +67,7 @@ class GdModule extends GalleryModule {
     function upgrade($currentVersion) {
 	if (!isset($currentVersion)) {
 	    /* Initial install */
-	    $ret = $this->setModuleParameter('jpegQuality', '75');
+	    $ret = $this->setParameter('jpegQuality', '75');
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -163,7 +163,7 @@ class GdModule extends GalleryModule {
 	 * This module requires all fields to be filled out before it can be
 	 * activated. 
 	 */
-	list ($ret, $value) = $this->getModuleParameter('jpegQuality');
+	list ($ret, $value) = $this->getParameter('jpegQuality');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

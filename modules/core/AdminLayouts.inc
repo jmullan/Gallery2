@@ -98,13 +98,15 @@ class AdminLayoutsController extends GalleryController {
 
 	    /* Only deactivate if we're not already deactive! */
 	    if (!empty($layoutStatus['active'])) {
-		$ret = $layout->deactivate();
+		list ($ret, $redirect) = $layout->deactivate();
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-		$redirect['view'] = 'core:SiteAdmin';
-		$redirect['subView'] = 'core:AdminLayouts';
+		if (empty($redirect)) {
+		    $redirect['view'] = 'core:SiteAdmin';
+		    $redirect['subView'] = 'core:AdminLayouts';
+		}
 		$status['deactivated'] = $layout->getName();
 	    }
 	} else if (isset($form['action']['saveDefaults'])) {

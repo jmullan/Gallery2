@@ -1,0 +1,347 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * Plugin meta-info container
+ *
+ * This is a container for information about a given module.
+ *
+ * @package GalleryCore
+ * @subpackage Classes
+ */
+class GalleryPlugin {
+
+    /*
+     * ****************************************
+     *                 Members
+     * ****************************************
+     */
+
+    /**
+     * The id of this plugin
+     *
+     * @var string _name
+     * @access private
+     */
+    var $_id;
+
+    /**
+     * The name of this plugin
+     *
+     * @var string _name
+     * @access private
+     */
+    var $_name;
+
+    /**
+     * The description of this plugin
+     *
+     * @var string _description
+     * @access private
+     */
+    var $_description;
+
+    /**
+     * The version of this plugin
+     *
+     * @var string _version
+     * @access private
+     */
+    var $_version;
+
+    /**
+     * The version of the Core API required by this module
+     *
+     * @var array _requiredCoreApi
+     * @access private
+     */
+    var $_requiredCoreApi;
+
+    /**
+     * The version of the Core API required by this module
+     *
+     * @var array _requiredModuleApi
+     * @access private
+     */
+    var $_requiredModuleApi;
+
+    /**
+     * The localization domain for this layout
+     *
+     * @var string _l10Domain
+     * @access private
+     */
+    var $_l10Domain;
+
+    /*
+     * ****************************************
+     *                 Methods
+     * ****************************************
+     */
+
+    /**
+     * Localize the given content
+     *
+     * @see Gallery::translate()
+     *
+     * @param mixed a single string, or an array of parameters
+     * @return string the localized value
+     */
+    function translate($params) {
+	global $gallery;
+
+	if (!is_array($params)) {
+	    $params = array('text' => $params);
+	}
+
+	$translator =& $gallery->getTranslator();
+	list ($ret, $content) =
+	    $translator->translateDomain($this->getPluginType() . 's_' . $this->getId(), $params);
+	if ($ret->isError()) {
+	    if ($gallery->getDebug()) {
+		$gallery->debug($ret->getAsHtml());
+	    }
+	    return 'Translation error';
+	} else {
+	    return $content;
+	}
+    }
+
+    /**
+     * Activate this plugin
+     *
+     * @return object GalleryStatus a status code
+     */
+    function activate() {
+	return GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
+    }
+
+    /**
+     * Deactivate this plugin
+     *
+     * @return array object GalleryStatus a status code
+     *               array redirect info for error page (empty for success)
+     */
+    function deactivate() {
+	$ret = GalleryCoreApi::deactivatePlugin($this->getPluginType(), $this->getId());
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	return array(GalleryStatus::success(), array());
+    }
+
+    /**
+     * Is this plugin active?
+     *
+     * @return array object GalleryStatus a status code
+     *               boolean true if active
+     */
+    function isActive() {
+	global $gallery;
+
+	list($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus($this->getPluginType());
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if (empty($moduleStatus[$this->getId()])) {
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+					      sprintf("No such module: %s", $this->getId())),
+			 null);
+	}
+
+	return array(GalleryStatus::success(),
+		     empty($moduleStatus[$this->getId()]['active']) ? false : true);
+    }
+
+    /**
+     * Convenience method to get a plugin parameter
+     *
+     * @param string the parameter name
+     * @param int the (optional) item id
+     * @return array object GalleryStatus a status code
+     *               mixed value
+     */
+    function getParameter($parameterName, $itemId=0) {
+	list ($ret, $value) = GalleryCoreApi::getPluginParameter($this->getPluginType(), $this->getId(),
+								 $parameterName, $itemId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	return array(GalleryStatus::success(), $value);
+    }
+
+    /**
+     * Convenience method to set a plugin parameter
+     *
+     * @param string the parameter name
+     * @param string the value
+     * @param int the (optional) item id
+     * @return object GalleryStatus a status code
+     */
+    function setParameter($parameterName, $parameterValue, $itemId=0) {
+	$ret = GalleryCoreApi::setPluginParameter($this->getPluginType(), $this->getId(),
+						  $parameterName, $parameterValue, $itemId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Remove a layout parameter for a specific item
+     *
+     * @param string the parameter name
+     * @param int the item id
+     * @return object GalleryStatus a status code
+     */
+    function removeItemParameter($parameterName, $itemId) {
+	$ret = GalleryCoreApi::removePluginParameter($this->getPluginType(), $this->getId(),
+						     $parameterName, $itemId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Fetch all plugin specific parameters for the given item.  The results will contain
+     * a mixture of global parameters and item specific parameters, where the item specific
+     * ones override the global ones.
+     *
+     * @param int optional itemId
+     * @return array object GalleryStatus a status code
+     *               array parameters in key => value form
+     */
+    function fetchParameters($itemId=null) {
+	/* Fetch global params */
+	list ($ret, $params) =
+	    GalleryCoreApi::fetchAllPluginParameters($this->getPluginType(), $this->getId(), null);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Then fetch item params (if applicable) */
+	if (isset($itemId)) {
+	    list ($ret, $local) =
+		GalleryCoreApi::fetchAllPluginParameters($this->getPluginType(), $this->getId(), $itemId);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    $params = array_merge($params, $local);
+	}
+
+	return array(GalleryStatus::success(), $params);
+    }
+
+    /* Getters and setters below */
+
+    function setId($id) {
+	$this->_id = $id;
+    }
+
+    function getId() {
+	return $this->_id;
+    }
+
+    function setName($name) {
+	$this->_name = $name;
+    }
+
+    function getName() {
+	return $this->_name;
+    }
+
+    function setDescription($description) {
+	$this->_description = $description;
+    }
+
+    function getDescription() {
+	return $this->_description;
+    }
+
+    function setVersion($version) {
+	$this->_version = $version;
+    }
+
+    function getVersion() {
+	return $this->_version;
+    }
+
+    function setGroup($group, $groupLabel) {
+	$this->_group = array('group' => $group, 'groupLabel' => $groupLabel);
+    }
+
+    function getGroup() {
+	return $this->_group;
+    }
+
+    function getCallbacks() {
+	return $this->_callbacks;
+    }
+
+    function setCallbacks($callbacks) {
+	$this->_callbacks = $callbacks;
+    }
+
+    function getL10Domain() {
+	return $this->_l10Domain;
+    }
+    
+    function setL10Domain($l10Domain) {
+	$this->_l10Domain = $l10Domain;
+    }
+
+    function setRequiredCoreApi($requirement) {
+	$this->_requiredCoreApi = $requirement;
+    }
+
+    function getRequiredCoreApi() {
+	return $this->_requiredCoreApi;
+    }
+
+    function setRequiredModuleApi($requirement) {
+	$this->_requiredModuleApi = $requirement;
+    }
+    
+    function getRequiredModuleApi() {
+	return $this->_requiredModuleApi;
+    }
+
+    /**
+     * @access protected
+     */
+    function getPluginType() {
+	return null;
+    }
+}
+?>

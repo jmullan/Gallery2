@@ -530,7 +530,7 @@ class ImageUploadHelper {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$ret = $module->setModuleParameter('id.uploadAlbum', $album->getId());
+	$ret = $module->setParameter('id.uploadAlbum', $album->getId());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

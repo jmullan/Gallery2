@@ -96,7 +96,7 @@ class ImageBlockTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $blocks) = $module->getModuleParameter('blocks');
+	list ($ret, $blocks) = $module->getParameter('blocks');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -188,7 +188,7 @@ class ImageBlockTest extends GalleryTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$ret = $this->_module->setModuleParameter('blocks', $this->_blocks);
+	$ret = $this->_module->setParameter('blocks', $this->_blocks);
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -211,7 +211,7 @@ class ImageBlockTest extends GalleryTestCase {
     }
 
     function testImageBlock() {
-	$ret = $this->_module->setModuleParameter('blocks', '');
+	$ret = $this->_module->setParameter('blocks', '');
 	if ($ret->isError()) {
 	    $this->assert(false, "Set blocks parameter");
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -225,7 +225,7 @@ class ImageBlockTest extends GalleryTestCase {
 	$this->assert(count($tpl) == 0, 'No template should have been returned');
 	$this->assert(!isset($template->data['ImageBlockSystemContent']), 'No blocks');
 
-	$ret = $this->_module->setModuleParameter('blocks', 'randomImage');
+	$ret = $this->_module->setParameter('blocks', 'randomImage');
 	if ($ret->isError()) {
 	    $this->assert(false, "Set blocks parameter");
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -240,7 +240,8 @@ class ImageBlockTest extends GalleryTestCase {
 	$this->assertEquals(1, count($template->data['ImageBlockSystemContent']['blocks']), 'One block');
 	$this->assertBlock($template->data['ImageBlockSystemContent']['blocks'][0]);
 
-	$ret = $this->_module->setModuleParameter('blocks', 'randomImage|recentImage|viewedImage|viewedAlbum|recentAlbum|randomAlbum');
+	$ret = $this->_module->setParameter('blocks', 'randomImage|recentImage|viewedImage|' .
+					    'viewedAlbum|recentAlbum|randomAlbum');
 	if ($ret->isError()) {
 	    $this->assert(false, "Set blocks parameter");
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
