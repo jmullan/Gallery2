@@ -44,7 +44,7 @@ class ItemEditPhotoThumbnailPluginTest extends ItemEditPluginTestCase {
 
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret->isError()) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* Register a dummy toolkit */
@@ -207,7 +207,7 @@ class ItemEditPhotoThumbnailPluginTest extends ItemEditPluginTestCase {
 	list ($ret, $operations) = 
 	    GalleryCoreApi::mergeDerivativeOperations('crop|0,0,100,100', $this->_derivative[2]->getDerivativeOperations());
 
-	list ($ret, $this->_lock) = GalleryCoreApi::acquireWriteLock($this->_derivative[2]->getId());
+	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($this->_derivative[2]->getId());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
@@ -219,7 +219,7 @@ class ItemEditPhotoThumbnailPluginTest extends ItemEditPluginTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$ret = GalleryCoreApi::releaseLocks($this->_lock);
+	$ret = GalleryCoreApi::releaseLocks($lockId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
