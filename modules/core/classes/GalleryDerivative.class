@@ -222,7 +222,7 @@ class GalleryDerivative_core extends GalleryChildEntity {
 	$ret = $this->expireCache();
 
 	GalleryDataCache::removeFromDisk(
-            array('type' => 'derivative-meta', 'itemId' => $this->getId()));
+	    array('type' => 'derivative-meta', 'itemId' => $this->getId()));
 
 	return GalleryStatus::success();
     }
@@ -403,7 +403,7 @@ class GalleryDerivative_core extends GalleryChildEntity {
 	}
 
 	GalleryDataCache::putToDisk(
-            array('type' => 'derivative-meta', 'itemId' => $this->getId()), $data);
+	    array('type' => 'derivative-meta', 'itemId' => $this->getId()), $data);
 
 	$this->deleteFastDownloadFile();
 	$ret = $this->createFastDownloadFile();
@@ -421,7 +421,7 @@ class GalleryDerivative_core extends GalleryChildEntity {
 	global $gallery;
 
 	$fastDownloadFilePath = GalleryDataCache::getCachePath(
-            array('type' => 'fast-download', 'itemId' => $this->getId()));
+	    array('type' => 'fast-download', 'itemId' => $this->getId()));
 	$platform = $gallery->getPlatform();
 	if ($platform->file_exists($fastDownloadFilePath)) {
 	    $platform->unlink($fastDownloadFilePath);
@@ -448,7 +448,7 @@ class GalleryDerivative_core extends GalleryChildEntity {
 	list ($ret, $anonymousUserId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$hasPermission = false;
@@ -457,7 +457,7 @@ class GalleryDerivative_core extends GalleryChildEntity {
 	case DERIVATIVE_TYPE_IMAGE_THUMBNAIL:
 	    $requiredPermission = 'core.view';
 	    break;
-	    
+
 	case DERIVATIVE_TYPE_IMAGE_RESIZE:
 	    $requiredPermission = 'core.viewResizes';
 	    break;
@@ -468,14 +468,14 @@ class GalleryDerivative_core extends GalleryChildEntity {
 	}
 
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	if ($requiredPermission) {
 	    list ($ret, $permissions) = GalleryCoreApi::fetchPermissionsForItems(
-                array($this->getParentId()), $anonymousUserId);
+		array($this->getParentId()), $anonymousUserId);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    $hasPermission = isset($permissions[$this->getParentId()][$requiredPermission]);
 	}
@@ -486,18 +486,18 @@ class GalleryDerivative_core extends GalleryChildEntity {
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-	
+
 	    $fullPath = GalleryDataCache::getCachePath(
-                array('type' => 'derivative', 'itemId' => $this->getId()));
+		array('type' => 'derivative', 'itemId' => $this->getId()));
 	    $relativePath = GalleryDataCache::getCachePath(
-                array('type' => 'derivative-relative', 'itemId' => $this->getId()));
+		array('type' => 'derivative-relative', 'itemId' => $this->getId()));
 	    $platform = $gallery->getPlatform();
 	    $stats = $platform->stat($fullPath);
 	    $contentLength = $stats[7];
 	    $lastModified = GalleryUtilities::getHttpDate($stats[9]);
-	
+
 	    $fastDownloadFilePath = GalleryDataCache::getCachePath(
-                array('type' => 'fast-download', 'itemId' => $this->getId()));
+		array('type' => 'fast-download', 'itemId' => $this->getId()));
 
 	    /* TODO: Protect this from concurrent writes using a temp file */
 	    $fd = $platform->fopen($fastDownloadFilePath, 'w');
@@ -507,7 +507,7 @@ class GalleryDerivative_core extends GalleryChildEntity {
 			       '\'%s\', \'%s\', %d);} ?>',
 			       $relativePath, $pseudoFileName, $lastModified,
 			       $this->getMimeType(), $contentLength);
-		$platform->fwrite($fd, $buf);	
+		$platform->fwrite($fd, $buf);
 		$platform->fclose($fd);
 	    }
 	}
