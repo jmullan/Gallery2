@@ -18,7 +18,7 @@
 	  <tr>
 	    <td colspan="2" align="center">
 	      {galleryBigFont}
-	      {galleryText text="Editting Group '%s'"
+	      {galleryText text="Editing Group '%s'"
 	                   arg1=$form.groupName}
 	      {/galleryBigFont}
 	    </td>

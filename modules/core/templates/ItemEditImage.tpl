@@ -39,13 +39,13 @@
 	<tr>
 	  <td>
 	    {galleryInput type="submit" name="form.action.rotate.counterClockwise"}
-	    {galleryText text="Counter-Clockwise 90&ordm;"}
+	    {galleryText text="Counter-Clockwise 90&deg;"}
 	    {/galleryInput}
 	    {galleryInput type="submit" name="form.action.rotate.flip"}
-	    {galleryText text="Flip 180&ordm;"}
+	    {galleryText text="Flip 180&deg;"}
 	    {/galleryInput}
 	    {galleryInput type="submit" name="form.action.rotate.clockwise"}
-	    {galleryText text="Clockwise 90&ordm;"}
+	    {galleryText text="Clockwise 90&deg;"}
 	    {/galleryInput}
 	  </td>
 	</tr>

@@ -43,7 +43,7 @@ class AdminEditUserController extends GalleryController {
 	}
 
 	/*
-	 * We treat anonymous users differently, so see if we're editting the
+	 * We treat anonymous users differently, so see if we're editing the
 	 * anonymous user.
 	 */
 	list ($ret, $anonymousUserId) =

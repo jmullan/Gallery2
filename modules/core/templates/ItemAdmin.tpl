@@ -13,7 +13,7 @@
 	    <center>
 	      {galleryBigFont}
 	      <nobr>
-		{galleryText text="Editting this item"}
+		{galleryText text="Editing this item"}
 	      </nobr>
 	      {/galleryBigFont}
 	      <br>

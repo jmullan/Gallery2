@@ -12,7 +12,7 @@
   <!-- TABLE -->
   <xsl:template match="table">
     -- This file was automatically generated from an XSL template, which is
-    -- why it looks so ugly.  Editting it by hand would be a bad idea.  If 
+    -- why it looks so ugly.  Editing it by hand would be a bad idea.  If 
     -- you want to do something productive, fix the style sheet so that it
     -- formats the SQL attractively.
     --

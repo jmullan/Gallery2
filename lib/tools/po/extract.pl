@@ -17,25 +17,28 @@
 # Copyright 2001-2002 Jan Schneider <jan@horde.org>
 #
 # We've modified the script somewhat to make it work cleanly with the
-# way that Gallery embeds internationalized text.
+# way that Gallery embeds internationalized text, so let's tack on our
+# own copyrights.
+#
+# Copyright 2002-2003 Bharat Mediratta <bharat@menalto.com>
 #
 # $Id$
 #
 use FileHandle;
 use File::Basename;
 use File::Find;
-use Cwd;
 
 use strict;
 
 my %strings;
+
 my $exts = '(php|inc|tpl)';
 
 foreach my $moduleDir (@ARGV) {
   find(\&extract, $moduleDir);
 }
 
-print join("\n", sort keys %strings), "\n";
+print join("\n" => sort keys %strings), "\n";
 
 sub extract {
   my $file = $File::Find::name;
@@ -44,26 +47,72 @@ sub extract {
 
   if ($file =~ /\.$exts$/) {
     open($fd, basename($file));
-    my $data = join('', <$fd>);
-    my $text;
-    while ($data =~ s/translate\("(.*?)"\)//s) {
-      $text = $1;
-      $strings{qq{_("$text")}}++;
+    my $data = join('' => <$fd>);
+
+    # grab phrases of this format: translate(".....")
+    while ($data =~ /translate\("(.*?[^\\])"\)/sg) {
+      my $text = $1;
+      $strings{qq{gettext("$text")}}++;
     }
 
-    while ($data =~ s/translate\('(.*?)'\)//s) {
-      $text = $1;
-      $strings{qq{_("$text")}}++;
+    # grab phrases of this format: translate('.....')
+    while ($data =~ /translate\('(.*?)'\)/sg) {
+      my $text = $1;
+      $text =~ s/\"/\\\"/sg;	# escape double-quotes
+      $strings{qq{gettext("$text")}}++;
     }
 
-    while ($data =~ s/({galleryText.*?)(one|many|text)="(.*?)"/$1/s) {
-      $text = $3;
-      $strings{qq{_("$text")}}++;
-    }
+    # grab phrases of this format { galleryText ..... }
+    while ($data =~ /(\{\s*galleryText\s+.*?[^\\]\})/sg) {
+      my $string = $1;
+      my $text;
+      my $one;
+      my $many;
 
-    while ($data =~ s/({galleryText.*?)(one|many|text)='(.*?)'/$1/s) {
-      $text = $3;
-      $strings{qq{_("$text")}}++;
+      # text=.....
+      if ($string =~ /text="(.*?[^\\])"/s) {
+	$text = $1;
+      }
+      elsif ($string =~ /text='(.*?)'/s) {
+	$text = $1;
+	$text =~ s/\"/\\\"/sg;	# escape double-quotes
+      }
+
+      # one = .....
+      if ($string =~ /\s+one="(.*?[^\\])"/s) {
+	$one = $1;
+      }
+      elsif ($string =~ /\s+one='(.*?)'/s) {
+	$one = $1;
+	$one =~ s/\"/\\\"/sg;	# escape double-quotes
+      }
+
+      # many = .....
+      if ($string =~ /\s+many="(.*?[^\\])"/s) {
+	$many = $1;
+      }
+      elsif ($string =~ /\s+many='(.*?)'/s) {
+	$many = $1;
+	$many =~ s/\"/\\\"/sg;	# escape double-quotes
+      }
+
+      # pick gettext() or ngettext()
+      if ($text) {
+	$string = qq{gettext("$text")};
+      }
+      elsif ($one and $many) {
+	$string = qq{ngettext("$one", "$many")};
+      }
+      else {
+	# parse error
+	$text =~ s/\n/\n>/sg;
+	print STDERR "extract.pl parse error: $file:\n";
+	print STDERR "> $text\n";
+	exit;
+      }
+
+      $string =~ s/\\\}/\}/sg;	# unescape right-curly-braces
+      $strings{qq{$string}}++;
     }
 
     close($fd);
