@@ -270,7 +270,7 @@ class GalleryEmbed {
      *
      * @param string username
      * @param array user data
-     *              ['email' => string, 'fullname' => string,
+     *              ['username' => string, 'email' => string, 'fullname' => string,
      *               'language' => string, 'password' => string,
      *               'hashedpassword' => string, 'hashmethod' => string]
      * @return object GalleryStatus a status object
@@ -317,6 +317,9 @@ class GalleryEmbed {
 	    $user->changePassword('G' . rand(100000,999999) . '2');
 	}
 
+	if (isset($args['username'])) {
+	    $user->setuserName($args['username']);
+	}
 	if (isset($args['email'])) {
 	    $user->setEmail($args['email']);
 	}
@@ -391,6 +394,40 @@ class GalleryEmbed {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	$ret = GalleryCoreApi::deleteEntityById($group->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	return GalleryStatus::success();
+    }
+	
+	/**
+     * Update a G2 Group.
+     *
+     * @param string groupname
+     * @param array group data
+     *              ['groupname' => string]
+     * @return object GalleryStatus a status object
+     * @static
+     */
+    function updateGroup($groupName, $args) {
+	list ($ret, $group) = GalleryCoreApi::fetchGroupByGroupName($groupName);;
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($group->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	if (isset($args['groupname'])) {
+	    $group->setgroupName($args['groupname']);
+	}
+	$ret = $group->save(); 
+	if ($ret->isError()) {
+	    GalleryCoreApi::releaseLocks($lockId);
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$ret = GalleryCoreApi::releaseLocks($lockId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
