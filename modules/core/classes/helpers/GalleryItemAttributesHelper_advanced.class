@@ -264,7 +264,7 @@ class GalleryItemAttributesHelper_advanced {
      * @static
      */
     function fetchViewCount($itemId) {
-	require_once(dirname(__FILE__) . '/../GalleryItemAttributesMap.class');
+	require_once(dirname(__FILE__) . '/GalleryItemAttributesHelper_medium.class');
 	list ($ret, $viewCounts) = GalleryItemAttributesHelper_medium::fetchViewCounts(array($itemId));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
