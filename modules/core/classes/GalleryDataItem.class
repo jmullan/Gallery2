@@ -261,6 +261,17 @@ class GalleryDataItem_core extends GalleryItem {
      * @return object GalleryStatus a status code
      */
     function rescan() {
+	global $gallery;
+
+	$platform = $gallery->getPlatform();
+
+	list($ret, $path) = $this->fetchPath();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$this->setSize($platform->filesize($path));
+	
 	return GalleryStatus::success();
     }
 
