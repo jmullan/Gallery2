@@ -196,6 +196,16 @@ class MimeHelper_simple {
 	    $extensionMap['forward']['asf'] = 'video/x-ms-asf';
 	    $extensionMap['forward']['wmv'] = 'video/x-ms-wmv';
 	    $extensionMap['forward']['wma'] = 'audio/x-ms-wma';
+
+	    /* JPEG 2000: From RFC 3745: http://www.faqs.org/rfcs/rfc3745.html */
+	    $extensionMap['forward']['jp2'] = 'image/jp2';
+	    $extensionMap['forward']['jpg2'] = 'image/jp2';
+	    $extensionMap['forward']['jpf'] = 'image/jpx';
+	    $extensionMap['forward']['jpx'] = 'image/jpx';
+	    $extensionMap['forward']['mj2'] = 'video/mj2';
+	    $extensionMap['forward']['mjp2'] = 'video/mj2';
+	    $extensionMap['forward']['jpm'] = 'image/jpm';
+	    $extensionMap['forward']['jpgm'] = 'image/jpgm';
 	    
 	    $extensionMap['reverse'] = array_flip($extensionMap['forward']);
 

@@ -390,7 +390,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
-	    $wantToConvert = array('image/tiff', 'image/svg+xml', 'application/pdf');
+	    $wantToConvert = array('image/tiff', 'image/svg+xml', 'application/pdf', 'image/jp2', 'image/jpx');
 	    $canConvert = array_intersect($wantToConvert, $environment['mimeTypes']);
 
 	    $this->assertEquals(array(

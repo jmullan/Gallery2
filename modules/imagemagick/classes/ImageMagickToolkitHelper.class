@@ -60,7 +60,9 @@ class ImageMagickToolkitHelper {
 	 * Same for PDF.
 	 */
 	$convertToJpegMimeTypes = array_intersect(
-	    array('image/tiff', 'image/svg+xml', 'application/pdf'), $mimeTypes);
+		array('image/tiff', 'image/svg+xml', 'application/pdf', 'image/jp2', 'image/jpx'),
+		$mimeTypes
+	);
 	if (!empty($convertToJpegMimeTypes)) {
 	    $operations['convert-to-image/jpeg']['params'] = array();
 	    $operations['convert-to-image/jpeg']['description'] = $gallery->i18n('Convert to a JPEG'); 
@@ -197,6 +199,7 @@ class ImageMagickToolkitHelper {
 	$tests = array();
 	$tests[] = array('mime' => array('image/gif'), 'file' => 'test.gif', 'expected' => '(GIF.*PseudoClass|PseudoClass.*GIF|DirectClass.*GIF)');
 	$tests[] = array('mime' => array('image/jpeg', 'image/pjpeg'), 'file' => 'test.jpg', 'expected' => '(JPEG.*DirectClass|DirectClass.*JPEG)');
+	$tests[] = array('mime' => array('image/jp2', 'image/jpg2', 'image/jpx'), 'file' => 'test.jp2', 'expected' => '(JP2.*DirectClass|DirectClass.*JP2)');
 	$tests[] = array('mime' => array('image/png'), 'file' => 'test.png', 'expected' => '(PNG.*DirectClass|DirectClass.*PNG)');
 	$tests[] = array('mime' => array('image/tiff'), 'file' => 'test.tif', 'expected' => '(TIFF.*(Pseudo|Direct)Class|(Pseudo|Direct)Class.*TIFF)');
 	$tests[] = array('mime' => array('image/svg+xml'), 'file' => 'test.svg', 'expected' => '(SVG.*DirectClass|DirectClass.*SVG)');
