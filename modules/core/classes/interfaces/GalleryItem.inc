@@ -51,17 +51,22 @@ class GalleryItem extends GalleryItem_core {
     function getPersistentMemberInfo() {
         $meta = parent::getPersistentMemberInfo();
     
+        $meta['members']['canContainChildren'] = array(
+            'class' => 'GalleryItem',
+            'type' => STORAGE_TYPE_BOOLEAN
+        );
+    
         $meta['members']['description'] = array(
             'class' => 'GalleryItem',
             'type' => STORAGE_TYPE_TEXT
         );
     
-        $meta['members']['layout'] = array(
+        $meta['members']['keywords'] = array(
             'class' => 'GalleryItem',
             'type' => STORAGE_TYPE_STRING
         );
     
-        $meta['members']['keywords'] = array(
+        $meta['members']['layout'] = array(
             'class' => 'GalleryItem',
             'type' => STORAGE_TYPE_STRING
         );
@@ -118,22 +123,28 @@ class GalleryItem extends GalleryItem_core {
         $data = parent::getMemberData();
         GalleryProfiler::start('GalleryPersistent::getMemberData');
     
+        if (!isset($this->_canContainChildren)) {
+            $data['canContainChildren'] = null;
+        } else {
+            $data['canContainChildren'] = $this->_canContainChildren;
+        }
+    
         if (!isset($this->_description)) {
             $data['description'] = null;
         } else {
             $data['description'] = $this->_description;
         }
     
-        if (!isset($this->_layout)) {
-            $data['layout'] = null;
-        } else {
-            $data['layout'] = $this->_layout;
-        }
-    
         if (!isset($this->_keywords)) {
             $data['keywords'] = null;
         } else {
             $data['keywords'] = $this->_keywords;
+        }
+    
+        if (!isset($this->_layout)) {
+            $data['layout'] = null;
+        } else {
+            $data['layout'] = $this->_layout;
         }
     
         if (!isset($this->_orderBy)) {
@@ -189,6 +200,47 @@ class GalleryItem extends GalleryItem_core {
     }
   
     /**
+     * Get the value of canContainChildren
+     *
+     * @return BOOLEAN the value
+     */
+    function getcanContainChildren() {
+        if (!isset($this->_canContainChildren)) {
+            return null;
+        }
+        return $this->_canContainChildren;
+    }
+
+    /**
+     * Set the value of canContainChildren
+     *
+     * @param BOOLEAN the value
+     */
+    function setcanContainChildren($value) {
+
+        /* 
+         * Convert unset values to null, to avoid generating warnings.
+         */
+	$a = isset($value) ? $value : null;
+	$b = isset($this->_canContainChildren) ? $this->_canContainChildren : null;
+
+    
+        /* Type case the incoming value to be a boolean */
+        if ($value != null) {
+            $value = (bool)$value;
+        }
+      
+        /* 
+         * Only take action if the value actually changes, but take care not to 
+         * generate warnings for unset values.
+         */
+        if ($a != $b) {
+            $this->_canContainChildren = $value;
+            $this->setModifiedFlag('canContainChildren', MEMBER_MODIFIED);
+        }
+    }
+  
+    /**
      * Get the value of description
      *
      * @return TEXT the value
@@ -225,42 +277,6 @@ class GalleryItem extends GalleryItem_core {
     }
   
     /**
-     * Get the value of layout
-     *
-     * @return STRING the value
-     */
-    function getlayout() {
-        if (!isset($this->_layout)) {
-            return null;
-        }
-        return $this->_layout;
-    }
-
-    /**
-     * Set the value of layout
-     *
-     * @param STRING the value
-     */
-    function setlayout($value) {
-
-        /* 
-         * Convert unset values to null, to avoid generating warnings.
-         */
-	$a = isset($value) ? $value : null;
-	$b = isset($this->_layout) ? $this->_layout : null;
-
-    
-        /* 
-         * Only take action if the value actually changes, but take care not to 
-         * generate warnings for unset values.
-         */
-        if ($a != $b) {
-            $this->_layout = $value;
-            $this->setModifiedFlag('layout', MEMBER_MODIFIED);
-        }
-    }
-  
-    /**
      * Get the value of keywords
      *
      * @return STRING the value
@@ -293,6 +309,42 @@ class GalleryItem extends GalleryItem_core {
         if ($a != $b) {
             $this->_keywords = $value;
             $this->setModifiedFlag('keywords', MEMBER_MODIFIED);
+        }
+    }
+  
+    /**
+     * Get the value of layout
+     *
+     * @return STRING the value
+     */
+    function getlayout() {
+        if (!isset($this->_layout)) {
+            return null;
+        }
+        return $this->_layout;
+    }
+
+    /**
+     * Set the value of layout
+     *
+     * @param STRING the value
+     */
+    function setlayout($value) {
+
+        /* 
+         * Convert unset values to null, to avoid generating warnings.
+         */
+	$a = isset($value) ? $value : null;
+	$b = isset($this->_layout) ? $this->_layout : null;
+
+    
+        /* 
+         * Only take action if the value actually changes, but take care not to 
+         * generate warnings for unset values.
+         */
+        if ($a != $b) {
+            $this->_layout = $value;
+            $this->setModifiedFlag('layout', MEMBER_MODIFIED);
         }
     }
   

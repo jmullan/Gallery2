@@ -47,8 +47,8 @@ class ClassicLayout extends GalleryLayout {
 	$template =& $this->_getTemplate();
 	$template->setVariable('properties', $properties);
 	$template->setVariable('item', $item->getMemberData());
-	
-	if ($item->canContainChildren()) {
+
+	if ($item->getCanContainChildren()) {
 	    list ($ret, $html) = $this->_renderAlbum($item, $urlParams, $properties);
 	} else {
 	    list ($ret, $html) = $this->_renderSingle($item, $urlParams, $properties);

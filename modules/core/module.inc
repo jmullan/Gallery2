@@ -493,8 +493,8 @@ class CoreModule extends GalleryModule {
 	    if (isset($permissions['core.all'])) {
 		$showEditLink = true;
 		$showDeleteLink = $item->getId() != $rootId;
-		$showAddItemLink = $item->canContainChildren();
-		$showAddAlbumLink = $item->canContainChildren();
+		$showAddItemLink = $item->getCanContainChildren();
+		$showAddAlbumLink = $item->getCanContainChildren();
 		$showPermissionsLink = true;
 		$showMoveItemLink = true;
 
@@ -505,7 +505,7 @@ class CoreModule extends GalleryModule {
 		    $showEditLink = true;
 		}
 
-		if ($item->canContainChildren()) {
+		if ($item->getCanContainChildren()) {
 		    if (isset($permissions['core.addItem'])) {
 			$showAddItemLink = true;
 		    }
@@ -733,14 +733,14 @@ class CoreModule extends GalleryModule {
 	}
 	
 	if (isset($permissions['core.addItem'])) {
-	    if ($item->canContainChildren()) {
+	    if ($item->getCanContainChildren()) {
 	        $views[] = array('name' => $this->translate('Add Items'),
 				 'view' => 'core:ItemAddChildren');
 	    }
 	}
 	
 	if (isset($permissions['core.addAlbumItem'])) {
-	    if ($item->canContainChildren()) {
+	    if ($item->getCanContainChildren()) {
 	        $views[] = array('name' => $this->translate('Add Album'),
 				 'view' => 'core:ItemAddAlbum');
 	    }

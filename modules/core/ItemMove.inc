@@ -125,10 +125,10 @@ class ItemMoveController extends GalleryController {
 			GalleryUtilities::putRequestVariable('form.error.source.' . $selectedId . '.permission.deleteSource', 1);
 		    }
 		    /* Check if the destination allows this source to be added */
-		    if ($selectedItem->canContainChildren() && ! $canAddAlbum) {
+		    if ($selectedItem->getCanContainChildren() && ! $canAddAlbum) {
 			$problem = true;
 			GalleryUtilities::putRequestVariable('form.error.source.' . $selectedId . '.permission.addAlbum', 1);
-		    } elseif (! $selectedItem->canContainChildren() && ! $canAddItem) {
+		    } elseif (! $selectedItem->getCanContainChildren() && ! $canAddItem) {
 			$problem = true;
 			GalleryUtilities::putRequestVariable('form.error.source.' . $selectedId . '.permission.addItem', 1);
 		    }
@@ -197,7 +197,7 @@ class ItemMoveView extends GalleryView {
 	$form = GalleryUtilities::getFormVariables('form.');
 
         if ($formName == 'ItemMove') {
-
+	    /* No validation at the moment */
         } else {
             /* First time around, load the form with item data */
             $form = array();
@@ -269,7 +269,7 @@ class ItemMoveView extends GalleryView {
             if (! GalleryUtilities::isA($treeItem['entity'], 'GalleryItem')) {
                 continue;
             }
-            if (! $treeItem['entity']->canContainChildren()) {
+            if (! $treeItem['entity']->getCanContainChildren()) {
                 continue;
             }
             if ($treeItem['entity']->getId() == $itemId) {

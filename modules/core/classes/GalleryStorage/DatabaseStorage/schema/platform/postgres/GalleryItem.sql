@@ -10,22 +10,26 @@
     NOT NULL
   
       ,
-    DB_COLUMN_PREFIXdescription
-      TEXT
+    DB_COLUMN_PREFIXcanContainChildren
+      SMALLINT
     
       ,
-    DB_COLUMN_PREFIXlayout
-      VARCHAR(
-      
-          32
-        
-      )
+    DB_COLUMN_PREFIXdescription
+      TEXT
     
       ,
     DB_COLUMN_PREFIXkeywords
       VARCHAR(
       
           255
+        
+      )
+    
+      ,
+    DB_COLUMN_PREFIXlayout
+      VARCHAR(
+      
+          32
         
       )
     

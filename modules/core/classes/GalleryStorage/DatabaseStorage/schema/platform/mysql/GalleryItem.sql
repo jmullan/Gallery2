@@ -10,22 +10,26 @@
     NOT NULL
   
       ,
-    DB_COLUMN_PREFIXdescription
-      text
+    DB_COLUMN_PREFIXcanContainChildren
+      int(1)
     
       ,
-    DB_COLUMN_PREFIXlayout
-      varchar(
-      
-          32
-        
-      )
+    DB_COLUMN_PREFIXdescription
+      text
     
       ,
     DB_COLUMN_PREFIXkeywords
       varchar(
       
           255
+        
+      )
+    
+      ,
+    DB_COLUMN_PREFIXlayout
+      varchar(
+      
+          32
         
       )
     

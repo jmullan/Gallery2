@@ -82,6 +82,9 @@ class GalleryAlbumItem_core extends GalleryItem {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
+	/* Albums can contain children */
+	$this->setCanContainChildren(true);
+
 	list($ret, $parent) = $gallery->loadEntitiesById($parentId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -126,6 +129,9 @@ class GalleryAlbumItem_core extends GalleryItem {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
+
+	/* Root album can contain children */
+	$this->setCanContainChildren(true);
 
 	$parentPath = $gallery->getConfig('data.gallery.albums');
 	if ($ret->isError()) {
@@ -238,18 +244,6 @@ class GalleryAlbumItem_core extends GalleryItem {
 	}
 
 	return GalleryStatus::success();
-    }
-
-    /**
-     * Can this item contain other items?
-     *
-     * AlbumItems are allowed to contain other GalleryItems
-     *
-     * @access public
-     * @return boolean true if the item can contain children
-     */
-    function canContainChildren() {
-	return true;
     }
 
     /**

@@ -60,6 +60,19 @@ class GalleryItem_core extends GalleryFileSystemEntity {
      */
 
     /**
+     * Can this item contain children?
+     *
+     * @g2 <member>
+     * @g2  <member-name>canContainChildren</member-name>
+     * @g2  <member-type>BOOLEAN</member-type>
+     * @g2 </member>
+     *
+     * @var int $_canContainChildren
+     * @access private
+     */
+    var $_canContainChildren;
+
+    /**
      * The (long) description of this item
      *
      * @g2 <member>
@@ -71,20 +84,6 @@ class GalleryItem_core extends GalleryFileSystemEntity {
      * @access private
      */
     var $_description;
-
-    /**
-     * The layout to use for this item
-     *
-     * @g2 <member>
-     * @g2   <member-name>layout</member-name>
-     * @g2   <member-type>STRING</member-type>
-     * @g2   <member-size>SMALL</member-size>
-     * @g2 </member>
-     *
-     * @var string $_layout
-     * @access private
-     */
-    var $_layout;
 
     /**
      * A set of keywords that describe this item
@@ -100,6 +99,20 @@ class GalleryItem_core extends GalleryFileSystemEntity {
      * @access private
      */
     var $_keywords;
+
+    /**
+     * The layout to use for this item
+     *
+     * @g2 <member>
+     * @g2   <member-name>layout</member-name>
+     * @g2   <member-type>STRING</member-type>
+     * @g2   <member-size>SMALL</member-size>
+     * @g2 </member>
+     *
+     * @var string $_layout
+     * @access private
+     */
+    var $_layout;
 
     /**
      * Specify the name of the field that we're using to order children
@@ -221,20 +234,6 @@ class GalleryItem_core extends GalleryFileSystemEntity {
      */
 
     /**
-     * Can this item contain other items?
-     *
-     * By default, GalleryItems cannot contain other items.  However
-     * Subclasses may wish to override this method to allow
-     * containment.
-     *
-     * @access public
-     * @return boolean true if the item can contain children
-     */
-    function canContainChildren() {
-	return false;
-    }
-
-    /**
      * Create a new instance of this GalleryEntity in the persistent store
      *
      * Let the parent do its work, then add any initialization specific to this
@@ -258,7 +257,7 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	if (!$parent->canContainChildren()) {
+	if (!$parent->getCanContainChildren()) {
 	    return GalleryStatus::error(ERROR_ILLEGAL_CHILD,
 					__FILE__, __LINE__);
 	}
@@ -277,6 +276,9 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	/* Adopt the parent's ordering scheme */
 	$this->setOrderBy($parent->getOrderBy());
 	$this->setOrderDirection($parent->getOrderDirection());
+
+	/* By default, items can't contain children */
+	$this->setCanContainChildren(false);
 
 	return GalleryStatus::success();
     }
