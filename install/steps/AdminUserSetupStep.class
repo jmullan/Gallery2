@@ -29,19 +29,21 @@ class AdminUserSetupStep extends InstallStep {
 
     function loadTemplateData(&$templateData) {
 	global $galleryStub;
-	
+
 	if (!isset($this->_hasBeenLoadedBefore)) {
 	    $this->_hasBeenLoadedBefore = 1;
 	    $this->_password = $galleryStub->getConfig('setup.password');
-	    $templateData['passwordA'] = $this->_password;
-	    $templateData['passwordB'] = $this->_password;
 	}
+	$templateData['passwordA'] = $this->_password;
+	$templateData['passwordB'] = $this->_password;
 
 	if (isset($_POST['action']) && $_POST['action'] == 'create') {
 	    if (empty($_POST['passwordA'])) {
 		$templateData['error']['passwordA_missing'] = 1;
+		$templateData['passwordA'] = '';
 	    } else if (empty($_POST['passwordB'])) {
 		$templateData['error']['passwordB_missing'] = 1;
+		$templateData['passwordB'] = '';
 	    } else if ($_POST['passwordA'] != $_POST['passwordB']) {
 		$templateData['error']['password_mismatch'] = 1;
 		$templateData['passwordA'] = $_POST['passwordA'];
