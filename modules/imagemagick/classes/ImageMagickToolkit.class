@@ -261,8 +261,8 @@ class ImageMagickToolkit extends GalleryToolkit {
 	}
 
 	$success = $platform->rename($tmpFilename, $destFilename);
-	@$platform->unlink($tmpFilename);
 	if (!$success) {
+	    @$platform->unlink($tmpFilename);
 	    return GalleryStatus::error(ERROR_PLATFORM_FAILURE,
 					__FILE__, __LINE__,
 					"Failed renaming $tmpFilename -> $destFilename");
