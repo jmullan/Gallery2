@@ -374,7 +374,8 @@ class GalleryPlatform {
 	    $fd = $this->fopen($filename, $fopenMode);
 	    if (! $fd) {
 		return array(GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
-						  sprintf('Can\'t open file (%s) in mode (%s)', $filename, $fopenMode)),
+						  sprintf('Can\'t open file (%s) in mode (%s)',
+							  $filename, $fopenMode)),
 			     null);
 	    }
 	    $lockMode = ($lockExclusive ? LOCK_EX : LOCK_SH) | LOCK_NB;
@@ -393,7 +394,8 @@ class GalleryPlatform {
 	    if ($wouldBlock) {
 		/* Still no lock? Somethings wrong... */
 		return array(GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
-						  sprintf('Failed to get a%s to (%s)', ($lockExclusive ? 'n exclusive' : ' shared'), $filename)),
+                             sprintf('Failed to get a%s to (%s)',
+				     ($lockExclusive ? 'n exclusive' : ' shared'), $filename)),
 			     null);
 	    }
 	} else {
