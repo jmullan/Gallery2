@@ -1,0 +1,136 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * Scan through all of our source code and verify that we're not
+ * using anything that is not PHP 4.1 compatible
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class Php41CompatibilityTest extends GalleryTestCase {
+
+    function Php41CompatibilityTest($methodName) {
+	$this->GalleryTestCase($methodName);
+
+	include(dirname(__FILE__) . '/Php41IllegalFunctions.inc');
+	$this->_illegalFunctions = $illegalFunctions;
+	$this->_illegalRegexp = sprintf('/\b(%s)\s*\(/', join('|', $this->_illegalFunctions));
+	$this->_baseDir = realpath(dirname(__FILE__) . '/../../../../');
+
+	$this->_exceptions['is_a']['GalleryUtilities.class'] = 1;
+	$this->_exceptions['html_entity_decode']['GalleryUtilities.class'] = 1;
+	$this->_exceptions['dngettext']['GalleryTranslator.class'] = 1;
+	$this->_exceptions['bind_textdomain_codeset']['GalleryTranslator.class'] = 1;
+	$this->_exceptions['debug_backtrace']['GalleryStatus.class'] = 1;
+    }
+
+    function testCompatibility() {
+	global $gallery;
+
+	/* If the base gallery dir has a CVS dir, then we're all set */
+	$platform = $gallery->getPlatform();
+	if ($platform->file_exists($this->_baseDir . '/CVS/Entries')) {
+	    $this->_scanDir($this->_baseDir);
+	}
+    }
+
+    function _scanDir($dirPath) {
+	global $gallery;
+	$platform = $gallery->getPlatform();
+
+	if ($dirPath == $this->_baseDir . '/lib') {
+	    return;
+	}
+
+	if (!file_exists($dirPath) || !is_dir($dirPath)) {
+	    $this->assert(false, "$dirPath is not a directory (check parent CVS/Entries file)");
+	}
+
+	$fd = $platform->fopen("$dirPath/CVS/Entries", 'r');
+	$this->assert(!empty($fd), "Unable to parse CVS for dir: $dirPath");
+	if ($fd) {
+	    while ($line = $platform->fgets($fd, 4096)) {
+		$line = trim($line);
+		if ($line == 'D') {
+		    continue;
+		}
+		
+		if ($line[0] == 'D') {
+		    if (preg_match('|^D/(.*?)/|', $line, $matches)) {
+			$dirName = $matches[1];
+			$this->_scanDir(sprintf("%s/%s", $dirPath, $dirName));
+		    } else {
+			$this->assert(false, "Unable to parse [$line]");
+		    }
+		} else {
+		    if (preg_match('|^/(.*?)/|', $line, $matches)) {
+			$fileName = $matches[1];
+			if (preg_match('/\.(class|inc|php)/', $fileName)) {
+			    $this->_scanFile(sprintf("%s/%s", $dirPath, $fileName));
+			}
+		    } else {
+			$this->assert(false, "Unable to parse [$line]");
+		    }
+		}
+	    }
+	    $platform->fclose($fd);
+	}
+    }
+
+    function _scanFile($fileName) {
+	// Skip files we don't care about
+	if ($fileName == 'Php41IllegalFunctions.inc' ||
+	        preg_match('/Test.class$/', $fileName)) {
+	    return;
+	}
+	
+	global $gallery;
+	$platform = $gallery->getPlatform();
+
+	$gallery->guaranteeTimeLimit(30);
+
+	$fd = $platform->fopen($fileName, 'r');
+	$this->assert($fd);
+	if ($fd) {
+	    $buf = $platform->fread($fd, $platform->filesize($fileName));
+	    if (preg_match_all($this->_illegalRegexp, $buf, $matches)) {
+		foreach (array_unique($matches[1]) as $keyword) {
+		    if (!isset($this->_exceptions[$keyword]) ||
+			!isset($this->_exceptions[$keyword][basename($fileName)])) {
+			$this->assert(false,
+				      sprintf('%s contains illegal keyword %s',
+					      basename($fileName), $keyword));
+		    }
+		}
+	    }
+	    $platform->fclose($fd);
+	}
+    }
+}
+
