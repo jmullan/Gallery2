@@ -449,12 +449,21 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
           AND
           [GalleryFileSystemEntity::pathComponent] = ?
           AND
-          [GalleryChildEntity::id] <> ?
-          AND
           [GalleryChildEntity::id] = [GalleryFileSystemEntity::id]
         ';
 	$data[] = $pathComponent;
-	$data[] = $this->getId();
+
+	/*
+	 * The id is null if we're creating a new entity, in which case we don't want to
+	 * try to filter ourselves out of the collision check.
+	 */
+	if ($this->getId() != null) {
+	    $query .= '
+              AND
+              [GalleryChildEntity::id] <> ?
+            ';
+	    $data[] = $this->getId();
+	}
 	    
 	list($ret, $searchResults) = $gallery->search($query, $data);
 	if ($ret->isError()) {

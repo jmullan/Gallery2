@@ -88,6 +88,39 @@ class FileSystemTest extends GalleryTestCase {
 
 	$this->assertEquals($this->_albums[2]->getId(), $id);
     }
+
+    /**
+     * Verify that creating a second filesystem entity with the same path as 
+     * an existing one throws a collision error.
+     */
+    function testCreateCollision() {
+	global $gallery;
+
+	list ($ret, $lockId) = $gallery->acquireWriteLock($this->_albums[0]->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	$entity1 = new GalleryFileSystemEntity();
+	$ret = $entity1->create($this->_albums[0]->getId(), 'valid_path');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = $entity1->save();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$entity2 = new GalleryFileSystemEntity();
+	$ret = $entity2->create($this->_albums[0]->getId(), 'valid_path');
+	$this->assert($ret->getErrorCode() & ERROR_COLLISION, 'Missing collision error!');
+
+	$ret = $gallery->releaseLocks($lockId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
 }
 
 ?>
