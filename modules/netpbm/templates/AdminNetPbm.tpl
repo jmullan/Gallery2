@@ -169,7 +169,9 @@
     </p>
 
     {foreach from=$AdminNetPbm.mimeTypes item=mimeType}
-    {$mimeType}
+    <span>
+      {$mimeType}<br />
+    </span>
     {/foreach}
   </div>
   {/if}
