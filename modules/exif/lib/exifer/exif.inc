@@ -680,6 +680,15 @@ function read_exif_data_raw($path,$verbose) {
 	
 	//Then 4 bytes of offset to IFD0 (usually 8 which includes all 8 bytes of TIFF header)
 	$offset = bin2hex(fread( $in, 4 ));
+
+	// Check for extremely large values here
+	if(hexdec($offset) > 100000) {
+	        $result['ValidEXIFData'] = 0;
+		fclose($in);
+		fclose($seek);
+		return $result;
+	}
+	
 	if($intel==1) $offset = intel2Moto($offset);
 	if(hexdec($offset)>8) $unknown = fread( $in, hexdec($offset)-8); //fixed this bug in 1.3
 	
