@@ -192,7 +192,7 @@ class GalleryUrlGenerator {
      */
     function getGalleryId() {
 	$url = GalleryUrlGenerator::getCurrentUrl();
-	return preg_replace('{^.*?://(.*?)/(main.php|(install|upgrade)/).*$}', '$1', $url);
+	return preg_replace('{^.*?://(.*?)/(main.php|(install|upgrade|lib/tools)/).*$}', '$1', $url);
     }
 
     /*

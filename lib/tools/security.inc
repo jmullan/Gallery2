@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -81,7 +81,7 @@ if (passwordProvided()) {
 }
 
 function passwordProvided() {
-    return isset($_POST['g2_password']); 
+    return isset($_POST['g2_password']);
 }
 
 function passwordIsCorrect() {
@@ -91,12 +91,13 @@ function passwordIsCorrect() {
 
 function savePasswordCookie() {
     global $gallery;
+    require_once(dirname(__FILE__) . '/../../modules/core/classes/GalleryUrlGenerator.class');
 
-    $path = preg_replace('|/lib/tools.*|', '/lib/tools', $_SERVER['PHP_SELF']); 
-    header(sprintf('Set-Cookie: %s=%s; path=%s',
-		   'g2Setup',
+    $urlGenerator = new GalleryUrlGenerator();
+    $urlGenerator->init('lib/tools');
+    header(sprintf('Set-Cookie: g2Setup=%s; path=%slib/tools',
 		   md5($gallery->getConfig('setup.password')),
-		   $path));
+		   $urlGenerator->getCookiePath()));
 }
 
 function askForPassword() {
@@ -113,17 +114,7 @@ function askForPassword() {
 }
 
 function redirectBackToSelf() {
-    $defaultPort = array('http' => 80, 'https' => 443);
-    $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? 'https' : 'http';
-    $domain = !empty($_SERVER['HTTP_X_FORWARDED_SERVER'])
-		? $_SERVER['HTTP_X_FORWARDED_SERVER'] : $_SERVER['HTTP_HOST'];
-    $port = $_SERVER['SERVER_PORT'];
-    if ($port == $defaultPort[$protocol] || strpos($domain, ':') !== false) {
-	$port = '';
-    } else if (!empty($port)) {
-	$port = ':' . $port;
-    }
-    $query = !empty($_SERVER['QUERY_STRING']) ? ('?' . $_SERVER['QUERY_STRING']) : '';
-    header(sprintf('Location: %s://%s%s%s%s', $protocol, $domain, $port, $_SERVER['PHP_SELF'], $query));
+    require_once(dirname(__FILE__) . '/../../modules/core/classes/GalleryUrlGenerator.class');
+    header('Location: ' . GalleryUrlGenerator::getCurrentUrl());
 }
 ?>
