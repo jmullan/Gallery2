@@ -17,7 +17,7 @@
   <td valign="top"><br>
     {$layout.item.title|default:$layout.item.pathComponent}<br>
     {g->text text="Owner: %s" arg1=$layout.owner.fullName|default:$layout.owner.userName}<br>
-    {g->text one="Viewed: %s time" many="Viewed: %s times"
+    {g->text one="Viewed: %d time" many="Viewed: %d times"
              count=$layout.viewCount arg1=$layout.viewCount}<br>
     {g->text text="Date: "}{g->date timestamp=$layout.item.creationTimestamp}<br>
     {if isset($layout.item.keywords)}
