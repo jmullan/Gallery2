@@ -46,8 +46,11 @@ class ItemAddFromWeb extends ItemAddPlugin {
 
 	if (isset($form['action']['findFilesFromWebPage'])) {
 	    /* Delegate back to the same view */
-	} else if (isset($form['action']['addFromWebPage'])) {
-            if (isset($form['webPageUrls']) && is_array($form['webPageUrls'])) {
+	} else if (isset($form['action']['addFromWebPage']) &&
+		   empty($form['webPageUrls'])) {
+	    GalleryUtilities::putRequestVariable('form[error][webPage][nothingSelected]', 1);
+	} else if (isset($form['action']['addFromWebPage']) &&
+		   is_array($form['webPageUrls'])) {
 	    $platform = $gallery->getPlatform();
 	    foreach (array_keys($form['webPageUrls']) as $url) {
 		/* Copy the file locally */
@@ -63,7 +66,7 @@ class ItemAddFromWeb extends ItemAddPlugin {
 		    list ($base, $extension) = GalleryUtilities::getFileNameComponents(basename($url));
 		    $mimeType = GalleryCoreApi::convertExtensionToMime($extension);
 
-		    // If we can't get a mime type, try stripping off the query string
+		    /* If we can't get a mime type, try stripping off the query string */
 		    if ($mimeType == 'application/unknown') {
 			if (strstr($url, "?")) {
 			    $tmpUrl = preg_replace("/\?.*$/", "", $url);
@@ -107,8 +110,7 @@ class ItemAddFromWeb extends ItemAddPlugin {
 						    'warnings' => $warnings);
 		}
 		@$platform->unlink($tmpFile);
-	    } /* end foreach */
-            } /* end if no items selected to add */
+	    }
         }
 
 	return array(GalleryStatus::success(), $error, $status);
@@ -297,7 +299,6 @@ class ItemAddFromWeb extends ItemAddPlugin {
 
         if (isset($form['action']['addFromWebPage']) && (!isset($form['webPageUrls'])
                 || !is_array($form['webPageUrls']) || !count($form['webPageUrls']))) {
-            $form['error']['emptylist'] = 1;
         }
 
 	if (!isset($form['set'])) {

@@ -54,9 +54,9 @@
     </div>
     {/if}
 
-    {if isset($form.error.emptylist)}
+    {if isset($form.error.webPage.nothingSelected)}
     <div class="giError">
-      {g->text text="No items were added since no items were selected"}
+      {g->text text="Nothing added since no items were selected"}
     </div>
     {/if}
   </div>

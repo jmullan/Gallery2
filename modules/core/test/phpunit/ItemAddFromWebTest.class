@@ -162,7 +162,10 @@ class ItemAddFromWebTest extends ItemAddPluginTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest($this->_rootAlbum);
-	$this->assertEquals(array(), $results[0]);
+	$this->assertEquals(array(array(), array()), $results);
+
+	$this->assertEquals('1',
+            GalleryUtilities::getRequestVariables('form[error][webPage][nothingSelected]'));
     }
 }
 
