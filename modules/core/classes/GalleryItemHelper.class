@@ -375,12 +375,12 @@ class GalleryItemHelper {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$ret = $newItem->create($albumId, $fileName, $mimeType, $itemName);
+	$ret = $newItem->create($albumId, $fileName, $mimeType, substr($itemName, 0, 64));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$newItem->setTitle($title);
+	$newItem->setTitle(substr($title, 0, 128));
 	$newItem->setSummary(substr($summary, 0, 255));
 	$newItem->setDescription($description);
 
