@@ -26,6 +26,10 @@
 	  {g->column}
 	    {if ($setting.type == 'text-field')}
 	      {g->input type="text" size="6" name="form[key][$settingKey]" onKeyPress="javascript:changeSetting('$settingKey')"}{$form.key.$settingKey}{/g->input}
+	    {elseif ($setting.type == 'single-select')}
+	      {g->select name="form[key][$settingKey]" onChange="javascript:changeSetting('$settingKey')"}
+		{html_options options=$setting.choices selected=$setting.value}
+	      {/g->select}
 	    {/if}
 	  {/g->column}
 	  {g->column}
