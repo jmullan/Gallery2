@@ -188,5 +188,140 @@ class GalleryEmbed {
 	}
 	return GalleryStatus::success();
     }
+
+    /**
+     * Create a G2 user.
+     *
+     * @param string username
+     * @param array (optional) additional data
+     *              ['email' => string, 'fullname' => string,
+     *               'language' => string, 'password' => string,
+     *               'hashedpassword' => string, 'hashmethod' => string]
+     * @return object GalleryStatus a status object
+     * @static
+     */
+    function createUser($userName, $args=array()) {
+	if (empty($userName)) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	}
+	list ($ret, $user) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryUser');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	if (!isset($user)) {
+	    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
+	}
+
+	$ret = $user->create($userName);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	GalleryEmbed::_setUserData($user, $args);
+	$ret = $user->save(); 
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Update a G2 user.
+     *
+     * @param string username
+     * @param array user data
+     *              ['email' => string, 'fullname' => string,
+     *               'language' => string, 'password' => string,
+     *               'hashedpassword' => string, 'hashmethod' => string]
+     * @return object GalleryStatus a status object
+     * @static
+     */
+    function updateUser($userName, $args) {
+	if (empty($userName)) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	}
+	list ($ret, $user) = GalleryCoreApi::fetchUserByUserName($userName);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	if (!isset($user)) {
+	    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
+	}
+	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($user->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	GalleryEmbed::_setUserData($user, $args);
+	$ret = $user->save(); 
+	if ($ret->isError()) {
+	    GalleryCoreApi::releaseLocks($lockId);
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$ret = GalleryCoreApi::releaseLocks($lockId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Set values in user object based on given args.
+     *
+     * @param object GalleryUser user
+     * @param array additional user data
+     * @private
+     */
+    function _setUserData(&$user, $args) {
+	if (!empty($args['password'])) {
+	    $user->changePassword($args['password']);
+	} elseif (isset($args['hashmethod']) && $args['hashmethod'] == 'md5'
+		&& !empty($args['hashedpassword'])) {
+	    $user->setHashedPassword($args['hashedpassword']);
+	} else {
+	    // Create a random password..
+	    $user->changePassword('G' . rand(100000,999999) . '2');
+	}
+
+	if (isset($args['email'])) {
+	    $user->setEmail($args['email']);
+	}
+	if (isset($args['fullname'])) {
+	    $user->setFullName($args['fullname']);
+	}
+	if (isset($args['language'])) {
+	    global $gallery;
+	    $translator = $gallery->getTranslator();
+	    list ($languageCode) = $translator->getSupportedLanguageCode($args['language']);
+	    $user->setLanguage($languageCode);
+	}
+    }
+
+    /**
+     * Delete a G2 user.
+     *
+     * @param string username
+     * @return object GalleryStatus a status object
+     * @static
+     */
+    function deleteUser($userName) {
+	if (empty($userName)) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	}
+	list ($ret, $user) = GalleryCoreApi::fetchUserByUserName($userName);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	if (!isset($user)) {
+	    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
+	}
+	$ret = GalleryCoreApi::deleteEntityById($user->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
 }
 ?>
