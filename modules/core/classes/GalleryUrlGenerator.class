@@ -222,13 +222,15 @@ class GalleryUrlGenerator {
      * Return a valid Gallery URL.
      *
      * @param array key/value pairs to be embedded in the URL
-     * @param boolean (optional, default=false) true if we want to force the session id into the url
+     * @param boolean (optional) set to true/false to force the session id to be in/not in
+     *                the url; by default it is include when cookies are not in use
      */
-    function generateUrl($params=array(), $forceSessionId=false) {
+    function generateUrl($params=array(), $forceSessionId=null) {
 	global $gallery;
-	    
+
 	$session =& $gallery->getSession();
-	if ($forceSessionId || !($session->isUsingCookies())) {
+	if ( (!isset($forceSessionId) && !($session->isUsingCookies())) ||
+		(isset($forceSessionId) && $forceSessionId === true)) {
 	    $params[$session->getKey()] = $session->getId();
 	}
 
