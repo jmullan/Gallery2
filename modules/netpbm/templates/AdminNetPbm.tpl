@@ -60,6 +60,26 @@
 	  </td>
 	</tr>
 
+	<!-- {if isset($form.error.path.testError)} -->
+	<tr>
+	  <td colspan="2" align="center">
+	    {gallery->errorFontColor}
+	    {gallery->text text="The path you entered doesn't contain valid NetPBM binaries. Use the 'test' button to check where the error is."}
+	    {/gallery->errorFontColor}
+	  </td>
+	</tr>
+	<!-- {/if} -->
+
+	<!-- {if isset($form.error.path.badPath)} -->
+	<tr>
+	  <td colspan="2" align="center">
+	    {gallery->errorFontColor}
+	    {gallery->text text="The path you entered isn't a valid path."}
+	    {/gallery->errorFontColor}
+	  </td>
+	</tr>
+	<!-- {/if} -->
+
 	<tr>	
 	  <td align="right">
 	    {gallery->text text="JPEG Quality"}
@@ -133,6 +153,24 @@
 	{/if}
 
 	{/foreach}
+
+	{if $mimeTypes}
+	<tr>
+	  <td colspan="2">
+	    &nbsp;
+	  </td>
+	</tr>
+
+	<tr>
+	  <th> {gallery->text text="Supported MIME Types"} </th>
+	  <td align="center">
+	    {foreach from=$mimeTypes item=mimeType}
+	        {$mimeType}<br>
+	    {/foreach}
+	  </td>
+	</tr>
+	{/if}
+
       </table>
       </td>
     </tr>

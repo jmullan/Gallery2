@@ -49,41 +49,69 @@ class AdminNetPbmController extends GalleryController {
 
 	$return = GalleryUtilities::getFormVariables('return.');
 
-	/* Set the path.  Guarantee that it's got a trailing slash. */
-	$platform = $gallery->getPlatform();
-	$slash = $platform->getDirectorySeparator();
-	$form['path'] = trim($form['path']);
-	if (!empty($form['path'])) {
-	    if ($form['path']{strlen($form['path'])-1} != $slash) {
-		$form['path'] .= $slash;
-	    }
-	}
-
 	if (isset($form['action']['save'])) {
-	    $ret = $gallery->setModuleParameter('netpbm', 'path', $form['path']);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
 
-	    /*
-	     * Set the image quality
-	     */
-	    $ret = $gallery->setModuleParameter('netpbm', 'jpegQuality', $form['jpegQuality']);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+	    /* Set the path.  Guarantee that it's got a trailing slash. */
+	    $platform = $gallery->getPlatform();
+	    $slash = $platform->getDirectorySeparator();
+	    $form['path'] = trim($form['path']);
+	    if (!empty($form['path'])) {
+		if ($form['path']{strlen($form['path'])-1} != $slash) {
+		    $form['path'] .= $slash;
+		}
 	    }
+	    
 
-	    /*
-	     * Set the pnmtojpeg binary name
-	     */
-	    $ret = $gallery->setModuleParameter('netpbm', 'pnmtojpeg', $form['pnmtojpeg']);
+	    $saveSuccess = false;
+	    $success = true;
+	    list ($ret, $testResults) =
+		NetPbmToolkitHelper::testBinaries($form['path'], array('pnmtojpeg' => $form['pnmtojpeg']));
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		if ($ret->getErrorCode() & ERROR_BAD_PATH) {
+		    GalleryUtilities::putRequestVariable('form.error.path.badPath', 1);
+		    $success = false;
+		} else {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	    } else {
+		foreach ($testResults as $testResult) {
+		    /* All tests should work, else this path is not a valid one */
+		    if (! $testResult['success']) {
+			$success = false;
+			GalleryUtilities::putRequestVariable('form.error.path.testError', 1);
+			break;
+		    }
+		}
+	    }
+	    
+	    if ($success) {
+		$saveSuccess = true;
+		$ret = $gallery->setModuleParameter('netpbm', 'path', $form['path']);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		
+		/*
+		 * Set the image quality
+		 */
+		$ret = $gallery->setModuleParameter('netpbm', 'jpegQuality', $form['jpegQuality']);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		
+		/*
+		 * Set the pnmtojpeg binary name
+		 */
+		$ret = $gallery->setModuleParameter('netpbm', 'pnmtojpeg', $form['pnmtojpeg']);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
 	    }
 	}
 
 	/* Figure out where to redirect upon success/cancel */
-	if (isset($form['action']['save']) || isset($form['action']['cancel'])) {
+	if ((isset($form['action']['save']) && $saveSuccess)
+	    || isset($form['action']['cancel'])) {
 	    if (!empty($return)) {
 		$redirectParams = $return;
 	    } else {
@@ -151,6 +179,7 @@ class AdminNetPbmView extends GalleryView {
 
 	$platform = $gallery->getPlatform();
 	$tests = array();
+	$mimeTypes = array();
 
 	if (isset($form['action']['test'])) {
 	    if (empty($form['path'])) {
@@ -167,6 +196,7 @@ class AdminNetPbmView extends GalleryView {
 	$template->setVariable('form', $form);
 	$template->setVariable('return', $return);
 	$template->setVariable('tests', $tests);
+	$template->setVariable('mimeTypes', $mimeTypes);
 	$template->setVariable('pnmToJpegList', $pnmToJpegList);
 	$template->setVariable('jpegQualityList', $jpegQualityList);
 	$template->setVariable('controller', 'netpbm:AdminNetPbm');
