@@ -26,9 +26,14 @@
 require_once(dirname(__FILE__) . '/../security.inc');
 $poFiles = findPoFiles("../../..");
 
+$type = 'summary';
+if (!empty($_REQUEST['type']) && $_REQUEST['type'] == 'detail') {
+    $type = 'detail';
+}
+
 ini_set('magic_quotes_runtime', false);
 $reportData = parsePoFiles($poFiles);
-require(dirname(__FILE__) . '/localization/main.inc');
+require(dirname(__FILE__) . '/localization/main_' . $type . '.inc');
 exit;
 
 function findPoFiles($dir) {
@@ -216,6 +221,14 @@ function parsePoFiles($poFiles) {
 						     'obsolete' => $obsolete,
 						     'percentDone' => $percentDone);
 
+	foreach (array('translated', 'untranslated', 'fuzzy', 'obsolete') as $key) {
+	    if (!isset($summary[$locale][$key])) {
+		$summary[$locale][$key] = 0;
+	    }
+	    
+	    $summary[$locale][$key] += $poData[$locale]['plugins'][$plugin][$key];
+	}
+
 	/* Keep track of the largest message count we've seen per plugin */
 	if (empty($maxMessageCount[$plugin]) || $total > $maxMessageCount[$plugin]) {
 	    $maxMessageCount[$plugin] = $total;
@@ -247,6 +260,11 @@ function parsePoFiles($poFiles) {
 	} else {
 	    $poData[$locale]['percentDone'] = $pluginTotal / $overallTotal * 100;
 	}
+
+	foreach (array('translated', 'untranslated', 'fuzzy', 'obsolete') as $key) {
+	    $poData[$locale]['summary'][$key] = 100 * $summary[$locale][$key] / $overallTotal;
+	}
+	$poData[$locale]['summary']['total'] = $overallTotal;
     }
 
     /* Sort locales by overall total */

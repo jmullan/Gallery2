@@ -1,6 +1,6 @@
 	    <tr>
 	      <th>
-		Number
+		Rank
 	      </th>
 	      <th>
 		Locale

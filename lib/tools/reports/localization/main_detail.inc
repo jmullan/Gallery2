@@ -9,12 +9,11 @@
       <h2> Generated: <?php print strftime("%x %X") ?> </h2>
 
       <center>
+        View: <a href="?type=summary"> summary </a> | <b> detail </b>
 	<table class="report">
 	  <?php $index = 0; ?>
 	  <?php foreach ($reportData as $locale => $localeData) { ?>
-	  <?php if (!($index % 2)) { ?>
-	  <?php include(dirname(__FILE__) . '/row_header.inc'); ?>
-	  <?php } ?>
+	  <?php include(dirname(__FILE__) . '/row_header_detail.inc'); ?>
 	  <?php $index++; ?>
 	    <tr>
 	      <td rowspan="<?php print sizeof($localeData['plugins'])?>" class="dark">
