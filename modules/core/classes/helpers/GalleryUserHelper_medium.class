@@ -97,7 +97,7 @@ class GalleryUserHelper_medium {
     }
 
     /**
-     * Return the total umber of users
+     * Return the total number of users
      *
      * @param string an optional substring to match against the username
      * @static
@@ -126,7 +126,6 @@ class GalleryUserHelper_medium {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$usernames = array();
 	$result = $searchResults->nextResult();
 	return array(GalleryStatus::success(), (int)$result[0]);
     }
