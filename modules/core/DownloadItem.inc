@@ -1,0 +1,87 @@
+<?php
+/*
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2002 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+class DownloadItemView /* extends GalleryView */ {
+
+    function render() {
+	global $gallery;
+
+	/* Figure out which item we're talking about */
+	$itemId = GalleryUtilities::getRequestVariables('gItemId');
+	if (empty($itemId)) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
+					__FILE__, __LINE__);
+	}
+
+	/* Load the item */
+	list ($ret, $item) = $gallery->loadEntitiesById($itemId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Rebuild derivative cache, if necessary */
+	if (is_subclass_of($item, 'GalleryDerivative')) {
+	    list ($ret, $current) = $item->isCacheCurrent();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    
+	    if (!$current) {
+		$ret = $item->rebuildCache();
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+
+	    $fileExtension = $item->getDerivativeFileExtension();
+	} else {
+	    $fileExtension = $item->getFileExtension();
+	}
+
+	/* Get the path to the file */
+	list ($ret, $path) = $item->getPath();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Get the size of the file */
+	list ($ret, $size) = $item->getSize();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/*
+	 * Update the database's info, if necessary 
+	 */
+	if ($size != $
+	if (is_subclass_of($item, 'GalleryDerivativeImage')) {
+	}
+
+	if ($size != -1) {
+	    header('Content-length: ' . $size);
+	}
+	$mimeType = GalleryUtilities::convertTagToMime($fileExtension);
+	header('Content-type: ' . $mimeType);
+	readfile($path);
+
+	return GalleryStatus::success();
+    }
+}
+?>
