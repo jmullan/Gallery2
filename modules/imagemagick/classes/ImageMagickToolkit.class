@@ -252,49 +252,6 @@ class ImageMagickToolkit extends GalleryToolkit {
     }
 
     /**
-     * @see GalleryToolkit::mergeOperations()
-     */
-    function mergeOperations($operation1, $args1, $operation2, $args2) {
-
-	/* We can only merge like operations */
-	if ($operation1 != $operation2) {
-	    /* But not all like operations have the same name */
-	    $likeOperations = array('resize', 'scale', 'thumbnail');
-	    if (!(in_array($operation1, $likeOperations) && in_array($operation2, $likeOperations))) {
-		return array(false, null, null);
-	    }
-	}
-
-	switch ($operation1) {
-	case 'crop':
-	case 'resize':
-	case 'scale':
-	case 'thumbnail':
-	case 'composite':
-	    /* For like operations, the second operation takes precedence */
-	    return array(true, $operation2, $args2);
-	    break;
-
-	case 'rotate':
-	    /* Rotation is additive */
-	    $rotation = ($args1[0] + $args2[0]) % 360;
-
-	    /* 0 rotation means the operation goes away */
-	    if ($rotation == 0) {
-		return array(true, null, null);
-	    }
-
-	    if ($rotation == 270) {
-		$rotation = -90;
-	    }
-	    return array(true, $operation2, array($rotation));
-
-	default:
-	    return array(false, null, null);
-	}
-    }
-			     
-    /**
      * @see GalleryGraphics::getImageDimensions()
      */
     function _getImageDimensions($mimeType, $filename) {
