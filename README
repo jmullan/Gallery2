@@ -15,13 +15,21 @@ these instructions:
 3. Create a database.  Right now we support PostgreSQL and MySQL.  
    Older versions of G2 would create your database for you, but that 
    turned out not to be portable to Postgres so we now require that
-   you create the database yourself. 
+   you create the database yourself. You must also give gallery full
+   access to this database.  Choose your own username and password.
 
    MySQL:
    mysqladmin -uroot create gallery2
- 
+   mysql gallery2 -uroot -e"GRANT ALL ON gallery2 TO \
+        username@localhost IDENTIFIED BY 'password'"
+
+   (Note:  if mysql denies you access, try adding "-p"
+        right before the "-e ")
+
    Postgres:
    createdb gallery2
+   (see the postgres documentation to set permssions or use a tool
+        such as webmin or phpPgAdmin to set them)
 
 4. Copy gallery2/setup/config.php-dist to gallery2/config.php and edit it.
    There are instructions in the file.  It should be pretty self
