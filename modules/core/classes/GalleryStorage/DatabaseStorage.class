@@ -29,7 +29,8 @@
  * Require the ADOdb libraries
  */
 GalleryCoreApi::relativeRequireOnce('lib/adodb/adodb.inc.php');
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryStorage/DatabaseStorage/ErrorHandler.inc');
+GalleryCoreApi::relativeRequireOnce(
+    'modules/core/classes/GalleryStorage/DatabaseStorage/ErrorHandler.inc');
 
 /**
  * Name of the sequence we'll use for GalleryEntity ids
@@ -680,6 +681,26 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	    return GalleryStatus::error(ERROR_STORAGE_CONNECTION, __FILE__, __LINE__);
 	}
 
+	list ($ret, $id) = $this->getUniqueId();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$entity->setId($id);
+	$entity->setSerialNumber(0);
+	$entity->setPersistentFlag(STORAGE_FLAG_NEWLY_CREATED);
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * @see GalleryStorage::getUniqueId
+     */
+    function getUniqueId() {
+	if (empty($this->_db)) {
+	    return array(GalleryStatus::error(ERROR_STORAGE_CONNECTION, __FILE__, __LINE__), null);
+	}
+
 	/* In case we're embedded in an app that sets adodb hasGenID to false (xaraya/postnuke) */
 	if (isset($this->_db->hasGenID) && !$this->_db->hasGenID) {
 	    $this->_db->hasGenID = $setGenID = true;
@@ -690,14 +711,11 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	$id = $this->_db->GenId($this->_tablePrefix . DATABASE_SEQUENCE_ID);
 	$this->_traceStop();
 
-	$entity->setId($id);
-	$entity->setSerialNumber(0);
-	$entity->setPersistentFlag(STORAGE_FLAG_NEWLY_CREATED);
-
 	if (isset($setGenID)) {
 	    $this->_db->hasGenID = false;
 	}
-	return GalleryStatus::success();
+	
+	return array(GalleryStatus::success(), $id);
     }
 
     /**

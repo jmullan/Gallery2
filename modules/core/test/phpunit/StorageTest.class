@@ -39,8 +39,10 @@ class StorageTest extends GalleryTestCase {
     }
 
     function testTranslateQuery() {
-	// Ensure DatabaseStorage::_translateQuery() can handle table and column names
-	// with underscore character..
+	/*
+	 * Ensure DatabaseStorage::_translateQuery() can handle table and column names
+	 * with underscore character..
+	 */
 	global $gallery;
 	$storage =& $gallery->getStorage();
 	$impl =& $storage->_impl;
@@ -51,6 +53,27 @@ class StorageTest extends GalleryTestCase {
 	    $impl->_translateQuery(
 		'SELECT [Test_table::Test_column] FROM [Test_table]')
 	);
+    }
+
+    function testGetUniqueId() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+	
+	/*
+	 * Hard to test this properly, so get two ids and make sure that the
+	 * second id is bigger than the first.
+	 */
+	list ($ret, $id1) = $storage->getUniqueId();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $id2) = $storage->getUniqueId();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assert($id2 > $id1);
     }
 }
 ?>

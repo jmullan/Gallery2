@@ -521,7 +521,7 @@ class GalleryStorage {
      * @return object GalleryStatus a status code
      */
     function releaseLocks($lockIds) {
-	if (!$this->_isInitialized) {
+ 	if (!$this->_isInitialized) {
 	    $ret = $this->_impl->init();
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
@@ -531,6 +531,25 @@ class GalleryStorage {
 	}
 
 	return $this->_impl->releaseLocks($lockIds);
+    }
+
+    /**
+     * Get a new, unique id.
+     *
+     * @return array object GalleryStatus a status code
+     *               int an id
+     */
+    function getUniqueId() {
+ 	if (!$this->_isInitialized) {
+	    $ret = $this->_impl->init();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    } else {
+		$this->_isInitialized = true;
+	    }
+	}
+
+	return $this->_impl->getUniqueId();
     }
 
     /**
