@@ -174,14 +174,8 @@ class GalleryUtilities {
 	}
 
 	/* Perform any necessary transformations on our values */
-	foreach (array_keys($values) as $key) {
-	    /* Convert UTF-8 to Unicode entities */
-	    $values[$key] = GalleryUtilities::utf8ToUnicodeEntities($values[$key]);
-
-	    /* Sanitize the input */
-	    $values[$key] = GalleryUtilities::sanitizeInputValue($values[$key]);
-	}
-
+	GalleryUtilities::_processInputValues($values);
+	
 	/*
 	 * Now split out any keys that contain a field separator (_) into
 	 * subarrays.  Eg, convert:
@@ -251,9 +245,7 @@ class GalleryUtilities {
 	}
 
 	/* Sanitize the input */
-	for ($i = 0; $i < sizeof($values); $i++) {
-	    $values[$i] = GalleryUtilities::sanitizeInputValue($values[$i]);
-	}
+	GalleryUtilities::_processInputValues($values);
 
 	if (sizeof($values) == 1) {
 	    return $values[0];
@@ -293,7 +285,8 @@ class GalleryUtilities {
 			'|</?\s*APPLET.*?>|si',
 			'|</?\s*LINK.*?>|si',
 			'|</?\s*IFRAME.*?>|si',
-			'|STYLE\s*=\s*"[^"]*"|si');
+			'|STYLE\s*=\s*"[^"]*"|si',
+			'|javascript|si');
 	$replace = array('');
 
 	$value = preg_replace($search, $replace, $value);
@@ -721,6 +714,27 @@ class GalleryUtilities {
 	    $encodedString .= $encodedLetter;
 	}
 	return $encodedString;
+    }
+
+    /**
+     * Perform necessary pre-processing on the "value" part of the incoming
+     * array (which may be an associative array or a simple list of values).
+     * We do the following:
+     * 1.  Convert UTF-8 values to Unicode entities
+     * 2.  Sanitize any input values to remove dangerous values
+     */
+    function _processInputValues(&$values) {
+	foreach (array_keys($values) as $key) {
+	    if (is_array($values[$key])) {
+		GalleryUtilities::_processInputValues($values[$key]);
+	    } else {
+		/* Convert UTF-8 to Unicode entities */
+		$values[$key] = GalleryUtilities::utf8ToUnicodeEntities($values[$key]);
+
+		/* Sanitize the input */
+		$values[$key] = GalleryUtilities::sanitizeInputValue($values[$key]);
+	    }
+	}
     }
 }
 ?>
