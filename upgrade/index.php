@@ -55,6 +55,7 @@ if (!function_exists('_')) {
 /* Our install steps, in order */
 $stepOrder[] = 'Welcome';
 $stepOrder[] = 'Authenticate';
+$stepOrder[] = 'SystemChecks';
 $stepOrder[] = 'UpgradeCoreModule';
 $stepOrder[] = 'UpgradeOtherModules';
 $stepOrder[] = 'CleanCache';
