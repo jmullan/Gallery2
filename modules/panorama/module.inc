@@ -113,7 +113,7 @@ class PanoramaModule extends GalleryModule {
 	require_once(dirname(__FILE__) . '/classes/PanoramaHelper.class');
 	list ($ret, $count) = PanoramaHelper::fetchItemCount();
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	if ($count > 0) {
 	    // Can't deactivate if panorama entities exist..
@@ -124,7 +124,7 @@ class PanoramaModule extends GalleryModule {
 
 	list ($ret, $redirect) = parent::deactivate();
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	return array(GalleryStatus::success(), $redirect);
     }

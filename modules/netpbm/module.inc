@@ -302,12 +302,12 @@ class NetPbmModule extends GalleryModule {
 	 */
 	$ret = GalleryCoreApi::unregisterToolkit('NetPBM');
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	list ($ret, $redirect) = parent::deactivate();
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	return array(GalleryStatus::success(), $redirect);

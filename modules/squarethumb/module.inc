@@ -178,13 +178,13 @@ class SquareThumbModule extends GalleryModule {
 
 	list ($ret, $redirect) = parent::deactivate();
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* Unregister all of our properties and operations */
 	$ret = GalleryCoreApi::unregisterToolkit('SquareThumb');
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	return array(GalleryStatus::success(), $redirect);
