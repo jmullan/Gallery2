@@ -389,9 +389,9 @@ class GalleryDataCache {
 		$platform->fwrite($fd, sprintf('GalleryCoreApi::relativeRequireOnce("%s"); ',
 					       $requiredClass));
 	    }
-	    $platform->fwrite($fd, "\$data = unserialize('");
-	    $platform->fwrite($fd, preg_replace("/'/", "\\'", serialize($data)));
-	    $platform->fwrite($fd, "'); ?>");
+	    $platform->fwrite($fd, "\$data = unserialize(<<<END\n");
+	    $platform->fwrite($fd, serialize($data));
+	    $platform->fwrite($fd, "\nEND\n);");
 	    $platform->fclose($fd);
 	}
     }
