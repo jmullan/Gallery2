@@ -319,9 +319,7 @@ class GalleryDataItem_core extends GalleryItem {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	
-	return array(GalleryStatus::success(),
-		     $containerPath . 
-		     $this->getPathComponent());
+	return array(GalleryStatus::success(), $containerPath . $this->getPathComponent());
     }
 }
 
