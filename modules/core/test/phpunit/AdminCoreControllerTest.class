@@ -1,0 +1,102 @@
+<?php
+/*
+ * $RCSfile
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * AdminCore controller tests
+ */
+class AdminCoreControllerTest extends GalleryTestCase {
+
+    function AdminCoreControllerTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    function setUp() {
+	global $gallery;
+	
+	$this->_keys = array('permissions.directory',
+			     'permissions.file',
+			     'exec.expectedStatus',
+			     'default.orderBy',
+			     'default.orderDirection',
+			     'default.layout',
+			     'default.theme',
+			     'default.language',
+			     'session.lifetime',
+			     'session.inactivityTimeout');
+	
+	/* Save the original values */
+	foreach ($this->_keys as $key) {
+	    list ($ret, $this->_save[$key]) = $gallery->getModuleParameter('core', $key);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+
+	list ($ret, $this->_controller) = GalleryController::loadController("core:AdminCore");
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    function tearDown() {
+	global $gallery;
+	
+	/* Restore the original values */
+	foreach ($this->_keys as $key) {
+	    $ret = $gallery->setModuleParameter('core', $key, $this->_save[$key]);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+    }
+
+    function testChangeDefaults() {
+
+	/* Change the defaults to something meaningless */
+	GalleryUtilities::putRequestVariable('default.orderBy', 'x');
+	GalleryUtilities::putRequestVariable('default.orderDirection', 'x');
+	GalleryUtilities::putRequestVariable('default.layout', 'x');
+	GalleryUtilities::putRequestVariable('default.theme', 'x');
+
+	/* Perform the request and verify that we succeeded */
+	list ($ret, $results) = $this->_controller->handleRequest();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertRedirect(array('view' => 'core:SiteAdmin',
+				    'subView' => 'core:AdminCore'),
+			      $results['redirect']);
+    }
+
+    function assertRedirect($params, $redirectUrl) {
+	global $gallery;
+	$urlGenerator = $gallery->getUrlGenerator();
+	$this->assertEquals($urlGenerator->generateUrl($params), $redirectUrl);
+    }
+}
+?>
