@@ -53,14 +53,20 @@ class MembersListView extends GalleryView {
 	    $form['list']['page'] = 1;
 	}
 	
+	list ($ret, $groupId) =
+            GalleryCoreApi::getPluginParameter('module', 'core', 'id.allUserGroup');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	/* Fetch the user count every time we reload */
-	list ($ret, $totalUserCount) = GalleryCoreApi::fetchUserCount();
+	list ($ret, $totalUserCount) = GalleryCoreApi::fetchUserCount(null, $groupId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	
 	$form['list']['count'] = $totalUserCount;
-	$form['list']['pageSize'] = $totalUserCount > 30 ? 30 : $totalUserCount + 2;
+	$form['list']['pageSize'] = $totalUserCount > 30 ? 30 : $totalUserCount;
 	
 	/* Figure out our max pages, make sure our current page fits in it */
 	$form['list']['maxPages'] = ceil($form['list']['count'] / $form['list']['pageSize']);
@@ -72,12 +78,6 @@ class MembersListView extends GalleryView {
 	$form['list']['nextPage'] = min($form['list']['page']+1, $form['list']['maxPages']);
 	$form['list']['backPage'] = max(1, $form['list']['page']-1);
         $form['list']['startingUser'] = ($form['list']['page'] - 1) * $form['list']['pageSize'];
-	
-	list ($ret, $groupId) =
-            GalleryCoreApi::getPluginParameter('module', 'core', 'id.allUserGroup');
-	if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
-	}
 	
 	list ($ret, $userNames) = GalleryCoreApi::fetchUsersForGroup($groupId,
 								     $form['list']['pageSize'],
