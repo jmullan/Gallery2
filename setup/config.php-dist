@@ -37,16 +37,18 @@ $gallery->setConfig('setup.password', '');
 
 /*
  * In order for Gallery to manage your data, you must provide it with
- * a directory that it can write to.  This is NOT the directory you unpacked
- * the Gallery code!  It's a new directory that you have to create.  Since
- * Gallery is a webserver application, the directory that you create
- * must be writeable by the webserver, not just by you.  So after you create
- * the new directory, you may need to do a "chmod 777" on it.
+ * a directory that it can write to.  Gallery is a webserver application,
+ * so the directory that you create must be writeable by the
+ * webserver, not just by you.
  *
- * This directory can be anywhere on your filesystem.  For security purposes,
- * it's better if the directory is not actually located inside your website
- * (ie, you shouldn't be able to get to it by entering a URL in your
- * web browser).
+ * Create an empty directory anywhere you please.  Gallery will fill this
+ * directory with its own files (that you shouldn't mess with).  This directory
+ * can be anywhere on your filesystem.  For security purposes, it's better
+ * if the directory is not accessible via your webserver (ie, it should
+ * not be in your DocumentRoot).  If you *do* make it available via your
+ * web server then you probably won't have any security for your data files.
+ *
+ * Don't make this the same as your gallery directory!  
  */
 $gallery->setConfig('data.gallery.base', '');
 
