@@ -81,6 +81,15 @@ class GalleryPersistent {
     }
 
     /**
+     * Get the data from this persistent object as an associative array
+     *
+     * @return array memberName => memberValue
+     */
+    function getMemberData() {
+	return array();
+    }
+    
+    /**
      * Have we modified any data in this class?
      *
      * @return bool true if modified, false if not.
