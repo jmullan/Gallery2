@@ -25,45 +25,62 @@
 	    {g->text text="Date: %s" arg1=$smarty.capture.modificationTimestamp}
 	  {/g->title}
 	{/g->item}
-	
-	{g->item}
-	  {g->title}
-	    {g->actionset}
-	      {g->title}
-		{g->text text="Size: "}
-	      {/g->title}
 
-	      {section name=imageView loop=$layout.imageViews}
-		{if $smarty.section.imageView.index != $layout.imageViewsIndex}
-		  {assign var="selected" value=false}
-		{else}
-		  {assign var="selected" value=true}
-		{/if}
+	{if sizeof($layout.imageViews) > 1}
+	  {g->item}
+	    {g->title}
+	      {g->actionset}
+		{g->title}
+		  {g->text text="Size: "}
+		{/g->title}
 
-		{g->actionitem selected=$selected}
-		  {g->title}
-		    {g->text text="%dx%d" arg1=$layout.imageViews[imageView].width arg2=$layout.imageViews[imageView].height}
-		  {/g->title}
-		  {g->value}
-		    {g->url view="core:ShowItem" itemId=$layout.item.id imageViewsIndex=$smarty.section.imageView.index}
-		  {/g->value}
-		{/g->actionitem}
-	      {/section}
-	    {/g->actionset}
-	  {/g->title}
-	{/g->item}
+		{section name=imageView loop=$layout.imageViews}
+		  {if $smarty.section.imageView.index != $layout.imageViewsIndex}
+		    {assign var="selected" value=false}
+		  {else}
+		    {assign var="selected" value=true}
+		  {/if}
+
+		  {g->actionitem selected=$selected}
+		    {g->title}
+		      {if empty($layout.imageViews[imageView].width)}
+			{g->text text="Unknown"}
+		      {else}
+			{g->text text="%dx%d" arg1=$layout.imageViews[imageView].width arg2=$layout.imageViews[imageView].height}
+		      {/if}
+		    {/g->title}
+		    {g->value}
+		      {g->url view="core:ShowItem" itemId=$layout.item.id imageViewsIndex=$smarty.section.imageView.index}
+		    {/g->value}
+		  {/g->actionitem}
+		{/section}
+	      {/g->actionset}
+	    {/g->title}
+	  {/g->item}
+	{/if}
 
 	{if !empty($layout.sourceImage)}
 	  {g->item}
 	    {g->title}
 	      {g->text text="Full size: "}
-		{g->link url_view="core:ShowItem" url_itemId=$layout.item.id url_imageViewsIndex=$layout.sourceImageViewIndex}
+	      {capture name="fullSize"}
+		{if empty($layout.sourceImage.width)}
+		  {g->text text="Unknown"}
+		{else}
 		  {g->text text="%dx%d" arg1=$layout.sourceImage.width arg2=$layout.sourceImage.height}
+		{/if}
+	      {/capture}
+	      {if sizeof($layout.imageViews) > 1}
+		{g->link url_view="core:ShowItem" url_itemId=$layout.item.id url_imageViewsIndex=$layout.sourceImageViewIndex}
+		  {$smarty.capture.fullSize}
 		{/g->link}
-	      {/g->title}
-	    {/g->item}
-	  {/if}
-
+	      {else}
+		{$smarty.capture.fullSize}
+	      {/if}
+	    {/g->title}
+	  {/g->item}
+	{/if}
+	  
 	  {g->item}
 	    {g->title}
 	      {g->text text="Owner: %s" arg1=$layout.owner.fullName|default:$layout.owner.userName}
@@ -96,9 +113,7 @@
 
       {if !empty($layout.moduleItemDetailFiles)}
 	{foreach from=$layout.moduleItemDetailFiles key=moduleName item=detailFile}
-	  {g->box}
-	    {include file=$detailFile l10Domain="modules_$moduleName"}
-	  {/g->box}
+	  {include file=$detailFile l10Domain="modules_$moduleName"}
 	{/foreach}
       {/if}
 
