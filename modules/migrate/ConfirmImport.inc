@@ -319,12 +319,17 @@ class ConfirmImportController extends GalleryController {
 					return array($ret->wrap(__FILE__, __LINE__), null);
 				    }
 				    list($ret, $owner) = GalleryCoreApi::fetchUserByUsername($albumUserFields['username']);
-				    if ($ret->isError() && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
-					return array($ret->wrap(__FILE__, __LINE__), null);
+				    if ($ret->isError()) {
+					if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
+					    list ($ret, $owner) = $gallery->getActiveUser();
+					    if ($ret->isError()) {
+						return array($ret->wrap(__FILE__, __LINE__), null);
+					    }
+					} else {
+					    return array($ret->wrap(__FILE__, __LINE__), null);
+					}
 				    }
-				    if ($owner) {
-					$newAlbumInstance->setownerId($owner->getId());
-				    }
+				    $newAlbumInstance->setOwnerId($owner->getId());
 				    $ret = GalleryCoreApi::addUserPermission($newAlbumInstance->getId(),
 									     $owner->getId(),
 									     'core.all',
