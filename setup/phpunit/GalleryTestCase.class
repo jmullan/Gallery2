@@ -56,6 +56,22 @@ class GalleryTestCase extends TestCase {
 	}
     }
 
+    function assert($boolean, $message=null) {
+	global $gallery;
+	if (!isset($message)) {
+	    $message = $gallery->getDebugBuffer();
+	}
+	parent::assert($boolean, $message);
+    }
+
+    function assertEquals($expected, $actual, $message=null) {
+	global $gallery;
+	if (!isset($message)) {
+	    $message = $gallery->getDebugBuffer();
+	}
+	parent::assertEquals($expected, $actual, $message);
+    }
+
     function tearDown() {
 	global $gallery;
 	
