@@ -170,7 +170,7 @@ class GalleryDerivativeImage_core extends GalleryDerivative {
 
 	/* Make sure the source is current */
 	$sourceId = $this->getDerivativeSourceId();
-	list($ret, $source) = $gallery->loadEntityById($sourceId);
+	list($ret, $source) = $gallery->loadEntitiesById($sourceId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

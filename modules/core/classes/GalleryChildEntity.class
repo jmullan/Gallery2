@@ -99,7 +99,7 @@ class GalleryChildEntity_core extends GalleryEntity {
      */
     function getParent() {
 	global $gallery;
-	return $gallery->loadEntityById($this->getParentId());
+	return $gallery->loadEntitiesById($this->getParentId());
     }
 
 }
