@@ -136,7 +136,7 @@
   <!-- Change/remove -->
   <xsl:template match="remove">
     <xsl:for-each select="column">
-      DROP COLUMN COLUMN_PREFIX<xsl:value-of select="column-name"/>
+      DROP COLUMN <xsl:value-of select="$columnPrefix"/><xsl:value-of select="column-name"/>
     <xsl:if test="position()!=last()">
       ,
     </xsl:if>
@@ -145,7 +145,7 @@
     <xsl:if test="count(column) and (count(key) or count(index))">,</xsl:if>
 
     <xsl:for-each select="index">
-      DROP INDEX COLUMN_PREFIX<xsl:value-of select="column-name"/>
+      DROP INDEX <xsl:value-of select="$columnPrefix"/><xsl:value-of select="column-name"/>
     <xsl:if test="position()!=last()">
       ,
     </xsl:if>
@@ -156,7 +156,7 @@
     </xsl:if>
     
     <xsl:for-each select="key">
-      DROP KEY COLUMN_PREFIX<xsl:value-of select="column-name"/>
+      DROP KEY <xsl:value-of select="$columnPrefix"/><xsl:value-of select="column-name"/>
     <xsl:if test="position()!=last()">
       ,
     </xsl:if>
