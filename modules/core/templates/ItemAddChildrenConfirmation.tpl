@@ -7,15 +7,15 @@
 
   {g->box style="admin"}
     {g->title}
-      {if ($ItemAddChildrenConfirmation.count)}
+      {if isset($ItemAddChildrenConfirmation.count)}
 	{g->text one="Successfully added %d file." many="Successfully added %d files." count=$ItemAddChildrenConfirmation.count arg1=$ItemAddChildrenConfirmation.count}
       {else}
 	{g->text text="No files added."}
       {/if}
     {/g->title}
-    
-    {if sizeof($status) > 0}
-      {foreach from=$status.addFromLocalServer item=entry}
+
+    {if sizeof($ItemAddChildrenConfirmation.status) > 0}
+      {foreach from=$ItemAddChildrenConfirmation.status item=entry}
 	{g->element}
 	  {g->text text="Added %s" arg1=$entry.fileName}
 	{/g->element}
