@@ -115,61 +115,6 @@ class SessionTest extends GalleryTestCase {
     }
 
     /**
-     * Save a whole lot of session data, enough that it won't fit into a single column so that
-     * we can test to make sure that it gets chunked.
-     */
-    function testSavingChunkedSessionData() {
-	global $gallery;
-	
-	$data = str_repeat('x', 128 * 1024); // 128KB
-
-	$session =& $gallery->getSession();
-
-	/* Store a huge value, save, reset, re-init and verify */
-	$session->put('SessionTest', $data);
-	$ret = $session->save();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	GalleryDataCache::reset();
-	$session->init();
-	$this->assertEquals($data, $session->get('SessionTest'));
-
-	/* Store a second huge value, save, reset, re-init and verify */
-	$session->put('SessionTest2', $data);
-	$ret = $session->save();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	GalleryDataCache::reset();
-	$session->init();
-	$this->assertEquals($data, $session->get('SessionTest'));
-	$this->assertEquals($data, $session->get('SessionTest2'));
-
-	/* Remove the first huge value, save, reload and verify */
-	$session->remove('SessionTest');
-	$ret = $session->save();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	GalleryDataCache::reset();
-	$session->init();
-	$this->assertEquals(null, $session->get('SessionTest'));
-	$this->assertEquals($data, $session->get('SessionTest2'));
-
-	/* Remove the second huge value, save, reload and verify */
-	$session->remove('SessionTest2');
-	$ret = $session->save();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	GalleryDataCache::reset();
-	$session->init();
-	$this->assertEquals(null, $session->get('SessionTest'));
-	$this->assertEquals(null, $session->get('SessionTest2'));
-    }
-
-    /**
      * Try storing a lot of session messages and make sure that the old ones get expired.
      */
     function testExpiringStatusMessages() {

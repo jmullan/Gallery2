@@ -770,5 +770,20 @@ class GalleryPlatform {
 
 	return realpath($file);
     }
+
+    function touch($file, $time=null, $atime=null) {
+	global $gallery;
+	if ($gallery->getDebug()) {
+	    $gallery->debug("touch($file, $time, $atime)");
+	}
+
+	if (isset($atime)) {
+	    touch($file, $time, $atime);
+	} else if (isset($time)) {
+	    touch($file, $time);
+	} else {
+	    touch($file);
+	}
+    }
 }
 ?>

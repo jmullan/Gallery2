@@ -26,57 +26,17 @@
  */
 
 /**
- * Storage container for session related data
- *
- * @g2 <class-name>GallerySession</class-name>
- * @g2 <schema>
- * @g2   <schema-major>1</schema-major>
- * @g2   <schema-minor>0</schema-minor>
- * @g2 </schema>
+ * Container for session related data
  *
  * @package GalleryCore
  * @subpackage Classes
  */
-class GallerySession_core {
+class GallerySession {
 
     /*
      * ****************************************
      *                 Members
      * ****************************************
-     */
-
-    /**
-     * @g2 <map>
-     * @g2   <member>
-     * @g2     <member-name>sessionId</member-name>
-     * @g2     <member-type>STRING</member-type>
-     * @g2     <member-size>MEDIUM</member-size>
-     * @g2     <indexed/>
-     * @g2     <required/>
-     * @g2   </member>
-     * @g2   <member>
-     * @g2     <member-name>userId</member-name>
-     * @g2     <member-type>INTEGER</member-type>
-     * @g2   </member>
-     * @g2   <member>
-     * @g2     <member-name>chunk</member-name>
-     * @g2     <member-type>INTEGER</member-type>
-     * @g2   </member>
-     * @g2   <member>
-     * @g2     <member-name>creationTime</member-name>
-     * @g2     <member-type>INTEGER</member-type>
-     * @g2     <indexed/>
-     * @g2   </member>
-     * @g2   <member>
-     * @g2     <member-name>lastModificationTime</member-name>
-     * @g2     <member-type>INTEGER</member-type>
-     * @g2     <indexed/>
-     * @g2   </member>
-     * @g2   <member>
-     * @g2     <member-name>sessionData</member-name>
-     * @g2     <member-type>TEXT</member-type>
-     * @g2   </member>
-     * @g2 </map>
      */
 
     /**
@@ -135,14 +95,6 @@ class GallerySession_core {
      */
     var $_sessionData;
 
-    /**
-     * The number of chunks used to store this session 
-     *
-     * @var array $_totalChunkCount
-     * @access private
-     */
-    var $_totalChunkCount;
-
     /*
      * ****************************************
      *                 Methods
@@ -197,44 +149,47 @@ class GallerySession_core {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	/*
-	 * Send back a cookie.
-	 *
-	 * TODO: Need to be able to decide for certain that the browser isn't
-	 * accepting cookies so that we can stop sending them.  We can do this
-	 * by recording how many times we've sent a cookie, and how many times
-	 * that we've received one back in return.  Leave that for later.
-	 */
-	$cookie = 'Set-Cookie: ' . $this->_sessionIdParameter . '=' . $this->_sessionId;
+	if (!isset($_COOKIE[$this->_sessionIdParameter]) ||
+	    $_COOKIE[$this->_sessionIdParameter] != $this->_sessionIdParameter) {
+	    /*
+	     * Send back a cookie.
+	     *
+	     * TODO: Need to be able to decide for certain that the browser isn't
+	     * accepting cookies so that we can stop sending them.  We can do this
+	     * by recording how many times we've sent a cookie, and how many times
+	     * that we've received one back in return.  Leave that for later.
+	     */
+	    $cookie = 'Set-Cookie: ' . $this->_sessionIdParameter . '=' . $this->_sessionId;
 
-	list ($ret, $sessionLifetime) =
-	    GalleryCoreApi::getPluginParameter('module', 'core', 'session.lifetime');
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
+	    list ($ret, $sessionLifetime) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'session.lifetime');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
 
-	if ($sessionLifetime > 0) {
-	    $expirationDate = gmstrftime("%a, %d-%b-%Y %T GMT", time() + $sessionLifetime);
-	    $cookie .= '; expires=' . $expirationDate;
-	}
+	    if ($sessionLifetime > 0) {
+		$expirationDate = gmstrftime("%a, %d-%b-%Y %T GMT", time() + $sessionLifetime);
+		$cookie .= '; expires=' . $expirationDate;
+	    }
 
-	$urlGenerator = $gallery->getUrlGenerator();
-	$urlComponents = parse_url($urlGenerator->getCurrentUrlDir());
-	$cookie  .= '; path=' . $urlComponents['path'];
+	    $urlGenerator = $gallery->getUrlGenerator();
+	    $urlComponents = parse_url($urlGenerator->getCurrentUrlDir());
+	    $cookie  .= '; path=' . $urlComponents['path'];
 
-	/*
-	 * Tag on the HttpOnly modifier.  IE 6.0 SP1 will prevent any cookies
-	 * with this in it from being visible to JavaScript, which mitigates
-	 * XSS attacks.
-	 */
-	$cookie .= '; HttpOnly=1';
+	    /*
+	     * Tag on the HttpOnly modifier.  IE 6.0 SP1 will prevent any cookies
+	     * with this in it from being visible to JavaScript, which mitigates
+	     * XSS attacks.
+	     */
+	    $cookie .= '; HttpOnly=1';
 
-	/*
-	 * Init may be called multiple times (from unit tests) but don't send the headers more
-	 * than once.
-	 */
-	if (!headers_sent()) {
-	    header($cookie);
+	    /*
+	     * Init may be called multiple times (from unit tests) but don't send the headers more
+	     * than once.
+	     */
+	    if (!headers_sent()) {
+		header($cookie);
+	    }
 	}
 	
 	return GalleryStatus::success();
@@ -247,55 +202,47 @@ class GallerySession_core {
      */
     function save() {
 	global $gallery;
+	$platform = $gallery->getPlatform();
 
+	$dieRoll = rand(1, 100);
+	
 	/* Only bother saving if we've been modified at all */
 	if ($this->_isSessionDataModified) {
-	    $chunkSize = 63 * 1024;
-	    $sessionData = serialize($this->_sessionData);
-
-	    /* Split it into chunks (make the array 1-based for convenience later on) */
-	    $i = 0;
-	    $chunks = array();
-	    while (strlen($sessionData) > $i * $chunkSize) {
-		$chunks[$i+1] = substr($sessionData, $i * $chunkSize, $chunkSize);
-		$i++;
+	    $sessionFile = $gallery->getConfig('data.gallery.sessions') . $this->_sessionId;
+	    $fd = $platform->fopen($sessionFile, 'wb');
+	    if ($fd) {
+		/*
+		 * TODO: it's still possible for two simultaneous requests to step on each
+		 * others session changes, but there's no easy way to resolve that.  Right?
+		 */
+		$platform->flock($fd, LOCK_EX, $wouldBlock);
+		$serialized = serialize($this->_sessionData);
+		$size = strlen($serialized);
+		$bytesWritten = $platform->fwrite($fd, $serialized, $size);
+		if ($bytesWritten != $size) {
+		    return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
+						sprintf('Failed to write complete session file (%s)',
+							$this->_sessionId));
+		}
+	    } else {
+		return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
+					    sprintf('Can\'t write to session file (%s)',
+						    $this->_sessionId));
 	    }
-
-	    $now = time();
-	    for ($i = 1; $i <= max(sizeof($chunks), $this->_totalChunkCount); $i++) {
-		if ($i > sizeof($chunks)) {
-		    /* Expired chunk */
-		    $ret = $this->removeMapEntry(array('sessionId' => $this->_sessionId,
-						       'chunk' => $i));
-		} else if ($this->_isNewSession || $i > $this->_totalChunkCount) {
-		    /* This is a new chunk */
-		    $dataSet = array();
-		    $dataSet['lastModificationTime'] = $now;
-		    $dataSet['userId'] = $gallery->getActiveUserId();
-		    $dataSet['sessionId'] = $this->_sessionId;
-		    $dataSet['creationTime'] = $this->_creationTime;
-		    $dataSet['chunk'] = $i;
-		    $dataSet['sessionData'] = $chunks[$i];
-		    $ret = $this->addMapEntry($dataSet);
-		} else {
-		    /* Update existing chunk */
-		    $dataSet = array();
-		    $dataSet['lastModificationTime'] = $now;
-		    $dataSet['sessionData'] = $chunks[$i];
-		    $ret = $this->updateMapEntry(array('sessionId' => $this->_sessionId,
-						       'chunk' => $i),
-						 $dataSet);
-		}
-		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
+	} else {
+	    /*
+	     * 5% of the time touch the session file so that it doesn't get expired.
+	     * We can't count on the atime being set, since you can disable that on
+	     * some operating systems to get performance gains
+	     */
+	    if ($dieRoll <= 5) {
+		$sessionFile = $gallery->getConfig('data.gallery.sessions') . $this->_sessionId;
+		$platform->touch($sessionFile);
 	    }
 	}
 
-	/*
-	 * Perform garbage collection 1% of the time.
-	 */
-	if (rand(1, 100) == 1) {
+	/* Perform garbage collection 1% of the time. */
+	if ($dieRoll == 1) {
 	    $ret = $this->_expireSessions();
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
@@ -346,29 +293,32 @@ class GallerySession_core {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	$storage =& $gallery->getStorage();
-	list ($ret, $timestamp) = $storage->getFunctionSql('UNIX_TIMESTAMP', array('NOW()'));
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	$inactiveCutoff = time() - $sessionInactivityTimeout;
+	$lifetimeCutoff = time() - $lifetime;
+
+	$inactiveCutoff = time() - 60;
+
+	$platform = $gallery->getPlatform();
+	$sessionsDir = $gallery->getConfig('data.gallery.sessions');
+	$dir = $platform->opendir($sessionsDir, 'r');
+	if (!$dir) {
+	    return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
+					"Can't access session dir");
 	}
 
-	if ($sessionInactivityTimeout > 0) {
-	    $statement = sprintf('
-                DELETE FROM
-                  [GallerySession]
-                WHERE
-                  (%s - [GallerySession::creationTime]) > ?
-                  OR
-                  (%s - [GallerySession::lastModificationTime]) > ?
-                ', $timestamp, $timestamp);
-		
-	    /* Delete any sessions that are expired */
-	    /* TODO: get away from using execute() here */
-	    $ret = $storage->execute($statement, array($lifetime, $sessionInactivityTimeout));
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+	while (($filename = $platform->readdir($dir)) !== false) {
+	    if ($filename == '.' || $filename == '..') {
+		continue;
+	    }
+	    
+	    $path = $sessionsDir . $filename;
+	    $statData = $platform->stat($path);
+	    if ($statData['mtime'] < $inactiveCutoff ||
+		    $statData['ctime'] < $lifetimeCutoff) {
+		$platform->unlink($path);
 	    }
 	}
+	$platform->closedir($dir);
 
 	return GalleryStatus::success();
     }
@@ -444,42 +394,27 @@ class GallerySession_core {
     function _loadSessionData() {
 	global $gallery;
 
-	$query = '
-        SELECT
-          [GallerySession::chunk], [GallerySession::sessionData], [GallerySession::creationTime]
-        FROM
-          [GallerySession]
-        WHERE
-          [GallerySession::sessionId] = ?
-        ORDER BY
-          [GallerySession::chunk] ASC
-        ';
-	list ($ret, $searchResults) = $gallery->search($query, array($this->_sessionId));
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
+	$platform = $gallery->getPlatform();
+	$sessionFile = $gallery->getConfig('data.gallery.sessions') . $this->_sessionId;
 
-	/* We shouldn't have more than one result */
-	if ($searchResults->resultCount() == 0) {
+	if ($platform->file_exists($sessionFile)) {
+	    $fd = $platform->fopen($sessionFile, 'rb');
+	    if ($fd) {
+		$this->_sessionData =
+		    unserialize($platform->fread($fd, $platform->filesize($sessionFile)));
+		$this->_isSessionDataModified = false;
+		$this->_isNewSession = false;
+		$platform->fclose($fd);
+	    } else {
+		return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
+					    sprintf('Session file for id %s is broken', $this->_sessionId));
+	    }
+	} else {
+	    /* No session file */
 	    $this->_sessionData = array();
 	    $this->_isSessionDataModified = true;
 	    $this->_isNewSession = true;
-	    $this->_totalChunkCount = 1;
 	    $this->_creationTime = time();
-	} else {
-	    $serializedSessionData = '';
-	    $this->_totalChunkCount = 0;
-	    while ($result = $searchResults->nextResult()) {
-		$serializedSessionData .= $result[1];
-
-		if ($this->_totalChunkCount == 0) {
-		    $this->_creationTime = $result[2];
-		}
-		$this->_totalChunkCount++;
-	    }
-	    $this->_sessionData = unserialize($serializedSessionData);
-	    $this->_isSessionDataModified = false;
-	    $this->_isNewSession = false;
 	}
 
 	return GalleryStatus::success();
@@ -547,5 +482,4 @@ class GallerySession_core {
     }
 }
 
-include(dirname(__FILE__) . '/interfaces/GallerySession.inc');
 ?>
