@@ -52,9 +52,9 @@ function GalleryMain(&$testSuite, $filter) {
     }
 
     /*
-     * Load the test cases for every module (active or not).
+     * Load the test cases for every active module.
      */
-    list ($ret, $moduleNames) = $gallery->getAllModuleNames();
+    list ($ret, $moduleStatusList) = $gallery->getModuleStatus();
     if ($ret->isError()) {
 	return $ret->wrap(__FILE__, __LINE__);
     }
@@ -62,7 +62,11 @@ function GalleryMain(&$testSuite, $filter) {
     $platform = $gallery->getPlatform();
     $modulesDir = $gallery->getConfig('code.gallery.modules');
     $suiteArray = array();
-    foreach ($moduleNames as $moduleName) {
+    foreach ($moduleStatusList as $moduleName => $moduleStatus) {
+	if (empty($moduleStatus['active'])) {
+	    continue;
+	}
+	
 	$testDir = $modulesDir . $moduleName . '/test/phpunit';
 
 	if ($platform->file_exists($testDir) &&
@@ -105,6 +109,12 @@ if (isset($HTTP_GET_VARS['filter'])) {
 
 $testSuite = new TestSuite();
 $ret = GalleryMain($testSuite, $filter);
+if ($ret->isError()) {
+    print $ret->getAsHtml();
+    return;
+}
+
+list ($ret, $moduleStatusList) = $gallery->getModuleStatus();
 if ($ret->isError()) {
     print $ret->getAsHtml();
     return;
@@ -186,6 +196,31 @@ print "</pre>";
     <br>
     Filter: <input type="text" name="filter" value="<?php echo $filter ?>">
     </form>
+
+    <h2>Modules</h2>
+    <a href="../../main.php?g2_view=core:SiteAdmin&g2_subView=core:AdminModules&g2_return.view=core:ShowItem">[ modules admin ]</a>
+    <table cellspacing="1" cellpadding="1" border="0" width="90%" align="center" class="details">
+    <tr>
+    <th> Module Name </th>
+    <th> Active </th>
+    <th> Installed </th>
+    </tr>
+    <pre>
+    </pre>
+    <?php foreach ($moduleStatusList as $moduleName => $moduleStatus) { ?>
+    <tr>
+    <td>
+    <?php print $moduleName ?>
+    </td>
+    <td>
+    <?php print !empty($moduleStatus['active']) ? "active" : "not active" ?>
+    </td>
+    <td>
+    <?php print !empty($moduleStatus['installed']) ? "installed" : "not installed" ?>
+    </td>
+    </tr>
+    <?php } ?>									   
+    </table>
     
     <?php
     $result = new PrettyTestResult();
