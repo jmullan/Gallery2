@@ -1,0 +1,168 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package SizeLimit
+ * @subpackage PHPUnit
+ * @author Felix Rabinovich <felix@rabinovich.org>
+ */
+
+GalleryCoreApi::relativeRequireOnce('lib/tools/phpunit/ItemEditOptionTestCase.class');
+
+/**
+ * SizeLimitOption tests
+ * @package SizeLimit
+ * @subpackage PHPUnit
+ */
+class SizeLimitOptionTest extends ItemEditOptionTestCase {
+
+    function SizeLimitOptionTest($methodName) {
+        $this->ItemEditOptionTestCase(
+            $methodName, 'SizeLimit', 'SizeLimitOption');
+    }
+
+    function setUp() {
+        parent::setUp();
+        list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
+        if ($ret->isError()) {
+            print $ret->getAsHtml();
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+        $this->_markForCleanup($this->_album);    
+    }
+
+    function testAppropriate() {
+        list ($ret, $appropriate) = $this->_option->isAppropriate($this->_album, null);
+        if ($ret->isError()) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+        $this->assert($appropriate, 'appropriate');
+    }
+    
+    function testNone() {
+        $form['SizeLimitOption']['dimensionChoice'] = 'unlimited';
+        $form['SizeLimitOption']['sizeChoice'] = 'unlimited';
+        list ($error, $warning) = $this->_handleRequestAfterEdit($form, $this->_album);
+        $this->assertEquals(array(), $error);
+        $this->assertEquals(array(), $warning);
+        list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters(
+            'module', 'sizelimit', $this->_album->getId());
+        if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
+        }
+        $this->assert(empty($params), 'Params not empty:');
+    }
+    
+    function testDimWidth() {
+        $form['SizeLimitOption']['dimensionChoice'] = 'explicit';
+        $form['SizeLimitOption']['sizeChoice'] = 'unlimited';
+        GalleryUtilities::putRequestVariable('SizeLimitOption_dimensions', array('width' => 1024, 'height' => ''));
+        list ($error, $warning) = $this->_handleRequestAfterEdit($form, $this->_album);
+        $this->assertEquals(array(), $error);
+        $this->assertEquals(array(), $warning);
+        list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters(
+            'module', 'sizelimit', $this->_album->getId());
+        if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
+        }
+        $this->assertEquals(array('height' => 1024, 'width' => 1024, 'keepOriginal' => 0), $params);
+    }
+    
+    function testDimHeight() {
+        $form['SizeLimitOption']['dimensionChoice'] = 'explicit';
+        $form['SizeLimitOption']['sizeChoice'] = 'unlimited';
+        $form['SizeLimitOption']['keepOriginal'] = 'checked';
+        GalleryUtilities::putRequestVariable('SizeLimitOption_dimensions', array('width' => '', 'height' => 768));
+        list ($error, $warning) = $this->_handleRequestAfterEdit($form, $this->_album);
+        $this->assertEquals(array(), $error);
+        $this->assertEquals(array(), $warning);
+        list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters(
+            'module', 'sizelimit', $this->_album->getId());
+        if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
+        }
+        $this->assertEquals(array('height' => 768, 'width' => 768, 'keepOriginal' => 1), $params);
+    }
+    
+    function testDimXY() {
+        $form['SizeLimitOption']['dimensionChoice'] = 'explicit';
+        $form['SizeLimitOption']['sizeChoice'] = 'unlimited';
+        GalleryUtilities::putRequestVariable('SizeLimitOption_dimensions', array('width'=>1024, 'height'=>768));
+        list ($error, $warning) = $this->_handleRequestAfterEdit($form, $this->_album);
+        $this->assertEquals(array(), $error);
+        $this->assertEquals(array(), $warning);
+        list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters(
+            'module', 'sizelimit', $this->_album->getId());
+        if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
+        }
+        $this->assertEquals(array('keepOriginal' => '0',  
+            'width' => '1024', 'height' => '768'), $params);
+    }
+    
+    function testSize() {
+        $form['SizeLimitOption']['dimensionChoice'] = 'unlimited';
+        $form['SizeLimitOption']['sizeChoice'] = 'explicit';
+        $form['SizeLimitOption']['filesize'] = 2000;
+        list ($error, $warning) = $this->_handleRequestAfterEdit($form, $this->_album);
+        $this->assertEquals(array(), $error);
+        $this->assertEquals(array(), $warning);
+        list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters(
+            'module', 'sizelimit', $this->_album->getId());
+        if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
+        }
+        $this->assertEquals(array('keepOriginal' => 0, 'size' => 2000), $params);
+    }
+    
+    function testBadSize() {
+        $form['SizeLimitOption']['dimensionChoice'] = 'unlimited';
+        $form['SizeLimitOption']['sizeChoice'] = 'explicit';
+        $form['SizeLimitOption']['filesize'] = 'bad';
+        list ($error, $warning) = $this->_handleRequestAfterEdit($form, $this->_album);
+        $this->assertEquals(array('form[error][SizeLimitOption][filesize][invalid]'), $error);
+        $this->assertEquals(array(), $warning);
+        list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters(
+            'module', 'sizelimit', $this->_album->getId());
+        if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
+        }
+        $this->assert(empty($params));
+    }
+    
+    function test0Size() {
+        $form['SizeLimitOption']['dimensionChoice'] = 'unlimited';
+        $form['SizeLimitOption']['sizeChoice'] = 'explicit';
+        $form['SizeLimitOption']['filesize'] = '0';
+        list ($error, $warning) = $this->_handleRequestAfterEdit($form, $this->_album);
+        $this->assertEquals(array('form[error][SizeLimitOption][filesize][invalid]'), 
+            $error, 'Invalid file size');
+        $this->assertEquals(array(), $warning);
+        list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters(
+            'module', 'sizelimit', $this->_album->getId());
+        if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
+        }
+        $this->assert(empty($params));
+    }
+}
+?>
