@@ -209,8 +209,12 @@ class MatrixLayout extends GalleryLayout {
 	
 	/* Show a window of 11 pages in the page navigator */
 	$windowSize = 6;
+	$jumprange = array();
 	$lowerPage = max($page - (int)($windowSize / 2), 1);
 	$upperPage = min($page + (int)($windowSize / 2), $totalPages);
+	if ($upperPage == 0) {
+	    $upperPage = 1;
+	}
 	if ($upperPage == $totalPages) {
 	    $lowerPage = max($upperPage - $windowSize, 1);
 	} else if ($lowerPage == 1) {
