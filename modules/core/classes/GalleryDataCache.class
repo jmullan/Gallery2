@@ -273,12 +273,14 @@ class GalleryDataCache {
      */
     function removeFromDisk($pathInfo) {
 	if (!GalleryDataCache::isFileCachingEnabled()) {
-	    return;
+	    return GalleryStatus::success();
 	}
 
 	global $gallery;
 	$platform = $gallery->getPlatform();
-	if ($pathInfo['type'] == 'entity' || isset($pathInfo['id'])) {
+	if ($pathInfo['type'] == 'entity' ||
+	        $pathInfo['type'] == 'derivative-meta' ||
+	        isset($pathInfo['id'])) {
 	    $cacheFile = GalleryDataCache::getCachePath($pathInfo);
 	    if ($platform->file_exists($cacheFile)) {
 		if ($platform->is_dir($cacheFile)) {
@@ -288,15 +290,17 @@ class GalleryDataCache {
 		}
 	    }
 	} else {
-	    list ($ret, $pluginStatus) = GalleryCoreApi::fetchPluginStatus($pathInfo['type']);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-	    
-	    foreach (array_keys($pluginStatus) as $pluginId) {
-		GalleryDataCache::removeFromDisk(array('type' => $pathInfo['type'],
-						       'id' => $pluginId,
-						       'itemId' => $pathInfo['itemId']));
+	    if ($pathInfo['type'] == 'module' || $pathInfo['type'] == 'layout') {
+		list ($ret, $pluginStatus) = GalleryCoreApi::fetchPluginStatus($pathInfo['type']);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+		
+		foreach (array_keys($pluginStatus) as $pluginId) {
+		    GalleryDataCache::removeFromDisk(array('type' => $pathInfo['type'],
+							   'id' => $pluginId,
+							   'itemId' => $pathInfo['itemId']));
+		}
 	    }
 	}
     }
