@@ -263,7 +263,7 @@ class GalleryUrlGenerator {
 		}
 
 		if (empty($this->_viewPrefixRegistry['forward'][$prefix])) {
-		    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
+		    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__, $prefix), null);
 		}
 
 		$viewName = $this->_viewPrefixRegistry['forward'][$prefix];
