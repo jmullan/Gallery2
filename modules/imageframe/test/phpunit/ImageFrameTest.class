@@ -72,7 +72,7 @@ class ImageFrameTest extends GalleryTestCase {
 	$this->assert(isset($template->data['ImageFrameData']), 'template data');
 	$data = $template->data['ImageFrameData'];
 	$this->assertEquals(3, count($data), 'Data size');
-	$this->assertEquals(array('type'=>'none'), $data['none'], 'None');
+	$this->assertEquals(array('type'=>'style','style'=>'border:none'), $data['none'], 'None');
 	$this->assertEquals('style', $data['dots']['type'], 'Dots type');
 	$this->assert(preg_match('/border.*dashed.*padding/', $data['dots']['style']), 'Dots style');
 	$this->assert(count($data['wood']) > 20 && isset($data['wood']['name']), 'Wood');
@@ -111,5 +111,6 @@ class ImageFrameDummyGalleryTemplate {
     }
     function register_block() { }
     function register_function() { }
+    function head() { }
 }
 ?>
