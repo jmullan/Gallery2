@@ -225,7 +225,14 @@ class SystemChecksStep extends InstallStep {
 		$lines = @file($path);
 		$actualChecksum = sprintf('%u', crc32(join('', $lines)));
 		if ($actualChecksum != $cksum) {
-		    $warnings['corrupt'][] = $file;
+		    $displayTextMaxSize = 60;	  // doesn't include the ellipses
+		    if (strlen($file) > $displayTextMaxSize) {
+			$abbrev = '...' . substr($file, -1 * $displayTextMaxSize);
+		    } else {
+			$abbrev = $file;
+		    }
+		    $warnings['corrupt'][] =
+			sprintf('<span title="%s">%s</span>', $file, $abbrev);
 		}
 	    }
 	}
