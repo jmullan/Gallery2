@@ -334,6 +334,21 @@ class UtilitiesTest extends GalleryTestCase {
 				  'size' => $platform->filesize(__FILE__)),
 			    $file);
     }
+
+    function testGetHttpDate() {
+	$regexp = '/(Mon|Tue|Wed|Thu|Fri|Sat|Sun), ';
+	$regexp .= '\d\d (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d\d\d\d ';
+	$regexp .= '\d\d:\d\d:\d\d GMT/';
+
+	/* Test a known date */
+	$date = GalleryUtilities::getHttpDate(1092648357);
+	$this->assertEquals('Mon, 16 Aug 2004 09:25:57 GMT', $date);
+
+	/* Test the format of current datetime */
+	$date = GalleryUtilities::getHttpDate();
+	$isCorrect = preg_match($regexp, $date);
+	$this->assert($isCorrect, 'date-string ' . $date . ' is not RFC 2616 conformant');
+    }
 }
 
 /**

@@ -91,7 +91,7 @@ class DownloadItemView extends GalleryView {
 		}
 		
 		$platform = $gallery->getPlatform();
-		header('Last-Modified: ' . gmstrftime('%a, %e %b %G %R %Z', $stats[9]));
+		header('Last-Modified: ' . GalleryUtilities::getHttpDate($stats[9]));
 		
 		/*
 		 * Don't use readfile() because it buffers the entire file in memory
@@ -198,7 +198,7 @@ class DownloadItemView extends GalleryView {
 
 	$platform = $gallery->getPlatform();
 	$stats = $platform->stat($path);
-	header('Last-Modified: ' . gmstrftime('%a, %e %b %G %R %Z', $stats[9]));
+	header('Last-Modified: ' . GalleryUtilities::getHttpDate($stats[9]));
 
 	/*
 	 * Don't use readfile() because it buffers the entire file in memory

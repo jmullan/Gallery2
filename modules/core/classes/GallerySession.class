@@ -182,7 +182,7 @@ class GallerySession {
 	    }
 
 	    if ($sessionLifetime > 0) {
-		$expirationDate = gmstrftime("%a, %d-%b-%Y %T GMT", time() + $sessionLifetime);
+		$expirationDate = GalleryUtilities::getHttpDate(time() + $sessionLifetime);
 		$cookie .= '; expires=' . $expirationDate;
 	    }
 
