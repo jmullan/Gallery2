@@ -43,7 +43,7 @@ class SizeLimitHelper {
      *                array (errors), 
      *                array (warnings)
      */     
-    function applyLimits($item, $operation, $args) {
+    function applyLimits(&$item, $operation, $args) {
         
         /* Get the path of the source */
         list($ret, $sourcePath) = $item->fetchPath();
