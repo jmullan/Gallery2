@@ -231,6 +231,7 @@ class GalleryTheme {
 	/* Build our tag */
 	$result = "<$tag";
 	foreach ($params as $key => $value) {
+	    $value = trim($value);
 	    $result .= " $key=\"$value\"";
 	}
 	$result .= ">";
