@@ -1,0 +1,95 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package Comment
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * DeleteComment controller tests
+ */
+class DeleteCommentControllerTest extends GalleryControllerTestCase {
+
+    function DeleteCommentControllerTest($methodName) {
+	$this->GalleryControllerTestCase($methodName, 'comment:DeleteComment');
+    }
+
+    function setUp() {
+	global $gallery;
+	parent::setUp();
+
+	list ($ret, $rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Create a random item */
+	list ($ret, $this->_item) = $this->_createRandomDataItem($rootId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Create a comment in it that we can delete */
+	list ($ret, $this->_comment) = GalleryFactory::newInstance('GalleryEntity', 'GalleryComment');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assert(isset($this->_comment), 'Missing comment instance');
+	$this->_comment->create($this->_item->getId());
+	$this->_comment->setCommenterId($gallery->getActiveUserId());
+	$this->_comment->setHost('127.0.0.1');
+	$this->_comment->setComment('this is a test comment');
+	$this->_comment->setDate(time());
+	$ret = $this->_comment->save();
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    function tearDown() {
+	global $gallery;
+	
+	$ret = $gallery->deleteEntityById($this->_item->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	parent::tearDown();
+    }
+
+    function testDeleteComment() {
+	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
+	GalleryUtilities::putRequestVariable('commentId', $this->_comment->getId());
+	GalleryUtilities::putRequestVariable('form.action.delete', 1);
+	GalleryUtilities::putRequestVariable('return.x', 'y');
+
+	$results = $this->handleRequest();
+	$this->assertRedirect(array('x' => 'y'), $results);
+    }
+    
+}
+?>
