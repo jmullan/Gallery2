@@ -456,7 +456,11 @@ class ItemAddChildrenView extends GalleryView {
 				 * Either way, we want the base path to be:
 				 *   http://example.com/path/to/
 				 */
-				$basePath = $baseUrlComponents['path'];
+				if (isset($baseUrlComponents['path'])) {
+				    $basePath = $baseUrlComponents['path'];
+				} else {
+				    $basePath = '/';
+				}
 				if (!preg_match('/\/$/', $basePath)) {
 				    $basePath = dirname($basePath) . '/';
 				}
