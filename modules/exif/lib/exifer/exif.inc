@@ -639,8 +639,12 @@ function read_exif_data_raw($path,$verbose) {
 		$result['JFIF']['Identifier'] = $ident;
 		$code = fread( $in, 1 );
 		$result['JFIF']['ExtensionCode'] =  bin2hex($code);
-		
-		$data = fread( $in, hexdec($size)-8 );
+
+		if (hexdec($size)-8 > 0) {
+		    $data = fread( $in, hexdec($size)-8 );
+		} else {
+		    $data = null;
+		}
 		$result['JFIF']['Data'] = $data;
 		$globalOffset+=hexdec($size)+2;
 		
