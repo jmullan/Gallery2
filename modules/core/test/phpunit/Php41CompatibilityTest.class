@@ -89,10 +89,13 @@ class Php41CompatibilityTest extends GalleryTestCase {
 			$this->assert(false, "Unable to parse [$line]");
 		    }
 		} else {
-		    if (preg_match('|^/(.*?)/|', $line, $matches)) {
-			$fileName = $matches[1];
-			if (preg_match('/\.(class|inc|php)/', $fileName)) {
-			    $this->_scanFile(sprintf("%s/%s", $dirPath, $fileName));
+		    if (preg_match('|^/(.*?)/(-?)|', $line, $matches)) {
+			// deleted files have a negative version number
+			if ($matches[2] != '-') {
+			    $fileName = $matches[1];
+			    if (preg_match('/\.(class|inc|php)/', $fileName)) {
+				$this->_scanFile(sprintf("%s/%s", $dirPath, $fileName));
+			    }
 			}
 		    } else {
 			$this->assert(false, "Unable to parse [$line]");
