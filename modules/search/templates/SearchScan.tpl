@@ -132,7 +132,7 @@
     		        {if isset($field.value)}
     		      <li>
     		        {$field.key}:
-    		        {$field.value|default:"&nbsp;"|ireplace:$searchCriteria:"<span class=\"searchHighlight\">\\1</span>"|markup}
+    		        {$field.value|default:"&nbsp;"|ireplace:$searchCriteria:"<span class=\"giSearchHighlight\">\\1</span>"|markup}
     		      </li>
     		        {/if}
     		      {/foreach}
