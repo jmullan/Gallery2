@@ -77,10 +77,10 @@
     </h2>
       
     <p class="giDescription">
-      {g->text text="This item has sub-items.  The changes you make here can be applied to just this item, or you can apply them to all sub-items.  Note that applying changes to sub-items will merge your change into the existing permissions of the sub-items and may be very time consuming if you have many of sub-items.  It's more efficient to grant permissions to groups and then add and remove users from groups whenever possible."}
+      {g->text text="This item has sub-items.  The changes you make here can be applied to just this item, or you can apply them to all sub-items.  Note that applying changes to sub-items will merge your change into the existing permissions of the sub-items and may be very time consuming if you have many of sub-items.  It's more efficient to grant permissions to groups and then add and remove users from groups whenever possible. Changes are applied to sub-albums by default."}
     </p>
 
-    <input type="checkbox" name="{g->formVar var="form[applyToSubItems]"}" value="{g->text text="Apply to sub-items"}"/>
+    <input type="checkbox" name="{g->formVar var="form[applyToSubItems]"}" value="{g->text text="Apply to sub-items"}" checked="checked"/>
   </div>
   {/if}
 
