@@ -417,10 +417,14 @@ class GalleryStatus {
     function getAsText($showMessage=true) {
 	list ($codes, $trace) = $this->_getAsArray();
 
-	list ($ret, $formatter) =
-	    GalleryCoreApi::newFactoryInstance('GalleryStatusFormatter', 'text/plain');
-	if ($ret->isError() || !isset($formatter)) {
+	if (class_exists('GalleryTestCase')) {
 	    $formatter = new GalleryStatusFormatterText();
+	} else {
+	    list ($ret, $formatter) =
+		GalleryCoreApi::newFactoryInstance('GalleryStatusFormatter', 'text/plain');
+	    if ($ret->isError() || !isset($formatter)) {
+		$formatter = new GalleryStatusFormatterText();
+	    }
 	}
 	return $formatter->format($codes, $trace, $showMessage ? $this->_errorMessage : '');
     }
