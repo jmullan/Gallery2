@@ -33,9 +33,9 @@ class AdminEditUserController extends GalleryController {
 
 	$results = array();
 	$redirectParams = array();
-	$form = GalleryUtilities::getFormVariables('form');
+	$form = GalleryUtilities::getFormVariables('form.');
 
-	list ($ret, $user) = GalleryUserHelper::fetchUserByUsername($form['username']);
+	list ($ret, $user) = $gallery->loadEntitiesById($form['userid']);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -49,12 +49,7 @@ class AdminEditUserController extends GalleryController {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	    
-	if ($user->getId() == $anonymousUserId) {
-	    $isAnonymous = true;
-	} else {
-	    $isAnonymous = false;
-	}
+	$isAnonymous = ($form['userid'] == $anonymousUserId);
 
 	if (isset($form['action']['cancel'])) {
 
@@ -145,83 +140,74 @@ class AdminEditUserView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$userid = GalleryUtilities::getRequestVariables('userid');
-	$form = GalleryUtilities::getFormVariables('form');
+	list ($userid, $formName) =
+	    GalleryUtilities::getRequestVariables('userid', 'formName');
+	$form = GalleryUtilities::getFormVariables('form.');
 
 	/* The 'userid' variable is set the first time we come to this page */
-	$firstTime = false;
 	if (!empty($userid)) {
 	    $form['userid'] = $userid;
-	    $firstTime = true;
 	}
 	
-	/* Get our smarty instance */
+	list ($ret, $user) = $gallery->loadEntitiesById($form['userid']);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
+	/* Email is not required for the anonymous user */
+	list ($ret, $anonymousUserId) =
+	    $gallery->getModuleParameter('core', 'id.anonymousUser');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$isAnonymous = ($form['userid'] == $anonymousUserId);
+
+	if ($formName == 'AdminEditUser') {
+	    /* Complain if any required fields are missing */
+	    if (empty($form['email'])) {
+		if (!$isAnonymous) {
+		    $form['error']['email']['missing'] = 1;
+		}
+	    }
+	    
+	    if ((isset($form['password1']) && !isset($form['password2'])) ||
+		(isset($form['password2']) && !isset($form['password1']))) {
+		$form['error']['password2']['mismatch'] = 1;
+	    }
+	} else {
+	    /* First time around, load the form with user data */
+	    $form['username'] = $user->getUserName();
+	    $form['fullname'] = $user->getFullName();
+	    $form['email'] = $user->getEmail();
+	    $form['language'] = $user->getLanguage();
+	}
+
+	/* Set up our language selection list */
+	list ($ret, $translator) = $gallery->getTranslator();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$languageList = array();
+	$languageList[''] = '<none>';
+	$supportedLanguages = $translator->getSupportedLanguages();
+	foreach ($supportedLanguages as $language => $countryList) {
+	    foreach ($countryList as $country => $languageData) {
+		$languageList[$language . '_' . $country] =
+		    $languageData['description'];
+	    }
+	}
+
+	/* Render the HTML body */
 	list ($ret, $smarty) = $gallery->getSmarty();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+	$smarty->assign('form', $form);
+	$smarty->assign('isAnonymous', $isAnonymous);
+	$smarty->assign('languageList', $languageList);
+	$smarty->assign('controller', 'core:AdminEditUser');
 	$smarty->template_dir = dirname(__FILE__) . '/templates';
-
-	list ($ret, $user) = $gallery->loadEntitiesById($form['userid']);
-	if ($ret->isError()) {
-	    if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
-		$html = $smarty->fetch('AdminEditUserMissing.tpl');
-	    } else {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	} else {
-	    /* Email is not required for the anonymous user */
-	    list ($ret, $anonymousUserId) =
-		$gallery->getModuleParameter('core', 'id.anonymousUser');
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-	    $isAnonymous = ($form['userid'] == $anonymousUserId);
-	    
-	    if ($firstTime) {
-		/* First time around, load the form with user data */
-		$form['username'] = $user->getUserName();
-		$form['fullname'] = $user->getFullName();
-		$form['email'] = $user->getEmail();
-		$form['language'] = $user->getLanguage();
-	    } else {
-		/* After that, complain if any required fields are missing */
-		
-		if (empty($form['email'])) {
-		    if (!$isAnonymous) {
-			$form['error']['email']['missing'] = 1;
-		    }
-		}
-
-		if ((isset($form['password1']) && !isset($form['password2'])) ||
-		    (isset($form['password2']) && !isset($form['password1']))) {
-		    $form['error']['password2']['mismatch'] = 1;
-		}
-	    }
-
-	    /* Set up our language selection list */
-	    list ($ret, $translator) = $gallery->getTranslator();
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    $languageList = array();
-	    $languageList[''] = '<none>';
-	    $supportedLanguages = $translator->getSupportedLanguages();
-	    foreach ($supportedLanguages as $language => $countryList) {
-		foreach ($countryList as $country => $languageData) {
-		    $languageList[$language . '_' . $country] =
-			$languageData['description'];
-		}
-	    }
-
-	    /* Render the HTML body */
-	    $smarty->assign('form', $form);
-	    $smarty->assign('isAnonymous', $isAnonymous);
-	    $smarty->assign('languageList', $languageList);
-	    $smarty->assign('controller', 'core:AdminEditUser');
-	    $html = $smarty->fetch('AdminEditUser.tpl');
-	}
+	$html = $smarty->fetch('AdminEditUser.tpl');
 
 	return array(GalleryStatus::success(), $html);
     }

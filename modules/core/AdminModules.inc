@@ -186,7 +186,6 @@ class AdminModulesView extends GalleryView {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-
 	$smarty->assign('modules', $modules);
 	$smarty->assign('controller', 'core:AdminModules');
 	$smarty->template_dir = dirname(__FILE__) . '/templates';

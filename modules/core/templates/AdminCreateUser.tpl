@@ -1,4 +1,5 @@
   {galleryForm controller="$controller"}
+  {galleryInput type="hidden" name="formName"}AdminCreateUser{/galleryInput}
   <table width="100%" border="0" cellspacing="3" cellpadding="3">
 
     <tr>

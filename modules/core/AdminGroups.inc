@@ -18,7 +18,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-class AdminUsersController extends GalleryController {
+class AdminGroupsController extends GalleryController {
 
     /**
      * @see GalleryController::handleRequest
@@ -34,13 +34,12 @@ class AdminUsersController extends GalleryController {
 	$results = array();
 	$form = GalleryUtilities::getFormVariables('form.');
 
-	if (!empty($form['text']['username'])) {
-	    list ($ret, $user) =
-		GalleryUserHelper::fetchUserByUsername($form['text']['username']);
+	$group = null;
+	if (!empty($form['text']['groupName'])) {
+	    list ($ret, $group) =
+		GalleryGroupHelper::fetchGroupByGroupName($form['text']['groupName']);
 	    if ($ret->isError()) {
-		if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
-		    $user = null;
-		} else {
+		if (!($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 	    }
@@ -74,46 +73,82 @@ class AdminUsersController extends GalleryController {
 	    
 	} else if (isset($form['action']['create'])) {
 
-	    /* Show the "create user" view */
+	    /* Show the "create group" view */
 	    $results['view'] = 'core:SiteAdmin';
-	    GalleryUtilities::putRequestVariable('subView', 'core:AdminCreateUser');
-	    
-	} else if (isset($form['action']['editFromText'])) {
-
-	    if ($user == null) {
-		GalleryUtilities::putRequestVariable('form.error.text.noSuchUser', 1);
-	    } else {
-		/* Show the "delete user" view */
-		$results['view'] = 'core:SiteAdmin';
-		GalleryUtilities::putRequestVariable('userid', $user->getId());
-		GalleryUtilities::putRequestVariable('subView', 'core:AdminEditUser');
-	    }
+	    GalleryUtilities::putRequestVariable('subView', 'core:AdminCreateGroup');
 	    
 	} else if (isset($form['action']['editFromList'])) {
 
-	    /* Show the "edit user" view */
-	    $results['view'] = 'core:SiteAdmin';
-	    GalleryUtilities::putRequestVariable('subView', 'core:AdminEditUser');
-	    GalleryUtilities::putRequestVariable('userid', $form['list']['userid']);
+	    if (empty($form['list']['groupId'])) {
+		GalleryUtilities::putRequestVariable('form.error.list.noGroupSelected', 1);
+	    } else {
+		/* Show the "edit group" view */
+		$results['view'] = 'core:SiteAdmin';
+		GalleryUtilities::putRequestVariable('subView', 'core:AdminEditGroup');
+		GalleryUtilities::putRequestVariable('groupId', $form['list']['groupId']);
+	    }
+	    
+	} else if (isset($form['action']['addRemoveUsersFromList'])) {
+
+	    if (empty($form['list']['groupId'])) {
+		GalleryUtilities::putRequestVariable('form.error.list.noGroupSelected', 1);
+	    } else {
+		/* Show the "edit group" view */
+		$results['view'] = 'core:SiteAdmin';
+		GalleryUtilities::putRequestVariable('subView', 'core:AdminEditGroupUsers');
+		GalleryUtilities::putRequestVariable('groupId', $form['list']['groupId']);
+	    }
+	    
+	} else if (isset($form['action']['deleteFromList'])) {
+
+	    if (empty($form['list']['groupId'])) {
+		GalleryUtilities::putRequestVariable('form.error.list.noGroupSelected', 1);
+	    } else {
+		/* Show the "delete group" view */
+		$results['view'] = 'core:SiteAdmin';
+		GalleryUtilities::putRequestVariable('groupId', $form['list']['groupId']);
+		GalleryUtilities::putRequestVariable('subView', 'core:AdminDeleteGroup');
+	    }
+	    
+	} else if (isset($form['action']['editFromText'])) {
+
+	    if (empty($form['text']['groupName'])) {
+		GalleryUtilities::putRequestVariable('form.error.text.noGroupSpecified', 1);
+	    } else if ($group == null) {
+		GalleryUtilities::putRequestVariable('form.error.text.noSuchGroup', 1);
+	    } else {
+		/* Show the "delete group" view */
+		$results['view'] = 'core:SiteAdmin';
+		GalleryUtilities::putRequestVariable('groupId', $group->getId());
+		GalleryUtilities::putRequestVariable('subView', 'core:AdminEditGroup');
+	    }
 	    
 	} else if (isset($form['action']['deleteFromText'])) {
 
-	    if ($user == null) {
-		GalleryUtilities::putRequestVariable('form.error.text.noSuchUser', 1);
+	    if (empty($form['text']['groupName'])) {
+		GalleryUtilities::putRequestVariable('form.error.text.noGroupSpecified', 1);
+	    } else if ($group == null) {
+		GalleryUtilities::putRequestVariable('form.error.text.noSuchGroup', 1);
 	    } else {
-		/* Show the "delete user" view */
+		/* Show the "delete group" view */
 		$results['view'] = 'core:SiteAdmin';
-		GalleryUtilities::putRequestVariable('subView', 'core:AdminDeleteUser');
-		GalleryUtilities::putRequestVariable('userid', $user->getId());
+		GalleryUtilities::putRequestVariable('subView', 'core:AdminDeleteGroup');
+		GalleryUtilities::putRequestVariable('groupId', $group->getId());
 	    }
 		
-	} else if (isset($form['action']['deleteFromList'])) {
+	} else if (isset($form['action']['addRemoveUsersFromText'])) {
 
-	    /* Show the "delete user" view */
-	    $results['view'] = 'core:SiteAdmin';
-	    GalleryUtilities::putRequestVariable('userid', $form['list']['userid']);
-	    GalleryUtilities::putRequestVariable('subView', 'core:AdminDeleteUser');
-	    
+	    if (empty($form['text']['groupName'])) {
+		GalleryUtilities::putRequestVariable('form.error.text.noGroupSpecified', 1);
+	    } else if ($group == null) {
+		GalleryUtilities::putRequestVariable('form.error.text.noSuchGroup', 1);
+	    } else {
+		/* Show the "edit group's users" view */
+		$results['view'] = 'core:SiteAdmin';
+		GalleryUtilities::putRequestVariable('subView', 'core:AdminEditGroupUsers');
+		GalleryUtilities::putRequestVariable('groupId', $group->getId());
+	    }
+		
 	}
 
 	if (empty($results['view'])) {
@@ -126,14 +161,14 @@ class AdminUsersController extends GalleryController {
 						 $form['list']['page']);
 
 	    $results['view'] = 'core:SiteAdmin';
-	    GalleryUtilities::putRequestVariable('subView', 'core:AdminUsers');
+	    GalleryUtilities::putRequestVariable('subView', 'core:AdminGroups');
 	}
 
 	return array(GalleryStatus::success(), $results);
     }
 }
 
-class AdminUsersView extends GalleryView {
+class AdminGroupsView extends GalleryView {
 
     /**
      * @see GalleryView::renderBody
@@ -164,21 +199,21 @@ class AdminUsersView extends GalleryView {
 	    $form['list']['page'] = 1;
 	}
 
-	if (empty($form['text']['username'])) {
-	    $form['text']['username'] = '';
+	if (empty($form['text']['groupName'])) {
+	    $form['text']['groupName'] = '';
 	}
 
-	list ($ret, $totalUserCount) = GalleryUserHelper::fetchUserCount();
+	list ($ret, $totalGroupCount) = GalleryGroupHelper::fetchGroupCount();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$form['list']['count'] = $totalUserCount;
+	$form['list']['count'] = $totalGroupCount;
 	$form['list']['pageSize'] = 15;
 
-	/* If we have a filter, find out how many users match it */
+	/* If we have a filter, find out how many groups match it */
 	if (!empty($form['list']['filter'])) {
-	    list ($ret, $form['list']['count']) = GalleryUserHelper::fetchUserCount($form['list']['filter']);
+	    list ($ret, $form['list']['count']) = GalleryGroupHelper::fetchGroupCount($form['list']['filter']);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -190,10 +225,11 @@ class AdminUsersView extends GalleryView {
 	    $form['list']['page'] = $form['list']['maxPages'];
 	}
 	
-	list ($ret, $form['list']['usernames']) =
-	    GalleryUserHelper::fetchUserNames($form['list']['pageSize'],
-					      ($form['list']['page'] - 1) * $form['list']['pageSize'],
-					      $form['list']['filter']);
+	list ($ret, $form['list']['groupNames']) =
+	    GalleryGroupHelper::fetchGroupNames($form['list']['pageSize'],
+						(($form['list']['page'] - 1) *
+						 $form['list']['pageSize']),
+						$form['list']['filter']);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -204,10 +240,10 @@ class AdminUsersView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$smarty->assign('form', $form);
-	$smarty->assign('totalUserCount', $totalUserCount);
-	$smarty->assign('controller', 'core:AdminUsers');
+	$smarty->assign('totalGroupCount', $totalGroupCount);
+	$smarty->assign('controller', 'core:AdminGroups');
 	$smarty->template_dir = dirname(__FILE__) . '/templates';
-	$html = $smarty->fetch('AdminUsers.tpl');
+	$html = $smarty->fetch('AdminGroups.tpl');
 
 	return array(GalleryStatus::success(), $html);
     }

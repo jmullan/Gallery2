@@ -18,7 +18,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-class AdminDeleteUserController extends GalleryController {
+class AdminDeleteGroupController extends GalleryController {
 
     /**
      * @see GalleryController::handleRequest
@@ -33,42 +33,35 @@ class AdminDeleteUserController extends GalleryController {
 
 	$results = array();
 	$redirectParams = array();
-	$userid = GalleryUtilities::getRequestVariables('userid');
+	$groupId = GalleryUtilities::getRequestVariables('groupId');
 	$form = GalleryUtilities::getFormVariables('form.');
 	
 	if (isset($form['action']['cancel'])) {
 
-	    /* Go back to the AdminUsers view */
+	    /* Go back to the AdminGroups view */
 	    $results['view'] = 'core:SiteAdmin';
-	    GalleryUtilities::putRequestVariable('subView', 'core:AdminUsers');
+	    GalleryUtilities::putRequestVariable('subView', 'core:AdminGroups');
 	    
 	} else if (isset($form['action']['delete'])) {
 
 	    /*
-	     * Check to see if we're trying to delete the anonymous user, or
+	     * Check to see if we're trying to delete the anonymous group, or
 	     * ourself (can't do either of those).
 	     */
-	    list ($ret, $user) = $gallery->loadEntitiesById($userid);
+	    list ($ret, $group) = $gallery->loadEntitiesById($groupId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    list ($ret, $anonymousUserId) =
-		$gallery->getModuleParameter('core', 'id.anonymousUser');
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    $isAnonymous = ($userid == $anonymousUserId);
-	    $isSelf = ($userid == $gallery->getActiveUserId());
+	    if ($group->getGroupType() == GROUP_NORMAL) {
 
-	    if (!$isAnonymous && !$isSelf) {
-		/* Delete the user */
-		list ($ret, $lockId) = $gallery->acquireWriteLock($userid);
+		/* Delete the group */
+		list ($ret, $lockId) = $gallery->acquireWriteLock($groupId);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-		$ret = $user->delete();
+		$ret = $group->delete();
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -80,8 +73,8 @@ class AdminDeleteUserController extends GalleryController {
 
 		/* Request a redirect to the confirmation screen */
 		$redirectParams['view'] = 'core:SiteAdmin';
-		$redirectParams['subView'] = 'core:AdminDeleteUserConfirmation';
-		$redirectParams['username'] = $user->getUsername();
+		$redirectParams['subView'] = 'core:AdminDeleteGroupConfirmation';
+		$redirectParams['groupName'] = $group->getGroupName();
 	    }
 	}
 
@@ -91,7 +84,7 @@ class AdminDeleteUserController extends GalleryController {
 	} else {
 	    if (empty($results['view'])) {
 		$results['view'] = 'core:SiteAdmin';
-		GalleryUtilities::putRequestVariable('subView', 'core:AdminDeleteUser');
+		GalleryUtilities::putRequestVariable('subView', 'core:AdminDeleteGroup');
 	    }
 	}
 
@@ -99,7 +92,7 @@ class AdminDeleteUserController extends GalleryController {
     }
 }
 
-class AdminDeleteUserView extends GalleryView {
+class AdminDeleteGroupView extends GalleryView {
 
     /**
      * @see GalleryView::renderBody
@@ -118,38 +111,32 @@ class AdminDeleteUserView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$userid = GalleryUtilities::getRequestVariables('userid');
+	$groupId = GalleryUtilities::getRequestVariables('groupId');
 
 	/*
-	 * Check to see if we're trying to delete the anonymous user, or
+	 * Check to see if we're trying to delete the anonymous group, or
 	 * ourself (can't do either of those).
 	 */
-	list ($ret, $user) = $gallery->loadEntitiesById($userid);
+	list ($ret, $group) = $gallery->loadEntitiesById($groupId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	list ($ret, $anonymousUserId) =
-	    $gallery->getModuleParameter('core', 'id.anonymousUser');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
+	$isAllUsers = ($group->getGroupType() == GROUP_ALL_USERS);
+	$isAllAdmins = ($group->getGroupType() == GROUP_ALL_ADMINS);
 	
-	$isAnonymous = ($userid == $anonymousUserId);
-	$isSelf = ($userid == $gallery->getActiveUserId());
-
 	/* Render the HTML body */
 	list ($ret, $smarty) = $gallery->getSmarty();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$smarty->assign('userid', $userid);
-	$smarty->assign('username', $user->getUserName());
-	$smarty->assign('isSelf', $isSelf);
-	$smarty->assign('isAnonymous', $isAnonymous);
-	$smarty->assign('controller', 'core:AdminDeleteUser');
+	$smarty->assign('groupId', $groupId);
+	$smarty->assign('groupName', $group->getGroupName());
+	$smarty->assign('isAllUsers', $isAllUsers);
+	$smarty->assign('isAllAdmins', $isAllAdmins);
+	$smarty->assign('controller', 'core:AdminDeleteGroup');
 	$smarty->template_dir = dirname(__FILE__) . '/templates';
-	$html = $smarty->fetch('AdminDeleteUser.tpl');
+	$html = $smarty->fetch('AdminDeleteGroup.tpl');
 
 	return array(GalleryStatus::success(), $html);
     }
