@@ -46,14 +46,14 @@ class EmptyGalleryTestCase extends TestCase {
 	closedir($dir);
 
 	// Recreate the gallery data directory
-	foreach (array('data.gallery.albums',
-		       'data.gallery.cache',
-		       'data.gallery.locks',
-		       'data.gallery.sessions',
-		       'data.gallery.tmp',
-		       'data.smarty.base',
-		       'data.smarty.templates_c') as $key) {
-	    $dir = $gallery->getConfig($key);
+	foreach (array('albums',
+		       'cache',
+		       'locks',
+		       'sessions',
+		       'tmp',
+		       'smarty',
+		       'smarty/templates_c') as $key) {
+	    $dir = $gallery->getConfig('data.gallery.base') . '/' . $key;
 
 	    if (empty($dir)) {
 		return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);
@@ -67,8 +67,8 @@ class EmptyGalleryTestCase extends TestCase {
 	    }
 	}
 
-	foreach (array('data.gallery.locks') as $key) {
-	    $dir = $gallery->getConfig($key);
+	foreach (array('locks') as $key) {
+	    $dir = $gallery->getConfig('data.gallery.base') . '/' . $key;
 
 	    if (empty($dir)) {
 		return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);

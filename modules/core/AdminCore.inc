@@ -134,7 +134,6 @@ class AdminCoreController extends GalleryController {
 			   'language.selector',
 			   'session.lifetime',
 			   'session.inactivityTimeout',
-			   'misc.useShortUrls',
 			   'misc.markup',
 			   'misc.login',
 			   'smtp.host',
@@ -203,7 +202,6 @@ class AdminCoreView extends GalleryView {
 			   'language.selector',
 			   'session.lifetime',
 			   'session.inactivityTimeout',
-			   'misc.useShortUrls',
 			   'misc.markup',
 			   'misc.login',
 			   'smtp.host',
@@ -309,9 +307,6 @@ class AdminCoreView extends GalleryView {
 			     'form' => $module->translate('Form on Sidebar'),
 			     'both' => $module->translate('Both'));
 
-	$useShortUrlsList = array('true' => $module->translate('yes'),
-				  'false' => $module->translate('no'));
-
 	$embeddedMarkupList = array('none' => $module->translate('No Markup'),
 				    'bbcode' => $module->translate('BBCode'),
 				    'html' => $module->translate('Raw HTML'));
@@ -333,7 +328,6 @@ class AdminCoreView extends GalleryView {
 	$AdminCore['permissionsFileList'] = $permissionsFileList;
 	$AdminCore['sessionTimeList'] = $sessionTimeList;
 	$AdminCore['loginMethod'] = $loginMethod;
-	$AdminCore['useShortUrlsList'] = $useShortUrlsList;
 	$AdminCore['embeddedMarkupList'] = $embeddedMarkupList;
 	$AdminCore['shortUrlTestItemId'] = $rootId;
 	$AdminCore['lockSystemList'] = $lockSystemList;

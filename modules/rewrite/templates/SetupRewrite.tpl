@@ -32,56 +32,15 @@
   
   <div class="gbAdmin">
     <h3 class="giTitle">
-      {g->text text="URL Rewrite Mode"}
+      {g->text text="Gallery base URL"}
     </h3>
 
     <p class="giDescription">
-      {g->text text="There's two diffrent modes URL Rewrite works in. Either you use the prefix method which will put a prefix before all URLs (ie /v/ by default for viewing items), or you may disable the prefix. Once activated, you can change the prefixes as desired."}
+      {g->text text="We need to know the URL to your Gallery installation in order to create short urls.  By default we take a pretty good guess, but if this is wrong you can change it here"}
     </p>
-    
-    <table class="gbDataTable">
-      <tr>
-	<td>
-	  {g->text text="Use prefixes?"}
-	</td>
-	<td>
-	  <select name="{g->formVar var="form[mode]"}">
-	      {html_options options=$SetupRewrite.modes selected=$form.mode}
-	  </select>
-	</td>
-      </tr>
-      
-      <tr>
-	<td>
-	  {g->text text="Gallery base URL:"}
-	</td>
-	<td>
-	  <input type="text" size="40" name="{g->formVar var="form[galleryLocation]"}" value="{$form.galleryLocation}"/>
-	</td>
-      </tr>
-    </table>
-    
+
+    <input type="text" size="60" name="{g->formVar var="form[galleryLocation]"}" value="{$form.galleryLocation}"/>
     <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}"/>
-  </div>
-  
-  <div class="gbAdmin">
-    <h3 class="giTitle">
-      {g->text text="Checking Gallery Configuration"}
-    </h3>
-    
-    <p class="giDescription">
-      {g->text text="URL Rewrite needs the bulk short URL style (using PathInfo) to be turned off in General settings."}
-    </p>
-
-    {if isset($form.error.shortUrls)}
-    <div class="giError">
-      {g->text text="Short URLs is turned on."}
-    </div>
-    {else}
-    <div class="giSuccess">
-      {g->text text="Short URLs is turned off."}
-    </div>
-    {/if}
   </div>
   
   <div class="gbAdmin">

@@ -38,7 +38,7 @@ class CoreModule extends GalleryModule {
 	$this->setId('core');
 	$this->setName('Core');
 	$this->setGalleryVersion('2.0-beta-1');
-	$this->setVersion('0.9.0'); /* Update CoreModuleExtras::upgrade also! */
+	$this->setVersion('0.9.1'); /* Update CoreModuleExtras::upgrade also! */
 	$this->setDescription($gallery->i18n('Gallery 2 Core Module'));
 	$this->setGroup('gallery', $this->translate('Gallery'));
 	$this->setCallbacks('registerEventListeners|' .
@@ -56,7 +56,8 @@ class CoreModule extends GalleryModule {
 	    'modules/core/classes/helpers/GalleryItemHelper_medium.class');
 	GalleryCoreApi::registerEventListener('Gallery::ViewableTreeChange',
 					      new GalleryItemHelper_medium());
-
+	GalleryCoreApi::registerEventListener('Gallery::RemovePermission',
+					      new GalleryItemHelper_medium());
     }
 
     /**

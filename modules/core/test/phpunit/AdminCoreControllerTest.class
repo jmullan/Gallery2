@@ -54,7 +54,6 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 			     'session.inactivityTimeout',
 			     'uploadLocalServer.dirs',
 			     'misc.markup',
-			     'misc.useShortUrls',
 			     'lock.system');
 	
 	/* Save the original values */
@@ -96,7 +95,6 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 			  'session.lifetime' => 'x9',
 			  'session.inactivityTimeout' => 'x10',
 			  'misc.markup' => 'x11',
-			  'misc.useShortUrls' => 'x12',
 			  'lock.system' => 'x13');
 
 	/* Change the defaults to something meaningless */
@@ -171,8 +169,7 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 			  'default.language' => 'x8',
 			  'session.lifetime' => 'x9',
 			  'session.inactivityTimeout' => 'x10',
-			  'misc.markup' => 'x11',
-			  'misc.useShortUrls' => 'x12');
+			  'misc.markup' => 'x11');
 
 	/* Change the defaults to something meaningless */
 	foreach ($valueMap as $key => $value) {

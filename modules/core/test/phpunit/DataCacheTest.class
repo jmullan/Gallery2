@@ -97,23 +97,30 @@ class DataCacheTest extends GalleryTestCase {
 
     function testGetCachePath() {
 	global $gallery;
-	$gallery->setConfig('data.gallery.cache', '/');
+	$gallery->setConfig('data.gallery.base', '/data/');
 	
-	$this->assertEquals('/module/core/0/0/1.inc',
-			    GalleryDataCache::getCachePath(array('type' => 'module',
-								 'id' => 'core',
-								 'itemId' => 1)));
-	$this->assertEquals('/layout/matrix',
-			    GalleryDataCache::getCachePath(array('type' => 'layout', 'id' => 'matrix')));
+	$this->assertEquals('/data/cache/module/core/0/0/1.inc',
+            GalleryDataCache::getCachePath(array('type' => 'module',
+						 'id' => 'core',
+						 'itemId' => 1)));
+	$this->assertEquals('/data/cache/layout/matrix',
+            GalleryDataCache::getCachePath(array('type' => 'layout', 'id' => 'matrix')));
 	
-	$this->assertEquals('/entity/7/2/725.inc',
-			    GalleryDataCache::getCachePath(array('type' => 'entity', 'itemId' => 725)));
+	$this->assertEquals('/data/cache/entity/7/2/725.inc',
+            GalleryDataCache::getCachePath(array('type' => 'entity', 'itemId' => 725)));
 
-	$this->assertEquals('/derivative/1/2/123.dat',
-			    GalleryDataCache::getCachePath(array('type' => 'derivative', 'itemId' => 123)));
+	$this->assertEquals('/data/cache/derivative/1/2/123.dat',
+            GalleryDataCache::getCachePath(array('type' => 'derivative', 'itemId' => 123)));
 
-	$this->assertEquals('/derivative/1/2/123-meta.inc',
-			    GalleryDataCache::getCachePath(array('type' => 'derivative-meta', 'itemId' => 123)));
+	$this->assertEquals('derivative/1/2/123.dat',
+            GalleryDataCache::getCachePath(array('type' => 'derivative-relative',
+						 'itemId' => 123)));
+
+	$this->assertEquals('/data/cache/derivative/1/2/123-meta.inc',
+            GalleryDataCache::getCachePath(array('type' => 'derivative-meta', 'itemId' => 123)));
+
+	$this->assertEquals('/data/cache/derivative/1/2/123-fast.inc',
+            GalleryDataCache::getCachePath(array('type' => 'fast-download', 'itemId' => 123)));
     }
 
     function testPutToDisk() {
@@ -121,30 +128,34 @@ class DataCacheTest extends GalleryTestCase {
 
 	GalleryDataCache::setFileCachingEnabled(true);
 
-	$gallery->setConfig('data.gallery.cache', '/');
+	$gallery->setConfig('data.gallery.base', '/data/');
 	$gallery->setPlatform(new DataCacheTestPlatform());
 	
 	$testdata = "testdata";
 	GalleryDataCache::putToDisk(array('type' => 'entity', 'itemId' => 1), $testdata);
 	$this->assertEquals(htmlentities("<?php \$data = unserialize('s:8:\"testdata\";'); ?>"),
-			    htmlentities(DataCacheTestPlatform::getFileContents('/entity/0/0/1.inc')));
+            htmlentities(DataCacheTestPlatform::getFileContents('/data/cache/entity/0/0/1.inc')));
 	DataCacheTestPlatform::reset();
 
-	GalleryDataCache::putToDisk(array('type' => 'entity', 'itemId' => 1), $testdata, array('required-class'));
-	$this->assertEquals(htmlentities("<?php GalleryCoreApi::relativeRequireOnce(\"required-class\"); " .
+	GalleryDataCache::putToDisk(array('type' => 'entity', 'itemId' => 1),
+				    $testdata, array('required-class'));
+	$this->assertEquals(
+           htmlentities("<?php GalleryCoreApi::relativeRequireOnce(\"required-class\"); " .
 					 "\$data = unserialize('s:8:\"testdata\";'); ?>"),
-			    htmlentities(DataCacheTestPlatform::getFileContents('/entity/0/0/1.inc')));
+            htmlentities(DataCacheTestPlatform::getFileContents('/data/cache/entity/0/0/1.inc')));
 	DataCacheTestPlatform::reset();
 	
 	GalleryDataCache::putToDisk(array('type' => 'entity', 'itemId' => 21), $testdata);
 	$this->assertEquals(htmlentities("<?php \$data = unserialize('s:8:\"testdata\";'); ?>"),
-			    htmlentities(DataCacheTestPlatform::getFileContents('/entity/0/2/21.inc')));
+            htmlentities(DataCacheTestPlatform::getFileContents('/data/cache/entity/0/2/21.inc')));
 	DataCacheTestPlatform::reset();
 
 	$testdata = '|test#with\'funky"chars? \\*&%$[]}{ end';
 	GalleryDataCache::putToDisk(array('type' => 'entity', 'itemId' => 721), $testdata);
-	$this->assertEquals(htmlentities("<?php \$data = unserialize('s:37:\"|test#with\\'funky\"chars? \\*&%\$[]}{ end\";'); ?>"),
-			    htmlentities(DataCacheTestPlatform::getFileContents('/entity/7/2/721.inc')));
+	$this->assertEquals(
+            htmlentities("<?php \$data = unserialize('s:37:\"|test#with" .
+			 "\\'funky\"chars? \\*&%\$[]}{ end\";'); ?>"),
+            htmlentities(DataCacheTestPlatform::getFileContents('/data/cache/entity/7/2/721.inc')));
 	DataCacheTestPlatform::reset();
     }
     
@@ -163,32 +174,37 @@ class DataCacheTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$gallery->setConfig('data.gallery.cache', '/');
+	$gallery->setConfig('data.gallery.base', '/data/');
 	$gallery->setPlatform(new DataCacheTestPlatform());
 	
 	GalleryDataCache::removeFromDisk(array('type' => 'entity', 'itemId' => 1));
-	$this->assert(DataCacheTestPlatform::wasFileDeleted('/entity/0/0/1.inc'), 'file was not deleted');
+	$this->assert(DataCacheTestPlatform::wasFileDeleted('/data/cache/entity/0/0/1.inc'),
+		      'file was not deleted');
 	DataCacheTestPlatform::reset();
 
 	GalleryDataCache::removeFromDisk(array('type' => 'module', 'id' => 'core', 'itemId' => 1));
-	$this->assert(DataCacheTestPlatform::wasFileDeleted('/module/core/0/0/1.inc'), 'file was not deleted');
+	$this->assert(DataCacheTestPlatform::wasFileDeleted('/data/cache/module/core/0/0/1.inc'),
+		      'file was not deleted');
 	DataCacheTestPlatform::reset();
 
 	GalleryDataCache::removeFromDisk(array('type' => 'module', 'id' => 'core'));
-	$this->assert(DataCacheTestPlatform::wasDirDeleted('/module/core'), 'dir was not deleted');
+	$this->assert(DataCacheTestPlatform::wasDirDeleted('/data/cache/module/core'),
+		      'dir was not deleted');
 	DataCacheTestPlatform::reset();
 
 	GalleryDataCache::removeFromDisk(array('type' => 'module', 'itemId' => 1));
 	foreach (array_keys($modulePluginStatus) as $moduleId) {
-	    $targetFile = '/module/' . $moduleId . '/0/0/1.inc';
-	    $this->assert(DataCacheTestPlatform::wasFileDeleted($targetFile), "$targetFile was not deleted");
+	    $targetFile = '/data/cache/module/' . $moduleId . '/0/0/1.inc';
+	    $this->assert(DataCacheTestPlatform::wasFileDeleted($targetFile),
+			  "$targetFile was not deleted");
 	}
 	DataCacheTestPlatform::reset();
 	
 	GalleryDataCache::removeFromDisk(array('type' => 'layout', 'itemId' => 1));
 	foreach (array_keys($layoutPluginStatus) as $layoutId) {
-	    $targetFile = '/layout/' . $layoutId . '/0/0/1.inc';
-	    $this->assert(DataCacheTestPlatform::wasFileDeleted($targetFile), "$targetFile was not deleted");
+	    $targetFile = '/data/cache/layout/' . $layoutId . '/0/0/1.inc';
+	    $this->assert(DataCacheTestPlatform::wasFileDeleted($targetFile),
+			  "$targetFile was not deleted");
 	}
 	DataCacheTestPlatform::reset();
     }
@@ -198,14 +214,16 @@ class DataCacheTest extends GalleryTestCase {
 	
 	GalleryDataCache::setFileCachingEnabled(true);
 
-	$gallery->setConfig('data.gallery.cache', '/');
+	$gallery->setConfig('data.gallery.base', '/data/');
 	$gallery->setPlatform(new DataCacheTestPlatform_testGetFromDisk());
 
 	/*
-	 * GalleryDataCache::getFromDisk uses include() and we don't have a platform wrapper for that.  We
-	 * can't easily wrap that function because we want to take advantage of the fact that include() shares
-	 * the lexical scope of the calling function, and wrapping it would change that scope.  But we can at
-	 * least partially exercise the function and make sure it doesn't throw any errors.
+	 * GalleryDataCache::getFromDisk uses include() and we don't have a
+	 * platform wrapper for that.  We can't easily wrap that function
+	 * because we want to take advantage of the fact that include() shares
+	 * the lexical scope of the calling function, and wrapping it would
+	 * change that scope.  But we can at least partially exercise the
+	 * function and make sure it doesn't throw any errors.
 	 */
 	GalleryDataCache::getFromDisk(array('type' => 'entity', 'itemId' => 1));
 	GalleryDataCache::getFromDisk(array('type' => 'module', 'id' => 'core', 'itemId' => 1));

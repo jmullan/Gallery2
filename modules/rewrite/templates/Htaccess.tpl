@@ -12,17 +12,16 @@
 
     RewriteBase {$Htaccess.galleryDirectory}
     
-    {if strlen($Htaccess.usePrefixes)}
-    RewriteRule ^$   {$Htaccess.galleryDirectory}{$Htaccess.baseFile}   [L]
-    {/if}
-    
     # Only redirect to Gallery base file if there's no such file already, and
     # make sure gallery_remote2.php gets generates a 404 in order to be compatible
     # with Gallery Remote.
     RewriteCond %{ldelim}REQUEST_FILENAME{rdelim} !gallery\_remote2\.php
     RewriteCond %{ldelim}REQUEST_FILENAME{rdelim} !-f
     RewriteCond %{ldelim}REQUEST_FILENAME{rdelim} !-d
-    RewriteRule ^(.+)$   {$Htaccess.galleryDirectory}{$Htaccess.baseFile}?{$Htaccess.g2Prefix}RewriteUrlGenerator=/{$Htaccess.usePrefixes}$1   [QSA]
+
+    RewriteRule ^v/(.*).html       {$Htaccess.galleryDirectory}{$Htaccess.baseFile}?{$Htaccess.g2Prefix}view=core:ShowItem&{$Htaccess.g2Prefix}path=/$1 [QSA]
+    RewriteRule ^v/(.*)            {$Htaccess.galleryDirectory}{$Htaccess.baseFile}?{$Htaccess.g2Prefix}view=core:ShowItem&{$Htaccess.g2Prefix}path=/$1 [QSA]
+    RewriteRule ^d/([0-9]+).*?     {$Htaccess.galleryDirectory}{$Htaccess.baseFile}?{$Htaccess.g2Prefix}view=core:DownloadItem&{$Htaccess.g2Prefix}itemId=$1 [QSA]
 </IfModule>
 
 # END Url Rewrite section

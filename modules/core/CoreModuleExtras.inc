@@ -79,12 +79,14 @@ class CoreModuleExtras {
 	 *      sure that it does not have a 'break' statement.  You'll want it
 	 *      to fall through to the new block that you're about to add.
 	 *  2.  Add a new block at the end of the switch statement for '1.0.1'
-	 *      and add all the changes necessary to go from 1.0.1 to 1.0.2.
-	 *      When you're done, set $currentVersion = '1.0.2' and break;
+	 *      and add all the changes necessary to upgrade from 1.0.1 to 1.0.2
+	 *      and then add a "break;" statement so that you don't fall through
+	 *      to the "default" clause.
 	 *  3.  Update the '0' block to make any appropriate changes for initial
 	 *      installs.  Merge them in with the existing install code as
-	 *      appropriate.  At the end of the block, set $currentVersion =
-	 *      '1.0.2' and break;
+	 *      appropriate.
+	 *  4.  Update the $currentVersion variable at the bottom of the switch
+	 *      to the new version.
 	 */
 	switch ($currentVersion) {
 	case '0':
@@ -104,7 +106,6 @@ class CoreModuleExtras {
 			   'session.lifetime' => 25 * 365 * 86400, /* 25 years */
 			   'session.inactivityTimeout' => 14 * 86400, /* two weeks */
 			   'misc.markup' => 'bbcode',
-			   'misc.useShortUrls' => 'false',
 			   'misc.login' => 'both',
 			   'lock.system' => 'flock',
 			   ) as $key => $value) {
@@ -180,8 +181,6 @@ class CoreModuleExtras {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
-
-	    $currentVersion = '0.9.0';
 	    break;
 
 	case '0.8':
@@ -219,8 +218,6 @@ class CoreModuleExtras {
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-
-	    $currentVersion = '0.8.3';
 	    /* fall through */
 
 	case '0.8.3':
@@ -241,8 +238,6 @@ class CoreModuleExtras {
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-
-	    $currentVersion = '0.8.6';
 	    /* fall through */
 
 	case '0.8.6':
@@ -251,7 +246,6 @@ class CoreModuleExtras {
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-	    $currentVersion = '0.8.8';
 	    /* fall through */
 
 	case '0.8.8':
@@ -268,8 +262,6 @@ class CoreModuleExtras {
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-
-	    $currentVersion = '0.8.10';
 	    /* fall through */
 
 	case '0.8.10':
@@ -279,7 +271,6 @@ class CoreModuleExtras {
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-	    $currentVersion = '0.8.13';
 	    /* fall through */
 
 	case '0.8.13':
@@ -317,13 +308,10 @@ class CoreModuleExtras {
 		    }
 		}
 	    }
-
-	    $currentVersion = '0.8.14';
 	    /* fall through */
 
 	case '0.8.14':
 	    /* Added Entity::onLoadHandlers; default all values to null, so nothing to do */
-	    $currentVersion = '0.8.15';
 	    /* fall through */
 
 	case '0.8.15':
@@ -344,18 +332,21 @@ class CoreModuleExtras {
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-
-	    $currentVersion = '0.8.16';
 	    /* fall through */
 
 	case '0.8.16':
 	    /* Schema updates: GalleryPluginMap, GalleryPluginParameterMap, GalleryGroup */
-	    $currentVersion = '0.8.17';
 	    /* fall through */
 
 	case '0.8.17':
 	    /* Beta 1! */
-	    $currentVersion = '0.9.0';
+	    /* fall through */
+
+	case '0.9.0':
+	    $ret = GalleryCoreApi::removePluginParameter('modules', 'core', 'misc.useShortUrls');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
 	    break;
 
 	default:

@@ -34,25 +34,17 @@ class RewriteModuleExtras {
 	switch ($currentVersion) {
 	case null:
 	    /* Initial install */
-	    foreach (array('prefixMap' => serialize(array()),
-			   'usePrefixes' => 'true',
-			   'galleryLocation' => '')
-		    as $key => $value) {
+	    foreach (array('galleryLocation' => '')
+		     as $key => $value) {
 		$ret = $module->setParameter($key, $value);
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
-	    
-	    $currentVersion = '0.8.1';
 	    break;
 
 	case '0.0.1':
-	    $currentVersion = '0.0.2';
-
 	case '0.0.2':
-	    $currentVersion = '0.0.3';
-
 	case '0.0.3':
 	    foreach (array('prefixes' => '', 'views' => '')
 		    as $key => $value) {
@@ -62,8 +54,6 @@ class RewriteModuleExtras {
 		}
 	    }
 
-	    $currentVersion = '0.0.4';
-
 	case '0.0.4':
 	    $prefixMap = array();
 	    list ($ret, $views) =
@@ -72,20 +62,20 @@ class RewriteModuleExtras {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    $views = explode('|', $views);
-	    
+
 	    list ($ret, $prefixes) =
 		    GalleryCoreApi::getPluginParameter('module', 'rewrite', 'prefixes');
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    $prefixes = explode('|', $prefixes);
-	    
+
 	    for ($i = 0; $i < sizeof($views); $i++) {
 		if (strlen($prefixes[$i])) {
 		    $prefixMap[$views[$i]] = $prefixes[$i];
 		}
 	    }
-	
+
 	    foreach (array('prefixMap' => serialize($prefixMap))
 		    as $key => $value) {
 		$ret = $module->setParameter($key, $value);
@@ -93,7 +83,7 @@ class RewriteModuleExtras {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
-	    
+
 	    $ret = $module->removeItemParameter('views', 0);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
@@ -106,17 +96,9 @@ class RewriteModuleExtras {
 	    $currentVersion = '0.0.5';
 
 	case '0.0.5':
-	    $currentVersion = '0.1.0';
-
 	case '0.1.0':
-	    $currentVersion = '0.1.1';
-
 	case '0.1.1':
-	    $currentVersion = '0.1.2';
-
 	case '0.1.2':
-	    $currentVersion = '0.1.3';
-
 	case '0.1.3':
 	    foreach (array('usePrefixes' => 'true',
 			   'rewriteLocation' => '',
@@ -127,12 +109,8 @@ class RewriteModuleExtras {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
-	
-	    $currentVersion = '0.1.4';
-	    
+
 	case '0.1.4':
-	    $currentVersion = '0.1.5';
-	    
 	case '0.1.5':
 	    foreach (array('galleryLocation' => '',
 			   'step' => 1)
@@ -142,37 +120,30 @@ class RewriteModuleExtras {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
-	
-	    $currentVersion = '0.1.6';
-	    
+
 	case '0.1.6':
-	    $currentVersion = '0.1.7';
-	    
 	case '0.1.7':
-	    $currentVersion = '0.1.8';
-
 	case '0.1.8':
-	    $ret = $module->removeItemParameter('rewriteLocation', 0);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+	    foreach (array('rewriteLocation', 'rewriteBase') as $key) {
+		$ret = $module->removeItemParameter($key, 0);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
 	    }
-	    $ret = $module->removeItemParameter('rewriteBase', 0);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-	
-	    $currentVersion = '0.1.9';
-	    
+
 	case '0.1.9':
-	    $currentVersion = '0.1.10';
-
 	case '0.1.10':
-	    $currentVersion = '0.8.0';
-
 	case '0.8.0':
-	    $currentVersion = '0.8.1';
+	case '0.8.1':
+	    foreach (array('prefixMap', 'usePrefixes') as $key) {
+		$ret = $module->removeItemParameter($key, 0);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+
 	    break;
-	    
+
 	default:
 	    return GalleryStatus::error(ERROR_BAD_PLUGIN, __FILE__, __LINE__,
 					sprintf('Unknown module version %s', $currentVersion));

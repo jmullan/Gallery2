@@ -53,14 +53,6 @@ class GalleryUrlGenerator {
     var $_baseFile;
 
     /**
-     * A registry of rewrite prefixes to their corresponding View names
-     *
-     * @var array $_viewPrefixRegistry
-     * @access private
-     */
-    var $_viewPrefixRegistry;
-
-    /**
      * The relative path between G2 request urls and the G2 basedir.
      * Should only be nonempty when G2 is embedded.
      *
@@ -211,32 +203,6 @@ class GalleryUrlGenerator {
     }
 
     /**
-     * Associate a prefix (eg "view") with a view (eg "core:ShowItem") so that when we
-     * encounter a url like this:
-     *
-     *   http://example.com/gallery2/main.php/view/blah/blah/blah
-     *
-     * We know to pass it to the core:ShowItem view.  Deprecated prefixes will
-     * be stored only in the forward map; ie, we'll parse deprecated prefixes
-     * but won't generate urls using them.
-     *
-     * @param string the prefix
-     * @param string the view name
-     * @param bool optional deprecated prefix.
-     * @return object GalleryStatus a status code
-     */
-    function registerViewPrefix($prefix, $viewName, $deprecated=false) {
-	if (isset($this->_viewPrefixRegistry[$prefix])) {
-	    return GalleryStatus::error(ERROR_COLLISION, __FILE__, __LINE__);
-	}
-
-	$this->_viewPrefixRegistry['forward'][$prefix] = $viewName;
-	if (!$deprecated) {
-	    $this->_viewPrefixRegistry['reverse'][$viewName] = $prefix;
-	}
-    }
-
-    /**
      * Return the complete current URL
      *
      * @return string the current URL
@@ -280,6 +246,9 @@ class GalleryUrlGenerator {
 	 *    http://example.com/gallery2/main.php/core:ShowView/foo=bar/...
 	 * Extract everything up to but not including main.php:
 	 *    http://example.com/gallery2/
+	 *
+	 * TODO: now that short urls are gone, do we need to do anything
+	 *       other than look at the path component of the url?
 	 */
 	if (($i = strpos($url, $this->_baseFile)) !== false) {
 	    $url = substr($url, 0, $i);
@@ -338,7 +307,7 @@ class GalleryUrlGenerator {
      *
      * Note: This should be called as soon as we have access to our session
      * and the requestVariables, but before we start generating URLs with
-     * generateUrl(). Currently it's called from parseCurrentUrl().
+     * generateUrl().  Currently it's called from _GalleryMain().
      *
      * @access private
      */
@@ -442,77 +411,6 @@ class GalleryUrlGenerator {
      */
     function getNavigationId() {
 	return $this->_navId;
-    }
-
-    /**
-     * Parse our current url since it may be in our compressed format
-     *
-     * @return array object GalleryStatus a status code
-     *               string redirect url or null
-     */
-    function parseCurrentUrl() {
-	$url = $this->getCurrentUrl();
-
-	/* Start our navigation */
-	$this->initNavigation();
-
-	/* Ignore anything after the '?', as PHP will handle that */
-	preg_match('/\?(.*)/', $url, $standardQueryString);
-	$url = preg_replace('/\?.*/', '', $url);
-
-	/* Search for data after our base file */
-	$redirectUrl = null;
-	if (preg_match('|' . preg_quote($this->_baseFile) . '(/.*)|', $url, $regs)) {
-	    preg_match('|/(.*?)(/.*)|', $regs[1], $regs);
-	    if (count($regs) >= 3) {
-		list ($prefix, $queryString) = array($regs[1], $regs[2]);
-
-		if (empty($prefix)) {
-		    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
-						      implode(' ', $regs)), null);
-		}
-
-		if (empty($this->_viewPrefixRegistry['forward'][$prefix])) {
-		    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__,
-						      $prefix), null);
-		}
-
-		$viewName = $this->_viewPrefixRegistry['forward'][$prefix];
-		list ($ret, $view) = GalleryView::loadView($viewName);
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-
-		list ($ret, $newQueryString) = $view->parseQueryString($queryString);
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-
-		/*
-		 * If the query string was modified, calculate a new URL with the new query string.
-		 * We'll pass that back up the chain and the caller can decide to redirect if it
-		 * chooses.
-		 */
-		if (isset($newQueryString)) {
-		    $redirectUrl = $this->getCurrentUrlDir() . $this->_baseFile;
-
-		    /* Ditch the prefix if the new query string is empty */
-		    if (!empty($newQueryString)) {
-			$redirectUrl .= '/' . $prefix . $newQueryString;
-		    }
-
-		    /* Tag on the ?foo=bar standard stuff if there was any */
-		    if (!empty($standardQueryString)) {
-			$redirectUrl .= $standardQueryString[0];
-		    }
-		}
-
-		/* Wire in the view */
-		GalleryUtilities::putRequestVariable('view', $viewName);
-	    }
-	}
-
-	return array(GalleryStatus::success(), $redirectUrl);
     }
 
     /**
@@ -680,39 +578,7 @@ class GalleryUrlGenerator {
 	    $params[$key] = htmlentities($params[$key]);
 	}
 
-	list ($ret, $useShortUrls) =
-	    GalleryCoreApi::getPluginParameter('module', 'core', 'misc.useShortUrls');
-	if (isset($params['forceShortUrls']) || ($ret->isSuccess() && $useShortUrls == 'true')) {
-	    unset($params['forceShortUrls']);
-
-	    /* Give our view a chance to rewrite the query string */
-	    $queryString = null;
-	    if (isset($params['view'])) {
-		$viewName = $params['view'];
-		if (isset($this->_viewPrefixRegistry['reverse'][$viewName])) {
-		    $prefix = $this->_viewPrefixRegistry['reverse'][$viewName];
-		    list ($ret, $view) = GalleryView::loadView($viewName);
-		    if ($ret->isError()) {
-			/*
-			 * Swallow this error.  It's unfortunate, but almost everything that calls
-			 * this function is in the business of speaking right to the presentation
-			 * layer (like the templating code) and isn't in a position to properly
-			 * provide an error.  Besides, we know that we have a working URL anyway,
-			 * so if rewriting doesn't work just fall back on that.
-			 */
-		    } else {
-			$rewritten = $view->rewriteQueryString($params);
-			if (isset($rewritten)) {
-			    $queryString = '/' . $prefix . $rewritten;
-			}
-		    }
-		}
-	    }
-	}
-
-	if (isset($queryString)) {
-	    $url .= $queryString;
-	} else if (!empty($params)) {
+	if (!empty($params)) {
 	    $url .= $this->buildQueryString($params, strpos($url, '?') !== false);
 	}
 	if (isset($sessionString)) {

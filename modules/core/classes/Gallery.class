@@ -722,8 +722,38 @@ class Gallery {
      * @return string the same value
      */
     function i18n($value) {
-	/* Just pass the value through */
-	return $value;
+	return $value;  /* Just pass the value through */
+    }
+
+    /**
+     * Send a data file out to the browser as quickly as possible.
+     *
+     * @param string the relative path to the file from the g2data/cache directory
+     * @param string the logical name of the file (used for the Content-Disposition header)
+     * @param string the last modified date string (used for the Last-Modified header)
+     * @param string the mime type (used for the Content-type header)
+     * @param int the size of the file (used for the Content-length header)
+     * @return true if we transferred the file successfully
+     */
+    function fastDownload($relativePath, $filename, $lastModified, $mimeType, $contentLength) {
+	/* Don't use GalleryPlatform here -- we're aiming for max speed */
+	/* TODO: benchmark what it would cost us to use GalleryPlatform */
+	$cacheBase = $this->getConfig('data.gallery.base') . '/cache/';
+	if ($fd = fopen($cacheBase . $relativePath, 'rb')) {
+	    header('Content-Disposition: inline; filename="' . $filename . '"');
+	    header('Last-Modified: ' . $lastModified);
+	    header('Content-type: ' . $mimeType);
+	    header('Content-length: ' . $contentLength);
+	    header('Expires: Sun, 17 Jan 2038 12:00:00 GMT');
+	    set_magic_quotes_runtime(0);
+	    set_time_limit(0);
+	    while (!feof($fd)) {
+		print fread($fd, 4096);
+	    }
+	    fclose($fd);
+	    return true;
+	}
+	return false;
     }
 }
 ?>

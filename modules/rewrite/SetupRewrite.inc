@@ -86,12 +86,6 @@ class SetupRewriteController extends GalleryController {
 	    $redirect['view'] = 'core:SiteAdmin';
 	    $redirect['subView'] = 'core:AdminModules';
 	} else if (isset($form['action']['save'])) {
-	    $ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', 'usePrefixes',
-		    $form['mode']);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', 'galleryLocation',
 		    $form['galleryLocation']);
 	    if ($ret->isError()) {
@@ -135,12 +129,6 @@ class SetupRewriteView extends GalleryView {
 	if ($form['formName'] != 'SetupRewrite') {
 	    $form['formName'] = 'SetupRewrite';
 
-	    list ($ret, $form['mode']) =
-		    GalleryCoreApi::getPluginParameter('module', 'rewrite', 'usePrefixes');
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    
 	    list ($ret, $form['galleryLocation']) =
 		    GalleryCoreApi::getPluginParameter('module', 'rewrite', 'galleryLocation');
 	    if ($ret->isError()) {
@@ -161,16 +149,6 @@ class SetupRewriteView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	
-	/* Warn if ShortUrls is turned on */
-	list ($ret, $useShortUrls) =
-		GalleryCoreApi::getPluginParameter('module', 'core', 'misc.useShortUrls');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	if ($useShortUrls == 'true') {
-	    $form['error']['shortUrls'] = 1;
-	}
-
 	$SetupRewrite['customFile'] = dirname(__FILE__) . '/test/mod_rewrite/custom/.htaccess';
 	$SetupRewrite['customLine'] = 'RewriteBase /' .
 		substr($urlGenerator->getCurrentUrlDir(), strlen($urlGenerator->makeUrl('/'))) .

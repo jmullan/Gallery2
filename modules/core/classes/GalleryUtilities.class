@@ -1154,18 +1154,19 @@ class GalleryUtilities {
     }
 
     /**
-     * Return an approximate filename of the given GalleryEntity, or "unknown" if we can't figure it out
+     * Return an approximate filename of the given GalleryEntity, or "unknown"
+     * if we can't figure it out
      *
      * @param object entity a GalleryEntity
      * @return array object GalleryStatus a status code
      *               string pseudoFileName a filename
      */
     function getPseudoFileName($entity) {
-
 	/*
-	 * If our GalleryEntity is a GalleryFileSystemEntity, then we've got a path component so we're cool.
-	 * If it's a derivative, then get the pseudo filename of its derivative source and use that instead.
-	 * If it's neither, then return 'unknown' for now.
+	 * If our GalleryEntity is a GalleryFileSystemEntity, then we've got a
+	 * path component so we're cool.  If it's a derivative, then get the
+	 * pseudo filename of its derivative source and use that instead.  If
+	 * it's neither, then return 'unknown' for now.
 	 */
 	if (GalleryUtilities::isA($entity, 'GalleryFileSystemEntity')) {
 	    $pseudoFileName = $entity->getPathComponent();

@@ -914,12 +914,14 @@ class GalleryCoreApi {
     }
 
     /**
-     * Use the given operation as a transform for each derivative that depends on the target derivative.  This
-     * gives the dependent derivatives a chance to perform any necessary transformations required to adapt to
-     * an upstream derivative operation change.  For example, if you have a preferred which has a dependent
-     * thumbnail which has a crop operation in it, then you "rotate|90" the preferred you'd call
-     * adjustDependentDerivatives on the thumbnail with the "rotate|90" operation so that we can rotate the
-     * crop coordinates appropriately.
+     * Use the given operation as a transform for each derivative that depends
+     * on the target derivative.  This gives the dependent derivatives a chance
+     * to perform any necessary transformations required to adapt to an upstream
+     * derivative operation change.  For example, if you have a preferred which
+     * has a dependent thumbnail which has a crop operation in it, then you
+     * "rotate|90" the preferred you'd call adjustDependentDerivatives on the
+     * thumbnail with the "rotate|90" operation so that we can rotate the crop
+     * coordinates appropriately.
      *
      * @param array id the target derivative
      * @param string the operation that was performed on the target derivative

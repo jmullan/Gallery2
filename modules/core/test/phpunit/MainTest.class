@@ -60,40 +60,12 @@ class MainTest extends GalleryTestCase {
 	GalleryCoreApi::relativeRequireOnce('main.php');
     }
 
-    function testUrlGeneratorRedirect() {
-	global $gallery;
-	$save = $gallery->getDebug();
-	$gallery->setDebug('buffered');
-	$_SERVER['REQUEST_URI'] = '/gallery2/phpunit_test.php/foo/bar';
-	$this->_urlGenerator->registerViewPrefix('foo', 'maintest:FooView');
-
-	list($ret, $g2Data) = _GalleryMain(false);
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	$this->assertEquals('http://example.com/gallery2/phpunit_test.php/foo/newbar',
-			    $g2Data['redirectUrl']);
-
-	$gallery->setDebug($save);
-    }
-
     function testEmbedOnly() {
 	global $gallery;
 	$gallery->setConfig('mode.embed.only', true);
 
 	list($ret, $g2Data) = _GalleryMain(false);
 	$this->assertEquals(GALLERY_ERROR | ERROR_PERMISSION_DENIED, $ret->getErrorCode());
-    }
-
-    function testRenderShortcut() {
-	ob_start();
-	list($ret, $g2Data) = _GalleryMain(false);
-	$output = ob_get_contents();
-	ob_end_clean();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	$this->assertEquals('foo!', $output);
     }
 }
 
@@ -103,14 +75,5 @@ class MainTestModule {
     }
 }
 
-class FooViewView extends GalleryView {
-    function parseQueryString($queryString) {
-	return array(GalleryStatus::success(), '/newbar');
-    }
-
-    function renderShortcut() {
-	print "foo!";
-	return array(GalleryStatus::success(), true);
-    }
-}
+class FooViewView extends GalleryView { }
 ?>

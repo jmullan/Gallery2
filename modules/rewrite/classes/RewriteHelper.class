@@ -72,16 +72,9 @@ class RewriteHelper {
 	}
 	
 	list ($ret, $usePrefixes) =
-		GalleryCoreApi::getPluginParameter('module', 'rewrite', 'usePrefixes');
+	    GalleryCoreApi::getPluginParameter('module', 'rewrite', 'usePrefixes');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	if ($usePrefixes == 'false') {
-	    if (empty($urlGenerator->_viewPrefixRegistry['reverse']['core:ShowItem'])) {
-		return array(GalleryStatus::error(ERROR_MISSING_VALUE, __FILE__, __LINE__), null);
-	    }
-	    $Htaccess['usePrefixes'] =
-		    $urlGenerator->_viewPrefixRegistry['reverse']['core:ShowItem'] . '/';
 	}
 
 	$template = new GalleryTemplate(dirname(__FILE__) . '/../templates');

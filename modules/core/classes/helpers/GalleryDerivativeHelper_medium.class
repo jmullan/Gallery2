@@ -58,9 +58,7 @@ class GalleryDerivativeHelper_medium {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	/*
-	 * Only one thumb per item, so simplify the results
-	 */
+	/* Only one thumb per item, so simplify the results */
 	foreach ($results as $id => $value) {
 	    $results[$id] = $value[0];
 	}

@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -46,7 +46,7 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
      * @access private
      */
     var $_error = false;
-    
+
     /**
      * Current Url cache.
      *
@@ -54,41 +54,6 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
      * @access private
      */
     var $_currentUrl = '';
-    
-    /**
-     * Cached preferences.
-     *
-     * @var array $variable => $value
-     * @access private
-     */
-    var $_cache = array();
-
-    /**
-     * @see GalleryUrlGenerator::init
-     */
-    function init($baseFile, $relativeG2Path=null, $embedSessionString=null) {
-	parent::init($baseFile, $relativeG2Path, $embedSessionString);
-
-	list ($ret, $prefixMap) = RewriteHelper::getPrefixMap();
-	if ($ret->isError()) {
-	    $this->_error = true;
-	}
-	$this->_registerCustomViewPrefix($prefixMap);
-	
-	list ($ret, $useShortUrls) =
-		GalleryCoreApi::getPluginParameter('module', 'core', 'misc.useShortUrls');
-	if ($ret->isError() || $useShortUrls == 'true') {
-	    $this->_error = true;
-	}
-    }
-
-    /**
-     * @see GalleryUrlGenerator::registerViewPrefix
-     */
-    function registerViewPrefix($prefix, $viewName, $deprecated=false) {
-	return parent::registerViewPrefix($prefix, $viewName,
-		(isset($this->_viewPrefixRegistry['reverse'][$viewName]) || $deprecated));
-    }
 
     /**
      * @see GalleryUrlGenerator::getCurrentUrl
@@ -97,7 +62,7 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
 	if ($this->_error) {
 	    return parent::getCurrentUrl();
 	}
-	
+
 	if (empty($this->_currentUrl)) {
 	    list ($ret, $galleryLocation) =
 		    GalleryCoreApi::getPluginParameter('module', 'rewrite', 'galleryLocation');
@@ -105,89 +70,91 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
 		$this->_error = true;
 		return parent::getCurrentUrl();
 	    }
-	
+
 	    $this->_currentUrl = $galleryLocation . $this->_baseFile;
-	    if (GalleryUtilities::hasRequestVariable('RewriteUrlGenerator')) {
-		$this->_currentUrl .= GalleryUtilities::getRequestVariables('RewriteUrlGenerator');
-	    }
 	}
 
 	return $this->_currentUrl;
     }
-    
-    /**
-     * @see GalleryUrlGenerator::getNavigationReturnUrl
-     */
-    function getNavigationReturnUrl() {
-	if ($this->_error) {
-	    return parent::getNavigationReturnUrl();
-	}
-	
-	$formUrl = GalleryUtilities::getRequestVariables('formUrl');
-	if (!empty($formUrl)) {
-	    return $formUrl;
-	}
 
-	$urlVariables = GalleryUtilities::getUrlVariablesFiltered(
-		array('return', 'returnName', 'navId', 'fromNavId', 'RewriteUrlGenerator'));
-	foreach ($urlVariables as $key => $value) {
-	    $urlVariables[substr($key, strlen(GALLERY_FORM_VARIABLE_PREFIX))] = $value;
-	    unset($urlVariables[$key]);
-	}
-	
-	return $this->generateUrl($urlVariables);
-    }
-    
     /**
      * @see GalleryUrlGenerator::generateUrl()
      */
     function generateUrl($params=array(), $forceSessionId=null) {
+	global $gallery;
+
 	if ($this->_error) {
 	    return parent::generateUrl($params, $forceSessionId);
 	}
-	
-	if (empty($this->_cache)) {
-	    list ($ret, $this->_cache['usePrefixes']) =
-		    GalleryCoreApi::getPluginParameter('module', 'rewrite', 'usePrefixes');
-	    if ($ret->isError()) {
-		$this->_error = true;
-		return parent::generateUrl($params, $forceSessionId);
-	    }
-	}
-	
-	$prefix = ($this->_cache['usePrefixes'] == 'true') ? ''
-		: $this->_viewPrefixRegistry['reverse']['core:ShowItem'] . '/';
 
-	$params['forceShortUrls'] = 'true';
-	$url = parent::generateUrl($params, $forceSessionId);
-	
-	if (strpos($url, '/' . $this->_baseFile . '/' . $prefix) !== false) {
-	    $url = str_replace('/' . $this->_baseFile . '/' . $prefix, '/', $url);
-	} else if (strpos($url, '/' . $this->_baseFile . '/') !== false) {
+	if (isset($params['view']) && ($params['view'] == 'core:ShowItem' ||
+				       $params['view'] == 'core:DownloadItem')) {
+	    $url = $this->getCurrentUrlDir();
+	    if ($params['view'] == 'core:ShowItem') {
+		/* Transform the id into a path */
+		if (isset($params['itemId'])) {
+		    $url .= 'v';
+		    list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($params['itemId']);
+		    if ($ret->isSuccess()) {
+			list ($ret, $path) = $entity->fetchLogicalPath();
+			if ($ret->isSuccess()) {
+			    $url .= $path;
+			    unset($params['itemId']);
+			}
+		    }
+
+		    if (!GalleryUtilities::isA($entity, 'GalleryAlbumItem')) {
+			$url .= '.html';
+		    }
+		} else {
+		    $url .= $this->_baseFile;
+		}
+	    } else if ($params['view'] == 'core:DownloadItem') {
+		list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($params['itemId']);
+		if ($ret->isError()) {
+		    return null;
+		}
+
+		list ($ret, $pseudoFileName) = GalleryUtilities::getPseudoFileName($entity);
+		if ($ret->isError()) {
+		    return null;
+		}
+
+		$url .= 'd/' . $params['itemId'] . '-' . $entity->getSerialNumber() .
+		    '/' . $pseudoFileName;
+
+		if (strpos($pseudoFileName, '.') === false) {
+		    $extension = GalleryCoreApi::convertMimeToExtension($entity->getMimeType());
+		    if (!empty($extension)) {
+			$url .= '.' . $extension;
+		    }
+		}
+
+		unset($params['serialNumber']);
+	    }
+
+	    $session =& $gallery->getSession();
+	    if ($forceSessionId === true) {
+		$params[$session->getKey()] = $session->getId();
+	    } else if ($forceSessionId === false) {
+		unset($params[$session->getKey()]);
+	    }
+
+	    /* Add in anything else as a standard query element */
+	    unset($params['view']);
+	    unset($params['itemId']);
+	    if (!empty($params)) {
+		$url .= GalleryUrlGenerator::buildQueryString($params);
+	    }
+	} else {
 	    /*
 	     * Fall back to basic URL for all other prefixes than core:ShowItem,
-	     * if prefixes are disabeled.
+	     * if prefixes are disabled.
 	     */
-	    unset($params['forceShortUrls']);
 	    $url = parent::generateUrl($params, $forceSessionId);
 	}
-	
-	return $url;
-    }
 
-    /**
-     * Override default viewName prefixes.
-     *
-     * @param array of views to override ($viewName => $prefix)
-     * @access private
-     */
-    function _registerCustomViewPrefix($prefixMap) {
-	foreach ($prefixMap as $view => $prefix) {
-	    if (isset($this->_viewPrefixRegistry['reverse'][$view])) {
-		unset($this->_viewPrefixRegistry['reverse'][$view]);
-	    }
-	    $this->registerViewPrefix($prefix, $view);
-	}
+	return $url;
     }
 }
 

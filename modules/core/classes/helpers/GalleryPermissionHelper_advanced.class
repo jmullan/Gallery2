@@ -42,7 +42,8 @@ class GalleryPermissionHelper_advanced {
      * @static
      */
     function addUserPermission($itemId, $userId, $permission, $applyToChildren=false) {
-	$ret = GalleryPermissionHelper_advanced::_addPermission($itemId, $userId, 0, $permission, $applyToChildren);
+	$ret = GalleryPermissionHelper_advanced::_addPermission(
+            $itemId, $userId, 0, $permission, $applyToChildren);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -66,7 +67,8 @@ class GalleryPermissionHelper_advanced {
      * @static
      */
     function addGroupPermission($itemId, $groupId, $permission, $applyToChildren=false) {
-	$ret = GalleryPermissionHelper_advanced::_addPermission($itemId, 0, $groupId, $permission, $applyToChildren);
+	$ret = GalleryPermissionHelper_advanced::_addPermission(
+            $itemId, 0, $groupId, $permission, $applyToChildren);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -136,8 +138,8 @@ class GalleryPermissionHelper_advanced {
 	}
 
 	/* Figure out what the current bits are */
-	list ($ret, $currentBits) =
-	    GalleryPermissionHelper_advanced::_fetchPermissionBitsForItem($itemId, $userId, $groupId);
+	list ($ret, $currentBits) = GalleryPermissionHelper_advanced::_fetchPermissionBitsForItem(
+            $itemId, $userId, $groupId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -168,6 +170,18 @@ class GalleryPermissionHelper_advanced {
 							    array('permission' => $newBits));
 	    }
 
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    $event = GalleryCoreApi::newEvent('Gallery::AddPermission');
+	    $event->setData(array('userId' => $userId,
+				  'groupId' => $groupId,
+				  'itemId' => $itemId,
+				  'oldBits' => $currentBits,
+				  'addBits' => $addBits,
+				  'newBits' => $newBits));
+	    list ($ret) = GalleryCoreApi::postEvent($event);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -206,7 +220,8 @@ class GalleryPermissionHelper_advanced {
      * @static
      */
     function removeUserPermission($itemId, $userId, $permission, $applyToChildren=false) {
-	$ret = GalleryPermissionHelper_advanced::_removePermission($itemId, $userId, 0, $permission, $applyToChildren);
+	$ret = GalleryPermissionHelper_advanced::_removePermission(
+            $itemId, $userId, 0, $permission, $applyToChildren);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -229,7 +244,8 @@ class GalleryPermissionHelper_advanced {
      * @static
      */
     function removeGroupPermission($itemId, $groupId, $permission, $applyToChildren=false) {
-	$ret = GalleryPermissionHelper_advanced::_removePermission($itemId, 0, $groupId, $permission, $applyToChildren);
+	$ret = GalleryPermissionHelper_advanced::_removePermission(
+            $itemId, 0, $groupId, $permission, $applyToChildren);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -266,8 +282,8 @@ class GalleryPermissionHelper_advanced {
 	}
 
 	/* Figure out what the current bits are */
-	list ($ret, $currentBits)  =
-	    GalleryPermissionHelper_advanced::_fetchPermissionBitsForItem($itemId, $userId, $groupId);
+	list ($ret, $currentBits)  = GalleryPermissionHelper_advanced::_fetchPermissionBitsForItem(
+            $itemId, $userId, $groupId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -303,7 +319,18 @@ class GalleryPermissionHelper_advanced {
 								  'groupId' => $groupId),
 							    array('permission' => $newBits));
 	    }
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
 
+	    $event = GalleryCoreApi::newEvent('Gallery::RemovePermission');
+	    $event->setData(array('userId' => $userId,
+				  'groupId' => $groupId,
+				  'itemId' => $itemId,
+				  'oldBits' => $currentBits,
+				  'removeBits' => $removeBits,
+				  'newBits' => $newBits));
+	    list ($ret) = GalleryCoreApi::postEvent($event);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }

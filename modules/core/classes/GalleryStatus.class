@@ -390,18 +390,19 @@ class GalleryStatus {
 	 * It's possible that we're having this problem at a very low level so
 	 * we may not want to try to use the factory if things have gone
 	 * catastrophically wrong.  Use the $storage and $translator objects as
-	 * our acid test.  If we have one them we're ok to continue
+	 * our acid test.  If we have them we're ok to continue, as long as
+	 * we're not in a unit test.
 	 */
 	global $gallery;
 	$storage =& $gallery->getStorage();
 	$translator = $gallery->getTranslator();
-	if (isset($storage) && isset($translator)) {
+	if (isset($storage) && isset($translator) && !class_exists('GalleryTestCase')) {
 	    list ($ret, $formatter) =
 		GalleryCoreApi::newFactoryInstanceByHint('GalleryStatusFormatter', 'text/html');
-	    if ($ret->isError() || !isset($formatter)) {
-		$formatter = new GalleryStatusFormatterHtml();
-	    }
-	} else {
+	    /* Swallow errors here -- we're already in an error handling situation */
+	}
+
+	if (!isset($formatter)) {
 	    $formatter = new GalleryStatusFormatterHtml();
 	}
 
@@ -464,10 +465,14 @@ class GalleryStatus {
     function _getAsArray() {
 	global $gallery;
 
-	$platform = $gallery->getPlatform();
 	$codes = $this->getErrorCodeConstants($this->_errorCode);
 	$trace = array();
-	$base = $platform->realpath(dirname(__FILE__) . '/../../../') . '/';
+	if (!class_exists('GalleryTestCase')) {
+	    $platform = $gallery->getPlatform();
+	    $base = $platform->realpath(dirname(__FILE__) . '/../../../') . '/';
+	} else {
+	    $base = '';
+	}
 	if (empty($this->_stackTrace)) {
 	    for ($i = 0; $i < count($this->_fileName); $i++) {
 		$trace[] = array('file' => str_replace($base, '', $this->_fileName[$i]),

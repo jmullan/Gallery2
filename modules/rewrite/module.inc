@@ -24,7 +24,7 @@
  * @version $Revision$ $Date$
  * @author Douglas Cau <douglas@cau.se>
  */
- 
+
 /**
  * URL Rewrite Module
  *
@@ -38,7 +38,7 @@ class RewriteModule extends GalleryModule {
 	$this->setId('rewrite');
 	$this->setName('URL Rewrite');
 	$this->setDescription($this->translate('Enables short URLs using mod_rewrite.'));
-	$this->setVersion('0.8.1');
+	$this->setVersion('0.9.0');
 	$this->setGroup('gallery', $this->translate('Gallery'));
 	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(4, 0));
@@ -52,7 +52,7 @@ class RewriteModule extends GalleryModule {
 	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/RewriteModuleExtras.inc');
 	$ret = RewriteModuleExtras::upgrade($this, $currentVersion);
 	if ($ret->isError()) {
-	    return $ret-wrap(__FILE__, __LINE__);
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
     	return GalleryStatus::success();
@@ -71,13 +71,13 @@ class RewriteModule extends GalleryModule {
 
 	return GalleryStatus::success();
     }
-    
+
     /**
      * @see GalleryModule::needsConfiguration
      */
     function needsConfiguration() {
 	GalleryCoreApi::relativeRequireOnce('modules/rewrite/classes/RewriteHelper.class');
-	
+
 	foreach (array('galleryLocation') as $key) {
 	    list ($ret, $value) = $this->getParameter($key);
 	    if ($ret->isError()) {
@@ -88,29 +88,12 @@ class RewriteModule extends GalleryModule {
 		return array(GalleryStatus::success(), true);
 	    }
 	}
-    	
+
 	list ($ret, $status) = RewriteHelper::checkFile();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	return array(GalleryStatus::success(), $status != REWRITE_STATUS_OK);
-    }
-
-    /**
-     * Only show AdminRewrite if we're using prefixes.
-     *
-     * @see GalleryModule::getSiteAdminViews
-     */
-    function getSiteAdminViews() {
-    	list ($ret, $usePrefixes) =
-		GalleryCoreApi::getPluginParameter('module', 'rewrite', 'usePrefixes');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	
-	return array(GalleryStatus::success(), ($usePrefixes == 'false') ? array()
-		: array(array('name' => 'URL Rewrite',
-			      'view' => 'rewrite:AdminRewrite')));
     }
 
     /**

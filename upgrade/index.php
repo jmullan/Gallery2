@@ -77,6 +77,7 @@ if (isset($_SESSION['path'])) {
 }
 $_SESSION['path'] = __FILE__;
 
+require_once(dirname(__FILE__) . '/../bootstrap.inc');
 require_once(dirname(__FILE__) . '/../init.inc');
 $ret = GalleryInitFirstPass(array('debug' => 'buffered',
 				  'noDatabase' => 1));

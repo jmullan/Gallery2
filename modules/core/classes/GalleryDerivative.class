@@ -188,7 +188,8 @@ class GalleryDerivative_core extends GalleryChildEntity {
 
 	/* Find all derivatives for whom I am the source and whack them too */
 	/* TODO: just fetch the ids, instead of the entire entities */
-	list ($ret, $derivativesTable) = GalleryCoreApi::fetchDerivativesBySourceIds(array($this->getId()));
+	list ($ret, $derivativesTable) =
+	    GalleryCoreApi::fetchDerivativesBySourceIds(array($this->getId()));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -197,10 +198,13 @@ class GalleryDerivative_core extends GalleryChildEntity {
 	    foreach ($derivatives as $derivative) {
 		$ret = GalleryCoreApi::deleteEntityById($derivative->getId());
 		/*
-		 * Deletes can cascade in interesting ways.  For example, deleting a derivative will get rid of
-		 * any other derivatives that are sourced to it, so it's possible that deleting children here can
-		 * lead to a MISSING_OBJECT result unless we re-run the parent/child query each time.  Easier to
-		 * just ignore the MISSING_OBJECT error since we only care that it's gone.
+		 * Deletes can cascade in interesting ways.  For example,
+		 * deleting a derivative will get rid of any other derivatives
+		 * that are sourced to it, so it's possible that deleting
+		 * children here can lead to a MISSING_OBJECT result unless we
+		 * re-run the parent/child query each time.  Easier to just
+		 * ignore the MISSING_OBJECT error since we only care that it's
+		 * gone.
 		 */
 		if ($ret->isError() && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
 		    return $ret->wrap(__FILE__, __LINE__);
@@ -217,7 +221,8 @@ class GalleryDerivative_core extends GalleryChildEntity {
 	/* Expire our cache, and don't abort if this fails */
 	$ret = $this->expireCache();
 
-	GalleryDataCache::removeFromDisk(array('type' => 'derivative-meta', 'itemId' => $this->getId()));
+	GalleryDataCache::removeFromDisk(
+            array('type' => 'derivative-meta', 'itemId' => $this->getId()));
 
 	return GalleryStatus::success();
     }
@@ -393,17 +398,124 @@ class GalleryDerivative_core extends GalleryChildEntity {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	GalleryDataCache::putToDisk(array('type' => 'derivative-meta',
-					  'itemId' => $this->getId()),
-				    $data);
+	GalleryDataCache::putToDisk(
+            array('type' => 'derivative-meta', 'itemId' => $this->getId()), $data);
+
+	$this->deleteFastDownloadFile();
+	$ret = $this->createFastDownloadFile();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 
 	return GalleryStatus::success();
     }
 
     /**
-     * Get the complete set of operations required by this derivative.  This will return the original source
-     * GalleryDataItem and an array of all the operations that must be performed in order to
-     * create the correct output file, including the post filter.
+     * Delete our fast download file.
+     */
+    function deleteFastDownloadFile() {
+	global $gallery;
+
+	$fastDownloadFilePath = GalleryDataCache::getCachePath(
+            array('type' => 'fast-download', 'itemId' => $this->getId()));
+	$platform = $gallery->getPlatform();
+	if ($platform->file_exists($fastDownloadFilePath)) {
+	    $platform->unlink($fastDownloadFilePath);
+	}
+    }
+
+    /**
+     * Create a small PHP file containing all the information we need to send
+     * this derivative to the browser.
+     *
+     * @param bool force this to run, even inside the unit test framework
+     *
+     * @return object GalleryStatus a status code
+     */
+    function createFastDownloadFile($runEvenInUnitTest=false) {
+	global $gallery;
+
+	/* Disable this for unit tests, for now */
+	if (!$runEvenInUnitTest && class_exists('GalleryTestCase')) {
+	    return GalleryStatus::success();
+	}
+
+	/* Make sure this derivative is publicly viewable */
+	list ($ret, $anonymousUserId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$hasPermission = false;
+	$requiredPermission = null;
+	switch ($this->getDerivativeType()) {
+	case DERIVATIVE_TYPE_IMAGE_THUMBNAIL:
+	    $requiredPermission = 'core.view';
+	    break;
+	    
+	case DERIVATIVE_TYPE_IMAGE_RESIZE:
+	    $requiredPermission = 'core.viewResizes';
+	    break;
+
+	case DERIVATIVE_TYPE_IMAGE_PREFERRED:
+	    $requiredPermission = 'core.viewSource';
+	    break;
+	}
+
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if ($requiredPermission) {
+	    list ($ret, $permissions) = GalleryCoreApi::fetchPermissionsForItems(
+                array($this->getParentId()), $anonymousUserId);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $hasPermission = isset($permissions[$this->getParentId()][$requiredPermission]);
+	}
+
+	if ($hasPermission) {
+	    /* Write the fast download file */
+	    list ($ret, $pseudoFileName) = GalleryUtilities::getPseudoFileName($this);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	
+	    $fullPath = GalleryDataCache::getCachePath(
+                array('type' => 'derivative', 'itemId' => $this->getId()));
+	    $relativePath = GalleryDataCache::getCachePath(
+                array('type' => 'derivative-relative', 'itemId' => $this->getId()));
+	    $platform = $gallery->getPlatform();
+	    $stats = $platform->stat($fullPath);
+	    $contentLength = $stats[7];
+	    $lastModified = GalleryUtilities::getHttpDate($stats[9]);
+	
+	    $fastDownloadFilePath = GalleryDataCache::getCachePath(
+                array('type' => 'fast-download', 'itemId' => $this->getId()));
+
+	    /* TODO: Protect this from concurrent writes using a temp file */
+	    $fd = $platform->fopen($fastDownloadFilePath, 'w');
+	    if ($fd) {
+		$buf = sprintf('<?php function GalleryFastDownload() { ' .
+			       'return $GLOBALS[\'gallery\']->fastDownload(\'%s\', \'%s\', ' .
+			       '\'%s\', \'%s\', %d);} ?>',
+			       $relativePath, $pseudoFileName, $lastModified,
+			       $this->getMimeType(), $contentLength);
+		$platform->fwrite($fd, $buf);	
+		$platform->fclose($fd);
+	    }
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Get the complete set of operations required by this derivative.  This will
+     * return the original source GalleryDataItem and an array of all the
+     * operations that must be performed in order to create the correct output
+     * file, including the post filter.
      *
      * @return array object GalleryStatus a status code
      *               object GalleryDataItem a data item
@@ -418,18 +530,21 @@ class GalleryDerivative_core extends GalleryChildEntity {
 
 	if (GalleryUtilities::isA($source, 'GalleryDerivative')) {
 	    /*
-	     * In order to build our derivative, we need to complete set of commands from the original
-	     * source file.  We can't rely on intervening files for two reasons:
+	     * In order to build our derivative, we need to complete set of
+	     * commands from the original source file.  We can't rely on
+	     * intervening files for two reasons:
 	     *  1.  Larger derivatives sourced on derivatives would lead to upsampling
 	     *  2.  The source derivative's cached data file may have postfilters applied, which we
 	     *      don't want for our derivative
 	     *
-	     * So seek backwards to the source file, then merge and apply all the derivative operations from
-	     * the intervening parents to discover the correct operations for this derivative.
+	     * So seek backwards to the source file, then merge and apply all
+	     * the derivative operations from the intervening parents to
+	     * discover the correct operations for this derivative.
 	     */
 	    $sources = array($source, $this);
 	    while (GalleryUtilities::isA($sources[0], 'GalleryDerivative')) {
-		list ($ret, $tmp) = GalleryCoreApi::loadEntitiesById($sources[0]->getDerivativeSourceId());
+		list ($ret, $tmp) =
+		    GalleryCoreApi::loadEntitiesById($sources[0]->getDerivativeSourceId());
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
@@ -518,6 +633,8 @@ class GalleryDerivative_core extends GalleryChildEntity {
 	    $platform->unlink($path);
 	}
 
+	$this->deleteFastDownloadFile();
+
 	return GalleryStatus::success();
     }
 
@@ -537,8 +654,9 @@ class GalleryDerivative_core extends GalleryChildEntity {
     }
 
     /**
-     * Render this item in the given format.  For example, GalleryDerivativeImage may want to render as
-     * an <img> tag in the HTML format.
+     * Render this item in the given format.  For example,
+     * GalleryDerivativeImage may want to render as an <img> tag in the HTML
+     * format.
      *
      * @param string the format (eg, "HTML")
      * @param object GalleryDataItem the data item

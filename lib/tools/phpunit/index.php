@@ -4,6 +4,7 @@
  * @subpackage PHPUnit
  */   
 include('../security.inc');
+include('../../../bootstrap.inc');
 require_once('../../../init.inc');
 require_once('phpunit.inc');
 require_once('GalleryTestCase.class');

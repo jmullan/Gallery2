@@ -46,16 +46,17 @@ class RewriteHelperTest extends GalleryTestCase {
 	$rewriteLocation = '/phpunit/var/www/localhost/htdocs/gallery2';
 	$rewriteBase = '/gallery2/';
 	
-	foreach (array('galleryLocation' => 'http://example.com/gallery2/',
-		    'usePrefixes' => 'true',
-		    'prefixMap' => serialize(array()))
-		as $param => $value) {
+	foreach (array('galleryLocation' => 'http://example.com/gallery2/')
+		 as $param => $value) {
+	    /* Save original value */
 	    list ($ret, $this->_saveParameters[$param]) =
-		    GalleryCoreApi::getPluginParameter('module', 'rewrite', $param);
+		GalleryCoreApi::getPluginParameter('module', 'rewrite', $param);
 	    if ($ret->isError()) {
 		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
+
+	    /* Set our test value */
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', $param, $value);
 	    if ($ret->isError()) {
 		print $ret->getAsHtml();
@@ -65,11 +66,9 @@ class RewriteHelperTest extends GalleryTestCase {
 	
 	$urlGenerator = new RewriteUrlGenerator();
 	$urlGenerator->init('phpunit_test.php');
-    	$urlGenerator->registerViewPrefix('test', 'core:ShowItem');
 	$this->_platform = new RewriteHelperTestPlatform();
 	$this->_platform->init();
 	$gallery->setPlatform($this->_platform);
-	
 	$gallery->setUrlGenerator($urlGenerator);
     }
     
@@ -78,8 +77,7 @@ class RewriteHelperTest extends GalleryTestCase {
 	parent::tearDown();
 
     	foreach ($this->_saveParameters as $key => $value) {
-	    $ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', $key,
-		    $value);
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', $key, $value);
 	    if ($ret->isError()) {
 		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));

@@ -19,16 +19,42 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-if (!file_exists(dirname(__FILE__) . '/config.php') ||
-	filesize(dirname(__FILE__) . '/config.php') < 10) {
-    header("Location: install/");
+if (!file_exists(dirname(__FILE__) . '/config.php')) {
+    header('Location: install/');
     return;
 }
 
-require_once(dirname(__FILE__) . '/init.inc');
+include(dirname(__FILE__) . '/bootstrap.inc');
 if (!defined('G2_EMBED')) {
+    /* If this is a request for a public data file, give it to the user immediately */
+    list ($view, $itemId) = GalleryUtilities::getRequestVariables('view', 'itemId');
+    if ($view == 'core:DownloadItem' && !empty($itemId)) {
+	/*
+	 * Our urls are immutable because they have the serial numbers embedded.
+	 * So if the browser presents us with an If-Modified-Since then it has
+	 * the latest version of the file already.
+	 */
+	if (function_exists('getallheaders')) {
+	    $headers = GetAllHeaders();
+	    if (isset($headers['If-Modified-Since'])) {
+		header('HTTP/1.x 304 Not Modified');
+		return;
+	    }
+	}
+	
+	$path = GalleryDataCache::getCachePath(
+            array('type' => 'fast-download', 'itemId' => $itemId));
+	/* We don't have a platform yet so we have to use the raw file_exists */
+	if (file_exists($path)) {
+	    include($path);
+	    if (GalleryFastDownload()) {
+		return;
+	    }
+	}
+    }
 
-    /* Initialize Gallery */
+    /* Otherwise, proceed with our regular process */
+    require_once(dirname(__FILE__) . '/init.inc');
     $ret = GalleryInitFirstPass();
     if ($ret->isError()) {
 	_GalleryMain_errorHandler($ret->wrap(__FILE__, __LINE__), null, false);
@@ -80,16 +106,8 @@ function _GalleryMain($returnHtml=false) {
     global $gallery;
 
     $main = array();
-
-    /* Let our url generator process the query string and redirect if suggested */
     $urlGenerator =& $gallery->getUrlGenerator();
-    list ($ret, $redirectUrl) = $urlGenerator->parseCurrentUrl();
-    if ($ret->isError()) {
-	return array($ret->wrap(__FILE__, __LINE__), null);
-    }
-    if (!empty($redirectUrl)) {
-	return array(GalleryStatus::success(), _GalleryMain_doRedirect($redirectUrl));
-    }
+    $urlGenerator->initNavigation();
 
     /* Figure out the target view/controller */
     list($viewName, $controllerName) = GalleryUtilities::getRequestVariables('view', 'controller');
@@ -98,24 +116,6 @@ function _GalleryMain($returnHtml=false) {
 		     && $viewName != 'core:DownloadItem') {
 	/* Lock out direct access when embed-only is set */
 	return array(GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__), null);
-    }
-
-    /* Try renderShortcut for fastest possible response */
-    if (!empty($viewName)) {
-	list ($ret, $view) = GalleryView::loadView($viewName);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	list ($ret, $responseComplete) = $view->renderShortcut();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	if ($responseComplete) {
-	    /* We're done */
-	    return array(GalleryStatus::success(), array('isDone' => true));
-	}
     }
 
     /* Check if core module needs upgrading */

@@ -29,6 +29,8 @@
  * Perform all necessary initialization of the Gallery framework
  */
 function GalleryInitFirstPass($params=array()) {
+    global $gallery;
+    
     ini_set('magic_quotes_runtime', 0);
     ini_set('magic_quotes_sybase', 0);
 
@@ -43,23 +45,11 @@ function GalleryInitFirstPass($params=array()) {
     $classDir = dirname(__FILE__) . '/modules/core/classes/';
     require_once($classDir . 'GalleryCoreApi.class');
     GalleryCoreApi::requireOnce($classDir . 'GalleryConstants.class');
-    GalleryCoreApi::requireOnce($classDir . 'Gallery.class');
     GalleryCoreApi::requireOnce($classDir . 'GalleryStatus.class');
-    GalleryCoreApi::requireOnce($classDir . 'GalleryDataCache.class');
     GalleryCoreApi::requireOnce($classDir . 'GalleryUtilities.class');
     GalleryCoreApi::requireOnce($classDir . 'GalleryCapabilities.class');
     GalleryCoreApi::requireOnce($classDir . 'GalleryView.class');
     GalleryCoreApi::requireOnce($classDir . 'GalleryModule.class');
-
-    /*
-     * Set up our Gallery global.  It's important to use a reference here because
-     * the constructor registers a shutdown function and ties it to the instance in
-     * the constructor.  This global should be the only one that Gallery requires.
-     * Everything else should be inside it so that we do not pollute the namespace
-     * (especially important when we're embedded inside another application).
-     */
-    $GLOBALS['gallery'] =& new Gallery();
-    $gallery =& $GLOBALS['gallery'];
 
     if (strtolower(PHP_OS) == 'winnt') {
 	GalleryCoreApi::requireOnce($classDir . 'GalleryPlatform/WinNtPlatform.class');
@@ -88,13 +78,12 @@ function GalleryInitFirstPass($params=array()) {
 
     /* Set our various data paths */
     $gallery->setConfig('data.gallery.albums', $dataBase . 'albums' . $slash);
-    $gallery->setConfig('data.gallery.cache', $dataBase . 'cache'. $slash);
     $gallery->setConfig('data.gallery.locks', $dataBase . 'locks'. $slash);
     $gallery->setConfig('data.gallery.sessions', $dataBase . 'sessions' . $slash);
     $gallery->setConfig('data.gallery.tmp', $dataBase . 'tmp' . $slash);
     $gallery->setConfig('data.smarty.base', $dataBase . 'smarty' . $slash);
     $gallery->setConfig('data.smarty.templates_c',
-			$dataBase . 'smarty' . $slash . 'templates_c' . $slash);
+        $dataBase . 'smarty' . $slash . 'templates_c' . $slash);
 
     /* Configure our url Generator */
     if (!isset($params['noDatabase'])) {
@@ -112,12 +101,6 @@ function GalleryInitFirstPass($params=array()) {
 	isset($params['embedUri']) ? $params['embedUri'] : 'main.php',
 	isset($params['relativeG2Path']) ? $params['relativeG2Path'] : null,
 	isset($params['embedSessionString']) ? $params['embedSessionString'] : null);
-    $urlGenerator->registerViewPrefix('v', 'core:ShowItem');
-    $urlGenerator->registerViewPrefix('d', 'core:DownloadItem');
-
-    /* Deprecated prefixes.  TODO: remove these before the final release */
-    $urlGenerator->registerViewPrefix('view', 'core:ShowItem', true);
-    $urlGenerator->registerViewPrefix('download', 'core:DownloadItem', true);
     $gallery->setUrlGenerator($urlGenerator);
 
     /* Initialize our session */

@@ -44,47 +44,6 @@ class DownloadItemView extends GalleryView {
     }
 
     /**
-     * @see GalleryView::renderShortcut
-     */
-    function renderShortcut() {
-	/*
-	 * If the browser passes us a request with an 'If-Modified-Since' header, then its already
-	 * got a cached copy of this file.  And since our links always include a serial number,
-	 * and any change triggers a serial number change, this means that its cache is always up
-	 * to date.  We don't even need to check the modification date.
-	 */
-	if (function_exists('getallheaders')) {
-	    $headers = GetAllHeaders();
-	    if (isset($headers['If-Modified-Since'])) {
-		header('HTTP/1.x 304 Not Modified');
-		return array(GalleryStatus::success(), true);
-	    }
-	}
-
-	/* Figure out which item we're talking about */
-	$itemId = GalleryUtilities::getRequestVariables('itemId');
-	if (empty($itemId)) {
-	    return array(GalleryStatus::success(), false);
-	}
-
-	/* Try to load our shortcut data file */
-	global $gallery;
-	$platform = $gallery->getPlatform();
-	$data = GalleryDataCache::getFromDisk(array('type' => 'derivative-meta',
-						    'itemId' => $itemId));
-	if (isset($data) && $platform->file_exists($data['derivativePath'])) {
-
-	    $ret = $this->_sendFile($data);
-	    if ($ret->isError()) {
-		return array(GalleryStatus::success(), false);
-	    }
-	    return array(GalleryStatus::success(), true);
-	}
-
-	return array(GalleryStatus::success(), false);
-    }
-
-    /**
      * @see GalleryView::renderImmediate
      */
     function renderImmediate($status, $error) {
@@ -134,6 +93,12 @@ class DownloadItemView extends GalleryView {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
+	/* Fast downloads only works for thumbs/resizes right now */
+	if (GalleryUtilities::isA($item, 'GalleryDerivative')) {
+	    $ret = $item->createFastDownloadFile();
+	    /* Ignore failures since the file has already been sent */
+	}
+
 	return GalleryStatus::success();
     }
 
@@ -162,10 +127,11 @@ class DownloadItemView extends GalleryView {
 	header('Content-type: ' . $data['mimeType']);
 	header('Content-Disposition: inline; filename="' . $data['pseudoFileName'] . '"');
 	$stats = $platform->stat($data['derivativePath']);
-	if ($stats[7] > 0) {
-	    header('Content-length: ' . $stats[7]);
-	}
+ 	if ($stats[7] > 0) {
+ 	    header('Content-length: ' . $stats[7]);
+ 	}
 	header('Last-Modified: ' . GalleryUtilities::getHttpDate($stats[9]));
+	header('Expires: Sun, 17 Jan 2038 12:00:00 GMT');
 
 	/*
 	 * Don't use readfile() because it buffers the entire file in memory
@@ -185,80 +151,9 @@ class DownloadItemView extends GalleryView {
 	    $platform->fclose($fd);
 	}
 
-	flush();
-	// Hopefully at this point the file has been sent to the browser; now we can connect
-	// to the database for administrative tasks without slowing down the request.
-
-	/* Increment the view count */
-	if ($data['derivativeType'] != DERIVATIVE_TYPE_IMAGE_THUMBNAIL) {
-	    $ret = GalleryCoreApi::incrementItemViewCount($data['parentId']);
-	    if ($ret->isError()) {
-		/* We've sent the file so ignore this error.. */
-		if ($gallery->getDebug()) {
-		    $gallery->debug('Error incrementing view count for ' . $data['parentId'] . "\n"
-				   . $ret->getAsText());
-		}
-	    }
-	}
+	
 
 	return GalleryStatus::success();
-    }
-
-    /**
-     * @see GalleryView::rewriteQueryString
-     */
-    function rewriteQueryString($params) {
-	global $gallery;
-
-	/* We know who we are */
-	unset($params['view']);
-
-	$itemId = $params['itemId'];
-	unset($params['itemId']);
-
-	$buf = '/' . $itemId;
-
-	list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($itemId);
-	if ($ret->isError()) {
-	    return null;
-	}
-
-	$buf .= '-' . $entity->getSerialNumber();
-	unset($params['serialNumber']);
-
-	list ($ret, $pseudoFileName) = GalleryUtilities::getPseudoFileName($entity);
-	if ($ret->isError()) {
-	    return null;
-	}
-	$buf .= '/' . $pseudoFileName;
-
-	if (strpos($pseudoFileName, '.') === false) {
-	    $extension = GalleryCoreApi::convertMimeToExtension($entity->getMimeType());
-	    if (!empty($extension)) {
-		$buf .= '.' . $extension;
-	    }
-	}
-
-	/* Add in anything else as a standard query element */
-	if (!empty($params)) {
-	    $buf .= GalleryUrlGenerator::buildQueryString($params);
-	}
-
-	return $buf;
-    }
-
-    /**
-     * @see GalleryView::parseQueryString()
-     */
-    function parseQueryString($queryString) {
-
-	/*
-	 * Expect the path to be in the format /<itemid>-<serial>.<extension>
-	 * We only care about the item id
-	 */
-	$queryString = preg_match('|/(\d+)-|', $queryString, $regs);
-	GalleryUtilities::putRequestVariable('itemId', $regs[1]);
-	return array(GalleryStatus::success(), null);
     }
 }
 ?>

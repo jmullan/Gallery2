@@ -359,8 +359,8 @@ class GalleryDataCache {
     }
 
     /**
-     * Put the specified data into a cache file from disk.  PathInfo is of the form that can be passed
-     * to getCachePath.
+     * Put the specified data into a cache file from disk.  PathInfo is of the
+     * form that can be passed to getCachePath.
      *
      * @param array the path info
      * @param mixed the object data
@@ -397,9 +397,11 @@ class GalleryDataCache {
     }
 
     /**
-     * For a given id, return a tuple with the breakdown of the id.  The caching mechanism uses this to
-     * determine where in the cache tree to place the file.  The breakdown happens according to the digits of
-     * the id.  The first element returned is the hundreds digit, the second element is the tens digit. 
+     * For a given id, return a tuple with the breakdown of the id.  The caching
+     * mechanism uses this to determine where in the cache tree to place the
+     * file.  The breakdown happens according to the digits of the id.  The
+     * first element returned is the hundreds digit, the second element is the
+     * tens digit.
      *
      *  0..9     =>  0, 0
      *  10..19   =>  0, 1
@@ -434,20 +436,26 @@ class GalleryDataCache {
      */
     function getCachePath($pathInfo) {
 	global $gallery;
-	
-	$base = $gallery->getConfig('data.gallery.cache');
+
+	$base = $gallery->getConfig('data.gallery.base') . 'cache/';
 	$cacheFile = null;
 	switch ($pathInfo['type']) {
 	case 'entity':
 	    list ($first, $second) = GalleryDataCache::getCacheTuple($pathInfo['itemId']);
-	    $cacheFile = sprintf('%s%s/%s/%s/%s.inc',
-				 $base, $pathInfo['type'], $first, $second, $pathInfo['itemId']);
+	    $cacheFile = sprintf('%sentity/%s/%s/%s.inc',
+				 $base, $first, $second, $pathInfo['itemId']);
 	    break;
 	    
 	case 'derivative':
 	    list ($first, $second) = GalleryDataCache::getCacheTuple($pathInfo['itemId']);
-	    $cacheFile = sprintf('%s%s/%s/%s/%s.dat',
-				 $base, $pathInfo['type'], $first, $second, $pathInfo['itemId']);
+	    $cacheFile = sprintf('%sderivative/%s/%s/%s.dat',
+				 $base, $first, $second, $pathInfo['itemId']);
+	    break;
+
+	case 'derivative-relative':
+	    list ($first, $second) = GalleryDataCache::getCacheTuple($pathInfo['itemId']);
+	    $cacheFile = sprintf('derivative/%s/%s/%s.dat',
+				 $first, $second, $pathInfo['itemId']);
 	    break;
 
 	case 'derivative-meta':
@@ -456,7 +464,12 @@ class GalleryDataCache {
 				 $base, $first, $second, $pathInfo['itemId']);
 	    break;
 	    
-
+	case 'fast-download':
+	    list ($first, $second) = GalleryDataCache::getCacheTuple($pathInfo['itemId']);
+	    $cacheFile = sprintf('%sderivative/%s/%s/%s-fast.inc',
+				 $base, $first, $second, $pathInfo['itemId']);
+	    break;
+	    
 	case 'module':
 	case 'layout':
 	    if (isset($pathInfo['id'])) {
@@ -527,9 +540,11 @@ class GalleryDataCache {
     }
 
     /**
-     * Look up the given permission in the cache.  Return true if the permission exists in the cache, false if
-     * it doesn't.  A return of false doesn't mean that the user doesn't have the permission -- just that it's
-     * not in the cache.
+     * Look up the given permission in the cache.  Return true if the permission
+     * exists in the cache, false if it doesn't.  A return of false doesn't mean
+     * that the user doesn't have the permission -- just that it's not in the
+     * cache.
+     *
      * @param int the item id
      * @param string the permission
      * @param bool true or false
@@ -545,8 +560,8 @@ class GalleryDataCache {
 	
 	$permissions = $session->get('permissionCache');
 	/*
-	 * Since we add all new data to the head of the list, the odds are good that we should find our
-	 * answer in the first iteration of this loop.
+	 * Since we add all new data to the head of the list, the odds are good
+	 * that we should find our answer in the first iteration of this loop.
 	 */
 	for ($i = 0; $i < sizeof($permissions); $i++) {
 	    if (isset($permissions[$i][$permission][$id])) {

@@ -180,8 +180,8 @@ class GallerySession {
 	$currentRemoteIdentifier = $this->_getRemoteIdentifier();
 
 	if (!isset($this->_remoteIdentifier) ||
-		$this->_compareIdentifiers($this->_remoteIdentifier,
-					   $currentRemoteIdentifier) == 0) {
+	    $this->_compareIdentifiers($this->_remoteIdentifier,
+				       $currentRemoteIdentifier) == 0) {
 	    $allowFrom = $gallery->getConfig('allowSessionAccess');
 	    if (!$allowFrom || $currentRemoteIdentifier[0] != $allowFrom) {
 		if ($gallery->getDebug()) {

@@ -44,7 +44,7 @@ class SetupRewriteControllerTest extends GalleryControllerTestCase {
 	$urlGenerator =& $gallery->getUrlGenerator();
 	
 	foreach (array('galleryLocation' => '',
-		    'usePrefixes' => 'true')
+		       'usePrefixes' => 'true')
 		as $param => $value) {
 	    list ($ret, $this->_saveParameters[$param]) =
 		    GalleryCoreApi::getPluginParameter('module', 'rewrite', $param);
@@ -63,7 +63,6 @@ class SetupRewriteControllerTest extends GalleryControllerTestCase {
 	$content =& $this->_platform->getContent();
 	$content = null;
 	$gallery->setPlatform($this->_platform);
-	$urlGenerator->registerViewPrefix('test', 'core:ShowItem');
     }
     
     function tearDown() {
