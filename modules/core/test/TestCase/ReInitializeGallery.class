@@ -19,21 +19,30 @@ class ReInitializeGalleryTestCase extends TestCase {
     }
 
     function getDependencies() {
-	return array(array('moduleId' => 'core', 'testName' => 'EmptyGallery'),
-		     array('moduleId' => 'core', 'testName' => 'CleanStore'),
-		     array('moduleId' => 'core', 'testName' => 'InitializeGallery'),
-		     array('moduleId' => 'imagemagick', 'testName' => 'ConfigureImageMagick'),
-		     array('moduleId' => 'imagemagick', 'testName' => 'ActivateModule'),
-		     array('moduleId' => 'netpbm', 'testName' => 'ConfigureNetPbm'),
-		     array('moduleId' => 'netpbm', 'testName' => 'ActivateModule'),
-		     array('moduleId' => 'debug', 'testName' => 'ActivateModule'),
-		     array('moduleId' => 'search', 'testName' => 'ActivateModule'),
-		     array('moduleId' => 'comment', 'testName' => 'ConfigureComment'),
-		     array('moduleId' => 'comment', 'testName' => 'ActivateModule'),
-		     array('moduleId' => 'ffmpeg', 'testName' => 'ConfigureFfmpeg'),
-		     array('moduleId' => 'ffmpeg', 'testName' => 'ActivateModule'),
-		     array('moduleId' => 'migrate', 'testName' => 'ActivateModule'),
-		     );
+	global $gallery;
+	
+	$dependencies = array(array('moduleId' => 'core', 'testName' => 'EmptyGallery'),
+			      array('moduleId' => 'core', 'testName' => 'CleanStore'),
+			      array('moduleId' => 'core', 'testName' => 'InitializeGallery'),
+			      array('moduleId' => 'imagemagick', 'testName' => 'ConfigureImageMagick'),
+			      array('moduleId' => 'imagemagick', 'testName' => 'ActivateModule'),
+			      array('moduleId' => 'netpbm', 'testName' => 'ConfigureNetPbm'),
+			      array('moduleId' => 'netpbm', 'testName' => 'ActivateModule'),
+			      array('moduleId' => 'debug', 'testName' => 'ActivateModule'),
+			      array('moduleId' => 'search', 'testName' => 'ActivateModule'),
+			      array('moduleId' => 'comment', 'testName' => 'ConfigureComment'),
+			      array('moduleId' => 'comment', 'testName' => 'ActivateModule'),
+			      array('moduleId' => 'migrate', 'testName' => 'ActivateModule'),
+			      );
+
+	/* No Ffmpeg on Windows, yet */
+	$platform = $gallery->getPlatform();
+	if (get_class($platform) == 'unixplatform') {
+	    $dependencies[] = array('moduleId' => 'ffmpeg', 'testName' => 'ConfigureFfmpeg');
+	    $dependencies[] = array('moduleId' => 'ffmpeg', 'testName' => 'ActivateModule');
+	}
+
+	return $dependencies;
     }
 
     function testStart() {
