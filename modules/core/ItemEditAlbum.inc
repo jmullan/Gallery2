@@ -90,7 +90,7 @@ class ItemEditAlbumController extends GalleryController {
 
 		/* Add the thumbnail size back in */
 		$ret = GalleryDerivativePreferencesMap::addMapEntry(
-	            array('order' => 0,
+                    array('order' => 0,
 			  'itemId' => $item->getId(),
 			  'derivativeType' => DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
 			  'derivativeOperations' => 'thumbnail|' . $form['thumbnail']['size']));
@@ -103,7 +103,7 @@ class ItemEditAlbumController extends GalleryController {
 		    if (empty($form['resizes'][$i]['active'])) {
 			continue;
 		    }
-		    
+
 		    $ret = GalleryDerivativePreferencesMap::addMapEntry(
 	                array('order' => $i,
 			      'itemId' => $item->getId(),
@@ -158,21 +158,35 @@ class ItemEditAlbumController extends GalleryController {
 			
 			$thumbnail = $thumbTable[$childId];
 
-			/*
-			 * Change the thumbnail
-			 * XXX: we should make sure that we have a toolkit for this!
-			 */
-			$thumbnail->setDerivativeOperations('thumbnail|' . $form['thumbnail']['size']);
-
-			if ($thumbnail->isModified()) {
-			    list ($ret, $lockIds[]) = $gallery->acquireWriteLock($thumbnail->getId());
+			/* Change the thumbnail */
+			$operation = 'thumbnail|' . $form['thumbnail']['size'];
+			list ($ret, $isSupported) =
+			    GalleryToolkitHelper::isSupportedOperationSequence($child->getMimeType(), $operation);
+			if ($ret->isError()) {
+			    return array($ret->wrap(__FILE__, __LINE__), null);
+			}
+			
+			if (!$isSupported) {
+			    $operation = 'convert-to-image/jpeg;' . $operation;
+			    list ($ret, $isSupported) =
+				GalleryToolkitHelper::isSupportedOperationSequence($child->getMimeType(), $operation);
 			    if ($ret->isError()) {
 				return array($ret->wrap(__FILE__, __LINE__), null);
 			    }
-			    $thumbnail->expireCache();
-			    $ret = $thumbnail->save();
-			    if ($ret->isError()) {
-				return array($ret->wrap(__FILE__, __LINE__), null);
+			}
+
+			if ($isSupported) {
+			    $thumbnail->setDerivativeOperations($operation);
+			    if ($thumbnail->isModified()) {
+				list ($ret, $lockIds[]) = $gallery->acquireWriteLock($thumbnail->getId());
+				if ($ret->isError()) {
+				    return array($ret->wrap(__FILE__, __LINE__), null);
+				}
+				$thumbnail->expireCache();
+				$ret = $thumbnail->save();
+				if ($ret->isError()) {
+				    return array($ret->wrap(__FILE__, __LINE__), null);
+				}
 			    }
 			}
 		    }
