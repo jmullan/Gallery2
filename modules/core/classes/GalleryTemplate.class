@@ -309,7 +309,7 @@ class GalleryTemplate {
     * templates with our own copies without modifying the original.
     */
    function resourceGetTemplate($templateName, &$templateSource, &$smarty) {
-	$templateName = $this->_getActualTemplateName($smarty->template_dir . '/' . $templateName);
+	$templateName = GalleryTemplate::_getActualTemplateName($smarty->template_dir . '/' . $templateName);
 	$templateSource = $smarty->_read_file($templateName);
 
 	return true;
@@ -326,7 +326,7 @@ class GalleryTemplate {
 	global $gallery;
 	$platform = $gallery->getPlatform();
 
-	$templateName = $this->_getActualTemplateName($smarty->template_dir . '/' . $templateName);
+	$templateName = GalleryTemplate::_getActualTemplateName($smarty->template_dir . '/' . $templateName);
 
 	$stat = $platform->stat($templateName);
 	$templateTimestamp = $stat[9];
@@ -342,6 +342,7 @@ class GalleryTemplate {
      *   3.  /foo/bar.tpl        (whether or not it exists)
      *
      * @return string
+     * @static
      */
     function _getActualTemplateName($templateName) {
 	global $gallery;
@@ -381,5 +382,4 @@ class GalleryTemplate {
 	// Not used for templates
     }
 }
-
 ?>
