@@ -73,9 +73,19 @@ class ItemCreateLinkController extends GalleryController {
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
+
+		list ($ret, $permissions) = GalleryCoreApi::fetchPermissionsForItems($selectedIds);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
 		
 		/* Look out for monkey business */
 		foreach ($selectedItems as $selectedItem) {
+		    if (!isset($permissions[$selectedItem->getId()]['core.viewSource'])) {
+			return array(GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__),
+				     null);
+		    }
+		    
 		    if ($selectedItem->getParentId() != $itemId) {
 			return array(GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__),
 				     null);
@@ -85,6 +95,7 @@ class ItemCreateLinkController extends GalleryController {
 			return array(GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__),
 				     null);
 		    }
+
 		}
 		
 		/*

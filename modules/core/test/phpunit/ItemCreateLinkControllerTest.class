@@ -94,7 +94,7 @@ class ItemCreateLinkControllerTest extends GalleryControllerTestCase {
     /**
      * Test linking an album (this should fail)
      */
-    function testLinkAlbumSuccessful() {
+    function testLinkAlbumUnsuccessful() {
 	list ($ret, $childAlbum) = $this->_createRandomAlbum($this->_album->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -109,6 +109,30 @@ class ItemCreateLinkControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('itemId', $childAlbum->getId());
 	GalleryUtilities::putRequestVariable('form[selectedIds]',
 					     array($grandChildAlbum->getId() => 1));
+	GalleryUtilities::putRequestVariable('form[action][link]', 1);
+	GalleryUtilities::putRequestVariable('form[destination]', $this->_album->getId());
+
+	$results = $this->handleRequest(ERROR_PERMISSION_DENIED);
+    }
+
+    /**
+     * Test linking an item without view permission (this should fail)
+     */
+    function testLinkItemWithoutViewFullPermissions() {
+	global $gallery;
+	list ($ret, $item) = $this->_createRandomDataItem($this->_album->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	$ret = GalleryCoreApi::removeItemPermissions($item->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
+	GalleryUtilities::putRequestVariable('form[selectedIds]',
+					     array($item->getId() => 1));
 	GalleryUtilities::putRequestVariable('form[action][link]', 1);
 	GalleryUtilities::putRequestVariable('form[destination]', $this->_album->getId());
 

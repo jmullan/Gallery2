@@ -800,6 +800,13 @@ class CoreModule extends GalleryModule {
 	    }
 	}
 	
+	if (isset($permissions['core.viewSource'])) {
+	    if ($item->getIsLinkable()) {
+		$views[] = array('name' => $this->translate(array('text' => 'Link %s', 'arg1' => $itemTypeNames[0])),
+				 'view' => 'core:ItemCreateLinkSingle');
+	    }
+	}
+	
 	if (isset($permissions['core.delete'])) {
 	    if ($item->getId() != $rootId) {
 		$views[] = array('name' => $this->translate(array('text' => 'Delete %s', 'arg1' => $itemTypeNames[0])),
