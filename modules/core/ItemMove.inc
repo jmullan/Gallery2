@@ -231,6 +231,7 @@ class ItemMoveView extends GalleryView {
 	$albumIds = array();
 	$peers = array();
 	$peerTypes = array();
+	$peerDescendentCounts = array();
 	$albumTree = array();
 	if (!empty($peerIds)) {
 	    /* Load all the peers */
@@ -249,6 +250,12 @@ class ItemMoveView extends GalleryView {
 		    $peerTypes['data'][$peerItem->getId()] = 1;
 		}
 		$peers[$peerItem->getId()]['selected'] = isset($form['selectedIds'][$peerItem->getId()]);
+	    }
+
+	    /* Get child counts */
+	    list ($ret, $peerDescendentCounts) = GalleryCoreApi::fetchDescendentCounts(array_keys($peerTypes['album']));
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    /* Get all possible destinations (where user has write permission) */
@@ -289,6 +296,7 @@ class ItemMoveView extends GalleryView {
 	$ItemMove['albumIds'] = $albumIds;
         $ItemMove['peers'] = $peers;
         $ItemMove['peerTypes'] = $peerTypes;
+	$ItemMove['peerDescendentCounts'] = $peerDescendentCounts;
         $ItemMove['albumTree'] = $albumTree;
         $template->setVariable('ItemMove', $ItemMove);
         $template->setVariable('controller', 'core:ItemMove');

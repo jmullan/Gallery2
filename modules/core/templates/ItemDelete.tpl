@@ -51,12 +51,21 @@
 	{g->element}
   	  {g->input type="checkbox" name="form[selectedIds][$peerItemId]"}{$peer.selected}{/g->input}
   	  {$peer.title|default:$peer.pathComponent}
+	  <i>
   	  {if isset($ItemDelete.peerTypes.data.$peerItemId)}
   	    {g->text text="(data)"}
   	  {/if}
   	  {if isset($ItemDelete.peerTypes.album.$peerItemId)}
-  	    {g->text text="(album)"}
+	    {if isset($ItemDelete.peerDescendentCounts.$peerItemId)}
+  	      {g->text one="(album containing %d item)" 
+	               many="(album containing %d items)"
+          	       count=$ItemDelete.peerDescendentCounts.$peerItemId
+         	       arg1=$ItemDelete.peerDescendentCounts.$peerItemId}
+	    {else}
+  	      {g->text text="(empty album)"}
+	    {/if}
   	  {/if}
+	  </i>
 	{/g->element}
 	
       {/foreach}

@@ -148,6 +148,7 @@ class ItemDeleteView extends GalleryView {
 	
 	$peers = array();
 	$peerTypes = array();
+	$peerDescendentCounts = array();
 	if (!empty($peerIds)) {
 	    /* load peers */
 	    list($ret, $peerItems) = GalleryCoreApi::loadEntitiesById($peerIds);
@@ -165,11 +166,18 @@ class ItemDeleteView extends GalleryView {
 		}
 		$peers[$peerItem->getId()]['selected'] = isset($form['selectedIds'][$peerItem->getId()]);
 	    }
+
+	    /* Get child counts */
+	    list ($ret, $peerDescendentCounts) = GalleryCoreApi::fetchDescendentCounts(array_keys($peerTypes['album']));
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
 	}
-	
+
 	$ItemDelete = array();
 	$ItemDelete['peers'] = $peers;
 	$ItemDelete['peerTypes'] = $peerTypes;
+	$ItemDelete['peerDescendentCounts'] = $peerDescendentCounts;
 	
 	$template->setVariable('controller', 'core:ItemDelete');
 	$template->setVariable('ItemDelete', $ItemDelete);
