@@ -174,7 +174,19 @@ class NetPbmToolkit extends GalleryToolkit {
      * @see GalleryToolkit::getImageDimensions()
      */
     function _getImageDimensions($mimeType, $filename) {
+	global $gallery;
 
+	/*
+	 * Run it through PHP first, it's faster and more portable.  If it runs
+	 * afoul of open_basedir it'll return false and we can try NetPBM.
+	 */
+	$platform = $gallery->getPlatform();
+	$results = $platform->getimagesize($filename);
+	if (($results != false) &&
+	    (($results[0] > 1) && ($results[1] > 1))) {
+	    return array(GalleryStatus::success(), $results[0], $results[1]);
+	}
+	
 	list($ret, $convertToPnmCmd) = $this->_convertToPnmCmd($mimeType, $filename);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
@@ -280,6 +292,10 @@ class NetPbmToolkit extends GalleryToolkit {
 	    $cmd = $this->_pnmCmd('giftopnm');
 	    break;
 
+	case 'image/tiff':
+	    $cmd = $this->_pnmCmd('tifftopnm');
+	    break;
+
 	default:
 	    $gallery->debug('Unsupported file type: ' . $mimeType);
 	    return array(GalleryStatus::error(ERROR_UNSUPPORTED_FILE_TYPE,
@@ -335,6 +351,12 @@ class NetPbmToolkit extends GalleryToolkit {
 			 array($this->_pnmCmd('ppmtogif'),
 			       '>',
 			       $filename));
+	    break;
+
+	case 'image/tiff':
+	    $cmd = array($this->_pnmCmd('pnmtotiff'),
+			 '>',
+			 $filename);
 	    break;
 
 	default:
