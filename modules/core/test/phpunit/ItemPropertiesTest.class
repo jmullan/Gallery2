@@ -1,0 +1,279 @@
+<?php
+/*
+ * $RCSfile
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * Test ItemProperties functionality
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ *
+ */
+class ItemPropertiesTest extends GalleryTestCase {
+    var $_itemId;
+
+    function ItemPropertiesTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    /**
+     * Internal function to create a random album
+     */
+    function _createRandomAlbum($parentId) {
+	global $gallery;
+	
+	list ($ret, $album) = GalleryFactory::newInstance('GalleryEntity', 'GalleryAlbumItem');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	if (!isset($album)) {
+	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
+	}
+
+	if (isset($parentId)) {
+	    list ($ret, $lockIds[]) = $gallery->acquireReadLock($parentId);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    
+	    $ret = $album->create($parentId, 'albumtest' . rand(), $gallery->getActiveUserId());
+	} else {
+	    $ret = $album->createRoot('albumtest' . rand(), $gallery->getActiveUserId());
+	}
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Change some settings */
+	$album->setTitle('This is my title');
+	$album->setDescription('This is a description');
+
+	/* Save it */
+	$ret = $album->save();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Leggo of our locks */
+	if (isset($lockIds)) {
+	    $ret = $gallery->releaseLocks($lockIds);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+
+	return array(GalleryStatus::success(), $album);
+    }
+
+    /**
+     * Create a random album to start the test
+     */
+    function setUp() {
+	parent::setUp();
+	
+	list ($ret, $this->_item) = $this->_createRandomAlbum(null);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    /**
+     * Delete our temporary album
+     */
+    function tearDown() {
+	global $gallery;
+	$ret = $gallery->deleteEntityById($this->_item->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	    
+	parent::tearDown();
+    }
+
+    /**
+     * Test setting a property.  Exercises:
+     *
+     *   GalleryItemPropertiesMap::setProperty
+     *   GalleryItemPropertiesMap::fetchProperty
+     *
+     */
+    function testSetProperty() {
+	$key = 'test-key';
+	$value = 'test-value';
+
+	$ret = GalleryItemPropertiesMap::setProperty($this->_item->getId(), $key, $value);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $newValue) = GalleryItemPropertiesMap::fetchProperty($this->_item->getId(), $key);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals($value, $newValue);
+    }
+
+    /**
+     * Test setting a property and then overwriting it.  Exercises:
+     *
+     *   GalleryItemPropertiesMap::setProperty
+     *   GalleryItemPropertiesMap::fetchProperty
+     *
+     */
+    function testUpdateProperty() {
+	$key = 'test-key-' . rand();
+	$value1 = 'test-value1';
+	$value2 = 'test-value2';
+
+	$ret = GalleryItemPropertiesMap::setProperty($this->_item->getId(), $key, $value1);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryItemPropertiesMap::setProperty($this->_item->getId(), $key, $value2);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $newValue) = GalleryItemPropertiesMap::fetchProperty($this->_item->getId(), $key);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals($value2, $newValue);
+    }
+
+    /**
+     * Test setting properties and then removing them.  Exercises:
+     *
+     *   GalleryItemPropertiesMap::setProperty
+     *   GalleryItemPropertiesMap::removeProperties
+     *   GalleryItemPropertiesMap::fetchPropertyKeys
+     *
+     */
+    function testRemoveProperties() {
+	$key1 = 'test-key1';
+	$value1 = 'test-value1';
+	$key2 = 'test-key2';
+	$value2 = 'test-value2';
+
+	$ret = GalleryItemPropertiesMap::setProperty($this->_item->getId(), $key1, $value1);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryItemPropertiesMap::setProperty($this->_item->getId(), $key2, $value2);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryItemPropertiesMap::removeProperties($this->_item->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	GalleryDataCache::reset();
+
+	list ($ret, $keys) = GalleryItemPropertiesMap::fetchPropertyKeys($this->_item->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(array(), $keys);
+    }
+
+    /**
+     * Test fetching property keys
+     *
+     *   GalleryItemPropertiesMap::setProperty
+     *   GalleryItemPropertiesMap::fetchPropertyKeys
+     *
+     */
+    function testFetchPropertyKeys() {
+	$key1 = 'test-key1';
+	$value1 = 'test-value1';
+	$key2 = 'test-key2';
+	$value2 = 'test-value2';
+
+	$ret = GalleryItemPropertiesMap::setProperty($this->_item->getId(), $key1, $value1);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryItemPropertiesMap::setProperty($this->_item->getId(), $key2, $value2);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	GalleryDataCache::reset();
+
+	list ($ret, $keys) = GalleryItemPropertiesMap::fetchPropertyKeys($this->_item->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(array('test-key1', 'test-key2'), $keys);
+    }
+
+    /**
+     * Test fetching all properties
+     *
+     *   GalleryItemPropertiesMap::setProperty
+     *   GalleryItemPropertiesMap::fetchAllProperties
+     */
+    function testFetchAllProperties() {
+	$key1 = 'test-key1';
+	$value1 = 'test-value1';
+	$key2 = 'test-key2';
+	$value2 = 'test-value2';
+
+	$ret = GalleryItemPropertiesMap::setProperty($this->_item->getId(), $key1, $value1);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryItemPropertiesMap::setProperty($this->_item->getId(), $key2, $value2);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	GalleryDataCache::reset();
+
+	list ($ret, $keys) = GalleryItemPropertiesMap::fetchAllProperties($this->_item->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(array('test-key1' => 'test-value1',
+				  'test-key2' => 'test-value2'),
+			    $keys);
+    }
+}
+
+?>
