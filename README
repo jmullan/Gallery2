@@ -12,7 +12,16 @@ these instructions:
 necessary, but it's helpful in terms of providing feedback
 on the install process.  You should probably wipe your old G2
 database, if you have one, as the data model may change without
-notice.
+notice.  If you've got G2 installed, a fast way to do this is to
+go to the test harness:
+
+	setup/test/index.php
+
+and run the "EmptyGallery" and then "RemoveStore" tests.  Note that if
+you're running a version of G2 from before, say, 10/21/2002 then this
+may not work for you 'cause I fixed some bugs in it.  So in that case,
+you should blow away your gallery data directory and drop your database
+by hand.
 
 3. Copy setup/config.php-dist to gallery/config.php and edit it.
 There are instructions in the file.  It should be pretty self
@@ -33,22 +42,21 @@ It's entirely in setup/setup.php
    your setup password (the one you entered in config.php) as the
    password.  This should log you in.
 
-6. Browse to the Gallery Site Administrator:
+6. You'll get a [site admin] link at the top.  Click that to go to
+   the Gallery Site Administrator.  You can go to it by hand at:
 
 	main.php?g2_view=core:SiteAdmin
 
-   6a.  Go to the 'modules' tab.  Click the 'configure' link next
-        to NetPBM.  Enter the path to your NetPBM binaries and save
-	it.  Repeat until all test results are positive.
+   6a.  Go to the 'modules' tab.  Click the 'install' link next
+        to NetPBM.  Then click the 'configure' link.  Enter the path
+        to your NetPBM binaries and save it.  Repeat until all test
+        results are positive.
 
    6b.  Go to the 'modules' tab.  Click the 'activate' link next to
 	NetPBM.
 
-   6c.  Go to the 'modules' tab.  Click the 'configure' link next
-	to 'comment'.  Click the 'configure' button.
-
-   6d.  Go to the 'modules' tab.  Click the 'activate' link next to
-	'comment'.
+   6c.  Go to the 'modules' tab.  Click the 'install' and then
+	'activate' links next to 'comment'.
 
 7. We don't yet have an interface to add images.  But we can do it
    via the test harness.  Browse to the test harness:
@@ -59,6 +67,9 @@ It's entirely in setup/setup.php
 	This will create a relatively boring tree of albums and 
 	photos for you.
 
+   7b.  Click the 50, 500, 1K or 10K link next to 'CreateRandomUser'.
+	This will create a relatively boring user base for you.
+
 8. Go to the main interface:
 
 	main.php
@@ -67,30 +78,35 @@ It's entirely in setup/setup.php
 
 9. Try adding a comment on an album or item.  
 
-By this point, you should be able to go to your main Gallery
-page which will be unimpressive.  It'll have no data in it
-so you'll just see a pretty empty table at the top of the page
-and a whole lot of debug stuff below.
-
-10. Configure NetPBM and activate it.  Vallimar, I have changed
-so much stuff around here that I haven't had a chance to get your
-ImageMagick code in yet :-/.  Immediately after activating NetPBM
-the UI may still report it as inactive.  Click the "test harness"
-link at the top of the page (that triggers a clean refresh) and
-it should say "active"
-
-11. Run 500 iterations of CreateRandomTree.  This will simulate
-creating a (pretty boring) tree of photos and albums for you.
-
-12. Run 500 iteratations of CreateRandomUser.  This will populate
-your user base.
-
-13. Browse back to gallery/main.php and you should be able to 
+10. Browse back to gallery/main.php and you should be able to 
 see your tree and wander around it.
 
-14. Browse to gallery/main.php?g2_view=core:SiteAdmin and you'll
+11. Browse to gallery/main.php?g2_view=core:SiteAdmin and you'll
 see the Site Admin framework.  User and group management are
 functionally complete now.  Try creating and editting users and
 groups, and try adding and removing users from groups.
 
 
+--- 
+
+10/28/2002
+
+I'm still working on getting the framework just right before I go too far
+into any one module.  Clearly there's still a lot of stuff missing.  Some
+of it is cosmetic, some of it structural.
+
+* We're not generating thumbnails for albums, so the albums just show
+  up as their id value.
+
+* The classic layout is pretty boring.
+
+* Navigation between Site Admin and regular mode needs work
+
+* The item administration code is not yet in
+
+* Haven't yet implemented these features:
+	- rating
+	- printing
+	- slideshow
+	- workflow (notifications, moderation, etc)
+  These will all be modules and won't require changing the core code.
