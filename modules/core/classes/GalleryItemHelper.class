@@ -203,6 +203,9 @@ class GalleryItemHelper {
 
 	list ($ret, $permissionsTable) =
 	    GalleryPermissionMap::fetchPermissionsForItems($itemIds, $userId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 
 	/* Cache the permissions */
 	foreach ($permissionsTable as $itemId => $permissions) {
