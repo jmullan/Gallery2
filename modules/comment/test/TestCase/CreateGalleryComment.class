@@ -13,14 +13,14 @@ class CreateGalleryCommentTestCase extends TestCase {
 	/* Lock the world */
 	$ret = $gallery->lockWorld();
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* Create our child */
 	$comment = new GalleryComment();
 	$ret = $comment->create($rootId);
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	
 	/* Make a change */
@@ -33,13 +33,13 @@ class CreateGalleryCommentTestCase extends TestCase {
 	/* Commit the cache */
 	$ret = $gallery->commitCache();
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* Unlock the world */
 	$ret = $gallery->unlock();
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	return GalleryStatus::success();

@@ -259,7 +259,7 @@ class Gallery {
 
 	list($ret, $storage) = $gallery->getStorage();
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	foreach (array_keys($this->_nucleusCache) as $key) {
@@ -271,13 +271,13 @@ class Gallery {
 		}
 		$ret = $storage->deleteNucleus($nucleus);
 		if ($ret->isError()) {
-		    return $ret;
+		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    } else if ($nucleus->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED) ||
 		       $nucleus->isModified()) {
 		$ret = $storage->saveNucleus($nucleus);
 		if ($ret->isError()) {
-		    return $ret;
+		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
 	}
@@ -399,7 +399,7 @@ class Gallery {
 
 	list($ret, $nucleus) = $this->loadNucleusById($id);
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	
 	return $nucleus->delete();
@@ -446,7 +446,7 @@ class Gallery {
 		    $modifiers=array()) {
 	list($ret, $storage) = $this->getStorage();
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	
 	return $storage->search($criteria, $target, $modifiers);
@@ -524,7 +524,7 @@ class Gallery {
 	    list($ret, $this->_graphics) =
 		    GalleryGraphicsFactory::newInstance($type, $config);
 	    if ($ret->isError()) {
-		return $ret;
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 	
@@ -658,7 +658,7 @@ class Gallery {
 	    
 	    $ret = $this->_lock->release();
 	    if ($ret->isError()) {
-		return $ret;
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 

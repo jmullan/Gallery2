@@ -13,7 +13,7 @@ class DeleteAllItemsTestCase extends TestCase {
 
 	$ret = $gallery->lockWorld();
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	    
 	while (true) {
@@ -29,7 +29,7 @@ class DeleteAllItemsTestCase extends TestCase {
 						 'GalleryNucleus::id',
 						 SEARCH_DIRECTION_DOWN)));
 	    if ($ret->isError()) {
-		return $ret;
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
 	    if (empty($results)) {
@@ -40,19 +40,19 @@ class DeleteAllItemsTestCase extends TestCase {
 	    print "<H2> Delete Item $id </H2>\n";
 	    $ret = $gallery->deleteNucleusById($id);
 	    if ($ret->isError()) {
-		return $ret;
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
 	    /* Commit the cache */
 	    $ret = $gallery->commitCache();
 	    if ($ret->isError()) {
-		return $ret;
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 
 	$ret = $gallery->unlock();
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	return GalleryStatus::success();

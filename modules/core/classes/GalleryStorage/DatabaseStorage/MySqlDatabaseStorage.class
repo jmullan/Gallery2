@@ -58,14 +58,14 @@ class MySqlDatabaseStorage extends DatabaseStorage {
 
 	$ret = $this->_initDatabaseSchema();
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	
 	$this->_traceStart();
 	$ret = $this->_databaseSchema->createSchema();
 	$this->_traceStop();
 
-	return $ret;
+	return $ret->wrap(__FILE__, __LINE__);
     }
 
     /**
@@ -94,7 +94,7 @@ class MySqlDatabaseStorage extends DatabaseStorage {
 	}
 
 	$this->_traceStop();
-	return $ret;
+	return $ret->wrap(__FILE__, __LINE__);
     }
 
     /**
@@ -115,7 +115,7 @@ class MySqlDatabaseStorage extends DatabaseStorage {
 	}
 
 	$this->_traceStop();
-	return $ret;
+	return $ret->wrap(__FILE__, __LINE__);
     }
 }
 ?>

@@ -460,7 +460,7 @@ class GalleryItem extends FileSystemNucleus {
 
 	$ret = $this->save();
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	return $this->_updateParentPermissionExceptions($userId);
@@ -495,7 +495,7 @@ class GalleryItem extends FileSystemNucleus {
 
 	$ret = $this->save();
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	return $this->_updateParentPermissionExceptions($userId);
@@ -530,7 +530,7 @@ class GalleryItem extends FileSystemNucleus {
 
 	$ret = $this->save();
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	return $this->_updateParentPermissionExceptions($userId);
@@ -550,7 +550,7 @@ class GalleryItem extends FileSystemNucleus {
 
 	list($ret, $parent) = $this->_getParent();
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	
 	$allowed = $this->_allowedPermissions->get($userId);
@@ -582,7 +582,7 @@ class GalleryItem extends FileSystemNucleus {
     function getAllPermissions() {
 	list($ret, $parent) = $this->_getParent();
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	if ($parent) {
 	    list($allowed, $denied) = $parent->getAllPermissions();
@@ -631,7 +631,7 @@ class GalleryItem extends FileSystemNucleus {
 
 	    list($ret, $parent) = $gallery->loadNucleusById($parentId);
 	    if ($ret->isError()) {
-		return $ret;
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    
 	    if (!$parent->canContainChildren()) {
@@ -642,7 +642,7 @@ class GalleryItem extends FileSystemNucleus {
 
 	$ret = parent::create($parentId, $path);
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* Record the owner */
@@ -655,14 +655,14 @@ class GalleryItem extends FileSystemNucleus {
 	if (isset($parentId)) {
 	    list($ret, $parent) = $gallery->loadNucleusById($parentId);
 	    if ($ret->isError()) {
-		return $ret;
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	
 	    $childIds =& $parent->getChildIds();
 	    $childIds->push($this->getId());
 	    $ret = $parent->save();
 	    if ($ret->isError()) {
-		return $ret;
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
 	    $this->setParentId($parent->getId());
@@ -688,7 +688,7 @@ class GalleryItem extends FileSystemNucleus {
 	/* Delete myself */
 	$ret = parent::delete();
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/*
@@ -698,10 +698,10 @@ class GalleryItem extends FileSystemNucleus {
 	 */
 	list($ret, $this) = $gallery->loadNucleusById($this->getId());
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/*
@@ -710,14 +710,14 @@ class GalleryItem extends FileSystemNucleus {
 	if (isset($this->_parentId)) {
 	    list($ret, $parent) = $this->_getParent();
 	    if ($ret->isError()) {
-		return $ret;
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
 	    $childIds =& $parent->getChildIds();
 	    $childIds->removeValue($this->getId());
 	    $ret = $parent->save();
 	    if ($ret->isError()) {
-		return $ret;
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 
@@ -727,7 +727,7 @@ class GalleryItem extends FileSystemNucleus {
 	    foreach ($childIds->values() as $childId) {
 		$ret = $gallery->deleteNucleusById($childId);
 		if ($ret->isError()) {
-		    return $ret;
+		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
 
@@ -737,7 +737,7 @@ class GalleryItem extends FileSystemNucleus {
 	     */
 	    list($ret, $this) = $gallery->loadNucleusById($this->getId());
 	    if ($ret->isError()) {
-		return $ret;
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
 	    /*
@@ -751,7 +751,7 @@ class GalleryItem extends FileSystemNucleus {
 	if (!empty($thumbnailId)) {
 	    $ret = $gallery->deleteNucleusById($thumbnailId);
 	    if ($ret->isError()) {
-		return $ret;
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 

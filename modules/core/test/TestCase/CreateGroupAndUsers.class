@@ -11,20 +11,20 @@ class CreateGroupAndUsersTestCase extends TestCase {
 
 	$ret = $gallery->lockWorld();
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$group = new GalleryGroup();
 	$ret = $group->create();
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	$group->setName('Group 1');
 
 	$user1 = new GalleryUser();
 	$ret = $user1->create();
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	$user1->setFullName('User 1');
 	$user1->changePassword('password');
@@ -34,7 +34,7 @@ class CreateGroupAndUsersTestCase extends TestCase {
 	$user2 = new GalleryUser();
 	$ret = $user2->create();
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	$user2->setFullName('User 2');
 	$user2->changePassword('password');
@@ -43,45 +43,45 @@ class CreateGroupAndUsersTestCase extends TestCase {
 
 	$ret = $gallery->commitCache();
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	print "<h2>ADD USERS TO GROUP!</h2>";
 	$ret = $group->addUser($user1->getId());
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$ret = $group->addUser($user2->getId());
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$ret = $gallery->commitCache();
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	print "<h2>REMOVE!</h2>";
 	list ($ret, $user1) = $gallery->loadNucleusById($user1->getId());
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	
 	$ret = $user1->removeFromGroup($group->getId());
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$ret = $gallery->commitCache();
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	
 	/* Leggo of our locks */
 	$ret = $gallery->unlock();
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	
 	return GalleryStatus::success();

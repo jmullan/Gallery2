@@ -12,7 +12,7 @@ class CreateAdminUserTestCase extends TestCase {
 	$user = new GalleryUser();
 	$ret = $user->create();
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	$user->setPassword('admin');
 	$user->setFullName('Admin');
@@ -20,7 +20,7 @@ class CreateAdminUserTestCase extends TestCase {
 	
 	$ret = $user->save();
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	return $gallery->commitCache();

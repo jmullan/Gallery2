@@ -11,7 +11,7 @@ class CreateNestedAlbumItemTestCase extends TestCase {
 
 	$ret = $gallery->lockWorld();
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	print("Creating new root album item\n");
@@ -19,7 +19,7 @@ class CreateNestedAlbumItemTestCase extends TestCase {
 	$ret = $rootAlbum->createRoot("nestedRoot",
 				      $gallery->getActiveUserId());
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$parentId = $rootAlbum->getId();
@@ -28,12 +28,12 @@ class CreateNestedAlbumItemTestCase extends TestCase {
 	    $ret = $nested[$i]->create($parentId, "nested_$i",
 				       $gallery->getActiveUserId());
 	    if ($ret->isError()) {
-		return $ret;
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    
 	    $ret = $nested[$i]->save();
 	    if ($ret->isError()) {
-		return $ret;
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
 	    $parentId = $nested[$i]->getId();
@@ -42,13 +42,13 @@ class CreateNestedAlbumItemTestCase extends TestCase {
 	/* Commit the cache */
 	$ret = $gallery->commitCache();
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* Leggo of our locks */
 	$ret = $gallery->unlock();
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	
 	return GalleryStatus::success();

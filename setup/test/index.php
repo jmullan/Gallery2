@@ -78,7 +78,7 @@ if (!empty($HTTP_GET_VARS['testName'])) {
     ob_end_clean();
 
     if ($ret->isError()) {
-	print 'Overall Status: ' . $ret->getAsString() . '<br>';
+	print 'Overall Status: ' . $ret->getAsHtml() . '<br>';
     } else {
 	print 'Overall Status: Success<br>';
     }
@@ -132,7 +132,7 @@ function runTest($testName) {
     if ($ret1->isSuccess()) {
 	print 'Status: Success<br>';
     } else {
-	print 'Status: ' . $ret1->getAsString();
+	print 'Status: ' . $ret1->getAsHtml();
     }
 
     print '<br>';
@@ -142,7 +142,7 @@ function runTest($testName) {
     if ($ret2->isSuccess()) {
 	print 'Status: Success<br>';
     } else {
-	print 'Status: ' . $ret2->getAsString();
+	print 'Status: ' . $ret2->getAsHtml();
     }
 
     print '<hr>';

@@ -24,7 +24,7 @@
  * All of these utilities should be accessed in a static sense,
  * ie:
  *
- *   GalleryUtilities::getFileType($filename);
+ *   GalleryUtilities::getFileTag($filename);
  *
  * Try not to jam too many methods into this class.  Only put methods here if
  * they are of obvious value to the class layer and there's no other home for
@@ -44,13 +44,13 @@ class GalleryUtilities {
     /**
      * Get the type of the file from its filename
      *
-     * Eg, "foo.jpg" yields "jpg"
-     *     "foo.bar.jpeg" yields "jpeg"
+     * Eg, "foo.jpg" yields 'foo', 'jpg'
+     *     "foo.bar.jpeg" yields 'foo.bar', 'jpeg'
      *
      * @param string the filename
-     * @return string the file type
+     * @return array the file base name, the file tag
      */
-    function getFileType($filename) {
+    function getFileNameComponents($filename) {
 
 	$pos = strrpos($filename, '.');
 
@@ -66,7 +66,33 @@ class GalleryUtilities {
 	    return null;
 	}
 
-	return substr($filename, $pos);
+	return array(substr($filename, 0, $pos-1), substr($filename, $pos));
+    }
+
+    /**
+     * Return the file's tag
+     *
+     * Eg, "foo.jpg" yields "jpg"
+     *
+     * @param string the filename
+     * @return array the file tag
+     */
+    function getFileTag($filename) {
+	list ($base, $tag) = GalleryUtilities::getFileNameComponents($filename);
+	return $tag;
+    }
+
+    /**
+     * Return the file's tag
+     *
+     * Eg, "foo.jpg" yields "foo"
+     *
+     * @param string the filename
+     * @return array the file base
+     */
+    function getFileBase($filename) {
+	list ($base, $tag) = GalleryUtilities::getFileNameComponents($filename);
+	return $base;
     }
 }
 ?>

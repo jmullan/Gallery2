@@ -12,13 +12,13 @@ class CreateAlbumItemTestCase extends TestCase {
 	print("Creating new album item\n");
 	$ret = $gallery->lockWorld();
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$album = new AlbumItem();
 	$ret = $album->createRoot("test", $gallery->getActiveUserId());
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$album->setRows(3);
@@ -28,19 +28,19 @@ class CreateAlbumItemTestCase extends TestCase {
 	print("SAVE\n");
 	$ret = $album->save();
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* Commit the cache */
 	$ret = $gallery->commitCache();
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* Leggo of our locks */
 	$ret = $gallery->unlock();
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	
 	return GalleryStatus::success();

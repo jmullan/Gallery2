@@ -12,14 +12,14 @@ class CreateAnonymousUserTestCase extends TestCase {
 	$user = new GalleryUser();
 	$ret = $user->create();
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	$user->setFullName('Anonymous');
 	$user->setIsAdmin(false);
 	
 	$ret = $user->save();
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	return $gallery->commitCache();

@@ -1350,7 +1350,7 @@ class DatabaseStorage extends GalleryStorage {
 						       $this->_capabilities);
 
 	    if ($ret->isError()) {
-		return $ret;
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 
@@ -1371,14 +1371,14 @@ class DatabaseStorage extends GalleryStorage {
 
 	$ret = $this->_initDatabaseSchema();
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	
 	$this->_traceStart();
 	$ret = $this->_databaseSchema->createSchema();
 	$this->_traceStop();
 
-	return $ret;
+	return $ret->wrap(__FILE__, __LINE__);
     }
 
     /**
@@ -1394,14 +1394,14 @@ class DatabaseStorage extends GalleryStorage {
 
 	$ret = $this->_initDatabaseSchema();
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$this->_traceStart();
 	$ret = $this->_databaseSchema->updateSchema();
 	$this->_traceStop();
 
-	return $ret;
+	return $ret->wrap(__FILE__, __LINE__);
     }
 
     /**
@@ -1421,14 +1421,14 @@ class DatabaseStorage extends GalleryStorage {
 
 	$ret = $this->_initDatabaseSchema();
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$this->_traceStart();
 	$ret = $this->_databaseSchema->createDatabase($this->_database);
 	$this->_traceStop();
 
-	return $ret;
+	return $ret->wrap(__FILE__, __LINE__);
     }
 
     /**
@@ -1450,14 +1450,14 @@ class DatabaseStorage extends GalleryStorage {
 
 	$ret = $this->_initDatabaseSchema();
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$this->_traceStart();
 	$ret = $this->_databaseSchema->dropDatabase($this->_database);
 	$this->_traceStop();
 
-	return $ret;
+	return $ret->wrap(__FILE__, __LINE__);
     }
 	
     /**

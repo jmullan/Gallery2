@@ -61,12 +61,12 @@ class GalleryLock {
 	global $gallery;
 	list($ret, $storage) = $gallery->getStorage();
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$ret = $storage->acquireLock($timeout);
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$this->_isLockAcquired = true;
@@ -108,12 +108,12 @@ class GalleryLock {
 
 	list($ret, $storage) = $gallery->getStorage();
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$ret = $storage->releaseLock();
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$this->_isLockAcquired = null;

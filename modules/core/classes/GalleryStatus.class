@@ -247,8 +247,8 @@ class GalleryStatus {
 
     function GalleryStatus($errorCode, $fileName=null, $lineNumber=null) {
 	$this->_errorCode = $errorCode;
-	$this->_fileName = $fileName;
-	$this->_lineNumber = $lineNumber;
+	$this->_fileName = array($fileName);
+	$this->_lineNumber = array($lineNumber);
     }
 
     /**
@@ -284,7 +284,7 @@ class GalleryStatus {
      * @return string 
      */
     function getFileName() {
-	return $this->_fileName;
+	return $this->_fileName[0];
     }
 
     /**
@@ -293,7 +293,7 @@ class GalleryStatus {
      * @return int 
      */
     function getLineNumber() {
-	return $this->_lineNumber;
+	return $this->_lineNumber[0];
     }
 
     /**
@@ -315,6 +315,25 @@ class GalleryStatus {
     }
 
     /**
+     * Add a new file name and line number to our stack trace
+     *
+     * Don't add the value, unless it's an error.  As a debug measure, whine if
+     * somebody tries to add a trace to a success code, because the success
+     * code is supposed to be a singleton.
+     *
+     * @param string a file name
+     * @param int a line number
+     */
+    function wrap($fileName, $lineNumber) {
+	if (!empty($this->_errorCode)) {
+	    array_push($this->_fileName, $fileName);
+	    array_push($this->_lineNumber, $lineNumber);
+	}
+
+	return $this;
+    }
+
+    /**
      * Is this an error?
      *
      * @return boolean  
@@ -333,14 +352,36 @@ class GalleryStatus {
     }
 
     /**
-     * Get the string representation(s) of an error.
+     * Return the error as an HTML string 
      *
-     * An error is a set of bitflags, so we return an array of strings.
-     * @param int the error code
-     * @return array string names of the errors
+     * @return string 
      */
-    function getAsString() {
+    function getAsHtml() {
+	$data = $this->_getAsArray();
+	$buf = array_shift($data);
+	if (count($data)) {
+	    $buf .= '<ul><li>' . join('<li>', $data) . '</ul>';
+	}
 
+	return $buf;
+    }
+
+    /**
+     * Return the error as a plain text string delimited by newlines
+     *
+     * @return string 
+     */
+    function getAsText() {
+	$data = $this->_getAsArray();
+	return join("\n\t", $data);
+    }
+
+    /**
+     * Internal function turn error code and stack trace into text
+     *
+     * @return string
+     */
+    function _getAsArray() {
 	$codes = array();
 	foreach (get_defined_constants() as $constantName => $constantValue) {
 	    if (strpos($constantName, 'ERROR_') === 0) {
@@ -350,10 +391,18 @@ class GalleryStatus {
 	    }
 	}
 
-	$buf = 'Error (' . join(', ', $codes) . ')' .
-		 ' in ' . basename($this->_fileName) .
-		 ' at line ' . $this->_lineNumber;
-	return $buf;
+	$results = array();
+	$results[] = 'Error (' . join(', ', $codes) . ')';
+	
+	$base = dirname(dirname(dirname(__FILE__))) . '/';
+	for ($i = 0; $i < count($this->_fileName); $i++) {
+	    $results[] = 'in ' .
+		    str_replace($base, '', $this->_fileName[$i])  .
+		    ' at line ' .
+		    $this->_lineNumber[$i];
+	}
+
+	return $results;
     }
 }
 ?>

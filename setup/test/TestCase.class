@@ -19,7 +19,7 @@ class TestCase {
 	$ret = $this->testStart();
 	$this->traceStop();
 
-	return $ret;
+	return $ret->wrap(__FILE__, __LINE__);
     }
 
     function getDependencies() {
@@ -39,7 +39,7 @@ class TestCase {
 	/* Release any locks the tests left hanging */
 	$gallery->unlock();
 	
-	return $ret;
+	return $ret->wrap(__FILE__, __LINE__);
     }
 
     function testCleanup() {
@@ -57,11 +57,6 @@ class TestCase {
 	foreach (split("\r", $buf) as $line) {
 	    $this->_debugOutput[] = $line;
 	}
-    }
-
-    function error($status) {
-	global $gallery;
-	print 'Error: ' . $status->getAsString();
     }
 
     function dump($ret, $item) {

@@ -270,7 +270,7 @@ class NetPbmGraphics extends GalleryGraphics {
 	/* Figure out our convert-to-pnm command */
 	list($ret, $convertToPnmCmd) = $this->_convertToPnmCmd($sourceFilename);
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* Get a temp file name and figure out our convert-from-pnm command */
@@ -282,11 +282,11 @@ class NetPbmGraphics extends GalleryGraphics {
 					__FILE__, __LINE__);
 	}
 
-	$fileType = GalleryUtilities::getFileType($sourceFilename);
+	$fileType = GalleryUtilities::getFileTag($sourceFilename);
 	list($ret, $convertFromPnmCmd) =
 		$this->_convertFromPnmCmd($tmpFilename, $fileType);
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* Do the conversion */
@@ -295,12 +295,12 @@ class NetPbmGraphics extends GalleryGraphics {
 				   $command,
 				   $convertFromPnmCmd));
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	list($ret, $platform) = $gallery->getPlatform();
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$success = $platform->rename($tmpFilename, $destFilename);
@@ -321,7 +321,7 @@ class NetPbmGraphics extends GalleryGraphics {
      */
     function _convertToPnmCmd($filename) {
 
-	$fileType = GalleryUtilities::getFileType($filename);
+	$fileType = GalleryUtilities::getFileTag($filename);
 	switch($fileType) {
 	case 'png':
 	    $cmd = $this->_pnmCmd('pngtopnm');
@@ -398,7 +398,7 @@ class NetPbmGraphics extends GalleryGraphics {
 	global $gallery;
 	list($ret, $platform) = $gallery->getPlatform();
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	return $this->_netPbmPath . '/' . $cmd;

@@ -312,7 +312,7 @@ class GalleryPlatform {
 	    }
 	    
 	    if ($ret == false) {
-		return $ret;
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 	closedir($fd);

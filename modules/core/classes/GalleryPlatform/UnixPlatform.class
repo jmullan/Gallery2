@@ -101,7 +101,7 @@ class UnixPlatform extends GalleryPlatform {
 	    $gallery->debug("Error Output:");
 	    list($ret, $platform) = $gallery->getPlatform();
 	    if ($ret->isError()) {
-		return $ret;
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
 	    if ($platform->file_exists($debugFile)) {

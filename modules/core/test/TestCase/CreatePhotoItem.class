@@ -13,7 +13,7 @@ class CreatePhotoItemTestCase extends TestCase {
 	/* Lock the world */
 	$ret = $gallery->lockWorld();
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	print("Creating new photo item\n");
@@ -22,7 +22,7 @@ class CreatePhotoItemTestCase extends TestCase {
 			      'itemPath_' . time(),
 			      $gallery->getActiveUserId());
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	
 	/* Put an ImageContainer in our PhotoItem */
@@ -30,7 +30,7 @@ class CreatePhotoItemTestCase extends TestCase {
 	$imagePath = dirname(dirname(__FILE__)) . '/data/test1.gif';
 	$ret = $image->createFromFile($photo->getId(), $imagePath);
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/*
@@ -53,13 +53,13 @@ class CreatePhotoItemTestCase extends TestCase {
 	$thumbnail = new ImageContainer();
 	$ret = $thumbnail->createDerivative($photo->getId());
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* Make it a derivative from the source image */
 	$ret = $thumbnail->deriveFrom($image->getId(), "scale 200");
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/*
@@ -84,13 +84,13 @@ class CreatePhotoItemTestCase extends TestCase {
 	/* Commit the cache */
 	$ret = $gallery->commitCache();
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* Release our lock */
 	$ret = $gallery->unlock();
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/*
@@ -99,7 +99,7 @@ class CreatePhotoItemTestCase extends TestCase {
 	 */
 	list ($ret, $bool) = $thumbnail->isCacheCurrent();
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	
 	if ($bool) {
@@ -110,7 +110,7 @@ class CreatePhotoItemTestCase extends TestCase {
 	    /* Rebuild the cache */
 	    $ret = $thumbnail->rebuildCache();
 	    if ($ret->isError()) {
-		return $ret;
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 

@@ -179,7 +179,7 @@ class GalleryUser extends GalleryNucleus {
 
 	list($ret, $group) = $gallery->loadNucleusById($groupId);
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	
 	$groups =& $this->getGroups();
@@ -190,7 +190,7 @@ class GalleryUser extends GalleryNucleus {
 
 	$ret = $group->save();
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	return $this->save();
@@ -211,7 +211,7 @@ class GalleryUser extends GalleryNucleus {
 
 	list($ret, $group) = $gallery->loadNucleusById($groupId);
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	
 	$groups =& $this->getGroups();
@@ -222,7 +222,7 @@ class GalleryUser extends GalleryNucleus {
 
 	$ret = $group->save();
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	return $this->save();

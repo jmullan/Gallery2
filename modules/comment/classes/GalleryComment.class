@@ -132,12 +132,12 @@ class GalleryComment extends GalleryNucleus {
 
 	$ret = parent::create($parentId);
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	list($ret, $parent) = $gallery->loadNucleusById($parentId);
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$comments =& $parent->getCommentIds();

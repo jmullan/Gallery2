@@ -15,7 +15,7 @@ class EmptyGalleryTestCase extends TestCase {
 
 	list($ret, $platform) = $gallery->getPlatform();
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	foreach (array($gallery->getConfig('core.directory.albums'),

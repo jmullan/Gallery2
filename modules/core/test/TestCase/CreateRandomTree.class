@@ -19,26 +19,26 @@ class CreateRandomTreeTestCase extends TestCase {
 
 	$ret = $gallery->lockWorld();
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	while ($this->_itemCount < $this->_maxItems) {
 	    $ret = $this->_createRandomAlbum($rootId);
 	    if ($ret->isError()) {
-		return $ret;
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 
 	/* Commit the cache */
 	$ret = $gallery->commitCache();
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* Leggo of our locks */
 	$ret = $gallery->unlock();
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	return GalleryStatus::success();
@@ -63,7 +63,7 @@ class CreateRandomTreeTestCase extends TestCase {
 			      $this->_randomName(),
 			      $gallery->getActiveUserId());
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	$this->_itemCount++;
 	if ($this->_itemCount >= $this->_maxItems) {
@@ -83,7 +83,7 @@ class CreateRandomTreeTestCase extends TestCase {
 				      $this->_randomName(),
 				      $gallery->getActiveUserId());
 	    if ($ret->isError()) {
-		return $ret;
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    $this->_itemCount++;
 	    if ($this->_itemCount >= $this->_maxItems) {
@@ -96,7 +96,7 @@ class CreateRandomTreeTestCase extends TestCase {
 					      $this->_imagePath,
 					      $this->_randomName());
 	    if ($ret->isError()) {
-		return $ret;
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    $this->_itemCount++;
 	    if ($this->_itemCount >= $this->_maxItems) {
@@ -110,12 +110,12 @@ class CreateRandomTreeTestCase extends TestCase {
 	    $thumbnail[$i] = new ImageContainer();
 	    $ret = $thumbnail[$i]->createDerivative($photo[$i]->getId());
 	    if ($ret->isError()) {
-		return $ret;
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    $ret = $thumbnail[$i]->deriveFrom($image[$i]->getId(),
 					  "scale 200");
 	    if ($ret->isError()) {
-		return $ret;
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
 	    /* Set the image as the photo's thumbnail */
@@ -133,14 +133,14 @@ class CreateRandomTreeTestCase extends TestCase {
 		$resize[$i][$j] = new ImageContainer();
 		$ret = $resize[$i][$j]->createDerivative($photo[$i]->getId());
 		if ($ret->isError()) {
-		    return $ret;
+		    return $ret->wrap(__FILE__, __LINE__);
 		}
 
 		$scale = rand(300, 600);
 		$ret = $resize[$i][$j]->deriveFrom($image[$i]->getId(),
 						   "scale $scale");
 		if ($ret->isError()) {
-		    return $ret;
+		    return $ret->wrap(__FILE__, __LINE__);
 		}
 
 		/* Add this image to the photo's resize id list */
@@ -157,7 +157,7 @@ class CreateRandomTreeTestCase extends TestCase {
 	/* Commit the cache */
 	$ret = $gallery->commitCache();
 	if ($ret->isError()) {
-	    return $ret;
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* Create 0-2 sub-albums */
@@ -166,7 +166,7 @@ class CreateRandomTreeTestCase extends TestCase {
 	for ($i = 0; $i < $rand3; $i++) {
 	    $ret = $this->_createRandomAlbum($album->getId());
 	    if ($ret->isError()) {
-		return $ret;
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 
