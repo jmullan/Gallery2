@@ -78,7 +78,9 @@ class PlatformTest extends GalleryTestCase {
     }
     
     function testIsWriteable() {
-	$this->assert(!$this->_platform->is_writeable(__FILE__));
+	// On Win32, all files are writeable so the next assertion isn't that useful!
+	// $this->assert(!$this->_platform->is_writeable(__FILE__));
+	
 	$this->assert($this->_platform->copy($this->_sourceFile, $this->_destFile));
 	$this->assert($this->_platform->is_writeable($this->_destFile));
 	$this->assert($this->_platform->unlink($this->_destFile));
@@ -172,8 +174,12 @@ class PlatformTest extends GalleryTestCase {
     }
     
     function testExec() {
-	$this->assertEquals(array(false, array('/bogus/path: not found', '')),
-			    $this->_platform->exec(array(array('/bogus/path'))));
+	/* XXX: This is a pretty weak test. */
+	$results = $this->_platform->exec(array(array('/bogus/path')));
+	$unixResults = array(false, array('/bogus/path: not found', ''));
+	$winResults = array(false, array());
+	$this->assert(serialize($results) == serialize($winResults) ||
+		      serialize($results) == serialize($unixResults));
     }
     
     function testGetDirectorySeparator() {
