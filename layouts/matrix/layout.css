@@ -6,45 +6,45 @@
 
 */
 
-/*      GALLERY
-        Category 1: Gallery                             
-        declare where to put Gallery Module           
+/*	  GALLERY
+		Category 1: Gallery							 
+		declare where to put Gallery Module		   
 */
 
-/*      main container - ignore in stand-alone install  */
+/*	  main container - ignore in stand-alone install  */
 #gallery { }
 
+div { margin: 0; padding: 0; }
 
-/*      SECTIONS
-        Category 2: section definitions               
-        declare relative or absolute section positions
+
+/*	  SECTIONS
+		Category 2: section definitions			   
+		declare relative or absolute section positions
 */
 
 #gsHeader { 
 	display: block; 
 	width: 90%;
-	margin: 0; 
-	padding: 0;
 }
 
 #gsSidebar {
+	position: absolute;
 	float: left;
+	clear: none;
 	width: 156px;
-	margin: 0;
-	padding: 0;
 }
 
 #gsContents {
-        width: auto;
-        margin: 0 0 0 0;
+		width: auto;
+		margin: 0 0 0 0;
 }
 
 #gsContents:after {
-    content: "."; 
-    display: block; 
-    height: 0; 
-    clear: both; 
-    visibility: hidden;
+	content: "."; 
+	display: block; 
+	height: 0; 
+	clear: both; 
+	visibility: hidden;
 }
 
 /* Hides from IE-mac \*/
@@ -52,66 +52,65 @@
 /* End hide from IE-mac */
 
 #gsComments { 
-        clear: both;
+	clear: both;
 	padding: 8px;
 }
 
-/*      status message display section  */
+/*	  status message display section  */
 #gsStatus {
 	padding: 4px;
 	margin: 4px 0;
- }
+}
 
 
-/*      gsXxxxContents - elements are the main 'holder' for the page. */
+/*	  gsXxxxContents - elements are the main 'holder' for the page. */
 
 #gsAlbumContents {
 	float: none;
 	width: auto;
 	/* min-width: 596px;  non ie */
 	margin: 0 0 0 157px;
-	padding: 0;
 }
 
 #gsSearchContents { }
 
 #gsItemImages {
 	display: block;
-	clear: all;
+	clear: both;
 }
 
 #gsAlbumImages {
 	display: block;
-	clear: all;
+	clear: both;
 }
 
-/*      BOXES
-        Category 3: box definitions
-        declare relative position of boxes inside main sections
-        Declare relative pos. in relation to containing section
+/*	  BOXES
+		Category 3: box definitions
+		declare relative position of boxes inside main sections
+		Declare relative pos. in relation to containing section
 */
 
-/*      global  */
+/*	  global  */
 
 .gbDataEntry { margin: 6 0px; }
 
-/*      first and default module settings */
+/*	  first and default module settings */
 .gbMenu { 
 	margin: 16px 0 8px 8px;
 	padding: 0 0 16px 0;
 }
 
-/*      subsequent menu modules can have different settings */
+/*	  subsequent menu modules can have different settings */
 .gbMenu + .gbMenu { 
 	margin-top: 0;
 }
 
 .gbMenu:after {
-    content: "."; 
-    display: block; 
-    height: 0; 
-    clear: both; 
-    visibility: hidden;
+	content: "."; 
+	display: block; 
+	height: 0; 
+	clear: both; 
+	visibility: hidden;
 }
 
 #gsSidebar .giThumbImage { margin: 4px 0; }
@@ -121,17 +120,17 @@
 /* End hide from IE-mac */
 
 /*
-        spacers neeed for expanding layouts -   we should be able to delete this soon :)
+		spacers neeed for expanding layouts -   we should be able to delete this soon :)
 
 */
 .guSpacer, .gpSpacer, .gsSpacer, .gbSpacer, .giSpacer { clear: both; }
 
-/*      #gsHeader       */
+/*	  #gsHeader	   */
 
 #gsHeader .gbTitleBanner { padding: 6px 0; }
 
 .gbBreadCrumb { 
-        margin: 0;
+	margin: 0;
 	padding: 16px 8px; 
 }
 .gbBreadCrumb li { 
@@ -145,7 +144,7 @@
 	margin: 0 0 0 156px;
 }
 
-/*      #gsAlbumContents        */
+/*	  #gsAlbumContents		*/
 
 #gsAlbumContents .gbTitleBanner {
 	float: left;
@@ -153,16 +152,14 @@
 	padding: 8px;
 }
 
-#gsAlbumContents .gbItemAlbum {
-	margin: 4px 0;
-}
+#gsAlbumContents .gbItemAlbum { margin: 4px 0; }
 
 .gbItemAlbum:after {
-    content: "."; 
-    display: block; 
-    height: 0; 
-    clear: both; 
-    visibility: hidden;
+	content: "."; 
+	display: block; 
+	height: 0; 
+	clear: both; 
+	visibility: hidden;
 }
 
 /* Hides from IE-mac \*/
@@ -188,16 +185,14 @@
 #gsAlbumContents .gbBottomFlag { 
 	display: block; 
 	clear: both;
-	padding: 0;
-	margin: 0;
 }
 
 .gbTopFlag:after, .gbBottomFlag:after {
-    content: "."; 
-    display: block; 
-    height: 0; 
-    clear: both; 
-    visibility: hidden;
+	content: "."; 
+	display: block; 
+	height: 0; 
+	clear: both; 
+	visibility: hidden;
 }
 
 /* Hides from IE-mac \*/
@@ -206,8 +201,6 @@
 
 #gsAlbumContents .giHorizontalLinks { 
 	float: right;
-	margin: 0;
-	padding: 0;
 }
 #gsAlbumContents .giHorizontalLinks li { 
 	display: inline;
@@ -216,25 +209,25 @@
  }
 #gsAlbumContents .giHorizontalLinks a { text-decoration: none; }
 
-/*      #gsCommentBox   */
+/*	  #gsCommentBox   */
 
 #gsComments .gbComment { 
 	padding: 8px 0 16px 0;
 }
 
-/*      gsSidebar       */
+/*	  gsSidebar	   */
 
 /* a default for any unknown div in #gsSideBar */
 #gsSidebar div { }
 
 
-/*      gsComments       */
+/*	  gsComments	   */
 
 #gsComments .gbComment div.giHorizontalLinks {
 	float: none;
 }
 
-/*      #gsSearchContents       */
+/*	  #gsSearchContents	   */
 
 /* The title banner is the light grey 'search' at the very top */
 #gsSearchContents .gbTitleBanner { }
