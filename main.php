@@ -25,62 +25,70 @@ if (!file_exists(dirname(__FILE__) . '/config.php') ||
     return;
 }
 
-/* Go! */
-list($ret, $g2Data) = GalleryMain( defined('G2_EMBED_URI') );
+if (!defined('G2_EMBED')) {
 
-/* Save our session */
-if ($ret->isSuccess()) {
-    /* Write out our session data */
-    $session =& $gallery->getSession();
-    $ret = $session->save();
-}
-
-/* Complete our transaction */
-if ($ret->isSuccess()) {
-    $storage =& $gallery->getStorage();
-    $ret = $storage->commitTransaction();
-    // Fall through to error handling below..
-}
-
-/*
- * If we get an at this level, we can't rely on smarty so all we can do is dump
- * the error out to the browser.
- */
-if ($ret->isError()) {
-    $ret = $ret->wrap(__FILE__, __LINE__);
-    print $ret->getAsHtml();
-
-    if ($gallery->getDebug() == 'buffered') {
-	print '<pre>';
-	print $gallery->getDebugBuffer();
-	print '</pre>';
-    }
-    $g2Data['isDone'] = true;
-
-    /* Nuke our transaction, too */
-    $storage =& $gallery->getStorage();
-    if (isset($storage)) {
-	$storage->rollbackTransaction();
-    }
-    return;
-}
-
-function GalleryMain($returnHtml=false) {
     /* Initialize Gallery */
     require_once(dirname(__FILE__) . '/init.php');
     $ret = GalleryInitFirstPass();
     if ($ret->isError()) {
-	return array($ret->wrap(__FILE__, __LINE__), null);
+	$ret = $ret->wrap(__FILE__, __LINE__);
+	print $ret->getAsHtml();
+	return;
+    }
+
+    /* Process the request */
+    GalleryMain();
+}
+
+function GalleryMain($returnHtml=false) {
+    global $gallery;
+
+    /* Go! */
+    list($ret, $g2Data) = _GalleryMain($returnHtml);
+
+    /* Save our session */
+    if ($ret->isSuccess()) {
+	/* Write out our session data */
+	$session =& $gallery->getSession();
+	$ret = $session->save();
+    }
+
+    /* Complete our transaction */
+    if ($ret->isSuccess()) {
+	$storage =& $gallery->getStorage();
+	$ret = $storage->commitTransaction();
     }
 
     /*
-     * Get the global gallery object.  We can't just declare "global $gallery"
-     * at the top of this function because the variable isn't defined until we
-     * call GalleryInitFirstPass()
-     *
+     * If we get an at this level, we can't rely on smarty so all we can do is dump
+     * the error out to the browser.
+     */
+    if ($ret->isError()) {
+	$ret = $ret->wrap(__FILE__, __LINE__);
+	print $ret->getAsHtml();
+
+	if ($gallery->getDebug() == 'buffered') {
+	    print '<pre>';
+	    print $gallery->getDebugBuffer();
+	    print '</pre>';
+	}
+	$g2Data['isDone'] = true;
+
+	/* Nuke our transaction, too */
+	$storage =& $gallery->getStorage();
+	if (isset($storage)) {
+	    $storage->rollbackTransaction();
+	}
+    }
+
+    return $g2Data;
+}
+
+function _GalleryMain($returnHtml=false) {
+    /**
      * @global Gallery $gallery
      */
-    $gallery =& $GLOBALS['gallery'];
+    global $gallery;
     
     /* Let our url generator process the query string */
     $urlGenerator = $gallery->getUrlGenerator();
