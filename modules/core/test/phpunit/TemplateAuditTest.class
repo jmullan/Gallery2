@@ -35,11 +35,10 @@ GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryTemplate.class'
  * @subpackage PHPUnit
  *
  */
-class TemplateAudit extends CodeAuditTestCase {
+class TemplateAuditTest extends CodeAuditTestCase {
 
-    function TemplateAudit($methodName) {
+    function TemplateAuditTest($methodName) {
 	$this->CodeAuditTestCase($methodName);
-
 
 	$this->_revisionPattern = ' \* \$Revision(:.+)?\$';
 	$lines[] = '\{\*';
