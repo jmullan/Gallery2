@@ -50,6 +50,12 @@ class ShowItemView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	/* Make sure we have permission do edit this item */
+	$ret = GalleryUserHelper::assertHasItemPermission($item->getId(), 'core.view');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	/* Update the view count */
 	$ret = $item->incrementViewCount();
 	if ($ret->isError()) {

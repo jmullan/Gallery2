@@ -1,27 +1,25 @@
 
     -- This file was automatically generated from an XSL template, which is
-    -- why it looks so ugly.  Editing it by hand would be a bad idea.  If 
-    -- you want to do something productive, fix the style sheet so that it
-    -- formats the SQL attractively.
+    -- why it looks so ugly.  Editing it by hand would be a bad idea.
     --
 
-    CREATE TABLE TABLE_PREFIXGalleryAlbumItem (
-  COLUMN_PREFIXid
+    CREATE TABLE DB_TABLE_PREFIXGalleryAlbumItem (
+  DB_COLUMN_PREFIXid
       int(11)
     
     NOT NULL
   
     , 
   
-    INDEX (COLUMN_PREFIXid)
+    INDEX (DB_COLUMN_PREFIXid)
     
 
-    ) TYPE=MyISAM;
+    ) TYPE=DB_TABLE_TYPE;
 
-    INSERT INTO TABLE_PREFIXSchema (
-      COLUMN_PREFIXname,
-      COLUMN_PREFIXmajor,
-      COLUMN_PREFIXminor
+    INSERT INTO DB_TABLE_PREFIXSchema (
+      DB_COLUMN_PREFIXname,
+      DB_COLUMN_PREFIXmajor,
+      DB_COLUMN_PREFIXminor
       ) VALUES (
       'GalleryAlbumItem',
       1,

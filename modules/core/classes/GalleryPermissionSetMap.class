@@ -1,0 +1,413 @@
+<?php
+/*
+ * $RCSfile
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+/**
+ * All Access
+ *
+ * @constant GALLERY_PERMISSION_ALL_ACCESS
+ */
+define('GALLERY_PERMISSION_ALL_ACCESS', 0x00000001);
+
+/**
+ * This permission is a composite of other permissions
+ *
+ * @constant GALLERY_PERMISSION_COMPOSITE
+ */
+define('GALLERY_PERMISSION_COMPOSITE',  0x00000002);
+
+/**
+ * This permission is for item administration
+ *
+ * @constant GALLERY_PERMISSION_ITEM_ADMIN
+ */
+define('GALLERY_PERMISSION_ITEM_ADMIN', 0x00000004);
+
+
+/**
+ * The central registry for all permissions in the system
+ *
+ * @g2 <class-name>GalleryPermissionSetMap</class-name>
+ * @g2 <schema>
+ * @g2   <schema-major>1</schema-major>
+ * @g2   <schema-minor>0</schema-minor>
+ * @g2 </schema>
+ *
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+class GalleryPermissionSetMap_core {
+
+    /**
+     * @g2 <map>
+     * @g2   <member>
+     * @g2     <member-name>module</member-name>
+     * @g2     <member-type>STRING</member-type>
+     * @g2     <member-size>MEDIUM</member-size>
+     * @g2   </member>
+     * @g2   <member>
+     * @g2     <member-name>permission</member-name>
+     * @g2     <member-type>STRING</member-type>
+     * @g2     <member-size>MEDIUM</member-size>
+     * @g2     <unique/>
+     * @g2   </member>
+     * @g2   <member>
+     * @g2     <member-name>description</member-name>
+     * @g2     <member-type>STRING</member-type>
+     * @g2     <member-size>LARGE</member-size>
+     * @g2   </member>
+     * @g2   <member>
+     * @g2     <member-name>bits</member-name>
+     * @g2     <member-type>INTEGER</member-type>
+     * @g2     <member-size>LARGE</member-size>
+     * @g2   </member>
+     * @g2   <member>
+     * @g2     <member-name>flags</member-name>
+     * @g2     <member-type>INTEGER</member-type>
+     * @g2     <member-size>LARGE</member-size>
+     * @g2   </member>
+     * @g2 </map>
+     */
+    
+    /**
+     * Register a new permission
+     *
+     * @param string the id of the module
+     * @param string the id of the permission
+     * @param string the non-localized description of the permission
+     * @param int flags (of the GALLERY_PERMISSION_XXX variety)
+     * @param array ids of other permissions that compose this one
+     * @return object GalleryStatus a status code
+     */
+    function registerPermission($module, $permissionId, $description, $flags=0, $composites=array()) {
+	global $gallery;
+
+	if (empty($module) || empty($permissionId) || empty($description)) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	}
+
+	list ($ret, $permissionTable) = GalleryPermissionSetMap::_fetchAllPermissions();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	if (isset($permissionTable[$permissionId])) {
+	    $gallery->debug('Duplicate permission id: ' . $permissionId);
+	    return GalleryStatus::error(ERROR_COLLISION, __FILE__, __LINE__);
+	}
+
+	if ($flags & GALLERY_PERMISSION_ALL_ACCESS) {
+	    /*
+	     * This is a special case where we want to grant all possible
+	     * permissions.  Convert it to a composite with all bits lit.
+	     */
+	    $bits = 0x7FFFFFFF;
+	    $flags |= GALLERY_PERMISSION_COMPOSITE;
+	} else if ($flags & GALLERY_PERMISSION_COMPOSITE) {
+	    if (empty($composites)) {
+		$gallery->debug("Permission $permissionId is marked as a composite, but didn't specify any composites!");
+		return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    }
+
+	    /* Convert our composites to their associated values */
+	    list ($ret, $bits) = GalleryPermissionSetMap::convertIdsToBits($composites);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	} else {
+	    list ($ret, $bits) = GalleryPermissionSetMap::_newPermissionBit();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	/* Add a new entry in our map to represent this relationship. */
+	$ret = GalleryPermissionSetMap::_setPermission(array('module' => $module,
+							     'permission' => $permissionId,
+							     'description' => $description,
+							     'flags' => $flags,
+							     'bits' => $bits));
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Get all the permission ids that match the specified flags
+     * This will return any permissions that contain *all* the bits from flags.
+     *
+     * @param int flags
+     * @return array object GalleryStatus a status code
+     *               array (id => description, id => description, ...)
+     */
+    function getPermissionIds($flags=0) {
+	global $gallery;
+	list ($ret, $allPermissions) = GalleryPermissionSetMap::_fetchAllPermissions();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	list ($ret, $translator) = $gallery->getTranslator();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/*
+	 * Remember that the permission description stored in the database
+	 * is an internationalized value that must be localized before it
+	 * can be returned.
+	 */
+	$results = array();
+	foreach ($allPermissions as $id => $permission) {
+	    if (($permission['flags'] & $flags) == $flags) {
+		list ($ret, $description) =
+		    $translator->translate('modules_' . $permission['module'],
+					   $gallery->getConfig('code.gallery.modules') . $permission['module'],
+					   array('text' => $permission['description']));
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		
+		$results[$id] = $description;
+	    }
+	}
+
+	return array(GalleryStatus::success(), $results);
+    }
+
+    /**
+     * Return the permission bits for a set of permission ids
+     *
+     * @return array object GalleryStatus a status code
+     *               integer bits
+     */
+    function convertIdsToBits($permissionIds) {
+	global $gallery;
+	list ($ret, $allPermissions) = GalleryPermissionSetMap::_fetchAllPermissions();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if (!is_array($permissionIds)) {
+	    $permissionIds = array($permissionIds);
+	}
+
+	$results = 0;
+	foreach ($permissionIds as $id) {
+	    if (!isset($allPermissions[$id])) {
+		$gallery->debug("Unknown permission id: $id");
+		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__));
+	    }
+	    $results |= $allPermissions[$id]['bits'];
+	}
+
+	return array(GalleryStatus::success(), $results);
+    }
+
+    /**
+     * Return all the permission ids for a permission bit set
+     *
+     * @return array object GalleryStatus a status code
+     *               array (bits, bits, bits)
+     */
+    function convertBitsToIds($permissionBits) {
+	global $gallery;
+
+	if (empty($permissionBits)) {
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	}
+	
+	list ($ret, $allPermissions) = GalleryPermissionSetMap::_fetchAllPermissions();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$results = array();
+
+	/* Make sure we've got an integer */
+	$permissionBits = (int)$permissionBits;
+
+	/*
+	 * We want to return the least number of permissions, so first process
+	 * all composites, then process all individual permissions.  Remove the
+	 * bits we've processed as we go.
+	 */
+	foreach ($allPermissions as $id => $permission) {
+	    if (($permission['flags'] & GALLERY_PERMISSION_COMPOSITE) > 0) {
+		if (($permission['bits'] & $permissionBits) == $permission['bits']) {
+		    $results[] = array('id' => $id,
+				       'module' => $permission['module'],
+				       'description' => $permission['description']);
+		    $permissionBits &= ~$permission['bits']; 
+		    if ($permissionBits == 0) {
+			break;
+		    }
+		}
+	    }
+	}
+
+	if ($permissionBits > 0) {
+	    foreach ($allPermissions as $id => $permission) {
+		if (($permission['flags'] & GALLERY_PERMISSION_COMPOSITE) == 0) {
+		    if (($permission['bits'] & $permissionBits) == $permission['bits']) {
+			$results[] = array('id' => $id,
+					   'module' => $permission['module'],
+					   'description' => $permission['description']);
+			$permissionBits &= ~$permission['bits'];
+			if ($permissionBits == 0) {
+			    break;
+			}
+		    }
+		}
+	    }
+	}
+
+	/*
+	 * We might have a left over value in $permissionBits here if it
+	 * contains some bits used by permissions that are no longer in the
+	 * system.  That shouldn't happen if modules clean up after themselves
+	 * properly.
+	 */
+	return array(GalleryStatus::success(), $results);
+    }
+    
+    /**
+     * Return an unused permission bit that we can use for our purposes
+     *
+     * @return array object GalleryStatus a status code
+     *               int location of a bit (1, 2, 3, etc)
+     */
+    function _newPermissionBit() {
+	list ($ret, $allPermissions) = GalleryPermissionSetMap::_fetchAllPermissions();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$bitSet = 0;
+	foreach ($allPermissions as $permission) {
+	    /*
+	     * Should we exclude composites from the scan?  We have to exclude
+	     * the "all access" composite, since that covers all the bits.  
+	     * If we exclude composites then we may run afoul of a problem
+	     * where a permission bit is removed but it's still part of a
+	     * different permission's composite.  
+	     */
+	    if ($permission['flags'] & GALLERY_PERMISSION_ALL_ACCESS) {
+		continue;
+	    }
+		
+	    $bitSet |= $permission['bits'];
+	}
+
+	/*
+	 * Bitset now has all the bits that we're using.  Scan it for an
+	 * available bit.
+	 */
+	$newBit = 0;
+	for ($i = 0; $i < 31; $i++) {
+	    $bit = 1 << $i;
+	    if (!($bitSet & $bit)) {
+		$newBit = $bit;
+		break;
+	    }
+	}
+
+	if ($newBit == 0) {
+	    return array(GalleryStatus::error(ERROR_OUT_OF_SPACE, __FILE__, __LINE__), null);
+	}
+
+	return array(GalleryStatus::success(), $newBit);
+    }
+
+    /**
+     * Return a list of permissions for the given item id
+     *
+     * @return array object GalleryStatus a status code
+     *               array ('permission' => array('module' => ...,
+     *                                            'permission' => ...,
+     *                                            'description' => ...,
+     *                                            'bits' => ...,
+     *                                            'flags' => ...)
+     *                      ...)
+     * @access private
+     */
+    function _fetchAllPermissions() {
+	global $gallery;
+
+	$cacheKey = 'GalleryPermissionSetMap::_allPermissions';
+	if (!GalleryDataCache::containsKey($cacheKey)) {
+	    $permissions = array();
+	    list($ret, $searchResults) =
+		$gallery->search(array('select' => ('[GalleryPermissionSetMap::module], ' .
+						    '[GalleryPermissionSetMap::permission], ' .
+						    '[GalleryPermissionSetMap::description], ' .
+						    '[GalleryPermissionSetMap::bits], ' .
+						    '[GalleryPermissionSetMap::flags]')));
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    while ($result = $searchResults->nextResult()) {
+		$permissions[$result[1]] = array('module' => $result[0],
+						 'permission' => $result[1],
+						 'description' => $result[2],
+						 'bits' => (int)$result[3],
+						 'flags' => (int)$result[4]);
+	    }
+	    GalleryDataCache::put($cacheKey, $permissions);
+	} else {
+	    $permissions = GalleryDataCache::get($cacheKey);
+	}
+	return array(GalleryStatus::success(), $permissions);
+    }
+
+    /**
+     * Add a permission to the database and to our permission cache.
+     *
+     * @param array the specific permission data
+     * @return object GalleryStatus a status code
+     */
+    function _setPermission($data) {
+	$cacheKey = 'GalleryPermissionSetMap::_allPermissions';
+	if (GalleryDataCache::containsKey($cacheKey)) {
+	    $permissions = GalleryDataCache::get($cacheKey);
+	} else {
+	    $permissions = array();
+	}
+
+	$permissions[$data['permission']] = $data;
+	GalleryDataCache::put($cacheKey, $permissions);
+
+	$ret = GalleryPermissionSetMap::addMapEntry($data);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+}
+
+include(dirname(__FILE__) . '/interfaces/GalleryPermissionSetMap.inc');
+?>

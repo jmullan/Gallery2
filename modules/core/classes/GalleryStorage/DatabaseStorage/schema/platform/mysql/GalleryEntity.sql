@@ -1,36 +1,34 @@
 
     -- This file was automatically generated from an XSL template, which is
-    -- why it looks so ugly.  Editing it by hand would be a bad idea.  If 
-    -- you want to do something productive, fix the style sheet so that it
-    -- formats the SQL attractively.
+    -- why it looks so ugly.  Editing it by hand would be a bad idea.
     --
 
-    CREATE TABLE TABLE_PREFIXGalleryEntity (
-  COLUMN_PREFIXid
+    CREATE TABLE DB_TABLE_PREFIXGalleryEntity (
+  DB_COLUMN_PREFIXid
       int(11)
     
     NOT NULL
   
       ,
-    COLUMN_PREFIXcreationTimestamp
+    DB_COLUMN_PREFIXcreationTimestamp
       datetime
     
     NOT NULL
   
       ,
-    COLUMN_PREFIXmodificationTimestamp
+    DB_COLUMN_PREFIXmodificationTimestamp
       datetime
     
     NOT NULL
   
       ,
-    COLUMN_PREFIXserialNumber
+    DB_COLUMN_PREFIXserialNumber
       int(11)
     
     NOT NULL
   
       ,
-    COLUMN_PREFIXentityType
+    DB_COLUMN_PREFIXentityType
       varchar(
       
           32
@@ -41,15 +39,23 @@
   
     , 
   
-    INDEX (COLUMN_PREFIXid)
+    INDEX (DB_COLUMN_PREFIXid)
+    
+      ,
+    
+    INDEX (DB_COLUMN_PREFIXcreationTimestamp)
+    
+      ,
+    
+    INDEX (DB_COLUMN_PREFIXmodificationTimestamp)
     
 
-    ) TYPE=MyISAM;
+    ) TYPE=DB_TABLE_TYPE;
 
-    INSERT INTO TABLE_PREFIXSchema (
-      COLUMN_PREFIXname,
-      COLUMN_PREFIXmajor,
-      COLUMN_PREFIXminor
+    INSERT INTO DB_TABLE_PREFIXSchema (
+      DB_COLUMN_PREFIXname,
+      DB_COLUMN_PREFIXmajor,
+      DB_COLUMN_PREFIXminor
       ) VALUES (
       'GalleryEntity',
       1,

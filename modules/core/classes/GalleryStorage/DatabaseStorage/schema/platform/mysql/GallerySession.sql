@@ -1,12 +1,10 @@
 
     -- This file was automatically generated from an XSL template, which is
-    -- why it looks so ugly.  Editing it by hand would be a bad idea.  If 
-    -- you want to do something productive, fix the style sheet so that it
-    -- formats the SQL attractively.
+    -- why it looks so ugly.  Editing it by hand would be a bad idea.
     --
 
-    CREATE TABLE TABLE_PREFIXGallerySession (
-  COLUMN_PREFIXsessionId
+    CREATE TABLE DB_TABLE_PREFIXGallerySession (
+  DB_COLUMN_PREFIXsessionId
       varchar(
       
           128
@@ -14,7 +12,7 @@
       )
     
       ,
-    COLUMN_PREFIXkey
+    DB_COLUMN_PREFIXkey
       varchar(
       
           32
@@ -22,24 +20,24 @@
       )
     
       ,
-    COLUMN_PREFIXvalue
+    DB_COLUMN_PREFIXvalue
       text
     
     , 
   
-    INDEX (COLUMN_PREFIXsessionId)
+    INDEX (DB_COLUMN_PREFIXsessionId)
     
       ,
     
-    INDEX (COLUMN_PREFIXkey)
+    INDEX (DB_COLUMN_PREFIXkey)
     
 
-    ) TYPE=MyISAM;
+    ) TYPE=DB_TABLE_TYPE;
 
-    INSERT INTO TABLE_PREFIXSchema (
-      COLUMN_PREFIXname,
-      COLUMN_PREFIXmajor,
-      COLUMN_PREFIXminor
+    INSERT INTO DB_TABLE_PREFIXSchema (
+      DB_COLUMN_PREFIXname,
+      DB_COLUMN_PREFIXmajor,
+      DB_COLUMN_PREFIXminor
       ) VALUES (
       'GallerySession',
       1,

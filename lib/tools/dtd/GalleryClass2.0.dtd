@@ -2,7 +2,7 @@
 
 <!ELEMENT schema ( schema-major, schema-minor ) >
 <!ELEMENT map ( member+, key? ) >
-<!ELEMENT member ( member-name, member-type, member-size?, id?, indexed?, unique?, required? ) >
+<!ELEMENT member ( member-name, member-type, member-size?, id?, (indexed | unique)?, required? ) >
 <!ELEMENT key ( member-name+ ) >
 
 <!ELEMENT class-name ( #PCDATA ) >

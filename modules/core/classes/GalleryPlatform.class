@@ -361,6 +361,7 @@ class GalleryPlatform {
 	$gallery->debug(sprintf("mkdir(%s, %o)", $path, $octalPerms));
 	
 	$umask = umask(0);
+
 	$results = mkdir($path, $octalPerms);
 	umask($umask);
 	return $results;

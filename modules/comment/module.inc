@@ -56,31 +56,6 @@ class CommentModule extends GalleryTemplateModule {
 					       'GalleryComment',
 					       $classDir . 'GalleryComment.class');
 
-	GalleryPermissionMap::registerPermission('comment.all',
-						 $this->translate('[comment] All access'),
-						 false);
-
-	GalleryPermissionMap::registerPermission('comment.add',
-						 $this->translate('[comment] Add comments'),
-						 false);
-
-	GalleryPermissionMap::registerPermission('comment.edit',
-						 $this->translate('[comment] Edit comments'),
-						 false);
-
-	GalleryPermissionMap::registerPermission('comment.delete',
-						 $this->translate('[comment] Delete comments'),
-						 false);
-
-	GalleryPermissionMap::registerPermission('comment.view',
-						 $this->translate('[comment] View comments'),
-						 false);
-
-	GalleryPermissionMap::registerPermission('comment.viewIp',
-						 $this->translate('[comment] View commenter\'s IP address'),
-						 false);
-
-
 	/* Register our search implementation */
 	GalleryFactory::registerImplementation('GallerySearchInterface_1_0',
 					       'GalleryCommentSearch',
@@ -127,6 +102,55 @@ class CommentModule extends GalleryTemplateModule {
 			return $ret->wrap(__FILE__, __LINE__);
 		    }
 		}
+	    }
+
+	    /* Register our permissions */
+	    // translate('[comment] Add comments')
+	    $ret = GalleryPermissionSetMap::registerPermission($this->getName(),
+							       'comment.add', '[comment] Add comments');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    
+	    // translate('[comment] Edit comments')
+	    $ret = GalleryPermissionSetMap::registerPermission($this->getName(),
+							       'comment.edit', '[comment] Edit comments');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    
+	    // translate('[comment] Delete comments')
+	    $ret = GalleryPermissionSetMap::registerPermission($this->getName(),
+							       'comment.delete', '[comment] Delete comments');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    
+	    // translate('[comment] View comments')
+	    $ret = GalleryPermissionSetMap::registerPermission($this->getName(),
+							       'comment.view', '[comment] View comments');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    
+	    // translate('s IP address')
+	    $ret = GalleryPermissionSetMap::registerPermission($this->getName(),
+							       'comment.viewIp', '[comment] View commenter\'s IP address');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    
+	    // translate('[comment] All access')
+	    $ret = GalleryPermissionSetMap::registerPermission($this->getName(),
+							       'comment.all', '[comment] All access',
+							       GALLERY_PERMISSION_COMPOSITE,
+							       array('comment.add',
+								     'comment.edit',
+								     'comment.delete',
+								     'comment.view',
+								     'comment.viewIp'));
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 		
 	    $ret = $this->setModuleParameter('version', $this->getVersion());

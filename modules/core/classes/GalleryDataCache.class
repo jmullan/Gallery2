@@ -130,5 +130,18 @@ class GalleryDataCache {
 
 	return isset($this->_cache[$key]);
     }
+
+    /**
+     * Empty the cache
+     */
+    function reset() {
+	/* Delegate to the singleton */
+	if (empty($this) || get_class($this) != 'gallerydatacache') {
+	    $galleryDataCache =& GalleryDataCache::_singleton();
+	    return $galleryDataCache->reset();
+	}
+
+	$this->_cache = array();
+    }
 }
 ?>

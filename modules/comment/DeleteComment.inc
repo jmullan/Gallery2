@@ -34,11 +34,7 @@ class DeleteCommentController extends GalleryController {
 	$return = GalleryUtilities::getFormVariables('return.');
 
 	/* Make sure we have permission to delete a comment */
-	$ret = GalleryUserHelper::assertHasItemPermission($itemId,
-							  $gallery->getActiveUserId(),
-							  array('core.all',
-								'comment.all',
-								'comment.delete'));
+	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'comment.delete');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -103,11 +99,7 @@ class DeleteCommentView extends GalleryView {
 	}
 
 	/* Make sure we have permission to delete a comment */
-	$ret = GalleryUserHelper::assertHasItemPermission($item->getId(),
-							  $gallery->getActiveUserId(),
-							  array('core.all',
-								'comment.all',
-								'comment.delete'));
+	$ret = GalleryUserHelper::assertHasItemPermission($item->getId(), 'comment.delete');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

@@ -1,53 +1,43 @@
 
     -- This file was automatically generated from an XSL template, which is
-    -- why it looks so ugly.  Editing it by hand would be a bad idea.  If 
-    -- you want to do something productive, fix the style sheet so that it
-    -- formats the SQL attractively.
+    -- why it looks so ugly.  Editing it by hand would be a bad idea.
     --
 
-    CREATE TABLE TABLE_PREFIXGalleryPermissionMap (
-  COLUMN_PREFIXitemId
+    CREATE TABLE DB_TABLE_PREFIXGalleryPermissionMap (
+  DB_COLUMN_PREFIXitemId
       int(11)
     
       ,
-    COLUMN_PREFIXuserId
+    DB_COLUMN_PREFIXuserId
       int(11)
     
       ,
-    COLUMN_PREFIXgroupId
+    DB_COLUMN_PREFIXgroupId
       int(11)
     
       ,
-    COLUMN_PREFIXpermission
-      varchar(
-      
-          32
-        
-      )
+    DB_COLUMN_PREFIXpermission
+      int(11)
     
     , 
   
-    INDEX (COLUMN_PREFIXitemId)
+    INDEX (DB_COLUMN_PREFIXitemId)
     
       ,
     
-    INDEX (COLUMN_PREFIXuserId)
+    INDEX (DB_COLUMN_PREFIXuserId)
     
       ,
     
-    INDEX (COLUMN_PREFIXgroupId)
-    
-      ,
-    
-    INDEX (COLUMN_PREFIXpermission)
+    INDEX (DB_COLUMN_PREFIXgroupId)
     
 
-    ) TYPE=MyISAM;
+    ) TYPE=DB_TABLE_TYPE;
 
-    INSERT INTO TABLE_PREFIXSchema (
-      COLUMN_PREFIXname,
-      COLUMN_PREFIXmajor,
-      COLUMN_PREFIXminor
+    INSERT INTO DB_TABLE_PREFIXSchema (
+      DB_COLUMN_PREFIXname,
+      DB_COLUMN_PREFIXmajor,
+      DB_COLUMN_PREFIXminor
       ) VALUES (
       'GalleryPermissionMap',
       1,

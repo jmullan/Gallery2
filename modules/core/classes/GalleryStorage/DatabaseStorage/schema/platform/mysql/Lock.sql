@@ -1,37 +1,35 @@
 
     -- This file was automatically generated from an XSL template, which is
-    -- why it looks so ugly.  Editing it by hand would be a bad idea.  If 
-    -- you want to do something productive, fix the style sheet so that it
-    -- formats the SQL attractively.
+    -- why it looks so ugly.  Editing it by hand would be a bad idea.
     --
 
-    CREATE TABLE TABLE_PREFIXLock (
-  COLUMN_PREFIXlockId
+    CREATE TABLE DB_TABLE_PREFIXLock (
+  DB_COLUMN_PREFIXlockId
       int(11)
     
       ,
-    COLUMN_PREFIXreadEntityId
+    DB_COLUMN_PREFIXreadEntityId
       int(11)
     
       ,
-    COLUMN_PREFIXwriteEntityId
+    DB_COLUMN_PREFIXwriteEntityId
       int(11)
     
       ,
-    COLUMN_PREFIXrequest
+    DB_COLUMN_PREFIXrequest
       int(11)
     
     , 
   
-    INDEX (COLUMN_PREFIXlockId)
+    INDEX (DB_COLUMN_PREFIXlockId)
     
 
-    ) TYPE=MyISAM;
+    ) TYPE=DB_TABLE_TYPE;
 
-    INSERT INTO TABLE_PREFIXSchema (
-      COLUMN_PREFIXname,
-      COLUMN_PREFIXmajor,
-      COLUMN_PREFIXminor
+    INSERT INTO DB_TABLE_PREFIXSchema (
+      DB_COLUMN_PREFIXname,
+      DB_COLUMN_PREFIXmajor,
+      DB_COLUMN_PREFIXminor
       ) VALUES (
       'Lock',
       1,

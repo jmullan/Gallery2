@@ -94,13 +94,6 @@ define('ERROR_STORAGE_FAILURE', 0x00000040);
 define('ERROR_STORAGE_CONNECTION', 0x00000080);
 
 /**
- * A storage operation was attempted with invalid credentials
- *
- * @constant ERROR_STORAGE_BAD_AUTHENTICAITON
- */
-define('ERROR_STORAGE_BAD_AUTHENTICATON', 0x00000100);
-
-/**
  * You attempted to modify an object using an in-memory version that
  * is out of date with the version that's in the storage
  *
@@ -205,6 +198,13 @@ define('ERROR_CONFIGURATION_REQUIRED', 0x00400000);
  * @constant ERROR_PERMISSION_DENIED
  */
 define('ERROR_PERMISSION_DENIED', 0x00800000);
+
+/**
+ * You don't have enough space for the operation required
+ *
+ * @constant ERROR_OUT_OF_SPACE
+ */
+define('ERROR_OUT_OF_SPACE', 0x01000000);
 
 /**
  * The operation you attempted is unimplemented

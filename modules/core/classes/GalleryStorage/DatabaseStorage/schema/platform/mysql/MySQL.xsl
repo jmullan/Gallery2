@@ -6,15 +6,13 @@
   version="1.0">
 
   <xsl:output method="text"/>
-  <xsl:variable name="tablePrefix">TABLE_PREFIX</xsl:variable>
-  <xsl:variable name="columnPrefix">COLUMN_PREFIX</xsl:variable>
+  <xsl:variable name="tablePrefix">DB_TABLE_PREFIX</xsl:variable>
+  <xsl:variable name="columnPrefix">DB_COLUMN_PREFIX</xsl:variable>
 
   <!-- TABLE -->
   <xsl:template match="table">
     -- This file was automatically generated from an XSL template, which is
-    -- why it looks so ugly.  Editing it by hand would be a bad idea.  If 
-    -- you want to do something productive, fix the style sheet so that it
-    -- formats the SQL attractively.
+    -- why it looks so ugly.  Editing it by hand would be a bad idea.
     --
 
     CREATE TABLE <xsl:value-of select="$tablePrefix"/><xsl:value-of select="table-name"/> (
@@ -47,7 +45,7 @@
     </xsl:if>
   </xsl:for-each>
 
-    ) TYPE=MyISAM;
+    ) TYPE=DB_TABLE_TYPE;
 
     INSERT INTO <xsl:value-of select="$tablePrefix"/>Schema (
       <xsl:value-of select="$columnPrefix"/>name,

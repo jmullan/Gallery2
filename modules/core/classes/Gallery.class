@@ -830,37 +830,6 @@ class Gallery {
     }
 
     /**
-     * Return a new, uninitialized storage instance.  
-     *
-     * This is useful when we want to do operations on the whole of the storage
-     * container (like in the case of DatabaseStorage when we want to drop or
-     * create the database).
-     *
-     * @access public
-     * @return array object GalleryStatus a status code
-     *               object GalleryStorage a storage instance
-     */
-    function getUninitializedStorage() {
-	GalleryProfiler::start('Gallery::getUninitializedStorage');
-	
-	$type = $this->getConfig('storage.type');
-	$config = $this->getConfig('storage.config');
-	
-	/* Load the factory class */
-	require_once(dirname(__FILE__) . '/GalleryStorageFactory.class');
-
-	list ($ret, $storage) =
-	    GalleryStorageFactory::newInstance($type, $config);
-
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	GalleryProfiler::stop('Gallery::getUninitializedStorage');
-	return array(GalleryStatus::success(), $storage);
-    }
-    
-    /**
      * Return an instance of the GalleryStorage class
      *
      * @access public
@@ -871,11 +840,19 @@ class Gallery {
 	GalleryProfiler::start('Gallery::getStorage');
 	
 	if (empty($this->_storage)) {
-	    list($ret, $storage) = $this->getUninitializedStorage();
+	    $type = $this->getConfig('storage.type');
+	    $config = $this->getConfig('storage.config');
+	    
+	    /* Load the factory class */
+	    require_once(dirname(__FILE__) . '/GalleryStorageFactory.class');
+	    
+	    list ($ret, $storage) =
+		GalleryStorageFactory::newInstance($type, $config);
+	    
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-
+	    
 	    $ret = $storage->init();
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
@@ -886,6 +863,48 @@ class Gallery {
 
 	GalleryProfiler::stop('Gallery::getStorage');
 	return array(GalleryStatus::success(), &$this->_storage);
+    }
+
+    /**
+     * Begin a new transaction, if the storage layer supports them.
+     *
+     * @return object GalleryStatus a status code
+     */
+    function beginTransaction() {
+	$reply =& $this->getStorage();
+	$ret = $reply[0];
+	$storage =& $reply[1];
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$ret = $storage->beginTransaction();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Commit our transaction, if the storage layer supports them.
+     *
+     * @return object GalleryStatus a status code
+     */
+    function commitTransaction() {
+	$reply =& $this->getStorage();
+	$ret = $reply[0];
+	$storage =& $reply[1];
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$ret = $storage->commitTransaction();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
     }
 
     /**
@@ -1236,6 +1255,12 @@ class Gallery {
      * @param mixed one of 'buffered', 'logged', 'immediate' or false
      */
     function setDebug($debug) {
+
+	// Try to do the right thing in the face of bogus input
+	if ($debug === true) {
+	    $debug = 'buffered';
+	}
+	
 	$this->_debug = $debug;
 	if (isset($this->_storage)) {
 	    if ($this->_debug) {

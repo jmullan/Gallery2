@@ -319,27 +319,6 @@ class GalleryStorage {
     }
 
     /**
-     * Test to see if our authentication information for this GalleryStorage is
-     * valid.
-     *
-     * @return object GalleryStatus a status code
-     */
-    function testAuthentication() {
-	return GalleryStatus::error(ERROR_UNIMPLEMENTED,
-				    __FILE__, __LINE__);
-    }
-
-    /**
-     * Create the persistent store for this strategy.
-     *
-     * @return object GalleryStatus a status code
-     */
-    function createStore() {
-	return GalleryStatus::error(ERROR_UNIMPLEMENTED,
-				    __FILE__, __LINE__);
-    }
-    
-    /**
      * Configure the persistent store for this strategy, for the given module.
      *
      * @return object GalleryStatus a status code
@@ -350,11 +329,31 @@ class GalleryStorage {
     }
     
     /**
-     * Remove the persistent store for this strategy.
+     * Clean out and reset the persistent store for this strategy.
      *
      * @return object GalleryStatus a status code
      */
-    function removeStore() {
+    function cleanStore() {
+	return GalleryStatus::error(ERROR_UNIMPLEMENTED,
+				    __FILE__, __LINE__);
+    }
+
+    /**
+     * Begin a new transaction, if the storage layer supports them.
+     *
+     * @return object GalleryStatus a status code
+     */
+    function beginTransaction() {
+	return GalleryStatus::error(ERROR_UNIMPLEMENTED,
+				    __FILE__, __LINE__);
+    }
+
+    /**
+     * Commit our transaction, if the storage layer supports them.
+     *
+     * @return object GalleryStatus a status code
+     */
+    function commitTransaction() {
 	return GalleryStatus::error(ERROR_UNIMPLEMENTED,
 				    __FILE__, __LINE__);
     }
@@ -458,7 +457,7 @@ class GalleryStorage {
 	if ($gallery->getDebug()) {
 	    $buf = ob_get_contents();
 	    ob_end_clean();
-	    
+
 	    $gallery->debug($buf);
 	}
     }

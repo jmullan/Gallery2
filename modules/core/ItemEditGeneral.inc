@@ -32,9 +32,7 @@ class ItemEditGeneralController extends GalleryController {
 	$form = GalleryUtilities::getFormVariables('form.');
 
 	/* Make sure we have permission do edit this item */
-	$ret = GalleryUserHelper::assertHasItemPermission($itemId,
-							  $gallery->getActiveUserId(),
-							  array('core.all', 'core.changeText'));
+	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'core.changeText');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -121,9 +119,7 @@ class ItemEditGeneralView extends GalleryView {
 	$form = GalleryUtilities::getFormVariables('form.');
 
 	/* Make sure we have permission do edit this item */
-	$ret = GalleryUserHelper::assertHasItemPermission($itemId,
-							  $gallery->getActiveUserId(),
-							  array('core.all', 'core.changeText'));
+	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'core.changeText');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

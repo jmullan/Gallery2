@@ -44,7 +44,7 @@ class InitializeGalleryTestCase extends TestCase {
 	
 	require_once(dirname(__FILE__) . '/../../module.inc');
 	$coreModule = new CoreModule();
-	$ret = $coreModule->init();
+	$ret = $coreModule->bootstrap();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -60,12 +60,12 @@ class InitializeGalleryTestCase extends TestCase {
 	    $gallery->$member = $oldGallery->$member;
 	}
 
-	/* Let the core module install itself, if necessary */
-	list ($ret, $coreModule) = $gallery->loadModule('core');
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
+	/* Get rid of the data cache */
+	GalleryDataCache::reset();
 
+	/*
+	 * Install and initialize the core module
+	 */
 	$ret = $coreModule->install();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);

@@ -1,33 +1,31 @@
 
     -- This file was automatically generated from an XSL template, which is
-    -- why it looks so ugly.  Editing it by hand would be a bad idea.  If 
-    -- you want to do something productive, fix the style sheet so that it
-    -- formats the SQL attractively.
+    -- why it looks so ugly.  Editing it by hand would be a bad idea.
     --
 
-    CREATE TABLE TABLE_PREFIXGalleryUserGroupMap (
-  COLUMN_PREFIXuserId
+    CREATE TABLE DB_TABLE_PREFIXGalleryUserGroupMap (
+  DB_COLUMN_PREFIXuserId
       int(11)
     
       ,
-    COLUMN_PREFIXgroupId
+    DB_COLUMN_PREFIXgroupId
       int(11)
     
     , 
   
-    INDEX (COLUMN_PREFIXuserId)
+    INDEX (DB_COLUMN_PREFIXuserId)
     
       ,
     
-    INDEX (COLUMN_PREFIXgroupId)
+    INDEX (DB_COLUMN_PREFIXgroupId)
     
 
-    ) TYPE=MyISAM;
+    ) TYPE=DB_TABLE_TYPE;
 
-    INSERT INTO TABLE_PREFIXSchema (
-      COLUMN_PREFIXname,
-      COLUMN_PREFIXmajor,
-      COLUMN_PREFIXminor
+    INSERT INTO DB_TABLE_PREFIXSchema (
+      DB_COLUMN_PREFIXname,
+      DB_COLUMN_PREFIXmajor,
+      DB_COLUMN_PREFIXminor
       ) VALUES (
       'GalleryUserGroupMap',
       1,

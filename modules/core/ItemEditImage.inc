@@ -32,9 +32,7 @@ class ItemEditImageController extends GalleryController {
 	$form = GalleryUtilities::getFormVariables('form.');
 
 	/* Make sure we have permission do edit this item */
-	$ret = GalleryUserHelper::assertHasItemPermission($itemId,
-							  $gallery->getActiveUserId(),
-							  array('core.all', 'core.changeProperties'));
+	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'core.changeProperties');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -279,9 +277,7 @@ class ItemEditImageView extends GalleryView {
 	$form = GalleryUtilities::getFormVariables('form.');
 
 	/* Make sure we have permission do edit this item */
-	$ret = GalleryUserHelper::assertHasItemPermission($itemId,
-							  $gallery->getActiveUserId(),
-							  array('core.all', 'core.changeProperties'));
+	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'core.changeProperties');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

@@ -51,10 +51,6 @@ class SearchModule extends GalleryTemplateModule {
 	$classDir = dirname(__FILE__) . '/classes/';
 	require_once($classDir . 'GallerySearchInterface_1_0.class');
 
-	GalleryPermissionMap::registerPermission('search.all',
-						 $this->translate('[search] All access'),
-						 false);
-
 	return GalleryStatus::success();
     }
 
@@ -71,6 +67,14 @@ class SearchModule extends GalleryTemplateModule {
 
 	if ($version != $this->getVersion()) {
 	    $ret = $this->setModuleParameter('version', $this->getVersion());
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    /* Register our permissions */
+	    // translate('[search] All access')
+	    $ret = GalleryPermissionSetMap::registerPermission($this->getName(),
+							       'search.all', '[search] All access');
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }

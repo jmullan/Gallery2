@@ -1,22 +1,20 @@
 
     -- This file was automatically generated from an XSL template, which is
-    -- why it looks so ugly.  Editing it by hand would be a bad idea.  If 
-    -- you want to do something productive, fix the style sheet so that it
-    -- formats the SQL attractively.
+    -- why it looks so ugly.  Editing it by hand would be a bad idea.
     --
 
-    CREATE TABLE TABLE_PREFIXGalleryItem (
-  COLUMN_PREFIXid
+    CREATE TABLE DB_TABLE_PREFIXGalleryItem (
+  DB_COLUMN_PREFIXid
       int(11)
     
     NOT NULL
   
       ,
-    COLUMN_PREFIXdescription
+    DB_COLUMN_PREFIXdescription
       text
     
       ,
-    COLUMN_PREFIXlayout
+    DB_COLUMN_PREFIXlayout
       varchar(
       
           32
@@ -24,7 +22,7 @@
       )
     
       ,
-    COLUMN_PREFIXkeywords
+    DB_COLUMN_PREFIXkeywords
       varchar(
       
           255
@@ -32,7 +30,7 @@
       )
     
       ,
-    COLUMN_PREFIXorderBy
+    DB_COLUMN_PREFIXorderBy
       varchar(
       
           128
@@ -40,7 +38,7 @@
       )
     
       ,
-    COLUMN_PREFIXorderDirection
+    DB_COLUMN_PREFIXorderDirection
       varchar(
       
           128
@@ -48,27 +46,25 @@
       )
     
       ,
-    COLUMN_PREFIXorderWeight
+    DB_COLUMN_PREFIXorderWeight
       int(11)
     
       ,
-    COLUMN_PREFIXownerId
+    DB_COLUMN_PREFIXownerId
       int(11)
     
     NOT NULL
   
       ,
-    COLUMN_PREFIXsummary
+    DB_COLUMN_PREFIXsummary
       varchar(
       
           128
         
       )
     
-    NOT NULL
-  
       ,
-    COLUMN_PREFIXtheme
+    DB_COLUMN_PREFIXtheme
       varchar(
       
           32
@@ -76,7 +72,7 @@
       )
     
       ,
-    COLUMN_PREFIXtitle
+    DB_COLUMN_PREFIXtitle
       varchar(
       
           128
@@ -86,44 +82,38 @@
     NOT NULL
   
       ,
-    COLUMN_PREFIXviewedSinceTimestamp
+    DB_COLUMN_PREFIXviewedSinceTimestamp
       int(11)
     
     NOT NULL
   
     , 
   
-    INDEX (COLUMN_PREFIXid)
+    INDEX (DB_COLUMN_PREFIXid)
     
       ,
     
-    INDEX (COLUMN_PREFIXdescription
-          (255)
-          )
+    INDEX (DB_COLUMN_PREFIXkeywords)
     
       ,
     
-    INDEX (COLUMN_PREFIXkeywords)
+    INDEX (DB_COLUMN_PREFIXownerId)
     
       ,
     
-    INDEX (COLUMN_PREFIXownerId)
+    INDEX (DB_COLUMN_PREFIXsummary)
     
       ,
     
-    INDEX (COLUMN_PREFIXsummary)
-    
-      ,
-    
-    INDEX (COLUMN_PREFIXtitle)
+    INDEX (DB_COLUMN_PREFIXtitle)
     
 
-    ) TYPE=MyISAM;
+    ) TYPE=DB_TABLE_TYPE;
 
-    INSERT INTO TABLE_PREFIXSchema (
-      COLUMN_PREFIXname,
-      COLUMN_PREFIXmajor,
-      COLUMN_PREFIXminor
+    INSERT INTO DB_TABLE_PREFIXSchema (
+      DB_COLUMN_PREFIXname,
+      DB_COLUMN_PREFIXmajor,
+      DB_COLUMN_PREFIXminor
       ) VALUES (
       'GalleryItem',
       1,

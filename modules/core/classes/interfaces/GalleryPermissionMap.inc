@@ -54,7 +54,7 @@ class GalleryPermissionMap extends GalleryPermissionMap_core {
   
         $info['members']['groupId'] = STORAGE_TYPE_INTEGER;
   
-        $info['members']['permission'] = STORAGE_TYPE_STRING;
+        $info['members']['permission'] = STORAGE_TYPE_INTEGER;
   
         return $info; 
     }

@@ -38,11 +38,14 @@ if (!CheckConfigFileExists()) {
 }
 
 /*
- * This call may fail, especially if the storage has not been
- * configured properly.  That's ok.  We'll check the storage
- * settings independently.
+ * Do the first pass of our initialization.  This doesn't do anything database
+ * related.
  */
-$ret = InitializeGallery();
+$ret = InitFirstPass();
+if ($ret->isError()) {
+    $ret = $ret->wrap(__FILE__, __LINE__);
+    error('unknownError', array('error' => $ret));
+}
 
 $platform = $gallery->getPlatform();
 
@@ -96,43 +99,10 @@ if (!empty($dirStatus)) {
 /*
  * Make sure we can connect to the storage subsystem.
  */
-list ($ret, $storage) = $gallery->getUninitializedStorage();
+list ($ret, $storage) = $gallery->getStorage();
 if ($ret->isError()) {
     $ret = $ret->wrap(__FILE__, __LINE__);
-    error('unknownError', array('error' => $ret));
-}
-
-$ret = $storage->testAuthentication();
-if ($ret->isError()) {
-    if ($ret->getErrorCode() & ERROR_UNIMPLEMENTED) {
-	error('configurationError');
-    } else if ($ret->getErrorCode() & ERROR_STORAGE_BAD_AUTHENTICATON) {
-	error('badStoragePassword');
-    } else if ($ret->getErrorCode() & ERROR_STORAGE_FAILURE) {
-	error('storageError', array('error' => $ret));
-    } else {
-	error('unknownError', array('error' => $ret));
-    }
-    return;
-}
-
-/*
- * Ok, we've got a connection to the database.  But we don't know if the
- * database has been created or not, so give the user the option to create it.
- */
-if (empty($HTTP_POST_VARS['g2_storeAction'])) {
-    message('create');
-    return;
-} else {
-    $storeAction = $HTTP_POST_VARS['g2_storeAction'];
-    if ($storeAction == 'Create New Database') {
-	$ret = $storage->createStore();
-	if ($ret->isError()) {
-	    $ret = $ret->wrap(__FILE__, __LINE__);
-	    error('storageError', array('error' => $ret));
-	    return;
-	}
-    }
+    error('storageError', array('error' => $ret));
 }
 
 message('success');
@@ -214,9 +184,13 @@ function CheckFileDirective() {
     }
 }
 
-function InitializeGallery() {
+function InitFirstPass() {
     require(dirname(__FILE__) . '/../init.php');
-    return GalleryInit();
+    return GalleryInitFirstPass();
+}
+
+function InitSecondPass() {
+    return GalleryInitSecondPass();
 }
 
 function CheckDirectories() {

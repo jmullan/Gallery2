@@ -169,19 +169,21 @@ class GalleryUserHelper {
      * @return object GalleryStatus success if the user is an administrator
      *                              ERROR_PERMISSION_DENIED if not.
      */
-    function assertHasItemPermission($itemId, $userId, $permissions) {
+    function assertHasItemPermission($itemId, $permission) {
 	global $gallery;
 
+	/* Use the active user id */
+	$userId = $gallery->getActiveUserId();
+	
 	list ($ret, $hasPermission) =
-	    GalleryUserHelper::hasItemPermission($itemId, $userId, $permissions);
+	    GalleryUserHelper::hasItemPermission($itemId, $userId, $permission);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	if (!$hasPermission) {
-	    $gallery->debug("user $userId doesn't have " .
-			    "permissions: (" . join(", ", $permissions) .
-			    ") for item $itemId");
+	    $gallery->debug("user id: $userId doesn't have " .
+			    "permission: $permission for item id: $itemId");
 	    return GalleryStatus::error(ERROR_PERMISSION_DENIED,
 					__FILE__, __LINE__);
 	}
@@ -196,7 +198,7 @@ class GalleryUserHelper {
      * @return array object GalleryStatus a status code
      *               boolean true if yes
      */
-    function hasItemPermission($itemId, $userId, $permissions) {
+    function hasItemPermission($itemId, $userId, $permission) {
 
 	list ($ret, $groupIds) = GalleryUserGroupMap::fetchGroupsForUser($userId);
 	if ($ret->isError()) {
@@ -205,7 +207,7 @@ class GalleryUserHelper {
 
 	list ($ret, $hasPermission) =
 	    GalleryPermissionMap::hasPermission($itemId, array($userId),
-						$groupIds, $permissions);
+						$groupIds, $permission);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

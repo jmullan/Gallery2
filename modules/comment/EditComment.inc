@@ -34,11 +34,7 @@ class EditCommentController extends GalleryController {
 	$return = GalleryUtilities::getFormVariables('return.');
 
 	/* Make sure we have permission to edit a comment */
-	$ret = GalleryUserHelper::assertHasItemPermission($itemId,
-							  $gallery->getActiveUserId(),
-							  array('core.all',
-								'comment.all',
-								'comment.edit'));
+	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'comment.edit');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -153,11 +149,7 @@ class EditCommentView extends GalleryView {
 	}
 
 	/* Make sure we have permission to edit a comment */
-	$ret = GalleryUserHelper::assertHasItemPermission($item->getId(),
-							  $gallery->getActiveUserId(),
-							  array('core.all',
-								'comment.all',
-								'comment.edit'));
+	$ret = GalleryUserHelper::assertHasItemPermission($item->getId(), 'comment.edit');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

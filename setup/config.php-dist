@@ -54,10 +54,10 @@ $gallery->setConfig('data.gallery.base', '/path/to/gallerydata');
  * support only MySQL.  Enter the hostname where your database lives, and the
  * username and password you use to connect to it.
  *
- * You must specify a database name, but you do not need to create the database
- * yourself.  Gallery will do it for you.  However, Gallery requires that the
- * user account you provide has the following permissions on the database you
- * specified:
+ * You must specify the name of a database that you have created yourself.
+ * Gallery will not create the database for you, because it's very difficult
+ * to do that in a reliable, database-neutral fashion.  The user that you
+ * use should have the following permissions:
  *
  *    SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER
  *
@@ -65,6 +65,12 @@ $gallery->setConfig('data.gallery.base', '/path/to/gallerydata');
  * applications, you can specify a prefix to prepend to all table and column
  * names.  By default these prefixes are as shown below.  If you modify these
  * after Gallery has created its various tables, it will stop working.
+ *
+ * The possible database types are: mysql, postgres
+ *
+ * If your database supports transactions (Postgres or MySQL 3.23.34a+)
+ * You should set 'transactional' to true.  This will provide you with
+ * a greater degree of data integrity at a small performance cost.
  */
 $storeConfig['type'] = 'mysql';
 $storeConfig['hostname'] = 'localhost';
@@ -73,6 +79,7 @@ $storeConfig['username'] = 'root';
 $storeConfig['password'] = '';
 $storeConfig['tablePrefix'] = 'g2_';
 $storeConfig['columnPrefix'] = 'g_';
+$storeConfig['transactional'] = false;
 $gallery->setConfig('storage.config', $storeConfig);
 $gallery->setConfig('storage.type', 'database');
 

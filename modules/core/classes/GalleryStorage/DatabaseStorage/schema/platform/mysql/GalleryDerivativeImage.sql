@@ -1,35 +1,33 @@
 
     -- This file was automatically generated from an XSL template, which is
-    -- why it looks so ugly.  Editing it by hand would be a bad idea.  If 
-    -- you want to do something productive, fix the style sheet so that it
-    -- formats the SQL attractively.
+    -- why it looks so ugly.  Editing it by hand would be a bad idea.
     --
 
-    CREATE TABLE TABLE_PREFIXGalleryDerivativeImage (
-  COLUMN_PREFIXid
+    CREATE TABLE DB_TABLE_PREFIXGalleryDerivativeImage (
+  DB_COLUMN_PREFIXid
       int(11)
     
     NOT NULL
   
       ,
-    COLUMN_PREFIXwidth
+    DB_COLUMN_PREFIXwidth
       int(11)
     
       ,
-    COLUMN_PREFIXheight
+    DB_COLUMN_PREFIXheight
       int(11)
     
     , 
   
-    INDEX (COLUMN_PREFIXid)
+    INDEX (DB_COLUMN_PREFIXid)
     
 
-    ) TYPE=MyISAM;
+    ) TYPE=DB_TABLE_TYPE;
 
-    INSERT INTO TABLE_PREFIXSchema (
-      COLUMN_PREFIXname,
-      COLUMN_PREFIXmajor,
-      COLUMN_PREFIXminor
+    INSERT INTO DB_TABLE_PREFIXSchema (
+      DB_COLUMN_PREFIXname,
+      DB_COLUMN_PREFIXmajor,
+      DB_COLUMN_PREFIXminor
       ) VALUES (
       'GalleryDerivativeImage',
       1,

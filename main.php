@@ -42,7 +42,7 @@ function GalleryMain($startTime) {
 
     /* Initialize Gallery */
     require_once(dirname(__FILE__) . '/init.php');
-    $ret = GalleryInit();
+    $ret = GalleryInitFirstPass();
     if ($ret->isError()) {
 	return $ret->wrap(__FILE__, __LINE__);
     }
@@ -50,12 +50,24 @@ function GalleryMain($startTime) {
     /*
      * Get the global gallery object.  We can't just declare "global $gallery"
      * at the top of this function because the variable isn't defined until we
-     * call GalleryInit()
+     * call GalleryInitFirstPass()
      */
     $gallery =& $GLOBALS['gallery'];
     GalleryProfiler::start('GalleryMain', $startTime);
-    GalleryProfiler::start('GalleryInit', $startTime);
-    GalleryProfiler::stop('GalleryInit');
+    GalleryProfiler::start('GalleryInitFirstPass', $startTime);
+    GalleryProfiler::stop('GalleryInitFirstPass');
+
+    /* Start our transaction */
+    $ret = $gallery->beginTransaction();
+    if ($ret->isError()) {
+	return $ret->wrap(__FILE__, __LINE__);
+    }
+
+    /* Do the second pass of initialization */
+    $ret = GalleryInitSecondPass();
+    if ($ret->isError()) {
+	return $ret->wrap(__FILE__, __LINE__);
+    }
     
     /*
      * Specify the base URL to the Gallery.  In standalone mode this will be the
@@ -147,6 +159,12 @@ function GalleryMain($startTime) {
 
     if ($showGlobal) {
 
+	/* Complete our transaction */
+	$ret = $gallery->commitTransaction();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
 	/* If we're debugging, gather up our debug info also */
 	if ($gallery->getDebug()) {
 	    if ($gallery->getDebug() == 'buffered') {

@@ -19,7 +19,12 @@ if ($ret->isError()) {
 
 function main() {
 
-    $ret = GalleryInit();
+    $ret = GalleryInitFirstPass();
+    if ($ret->isError()) {
+	return $ret->wrap(__FILE__, __LINE__);
+    }
+
+    $ret = GalleryInitSecondPass();
     if ($ret->isError()) {
 	return $ret->wrap(__FILE__, __LINE__);
     }

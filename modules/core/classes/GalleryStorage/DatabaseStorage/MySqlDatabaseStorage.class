@@ -38,6 +38,34 @@ define('MYSQL_CLEARANCE_LOCK', 'gallery_clearance');
 class MySqlDatabaseStorage extends DatabaseStorage {
 
     /**
+     * The type of mysql database (mysql or mysqlt)
+     *
+     * @var string $_mysqlType
+     * @access private
+     */
+    var $_mysqlType;
+
+    /**
+     * Constructor
+     */
+    function MySqlDatabaseStorage($config) {
+	$this->DatabaseStorage($config);
+	$this->_mysqlType = $config['type'];
+	if ($this->_mysqlType == 'mysqlt') {
+	    $this->_isTransactional = true;
+	}
+    }
+
+    /**
+     * Return the type of this database
+     *
+     * @return string
+     */
+    function getAdoDbType() {
+	return $this->_mysqlType;
+    }
+
+    /**
      * Return the type of this database
      *
      * @return string
@@ -46,6 +74,21 @@ class MySqlDatabaseStorage extends DatabaseStorage {
 	return 'mysql';
     }
 
+    /**
+     * @see DatabaseStorage::getSqlReplacements
+     */
+    function getSqlReplacements() {
+
+	/* Use InnoDB for transactional tables */
+	if ($this->_isTransactional) {
+	    $tableType = 'InnoDB';
+	} else {
+	    $tableType = 'MyISAM';
+	}
+	
+	return array('DB_TABLE_TYPE' => $tableType);
+    }
+    
     /**
      * @see DatabaseStorage::_getLockClearance()
      */

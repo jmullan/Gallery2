@@ -1,18 +1,16 @@
 
     -- This file was automatically generated from an XSL template, which is
-    -- why it looks so ugly.  Editing it by hand would be a bad idea.  If 
-    -- you want to do something productive, fix the style sheet so that it
-    -- formats the SQL attractively.
+    -- why it looks so ugly.  Editing it by hand would be a bad idea.
     --
 
-    CREATE TABLE TABLE_PREFIXGalleryUser (
-  COLUMN_PREFIXid
+    CREATE TABLE DB_TABLE_PREFIXGalleryUser (
+  DB_COLUMN_PREFIXid
       int(11)
     
     NOT NULL
   
       ,
-    COLUMN_PREFIXuserName
+    DB_COLUMN_PREFIXuserName
       varchar(
       
           32
@@ -22,7 +20,7 @@
     NOT NULL
   
       ,
-    COLUMN_PREFIXfullName
+    DB_COLUMN_PREFIXfullName
       varchar(
       
           128
@@ -30,7 +28,7 @@
       )
     
       ,
-    COLUMN_PREFIXhashedPassword
+    DB_COLUMN_PREFIXhashedPassword
       varchar(
       
           32
@@ -38,7 +36,7 @@
       )
     
       ,
-    COLUMN_PREFIXemail
+    DB_COLUMN_PREFIXemail
       varchar(
       
           128
@@ -46,7 +44,7 @@
       )
     
       ,
-    COLUMN_PREFIXlanguage
+    DB_COLUMN_PREFIXlanguage
       varchar(
       
           128
@@ -55,23 +53,19 @@
     
     , 
   
-    UNIQUE KEY (COLUMN_PREFIXuserName)
+    UNIQUE KEY (DB_COLUMN_PREFIXuserName)
     
     , 
   
-    INDEX (COLUMN_PREFIXid)
-    
-      ,
-    
-    INDEX (COLUMN_PREFIXuserName)
+    INDEX (DB_COLUMN_PREFIXid)
     
 
-    ) TYPE=MyISAM;
+    ) TYPE=DB_TABLE_TYPE;
 
-    INSERT INTO TABLE_PREFIXSchema (
-      COLUMN_PREFIXname,
-      COLUMN_PREFIXmajor,
-      COLUMN_PREFIXminor
+    INSERT INTO DB_TABLE_PREFIXSchema (
+      DB_COLUMN_PREFIXname,
+      DB_COLUMN_PREFIXmajor,
+      DB_COLUMN_PREFIXminor
       ) VALUES (
       'GalleryUser',
       1,

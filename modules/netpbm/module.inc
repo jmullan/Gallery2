@@ -176,7 +176,7 @@ class NetPbmModule extends GalleryModule {
 	foreach (array('path', 'jpegQuality', 'pnmtojpeg') as $key) {
 	    list ($ret, $value) = $this->getModuleParameter($key);
 	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    if (empty($value)) {

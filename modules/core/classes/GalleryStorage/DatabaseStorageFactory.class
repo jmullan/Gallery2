@@ -41,10 +41,17 @@ class DatabaseStorageFactory {
 
 	switch ($type) {
 	case 'mysql':
+	case 'mysqlt':
 	    $base = dirname(__FILE__);
 	    require_once($base . '/DatabaseStorage/MySqlDatabaseStorage.class');
 	    return array(GalleryStatus::success(),
 			 new MySqlDatabaseStorage($config));
+	    
+	case 'postgres':
+	    $base = dirname(__FILE__);
+	    require_once($base . '/DatabaseStorage/PostgreSqlDatabaseStorage.class');
+	    return array(GalleryStatus::success(),
+			 new PostgreSqlDatabaseStorage($config));
 	    
 	default:
 	    $gallery->debug("Unknown storage type '$type'");

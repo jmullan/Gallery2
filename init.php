@@ -20,7 +20,15 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-function GalleryInit() {
+/**
+ * First pass of initialization.  Do the following:
+ * - Create and bootstrap the Core
+ * - Set all of our paths correctly (modules, themes, layouts, etc)
+ * - Check for the existence of key functions (eg, dgettext)
+ *
+ * Do not attempt anything database related!
+ */
+function GalleryInitFirstPass() {
     /*
      * Specify that when an assertion fails, we terminate right away.
      */
@@ -97,6 +105,25 @@ function GalleryInit() {
 	$gallery->setConfig($key, function_exists($functionName) ? 1 : 0);
     }
 
+    return GalleryStatus::success();
+}
+
+/**
+ * Second pass of initialization.  Do the following:
+ * - Install the core, if necessary
+ * - Attach to our session
+ * - Load all modules
+ */
+function GalleryInitSecondPass() {
+    global $gallery;
+
+    GalleryProfiler::start('GalleryInitSecondPass');
+
+    list ($ret, $coreModule) = $gallery->loadModule('core');
+    if ($ret->isError()) {
+	return $ret->wrap(__FILE__, __LINE__);
+    }
+    
     /*
      * During the setup process, we may have bogus database credentials.  So,
      * anything that can be set without using the database should be defined
@@ -158,6 +185,7 @@ function GalleryInit() {
 	}
     }
     GalleryProfiler::stop('GalleryInit.load-modules');
+    GalleryProfiler::stop('GalleryInitSecondPass');
 
     return GalleryStatus::success();
 }

@@ -1,24 +1,22 @@
 
     -- This file was automatically generated from an XSL template, which is
-    -- why it looks so ugly.  Editing it by hand would be a bad idea.  If 
-    -- you want to do something productive, fix the style sheet so that it
-    -- formats the SQL attractively.
+    -- why it looks so ugly.  Editing it by hand would be a bad idea.
     --
 
-    CREATE TABLE TABLE_PREFIXGalleryDerivative (
-  COLUMN_PREFIXid
+    CREATE TABLE DB_TABLE_PREFIXGalleryDerivative (
+  DB_COLUMN_PREFIXid
       int(11)
     
     NOT NULL
   
       ,
-    COLUMN_PREFIXderivativeSourceId
+    DB_COLUMN_PREFIXderivativeSourceId
       int(11)
     
     NOT NULL
   
       ,
-    COLUMN_PREFIXderivativeCommands
+    DB_COLUMN_PREFIXderivativeCommands
       varchar(
       
           255
@@ -26,19 +24,19 @@
       )
     
       ,
-    COLUMN_PREFIXderivativeOrder
+    DB_COLUMN_PREFIXderivativeOrder
       int(11)
     
       ,
-    COLUMN_PREFIXderivativeSize
+    DB_COLUMN_PREFIXderivativeSize
       int(11)
     
       ,
-    COLUMN_PREFIXderivativeType
+    DB_COLUMN_PREFIXderivativeType
       int(11)
     
       ,
-    COLUMN_PREFIXderivativeMimeType
+    DB_COLUMN_PREFIXderivativeMimeType
       varchar(
       
           128
@@ -47,27 +45,27 @@
     
     , 
   
-    INDEX (COLUMN_PREFIXid)
+    INDEX (DB_COLUMN_PREFIXid)
     
       ,
     
-    INDEX (COLUMN_PREFIXderivativeSourceId)
+    INDEX (DB_COLUMN_PREFIXderivativeSourceId)
     
       ,
     
-    INDEX (COLUMN_PREFIXderivativeOrder)
+    INDEX (DB_COLUMN_PREFIXderivativeOrder)
     
       ,
     
-    INDEX (COLUMN_PREFIXderivativeType)
+    INDEX (DB_COLUMN_PREFIXderivativeType)
     
 
-    ) TYPE=MyISAM;
+    ) TYPE=DB_TABLE_TYPE;
 
-    INSERT INTO TABLE_PREFIXSchema (
-      COLUMN_PREFIXname,
-      COLUMN_PREFIXmajor,
-      COLUMN_PREFIXminor
+    INSERT INTO DB_TABLE_PREFIXSchema (
+      DB_COLUMN_PREFIXname,
+      DB_COLUMN_PREFIXmajor,
+      DB_COLUMN_PREFIXminor
       ) VALUES (
       'GalleryDerivative',
       1,

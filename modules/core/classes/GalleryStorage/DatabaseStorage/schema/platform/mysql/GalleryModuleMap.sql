@@ -1,12 +1,10 @@
 
     -- This file was automatically generated from an XSL template, which is
-    -- why it looks so ugly.  Editing it by hand would be a bad idea.  If 
-    -- you want to do something productive, fix the style sheet so that it
-    -- formats the SQL attractively.
+    -- why it looks so ugly.  Editing it by hand would be a bad idea.
     --
 
-    CREATE TABLE TABLE_PREFIXGalleryModuleMap (
-  COLUMN_PREFIXmoduleName
+    CREATE TABLE DB_TABLE_PREFIXGalleryModuleMap (
+  DB_COLUMN_PREFIXmoduleName
       varchar(
       
           128
@@ -14,20 +12,20 @@
       )
     
       ,
-    COLUMN_PREFIXactive
+    DB_COLUMN_PREFIXactive
       int(1)
     
     , 
   
-    UNIQUE KEY (COLUMN_PREFIXmoduleName)
+    UNIQUE KEY (DB_COLUMN_PREFIXmoduleName)
     
 
-    ) TYPE=MyISAM;
+    ) TYPE=DB_TABLE_TYPE;
 
-    INSERT INTO TABLE_PREFIXSchema (
-      COLUMN_PREFIXname,
-      COLUMN_PREFIXmajor,
-      COLUMN_PREFIXminor
+    INSERT INTO DB_TABLE_PREFIXSchema (
+      DB_COLUMN_PREFIXname,
+      DB_COLUMN_PREFIXmajor,
+      DB_COLUMN_PREFIXminor
       ) VALUES (
       'GalleryModuleMap',
       1,

@@ -32,9 +32,7 @@ class ItemEditPermissionsController extends GalleryController {
 	$form = GalleryUtilities::getFormVariables('form.');
 
 	/* Make sure we have permission do edit this item */
-	$ret = GalleryUserHelper::assertHasItemPermission($itemId,
-							  $gallery->getActiveUserId(),
-							  array('core.all', 'core.changePermissions'));
+	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'core.changePermissions');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -99,30 +97,28 @@ class ItemEditPermissionsController extends GalleryController {
 
 		/* Validate the permission */
 		$permission = $form['user']['permission'];
-		$allPermissions = GalleryPermissionMap::getAllRegisteredPermissions();
+		list ($ret, $allPermissions) = GalleryPermissionSetMap::getPermissionIds();
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
 		if (empty($allPermissions[$permission])) {
 		    GalleryUtilities::putRequestVariable('form.error.user.invalidPermission', 1);
 		    $permission = null;
 		}
 
 		if (!empty($permission) && !empty($user)) {
-		    /* Don't add the permission if it already exists */
-		    list ($ret, $hasIt) =
-			GalleryPermissionMap::hasPermission($itemId,
-							    array($user->getId()),
-							    null,
-							    array($permission));
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 
-		    if (!$hasIt) {
-			$ret = GalleryPermissionMap::addUserPermission($itemId,
-								       $user->getId(),
-								       $permission);
-			if ($ret->isError()) {
-			    return array($ret->wrap(__FILE__, __LINE__), null);
-			}
+		    $gallery->debug("p: $permission, u: $user");
+
+		    $ret = GalleryPermissionMap::addUserPermission($itemId,
+								   $user->getId(),
+								   $permission);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 
 		    /* Figure out where to redirect upon success */
@@ -151,7 +147,11 @@ class ItemEditPermissionsController extends GalleryController {
 
 		/* Validate the permission */
 		$permission = $form['group']['permission'];
-		$allPermissions = GalleryPermissionMap::getAllRegisteredPermissions();
+		list ($ret, $allPermissions) = GalleryPermissionSetMap::getPermissionIds();
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
 		if (empty($allPermissions[$permission])) {
 		    GalleryUtilities::putRequestVariable('form.error.group.invalidPermission', 1);
 		    $permission = null;
@@ -257,9 +257,7 @@ class ItemEditPermissionsView extends GalleryView {
 	$form = GalleryUtilities::getFormVariables('form.');
 
 	/* Make sure we have permission do edit this item */
-	$ret = GalleryUserHelper::assertHasItemPermission($itemId,
-							  $gallery->getActiveUserId(),
-							  array('core.all', 'core.changePermissions'));
+	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'core.changePermissions');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -289,8 +287,11 @@ class ItemEditPermissionsView extends GalleryView {
 	}
 
 	/* Get all available permissions */
-	$allPermissions =
-	    GalleryPermissionMap::getAllRegisteredPermissions();
+	list ($ret, $allPermissions) =
+	    GalleryPermissionSetMap::getPermissionIds();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 	ksort($allPermissions);
 
 	/* Get all permissions for the item. */

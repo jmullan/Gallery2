@@ -1,29 +1,27 @@
 
     -- This file was automatically generated from an XSL template, which is
-    -- why it looks so ugly.  Editing it by hand would be a bad idea.  If 
-    -- you want to do something productive, fix the style sheet so that it
-    -- formats the SQL attractively.
+    -- why it looks so ugly.  Editing it by hand would be a bad idea.
     --
 
-    CREATE TABLE TABLE_PREFIXGalleryViewCountMap (
-  COLUMN_PREFIXitemId
+    CREATE TABLE DB_TABLE_PREFIXGalleryViewCountMap (
+  DB_COLUMN_PREFIXitemId
       int(11)
     
       ,
-    COLUMN_PREFIXviewCount
+    DB_COLUMN_PREFIXviewCount
       int(11)
     
     , 
   
-    UNIQUE KEY (COLUMN_PREFIXitemId)
+    UNIQUE KEY (DB_COLUMN_PREFIXitemId)
     
 
-    ) TYPE=MyISAM;
+    ) TYPE=DB_TABLE_TYPE;
 
-    INSERT INTO TABLE_PREFIXSchema (
-      COLUMN_PREFIXname,
-      COLUMN_PREFIXmajor,
-      COLUMN_PREFIXminor
+    INSERT INTO DB_TABLE_PREFIXSchema (
+      DB_COLUMN_PREFIXname,
+      DB_COLUMN_PREFIXmajor,
+      DB_COLUMN_PREFIXminor
       ) VALUES (
       'GalleryViewCountMap',
       1,

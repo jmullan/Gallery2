@@ -110,18 +110,44 @@ class GalleryItemHelper {
 	}
 	$groupIdString = join(', ', array_values($groupIds));
 
+	list ($ret, $permissionBits) =
+	    GalleryPermissionSetMap::convertIdsToBits('core.view');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/*
+	 * We've still got a problem here.  There's no way to check to see if
+	 * the user has two different permissions, cause one permission might
+	 * be associated with one group (row) and the other might be associated
+	 * with a different group (row) or user (another row).
+	 *
+	 * Solutions:
+	 *
+	 * 1. We could separate the group and user tables so that we
+	 * could perform a join between them, but that doesn't take care of the
+	 * problem of the permission being in multiple rows.
+	 * 2. Reflexively cross-join all groups vs. each other and vs. each
+	 * user.  Is that possible?
+	 * 3. Do some craziness with bit_or() aggregator into a temporary
+	 * table?
+	 * 4. Do some craziness with bit_or() and return invalid values?
+	 * 5. Don't allow multiple permission checks?
+	 */
+
 	$where = ' ([GalleryItem::ownerId] = ?';
 	$data[] = $userId;
-	$where .= ' OR (([GalleryPermissionMap::itemId] = [GalleryItem::id]';
-	$where .= '      AND ([GalleryPermissionMap::groupId] IN (' . $groupIdString . ')';
-	$where .= '           OR [GalleryPermissionMap::userId] = ?))';
+	$where .= ' OR (';
+	$where .=     ' (';
+	$where .=      ' [GalleryPermissionMap::itemId] = [GalleryItem::id]';
+	$where .=      ' AND (';
+	$where .=           ' [GalleryPermissionMap::groupId] IN (' . $groupIdString . ')';
+	$where .=           ' OR [GalleryPermissionMap::userId] = ?';
+	$where .=           ')';
+	$where .=      ')';
 	$data[] = $userId;
-	$where .= '       AND ([GalleryPermissionMap::permission] = ? ';
-	$data[] = 'core.all';
-	$where .= '            OR ([GalleryPermissionMap::permission] IN (?, ?)';
-	$data = array_merge($data, array('core.view', 'core.viewAll'));
-	$where .= '               )';
-	$where .= '           )';
+	$where .= '      AND ([GalleryPermissionMap::permission] & ? > 0)';
+	$data[] = $permissionBits;
 	$where .= '    )';
 	$where .= ')';
 
@@ -156,8 +182,7 @@ class GalleryItemHelper {
     }
 
     /**
-     * Assert that the given user has one of the specific permissions for the
-     * target item
+     * Return all the permissions that the given user has for the given item.
      *
      * @return array object GalleryStatus a status code
      *               boolean true if yes
@@ -181,7 +206,11 @@ class GalleryItemHelper {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    $permissions = $permissionsTable[$itemId];
+	    if (isset($permissionsTable[$itemId])) {
+		$permissions = $permissionsTable[$itemId];
+	    } else {
+		$permissions = null;
+	    }
 	    GalleryDataCache::put($cacheKey, $permissions);
 	}
 

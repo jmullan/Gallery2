@@ -34,11 +34,7 @@ class AddCommentController extends GalleryController {
 	$return = GalleryUtilities::getFormVariables('return.');
 
 	/* Make sure we have permission to add a comment */
-	$ret = GalleryUserHelper::assertHasItemPermission($itemId,
-							  $gallery->getActiveUserId(),
-							  array('core.all',
-								'comment.all',
-								'comment.add'));
+	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'comment.add');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -110,11 +106,7 @@ class AddCommentView extends GalleryView {
 	}
 
 	/* Make sure we have permission to add a comment */
-	$ret = GalleryUserHelper::assertHasItemPermission($item->getId(),
-							  $gallery->getActiveUserId(),
-							  array('core.all',
-								'comment.all',
-								'comment.add'));
+	$ret = GalleryUserHelper::assertHasItemPermission($item->getId(), 'comment.add');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
