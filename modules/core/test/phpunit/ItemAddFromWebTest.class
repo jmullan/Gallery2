@@ -80,20 +80,23 @@ class ItemAddFromWebTest extends ItemAddPluginTestCase {
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('form[action][addFromWebPage]', 1);
 	GalleryUtilities::putRequestVariable('form[webPageUrls][http://www.test.com/test1.gif]', 1);
-	GalleryUtilities::putRequestVariable('form[webPageUrls][http://www.test.com/test1.jpg]', 1);
+	GalleryUtilities::putRequestVariable('form[webPageUrls][http://www.test.com/test2.jpg]', 1);
 	GalleryUtilities::putRequestVariable('form[webPageUrls][http://www.test.com/404.jpg]', 1);
+	GalleryUtilities::putRequestVariable('form[webPageUrls][http://www.test.com/test3.jpg?foo=bar]', 1);
 	GalleryUtilities::putRequestVariable('form[webPageUrls][http://www.test.com/apo\'strophe.jpg]', 1);
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest($this->_rootAlbum);
 	$this->assertEquals(array(), $results[0]);
-	$this->assertEquals(3, sizeof($results[1]['addedFiles']));
+	$this->assertEquals(4, sizeof($results[1]['addedFiles']));
 	$this->assertEquals('http://www.test.com/test1.gif', $results[1]['addedFiles'][0]['fileName']);
 	$this->assert(isset($results[1]['addedFiles'][0]['id']));
-	$this->assertEquals('http://www.test.com/test1.jpg', $results[1]['addedFiles'][1]['fileName']);
+	$this->assertEquals('http://www.test.com/test2.jpg', $results[1]['addedFiles'][1]['fileName']);
 	$this->assert(isset($results[1]['addedFiles'][1]['id']));
-	$this->assertEquals('http://www.test.com/apo\'strophe.jpg', $results[1]['addedFiles'][2]['fileName']);
+	$this->assertEquals('http://www.test.com/test3.jpg', $results[1]['addedFiles'][2]['fileName']);
 	$this->assert(isset($results[1]['addedFiles'][2]['id']));
+	$this->assertEquals('http://www.test.com/apo\'strophe.jpg', $results[1]['addedFiles'][3]['fileName']);
+	$this->assert(isset($results[1]['addedFiles'][3]['id']));
     }
 }
 
@@ -127,7 +130,10 @@ class ItemAddFromWebTestPlatform  {
 	    case "GET /test1.gif HTTP/1.0\r\n" .
 		"Host: www.test.com\r\n" .
 		"\r\n":
-	    case "GET /test1.jpg HTTP/1.0\r\n" .
+	    case "GET /test2.jpg HTTP/1.0\r\n" .
+		"Host: www.test.com\r\n" .
+		"\r\n":
+	    case "GET /test3.jpg?foo=bar HTTP/1.0\r\n" .
 		"Host: www.test.com\r\n" .
 		"\r\n":
 	    case "GET /apo'strophe.jpg HTTP/1.0\r\n" .
@@ -198,7 +204,8 @@ class ItemAddFromWebTestPlatform  {
     function legalizePathComponent($component) {
 	switch ($component) {
 	case 'test1.gif':
-	case 'test1.jpg':
+	case 'test2.jpg':
+	case 'test3.jpg':
 	    return $component;
 	    
 	case 'apo\'strophe.jpg':
@@ -214,7 +221,8 @@ class ItemAddFromWebTestPlatform  {
 	if ($fromFile == '/test/add') {
 	    switch (basename($toFile)) {
 	    case 'test1.gif':
-	    case 'test1.jpg':
+	    case 'test2.jpg':
+	    case 'test3.jpg':
 	    case 'apo_strophe.jpg':
 		return true;
 	    }
@@ -227,7 +235,8 @@ class ItemAddFromWebTestPlatform  {
     function getimagesize($filename) {
 	switch (basename($filename)) {
 	case 'test1.gif':
-	case 'test1.jpg':
+	case 'test2.jpg':
+	case 'test3.jpg':
 	case 'apo_strophe.jpg':
 	    return array(100, 200);
 	}
@@ -239,7 +248,8 @@ class ItemAddFromWebTestPlatform  {
     function filesize($filename) {
 	switch (basename($filename)) {
 	case 'test1.gif':
-	case 'test1.jpg':
+	case 'test2.jpg':
+	case 'test3.jpg':
 	case 'apo_strophe.jpg':
 	    return 5;
 	}

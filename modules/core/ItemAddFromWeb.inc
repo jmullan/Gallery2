@@ -62,6 +62,18 @@ class ItemAddFromWeb extends ItemAddPlugin {
 		    list ($base, $extension) = GalleryUtilities::getFileNameComponents(basename($url));
 		    $mimeType = GalleryCoreApi::convertExtensionToMime($extension);
 
+		    // If we can't get a mime type, try stripping off the query string
+		    if ($mimeType == 'application/unknown') {
+			if (strstr($url, "?")) {
+			    $tmpUrl = preg_replace("/\?.*$/", "", $url);
+			    if (!empty($tmpUrl)) {
+				$url = $tmpUrl;
+				list ($base, $extension) = GalleryUtilities::getFileNameComponents(basename($url));
+				$mimeType = GalleryCoreApi::convertExtensionToMime($extension);
+			    }
+			}
+		    }
+
 		    list ($ret, $newItem) = GalleryCoreApi::addItemToAlbum($tmpFile,
 									   basename($url),
 									   $base,
