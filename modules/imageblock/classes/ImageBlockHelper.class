@@ -94,7 +94,11 @@ class ImageBlockHelper {
 	    $where .= ' AND [GalleryItemAttributesMap::parentSequence] LIKE ?';
 	}
 
-	$query = "SELECT $select FROM $from WHERE $where ORDER BY $orderBy LIMIT 1";
+	list ($ret, $query) = $storage->getFunctionSql('LIMIT', array(1,
+			      "SELECT $select FROM $from WHERE $where ORDER BY $orderBy"));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 	$data[] = $gallery->getActiveUserId();
 	$data[] = $typeMap[$itemType];
 	$result = null;
