@@ -54,14 +54,22 @@ class CustomFieldModule extends GalleryModule {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	
+	/* Register event listener */
+	require_once(dirname(__FILE__) . '/classes/CustomFieldHelper.class');
+	GalleryCoreApi::registerEventListener('GalleryEntity::delete', new CustomFieldHelper());
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * @see GalleryModule::performFactoryRegistrations
+     */
+    function performFactoryRegistrations() {
+	
 	/* Register our item edit plugin */
 	GalleryCoreApi::registerFactoryImplementation(
 	    'ItemEditPlugin', 'CustomFieldItemEdit', 'CustomFieldItemEdit',
 	    dirname(__FILE__) . '/CustomFieldItemEdit.inc');
-
-	/* Register event listener */
-	require_once(dirname(__FILE__) . '/classes/CustomFieldHelper.class');
-	GalleryCoreApi::registerEventListener('GalleryEntity::delete', new CustomFieldHelper());
 
 	return GalleryStatus::success();
     }

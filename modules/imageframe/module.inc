@@ -41,19 +41,13 @@ class ImageFrameModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::init()
+     * @see GalleryModule::performFactoryRegistrations
      */
-    function init() {
-	$ret = parent::init();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
+    function performFactoryRegistrations() {
+	$classDir = dirname(__FILE__) . '/classes/';
 	GalleryCoreApi::registerFactoryImplementation(
 	    'ImageFrameInterface_1_0', 'ImageFrameImpl', 'ImageFrame',
 	    dirname(__FILE__) . '/classes/ImageFrameImpl.class');
-
-	return GalleryStatus::success();
     }
 
     /**

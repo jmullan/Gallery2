@@ -37,14 +37,44 @@ class GalleryFactoryHelper_simple {
     /**
      * Get the static factory registry
      *
-     * @return array
+     * @return array factory data
      * @access private
      * @staticvar array $registry The only factory registry we will need
      * @static
      */
     function &_getFactoryData() {
-	static $registry = array();
+	static $registry;
+	if (!isset($registry)) {
+	    $registry = array();
+	}
 	return $registry;
+    }
+
+    /**
+     * Tell all modules to register their factory implementations, because we're about to
+     * use one of them.
+     *
+     * @access private
+     * @return object GalleryStatus a status code
+     */
+    function _loadRegistry() {
+	list ($ret, $status) = GalleryCoreApi::getPluginStatus('module');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	foreach (array_keys($status) as $moduleId) {
+	    if (!empty($status[$moduleId]['active'])) {
+		list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+		
+		$module->performFactoryRegistrations();
+	    }
+	}
+
+	return GalleryStatus::success();
     }
 
     /**
@@ -84,6 +114,13 @@ class GalleryFactoryHelper_simple {
 	}
 	$hints[] = '*';
 
+	if (empty($registry)) {
+	    $ret = GalleryFactoryHelper_simple::_loadRegistry();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+
 	foreach ($hints as $hint) {
 	    $hint = strtolower($hint);
 	    if (!empty($registry['hints'][$classType][$hint])) {
@@ -116,6 +153,14 @@ class GalleryFactoryHelper_simple {
 	global $gallery;
 
 	$registry =& GalleryFactoryHelper_simple::_getFactoryData();
+
+	if (empty($registry)) {
+	    $ret = GalleryFactoryHelper_simple::_loadRegistry();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+	
 	if (!isset($className)) {
 	    if (empty($registry['implementations'][$classType])) {
 		if ($gallery->getDebug()) {

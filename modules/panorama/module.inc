@@ -44,15 +44,11 @@ class PanoramaModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::init()
+     * @see GalleryModule::performFactoryRegistrations
      */
-    function init() {
-	$ret = parent::init();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-	require_once(dirname(__FILE__) . '/classes/PanoramaPhotoItem.class');
-	require_once(dirname(__FILE__) . '/classes/PanoramaDerivativeImage.class');
+    function performFactoryRegistrations() {
+	$classDir = dirname(__FILE__) . '/classes/';
+	
 	GalleryCoreApi::registerFactoryImplementation('GalleryEntity',
 						      'PanoramaDerivativeImage',
 						      'PanoramaDerivativeImage',
@@ -66,7 +62,6 @@ class PanoramaModule extends GalleryModule {
 						      'PanoramaItemEdit',
 						      'PanoramaItemEdit',
 						      dirname(__FILE__) . '/PanoramaItemEdit.inc');
-	return GalleryStatus::success();
     }
 
     /**

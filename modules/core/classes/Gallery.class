@@ -277,6 +277,7 @@ class Gallery {
      * @return object GalleryStatus a status code
      */
     function initSession() {
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/modules/core/classes/GallerySession.class');
 	if (empty($this->_session)) {
 	    $this->_session = new GallerySession();
 	    $ret = $this->_session->init();
@@ -302,44 +303,24 @@ class Gallery {
     }
 
     /**
+     * Set the Gallery platform object.
+     *
+     * @access public
+     * @param object GalleryPlatform the Gallery platform object
+     */
+    function setPlatform(&$platform) {
+	$this->_platform = $platform;
+    }
+
+    /**
      * Get the Gallery platform object.
      *
      * Return a copy of the unique Gallery platform object.
      * 
      * @access public
-     * @return array object GalleryPlatform the Gallery platform object
+     * @return object GalleryPlatform the Gallery platform object
      */
     function getPlatform() {
-
-	if (!isset($this->_platform)) {
-	    $platformType = $this->getConfig('platform.type');
-
-	    foreach (array($platformType, '*') as $type) {
-		list ($ret, $this->_platform) =
-		    GalleryCoreApi::newFactoryInstanceByHint('GalleryPlatform', $type);
-
-		/*
-		 * The platform factory should never fail.  It's highly
-		 * inconvenient to have to return an error code from this function,
-		 * so just drop a debug message if there was a failure.
-		 *
-		 * XXX: Refactor this out into initPlatform() and getPlatform()
-		 *      so that we can actually return an error code.
-		 */
-		if ($ret->isError()) {
-		    $this->debug($ret->getAsHtml());
-		}
-
-		if (isset($this->_platform)) {
-		    break;
-		}
-	    }
-
-	    if (!isset($this->_platform)) {
-		$this->debug('Failed to get the platform!');
-	    }
-	}
-	
 	return $this->_platform;
     }
 
@@ -364,7 +345,9 @@ class Gallery {
 	GalleryCoreApi::releaseAllLocks(false);
 
 	/* Roll back any transactions */
-	$this->_storage->rollbackTransaction();
+	if (isset($this->_storage)) {
+	    $this->_storage->rollbackTransaction();
+	}
     }
 
     /**

@@ -290,24 +290,30 @@ class GalleryPluginHelper_simple {
 			 null);
 	}
 
-	$query = '
-        SELECT
-          [GalleryPluginMap::pluginId],
-          [GalleryPluginMap::active]
-        FROM
-          [GalleryPluginMap]
-        WHERE
-          [GalleryPluginMap::pluginType] = ?
-        ';
-	
-	list ($ret, $searchResults) = $gallery->search($query, array($pluginType));
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	$data = array();
-	while ($result = $searchResults->nextResult()) {
-	    $data[$result[0]] = array('active' => $result[1]);
+	$cacheKey = "GalleryPluginHelper::fetchPluginList($pluginType)";
+	if (!GalleryDataCache::containsKey($cacheKey)) {
+	    $query = '
+            SELECT
+              [GalleryPluginMap::pluginId],
+              [GalleryPluginMap::active]
+            FROM
+              [GalleryPluginMap]
+            WHERE
+              [GalleryPluginMap::pluginType] = ?
+            ';
+    	
+	    list ($ret, $searchResults) = $gallery->search($query, array($pluginType));
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    
+	    $data = array();
+	    while ($result = $searchResults->nextResult()) {
+		$data[$result[0]] = array('active' => $result[1]);
+	    }
+	    GalleryDataCache::put($cacheKey, $data);
+	} else {
+	    $data = GalleryDataCache::get($cacheKey);
 	}
 	
 	return array(GalleryStatus::success(), $data);

@@ -44,16 +44,9 @@ class NetPbmModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::init()
+     * @see GalleryModule::performFactoryRegistrations
      */
-    function init() {
-	global $gallery;
-	
-	$ret = parent::init();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-	
+    function performFactoryRegistrations() {
 	$classDir = dirname(__FILE__) . '/classes/';
 
 	/* Register our graphics class with the factory */
@@ -61,8 +54,6 @@ class NetPbmModule extends GalleryModule {
 						      'NetPbmToolkit',
 						      'NetPBM',
 						      $classDir . 'NetPbmToolkit.class');
-
-	return GalleryStatus::success();
     }
 
     /**

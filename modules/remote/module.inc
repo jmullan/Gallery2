@@ -36,21 +36,16 @@ class RemoteModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::init()
+     * @see GalleryModule::performFactoryRegistrations
      */
-    function init() {
-	$ret = parent::init();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
+    function performFactoryRegistrations() {
+	$classDir = dirname(__FILE__) . '/classes/';
 
 	/* Register our item add plugins */
 	GalleryCoreApi::registerFactoryImplementation('ItemAddPlugin',
 						      'ItemAddGalleryRemote',
 						      'ItemAddGalleryRemote',
 						      dirname(__FILE__) . '/ItemAddGalleryRemote.inc');
-
-	return GalleryStatus::success();
     }
 
     /**

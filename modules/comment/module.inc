@@ -44,18 +44,11 @@ class CommentModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::init()
+     * @see GalleryModule::performFactoryRegistrations
      */
-    function init() {
-	global $gallery;
-
-	$ret = parent::init();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-	
+    function performFactoryRegistrations() {
 	$classDir = dirname(__FILE__) . '/classes/';
-
+	
 	GalleryCoreApi::registerFactoryImplementation('GalleryEntity',
 						      'GalleryComment',
 						      'GalleryComment',
@@ -66,8 +59,6 @@ class CommentModule extends GalleryModule {
 						      'GalleryCommentSearch',
 						      'comment',
 						      $classDir . 'GalleryCommentSearch.class');
-	
-	return GalleryStatus::success();
     }
 
     /**

@@ -44,21 +44,14 @@ class ExifModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::init()
+     * @see GalleryModule::performFactoryRegistrations
      */
-    function init() {
-	global $gallery;
-
-	$ret = parent::init();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
+    function performFactoryRegistrations() {
+	$classDir = dirname(__FILE__) . '/classes/';
 
 	GalleryCoreApi::registerFactoryImplementation(
 	    'ExifInterface_1_0', 'ExifExtractor', 'Exif',
 	    dirname(__FILE__) . '/classes/ExifExtractor.class');
-
-	return GalleryStatus::success();
     }
 
     /**

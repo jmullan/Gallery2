@@ -68,7 +68,6 @@ class CoreModule extends GalleryModule {
  	require_once($classDir . 'GalleryDataCache.class');
 	require_once($classDir . 'GalleryCoreApi.class');
  	require_once($classDir . 'GalleryUrlGenerator.class');
- 	require_once($classDir . 'GallerySession.class');
  	require_once($classDir . 'GalleryUtilities.class');
  	require_once($classDir . 'GalleryView.class');
 	
@@ -86,19 +85,26 @@ class CoreModule extends GalleryModule {
 	/* Configure the Platform */
 	$gallery->setConfig('platform.type', strtolower(PHP_OS));
 
-	/* Register platform implementations */
-	GalleryCoreApi::registerFactoryImplementation('GalleryPlatform',
-						      'UnixPlatform',
-						      'Unix',
-						      $classDir . 'GalleryPlatform/UnixPlatform.class',
-						      array('unix', '*'));
+	if (strtolower(PHP_OS) == 'winnt') {
+	    require_once($classDir . 'GalleryPlatform/WinNtPlatform.class');
+	    $gallery->setPlatform(new WinNtPlatform());
+	} else {
+	    require_once($classDir . 'GalleryPlatform/UnixPlatform.class');
+	    $gallery->setPlatform(new UnixPlatform());
+	}
+	
+	/* Now we have a $gallery instance and can set our description */
+	$this->setDescription($gallery->i18n('Gallery 2 Core Module'));
 
-	GalleryCoreApi::registerFactoryImplementation('GalleryPlatform',
-						      'WinNtPlatform',
-						      'WinNT',
-						      $classDir . 'GalleryPlatform/WinNtPlatform.class',
-						      array('winnt'));
+	return GalleryStatus::success();
+    }
 
+    /**
+     * @see GalleryModule::performFactoryRegistrations
+     */
+    function performFactoryRegistrations() {
+	$classDir = dirname(__FILE__) . '/classes/';
+	
 	/* Register our entity implementations */
 	GalleryCoreApi::registerFactoryImplementation('GalleryEntity',
 						      'GalleryEntity',
@@ -252,11 +258,6 @@ class CoreModule extends GalleryModule {
 						      'ItemAddFromWeb',
 						      'ItemAddFromWeb',
 						      dirname(__FILE__) . '/ItemAddFromWeb.inc');
-	
-	/* Now we have a $gallery instance and can set our description */
-	$this->setDescription($gallery->i18n('Gallery 2 Core Module'));
-
-	return GalleryStatus::success();
     }
 
     /**
@@ -275,7 +276,7 @@ class CoreModule extends GalleryModule {
 	$urlGenerator->registerViewPrefix('view', 'core:ShowItem');
 	$urlGenerator->registerViewPrefix('download', 'core:DownloadItem');
 
-	require_once(dirname(__FILE__) . '/classes/helpers/GalleryItemHelper_medium.class');
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/helpers/GalleryItemHelper_medium.class');
 	GalleryCoreApi::registerEventListener('Gallery::ViewableTreeChange',
 					      new GalleryItemHelper_medium());
 

@@ -120,6 +120,14 @@ class GalleryModule {
     }
 
     /**
+     * The factory will call this method the first time its used to load up all
+     * factory data that it requires.  Register all factory implementations for the
+     * module here.
+     */
+    function performFactoryRegistrations() {
+    }
+    
+    /**
      * Perform any install/upgrade tasks required at this point.  This method
      * is called if the module version in the module.inc does not match the
      * version number in the database.  If this method completes successfully,

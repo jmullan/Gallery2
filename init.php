@@ -36,19 +36,13 @@
  * Do not attempt anything database related!
  */
 function GalleryInitFirstPass() {
-    /*
-     * Specify that when an assertion fails, we terminate right away.
-     */
+    /* Specify that when an assertion fails, we terminate right away. */
     assert_options(ASSERT_BAIL, 1);
 
-    /*
-     * Figure out the Gallery base directory here, from our filename.
-     */
+    /* Figure out the Gallery base directory here, from our filename. */
     $galleryBase = dirname(__FILE__) . '/';
 
-    /*
-     * Load and initialize the core module
-     */
+    /* Load and initialize the core module */
     require_once($galleryBase . 'modules/core/module.inc');
     $coreModule = new CoreModule();
     $ret = $coreModule->bootstrap();

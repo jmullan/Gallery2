@@ -42,23 +42,16 @@ class PhotoAccessModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::init();
+     * @see GalleryModule::performFactoryRegistrations
      */
-    function init() {
-	global $gallery;
-
-	$ret = parent::init();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
+    function performFactoryRegistrations() {
+	$classDir = dirname(__FILE__) . '/classes/';
 
 	/* Register our cart plugin */
 	GalleryCoreApi::registerFactoryImplementation('CartPluginInterface_1_0',
 						      'PhotoAccessCartPlugin',
 						      'photoaccess',
 						      dirname(__FILE__) . '/classes/PhotoAccessCartPlugin.class');
-
-	return GalleryStatus::success();
     }
 
     /**
