@@ -548,11 +548,7 @@ class GalleryUtilities {
      * @static
      */
     function isExactlyA($instance, $className) {
-	if (function_exists('is_a')) {
-	    return is_a($instance, $className);
-	} else {
-	    return (!strcasecmp(get_class($instance), $className));
-	}
+	return (!strcasecmp(get_class($instance), $className));
     }
     
     /**
