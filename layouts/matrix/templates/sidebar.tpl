@@ -23,7 +23,7 @@
   </div>
 
   {* Search form, if module's activated *}
-  {if $layout.moduleSystemContentFiles.search}
+  {if isset($layout.moduleSystemContentFiles.search)}
 	{include file="gallery:modules/search/templates/SearchSystemContent.tpl"} 
   {/if}
 
