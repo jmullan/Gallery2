@@ -241,11 +241,11 @@ class HybridLayout extends GalleryLayout {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-//	    list ($ret, $resizedImages) =
-//		GalleryCoreApi::fetchResizesByItemIds($childIds);
-//	    if ($ret->isError()) {
-//		return array($ret->wrap(__FILE__, __LINE__), null);
-//	    }
+	    list ($ret, $resizedImages) =
+		GalleryCoreApi::fetchResizesByItemIds($childIds);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
 	    list ($ret, $thumbnails) =
 		GalleryCoreApi::fetchThumbnailsByItemIds($childIds);
 	    if ($ret->isError()) {
@@ -302,12 +302,12 @@ class HybridLayout extends GalleryLayout {
 			$images[] = $child;
 		    }
 		}
-//		if (isset($permissions['core.viewResizes']) &&
-//			isset($resizedImages[$childId])) {
-//		    foreach ($resizedImages[$childId] as $resize) {
-//			$images[] = $resize;
-//		    }
-//		}
+		if (isset($permissions['core.viewResizes']) &&
+			isset($resizedImages[$childId])) {
+		    foreach ($resizedImages[$childId] as $resize) {
+			$images[] = $resize;
+		    }
+		}
 		if (isset($thumbnails[$childId])) {
 		    $images[] = $thumbnails[$childId];
 		}
