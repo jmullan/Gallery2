@@ -100,7 +100,7 @@ class ExifDescriptionOption extends ItemAddOption {
 	    }
 	}
 
-	return array(GalleryStatus::success(), array());
+	return array(GalleryStatus::success(), array(), array());
     }
 }
 ?>

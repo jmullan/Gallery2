@@ -56,6 +56,7 @@ class CreateThumbnailOption extends ItemAddOption {
      */
     function handleRequestAfterAdd($form, &$item) {
 	$error = array();
+	$warning = array();
 
 	list ($ret, $thumbTable) = GalleryCoreApi::fetchThumbnailsByItemIds(array($item->getId()));
 	if ($ret->isError()) {
@@ -76,8 +77,8 @@ class CreateThumbnailOption extends ItemAddOption {
 		}
 	    }
 	}
-	
-	return array(GalleryStatus::success(), $error);
+
+	return array(GalleryStatus::success(), $error, $warning);
     }
 }
 ?>

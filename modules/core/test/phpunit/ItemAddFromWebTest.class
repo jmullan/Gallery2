@@ -116,8 +116,14 @@ class ItemAddFromWebTest extends ItemAddPluginTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$option = new ItemAddPluginTestOption();
+	$option->addError('an error');
+	$option->addWarning('a warning');
 	$results = $this->handleRequest($this->_rootAlbum, null, array($option));
 
+	/* Check that warnings and errors came through from the option */
+	$this->assertEquals(array('an error'), $results[0]);
+	$this->assertEquals('a warning', $results[1]['addedFiles'][0]['warnings'][0]);
+	
 	list ($form, $item) = $option->getData();
 	$this->assert(isset($form['webPageUrls']['http://www.test.com/test1.gif']));
 	$this->assertEquals('test1.gif', $item->getPathComponent());

@@ -89,8 +89,8 @@ class CreateThumbnailOptionTest extends ItemAddOptionTestCase {
 	}
 	
 	$form['CreateThumbnailOption']['createThumbnail'] = 1;
-	$error = $this->handleRequestAfterAdd($form, $this->_item);
-	$this->assertEquals(array(), $error);
+	$result = $this->_handleRequestAfterAdd($form, $this->_item);
+	$this->assertEquals(array(array(), array()), $result);
 
 	list ($ret, $isCurrent) = $thumbnail->isCacheCurrent();
 	if ($ret->isError()) {
@@ -103,8 +103,8 @@ class CreateThumbnailOptionTest extends ItemAddOptionTestCase {
     // This won't do anything, but shouldn't have any errors either.
     function testCreateWithNoThumbnail() {
 	$form['CreateThumbnailOption']['createThumbnail'] = 1;
-	$error = $this->handleRequestAfterAdd($form, $this->_item);
-	$this->assertEquals(array(), $error);
+	$result = $this->_handleRequestAfterAdd($form, $this->_item);
+	$this->assertEquals(array(array(), array()), $result);
     }
 }
 

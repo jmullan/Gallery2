@@ -33,6 +33,13 @@
     {/capture}
     {g->text text="Added %s" arg1=$smarty.capture.itemLink}
     <br/>
+    {if !empty($entry.warnings)}
+    <div class="giWarning">
+    {foreach from=$entry.warnings item=warning}
+    {$warning} <br/>
+    {/foreach}
+    </div>
+    {/if}
     {/foreach}
   </div>
 

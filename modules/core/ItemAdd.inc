@@ -336,7 +336,8 @@ class ItemAddOption {
      * @param array the form values
      * @param reference to the item
      * @return array object GalleryStatus a status code
-     *               array error messages
+     *               array localized error messages
+     *               array localized warning messages
      */
     function handleRequestAfterAdd($form, &$item) {
 	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);

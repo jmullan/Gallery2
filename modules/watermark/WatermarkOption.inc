@@ -102,7 +102,7 @@ class WatermarkOption extends ItemAddOption {
 	    }
 	}
 
-	return array(GalleryStatus::success(), $error);
+	return array(GalleryStatus::success(), $error, array());
     }
 }
 ?>

@@ -86,15 +86,19 @@ class ItemAddFromServer extends ItemAddPlugin {
 			return array($ret->wrap(__FILE__, __LINE__), null, null);
 		    }
 
+		    $warnings = array();
 		    foreach ($options as $option) {
-			list ($ret, $optionErrors) = $option->handleRequestAfterAdd($form, $newItem);
+			list ($ret, $optionErrors, $optionWarnings) = $option->handleRequestAfterAdd($form, $newItem);
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null, null);
 			}
 			$error = array_merge($error, $optionErrors);
+			$warnings = array_merge($warnings, $optionWarnings);
 		    }
 
-		    $status['addedFiles'][] = array('fileName' => $filename, 'id' => $newItem->getId());
+		    $status['addedFiles'][] = array('fileName' => $filename,
+						    'id' => $newItem->getId(),
+						    'warnings' => $warnings);
 		}
 	    }
 	}
