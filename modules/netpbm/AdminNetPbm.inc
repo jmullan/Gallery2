@@ -179,7 +179,7 @@ class AdminNetPbmView extends GalleryView {
 	}
 	
 	/* Set up our jpeg quality selection list */
-	for ($i = 95; $i >= 50; $i -= 5) {
+	for ($i = 100; $i >= 50; $i -= 5) {
 	    $jpegQualityList[] = $i;
 	}
 
