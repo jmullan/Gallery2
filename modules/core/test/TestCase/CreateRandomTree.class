@@ -162,7 +162,7 @@ class CreateRandomTreeTestCase extends TestCase {
 	    }
 
 	    /* Save the item */
-	    $item->save();
+	    $ret = $item->save();
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -192,7 +192,7 @@ class CreateRandomTreeTestCase extends TestCase {
 		$thumbnail->setDerivativeOperations('thumbnail|100');
 		$thumbnail->setDerivativeMimeType($outputMimeType);
 
-		$thumbnail->save();
+		$ret = $thumbnail->save();
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
@@ -216,7 +216,7 @@ class CreateRandomTreeTestCase extends TestCase {
 		    $thumbnail->setDerivativeOperations('thumbnail|100');
 		    $thumbnail->setDerivativeMimeType($outputMimeType);
 		
-		    $thumbnail->save();
+		    $ret = $thumbnail->save();
 		    if ($ret->isError()) {
 			return $ret->wrap(__FILE__, __LINE__);
 		    }
