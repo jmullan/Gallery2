@@ -35,6 +35,7 @@
 
 class GalleryStub {
     var $_hash;
+    var $_debug;
     function setConfig($key, $value) {
 	$this->_hash[$key] = $value;
     }
@@ -43,9 +44,15 @@ class GalleryStub {
 	return $this->_hash[$key];
     }
     
-    function setDebug() { }
+    function setDebug($value) {
+	$this->_debug = $value;
+    }
+
+    function getDebug() {
+	return $this->_debug;
+    }
+    
     function setDebugLogFile() { }
-    function setProfile() { }
 }
 
 $gallery = new GalleryStub();
@@ -82,6 +89,17 @@ $visited = array();
 foreach (array_keys($navtext) as $curr) {
     array_push($status, false);
     array_push($visited, false);
+}
+
+// load in config.php if there
+$configFile = dirname(__FILE__) . '/../config.php';
+if (is_file($configFile) && is_readable($configFile)) {
+    require_once($configFile);
+    $_SESSION['passA'] = $gallery->getConfig('setup.password');
+    $_SESSION['passB'] = $_SESSION['passA'];
+    $_SESSION['dir']   = $gallery->getConfig('data.gallery.base');
+    $_SESSION['db']    = $gallery->getConfig('storage.config');
+    $_SESSION['debug'] = $gallery->getDebug();
 }
 if (isset($_SESSION['status'])) {
     $status = $_SESSION['status'];
