@@ -159,15 +159,13 @@ class GalleryPendingUserHelper {
 
 	$generator =& $gallery->getUrlGenerator();
 	$confirmationUrl = $generator->generateUrl(
-			 array( 'view' => 'core:UserAdmin',
-				'subview' => 'register:ConfirmRegistration',
+			 array( 'controller' => 'register:ConfirmRegistration',
 				'username' => $pendingUser->getUserName(),
-				'key' => $pendingUser->getRegistrationKey(),
-				'controller' => 'register:ConfirmRegistration' ));
+				'key' => $pendingUser->getRegistrationKey() ));
 	/* it seems that spaces in the username are not translated to %20, so do it here */
 	/* otherwise mail clients will certainly put a line break there */
-	$confirmationUrl = str_replace(" ", "%20", $confirmationUrl);
-	$baseUrl = $generator->generateUrl();
+	$confirmationUrl = str_replace('&amp;', '&', str_replace(' ', '%20', $confirmationUrl));
+	$baseUrl = str_replace('&amp;', '&', $generator->generateUrl());
 
 	$ret = GalleryPendingUserHelper::_sendEmail(
 		'modules/register/templates/ConfirmationEmail.tpl',
