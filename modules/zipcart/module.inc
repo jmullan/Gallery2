@@ -1,0 +1,180 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package ZipCart
+ * @author Alan Harder <alan.harder@sun.com>
+ */
+
+/**
+ * Cart plugin to download all images in a zip file
+ *
+ * @package ZipCart
+ */
+class ZipCartModule extends GalleryModule {
+
+    function ZipCartModule() {
+	global $gallery;
+	
+	$this->setId('zipcart');
+	$this->setName('Zip Download');
+	$this->setDescription($gallery->i18n('Download cart items in a zip file'));
+	$this->setVersion('0.8');
+	$this->setGroup('commerce', $gallery->i18n('Commerce'));
+    }
+
+    /**
+     * @see GalleryModule::performFactoryRegistrations
+     */
+    function performFactoryRegistrations() {
+	$classDir = dirname(__FILE__) . '/classes/';
+
+	/* Register our cart plugin */
+	GalleryCoreApi::registerFactoryImplementation(
+	    'CartPluginInterface_1_0', 'ZipCartPlugin', 'zipcart',
+	    $classDir . 'ZipCartPlugin.class');
+    }
+
+    /**
+     * @see GalleryModule::install()
+     */
+    function install() {
+	global $gallery;
+
+	list ($ret, $version) = $this->getModuleParameter('version');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	if ($version != $this->getVersion()) {
+	    $ret = $this->setModuleParameter('version', $this->getVersion());
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * @see GalleryModule::canBeAutoInstalled
+     */
+    function canBeAutoInstalled() {
+	return true;
+    }
+
+    /**
+     * @see GalleryModule::needsConfiguration
+     */
+    function needsConfiguration() {
+	list ($ret, $value) = $this->getModuleParameter('path');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	return array(GalleryStatus::success(), empty($value));
+    }
+
+    /**
+     * @see GalleryModule::autoConfigure
+     */
+    function autoConfigure() {
+	global $gallery;
+
+	list ($ret, $needsConfiguration) = $this->needsConfiguration();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), false);
+	}
+	if (!$needsConfiguration) {
+	    return array(GalleryStatus::success(), true);
+	}
+
+	/* Try a bunch of likely seeming paths to see if any of them work. */
+	$platform = $gallery->getPlatform();
+	$slash = $platform->getDirectorySeparator();
+
+	/*
+	 * Start with system paths.  Tack on a trailing slash if necessary,
+	 * then tack on other likely paths, based on our OS
+	 */
+	$paths = array();
+	if (GalleryUtilities::isA($platform, 'WinNtPlatform')) {
+	    foreach (explode(';', getenv('PATH')) as $path) {
+		$path = trim($path);
+		if ($path{strlen($path)-1} != $slash) {
+		    $path .= $slash;
+		}
+		$paths[] = $path . 'zip.exe';
+	    }
+
+	    $paths[] = 'C:\\Program Files\\Zip\\zip.exe';
+	    $paths[] = 'C:\\apps\Zip\\zip.exe';
+	    $paths[] = 'C:\\Zip\\zip.exe';
+	} else if (GalleryUtilities::isA($platform, 'UnixPlatform')){
+	    foreach (explode(':', getenv('PATH')) as $path) {
+		$path = trim($path);
+		if ($path{strlen($path)-1} != $slash) {
+		    $path .= $slash;
+		}
+		$paths[] = $path . 'zip';
+	    }
+
+	    $paths[] = '/usr/bin/zip';
+	    $paths[] = '/usr/local/bin/zip';
+	    $paths[] = '/bin/zip';
+	    $paths[] = '/sw/bin/zip';
+	} else {
+	    return array(GalleryStatus::success(), false);
+	}
+
+	/* Now try each path in turn to see which ones work */
+	foreach ($paths as $path) {
+	    if ($platform->is_executable($path)) {
+		/* We have a winner */
+		$ret = $this->setModuleParameter('path', $path);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), false);
+		}
+		return array(GalleryStatus::success(), true);
+	    }
+	}
+
+	return array(GalleryStatus::success(), false);
+    }
+
+    /**
+     * @see GalleryModule::getSiteAdminViews
+     */
+    function getSiteAdminViews() {
+	return array(GalleryStatus::success(),
+		     array(array('name' => $this->translate('Zip Download'),
+				 'view' => 'zipcart:Admin')));
+    }
+
+    /**
+     * @see GalleryModule::getConfigurationView
+     */
+    function getConfigurationView() {
+	return 'zipcart:Admin';
+    }
+}
+?>
