@@ -15,12 +15,12 @@
 <div id="gsAlbumContents">
   <div class="gbTopFlag">
     <div class="gbTitleBanner">
-      <div class="giTitle">
+      <h1 class="giTitle">
 	{$layout.item.title|markup}
-      </div>
-      <div class="giDescription">
+      </h1>
+      <p class="giDescription">
 	{$layout.item.description|markup}
-      </div>
+      </p>
     </div>
 
     <div class="giInfo">
