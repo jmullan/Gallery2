@@ -169,7 +169,7 @@ class GalleryUrlGenerator {
 
 	/* Search for data after our base file */
 	$redirectUrl = null;
-	if (preg_match('|' . $this->_baseFile . '(/.*)|', $url, $regs)) {
+	if (preg_match('|' . preg_quote($this->_baseFile) . '(/.*)|', $url, $regs)) {
 	    preg_match('|/(.*?)(/.*)|', $regs[1], $regs);
 	    if (sizeof($regs) >= 3) {
 		list ($prefix, $queryString) = array($regs[1], $regs[2]);
